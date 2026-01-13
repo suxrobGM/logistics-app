@@ -14,5 +14,5 @@ public interface IPdfDataExtractor
     /// <param name="fileName">The original file name.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>Extracted load data or error.</returns>
-    Task<Result<ExtractedLoadData>> ExtractAsync(Stream pdfStream, string fileName, CancellationToken ct = default);
+    Task<Result<ExtractedLoadDataDto>> ExtractAsync(Stream pdfStream, string fileName, CancellationToken ct = default);
 }

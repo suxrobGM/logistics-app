@@ -21,5 +21,9 @@ public class ImportLoadFromPdfValidator : AbstractValidator<ImportLoadFromPdfCom
         RuleFor(x => x.CurrentUserId)
             .NotEmpty()
             .WithMessage("Current user ID is required");
+
+        RuleFor(x => x.AssignedTruckId)
+            .NotEmpty()
+            .WithMessage("Truck assignment is required");
     }
 }

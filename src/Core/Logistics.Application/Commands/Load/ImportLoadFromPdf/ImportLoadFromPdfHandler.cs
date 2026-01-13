@@ -113,38 +113,30 @@ internal sealed class ImportLoadFromPdfHandler(
                 "Current user is not an employee. Cannot assign as dispatcher.");
         }
 
-        // Step 6: Find truck if specified
-        Truck? truck = null;
-        if (request.AssignedTruckId.HasValue)
-        {
-            truck = await tenantUow.Repository<Truck>()
-                .GetAsync(t => t.Id == request.AssignedTruckId.Value, ct);
+        // Step 6: Find truck (required)
+        var truck = await tenantUow.Repository<Truck>()
+            .GetAsync(t => t.Id == request.AssignedTruckId, ct);
 
-            if (truck is null)
-            {
-                warnings.Add("Specified truck not found. Load created without truck assignment.");
-            }
+        if (truck is null)
+        {
+            return Result<ImportLoadFromPdfResponse>.Fail("Specified truck not found.");
         }
 
-        // Step 7: Build addresses
-        var originAddress = BuildAddress(extractedData.OriginAddress!);
-        var destinationAddress = BuildAddress(extractedData.DestinationAddress!);
-
-        // Step 8: Create the load
+        // Step 7: Create the load
         try
         {
             var createLoadParameters = new CreateLoadParameters(
                 extractedData.GetLoadName(),
                 LoadType.Vehicle,
-                (originAddress, originLocation),
-                (destinationAddress, destinationLocation),
+                (extractedData.OriginAddress!, originLocation),
+                (extractedData.DestinationAddress!, destinationLocation),
                 extractedData.PaymentAmount ?? 0,
                 0, // Will be calculated from coordinates
                 customer.Id,
-                truck?.Id ?? Guid.Empty,
+                truck.Id,
                 dispatcher.Id);
 
-            var newLoad = await loadService.CreateLoadAsync(createLoadParameters);
+            var newLoad = await loadService.CreateLoadAsync(createLoadParameters, ct: ct);
 
             logger.LogInformation("Created load {LoadId} from PDF import", newLoad.Id);
 
@@ -153,7 +145,7 @@ internal sealed class ImportLoadFromPdfHandler(
                 LoadId = newLoad.Id,
                 LoadName = newLoad.Name,
                 LoadNumber = newLoad.Number,
-                ExtractedData = MapToDto(extractedData),
+                ExtractedData = extractedData,
                 CustomerCreated = customerCreated,
                 CustomerName = customer.Name,
                 Warnings = warnings
@@ -195,58 +187,5 @@ internal sealed class ImportLoadFromPdfHandler(
         await tenantUow.SaveChangesAsync(ct);
 
         return (newCustomer, true);
-    }
-
-    private static Address BuildAddress(ExtractedAddress extracted)
-    {
-        return new Address
-        {
-            Line1 = extracted.Line1 ?? "",
-            Line2 = extracted.Line2,
-            City = extracted.City ?? "",
-            State = extracted.State ?? "",
-            ZipCode = extracted.ZipCode ?? "",
-            Country = extracted.Country
-        };
-    }
-
-    private static ExtractedLoadDataDto MapToDto(ExtractedLoadData data)
-    {
-        return new ExtractedLoadDataDto
-        {
-            OrderId = data.OrderId,
-            VehicleYear = data.VehicleYear,
-            VehicleMake = data.VehicleMake,
-            VehicleModel = data.VehicleModel,
-            VehicleVin = data.VehicleVin,
-            VehicleType = data.VehicleType,
-            OriginAddress = MapAddressToDto(data.OriginAddress),
-            DestinationAddress = MapAddressToDto(data.DestinationAddress),
-            PickupDate = data.PickupDate,
-            DeliveryDate = data.DeliveryDate,
-            PaymentAmount = data.PaymentAmount,
-            ShipperName = data.ShipperName,
-            SourceTemplate = data.SourceTemplate
-        };
-    }
-
-    private static ExtractedAddressDto? MapAddressToDto(ExtractedAddress? address)
-    {
-        if (address is null)
-        {
-            return null;
-        }
-
-        return new ExtractedAddressDto
-        {
-            Line1 = address.Line1,
-            Line2 = address.Line2,
-            City = address.City,
-            State = address.State,
-            ZipCode = address.ZipCode,
-            Country = address.Country,
-            ContactName = address.ContactName,
-            Phone = address.Phone
-        };
     }
 }

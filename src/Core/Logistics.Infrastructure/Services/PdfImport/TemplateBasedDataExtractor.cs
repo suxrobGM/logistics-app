@@ -25,7 +25,7 @@ public sealed class TemplateBasedDataExtractor(ILogger<TemplateBasedDataExtracto
 
     // Register all available templates
 
-    public async Task<Result<ExtractedLoadData>> ExtractAsync(
+    public async Task<Result<ExtractedLoadDataDto>> ExtractAsync(
         Stream pdfStream,
         string fileName,
         CancellationToken cancellationToken = default)
@@ -42,7 +42,7 @@ public sealed class TemplateBasedDataExtractor(ILogger<TemplateBasedDataExtracto
 
             if (string.IsNullOrWhiteSpace(pdfText))
             {
-                return Result<ExtractedLoadData>.Fail(
+                return Result<ExtractedLoadDataDto>.Fail(
                     "Unable to extract text from PDF. The file may be image-based or corrupted.");
             }
 
@@ -54,7 +54,7 @@ public sealed class TemplateBasedDataExtractor(ILogger<TemplateBasedDataExtracto
             if (template is null)
             {
                 var supportedFormats = string.Join(", ", _templates.Select(t => t.TemplateName));
-                return Result<ExtractedLoadData>.Fail(
+                return Result<ExtractedLoadDataDto>.Fail(
                     $"Unsupported dispatch sheet format. Supported formats: {supportedFormats}");
             }
 
@@ -71,12 +71,12 @@ public sealed class TemplateBasedDataExtractor(ILogger<TemplateBasedDataExtracto
                 return validationResult;
             }
 
-            return Result<ExtractedLoadData>.Ok(extractedData);
+            return Result<ExtractedLoadDataDto>.Ok(extractedData);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error extracting data from PDF {FileName}", fileName);
-            return Result<ExtractedLoadData>.Fail($"Error processing PDF: {ex.Message}");
+            return Result<ExtractedLoadDataDto>.Fail($"Error processing PDF: {ex.Message}");
         }
     }
 
@@ -107,7 +107,7 @@ public sealed class TemplateBasedDataExtractor(ILogger<TemplateBasedDataExtracto
         return null;
     }
 
-    private static Result<ExtractedLoadData> ValidateExtractedData(ExtractedLoadData data)
+    private static Result<ExtractedLoadDataDto> ValidateExtractedData(ExtractedLoadDataDto data)
     {
         var errors = new List<string>();
 
@@ -135,10 +135,10 @@ public sealed class TemplateBasedDataExtractor(ILogger<TemplateBasedDataExtracto
 
         if (errors.Count > 0)
         {
-            return Result<ExtractedLoadData>.Fail(
+            return Result<ExtractedLoadDataDto>.Fail(
                 $"Missing required fields: {string.Join(", ", errors)}");
         }
 
-        return Result<ExtractedLoadData>.Ok(data);
+        return Result<ExtractedLoadDataDto>.Ok(data);
     }
 }

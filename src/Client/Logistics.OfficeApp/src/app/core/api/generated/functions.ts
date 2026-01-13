@@ -103,6 +103,10 @@ export type { GetLoads$Json$Params as GetLoads$Json$Params } from './fn/load/get
 export { getLoads$Json as getLoads$Json } from './fn/load/get-loads-json';
 export type { CreateLoad$Params as CreateLoad$Params } from './fn/load/create-load';
 export { createLoad as createLoad } from './fn/load/create-load';
+export type { ImportLoadFromPdf$Plain$Params as ImportLoadFromPdf$Plain$Params } from './fn/load/import-load-from-pdf-plain';
+export { importLoadFromPdf$Plain as importLoadFromPdf$Plain } from './fn/load/import-load-from-pdf-plain';
+export type { ImportLoadFromPdf$Json$Params as ImportLoadFromPdf$Json$Params } from './fn/load/import-load-from-pdf-json';
+export { importLoadFromPdf$Json as importLoadFromPdf$Json } from './fn/load/import-load-from-pdf-json';
 export type { GetNotifications$Plain$Params as GetNotifications$Plain$Params } from './fn/notification/get-notifications-plain';
 export { getNotifications$Plain as getNotifications$Plain } from './fn/notification/get-notifications-plain';
 export type { GetNotifications$Json$Params as GetNotifications$Json$Params } from './fn/notification/get-notifications-json';

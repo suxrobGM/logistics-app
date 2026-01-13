@@ -1,4 +1,4 @@
-using Logistics.Application.Services.PdfImport;
+using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.Services.PdfImport.Templates;
 
@@ -25,5 +25,5 @@ public interface IDispatchSheetTemplate
     /// </summary>
     /// <param name="pdfText">The extracted text content from the PDF.</param>
     /// <returns>The extracted load data.</returns>
-    ExtractedLoadData Extract(string pdfText);
+    ExtractedLoadDataDto Extract(string pdfText);
 }

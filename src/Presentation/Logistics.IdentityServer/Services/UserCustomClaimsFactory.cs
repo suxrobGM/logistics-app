@@ -10,26 +10,17 @@ using CustomClaimTypes = Logistics.Shared.Identity.Claims.CustomClaimTypes;
 
 namespace Logistics.IdentityServer.Services;
 
-public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
+public class UserCustomClaimsFactory(
+    UserManager<User> userManager,
+    RoleManager<AppRole> roleManager,
+    IOptions<IdentityOptions> options,
+    IHttpContextAccessor httpContextAccessor,
+    ITenantUnitOfWork tenantUow)
+    : UserClaimsPrincipalFactory<User, AppRole>(userManager, roleManager, options)
 {
-    private readonly HttpContext _httpContext;
-    private readonly RoleManager<AppRole> _roleManager;
-    private readonly ITenantUnitOfWork _tenantUow;
-    private readonly UserManager<User> _userManager;
-
-    public UserCustomClaimsFactory(
-        UserManager<User> userManager,
-        RoleManager<AppRole> roleManager,
-        IOptions<IdentityOptions> options,
-        IHttpContextAccessor httpContextAccessor,
-        ITenantUnitOfWork tenantUow)
-        : base(userManager, roleManager, options)
-    {
-        _httpContext = httpContextAccessor.HttpContext!;
-        _roleManager = roleManager;
-        _userManager = userManager;
-        _tenantUow = tenantUow;
-    }
+    private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
+    private readonly RoleManager<AppRole> _roleManager = roleManager;
+    private readonly UserManager<User> _userManager = userManager;
 
     protected override async Task<ClaimsIdentity> GenerateClaimsAsync(User user)
     {
@@ -44,8 +35,8 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
             return claimsIdentity;
         }
 
-        await _tenantUow.SetCurrentTenantByIdAsync(tenantId.Value);
-        var employee = await _tenantUow.Repository<Employee>().GetByIdAsync(user.Id);
+        await tenantUow.SetCurrentTenantByIdAsync(tenantId.Value);
+        var employee = await tenantUow.Repository<Employee>().GetByIdAsync(user.Id);
 
         claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Tenant, tenantId.Value.ToString()));
         await AddTenantRoleClaimsAsync(claimsIdentity, employee);
@@ -77,7 +68,7 @@ public class UserCustomClaimsFactory : UserClaimsPrincipalFactory<User, AppRole>
             return;
         }
 
-        var tenantRoleClaimRepository = _tenantUow.Repository<TenantRoleClaim>();
+        var tenantRoleClaimRepository = tenantUow.Repository<TenantRoleClaim>();
 
         foreach (var tenantRole in employee.Roles)
         {

@@ -4,19 +4,14 @@ using System.Text.Json.Serialization;
 namespace Logistics.API.Converters;
 
 /// <summary>
-/// JSON converter to handle DateTime in ISO 8601 format with UTC timezone.
+///     JSON converter to handle DateTime in ISO 8601 format with UTC timezone.
 /// </summary>
 public class Iso8601UtcDateTimeConverter : JsonConverter<DateTime>
 {
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var dateString = reader.GetString();
-        if (string.IsNullOrEmpty(dateString))
-        {
-            return default;
-        }
-
-        return DateTime.Parse(dateString).ToUniversalTime();
+        return string.IsNullOrEmpty(dateString) ? default : DateTime.Parse(dateString).ToUniversalTime();
     }
 
     public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)

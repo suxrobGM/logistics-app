@@ -122,7 +122,9 @@ internal static class Setup
 
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
-        app.UseSerilogRequestLogging();
+        // Serilog must wrap the exception handler so it logs AFTER error body is captured
+        app.UseSerilogRequestLoggingWithErrorDetails();
+        app.UseCustomExceptionHandler();
 
         if (app.Environment.IsDevelopment())
         {
@@ -139,7 +141,6 @@ internal static class Setup
         app.UseAuthorization();
         app.UseHangfireDashboard();
 
-        app.UseCustomExceptionHandler();
         app.MapControllers();
 
         // SignalR Hubs

@@ -1,3 +1,5 @@
+using Logistics.Domain.Primitives.ValueObjects;
+
 namespace Logistics.Shared.Models;
 
 /// <summary>
@@ -52,26 +54,30 @@ public record ExtractedLoadDataDto
     public string? VehicleModel { get; init; }
     public string? VehicleVin { get; init; }
     public string? VehicleType { get; init; }
-    public ExtractedAddressDto? OriginAddress { get; init; }
-    public ExtractedAddressDto? DestinationAddress { get; init; }
+    public Address? OriginAddress { get; init; }
+    public Address? DestinationAddress { get; init; }
+    public string? OriginContactName { get; init; }
+    public string? OriginContactPhone { get; init; }
+    public string? DestinationContactName { get; init; }
+    public string? DestinationContactPhone { get; init; }
     public DateTime? PickupDate { get; init; }
     public DateTime? DeliveryDate { get; init; }
     public decimal? PaymentAmount { get; init; }
     public string? ShipperName { get; init; }
+    public string? ShipperPhone { get; init; }
+    public string? ShipperEmail { get; init; }
     public string? SourceTemplate { get; init; }
-}
 
-/// <summary>
-/// DTO for extracted address from PDF.
-/// </summary>
-public record ExtractedAddressDto
-{
-    public string? Line1 { get; init; }
-    public string? Line2 { get; init; }
-    public string? City { get; init; }
-    public string? State { get; init; }
-    public string? ZipCode { get; init; }
-    public string? Country { get; init; }
-    public string? ContactName { get; init; }
-    public string? Phone { get; init; }
+    /// <summary>
+    /// Gets the vehicle description for use as Load name.
+    /// </summary>
+    public string GetLoadName()
+    {
+        if (VehicleYear.HasValue && !string.IsNullOrEmpty(VehicleMake) && !string.IsNullOrEmpty(VehicleModel))
+        {
+            return $"{VehicleYear} {VehicleMake} {VehicleModel}";
+        }
+
+        return OrderId ?? "Imported Load";
+    }
 }

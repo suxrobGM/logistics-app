@@ -1,7 +1,8 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-using Logistics.Application.Services.PdfImport;
+using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.Services.PdfImport.Templates;
 
@@ -18,9 +19,9 @@ public sealed partial class ShipCarsTemplate : IDispatchSheetTemplate
                || pdfText.Contains("Dispatch Contract #", StringComparison.OrdinalIgnoreCase);
     }
 
-    public ExtractedLoadData Extract(string pdfText)
+    public ExtractedLoadDataDto Extract(string pdfText)
     {
-        return new ExtractedLoadData
+        return new ExtractedLoadDataDto
         {
             OrderId = ExtractOrderId(pdfText),
             VehicleYear = ExtractVehicleYear(pdfText),
@@ -78,61 +79,109 @@ public sealed partial class ShipCarsTemplate : IDispatchSheetTemplate
         return match.Success ? match.Groups[1].Value : null;
     }
 
-    private static ExtractedAddress? ExtractOriginAddress(string text)
+    private static Address? ExtractOriginAddress(string text)
     {
-        // Look for ORIGIN section
-        var originMatch = OriginSectionRegex().Match(text);
-        if (!originMatch.Success) return null;
+        // Ship.Cars PDF format (concatenated without line breaks):
+        // "ORIGINPickup fromCompany...Address 555 Pacific Ave, Santa Cruz, CA 95060Phone..."
+        // Find the ORIGIN section and extract address between "Address" and "Phone"
 
-        var section = originMatch.Value;
+        var originIdx = text.IndexOf("ORIGIN", StringComparison.OrdinalIgnoreCase);
+        var destIdx = text.IndexOf("DESTINATION", StringComparison.OrdinalIgnoreCase);
 
-        // Extract address line
-        var addressMatch = OriginAddressRegex().Match(section);
-        if (addressMatch.Success)
+        if (originIdx < 0 || destIdx < 0 || destIdx <= originIdx)
         {
-            var fullAddress = addressMatch.Groups[1].Value.Trim();
-            return ParseAddress(fullAddress);
+            return null;
         }
 
-        return null;
-    }
+        // Get the ORIGIN section (text between ORIGIN and DESTINATION)
+        var originSection = text[originIdx..destIdx];
 
-    private static ExtractedAddress? ExtractDestinationAddress(string text)
-    {
-        // Look for DESTINATION section
-        var destMatch = DestinationSectionRegex().Match(text);
-        if (!destMatch.Success) return null;
-
-        var section = destMatch.Value;
-
-        // Extract address line
-        var addressMatch = DestAddressRegex().Match(section);
-        if (addressMatch.Success)
+        // Find "Address" followed by the address, ending at "Phone"
+        var addressIdx = originSection.IndexOf("Address", StringComparison.OrdinalIgnoreCase);
+        if (addressIdx < 0)
         {
-            var fullAddress = addressMatch.Groups[1].Value.Trim();
-            return ParseAddress(fullAddress);
+            return null;
         }
 
-        return null;
+        var phoneIdx = originSection.IndexOf("Phone", addressIdx + 7, StringComparison.OrdinalIgnoreCase);
+        if (phoneIdx < 0)
+        {
+            return null;
+        }
+
+        var addressText = originSection[(addressIdx + 7)..phoneIdx].Trim();
+        return ParseAddressFromText(addressText);
     }
 
-    private static ExtractedAddress? ParseAddress(string fullAddress)
+    private static Address? ExtractDestinationAddress(string text)
     {
-        // Try to parse "123 Street, City, ST 12345" format
-        var match = AddressParseRegex().Match(fullAddress);
+        // Find DESTINATION section
+        var destIdx = text.IndexOf("DESTINATION", StringComparison.OrdinalIgnoreCase);
+        if (destIdx < 0)
+        {
+            return null;
+        }
+
+        // Find the end of DESTINATION section (at VEHICLE INFORMATION or similar)
+        var vehicleIdx = text.IndexOf("VEHICLE INFORMATION", destIdx, StringComparison.OrdinalIgnoreCase);
+        var vipIdx = text.IndexOf("VIP ORDER", destIdx, StringComparison.OrdinalIgnoreCase);
+
+        var endIdx = text.Length;
+        if (vehicleIdx > 0 && vehicleIdx < endIdx) endIdx = vehicleIdx;
+        if (vipIdx > 0 && vipIdx < endIdx) endIdx = vipIdx;
+
+        var destSection = text[destIdx..endIdx];
+
+        // Find "Address" followed by the address, ending at "Phone"
+        var addressIdx = destSection.IndexOf("Address", StringComparison.OrdinalIgnoreCase);
+        if (addressIdx < 0)
+        {
+            return null;
+        }
+
+        var phoneIdx = destSection.IndexOf("Phone", addressIdx + 7, StringComparison.OrdinalIgnoreCase);
+        if (phoneIdx < 0)
+        {
+            return null;
+        }
+
+        var addressText = destSection[(addressIdx + 7)..phoneIdx].Trim();
+        return ParseAddressFromText(addressText);
+    }
+
+    private static Address? ParseAddressFromText(string addressText)
+    {
+        // Parse address like "555 Pacific Ave, Santa Cruz, CA 95060"
+        // or "10208 Loving Trail Dr, Frisco, TX 75035"
+        var match = AddressParseRegex().Match(addressText);
         if (match.Success)
         {
-            return new ExtractedAddress
+            return new Address
             {
                 Line1 = match.Groups[1].Value.Trim(),
                 City = match.Groups[2].Value.Trim(),
                 State = match.Groups[3].Value.Trim(),
-                ZipCode = match.Groups[4].Value.Trim()
+                ZipCode = match.Groups[4].Value.Trim(),
+                Country = "USA"
             };
         }
 
-        // Fallback: just use the whole thing as Line1
-        return new ExtractedAddress { Line1 = fullAddress };
+        // Try alternative pattern for concatenated text without commas
+        // "555 Pacific AveSanta Cruz CA 95060"
+        var altMatch = ConcatenatedAddressRegex().Match(addressText);
+        if (altMatch.Success)
+        {
+            return new Address
+            {
+                Line1 = altMatch.Groups[1].Value.Trim(),
+                City = altMatch.Groups[2].Value.Trim(),
+                State = altMatch.Groups[3].Value.Trim(),
+                ZipCode = altMatch.Groups[4].Value.Trim(),
+                Country = "USA"
+            };
+        }
+
+        return null;
     }
 
     private static DateTime? ExtractPickupDate(string text)
@@ -185,23 +234,17 @@ public sealed partial class ShipCarsTemplate : IDispatchSheetTemplate
     [GeneratedRegex(@"([A-HJ-NPR-Z0-9]{17})", RegexOptions.IgnoreCase)]
     private static partial Regex VinRegex();
 
-    [GeneratedRegex(@"Type\s+(SUV|Sedan|Truck|Van|Coupe|Convertible|Hatchback|Wagon)", RegexOptions.IgnoreCase)]
+    // Vehicle type can appear in various formats - "Type Sedan" or just "Sedan" in vehicle info
+    [GeneratedRegex(@"\b(SUV|Sedan|Truck|Van|Coupe|Convertible|Hatchback|Wagon)\b", RegexOptions.IgnoreCase)]
     private static partial Regex VehicleTypeRegex();
 
-    [GeneratedRegex(@"ORIGIN.*?(?=DESTINATION|VEHICLE|$)", RegexOptions.Singleline | RegexOptions.IgnoreCase)]
-    private static partial Regex OriginSectionRegex();
-
-    [GeneratedRegex(@"DESTINATION.*?(?=VEHICLE|TIMEFRAMES|$)", RegexOptions.Singleline | RegexOptions.IgnoreCase)]
-    private static partial Regex DestinationSectionRegex();
-
-    [GeneratedRegex(@"Address\s+(.+?)(?:\nPhone|\n\()", RegexOptions.IgnoreCase)]
-    private static partial Regex OriginAddressRegex();
-
-    [GeneratedRegex(@"Address\s+(.+?)(?:\nPhone|\n\()", RegexOptions.IgnoreCase)]
-    private static partial Regex DestAddressRegex();
-
-    [GeneratedRegex(@"(.+),\s*([^,]+),\s*([A-Z]{2})\s*(\d{5})", RegexOptions.IgnoreCase)]
+    // Address with commas: "555 Pacific Ave, Santa Cruz, CA 95060"
+    [GeneratedRegex(@"(.+),\s*([^,]+),\s*([A-Z]{2})\s*(\d{5}(?:-\d{4})?)", RegexOptions.IgnoreCase)]
     private static partial Regex AddressParseRegex();
+
+    // Address without commas (concatenated): "555 Pacific AveSanta Cruz CA 95060"
+    [GeneratedRegex(@"(\d+[^,]*?(?:Ave|Avenue|St|Street|Rd|Road|Blvd|Boulevard|Dr|Drive|Ln|Lane|Way|Ct|Court|Pl|Place|Cir|Circle|Trail)[^,]*?),?\s*([A-Za-z\s]+),?\s*([A-Z]{2})\s+(\d{5}(?:-\d{4})?)", RegexOptions.IgnoreCase)]
+    private static partial Regex ConcatenatedAddressRegex();
 
     [GeneratedRegex(@"Pickup\s+Exactly\s+(\d{2}/\d{2}/\d{4})", RegexOptions.IgnoreCase)]
     private static partial Regex PickupDateRegex();
@@ -209,9 +252,11 @@ public sealed partial class ShipCarsTemplate : IDispatchSheetTemplate
     [GeneratedRegex(@"Delivery\s+Exactly\s+(\d{2}/\d{2}/\d{4})", RegexOptions.IgnoreCase)]
     private static partial Regex DeliveryDateRegex();
 
-    [GeneratedRegex(@"Total Carrier Pay\s*\$?([\d,]+)", RegexOptions.IgnoreCase)]
+    // Payment amount appears after "Total Carrier Pay" but may have intermediate text like "Broker to CarrierShip Via"
+    [GeneratedRegex(@"Total Carrier Pay[^\d$]*\$?([\d,]+)", RegexOptions.IgnoreCase)]
     private static partial Regex PaymentRegex();
 
-    [GeneratedRegex(@"BROKER\s+([^\n]+?)(?:\s+USDOT|\n)", RegexOptions.IgnoreCase)]
+    // Broker name: "BROKER\nMontway Auto Transport USDOT#..." or concatenated "BROKERMontway Auto Transport USDOT#..."
+    [GeneratedRegex(@"BROKER\s*([A-Za-z][A-Za-z\s]+?)(?:\s+USDOT|USDOT)", RegexOptions.IgnoreCase)]
     private static partial Regex BrokerNameRegex();
 }

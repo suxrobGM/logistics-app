@@ -1,7 +1,8 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-using Logistics.Application.Services.PdfImport;
+using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Shared.Models;
 
 namespace Logistics.Infrastructure.Services.PdfImport.Templates;
 
@@ -19,9 +20,12 @@ public sealed partial class CentralDispatchTemplate : IDispatchSheetTemplate
                   && pdfText.Contains("Load ID", StringComparison.OrdinalIgnoreCase);
     }
 
-    public ExtractedLoadData Extract(string pdfText)
+    public ExtractedLoadDataDto Extract(string pdfText)
     {
-        return new ExtractedLoadData
+        var (originAddress, originContactName) = ExtractOriginAddress(pdfText);
+        var (destinationAddress, destinationContactName) = ExtractDestinationAddress(pdfText);
+
+        return new ExtractedLoadDataDto
         {
             OrderId = ExtractOrderId(pdfText),
             VehicleYear = ExtractVehicleYear(pdfText),
@@ -29,8 +33,10 @@ public sealed partial class CentralDispatchTemplate : IDispatchSheetTemplate
             VehicleModel = ExtractVehicleModel(pdfText),
             VehicleVin = ExtractVin(pdfText),
             VehicleType = ExtractVehicleType(pdfText),
-            OriginAddress = ExtractOriginAddress(pdfText),
-            DestinationAddress = ExtractDestinationAddress(pdfText),
+            OriginAddress = originAddress,
+            DestinationAddress = destinationAddress,
+            OriginContactName = originContactName,
+            DestinationContactName = destinationContactName,
             PickupDate = ExtractPickupDate(pdfText),
             DeliveryDate = ExtractDeliveryDate(pdfText),
             PaymentAmount = ExtractPaymentAmount(pdfText),
@@ -79,54 +85,117 @@ public sealed partial class CentralDispatchTemplate : IDispatchSheetTemplate
         return match.Success ? match.Groups[1].Value : null;
     }
 
-    private static ExtractedAddress? ExtractOriginAddress(string text)
+    private static (Address? Address, string? ContactName) ExtractOriginAddress(string text)
     {
-        // Look for Origin section
-        var originMatch = OriginSectionRegex().Match(text);
-        if (!originMatch.Success) return null;
+        // CentralDispatch PDF format - "Origin Info" and "Destination Info" are column headers on same line
+        // Concatenated text: "Origin Info Destination InfoOriginManheim Pennsylania1190 Lancaster RoadManheim, PA 17545Contact Info"
+        // Need to find "Origin" label (not "Origin Info") and extract until first "Contact Info"
 
-        var section = originMatch.Value;
-
-        // Extract name (first line after Origin)
-        var nameMatch = OriginNameRegex().Match(section);
-        var name = nameMatch.Success ? nameMatch.Groups[1].Value.Trim() : null;
-
-        // Extract full address
-        var addressMatch = OriginAddressRegex().Match(section);
-        if (addressMatch.Success)
+        // Find all occurrences and use context to determine which is the actual label
+        var originInfoIdx = text.IndexOf("Origin Info", StringComparison.OrdinalIgnoreCase);
+        if (originInfoIdx < 0)
         {
-            var street = addressMatch.Groups[1].Value.Trim();
-            var city = addressMatch.Groups[2].Value.Trim();
-            var state = addressMatch.Groups[3].Value.Trim();
-            var zip = addressMatch.Groups[4].Value.Trim();
-
-            return new ExtractedAddress
-            {
-                ContactName = name,
-                Line1 = street,
-                City = city,
-                State = state,
-                ZipCode = zip
-            };
+            return (null, null);
         }
 
-        return null;
+        // Find "Origin" that appears after any headers (look for standalone "Origin" followed by location data)
+        // Skip past "Origin Info" and "Destination Info" headers
+        var searchStart = originInfoIdx + 11;
+        var destInfoIdx = text.IndexOf("Destination Info", searchStart, StringComparison.OrdinalIgnoreCase);
+        if (destInfoIdx > 0 && destInfoIdx < searchStart + 20)
+        {
+            searchStart = destInfoIdx + 16; // Skip past "Destination Info" header too
+        }
+
+        // Now find "Origin" label (the actual data label, not the header)
+        var originLabelIdx = text.IndexOf("Origin", searchStart, StringComparison.OrdinalIgnoreCase);
+        if (originLabelIdx < 0)
+        {
+            return (null, null);
+        }
+
+        // Find "Contact Info" or "Destination" which ends the origin address block
+        var contactIdx = text.IndexOf("Contact Info", originLabelIdx + 6, StringComparison.OrdinalIgnoreCase);
+        var destLabelIdx = text.IndexOf("Destination", originLabelIdx + 6, StringComparison.OrdinalIgnoreCase);
+
+        // Use the earlier of Contact Info or Destination as the end marker
+        var endIdx = text.Length;
+        if (contactIdx > 0 && contactIdx < endIdx)
+        {
+            endIdx = contactIdx;
+        }
+
+        if (destLabelIdx > 0 && destLabelIdx < endIdx)
+        {
+            endIdx = destLabelIdx;
+        }
+
+        // Extract the text between "Origin" label and end marker
+        var addressBlock = text[(originLabelIdx + 6)..endIdx].Trim();
+
+        return ParseAddressFromConcatenatedBlock(addressBlock);
     }
 
-    private static ExtractedAddress? ExtractDestinationAddress(string text)
+    private static (Address? Address, string? ContactName) ExtractDestinationAddress(string text)
     {
-        // Look for Destination section
-        var destMatch = DestinationSectionRegex().Match(text);
-        if (!destMatch.Success) return null;
+        // Find "Destination" label (not "Destination Info" header)
+        // Look for "Destination" that's followed by location data (after the Origin section)
 
-        var section = destMatch.Value;
+        var originInfoIdx = text.IndexOf("Origin Info", StringComparison.OrdinalIgnoreCase);
+        if (originInfoIdx < 0)
+        {
+            return (null, null);
+        }
 
-        // Extract name
-        var nameMatch = DestNameRegex().Match(section);
-        var name = nameMatch.Success ? nameMatch.Groups[1].Value.Trim() : null;
+        // Skip past headers to find data labels
+        var searchStart = originInfoIdx + 11;
+        var destInfoIdx = text.IndexOf("Destination Info", searchStart, StringComparison.OrdinalIgnoreCase);
+        if (destInfoIdx > 0 && destInfoIdx < searchStart + 20)
+        {
+            searchStart = destInfoIdx + 16;
+        }
 
-        // Extract full address
-        var addressMatch = DestAddressRegex().Match(section);
+        // Find the first "Origin" label
+        var originLabelIdx = text.IndexOf("Origin", searchStart, StringComparison.OrdinalIgnoreCase);
+        if (originLabelIdx < 0)
+        {
+            return (null, null);
+        }
+
+        // Find "Destination" label after the Origin label
+        var destLabelIdx = text.IndexOf("Destination", originLabelIdx + 6, StringComparison.OrdinalIgnoreCase);
+        if (destLabelIdx < 0)
+        {
+            return (null, null);
+        }
+
+        // Find end of destination block (Contact Info, Location Type, Dates, etc.)
+        var endMarkers = new[] { "Contact Info", "Location Type", "Dates", "Load Info", "Vehicle Info", "Additional Info" };
+        var endIdx = text.Length;
+
+        foreach (var marker in endMarkers)
+        {
+            var markerIdx = text.IndexOf(marker, destLabelIdx + 11, StringComparison.OrdinalIgnoreCase);
+            if (markerIdx > 0 && markerIdx < endIdx)
+            {
+                endIdx = markerIdx;
+            }
+        }
+
+        // Extract the text between "Destination" label and end marker
+        var addressBlock = text[(destLabelIdx + 11)..endIdx].Trim();
+
+        return ParseAddressFromConcatenatedBlock(addressBlock);
+    }
+
+    private static (Address? Address, string? ContactName) ParseAddressFromConcatenatedBlock(string block)
+    {
+        // Block format: "Manheim Pennsylania1190 Lancaster RoadManheim, PA 17545"
+        // or "AllServic Statn133 Avenue SBrooklyn, NY 11223"
+        // The contact name is the first part before the street number
+
+        // Try to find address pattern: street number + street + city, state zip
+        var addressMatch = ConcatenatedAddressRegex().Match(block);
         if (addressMatch.Success)
         {
             var street = addressMatch.Groups[1].Value.Trim();
@@ -134,17 +203,22 @@ public sealed partial class CentralDispatchTemplate : IDispatchSheetTemplate
             var state = addressMatch.Groups[3].Value.Trim();
             var zip = addressMatch.Groups[4].Value.Trim();
 
-            return new ExtractedAddress
+            // Contact name is text before the street number
+            var streetStartIdx = block.IndexOf(street, StringComparison.OrdinalIgnoreCase);
+            var contactName = streetStartIdx > 0 ? block[..streetStartIdx].Trim() : null;
+
+            var address = new Address
             {
-                ContactName = name,
                 Line1 = street,
                 City = city,
                 State = state,
-                ZipCode = zip
+                ZipCode = zip,
+                Country = "USA"
             };
+            return (address, contactName);
         }
 
-        return null;
+        return (null, null);
     }
 
     private static DateTime? ExtractPickupDate(string text)
@@ -188,7 +262,8 @@ public sealed partial class CentralDispatchTemplate : IDispatchSheetTemplate
     }
 
     // Regex patterns
-    [GeneratedRegex(@"Load ID\s+(.+?)(?:\n|Total)", RegexOptions.IgnoreCase)]
+    // Load ID appears before "Total Price" in concatenated text
+    [GeneratedRegex(@"Load ID\s*(.+?)(?:Total|$)", RegexOptions.IgnoreCase)]
     private static partial Regex LoadIdRegex();
 
     [GeneratedRegex(@"Vehicle Year/Make/Model\s+(\d{4})\s+([\w]+)\s+([\w]+)", RegexOptions.IgnoreCase)]
@@ -200,23 +275,11 @@ public sealed partial class CentralDispatchTemplate : IDispatchSheetTemplate
     [GeneratedRegex(@"Vehicle Type\s+(SUV|Sedan|Truck|Van|Coupe|Convertible|Hatchback|Wagon)", RegexOptions.IgnoreCase)]
     private static partial Regex VehicleTypeRegex();
 
-    [GeneratedRegex(@"Origin Info.*?(?=Destination Info|Load Info|$)", RegexOptions.Singleline | RegexOptions.IgnoreCase)]
-    private static partial Regex OriginSectionRegex();
-
-    [GeneratedRegex(@"Destination Info.*?(?=Dates|Load Info|Vehicle Info|$)", RegexOptions.Singleline | RegexOptions.IgnoreCase)]
-    private static partial Regex DestinationSectionRegex();
-
-    [GeneratedRegex(@"Origin\s+([^\n]+)", RegexOptions.IgnoreCase)]
-    private static partial Regex OriginNameRegex();
-
-    [GeneratedRegex(@"Destination\s+([^\n]+)", RegexOptions.IgnoreCase)]
-    private static partial Regex DestNameRegex();
-
-    [GeneratedRegex(@"(\d+[^\n,]+)\n([^,\n]+),\s*([A-Z]{2})\s*(\d{5})", RegexOptions.IgnoreCase)]
-    private static partial Regex OriginAddressRegex();
-
-    [GeneratedRegex(@"(\d+[^\n,]+)\n([^,\n]+),\s*([A-Z]{2})\s*(\d{5})", RegexOptions.IgnoreCase)]
-    private static partial Regex DestAddressRegex();
+    // Address pattern for concatenated text: "1190 Lancaster RoadManheim, PA 17545" or "133 Avenue SBrooklyn, NY 11223"
+    // Handles directional suffixes like "S", "N", "E", "W" that may be concatenated with city name
+    // Captures: street (starting with number + street type + optional directional), city, state, zip
+    [GeneratedRegex(@"(\d+[^,]*?(?:Road|Rd|Street|St|Avenue|Ave|Drive|Dr|Lane|Ln|Boulevard|Blvd|Way|Court|Ct|Place|Pl|Circle|Cir|Trail)(?:\s*[NSEW](?=[A-Z]))?)([A-Za-z][A-Za-z\s]*?),\s*([A-Z]{2})\s+(\d{5})", RegexOptions.IgnoreCase)]
+    private static partial Regex ConcatenatedAddressRegex();
 
     [GeneratedRegex(@"Scheduled Pick-Up\s+(?:Exactly\s+)?(\d{2}/\d{2}/\d{4})", RegexOptions.IgnoreCase)]
     private static partial Regex PickupDateRegex();
@@ -227,6 +290,7 @@ public sealed partial class CentralDispatchTemplate : IDispatchSheetTemplate
     [GeneratedRegex(@"Total Price\s*\$?([\d,]+)", RegexOptions.IgnoreCase)]
     private static partial Regex PaymentRegex();
 
-    [GeneratedRegex(@"Shipper\s+([^\n]+)", RegexOptions.IgnoreCase)]
+    // Shipper name appears after "Shipper" label until the next section or number
+    [GeneratedRegex(@"Shipper\s*([A-Za-z][A-Za-z\s]+?)(?:\d|Contact|Special|$)", RegexOptions.IgnoreCase)]
     private static partial Regex ShipperNameRegex();
 }

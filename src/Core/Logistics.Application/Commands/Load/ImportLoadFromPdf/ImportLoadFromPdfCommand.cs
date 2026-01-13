@@ -24,7 +24,7 @@ public class ImportLoadFromPdfCommand : IAppRequest<Result<ImportLoadFromPdfResp
     public Guid CurrentUserId { get; set; }
 
     /// <summary>
-    /// Optional truck ID to assign to the load.
+    /// The truck ID to assign to the load.
     /// </summary>
-    public Guid? AssignedTruckId { get; set; }
+    public required Guid AssignedTruckId { get; set; }
 }

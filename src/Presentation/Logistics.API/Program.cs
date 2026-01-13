@@ -1,5 +1,4 @@
 using Logistics.API;
-
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -13,10 +12,12 @@ try
     var builder = WebApplication.CreateBuilder(args);
     builder.AddServiceDefaults();
     // Optional local configuration file and excluded from git
-    builder.Configuration.AddJsonFile("appsettings.local.json", optional: true, reloadOnChange: true);
+    builder.Configuration.AddJsonFile("appsettings.local.json", true, true);
 
     builder.Host.UseSerilog((ctx, lc) => lc
-        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
+        .WriteTo.Console(
+            outputTemplate:
+            "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Properties:j}{NewLine}{Exception}{NewLine}")
         .Enrich.FromLogContext()
         .ReadFrom.Configuration(ctx.Configuration));
 

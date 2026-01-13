@@ -13,6 +13,14 @@
   </ng-template>
 
   @if (!importResult()) {
+    <!-- Truck Selection -->
+    <app-form-field label="Assign Truck" [required]="true" hint="Select a truck to assign to the imported load">
+      <app-search-truck
+        [selectedTruck]="selectedTruck()"
+        (selectedTruckChange)="selectedTruck.set($event)"
+      />
+    </app-form-field>
+
     <p-fileUpload
       mode="advanced"
       name="file"
@@ -21,7 +29,7 @@
       chooseLabel="Select PDF"
       [auto]="true"
       (onSelect)="onFileSelect($event)"
-      [disabled]="isUploading()"
+      [disabled]="!canUpload()"
     >
       <ng-template #content>
         <div class="flex flex-col items-center p-8">

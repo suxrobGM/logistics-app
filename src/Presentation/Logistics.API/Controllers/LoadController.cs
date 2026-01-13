@@ -3,12 +3,9 @@ using Logistics.Application.Commands;
 using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 using CreateLoadCommand = Logistics.Application.Commands.CreateLoadCommand;
 using GetLoadsQuery = Logistics.Application.Queries.GetLoadsQuery;
 using UpdateLoadCommand = Logistics.Application.Commands.UpdateLoadCommand;
@@ -76,12 +73,16 @@ public class LoadController(IMediator mediator) : ControllerBase
     [RequestSizeLimit(10 * 1024 * 1024)] // 10 MB limit
     public async Task<IActionResult> ImportFromPdf([FromForm] ImportLoadFromPdfRequest request)
     {
-        if (request.File is null || request.File.Length == 0)
+        if (request.File.Length == 0)
+        {
             return BadRequest(new ErrorResponse("No PDF file provided"));
+        }
 
         var userId = User.GetUserId();
         if (userId == Guid.Empty)
+        {
             return BadRequest(new ErrorResponse("User not authenticated"));
+        }
 
         var cmd = new ImportLoadFromPdfCommand
         {
@@ -97,8 +98,8 @@ public class LoadController(IMediator mediator) : ControllerBase
 }
 
 /// <summary>
-/// Request model for importing a load from PDF.
+///     Request model for importing a load from PDF.
 /// </summary>
 public record ImportLoadFromPdfRequest(
     IFormFile File,
-    Guid? AssignedTruckId = null);
+    Guid AssignedTruckId);
