@@ -1,6 +1,6 @@
-<span class="fw-bold">{{ label() }}</span>
+<span class="font-bold">{{ label() }}</span>
 <p-date-picker
-  class="ms-2"
+  class="ml-2"
   [(ngModel)]="dates"
   selectionMode="range"
   [showIcon]="true"
@@ -8,7 +8,7 @@
 />
 <button
   pButton
-  class="p-button-raised ms-2"
+  class="p-button-raised ml-2"
   [disabled]="!areDatesValid()"
   (click)="onClickButton()"
 >

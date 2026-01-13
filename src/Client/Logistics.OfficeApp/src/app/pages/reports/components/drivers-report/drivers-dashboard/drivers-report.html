@@ -1,9 +1,9 @@
-<div class="container-fluid p-4">
+<div class="w-full p-6">
   <!-- Header -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="flex justify-between items-center mb-6">
     <div>
-      <h1 class="h3 mb-1">Drivers Dashboard</h1>
-      <p class="text-muted mb-0">Comprehensive overview of driver performance and efficiency</p>
+      <h1 class="text-2xl font-semibold mb-1">Drivers Dashboard</h1>
+      <p class="text-gray-500 mb-0">Comprehensive overview of driver performance and efficiency</p>
     </div>
     <app-range-calendar
       [(startDate)]="startDate"
@@ -15,28 +15,28 @@
 
   @if (isLoading()) {
     <!-- Loading State -->
-    <div class="row">
+    <div class="grid grid-cols-12">
       @for (item of [1, 2, 3, 4]; track item) {
-        <div class="col-md-6 col-lg-3 col-12 mb-4">
+        <div class="col-span-12 md:col-span-6 lg:col-span-3 mb-6">
           <p-skeleton height="120px"></p-skeleton>
         </div>
       }
     </div>
   } @else {
     <!-- Key Metrics Cards -->
-    <div class="row mb-4">
-      <div class="col-md-6 col-lg-3 col-12 mb-3">
-        <p-card class="h-100 border-0 shadow-sm">
-          <div class="d-flex align-items-center">
-            <div class="flex-shrink-0">
-              <div class="bg-primary bg-opacity-10 rounded-circle p-3">
-                <i class="pi pi-users text-primary fs-4"></i>
+    <div class="grid grid-cols-12 mb-6">
+      <div class="col-span-12 md:col-span-6 lg:col-span-3 mb-4">
+        <p-card class="h-full border-0 shadow-sm">
+          <div class="flex items-center">
+            <div class="shrink-0">
+              <div class="bg-blue-600/10 rounded-full p-4">
+                <i class="pi pi-users text-blue-600 text-xl"></i>
               </div>
             </div>
-            <div class="ms-3 flex-grow-1">
-              <h6 class="text-muted mb-1">Total Drivers</h6>
+            <div class="ml-4 grow">
+              <h6 class="text-gray-500 mb-1">Total Drivers</h6>
               <h4 class="mb-0">{{ data()?.totalDrivers || 0 | number }}</h4>
-              <small class="text-info">
+              <small class="text-cyan-500">
                 <i class="pi pi-info-circle"></i> {{ data()?.activeDrivers || 0 }} active
               </small>
             </div>
@@ -44,20 +44,20 @@
         </p-card>
       </div>
 
-      <div class="col-md-6 col-lg-3 col-12 mb-3">
-        <p-card class="h-100 border-0 shadow-sm">
-          <div class="d-flex align-items-center">
-            <div class="flex-shrink-0">
-              <div class="bg-success bg-opacity-10 rounded-circle p-3">
-                <i class="pi pi-dollar text-success fs-4"></i>
+      <div class="col-span-12 md:col-span-6 lg:col-span-3 mb-4">
+        <p-card class="h-full border-0 shadow-sm">
+          <div class="flex items-center">
+            <div class="shrink-0">
+              <div class="bg-green-600/10 rounded-full p-4">
+                <i class="pi pi-dollar text-green-600 fs-4"></i>
               </div>
             </div>
-            <div class="ms-3 flex-grow-1">
-              <h6 class="text-muted mb-1">Total Earnings</h6>
+            <div class="ml-4 grow">
+              <h6 class="text-gray-500 mb-1">Total Earnings</h6>
               <h4 class="mb-0">
                 {{ data()?.totalEarnings || 0 | currency: "USD" : "symbol" : "1.0-0" }}
               </h4>
-              <small class="text-success">
+              <small class="text-green-600">
                 <i class="pi pi-arrow-up"></i> +12.5% vs last period
               </small>
             </div>
@@ -65,18 +65,18 @@
         </p-card>
       </div>
 
-      <div class="col-md-6 col-lg-3 col-12 mb-3">
-        <p-card class="h-100 border-0 shadow-sm">
-          <div class="d-flex align-items-center">
-            <div class="flex-shrink-0">
-              <div class="bg-info bg-opacity-10 rounded-circle p-3">
-                <i class="pi pi-map text-info fs-4"></i>
+      <div class="col-span-12 md:col-span-6 lg:col-span-3 mb-4">
+        <p-card class="h-full border-0 shadow-sm">
+          <div class="flex items-center">
+            <div class="shrink-0">
+              <div class="bg-cyan-500/10 rounded-full p-4">
+                <i class="pi pi-map text-cyan-500 fs-4"></i>
               </div>
             </div>
-            <div class="ms-3 flex-grow-1">
-              <h6 class="text-muted mb-1">Total Distance</h6>
+            <div class="ml-4 grow">
+              <h6 class="text-gray-500 mb-1">Total Distance</h6>
               <h4 class="mb-0">{{ data()?.totalDistance || 0 | number: "1.0-0" }} km</h4>
-              <small class="text-success">
+              <small class="text-green-600">
                 <i class="pi pi-arrow-up"></i> +7.3% vs last period
               </small>
             </div>
@@ -84,18 +84,18 @@
         </p-card>
       </div>
 
-      <div class="col-md-6 col-lg-3 col-12 mb-3">
-        <p-card class="h-100 border-0 shadow-sm">
-          <div class="d-flex align-items-center">
-            <div class="flex-shrink-0">
-              <div class="bg-warning bg-opacity-10 rounded-circle p-3">
-                <i class="pi pi-check-circle text-warning fs-4"></i>
+      <div class="col-span-12 md:col-span-6 lg:col-span-3 mb-4">
+        <p-card class="h-full border-0 shadow-sm">
+          <div class="flex items-center">
+            <div class="shrink-0">
+              <div class="bg-yellow-500/10 rounded-full p-4">
+                <i class="pi pi-check-circle text-yellow-500 text-xl"></i>
               </div>
             </div>
-            <div class="ms-3 flex-grow-1">
-              <h6 class="text-muted mb-1">Loads Delivered</h6>
+            <div class="ml-4 grow">
+              <h6 class="text-gray-500 mb-1">Loads Delivered</h6>
               <h4 class="mb-0">{{ data()?.totalLoadsDelivered || 0 | number }}</h4>
-              <small class="text-success">
+              <small class="text-green-600">
                 <i class="pi pi-arrow-up"></i> +9.8% vs last period
               </small>
             </div>
@@ -105,24 +105,24 @@
     </div>
 
     <!-- Efficiency Metrics -->
-    <div class="row mb-4">
-      <div class="col-12">
+    <div class="grid grid-cols-12 mb-6">
+      <div class="col-span-12">
         <p-card class="border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
-            <div class="d-flex align-items-center">
-              <i class="pi pi-chart-line text-primary me-2"></i>
+            <div class="flex items-center">
+              <i class="pi pi-chart-line text-blue-600 mr-2"></i>
               <h5 class="mb-0">Efficiency Metrics</h5>
             </div>
           </ng-template>
-          <div class="row">
+          <div class="grid grid-cols-12">
             @for (metric of data()?.efficiencyMetrics || []; track metric.metric) {
-              <div class="col-md-6 col-lg-3 col-12 mb-3">
-                <div class="d-flex align-items-center bg-light rounded p-3">
-                  <div class="flex-grow-1">
+              <div class="col-span-12 md:col-span-6 lg:col-span-3 mb-4">
+                <div class="flex items-center bg-gray-100 rounded p-4">
+                  <div class="grow">
                     <h6 class="mb-1">{{ metric.metric }}</h6>
                     <h4 class="mb-0">{{ metric.value | number: "1.1-1" }} {{ metric.unit }}</h4>
                   </div>
-                  <div class="flex-shrink-0">
+                  <div class="shrink-0">
                     <p-tag
                       [value]="((metric.trend ?? 0) >= 0 ? '+' : '') + (metric.trend ?? 0) + '%'"
                       [severity]="(metric.trend ?? 0) >= 0 ? 'success' : 'danger'"
@@ -138,12 +138,12 @@
     </div>
 
     <!-- Charts Row 1 -->
-    <div class="row mb-4">
-      <div class="col-lg-8 col-12 mb-4">
+    <div class="grid grid-cols-12 mb-6">
+      <div class="col-span-12 lg:col-span-8 mb-6">
         <p-card class="h-100 border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
-            <div class="d-flex align-items-center">
-              <i class="pi pi-chart-line text-primary me-2"></i>
+            <div class="flex items-center">
+              <i class="pi pi-chart-line text-blue-600 mr-2"></i>
               <h5 class="mb-0">Driver Trends Over Time</h5>
             </div>
           </ng-template>
@@ -157,11 +157,11 @@
         </p-card>
       </div>
 
-      <div class="col-lg-4 col-12 mb-4">
+      <div class="col-span-12 lg:col-span-4 mb-6">
         <p-card class="h-100 border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
-            <div class="d-flex align-items-center">
-              <i class="pi pi-chart-bar text-primary me-2"></i>
+            <div class="flex items-center">
+              <i class="pi pi-chart-bar text-blue-600 mr-2"></i>
               <h5 class="mb-0">Top Performers</h5>
             </div>
           </ng-template>
@@ -177,12 +177,12 @@
     </div>
 
     <!-- Efficiency Chart -->
-    <div class="row mb-4">
-      <div class="col-12">
+    <div class="grid grid-cols-12 mb-6">
+      <div class="col-span-12">
         <p-card class="border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
-            <div class="d-flex align-items-center">
-              <i class="pi pi-chart-bar text-primary me-2"></i>
+            <div class="flex items-center">
+              <i class="pi pi-chart-bar text-blue-600 mr-2"></i>
               <h5 class="mb-0">Efficiency Metrics</h5>
             </div>
           </ng-template>
@@ -198,12 +198,12 @@
     </div>
 
     <!-- Top Performers Table -->
-    <div class="row">
-      <div class="col-12">
+    <div class="grid grid-cols-12">
+      <div class="col-span-12">
         <p-card class="border-0 p-2 shadow-sm">
           <ng-template pTemplate="header">
-            <div class="d-flex align-items-center">
-              <i class="pi pi-star text-primary me-2"></i>
+            <div class="flex items-center">
+              <i class="pi pi-star text-blue-600 mr-2"></i>
               <h5 class="mb-0">Top Performing Drivers</h5>
             </div>
           </ng-template>
@@ -211,7 +211,6 @@
             [value]="data()?.topPerformers || []"
             [paginator]="true"
             [rows]="10"
-            responsiveLayout="scroll"
           >
             <ng-template pTemplate="header">
               <tr>
@@ -226,11 +225,11 @@
             <ng-template pTemplate="body" let-driver>
               <tr>
                 <td>
-                  <div class="d-flex align-items-center">
-                    <div class="bg-primary bg-opacity-10 rounded-circle me-2 p-2">
-                      <i class="pi pi-user text-primary"></i>
+                  <div class="flex items-center">
+                    <div class="bg-blue-600/10 rounded-full mr-2 p-2">
+                      <i class="pi pi-user text-blue-600"></i>
                     </div>
-                    <span class="fw-medium">{{ driver.driverName }}</span>
+                    <span class="font-medium">{{ driver.driverName }}</span>
                   </div>
                 </td>
                 <td>{{ driver.loadsDelivered | number }}</td>

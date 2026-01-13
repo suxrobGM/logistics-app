@@ -1,10 +1,9 @@
 <p-card>
   <ng-template #header>
-    <h4 class="py-2 ps-3">
-      Truck statistics for <span class="text-danger">{{ startDate() | date: "shortDate" }}</span> -
-      <span class="text-danger">{{ endDate() | date: "shortDate" }}</span>
+    <h4 class="py-2 pl-4">
+      Truck statistics for <span class="text-red-600">{{ startDate() | date: "shortDate" }}</span> -
+      <span class="text-red-600">{{ endDate() | date: "shortDate" }}</span>
     </h4>
-    <hr class="m-0 w-full" />
   </ng-template>
 
   <div class="mb-2">
@@ -17,7 +16,6 @@
 
   <p-table
     [value]="truckStats()"
-    responsiveLayout="scroll"
     [lazy]="true"
     [paginator]="true"
     [showCurrentPageReport]="true"
@@ -74,7 +72,7 @@
             [routerLink]="['/trucks', truckStats.truckId]"
           />
           <p-button
-            class="ms-2"
+            class="ml-2"
             icon="pi pi-pen-to-square"
             pTooltip="Edit"
             [routerLink]="['/trucks', truckStats.truckId, 'edit']"

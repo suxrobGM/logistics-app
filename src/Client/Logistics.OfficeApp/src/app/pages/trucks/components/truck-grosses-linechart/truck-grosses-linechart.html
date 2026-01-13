@@ -4,11 +4,11 @@
       Truck grosses for <span class="text-danger">{{ startDate() | date: "shortDate" }}</span> -
       <span class="text-danger">{{ endDate() | date: "shortDate" }}</span>
     </h4>
-    <hr class="m-0 w-full" />
+    <p-divider />
   </ng-template>
 
   @if (isLoading()) {
-    <p-skeleton styleClass="my-2" height="20rem" width="100%" />
+    <p-skeleton class="my-2" height="20rem" width="100%" />
   } @else {
     <div class="mb-2">
       <app-range-calendar

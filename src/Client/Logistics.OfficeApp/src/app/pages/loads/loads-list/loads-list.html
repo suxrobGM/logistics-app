@@ -1,7 +1,7 @@
 <div class="flex items-center">
   <h1>List Loads</h1>
   <p-button
-    styleClass="text-black ms-2"
+    styleClass="text-black ml-2"
     icon="pi pi-plus-circle"
     size="large"
     [rounded]="true"
@@ -10,7 +10,7 @@
     [routerLink]="['/loads/add']"
   />
   <p-button
-    styleClass="text-black ms-2"
+    styleClass="text-black ml-2"
     icon="pi pi-file-import"
     size="large"
     [rounded]="true"
@@ -19,7 +19,6 @@
     [routerLink]="['/loads/import']"
   />
 </div>
-<hr class="w-full" />
 
 <p-card>
   <app-data-container
@@ -49,7 +48,7 @@
       [rowsPerPageOptions]="[10, 25, 50]"
     >
       <ng-template #caption>
-        <div class="align-items-center flex gap-2">
+        <div class="flex items-center gap-2">
           <p-icon-field>
             <p-inputicon class="pi pi-search" />
             <input pInputText type="text" placeholder="Search" (input)="onSearch($event)" />

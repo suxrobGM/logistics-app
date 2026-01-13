@@ -1,14 +1,13 @@
 <h1 class="text-center">Load Invoice Details</h1>
-<hr class="w-full" />
 
-<p-card class="col-sm-6 col-12">
+<p-card class="col-span-12 sm:col-span-6">
   @if (isLoading() || !invoice()) {
     <p-progress-spinner />
   }
 
   <h2>{{ companyName() }}</h2>
   <p>{{ companyAddress() | address }}</p>
-  <hr />
+  <p-divider />
 
   <p><strong>Load Number:</strong> {{ invoice()!.loadNumber }}</p>
   <p><strong>Date:</strong> {{ invoice()!.createdDate | date: "mediumDate" }}</p>

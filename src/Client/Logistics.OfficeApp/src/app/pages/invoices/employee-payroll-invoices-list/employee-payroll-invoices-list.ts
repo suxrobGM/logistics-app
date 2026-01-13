@@ -6,6 +6,7 @@ import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
+import { DividerModule } from "primeng/divider";
 import { Api, getEmployeeById$Json } from "@/core/api";
 import {
   type EmployeeDto,
@@ -31,6 +32,7 @@ import { EmployeePayrollInvoicesListStore } from "../store/employee-payroll-invo
     InvoiceStatusTag,
     ProgressSpinnerModule,
     DataContainer,
+    DividerModule,
   ],
 })
 export class EmployeePayrollInvoicesListComponent {

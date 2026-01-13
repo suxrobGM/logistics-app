@@ -1,17 +1,17 @@
-<div class="sidebar" [ngClass]="{ minimized: !isOpened() }">
+<div class="sidebar" [class.minimized]="!isOpened()">
   <a class="navbar-brand border-bottom p-2">
-    <img src="images/logo.svg" class="img-fluid" height="40" alt="logo" />
+    <img src="images/logo.svg" class="h-auto max-w-full" height="40" alt="logo" />
     @if (isOpened()) {
-      <span class="h4">{{ companyName() }}</span>
+      <h4 class="mt-1">{{ companyName() }}</h4>
     }
   </a>
 
-  <ul class="nav flex-column mb-auto">
+  <ul class="nav mb-auto flex-col">
     <li>
       <app-panel-menu [items]="navItems()" [(expanded)]="isOpened" />
     </li>
     <li>
-      <a class="nav-link border-bottom">
+      <a class="nav-link border-bottom pl-2">
         <i
           [class]="isOpened() ? 'pi pi-arrow-left text-3xl!' : 'pi pi-arrow-right text-3xl!'"
           (click)="toggle()"
@@ -23,10 +23,10 @@
   </ul>
 
   @if (userFullName()) {
-    <div class="flex-column border-top flex" [class.items-center]="!isOpened()">
+    <div class="border-top flex flex-col" [class.items-center]="!isOpened()">
       @if (userRole() && isOpened()) {
-        <div class="user-select-none px-3 py-2 text-left">
-          Role: <span class="fw-bold">{{ userRole() }}</span>
+        <div class="px-3 py-2 text-left select-none">
+          Role: <span class="font-bold">{{ userRole() }}</span>
         </div>
       }
 

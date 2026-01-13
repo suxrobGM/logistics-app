@@ -1,4 +1,3 @@
-@import "bootstrap/dist/css/bootstrap.min.css";
 @import "primeicons/primeicons.css";
 @import "tailwindcss";
 
@@ -10,4 +9,62 @@ body {
 
 body {
   background-color: #dae5f3;
+}
+
+/* Typography base styles */
+@layer base {
+  h1 {
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  h4 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  h5 {
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  h6 {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin-bottom: 1rem;
+  }
+
+  small {
+    font-size: 0.875rem;
+  }
+
+  label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+  }
 }

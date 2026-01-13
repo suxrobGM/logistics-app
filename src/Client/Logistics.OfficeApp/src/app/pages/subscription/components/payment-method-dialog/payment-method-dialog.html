@@ -4,138 +4,126 @@
   [modal]="true"
   [style]="{ width: '50vw' }"
 >
-  <form class="row gx-5" [formGroup]="form" (ngSubmit)="submit()">
+  <form class="grid grid-cols-12 gap-x-5" [formGroup]="form" (ngSubmit)="submit()">
     <app-validation-summary [form]="form" />
 
-    <div class="col-12">
+    <div class="col-span-12">
       <h5>Choose payment method:</h5>
 
-      <div class="mb-3">
-        <label for="methodType" class="form-label">Payment Type</label>
+      <app-form-field label="Payment Type" for="methodType">
         <p-select
           formControlName="methodType"
           [options]="paymentMethodTypes()"
           class="w-full"
         ></p-select>
-      </div>
+      </app-form-field>
 
       @if (form.get("methodType")?.value === "card") {
         <h5>Credit/Debit card details</h5>
-        <hr />
+        <p-divider />
 
-        <div class="mb-3">
-          <label for="cardHolderName" class="form-label">Cardholder Name</label>
+        <app-form-field label="Cardholder Name" for="cardHolderName">
           <input
             id="cardHolderName"
             formControlName="cardHolderName"
             pInputText
-            class="w-full"
             placeholder="ex. John Smith"
           />
-        </div>
+        </app-form-field>
 
-        <div class="mb-3">
+        <div class="mb-4">
           <app-stripe-card (ready)="setCardNumberElement($event.cardNumber)" />
         </div>
       } @else if (form.get("methodType")?.value === "us_bank_account") {
         <h5>US bank account details</h5>
-        <hr />
+        <p-divider />
 
-        <div class="mb-3">
-          <label for="bankName" class="form-label">Bank Name</label>
+        <app-form-field label="Bank Name" for="bankName">
           <input
             formControlName="bankName"
             pInputText
-            class="w-full"
             placeholder="ex. Bank of America"
           />
-        </div>
-        <div class="mb-3">
-          <label for="bankAccountType" class="form-label">Account Type</label>
+        </app-form-field>
+
+        <app-form-field label="Account Type" for="bankAccountType">
           <p-select
             formControlName="bankAccountType"
             [options]="usBankAccountTypes"
             class="w-full"
           ></p-select>
-        </div>
-        <div class="mb-3">
-          <label for="bankAccountNumber" class="form-label">Account Number</label>
+        </app-form-field>
+
+        <app-form-field label="Account Number" for="bankAccountNumber">
           <input
             formControlName="bankAccountNumber"
             pInputText
             pKeyFilter="int"
-            class="w-full"
             placeholder="ex. 1234567891011"
           />
-        </div>
-        <div class="mb-3">
-          <label for="bankRoutingNumber" class="form-label">Routing Number</label>
+        </app-form-field>
+
+        <app-form-field label="Routing Number" for="bankRoutingNumber">
           <input
             formControlName="bankRoutingNumber"
             pInputText
             pKeyFilter="int"
-            class="w-full"
             placeholder="ex. 123456789"
           />
-        </div>
-        <div class="mb-3">
-          <label for="bankAccountHolderType" class="form-label">Account Holder Type</label>
+        </app-form-field>
+
+        <app-form-field label="Account Holder Type" for="bankAccountHolderType">
           <p-select
             formControlName="bankAccountHolderType"
             [options]="usBankAccountHolderTypes"
             class="w-full"
           />
-        </div>
-        <div class="mb-3">
-          <label for="bankAccountHolderName" class="form-label">Account Holder Name</label>
+        </app-form-field>
+
+        <app-form-field label="Account Holder Name" for="bankAccountHolderName">
           <input
             formControlName="bankAccountHolderName"
             pInputText
-            class="w-full"
             placeholder="ex. John Smith"
           />
-        </div>
+        </app-form-field>
       } @else if (form.get("methodType")?.value === "international_bank_account") {
         <h5>International bank account details</h5>
-        <hr />
+        <p-divider />
 
-        <div class="mb-3">
-          <label for="bankName" class="form-label">Bank Name</label>
+        <app-form-field label="Bank Name" for="bankName">
           <input
             formControlName="bankName"
             pInputText
-            class="w-full"
             placeholder="ex. Bank of America"
           />
-        </div>
-        <div class="mb-3">
-          <label for="bankAccountNumber" class="form-label">Account Number</label>
+        </app-form-field>
+
+        <app-form-field label="Account Number" for="bankAccountNumber">
           <input
             formControlName="bankAccountNumber"
             pInputText
-            class="w-full"
             placeholder="ex. 1234567891011"
           />
-        </div>
-        <div class="mb-3">
-          <label for="swiftCode" class="form-label">SWIFT Code</label>
-          <input formControlName="swiftCode" pInputText class="w-full" placeholder="ex. ABCD1234" />
-        </div>
-        <div class="mb-3">
-          <label for="bankAccountHolderName" class="form-label">Account Holder Name</label>
+        </app-form-field>
+
+        <app-form-field label="SWIFT Code" for="swiftCode">
+          <input formControlName="swiftCode" pInputText placeholder="ex. ABCD1234" />
+        </app-form-field>
+
+        <app-form-field label="Account Holder Name" for="bankAccountHolderName">
           <input
             formControlName="bankAccountHolderName"
             pInputText
-            class="w-full"
             placeholder="ex. John Smith"
           />
-        </div>
+        </app-form-field>
       }
     </div>
 
-    <div class="col-12">
+    <div class="col-span-12">
       <h5>Billing address</h5>
-      <hr />
+      <p-divider />
       <app-address-form formControlName="billingAddress" />
     </div>
 

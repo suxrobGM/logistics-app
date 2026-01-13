@@ -1,25 +1,25 @@
 <h1>Overview</h1>
-<hr class="w-full" />
+<p-divider />
 
-<div class="row g-3 mt-3">
-  <div class="col-xl-7 col-12">
+<div class="mt-4 grid grid-cols-12 gap-3">
+  <div class="col-span-12 xl:col-span-7">
     <p-card>
       <ng-template #header>
-        <h4 class="py-2 ps-3">Trucks</h4>
-        <hr class="m-0 w-full" />
+        <h4 class="py-2 pl-4">Trucks</h4>
+        <p-divider class="m-0" />
       </ng-template>
       <app-trucks-map height="700px" />
     </p-card>
   </div>
 
-  <div class="col-xl-5 col-12">
-    <p-card class="h-100">
+  <div class="col-span-12 xl:col-span-5">
+    <p-card class="h-full">
       <ng-template #header>
-        <h4 class="py-2 ps-3">Active loads</h4>
-        <hr class="m-0 w-full" />
+        <h4 class="py-2 pl-4">Active loads</h4>
+        <p-divider class="m-0" />
       </ng-template>
 
-      <p-table [value]="loads()" responsiveLayout="scroll" [loading]="isLoadingLoadsData()">
+      <p-table [value]="loads()" [loading]="isLoadingLoadsData()">
         <ng-template #header>
           <tr>
             <th>ID</th>
@@ -48,9 +48,9 @@
         </ng-template>
         <ng-template #footer>
           <tr>
-            <td colspan="4" class="text-start">
+            <td colspan="4" class="text-left">
               <p-button label="Add" [routerLink]="['/loads/add']" />
-              <p-button class="ms-2" label="View all loads" [routerLink]="['/loads']" />
+              <p-button class="ml-2" label="View all loads" [routerLink]="['/loads']" />
             </td>
           </tr>
         </ng-template>
@@ -59,56 +59,56 @@
   </div>
 </div>
 
-<div class="row g-3 mt-3">
-  <div class="col-12">
+<div class="mt-4 grid grid-cols-12 gap-3">
+  <div class="col-span-12">
     <p-card>
       <ng-template #header>
-        <h4 class="py-2 ps-3">Weekly Report</h4>
-        <hr class="m-0 w-full" />
+        <h4 class="py-2 pl-4">Weekly Report</h4>
+        <p-divider class="m-0" />
       </ng-template>
 
       @if (isLoadingChartData()) {
-        <div class="row">
-          <div class="col-md-4 col-12">
+        <div class="grid grid-cols-12">
+          <div class="col-span-12 md:col-span-4">
             <p-skeleton height="3rem" />
           </div>
-          <div class="col-md-4 col-12">
+          <div class="col-span-12 md:col-span-4">
             <p-skeleton height="3rem" />
           </div>
-          <div class="col-md-4 col-12">
+          <div class="col-span-12 md:col-span-4">
             <p-skeleton height="3rem" />
           </div>
         </div>
       } @else {
-        <div class="row">
-          <div class="col-md-4 col-12 px-3">
-            <span class="text-secondary text-uppercase">Total Gross:</span><br />
-            <span class="fw-bold fs-3">{{ weeklyGross() | currency }}</span>
+        <div class="grid grid-cols-12">
+          <div class="col-span-12 px-4 md:col-span-4">
+            <span class="uppercase text-gray-600">Total Gross:</span><br />
+            <span class="text-2xl font-bold">{{ weeklyGross() | currency }}</span>
           </div>
-          <div class="col-md-4 col-12 px-3">
-            <span class="text-secondary text-uppercase">Billed Miles:</span><br />
-            <span class="fw-bold fs-3">{{ weeklyDistance() | distanceUnit: "mi" }}</span>
+          <div class="col-span-12 px-4 md:col-span-4">
+            <span class="uppercase text-gray-600">Billed Miles:</span><br />
+            <span class="text-2xl font-bold">{{ weeklyDistance() | distanceUnit: "mi" }}</span>
           </div>
-          <div class="col-md-4 col-12 px-3">
-            <span class="text-secondary text-uppercase">Rate Per Mile:</span><br />
-            <span class="fw-bold fs-3">{{ weeklyRpm() | currency }}</span>
+          <div class="col-span-12 px-4 md:col-span-4">
+            <span class="uppercase text-gray-600">Rate Per Mile:</span><br />
+            <span class="text-2xl font-bold">{{ weeklyRpm() | currency }}</span>
           </div>
         </div>
       }
 
       <ng-template #data>
-        <div class="row">
-          <div class="col-md-4 col-12 px-3">
-            <span class="text-secondary text-uppercase">Total Gross:</span><br />
-            <span class="fw-bold fs-3">{{ weeklyGross() | currency }}</span>
+        <div class="grid grid-cols-12">
+          <div class="col-span-12 px-4 md:col-span-4">
+            <span class="uppercase text-gray-600">Total Gross:</span><br />
+            <span class="text-2xl font-bold">{{ weeklyGross() | currency }}</span>
           </div>
-          <div class="col-md-4 col-12 px-3">
-            <span class="text-secondary text-uppercase">Billed Miles:</span><br />
-            <span class="fw-bold fs-3">{{ weeklyDistance() | distanceUnit: "mi" }}</span>
+          <div class="col-span-12 px-4 md:col-span-4">
+            <span class="uppercase text-gray-600">Billed Miles:</span><br />
+            <span class="text-2xl font-bold">{{ weeklyDistance() | distanceUnit: "mi" }}</span>
           </div>
-          <div class="col-md-4 col-12 px-3">
-            <span class="text-secondary text-uppercase">Rate Per Mile:</span><br />
-            <span class="fw-bold fs-3">{{ weeklyRpm() | currency }}</span>
+          <div class="col-span-12 px-4 md:col-span-4">
+            <span class="uppercase text-gray-600">Rate Per Mile:</span><br />
+            <span class="text-2xl font-bold">{{ weeklyRpm() | currency }}</span>
           </div>
         </div>
       </ng-template>
@@ -116,27 +116,27 @@
   </div>
 </div>
 
-<div class="row g-3 mt-3">
-  <div class="col-xl-7 col-12">
+<div class="mt-4 grid grid-cols-12 gap-3">
+  <div class="col-span-12 xl:col-span-7">
     <p-card>
       <ng-template #header>
-        <h4 class="py-2 ps-3">Daily Gross</h4>
-        <hr class="m-0 w-full" />
+        <h4 class="py-2 pl-4">Daily Gross</h4>
+        <p-divider class="m-0" />
       </ng-template>
 
       @if (isLoadingChartData()) {
-        <div class="row">
-          <div class="col-12">
+        <div class="grid grid-cols-12">
+          <div class="col-span-12">
             <p-skeleton height="20vh" />
           </div>
         </div>
       } @else {
-        <div class="row">
-          <div class="col-md-3 col-12 mb-2">
-            <span class="fw-bold">Today Gross:</span><br />
-            <span class="fw-bold fs-3">{{ todayGross() | currency }}</span>
+        <div class="grid grid-cols-12">
+          <div class="col-span-12 mb-2 md:col-span-3">
+            <span class="font-bold">Today Gross:</span><br />
+            <span class="text-2xl font-bold">{{ todayGross() | currency }}</span>
           </div>
-          <div class="col-md-9 col-12">
+          <div class="col-span-12 md:col-span-9">
             <p-chart
               type="line"
               [data]="chartData()"
@@ -149,7 +149,7 @@
       }
     </p-card>
   </div>
-  <div class="col-xl-5 col-12">
+  <div class="col-span-12 xl:col-span-5">
     <app-notifications-panel height="400px" />
   </div>
 </div>

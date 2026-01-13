@@ -1,16 +1,16 @@
 <p-card>
   <ng-template #header>
-    <h4 class="py-2 ps-3">
+    <h4 class="py-2 pl-3">
       Gross income for
-      <span class="text-danger">{{ startDate() | date: "shortDate" }}</span> -
-      <span class="text-danger">{{ endDate() | date: "shortDate" }}</span>
+      <span class="text-red-600">{{ startDate() | date: "shortDate" }}</span> -
+      <span class="text-red-600">{{ endDate() | date: "shortDate" }}</span>
     </h4>
-    <hr class="m-0 w-full" />
+    <p-divider />
   </ng-template>
 
   @if (isLoading()) {
     <div>
-      <p-skeleton styleClass="my-2" height="20rem" width="100%"></p-skeleton>
+      <p-skeleton class="my-2" height="20rem" width="100%"></p-skeleton>
     </div>
   } @else {
     <div class="mb-2">

@@ -1,11 +1,11 @@
 <p-card header="Payment Methods">
-  <div class="flex-column flex gap-3">
+  <div class="flex flex-col gap-3">
     @for (paymentMethod of paymentMethods(); track paymentMethod.id) {
       <p-card>
         <ng-template #title>
           <span>{{ getMethodLabel(paymentMethod) }}</span>
           @if (paymentMethod.isDefault) {
-            <p-tag severity="success" value="Default" styleClass="ms-2" />
+            <p-tag severity="success" value="Default" class="ml-2" />
           }
         </ng-template>
 
@@ -23,69 +23,69 @@
           }
         </ng-template>
 
-        <div class="row mb-2">
+        <div class="grid grid-cols-12 mb-2">
           @switch (paymentMethod.type) {
             <!-- Card -->
             @case ("card") {
-              <div class="fw-bold col-6">Cardholder Name:</div>
-              <div class="col-6">{{ paymentMethod.cardHolderName }}</div>
+              <div class="font-bold col-span-6">Cardholder Name:</div>
+              <div class="col-span-6">{{ paymentMethod.cardHolderName }}</div>
 
-              <div class="fw-bold col-6">Card Number:</div>
-              <div class="col-6">{{ paymentMethod.cardNumber }}</div>
+              <div class="font-bold col-span-6">Card Number:</div>
+              <div class="col-span-6">{{ paymentMethod.cardNumber }}</div>
 
-              <div class="fw-bold col-6">CVC:</div>
-              <div class="col-6">{{ paymentMethod.cvc }}</div>
+              <div class="font-bold col-span-6">CVC:</div>
+              <div class="col-span-6">{{ paymentMethod.cvc }}</div>
 
-              <div class="fw-bold col-6">Expiry Date:</div>
-              <div class="col-6">{{ paymentMethod.expMonth }}/{{ paymentMethod.expYear }}</div>
+              <div class="font-bold col-span-6">Expiry Date:</div>
+              <div class="col-span-6">{{ paymentMethod.expMonth }}/{{ paymentMethod.expYear }}</div>
             }
             <!-- US Bank Account -->
             @case ("us_bank_account") {
-              <div class="fw-bold col-6">Account Holder Type:</div>
-              <div class="col-6">{{ paymentMethod.accountHolderType }}</div>
+              <div class="font-bold col-span-6">Account Holder Type:</div>
+              <div class="col-span-6">{{ paymentMethod.accountHolderType }}</div>
 
-              <div class="fw-bold col-6">Account Holder:</div>
-              <div class="col-6">{{ paymentMethod.accountHolderName }}</div>
+              <div class="font-bold col-span-6">Account Holder:</div>
+              <div class="col-span-6">{{ paymentMethod.accountHolderName }}</div>
 
-              <div class="fw-bold col-6">Bank Name:</div>
-              <div class="col-6">{{ paymentMethod.bankName }}</div>
+              <div class="font-bold col-span-6">Bank Name:</div>
+              <div class="col-span-6">{{ paymentMethod.bankName }}</div>
 
-              <div class="fw-bold col-6">Account Number:</div>
-              <div class="col-6">{{ paymentMethod.accountNumber }}</div>
+              <div class="font-bold col-span-6">Account Number:</div>
+              <div class="col-span-6">{{ paymentMethod.accountNumber }}</div>
 
-              <div class="fw-bold col-6">Routing Number:</div>
-              <div class="col-6">{{ paymentMethod.routingNumber }}</div>
+              <div class="font-bold col-span-6">Routing Number:</div>
+              <div class="col-span-6">{{ paymentMethod.routingNumber }}</div>
 
-              <div class="fw-bold col-6">Account Type:</div>
-              <div class="col-6">{{ paymentMethod.accountType }}</div>
+              <div class="font-bold col-span-6">Account Type:</div>
+              <div class="col-span-6">{{ paymentMethod.accountType }}</div>
 
               @if (
                 paymentMethod.verificationStatus !== "verified" && paymentMethod.verificationUrl
               ) {
-                <div class="fw-bold col-6">Verification URL:</div>
-                <div class="col-6">
+                <div class="font-bold col-span-6">Verification URL:</div>
+                <div class="col-span-6">
                   <a [href]="paymentMethod.verificationUrl" target="_blank">Click here to verify</a>
                 </div>
               }
             }
             <!-- International Bank Account -->
             @case ("international_bank_account") {
-              <div class="fw-bold col-6">Account Holder:</div>
-              <div class="col-6">{{ paymentMethod.accountHolderName }}</div>
+              <div class="font-bold col-span-6">Account Holder:</div>
+              <div class="col-span-6">{{ paymentMethod.accountHolderName }}</div>
 
-              <div class="fw-bold col-6">Bank Name:</div>
-              <div class="col-6">{{ paymentMethod.bankName }}</div>
+              <div class="font-bold col-span-6">Bank Name:</div>
+              <div class="col-span-6">{{ paymentMethod.bankName }}</div>
 
-              <div class="fw-bold col-6">Account Number:</div>
-              <div class="col-6">{{ paymentMethod.accountNumber }}</div>
+              <div class="font-bold col-span-6">Account Number:</div>
+              <div class="col-span-6">{{ paymentMethod.accountNumber }}</div>
 
-              <div class="fw-bold col-6">SWIFT:</div>
-              <div class="col-6">{{ paymentMethod.swiftCode }}</div>
+              <div class="font-bold col-span-6">SWIFT:</div>
+              <div class="col-span-6">{{ paymentMethod.swiftCode }}</div>
             }
           }
 
-          <div class="fw-bold col-6">Billing Address:</div>
-          <div class="col-6">{{ paymentMethod.billingAddress | address }}</div>
+          <div class="font-bold col-span-6">Billing Address:</div>
+          <div class="col-span-6">{{ paymentMethod.billingAddress | address }}</div>
         </div>
 
         <ng-template #footer>

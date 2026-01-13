@@ -6,6 +6,7 @@ import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autoco
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
+import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import {
@@ -44,6 +45,7 @@ import { DateUtils } from "@/shared/utils";
     ButtonModule,
     SelectModule,
     DatePicker,
+    DividerModule,
   ],
 })
 export class PayrollInvoiceEditComponent implements OnInit {

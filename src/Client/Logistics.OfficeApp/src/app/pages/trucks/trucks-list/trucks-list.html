@@ -1,7 +1,7 @@
 <div class="flex items-center">
   <h1>List Trucks</h1>
   <p-button
-    styleClass="text-black ms-2"
+    styleClass="text-black ml-2"
     icon="pi pi-plus-circle"
     size="large"
     [rounded]="true"
@@ -10,7 +10,6 @@
     [routerLink]="['/trucks/add']"
   />
 </div>
-<hr class="w-full" />
 
 <p-card>
   <app-data-container
@@ -83,7 +82,7 @@
           <td class="text-center">
             <span>{{ truck.mainDriver?.fullName }}</span>
             @if (truck.secondaryDriver) {
-              <span class="ms-1">and {{ truck.secondaryDriver?.fullName }}</span>
+              <span class="ml-1">and {{ truck.secondaryDriver?.fullName }}</span>
             }
           </td>
 
@@ -94,7 +93,7 @@
               [routerLink]="['/trucks', truck.id]"
             />
             <p-button
-              class="ms-2"
+              class="ml-2"
               icon="pi pi-pen-to-square"
               pTooltip="Edit truck"
               [routerLink]="['/trucks', truck.id, 'edit']"

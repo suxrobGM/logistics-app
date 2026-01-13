@@ -28,7 +28,6 @@
     "@primeuix/themes": "^2.0.2",
     "@stripe/stripe-js": "^8.6.0",
     "angular-auth-oidc-client": "^21.0.0",
-    "bootstrap": "^5.3.3",
     "chart.js": "^4.5.1",
     "jspdf": "^4.0.0",
     "mapbox-gl": "^3.17.0",

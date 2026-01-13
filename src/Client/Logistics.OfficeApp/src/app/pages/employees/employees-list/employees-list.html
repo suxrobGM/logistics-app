@@ -1,7 +1,7 @@
 <div class="flex items-center">
   <h1>List Employees</h1>
   <p-button
-    styleClass="text-black ms-2"
+    styleClass="text-black ml-2"
     icon="pi pi-plus-circle"
     size="large"
     [rounded]="true"
@@ -10,7 +10,6 @@
     [routerLink]="['/employees/add']"
   />
 </div>
-<hr class="w-full" />
 
 <p-card>
   <app-data-container
@@ -102,14 +101,14 @@
               [routerLink]="['/employees', employee.id, 'edit']"
             />
             <p-button
-              styleClass="ms-2"
+              styleClass="ml-2"
               icon="pi pi-file-o"
               pTooltip="View employee payrolls"
               tooltipPosition="bottom"
               [routerLink]="['/invoices/payroll/employee', employee.id]"
             />
             <p-button
-              styleClass="ms-2"
+              styleClass="ml-2"
               icon="pi pi-paperclip"
               pTooltip="Manage documents"
               tooltipPosition="bottom"

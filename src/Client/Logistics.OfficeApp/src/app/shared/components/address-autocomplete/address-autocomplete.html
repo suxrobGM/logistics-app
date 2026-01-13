@@ -1,9 +1,10 @@
-<div class="position-relative">
+<div class="relative">
   <input
     type="text"
     [id]="field()"
     [name]="field()"
-    class="form-control"
+    class="w-full"
+    pInputText
     [placeholder]="placeholder()"
     (input)="handleAddressInputChange($event)"
     (focusout)="handleInputFocusOut($event)"

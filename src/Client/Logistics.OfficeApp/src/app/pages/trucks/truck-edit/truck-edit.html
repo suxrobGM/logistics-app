@@ -1,5 +1,4 @@
 <h1 class="text-center">{{ title() }}</h1>
-<hr class="w-full" />
 
 <div class="flex flex-col justify-center gap-6 md:flex-row">
   <div class="w-full md:w-1/2">
@@ -36,8 +35,8 @@
         <app-form-field label="Main Driver" for="mainDriver" [required]="true">
           <p-auto-complete
             formControlName="mainDriver"
-            styleClass="w-full"
-            inputStyleClass="form-control"
+            class="w-full"
+            inputStyleClass="w-full"
             placeholder="Type a driver name"
             optionLabel="fullName"
             [minLength]="2"
@@ -49,8 +48,8 @@
         <app-form-field label="Secondary Driver" for="secondaryDriver">
           <p-auto-complete
             formControlName="secondaryDriver"
-            styleClass="w-full"
-            inputStyleClass="form-control"
+            class="w-full"
+            inputStyleClass="w-full"
             placeholder="Type a driver name"
             optionLabel="fullName"
             [minLength]="2"

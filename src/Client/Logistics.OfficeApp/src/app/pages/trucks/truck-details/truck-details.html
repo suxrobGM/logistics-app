@@ -1,96 +1,95 @@
 <h1 class="text-center">Truck Details</h1>
-<hr class="w-full" />
 
-<div class="row g-3 mt-3">
-  <p-card class="col-sm-6 col-12">
+<div class="mt-4 grid grid-cols-12 gap-3">
+  <p-card class="col-span-12 sm:col-span-6">
     @if (isLoading()) {
-      <div class="row mb-3">
-        <div class="col-md-6 mb-md-0 col-12 mb-2">
-          <p-skeleton styleClass="my-2" height="3rem" />
+      <div class="mb-4 grid grid-cols-12">
+        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
+          <p-skeleton class="my-2" height="3rem" />
         </div>
-        <div class="col-md-6 mb-md-0 col-12 mb-2">
-          <p-skeleton styleClass="my-2" height="3rem" />
-        </div>
-      </div>
-
-      <div class="row mb-3">
-        <div class="col-md-6 mb-md-0 col-12 mb-2">
-          <p-skeleton styleClass="my-2" height="3rem" />
-        </div>
-        <div class="col-md-6 mb-md-0 col-12 mb-2">
-          <p-skeleton styleClass="my-2" height="3rem" />
+        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
+          <p-skeleton class="my-2" height="3rem" />
         </div>
       </div>
 
-      <div class="row mb-3">
-        <div class="col-md-6 mb-md-0 col-12 mb-2">
-          <p-skeleton styleClass="my-2" height="3rem" />
+      <div class="mb-4 grid grid-cols-12">
+        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
+          <p-skeleton class="my-2" height="3rem" />
         </div>
-        <div class="col-md-6 mb-md-0 col-12 mb-2">
-          <p-skeleton styleClass="my-2" height="3rem" />
+        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
+          <p-skeleton class="my-2" height="3rem" />
         </div>
       </div>
 
-      <div class="row mb-3">
-        <div class="col-md-6 mb-md-0 col-12 mb-2">
-          <p-skeleton styleClass="my-2" height="3rem" />
+      <div class="mb-4 grid grid-cols-12">
+        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
+          <p-skeleton class="my-2" height="3rem" />
         </div>
-        <div class="col-md-6 mb-md-0 col-12 mb-2">
-          <p-skeleton styleClass="my-2" height="3rem" />
+        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
+          <p-skeleton class="my-2" height="3rem" />
+        </div>
+      </div>
+
+      <div class="mb-4 grid grid-cols-12">
+        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
+          <p-skeleton class="my-2" height="3rem" />
+        </div>
+        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
+          <p-skeleton class="my-2" height="3rem" />
         </div>
       </div>
     } @else {
-      <div class="row mb-3">
-        <div class="col-md-6 mb-md-0 col-12 mb-2">
-          <span class="fw-bold">Drivers: </span><br />
-          <span class="me-1">{{ truck()?.mainDriver?.fullName }}</span>
+      <div class="mb-4 grid grid-cols-12">
+        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
+          <span class="font-bold">Drivers: </span><br />
+          <span class="mr-1">{{ truck()?.mainDriver?.fullName }}</span>
 
           @if (truck()?.secondaryDriver) {
-            <span class="me-1">and {{ truck()?.secondaryDriver?.fullName }}</span>
+            <span class="mr-1">and {{ truck()?.secondaryDriver?.fullName }}</span>
           }
         </div>
-        <div class="col-md-6 mb-md-0 col-12 mb-2">
-          <span class="fw-bold">Truck Number: </span><br />
+        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
+          <span class="font-bold">Truck Number: </span><br />
           <a [routerLink]="['/trucks', truck()?.id, 'edit']">{{ truck()?.number }}</a>
         </div>
       </div>
 
-      <div class="row mb-3">
-        <div class="col-md-6 mb-md-0 col-12 mb-2">
-          <span class="fw-bold">Total Gross this year: </span><br />
+      <div class="mb-4 grid grid-cols-12">
+        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
+          <span class="font-bold">Total Gross this year: </span><br />
           <span>{{ monthlyGrosses()?.totalGross | currency }}</span>
         </div>
-        <div class="col-md-6 mb-md-0 col-12 mb-2">
-          <span class="fw-bold">Total Gross last 30 days: </span><br />
+        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
+          <span class="font-bold">Total Gross last 30 days: </span><br />
           <span>{{ dailyGrosses()?.totalGross | currency }}</span>
         </div>
       </div>
 
-      <div class="row mb-3">
-        <div class="col-md-6 mb-md-0 col-12 mb-2">
-          <span class="fw-bold">Total distance this year: </span><br />
+      <div class="mb-4 grid grid-cols-12">
+        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
+          <span class="font-bold">Total distance this year: </span><br />
           <span>{{ monthlyGrosses()?.totalDistance | distanceUnit: "mi" }} mi</span>
         </div>
-        <div class="col-md-6 mb-md-0 col-12 mb-2">
-          <span class="fw-bold">Total distance last 30 days: </span><br />
+        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
+          <span class="font-bold">Total distance last 30 days: </span><br />
           <span>{{ dailyGrosses()?.totalDistance | distanceUnit: "mi" }} mi</span>
         </div>
       </div>
 
-      <div class="row mb-3">
-        <div class="col-md-6 mb-md-0 col-12 mb-2">
-          <span class="fw-bold">RPM this year: </span><br />
+      <div class="mb-4 grid grid-cols-12">
+        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
+          <span class="font-bold">RPM this year: </span><br />
           <span>{{ rpmAllTime() | currency }}</span>
         </div>
-        <div class="col-md-6 mb-md-0 col-12 mb-2">
-          <span class="fw-bold">RPM last 30 days: </span><br />
+        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
+          <span class="font-bold">RPM last 30 days: </span><br />
           <span>{{ rpmCurrent() | currency }}</span>
         </div>
       </div>
     }
   </p-card>
 
-  <div class="col-sm-6 map-container col-12">
+  <div class="map-container col-span-12 sm:col-span-6">
     <app-geolocation-map [geolocationData]="truckLocations()" />
   </div>
 </div>

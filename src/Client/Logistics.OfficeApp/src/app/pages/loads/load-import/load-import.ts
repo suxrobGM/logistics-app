@@ -8,6 +8,7 @@ import { FileUploadModule, type FileSelectEvent } from "primeng/fileupload";
 import { MessageModule } from "primeng/message";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
+import { DividerModule } from "primeng/divider";
 import { Api, importLoadFromPdf$Json } from "@/core/api";
 import type { ExtractedLoadDataDto, ImportLoadFromPdfResponse, TruckDto } from "@/core/api";
 import { ToastService } from "@/core/services";
@@ -27,6 +28,7 @@ import { FormField, SearchTruckComponent } from "@/shared/components";
     RouterLink,
     SearchTruckComponent,
     FormField,
+    DividerModule,
   ],
 })
 export class LoadImportComponent {

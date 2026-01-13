@@ -1,8 +1,7 @@
 <h1 class="text-center">{{ title() }}</h1>
-<hr class="w-full" />
 
-<div class="row justify-content-center mx-0">
-  <div class="col-md-6 col-12">
+<div class="flex justify-center">
+  <div class="w-full md:w-1/2">
     <p-card>
       @if (isLoading()) {
         <p-progress-spinner />
@@ -11,7 +10,7 @@
       <form [formGroup]="form" (ngSubmit)="submit()">
         <app-validation-summary [form]="form" />
 
-        <div class="mb-3">
+        <div class="mb-4">
           <label for="dateRange" class="mb-2">Date range</label><br />
           <p-date-picker
             formControlName="dateRange"
@@ -22,21 +21,17 @@
           />
         </div>
 
-        <div class="mb-3">
-          <label for="employee" class="form-label">Employee</label>
-          <p-auto-complete
-            formControlName="employee"
-            styleClass="w-full"
-            inputStyleClass="form-control"
-          />
+        <div class="mb-4">
+          <label for="employee" class="mb-2 block text-sm font-medium">Employee</label>
+          <p-auto-complete formControlName="employee" class="w-full" inputStyleClass="w-full" />
         </div>
 
-        <div class="mb-3">
-          <label for="employee" class="form-label">Employee</label>
+        <div class="mb-4">
+          <label for="employee" class="mb-2 block text-sm font-medium">Employee</label>
           <p-auto-complete
             formControlName="employee"
-            styleClass="w-full"
-            inputStyleClass="form-control"
+            class="w-full"
+            inputStyleClass="w-full"
             placeholder="Type employee's name"
             optionLabel="fullName"
             [minLength]="2"
@@ -48,7 +43,7 @@
 
         @if (selectedEmployee() && previewPayrollInvoice()) {
           <h4>Preview Payroll Invoice</h4>
-          <hr />
+          <p-divider />
 
           <p>
             <strong>Employee Role:</strong>
@@ -85,7 +80,7 @@
 
           @if (form.get("paymentStatus")?.value === "paid") {
             <h4>Payment details</h4>
-            <hr />
+            <p-divider />
 
             <div class="mb-3">
               <label for="paymentMethod" class="form-label">Payment Method</label>
@@ -105,14 +100,14 @@
         <div class="flex gap-2">
           <p-button
             type="submit"
-            class="mt-3"
+            class="mt-4"
             icon="pi pi-pencil"
             label="Save"
             [disabled]="isLoading || !form.valid || previewPayrollInvoice()?.total?.amount === 0"
           />
           <p-button
             type="button"
-            class="ms-2 mt-3"
+            class="mt-4 ml-2"
             icon="pi pi-arrow-left"
             label="Back to list"
             [routerLink]="['/invoices/payroll']"

@@ -1,7 +1,6 @@
 <div class="flex items-center">
   <h1>Trip #{{ trip()?.number }} — {{ trip()?.name }}</h1>
 </div>
-<hr class="w-full" />
 
 <div class="flex flex-col gap-4">
   <p-card>
@@ -63,7 +62,7 @@
     <!-- Trip Stops table -->
     <p-card>
       <ng-template #header>
-        <div class="align-items-center flex gap-2 p-3 pb-0">
+        <div class="flex items-center gap-2 p-3 pb-0">
           <h5>Stops</h5>
         </div>
       </ng-template>
@@ -99,12 +98,12 @@
     <!-- Loads table -->
     <p-card>
       <ng-template #header>
-        <div class="align-items-center flex gap-2 p-3 pb-0">
+        <div class="flex items-center gap-2 p-3 pb-0">
           <h5>Loads</h5>
         </div>
       </ng-template>
 
-      <p-table [value]="tripDetails.loads ?? []" [dataKey]="'id'" responsiveLayout="scroll">
+      <p-table [value]="tripDetails.loads ?? []" [dataKey]="'id'">
         <ng-template #header>
           <tr>
             <th pSortableColumn="number">Load Number <p-sortIcon field="number" /></th>

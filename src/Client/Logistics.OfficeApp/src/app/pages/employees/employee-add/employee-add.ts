@@ -11,6 +11,9 @@ import { AutoCompleteModule } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { InputGroupModule } from "primeng/inputgroup";
+import { InputGroupAddonModule } from "primeng/inputgroupaddon";
+import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
@@ -23,7 +26,7 @@ import {
   salaryTypeOptions,
 } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { ValidationSummary } from "@/shared/components";
+import { FormField, ValidationSummary } from "@/shared/components";
 import { UserService } from "../services";
 
 @Component({
@@ -41,6 +44,10 @@ import { UserService } from "../services";
     ButtonModule,
     RouterLink,
     ValidationSummary,
+    FormField,
+    InputGroupModule,
+    InputGroupAddonModule,
+    InputTextModule,
   ],
 })
 export class EmployeeAddComponent {

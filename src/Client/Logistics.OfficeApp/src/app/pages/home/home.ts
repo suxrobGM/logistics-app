@@ -8,6 +8,7 @@ import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
+import { DividerModule } from "primeng/divider";
 import { Api, getDailyGrosses$Json, getLoads$Json } from "@/core/api";
 import type { AddressDto, DailyGrossesDto, LoadDto } from "@/core/api/models";
 import { TrucksMap } from "@/shared/components";
@@ -50,6 +51,7 @@ const chartOptions = {
     TrucksMap,
     NotificationsPanelComponent,
     AddressPipe,
+    DividerModule,
   ],
   providers: [AddressPipe],
 })

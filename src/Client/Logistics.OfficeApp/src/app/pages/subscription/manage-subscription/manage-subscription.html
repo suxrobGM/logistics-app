@@ -1,36 +1,35 @@
 <h1 class="text-center">Manage subscription</h1>
-<hr class="w-full" />
 
-<div class="flex-column flex gap-2">
+<div class="flex flex-col gap-2">
   <!-- Current Plan Card -->
-  <div class="col-12">
+  <div class="col-span-12">
     <p-card header="Current Plan">
-      <div class="row">
-        <div class="fw-bold col-6">Plan Name:</div>
-        <div class="col-6">{{ subscription.plan?.name }}</div>
+      <div class="grid grid-cols-12">
+        <div class="col-span-6 font-bold">Plan Name:</div>
+        <div class="col-span-6">{{ subscription.plan?.name }}</div>
 
-        <div class="fw-bold col-6">Price per Employee:</div>
-        <div class="col-6">{{ subscription.plan?.price | currency }}</div>
+        <div class="col-span-6 font-bold">Price per Employee:</div>
+        <div class="col-span-6">{{ subscription.plan?.price | currency }}</div>
 
-        <div class="fw-bold col-6">Number of Employees:</div>
-        <div class="col-6">{{ employeeCount }}</div>
+        <div class="col-span-6 font-bold">Number of Employees:</div>
+        <div class="col-span-6">{{ employeeCount }}</div>
 
-        <div class="fw-bold col-6">Total Price:</div>
-        <div class="col-6">{{ calcTotalSubscriptionCost(subscription) | currency }}</div>
+        <div class="col-span-6 font-bold">Total Price:</div>
+        <div class="col-span-6">{{ calcTotalSubscriptionCost(subscription) | currency }}</div>
 
         @if (subscription.endDate) {
-          <div class="fw-bold col-6">End Date:</div>
-          <div class="col-6">{{ subscription.endDate | date }}</div>
+          <div class="col-span-6 font-bold">End Date:</div>
+          <div class="col-span-6">{{ subscription.endDate | date }}</div>
         }
 
         @if (isActiveSubscription()) {
-          <div class="fw-bold col-6">Next Billing Date:</div>
-          <div class="col-6">{{ subscription.nextBillingDate | date }}</div>
+          <div class="col-span-6 font-bold">Next Billing Date:</div>
+          <div class="col-span-6">{{ subscription.nextBillingDate | date }}</div>
         }
 
-        <div class="fw-bold col-6">Status:</div>
-        <div class="col-6">
-          <p-tag [severity]="getSubStatusSeverity()" styleClass="text-center">
+        <div class="col-span-6 font-bold">Status:</div>
+        <div class="col-span-6">
+          <p-tag [severity]="getSubStatusSeverity()" class="text-center">
             {{ getSubStatusLabel() }}
           </p-tag>
         </div>
@@ -67,12 +66,12 @@
   </div>
 
   <!-- Payment Methods Card -->
-  <div class="col-12">
+  <div class="col-span-12">
     <app-payment-methods-card />
   </div>
 
   <!-- Billing History Table -->
-  <div class="col-12">
+  <div class="col-span-12">
     <p-card header="Billing History">
       <app-billing-history />
     </p-card>

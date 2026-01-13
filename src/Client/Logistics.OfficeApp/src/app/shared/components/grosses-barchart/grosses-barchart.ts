@@ -3,6 +3,7 @@ import { Component, type OnInit, inject, input, output, signal } from "@angular/
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
+import { DividerModule } from "primeng/divider";
 import { Api, getMonthlyGrosses$Json } from "@/core/api";
 import type { MonthlyGrossesDto } from "@/core/api/models";
 import { Converters, DateUtils } from "@/shared/utils";
@@ -31,7 +32,7 @@ const chartInitialOptions = {
   standalone: true,
   templateUrl: "./grosses-barchart.html",
   styleUrls: [],
-  imports: [CommonModule, CardModule, SkeletonModule, ChartModule, RangeCalendar],
+  imports: [CommonModule, CardModule, SkeletonModule, ChartModule, RangeCalendar, DividerModule],
 })
 export class GrossesBarchart implements OnInit {
   private readonly api = inject(Api);

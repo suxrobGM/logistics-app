@@ -1,19 +1,19 @@
 <form [formGroup]="form">
   <app-validation-summary [form]="form" />
-  <div class="mb-3">
-    <label for="addressLine1" class="form-label">Address Line 1:</label>
+  <div class="mb-4">
+    <label for="addressLine1" class="block mb-1">Address Line 1:</label>
     <input pInputText id="addressLine1" formControlName="addressLine1" class="w-full" />
   </div>
-  <div class="mb-3">
-    <label for="addressLine2" class="form-label">Address Line 2 (optional):</label>
+  <div class="mb-4">
+    <label for="addressLine2" class="block mb-1">Address Line 2 (optional):</label>
     <input pInputText id="addressLine2" formControlName="addressLine2" class="w-full" />
   </div>
-  <div class="mb-3">
-    <label for="city" class="form-label">City:</label>
+  <div class="mb-4">
+    <label for="city" class="block mb-1">City:</label>
     <input pInputText id="city" formControlName="city" class="w-full" />
   </div>
-  <div class="mb-3">
-    <label for="state" class="form-label">State:</label>
+  <div class="mb-4">
+    <label for="state" class="block mb-1">State:</label>
     <p-select
       formControlName="state"
       [options]="usStates"
@@ -21,12 +21,12 @@
       class="w-full"
     />
   </div>
-  <div class="mb-3">
-    <label for="zipCode" class="form-label">Zip Code:</label>
+  <div class="mb-4">
+    <label for="zipCode" class="block mb-1">Zip Code:</label>
     <input pInputText id="zipCode" formControlName="zipCode" class="w-full" pKeyFilter="int" />
   </div>
-  <div class="mb-3">
-    <label for="country" class="form-label">Country:</label>
+  <div class="mb-4">
+    <label for="country" class="block mb-1">Country:</label>
     <p-select
       formControlName="country"
       [options]="countries"

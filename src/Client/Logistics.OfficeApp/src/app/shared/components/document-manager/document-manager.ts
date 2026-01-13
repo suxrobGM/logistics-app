@@ -2,7 +2,6 @@ import { CommonModule } from "@angular/common";
 import { Component, type OnInit, inject, input, output, signal } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
 import { FileUploadModule } from "primeng/fileupload";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
@@ -32,7 +31,6 @@ import { downloadBlobFile } from "@/shared/utils";
     TagModule,
     ToastModule,
     CardModule,
-    DividerModule,
     ProgressSpinnerModule,
     TooltipModule,
   ],

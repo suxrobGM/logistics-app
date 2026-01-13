@@ -1,19 +1,18 @@
 <h1 class="text-center">View subscription plans</h1>
-<hr class="w-full" />
 
 @for (subscriptionPlan of subscriptionPlans(); track subscriptionPlan.id) {
-  <div class="flex-column flex gap-2">
-    <div class="col-6">
+  <div class="flex flex-col gap-2">
+    <div class="col-span-6">
       <p-card header="{{ subscriptionPlan.name }}">
-        <div class="row">
-          <div class="fw-bold col-6">Price per Employee:</div>
-          <div class="col-6">{{ subscriptionPlan.price | currency }}</div>
+        <div class="grid grid-cols-12">
+          <div class="col-span-6 font-bold">Price per Employee:</div>
+          <div class="col-span-6">{{ subscriptionPlan.price | currency }}</div>
 
-          <div class="fw-bold col-6">Billing Cycle:</div>
-          <div class="col-6">Monthly</div>
+          <div class="col-span-6 font-bold">Billing Cycle:</div>
+          <div class="col-span-6">Monthly</div>
 
-          <div class="fw-bold col-6">Description:</div>
-          <div class="col-6">{{ subscriptionPlan.description }}</div>
+          <div class="col-span-6 font-bold">Description:</div>
+          <div class="col-span-6">{{ subscriptionPlan.description }}</div>
         </div>
 
         <ng-template #footer>

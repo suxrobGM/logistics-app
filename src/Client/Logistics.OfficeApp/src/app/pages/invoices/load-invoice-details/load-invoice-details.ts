@@ -5,6 +5,7 @@ import { jsPDF } from "jspdf";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { DividerModule } from "primeng/divider";
 import { Api, getInvoiceById$Json } from "@/core/api";
 import type { AddressDto, InvoiceDto } from "@/core/api/models";
 import { TenantService } from "@/core/services";
@@ -22,6 +23,7 @@ import { AddressPipe } from "@/shared/pipes";
     RouterModule,
     AddressPipe,
     InvoiceStatusTag,
+    DividerModule,
   ],
 })
 export class LoadInvoiceDetailsComponent implements OnInit {

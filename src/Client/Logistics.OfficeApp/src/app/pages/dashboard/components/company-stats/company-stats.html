@@ -1,152 +1,152 @@
-<p-card class="flex h-100">
+<p-card class="flex h-full">
   @if (isLoading()) {
-    <div class="row gy-2">
-      <div class="col-6">
-        <p-skeleton styleClass="my-2" height="3rem" />
+    <div class="grid grid-cols-12 gap-y-2">
+      <div class="col-span-6">
+        <p-skeleton class="my-2" height="3rem" />
       </div>
-      <div class="col-6">
-        <p-skeleton styleClass="my-2" height="3rem" />
+      <div class="col-span-6">
+        <p-skeleton class="my-2" height="3rem" />
       </div>
-      <div class="col-6">
-        <p-skeleton styleClass="my-2" height="3rem" />
+      <div class="col-span-6">
+        <p-skeleton class="my-2" height="3rem" />
       </div>
-      <div class="col-6">
-        <p-skeleton styleClass="my-2" height="3rem" />
+      <div class="col-span-6">
+        <p-skeleton class="my-2" height="3rem" />
       </div>
-      <div class="col-6">
-        <p-skeleton styleClass="my-2" height="3rem" />
+      <div class="col-span-6">
+        <p-skeleton class="my-2" height="3rem" />
       </div>
-      <div class="col-6">
-        <p-skeleton styleClass="my-2" height="3rem" />
-      </div>
-
-      <div class="col-6">
-        <p-skeleton styleClass="my-2" height="3rem" />
-      </div>
-      <div class="col-6">
-        <p-skeleton styleClass="my-2" height="3rem" />
-      </div>
-      <div class="col-6">
-        <p-skeleton styleClass="my-2" height="3rem" />
-      </div>
-      <div class="col-6">
-        <p-skeleton styleClass="my-2" height="3rem" />
-      </div>
-      <div class="col-6">
-        <p-skeleton styleClass="my-2" height="3rem" />
+      <div class="col-span-6">
+        <p-skeleton class="my-2" height="3rem" />
       </div>
 
-      <div class="col-6">
-        <p-skeleton styleClass="my-2" height="3rem" />
+      <div class="col-span-6">
+        <p-skeleton class="my-2" height="3rem" />
       </div>
-      <div class="col-6">
-        <p-skeleton styleClass="my-2" height="3rem" />
+      <div class="col-span-6">
+        <p-skeleton class="my-2" height="3rem" />
       </div>
-      <div class="col-6">
-        <p-skeleton styleClass="my-2" height="3rem" />
+      <div class="col-span-6">
+        <p-skeleton class="my-2" height="3rem" />
       </div>
-      <div class="col-6">
-        <p-skeleton styleClass="my-2" height="3rem" />
+      <div class="col-span-6">
+        <p-skeleton class="my-2" height="3rem" />
       </div>
-      <div class="col-6">
-        <p-skeleton styleClass="my-2" height="3rem" />
+      <div class="col-span-6">
+        <p-skeleton class="my-2" height="3rem" />
+      </div>
+
+      <div class="col-span-6">
+        <p-skeleton class="my-2" height="3rem" />
+      </div>
+      <div class="col-span-6">
+        <p-skeleton class="my-2" height="3rem" />
+      </div>
+      <div class="col-span-6">
+        <p-skeleton class="my-2" height="3rem" />
+      </div>
+      <div class="col-span-6">
+        <p-skeleton class="my-2" height="3rem" />
+      </div>
+      <div class="col-span-6">
+        <p-skeleton class="my-2" height="3rem" />
       </div>
     </div>
   } @else {
-    <div class="row gy-2">
-      <div class="col-6">
-        <span class="fw-bold">Company owner: </span><br />
+    <div class="grid grid-cols-12 gap-y-2">
+      <div class="col-span-6">
+        <span class="font-bold">Company owner: </span><br />
         <span>{{ companyStats()?.ownerName }}</span>
       </div>
-      <div class="col-6">
-        <span class="fw-bold">Number of employees: </span><br />
+      <div class="col-span-6">
+        <span class="font-bold">Number of employees: </span><br />
         <span>{{ companyStats()?.employeesCount }}</span>
       </div>
-      <div class="col-6">
-        <span class="fw-bold">Number of dispatchers: </span><br />
+      <div class="col-span-6">
+        <span class="font-bold">Number of dispatchers: </span><br />
         <span>{{ companyStats()?.dispatchersCount }}</span>
       </div>
-      <div class="col-6">
-        <span class="fw-bold">Number of drivers: </span><br />
+      <div class="col-span-6">
+        <span class="font-bold">Number of drivers: </span><br />
         <span>{{ companyStats()?.driversCount }}</span>
       </div>
-      <div class="col-6">
-        <span class="fw-bold">Number of managers: </span><br />
+      <div class="col-span-6">
+        <span class="font-bold">Number of managers: </span><br />
         <span>{{ companyStats()?.managersCount }}</span>
       </div>
-      <div class="col-6">
-        <span class="fw-bold">Number of trucks: </span><br />
+      <div class="col-span-6">
+        <span class="font-bold">Number of trucks: </span><br />
         <span>{{ companyStats()?.trucksCount }}</span>
       </div>
 
-      <div class="col-6">
-        <span class="fw-bold">Total gross this week: </span><br />
+      <div class="col-span-6">
+        <span class="font-bold">Total gross this week: </span><br />
         <span>{{ companyStats()?.thisWeekGross | currency }}</span>
       </div>
-      <div class="col-6">
-        <span class="fw-bold">Total gross last week: </span><br />
+      <div class="col-span-6">
+        <span class="font-bold">Total gross last week: </span><br />
         <span>{{ companyStats()?.lastWeekGross | currency }}</span>
       </div>
-      <div class="col-6">
-        <span class="fw-bold">Total gross this month: </span><br />
+      <div class="col-span-6">
+        <span class="font-bold">Total gross this month: </span><br />
         <span>{{ companyStats()?.thisMonthGross | currency }}</span>
       </div>
-      <div class="col-6">
-        <span class="fw-bold">Total gross last month: </span><br />
+      <div class="col-span-6">
+        <span class="font-bold">Total gross last month: </span><br />
         <span>{{ companyStats()?.lastMonthGross | currency }}</span>
       </div>
-      <div class="col-6">
-        <span class="fw-bold">Total gross all time: </span><br />
+      <div class="col-span-6">
+        <span class="font-bold">Total gross all time: </span><br />
         <span>{{ companyStats()?.totalGross | currency }}</span>
       </div>
 
       <!-- <div class="col-12 col-md-6">
-        <span class="fw-bold">Total distance this week: </span><br />
+        <span class="font-bold">Total distance this week: </span><br />
         <span>{{companyStats?.thisWeekDistance | distanceUnit:'mi'}} mi</span>
       </div>
       <div class="col-12 col-md-6">
-        <span class="fw-bold">Total distance last week: </span><br />
+        <span class="font-bold">Total distance last week: </span><br />
         <span>{{companyStats?.lastWeekDistance | distanceUnit:'mi'}} mi</span>
       </div>
       <div class="col-12 col-md-6">
-        <span class="fw-bold">Total distance this month: </span><br />
+        <span class="font-bold">Total distance this month: </span><br />
         <span>{{companyStats?.thisMonthDistance | distanceUnit:'mi'}} mi</span>
       </div>
       <div class="col-12 col-md-6">
-        <span class="fw-bold">Total distance last month: </span><br />
+        <span class="font-bold">Total distance last month: </span><br />
         <span>{{companyStats?.lastMonthDistance | distanceUnit:'mi'}} mi</span>
       </div>
       <div class="col-12 col-md-6">
-        <span class="fw-bold">Total distance all time: </span><br />
+        <span class="font-bold">Total distance all time: </span><br />
         <span>{{companyStats?.totalDistance | distanceUnit:'mi'}} mi</span>
       </div> -->
 
-      <div class="col-6">
-        <span class="fw-bold">RPM this week: </span><br />
+      <div class="col-span-6">
+        <span class="font-bold">RPM this week: </span><br />
         <span>{{
           calcRpm(companyStats()?.thisWeekGross, companyStats()?.thisWeekDistance) | currency
         }}</span>
       </div>
-      <div class="col-6">
-        <span class="fw-bold">RPM last week: </span><br />
+      <div class="col-span-6">
+        <span class="font-bold">RPM last week: </span><br />
         <span>{{
           calcRpm(companyStats()?.lastWeekGross, companyStats()?.lastWeekDistance) | currency
         }}</span>
       </div>
-      <div class="col-6">
-        <span class="fw-bold">RPM this month: </span><br />
+      <div class="col-span-6">
+        <span class="font-bold">RPM this month: </span><br />
         <span>{{
           calcRpm(companyStats()?.thisMonthGross, companyStats()?.thisMonthDistance) | currency
         }}</span>
       </div>
-      <div class="col-6">
-        <span class="fw-bold">RPM last month: </span><br />
+      <div class="col-span-6">
+        <span class="font-bold">RPM last month: </span><br />
         <span>{{
           calcRpm(companyStats()?.lastMonthGross, companyStats()?.lastMonthDistance) | currency
         }}</span>
       </div>
-      <div class="col-6">
-        <span class="fw-bold">RPM all time: </span><br />
+      <div class="col-span-6">
+        <span class="font-bold">RPM all time: </span><br />
         <span>{{
           calcRpm(companyStats()?.totalGross, companyStats()?.totalDistance) | currency
         }}</span>

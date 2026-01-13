@@ -1,13 +1,13 @@
-<div class="container-fluid p-4">
+<div class="w-full p-6">
   <!-- Header -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="flex justify-between items-center mb-6">
     <div>
-      <h1 class="h3 mb-1">Drivers Report</h1>
-      <p class="text-muted mb-0">Detailed driver performance and statistics</p>
+      <h1 class="text-2xl font-semibold mb-1">Drivers Report</h1>
+      <p class="text-gray-500 mb-0">Detailed driver performance and statistics</p>
     </div>
-    <div class="d-flex align-items-center gap-2">
-      <div class="d-flex align-items-center gap-2">
-        <label for="search" class="form-label fw-medium mb-0">Search:</label>
+    <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2">
+        <label for="search" class="text-sm font-medium mb-0">Search:</label>
         <input
           pInputText
           id="search"
@@ -15,7 +15,7 @@
           (change)="onSearch($event)"
           name="search"
           placeholder="Search drivers..."
-          class="form-control"
+          class="w-full"
           style="width: 200px"
         />
       </div>
@@ -31,8 +31,8 @@
   <!-- Drivers Table -->
   <p-card class="border-0 p-2 shadow-sm">
     <ng-template pTemplate="header">
-      <div class="d-flex align-items-center">
-        <i class="pi pi-users text-primary me-2"></i>
+      <div class="flex items-center">
+        <i class="pi pi-users text-blue-600 mr-2"></i>
         <h5 class="mb-0">Driver Performance Details</h5>
       </div>
     </ng-template>
@@ -84,18 +84,18 @@
       <ng-template pTemplate="body" let-driver>
         <tr>
           <td>
-            <div class="d-flex align-items-center">
-              <div class="bg-primary bg-opacity-10 rounded-circle me-2 p-2">
-                <i class="pi pi-user text-primary"></i>
+            <div class="flex items-center">
+              <div class="bg-blue-600/10 rounded-full mr-2 p-2">
+                <i class="pi pi-user text-blue-600"></i>
               </div>
               <div>
-                <div class="fw-medium">{{ driver.driverName }}</div>
-                <small class="text-muted">ID: {{ driver.driverId }}</small>
+                <div class="font-medium">{{ driver.driverName }}</div>
+                <small class="text-gray-500">ID: {{ driver.driverId }}</small>
               </div>
             </div>
           </td>
           <td>
-            <span class="badge bg-secondary">{{ driver.truckNumber }}</span>
+            <span class="bg-gray-500 text-white px-2 py-1 rounded text-sm">{{ driver.truckNumber }}</span>
           </td>
           <td>
             <p-tag
@@ -105,23 +105,23 @@
             </p-tag>
           </td>
           <td>
-            <span class="fw-medium">{{ driver.loadsDelivered | number }}</span>
+            <span class="font-medium">{{ driver.loadsDelivered | number }}</span>
           </td>
           <td>
-            <span class="fw-medium">{{ driver.distanceDriven | number: "1.0-0" }} km</span>
+            <span class="font-medium">{{ driver.distanceDriven | number: "1.0-0" }} km</span>
           </td>
           <td>
-            <span class="fw-medium text-success">{{
+            <span class="font-medium text-green-600">{{
               driver.grossEarnings | currency: "USD" : "symbol" : "1.0-0"
             }}</span>
           </td>
           <td>
-            <span class="text-muted">{{
+            <span class="text-gray-500">{{
               driver.averageEarningsPerLoad | currency: "USD" : "symbol" : "1.0-0"
             }}</span>
           </td>
           <td>
-            <span class="fw-medium">{{ driver.efficiency | number: "1.1-1" }} loads/day</span>
+            <span class="font-medium">{{ driver.efficiency | number: "1.1-1" }} loads/day</span>
           </td>
           <td>
             <p-tag
@@ -135,10 +135,10 @@
       <ng-template pTemplate="emptymessage">
         <tr>
           <td colspan="9" class="py-4 text-center">
-            <div class="d-flex flex-column align-items-center">
-              <i class="pi pi-users text-muted" style="font-size: 3rem"></i>
-              <h6 class="text-muted mt-2">No drivers found</h6>
-              <p class="text-muted mb-0">Try adjusting your search criteria or date range</p>
+            <div class="flex flex-col items-center">
+              <i class="pi pi-users text-gray-500" style="font-size: 3rem"></i>
+              <h6 class="text-gray-500 mt-2">No drivers found</h6>
+              <p class="text-gray-500 mb-0">Try adjusting your search criteria or date range</p>
             </div>
           </td>
         </tr>

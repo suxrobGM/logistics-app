@@ -5,10 +5,9 @@
 />
 
 <h1 class="text-center">Edit Employee</h1>
-<hr class="w-full" />
 
-<div class="row justify-content-center">
-  <div class="col-md-6 col-12">
+<div class="flex justify-center">
+  <div class="w-full md:w-1/2">
     <p-card>
       @if (isLoading()) {
         <p-progress-spinner />
@@ -17,77 +16,77 @@
       <form [formGroup]="form" (ngSubmit)="updateEmployee()">
         <app-validation-summary [form]="form" />
 
-        <div class="mb-3">
-          <label for="email" class="form-label">Email</label>
+        <app-form-field label="Email" for="email">
           <input
+            pInputText
             id="email"
             type="text"
-            class="form-control"
+            class="w-full"
             [disabled]="true"
             [value]="employee()?.email"
           />
-        </div>
-        <div class="mb-3">
-          <label for="firstName" class="form-label">First name</label>
+        </app-form-field>
+
+        <app-form-field label="First name" for="firstName">
           <input
+            pInputText
             id="firstName"
             type="text"
-            class="form-control"
+            class="w-full"
             [disabled]="true"
             [value]="employee()?.firstName"
           />
-        </div>
-        <div class="mb-3">
-          <label for="lastName" class="form-label">Last name</label>
+        </app-form-field>
+
+        <app-form-field label="Last name" for="lastName">
           <input
+            pInputText
             id="lastName"
             type="text"
-            class="form-control"
+            class="w-full"
             [disabled]="true"
             [value]="employee()?.lastName"
           />
-        </div>
-        <div class="mb-3">
-          <label for="salaryType" class="form-label">Salary Type</label>
-          <p-select formControlName="salaryType" class="w-full" [options]="salaryTypes" />
-        </div>
+        </app-form-field>
 
-        <div class="mb-3">
-          <label for="salary" class="form-label">Salary</label>
+        <app-form-field label="Salary Type" for="salaryType">
+          <p-select formControlName="salaryType" class="w-full" [options]="salaryTypes" />
+        </app-form-field>
+
+        <app-form-field label="Salary" for="salary">
           @if (isShareOfGrossSalary()) {
-            <div class="input-group">
-              <span class="input-group-text">%</span>
+            <p-inputgroup>
+              <p-inputgroup-addon>%</p-inputgroup-addon>
               <input
+                pInputText
                 id="salary"
                 formControlName="salary"
                 type="number"
-                class="form-control"
                 [min]="0"
                 [max]="100"
               />
-            </div>
+            </p-inputgroup>
           } @else {
-            <div class="input-group">
-              <span class="input-group-text">$$</span>
+            <p-inputgroup>
+              <p-inputgroup-addon>$$</p-inputgroup-addon>
               <input
+                pInputText
                 id="salary"
                 formControlName="salary"
                 type="number"
-                class="form-control"
                 [min]="0"
                 [disabled]="isNoneSalary()"
               />
-            </div>
+            </p-inputgroup>
           }
-        </div>
+        </app-form-field>
 
-        <div class="mb-3">
-          <label for="roleName" class="form-label">Role</label>
-          <div class="input-group">
+        <app-form-field label="Role" for="roleName">
+          <p-inputgroup>
             <input
+              pInputText
               id="roleName"
               type="text"
-              class="form-control"
               [disabled]="true"
               [value]="getEmployeeRoleNames()"
             />
@@ -97,8 +96,8 @@
               [disabled]="!canChangeRole()"
               (click)="openUpdateDialog()"
             />
-          </div>
-        </div>
+          </p-inputgroup>
+        </app-form-field>
 
         <div class="flex gap-2">
           <p-button type="submit" icon="pi pi-pencil" label="Save" [disabled]="isLoading()" />

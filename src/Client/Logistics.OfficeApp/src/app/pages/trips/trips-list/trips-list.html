@@ -1,7 +1,7 @@
 <div class="flex items-center">
   <h1>Trips</h1>
   <p-button
-    styleClass="text-black ms-2"
+    styleClass="text-black ml-2"
     icon="pi pi-plus-circle"
     size="large"
     [rounded]="true"
@@ -10,7 +10,6 @@
     [routerLink]="['/trips/add']"
   />
 </div>
-<hr class="w-full" />
 
 <p-card>
   <app-data-container
@@ -123,9 +122,9 @@
       <ng-template #expandedrow let-trip>
         <tr>
           <td colspan="12">
-            <div class="p-3">
-              <h5 class="mb-3">Loads in this trip</h5>
-              <p-table [value]="trip.loads" [dataKey]="'id'" responsiveLayout="scroll">
+            <div class="p-4">
+              <h5 class="mb-4">Loads in this trip</h5>
+              <p-table [value]="trip.loads" [dataKey]="'id'">
                 <ng-template #header>
                   <tr>
                     <th pSortableColumn="number">Load Number <p-sortIcon field="number" /></th>

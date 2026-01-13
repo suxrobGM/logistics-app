@@ -14,6 +14,7 @@ import { InputMaskModule } from "primeng/inputmask";
 import { InputTextModule } from "primeng/inputtext";
 import { KeyFilterModule } from "primeng/keyfilter";
 import { SelectModule } from "primeng/select";
+import { DividerModule } from "primeng/divider";
 import { Api, createPaymentMethod } from "@/core/api";
 import {
   type AddressDto,
@@ -26,7 +27,7 @@ import {
   usBankAccountTypeOptions,
 } from "@/core/api/models";
 import { StripeService, TenantService, ToastService } from "@/core/services";
-import { AddressForm, StripeCard, ValidationSummary } from "@/shared/components";
+import { AddressForm, FormField, StripeCard, ValidationSummary } from "@/shared/components";
 
 const enabledPaymentTypes: PaymentMethodType[] = [
   "card",
@@ -50,6 +51,8 @@ const enabledPaymentTypes: PaymentMethodType[] = [
     InputTextModule,
     KeyFilterModule,
     StripeCard,
+    FormField,
+    DividerModule,
   ],
 })
 export class PaymentMethodDialogComponent {

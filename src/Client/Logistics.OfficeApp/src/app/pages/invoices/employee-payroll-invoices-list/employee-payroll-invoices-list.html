@@ -1,7 +1,7 @@
 <div class="flex items-center">
   <h1>Employee Payroll Invoices</h1>
   <p-button
-    styleClass="text-black ms-2"
+    styleClass="text-black ml-2"
     icon="pi pi-plus-circle"
     size="large"
     [rounded]="true"
@@ -10,55 +10,56 @@
     [routerLink]="['/invoices/payroll/add']"
   />
 </div>
-<hr class="w-full" />
 
 @if (isLoadingEmployee() || !employee()) {
   <div class="flex items-center">
     <p-progress-spinner />
-    <div class="ms-2">Loading employee data</div>
+    <div class="ml-2">Loading employee data</div>
   </div>
 } @else {
-  <p-card styleClass="mb-3">
+  <p-card class="mb-4">
     <ng-template #header>
-      <h4 class="py-2 ps-3">Payroll details</h4>
-      <hr class="m-0 w-full" />
+      <h4 class="py-2 pl-4">Payroll details</h4>
+      <p-divider />
     </ng-template>
 
-    <div class="col-md-5 col-12">
-      <div class="row mb-3">
-        <div class="col-4">
-          <h6>Employee:</h6>
+    <div class="grid grid-cols-12">
+      <div class="col-span-12 md:col-span-5">
+        <div class="mb-4 grid grid-cols-12">
+          <div class="col-span-4">
+            <h6>Employee:</h6>
+          </div>
+          <div class="col-span-8">
+            {{ employee()!.fullName }}
+          </div>
         </div>
-        <div class="col-8">
-          {{ employee()!.fullName }}
+        <div class="mb-4 grid grid-cols-12">
+          <div class="col-span-4">
+            <h6>Position:</h6>
+          </div>
+          <div class="col-span-8">
+            {{ employee()!.roles?.[0]?.displayName ?? "N/A" }}
+          </div>
         </div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-4">
-          <h6>Position:</h6>
+        <div class="mb-4 grid grid-cols-12">
+          <div class="col-span-4">
+            <h6>Salary type:</h6>
+          </div>
+          <div class="col-span-8">
+            {{ getSalaryTypeDesc(employee()!.salaryType) }}
+          </div>
         </div>
-        <div class="col-8">
-          {{ employee()!.roles?.[0]?.displayName ?? "N/A" }}
-        </div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-4">
-          <h6>Salary type:</h6>
-        </div>
-        <div class="col-8">
-          {{ getSalaryTypeDesc(employee()!.salaryType) }}
-        </div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-4">
-          <h6>Salary:</h6>
-        </div>
-        <div class="col-8">
-          @if (employee()!.salaryType === "share_of_gross") {
-            {{ employee()!.salary | percent }}
-          } @else {
-            {{ employee()!.salary | currency }}
-          }
+        <div class="mb-4 grid grid-cols-12">
+          <div class="col-span-4">
+            <h6>Salary:</h6>
+          </div>
+          <div class="col-span-8">
+            @if (employee()!.salaryType === "share_of_gross") {
+              {{ employee()!.salary | percent }}
+            } @else {
+              {{ employee()!.salary | currency }}
+            }
+          </div>
         </div>
       </div>
     </div>
@@ -80,7 +81,6 @@
   >
     <p-table
       [value]="store.data()"
-      responsiveLayout="scroll"
       [lazy]="true"
       [paginator]="true"
       [showCurrentPageReport]="true"
@@ -118,7 +118,7 @@
           <td>{{ getPaymentMethodDesc(invoice.payment.method) }}</td>
           <td class="overflow-visible">
             <p-button
-              class="ms-2"
+              class="ml-2"
               icon="pi pi-pen-to-square"
               pTooltip="Edit payroll"
               tooltipPosition="bottom"

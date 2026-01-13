@@ -3,6 +3,7 @@ import { Component, type OnInit, inject, input, model, output, signal } from "@a
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
+import { DividerModule } from "primeng/divider";
 import { Api, getDailyGrosses$Json } from "@/core/api";
 import type { DailyGrossesDto } from "@/core/api/models";
 import { RangeCalendar } from "@/shared/components";
@@ -29,7 +30,7 @@ const chartOptions = {
 @Component({
   selector: "app-truck-grosses-linechart",
   templateUrl: "./truck-grosses-linechart.html",
-  imports: [DatePipe, CardModule, SkeletonModule, ChartModule, RangeCalendar],
+  imports: [DatePipe, CardModule, SkeletonModule, ChartModule, RangeCalendar, DividerModule],
 })
 export class TruckGrossesLinechartComponent implements OnInit {
   private readonly api = inject(Api);
