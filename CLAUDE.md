@@ -73,7 +73,7 @@ Shared (Models)         → DTOs shared between backend and frontend
 
 ### Key Domain Entities
 
-`Tenant`, `User`, `Customer`, `Load`, `Trip`, `Employee/Driver`, `Invoice`, `Payment`, `Truck`, `Document`, `Subscription`
+`Tenant`, `User`, `Customer`, `Load`, `Trip`, `Employee/Driver`, `Invoice`, `Payment`, `Truck`, `Document`, `Subscription`, `EldProviderConfiguration`, `DriverHosStatus`, `EldDriverMapping`
 
 ### Service Ports
 
@@ -112,6 +112,34 @@ Shared (Models)         → DTOs shared between backend and frontend
 - **SignalR**: Real-time GPS tracking and notifications
 - **Azure Blob Storage**: Document storage
 - **Mapbox**: Maps in Office and Driver apps
+- **ELD Providers**: Hours of Service (HOS) data from Samsara, Motive (KeepTruckin), webhooks at `/webhooks/eld/*`
+
+### ELD Integration Architecture
+
+The ELD (Electronic Logging Device) integration pulls driver Hours of Service data from external providers for FMCSA compliance.
+
+**Key Components:**
+
+- `IEldProviderService` - Interface for all ELD operations (in Application layer)
+- `IEldProviderFactory` - Factory to get provider by type
+- `SamsaraEldService`, `MotiveEldService` - Provider implementations (in Infrastructure layer)
+- `EldSyncJob` - Hangfire job that syncs HOS data every 5 minutes (fallback for webhooks)
+
+**Data Flow:**
+
+1. Configure ELD provider credentials per tenant via API
+2. Map TMS employees to external ELD driver IDs
+3. Webhooks receive real-time updates, or background job polls every 5 minutes
+4. HOS data stored in `DriverHosStatus` entity, displayed in Office App ELD Dashboard
+
+**Configuration** (`appsettings.json`):
+
+```json
+"Eld": {
+  "Samsara": { "BaseUrl": "https://api.samsara.com" },
+  "Motive": { "BaseUrl": "https://api.keeptruckin.com/v1" }
+}
+```
 
 ## User Roles
 

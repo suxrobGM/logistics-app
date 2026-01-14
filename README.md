@@ -18,6 +18,7 @@ Logistics TMS is purpose-built for trucking fleets specializing in intermodal co
 - **Multi-Tenant**: Each company gets isolated database and data
 - **Real-Time Tracking**: GPS tracking of drivers and vehicles via SignalR
 - **Load Management**: Create, assign, and track shipments from origin to destination
+- **ELD/HOS Compliance**: Integration with ELD providers (Samsara, Motive) for Hours of Service tracking
 - **Invoicing & Payments**: Generate invoices and process payments with Stripe
 - **Driver Mobile App**: Native Android/iOS app for drivers to manage their tasks
 - **Analytics Dashboard**: Insights into operations, driver performance, and financials
