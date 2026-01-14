@@ -19,7 +19,7 @@ import {
   type EldProviderConfigurationDto,
   type EldProviderType,
 } from "@/core/api";
-import { FormField } from "@/shared/components";
+import { LabeledField } from "@/shared/components";
 
 interface ProviderOption {
   label: string;
@@ -35,7 +35,7 @@ interface ProviderOption {
     CardModule,
     DatePipe,
     DialogModule,
-    FormField,
+    LabeledField,
     InputTextModule,
     PasswordModule,
     ProgressSpinnerModule,

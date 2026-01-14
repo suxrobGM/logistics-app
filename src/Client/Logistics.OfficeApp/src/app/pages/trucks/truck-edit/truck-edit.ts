@@ -26,7 +26,7 @@ import {
   truckTypeOptions,
 } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { FormField } from "@/shared/components";
+import { LabeledField } from "@/shared/components";
 
 @Component({
   selector: "app-truck-edit",
@@ -41,7 +41,7 @@ import { FormField } from "@/shared/components";
     AutoCompleteModule,
     ButtonModule,
     RouterLink,
-    FormField,
+    LabeledField,
     InputTextModule,
     SelectModule,
   ],

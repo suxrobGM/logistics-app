@@ -10,7 +10,7 @@
       <form [formGroup]="form" (ngSubmit)="submit()">
         <app-validation-summary [form]="form" />
 
-        <app-form-field label="User Name" for="name">
+        <app-labeled-field label="User Name" for="name">
           <p-auto-complete
             formControlName="user"
             class="w-full"
@@ -21,13 +21,13 @@
             [suggestions]="suggestedUsers()"
             (completeMethod)="searchUser($event)"
           />
-        </app-form-field>
+        </app-labeled-field>
 
-        <app-form-field label="Salary Type" for="salaryType">
+        <app-labeled-field label="Salary Type" for="salaryType">
           <p-select formControlName="salaryType" class="w-full" [options]="salaryTypes" />
-        </app-form-field>
+        </app-labeled-field>
 
-        <app-form-field label="Salary" for="salary">
+        <app-labeled-field label="Salary" for="salary">
           @if (isShareOfGrossSalary()) {
             <p-inputgroup>
               <p-inputgroup-addon>%</p-inputgroup-addon>
@@ -53,9 +53,9 @@
               />
             </p-inputgroup>
           }
-        </app-form-field>
+        </app-labeled-field>
 
-        <app-form-field label="Role" for="role">
+        <app-labeled-field label="Role" for="role">
           <p-select
             formControlName="role"
             class="w-full"
@@ -65,7 +65,7 @@
             [showClear]="true"
             (onClear)="clearSelectedRole()"
           />
-        </app-form-field>
+        </app-labeled-field>
 
         <div class="flex gap-2">
           <p-button type="submit" icon="pi pi-pencil" label="Add" [disabled]="isLoading()" />

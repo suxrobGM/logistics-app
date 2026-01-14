@@ -5,7 +5,7 @@ import { Button } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import type { TruckDto } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { FormField, SearchTruckComponent, ValidationSummary } from "@/shared/components";
+import { LabeledField, SearchTruckComponent, ValidationSummary } from "@/shared/components";
 import { TripWizardStore } from "../../store/trip-wizard-store";
 
 @Component({
@@ -13,7 +13,7 @@ import { TripWizardStore } from "../../store/trip-wizard-store";
   templateUrl: "./trip-wizard-basic.html",
   imports: [
     ValidationSummary,
-    FormField,
+    LabeledField,
     SearchTruckComponent,
     Button,
     RouterLink,

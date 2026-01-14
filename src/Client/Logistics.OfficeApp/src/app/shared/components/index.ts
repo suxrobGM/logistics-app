@@ -8,7 +8,7 @@ export * from "./validation-summary/validation-summary";
 export * from "./address-form/address-form";
 export * from "./stripe-card/stripe-card";
 export * from "./base-table/base-table";
-export * from "./form-field/form-field";
+export * from "./labeled-field/labeled-field";
 export * from "./search-customer/search-customer";
 export * from "./search-truck/search-truck";
 export * from "./load-form/load-form";

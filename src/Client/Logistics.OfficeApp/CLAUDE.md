@@ -134,11 +134,11 @@ export class CustomersListComponent {
 
 ## Form Fields
 
-Use the `FormField` component for form inputs instead of manually adding labels, hints, and error handling.
+Use the `LabeledField` component for form inputs instead of manually adding labels, hints, and error handling.
 
 ```html
-<!-- DO: Use FormField component -->
-<app-form-field
+<!-- DO: Use LabeledField component -->
+<app-labeled-field
   label="Email"
   for="email"
   [required]="true"
@@ -146,7 +146,7 @@ Use the `FormField` component for form inputs instead of manually adding labels,
   [control]="form.controls.email"
 >
   <input pInputText id="email" formControlName="email" class="w-full" />
-</app-form-field>
+</app-labeled-field>
 
 <!-- DON'T: Manually structure form fields -->
 <div class="mb-4">
@@ -156,7 +156,7 @@ Use the `FormField` component for form inputs instead of manually adding labels,
 </div>
 ```
 
-FormField inputs:
+LabeledField inputs:
 
 - `label` - Label text
 - `for` - The field id for the label

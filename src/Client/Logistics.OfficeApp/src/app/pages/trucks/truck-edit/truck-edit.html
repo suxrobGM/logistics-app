@@ -7,32 +7,32 @@
         <p-progress-spinner />
       }
       <form [formGroup]="form" (ngSubmit)="submit()">
-        <app-form-field label="Truck Number" for="truckNumber" [required]="true">
+        <app-labeled-field label="Truck Number" for="truckNumber" [required]="true">
           <input pInputText formControlName="truckNumber" id="truckNumber" />
-        </app-form-field>
-        <app-form-field label="Truck Type" for="truckType" [required]="true">
+        </app-labeled-field>
+        <app-labeled-field label="Truck Type" for="truckType" [required]="true">
           <p-select
             formControlName="truckType"
             [options]="truckTypes"
             placeholder="Select a truck type"
           />
-        </app-form-field>
-        <app-form-field label="Truck Status" for="truckStatus" [required]="true">
+        </app-labeled-field>
+        <app-labeled-field label="Truck Status" for="truckStatus" [required]="true">
           <p-select
             formControlName="truckStatus"
             [options]="truckStatuses"
             placeholder="Select a truck status"
           />
-        </app-form-field>
+        </app-labeled-field>
 
-        <!-- <app-form-field for="driverIncomePercentage" label="Driver Income Percentage">
+        <!-- <app-labeled-field for="driverIncomePercentage" label="Driver Income Percentage">
           <div class="input-group">
             <span class="input-group-text">%</span>
             <input formControlName="driverIncomePercentage" id="driverIncomePercentage" class="form-control" type="number" min="0" max="100" />
           </div>
-        </app-form-field> -->
+        </app-labeled-field> -->
 
-        <app-form-field label="Main Driver" for="mainDriver" [required]="true">
+        <app-labeled-field label="Main Driver" for="mainDriver" [required]="true">
           <p-auto-complete
             formControlName="mainDriver"
             class="w-full"
@@ -43,9 +43,9 @@
             [suggestions]="suggestedDrivers()"
             (completeMethod)="searchDriver($event)"
           />
-        </app-form-field>
+        </app-labeled-field>
 
-        <app-form-field label="Secondary Driver" for="secondaryDriver">
+        <app-labeled-field label="Secondary Driver" for="secondaryDriver">
           <p-auto-complete
             formControlName="secondaryDriver"
             class="w-full"
@@ -56,7 +56,7 @@
             [suggestions]="suggestedDrivers()"
             (completeMethod)="searchDriver($event)"
           />
-        </app-form-field>
+        </app-labeled-field>
 
         <div class="flex gap-2">
           <p-button

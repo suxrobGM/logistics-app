@@ -5,7 +5,7 @@ import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
-import { FormField } from "../form-field/form-field";
+import { LabeledField } from "../labeled-field/labeled-field";
 import { ValidationSummary } from "../validation-summary/validation-summary";
 
 export interface CustomerFormValue {
@@ -21,7 +21,7 @@ export interface CustomerFormValue {
     ReactiveFormsModule,
     RouterLink,
     ProgressSpinnerModule,
-    FormField,
+    LabeledField,
     InputTextModule,
   ],
 })

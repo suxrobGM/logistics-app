@@ -16,7 +16,7 @@
       <form [formGroup]="form" (ngSubmit)="updateEmployee()">
         <app-validation-summary [form]="form" />
 
-        <app-form-field label="Email" for="email">
+        <app-labeled-field label="Email" for="email">
           <input
             pInputText
             id="email"
@@ -25,9 +25,9 @@
             [disabled]="true"
             [value]="employee()?.email"
           />
-        </app-form-field>
+        </app-labeled-field>
 
-        <app-form-field label="First name" for="firstName">
+        <app-labeled-field label="First name" for="firstName">
           <input
             pInputText
             id="firstName"
@@ -36,9 +36,9 @@
             [disabled]="true"
             [value]="employee()?.firstName"
           />
-        </app-form-field>
+        </app-labeled-field>
 
-        <app-form-field label="Last name" for="lastName">
+        <app-labeled-field label="Last name" for="lastName">
           <input
             pInputText
             id="lastName"
@@ -47,13 +47,13 @@
             [disabled]="true"
             [value]="employee()?.lastName"
           />
-        </app-form-field>
+        </app-labeled-field>
 
-        <app-form-field label="Salary Type" for="salaryType">
+        <app-labeled-field label="Salary Type" for="salaryType">
           <p-select formControlName="salaryType" class="w-full" [options]="salaryTypes" />
-        </app-form-field>
+        </app-labeled-field>
 
-        <app-form-field label="Salary" for="salary">
+        <app-labeled-field label="Salary" for="salary">
           @if (isShareOfGrossSalary()) {
             <p-inputgroup>
               <p-inputgroup-addon>%</p-inputgroup-addon>
@@ -79,9 +79,9 @@
               />
             </p-inputgroup>
           }
-        </app-form-field>
+        </app-labeled-field>
 
-        <app-form-field label="Role" for="roleName">
+        <app-labeled-field label="Role" for="roleName">
           <p-inputgroup>
             <input
               pInputText
@@ -97,7 +97,7 @@
               (click)="openUpdateDialog()"
             />
           </p-inputgroup>
-        </app-form-field>
+        </app-labeled-field>
 
         <div class="flex gap-2">
           <p-button type="submit" icon="pi pi-pencil" label="Save" [disabled]="isLoading()" />

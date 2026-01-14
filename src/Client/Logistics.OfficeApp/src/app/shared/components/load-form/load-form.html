@@ -7,15 +7,15 @@
     <form [formGroup]="form" (ngSubmit)="submit()">
       <app-validation-summary [form]="form" />
 
-      <app-form-field label="Name" for="name" [required]="true">
+      <app-labeled-field label="Name" for="name" [required]="true">
         <input pInputText id="name" formControlName="name" type="text" placeholder="Load name" />
-      </app-form-field>
-      <app-form-field label="Load Type" for="type" [required]="true">
+      </app-labeled-field>
+      <app-labeled-field label="Load Type" for="type" [required]="true">
         <p-select formControlName="type" [options]="loadTypes" />
-      </app-form-field>
+      </app-labeled-field>
 
       @if (initial()?.tripNumber && initial()?.tripId) {
-        <app-form-field label="Trip" for="tripNumber">
+        <app-labeled-field label="Trip" for="tripNumber">
           <input
             pInputText
             id="tripNumber"
@@ -23,62 +23,62 @@
             type="text"
             placeholder="Trip"
           />
-        </app-form-field>
+        </app-labeled-field>
       }
 
-      <app-form-field label="Customer" for="customer" [required]="true">
+      <app-labeled-field label="Customer" for="customer" [required]="true">
         <app-search-customer formControlName="customer" />
-      </app-form-field>
+      </app-labeled-field>
 
-      <app-form-field label="Origin Address" for="originAddress" [required]="true">
+      <app-labeled-field label="Origin Address" for="originAddress" [required]="true">
         <app-address-autocomplete
           field="originAddress"
           formControlName="originAddress"
           [forceSelection]="true"
           (selectedAddress)="updateOrigin($event)"
         />
-      </app-form-field>
+      </app-labeled-field>
 
-      <app-form-field label="Destination Address" for="destinationAddress" [required]="true">
+      <app-labeled-field label="Destination Address" for="destinationAddress" [required]="true">
         <app-address-autocomplete
           field="destinationAddress"
           formControlName="destinationAddress"
           [forceSelection]="true"
           (selectedAddress)="updateDestination($event)"
         />
-      </app-form-field>
+      </app-labeled-field>
 
-      <app-form-field label="Delivery Cost" for="deliveryCost" [required]="true">
+      <app-labeled-field label="Delivery Cost" for="deliveryCost" [required]="true">
         <p-inputgroup>
           <p-inputgroup-addon>$$</p-inputgroup-addon>
           <p-input-number id="deliveryCost" formControlName="deliveryCost" [min]="0" />
         </p-inputgroup>
-      </app-form-field>
+      </app-labeled-field>
 
-      <app-form-field label="Estimated Distance" for="distance">
+      <app-labeled-field label="Estimated Distance" for="distance">
         <p-inputgroup>
           <p-inputgroup-addon>mi</p-inputgroup-addon>
           <p-input-number id="distance" formControlName="distance" [min]="0" />
         </p-inputgroup>
-      </app-form-field>
+      </app-labeled-field>
 
-      <app-form-field label="Assigned Dispatcher" for="dispatcherName">
+      <app-labeled-field label="Assigned Dispatcher" for="dispatcherName">
         <input
           pInputText
           id="dispatcherName"
           formControlName="assignedDispatcherName"
           type="text"
         />
-      </app-form-field>
+      </app-labeled-field>
 
-      <app-form-field label="Assigned Truck" for="assignedTruck" [required]="true">
+      <app-labeled-field label="Assigned Truck" for="assignedTruck" [required]="true">
         <app-search-truck formControlName="assignedTruck" />
-      </app-form-field>
+      </app-labeled-field>
 
       @if (mode() === "edit") {
-        <app-form-field label="Status" for="status">
+        <app-labeled-field label="Status" for="status">
           <p-select formControlName="status" [options]="loadStatuses" />
-        </app-form-field>
+        </app-labeled-field>
       }
 
       <!-- action buttons -->

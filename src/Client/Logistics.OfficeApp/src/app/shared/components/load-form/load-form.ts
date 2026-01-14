@@ -25,7 +25,7 @@ import { ToastService } from "@/core/services";
 import {
   AddressAutocomplete,
   DirectionMap,
-  FormField,
+  LabeledField,
   SearchCustomerComponent,
   SearchTruckComponent,
   type SelectedAddressEvent,
@@ -72,7 +72,7 @@ export interface LoadFormValue {
     AddressAutocomplete,
     DirectionMap,
     ValidationSummary,
-    FormField,
+    LabeledField,
     SearchCustomerComponent,
     SearchTruckComponent,
     DividerModule,

@@ -19,7 +19,7 @@ import {
 } from "@/core/api/models";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
-import { FormField, ValidationSummary } from "@/shared/components";
+import { LabeledField, ValidationSummary } from "@/shared/components";
 import { UserRole } from "@/shared/models";
 import { NumberUtils } from "@/shared/utils";
 import { ChangeRoleDialogComponent } from "../components";
@@ -37,7 +37,7 @@ import { ChangeRoleDialogComponent } from "../components";
     RouterLink,
     ReactiveFormsModule,
     ValidationSummary,
-    FormField,
+    LabeledField,
     SelectModule,
     InputGroupModule,
     InputGroupAddonModule,

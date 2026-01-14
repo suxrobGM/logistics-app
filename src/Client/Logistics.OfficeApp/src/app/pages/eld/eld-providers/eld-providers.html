@@ -141,7 +141,7 @@
   [draggable]="false"
 >
   <form [formGroup]="addForm" (ngSubmit)="saveProvider()">
-    <app-form-field label="Provider" for="providerType" [required]="true" [control]="addForm.controls.providerType">
+    <app-labeled-field label="Provider" for="providerType" [required]="true" [control]="addForm.controls.providerType">
       <p-select
         id="providerType"
         formControlName="providerType"
@@ -159,9 +159,9 @@
           </div>
         </ng-template>
       </p-select>
-    </app-form-field>
+    </app-labeled-field>
 
-    <app-form-field
+    <app-labeled-field
       label="API Key"
       for="apiKey"
       [required]="true"
@@ -169,9 +169,9 @@
       [control]="addForm.controls.apiKey"
     >
       <input pInputText id="apiKey" formControlName="apiKey" class="w-full" placeholder="Enter API key" />
-    </app-form-field>
+    </app-labeled-field>
 
-    <app-form-field label="API Secret (Optional)" for="apiSecret" hint="Required for some providers">
+    <app-labeled-field label="API Secret (Optional)" for="apiSecret" hint="Required for some providers">
       <p-password
         id="apiSecret"
         formControlName="apiSecret"
@@ -181,9 +181,9 @@
         inputStyleClass="w-full"
         placeholder="Enter API secret"
       />
-    </app-form-field>
+    </app-labeled-field>
 
-    <app-form-field
+    <app-labeled-field
       label="Webhook Secret (Optional)"
       for="webhookSecret"
       hint="For verifying incoming webhook requests"
@@ -197,7 +197,7 @@
         inputStyleClass="w-full"
         placeholder="Enter webhook secret"
       />
-    </app-form-field>
+    </app-labeled-field>
 
     <div class="rounded bg-yellow-50 p-3">
       <div class="flex items-start gap-2">

@@ -26,7 +26,7 @@ import {
   salaryTypeOptions,
 } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { FormField, ValidationSummary } from "@/shared/components";
+import { LabeledField, ValidationSummary } from "@/shared/components";
 import { UserService } from "../services";
 
 @Component({
@@ -44,7 +44,7 @@ import { UserService } from "../services";
     ButtonModule,
     RouterLink,
     ValidationSummary,
-    FormField,
+    LabeledField,
     InputGroupModule,
     InputGroupAddonModule,
     InputTextModule,

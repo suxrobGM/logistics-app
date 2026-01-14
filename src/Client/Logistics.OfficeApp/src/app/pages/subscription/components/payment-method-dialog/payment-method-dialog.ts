@@ -27,7 +27,7 @@ import {
   usBankAccountTypeOptions,
 } from "@/core/api/models";
 import { StripeService, TenantService, ToastService } from "@/core/services";
-import { AddressForm, FormField, StripeCard, ValidationSummary } from "@/shared/components";
+import { AddressForm, LabeledField, StripeCard, ValidationSummary } from "@/shared/components";
 
 const enabledPaymentTypes: PaymentMethodType[] = [
   "card",
@@ -51,7 +51,7 @@ const enabledPaymentTypes: PaymentMethodType[] = [
     InputTextModule,
     KeyFilterModule,
     StripeCard,
-    FormField,
+    LabeledField,
     DividerModule,
   ],
 })

@@ -12,7 +12,7 @@ import { ToastModule } from "primeng/toast";
 import { Api, importLoadFromPdf } from "@/core/api";
 import type { ExtractedLoadDataDto, ImportLoadFromPdfResponse, TruckDto } from "@/core/api";
 import { ToastService } from "@/core/services";
-import { FormField, SearchTruckComponent } from "@/shared/components";
+import { LabeledField, SearchTruckComponent } from "@/shared/components";
 
 @Component({
   selector: "app-load-import",
@@ -27,7 +27,7 @@ import { FormField, SearchTruckComponent } from "@/shared/components";
     ToastModule,
     RouterLink,
     SearchTruckComponent,
-    FormField,
+    LabeledField,
     DividerModule,
   ],
 })
