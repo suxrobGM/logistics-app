@@ -26,24 +26,24 @@ public class PayrollService(
     private async Task ProcessPayrolls(Employee[] employees, List<(DateTime StartDate, DateTime EndDate)> dateRanges)
     {
         var payrollRepository = tenantUow.Repository<PayrollInvoice>();
-        foreach (var range in dateRanges)
+        foreach (var (StartDate, EndDate) in dateRanges)
         {
             foreach (var employee in employees)
             {
                 var isPayrollExisting =
-                    await IsPayrollExisting(payrollRepository, employee.Id, range.StartDate, range.EndDate);
+                    await IsPayrollExisting(payrollRepository, employee.Id, StartDate, EndDate);
 
                 if (isPayrollExisting)
                 {
                     continue;
                 }
 
-                var payroll = CreatePayrollInvoice(employee, range.StartDate, range.EndDate);
+                var payroll = CreatePayrollInvoice(employee, StartDate, EndDate);
                 await payrollRepository.AddAsync(payroll);
 
                 logger.LogInformation(
                     "Generated payrolls for the employee '{EmployeeName}', date range: {StartDate} - {EndDate}",
-                    employee.GetFullName(), range.StartDate.ToShortDateString(), range.EndDate.ToShortDateString());
+                    employee.GetFullName(), StartDate.ToShortDateString(), EndDate.ToShortDateString());
             }
         }
     }

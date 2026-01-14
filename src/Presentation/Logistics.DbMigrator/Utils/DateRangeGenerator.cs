@@ -14,7 +14,9 @@ public static class DateRangeGenerator
             currentEndDate = DateTime.SpecifyKind(currentEndDate, DateTimeKind.Utc);
 
             if (currentEndDate > endDate)
+            {
                 currentEndDate = endDate;
+            }
 
             ranges.Add((currentStartDate, currentEndDate));
             currentStartDate = currentStartDate.AddMonths(1);
@@ -35,7 +37,9 @@ public static class DateRangeGenerator
             currentEndDate = DateTime.SpecifyKind(currentEndDate, DateTimeKind.Utc);
 
             if (currentEndDate > endDate)
+            {
                 currentEndDate = endDate;
+            }
 
             ranges.Add((currentStartDate, currentEndDate));
             currentStartDate = currentEndDate.AddDays(1);

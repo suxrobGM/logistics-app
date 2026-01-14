@@ -10,6 +10,12 @@ builder.AddDockerComposeEnvironment("compose")
 
 var postgres = builder.AddPostgres("postgres", port: 5433)
     .WithImage("postgres:latest")
+    .WithEndpoint("tcp", endpoint =>
+    {
+        endpoint.Port = 5432;
+        endpoint.TargetPort = 5432;
+        endpoint.IsExternal = true;
+    })
     .WithPgAdmin(container =>
         container.WithImage("dpage/pgadmin4:latest").WithHostPort(5434))
     .WithVolume("logistics-pg-data", "/var/lib/postgresql"); // PostgreSQL 18+ uses subdirectories

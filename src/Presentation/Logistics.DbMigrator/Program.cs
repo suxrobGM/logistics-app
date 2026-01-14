@@ -1,4 +1,5 @@
 using Logistics.DbMigrator.Data;
+using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Services;
 using Logistics.DbMigrator.Workers;
 using Logistics.Infrastructure;
@@ -22,11 +23,11 @@ builder.Services.AddInfrastructureLayer(builder.Configuration)
     .AddIdentity();
 
 builder.Services.AddScoped<PayrollService>();
+builder.Services.AddSeeders();
 
 // These hosted services will run in the order they are registered
 builder.Services.AddHostedService<MigrateDatabaseWorker>();
-builder.Services.AddHostedService<SeedDatabaseWorker>();
-builder.Services.AddHostedService<FakeDataWorker>();
+builder.Services.AddHostedService<SeederOrchestrationWorker>();
 builder.Services.AddHostedService<CreateSqlFunctionsWorker>();
 
 builder.Build().Run();
