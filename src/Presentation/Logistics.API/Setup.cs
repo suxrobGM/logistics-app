@@ -152,6 +152,7 @@ internal static class Setup
     public static WebApplication ScheduleJobs(this WebApplication app)
     {
         PayrollGenerationJob.ScheduleJobs();
+        EldSyncJob.ScheduleJobs();
         return app;
     }
 

@@ -53,6 +53,11 @@ export const sidebarItems: MenuItem[] = [
     route: "/trucks",
   },
   {
+    label: "ELD / HOS",
+    icon: "pi pi-clock text-3xl!",
+    route: "/eld",
+  },
+  {
     label: "Employees",
     icon: "pi pi-users text-3xl!",
     route: "/employees",

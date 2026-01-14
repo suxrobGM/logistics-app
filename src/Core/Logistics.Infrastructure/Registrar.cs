@@ -5,6 +5,7 @@ using Logistics.Infrastructure.Builder;
 using Logistics.Infrastructure.Extensions;
 using Logistics.Infrastructure.Interceptors;
 using Logistics.Infrastructure.Options;
+using Logistics.Infrastructure.Services;
 using Logistics.Infrastructure.Services.Trip;
 
 using Microsoft.Extensions.Configuration;
@@ -51,6 +52,12 @@ public static class Registrar
 
         // Geocoding services
         services.AddHttpClient<IGeocodingService, MapboxGeocodingService>();
+
+        // ELD Provider Services
+        services.Configure<EldOptions>(configuration.GetSection("Eld"));
+        services.AddHttpClient<SamsaraEldService>();
+        services.AddHttpClient<MotiveEldService>();
+        services.AddScoped<IEldProviderFactory, EldProviderFactory>();
 
         return new InfrastructureBuilder(services, configuration);
     }

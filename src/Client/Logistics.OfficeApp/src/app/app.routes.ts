@@ -72,6 +72,13 @@ export const appRoutes: Routes = [
     loadChildren: () => import("./pages/trips/trip.routes").then((m) => m.tripRoutes),
   },
   {
+    path: "eld",
+    loadChildren: () => import("./pages/eld/eld.routes").then((m) => m.eldRoutes),
+    data: {
+      breadcrumb: "ELD / HOS",
+    },
+  },
+  {
     path: "",
     component: LoginComponent,
   },

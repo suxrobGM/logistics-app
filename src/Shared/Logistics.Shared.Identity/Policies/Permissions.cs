@@ -124,6 +124,15 @@ public static class Permissions
         public const string Delete = $"{nameof(Permissions)}.{nameof(Payrolls)}.Delete";
     }
 
+    public static class Eld
+    {
+        public const string View = $"{nameof(Permissions)}.{nameof(Eld)}.View";
+        public const string Create = $"{nameof(Permissions)}.{nameof(Eld)}.Create";
+        public const string Edit = $"{nameof(Permissions)}.{nameof(Eld)}.Edit";
+        public const string Delete = $"{nameof(Permissions)}.{nameof(Eld)}.Delete";
+        public const string Sync = $"{nameof(Permissions)}.{nameof(Eld)}.Sync";
+    }
+
     public static IEnumerable<string> GetAll()
     {
         var list = new List<string>();

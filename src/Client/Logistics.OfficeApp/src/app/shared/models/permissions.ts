@@ -65,4 +65,12 @@ export namespace Permissions {
     Edit = "Permissions.Payrolls.Edit",
     Delete = "Permissions.Payrolls.Delete",
   }
+
+  export enum Eld {
+    View = "Permissions.Eld.View",
+    Create = "Permissions.Eld.Create",
+    Edit = "Permissions.Eld.Edit",
+    Delete = "Permissions.Eld.Delete",
+    Sync = "Permissions.Eld.Sync",
+  }
 }

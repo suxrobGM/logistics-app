@@ -18,6 +18,7 @@ public static class TenantRolePermissions
             list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Payments)));
             list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Invoices)));
             list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Payrolls)));
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Eld)));
             return list;
         }
     }
@@ -38,6 +39,7 @@ public static class TenantRolePermissions
             list.Add(Permissions.Employees.Create);
             list.Add(Permissions.Employees.Edit);
             list.Add(Permissions.Stats.View);
+            list.AddRange(Permissions.GeneratePermissions(nameof(Permissions.Eld)));
             return list;
         }
     }
@@ -55,6 +57,7 @@ public static class TenantRolePermissions
             list.Add(Permissions.Invoices.View);
             list.Add(Permissions.Trucks.View);
             list.Add(Permissions.Stats.View);
+            list.Add(Permissions.Eld.View);
             return list;
         }
     }
