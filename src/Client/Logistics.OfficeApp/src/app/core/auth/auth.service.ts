@@ -1,6 +1,6 @@
-import { Injectable, inject } from "@angular/core";
+import { Injectable, inject, signal } from "@angular/core";
 import { EventTypes, OidcSecurityService, PublicEventsService } from "angular-auth-oidc-client";
-import { Observable, filter, map, from, switchMap } from "rxjs";
+import { Observable, filter, from, map, switchMap } from "rxjs";
 import { TenantService } from "@/core/services";
 import { userRoleOptions } from "../../shared/models";
 import { PermissionService } from "./permission.service";
@@ -14,6 +14,13 @@ export class AuthService {
   private readonly permissionService = inject(PermissionService);
 
   private userData: UserData | null = null;
+  private readonly _authInitialized = signal(false);
+
+  /**
+   * Signal indicating whether the initial auth check has completed.
+   * This includes loading user data and permissions.
+   */
+  public readonly authInitialized = this._authInitialized.asReadonly();
 
   /**
    * Register for the event that is emitted when the user is authenticated
@@ -81,8 +88,16 @@ export class AuthService {
         if (response.isAuthenticated) {
           this.userData = new UserData(response.userData);
           this.tenantService.setTenantId(this.userData.tenant);
-          return from(this.permissionService.loadPermissions()).pipe(map(() => true));
+
+          return from(this.permissionService.loadPermissions()).pipe(
+            map(() => {
+              this._authInitialized.set(true);
+              return true;
+            }),
+          );
         }
+
+        this._authInitialized.set(true);
         return from(Promise.resolve(false));
       }),
     );

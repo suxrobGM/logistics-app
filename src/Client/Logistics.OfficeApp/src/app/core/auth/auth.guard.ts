@@ -1,9 +1,10 @@
 import { inject } from "@angular/core";
+import { toObservable } from "@angular/core/rxjs-interop";
 import { type CanActivateFn, Router } from "@angular/router";
-import { map } from "rxjs";
+import { filter, map, switchMap, take } from "rxjs";
 import { AuthService } from "@/core/auth";
-import { PermissionService } from "./permission.service";
 import { TenantService } from "../services";
+import { PermissionService } from "./permission.service";
 
 export const authGuard: CanActivateFn = (route) => {
   const authService = inject(AuthService);
@@ -11,7 +12,11 @@ export const authGuard: CanActivateFn = (route) => {
   const tenantService = inject(TenantService);
   const permissionService = inject(PermissionService);
 
-  return authService.onAuthenticated().pipe(
+  // Wait for auth initialization to complete before checking permissions
+  return toObservable(authService.authInitialized).pipe(
+    filter((initialized) => initialized),
+    take(1),
+    switchMap(() => authService.onAuthenticated()),
     map((isAuthenticated) => {
       const permission = route.data["permission"] as string;
       const hasAccess = !permission || permissionService.hasPermission(permission);
