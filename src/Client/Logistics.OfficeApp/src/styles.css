@@ -67,4 +67,13 @@ body {
     display: inline-block;
     margin-bottom: 0.5rem;
   }
+
+  a {
+    color: #2563eb;
+    text-decoration: underline;
+
+    &:hover {
+      color: #1e40af;
+    }
+  }
 }
