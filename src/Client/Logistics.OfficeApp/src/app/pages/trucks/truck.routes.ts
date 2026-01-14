@@ -1,6 +1,6 @@
 import type { Routes } from "@angular/router";
 import { authGuard } from "@/core/auth";
-import { Permissions } from "@/shared/models";
+import { Permission } from "@/shared/models";
 import { TruckDetailsComponent } from "./truck-details/truck-details";
 import { TruckEditComponent } from "./truck-edit/truck-edit";
 import { TrucksListComponent } from "./trucks-list/trucks-list";
@@ -12,7 +12,7 @@ export const truckRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "",
-      permission: Permissions.Trucks.View,
+      permission: Permission.Truck.View,
     },
   },
   {
@@ -21,7 +21,7 @@ export const truckRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Add",
-      permission: Permissions.Trucks.Create,
+      permission: Permission.Truck.Manage,
     },
   },
   {
@@ -30,7 +30,7 @@ export const truckRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Edit",
-      permission: Permissions.Trucks.Edit,
+      permission: Permission.Truck.Manage,
     },
   },
   {
@@ -39,7 +39,7 @@ export const truckRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Details",
-      permission: Permissions.Trucks.View,
+      permission: Permission.Truck.View,
     },
   },
 ];

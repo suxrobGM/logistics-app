@@ -8,7 +8,7 @@ import {
 } from "primeng/autocomplete";
 import { Button } from "primeng/button";
 import { Dialog } from "primeng/dialog";
-import { Api, type CustomerDto, createCustomer$Json, getCustomers$Json } from "@/core/api";
+import { Api, type CustomerDto, createCustomer, getCustomers } from "@/core/api";
 import { ToastService } from "@/core/services";
 import { CustomerForm, type CustomerFormValue } from "../customer-form/customer-form";
 
@@ -46,7 +46,7 @@ export class SearchCustomerComponent implements ControlValueAccessor {
     }
 
     try {
-      const result = await this.api.invoke(getCustomers$Json, { Search: q });
+      const result = await this.api.invoke(getCustomers, { Search: q });
       const items = result.items ?? [];
       this.suggestedCustomers.set(items); // [] triggers the "empty" template
     } catch {
@@ -66,7 +66,7 @@ export class SearchCustomerComponent implements ControlValueAccessor {
   }
 
   protected async createCustomer(formValue: CustomerFormValue): Promise<void> {
-    const result = await this.api.invoke(createCustomer$Json, { body: formValue });
+    const result = await this.api.invoke(createCustomer, { body: formValue });
     if (result) {
       this.toastService.showSuccess("A new customer has been created successfully");
       this.customerDialogVisible.set(false);

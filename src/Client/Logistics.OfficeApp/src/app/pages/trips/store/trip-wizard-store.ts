@@ -2,7 +2,7 @@ import { computed, inject } from "@angular/core";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 import { rxMethod } from "@ngrx/signals/rxjs-interop";
 import { from, pipe, switchMap, tap } from "rxjs";
-import { Api, optimizeTripStops$Json } from "@/core/api";
+import { Api, optimizeTripStops } from "@/core/api";
 import type {
   CreateTripLoadCommand,
   OptimizeTripStopsCommand,
@@ -323,7 +323,7 @@ export const TripWizardStore = signalStore(
           };
 
           return from(
-            api.invoke(optimizeTripStops$Json, {
+            api.invoke(optimizeTripStops, {
               body: command,
             }),
           ).pipe(
@@ -367,7 +367,7 @@ export const TripWizardStore = signalStore(
           };
 
           return from(
-            api.invoke(optimizeTripStops$Json, {
+            api.invoke(optimizeTripStops, {
               body: command,
             }),
           ).pipe(

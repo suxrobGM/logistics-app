@@ -14,6 +14,7 @@ namespace Logistics.API.Controllers;
 
 [ApiController]
 [Route("tenants")]
+[Produces("application/json")]
 public class TenantController(IMediator mediator) : ControllerBase
 {
     #region Tenants
@@ -37,7 +38,7 @@ public class TenantController(IMediator mediator) : ControllerBase
 
     [HttpGet(Name = "GetTenants")]
     [ProducesResponseType(typeof(PagedResponse<TenantDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permissions.Tenants.View)]
+    [Authorize(Policy = Permission.Tenant.View)]
     public async Task<IActionResult> GetTenantList([FromQuery] GetTenantsQuery query)
     {
         if (User.HasOneTheseRoles(AppRoles.SuperAdmin, AppRoles.Admin))
@@ -52,7 +53,7 @@ public class TenantController(IMediator mediator) : ControllerBase
     [HttpPost(Name = "CreateTenant")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Tenants.Create)]
+    [Authorize(Policy = Permission.Tenant.Manage)]
     public async Task<IActionResult> CreateTenant([FromBody] CreateTenantCommand request)
     {
         var result = await mediator.Send(request);
@@ -62,7 +63,7 @@ public class TenantController(IMediator mediator) : ControllerBase
     [HttpPut("{id:guid}", Name = "UpdateTenant")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Tenants.Edit)]
+    [Authorize(Policy = Permission.Tenant.Manage)]
     public async Task<IActionResult> UpdateTenant(Guid id, [FromBody] UpdateTenantCommand request)
     {
         request.Id = id;
@@ -73,7 +74,7 @@ public class TenantController(IMediator mediator) : ControllerBase
     [HttpDelete("{id:guid}", Name = "DeleteTenant")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Policy = Permissions.Tenants.Delete)]
+    [Authorize(Policy = Permission.Tenant.Manage)]
     public async Task<IActionResult> DeleteTenant(Guid id)
     {
         var result = await mediator.Send(new DeleteTenantCommand { Id = id });

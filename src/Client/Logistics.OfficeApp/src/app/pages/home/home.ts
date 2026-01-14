@@ -5,11 +5,11 @@ import { SharedModule } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
+import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { DividerModule } from "primeng/divider";
-import { Api, getDailyGrosses$Json, getLoads$Json } from "@/core/api";
+import { Api, getDailyGrosses, getLoads } from "@/core/api";
 import type { AddressDto, DailyGrossesDto, LoadDto } from "@/core/api/models";
 import { TrucksMap } from "@/shared/components";
 import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
@@ -81,7 +81,7 @@ export class HomeComponent implements OnInit {
   private async fetchActiveLoads(): Promise<void> {
     this.isLoadingLoadsData.set(true);
 
-    const result = await this.api.invoke(getLoads$Json, {
+    const result = await this.api.invoke(getLoads, {
       OrderBy: "-DispatchedAt",
       OnlyActiveLoads: true,
     });
@@ -96,7 +96,7 @@ export class HomeComponent implements OnInit {
     this.isLoadingChartData.set(true);
     const oneWeekAgo = DateUtils.daysAgo(7);
 
-    const result = await this.api.invoke(getDailyGrosses$Json, {
+    const result = await this.api.invoke(getDailyGrosses, {
       StartDate: oneWeekAgo.toISOString(),
     });
     if (result) {

@@ -13,12 +13,13 @@ namespace Logistics.API.Controllers;
 
 [ApiController]
 [Route("trucks")]
+[Produces("application/json")]
 public class TruckController(IMediator mediator) : ControllerBase
 {
     [HttpGet("{truckOrDriverId:guid}", Name = "GetTruckById")]
     [ProducesResponseType(typeof(TruckDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Policy = Permissions.Trucks.View)]
+    [Authorize(Policy = Permission.Truck.View)]
     public async Task<IActionResult> GetById(Guid truckOrDriverId, [FromQuery] GetTruckQuery request)
     {
         request.TruckOrDriverId = truckOrDriverId;
@@ -28,7 +29,7 @@ public class TruckController(IMediator mediator) : ControllerBase
 
     [HttpGet(Name = "GetTrucks")]
     [ProducesResponseType(typeof(PagedResponse<TruckDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permissions.Trucks.View)]
+    [Authorize(Policy = Permission.Truck.View)]
     public async Task<IActionResult> GetList([FromQuery] GetTrucksQuery query)
     {
         var result = await mediator.Send(query);
@@ -38,7 +39,7 @@ public class TruckController(IMediator mediator) : ControllerBase
     [HttpPost(Name = "CreateTruck")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Trucks.Create)]
+    [Authorize(Policy = Permission.Truck.Manage)]
     public async Task<IActionResult> Create([FromBody] CreateTruckCommand request)
     {
         var result = await mediator.Send(request);
@@ -48,7 +49,7 @@ public class TruckController(IMediator mediator) : ControllerBase
     [HttpPut("{id:guid}", Name = "UpdateTruck")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Trucks.Edit)]
+    [Authorize(Policy = Permission.Truck.Manage)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateTruckCommand request)
     {
         request.Id = id;
@@ -59,7 +60,7 @@ public class TruckController(IMediator mediator) : ControllerBase
     [HttpDelete("{id:guid}", Name = "DeleteTruck")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Policy = Permissions.Trucks.Delete)]
+    [Authorize(Policy = Permission.Truck.Manage)]
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteTruckCommand { Id = id });

@@ -1,8 +1,9 @@
 import { Injectable, inject } from "@angular/core";
 import { EventTypes, OidcSecurityService, PublicEventsService } from "angular-auth-oidc-client";
-import { Observable, filter, map } from "rxjs";
+import { Observable, filter, map, from, switchMap } from "rxjs";
 import { TenantService } from "@/core/services";
 import { userRoleOptions } from "../../shared/models";
+import { PermissionService } from "./permission.service";
 import { UserData } from "./user-data";
 
 @Injectable({ providedIn: "root" })
@@ -10,6 +11,7 @@ export class AuthService {
   private readonly oidcService = inject(OidcSecurityService);
   private readonly eventService = inject(PublicEventsService);
   private readonly tenantService = inject(TenantService);
+  private readonly permissionService = inject(PermissionService);
 
   private userData: UserData | null = null;
 
@@ -64,24 +66,24 @@ export class AuthService {
   logout(): void {
     this.oidcService.logoff().subscribe(() => {
       this.userData = null;
+      this.permissionService.clearPermissions();
     });
   }
 
   /**
    * Initiate the authentication process and check if the user is authenticated
-   * If the user is authenticated, set the user data and tenant ID
+   * If the user is authenticated, set the user data, tenant ID, and load permissions
    * @returns An observable that emits a boolean value indicating whether the user is authenticated
    */
   checkAuth(): Observable<boolean> {
     return this.oidcService.checkAuth().pipe(
-      map((response) => {
+      switchMap((response) => {
         if (response.isAuthenticated) {
           this.userData = new UserData(response.userData);
           this.tenantService.setTenantId(this.userData.tenant);
+          return from(this.permissionService.loadPermissions()).pipe(map(() => true));
         }
-
-        console.log("User data:", this.userData);
-        return response.isAuthenticated;
+        return from(Promise.resolve(false));
       }),
     );
   }

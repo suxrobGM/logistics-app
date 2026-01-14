@@ -1,5 +1,5 @@
 import { DatePipe } from "@angular/common";
-import { Component, computed, inject, type OnInit, signal } from "@angular/core";
+import { Component, type OnInit, computed, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -7,10 +7,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { Api } from "@/core/api";
-import { getAllDriversHos$Json } from "@/core/api/generated/fn/eld/get-all-drivers-hos-json";
-import { syncAllDriversHos } from "@/core/api/generated/fn/eld/sync-all-drivers-hos";
-import type { DriverHosStatusDto } from "@/core/api/generated/models/driver-hos-status-dto";
+import { Api, getAllDriversHos, syncAllDriversHos, type DriverHosStatusDto } from "@/core/api";
 
 @Component({
   selector: "app-eld-dashboard",
@@ -34,11 +31,11 @@ export class EldDashboardComponent implements OnInit {
   protected readonly drivers = signal<DriverHosStatusDto[]>([]);
 
   protected readonly availableDrivers = computed(() =>
-    this.drivers().filter((d) => d.isAvailableForDispatch)
+    this.drivers().filter((d) => d.isAvailableForDispatch),
   );
 
-  protected readonly violationCount = computed(() =>
-    this.drivers().filter((d) => d.isInViolation).length
+  protected readonly violationCount = computed(
+    () => this.drivers().filter((d) => d.isInViolation).length,
   );
 
   ngOnInit(): void {
@@ -50,7 +47,7 @@ export class EldDashboardComponent implements OnInit {
     this.error.set(null);
 
     try {
-      const data = await this.api.invoke(getAllDriversHos$Json);
+      const data = await this.api.invoke(getAllDriversHos);
       this.drivers.set(data ?? []);
     } catch (err) {
       this.error.set("Failed to load driver HOS status");
@@ -73,7 +70,9 @@ export class EldDashboardComponent implements OnInit {
     }
   }
 
-  protected getDutyStatusSeverity(status: number): "success" | "info" | "warn" | "danger" | "secondary" {
+  protected getDutyStatusSeverity(
+    status: number,
+  ): "success" | "info" | "warn" | "danger" | "secondary" {
     switch (status) {
       case 0: // OffDuty
         return "secondary";

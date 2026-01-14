@@ -8,13 +8,7 @@ import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
-import {
-  Api,
-  deleteDocument,
-  downloadDocument$Json,
-  getDocuments$Json,
-  uploadDocument$Json,
-} from "@/core/api";
+import { Api, deleteDocument, downloadDocument, getDocuments, uploadDocument } from "@/core/api";
 import type { DocumentDto, DocumentStatus, DocumentType } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { downloadBlobFile } from "@/shared/utils";
@@ -56,7 +50,7 @@ export class DocumentManagerComponent implements OnInit {
   protected async refresh(): Promise<void> {
     this.isLoading.set(true);
 
-    const result = await this.api.invoke(getDocuments$Json, {
+    const result = await this.api.invoke(getDocuments, {
       OwnerType: this.employeeId() ? "employee" : "load",
       OwnerId: this.employeeId() || this.loadId() || "",
     });
@@ -88,7 +82,7 @@ export class DocumentManagerComponent implements OnInit {
     this.uploadProgress.set({ [type]: 0 });
 
     try {
-      await this.api.invoke(uploadDocument$Json, {
+      await this.api.invoke(uploadDocument, {
         body: {
           OwnerType: ownerType,
           OwnerId: ownerId,
@@ -110,7 +104,7 @@ export class DocumentManagerComponent implements OnInit {
 
   protected async download(row: DocumentDto): Promise<void> {
     try {
-      const blob = await this.api.invoke(downloadDocument$Json, { documentId: row.id! });
+      const blob = await this.api.invoke(downloadDocument, { documentId: row.id! });
       const fileName = row.originalFileName || row.fileName;
       downloadBlobFile(blob, fileName!);
     } catch {

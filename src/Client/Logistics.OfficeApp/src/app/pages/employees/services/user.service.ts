@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
 import { Observable, from, map } from "rxjs";
-import { Api, getTenantRoles$Json, getUsers$Json } from "@/core/api";
+import { Api, getTenantRoles, getUsers } from "@/core/api";
 import type { RoleDto, RoleDtoPagedResponse, UserDto } from "@/core/api/models";
 import { AuthService } from "@/core/auth";
 import { UserRole } from "@/shared/models";
@@ -19,13 +19,13 @@ export class UserService {
   }
 
   searchUser(searchQuery: string): Observable<UserDto[] | undefined> {
-    const users$ = from(this.api.invoke(getUsers$Json, { Search: searchQuery }));
+    const users$ = from(this.api.invoke(getUsers, { Search: searchQuery }));
     return users$.pipe(map((i) => i.items ?? undefined));
   }
 
   fetchRoles(): Observable<RoleDto[]> {
     const dummyRole: RoleDto = { name: "", displayName: " " };
-    const roles$ = from(this.api.invoke(getTenantRoles$Json, {}));
+    const roles$ = from(this.api.invoke(getTenantRoles, {}));
 
     return roles$.pipe(
       map((result: RoleDtoPagedResponse) => {

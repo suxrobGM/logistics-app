@@ -10,6 +10,7 @@ namespace Logistics.API.Controllers;
 
 [ApiController]
 [Route("payments")]
+[Produces("application/json")]
 public class PaymentController(IMediator mediator) : ControllerBase
 {
     #region Payments
@@ -17,7 +18,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     [HttpGet("{id:guid}", Name = "GetPaymentById")]
     [ProducesResponseType(typeof(PaymentDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Policy = Permissions.Payments.View)]
+    [Authorize(Policy = Permission.Payment.View)]
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await mediator.Send(new GetPaymentQuery { Id = id });
@@ -26,7 +27,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
 
     [HttpGet(Name = "GetPayments")]
     [ProducesResponseType(typeof(PagedResponse<PaymentDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permissions.Payments.View)]
+    [Authorize(Policy = Permission.Payment.View)]
     public async Task<IActionResult> GetList([FromQuery] GetPaymentsQuery query)
     {
         var result = await mediator.Send(query);
@@ -36,7 +37,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     [HttpPost(Name = "CreatePayment")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Payments.Create)]
+    [Authorize(Policy = Permission.Payment.Manage)]
     public async Task<IActionResult> Create([FromBody] CreatePaymentCommand request)
     {
         var result = await mediator.Send(request);
@@ -56,7 +57,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     [HttpPut("{id:guid}", Name = "UpdatePayment")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Payments.Edit)]
+    [Authorize(Policy = Permission.Payment.Manage)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdatePaymentCommand request)
     {
         request.Id = id;
@@ -67,7 +68,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     [HttpDelete("{id:guid}", Name = "DeletePayment")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Policy = Permissions.Payments.Delete)]
+    [Authorize(Policy = Permission.Payment.Manage)]
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteCustomerCommand { Id = id });
@@ -82,7 +83,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     [HttpGet("methods/{id:guid}", Name = "GetPaymentMethodById")]
     [ProducesResponseType(typeof(PaymentMethodDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Policy = Permissions.Payments.View)]
+    [Authorize(Policy = Permission.Payment.View)]
     public async Task<IActionResult> GetPaymentMethodById(Guid id)
     {
         var result = await mediator.Send(new GetPaymentMethodQuery { Id = id });
@@ -92,7 +93,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     [HttpGet("methods", Name = "GetPaymentMethods")]
     [ProducesResponseType(typeof(PaymentMethodDto[]), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Payments.View)]
+    [Authorize(Policy = Permission.Payment.View)]
     public async Task<IActionResult> GetPaymentMethods([FromQuery] GetPaymentMethodsQuery query)
     {
         var result = await mediator.Send(query);
@@ -102,7 +103,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     [HttpPost("methods", Name = "CreatePaymentMethod")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Payments.Create)]
+    [Authorize(Policy = Permission.Payment.Manage)]
     public async Task<IActionResult> CreatePaymentMethod([FromBody] CreatePaymentMethodCommand request)
     {
         var result = await mediator.Send(request);
@@ -112,7 +113,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     [HttpPost("methods/setup-intent", Name = "CreateSetupIntent")]
     [ProducesResponseType(typeof(SetupIntentDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Payments.Create)]
+    [Authorize(Policy = Permission.Payment.Manage)]
     public async Task<IActionResult> CreateSetupIntent()
     {
         var result = await mediator.Send(new CreateSetupIntentCommand());
@@ -122,7 +123,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     [HttpPut("methods", Name = "UpdatePaymentMethod")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Payments.Edit)]
+    [Authorize(Policy = Permission.Payment.Manage)]
     public async Task<IActionResult> UpdatePaymentMethod([FromBody] UpdatePaymentMethodCommand request)
     {
         var result = await mediator.Send(request);
@@ -132,7 +133,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     [HttpPut("methods/default", Name = "SetDefaultPaymentMethod")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Payments.Edit)]
+    [Authorize(Policy = Permission.Payment.Manage)]
     public async Task<IActionResult> SetDefaultPaymentMethod([FromBody] SetDefaultPaymentMethodCommand request)
     {
         var result = await mediator.Send(request);
@@ -142,7 +143,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     [HttpDelete("methods/{id:guid}", Name = "DeletePaymentMethod")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Policy = Permissions.Payments.Edit)]
+    [Authorize(Policy = Permission.Payment.Manage)]
     public async Task<IActionResult> DeletePaymentMethod(Guid id)
     {
         var result = await mediator.Send(new DeletePaymentMethodCommand { Id = id });

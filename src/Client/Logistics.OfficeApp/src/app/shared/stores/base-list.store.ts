@@ -34,8 +34,8 @@ function getInitialState<T>(config?: { defaultPageSize?: number }): ListState<T>
  *
  * @example
  * ```typescript
- * export const CustomersListStore = createListStore<CustomerDto, GetCustomers$Json$Params>({
- *   apiFn: getCustomers$Json,
+ * export const CustomersListStore = createListStore<CustomerDto, GetCustomers$Params>({
+ *   apiFn: getCustomers,
  *   defaultSortField: 'Name',
  *   defaultPageSize: 10,
  * });

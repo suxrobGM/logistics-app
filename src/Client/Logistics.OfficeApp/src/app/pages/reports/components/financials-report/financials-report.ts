@@ -9,12 +9,8 @@ import { InputTextModule } from "primeng/inputtext";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
-import { getFinancialsReport$Json } from "@/core/api";
-import type {
-  FinancialMetricDto,
-  FinancialsReportDto,
-  RevenueTrendDto,
-} from "@/core/api/models";
+import { getFinancialsReport } from "@/core/api";
+import type { FinancialMetricDto, FinancialsReportDto, RevenueTrendDto } from "@/core/api/models";
 import { RangeCalendar } from "@/shared/components";
 import {
   BaseReportComponent,
@@ -64,7 +60,7 @@ export class FinancialsReportComponent
   }
 
   protected override async query(params: ReportQueryParams): Promise<FinancialsReportDto> {
-    return this.api.invoke(getFinancialsReport$Json, {
+    return this.api.invoke(getFinancialsReport, {
       StartDate: params.startDate.toISOString(),
       EndDate: params.endDate?.toISOString(),
     });

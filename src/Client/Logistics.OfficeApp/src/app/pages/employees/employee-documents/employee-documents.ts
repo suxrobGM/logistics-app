@@ -3,7 +3,7 @@ import { RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ToastModule } from "primeng/toast";
-import { Api, getEmployeeById$Json } from "@/core/api";
+import { Api, getEmployeeById } from "@/core/api";
 import type { DocumentType, EmployeeDto } from "@/core/api/models";
 import { DocumentManagerComponent } from "@/shared/components/document-manager/document-manager";
 
@@ -32,7 +32,7 @@ export class EmployeeDocumentsPage implements OnInit {
   }
 
   private async fetchEmployee(): Promise<void> {
-    const result = await this.api.invoke(getEmployeeById$Json, { userId: this.id() });
+    const result = await this.api.invoke(getEmployeeById, { userId: this.id() });
     if (result) {
       this.employee.set(result);
     }

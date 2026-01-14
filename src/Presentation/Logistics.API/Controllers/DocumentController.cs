@@ -11,6 +11,7 @@ namespace Logistics.API.Controllers;
 
 [ApiController]
 [Route("documents")]
+[Produces("application/json")]
 public class DocumentController(IMediator mediator) : ControllerBase
 {
     // GET /documents/{owner}/{ownerId}

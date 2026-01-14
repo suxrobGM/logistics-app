@@ -4,7 +4,7 @@ import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
-import { Api, deleteLoad, getLoadById$Json, updateLoad } from "@/core/api";
+import { Api, deleteLoad, getLoadById, updateLoad } from "@/core/api";
 import type { UpdateLoadCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { LoadFormComponent, type LoadFormValue } from "@/shared/components";
@@ -67,7 +67,7 @@ export class LoadEditComponent implements OnInit {
   private async fetchLoad(loadId: string): Promise<void> {
     this.isLoading.set(true);
 
-    const load = await this.api.invoke(getLoadById$Json, { id: loadId });
+    const load = await this.api.invoke(getLoadById, { id: loadId });
     if (!load) {
       return;
     }

@@ -2,13 +2,13 @@ using System.Reflection;
 
 namespace Logistics.Shared.Identity.Policies;
 
-public static class Permissions
+public static class Permission
 {
     private static readonly Dictionary<string, IEnumerable<string>> Modules;
 
-    static Permissions()
+    static Permission()
     {
-        Modules = typeof(Permissions)
+        Modules = typeof(Permission)
             .GetNestedTypes(BindingFlags.Public | BindingFlags.Static)
             .Where(type => type is { IsClass: true, IsSealed: true, IsAbstract: true })
             .ToDictionary(
@@ -19,118 +19,94 @@ public static class Permissions
             );
     }
 
-    public static class AppRoles
+    public static class AppRole
     {
-        public const string Create = $"{nameof(Permissions)}.{nameof(AppRoles)}.Create";
-        public const string View = $"{nameof(Permissions)}.{nameof(AppRoles)}.View";
-        public const string Edit = $"{nameof(Permissions)}.{nameof(AppRoles)}.Edit";
-        public const string Delete = $"{nameof(Permissions)}.{nameof(AppRoles)}.Delete";
+        public const string View = $"{nameof(Permission)}.{nameof(AppRole)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(AppRole)}.Manage";
     }
 
-    public static class Employees
+    public static class Employee
     {
-        public const string Create = $"{nameof(Permissions)}.{nameof(Employees)}.Create";
-        public const string View = $"{nameof(Permissions)}.{nameof(Employees)}.View";
-        public const string Edit = $"{nameof(Permissions)}.{nameof(Employees)}.Edit";
-        public const string Delete = $"{nameof(Permissions)}.{nameof(Employees)}.Delete";
+        public const string View = $"{nameof(Permission)}.{nameof(Employee)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Employee)}.Manage";
     }
 
-    public static class Customers
+    public static class Customer
     {
-        public const string Create = $"{nameof(Permissions)}.{nameof(Customers)}.Create";
-        public const string View = $"{nameof(Permissions)}.{nameof(Customers)}.View";
-        public const string Edit = $"{nameof(Permissions)}.{nameof(Customers)}.Edit";
-        public const string Delete = $"{nameof(Permissions)}.{nameof(Customers)}.Delete";
+        public const string View = $"{nameof(Permission)}.{nameof(Customer)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Customer)}.Manage";
     }
 
-    public static class Drivers
+    public static class Driver
     {
-        public const string View = $"{nameof(Permissions)}.{nameof(Drivers)}.View";
-        public const string Edit = $"{nameof(Permissions)}.{nameof(Drivers)}.Edit";
+        public const string View = $"{nameof(Permission)}.{nameof(Driver)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Driver)}.Manage";
     }
 
-    public static class Notifications
+    public static class Notification
     {
-        public const string View = $"{nameof(Permissions)}.{nameof(Notifications)}.View";
-        public const string Edit = $"{nameof(Permissions)}.{nameof(Notifications)}.Edit";
+        public const string View = $"{nameof(Permission)}.{nameof(Notification)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Notification)}.Manage";
     }
 
-    public static class Loads
+    public static class Load
     {
-        public const string Create = $"{nameof(Permissions)}.{nameof(Loads)}.Create";
-        public const string View = $"{nameof(Permissions)}.{nameof(Loads)}.View";
-        public const string Edit = $"{nameof(Permissions)}.{nameof(Loads)}.Edit";
-        public const string Delete = $"{nameof(Permissions)}.{nameof(Loads)}.Delete";
+        public const string View = $"{nameof(Permission)}.{nameof(Load)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Load)}.Manage";
     }
 
-    public static class Stats
+    public static class Stat
     {
-        public const string View = $"{nameof(Permissions)}.{nameof(Stats)}.View";
+        public const string View = $"{nameof(Permission)}.{nameof(Stat)}.View";
     }
 
-    public static class Tenants
+    public static class Tenant
     {
-        public const string Create = $"{nameof(Permissions)}.{nameof(Tenants)}.Create";
-        public const string View = $"{nameof(Permissions)}.{nameof(Tenants)}.View";
-        public const string Edit = $"{nameof(Permissions)}.{nameof(Tenants)}.Edit";
-        public const string Delete = $"{nameof(Permissions)}.{nameof(Tenants)}.Delete";
+        public const string View = $"{nameof(Permission)}.{nameof(Tenant)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Tenant)}.Manage";
     }
 
-    public static class TenantRoles
+    public static class TenantRole
     {
-        public const string Create = $"{nameof(Permissions)}.{nameof(TenantRoles)}.Create";
-        public const string View = $"{nameof(Permissions)}.{nameof(TenantRoles)}.View";
-        public const string Edit = $"{nameof(Permissions)}.{nameof(TenantRoles)}.Edit";
-        public const string Delete = $"{nameof(Permissions)}.{nameof(TenantRoles)}.Delete";
+        public const string View = $"{nameof(Permission)}.{nameof(TenantRole)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(TenantRole)}.Manage";
     }
 
-    public static class Trucks
+    public static class Truck
     {
-        public const string Create = $"{nameof(Permissions)}.{nameof(Trucks)}.Create";
-        public const string View = $"{nameof(Permissions)}.{nameof(Trucks)}.View";
-        public const string Edit = $"{nameof(Permissions)}.{nameof(Trucks)}.Edit";
-        public const string Delete = $"{nameof(Permissions)}.{nameof(Trucks)}.Delete";
+        public const string View = $"{nameof(Permission)}.{nameof(Truck)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Truck)}.Manage";
     }
 
-    public static class Users
+    public static class User
     {
-        public const string Create = $"{nameof(Permissions)}.{nameof(Users)}.Create";
-        public const string View = $"{nameof(Permissions)}.{nameof(Users)}.View";
-        public const string Edit = $"{nameof(Permissions)}.{nameof(Users)}.Edit";
-        public const string Delete = $"{nameof(Permissions)}.{nameof(Users)}.Delete";
+        public const string View = $"{nameof(Permission)}.{nameof(User)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(User)}.Manage";
     }
 
-    public static class Payments
+    public static class Payment
     {
-        public const string Create = $"{nameof(Permissions)}.{nameof(Payments)}.Create";
-        public const string View = $"{nameof(Permissions)}.{nameof(Payments)}.View";
-        public const string Edit = $"{nameof(Permissions)}.{nameof(Payments)}.Edit";
-        public const string Delete = $"{nameof(Permissions)}.{nameof(Payments)}.Delete";
+        public const string View = $"{nameof(Permission)}.{nameof(Payment)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Payment)}.Manage";
     }
 
-    public static class Invoices
+    public static class Invoice
     {
-        public const string Create = $"{nameof(Permissions)}.{nameof(Invoices)}.Create";
-        public const string View = $"{nameof(Permissions)}.{nameof(Invoices)}.View";
-        public const string Edit = $"{nameof(Permissions)}.{nameof(Invoices)}.Edit";
-        public const string Delete = $"{nameof(Permissions)}.{nameof(Invoices)}.Delete";
+        public const string View = $"{nameof(Permission)}.{nameof(Invoice)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Invoice)}.Manage";
     }
 
-    public static class Payrolls
+    public static class Payroll
     {
-        public const string Create = $"{nameof(Permissions)}.{nameof(Payrolls)}.Create";
-        public const string View = $"{nameof(Permissions)}.{nameof(Payrolls)}.View";
-        public const string Edit = $"{nameof(Permissions)}.{nameof(Payrolls)}.Edit";
-        public const string Delete = $"{nameof(Permissions)}.{nameof(Payrolls)}.Delete";
+        public const string View = $"{nameof(Permission)}.{nameof(Payroll)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Payroll)}.Manage";
     }
 
     public static class Eld
     {
-        public const string View = $"{nameof(Permissions)}.{nameof(Eld)}.View";
-        public const string Create = $"{nameof(Permissions)}.{nameof(Eld)}.Create";
-        public const string Edit = $"{nameof(Permissions)}.{nameof(Eld)}.Edit";
-        public const string Delete = $"{nameof(Permissions)}.{nameof(Eld)}.Delete";
-        public const string Sync = $"{nameof(Permissions)}.{nameof(Eld)}.Sync";
+        public const string View = $"{nameof(Permission)}.{nameof(Eld)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Eld)}.Manage";
+        public const string Sync = $"{nameof(Permission)}.{nameof(Eld)}.Sync";
     }
 
     public static IEnumerable<string> GetAll()

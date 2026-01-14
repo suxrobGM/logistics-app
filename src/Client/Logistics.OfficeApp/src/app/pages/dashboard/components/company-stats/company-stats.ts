@@ -4,7 +4,7 @@ import { SharedModule } from "primeng/api";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
-import { Api, getCompanyStats$Json } from "@/core/api";
+import { Api, getCompanyStats } from "@/core/api";
 import type { CompanyStatsDto } from "@/core/api/models";
 import { Converters } from "@/shared/utils";
 
@@ -43,7 +43,7 @@ export class CompanyStatsComponent {
   private async fetchCompanyStats(): Promise<void> {
     this.isLoading.set(true);
 
-    const result = await this.api.invoke(getCompanyStats$Json, {});
+    const result = await this.api.invoke(getCompanyStats, {});
     if (result) {
       this.companyStats.set(result);
       this.rpm.set((result.totalGross ?? 0) / Converters.metersTo(result.totalDistance ?? 0, "mi"));

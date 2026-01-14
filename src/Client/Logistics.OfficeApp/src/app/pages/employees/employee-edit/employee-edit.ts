@@ -10,7 +10,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
-import { Api, getEmployeeById$Json, updateEmployee } from "@/core/api";
+import { Api, getEmployeeById, updateEmployee } from "@/core/api";
 import {
   type EmployeeDto,
   type SalaryType,
@@ -147,7 +147,7 @@ export class EmployeeEditComponent implements OnInit {
   private async fetchEmployee(): Promise<void> {
     this.isLoading.set(true);
 
-    const result = await this.api.invoke(getEmployeeById$Json, { userId: this.id()! });
+    const result = await this.api.invoke(getEmployeeById, { userId: this.id()! });
     if (result) {
       this.employee.set(result);
       const employeeRoles = this.employee()

@@ -7,6 +7,7 @@ namespace Logistics.API.Controllers;
 
 [ApiController]
 [Route("")]
+[Produces("application/json")]
 public class DefaultController : ControllerBase
 {
     [HttpGet(Name = "GetApiStatus")]

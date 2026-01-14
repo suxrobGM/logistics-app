@@ -2,7 +2,7 @@
 import { Component, forwardRef, inject, input, model, output, signal } from "@angular/core";
 import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
-import { Api, type LoadDto, getLoadById$Json, getLoads$Json } from "@/core/api";
+import { Api, type LoadDto, getLoadById, getLoads } from "@/core/api";
 import { LoadStatusTag } from "../tags/load-status-tag/load-status-tag";
 
 /**
@@ -31,7 +31,7 @@ export class SearchLoadComponent implements ControlValueAccessor {
   public readonly selectedLoadChange = output<LoadDto | null>();
 
   protected async searchLoad(event: { query: string }): Promise<void> {
-    const result = await this.api.invoke(getLoads$Json, {
+    const result = await this.api.invoke(getLoads, {
       Search: event.query,
       OnlyActiveLoads: this.filterActiveLoads(),
     });
@@ -54,7 +54,7 @@ export class SearchLoadComponent implements ControlValueAccessor {
       return;
     }
 
-    const result = await this.api.invoke(getLoadById$Json, { id: loadId });
+    const result = await this.api.invoke(getLoadById, { id: loadId });
     if (result) {
       this.selectedLoad.set(result);
     }

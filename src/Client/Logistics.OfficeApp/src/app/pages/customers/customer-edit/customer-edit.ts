@@ -2,7 +2,7 @@ import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { Api, deleteCustomer, getCustomerById$Json, updateCustomer } from "@/core/api";
+import { Api, deleteCustomer, getCustomerById, updateCustomer } from "@/core/api";
 import type { UpdateCustomerCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { CustomerForm, type CustomerFormValue } from "@/shared/components";
@@ -56,7 +56,7 @@ export class CustomerEditComponent implements OnInit {
   private async fetchCustomer(customerId: string): Promise<void> {
     this.isLoading.set(true);
 
-    const customer = await this.api.invoke(getCustomerById$Json, { id: customerId });
+    const customer = await this.api.invoke(getCustomerById, { id: customerId });
     if (customer) {
       this.initialData.set({ name: customer.name ?? undefined });
     }

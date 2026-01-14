@@ -2,7 +2,7 @@ import { CurrencyPipe } from "@angular/common";
 import { Component, type OnInit, inject, signal } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { Api, getSubscriptionPlans$Json } from "@/core/api";
+import { Api, getSubscriptionPlans } from "@/core/api";
 import type { SubscriptionPlanDto } from "@/core/api/models";
 import { TenantService } from "@/core/services";
 
@@ -18,7 +18,7 @@ export class ViewPlansComponent implements OnInit {
   protected readonly subscriptionPlans = signal<SubscriptionPlanDto[]>([]);
 
   async ngOnInit(): Promise<void> {
-    const result = await this.api.invoke(getSubscriptionPlans$Json, {});
+    const result = await this.api.invoke(getSubscriptionPlans, {});
     if (result.items) {
       this.subscriptionPlans.set(result.items);
     }

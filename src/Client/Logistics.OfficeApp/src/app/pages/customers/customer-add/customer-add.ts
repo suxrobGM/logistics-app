@@ -3,7 +3,7 @@ import { Router, RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
-import { Api, createCustomer$Json } from "@/core/api";
+import { Api, createCustomer } from "@/core/api";
 import type { CreateCustomerCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { CustomerForm, type CustomerFormValue } from "@/shared/components";
@@ -28,7 +28,7 @@ export class CustomerAddComponent {
       name: formValue.name!,
     };
 
-    await this.api.invoke(createCustomer$Json, { body: command });
+    await this.api.invoke(createCustomer, { body: command });
     this.toastService.showSuccess("A customer has been created successfully");
     this.router.navigateByUrl("/customers");
 

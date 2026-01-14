@@ -5,7 +5,7 @@ import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
-import { getLoadsReport$Json } from "@/core/api";
+import { getLoadsReport } from "@/core/api";
 import type {
   LoadPerformanceDto,
   LoadTrendDto,
@@ -58,7 +58,7 @@ export class LoadsReportComponent extends BaseReportComponent<LoadsReportDto> im
   }
 
   protected override async query(params: ReportQueryParams): Promise<LoadsReportDto> {
-    return this.api.invoke(getLoadsReport$Json, {
+    return this.api.invoke(getLoadsReport, {
       StartDate: params.startDate.toISOString(),
       EndDate: params.endDate?.toISOString(),
     });

@@ -10,12 +10,13 @@ namespace Logistics.API.Controllers;
 
 [ApiController]
 [Route("notifications")]
+[Produces("application/json")]
 public class NotificationController(IMediator mediator) : ControllerBase
 {
     [HttpGet(Name = "GetNotifications")]
     [ProducesResponseType(typeof(NotificationDto[]), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Notifications.View)]
+    [Authorize(Policy = Permission.Notification.View)]
     public async Task<IActionResult> GetList([FromQuery] GetNotificationsQuery request)
     {
         var result = await mediator.Send(request);
@@ -25,7 +26,7 @@ public class NotificationController(IMediator mediator) : ControllerBase
     [HttpPut("{id:guid}", Name = "UpdateNotification")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Notifications.Edit)]
+    [Authorize(Policy = Permission.Notification.Manage)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateNotificationCommand request)
     {
         request.Id = id;

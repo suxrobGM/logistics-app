@@ -11,7 +11,7 @@ import { environment } from "@/env";
 import { COUNTRIES_OPTIONS } from "@/shared/constants";
 import type { UsBankAccount } from "@/shared/models";
 import { findOption } from "@/shared/utils";
-import { type Address as AddressDto, Api, createSetupIntent$Json } from "../api";
+import { type Address as AddressDto, Api, createSetupIntent } from "../api";
 import { TenantService } from "./tenant.service";
 
 @Injectable({ providedIn: "root" })
@@ -106,7 +106,7 @@ export class StripeService {
    * @throws An error if the setup intent creation fails.
    */
   async getClientSecret(): Promise<string> {
-    const result = await this.api.invoke(createSetupIntent$Json, {});
+    const result = await this.api.invoke(createSetupIntent, {});
 
     if (!result.clientSecret) {
       throw new Error("Failed to create setup intent");

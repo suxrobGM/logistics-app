@@ -1,5 +1,6 @@
 using Logistics.AdminApp.Authorization;
 using Logistics.AdminApp.Components;
+using Logistics.AdminApp.Services;
 using Logistics.HttpClient;
 
 using Microsoft.AspNetCore.Authorization;
@@ -15,6 +16,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddApiHttpClient(builder.Configuration);
 builder.Services.AddAuthorizationCore();
 builder.Services.AddRadzenComponents();
+builder.Services.AddScoped<PermissionService>();
 builder.Services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
 

@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, inject, model, signal } from "@angular/core";
 import { type TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { Api, formatSortField, getPayments$Json } from "@/core/api";
+import { Api, formatSortField, getPayments } from "@/core/api";
 import type { PaymentDto } from "@/core/api/models";
 import { TenantService } from "@/core/services";
 import { AddressPipe } from "@/shared/pipes";
@@ -29,7 +29,7 @@ export class BillingHistoryComponent {
     const sortField = formatSortField(event.sortField as string, event.sortOrder);
     const subscriptionId = this.tenantService.getTenantData()?.subscription?.id;
 
-    const result = await this.api.invoke(getPayments$Json, {
+    const result = await this.api.invoke(getPayments, {
       SubscriptionId: subscriptionId,
       OrderBy: sortField,
       Page: page,

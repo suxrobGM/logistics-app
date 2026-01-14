@@ -1,5 +1,5 @@
 import { Component, type OnDestroy, inject, input, signal } from "@angular/core";
-import { Api, getTrucks$Json } from "@/core/api";
+import { Api, getTrucks } from "@/core/api";
 import type { TruckGeolocationDto } from "@/core/api/models";
 import { LiveTrackingService } from "@/core/services";
 import { GeolocationMap } from "@/shared/components";
@@ -45,7 +45,7 @@ export class TrucksMap implements OnDestroy {
   }
 
   private async fetchTrucksData(): Promise<void> {
-    const result = await this.api.invoke(getTrucks$Json, { PageSize: 100 });
+    const result = await this.api.invoke(getTrucks, { PageSize: 100 });
 
     if (!result.items) {
       return;

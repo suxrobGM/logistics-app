@@ -5,7 +5,7 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { type TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { Api, formatSortField, getTrucksStats$Json } from "@/core/api";
+import { Api, formatSortField, getTrucksStats } from "@/core/api";
 import type { TruckStatsDto } from "@/core/api/models";
 import { RangeCalendar } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
@@ -47,7 +47,7 @@ export class TruckStatsTableComponent {
     const page = first / rows + 1;
     const sortField = formatSortField(event.sortField as string, event.sortOrder);
 
-    const result = await this.api.invoke(getTrucksStats$Json, {
+    const result = await this.api.invoke(getTrucksStats, {
       StartDate: this.startDate().toISOString(),
       EndDate: this.endDate().toISOString(),
       OrderBy: sortField,

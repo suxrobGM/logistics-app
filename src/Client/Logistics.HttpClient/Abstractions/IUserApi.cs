@@ -8,4 +8,5 @@ public interface IUserApi
     Task<PagedResponse<UserDto>?> GetUsersAsync(SearchableQuery query);
     Task<bool> UpdateUserAsync(UpdateUser command);
     Task<TenantDto?> GetUserCurrentTenant(Guid userId);
+    Task<string[]?> GetCurrentUserPermissionsAsync();
 }

@@ -11,12 +11,13 @@ namespace Logistics.API.Controllers;
 
 [ApiController]
 [Route("stats")]
+[Produces("application/json")]
 public class StatController(IMediator mediator) : ControllerBase
 {
     [HttpGet("daily-grosses", Name = "GetDailyGrosses")]
     [ProducesResponseType(typeof(DailyGrossesDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Stats.View)]
+    [Authorize(Policy = Permission.Stat.View)]
     public async Task<IActionResult> GetDailyGrosses([FromQuery] GetDailyGrossesQuery request)
     {
         var result = await mediator.Send(request);
@@ -26,7 +27,7 @@ public class StatController(IMediator mediator) : ControllerBase
     [HttpGet("monthly-grosses", Name = "GetMonthlyGrosses")]
     [ProducesResponseType(typeof(MonthlyGrossesDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Stats.View)]
+    [Authorize(Policy = Permission.Stat.View)]
     public async Task<IActionResult> GetMonthlyGrosses([FromQuery] GetMonthlyGrossesQuery request)
     {
         var result = await mediator.Send(request);
@@ -36,7 +37,7 @@ public class StatController(IMediator mediator) : ControllerBase
     [HttpGet("company", Name = "GetCompanyStats")]
     [ProducesResponseType(typeof(CompanyStatsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Stats.View)]
+    [Authorize(Policy = Permission.Stat.View)]
     public async Task<IActionResult> GetCompanyStats([FromQuery] GetCompanyStatsQuery request)
     {
         var result = await mediator.Send(request);
@@ -45,7 +46,7 @@ public class StatController(IMediator mediator) : ControllerBase
 
     [HttpGet("trucks", Name = "GetTrucksStats")]
     [ProducesResponseType(typeof(PagedResponse<TruckStatsDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permissions.Stats.View)]
+    [Authorize(Policy = Permission.Stat.View)]
     public async Task<IActionResult> GetTrucksStatsList([FromQuery] GetTrucksStatsListQuery request)
     {
         var result = await mediator.Send(request);
@@ -55,7 +56,7 @@ public class StatController(IMediator mediator) : ControllerBase
     [HttpGet("driver/{userId:guid}", Name = "GetDriverStats")]
     [ProducesResponseType(typeof(DriverStatsDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Stats.View)]
+    [Authorize(Policy = Permission.Stat.View)]
     public async Task<IActionResult> GetDriverStats(Guid userId, [FromQuery] GetDriverStatsQuery request)
     {
         request.UserId = userId;

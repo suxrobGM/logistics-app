@@ -6,7 +6,7 @@ import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { Api, getTripById$Json } from "@/core/api";
+import { Api, getTripById } from "@/core/api";
 import type { TripDto, TripStopDto, TripStopType } from "@/core/api/models";
 import { DirectionMap, LoadStatusTag, LoadTypeTag, TripStatusTag } from "@/shared/components";
 import type {
@@ -91,7 +91,7 @@ export class TripDetailsPage implements OnInit {
     }
 
     this.isLoading.set(true);
-    const result = await this.api.invoke(getTripById$Json, { tripId: id });
+    const result = await this.api.invoke(getTripById, { tripId: id });
     if (result) {
       this.trip.set(result);
     }

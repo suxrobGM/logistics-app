@@ -1,7 +1,7 @@
 import { HttpHeaders } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { Subject } from "rxjs";
-import { Api, type TenantDto, getTenantById$Json } from "@/core/api";
+import { Api, type TenantDto, getTenantById } from "@/core/api";
 import { CookieService } from "./cookie.service";
 
 @Injectable({ providedIn: "root" })
@@ -110,7 +110,7 @@ export class TenantService {
    * @param tenantId The tenant ID
    */
   private async fetchTenantData(tenantId: string): Promise<void> {
-    const tenant = await this.api.invoke(getTenantById$Json, { identifier: tenantId });
+    const tenant = await this.api.invoke(getTenantById, { identifier: tenantId });
 
     if (!tenant) {
       return;

@@ -1,6 +1,6 @@
 import type { Routes } from "@angular/router";
 import { authGuard } from "@/core/auth";
-import { Permissions } from "@/shared/models";
+import { Permission } from "@/shared/models";
 import { LoadAddComponent } from "./load-add/load-add";
 import { LoadDocumentsPage } from "./load-documents/load-documents";
 import { LoadEditComponent } from "./load-edit/load-edit";
@@ -13,7 +13,7 @@ export const loadRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "",
-      permission: Permissions.Loads.View,
+      permission: Permission.Load.View,
     },
   },
   {
@@ -22,7 +22,7 @@ export const loadRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Add",
-      permission: Permissions.Loads.Create,
+      permission: Permission.Load.Manage,
     },
   },
   {
@@ -31,7 +31,7 @@ export const loadRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Import",
-      permission: Permissions.Loads.Create,
+      permission: Permission.Load.Manage,
     },
   },
   {
@@ -40,7 +40,7 @@ export const loadRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Edit",
-      permission: Permissions.Loads.Edit,
+      permission: Permission.Load.Manage,
     },
   },
   {
@@ -49,7 +49,7 @@ export const loadRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Documents",
-      permission: Permissions.Loads.Edit,
+      permission: Permission.Load.Manage,
     },
   },
 ];

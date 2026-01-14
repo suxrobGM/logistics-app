@@ -14,12 +14,13 @@ namespace Logistics.API.Controllers;
 
 [ApiController]
 [Route("loads")]
+[Produces("application/json")]
 public class LoadController(IMediator mediator) : ControllerBase
 {
     [HttpGet("{id:guid}", Name = "GetLoadById")]
     [ProducesResponseType(typeof(LoadDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Policy = Permissions.Loads.View)]
+    [Authorize(Policy = Permission.Load.View)]
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await mediator.Send(new GetLoadByIdQuery { Id = id });
@@ -28,7 +29,7 @@ public class LoadController(IMediator mediator) : ControllerBase
 
     [HttpGet(Name = "GetLoads")]
     [ProducesResponseType(typeof(PagedResponse<LoadDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permissions.Loads.View)]
+    [Authorize(Policy = Permission.Load.View)]
     public async Task<IActionResult> GetList([FromQuery] GetLoadsQuery query)
     {
         var result = await mediator.Send(query);
@@ -38,7 +39,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     [HttpPost(Name = "CreateLoad")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Loads.Create)]
+    [Authorize(Policy = Permission.Load.Manage)]
     public async Task<IActionResult> Create([FromBody] CreateLoadCommand request)
     {
         var result = await mediator.Send(request);
@@ -48,7 +49,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     [HttpPut("{id:guid}", Name = "UpdateLoad")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Loads.Edit)]
+    [Authorize(Policy = Permission.Load.Manage)]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateLoadCommand request)
     {
         request.Id = id;
@@ -59,7 +60,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     [HttpDelete("{id:guid}", Name = "DeleteLoad")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Policy = Permissions.Loads.Delete)]
+    [Authorize(Policy = Permission.Load.Manage)]
     public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteLoadCommand { Id = id });
@@ -69,7 +70,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     [HttpPost("import", Name = "ImportLoadFromPdf")]
     [ProducesResponseType(typeof(ImportLoadFromPdfResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Loads.Create)]
+    [Authorize(Policy = Permission.Load.Manage)]
     [RequestSizeLimit(10 * 1024 * 1024)] // 10 MB limit
     public async Task<IActionResult> ImportFromPdf([FromForm] ImportLoadFromPdfRequest request)
     {

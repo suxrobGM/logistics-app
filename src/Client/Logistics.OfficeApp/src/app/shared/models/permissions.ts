@@ -1,76 +1,58 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 
-export namespace Permissions {
-  export enum Employees {
-    Create = "Permissions.Employees.Create",
-    View = "Permissions.Employees.View",
-    Edit = "Permissions.Employees.Edit",
-    Delete = "Permissions.Employees.Delete",
+export namespace Permission {
+  export enum Employee {
+    View = "Permission.Employee.View",
+    Manage = "Permission.Employee.Manage",
   }
 
-  export enum Loads {
-    Create = "Permissions.Loads.Create",
-    View = "Permissions.Loads.View",
-    Edit = "Permissions.Loads.Edit",
-    Delete = "Permissions.Loads.Delete",
+  export enum Load {
+    View = "Permission.Load.View",
+    Manage = "Permission.Load.Manage",
   }
 
-  export enum Notifications {
-    View = "Permissions.Notifications.View",
-    Edit = "Permissions.Notifications.Edit",
+  export enum Notification {
+    View = "Permission.Notification.View",
+    Manage = "Permission.Notification.Manage",
   }
 
-  export enum Stats {
-    View = "Permissions.Stats.View",
+  export enum Stat {
+    View = "Permission.Stat.View",
   }
 
-  export enum TenantRoles {
-    Create = "Permissions.TenantRoles.Create",
-    View = "Permissions.TenantRoles.View",
-    Edit = "Permissions.TenantRoles.Edit",
-    Delete = "Permissions.TenantRoles.Delete",
+  export enum TenantRole {
+    View = "Permission.TenantRole.View",
+    Manage = "Permission.TenantRole.Manage",
   }
 
-  export enum Trucks {
-    Create = "Permissions.Trucks.Create",
-    View = "Permissions.Trucks.View",
-    Edit = "Permissions.Trucks.Edit",
-    Delete = "Permissions.Trucks.Delete",
+  export enum Truck {
+    View = "Permission.Truck.View",
+    Manage = "Permission.Truck.Manage",
   }
 
-  export enum Customers {
-    Create = "Permissions.Customers.Create",
-    View = "Permissions.Customers.View",
-    Edit = "Permissions.Customers.Edit",
-    Delete = "Permissions.Customers.Delete",
+  export enum Customer {
+    View = "Permission.Customer.View",
+    Manage = "Permission.Customer.Manage",
   }
 
-  export enum Payments {
-    Create = "Permissions.Payments.Create",
-    View = "Permissions.Payments.View",
-    Edit = "Permissions.Payments.Edit",
-    Delete = "Permissions.Payments.Delete",
+  export enum Payment {
+    View = "Permission.Payment.View",
+    Manage = "Permission.Payment.Manage",
   }
 
-  export enum Invoices {
-    Create = "Permissions.Invoices.Create",
-    View = "Permissions.Invoices.View",
-    Edit = "Permissions.Invoices.Edit",
-    Delete = "Permissions.Invoices.Delete",
+  export enum Invoice {
+    View = "Permission.Invoice.View",
+    Manage = "Permission.Invoice.Manage",
   }
 
-  export enum Payrolls {
-    Create = "Permissions.Payrolls.Create",
-    View = "Permissions.Payrolls.View",
-    Edit = "Permissions.Payrolls.Edit",
-    Delete = "Permissions.Payrolls.Delete",
+  export enum Payroll {
+    View = "Permission.Payroll.View",
+    Manage = "Permission.Payroll.Manage",
   }
 
   export enum Eld {
-    View = "Permissions.Eld.View",
-    Create = "Permissions.Eld.Create",
-    Edit = "Permissions.Eld.Edit",
-    Delete = "Permissions.Eld.Delete",
-    Sync = "Permissions.Eld.Sync",
+    View = "Permission.Eld.View",
+    Manage = "Permission.Eld.Manage",
+    Sync = "Permission.Eld.Sync",
   }
 }

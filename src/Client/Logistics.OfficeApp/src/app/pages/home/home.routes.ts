@@ -1,6 +1,6 @@
 import type { Routes } from "@angular/router";
 import { authGuard } from "@/core/auth";
-import { Permissions } from "@/shared/models";
+import { Permission } from "@/shared/models";
 import { HomeComponent } from "./home";
 
 export const homeRoutes: Routes = [
@@ -10,7 +10,7 @@ export const homeRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Home",
-      permission: Permissions.Loads.View,
+      permission: Permission.Load.View,
     },
   },
 ];

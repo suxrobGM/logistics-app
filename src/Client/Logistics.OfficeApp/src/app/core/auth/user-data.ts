@@ -5,7 +5,6 @@ export class UserData {
   public readonly name: string;
   public readonly firstName: string;
   public readonly lastName: string;
-  public readonly permissions: string[];
   public readonly roles: string[];
   public readonly tenant: string;
 
@@ -15,10 +14,8 @@ export class UserData {
     this.firstName = userIdentity.given_name;
     this.lastName = userIdentity.family_name;
     this.tenant = userIdentity.tenant;
-    this.permissions = [];
     this.roles = [];
 
-    this.tryToAddArray(this.permissions, userIdentity.permission);
     this.tryToAddArray(this.roles, userIdentity.role);
   }
 

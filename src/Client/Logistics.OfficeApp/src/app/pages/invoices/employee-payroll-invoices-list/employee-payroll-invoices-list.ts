@@ -3,11 +3,11 @@ import { Component, effect, inject, input, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
+import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { DividerModule } from "primeng/divider";
-import { Api, getEmployeeById$Json } from "@/core/api";
+import { Api, getEmployeeById } from "@/core/api";
 import {
   type EmployeeDto,
   type PaymentMethodType,
@@ -77,7 +77,7 @@ export class EmployeePayrollInvoicesListComponent {
   private async fetchEmployee(): Promise<void> {
     this.isLoadingEmployee.set(true);
 
-    const result = await this.api.invoke(getEmployeeById$Json, { userId: this.employeeId() });
+    const result = await this.api.invoke(getEmployeeById, { userId: this.employeeId() });
     if (result) {
       this.employee.set(result);
     }

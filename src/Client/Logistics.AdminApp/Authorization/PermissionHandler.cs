@@ -1,23 +1,20 @@
-using Logistics.Shared.Identity.Claims;
-
+using Logistics.AdminApp.Services;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Logistics.AdminApp.Authorization;
 
-internal class PermissionHandler : AuthorizationHandler<PermissionRequirement>
+internal class PermissionHandler(PermissionService permissionService) : AuthorizationHandler<PermissionRequirement>
 {
-    protected override Task HandleRequirementAsync(
+    protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
         PermissionRequirement requirement)
     {
-        var permissionClaim = context.User.Claims.FirstOrDefault(i => i.Type == CustomClaimTypes.Permission);
-        var hasRequiredPermission = permissionClaim?.Value.Contains(requirement.Permission) ?? false;
+        await permissionService.LoadPermissionsAsync();
+        var hasRequiredPermission = permissionService.HasPermission(requirement.Permission);
 
         if (hasRequiredPermission)
         {
             context.Succeed(requirement);
         }
-
-        return Task.CompletedTask;
     }
 }

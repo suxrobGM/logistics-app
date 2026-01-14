@@ -1,7 +1,7 @@
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { CardModule } from "primeng/card";
-import { Api, deleteTrip, getTripById$Json, updateTrip } from "@/core/api";
+import { Api, deleteTrip, getTripById, updateTrip } from "@/core/api";
 import type { UpdateTripCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { TripWizard, type TripWizardValue } from "../components";
@@ -70,7 +70,7 @@ export class TripEditPage implements OnInit {
 
     this.isLoading.set(true);
 
-    const trip = await this.api.invoke(getTripById$Json, { tripId });
+    const trip = await this.api.invoke(getTripById, { tripId });
     if (trip) {
       this.initialData.set({
         tripName: trip.name ?? undefined,

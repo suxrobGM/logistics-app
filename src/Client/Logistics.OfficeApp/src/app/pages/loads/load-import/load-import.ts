@@ -4,12 +4,12 @@ import { Component, computed, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { FileUploadModule, type FileSelectEvent } from "primeng/fileupload";
+import { DividerModule } from "primeng/divider";
+import { type FileSelectEvent, FileUploadModule } from "primeng/fileupload";
 import { MessageModule } from "primeng/message";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
-import { DividerModule } from "primeng/divider";
-import { Api, importLoadFromPdf$Json } from "@/core/api";
+import { Api, importLoadFromPdf } from "@/core/api";
 import type { ExtractedLoadDataDto, ImportLoadFromPdfResponse, TruckDto } from "@/core/api";
 import { ToastService } from "@/core/services";
 import { FormField, SearchTruckComponent } from "@/shared/components";
@@ -41,7 +41,9 @@ export class LoadImportComponent {
   protected readonly importResult = signal<ImportLoadFromPdfResponse | null>(null);
   protected readonly error = signal<string | null>(null);
   protected readonly selectedTruck = signal<TruckDto | null>(null);
-  protected readonly canUpload = computed(() => this.selectedTruck() !== null && !this.isUploading());
+  protected readonly canUpload = computed(
+    () => this.selectedTruck() !== null && !this.isUploading(),
+  );
 
   protected async onFileSelect(event: FileSelectEvent): Promise<void> {
     const file = event.files[0];
@@ -71,7 +73,7 @@ export class LoadImportComponent {
     this.importResult.set(null);
 
     try {
-      const response = await this.api.invoke(importLoadFromPdf$Json, {
+      const response = await this.api.invoke(importLoadFromPdf, {
         body: {
           File: file,
           AssignedTruckId: truck.id,
@@ -84,7 +86,8 @@ export class LoadImportComponent {
         this.toastService.showSuccess(`Load '${response.loadName}' created successfully`);
       }
     } catch (err: unknown) {
-      const errorMessage = (err as HttpErrorResponse).error?.error ?? "Failed to import PDF. Please try again.";
+      const errorMessage =
+        (err as HttpErrorResponse).error?.error ?? "Failed to import PDF. Please try again.";
       this.error.set(errorMessage);
     } finally {
       this.isUploading.set(false);

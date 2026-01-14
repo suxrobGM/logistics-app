@@ -9,11 +9,12 @@ namespace Logistics.API.Controllers;
 
 [ApiController]
 [Route("roles")]
+[Produces("application/json")]
 public class RoleController(IMediator mediator) : ControllerBase
 {
     [HttpGet("app", Name = "GetAppRoles")]
     [ProducesResponseType(typeof(PagedResponse<RoleDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permissions.AppRoles.View)]
+    [Authorize(Policy = Permission.AppRole.View)]
     public async Task<IActionResult> GetAppRoles([FromQuery] GetAppRolesQuery query)
     {
         var result = await mediator.Send(query);
@@ -22,7 +23,7 @@ public class RoleController(IMediator mediator) : ControllerBase
 
     [HttpGet("tenant", Name = "GetTenantRoles")]
     [ProducesResponseType(typeof(PagedResponse<RoleDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permissions.TenantRoles.View)]
+    [Authorize(Policy = Permission.TenantRole.View)]
     public async Task<IActionResult> GetTenantRoles([FromQuery] GetTenantRolesQuery query)
     {
         var result = await mediator.Send(query);

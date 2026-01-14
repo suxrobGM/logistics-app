@@ -18,8 +18,7 @@ public static class Config
                 Name = "roles",
                 DisplayName = "Identity roles",
                 UserClaims = {
-                    CustomClaimTypes.Role,
-                    CustomClaimTypes.Permission
+                    CustomClaimTypes.Role
                 }
             },
             new IdentityResource
@@ -44,8 +43,7 @@ public static class Config
                 UserClaims = {
                     JwtClaimTypes.GivenName,
                     JwtClaimTypes.FamilyName,
-                    CustomClaimTypes.Role,
-                    CustomClaimTypes.Permission
+                    CustomClaimTypes.Role
                 }
             },
             new ApiScope
@@ -56,7 +54,6 @@ public static class Config
                     JwtClaimTypes.GivenName,
                     JwtClaimTypes.FamilyName,
                     CustomClaimTypes.Role,
-                    CustomClaimTypes.Permission,
                     CustomClaimTypes.Tenant
                 }
             }
@@ -79,7 +76,6 @@ public static class Config
                     JwtClaimTypes.GivenName,
                     JwtClaimTypes.FamilyName,
                     CustomClaimTypes.Role,
-                    CustomClaimTypes.Permission,
                     CustomClaimTypes.Tenant
                 }
             }

@@ -1,4 +1,4 @@
-import { formatSortField, getInvoices$Json } from "@/core/api";
+import { formatSortField, getInvoices } from "@/core/api";
 import type { InvoiceDto } from "@/core/api/models";
 import { createListStore } from "@/shared/stores";
 
@@ -6,7 +6,7 @@ import { createListStore } from "@/shared/stores";
  * Store for the load invoices list page.
  * Requires LoadId to be set via setFilters before loading.
  */
-export const LoadInvoicesListStore = createListStore<InvoiceDto>(getInvoices$Json, {
+export const LoadInvoicesListStore = createListStore<InvoiceDto>(getInvoices, {
   defaultSortField: "-CreatedAt",
   defaultPageSize: 10,
   buildParams: (state) => {

@@ -2,7 +2,7 @@
 import { Component, forwardRef, inject, model, output, signal } from "@angular/core";
 import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
-import { Api, type TruckDto, getTruckById$Json, getTrucks$Json } from "@/core/api";
+import { Api, type TruckDto, getTruckById, getTrucks } from "@/core/api";
 
 /**
  * Component for searching and selecting a truck.
@@ -31,7 +31,7 @@ export class SearchTruckComponent implements ControlValueAccessor {
   public readonly selectedTruckChange = output<TruckDto | null>();
 
   protected async searchTruck(event: { query: string }): Promise<void> {
-    const result = await this.api.invoke(getTrucks$Json, { Search: event.query });
+    const result = await this.api.invoke(getTrucks, { Search: event.query });
 
     if (!result.items) {
       return;
@@ -51,7 +51,7 @@ export class SearchTruckComponent implements ControlValueAccessor {
       return;
     }
 
-    const result = await this.api.invoke(getTruckById$Json, { truckOrDriverId: id });
+    const result = await this.api.invoke(getTruckById, { truckOrDriverId: id });
     if (result) {
       this.selectedTruck.set(result);
       this.onChange(result);

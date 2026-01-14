@@ -11,12 +11,13 @@ namespace Logistics.API.Controllers;
 
 [ApiController]
 [Route("drivers")]
+[Produces("application/json")]
 public class DriverController(IMediator mediator) : ControllerBase
 {
     [HttpGet("{userId:guid}", Name = "GetDriverByUserId")]
     [ProducesResponseType(typeof(EmployeeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Policy = Permissions.Drivers.View)]
+    [Authorize(Policy = Permission.Driver.View)]
     public async Task<IActionResult> GetById(Guid userId)
     {
         var result = await mediator.Send(new GetEmployeeByIdQuery { UserId = userId });
@@ -26,7 +27,7 @@ public class DriverController(IMediator mediator) : ControllerBase
     [HttpPost("{userId:guid}/device-token", Name = "SetDriverDeviceToken")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Drivers.Edit)]
+    [Authorize(Policy = Permission.Driver.Manage)]
     public async Task<IActionResult> SetDeviceToken(Guid userId, [FromBody] SetDriverDeviceTokenCommand request)
     {
         request.UserId = userId;
@@ -37,7 +38,7 @@ public class DriverController(IMediator mediator) : ControllerBase
     [HttpPost("confirm-load-status", Name = "ConfirmLoadStatus")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Drivers.Edit)]
+    [Authorize(Policy = Permission.Driver.Manage)]
     public async Task<IActionResult> ConfirmLoadStatus([FromBody] ConfirmLoadStatusCommand request)
     {
         var result = await mediator.Send(request);
@@ -47,7 +48,7 @@ public class DriverController(IMediator mediator) : ControllerBase
     [HttpPost("update-load-proximity", Name = "UpdateLoadProximity")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Drivers.Edit)]
+    [Authorize(Policy = Permission.Driver.Manage)]
     public async Task<IActionResult> UpdateLoadProximity([FromBody] UpdateLoadProximityCommand request)
     {
         var result = await mediator.Send(request);

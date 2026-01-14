@@ -4,9 +4,9 @@ import { RouterModule } from "@angular/router";
 import { jsPDF } from "jspdf";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { DividerModule } from "primeng/divider";
-import { Api, getInvoiceById$Json } from "@/core/api";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Api, getInvoiceById } from "@/core/api";
 import type { AddressDto, InvoiceDto } from "@/core/api/models";
 import { TenantService } from "@/core/services";
 import { InvoiceStatusTag } from "@/shared/components";
@@ -79,7 +79,7 @@ export class LoadInvoiceDetailsComponent implements OnInit {
     }
 
     this.isLoading.set(true);
-    const result = await this.api.invoke(getInvoiceById$Json, { id: this.id() });
+    const result = await this.api.invoke(getInvoiceById, { id: this.id() });
     if (result) {
       this.invoice.set(result);
     }

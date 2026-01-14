@@ -15,14 +15,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
-import {
-  Api,
-  createTruck,
-  deleteTruck,
-  getEmployees$Json,
-  getTruckById$Json,
-  updateTruck,
-} from "@/core/api";
+import { Api, createTruck, deleteTruck, getEmployees, getTruckById, updateTruck } from "@/core/api";
 import {
   type CreateTruckCommand,
   type EmployeeDto,
@@ -92,7 +85,7 @@ export class TruckEditComponent implements OnInit {
   }
 
   protected async searchDriver(event: { query: string }): Promise<void> {
-    const result = await this.api.invoke(getEmployees$Json, {
+    const result = await this.api.invoke(getEmployees, {
       Search: event.query,
       Role: "Driver",
     });
@@ -117,7 +110,7 @@ export class TruckEditComponent implements OnInit {
   }
 
   private async fetchTruck(id: string): Promise<void> {
-    const truck = await this.api.invoke(getTruckById$Json, { truckOrDriverId: id });
+    const truck = await this.api.invoke(getTruckById, { truckOrDriverId: id });
     if (truck) {
       this.form.patchValue({
         truckNumber: truck.number ?? undefined,

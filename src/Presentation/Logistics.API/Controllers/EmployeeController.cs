@@ -12,12 +12,13 @@ namespace Logistics.API.Controllers;
 
 [ApiController]
 [Route("employees")]
+[Produces("application/json")]
 public class EmployeeController(IMediator mediator) : ControllerBase
 {
     [HttpGet("{userId:guid}", Name = "GetEmployeeById")]
     [ProducesResponseType(typeof(EmployeeDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Policy = Permissions.Employees.View)]
+    [Authorize(Policy = Permission.Employee.View)]
     public async Task<IActionResult> GetById(Guid userId)
     {
         var result = await mediator.Send(new GetEmployeeByIdQuery { UserId = userId });
@@ -26,7 +27,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
 
     [HttpGet(Name = "GetEmployees")]
     [ProducesResponseType(typeof(PagedResponse<EmployeeDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permissions.Employees.View)]
+    [Authorize(Policy = Permission.Employee.View)]
     public async Task<IActionResult> GetList([FromQuery] GetEmployeesQuery query)
     {
         var result = await mediator.Send(query);
@@ -36,7 +37,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     [HttpPost(Name = "CreateEmployee")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employees.Create)]
+    [Authorize(Policy = Permission.Employee.Manage)]
     public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand request)
     {
         var result = await mediator.Send(request);
@@ -46,7 +47,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     [HttpPost("{userId:guid}/remove-role", Name = "RemoveRoleFromEmployee")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employees.Edit)]
+    [Authorize(Policy = Permission.Employee.Manage)]
     public async Task<IActionResult> RemoveRole(Guid userId, [FromBody] RemoveRoleFromEmployeeCommand request)
     {
         request.UserId = userId;
@@ -57,7 +58,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     [HttpPut("{userId:guid}", Name = "UpdateEmployee")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Employees.Edit)]
+    [Authorize(Policy = Permission.Employee.Manage)]
     public async Task<IActionResult> Update(Guid userId, [FromBody] UpdateEmployeeCommand request)
     {
         request.UserId = userId;
@@ -68,7 +69,7 @@ public class EmployeeController(IMediator mediator) : ControllerBase
     [HttpDelete("{userId:guid}", Name = "DeleteEmployee")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Policy = Permissions.Employees.Delete)]
+    [Authorize(Policy = Permission.Employee.Manage)]
     public async Task<IActionResult> Delete(Guid userId)
     {
         var result = await mediator.Send(new DeleteEmployeeCommand { UserId = userId });

@@ -3,12 +3,7 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { TagModule } from "primeng/tag";
-import {
-  Api,
-  deletePaymentMethod,
-  getPaymentMethods$Json,
-  setDefaultPaymentMethod,
-} from "@/core/api";
+import { Api, deletePaymentMethod, getPaymentMethods, setDefaultPaymentMethod } from "@/core/api";
 import type { PaymentMethodDto, SetDefaultPaymentMethodCommand } from "@/core/api/models";
 import { TenantService, ToastService } from "@/core/services";
 import { AddressPipe } from "@/shared/pipes";
@@ -102,7 +97,7 @@ export class PaymentMethodsCardComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    const result = await this.api.invoke(getPaymentMethods$Json, {});
+    const result = await this.api.invoke(getPaymentMethods, {});
     if (result) {
       // Move the default payment method to the top of the list
       result.sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));

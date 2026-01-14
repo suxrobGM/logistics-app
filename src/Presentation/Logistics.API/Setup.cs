@@ -43,6 +43,7 @@ internal static class Setup
             .AddIdentity();
 
         services.AddHttpContextAccessor();
+        services.AddMemoryCache();
         services.AddAuthorization();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();

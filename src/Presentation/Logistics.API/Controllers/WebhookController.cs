@@ -9,6 +9,7 @@ namespace Logistics.API.Controllers;
 [ApiController]
 [AllowAnonymous]
 [Route("webhooks")]
+[Produces("application/json")]
 public class WebhookController(IMediator mediator) : ControllerBase
 {
     [HttpPost("stripe", Name = "ProcessStripeWebhook")]

@@ -2,9 +2,9 @@ import { DatePipe } from "@angular/common";
 import { Component, type OnInit, inject, input, model, output, signal } from "@angular/core";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
-import { SkeletonModule } from "primeng/skeleton";
 import { DividerModule } from "primeng/divider";
-import { Api, getDailyGrosses$Json } from "@/core/api";
+import { SkeletonModule } from "primeng/skeleton";
+import { Api, getDailyGrosses } from "@/core/api";
 import type { DailyGrossesDto } from "@/core/api/models";
 import { RangeCalendar } from "@/shared/components";
 import { Converters, DateUtils } from "@/shared/utils";
@@ -53,15 +53,14 @@ export class TruckGrossesLinechartComponent implements OnInit {
   protected async fetchDailyGrosses(): Promise<void> {
     this.isLoading.set(true);
 
-    const result = await this.api.invoke(getDailyGrosses$Json, {
+    const result = await this.api.invoke(getDailyGrosses, {
       StartDate: this.startDate().toISOString(),
       EndDate: this.endDate().toISOString(),
       TruckId: this.truckId(),
     });
     if (result) {
       this.dailyGrosses.set(result);
-      const rpm =
-        (result.totalGross ?? 0) / Converters.metersTo(result.totalDistance ?? 0, "mi");
+      const rpm = (result.totalGross ?? 0) / Converters.metersTo(result.totalDistance ?? 0, "mi");
 
       this.drawChart(result);
       this.chartDrawn.emit({ dailyGrosses: result, rpm: rpm });

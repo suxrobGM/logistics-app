@@ -281,6 +281,11 @@ internal class ApiClient : GenericApiClient, IApiClient
         return MakeGetRequestAsync<TenantDto>($"users/{userId}/tenant");
     }
 
+    public Task<string[]?> GetCurrentUserPermissionsAsync()
+    {
+        return MakeGetRequestAsync<string[]>("users/me/permissions");
+    }
+
     #endregion
 
 

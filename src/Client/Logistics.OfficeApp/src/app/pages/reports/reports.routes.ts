@@ -1,6 +1,6 @@
 import type { Routes } from "@angular/router";
 import { authGuard } from "@/core/auth";
-import { Permissions } from "@/shared/models";
+import { Permission } from "@/shared/models";
 
 export const reportsRoutes: Routes = [
   {
@@ -15,7 +15,7 @@ export const reportsRoutes: Routes = [
         canActivate: [authGuard],
         data: {
           breadcrumb: "",
-          permission: Permissions.Stats.View,
+          permission: Permission.Stat.View,
         },
       },
       {
@@ -27,7 +27,7 @@ export const reportsRoutes: Routes = [
         canActivate: [authGuard],
         data: {
           breadcrumb: "",
-          permission: Permissions.Stats.View,
+          permission: Permission.Stat.View,
         },
       },
       {
@@ -39,7 +39,7 @@ export const reportsRoutes: Routes = [
         canActivate: [authGuard],
         data: {
           breadcrumb: "",
-          permission: Permissions.Stats.View,
+          permission: Permission.Stat.View,
         },
       },
       {
@@ -51,7 +51,7 @@ export const reportsRoutes: Routes = [
         canActivate: [authGuard],
         data: {
           breadcrumb: "",
-          permission: Permissions.Stats.View,
+          permission: Permission.Stat.View,
         },
       },
       { path: "", redirectTo: "loads", pathMatch: "full" },

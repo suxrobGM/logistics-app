@@ -49,33 +49,25 @@ public class UserCustomClaimsFactory(
 
         foreach (var roleName in appRoles)
         {
-            var role = await _roleManager.FindByNameAsync(roleName);
-
-            if (role is null)
-            {
-                continue;
-            }
-
-            var claims = await _roleManager.GetClaimsAsync(role);
-            claimsIdentity.AddClaims(claims);
+            // Only add role claim, permissions are fetched separately via API
+            claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Role, roleName));
         }
     }
 
-    private async Task AddTenantRoleClaimsAsync(ClaimsIdentity claimsIdentity, Employee? employee)
+    private Task AddTenantRoleClaimsAsync(ClaimsIdentity claimsIdentity, Employee? employee)
     {
         if (employee is null)
         {
-            return;
+            return Task.CompletedTask;
         }
-
-        var tenantRoleClaimRepository = tenantUow.Repository<TenantRoleClaim>();
 
         foreach (var tenantRole in employee.Roles)
         {
-            var roleClaims = await tenantRoleClaimRepository.GetListAsync(i => i.RoleId == tenantRole.Id);
-            claimsIdentity.AddClaims(roleClaims.Select(i => new Claim(i.ClaimType, i.ClaimValue)));
+            // Only add role claim, permissions are fetched separately via API
             claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Role, tenantRole.Name));
         }
+
+        return Task.CompletedTask;
     }
 
     private static void AddProfileClaims(ClaimsIdentity claimsIdentity, User user)

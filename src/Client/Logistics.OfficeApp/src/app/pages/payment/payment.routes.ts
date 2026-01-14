@@ -1,6 +1,6 @@
 import type { Routes } from "@angular/router";
 import { authGuard } from "@/core/auth";
-import { Permissions } from "@/shared/models";
+import { Permission } from "@/shared/models";
 import { PaymentsListComponent } from "./payments-list/payments-list";
 
 export const paymentRoutes: Routes = [
@@ -10,7 +10,7 @@ export const paymentRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Payments",
-      permission: Permissions.Payments.View,
+      permission: Permission.Payment.View,
     },
   },
 ];

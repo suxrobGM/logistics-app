@@ -1,6 +1,6 @@
 import type { Routes } from "@angular/router";
 import { authGuard } from "@/core/auth";
-import { Permissions } from "@/shared/models";
+import { Permission } from "@/shared/models";
 import { EmployeeAddComponent } from "./employee-add/employee-add";
 import { EmployeeDocumentsPage } from "./employee-documents/employee-documents";
 import { EmployeeEditComponent } from "./employee-edit/employee-edit";
@@ -13,7 +13,7 @@ export const employeeRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "",
-      permission: Permissions.Employees.View,
+      permission: Permission.Employee.View,
     },
   },
   {
@@ -22,7 +22,7 @@ export const employeeRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Add",
-      permission: Permissions.Employees.Create,
+      permission: Permission.Employee.Manage,
     },
   },
   {
@@ -31,7 +31,7 @@ export const employeeRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Edit",
-      permission: Permissions.Employees.Edit,
+      permission: Permission.Employee.Manage,
     },
   },
   {
@@ -40,7 +40,7 @@ export const employeeRoutes: Routes = [
     // canActivate: [authGuard],
     data: {
       breadcrumb: "Documents",
-      // permission: Permissions.Employees.Edit,
+      // permission: Permission.Employee.Manage,
     },
   },
 ];

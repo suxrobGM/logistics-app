@@ -8,7 +8,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
 import { Observable, from } from "rxjs";
-import { Api, formatSortField, getDriversReport$Json } from "@/core/api";
+import { Api, formatSortField, getDriversReport } from "@/core/api";
 import type { DriverReportDto, PagedResponse } from "@/core/api/models";
 import { BaseTableComponent, RangeCalendar, type TableQueryParams } from "@/shared/components";
 import { DateUtils } from "@/shared/utils";
@@ -39,7 +39,7 @@ export class DriversDetailedComponent extends BaseTableComponent<DriverReportDto
     const orderBy = formatSortField(params.sortField, params.sortOrder);
 
     return from(
-      this.api.invoke(getDriversReport$Json, {
+      this.api.invoke(getDriversReport, {
         Page: params.page + 1,
         PageSize: params.size,
         OrderBy: orderBy,

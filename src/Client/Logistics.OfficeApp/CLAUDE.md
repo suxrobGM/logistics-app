@@ -54,11 +54,11 @@ List pages must use the `createListStore` factory and `DataContainer` component 
 
 ```typescript
 // src/app/pages/customers/store/customers-list.store.ts
-import { getCustomers$Json } from "@/core/api";
+import { getCustomers } from "@/core/api";
 import type { CustomerDto } from "@/core/api/models";
 import { createListStore } from "@/shared/stores";
 
-export const CustomersListStore = createListStore<CustomerDto>(getCustomers$Json, {
+export const CustomersListStore = createListStore<CustomerDto>(getCustomers, {
   defaultSortField: "Name",
   defaultPageSize: 10,
 });

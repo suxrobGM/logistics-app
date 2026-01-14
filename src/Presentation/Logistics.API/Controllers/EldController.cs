@@ -10,13 +10,14 @@ namespace Logistics.API.Controllers;
 
 [ApiController]
 [Route("eld")]
+[Produces("application/json")]
 public class EldController(IMediator mediator) : ControllerBase
 {
     #region Provider Configuration
 
     [HttpGet("providers", Name = "GetEldProviders")]
     [ProducesResponseType(typeof(List<EldProviderConfigurationDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permissions.Eld.View)]
+    [Authorize(Policy = Permission.Eld.View)]
     public async Task<IActionResult> GetProviders()
     {
         var result = await mediator.Send(new GetEldProviderConfigurationsQuery());
@@ -26,7 +27,7 @@ public class EldController(IMediator mediator) : ControllerBase
     [HttpPost("providers", Name = "CreateEldProvider")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Eld.Create)]
+    [Authorize(Policy = Permission.Eld.Manage)]
     public async Task<IActionResult> CreateProvider([FromBody] CreateEldProviderConfigurationCommand request)
     {
         var result = await mediator.Send(request);
@@ -40,7 +41,7 @@ public class EldController(IMediator mediator) : ControllerBase
     [HttpPost("drivers/mappings", Name = "MapEldDriver")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Eld.Edit)]
+    [Authorize(Policy = Permission.Eld.Manage)]
     public async Task<IActionResult> MapDriver([FromBody] MapEldDriverCommand request)
     {
         var result = await mediator.Send(request);
@@ -53,7 +54,7 @@ public class EldController(IMediator mediator) : ControllerBase
 
     [HttpGet("drivers/hos", Name = "GetAllDriversHos")]
     [ProducesResponseType(typeof(List<DriverHosStatusDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permissions.Eld.View)]
+    [Authorize(Policy = Permission.Eld.View)]
     public async Task<IActionResult> GetAllDriversHos()
     {
         var result = await mediator.Send(new GetAllDriversHosStatusQuery());
@@ -62,7 +63,7 @@ public class EldController(IMediator mediator) : ControllerBase
 
     [HttpGet("drivers/{employeeId:guid}/logs", Name = "GetDriverHosLogs")]
     [ProducesResponseType(typeof(PagedResponse<HosLogDto>), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permissions.Eld.View)]
+    [Authorize(Policy = Permission.Eld.View)]
     public async Task<IActionResult> GetDriverHosLogs(Guid employeeId, [FromQuery] GetDriverHosLogsQuery query)
     {
         query.EmployeeId = employeeId;
@@ -77,7 +78,7 @@ public class EldController(IMediator mediator) : ControllerBase
     [HttpPost("sync/drivers/hos", Name = "SyncAllDriversHos")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permissions.Eld.Sync)]
+    [Authorize(Policy = Permission.Eld.Sync)]
     public async Task<IActionResult> SyncAllDriversHos()
     {
         var result = await mediator.Send(new SyncAllDriversHosStatusCommand());

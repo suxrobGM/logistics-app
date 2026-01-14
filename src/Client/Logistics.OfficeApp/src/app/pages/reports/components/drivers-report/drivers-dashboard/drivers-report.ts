@@ -5,7 +5,7 @@ import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
-import { getDriverDashboard$Json } from "@/core/api";
+import { getDriverDashboard } from "@/core/api";
 import type {
   DriverDashboardDto,
   DriverEfficiencyDto,
@@ -55,7 +55,7 @@ export class DriversReportComponent
   }
 
   protected override async query(params: ReportQueryParams): Promise<DriverDashboardDto> {
-    return this.api.invoke(getDriverDashboard$Json, {
+    return this.api.invoke(getDriverDashboard, {
       StartDate: params.startDate.toISOString(),
       EndDate: params.endDate?.toISOString(),
     });

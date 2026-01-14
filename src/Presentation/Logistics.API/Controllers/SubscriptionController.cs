@@ -14,6 +14,7 @@ namespace Logistics.API.Controllers;
 
 [ApiController]
 [Route("subscriptions")]
+[Produces("application/json")]
 public class SubscriptionController(IMediator mediator) : ControllerBase
 {
     #region Subscriptions

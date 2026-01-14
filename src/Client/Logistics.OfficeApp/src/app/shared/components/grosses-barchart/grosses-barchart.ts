@@ -2,9 +2,9 @@ import { CommonModule } from "@angular/common";
 import { Component, type OnInit, inject, input, output, signal } from "@angular/core";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
-import { SkeletonModule } from "primeng/skeleton";
 import { DividerModule } from "primeng/divider";
-import { Api, getMonthlyGrosses$Json } from "@/core/api";
+import { SkeletonModule } from "primeng/skeleton";
+import { Api, getMonthlyGrosses } from "@/core/api";
 import type { MonthlyGrossesDto } from "@/core/api/models";
 import { Converters, DateUtils } from "@/shared/utils";
 import { RangeCalendar } from "../range-calendar/range-calendar";
@@ -58,7 +58,7 @@ export class GrossesBarchart implements OnInit {
   async fetchMonthlyGrosses(): Promise<void> {
     this.isLoading.set(true);
 
-    const result = await this.api.invoke(getMonthlyGrosses$Json, {
+    const result = await this.api.invoke(getMonthlyGrosses, {
       StartDate: this.startDate().toISOString(),
       EndDate: this.endDate().toISOString(),
       TruckId: this.truckId(),
@@ -66,8 +66,7 @@ export class GrossesBarchart implements OnInit {
 
     if (result) {
       this.monthlyGrosses.set(result);
-      const rpm =
-        (result.totalGross ?? 0) / Converters.metersTo(result.totalDistance ?? 0, "mi");
+      const rpm = (result.totalGross ?? 0) / Converters.metersTo(result.totalDistance ?? 0, "mi");
 
       this.drawChart(result);
       this.chartDrawn.emit({ monthlyGrosses: result, rpm });

@@ -1,5 +1,5 @@
 import { Injectable, inject } from "@angular/core";
-import { Api, type NotificationDto, getNotifications$Json, updateNotification } from "@/core/api";
+import { Api, type NotificationDto, getNotifications, updateNotification } from "@/core/api";
 import { PredefinedDateRanges } from "@/shared/utils";
 import { BaseHubConnection } from "./base-hub-connection";
 
@@ -17,7 +17,7 @@ export class NotificationService extends BaseHubConnection {
 
   async getPastTwoWeeksNotifications(): Promise<NotificationDto[]> {
     const pastTwoWeeksDateRange = PredefinedDateRanges.getPastTwoWeeks();
-    return this.api.invoke(getNotifications$Json, {
+    return this.api.invoke(getNotifications, {
       StartDate: pastTwoWeeksDateRange.startDate.toISOString(),
       EndDate: pastTwoWeeksDateRange.endDate.toISOString(),
     });

@@ -1,6 +1,6 @@
 import type { Routes } from "@angular/router";
 import { authGuard } from "@/core/auth";
-import { Permissions } from "@/shared/models";
+import { Permission } from "@/shared/models";
 import { DashboardComponent } from "./dashboard";
 
 export const dashboardRoutes: Routes = [
@@ -10,7 +10,7 @@ export const dashboardRoutes: Routes = [
     canActivate: [authGuard],
     data: {
       breadcrumb: "Main",
-      permission: Permissions.Stats.View,
+      permission: Permission.Stat.View,
     },
   },
 ];

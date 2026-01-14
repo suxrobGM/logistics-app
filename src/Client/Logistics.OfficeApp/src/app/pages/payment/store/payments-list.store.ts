@@ -1,4 +1,4 @@
-import { formatSortField, getPayments$Json } from "@/core/api";
+import { formatSortField, getPayments } from "@/core/api";
 import type { PaymentDto } from "@/core/api/models";
 import { createListStore } from "@/shared/stores";
 import { PredefinedDateRanges } from "@/shared/utils";
@@ -7,7 +7,7 @@ import { PredefinedDateRanges } from "@/shared/utils";
  * Store for the payments list page.
  * Filters payments to the past 90 days by default.
  */
-export const PaymentsListStore = createListStore<PaymentDto>(getPayments$Json, {
+export const PaymentsListStore = createListStore<PaymentDto>(getPayments, {
   defaultSortField: "-CreatedDate",
   defaultPageSize: 10,
   buildParams: (state) => {

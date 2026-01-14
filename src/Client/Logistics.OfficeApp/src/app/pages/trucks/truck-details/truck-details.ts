@@ -3,7 +3,7 @@ import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";
-import { Api, getTruckById$Json } from "@/core/api";
+import { Api, getTruckById } from "@/core/api";
 import type {
   DailyGrossesDto,
   MonthlyGrossesDto,
@@ -65,7 +65,7 @@ export class TruckDetailsComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    const truck = await this.api.invoke(getTruckById$Json, { truckOrDriverId: id });
+    const truck = await this.api.invoke(getTruckById, { truckOrDriverId: id });
     if (truck) {
       this.truck.set(truck);
 

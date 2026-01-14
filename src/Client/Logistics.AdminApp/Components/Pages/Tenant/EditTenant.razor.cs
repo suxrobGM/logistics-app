@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Logistics.AdminApp.Components.Pages.Tenant;
 
-[Authorize(Policy = Permissions.Tenants.Edit)]
+[Authorize(Policy = Permission.Tenant.Manage)]
 public partial class EditTenant : PageBase
 {
     private TenantDto _tenant = new();

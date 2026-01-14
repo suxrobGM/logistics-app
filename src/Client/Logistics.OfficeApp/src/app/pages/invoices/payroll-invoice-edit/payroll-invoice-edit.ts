@@ -12,9 +12,9 @@ import { SelectModule } from "primeng/select";
 import {
   Api,
   createPayrollInvoice,
-  getEmployees$Json,
-  getInvoiceById$Json,
-  previewPayrollInvoice$Json,
+  getEmployees,
+  getInvoiceById,
+  previewPayrollInvoice,
   updatePayrollInvoice,
 } from "@/core/api";
 import {
@@ -91,7 +91,7 @@ export class PayrollInvoiceEditComponent implements OnInit {
   }
 
   async searchEmployee(event: { query: string }): Promise<void> {
-    const result = await this.api.invoke(getEmployees$Json, { Search: event.query });
+    const result = await this.api.invoke(getEmployees, { Search: event.query });
     if (result.items) {
       this.suggestedEmployees.set(result.items);
     }
@@ -106,7 +106,7 @@ export class PayrollInvoiceEditComponent implements OnInit {
       return;
     }
 
-    const result = await this.api.invoke(previewPayrollInvoice$Json, {
+    const result = await this.api.invoke(previewPayrollInvoice, {
       EmployeeId: employeeId,
       PeriodStart: this.form.value.dateRange![0].toISOString(),
       PeriodEnd: this.form.value.dateRange![1].toISOString(),
@@ -157,7 +157,7 @@ export class PayrollInvoiceEditComponent implements OnInit {
     }
 
     this.isLoading.set(true);
-    const invoice = await this.api.invoke(getInvoiceById$Json, { id: invoiceId });
+    const invoice = await this.api.invoke(getInvoiceById, { id: invoiceId });
     if (invoice) {
       this.form.patchValue({
         employee: invoice.employee,
