@@ -17,6 +17,7 @@ internal class EldProviderFactory(
         {
             EldProviderType.Samsara => serviceProvider.GetRequiredService<SamsaraEldService>(),
             EldProviderType.Motive => serviceProvider.GetRequiredService<MotiveEldService>(),
+            EldProviderType.Demo => serviceProvider.GetRequiredService<DemoEldService>(),
             _ => throw new NotSupportedException($"ELD provider '{providerType}' is not supported")
         };
 
@@ -33,6 +34,6 @@ internal class EldProviderFactory(
 
     public bool IsProviderSupported(EldProviderType providerType)
     {
-        return providerType is EldProviderType.Samsara or EldProviderType.Motive;
+        return providerType is EldProviderType.Samsara or EldProviderType.Motive or EldProviderType.Demo;
     }
 }

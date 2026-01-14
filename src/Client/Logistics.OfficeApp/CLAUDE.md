@@ -39,6 +39,7 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Keep templates simple and avoid complex logic
 - Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
 - Use the async pipe to handle observables
+- Use self-closing tags for components without children: `<p-button />` not `<p-button></p-button>`
 
 ## Services
 
@@ -130,6 +131,38 @@ export class CustomersListComponent {
 - `reset()` - Reset store to initial state
 - `removeItem(id)` - Optimistically remove item from list
 - `updateItem(id, updates)` - Optimistically update item in list
+
+## Form Fields
+
+Use the `FormField` component for form inputs instead of manually adding labels, hints, and error handling.
+
+```html
+<!-- DO: Use FormField component -->
+<app-form-field
+  label="Email"
+  for="email"
+  [required]="true"
+  hint="We'll never share your email"
+  [control]="form.controls.email"
+>
+  <input pInputText id="email" formControlName="email" class="w-full" />
+</app-form-field>
+
+<!-- DON'T: Manually structure form fields -->
+<div class="mb-4">
+  <label for="email" class="mb-2 block text-sm font-medium">Email</label>
+  <input pInputText id="email" formControlName="email" class="w-full" />
+  <small class="text-gray-500">We'll never share your email</small>
+</div>
+```
+
+FormField inputs:
+
+- `label` - Label text
+- `for` - The field id for the label
+- `required` - Shows required indicator (*)
+- `hint` - Help text shown below the field
+- `control` - The form control for validation display
 
 ## Error Handling
 

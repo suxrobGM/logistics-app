@@ -57,6 +57,7 @@ public static class Registrar
         services.Configure<EldOptions>(configuration.GetSection("Eld"));
         services.AddHttpClient<SamsaraEldService>();
         services.AddHttpClient<MotiveEldService>();
+        services.AddScoped<DemoEldService>();
         services.AddScoped<IEldProviderFactory, EldProviderFactory>();
 
         return new InfrastructureBuilder(services, configuration);

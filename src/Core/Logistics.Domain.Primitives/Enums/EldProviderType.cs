@@ -17,6 +17,9 @@ public enum EldProviderType
     [Description("Omnitracs")] [EnumMember(Value = "omnitracs")]
     Omnitracs = 4,
 
-    [Description("PeopleNet")] [EnumMember(Value = "peoplenet")]
-    PeopleNet = 5
+    [Description("PeopleNet")] [EnumMember(Value = "people_net")]
+    PeopleNet = 5,
+
+    [Description("Demo")] [EnumMember(Value = "demo")]
+    Demo = 99
 }
