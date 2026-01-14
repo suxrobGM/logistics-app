@@ -6,7 +6,7 @@ using Logistics.Shared.Identity.Roles;
 namespace Logistics.DbMigrator.Seeders.Infrastructure;
 
 /// <summary>
-/// Seeds the super admin user from configuration.
+///     Seeds the super admin user from configuration.
 /// </summary>
 internal class SuperAdminSeeder(ILogger<SuperAdminSeeder> logger) : SeederBase(logger)
 {
@@ -19,8 +19,8 @@ internal class SuperAdminSeeder(ILogger<SuperAdminSeeder> logger) : SeederBase(l
     {
         LogStarting();
         var userManager = context.UserManager;
-        var adminData = context.Configuration.GetRequiredSection("SuperAdmin").Get<User>()!;
-        var superAdmin = await userManager.FindByEmailAsync(adminData.Email!);
+        var adminData = context.Configuration.GetRequiredSection("SuperAdmin").Get<UserData>()!;
+        var superAdmin = await userManager.FindByEmailAsync(adminData.Email);
 
         if (superAdmin is null)
         {
@@ -33,9 +33,7 @@ internal class SuperAdminSeeder(ILogger<SuperAdminSeeder> logger) : SeederBase(l
                 EmailConfirmed = true
             };
 
-            var password = context.Configuration["SuperAdmin:Password"]
-                           ?? throw new InvalidOperationException("SuperAdmin:Password not configured");
-            var result = await userManager.CreateAsync(superAdmin, password);
+            var result = await userManager.CreateAsync(superAdmin, adminData.Password);
             if (!result.Succeeded)
             {
                 throw new InvalidOperationException(

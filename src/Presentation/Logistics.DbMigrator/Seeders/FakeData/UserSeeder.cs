@@ -5,7 +5,7 @@ using Logistics.Domain.Entities;
 namespace Logistics.DbMigrator.Seeders.FakeData;
 
 /// <summary>
-/// Seeds test users from fake-dataset.json configuration.
+///     Seeds test users from fake-dataset.json configuration.
 /// </summary>
 internal class UserSeeder(ILogger<UserSeeder> logger) : SeederBase(logger)
 {
@@ -15,34 +15,34 @@ internal class UserSeeder(ILogger<UserSeeder> logger) : SeederBase(logger)
 
     protected override async Task<bool> HasExistingDataAsync(SeederContext context, CancellationToken cancellationToken)
     {
-        var testUsers = context.Configuration.GetSection("Users").Get<User[]>();
+        var testUsers = context.Configuration.GetSection("Users").Get<UserData[]>();
         if (testUsers is null || testUsers.Length == 0)
         {
             return true; // Skip if no users configured
         }
 
         // Check if first test user already exists
-        var firstUser = await context.UserManager.FindByNameAsync(testUsers[0].Email!);
+        var firstUser = await context.UserManager.FindByNameAsync(testUsers[0].Email);
         return firstUser is not null;
     }
 
     public override async Task SeedAsync(SeederContext context, CancellationToken cancellationToken = default)
     {
         LogStarting();
-        var testUsers = context.Configuration.GetSection("Users").Get<User[]>();
+        var testUsers = context.Configuration.GetSection("Users").Get<UserData[]>();
         var usersList = new List<User>();
 
         if (testUsers is null)
         {
             Logger.LogWarning("No test users found in configuration");
             context.CreatedUsers = usersList;
-            LogCompleted(0);
+            LogCompleted();
             return;
         }
 
         foreach (var fakeUser in testUsers)
         {
-            var user = await context.UserManager.FindByNameAsync(fakeUser.Email!);
+            var user = await context.UserManager.FindByNameAsync(fakeUser.Email);
 
             if (user is not null)
             {
@@ -59,9 +59,7 @@ internal class UserSeeder(ILogger<UserSeeder> logger) : SeederBase(logger)
                 EmailConfirmed = true
             };
 
-            var password = context.Configuration["SuperAdmin:Password"]
-                           ?? throw new InvalidOperationException("SuperAdmin:Password not configured");
-            var result = await context.UserManager.CreateAsync(user, password);
+            var result = await context.UserManager.CreateAsync(user, fakeUser.Password);
             if (!result.Succeeded)
             {
                 throw new InvalidOperationException(

@@ -21,55 +21,65 @@
     {
       "Email": "Test1@gmail.com",
       "FirstName": "Gloria",
-      "LastName": "Kaufman"
+      "LastName": "Kaufman",
+      "Password": "Test12345#"
     },
     // Manager
     {
       "Email": "Test2@gmail.com",
       "FirstName": "Ivory",
-      "LastName": "Collins"
+      "LastName": "Collins",
+      "Password": "Test12345#"
     },
     // Dispatchers
     {
       "Email": "Test3@gmail.com",
       "FirstName": "Rosalyn",
-      "LastName": "Callahan"
+      "LastName": "Callahan",
+      "Password": "Test12345#"
     },
     {
       "Email": "Test4@gmail.com",
       "FirstName": "Zane",
-      "LastName": "Salinas"
+      "LastName": "Salinas",
+      "Password": "Test12345#"
     },
     {
       "Email": "Test5@gmail.com",
       "FirstName": "Justine",
-      "LastName": "Blevins"
+      "LastName": "Blevins",
+      "Password": "Test12345#"
     },
     // The rest of the users are drivers
     {
       "Email": "Test6@gmail.com",
       "FirstName": "John",
-      "LastName": "Ortiz"
+      "LastName": "Ortiz",
+      "Password": "Test12345#"
     },
     {
       "Email": "Test7@gmail.com",
       "FirstName": "Anne",
-      "LastName": "Shields"
+      "LastName": "Shields",
+      "Password": "Test12345#"
     },
     {
       "Email": "Test8@gmail.com",
       "FirstName": "Tate",
-      "LastName": "Taylor"
+      "LastName": "Taylor",
+      "Password": "Test12345#"
     },
     {
       "Email": "Test9@gmail.com",
       "FirstName": "Ronan",
-      "LastName": "Hudson"
+      "LastName": "Hudson",
+      "Password": "Test12345#"
     },
     {
       "Email": "Test10@gmail.com",
       "FirstName": "Clarke",
-      "LastName": "Bonner"
+      "LastName": "Bonner",
+      "Password": "Test12345#"
     }
   ]
 }
