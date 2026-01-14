@@ -5,20 +5,22 @@ import { Router } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
-import { SelectModule } from "primeng/select";
 import { InputTextModule } from "primeng/inputtext";
 import { PasswordModule } from "primeng/password";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { SelectModule } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import {
   Api,
-  createEldProvider,
-  getEldProviders,
   type EldProviderConfigurationDto,
   type EldProviderType,
+  createEldProvider,
+  deleteEldProvider,
+  getEldProviders,
 } from "@/core/api";
+import { ToastService } from "@/core/services";
 import { LabeledField } from "@/shared/components";
 
 interface ProviderOption {
@@ -50,6 +52,7 @@ export class EldProvidersComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly api = inject(Api);
   private readonly fb = inject(FormBuilder);
+  private readonly toastService = inject(ToastService);
 
   protected readonly loading = signal(true);
   protected readonly saving = signal(false);
@@ -121,8 +124,8 @@ export class EldProvidersComponent implements OnInit {
         body: {
           providerType: formValue.providerType as EldProviderType,
           apiKey: formValue.apiKey ?? "",
-          apiSecret: formValue.apiSecret || undefined,
-          webhookSecret: formValue.webhookSecret || undefined,
+          apiSecret: formValue.apiSecret,
+          webhookSecret: formValue.webhookSecret,
         },
       });
       this.showAddDialog.set(false);
@@ -134,15 +137,33 @@ export class EldProvidersComponent implements OnInit {
     }
   }
 
+  protected confirmDeleteProvider(provider: EldProviderConfigurationDto): void {
+    this.toastService.confirm({
+      message: `Are you sure you want to delete the ${this.getProviderLabel(provider.providerType)} provider? This will also remove all driver mappings and HOS data.`,
+      header: "Delete Provider",
+      icon: "pi pi-exclamation-triangle",
+      acceptButtonStyleClass: "p-button-danger",
+      accept: () => this.deleteProvider(provider.id!),
+    });
+  }
+
+  protected async deleteProvider(providerId: string): Promise<void> {
+    this.loading.set(true);
+    try {
+      await this.api.invoke(deleteEldProvider, { providerId });
+      await this.loadProviders();
+    } catch (err) {
+      console.error("Error deleting provider:", err);
+      this.error.set("Failed to delete provider");
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
   protected getProviderLabel(type?: EldProviderType): string {
     if (!type) return "Unknown";
     const option = this.providerOptions.find((o) => o.value === type);
     return option?.label ?? type;
-  }
-
-  protected getStatusSeverity(isConnected?: boolean): "success" | "danger" | "secondary" {
-    if (isConnected === undefined) return "secondary";
-    return isConnected ? "success" : "danger";
   }
 
   protected goBack(): void {

@@ -27,6 +27,35 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Do NOT use `ngClass`, use `class` bindings instead
 - Do NOT use `ngStyle`, use `style` bindings instead
 
+## Route Parameters
+
+Use signal inputs for route parameters instead of `ActivatedRoute`. Angular's router with `withComponentInputBinding()` automatically binds route params to matching input names.
+
+```typescript
+// DO: Use signal inputs for route parameters
+readonly employeeId = input.required<string>();
+
+ngOnInit(): void {
+  const id = this.employeeId();
+  this.loadData(id);
+}
+
+// DON'T: Use ActivatedRoute snapshot
+private readonly route = inject(ActivatedRoute);
+
+ngOnInit(): void {
+  const id = this.route.snapshot.paramMap.get("employeeId");  // Don't do this
+  this.loadData(id);
+}
+```
+
+Benefits:
+
+- Cleaner, more declarative code
+- Works with signals ecosystem
+- Automatically typed (no null checks needed with `input.required`)
+- No need to inject `ActivatedRoute`
+
 ## State Management
 
 - Use signals for local component state
@@ -160,7 +189,7 @@ LabeledField inputs:
 
 - `label` - Label text
 - `for` - The field id for the label
-- `required` - Shows required indicator (*)
+- `required` - Shows required indicator (\*)
 - `hint` - Help text shown below the field
 - `control` - The form control for validation display
 
@@ -170,6 +199,36 @@ LabeledField inputs:
 - Errors are displayed via toast notifications automatically
 - Use `AppError` type from `@/core/errors` for typed error handling
 - Retryable errors (network, server) show retry buttons in `ErrorState` component
+
+## Toast and Confirmation Dialogs
+
+Use `ToastService` from `@/core/services` for toast notifications and confirmation dialogs. Do NOT use PrimeNG's `ConfirmationService` or `MessageService` directly.
+
+```typescript
+// DO: Use ToastService
+import { ToastService } from "@/core/services";
+
+private readonly toastService = inject(ToastService);
+
+// Show confirmation dialog
+this.toastService.confirm({
+  message: "Are you sure you want to delete this item?",
+  header: "Confirm Delete",
+  icon: "pi pi-exclamation-triangle",
+  acceptButtonStyleClass: "p-button-danger",
+  accept: () => this.deleteItem(),
+});
+
+// Show toast messages
+this.toastService.success("Item saved successfully");
+this.toastService.error("Failed to save item");
+this.toastService.warn("This action cannot be undone");
+
+// DON'T: Use ConfirmationService directly
+import { ConfirmationService } from "primeng/api";  // Don't do this
+```
+
+The `ToastService` is a singleton that wraps `ConfirmationService` and `MessageService`, using a global confirm dialog. Components do not need to include `ConfirmDialogModule` or `<p-confirmDialog />` in their templates.
 
 ## DTO and HTTP Layer
 

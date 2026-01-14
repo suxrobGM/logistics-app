@@ -1,0 +1,207 @@
+<div class="w-full p-6">
+  <!-- Header -->
+  <div class="mb-6 flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <p-button
+        icon="pi pi-arrow-left"
+        [rounded]="true"
+        [text]="true"
+        (onClick)="goBack()"
+        pTooltip="Back to Providers"
+      />
+      <div>
+        <h1 class="mb-1 text-2xl font-semibold">Driver Mappings</h1>
+        <p class="mb-0 text-gray-500">
+          Map your TMS drivers to {{ providerName() }} ELD drivers
+        </p>
+      </div>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="flex justify-center p-10">
+      <p-progressSpinner />
+    </div>
+  } @else if (error()) {
+    <div class="p-4 text-center">
+      <i class="pi pi-exclamation-circle mb-3 text-4xl text-red-500"></i>
+      <p class="text-red-500">{{ error() }}</p>
+      <p-button label="Retry" icon="pi pi-refresh" (onClick)="loadData()" />
+    </div>
+  } @else {
+    <div class="grid grid-cols-12 gap-6">
+      <!-- Current Mappings -->
+      <div class="col-span-12">
+        <p-card class="border-0 shadow-sm">
+          <ng-template pTemplate="header">
+            <div class="flex items-center justify-between p-3">
+              <div class="flex items-center">
+                <i class="pi pi-link mr-2 text-blue-600"></i>
+                <h5 class="mb-0">Current Mappings ({{ mappings().length }})</h5>
+              </div>
+            </div>
+          </ng-template>
+
+          @if (mappings().length === 0) {
+            <div class="p-5 text-center">
+              <i class="pi pi-users mb-3 text-4xl text-gray-400"></i>
+              <p class="text-gray-600">No driver mappings configured yet.</p>
+              <p class="mb-0 text-sm text-gray-500">
+                Select an ELD driver and TMS employee below to create a mapping.
+              </p>
+            </div>
+          } @else {
+            <p-table [value]="mappings()" [size]="'small'">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>TMS Employee</th>
+                  <th>ELD Driver</th>
+                  <th>Sync Enabled</th>
+                  <th>Last Synced</th>
+                  <th>Actions</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-mapping>
+                <tr>
+                  <td>
+                    <div class="flex items-center gap-2">
+                      <div
+                        class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600/10"
+                      >
+                        <i class="pi pi-user text-blue-600"></i>
+                      </div>
+                      <span class="font-medium">{{ mapping.employeeName }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="flex items-center gap-2">
+                      <div
+                        class="flex h-8 w-8 items-center justify-center rounded-full bg-green-600/10"
+                      >
+                        <i class="pi pi-id-card text-green-600"></i>
+                      </div>
+                      <div>
+                        <div>{{ mapping.externalDriverName || mapping.externalDriverId }}</div>
+                        <small class="text-gray-500">{{ mapping.externalDriverId }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    @if (mapping.isSyncEnabled) {
+                      <p-tag value="Enabled" severity="success" />
+                    } @else {
+                      <p-tag value="Disabled" severity="secondary" />
+                    }
+                  </td>
+                  <td>
+                    @if (mapping.lastSyncedAt) {
+                      <span class="text-sm text-gray-500">{{
+                        mapping.lastSyncedAt | date: "short"
+                      }}</span>
+                    } @else {
+                      <span class="text-sm text-gray-400">Never</span>
+                    }
+                  </td>
+                  <td>
+                    <p-button
+                      icon="pi pi-trash"
+                      [rounded]="true"
+                      [text]="true"
+                      severity="danger"
+                      pTooltip="Remove Mapping"
+                      (onClick)="confirmDeleteMapping(mapping)"
+                    />
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          }
+        </p-card>
+      </div>
+
+      <!-- Create New Mapping -->
+      <div class="col-span-12">
+        <p-card class="border-0 shadow-sm">
+          <ng-template pTemplate="header">
+            <div class="flex items-center p-3">
+              <i class="pi pi-plus-circle mr-2 text-green-600"></i>
+              <h5 class="mb-0">Create New Mapping</h5>
+            </div>
+          </ng-template>
+
+          <div class="grid grid-cols-12 gap-4">
+            <div class="col-span-12 md:col-span-5">
+              <app-labeled-field label="ELD Driver" for="eldDriver">
+                <p-select
+                  id="eldDriver"
+                  [(ngModel)]="selectedEldDriver"
+                  [options]="unmappedEldDrivers()"
+                  optionLabel="name"
+                  placeholder="Select ELD driver"
+                  class="w-full"
+                  [style]="{ width: '100%' }"
+                  [showClear]="true"
+                >
+                  <ng-template pTemplate="selectedItem" let-item>
+                    <div class="flex items-center gap-2">
+                      <i class="pi pi-id-card text-green-600"></i>
+                      <span>{{ item.name }} ({{ item.externalDriverId }})</span>
+                    </div>
+                  </ng-template>
+                  <ng-template pTemplate="item" let-item>
+                    <div>
+                      <div class="font-medium">{{ item.name }}</div>
+                      <small class="text-gray-500">ID: {{ item.externalDriverId }}</small>
+                    </div>
+                  </ng-template>
+                </p-select>
+              </app-labeled-field>
+            </div>
+
+            <div class="col-span-12 flex items-end justify-center md:col-span-2">
+              <i class="pi pi-arrows-h text-2xl text-gray-400"></i>
+            </div>
+
+            <div class="col-span-12 md:col-span-5">
+              <app-labeled-field label="TMS Employee" for="employee">
+                <p-select
+                  id="employee"
+                  [(ngModel)]="selectedEmployee"
+                  [options]="unmappedEmployees()"
+                  optionLabel="fullName"
+                  placeholder="Select employee"
+                  class="w-full"
+                  [style]="{ width: '100%' }"
+                  [showClear]="true"
+                >
+                  <ng-template pTemplate="selectedItem" let-item>
+                    <div class="flex items-center gap-2">
+                      <i class="pi pi-user text-blue-600"></i>
+                      <span>{{ item.fullName }}</span>
+                    </div>
+                  </ng-template>
+                  <ng-template pTemplate="item" let-item>
+                    <div>
+                      <div class="font-medium">{{ item.fullName }}</div>
+                      <small class="text-gray-500">{{ item.email }}</small>
+                    </div>
+                  </ng-template>
+                </p-select>
+              </app-labeled-field>
+            </div>
+          </div>
+
+          <div class="mt-4 flex justify-end">
+            <p-button
+              label="Create Mapping"
+              icon="pi pi-link"
+              (onClick)="createMapping()"
+              [loading]="saving()"
+              [disabled]="!selectedEldDriver || !selectedEmployee"
+            />
+          </div>
+        </p-card>
+      </div>
+    </div>
+  }
+</div>

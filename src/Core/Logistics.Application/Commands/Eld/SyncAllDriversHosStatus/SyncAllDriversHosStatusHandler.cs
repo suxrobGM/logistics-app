@@ -2,7 +2,9 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
@@ -39,6 +41,12 @@ internal sealed class SyncAllDriversHosStatusHandler(
                 // Get all driver mappings for this provider
                 var mappings = await tenantUow.Repository<EldDriverMapping>()
                     .GetListAsync(m => m.ProviderType == config.ProviderType && m.IsSyncEnabled, ct);
+
+                // For Demo provider, auto-create mappings if none exist
+                if (config.ProviderType == EldProviderType.Demo && !mappings.Any())
+                {
+                    mappings = await AutoCreateDemoMappingsAsync(hosDataList, ct);
+                }
 
                 foreach (var mapping in mappings)
                 {
@@ -101,5 +109,47 @@ internal sealed class SyncAllDriversHosStatusHandler(
         return errorCount == 0
             ? Result.Ok()
             : Result.Fail($"Sync completed with {errorCount} errors");
+    }
+
+    /// <summary>
+    /// Auto-creates driver mappings for Demo provider by mapping demo drivers to existing employees.
+    /// This allows the Demo provider to work out-of-the-box without manual configuration.
+    /// </summary>
+    private async Task<List<EldDriverMapping>> AutoCreateDemoMappingsAsync(
+        IEnumerable<EldDriverHosDataDto> hosDataList,
+        CancellationToken ct)
+    {
+        // Get available employees (take up to 8 for demo)
+        var employees = await tenantUow.Repository<Employee>()
+            .Query()
+            .Take(8)
+            .ToListAsync(ct);
+
+        if (!employees.Any())
+        {
+            logger.LogWarning("No employees found to create demo driver mappings");
+            return [];
+        }
+
+        var mappings = new List<EldDriverMapping>();
+        var hosDataArray = hosDataList.ToArray();
+
+        for (var i = 0; i < Math.Min(employees.Count, hosDataArray.Length); i++)
+        {
+            var mapping = new EldDriverMapping
+            {
+                EmployeeId = employees[i].Id,
+                ExternalDriverId = hosDataArray[i].ExternalDriverId,
+                ExternalDriverName = hosDataArray[i].ExternalDriverName,
+                ProviderType = EldProviderType.Demo,
+                IsSyncEnabled = true
+            };
+
+            await tenantUow.Repository<EldDriverMapping>().AddAsync(mapping);
+            mappings.Add(mapping);
+        }
+
+        logger.LogInformation("Auto-created {Count} demo driver mappings", mappings.Count);
+        return mappings;
     }
 }

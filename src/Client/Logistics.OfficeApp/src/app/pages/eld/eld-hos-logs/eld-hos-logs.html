@@ -1,0 +1,179 @@
+<div class="w-full p-6">
+  <!-- Header -->
+  <div class="mb-6 flex items-center justify-between">
+    <div class="flex items-center gap-4">
+      <p-button
+        icon="pi pi-arrow-left"
+        [rounded]="true"
+        [text]="true"
+        (onClick)="goBack()"
+        pTooltip="Back to Dashboard"
+      />
+      <div>
+        <h1 class="mb-1 text-2xl font-semibold">HOS Logs - {{ employeeName() }}</h1>
+        <p class="mb-0 text-gray-500">View driver duty status history</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Date Range Filter -->
+  <div class="mb-6">
+    <p-card class="border-0 shadow-sm">
+      <div class="flex flex-wrap items-end gap-4">
+        <app-labeled-field label="Start Date" for="startDate">
+          <p-datepicker
+            id="startDate"
+            [(ngModel)]="startDate"
+            [showIcon]="true"
+            [maxDate]="endDate"
+            dateFormat="mm/dd/yy"
+            (onSelect)="onDateRangeChange()"
+          />
+        </app-labeled-field>
+        <app-labeled-field label="End Date" for="endDate">
+          <p-datepicker
+            id="endDate"
+            [(ngModel)]="endDate"
+            [showIcon]="true"
+            [minDate]="startDate"
+            [maxDate]="today"
+            dateFormat="mm/dd/yy"
+            (onSelect)="onDateRangeChange()"
+          />
+        </app-labeled-field>
+      </div>
+      <p-button
+        label="Refresh"
+        icon="pi pi-refresh"
+        severity="secondary"
+        (onClick)="loadData()"
+        [loading]="loading()"
+      />
+    </p-card>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="mb-6 grid grid-cols-12 gap-4">
+    <div class="col-span-12 md:col-span-6">
+      <p-card class="h-full border-0 shadow-sm">
+        <div class="flex items-center">
+          <div
+            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-600/10"
+          >
+            <i class="pi pi-car text-xl text-green-600"></i>
+          </div>
+          <div class="ml-4">
+            <h6 class="mb-1 text-gray-500">Total Driving Time</h6>
+            <h4 class="mb-0 text-xl font-bold">{{ formatMinutes(totalDrivingMinutes()) }}</h4>
+          </div>
+        </div>
+      </p-card>
+    </div>
+    <div class="col-span-12 md:col-span-6">
+      <p-card class="h-full border-0 shadow-sm">
+        <div class="flex items-center">
+          <div
+            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-600/10"
+          >
+            <i class="pi pi-clock text-xl text-blue-600"></i>
+          </div>
+          <div class="ml-4">
+            <h6 class="mb-1 text-gray-500">Total On-Duty Time</h6>
+            <h4 class="mb-0 text-xl font-bold">{{ formatMinutes(totalOnDutyMinutes()) }}</h4>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </div>
+
+  <!-- Logs Table -->
+  <p-card class="border-0 shadow-sm">
+    <ng-template pTemplate="header">
+      <div class="flex items-center p-3">
+        <i class="pi pi-history mr-2 text-blue-600"></i>
+        <h5 class="mb-0">Duty Status Logs</h5>
+      </div>
+    </ng-template>
+
+    @if (loading()) {
+      <div class="flex justify-center p-5">
+        <p-progressSpinner />
+      </div>
+    } @else if (error()) {
+      <div class="p-4 text-center">
+        <i class="pi pi-exclamation-circle mb-3 text-4xl text-red-500"></i>
+        <p class="text-red-500">{{ error() }}</p>
+        <p-button label="Retry" icon="pi pi-refresh" (onClick)="loadData()" />
+      </div>
+    } @else if (logs().length === 0) {
+      <div class="p-5 text-center">
+        <i class="pi pi-inbox mb-3 text-4xl text-gray-400"></i>
+        <p class="text-gray-600">No HOS logs found for the selected date range.</p>
+        <p class="mb-0 text-sm text-gray-500">Try adjusting the date filter above.</p>
+      </div>
+    } @else {
+      <p-table
+        [value]="logs()"
+        [lazy]="true"
+        [paginator]="true"
+        [rows]="pageSize()"
+        [first]="first()"
+        [totalRecords]="totalRecords()"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} logs"
+        (onLazyLoad)="onLazyLoad($event)"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Date</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Status</th>
+            <th>Duration</th>
+            <th>Location</th>
+            <th>Remark</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-log>
+          <tr>
+            <td>{{ log.logDate | date: "mediumDate" }}</td>
+            <td>{{ log.startTime | date: "shortTime" }}</td>
+            <td>
+              @if (log.endTime) {
+                {{ log.endTime | date: "shortTime" }}
+              } @else {
+                <span class="text-gray-400">Ongoing</span>
+              }
+            </td>
+            <td>
+              <p-tag
+                [value]="log.dutyStatusDisplay"
+                [severity]="getDutyStatusSeverity(log.dutyStatus)"
+              />
+            </td>
+            <td>{{ log.durationDisplay }}</td>
+            <td>
+              @if (log.location) {
+                <span class="text-sm">{{ log.location }}</span>
+              } @else if (log.latitude && log.longitude) {
+                <span class="text-sm text-gray-500">
+                  {{ log.latitude | number: "1.4-4" }}, {{ log.longitude | number: "1.4-4" }}
+                </span>
+              } @else {
+                <span class="text-gray-400">-</span>
+              }
+            </td>
+            <td>
+              @if (log.remark) {
+                <span class="text-sm">{{ log.remark }}</span>
+              } @else {
+                <span class="text-gray-400">-</span>
+              }
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </p-card>
+</div>

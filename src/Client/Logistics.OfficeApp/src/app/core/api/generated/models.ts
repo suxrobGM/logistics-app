@@ -37,6 +37,8 @@ export type { DriverReportDtoPagedResponse } from './models/driver-report-dto-pa
 export type { DriverStatsDto } from './models/driver-stats-dto';
 export type { DriverTrendDto } from './models/driver-trend-dto';
 export type { DutyStatus } from './models/duty-status';
+export type { EldDriverDto } from './models/eld-driver-dto';
+export type { EldDriverMappingDto } from './models/eld-driver-mapping-dto';
 export type { EldProviderConfigurationDto } from './models/eld-provider-configuration-dto';
 export type { EldProviderType } from './models/eld-provider-type';
 export type { EmployeeDto } from './models/employee-dto';

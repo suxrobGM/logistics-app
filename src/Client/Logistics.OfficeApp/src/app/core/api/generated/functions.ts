@@ -37,8 +37,16 @@ export type { GetEldProviders$Params as GetEldProviders$Params } from './fn/eld/
 export { getEldProviders as getEldProviders } from './fn/eld/get-eld-providers';
 export type { CreateEldProvider$Params as CreateEldProvider$Params } from './fn/eld/create-eld-provider';
 export { createEldProvider as createEldProvider } from './fn/eld/create-eld-provider';
+export type { DeleteEldProvider$Params as DeleteEldProvider$Params } from './fn/eld/delete-eld-provider';
+export { deleteEldProvider as deleteEldProvider } from './fn/eld/delete-eld-provider';
+export type { GetEldProviderDrivers$Params as GetEldProviderDrivers$Params } from './fn/eld/get-eld-provider-drivers';
+export { getEldProviderDrivers as getEldProviderDrivers } from './fn/eld/get-eld-provider-drivers';
+export type { GetEldDriverMappings$Params as GetEldDriverMappings$Params } from './fn/eld/get-eld-driver-mappings';
+export { getEldDriverMappings as getEldDriverMappings } from './fn/eld/get-eld-driver-mappings';
 export type { MapEldDriver$Params as MapEldDriver$Params } from './fn/eld/map-eld-driver';
 export { mapEldDriver as mapEldDriver } from './fn/eld/map-eld-driver';
+export type { DeleteEldDriverMapping$Params as DeleteEldDriverMapping$Params } from './fn/eld/delete-eld-driver-mapping';
+export { deleteEldDriverMapping as deleteEldDriverMapping } from './fn/eld/delete-eld-driver-mapping';
 export type { GetAllDriversHos$Params as GetAllDriversHos$Params } from './fn/eld/get-all-drivers-hos';
 export { getAllDriversHos as getAllDriversHos } from './fn/eld/get-all-drivers-hos';
 export type { GetDriverHosLogs$Params as GetDriverHosLogs$Params } from './fn/eld/get-driver-hos-logs';
