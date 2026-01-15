@@ -121,4 +121,35 @@ public interface IStripeService
     /// <param name="tenant">Tenant for which the SetupIntent is to be created.</param>
     /// <returns>Stripe SetupIntent object.</returns>
     Task<SetupIntent> CreateSetupIntentAsync(Tenant tenant);
+
+    /// <summary>
+    /// Creates a PaymentIntent for processing a payment.
+    /// </summary>
+    /// <param name="payment">Payment entity with amount details.</param>
+    /// <param name="paymentMethod">The payment method to use.</param>
+    /// <param name="tenant">Tenant entity for customer reference.</param>
+    /// <returns>Stripe PaymentIntent object.</returns>
+    Task<PaymentIntent> CreatePaymentIntentAsync(Payment payment, PaymentMethod paymentMethod, Tenant tenant);
+
+    /// <summary>
+    /// Retrieves a PaymentIntent from Stripe.
+    /// </summary>
+    /// <param name="paymentIntentId">The Stripe PaymentIntent ID.</param>
+    /// <returns>Stripe PaymentIntent object.</returns>
+    Task<PaymentIntent> GetPaymentIntentAsync(string paymentIntentId);
+
+    /// <summary>
+    /// Attaches an existing Stripe payment method to a customer.
+    /// </summary>
+    /// <param name="stripePaymentMethodId">The Stripe payment method ID.</param>
+    /// <param name="tenant">Tenant entity for customer reference.</param>
+    /// <returns>Attached Stripe PaymentMethod object.</returns>
+    Task<StripePaymentMethod> AttachPaymentMethodAsync(string stripePaymentMethodId, Tenant tenant);
+
+    /// <summary>
+    /// Retrieves a payment method from Stripe to verify it exists.
+    /// </summary>
+    /// <param name="stripePaymentMethodId">The Stripe payment method ID.</param>
+    /// <returns>Stripe PaymentMethod object if found, null otherwise.</returns>
+    Task<StripePaymentMethod?> GetPaymentMethodAsync(string stripePaymentMethodId);
 }

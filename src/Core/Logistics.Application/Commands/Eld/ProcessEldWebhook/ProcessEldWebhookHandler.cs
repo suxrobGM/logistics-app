@@ -17,7 +17,7 @@ internal sealed class ProcessEldWebhookHandler(
     {
         // Get provider configuration
         var config = await tenantUow.Repository<EldProviderConfiguration>()
-            .GetAsync(c => c.ProviderType == req.ProviderType && c.IsActive);
+            .GetAsync(c => c.ProviderType == req.ProviderType && c.IsActive, ct);
 
         if (config == null)
         {
@@ -51,7 +51,7 @@ internal sealed class ProcessEldWebhookHandler(
                 break;
 
             case EldWebhookEventType.ViolationResolved:
-                await HandleViolationResolved(webhookResult);
+                await HandleViolationResolved(webhookResult, config);
                 break;
 
             default:
@@ -59,7 +59,7 @@ internal sealed class ProcessEldWebhookHandler(
                 break;
         }
 
-        await tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 
@@ -119,15 +119,134 @@ internal sealed class ProcessEldWebhookHandler(
 
     private async Task HandleViolationCreated(EldWebhookResultDto webhookResult, EldProviderConfiguration config)
     {
-        // Implementation for handling new violations
-        logger.LogInformation("Violation created webhook received for driver {DriverId}",
-            webhookResult.ExternalDriverId);
+        if (string.IsNullOrEmpty(webhookResult.ExternalDriverId))
+        {
+            logger.LogWarning("ViolationCreated webhook missing external driver ID");
+            return;
+        }
+
+        // Find driver mapping
+        var mapping = await tenantUow.Repository<EldDriverMapping>()
+            .GetAsync(m => m.ExternalDriverId == webhookResult.ExternalDriverId
+                           && m.ProviderType == config.ProviderType);
+
+        if (mapping == null)
+        {
+            logger.LogDebug("No mapping found for external driver {DriverId}", webhookResult.ExternalDriverId);
+            return;
+        }
+
+        // Fetch violation details from provider API
+        var providerService = eldProviderFactory.GetProvider(config);
+        var violations = await providerService.GetDriverViolationsAsync(
+            webhookResult.ExternalDriverId,
+            DateTime.UtcNow.AddDays(-1),
+            DateTime.UtcNow);
+
+        var latestViolation = violations.OrderByDescending(v => v.ViolationDate).FirstOrDefault();
+        if (latestViolation is null)
+        {
+            logger.LogWarning("Could not fetch violation details for driver {DriverId}",
+                webhookResult.ExternalDriverId);
+            return;
+        }
+
+        // Check for duplicate violation
+        if (!string.IsNullOrEmpty(latestViolation.ExternalViolationId))
+        {
+            var existingViolation = await tenantUow.Repository<HosViolation>()
+                .GetAsync(v => v.ExternalViolationId == latestViolation.ExternalViolationId);
+
+            if (existingViolation != null)
+            {
+                logger.LogDebug("Violation {ViolationId} already exists", latestViolation.ExternalViolationId);
+                return;
+            }
+        }
+
+        // Create new violation entity
+        var violation = new HosViolation
+        {
+            EmployeeId = mapping.EmployeeId,
+            ViolationDate = latestViolation.ViolationDate,
+            ViolationType = latestViolation.ViolationType,
+            Description = latestViolation.Description,
+            SeverityLevel = latestViolation.SeverityLevel,
+            IsResolved = false,
+            ExternalViolationId = latestViolation.ExternalViolationId,
+            ProviderType = config.ProviderType
+        };
+
+        await tenantUow.Repository<HosViolation>().AddAsync(violation);
+
+        // Update driver HOS status to show in violation
+        var hosStatus = await tenantUow.Repository<DriverHosStatus>()
+            .GetAsync(h => h.EmployeeId == mapping.EmployeeId);
+
+        if (hosStatus is not null)
+        {
+            hosStatus.IsInViolation = true;
+            hosStatus.LastUpdatedAt = DateTime.UtcNow;
+        }
+
+        logger.LogInformation("Created HOS violation for employee {EmployeeId}: {ViolationType}",
+            mapping.EmployeeId, latestViolation.ViolationType);
     }
 
-    private async Task HandleViolationResolved(EldWebhookResultDto webhookResult)
+    private async Task HandleViolationResolved(EldWebhookResultDto webhookResult, EldProviderConfiguration config)
     {
-        // Implementation for handling resolved violations
-        logger.LogInformation("Violation resolved webhook received for driver {DriverId}",
-            webhookResult.ExternalDriverId);
+        if (string.IsNullOrEmpty(webhookResult.ExternalDriverId))
+        {
+            logger.LogWarning("ViolationResolved webhook missing external driver ID");
+            return;
+        }
+
+        // Find driver mapping
+        var mapping = await tenantUow.Repository<EldDriverMapping>()
+            .GetAsync(m => m.ExternalDriverId == webhookResult.ExternalDriverId
+                           && m.ProviderType == config.ProviderType);
+
+        if (mapping == null)
+        {
+            logger.LogDebug("No mapping found for external driver {DriverId}", webhookResult.ExternalDriverId);
+            return;
+        }
+
+        // Find unresolved violations for this driver
+        var unresolvedViolations = await tenantUow.Repository<HosViolation>()
+            .GetListAsync(v => v.EmployeeId == mapping.EmployeeId && !v.IsResolved);
+
+        if (!unresolvedViolations.Any())
+        {
+            logger.LogDebug("No unresolved violations found for employee {EmployeeId}", mapping.EmployeeId);
+            return;
+        }
+
+        // Mark the most recent unresolved violation as resolved
+        var violationToResolve = unresolvedViolations
+            .OrderByDescending(v => v.ViolationDate)
+            .First();
+
+        violationToResolve.IsResolved = true;
+        violationToResolve.ResolvedAt = DateTime.UtcNow;
+
+        // Check if there are still other unresolved violations
+        var remainingUnresolved = unresolvedViolations.Count - 1;
+
+        // Update driver HOS status if no more violations
+        if (remainingUnresolved == 0)
+        {
+            var hosStatus = await tenantUow.Repository<DriverHosStatus>()
+                .GetAsync(h => h.EmployeeId == mapping.EmployeeId);
+
+            if (hosStatus != null)
+            {
+                hosStatus.IsInViolation = false;
+                hosStatus.LastUpdatedAt = DateTime.UtcNow;
+            }
+        }
+
+        logger.LogInformation("Resolved HOS violation for employee {EmployeeId}, {RemainingCount} violations remaining",
+            mapping.EmployeeId, remainingUnresolved);
     }
 }

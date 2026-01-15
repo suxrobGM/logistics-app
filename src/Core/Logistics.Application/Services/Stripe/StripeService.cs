@@ -1,11 +1,8 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Utilities;
-
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
 using Stripe;
-
 using PaymentMethod = Logistics.Domain.Entities.PaymentMethod;
 using StripeCustomer = Stripe.Customer;
 using StripePaymentMethod = Stripe.PaymentMethod;
@@ -23,6 +20,37 @@ internal class StripeService : IStripeService
         _logger = logger;
         StripeConfiguration.ApiKey = options.Value.SecretKey;
     }
+
+    #region Setup Intent API
+
+    public async Task<SetupIntent> CreateSetupIntentAsync(Tenant tenant)
+    {
+        if (string.IsNullOrEmpty(tenant.StripeCustomerId))
+        {
+            throw new ArgumentException("Tenant must have a StripeCustomerId");
+        }
+
+        var options = new SetupIntentCreateOptions
+        {
+            Customer = tenant.StripeCustomerId,
+            Usage = "off_session",
+            AutomaticPaymentMethods = new SetupIntentAutomaticPaymentMethodsOptions
+            {
+                Enabled = true
+            },
+            Metadata = new Dictionary<string, string>
+            {
+                [StripeMetadataKeys.TenantId] = tenant.Id.ToString()
+            }
+        };
+
+        var setupIntentService = new SetupIntentService();
+        var setupIntent = await setupIntentService.CreateAsync(options);
+        _logger.LogInformation("Created SetupIntent for tenant {TenantId}", tenant.Id);
+        return setupIntent;
+    }
+
+    #endregion
 
     #region Customer API
 
@@ -76,7 +104,8 @@ internal class StripeService : IStripeService
 
     #region Subscription API
 
-    public async Task<StripeSubscription> CreateSubscriptionAsync(SubscriptionPlan plan, Tenant tenant, int employeeCount, bool trial = false)
+    public async Task<StripeSubscription> CreateSubscriptionAsync(SubscriptionPlan plan, Tenant tenant,
+        int employeeCount, bool trial = false)
     {
         if (tenant.StripeCustomerId is null)
         {
@@ -113,7 +142,8 @@ internal class StripeService : IStripeService
         return subscription;
     }
 
-    public async Task<StripeSubscription> CancelSubscriptionAsync(string stripeSubscriptionId, bool cancelImmediately = true)
+    public async Task<StripeSubscription> CancelSubscriptionAsync(string stripeSubscriptionId,
+        bool cancelImmediately = true)
     {
         var service = new SubscriptionService();
         StripeSubscription stripeSubscription;
@@ -126,7 +156,8 @@ internal class StripeService : IStripeService
                 InvoiceNow = true,
                 Prorate = true
             });
-            _logger.LogInformation("Canceled immediately Stripe subscription {StripeSubscriptionId}", stripeSubscriptionId);
+            _logger.LogInformation("Canceled immediately Stripe subscription {StripeSubscriptionId}",
+                stripeSubscriptionId);
             return stripeSubscription;
         }
 
@@ -135,7 +166,8 @@ internal class StripeService : IStripeService
         {
             CancelAtPeriodEnd = true
         });
-        _logger.LogInformation("Canceled at period end Stripe subscription {StripeSubscriptionId}", stripeSubscriptionId);
+        _logger.LogInformation("Canceled at period end Stripe subscription {StripeSubscriptionId}",
+            stripeSubscriptionId);
         return stripeSubscription;
     }
 
@@ -145,7 +177,8 @@ internal class StripeService : IStripeService
         var item = subscription.Items.Data[0]; // Assuming single item per subscription
         var options = new SubscriptionItemUpdateOptions { Quantity = employeeCount };
         var stripeSubscriptionItem = await new SubscriptionItemService().UpdateAsync(item.Id, options);
-        _logger.LogInformation("Updated Stripe subscription {StripeSubscriptionId} with new quantity {EmployeeCount}", stripeSubscriptionId, employeeCount);
+        _logger.LogInformation("Updated Stripe subscription {StripeSubscriptionId} with new quantity {EmployeeCount}",
+            stripeSubscriptionId, employeeCount);
         return stripeSubscriptionItem;
     }
 
@@ -156,7 +189,9 @@ internal class StripeService : IStripeService
         int employeeCount)
     {
         if (string.IsNullOrEmpty(tenant.StripeCustomerId))
+        {
             throw new ArgumentException("Tenant must have a StripeCustomerId");
+        }
 
         var subSvc = new SubscriptionService();
         var invSvc = new InvoiceService();
@@ -257,7 +292,9 @@ internal class StripeService : IStripeService
                 }
             });
 
-            _logger.LogInformation("Updated Stripe price for plan {PlanId} with billing cycle anchor {BillingCycleAnchor}", plan.Id, billingCycleAnchorStr);
+            _logger.LogInformation(
+                "Updated Stripe price for plan {PlanId} with billing cycle anchor {BillingCycleAnchor}", plan.Id,
+                billingCycleAnchorStr);
         }
 
         _logger.LogInformation("Created Stripe price for plan {PlanId}", plan.Id);
@@ -320,7 +357,7 @@ internal class StripeService : IStripeService
                 },
                 Metadata = new Dictionary<string, string>
                 {
-                    [StripeMetadataKeys.PlanId] = plan.Id.ToString(),
+                    [StripeMetadataKeys.PlanId] = plan.Id.ToString()
                 }
             });
 
@@ -339,7 +376,9 @@ internal class StripeService : IStripeService
     public async Task<StripePaymentMethod> UpdatePaymentMethodAsync(PaymentMethod paymentMethod)
     {
         if (string.IsNullOrEmpty(paymentMethod.StripePaymentMethodId))
+        {
             throw new ArgumentException("Payment method must have a Stripe ID");
+        }
 
         var service = new PaymentMethodService();
         var options = new PaymentMethodUpdateOptions
@@ -365,7 +404,9 @@ internal class StripeService : IStripeService
     public async Task RemovePaymentMethodAsync(PaymentMethod paymentMethod)
     {
         if (string.IsNullOrEmpty(paymentMethod.StripePaymentMethodId))
+        {
             throw new ArgumentException("Payment method must have a Stripe ID");
+        }
 
         await new PaymentMethodService().DetachAsync(paymentMethod.StripePaymentMethodId);
         _logger.LogInformation("Removed Stripe payment method {PaymentMethodId}", paymentMethod.StripePaymentMethodId);
@@ -374,10 +415,14 @@ internal class StripeService : IStripeService
     public async Task SetDefaultPaymentMethodAsync(PaymentMethod paymentMethod, Tenant tenant)
     {
         if (string.IsNullOrEmpty(tenant.StripeCustomerId))
+        {
             throw new ArgumentException("Tenant must have a StripeCustomerId");
+        }
 
         if (string.IsNullOrEmpty(paymentMethod.StripePaymentMethodId))
+        {
             throw new ArgumentException("Payment method must have a StripePaymentMethodId");
+        }
 
         await new CustomerService().UpdateAsync(tenant.StripeCustomerId, new CustomerUpdateOptions
         {
@@ -387,37 +432,83 @@ internal class StripeService : IStripeService
             }
         });
 
-        _logger.LogInformation("Set default Stripe payment method for tenant {TenantId}, Stripe payment method ID {StripePaymentMethodId}",
+        _logger.LogInformation(
+            "Set default Stripe payment method for tenant {TenantId}, Stripe payment method ID {StripePaymentMethodId}",
             tenant.Id, paymentMethod.StripePaymentMethodId);
     }
 
     #endregion
 
-    #region Setup Intent API
+    #region Payment Intent API
 
-    public async Task<SetupIntent> CreateSetupIntentAsync(Tenant tenant)
+    public async Task<PaymentIntent> CreatePaymentIntentAsync(Payment payment, PaymentMethod paymentMethod,
+        Tenant tenant)
     {
         if (string.IsNullOrEmpty(tenant.StripeCustomerId))
-            throw new ArgumentException("Tenant must have a StripeCustomerId");
-
-        var options = new SetupIntentCreateOptions
         {
+            throw new ArgumentException("Tenant must have a StripeCustomerId");
+        }
+
+        if (string.IsNullOrEmpty(paymentMethod.StripePaymentMethodId))
+        {
+            throw new ArgumentException("Payment method must have a StripePaymentMethodId");
+        }
+
+        var options = new PaymentIntentCreateOptions
+        {
+            Amount = (long)(payment.Amount.Amount * 100), // Convert to cents
+            Currency = payment.Amount.Currency.ToLower(),
             Customer = tenant.StripeCustomerId,
-            Usage = "off_session",
-            AutomaticPaymentMethods = new SetupIntentAutomaticPaymentMethodsOptions
-            {
-                Enabled = true
-            },
+            PaymentMethod = paymentMethod.StripePaymentMethodId,
+            Confirm = true,
+            OffSession = true,
+            Description = payment.Description,
             Metadata = new Dictionary<string, string>
             {
-                [StripeMetadataKeys.TenantId] = tenant.Id.ToString()
+                [StripeMetadataKeys.TenantId] = tenant.Id.ToString(),
+                ["PaymentId"] = payment.Id.ToString()
             }
         };
 
-        var setupIntentService = new SetupIntentService();
-        var setupIntent = await setupIntentService.CreateAsync(options);
-        _logger.LogInformation("Created SetupIntent for tenant {TenantId}", tenant.Id);
-        return setupIntent;
+        var paymentIntent = await new PaymentIntentService().CreateAsync(options);
+        _logger.LogInformation("Created PaymentIntent {PaymentIntentId} for tenant {TenantId}",
+            paymentIntent.Id, tenant.Id);
+        return paymentIntent;
+    }
+
+    public Task<PaymentIntent> GetPaymentIntentAsync(string paymentIntentId)
+    {
+        return new PaymentIntentService().GetAsync(paymentIntentId);
+    }
+
+    public async Task<StripePaymentMethod> AttachPaymentMethodAsync(string stripePaymentMethodId, Tenant tenant)
+    {
+        if (string.IsNullOrEmpty(tenant.StripeCustomerId))
+        {
+            throw new ArgumentException("Tenant must have a StripeCustomerId");
+        }
+
+        var service = new PaymentMethodService();
+        var attachedMethod = await service.AttachAsync(stripePaymentMethodId, new PaymentMethodAttachOptions
+        {
+            Customer = tenant.StripeCustomerId
+        });
+
+        _logger.LogInformation("Attached payment method {PaymentMethodId} to customer {CustomerId}",
+            stripePaymentMethodId, tenant.StripeCustomerId);
+        return attachedMethod;
+    }
+
+    public async Task<StripePaymentMethod?> GetPaymentMethodAsync(string stripePaymentMethodId)
+    {
+        try
+        {
+            return await new PaymentMethodService().GetAsync(stripePaymentMethodId);
+        }
+        catch (StripeException ex) when (ex.StripeError?.Code == "resource_missing")
+        {
+            return null;
+        }
     }
 
     #endregion

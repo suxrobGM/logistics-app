@@ -17,6 +17,7 @@ export const tripRoutes: Routes = [
   {
     path: "add",
     component: TripAddPage,
+    canActivate: [authGuard],
     data: {
       breadcrumb: "Add Trip",
     },

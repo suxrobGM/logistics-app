@@ -4,5 +4,15 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to track deliveries and optimize routes.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We need your location in the background to track deliveries and provide real-time updates to dispatchers.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location in the background to track deliveries and provide real-time updates to dispatchers.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 </dict>
 </plist>

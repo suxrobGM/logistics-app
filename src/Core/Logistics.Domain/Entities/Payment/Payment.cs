@@ -12,4 +12,5 @@ public class Payment : AuditableEntity, IMasterEntity, ITenantEntity
     public required Guid TenantId { get; set; }
     public string? Description { get; set; }
     public required Address BillingAddress { get; set; }
+    public string? StripePaymentIntentId { get; set; }
 }

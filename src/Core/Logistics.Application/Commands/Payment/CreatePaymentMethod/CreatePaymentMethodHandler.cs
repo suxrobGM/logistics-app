@@ -5,54 +5,77 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
+using Stripe;
+using PaymentMethod = Logistics.Domain.Entities.PaymentMethod;
+
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreatePaymentMethodHandler : IAppRequestHandler<CreatePaymentMethodCommand, Result>
+internal sealed class CreatePaymentMethodHandler(
+    ITenantUnitOfWork tenantUow,
+    IStripeService stripeService,
+    ILogger<CreatePaymentMethodHandler> logger)
+    : IAppRequestHandler<CreatePaymentMethodCommand, Result>
 {
-    private readonly ILogger<CreatePaymentMethodHandler> _logger;
-    private readonly IStripeService _stripeService;
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public CreatePaymentMethodHandler(
-        ITenantUnitOfWork tenantUow,
-        IStripeService stripeService,
-        ILogger<CreatePaymentMethodHandler> logger)
-    {
-        _tenantUow = tenantUow;
-        _stripeService = stripeService;
-        _logger = logger;
-    }
-
     public async Task<Result> Handle(
         CreatePaymentMethodCommand req, CancellationToken ct)
     {
-        // If there are no payment methods for the tenant, set the first one as default
-        var paymentMethodsCount = await _tenantUow.Repository<PaymentMethod>().CountAsync();
-
-        switch (req.Type)
+        try
         {
-            case PaymentMethodType.Card:
-                await CreateCardPaymentMethod(req, paymentMethodsCount == 0);
-                break;
-            case PaymentMethodType.UsBankAccount:
-                await CreateUsBankAccountPaymentMethod(req, paymentMethodsCount == 0);
-                break;
-            case PaymentMethodType.InternationalBankAccount:
-                await CreateInternationalBankAccountPaymentMethod(req, paymentMethodsCount == 0);
-                break;
-            default:
-                return Result.Fail($"Unsupported payment method type: {req.Type}");
-        }
+            // If there are no payment methods for the tenant, set the first one as default
+            var paymentMethodsCount = await tenantUow.Repository<PaymentMethod>().CountAsync(ct: ct);
 
-        await _tenantUow.SaveChangesAsync();
-        return Result.Ok();
+            switch (req.Type)
+            {
+                case PaymentMethodType.Card:
+                    await CreateCardPaymentMethod(req, paymentMethodsCount == 0);
+                    break;
+                case PaymentMethodType.UsBankAccount:
+                    await CreateUsBankAccountPaymentMethod(req, paymentMethodsCount == 0);
+                    break;
+                case PaymentMethodType.InternationalBankAccount:
+                    await CreateInternationalBankAccountPaymentMethod(req, paymentMethodsCount == 0);
+                    break;
+                default:
+                    return Result.Fail($"Unsupported payment method type: {req.Type}");
+            }
+
+            await tenantUow.SaveChangesAsync(ct);
+            return Result.Ok();
+        }
+        catch (StripeException ex)
+        {
+            logger.LogError(ex, "Stripe error creating payment method: {Message}", ex.Message);
+            return Result.Fail($"Failed to sync payment method with Stripe: {ex.Message}");
+        }
+        catch (ArgumentException ex)
+        {
+            logger.LogError(ex, "Validation error creating payment method: {Message}", ex.Message);
+            return Result.Fail(ex.Message);
+        }
     }
 
     private async Task CreateCardPaymentMethod(
         CreatePaymentMethodCommand command, bool setDefault = false)
     {
-        var tenant = _tenantUow.GetCurrentTenant();
+        var tenant = tenantUow.GetCurrentTenant();
+
+        // Verify and attach Stripe payment method if provided
+        if (!string.IsNullOrEmpty(command.StripePaymentMethodId))
+        {
+            var stripePaymentMethod = await stripeService.GetPaymentMethodAsync(command.StripePaymentMethodId);
+            if (stripePaymentMethod is null)
+            {
+                throw new ArgumentException($"Payment method {command.StripePaymentMethodId} not found in Stripe");
+            }
+
+            // Attach to customer if not already attached
+            if (stripePaymentMethod.CustomerId != tenant.StripeCustomerId)
+            {
+                await stripeService.AttachPaymentMethodAsync(command.StripePaymentMethodId, tenant);
+            }
+        }
+
         var paymentMethod = new CardPaymentMethod
         {
             CardNumber = command.CardNumber!.Replace(" ", ""),
@@ -66,9 +89,14 @@ internal sealed class CreatePaymentMethodHandler : IAppRequestHandler<CreatePaym
             StripePaymentMethodId = command.StripePaymentMethodId
         };
 
-        //await _stripeService.AddPaymentMethodAsync(paymentMethod, tenant);
-        await _tenantUow.Repository<CardPaymentMethod>().AddAsync(paymentMethod);
-        _logger.LogInformation(
+        await tenantUow.Repository<CardPaymentMethod>().AddAsync(paymentMethod);
+
+        if (setDefault && !string.IsNullOrEmpty(paymentMethod.StripePaymentMethodId))
+        {
+            await stripeService.SetDefaultPaymentMethodAsync(paymentMethod, tenant);
+        }
+
+        logger.LogInformation(
             "Created card payment method for tenant {TenantId} with last 4 digits {Last4}",
             tenant.Id, command.CardNumber![^4..]);
     }
@@ -76,7 +104,24 @@ internal sealed class CreatePaymentMethodHandler : IAppRequestHandler<CreatePaym
     private async Task CreateUsBankAccountPaymentMethod(
         CreatePaymentMethodCommand command, bool setDefault = false)
     {
-        var tenant = _tenantUow.GetCurrentTenant();
+        var tenant = tenantUow.GetCurrentTenant();
+
+        // Verify and attach Stripe payment method if provided
+        if (!string.IsNullOrEmpty(command.StripePaymentMethodId))
+        {
+            var stripePaymentMethod = await stripeService.GetPaymentMethodAsync(command.StripePaymentMethodId);
+            if (stripePaymentMethod is null)
+            {
+                throw new ArgumentException($"Payment method {command.StripePaymentMethodId} not found in Stripe");
+            }
+
+            // Attach to customer if not already attached
+            if (stripePaymentMethod.CustomerId != tenant.StripeCustomerId)
+            {
+                await stripeService.AttachPaymentMethodAsync(command.StripePaymentMethodId, tenant);
+            }
+        }
+
         var paymentMethod = new UsBankAccountPaymentMethod
         {
             AccountNumber = command.AccountNumber!.Replace(" ", ""),
@@ -92,9 +137,14 @@ internal sealed class CreatePaymentMethodHandler : IAppRequestHandler<CreatePaym
             StripePaymentMethodId = command.StripePaymentMethodId
         };
 
-        //await _stripeService.AddPaymentMethodAsync(paymentMethod, tenant);
-        await _tenantUow.Repository<UsBankAccountPaymentMethod>().AddAsync(paymentMethod);
-        _logger.LogInformation(
+        await tenantUow.Repository<UsBankAccountPaymentMethod>().AddAsync(paymentMethod);
+
+        if (setDefault && !string.IsNullOrEmpty(paymentMethod.StripePaymentMethodId))
+        {
+            await stripeService.SetDefaultPaymentMethodAsync(paymentMethod, tenant);
+        }
+
+        logger.LogInformation(
             "Created US bank account payment method for tenant {TenantId} with last 4 digits {Last4}",
             tenant.Id, command.AccountNumber![^4..]);
     }
@@ -102,7 +152,7 @@ internal sealed class CreatePaymentMethodHandler : IAppRequestHandler<CreatePaym
     private async Task CreateInternationalBankAccountPaymentMethod(
         CreatePaymentMethodCommand command, bool setDefault = false)
     {
-        var tenant = _tenantUow.GetCurrentTenant();
+        var tenant = tenantUow.GetCurrentTenant();
         var paymentMethod = new BankAccountPaymentMethod
         {
             AccountNumber = command.AccountNumber!,
@@ -116,8 +166,8 @@ internal sealed class CreatePaymentMethodHandler : IAppRequestHandler<CreatePaym
 
         // TODO: Stripe does not support international bank accounts yet
 
-        await _tenantUow.Repository<BankAccountPaymentMethod>().AddAsync(paymentMethod);
-        _logger.LogInformation(
+        await tenantUow.Repository<BankAccountPaymentMethod>().AddAsync(paymentMethod);
+        logger.LogInformation(
             "Created international bank account payment method for tenant {TenantId} with last 4 digits {Last4}",
             tenant.Id, command.AccountNumber![^4..]);
     }

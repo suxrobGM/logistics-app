@@ -71,7 +71,7 @@ public class PaymentController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Payment.Manage)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var result = await mediator.Send(new DeleteCustomerCommand { Id = id });
+        var result = await mediator.Send(new DeletePaymentCommand { Id = id });
         return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
 
