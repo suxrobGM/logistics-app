@@ -3,14 +3,11 @@ import { Router, RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { IconFieldModule } from "primeng/iconfield";
-import { InputIconModule } from "primeng/inputicon";
-import { InputTextModule } from "primeng/inputtext";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { Api, deleteCustomer } from "@/core/api";
 import { ToastService } from "@/core/services";
-import { DataContainer } from "@/shared/components";
+import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
 import { CustomersListStore } from "../store/customers-list.store";
 
 @Component({
@@ -23,11 +20,10 @@ import { CustomersListStore } from "../store/customers-list.store";
     RouterLink,
     CardModule,
     TableModule,
-    InputTextModule,
     ConfirmDialogModule,
-    IconFieldModule,
-    InputIconModule,
     DataContainer,
+    PageHeader,
+    SearchInput,
   ],
 })
 export class CustomersListComponent {
@@ -36,9 +32,8 @@ export class CustomersListComponent {
   private readonly toastService = inject(ToastService);
   protected readonly store = inject(CustomersListStore);
 
-  protected search(event: Event): void {
-    const searchValue = (event.target as HTMLInputElement).value;
-    this.store.setSearch(searchValue);
+  protected search(value: string): void {
+    this.store.setSearch(value);
   }
 
   protected addCustomer(): void {
@@ -46,10 +41,7 @@ export class CustomersListComponent {
   }
 
   protected confirmToDelete(id: string): void {
-    this.toastService.confirm({
-      message: "Are you sure that you want to delete this customer?",
-      accept: () => this.deleteCustomer(id),
-    });
+    this.toastService.confirmDelete("customer", () => this.deleteCustomer(id));
   }
 
   private async deleteCustomer(id: string): Promise<void> {

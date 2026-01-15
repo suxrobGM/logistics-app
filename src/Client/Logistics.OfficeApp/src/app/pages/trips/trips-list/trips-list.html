@@ -21,8 +21,8 @@
     emptyTitle="No trips yet"
     emptyMessage="Create your first trip to get started."
     emptyActionLabel="Add Trip"
-    (onRetry)="store.retry()"
-    (onEmptyAction)="addTrip()"
+    (retry)="store.retry()"
+    (emptyAction)="addTrip()"
   >
     <p-table
       [value]="store.data()"

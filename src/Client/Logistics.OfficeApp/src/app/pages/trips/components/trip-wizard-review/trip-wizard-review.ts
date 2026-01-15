@@ -4,12 +4,12 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
 import type { TripStopDto, TripStopType } from "@/core/api/models";
-import { DirectionMap } from "@/shared/components";
-import type {
-  RouteSegmentClickEvent,
-  Waypoint,
-  WaypointClickEvent,
-} from "@/shared/components/direction-map/types";
+import {
+  DirectionMap,
+  type RouteSegmentClickEvent,
+  type Waypoint,
+  type WaypointClickEvent,
+} from "@/shared/components";
 import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
 import { TripWizardStore } from "../../store/trip-wizard-store";
 

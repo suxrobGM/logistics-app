@@ -1,0 +1,19 @@
+<p-card class="h-full border-0 shadow-sm">
+  <div class="flex items-center">
+    <div [class]="bgClasses()">
+      <i [class]="iconClasses()"></i>
+    </div>
+    <div class="ml-4 grow">
+      <h6 class="mb-1 text-gray-500">{{ label() }}</h6>
+      <h4 class="mb-0 text-2xl font-bold">{{ value() }}</h4>
+      @if (trend()) {
+        <small [class]="trendClasses()">
+          @if (trendIcon()) {
+            <i [class]="trendIcon()"></i>
+          }
+          {{ trend() }}
+        </small>
+      }
+    </div>
+  </div>
+</p-card>

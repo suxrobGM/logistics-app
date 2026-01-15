@@ -2,13 +2,10 @@ import { Component, inject } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { IconFieldModule } from "primeng/iconfield";
-import { InputIconModule } from "primeng/inputicon";
-import { InputTextModule } from "primeng/inputtext";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import type { AddressDto } from "@/core/api/models";
-import { DataContainer } from "@/shared/components";
+import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
 import { AddressPipe } from "@/shared/pipes";
 import { TrucksListStore } from "../store/trucks-list.store";
 
@@ -22,11 +19,10 @@ import { TrucksListStore } from "../store/trucks-list.store";
     RouterLink,
     CardModule,
     TableModule,
-    InputTextModule,
     AddressPipe,
-    IconFieldModule,
-    InputIconModule,
     DataContainer,
+    PageHeader,
+    SearchInput,
   ],
 })
 export class TrucksListComponent {
@@ -34,9 +30,8 @@ export class TrucksListComponent {
   private readonly addressPipe = inject(AddressPipe);
   protected readonly store = inject(TrucksListStore);
 
-  protected search(event: Event): void {
-    const searchValue = (event.target as HTMLInputElement).value;
-    this.store.setSearch(searchValue);
+  protected search(value: string): void {
+    this.store.setSearch(value);
   }
 
   protected addTruck(): void {

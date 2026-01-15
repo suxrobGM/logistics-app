@@ -1,4 +1,5 @@
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
@@ -19,7 +20,7 @@ import {
 } from "@/core/api/models";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
-import { LabeledField, ValidationSummary } from "@/shared/components";
+import { CurrencyInput, LabeledField, UnitInput, ValidationSummary } from "@/shared/components";
 import { UserRole } from "@/shared/models";
 import { NumberUtils } from "@/shared/utils";
 import { ChangeRoleDialogComponent } from "../components";
@@ -42,6 +43,8 @@ import { ChangeRoleDialogComponent } from "../components";
     InputGroupModule,
     InputGroupAddonModule,
     InputTextModule,
+    UnitInput,
+    CurrencyInput,
   ],
 })
 export class EmployeeEditComponent implements OnInit {
@@ -70,24 +73,30 @@ export class EmployeeEditComponent implements OnInit {
       }),
     });
 
-    this.form.get("salaryType")?.valueChanges.subscribe((selectedSalaryType) => {
-      const salaryControl = this.form.get("salary");
+    this.form
+      .get("salaryType")
+      ?.valueChanges.pipe(takeUntilDestroyed())
+      .subscribe((selectedSalaryType) => {
+        const salaryControl = this.form.get("salary");
 
-      if (!salaryControl) {
-        return;
-      }
+        if (!salaryControl) {
+          return;
+        }
 
-      if (selectedSalaryType === "share_of_gross") {
-        salaryControl.setValidators([Validators.required, Validators.min(0), Validators.max(100)]);
-        salaryControl.setValue(0);
-      } else if (selectedSalaryType === "none") {
-        salaryControl.setValue(0);
-      } else {
-        salaryControl.setValidators([Validators.required, Validators.min(0)]);
-      }
+        if (selectedSalaryType === "share_of_gross") {
+          salaryControl.setValidators([Validators.required, Validators.min(0), Validators.max(100)]);
+          salaryControl.setValue(0);
+          salaryControl.enable();
+        } else if (selectedSalaryType === "none") {
+          salaryControl.setValue(0);
+          salaryControl.disable();
+        } else {
+          salaryControl.setValidators([Validators.required, Validators.min(0)]);
+          salaryControl.enable();
+        }
 
-      salaryControl.updateValueAndValidity();
-    });
+        salaryControl.updateValueAndValidity();
+      });
   }
 
   ngOnInit(): void {
@@ -119,9 +128,8 @@ export class EmployeeEditComponent implements OnInit {
   }
 
   confirmToDelete(): void {
-    this.toastService.confirm({
-      message: "Are you sure that you want to delete this employee from the company?",
-      // accept: () => this.deleteLoad()
+    this.toastService.confirmDelete("employee", () => {
+      // TODO: implement delete employee
     });
   }
 

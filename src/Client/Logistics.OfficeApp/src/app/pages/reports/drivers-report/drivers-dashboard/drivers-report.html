@@ -1,0 +1,178 @@
+<div class="w-full p-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <app-page-title
+      title="Drivers Dashboard"
+      subtitle="Comprehensive overview of driver performance and efficiency"
+    />
+    <app-range-calendar
+      [(startDate)]="startDate"
+      [(endDate)]="endDate"
+      (applyButtonClick)="filter()"
+    />
+  </div>
+
+  @if (isLoading()) {
+    <!-- Loading State -->
+    <div class="grid grid-cols-12">
+      @for (item of [1, 2, 3, 4]; track item) {
+        <div class="col-span-12 mb-6 md:col-span-6 lg:col-span-3">
+          <p-skeleton height="120px"></p-skeleton>
+        </div>
+      }
+    </div>
+  } @else {
+    <!-- Key Metrics Cards -->
+    <div class="mb-6 grid grid-cols-12 gap-2">
+      <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+        <app-stat-card
+          icon="pi-users"
+          label="Total Drivers"
+          [value]="(data()?.totalDrivers || 0 | number) ?? '0'"
+          color="blue"
+          [trend]="(data()?.activeDrivers || 0) + ' active'"
+        />
+      </div>
+
+      <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+        <app-stat-card
+          icon="pi-dollar"
+          label="Total Earnings"
+          [value]="(data()?.totalEarnings || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+          color="green"
+          trend="+12.5% vs last period"
+          trendDirection="up"
+        />
+      </div>
+
+      <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+        <app-stat-card
+          icon="pi-map"
+          label="Total Distance"
+          [value]="(data()?.totalDistance || 0 | number: '1.0-0') + ' km'"
+          color="blue"
+          trend="+7.3% vs last period"
+          trendDirection="up"
+        />
+      </div>
+
+      <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+        <app-stat-card
+          icon="pi-check-circle"
+          label="Loads Delivered"
+          [value]="(data()?.totalLoadsDelivered || 0 | number) ?? '0'"
+          color="orange"
+          trend="+9.8% vs last period"
+          trendDirection="up"
+        />
+      </div>
+    </div>
+
+    <!-- Efficiency Metrics -->
+    <div class="mb-6 grid grid-cols-12 gap-2">
+      <div class="col-span-12">
+        <app-dashboard-card title="Efficiency Metrics" icon="pi-chart-line" iconColor="blue">
+          <div class="grid grid-cols-12 gap-1">
+            @for (metric of data()?.efficiencyMetrics || []; track metric.metric) {
+              <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+                <div class="flex items-center rounded bg-gray-100 p-4">
+                  <div class="grow">
+                    <h6 class="mb-1">{{ metric.metric }}</h6>
+                    <h4 class="mb-0">{{ metric.value | number: "1.1-1" }} {{ metric.unit }}</h4>
+                  </div>
+                  <div class="shrink-0">
+                    <p-tag
+                      [value]="((metric.trend ?? 0) >= 0 ? '+' : '') + (metric.trend ?? 0) + '%'"
+                      [severity]="(metric.trend ?? 0) >= 0 ? 'success' : 'danger'"
+                    />
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </app-dashboard-card>
+      </div>
+    </div>
+
+    <!-- Charts Row 1 -->
+    <div class="mb-6 grid grid-cols-12 gap-2">
+      <div class="col-span-12 mb-6 lg:col-span-8">
+        <app-dashboard-card title="Driver Trends Over Time" icon="pi-chart-line" iconColor="blue">
+          <p-chart
+            type="line"
+            [data]="trendChartData()"
+            [options]="trendChartOptions"
+            style="height: 300px"
+          />
+        </app-dashboard-card>
+      </div>
+
+      <div class="col-span-12 mb-6 lg:col-span-4">
+        <app-dashboard-card title="Top Performers" icon="pi-chart-bar" iconColor="blue">
+          <p-chart
+            type="bar"
+            [data]="performanceChartData()"
+            [options]="performanceChartOptions"
+            style="height: 300px"
+          />
+        </app-dashboard-card>
+      </div>
+    </div>
+
+    <!-- Efficiency Chart -->
+    <div class="mb-6 grid grid-cols-12 gap-2">
+      <div class="col-span-12">
+        <app-dashboard-card title="Efficiency Metrics" icon="pi-chart-bar" iconColor="blue">
+          <p-chart
+            type="bar"
+            [data]="efficiencyChartData()"
+            [options]="efficiencyChartOptions"
+            style="height: 300px"
+          />
+        </app-dashboard-card>
+      </div>
+    </div>
+
+    <!-- Top Performers Table -->
+    <div class="grid grid-cols-12 gap-2">
+      <div class="col-span-12">
+        <app-dashboard-card title="Top Performing Drivers" icon="pi-star" iconColor="blue">
+          <p-table [value]="data()?.topPerformers || []" [paginator]="true" [rows]="10">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Driver Name</th>
+                <th>Loads Delivered</th>
+                <th>Total Earnings</th>
+                <th>Distance Driven</th>
+                <th>Efficiency</th>
+                <th>Performance</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-driver>
+              <tr>
+                <td>
+                  <div class="flex items-center">
+                    <div class="mr-2 rounded-full bg-blue-600/10 p-2">
+                      <i class="pi pi-user text-blue-600"></i>
+                    </div>
+                    <span class="font-medium">{{ driver.driverName }}</span>
+                  </div>
+                </td>
+                <td>{{ driver.loadsDelivered | number }}</td>
+                <td>{{ driver.earnings | currency: "USD" : "symbol" : "1.0-0" }}</td>
+                <td>{{ driver.distance | number: "1.0-0" }} km</td>
+                <td>{{ driver.efficiency | number: "1.1-1" }} loads/day</td>
+                <td>
+                  <p-tag
+                    [value]="getPerformanceLevel(driver.efficiency)"
+                    [severity]="getPerformanceSeverity(driver.efficiency)"
+                  />
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </app-dashboard-card>
+      </div>
+    </div>
+  }
+</div>

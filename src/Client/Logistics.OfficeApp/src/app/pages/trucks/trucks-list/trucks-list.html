@@ -1,15 +1,8 @@
-<div class="flex items-center">
-  <h1>List Trucks</h1>
-  <p-button
-    styleClass="text-black ml-2"
-    icon="pi pi-plus-circle"
-    size="large"
-    [rounded]="true"
-    [text]="true"
-    pTooltip="Add a new truck"
-    [routerLink]="['/trucks/add']"
-  />
-</div>
+<app-page-header
+  title="List Trucks"
+  addRoute="/trucks/add"
+  addTooltip="Add a new truck"
+/>
 
 <p-card>
   <app-data-container
@@ -21,8 +14,8 @@
     emptyTitle="No trucks yet"
     emptyMessage="Add your first truck to get started."
     emptyActionLabel="Add Truck"
-    (onRetry)="store.retry()"
-    (onEmptyAction)="addTruck()"
+    (retry)="store.retry()"
+    (emptyAction)="addTruck()"
   >
     <p-table
       [value]="store.data()"
@@ -37,10 +30,7 @@
       [rowsPerPageOptions]="[10, 25, 50]"
     >
       <ng-template #caption>
-        <p-icon-field>
-          <p-inputicon class="pi pi-search" />
-          <input pInputText type="text" placeholder="Search" (input)="search($event)" />
-        </p-icon-field>
+        <app-search-input (searchChange)="search($event)" />
       </ng-template>
       <ng-template #header>
         <tr>

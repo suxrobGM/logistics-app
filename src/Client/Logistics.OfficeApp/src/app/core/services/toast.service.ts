@@ -49,4 +49,19 @@ export class ToastService {
       ...options,
     });
   }
+
+  /**
+   * Displays a delete confirmation dialog with a standard message.
+   * @param entityName The name of the entity type being deleted (e.g., "customer", "truck").
+   * @param onAccept The callback function to be executed when the delete is confirmed.
+   */
+  confirmDelete(entityName: string, onAccept: () => void) {
+    this.confirm({
+      message: `Are you sure that you want to delete this ${entityName}?`,
+      header: "Confirm Delete",
+      icon: "pi pi-exclamation-triangle",
+      acceptButtonStyleClass: "p-button-danger",
+      accept: onAccept,
+    });
+  }
 }

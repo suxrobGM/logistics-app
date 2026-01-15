@@ -76,8 +76,8 @@
     emptyTitle="No payroll invoices yet"
     emptyMessage="Create your first payroll invoice for this employee."
     emptyActionLabel="Add Invoice"
-    (onRetry)="store.retry()"
-    (onEmptyAction)="addInvoice()"
+    (retry)="store.retry()"
+    (emptyAction)="addInvoice()"
   >
     <p-table
       [value]="store.data()"

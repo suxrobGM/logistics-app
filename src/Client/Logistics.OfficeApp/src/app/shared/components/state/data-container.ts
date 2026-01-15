@@ -46,16 +46,16 @@ export class DataContainer {
 
   // Events
   /** Emitted when user clicks retry on error state */
-  readonly onRetry = output<void>();
+  readonly retry = output<void>();
 
   /** Emitted when user clicks action button on empty state */
-  readonly onEmptyAction = output<void>();
+  readonly emptyAction = output<void>();
 
   protected handleRetry(): void {
-    this.onRetry.emit();
+    this.retry.emit();
   }
 
   protected handleEmptyAction(): void {
-    this.onEmptyAction.emit();
+    this.emptyAction.emit();
   }
 }

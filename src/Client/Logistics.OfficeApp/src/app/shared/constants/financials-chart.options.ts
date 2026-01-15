@@ -45,7 +45,7 @@ export const INVOICE_STATUS_CHART_OPTIONS = {
     },
     tooltip: {
       callbacks: {
-        label: (ctx: any) => `${ctx.label}: ${ctx.parsed}`,
+        label: (ctx: { label: string; parsed: number }) => `${ctx.label}: ${ctx.parsed}`,
       },
     },
   },

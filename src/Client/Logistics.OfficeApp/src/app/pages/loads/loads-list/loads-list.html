@@ -30,8 +30,8 @@
     emptyTitle="No loads yet"
     emptyMessage="Create your first load to get started."
     emptyActionLabel="Add Load"
-    (onRetry)="store.retry()"
-    (onEmptyAction)="addLoad()"
+    (retry)="store.retry()"
+    (emptyAction)="addLoad()"
   >
     <p-table
       [value]="store.data()"
@@ -48,12 +48,7 @@
       [rowsPerPageOptions]="[10, 25, 50]"
     >
       <ng-template #caption>
-        <div class="flex items-center gap-2">
-          <p-icon-field>
-            <p-inputicon class="pi pi-search" />
-            <input pInputText type="text" placeholder="Search" (input)="onSearch($event)" />
-          </p-icon-field>
-        </div>
+        <app-search-input (searchChange)="onSearch($event)" />
       </ng-template>
       <ng-template #header>
         <tr>

@@ -1,15 +1,8 @@
-<div class="flex items-center">
-  <h1>List Employees</h1>
-  <p-button
-    styleClass="text-black ml-2"
-    icon="pi pi-plus-circle"
-    size="large"
-    [rounded]="true"
-    [text]="true"
-    pTooltip="Add a new employee"
-    [routerLink]="['/employees/add']"
-  />
-</div>
+<app-page-header
+  title="List Employees"
+  addRoute="/employees/add"
+  addTooltip="Add a new employee"
+/>
 
 <p-card>
   <app-data-container
@@ -21,8 +14,8 @@
     emptyTitle="No employees yet"
     emptyMessage="Add your first employee to get started."
     emptyActionLabel="Add Employee"
-    (onRetry)="store.retry()"
-    (onEmptyAction)="addEmployee()"
+    (retry)="store.retry()"
+    (emptyAction)="addEmployee()"
   >
     <p-table
       [value]="store.data()"
@@ -37,10 +30,7 @@
       [rowsPerPageOptions]="[10, 25, 50]"
     >
       <ng-template #caption>
-        <p-icon-field>
-          <p-inputicon class="pi pi-search" />
-          <input pInputText type="text" placeholder="Search" (input)="onSearch($event)" />
-        </p-icon-field>
+        <app-search-input (searchChange)="onSearch($event)" />
       </ng-template>
       <ng-template #header>
         <tr>

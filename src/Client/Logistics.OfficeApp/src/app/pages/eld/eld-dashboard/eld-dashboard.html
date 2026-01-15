@@ -1,56 +1,46 @@
 <div class="w-full p-6">
   <!-- Header -->
-  <div class="mb-6 flex items-center justify-between">
-    <div>
-      <h1 class="mb-1 text-2xl font-semibold">ELD / HOS Dashboard</h1>
-      <p class="mb-0 text-gray-500">Monitor driver Hours of Service compliance</p>
-    </div>
+  <div class="flex items-center justify-between">
+    <app-page-title
+      title="ELD / HOS Dashboard"
+      subtitle="Monitor driver Hours of Service compliance"
+    />
     <div class="flex gap-2">
       <p-button
         label="Configure Providers"
         icon="pi pi-cog"
         severity="secondary"
         (onClick)="configureProviders()"
-      ></p-button>
+      />
       <p-button
         label="Sync HOS Data"
         icon="pi pi-refresh"
         [loading]="loading()"
         (onClick)="syncDriversHos()"
-      ></p-button>
+      />
     </div>
   </div>
 
   <!-- Summary Cards Row -->
   <div class="mb-6 grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-6 lg:col-span-4">
-      <p-card class="h-full border-0 shadow-sm">
-        <div class="flex items-center">
-          <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-green-600/10">
-            <i class="pi pi-check-circle text-2xl text-green-600"></i>
-          </div>
-          <div class="ml-4 grow">
-            <h6 class="mb-1 text-gray-500">Available Drivers</h6>
-            <h4 class="mb-0 text-2xl font-bold">{{ availableDrivers().length }}</h4>
-            <small class="text-gray-400">Ready for dispatch</small>
-          </div>
-        </div>
-      </p-card>
+      <app-stat-card
+        icon="pi-check-circle"
+        label="Available Drivers"
+        [value]="availableDrivers().length"
+        color="green"
+        trend="Ready for dispatch"
+      />
     </div>
 
     <div class="col-span-12 md:col-span-6 lg:col-span-4">
-      <p-card class="h-full border-0 shadow-sm">
-        <div class="flex items-center">
-          <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-blue-600/10">
-            <i class="pi pi-users text-2xl text-blue-600"></i>
-          </div>
-          <div class="ml-4 grow">
-            <h6 class="mb-1 text-gray-500">Total Drivers</h6>
-            <h4 class="mb-0 text-2xl font-bold">{{ drivers().length }}</h4>
-            <small class="text-gray-400">With ELD mapping</small>
-          </div>
-        </div>
-      </p-card>
+      <app-stat-card
+        icon="pi-users"
+        label="Total Drivers"
+        [value]="drivers().length"
+        color="blue"
+        trend="With ELD mapping"
+      />
     </div>
 
     <div class="col-span-12 md:col-span-6 lg:col-span-4">
@@ -87,14 +77,7 @@
   <!-- Main Content -->
   <div class="grid grid-cols-12 gap-4">
     <div class="col-span-12">
-      <p-card class="border-0 shadow-sm">
-        <ng-template pTemplate="header">
-          <div class="flex items-center p-3">
-            <i class="pi pi-clock mr-2 text-blue-600"></i>
-            <h5 class="mb-0">Driver Hours of Service</h5>
-          </div>
-        </ng-template>
-
+      <app-dashboard-card title="Driver Hours of Service" icon="pi-clock" iconColor="blue">
         @if (loading()) {
           <div class="flex justify-center p-5">
             <p-progressSpinner></p-progressSpinner>
@@ -196,7 +179,7 @@
             </ng-template>
           </p-table>
         }
-      </p-card>
+      </app-dashboard-card>
     </div>
   </div>
 </div>

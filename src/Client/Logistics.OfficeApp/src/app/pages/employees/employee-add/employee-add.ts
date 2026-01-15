@@ -1,4 +1,5 @@
-import { Component, inject, signal } from "@angular/core";
+import { Component, DestroyRef, inject, signal } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   FormControl,
   FormGroup,
@@ -26,7 +27,7 @@ import {
   salaryTypeOptions,
 } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { LabeledField, ValidationSummary } from "@/shared/components";
+import { CurrencyInput, LabeledField, UnitInput, ValidationSummary } from "@/shared/components";
 import { UserService } from "../services";
 
 @Component({
@@ -48,6 +49,8 @@ import { UserService } from "../services";
     InputGroupModule,
     InputGroupAddonModule,
     InputTextModule,
+    UnitInput,
+    CurrencyInput,
   ],
 })
 export class EmployeeAddComponent {
@@ -57,6 +60,7 @@ export class EmployeeAddComponent {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
   private readonly userService = inject(UserService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly suggestedUsers = signal<UserDto[]>([]);
   protected readonly roles = signal<RoleDto[]>([]);
@@ -77,11 +81,14 @@ export class EmployeeAddComponent {
   }
 
   searchUser(event: { query: string }): void {
-    this.userService.searchUser(event.query).subscribe((users) => {
-      if (users) {
-        this.suggestedUsers.set(users);
-      }
-    });
+    this.userService
+      .searchUser(event.query)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((users) => {
+        if (users) {
+          this.suggestedUsers.set(users);
+        }
+      });
   }
 
   clearSelectedRole(): void {
@@ -128,13 +135,16 @@ export class EmployeeAddComponent {
   private fetchRoles(): void {
     this.isLoading.set(true);
 
-    this.userService.fetchRoles().subscribe((roles) => {
-      if (roles) {
-        this.roles.set(roles);
-      }
+    this.userService
+      .fetchRoles()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((roles) => {
+        if (roles) {
+          this.roles.set(roles);
+        }
 
-      this.isLoading.set(false);
-    });
+        this.isLoading.set(false);
+      });
   }
 }
 

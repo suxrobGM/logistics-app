@@ -20,7 +20,7 @@
     [skeletonRows]="10"
     emptyTitle="No payments yet"
     emptyMessage="Payment history will appear here."
-    (onRetry)="store.retry()"
+    (retry)="store.retry()"
   >
     <p-table
       [value]="store.data()"

@@ -1,0 +1,26 @@
+<div class="flex items-center">
+  <h1>{{ title() }}</h1>
+  @if (showAddButton()) {
+    @if (addRoute()) {
+      <p-button
+        styleClass="text-black ml-2"
+        icon="pi pi-plus-circle"
+        size="large"
+        [rounded]="true"
+        [text]="true"
+        [pTooltip]="addTooltip()"
+        [routerLink]="[addRoute()]"
+      />
+    } @else {
+      <p-button
+        styleClass="text-black ml-2"
+        icon="pi pi-plus-circle"
+        size="large"
+        [rounded]="true"
+        [text]="true"
+        [pTooltip]="addTooltip()"
+        (click)="handleAdd()"
+      />
+    }
+  }
+</div>

@@ -17,7 +17,7 @@
     [skeletonRows]="10"
     emptyTitle="No load invoices yet"
     emptyMessage="Invoices for this load will appear here."
-    (onRetry)="store.retry()"
+    (retry)="store.retry()"
   >
     <p-table
       [value]="store.data()"

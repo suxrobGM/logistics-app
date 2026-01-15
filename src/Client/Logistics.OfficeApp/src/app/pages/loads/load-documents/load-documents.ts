@@ -4,7 +4,7 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ToastModule } from "primeng/toast";
 import type { DocumentType } from "@/core/api/models";
-import { DocumentManagerComponent } from "@/shared/components/document-manager/document-manager";
+import { DocumentManagerComponent } from "@/shared/components";
 
 @Component({
   selector: "app-load-documents",

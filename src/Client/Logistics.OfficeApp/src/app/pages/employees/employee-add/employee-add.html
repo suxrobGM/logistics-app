@@ -29,29 +29,17 @@
 
         <app-labeled-field label="Salary" for="salary">
           @if (isShareOfGrossSalary()) {
-            <p-inputgroup>
-              <p-inputgroup-addon>%</p-inputgroup-addon>
-              <input
-                pInputText
-                id="salary"
-                formControlName="salary"
-                type="number"
-                [min]="0"
-                [max]="100"
-              />
-            </p-inputgroup>
+            <app-unit-input
+              [control]="form.controls.salary"
+              unit="%"
+              [min]="0"
+              [max]="100"
+            />
           } @else {
-            <p-inputgroup>
-              <p-inputgroup-addon>$$</p-inputgroup-addon>
-              <input
-                pInputText
-                id="salary"
-                formControlName="salary"
-                type="number"
-                [min]="0"
-                [disabled]="isNoneSalary()"
-              />
-            </p-inputgroup>
+            <app-currency-input
+              [control]="form.controls.salary"
+              [min]="0"
+            />
           }
         </app-labeled-field>
 

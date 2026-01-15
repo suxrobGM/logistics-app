@@ -8,6 +8,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { Api, getAllDriversHos, syncAllDriversHos, type DriverHosStatusDto } from "@/core/api";
+import { DashboardCard, PageTitle, StatCard } from "@/shared/components";
 
 @Component({
   selector: "app-eld-dashboard",
@@ -20,6 +21,9 @@ import { Api, getAllDriversHos, syncAllDriversHos, type DriverHosStatusDto } fro
     TagModule,
     DatePipe,
     ProgressSpinnerModule,
+    PageTitle,
+    StatCard,
+    DashboardCard,
   ],
 })
 export class EldDashboardComponent implements OnInit {

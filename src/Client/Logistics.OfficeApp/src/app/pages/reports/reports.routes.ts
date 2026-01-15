@@ -6,12 +6,12 @@ export const reportsRoutes: Routes = [
   {
     path: "",
     loadComponent: () =>
-      import("./components/reports-layout/reports.layout").then((m) => m.ReportsLayoutComponent),
+      import("./reports-layout/reports.layout").then((m) => m.ReportsLayoutComponent),
     children: [
       {
         path: "loads",
         loadComponent: () =>
-          import("./components/loads-report/loads-report").then((m) => m.LoadsReportComponent),
+          import("./loads-report/loads-report").then((m) => m.LoadsReportComponent),
         canActivate: [authGuard],
         data: {
           breadcrumb: "",
@@ -21,7 +21,7 @@ export const reportsRoutes: Routes = [
       {
         path: "drivers",
         loadComponent: () =>
-          import("./components/drivers-report/drivers-dashboard/drivers-report").then(
+          import("./drivers-report/drivers-dashboard/drivers-report").then(
             (m) => m.DriversReportComponent,
           ),
         canActivate: [authGuard],
@@ -33,7 +33,7 @@ export const reportsRoutes: Routes = [
       {
         path: "drivers/detailed",
         loadComponent: () =>
-          import("./components/drivers-report/drivers-detailed/drivers-detailed").then(
+          import("./drivers-report/drivers-detailed/drivers-detailed").then(
             (m) => m.DriversDetailedComponent,
           ),
         canActivate: [authGuard],
@@ -45,9 +45,7 @@ export const reportsRoutes: Routes = [
       {
         path: "financials",
         loadComponent: () =>
-          import("./components/financials-report/financials-report").then(
-            (m) => m.FinancialsReportComponent,
-          ),
+          import("./financials-report/financials-report").then((m) => m.FinancialsReportComponent),
         canActivate: [authGuard],
         data: {
           breadcrumb: "",

@@ -4,14 +4,11 @@ import { Router, RouterLink } from "@angular/router";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { IconFieldModule } from "primeng/iconfield";
-import { InputIconModule } from "primeng/inputicon";
-import { InputTextModule } from "primeng/inputtext";
 import { MenuModule } from "primeng/menu";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import type { LoadDto } from "@/core/api/models";
-import { DataContainer, LoadStatusTag, LoadTypeTag } from "@/shared/components";
+import { DataContainer, LoadStatusTag, LoadTypeTag, SearchInput } from "@/shared/components";
 import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
 import { LoadsListStore } from "../store/loads-list.store";
 
@@ -25,17 +22,15 @@ import { LoadsListStore } from "../store/loads-list.store";
     RouterLink,
     CardModule,
     TableModule,
-    InputTextModule,
     DistanceUnitPipe,
     AddressPipe,
-    IconFieldModule,
-    InputIconModule,
     LoadStatusTag,
     LoadTypeTag,
     MenuModule,
     DataContainer,
     DatePipe,
     CurrencyPipe,
+    SearchInput,
   ],
 })
 export class LoadsListComponent {
@@ -70,8 +65,7 @@ export class LoadsListComponent {
     ];
   }
 
-  protected onSearch(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
+  protected onSearch(value: string): void {
     this.store.setSearch(value);
   }
 

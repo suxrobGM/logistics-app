@@ -8,12 +8,15 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { Api, getTripById } from "@/core/api";
 import type { TripDto, TripStopDto, TripStopType } from "@/core/api/models";
-import { DirectionMap, LoadStatusTag, LoadTypeTag, TripStatusTag } from "@/shared/components";
-import type {
-  RouteSegmentClickEvent,
-  Waypoint,
-  WaypointClickEvent,
-} from "@/shared/components/direction-map/types";
+import {
+  DirectionMap,
+  LoadStatusTag,
+  LoadTypeTag,
+  type RouteSegmentClickEvent,
+  TripStatusTag,
+  type Waypoint,
+  type WaypointClickEvent,
+} from "@/shared/components";
 import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
 
 @Component({
