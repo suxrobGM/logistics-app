@@ -14,7 +14,7 @@ plugins {
 // OpenAPI Generator Configuration
 openApiGenerate {
     generatorName.set("kotlin")
-    inputSpec.set("$projectDir/src/openapi/api-spec.json")
+    remoteInputSpec.set("http://localhost:7000/swagger/v1/swagger.json")
     outputDir.set(layout.buildDirectory.dir("generated/openapi").get().asFile.absolutePath)
     packageName.set("com.jfleets.driver")
     apiPackage.set("com.jfleets.driver.api")

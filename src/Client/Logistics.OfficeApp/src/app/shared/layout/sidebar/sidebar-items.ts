@@ -12,6 +12,11 @@ export const sidebarItems: MenuItem[] = [
     route: "/dashboard",
   },
   {
+    label: "Messages",
+    icon: "pi pi-comments text-3xl!",
+    route: "/messages",
+  },
+  {
     label: "Loads",
     icon: "pi pi-server text-3xl!",
     items: [

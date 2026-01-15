@@ -60,6 +60,9 @@ public static class Registrar
         services.AddScoped<DemoEldService>();
         services.AddScoped<IEldProviderFactory, EldProviderFactory>();
 
+        // VIN Decoder Service
+        services.AddHttpClient<IVinDecoderService, NhtsaVinDecoderService>();
+
         return new InfrastructureBuilder(services, configuration);
     }
 }

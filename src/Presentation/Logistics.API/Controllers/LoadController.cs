@@ -80,7 +80,7 @@ public class LoadController(IMediator mediator) : ControllerBase
         }
 
         var userId = User.GetUserId();
-        if (userId == Guid.Empty)
+        if (userId is null)
         {
             return BadRequest(new ErrorResponse("User not authenticated"));
         }
@@ -89,7 +89,7 @@ public class LoadController(IMediator mediator) : ControllerBase
         {
             PdfContent = request.File.OpenReadStream(),
             FileName = request.File.FileName,
-            CurrentUserId = userId,
+            CurrentUserId = userId.Value,
             AssignedTruckId = request.AssignedTruckId
         };
 

@@ -1,0 +1,83 @@
+<p-card>
+  <ng-template #header>
+    <div class="flex items-center justify-between p-4">
+      <h2 class="text-xl font-semibold">Messages</h2>
+      <p-button
+        icon="pi pi-plus"
+        label="New Conversation"
+        (onClick)="createNewConversation()"
+      />
+    </div>
+  </ng-template>
+
+  @if (store.loading()) {
+    <div class="space-y-4">
+      @for (i of [1, 2, 3, 4, 5]; track i) {
+        <div class="flex items-center gap-4 p-4">
+          <p-skeleton shape="circle" size="3rem" />
+          <div class="flex-1">
+            <p-skeleton width="60%" height="1rem" styleClass="mb-2" />
+            <p-skeleton width="80%" height="0.75rem" />
+          </div>
+        </div>
+      }
+    </div>
+  } @else if (store.conversations().length === 0) {
+    <div class="flex flex-col items-center justify-center py-12 text-center">
+      <i class="pi pi-comments mb-4 text-6xl text-gray-300"></i>
+      <h3 class="mb-2 text-lg font-medium text-gray-600">No conversations yet</h3>
+      <p class="mb-4 text-gray-500">Start a new conversation to get started</p>
+      <p-button
+        icon="pi pi-plus"
+        label="Start Conversation"
+        (onClick)="createNewConversation()"
+      />
+    </div>
+  } @else {
+    <div class="divide-y">
+      @for (conversation of store.conversations(); track conversation.id) {
+        <div
+          class="flex cursor-pointer items-center gap-4 p-4 transition-colors hover:bg-gray-50"
+          tabindex="0"
+          role="button"
+          (click)="selectConversation(conversation)"
+          (keydown.enter)="selectConversation(conversation)"
+        >
+          <p-avatar
+            [label]="getInitials(conversation)"
+            styleClass="bg-primary text-white"
+            size="large"
+            shape="circle"
+          />
+
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center justify-between">
+              <span class="font-medium text-gray-900 truncate">
+                {{ conversation.name || getParticipantNames(conversation) }}
+              </span>
+              @if (conversation.lastMessageAt) {
+                <span class="text-xs text-gray-500">
+                  {{ conversation.lastMessageAt | date: 'short' }}
+                </span>
+              }
+            </div>
+
+            <div class="flex items-center justify-between">
+              <p class="truncate text-sm text-gray-500">
+                @if (conversation.lastMessage) {
+                  {{ conversation.lastMessage.content }}
+                } @else {
+                  No messages yet
+                }
+              </p>
+
+              @if (conversation.unreadCount && conversation.unreadCount > 0) {
+                <p-badge [value]="conversation.unreadCount.toString()" severity="info" />
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</p-card>

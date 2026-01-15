@@ -17,5 +17,7 @@ export const DOCUMENT_TYPE: DocumentType[] = [
   'driver_license',
   'vehicle_registration',
   'identity_document',
+  'pickup_inspection',
+  'delivery_inspection',
   'other'
 ];

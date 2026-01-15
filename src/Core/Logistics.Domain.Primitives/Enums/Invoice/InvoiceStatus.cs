@@ -6,7 +6,7 @@ namespace Logistics.Domain.Primitives.Enums;
 public enum InvoiceStatus
 {
     [Description("Draft"), EnumMember(Value = "draft")]
-    Draft = 0,
+    Draft,
 
     [Description("Issued"), EnumMember(Value = "issued")]
     Issued,

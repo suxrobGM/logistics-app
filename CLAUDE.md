@@ -101,6 +101,56 @@ Shared (Models)         → DTOs shared between backend and frontend
 3. Create Controller method in `Logistics.API/Controllers/`
 4. DTOs go in `Logistics.Shared.Models/`
 
+### Entity-to-DTO Mapping with Riok.Mapperly
+
+Use [Riok.Mapperly](https://mapperly.riok.app/) for compile-time entity-to-DTO mapping. Mappers are located in `src/Core/Logistics.Mappings/`.
+
+**Pattern:**
+
+```csharp
+[Mapper]
+public static partial class MyEntityMapper
+{
+    // Basic mapping - Mapperly generates the implementation
+    [MapperIgnoreSource(nameof(MyEntity.NavigationProperty))]
+    [MapperIgnoreTarget(nameof(MyDto.ComputedField))]
+    [MapProperty(nameof(MyEntity.Related), nameof(MyDto.RelatedName), Use = nameof(MapRelatedName))]
+    public static partial MyDto ToDto(this MyEntity entity);
+
+    // Overload with additional computed fields
+    public static MyDto ToDto(this MyEntity entity, int computedValue)
+    {
+        var dto = entity.ToDto();
+        return dto with { ComputedField = computedValue };
+    }
+
+    // Custom property mapper
+    private static string? MapRelatedName(RelatedEntity? related) => related?.Name;
+}
+```
+
+**Key attributes:**
+
+- `[Mapper]` - Marks the static partial class as a Mapperly mapper
+- `[MapperIgnoreSource]` - Ignore source property (navigation properties, internal fields)
+- `[MapperIgnoreTarget]` - Ignore target property (computed fields set manually)
+- `[MapProperty(..., Use = nameof(...))]` - Use custom mapper method for property
+
+**Usage in handlers:**
+
+```csharp
+// Single entity
+var dto = entity.ToDto();
+
+// With computed fields
+var dto = entity.ToDto(computedValue);
+
+// Collections
+var dtos = entities.Select(e => e.ToDto()).ToList();
+```
+
+**Do NOT** manually map properties in handlers. Always create or extend mappers in `Logistics.Mappings`.
+
 ### Angular Patterns (Office App)
 
 - Described in detail in `src/Client/Logistics.OfficeApp/CLAUDE.md`

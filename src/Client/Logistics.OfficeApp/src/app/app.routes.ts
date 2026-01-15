@@ -79,6 +79,13 @@ export const appRoutes: Routes = [
     },
   },
   {
+    path: "messages",
+    loadChildren: () => import("./pages/messages/messages.routes").then((m) => m.messagesRoutes),
+    data: {
+      breadcrumb: "Messages",
+    },
+  },
+  {
     path: "",
     component: LoginComponent,
   },

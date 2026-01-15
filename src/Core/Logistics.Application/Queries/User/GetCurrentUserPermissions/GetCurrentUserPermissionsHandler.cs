@@ -2,8 +2,10 @@ using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Identity.Claims;
+using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Queries;
 
@@ -32,6 +34,9 @@ internal sealed class GetCurrentUserPermissionsHandler(
         if (req.TenantId.HasValue)
         {
             await AddTenantRolePermissionsAsync(req.TenantId.Value, req.UserId, permissions);
+
+            // Check if user is a CustomerUser and add portal permissions
+            await AddCustomerUserPermissionsAsync(req.TenantId.Value, req.UserId, permissions);
         }
 
         return Result<string[]>.Ok(permissions.ToArray());
@@ -78,6 +83,23 @@ internal sealed class GetCurrentUserPermissionsHandler(
             {
                 permissions.Add(claim.ClaimValue);
             }
+        }
+    }
+
+    private async Task AddCustomerUserPermissionsAsync(
+        Guid tenantId, Guid userId, HashSet<string> permissions)
+    {
+        await tenantUow.SetCurrentTenantByIdAsync(tenantId);
+        var customerUserExists = await tenantUow.Repository<CustomerUser>().Query()
+            .AnyAsync(cu => cu.UserId == userId && cu.IsActive);
+
+        if (customerUserExists)
+        {
+            // Grant all portal permissions to active customer users
+            permissions.Add(Permission.Portal.Access);
+            permissions.Add(Permission.Portal.ViewLoads);
+            permissions.Add(Permission.Portal.ViewInvoices);
+            permissions.Add(Permission.Portal.ViewDocuments);
         }
     }
 }

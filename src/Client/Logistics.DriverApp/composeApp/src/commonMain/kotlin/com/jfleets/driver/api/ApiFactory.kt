@@ -16,18 +16,32 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 
+/**
+ * Factory for API clients generated from OpenAPI spec.
+ *
+ * The API clients (LoadApi, EmployeeApi, etc.) are auto-generated from the
+ * backend's swagger.json.
+ *
+ * Generated APIs are in: com.jfleets.driver.api
+ * Generated models (DTOs) are in: com.jfleets.driver.api.models
+ */
 class ApiFactory(
     private val baseUrl: String,
     private val preferencesManager: PreferencesManager
 ) {
 
-    private val httpClient: HttpClient by lazy { createHttpClient() }
+    val httpClient: HttpClient by lazy { createHttpClient() }
 
-    val loadApi: LoadApi by lazy { LoadApi(baseUrl, httpClient) }
-    val truckApi: TruckApi by lazy { TruckApi(baseUrl, httpClient) }
-    val userApi: UserApi by lazy { UserApi(baseUrl, httpClient) }
+    // Generated API clients (from OpenAPI spec)
+    val customerApi: CustomerApi by lazy { CustomerApi(baseUrl, httpClient) }
+    val documentApi: DocumentApi by lazy { DocumentApi(baseUrl, httpClient) }
     val driverApi: DriverApi by lazy { DriverApi(baseUrl, httpClient) }
-    val statApi: StatApi by lazy { StatApi(baseUrl, httpClient) }
+    val employeeApi: EmployeeApi by lazy { EmployeeApi(baseUrl, httpClient) }
+    val inspectionApi: InspectionApi by lazy { InspectionApi(baseUrl, httpClient) }
+    val loadApi: LoadApi by lazy { LoadApi(baseUrl, httpClient) }
+    val messageApi: MessageApi by lazy { MessageApi(baseUrl, httpClient) }
+    val reportApi: ReportApi by lazy { ReportApi(baseUrl, httpClient) }
+    val truckApi: TruckApi by lazy { TruckApi(baseUrl, httpClient) }
 
     private fun createHttpClient(): HttpClient {
         return HttpClient {

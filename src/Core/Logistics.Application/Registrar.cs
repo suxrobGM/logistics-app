@@ -69,6 +69,7 @@ public static class Registrar
         services.AddSingleton<IPushNotificationService, PushNotificationService>();
         services.AddSingleton<IStripeService, StripeService>();
         services.AddSingleton<LiveTrackingHubContext>();
+        services.AddSingleton<MessagingHubContext>();
         services.AddScoped<IPayrollService, PayrollService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<ILoadService, LoadService>();

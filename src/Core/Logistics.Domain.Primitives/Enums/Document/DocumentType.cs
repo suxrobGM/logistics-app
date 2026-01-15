@@ -35,6 +35,12 @@ public enum DocumentType
     [Description("Identity Document"), EnumMember(Value = "identity_document")]
     IdentityDocument,
 
+    [Description("Pickup Inspection"), EnumMember(Value = "pickup_inspection")]
+    PickupInspection,
+
+    [Description("Delivery Inspection"), EnumMember(Value = "delivery_inspection")]
+    DeliveryInspection,
+
     [Description("Other"), EnumMember(Value = "other")]
     Other
 }

@@ -22,12 +22,18 @@ public class UserController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetCurrentUserPermissions()
     {
         var userId = User.GetUserId();
+
+        if (userId is null)
+        {
+            return BadRequest(new ErrorResponse("User not authenticated"));
+        }
+
         var tenantClaim = User.FindFirst(CustomClaimTypes.Tenant)?.Value;
         var tenantId = Guid.TryParse(tenantClaim, out var tid) ? tid : (Guid?)null;
 
         var result = await mediator.Send(new GetCurrentUserPermissionsQuery
         {
-            UserId = userId,
+            UserId = userId.Value,
             TenantId = tenantId
         });
 

@@ -1,0 +1,106 @@
+<div class="flex h-[calc(100vh-12rem)] flex-col">
+  <!-- Header -->
+  <div class="flex items-center gap-4 border-b bg-white p-4">
+    <p-button icon="pi pi-arrow-left" [text]="true" routerLink="/messages" />
+    <div class="flex-1">
+      <h2 class="font-semibold">
+        {{ getConversationTitle(store.currentConversation()) }}
+      </h2>
+      @if (store.typingUsers().size > 0) {
+        <p class="text-sm text-gray-500 italic">typing...</p>
+      }
+    </div>
+  </div>
+
+  <!-- Messages Area -->
+  <div #messagesContainer class="flex-1 space-y-4 overflow-y-auto bg-gray-50 p-4">
+    @if (store.hasMore() && store.messages().length > 0) {
+      <div class="flex justify-center">
+        <p-button
+          label="Load earlier messages"
+          [text]="true"
+          [loading]="store.loading()"
+          (onClick)="loadMore()"
+        />
+      </div>
+    }
+
+    @if (store.loading() && store.messages().length === 0) {
+      <div class="space-y-4">
+        @for (i of [1, 2, 3]; track i) {
+          <div class="flex gap-3">
+            <p-skeleton shape="circle" size="2.5rem" />
+            <div class="flex-1">
+              <p-skeleton width="40%" height="1rem" styleClass="mb-2" />
+              <p-skeleton width="70%" height="3rem" />
+            </div>
+          </div>
+        }
+      </div>
+    } @else if (store.messages().length === 0) {
+      <div class="flex h-full flex-col items-center justify-center text-center">
+        <i class="pi pi-comments mb-4 text-4xl text-gray-300"></i>
+        <p class="text-gray-500">No messages yet. Start the conversation!</p>
+      </div>
+    } @else {
+      @for (message of store.messages(); track message.id) {
+        <div
+          class="flex gap-3"
+          [class.flex-row-reverse]="isOwnMessage(message)"
+          (mouseenter)="markMessageAsRead(message)"
+        >
+          @if (!isOwnMessage(message)) {
+            <p-avatar
+              [label]="getInitials(message.senderName)"
+              class="bg-gray-400 text-white"
+              shape="circle"
+            />
+          }
+
+          <div
+            class="max-w-[70%] rounded-lg p-3"
+            [class.bg-primary]="isOwnMessage(message)"
+            [class.text-white]="isOwnMessage(message)"
+            [class.bg-white]="!isOwnMessage(message)"
+            [class.shadow]="!isOwnMessage(message)"
+          >
+            @if (!isOwnMessage(message)) {
+              <p class="mb-1 text-xs font-medium text-gray-600">
+                {{ message.senderName }}
+              </p>
+            }
+            <p class="break-words whitespace-pre-wrap">{{ message.content }}</p>
+            <p
+              class="mt-1 text-xs"
+              [class.text-white/70]="isOwnMessage(message)"
+              [class.text-gray-400]="!isOwnMessage(message)"
+            >
+              {{ message.sentAt | date: "short" }}
+              @if (isOwnMessage(message) && message.isRead) {
+                <i class="pi pi-check-circle ml-1"></i>
+              }
+            </p>
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Input Area -->
+  <div class="border-t bg-white p-4">
+    <div class="flex gap-2">
+      <input
+        #messageInput
+        type="text"
+        pInputText
+        class="flex-1"
+        placeholder="Type a message..."
+        [ngModel]="messageContent()"
+        (ngModelChange)="messageContent.set($event)"
+        (keydown)="onKeyDown($event)"
+        (input)="onInput()"
+      />
+      <p-button icon="pi pi-send" [disabled]="!messageContent().trim()" (onClick)="sendMessage()" />
+    </div>
+  </div>
+</div>

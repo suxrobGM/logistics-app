@@ -38,9 +38,12 @@ The complete project report can be found in the [report.pdf](docs/report.pdf) fi
 ### Setup Instructions
 
 1. **Run Backend Services**:
-   - Ensure the Logistics backend services (API and Identity servers) are running and accessible. Refer to the main project [README](../../../README.md) for backend setup.
+
+   - Ensure the Logistics backend services (API and Identity servers) are running and accessible.
+     Refer to the main project [README](../../../README.md) for backend setup.
 
 2. **Run Android App**:
+
    - Open the `Logistics.DriverApp` folder in Android Studio.
    - Connect an Android device or start an emulator.
    - Click "Run" to build and deploy the app. Ensure the `composeApp` module is selected.
@@ -132,15 +135,19 @@ The app follows **Clean Architecture** with **MVVM** pattern:
 
 ### Dependency Injection
 
-Koin is used for multiplatform DI, configured in `Module.kt` with platform-specific modules in `androidMain` and `iosMain`.
+Koin is used for multiplatform DI, configured in `Module.kt` with platform-specific modules in
+`androidMain` and `iosMain`.
 
 ### API Generation
 
-API clients and models are auto-generated from OpenAPI spec using the OpenAPI Generator Gradle plugin.
+API clients and models are auto-generated from OpenAPI spec using the OpenAPI Generator Gradle
+plugin.
 
 #### Automatic Generation (Build-Time)
 
-The API client is automatically regenerated during the build process. When you run any build command (e.g., `./gradlew assembleDebug`), the `openApiGenerate` task runs automatically if the spec file has changed.
+The API client is automatically regenerated during the build process. When you run any build
+command (e.g., `./gradlew assembleDebug`), the `openApiGenerate` task runs automatically before
+compilation.
 
 ```bash
 # Build triggers automatic API generation
@@ -159,25 +166,6 @@ To manually regenerate the API client (e.g., after updating the OpenAPI spec):
 ./gradlew openApiGenerate --rerun-tasks
 ./gradlew compileDebugKotlinAndroid
 ```
-
-#### Updating the OpenAPI Spec
-
-1. **Get the latest spec from the backend**:
-   - Start the backend API server
-   - Download the spec from `http://localhost:7000/swagger/v1/swagger.json`
-   - Save it to `composeApp/src/openapi/api-spec.json`
-
-2. **Regenerate the client**:
-
-   ```bash
-   ./gradlew openApiGenerate
-   ```
-
-3. **Build and fix any breaking changes**:
-
-   ```bash
-   ./gradlew compileDebugKotlinAndroid
-   ```
 
 #### Generated Files Location
 
