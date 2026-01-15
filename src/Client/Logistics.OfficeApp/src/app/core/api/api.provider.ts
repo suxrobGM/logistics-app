@@ -3,6 +3,7 @@ import { provideHttpClient, withInterceptors } from "@angular/common/http";
 import type { EnvironmentProviders } from "@angular/core";
 import { InjectionToken, makeEnvironmentProviders } from "@angular/core";
 import { ApiConfiguration } from "./generated/api-configuration";
+import { cacheInterceptor } from "./interceptors/cache.interceptor";
 import { tokenAuthInterceptor } from "./interceptors/token-auth.interceptor";
 
 /**
@@ -41,7 +42,7 @@ export const API_CONFIG = new InjectionToken<ApiConfig>("API_CONFIG");
  * @returns The environment providers for the API.
  */
 export function provideApi(config: ApiConfig): EnvironmentProviders {
-  const interceptors: HttpInterceptorFn[] = [tokenAuthInterceptor, ...(config.interceptors ?? [])];
+  const interceptors: HttpInterceptorFn[] = [cacheInterceptor, tokenAuthInterceptor, ...(config.interceptors ?? [])];
 
   return makeEnvironmentProviders([
     { provide: API_CONFIG, useValue: config },
