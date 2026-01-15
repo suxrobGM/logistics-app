@@ -9,7 +9,7 @@ import type { FinancialMetricDto, FinancialsReportDto, RevenueTrendDto } from "@
 import {
   BaseReportComponent,
   DashboardCard,
-  PageTitle,
+  PageHeader,
   RangeCalendar,
   StatCard,
   type ReportQueryParams,
@@ -34,7 +34,7 @@ import {
     DecimalPipe,
     SkeletonModule,
     TagModule,
-    PageTitle,
+    PageHeader,
     StatCard,
     DashboardCard,
   ],

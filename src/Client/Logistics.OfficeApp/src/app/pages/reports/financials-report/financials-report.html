@@ -1,9 +1,10 @@
 <div class="w-full p-6">
   <!-- Header -->
   <div class="flex items-center justify-between">
-    <app-page-title
+    <app-page-header
       title="Financial Dashboard"
       subtitle="Comprehensive financial overview and performance metrics"
+      [showAddButton]="false"
     />
     <app-range-calendar
       [(startDate)]="startDate"
