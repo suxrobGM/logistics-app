@@ -372,3 +372,5 @@ KotlinProject/
 .env.docker
 
 sample-pdf/
+
+PLAN.md

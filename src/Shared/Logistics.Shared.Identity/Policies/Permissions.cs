@@ -109,6 +109,12 @@ public static class Permission
         public const string Sync = $"{nameof(Permission)}.{nameof(Eld)}.Sync";
     }
 
+    public static class Message
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(Message)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Message)}.Manage";
+    }
+
     public static IEnumerable<string> GetAll()
     {
         var list = new List<string>();
