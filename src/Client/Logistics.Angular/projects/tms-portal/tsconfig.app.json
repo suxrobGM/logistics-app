@@ -6,9 +6,7 @@
       "@/*": ["./src/app/*"],
       "@/env": ["./src/environments/environment"],
       "@logistics/shared": ["../../projects/shared/src/public-api.ts"],
-      "@logistics/shared/*": ["../../projects/shared/src/lib/*"],
-      "@angular/*": ["../../node_modules/@angular/*"],
-      "primeng/*": ["../../node_modules/primeng/*"]
+      "@logistics/shared/*": ["../../projects/shared/src/lib/*"]
     }
   },
   "include": ["src/**/*.ts"],
