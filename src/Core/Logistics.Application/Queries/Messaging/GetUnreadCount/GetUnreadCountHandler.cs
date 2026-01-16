@@ -2,7 +2,6 @@ using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Queries;
 
@@ -13,11 +12,7 @@ internal sealed class GetUnreadCountHandler(ITenantUnitOfWork tenantUow)
     {
         // Get all conversations the user is part of
         var participations = await tenantUow.Repository<ConversationParticipant>()
-            .Query()
-            .Where(p => p.EmployeeId == req.EmployeeId)
-            .Include(p => p.Conversation)
-                .ThenInclude(c => c.Messages)
-            .ToListAsync(ct);
+            .GetListAsync(p => p.EmployeeId == req.EmployeeId, ct);
 
         var totalUnread = 0;
 

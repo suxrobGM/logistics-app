@@ -21,7 +21,6 @@ internal sealed class GetEldDriverMappingsHandler(ITenantUnitOfWork tenantUow)
 
         var mappings = await tenantUow.Repository<EldDriverMapping>()
             .Query()
-            .Include(m => m.Employee)
             .Where(m => m.ProviderType == config.ProviderType)
             .Select(m => new EldDriverMappingDto
             {

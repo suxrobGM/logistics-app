@@ -26,7 +26,6 @@ internal sealed class GetDriverHosLogsHandler(ITenantUnitOfWork tenantUow)
             .OrderByDescending(l => l.StartTime)
             .Skip((req.Page - 1) * req.PageSize)
             .Take(req.PageSize)
-            .Include(l => l.Employee)
             .Select(l => l.ToDto(l.Employee.FirstName + " " + l.Employee.LastName))
             .ToArrayAsync(ct);
 

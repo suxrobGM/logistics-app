@@ -99,9 +99,22 @@ public class MessagingHub(MessagingHubContext hubContext) : Hub<IMessagingHubCli
     /// <summary>
     /// Send typing indicator to a conversation.
     /// </summary>
-    public async Task SendTypingIndicator(TypingIndicatorDto indicator)
+    public async Task SendTypingIndicator(string conversationId, bool isTyping)
     {
-        await Clients.GroupExcept($"conversation-{indicator.ConversationId}", Context.ConnectionId)
+        var userId = hubContext.GetUserId(Context.ConnectionId);
+        if (!userId.HasValue)
+        {
+            return;
+        }
+
+        var indicator = new TypingIndicatorDto
+        {
+            ConversationId = Guid.Parse(conversationId),
+            UserId = userId.Value,
+            IsTyping = isTyping
+        };
+
+        await Clients.GroupExcept($"conversation-{conversationId}", Context.ConnectionId)
             .TypingIndicator(indicator);
     }
 }

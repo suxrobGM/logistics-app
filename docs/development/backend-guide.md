@@ -207,7 +207,6 @@ public class ActiveLoadsByCustomerSpec : Specification<Load>
         Query
             .Where(l => l.CustomerId == customerId)
             .Where(l => l.Status == LoadStatus.Active)
-            .Include(l => l.Trips)
             .OrderByDescending(l => l.CreatedDate);
     }
 }

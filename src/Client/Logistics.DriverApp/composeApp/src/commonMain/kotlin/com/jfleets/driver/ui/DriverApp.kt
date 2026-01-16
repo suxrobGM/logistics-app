@@ -7,7 +7,6 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -73,7 +72,8 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
     )
 
     val showBottomBar = currentDestination?.route != Screen.Login.route &&
-            !currentDestination?.route.orEmpty().startsWith("load_detail")
+            !currentDestination?.route.orEmpty().startsWith("load_detail") &&
+            !currentDestination?.route.orEmpty().startsWith("conversation")
 
     CompositionLocalProvider(LocalUserSettings provides userSettings) {
         LogisticsDriverTheme {

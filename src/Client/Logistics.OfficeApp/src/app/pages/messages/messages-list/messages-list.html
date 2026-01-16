@@ -1,83 +1,112 @@
-<p-card>
-  <ng-template #header>
-    <div class="flex items-center justify-between p-4">
-      <h2 class="text-xl font-semibold">Messages</h2>
-      <p-button
-        icon="pi pi-plus"
-        label="New Conversation"
-        (onClick)="createNewConversation()"
-      />
-    </div>
-  </ng-template>
-
-  @if (store.loading()) {
-    <div class="space-y-4">
-      @for (i of [1, 2, 3, 4, 5]; track i) {
-        <div class="flex items-center gap-4 p-4">
-          <p-skeleton shape="circle" size="3rem" />
-          <div class="flex-1">
-            <p-skeleton width="60%" height="1rem" styleClass="mb-2" />
-            <p-skeleton width="80%" height="0.75rem" />
-          </div>
+<div class="mx-auto max-w-4xl">
+  <p-card class="shadow-lg">
+    <ng-template #header>
+      <div
+        class="from-primary/5 flex items-center justify-between border-b bg-gradient-to-r to-transparent p-5"
+      >
+        <div class="flex items-center gap-3">
+          <i class="pi pi-comments text-primary text-2xl"></i>
+          <h2 class="text-xl font-semibold text-gray-800">Messages</h2>
         </div>
-      }
-    </div>
-  } @else if (store.conversations().length === 0) {
-    <div class="flex flex-col items-center justify-center py-12 text-center">
-      <i class="pi pi-comments mb-4 text-6xl text-gray-300"></i>
-      <h3 class="mb-2 text-lg font-medium text-gray-600">No conversations yet</h3>
-      <p class="mb-4 text-gray-500">Start a new conversation to get started</p>
-      <p-button
-        icon="pi pi-plus"
-        label="Start Conversation"
-        (onClick)="createNewConversation()"
-      />
-    </div>
-  } @else {
-    <div class="divide-y">
-      @for (conversation of store.conversations(); track conversation.id) {
-        <div
-          class="flex cursor-pointer items-center gap-4 p-4 transition-colors hover:bg-gray-50"
-          tabindex="0"
-          role="button"
-          (click)="selectConversation(conversation)"
-          (keydown.enter)="selectConversation(conversation)"
-        >
-          <p-avatar
-            [label]="getInitials(conversation)"
-            styleClass="bg-primary text-white"
-            size="large"
-            shape="circle"
+        <div class="flex gap-2">
+          <p-button
+            icon="pi pi-users"
+            label="Team Chat"
+            severity="info"
+            [outlined]="true"
+            (onClick)="openTeamChat()"
           />
+          <p-button
+            icon="pi pi-plus"
+            label="New Conversation"
+            severity="success"
+            (onClick)="createNewConversation()"
+          />
+        </div>
+      </div>
+    </ng-template>
 
-          <div class="min-w-0 flex-1">
-            <div class="flex items-center justify-between">
-              <span class="font-medium text-gray-900 truncate">
-                {{ conversation.name || getParticipantNames(conversation) }}
-              </span>
-              @if (conversation.lastMessageAt) {
-                <span class="text-xs text-gray-500">
-                  {{ conversation.lastMessageAt | date: 'short' }}
-                </span>
-              }
-            </div>
-
-            <div class="flex items-center justify-between">
-              <p class="truncate text-sm text-gray-500">
-                @if (conversation.lastMessage) {
-                  {{ conversation.lastMessage.content }}
-                } @else {
-                  No messages yet
-                }
-              </p>
-
-              @if (conversation.unreadCount && conversation.unreadCount > 0) {
-                <p-badge [value]="conversation.unreadCount.toString()" severity="info" />
-              }
+    @if (store.loading()) {
+      <div class="space-y-2 p-2">
+        @for (i of [1, 2, 3, 4, 5]; track i) {
+          <div class="flex items-center gap-4 rounded-xl bg-gray-50 p-4">
+            <p-skeleton shape="circle" size="3.5rem" />
+            <div class="flex-1">
+              <p-skeleton width="50%" height="1.25rem" styleClass="mb-2" />
+              <p-skeleton width="75%" height="0.875rem" />
             </div>
           </div>
+        }
+      </div>
+    } @else if (store.conversations().length === 0) {
+      <div class="flex flex-col items-center justify-center py-16 text-center">
+        <div class="bg-primary/10 mb-6 flex h-24 w-24 items-center justify-center rounded-full">
+          <i class="pi pi-comments text-primary text-5xl"></i>
         </div>
-      }
-    </div>
-  }
-</p-card>
+        <h3 class="mb-2 text-xl font-semibold text-gray-700">No conversations yet</h3>
+        <p class="mb-6 max-w-sm text-gray-500">
+          Start a conversation with your team members to collaborate and stay connected
+        </p>
+        <p-button
+          icon="pi pi-plus"
+          label="Start Conversation"
+          severity="success"
+          size="large"
+          (onClick)="createNewConversation()"
+        />
+      </div>
+    } @else {
+      <div class="space-y-2 p-2">
+        @for (conversation of store.conversations(); track conversation.id) {
+          <div
+            class="hover:border-primary/20 hover:bg-primary/5 flex cursor-pointer items-center gap-4 rounded-xl border border-transparent p-4 transition-all duration-200 hover:shadow-sm"
+            tabindex="0"
+            role="button"
+            (click)="selectConversation(conversation)"
+            (keydown.enter)="selectConversation(conversation)"
+          >
+            <p-avatar
+              [label]="getInitials(conversation)"
+              styleClass="bg-primary text-white shadow-md"
+              size="large"
+              shape="circle"
+            />
+
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center justify-between gap-2">
+                <span class="truncate font-semibold text-gray-800">
+                  {{ conversation.name || getParticipantNames(conversation) }}
+                </span>
+                @if (conversation.lastMessageAt) {
+                  <span class="shrink-0 text-xs text-gray-400">
+                    {{ conversation.lastMessageAt | date: "shortTime" }}
+                  </span>
+                }
+              </div>
+
+              <div class="mt-1 flex items-center justify-between gap-2">
+                <p class="truncate text-sm text-gray-500">
+                  @if (conversation.lastMessage) {
+                    {{ conversation.lastMessage.content }}
+                  } @else {
+                    <span class="italic">No messages yet</span>
+                  }
+                </p>
+
+                @if (conversation.unreadCount && conversation.unreadCount > 0) {
+                  <p-badge
+                    [value]="conversation.unreadCount.toString()"
+                    severity="danger"
+                    styleClass="shrink-0"
+                  />
+                }
+              </div>
+            </div>
+
+            <i class="pi pi-angle-right text-gray-300"></i>
+          </div>
+        }
+      </div>
+    }
+  </p-card>
+</div>

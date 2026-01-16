@@ -22,17 +22,14 @@ import {
 } from "@/core/api/models";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
+import { LabeledField, ValidationSummary } from "@/shared/components/form";
 import {
   AddressAutocomplete,
   DirectionMap,
-  LabeledField,
-  type RouteChangeEvent,
-  SearchCustomerComponent,
-  SearchTruckComponent,
   type SelectedAddressEvent,
-  ValidationSummary,
-  type Waypoint,
-} from "@/shared/components";
+} from "@/shared/components/maps";
+import type { RouteChangeEvent, Waypoint } from "@/shared/components/maps";
+import { SearchCustomerComponent, SearchTruckComponent } from "@/shared/components/search";
 import { Converters } from "@/shared/utils";
 
 /**

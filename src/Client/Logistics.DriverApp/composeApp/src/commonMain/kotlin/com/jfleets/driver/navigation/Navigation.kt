@@ -30,7 +30,7 @@ import org.koin.compose.koinInject
 fun AppNavigation(
     navController: NavHostController,
     startDestination: String,
-    onOpenUrl: (String) -> Unit,
+    onOpenUrl: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -122,7 +122,7 @@ fun AppNavigation(
                 navArgument("conversationId") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val conversationId = backStackEntry.arguments?.getString("conversationId") ?: ""
+            val conversationId = backStackEntry.savedStateHandle.get<String>("conversationId") ?: ""
             ConversationScreen(
                 conversationId = conversationId,
                 onBack = { navController.popBackStack() }
@@ -141,9 +141,9 @@ fun AppNavigation(
                 }
             )
         ) { backStackEntry ->
-            val loadId = backStackEntry.arguments?.getString("loadId") ?: ""
-            val captureTypeStr = backStackEntry.arguments?.getString("captureType") ?: "POD"
-            val tripStopId = backStackEntry.arguments?.getString("tripStopId")
+            val loadId = backStackEntry.savedStateHandle.get<String>("loadId") ?: ""
+            val captureTypeStr = backStackEntry.savedStateHandle.get<String>("captureType") ?: "POD"
+            val tripStopId = backStackEntry.savedStateHandle.get<String>("tripStopId") ?: ""
             val captureType = when (captureTypeStr) {
                 "BOL" -> DocumentCaptureType.BOL
                 else -> DocumentCaptureType.POD
@@ -167,9 +167,9 @@ fun AppNavigation(
                 navArgument("inspectionType") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val loadId = backStackEntry.arguments?.getString("loadId") ?: ""
+            val loadId = backStackEntry.savedStateHandle.get<String>("loadId") ?: ""
             val inspectionTypeStr =
-                backStackEntry.arguments?.getString("inspectionType") ?: "Pickup"
+                backStackEntry.savedStateHandle.get<String>("inspectionType") ?: "Pickup"
             val inspectionType = when (inspectionTypeStr) {
                 "Delivery" -> InspectionType.DELIVERY
                 else -> InspectionType.PICKUP

@@ -4,7 +4,6 @@ using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Logistics.Shared.Models.Messaging;
-using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Queries;
 
@@ -23,13 +22,9 @@ internal sealed class GetMessagesHandler(ITenantUnitOfWork tenantUow)
         }
 
         var messages = await tenantUow.Repository<Message>()
-            .Query()
-            .Where(m => m.ConversationId == req.ConversationId
-                        && !m.IsDeleted
-                        && (!req.Before.HasValue || m.SentAt < req.Before.Value))
-            .Include(m => m.Sender)
-            .Include(m => m.ReadReceipts)
-            .ToListAsync(ct);
+            .GetListAsync(m => m.ConversationId == req.ConversationId
+                               && !m.IsDeleted
+                               && (!req.Before.HasValue || m.SentAt < req.Before.Value), ct);
 
         var messageDtos = messages
             .OrderByDescending(m => m.SentAt)

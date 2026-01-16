@@ -14,7 +14,6 @@ internal sealed class GetConditionReportsHandler(ITenantUnitOfWork tenantUow)
     public async Task<Result<List<ConditionReportDto>>> Handle(GetConditionReportsQuery req, CancellationToken ct)
     {
         var query = tenantUow.Repository<VehicleConditionReport>().Query()
-            .Include(r => r.InspectedBy)
             .AsQueryable();
 
         if (req.LoadId.HasValue)

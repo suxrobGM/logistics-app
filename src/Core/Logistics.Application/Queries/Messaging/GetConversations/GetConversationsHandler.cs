@@ -4,7 +4,6 @@ using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Logistics.Shared.Models.Messaging;
-using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Queries;
 
@@ -21,15 +20,7 @@ internal sealed class GetConversationsHandler(ITenantUnitOfWork tenantUow)
         {
             // Get conversations where the user is a participant
             var participantConversations = await tenantUow.Repository<ConversationParticipant>()
-                .Query()
-                .Where(p => p.EmployeeId == req.ParticipantId.Value)
-                .Include(p => p.Conversation)
-                    .ThenInclude(c => c.Participants)
-                        .ThenInclude(cp => cp.Employee)
-                .Include(p => p.Conversation)
-                    .ThenInclude(c => c.Messages)
-                        .ThenInclude(m => m.Sender)
-                .ToListAsync(ct);
+                .GetListAsync(p => p.EmployeeId == req.ParticipantId.Value, ct);
 
             conversations = participantConversations
                 .Select(p => p.Conversation)
@@ -37,22 +28,12 @@ internal sealed class GetConversationsHandler(ITenantUnitOfWork tenantUow)
         }
         else if (req.LoadId.HasValue)
         {
-            conversations = await conversationRepo.Query()
-                .Where(c => c.LoadId == req.LoadId.Value)
-                .Include(c => c.Participants)
-                    .ThenInclude(p => p.Employee)
-                .Include(c => c.Messages)
-                    .ThenInclude(m => m.Sender)
-                .ToListAsync(ct);
+            conversations = await conversationRepo
+                .GetListAsync(c => c.LoadId == req.LoadId.Value, ct);
         }
         else
         {
-            conversations = await conversationRepo.Query()
-                .Include(c => c.Participants)
-                    .ThenInclude(p => p.Employee)
-                .Include(c => c.Messages)
-                    .ThenInclude(m => m.Sender)
-                .ToListAsync(ct);
+            conversations = await conversationRepo.GetListAsync(_ => true, ct);
         }
 
         var conversationDtos = conversations

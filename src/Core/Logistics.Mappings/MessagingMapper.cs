@@ -81,6 +81,7 @@ public static partial class MessagingMapper
             Id = entity.Id,
             Name = entity.Name,
             LoadId = entity.LoadId,
+            IsTenantChat = entity.IsTenantChat,
             CreatedAt = entity.CreatedAt,
             LastMessageAt = entity.LastMessageAt,
             Participants = entity.Participants.Select(p => p.ToDto()).ToList(),

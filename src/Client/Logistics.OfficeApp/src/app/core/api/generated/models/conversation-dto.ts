@@ -6,6 +6,7 @@ import type { MessageDto } from '../models/message-dto';
 export interface ConversationDto {
   createdAt?: string;
   id?: string;
+  isTenantChat?: boolean;
   lastMessage?: MessageDto;
   lastMessageAt?: string | null;
   loadId?: string | null;

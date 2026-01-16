@@ -8,6 +8,7 @@ import {
   createConversation,
   getConversations,
   getMessages,
+  getTenantChat,
   getUnreadCount,
   markMessageRead,
   sendMessage,
@@ -61,15 +62,15 @@ export class MessagingService extends BaseHubConnection {
     await this.hubConnection.invoke("SendTypingIndicator", conversationId, isTyping);
   }
 
-  async getConversations(participantId?: string, loadId?: string): Promise<ConversationDto[]> {
+  getConversations(participantId?: string, loadId?: string): Promise<ConversationDto[]> {
     return this.api.invoke(getConversations, { ParticipantId: participantId, LoadId: loadId });
   }
 
-  async createConversation(request: CreateConversationRequest): Promise<ConversationDto> {
+  createConversation(request: CreateConversationRequest): Promise<ConversationDto> {
     return this.api.invoke(createConversation, { body: request });
   }
 
-  async getMessages(
+  getMessages(
     conversationId: string,
     limit = 50,
     offset = 0,
@@ -78,11 +79,11 @@ export class MessagingService extends BaseHubConnection {
     return this.api.invoke(getMessages, { conversationId, limit, offset, before });
   }
 
-  async sendMessage(request: SendMessageRequest): Promise<MessageDto> {
+  sendMessage(request: SendMessageRequest): Promise<MessageDto> {
     return this.api.invoke(sendMessage, { body: request });
   }
 
-  async markAsRead(messageId: string): Promise<void> {
+  markAsRead(messageId: string): Promise<void> {
     return this.api.invoke(markMessageRead, { messageId });
   }
 
@@ -90,5 +91,9 @@ export class MessagingService extends BaseHubConnection {
     const count = await this.api.invoke(getUnreadCount);
     this.unreadCount.set(count);
     return count;
+  }
+
+  getTenantChat(): Promise<ConversationDto> {
+    return this.api.invoke(getTenantChat);
   }
 }

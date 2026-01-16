@@ -48,6 +48,15 @@ export class MessagesListComponent implements OnInit, OnDestroy {
     this.router.navigate(["/messages", "new"]);
   }
 
+  protected async openTeamChat(): Promise<void> {
+    try {
+      const tenantChat = await this.store.getTenantChat();
+      this.router.navigate(["/messages", tenantChat.id]);
+    } catch (e) {
+      console.error("Failed to open team chat", e);
+    }
+  }
+
   protected getParticipantNames(conversation: ConversationDto): string {
     return (conversation.participants ?? []).map((p) => p.employeeName || "Unknown").join(", ");
   }

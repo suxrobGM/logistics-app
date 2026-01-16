@@ -209,6 +209,26 @@ export const MessagesStore = signalStore(
         return conversation;
       },
 
+      async getTenantChat(): Promise<ConversationDto> {
+        patchState(store, { loading: true });
+        try {
+          const tenantChat = await messagingService.getTenantChat();
+
+          // Add to conversations if not already present
+          const exists = store.conversations().some((c) => c.id === tenantChat.id);
+          if (!exists) {
+            patchState(store, { conversations: [tenantChat, ...store.conversations()] });
+          }
+
+          patchState(store, { loading: false });
+          return tenantChat;
+        } catch (e) {
+          patchState(store, { error: "Failed to load team chat", loading: false });
+          console.error(e);
+          throw e;
+        }
+      },
+
       async cleanup(): Promise<void> {
         const currentConvo = store.currentConversation();
         if (currentConvo?.id) {

@@ -4,7 +4,6 @@ using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Commands;
 
@@ -17,9 +16,7 @@ internal sealed class MarkMessageReadHandler(
     {
         // Get the message
         var message = await tenantUow.Repository<Message>()
-            .Query()
-            .Include(m => m.Conversation)
-            .FirstOrDefaultAsync(m => m.Id == req.MessageId, ct);
+            .GetByIdAsync(req.MessageId, ct);
 
         if (message is null)
         {

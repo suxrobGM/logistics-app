@@ -119,6 +119,8 @@ export type { GetConversations$Params as GetConversations$Params } from './fn/me
 export { getConversations as getConversations } from './fn/message/get-conversations';
 export type { CreateConversation$Params as CreateConversation$Params } from './fn/message/create-conversation';
 export { createConversation as createConversation } from './fn/message/create-conversation';
+export type { GetTenantChat$Params as GetTenantChat$Params } from './fn/message/get-tenant-chat';
+export { getTenantChat as getTenantChat } from './fn/message/get-tenant-chat';
 export type { GetMessages$Params as GetMessages$Params } from './fn/message/get-messages';
 export { getMessages as getMessages } from './fn/message/get-messages';
 export type { SendMessage$Params as SendMessage$Params } from './fn/message/send-message';

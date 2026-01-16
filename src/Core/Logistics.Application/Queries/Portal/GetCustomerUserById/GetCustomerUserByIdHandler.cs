@@ -15,7 +15,6 @@ internal sealed class GetCustomerUserByIdHandler(ITenantUnitOfWork tenantUow)
         CancellationToken ct)
     {
         var customerUser = await tenantUow.Repository<CustomerUser>().Query()
-            .Include(cu => cu.Customer)
             .Where(cu => cu.Id == req.Id)
             .FirstOrDefaultAsync(ct);
 

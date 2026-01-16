@@ -18,6 +18,11 @@ public class Conversation : Entity, ITenantEntity
     public Guid? LoadId { get; set; }
 
     /// <summary>
+    /// Indicates if this is a tenant-wide group chat that all employees can join.
+    /// </summary>
+    public bool IsTenantChat { get; set; }
+
+    /// <summary>
     /// When the conversation was created.
     /// </summary>
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -57,5 +62,17 @@ public class Conversation : Entity, ITenantEntity
             ]
         };
         return conversation;
+    }
+
+    /// <summary>
+    /// Creates a tenant-wide group chat.
+    /// </summary>
+    public static Conversation CreateTenantChat(string tenantName)
+    {
+        return new Conversation
+        {
+            Name = $"{tenantName} Team Chat",
+            IsTenantChat = true
+        };
     }
 }

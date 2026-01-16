@@ -15,8 +15,6 @@ internal sealed class GetPortalLoadsHandler(ITenantUnitOfWork tenantUow)
         CancellationToken ct)
     {
         var baseQuery = tenantUow.Repository<Load>().Query()
-            .Include(l => l.AssignedTruck)
-            .Include(l => l.Documents)
             .Where(l => l.CustomerId == req.CustomerId);
 
         // Apply search filter
@@ -24,7 +22,7 @@ internal sealed class GetPortalLoadsHandler(ITenantUnitOfWork tenantUow)
         {
             var search = req.Search.ToLower();
             baseQuery = baseQuery.Where(l =>
-                l.Name.ToLower().Contains(search) ||
+                l.Name.Contains(search, StringComparison.CurrentCultureIgnoreCase) ||
                 l.Number.ToString().Contains(search));
         }
 
@@ -57,10 +55,6 @@ internal sealed class GetPortalLoadsHandler(ITenantUnitOfWork tenantUow)
 
         // Load data first, then project (GetDriversNames can't be translated to SQL)
         var loadEntities = await baseQuery
-            .Include(l => l.AssignedTruck)
-            .ThenInclude(t => t!.MainDriver)
-            .Include(l => l.AssignedTruck)
-            .ThenInclude(t => t!.SecondaryDriver)
             .ToListAsync(ct);
 
         var loads = loadEntities.Select(l => new PortalLoadDto

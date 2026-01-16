@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Application.Commands;
 using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Policies;
@@ -44,6 +45,23 @@ public class MessageController(IMediator mediator) : ControllerBase
             : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    [HttpGet("conversations/common", Name = "GetTenantChat")]
+    [ProducesResponseType(typeof(ConversationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Message.View)]
+    public async Task<IActionResult> GetTenantChat()
+    {
+        var employeeId = User.GetUserId();
+        if (employeeId is null)
+        {
+            return BadRequest(new ErrorResponse("Unable to identify user"));
+        }
+
+        var query = new GetTenantChatQuery { EmployeeId = employeeId.Value };
+        var result = await mediator.Send(query);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     [HttpGet("conversations/{conversationId:guid}", Name = "GetMessages")]
     [ProducesResponseType(typeof(MessageDto[]), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -75,9 +93,8 @@ public class MessageController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Message.Manage)]
     public async Task<IActionResult> SendMessage([FromBody] SendMessageRequest request)
     {
-        // Get sender ID from the current user claims
-        var senderIdClaim = User.FindFirst("sub")?.Value;
-        if (string.IsNullOrEmpty(senderIdClaim) || !Guid.TryParse(senderIdClaim, out var senderId))
+        var senderId = User.GetUserId();
+        if (senderId is null)
         {
             return BadRequest(new ErrorResponse("Unable to identify sender"));
         }
@@ -85,7 +102,7 @@ public class MessageController(IMediator mediator) : ControllerBase
         var command = new SendMessageCommand
         {
             ConversationId = request.ConversationId,
-            SenderId = senderId,
+            SenderId = senderId.Value,
             Content = request.Content
         };
         var result = await mediator.Send(command);
@@ -100,9 +117,8 @@ public class MessageController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Message.View)]
     public async Task<IActionResult> MarkAsRead(Guid messageId)
     {
-        // Get reader ID from the current user claims
-        var readerIdClaim = User.FindFirst("sub")?.Value;
-        if (string.IsNullOrEmpty(readerIdClaim) || !Guid.TryParse(readerIdClaim, out var readerId))
+        var readerId = User.GetUserId();
+        if (readerId is null)
         {
             return BadRequest(new ErrorResponse("Unable to identify reader"));
         }
@@ -110,7 +126,7 @@ public class MessageController(IMediator mediator) : ControllerBase
         var command = new MarkMessageReadCommand
         {
             MessageId = messageId,
-            ReadById = readerId
+            ReadById = readerId.Value
         };
         var result = await mediator.Send(command);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
@@ -126,14 +142,13 @@ public class MessageController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Message.View)]
     public async Task<IActionResult> GetUnreadCount()
     {
-        // Get employee ID from the current user claims
-        var employeeIdClaim = User.FindFirst("sub")?.Value;
-        if (string.IsNullOrEmpty(employeeIdClaim) || !Guid.TryParse(employeeIdClaim, out var employeeId))
+        var employeeId = User.GetUserId();
+        if (employeeId is null)
         {
             return BadRequest(new ErrorResponse("Unable to identify user"));
         }
 
-        var query = new GetUnreadCountQuery { EmployeeId = employeeId };
+        var query = new GetUnreadCountQuery { EmployeeId = employeeId.Value };
         var result = await mediator.Send(query);
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }

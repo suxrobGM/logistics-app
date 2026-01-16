@@ -15,8 +15,6 @@ internal sealed class GetPortalLoadHandler(ITenantUnitOfWork tenantUow)
         CancellationToken ct)
     {
         var load = await tenantUow.Repository<Load>().Query()
-            .Include(l => l.AssignedTruck)
-            .Include(l => l.Documents)
             .Where(l => l.Id == req.LoadId && l.CustomerId == req.CustomerId)
             .FirstOrDefaultAsync(ct);
 

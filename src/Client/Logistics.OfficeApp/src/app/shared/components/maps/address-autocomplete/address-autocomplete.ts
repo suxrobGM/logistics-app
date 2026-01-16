@@ -3,6 +3,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Component, inject, input, model, output, signal } from "@angular/core";
 import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { InputTextModule } from "primeng/inputtext";
 import { catchError } from "rxjs";
 import type { AddressDto } from "@/core/api/models";
 import { environment } from "@/env";
@@ -17,7 +18,7 @@ import { Converters } from "@/shared/utils";
   selector: "app-address-autocomplete",
   templateUrl: "./address-autocomplete.html",
   styleUrl: "./address-autocomplete.css",
-  imports: [FormsModule],
+  imports: [FormsModule, InputTextModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

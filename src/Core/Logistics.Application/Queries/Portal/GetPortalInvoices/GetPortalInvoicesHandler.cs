@@ -15,7 +15,6 @@ internal sealed class GetPortalInvoicesHandler(ITenantUnitOfWork tenantUow)
         CancellationToken ct)
     {
         var baseQuery = tenantUow.Repository<LoadInvoice>().Query()
-            .Include(i => i.Load)
             .Where(i => i.CustomerId == req.CustomerId);
 
         // Apply search filter
@@ -24,7 +23,7 @@ internal sealed class GetPortalInvoicesHandler(ITenantUnitOfWork tenantUow)
             var search = req.Search.ToLower();
             baseQuery = baseQuery.Where(i =>
                 i.Number.ToString().Contains(search) ||
-                (i.Load != null && i.Load.Name.ToLower().Contains(search)));
+                (i.Load != null && i.Load.Name.Contains(search, StringComparison.CurrentCultureIgnoreCase)));
         }
 
         // Apply date filters
