@@ -16,28 +16,16 @@ using Subscription = Logistics.Domain.Entities.Subscription;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStripEventCommand, Result>
+internal sealed class ProcessStripEventHandler(
+    ITenantUnitOfWork tenantUow,
+    IMasterUnitOfWork masterUow,
+    IStripeService stripeService,
+    IOptions<StripeOptions> stripeOptions,
+    ILogger<ProcessStripEventHandler> logger)
+    : IAppRequestHandler<ProcessStripEventCommand, Result>
 {
-    private readonly ILogger<ProcessStripEventHandler> _logger;
-    private readonly IMasterUnitOfWork _masterUow;
-    private readonly IStripeService _stripeService;
-    private readonly string _stripeWebhookSecret;
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public ProcessStripEventHandler(
-        ITenantUnitOfWork tenantUow,
-        IMasterUnitOfWork masterUow,
-        IStripeService stripeService,
-        IOptions<StripeOptions> stripeOptions,
-        ILogger<ProcessStripEventHandler> logger)
-    {
-        _tenantUow = tenantUow;
-        _masterUow = masterUow;
-        _stripeService = stripeService;
-        _logger = logger;
-        _stripeWebhookSecret =
-            stripeOptions.Value.WebhookSecret ?? throw new ArgumentNullException(nameof(stripeOptions));
-    }
+    private readonly string _stripeWebhookSecret =
+        stripeOptions.Value.WebhookSecret ?? throw new ArgumentNullException(nameof(stripeOptions));
 
     public async Task<Result> Handle(
         ProcessStripEventCommand req, CancellationToken ct)
@@ -50,29 +38,27 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
                 _stripeWebhookSecret,
                 throwOnApiVersionMismatch: false);
 
-            _logger.LogInformation("Received Stripe event: {Type}", stripeEvent.Type);
+            logger.LogInformation("Received Stripe event: {Type}", stripeEvent.Type);
 
-            switch (stripeEvent.Type)
+            return stripeEvent.Type switch
             {
-                case EventTypes.InvoicePaid:
-                    return await HandleInvoicePaid((stripeEvent.Data.Object as StripeInvoice)!);
-                case EventTypes.PaymentMethodAttached:
-                    return await HandlePaymentMethodAttached((stripeEvent.Data.Object as StripePaymentMethod)!);
-                case EventTypes.PaymentMethodDetached:
-                    return await HandlePaymentMethodDetached((stripeEvent.Data.Object as StripePaymentMethod)!);
-                case EventTypes.CustomerSubscriptionCreated:
-                    return await HandleSubscriptionCreated((stripeEvent.Data.Object as StripeSubscription)!);
-                case EventTypes.CustomerSubscriptionUpdated:
-                    return await HandleSubscriptionUpdated((stripeEvent.Data.Object as StripeSubscription)!);
-                case EventTypes.CustomerSubscriptionDeleted:
-                    return await HandleSubscriptionDeleted((stripeEvent.Data.Object as StripeSubscription)!);
-            }
-
-            return Result.Ok();
+                EventTypes.InvoicePaid => await HandleInvoicePaid((stripeEvent.Data.Object as StripeInvoice)!),
+                EventTypes.PaymentMethodAttached => await HandlePaymentMethodAttached(
+                    (stripeEvent.Data.Object as StripePaymentMethod)!),
+                EventTypes.PaymentMethodDetached => await HandlePaymentMethodDetached(
+                    (stripeEvent.Data.Object as StripePaymentMethod)!),
+                EventTypes.CustomerSubscriptionCreated => await HandleSubscriptionCreated(
+                    (stripeEvent.Data.Object as StripeSubscription)!),
+                EventTypes.CustomerSubscriptionUpdated => await HandleSubscriptionUpdated(
+                    (stripeEvent.Data.Object as StripeSubscription)!),
+                EventTypes.CustomerSubscriptionDeleted => await HandleSubscriptionDeleted(
+                    (stripeEvent.Data.Object as StripeSubscription)!),
+                _ => Result.Ok()
+            };
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Stripe error: {Message}", ex.Message);
+            logger.LogError(ex, "Stripe error: {Message}", ex.Message);
             return Result.Fail(ex.Message);
         }
     }
@@ -82,7 +68,7 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
 
     private async Task<Result> HandleInvoicePaid(StripeInvoice stripeInvoice)
     {
-        var customer = await _stripeService.GetCustomerAsync(stripeInvoice.CustomerId);
+        var customer = await stripeService.GetCustomerAsync(stripeInvoice.CustomerId);
         if (!customer.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
         {
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in invoice metadata.");
@@ -93,12 +79,12 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
             return Result.Fail($"Invalid tenant ID format: {tenantId}");
         }
 
-        await _tenantUow.SetCurrentTenantByIdAsync(parsedTenantId);
+        await tenantUow.SetCurrentTenantByIdAsync(parsedTenantId);
 
         var amount = stripeInvoice.AmountPaid / 100m; // Convert from cents
         var stripePaymentMethodId = stripeInvoice.DefaultPaymentMethodId;
 
-        var paymentMethod = await _tenantUow.Repository<PaymentMethod>()
+        var paymentMethod = await tenantUow.Repository<PaymentMethod>()
             .GetAsync(pm => pm.StripePaymentMethodId == stripePaymentMethodId);
 
         if (paymentMethod is null)
@@ -106,7 +92,7 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
             return Result.Fail($"Payment method {stripePaymentMethodId} not found for tenant {tenantId}.");
         }
 
-        var tenant = _tenantUow.GetCurrentTenant();
+        var tenant = tenantUow.GetCurrentTenant();
 
         var payment = new Payment
         {
@@ -117,10 +103,10 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
             BillingAddress = stripeInvoice.CustomerAddress.ToAddressEntity()
         };
 
-        await _tenantUow.Repository<Payment>().AddAsync(payment);
-        await _tenantUow.SaveChangesAsync();
+        await tenantUow.Repository<Payment>().AddAsync(payment);
+        await tenantUow.SaveChangesAsync();
 
-        _logger.LogInformation("Added payment for tenant {TenantId} with amount {Amount}, invoice ID {StripeInvoiceId}",
+        logger.LogInformation("Added payment for tenant {TenantId} with amount {Amount}, invoice ID {StripeInvoiceId}",
             tenantId, payment.Amount, stripeInvoice.Id);
         return Result.Ok();
     }
@@ -143,14 +129,14 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
             return Result.Fail($"{StripeMetadataKeys.PlanId} not found in subscription metadata.");
         }
 
-        var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(Guid.Parse(tenantId));
+        var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(Guid.Parse(tenantId));
 
         if (tenant is null)
         {
             return Result.Fail($"Could not find a tenant with ID '{tenantId}'");
         }
 
-        var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(Guid.Parse(planId));
+        var subscriptionPlan = await masterUow.Repository<SubscriptionPlan>().GetByIdAsync(Guid.Parse(planId));
 
         if (subscriptionPlan is null)
         {
@@ -165,8 +151,8 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
             tenant.Subscription.NextBillingDate = stripeSubscription.Items.Data.First().CurrentPeriodEnd;
             tenant.Subscription.TrialEndDate = stripeSubscription.TrialEnd;
 
-            _masterUow.Repository<Subscription>().Update(tenant.Subscription);
-            _logger.LogInformation("Updated existing subscription {StripeSubscriptionId} for tenant {TenantId}",
+            masterUow.Repository<Subscription>().Update(tenant.Subscription);
+            logger.LogInformation("Updated existing subscription {StripeSubscriptionId} for tenant {TenantId}",
                 stripeSubscription.Id, tenantId);
         }
         else
@@ -177,12 +163,12 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
             newSubscription.NextBillingDate = stripeSubscription.Items.Data.First().CurrentPeriodEnd;
             newSubscription.TrialEndDate = stripeSubscription.TrialEnd;
 
-            await _masterUow.Repository<Subscription>().AddAsync(newSubscription);
-            _logger.LogInformation("Created new subscription {StripeSubscriptionId} for tenant {TenantId}",
+            await masterUow.Repository<Subscription>().AddAsync(newSubscription);
+            logger.LogInformation("Created new subscription {StripeSubscriptionId} for tenant {TenantId}",
                 stripeSubscription.Id, tenantId);
         }
 
-        await _masterUow.SaveChangesAsync();
+        await masterUow.SaveChangesAsync();
         return Result.Ok();
     }
 
@@ -194,7 +180,7 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in subscription metadata.");
         }
 
-        var subscription = await _masterUow.Repository<Subscription>()
+        var subscription = await masterUow.Repository<Subscription>()
             .GetAsync(s => s.StripeSubscriptionId == stripeSubscription.Id);
 
         if (subscription is null)
@@ -207,10 +193,10 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
         subscription.NextBillingDate = stripeSubscription.Items.Data.First().CurrentPeriodEnd;
         subscription.TrialEndDate = stripeSubscription.TrialEnd;
 
-        _masterUow.Repository<Subscription>().Update(subscription);
-        await _masterUow.SaveChangesAsync();
+        masterUow.Repository<Subscription>().Update(subscription);
+        await masterUow.SaveChangesAsync();
 
-        _logger.LogInformation("Updated subscription {StripeSubscriptionId} for tenant {TenantId}",
+        logger.LogInformation("Updated subscription {StripeSubscriptionId} for tenant {TenantId}",
             stripeSubscription.Id, tenantId);
         return Result.Ok();
     }
@@ -222,7 +208,7 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in subscription metadata.");
         }
 
-        var subscription = await _masterUow.Repository<Subscription>()
+        var subscription = await masterUow.Repository<Subscription>()
             .GetAsync(s => s.StripeSubscriptionId == stripeSubscription.Id);
 
         if (subscription is null)
@@ -232,10 +218,10 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
 
         subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
         subscription.EndDate = stripeSubscription.EndedAt;
-        _masterUow.Repository<Subscription>().Update(subscription);
-        await _masterUow.SaveChangesAsync();
+        masterUow.Repository<Subscription>().Update(subscription);
+        await masterUow.SaveChangesAsync();
 
-        _logger.LogInformation("Cancelled subscription {StripeSubscriptionId} for tenant {TenantId}",
+        logger.LogInformation("Cancelled subscription {StripeSubscriptionId} for tenant {TenantId}",
             stripeSubscription.Id, tenantId);
         return Result.Ok();
     }
@@ -257,7 +243,7 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
             return Result.Fail($"Invalid tenant ID format: {tenantId}");
         }
 
-        await _tenantUow.SetCurrentTenantByIdAsync(parsedTenantId);
+        await tenantUow.SetCurrentTenantByIdAsync(parsedTenantId);
         var paymentMethod = stripePaymentMethod.ToPaymentMethodEntity();
 
         if (paymentMethod is UsBankAccountPaymentMethod usBankAccountPaymentMethod)
@@ -266,11 +252,11 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
         }
         else
         {
-            await _tenantUow.Repository<PaymentMethod>().AddAsync(paymentMethod);
+            await tenantUow.Repository<PaymentMethod>().AddAsync(paymentMethod);
         }
 
-        await _tenantUow.SaveChangesAsync();
-        _logger.LogInformation(
+        await tenantUow.SaveChangesAsync();
+        logger.LogInformation(
             "Attached payment method {PaymentMethodType} {StripePaymentMethodId} to tenant {TenantId}",
             paymentMethod.Type, paymentMethod.StripePaymentMethodId, tenantId);
         return Result.Ok();
@@ -288,8 +274,8 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
             return Result.Fail($"Invalid tenant ID format: {tenantId}");
         }
 
-        await _tenantUow.SetCurrentTenantByIdAsync(parsedTenantId);
-        var paymentMethod = await _tenantUow.Repository<PaymentMethod>()
+        await tenantUow.SetCurrentTenantByIdAsync(parsedTenantId);
+        var paymentMethod = await tenantUow.Repository<PaymentMethod>()
             .GetAsync(pm => pm.StripePaymentMethodId == stripePaymentMethod.Id);
 
         if (paymentMethod is null)
@@ -297,10 +283,10 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
             return Result.Fail($"Payment method {stripePaymentMethod.Id} not found for tenant {tenantId}.");
         }
 
-        _tenantUow.Repository<PaymentMethod>().Delete(paymentMethod);
-        await _tenantUow.SaveChangesAsync();
+        tenantUow.Repository<PaymentMethod>().Delete(paymentMethod);
+        await tenantUow.SaveChangesAsync();
 
-        _logger.LogInformation(
+        logger.LogInformation(
             "Detached payment method {PaymentMethodType} {StripePaymentMethodId} from tenant {TenantId}",
             paymentMethod.Type, paymentMethod.StripePaymentMethodId, tenantId);
         return Result.Ok();
@@ -313,12 +299,12 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
     /// <param name="paymentMethod">The US bank account payment method to handle.</param>
     private async Task UpdateOrAddUsBankAccount(UsBankAccountPaymentMethod paymentMethod)
     {
-        var existingPaymentMethod = await _tenantUow.Repository<PaymentMethod>()
+        var existingPaymentMethod = await tenantUow.Repository<PaymentMethod>()
             .GetAsync(pm => pm.StripePaymentMethodId == paymentMethod.StripePaymentMethodId);
 
         if (existingPaymentMethod is not UsBankAccountPaymentMethod usBankAccountPaymentMethod)
         {
-            await _tenantUow.Repository<PaymentMethod>().AddAsync(paymentMethod);
+            await tenantUow.Repository<PaymentMethod>().AddAsync(paymentMethod);
             return;
         }
 
@@ -330,9 +316,9 @@ internal sealed class ProcessStripEventHandler : IAppRequestHandler<ProcessStrip
         usBankAccountPaymentMethod.AccountType = paymentMethod.AccountType;
         usBankAccountPaymentMethod.VerificationStatus = PaymentMethodVerificationStatus.Verified;
 
-        _tenantUow.Repository<PaymentMethod>().Update(usBankAccountPaymentMethod);
-        _logger.LogInformation("Verified US bank account payment method {StripePaymentMethodId} for tenant {TenantId}",
-            paymentMethod.StripePaymentMethodId, _tenantUow.GetCurrentTenant().Id);
+        tenantUow.Repository<PaymentMethod>().Update(usBankAccountPaymentMethod);
+        logger.LogInformation("Verified US bank account payment method {StripePaymentMethodId} for tenant {TenantId}",
+            paymentMethod.StripePaymentMethodId, tenantUow.GetCurrentTenant().Id);
     }
 
     #endregion

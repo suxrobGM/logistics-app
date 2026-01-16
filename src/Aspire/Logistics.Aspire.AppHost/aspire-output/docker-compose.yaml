@@ -17,7 +17,7 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - type: "volume"
         target: "/var/lib/postgresql"
@@ -169,10 +169,10 @@ services:
         condition: "service_started"
     networks:
       - "aspire"
-  office-app:
-    image: "ghcr.io/suxrobgm/logistics-app/office:latest"
+  tms-portal:
+    image: "ghcr.io/suxrobgm/logistics-app/tms-portal:latest"
     ports:
-      - "7003:7003"
+      - "7003:80"
     depends_on:
       api:
         condition: "service_started"
@@ -180,19 +180,14 @@ services:
         condition: "service_started"
     networks:
       - "aspire"
-  stripe-cli:
-    image: "stripe/stripe-cli:latest"
-    command:
-      - "listen"
-      - "--forward-to"
-      - "http://api:7000/webhooks/stripe"
-    entrypoint:
-      - "stripe"
-    environment:
-      STRIPE_API_KEY: "${Stripe__SecretKey}"
-      STRIPE_DEVICE_NAME: "aspire-dev"
+  customer-portal:
+    image: "ghcr.io/suxrobgm/logistics-app/customer-portal:latest"
+    ports:
+      - "7004:80"
     depends_on:
       api:
+        condition: "service_started"
+      identity-server:
         condition: "service_started"
     networks:
       - "aspire"

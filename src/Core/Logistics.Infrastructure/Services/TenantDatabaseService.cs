@@ -14,33 +14,23 @@ using CustomClaimTypes = Logistics.Shared.Identity.Claims.CustomClaimTypes;
 
 namespace Logistics.Infrastructure.Services;
 
-public class TenantDatabaseService : ITenantDatabaseService
+public partial class TenantDatabaseService(
+    TenantDbContext context,
+    TenantsDatabaseOptions databaseOptions,
+    ILogger<TenantDatabaseService> logger)
+    : ITenantDatabaseService
 {
-    private readonly TenantDbContext _context;
-    private readonly TenantsDatabaseOptions _databaseOptions;
-    private readonly ILogger<TenantDatabaseService> _logger;
-
-    public TenantDatabaseService(
-        TenantDbContext context,
-        TenantsDatabaseOptions databaseOptions,
-        ILogger<TenantDatabaseService> logger)
-    {
-        _context = context;
-        _logger = logger;
-        _databaseOptions = databaseOptions;
-    }
-
     public string GenerateConnectionString(string tenantName)
     {
-        if (string.IsNullOrEmpty(_databaseOptions.DatabaseNameTemplate))
+        if (string.IsNullOrEmpty(databaseOptions.DatabaseNameTemplate))
         {
             throw new InvalidOperationException(
                 "The database name template is not defined in the TenantsDatabaseOptions appsettings.json file");
         }
 
-        var databaseName = Regex.Replace(_databaseOptions.DatabaseNameTemplate, "{tenant}", tenantName);
+        var databaseName = TenantDatabaseNameRegex().Replace(databaseOptions.DatabaseNameTemplate, tenantName);
         var connectionString =
-            $"Host={_databaseOptions.DatabaseHost}; Database={databaseName}; Port=5432; Username={_databaseOptions.DatabaseUserId}; Password={_databaseOptions.DatabasePassword}";
+            $"Host={databaseOptions.DatabaseHost}; Database={databaseName}; Port=5432; Username={databaseOptions.DatabaseUserId}; Password={databaseOptions.DatabasePassword}";
         return connectionString;
     }
 
@@ -48,14 +38,14 @@ public class TenantDatabaseService : ITenantDatabaseService
     {
         try
         {
-            _context.Database.SetConnectionString(connectionString);
-            await _context.Database.MigrateAsync();
+            context.Database.SetConnectionString(connectionString);
+            await context.Database.MigrateAsync();
             await AddTenantRoles();
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError("Thrown exception in TenantDatabaseService.CreateDatabaseAsync(): {Exception}", ex);
+            logger.LogError("Thrown exception in TenantDatabaseService.CreateDatabaseAsync(): {Exception}", ex);
             return false;
         }
     }
@@ -88,7 +78,7 @@ public class TenantDatabaseService : ITenantDatabaseService
         }
         catch (DbException ex)
         {
-            _logger.LogError("Thrown exception in TenantDatabaseService.DeleteDatabaseAsync(): {@Exception}", ex);
+            logger.LogError("Thrown exception in TenantDatabaseService.DeleteDatabaseAsync(): {@Exception}", ex);
             return false;
         }
     }
@@ -104,14 +94,14 @@ public class TenantDatabaseService : ITenantDatabaseService
                 DisplayName = tenantRole.DisplayName
             };
 
-            var existingRole = await _context.Set<TenantRole>().FirstOrDefaultAsync(i => i.Name == role.Name);
+            var existingRole = await context.Set<TenantRole>().FirstOrDefaultAsync(i => i.Name == role.Name);
             if (existingRole != null)
             {
                 // Update existing role claims
                 var newPermissions = GetPermissionsBasedOnRole(role.Name);
                 AddRolePermissions(existingRole, newPermissions);
-                _context.Set<TenantRole>().Update(existingRole);
-                _logger.LogInformation("Updated tenant role '{Role}'", existingRole.Name);
+                context.Set<TenantRole>().Update(existingRole);
+                logger.LogInformation("Updated tenant role '{Role}'", existingRole.Name);
             }
             else
             {
@@ -120,12 +110,12 @@ public class TenantDatabaseService : ITenantDatabaseService
                 var newPermissions = GetPermissionsBasedOnRole(role.Name);
                 AddRolePermissions(role, newPermissions);
 
-                _context.Set<TenantRole>().Add(role);
-                _logger.LogInformation("Added tenant role '{Role}'", role.Name);
+                context.Set<TenantRole>().Add(role);
+                logger.LogInformation("Added tenant role '{Role}'", role.Name);
             }
         }
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
     private void AddRolePermissions(TenantRole role, IEnumerable<string> permissions)
@@ -138,7 +128,7 @@ public class TenantDatabaseService : ITenantDatabaseService
                 var claim = new Claim(CustomClaimTypes.Permission, permission);
                 role.Claims.Add(new TenantRoleClaim(claim.Type, claim.Value));
 
-                _logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the tenant role '{Role}'",
+                logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the tenant role '{Role}'",
                     claim.Type, claim.Value, role.Name);
             }
         }
@@ -152,7 +142,11 @@ public class TenantDatabaseService : ITenantDatabaseService
             TenantRoles.Manager => TenantRolePermissions.Manager,
             TenantRoles.Dispatcher => TenantRolePermissions.Dispatcher,
             TenantRoles.Driver => TenantRolePermissions.Driver,
+            TenantRoles.Customer => TenantRolePermissions.Customer,
             _ => []
         };
     }
+
+    [GeneratedRegex("{tenant}")]
+    private static partial Regex TenantDatabaseNameRegex();
 }
