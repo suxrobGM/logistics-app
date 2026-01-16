@@ -37,7 +37,7 @@ jobs:
       - name: Build Admin App
         run: dotnet build ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.AdminApp/Logistics.AdminApp.csproj
 
-  build-office-app:
+  build-angular-apps:
     runs-on: ubuntu-latest
 
     steps:
@@ -47,9 +47,17 @@ jobs:
         uses: oven-sh/setup-bun@v2
 
       - name: Install dependencies
-        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.OfficeApp
+        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
         run: bun install --force
 
-      - name: Build
-        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.OfficeApp
-        run: bun run build
+      - name: Build shared library
+        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
+        run: bun run build:shared
+
+      - name: Build TMS Portal
+        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
+        run: bun run build:tms
+
+      - name: Build Customer Portal
+        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
+        run: bun run build:customer

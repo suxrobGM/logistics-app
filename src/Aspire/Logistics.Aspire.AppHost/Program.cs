@@ -71,22 +71,39 @@ builder.AddProject<Logistics_AdminApp>("admin-app")
     .WaitFor(logisticsApi)
     .WaitFor(identityServer);
 
-// Office App: Use BunApp for local dev, Container for publishing
+// TMS Portal: Use BunApp for local dev, Container for publishing
 if (builder.ExecutionContext.IsPublishMode)
 {
-    // For production: use pre-built container image
-    builder.AddContainer("office-app", "ghcr.io/suxrobgm/logistics-app/office")
+    builder.AddContainer("tms-portal", "ghcr.io/suxrobgm/logistics-app/tms-portal")
         .WithImageTag("latest")
-        .WithHttpEndpoint(7003, 7003, "office-http")
+        .WithHttpEndpoint(7003, 80, "tms-http")
         .WithExternalHttpEndpoints()
         .WaitFor(logisticsApi)
         .WaitFor(identityServer);
 }
 else
 {
-    // For local development: use Bun dev server
-    builder.AddBunApp("office-app", "../../Client/Logistics.OfficeApp", "start", true)
-        .WithHttpEndpoint(7003, 7003, "office-app-http", isProxied: false)
+    builder.AddBunApp("tms-portal", "../../Client/Logistics.Angular", "start:tms", true)
+        .WithHttpEndpoint(7003, 7003, "tms-http", isProxied: false)
+        .WithBunPackageInstallation()
+        .WaitFor(logisticsApi)
+        .WaitFor(identityServer);
+}
+
+// Customer Portal: Use BunApp for local dev, Container for publishing
+if (builder.ExecutionContext.IsPublishMode)
+{
+    builder.AddContainer("customer-portal", "ghcr.io/suxrobgm/logistics-app/customer-portal")
+        .WithImageTag("latest")
+        .WithHttpEndpoint(7004, 80, "customer-http")
+        .WithExternalHttpEndpoints()
+        .WaitFor(logisticsApi)
+        .WaitFor(identityServer);
+}
+else
+{
+    builder.AddBunApp("customer-portal", "../../Client/Logistics.Angular", "start:customer", true)
+        .WithHttpEndpoint(7004, 7004, "customer-http", isProxied: false)
         .WithBunPackageInstallation()
         .WaitFor(logisticsApi)
         .WaitFor(identityServer);

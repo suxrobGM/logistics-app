@@ -1,0 +1,35 @@
+<div class="p-6">
+  <h1 class="text-2xl font-semibold mb-6">My Invoices</h1>
+
+  <p-table [value]="[]" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template #header>
+      <tr>
+        <th>Invoice #</th>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-invoice>
+      <tr>
+        <td>{{ invoice.number }}</td>
+        <td>{{ invoice.date }}</td>
+        <td>{{ invoice.amount | currency }}</td>
+        <td>
+          <p-tag [value]="invoice.status" />
+        </td>
+        <td>
+          <button pButton icon="pi pi-download" label="Download" text />
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="5" class="text-center py-8 text-gray-500">
+          No invoices found
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

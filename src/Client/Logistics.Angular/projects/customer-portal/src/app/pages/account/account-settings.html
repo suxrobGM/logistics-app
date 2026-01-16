@@ -1,0 +1,39 @@
+<div class="p-6">
+  <h1 class="text-2xl font-semibold mb-6">Account Settings</h1>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <p-card header="Profile Information">
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm text-gray-500 mb-1">Company Name</label>
+          <input type="text" pInputText class="w-full" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-500 mb-1">Contact Email</label>
+          <input type="email" pInputText class="w-full" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-500 mb-1">Phone</label>
+          <input type="tel" pInputText class="w-full" />
+        </div>
+        <button pButton label="Save Changes" />
+      </div>
+    </p-card>
+
+    <p-card header="Notification Preferences">
+      <p class="text-gray-500 mb-4">
+        Configure how you receive updates about your shipments
+      </p>
+      <div class="space-y-4">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="email-notifications" />
+          <label for="email-notifications">Email notifications</label>
+        </div>
+        <div class="flex items-center gap-2">
+          <input type="checkbox" id="sms-notifications" />
+          <label for="sms-notifications">SMS notifications</label>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>

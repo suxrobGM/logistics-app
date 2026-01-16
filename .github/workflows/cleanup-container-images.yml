@@ -75,7 +75,7 @@ on:
         required: false
 
 env:
-  DEFAULT_PACKAGES: "logistics-api,logistics-identityserver,logistics-adminapp,logistics-officeapp"
+  DEFAULT_PACKAGES: "logistics-api,logistics-identityserver,logistics-adminapp,logistics-tms-portal,logistics-customer-portal"
 
 jobs:
   cleanup:

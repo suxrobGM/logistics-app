@@ -1,0 +1,34 @@
+<div class="p-6">
+  <h1 class="text-2xl font-semibold mb-6">My Documents</h1>
+
+  <p-table [value]="[]" [tableStyle]="{ 'min-width': '50rem' }">
+    <ng-template #header>
+      <tr>
+        <th>Document Name</th>
+        <th>Type</th>
+        <th>Related Shipment</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-document>
+      <tr>
+        <td>{{ document.name }}</td>
+        <td>{{ document.type }}</td>
+        <td>{{ document.shipmentRef }}</td>
+        <td>{{ document.date }}</td>
+        <td>
+          <button pButton icon="pi pi-download" label="Download" text />
+          <button pButton icon="pi pi-eye" label="View" text />
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="5" class="text-center py-8 text-gray-500">
+          No documents found
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

@@ -1,0 +1,33 @@
+<div class="p-6">
+  <div class="flex items-center gap-4 mb-6">
+    <a routerLink="/shipments" pButton icon="pi pi-arrow-left" text />
+    <h1 class="text-2xl font-semibold">Shipment Details</h1>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <p-card header="Shipment Information">
+      <div class="space-y-4">
+        <div>
+          <label class="text-gray-500 text-sm">Reference #</label>
+          <p class="font-medium">{{ id() }}</p>
+        </div>
+        <div>
+          <label class="text-gray-500 text-sm">Status</label>
+          <p class="font-medium">In Transit</p>
+        </div>
+        <div>
+          <label class="text-gray-500 text-sm">Origin</label>
+          <p class="font-medium">Los Angeles, CA</p>
+        </div>
+        <div>
+          <label class="text-gray-500 text-sm">Destination</label>
+          <p class="font-medium">Chicago, IL</p>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card header="Tracking History">
+      <p class="text-gray-500">Tracking events will appear here</p>
+    </p-card>
+  </div>
+</div>

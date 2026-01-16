@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/customer-portal",
+    "types": [],
+    "paths": {
+      "@/*": ["./src/app/*"],
+      "@/env": ["./src/environments/environment"],
+      "@logistics/shared": ["../../projects/shared/src/public-api.ts"],
+      "@logistics/shared/*": ["../../projects/shared/src/lib/*"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/**/*.spec.ts"]
+}

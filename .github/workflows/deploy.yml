@@ -92,13 +92,23 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Build and push Office App
+      - name: Build and push TMS Portal
         uses: docker/build-push-action@v6
         with:
-          context: ./src/Client/Logistics.OfficeApp
-          file: ./src/Client/Logistics.OfficeApp/Dockerfile
+          context: ./src/Client/Logistics.Angular
+          file: ./src/Client/Logistics.Angular/Dockerfile.tms
           push: true
-          tags: ${{ env.REGISTRY }}/${{ steps.repo.outputs.name }}/office:latest
+          tags: ${{ env.REGISTRY }}/${{ steps.repo.outputs.name }}/tms-portal:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push Customer Portal
+        uses: docker/build-push-action@v6
+        with:
+          context: ./src/Client/Logistics.Angular
+          file: ./src/Client/Logistics.Angular/Dockerfile.customer
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ steps.repo.outputs.name }}/customer-portal:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
