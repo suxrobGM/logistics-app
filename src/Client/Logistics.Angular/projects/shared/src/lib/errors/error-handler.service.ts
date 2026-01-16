@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
-import { ToastService } from "../../../../tms-portal/src/app/core/services";
+import { ToastService } from "../services/toast.service";
 import type { AppError, ErrorCategory } from "./error.types";
 
 /**
@@ -102,24 +102,8 @@ export class ErrorHandlerService {
     // Log for debugging
     console.error(`[${error.category.toUpperCase()}]`, error.message, error.originalError);
 
-    // Show toast based on category
-    switch (error.category) {
-      case "network":
-        this.toastService.showError(error.message);
-        break;
-      case "auth":
-        // Auth errors might be handled differently (e.g., redirect to login)
-        this.toastService.showError(error.message);
-        break;
-      case "validation":
-        this.toastService.showError(error.message);
-        break;
-      case "server":
-        this.toastService.showError(error.message);
-        break;
-      default:
-        this.toastService.showError(error.message);
-    }
+    // Show toast notification
+    this.toastService.showError(error.message);
   }
 
   /**
