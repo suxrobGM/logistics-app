@@ -2,18 +2,5 @@
  * Public API Surface of @logistics/shared
  */
 
-// API
+// API - generated client and utilities
 export * from './lib/api';
-export * from './lib/api/models';
-
-// Interceptors
-export * from './lib/interceptors';
-
-// Guards
-export * from './lib/guards';
-
-// Services
-export * from './lib/services';
-
-// Models
-export * from './lib/models';

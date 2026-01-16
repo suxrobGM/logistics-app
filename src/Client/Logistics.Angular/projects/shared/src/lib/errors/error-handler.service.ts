@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
-import { ToastService } from "../services";
+import { ToastService } from "../../../../tms-portal/src/app/core/services";
 import type { AppError, ErrorCategory } from "./error.types";
 
 /**
