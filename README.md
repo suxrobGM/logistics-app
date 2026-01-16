@@ -11,7 +11,22 @@
 
 ## Overview
 
-Logistics TMS is purpose-built for trucking fleets specializing in intermodal containers and vehicle transport. It replaces spreadsheet-based workflows with an end-to-end digital system.
+Logistics TMS is purpose-built for trucking fleets specializing in intermodal containers and vehicle transport. It replaces spreadsheet-based workflows with an end-to-end digital system. The platform connects dispatchers, drivers, and customers through web and mobile applications with real-time synchronization. Built on a modern cloud-native architecture, it scales from small owner-operators to large multi-location fleets while keeping each company's data completely isolated.
+
+**What it does:**
+
+- **Dispatchers** create loads, assign drivers, and monitor deliveries in real-time from the TMS Portal
+- **Drivers** receive assignments, navigate to stops, capture proof of delivery, and communicate with dispatch via the mobile app
+- **Customers** track their shipments, download documents, and view invoices through the self-service Customer Portal
+- **Owners/Managers** access financial reports, driver performance metrics, and operational analytics
+
+**Why it matters:**
+
+- Eliminate paper-based processes and manual data entry
+- Reduce miscommunication with real-time messaging and notifications
+- Ensure compliance with digital documentation (POD, BOL, DVIR, HOS)
+- Improve cash flow with faster invoicing and online payments
+- Make data-driven decisions with comprehensive analytics
 
 ## Features
 
