@@ -1,7 +1,12 @@
-import { provideHttpClient, withInterceptors } from "@angular/common/http";
-import { type ApplicationConfig, provideZoneChangeDetection } from "@angular/core";
+import {
+  type ApplicationConfig,
+  importProvidersFrom,
+  provideBrowserGlobalErrorListeners,
+  provideZoneChangeDetection,
+} from "@angular/core";
+import { BrowserModule } from "@angular/platform-browser";
 import { provideRouter } from "@angular/router";
-import { provideApi } from "@logistics/shared";
+import { provideApi } from "@logistics/shared/api";
 import Aura from "@primeuix/themes/aura";
 import { providePrimeNG } from "primeng/config";
 import { environment } from "@/env";
@@ -9,9 +14,10 @@ import { routes } from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([])),
+    importProvidersFrom(BrowserModule),
     providePrimeNG({
       theme: {
         preset: Aura,
