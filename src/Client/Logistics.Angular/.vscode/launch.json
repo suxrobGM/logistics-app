@@ -1,0 +1,62 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "TMS Portal (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "preLaunchTask": "serve:tms",
+      "url": "https://localhost:7003",
+      "webRoot": "${workspaceFolder}/projects/tms-portal/src",
+      "sourceMapPathOverrides": {
+        "webpack:/*": "${webRoot}/*"
+      }
+    },
+    {
+      "name": "TMS Portal (Edge)",
+      "type": "msedge",
+      "request": "launch",
+      "preLaunchTask": "serve:tms",
+      "url": "https://localhost:7003",
+      "webRoot": "${workspaceFolder}/projects/tms-portal/src",
+      "sourceMapPathOverrides": {
+        "webpack:/*": "${webRoot}/*"
+      }
+    },
+    {
+      "name": "Customer Portal (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "preLaunchTask": "serve:customer",
+      "url": "https://localhost:7004",
+      "webRoot": "${workspaceFolder}/projects/customer-portal/src",
+      "sourceMapPathOverrides": {
+        "webpack:/*": "${webRoot}/*"
+      }
+    },
+    {
+      "name": "Customer Portal (Edge)",
+      "type": "msedge",
+      "request": "launch",
+      "preLaunchTask": "serve:customer",
+      "url": "https://localhost:7004",
+      "webRoot": "${workspaceFolder}/projects/customer-portal/src",
+      "sourceMapPathOverrides": {
+        "webpack:/*": "${webRoot}/*"
+      }
+    },
+    {
+      "name": "Attach to Chrome",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Both Portals (Chrome)",
+      "configurations": ["TMS Portal (Chrome)", "Customer Portal (Chrome)"]
+    }
+  ]
+}
