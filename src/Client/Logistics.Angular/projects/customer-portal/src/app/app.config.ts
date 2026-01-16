@@ -2,7 +2,6 @@ import {
   type ApplicationConfig,
   importProvidersFrom,
   provideBrowserGlobalErrorListeners,
-  provideZoneChangeDetection,
 } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { provideRouter } from "@angular/router";
@@ -15,7 +14,6 @@ import { routes } from "./app.routes";
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     importProvidersFrom(BrowserModule),
     providePrimeNG({
