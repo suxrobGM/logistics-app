@@ -2,16 +2,6 @@ import { CommonModule } from "@angular/common";
 import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
-import { ValidationSummary } from "@logistics/shared/components";
-import { PredefinedDateRanges } from "@logistics/shared/utils";
-import { DateUtils } from "@logistics/shared/utils";
-import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
-import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
-import { DatePicker } from "primeng/datepicker";
-import { DividerModule } from "primeng/divider";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { SelectModule } from "primeng/select";
 import {
   Api,
   createPayrollInvoice,
@@ -19,7 +9,7 @@ import {
   getInvoiceById,
   previewPayrollInvoice,
   updatePayrollInvoice,
-} from "@/core/api";
+} from "@logistics/shared/api";
 import {
   type CreatePayrollInvoiceCommand,
   type EmployeeDto,
@@ -28,8 +18,18 @@ import {
   type SalaryType,
   type UpdatePayrollInvoiceCommand,
   salaryTypeOptions,
-} from "@/core/api/models";
+} from "@logistics/shared/api/models";
+import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { DatePicker } from "primeng/datepicker";
+import { DividerModule } from "primeng/divider";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { SelectModule } from "primeng/select";
 import { ToastService } from "@/core/services";
+import { ValidationSummary } from "@/shared/components";
+import { PredefinedDateRanges } from "@/shared/utils";
+import { DateUtils } from "@/shared/utils";
 
 @Component({
   selector: "app-payroll-invoice-edit",

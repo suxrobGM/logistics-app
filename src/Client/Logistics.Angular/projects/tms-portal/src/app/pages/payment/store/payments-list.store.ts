@@ -1,7 +1,7 @@
-import { createListStore } from "@logistics/shared/stores";
-import { PredefinedDateRanges } from "@logistics/shared/utils";
-import { formatSortField, getPayments } from "@/core/api";
-import type { PaymentDto } from "@/core/api/models";
+import { formatSortField, getPayments } from "@logistics/shared/api";
+import type { PaymentDto } from "@logistics/shared/api/models";
+import { createListStore } from "@/shared/stores";
+import { PredefinedDateRanges } from "@/shared/utils";
 
 /**
  * Store for the payments list page.

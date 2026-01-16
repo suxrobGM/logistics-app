@@ -8,12 +8,14 @@ import {
   Validators,
 } from "@angular/forms";
 import { RouterLink } from "@angular/router";
+import { Api, createEmployee } from "@logistics/shared/api";
 import {
-  CurrencyInput,
-  LabeledField,
-  UnitInput,
-  ValidationSummary,
-} from "@logistics/shared/components";
+  type CreateEmployeeCommand,
+  type RoleDto,
+  type SalaryType,
+  type UserDto,
+  salaryTypeOptions,
+} from "@logistics/shared/api/models";
 import { AutoCompleteModule } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -24,15 +26,8 @@ import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
-import { Api, createEmployee } from "@/core/api";
-import {
-  type CreateEmployeeCommand,
-  type RoleDto,
-  type SalaryType,
-  type UserDto,
-  salaryTypeOptions,
-} from "@/core/api/models";
 import { ToastService } from "@/core/services";
+import { CurrencyInput, LabeledField, UnitInput, ValidationSummary } from "@/shared/components";
 import { UserService } from "../services";
 
 @Component({

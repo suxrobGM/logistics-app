@@ -1,6 +1,6 @@
 import { computed, inject } from "@angular/core";
+import type { ConversationDto, MessageDto } from "@logistics/shared/api";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
-import type { ConversationDto, MessageDto } from "@/core/api";
 import { MessagingService } from "@/core/services";
 
 interface MessagesState {

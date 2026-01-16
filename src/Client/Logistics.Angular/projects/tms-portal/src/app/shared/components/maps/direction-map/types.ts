@@ -1,5 +1,5 @@
+import type { GeoPointDto } from "@logistics/shared/api/models";
 import type { Feature, FeatureCollection, LineString, Point } from "geojson";
-import type { GeoPointDto } from "@/core/api/models";
 
 /**
  * Fired when a route segment is clicked.

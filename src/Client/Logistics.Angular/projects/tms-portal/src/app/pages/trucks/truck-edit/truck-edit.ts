@@ -7,16 +7,14 @@ import {
   Validators,
 } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
-import { LabeledField } from "@logistics/shared/components";
-import { AutoCompleteModule } from "primeng/autocomplete";
-import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
-import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { InputTextModule } from "primeng/inputtext";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { SelectModule } from "primeng/select";
-import { ToastModule } from "primeng/toast";
-import { Api, createTruck, deleteTruck, getEmployees, getTruckById, updateTruck } from "@/core/api";
+import {
+  Api,
+  createTruck,
+  deleteTruck,
+  getEmployees,
+  getTruckById,
+  updateTruck,
+} from "@logistics/shared/api";
 import {
   type CreateTruckCommand,
   type EmployeeDto,
@@ -25,8 +23,17 @@ import {
   type UpdateTruckCommand,
   truckStatusOptions,
   truckTypeOptions,
-} from "@/core/api/models";
+} from "@logistics/shared/api/models";
+import { AutoCompleteModule } from "primeng/autocomplete";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { InputTextModule } from "primeng/inputtext";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { SelectModule } from "primeng/select";
+import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
+import { LabeledField } from "@/shared/components";
 
 @Component({
   selector: "app-truck-edit",

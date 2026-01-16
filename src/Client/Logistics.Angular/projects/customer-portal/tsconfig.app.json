@@ -3,11 +3,14 @@
   "compilerOptions": {
     "outDir": "../../out-tsc/customer-portal",
     "types": [],
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/app/*"],
       "@/env": ["./src/environments/environment"],
       "@logistics/shared": ["../../projects/shared/src/public-api.ts"],
-      "@logistics/shared/*": ["../../projects/shared/src/lib/*"]
+      "@logistics/shared/*": ["../../projects/shared/src/lib/*"],
+      "@angular/*": ["../../node_modules/@angular/*"],
+      "primeng/*": ["../../node_modules/primeng/*"]
     }
   },
   "include": ["src/**/*.ts"],

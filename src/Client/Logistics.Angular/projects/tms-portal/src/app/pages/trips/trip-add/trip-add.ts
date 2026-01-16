@@ -1,8 +1,8 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
+import { Api, createTrip } from "@logistics/shared/api";
+import type { CreateTripCommand } from "@logistics/shared/api/models";
 import { CardModule } from "primeng/card";
-import { Api, createTrip } from "@/core/api";
-import type { CreateTripCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
 import { TripWizard, type TripWizardValue } from "../components";
 

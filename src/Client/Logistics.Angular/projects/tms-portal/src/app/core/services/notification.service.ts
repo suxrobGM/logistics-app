@@ -1,6 +1,11 @@
 import { Injectable, inject } from "@angular/core";
-import { PredefinedDateRanges } from "@logistics/shared/utils";
-import { Api, type NotificationDto, getNotifications, updateNotification } from "@/core/api";
+import {
+  Api,
+  type NotificationDto,
+  getNotifications,
+  updateNotification,
+} from "@logistics/shared/api";
+import { PredefinedDateRanges } from "@/shared/utils";
 import { BaseHubConnection } from "./base-hub-connection";
 
 @Injectable({ providedIn: "root" })

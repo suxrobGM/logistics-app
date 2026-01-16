@@ -1,7 +1,7 @@
 import { HttpHeaders } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
+import { Api, type TenantDto, getTenantById } from "@logistics/shared/api";
 import { Subject } from "rxjs";
-import { Api, type TenantDto, getTenantById } from "@/core/api";
 import { CookieService } from "./cookie.service";
 
 @Injectable({ providedIn: "root" })

@@ -1,7 +1,6 @@
 import { Injectable, inject } from "@angular/core";
-import { COUNTRIES_OPTIONS } from "@logistics/shared/constants";
+import { type Address as AddressDto, Api, createSetupIntent } from "@logistics/shared/api";
 import type { UsBankAccount } from "@logistics/shared/models";
-import { findOption } from "@logistics/shared/utils";
 import {
   type Address,
   type SetupIntentResult,
@@ -11,7 +10,8 @@ import {
   loadStripe,
 } from "@stripe/stripe-js";
 import { environment } from "@/env";
-import { type Address as AddressDto, Api, createSetupIntent } from "../api";
+import { COUNTRIES_OPTIONS } from "@/shared/constants";
+import { findOption } from "@/shared/utils";
 import { TenantService } from "./tenant.service";
 
 @Injectable({ providedIn: "root" })

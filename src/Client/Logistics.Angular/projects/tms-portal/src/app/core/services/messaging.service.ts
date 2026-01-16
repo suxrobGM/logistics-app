@@ -12,7 +12,7 @@ import {
   getUnreadCount,
   markMessageRead,
   sendMessage,
-} from "@/core/api";
+} from "@logistics/shared/api";
 import { BaseHubConnection } from "./base-hub-connection";
 
 // SignalR-specific DTO (not generated from OpenAPI)

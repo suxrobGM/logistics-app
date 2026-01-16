@@ -1,15 +1,15 @@
 import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { RangeCalendar } from "@logistics/shared/components";
-import { DistanceUnitPipe } from "@logistics/shared/pipes";
-import { DateUtils } from "@logistics/shared/utils";
+import { Api, formatSortField, getTrucksStats } from "@logistics/shared/api";
+import type { TruckStatsDto } from "@logistics/shared/api/models";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { type TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { Api, formatSortField, getTrucksStats } from "@/core/api";
-import type { TruckStatsDto } from "@/core/api/models";
+import { RangeCalendar } from "@/shared/components";
+import { DistanceUnitPipe } from "@/shared/pipes";
+import { DateUtils } from "@/shared/utils";
 
 @Component({
   selector: "app-truck-stats-table",

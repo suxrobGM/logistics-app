@@ -10,13 +10,13 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import type { ConversationDto, MessageDto } from "@logistics/shared/api";
 import { AvatarModule } from "primeng/avatar";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SkeletonModule } from "primeng/skeleton";
-import type { ConversationDto, MessageDto } from "@/core/api";
 import { AuthService } from "@/core/auth";
 import { MessagingService } from "@/core/services";
 import { MessagesStore } from "../store/messages.store";

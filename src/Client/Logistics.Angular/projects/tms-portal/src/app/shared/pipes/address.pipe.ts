@@ -1,5 +1,5 @@
 import { Pipe, type PipeTransform } from "@angular/core";
-import type { AddressDto } from "@/core/api/models";
+import type { AddressDto } from "@logistics/shared/api/models";
 
 @Pipe({
   name: "address",

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Component, forwardRef, inject, model, output, signal } from "@angular/core";
 import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { Api, type CustomerDto, createCustomer, getCustomers } from "@logistics/shared/api";
 import {
   AutoComplete,
   AutoCompleteModule,
@@ -8,9 +9,11 @@ import {
 } from "primeng/autocomplete";
 import { Button } from "primeng/button";
 import { Dialog } from "primeng/dialog";
-import { Api, type CustomerDto, createCustomer, getCustomers } from "@/core/api";
 import { ToastService } from "@/core/services";
-import { CustomerForm, type CustomerFormValue } from "../../domain-forms/customer-form/customer-form";
+import {
+  CustomerForm,
+  type CustomerFormValue,
+} from "../../domain-forms/customer-form/customer-form";
 
 @Component({
   selector: "app-search-customer",

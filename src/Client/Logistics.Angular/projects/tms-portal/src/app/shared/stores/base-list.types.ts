@@ -1,4 +1,4 @@
-import type { AppError } from "@/core/errors";
+import type { AppError } from "@logistics/shared/errors";
 
 /**
  * State interface for list components with pagination, sorting, and filtering.

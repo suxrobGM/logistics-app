@@ -3,16 +3,16 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Component, inject, input, model, output, signal } from "@angular/core";
 import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
+import type { AddressDto } from "@logistics/shared/api/models";
+import { InputTextModule } from "primeng/inputtext";
+import { catchError } from "rxjs";
+import { environment } from "@/env";
 import type {
   GeoPoint,
   MapboxGeocodingFeature,
   MapboxGeocodingResponse,
-} from "@logistics/shared/types/mapbox";
-import { Converters } from "@logistics/shared/utils";
-import { InputTextModule } from "primeng/inputtext";
-import { catchError } from "rxjs";
-import type { AddressDto } from "@/core/api/models";
-import { environment } from "@/env";
+} from "@/shared/types/mapbox";
+import { Converters } from "@/shared/utils";
 
 @Component({
   selector: "app-address-autocomplete",

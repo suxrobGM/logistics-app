@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from "@angular/core";
-import { Api, getCurrentUserPermissions } from "../api/generated";
+import { Api, getCurrentUserPermissions } from "@logistics/shared/api";
 
 @Injectable({ providedIn: "root" })
 export class PermissionService {

@@ -1,21 +1,21 @@
 import { CommonModule } from "@angular/common";
 import { Component, effect, inject, input, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { DataContainer, InvoiceStatusTag } from "@logistics/shared/components";
-import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
-import { TooltipModule } from "primeng/tooltip";
-import { Api, getEmployeeById } from "@/core/api";
+import { Api, getEmployeeById } from "@logistics/shared/api";
 import {
   type EmployeeDto,
   type PaymentMethodType,
   type SalaryType,
   paymentMethodTypeOptions,
   salaryTypeOptions,
-} from "@/core/api/models";
+} from "@logistics/shared/api/models";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { DividerModule } from "primeng/divider";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { TableModule } from "primeng/table";
+import { TooltipModule } from "primeng/tooltip";
+import { DataContainer, InvoiceStatusTag } from "@/shared/components";
 import { EmployeePayrollInvoicesListStore } from "../store/employee-payroll-invoices-list.store";
 
 @Component({

@@ -1,14 +1,14 @@
 import { computed, inject } from "@angular/core";
-import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
-import { rxMethod } from "@ngrx/signals/rxjs-interop";
-import { from, pipe, switchMap, tap } from "rxjs";
-import { Api, optimizeTripStops } from "@/core/api";
+import { Api, optimizeTripStops } from "@logistics/shared/api";
 import type {
   CreateTripLoadCommand,
   OptimizeTripStopsCommand,
   TripLoadDto,
   TripStopDto,
-} from "@/core/api/models";
+} from "@logistics/shared/api/models";
+import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
+import { rxMethod } from "@ngrx/signals/rxjs-interop";
+import { from, pipe, switchMap, tap } from "rxjs";
 
 // Internal types for store state
 interface NewLoad extends CreateTripLoadCommand {

@@ -1,6 +1,6 @@
 import { Component, input } from "@angular/core";
+import { type LoadStatus, loadStatusOptions } from "@logistics/shared/api/models";
 import { Tag, TagModule } from "primeng/tag";
-import { type LoadStatus, loadStatusOptions } from "@/core/api/models";
 
 @Component({
   selector: "app-load-status-tag",

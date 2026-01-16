@@ -1,15 +1,11 @@
 import { Component, effect, inject, input } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import {
-  LabeledField,
-  SearchTruckComponent,
-  ValidationSummary,
-} from "@logistics/shared/components";
+import type { TruckDto } from "@logistics/shared/api/models";
 import { Button } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
-import type { TruckDto } from "@/core/api/models";
 import { ToastService } from "@/core/services";
+import { LabeledField, SearchTruckComponent, ValidationSummary } from "@/shared/components";
 import { TripWizardStore } from "../../store/trip-wizard-store";
 
 @Component({

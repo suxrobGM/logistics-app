@@ -1,12 +1,12 @@
 import { computed, inject } from "@angular/core";
+import { Api, formatSortField } from "@logistics/shared/api";
+import type { ApiFnOptional, ApiFnRequired } from "@logistics/shared/api/generated/api";
+import type { PagedResponse } from "@logistics/shared/api/models";
+import type { AppError } from "@logistics/shared/errors";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 import { rxMethod } from "@ngrx/signals/rxjs-interop";
 import type { TableLazyLoadEvent } from "primeng/table";
 import { catchError, from, of, pipe, switchMap, tap } from "rxjs";
-import { Api, formatSortField } from "@/core/api";
-import type { ApiFnOptional, ApiFnRequired } from "@/core/api/generated/api";
-import type { PagedResponse } from "@/core/api/models";
-import type { AppError } from "@/core/errors";
 import type { ListQueryParams, ListState, ListStoreConfig } from "./base-list.types";
 
 /**

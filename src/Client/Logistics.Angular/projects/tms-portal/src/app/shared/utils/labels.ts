@@ -1,4 +1,4 @@
-import type { SubscriptionDto } from "@/core/api/models";
+import type { SubscriptionDto } from "@logistics/shared/api/models";
 
 export type SeverityLevel = "success" | "warn" | "danger" | "info";
 

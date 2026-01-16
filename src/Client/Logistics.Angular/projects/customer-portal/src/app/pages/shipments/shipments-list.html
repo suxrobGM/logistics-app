@@ -20,7 +20,7 @@
         <td>{{ shipment.status }}</td>
         <td>{{ shipment.eta }}</td>
         <td>
-          <a [routerLink]="['/shipments', shipment.id]" pButton label="Track" />
+          <p-button [routerLink]="['/shipments', shipment.id]" label="Track" />
         </td>
       </tr>
     </ng-template>

@@ -1,6 +1,6 @@
 import { Component, computed, input } from "@angular/core";
+import type { TripStatus } from "@logistics/shared/api/models";
 import { Tag } from "primeng/tag";
-import type { TripStatus } from "@/core/api/models";
 
 @Component({
   selector: "app-trip-status-tag",

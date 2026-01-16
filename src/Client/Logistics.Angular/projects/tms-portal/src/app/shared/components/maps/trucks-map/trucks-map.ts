@@ -1,8 +1,8 @@
 import { Component, type OnDestroy, inject, input, signal } from "@angular/core";
-import { GeolocationMap } from "@logistics/shared/components";
-import { Api, getTrucks } from "@/core/api";
-import type { TruckGeolocationDto } from "@/core/api/models";
+import { Api, getTrucks } from "@logistics/shared/api";
+import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { LiveTrackingService } from "@/core/services";
+import { GeolocationMap } from "@/shared/components";
 
 @Component({
   selector: "app-trucks-map",

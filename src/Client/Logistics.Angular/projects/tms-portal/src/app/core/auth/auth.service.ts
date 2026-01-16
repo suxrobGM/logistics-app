@@ -2,7 +2,7 @@ import { Injectable, inject, signal } from "@angular/core";
 import { EventTypes, OidcSecurityService, PublicEventsService } from "angular-auth-oidc-client";
 import { Observable, filter, from, map, switchMap } from "rxjs";
 import { TenantService } from "@/core/services";
-import { userRoleOptions } from "../../shared/models";
+import { userRoleOptions } from "../../../../../shared/src/lib/models";
 import { PermissionService } from "./permission.service";
 import { UserData } from "./user-data";
 

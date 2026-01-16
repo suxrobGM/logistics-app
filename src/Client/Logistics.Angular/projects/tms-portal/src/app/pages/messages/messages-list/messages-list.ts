@@ -1,13 +1,13 @@
 import { DatePipe } from "@angular/common";
 import { Component, type OnDestroy, type OnInit, inject } from "@angular/core";
 import { Router } from "@angular/router";
+import type { ConversationDto } from "@logistics/shared/api";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
-import type { ConversationDto } from "@/core/api";
 import { MessagingService } from "@/core/services";
 import { MessagesStore } from "../store/messages.store";
 

@@ -1,12 +1,12 @@
 import { CommonModule, CurrencyPipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
-import { Converters } from "@logistics/shared/utils";
+import { Api, getCompanyStats } from "@logistics/shared/api";
+import type { CompanyStatsDto } from "@logistics/shared/api/models";
 import { SharedModule } from "primeng/api";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
-import { Api, getCompanyStats } from "@/core/api";
-import type { CompanyStatsDto } from "@/core/api/models";
+import { Converters } from "@/shared/utils";
 
 @Component({
   selector: "app-company-stats",

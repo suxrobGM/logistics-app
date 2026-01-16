@@ -1,12 +1,8 @@
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import {
-  BaseTableComponent,
-  RangeCalendar,
-  type TableQueryParams,
-} from "@logistics/shared/components";
-import { DateUtils } from "@logistics/shared/utils";
+import { Api, formatSortField, getDriversReport } from "@logistics/shared/api";
+import type { DriverReportDto, PagedResponse } from "@logistics/shared/api/models";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePickerModule } from "primeng/datepicker";
@@ -14,8 +10,8 @@ import { InputTextModule } from "primeng/inputtext";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
 import { Observable, from } from "rxjs";
-import { Api, formatSortField, getDriversReport } from "@/core/api";
-import type { DriverReportDto, PagedResponse } from "@/core/api/models";
+import { BaseTableComponent, RangeCalendar, type TableQueryParams } from "@/shared/components";
+import { DateUtils } from "@/shared/utils";
 
 @Component({
   selector: "app-drivers-detailed",

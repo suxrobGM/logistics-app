@@ -6,22 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import {
-  AddressForm,
-  LabeledField,
-  StripeCard,
-  ValidationSummary,
-} from "@logistics/shared/components";
-import type { StripeCardNumberElement } from "@stripe/stripe-js";
-import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
-import { DialogModule } from "primeng/dialog";
-import { DividerModule } from "primeng/divider";
-import { InputMaskModule } from "primeng/inputmask";
-import { InputTextModule } from "primeng/inputtext";
-import { KeyFilterModule } from "primeng/keyfilter";
-import { SelectModule } from "primeng/select";
-import { Api, createPaymentMethod } from "@/core/api";
+import { Api, createPaymentMethod } from "@logistics/shared/api";
 import {
   type AddressDto,
   type CreatePaymentMethodCommand,
@@ -31,8 +16,18 @@ import {
   paymentMethodTypeOptions,
   usBankAccountHolderTypeOptions,
   usBankAccountTypeOptions,
-} from "@/core/api/models";
+} from "@logistics/shared/api/models";
+import type { StripeCardNumberElement } from "@stripe/stripe-js";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { DialogModule } from "primeng/dialog";
+import { DividerModule } from "primeng/divider";
+import { InputMaskModule } from "primeng/inputmask";
+import { InputTextModule } from "primeng/inputtext";
+import { KeyFilterModule } from "primeng/keyfilter";
+import { SelectModule } from "primeng/select";
 import { StripeService, TenantService, ToastService } from "@/core/services";
+import { AddressForm, LabeledField, StripeCard, ValidationSummary } from "@/shared/components";
 
 const enabledPaymentTypes: PaymentMethodType[] = [
   "card",

@@ -2,7 +2,12 @@ import { CommonModule } from "@angular/common";
 import { type HttpErrorResponse } from "@angular/common/http";
 import { Component, computed, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { LabeledField, SearchTruckComponent } from "@logistics/shared/components";
+import { Api, importLoadFromPdf } from "@logistics/shared/api";
+import type {
+  ExtractedLoadDataDto,
+  ImportLoadFromPdfResponse,
+  TruckDto,
+} from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -10,9 +15,8 @@ import { type FileSelectEvent, FileUploadModule } from "primeng/fileupload";
 import { MessageModule } from "primeng/message";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
-import { Api, importLoadFromPdf } from "@/core/api";
-import type { ExtractedLoadDataDto, ImportLoadFromPdfResponse, TruckDto } from "@/core/api";
 import { ToastService } from "@/core/services";
+import { LabeledField, SearchTruckComponent } from "@/shared/components";
 
 @Component({
   selector: "app-load-import",

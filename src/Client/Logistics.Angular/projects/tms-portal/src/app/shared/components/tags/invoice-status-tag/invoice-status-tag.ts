@@ -1,6 +1,6 @@
 import { Component, input } from "@angular/core";
+import { type InvoiceStatus, invoiceStatusOptions } from "@logistics/shared/api/models";
 import { Tag, TagModule } from "primeng/tag";
-import { type InvoiceStatus, invoiceStatusOptions } from "@/core/api/models";
 
 @Component({
   selector: "app-invoice-status-tag",

@@ -1,6 +1,6 @@
-import { createListStore } from "@logistics/shared/stores";
-import { getEmployees } from "@/core/api";
-import type { EmployeeDto } from "@/core/api/models";
+import { getEmployees } from "@logistics/shared/api";
+import type { EmployeeDto } from "@logistics/shared/api/models";
+import { createListStore } from "@/shared/stores";
 
 /**
  * Store for the employees list page.

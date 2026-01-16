@@ -1,9 +1,9 @@
 // Truck geolocation type for map visualization (custom type, not generated)
-import type { PaginationMeta, GeoPoint, Address } from "../generated/models";
+import type { Address, GeoPoint, PaginationMeta } from "../generated/models";
 
 /**
  * Re-export all models from generated code for backwards compatibility.
- * Import from '@/core/api' or '@/core/api/models' - both work.
+ * Import from '@logistics/shared/api' or '@logistics/shared/api/models' - both work.
  */
 export * from "../generated/models";
 export * from "./enums";

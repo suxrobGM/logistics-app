@@ -6,16 +6,16 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { ButtonModule } from "primeng/button";
-import { DialogModule } from "primeng/dialog";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { SelectModule } from "primeng/select";
-import { Api, removeRoleFromEmployee, updateEmployee } from "@/core/api";
+import { Api, removeRoleFromEmployee, updateEmployee } from "@logistics/shared/api";
 import type {
   RemoveRoleFromEmployeeCommand,
   RoleDto,
   UpdateEmployeeCommand,
-} from "@/core/api/models";
+} from "@logistics/shared/api/models";
+import { ButtonModule } from "primeng/button";
+import { DialogModule } from "primeng/dialog";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { SelectModule } from "primeng/select";
 import { ToastService } from "@/core/services";
 import { UserService } from "../../services";
 

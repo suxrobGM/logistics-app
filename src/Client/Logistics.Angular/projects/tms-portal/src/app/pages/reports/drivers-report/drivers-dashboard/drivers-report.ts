@@ -1,5 +1,16 @@
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
 import { Component, type OnInit, signal } from "@angular/core";
+import { getDriverDashboard } from "@logistics/shared/api";
+import type {
+  DriverDashboardDto,
+  DriverEfficiencyDto,
+  DriverPerformanceDto,
+  DriverTrendDto,
+} from "@logistics/shared/api/models";
+import { ChartModule } from "primeng/chart";
+import { SkeletonModule } from "primeng/skeleton";
+import { TableModule } from "primeng/table";
+import { Tag, TagModule } from "primeng/tag";
 import {
   BaseReportComponent,
   DashboardCard,
@@ -7,24 +18,13 @@ import {
   RangeCalendar,
   type ReportQueryParams,
   StatCard,
-} from "@logistics/shared/components";
+} from "@/shared/components";
 import {
   DRIVERS_CHART_PALETTE,
   DRIVERS_EFFICIENCY_CHART_OPTIONS,
   DRIVERS_PERFORMANCE_CHART_OPTIONS,
   DRIVERS_TREND_CHART_OPTIONS,
-} from "@logistics/shared/constants/drivers-chart.options";
-import { ChartModule } from "primeng/chart";
-import { SkeletonModule } from "primeng/skeleton";
-import { TableModule } from "primeng/table";
-import { Tag, TagModule } from "primeng/tag";
-import { getDriverDashboard } from "@/core/api";
-import type {
-  DriverDashboardDto,
-  DriverEfficiencyDto,
-  DriverPerformanceDto,
-  DriverTrendDto,
-} from "@/core/api/models";
+} from "@/shared/constants/drivers-chart.options";
 
 @Component({
   selector: "app-drivers-report",

@@ -2,14 +2,14 @@ import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
+import { Api, getEmployeeById, updateEmployee } from "@logistics/shared/api";
 import {
-  CurrencyInput,
-  LabeledField,
-  UnitInput,
-  ValidationSummary,
-} from "@logistics/shared/components";
+  type EmployeeDto,
+  type SalaryType,
+  type UpdateEmployeeCommand,
+  salaryTypeOptions,
+} from "@logistics/shared/api/models";
 import { UserRole } from "@logistics/shared/models";
-import { NumberUtils } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
@@ -19,15 +19,10 @@ import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
-import { Api, getEmployeeById, updateEmployee } from "@/core/api";
-import {
-  type EmployeeDto,
-  type SalaryType,
-  type UpdateEmployeeCommand,
-  salaryTypeOptions,
-} from "@/core/api/models";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
+import { CurrencyInput, LabeledField, UnitInput, ValidationSummary } from "@/shared/components";
+import { NumberUtils } from "@/shared/utils";
 import { ChangeRoleDialogComponent } from "../components";
 
 @Component({

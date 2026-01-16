@@ -1,7 +1,7 @@
 import { Component, input } from "@angular/core";
+import type { LoadType } from "@logistics/shared/api/models";
 import { Tag } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import type { LoadType } from "@/core/api/models";
 
 interface TypeInfo {
   label: string;

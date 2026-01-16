@@ -1,6 +1,6 @@
-import { createListStore } from "@logistics/shared/stores";
-import { getLoads } from "@/core/api";
-import type { LoadDto } from "@/core/api/models";
+import { getLoads } from "@logistics/shared/api";
+import type { LoadDto } from "@logistics/shared/api/models";
+import { createListStore } from "@/shared/stores";
 
 /**
  * Store for the loads list page.

@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { GrossesBarchart, TrucksMap } from "@logistics/shared/components";
+import { GrossesBarchart, TrucksMap } from "@/shared/components";
 import { CompanyStatsComponent, TruckStatsTableComponent } from "./components";
 
 @Component({

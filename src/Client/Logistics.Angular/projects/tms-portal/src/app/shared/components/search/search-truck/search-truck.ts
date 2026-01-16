@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Component, forwardRef, inject, model, output, signal } from "@angular/core";
 import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { Api, type TruckDto, getTruckById, getTrucks } from "@logistics/shared/api";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
-import { Api, type TruckDto, getTruckById, getTrucks } from "@/core/api";
 
 /**
  * Component for searching and selecting a truck.

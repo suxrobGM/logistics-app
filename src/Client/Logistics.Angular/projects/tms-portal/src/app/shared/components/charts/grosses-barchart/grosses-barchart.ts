@@ -1,13 +1,13 @@
 import { CommonModule } from "@angular/common";
 import { Component, type OnInit, inject, input, output, signal } from "@angular/core";
-import { RangeCalendar } from "@logistics/shared/components/other";
-import { Converters, DateUtils } from "@logistics/shared/utils";
+import { Api, getMonthlyGrosses } from "@logistics/shared/api";
+import type { MonthlyGrossesDto } from "@logistics/shared/api/models";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
-import { Api, getMonthlyGrosses } from "@/core/api";
-import type { MonthlyGrossesDto } from "@/core/api/models";
+import { RangeCalendar } from "@/shared/components/other";
+import { Converters, DateUtils } from "@/shared/utils";
 
 const chartInitialData = {
   labels: [],

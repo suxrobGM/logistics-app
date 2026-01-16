@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import type { TruckGeolocationDto } from "@/core/api/models";
+import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { BaseHubConnection } from "./base-hub-connection";
 
 @Injectable({ providedIn: "root" })

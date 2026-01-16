@@ -1,13 +1,13 @@
 import { Component, inject } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { DataContainer, PageHeader, SearchInput } from "@logistics/shared/components";
+import { Api, deleteCustomer } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { Api, deleteCustomer } from "@/core/api";
 import { ToastService } from "@/core/services";
+import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
 import { CustomersListStore } from "../store/customers-list.store";
 
 @Component({

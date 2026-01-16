@@ -2,7 +2,13 @@ import { DatePipe, DecimalPipe } from "@angular/common";
 import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
-import { LabeledField } from "@logistics/shared/components";
+import {
+  Api,
+  type DutyStatus,
+  type HosLogDto,
+  getDriverHosLogs,
+  getEmployeeById,
+} from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
@@ -11,13 +17,7 @@ import type { TableLazyLoadEvent } from "primeng/table";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import {
-  Api,
-  type DutyStatus,
-  type HosLogDto,
-  getDriverHosLogs,
-  getEmployeeById,
-} from "@/core/api";
+import { LabeledField } from "@/shared/components";
 
 @Component({
   selector: "app-eld-hos-logs",

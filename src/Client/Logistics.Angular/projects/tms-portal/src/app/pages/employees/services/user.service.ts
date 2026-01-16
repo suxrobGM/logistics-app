@@ -1,8 +1,8 @@
 import { Injectable, inject } from "@angular/core";
+import { Api, getTenantRoles, getUsers } from "@logistics/shared/api";
+import type { RoleDto, RoleDtoPagedResponse, UserDto } from "@logistics/shared/api/models";
 import { UserRole } from "@logistics/shared/models";
 import { Observable, from, map } from "rxjs";
-import { Api, getTenantRoles, getUsers } from "@/core/api";
-import type { RoleDto, RoleDtoPagedResponse, UserDto } from "@/core/api/models";
 import { AuthService } from "@/core/auth";
 
 @Injectable({ providedIn: "root" })

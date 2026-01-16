@@ -1,7 +1,7 @@
 import { inject, signal } from "@angular/core";
-import { DateUtils } from "@logistics/shared/utils";
-import { Api } from "@/core/api";
+import { Api } from "@logistics/shared/api";
 import { ToastService } from "@/core/services";
+import { DateUtils } from "@/shared/utils";
 
 export interface ReportQueryParams {
   startDate: Date;

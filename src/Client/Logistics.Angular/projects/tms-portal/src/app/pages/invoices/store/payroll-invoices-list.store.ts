@@ -1,6 +1,6 @@
-import { createListStore } from "@logistics/shared/stores";
-import { formatSortField, getInvoices } from "@/core/api";
-import type { InvoiceDto } from "@/core/api/models";
+import { formatSortField, getInvoices } from "@logistics/shared/api";
+import type { InvoiceDto } from "@logistics/shared/api/models";
+import { createListStore } from "@/shared/stores";
 
 /**
  * Store for the payroll invoices list page.

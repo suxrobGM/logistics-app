@@ -1,4 +1,5 @@
 import { Component, effect, inject, input, output } from "@angular/core";
+import type { CreateTripLoadCommand, TripLoadDto, TripStopDto } from "@logistics/shared/api/models";
 import { ButtonModule } from "primeng/button";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputTextModule } from "primeng/inputtext";
@@ -7,7 +8,6 @@ import { StepperModule } from "primeng/stepper";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import type { CreateTripLoadCommand, TripLoadDto, TripStopDto } from "@/core/api/models";
 import { TripWizardStore } from "../../store/trip-wizard-store";
 import { TripWizardBasic } from "../trip-wizard-basic/trip-wizard-basic";
 import { TripFormStepLoads } from "../trip-wizard-loads/trip-wizard-loads";

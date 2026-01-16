@@ -1,12 +1,12 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { CustomerForm, type CustomerFormValue } from "@logistics/shared/components";
+import { Api, createCustomer } from "@logistics/shared/api";
+import type { CreateCustomerCommand } from "@logistics/shared/api/models";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
-import { Api, createCustomer } from "@/core/api";
-import type { CreateCustomerCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
+import { CustomerForm, type CustomerFormValue } from "@/shared/components";
 
 @Component({
   selector: "app-customer-add",

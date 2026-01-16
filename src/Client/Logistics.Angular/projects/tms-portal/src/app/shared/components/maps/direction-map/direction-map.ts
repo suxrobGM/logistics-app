@@ -1,12 +1,12 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, effect, inject, input, model, output, signal } from "@angular/core";
-import type { MapboxDirectionsResponse } from "@logistics/shared/types/mapbox";
+import type { GeoPointDto } from "@logistics/shared/api/models";
 import type { LineString } from "geojson";
 import type { LngLatLike, MapMouseEvent } from "mapbox-gl";
 import { GeoJSONSourceComponent, LayerComponent, MapComponent } from "ngx-mapbox-gl";
 import { firstValueFrom } from "rxjs";
-import type { GeoPointDto } from "@/core/api/models";
 import { environment } from "@/env";
+import type { MapboxDirectionsResponse } from "@/shared/types/mapbox";
 import type {
   RouteChangeEvent,
   RouteSegmentClickEvent,

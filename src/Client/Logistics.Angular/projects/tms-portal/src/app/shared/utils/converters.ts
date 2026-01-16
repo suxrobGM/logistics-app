@@ -1,4 +1,4 @@
-import type { AddressDto } from "@/core/api/models";
+import type { AddressDto } from "@logistics/shared/api/models";
 
 export abstract class Converters {
   /**

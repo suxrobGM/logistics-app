@@ -1,5 +1,15 @@
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
 import { Component, type OnInit, signal } from "@angular/core";
+import { getFinancialsReport } from "@logistics/shared/api";
+import type {
+  FinancialMetricDto,
+  FinancialsReportDto,
+  RevenueTrendDto,
+} from "@logistics/shared/api/models";
+import { ChartModule } from "primeng/chart";
+import { SkeletonModule } from "primeng/skeleton";
+import { TableModule } from "primeng/table";
+import { Tag, TagModule } from "primeng/tag";
 import {
   BaseReportComponent,
   DashboardCard,
@@ -7,7 +17,7 @@ import {
   RangeCalendar,
   type ReportQueryParams,
   StatCard,
-} from "@logistics/shared/components";
+} from "@/shared/components";
 import {
   FINANCIALS_CHART_BACKGROUND_COLORS,
   FINANCIALS_CHART_HOVER_BACKGROUND_COLORS,
@@ -15,13 +25,7 @@ import {
   FINANCIAL_METRICS_CHART_OPTIONS,
   INVOICE_STATUS_CHART_OPTIONS,
   REVENUE_TREND_CHART_OPTIONS,
-} from "@logistics/shared/constants";
-import { ChartModule } from "primeng/chart";
-import { SkeletonModule } from "primeng/skeleton";
-import { TableModule } from "primeng/table";
-import { Tag, TagModule } from "primeng/tag";
-import { getFinancialsReport } from "@/core/api";
-import type { FinancialMetricDto, FinancialsReportDto, RevenueTrendDto } from "@/core/api/models";
+} from "@/shared/constants";
 
 @Component({
   selector: "app-financials-report",

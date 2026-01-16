@@ -1,20 +1,15 @@
 import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import {
-  DataContainer,
-  LoadStatusTag,
-  LoadTypeTag,
-  SearchInput,
-} from "@logistics/shared/components";
-import { AddressPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
+import type { LoadDto } from "@logistics/shared/api/models";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import type { LoadDto } from "@/core/api/models";
+import { DataContainer, LoadStatusTag, LoadTypeTag, SearchInput } from "@/shared/components";
+import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
 import { LoadsListStore } from "../store/loads-list.store";
 
 @Component({

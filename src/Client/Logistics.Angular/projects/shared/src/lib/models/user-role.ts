@@ -7,6 +7,7 @@ export enum UserRole {
   Manager = "tenant.manager",
   Dispatcher = "tenant.dispatcher",
   Driver = "tenant.driver",
+  Customer = "tenant.customer",
 }
 
 export const userRoleOptions: SelectOption<UserRole>[] = [
@@ -16,4 +17,5 @@ export const userRoleOptions: SelectOption<UserRole>[] = [
   { label: "Manager", value: UserRole.Manager },
   { label: "Dispatcher", value: UserRole.Dispatcher },
   { label: "Driver", value: UserRole.Driver },
+  { label: "Customer", value: UserRole.Customer },
 ] as const;
