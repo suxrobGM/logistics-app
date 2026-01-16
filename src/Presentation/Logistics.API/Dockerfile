@@ -13,7 +13,7 @@ RUN dotnet restore src/Presentation/Logistics.API/Logistics.API.csproj
 
 # Build and publish
 WORKDIR /logistics/src/Presentation/Logistics.API
-RUN dotnet publish -c Release -o /app/publish --no-restore
+RUN dotnet publish -c Release -o /app/publish
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
