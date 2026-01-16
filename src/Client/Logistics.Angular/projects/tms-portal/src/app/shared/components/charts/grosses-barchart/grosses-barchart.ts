@@ -29,7 +29,6 @@ const chartInitialOptions = {
 
 @Component({
   selector: "app-grosses-barchart",
-  standalone: true,
   templateUrl: "./grosses-barchart.html",
   styleUrls: [],
   imports: [CommonModule, CardModule, SkeletonModule, ChartModule, RangeCalendar, DividerModule],

@@ -157,6 +157,7 @@ export type { UsBankAccountHolderType } from './models/us-bank-account-holder-ty
 export type { UsBankAccountType } from './models/us-bank-account-type';
 export type { UserDto } from './models/user-dto';
 export type { UserDtoPagedResponse } from './models/user-dto-paged-response';
+export type { UserTenantAccessDto } from './models/user-tenant-access-dto';
 export type { VehicleInfoDto } from './models/vehicle-info-dto';
 
 export type { GetCustomerById$Params as GetCustomerById$Params } from './fn/customer/get-customer-by-id';
@@ -317,6 +318,8 @@ export type { CreateSetupIntent$Params as CreateSetupIntent$Params } from './fn/
 export { createSetupIntent as createSetupIntent } from './fn/payment/create-setup-intent';
 export type { SetDefaultPaymentMethod$Params as SetDefaultPaymentMethod$Params } from './fn/payment/set-default-payment-method';
 export { setDefaultPaymentMethod as setDefaultPaymentMethod } from './fn/payment/set-default-payment-method';
+export type { GetPortalTenants$Params as GetPortalTenants$Params } from './fn/portal/get-portal-tenants';
+export { getPortalTenants as getPortalTenants } from './fn/portal/get-portal-tenants';
 export type { GetPortalProfile$Params as GetPortalProfile$Params } from './fn/portal/get-portal-profile';
 export { getPortalProfile as getPortalProfile } from './fn/portal/get-portal-profile';
 export type { GetPortalLoads$Params as GetPortalLoads$Params } from './fn/portal/get-portal-loads';

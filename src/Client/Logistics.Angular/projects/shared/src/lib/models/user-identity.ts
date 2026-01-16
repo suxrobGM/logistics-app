@@ -4,5 +4,5 @@ export interface UserIdentity {
   given_name: string;
   family_name: string;
   role?: string | string[];
-  tenant: string;
+  tenant?: string;
 }

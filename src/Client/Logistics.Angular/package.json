@@ -11,8 +11,6 @@
     "build:tms": "ng build tms-portal",
     "build:customer": "ng build customer-portal",
     "build:all": "ng build shared && ng build tms-portal && ng build customer-portal",
-    "watch:tms": "ng build tms-portal --watch --configuration development",
-    "watch:customer": "ng build customer-portal --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
     "format": "prettier --write ./projects",

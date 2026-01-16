@@ -12,11 +12,11 @@ A live demo is available at [https://tms.suxrobgm.net](https://tms.suxrobgm.net)
 
 | Role | Email | Password | Application |
 |------|-------|----------|-------------|
-| **Super Admin** | admin@gmail.com | Test12345# | Admin App |
-| **Owner** | Test1@gmail.com | Test12345# | Office App |
-| **Manager** | Test2@gmail.com | Test12345# | Office App |
-| **Dispatcher** | Test3@gmail.com | Test12345# | Office App |
-| **Driver** | Test6@gmail.com | Test12345# | Driver Mobile App |
+| **Super Admin** | admin@test.com | Test12345# | Admin App |
+| **Owner** | owner@test.com | Test12345# | Office App |
+| **Manager** | manager1@test.com | Test12345# | Office App |
+| **Dispatcher** | dispatcher1@test.com | Test12345# | Office App |
+| **Driver** | driver1@test.com | Test12345# | Driver Mobile App |
 
 ## Role Permissions
 

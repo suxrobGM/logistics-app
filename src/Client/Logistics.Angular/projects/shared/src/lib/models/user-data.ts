@@ -6,7 +6,7 @@ export class UserData {
   public readonly firstName: string;
   public readonly lastName: string;
   public readonly roles: string[];
-  public readonly tenant: string;
+  public readonly tenant?: string;
 
   constructor(userIdentity: UserIdentity) {
     this.id = userIdentity.sub;

@@ -102,14 +102,19 @@ See [Local Development Guide](docs/getting-started/local-development.md)
 
 ## Live Demo
 
-Try the application: [https://tms.suxrobgm.net](https://tms.suxrobgm.net)
+Try the TMS Portal: [https://tms.suxrobgm.net](https://tms.suxrobgm.net)
+
+Try the Customer Self-Service Portal: [https://customer.suxrobgm.net](https://customer.suxrobgm.net)
 
 **Test Credentials:**
 
 | Role | Email | Password |
 |------|-------|----------|
-| Owner | <Test1@gmail.com> | Test12345# |
-| Dispatcher | <Test3@gmail.com> | Test12345# |
+| Owner | <owner@test.com> | Test12345# |
+| Manager | <manager1@test.com> | Test12345# |
+| Dispatcher | <dispatcher1@test.com> | Test12345# |
+| Driver | <driver1@test.com> | Test12345# |
+| Customer | <customer1@test.com> | Test12345# |
 
 [All test credentials](docs/getting-started/test-credentials.md)
 
@@ -156,7 +161,7 @@ For commercial licensing, contact me.
 
 Created by **Sukhrob Ilyosbekov**
 
-- Email: [suxrobgm@gmail.com](mailto:suxrobgm@gmail.com)
+- Email: [suxrobgm@test.com](mailto:suxrobgm@test.com)
 - Telegram: [@suxrobgm](https://t.me/suxrobgm)
 
 ## Preview

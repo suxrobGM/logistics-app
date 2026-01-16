@@ -37,7 +37,7 @@ internal class DefaultTenantSeeder(ILogger<DefaultTenantSeeder> logger) : Seeder
         {
             Name = "default",
             CompanyName = "Test Company",
-            BillingEmail = "test@gmail.com",
+            BillingEmail = "test@test.com",
             CompanyAddress = companyAddress,
             ConnectionString = defaultTenantConnectionString
         };

@@ -1,20 +1,117 @@
-<div class="p-6">
-  <h1 class="mb-6 text-2xl font-semibold">Welcome to Customer Portal</h1>
-
-  <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-    <p-card header="Active Shipments">
-      <p class="mb-4 text-gray-600">Track your current shipments</p>
-      <p-button routerLink="/shipments" label="View Shipments" />
-    </p-card>
-
-    <p-card header="Invoices">
-      <p class="mb-4 text-gray-600">View and download your invoices</p>
-      <p-button routerLink="/invoices" label="View Invoices" />
-    </p-card>
-
-    <p-card header="Documents">
-      <p class="mb-4 text-gray-600">Access your shipping documents</p>
-      <p-button routerLink="/documents" label="View Documents" />
-    </p-card>
-  </div>
+<!-- Welcome Header -->
+<div class="mb-8">
+  <h1 class="text-2xl font-bold text-gray-900">
+    Welcome back{{ profile()?.displayName ? ", " + profile()?.displayName : "" }}
+  </h1>
+  @if (companyName()) {
+    <p class="mt-1 text-gray-600">{{ companyName() }}</p>
+  }
 </div>
+
+@if (isLoading()) {
+  <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+    @for (_ of [1, 2, 3]; track $index) {
+      <div class="rounded-lg bg-white p-6 shadow">
+        <p-skeleton height="1.5rem" width="60%" styleClass="mb-2" />
+        <p-skeleton height="2.5rem" width="40%" />
+      </div>
+    }
+  </div>
+} @else {
+  <!-- Stats Cards -->
+  <div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
+    <a
+      routerLink="/shipments"
+      class="rounded-lg bg-white p-6 shadow transition-shadow hover:shadow-md"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-500">Active Shipments</p>
+          <p class="mt-1 text-3xl font-bold text-gray-900">{{ activeLoadCount() }}</p>
+        </div>
+        <div class="rounded-full bg-blue-100 p-3">
+          <i class="pi pi-truck text-2xl text-blue-600"></i>
+        </div>
+      </div>
+    </a>
+
+    <a
+      routerLink="/invoices"
+      class="rounded-lg bg-white p-6 shadow transition-shadow hover:shadow-md"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-500">Pending Invoices</p>
+          <p class="mt-1 text-3xl font-bold text-gray-900">{{ pendingInvoiceCount() }}</p>
+        </div>
+        <div class="rounded-full bg-orange-100 p-3">
+          <i class="pi pi-receipt text-2xl text-orange-600"></i>
+        </div>
+      </div>
+    </a>
+
+    <a
+      routerLink="/documents"
+      class="rounded-lg bg-white p-6 shadow transition-shadow hover:shadow-md"
+    >
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-500">Documents</p>
+          <p class="mt-1 text-3xl font-bold text-gray-900">
+            <i class="pi pi-folder-open"></i>
+          </p>
+        </div>
+        <div class="rounded-full bg-green-100 p-3">
+          <i class="pi pi-file text-2xl text-green-600"></i>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <!-- Recent Shipments -->
+  <div class="rounded-lg bg-white p-6 shadow">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-gray-900">Recent Shipments</h2>
+      <a routerLink="/shipments" class="text-primary text-sm font-medium hover:underline">
+        View All
+      </a>
+    </div>
+
+    @if (recentLoads().length > 0) {
+      <p-table [value]="recentLoads()" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Load #</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Driver</th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-load>
+          <tr>
+            <td class="font-medium">{{ load.number }}</td>
+            <td>{{ load.name || "-" }}</td>
+            <td>
+              <p-tag [value]="load.status" [severity]="getStatusSeverity(load.status)" />
+            </td>
+            <td>{{ load.driverName || "-" }}</td>
+            <td class="text-right">
+              <a
+                [routerLink]="['/shipments', load.id]"
+                class="text-primary text-sm font-medium hover:underline"
+              >
+                Details
+              </a>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    } @else {
+      <div class="py-8 text-center">
+        <i class="pi pi-inbox mb-2 text-4xl text-gray-300"></i>
+        <p class="text-gray-500">No active shipments</p>
+      </div>
+    }
+  </div>
+}

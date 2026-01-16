@@ -151,18 +151,18 @@ For payment testing:
 |-------------|-----|-------------|
 | API (Swagger) | <https://localhost:7000/swagger> | - |
 | Identity Server | <https://localhost:7001> | - |
-| Admin App | <https://localhost:7002> | <admin@gmail.com> / Test12345# |
-| Office App | <https://localhost:7003> | <Test1@gmail.com> / Test12345# |
+| Admin App | <https://localhost:7002> | <admin@test.com> / Test12345# |
+| Office App | <https://localhost:7003> | <owner@test.com> / Test12345# |
 
 ## Test Credentials
 
 | Role | Email | Password | App Access |
 |------|-------|----------|------------|
-| Super Admin | <admin@gmail.com> | Test12345# | Admin App |
-| Owner | <Test1@gmail.com> | Test12345# | Office App |
-| Manager | <Test2@gmail.com> | Test12345# | Office App |
-| Dispatcher | <Test3@gmail.com> | Test12345# | Office App |
-| Driver | <Test6@gmail.com> | Test12345# | Driver Mobile App |
+| Super Admin | <admin@test.com> | Test12345# | Admin App |
+| Owner | <owner@test.com> | Test12345# | Office App |
+| Manager | <manager1@test.com> | Test12345# | Office App |
+| Dispatcher | <dispatcher1@test.com> | Test12345# | Office App |
+| Driver | <driver1@test.com> | Test12345# | Driver Mobile App |
 
 ## Common Issues
 

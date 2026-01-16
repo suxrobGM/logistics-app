@@ -1,0 +1,63 @@
+<div class="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+  <div class="mx-4 max-w-lg text-center">
+    <!-- Illustration -->
+    <div class="relative mb-8">
+      <div class="mx-auto flex h-40 w-40 items-center justify-center rounded-full bg-red-50">
+        <div class="relative">
+          <i class="pi pi-lock text-8xl text-red-200"></i>
+          <div
+            class="absolute -bottom-2 -right-2 flex h-12 w-12 items-center justify-center rounded-full bg-yellow-100"
+          >
+            <i class="pi pi-exclamation-triangle text-2xl text-yellow-600"></i>
+          </div>
+        </div>
+      </div>
+      <!-- Decorative elements -->
+      <div class="absolute left-1/4 top-0 h-3 w-3 rounded-full bg-red-200 opacity-60"></div>
+      <div class="absolute bottom-4 right-1/4 h-2 w-2 rounded-full bg-yellow-200 opacity-60"></div>
+      <div class="absolute right-1/3 top-1/4 h-4 w-4 rounded-full bg-gray-200 opacity-40"></div>
+    </div>
+
+    <!-- Error Code -->
+    <h1 class="mb-2 text-8xl font-bold text-gray-200">401</h1>
+
+    <!-- Title -->
+    <h2 class="mb-4 text-2xl font-bold text-gray-900">Access Denied</h2>
+
+    <!-- Description -->
+    <p class="mb-8 text-gray-600">
+      You don't have permission to access this page. This might be because your session has expired
+      or you don't have the required permissions.
+    </p>
+
+    <!-- Actions -->
+    <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+      <p-button label="Sign In Again" icon="pi pi-sign-in" (click)="login()" />
+      <p-button label="Sign Out" icon="pi pi-sign-out" [outlined]="true" (click)="logout()" />
+    </div>
+
+    <!-- Additional info -->
+    <div class="mt-8 rounded-lg bg-white p-4 shadow-sm">
+      <h3 class="mb-2 text-sm font-semibold text-gray-700">Why am I seeing this?</h3>
+      <ul class="space-y-1 text-left text-sm text-gray-500">
+        <li class="flex items-start gap-2">
+          <i class="pi pi-clock mt-0.5 text-xs text-gray-400"></i>
+          <span>Your session may have expired</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="pi pi-user-minus mt-0.5 text-xs text-gray-400"></i>
+          <span>Your account may not have portal access</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="pi pi-ban mt-0.5 text-xs text-gray-400"></i>
+          <span>The resource may require special permissions</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Help text -->
+    <p class="mt-6 text-sm text-gray-400">
+      If you believe this is an error, please contact your company administrator.
+    </p>
+  </div>
+</div>

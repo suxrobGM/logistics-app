@@ -73,7 +73,6 @@ No NgModules. All components are standalone:
 ```typescript
 @Component({
   selector: 'app-load-list',
-  standalone: true,
   imports: [CommonModule, TableModule, ButtonModule],
   templateUrl: './load-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -152,4 +152,5 @@ export type { UsBankAccountHolderType } from './models/us-bank-account-holder-ty
 export type { UsBankAccountType } from './models/us-bank-account-type';
 export type { UserDto } from './models/user-dto';
 export type { UserDtoPagedResponse } from './models/user-dto-paged-response';
+export type { UserTenantAccessDto } from './models/user-tenant-access-dto';
 export type { VehicleInfoDto } from './models/vehicle-info-dto';

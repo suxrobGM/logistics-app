@@ -13,9 +13,19 @@ internal class CustomerSeeder(ILogger<CustomerSeeder> logger) : SeederBase(logge
     public override SeederType Type => SeederType.FakeData;
     public override int Order => 120;
 
-    protected override async Task<bool> HasExistingDataAsync(SeederContext context, CancellationToken cancellationToken)
+    public override async Task<bool> ShouldSkipAsync(SeederContext context, CancellationToken cancellationToken = default)
     {
-        return await context.TenantUnitOfWork.Repository<Customer>().CountAsync(ct: cancellationToken) > 0;
+        var customerRepository = context.TenantUnitOfWork.Repository<Customer>();
+        var existingCustomers = await customerRepository.GetListAsync(ct: cancellationToken);
+
+        if (existingCustomers.Count > 0)
+        {
+            // Even when skipping, populate CreatedCustomers for dependent seeders
+            context.CreatedCustomers = existingCustomers;
+            return true;
+        }
+
+        return false;
     }
 
     public override async Task SeedAsync(SeederContext context, CancellationToken cancellationToken = default)

@@ -1,0 +1,63 @@
+<div class="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+  <div class="w-full max-w-2xl">
+    <div class="mb-8 text-center">
+      <i class="pi pi-box mb-4 text-5xl text-primary"></i>
+      <h1 class="mb-2 text-2xl font-bold text-gray-900">Select Company</h1>
+      <p class="text-gray-600">Choose which company you'd like to access</p>
+    </div>
+
+    @if (isLoading()) {
+      <div class="flex justify-center py-12">
+        <p-progress-spinner strokeWidth="4" />
+      </div>
+    } @else {
+      <div class="grid gap-4 md:grid-cols-2">
+        @for (tenant of tenants(); track tenant.id) {
+          <button
+            type="button"
+            class="group rounded-lg border border-gray-200 bg-white p-6 text-left transition-all hover:border-primary hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            (click)="selectTenant(tenant)"
+          >
+            <div class="flex items-start gap-4">
+              <div
+                class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-50 text-primary group-hover:bg-primary group-hover:text-white"
+              >
+                <i class="pi pi-building text-xl"></i>
+              </div>
+              <div class="flex-1">
+                <h3 class="font-semibold text-gray-900">
+                  {{ tenant.companyName || tenant.tenantName }}
+                </h3>
+                @if (tenant.customerName) {
+                  <p class="mt-1 text-sm text-gray-500">Customer: {{ tenant.customerName }}</p>
+                }
+                @if (tenant.lastAccessedAt) {
+                  <p class="mt-1 text-xs text-gray-400">
+                    Last accessed: {{ tenant.lastAccessedAt | date: "short" }}
+                  </p>
+                }
+              </div>
+              <i class="pi pi-chevron-right text-gray-400 group-hover:text-primary"></i>
+            </div>
+          </button>
+        }
+      </div>
+
+      @if (tenants().length === 0) {
+        <div class="rounded-lg bg-white p-8 text-center shadow">
+          <i class="pi pi-exclamation-triangle mb-4 text-4xl text-yellow-500"></i>
+          <h3 class="mb-2 font-semibold text-gray-900">No Access</h3>
+          <p class="mb-6 text-gray-600">
+            You don't have access to any companies. Please contact your administrator.
+          </p>
+          <p-button
+            label="Sign Out"
+            icon="pi pi-sign-out"
+            [outlined]="true"
+            (click)="logout()"
+          />
+        </div>
+      }
+    }
+  </div>
+</div>

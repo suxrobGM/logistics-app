@@ -1,33 +1,150 @@
-<div class="p-6">
-  <div class="mb-6 flex items-center gap-4">
-    <p-button routerLink="/shipments" icon="pi pi-arrow-left" [text]="true" />
-    <h1 class="text-2xl font-semibold">Shipment Details</h1>
-  </div>
+<div class="mb-6 flex items-center gap-4">
+  <p-button routerLink="/shipments" icon="pi pi-arrow-left" [text]="true" label="Back" />
+  <h1 class="text-2xl font-bold text-gray-900">Shipment Details</h1>
+</div>
 
-  <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-    <p-card header="Shipment Information">
-      <div class="space-y-4">
-        <div>
-          <label class="text-sm text-gray-500">Reference #</label>
-          <p class="font-medium">{{ id() }}</p>
+@if (isLoading()) {
+  <div class="flex items-center justify-center py-12">
+    <p-progress-spinner strokeWidth="4" />
+  </div>
+} @else if (load()) {
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+    <!-- Main Info -->
+    <div class="lg:col-span-2">
+      <div class="rounded-lg bg-white p-6 shadow">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-lg font-semibold">Load #{{ load()?.number }}</h2>
+          <p-tag [value]="load()?.status" [severity]="getStatusSeverity(load()?.status)" />
         </div>
-        <div>
-          <label class="text-sm text-gray-500">Status</label>
-          <p class="font-medium">In Transit</p>
-        </div>
-        <div>
-          <label class="text-sm text-gray-500">Origin</label>
-          <p class="font-medium">Los Angeles, CA</p>
-        </div>
-        <div>
-          <label class="text-sm text-gray-500">Destination</label>
-          <p class="font-medium">Chicago, IL</p>
+
+        @if (load()?.name) {
+          <p class="mb-4 text-gray-600">{{ load()?.name }}</p>
+        }
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <h3 class="mb-2 text-sm font-medium text-gray-500">Origin</h3>
+            <p class="font-medium">{{ formatAddress(load()?.originAddress) }}</p>
+            @if (load()?.dispatchedAt) {
+              <p class="mt-1 text-sm text-gray-500">
+                Dispatched: {{ load()?.dispatchedAt | date: "medium" }}
+              </p>
+            }
+          </div>
+
+          <div>
+            <h3 class="mb-2 text-sm font-medium text-gray-500">Destination</h3>
+            <p class="font-medium">{{ formatAddress(load()?.destinationAddress) }}</p>
+            @if (load()?.deliveredAt) {
+              <p class="mt-1 text-sm text-gray-500">
+                Delivered: {{ load()?.deliveredAt | date: "medium" }}
+              </p>
+            }
+          </div>
         </div>
       </div>
-    </p-card>
 
-    <p-card header="Tracking History">
-      <p class="text-gray-500">Tracking events will appear here</p>
-    </p-card>
+      <!-- Documents -->
+      <div class="mt-6 rounded-lg bg-white p-6 shadow">
+        <h2 class="mb-4 text-lg font-semibold">Documents</h2>
+
+        @if (documents().length > 0) {
+          <p-table [value]="documents()">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Document</th>
+                <th>Type</th>
+                <th>Created</th>
+                <th></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-doc>
+              <tr>
+                <td class="font-medium">{{ doc.fileName }}</td>
+                <td>{{ doc.documentType }}</td>
+                <td>{{ doc.createdAt | date: "short" }}</td>
+                <td class="text-right">
+                  <p-button icon="pi pi-download" [text]="true" label="Download" />
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        } @else {
+          <div class="py-8 text-center">
+            <i class="pi pi-file mb-2 text-3xl text-gray-300"></i>
+            <p class="text-gray-500">No documents available</p>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div>
+      <div class="rounded-lg bg-white p-6 shadow">
+        <h2 class="mb-4 text-lg font-semibold">Driver Information</h2>
+        @if (load()?.driverName) {
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+              <i class="pi pi-user text-gray-600"></i>
+            </div>
+            <div>
+              <p class="font-medium">{{ load()?.driverName }}</p>
+              @if (load()?.truckNumber) {
+                <p class="text-sm text-gray-500">Truck: {{ load()?.truckNumber }}</p>
+              }
+            </div>
+          </div>
+        } @else {
+          <p class="text-gray-500">No driver assigned</p>
+        }
+      </div>
+
+      <div class="mt-6 rounded-lg bg-white p-6 shadow">
+        <h2 class="mb-4 text-lg font-semibold">Shipment Details</h2>
+        <div class="space-y-3">
+          @if (load()?.distance) {
+            <div class="flex justify-between">
+              <span class="text-gray-500">Distance</span>
+              <span class="font-medium">{{ load()?.distance | number: "1.0-0" }} mi</span>
+            </div>
+          }
+          @if (load()?.deliveryCost) {
+            <div class="flex justify-between">
+              <span class="text-gray-500">Delivery Cost</span>
+              <span class="font-medium">{{ load()?.deliveryCost | currency }}</span>
+            </div>
+          }
+          <div class="flex justify-between">
+            <span class="text-gray-500">Documents</span>
+            <span class="font-medium">{{ load()?.documentCount || 0 }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">Bill of Lading</span>
+            <span class="font-medium">
+              @if (load()?.hasBillOfLading) {
+                <i class="pi pi-check text-green-600"></i>
+              } @else {
+                <i class="pi pi-times text-gray-400"></i>
+              }
+            </span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">Proof of Delivery</span>
+            <span class="font-medium">
+              @if (load()?.hasProofOfDelivery) {
+                <i class="pi pi-check text-green-600"></i>
+              } @else {
+                <i class="pi pi-times text-gray-400"></i>
+              }
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+} @else {
+  <div class="py-12 text-center">
+    <i class="pi pi-exclamation-triangle mb-2 text-4xl text-yellow-500"></i>
+    <p class="text-gray-500">Shipment not found</p>
+  </div>
+}

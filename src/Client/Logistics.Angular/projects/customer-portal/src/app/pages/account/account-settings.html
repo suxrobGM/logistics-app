@@ -1,37 +1,81 @@
-<div class="p-6">
-  <h1 class="mb-6 text-2xl font-semibold">Account Settings</h1>
-
-  <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-    <p-card header="Profile Information">
-      <div class="space-y-4">
-        <div>
-          <label class="mb-1 block text-sm text-gray-500">Company Name</label>
-          <input type="text" pInputText class="w-full" />
-        </div>
-        <div>
-          <label class="mb-1 block text-sm text-gray-500">Contact Email</label>
-          <input type="email" pInputText class="w-full" />
-        </div>
-        <div>
-          <label class="mb-1 block text-sm text-gray-500">Phone</label>
-          <input type="tel" pInputText class="w-full" />
-        </div>
-        <p-button label="Save Changes" />
-      </div>
-    </p-card>
-
-    <p-card header="Notification Preferences">
-      <p class="mb-4 text-gray-500">Configure how you receive updates about your shipments</p>
-      <div class="space-y-4">
-        <div class="flex items-center gap-2">
-          <input type="checkbox" id="email-notifications" />
-          <label for="email-notifications">Email notifications</label>
-        </div>
-        <div class="flex items-center gap-2">
-          <input type="checkbox" id="sms-notifications" />
-          <label for="sms-notifications">SMS notifications</label>
-        </div>
-      </div>
-    </p-card>
-  </div>
+<div class="mb-6">
+  <h1 class="text-2xl font-bold text-gray-900">Account Settings</h1>
+  <p class="mt-1 text-gray-500">View your profile and manage your account</p>
 </div>
+
+@if (isLoading()) {
+  <div class="flex items-center justify-center py-12">
+    <p-progress-spinner strokeWidth="4" />
+  </div>
+} @else {
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <!-- Profile Information -->
+    <div class="rounded-lg bg-white p-6 shadow">
+      <h2 class="mb-4 text-lg font-semibold">Profile Information</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="text-sm font-medium text-gray-500">Name</label>
+          <p class="mt-1 font-medium text-gray-900">{{ profile()?.displayName || "-" }}</p>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-500">Email</label>
+          <p class="mt-1 font-medium text-gray-900">{{ profile()?.email || "-" }}</p>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-500">Company</label>
+          <p class="mt-1 font-medium text-gray-900">{{ companyName() || "-" }}</p>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-500">Customer Account</label>
+          <p class="mt-1 font-medium text-gray-900">{{ profile()?.customerName || "-" }}</p>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-gray-500">Last Login</label>
+          <p class="mt-1 font-medium text-gray-900">
+            {{ profile()?.lastLoginAt ? (profile()?.lastLoginAt | date: "medium") : "Never" }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Account Actions -->
+    <div class="space-y-6">
+      <div class="rounded-lg bg-white p-6 shadow">
+        <h2 class="mb-4 text-lg font-semibold">Manage Account</h2>
+        <p class="mb-4 text-sm text-gray-500">
+          Update your profile information, change your password, and manage security settings.
+        </p>
+        <div class="flex flex-col gap-3">
+          <p-button
+            label="Edit Profile"
+            icon="pi pi-user-edit"
+            [outlined]="true"
+            (click)="openManageProfile()"
+          />
+          <p-button
+            label="Change Password"
+            icon="pi pi-lock"
+            [outlined]="true"
+            (click)="openChangePassword()"
+          />
+        </div>
+      </div>
+
+      <div class="rounded-lg bg-white p-6 shadow">
+        <h2 class="mb-4 text-lg font-semibold">Account Status</h2>
+        <div class="flex items-center gap-2">
+          @if (profile()?.isActive) {
+            <span class="flex h-3 w-3 rounded-full bg-green-500"></span>
+            <span class="text-green-700">Active</span>
+          } @else {
+            <span class="flex h-3 w-3 rounded-full bg-red-500"></span>
+            <span class="text-red-700">Inactive</span>
+          }
+        </div>
+        <p class="mt-2 text-sm text-gray-500">
+          Account created: {{ profile()?.createdAt | date: "mediumDate" }}
+        </p>
+      </div>
+    </div>
+  </div>
+}

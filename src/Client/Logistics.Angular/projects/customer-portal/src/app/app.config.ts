@@ -4,17 +4,22 @@ import {
   provideBrowserGlobalErrorListeners,
 } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
-import { provideRouter } from "@angular/router";
-import { provideApi } from "@logistics/shared/api";
+import { provideRouter, withComponentInputBinding } from "@angular/router";
+import { getAccessToken, provideApi } from "@logistics/shared";
 import Aura from "@primeuix/themes/aura";
+import { provideAuth } from "angular-auth-oidc-client";
+import { ConfirmationService, MessageService } from "primeng/api";
 import { providePrimeNG } from "primeng/config";
+import { authConfig } from "@/core/auth";
+import { tenantInterceptor } from "@/core/interceptors";
 import { environment } from "@/env";
 import { routes } from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes),
+    provideAuth({ config: authConfig }),
+    provideRouter(routes, withComponentInputBinding()),
     importProvidersFrom(BrowserModule),
     providePrimeNG({
       theme: {
@@ -24,6 +29,13 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
-    provideApi({ baseUrl: environment.apiUrl }),
+    provideApi({
+      baseUrl: environment.apiUrl,
+      tokenGetter: () => getAccessToken("customerportal"),
+      interceptors: [tenantInterceptor],
+    }),
+
+    MessageService,
+    ConfirmationService,
   ],
 };

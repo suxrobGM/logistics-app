@@ -51,4 +51,10 @@ public class SeederContext
         get => SharedState.TryGetValue(nameof(DefaultTenant), out var val) ? (Tenant)val : null;
         set => SharedState[nameof(DefaultTenant)] = value!;
     }
+
+    public IList<CustomerUser>? CreatedCustomerUsers
+    {
+        get => SharedState.TryGetValue(nameof(CreatedCustomerUsers), out var val) ? (IList<CustomerUser>)val : null;
+        set => SharedState[nameof(CreatedCustomerUsers)] = value!;
+    }
 }

@@ -1,33 +1,78 @@
-<div class="p-6">
-  <h1 class="mb-6 text-2xl font-semibold">My Invoices</h1>
+<div class="mb-6 flex items-center justify-between">
+  <h1 class="text-2xl font-bold text-gray-900">My Invoices</h1>
+  <p-iconfield>
+    <p-inputicon class="pi pi-search" />
+    <input
+      type="text"
+      pInputText
+      placeholder="Search invoices..."
+      class="w-64"
+      (input)="onSearch($any($event.target).value)"
+    />
+  </p-iconfield>
+</div>
 
-  <p-table [value]="[]" [tableStyle]="{ 'min-width': '50rem' }">
-    <ng-template #header>
+<div class="rounded-lg bg-white shadow">
+  <p-table
+    [value]="invoices()"
+    [lazy]="true"
+    [paginator]="true"
+    [rows]="10"
+    [first]="tableFirst()"
+    [totalRecords]="totalRecords()"
+    [loading]="isLoading()"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    (onLazyLoad)="onLazyLoad($event)"
+  >
+    <ng-template pTemplate="header">
       <tr>
         <th>Invoice #</th>
+        <th>Load</th>
         <th>Date</th>
+        <th>Due Date</th>
         <th>Amount</th>
         <th>Status</th>
-        <th>Actions</th>
+        <th></th>
       </tr>
     </ng-template>
-    <ng-template #body let-invoice>
+    <ng-template pTemplate="body" let-invoice>
       <tr>
-        <td>{{ invoice.number }}</td>
-        <td>{{ invoice.date }}</td>
-        <td>{{ invoice.amount | currency }}</td>
+        <td class="font-medium">INV-{{ invoice.number }}</td>
         <td>
-          <p-tag [value]="invoice.status" />
+          @if (invoice.loadId) {
+            <a [routerLink]="['/shipments', invoice.loadId]" class="text-primary hover:underline">
+              #{{ invoice.loadNumber }}
+            </a>
+          } @else {
+            -
+          }
         </td>
+        <td>{{ invoice.createdAt | date: "mediumDate" }}</td>
+        <td>{{ invoice.dueDate | date: "mediumDate" }}</td>
+        <td class="font-medium">{{ invoice.total | currency }}</td>
         <td>
-          <p-button icon="pi pi-download" label="Download" [text]="true" />
+          <p-tag [value]="invoice.status" [severity]="getStatusSeverity(invoice.status)" />
+        </td>
+        <td class="text-right">
+          <p-button
+            icon="pi pi-download"
+            [text]="true"
+            label="Download"
+            (click)="downloadInvoice(invoice)"
+          />
         </td>
       </tr>
     </ng-template>
-    <ng-template #emptymessage>
+    <ng-template pTemplate="emptymessage">
       <tr>
-        <td colspan="5" class="py-8 text-center text-gray-500">No invoices found</td>
+        <td colspan="7" class="py-12 text-center">
+          <i class="pi pi-inbox mb-2 text-4xl text-gray-300"></i>
+          <p class="text-gray-500">No invoices found</p>
+        </td>
       </tr>
     </ng-template>
   </p-table>
 </div>
+
+<p-toast />

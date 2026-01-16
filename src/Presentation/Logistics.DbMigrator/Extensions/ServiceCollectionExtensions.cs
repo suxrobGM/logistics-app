@@ -5,12 +5,12 @@ using Logistics.DbMigrator.Seeders.Infrastructure;
 namespace Logistics.DbMigrator.Extensions;
 
 /// <summary>
-/// Extension methods for registering seeders with dependency injection.
+///     Extension methods for registering seeders with dependency injection.
 /// </summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Registers all seeders.
+    ///     Registers all seeders.
     /// </summary>
     public static IServiceCollection AddSeeders(this IServiceCollection services)
     {
@@ -29,6 +29,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISeeder, TripSeeder>();
         services.AddScoped<ISeeder, NotificationSeeder>();
         services.AddScoped<ISeeder, PayrollSeeder>();
+        services.AddScoped<ISeeder, CustomerUserSeeder>();
 
         return services;
     }

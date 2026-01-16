@@ -1,33 +1,70 @@
-<div class="p-6">
-  <h1 class="mb-6 text-2xl font-semibold">My Shipments</h1>
+<div>
+  <div class="mb-6 flex items-center justify-between">
+    <h1 class="text-2xl font-bold text-gray-900">My Shipments</h1>
+    <p-iconfield>
+      <p-inputicon class="pi pi-search" />
+      <input
+        type="text"
+        pInputText
+        placeholder="Search shipments..."
+        class="w-64"
+        (input)="onSearch($any($event.target).value)"
+      />
+    </p-iconfield>
+  </div>
 
-  <p-table [value]="[]" [tableStyle]="{ 'min-width': '50rem' }">
-    <ng-template #header>
-      <tr>
-        <th>Reference #</th>
-        <th>Origin</th>
-        <th>Destination</th>
-        <th>Status</th>
-        <th>ETA</th>
-        <th>Actions</th>
-      </tr>
-    </ng-template>
-    <ng-template #body let-shipment>
-      <tr>
-        <td>{{ shipment.refId }}</td>
-        <td>{{ shipment.origin }}</td>
-        <td>{{ shipment.destination }}</td>
-        <td>{{ shipment.status }}</td>
-        <td>{{ shipment.eta }}</td>
-        <td>
-          <p-button [routerLink]="['/shipments', shipment.id]" label="Track" />
-        </td>
-      </tr>
-    </ng-template>
-    <ng-template #emptymessage>
-      <tr>
-        <td colspan="6" class="py-8 text-center text-gray-500">No shipments found</td>
-      </tr>
-    </ng-template>
-  </p-table>
+  <div class="rounded-lg bg-white shadow">
+    <p-table
+      [value]="loads()"
+      [lazy]="true"
+      [paginator]="true"
+      [rows]="10"
+      [first]="tableFirst()"
+      [totalRecords]="totalRecords()"
+      [loading]="isLoading()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      (onLazyLoad)="onLazyLoad($event)"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Load #</th>
+          <th>Name</th>
+          <th>Origin</th>
+          <th>Destination</th>
+          <th>Status</th>
+          <th>Driver</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-load>
+        <tr>
+          <td class="font-medium">{{ load.number }}</td>
+          <td>{{ load.name || "-" }}</td>
+          <td>{{ formatAddress(load.originAddress) }}</td>
+          <td>{{ formatAddress(load.destinationAddress) }}</td>
+          <td>
+            <p-tag [value]="load.status" [severity]="getStatusSeverity(load.status)" />
+          </td>
+          <td>{{ load.driverName || "-" }}</td>
+          <td class="text-right">
+            <p-button
+              [routerLink]="['/shipments', load.id]"
+              label="View"
+              [text]="true"
+              icon="pi pi-eye"
+            />
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="py-12 text-center">
+            <i class="pi pi-inbox mb-2 text-4xl text-gray-300"></i>
+            <p class="text-gray-500">No shipments found</p>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 </div>

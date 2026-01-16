@@ -1,4 +1,20 @@
 {
+  "CustomerPortalUsers": [
+    {
+      "Email": "customer1@test.com",
+      "FirstName": "Alice",
+      "LastName": "Porter",
+      "Password": "Test12345#",
+      "CustomerNames": ["Crowley Maritime"]
+    },
+    {
+      "Email": "customer2@test.com",
+      "FirstName": "Bob",
+      "LastName": "Multicorp",
+      "Password": "Test12345#",
+      "CustomerNames": ["General Steamship Company", "American Export-Isbrandtsen Lines"]
+    }
+  ],
   "Customers": [
     {
       "Name": "Crowley Maritime"
@@ -19,64 +35,64 @@
   "Users": [
     // Owner
     {
-      "Email": "Test1@gmail.com",
+      "Email": "owner@test.com",
       "FirstName": "Gloria",
       "LastName": "Kaufman",
       "Password": "Test12345#"
     },
     // Manager
     {
-      "Email": "Test2@gmail.com",
+      "Email": "manager1@test.com",
       "FirstName": "Ivory",
       "LastName": "Collins",
       "Password": "Test12345#"
     },
     // Dispatchers
     {
-      "Email": "Test3@gmail.com",
+      "Email": "dispatcher1@test.com",
       "FirstName": "Rosalyn",
       "LastName": "Callahan",
       "Password": "Test12345#"
     },
     {
-      "Email": "Test4@gmail.com",
+      "Email": "dispatcher2@test.com",
       "FirstName": "Zane",
       "LastName": "Salinas",
       "Password": "Test12345#"
     },
     {
-      "Email": "Test5@gmail.com",
+      "Email": "dispatcher3@test.com",
       "FirstName": "Justine",
       "LastName": "Blevins",
       "Password": "Test12345#"
     },
     // The rest of the users are drivers
     {
-      "Email": "Test6@gmail.com",
+      "Email": "driver1@test.com",
       "FirstName": "John",
       "LastName": "Ortiz",
       "Password": "Test12345#"
     },
     {
-      "Email": "Test7@gmail.com",
+      "Email": "driver2@test.com",
       "FirstName": "Anne",
       "LastName": "Shields",
       "Password": "Test12345#"
     },
     {
-      "Email": "Test8@gmail.com",
+      "Email": "driver3@test.com",
       "FirstName": "Tate",
       "LastName": "Taylor",
       "Password": "Test12345#"
     },
     {
-      "Email": "Test9@gmail.com",
+      "Email": "driver4@test.com",
       "FirstName": "Ronan",
       "LastName": "Hudson",
       "Password": "Test12345#"
     },
     {
-      "Email": "Test10@gmail.com",
+      "Email": "driver5@test.com",
       "FirstName": "Clarke",
       "LastName": "Bonner",
       "Password": "Test12345#"

@@ -20,6 +20,28 @@ namespace Logistics.API.Controllers;
 public class PortalController(IMediator mediator) : ControllerBase
 {
     /// <summary>
+    ///     Get the list of tenants/companies the authenticated user can access.
+    ///     Used for tenant selection in the customer portal.
+    ///     This endpoint only requires authentication, not Portal.Access permission,
+    ///     so users can see whether they have any tenant access.
+    /// </summary>
+    [HttpGet("tenants", Name = "GetPortalTenants")]
+    [ProducesResponseType(typeof(List<UserTenantAccessDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+    [Authorize] // Override controller-level policy - only require authentication
+    public async Task<IActionResult> GetTenants()
+    {
+        var userId = User.GetUserId();
+        if (userId is null)
+        {
+            return Unauthorized(new ErrorResponse("User not authenticated."));
+        }
+
+        var result = await mediator.Send(new GetUserTenantAccessQuery { UserId = userId.Value });
+        return result.IsSuccess ? Ok(result.Value) : Unauthorized(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
     ///     Get the current customer user's profile.
     /// </summary>
     [HttpGet("me", Name = "GetPortalProfile")]

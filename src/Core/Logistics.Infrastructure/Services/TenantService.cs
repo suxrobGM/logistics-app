@@ -107,7 +107,7 @@ internal class TenantService : ITenantService
         return new Tenant
         {
             Name = "default",
-            BillingEmail = "test@gmail.com",
+            BillingEmail = "test@test.com",
             CompanyAddress = new Address
             {
                 Line1 = "123 Main St",

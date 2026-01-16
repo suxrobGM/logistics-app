@@ -1,10 +1,9 @@
 import { Injectable, inject, signal } from "@angular/core";
+import { UserData, userRoleOptions } from "@logistics/shared/models";
 import { EventTypes, OidcSecurityService, PublicEventsService } from "angular-auth-oidc-client";
 import { Observable, filter, from, map, switchMap } from "rxjs";
 import { TenantService } from "@/core/services";
-import { userRoleOptions } from "../../../../../shared/src/lib/models";
 import { PermissionService } from "./permission.service";
-import { UserData } from "./user-data";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
@@ -87,7 +86,7 @@ export class AuthService {
       switchMap((response) => {
         if (response.isAuthenticated) {
           this.userData = new UserData(response.userData);
-          this.tenantService.setTenantId(this.userData.tenant);
+          this.tenantService.setTenantId(this.userData.tenant!);
 
           return from(this.permissionService.loadPermissions()).pipe(
             map(() => {
