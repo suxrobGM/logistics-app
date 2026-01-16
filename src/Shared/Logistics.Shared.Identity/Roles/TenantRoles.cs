@@ -6,6 +6,7 @@ public static class TenantRoles
     public const string Manager = "tenant.manager";
     public const string Dispatcher = "tenant.dispatcher";
     public const string Driver = "tenant.driver";
+    public const string Customer = "tenant.customer";
 
     public static IEnumerable<EnumType<string>> GetValues()
     {
@@ -13,5 +14,6 @@ public static class TenantRoles
         yield return new EnumType<string>(Manager, "Manager");
         yield return new EnumType<string>(Dispatcher, "Dispatcher");
         yield return new EnumType<string>(Driver, "Driver");
+        yield return new EnumType<string>(Customer, "Customer");
     }
 }

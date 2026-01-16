@@ -79,5 +79,16 @@ public static class TenantRolePermissions
         }
     }
 
+    public static IEnumerable<string> Customer
+    {
+        get
+        {
+            var list = new List<string>();
+            list.AddRange(GetBasicPermissions());
+            list.AddRange(Permission.GeneratePermissions(nameof(Permission.Portal)));
+            return list;
+        }
+    }
+
     public static IEnumerable<string> GetBasicPermissions() => AppRolePermissions.GetBasicPermissions();
 }
