@@ -60,13 +60,13 @@
           </div>
           <div class="ml-4 grow">
             <h6 class="mb-1 text-gray-500">HOS Violations</h6>
-            <h4
-              class="mb-0 text-2xl font-bold"
-              [class.text-red-600]="violationCount() > 0"
-            >
+            <h4 class="mb-0 text-2xl font-bold" [class.text-red-600]="violationCount() > 0">
               {{ violationCount() }}
             </h4>
-            <small [class.text-red-500]="violationCount() > 0" [class.text-gray-400]="violationCount() === 0">
+            <small
+              [class.text-red-500]="violationCount() > 0"
+              [class.text-gray-400]="violationCount() === 0"
+            >
               {{ violationCount() > 0 ? "Requires attention" : "All compliant" }}
             </small>
           </div>
@@ -137,7 +137,10 @@
                 <td>
                   <div class="flex items-center gap-2">
                     @if (driver.isInViolation) {
-                      <i class="pi pi-exclamation-triangle text-red-500" pTooltip="HOS Violation"></i>
+                      <i
+                        class="pi pi-exclamation-triangle text-red-500"
+                        pTooltip="HOS Violation"
+                      ></i>
                     }
                     <span class="font-medium">{{ driver.employeeName }}</span>
                   </div>

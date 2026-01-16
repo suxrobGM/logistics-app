@@ -29,17 +29,9 @@
 
         <app-labeled-field label="Salary" for="salary">
           @if (isShareOfGrossSalary()) {
-            <app-unit-input
-              [control]="form.controls.salary"
-              unit="%"
-              [min]="0"
-              [max]="100"
-            />
+            <app-unit-input [control]="form.controls.salary" unit="%" [min]="0" [max]="100" />
           } @else {
-            <app-currency-input
-              [control]="form.controls.salary"
-              [min]="0"
-            />
+            <app-currency-input [control]="form.controls.salary" [min]="0" />
           }
         </app-labeled-field>
 

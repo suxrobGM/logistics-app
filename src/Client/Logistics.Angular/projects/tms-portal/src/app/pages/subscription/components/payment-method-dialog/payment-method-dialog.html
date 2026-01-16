@@ -39,11 +39,7 @@
         <p-divider />
 
         <app-labeled-field label="Bank Name" for="bankName">
-          <input
-            formControlName="bankName"
-            pInputText
-            placeholder="ex. Bank of America"
-          />
+          <input formControlName="bankName" pInputText placeholder="ex. Bank of America" />
         </app-labeled-field>
 
         <app-labeled-field label="Account Type" for="bankAccountType">
@@ -81,30 +77,18 @@
         </app-labeled-field>
 
         <app-labeled-field label="Account Holder Name" for="bankAccountHolderName">
-          <input
-            formControlName="bankAccountHolderName"
-            pInputText
-            placeholder="ex. John Smith"
-          />
+          <input formControlName="bankAccountHolderName" pInputText placeholder="ex. John Smith" />
         </app-labeled-field>
       } @else if (form.get("methodType")?.value === "international_bank_account") {
         <h5>International bank account details</h5>
         <p-divider />
 
         <app-labeled-field label="Bank Name" for="bankName">
-          <input
-            formControlName="bankName"
-            pInputText
-            placeholder="ex. Bank of America"
-          />
+          <input formControlName="bankName" pInputText placeholder="ex. Bank of America" />
         </app-labeled-field>
 
         <app-labeled-field label="Account Number" for="bankAccountNumber">
-          <input
-            formControlName="bankAccountNumber"
-            pInputText
-            placeholder="ex. 1234567891011"
-          />
+          <input formControlName="bankAccountNumber" pInputText placeholder="ex. 1234567891011" />
         </app-labeled-field>
 
         <app-labeled-field label="SWIFT Code" for="swiftCode">
@@ -112,11 +96,7 @@
         </app-labeled-field>
 
         <app-labeled-field label="Account Holder Name" for="bankAccountHolderName">
-          <input
-            formControlName="bankAccountHolderName"
-            pInputText
-            placeholder="ex. John Smith"
-          />
+          <input formControlName="bankAccountHolderName" pInputText placeholder="ex. John Smith" />
         </app-labeled-field>
       }
     </div>

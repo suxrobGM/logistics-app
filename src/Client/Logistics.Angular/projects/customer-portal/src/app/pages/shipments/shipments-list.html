@@ -1,5 +1,5 @@
 <div class="p-6">
-  <h1 class="text-2xl font-semibold mb-6">My Shipments</h1>
+  <h1 class="mb-6 text-2xl font-semibold">My Shipments</h1>
 
   <p-table [value]="[]" [tableStyle]="{ 'min-width': '50rem' }">
     <ng-template #header>
@@ -26,9 +26,7 @@
     </ng-template>
     <ng-template #emptymessage>
       <tr>
-        <td colspan="6" class="text-center py-8 text-gray-500">
-          No shipments found
-        </td>
+        <td colspan="6" class="py-8 text-center text-gray-500">No shipments found</td>
       </tr>
     </ng-template>
   </p-table>

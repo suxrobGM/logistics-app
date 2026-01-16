@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 /**
  * Global configuration for API endpoints
  */
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class ApiConfiguration {
-  rootUrl: string = '';
+  rootUrl: string = "";
 }
 
 /**

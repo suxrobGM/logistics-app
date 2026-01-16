@@ -2,8 +2,6 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../out-tsc/customer-portal",
-    "types": [],
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/app/*"],
       "@/env": ["./src/environments/environment"],

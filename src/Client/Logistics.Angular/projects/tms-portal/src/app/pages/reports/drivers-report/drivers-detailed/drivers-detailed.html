@@ -1,13 +1,13 @@
 <div class="w-full p-6">
   <!-- Header -->
-  <div class="flex justify-between items-center mb-6">
+  <div class="mb-6 flex items-center justify-between">
     <div>
-      <h1 class="text-2xl font-semibold mb-1">Drivers Report</h1>
-      <p class="text-gray-500 mb-0">Detailed driver performance and statistics</p>
+      <h1 class="mb-1 text-2xl font-semibold">Drivers Report</h1>
+      <p class="mb-0 text-gray-500">Detailed driver performance and statistics</p>
     </div>
     <div class="flex items-center gap-2">
       <div class="flex items-center gap-2">
-        <label for="search" class="text-sm font-medium mb-0">Search:</label>
+        <label for="search" class="mb-0 text-sm font-medium">Search:</label>
         <input
           pInputText
           id="search"
@@ -32,7 +32,7 @@
   <p-card class="border-0 p-2 shadow-sm">
     <ng-template pTemplate="header">
       <div class="flex items-center">
-        <i class="pi pi-users text-blue-600 mr-2"></i>
+        <i class="pi pi-users mr-2 text-blue-600"></i>
         <h5 class="mb-0">Driver Performance Details</h5>
       </div>
     </ng-template>
@@ -85,7 +85,7 @@
         <tr>
           <td>
             <div class="flex items-center">
-              <div class="bg-blue-600/10 rounded-full mr-2 p-2">
+              <div class="mr-2 rounded-full bg-blue-600/10 p-2">
                 <i class="pi pi-user text-blue-600"></i>
               </div>
               <div>
@@ -95,7 +95,9 @@
             </div>
           </td>
           <td>
-            <span class="bg-gray-500 text-white px-2 py-1 rounded text-sm">{{ driver.truckNumber }}</span>
+            <span class="rounded bg-gray-500 px-2 py-1 text-sm text-white">{{
+              driver.truckNumber
+            }}</span>
           </td>
           <td>
             <p-tag
@@ -137,8 +139,8 @@
           <td colspan="9" class="py-4 text-center">
             <div class="flex flex-col items-center">
               <i class="pi pi-users text-gray-500" style="font-size: 3rem"></i>
-              <h6 class="text-gray-500 mt-2">No drivers found</h6>
-              <p class="text-gray-500 mb-0">Try adjusting your search criteria or date range</p>
+              <h6 class="mt-2 text-gray-500">No drivers found</h6>
+              <p class="mb-0 text-gray-500">Try adjusting your search criteria or date range</p>
             </div>
           </td>
         </tr>

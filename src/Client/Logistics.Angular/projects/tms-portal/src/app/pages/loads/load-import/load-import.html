@@ -14,7 +14,11 @@
 
   @if (!importResult()) {
     <!-- Truck Selection -->
-    <app-labeled-field label="Assign Truck" [required]="true" hint="Select a truck to assign to the imported load">
+    <app-labeled-field
+      label="Assign Truck"
+      [required]="true"
+      hint="Select a truck to assign to the imported load"
+    >
       <app-search-truck
         [selectedTruck]="selectedTruck()"
         (selectedTruckChange)="selectedTruck.set($event)"
@@ -74,7 +78,9 @@
       <div>
         <h4 class="mb-2 font-semibold">Vehicle</h4>
         @if (data.vehicleYear || data.vehicleMake || data.vehicleModel) {
-          <p class="text-lg">{{ data.vehicleYear }} {{ data.vehicleMake }} {{ data.vehicleModel }}</p>
+          <p class="text-lg">
+            {{ data.vehicleYear }} {{ data.vehicleMake }} {{ data.vehicleModel }}
+          </p>
         }
         @if (data.vehicleVin) {
           <p class="text-sm text-gray-500">VIN: {{ data.vehicleVin }}</p>
@@ -178,7 +184,12 @@
 
       <div class="flex gap-2">
         <p-button label="View Load" icon="pi pi-eye" (onClick)="viewLoad()" />
-        <p-button label="Import Another" icon="pi pi-plus" severity="secondary" (onClick)="reset()" />
+        <p-button
+          label="Import Another"
+          icon="pi pi-plus"
+          severity="secondary"
+          (onClick)="reset()"
+        />
         <p-button
           label="Back to Loads"
           icon="pi pi-arrow-left"

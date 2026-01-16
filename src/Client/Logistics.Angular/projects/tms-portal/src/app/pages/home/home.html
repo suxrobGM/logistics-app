@@ -82,15 +82,15 @@
       } @else {
         <div class="grid grid-cols-12">
           <div class="col-span-12 px-4 md:col-span-4">
-            <span class="uppercase text-gray-600">Total Gross:</span><br />
+            <span class="text-gray-600 uppercase">Total Gross:</span><br />
             <span class="text-2xl font-bold">{{ weeklyGross() | currency }}</span>
           </div>
           <div class="col-span-12 px-4 md:col-span-4">
-            <span class="uppercase text-gray-600">Billed Miles:</span><br />
+            <span class="text-gray-600 uppercase">Billed Miles:</span><br />
             <span class="text-2xl font-bold">{{ weeklyDistance() | distanceUnit: "mi" }}</span>
           </div>
           <div class="col-span-12 px-4 md:col-span-4">
-            <span class="uppercase text-gray-600">Rate Per Mile:</span><br />
+            <span class="text-gray-600 uppercase">Rate Per Mile:</span><br />
             <span class="text-2xl font-bold">{{ weeklyRpm() | currency }}</span>
           </div>
         </div>
@@ -99,15 +99,15 @@
       <ng-template #data>
         <div class="grid grid-cols-12">
           <div class="col-span-12 px-4 md:col-span-4">
-            <span class="uppercase text-gray-600">Total Gross:</span><br />
+            <span class="text-gray-600 uppercase">Total Gross:</span><br />
             <span class="text-2xl font-bold">{{ weeklyGross() | currency }}</span>
           </div>
           <div class="col-span-12 px-4 md:col-span-4">
-            <span class="uppercase text-gray-600">Billed Miles:</span><br />
+            <span class="text-gray-600 uppercase">Billed Miles:</span><br />
             <span class="text-2xl font-bold">{{ weeklyDistance() | distanceUnit: "mi" }}</span>
           </div>
           <div class="col-span-12 px-4 md:col-span-4">
-            <span class="uppercase text-gray-600">Rate Per Mile:</span><br />
+            <span class="text-gray-600 uppercase">Rate Per Mile:</span><br />
             <span class="text-2xl font-bold">{{ weeklyRpm() | currency }}</span>
           </div>
         </div>

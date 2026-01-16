@@ -42,7 +42,11 @@ export const API_CONFIG = new InjectionToken<ApiConfig>("API_CONFIG");
  * @returns The environment providers for the API.
  */
 export function provideApi(config: ApiConfig): EnvironmentProviders {
-  const interceptors: HttpInterceptorFn[] = [cacheInterceptor, tokenAuthInterceptor, ...(config.interceptors ?? [])];
+  const interceptors: HttpInterceptorFn[] = [
+    cacheInterceptor,
+    tokenAuthInterceptor,
+    ...(config.interceptors ?? []),
+  ];
 
   return makeEnvironmentProviders([
     { provide: API_CONFIG, useValue: config },

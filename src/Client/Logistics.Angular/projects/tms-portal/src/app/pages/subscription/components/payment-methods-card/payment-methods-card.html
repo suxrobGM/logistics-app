@@ -23,46 +23,46 @@
           }
         </ng-template>
 
-        <div class="grid grid-cols-12 mb-2">
+        <div class="mb-2 grid grid-cols-12">
           @switch (paymentMethod.type) {
             <!-- Card -->
             @case ("card") {
-              <div class="font-bold col-span-6">Cardholder Name:</div>
+              <div class="col-span-6 font-bold">Cardholder Name:</div>
               <div class="col-span-6">{{ paymentMethod.cardHolderName }}</div>
 
-              <div class="font-bold col-span-6">Card Number:</div>
+              <div class="col-span-6 font-bold">Card Number:</div>
               <div class="col-span-6">{{ paymentMethod.cardNumber }}</div>
 
-              <div class="font-bold col-span-6">CVC:</div>
+              <div class="col-span-6 font-bold">CVC:</div>
               <div class="col-span-6">{{ paymentMethod.cvc }}</div>
 
-              <div class="font-bold col-span-6">Expiry Date:</div>
+              <div class="col-span-6 font-bold">Expiry Date:</div>
               <div class="col-span-6">{{ paymentMethod.expMonth }}/{{ paymentMethod.expYear }}</div>
             }
             <!-- US Bank Account -->
             @case ("us_bank_account") {
-              <div class="font-bold col-span-6">Account Holder Type:</div>
+              <div class="col-span-6 font-bold">Account Holder Type:</div>
               <div class="col-span-6">{{ paymentMethod.accountHolderType }}</div>
 
-              <div class="font-bold col-span-6">Account Holder:</div>
+              <div class="col-span-6 font-bold">Account Holder:</div>
               <div class="col-span-6">{{ paymentMethod.accountHolderName }}</div>
 
-              <div class="font-bold col-span-6">Bank Name:</div>
+              <div class="col-span-6 font-bold">Bank Name:</div>
               <div class="col-span-6">{{ paymentMethod.bankName }}</div>
 
-              <div class="font-bold col-span-6">Account Number:</div>
+              <div class="col-span-6 font-bold">Account Number:</div>
               <div class="col-span-6">{{ paymentMethod.accountNumber }}</div>
 
-              <div class="font-bold col-span-6">Routing Number:</div>
+              <div class="col-span-6 font-bold">Routing Number:</div>
               <div class="col-span-6">{{ paymentMethod.routingNumber }}</div>
 
-              <div class="font-bold col-span-6">Account Type:</div>
+              <div class="col-span-6 font-bold">Account Type:</div>
               <div class="col-span-6">{{ paymentMethod.accountType }}</div>
 
               @if (
                 paymentMethod.verificationStatus !== "verified" && paymentMethod.verificationUrl
               ) {
-                <div class="font-bold col-span-6">Verification URL:</div>
+                <div class="col-span-6 font-bold">Verification URL:</div>
                 <div class="col-span-6">
                   <a [href]="paymentMethod.verificationUrl" target="_blank">Click here to verify</a>
                 </div>
@@ -70,21 +70,21 @@
             }
             <!-- International Bank Account -->
             @case ("international_bank_account") {
-              <div class="font-bold col-span-6">Account Holder:</div>
+              <div class="col-span-6 font-bold">Account Holder:</div>
               <div class="col-span-6">{{ paymentMethod.accountHolderName }}</div>
 
-              <div class="font-bold col-span-6">Bank Name:</div>
+              <div class="col-span-6 font-bold">Bank Name:</div>
               <div class="col-span-6">{{ paymentMethod.bankName }}</div>
 
-              <div class="font-bold col-span-6">Account Number:</div>
+              <div class="col-span-6 font-bold">Account Number:</div>
               <div class="col-span-6">{{ paymentMethod.accountNumber }}</div>
 
-              <div class="font-bold col-span-6">SWIFT:</div>
+              <div class="col-span-6 font-bold">SWIFT:</div>
               <div class="col-span-6">{{ paymentMethod.swiftCode }}</div>
             }
           }
 
-          <div class="font-bold col-span-6">Billing Address:</div>
+          <div class="col-span-6 font-bold">Billing Address:</div>
           <div class="col-span-6">{{ paymentMethod.billingAddress | address }}</div>
         </div>
 

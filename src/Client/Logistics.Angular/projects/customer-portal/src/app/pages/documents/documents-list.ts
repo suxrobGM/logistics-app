@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
-import { TableModule } from 'primeng/table';
-import { ButtonModule } from 'primeng/button';
+import { Component } from "@angular/core";
+import { ButtonModule } from "primeng/button";
+import { TableModule } from "primeng/table";
 
 @Component({
-  selector: 'cp-documents-list',
+  selector: "cp-documents-list",
   standalone: true,
   imports: [TableModule, ButtonModule],
-  templateUrl: './documents-list.html',
+  templateUrl: "./documents-list.html",
 })
 export class DocumentsList {}

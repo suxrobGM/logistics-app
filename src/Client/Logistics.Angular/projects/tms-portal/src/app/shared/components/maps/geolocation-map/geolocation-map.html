@@ -12,7 +12,7 @@
         [lngLat]="[geoData.currentLocation.longitude ?? 0, geoData.currentLocation.latitude ?? 0]"
       >
         <div class="text-center" (click)="onSelectMarker(geoData, marker)" role="presentation">
-          <div class="bg-gray-800 text-gray-100 rounded">{{ geoData.truckNumber }}</div>
+          <div class="rounded bg-gray-800 text-gray-100">{{ geoData.truckNumber }}</div>
           <div class="text-red-600">
             <i class="pi pi-map-marker text-xl"></i>
           </div>
