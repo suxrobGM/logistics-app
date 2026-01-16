@@ -19,6 +19,7 @@ public static class TenantRolePermissions
             list.AddRange(Permission.GeneratePermissions(nameof(Permission.Invoice)));
             list.AddRange(Permission.GeneratePermissions(nameof(Permission.Payroll)));
             list.AddRange(Permission.GeneratePermissions(nameof(Permission.Eld)));
+            list.AddRange(Permission.GeneratePermissions(nameof(Permission.Message)));
             return list;
         }
     }
@@ -36,6 +37,7 @@ public static class TenantRolePermissions
             list.AddRange(Permission.GeneratePermissions(nameof(Permission.Payment)));
             list.AddRange(Permission.GeneratePermissions(nameof(Permission.Invoice)));
             list.AddRange(Permission.GeneratePermissions(nameof(Permission.Payroll)));
+            list.AddRange(Permission.GeneratePermissions(nameof(Permission.Message)));
             list.Add(Permission.Employee.Manage);
             list.Add(Permission.Stat.View);
             list.AddRange(Permission.GeneratePermissions(nameof(Permission.Eld)));
@@ -52,6 +54,7 @@ public static class TenantRolePermissions
             list.AddRange(Permission.GeneratePermissions(nameof(Permission.Load)));
             list.AddRange(Permission.GeneratePermissions(nameof(Permission.Notification)));
             list.AddRange(Permission.GeneratePermissions(nameof(Permission.Customer)));
+            list.AddRange(Permission.GeneratePermissions(nameof(Permission.Message)));
             list.Add(Permission.Payment.View);
             list.Add(Permission.Invoice.View);
             list.Add(Permission.Truck.View);
@@ -68,6 +71,7 @@ public static class TenantRolePermissions
             var list = new List<string>();
             list.AddRange(GetBasicPermissions());
             list.AddRange(Permission.GeneratePermissions(nameof(Permission.Driver)));
+            list.AddRange(Permission.GeneratePermissions(nameof(Permission.Message)));
             list.Add(Permission.Truck.View);
             list.Add(Permission.Load.View);
             list.Add(Permission.Stat.View);

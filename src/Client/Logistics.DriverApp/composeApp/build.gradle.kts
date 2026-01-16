@@ -1,14 +1,10 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.google.services)
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.jetbrains.compose)
-    alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.openapi.generator)
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.androidKotlinMultiplatformLibrary)
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.jetbrainsCompose)
+    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.openApiGenerator)
 }
 
 // OpenAPI Generator Configuration
@@ -30,22 +26,10 @@ openApiGenerate {
 }
 
 kotlin {
-    // Apply expect-actual-classes flag to all targets
-    targets.all {
-        compilations.all {
-            compileTaskProvider.configure {
-                compilerOptions {
-                    freeCompilerArgs.add("-Xexpect-actual-classes")
-                }
-            }
-        }
-    }
-
-    androidTarget {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-            freeCompilerArgs.add("-opt-in=kotlin.time.ExperimentalTime")
-        }
+    androidLibrary {
+        namespace = "com.jfleets.driver.shared"
+        compileSdk = 36
+        minSdk = 26
     }
 
     sourceSets.all {
@@ -73,7 +57,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            // Compose Multiplatform
+            // Compose Multiplatform (using compose accessor - deprecated but functional)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
@@ -117,13 +101,8 @@ kotlin {
             // Koin Android
             implementation(libs.koin.androidx.compose)
 
-            // Firebase
-            implementation(project.dependencies.platform(libs.firebase.bom))
-            implementation(libs.firebase.messaging)
-
-            // Google Play Services & Maps
+            // Google Play Services Location (for LocationTracker.android.kt)
             implementation(libs.play.services.location)
-            implementation(libs.bundles.maps)
 
             // SignalR Client
             implementation(libs.signalr.client)
@@ -132,70 +111,13 @@ kotlin {
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
-
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-        }
     }
 }
 
-android {
-    namespace = "com.jfleets.driver"
-    compileSdk = 36
-
-    defaultConfig {
-        applicationId = "com.jfleets.driver"
-        minSdk = 26
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-        debug {
-            isMinifyEnabled = false
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    buildFeatures {
-        compose = true
-        buildConfig = true
-    }
-
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-}
-
-dependencies {
-    debugImplementation(compose.uiTooling)
-
-    // Testing
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.test.junit)
-    androidTestImplementation(libs.androidx.test.espresso)
-}
+// Apply OpenAPI generator post-processing fix
+apply(from = "../gradle/openapi-fix.gradle.kts")
 
 // Ensure OpenAPI code is generated before Kotlin compilation
-tasks.withType<KotlinCompile>().configureEach {
-    dependsOn(tasks.named("openApiGenerate"))
-}
+//tasks.withType<KotlinCompile>().configureEach {
+//    dependsOn(tasks.named("openApiGenerate"))
+//}

@@ -30,6 +30,7 @@ class AccountViewModel(
         viewModelScope.launch {
             _uiState.value = AccountUiState.Loading
             val userId = preferencesManager.getUserId()
+
             if (userId.isNullOrEmpty()) {
                 _uiState.value = AccountUiState.Error("User ID not available")
                 return@launch
@@ -37,11 +38,7 @@ class AccountViewModel(
 
             try {
                 val user = userApi.getUserById(userId).body()
-                if (user != null) {
-                    _uiState.value = AccountUiState.Success(user)
-                } else {
-                    _uiState.value = AccountUiState.Error("Failed to load user")
-                }
+                _uiState.value = AccountUiState.Success(user)
             } catch (e: Exception) {
                 _uiState.value = AccountUiState.Error(e.message ?: "An error occurred")
             }

@@ -31,11 +31,8 @@ class LoadDetailViewModel(
             _uiState.value = LoadDetailUiState.Loading
             try {
                 val load = loadApi.getLoadById(loadId).body()
-                if (load != null) {
-                    _uiState.value = LoadDetailUiState.Success(load)
-                } else {
-                    _uiState.value = LoadDetailUiState.Error("Failed to load details")
-                }
+                _uiState.value = LoadDetailUiState.Success(load)
+
             } catch (e: Exception) {
                 _uiState.value = LoadDetailUiState.Error(e.message ?: "An error occurred")
             }

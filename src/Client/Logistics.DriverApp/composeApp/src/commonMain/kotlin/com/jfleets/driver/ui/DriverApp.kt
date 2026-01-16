@@ -6,6 +6,7 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -65,10 +66,10 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
     val bottomNavItems = listOf(
         BottomNavItem("Dashboard", Screen.Dashboard.route, Icons.Default.Dashboard),
         BottomNavItem("Stats", Screen.Stats.route, Icons.Default.BarChart),
+        BottomNavItem("Messages", Screen.Messages.route, Icons.Default.Email),
         BottomNavItem("Past Loads", Screen.PastLoads.route, Icons.AutoMirrored.Filled.List),
         BottomNavItem("Account", Screen.Account.route, Icons.Default.AccountCircle),
         BottomNavItem("Settings", Screen.Settings.route, Icons.Default.Settings),
-        BottomNavItem("About", Screen.About.route, Icons.Default.Info)
     )
 
     val showBottomBar = currentDestination?.route != Screen.Login.route &&

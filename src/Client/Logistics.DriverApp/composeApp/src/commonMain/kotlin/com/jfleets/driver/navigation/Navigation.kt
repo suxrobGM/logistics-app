@@ -9,14 +9,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.jfleets.driver.api.DriverApi
 import com.jfleets.driver.api.LoadApi
+import com.jfleets.driver.api.models.InspectionType
 import com.jfleets.driver.ui.screens.AboutScreen
 import com.jfleets.driver.ui.screens.AccountScreen
+import com.jfleets.driver.ui.screens.ConditionReportScreen
+import com.jfleets.driver.ui.screens.ConversationScreen
 import com.jfleets.driver.ui.screens.DashboardScreen
 import com.jfleets.driver.ui.screens.LoadDetailScreen
 import com.jfleets.driver.ui.screens.LoginScreen
+import com.jfleets.driver.ui.screens.MessagesScreen
 import com.jfleets.driver.ui.screens.PastLoadsScreen
+import com.jfleets.driver.ui.screens.PodCaptureScreen
 import com.jfleets.driver.ui.screens.SettingsScreen
 import com.jfleets.driver.ui.screens.StatsScreen
+import com.jfleets.driver.viewmodel.DocumentCaptureType
 import com.jfleets.driver.viewmodel.LoadDetailViewModel
 import org.koin.compose.koinInject
 
@@ -85,7 +91,100 @@ fun AppNavigation(
             LoadDetailScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onOpenMaps = onOpenUrl,
+                onCapturePod = { id ->
+                    navController.navigate(Screen.PodCapture.createRoute(id, "POD"))
+                },
+                onCaptureBol = { id ->
+                    navController.navigate(Screen.PodCapture.createRoute(id, "BOL"))
+                },
+                onPickupInspection = { id ->
+                    navController.navigate(Screen.ConditionReport.createRoute(id, "Pickup"))
+                },
+                onDeliveryInspection = { id ->
+                    navController.navigate(Screen.ConditionReport.createRoute(id, "Delivery"))
+                },
                 viewModel = viewModel
+            )
+        }
+
+        composable(Screen.Messages.route) {
+            MessagesScreen(
+                onConversationClick = { conversationId ->
+                    navController.navigate(Screen.Conversation.createRoute(conversationId))
+                },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = Screen.Conversation.route,
+            arguments = listOf(
+                navArgument("conversationId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val conversationId = backStackEntry.arguments?.getString("conversationId") ?: ""
+            ConversationScreen(
+                conversationId = conversationId,
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = Screen.PodCapture.route,
+            arguments = listOf(
+                navArgument("loadId") { type = NavType.StringType },
+                navArgument("captureType") { type = NavType.StringType },
+                navArgument("tripStopId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) { backStackEntry ->
+            val loadId = backStackEntry.arguments?.getString("loadId") ?: ""
+            val captureTypeStr = backStackEntry.arguments?.getString("captureType") ?: "POD"
+            val tripStopId = backStackEntry.arguments?.getString("tripStopId")
+            val captureType = when (captureTypeStr) {
+                "BOL" -> DocumentCaptureType.BOL
+                else -> DocumentCaptureType.POD
+            }
+
+            PodCaptureScreen(
+                loadId = loadId,
+                tripStopId = tripStopId,
+                captureType = captureType,
+                onNavigateBack = { navController.popBackStack() },
+                onCapturePhoto = {
+                    // TODO: Launch camera - platform specific implementation
+                }
+            )
+        }
+
+        composable(
+            route = Screen.ConditionReport.route,
+            arguments = listOf(
+                navArgument("loadId") { type = NavType.StringType },
+                navArgument("inspectionType") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val loadId = backStackEntry.arguments?.getString("loadId") ?: ""
+            val inspectionTypeStr =
+                backStackEntry.arguments?.getString("inspectionType") ?: "Pickup"
+            val inspectionType = when (inspectionTypeStr) {
+                "Delivery" -> InspectionType.DELIVERY
+                else -> InspectionType.PICKUP
+            }
+
+            ConditionReportScreen(
+                loadId = loadId,
+                inspectionType = inspectionType,
+                onNavigateBack = { navController.popBackStack() },
+                onCapturePhoto = {
+                    // TODO: Launch camera - platform specific implementation
+                },
+                onScanVin = {
+                    // TODO: Launch barcode scanner - platform specific implementation
+                }
             )
         }
 

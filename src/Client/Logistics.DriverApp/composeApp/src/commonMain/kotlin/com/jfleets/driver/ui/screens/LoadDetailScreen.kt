@@ -15,8 +15,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,6 +51,10 @@ import kotlin.time.ExperimentalTime
 fun LoadDetailScreen(
     onNavigateBack: () -> Unit,
     onOpenMaps: (String) -> Unit,
+    onCapturePod: (loadId: String) -> Unit = {},
+    onCaptureBol: (loadId: String) -> Unit = {},
+    onPickupInspection: (loadId: String) -> Unit = {},
+    onDeliveryInspection: (loadId: String) -> Unit = {},
     viewModel: LoadDetailViewModel
 ) {
     val userSettings = LocalUserSettings.current
@@ -153,6 +160,30 @@ fun LoadDetailScreen(
                     // Action Buttons
                     when (load.status) {
                         LoadStatus.DISPATCHED -> {
+                            // Capture BOL button
+                            OutlinedButton(
+                                onClick = { load.id?.let { onCaptureBol(it) } },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.Description, "BOL")
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Capture Bill of Lading")
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            // Pickup Inspection button
+                            OutlinedButton(
+                                onClick = { load.id?.let { onPickupInspection(it) } },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.Description, "Inspection")
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Pickup Vehicle Inspection")
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
                             Button(
                                 onClick = { viewModel.confirmPickup() },
                                 modifier = Modifier.fillMaxWidth(),
@@ -163,6 +194,30 @@ fun LoadDetailScreen(
                         }
 
                         LoadStatus.PICKED_UP -> {
+                            // Capture POD button
+                            OutlinedButton(
+                                onClick = { load.id?.let { onCapturePod(it) } },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.CameraAlt, "POD")
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Capture Proof of Delivery")
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            // Delivery Inspection button
+                            OutlinedButton(
+                                onClick = { load.id?.let { onDeliveryInspection(it) } },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Icon(Icons.Default.Description, "Inspection")
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text("Delivery Vehicle Inspection")
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
                             Button(
                                 onClick = { viewModel.confirmDelivery() },
                                 modifier = Modifier.fillMaxWidth(),

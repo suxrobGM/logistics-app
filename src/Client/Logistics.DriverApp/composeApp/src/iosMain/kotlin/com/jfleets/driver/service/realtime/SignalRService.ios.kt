@@ -1,15 +1,12 @@
-package com.jfleets.driver.service
+package com.jfleets.driver.service.realtime
 
-import com.jfleets.driver.service.realtime.SignalRConnectionState
+import com.jfleets.driver.service.PreferencesManager
 import com.jfleets.driver.util.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 /**
  * iOS implementation of SignalRService using Microsoft's official SignalR Swift client.
@@ -36,6 +33,7 @@ actual class SignalRService(
 
             @Suppress("UNUSED_VARIABLE")
             val token = preferencesManager.getAccessToken() ?: ""
+
             @Suppress("UNUSED_VARIABLE")
             val tenantId = preferencesManager.getTenantId() ?: ""
 
@@ -83,44 +81,46 @@ actual class SignalRService(
         }
     }
 
-    actual suspend fun sendLocationUpdate(location: LocationUpdate) = withContext(Dispatchers.Main) {
-        if (_connectionState.value != SignalRConnectionState.CONNECTED) {
-            Logger.w("SignalR iOS: Cannot send location - not connected")
-            return@withContext
+    actual suspend fun sendLocationUpdate(location: LocationUpdate) =
+        withContext(Dispatchers.Main) {
+            if (_connectionState.value != SignalRConnectionState.CONNECTED) {
+                Logger.w("SignalR iOS: Cannot send location - not connected")
+                return@withContext
+            }
+
+            try {
+                @Suppress("UNUSED_VARIABLE")
+                val tenantId = preferencesManager.getTenantId() ?: ""
+
+                @Suppress("UNUSED_VARIABLE")
+                val truckId = preferencesManager.getTruckId() ?: ""
+
+                // TODO: When cinterop is configured:
+                // suspendCancellableCoroutine { cont ->
+                //     bridge?.sendLocationUpdate(
+                //         truckId = truckId,
+                //         tenantId = tenantId,
+                //         latitude = location.latitude,
+                //         longitude = location.longitude,
+                //         truckNumber = location.truckNumber,
+                //         driversName = location.driverName,
+                //         addressLine1 = location.addressLine1,
+                //         city = location.city,
+                //         state = location.state
+                //     ) { error ->
+                //         if (error != null) {
+                //             cont.resumeWithException(Exception(error.localizedDescription))
+                //         } else {
+                //             cont.resume(Unit)
+                //         }
+                //     }
+                // }
+
+                Logger.d("SignalR iOS: Location update prepared: ${location.latitude}, ${location.longitude}")
+            } catch (e: Exception) {
+                Logger.e("SignalR iOS: Failed to send location: ${e.message}")
+            }
         }
-
-        try {
-            @Suppress("UNUSED_VARIABLE")
-            val tenantId = preferencesManager.getTenantId() ?: ""
-            @Suppress("UNUSED_VARIABLE")
-            val truckId = preferencesManager.getTruckId() ?: ""
-
-            // TODO: When cinterop is configured:
-            // suspendCancellableCoroutine { cont ->
-            //     bridge?.sendLocationUpdate(
-            //         truckId = truckId,
-            //         tenantId = tenantId,
-            //         latitude = location.latitude,
-            //         longitude = location.longitude,
-            //         truckNumber = location.truckNumber,
-            //         driversName = location.driverName,
-            //         addressLine1 = location.addressLine1,
-            //         city = location.city,
-            //         state = location.state
-            //     ) { error ->
-            //         if (error != null) {
-            //             cont.resumeWithException(Exception(error.localizedDescription))
-            //         } else {
-            //             cont.resume(Unit)
-            //         }
-            //     }
-            // }
-
-            Logger.d("SignalR iOS: Location update prepared: ${location.latitude}, ${location.longitude}")
-        } catch (e: Exception) {
-            Logger.e("SignalR iOS: Failed to send location: ${e.message}")
-        }
-    }
 
     actual fun isConnected(): Boolean {
         // TODO: When cinterop is configured:

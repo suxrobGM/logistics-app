@@ -10,6 +10,9 @@ actual object LocationTracker : KoinComponent {
     private val context: Context by inject()
     private var isServiceRunning = false
 
+    // Service class name in the app module (resolved via reflection)
+    private const val SERVICE_CLASS_NAME = "com.jfleets.driver.service.LocationTrackingService"
+
     actual fun start() {
         if (isServiceRunning) {
             Logger.d("Location tracking already running")
@@ -17,7 +20,8 @@ actual object LocationTracker : KoinComponent {
         }
 
         try {
-            val intent = Intent(context, LocationTrackingService::class.java)
+            val serviceClass = Class.forName(SERVICE_CLASS_NAME)
+            val intent = Intent(context, serviceClass)
             context.startForegroundService(intent)
             isServiceRunning = true
             Logger.d("Location tracking service started")
@@ -28,7 +32,8 @@ actual object LocationTracker : KoinComponent {
 
     actual fun stop() {
         try {
-            val intent = Intent(context, LocationTrackingService::class.java)
+            val serviceClass = Class.forName(SERVICE_CLASS_NAME)
+            val intent = Intent(context, serviceClass)
             context.stopService(intent)
             isServiceRunning = false
             Logger.d("Location tracking service stopped")
