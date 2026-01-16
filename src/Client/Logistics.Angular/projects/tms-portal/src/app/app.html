@@ -1,16 +1,16 @@
 <p-toast key="notification" position="top-right" />
 <p-confirm-dialog key="confirmDialog" position="center" />
 
-<div class="flex">
-  @if (isAuthenticated()) {
+@if (showLayout()) {
+  <div class="flex">
     <app-sidebar />
-  }
-  <div class="w-full pb-10">
-    @if (isAuthenticated()) {
+    <div class="w-full pb-10">
       <app-breadcrumb />
-    }
-    <div class="p-2">
-      <router-outlet />
+      <div class="p-2">
+        <router-outlet />
+      </div>
     </div>
   </div>
-</div>
+} @else {
+  <router-outlet />
+}

@@ -1,7 +1,6 @@
 import type { Routes } from "@angular/router";
-import { Error404Component } from "@/pages/error404";
+import { NotFoundComponent, UnauthorizedComponent } from "@/pages/errors";
 import { LoginComponent } from "@/pages/login";
-import { UnauthorizedComponent } from "@/pages/unauthorized";
 
 export const appRoutes: Routes = [
   {
@@ -95,7 +94,7 @@ export const appRoutes: Routes = [
   },
   {
     path: "404",
-    component: Error404Component,
+    component: NotFoundComponent,
   },
   {
     path: "**",

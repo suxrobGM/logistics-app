@@ -1,17 +1,24 @@
-import { Component, inject, input } from "@angular/core";
-import { Router, RouterModule } from "@angular/router";
+import { Location } from "@angular/common";
+import { Component, computed, inject, input } from "@angular/core";
+import { Router, RouterLink } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { AuthService } from "@/core/auth";
 import { TenantService } from "@/core/services";
 
 @Component({
   selector: "app-unauthorized",
   templateUrl: "./unauthorized.html",
-  imports: [RouterModule],
+  imports: [RouterLink, ButtonModule],
 })
 export class UnauthorizedComponent {
+  private readonly location = inject(Location);
+  private readonly authService = inject(AuthService);
   private readonly tenantService = inject(TenantService);
   private readonly router = inject(Router);
 
   protected readonly reason = input<string | null>();
+
+  protected readonly isSubscriptionIssue = computed(() => this.reason() === "subscription");
 
   constructor() {
     this.tenantService.tenantDataChanged$.subscribe(() => {
@@ -22,11 +29,11 @@ export class UnauthorizedComponent {
     });
   }
 
-  protected getReasonMessage(): string {
-    if (this.reason() === "subscription") {
-      return "Your subscription is not active. Please renew it.";
-    }
+  protected goBack(): void {
+    this.location.back();
+  }
 
-    return "You do not have permission to access this page.";
+  protected logout(): void {
+    this.authService.logout();
   }
 }
