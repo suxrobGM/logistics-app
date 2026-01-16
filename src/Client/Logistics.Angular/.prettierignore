@@ -1,0 +1,6 @@
+**/.VSCodeCounter
+**/node_modules
+**/dist
+**/assets
+**/.angular
+**/generated
