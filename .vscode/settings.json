@@ -1,7 +1,7 @@
 {
   "editor.tabSize": 2,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "prettier.configPath": "./src/Client/Logistics.OfficeApp/prettier.config.js",
+  "prettier.configPath": "./src/Client/Logistics.Angular/prettier.config.js",
   "editor.formatOnSave": true,
   "files.exclude": {
     "**/node_modules": true,
