@@ -8,7 +8,7 @@ export const authConfig: OpenIdConfiguration = {
   unauthorizedRoute: "/unauthorized",
   redirectUrl: window.location.origin,
   postLogoutRedirectUri: window.location.origin,
-  clientId: "logistics.officeapp",
+  clientId: "logistics.tmsportal",
   scope: "openid profile offline_access roles tenant logistics.api.tenant",
   responseType: "code",
   silentRenew: true,

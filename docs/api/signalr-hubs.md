@@ -8,6 +8,7 @@ Real-time communication via SignalR WebSocket connections.
 |-----|-----|---------|
 | Live Tracking | `/hubs/live-tracking` | GPS location updates |
 | Notifications | `/hubs/notification` | Push notifications |
+| Messaging | `/hubs/messaging` | Real-time chat messages |
 
 ## Connecting to Hubs
 
@@ -81,6 +82,83 @@ Dispatchers automatically join groups for their tenant's drivers:
 ```typescript
 // Server-side (automatic on connection)
 await Groups.AddToGroupAsync(Context.ConnectionId, $"tenant-{tenantId}");
+```
+
+## Messaging Hub
+
+Real-time chat messaging between employees (dispatchers and drivers).
+
+### Client → Server Methods
+
+**JoinConversation**: Join a conversation to receive messages
+
+```typescript
+await connection.invoke('JoinConversation', conversationId);
+```
+
+**LeaveConversation**: Leave a conversation
+
+```typescript
+await connection.invoke('LeaveConversation', conversationId);
+```
+
+**SendMessage**: Send a message to a conversation
+
+```typescript
+await connection.invoke('SendMessage', {
+  conversationId: 'conv-123',
+  content: 'Hello!'
+});
+```
+
+**MarkAsRead**: Mark a message as read
+
+```typescript
+await connection.invoke('MarkAsRead', conversationId, messageId, readById);
+```
+
+**SendTypingIndicator**: Broadcast typing status
+
+```typescript
+await connection.invoke('SendTypingIndicator', conversationId, true);
+```
+
+### Server → Client Events
+
+**ReceiveMessage**: New message received
+
+```typescript
+connection.on('ReceiveMessage', (message: MessageDto) => {
+  addMessageToChat(message);
+});
+```
+
+**MessageRead**: Message was read by another user
+
+```typescript
+connection.on('MessageRead', (messageId: string, readBy: string) => {
+  updateMessageReadStatus(messageId, readBy);
+});
+```
+
+**TypingIndicator**: User is typing
+
+```typescript
+connection.on('TypingIndicator', (dto: TypingIndicatorDto) => {
+  if (dto.isTyping) {
+    showTypingIndicator(dto.userId);
+  } else {
+    hideTypingIndicator(dto.userId);
+  }
+});
+```
+
+**UserJoinedConversation**: User joined the conversation
+
+```typescript
+connection.on('UserJoinedConversation', (conversationId, userId, time) => {
+  console.log(`User ${userId} joined at ${time}`);
+});
 ```
 
 ## Notification Hub

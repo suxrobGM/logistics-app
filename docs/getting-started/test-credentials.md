@@ -4,7 +4,7 @@ Default accounts available after seeding the database.
 
 ## Live Demo
 
-A live demo is available at [https://logistics-office.suxrobgm.net](https://logistics-office.suxrobgm.net)
+A live demo is available at [https://tms.suxrobgm.net](https://tms.suxrobgm.net)
 
 > **Warning**: The demo uses test Stripe keys. Do not enter real payment information.
 

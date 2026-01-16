@@ -37,9 +37,14 @@ src/
 ├── Aspire/
 │   └── Logistics.Aspire.AppHost       # Orchestration
 ├── Client/
-│   ├── Logistics.OfficeApp            # Angular frontend
+│   ├── Logistics.Angular/             # Angular workspace
+│   │   ├── projects/
+│   │   │   ├── shared/                # @logistics/shared library
+│   │   │   ├── tms-portal/            # TMS Portal (dispatchers)
+│   │   │   └── customer-portal/       # Customer Portal (self-service)
+│   │   └── angular.json
 │   ├── Logistics.DriverApp            # Kotlin Multiplatform mobile
-│   └── Logistics.HttpClient           # Shared API client
+│   └── Logistics.HttpClient           # Shared API client (.NET)
 ├── Core/
 │   ├── Logistics.Application          # Business logic (CQRS)
 │   ├── Logistics.Domain               # Entities, domain events
@@ -73,7 +78,7 @@ src/
 
 | Technology | Purpose |
 |------------|---------|
-| Angular 21 | Office App SPA |
+| Angular 21 | TMS Portal & Customer Portal |
 | PrimeNG | UI components |
 | Blazor Server | Admin App |
 | Kotlin Multiplatform | Driver Mobile App |
@@ -96,7 +101,8 @@ src/
 | Stripe | Payment processing |
 | Firebase | Push notifications |
 | Mapbox | Maps and geocoding |
-| Azure Blob Storage | File storage (optional) |
+| Azure Blob Storage | Document/photo storage |
+| NHTSA API | VIN decoding (vehicle info) |
 
 ## Design Patterns
 

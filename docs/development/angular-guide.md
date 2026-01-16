@@ -1,30 +1,67 @@
 # Angular Development Guide
 
-Patterns and conventions for the Office App (Angular 21).
+Patterns and conventions for the Angular workspace (Angular 21).
 
-## Project Structure
+## Workspace Structure
+
+The Angular frontend uses a monorepo workspace with multiple projects:
 
 ```text
-src/Client/Logistics.OfficeApp/
-├── src/
-│   ├── app/
-│   │   ├── core/              # Singleton services
-│   │   │   ├── auth/          # Authentication
-│   │   │   ├── api/           # Generated API client
-│   │   │   └── services/      # Core services
-│   │   ├── shared/            # Shared components
-│   │   │   ├── components/    # Reusable components
-│   │   │   └── pipes/         # Custom pipes
-│   │   ├── pages/          # Feature modules
-│   │   │   ├── dashboard/
-│   │   │   ├── loads/
-│   │   │   ├── customers/
-│   │   │   └── ...
-│   │   ├── app.component.ts
-│   │   ├── app.config.ts
-│   │   └── app.routes.ts
-│   └── environments/
-└── package.json
+src/Client/Logistics.Angular/
+├── angular.json                    # Workspace configuration
+├── package.json                    # Shared dependencies
+├── tsconfig.json                   # Base TypeScript config
+├── ng-openapi-gen.json             # API client generation
+├── projects/
+│   ├── shared/                     # @logistics/shared library
+│   │   ├── src/lib/
+│   │   │   ├── api/                # Generated API client
+│   │   │   ├── errors/             # Error handling
+│   │   │   ├── services/           # Shared services (toast, cache)
+│   │   │   └── interceptors/       # HTTP interceptors
+│   │   └── ng-package.json
+│   ├── tms-portal/                 # TMS Portal (dispatchers/managers)
+│   │   └── src/app/
+│   │       ├── core/               # App-specific auth, services
+│   │       ├── shared/             # TMS-specific components
+│   │       └── pages/              # Feature pages
+│   └── customer-portal/            # Customer Portal (self-service)
+│       └── src/app/
+│           ├── core/               # Customer auth
+│           ├── shared/             # Customer components
+│           └── pages/              # Customer features
+└── scripts/
+```
+
+## Projects
+
+| Project | Prefix | Port | Description |
+|---------|--------|------|-------------|
+| @logistics/shared | `shared-` | N/A | Shared library (API, services) |
+| @logistics/tms-portal | `app-` | 7003 | Internal TMS for dispatchers |
+| @logistics/customer-portal | `cp-` | 7004 | Customer self-service portal |
+
+## TMS Portal Structure
+
+```text
+projects/tms-portal/src/app/
+├── core/                    # Singleton services
+│   ├── auth/                # Authentication (OIDC)
+│   ├── interceptors/        # HTTP interceptors
+│   └── services/            # Core services (messaging, etc.)
+├── shared/                  # Shared components
+│   ├── components/          # Reusable UI components
+│   └── pipes/               # Custom pipes
+├── pages/                   # Feature pages
+│   ├── dashboard/
+│   ├── loads/
+│   ├── customers/
+│   ├── messages/            # Real-time messaging
+│   ├── inspections/         # Vehicle condition reports
+│   └── ...
+├── app.component.ts
+├── app.config.ts
+└── app.routes.ts
 ```
 
 ## Key Patterns
@@ -184,11 +221,15 @@ After API changes, regenerate the TypeScript client:
 bun run gen:api
 ```
 
-This reads the OpenAPI spec from the running API and generates typed services.
+This reads the OpenAPI spec from the running API and generates typed services in `projects/shared/src/lib/api/`.
 
 ### Using API Services
 
+Import API services from the shared library:
+
 ```typescript
+import { LoadsApiService } from '@logistics/shared/api';
+
 @Component({ ... })
 export class LoadListComponent {
   private api = inject(LoadsApiService);
@@ -205,22 +246,37 @@ export class LoadListComponent {
 }
 ```
 
+### Shared Library Imports
+
+```typescript
+// API services
+import { LoadsApiService, CustomersApiService } from '@logistics/shared/api';
+
+// Error handling
+import { ErrorHandlerService } from '@logistics/shared/errors';
+
+// Common services
+import { ToastService, HttpCacheService } from '@logistics/shared/services';
+```
+
 ## Common Commands
 
 ```bash
-# Development server
-bun run start
+# Development servers
+bun run start:tms         # TMS Portal on https://localhost:7003
+bun run start:customer    # Customer Portal on https://localhost:7004
 
-# Production build
-bun run build
+# Build
+bun run build:shared      # Build shared library
+bun run build:tms         # Build TMS Portal
+bun run build:customer    # Build Customer Portal
+bun run build:all         # Build all projects
 
-# Linting
+# Linting & formatting
 bun run lint
-
-# Format code
 bun run format
 
-# Generate API client
+# Generate API client (outputs to shared library)
 bun run gen:api
 ```
 

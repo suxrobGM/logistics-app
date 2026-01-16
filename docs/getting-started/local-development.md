@@ -96,9 +96,17 @@ dotnet run --project src/Presentation/Logistics.AdminApp
 **Terminal 4 - Office App**:
 
 ```bash
-cd src/Client/Logistics.OfficeApp
-bun run start
+cd src/Client/Logistics.Angular
+bun run start:tms
 # Runs on https://localhost:7003
+```
+
+**Terminal 5 - Customer Portal (Optional)**:
+
+```bash
+cd src/Client/Logistics.Angular
+bun run start:customer
+# Runs on https://localhost:7004
 ```
 
 Or use the provided scripts:
@@ -107,7 +115,8 @@ Or use the provided scripts:
 scripts/run-api.cmd
 scripts/run-identity.cmd
 scripts/run-adminapp.cmd
-scripts/run-officeapp.cmd
+scripts/run-tms.cmd
+scripts/run-customer.cmd
 ```
 
 ## Step 6: Configure Stripe (Optional)

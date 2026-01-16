@@ -13,15 +13,63 @@
 
 Logistics TMS is purpose-built for trucking fleets specializing in intermodal containers and vehicle transport. It replaces spreadsheet-based workflows with an end-to-end digital system.
 
-**Key Features:**
+## Features
 
-- **Multi-Tenant**: Each company gets isolated database and data
-- **Real-Time Tracking**: GPS tracking of drivers and vehicles via SignalR
-- **Load Management**: Create, assign, and track shipments from origin to destination
-- **ELD/HOS Compliance**: Integration with ELD providers (Samsara, Motive) for Hours of Service tracking
-- **Invoicing & Payments**: Generate invoices and process payments with Stripe
-- **Driver Mobile App**: Native Android/iOS app for drivers to manage their tasks
-- **Analytics Dashboard**: Insights into operations, driver performance, and financials
+### Core Operations
+
+| Feature | Description |
+|---------|-------------|
+| **Multi-Tenant Architecture** | Complete data isolation per company with separate databases. Each trucking company gets their own secure environment with customizable settings. |
+| **Load Management** | Create, assign, and track shipments from origin to destination. Manage pickup/delivery stops, special instructions, and cargo details. |
+| **Trip Planning** | Organize multiple loads into trips with optimized routing. Assign drivers and trucks to trips with automatic conflict detection. |
+| **Fleet Management** | Track trucks, trailers, and equipment. Monitor maintenance schedules, registration expiration, and vehicle assignments. |
+| **Customer Management** | Maintain customer profiles with contact info, billing addresses, and shipment history. Support for multiple contacts per customer. |
+
+### Real-Time Communication
+
+| Feature | Description |
+|---------|-------------|
+| **GPS Tracking** | Live driver location updates via SignalR WebSocket connections. View all active drivers on an interactive map with route visualization. |
+| **In-App Messaging** | Real-time chat between dispatchers and drivers. Supports direct conversations, load-specific threads, and company-wide announcements. Includes read receipts and typing indicators. |
+| **Push Notifications** | Instant alerts for load assignments, status changes, and important updates via Firebase Cloud Messaging to mobile devices. |
+
+### Documentation & Compliance
+
+| Feature | Description |
+|---------|-------------|
+| **Proof of Delivery (POD)** | Capture delivery confirmation with photos, digital signatures, recipient name, and GPS coordinates. Documents stored securely in Azure Blob Storage. |
+| **Bill of Lading (BOL)** | Upload and manage BOL documents with automatic association to loads. Support for multiple document formats. |
+| **Vehicle Condition Reports** | Pre-trip and post-trip inspections (DVIR) with interactive damage marking on vehicle diagrams. Record damage severity, location, and photos for compliance. |
+| **VIN Decoding** | Automatic vehicle information lookup via NHTSA API. Enter a 17-character VIN to retrieve make, model, year, body class, and engine specifications. |
+| **ELD/HOS Compliance** | Integration with ELD providers (Samsara, Motive/KeepTruckin) for Hours of Service tracking. Real-time duty status, driving hours, and violation alerts. |
+| **Document Storage** | Centralized document management for load paperwork, employee records, and compliance documents with Azure Blob Storage. |
+
+### Financial Management
+
+| Feature | Description |
+|---------|-------------|
+| **Invoicing** | Generate professional invoices for completed loads. Support for itemized charges, fuel surcharges, and accessorial fees. |
+| **Payment Processing** | Accept payments via Stripe integration. Support for credit cards and ACH transfers with automatic reconciliation. |
+| **Payroll Management** | Calculate driver pay based on miles, percentage, or flat rates. Generate payroll reports and track payment history. |
+| **Financial Reports** | Revenue tracking, expense analysis, and profitability reports by customer, driver, or time period. |
+
+### Analytics & Reporting
+
+| Feature | Description |
+|---------|-------------|
+| **Operations Dashboard** | Real-time overview of active loads, available drivers, and fleet utilization. Key metrics at a glance. |
+| **Driver Performance** | Track on-time delivery rates, miles driven, and efficiency metrics per driver. Identify top performers and improvement areas. |
+| **Customer Analytics** | Shipment volume trends, revenue per customer, and customer retention metrics. |
+| **Financial Insights** | Daily/weekly/monthly gross revenue, expenses, and profit margins with trend visualization. |
+
+### User Access
+
+| Feature | Description |
+|---------|-------------|
+| **Role-Based Access Control** | Six user roles with granular permissions: Super Admin, Owner, Manager, Dispatcher, Driver, and Customer. |
+| **TMS Portal** | Full-featured web application for dispatchers and managers to manage all operations. |
+| **Customer Portal** | Self-service portal for customers to track shipments, view documents, and access invoices. |
+| **Driver Mobile App** | Native Android/iOS app for drivers to receive assignments, update statuses, capture POD, and communicate with dispatch. |
 
 ## Quick Start
 
@@ -39,7 +87,7 @@ See [Local Development Guide](docs/getting-started/local-development.md)
 
 ## Live Demo
 
-Try the application: [https://office.suxrobgm.net](https://office.suxrobgm.net)
+Try the application: [https://tms.suxrobgm.net](https://tms.suxrobgm.net)
 
 **Test Credentials:**
 
@@ -71,7 +119,8 @@ Try the application: [https://office.suxrobgm.net](https://office.suxrobgm.net)
 | App | Technology | Purpose |
 |-----|------------|---------|
 | Admin App | Blazor | Super admin management |
-| Office App | Angular | Dispatcher/manager interface |
+| TMS Portal | Angular | Dispatcher/manager interface |
+| Customer Portal | Angular | Customer self-service (shipment tracking, documents) |
 | Driver App | Kotlin Multiplatform | Mobile app for drivers |
 | API | ASP.NET Core | RESTful backend |
 | Identity Server | Duende IdentityServer | OAuth2/OIDC auth |

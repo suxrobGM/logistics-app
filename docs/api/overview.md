@@ -89,11 +89,33 @@ See [Authentication](authentication.md) for details on obtaining tokens.
 | Tenants | `/api/tenants` | Tenant management |
 | Subscriptions | `/api/subscriptions` | Billing plans |
 
-### Utilities
+### Messaging
+
+| Resource | Endpoint | Description |
+|----------|----------|-------------|
+| Conversations | `/api/messages/conversations` | Get/create conversations |
+| Messages | `/api/messages` | Send and receive messages |
+| Unread Count | `/api/messages/unread-count` | Get unread message count |
+
+### Inspections
+
+| Resource | Endpoint | Description |
+|----------|----------|-------------|
+| Condition Reports | `/api/inspections/condition-reports` | Vehicle condition reports (DVIR) |
+| VIN Decoder | `/api/inspections/decode-vin` | Decode VIN to vehicle info |
+
+### Documents
 
 | Resource | Endpoint | Description |
 |----------|----------|-------------|
 | Documents | `/api/documents` | File management |
+| Proof of Delivery | `/api/documents/pod` | Capture POD with photos/signature |
+| Bill of Lading | `/api/documents/bol` | Capture BOL documents |
+
+### Utilities
+
+| Resource | Endpoint | Description |
+|----------|----------|-------------|
 | Notifications | `/api/notifications` | Push notifications |
 | Reports | `/api/reports` | Report generation |
 | Stats | `/api/stats` | Analytics data |
@@ -160,19 +182,20 @@ For real-time features, connect to SignalR hubs:
 
 - **GPS Tracking**: `/hubs/live-tracking`
 - **Notifications**: `/hubs/notification`
+- **Messaging**: `/hubs/messaging`
 
 See [SignalR Hubs](signalr-hubs.md) for details.
 
 ## API Client Generation
 
-The Angular Office App generates its API client from OpenAPI:
+The Angular apps generate their API client from OpenAPI:
 
 ```bash
-cd src/Client/Logistics.OfficeApp
+cd src/Client/Logistics.Angular
 bun run gen:api
 ```
 
-This creates TypeScript types and services matching the API.
+This creates TypeScript types and services matching the API in the shared library.
 
 ## Next Steps
 

@@ -29,13 +29,17 @@ dotnet run --project src/Presentation/Logistics.DbMigrator      # Run migrations
 ### Frontend (Angular 21)
 
 ```bash
-cd src/Client/Logistics.OfficeApp
-bun install           # Install dependencies
-bun run start         # Dev server on https://localhost:7003
-bun run build         # Production build
-bun run lint          # ESLint
-bun run format        # Prettier
-bun run gen:api       # Regenerate API client from OpenAPI spec
+cd src/Client/Logistics.Angular
+bun install             # Install dependencies
+bun run start:tms       # TMS Portal on https://localhost:7003
+bun run start:customer  # Customer Portal on https://localhost:7004
+bun run build:shared    # Build shared library
+bun run build:tms       # Build TMS Portal
+bun run build:customer  # Build Customer Portal
+bun run build:all       # Build all projects
+bun run lint            # ESLint
+bun run format          # Prettier
+bun run gen:api         # Regenerate API client from OpenAPI spec
 ```
 
 ### Mobile (Kotlin Multiplatform)
@@ -73,7 +77,7 @@ Shared (Models)         → DTOs shared between backend and frontend
 
 ### Key Domain Entities
 
-`Tenant`, `User`, `Customer`, `Load`, `Trip`, `Employee/Driver`, `Invoice`, `Payment`, `Truck`, `Document`, `Subscription`, `EldProviderConfiguration`, `DriverHosStatus`, `EldDriverMapping`
+`Tenant`, `User`, `Customer`, `Load`, `Trip`, `Employee/Driver`, `Invoice`, `Payment`, `Truck`, `Document`, `Subscription`, `EldProviderConfiguration`, `DriverHosStatus`, `EldDriverMapping`, `Conversation`, `Message`, `VehicleConditionReport`
 
 ### Service Ports
 
@@ -82,7 +86,8 @@ Shared (Models)         → DTOs shared between backend and frontend
 | API | 7000 |
 | Identity Server | 7001 |
 | Admin App (Blazor) | 7002 |
-| Office App (Angular) | 7003 |
+| TMS Portal (Angular) | 7003 |
+| Customer Portal (Angular) | 7004 |
 | Aspire Dashboard | 8100 |
 
 ## Code Patterns
@@ -151,9 +156,9 @@ var dtos = entities.Select(e => e.ToDto()).ToList();
 
 **Do NOT** manually map properties in handlers. Always create or extend mappers in `Logistics.Mappings`.
 
-### Angular Patterns (Office App)
+### Angular Patterns (TMS Portal & Customer Portal)
 
-- Described in detail in `src/Client/Logistics.OfficeApp/CLAUDE.md`
+- Described in detail in `src/Client/Logistics.Angular/CLAUDE.md`
 
 ## External Integrations
 
@@ -193,10 +198,28 @@ The ELD (Electronic Logging Device) integration pulls driver Hours of Service da
 
 ## User Roles
 
-`SuperAdmin` (Admin App), `Owner`, `Manager`, `Dispatcher` (Office App), `Driver` (Mobile App)
+`SuperAdmin` (Admin App), `Owner`, `Manager`, `Dispatcher` (TMS Portal), `Driver` (Mobile App), `Customer` (Customer Portal)
 
 ## Important Notes
 
 - `Logistics.DriverApp.Legacy` (MAUI) is deprecated; use the Kotlin Multiplatform version
-- Angular app has its own rules in `src/Client/Logistics.OfficeApp/CLAUDE.md`
+- Angular apps have their own rules in `src/Client/Logistics.Angular/CLAUDE.md`
 - Aspire automatically runs DB migrations on startup
+
+## New Features
+
+### Messaging
+
+Real-time in-app messaging between employees via SignalR (`/hubs/messaging`). Supports conversations, read receipts, and typing indicators.
+
+### Proof of Delivery (POD)
+
+Capture delivery confirmation with photos, digital signatures, recipient name, and GPS coordinates. Stored in Azure Blob Storage.
+
+### Vehicle Condition Reports (DVIR)
+
+Pre-trip and post-trip vehicle inspections with visual damage marking on vehicle diagrams. Includes VIN decoding for automatic vehicle info lookup.
+
+### VIN Decoding
+
+Automatic vehicle information lookup via NHTSA API. Decodes 17-character VINs to retrieve make, model, year, body class, and engine specifications.
