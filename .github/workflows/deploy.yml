@@ -25,14 +25,36 @@ env:
 
 jobs:
   build:
-    name: Build Docker Images
+    name: Build ${{ matrix.image }}
     runs-on: ubuntu-latest
     concurrency:
-      group: deploy-prod
+      group: build-${{ matrix.image }}
       cancel-in-progress: true
     permissions:
       contents: read
       packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: api
+            context: .
+            file: ./src/Presentation/Logistics.API/Dockerfile
+          - image: identity
+            context: .
+            file: ./src/Presentation/Logistics.IdentityServer/Dockerfile
+          - image: migrator
+            context: .
+            file: ./src/Presentation/Logistics.DbMigrator/Dockerfile
+          - image: admin
+            context: .
+            file: ./src/Client/Logistics.AdminApp/Dockerfile
+          - image: tms-portal
+            context: ./src/Client/Logistics.Angular
+            file: ./src/Client/Logistics.Angular/Dockerfile.tms
+          - image: customer-portal
+            context: ./src/Client/Logistics.Angular
+            file: ./src/Client/Logistics.Angular/Dockerfile.customer
 
     steps:
       - name: Checkout code
@@ -52,65 +74,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PAT }}
 
-      - name: Build and push API
+      - name: Build and push ${{ matrix.image }}
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./src/Presentation/Logistics.API/Dockerfile
+          context: ${{ matrix.context }}
+          file: ${{ matrix.file }}
           push: true
-          tags: ${{ env.REGISTRY }}/${{ steps.repo.outputs.name }}/api:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build and push Identity Server
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./src/Presentation/Logistics.IdentityServer/Dockerfile
-          push: true
-          tags: ${{ env.REGISTRY }}/${{ steps.repo.outputs.name }}/identity:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build and push Migrator
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./src/Presentation/Logistics.DbMigrator/Dockerfile
-          push: true
-          tags: ${{ env.REGISTRY }}/${{ steps.repo.outputs.name }}/migrator:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build and push Admin App
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./src/Client/Logistics.AdminApp/Dockerfile
-          push: true
-          tags: ${{ env.REGISTRY }}/${{ steps.repo.outputs.name }}/admin:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build and push TMS Portal
-        uses: docker/build-push-action@v6
-        with:
-          context: ./src/Client/Logistics.Angular
-          file: ./src/Client/Logistics.Angular/Dockerfile.tms
-          push: true
-          tags: ${{ env.REGISTRY }}/${{ steps.repo.outputs.name }}/tms-portal:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build and push Customer Portal
-        uses: docker/build-push-action@v6
-        with:
-          context: ./src/Client/Logistics.Angular
-          file: ./src/Client/Logistics.Angular/Dockerfile.customer
-          push: true
-          tags: ${{ env.REGISTRY }}/${{ steps.repo.outputs.name }}/customer-portal:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          tags: ${{ env.REGISTRY }}/${{ steps.repo.outputs.name }}/${{ matrix.image }}:latest
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ steps.repo.outputs.name }}/${{ matrix.image }}:buildcache
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ steps.repo.outputs.name }}/${{ matrix.image }}:buildcache,mode=max
 
   deploy:
     name: Deploy to VPS
@@ -118,7 +90,7 @@ jobs:
     needs: build
     concurrency:
       group: deploy-prod
-      cancel-in-progress: true
+      cancel-in-progress: false
 
     steps:
       - name: Checkout code

@@ -13,7 +13,7 @@ RUN dotnet restore src/Presentation/Logistics.DbMigrator/Logistics.DbMigrator.cs
 
 # Build and publish
 WORKDIR /logistics/src/Presentation/Logistics.DbMigrator
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish -c Release -o /app/publish --no-restore
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:10.0

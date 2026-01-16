@@ -13,7 +13,7 @@ RUN dotnet restore src/Presentation/Logistics.IdentityServer/Logistics.IdentityS
 
 # Build and publish
 WORKDIR /logistics/src/Presentation/Logistics.IdentityServer
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish -c Release -o /app/publish --no-restore
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:10.0

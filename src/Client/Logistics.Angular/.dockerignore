@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+.bun/
+
+# Build outputs
+dist/
+.angular/
+
+# IDE and editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+*.log
+*.md
+.editorconfig
+.prettierrc
+prettoier.config.js
+.eslintrc*
+eslint.config.*
+tsconfig.spec.json

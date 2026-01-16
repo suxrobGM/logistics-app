@@ -13,7 +13,7 @@ RUN dotnet restore src/Client/Logistics.AdminApp/Logistics.AdminApp.csproj
 
 # Build and publish
 WORKDIR /logistics/src/Client/Logistics.AdminApp
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet publish -c Release -o /app/publish --no-restore
 
 # Runtime stage - use nginx to serve static Blazor WASM files
 FROM nginx:alpine
