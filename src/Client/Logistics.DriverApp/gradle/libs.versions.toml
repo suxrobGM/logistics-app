@@ -14,8 +14,8 @@ androidx-datastore = "1.2.0"
 compose-activity = "1.12.2"
 
 # JetBrains Compose Multiplatform Libraries
-jetbrains-lifecycle = "2.9.6"
-jetbrains-navigation = "2.9.1"
+jetbrains-lifecycle = "2.10.0-alpha07"
+jetbrains-navigation3 = "1.0.0-alpha06"
 
 # Networking
 ktor = "3.3.3"
@@ -70,7 +70,8 @@ koin-android = { module = "io.insert-koin:koin-android" }
 # JetBrains Compose Multiplatform
 jetbrains-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "jetbrains-lifecycle" }
 jetbrains-lifecycle-runtime = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "jetbrains-lifecycle" }
-jetbrains-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "jetbrains-navigation" }
+jetbrains-lifecycle-viewmodel-navigation3 = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "jetbrains-lifecycle" }
+jetbrains-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "jetbrains-navigation3" }
 
 # AndroidX Core
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
@@ -112,7 +113,8 @@ ktor-common = [
 jetbrains-compose-multiplatform = [
     "jetbrains-lifecycle-viewmodel",
     "jetbrains-lifecycle-runtime",
-    "jetbrains-navigation-compose"
+    "jetbrains-lifecycle-viewmodel-navigation3",
+    "jetbrains-navigation3-ui"
 ]
 
 maps = [

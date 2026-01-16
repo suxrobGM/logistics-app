@@ -1,31 +1,65 @@
 package com.jfleets.driver.navigation
 
-sealed class Screen(val route: String) {
-    object Login : Screen("login")
-    object Dashboard : Screen("dashboard")
-    object Stats : Screen("stats")
-    object PastLoads : Screen("past_loads")
-    object LoadDetail : Screen("load_detail/{loadId}") {
-        fun createRoute(loadId: String) = "load_detail/$loadId"
-    }
+import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
 
-    object Messages : Screen("messages")
-    object Conversation : Screen("conversation/{conversationId}") {
-        fun createRoute(conversationId: String) = "conversation/$conversationId"
-    }
+/**
+ * Navigation routes for the Driver app using Navigation 3.
+ * Each route implements NavKey for type-safe navigation.
+ */
 
-    object PodCapture : Screen("pod_capture/{loadId}/{captureType}?tripStopId={tripStopId}") {
-        fun createRoute(loadId: String, captureType: String, tripStopId: String? = null): String {
-            val base = "pod_capture/$loadId/$captureType"
-            return if (tripStopId != null) "$base?tripStopId=$tripStopId" else base
-        }
-    }
+@Serializable
+data object LoginRoute : NavKey
 
-    object ConditionReport : Screen("condition_report/{loadId}/{inspectionType}") {
-        fun createRoute(loadId: String, inspectionType: String) = "condition_report/$loadId/$inspectionType"
-    }
+@Serializable
+data object DashboardRoute : NavKey
 
-    object Account : Screen("account")
-    object Settings : Screen("settings")
-    object About : Screen("about")
-}
+@Serializable
+data object StatsRoute : NavKey
+
+@Serializable
+data object PastLoadsRoute : NavKey
+
+@Serializable
+data class LoadDetailRoute(val loadId: String) : NavKey
+
+@Serializable
+data object MessagesRoute : NavKey
+
+@Serializable
+data class ConversationRoute(val conversationId: String) : NavKey
+
+@Serializable
+data class PodCaptureRoute(
+    val loadId: String,
+    val captureType: String,
+    val tripStopId: String? = null
+) : NavKey
+
+@Serializable
+data class ConditionReportRoute(
+    val loadId: String,
+    val inspectionType: String
+) : NavKey
+
+@Serializable
+data object AccountRoute : NavKey
+
+@Serializable
+data object SettingsRoute : NavKey
+
+@Serializable
+data object AboutRoute : NavKey
+
+/**
+ * Top-level routes that appear in the bottom navigation bar.
+ * These routes maintain separate back stacks.
+ */
+val topLevelRoutes: Set<NavKey> = setOf(
+    DashboardRoute,
+    StatsRoute,
+    MessagesRoute,
+    PastLoadsRoute,
+    AccountRoute,
+    SettingsRoute
+)

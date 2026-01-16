@@ -74,7 +74,6 @@ class LocationTrackingService : Service() {
         serviceScope.launch {
             try {
                 signalRService.connect()
-                Logger.d("SignalR connected in LocationTrackingService")
             } catch (e: Exception) {
                 Logger.e("Failed to connect SignalR in LocationTrackingService", e)
             }
@@ -134,7 +133,6 @@ class LocationTrackingService : Service() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let { location ->
-                    Logger.d("Location update: ${location.latitude}, ${location.longitude}")
                     handleLocationUpdate(location)
                 }
             }

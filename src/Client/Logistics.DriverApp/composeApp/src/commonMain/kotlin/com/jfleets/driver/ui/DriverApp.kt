@@ -8,7 +8,6 @@ import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -19,16 +18,25 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.ui.NavDisplay
 import com.jfleets.driver.model.LocalUserSettings
 import com.jfleets.driver.model.UserSettings
-import com.jfleets.driver.navigation.AppNavigation
-import com.jfleets.driver.navigation.Screen
+import com.jfleets.driver.navigation.AccountRoute
+import com.jfleets.driver.navigation.ConversationRoute
+import com.jfleets.driver.navigation.DashboardRoute
+import com.jfleets.driver.navigation.LoadDetailRoute
+import com.jfleets.driver.navigation.LoginRoute
+import com.jfleets.driver.navigation.MessagesRoute
+import com.jfleets.driver.navigation.Navigator
+import com.jfleets.driver.navigation.PastLoadsRoute
+import com.jfleets.driver.navigation.SettingsRoute
+import com.jfleets.driver.navigation.StatsRoute
+import com.jfleets.driver.navigation.createEntryProvider
 import com.jfleets.driver.service.PreferencesManager
 import com.jfleets.driver.service.auth.AuthService
 import com.jfleets.driver.ui.theme.LogisticsDriverTheme
@@ -37,43 +45,48 @@ import org.koin.compose.koinInject
 /**
  * The main entry composable
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DriverApp(onOpenUrl: (String) -> Unit) {
     val authService = koinInject<AuthService>()
     val preferencesManager = koinInject<PreferencesManager>()
 
     val userSettings by preferencesManager.getUserSettingsFlow().collectAsState(UserSettings())
-    val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
 
-    // Check auth status once and navigate if logged in
+    // Simple single back stack with Dashboard as start
+    val backStack = remember { mutableStateListOf<NavKey>(DashboardRoute) }
+    val navigator = remember { Navigator(backStack) }
+
+    // Create the entry provider for all screens
+    val entryProvider = createEntryProvider(navigator, onOpenUrl)
+
+    // Check auth status once and navigate if not logged in
     LaunchedEffect(Unit) {
         try {
             val isLoggedIn = authService.isLoggedIn()
-            if (isLoggedIn) {
-                navController.navigate(Screen.Dashboard.route) {
-                    popUpTo(Screen.Login.route) { inclusive = true }
-                }
+            if (!isLoggedIn) {
+                navigator.clearAndNavigate(LoginRoute)
             }
         } catch (_: Exception) {
-            // Stay on login screen if check fails
+            navigator.clearAndNavigate(LoginRoute)
         }
     }
 
     val bottomNavItems = listOf(
-        BottomNavItem("Dashboard", Screen.Dashboard.route, Icons.Default.Dashboard),
-        BottomNavItem("Stats", Screen.Stats.route, Icons.Default.BarChart),
-        BottomNavItem("Messages", Screen.Messages.route, Icons.Default.Email),
-        BottomNavItem("Past Loads", Screen.PastLoads.route, Icons.AutoMirrored.Filled.List),
-        BottomNavItem("Account", Screen.Account.route, Icons.Default.AccountCircle),
-        BottomNavItem("Settings", Screen.Settings.route, Icons.Default.Settings),
+        BottomNavItem("Dashboard", DashboardRoute, Icons.Default.Dashboard),
+        BottomNavItem("Stats", StatsRoute, Icons.Default.BarChart),
+        BottomNavItem("Messages", MessagesRoute, Icons.Default.Email),
+        BottomNavItem("Past Loads", PastLoadsRoute, Icons.AutoMirrored.Filled.List),
+        BottomNavItem("Account", AccountRoute, Icons.Default.AccountCircle),
+        BottomNavItem("Settings", SettingsRoute, Icons.Default.Settings),
     )
 
-    val showBottomBar = currentDestination?.route != Screen.Login.route &&
-            !currentDestination?.route.orEmpty().startsWith("load_detail") &&
-            !currentDestination?.route.orEmpty().startsWith("conversation")
+    // Determine current destination for bottom bar visibility
+    val currentDestination = navigator.currentDestination
+
+    val showBottomBar = currentDestination != null &&
+            currentDestination !is LoginRoute &&
+            currentDestination !is LoadDetailRoute &&
+            currentDestination !is ConversationRoute
 
     CompositionLocalProvider(LocalUserSettings provides userSettings) {
         LogisticsDriverTheme {
@@ -85,22 +98,16 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
 
                     NavigationBar {
                         bottomNavItems.forEach { item ->
+                            val isSelected = currentDestination == item.route ||
+                                    (currentDestination is LoadDetailRoute && item.route == DashboardRoute)
+
                             NavigationBarItem(
                                 icon = { Icon(item.icon, contentDescription = item.label) },
                                 label = { Text(item.label) },
-                                selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                                selected = isSelected,
                                 onClick = {
-                                    // Ignore navigation if already on the destination
-                                    if (currentDestination?.route == item.route) {
-                                        return@NavigationBarItem
-                                    }
-
-                                    navController.navigate(item.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
+                                    if (!isSelected) {
+                                        navigator.navigateToTopLevel(item.route)
                                     }
                                 }
                             )
@@ -108,10 +115,10 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
                     }
                 }
             ) { innerPadding ->
-                AppNavigation(
-                    navController = navController,
-                    startDestination = Screen.Login.route,
-                    onOpenUrl = onOpenUrl,
+                NavDisplay(
+                    backStack = backStack,
+                    entryProvider = entryProvider,
+                    onBack = { navigator.goBack() },
                     modifier = Modifier.padding(innerPadding)
                 )
             }
@@ -121,6 +128,6 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
 
 private data class BottomNavItem(
     val label: String,
-    val route: String,
+    val route: NavKey,
     val icon: ImageVector
 )

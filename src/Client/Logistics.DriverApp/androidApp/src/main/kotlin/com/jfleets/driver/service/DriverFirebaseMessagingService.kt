@@ -81,7 +81,6 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
             }
 
             "new_load" -> {
-                Logger.d("New load notification received")
                 data["loadId"]
                 showNotification("New Load Assigned", "You have been assigned a new load")
             }
