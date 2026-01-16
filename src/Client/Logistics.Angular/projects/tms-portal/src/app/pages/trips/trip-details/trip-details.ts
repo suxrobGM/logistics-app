@@ -1,13 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
-import { SkeletonModule } from "primeng/skeleton";
-import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
-import { Api, getTripById } from "@/core/api";
-import type { TripDto, TripStopDto, TripStopType } from "@/core/api/models";
 import {
   DirectionMap,
   LoadStatusTag,
@@ -16,8 +9,15 @@ import {
   TripStatusTag,
   type Waypoint,
   type WaypointClickEvent,
-} from "@/shared/components";
-import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
+} from "@logistics/shared/components";
+import { AddressPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
+import { ButtonModule } from "primeng/button";
+import { CardModule } from "primeng/card";
+import { SkeletonModule } from "primeng/skeleton";
+import { TableModule } from "primeng/table";
+import { TagModule } from "primeng/tag";
+import { Api, getTripById } from "@/core/api";
+import type { TripDto, TripStopDto, TripStopType } from "@/core/api/models";
 
 @Component({
   selector: "app-trip-details",

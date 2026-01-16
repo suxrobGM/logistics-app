@@ -1,11 +1,11 @@
 import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, effect, inject, input } from "@angular/core";
 import { RouterModule } from "@angular/router";
+import { DataContainer, InvoiceStatusTag } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { DataContainer, InvoiceStatusTag } from "@/shared/components";
 import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
 
 @Component({

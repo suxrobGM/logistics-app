@@ -1,11 +1,11 @@
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import { DocumentManagerComponent } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ToastModule } from "primeng/toast";
 import { Api, getEmployeeById } from "@/core/api";
 import type { DocumentType, EmployeeDto } from "@/core/api/models";
-import { DocumentManagerComponent } from "@/shared/components";
 
 @Component({
   selector: "app-employee-documents",

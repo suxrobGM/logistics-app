@@ -1,6 +1,6 @@
 import type { Routes } from "@angular/router";
+import { Permission } from "@logistics/shared/models";
 import { authGuard } from "@/core/auth";
-import { Permission } from "@/shared/models";
 import { EmployeeAddComponent } from "./employee-add/employee-add";
 import { EmployeeDocumentsPage } from "./employee-documents/employee-documents";
 import { EmployeeEditComponent } from "./employee-edit/employee-edit";

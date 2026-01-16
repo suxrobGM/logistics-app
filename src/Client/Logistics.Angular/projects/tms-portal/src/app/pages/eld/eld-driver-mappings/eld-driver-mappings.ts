@@ -2,6 +2,7 @@ import { DatePipe } from "@angular/common";
 import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
+import { LabeledField } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -23,7 +24,6 @@ import {
   mapEldDriver,
 } from "@/core/api";
 import { ToastService } from "@/core/services";
-import { LabeledField } from "@/shared/components";
 
 @Component({
   selector: "app-eld-driver-mappings",

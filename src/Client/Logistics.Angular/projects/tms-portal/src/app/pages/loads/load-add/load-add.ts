@@ -1,12 +1,12 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
+import { LoadFormComponent, type LoadFormValue } from "@logistics/shared/components";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { Api, createLoad } from "@/core/api";
 import type { CreateLoadCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { LoadFormComponent, type LoadFormValue } from "@/shared/components";
 
 @Component({
   selector: "app-load-add",

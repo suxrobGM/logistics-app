@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
+import { DataContainer, InvoiceStatusTag } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { IconFieldModule } from "primeng/iconfield";
@@ -9,7 +10,6 @@ import { InputTextModule } from "primeng/inputtext";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { type SalaryType, salaryTypeOptions } from "@/core/api/models";
-import { DataContainer, InvoiceStatusTag } from "@/shared/components";
 import { PayrollInvoicesListStore } from "../store/payroll-invoices-list.store";
 
 @Component({

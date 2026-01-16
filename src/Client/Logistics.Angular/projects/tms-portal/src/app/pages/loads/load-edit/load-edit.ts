@@ -1,5 +1,7 @@
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { Router } from "@angular/router";
+import { LoadFormComponent, type LoadFormValue } from "@logistics/shared/components";
+import { Converters } from "@logistics/shared/utils";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -7,8 +9,6 @@ import { ToastModule } from "primeng/toast";
 import { Api, deleteLoad, getLoadById, updateLoad } from "@/core/api";
 import type { UpdateLoadCommand } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { LoadFormComponent, type LoadFormValue } from "@/shared/components";
-import { Converters } from "@/shared/utils";
 
 @Component({
   selector: "app-load-edit",

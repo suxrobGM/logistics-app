@@ -1,6 +1,6 @@
 import type { Routes } from "@angular/router";
+import { Permission } from "@logistics/shared/models";
 import { authGuard } from "@/core/auth";
-import { Permission } from "@/shared/models";
 import { EmployeePayrollInvoicesListComponent } from "./employee-payroll-invoices-list/employee-payroll-invoices-list";
 import { LoadInvoiceDetailsComponent } from "./load-invoice-details/load-invoice-details";
 import { LoadInvoicesListComponent } from "./load-invoices-list/load-invoices-list";

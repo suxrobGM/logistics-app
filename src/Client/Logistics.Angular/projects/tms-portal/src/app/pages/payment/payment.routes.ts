@@ -1,6 +1,6 @@
 import type { Routes } from "@angular/router";
+import { Permission } from "@logistics/shared/models";
 import { authGuard } from "@/core/auth";
-import { Permission } from "@/shared/models";
 import { PaymentsListComponent } from "./payments-list/payments-list";
 
 export const paymentRoutes: Routes = [

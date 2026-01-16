@@ -1,7 +1,7 @@
 import { Component, input, signal } from "@angular/core";
+import { AddressPipe } from "@logistics/shared/pipes";
 import { MapComponent, MarkerComponent, PopupComponent } from "ngx-mapbox-gl";
 import type { TruckGeolocationDto } from "@/core/api/models";
-import { AddressPipe } from "@/shared/pipes";
 
 @Component({
   selector: "app-geolocation-map",

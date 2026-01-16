@@ -1,6 +1,6 @@
 import type { Routes } from "@angular/router";
+import { Permission } from "@logistics/shared/models";
 import { authGuard } from "@/core/auth";
-import { Permission } from "@/shared/models";
 import { EldDashboardComponent } from "./eld-dashboard/eld-dashboard";
 import { EldDriverMappingsComponent } from "./eld-driver-mappings/eld-driver-mappings";
 import { EldHosLogsComponent } from "./eld-hos-logs/eld-hos-logs";

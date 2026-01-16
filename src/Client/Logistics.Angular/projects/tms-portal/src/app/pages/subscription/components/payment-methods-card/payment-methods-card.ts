@@ -1,4 +1,5 @@
 import { Component, type OnInit, inject, model, signal } from "@angular/core";
+import { AddressPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -6,7 +7,6 @@ import { TagModule } from "primeng/tag";
 import { Api, deletePaymentMethod, getPaymentMethods, setDefaultPaymentMethod } from "@/core/api";
 import type { PaymentMethodDto, SetDefaultPaymentMethodCommand } from "@/core/api/models";
 import { TenantService, ToastService } from "@/core/services";
-import { AddressPipe } from "@/shared/pipes";
 import { PaymentMethodDialogComponent } from "../payment-method-dialog/payment-method-dialog";
 
 @Component({

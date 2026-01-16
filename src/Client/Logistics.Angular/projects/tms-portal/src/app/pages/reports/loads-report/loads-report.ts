@@ -1,5 +1,17 @@
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
 import { Component, type OnInit, signal } from "@angular/core";
+import {
+  BaseReportComponent,
+  RangeCalendar,
+  type ReportQueryParams,
+} from "@logistics/shared/components";
+import {
+  LOADS_CHART_PALETTE,
+  LOADS_PERFORMANCE_CHART_OPTIONS,
+  LOADS_PIE_OPTIONS,
+  LOADS_TREND_CHART_OPTIONS,
+  LOADS_TYPE_CHART_OPTIONS,
+} from "@logistics/shared/constants";
 import { Card } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
@@ -13,18 +25,6 @@ import type {
   StatusDto,
   TypeDto,
 } from "@/core/api/models";
-import {
-  BaseReportComponent,
-  RangeCalendar,
-  type ReportQueryParams,
-} from "@/shared/components";
-import {
-  LOADS_CHART_PALETTE,
-  LOADS_PERFORMANCE_CHART_OPTIONS,
-  LOADS_PIE_OPTIONS,
-  LOADS_TREND_CHART_OPTIONS,
-  LOADS_TYPE_CHART_OPTIONS,
-} from "@/shared/constants";
 
 @Component({
   selector: "app-loads-report",

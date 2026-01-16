@@ -1,6 +1,6 @@
 import type { Routes } from "@angular/router";
+import { Permission } from "@logistics/shared/models";
 import { authGuard } from "@/core/auth";
-import { Permission } from "@/shared/models";
 import { ConversationComponent } from "./conversation/conversation";
 import { MessagesListComponent } from "./messages-list/messages-list";
 

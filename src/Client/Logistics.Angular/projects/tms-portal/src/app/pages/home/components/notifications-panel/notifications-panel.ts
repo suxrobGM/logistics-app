@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, type OnDestroy, inject, model, signal } from "@angular/core";
+import { TimeAgoPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -7,7 +8,6 @@ import { OverlayBadgeModule } from "primeng/overlaybadge";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import type { NotificationDto } from "@/core/api/models";
 import { NotificationService, ToastService } from "@/core/services";
-import { TimeAgoPipe } from "@/shared/pipes";
 
 @Component({
   selector: "app-notifications-panel",

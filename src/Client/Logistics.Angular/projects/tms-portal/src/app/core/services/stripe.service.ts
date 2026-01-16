@@ -1,4 +1,7 @@
 import { Injectable, inject } from "@angular/core";
+import { COUNTRIES_OPTIONS } from "@logistics/shared/constants";
+import type { UsBankAccount } from "@logistics/shared/models";
+import { findOption } from "@logistics/shared/utils";
 import {
   type Address,
   type SetupIntentResult,
@@ -8,9 +11,6 @@ import {
   loadStripe,
 } from "@stripe/stripe-js";
 import { environment } from "@/env";
-import { COUNTRIES_OPTIONS } from "@/shared/constants";
-import type { UsBankAccount } from "@/shared/models";
-import { findOption } from "@/shared/utils";
 import { type Address as AddressDto, Api, createSetupIntent } from "../api";
 import { TenantService } from "./tenant.service";
 
@@ -121,7 +121,7 @@ export class StripeService {
    */
   private async getStripe(): Promise<Stripe> {
     if (!this.stripe) {
-      const stripe = await loadStripe(environment.stripePubKey);
+      const stripe = await loadStripe(environment.stripePublishableKey);
 
       if (!stripe) {
         throw new Error("Stripe failed to initialize");

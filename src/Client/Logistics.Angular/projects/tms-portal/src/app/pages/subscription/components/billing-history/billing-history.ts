@@ -1,11 +1,11 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, model, signal } from "@angular/core";
+import { AddressPipe } from "@logistics/shared/pipes";
 import { type TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { Api, formatSortField, getPayments } from "@/core/api";
 import type { PaymentDto } from "@/core/api/models";
 import { TenantService } from "@/core/services";
-import { AddressPipe } from "@/shared/pipes";
 
 @Component({
   selector: "app-billing-history",

@@ -82,6 +82,6 @@ export class Sidebar {
   }
 
   protected openAccountUrl(): void {
-    window.open(`${environment.idBaseUrl}/account/manage/profile`, "_blank");
+    window.open(`${environment.identityServerUrl}/account/manage/profile`, "_blank");
   }
 }

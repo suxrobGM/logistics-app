@@ -7,6 +7,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
+import { LabeledField } from "@logistics/shared/components";
 import { AutoCompleteModule } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -26,7 +27,6 @@ import {
   truckTypeOptions,
 } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { LabeledField } from "@/shared/components";
 
 @Component({
   selector: "app-truck-edit",

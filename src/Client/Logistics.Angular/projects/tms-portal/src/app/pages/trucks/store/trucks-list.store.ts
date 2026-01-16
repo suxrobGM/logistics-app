@@ -1,6 +1,6 @@
+import { createListStore } from "@logistics/shared/stores";
 import { getTrucks } from "@/core/api";
 import type { TruckDto } from "@/core/api/models";
-import { createListStore } from "@/shared/stores";
 
 /**
  * Store for the trucks list page.

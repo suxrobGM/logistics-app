@@ -8,6 +8,12 @@ import {
   Validators,
 } from "@angular/forms";
 import { RouterLink } from "@angular/router";
+import {
+  CurrencyInput,
+  LabeledField,
+  UnitInput,
+  ValidationSummary,
+} from "@logistics/shared/components";
 import { AutoCompleteModule } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -27,7 +33,6 @@ import {
   salaryTypeOptions,
 } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { CurrencyInput, LabeledField, UnitInput, ValidationSummary } from "@/shared/components";
 import { UserService } from "../services";
 
 @Component({

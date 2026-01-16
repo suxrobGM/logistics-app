@@ -3,7 +3,7 @@
  * The generated code uses string union types, but consuming code expects enum-like objects.
  * These shadow the type-only exports from generated/models with both type + value.
  */
-import type { SelectOption } from "@/shared/models";
+import type { SelectOption } from "@logistics/shared/models";
 import type {
   DocumentType,
   InvoiceStatus,

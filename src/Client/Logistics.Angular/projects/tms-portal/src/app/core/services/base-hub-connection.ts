@@ -11,7 +11,7 @@ export abstract class BaseHubConnection {
   constructor(private readonly hubName: string) {
     this.isConnected = false;
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(`${environment.apiBaseUrl}/hubs/${hubName}`, {
+      .withUrl(`${environment.apiUrl}/hubs/${hubName}`, {
         skipNegotiation: true,
         transport: HttpTransportType.WebSockets,
       })

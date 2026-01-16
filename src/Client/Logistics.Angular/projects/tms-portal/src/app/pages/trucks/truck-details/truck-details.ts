@@ -1,6 +1,12 @@
 import { CommonModule, CurrencyPipe } from "@angular/common";
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import {
+  type BarChartDrawnEvent,
+  GeolocationMap,
+  GrossesBarchart,
+} from "@logistics/shared/components";
+import { DistanceUnitPipe } from "@logistics/shared/pipes";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";
 import { Api, getTruckById } from "@/core/api";
@@ -10,8 +16,6 @@ import type {
   TruckDto,
   TruckGeolocationDto,
 } from "@/core/api/models";
-import { type BarChartDrawnEvent, GeolocationMap, GrossesBarchart } from "@/shared/components";
-import { DistanceUnitPipe } from "@/shared/pipes";
 import { type LineChartDrawnEvent, TruckGrossesLinechartComponent } from "../components";
 
 @Component({

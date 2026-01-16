@@ -6,15 +6,21 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
+import {
+  AddressForm,
+  LabeledField,
+  StripeCard,
+  ValidationSummary,
+} from "@logistics/shared/components";
 import type { StripeCardNumberElement } from "@stripe/stripe-js";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
+import { DividerModule } from "primeng/divider";
 import { InputMaskModule } from "primeng/inputmask";
 import { InputTextModule } from "primeng/inputtext";
 import { KeyFilterModule } from "primeng/keyfilter";
 import { SelectModule } from "primeng/select";
-import { DividerModule } from "primeng/divider";
 import { Api, createPaymentMethod } from "@/core/api";
 import {
   type AddressDto,
@@ -27,7 +33,6 @@ import {
   usBankAccountTypeOptions,
 } from "@/core/api/models";
 import { StripeService, TenantService, ToastService } from "@/core/services";
-import { AddressForm, LabeledField, StripeCard, ValidationSummary } from "@/shared/components";
 
 const enabledPaymentTypes: PaymentMethodType[] = [
   "card",
@@ -194,9 +199,7 @@ export class PaymentMethodDialogComponent {
     };
 
     await this.api.invoke(createPaymentMethod, { body: payload });
-    this.toastService.showSuccess(
-      "US Bank account added successfully. Now you need to verify it.",
-    );
+    this.toastService.showSuccess("US Bank account added successfully. Now you need to verify it.");
     this.paymentMethodAdded.emit();
 
     this.isLoading.set(false);

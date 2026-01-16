@@ -1,10 +1,10 @@
 import { Component, type OnInit, inject, signal } from "@angular/core";
 import { ActivatedRoute, RouterLink } from "@angular/router";
+import { DocumentManagerComponent } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ToastModule } from "primeng/toast";
 import type { DocumentType } from "@/core/api/models";
-import { DocumentManagerComponent } from "@/shared/components";
 
 @Component({
   selector: "app-load-documents",

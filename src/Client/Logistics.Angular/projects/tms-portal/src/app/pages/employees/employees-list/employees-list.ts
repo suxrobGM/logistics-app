@@ -1,12 +1,12 @@
 import { CurrencyPipe, DatePipe, PercentPipe } from "@angular/common";
 import { Component, inject } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
+import { DataContainer, PageHeader, SearchInput } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { type SalaryType, salaryTypeOptions } from "@/core/api/models";
-import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
 import { EmployeesListStore } from "../store/employees-list.store";
 
 @Component({

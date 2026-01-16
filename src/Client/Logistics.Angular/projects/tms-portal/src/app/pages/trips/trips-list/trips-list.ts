@@ -1,6 +1,13 @@
 import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
+import {
+  DataContainer,
+  LoadStatusTag,
+  LoadTypeTag,
+  TripStatusTag,
+} from "@logistics/shared/components";
+import { AddressPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import type { MenuItem } from "primeng/api";
 import { Button } from "primeng/button";
 import { Card } from "primeng/card";
@@ -13,8 +20,6 @@ import { TooltipModule } from "primeng/tooltip";
 import { Api, deleteTrip } from "@/core/api";
 import type { TripDto } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { DataContainer, LoadStatusTag, LoadTypeTag, TripStatusTag } from "@/shared/components";
-import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
 import { TripsListStore } from "../store/trips-list.store";
 
 @Component({

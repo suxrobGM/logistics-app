@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, type OnInit, inject, input, output, signal } from "@angular/core";
+import { downloadBlobFile } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { FileUploadModule } from "primeng/fileupload";
@@ -11,7 +12,6 @@ import { TooltipModule } from "primeng/tooltip";
 import { Api, deleteDocument, downloadDocument, getDocuments, uploadDocument } from "@/core/api";
 import type { DocumentDto, DocumentStatus, DocumentType } from "@/core/api/models";
 import { ToastService } from "@/core/services";
-import { downloadBlobFile } from "@/shared/utils";
 
 @Component({
   selector: "app-document-manager",

@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, effect, inject, input, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
+import { DataContainer, InvoiceStatusTag } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -15,7 +16,6 @@ import {
   paymentMethodTypeOptions,
   salaryTypeOptions,
 } from "@/core/api/models";
-import { DataContainer, InvoiceStatusTag } from "@/shared/components";
 import { EmployeePayrollInvoicesListStore } from "../store/employee-payroll-invoices-list.store";
 
 @Component({

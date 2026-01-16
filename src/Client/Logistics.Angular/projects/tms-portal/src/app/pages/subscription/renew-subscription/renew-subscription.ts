@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
+import { Labels, type SeverityLevel } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
@@ -11,7 +12,6 @@ import { TagModule } from "primeng/tag";
 import { Api, renewSubscription } from "@/core/api";
 import type { SubscriptionDto } from "@/core/api/models";
 import { TenantService, ToastService } from "@/core/services";
-import { Labels, type SeverityLevel } from "@/shared/utils";
 import { PaymentMethodsCardComponent } from "../components";
 
 @Component({

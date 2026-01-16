@@ -1,6 +1,15 @@
 import { Component, type OnInit, effect, inject, input, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
+import { LabeledField, ValidationSummary } from "@logistics/shared/components/form";
+import {
+  AddressAutocomplete,
+  DirectionMap,
+  type SelectedAddressEvent,
+} from "@logistics/shared/components/maps";
+import type { RouteChangeEvent, Waypoint } from "@logistics/shared/components/maps";
+import { SearchCustomerComponent, SearchTruckComponent } from "@logistics/shared/components/search";
+import { Converters } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { DividerModule } from "primeng/divider";
 import { InputGroupModule } from "primeng/inputgroup";
@@ -22,15 +31,6 @@ import {
 } from "@/core/api/models";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
-import { LabeledField, ValidationSummary } from "@/shared/components/form";
-import {
-  AddressAutocomplete,
-  DirectionMap,
-  type SelectedAddressEvent,
-} from "@/shared/components/maps";
-import type { RouteChangeEvent, Waypoint } from "@/shared/components/maps";
-import { SearchCustomerComponent, SearchTruckComponent } from "@/shared/components/search";
-import { Converters } from "@/shared/utils";
 
 /**
  * Form value interface for the Load Form.

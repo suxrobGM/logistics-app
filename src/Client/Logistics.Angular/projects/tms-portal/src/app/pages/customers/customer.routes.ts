@@ -1,6 +1,6 @@
 import type { Routes } from "@angular/router";
+import { Permission } from "@logistics/shared/models";
 import { authGuard } from "@/core/auth";
-import { Permission } from "@/shared/models";
 import { CustomerAddComponent } from "./customer-add/customer-add";
 import { CustomerEditComponent } from "./customer-edit/customer-edit";
 import { CustomersListComponent } from "./customers-list/customers-list";

@@ -2,6 +2,7 @@ import { DatePipe } from "@angular/common";
 import { Component, type OnInit, inject, signal } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
+import { LabeledField } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -21,7 +22,6 @@ import {
   getEldProviders,
 } from "@/core/api";
 import { ToastService } from "@/core/services";
-import { LabeledField } from "@/shared/components";
 
 interface ProviderOption {
   label: string;

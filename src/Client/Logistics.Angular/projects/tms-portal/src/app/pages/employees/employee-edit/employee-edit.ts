@@ -2,6 +2,14 @@ import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
+import {
+  CurrencyInput,
+  LabeledField,
+  UnitInput,
+  ValidationSummary,
+} from "@logistics/shared/components";
+import { UserRole } from "@logistics/shared/models";
+import { NumberUtils } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
@@ -20,9 +28,6 @@ import {
 } from "@/core/api/models";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
-import { CurrencyInput, LabeledField, UnitInput, ValidationSummary } from "@/shared/components";
-import { UserRole } from "@/shared/models";
-import { NumberUtils } from "@/shared/utils";
 import { ChangeRoleDialogComponent } from "../components";
 
 @Component({
@@ -84,7 +89,11 @@ export class EmployeeEditComponent implements OnInit {
         }
 
         if (selectedSalaryType === "share_of_gross") {
-          salaryControl.setValidators([Validators.required, Validators.min(0), Validators.max(100)]);
+          salaryControl.setValidators([
+            Validators.required,
+            Validators.min(0),
+            Validators.max(100),
+          ]);
           salaryControl.setValue(0);
           salaryControl.enable();
         } else if (selectedSalaryType === "none") {
