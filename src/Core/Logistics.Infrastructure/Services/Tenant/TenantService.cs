@@ -1,34 +1,26 @@
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Exceptions;
+using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Infrastructure.Data;
 using Logistics.Infrastructure.Options;
 using Logistics.Shared.Identity.Claims;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Infrastructure.Services;
 
-internal class TenantService : ITenantService
+internal class TenantService(
+    IMasterUnitOfWork masterUow,
+    TenantDbContextOptions? dbContextContextOptions = null,
+    IHttpContextAccessor? contextAccessor = null)
+    : ITenantService
 {
     private const string TenantHeader = "X-Tenant";
 
-    private readonly TenantDbContextOptions? _dbContextOptions;
-    private readonly HttpContext? _httpContext;
-    private readonly MasterDbContext _masterDbContext;
-    private Tenant? _cachedTenant;
+    private readonly HttpContext? _httpContext = contextAccessor?.HttpContext;
 
-    public TenantService(
-        MasterDbContext masterDbContext,
-        TenantDbContextOptions? dbContextContextOptions = null,
-        IHttpContextAccessor? contextAccessor = null)
-    {
-        _dbContextOptions = dbContextContextOptions;
-        _httpContext = contextAccessor?.HttpContext;
-        _masterDbContext = masterDbContext ?? throw new ArgumentNullException(nameof(masterDbContext));
-    }
+    private Tenant? _cachedTenant;
 
     public Tenant GetCurrentTenant()
     {
@@ -68,15 +60,15 @@ internal class TenantService : ITenantService
 
         if (Guid.TryParse(tenantId, out var guid))
         {
-            return await _masterDbContext
-                .Set<Tenant>()
-                .FirstOrDefaultAsync(t => t.Id == guid, ct);
+            return await masterUow
+                .Repository<Tenant>()
+                .GetAsync(t => t.Id == guid, ct);
         }
 
         var normalized = tenantId.Trim().ToLowerInvariant();
-        return await _masterDbContext
-            .Set<Tenant>()
-            .FirstOrDefaultAsync(t => t.Name == normalized, ct);
+        return await masterUow
+            .Repository<Tenant>()
+            .GetAsync(t => t.Name == normalized, ct);
     }
 
     private string ResolveTenantIdFromHttpContext()
@@ -116,7 +108,7 @@ internal class TenantService : ITenantService
                 ZipCode = "12345",
                 Country = "United States"
             },
-            ConnectionString = _dbContextOptions?.ConnectionString
+            ConnectionString = dbContextContextOptions?.ConnectionString
                                ?? ConnectionStrings.LocalDefaultTenant
         };
     }

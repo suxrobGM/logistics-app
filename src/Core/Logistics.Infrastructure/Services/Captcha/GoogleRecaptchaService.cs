@@ -1,19 +1,21 @@
 using System.Net.Http.Json;
-
+using Logistics.Application.Services;
 using Microsoft.Extensions.Options;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Infrastructure.Services;
 
 internal sealed class GoogleRecaptchaService : ICaptchaService
 {
     private const string ApiEndpoint = "https://www.google.com/recaptcha/api/siteverify";
-    private readonly GoogleRecaptchaOptions _options;
     private readonly HttpClient _httpClient = new();
+    private readonly GoogleRecaptchaOptions _options;
 
     public GoogleRecaptchaService(IOptions<GoogleRecaptchaOptions> options)
     {
         if (string.IsNullOrEmpty(options.Value.SecretKey))
+        {
             throw new ArgumentException("Secret key is an empty string");
+        }
 
         _options = options.Value;
     }

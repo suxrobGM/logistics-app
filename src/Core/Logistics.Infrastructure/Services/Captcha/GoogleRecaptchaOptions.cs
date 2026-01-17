@@ -1,4 +1,4 @@
-namespace Logistics.Application.Services;
+namespace Logistics.Infrastructure.Services;
 
 internal class GoogleRecaptchaOptions
 {

@@ -1,17 +1,14 @@
 using Duende.IdentityServer;
-
 using Logistics.Application;
 using Logistics.Domain.Entities;
 using Logistics.IdentityServer.Services;
 using Logistics.Infrastructure;
 using Logistics.Infrastructure.Builder;
 using Logistics.Infrastructure.Data;
-
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
-
 using Serilog;
 using Serilog.Extensions.Logging;
 
@@ -28,7 +25,7 @@ internal static class Setup
             .CreateLogger<IInfrastructureBuilder>();
 
         services.AddRazorPages();
-        services.AddApplicationLayer(configuration);
+        services.AddApplicationLayer();
         services.AddInfrastructureLayer(configuration)
             .UseLogger(microsoftLogger)
             .AddMasterDatabase()
@@ -125,39 +122,39 @@ internal static class Setup
     private static void AddAuthSchemes(IServiceCollection services)
     {
         services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
-            options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
-            options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-        })
-        .AddCookie(IdentityConstants.ApplicationScheme, o =>
-        {
-            o.LoginPath = new PathString("/Account/Login");
-            o.Cookie.SameSite = SameSiteMode.None;
-            o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            o.Cookie.HttpOnly = true;
-            o.Events = new CookieAuthenticationEvents()
             {
-                OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync
-            };
-        })
-        .AddCookie(IdentityConstants.ExternalScheme, o =>
-        {
-            o.Cookie.Name = IdentityConstants.ExternalScheme;
-            o.ExpireTimeSpan = TimeSpan.FromMinutes(5.0);
-        })
-        .AddCookie(IdentityConstants.TwoFactorRememberMeScheme, o =>
-        {
-            o.Cookie.Name = IdentityConstants.TwoFactorRememberMeScheme;
-            o.Events = new CookieAuthenticationEvents()
+                options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            })
+            .AddCookie(IdentityConstants.ApplicationScheme, o =>
             {
-                OnValidatePrincipal = SecurityStampValidator.ValidateAsync<ITwoFactorSecurityStampValidator>
-            };
-        })
-        .AddCookie(IdentityConstants.TwoFactorUserIdScheme, o =>
-        {
-            o.Cookie.Name = IdentityConstants.TwoFactorUserIdScheme;
-            o.ExpireTimeSpan = TimeSpan.FromMinutes(5.0);
-        });
+                o.LoginPath = new PathString("/Account/Login");
+                o.Cookie.SameSite = SameSiteMode.None;
+                o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                o.Cookie.HttpOnly = true;
+                o.Events = new CookieAuthenticationEvents
+                {
+                    OnValidatePrincipal = SecurityStampValidator.ValidatePrincipalAsync
+                };
+            })
+            .AddCookie(IdentityConstants.ExternalScheme, o =>
+            {
+                o.Cookie.Name = IdentityConstants.ExternalScheme;
+                o.ExpireTimeSpan = TimeSpan.FromMinutes(5.0);
+            })
+            .AddCookie(IdentityConstants.TwoFactorRememberMeScheme, o =>
+            {
+                o.Cookie.Name = IdentityConstants.TwoFactorRememberMeScheme;
+                o.Events = new CookieAuthenticationEvents
+                {
+                    OnValidatePrincipal = SecurityStampValidator.ValidateAsync<ITwoFactorSecurityStampValidator>
+                };
+            })
+            .AddCookie(IdentityConstants.TwoFactorUserIdScheme, o =>
+            {
+                o.Cookie.Name = IdentityConstants.TwoFactorUserIdScheme;
+                o.ExpireTimeSpan = TimeSpan.FromMinutes(5.0);
+            });
     }
 }

@@ -8,10 +8,8 @@ using Logistics.Infrastructure.Options;
 using Logistics.Infrastructure.Services;
 using Logistics.Infrastructure.Services.Email;
 using Logistics.Infrastructure.Services.Trip;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
 using MapboxGeocodingService = Logistics.Infrastructure.Services.Geocoding.MapboxGeocodingService;
 using TemplateBasedDataExtractor = Logistics.Infrastructure.Services.PdfImport.TemplateBasedDataExtractor;
 
@@ -73,6 +71,31 @@ public static class Registrar
             services.AddSingleton<IEmailTemplateService, FluidEmailTemplateService>();
         }
 
+        var googleRecaptchaOptions = configuration.GetSection("GoogleRecaptcha").Get<GoogleRecaptchaOptions>();
+        if (googleRecaptchaOptions is not null)
+        {
+            services.Configure<GoogleRecaptchaOptions>(options =>
+            {
+                options.SecretKey = googleRecaptchaOptions.SecretKey;
+                options.SiteKey = googleRecaptchaOptions.SiteKey;
+            });
+            services.AddSingleton<ICaptchaService, GoogleRecaptchaService>();
+        }
+
+        var stripeOptions = configuration.GetSection("Stripe").Get<StripeOptions>();
+        if (stripeOptions is not null)
+        {
+            services.Configure<StripeOptions>(options =>
+            {
+                options.PublishableKey = stripeOptions.PublishableKey;
+                options.SecretKey = stripeOptions.SecretKey;
+                options.WebhookSecret = stripeOptions.WebhookSecret;
+            });
+            services.AddSingleton<IStripeService, StripeService>();
+        }
+
+        services.AddSingleton<IPushNotificationService, PushNotificationService>();
+        services.AddScoped<INotificationService, NotificationService>();
         return new InfrastructureBuilder(services, configuration);
     }
 }

@@ -35,7 +35,7 @@ internal static class Setup
         var microsoftLogger = new SerilogLoggerFactory(Log.Logger)
             .CreateLogger<IInfrastructureBuilder>();
 
-        services.AddApplicationLayer(configuration);
+        services.AddApplicationLayer();
         services.AddInfrastructureLayer(configuration)
             .UseLogger(microsoftLogger)
             .AddMasterDatabase()
@@ -66,7 +66,7 @@ internal static class Setup
 
                 // Disable HTTPS requirement in development or when configured (e.g., behind reverse proxy)
                 if (builder.Environment.IsDevelopment() ||
-                    configuration.GetValue<bool>("IdentityServer:RequireHttpsMetadata") == false)
+                    !configuration.GetValue<bool>("IdentityServer:RequireHttpsMetadata"))
                 {
                     options.RequireHttpsMetadata = false;
                 }

@@ -1,3 +1,4 @@
+using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Utilities;
 using Microsoft.Extensions.Logging;
@@ -9,7 +10,7 @@ using StripePaymentMethod = Stripe.PaymentMethod;
 using StripeSubscription = Stripe.Subscription;
 using Subscription = Logistics.Domain.Entities.Subscription;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Infrastructure.Services;
 
 internal class StripeService : IStripeService
 {
@@ -19,7 +20,11 @@ internal class StripeService : IStripeService
     {
         _logger = logger;
         StripeConfiguration.ApiKey = options.Value.SecretKey;
+        WebhookSecret = options.Value.WebhookSecret ??
+                        throw new ArgumentNullException(nameof(options.Value.WebhookSecret));
     }
+
+    public string WebhookSecret { get; }
 
     #region Setup Intent API
 

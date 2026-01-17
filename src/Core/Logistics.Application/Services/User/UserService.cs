@@ -1,25 +1,15 @@
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 
-namespace Logistics.Infrastructure.Services;
+namespace Logistics.Application.Services;
 
-public class UserService : IUserService
+public class UserService(
+    IMasterUnitOfWork masterUow,
+    ITenantUnitOfWork tenantUow) : IUserService
 {
-    private readonly IMasterUnitOfWork _masterUow;
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public UserService(
-        IMasterUnitOfWork masterUow,
-        ITenantUnitOfWork tenantUow)
-    {
-        _masterUow = masterUow;
-        _tenantUow = tenantUow;
-    }
-
     public async Task UpdateUserAsync(UpdateUserParams userParams)
     {
-        var userRepository = _masterUow.Repository<User>();
+        var userRepository = masterUow.Repository<User>();
         var user = await userRepository.GetByIdAsync(userParams.Id);
 
         if (user is null)
@@ -47,13 +37,13 @@ public class UserService : IUserService
             await UpdateTenantEmployeeDataAsync(userParams.TenantId.Value, user);
         }
 
-        await _masterUow.SaveChangesAsync();
+        await masterUow.SaveChangesAsync();
     }
 
     private async Task UpdateTenantEmployeeDataAsync(Guid tenantId, User user)
     {
-        await _tenantUow.SetCurrentTenantByIdAsync(tenantId);
-        var employeeRepository = _tenantUow.Repository<Employee>();
+        await tenantUow.SetCurrentTenantByIdAsync(tenantId);
+        var employeeRepository = tenantUow.Repository<Employee>();
         var employee = await employeeRepository.GetByIdAsync(user.Id);
 
         if (employee is null)
@@ -63,8 +53,8 @@ public class UserService : IUserService
 
         employee.FirstName = user.FirstName;
         employee.LastName = user.LastName;
-        employee.Email = user.Email;
+        employee.Email = user.Email!;
         employee.PhoneNumber = user.PhoneNumber;
-        await _tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync();
     }
 }

@@ -1,11 +1,10 @@
 using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
-
 using Google.Apis.Auth.OAuth2;
-
+using Logistics.Application.Services;
 using Microsoft.Extensions.Logging;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Infrastructure.Services;
 
 public class PushNotificationService : IPushNotificationService
 {
@@ -18,7 +17,7 @@ public class PushNotificationService : IPushNotificationService
 
         if (File.Exists("firebase-adminsdk-key.json"))
         {
-            _firebaseApp = FirebaseApp.Create(new AppOptions()
+            _firebaseApp = FirebaseApp.Create(new AppOptions
             {
                 Credential = GoogleCredential.FromFile("firebase-adminsdk-key.json")
             });
@@ -36,14 +35,16 @@ public class PushNotificationService : IPushNotificationService
         IReadOnlyDictionary<string, string>? data = null)
     {
         if (_firebaseApp is null)
+        {
             return;
+        }
 
         try
         {
             var message = new Message
             {
                 Token = deviceToken,
-                Notification = new FirebaseAdmin.Messaging.Notification
+                Notification = new Notification
                 {
                     Title = title,
                     Body = body
@@ -54,7 +55,8 @@ public class PushNotificationService : IPushNotificationService
         }
         catch (Exception ex)
         {
-            _logger.LogError("Could not send a notification to device: {DeviceToken}\nRaised an exception: {Exception}", deviceToken, ex.ToString());
+            _logger.LogError("Could not send a notification to device: {DeviceToken}\nRaised an exception: {Exception}",
+                deviceToken, ex.ToString());
         }
     }
 }

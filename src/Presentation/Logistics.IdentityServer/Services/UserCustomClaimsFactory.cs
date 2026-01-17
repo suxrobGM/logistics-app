@@ -19,7 +19,6 @@ public class UserCustomClaimsFactory(
     : UserClaimsPrincipalFactory<User, AppRole>(userManager, roleManager, options)
 {
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
-    private readonly RoleManager<AppRole> _roleManager = roleManager;
     private readonly UserManager<User> _userManager = userManager;
 
     protected override async Task<ClaimsIdentity> GenerateClaimsAsync(User user)
@@ -54,7 +53,7 @@ public class UserCustomClaimsFactory(
         }
     }
 
-    private Task AddTenantRoleClaimsAsync(ClaimsIdentity claimsIdentity, Employee? employee)
+    private static Task AddTenantRoleClaimsAsync(ClaimsIdentity claimsIdentity, Employee? employee)
     {
         if (employee is null)
         {

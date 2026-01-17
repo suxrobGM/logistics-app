@@ -1,4 +1,4 @@
-namespace Logistics.Application.Services;
+namespace Logistics.Infrastructure.Services;
 
 public class StripeOptions
 {

@@ -6,7 +6,6 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Stripe;
 using PaymentMethod = Logistics.Domain.Entities.PaymentMethod;
 using StripeInvoice = Stripe.Invoice;
@@ -20,13 +19,9 @@ internal sealed class ProcessStripEventHandler(
     ITenantUnitOfWork tenantUow,
     IMasterUnitOfWork masterUow,
     IStripeService stripeService,
-    IOptions<StripeOptions> stripeOptions,
     ILogger<ProcessStripEventHandler> logger)
     : IAppRequestHandler<ProcessStripEventCommand, Result>
 {
-    private readonly string _stripeWebhookSecret =
-        stripeOptions.Value.WebhookSecret ?? throw new ArgumentNullException(nameof(stripeOptions));
-
     public async Task<Result> Handle(
         ProcessStripEventCommand req, CancellationToken ct)
     {
@@ -35,7 +30,7 @@ internal sealed class ProcessStripEventHandler(
             var stripeEvent = EventUtility.ConstructEvent(
                 req.RequestBodyJson,
                 req.StripeSignature,
-                _stripeWebhookSecret,
+                stripeService.WebhookSecret,
                 throwOnApiVersionMismatch: false);
 
             logger.LogInformation("Received Stripe event: {Type}", stripeEvent.Type);
