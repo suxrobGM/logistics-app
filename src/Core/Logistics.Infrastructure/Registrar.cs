@@ -6,6 +6,7 @@ using Logistics.Infrastructure.Extensions;
 using Logistics.Infrastructure.Interceptors;
 using Logistics.Infrastructure.Options;
 using Logistics.Infrastructure.Services;
+using Logistics.Infrastructure.Services.Email;
 using Logistics.Infrastructure.Services.Trip;
 
 using Microsoft.Extensions.Configuration;
@@ -62,6 +63,15 @@ public static class Registrar
 
         // VIN Decoder Service
         services.AddHttpClient<IVinDecoderService, NhtsaVinDecoderService>();
+
+        // Email Services
+        var smtpOptions = configuration.GetSection("Smtp").Get<SmtpOptions>();
+        if (smtpOptions is not null)
+        {
+            services.Configure<SmtpOptions>(configuration.GetSection("Smtp"));
+            services.AddSingleton<IEmailSender, SmtpEmailSender>();
+            services.AddSingleton<IEmailTemplateService, FluidEmailTemplateService>();
+        }
 
         return new InfrastructureBuilder(services, configuration);
     }

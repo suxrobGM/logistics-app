@@ -1,10 +1,11 @@
 using System.Net;
 using System.Net.Mail;
 
+using Logistics.Application.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Infrastructure.Services.Email;
 
 internal sealed class SmtpEmailSender : IEmailSender
 {
@@ -21,8 +22,6 @@ internal sealed class SmtpEmailSender : IEmailSender
         ArgumentException.ThrowIfNullOrEmpty(_options.SenderName);
         ArgumentException.ThrowIfNullOrEmpty(_options.SenderEmail);
         ArgumentException.ThrowIfNullOrEmpty(_options.Host);
-        ArgumentException.ThrowIfNullOrEmpty(_options.UserName);
-        ArgumentException.ThrowIfNullOrEmpty(_options.Password);
     }
 
     public async Task<bool> SendEmailAsync(string recipient, string subject, string htmlBody)
@@ -46,20 +45,25 @@ internal sealed class SmtpEmailSender : IEmailSender
             using var smtpClient = new SmtpClient(_options.Host, _options.Port);
             smtpClient.Port = _options.Port;
             smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-            smtpClient.UseDefaultCredentials = false;
             smtpClient.Host = _options.Host!;
-            smtpClient.EnableSsl = true;
+            smtpClient.EnableSsl = _options.EnableSsl;
             smtpClient.Timeout = 5000;
-            smtpClient.Credentials = new NetworkCredential(_options.UserName, _options.Password);
+
+            // Only set credentials if provided (for local testing without auth)
+            if (!string.IsNullOrEmpty(_options.UserName) && !string.IsNullOrEmpty(_options.Password))
+            {
+                smtpClient.UseDefaultCredentials = false;
+                smtpClient.Credentials = new NetworkCredential(_options.UserName, _options.Password);
+            }
 
             await smtpClient.SendMailAsync(mailMessage);
-            _logger.LogInformation("Email has been sent to {Mail}, subject: \'{Subject}\'", recipient, subject);
+            _logger.LogInformation("Email has been sent to {Mail}, subject: '{Subject}'", recipient, subject);
             return true;
         }
         catch (Exception ex)
         {
             _logger.LogWarning(
-                "Could not send email to {Mail}, subject: \'{Subject}\'. \nThrown exception: {Exception}",
+                "Could not send email to {Mail}, subject: '{Subject}'. \nThrown exception: {Exception}",
                 recipient, subject, ex.ToString());
             return false;
         }

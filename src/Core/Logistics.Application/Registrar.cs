@@ -13,27 +13,11 @@ public static class Registrar
     public static IServiceCollection AddApplicationLayer(
         this IServiceCollection services,
         IConfiguration configuration,
-        string emailConfigSection = "Smtp",
         string captchaConfigSection = "GoogleRecaptcha",
         string stripeSection = "Stripe")
     {
-        var emailSenderOptions = configuration.GetSection(emailConfigSection).Get<SmtpOptions>();
         var googleRecaptchaOptions = configuration.GetSection(captchaConfigSection).Get<GoogleRecaptchaOptions>();
         var stripeOptions = configuration.GetSection(stripeSection).Get<StripeOptions>();
-
-        if (emailSenderOptions is not null)
-        {
-            services.Configure<SmtpOptions>(options =>
-            {
-                options.Host = emailSenderOptions.Host;
-                options.Port = emailSenderOptions.Port;
-                options.UserName = emailSenderOptions.UserName;
-                options.Password = emailSenderOptions.Password;
-                options.SenderName = emailSenderOptions.SenderName;
-                options.SenderEmail = emailSenderOptions.SenderEmail;
-            });
-            services.AddSingleton<IEmailSender, SmtpEmailSender>();
-        }
 
         if (googleRecaptchaOptions is not null)
         {
