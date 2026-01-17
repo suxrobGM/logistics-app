@@ -115,6 +115,12 @@ public static class Permission
         public const string Manage = $"{nameof(Permission)}.{nameof(Message)}.Manage";
     }
 
+    public static class Invitation
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(Invitation)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Invitation)}.Manage";
+    }
+
     public static class Portal
     {
         public const string Access = $"{nameof(Permission)}.{nameof(Portal)}.Access";

@@ -5,6 +5,7 @@ import { EmployeeAddComponent } from "./employee-add/employee-add";
 import { EmployeeDocumentsPage } from "./employee-documents/employee-documents";
 import { EmployeeEditComponent } from "./employee-edit/employee-edit";
 import { EmployeeListComponent } from "./employees-list/employees-list";
+import { PendingInvitationsComponent } from "./pending-invitations/pending-invitations";
 
 export const employeeRoutes: Routes = [
   {
@@ -23,6 +24,15 @@ export const employeeRoutes: Routes = [
     data: {
       breadcrumb: "Add",
       permission: Permission.Employee.Manage,
+    },
+  },
+  {
+    path: "invitations",
+    component: PendingInvitationsComponent,
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: "Invitations",
+      permission: Permission.Invitation.Manage,
     },
   },
   {

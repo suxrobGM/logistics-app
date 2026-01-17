@@ -1,5 +1,5 @@
 import { CurrencyPipe, DatePipe, PercentPipe } from "@angular/common";
-import { Component, inject } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { type SalaryType, salaryTypeOptions } from "@logistics/shared/api/models";
 import { ButtonModule } from "primeng/button";
@@ -8,6 +8,7 @@ import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
 import { EmployeesListStore } from "../store/employees-list.store";
+import { InviteEmployeeDialogComponent } from "../components/invite-employee-dialog/invite-employee-dialog";
 
 @Component({
   selector: "app-employees-list",
@@ -25,11 +26,14 @@ import { EmployeesListStore } from "../store/employees-list.store";
     DataContainer,
     PageHeader,
     SearchInput,
+    InviteEmployeeDialogComponent,
   ],
 })
 export class EmployeeListComponent {
   private readonly router = inject(Router);
   protected readonly store = inject(EmployeesListStore);
+
+  protected readonly inviteDialogVisible = signal(false);
 
   protected onSearch(value: string): void {
     this.store.setSearch(value);
@@ -37,6 +41,14 @@ export class EmployeeListComponent {
 
   protected addEmployee(): void {
     this.router.navigate(["/employees/add"]);
+  }
+
+  protected openInviteDialog(): void {
+    this.inviteDialogVisible.set(true);
+  }
+
+  protected onInvitationSent(): void {
+    // Optionally refresh the list or navigate to pending invitations
   }
 
   protected getSalaryTypeDesc(enumValue: SalaryType): string {

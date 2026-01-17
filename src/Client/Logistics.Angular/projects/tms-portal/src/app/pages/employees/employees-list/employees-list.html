@@ -1,5 +1,22 @@
 <app-page-header title="List Employees" addRoute="/employees/add" addTooltip="Add a new employee" />
 
+<div class="flex gap-2 mb-4">
+  <p-button
+    icon="pi pi-send"
+    label="Invite Employee"
+    severity="secondary"
+    [outlined]="true"
+    (click)="openInviteDialog()"
+  />
+  <p-button
+    icon="pi pi-clock"
+    label="Pending Invitations"
+    severity="secondary"
+    [outlined]="true"
+    routerLink="/employees/invitations"
+  />
+</div>
+
 <p-card>
   <app-data-container
     [loading]="store.isLoading()"
@@ -106,3 +123,8 @@
     </p-table>
   </app-data-container>
 </p-card>
+
+<app-invite-employee-dialog
+  [(visible)]="inviteDialogVisible"
+  (invitationSent)="onInvitationSent()"
+/>

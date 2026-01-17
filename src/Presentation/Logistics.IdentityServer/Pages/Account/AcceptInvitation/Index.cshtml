@@ -1,0 +1,103 @@
+@page
+@model Logistics.IdentityServer.Pages.Account.AcceptInvitation.Index
+
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <div class="mb-4">
+                        <i class="bi bi-exclamation-circle text-danger" style="font-size: 3rem;"></i>
+                    </div>
+                    <h4 class="text-danger mb-3">Unable to Process Invitation</h4>
+                    <p class="text-muted mb-4">@Model.ErrorMessage</p>
+                    <a href="/Account/Login" class="btn btn-primary">Go to Login</a>
+                </div>
+            </div>
+        }
+        else if (Model.InvitationValid)
+        {
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0 text-center">Accept Invitation</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info mb-4">
+                        <div class="d-flex align-items-start">
+                            <i class="bi bi-info-circle me-2 mt-1"></i>
+                            <div>
+                                <p class="mb-1">
+                                    You've been invited to join <strong>@Model.TenantName</strong>
+                                </p>
+                                <p class="mb-0 small">
+                                    Role: <strong>@Model.RoleDisplayName</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="post">
+                        <input type="hidden" asp-for="Input.Token" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Email</label>
+                            <input type="email" class="form-control bg-light" value="@Model.Email" readonly />
+                        </div>
+
+                        @if (!Model.UserExists)
+                        {
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Input.FirstName" class="form-label"></label>
+                                    <input asp-for="Input.FirstName" class="form-control" placeholder="John" />
+                                    <span asp-validation-for="Input.FirstName" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Input.LastName" class="form-label"></label>
+                                    <input asp-for="Input.LastName" class="form-control" placeholder="Doe" />
+                                    <span asp-validation-for="Input.LastName" class="text-danger small"></span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="Input.Password" class="form-label"></label>
+                                <input asp-for="Input.Password" class="form-control" placeholder="Minimum 8 characters" />
+                                <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                            </div>
+                            <div class="mb-4">
+                                <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                                <input asp-for="Input.ConfirmPassword" class="form-control" placeholder="Confirm your password" />
+                                <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-secondary mb-4">
+                                <i class="bi bi-person-check me-2"></i>
+                                You already have an account. Click below to join this organization.
+                            </div>
+                            <input type="hidden" asp-for="Input.FirstName" value="Existing" />
+                            <input type="hidden" asp-for="Input.LastName" value="User" />
+                            <input type="hidden" asp-for="Input.Password" value="NotRequired123!" />
+                            <input type="hidden" asp-for="Input.ConfirmPassword" value="NotRequired123!" />
+                        }
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>
+                                Accept Invitation
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <a href="/Account/Login" class="text-muted small">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Login
+                </a>
+            </div>
+        }
+    </div>
+</div>

@@ -1,5 +1,15 @@
 <app-page-header title="List Customers" addRoute="/customers/add" addTooltip="Add a new customer" />
 
+<div class="flex gap-2 mb-4">
+  <p-button
+    icon="pi pi-send"
+    label="Invite Customer User"
+    severity="secondary"
+    [outlined]="true"
+    (click)="openInviteDialog()"
+  />
+</div>
+
 <p-card>
   <app-data-container
     [loading]="store.isLoading()"
@@ -42,7 +52,12 @@
           <td>{{ customer.name }}</td>
           <td class="text-center">
             <p-button
-              class="ml-2"
+              icon="pi pi-send"
+              pTooltip="Invite Portal User"
+              (click)="openInviteDialog(customer.id, customer.name)"
+            />
+            <p-button
+              styleClass="ml-2"
               icon="pi pi-pen-to-square"
               pTooltip="Edit Customer"
               [routerLink]="['/customers', customer.id, 'edit']"
@@ -59,3 +74,10 @@
     </p-table>
   </app-data-container>
 </p-card>
+
+<app-invite-customer-dialog
+  [(visible)]="inviteDialogVisible"
+  [customerId]="selectedCustomerId()"
+  [customerName]="selectedCustomerName()"
+  (invitationSent)="onInvitationSent()"
+/>

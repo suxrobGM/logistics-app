@@ -1,0 +1,84 @@
+<p-dialog
+  header="Invite Customer User"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  (onShow)="onShow()"
+  (onHide)="close()"
+>
+  @if (isLoading()) {
+    <div class="flex justify-center py-4">
+      <p-progress-spinner />
+    </div>
+  } @else {
+    <p class="text-muted-color mb-4">
+      Send an email invitation to give a customer access to the customer portal.
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <app-labeled-field label="Email Address" for="email" [required]="true" [control]="form.controls.email">
+        <input
+          pInputText
+          id="email"
+          formControlName="email"
+          type="email"
+          placeholder="customer@example.com"
+          class="w-full"
+        />
+      </app-labeled-field>
+
+      <app-labeled-field label="Customer" for="customerId" [required]="true" [control]="form.controls.customerId">
+        @if (customerId()) {
+          <input
+            pInputText
+            id="customerName"
+            [value]="customerName()"
+            class="w-full"
+            disabled
+          />
+        } @else {
+          <p-select
+            formControlName="customerId"
+            id="customerId"
+            class="w-full"
+            appendTo="body"
+            [options]="customers()"
+            optionValue="id"
+            optionLabel="name"
+            placeholder="Select a customer"
+            [loading]="isLoadingCustomers()"
+            [filter]="true"
+            filterPlaceholder="Search customers..."
+          />
+        }
+      </app-labeled-field>
+
+      <app-labeled-field label="Personal Message" for="personalMessage" hint="Optional note to include in the invitation email">
+        <textarea
+          pTextarea
+          id="personalMessage"
+          formControlName="personalMessage"
+          rows="3"
+          placeholder="Add a personal note to the invitation email..."
+          class="w-full"
+        ></textarea>
+      </app-labeled-field>
+
+      <div class="flex gap-2 justify-end">
+        <p-button
+          type="button"
+          label="Cancel"
+          severity="secondary"
+          [outlined]="true"
+          (click)="close()"
+        />
+        <p-button
+          type="submit"
+          icon="pi pi-send"
+          label="Send Invitation"
+          [disabled]="isLoading() || form.invalid"
+        />
+      </div>
+    </form>
+  }
+</p-dialog>
