@@ -17,7 +17,7 @@ RUN bun run build:tms
 FROM nginx:alpine
 
 # Copy nginx config
-COPY nginx.tms.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copy built app
 COPY --from=builder /app/dist/tms-portal/browser /usr/share/nginx/html

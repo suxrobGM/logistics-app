@@ -1,9 +1,8 @@
 using Logistics.Aspire.AppHost;
-using Microsoft.Extensions.Configuration;
 using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
-builder.Configuration.AddJsonFile("appsettings.local.json", true, true);
+var isPublishMode = builder.ExecutionContext.IsPublishMode;
 
 builder.AddDockerComposeEnvironment("compose")
     .WithDashboard(dashboard => dashboard.WithHostPort(7100));
@@ -46,7 +45,7 @@ var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithExternalHttpEndpoints()
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
-    .WithEnvironment("IdentityServer__Authority", "http://identity-server:7001")
+    .WithEnvironment("IdentityServer__Authority", isPublishMode ? "http://identity-server:7001" : "http://localhost:7001")
     .WithEnvironment("IdentityServer__RequireHttpsMetadata", "false")
     .WithEnvironment("Smtp__SenderEmail", builder.GetConfigValue("Smtp:SenderEmail"))
     .WithEnvironment("Smtp__SenderName", builder.GetConfigValue("Smtp:SenderName"))
@@ -64,7 +63,7 @@ var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WaitFor(identityServer);
 
 // Use BunApp for local dev, Container for publishing
-if (builder.ExecutionContext.IsPublishMode)
+if (isPublishMode)
 {
     builder.AddContainer("admin-portal", "ghcr.io/suxrobgm/logistics-app/admin-portal")
         .WithImageTag("latest")
@@ -109,7 +108,7 @@ else
 }
 
 // Use Stripe CLI only in development mode, on the prod the webhooks are handled by the Stripe Dashboard
-if (!builder.ExecutionContext.IsPublishMode)
+if (!isPublishMode)
 {
     // Listen for Stripe webhooks and forward them to the logistics API
     builder.AddContainer("stripe-cli", "stripe/stripe-cli:latest")
@@ -123,7 +122,7 @@ if (!builder.ExecutionContext.IsPublishMode)
 }
 
 // Use portainer only in publish mode, on the dev the containers are managed by Aspire Dashboard
-if (builder.ExecutionContext.IsPublishMode)
+if (isPublishMode)
 {
     // Portainer Agent: Exposes Docker API to Portainer CE
     var portainerAgent = builder.AddContainer("portainer-agent", "portainer/agent:latest")

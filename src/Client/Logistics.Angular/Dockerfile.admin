@@ -17,7 +17,7 @@ RUN bun run build:admin
 FROM nginx:alpine
 
 # Copy nginx config
-COPY nginx.admin.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copy built app
 COPY --from=builder /app/dist/admin-portal/browser /usr/share/nginx/html

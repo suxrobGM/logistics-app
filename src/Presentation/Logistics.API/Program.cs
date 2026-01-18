@@ -15,9 +15,7 @@ try
     builder.Configuration.AddJsonFile("appsettings.local.json", true, true);
 
     builder.Host.UseSerilog((ctx, lc) => lc
-        .WriteTo.Console(
-            outputTemplate:
-            "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Properties:j}{NewLine}{Exception}{NewLine}")
+        .WriteTo.Console()
         .Enrich.FromLogContext()
         .ReadFrom.Configuration(ctx.Configuration));
 

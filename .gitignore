@@ -4,7 +4,8 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # Exclude production appsettings file
-appsettings.Production.json
+appsettings.[Pp]roduction.json
+appsettings.[Dd]evelopment.json
 appsettings.[Ll]ocal.json
 
 # Exception for production appsettings files in the following projects

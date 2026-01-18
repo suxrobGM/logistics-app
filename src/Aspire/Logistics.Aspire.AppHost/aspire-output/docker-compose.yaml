@@ -149,8 +149,8 @@ services:
         condition: "service_started"
     networks:
       - "aspire"
-  admin-app:
-    image: "${ADMIN_APP_IMAGE}"
+  admin-portal:
+    image: "ghcr.io/suxrobgm/logistics-app/admin-portal:latest"
     ports:
       - "7002:80"
     depends_on:
