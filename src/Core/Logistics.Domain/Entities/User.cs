@@ -11,9 +11,6 @@ public class User : IdentityUser<Guid>, IEntity<Guid>, IMasterEntity, IAuditable
     public Guid? TenantId { get; set; }
     public virtual Tenant? Tenant { get; set; }
 
-    public Guid? AppRoleId { get; set; }
-    public virtual AppRole? AppRole { get; set; }
-
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public string? CreatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }

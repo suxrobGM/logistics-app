@@ -43,8 +43,11 @@ internal sealed class CreateInvitationHandler(
         // Validate role assignment permissions - Owner can only be assigned by SuperAdmin/AppManager
         if (req.TenantRole == TenantRoles.Owner)
         {
-            var currentUserRole = currentUser.AppRole?.Name;
-            var canAssignOwner = currentUserRole == AppRoles.SuperAdmin || currentUserRole == AppRoles.Manager;
+            var currentUserRoles = await userManager.GetRolesAsync(currentUser);
+            var canAssignOwner = currentUserRoles.Contains(AppRoles.SuperAdmin) ||
+                currentUserRoles.Contains(AppRoles.Admin) ||
+                currentUserRoles.Contains(AppRoles.Manager);
+
             if (!canAssignOwner)
             {
                 return Result<InvitationDto>.Fail("Only Super Admins and App Managers can invite Owner users.");

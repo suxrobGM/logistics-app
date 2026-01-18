@@ -184,7 +184,6 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
                     TenantId = table.Column<Guid>(type: "uuid", nullable: true),
-                    AppRoleId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -207,12 +206,6 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_AspNetRoles_AppRoleId",
-                        column: x => x.AppRoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_AspNetUsers_Tenants_TenantId",
                         column: x => x.TenantId,
@@ -450,11 +443,6 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_AppRoleId",
-                table: "AspNetUsers",
-                column: "AppRoleId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_TenantId",
                 table: "AspNetUsers",
                 column: "TenantId");
@@ -569,6 +557,9 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                 name: "UserTenantAccess");
 
             migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
                 name: "Invoices");
 
             migrationBuilder.DropTable(
@@ -576,9 +567,6 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Tenants");

@@ -13,10 +13,5 @@ internal sealed class UserEntityConfiguration : IEntityTypeConfiguration<User>
             .WithMany(i => i.Users)
             .HasForeignKey(i => i.TenantId)
             .OnDelete(DeleteBehavior.SetNull);
-
-        builder.HasOne(i => i.AppRole)
-            .WithMany()
-            .HasForeignKey(i => i.AppRoleId)
-            .OnDelete(DeleteBehavior.SetNull);
     }
 }

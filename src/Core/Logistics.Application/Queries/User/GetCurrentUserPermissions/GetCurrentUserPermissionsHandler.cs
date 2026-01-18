@@ -44,15 +44,22 @@ internal sealed class GetCurrentUserPermissionsHandler(
 
     private async Task AddAppRolePermissionsAsync(User user, HashSet<string> permissions)
     {
-        if (user.AppRole is null)
-        {
-            return;
-        }
+        // Get roles from ASP.NET Identity (stored in AspNetUserRoles table)
+        var roleNames = await userManager.GetRolesAsync(user);
 
-        var claims = await roleManager.GetClaimsAsync(user.AppRole);
-        foreach (var claim in claims.Where(c => c.Type == CustomClaimTypes.Permission))
+        foreach (var roleName in roleNames)
         {
-            permissions.Add(claim.Value);
+            var appRole = await roleManager.FindByNameAsync(roleName);
+            if (appRole is null)
+            {
+                continue;
+            }
+
+            var claims = await roleManager.GetClaimsAsync(appRole);
+            foreach (var claim in claims.Where(c => c.Type == CustomClaimTypes.Permission))
+            {
+                permissions.Add(claim.Value);
+            }
         }
     }
 
