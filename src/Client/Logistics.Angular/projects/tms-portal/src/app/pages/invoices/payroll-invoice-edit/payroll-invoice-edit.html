@@ -8,7 +8,7 @@
       }
 
       <form [formGroup]="form" (ngSubmit)="submit()">
-        <app-validation-summary [form]="form" />
+        <shared-validation-summary [form]="form" />
 
         <div class="mb-4">
           <label for="dateRange" class="mb-2">Date range</label><br />
@@ -93,7 +93,7 @@
             </div>
 
             <h5>Billing address</h5>
-            <app-address-form formControlName="paymentBillingAddress"></app-address-form>
+            <shared-address-form formControlName="paymentBillingAddress"></shared-address-form>
           }
         } -->
 

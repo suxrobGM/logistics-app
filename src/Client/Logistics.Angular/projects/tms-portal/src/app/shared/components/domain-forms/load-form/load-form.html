@@ -5,17 +5,17 @@
     }
 
     <form [formGroup]="form" (ngSubmit)="submit()">
-      <app-validation-summary [form]="form" />
+      <shared-validation-summary [form]="form" />
 
-      <app-labeled-field label="Name" for="name" [required]="true">
+      <shared-labeled-field label="Name" for="name" [required]="true">
         <input pInputText id="name" formControlName="name" type="text" placeholder="Load name" />
-      </app-labeled-field>
-      <app-labeled-field label="Load Type" for="type" [required]="true">
+      </shared-labeled-field>
+      <shared-labeled-field label="Load Type" for="type" [required]="true">
         <p-select formControlName="type" [options]="loadTypes" />
-      </app-labeled-field>
+      </shared-labeled-field>
 
       @if (initial()?.tripNumber && initial()?.tripId) {
-        <app-labeled-field label="Trip" for="tripNumber">
+        <shared-labeled-field label="Trip" for="tripNumber">
           <input
             pInputText
             id="tripNumber"
@@ -23,62 +23,62 @@
             type="text"
             placeholder="Trip"
           />
-        </app-labeled-field>
+        </shared-labeled-field>
       }
 
-      <app-labeled-field label="Customer" for="customer" [required]="true">
+      <shared-labeled-field label="Customer" for="customer" [required]="true">
         <app-search-customer formControlName="customer" />
-      </app-labeled-field>
+      </shared-labeled-field>
 
-      <app-labeled-field label="Origin Address" for="originAddress" [required]="true">
+      <shared-labeled-field label="Origin Address" for="originAddress" [required]="true">
         <app-address-autocomplete
           field="originAddress"
           formControlName="originAddress"
           [forceSelection]="true"
           (selectedAddress)="updateOrigin($event)"
         />
-      </app-labeled-field>
+      </shared-labeled-field>
 
-      <app-labeled-field label="Destination Address" for="destinationAddress" [required]="true">
+      <shared-labeled-field label="Destination Address" for="destinationAddress" [required]="true">
         <app-address-autocomplete
           field="destinationAddress"
           formControlName="destinationAddress"
           [forceSelection]="true"
           (selectedAddress)="updateDestination($event)"
         />
-      </app-labeled-field>
+      </shared-labeled-field>
 
-      <app-labeled-field label="Delivery Cost" for="deliveryCost" [required]="true">
+      <shared-labeled-field label="Delivery Cost" for="deliveryCost" [required]="true">
         <p-inputgroup>
           <p-inputgroup-addon>$$</p-inputgroup-addon>
           <p-input-number id="deliveryCost" formControlName="deliveryCost" [min]="0" />
         </p-inputgroup>
-      </app-labeled-field>
+      </shared-labeled-field>
 
-      <app-labeled-field label="Estimated Distance" for="distance">
+      <shared-labeled-field label="Estimated Distance" for="distance">
         <p-inputgroup>
           <p-inputgroup-addon>mi</p-inputgroup-addon>
           <p-input-number id="distance" formControlName="distance" [min]="0" />
         </p-inputgroup>
-      </app-labeled-field>
+      </shared-labeled-field>
 
-      <app-labeled-field label="Assigned Dispatcher" for="dispatcherName">
+      <shared-labeled-field label="Assigned Dispatcher" for="dispatcherName">
         <input
           pInputText
           id="dispatcherName"
           formControlName="assignedDispatcherName"
           type="text"
         />
-      </app-labeled-field>
+      </shared-labeled-field>
 
-      <app-labeled-field label="Assigned Truck" for="assignedTruck" [required]="true">
+      <shared-labeled-field label="Assigned Truck" for="assignedTruck" [required]="true">
         <app-search-truck formControlName="assignedTruck" />
-      </app-labeled-field>
+      </shared-labeled-field>
 
       @if (mode() === "edit") {
-        <app-labeled-field label="Status" for="status">
+        <shared-labeled-field label="Status" for="status">
           <p-select formControlName="status" [options]="loadStatuses" />
-        </app-labeled-field>
+        </shared-labeled-field>
       }
 
       <!-- action buttons -->

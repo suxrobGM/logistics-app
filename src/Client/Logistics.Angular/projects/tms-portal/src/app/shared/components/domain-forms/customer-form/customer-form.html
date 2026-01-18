@@ -4,11 +4,11 @@
   }
 
   <form [formGroup]="form" (ngSubmit)="submit()">
-    <app-validation-summary [form]="form" />
+    <shared-validation-summary [form]="form" />
 
-    <app-labeled-field label="Customer Name" for="name" [required]="true">
+    <shared-labeled-field label="Customer Name" for="name" [required]="true">
       <input pInputText id="name" formControlName="name" />
-    </app-labeled-field>
+    </shared-labeled-field>
 
     <div class="flex gap-2">
       <p-button type="submit" icon="pi pi-pencil" label="Save" [disabled]="isLoading()" />

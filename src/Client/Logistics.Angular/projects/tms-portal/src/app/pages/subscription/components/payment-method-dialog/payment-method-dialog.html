@@ -5,31 +5,31 @@
   [style]="{ width: '50vw' }"
 >
   <form class="grid grid-cols-12 gap-x-5" [formGroup]="form" (ngSubmit)="submit()">
-    <app-validation-summary [form]="form" />
+    <shared-validation-summary [form]="form" />
 
     <div class="col-span-12">
       <h5>Choose payment method:</h5>
 
-      <app-labeled-field label="Payment Type" for="methodType">
+      <shared-labeled-field label="Payment Type" for="methodType">
         <p-select
           formControlName="methodType"
           [options]="paymentMethodTypes()"
           class="w-full"
         ></p-select>
-      </app-labeled-field>
+      </shared-labeled-field>
 
       @if (form.get("methodType")?.value === "card") {
         <h5>Credit/Debit card details</h5>
         <p-divider />
 
-        <app-labeled-field label="Cardholder Name" for="cardHolderName">
+        <shared-labeled-field label="Cardholder Name" for="cardHolderName">
           <input
             id="cardHolderName"
             formControlName="cardHolderName"
             pInputText
             placeholder="ex. John Smith"
           />
-        </app-labeled-field>
+        </shared-labeled-field>
 
         <div class="mb-4">
           <app-stripe-card (ready)="setCardNumberElement($event.cardNumber)" />
@@ -38,73 +38,73 @@
         <h5>US bank account details</h5>
         <p-divider />
 
-        <app-labeled-field label="Bank Name" for="bankName">
+        <shared-labeled-field label="Bank Name" for="bankName">
           <input formControlName="bankName" pInputText placeholder="ex. Bank of America" />
-        </app-labeled-field>
+        </shared-labeled-field>
 
-        <app-labeled-field label="Account Type" for="bankAccountType">
+        <shared-labeled-field label="Account Type" for="bankAccountType">
           <p-select
             formControlName="bankAccountType"
             [options]="usBankAccountTypes"
             class="w-full"
           ></p-select>
-        </app-labeled-field>
+        </shared-labeled-field>
 
-        <app-labeled-field label="Account Number" for="bankAccountNumber">
+        <shared-labeled-field label="Account Number" for="bankAccountNumber">
           <input
             formControlName="bankAccountNumber"
             pInputText
             pKeyFilter="int"
             placeholder="ex. 1234567891011"
           />
-        </app-labeled-field>
+        </shared-labeled-field>
 
-        <app-labeled-field label="Routing Number" for="bankRoutingNumber">
+        <shared-labeled-field label="Routing Number" for="bankRoutingNumber">
           <input
             formControlName="bankRoutingNumber"
             pInputText
             pKeyFilter="int"
             placeholder="ex. 123456789"
           />
-        </app-labeled-field>
+        </shared-labeled-field>
 
-        <app-labeled-field label="Account Holder Type" for="bankAccountHolderType">
+        <shared-labeled-field label="Account Holder Type" for="bankAccountHolderType">
           <p-select
             formControlName="bankAccountHolderType"
             [options]="usBankAccountHolderTypes"
             class="w-full"
           />
-        </app-labeled-field>
+        </shared-labeled-field>
 
-        <app-labeled-field label="Account Holder Name" for="bankAccountHolderName">
+        <shared-labeled-field label="Account Holder Name" for="bankAccountHolderName">
           <input formControlName="bankAccountHolderName" pInputText placeholder="ex. John Smith" />
-        </app-labeled-field>
+        </shared-labeled-field>
       } @else if (form.get("methodType")?.value === "international_bank_account") {
         <h5>International bank account details</h5>
         <p-divider />
 
-        <app-labeled-field label="Bank Name" for="bankName">
+        <shared-labeled-field label="Bank Name" for="bankName">
           <input formControlName="bankName" pInputText placeholder="ex. Bank of America" />
-        </app-labeled-field>
+        </shared-labeled-field>
 
-        <app-labeled-field label="Account Number" for="bankAccountNumber">
+        <shared-labeled-field label="Account Number" for="bankAccountNumber">
           <input formControlName="bankAccountNumber" pInputText placeholder="ex. 1234567891011" />
-        </app-labeled-field>
+        </shared-labeled-field>
 
-        <app-labeled-field label="SWIFT Code" for="swiftCode">
+        <shared-labeled-field label="SWIFT Code" for="swiftCode">
           <input formControlName="swiftCode" pInputText placeholder="ex. ABCD1234" />
-        </app-labeled-field>
+        </shared-labeled-field>
 
-        <app-labeled-field label="Account Holder Name" for="bankAccountHolderName">
+        <shared-labeled-field label="Account Holder Name" for="bankAccountHolderName">
           <input formControlName="bankAccountHolderName" pInputText placeholder="ex. John Smith" />
-        </app-labeled-field>
+        </shared-labeled-field>
       }
     </div>
 
     <div class="col-span-12">
       <h5>Billing address</h5>
       <p-divider />
-      <app-address-form formControlName="billingAddress" />
+      <shared-address-form formControlName="billingAddress" />
     </div>
 
     <div class="flex gap-2">

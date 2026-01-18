@@ -1,20 +1,37 @@
 // =============================================================================
-// REUSABLE UI COMPONENTS
+// SHARED LIBRARY RE-EXPORTS
 // =============================================================================
 
 // UI Components (layout, display, cards)
-export * from "./ui";
+export {
+  PageHeader,
+  StatCard,
+  DashboardCard,
+} from "@logistics/shared/components";
 
 // Form Components (inputs, buttons, validation)
-export * from "./form";
+export {
+  SearchInput,
+  CurrencyInput,
+  UnitInput,
+  LabeledField,
+  ValidationSummary,
+} from "@logistics/shared/components";
+
+// State Components
+export {
+  DataContainer,
+  LoadingSkeleton,
+  EmptyState,
+  ErrorState,
+} from "@logistics/shared/components";
+
+// =============================================================================
+// TMS-SPECIFIC COMPONENTS
+// =============================================================================
 
 // Tags and Status
 export * from "./tags";
-export * from "./state";
-
-// =============================================================================
-// DOMAIN-SPECIFIC COMPONENTS
-// =============================================================================
 
 // Maps
 export * from "./maps";

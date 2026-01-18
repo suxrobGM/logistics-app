@@ -1,12 +1,12 @@
 <div class="w-full p-6">
   <!-- Header -->
   <div class="flex items-center justify-between">
-    <app-page-header
+    <shared-page-header
       title="Financial Dashboard"
       subtitle="Comprehensive financial overview and performance metrics"
       [showAddButton]="false"
     />
-    <app-range-calendar
+    <shared-range-calendar
       [(startDate)]="startDate"
       [(endDate)]="endDate"
       (applyButtonClick)="filter()"
@@ -26,7 +26,7 @@
     <!-- Key Financial Metrics Cards -->
     <div class="mb-6 grid grid-cols-12 gap-2">
       <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
-        <app-stat-card
+        <shared-stat-card
           icon="pi-file-export"
           label="Total Invoiced"
           [value]="(data()?.totalInvoiced || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
@@ -37,7 +37,7 @@
       </div>
 
       <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
-        <app-stat-card
+        <shared-stat-card
           icon="pi-check-circle"
           label="Total Paid"
           [value]="(data()?.totalPaid || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
@@ -48,7 +48,7 @@
       </div>
 
       <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
-        <app-stat-card
+        <shared-stat-card
           icon="pi-clock"
           label="Outstanding"
           [value]="(data()?.totalDue || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
@@ -58,7 +58,7 @@
       </div>
 
       <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
-        <app-stat-card
+        <shared-stat-card
           icon="pi-percentage"
           label="Collection Rate"
           [value]="(data()?.collectionRate || 0 | number: '1.1-1') + '%'"
@@ -72,7 +72,7 @@
     <!-- Financial Metrics -->
     <div class="mb-6 grid grid-cols-12 gap-2">
       <div class="col-span-12">
-        <app-dashboard-card title="Financial Metrics" icon="pi-chart-line" iconColor="blue">
+        <shared-dashboard-card title="Financial Metrics" icon="pi-chart-line" iconColor="blue">
           <div class="grid grid-cols-12 gap-1">
             @for (metric of data()?.financialMetrics || []; track metric.metric) {
               <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
@@ -98,14 +98,14 @@
               </div>
             }
           </div>
-        </app-dashboard-card>
+        </shared-dashboard-card>
       </div>
     </div>
 
     <!-- Charts Row 1 -->
     <div class="mb-6 grid grid-cols-12 gap-2">
       <div class="col-span-12 mb-6 lg:col-span-6">
-        <app-dashboard-card
+        <shared-dashboard-card
           title="Invoice Status Distribution"
           icon="pi-chart-pie"
           iconColor="blue"
@@ -116,39 +116,39 @@
             [options]="invoiceStatusChartOptions"
             style="height: 300px"
           />
-        </app-dashboard-card>
+        </shared-dashboard-card>
       </div>
 
       <div class="col-span-12 mb-6 lg:col-span-6">
-        <app-dashboard-card title="Financial Metrics" icon="pi-chart-bar" iconColor="blue">
+        <shared-dashboard-card title="Financial Metrics" icon="pi-chart-bar" iconColor="blue">
           <p-chart
             type="bar"
             [data]="financialMetricsChartData()"
             [options]="financialMetricsChartOptions"
             style="height: 300px"
           />
-        </app-dashboard-card>
+        </shared-dashboard-card>
       </div>
     </div>
 
     <!-- Revenue Trends Chart -->
     <div class="mb-6 grid grid-cols-12 gap-2">
       <div class="col-span-12">
-        <app-dashboard-card title="Revenue & Profit Trends" icon="pi-chart-line" iconColor="blue">
+        <shared-dashboard-card title="Revenue & Profit Trends" icon="pi-chart-line" iconColor="blue">
           <p-chart
             type="line"
             [data]="revenueTrendChartData()"
             [options]="revenueTrendChartOptions"
             style="height: 400px"
           />
-        </app-dashboard-card>
+        </shared-dashboard-card>
       </div>
     </div>
 
     <!-- Data Tables -->
     <div class="grid grid-cols-12 gap-2">
       <div class="col-span-12 mb-6 lg:col-span-6">
-        <app-dashboard-card title="Payment Trends" icon="pi-table" iconColor="blue">
+        <shared-dashboard-card title="Payment Trends" icon="pi-table" iconColor="blue">
           <p-table [value]="data()?.paymentTrends || []" [paginator]="true" [rows]="5">
             <ng-template pTemplate="header">
               <tr>
@@ -180,11 +180,11 @@
               </tr>
             </ng-template>
           </p-table>
-        </app-dashboard-card>
+        </shared-dashboard-card>
       </div>
 
       <div class="col-span-12 mb-6 lg:col-span-6">
-        <app-dashboard-card title="Top Customers" icon="pi-users" iconColor="blue">
+        <shared-dashboard-card title="Top Customers" icon="pi-users" iconColor="blue">
           <p-table [value]="data()?.topCustomers || []" [paginator]="true" [rows]="5">
             <ng-template pTemplate="header">
               <tr>
@@ -214,7 +214,7 @@
               </tr>
             </ng-template>
           </p-table>
-        </app-dashboard-card>
+        </shared-dashboard-card>
       </div>
     </div>
   }

@@ -5,8 +5,7 @@ import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
-import { LabeledField } from "../../form/labeled-field/labeled-field";
-import { ValidationSummary } from "../../form/validation-summary/validation-summary";
+import { LabeledField, ValidationSummary } from "@logistics/shared/components";
 
 export interface CustomerFormValue {
   name: string;

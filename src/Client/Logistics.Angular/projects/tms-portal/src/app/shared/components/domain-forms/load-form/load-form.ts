@@ -22,7 +22,7 @@ import { Select } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
-import { LabeledField, ValidationSummary } from "@/shared/components/form";
+import { LabeledField, ValidationSummary } from "@logistics/shared/components";
 import {
   AddressAutocomplete,
   DirectionMap,

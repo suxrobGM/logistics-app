@@ -14,9 +14,9 @@
       }
 
       <form [formGroup]="form" (ngSubmit)="updateEmployee()">
-        <app-validation-summary [form]="form" />
+        <shared-validation-summary [form]="form" />
 
-        <app-labeled-field label="Email" for="email">
+        <shared-labeled-field label="Email" for="email">
           <input
             pInputText
             id="email"
@@ -25,9 +25,9 @@
             [disabled]="true"
             [value]="employee()?.email"
           />
-        </app-labeled-field>
+        </shared-labeled-field>
 
-        <app-labeled-field label="First name" for="firstName">
+        <shared-labeled-field label="First name" for="firstName">
           <input
             pInputText
             id="firstName"
@@ -36,9 +36,9 @@
             [disabled]="true"
             [value]="employee()?.firstName"
           />
-        </app-labeled-field>
+        </shared-labeled-field>
 
-        <app-labeled-field label="Last name" for="lastName">
+        <shared-labeled-field label="Last name" for="lastName">
           <input
             pInputText
             id="lastName"
@@ -47,21 +47,21 @@
             [disabled]="true"
             [value]="employee()?.lastName"
           />
-        </app-labeled-field>
+        </shared-labeled-field>
 
-        <app-labeled-field label="Salary Type" for="salaryType">
+        <shared-labeled-field label="Salary Type" for="salaryType">
           <p-select formControlName="salaryType" class="w-full" [options]="salaryTypes" />
-        </app-labeled-field>
+        </shared-labeled-field>
 
-        <app-labeled-field label="Salary" for="salary">
+        <shared-labeled-field label="Salary" for="salary">
           @if (isShareOfGrossSalary()) {
-            <app-unit-input [control]="form.controls.salary" unit="%" [min]="0" [max]="100" />
+            <shared-unit-input [control]="form.controls.salary" unit="%" [min]="0" [max]="100" />
           } @else {
-            <app-currency-input [control]="form.controls.salary" [min]="0" />
+            <shared-currency-input [control]="form.controls.salary" [min]="0" />
           }
-        </app-labeled-field>
+        </shared-labeled-field>
 
-        <app-labeled-field label="Role" for="roleName">
+        <shared-labeled-field label="Role" for="roleName">
           <p-inputgroup>
             <input
               pInputText
@@ -77,7 +77,7 @@
               (click)="openUpdateDialog()"
             />
           </p-inputgroup>
-        </app-labeled-field>
+        </shared-labeled-field>
 
         <div class="flex gap-2">
           <p-button type="submit" icon="pi pi-pencil" label="Save" [disabled]="isLoading()" />

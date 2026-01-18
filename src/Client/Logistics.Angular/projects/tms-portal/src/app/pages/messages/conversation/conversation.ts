@@ -15,7 +15,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { SkeletonModule } from "primeng/skeleton";
 import { AuthService } from "@/core/auth";
 import { MessagingService } from "@/core/services";
-import { EmptyState } from "@/shared/components/state";
+import { EmptyState } from "@logistics/shared/components";
 import {
   ConversationDetails,
   ConversationHeader,

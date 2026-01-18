@@ -11,7 +11,7 @@
     <p-skeleton class="my-2" height="20rem" width="100%" />
   } @else {
     <div class="mb-2">
-      <app-range-calendar
+      <shared-range-calendar
         [(startDate)]="startDate"
         [(endDate)]="endDate"
         (applyButtonClick)="fetchDailyGrosses()"
