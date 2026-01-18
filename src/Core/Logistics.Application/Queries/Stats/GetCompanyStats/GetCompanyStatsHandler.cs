@@ -36,16 +36,16 @@ internal sealed class GetCompanyStatsHandler : IAppRequestHandler<GetCompanyStat
 
             var employeeRepository = _tenantUow.Repository<Employee>();
             var ownerEmployee =
-                await employeeRepository.GetAsync(e => e.EmployeeRoles.Any(er => er.RoleId == ownerRoleId));
+                await employeeRepository.GetAsync(e => e.RoleId == ownerRoleId);
 
             companyStats.OwnerName = ownerEmployee?.GetFullName();
             companyStats.EmployeesCount = await employeeRepository.CountAsync();
             companyStats.ManagersCount =
-                await employeeRepository.CountAsync(e => e.EmployeeRoles.Any(er => er.RoleId == managerRoleId));
+                await employeeRepository.CountAsync(e => e.RoleId == managerRoleId);
             companyStats.DispatchersCount =
-                await employeeRepository.CountAsync(e => e.EmployeeRoles.Any(er => er.RoleId == dispatcherRoleId));
+                await employeeRepository.CountAsync(e => e.RoleId == dispatcherRoleId);
             companyStats.DriversCount =
-                await employeeRepository.CountAsync(e => e.EmployeeRoles.Any(er => er.RoleId == driverRoleId));
+                await employeeRepository.CountAsync(e => e.RoleId == driverRoleId);
             companyStats.TrucksCount = await _tenantUow.Repository<Truck>().CountAsync();
 
             var now = DateTime.UtcNow;

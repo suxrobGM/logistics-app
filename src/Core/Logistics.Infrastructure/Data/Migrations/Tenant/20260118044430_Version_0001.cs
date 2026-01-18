@@ -46,26 +46,6 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 });
 
             migrationBuilder.CreateTable(
-                name: "Employees",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    SalaryType = table.Column<int>(type: "integer", nullable: false),
-                    JoinedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DeviceToken = table.Column<string>(type: "text", nullable: true),
-                    Salary_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
-                    Salary_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Employees", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Notifications",
                 columns: table => new
                 {
@@ -130,6 +110,80 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Roles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CustomerUsers",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    LastLoginAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DisplayName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CustomerUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CustomerUsers_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Employees",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    FirstName = table.Column<string>(type: "text", nullable: false),
+                    LastName = table.Column<string>(type: "text", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    SalaryType = table.Column<int>(type: "integer", nullable: false),
+                    JoinedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DeviceToken = table.Column<string>(type: "text", nullable: true),
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Salary_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Salary_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Employees", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Employees_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RoleClaims",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ClaimType = table.Column<string>(type: "text", nullable: false),
+                    ClaimValue = table.Column<string>(type: "text", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RoleClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RoleClaims_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -277,50 +331,6 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 });
 
             migrationBuilder.CreateTable(
-                name: "EmployeeRoles",
-                columns: table => new
-                {
-                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RoleId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmployeeRoles", x => new { x.EmployeeId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_EmployeeRoles_Employees_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Employees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EmployeeRoles_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RoleClaims",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ClaimType = table.Column<string>(type: "text", nullable: false),
-                    ClaimValue = table.Column<string>(type: "text", nullable: false),
-                    RoleId = table.Column<Guid>(type: "uuid", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RoleClaims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RoleClaims_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "EldVehicleMappings",
                 columns: table => new
                 {
@@ -439,6 +449,28 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 });
 
             migrationBuilder.CreateTable(
+                name: "Conversations",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    LoadId = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsTenantChat = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastMessageAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Conversations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Conversations_Loads_LoadId",
+                        column: x => x.LoadId,
+                        principalTable: "Loads",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Documents",
                 columns: table => new
                 {
@@ -453,6 +485,13 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     Type = table.Column<string>(type: "text", nullable: false),
                     Status = table.Column<string>(type: "text", nullable: false, defaultValue: "Active"),
                     Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    RecipientName = table.Column<string>(type: "text", nullable: true),
+                    RecipientSignature = table.Column<string>(type: "text", nullable: true),
+                    CaptureLatitude = table.Column<double>(type: "double precision", nullable: true),
+                    CaptureLongitude = table.Column<double>(type: "double precision", nullable: true),
+                    CapturedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    TripStopId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Notes = table.Column<string>(type: "text", nullable: true),
                     UploadedById = table.Column<Guid>(type: "uuid", nullable: false),
                     EmployeeId = table.Column<Guid>(type: "uuid", nullable: true),
                     LoadId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -571,6 +610,63 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 });
 
             migrationBuilder.CreateTable(
+                name: "ConversationParticipants",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ConversationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    JoinedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastReadAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IsMuted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ConversationParticipants", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ConversationParticipants_Conversations_ConversationId",
+                        column: x => x.ConversationId,
+                        principalTable: "Conversations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ConversationParticipants_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Messages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ConversationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SenderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Content = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
+                    SentAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Messages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Messages_Conversations_ConversationId",
+                        column: x => x.ConversationId,
+                        principalTable: "Conversations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Messages_Employees_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Payments",
                 columns: table => new
                 {
@@ -579,6 +675,7 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     MethodId = table.Column<Guid>(type: "uuid", nullable: false),
                     TenantId = table.Column<Guid>(type: "uuid", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
+                    StripePaymentIntentId = table.Column<string>(type: "text", nullable: true),
                     InvoiceId = table.Column<Guid>(type: "uuid", nullable: true),
                     Amount_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Amount_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
@@ -602,6 +699,69 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                         principalTable: "Invoices",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.CreateTable(
+                name: "MessageReadReceipts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    MessageId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ReadById = table.Column<Guid>(type: "uuid", nullable: false),
+                    ReadAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MessageReadReceipts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MessageReadReceipts_Employees_ReadById",
+                        column: x => x.ReadById,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MessageReadReceipts_Messages_MessageId",
+                        column: x => x.MessageId,
+                        principalTable: "Messages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ConversationParticipants_ConversationId_EmployeeId",
+                table: "ConversationParticipants",
+                columns: new[] { "ConversationId", "EmployeeId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ConversationParticipants_EmployeeId",
+                table: "ConversationParticipants",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Conversations_LastMessageAt",
+                table: "Conversations",
+                column: "LastMessageAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Conversations_LoadId",
+                table: "Conversations",
+                column: "LoadId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CustomerUsers_CustomerId_UserId",
+                table: "CustomerUsers",
+                columns: new[] { "CustomerId", "UserId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CustomerUsers_Email",
+                table: "CustomerUsers",
+                column: "Email");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CustomerUsers_UserId",
+                table: "CustomerUsers",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Documents_EmployeeId",
@@ -665,8 +825,8 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 column: "TruckId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeeRoles_RoleId",
-                table: "EmployeeRoles",
+                name: "IX_Employees_RoleId",
+                table: "Employees",
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
@@ -732,6 +892,32 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_MessageReadReceipts_MessageId_ReadById",
+                table: "MessageReadReceipts",
+                columns: new[] { "MessageId", "ReadById" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MessageReadReceipts_ReadById",
+                table: "MessageReadReceipts",
+                column: "ReadById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_ConversationId",
+                table: "Messages",
+                column: "ConversationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_SenderId",
+                table: "Messages",
+                column: "SenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_SentAt",
+                table: "Messages",
+                column: "SentAt");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PaymentMethods_StripePaymentMethodId",
                 table: "PaymentMethods",
                 column: "StripePaymentMethodId",
@@ -789,6 +975,12 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ConversationParticipants");
+
+            migrationBuilder.DropTable(
+                name: "CustomerUsers");
+
+            migrationBuilder.DropTable(
                 name: "Documents");
 
             migrationBuilder.DropTable(
@@ -804,13 +996,13 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 name: "EldVehicleMappings");
 
             migrationBuilder.DropTable(
-                name: "EmployeeRoles");
-
-            migrationBuilder.DropTable(
                 name: "HosLogs");
 
             migrationBuilder.DropTable(
                 name: "HosViolations");
+
+            migrationBuilder.DropTable(
+                name: "MessageReadReceipts");
 
             migrationBuilder.DropTable(
                 name: "Notifications");
@@ -828,13 +1020,16 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 name: "TripStops");
 
             migrationBuilder.DropTable(
+                name: "Messages");
+
+            migrationBuilder.DropTable(
                 name: "Invoices");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "Trips");
 
             migrationBuilder.DropTable(
-                name: "Trips");
+                name: "Conversations");
 
             migrationBuilder.DropTable(
                 name: "Loads");
@@ -847,6 +1042,9 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
 
             migrationBuilder.DropTable(
                 name: "Employees");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
         }
     }
 }

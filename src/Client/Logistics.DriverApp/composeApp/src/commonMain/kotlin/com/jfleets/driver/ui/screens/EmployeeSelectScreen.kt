@@ -231,7 +231,7 @@ private fun EmployeeListItem(
                     fontWeight = FontWeight.Medium
                 )
 
-                employee.roles?.firstOrNull()?.displayName?.let { roleName ->
+                employee.role?.displayName?.let { roleName ->
                     Text(
                         text = roleName,
                         style = MaterialTheme.typography.bodySmall,

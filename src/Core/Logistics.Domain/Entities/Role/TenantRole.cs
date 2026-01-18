@@ -19,7 +19,6 @@ public class TenantRole : Entity, ITenantEntity
     public string NormalizedName { get; set; }
 
     public virtual List<Employee> Employees { get; } = new();
-    public virtual List<EmployeeTenantRole> EmployeeRoles { get; } = new();
     public virtual HashSet<TenantRoleClaim> Claims { get; } = new(new TenantRoleClaimComparer());
 }
 

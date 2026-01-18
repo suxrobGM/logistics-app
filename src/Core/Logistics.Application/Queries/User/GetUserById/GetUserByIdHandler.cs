@@ -6,28 +6,20 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetUserByIdHandler : IAppRequestHandler<GetUserByIdQuery, Result<UserDto>>
+internal sealed class GetUserByIdHandler(UserManager<User> userManager)
+    : IAppRequestHandler<GetUserByIdQuery, Result<UserDto>>
 {
-    private readonly UserManager<User> _userManager;
-
-    public GetUserByIdHandler(UserManager<User> userManager)
-    {
-        _userManager = userManager;
-    }
-
     public async Task<Result<UserDto>> Handle(
         GetUserByIdQuery req, CancellationToken ct)
     {
-        var userEntity = await _userManager.FindByIdAsync(req.UserId);
+        var userEntity = await userManager.FindByIdAsync(req.UserId);
 
         if (userEntity is null)
         {
             return Result<UserDto>.Fail($"Could not find an user with ID '{req.UserId}'");
         }
 
-        var userRoles = await _userManager.GetRolesAsync(userEntity);
-
-        var user = userEntity.ToDto(userRoles);
+        var user = userEntity.ToDto();
         return Result<UserDto>.Ok(user);
     }
 }

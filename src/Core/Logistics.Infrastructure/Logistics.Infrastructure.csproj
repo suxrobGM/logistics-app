@@ -35,4 +35,8 @@
     <ProjectReference Include="..\Logistics.Application\Logistics.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Migrations\" />
+  </ItemGroup>
+
 </Project>

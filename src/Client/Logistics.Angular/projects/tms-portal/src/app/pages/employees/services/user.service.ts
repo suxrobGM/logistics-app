@@ -9,13 +9,13 @@ import { AuthService } from "@/core/auth";
 export class UserService {
   private readonly api = inject(Api);
 
-  private userRoles?: string[];
+  private userRole?: string | null;
 
   constructor() {
     const authService = inject(AuthService);
 
     const user = authService.getUserData();
-    this.userRoles = user?.roles;
+    this.userRole = user?.role;
   }
 
   searchUser(searchQuery: string): Observable<UserDto[] | undefined> {
@@ -33,10 +33,10 @@ export class UserService {
           const roles = [...result.items];
           const roleNames = roles.map((i: RoleDto) => i.name);
 
-          if (this.userRoles?.includes(UserRole.Owner)) {
+          if (this.userRole === UserRole.Owner) {
             const ownerIndex = roleNames.indexOf(UserRole.Owner);
             if (ownerIndex >= 0) roles.splice(ownerIndex, 1);
-          } else if (this.userRoles?.includes(UserRole.Manager)) {
+          } else if (this.userRole === UserRole.Manager) {
             const ownerIndex = roleNames.indexOf(UserRole.Owner);
             if (ownerIndex >= 0) roles.splice(ownerIndex, 1);
             const managerIndex = roles.map((i: RoleDto) => i.name).indexOf(UserRole.Manager);

@@ -151,6 +151,7 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                     MethodId = table.Column<Guid>(type: "uuid", nullable: false),
                     TenantId = table.Column<Guid>(type: "uuid", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
+                    StripePaymentIntentId = table.Column<string>(type: "text", nullable: true),
                     InvoiceId = table.Column<Guid>(type: "uuid", nullable: true),
                     Amount_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Amount_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
@@ -183,6 +184,7 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
                     TenantId = table.Column<Guid>(type: "uuid", nullable: true),
+                    AppRoleId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -205,6 +207,12 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_AspNetRoles_AppRoleId",
+                        column: x => x.AppRoleId,
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_AspNetUsers_Tenants_TenantId",
                         column: x => x.TenantId,
@@ -330,6 +338,86 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Invitations",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Token = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    TenantRole = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ExpiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    AcceptedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    AcceptedByUserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    InvitedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PersonalMessage = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    SendCount = table.Column<int>(type: "integer", nullable: false),
+                    LastSentAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Invitations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Invitations_AspNetUsers_AcceptedByUserId",
+                        column: x => x.AcceptedByUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Invitations_AspNetUsers_InvitedByUserId",
+                        column: x => x.InvitedByUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Invitations_Tenants_TenantId",
+                        column: x => x.TenantId,
+                        principalTable: "Tenants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserTenantAccess",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerUserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CustomerName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    LastAccessedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserTenantAccess", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserTenantAccess_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserTenantAccess_Tenants_TenantId",
+                        column: x => x.TenantId,
+                        principalTable: "Tenants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -362,6 +450,11 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_AppRoleId",
+                table: "AspNetUsers",
+                column: "AppRoleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_TenantId",
                 table: "AspNetUsers",
                 column: "TenantId");
@@ -370,6 +463,37 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invitations_AcceptedByUserId",
+                table: "Invitations",
+                column: "AcceptedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invitations_Email_TenantId_Status",
+                table: "Invitations",
+                columns: new[] { "Email", "TenantId", "Status" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invitations_ExpiresAt",
+                table: "Invitations",
+                column: "ExpiresAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invitations_InvitedByUserId",
+                table: "Invitations",
+                column: "InvitedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invitations_TenantId",
+                table: "Invitations",
+                column: "TenantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Invitations_Token",
+                table: "Invitations",
+                column: "Token",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -392,6 +516,22 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                 name: "IX_Subscriptions_TenantId",
                 table: "Subscriptions",
                 column: "TenantId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserTenantAccess_TenantId",
+                table: "UserTenantAccess",
+                column: "TenantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserTenantAccess_UserId",
+                table: "UserTenantAccess",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserTenantAccess_UserId_TenantId",
+                table: "UserTenantAccess",
+                columns: new[] { "UserId", "TenantId" },
                 unique: true);
         }
 
@@ -417,22 +557,28 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                 name: "DataProtectionKeys");
 
             migrationBuilder.DropTable(
+                name: "Invitations");
+
+            migrationBuilder.DropTable(
                 name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "Subscriptions");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "UserTenantAccess");
 
             migrationBuilder.DropTable(
                 name: "Invoices");
 
             migrationBuilder.DropTable(
                 name: "SubscriptionPlans");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Tenants");

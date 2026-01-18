@@ -19,7 +19,6 @@ public class UserCustomClaimsFactory(
     : UserClaimsPrincipalFactory<User, AppRole>(userManager, roleManager, options)
 {
     private readonly HttpContext _httpContext = httpContextAccessor.HttpContext!;
-    private readonly UserManager<User> _userManager = userManager;
 
     protected override async Task<ClaimsIdentity> GenerateClaimsAsync(User user)
     {
@@ -44,26 +43,18 @@ public class UserCustomClaimsFactory(
 
     private async Task AddAppRoleClaimsAsync(ClaimsIdentity claimsIdentity, User user)
     {
-        var appRoles = await _userManager.GetRolesAsync(user);
-
-        foreach (var roleName in appRoles)
+        var roles = await UserManager.GetRolesAsync(user);
+        foreach (var role in roles)
         {
-            // Only add role claim, permissions are fetched separately via API
-            claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Role, roleName));
+            claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Role, role));
         }
     }
 
     private static Task AddTenantRoleClaimsAsync(ClaimsIdentity claimsIdentity, Employee? employee)
     {
-        if (employee is null)
+        if (employee?.Role is not null)
         {
-            return Task.CompletedTask;
-        }
-
-        foreach (var tenantRole in employee.Roles)
-        {
-            // Only add role claim, permissions are fetched separately via API
-            claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Role, tenantRole.Name));
+            claimsIdentity.AddClaim(new Claim(CustomClaimTypes.Role, employee.Role.Name));
         }
 
         return Task.CompletedTask;

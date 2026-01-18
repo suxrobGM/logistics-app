@@ -30,6 +30,7 @@ internal static class Setup
             .UseLogger(microsoftLogger)
             .AddMasterDatabase()
             .AddTenantDatabase()
+            .AddNotifications()
             .AddIdentity(identityBuilder =>
             {
                 identityBuilder

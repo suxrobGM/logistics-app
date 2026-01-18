@@ -98,7 +98,7 @@
             }
           </td>
           <td>{{ getSalaryTypeDesc(employee.salaryType) }}</td>
-          <td>{{ employee.roles[0]?.displayName }}</td>
+          <td>{{ employee.role?.displayName }}</td>
           <td>{{ employee.joinedDate | date: "mediumDate" }}</td>
           <td class="overflow-visible">
             <p-button

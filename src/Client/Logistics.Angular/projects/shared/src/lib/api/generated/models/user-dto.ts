@@ -7,7 +7,7 @@ export interface UserDto {
   id?: string | null;
   lastName?: string | null;
   phoneNumber?: string | null;
-  roles?: Array<string> | null;
+  role?: string | null;
   tenantId?: string | null;
   tenantName?: string | null;
 }

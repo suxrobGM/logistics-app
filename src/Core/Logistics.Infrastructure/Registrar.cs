@@ -95,7 +95,6 @@ public static class Registrar
         }
 
         services.AddSingleton<IPushNotificationService, PushNotificationService>();
-        services.AddScoped<INotificationService, NotificationService>();
         return new InfrastructureBuilder(services, configuration);
     }
 }

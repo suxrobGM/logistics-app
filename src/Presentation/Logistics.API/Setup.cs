@@ -40,7 +40,8 @@ internal static class Setup
             .UseLogger(microsoftLogger)
             .AddMasterDatabase()
             .AddTenantDatabase()
-            .AddIdentity();
+            .AddIdentity()
+            .AddNotifications();
 
         services.AddHttpContextAccessor();
         services.AddMemoryCache();

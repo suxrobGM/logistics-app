@@ -144,7 +144,7 @@ internal sealed class AcceptInvitationHandler(
         var employee = Employee.CreateEmployeeFromUser(user);
         if (tenantRole is not null)
         {
-            employee.Roles.Add(tenantRole);
+            employee.Role = tenantRole;
         }
 
         await tenantUow.Repository<Employee>().AddAsync(employee, ct);

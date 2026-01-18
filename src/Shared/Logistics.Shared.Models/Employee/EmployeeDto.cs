@@ -16,5 +16,5 @@ public class EmployeeDto
     public decimal Salary { get; set; }
     public SalaryType SalaryType { get; set; }
     public DateTime JoinedDate { get; set; }
-    public IEnumerable<RoleDto> Roles { get; set; } = [];
+    public RoleDto? Role { get; set; }
 }

@@ -1,7 +1,7 @@
 <app-change-role-dialog
   [(visible)]="showUpdateDialog"
   [userId]="id()!"
-  [currentRoles]="employee()?.roles ?? []"
+  [currentRole]="employee()?.role ?? null"
 />
 
 <h1 class="text-center">Edit Employee</h1>
@@ -68,7 +68,7 @@
               id="roleName"
               type="text"
               [disabled]="true"
-              [value]="getEmployeeRoleNames()"
+              [value]="getEmployeeRoleName()"
             />
             <p-button
               type="button"

@@ -102,7 +102,7 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
         employee = Employee.CreateEmployeeFromUser(user, salary, salaryType);
         user.TenantId = tenantId;
         await employeeRepository.AddAsync(employee);
-        employee.Roles.Add(role);
+        employee.Role = role;
         Logger.LogInformation("Created employee {Name} with role {Role}", user.UserName, role.Name);
         return employee;
     }

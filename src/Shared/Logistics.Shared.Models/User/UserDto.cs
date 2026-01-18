@@ -9,5 +9,5 @@ public record UserDto
     public string? PhoneNumber { get; set; }
     public Guid? TenantId { get; set; }
     public string? TenantName { get; set; }
-    public IEnumerable<string> Roles { get; set; } = [];
+    public string? Role { get; set; }
 }

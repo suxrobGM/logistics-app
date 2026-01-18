@@ -103,8 +103,6 @@ export type { PortalInvoiceDtoPagedResponse } from './models/portal-invoice-dto-
 export type { PortalLoadDto } from './models/portal-load-dto';
 export type { PortalLoadDtoPagedResponse } from './models/portal-load-dto-paged-response';
 export type { ProcessPaymentCommand } from './models/process-payment-command';
-export type { RemoveRoleFromEmployeeCommand } from './models/remove-role-from-employee-command';
-export type { RemoveRoleFromUserCommand } from './models/remove-role-from-user-command';
 export type { RenewSubscriptionCommand } from './models/renew-subscription-command';
 export type { RevenueTrendDto } from './models/revenue-trend-dto';
 export type { RoleDto } from './models/role-dto';

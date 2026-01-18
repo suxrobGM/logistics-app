@@ -148,11 +148,8 @@ export class EmployeeEditComponent implements OnInit {
     });
   }
 
-  getEmployeeRoleNames(): string {
-    const roleNames = this.employee()
-      ?.roles?.map((i) => i.displayName)
-      .join(",");
-    return roleNames ? roleNames : "";
+  getEmployeeRoleName(): string {
+    return this.employee()?.role?.displayName ?? "";
   }
 
   openUpdateDialog(): void {
@@ -173,11 +170,9 @@ export class EmployeeEditComponent implements OnInit {
     const result = await this.api.invoke(getEmployeeById, { userId: this.id()! });
     if (result) {
       this.employee.set(result);
-      const employeeRoles = this.employee()
-        ?.roles?.map((i) => i.name)
-        .filter((n): n is string => !!n);
+      const employeeRole = this.employee()?.role?.name;
       const user = this.authService.getUserData();
-      this.evaluateCanChangeRole(user?.roles, employeeRoles);
+      this.evaluateCanChangeRole(user?.role, employeeRole);
 
       const salaryType = result.salaryType;
       const salary = result.salary;
@@ -191,25 +186,23 @@ export class EmployeeEditComponent implements OnInit {
     this.isLoading.set(false);
   }
 
-  private evaluateCanChangeRole(userRoles?: string[], employeeRoles?: string[]) {
-    if (!userRoles) {
+  private evaluateCanChangeRole(userRole?: string | null, employeeRole?: string | null) {
+    if (!userRole) {
       this.canChangeRole.set(false);
       return;
     }
 
-    if (!employeeRoles || employeeRoles.length < 1) {
+    if (!employeeRole) {
       this.canChangeRole.set(true);
       return;
     }
 
-    const employeeRole = employeeRoles[0];
-
-    if (userRoles.includes(UserRole.AppSuperAdmin) || userRoles.includes(UserRole.AppAdmin)) {
+    if (userRole === UserRole.AppSuperAdmin || userRole === UserRole.AppAdmin) {
       this.canChangeRole.set(true);
-    } else if (userRoles.includes(UserRole.Owner) && employeeRole !== UserRole.Owner) {
+    } else if (userRole === UserRole.Owner && employeeRole !== UserRole.Owner) {
       this.canChangeRole.set(true);
     } else if (
-      userRoles.includes(UserRole.Manager) &&
+      userRole === UserRole.Manager &&
       employeeRole !== UserRole.Owner &&
       employeeRole !== UserRole.Manager
     ) {

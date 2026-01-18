@@ -6,12 +6,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { Api, removeRoleFromEmployee, updateEmployee } from "@logistics/shared/api";
-import type {
-  RemoveRoleFromEmployeeCommand,
-  RoleDto,
-  UpdateEmployeeCommand,
-} from "@logistics/shared/api/models";
+import { Api, updateEmployee } from "@logistics/shared/api";
+import type { RoleDto, UpdateEmployeeCommand } from "@logistics/shared/api/models";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -39,7 +35,7 @@ export class ChangeRoleDialogComponent {
   private readonly toastService = inject(ToastService);
 
   public readonly userId = input.required<string>();
-  public readonly currentRoles = input<RoleDto[]>([]);
+  public readonly currentRole = input<RoleDto | null>(null);
   public readonly visible = model<boolean>(false);
 
   protected readonly roles = signal<RoleDto[]>([]);
@@ -88,27 +84,18 @@ export class ChangeRoleDialogComponent {
     });
   }
 
-  removeRoles(): void {
-    this.currentRoles()?.forEach((role) => {
-      if (role.name) {
-        this.removeRole(role.name);
-      }
-    });
-  }
-
-  private async removeRole(roleName: string): Promise<void> {
-    const command: RemoveRoleFromEmployeeCommand = {
+  async removeRole(): Promise<void> {
+    const command: UpdateEmployeeCommand = {
       userId: this.userId(),
-      role: roleName,
+      role: undefined,
     };
 
     this.isLoading.set(true);
-    await this.api.invoke(removeRoleFromEmployee, {
+    await this.api.invoke(updateEmployee, {
       userId: this.userId(),
       body: command,
     });
-    this.toastService.showSuccess(`Removed ${roleName} role from the employee`);
-
+    this.toastService.showSuccess("Removed role from the employee");
     this.isLoading.set(false);
   }
 

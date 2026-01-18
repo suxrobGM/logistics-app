@@ -416,6 +416,9 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("RoleId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("SalaryType")
                         .HasColumnType("integer");
 
@@ -435,22 +438,9 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
 
                     b.HasKey("Id");
 
-                    b.ToTable("Employees", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.EmployeeTenantRole", b =>
-                {
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("EmployeeId", "RoleId");
-
                     b.HasIndex("RoleId");
 
-                    b.ToTable("EmployeeRoles", (string)null);
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.HosLog", b =>
@@ -1673,21 +1663,12 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     b.Navigation("Truck");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.EmployeeTenantRole", b =>
+            modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
-                        .WithMany("EmployeeRoles")
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Logistics.Domain.Entities.TenantRole", "Role")
-                        .WithMany("EmployeeRoles")
+                        .WithMany("Employees")
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Role");
                 });
@@ -1933,8 +1914,6 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
 
                     b.Navigation("Documents");
 
-                    b.Navigation("EmployeeRoles");
-
                     b.Navigation("PayrollInvoices");
                 });
 
@@ -1968,7 +1947,7 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 {
                     b.Navigation("Claims");
 
-                    b.Navigation("EmployeeRoles");
+                    b.Navigation("Employees");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Trip", b =>

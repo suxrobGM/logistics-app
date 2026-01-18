@@ -5,14 +5,14 @@ namespace Logistics.Mappings;
 
 public static class UserMapper
 {
-    public static UserDto ToDto(this User entity, IEnumerable<string>? roles)
+    public static UserDto ToDto(this User entity)
     {
         var dto = new UserDto
         {
             Id = entity.Id,
             FirstName = entity.FirstName,
             LastName = entity.LastName,
-            Roles = roles ?? [],
+            Role = entity.AppRole?.Name,
             Email = entity.Email,
             PhoneNumber = entity.PhoneNumber,
             TenantId = entity.TenantId,

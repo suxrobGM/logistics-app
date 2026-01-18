@@ -111,7 +111,7 @@ export class AuthService {
   }
 
   getUserRoleName(): string | null {
-    const roleValue = this.userData?.roles[0];
+    const roleValue = this.userData?.role;
 
     if (!roleValue) {
       return null;

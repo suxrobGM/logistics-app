@@ -23,10 +23,10 @@ public class SearchEmployees : BaseSpecification<Employee>
 
         if (!string.IsNullOrEmpty(roleName))
         {
-            AddInclude(e => e.Roles);
+            AddInclude(e => e.Role!);
             Criteria = Criteria is null
-                ? e => e.Roles.Any(r => r.Name.Contains(roleName))
-                : Criteria.AndAlso(e => e.Roles.Any(r => r.Name.Contains(roleName)));
+                ? e => e.Role != null && e.Role.Name.Contains(roleName)
+                : Criteria.AndAlso(e => e.Role != null && e.Role.Name.Contains(roleName));
         }
 
 

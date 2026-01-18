@@ -24,7 +24,7 @@ internal sealed class GetUsersHandler : IAppRequestHandler<GetUsersQuery, PagedR
 
         var users = _masterUow.Repository<User>()
             .ApplySpecification(new SearchUsers(req.Search, req.OrderBy, req.Page, req.PageSize))
-            .Select(i => i.ToDto(null))
+            .Select(i => i.ToDto())
             .ToArray();
 
         return PagedResult<UserDto>.Succeed(users, totalItems, req.PageSize);

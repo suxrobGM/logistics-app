@@ -17,11 +17,9 @@ internal sealed class EmployeeEntityConfiguration : IEntityTypeConfiguration<Emp
             money.Property(m => m.Currency).HasMaxLength(3);
         });
 
-        builder.HasMany(i => i.Roles)
+        builder.HasOne(i => i.Role)
             .WithMany(i => i.Employees)
-            .UsingEntity<EmployeeTenantRole>(
-                l => l.HasOne<TenantRole>(i => i.Role).WithMany(i => i.EmployeeRoles),
-                r => r.HasOne<Employee>(i => i.Employee).WithMany(i => i.EmployeeRoles),
-                c => c.ToTable("EmployeeRoles"));
+            .HasForeignKey(i => i.RoleId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

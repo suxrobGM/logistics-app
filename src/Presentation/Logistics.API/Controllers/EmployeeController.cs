@@ -44,17 +44,6 @@ public class EmployeeController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    [HttpPost("{userId:guid}/remove-role", Name = "RemoveRoleFromEmployee")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Employee.Manage)]
-    public async Task<IActionResult> RemoveRole(Guid userId, [FromBody] RemoveRoleFromEmployeeCommand request)
-    {
-        request.UserId = userId;
-        var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
-    }
-
     [HttpPut("{userId:guid}", Name = "UpdateEmployee")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

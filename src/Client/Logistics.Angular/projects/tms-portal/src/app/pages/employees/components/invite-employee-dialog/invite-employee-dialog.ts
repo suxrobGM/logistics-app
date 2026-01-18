@@ -51,11 +51,11 @@ export class InviteEmployeeDialogComponent {
   protected readonly roles = signal<RoleDto[]>([]);
   protected readonly isLoading = signal(false);
 
-  private userRoles?: string[];
+  private userRole?: string | null;
 
   constructor() {
     const user = this.authService.getUserData();
-    this.userRoles = user?.roles;
+    this.userRole = user?.role;
     this.fetchRoles();
   }
 
@@ -103,18 +103,14 @@ export class InviteEmployeeDialogComponent {
 
         // Owner role can only be assigned by SuperAdmin/AppManager
         const canAssignOwner =
-          this.userRoles?.includes(UserRole.AppSuperAdmin) ||
-          this.userRoles?.includes(UserRole.AppAdmin);
+          this.userRole === UserRole.AppSuperAdmin || this.userRole === UserRole.AppAdmin;
 
         if (!canAssignOwner) {
           roles = roles.filter((r) => r.name !== UserRole.Owner);
         }
 
         // Managers cannot assign Manager role
-        if (
-          this.userRoles?.includes(UserRole.Manager) &&
-          !this.userRoles?.includes(UserRole.Owner)
-        ) {
+        if (this.userRole === UserRole.Manager) {
           roles = roles.filter((r) => r.name !== UserRole.Manager);
         }
 

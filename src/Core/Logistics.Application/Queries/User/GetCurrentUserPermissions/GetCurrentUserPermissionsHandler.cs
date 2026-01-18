@@ -44,22 +44,15 @@ internal sealed class GetCurrentUserPermissionsHandler(
 
     private async Task AddAppRolePermissionsAsync(User user, HashSet<string> permissions)
     {
-        var appRoles = await userManager.GetRolesAsync(user);
-
-        foreach (var roleName in appRoles)
+        if (user.AppRole is null)
         {
-            var role = await roleManager.FindByNameAsync(roleName);
+            return;
+        }
 
-            if (role is null)
-            {
-                continue;
-            }
-
-            var claims = await roleManager.GetClaimsAsync(role);
-            foreach (var claim in claims.Where(c => c.Type == CustomClaimTypes.Permission))
-            {
-                permissions.Add(claim.Value);
-            }
+        var claims = await roleManager.GetClaimsAsync(user.AppRole);
+        foreach (var claim in claims.Where(c => c.Type == CustomClaimTypes.Permission))
+        {
+            permissions.Add(claim.Value);
         }
     }
 
@@ -76,13 +69,15 @@ internal sealed class GetCurrentUserPermissionsHandler(
 
         var tenantRoleClaimRepository = tenantUow.Repository<TenantRoleClaim>();
 
-        foreach (var tenantRole in employee.Roles)
+        if (employee.Role is null)
         {
-            var roleClaims = await tenantRoleClaimRepository.GetListAsync(i => i.RoleId == tenantRole.Id);
-            foreach (var claim in roleClaims.Where(c => c.ClaimType == CustomClaimTypes.Permission))
-            {
-                permissions.Add(claim.ClaimValue);
-            }
+            return;
+        }
+
+        var roleClaims = await tenantRoleClaimRepository.GetListAsync(i => i.RoleId == employee.Role.Id);
+        foreach (var claim in roleClaims.Where(c => c.ClaimType == CustomClaimTypes.Permission))
+        {
+            permissions.Add(claim.ClaimValue);
         }
     }
 

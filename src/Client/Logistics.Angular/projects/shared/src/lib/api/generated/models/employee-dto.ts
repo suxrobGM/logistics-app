@@ -14,7 +14,7 @@ export interface EmployeeDto {
   lastKnownLocationLng?: number | null;
   lastName?: string | null;
   phoneNumber?: string | null;
-  roles?: Array<RoleDto> | null;
+  role?: RoleDto;
   salary?: number;
   salaryType?: SalaryType;
 }

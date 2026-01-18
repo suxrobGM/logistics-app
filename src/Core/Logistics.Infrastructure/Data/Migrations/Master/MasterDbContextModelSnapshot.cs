@@ -521,6 +521,9 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("AppRoleId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
@@ -597,6 +600,8 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                         .HasColumnType("character varying(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppRoleId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -875,10 +880,17 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
 
             modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
                 {
+                    b.HasOne("Logistics.Domain.Entities.AppRole", "AppRole")
+                        .WithMany()
+                        .HasForeignKey("AppRoleId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Logistics.Domain.Entities.Tenant", "Tenant")
                         .WithMany("Users")
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("AppRole");
 
                     b.Navigation("Tenant");
                 });

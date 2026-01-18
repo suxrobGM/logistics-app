@@ -108,8 +108,6 @@ export type { PortalInvoiceDtoPagedResponse } from './models/portal-invoice-dto-
 export type { PortalLoadDto } from './models/portal-load-dto';
 export type { PortalLoadDtoPagedResponse } from './models/portal-load-dto-paged-response';
 export type { ProcessPaymentCommand } from './models/process-payment-command';
-export type { RemoveRoleFromEmployeeCommand } from './models/remove-role-from-employee-command';
-export type { RemoveRoleFromUserCommand } from './models/remove-role-from-user-command';
 export type { RenewSubscriptionCommand } from './models/renew-subscription-command';
 export type { RevenueTrendDto } from './models/revenue-trend-dto';
 export type { RoleDto } from './models/role-dto';
@@ -244,8 +242,6 @@ export type { GetEmployees$Params as GetEmployees$Params } from './fn/employee/g
 export { getEmployees as getEmployees } from './fn/employee/get-employees';
 export type { CreateEmployee$Params as CreateEmployee$Params } from './fn/employee/create-employee';
 export { createEmployee as createEmployee } from './fn/employee/create-employee';
-export type { RemoveRoleFromEmployee$Params as RemoveRoleFromEmployee$Params } from './fn/employee/remove-role-from-employee';
-export { removeRoleFromEmployee as removeRoleFromEmployee } from './fn/employee/remove-role-from-employee';
 export type { DecodeVin$Params as DecodeVin$Params } from './fn/inspection/decode-vin';
 export { decodeVin as decodeVin } from './fn/inspection/decode-vin';
 export type { GetConditionReports$Params as GetConditionReports$Params } from './fn/inspection/get-condition-reports';
@@ -440,8 +436,6 @@ export type { GetUsers$Params as GetUsers$Params } from './fn/user/get-users';
 export { getUsers as getUsers } from './fn/user/get-users';
 export type { GetUserCurrentTenant$Params as GetUserCurrentTenant$Params } from './fn/user/get-user-current-tenant';
 export { getUserCurrentTenant as getUserCurrentTenant } from './fn/user/get-user-current-tenant';
-export type { RemoveRoleFromUser$Params as RemoveRoleFromUser$Params } from './fn/user/remove-role-from-user';
-export { removeRoleFromUser as removeRoleFromUser } from './fn/user/remove-role-from-user';
 export type { ProcessStripeWebhook$Params as ProcessStripeWebhook$Params } from './fn/webhook/process-stripe-webhook';
 export { processStripeWebhook as processStripeWebhook } from './fn/webhook/process-stripe-webhook';
 export type { ProcessSamsaraWebhook$Params as ProcessSamsaraWebhook$Params } from './fn/webhook/process-samsara-webhook';

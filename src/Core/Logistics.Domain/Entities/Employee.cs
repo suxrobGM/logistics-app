@@ -34,11 +34,10 @@ public class Employee : Entity, ITenantEntity
     public virtual List<PayrollInvoice> PayrollInvoices { get; set; } = [];
 
     /// <summary>
-    ///     User tenant roles
+    ///     User tenant role
     /// </summary>
-    public virtual HashSet<TenantRole> Roles { get; } = new(new TenantRoleComparer());
-
-    public virtual List<EmployeeTenantRole> EmployeeRoles { get; } = [];
+    public Guid? RoleId { get; set; }
+    public virtual TenantRole? Role { get; set; }
 
     public string GetFullName()
     {

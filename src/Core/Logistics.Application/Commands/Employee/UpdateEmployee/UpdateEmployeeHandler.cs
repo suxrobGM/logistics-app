@@ -6,20 +6,14 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateEmployeeHandler : IAppRequestHandler<UpdateEmployeeCommand, Result>
+internal sealed class UpdateEmployeeHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<UpdateEmployeeCommand, Result>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public UpdateEmployeeHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result> Handle(
         UpdateEmployeeCommand req, CancellationToken ct)
     {
-        var employeeEntity = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UserId);
-        var tenantRole = await _tenantUow.Repository<TenantRole>().GetAsync(i => i.Name == req.Role);
+        var employeeEntity = await tenantUow.Repository<Employee>().GetByIdAsync(req.UserId, ct);
+        var tenantRole = await tenantUow.Repository<TenantRole>().GetAsync(i => i.Name == req.Role, ct);
 
         if (employeeEntity is null)
         {
@@ -28,8 +22,7 @@ internal sealed class UpdateEmployeeHandler : IAppRequestHandler<UpdateEmployeeC
 
         if (tenantRole is not null)
         {
-            employeeEntity.Roles.Clear();
-            employeeEntity.Roles.Add(tenantRole);
+            employeeEntity.Role = tenantRole;
         }
 
         if (req.SalaryType.HasValue && employeeEntity.SalaryType != req.SalaryType)
@@ -42,8 +35,8 @@ internal sealed class UpdateEmployeeHandler : IAppRequestHandler<UpdateEmployeeC
             employeeEntity.Salary = req.SalaryType == SalaryType.None ? 0 : req.Salary.Value;
         }
 
-        _tenantUow.Repository<Employee>().Update(employeeEntity);
-        await _tenantUow.SaveChangesAsync();
+        tenantUow.Repository<Employee>().Update(employeeEntity);
+        await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

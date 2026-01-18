@@ -7,6 +7,6 @@ public class FilterEmployeesByRole : BaseSpecification<Employee>
 {
     public FilterEmployeesByRole(Guid roleId)
     {
-        Criteria = e => e.EmployeeRoles.Any(er => er.RoleId == roleId);
+        Criteria = e => e.RoleId == roleId;
     }
 }

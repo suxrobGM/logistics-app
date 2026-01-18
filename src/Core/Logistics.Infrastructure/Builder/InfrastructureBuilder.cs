@@ -86,6 +86,13 @@ internal class InfrastructureBuilder : IInfrastructureBuilder
         return this;
     }
 
+    public IInfrastructureBuilder AddNotifications()
+    {
+        _services.AddScoped<INotificationService, NotificationService>();
+        _logger?.LogInformation("Added notification services");
+        return this;
+    }
+
     public IInfrastructureBuilder UseLogger(ILogger<IInfrastructureBuilder> logger)
     {
         _logger = logger;
