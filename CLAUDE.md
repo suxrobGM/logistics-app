@@ -205,8 +205,6 @@ The ELD (Electronic Logging Device) integration pulls driver Hours of Service da
 
 ## Important Notes
 
-- `Logistics.DriverApp.Legacy` (MAUI) is deprecated; use the Kotlin Multiplatform version
-- `Logistics.AdminApp` (Blazor WASM) is deprecated; use the Angular admin-portal instead
 - Angular apps have their own rules in `src/Client/Logistics.Angular/CLAUDE.md`
 - Aspire automatically runs DB migrations on startup
 

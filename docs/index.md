@@ -19,7 +19,7 @@ Welcome to the Logistics TMS documentation.
 |-----------|------------|---------|
 | **API** | .NET 10, ASP.NET Core | RESTful backend |
 | **Identity Server** | Duende IdentityServer | OAuth2/OIDC auth |
-| **Admin App** | Blazor Server | Super admin management |
+| **Admin App** | Angular 21 | Super admin management |
 | **TMS Portal** | Angular 21 | Dispatcher/manager interface |
 | **Customer Portal** | Angular 21 | Customer self-service |
 | **Driver App** | Kotlin Multiplatform | Mobile app for drivers |

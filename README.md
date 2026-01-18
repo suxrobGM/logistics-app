@@ -138,7 +138,7 @@ Try the Customer Self-Service Portal: [https://customer.suxrobgm.net](https://cu
 
 | App | Technology | Purpose |
 |-----|------------|---------|
-| Admin App | Blazor | Super admin management |
+| Admin App | Angular | Super admin management |
 | TMS Portal | Angular | Dispatcher/manager interface |
 | Customer Portal | Angular | Customer self-service (shipment tracking, documents) |
 | Driver App | Kotlin Multiplatform | Mobile app for drivers |

@@ -8,7 +8,7 @@ Logistics TMS follows Domain-Driven Design (DDD) with CQRS pattern.
 
 ## Layer Structure
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                     Presentation Layer                          │
 │  Logistics.API │ Logistics.IdentityServer │ Logistics.AdminApp  │
@@ -16,45 +16,49 @@ Logistics TMS follows Domain-Driven Design (DDD) with CQRS pattern.
                               │
 ┌─────────────────────────────────────────────────────────────────┐
 │                     Application Layer                           │
-│         Commands │ Queries │ Services │ SignalR Hubs           │
+│         Commands │ Queries │ Services │ SignalR Hubs            │
 └─────────────────────────────────────────────────────────────────┘
                               │
 ┌─────────────────────────────────────────────────────────────────┐
 │                       Domain Layer                              │
-│        Entities │ Value Objects │ Domain Events │ Specs        │
+│        Entities │ Value Objects │ Domain Events │ Specs         │
 └─────────────────────────────────────────────────────────────────┘
                               │
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Infrastructure Layer                         │
-│              EF Core │ Repositories │ Unit of Work             │
+│              EF Core │ Repositories │ Unit of Work              │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ## Project Structure
 
-```
+```text
 src/
 ├── Aspire/
-│   └── Logistics.Aspire.AppHost       # Orchestration
+│   ├── Logistics.Aspire.AppHost            # Orchestration
+│   └── Logistics.Aspire.ServiceDefaults    # Aspire service defaults project
 ├── Client/
 │   ├── Logistics.Angular/             # Angular workspace
 │   │   ├── projects/
 │   │   │   ├── shared/                # @logistics/shared library
 │   │   │   ├── tms-portal/            # TMS Portal (dispatchers)
-│   │   │   └── customer-portal/       # Customer Portal (self-service)
+|   |   |   ├── admin-portal/          # Admin Portal (super admin)
+│   │   │   └── customer-portal/       # Customer Portal (self-service)    
 │   │   └── angular.json
-│   ├── Logistics.DriverApp            # Kotlin Multiplatform mobile
-│   └── Logistics.HttpClient           # Shared API client (.NET)
+│   └── Logistics.DriverApp            # Kotlin Multiplatform mobile
 ├── Core/
 │   ├── Logistics.Application          # Business logic (CQRS)
 │   ├── Logistics.Domain               # Entities, domain events
-│   └── Logistics.Shared               # DTOs, shared models
-├── Infrastructure/
-│   └── Logistics.Infrastructure       # EF Core, repositories
+│   ├── Logistics.Domain.Primitives    # Value objects, enums
+│   ├── Logistics.Mappings             # Entity-to-DTO mappers
+│   └── Logistics.Infrastructure       # EF Core, repositories, implementations for external services
+├── Shared/
+│   ├── Logistics.Shared.Geo           # Geolocation utilities
+│   ├── Logistics.Shared.Identity      # Identity models
+│   └── Logistics.Shared.Models        # DTOs for contracts
 └── Presentation/
     ├── Logistics.API                  # REST API
     ├── Logistics.IdentityServer       # OAuth2/OIDC
-    ├── Logistics.AdminApp             # Blazor admin
     └── Logistics.DbMigrator           # Migrations runner
 ```
 
@@ -80,7 +84,7 @@ src/
 |------------|---------|
 | Angular 21 | TMS Portal & Customer Portal |
 | PrimeNG | UI components |
-| Blazor Server | Admin App |
+| Angular 21 | Admin App |
 | Kotlin Multiplatform | Driver Mobile App |
 | Compose Multiplatform | Mobile UI |
 
@@ -122,7 +126,7 @@ public record GetLoadByIdQuery(string Id) : IRequest<DataResult<LoadDto>>;
 
 Requests flow through behaviors:
 
-```
+```text
 Request → ValidationBehavior → LoggingBehavior → Handler → Response
 ```
 
