@@ -151,17 +151,8 @@ services:
       - "aspire"
   admin-app:
     image: "${ADMIN_APP_IMAGE}"
-    environment:
-      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
-      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
-      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
-      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
-      HTTP_PORTS: "${ADMIN_APP_PORT}"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://compose-dashboard:18889"
-      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
-      OTEL_SERVICE_NAME: "admin-app"
     ports:
-      - "${ADMIN_APP_PORT}:${ADMIN_APP_PORT}"
+      - "7002:80"
     depends_on:
       api:
         condition: "service_started"
