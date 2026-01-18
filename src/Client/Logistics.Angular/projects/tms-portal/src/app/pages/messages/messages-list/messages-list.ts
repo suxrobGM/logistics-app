@@ -9,6 +9,7 @@ import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
 import { MessagingService } from "@/core/services";
+import { Converters } from "@/shared/utils";
 import { MessagesStore } from "../store/messages.store";
 
 @Component({
@@ -63,24 +64,9 @@ export class MessagesListComponent implements OnInit, OnDestroy {
 
   protected getInitials(conversation: ConversationDto): string {
     if (conversation.name) {
-      return conversation.name
-        .split(" ")
-        .map((w) => w[0])
-        .join("")
-        .substring(0, 2)
-        .toUpperCase();
+      return Converters.getInitials(conversation.name);
     }
-
     const firstParticipant = (conversation.participants ?? [])[0];
-    if (firstParticipant?.employeeName) {
-      return firstParticipant.employeeName
-        .split(" ")
-        .map((w) => w[0])
-        .join("")
-        .substring(0, 2)
-        .toUpperCase();
-    }
-
-    return "??";
+    return Converters.getInitials(firstParticipant?.employeeName);
   }
 }

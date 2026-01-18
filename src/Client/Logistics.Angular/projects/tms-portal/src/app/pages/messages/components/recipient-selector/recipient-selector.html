@@ -1,0 +1,68 @@
+<div class="flex h-full flex-col items-center justify-center">
+  <div class="w-full max-w-md space-y-6">
+    <div class="text-center">
+      <div class="bg-primary/10 mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full">
+        <i class="pi pi-user-plus text-primary text-4xl"></i>
+      </div>
+      <h3 class="mb-2 font-semibold text-gray-700">Start a New Conversation</h3>
+      <p class="text-sm text-gray-500">Search for an employee to message</p>
+    </div>
+
+    <div class="space-y-2">
+      <label class="text-sm font-medium text-gray-700">To:</label>
+      @if (selected(); as recipient) {
+        <div class="flex items-center gap-3 rounded-lg border border-gray-200 bg-white p-3">
+          <p-avatar
+            [label]="getInitials(recipient.fullName)"
+            class="bg-primary text-white"
+            shape="circle"
+          />
+          <div class="flex-1">
+            <p class="font-medium text-gray-800">{{ recipient.fullName }}</p>
+            <p class="text-xs text-gray-500">{{ recipient.email }}</p>
+          </div>
+          <p-button
+            icon="pi pi-times"
+            [text]="true"
+            [rounded]="true"
+            severity="secondary"
+            (onClick)="clearRecipient()"
+            pTooltip="Remove"
+          />
+        </div>
+      } @else {
+        <p-auto-complete
+          [suggestions]="employeeSuggestions()"
+          (completeMethod)="searchEmployees($event)"
+          (onSelect)="onRecipientSelect($event)"
+          optionLabel="fullName"
+          placeholder="Search employees..."
+          [minLength]="2"
+          class="w-full"
+          inputStyleClass="w-full"
+        >
+          <ng-template let-employee #item>
+            <div class="flex items-center gap-3 py-1">
+              <p-avatar
+                [label]="getInitials(employee.fullName)"
+                class="bg-gray-400 text-white"
+                size="normal"
+                shape="circle"
+              />
+              <div>
+                <p class="font-medium">{{ employee.fullName }}</p>
+                <p class="text-xs text-gray-500">{{ employee.email }}</p>
+              </div>
+            </div>
+          </ng-template>
+        </p-auto-complete>
+      }
+    </div>
+
+    @if (selected()) {
+      <p class="text-center text-sm text-gray-500">
+        Type a message below to start your conversation
+      </p>
+    }
+  </div>
+</div>

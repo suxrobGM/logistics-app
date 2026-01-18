@@ -1,4 +1,3 @@
-import { DatePipe } from "@angular/common";
 import {
   Component,
   ElementRef,
@@ -9,17 +8,20 @@ import {
   viewChild,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ActivatedRoute, Router, RouterLink } from "@angular/router";
-import type { ConversationDto, MessageDto } from "@logistics/shared/api";
-import { AvatarModule } from "primeng/avatar";
+import { ActivatedRoute, Router } from "@angular/router";
+import type { ConversationDto, EmployeeDto, MessageDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
-import { DrawerModule } from "primeng/drawer";
 import { InputTextModule } from "primeng/inputtext";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SkeletonModule } from "primeng/skeleton";
 import { AuthService } from "@/core/auth";
 import { MessagingService } from "@/core/services";
+import { EmptyState } from "@/shared/components/state";
+import {
+  ConversationDetails,
+  ConversationHeader,
+  MessageBubble,
+  RecipientSelector,
+} from "../components";
 import { MessagesStore } from "../store/messages.store";
 
 @Component({
@@ -27,21 +29,19 @@ import { MessagesStore } from "../store/messages.store";
   templateUrl: "./conversation.html",
   providers: [MessagesStore],
   imports: [
-    CardModule,
     ButtonModule,
-    AvatarModule,
     InputTextModule,
     FormsModule,
     SkeletonModule,
-    ProgressSpinnerModule,
-    RouterLink,
-    DatePipe,
-    DrawerModule,
+    EmptyState,
+    ConversationHeader,
+    ConversationDetails,
+    MessageBubble,
+    RecipientSelector,
   ],
 })
 export class ConversationComponent implements OnInit, OnDestroy {
   protected readonly messagesContainer = viewChild<ElementRef<HTMLDivElement>>("messagesContainer");
-  protected readonly messageInput = viewChild<ElementRef<HTMLInputElement>>("messageInput");
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -52,20 +52,23 @@ export class ConversationComponent implements OnInit, OnDestroy {
   protected messageContent = signal("");
   protected currentUserId = signal<string | null>(null);
   protected showDetails = signal(false);
+  protected isNewConversation = signal(false);
+  protected selectedRecipient = signal<EmployeeDto | null>(null);
+  protected isCreatingConversation = signal(false);
   private typingTimeout: ReturnType<typeof setTimeout> | null = null;
 
   async ngOnInit(): Promise<void> {
     await this.messagingService.connect();
 
-    const conversationId = this.route.snapshot.params["id"];
-    if (!conversationId || conversationId === "new") {
-      return;
-    }
-
-    // Get current user ID from auth service
     const userData = this.authService.getUserData();
     if (userData) {
       this.currentUserId.set(userData.id);
+    }
+
+    const conversationId = this.route.snapshot.params["id"];
+    if (!conversationId || conversationId === "new") {
+      this.isNewConversation.set(true);
+      return;
     }
 
     await this.store.loadConversations();
@@ -90,14 +93,56 @@ export class ConversationComponent implements OnInit, OnDestroy {
     const content = this.messageContent();
     if (!content.trim()) return;
 
+    if (this.isNewConversation()) {
+      const recipient = this.selectedRecipient();
+      const currentUser = this.currentUserId();
+      if (!recipient?.id || !currentUser) return;
+
+      this.isCreatingConversation.set(true);
+      try {
+        // Load conversations to check for existing one
+        await this.store.loadConversations();
+        const existingConversation = this.findExistingConversation(currentUser, recipient.id);
+
+        if (existingConversation) {
+          // Use existing conversation
+          await this.store.selectConversation(existingConversation);
+          this.isNewConversation.set(false);
+          await this.store.sendMessage(content);
+          this.messageContent.set("");
+          this.router.navigate(["/messages", existingConversation.id], { replaceUrl: true });
+        } else {
+          // Create new conversation
+          const conversation = await this.store.createConversation([currentUser, recipient.id]);
+          await this.store.selectConversation(conversation);
+          this.isNewConversation.set(false);
+          await this.store.sendMessage(content);
+          this.messageContent.set("");
+          this.router.navigate(["/messages", conversation.id], { replaceUrl: true });
+        }
+      } finally {
+        this.isCreatingConversation.set(false);
+      }
+      return;
+    }
+
     await this.store.sendMessage(content);
     this.messageContent.set("");
-
-    // Clear typing indicator
     await this.store.sendTypingIndicator(false);
 
-    // Scroll to bottom after sending
     setTimeout(() => this.scrollToBottom(), 100);
+  }
+
+  protected onRecipientChange(recipient: EmployeeDto | null): void {
+    this.selectedRecipient.set(recipient);
+  }
+
+  protected canSendMessage(): boolean {
+    const hasContent = !!this.messageContent().trim();
+    if (this.isNewConversation()) {
+      return hasContent && !!this.selectedRecipient();
+    }
+    return hasContent;
   }
 
   protected onKeyDown(event: KeyboardEvent): void {
@@ -108,15 +153,12 @@ export class ConversationComponent implements OnInit, OnDestroy {
   }
 
   protected onInput(): void {
-    // Send typing indicator
     this.store.sendTypingIndicator(true);
 
-    // Clear previous timeout
     if (this.typingTimeout) {
       clearTimeout(this.typingTimeout);
     }
 
-    // Stop typing indicator after 2 seconds of inactivity
     this.typingTimeout = setTimeout(() => {
       this.store.sendTypingIndicator(false);
     }, 2000);
@@ -128,22 +170,6 @@ export class ConversationComponent implements OnInit, OnDestroy {
 
   protected isOwnMessage(message: MessageDto): boolean {
     return message.senderId === this.currentUserId();
-  }
-
-  protected getInitials(name?: string | null): string {
-    if (!name) return "??";
-    return name
-      .split(" ")
-      .map((w) => w[0])
-      .join("")
-      .substring(0, 2)
-      .toUpperCase();
-  }
-
-  protected getConversationTitle(conversation: ConversationDto | null): string {
-    if (!conversation) return "";
-    if (conversation.name) return conversation.name;
-    return (conversation.participants ?? []).map((p) => p.employeeName || "Unknown").join(", ");
   }
 
   protected markMessageAsRead(message: MessageDto): void {
@@ -162,5 +188,25 @@ export class ConversationComponent implements OnInit, OnDestroy {
       const container = containerRef.nativeElement;
       container.scrollTop = container.scrollHeight;
     }
+  }
+
+  private findExistingConversation(currentUserId: string, recipientId: string): ConversationDto | null {
+    const targetIds = new Set([currentUserId, recipientId]);
+
+    return (
+      this.store.conversations().find((conv) => {
+        // Skip team chats
+        if (conv.isTenantChat) return false;
+
+        const participantIds = new Set((conv.participants ?? []).map((p) => p.employeeId));
+
+        // Check if participants match exactly (same size and same members)
+        if (participantIds.size !== targetIds.size) return false;
+        for (const id of targetIds) {
+          if (!participantIds.has(id)) return false;
+        }
+        return true;
+      }) ?? null
+    );
   }
 }

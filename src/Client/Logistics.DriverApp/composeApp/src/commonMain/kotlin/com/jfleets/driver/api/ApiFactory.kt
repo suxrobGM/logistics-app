@@ -1,7 +1,9 @@
 package com.jfleets.driver.api
 
 import com.jfleets.driver.service.PreferencesManager
+import com.jfleets.driver.service.auth.AuthEventBus
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
@@ -11,6 +13,7 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.header
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.runBlocking
@@ -63,6 +66,14 @@ class ApiFactory(
             install(HttpTimeout) {
                 requestTimeoutMillis = 30000
                 connectTimeoutMillis = 30000
+            }
+
+            HttpResponseValidator {
+                validateResponse { response ->
+                    if (response.status == HttpStatusCode.Unauthorized) {
+                        AuthEventBus.emitUnauthorized()
+                    }
+                }
             }
 
             defaultRequest {

@@ -16,6 +16,7 @@ internal sealed class GetTenantChatHandler(
     public async Task<Result<ConversationDto>> Handle(GetTenantChatQuery req, CancellationToken ct)
     {
         var conversationRepo = tenantUow.Repository<Conversation>();
+        var participantRepo = tenantUow.Repository<ConversationParticipant>();
 
         // Try to find existing tenant chat
         var tenantChat = await conversationRepo.GetAsync(c => c.IsTenantChat, ct);
@@ -29,15 +30,18 @@ internal sealed class GetTenantChatHandler(
             await tenantUow.SaveChangesAsync(ct);
         }
 
-        // Ensure requesting employee is a participant
-        var isParticipant = tenantChat.Participants.Any(p => p.EmployeeId == req.EmployeeId);
-        if (!isParticipant)
+        // Ensure requesting employee is a participant (check directly in DB to avoid stale data)
+        var existingParticipant = await participantRepo.GetAsync(
+            p => p.ConversationId == tenantChat.Id && p.EmployeeId == req.EmployeeId, ct);
+
+        if (existingParticipant is null)
         {
-            tenantChat.Participants.Add(new ConversationParticipant
+            var newParticipant = new ConversationParticipant
             {
                 ConversationId = tenantChat.Id,
                 EmployeeId = req.EmployeeId
-            });
+            };
+            await participantRepo.AddAsync(newParticipant, ct);
             await tenantUow.SaveChangesAsync(ct);
         }
 

@@ -1,0 +1,65 @@
+<p-drawer
+  [(visible)]="visible"
+  position="right"
+  [style]="{ width: '320px' }"
+  header="Conversation Details"
+>
+  @if (conversation(); as conv) {
+    <div class="space-y-6">
+      <!-- Conversation Info -->
+      <div class="text-center">
+        <p-avatar
+          [label]="getInitials(getConversationTitle(conv))"
+          class="bg-primary text-white"
+          size="xlarge"
+          shape="circle"
+        />
+        <h3 class="mt-3 font-semibold text-gray-800">
+          {{ getConversationTitle(conv) }}
+        </h3>
+        @if (conv.isTenantChat) {
+          <p class="text-sm text-gray-500">Team Chat</p>
+        }
+      </div>
+
+      <!-- Participants -->
+      <div>
+        <h4 class="mb-3 flex items-center gap-2 font-medium text-gray-700">
+          <i class="pi pi-users"></i>
+          Participants ({{ conv.participants?.length || 0 }})
+        </h4>
+        <div class="space-y-2">
+          @for (participant of conv.participants; track participant.employeeId) {
+            <div
+              class="flex items-center gap-3 rounded-lg bg-gray-50 p-3 transition-colors hover:bg-gray-100"
+            >
+              <p-avatar
+                [label]="getInitials(participant.employeeName)"
+                class="bg-gray-400 text-white"
+                shape="circle"
+              />
+              <div class="min-w-0 flex-1">
+                <p class="truncate font-medium text-gray-800">
+                  {{ participant.employeeName || "Unknown" }}
+                </p>
+                @if (participant.employeeId === currentUserId()) {
+                  <p class="text-xs text-gray-500">You</p>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Created Date -->
+      @if (conv.createdAt) {
+        <div class="border-t pt-4">
+          <p class="text-sm text-gray-500">
+            <i class="pi pi-calendar mr-2"></i>
+            Created {{ conv.createdAt | date: "medium" }}
+          </p>
+        </div>
+      }
+    </div>
+  }
+</p-drawer>

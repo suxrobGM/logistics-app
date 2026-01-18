@@ -19,28 +19,32 @@ internal sealed class SendMessageHandler(
 {
     public async Task<Result<MessageDto>> Handle(SendMessageCommand req, CancellationToken ct)
     {
+        var conversationRepo = tenantUow.Repository<Conversation>();
+        var participantRepo = tenantUow.Repository<ConversationParticipant>();
+
         // Validate conversation exists
-        var conversation = await tenantUow.Repository<Conversation>()
-            .GetByIdAsync(req.ConversationId, ct);
+        var conversation = await conversationRepo.GetByIdAsync(req.ConversationId, ct);
 
         if (conversation is null)
         {
             return Result<MessageDto>.Fail($"Conversation with ID '{req.ConversationId}' not found");
         }
 
-        // Validate sender is a participant (auto-add for tenant chat)
-        var isParticipant = conversation.Participants.Any(p => p.EmployeeId == req.SenderId);
+        // Check if sender is a participant (query DB directly to avoid stale data)
+        var existingParticipant = await participantRepo.GetAsync(
+            p => p.ConversationId == req.ConversationId && p.EmployeeId == req.SenderId, ct);
 
-        if (!isParticipant)
+        if (existingParticipant is null)
         {
             if (conversation.IsTenantChat)
             {
                 // Auto-add sender as participant for tenant chat
-                conversation.Participants.Add(new ConversationParticipant
+                var newParticipant = new ConversationParticipant
                 {
                     ConversationId = conversation.Id,
                     EmployeeId = req.SenderId
-                });
+                };
+                await participantRepo.AddAsync(newParticipant, ct);
             }
             else
             {
@@ -58,7 +62,6 @@ internal sealed class SendMessageHandler(
 
         // Create message
         var message = Message.Create(req.ConversationId, req.SenderId, req.Content);
-
         await tenantUow.Repository<Message>().AddAsync(message, ct);
 
         // Update conversation's last message timestamp
@@ -76,23 +79,28 @@ internal sealed class SendMessageHandler(
         // Send push notifications to other participants
         foreach (var participant in conversation.Participants.Where(p => p.EmployeeId != req.SenderId))
         {
-            if (string.IsNullOrEmpty(participant.Employee.DeviceToken) || !participant.IsMuted)
-            {
-                continue;
-            }
-
-            await pushNotificationService.SendNotificationAsync(
-                sender.GetFullName(),
-                message.Content.Length > 100 ? message.Content[..100] + "..." : message.Content,
-                participant.Employee.DeviceToken,
-                new Dictionary<string, string>
-                {
-                    ["type"] = "message",
-                    ["conversationId"] = req.ConversationId.ToString(),
-                    ["messageId"] = message.Id.ToString()
-                });
+            await NotifyParticipantNewMessageAsync(sender, participant, message);
         }
 
         return Result<MessageDto>.Ok(messageDto);
+    }
+
+    private async Task NotifyParticipantNewMessageAsync(Employee sender, ConversationParticipant participant, Message message)
+    {
+        if (string.IsNullOrEmpty(participant.Employee?.DeviceToken) || participant.IsMuted)
+        {
+            return;
+        }
+
+        await pushNotificationService.SendNotificationAsync(
+            sender.GetFullName(),
+            message.Content.Length > 100 ? message.Content[..100] + "..." : message.Content,
+            participant.Employee.DeviceToken,
+            new Dictionary<string, string>
+            {
+                ["type"] = "message",
+                ["conversationId"] = message.ConversationId.ToString(),
+                ["messageId"] = message.Id.ToString()
+            });
     }
 }

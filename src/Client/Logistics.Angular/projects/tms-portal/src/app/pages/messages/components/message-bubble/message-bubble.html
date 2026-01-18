@@ -1,0 +1,41 @@
+<div class="flex" [class.flex-row-reverse]="isOwn()" (mouseenter)="mouseEnter.emit()">
+  @if (!isOwn()) {
+    <p-avatar
+      [label]="getInitials(message().senderName)"
+      class="bg-gray-400 text-white shadow-sm"
+      shape="circle"
+    />
+  }
+
+  <div
+    class="max-w-[70%] rounded-2xl px-4 py-3 shadow-sm"
+    [class.bg-blue-600]="isOwn()"
+    [class.text-white]="isOwn()"
+    [class.rounded-br-sm]="isOwn()"
+    [class.bg-white]="!isOwn()"
+    [class.text-gray-800]="!isOwn()"
+    [class.rounded-bl-sm]="!isOwn()"
+  >
+    @if (!isOwn()) {
+      <p class="text-primary mb-1 text-xs font-semibold">
+        {{ message().senderName }}
+      </p>
+    }
+    <p class="leading-relaxed wrap-break-word whitespace-pre-wrap">{{ message().content }}</p>
+    <div
+      class="mt-2 flex items-center gap-1 text-xs"
+      [class.text-white/60]="isOwn()"
+      [class.justify-end]="isOwn()"
+      [class.text-gray-400]="!isOwn()"
+    >
+      <span>{{ message().sentAt | date: "shortTime" }}</span>
+      @if (isOwn()) {
+        @if (message().isRead) {
+          <i class="pi pi-check-circle text-xs"></i>
+        } @else {
+          <i class="pi pi-check text-xs"></i>
+        }
+      }
+    </div>
+  </div>
+</div>

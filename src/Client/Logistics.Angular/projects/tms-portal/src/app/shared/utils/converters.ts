@@ -67,6 +67,21 @@ export abstract class Converters {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join("");
   }
+
+  /**
+   * Extracts initials from a name (up to 2 characters).
+   * @param name The full name
+   * @returns Uppercase initials (e.g., "John Doe" -> "JD")
+   */
+  static getInitials(name?: string | null): string {
+    if (!name) return "??";
+    return name
+      .split(" ")
+      .map((w) => w[0])
+      .join("")
+      .substring(0, 2)
+      .toUpperCase();
+  }
 }
 
 export type DistanceUnitTypes = "m" | "km" | "mi" | "yd";

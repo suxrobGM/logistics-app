@@ -38,6 +38,8 @@ import com.jfleets.driver.navigation.SettingsRoute
 import com.jfleets.driver.navigation.StatsRoute
 import com.jfleets.driver.navigation.createEntryProvider
 import com.jfleets.driver.service.PreferencesManager
+import com.jfleets.driver.service.auth.AuthEvent
+import com.jfleets.driver.service.auth.AuthEventBus
 import com.jfleets.driver.service.auth.AuthService
 import com.jfleets.driver.ui.theme.LogisticsDriverTheme
 import org.koin.compose.koinInject
@@ -68,6 +70,18 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
             }
         } catch (_: Exception) {
             navigator.clearAndNavigate(LoginRoute)
+        }
+    }
+
+    // Listen for 401 Unauthorized responses and redirect to login
+    LaunchedEffect(Unit) {
+        AuthEventBus.events.collect { event ->
+            when (event) {
+                is AuthEvent.Unauthorized -> {
+                    authService.logout()
+                    navigator.clearAndNavigate(LoginRoute)
+                }
+            }
         }
     }
 

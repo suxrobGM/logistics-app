@@ -2,60 +2,25 @@
   class="mx-auto flex h-[calc(100vh-10rem)] max-w-4xl flex-col overflow-hidden rounded-xl bg-white shadow-lg"
 >
   <!-- Header -->
-  <div
-    class="from-primary/5 flex items-center gap-4 border-b bg-linear-to-r to-transparent px-4 py-3"
-  >
-    <p-button
-      icon="pi pi-arrow-left"
-      [text]="true"
-      [rounded]="true"
-      severity="secondary"
-      routerLink="/messages"
-    />
-    <p-avatar
-      [label]="getInitials(getConversationTitle(store.currentConversation()))"
-      class="bg-primary text-white"
-      shape="circle"
-    />
-    <div class="flex-1 cursor-pointer" (click)="toggleDetails()">
-      <h2 class="font-semibold text-gray-800">
-        {{ getConversationTitle(store.currentConversation()) }}
-      </h2>
-      @if (store.typingUsers().size > 0) {
-        <p class="text-primary animate-pulse text-sm">typing...</p>
-      } @else {
-        <p class="text-xs text-gray-400">Click to view details</p>
-      }
-    </div>
-    <p-button
-      icon="pi pi-info-circle"
-      [text]="true"
-      [rounded]="true"
-      severity="secondary"
-      (onClick)="toggleDetails()"
-      pTooltip="View details"
-    />
-  </div>
+  <app-conversation-header
+    [conversation]="store.currentConversation()"
+    [isNewConversation]="isNewConversation()"
+    [isTyping]="store.typingUsers().size > 0"
+    (toggleDetails)="toggleDetails()"
+  />
 
   <!-- Messages Area -->
   <div
     #messagesContainer
-    class="flex-1 space-y-4 overflow-y-auto bg-linear-to-b from-gray-50 to-gray-100 p-6"
+    class="flex-1 gap-2 space-y-4 overflow-y-auto bg-linear-to-b from-gray-50 to-gray-100 p-6"
   >
-    @if (store.hasMore() && store.messages().length > 0) {
-      <div class="flex justify-center">
-        <p-button
-          label="Load earlier messages"
-          icon="pi pi-history"
-          [text]="true"
-          [loading]="store.loading()"
-          size="small"
-          (onClick)="loadMore()"
-        />
-      </div>
-    }
-
-    @if (store.loading() && store.messages().length === 0) {
+    @if (isNewConversation()) {
+      <app-recipient-selector
+        [currentUserId]="currentUserId()"
+        [selected]="selectedRecipient()"
+        (selectedChange)="onRecipientChange($event)"
+      />
+    } @else if (store.loading() && store.messages().length === 0) {
       <div class="space-y-4">
         @for (i of [1, 2, 3]; track i) {
           <div class="flex gap-3">
@@ -68,61 +33,33 @@
         }
       </div>
     } @else if (store.messages().length === 0) {
-      <div class="flex h-full flex-col items-center justify-center text-center">
-        <div class="bg-primary/10 mb-4 flex h-20 w-20 items-center justify-center rounded-full">
-          <i class="pi pi-comments text-primary text-4xl"></i>
-        </div>
-        <h3 class="mb-2 font-semibold text-gray-700">No messages yet</h3>
-        <p class="text-sm text-gray-500">Send a message to start the conversation!</p>
-      </div>
+      <app-empty-state
+        icon="comments"
+        title="No messages yet"
+        message="Send a message to start the conversation!"
+      />
     } @else {
-      @for (message of store.messages(); track message.id) {
-        <div
-          class="flex gap-3"
-          [class.flex-row-reverse]="isOwnMessage(message)"
-          (mouseenter)="markMessageAsRead(message)"
-        >
-          @if (!isOwnMessage(message)) {
-            <p-avatar
-              [label]="getInitials(message.senderName)"
-              class="bg-gray-400 text-white shadow-sm"
-              shape="circle"
-            />
-          }
-
-          <div
-            class="max-w-[70%] rounded-2xl px-4 py-3 shadow-sm"
-            [class.bg-blue-600]="isOwnMessage(message)"
-            [class.text-white]="isOwnMessage(message)"
-            [class.rounded-br-sm]="isOwnMessage(message)"
-            [class.bg-white]="!isOwnMessage(message)"
-            [class.text-gray-800]="!isOwnMessage(message)"
-            [class.rounded-bl-sm]="!isOwnMessage(message)"
-          >
-            @if (!isOwnMessage(message)) {
-              <p class="text-primary mb-1 text-xs font-semibold">
-                {{ message.senderName }}
-              </p>
-            }
-            <p class="leading-relaxed wrap-break-word whitespace-pre-wrap">{{ message.content }}</p>
-            <div
-              class="mt-2 flex items-center gap-1 text-xs"
-              [class.text-white/60]="isOwnMessage(message)"
-              [class.justify-end]="isOwnMessage(message)"
-              [class.text-gray-400]="!isOwnMessage(message)"
-            >
-              <span>{{ message.sentAt | date: "shortTime" }}</span>
-              @if (isOwnMessage(message)) {
-                @if (message.isRead) {
-                  <i class="pi pi-check-circle text-xs"></i>
-                } @else {
-                  <i class="pi pi-check text-xs"></i>
-                }
-              }
-            </div>
-          </div>
+      @if (store.hasMore()) {
+        <div class="flex justify-center">
+          <p-button
+            label="Load earlier messages"
+            icon="pi pi-history"
+            [text]="true"
+            [loading]="store.loading()"
+            size="small"
+            (onClick)="loadMore()"
+          />
         </div>
       }
+      <div class="flex flex-col gap-2">
+        @for (message of store.messages(); track message.id) {
+          <app-message-bubble
+            [message]="message"
+            [isOwn]="isOwnMessage(message)"
+            (mouseEnter)="markMessageAsRead(message)"
+          />
+        }
+      </div>
     }
   </div>
 
@@ -131,7 +68,6 @@
     <div class="flex items-end gap-3">
       <div class="relative flex-1">
         <input
-          #messageInput
           type="text"
           pInputText
           class="focus:border-primary focus:ring-primary w-full rounded-full border-gray-200 py-3 pr-4 pl-4"
@@ -145,76 +81,16 @@
       <p-button
         icon="pi pi-send"
         [rounded]="true"
-        [disabled]="!messageContent().trim()"
+        [disabled]="!canSendMessage()"
+        [loading]="isCreatingConversation()"
         (onClick)="sendMessage()"
       />
     </div>
   </div>
 </div>
 
-<!-- Conversation Details Drawer -->
-<p-drawer
+<app-conversation-details
+  [conversation]="store.currentConversation()"
+  [currentUserId]="currentUserId()"
   [(visible)]="showDetails"
-  position="right"
-  [style]="{ width: '320px' }"
-  header="Conversation Details"
->
-  @if (store.currentConversation(); as conversation) {
-    <div class="space-y-6">
-      <!-- Conversation Info -->
-      <div class="text-center">
-        <p-avatar
-          [label]="getInitials(getConversationTitle(conversation))"
-          class="bg-primary text-white"
-          size="xlarge"
-          shape="circle"
-        />
-        <h3 class="mt-3 font-semibold text-gray-800">
-          {{ getConversationTitle(conversation) }}
-        </h3>
-        @if (conversation.isTenantChat) {
-          <p class="text-sm text-gray-500">Team Chat</p>
-        }
-      </div>
-
-      <!-- Participants -->
-      <div>
-        <h4 class="mb-3 flex items-center gap-2 font-medium text-gray-700">
-          <i class="pi pi-users"></i>
-          Participants ({{ conversation.participants?.length || 0 }})
-        </h4>
-        <div class="space-y-2">
-          @for (participant of conversation.participants; track participant.employeeId) {
-            <div
-              class="flex items-center gap-3 rounded-lg bg-gray-50 p-3 transition-colors hover:bg-gray-100"
-            >
-              <p-avatar
-                [label]="getInitials(participant.employeeName)"
-                class="bg-gray-400 text-white"
-                shape="circle"
-              />
-              <div class="min-w-0 flex-1">
-                <p class="truncate font-medium text-gray-800">
-                  {{ participant.employeeName || "Unknown" }}
-                </p>
-                @if (participant.employeeId === currentUserId()) {
-                  <p class="text-xs text-gray-500">You</p>
-                }
-              </div>
-            </div>
-          }
-        </div>
-      </div>
-
-      <!-- Created Date -->
-      @if (conversation.createdAt) {
-        <div class="border-t pt-4">
-          <p class="text-sm text-gray-500">
-            <i class="pi pi-calendar mr-2"></i>
-            Created {{ conversation.createdAt | date: "medium" }}
-          </p>
-        </div>
-      }
-    </div>
-  }
-</p-drawer>
+/>
