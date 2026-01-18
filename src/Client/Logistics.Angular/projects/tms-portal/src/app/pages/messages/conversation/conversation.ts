@@ -14,6 +14,7 @@ import type { ConversationDto, MessageDto } from "@logistics/shared/api";
 import { AvatarModule } from "primeng/avatar";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
+import { DrawerModule } from "primeng/drawer";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SkeletonModule } from "primeng/skeleton";
@@ -35,6 +36,7 @@ import { MessagesStore } from "../store/messages.store";
     ProgressSpinnerModule,
     RouterLink,
     DatePipe,
+    DrawerModule,
   ],
 })
 export class ConversationComponent implements OnInit, OnDestroy {
@@ -49,6 +51,7 @@ export class ConversationComponent implements OnInit, OnDestroy {
 
   protected messageContent = signal("");
   protected currentUserId = signal<string | null>(null);
+  protected showDetails = signal(false);
   private typingTimeout: ReturnType<typeof setTimeout> | null = null;
 
   async ngOnInit(): Promise<void> {
@@ -147,6 +150,10 @@ export class ConversationComponent implements OnInit, OnDestroy {
     if (!message.isRead && !this.isOwnMessage(message) && message.id) {
       this.store.markAsRead(message.id);
     }
+  }
+
+  protected toggleDetails(): void {
+    this.showDetails.update((v) => !v);
   }
 
   private scrollToBottom(): void {

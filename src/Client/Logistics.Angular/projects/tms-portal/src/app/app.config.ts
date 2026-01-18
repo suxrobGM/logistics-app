@@ -2,8 +2,9 @@ import type { ApplicationConfig } from "@angular/core";
 import { importProvidersFrom, provideBrowserGlobalErrorListeners } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { provideRouter, withComponentInputBinding } from "@angular/router";
-import { getAccessToken } from "@logistics/shared";
+import { getAccessToken, PERMISSION_CHECKER } from "@logistics/shared";
 import { provideApi } from "@logistics/shared/api";
+import { PermissionService } from "@/core/auth";
 import Aura from "@primeuix/themes/aura";
 import { provideAuth } from "angular-auth-oidc-client";
 import { provideMapboxGL } from "ngx-mapbox-gl";
@@ -37,5 +38,6 @@ export const appConfig: ApplicationConfig = {
 
     MessageService,
     ConfirmationService,
+    { provide: PERMISSION_CHECKER, useExisting: PermissionService },
   ],
 };

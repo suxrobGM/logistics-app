@@ -12,7 +12,7 @@ public interface IPayrollService
     /// </summary>
     /// <param name="employee">Employee for whom the payroll is created.</param>
     /// <param name="startDate">Period start date.</param>
-    /// <param name="endDate">>Period end date.</param>
+    /// <param name="endDate">Period end date.</param>
     /// <returns>Payroll invoice.</returns>
     PayrollInvoice CreatePayrollInvoice(Employee employee, DateTime startDate, DateTime endDate);
 }

@@ -1,20 +1,24 @@
 <app-page-header title="List Employees" addRoute="/employees/add" addTooltip="Add a new employee" />
 
-<div class="flex gap-2 mb-4">
-  <p-button
-    icon="pi pi-send"
-    label="Invite Employee"
-    severity="secondary"
-    [outlined]="true"
-    (click)="openInviteDialog()"
-  />
-  <p-button
-    icon="pi pi-clock"
-    label="Pending Invitations"
-    severity="secondary"
-    [outlined]="true"
-    routerLink="/employees/invitations"
-  />
+<div class="mb-4 flex gap-2">
+  <lib-permission-guard [permissions]="Permission.Invitation.Manage">
+    <p-button
+      icon="pi pi-send"
+      label="Invite Employee"
+      severity="secondary"
+      [outlined]="true"
+      (click)="openInviteDialog()"
+    />
+  </lib-permission-guard>
+  <lib-permission-guard [permissions]="Permission.Invitation.View">
+    <p-button
+      icon="pi pi-clock"
+      label="Pending Invitations"
+      severity="secondary"
+      [outlined]="true"
+      routerLink="/employees/invitations"
+    />
+  </lib-permission-guard>
 </div>
 
 <p-card>

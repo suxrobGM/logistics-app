@@ -17,7 +17,7 @@ import { Tag, TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { downloadBlobFile } from "@/shared/utils";
+import { Converters, downloadBlobFile } from "@/shared/utils";
 
 @Component({
   selector: "app-document-manager",
@@ -93,17 +93,20 @@ export class DocumentManagerComponent implements OnInit {
           OwnerType: ownerType,
           OwnerId: ownerId,
           File: file,
-          Type: type,
-          Description: `${type} document`,
+          Type: Converters.toPascalCase(type) as DocumentType,
+          Description: `${this.getTypeLabel(type)} document`,
         },
       });
 
-      this.toast.showSuccess(`${type} uploaded successfully`);
-      this.refresh();
-      this.changed.emit();
       this.uploadProgress.set({ [type]: 100 });
+      this.toast.showSuccess(`${this.getTypeLabel(type)} uploaded successfully`);
+      await this.refresh();
+      this.changed.emit();
+
+      // Reset progress after a short delay
+      setTimeout(() => this.uploadProgress.set({ [type]: 0 }), 1500);
     } catch {
-      this.toast.showError(`Failed to upload ${type}`);
+      this.toast.showError(`Failed to upload ${this.getTypeLabel(type)}`);
       this.uploadProgress.set({ [type]: 0 });
     }
   }
@@ -118,18 +121,17 @@ export class DocumentManagerComponent implements OnInit {
     }
   }
 
-  protected async delete(row: DocumentDto): Promise<void> {
-    console.log(row);
-    if (confirm(`Are you sure you want to delete "${row.fileName}"?`)) {
+  protected delete(row: DocumentDto): void {
+    this.toast.confirmDelete("document", async () => {
       try {
         await this.api.invoke(deleteDocument, { documentId: row.id! });
         this.toast.showSuccess("Document deleted successfully");
-        this.refresh();
+        await this.refresh();
         this.changed.emit();
       } catch {
         this.toast.showError("Failed to delete document");
       }
-    }
+    });
   }
 
   protected statusSeverity(status: DocumentStatus): Tag["severity"] {

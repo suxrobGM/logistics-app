@@ -1,8 +1,9 @@
 import { Injectable, inject, signal } from "@angular/core";
+import type { PermissionChecker } from "@logistics/shared";
 import { Api, getCurrentUserPermissions } from "@logistics/shared/api";
 
 @Injectable({ providedIn: "root" })
-export class PermissionService {
+export class PermissionService implements PermissionChecker {
   private readonly api = inject(Api);
 
   private readonly _permissions = signal<string[]>([]);

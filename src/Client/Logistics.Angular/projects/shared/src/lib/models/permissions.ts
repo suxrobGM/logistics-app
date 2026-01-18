@@ -52,3 +52,11 @@ export const Permission = {
     Manage: "Permission.Invitation.Manage",
   },
 } as const;
+
+/**
+ * Type representing all possible permission values.
+ * Extracted from the Permission object for strong typing.
+ */
+export type PermissionValue = {
+  [K in keyof typeof Permission]: (typeof Permission)[K][keyof (typeof Permission)[K]];
+}[keyof typeof Permission];

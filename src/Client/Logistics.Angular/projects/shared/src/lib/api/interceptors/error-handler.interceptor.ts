@@ -16,9 +16,8 @@ export function errorHandlerInterceptor(
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      const appError = errorHandlerService.categorizeError(error);
-      errorHandlerService.handleError(appError);
-      return throwError(() => appError);
+      errorHandlerService.handleError(error);
+      return throwError(() => error);
     }),
   );
 }

@@ -366,6 +366,9 @@ MigrationBackup/
 # Claude Code settings
 settings.local.json
 
+# Uploaded files
+*/**/wwwroot/uploads/
+
 KotlinProject/
 
 .env

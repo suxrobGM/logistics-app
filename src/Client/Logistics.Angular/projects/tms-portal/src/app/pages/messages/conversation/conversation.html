@@ -3,7 +3,7 @@
 >
   <!-- Header -->
   <div
-    class="from-primary/5 flex items-center gap-4 border-b bg-gradient-to-r to-transparent px-4 py-3"
+    class="from-primary/5 flex items-center gap-4 border-b bg-linear-to-r to-transparent px-4 py-3"
   >
     <p-button
       icon="pi pi-arrow-left"
@@ -17,7 +17,7 @@
       class="bg-primary text-white"
       shape="circle"
     />
-    <div class="flex-1">
+    <div class="flex-1 cursor-pointer" (click)="toggleDetails()">
       <h2 class="font-semibold text-gray-800">
         {{ getConversationTitle(store.currentConversation()) }}
       </h2>
@@ -27,12 +27,20 @@
         <p class="text-xs text-gray-400">Click to view details</p>
       }
     </div>
+    <p-button
+      icon="pi pi-info-circle"
+      [text]="true"
+      [rounded]="true"
+      severity="secondary"
+      (onClick)="toggleDetails()"
+      pTooltip="View details"
+    />
   </div>
 
   <!-- Messages Area -->
   <div
     #messagesContainer
-    class="flex-1 space-y-4 overflow-y-auto bg-gradient-to-b from-gray-50 to-gray-100 p-6"
+    class="flex-1 space-y-4 overflow-y-auto bg-linear-to-b from-gray-50 to-gray-100 p-6"
   >
     @if (store.hasMore() && store.messages().length > 0) {
       <div class="flex justify-center">
@@ -96,7 +104,7 @@
                 {{ message.senderName }}
               </p>
             }
-            <p class="leading-relaxed break-words whitespace-pre-wrap">{{ message.content }}</p>
+            <p class="leading-relaxed wrap-break-word whitespace-pre-wrap">{{ message.content }}</p>
             <div
               class="mt-2 flex items-center gap-1 text-xs"
               [class.text-white/60]="isOwnMessage(message)"
@@ -143,3 +151,70 @@
     </div>
   </div>
 </div>
+
+<!-- Conversation Details Drawer -->
+<p-drawer
+  [(visible)]="showDetails"
+  position="right"
+  [style]="{ width: '320px' }"
+  header="Conversation Details"
+>
+  @if (store.currentConversation(); as conversation) {
+    <div class="space-y-6">
+      <!-- Conversation Info -->
+      <div class="text-center">
+        <p-avatar
+          [label]="getInitials(getConversationTitle(conversation))"
+          class="bg-primary text-white"
+          size="xlarge"
+          shape="circle"
+        />
+        <h3 class="mt-3 font-semibold text-gray-800">
+          {{ getConversationTitle(conversation) }}
+        </h3>
+        @if (conversation.isTenantChat) {
+          <p class="text-sm text-gray-500">Team Chat</p>
+        }
+      </div>
+
+      <!-- Participants -->
+      <div>
+        <h4 class="mb-3 flex items-center gap-2 font-medium text-gray-700">
+          <i class="pi pi-users"></i>
+          Participants ({{ conversation.participants?.length || 0 }})
+        </h4>
+        <div class="space-y-2">
+          @for (participant of conversation.participants; track participant.employeeId) {
+            <div
+              class="flex items-center gap-3 rounded-lg bg-gray-50 p-3 transition-colors hover:bg-gray-100"
+            >
+              <p-avatar
+                [label]="getInitials(participant.employeeName)"
+                class="bg-gray-400 text-white"
+                shape="circle"
+              />
+              <div class="min-w-0 flex-1">
+                <p class="truncate font-medium text-gray-800">
+                  {{ participant.employeeName || "Unknown" }}
+                </p>
+                @if (participant.employeeId === currentUserId()) {
+                  <p class="text-xs text-gray-500">You</p>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Created Date -->
+      @if (conversation.createdAt) {
+        <div class="border-t pt-4">
+          <p class="text-sm text-gray-500">
+            <i class="pi pi-calendar mr-2"></i>
+            Created {{ conversation.createdAt | date: "medium" }}
+          </p>
+        </div>
+      }
+    </div>
+  }
+</p-drawer>

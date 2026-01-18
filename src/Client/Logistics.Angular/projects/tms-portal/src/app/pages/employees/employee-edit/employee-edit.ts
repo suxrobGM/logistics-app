@@ -1,8 +1,8 @@
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { RouterLink } from "@angular/router";
-import { Api, getEmployeeById, updateEmployee } from "@logistics/shared/api";
+import { Router, RouterLink } from "@angular/router";
+import { Api, deleteEmployee, getEmployeeById, updateEmployee } from "@logistics/shared/api";
 import {
   type EmployeeDto,
   type SalaryType,
@@ -54,6 +54,7 @@ export class EmployeeEditComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
 
   protected readonly id = input<string>();
   protected readonly isLoading = signal(false);
@@ -122,18 +123,28 @@ export class EmployeeEditComponent implements OnInit {
     };
 
     this.isLoading.set(true);
-    await this.api.invoke(updateEmployee, {
-      userId: this.id()!,
-      body: command,
-    });
-    this.toastService.showSuccess("The employee data has been successfully saved");
-
-    this.isLoading.set(false);
+    try {
+      await this.api.invoke(updateEmployee, {
+        userId: this.id()!,
+        body: command,
+      });
+      this.toastService.showSuccess("The employee data has been successfully saved");
+    } catch (error) {
+      this.toastService.showError("An error occurred while saving employee data");
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   confirmToDelete(): void {
-    this.toastService.confirmDelete("employee", () => {
-      // TODO: implement delete employee
+    this.toastService.confirmDelete("employee", async () => {
+      try {
+        await this.api.invoke(deleteEmployee, { userId: this.id()! });
+        this.toastService.showSuccess("Employee has been removed from the tenant");
+        this.router.navigate(["/employees"]);
+      } catch {
+        this.toastService.showError("Failed to remove employee");
+      }
     });
   }
 

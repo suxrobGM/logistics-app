@@ -55,6 +55,18 @@ export abstract class Converters {
         return value;
     }
   }
+
+  /**
+   * Converts a snake_case string to PascalCase.
+   * @param value The snake_case string to convert
+   * @returns The PascalCase string
+   */
+  static toPascalCase(value: string): string {
+    return value
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join("");
+  }
 }
 
 export type DistanceUnitTypes = "m" | "km" | "mi" | "yd";

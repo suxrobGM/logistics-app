@@ -1,13 +1,15 @@
 <app-page-header title="List Customers" addRoute="/customers/add" addTooltip="Add a new customer" />
 
-<div class="flex gap-2 mb-4">
-  <p-button
-    icon="pi pi-send"
-    label="Invite Customer User"
-    severity="secondary"
-    [outlined]="true"
-    (click)="openInviteDialog()"
-  />
+<div class="mb-4 flex gap-2">
+  <lib-permission-guard [permissions]="Permission.Invitation.Manage">
+    <p-button
+      icon="pi pi-send"
+      label="Invite Customer User"
+      severity="secondary"
+      [outlined]="true"
+      (click)="openInviteDialog()"
+    />
+  </lib-permission-guard>
 </div>
 
 <p-card>

@@ -1,14 +1,16 @@
 import { CurrencyPipe, DatePipe, PercentPipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
+import { PermissionGuard } from "@logistics/shared";
 import { type SalaryType, salaryTypeOptions } from "@logistics/shared/api/models";
+import { Permission } from "@logistics/shared/models";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
-import { EmployeesListStore } from "../store/employees-list.store";
 import { InviteEmployeeDialogComponent } from "../components/invite-employee-dialog/invite-employee-dialog";
+import { EmployeesListStore } from "../store/employees-list.store";
 
 @Component({
   selector: "app-employees-list",
@@ -27,11 +29,13 @@ import { InviteEmployeeDialogComponent } from "../components/invite-employee-dia
     PageHeader,
     SearchInput,
     InviteEmployeeDialogComponent,
+    PermissionGuard,
   ],
 })
 export class EmployeeListComponent {
   private readonly router = inject(Router);
   protected readonly store = inject(EmployeesListStore);
+  protected readonly Permission = Permission;
 
   protected readonly inviteDialogVisible = signal(false);
 

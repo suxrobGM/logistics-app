@@ -68,3 +68,14 @@ body {
     margin-bottom: 0.5rem;
   }
 }
+
+/* Custom utility classes using PrimeNG CSS variables */
+@layer utilities {
+  .bg-primary {
+    background-color: var(--p-primary-color);
+  }
+
+  .bg-primary-dark {
+    background-color: var(--p-primary-700);
+  }
+}

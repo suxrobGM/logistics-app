@@ -13,7 +13,7 @@ export class ErrorHandlerService {
   /**
    * Categorizes an HTTP error response into a standardized AppError.
    */
-  categorizeError(error: HttpErrorResponse): AppError {
+  private categorizeError(error: HttpErrorResponse): AppError {
     const statusCode = error.status;
 
     // Network error (no connection)
@@ -98,12 +98,18 @@ export class ErrorHandlerService {
   /**
    * Handles an AppError by displaying appropriate feedback to the user.
    */
-  handleError(error: AppError): void {
+  handleError(error: HttpErrorResponse): void {
+    const categorizedError = this.categorizeError(error);
+
     // Log for debugging
-    console.error(`[${error.category.toUpperCase()}]`, error.message, error.originalError);
+    console.error(
+      `[${categorizedError.category.toUpperCase()}]`,
+      categorizedError.message,
+      categorizedError.originalError,
+    );
 
     // Show toast notification
-    this.toastService.showError(error.message);
+    this.toastService.showError(categorizedError.message);
   }
 
   /**

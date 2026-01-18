@@ -25,6 +25,12 @@ export const cacheInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req);
   }
 
+  // Get TTL for this URL - check first to skip caching entirely for TTL=0
+  const ttl = getTtlForUrl(req.url);
+  if (ttl == null || ttl === 0) {
+    return next(req); // Don't cache if no rule matches or TTL is 0
+  }
+
   // Generate cache key (includes tenant header for multi-tenant support)
   const tenantId = req.headers.get("X-Tenant") ?? "";
   const cacheKey = `${tenantId}:${req.urlWithParams}`;
@@ -33,12 +39,6 @@ export const cacheInterceptor: HttpInterceptorFn = (req, next) => {
   const cached = cacheService.get<HttpResponse<unknown>>(cacheKey);
   if (cached) {
     return of(cached.clone());
-  }
-
-  // Get TTL for this URL
-  const ttl = getTtlForUrl(req.url);
-  if (ttl === null) {
-    return next(req); // Don't cache if no rule matches
   }
 
   // Make request and cache response

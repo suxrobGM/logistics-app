@@ -5,34 +5,24 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Services;
 
-internal class PayrollService : IPayrollService
+internal class PayrollService(
+    IMasterUnitOfWork masterUow,
+    ITenantUnitOfWork tenantUow,
+    ILogger<PayrollService> logger)
+    : IPayrollService
 {
-    private readonly ILogger<PayrollService> _logger;
-    private readonly IMasterUnitOfWork _masterUow;
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public PayrollService(
-        IMasterUnitOfWork masterUow,
-        ITenantUnitOfWork tenantUow,
-        ILogger<PayrollService> logger)
-    {
-        _masterUow = masterUow;
-        _tenantUow = tenantUow;
-        _logger = logger;
-    }
-
     public async Task GenerateMonthlyPayrollsAsync()
     {
-        var tenants = await _masterUow.Repository<Tenant>().GetListAsync();
+        var tenants = await masterUow.Repository<Tenant>().GetListAsync();
 
         foreach (var tenant in tenants)
         {
-            _tenantUow.SetCurrentTenant(tenant);
+            tenantUow.SetCurrentTenant(tenant);
 
             var previousMonthStart =
                 new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, 1, 0, 0, 0, DateTimeKind.Utc).AddMonths(-1);
             var previousMonthEnd = previousMonthStart.AddMonths(1).AddDays(-1);
-            var employees = await _tenantUow.Repository<Employee>().GetListAsync(e =>
+            var employees = await tenantUow.Repository<Employee>().GetListAsync(e =>
                 e.SalaryType == SalaryType.Monthly ||
                 e.SalaryType == SalaryType.ShareOfGross);
 
@@ -46,27 +36,27 @@ internal class PayrollService : IPayrollService
                 }
 
                 var payroll = CreatePayrollInvoice(employee, previousMonthStart, previousMonthEnd);
-                await _tenantUow.Repository<PayrollInvoice>().AddAsync(payroll);
+                await tenantUow.Repository<PayrollInvoice>().AddAsync(payroll);
             }
 
-            _logger.LogInformation(
+            logger.LogInformation(
                 "Generated monthly payrolls for the tenant: {TenantName}, date range: {StartDate} - {EndDate}",
                 tenant.Name, previousMonthStart.ToShortDateString(), previousMonthEnd.ToShortDateString());
-            await _tenantUow.SaveChangesAsync();
+            await tenantUow.SaveChangesAsync();
         }
     }
 
     public async Task GenerateWeeklyPayrollsAsync()
     {
-        var tenants = await _masterUow.Repository<Tenant>().GetListAsync();
+        var tenants = await masterUow.Repository<Tenant>().GetListAsync();
 
         foreach (var tenant in tenants)
         {
-            _tenantUow.SetCurrentTenant(tenant);
+            tenantUow.SetCurrentTenant(tenant);
             var previousWeekStart = StartOfPreviousWeek(DateTime.UtcNow);
             var previousWeekEnd = previousWeekStart.AddDays(6);
             var employees =
-                await _tenantUow.Repository<Employee>().GetListAsync(e => e.SalaryType == SalaryType.Weekly);
+                await tenantUow.Repository<Employee>().GetListAsync(e => e.SalaryType == SalaryType.Weekly);
 
             foreach (var employee in employees)
             {
@@ -77,13 +67,13 @@ internal class PayrollService : IPayrollService
                 }
 
                 var payroll = CreatePayrollInvoice(employee, previousWeekStart, previousWeekEnd);
-                await _tenantUow.Repository<PayrollInvoice>().AddAsync(payroll);
+                await tenantUow.Repository<PayrollInvoice>().AddAsync(payroll);
             }
 
-            _logger.LogInformation(
+            logger.LogInformation(
                 "Generated weekly payrolls for the tenant: {TenantName}, date range: {StartDate} - {EndDate}",
                 tenant.Name, previousWeekStart.ToShortDateString(), previousWeekEnd.ToShortDateString());
-            await _tenantUow.SaveChangesAsync();
+            await tenantUow.SaveChangesAsync();
         }
     }
 
@@ -100,14 +90,12 @@ internal class PayrollService : IPayrollService
             EmployeeId = employee.Id,
             Employee = employee
         };
-
-
         return payrollInvoice;
     }
 
     private async Task<bool> IsPayrollInvoiceExisting(Guid employeeId, DateTime startDate, DateTime endDate)
     {
-        var payroll = await _tenantUow.Repository<PayrollInvoice>().GetAsync(p =>
+        var payroll = await tenantUow.Repository<PayrollInvoice>().GetAsync(p =>
             p.EmployeeId == employeeId &&
             p.PeriodStart >= startDate &&
             p.PeriodEnd <= endDate);
@@ -121,7 +109,7 @@ internal class PayrollService : IPayrollService
         // by ANY truck where this employee was the main OR secondary driver.
         if (employee.SalaryType == SalaryType.ShareOfGross)
         {
-            var totalGross = _tenantUow.Repository<Truck>()
+            var totalGross = tenantUow.Repository<Truck>()
                 .Query()
                 .Where(t => t.MainDriverId == employee.Id ||
                             t.SecondaryDriverId == employee.Id)

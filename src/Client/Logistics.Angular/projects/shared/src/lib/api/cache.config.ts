@@ -1,12 +1,17 @@
 interface CacheRule {
   pattern: RegExp;
-  ttl: number; // milliseconds
+  ttl: number; // milliseconds, 0 = no cache
 }
 
 /**
  * Predefined cache rules for different API endpoints.
+ * Rules are evaluated in order - first match wins.
  */
 const cacheRules: CacheRule[] = [
+  // No caching for frequently mutated data
+  { pattern: /\/documents/, ttl: 0 }, // Documents change often, don't cache
+  { pattern: /\/messages/, ttl: 0 }, // Real-time data, don't cache
+
   // Reference/static data - longer TTL
   { pattern: /\/settings/, ttl: 30 * 60 * 1000 }, // 30 min
   { pattern: /\/roles/, ttl: 30 * 60 * 1000 }, // 30 min

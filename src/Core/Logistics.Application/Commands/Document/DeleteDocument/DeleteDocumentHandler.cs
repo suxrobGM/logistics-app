@@ -2,53 +2,42 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class DeleteDocumentHandler : IAppRequestHandler<DeleteDocumentCommand, Result>
+internal sealed class DeleteDocumentHandler(
+    ITenantUnitOfWork tenantUow,
+    IBlobStorageService blobStorageService,
+    ILogger<DeleteDocumentHandler> logger)
+    : IAppRequestHandler<DeleteDocumentCommand, Result>
 {
-    private readonly IBlobStorageService _blobStorageService;
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public DeleteDocumentHandler(
-        ITenantUnitOfWork tenantUow,
-        IBlobStorageService blobStorageService)
-    {
-        _tenantUow = tenantUow;
-        _blobStorageService = blobStorageService;
-    }
-
     public async Task<Result> Handle(
         DeleteDocumentCommand req, CancellationToken ct)
     {
-        // Get the document
-
-        Document? document = await _tenantUow.Repository<Document>().GetByIdAsync(req.DocumentId, ct);
+        var documentRepo = tenantUow.Repository<Document>();
+        var document = await documentRepo.GetByIdAsync(req.DocumentId, ct);
 
         if (document is null)
         {
             return Result.Fail($"Could not find document with ID '{req.DocumentId}'");
         }
 
-        // Check if the document is already deleted
-        if (document.Status == DocumentStatus.Deleted)
-        {
-            return Result.Fail("Document is already deleted");
-        }
-
         try
         {
-            // Soft delete the document (mark as deleted)
-            document.UpdateStatus(DocumentStatus.Deleted);
+            // Store blob info before deletion
+            var blobContainer = document.BlobContainer;
+            var blobPath = document.BlobPath;
 
-            // Save changes
-            var changes = await _tenantUow.SaveChangesAsync();
+            // Hard delete the document from database
+            documentRepo.Delete(document);
+            var changes = await tenantUow.SaveChangesAsync(ct);
 
             if (changes > 0)
             {
-                _ = DeleteDocumentBackground(document, ct);
+                // Delete blob in background
+                _ = DeleteBlobAsync(blobContainer, blobPath, ct);
                 return Result.Ok();
             }
 
@@ -60,19 +49,19 @@ internal sealed class DeleteDocumentHandler : IAppRequestHandler<DeleteDocumentC
         }
     }
 
-    private Task DeleteDocumentBackground(Document document, CancellationToken cancellationToken)
+    private Task DeleteBlobAsync(string blobContainer, string blobPath, CancellationToken ct)
     {
         return Task.Run(async () =>
         {
             try
             {
-                await _blobStorageService.DeleteAsync(document.BlobContainer, document.BlobPath, cancellationToken);
+                await blobStorageService.DeleteAsync(blobContainer, blobPath, ct);
             }
-            catch
+            catch (Exception ex)
             {
-                // Log error but don't fail the operation
-                // The blob can be cleaned up later
+                logger.LogError(ex, "Failed to delete blob {BlobPath} from container {BlobContainer}", blobPath,
+                    blobContainer);
             }
-        }, cancellationToken);
+        }, ct);
     }
 }

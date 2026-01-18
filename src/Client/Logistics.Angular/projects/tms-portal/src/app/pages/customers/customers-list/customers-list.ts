@@ -1,6 +1,7 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { Api, deleteCustomer } from "@logistics/shared/api";
+import { Api, PermissionGuard, deleteCustomer } from "@logistics/shared";
+import { Permission } from "@logistics/shared/models";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
@@ -8,8 +9,8 @@ import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
-import { CustomersListStore } from "../store/customers-list.store";
 import { InviteCustomerDialogComponent } from "../components/invite-customer-dialog/invite-customer-dialog";
+import { CustomersListStore } from "../store/customers-list.store";
 
 @Component({
   selector: "app-customers-list",
@@ -26,6 +27,7 @@ import { InviteCustomerDialogComponent } from "../components/invite-customer-dia
     PageHeader,
     SearchInput,
     InviteCustomerDialogComponent,
+    PermissionGuard,
   ],
 })
 export class CustomersListComponent {
@@ -33,6 +35,7 @@ export class CustomersListComponent {
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
   protected readonly store = inject(CustomersListStore);
+  protected readonly Permission = Permission;
 
   protected readonly inviteDialogVisible = signal(false);
   protected readonly selectedCustomerId = signal<string | undefined>(undefined);
