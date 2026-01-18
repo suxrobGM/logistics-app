@@ -1,6 +1,6 @@
 import { Injectable, inject } from "@angular/core";
+import type { UsBankAccount } from "@logistics/shared";
 import { type Address as AddressDto, Api, createSetupIntent } from "@logistics/shared/api";
-import type { UsBankAccount } from "@logistics/shared/models";
 import {
   type Address,
   type SetupIntentResult,

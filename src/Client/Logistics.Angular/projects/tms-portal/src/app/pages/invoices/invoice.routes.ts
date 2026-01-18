@@ -1,5 +1,5 @@
 import type { Routes } from "@angular/router";
-import { Permission } from "@logistics/shared/models";
+import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
 import { EmployeePayrollInvoicesListComponent } from "./employee-payroll-invoices-list/employee-payroll-invoices-list";
 import { LoadInvoiceDetailsComponent } from "./load-invoice-details/load-invoice-details";

@@ -6,9 +6,9 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
+import { UserRole } from "@logistics/shared";
 import { Api, createInvitation, getTenantRoles } from "@logistics/shared/api";
 import type { CreateInvitationCommand, RoleDto } from "@logistics/shared/api/models";
-import { UserRole } from "@logistics/shared/models";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";

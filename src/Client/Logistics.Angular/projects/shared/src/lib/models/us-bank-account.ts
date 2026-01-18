@@ -1,4 +1,4 @@
-import type { UsBankAccountHolderType, UsBankAccountType } from "@logistics/shared/api/models";
+import type { UsBankAccountHolderType, UsBankAccountType } from "../api/generated/models";
 
 export interface UsBankAccount {
   accountNumber: string;

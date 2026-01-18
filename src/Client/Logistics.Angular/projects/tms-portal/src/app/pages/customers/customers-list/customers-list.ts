@@ -1,7 +1,7 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { Api, PermissionGuard, deleteCustomer } from "@logistics/shared";
-import { Permission } from "@logistics/shared/models";
+import { Permission } from "@logistics/shared";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";

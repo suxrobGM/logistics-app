@@ -1,4 +1,4 @@
-import type { SelectOption } from "@logistics/shared/models";
+import type { SelectOption } from "../models/select-option";
 
 export const COUNTRIES_OPTIONS: SelectOption[] = [
   { label: "Andorra", value: "AD" },

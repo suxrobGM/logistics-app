@@ -7,4 +7,4 @@ export * from "./lib/components";
 export * from "./lib/services";
 export * from "./lib/utils";
 export * from "./lib/constants";
-// export * from "./lib/models";
+export * from "./lib/models";

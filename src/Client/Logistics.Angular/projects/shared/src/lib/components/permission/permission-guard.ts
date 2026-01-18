@@ -1,5 +1,5 @@
 import { Component, computed, inject, input } from "@angular/core";
-import type { PermissionValue } from "@logistics/shared/models";
+import type { PermissionValue } from "../../models/permissions";
 import { PERMISSION_CHECKER } from "./permission-checker";
 
 /**

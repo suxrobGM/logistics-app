@@ -1,4 +1,4 @@
-import type { SelectOption } from "@logistics/shared/models";
+import type { SelectOption } from "../models/select-option";
 
 /**
  * Finds an option by value or label in a list of options.

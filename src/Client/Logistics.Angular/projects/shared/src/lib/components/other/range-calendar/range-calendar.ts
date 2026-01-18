@@ -2,7 +2,7 @@ import { Component, effect, input, model, output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ButtonModule } from "primeng/button";
 import { DatePicker } from "primeng/datepicker";
-import { DateUtils } from "@logistics/shared/utils";
+import { DateUtils } from "../../../utils/date-utils";
 
 @Component({
   selector: "shared-range-calendar",

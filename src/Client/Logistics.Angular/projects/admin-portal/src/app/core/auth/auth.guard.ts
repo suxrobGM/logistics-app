@@ -1,11 +1,10 @@
 import { inject } from "@angular/core";
+import { toObservable } from "@angular/core/rxjs-interop";
 import type { CanActivateFn } from "@angular/router";
 import { Router } from "@angular/router";
-import { toObservable } from "@angular/core/rxjs-interop";
+import { PermissionService } from "@logistics/shared/services";
 import { filter, map, switchMap, take } from "rxjs";
-import { Permission } from "@logistics/shared/models";
 import { AuthService } from "./auth.service";
-import { PermissionService } from "./permission.service";
 
 export const authGuard: CanActivateFn = (route) => {
   const authService = inject(AuthService);

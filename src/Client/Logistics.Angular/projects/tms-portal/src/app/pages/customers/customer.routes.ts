@@ -1,5 +1,5 @@
 import type { Routes } from "@angular/router";
-import { Permission } from "@logistics/shared/models";
+import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
 import { CustomerAddComponent } from "./customer-add/customer-add";
 import { CustomerEditComponent } from "./customer-edit/customer-edit";

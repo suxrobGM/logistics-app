@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
-import type { AppError } from "@logistics/shared/errors";
+import type { AppError } from "../../errors/error.types";
 import { EmptyState } from "./empty-state";
 import { ErrorState } from "./error-state";
 import { LoadingSkeleton } from "./loading-skeleton";

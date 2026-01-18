@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from "@angular/core";
-import { UserData } from "@logistics/shared/models";
+import { UserData } from "@logistics/shared";
 import { EventTypes, OidcSecurityService, PublicEventsService } from "angular-auth-oidc-client";
 import { Observable, filter, from, map, switchMap } from "rxjs";
 

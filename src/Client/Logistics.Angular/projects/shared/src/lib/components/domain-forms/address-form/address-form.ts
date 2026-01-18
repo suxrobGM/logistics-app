@@ -7,12 +7,12 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import type { AddressDto } from "@logistics/shared/api/models";
 import { InputTextModule } from "primeng/inputtext";
 import { KeyFilterModule } from "primeng/keyfilter";
 import { SelectModule } from "primeng/select";
-import { COUNTRIES_OPTIONS, DEFAULT_COUNTRY_OPTION, US_STATES_OPTIONS } from "@logistics/shared/constants";
-import { findOption } from "@logistics/shared/utils";
+import type { Address } from "../../../api/generated/models";
+import { COUNTRIES_OPTIONS, DEFAULT_COUNTRY_OPTION, US_STATES_OPTIONS } from "../../../constants";
+import { findOption } from "../../../utils/select-utils";
 import { ValidationSummary } from "../../form/validation-summary/validation-summary";
 
 @Component({
@@ -32,10 +32,10 @@ export class AddressForm implements ControlValueAccessor {
   readonly usStates = US_STATES_OPTIONS;
   readonly countries = COUNTRIES_OPTIONS;
   private onTouched?: () => void;
-  private onChanged?: (value: AddressDto | null) => void;
+  private onChanged?: (value: Address | null) => void;
 
-  readonly address = input<AddressDto>();
-  readonly addressChange = output<AddressDto | null>();
+  readonly address = input<Address>();
+  readonly addressChange = output<Address | null>();
 
   constructor() {
     this.form = new FormGroup<AddressFormType>({
@@ -53,7 +53,7 @@ export class AddressForm implements ControlValueAccessor {
     this.form.valueChanges.subscribe((values) => this.handleFormValueChange(values));
   }
 
-  writeValue(value: AddressDto | null): void {
+  writeValue(value: Address | null): void {
     if (!value) {
       return;
     }
@@ -102,7 +102,7 @@ export class AddressForm implements ControlValueAccessor {
 
     const countryOption = findOption(COUNTRIES_OPTIONS, values.country);
 
-    const address: AddressDto = {
+    const address: Address = {
       line1: values.addressLine1,
       line2: values.addressLine2,
       city: values.city,

@@ -2,6 +2,7 @@ import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
+import { UserRole } from "@logistics/shared";
 import { Api, deleteEmployee, getEmployeeById, updateEmployee } from "@logistics/shared/api";
 import {
   type EmployeeDto,
@@ -9,7 +10,6 @@ import {
   type UpdateEmployeeCommand,
   salaryTypeOptions,
 } from "@logistics/shared/api/models";
-import { UserRole } from "@logistics/shared/models";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
