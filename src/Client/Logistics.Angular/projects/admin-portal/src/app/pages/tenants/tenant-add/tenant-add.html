@@ -1,0 +1,12 @@
+<h1>Add Tenant</h1>
+<p-divider />
+
+<div class="flex flex-col justify-center gap-6 md:flex-row">
+  <p-card class="w-full md:w-2/3 lg:w-1/2">
+    <adm-tenant-form
+      mode="create"
+      [isLoading]="isLoading()"
+      (save)="onSave($event)"
+    />
+  </p-card>
+</div>

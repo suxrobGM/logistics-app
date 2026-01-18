@@ -31,9 +31,11 @@ dotnet run --project src/Presentation/Logistics.DbMigrator      # Run migrations
 ```bash
 cd src/Client/Logistics.Angular
 bun install             # Install dependencies
+bun run start:admin     # Admin Portal on https://localhost:7002
 bun run start:tms       # TMS Portal on https://localhost:7003
 bun run start:customer  # Customer Portal on https://localhost:7004
 bun run build:shared    # Build shared library
+bun run build:admin     # Build Admin Portal
 bun run build:tms       # Build TMS Portal
 bun run build:customer  # Build Customer Portal
 bun run build:all       # Build all projects
@@ -85,7 +87,7 @@ Shared (Models)         → DTOs shared between backend and frontend
 |---------|------|
 | API | 7000 |
 | Identity Server | 7001 |
-| Admin App (Blazor) | 7002 |
+| Admin Portal (Angular) | 7002 |
 | TMS Portal (Angular) | 7003 |
 | Customer Portal (Angular) | 7004 |
 | Aspire Dashboard | 8100 |
@@ -199,11 +201,12 @@ The ELD (Electronic Logging Device) integration pulls driver Hours of Service da
 
 ## User Roles
 
-`SuperAdmin` (Admin App), `Owner`, `Manager`, `Dispatcher` (TMS Portal), `Driver` (Mobile App), `Customer` (Customer Portal)
+`SuperAdmin`, `Admin` (Admin Portal), `Owner`, `Manager`, `Dispatcher` (TMS Portal), `Driver` (Mobile App), `Customer` (Customer Portal)
 
 ## Important Notes
 
 - `Logistics.DriverApp.Legacy` (MAUI) is deprecated; use the Kotlin Multiplatform version
+- `Logistics.AdminApp` (Blazor WASM) is deprecated; use the Angular admin-portal instead
 - Angular apps have their own rules in `src/Client/Logistics.Angular/CLAUDE.md`
 - Aspire automatically runs DB migrations on startup
 

@@ -1,0 +1,16 @@
+<span class="font-bold">{{ label() }}</span>
+<p-date-picker
+  class="ml-2"
+  [(ngModel)]="dates"
+  selectionMode="range"
+  [showIcon]="true"
+  [maxDate]="todayDate"
+/>
+<button
+  pButton
+  class="p-button-raised ml-2"
+  [disabled]="!areDatesValid()"
+  (click)="onClickButton()"
+>
+  Apply
+</button>

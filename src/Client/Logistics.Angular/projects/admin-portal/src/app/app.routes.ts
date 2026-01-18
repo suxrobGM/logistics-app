@@ -1,0 +1,42 @@
+import type { Routes } from "@angular/router";
+import { authGuard } from "@/core/auth";
+
+export const appRoutes: Routes = [
+  {
+    path: "home",
+    loadChildren: () => import("./pages/home/home.routes").then((m) => m.homeRoutes),
+  },
+  {
+    path: "tenants",
+    loadChildren: () => import("./pages/tenants/tenant.routes").then((m) => m.tenantRoutes),
+    canActivate: [authGuard],
+  },
+  {
+    path: "subscriptions",
+    loadChildren: () =>
+      import("./pages/subscriptions/subscription.routes").then((m) => m.subscriptionRoutes),
+    canActivate: [authGuard],
+  },
+  {
+    path: "subscription-plans",
+    loadChildren: () => import("./pages/plans/plan.routes").then((m) => m.planRoutes),
+    canActivate: [authGuard],
+  },
+  {
+    path: "users",
+    loadChildren: () => import("./pages/users/user.routes").then((m) => m.userRoutes),
+    canActivate: [authGuard],
+  },
+  {
+    path: "",
+    loadComponent: () => import("./pages/login/login").then((m) => m.Login),
+  },
+  {
+    path: "unauthorized",
+    loadComponent: () => import("./pages/unauthorized/unauthorized").then((m) => m.Unauthorized),
+  },
+  {
+    path: "**",
+    redirectTo: "",
+  },
+];

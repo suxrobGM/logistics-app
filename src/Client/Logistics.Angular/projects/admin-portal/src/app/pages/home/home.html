@@ -1,0 +1,120 @@
+<h1>Dashboard</h1>
+<p-divider />
+
+<div class="mt-4 grid grid-cols-12 gap-4">
+  @if (isLoading()) {
+    @for (_ of [1, 2, 3, 4]; track $index) {
+      <div class="col-span-12 md:col-span-6 lg:col-span-3">
+        <p-skeleton height="8rem" styleClass="w-full" />
+      </div>
+    }
+  } @else {
+    <div class="col-span-12 md:col-span-6 lg:col-span-3">
+      <p-card styleClass="h-full">
+        <div class="flex items-center gap-4">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
+            <i class="pi pi-building text-2xl text-blue-600"></i>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Total Tenants</p>
+            <p class="text-2xl font-bold">{{ tenantCount() }}</p>
+          </div>
+        </div>
+        <div class="mt-4">
+          <p-button
+            label="View All"
+            icon="pi pi-arrow-right"
+            iconPos="right"
+            [link]="true"
+            routerLink="/tenants"
+          />
+        </div>
+      </p-card>
+    </div>
+
+    <div class="col-span-12 md:col-span-6 lg:col-span-3">
+      <p-card styleClass="h-full">
+        <div class="flex items-center gap-4">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+            <i class="pi pi-credit-card text-2xl text-green-600"></i>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Active Subscriptions</p>
+            <p class="text-2xl font-bold">{{ subscriptionCount() }}</p>
+          </div>
+        </div>
+        <div class="mt-4">
+          <p-button
+            label="View All"
+            icon="pi pi-arrow-right"
+            iconPos="right"
+            [link]="true"
+            routerLink="/subscriptions"
+          />
+        </div>
+      </p-card>
+    </div>
+
+    <div class="col-span-12 md:col-span-6 lg:col-span-3">
+      <p-card styleClass="h-full">
+        <div class="flex items-center gap-4">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100">
+            <i class="pi pi-box text-2xl text-purple-600"></i>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Subscription Plans</p>
+            <p class="text-2xl font-bold">{{ planCount() }}</p>
+          </div>
+        </div>
+        <div class="mt-4">
+          <p-button
+            label="View All"
+            icon="pi pi-arrow-right"
+            iconPos="right"
+            [link]="true"
+            routerLink="/subscription-plans"
+          />
+        </div>
+      </p-card>
+    </div>
+
+    <div class="col-span-12 md:col-span-6 lg:col-span-3">
+      <p-card styleClass="h-full">
+        <div class="flex items-center gap-4">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
+            <i class="pi pi-users text-2xl text-orange-600"></i>
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">Admin Users</p>
+            <p class="text-2xl font-bold">{{ userCount() }}</p>
+          </div>
+        </div>
+        <div class="mt-4">
+          <p-button
+            label="View All"
+            icon="pi pi-arrow-right"
+            iconPos="right"
+            [link]="true"
+            routerLink="/users"
+          />
+        </div>
+      </p-card>
+    </div>
+  }
+</div>
+
+<div class="mt-8 grid grid-cols-12 gap-4">
+  <div class="col-span-12 lg:col-span-6">
+    <p-card>
+      <ng-template #header>
+        <h4 class="py-2 pl-4">Quick Actions</h4>
+        <p-divider class="m-0" />
+      </ng-template>
+      <div class="flex flex-wrap gap-3">
+        <p-button label="Add Tenant" icon="pi pi-plus" routerLink="/tenants/add" />
+        <p-button label="Add Plan" icon="pi pi-plus" severity="secondary" routerLink="/subscription-plans/add" />
+        <p-button label="Add Subscription" icon="pi pi-plus" severity="secondary" routerLink="/subscriptions/add" />
+      </div>
+    </p-card>
+  </div>
+</div>

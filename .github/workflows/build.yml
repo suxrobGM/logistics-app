@@ -34,9 +34,6 @@ jobs:
       - name: Build Identity Server
         run: dotnet build ${{ env.PRESENTATION_PROJECTS_DIR }}/Logistics.IdentityServer/Logistics.IdentityServer.csproj
 
-      - name: Build Admin App
-        run: dotnet build ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.AdminApp/Logistics.AdminApp.csproj
-
   build-angular-apps:
     runs-on: ubuntu-latest
 
@@ -57,6 +54,10 @@ jobs:
       - name: Build TMS Portal
         working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
         run: bun run build:tms
+
+      - name: Build Admin Portal
+        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
+        run: bun run build:admin
 
       - name: Build Customer Portal
         working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular

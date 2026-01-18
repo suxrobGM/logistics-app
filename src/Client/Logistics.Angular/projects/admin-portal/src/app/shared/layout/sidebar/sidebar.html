@@ -1,0 +1,46 @@
+<aside class="fixed left-0 top-0 z-40 h-screen w-64 border-r border-gray-200 bg-white">
+  <!-- Header -->
+  <div class="flex h-16 items-center justify-center border-b border-gray-200 px-4">
+    <h1 class="text-xl font-bold text-primary-600">Admin Portal</h1>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex-1 p-4">
+    <ul class="space-y-2">
+      @for (item of navItems; track item.routerLink) {
+        <li>
+          <a
+            [routerLink]="item.routerLink"
+            routerLinkActive="bg-primary-50 text-primary-600"
+            class="flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-100"
+          >
+            <i [class]="item.icon + ' mr-3 text-lg'"></i>
+            <span>{{ item.label }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <!-- User section -->
+  <div class="border-t border-gray-200 p-4">
+    <div class="mb-3 flex items-center">
+      <div
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-primary-600"
+      >
+        <i class="pi pi-user"></i>
+      </div>
+      <div class="ml-3">
+        <p class="text-sm font-medium text-gray-900">{{ userName() }}</p>
+        <p class="text-xs text-gray-500">Super Admin</p>
+      </div>
+    </div>
+    <p-button
+      label="Logout"
+      icon="pi pi-sign-out"
+      severity="secondary"
+      styleClass="w-full"
+      (onClick)="logout()"
+    />
+  </div>
+</aside>

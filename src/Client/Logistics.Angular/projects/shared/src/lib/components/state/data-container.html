@@ -1,0 +1,19 @@
+@if (loading()) {
+  <shared-loading-skeleton [variant]="skeletonVariant()" [rows]="skeletonRows()" />
+} @else if (error()) {
+  <shared-error-state
+    [message]="error()!.message"
+    [retryable]="error()!.retryable"
+    (retry)="handleRetry()"
+  />
+} @else if (isEmpty()) {
+  <shared-empty-state
+    [title]="emptyTitle()"
+    [message]="emptyMessage()"
+    [icon]="emptyIcon()"
+    [actionLabel]="emptyActionLabel()"
+    (action)="handleEmptyAction()"
+  />
+} @else {
+  <ng-content />
+}

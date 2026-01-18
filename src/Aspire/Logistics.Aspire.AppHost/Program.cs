@@ -63,14 +63,16 @@ var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WaitFor(migrator)
     .WaitFor(identityServer);
 
-builder.AddProject<Logistics_AdminApp>("admin-app")
-    .WithExternalHttpEndpoints()
-    .WaitFor(logisticsApi)
-    .WaitFor(identityServer);
-
 // Use BunApp for local dev, Container for publishing
 if (builder.ExecutionContext.IsPublishMode)
 {
+    builder.AddContainer("admin-portal", "ghcr.io/suxrobgm/logistics-app/admin-portal")
+        .WithImageTag("latest")
+        .WithHttpEndpoint(7002, 80, "admin-http")
+        .WithExternalHttpEndpoints()
+        .WaitFor(logisticsApi)
+        .WaitFor(identityServer);
+
     builder.AddContainer("tms-portal", "ghcr.io/suxrobgm/logistics-app/tms-portal")
         .WithImageTag("latest")
         .WithHttpEndpoint(7003, 80, "tms-http")
@@ -87,6 +89,12 @@ if (builder.ExecutionContext.IsPublishMode)
 }
 else
 {
+    builder.AddBunApp("admin-portal", "../../Client/Logistics.Angular", "start:admin", true)
+        .WithHttpEndpoint(7002, 7002, "admin-http", isProxied: false)
+        .WithBunPackageInstallation()
+        .WaitFor(logisticsApi)
+        .WaitFor(identityServer);
+
     builder.AddBunApp("tms-portal", "../../Client/Logistics.Angular", "start:tms", true)
         .WithHttpEndpoint(7003, 7003, "tms-http", isProxied: false)
         .WithBunPackageInstallation()

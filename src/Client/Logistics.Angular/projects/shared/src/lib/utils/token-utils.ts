@@ -4,7 +4,9 @@
  * This function retrieves the token from the session storage key "0-logistics.{appName}".
  * @returns The authentication access token or null if not found.
  */
-export function getAccessToken(appName: "customerportal" | "tmsportal"): string | null {
+export function getAccessToken(
+  appName: "customerportal" | "tmsportal" | "adminportal",
+): string | null {
   const authData = JSON.parse(sessionStorage.getItem(`0-logistics.${appName}`) || "{}");
   return authData?.authnResult?.access_token ?? null;
 }

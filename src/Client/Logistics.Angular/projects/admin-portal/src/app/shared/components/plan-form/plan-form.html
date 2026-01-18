@@ -1,0 +1,99 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="mb-4 grid grid-cols-12 gap-4">
+    <div class="col-span-12">
+      <shared-labeled-field label="Plan Name" [required]="true">
+        <input
+          pInputText
+          formControlName="name"
+          placeholder="Enter plan name (e.g., Basic, Pro, Enterprise)"
+          class="w-full"
+        />
+      </shared-labeled-field>
+    </div>
+  </div>
+
+  <div class="mb-4 grid grid-cols-12 gap-4">
+    <div class="col-span-12">
+      <shared-labeled-field label="Description">
+        <textarea
+          pInputTextarea
+          formControlName="description"
+          placeholder="Enter plan description"
+          rows="3"
+          class="w-full"
+        ></textarea>
+      </shared-labeled-field>
+    </div>
+  </div>
+
+  <div class="mb-4 grid grid-cols-12 gap-4">
+    <div class="col-span-12 md:col-span-4">
+      <shared-labeled-field label="Price" [required]="true">
+        <shared-currency-input [control]="form.controls.price" placeholder="0.00" />
+      </shared-labeled-field>
+    </div>
+
+    <div class="col-span-12 md:col-span-4">
+      <shared-labeled-field label="Billing Interval" [required]="true">
+        <p-select
+          formControlName="interval"
+          [options]="intervalOptions"
+          placeholder="Select interval"
+          styleClass="w-full"
+        />
+      </shared-labeled-field>
+    </div>
+
+    <div class="col-span-12 md:col-span-4">
+      <shared-labeled-field label="Interval Count" [required]="true">
+        <p-inputNumber
+          formControlName="intervalCount"
+          [min]="1"
+          [max]="12"
+          [showButtons]="true"
+          styleClass="w-full"
+        />
+      </shared-labeled-field>
+    </div>
+  </div>
+
+  <div class="mb-4 grid grid-cols-12 gap-4">
+    <div class="col-span-12 md:col-span-6">
+      <shared-labeled-field label="Trial Period">
+        <p-select
+          formControlName="trialPeriod"
+          [options]="trialPeriodOptions"
+          placeholder="Select trial period"
+          styleClass="w-full"
+        />
+      </shared-labeled-field>
+    </div>
+  </div>
+
+  <shared-validation-summary [form]="form" />
+
+  <div class="mt-6 flex gap-2">
+    <p-button
+      [label]="mode() === 'create' ? 'Create' : 'Save'"
+      icon="pi pi-check"
+      type="submit"
+      [loading]="isLoading()"
+      [disabled]="form.invalid || isLoading()"
+    />
+    <p-button
+      label="Cancel"
+      icon="pi pi-times"
+      severity="secondary"
+      routerLink="/subscription-plans"
+    />
+    @if (mode() === 'edit') {
+      <p-button
+        label="Delete"
+        icon="pi pi-trash"
+        severity="danger"
+        [outlined]="true"
+        (click)="askRemove()"
+      />
+    }
+  </div>
+</form>

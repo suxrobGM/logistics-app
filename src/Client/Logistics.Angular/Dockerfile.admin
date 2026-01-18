@@ -1,0 +1,27 @@
+# Stage 1: Build
+FROM oven/bun:latest AS builder
+WORKDIR /app
+
+# Copy package files
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
+
+# Copy source
+COPY . .
+
+# Build shared library and Admin Portal
+RUN bun run build:shared
+RUN bun run build:admin
+
+# Stage 2: Runtime
+FROM nginx:alpine
+
+# Copy nginx config
+COPY nginx.admin.conf /etc/nginx/nginx.conf
+
+# Copy built app
+COPY --from=builder /app/dist/admin-portal/browser /usr/share/nginx/html
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

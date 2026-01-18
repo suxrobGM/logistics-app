@@ -1,0 +1,77 @@
+<h1>Add Subscription</h1>
+<p-divider />
+
+<div class="flex flex-col justify-center gap-6 md:flex-row">
+  <p-card class="w-full md:w-2/3 lg:w-1/2">
+    @if (isFetching()) {
+      <div class="space-y-4">
+        <p-skeleton height="3rem" />
+        <p-skeleton height="3rem" />
+      </div>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="mb-4 grid grid-cols-12 gap-4">
+          <div class="col-span-12">
+            <shared-labeled-field label="Tenant" [required]="true">
+              <p-select
+                formControlName="tenantId"
+                [options]="tenantOptions()"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select a tenant"
+                [filter]="true"
+                filterPlaceholder="Search tenants..."
+                styleClass="w-full"
+              />
+            </shared-labeled-field>
+            @if (tenantOptions().length === 0) {
+              <p class="mt-1 text-sm text-orange-500">
+                <i class="pi pi-info-circle mr-1"></i>
+                All tenants already have active subscriptions.
+              </p>
+            }
+          </div>
+        </div>
+
+        <div class="mb-4 grid grid-cols-12 gap-4">
+          <div class="col-span-12">
+            <shared-labeled-field label="Subscription Plan" [required]="true">
+              <p-select
+                formControlName="planId"
+                [options]="planOptions()"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select a plan"
+                styleClass="w-full"
+              />
+            </shared-labeled-field>
+            @if (planOptions().length === 0) {
+              <p class="mt-1 text-sm text-orange-500">
+                <i class="pi pi-info-circle mr-1"></i>
+                No subscription plans available. <a routerLink="/subscription-plans/add" class="underline">Create one first.</a>
+              </p>
+            }
+          </div>
+        </div>
+
+        <shared-validation-summary [form]="form" />
+
+        <div class="mt-6 flex gap-2">
+          <p-button
+            label="Create Subscription"
+            icon="pi pi-check"
+            type="submit"
+            [loading]="isLoading()"
+            [disabled]="form.invalid || isLoading() || tenantOptions().length === 0 || planOptions().length === 0"
+          />
+          <p-button
+            label="Cancel"
+            icon="pi pi-times"
+            severity="secondary"
+            routerLink="/subscriptions"
+          />
+        </div>
+      </form>
+    }
+  </p-card>
+</div>

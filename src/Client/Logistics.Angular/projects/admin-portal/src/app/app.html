@@ -1,0 +1,13 @@
+@if (showLayout()) {
+  <div class="flex min-h-screen">
+    <adm-sidebar />
+    <main class="ml-64 flex-1 bg-gray-50 p-6">
+      <router-outlet />
+    </main>
+  </div>
+} @else {
+  <router-outlet />
+}
+
+<p-toast />
+<p-confirmDialog />
