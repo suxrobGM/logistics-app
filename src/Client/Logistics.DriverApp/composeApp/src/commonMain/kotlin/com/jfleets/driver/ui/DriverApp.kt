@@ -29,6 +29,7 @@ import com.jfleets.driver.model.UserSettings
 import com.jfleets.driver.navigation.AccountRoute
 import com.jfleets.driver.navigation.ConversationRoute
 import com.jfleets.driver.navigation.DashboardRoute
+import com.jfleets.driver.navigation.EmployeeSelectRoute
 import com.jfleets.driver.navigation.LoadDetailRoute
 import com.jfleets.driver.navigation.LoginRoute
 import com.jfleets.driver.navigation.MessagesRoute
@@ -100,7 +101,8 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
     val showBottomBar = currentDestination != null &&
             currentDestination !is LoginRoute &&
             currentDestination !is LoadDetailRoute &&
-            currentDestination !is ConversationRoute
+            currentDestination !is ConversationRoute &&
+            currentDestination !is EmployeeSelectRoute
 
     CompositionLocalProvider(LocalUserSettings provides userSettings) {
         LogisticsDriverTheme {

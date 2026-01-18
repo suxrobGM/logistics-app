@@ -30,6 +30,9 @@ data object MessagesRoute : NavKey
 data class ConversationRoute(val conversationId: String) : NavKey
 
 @Serializable
+data object EmployeeSelectRoute : NavKey
+
+@Serializable
 data class PodCaptureRoute(
     val loadId: String,
     val captureType: String,

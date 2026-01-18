@@ -14,13 +14,16 @@ import com.jfleets.driver.api.TruckApi
 import com.jfleets.driver.api.UserApi
 import com.jfleets.driver.api.models.InspectionType
 import com.jfleets.driver.service.PreferencesManager
+import com.jfleets.driver.service.messaging.ConversationStateManager
 import com.jfleets.driver.viewmodel.AccountViewModel
+import com.jfleets.driver.viewmodel.ChatViewModel
 import com.jfleets.driver.viewmodel.ConditionReportViewModel
+import com.jfleets.driver.viewmodel.ConversationListViewModel
 import com.jfleets.driver.viewmodel.DashboardViewModel
 import com.jfleets.driver.viewmodel.DocumentCaptureType
+import com.jfleets.driver.viewmodel.EmployeeSelectViewModel
 import com.jfleets.driver.viewmodel.LoadDetailViewModel
 import com.jfleets.driver.viewmodel.LoginViewModel
-import com.jfleets.driver.viewmodel.MessagesViewModel
 import com.jfleets.driver.viewmodel.PastLoadsViewModel
 import com.jfleets.driver.viewmodel.PodCaptureViewModel
 import com.jfleets.driver.viewmodel.SettingsViewModel
@@ -53,6 +56,9 @@ fun commonModule(baseUrl: String) = module {
     single<TruckApi> { get<ApiFactory>().truckApi }
     single<UserApi> { get<ApiFactory>().userApi }
 
+    // ConversationStateManager service for shared messaging state
+    single { ConversationStateManager(get(), get()) }
+
     viewModelOf(::DashboardViewModel)
     viewModelOf(::AccountViewModel)
     viewModelOf(::LoadDetailViewModel)
@@ -60,7 +66,19 @@ fun commonModule(baseUrl: String) = module {
     viewModelOf(::StatsViewModel)
     viewModelOf(::LoginViewModel)
     viewModelOf(::SettingsViewModel)
-    viewModelOf(::MessagesViewModel)
+    viewModelOf(::ConversationListViewModel)
+    viewModelOf(::EmployeeSelectViewModel)
+
+    // ChatViewModel with conversationId parameter
+    viewModel { params ->
+        ChatViewModel(
+            messageApi = get(),
+            preferencesManager = get(),
+            messagingService = get(),
+            conversationStateManager = get(),
+            conversationId = params.get<String>()
+        )
+    }
 
     // PodCaptureViewModel with parameters
     viewModel { params ->

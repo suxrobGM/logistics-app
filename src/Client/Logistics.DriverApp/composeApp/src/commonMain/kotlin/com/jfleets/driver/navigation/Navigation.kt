@@ -12,6 +12,7 @@ import com.jfleets.driver.ui.screens.AccountScreen
 import com.jfleets.driver.ui.screens.ConditionReportScreen
 import com.jfleets.driver.ui.screens.ConversationScreen
 import com.jfleets.driver.ui.screens.DashboardScreen
+import com.jfleets.driver.ui.screens.EmployeeSelectScreen
 import com.jfleets.driver.ui.screens.LoadDetailScreen
 import com.jfleets.driver.ui.screens.LoginScreen
 import com.jfleets.driver.ui.screens.MessagesScreen
@@ -96,6 +97,20 @@ fun createEntryProvider(
         MessagesScreen(
             onConversationClick = { conversationId ->
                 navigator.navigate(ConversationRoute(conversationId))
+            },
+            onNewMessage = {
+                navigator.navigate(EmployeeSelectRoute)
+            },
+            onBack = { navigator.goBack() }
+        )
+    }
+
+    // Employee Select Screen (New Message)
+    entry<EmployeeSelectRoute> {
+        EmployeeSelectScreen(
+            onConversationCreated = { conversationId ->
+                // Navigate to the conversation, replacing EmployeeSelectRoute
+                navigator.navigateAndClear(ConversationRoute(conversationId), EmployeeSelectRoute)
             },
             onBack = { navigator.goBack() }
         )

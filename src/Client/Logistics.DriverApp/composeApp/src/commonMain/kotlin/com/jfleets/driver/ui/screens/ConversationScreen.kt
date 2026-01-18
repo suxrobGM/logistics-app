@@ -45,29 +45,25 @@ import com.jfleets.driver.ui.components.EmptyStateView
 import com.jfleets.driver.ui.components.ErrorView
 import com.jfleets.driver.ui.components.LoadingIndicator
 import com.jfleets.driver.ui.components.MessageBubble
-import com.jfleets.driver.util.formatAsNames
 import com.jfleets.driver.viewmodel.ChatUiState
-import com.jfleets.driver.viewmodel.MessagesViewModel
+import com.jfleets.driver.viewmodel.ChatViewModel
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun ConversationScreen(
     conversationId: String,
     onBack: () -> Unit = {},
-    viewModel: MessagesViewModel = koinViewModel()
+    viewModel: ChatViewModel = koinViewModel(key = conversationId) { parametersOf(conversationId) }
 ) {
-    val chatState by viewModel.chatState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     var messageText by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
 
-    LaunchedEffect(conversationId) {
-        viewModel.selectConversation(conversationId)
-    }
-
     // Scroll to bottom when new messages arrive
-    LaunchedEffect(chatState) {
-        if (chatState is ChatUiState.Success) {
-            val messages = (chatState as ChatUiState.Success).messages
+    LaunchedEffect(uiState) {
+        if (uiState is ChatUiState.Success) {
+            val messages = (uiState as ChatUiState.Success).messages
             if (messages.isNotEmpty()) {
                 listState.animateScrollToItem(messages.size - 1)
             }
@@ -77,12 +73,9 @@ fun ConversationScreen(
     Scaffold(
         topBar = {
             AppTopBar(
-                title = chatState.getConversationTitle(),
+                title = uiState.getConversationTitle(),
                 navigationIcon = {
-                    IconButton(onClick = {
-                        viewModel.clearChat()
-                        onBack()
-                    }) {
+                    IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
@@ -102,7 +95,7 @@ fun ConversationScreen(
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
             ) {
-                when (val state = chatState) {
+                when (val state = uiState) {
                     is ChatUiState.Initial -> {}
 
                     is ChatUiState.Loading -> {
