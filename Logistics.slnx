@@ -1,9 +1,4 @@
 <Solution>
-  <Folder Name="/Client/">
-    <Project Path="src/Client/Logistics.HttpClient/Logistics.HttpClient.csproj" />
-    <!-- <Project Path="src/Client/Logistics.DriverApp.Legacy/Logistics.DriverApp.csproj" /> -->
-    <Project Path="src/Client/Logistics.AdminApp/Logistics.AdminApp.csproj" />
-  </Folder>
   <Folder Name="/Test/">
     <Project Path="test/Logistics.Application.Tests/Logistics.Application.Tests.csproj" />
   </Folder>
