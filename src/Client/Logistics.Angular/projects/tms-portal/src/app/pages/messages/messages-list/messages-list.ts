@@ -8,6 +8,7 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
+import { AuthService } from "@/core/auth";
 import { MessagingService } from "@/core/services";
 import { Converters } from "@/shared/utils";
 import { MessagesStore } from "../store/messages.store";
@@ -28,12 +29,14 @@ import { MessagesStore } from "../store/messages.store";
 })
 export class MessagesListComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
   private readonly messagingService = inject(MessagingService);
   protected readonly store = inject(MessagesStore);
 
   async ngOnInit(): Promise<void> {
     await this.messagingService.connect();
-    await this.store.loadConversations();
+    const currentUserId = this.authService.getUserData()?.id;
+    await this.store.loadConversations(currentUserId);
     await this.messagingService.getUnreadCount();
   }
 

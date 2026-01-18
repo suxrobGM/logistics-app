@@ -1,4 +1,4 @@
-<div class="flex" [class.flex-row-reverse]="isOwn()" (mouseenter)="mouseEnter.emit()">
+<div class="flex gap-2" [class.flex-row-reverse]="isOwn()" (mouseenter)="mouseEnter.emit()">
   @if (!isOwn()) {
     <p-avatar
       [label]="getInitials(message().senderName)"
@@ -31,9 +31,9 @@
       <span>{{ message().sentAt | date: "shortTime" }}</span>
       @if (isOwn()) {
         @if (message().isRead) {
-          <i class="pi pi-check-circle text-xs"></i>
+          <i class="pi pi-check-circle text-xs text-cyan-300"></i>
         } @else {
-          <i class="pi pi-check text-xs"></i>
+          <i class="pi pi-check text-xs text-white/50"></i>
         }
       }
     </div>

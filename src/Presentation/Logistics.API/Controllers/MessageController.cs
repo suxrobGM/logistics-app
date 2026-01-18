@@ -68,7 +68,7 @@ public class MessageController(IMediator mediator) : ControllerBase
     [Authorize(Policy = Permission.Message.View)]
     public async Task<IActionResult> GetMessages(
         Guid conversationId,
-        [FromQuery] int limit = 50,
+        [FromQuery] int limit = 10,
         [FromQuery] int offset = 0,
         [FromQuery] DateTime? before = null)
     {

@@ -7,20 +7,30 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.jfleets.driver.api.models.MessageDto
 import com.jfleets.driver.util.formatTime
+
+// WhatsApp-style blue color for read messages
+private val ReadCheckColor = Color(0xFF53BDEB)
 
 /**
  * A chat message bubble that displays message content with sender info and timestamp.
@@ -101,15 +111,35 @@ private fun MessageContent(
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        message.sentAt?.let { sentAt ->
-            Text(
-                text = sentAt.formatTime(),
-                style = MaterialTheme.typography.labelSmall,
-                color = if (isOwnMessage)
-                    MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
-                else
-                    MaterialTheme.colorScheme.onSurfaceVariant
-            )
+        // Timestamp and read status row
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.End
+        ) {
+            message.sentAt?.let { sentAt ->
+                Text(
+                    text = sentAt.formatTime(),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (isOwnMessage)
+                        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
+                    else
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            // Read status indicator (only for own messages)
+            if (isOwnMessage) {
+                Spacer(modifier = Modifier.width(4.dp))
+                Icon(
+                    imageVector = if (message.isRead == true) Icons.Default.DoneAll else Icons.Default.Check,
+                    contentDescription = if (message.isRead == true) "Read" else "Sent",
+                    modifier = Modifier.size(14.dp),
+                    tint = if (message.isRead == true)
+                        ReadCheckColor
+                    else
+                        MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.7f)
+                )
+            }
         }
     }
 }

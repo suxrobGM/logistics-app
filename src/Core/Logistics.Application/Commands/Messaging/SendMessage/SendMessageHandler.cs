@@ -71,12 +71,12 @@ internal sealed class SendMessageHandler(
 
         var messageDto = message.ToDto(false);
 
-        // Broadcast message to conversation participants via SignalR
+        // Broadcast message to conversation group
         await messagingHub.Clients
             .Group($"conversation-{req.ConversationId}")
             .ReceiveMessage(messageDto);
 
-        // Send push notifications to other participants
+        // Send push notifications to participants
         foreach (var participant in conversation.Participants.Where(p => p.EmployeeId != req.SenderId))
         {
             await NotifyParticipantNewMessageAsync(sender, participant, message);

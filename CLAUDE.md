@@ -98,6 +98,7 @@ Shared (Models)         → DTOs shared between backend and frontend
 - **Validation**: FluentValidation in `Behaviors/ValidationBehavior.cs`
 - **Domain Events**: Entities raise events, handlers in Application layer
 - **Specifications**: Reusable query filters in `Specifications/`
+- **Lazy Loading**: EF Core Proxy Lazy Loading is enabled - navigation properties are loaded automatically on access. No need to use `.Include()` in queries.
 
 ### Adding a New API Endpoint
 

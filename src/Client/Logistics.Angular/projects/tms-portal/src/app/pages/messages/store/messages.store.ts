@@ -25,6 +25,8 @@ const initialState: MessagesState = {
   initialized: false,
 };
 
+const MESSAGE_LOAD_BATCH_SIZE = 10;
+
 export const MessagesStore = signalStore(
   withState(initialState),
 
@@ -131,9 +133,14 @@ export const MessagesStore = signalStore(
           const before =
             append && currentMessages.length > 0 ? currentMessages[0].sentAt : undefined;
 
-          const newMessages = await messagingService.getMessages(conversation.id, 50, 0, before);
+          const newMessages = await messagingService.getMessages(
+            conversation.id,
+            MESSAGE_LOAD_BATCH_SIZE,
+            0,
+            before,
+          );
 
-          if (newMessages.length < 50) {
+          if (newMessages.length < MESSAGE_LOAD_BATCH_SIZE) {
             patchState(store, { hasMore: false });
           }
 

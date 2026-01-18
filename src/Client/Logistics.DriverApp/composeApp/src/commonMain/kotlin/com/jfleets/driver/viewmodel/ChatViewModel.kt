@@ -22,7 +22,7 @@ class ChatViewModel(
     private val conversationStateManager: ConversationStateManager,
     private val conversationId: String
 ) : ViewModel() {
-
+    private val messageLoadBatchSize = 10
     private val _uiState = MutableStateFlow<ChatUiState>(ChatUiState.Loading)
     val uiState: StateFlow<ChatUiState> = _uiState.asStateFlow()
 
@@ -96,7 +96,7 @@ class ChatViewModel(
 
             val response = messageApi.getMessages(
                 conversationId = conversationId,
-                limit = 50,
+                limit = messageLoadBatchSize,
                 before = before
             )
 
@@ -106,7 +106,7 @@ class ChatViewModel(
             }
 
             val newMessages = response.body()
-            val hasMore = newMessages.size >= 50
+            val hasMore = newMessages.size >= messageLoadBatchSize
             val allMessages = if (append) newMessages + currentMessages else newMessages
 
             // Get conversation details from conversations list
