@@ -56,11 +56,7 @@ public class DocumentController(IMediator mediator) : ControllerBase
             return BadRequest(new ErrorResponse("No file provided"));
         }
 
-        var userId = User.GetUserId();
-        if (userId is null)
-        {
-            return BadRequest(new ErrorResponse("User not authenticated"));
-        }
+        var userId = User.GetUserId()!;
 
         var cmd = new UploadDocumentCommand
         {

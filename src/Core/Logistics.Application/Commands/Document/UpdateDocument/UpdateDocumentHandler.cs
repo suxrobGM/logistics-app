@@ -6,19 +6,13 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateDocumentHandler : IAppRequestHandler<UpdateDocumentCommand, Result>
+internal sealed class UpdateDocumentHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<UpdateDocumentCommand, Result>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public UpdateDocumentHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result> Handle(
         UpdateDocumentCommand req, CancellationToken ct)
     {
-        var document = await _tenantUow.Repository<Document>().GetByIdAsync(req.DocumentId, ct);
+        var document = await tenantUow.Repository<Document>().GetByIdAsync(req.DocumentId, ct);
         if (document is null)
         {
             return Result.Fail($"Could not find document with ID '{req.DocumentId}'");
@@ -29,7 +23,7 @@ internal sealed class UpdateDocumentHandler : IAppRequestHandler<UpdateDocumentC
             return Result.Fail("Cannot update deleted document");
         }
 
-        var updater = await _tenantUow.Repository<Employee>().GetByIdAsync(req.UpdatedById, ct);
+        var updater = await tenantUow.Repository<Employee>().GetByIdAsync(req.UpdatedById, ct);
         if (updater is null)
         {
             return Result.Fail($"Could not find employee with ID '{req.UpdatedById}'");
@@ -46,7 +40,7 @@ internal sealed class UpdateDocumentHandler : IAppRequestHandler<UpdateDocumentC
             document.UpdateDescription(req.Description);
         }
 
-        await _tenantUow.SaveChangesAsync(ct);
+        await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

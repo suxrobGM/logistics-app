@@ -26,6 +26,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISeeder, CustomerSeeder>();
         services.AddScoped<ISeeder, TruckSeeder>();
         services.AddScoped<ISeeder, LoadSeeder>();
+        services.AddScoped<ISeeder, DocumentSeeder>();
+        services.AddScoped<ISeeder, ConditionReportSeeder>();
+        services.AddScoped<ISeeder, ExpenseSeeder>();
         services.AddScoped<ISeeder, TripSeeder>();
         services.AddScoped<ISeeder, NotificationSeeder>();
         services.AddScoped<ISeeder, PayrollSeeder>();
