@@ -102,7 +102,15 @@
       </ng-template>
       <ng-template #body let-load>
         <tr (click)="selectedRow.set(load)">
-          <td>{{ load.number }}</td>
+          <td>
+            <a
+              [routerLink]="['/loads', load.id]"
+              class="text-primary font-medium hover:underline"
+              (click)="$event.stopPropagation()"
+            >
+              {{ load.number }}
+            </a>
+          </td>
           <td [pTooltip]="load.name" [showDelay]="500" tooltipPosition="bottom">
             {{ load.name }}
           </td>

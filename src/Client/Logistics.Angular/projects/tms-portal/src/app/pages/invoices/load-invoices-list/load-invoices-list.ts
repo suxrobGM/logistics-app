@@ -1,5 +1,5 @@
 import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
-import { Component, effect, inject, input } from "@angular/core";
+import { Component, inject, input, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -25,17 +25,14 @@ import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
     DataContainer,
   ],
 })
-export class LoadInvoicesListComponent {
+export class LoadInvoicesListComponent implements OnInit {
   protected readonly store = inject(LoadInvoicesListStore);
   protected readonly loadId = input<string>();
 
-  constructor() {
-    // Set the LoadId filter when the input changes
-    effect(() => {
-      const id = this.loadId();
-      if (id) {
-        this.store.setFilters({ LoadId: id });
-      }
-    });
+  ngOnInit(): void {
+    const id = this.loadId();
+    if (id) {
+      this.store.setFilters({ LoadId: id });
+    }
   }
 }

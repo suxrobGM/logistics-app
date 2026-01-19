@@ -2,9 +2,8 @@ import type { Routes } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
 import { LoadAddComponent } from "./load-add/load-add";
-import { LoadDocumentsPage } from "./load-documents/load-documents";
+import { LoadDetailPage } from "./load-detail/load-detail";
 import { LoadEditComponent } from "./load-edit/load-edit";
-import { LoadPodViewerPage } from "./load-pod-viewer/load-pod-viewer";
 import { LoadsListComponent } from "./loads-list/loads-list";
 
 export const loadRoutes: Routes = [
@@ -45,20 +44,11 @@ export const loadRoutes: Routes = [
     },
   },
   {
-    path: ":id/documents",
-    component: LoadDocumentsPage,
+    path: ":id",
+    component: LoadDetailPage,
     canActivate: [authGuard],
     data: {
-      breadcrumb: "Documents",
-      permission: Permission.Load.Manage,
-    },
-  },
-  {
-    path: ":id/pod",
-    component: LoadPodViewerPage,
-    canActivate: [authGuard],
-    data: {
-      breadcrumb: "POD/BOL",
+      breadcrumb: "Details",
       permission: Permission.Load.View,
     },
   },

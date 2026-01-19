@@ -1,0 +1,79 @@
+<p-card>
+  <ng-template #header>
+    <div class="flex items-center justify-between p-4 pb-0">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-book text-primary"></i>
+        <h3 class="m-0 text-lg font-semibold">Load Invoices</h3>
+      </div>
+      <p-button
+        icon="pi pi-refresh"
+        severity="secondary"
+        [outlined]="true"
+        size="small"
+        (click)="refresh()"
+        [loading]="isLoading()"
+      />
+    </div>
+  </ng-template>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-8">
+      <p-progress-spinner />
+    </div>
+  } @else {
+    <p-table [value]="invoices()" [dataKey]="'id'" class="p-datatable-sm">
+      <ng-template #header>
+        <tr>
+          <th class="w-32">Invoice #</th>
+          <th>Customer</th>
+          <th class="w-36">Total</th>
+          <th class="w-40">Date</th>
+          <th class="w-32">Status</th>
+          <th class="w-24">Action</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-invoice>
+        <tr>
+          <td>
+            <span class="font-mono font-medium">{{ invoice.number }}</span>
+          </td>
+          <td>{{ invoice.customer?.name ?? "—" }}</td>
+          <td>
+            <span class="font-semibold text-green-600">
+              {{ invoice.total?.amount | currency }}
+            </span>
+          </td>
+          <td>{{ invoice.createdDate | date: "mediumDate" }}</td>
+          <td>
+            <app-invoice-status-tag [status]="invoice.status" />
+          </td>
+          <td>
+            <p-button
+              icon="pi pi-eye"
+              size="small"
+              [text]="true"
+              severity="info"
+              pTooltip="View details"
+              [routerLink]="['/invoices/loads', loadId(), invoice.id]"
+            />
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #empty>
+        <tr>
+          <td colspan="6" class="py-8 text-center">
+            <div class="flex flex-col items-center gap-3 text-gray-500">
+              <i class="pi pi-book text-4xl"></i>
+              <div>
+                <p class="font-medium">No invoices found</p>
+                <p class="text-sm">Invoices for this load will appear here.</p>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  }
+</p-card>

@@ -1,11 +1,13 @@
 import { CurrencyPipe, DatePipe, PercentPipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { PermissionGuard } from "@logistics/shared";
-import { Permission } from "@logistics/shared";
-import { type SalaryType, salaryTypeOptions } from "@logistics/shared/api/models";
+import { Permission, PermissionGuard } from "@logistics/shared";
+import type { EmployeeDto, SalaryType } from "@logistics/shared/api/models";
+import { salaryTypeOptions } from "@logistics/shared/api/models";
+import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
+import { MenuModule } from "primeng/menu";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
@@ -22,6 +24,7 @@ import { EmployeesListStore } from "../store/employees-list.store";
     RouterLink,
     CardModule,
     TableModule,
+    MenuModule,
     DatePipe,
     PercentPipe,
     CurrencyPipe,
@@ -38,6 +41,26 @@ export class EmployeeListComponent {
   protected readonly Permission = Permission;
 
   protected readonly inviteDialogVisible = signal(false);
+  protected readonly selectedRow = signal<EmployeeDto | null>(null);
+
+  protected readonly actionMenuItems: MenuItem[] = [
+    {
+      label: "Edit employee",
+      icon: "pi pi-pen-to-square",
+      command: () => this.router.navigateByUrl(`/employees/${this.selectedRow()!.id}/edit`),
+    },
+    {
+      label: "View payrolls",
+      icon: "pi pi-file-o",
+      command: () =>
+        this.router.navigateByUrl(`/invoices/payroll/employee/${this.selectedRow()!.id}`),
+    },
+    {
+      label: "Manage documents",
+      icon: "pi pi-paperclip",
+      command: () => this.router.navigateByUrl(`/employees/${this.selectedRow()!.id}/documents`),
+    },
+  ];
 
   protected onSearch(value: string): void {
     this.store.setSearch(value);

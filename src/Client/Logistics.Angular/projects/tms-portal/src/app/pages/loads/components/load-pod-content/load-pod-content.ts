@@ -1,12 +1,10 @@
 import { CommonModule, DatePipe } from "@angular/common";
 import { Component, effect, inject, input, signal } from "@angular/core";
-import { RouterLink } from "@angular/router";
 import { Api, downloadDocument, getDocuments } from "@logistics/shared/api";
 import type { DocumentDto } from "@logistics/shared/api/models";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
-import { ImageModule } from "primeng/image";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
@@ -15,8 +13,8 @@ import { ToastService } from "@/core/services";
 import { downloadBlobFile } from "@/shared/utils";
 
 @Component({
-  selector: "app-load-pod-viewer",
-  templateUrl: "./load-pod-viewer.html",
+  selector: "app-load-pod-content",
+  templateUrl: "./load-pod-content.html",
   imports: [
     CommonModule,
     CardModule,
@@ -25,17 +23,15 @@ import { downloadBlobFile } from "@/shared/utils";
     TagModule,
     TooltipModule,
     DialogModule,
-    ImageModule,
     ProgressSpinnerModule,
-    RouterLink,
     DatePipe,
   ],
 })
-export class LoadPodViewerPage {
+export class LoadPodContent {
   private readonly api = inject(Api);
   private readonly toast = inject(ToastService);
 
-  readonly id = input.required<string>();
+  readonly loadId = input.required<string>();
   protected readonly isLoading = signal(false);
   protected readonly documents = signal<DocumentDto[]>([]);
   protected readonly selectedDocument = signal<DocumentDto | null>(null);
@@ -43,17 +39,17 @@ export class LoadPodViewerPage {
 
   constructor() {
     effect(() => {
-      const loadId = this.id();
-      if (loadId) {
-        this.loadDocuments(loadId);
+      const id = this.loadId();
+      if (id) {
+        this.loadDocuments(id);
       }
     });
   }
 
   protected refresh(): void {
-    const loadId = this.id();
-    if (loadId) {
-      this.loadDocuments(loadId);
+    const id = this.loadId();
+    if (id) {
+      this.loadDocuments(id);
     }
   }
 
@@ -68,7 +64,7 @@ export class LoadPodViewerPage {
     if (result) {
       // Filter to only POD and BOL documents
       const filtered = result.filter(
-        (doc) => doc.type === "proof_of_delivery" || doc.type === "bill_of_lading"
+        (doc) => doc.type === "proof_of_delivery" || doc.type === "bill_of_lading",
       );
       this.documents.set(filtered);
     }
@@ -106,12 +102,18 @@ export class LoadPodViewerPage {
     return type === "proof_of_delivery" ? "success" : "info";
   }
 
-  protected formatCoordinates(lat: number | null | undefined, lng: number | null | undefined): string {
+  protected formatCoordinates(
+    lat: number | null | undefined,
+    lng: number | null | undefined,
+  ): string {
     if (lat == null || lng == null) return "N/A";
     return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
   }
 
-  protected getGoogleMapsUrl(lat: number | null | undefined, lng: number | null | undefined): string {
+  protected getGoogleMapsUrl(
+    lat: number | null | undefined,
+    lng: number | null | undefined,
+  ): string {
     if (lat == null || lng == null) return "";
     return `https://www.google.com/maps?q=${lat},${lng}`;
   }

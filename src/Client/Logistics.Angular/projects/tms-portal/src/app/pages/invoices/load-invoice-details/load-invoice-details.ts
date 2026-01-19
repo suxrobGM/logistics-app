@@ -30,7 +30,7 @@ export class LoadInvoiceDetailsComponent implements OnInit {
   private readonly api = inject(Api);
   private readonly tenantService = inject(TenantService);
 
-  readonly id = input.required<string>();
+  readonly invoiceId = input.required<string>();
   readonly isLoading = signal(false);
   readonly companyName = signal<string | null>(null);
   readonly companyAddress = signal<AddressDto | null>(null);
@@ -74,12 +74,12 @@ export class LoadInvoiceDetailsComponent implements OnInit {
   }
 
   private async fetchInvoice(): Promise<void> {
-    if (!this.id()) {
+    if (!this.invoiceId()) {
       return;
     }
 
     this.isLoading.set(true);
-    const result = await this.api.invoke(getInvoiceById, { id: this.id() });
+    const result = await this.api.invoke(getInvoiceById, { id: this.invoiceId() });
     if (result) {
       this.invoice.set(result);
     }

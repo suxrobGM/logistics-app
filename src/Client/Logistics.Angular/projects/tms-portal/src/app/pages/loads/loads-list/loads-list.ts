@@ -43,14 +43,14 @@ export class LoadsListComponent {
   constructor() {
     this.actionMenuItems = [
       {
+        label: "View details",
+        icon: "pi pi-eye",
+        command: () => this.router.navigateByUrl(`/loads/${this.selectedRow()!.id}`),
+      },
+      {
         label: "Edit load details",
         icon: "pi pi-pen-to-square",
         command: () => this.router.navigateByUrl(`/loads/${this.selectedRow()!.id}/edit`),
-      },
-      {
-        label: "Manage documents",
-        icon: "pi pi-paperclip",
-        command: () => this.router.navigateByUrl(`/loads/${this.selectedRow()!.id}/documents`),
       },
       {
         label: "View truck details",

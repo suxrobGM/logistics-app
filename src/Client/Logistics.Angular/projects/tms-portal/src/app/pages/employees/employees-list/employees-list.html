@@ -100,26 +100,12 @@
           <td>{{ getSalaryTypeDesc(employee.salaryType) }}</td>
           <td>{{ employee.role?.displayName }}</td>
           <td>{{ employee.joinedDate | date: "mediumDate" }}</td>
-          <td class="overflow-visible">
+          <td>
             <p-button
-              icon="pi pi-pen-to-square"
-              pTooltip="Edit employee details"
-              tooltipPosition="bottom"
-              [routerLink]="['/employees', employee.id, 'edit']"
-            />
-            <p-button
-              styleClass="ml-2"
-              icon="pi pi-file-o"
-              pTooltip="View employee payrolls"
-              tooltipPosition="bottom"
-              [routerLink]="['/invoices/payroll/employee', employee.id]"
-            />
-            <p-button
-              styleClass="ml-2"
-              icon="pi pi-paperclip"
-              pTooltip="Manage documents"
-              tooltipPosition="bottom"
-              [routerLink]="['/employees', employee.id, 'documents']"
+              icon="pi pi-ellipsis-v"
+              severity="secondary"
+              [text]="true"
+              (click)="selectedRow.set(employee); menu.toggle($event)"
             />
           </td>
         </tr>
@@ -132,3 +118,6 @@
   [(visible)]="inviteDialogVisible"
   (invitationSent)="onInvitationSent()"
 />
+
+<!-- Context menu for row actions -->
+<p-menu #menu [model]="actionMenuItems" [popup]="true" />

@@ -1,0 +1,288 @@
+<div class="mx-auto max-w-7xl">
+  <!-- Header with actions -->
+  <div class="mb-6 flex items-start justify-between">
+    <shared-page-header title="Load Details" [showAddButton]="false" />
+    <div class="flex gap-2">
+      <p-button
+        icon="pi pi-pencil"
+        label="Edit"
+        severity="secondary"
+        [outlined]="true"
+        (click)="onEdit()"
+      />
+      <p-button
+        icon="pi pi-arrow-left"
+        label="Back"
+        [routerLink]="['/loads']"
+        severity="secondary"
+        [outlined]="true"
+      />
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-16">
+      <p-progress-spinner />
+    </div>
+  } @else if (load()) {
+    <p-card>
+      <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
+        <p-tablist>
+          <p-tab [value]="0">
+            <i class="pi pi-info-circle mr-2"></i>
+            Details
+          </p-tab>
+          <p-tab [value]="1">
+            <i class="pi pi-folder mr-2"></i>
+            Documents
+          </p-tab>
+          <p-tab [value]="2">
+            <i class="pi pi-file-check mr-2"></i>
+            POD / BOL
+          </p-tab>
+          <p-tab [value]="3">
+            <i class="pi pi-book mr-2"></i>
+            Invoices
+          </p-tab>
+        </p-tablist>
+
+        <p-tabpanels>
+          <!-- Details Tab -->
+          <p-tabpanel [value]="0">
+            <div class="grid grid-cols-1 gap-6 pt-4 lg:grid-cols-2">
+              <!-- Load Info Card -->
+              <p-card>
+                <ng-template #header>
+                  <div class="p-4 pb-0">
+                    <h3 class="m-0 text-lg font-semibold">Load Information</h3>
+                  </div>
+                </ng-template>
+
+                <div class="space-y-4">
+                  <div class="flex items-center justify-between">
+                    <span class="text-gray-500">Load #</span>
+                    <span class="font-mono font-semibold">{{ load()!.number }}</span>
+                  </div>
+
+                  @if (load()!.name) {
+                    <div class="flex items-center justify-between">
+                      <span class="text-gray-500">Name</span>
+                      <span class="font-medium">{{ load()!.name }}</span>
+                    </div>
+                  }
+
+                  <p-divider />
+
+                  <div class="flex items-center justify-between">
+                    <span class="text-gray-500">Type</span>
+                    <app-load-type-tag [type]="load()!.type!" />
+                  </div>
+
+                  <div class="flex items-center justify-between">
+                    <span class="text-gray-500">Status</span>
+                    <app-load-status-tag [status]="load()!.status!" />
+                  </div>
+
+                  <p-divider />
+
+                  <div class="flex items-center justify-between">
+                    <span class="text-gray-500">Delivery Cost</span>
+                    <span class="text-xl font-bold text-green-600">
+                      {{ load()!.deliveryCost | currency }}
+                    </span>
+                  </div>
+
+                  @if (load()!.distance) {
+                    <div class="flex items-center justify-between">
+                      <span class="text-gray-500">Distance</span>
+                      <span>{{ load()!.distance | distanceUnit: "mi" }}</span>
+                    </div>
+                  }
+                </div>
+              </p-card>
+
+              <!-- Assignment Card -->
+              <p-card>
+                <ng-template #header>
+                  <div class="p-4 pb-0">
+                    <h3 class="m-0 text-lg font-semibold">Assignment</h3>
+                  </div>
+                </ng-template>
+
+                <div class="space-y-4">
+                  @if (load()!.customer) {
+                    <div class="flex items-center justify-between">
+                      <span class="text-gray-500">Customer</span>
+                      <a
+                        [routerLink]="['/customers', load()!.customer!.id]"
+                        class="text-primary font-medium hover:underline"
+                      >
+                        {{ load()!.customer!.name }}
+                      </a>
+                    </div>
+                  }
+
+                  <p-divider />
+
+                  @if (load()!.assignedTruckNumber) {
+                    <div class="flex items-center justify-between">
+                      <span class="text-gray-500">Truck</span>
+                      <a
+                        [routerLink]="['/trucks', load()!.assignedTruckId]"
+                        class="text-primary font-medium hover:underline"
+                      >
+                        {{ load()!.assignedTruckNumber }}
+                      </a>
+                    </div>
+                  }
+
+                  @if (load()!.assignedTruckDriversName?.length) {
+                    <div class="flex items-center justify-between">
+                      <span class="text-gray-500">Driver(s)</span>
+                      <span>{{ load()!.assignedTruckDriversName!.join(", ") }}</span>
+                    </div>
+                  }
+
+                  @if (load()!.assignedDispatcherName) {
+                    <div class="flex items-center justify-between">
+                      <span class="text-gray-500">Dispatcher</span>
+                      <span>{{ load()!.assignedDispatcherName }}</span>
+                    </div>
+                  }
+
+                  @if (load()!.tripId) {
+                    <p-divider />
+                    <div class="flex items-center justify-between">
+                      <span class="text-gray-500">Trip</span>
+                      <a
+                        [routerLink]="['/trips', load()!.tripId]"
+                        class="text-primary font-medium hover:underline"
+                      >
+                        {{ load()!.tripName }}
+                      </a>
+                    </div>
+                  }
+                </div>
+              </p-card>
+            </div>
+
+            <!-- Route Card (full width) -->
+            <p-card class="mt-6">
+              <ng-template #header>
+                <div class="p-4 pb-0">
+                  <h3 class="m-0 text-lg font-semibold">Route Information</h3>
+                </div>
+              </ng-template>
+
+              <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div>
+                  <div class="mb-2 flex items-center gap-2">
+                    <i class="pi pi-map-marker text-blue-500"></i>
+                    <span class="font-medium text-blue-600">Origin</span>
+                  </div>
+                  <p class="text-gray-700">{{ load()!.originAddress | address }}</p>
+                </div>
+                <div>
+                  <div class="mb-2 flex items-center gap-2">
+                    <i class="pi pi-flag text-green-500"></i>
+                    <span class="font-medium text-green-600">Destination</span>
+                  </div>
+                  <p class="text-gray-700">{{ load()!.destinationAddress | address }}</p>
+                </div>
+              </div>
+
+              @if (load()!.currentAddress) {
+                <p-divider />
+                <div>
+                  <div class="mb-2 flex items-center gap-2">
+                    <i class="pi pi-truck text-orange-500"></i>
+                    <span class="font-medium text-orange-600">Current Location</span>
+                  </div>
+                  <p class="text-gray-700">{{ load()!.currentAddress | address }}</p>
+                </div>
+              }
+            </p-card>
+
+            <!-- Timeline Card -->
+            <p-card class="mt-6">
+              <ng-template #header>
+                <div class="p-4 pb-0">
+                  <h3 class="m-0 text-lg font-semibold">Timeline</h3>
+                </div>
+              </ng-template>
+
+              <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+                <div>
+                  <span class="block text-sm text-gray-500">Created</span>
+                  <span class="font-medium">{{ load()!.createdAt | date: "medium" }}</span>
+                </div>
+                @if (load()!.dispatchedAt) {
+                  <div>
+                    <span class="block text-sm text-gray-500">Dispatched</span>
+                    <span class="font-medium">{{ load()!.dispatchedAt | date: "medium" }}</span>
+                  </div>
+                }
+                @if (load()!.pickedUpAt) {
+                  <div>
+                    <span class="block text-sm text-gray-500">Picked Up</span>
+                    <span class="font-medium">{{ load()!.pickedUpAt | date: "medium" }}</span>
+                  </div>
+                }
+                @if (load()!.deliveredAt) {
+                  <div>
+                    <span class="block text-sm text-gray-500">Delivered</span>
+                    <span class="font-medium text-green-600">
+                      {{ load()!.deliveredAt | date: "medium" }}
+                    </span>
+                  </div>
+                }
+                @if (load()!.cancelledAt) {
+                  <div>
+                    <span class="block text-sm text-gray-500">Cancelled</span>
+                    <span class="font-medium text-red-600">
+                      {{ load()!.cancelledAt | date: "medium" }}
+                    </span>
+                  </div>
+                }
+              </div>
+            </p-card>
+          </p-tabpanel>
+
+          <!-- Documents Tab -->
+          <p-tabpanel [value]="1">
+            <div class="pt-4">
+              <app-document-manager [loadId]="id()" [types]="loadDocTypes" />
+            </div>
+          </p-tabpanel>
+
+          <!-- POD/BOL Tab -->
+          <p-tabpanel [value]="2">
+            <div class="pt-4">
+              <app-load-pod-content [loadId]="id()" />
+            </div>
+          </p-tabpanel>
+
+          <!-- Invoices Tab -->
+          <p-tabpanel [value]="3">
+            <div class="pt-4">
+              <app-load-invoices-content [loadId]="id()" />
+            </div>
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
+    </p-card>
+  } @else {
+    <p-card>
+      <div class="py-16 text-center">
+        <i class="pi pi-exclamation-circle mb-4 text-4xl text-gray-400"></i>
+        <p class="text-gray-500">Load not found</p>
+        <p-button
+          label="Back to Loads"
+          [routerLink]="['/loads']"
+          severity="secondary"
+          class="mt-4"
+        />
+      </div>
+    </p-card>
+  }
+</div>
