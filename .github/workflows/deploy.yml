@@ -46,7 +46,7 @@ jobs:
           - image: migrator
             context: .
             file: ./src/Presentation/Logistics.DbMigrator/Dockerfile
-          - image: admin
+          - image: admin-portal
             context: ./src/Client/Logistics.Angular
             file: ./src/Client/Logistics.Angular/Dockerfile.admin
           - image: tms-portal
