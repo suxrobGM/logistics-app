@@ -153,7 +153,7 @@
   [draggable]="false"
 >
   <form [formGroup]="addForm" (ngSubmit)="saveProvider()">
-    <shared-labeled-field
+    <ui-labeled-field
       label="Provider"
       for="providerType"
       [required]="true"
@@ -176,9 +176,9 @@
           </div>
         </ng-template>
       </p-select>
-    </shared-labeled-field>
+    </ui-labeled-field>
 
-    <shared-labeled-field
+    <ui-labeled-field
       label="API Key"
       for="apiKey"
       [required]="true"
@@ -192,9 +192,9 @@
         class="w-full"
         placeholder="Enter API key"
       />
-    </shared-labeled-field>
+    </ui-labeled-field>
 
-    <shared-labeled-field
+    <ui-labeled-field
       label="API Secret (Optional)"
       for="apiSecret"
       hint="Required for some providers"
@@ -208,9 +208,9 @@
         inputStyleClass="w-full"
         placeholder="Enter API secret"
       />
-    </shared-labeled-field>
+    </ui-labeled-field>
 
-    <shared-labeled-field
+    <ui-labeled-field
       label="Webhook Secret (Optional)"
       for="webhookSecret"
       hint="For verifying incoming webhook requests"
@@ -224,7 +224,7 @@
         inputStyleClass="w-full"
         placeholder="Enter webhook secret"
       />
-    </shared-labeled-field>
+    </ui-labeled-field>
 
     <div class="rounded bg-yellow-50 p-3">
       <div class="flex items-start gap-2">

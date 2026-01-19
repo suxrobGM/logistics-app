@@ -7,7 +7,7 @@ import { TooltipModule } from "primeng/tooltip";
  * Page header component with title, optional subtitle, and optional add button.
  */
 @Component({
-  selector: "shared-page-header",
+  selector: "ui-page-header",
   templateUrl: "./page-header.html",
   imports: [ButtonModule, RouterModule, TooltipModule],
 })

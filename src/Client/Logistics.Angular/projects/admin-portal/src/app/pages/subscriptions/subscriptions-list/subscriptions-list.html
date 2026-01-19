@@ -1,7 +1,11 @@
-<shared-page-header title="Subscriptions" addRoute="/subscriptions/add" addTooltip="Add a new subscription" />
+<ui-page-header
+  title="Subscriptions"
+  addRoute="/subscriptions/add"
+  addTooltip="Add a new subscription"
+/>
 
 <p-card>
-  <shared-data-container
+  <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
     [isEmpty]="store.isEmpty()"
@@ -26,7 +30,7 @@
       [rowsPerPageOptions]="[10, 25, 50]"
     >
       <ng-template #caption>
-        <shared-search-input (searchChange)="search($event)" />
+        <ui-search-input (searchChange)="search($event)" />
       </ng-template>
       <ng-template #header>
         <tr>
@@ -45,20 +49,17 @@
         <tr>
           <td>
             <a [routerLink]="['/tenants', sub.tenant?.id, 'edit']" class="font-medium">
-              {{ sub.tenant?.name ?? 'Unknown' }}
+              {{ sub.tenant?.name ?? "Unknown" }}
             </a>
           </td>
-          <td>{{ sub.plan?.name ?? '-' }}</td>
+          <td>{{ sub.plan?.name ?? "-" }}</td>
           <td>
-            <p-tag
-              [value]="sub.status ?? 'unknown'"
-              [severity]="getStatusSeverity(sub.status)"
-            />
+            <p-tag [value]="sub.status ?? 'unknown'" [severity]="getStatusSeverity(sub.status)" />
           </td>
-          <td>{{ sub.startDate | date:'mediumDate' }}</td>
-          <td>{{ sub.nextBillingDate | date:'mediumDate' }}</td>
+          <td>{{ sub.startDate | date: "mediumDate" }}</td>
+          <td>{{ sub.nextBillingDate | date: "mediumDate" }}</td>
           <td class="text-center">
-            @if (sub.status === 'active' || sub.status === 'trialing') {
+            @if (sub.status === "active" || sub.status === "trialing") {
               <p-button
                 icon="pi pi-times-circle"
                 pTooltip="Cancel Subscription"
@@ -77,5 +78,5 @@
         </tr>
       </ng-template>
     </p-table>
-  </shared-data-container>
+  </ui-data-container>
 </p-card>

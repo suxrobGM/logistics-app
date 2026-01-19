@@ -1,31 +1,31 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
   <div class="mb-4 grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-6">
-      <shared-labeled-field label="Tenant Name" [required]="true">
+      <ui-labeled-field label="Tenant Name" [required]="true">
         <input
           pInputText
           formControlName="name"
           placeholder="Enter tenant identifier"
           class="w-full"
         />
-      </shared-labeled-field>
+      </ui-labeled-field>
     </div>
 
     <div class="col-span-12 md:col-span-6">
-      <shared-labeled-field label="Company Name" [required]="true">
+      <ui-labeled-field label="Company Name" [required]="true">
         <input
           pInputText
           formControlName="companyName"
           placeholder="Enter company name"
           class="w-full"
         />
-      </shared-labeled-field>
+      </ui-labeled-field>
     </div>
   </div>
 
   <div class="mb-4 grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-6">
-      <shared-labeled-field label="Billing Email" [required]="true">
+      <ui-labeled-field label="Billing Email" [required]="true">
         <input
           pInputText
           formControlName="billingEmail"
@@ -33,27 +33,27 @@
           type="email"
           class="w-full"
         />
-      </shared-labeled-field>
+      </ui-labeled-field>
     </div>
 
     <div class="col-span-12 md:col-span-6">
-      <shared-labeled-field label="DOT Number">
+      <ui-labeled-field label="DOT Number">
         <input
           pInputText
           formControlName="dotNumber"
           placeholder="Enter DOT number"
           class="w-full"
         />
-      </shared-labeled-field>
+      </ui-labeled-field>
     </div>
   </div>
 
   <div class="mb-4">
     <h4 class="mb-2 font-semibold">Company Address</h4>
-    <shared-address-form formControlName="companyAddress" />
+    <ui-address-form formControlName="companyAddress" />
   </div>
 
-  <shared-validation-summary [form]="form" />
+  <ui-validation-summary [form]="form" />
 
   <div class="mt-6 flex gap-2">
     <p-button
@@ -63,13 +63,8 @@
       [loading]="isLoading()"
       [disabled]="form.invalid || isLoading()"
     />
-    <p-button
-      label="Cancel"
-      icon="pi pi-times"
-      severity="secondary"
-      routerLink="/tenants"
-    />
-    @if (mode() === 'edit') {
+    <p-button label="Cancel" icon="pi pi-times" severity="secondary" routerLink="/tenants" />
+    @if (mode() === "edit") {
       <p-button
         label="Delete"
         icon="pi pi-trash"

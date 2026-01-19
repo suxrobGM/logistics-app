@@ -5,7 +5,7 @@ import { InputGroupAddonModule } from "primeng/inputgroupaddon";
 import { InputNumberModule } from "primeng/inputnumber";
 
 @Component({
-  selector: "shared-currency-input",
+  selector: "ui-currency-input",
   templateUrl: "./currency-input.html",
   imports: [InputGroupModule, InputGroupAddonModule, InputNumberModule, ReactiveFormsModule],
 })

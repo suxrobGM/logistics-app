@@ -16,7 +16,7 @@ import { findOption } from "../../../utils/select-utils";
 import { ValidationSummary } from "../../form/validation-summary/validation-summary";
 
 @Component({
-  selector: "shared-address-form",
+  selector: "ui-address-form",
   templateUrl: "./address-form.html",
   imports: [ReactiveFormsModule, ValidationSummary, SelectModule, InputTextModule, KeyFilterModule],
   providers: [

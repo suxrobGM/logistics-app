@@ -8,9 +8,9 @@
       }
 
       <form [formGroup]="form" (ngSubmit)="submit()">
-        <shared-validation-summary [form]="form" />
+        <ui-validation-summary [form]="form" />
 
-        <shared-labeled-field label="User Name" for="name">
+        <ui-labeled-field label="User Name" for="name">
           <p-auto-complete
             formControlName="user"
             class="w-full"
@@ -21,21 +21,21 @@
             [suggestions]="suggestedUsers()"
             (completeMethod)="searchUser($event)"
           />
-        </shared-labeled-field>
+        </ui-labeled-field>
 
-        <shared-labeled-field label="Salary Type" for="salaryType">
+        <ui-labeled-field label="Salary Type" for="salaryType">
           <p-select formControlName="salaryType" class="w-full" [options]="salaryTypes" />
-        </shared-labeled-field>
+        </ui-labeled-field>
 
-        <shared-labeled-field label="Salary" for="salary">
+        <ui-labeled-field label="Salary" for="salary">
           @if (isShareOfGrossSalary()) {
-            <shared-unit-input [control]="form.controls.salary" unit="%" [min]="0" [max]="100" />
+            <ui-unit-input [control]="form.controls.salary" unit="%" [min]="0" [max]="100" />
           } @else {
-            <shared-currency-input [control]="form.controls.salary" [min]="0" />
+            <ui-currency-input [control]="form.controls.salary" [min]="0" />
           }
-        </shared-labeled-field>
+        </ui-labeled-field>
 
-        <shared-labeled-field label="Role" for="role">
+        <ui-labeled-field label="Role" for="role">
           <p-select
             formControlName="role"
             class="w-full"
@@ -45,7 +45,7 @@
             [showClear]="true"
             (onClear)="clearSelectedRole()"
           />
-        </shared-labeled-field>
+        </ui-labeled-field>
 
         <div class="flex gap-2">
           <p-button type="submit" icon="pi pi-pencil" label="Add" [disabled]="isLoading()" />

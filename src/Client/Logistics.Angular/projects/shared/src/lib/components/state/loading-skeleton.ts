@@ -5,7 +5,7 @@ import { SkeletonModule } from "primeng/skeleton";
  * Configurable loading skeleton component with multiple layout variants.
  */
 @Component({
-  selector: "shared-loading-skeleton",
+  selector: "ui-loading-skeleton",
   templateUrl: "./loading-skeleton.html",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [SkeletonModule],

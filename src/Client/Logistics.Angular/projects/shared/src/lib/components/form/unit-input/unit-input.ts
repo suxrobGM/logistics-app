@@ -5,7 +5,7 @@ import { InputGroupAddonModule } from "primeng/inputgroupaddon";
 import { InputTextModule } from "primeng/inputtext";
 
 @Component({
-  selector: "shared-unit-input",
+  selector: "ui-unit-input",
   templateUrl: "./unit-input.html",
   imports: [InputGroupModule, InputGroupAddonModule, InputTextModule, ReactiveFormsModule],
 })

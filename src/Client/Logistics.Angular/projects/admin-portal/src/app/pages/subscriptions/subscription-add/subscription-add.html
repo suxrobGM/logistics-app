@@ -12,7 +12,7 @@
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="mb-4 grid grid-cols-12 gap-4">
           <div class="col-span-12">
-            <shared-labeled-field label="Tenant" [required]="true">
+            <ui-labeled-field label="Tenant" [required]="true">
               <p-select
                 formControlName="tenantId"
                 [options]="tenantOptions()"
@@ -23,7 +23,7 @@
                 filterPlaceholder="Search tenants..."
                 styleClass="w-full"
               />
-            </shared-labeled-field>
+            </ui-labeled-field>
             @if (tenantOptions().length === 0) {
               <p class="mt-1 text-sm text-orange-500">
                 <i class="pi pi-info-circle mr-1"></i>
@@ -35,7 +35,7 @@
 
         <div class="mb-4 grid grid-cols-12 gap-4">
           <div class="col-span-12">
-            <shared-labeled-field label="Subscription Plan" [required]="true">
+            <ui-labeled-field label="Subscription Plan" [required]="true">
               <p-select
                 formControlName="planId"
                 [options]="planOptions()"
@@ -44,17 +44,18 @@
                 placeholder="Select a plan"
                 styleClass="w-full"
               />
-            </shared-labeled-field>
+            </ui-labeled-field>
             @if (planOptions().length === 0) {
               <p class="mt-1 text-sm text-orange-500">
                 <i class="pi pi-info-circle mr-1"></i>
-                No subscription plans available. <a routerLink="/subscription-plans/add" class="underline">Create one first.</a>
+                No subscription plans available.
+                <a routerLink="/subscription-plans/add" class="underline">Create one first.</a>
               </p>
             }
           </div>
         </div>
 
-        <shared-validation-summary [form]="form" />
+        <ui-validation-summary [form]="form" />
 
         <div class="mt-6 flex gap-2">
           <p-button
@@ -62,7 +63,12 @@
             icon="pi pi-check"
             type="submit"
             [loading]="isLoading()"
-            [disabled]="form.invalid || isLoading() || tenantOptions().length === 0 || planOptions().length === 0"
+            [disabled]="
+              form.invalid ||
+              isLoading() ||
+              tenantOptions().length === 0 ||
+              planOptions().length === 0
+            "
           />
           <p-button
             label="Cancel"

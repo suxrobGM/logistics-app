@@ -4,7 +4,7 @@ import { CardModule } from "primeng/card";
 type ColorVariant = "blue" | "green" | "orange" | "red" | "purple" | "gray";
 
 @Component({
-  selector: "shared-dashboard-card",
+  selector: "ui-dashboard-card",
   templateUrl: "./dashboard-card.html",
   imports: [CardModule],
 })

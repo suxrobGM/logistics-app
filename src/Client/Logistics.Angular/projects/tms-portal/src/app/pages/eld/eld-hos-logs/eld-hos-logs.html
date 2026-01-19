@@ -20,7 +20,7 @@
   <div class="mb-6">
     <p-card class="border-0 shadow-sm">
       <div class="flex flex-wrap items-end gap-4">
-        <shared-labeled-field label="Start Date" for="startDate">
+        <ui-labeled-field label="Start Date" for="startDate">
           <p-datepicker
             id="startDate"
             [(ngModel)]="startDate"
@@ -29,8 +29,8 @@
             dateFormat="mm/dd/yy"
             (onSelect)="onDateRangeChange()"
           />
-        </shared-labeled-field>
-        <shared-labeled-field label="End Date" for="endDate">
+        </ui-labeled-field>
+        <ui-labeled-field label="End Date" for="endDate">
           <p-datepicker
             id="endDate"
             [(ngModel)]="endDate"
@@ -40,7 +40,7 @@
             dateFormat="mm/dd/yy"
             (onSelect)="onDateRangeChange()"
           />
-        </shared-labeled-field>
+        </ui-labeled-field>
       </div>
       <p-button
         label="Refresh"

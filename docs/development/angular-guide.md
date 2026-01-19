@@ -37,7 +37,7 @@ src/Client/Logistics.Angular/
 
 | Project | Prefix | Port | Description |
 |---------|--------|------|-------------|
-| @logistics/shared | `shared-` | N/A | Shared library (API, services) |
+| @logistics/shared | `ui-` | N/A | Shared library (API, services) |
 | @logistics/tms-portal | `app-` | 7003 | Internal TMS for dispatchers |
 | @logistics/customer-portal | `cp-` | 7004 | Customer self-service portal |
 

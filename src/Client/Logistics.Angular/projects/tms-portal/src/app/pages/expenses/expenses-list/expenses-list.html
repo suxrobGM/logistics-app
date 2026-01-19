@@ -1,5 +1,5 @@
 <div class="flex items-start justify-between">
-  <shared-page-header title="Expenses" addRoute="/expenses/add" addTooltip="Add a new expense" />
+  <ui-page-header title="Expenses" addRoute="/expenses/add" addTooltip="Add a new expense" />
   <p-button
     icon="pi pi-chart-bar"
     label="Analytics"
@@ -11,10 +11,10 @@
 
 <p-card>
   <div class="mb-4">
-    <shared-search-input (searchChange)="onSearch($event)" />
+    <ui-search-input (searchChange)="onSearch($event)" />
   </div>
 
-  <shared-data-container
+  <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
     [isEmpty]="store.isEmpty()"
@@ -67,10 +67,7 @@
         </tr>
       </ng-template>
       <ng-template #body let-expense>
-        <tr
-          class="cursor-pointer hover:bg-gray-50"
-          (click)="selectedRow.set(expense)"
-        >
+        <tr class="cursor-pointer hover:bg-gray-50" (click)="selectedRow.set(expense)">
           <td>
             <span class="font-mono text-sm">{{ expense.number }}</span>
           </td>
@@ -81,14 +78,14 @@
             <span class="text-sm">{{ getCategoryLabel(expense) }}</span>
           </td>
           <td>
-            <span class="text-sm">{{ expense.vendorName || 'N/A' }}</span>
+            <span class="text-sm">{{ expense.vendorName || "N/A" }}</span>
           </td>
           <td>
             <span class="font-medium">
               {{ expense.amount?.amount | currency: expense.amount?.currency }}
             </span>
           </td>
-          <td>{{ expense.expenseDate | date: 'mediumDate' }}</td>
+          <td>{{ expense.expenseDate | date: "mediumDate" }}</td>
           <td>
             <app-expense-status-tag [status]="expense.status" />
           </td>
@@ -117,7 +114,7 @@
         </tr>
       </ng-template>
     </p-table>
-  </shared-data-container>
+  </ui-data-container>
 </p-card>
 
 <!-- Context menu for actions -->

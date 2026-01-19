@@ -16,7 +16,12 @@
     </p>
 
     <form [formGroup]="form" (ngSubmit)="submit()">
-      <shared-labeled-field label="Email Address" for="email" [required]="true" [control]="form.controls.email">
+      <ui-labeled-field
+        label="Email Address"
+        for="email"
+        [required]="true"
+        [control]="form.controls.email"
+      >
         <input
           pInputText
           id="email"
@@ -25,17 +30,16 @@
           placeholder="customer@example.com"
           class="w-full"
         />
-      </shared-labeled-field>
+      </ui-labeled-field>
 
-      <shared-labeled-field label="Customer" for="customerId" [required]="true" [control]="form.controls.customerId">
+      <ui-labeled-field
+        label="Customer"
+        for="customerId"
+        [required]="true"
+        [control]="form.controls.customerId"
+      >
         @if (customerId()) {
-          <input
-            pInputText
-            id="customerName"
-            [value]="customerName()"
-            class="w-full"
-            disabled
-          />
+          <input pInputText id="customerName" [value]="customerName()" class="w-full" disabled />
         } @else {
           <p-select
             formControlName="customerId"
@@ -51,9 +55,13 @@
             filterPlaceholder="Search customers..."
           />
         }
-      </shared-labeled-field>
+      </ui-labeled-field>
 
-      <shared-labeled-field label="Personal Message" for="personalMessage" hint="Optional note to include in the invitation email">
+      <ui-labeled-field
+        label="Personal Message"
+        for="personalMessage"
+        hint="Optional note to include in the invitation email"
+      >
         <textarea
           pTextarea
           id="personalMessage"
@@ -62,9 +70,9 @@
           placeholder="Add a personal note to the invitation email..."
           class="w-full"
         ></textarea>
-      </shared-labeled-field>
+      </ui-labeled-field>
 
-      <div class="flex gap-2 justify-end">
+      <div class="flex justify-end gap-2">
         <p-button
           type="button"
           label="Cancel"

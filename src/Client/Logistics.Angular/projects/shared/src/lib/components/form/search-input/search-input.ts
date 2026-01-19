@@ -4,7 +4,7 @@ import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
 
 @Component({
-  selector: "shared-search-input",
+  selector: "ui-search-input",
   templateUrl: "./search-input.html",
   imports: [IconFieldModule, InputIconModule, InputTextModule],
 })

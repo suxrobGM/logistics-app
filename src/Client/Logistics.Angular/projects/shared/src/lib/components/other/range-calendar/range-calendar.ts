@@ -5,7 +5,7 @@ import { DatePicker } from "primeng/datepicker";
 import { DateUtils } from "../../../utils/date-utils";
 
 @Component({
-  selector: "shared-range-calendar",
+  selector: "ui-range-calendar",
   templateUrl: "./range-calendar.html",
   imports: [DatePicker, FormsModule, ButtonModule],
 })

@@ -4,7 +4,7 @@ import { CardModule } from "primeng/card";
 type ColorVariant = "blue" | "green" | "orange" | "red" | "purple" | "gray";
 
 @Component({
-  selector: "shared-stat-card",
+  selector: "ui-stat-card",
   templateUrl: "./stat-card.html",
   imports: [CardModule],
 })

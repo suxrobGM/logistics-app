@@ -5,7 +5,7 @@ import { ButtonModule } from "primeng/button";
  * Error state component with retry functionality.
  */
 @Component({
-  selector: "shared-error-state",
+  selector: "ui-error-state",
   templateUrl: "./error-state.html",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ButtonModule],

@@ -1,7 +1,7 @@
 <div class="w-full p-6">
   <!-- Header -->
   <div class="flex items-center justify-between">
-    <shared-page-header
+    <ui-page-header
       title="ELD / HOS Dashboard"
       subtitle="Monitor driver Hours of Service compliance"
       [showAddButton]="false"
@@ -25,7 +25,7 @@
   <!-- Summary Cards Row -->
   <div class="mb-6 grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-6 lg:col-span-4">
-      <shared-stat-card
+      <ui-stat-card
         icon="pi-check-circle"
         label="Available Drivers"
         [value]="availableDrivers().length"
@@ -35,7 +35,7 @@
     </div>
 
     <div class="col-span-12 md:col-span-6 lg:col-span-4">
-      <shared-stat-card
+      <ui-stat-card
         icon="pi-users"
         label="Total Drivers"
         [value]="drivers().length"
@@ -78,7 +78,7 @@
   <!-- Main Content -->
   <div class="grid grid-cols-12 gap-4">
     <div class="col-span-12">
-      <shared-dashboard-card title="Driver Hours of Service" icon="pi-clock" iconColor="blue">
+      <ui-dashboard-card title="Driver Hours of Service" icon="pi-clock" iconColor="blue">
         @if (loading()) {
           <div class="flex justify-center p-5">
             <p-progressSpinner></p-progressSpinner>
@@ -183,7 +183,7 @@
             </ng-template>
           </p-table>
         }
-      </shared-dashboard-card>
+      </ui-dashboard-card>
     </div>
   </div>
 </div>

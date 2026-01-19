@@ -21,7 +21,7 @@
 </div>
 
 <p-card>
-  <shared-data-container
+  <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
     [isEmpty]="store.isEmpty()"
@@ -48,7 +48,7 @@
       [rowsPerPageOptions]="[10, 25, 50]"
     >
       <ng-template #caption>
-        <shared-search-input (searchChange)="onSearch($event)" />
+        <ui-search-input (searchChange)="onSearch($event)" />
       </ng-template>
       <ng-template #header>
         <tr>
@@ -156,7 +156,7 @@
         </tr>
       </ng-template>
     </p-table>
-  </shared-data-container>
+  </ui-data-container>
 </p-card>
 
 <!-- Reusable context menu for the actions button -->

@@ -5,12 +5,12 @@
       <h1 class="mb-1 text-2xl font-semibold">Loads Dashboard</h1>
       <p class="mb-0 text-gray-500">Comprehensive overview of load performance and trends</p>
     </div>
-    <shared-range-calendar
+    <ui-range-calendar
       [(startDate)]="startDate"
       [(endDate)]="endDate"
       (applyButtonClick)="filter()"
     >
-    </shared-range-calendar>
+    </ui-range-calendar>
   </div>
 
   @if (isLoading()) {

@@ -2,7 +2,7 @@
 
 <div class="mx-auto max-w-4xl">
   <div class="flex items-start justify-between">
-    <shared-page-header [title]="'Edit ' + getTypeLabel(expense()?.type)" [showAddButton]="false" />
+    <ui-page-header [title]="'Edit ' + getTypeLabel(expense()?.type)" [showAddButton]="false" />
     <p-button
       icon="pi pi-arrow-left"
       label="Back"
@@ -21,7 +21,7 @@
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
         <!-- Common Fields -->
         <div class="grid grid-cols-2 gap-4">
-          <shared-labeled-field label="Amount" for="amount" [required]="true">
+          <ui-labeled-field label="Amount" for="amount" [required]="true">
             <p-inputNumber
               id="amount"
               formControlName="amount"
@@ -30,26 +30,26 @@
               [min]="0"
               styleClass="w-full"
             />
-          </shared-labeled-field>
+          </ui-labeled-field>
 
-          <shared-labeled-field label="Expense Date" for="expenseDate" [required]="true">
+          <ui-labeled-field label="Expense Date" for="expenseDate" [required]="true">
             <p-datepicker
               id="expenseDate"
               formControlName="expenseDate"
               [showIcon]="true"
               styleClass="w-full"
             />
-          </shared-labeled-field>
+          </ui-labeled-field>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
-          <shared-labeled-field label="Vendor Name" for="vendorName">
+          <ui-labeled-field label="Vendor Name" for="vendorName">
             <input pInputText id="vendorName" formControlName="vendorName" class="w-full" />
-          </shared-labeled-field>
+          </ui-labeled-field>
 
           <!-- Company Category -->
-          @if (expense()?.type === 'company') {
-            <shared-labeled-field label="Category" for="companyCategory" [required]="true">
+          @if (expense()?.type === "company") {
+            <ui-labeled-field label="Category" for="companyCategory" [required]="true">
               <p-select
                 id="companyCategory"
                 formControlName="companyCategory"
@@ -58,12 +58,12 @@
                 optionValue="value"
                 styleClass="w-full"
               />
-            </shared-labeled-field>
+            </ui-labeled-field>
           }
 
           <!-- Truck Category -->
-          @if (expense()?.type === 'truck') {
-            <shared-labeled-field label="Category" for="truckCategory" [required]="true">
+          @if (expense()?.type === "truck") {
+            <ui-labeled-field label="Category" for="truckCategory" [required]="true">
               <p-select
                 id="truckCategory"
                 formControlName="truckCategory"
@@ -72,14 +72,14 @@
                 optionValue="value"
                 styleClass="w-full"
               />
-            </shared-labeled-field>
+            </ui-labeled-field>
           }
         </div>
 
         <!-- Truck-specific Fields -->
-        @if (expense()?.type === 'truck') {
+        @if (expense()?.type === "truck") {
           <div class="grid grid-cols-2 gap-4">
-            <shared-labeled-field label="Truck" for="truckId">
+            <ui-labeled-field label="Truck" for="truckId">
               <p-select
                 id="truckId"
                 formControlName="truckId"
@@ -90,9 +90,9 @@
                 styleClass="w-full"
                 [disabled]="true"
               />
-            </shared-labeled-field>
+            </ui-labeled-field>
 
-            <shared-labeled-field label="Odometer Reading" for="odometerReading">
+            <ui-labeled-field label="Odometer Reading" for="odometerReading">
               <p-inputNumber
                 id="odometerReading"
                 formControlName="odometerReading"
@@ -100,14 +100,14 @@
                 suffix=" mi"
                 styleClass="w-full"
               />
-            </shared-labeled-field>
+            </ui-labeled-field>
           </div>
         }
 
         <!-- Body Shop-specific Fields -->
-        @if (expense()?.type === 'body_shop') {
+        @if (expense()?.type === "body_shop") {
           <div class="grid grid-cols-2 gap-4">
-            <shared-labeled-field label="Truck" for="truckId">
+            <ui-labeled-field label="Truck" for="truckId">
               <p-select
                 id="truckId"
                 formControlName="truckId"
@@ -118,18 +118,18 @@
                 styleClass="w-full"
                 [disabled]="true"
               />
-            </shared-labeled-field>
+            </ui-labeled-field>
 
-            <shared-labeled-field label="Shop Phone" for="vendorPhone">
+            <ui-labeled-field label="Shop Phone" for="vendorPhone">
               <input pInputText id="vendorPhone" formControlName="vendorPhone" class="w-full" />
-            </shared-labeled-field>
+            </ui-labeled-field>
           </div>
 
-          <shared-labeled-field label="Shop Address" for="vendorAddress">
+          <ui-labeled-field label="Shop Address" for="vendorAddress">
             <input pInputText id="vendorAddress" formControlName="vendorAddress" class="w-full" />
-          </shared-labeled-field>
+          </ui-labeled-field>
 
-          <shared-labeled-field label="Repair Description" for="repairDescription">
+          <ui-labeled-field label="Repair Description" for="repairDescription">
             <textarea
               pInputTextarea
               id="repairDescription"
@@ -137,30 +137,30 @@
               rows="3"
               class="w-full"
             ></textarea>
-          </shared-labeled-field>
+          </ui-labeled-field>
 
           <div class="grid grid-cols-2 gap-4">
-            <shared-labeled-field label="Estimated Completion" for="estimatedCompletionDate">
+            <ui-labeled-field label="Estimated Completion" for="estimatedCompletionDate">
               <p-datepicker
                 id="estimatedCompletionDate"
                 formControlName="estimatedCompletionDate"
                 [showIcon]="true"
                 styleClass="w-full"
               />
-            </shared-labeled-field>
+            </ui-labeled-field>
 
-            <shared-labeled-field label="Actual Completion" for="actualCompletionDate">
+            <ui-labeled-field label="Actual Completion" for="actualCompletionDate">
               <p-datepicker
                 id="actualCompletionDate"
                 formControlName="actualCompletionDate"
                 [showIcon]="true"
                 styleClass="w-full"
               />
-            </shared-labeled-field>
+            </ui-labeled-field>
           </div>
         }
 
-        <shared-labeled-field label="Notes" for="notes">
+        <ui-labeled-field label="Notes" for="notes">
           <textarea
             pInputTextarea
             id="notes"
@@ -168,9 +168,9 @@
             rows="3"
             class="w-full"
           ></textarea>
-        </shared-labeled-field>
+        </ui-labeled-field>
 
-        <shared-labeled-field label="Receipt (Optional)">
+        <ui-labeled-field label="Receipt (Optional)">
           <p-fileUpload
             mode="basic"
             [auto]="true"
@@ -184,7 +184,7 @@
               Receipt attached
             </span>
           }
-        </shared-labeled-field>
+        </ui-labeled-field>
 
         <div class="flex justify-end gap-2 pt-4">
           <p-button
@@ -193,12 +193,7 @@
             severity="secondary"
             [outlined]="true"
           />
-          <p-button
-            type="submit"
-            label="Save Changes"
-            icon="pi pi-save"
-            [loading]="isSaving()"
-          />
+          <p-button type="submit" label="Save Changes" icon="pi pi-save" [loading]="isSaving()" />
         </div>
       </form>
     </p-card>

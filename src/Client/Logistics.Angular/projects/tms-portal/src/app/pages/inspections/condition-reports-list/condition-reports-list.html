@@ -1,7 +1,7 @@
-<shared-page-header title="Vehicle Condition Reports" [showAddButton]="false" />
+<ui-page-header title="Vehicle Condition Reports" [showAddButton]="false" />
 
 <p-card>
-  <shared-data-container
+  <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
     [isEmpty]="store.isEmpty()"
@@ -23,7 +23,7 @@
       [rowsPerPageOptions]="[10, 25, 50]"
     >
       <ng-template #caption>
-        <shared-search-input (searchChange)="onSearch($event)" />
+        <ui-search-input (searchChange)="onSearch($event)" />
       </ng-template>
       <ng-template #header>
         <tr>
@@ -51,18 +51,12 @@
         </tr>
       </ng-template>
       <ng-template #body let-report>
-        <tr
-          class="cursor-pointer hover:bg-gray-50"
-          (click)="selectedRow.set(report)"
-        >
+        <tr class="cursor-pointer hover:bg-gray-50" (click)="selectedRow.set(report)">
           <td>
-            <p-tag
-              [value]="getTypeLabel(report.type)"
-              [severity]="getTypeSeverity(report.type)"
-            />
+            <p-tag [value]="getTypeLabel(report.type)" [severity]="getTypeSeverity(report.type)" />
           </td>
           <td>
-            <span class="font-mono text-sm">{{ report.vin || 'N/A' }}</span>
+            <span class="font-mono text-sm">{{ report.vin || "N/A" }}</span>
           </td>
           <td>
             <span class="text-sm">{{ getVehicleInfo(report) }}</span>
@@ -72,16 +66,13 @@
           </td>
           <td>
             @if (getDamageCount(report) > 0) {
-              <p-tag
-                [value]="getDamageCount(report).toString() + ' damages'"
-                severity="danger"
-              />
+              <p-tag [value]="getDamageCount(report).toString() + ' damages'" severity="danger" />
             } @else {
               <span class="text-sm text-gray-400">None</span>
             }
           </td>
-          <td>{{ report.inspectorName || 'N/A' }}</td>
-          <td>{{ report.inspectedAt | date: 'medium' }}</td>
+          <td>{{ report.inspectorName || "N/A" }}</td>
+          <td>{{ report.inspectedAt | date: "medium" }}</td>
           <td>
             @if (report.photos && report.photos.length > 0) {
               <span class="text-sm">{{ report.photos.length }} photo(s)</span>
@@ -107,7 +98,7 @@
         </tr>
       </ng-template>
     </p-table>
-  </shared-data-container>
+  </ui-data-container>
 </p-card>
 
 <!-- Reusable context menu for the actions button -->

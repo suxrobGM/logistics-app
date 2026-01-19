@@ -1,7 +1,7 @@
-<shared-page-header title="Users" />
+<ui-page-header title="Users" />
 
 <p-card>
-  <shared-data-container
+  <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
     [isEmpty]="store.isEmpty()"
@@ -24,7 +24,7 @@
       [rowsPerPageOptions]="[10, 25, 50]"
     >
       <ng-template #caption>
-        <shared-search-input (searchChange)="search($event)" />
+        <ui-search-input (searchChange)="search($event)" />
       </ng-template>
       <ng-template #header>
         <tr>
@@ -43,23 +43,20 @@
           <td>{{ user.email }}</td>
           <td>{{ getFullName(user) }}</td>
           <td>
-            <p-tag
-              [value]="user.role ?? 'Unknown'"
-              [severity]="getRoleSeverity(user.role)"
-            />
+            <p-tag [value]="user.role ?? 'Unknown'" [severity]="getRoleSeverity(user.role)" />
           </td>
           <td>
             @if (user.tenantId) {
               <a [routerLink]="['/tenants', user.tenantId, 'edit']">
-                {{ user.tenantName ?? 'View Tenant' }}
+                {{ user.tenantName ?? "View Tenant" }}
               </a>
             } @else {
               <span class="text-gray-400">-</span>
             }
           </td>
-          <td>{{ user.phoneNumber ?? '-' }}</td>
+          <td>{{ user.phoneNumber ?? "-" }}</td>
         </tr>
       </ng-template>
     </p-table>
-  </shared-data-container>
+  </ui-data-container>
 </p-card>

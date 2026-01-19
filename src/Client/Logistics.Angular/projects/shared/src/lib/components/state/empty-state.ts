@@ -5,7 +5,7 @@ import { ButtonModule } from "primeng/button";
  * Empty state component for when there's no data to display.
  */
 @Component({
-  selector: "shared-empty-state",
+  selector: "ui-empty-state",
   templateUrl: "./empty-state.html",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ButtonModule],

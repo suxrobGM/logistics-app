@@ -1,7 +1,7 @@
-<shared-page-header title="Tenants" addRoute="/tenants/add" addTooltip="Add a new tenant" />
+<ui-page-header title="Tenants" addRoute="/tenants/add" addTooltip="Add a new tenant" />
 
 <p-card>
-  <shared-data-container
+  <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
     [isEmpty]="store.isEmpty()"
@@ -26,7 +26,7 @@
       [rowsPerPageOptions]="[10, 25, 50]"
     >
       <ng-template #caption>
-        <shared-search-input (searchChange)="search($event)" />
+        <ui-search-input (searchChange)="search($event)" />
       </ng-template>
       <ng-template #header>
         <tr>
@@ -70,5 +70,5 @@
         </tr>
       </ng-template>
     </p-table>
-  </shared-data-container>
+  </ui-data-container>
 </p-card>

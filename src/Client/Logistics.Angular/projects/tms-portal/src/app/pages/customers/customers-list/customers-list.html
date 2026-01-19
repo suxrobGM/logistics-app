@@ -1,4 +1,4 @@
-<shared-page-header title="List Customers" addRoute="/customers/add" addTooltip="Add a new customer" />
+<ui-page-header title="List Customers" addRoute="/customers/add" addTooltip="Add a new customer" />
 
 <div class="mb-4 flex gap-2">
   <lib-permission-guard [permissions]="Permission.Invitation.Manage">
@@ -13,7 +13,7 @@
 </div>
 
 <p-card>
-  <shared-data-container
+  <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
     [isEmpty]="store.isEmpty()"
@@ -38,7 +38,7 @@
       [rowsPerPageOptions]="[10, 25, 50]"
     >
       <ng-template #caption>
-        <shared-search-input (searchChange)="search($event)" />
+        <ui-search-input (searchChange)="search($event)" />
       </ng-template>
       <ng-template #header>
         <tr>
@@ -74,7 +74,7 @@
         </tr>
       </ng-template>
     </p-table>
-  </shared-data-container>
+  </ui-data-container>
 </p-card>
 
 <app-invite-customer-dialog

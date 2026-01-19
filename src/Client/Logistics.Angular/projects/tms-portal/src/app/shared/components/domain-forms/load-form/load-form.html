@@ -5,17 +5,17 @@
     }
 
     <form [formGroup]="form" (ngSubmit)="submit()">
-      <shared-validation-summary [form]="form" />
+      <ui-validation-summary [form]="form" />
 
-      <shared-labeled-field label="Name" for="name" [required]="true">
+      <ui-labeled-field label="Name" for="name" [required]="true">
         <input pInputText id="name" formControlName="name" type="text" placeholder="Load name" />
-      </shared-labeled-field>
-      <shared-labeled-field label="Load Type" for="type" [required]="true">
+      </ui-labeled-field>
+      <ui-labeled-field label="Load Type" for="type" [required]="true">
         <p-select formControlName="type" [options]="loadTypes" />
-      </shared-labeled-field>
+      </ui-labeled-field>
 
       @if (initial()?.tripNumber && initial()?.tripId) {
-        <shared-labeled-field label="Trip" for="tripNumber">
+        <ui-labeled-field label="Trip" for="tripNumber">
           <input
             pInputText
             id="tripNumber"
@@ -23,62 +23,62 @@
             type="text"
             placeholder="Trip"
           />
-        </shared-labeled-field>
+        </ui-labeled-field>
       }
 
-      <shared-labeled-field label="Customer" for="customer" [required]="true">
+      <ui-labeled-field label="Customer" for="customer" [required]="true">
         <app-search-customer formControlName="customer" />
-      </shared-labeled-field>
+      </ui-labeled-field>
 
-      <shared-labeled-field label="Origin Address" for="originAddress" [required]="true">
+      <ui-labeled-field label="Origin Address" for="originAddress" [required]="true">
         <app-address-autocomplete
           field="originAddress"
           formControlName="originAddress"
           [forceSelection]="true"
           (selectedAddress)="updateOrigin($event)"
         />
-      </shared-labeled-field>
+      </ui-labeled-field>
 
-      <shared-labeled-field label="Destination Address" for="destinationAddress" [required]="true">
+      <ui-labeled-field label="Destination Address" for="destinationAddress" [required]="true">
         <app-address-autocomplete
           field="destinationAddress"
           formControlName="destinationAddress"
           [forceSelection]="true"
           (selectedAddress)="updateDestination($event)"
         />
-      </shared-labeled-field>
+      </ui-labeled-field>
 
-      <shared-labeled-field label="Delivery Cost" for="deliveryCost" [required]="true">
+      <ui-labeled-field label="Delivery Cost" for="deliveryCost" [required]="true">
         <p-inputgroup>
           <p-inputgroup-addon>$$</p-inputgroup-addon>
           <p-input-number id="deliveryCost" formControlName="deliveryCost" [min]="0" />
         </p-inputgroup>
-      </shared-labeled-field>
+      </ui-labeled-field>
 
-      <shared-labeled-field label="Estimated Distance" for="distance">
+      <ui-labeled-field label="Estimated Distance" for="distance">
         <p-inputgroup>
           <p-inputgroup-addon>mi</p-inputgroup-addon>
           <p-input-number id="distance" formControlName="distance" [min]="0" />
         </p-inputgroup>
-      </shared-labeled-field>
+      </ui-labeled-field>
 
-      <shared-labeled-field label="Assigned Dispatcher" for="dispatcherName">
+      <ui-labeled-field label="Assigned Dispatcher" for="dispatcherName">
         <input
           pInputText
           id="dispatcherName"
           formControlName="assignedDispatcherName"
           type="text"
         />
-      </shared-labeled-field>
+      </ui-labeled-field>
 
-      <shared-labeled-field label="Assigned Truck" for="assignedTruck" [required]="true">
+      <ui-labeled-field label="Assigned Truck" for="assignedTruck" [required]="true">
         <app-search-truck formControlName="assignedTruck" />
-      </shared-labeled-field>
+      </ui-labeled-field>
 
       @if (mode() === "edit") {
-        <shared-labeled-field label="Status" for="status">
+        <ui-labeled-field label="Status" for="status">
           <p-select formControlName="status" [options]="loadStatuses" />
-        </shared-labeled-field>
+        </ui-labeled-field>
       }
 
       <!-- action buttons -->

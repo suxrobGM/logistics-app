@@ -4,7 +4,7 @@ import { FormGroup } from "@angular/forms";
 import { BehaviorSubject } from "rxjs";
 
 @Component({
-  selector: "shared-validation-summary",
+  selector: "ui-validation-summary",
   templateUrl: "./validation-summary.html",
   styleUrl: "./validation-summary.css",
   imports: [CommonModule, AsyncPipe],

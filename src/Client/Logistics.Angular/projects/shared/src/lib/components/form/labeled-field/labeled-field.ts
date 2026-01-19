@@ -2,7 +2,7 @@ import { Component, computed, input } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
 
 @Component({
-  selector: "shared-labeled-field",
+  selector: "ui-labeled-field",
   templateUrl: "./labeled-field.html",
 })
 export class LabeledField {

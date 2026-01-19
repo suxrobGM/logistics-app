@@ -9,7 +9,7 @@ import { LoadingSkeleton } from "./loading-skeleton";
  * Wraps content and shows appropriate state component based on inputs.
  */
 @Component({
-  selector: "shared-data-container",
+  selector: "ui-data-container",
   templateUrl: "./data-container.html",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [LoadingSkeleton, ErrorState, EmptyState],

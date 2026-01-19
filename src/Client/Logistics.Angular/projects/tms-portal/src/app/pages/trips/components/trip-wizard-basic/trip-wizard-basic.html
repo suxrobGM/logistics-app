@@ -1,8 +1,8 @@
 <div class="flex flex-col">
   <form [formGroup]="form" (ngSubmit)="goToNextStep()">
-    <shared-validation-summary [form]="form" />
+    <ui-validation-summary [form]="form" />
 
-    <shared-labeled-field label="Trip Name" for="tripName" [required]="true">
+    <ui-labeled-field label="Trip Name" for="tripName" [required]="true">
       <input
         pInputText
         id="tripName"
@@ -10,11 +10,11 @@
         type="text"
         placeholder="Trip name"
       />
-    </shared-labeled-field>
+    </ui-labeled-field>
 
-    <shared-labeled-field label="Assigned Truck" for="truck" [required]="true">
+    <ui-labeled-field label="Assigned Truck" for="truck" [required]="true">
       <app-search-truck formControlName="truck" />
-    </shared-labeled-field>
+    </ui-labeled-field>
 
     <div class="flex justify-between pt-6">
       <p-button
