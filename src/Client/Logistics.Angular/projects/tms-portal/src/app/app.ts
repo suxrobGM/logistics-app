@@ -26,7 +26,7 @@ const STANDALONE_ROUTES = ["/", "/unauthorized", "/404"];
 export class App {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  protected readonly layouytService = inject(LayoutService);
+  protected readonly layoutService = inject(LayoutService);
 
   protected readonly isAuthenticated = signal(false);
   private readonly currentUrl = signal("/");

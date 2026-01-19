@@ -15,16 +15,18 @@ Logistics TMS is purpose-built for trucking fleets specializing in intermodal co
 
 **What it does:**
 
-- **Dispatchers** create loads, assign drivers, and monitor deliveries in real-time from the TMS Portal
-- **Drivers** receive assignments, navigate to stops, capture proof of delivery, and communicate with dispatch via the mobile app
+- **Dispatchers** create loads, assign drivers, and monitor deliveries in real-time from the TMS Portal. Search load boards for available freight and post trucks to find backhauls.
+- **Drivers** receive assignments, navigate to stops, capture proof of delivery, complete vehicle inspections, and communicate with dispatch via the mobile app
 - **Customers** track their shipments, download documents, and view invoices through the self-service Customer Portal
 - **Owners/Managers** access financial reports, driver performance metrics, and operational analytics
 
 **Why it matters:**
 
 - Eliminate paper-based processes and manual data entry
+- Find freight faster with integrated load board search across DAT, Truckstop, and 123Loadboard
+- Reduce empty miles by posting available trucks to attract backhaul opportunities
 - Reduce miscommunication with real-time messaging and notifications
-- Ensure compliance with digital documentation (POD, BOL, DVIR, HOS)
+- Ensure compliance with digital documentation (POD, POL, BOL, DVIR, HOS)
 - Improve cash flow with faster invoicing and online payments
 - Make data-driven decisions with comprehensive analytics
 
@@ -48,13 +50,24 @@ Logistics TMS is purpose-built for trucking fleets specializing in intermodal co
 | **In-App Messaging** | Real-time chat between dispatchers and drivers. Supports direct conversations, load-specific threads, and company-wide announcements. Includes read receipts and typing indicators. |
 | **Push Notifications** | Instant alerts for load assignments, status changes, and important updates via Firebase Cloud Messaging to mobile devices. |
 
+### Load Board Integration
+
+| Feature | Description |
+|---------|-------------|
+| **Multi-Provider Support** | Connect to major load boards including DAT, Truckstop.com, and 123Loadboard from a single interface. Configure API credentials per provider with secure storage. |
+| **Load Search** | Search for available freight across all connected load boards. Filter by origin/destination, pickup dates, equipment type, and rate. View aggregated results with provider tags. |
+| **Book Loads** | Book loads directly from search results. Automatically creates a new load in your TMS with all details pre-filled from the load board listing. |
+| **Post Trucks** | Advertise your available capacity to load boards. Specify truck location, destination preferences, equipment type, and availability window. Posts are automatically refreshed to prevent expiration. |
+| **Demo Provider** | Built-in demo provider for testing and development. Generates realistic mock data without requiring external API credentials. |
+
 ### Documentation & Compliance
 
 | Feature | Description |
 |---------|-------------|
 | **Proof of Delivery (POD)** | Capture delivery confirmation with photos, digital signatures, recipient name, and GPS coordinates. Documents stored securely in Azure Blob Storage. |
-| **Bill of Lading (BOL)** | Upload and manage BOL documents with automatic association to loads. Support for multiple document formats. |
-| **Vehicle Condition Reports** | Pre-trip and post-trip inspections (DVIR) with interactive damage marking on vehicle diagrams. Record damage severity, location, and photos for compliance. |
+| **Proof of Loading (POL)** | Document pickup confirmation with photos and signatures at origin. Track loading conditions, seal numbers, and cargo verification. |
+| **Bill of Lading (BOL)** | Generate, upload, and manage BOL documents with automatic association to loads. Support for multiple document formats and digital signatures. |
+| **Vehicle Inspections (DVIR)** | Pre-trip and post-trip Driver Vehicle Inspection Reports with interactive damage marking on vehicle diagrams. Record defects by category (brakes, tires, lights, etc.), severity level, and attach photos. Inspection history tracked per vehicle for compliance audits. |
 | **VIN Decoding** | Automatic vehicle information lookup via NHTSA API. Enter a 17-character VIN to retrieve make, model, year, body class, and engine specifications. |
 | **ELD/HOS Compliance** | Integration with ELD providers (Samsara, Motive/KeepTruckin) for Hours of Service tracking. Real-time duty status, driving hours, and violation alerts. |
 | **Document Storage** | Centralized document management for load paperwork, employee records, and compliance documents with Azure Blob Storage. |
