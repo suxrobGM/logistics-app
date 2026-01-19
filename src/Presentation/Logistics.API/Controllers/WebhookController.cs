@@ -55,4 +55,29 @@ public class WebhookController(IMediator mediator) : ControllerBase
         });
         return result.IsSuccess ? Ok() : BadRequest();
     }
+
+    #region Load Board Webhooks
+
+    [HttpPost("loadboard/dat", Name = "ProcessDatWebhook")]
+    public Task<IActionResult> DatWebhook()
+    {
+        // TODO: Implement DAT webhook processing when provider is implemented
+        return Task.FromResult<IActionResult>(Ok());
+    }
+
+    [HttpPost("loadboard/truckstop", Name = "ProcessTruckstopWebhook")]
+    public Task<IActionResult> TruckstopWebhook()
+    {
+        // TODO: Implement Truckstop webhook processing when provider is implemented
+        return Task.FromResult<IActionResult>(Ok());
+    }
+
+    [HttpPost("loadboard/123loadboard", Name = "Process123LoadboardWebhook")]
+    public Task<IActionResult> OneTwo3LoadboardWebhook()
+    {
+        // TODO: Implement 123Loadboard webhook processing when provider is implemented
+        return Task.FromResult<IActionResult>(Ok());
+    }
+
+    #endregion
 }

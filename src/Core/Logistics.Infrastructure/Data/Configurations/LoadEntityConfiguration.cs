@@ -30,5 +30,12 @@ internal sealed class LoadEntityConfiguration : IEntityTypeConfiguration<Load>
             .WithMany(i => i.DispatchedLoads)
             .HasForeignKey(i => i.AssignedDispatcherId);
         //.OnDelete(DeleteBehavior.SetNull);
+
+        // External load board source tracking
+        builder.Property(i => i.ExternalSourceId)
+            .HasMaxLength(100);
+
+        builder.Property(i => i.ExternalBrokerReference)
+            .HasMaxLength(100);
     }
 }

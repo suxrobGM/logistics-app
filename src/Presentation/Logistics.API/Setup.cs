@@ -156,6 +156,7 @@ internal static class Setup
     {
         PayrollGenerationJob.ScheduleJobs();
         EldSyncJob.ScheduleJobs();
+        LoadBoardSyncJob.ScheduleJobs();
         return app;
     }
 

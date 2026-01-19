@@ -136,6 +136,15 @@ public static class Permission
         public const string Approve = $"{nameof(Permission)}.{nameof(Expense)}.Approve";
     }
 
+    public static class LoadBoard
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(LoadBoard)}.View";
+        public const string Search = $"{nameof(Permission)}.{nameof(LoadBoard)}.Search";
+        public const string Book = $"{nameof(Permission)}.{nameof(LoadBoard)}.Book";
+        public const string Post = $"{nameof(Permission)}.{nameof(LoadBoard)}.Post";
+        public const string Manage = $"{nameof(Permission)}.{nameof(LoadBoard)}.Manage";
+    }
+
     public static IEnumerable<string> GetAll()
     {
         var list = new List<string>();

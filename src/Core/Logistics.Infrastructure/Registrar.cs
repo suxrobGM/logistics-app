@@ -59,6 +59,11 @@ public static class Registrar
         services.AddScoped<DemoEldService>();
         services.AddScoped<IEldProviderFactory, EldProviderFactory>();
 
+        // Load Board Provider Services
+        services.Configure<LoadBoardOptions>(configuration.GetSection("LoadBoard"));
+        services.AddScoped<DemoLoadBoardService>();
+        services.AddScoped<ILoadBoardProviderFactory, LoadBoardProviderFactory>();
+
         // VIN Decoder Service
         services.AddHttpClient<IVinDecoderService, NhtsaVinDecoderService>();
 

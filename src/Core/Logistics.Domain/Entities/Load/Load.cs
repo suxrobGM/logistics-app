@@ -57,6 +57,21 @@ public class Load : AuditableEntity, ITenantEntity
     public virtual List<LoadDocument> Documents { get; set; } = [];
     public virtual ICollection<TripStop> TripStops { get; } = [];
 
+    /// <summary>
+    /// If the load was booked from a load board, the provider type
+    /// </summary>
+    public LoadBoardProviderType? ExternalSourceProvider { get; set; }
+
+    /// <summary>
+    /// External listing ID from the load board provider
+    /// </summary>
+    public string? ExternalSourceId { get; set; }
+
+    /// <summary>
+    /// Broker reference number from the load board
+    /// </summary>
+    public string? ExternalBrokerReference { get; set; }
+
     public bool CanTransitionTo(LoadStatus next)
     {
         return Allowed.TryGetValue(Status, out var nexts) && nexts.Contains(next);
