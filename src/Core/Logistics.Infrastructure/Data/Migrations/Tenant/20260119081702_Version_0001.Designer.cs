@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Data.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20260118192718_Version_0002")]
-    partial class Version_0002
+    [Migration("20260119081702_Version_0001")]
+    partial class Version_0001
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -487,7 +487,6 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Number"));
 
                     b.Property<string>("ReceiptBlobPath")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
@@ -1454,6 +1453,95 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     b.ToTable("Trucks", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.VehicleConditionReport", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<string>("DamageMarkersJson")
+                        .HasColumnType("jsonb");
+
+                    b.Property<DateTime>("InspectedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("InspectedById")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("InspectorSignature")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<Guid>("LoadId")
+                        .HasColumnType("uuid");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
+
+                    b.Property<string>("VehicleBodyClass")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("VehicleMake")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("VehicleModel")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int?>("VehicleYear")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Vin")
+                        .IsRequired()
+                        .HasMaxLength(17)
+                        .HasColumnType("character varying(17)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InspectedAt");
+
+                    b.HasIndex("InspectedById");
+
+                    b.HasIndex("LoadId");
+
+                    b.HasIndex("Vin");
+
+                    b.ToTable("VehicleConditionReports", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Shared.Models.CompanyStatsDto", b =>
                 {
                     b.Property<int>("DispatchersCount")
@@ -1563,7 +1651,12 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     b.Property<Guid>("LoadId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("VehicleConditionReportId")
+                        .HasColumnType("uuid");
+
                     b.HasIndex("LoadId");
+
+                    b.HasIndex("VehicleConditionReportId");
 
                     b.HasDiscriminator().HasValue("Load");
                 });
@@ -2023,6 +2116,25 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     b.Navigation("SecondaryDriver");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.VehicleConditionReport", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Employee", "InspectedBy")
+                        .WithMany()
+                        .HasForeignKey("InspectedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Logistics.Domain.Entities.Load", "Load")
+                        .WithMany()
+                        .HasForeignKey("LoadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("InspectedBy");
+
+                    b.Navigation("Load");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.EmployeeDocument", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
@@ -2041,6 +2153,10 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                         .HasForeignKey("LoadId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Logistics.Domain.Entities.VehicleConditionReport", null)
+                        .WithMany("Photos")
+                        .HasForeignKey("VehicleConditionReportId");
 
                     b.Navigation("Load");
                 });
@@ -2154,6 +2270,11 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     b.Navigation("Loads");
 
                     b.Navigation("Trips");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.VehicleConditionReport", b =>
+                {
+                    b.Navigation("Photos");
                 });
 #pragma warning restore 612, 618
         }

@@ -45,13 +45,13 @@ internal sealed class GetExpensesHandler(ITenantUnitOfWork tenantUow)
             query = query.Where(e => e.ExpenseDate <= req.ToDate.Value);
         }
 
-        // Apply search
+        // Apply search (case-insensitive)
         if (!string.IsNullOrEmpty(req.Search))
         {
-            var pattern = $"%{req.Search.ToLowerInvariant()}%";
+            var search = req.Search.ToLower();
             query = query.Where(e =>
-                EF.Functions.Like(e.VendorName ?? "", pattern) ||
-                EF.Functions.Like(e.Notes ?? "", pattern));
+                (e.VendorName ?? "").ToLower().Contains(search) ||
+                (e.Notes ?? "").ToLower().Contains(search));
         }
 
         var totalItems = await query.CountAsync(ct);

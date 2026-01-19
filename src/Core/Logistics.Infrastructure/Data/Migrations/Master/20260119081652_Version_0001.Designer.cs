@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Data.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20260118083838_Version_0001")]
+    [Migration("20260119081652_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />

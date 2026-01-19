@@ -1,5 +1,5 @@
 import { DatePipe } from "@angular/common";
-import { Component, inject, type OnInit, signal } from "@angular/core";
+import { Component, type OnInit, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import type { ConditionReportDto } from "@logistics/shared/api/models";
 import type { MenuItem } from "primeng/api";
@@ -46,7 +46,7 @@ export class ConditionReportsListPage implements OnInit {
       {
         label: "View load",
         icon: "pi pi-box",
-        command: () => this.router.navigateByUrl(`/loads/${this.selectedRow()!.loadId}/edit`),
+        command: () => this.router.navigateByUrl(`/loads/${this.selectedRow()!.loadId}`),
       },
     ];
   }
@@ -59,7 +59,11 @@ export class ConditionReportsListPage implements OnInit {
     this.store.setSearch(value);
   }
 
-  protected openActionMenu(report: ConditionReportDto, menu: { toggle: (event: Event) => void }, event: Event): void {
+  protected openActionMenu(
+    report: ConditionReportDto,
+    menu: { toggle: (event: Event) => void },
+    event: Event,
+  ): void {
     this.selectedRow.set(report);
     menu.toggle(event);
   }

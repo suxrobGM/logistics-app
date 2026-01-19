@@ -484,7 +484,6 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Number"));
 
                     b.Property<string>("ReceiptBlobPath")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 

@@ -5,6 +5,7 @@ using Logistics.DbMigrator.Models;
 using Logistics.DbMigrator.Utils;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Shared.Identity.Roles;
 
 namespace Logistics.DbMigrator.Seeders.FakeData;
 
@@ -76,7 +77,7 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
 
         // Get drivers from context or load from database
         var drivers = context.CreatedEmployees?.Drivers
-            ?? await employeeRepository.GetListAsync(e => e.Role != null && e.Role.Name == "Driver", ct: cancellationToken);
+            ?? await employeeRepository.GetListAsync(e => e.Role != null && e.Role.Name == TenantRoles.Driver, ct: cancellationToken);
         if (drivers.Count == 0)
         {
             Logger.LogWarning("No drivers available for condition report seeding");

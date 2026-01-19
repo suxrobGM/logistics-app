@@ -11,7 +11,7 @@
               [severity]="getTypeSeverity(report()!.type ?? '')"
             />
             <span class="text-gray-500">|</span>
-            <span class="font-mono text-sm text-gray-600">VIN: {{ report()!.vin || 'N/A' }}</span>
+            <span class="font-mono text-sm text-gray-600">VIN: {{ report()!.vin || "N/A" }}</span>
           </div>
         }
       </div>
@@ -47,7 +47,7 @@
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="mb-1 block text-xs font-medium text-gray-500">VIN</label>
-              <p class="font-mono text-sm">{{ report()!.vin || 'N/A' }}</p>
+              <p class="font-mono text-sm">{{ report()!.vin || "N/A" }}</p>
             </div>
             <div>
               <label class="mb-1 block text-xs font-medium text-gray-500">Vehicle</label>
@@ -108,7 +108,7 @@
                       [severity]="getSeverityBadge(marker.severity)"
                     />
                   </td>
-                  <td>{{ marker.description || 'No description provided' }}</td>
+                  <td>{{ marker.description || "No description provided" }}</td>
                 </tr>
               </ng-template>
             </p-table>
@@ -154,11 +154,11 @@
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="mb-1 block text-xs font-medium text-gray-500">Inspector</label>
-                <p class="text-sm">{{ report()!.inspectorName || 'N/A' }}</p>
+                <p class="text-sm">{{ report()!.inspectorName || "N/A" }}</p>
               </div>
               <div>
                 <label class="mb-1 block text-xs font-medium text-gray-500">Inspected At</label>
-                <p class="text-sm">{{ report()!.inspectedAt | date: 'medium' }}</p>
+                <p class="text-sm">{{ report()!.inspectedAt | date: "medium" }}</p>
               </div>
             </div>
 
@@ -166,7 +166,9 @@
               <div class="rounded-lg bg-green-50 p-3">
                 <label class="mb-1 block text-xs font-medium text-green-600">Location</label>
                 <div class="flex items-center justify-between">
-                  <p class="text-sm">{{ formatCoordinates(report()!.latitude, report()!.longitude) }}</p>
+                  <p class="text-sm">
+                    {{ formatCoordinates(report()!.latitude, report()!.longitude) }}
+                  </p>
                   <a
                     [href]="getGoogleMapsUrl(report()!.latitude, report()!.longitude)"
                     target="_blank"
@@ -182,7 +184,7 @@
             <div>
               <label class="mb-1 block text-xs font-medium text-gray-500">Load ID</label>
               <a
-                [routerLink]="['/loads', report()!.loadId, 'edit']"
+                [routerLink]="['/loads', report()!.loadId]"
                 class="text-primary text-sm hover:underline"
               >
                 {{ report()!.loadId }}
@@ -202,7 +204,7 @@
               </div>
             </ng-template>
 
-            <p class="whitespace-pre-wrap text-sm text-gray-700">{{ report()!.notes }}</p>
+            <p class="text-sm whitespace-pre-wrap text-gray-700">{{ report()!.notes }}</p>
           </p-card>
         }
 
