@@ -6,8 +6,11 @@ using Logistics.Infrastructure.Extensions;
 using Logistics.Infrastructure.Interceptors;
 using Logistics.Infrastructure.Options;
 using Logistics.Infrastructure.Services;
+using Logistics.Infrastructure.Services.Dat;
 using Logistics.Infrastructure.Services.Email;
+using Logistics.Infrastructure.Services.OneTwo3;
 using Logistics.Infrastructure.Services.Trip;
+using Logistics.Infrastructure.Services.Truckstop;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MapboxGeocodingService = Logistics.Infrastructure.Services.Geocoding.MapboxGeocodingService;
@@ -61,6 +64,9 @@ public static class Registrar
 
         // Load Board Provider Services
         services.Configure<LoadBoardOptions>(configuration.GetSection("LoadBoard"));
+        services.AddHttpClient<DatLoadBoardService>();
+        services.AddHttpClient<TruckstopLoadBoardService>();
+        services.AddHttpClient<OneTwo3LoadBoardService>();
         services.AddScoped<DemoLoadBoardService>();
         services.AddScoped<ILoadBoardProviderFactory, LoadBoardProviderFactory>();
 

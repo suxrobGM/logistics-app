@@ -1,0 +1,360 @@
+<div class="w-full p-6">
+  <!-- Header -->
+  <div class="mb-3 flex items-center gap-3">
+    <p-button
+      icon="pi pi-arrow-left"
+      [rounded]="true"
+      [text]="true"
+      (onClick)="goBack()"
+      pTooltip="Back to Dashboard"
+    />
+    <ui-page-header
+      title="Search Load Boards"
+      subtitle="Find available freight from DAT, Truckstop, and 123Loadboard"
+      [showAddButton]="false"
+    />
+  </div>
+
+  <!-- Search Filters -->
+  <p-card class="mb-6 border-0 shadow-sm">
+    <ng-template pTemplate="header">
+      <div class="flex items-center p-3">
+        <i class="pi pi-filter mr-2 text-blue-600"></i>
+        <h5 class="mb-0">Search Filters</h5>
+      </div>
+    </ng-template>
+
+    <form [formGroup]="searchForm" (ngSubmit)="searchLoads()">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <!-- Origin -->
+        <ui-labeled-field label="Origin City" for="originCity">
+          <input
+            pInputText
+            id="originCity"
+            formControlName="originCity"
+            class="w-full"
+            placeholder="e.g., Los Angeles"
+          />
+        </ui-labeled-field>
+
+        <ui-labeled-field label="Origin State" for="originState">
+          <input
+            pInputText
+            id="originState"
+            formControlName="originState"
+            class="w-full"
+            placeholder="e.g., CA"
+          />
+        </ui-labeled-field>
+
+        <ui-labeled-field label="Origin Radius (mi)" for="originRadius">
+          <p-inputNumber
+            id="originRadius"
+            formControlName="originRadius"
+            [min]="0"
+            [max]="500"
+            class="w-full"
+            inputStyleClass="w-full"
+          />
+        </ui-labeled-field>
+
+        <!-- Destination -->
+        <ui-labeled-field label="Destination City" for="destinationCity">
+          <input
+            pInputText
+            id="destinationCity"
+            formControlName="destinationCity"
+            class="w-full"
+            placeholder="e.g., Dallas"
+          />
+        </ui-labeled-field>
+
+        <ui-labeled-field label="Destination State" for="destinationState">
+          <input
+            pInputText
+            id="destinationState"
+            formControlName="destinationState"
+            class="w-full"
+            placeholder="e.g., TX"
+          />
+        </ui-labeled-field>
+
+        <ui-labeled-field label="Dest. Radius (mi)" for="destinationRadius">
+          <p-inputNumber
+            id="destinationRadius"
+            formControlName="destinationRadius"
+            [min]="0"
+            [max]="500"
+            class="w-full"
+            inputStyleClass="w-full"
+          />
+        </ui-labeled-field>
+
+        <!-- Dates -->
+        <ui-labeled-field label="Pickup From" for="pickupDateStart">
+          <p-datePicker
+            id="pickupDateStart"
+            formControlName="pickupDateStart"
+            [showIcon]="true"
+            dateFormat="mm/dd/yy"
+            class="w-full"
+            inputStyleClass="w-full"
+          />
+        </ui-labeled-field>
+
+        <ui-labeled-field label="Pickup To" for="pickupDateEnd">
+          <p-datePicker
+            id="pickupDateEnd"
+            formControlName="pickupDateEnd"
+            [showIcon]="true"
+            dateFormat="mm/dd/yy"
+            class="w-full"
+            inputStyleClass="w-full"
+          />
+        </ui-labeled-field>
+
+        <!-- Equipment -->
+        <ui-labeled-field label="Equipment Types" for="equipmentTypes">
+          <p-multiSelect
+            id="equipmentTypes"
+            formControlName="equipmentTypes"
+            [options]="equipmentOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Any equipment"
+            class="w-full"
+            [style]="{ width: '100%' }"
+          />
+        </ui-labeled-field>
+
+        <ui-labeled-field label="Max Results" for="maxResults">
+          <p-inputNumber
+            id="maxResults"
+            formControlName="maxResults"
+            [min]="10"
+            [max]="100"
+            class="w-full"
+            inputStyleClass="w-full"
+          />
+        </ui-labeled-field>
+      </div>
+
+      <div class="mt-4 flex justify-end">
+        <p-button
+          label="Search Loads"
+          icon="pi pi-search"
+          type="submit"
+          [loading]="searching()"
+        />
+      </div>
+    </form>
+  </p-card>
+
+  <!-- Results -->
+  <p-card class="border-0 shadow-sm">
+    <ng-template pTemplate="header">
+      <div class="flex items-center justify-between p-3">
+        <div class="flex items-center">
+          <i class="pi pi-list mr-2 text-blue-600"></i>
+          <h5 class="mb-0">Search Results</h5>
+        </div>
+        @if (listings().length > 0) {
+          <span class="text-sm text-gray-500">{{ listings().length }} loads found</span>
+        }
+      </div>
+    </ng-template>
+
+    @if (searching()) {
+      <div class="flex justify-center p-5">
+        <p-progressSpinner />
+      </div>
+    } @else if (listings().length === 0) {
+      <div class="p-5 text-center">
+        <i class="pi pi-search mb-3 text-4xl text-gray-400"></i>
+        <p class="text-gray-600">No loads found.</p>
+        <p class="text-sm text-gray-500">Enter search criteria and click "Search Loads"</p>
+      </div>
+    } @else {
+      <p-table
+        [value]="listings()"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[10, 25, 50]"
+        [scrollable]="true"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Provider</th>
+            <th>Route</th>
+            <th>Pickup</th>
+            <th>Equipment</th>
+            <th>Weight</th>
+            <th>Rate</th>
+            <th>Rate/Mile</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-listing>
+          <tr>
+            <td>
+              <p-tag
+                [value]="listing.providerName"
+                [severity]="getProviderSeverity(listing.providerType)"
+              />
+            </td>
+            <td>
+              <div class="max-w-50">
+                <div class="font-medium">{{ listing.originAddress.city }}, {{ listing.originAddress.state }}</div>
+                <div class="text-sm text-gray-500">↓</div>
+                <div class="font-medium">{{ listing.destinationAddress.city }}, {{ listing.destinationAddress.state }}</div>
+                @if (listing.distance) {
+                  <div class="text-xs text-gray-400">{{ listing.distance }} mi</div>
+                }
+              </div>
+            </td>
+            <td>
+              @if (listing.pickupDateStart) {
+                <div class="text-sm">{{ listing.pickupDateStart | date: "shortDate" }}</div>
+              } @else {
+                <span class="text-gray-400">-</span>
+              }
+            </td>
+            <td>
+              <span class="text-sm">{{ listing.equipmentType || "-" }}</span>
+            </td>
+            <td>
+              @if (listing.weight) {
+                <span class="text-sm">{{ listing.weight | number }} lbs</span>
+              } @else {
+                <span class="text-gray-400">-</span>
+              }
+            </td>
+            <td>
+              <span class="font-medium text-green-600">{{ formatCurrency(listing.totalRate) }}</span>
+            </td>
+            <td>
+              <span class="text-sm">{{ formatCurrency(listing.ratePerMile) }}/mi</span>
+            </td>
+            <td>
+              <div class="flex gap-1">
+                <p-button
+                  icon="pi pi-check"
+                  label="Book"
+                  [rounded]="true"
+                  size="small"
+                  (onClick)="openBookDialog(listing)"
+                  pTooltip="Book this load"
+                />
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </p-card>
+</div>
+
+<!-- Book Load Dialog -->
+<p-dialog
+  header="Book Load"
+  [(visible)]="showBookDialog"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [draggable]="false"
+>
+  @if (selectedListing(); as listing) {
+    <div class="mb-4 rounded bg-gray-50 p-3">
+      <div class="mb-2 flex items-center justify-between">
+        <span class="font-medium">{{ listing.originAddress.city }}, {{ listing.originAddress.state }}</span>
+        <span class="text-gray-400">→</span>
+        <span class="font-medium">{{ listing.destinationAddress.city }}, {{ listing.destinationAddress.state }}</span>
+      </div>
+      <div class="flex items-center justify-between text-sm text-gray-600">
+        <span>{{ listing.equipmentType }}</span>
+        <span class="font-medium text-green-600">{{ formatCurrency(listing.totalRate) }}</span>
+      </div>
+    </div>
+
+    <form [formGroup]="bookForm">
+      <ui-labeled-field label="Assign Truck" for="truckId">
+        <p-select
+          id="truckId"
+          formControlName="truckId"
+          [options]="trucks()"
+          optionLabel="number"
+          optionValue="id"
+          placeholder="Select a truck"
+          class="w-full"
+          [style]="{ width: '100%' }"
+        >
+          <ng-template pTemplate="item" let-truck>
+            <div>
+              <div class="font-medium">{{ truck.number }}</div>
+              <small class="text-gray-500">{{ truck.type }}</small>
+            </div>
+          </ng-template>
+        </p-select>
+      </ui-labeled-field>
+
+      <ui-labeled-field label="Contact Name" for="contactName">
+        <input
+          pInputText
+          id="contactName"
+          formControlName="contactName"
+          class="w-full"
+          placeholder="Your name"
+        />
+      </ui-labeled-field>
+
+      <ui-labeled-field label="Contact Phone" for="contactPhone">
+        <input
+          pInputText
+          id="contactPhone"
+          formControlName="contactPhone"
+          class="w-full"
+          placeholder="Your phone number"
+        />
+      </ui-labeled-field>
+
+      <ui-labeled-field label="Contact Email" for="contactEmail">
+        <input
+          pInputText
+          id="contactEmail"
+          formControlName="contactEmail"
+          class="w-full"
+          placeholder="Your email"
+        />
+      </ui-labeled-field>
+
+      <ui-labeled-field label="Notes" for="notes">
+        <input
+          pInputText
+          id="notes"
+          formControlName="notes"
+          class="w-full"
+          placeholder="Additional notes for the broker"
+        />
+      </ui-labeled-field>
+    </form>
+
+    <div class="mt-3 rounded bg-blue-50 p-3 text-sm">
+      <i class="pi pi-info-circle mr-2 text-blue-600"></i>
+      Booking this load will create a new load in your TMS with the details from the load board.
+    </div>
+  }
+
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      (onClick)="showBookDialog.set(false)"
+      [text]="true"
+    />
+    <p-button
+      label="Book Load"
+      icon="pi pi-check"
+      (onClick)="bookLoad()"
+      [loading]="booking()"
+    />
+  </ng-template>
+</p-dialog>

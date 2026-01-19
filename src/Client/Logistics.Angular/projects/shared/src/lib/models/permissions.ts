@@ -55,6 +55,13 @@ export const Permission = {
     View: "Permission.Expense.View",
     Manage: "Permission.Expense.Manage",
   },
+  LoadBoard: {
+    View: "Permission.LoadBoard.View",
+    Search: "Permission.LoadBoard.Search",
+    Book: "Permission.LoadBoard.Book",
+    Post: "Permission.LoadBoard.Post",
+    Manage: "Permission.LoadBoard.Manage",
+  },
 } as const;
 
 /**

@@ -1,6 +1,9 @@
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Infrastructure.Services.Dat;
+using Logistics.Infrastructure.Services.OneTwo3;
+using Logistics.Infrastructure.Services.Truckstop;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -13,12 +16,13 @@ internal class LoadBoardProviderFactory(
 {
     public ILoadBoardProviderService GetProvider(LoadBoardProviderType providerType)
     {
-        // Note: DAT, Truckstop, and 123Loadboard providers are defined but not yet implemented.
-        // Only Demo provider is available for testing.
         ILoadBoardProviderService service = providerType switch
         {
+            LoadBoardProviderType.Dat => serviceProvider.GetRequiredService<DatLoadBoardService>(),
+            LoadBoardProviderType.Truckstop => serviceProvider.GetRequiredService<TruckstopLoadBoardService>(),
+            LoadBoardProviderType.OneTwo3Loadboard => serviceProvider.GetRequiredService<OneTwo3LoadBoardService>(),
             LoadBoardProviderType.Demo => serviceProvider.GetRequiredService<DemoLoadBoardService>(),
-            _ => throw new NotSupportedException($"Load board provider '{providerType}' is not yet implemented. Only Demo provider is currently available.")
+            _ => throw new NotSupportedException($"Load board provider '{providerType}' is not supported.")
         };
 
         logger.LogDebug("Created load board provider service for {ProviderType}", providerType);
@@ -34,7 +38,9 @@ internal class LoadBoardProviderFactory(
 
     public bool IsProviderSupported(LoadBoardProviderType providerType)
     {
-        // Only Demo is currently implemented
-        return providerType is LoadBoardProviderType.Demo;
+        return providerType is LoadBoardProviderType.Dat
+            or LoadBoardProviderType.Truckstop
+            or LoadBoardProviderType.OneTwo3Loadboard
+            or LoadBoardProviderType.Demo;
     }
 }

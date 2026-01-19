@@ -1,0 +1,255 @@
+<div class="w-full p-6">
+  <!-- Header -->
+  <div class="mb-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <p-button
+        icon="pi pi-arrow-left"
+        [rounded]="true"
+        [text]="true"
+        (onClick)="goBack()"
+        pTooltip="Back to Dashboard"
+      />
+      <ui-page-header
+        title="Load Board Provider Configuration"
+        subtitle="Connect to load boards to search for available freight and post trucks"
+        [showAddButton]="false"
+      />
+    </div>
+    <p-button label="Add Provider" icon="pi pi-plus" (onClick)="openAddDialog()" />
+  </div>
+
+  <!-- Info Card -->
+  <div class="mb-6">
+    <p-card class="border-0 bg-blue-50 shadow-sm">
+      <div class="flex items-start gap-3">
+        <i class="pi pi-info-circle text-2xl text-blue-600"></i>
+        <div>
+          <h6 class="mb-1 font-medium">How Load Board Integration Works</h6>
+          <p class="mb-0 text-sm text-gray-600">
+            Connect your load board accounts to search for available loads, get rate information,
+            and post your available trucks to attract freight. Each provider requires API credentials
+            which you can obtain from their respective developer portals.
+          </p>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Providers List -->
+  <p-card class="border-0 shadow-sm">
+    <ng-template pTemplate="header">
+      <div class="flex items-center p-3">
+        <i class="pi pi-link mr-2 text-blue-600"></i>
+        <h5 class="mb-0">Configured Providers</h5>
+      </div>
+    </ng-template>
+
+    @if (loading()) {
+      <div class="flex justify-center p-5">
+        <p-progressSpinner />
+      </div>
+    } @else if (error()) {
+      <div class="p-4 text-center">
+        <i class="pi pi-exclamation-circle mb-3 text-4xl text-red-500"></i>
+        <p class="text-red-500">{{ error() }}</p>
+        <p-button label="Retry" icon="pi pi-refresh" (onClick)="loadProviders()" />
+      </div>
+    } @else if (providers().length === 0) {
+      <div class="p-5 text-center">
+        <i class="pi pi-link mb-3 text-4xl text-gray-400"></i>
+        <p class="text-gray-600">No load board providers configured yet.</p>
+        <p class="mb-4 text-sm text-gray-500">
+          Add your first load board provider to start searching for freight.
+        </p>
+        <p-button label="Add Provider" icon="pi pi-plus" (onClick)="openAddDialog()" />
+      </div>
+    } @else {
+      <p-table [value]="providers()">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Provider</th>
+            <th>Status</th>
+            <th>DOT Number</th>
+            <th>MC Number</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-provider>
+          <tr>
+            <td>
+              <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600/10">
+                  <i class="pi pi-link text-blue-600"></i>
+                </div>
+                <div>
+                  <div class="font-medium">{{ getProviderLabel(provider.providerType) }}</div>
+                  <small class="text-gray-500">{{ provider.providerType }}</small>
+                </div>
+              </div>
+            </td>
+            <td>
+              @if (provider.isActive) {
+                <p-tag value="Active" severity="success"></p-tag>
+              } @else {
+                <p-tag value="Inactive" severity="danger"></p-tag>
+              }
+            </td>
+            <td>
+              <span class="text-sm">{{ provider.companyDotNumber || "-" }}</span>
+            </td>
+            <td>
+              <span class="text-sm">{{ provider.companyMcNumber || "-" }}</span>
+            </td>
+            <td>
+              @if (provider.createdAt) {
+                <span class="text-sm text-gray-500">{{ provider.createdAt | date: "short" }}</span>
+              } @else {
+                <span class="text-sm text-gray-400">-</span>
+              }
+            </td>
+            <td>
+              <div class="flex gap-1">
+                <p-button
+                  icon="pi pi-trash"
+                  [rounded]="true"
+                  [text]="true"
+                  severity="danger"
+                  pTooltip="Delete Provider"
+                  (onClick)="confirmDeleteProvider(provider)"
+                />
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </p-card>
+</div>
+
+<!-- Add Provider Dialog -->
+<p-dialog
+  header="Add Load Board Provider"
+  [(visible)]="showAddDialog"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [draggable]="false"
+>
+  <form [formGroup]="addForm" (ngSubmit)="saveProvider()">
+    <ui-labeled-field
+      label="Provider"
+      for="providerType"
+      [required]="true"
+      [control]="addForm.controls.providerType"
+    >
+      <p-select
+        id="providerType"
+        formControlName="providerType"
+        [options]="providerOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select provider"
+        class="w-full"
+        [style]="{ width: '100%' }"
+      >
+        <ng-template pTemplate="item" let-item>
+          <div>
+            <div class="font-medium">{{ item.label }}</div>
+            <small class="text-gray-500">{{ item.description }}</small>
+          </div>
+        </ng-template>
+      </p-select>
+    </ui-labeled-field>
+
+    <ui-labeled-field
+      label="API Key"
+      for="apiKey"
+      [required]="true"
+      hint="Your load board API key or client ID"
+      [control]="addForm.controls.apiKey"
+    >
+      <input
+        pInputText
+        id="apiKey"
+        formControlName="apiKey"
+        class="w-full"
+        placeholder="Enter API key"
+      />
+    </ui-labeled-field>
+
+    <ui-labeled-field
+      label="API Secret (Optional)"
+      for="apiSecret"
+      hint="Required for some providers (e.g., DAT)"
+    >
+      <p-password
+        id="apiSecret"
+        formControlName="apiSecret"
+        [toggleMask]="true"
+        [feedback]="false"
+        class="w-full"
+        inputStyleClass="w-full"
+        placeholder="Enter API secret"
+      />
+    </ui-labeled-field>
+
+    <ui-labeled-field
+      label="DOT Number (Optional)"
+      for="companyDotNumber"
+      hint="Your company's USDOT number"
+    >
+      <input
+        pInputText
+        id="companyDotNumber"
+        formControlName="companyDotNumber"
+        class="w-full"
+        placeholder="e.g., 1234567"
+      />
+    </ui-labeled-field>
+
+    <ui-labeled-field
+      label="MC Number (Optional)"
+      for="companyMcNumber"
+      hint="Your company's Motor Carrier number"
+    >
+      <input
+        pInputText
+        id="companyMcNumber"
+        formControlName="companyMcNumber"
+        class="w-full"
+        placeholder="e.g., MC123456"
+      />
+    </ui-labeled-field>
+
+    <div class="rounded bg-yellow-50 p-3">
+      <div class="flex items-start gap-2">
+        <i class="pi pi-exclamation-triangle text-yellow-600"></i>
+        <div class="text-sm">
+          <strong>Where to get credentials:</strong>
+          <ul class="mt-1 mb-0 list-inside list-disc text-gray-600">
+            <li>Demo: Enter any text as API key (for testing only)</li>
+            <li>DAT: freight.api.dat.com developer portal</li>
+            <li>Truckstop: api.truckstop.com developer portal</li>
+            <li>123Loadboard: 123loadboard.com/developers</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      (onClick)="showAddDialog.set(false)"
+      [text]="true"
+    />
+    <p-button
+      label="Add Provider"
+      icon="pi pi-check"
+      (onClick)="saveProvider()"
+      [loading]="saving()"
+      [disabled]="addForm.invalid"
+    />
+  </ng-template>
+</p-dialog>

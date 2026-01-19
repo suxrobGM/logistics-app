@@ -78,6 +78,14 @@ export const appRoutes: Routes = [
     },
   },
   {
+    path: "loadboard",
+    loadChildren: () =>
+      import("./pages/load-board/load-board.routes").then((m) => m.loadBoardRoutes),
+    data: {
+      breadcrumb: "Load Board",
+    },
+  },
+  {
     path: "messages",
     loadChildren: () => import("./pages/messages/messages.routes").then((m) => m.messagesRoutes),
     data: {
@@ -86,7 +94,8 @@ export const appRoutes: Routes = [
   },
   {
     path: "inspections",
-    loadChildren: () => import("./pages/inspections/inspection.routes").then((m) => m.inspectionRoutes),
+    loadChildren: () =>
+      import("./pages/inspections/inspection.routes").then((m) => m.inspectionRoutes),
     data: {
       breadcrumb: "Inspections",
     },

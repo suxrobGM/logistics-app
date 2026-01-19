@@ -74,14 +74,14 @@ internal sealed class GetCurrentUserPermissionsHandler(
             return;
         }
 
-        var tenantRoleClaimRepository = tenantUow.Repository<TenantRoleClaim>();
-
         if (employee.Role is null)
         {
             return;
         }
 
-        var roleClaims = await tenantRoleClaimRepository.GetListAsync(i => i.RoleId == employee.Role.Id);
+        var roleClaims = await tenantUow.Repository<TenantRoleClaim>()
+            .GetListAsync(i => i.RoleId == employee.Role.Id);
+
         foreach (var claim in roleClaims.Where(c => c.ClaimType == CustomClaimTypes.Permission))
         {
             permissions.Add(claim.ClaimValue);
