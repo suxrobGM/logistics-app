@@ -4,6 +4,7 @@ import { authGuard } from "@/core/auth";
 import { LoadAddComponent } from "./load-add/load-add";
 import { LoadDocumentsPage } from "./load-documents/load-documents";
 import { LoadEditComponent } from "./load-edit/load-edit";
+import { LoadPodViewerPage } from "./load-pod-viewer/load-pod-viewer";
 import { LoadsListComponent } from "./loads-list/loads-list";
 
 export const loadRoutes: Routes = [
@@ -50,6 +51,15 @@ export const loadRoutes: Routes = [
     data: {
       breadcrumb: "Documents",
       permission: Permission.Load.Manage,
+    },
+  },
+  {
+    path: ":id/pod",
+    component: LoadPodViewerPage,
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: "POD/BOL",
+      permission: Permission.Load.View,
     },
   },
 ];

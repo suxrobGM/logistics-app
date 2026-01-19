@@ -21,6 +21,15 @@ public sealed record DocumentDto
     public Guid? LoadId { get; init; }
     public Guid? EmployeeId { get; init; }
 
+    // POD/BOL capture metadata
+    public string? RecipientName { get; init; }
+    public string? RecipientSignature { get; init; }
+    public double? CaptureLatitude { get; init; }
+    public double? CaptureLongitude { get; init; }
+    public DateTime? CapturedAt { get; init; }
+    public Guid? TripStopId { get; init; }
+    public string? Notes { get; init; }
+
     public DateTime CreatedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
 }

@@ -106,6 +106,12 @@ kotlin {
 
             // SignalR Client
             implementation(libs.signalr.client)
+
+            // CameraX (for barcode scanning)
+            implementation(libs.bundles.camerax)
+
+            // ML Kit Barcode Scanning
+            implementation(libs.mlkit.barcode)
         }
 
         iosMain.dependencies {

@@ -5,9 +5,12 @@ namespace Logistics.Mappings;
 
 public static class TruckMapper
 {
-    public static TruckDto ToDto(this Truck entity, IEnumerable<LoadDto> loads)
+    /// <summary>
+    ///     Maps a Truck entity to TruckDto without loads.
+    /// </summary>
+    public static TruckDto ToDto(this Truck entity)
     {
-        var dto = new TruckDto
+        return new TruckDto
         {
             Id = entity.Id,
             Number = entity.Number,
@@ -16,10 +19,19 @@ public static class TruckMapper
             CurrentLocation = entity.CurrentLocation,
             CurrentAddress = entity.CurrentAddress,
             VehicleCapacity = entity.VehicleCapacity,
-            Loads = loads,
+            Loads = [],
             MainDriver = entity.MainDriver?.ToDto(),
             SecondaryDriver = entity.SecondaryDriver?.ToDto(),
         };
+    }
+
+    /// <summary>
+    ///     Maps a Truck entity to TruckDto with loads.
+    /// </summary>
+    public static TruckDto ToDto(this Truck entity, IEnumerable<LoadDto> loads)
+    {
+        var dto = entity.ToDto();
+        dto.Loads = loads;
         return dto;
     }
 }

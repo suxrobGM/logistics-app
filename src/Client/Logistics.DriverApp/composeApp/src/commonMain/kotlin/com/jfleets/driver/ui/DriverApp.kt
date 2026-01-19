@@ -27,6 +27,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.jfleets.driver.model.LocalUserSettings
 import com.jfleets.driver.model.UserSettings
 import com.jfleets.driver.navigation.AccountRoute
+import com.jfleets.driver.navigation.ConditionReportRoute
 import com.jfleets.driver.navigation.ConversationRoute
 import com.jfleets.driver.navigation.DashboardRoute
 import com.jfleets.driver.navigation.EmployeeSelectRoute
@@ -35,6 +36,7 @@ import com.jfleets.driver.navigation.LoginRoute
 import com.jfleets.driver.navigation.MessagesRoute
 import com.jfleets.driver.navigation.Navigator
 import com.jfleets.driver.navigation.PastLoadsRoute
+import com.jfleets.driver.navigation.PodCaptureRoute
 import com.jfleets.driver.navigation.SettingsRoute
 import com.jfleets.driver.navigation.StatsRoute
 import com.jfleets.driver.navigation.createEntryProvider
@@ -102,7 +104,9 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
             currentDestination !is LoginRoute &&
             currentDestination !is LoadDetailRoute &&
             currentDestination !is ConversationRoute &&
-            currentDestination !is EmployeeSelectRoute
+            currentDestination !is EmployeeSelectRoute &&
+            currentDestination !is ConditionReportRoute &&
+            currentDestination !is PodCaptureRoute
 
     CompositionLocalProvider(LocalUserSettings provides userSettings) {
         LogisticsDriverTheme {

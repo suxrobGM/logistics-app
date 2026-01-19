@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between">
       <div>
         <h1 class="mb-2 text-2xl font-bold text-gray-900">Load Documents</h1>
-        <p class="text-gray-600">Manage documents for load ID: {{ loadId() }}</p>
+        <p class="text-gray-600">Manage documents for load ID: {{ id() }}</p>
       </div>
       <p-button
         icon="pi pi-arrow-left"
@@ -15,5 +15,5 @@
     </div>
   </div>
 
-  <app-document-manager [loadId]="loadId()" [types]="loadDocTypes" class="w-full" />
+  <app-document-manager [loadId]="id()" [types]="loadDocTypes" class="w-full" />
 </div>

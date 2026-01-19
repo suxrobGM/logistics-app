@@ -1,0 +1,120 @@
+<div class="vehicle-diagram relative">
+  <svg
+    [attr.viewBox]="'0 0 ' + svgWidth + ' ' + svgHeight"
+    class="w-full"
+    [style.maxWidth.px]="svgWidth"
+  >
+    <!-- Vehicle outline - sedan/car shape -->
+    <g class="vehicle-body" fill="none" stroke="#374151" stroke-width="2">
+      <!-- Main body -->
+      <path
+        d="M 60 140
+           L 60 100
+           Q 60 80, 100 70
+           L 180 60
+           Q 220 55, 260 60
+           L 340 70
+           Q 380 80, 380 100
+           L 380 140
+           Q 380 160, 360 160
+           L 80 160
+           Q 60 160, 60 140 Z"
+        fill="#f3f4f6"
+      />
+      <!-- Roof/cabin -->
+      <path
+        d="M 120 70
+           Q 140 30, 220 25
+           Q 300 30, 320 70"
+        fill="#e5e7eb"
+        stroke="#374151"
+        stroke-width="2"
+      />
+      <!-- Windows -->
+      <path
+        d="M 130 68
+           Q 145 40, 210 35
+           L 210 68 Z"
+        fill="#93c5fd"
+        stroke="#374151"
+        stroke-width="1"
+      />
+      <path
+        d="M 230 35
+           Q 295 40, 310 68
+           L 230 68 Z"
+        fill="#93c5fd"
+        stroke="#374151"
+        stroke-width="1"
+      />
+      <!-- Front wheel well -->
+      <ellipse cx="110" cy="155" rx="35" ry="25" fill="#374151" />
+      <ellipse cx="110" cy="155" rx="25" ry="18" fill="#6b7280" />
+      <ellipse cx="110" cy="155" rx="12" ry="8" fill="#9ca3af" />
+      <!-- Rear wheel well -->
+      <ellipse cx="330" cy="155" rx="35" ry="25" fill="#374151" />
+      <ellipse cx="330" cy="155" rx="25" ry="18" fill="#6b7280" />
+      <ellipse cx="330" cy="155" rx="12" ry="8" fill="#9ca3af" />
+      <!-- Headlights -->
+      <ellipse cx="65" cy="115" rx="8" ry="12" fill="#fde68a" stroke="#374151" />
+      <!-- Taillights -->
+      <ellipse cx="375" cy="115" rx="8" ry="12" fill="#fca5a5" stroke="#374151" />
+      <!-- Door lines -->
+      <line x1="180" y1="70" x2="180" y2="150" stroke="#9ca3af" stroke-width="1" />
+      <line x1="260" y1="70" x2="260" y2="150" stroke="#9ca3af" stroke-width="1" />
+      <!-- Door handles -->
+      <rect x="155" y="100" width="15" height="5" rx="2" fill="#6b7280" />
+      <rect x="275" y="100" width="15" height="5" rx="2" fill="#6b7280" />
+      <!-- Side mirror -->
+      <ellipse cx="125" cy="78" rx="8" ry="5" fill="#374151" />
+    </g>
+
+    <!-- Zone labels -->
+    <g class="zone-labels" font-size="10" fill="#6b7280" text-anchor="middle">
+      <text x="80" y="195">Front Left</text>
+      <text x="160" y="195">Left Side</text>
+      <text x="280" y="195">Right Side</text>
+      <text x="360" y="195">Rear Right</text>
+    </g>
+
+    <!-- Damage markers -->
+    @for (marker of markers(); track $index) {
+      <g
+        class="damage-marker cursor-pointer"
+        [attr.transform]="'translate(' + getMarkerX(marker) + ',' + getMarkerY(marker) + ')'"
+        [pTooltip]="getTooltipText(marker)"
+        tooltipPosition="top"
+      >
+        <circle r="12" [attr.fill]="getSeverityColor(marker.severity)" opacity="0.8" />
+        <circle r="8" fill="white" opacity="0.9" />
+        <text
+          y="4"
+          text-anchor="middle"
+          font-size="10"
+          font-weight="bold"
+          [attr.fill]="getSeverityColor(marker.severity)"
+        >
+          {{ $index + 1 }}
+        </text>
+      </g>
+    }
+  </svg>
+
+  <!-- Legend -->
+  @if (showLegend() && markers().length > 0) {
+    <div class="mt-4 flex flex-wrap gap-4 text-sm">
+      <div class="flex items-center gap-2">
+        <span class="inline-block h-3 w-3 rounded-full bg-yellow-500"></span>
+        <span>Minor</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-block h-3 w-3 rounded-full bg-orange-500"></span>
+        <span>Moderate</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-block h-3 w-3 rounded-full bg-red-500"></span>
+        <span>Severe</span>
+      </div>
+    </div>
+  }
+</div>

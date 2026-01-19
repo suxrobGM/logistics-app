@@ -85,6 +85,20 @@ export const appRoutes: Routes = [
     },
   },
   {
+    path: "inspections",
+    loadChildren: () => import("./pages/inspections/inspection.routes").then((m) => m.inspectionRoutes),
+    data: {
+      breadcrumb: "Inspections",
+    },
+  },
+  {
+    path: "expenses",
+    loadChildren: () => import("./pages/expenses/expense.routes").then((m) => m.expenseRoutes),
+    data: {
+      breadcrumb: "Expenses",
+    },
+  },
+  {
     path: "",
     component: LoginComponent,
   },

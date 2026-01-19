@@ -1,5 +1,5 @@
-import { Component, type OnInit, inject, signal } from "@angular/core";
-import { ActivatedRoute, RouterLink } from "@angular/router";
+import { Component, input } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import type { DocumentType } from "@logistics/shared/api/models";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -11,10 +11,9 @@ import { DocumentManagerComponent } from "@/shared/components";
   templateUrl: "./load-documents.html",
   imports: [CardModule, ToastModule, RouterLink, DocumentManagerComponent, ButtonModule],
 })
-export class LoadDocumentsPage implements OnInit {
-  private readonly route = inject(ActivatedRoute);
+export class LoadDocumentsPage {
+  readonly id = input.required<string>();
 
-  protected readonly loadId = signal<string>("");
   protected readonly loadDocTypes: DocumentType[] = [
     "bill_of_lading",
     "proof_of_delivery",
@@ -24,9 +23,4 @@ export class LoadDocumentsPage implements OnInit {
     "photo",
     "other",
   ];
-
-  ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get("id");
-    if (id) this.loadId.set(id);
-  }
 }

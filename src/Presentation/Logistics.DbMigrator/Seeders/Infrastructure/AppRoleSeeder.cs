@@ -44,7 +44,7 @@ internal class AppRoleSeeder(ILogger<AppRoleSeeder> logger) : SeederBase(logger)
                 if (result.Succeeded)
                 {
                     await AddPermissionsAsync(roleManager, role, AppRolePermissions.GetBasicPermissions());
-                    await AddPermissionsAsync(roleManager, role, GetPermissionsBasedOnRole(role.Name!));
+                    await AddPermissionsAsync(roleManager, role, AppRolePermissions.GetPermissionsForRole(role.Name!));
                     Logger.LogInformation("Created app role '{RoleName}'", role.Name);
                 }
                 else
@@ -63,10 +63,12 @@ internal class AppRoleSeeder(ILogger<AppRoleSeeder> logger) : SeederBase(logger)
     private async Task UpdateRolePermissionsAsync(RoleManager<AppRole> roleManager, AppRole role)
     {
         var currentClaims = await roleManager.GetClaimsAsync(role);
-        var requiredPermissions = GetPermissionsBasedOnRole(role.Name!)
+        var requiredPermissions = AppRolePermissions.GetPermissionsForRole(role.Name!)
             .Concat(AppRolePermissions.GetBasicPermissions())
-            .Distinct();
+            .Distinct()
+            .ToList();
 
+        // Add missing permissions
         foreach (var permission in requiredPermissions)
         {
             if (!currentClaims.Any(c => c.Type == CustomClaimTypes.Permission && c.Value == permission))
@@ -74,6 +76,17 @@ internal class AppRoleSeeder(ILogger<AppRoleSeeder> logger) : SeederBase(logger)
                 await roleManager.AddClaimAsync(role, new Claim(CustomClaimTypes.Permission, permission));
                 Logger.LogInformation("Added permission '{Permission}' to role '{Role}'", permission, role.Name);
             }
+        }
+
+        // Remove permissions that are no longer in the required list
+        var permissionsToRemove = currentClaims
+            .Where(c => c.Type == CustomClaimTypes.Permission && !requiredPermissions.Contains(c.Value))
+            .ToList();
+
+        foreach (var claim in permissionsToRemove)
+        {
+            await roleManager.RemoveClaimAsync(role, claim);
+            Logger.LogInformation("Removed permission '{Permission}' from role '{Role}'", claim.Value, role.Name);
         }
     }
 
@@ -93,16 +106,5 @@ internal class AppRoleSeeder(ILogger<AppRoleSeeder> logger) : SeederBase(logger)
                 }
             }
         }
-    }
-
-    private static IEnumerable<string> GetPermissionsBasedOnRole(string roleName)
-    {
-        return roleName switch
-        {
-            AppRoles.SuperAdmin => AppRolePermissions.SuperAdmin,
-            AppRoles.Admin => AppRolePermissions.Admin,
-            AppRoles.Manager => AppRolePermissions.Manager,
-            _ => []
-        };
     }
 }

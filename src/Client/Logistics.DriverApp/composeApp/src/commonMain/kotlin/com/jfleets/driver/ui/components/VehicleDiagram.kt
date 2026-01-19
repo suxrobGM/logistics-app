@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -30,14 +31,14 @@ fun VehicleDiagram(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .aspectRatio(2f)
+            .aspectRatio(0.7f) // Taller aspect ratio for better car proportions
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.outline,
                 shape = RoundedCornerShape(8.dp)
             )
             .background(
-                color = Color.White,
+                color = Color(0xFFF5F5F5),
                 shape = RoundedCornerShape(8.dp)
             )
     ) {
@@ -54,128 +55,266 @@ fun VehicleDiagram(
         ) {
             val width = size.width
             val height = size.height
-            val padding = 20f
+            val padding = width * 0.15f
 
-            // Draw car silhouette (top-down view)
-            val carPath = Path().apply {
-                // Car body outline
-                val carLeft = padding + width * 0.15f
-                val carRight = width - padding - width * 0.15f
-                val carTop = padding + height * 0.1f
-                val carBottom = height - padding - height * 0.1f
-                val carWidth = carRight - carLeft
-                val carHeight = carBottom - carTop
+            // Car dimensions - centered in canvas
+            val carWidth = width * 0.5f
+            val carHeight = height * 0.85f
+            val carLeft = (width - carWidth) / 2
+            val carRight = carLeft + carWidth
+            val carTop = (height - carHeight) / 2
+            val carBottom = carTop + carHeight
 
-                // Front (rounded)
-                moveTo(carLeft + carWidth * 0.2f, carTop)
-                quadraticTo(carLeft, carTop, carLeft, carTop + carHeight * 0.15f)
+            // Hood taper and corner radius
+            val hoodTaper = carWidth * 0.08f
+            val bodyCorner = carWidth * 0.12f
+            val hoodCorner = carWidth * 0.08f
 
-                // Left side
-                lineTo(carLeft, carBottom - carHeight * 0.15f)
+            // Draw car body - clean sedan shape
+            val bodyPath = Path().apply {
+                // Start at front left after hood taper
+                moveTo(carLeft + hoodTaper, carTop + hoodCorner)
 
-                // Rear left (rounded)
-                quadraticTo(carLeft, carBottom, carLeft + carWidth * 0.1f, carBottom)
+                // Front left corner (hood - narrower)
+                quadraticTo(
+                    carLeft + hoodTaper, carTop,
+                    carLeft + hoodTaper + hoodCorner, carTop
+                )
 
-                // Rear
-                lineTo(carRight - carWidth * 0.1f, carBottom)
+                // Front edge (hood)
+                lineTo(carRight - hoodTaper - hoodCorner, carTop)
 
-                // Rear right (rounded)
-                quadraticTo(carRight, carBottom, carRight, carBottom - carHeight * 0.15f)
+                // Front right corner (hood)
+                quadraticTo(
+                    carRight - hoodTaper, carTop,
+                    carRight - hoodTaper, carTop + hoodCorner
+                )
 
-                // Right side
-                lineTo(carRight, carTop + carHeight * 0.15f)
+                // Transition from hood to body (right side)
+                lineTo(carRight - hoodTaper, carTop + carHeight * 0.12f)
+                quadraticTo(
+                    carRight, carTop + carHeight * 0.14f,
+                    carRight, carTop + carHeight * 0.18f
+                )
 
-                // Front right (rounded)
-                quadraticTo(carRight, carTop, carRight - carWidth * 0.2f, carTop)
+                // Right side (straight)
+                lineTo(carRight, carBottom - carHeight * 0.12f)
+
+                // Rear right corner
+                quadraticTo(
+                    carRight, carBottom,
+                    carRight - bodyCorner, carBottom
+                )
+
+                // Rear edge
+                lineTo(carLeft + bodyCorner, carBottom)
+
+                // Rear left corner
+                quadraticTo(
+                    carLeft, carBottom,
+                    carLeft, carBottom - carHeight * 0.12f
+                )
+
+                // Left side (straight)
+                lineTo(carLeft, carTop + carHeight * 0.18f)
+
+                // Transition from body to hood (left side)
+                quadraticTo(
+                    carLeft, carTop + carHeight * 0.14f,
+                    carLeft + hoodTaper, carTop + carHeight * 0.12f
+                )
 
                 close()
             }
 
-            // Draw car outline
+            // Car body fill
+            drawPath(path = bodyPath, color = Color(0xFFDDDDDD))
+
+            // Car body outline
             drawPath(
-                path = carPath,
-                color = Color.Gray,
-                style = Stroke(width = 2.dp.toPx())
+                path = bodyPath,
+                color = Color(0xFF555555),
+                style = Stroke(width = 2.5f.dp.toPx())
             )
 
-            // Draw wheels
-            val wheelWidth = width * 0.08f
-            val wheelHeight = height * 0.12f
-            val carLeft = padding + width * 0.15f
-            val carRight = width - padding - width * 0.15f
-            val carTop = padding + height * 0.1f
-            val carBottom = height - padding - height * 0.1f
+            // Cabin area (darker to show roof)
+            val cabinPath = Path().apply {
+                val cabinTop = carTop + carHeight * 0.22f
+                val cabinBottom = carBottom - carHeight * 0.18f
+                val cabinLeft = carLeft + carWidth * 0.08f
+                val cabinRight = carRight - carWidth * 0.08f
+                val cabinCorner = carWidth * 0.06f
 
-            // Front left wheel
-            drawRect(
-                color = Color.DarkGray,
-                topLeft = Offset(carLeft - wheelWidth / 2, carTop + height * 0.1f),
-                size = Size(wheelWidth, wheelHeight)
-            )
-            // Front right wheel
-            drawRect(
-                color = Color.DarkGray,
-                topLeft = Offset(carRight - wheelWidth / 2, carTop + height * 0.1f),
-                size = Size(wheelWidth, wheelHeight)
-            )
-            // Rear left wheel
-            drawRect(
-                color = Color.DarkGray,
-                topLeft = Offset(carLeft - wheelWidth / 2, carBottom - height * 0.1f - wheelHeight),
-                size = Size(wheelWidth, wheelHeight)
-            )
-            // Rear right wheel
-            drawRect(
-                color = Color.DarkGray,
-                topLeft = Offset(
-                    carRight - wheelWidth / 2,
-                    carBottom - height * 0.1f - wheelHeight
-                ),
-                size = Size(wheelWidth, wheelHeight)
-            )
-
-            // Draw windshield
-            val windshieldPath = Path().apply {
-                val wsLeft = carLeft + (carRight - carLeft) * 0.2f
-                val wsRight = carRight - (carRight - carLeft) * 0.2f
-                val wsTop = carTop + height * 0.08f
-                val wsBottom = carTop + height * 0.25f
-
-                moveTo(wsLeft, wsTop)
-                lineTo(wsRight, wsTop)
-                lineTo(wsRight - (carRight - carLeft) * 0.05f, wsBottom)
-                lineTo(wsLeft + (carRight - carLeft) * 0.05f, wsBottom)
+                moveTo(cabinLeft + cabinCorner, cabinTop)
+                lineTo(cabinRight - cabinCorner, cabinTop)
+                quadraticTo(cabinRight, cabinTop, cabinRight, cabinTop + cabinCorner)
+                lineTo(cabinRight, cabinBottom - cabinCorner)
+                quadraticTo(cabinRight, cabinBottom, cabinRight - cabinCorner, cabinBottom)
+                lineTo(cabinLeft + cabinCorner, cabinBottom)
+                quadraticTo(cabinLeft, cabinBottom, cabinLeft, cabinBottom - cabinCorner)
+                lineTo(cabinLeft, cabinTop + cabinCorner)
+                quadraticTo(cabinLeft, cabinTop, cabinLeft + cabinCorner, cabinTop)
                 close()
             }
+            drawPath(path = cabinPath, color = Color(0xFFCCCCCC))
+
+            // Front windshield
+            val windshieldPath = Path().apply {
+                val wsTop = carTop + carHeight * 0.14f
+                val wsBottom = carTop + carHeight * 0.26f
+                val wsInset = carWidth * 0.12f
+
+                moveTo(carLeft + wsInset + carWidth * 0.03f, wsTop)
+                lineTo(carRight - wsInset - carWidth * 0.03f, wsTop)
+                lineTo(carRight - wsInset, wsBottom)
+                lineTo(carLeft + wsInset, wsBottom)
+                close()
+            }
+            drawPath(path = windshieldPath, color = Color(0xFFADD8E6))
             drawPath(
                 path = windshieldPath,
-                color = Color.LightGray.copy(alpha = 0.5f)
+                color = Color(0xFF777777),
+                style = Stroke(width = 1.dp.toPx())
+            )
+
+            // Rear windshield
+            val rearWindowPath = Path().apply {
+                val rwTop = carBottom - carHeight * 0.22f
+                val rwBottom = carBottom - carHeight * 0.10f
+                val rwInset = carWidth * 0.12f
+
+                moveTo(carLeft + rwInset, rwTop)
+                lineTo(carRight - rwInset, rwTop)
+                lineTo(carRight - rwInset - carWidth * 0.02f, rwBottom)
+                lineTo(carLeft + rwInset + carWidth * 0.02f, rwBottom)
+                close()
+            }
+            drawPath(path = rearWindowPath, color = Color(0xFFADD8E6))
+            drawPath(
+                path = rearWindowPath,
+                color = Color(0xFF777777),
+                style = Stroke(width = 1.dp.toPx())
+            )
+
+            // Wheels - dark with rounded corners
+            val wheelWidth = carWidth * 0.22f
+            val wheelHeight = carHeight * 0.10f
+            val wheelColor = Color(0xFF2D2D2D)
+            val wheelCorner = CornerRadius(4.dp.toPx())
+
+            // Front left wheel
+            drawRoundRect(
+                color = wheelColor,
+                topLeft = Offset(carLeft - wheelWidth * 0.35f, carTop + carHeight * 0.08f),
+                size = Size(wheelWidth, wheelHeight),
+                cornerRadius = wheelCorner
+            )
+
+            // Front right wheel
+            drawRoundRect(
+                color = wheelColor,
+                topLeft = Offset(carRight - wheelWidth * 0.65f, carTop + carHeight * 0.08f),
+                size = Size(wheelWidth, wheelHeight),
+                cornerRadius = wheelCorner
+            )
+
+            // Rear left wheel
+            drawRoundRect(
+                color = wheelColor,
+                topLeft = Offset(carLeft - wheelWidth * 0.35f, carBottom - carHeight * 0.08f - wheelHeight),
+                size = Size(wheelWidth, wheelHeight),
+                cornerRadius = wheelCorner
+            )
+
+            // Rear right wheel
+            drawRoundRect(
+                color = wheelColor,
+                topLeft = Offset(carRight - wheelWidth * 0.65f, carBottom - carHeight * 0.08f - wheelHeight),
+                size = Size(wheelWidth, wheelHeight),
+                cornerRadius = wheelCorner
+            )
+
+            // Headlights
+            val lightWidth = carWidth * 0.14f
+            val lightHeight = carHeight * 0.025f
+            val lightCorner = CornerRadius(2.dp.toPx())
+
+            drawRoundRect(
+                color = Color(0xFFFFEB3B),
+                topLeft = Offset(carLeft + hoodTaper + carWidth * 0.05f, carTop + carHeight * 0.015f),
+                size = Size(lightWidth, lightHeight),
+                cornerRadius = lightCorner
+            )
+            drawRoundRect(
+                color = Color(0xFFFFEB3B),
+                topLeft = Offset(carRight - hoodTaper - carWidth * 0.05f - lightWidth, carTop + carHeight * 0.015f),
+                size = Size(lightWidth, lightHeight),
+                cornerRadius = lightCorner
+            )
+
+            // Taillights
+            drawRoundRect(
+                color = Color(0xFFE53935),
+                topLeft = Offset(carLeft + carWidth * 0.08f, carBottom - carHeight * 0.035f),
+                size = Size(lightWidth, lightHeight),
+                cornerRadius = lightCorner
+            )
+            drawRoundRect(
+                color = Color(0xFFE53935),
+                topLeft = Offset(carRight - carWidth * 0.08f - lightWidth, carBottom - carHeight * 0.035f),
+                size = Size(lightWidth, lightHeight),
+                cornerRadius = lightCorner
+            )
+
+            // Side mirrors
+            val mirrorWidth = carWidth * 0.10f
+            val mirrorHeight = carHeight * 0.018f
+
+            drawRoundRect(
+                color = Color(0xFF555555),
+                topLeft = Offset(carLeft - mirrorWidth + carWidth * 0.02f, carTop + carHeight * 0.20f),
+                size = Size(mirrorWidth, mirrorHeight),
+                cornerRadius = CornerRadius(2.dp.toPx())
+            )
+            drawRoundRect(
+                color = Color(0xFF555555),
+                topLeft = Offset(carRight - carWidth * 0.02f, carTop + carHeight * 0.20f),
+                size = Size(mirrorWidth, mirrorHeight),
+                cornerRadius = CornerRadius(2.dp.toPx())
             )
 
             // Draw damage markers
-            damageMarkers.forEachIndexed { index, marker ->
+            damageMarkers.forEach { marker ->
                 val markerX = (marker.x * width).toFloat()
                 val markerY = (marker.y * height).toFloat()
                 val markerRadius = 12.dp.toPx()
 
-                // Marker color based on severity
                 val markerColor = when (marker.severity?.lowercase()) {
-                    "severe" -> Color.Red
-                    "moderate" -> Color(0xFFFFA500) // Orange
-                    else -> Color.Yellow
+                    "severe" -> Color(0xFFD32F2F)
+                    "moderate" -> Color(0xFFFF9800)
+                    else -> Color(0xFFFFC107)
                 }
 
-                // Draw marker
+                // Shadow
+                drawCircle(
+                    color = Color.Black.copy(alpha = 0.25f),
+                    radius = markerRadius + 2.dp.toPx(),
+                    center = Offset(markerX + 2.dp.toPx(), markerY + 2.dp.toPx())
+                )
+
+                // Marker fill
                 drawCircle(
                     color = markerColor,
                     radius = markerRadius,
                     center = Offset(markerX, markerY)
                 )
+
+                // Marker border
                 drawCircle(
-                    color = Color.Black,
+                    color = Color.White,
                     radius = markerRadius,
                     center = Offset(markerX, markerY),
-                    style = Stroke(width = 2.dp.toPx())
+                    style = Stroke(width = 2.5f.dp.toPx())
                 )
             }
         }

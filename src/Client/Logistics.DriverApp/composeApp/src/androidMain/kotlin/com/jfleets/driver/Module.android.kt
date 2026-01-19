@@ -1,11 +1,14 @@
 package com.jfleets.driver
 
 import android.content.Context
+import androidx.activity.ComponentActivity
 import com.jfleets.driver.service.LocationService
 import com.jfleets.driver.service.auth.AuthService
 import com.jfleets.driver.service.createAndroidDataStore
 import com.jfleets.driver.service.messaging.MessagingService
 import com.jfleets.driver.service.realtime.SignalRService
+import com.jfleets.driver.util.BarcodeScannerLauncher
+import com.jfleets.driver.util.CameraLauncher
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -19,17 +22,21 @@ const val MESSAGING_HUB_URL = "http://10.0.2.2:7000/hubs/messaging"
 
 private var koinInitialized = false
 
-fun initKoin(context: Context) {
+fun initKoin(activity: ComponentActivity) {
     if (koinInitialized) {
         return
     }
 
+    // Create launchers before Koin initialization (must happen in onCreate before setContent)
+    val cameraLauncher = CameraLauncher(activity)
+    val barcodeScannerLauncher = BarcodeScannerLauncher(activity)
+
     startKoin {
         androidLogger()
-        androidContext(context)
+        androidContext(activity)
         modules(
             // Android-specific module (must be loaded first to provide PreferencesManager)
-            androidModule,
+            androidModule(cameraLauncher, barcodeScannerLauncher),
             commonModule(baseUrl = API_BASE_URL)
         )
     }
@@ -37,10 +44,17 @@ fun initKoin(context: Context) {
     koinInitialized = true
 }
 
-private val androidModule = module {
+private fun androidModule(
+    cameraLauncher: CameraLauncher,
+    barcodeScannerLauncher: BarcodeScannerLauncher
+) = module {
     single { createAndroidDataStore(get<Context>()) }
     single { AuthService(IDENTITY_SERVER_URL, get()) }
     single { SignalRService(SIGNALR_HUB_URL, get()) }
     single { MessagingService(MESSAGING_HUB_URL, get()) }
     singleOf(::LocationService)
+
+    // Platform-specific launchers
+    single { cameraLauncher }
+    single { barcodeScannerLauncher }
 }

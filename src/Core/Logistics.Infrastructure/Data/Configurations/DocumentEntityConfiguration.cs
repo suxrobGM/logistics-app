@@ -55,6 +55,21 @@ internal sealed class DocumentEntityConfiguration : IEntityTypeConfiguration<Doc
         builder.Property(d => d.Description)
             .HasMaxLength(1000);
 
+        // POD/BOL capture metadata
+        builder.Property(d => d.RecipientName)
+            .HasMaxLength(255);
+
+        builder.Property(d => d.RecipientSignature)
+            .HasMaxLength(2048);
+
+        builder.Property(d => d.CaptureLatitude);
+        builder.Property(d => d.CaptureLongitude);
+        builder.Property(d => d.CapturedAt);
+        builder.Property(d => d.TripStopId);
+
+        builder.Property(d => d.Notes)
+            .HasMaxLength(2000);
+
         // Relations
         builder.HasOne(d => d.UploadedBy)
             .WithMany()

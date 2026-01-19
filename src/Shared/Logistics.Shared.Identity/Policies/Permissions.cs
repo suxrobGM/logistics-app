@@ -129,6 +129,13 @@ public static class Permission
         public const string ViewDocuments = $"{nameof(Permission)}.{nameof(Portal)}.ViewDocuments";
     }
 
+    public static class Expense
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(Expense)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Expense)}.Manage";
+        public const string Approve = $"{nameof(Permission)}.{nameof(Expense)}.Approve";
+    }
+
     public static IEnumerable<string> GetAll()
     {
         var list = new List<string>();

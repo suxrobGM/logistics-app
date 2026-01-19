@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="320dp"
+    android:viewportWidth="200"
+    android:viewportHeight="320">
+
+    <!-- Car body -->
+    <path
+        android:fillColor="#E8E8E8"
+        android:strokeColor="#666666"
+        android:strokeWidth="2"
+        android:pathData="M60,30
+            Q60,15 75,15
+            L125,15
+            Q140,15 140,30
+            L140,55
+            Q155,60 155,75
+            L155,245
+            Q155,260 140,260
+            L140,290
+            Q140,305 125,305
+            L75,305
+            Q60,305 60,290
+            L60,260
+            Q45,260 45,245
+            L45,75
+            Q45,60 60,55
+            Z" />
+
+    <!-- Front windshield -->
+    <path
+        android:fillColor="#B8D4E8"
+        android:strokeColor="#888888"
+        android:strokeWidth="1"
+        android:pathData="M70,50 L130,50 L125,85 L75,85 Z" />
+
+    <!-- Rear windshield -->
+    <path
+        android:fillColor="#B8D4E8"
+        android:strokeColor="#888888"
+        android:strokeWidth="1"
+        android:pathData="M75,235 L125,235 L130,270 L70,270 Z" />
+
+    <!-- Left side window -->
+    <path
+        android:fillColor="#B8D4E8"
+        android:pathData="M50,100 L55,100 L55,180 L50,180 Z" />
+
+    <!-- Right side window -->
+    <path
+        android:fillColor="#B8D4E8"
+        android:pathData="M145,100 L150,100 L150,180 L145,180 Z" />
+
+    <!-- Front left wheel -->
+    <path
+        android:fillColor="#333333"
+        android:pathData="M30,55 Q30,50 35,50 L50,50 Q55,50 55,55 L55,90 Q55,95 50,95 L35,95 Q30,95 30,90 Z" />
+
+    <!-- Front right wheel -->
+    <path
+        android:fillColor="#333333"
+        android:pathData="M145,55 Q145,50 150,50 L165,50 Q170,50 170,55 L170,90 Q170,95 165,95 L150,95 Q145,95 145,90 Z" />
+
+    <!-- Rear left wheel -->
+    <path
+        android:fillColor="#333333"
+        android:pathData="M30,225 Q30,220 35,220 L50,220 Q55,220 55,225 L55,260 Q55,265 50,265 L35,265 Q30,265 30,260 Z" />
+
+    <!-- Rear right wheel -->
+    <path
+        android:fillColor="#333333"
+        android:pathData="M145,225 Q145,220 150,220 L165,220 Q170,220 170,225 L170,260 Q170,265 165,265 L150,265 Q145,265 145,260 Z" />
+
+    <!-- Left headlight -->
+    <path
+        android:fillColor="#FFEB3B"
+        android:pathData="M70,20 Q70,18 72,18 L88,18 Q90,18 90,20 L90,25 Q90,27 88,27 L72,27 Q70,27 70,25 Z" />
+
+    <!-- Right headlight -->
+    <path
+        android:fillColor="#FFEB3B"
+        android:pathData="M110,20 Q110,18 112,18 L128,18 Q130,18 130,20 L130,25 Q130,27 128,27 L112,27 Q110,27 110,25 Z" />
+
+    <!-- Left taillight -->
+    <path
+        android:fillColor="#E53935"
+        android:pathData="M70,293 Q70,291 72,291 L88,291 Q90,291 90,293 L90,298 Q90,300 88,300 L72,300 Q70,300 70,298 Z" />
+
+    <!-- Right taillight -->
+    <path
+        android:fillColor="#E53935"
+        android:pathData="M110,293 Q110,291 112,291 L128,291 Q130,291 130,293 L130,298 Q130,300 128,300 L112,300 Q110,300 110,298 Z" />
+
+    <!-- Left mirror -->
+    <path
+        android:fillColor="#666666"
+        android:pathData="M35,70 L45,70 L45,78 L35,78 Z" />
+
+    <!-- Right mirror -->
+    <path
+        android:fillColor="#666666"
+        android:pathData="M155,70 L165,70 L165,78 L155,78 Z" />
+</vector>

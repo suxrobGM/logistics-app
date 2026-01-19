@@ -45,5 +45,8 @@ export * from "./domain-forms";
 // Search Components
 export * from "./search";
 
+// Inspections
+export * from "./inspections";
+
 // Other
 export * from "./other";

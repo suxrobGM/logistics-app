@@ -135,10 +135,7 @@ fun createEntryProvider(
             loadId = key.loadId,
             tripStopId = key.tripStopId ?: "",
             captureType = captureType,
-            onNavigateBack = { navigator.goBack() },
-            onCapturePhoto = {
-                // TODO: Launch camera - platform specific implementation
-            }
+            onNavigateBack = { navigator.goBack() }
         )
     }
 
@@ -152,13 +149,7 @@ fun createEntryProvider(
         ConditionReportScreen(
             loadId = key.loadId,
             inspectionType = inspectionType,
-            onNavigateBack = { navigator.goBack() },
-            onCapturePhoto = {
-                // TODO: Launch camera - platform specific implementation
-            },
-            onScanVin = {
-                // TODO: Launch barcode scanner - platform specific implementation
-            }
+            onNavigateBack = { navigator.goBack() }
         )
     }
 

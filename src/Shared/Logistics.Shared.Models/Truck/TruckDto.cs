@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Shared.Models;
 
-public class TruckDto
+public record TruckDto
 {
     public Guid? Id { get; set; }
     public string? Number { get; set; }

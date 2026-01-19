@@ -3,12 +3,14 @@ import {
   ElementRef,
   type OnDestroy,
   type OnInit,
+  effect,
   inject,
+  input,
   signal,
   viewChild,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Router } from "@angular/router";
 import type { ConversationDto, EmployeeDto, MessageDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
@@ -43,12 +45,12 @@ import { MessagesStore } from "../store/messages.store";
 export class ConversationComponent implements OnInit, OnDestroy {
   protected readonly messagesContainer = viewChild<ElementRef<HTMLDivElement>>("messagesContainer");
 
-  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly messagingService = inject(MessagingService);
   private readonly authService = inject(AuthService);
   protected readonly store = inject(MessagesStore);
 
+  readonly id = input.required<string>();
   protected messageContent = signal("");
   protected currentUserId = signal<string | null>(null);
   protected showDetails = signal(false);
@@ -56,6 +58,16 @@ export class ConversationComponent implements OnInit, OnDestroy {
   protected selectedRecipient = signal<EmployeeDto | null>(null);
   protected isCreatingConversation = signal(false);
   private typingTimeout: ReturnType<typeof setTimeout> | null = null;
+  private initialized = false;
+
+  constructor() {
+    effect(() => {
+      const conversationId = this.id();
+      if (this.initialized && conversationId) {
+        this.handleConversationId(conversationId);
+      }
+    });
+  }
 
   async ngOnInit(): Promise<void> {
     await this.messagingService.connect();
@@ -65,7 +77,14 @@ export class ConversationComponent implements OnInit, OnDestroy {
       this.currentUserId.set(userData.id);
     }
 
-    const conversationId = this.route.snapshot.params["id"];
+    this.initialized = true;
+    const conversationId = this.id();
+    if (conversationId) {
+      await this.handleConversationId(conversationId);
+    }
+  }
+
+  private async handleConversationId(conversationId: string): Promise<void> {
     if (!conversationId || conversationId === "new") {
       this.isNewConversation.set(true);
       return;

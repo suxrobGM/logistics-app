@@ -1,5 +1,4 @@
 using System.Data.Common;
-using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
@@ -94,21 +93,23 @@ public partial class TenantDatabaseService(
                 DisplayName = tenantRole.DisplayName
             };
 
-            var existingRole = await context.Set<TenantRole>().FirstOrDefaultAsync(i => i.Name == role.Name);
+            var existingRole = await context.Set<TenantRole>()
+                .Include(r => r.Claims)
+                .FirstOrDefaultAsync(i => i.Name == role.Name);
+
             if (existingRole != null)
             {
-                // Update existing role claims
-                var newPermissions = GetPermissionsBasedOnRole(role.Name);
-                AddRolePermissions(existingRole, newPermissions);
+                // Sync role claims - add missing and remove stale
+                await SyncRolePermissionsAsync(existingRole);
                 context.Set<TenantRole>().Update(existingRole);
                 logger.LogInformation("Updated tenant role '{Role}'", existingRole.Name);
             }
             else
             {
                 // Add new role and its claims
-                AddRolePermissions(role, TenantRolePermissions.GetBasicPermissions());
-                var newPermissions = GetPermissionsBasedOnRole(role.Name);
-                AddRolePermissions(role, newPermissions);
+                var basicPermissions = TenantRolePermissions.GetBasicPermissions();
+                var rolePermissions = TenantRolePermissions.GetPermissionsForRole(role.Name);
+                AddRolePermissions(role, basicPermissions.Concat(rolePermissions).Distinct());
 
                 context.Set<TenantRole>().Add(role);
                 logger.LogInformation("Added tenant role '{Role}'", role.Name);
@@ -118,6 +119,37 @@ public partial class TenantDatabaseService(
         await context.SaveChangesAsync();
     }
 
+    private Task SyncRolePermissionsAsync(TenantRole role)
+    {
+        var requiredPermissions = TenantRolePermissions.GetPermissionsForRole(role.Name)
+            .Concat(TenantRolePermissions.GetBasicPermissions())
+            .Distinct()
+            .ToList();
+
+        // Add missing permissions
+        foreach (var permission in requiredPermissions)
+        {
+            if (!role.Claims.Any(c => c.ClaimType == CustomClaimTypes.Permission && c.ClaimValue == permission))
+            {
+                role.Claims.Add(new TenantRoleClaim(CustomClaimTypes.Permission, permission));
+                logger.LogInformation("Added permission '{Permission}' to tenant role '{Role}'", permission, role.Name);
+            }
+        }
+
+        // Remove permissions that are no longer in the required list
+        var claimsToRemove = role.Claims
+            .Where(c => c.ClaimType == CustomClaimTypes.Permission && !requiredPermissions.Contains(c.ClaimValue!))
+            .ToList();
+
+        foreach (var claim in claimsToRemove)
+        {
+            role.Claims.Remove(claim);
+            logger.LogInformation("Removed permission '{Permission}' from tenant role '{Role}'", claim.ClaimValue, role.Name);
+        }
+
+        return Task.CompletedTask;
+    }
+
     private void AddRolePermissions(TenantRole role, IEnumerable<string> permissions)
     {
         foreach (var permission in permissions)
@@ -125,26 +157,12 @@ public partial class TenantDatabaseService(
             // Add the claim only if it does not already exist.
             if (!role.Claims.Any(c => c.ClaimType == CustomClaimTypes.Permission && c.ClaimValue == permission))
             {
-                var claim = new Claim(CustomClaimTypes.Permission, permission);
-                role.Claims.Add(new TenantRoleClaim(claim.Type, claim.Value));
+                role.Claims.Add(new TenantRoleClaim(CustomClaimTypes.Permission, permission));
 
                 logger.LogInformation("Added claim '{ClaimType}' - '{ClaimValue}' to the tenant role '{Role}'",
-                    claim.Type, claim.Value, role.Name);
+                    CustomClaimTypes.Permission, permission, role.Name);
             }
         }
-    }
-
-    private static IEnumerable<string> GetPermissionsBasedOnRole(string roleName)
-    {
-        return roleName switch
-        {
-            TenantRoles.Owner => TenantRolePermissions.Owner,
-            TenantRoles.Manager => TenantRolePermissions.Manager,
-            TenantRoles.Dispatcher => TenantRolePermissions.Dispatcher,
-            TenantRoles.Driver => TenantRolePermissions.Driver,
-            TenantRoles.Customer => TenantRolePermissions.Customer,
-            _ => []
-        };
     }
 
     [GeneratedRegex("{tenant}")]

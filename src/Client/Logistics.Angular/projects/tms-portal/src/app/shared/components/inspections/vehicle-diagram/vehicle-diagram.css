@@ -1,0 +1,6 @@
+.damage-marker {
+  transition: transform 0.2s ease;
+}
+.damage-marker:hover {
+  transform: scale(1.2);
+}

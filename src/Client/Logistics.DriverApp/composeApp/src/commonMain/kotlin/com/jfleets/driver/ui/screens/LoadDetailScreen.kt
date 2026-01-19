@@ -157,7 +157,7 @@ fun LoadDetailScreen(
                         Text("View Route on Maps")
                     }
 
-                    // Action Buttons
+                    // Status-specific Action Buttons
                     when (load.status) {
                         LoadStatus.DISPATCHED -> {
                             // Capture BOL button
@@ -168,18 +168,6 @@ fun LoadDetailScreen(
                                 Icon(Icons.Default.Description, "BOL")
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text("Capture Bill of Lading")
-                            }
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            // Pickup Inspection button
-                            OutlinedButton(
-                                onClick = { load.id?.let { onPickupInspection(it) } },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Icon(Icons.Default.Description, "Inspection")
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text("Pickup Vehicle Inspection")
                             }
 
                             Spacer(modifier = Modifier.height(8.dp))
@@ -206,18 +194,6 @@ fun LoadDetailScreen(
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            // Delivery Inspection button
-                            OutlinedButton(
-                                onClick = { load.id?.let { onDeliveryInspection(it) } },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Icon(Icons.Default.Description, "Inspection")
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text("Delivery Vehicle Inspection")
-                            }
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
                             Button(
                                 onClick = { viewModel.confirmDelivery() },
                                 modifier = Modifier.fillMaxWidth(),
@@ -228,6 +204,47 @@ fun LoadDetailScreen(
                         }
 
                         else -> {}
+                    }
+
+                    // Vehicle Inspection Section - Always visible for active loads
+                    if (load.status in listOf(
+                            LoadStatus.DISPATCHED,
+                            LoadStatus.PICKED_UP,
+                            LoadStatus.DELIVERED
+                        )
+                    ) {
+                        CardContainer {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = "Vehicle Condition Reports",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                // Pickup Inspection button
+                                OutlinedButton(
+                                    onClick = { load.id?.let { onPickupInspection(it) } },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Icon(Icons.Default.Description, "Pickup Inspection")
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text("Pickup Inspection (DVIR)")
+                                }
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                // Delivery Inspection button
+                                OutlinedButton(
+                                    onClick = { load.id?.let { onDeliveryInspection(it) } },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Icon(Icons.Default.Description, "Delivery Inspection")
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text("Delivery Inspection (DVIR)")
+                                }
+                            }
+                        }
                     }
                 }
             }

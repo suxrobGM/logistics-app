@@ -51,6 +51,10 @@ export const Permission = {
     View: "Permission.Invitation.View",
     Manage: "Permission.Invitation.Manage",
   },
+  Expense: {
+    View: "Permission.Expense.View",
+    Manage: "Permission.Expense.Manage",
+  },
 } as const;
 
 /**

@@ -41,6 +41,12 @@ maps-compose = "7.0.0"
 # SignalR
 signalr = "10.0.2"
 
+# CameraX
+camerax = "1.5.2"
+
+# ML Kit
+mlkit-barcode = "17.3.0"
+
 [libraries]
 # Kotlin Extensions
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
@@ -92,6 +98,15 @@ maps-compose-utils = { module = "com.google.maps.android:maps-compose-utils", ve
 # SignalR
 signalr-client = { module = "com.microsoft.signalr:signalr", version.ref = "signalr" }
 
+# CameraX
+camerax-core = { module = "androidx.camera:camera-core", version.ref = "camerax" }
+camerax-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
+camerax-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax" }
+camerax-view = { module = "androidx.camera:camera-view", version.ref = "camerax" }
+
+# ML Kit Barcode Scanning
+mlkit-barcode = { module = "com.google.mlkit:barcode-scanning", version.ref = "mlkit-barcode" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidKotlinMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
@@ -121,4 +136,11 @@ maps = [
     "play-services-maps",
     "maps-compose",
     "maps-compose-utils"
+]
+
+camerax = [
+    "camerax-core",
+    "camerax-camera2",
+    "camerax-lifecycle",
+    "camerax-view"
 ]

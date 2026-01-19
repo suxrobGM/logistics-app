@@ -6,6 +6,9 @@ import type { DocumentType } from '../models/document-type';
 export interface DocumentDto {
   blobContainer?: string | null;
   blobPath?: string | null;
+  captureLatitude?: number | null;
+  captureLongitude?: number | null;
+  capturedAt?: string | null;
   contentType?: string | null;
   createdAt?: string;
   description?: string | null;
@@ -14,8 +17,12 @@ export interface DocumentDto {
   fileSizeBytes?: number;
   id?: string;
   loadId?: string | null;
+  notes?: string | null;
   originalFileName?: string | null;
+  recipientName?: string | null;
+  recipientSignature?: string | null;
   status?: DocumentStatus;
+  tripStopId?: string | null;
   type?: DocumentType;
   updatedAt?: string | null;
   uploadedById?: string;

@@ -1,0 +1,277 @@
+<div class="condition-report-detail mx-auto max-w-7xl p-6">
+  <!-- Header -->
+  <div class="page-header mb-6 border-b border-gray-200 pb-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="mb-2 text-2xl font-bold text-gray-900">Condition Report Details</h1>
+        @if (report()) {
+          <div class="flex items-center gap-3">
+            <p-tag
+              [value]="getTypeLabel(report()!.type ?? '')"
+              [severity]="getTypeSeverity(report()!.type ?? '')"
+            />
+            <span class="text-gray-500">|</span>
+            <span class="font-mono text-sm text-gray-600">VIN: {{ report()!.vin || 'N/A' }}</span>
+          </div>
+        }
+      </div>
+      <div class="flex gap-2">
+        <p-button
+          icon="pi pi-arrow-left"
+          label="Back to List"
+          [routerLink]="['/inspections']"
+          severity="secondary"
+          [outlined]="true"
+        />
+      </div>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-16">
+      <p-progress-spinner />
+    </div>
+  } @else if (report()) {
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <!-- Left Column: Vehicle Info & Diagram -->
+      <div class="space-y-6">
+        <!-- Vehicle Information -->
+        <p-card>
+          <ng-template #header>
+            <div class="flex items-center gap-2 p-4 pb-0">
+              <i class="pi pi-car text-primary"></i>
+              <h3 class="m-0 text-lg font-semibold">Vehicle Information</h3>
+            </div>
+          </ng-template>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="mb-1 block text-xs font-medium text-gray-500">VIN</label>
+              <p class="font-mono text-sm">{{ report()!.vin || 'N/A' }}</p>
+            </div>
+            <div>
+              <label class="mb-1 block text-xs font-medium text-gray-500">Vehicle</label>
+              <p class="text-sm">{{ getVehicleInfo() }}</p>
+            </div>
+            @if (report()!.vehicleBodyClass) {
+              <div class="col-span-2">
+                <label class="mb-1 block text-xs font-medium text-gray-500">Body Class</label>
+                <p class="text-sm">{{ report()!.vehicleBodyClass }}</p>
+              </div>
+            }
+          </div>
+        </p-card>
+
+        <!-- Vehicle Diagram with Damage Markers -->
+        <p-card>
+          <ng-template #header>
+            <div class="flex items-center justify-between p-4 pb-0">
+              <div class="flex items-center gap-2">
+                <i class="pi pi-map text-primary"></i>
+                <h3 class="m-0 text-lg font-semibold">Damage Locations</h3>
+              </div>
+              @if (damageMarkers().length > 0) {
+                <p-tag [value]="damageMarkers().length + ' damage(s)'" severity="danger" />
+              } @else {
+                <p-tag value="No damage" severity="success" />
+              }
+            </div>
+          </ng-template>
+
+          <app-vehicle-diagram [markers]="damageMarkers()" [showLegend]="true" />
+        </p-card>
+
+        <!-- Damage Details Table -->
+        @if (damageMarkers().length > 0) {
+          <p-card>
+            <ng-template #header>
+              <div class="flex items-center gap-2 p-4 pb-0">
+                <i class="pi pi-exclamation-triangle text-orange-500"></i>
+                <h3 class="m-0 text-lg font-semibold">Damage Details</h3>
+              </div>
+            </ng-template>
+
+            <p-table [value]="damageMarkers()" [scrollable]="true" class="p-datatable-sm">
+              <ng-template #header>
+                <tr>
+                  <th class="w-16">#</th>
+                  <th class="w-28">Severity</th>
+                  <th>Description</th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-marker let-i="rowIndex">
+                <tr>
+                  <td class="font-bold">{{ i + 1 }}</td>
+                  <td>
+                    <p-tag
+                      [value]="marker.severity || 'Unknown'"
+                      [severity]="getSeverityBadge(marker.severity)"
+                    />
+                  </td>
+                  <td>{{ marker.description || 'No description provided' }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-card>
+        }
+      </div>
+
+      <!-- Right Column: Inspection Info, Photos, Notes -->
+      <div class="space-y-6">
+        <!-- Inspection Information -->
+        <p-card>
+          <ng-template #header>
+            <div class="flex items-center gap-2 p-4 pb-0">
+              <i class="pi pi-clipboard text-primary"></i>
+              <h3 class="m-0 text-lg font-semibold">Inspection Information</h3>
+            </div>
+          </ng-template>
+
+          <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="mb-1 block text-xs font-medium text-gray-500">Inspection Type</label>
+                <p-tag
+                  [value]="getTypeLabel(report()!.type ?? '')"
+                  [severity]="getTypeSeverity(report()!.type ?? '')"
+                />
+              </div>
+              <div>
+                <label class="mb-1 block text-xs font-medium text-gray-500">Signature</label>
+                @if (report()!.hasSignature) {
+                  <span class="flex items-center gap-1 text-green-600">
+                    <i class="pi pi-check-circle"></i>
+                    Captured
+                  </span>
+                } @else {
+                  <span class="text-gray-400">Not captured</span>
+                }
+              </div>
+            </div>
+
+            <p-divider />
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="mb-1 block text-xs font-medium text-gray-500">Inspector</label>
+                <p class="text-sm">{{ report()!.inspectorName || 'N/A' }}</p>
+              </div>
+              <div>
+                <label class="mb-1 block text-xs font-medium text-gray-500">Inspected At</label>
+                <p class="text-sm">{{ report()!.inspectedAt | date: 'medium' }}</p>
+              </div>
+            </div>
+
+            @if (report()!.latitude && report()!.longitude) {
+              <div class="rounded-lg bg-green-50 p-3">
+                <label class="mb-1 block text-xs font-medium text-green-600">Location</label>
+                <div class="flex items-center justify-between">
+                  <p class="text-sm">{{ formatCoordinates(report()!.latitude, report()!.longitude) }}</p>
+                  <a
+                    [href]="getGoogleMapsUrl(report()!.latitude, report()!.longitude)"
+                    target="_blank"
+                    class="text-primary text-sm hover:underline"
+                  >
+                    <i class="pi pi-external-link mr-1"></i>
+                    Open in Maps
+                  </a>
+                </div>
+              </div>
+            }
+
+            <div>
+              <label class="mb-1 block text-xs font-medium text-gray-500">Load ID</label>
+              <a
+                [routerLink]="['/loads', report()!.loadId, 'edit']"
+                class="text-primary text-sm hover:underline"
+              >
+                {{ report()!.loadId }}
+                <i class="pi pi-external-link ml-1 text-xs"></i>
+              </a>
+            </div>
+          </div>
+        </p-card>
+
+        <!-- Notes -->
+        @if (report()!.notes) {
+          <p-card>
+            <ng-template #header>
+              <div class="flex items-center gap-2 p-4 pb-0">
+                <i class="pi pi-file-edit text-primary"></i>
+                <h3 class="m-0 text-lg font-semibold">Notes</h3>
+              </div>
+            </ng-template>
+
+            <p class="whitespace-pre-wrap text-sm text-gray-700">{{ report()!.notes }}</p>
+          </p-card>
+        }
+
+        <!-- Photos -->
+        @if (report()!.photos && (report()!.photos ?? []).length > 0) {
+          <p-card>
+            <ng-template #header>
+              <div class="flex items-center justify-between p-4 pb-0">
+                <div class="flex items-center gap-2">
+                  <i class="pi pi-images text-primary"></i>
+                  <h3 class="m-0 text-lg font-semibold">Photos</h3>
+                </div>
+                <p-tag [value]="(report()!.photos ?? []).length + ' photo(s)'" severity="info" />
+              </div>
+            </ng-template>
+
+            <div class="grid grid-cols-3 gap-3">
+              @for (photo of report()!.photos; track photo.id; let i = $index) {
+                <div
+                  class="group relative cursor-pointer overflow-hidden rounded-lg border"
+                  (click)="openGallery(i)"
+                >
+                  <img
+                    [src]="getPhotoUrl(photo.blobPath)"
+                    [alt]="photo.originalFileName || photo.fileName"
+                    class="aspect-square w-full object-cover transition-transform group-hover:scale-105"
+                  />
+                  <div
+                    class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100"
+                  >
+                    <i class="pi pi-search-plus text-2xl text-white"></i>
+                  </div>
+                </div>
+              }
+            </div>
+          </p-card>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="py-16 text-center">
+      <i class="pi pi-exclamation-circle mb-4 text-4xl text-gray-400"></i>
+      <p class="text-gray-500">Condition report not found</p>
+      <p-button
+        label="Back to List"
+        [routerLink]="['/inspections']"
+        severity="secondary"
+        [outlined]="true"
+        class="mt-4"
+      />
+    </div>
+  }
+</div>
+
+<!-- Photo Gallery Dialog -->
+<p-galleria
+  [value]="photoUrls()"
+  [(visible)]="showGallery"
+  [(activeIndex)]="activeImageIndex"
+  [circular]="true"
+  [fullScreen]="true"
+  [showItemNavigators]="true"
+  [showThumbnails]="true"
+  [numVisible]="5"
+>
+  <ng-template #item let-item>
+    <img [src]="item.itemImageSrc" [alt]="item.alt" class="max-h-[80vh] w-auto" />
+  </ng-template>
+  <ng-template #thumbnail let-item>
+    <img [src]="item.thumbnailImageSrc" [alt]="item.alt" class="h-16 w-16 object-cover" />
+  </ng-template>
+</p-galleria>

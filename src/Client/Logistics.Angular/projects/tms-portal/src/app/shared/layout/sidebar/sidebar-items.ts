@@ -87,6 +87,29 @@ export const sidebarItems: MenuItem[] = [
     ],
   },
   {
+    label: "Expenses",
+    icon: "pi pi-wallet text-3xl!",
+    items: [
+      {
+        label: "All Expenses",
+        route: "/expenses",
+      },
+      {
+        label: "Add Expense",
+        route: "/expenses/add",
+      },
+      {
+        label: "Analytics",
+        route: "/expenses/analytics",
+      },
+    ],
+  },
+  {
+    label: "Inspections",
+    icon: "pi pi-clipboard text-3xl!",
+    route: "/inspections",
+  },
+  {
     label: "Subscription",
     icon: "pi pi-credit-card text-3xl!",
     route: "/subscription/manage",
