@@ -1,0 +1,103 @@
+<p-drawer
+  [visible]="visible()"
+  (visibleChange)="onVisibleChange($event)"
+  position="left"
+  [modal]="true"
+  [closeOnEscape]="true"
+  [dismissible]="true"
+  [showCloseIcon]="true"
+  styleClass="mobile-nav-drawer"
+>
+  <ng-template #header>
+    <div class="flex items-center gap-3">
+      <img src="images/logo.svg" class="h-10 w-auto" alt="Logo" />
+      @if (companyName()) {
+        <h4 class="font-semibold text-gray-800">{{ companyName() }}</h4>
+      }
+    </div>
+  </ng-template>
+
+  <nav class="mobile-nav-menu flex h-full flex-col">
+    <!-- Navigation Items -->
+    <div class="flex-1 overflow-y-auto py-2">
+      @for (item of navItems(); track item.label) {
+        @if (item.items && item.items.length > 0) {
+          <!-- Expandable Menu Item -->
+          <div class="mb-1">
+            <button
+              class="mobile-nav-item flex w-full items-center justify-between rounded-lg px-4 py-3 text-left text-gray-700 hover:bg-gray-100"
+              (click)="toggleExpanded(item)"
+            >
+              <div class="flex items-center gap-3">
+                <i [class]="item.icon"></i>
+                <span class="font-medium">{{ item.label }}</span>
+              </div>
+              <i
+                class="pi transition-transform duration-200"
+                [class.pi-chevron-down]="!item.expanded"
+                [class.pi-chevron-up]="item.expanded"
+              ></i>
+            </button>
+
+            @if (item.expanded) {
+              <div class="mt-1 ml-6 space-y-1 border-l-2 border-gray-200 pl-4">
+                @for (subItem of item.items; track subItem.label) {
+                  <button
+                    class="mobile-nav-subitem block w-full rounded-lg px-4 py-2 text-left text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                    (click)="navigateTo(subItem.route!)"
+                  >
+                    {{ subItem.label }}
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <!-- Direct Link Item -->
+          <button
+            class="mobile-nav-item flex w-full items-center gap-3 rounded-lg px-4 py-3 text-gray-700 hover:bg-gray-100"
+            (click)="navigateTo(item.route!)"
+          >
+            <i [class]="item.icon"></i>
+            <span class="font-medium">{{ item.label }}</span>
+          </button>
+        }
+      }
+    </div>
+
+    <!-- User Section -->
+    <div class="border-t border-gray-200 pt-4">
+      @if (userFullName()) {
+        <div class="px-4 pb-3">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-300">
+              <i class="pi pi-user text-gray-600"></i>
+            </div>
+            <div>
+              <p class="font-medium text-gray-800">{{ userFullName() }}</p>
+              @if (userRole()) {
+                <p class="text-sm text-gray-500">{{ userRole() }}</p>
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+      <button
+        class="flex w-full items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100"
+        (click)="openAccountUrl()"
+      >
+        <i class="pi pi-user-edit text-lg"></i>
+        <span>Manage Profile</span>
+      </button>
+
+      <button
+        class="flex w-full items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50"
+        (click)="logout()"
+      >
+        <i class="pi pi-sign-out text-lg"></i>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </nav>
+</p-drawer>

@@ -1,0 +1,22 @@
+:host ::ng-deep {
+  .mobile-nav-drawer {
+    width: 300px !important;
+    max-width: 85vw;
+  }
+
+  .mobile-nav-drawer .p-drawer-content {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+}
+
+.mobile-nav-item {
+  transition: background-color 0.2s ease;
+}
+
+.mobile-nav-item:active,
+.mobile-nav-subitem:active {
+  background-color: var(--p-primary-100);
+}

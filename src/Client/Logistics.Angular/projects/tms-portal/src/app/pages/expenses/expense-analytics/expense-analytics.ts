@@ -11,6 +11,7 @@ import { DatePicker } from "primeng/datepicker";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { PageHeader } from "@/shared/components";
+import { downloadBlobFile } from "@/shared/utils";
 
 @Component({
   selector: "app-expense-analytics",
@@ -134,12 +135,7 @@ export class ExpenseAnalyticsPage implements OnInit {
 
     const csvContent = rows.map((row) => row.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `expense-analytics-${new Date().toISOString().split("T")[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadBlobFile(blob, `expense-analytics-${new Date().toISOString().split("T")[0]}.csv`);
   }
 
   private updateCharts(s: ExpenseStatsDto): void {

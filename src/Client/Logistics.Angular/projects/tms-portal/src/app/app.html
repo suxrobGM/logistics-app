@@ -2,11 +2,25 @@
 <p-confirm-dialog key="confirmDialog" position="center" />
 
 @if (showLayout()) {
+  <!-- Mobile Header (visible only on mobile) -->
+  <app-mobile-header />
+
+  <!-- Mobile Drawer (slides in from left) -->
+  <app-mobile-drawer />
+
   <div class="flex">
-    <app-sidebar />
+    <!-- Desktop Sidebar (hidden on mobile) -->
+    <div class="hidden md:block">
+      <app-sidebar />
+    </div>
+
+    <!-- Main Content -->
     <div class="w-full pb-10">
-      <app-breadcrumb />
-      <div class="p-2">
+      @if (!layouytService.isMobile()) {
+        <app-breadcrumb />
+      }
+
+      <div class="p-1">
         <router-outlet />
       </div>
     </div>

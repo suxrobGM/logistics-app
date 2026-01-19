@@ -1,0 +1,22 @@
+<header
+  class="sticky top-0 z-40 flex items-center justify-between border-b border-gray-300 bg-[#c2d1dd] px-4 py-3 md:hidden"
+>
+  <!-- Hamburger Menu Button -->
+  <p-button
+    [icon]="mobileMenuOpen() ? 'pi pi-times' : 'pi pi-bars'"
+    [text]="true"
+    severity="secondary"
+    (click)="toggleMenu()"
+    aria-label="Toggle navigation menu"
+    styleClass="text-xl"
+  />
+
+  <!-- Logo and App Name -->
+  <a routerLink="/home" class="flex items-center gap-2">
+    <img src="images/logo.svg" class="h-8 w-auto" alt="Logo" />
+    <span class="text-lg font-semibold text-gray-800">TMS Portal</span>
+  </a>
+
+  <!-- Spacer for balance -->
+  <div class="w-10"></div>
+</header>

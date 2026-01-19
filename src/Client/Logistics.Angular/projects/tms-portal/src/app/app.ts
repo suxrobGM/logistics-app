@@ -4,7 +4,8 @@ import { ConfirmDialog } from "primeng/confirmdialog";
 import { ToastModule } from "primeng/toast";
 import { filter } from "rxjs";
 import { AuthService } from "@/core/auth";
-import { Breadcrumb, Sidebar } from "@/shared/layout";
+import { LayoutService } from "@/core/services";
+import { Breadcrumb, MobileDrawer, MobileHeader, Sidebar } from "@/shared/layout";
 
 /** Routes that should not show the sidebar/breadcrumb layout */
 const STANDALONE_ROUTES = ["/", "/unauthorized", "/404"];
@@ -12,11 +13,20 @@ const STANDALONE_ROUTES = ["/", "/unauthorized", "/404"];
 @Component({
   selector: "app-root",
   templateUrl: "./app.html",
-  imports: [Breadcrumb, ToastModule, RouterOutlet, Sidebar, ConfirmDialog],
+  imports: [
+    Breadcrumb,
+    ToastModule,
+    RouterOutlet,
+    Sidebar,
+    ConfirmDialog,
+    MobileHeader,
+    MobileDrawer,
+  ],
 })
 export class App {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  protected readonly layouytService = inject(LayoutService);
 
   protected readonly isAuthenticated = signal(false);
   private readonly currentUrl = signal("/");
