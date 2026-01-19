@@ -45,7 +45,8 @@ var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithExternalHttpEndpoints()
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(tenantDb, "DefaultTenantDatabase")
-    .WithEnvironment("IdentityServer__Authority", isPublishMode ? "http://identity-server:7001" : "http://localhost:7001")
+    .WithEnvironment("IdentityServer__Authority",
+        isPublishMode ? "http://identity-server:7001" : "http://localhost:7001")
     .WithEnvironment("IdentityServer__RequireHttpsMetadata", "false")
     .WithEnvironment("Smtp__SenderEmail", builder.GetConfigValue("Smtp:SenderEmail"))
     .WithEnvironment("Smtp__SenderName", builder.GetConfigValue("Smtp:SenderName"))
@@ -59,6 +60,8 @@ var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithEnvironment("Mapbox__AccessToken", builder.GetConfigValue("Mapbox:AccessToken"))
     .WithEnvironment("TenantsDatabaseConfig__DatabasePassword",
         builder.GetConfigValue("TenantsDatabaseConfig:DatabasePassword"))
+    .WithEnvironment("TenantsDatabaseConfig__DatabasePort",
+        builder.GetConfigValue("TenantsDatabaseConfig:DatabasePort"))
     .WaitFor(migrator)
     .WaitFor(identityServer);
 

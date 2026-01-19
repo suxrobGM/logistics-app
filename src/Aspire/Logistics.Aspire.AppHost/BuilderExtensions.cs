@@ -23,25 +23,5 @@ public static class BuilderExtensions
 
             return builder.Configuration[key] ?? string.Empty;
         }
-
-        /// <summary>
-        ///     Gets a required configuration value based on execution context.
-        ///     In publish mode: returns ${Key__Subkey} syntax for docker-compose env var substitution.
-        ///     In run mode: returns the actual value from appsettings, throws if missing.
-        /// </summary>
-        /// <param name="key">The configuration key in "Section:Key" format (e.g., "Stripe:SecretKey").</param>
-        /// <returns>Either the env var reference or actual config value.</returns>
-        /// <exception cref="InvalidOperationException">Thrown when value is missing in run mode.</exception>
-        public string GetRequiredConfigValue(string key)
-        {
-            var value = builder.GetConfigValue(key);
-
-            if (string.IsNullOrEmpty(value))
-            {
-                throw new InvalidOperationException($"Configuration value '{key}' is missing or empty.");
-            }
-
-            return value;
-        }
     }
 }

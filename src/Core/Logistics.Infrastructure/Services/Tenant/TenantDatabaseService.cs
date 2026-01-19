@@ -29,7 +29,7 @@ public partial class TenantDatabaseService(
 
         var databaseName = TenantDatabaseNameRegex().Replace(databaseOptions.DatabaseNameTemplate, tenantName);
         var connectionString =
-            $"Host={databaseOptions.DatabaseHost}; Database={databaseName}; Port=5432; Username={databaseOptions.DatabaseUserId}; Password={databaseOptions.DatabasePassword}";
+            $"Host={databaseOptions.DatabaseHost}; Database={databaseName}; Port={databaseOptions.DatabasePort}; Username={databaseOptions.DatabaseUserId}; Password={databaseOptions.DatabasePassword}";
         return connectionString;
     }
 
@@ -144,7 +144,8 @@ public partial class TenantDatabaseService(
         foreach (var claim in claimsToRemove)
         {
             role.Claims.Remove(claim);
-            logger.LogInformation("Removed permission '{Permission}' from tenant role '{Role}'", claim.ClaimValue, role.Name);
+            logger.LogInformation("Removed permission '{Permission}' from tenant role '{Role}'", claim.ClaimValue,
+                role.Name);
         }
 
         return Task.CompletedTask;
