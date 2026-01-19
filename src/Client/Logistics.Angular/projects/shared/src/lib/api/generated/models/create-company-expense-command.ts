@@ -8,6 +8,6 @@ export interface CreateCompanyExpenseCommand {
   currency?: string | null;
   expenseDate?: string;
   notes?: string | null;
-  receiptBlobPath: string | null;
+  receiptBlobPath?: string | null;
   vendorName?: string | null;
 }

@@ -1,3 +1,5 @@
+export * from "./expense-status-tag/expense-status-tag";
+export * from "./expense-type-tag/expense-type-tag";
 export * from "./invoice-status-tag/invoice-status-tag";
 export * from "./load-status-tag/load-status-tag";
 export * from "./load-type-tag/load-type-tag";

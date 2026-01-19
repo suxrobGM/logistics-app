@@ -170,6 +170,7 @@ export type { UpdateTenantCommand } from './models/update-tenant-command';
 export type { UpdateTripCommand } from './models/update-trip-command';
 export type { UpdateTruckCommand } from './models/update-truck-command';
 export type { UpdateUserCommand } from './models/update-user-command';
+export type { UploadReceiptResponse } from './models/upload-receipt-response';
 export type { UsBankAccountHolderType } from './models/us-bank-account-holder-type';
 export type { UsBankAccountType } from './models/us-bank-account-type';
 export type { UserDto } from './models/user-dto';

@@ -99,7 +99,7 @@
           <td>
             <p-button
               icon="pi pi-ellipsis-v"
-              (click)="menu.toggle($event); $event.stopPropagation()"
+              (click)="openActionMenu(report, menu, $event); $event.stopPropagation()"
               severity="secondary"
               [text]="true"
             />

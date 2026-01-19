@@ -1,13 +1,14 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, signal, type OnInit } from "@angular/core";
+import { Component, type OnInit, inject, signal } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import {
   Api,
+  createBodyShopExpense,
   createCompanyExpense,
   createTruckExpense,
-  createBodyShopExpense,
   getTrucks,
+  uploadExpenseReceipt,
 } from "@logistics/shared/api";
 import type { TruckDto } from "@logistics/shared/api/models";
 import { MessageService } from "primeng/api";
@@ -56,52 +57,52 @@ export class ExpenseAddPage implements OnInit {
   private readonly router = inject(Router);
   private readonly messageService = inject(MessageService);
 
-  readonly isLoading = signal(false);
-  readonly activeTab = signal(0);
-  readonly trucks = signal<TruckDto[]>([]);
-  readonly receiptPath = signal<string>("");
+  protected readonly isLoading = signal(false);
+  protected readonly activeTab = signal(0);
+  protected readonly trucks = signal<TruckDto[]>([]);
+  protected readonly receiptPath = signal<string>("");
 
-  readonly companyCategories: CategoryOption[] = [
-    { label: "Office", value: "Office" },
-    { label: "Software", value: "Software" },
-    { label: "Insurance", value: "Insurance" },
-    { label: "Legal", value: "Legal" },
-    { label: "Travel", value: "Travel" },
-    { label: "Other", value: "Other" },
+  protected readonly companyCategories: CategoryOption[] = [
+    { label: "Office", value: "office" },
+    { label: "Software", value: "software" },
+    { label: "Insurance", value: "insurance" },
+    { label: "Legal", value: "legal" },
+    { label: "Travel", value: "travel" },
+    { label: "Other", value: "other" },
   ];
 
-  readonly truckCategories: CategoryOption[] = [
-    { label: "Fuel", value: "Fuel" },
-    { label: "Maintenance", value: "Maintenance" },
-    { label: "Tires", value: "Tires" },
-    { label: "Registration", value: "Registration" },
-    { label: "Toll", value: "Toll" },
-    { label: "Parking", value: "Parking" },
-    { label: "Other", value: "Other" },
+  protected readonly truckCategories: CategoryOption[] = [
+    { label: "Fuel", value: "fuel" },
+    { label: "Maintenance", value: "maintenance" },
+    { label: "Tires", value: "tires" },
+    { label: "Registration", value: "registration" },
+    { label: "Toll", value: "toll" },
+    { label: "Parking", value: "parking" },
+    { label: "Other", value: "other" },
   ];
 
   // Company expense form
-  companyForm: FormGroup = this.fb.group({
+  protected readonly companyForm: FormGroup = this.fb.group({
     amount: [null, [Validators.required, Validators.min(0.01)]],
     vendorName: [""],
     expenseDate: [new Date(), Validators.required],
     notes: [""],
-    category: ["Office", Validators.required],
+    category: ["office", Validators.required],
   });
 
   // Truck expense form
-  truckForm: FormGroup = this.fb.group({
+  protected readonly truckForm: FormGroup = this.fb.group({
     amount: [null, [Validators.required, Validators.min(0.01)]],
     vendorName: [""],
     expenseDate: [new Date(), Validators.required],
     notes: [""],
     truckId: [null, Validators.required],
-    category: ["Fuel", Validators.required],
+    category: ["fuel", Validators.required],
     odometerReading: [null],
   });
 
   // Body shop expense form
-  bodyShopForm: FormGroup = this.fb.group({
+  protected readonly bodyShopForm: FormGroup = this.fb.group({
     amount: [null, [Validators.required, Validators.min(0.01)]],
     vendorName: [""],
     expenseDate: [new Date(), Validators.required],
@@ -124,25 +125,40 @@ export class ExpenseAddPage implements OnInit {
     this.receiptPath.set("");
   }
 
-  onReceiptUpload(event: { files: File[] }): void {
-    // TODO: Upload to blob storage and get path
-    // For now, use a placeholder path
-    if (event.files.length > 0) {
-      this.receiptPath.set(`receipts/${Date.now()}_${event.files[0].name}`);
+  async onReceiptUpload(event: { files: File[] }): Promise<void> {
+    if (event.files.length === 0) return;
+
+    const file = event.files[0];
+    this.isLoading.set(true);
+
+    const result = await this.api.invoke(uploadExpenseReceipt, {
+      body: { File: file },
+    });
+
+    this.isLoading.set(false);
+
+    if (result?.blobPath) {
+      this.receiptPath.set(result.blobPath);
       this.messageService.add({
         severity: "success",
         summary: "Receipt Uploaded",
         detail: "Receipt file attached successfully.",
       });
+    } else {
+      this.messageService.add({
+        severity: "error",
+        summary: "Upload Failed",
+        detail: "Failed to upload receipt. Please try again.",
+      });
     }
   }
 
   async submitCompanyExpense(): Promise<void> {
-    if (!this.companyForm.valid || !this.receiptPath()) {
+    if (!this.companyForm.valid) {
       this.messageService.add({
         severity: "error",
         summary: "Validation Error",
-        detail: "Please fill all required fields and attach a receipt.",
+        detail: "Please fill all required fields.",
       });
       return;
     }
@@ -156,7 +172,7 @@ export class ExpenseAddPage implements OnInit {
         currency: "USD",
         vendorName: formValue.vendorName,
         expenseDate: formValue.expenseDate.toISOString(),
-        receiptBlobPath: this.receiptPath(),
+        receiptBlobPath: this.receiptPath() || null,
         notes: formValue.notes,
         category: formValue.category,
       },
@@ -175,11 +191,11 @@ export class ExpenseAddPage implements OnInit {
   }
 
   async submitTruckExpense(): Promise<void> {
-    if (!this.truckForm.valid || !this.receiptPath()) {
+    if (!this.truckForm.valid) {
       this.messageService.add({
         severity: "error",
         summary: "Validation Error",
-        detail: "Please fill all required fields and attach a receipt.",
+        detail: "Please fill all required fields.",
       });
       return;
     }
@@ -193,7 +209,7 @@ export class ExpenseAddPage implements OnInit {
         currency: "USD",
         vendorName: formValue.vendorName,
         expenseDate: formValue.expenseDate.toISOString(),
-        receiptBlobPath: this.receiptPath(),
+        receiptBlobPath: this.receiptPath() || null,
         notes: formValue.notes,
         truckId: formValue.truckId,
         category: formValue.category,
@@ -214,11 +230,11 @@ export class ExpenseAddPage implements OnInit {
   }
 
   async submitBodyShopExpense(): Promise<void> {
-    if (!this.bodyShopForm.valid || !this.receiptPath()) {
+    if (!this.bodyShopForm.valid) {
       this.messageService.add({
         severity: "error",
         summary: "Validation Error",
-        detail: "Please fill all required fields and attach a receipt.",
+        detail: "Please fill all required fields.",
       });
       return;
     }
@@ -232,7 +248,7 @@ export class ExpenseAddPage implements OnInit {
         currency: "USD",
         vendorName: formValue.vendorName,
         expenseDate: formValue.expenseDate.toISOString(),
-        receiptBlobPath: this.receiptPath(),
+        receiptBlobPath: this.receiptPath() || null,
         notes: formValue.notes,
         truckId: formValue.truckId,
         vendorAddress: formValue.vendorAddress,

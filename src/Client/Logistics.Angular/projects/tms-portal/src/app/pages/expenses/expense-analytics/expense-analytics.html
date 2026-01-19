@@ -79,13 +79,13 @@
     <div class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
       <!-- Expense Type Distribution -->
       @if (typeChartData()) {
-        <p-card>
+        <p-card class="overflow-hidden">
           <ng-template #header>
             <div class="p-4 pb-0">
               <h3 class="m-0 text-lg font-semibold">Expense by Type</h3>
             </div>
           </ng-template>
-          <div class="h-64">
+          <div class="h-80">
             <p-chart type="pie" [data]="typeChartData()" [options]="chartOptions" />
           </div>
         </p-card>
@@ -93,13 +93,13 @@
 
       <!-- Monthly Trend -->
       @if (monthlyTrendChartData()) {
-        <p-card>
+        <p-card class="overflow-hidden">
           <ng-template #header>
             <div class="p-4 pb-0">
               <h3 class="m-0 text-lg font-semibold">Monthly Expense Trend</h3>
             </div>
           </ng-template>
-          <div class="h-64">
+          <div class="h-80">
             <p-chart type="line" [data]="monthlyTrendChartData()" [options]="lineChartOptions" />
           </div>
         </p-card>
@@ -110,13 +110,13 @@
     <div class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
       <!-- Company Category Distribution -->
       @if (companyCategoryChartData()) {
-        <p-card>
+        <p-card class="overflow-hidden">
           <ng-template #header>
             <div class="p-4 pb-0">
               <h3 class="m-0 text-lg font-semibold">Company Expenses by Category</h3>
             </div>
           </ng-template>
-          <div class="h-64">
+          <div class="h-80">
             <p-chart type="doughnut" [data]="companyCategoryChartData()" [options]="chartOptions" />
           </div>
         </p-card>
@@ -124,13 +124,13 @@
 
       <!-- Truck Category Distribution -->
       @if (truckCategoryChartData()) {
-        <p-card>
+        <p-card class="overflow-hidden">
           <ng-template #header>
             <div class="p-4 pb-0">
               <h3 class="m-0 text-lg font-semibold">Truck Expenses by Category</h3>
             </div>
           </ng-template>
-          <div class="h-64">
+          <div class="h-80">
             <p-chart type="bar" [data]="truckCategoryChartData()" [options]="chartOptions" />
           </div>
         </p-card>

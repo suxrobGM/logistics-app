@@ -1,13 +1,13 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, signal, type OnInit } from "@angular/core";
+import { Component, type OnInit, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Api, getExpenseStats } from "@logistics/shared/api";
 import type { ExpenseStatsDto } from "@logistics/shared/api/models";
 import { ButtonModule } from "primeng/button";
-import { DatePicker } from "primeng/datepicker";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
+import { DatePicker } from "primeng/datepicker";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { PageHeader } from "@/shared/components";
@@ -31,18 +31,18 @@ import { PageHeader } from "@/shared/components";
 export class ExpenseAnalyticsPage implements OnInit {
   private readonly api = inject(Api);
 
-  readonly isLoading = signal(false);
-  readonly stats = signal<ExpenseStatsDto | null>(null);
-  readonly fromDate = signal<Date | null>(null);
-  readonly toDate = signal<Date | null>(null);
+  protected readonly isLoading = signal(false);
+  protected readonly stats = signal<ExpenseStatsDto | null>(null);
+  protected readonly fromDate = signal<Date | null>(null);
+  protected readonly toDate = signal<Date | null>(null);
 
   // Chart data
-  readonly typeChartData = signal<unknown>(null);
-  readonly companyCategoryChartData = signal<unknown>(null);
-  readonly truckCategoryChartData = signal<unknown>(null);
-  readonly monthlyTrendChartData = signal<unknown>(null);
+  protected readonly typeChartData = signal<unknown>(null);
+  protected readonly companyCategoryChartData = signal<unknown>(null);
+  protected readonly truckCategoryChartData = signal<unknown>(null);
+  protected readonly monthlyTrendChartData = signal<unknown>(null);
 
-  readonly chartOptions = {
+  protected readonly chartOptions = {
     plugins: {
       legend: {
         position: "bottom",
@@ -52,7 +52,7 @@ export class ExpenseAnalyticsPage implements OnInit {
     maintainAspectRatio: false,
   };
 
-  readonly lineChartOptions = {
+  protected readonly lineChartOptions = {
     plugins: {
       legend: {
         display: false,

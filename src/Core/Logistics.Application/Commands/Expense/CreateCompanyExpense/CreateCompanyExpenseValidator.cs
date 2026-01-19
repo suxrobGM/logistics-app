@@ -10,7 +10,7 @@ public class CreateCompanyExpenseValidator : AbstractValidator<CreateCompanyExpe
         RuleFor(x => x.Currency).NotEmpty().MaximumLength(3);
         RuleFor(x => x.VendorName).MaximumLength(255);
         RuleFor(x => x.ExpenseDate).NotEmpty();
-        RuleFor(x => x.ReceiptBlobPath).NotEmpty().MaximumLength(500);
+        RuleFor(x => x.ReceiptBlobPath).MaximumLength(500);
         RuleFor(x => x.Notes).MaximumLength(2000);
         RuleFor(x => x.Category).IsInEnum();
     }

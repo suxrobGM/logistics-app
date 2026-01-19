@@ -5,19 +5,13 @@ using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.Services;
 
-public class FileBlobStorageService : IBlobStorageService
+public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, ITenantService tenantService)
+    : IBlobStorageService
 {
-    private readonly FileBlobStorageOptions _options;
-    private readonly ITenantService _tenantService;
-
-    public FileBlobStorageService(IOptions<FileBlobStorageOptions> options, ITenantService tenantService)
-    {
-        _options = options.Value;
-        _tenantService = tenantService;
-    }
+    private readonly FileBlobStorageOptions _options = options.Value;
 
     public async Task<string> UploadAsync(string containerName, string blobName, Stream content, string contentType,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
         var containerPath = GetContainerPath(containerName);
         EnsureDirectoryExists(containerPath);
@@ -31,7 +25,7 @@ public class FileBlobStorageService : IBlobStorageService
         }
 
         await using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-        await content.CopyToAsync(fileStream, cancellationToken);
+        await content.CopyToAsync(fileStream, ct);
 
         // Store metadata alongside the file
         await StoreMetadataAsync(filePath, contentType, content.Length);
@@ -40,7 +34,7 @@ public class FileBlobStorageService : IBlobStorageService
     }
 
     public async Task<Stream> DownloadAsync(string containerName, string blobName,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
         var filePath = GetFilePath(containerName, blobName);
 
@@ -53,7 +47,7 @@ public class FileBlobStorageService : IBlobStorageService
         return await Task.FromResult(fileStream);
     }
 
-    public async Task DeleteAsync(string containerName, string blobName, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(string containerName, string blobName, CancellationToken ct = default)
     {
         var filePath = GetFilePath(containerName, blobName);
         var metadataPath = GetMetadataPath(filePath);
@@ -72,14 +66,14 @@ public class FileBlobStorageService : IBlobStorageService
     }
 
     public async Task<bool> ExistsAsync(string containerName, string blobName,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
         var filePath = GetFilePath(containerName, blobName);
         return await Task.FromResult(File.Exists(filePath));
     }
 
     public async Task<BlobFileProperties> GetPropertiesAsync(string containerName, string blobName,
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
         var filePath = GetFilePath(containerName, blobName);
 
@@ -101,7 +95,7 @@ public class FileBlobStorageService : IBlobStorageService
 
     private string GetContainerPath(string containerName)
     {
-        var tenant = _tenantService.GetCurrentTenant();
+        var tenant = tenantService.GetCurrentTenant();
         var tenantId = tenant.Id.ToString();
         return Path.Combine(_options.RootPath, tenantId, containerName);
     }
@@ -119,7 +113,7 @@ public class FileBlobStorageService : IBlobStorageService
 
     private string GetFileUri(string containerName, string blobName)
     {
-        var tenant = _tenantService.GetCurrentTenant();
+        var tenant = tenantService.GetCurrentTenant();
         var tenantId = tenant.Id.ToString();
 
         if (!string.IsNullOrEmpty(_options.BaseUrl))
@@ -144,7 +138,7 @@ public class FileBlobStorageService : IBlobStorageService
         return Convert.ToBase64String(Encoding.UTF8.GetBytes(hash));
     }
 
-    private async Task StoreMetadataAsync(string filePath, string contentType, long contentLength)
+    private static async Task StoreMetadataAsync(string filePath, string contentType, long contentLength)
     {
         var metadataPath = GetMetadataPath(filePath);
         var metadata = new FileMetadata
@@ -158,7 +152,7 @@ public class FileBlobStorageService : IBlobStorageService
         await File.WriteAllTextAsync(metadataPath, json);
     }
 
-    private async Task<FileMetadata> LoadMetadataAsync(string filePath)
+    private static async Task<FileMetadata> LoadMetadataAsync(string filePath)
     {
         var metadataPath = GetMetadataPath(filePath);
 

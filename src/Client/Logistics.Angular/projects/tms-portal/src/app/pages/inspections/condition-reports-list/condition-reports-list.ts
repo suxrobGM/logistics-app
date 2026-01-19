@@ -59,6 +59,11 @@ export class ConditionReportsListPage implements OnInit {
     this.store.setSearch(value);
   }
 
+  protected openActionMenu(report: ConditionReportDto, menu: { toggle: (event: Event) => void }, event: Event): void {
+    this.selectedRow.set(report);
+    menu.toggle(event);
+  }
+
   protected getTypeSeverity(type: string | undefined): "success" | "info" {
     return type === "pickup" ? "info" : "success";
   }

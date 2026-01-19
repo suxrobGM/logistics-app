@@ -3,6 +3,8 @@ import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
 import { ExpensesListPage } from "./expenses-list/expenses-list";
 import { ExpenseAddPage } from "./expense-add/expense-add";
+import { ExpenseDetailPage } from "./expense-detail/expense-detail";
+import { ExpenseEditPage } from "./expense-edit/expense-edit";
 import { ExpenseAnalyticsPage } from "./expense-analytics/expense-analytics";
 
 export const expenseRoutes: Routes = [
@@ -31,6 +33,24 @@ export const expenseRoutes: Routes = [
     data: {
       breadcrumb: "Analytics",
       permission: Permission.Expense.View,
+    },
+  },
+  {
+    path: ":id",
+    component: ExpenseDetailPage,
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: "Details",
+      permission: Permission.Expense.View,
+    },
+  },
+  {
+    path: ":id/edit",
+    component: ExpenseEditPage,
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: "Edit",
+      permission: Permission.Expense.Manage,
     },
   },
 ];

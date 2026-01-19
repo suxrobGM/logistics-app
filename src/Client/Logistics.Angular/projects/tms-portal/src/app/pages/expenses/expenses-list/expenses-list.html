@@ -10,14 +10,18 @@
 </div>
 
 <p-card>
+  <div class="mb-4">
+    <shared-search-input (searchChange)="onSearch($event)" />
+  </div>
+
   <shared-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
     [isEmpty]="store.isEmpty()"
     skeletonVariant="table"
     [skeletonRows]="10"
-    emptyTitle="No expenses yet"
-    emptyMessage="Expenses will appear here when created."
+    emptyTitle="No expenses found"
+    emptyMessage="Try adjusting your search or add a new expense."
     (retry)="store.retry()"
   >
     <p-table
@@ -34,9 +38,6 @@
       [loading]="store.isLoading()"
       [rowsPerPageOptions]="[10, 25, 50]"
     >
-      <ng-template #caption>
-        <shared-search-input (searchChange)="onSearch($event)" />
-      </ng-template>
       <ng-template #header>
         <tr>
           <th pSortableColumn="Number" class="w-24">
@@ -74,10 +75,7 @@
             <span class="font-mono text-sm">{{ expense.number }}</span>
           </td>
           <td>
-            <p-tag
-              [value]="getTypeLabel(expense.type)"
-              [severity]="getTypeSeverity(expense.type)"
-            />
+            <app-expense-type-tag [type]="expense.type" />
           </td>
           <td>
             <span class="text-sm">{{ getCategoryLabel(expense) }}</span>
@@ -92,14 +90,18 @@
           </td>
           <td>{{ expense.expenseDate | date: 'mediumDate' }}</td>
           <td>
-            <p-tag
-              [value]="getStatusLabel(expense.status)"
-              [severity]="getStatusSeverity(expense.status)"
-            />
+            <app-expense-status-tag [status]="expense.status" />
           </td>
           <td>
             @if (expense.receiptBlobPath) {
-              <i class="pi pi-file text-green-500" pTooltip="Receipt attached"></i>
+              <p-button
+                icon="pi pi-file"
+                pTooltip="View receipt"
+                severity="success"
+                [text]="true"
+                size="small"
+                (click)="viewReceipt(expense, $event)"
+              />
             } @else {
               <i class="pi pi-file text-gray-400" pTooltip="No receipt"></i>
             }
@@ -107,7 +109,7 @@
           <td>
             <p-button
               icon="pi pi-ellipsis-v"
-              (click)="menu.toggle($event); $event.stopPropagation()"
+              (click)="openActionMenu(expense, menu, $event); $event.stopPropagation()"
               severity="secondary"
               [text]="true"
             />
@@ -119,4 +121,7 @@
 </p-card>
 
 <!-- Context menu for actions -->
-<p-menu #menu [model]="actionMenuItems" [popup]="true" />
+<p-menu #menu [model]="actionMenuItems()" [popup]="true" />
+
+<!-- Reject dialog -->
+<app-reject-expense-dialog />

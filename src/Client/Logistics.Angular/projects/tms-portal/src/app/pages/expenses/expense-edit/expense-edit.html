@@ -1,0 +1,219 @@
+<p-toast />
+
+<div class="mx-auto max-w-4xl">
+  <div class="flex items-start justify-between">
+    <shared-page-header [title]="'Edit ' + getTypeLabel(expense()?.type)" [showAddButton]="false" />
+    <p-button
+      icon="pi pi-arrow-left"
+      label="Back"
+      [routerLink]="['/expenses', id()]"
+      severity="secondary"
+      [outlined]="true"
+    />
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-16">
+      <p-progress-spinner />
+    </div>
+  } @else if (expense()) {
+    <p-card>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+        <!-- Common Fields -->
+        <div class="grid grid-cols-2 gap-4">
+          <shared-labeled-field label="Amount" for="amount" [required]="true">
+            <p-inputNumber
+              id="amount"
+              formControlName="amount"
+              mode="currency"
+              [currency]="expense()?.amount?.currency || 'USD'"
+              [min]="0"
+              styleClass="w-full"
+            />
+          </shared-labeled-field>
+
+          <shared-labeled-field label="Expense Date" for="expenseDate" [required]="true">
+            <p-datepicker
+              id="expenseDate"
+              formControlName="expenseDate"
+              [showIcon]="true"
+              styleClass="w-full"
+            />
+          </shared-labeled-field>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <shared-labeled-field label="Vendor Name" for="vendorName">
+            <input pInputText id="vendorName" formControlName="vendorName" class="w-full" />
+          </shared-labeled-field>
+
+          <!-- Company Category -->
+          @if (expense()?.type === 'company') {
+            <shared-labeled-field label="Category" for="companyCategory" [required]="true">
+              <p-select
+                id="companyCategory"
+                formControlName="companyCategory"
+                [options]="companyCategories"
+                optionLabel="label"
+                optionValue="value"
+                styleClass="w-full"
+              />
+            </shared-labeled-field>
+          }
+
+          <!-- Truck Category -->
+          @if (expense()?.type === 'truck') {
+            <shared-labeled-field label="Category" for="truckCategory" [required]="true">
+              <p-select
+                id="truckCategory"
+                formControlName="truckCategory"
+                [options]="truckCategories"
+                optionLabel="label"
+                optionValue="value"
+                styleClass="w-full"
+              />
+            </shared-labeled-field>
+          }
+        </div>
+
+        <!-- Truck-specific Fields -->
+        @if (expense()?.type === 'truck') {
+          <div class="grid grid-cols-2 gap-4">
+            <shared-labeled-field label="Truck" for="truckId">
+              <p-select
+                id="truckId"
+                formControlName="truckId"
+                [options]="trucks()"
+                optionLabel="number"
+                optionValue="id"
+                placeholder="Select a truck"
+                styleClass="w-full"
+                [disabled]="true"
+              />
+            </shared-labeled-field>
+
+            <shared-labeled-field label="Odometer Reading" for="odometerReading">
+              <p-inputNumber
+                id="odometerReading"
+                formControlName="odometerReading"
+                [min]="0"
+                suffix=" mi"
+                styleClass="w-full"
+              />
+            </shared-labeled-field>
+          </div>
+        }
+
+        <!-- Body Shop-specific Fields -->
+        @if (expense()?.type === 'body_shop') {
+          <div class="grid grid-cols-2 gap-4">
+            <shared-labeled-field label="Truck" for="truckId">
+              <p-select
+                id="truckId"
+                formControlName="truckId"
+                [options]="trucks()"
+                optionLabel="number"
+                optionValue="id"
+                placeholder="Select a truck"
+                styleClass="w-full"
+                [disabled]="true"
+              />
+            </shared-labeled-field>
+
+            <shared-labeled-field label="Shop Phone" for="vendorPhone">
+              <input pInputText id="vendorPhone" formControlName="vendorPhone" class="w-full" />
+            </shared-labeled-field>
+          </div>
+
+          <shared-labeled-field label="Shop Address" for="vendorAddress">
+            <input pInputText id="vendorAddress" formControlName="vendorAddress" class="w-full" />
+          </shared-labeled-field>
+
+          <shared-labeled-field label="Repair Description" for="repairDescription">
+            <textarea
+              pInputTextarea
+              id="repairDescription"
+              formControlName="repairDescription"
+              rows="3"
+              class="w-full"
+            ></textarea>
+          </shared-labeled-field>
+
+          <div class="grid grid-cols-2 gap-4">
+            <shared-labeled-field label="Estimated Completion" for="estimatedCompletionDate">
+              <p-datepicker
+                id="estimatedCompletionDate"
+                formControlName="estimatedCompletionDate"
+                [showIcon]="true"
+                styleClass="w-full"
+              />
+            </shared-labeled-field>
+
+            <shared-labeled-field label="Actual Completion" for="actualCompletionDate">
+              <p-datepicker
+                id="actualCompletionDate"
+                formControlName="actualCompletionDate"
+                [showIcon]="true"
+                styleClass="w-full"
+              />
+            </shared-labeled-field>
+          </div>
+        }
+
+        <shared-labeled-field label="Notes" for="notes">
+          <textarea
+            pInputTextarea
+            id="notes"
+            formControlName="notes"
+            rows="3"
+            class="w-full"
+          ></textarea>
+        </shared-labeled-field>
+
+        <shared-labeled-field label="Receipt (Optional)">
+          <p-fileUpload
+            mode="basic"
+            [auto]="true"
+            accept="image/*,.pdf"
+            chooseLabel="Upload New Receipt"
+            (onSelect)="onReceiptUpload($event)"
+          />
+          @if (receiptPath()) {
+            <span class="mt-2 block text-sm text-green-600">
+              <i class="pi pi-check mr-1"></i>
+              Receipt attached
+            </span>
+          }
+        </shared-labeled-field>
+
+        <div class="flex justify-end gap-2 pt-4">
+          <p-button
+            label="Cancel"
+            [routerLink]="['/expenses', id()]"
+            severity="secondary"
+            [outlined]="true"
+          />
+          <p-button
+            type="submit"
+            label="Save Changes"
+            icon="pi pi-save"
+            [loading]="isSaving()"
+          />
+        </div>
+      </form>
+    </p-card>
+  } @else {
+    <p-card>
+      <div class="py-16 text-center">
+        <i class="pi pi-exclamation-circle mb-4 text-4xl text-gray-400"></i>
+        <p class="text-gray-500">Expense not found</p>
+        <p-button
+          label="Back to Expenses"
+          [routerLink]="['/expenses']"
+          severity="secondary"
+          class="mt-4"
+        />
+      </div>
+    </p-card>
+  }
+</div>

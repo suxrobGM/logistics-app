@@ -83,10 +83,14 @@ export type { UpdateExpense$Params as UpdateExpense$Params } from './fn/expense/
 export { updateExpense as updateExpense } from './fn/expense/update-expense';
 export type { DeleteExpense$Params as DeleteExpense$Params } from './fn/expense/delete-expense';
 export { deleteExpense as deleteExpense } from './fn/expense/delete-expense';
+export type { DownloadExpenseReceipt$Params as DownloadExpenseReceipt$Params } from './fn/expense/download-expense-receipt';
+export { downloadExpenseReceipt as downloadExpenseReceipt } from './fn/expense/download-expense-receipt';
 export type { GetExpenses$Params as GetExpenses$Params } from './fn/expense/get-expenses';
 export { getExpenses as getExpenses } from './fn/expense/get-expenses';
 export type { GetExpenseStats$Params as GetExpenseStats$Params } from './fn/expense/get-expense-stats';
 export { getExpenseStats as getExpenseStats } from './fn/expense/get-expense-stats';
+export type { UploadExpenseReceipt$Params as UploadExpenseReceipt$Params } from './fn/expense/upload-expense-receipt';
+export { uploadExpenseReceipt as uploadExpenseReceipt } from './fn/expense/upload-expense-receipt';
 export type { CreateCompanyExpense$Params as CreateCompanyExpense$Params } from './fn/expense/create-company-expense';
 export { createCompanyExpense as createCompanyExpense } from './fn/expense/create-company-expense';
 export type { CreateTruckExpense$Params as CreateTruckExpense$Params } from './fn/expense/create-truck-expense';

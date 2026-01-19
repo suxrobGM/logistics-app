@@ -28,6 +28,28 @@ public class ExpenseController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
 
+    [HttpGet("{id:guid}/receipt", Name = "DownloadExpenseReceipt")]
+    [ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.Expense.View)]
+    public async Task<IActionResult> DownloadReceipt(Guid id)
+    {
+        var requestedById = Guid.TryParse(UserId, out var uid) ? uid : Guid.Empty;
+
+        var result = await mediator.Send(new DownloadExpenseReceiptQuery
+        {
+            ExpenseId = id,
+            RequestedById = requestedById
+        });
+
+        if (!result.IsSuccess || result.Value is null)
+        {
+            return NotFound(ErrorResponse.FromResult(result));
+        }
+
+        return File(result.Value.FileContent, result.Value.ContentType, result.Value.OriginalFileName);
+    }
+
     [HttpGet(Name = "GetExpenses")]
     [ProducesResponseType(typeof(PagedResponse<ExpenseDto>), StatusCodes.Status200OK)]
     [Authorize(Policy = Permission.Expense.View)]
@@ -45,6 +67,35 @@ public class ExpenseController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(query);
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    #endregion
+
+    #region Receipt Upload
+
+    [HttpPost("receipt", Name = "UploadExpenseReceipt")]
+    [ProducesResponseType(typeof(UploadReceiptResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Expense.Manage)]
+    [RequestSizeLimit(20 * 1024 * 1024)] // 20MB limit
+    public async Task<IActionResult> UploadReceipt([FromForm] UploadReceiptRequest request)
+    {
+        if (request.File.Length == 0)
+        {
+            return BadRequest(new ErrorResponse("No file provided"));
+        }
+
+        var result = await mediator.Send(new UploadExpenseReceiptCommand
+        {
+            FileContent = request.File.OpenReadStream(),
+            FileName = request.File.FileName,
+            ContentType = request.File.ContentType,
+            FileSizeBytes = request.File.Length
+        });
+
+        return result.IsSuccess
+            ? Ok(new UploadReceiptResponse(result.Value!))
+            : BadRequest(ErrorResponse.FromResult(result));
     }
 
     #endregion
@@ -145,3 +196,5 @@ public class ExpenseController(IMediator mediator) : ControllerBase
 }
 
 public record RejectExpenseRequest(string Reason);
+public record UploadReceiptRequest(IFormFile File);
+public record UploadReceiptResponse(string BlobPath);

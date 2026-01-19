@@ -32,7 +32,7 @@ public abstract class Expense : AuditableEntity, ITenantEntity
     /// <summary>
     ///     Path to the receipt blob in storage. Required for all expenses.
     /// </summary>
-    public required string ReceiptBlobPath { get; set; }
+    public string? ReceiptBlobPath { get; set; }
 
     /// <summary>
     ///     Notes or description of the expense.
