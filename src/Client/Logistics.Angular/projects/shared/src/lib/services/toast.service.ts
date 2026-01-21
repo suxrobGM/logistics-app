@@ -38,6 +38,34 @@ export class ToastService {
   }
 
   /**
+   * Displays a warning message toast notification with the given message and title.
+   * @param message The message to be displayed in the toast notification.
+   * @param title The title of the toast notification. Defaults to "Warning".
+   */
+  showWarning(message: string, title = "Warning") {
+    this.messageService.add({
+      key: "notification",
+      severity: "warn",
+      summary: title,
+      detail: message,
+    });
+  }
+
+  /**
+   * Displays an info message toast notification with the given message and title.
+   * @param message The message to be displayed in the toast notification.
+   * @param title The title of the toast notification. Defaults to "Information".
+   */
+  showInfo(message: string, title = "Information") {
+    this.messageService.add({
+      key: "notification",
+      severity: "info",
+      summary: title,
+      detail: message,
+    });
+  }
+
+  /**
    * Displays a confirmation dialog with the given message and actions.
    * @param message The message to be displayed in the confirmation dialog.
    * @param onAccept The callback function to be executed when the accept button is clicked.

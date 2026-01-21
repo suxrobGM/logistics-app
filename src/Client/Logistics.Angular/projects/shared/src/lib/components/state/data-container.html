@@ -1,5 +1,5 @@
 @if (loading()) {
-  <ui-loading-skeleton [variant]="skeletonVariant()" [rows]="skeletonRows()" />
+  <ui-loading-skeleton [variant]="skeletonVariant()" [rows]="skeletonRows()" [loadingText]="loadingText()" />
 } @else if (error()) {
   <ui-error-state
     [message]="error()!.message"
@@ -15,5 +15,7 @@
     (action)="handleEmptyAction()"
   />
 } @else {
-  <ng-content />
+  <div class="animate-fade-in">
+    <ng-content />
+  </div>
 }

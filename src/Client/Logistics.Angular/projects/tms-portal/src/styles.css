@@ -78,4 +78,17 @@ body {
   .bg-primary-dark {
     background-color: var(--p-primary-700);
   }
+
+  .animate-fade-in {
+    animation: fadeIn 0.2s ease-in;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

@@ -16,40 +16,43 @@ import { LoadingSkeleton } from "./loading-skeleton";
 })
 export class DataContainer {
   /** Whether data is currently loading */
-  readonly loading = input(false);
+  public readonly loading = input(false);
 
   /** Error object if an error occurred */
-  readonly error = input<AppError | null>(null);
+  public readonly error = input<AppError | null>(null);
 
   /** Whether the data set is empty */
-  readonly isEmpty = input(false);
+  public readonly isEmpty = input(false);
 
   // Skeleton configuration
   /** Skeleton variant to show while loading */
-  readonly skeletonVariant = input<"table" | "card" | "list">("table");
+  public readonly skeletonVariant = input<"table" | "card" | "list">("table");
 
   /** Number of skeleton rows */
-  readonly skeletonRows = input(5);
+  public readonly skeletonRows = input(5);
+
+  /** Optional loading text to display below skeleton */
+  public readonly loadingText = input<string | null>(null);
 
   // Empty state configuration
   /** Title for empty state */
-  readonly emptyTitle = input("No data");
+  public readonly emptyTitle = input("No data");
 
   /** Message for empty state */
-  readonly emptyMessage = input("No items to display.");
+  public readonly emptyMessage = input("No items to display.");
 
   /** Icon for empty state */
-  readonly emptyIcon = input("inbox");
+  public readonly emptyIcon = input("inbox");
 
   /** Action button label for empty state */
-  readonly emptyActionLabel = input<string | null>(null);
+  public readonly emptyActionLabel = input<string | null>(null);
 
   // Events
   /** Emitted when user clicks retry on error state */
-  readonly retry = output<void>();
+  public readonly retry = output<void>();
 
   /** Emitted when user clicks action button on empty state */
-  readonly emptyAction = output<void>();
+  public readonly emptyAction = output<void>();
 
   protected handleRetry(): void {
     this.retry.emit();

@@ -7,7 +7,7 @@
       "projectType": "library",
       "root": "projects/shared",
       "sourceRoot": "projects/shared/src",
-      "prefix": "shared",
+      "prefix": "ui",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",

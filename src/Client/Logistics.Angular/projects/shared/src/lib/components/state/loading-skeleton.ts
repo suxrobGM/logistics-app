@@ -12,19 +12,22 @@ import { SkeletonModule } from "primeng/skeleton";
 })
 export class LoadingSkeleton {
   /** The layout variant: 'table' for rows, 'card' for a block, 'list' for avatar+text */
-  readonly variant = input<"table" | "card" | "list">("table");
+  public readonly variant = input<"table" | "card" | "list">("table");
 
   /** Number of skeleton rows to show (for table and list variants) */
-  readonly rows = input(5);
+  public readonly rows = input(5);
 
   /** Height of each row (for table variant) */
-  readonly rowHeight = input("2.5rem");
+  public readonly rowHeight = input("2.5rem");
 
   /** Width of the skeleton (for card variant) */
-  readonly width = input("100%");
+  public readonly width = input("100%");
 
   /** Height of the skeleton (for card variant) */
-  readonly height = input("10rem");
+  public readonly height = input("10rem");
+
+  /** Optional loading text to display below skeleton */
+  public readonly loadingText = input<string | null>(null);
 
   protected readonly rowsArray = computed(() => Array.from({ length: this.rows() }));
 }

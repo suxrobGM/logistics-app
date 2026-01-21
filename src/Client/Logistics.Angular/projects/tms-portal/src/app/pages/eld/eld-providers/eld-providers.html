@@ -8,6 +8,7 @@
         [text]="true"
         (onClick)="goBack()"
         pTooltip="Back to Dashboard"
+        aria-label="Go back to dashboard"
       />
       <div>
         <h1 class="mb-1 text-2xl font-semibold">ELD Provider Configuration</h1>
@@ -125,6 +126,7 @@
                   [rounded]="true"
                   [text]="true"
                   pTooltip="Manage Driver Mappings"
+                  aria-label="Manage driver mappings"
                   (onClick)="manageDriverMappings(provider.id!)"
                 />
                 <p-button
@@ -133,6 +135,7 @@
                   [text]="true"
                   severity="danger"
                   pTooltip="Delete Provider"
+                  aria-label="Delete provider"
                   (onClick)="confirmDeleteProvider(provider)"
                 />
               </div>

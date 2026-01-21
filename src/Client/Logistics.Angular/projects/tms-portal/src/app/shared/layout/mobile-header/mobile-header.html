@@ -11,10 +11,12 @@
     styleClass="text-xl"
   />
 
-  <!-- Logo and App Name -->
+  <!-- Logo and Page Title -->
   <a routerLink="/home" class="flex items-center gap-2">
     <img src="images/logo.svg" class="h-8 w-auto" alt="Logo" />
-    <span class="text-lg font-semibold text-gray-800">TMS Portal</span>
+    <span class="max-w-37.5 truncate text-lg font-semibold text-gray-800">
+      {{ pageTitle() }}
+    </span>
   </a>
 
   <!-- Spacer for balance -->

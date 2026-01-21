@@ -76,12 +76,14 @@
             <p-button
               icon="pi pi-book"
               pTooltip="View details"
+              aria-label="View truck details"
               [routerLink]="['/trucks', truck.id]"
             />
             <p-button
               class="ml-2"
               icon="pi pi-pen-to-square"
               pTooltip="Edit truck"
+              aria-label="Edit truck"
               [routerLink]="['/trucks', truck.id, 'edit']"
             />
           </td>

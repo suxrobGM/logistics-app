@@ -94,6 +94,7 @@
               <p-button
                 icon="pi pi-file"
                 pTooltip="View receipt"
+                aria-label="View receipt"
                 severity="success"
                 [text]="true"
                 size="small"
@@ -109,6 +110,7 @@
               (click)="openActionMenu(expense, menu, $event); $event.stopPropagation()"
               severity="secondary"
               [text]="true"
+              aria-label="Show actions menu"
             />
           </td>
         </tr>

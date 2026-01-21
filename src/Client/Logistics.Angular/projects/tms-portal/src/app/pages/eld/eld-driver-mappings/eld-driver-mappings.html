@@ -8,6 +8,7 @@
         [text]="true"
         (onClick)="goBack()"
         pTooltip="Back to Providers"
+        aria-label="Go back to providers"
       />
       <div>
         <h1 class="mb-1 text-2xl font-semibold">Driver Mappings</h1>
@@ -107,6 +108,7 @@
                       [text]="true"
                       severity="danger"
                       pTooltip="Remove Mapping"
+                      aria-label="Remove mapping"
                       (onClick)="confirmDeleteMapping(mapping)"
                     />
                   </td>
