@@ -11,7 +11,9 @@ export interface TenantDto {
   dotNumber?: string | null;
   employeeCount?: number | null;
   id?: string | null;
+  logoUrl?: string | null;
   name?: string | null;
+  phoneNumber?: string | null;
   stripeCustomerId?: string | null;
   subscription?: SubscriptionDto;
 }

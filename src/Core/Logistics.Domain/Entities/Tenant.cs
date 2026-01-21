@@ -12,6 +12,8 @@ public class Tenant : Entity, IMasterEntity
     public required string BillingEmail { get; set; }
     public string? DotNumber { get; set; }
     public string? StripeCustomerId { get; set; }
+    public string? LogoPath { get; set; }
+    public string? PhoneNumber { get; set; }
 
     public virtual Subscription? Subscription { get; set; }
 

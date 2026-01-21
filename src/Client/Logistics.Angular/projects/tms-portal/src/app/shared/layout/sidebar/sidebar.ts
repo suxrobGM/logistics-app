@@ -1,5 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
+import { UserRole } from "@logistics/shared";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { PanelMenuModule } from "primeng/panelmenu";
@@ -29,6 +30,7 @@ export class Sidebar {
   private readonly tenantService = inject(TenantService);
   public readonly isOpened = signal(true);
   public readonly companyName = signal<string | null>(null);
+  public readonly companyLogoUrl = signal<string | null>(null);
   public readonly userRole = signal<string | null>(null);
   public readonly userFullName = signal<string | null>(null);
   public readonly navItems = signal<MenuItem[]>(sidebarItems);
@@ -61,7 +63,13 @@ export class Sidebar {
         this.profileMenuItems[0].label = userData.getFullName();
       }
 
-      this.userRole.set(this.authService.getUserRoleName());
+      const userRole = this.authService.getUserRoleName();
+      this.userRole.set(userRole);
+
+      // Settings menu is only visible to Owner role
+      if (userRole !== UserRole.Owner) {
+        this.navItems.update((items) => items.filter((item) => item.label !== "Settings"));
+      }
     });
 
     this.tenantService.tenantDataChanged$.subscribe((tenantData) => {
@@ -70,6 +78,7 @@ export class Sidebar {
       }
 
       this.companyName.set(tenantData?.companyName ?? null);
+      this.companyLogoUrl.set(tenantData?.logoUrl ?? null);
     });
   }
 

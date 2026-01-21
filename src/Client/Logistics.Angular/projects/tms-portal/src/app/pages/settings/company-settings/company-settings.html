@@ -1,0 +1,105 @@
+<h1 class="text-center">Company Settings</h1>
+
+<div class="flex justify-center">
+  <div class="w-full md:w-2/3 lg:w-1/2">
+    <p-card>
+      @if (isLoading()) {
+        <div class="flex justify-center py-8">
+          <p-progress-spinner />
+        </div>
+      } @else {
+        <form [formGroup]="form" (ngSubmit)="save()">
+          <ui-validation-summary [form]="form" />
+
+          <!-- Logo Upload Section -->
+          <div class="mb-6">
+            <ui-labeled-field label="Company Logo">
+              <div class="flex items-center gap-4">
+                <!-- Logo Preview -->
+                <div
+                  class="flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-gray-300"
+                >
+                  @if (logoPreviewUrl()) {
+                    <img
+                      [src]="logoPreviewUrl()"
+                      alt="Company logo"
+                      class="h-full w-full object-contain"
+                    />
+                  } @else {
+                    <i class="pi pi-image text-3xl text-gray-400"></i>
+                  }
+                </div>
+                <!-- Upload Button -->
+                <div>
+                  <input
+                    type="file"
+                    class="hidden"
+                    #logoInput
+                    accept="image/*"
+                    (change)="onLogoSelected($event)"
+                  />
+                  <p-button
+                    type="button"
+                    icon="pi pi-upload"
+                    label="Upload Logo"
+                    (click)="logoInput.click()"
+                    [loading]="isUploadingLogo()"
+                  />
+                  <p class="mt-1 text-xs text-gray-500">PNG, JPG or GIF. Max 5MB.</p>
+                </div>
+              </div>
+            </ui-labeled-field>
+          </div>
+
+          <!-- Company Name -->
+          <ui-labeled-field label="Company Name" for="companyName" [required]="true">
+            <input pInputText formControlName="companyName" id="companyName" class="w-full" />
+          </ui-labeled-field>
+
+          <!-- Phone Number -->
+          <ui-labeled-field label="Phone Number" for="phoneNumber">
+            <input
+              pInputText
+              formControlName="phoneNumber"
+              id="phoneNumber"
+              type="tel"
+              class="w-full"
+            />
+          </ui-labeled-field>
+
+          <!-- Billing Email -->
+          <ui-labeled-field label="Billing Email" for="billingEmail" [required]="true">
+            <input
+              pInputText
+              formControlName="billingEmail"
+              id="billingEmail"
+              type="email"
+              class="w-full"
+            />
+          </ui-labeled-field>
+
+          <!-- DOT Number -->
+          <ui-labeled-field label="US DOT Number" for="dotNumber">
+            <input pInputText formControlName="dotNumber" id="dotNumber" class="w-full" />
+          </ui-labeled-field>
+
+          <!-- Company Address -->
+          <ui-labeled-field label="Company Address" [required]="true">
+            <ui-address-form formControlName="companyAddress" />
+          </ui-labeled-field>
+
+          <!-- Actions -->
+          <div class="mt-6 flex gap-2">
+            <p-button
+              type="submit"
+              icon="pi pi-save"
+              label="Save Changes"
+              [loading]="isSaving()"
+              [disabled]="form.invalid"
+            />
+          </div>
+        </form>
+      }
+    </p-card>
+  </div>
+</div>

@@ -13,6 +13,8 @@ public record TenantDto
     public string? DotNumber { get; set; }
     public Address? CompanyAddress { get; set; }
     public string? StripeCustomerId { get; set; }
+    public string? LogoUrl { get; set; }
+    public string? PhoneNumber { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public string? ConnectionString { get; set; }

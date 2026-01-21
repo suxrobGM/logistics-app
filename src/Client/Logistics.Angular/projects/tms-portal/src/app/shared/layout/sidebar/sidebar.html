@@ -1,6 +1,10 @@
 <div class="sidebar" [class.minimized]="!isOpened()">
   <a class="navbar-brand border-bottom p-2">
-    <img src="images/logo.svg" class="h-auto max-w-full" height="40" alt="logo" />
+    @if (companyLogoUrl()) {
+      <img [src]="companyLogoUrl()" class="h-10 w-auto max-w-full object-contain" alt="Company logo" />
+    } @else {
+      <img src="images/logo.svg" class="h-auto max-w-full" height="40" alt="logo" />
+    }
     @if (isOpened()) {
       <h4 class="mt-1">{{ companyName() }}</h4>
     }

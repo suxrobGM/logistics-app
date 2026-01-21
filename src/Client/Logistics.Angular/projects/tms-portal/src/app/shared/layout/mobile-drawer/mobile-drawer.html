@@ -10,7 +10,11 @@
 >
   <ng-template #header>
     <div class="flex items-center gap-3">
-      <img src="images/logo.svg" class="h-10 w-auto" alt="Logo" />
+      @if (companyLogoUrl()) {
+        <img [src]="companyLogoUrl()" class="h-10 w-auto object-contain" alt="Company logo" />
+      } @else {
+        <img src="images/logo.svg" class="h-10 w-auto" alt="Logo" />
+      }
       @if (companyName()) {
         <h4 class="font-semibold text-gray-800">{{ companyName() }}</h4>
       }

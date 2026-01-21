@@ -17,6 +17,8 @@ public static class TenantMapper
             CompanyAddress = entity.CompanyAddress,
             ConnectionString = includeConnectionString ? entity.ConnectionString : null,
             StripeCustomerId = entity.StripeCustomerId,
+            LogoUrl = entity.LogoPath,
+            PhoneNumber = entity.PhoneNumber,
             Subscription = entity.Subscription?.ToDto(),
             EmployeeCount = employeeCount,
         };

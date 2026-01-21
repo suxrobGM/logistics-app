@@ -81,5 +81,29 @@ public class TenantController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
 
+    [HttpPost("{id:guid}/logo", Name = "UploadTenantLogo")]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Tenant.Manage)]
+    [RequestSizeLimit(5 * 1024 * 1024)] // 5 MB
+    public async Task<IActionResult> UploadTenantLogo(Guid id, IFormFile file)
+    {
+        if (file.Length == 0)
+        {
+            return BadRequest(new ErrorResponse("No file provided"));
+        }
+
+        var result = await mediator.Send(new UploadTenantLogoCommand
+        {
+            TenantId = id,
+            FileContent = file.OpenReadStream(),
+            FileName = file.FileName,
+            ContentType = file.ContentType,
+            FileSizeBytes = file.Length
+        });
+
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     #endregion
 }

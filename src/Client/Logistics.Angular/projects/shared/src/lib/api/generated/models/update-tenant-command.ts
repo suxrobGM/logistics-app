@@ -10,4 +10,5 @@ export interface UpdateTenantCommand {
   dotNumber?: string | null;
   id?: string;
   name?: string | null;
+  phoneNumber?: string | null;
 }

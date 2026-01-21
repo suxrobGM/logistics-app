@@ -62,6 +62,13 @@ export const appRoutes: Routes = [
     },
   },
   {
+    path: "settings",
+    loadChildren: () => import("./pages/settings/settings.routes").then((m) => m.settingsRoutes),
+    data: {
+      breadcrumb: "Settings",
+    },
+  },
+  {
     path: "subscription",
     loadChildren: () =>
       import("./pages/subscription/subscription.routes").then((m) => m.subscriptionRoutes),

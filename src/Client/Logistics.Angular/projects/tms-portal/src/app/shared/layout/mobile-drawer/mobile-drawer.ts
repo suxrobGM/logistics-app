@@ -1,10 +1,10 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { DrawerModule } from "primeng/drawer";
 import { ButtonModule } from "primeng/button";
-import { LayoutService } from "@/core/services/layout.service";
+import { DrawerModule } from "primeng/drawer";
 import { AuthService } from "@/core/auth";
 import { TenantService } from "@/core/services";
+import { LayoutService } from "@/core/services/layout.service";
 import { environment } from "@/env";
 import type { MenuItem } from "../panel-menu";
 import { sidebarItems } from "../sidebar/sidebar-items";
@@ -31,9 +31,12 @@ export class MobileDrawer {
 
   protected readonly visible = this.layoutService.mobileMenuOpen;
   protected readonly companyName = signal<string | null>(null);
+  protected readonly companyLogoUrl = signal<string | null>(null);
   protected readonly userFullName = signal<string | null>(null);
   protected readonly userRole = signal<string | null>(null);
-  protected readonly navItems = signal<MobileMenuItem[]>(this.transformMenuItems([...sidebarItems]));
+  protected readonly navItems = signal<MobileMenuItem[]>(
+    this.transformMenuItems([...sidebarItems]),
+  );
 
   constructor() {
     this.authService.onUserDataChanged().subscribe((userData) => {
@@ -46,10 +49,13 @@ export class MobileDrawer {
     this.tenantService.tenantDataChanged$.subscribe((tenantData) => {
       if (tenantData?.subscription == null || !this.tenantService.isSubscriptionActive()) {
         this.navItems.set(
-          this.transformMenuItems([...sidebarItems].filter((item) => item.label !== "Subscription")),
+          this.transformMenuItems(
+            [...sidebarItems].filter((item) => item.label !== "Subscription"),
+          ),
         );
       }
       this.companyName.set(tenantData?.companyName ?? null);
+      this.companyLogoUrl.set(tenantData?.logoUrl ?? null);
     });
   }
 
