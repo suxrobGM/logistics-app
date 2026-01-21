@@ -116,15 +116,6 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                         .HasMaxLength(512)
                         .HasColumnType("character varying(512)");
 
-                    b.Property<double?>("CaptureLatitude")
-                        .HasColumnType("double precision");
-
-                    b.Property<double?>("CaptureLongitude")
-                        .HasColumnType("double precision");
-
-                    b.Property<DateTime?>("CapturedAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("ContentType")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -153,10 +144,6 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     b.Property<long>("FileSizeBytes")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Notes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
-
                     b.Property<string>("OriginalFileName")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -166,22 +153,11 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("RecipientName")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<string>("RecipientSignature")
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
-
                     b.Property<string>("Status")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("text")
                         .HasDefaultValue("Active");
-
-                    b.Property<Guid?>("TripStopId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -2287,6 +2263,39 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     b.HasDiscriminator().HasValue(1);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.DeliveryDocument", b =>
+                {
+                    b.HasBaseType("Logistics.Domain.Entities.LoadDocument");
+
+                    b.Property<double?>("CaptureLatitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("CaptureLongitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime?>("CapturedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("RecipientName")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("RecipientSignature")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
+
+                    b.Property<Guid?>("TripStopId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("TripStopId");
+
+                    b.HasDiscriminator().HasValue("Delivery");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.CustomerUser", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Customer", "Customer")
@@ -2646,6 +2655,16 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                         .IsRequired();
 
                     b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.DeliveryDocument", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.TripStop", "TripStop")
+                        .WithMany()
+                        .HasForeignKey("TripStopId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("TripStop");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Customer", b =>

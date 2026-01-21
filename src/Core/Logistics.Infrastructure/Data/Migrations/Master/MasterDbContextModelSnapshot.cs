@@ -472,8 +472,14 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                     b.Property<string>("DotNumber")
                         .HasColumnType("text");
 
+                    b.Property<string>("LogoPath")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
                     b.Property<string>("StripeCustomerId")

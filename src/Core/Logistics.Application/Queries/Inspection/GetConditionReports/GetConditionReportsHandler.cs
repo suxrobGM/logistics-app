@@ -34,8 +34,8 @@ internal sealed class GetConditionReportsHandler(ITenantUnitOfWork tenantUow)
 
         foreach (var report in reports)
         {
-            // Get associated photos
-            var photos = await tenantUow.Repository<LoadDocument>().Query()
+            // Get associated photos (inspection photos are stored as DeliveryDocuments with capture metadata)
+            var photos = await tenantUow.Repository<DeliveryDocument>().Query()
                 .Where(d => d.LoadId == report.LoadId &&
                     (d.Type == DocumentType.PickupInspection || d.Type == DocumentType.DeliveryInspection) &&
                     d.CapturedAt != null &&

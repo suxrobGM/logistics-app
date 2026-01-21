@@ -14,7 +14,8 @@ internal sealed class DocumentEntityConfiguration : IEntityTypeConfiguration<Doc
 
         builder.HasDiscriminator(d => d.OwnerType)
             .HasValue<EmployeeDocument>(DocumentOwnerType.Employee)
-            .HasValue<LoadDocument>(DocumentOwnerType.Load);
+            .HasValue<LoadDocument>(DocumentOwnerType.Load)
+            .HasValue<DeliveryDocument>(DocumentOwnerType.Delivery);
 
         builder.Property(d => d.FileName)
             .IsRequired()
@@ -55,21 +56,6 @@ internal sealed class DocumentEntityConfiguration : IEntityTypeConfiguration<Doc
         builder.Property(d => d.Description)
             .HasMaxLength(1000);
 
-        // POD/BOL capture metadata
-        builder.Property(d => d.RecipientName)
-            .HasMaxLength(255);
-
-        builder.Property(d => d.RecipientSignature)
-            .HasMaxLength(2048);
-
-        builder.Property(d => d.CaptureLatitude);
-        builder.Property(d => d.CaptureLongitude);
-        builder.Property(d => d.CapturedAt);
-        builder.Property(d => d.TripStopId);
-
-        builder.Property(d => d.Notes)
-            .HasMaxLength(2000);
-
         // Relations
         builder.HasOne(d => d.UploadedBy)
             .WithMany()
@@ -102,6 +88,33 @@ internal sealed class DocumentEntityConfiguration : IEntityTypeConfiguration<Doc
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasIndex(ed => ed.EmployeeId);
+        }
+    }
+
+    public sealed class DeliveryDocumentConfiguration : IEntityTypeConfiguration<DeliveryDocument>
+    {
+        public void Configure(EntityTypeBuilder<DeliveryDocument> builder)
+        {
+            // POD/BOL capture metadata
+            builder.Property(d => d.RecipientName)
+                .HasMaxLength(255);
+
+            builder.Property(d => d.RecipientSignature)
+                .HasMaxLength(2048);
+
+            builder.Property(d => d.CaptureLatitude);
+            builder.Property(d => d.CaptureLongitude);
+            builder.Property(d => d.CapturedAt);
+            builder.Property(d => d.TripStopId);
+
+            builder.Property(d => d.Notes)
+                .HasMaxLength(2000);
+
+            // TripStop relation
+            builder.HasOne(d => d.TripStop)
+                .WithMany()
+                .HasForeignKey(d => d.TripStopId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 

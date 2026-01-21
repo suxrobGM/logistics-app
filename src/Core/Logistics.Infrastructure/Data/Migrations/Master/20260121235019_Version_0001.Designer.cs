@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Data.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20260119081652_Version_0001")]
+    [Migration("20260121235019_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -475,8 +475,14 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                     b.Property<string>("DotNumber")
                         .HasColumnType("text");
 
+                    b.Property<string>("LogoPath")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
                     b.Property<string>("StripeCustomerId")

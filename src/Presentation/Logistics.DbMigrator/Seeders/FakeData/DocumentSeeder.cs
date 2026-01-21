@@ -29,7 +29,7 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
 
     protected override async Task<bool> HasExistingDataAsync(SeederContext context, CancellationToken cancellationToken)
     {
-        return await context.TenantUnitOfWork.Repository<LoadDocument>().CountAsync(ct: cancellationToken) > 0;
+        return await context.TenantUnitOfWork.Repository<DeliveryDocument>().CountAsync(ct: cancellationToken) > 0;
     }
 
     public override async Task SeedAsync(SeederContext context, CancellationToken cancellationToken = default)
@@ -37,7 +37,7 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
         LogStarting();
 
         var loadRepository = context.TenantUnitOfWork.Repository<Load>();
-        var documentRepository = context.TenantUnitOfWork.Repository<LoadDocument>();
+        var documentRepository = context.TenantUnitOfWork.Repository<DeliveryDocument>();
         var employeeRepository = context.TenantUnitOfWork.Repository<Employee>();
 
         // Get all loads
@@ -82,14 +82,14 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
         LogCompleted(count);
     }
 
-    private LoadDocument CreateBillOfLading(
+    private DeliveryDocument CreateBillOfLading(
         Load load,
         Employee driver,
         (Domain.Primitives.ValueObjects.Address Address, double Longitude, double Latitude) location)
     {
         var capturedAt = load.PickedUpAt ?? load.DispatchedAt ?? DateTime.UtcNow.AddDays(-_random.Next(1, 30));
 
-        var doc = LoadDocument.Create(
+        return DeliveryDocument.Create(
             fileName: $"bol_{load.Id}_{Guid.NewGuid():N}.jpg",
             originalFileName: $"BOL_{load.Number}.jpg",
             contentType: "image/jpeg",
@@ -99,28 +99,24 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
             type: DocumentType.BillOfLading,
             loadId: load.Id,
             uploadedById: driver.Id,
-            description: $"Bill of Lading for load {load.Number}"
+            recipientName: _random.Pick(RecipientNames),
+            recipientSignature: GenerateFakeSignature(),
+            captureLatitude: location.Latitude + (_random.NextDouble() - 0.5) * 0.01,
+            captureLongitude: location.Longitude + (_random.NextDouble() - 0.5) * 0.01,
+            capturedAt: capturedAt,
+            tripStopId: null,
+            notes: "Shipper verified load contents and condition."
         );
-
-        // Add POD/BOL capture metadata
-        doc.RecipientName = _random.Pick(RecipientNames);
-        doc.RecipientSignature = GenerateFakeSignature();
-        doc.CaptureLatitude = location.Latitude + (_random.NextDouble() - 0.5) * 0.01;
-        doc.CaptureLongitude = location.Longitude + (_random.NextDouble() - 0.5) * 0.01;
-        doc.CapturedAt = capturedAt;
-        doc.Notes = "Shipper verified load contents and condition.";
-
-        return doc;
     }
 
-    private LoadDocument CreateProofOfDelivery(
+    private DeliveryDocument CreateProofOfDelivery(
         Load load,
         Employee driver,
         (Domain.Primitives.ValueObjects.Address Address, double Longitude, double Latitude) location)
     {
         var capturedAt = load.DeliveredAt ?? load.PickedUpAt?.AddHours(_random.Next(4, 48)) ?? DateTime.UtcNow.AddDays(-_random.Next(1, 15));
 
-        var doc = LoadDocument.Create(
+        return DeliveryDocument.Create(
             fileName: $"pod_{load.Id}_{Guid.NewGuid():N}.jpg",
             originalFileName: $"POD_{load.Number}.jpg",
             contentType: "image/jpeg",
@@ -130,18 +126,14 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
             type: DocumentType.ProofOfDelivery,
             loadId: load.Id,
             uploadedById: driver.Id,
-            description: $"Proof of Delivery for load {load.Number}"
+            recipientName: _random.Pick(RecipientNames),
+            recipientSignature: GenerateFakeSignature(),
+            captureLatitude: location.Latitude + (_random.NextDouble() - 0.5) * 0.01,
+            captureLongitude: location.Longitude + (_random.NextDouble() - 0.5) * 0.01,
+            capturedAt: capturedAt,
+            tripStopId: null,
+            notes: "Delivery completed successfully. No damage reported."
         );
-
-        // Add POD/BOL capture metadata
-        doc.RecipientName = _random.Pick(RecipientNames);
-        doc.RecipientSignature = GenerateFakeSignature();
-        doc.CaptureLatitude = location.Latitude + (_random.NextDouble() - 0.5) * 0.01;
-        doc.CaptureLongitude = location.Longitude + (_random.NextDouble() - 0.5) * 0.01;
-        doc.CapturedAt = capturedAt;
-        doc.Notes = "Delivery completed successfully. No damage reported.";
-
-        return doc;
     }
 
     private string GenerateFakeSignature()

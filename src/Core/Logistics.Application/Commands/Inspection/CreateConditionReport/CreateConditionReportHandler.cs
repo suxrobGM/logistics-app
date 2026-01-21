@@ -88,7 +88,7 @@ internal sealed class CreateConditionReportHandler(
                     ? DocumentType.PickupInspection
                     : DocumentType.DeliveryInspection;
 
-                var doc = LoadDocument.Create(
+                var doc = DeliveryDocument.Create(
                     uniqueFileName,
                     photo.FileName,
                     photo.ContentType,
@@ -98,13 +98,15 @@ internal sealed class CreateConditionReportHandler(
                     docType,
                     req.LoadId,
                     req.InspectedById,
-                    $"Vehicle inspection - {req.Vin}");
+                    recipientName: null,
+                    recipientSignature: null,
+                    captureLatitude: req.Latitude,
+                    captureLongitude: req.Longitude,
+                    capturedAt: report.InspectedAt,
+                    tripStopId: null,
+                    notes: $"Vehicle inspection - {req.Vin}");
 
-                doc.CapturedAt = report.InspectedAt;
-                doc.CaptureLatitude = req.Latitude;
-                doc.CaptureLongitude = req.Longitude;
-
-                await tenantUow.Repository<LoadDocument>().AddAsync(doc, ct);
+                await tenantUow.Repository<DeliveryDocument>().AddAsync(doc, ct);
             }
 
             await tenantUow.SaveChangesAsync(ct);

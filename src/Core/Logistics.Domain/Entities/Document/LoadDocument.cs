@@ -8,7 +8,7 @@ public class LoadDocument : Document
     public override DocumentOwnerType OwnerType { get; protected set; } = DocumentOwnerType.Load;
 
     // Subject/owner: Load
-    public Guid LoadId { get; private set; }
+    public Guid LoadId { get; protected set; }
     public virtual Load Load { get; private set; } = null!;
 
     public static LoadDocument Create(
@@ -46,6 +46,8 @@ public class LoadDocument : Document
     protected override void OnStatusChanged(DocumentStatus newStatus)
     {
         if (newStatus == DocumentStatus.Deleted)
+        {
             DomainEvents.Add(new LoadDocumentDeletedEvent(Id, LoadId));
+        }
     }
 }

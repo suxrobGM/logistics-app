@@ -46,6 +46,8 @@ public class EmployeeDocument : Document
     protected override void OnStatusChanged(DocumentStatus newStatus)
     {
         if (newStatus == DocumentStatus.Deleted)
+        {
             DomainEvents.Add(new EmployeeDocumentDeletedEvent(Id, EmployeeId));
+        }
     }
 }

@@ -279,6 +279,8 @@ export type { UpdateTenant$Params as UpdateTenant$Params } from './fn/tenant/upd
 export { updateTenant as updateTenant } from './fn/tenant/update-tenant';
 export type { DeleteTenant$Params as DeleteTenant$Params } from './fn/tenant/delete-tenant';
 export { deleteTenant as deleteTenant } from './fn/tenant/delete-tenant';
+export type { UploadTenantLogo$Params as UploadTenantLogo$Params } from './fn/tenant/upload-tenant-logo';
+export { uploadTenantLogo as uploadTenantLogo } from './fn/tenant/upload-tenant-logo';
 export type { GetTripById$Params as GetTripById$Params } from './fn/trip/get-trip-by-id';
 export { getTripById as getTripById } from './fn/trip/get-trip-by-id';
 export type { GetTrips$Params as GetTrips$Params } from './fn/trip/get-trips';

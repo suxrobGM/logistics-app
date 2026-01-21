@@ -12,5 +12,8 @@ public enum DocumentOwnerType
     Load,
 
     [Description("Employee Document")] [EnumMember(Value = "employee")]
-    Employee
+    Employee,
+
+    [Description("Delivery Document")] [EnumMember(Value = "delivery")]
+    Delivery
 }

@@ -109,6 +109,8 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                     BillingEmail = table.Column<string>(type: "text", nullable: false),
                     DotNumber = table.Column<string>(type: "text", nullable: true),
                     StripeCustomerId = table.Column<string>(type: "text", nullable: true),
+                    LogoPath = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
                     CompanyAddress_City = table.Column<string>(type: "text", nullable: false),
                     CompanyAddress_Country = table.Column<string>(type: "text", nullable: false),
                     CompanyAddress_Line1 = table.Column<string>(type: "text", nullable: false),

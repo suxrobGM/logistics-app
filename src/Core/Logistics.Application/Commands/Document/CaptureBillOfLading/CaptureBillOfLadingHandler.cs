@@ -77,7 +77,7 @@ internal sealed class CaptureBillOfLadingHandler(
                     photo.ContentType,
                     ct);
 
-                var doc = LoadDocument.Create(
+                var doc = DeliveryDocument.Create(
                     uniqueFileName,
                     photo.FileName,
                     photo.ContentType,
@@ -87,18 +87,15 @@ internal sealed class CaptureBillOfLadingHandler(
                     DocumentType.BillOfLading,
                     req.LoadId,
                     req.CapturedById,
+                    req.RecipientName,
+                    signatureBlobPath,
+                    req.Latitude,
+                    req.Longitude,
+                    capturedAt,
+                    req.TripStopId,
                     req.Notes);
 
-                // Set BOL-specific metadata
-                doc.RecipientName = req.RecipientName;
-                doc.RecipientSignature = signatureBlobPath;
-                doc.CaptureLatitude = req.Latitude;
-                doc.CaptureLongitude = req.Longitude;
-                doc.CapturedAt = capturedAt;
-                doc.TripStopId = req.TripStopId;
-                doc.Notes = req.Notes;
-
-                await tenantUow.Repository<LoadDocument>().AddAsync(doc, ct);
+                await tenantUow.Repository<DeliveryDocument>().AddAsync(doc, ct);
                 uploadedDocIds.Add(doc.Id);
             }
 
@@ -109,7 +106,7 @@ internal sealed class CaptureBillOfLadingHandler(
                 var blobPath = $"loads/{req.LoadId}/bol/{signatureFileName}";
 
                 // Create a placeholder document for the signature-only BOL
-                var doc = LoadDocument.Create(
+                var doc = DeliveryDocument.Create(
                     signatureFileName,
                     "bill_of_lading.json",
                     "application/json",
@@ -119,17 +116,15 @@ internal sealed class CaptureBillOfLadingHandler(
                     DocumentType.BillOfLading,
                     req.LoadId,
                     req.CapturedById,
+                    req.RecipientName,
+                    signatureBlobPath,
+                    req.Latitude,
+                    req.Longitude,
+                    capturedAt,
+                    req.TripStopId,
                     req.Notes);
 
-                doc.RecipientName = req.RecipientName;
-                doc.RecipientSignature = signatureBlobPath;
-                doc.CaptureLatitude = req.Latitude;
-                doc.CaptureLongitude = req.Longitude;
-                doc.CapturedAt = capturedAt;
-                doc.TripStopId = req.TripStopId;
-                doc.Notes = req.Notes;
-
-                await tenantUow.Repository<LoadDocument>().AddAsync(doc, ct);
+                await tenantUow.Repository<DeliveryDocument>().AddAsync(doc, ct);
                 uploadedDocIds.Add(doc.Id);
             }
 

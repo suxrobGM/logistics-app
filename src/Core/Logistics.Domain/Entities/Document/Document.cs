@@ -17,15 +17,6 @@ public abstract class Document : AuditableEntity, ITenantEntity
     public DocumentStatus Status { get; protected set; } = DocumentStatus.Active;
     public string? Description { get; protected set; }
 
-    // POD/BOL capture metadata (optional - only populated for proof of delivery/bill of lading documents)
-    public string? RecipientName { get; set; }
-    public string? RecipientSignature { get; set; }  // Base64 encoded signature or blob path
-    public double? CaptureLatitude { get; set; }
-    public double? CaptureLongitude { get; set; }
-    public DateTime? CapturedAt { get; set; }
-    public Guid? TripStopId { get; set; }  // The trip stop this POD/BOL is associated with
-    public string? Notes { get; set; }  // Additional notes from driver
-
     public Guid UploadedById { get; set; }
 
     /// <summary>
