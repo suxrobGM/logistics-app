@@ -5,6 +5,9 @@ export type { AcceptInvitationCommand } from './models/accept-invitation-command
 export type { AcceptInvitationResult } from './models/accept-invitation-result';
 export type { Address } from './models/address';
 export type { BillingInterval } from './models/billing-interval';
+export type { BlogPostDto } from './models/blog-post-dto';
+export type { BlogPostDtoPagedResponse } from './models/blog-post-dto-paged-response';
+export type { BlogPostStatus } from './models/blog-post-status';
 export type { CancelSubscriptionCommand } from './models/cancel-subscription-command';
 export type { CompanyExpenseCategory } from './models/company-expense-category';
 export type { CompanyStatsDto } from './models/company-stats-dto';
@@ -12,6 +15,7 @@ export type { ConditionReportDto } from './models/condition-report-dto';
 export type { ConfirmLoadStatusCommand } from './models/confirm-load-status-command';
 export type { ConversationDto } from './models/conversation-dto';
 export type { ConversationParticipantDto } from './models/conversation-participant-dto';
+export type { CreateBlogPostCommand } from './models/create-blog-post-command';
 export type { CreateBodyShopExpenseCommand } from './models/create-body-shop-expense-command';
 export type { CreateCompanyExpenseCommand } from './models/create-company-expense-command';
 export type { CreateConversationRequest } from './models/create-conversation-request';
@@ -170,6 +174,7 @@ export type { TruckStatsDtoPagedResponse } from './models/truck-stats-dto-paged-
 export type { TruckStatus } from './models/truck-status';
 export type { TruckType } from './models/truck-type';
 export type { TypeDto } from './models/type-dto';
+export type { UpdateBlogPostCommand } from './models/update-blog-post-command';
 export type { UpdateCustomerCommand } from './models/update-customer-command';
 export type { UpdateCustomerUserCommand } from './models/update-customer-user-command';
 export type { UpdateDemoRequestCommand } from './models/update-demo-request-command';

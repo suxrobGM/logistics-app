@@ -1,0 +1,332 @@
+<!-- Hero Section -->
+  <web-section-container background="dark">
+    <div class="text-center" webScrollAnimate="fade-up">
+      <h1 class="text-4xl font-bold text-white sm:text-5xl">Cookie Policy</h1>
+      <p class="mt-4 text-lg text-purple-200">Last updated: {{ lastUpdated }}</p>
+    </div>
+  </web-section-container>
+
+  <!-- Content Section -->
+  <web-section-container background="white" maxWidth="3xl">
+    <!-- Table of Contents -->
+    <nav class="mb-12 rounded-lg bg-slate-50 p-6" webScrollAnimate="fade-up">
+      <h2 class="mb-4 text-lg font-semibold text-gray-900">Table of Contents</h2>
+      <ul class="space-y-2">
+        @for (section of sections; track section.id) {
+          <li>
+            <a
+              [href]="'#' + section.id"
+              class="text-blue-600 transition-colors hover:text-blue-800 hover:underline"
+            >
+              {{ section.title }}
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <!-- Content -->
+    <div class="prose prose-lg max-w-none">
+      <!-- What Are Cookies -->
+      <section [id]="sections[0].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[0].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          Cookies are small text files that are placed on your device when you visit a website. They
+          are widely used to make websites work more efficiently, provide a better user experience,
+          and give website owners useful information about how their site is being used.
+        </p>
+        <p class="mt-4 text-gray-600">
+          Logistics TMS uses cookies and similar technologies (such as local storage and pixel tags)
+          to provide, improve, and protect our Services.
+        </p>
+      </section>
+
+      <!-- Types of Cookies We Use -->
+      <section [id]="sections[1].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[1].title }}</h2>
+
+        <h3 class="mt-6 text-xl font-semibold text-gray-800">Essential Cookies</h3>
+        <p class="mt-2 text-gray-600">
+          These cookies are necessary for the website to function properly. They enable core
+          functionality such as security, network management, and accessibility. You cannot opt out
+          of these cookies as the Services would not work properly without them.
+        </p>
+
+        <h3 class="mt-6 text-xl font-semibold text-gray-800">Analytics Cookies</h3>
+        <p class="mt-2 text-gray-600">
+          These cookies help us understand how visitors interact with our website by collecting and
+          reporting information anonymously. This helps us improve our Services and provide a better
+          experience.
+        </p>
+
+        <h3 class="mt-6 text-xl font-semibold text-gray-800">Functional Cookies</h3>
+        <p class="mt-2 text-gray-600">
+          These cookies enable enhanced functionality and personalization, such as remembering your
+          preferences, language settings, and customizations. If you disable these cookies, some
+          features may not work as intended.
+        </p>
+
+        <h3 class="mt-6 text-xl font-semibold text-gray-800">Marketing Cookies</h3>
+        <p class="mt-2 text-gray-600">
+          These cookies are used to track visitors across websites to display relevant
+          advertisements. They are also used to measure the effectiveness of our advertising
+          campaigns.
+        </p>
+      </section>
+
+      <!-- Cookie Details Table -->
+      <section [id]="sections[2].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[2].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          Below is a detailed list of cookies we use, organized by category:
+        </p>
+
+        <!-- Essential Cookies Table -->
+        <h3 class="mt-8 text-xl font-semibold text-gray-800">Essential Cookies</h3>
+        <div class="mt-4 overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 rounded-lg border border-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Name</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Purpose</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Duration</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              @for (cookie of essentialCookies; track cookie.name) {
+                <tr>
+                  <td class="px-4 py-3 text-sm font-mono text-gray-900">{{ cookie.name }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-600">{{ cookie.purpose }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-600">{{ cookie.duration }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Analytics Cookies Table -->
+        <h3 class="mt-8 text-xl font-semibold text-gray-800">Analytics Cookies</h3>
+        <div class="mt-4 overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 rounded-lg border border-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Name</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Purpose</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Duration</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              @for (cookie of analyticsCookies; track cookie.name) {
+                <tr>
+                  <td class="px-4 py-3 text-sm font-mono text-gray-900">{{ cookie.name }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-600">{{ cookie.purpose }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-600">{{ cookie.duration }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Functional Cookies Table -->
+        <h3 class="mt-8 text-xl font-semibold text-gray-800">Functional Cookies</h3>
+        <div class="mt-4 overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 rounded-lg border border-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Name</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Purpose</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Duration</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              @for (cookie of functionalCookies; track cookie.name) {
+                <tr>
+                  <td class="px-4 py-3 text-sm font-mono text-gray-900">{{ cookie.name }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-600">{{ cookie.purpose }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-600">{{ cookie.duration }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Marketing Cookies Table -->
+        <h3 class="mt-8 text-xl font-semibold text-gray-800">Marketing Cookies</h3>
+        <div class="mt-4 overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 rounded-lg border border-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Name</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Purpose</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Duration</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              @for (cookie of marketingCookies; track cookie.name) {
+                <tr>
+                  <td class="px-4 py-3 text-sm font-mono text-gray-900">{{ cookie.name }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-600">{{ cookie.purpose }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-600">{{ cookie.duration }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Managing Cookies -->
+      <section [id]="sections[3].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[3].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          You can control and manage cookies in several ways. Please note that removing or blocking
+          cookies may impact your user experience and some functionality may no longer be available.
+        </p>
+        <h3 class="mt-6 text-xl font-semibold text-gray-800">Browser Settings</h3>
+        <p class="mt-2 text-gray-600">
+          Most web browsers allow you to manage cookies through their settings. You can typically
+          find these settings in your browser's "Options," "Settings," or "Preferences" menu. The
+          following links provide information on how to manage cookies in popular browsers:
+        </p>
+        <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+          <li>
+            <a
+              href="https://support.google.com/chrome/answer/95647"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-600 hover:underline"
+            >
+              Google Chrome
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://support.mozilla.org/en-US/kb/cookies-information-websites-store-on-your-computer"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-600 hover:underline"
+            >
+              Mozilla Firefox
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://support.apple.com/guide/safari/manage-cookies-sfri11471"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-600 hover:underline"
+            >
+              Apple Safari
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://support.microsoft.com/en-us/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-600 hover:underline"
+            >
+              Microsoft Edge
+            </a>
+          </li>
+        </ul>
+
+        <h3 class="mt-6 text-xl font-semibold text-gray-800">Opt-Out Tools</h3>
+        <p class="mt-2 text-gray-600">
+          You can opt out of certain third-party cookies using the following tools:
+        </p>
+        <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+          <li>
+            <a
+              href="https://tools.google.com/dlpage/gaoptout"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-600 hover:underline"
+            >
+              Google Analytics Opt-out Browser Add-on
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://www.youronlinechoices.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-600 hover:underline"
+            >
+              Your Online Choices (EU)
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://optout.networkadvertising.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-600 hover:underline"
+            >
+              Network Advertising Initiative Opt-out
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <!-- Third-Party Cookies -->
+      <section [id]="sections[4].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[4].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          In addition to our own cookies, we may also use various third-party cookies to report
+          usage statistics, deliver advertisements, and provide other services. These third parties
+          have their own privacy policies and may collect information about your online activities
+          across different websites.
+        </p>
+        <p class="mt-4 text-gray-600">Third-party services we use include:</p>
+        <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+          <li>
+            <strong>Google Analytics:</strong> Web analytics service that tracks and reports website
+            traffic
+          </li>
+          <li>
+            <strong>Stripe:</strong> Payment processing and fraud prevention
+          </li>
+          <li>
+            <strong>Mapbox:</strong> Mapping and location services
+          </li>
+          <li>
+            <strong>Intercom:</strong> Customer support and messaging
+          </li>
+        </ul>
+      </section>
+
+      <!-- Changes to This Policy -->
+      <section [id]="sections[5].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[5].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          We may update this Cookie Policy from time to time to reflect changes in our practices or
+          for other operational, legal, or regulatory reasons. We will notify you of any material
+          changes by posting the updated policy on our website and updating the "Last updated" date.
+        </p>
+      </section>
+
+      <!-- Contact Us -->
+      <section [id]="sections[6].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[6].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          If you have any questions about our use of cookies or this Cookie Policy, please contact
+          us:
+        </p>
+        <ul class="mt-4 space-y-2 text-gray-600">
+          <li>
+            <strong>Email:</strong>
+            <a href="mailto:privacy@logisticstms.com" class="text-blue-600 hover:underline">
+              privacy&#64;logisticstms.com
+            </a>
+          </li>
+          <li>
+            <strong>Address:</strong> 123 Fleet Street, Suite 500, Houston, TX 77001
+          </li>
+          <li>
+            <strong>Phone:</strong>
+            <a href="tel:+18005551234" class="text-blue-600 hover:underline">(800) 555-1234</a>
+          </li>
+        </ul>
+      </section>
+    </div>
+</web-section-container>

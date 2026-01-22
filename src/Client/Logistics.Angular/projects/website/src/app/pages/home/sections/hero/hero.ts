@@ -1,5 +1,6 @@
-import { Component, output } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { type StatItem, StatsGrid } from "@/shared/components";
+import { DemoDialogService } from "@/shared/services";
 import { ButtonModule } from "primeng/button";
 
 @Component({
@@ -8,7 +9,7 @@ import { ButtonModule } from "primeng/button";
   imports: [ButtonModule, StatsGrid],
 })
 export class Hero {
-  public readonly demoRequested = output<void>();
+  private readonly demoDialogService = inject(DemoDialogService);
 
   protected readonly stats: StatItem[] = [
     { value: "500+", label: "Companies" },
@@ -16,4 +17,8 @@ export class Hero {
     { value: "99.9%", label: "Uptime" },
     { value: "24/7", label: "Support" },
   ];
+
+  protected openDemoDialog(): void {
+    this.demoDialogService.open();
+  }
 }

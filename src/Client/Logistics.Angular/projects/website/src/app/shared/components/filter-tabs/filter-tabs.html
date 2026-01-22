@@ -1,0 +1,18 @@
+<div class="flex flex-wrap justify-center gap-2" webScrollAnimate="fade-up" [delay]="delay()">
+  @for (option of options(); track option) {
+    <button
+      type="button"
+      class="rounded-full px-4 py-2 text-sm font-medium transition-all"
+      [class.bg-blue-600]="selected() === option"
+      [class.text-white]="selected() === option"
+      [class.bg-white]="selected() !== option && variant() === 'light'"
+      [class.bg-slate-100]="selected() !== option && variant() === 'dark'"
+      [class.text-gray-700]="selected() !== option"
+      [class.hover:bg-gray-100]="selected() !== option && variant() === 'light'"
+      [class.hover:bg-slate-200]="selected() !== option && variant() === 'dark'"
+      (click)="selectionChange.emit(option)"
+    >
+      {{ option }}
+    </button>
+  }
+</div>

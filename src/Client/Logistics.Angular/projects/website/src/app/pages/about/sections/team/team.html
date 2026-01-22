@@ -1,0 +1,45 @@
+<web-section-container sectionId="team" background="white">
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="Our Team"
+      title="Meet the People Behind Logistics TMS"
+      subtitle="A passionate team dedicated to transforming fleet management."
+    />
+  </div>
+
+  <!-- Team Grid -->
+  <div class="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    @for (member of members; track member.name; let i = $index) {
+      <div
+        class="group rounded-2xl bg-slate-50 p-6 text-center transition-all hover:bg-white hover:shadow-lg"
+        webScrollAnimate="fade-up"
+        [delay]="i * 100"
+      >
+        <!-- Avatar -->
+        <div class="mx-auto">
+          <web-avatar [initials]="member.initials" size="lg" [hoverScale]="true" />
+        </div>
+
+        <!-- Info -->
+        <h3 class="mt-6 text-xl font-bold text-gray-900">{{ member.name }}</h3>
+        <p class="mt-1 text-sm font-medium text-blue-600">{{ member.role }}</p>
+        <p class="mt-3 text-sm text-gray-600">{{ member.bio }}</p>
+
+        <!-- Social Links -->
+        @if (member.linkedIn) {
+          <div class="mt-4">
+            <a
+              [href]="member.linkedIn"
+              class="inline-flex items-center gap-1 text-sm text-gray-400 transition-colors hover:text-blue-600"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <i class="pi pi-linkedin"></i>
+              <span>LinkedIn</span>
+            </a>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</web-section-container>

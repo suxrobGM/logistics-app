@@ -1,0 +1,93 @@
+<web-section-container background="white">
+  @if (store.isLoading()) {
+    <!-- Loading State -->
+    <div class="overflow-hidden rounded-3xl bg-linear-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div class="grid items-center lg:grid-cols-2">
+        <div class="h-64 bg-linear-to-br from-blue-500/20 to-purple-500/20 lg:h-full lg:min-h-[400px]">
+          <div class="flex h-full items-center justify-center">
+            <i class="pi pi-spin pi-spinner text-6xl text-purple-300/50"></i>
+          </div>
+        </div>
+        <div class="p-8 lg:p-12">
+          <p-skeleton width="6rem" height="1.5rem" styleClass="rounded-full bg-purple-500/20" />
+          <p-skeleton height="2.5rem" styleClass="mt-4 bg-purple-500/20" />
+          <p-skeleton height="4rem" styleClass="mt-4 bg-purple-500/20" />
+          <div class="mt-6 flex items-center gap-4">
+            <p-skeleton shape="circle" size="3rem" styleClass="bg-purple-500/20" />
+            <div>
+              <p-skeleton width="8rem" height="1rem" styleClass="bg-purple-500/20" />
+              <p-skeleton width="10rem" height="1rem" styleClass="mt-1 bg-purple-500/20" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else if (store.featuredPost(); as featured) {
+    <div
+      class="overflow-hidden rounded-3xl bg-linear-to-br from-slate-900 via-purple-900 to-slate-900"
+      webScrollAnimate="fade-up"
+    >
+      <div class="grid items-center lg:grid-cols-2">
+        <!-- Image -->
+        <div class="h-64 bg-linear-to-br from-blue-500/20 to-purple-500/20 lg:h-full lg:min-h-[400px]">
+          @if (featured.featuredImage) {
+            <img
+              [src]="featured.featuredImage"
+              [alt]="featured.title"
+              class="h-full w-full object-cover"
+            />
+          } @else {
+            <div class="flex h-full items-center justify-center">
+              <i class="pi pi-image text-6xl text-purple-300/50"></i>
+            </div>
+          }
+        </div>
+
+        <!-- Content -->
+        <div class="p-8 lg:p-12">
+          <!-- Category Badge -->
+          @if (featured.category) {
+            <span
+              class="inline-flex rounded-full bg-purple-500/20 px-3 py-1 text-sm font-medium text-purple-300"
+            >
+              {{ featured.category }}
+            </span>
+          }
+
+          <!-- Title -->
+          <h2 class="mt-4 text-2xl font-bold text-white sm:text-3xl">
+            {{ featured.title }}
+          </h2>
+
+          <!-- Excerpt -->
+          <p class="mt-4 text-purple-200">
+            {{ featured.excerpt }}
+          </p>
+
+          <!-- Meta -->
+          <div class="mt-6 flex items-center gap-4">
+            <!-- Author Avatar -->
+            <web-avatar [initials]="featured.authorInitials ?? ''" size="md" />
+            <div>
+              <p class="font-medium text-white">{{ featured.authorName }}</p>
+              <p class="text-sm text-purple-300">
+                {{ featured.publishedAt | date : "MMMM d, yyyy" }} · {{ getReadTime(featured.content) }}
+              </p>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div class="mt-8">
+            <p-button
+              label="Read Article"
+              icon="pi pi-arrow-right"
+              iconPos="right"
+              [rounded]="true"
+              [routerLink]="['/blog', featured.slug]"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</web-section-container>

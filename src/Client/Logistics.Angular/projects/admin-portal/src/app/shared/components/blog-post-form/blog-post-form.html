@@ -1,0 +1,112 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <div class="mb-4 grid grid-cols-12 gap-4">
+    <div class="col-span-12 md:col-span-8">
+      <ui-labeled-field label="Title" [required]="true">
+        <input
+          pInputText
+          formControlName="title"
+          placeholder="Enter blog post title"
+          class="w-full"
+        />
+      </ui-labeled-field>
+    </div>
+
+    <div class="col-span-12 md:col-span-4">
+      <ui-labeled-field label="Category">
+        <input
+          pInputText
+          formControlName="category"
+          placeholder="e.g., Industry News, Tips"
+          class="w-full"
+        />
+      </ui-labeled-field>
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <ui-labeled-field label="Content" [required]="true">
+      <p-editor formControlName="content" [style]="{ height: '320px' }" />
+    </ui-labeled-field>
+  </div>
+
+  <div class="mb-4">
+    <ui-labeled-field label="Excerpt">
+      <textarea
+        pTextarea
+        formControlName="excerpt"
+        placeholder="Brief summary of the post (shown in listings)"
+        class="w-full"
+        rows="3"
+      ></textarea>
+    </ui-labeled-field>
+  </div>
+
+  <div class="mb-4 grid grid-cols-12 gap-4">
+    <div class="col-span-12 md:col-span-6">
+      <ui-labeled-field label="Author Name" [required]="true">
+        <input
+          pInputText
+          formControlName="authorName"
+          placeholder="Enter author name"
+          class="w-full"
+        />
+      </ui-labeled-field>
+    </div>
+
+    <div class="col-span-12 md:col-span-6">
+      <ui-labeled-field label="Featured Image URL">
+        <input
+          pInputText
+          formControlName="featuredImage"
+          placeholder="https://example.com/image.jpg"
+          class="w-full"
+        />
+      </ui-labeled-field>
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <p-checkbox formControlName="isFeatured" [binary]="true" inputId="isFeatured" />
+    <label for="isFeatured" class="ml-2">Featured Post</label>
+  </div>
+
+  <ui-validation-summary [form]="form" />
+
+  <div class="mt-6 flex flex-wrap gap-2">
+    <p-button
+      [label]="mode() === 'create' ? 'Create' : 'Save'"
+      icon="pi pi-check"
+      type="submit"
+      [loading]="isLoading()"
+      [disabled]="form.invalid || isLoading()"
+    />
+    <p-button label="Cancel" icon="pi pi-times" severity="secondary" routerLink="/blog-posts" />
+    @if (mode() === "edit") {
+      @if (status() === "draft" || status() === "archived") {
+        <p-button
+          label="Publish"
+          icon="pi pi-send"
+          severity="success"
+          [outlined]="true"
+          (click)="askPublish()"
+        />
+      }
+      @if (status() === "published") {
+        <p-button
+          label="Unpublish"
+          icon="pi pi-eye-slash"
+          severity="warn"
+          [outlined]="true"
+          (click)="askUnpublish()"
+        />
+      }
+      <p-button
+        label="Delete"
+        icon="pi pi-trash"
+        severity="danger"
+        [outlined]="true"
+        (click)="askRemove()"
+      />
+    }
+  </div>
+</form>

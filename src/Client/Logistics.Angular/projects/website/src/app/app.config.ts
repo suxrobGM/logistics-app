@@ -1,6 +1,6 @@
 import { type ApplicationConfig, provideBrowserGlobalErrorListeners } from "@angular/core";
 import { provideClientHydration, withEventReplay } from "@angular/platform-browser";
-import { provideRouter, withInMemoryScrolling } from "@angular/router";
+import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from "@angular/router";
 import { provideApi } from "@logistics/shared/api";
 import Aura from "@primeuix/themes/aura";
 import { ConfirmationService, MessageService } from "primeng/api";
@@ -17,6 +17,7 @@ export const appConfig: ApplicationConfig = {
         scrollPositionRestoration: "enabled",
         anchorScrolling: "enabled",
       }),
+      withComponentInputBinding(),
     ),
     provideClientHydration(withEventReplay()),
     provideApi({

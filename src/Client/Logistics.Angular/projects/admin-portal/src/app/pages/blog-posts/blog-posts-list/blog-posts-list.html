@@ -1,0 +1,84 @@
+<ui-page-header title="Blog Posts" addRoute="/blog-posts/add" addTooltip="Add a new blog post" />
+
+<p-card>
+  <ui-data-container
+    [loading]="store.isLoading()"
+    [error]="store.error()"
+    [isEmpty]="store.isEmpty()"
+    skeletonVariant="table"
+    [skeletonRows]="10"
+    emptyTitle="No blog posts yet"
+    emptyMessage="Add your first blog post to get started."
+    emptyActionLabel="Add Blog Post"
+    (retry)="store.retry()"
+    (emptyAction)="addBlogPost()"
+  >
+    <p-table
+      [value]="store.data()"
+      [lazy]="true"
+      [paginator]="true"
+      [showCurrentPageReport]="true"
+      (onLazyLoad)="store.onLazyLoad($event)"
+      [rows]="store.pageSize()"
+      [first]="store.first()"
+      [totalRecords]="store.totalRecords()"
+      [loading]="store.isLoading()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
+      <ng-template #caption>
+        <ui-search-input (searchChange)="search($event)" />
+      </ng-template>
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="Title">
+            Title
+            <p-sortIcon field="Title" />
+          </th>
+          <th pSortableColumn="Category">
+            Category
+            <p-sortIcon field="Category" />
+          </th>
+          <th pSortableColumn="AuthorName">
+            Author
+            <p-sortIcon field="AuthorName" />
+          </th>
+          <th>Status</th>
+          <th pSortableColumn="PublishedAt">
+            Published
+            <p-sortIcon field="PublishedAt" />
+          </th>
+          <th class="w-20">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-post>
+        <tr>
+          <td>
+            <div class="flex items-center gap-2">
+              @if (post.isFeatured) {
+                <i class="pi pi-star-fill text-yellow-500" pTooltip="Featured"></i>
+              }
+              {{ post.title }}
+            </div>
+          </td>
+          <td>{{ post.category || "-" }}</td>
+          <td>{{ post.authorName }}</td>
+          <td>
+            <p-tag [value]="post.status" [severity]="getStatusSeverity(post.status)" />
+          </td>
+          <td>{{ post.publishedAt | date: "mediumDate" }}</td>
+          <td>
+            <p-button
+              icon="pi pi-ellipsis-v"
+              (click)="openActionMenu(post, menu, $event)"
+              severity="secondary"
+              [text]="true"
+              aria-label="Show actions menu"
+            />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ui-data-container>
+</p-card>
+
+<p-menu #menu [model]="actionMenuItems()" [popup]="true" />

@@ -1,0 +1,50 @@
+<web-section-container sectionId="story" background="white">
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="Our Story"
+      title="From Vision to Reality"
+      subtitle="How a simple idea became a platform trusted by hundreds of trucking companies."
+    />
+  </div>
+
+  <!-- Timeline -->
+  <div class="mt-16">
+    <div class="relative">
+      <!-- Timeline line -->
+      <div
+        class="absolute top-0 left-1/2 hidden h-full w-0.5 -translate-x-1/2 bg-blue-200 md:block"
+      ></div>
+
+      <!-- Milestones -->
+      <div class="space-y-12">
+        @for (milestone of milestones; track milestone.year; let i = $index) {
+          <div
+            class="relative flex flex-col items-center md:flex-row"
+            [class.md:flex-row-reverse]="i % 2 !== 0"
+            webScrollAnimate="fade-up"
+            [delay]="i * 150"
+          >
+            <!-- Content -->
+            <div class="w-full md:w-5/12" [class.md:text-right]="i % 2 === 0">
+              <div
+                class="rounded-2xl bg-slate-50 p-6 shadow-sm transition-shadow hover:shadow-md"
+              >
+                <span class="text-sm font-semibold text-blue-600">{{ milestone.year }}</span>
+                <h3 class="mt-2 text-xl font-bold text-gray-900">{{ milestone.title }}</h3>
+                <p class="mt-2 text-gray-600">{{ milestone.description }}</p>
+              </div>
+            </div>
+
+            <!-- Icon (center) -->
+            <div class="my-4 flex justify-center md:absolute md:left-1/2 md:my-0 md:-translate-x-1/2">
+              <web-icon-circle [icon]="milestone.icon" size="md" gradient="blue-cyan" />
+            </div>
+
+            <!-- Spacer -->
+            <div class="hidden w-5/12 md:block"></div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</web-section-container>

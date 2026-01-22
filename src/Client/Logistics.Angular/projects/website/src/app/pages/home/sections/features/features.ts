@@ -51,5 +51,17 @@ export class Features {
       description:
         "Built-in messaging between dispatchers and drivers with read receipts and typing indicators.",
     },
+    {
+      icon: "pi-user",
+      title: "Customer Self-Service Portal",
+      description:
+        "Give your customers 24/7 access to track shipments, view invoices, request quotes, and download delivery documents.",
+    },
+    {
+      icon: "pi-clipboard",
+      title: "Vehicle Inspections (DVIR)",
+      description:
+        "Digital pre-trip and post-trip inspections with photo documentation and automated maintenance alerts.",
+    },
   ];
 }

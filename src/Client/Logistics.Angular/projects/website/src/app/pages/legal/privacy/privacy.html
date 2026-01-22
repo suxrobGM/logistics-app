@@ -1,0 +1,225 @@
+<!-- Hero Section -->
+  <web-section-container background="dark">
+    <div class="text-center" webScrollAnimate="fade-up">
+      <h1 class="text-4xl font-bold text-white sm:text-5xl">Privacy Policy</h1>
+      <p class="mt-4 text-lg text-purple-200">Last updated: {{ lastUpdated }}</p>
+    </div>
+  </web-section-container>
+
+  <!-- Content Section -->
+  <web-section-container background="white" maxWidth="3xl">
+    <!-- Table of Contents -->
+    <nav class="mb-12 rounded-lg bg-slate-50 p-6" webScrollAnimate="fade-up">
+      <h2 class="mb-4 text-lg font-semibold text-gray-900">Table of Contents</h2>
+      <ul class="space-y-2">
+        @for (section of sections; track section.id) {
+          <li>
+            <a
+              [href]="'#' + section.id"
+              class="text-blue-600 transition-colors hover:text-blue-800 hover:underline"
+            >
+              {{ section.title }}
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <!-- Content -->
+    <div class="prose prose-lg max-w-none">
+      <!-- Introduction -->
+      <section [id]="sections[0].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[0].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          Logistics TMS ("we," "our," or "us") is committed to protecting your privacy. This Privacy
+          Policy explains how we collect, use, disclose, and safeguard your information when you use
+          our fleet management platform and related services.
+        </p>
+        <p class="mt-4 text-gray-600">
+          By accessing or using our services, you agree to the collection and use of information in
+          accordance with this policy. If you do not agree with our policies and practices, please
+          do not use our services.
+        </p>
+      </section>
+
+      <!-- Information We Collect -->
+      <section [id]="sections[1].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[1].title }}</h2>
+        <p class="mt-4 text-gray-600">We collect several types of information, including:</p>
+        <h3 class="mt-6 text-xl font-semibold text-gray-800">Personal Information</h3>
+        <ul class="mt-2 list-disc space-y-2 pl-6 text-gray-600">
+          <li>Name, email address, phone number, and mailing address</li>
+          <li>Company name and business information</li>
+          <li>Payment and billing information</li>
+          <li>Driver license information and DOT numbers</li>
+          <li>Account credentials and preferences</li>
+        </ul>
+        <h3 class="mt-6 text-xl font-semibold text-gray-800">Automatically Collected Information</h3>
+        <ul class="mt-2 list-disc space-y-2 pl-6 text-gray-600">
+          <li>Device information (IP address, browser type, operating system)</li>
+          <li>GPS and location data from vehicles and mobile devices</li>
+          <li>Usage data and analytics</li>
+          <li>Log files and activity records</li>
+        </ul>
+      </section>
+
+      <!-- How We Use Your Information -->
+      <section [id]="sections[2].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[2].title }}</h2>
+        <p class="mt-4 text-gray-600">We use the information we collect to:</p>
+        <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+          <li>Provide, maintain, and improve our fleet management services</li>
+          <li>Process transactions and send related information</li>
+          <li>Enable real-time GPS tracking and dispatching features</li>
+          <li>Generate invoices, payroll, and financial reports</li>
+          <li>Send promotional communications (with your consent)</li>
+          <li>Respond to your comments, questions, and support requests</li>
+          <li>Monitor and analyze usage patterns and trends</li>
+          <li>Detect, prevent, and address technical issues and fraud</li>
+          <li>Comply with legal obligations and regulatory requirements</li>
+        </ul>
+      </section>
+
+      <!-- Information Sharing -->
+      <section [id]="sections[3].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[3].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          We may share your information in the following circumstances:
+        </p>
+        <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+          <li>
+            <strong>Service Providers:</strong> With third-party vendors who perform services on our
+            behalf (payment processing, cloud hosting, analytics)
+          </li>
+          <li>
+            <strong>Business Partners:</strong> With ELD providers, mapping services, and other
+            integrations you authorize
+          </li>
+          <li>
+            <strong>Legal Requirements:</strong> When required by law, regulation, or legal process
+          </li>
+          <li>
+            <strong>Business Transfers:</strong> In connection with a merger, acquisition, or sale
+            of assets
+          </li>
+          <li>
+            <strong>With Your Consent:</strong> When you have given us explicit permission to share
+            your information
+          </li>
+        </ul>
+        <p class="mt-4 text-gray-600">
+          We do not sell your personal information to third parties for marketing purposes.
+        </p>
+      </section>
+
+      <!-- Data Security -->
+      <section [id]="sections[4].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[4].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          We implement appropriate technical and organizational measures to protect your personal
+          information, including:
+        </p>
+        <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+          <li>Encryption of data in transit and at rest</li>
+          <li>Regular security assessments and penetration testing</li>
+          <li>Access controls and authentication mechanisms</li>
+          <li>Employee training on data protection practices</li>
+          <li>Incident response and breach notification procedures</li>
+        </ul>
+        <p class="mt-4 text-gray-600">
+          While we strive to protect your information, no method of transmission over the internet
+          or electronic storage is 100% secure. We cannot guarantee absolute security.
+        </p>
+      </section>
+
+      <!-- Your Rights -->
+      <section [id]="sections[5].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[5].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          Depending on your location, you may have certain rights regarding your personal
+          information:
+        </p>
+        <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+          <li>
+            <strong>Access:</strong> Request a copy of the personal information we hold about you
+          </li>
+          <li>
+            <strong>Correction:</strong> Request correction of inaccurate or incomplete information
+          </li>
+          <li>
+            <strong>Deletion:</strong> Request deletion of your personal information (subject to
+            legal requirements)
+          </li>
+          <li>
+            <strong>Portability:</strong> Request transfer of your data to another service provider
+          </li>
+          <li>
+            <strong>Objection:</strong> Object to processing of your information for certain
+            purposes
+          </li>
+          <li>
+            <strong>Withdrawal of Consent:</strong> Withdraw consent where processing is based on
+            consent
+          </li>
+        </ul>
+        <p class="mt-4 text-gray-600">
+          To exercise these rights, please contact us using the information provided below.
+        </p>
+      </section>
+
+      <!-- Cookies and Tracking -->
+      <section [id]="sections[6].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[6].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          We use cookies and similar tracking technologies to collect and store information about
+          your interactions with our services. For detailed information about the cookies we use and
+          how to manage them, please see our
+          <a href="/cookies" class="text-blue-600 hover:underline">Cookie Policy</a>.
+        </p>
+      </section>
+
+      <!-- Children's Privacy -->
+      <section [id]="sections[7].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[7].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          Our services are not intended for individuals under the age of 18. We do not knowingly
+          collect personal information from children. If you are a parent or guardian and believe
+          your child has provided us with personal information, please contact us immediately.
+        </p>
+      </section>
+
+      <!-- Changes to This Policy -->
+      <section [id]="sections[8].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[8].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          We may update this Privacy Policy from time to time. We will notify you of any changes by
+          posting the new Privacy Policy on this page and updating the "Last updated" date. We
+          encourage you to review this Privacy Policy periodically for any changes.
+        </p>
+      </section>
+
+      <!-- Contact Us -->
+      <section [id]="sections[9].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[9].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          If you have any questions about this Privacy Policy or our data practices, please contact
+          us:
+        </p>
+        <ul class="mt-4 space-y-2 text-gray-600">
+          <li>
+            <strong>Email:</strong>
+            <a href="mailto:privacy@logisticstms.com" class="text-blue-600 hover:underline">
+              privacy&#64;logisticstms.com
+            </a>
+          </li>
+          <li>
+            <strong>Address:</strong> 123 Fleet Street, Suite 500, Houston, TX 77001
+          </li>
+          <li>
+            <strong>Phone:</strong>
+            <a href="tel:+18005551234" class="text-blue-600 hover:underline">(800) 555-1234</a>
+          </li>
+        </ul>
+      </section>
+    </div>
+</web-section-container>

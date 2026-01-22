@@ -24,6 +24,7 @@ export class Sidebar {
     { label: "Subscription Plans", icon: "pi pi-credit-card", routerLink: "/subscription-plans" },
     { label: "Subscriptions", icon: "pi pi-users", routerLink: "/subscriptions" },
     { label: "Users", icon: "pi pi-user", routerLink: "/users" },
+    { label: "Blog Posts", icon: "pi pi-file-edit", routerLink: "/blog-posts" },
   ];
 
   protected readonly userName = this.authService.userName;
