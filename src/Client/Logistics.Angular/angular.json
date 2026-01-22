@@ -60,10 +60,7 @@
                 "input": "projects/tms-portal/public"
               }
             ],
-            "styles": [
-              "projects/tms-portal/src/styles.css",
-              "mapbox-gl/dist/mapbox-gl.css"
-            ]
+            "styles": ["projects/tms-portal/src/styles.css", "mapbox-gl/dist/mapbox-gl.css"]
           },
           "configurations": {
             "production": {
@@ -153,9 +150,7 @@
                 "input": "projects/customer-portal/public"
               }
             ],
-            "styles": [
-              "projects/customer-portal/src/styles.css"
-            ]
+            "styles": ["projects/customer-portal/src/styles.css"]
           },
           "configurations": {
             "production": {
@@ -245,9 +240,7 @@
                 "input": "projects/admin-portal/public"
               }
             ],
-            "styles": [
-              "projects/admin-portal/src/styles.css"
-            ]
+            "styles": ["projects/admin-portal/src/styles.css"]
           },
           "configurations": {
             "production": {
@@ -305,6 +298,79 @@
               "projects/admin-portal/src/**/*.ts",
               "projects/admin-portal/src/**/*.html"
             ]
+          }
+        }
+      }
+    },
+    "website": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "projects/website",
+      "sourceRoot": "projects/website/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/website/src/main.ts",
+            "tsConfig": "projects/website/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/website/public"
+              }
+            ],
+            "styles": ["projects/website/src/styles.css"],
+            "server": "projects/website/src/main.server.ts",
+            "outputMode": "server",
+            "ssr": {
+              "entry": "projects/website/src/server.ts"
+            }
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "website:build:production"
+            },
+            "development": {
+              "buildTarget": "website:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["projects/website/**/*.ts", "projects/website/**/*.html"],
+            "eslintConfig": "projects/website/eslint.config.js"
           }
         }
       }
