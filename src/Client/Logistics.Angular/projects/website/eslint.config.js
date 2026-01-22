@@ -11,7 +11,7 @@ export default defineConfig([
         "error",
         {
           type: "attribute",
-          prefix: "app",
+          prefix: "web",
           style: "camelCase",
         },
       ],
@@ -19,7 +19,7 @@ export default defineConfig([
         "error",
         {
           type: "element",
-          prefix: "app",
+          prefix: "web",
           style: "kebab-case",
         },
       ],
@@ -28,5 +28,5 @@ export default defineConfig([
   {
     files: ["**/*.html"],
     rules: {},
-  }
+  },
 ]);

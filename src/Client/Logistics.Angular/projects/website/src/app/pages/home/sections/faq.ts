@@ -7,7 +7,7 @@ interface FaqItem {
 }
 
 @Component({
-  selector: "app-faq",
+  selector: "web-faq",
   templateUrl: "./faq.html",
   imports: [AccordionModule],
 })

@@ -8,7 +8,7 @@ interface Step {
 }
 
 @Component({
-  selector: "app-how-it-works",
+  selector: "web-how-it-works",
   templateUrl: "./how-it-works.html",
 })
 export class HowItWorks {
@@ -16,7 +16,8 @@ export class HowItWorks {
     {
       number: 1,
       title: "Sign Up",
-      description: "Create your company account in just a few minutes with a simple onboarding process.",
+      description:
+        "Create your company account in just a few minutes with a simple onboarding process.",
       icon: "pi-user-plus",
     },
     {

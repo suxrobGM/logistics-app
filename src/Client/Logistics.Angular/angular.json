@@ -313,7 +313,7 @@
       },
       "root": "projects/website",
       "sourceRoot": "projects/website/src",
-      "prefix": "app",
+      "prefix": "web",
       "architect": {
         "build": {
           "builder": "@angular/build:application",
@@ -345,6 +345,12 @@
                   "type": "anyComponentStyle",
                   "maximumWarning": "4kB",
                   "maximumError": "8kB"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "projects/website/src/environments/environment.ts",
+                  "with": "projects/website/src/environments/environment.prod.ts"
                 }
               ],
               "outputHashing": "all"

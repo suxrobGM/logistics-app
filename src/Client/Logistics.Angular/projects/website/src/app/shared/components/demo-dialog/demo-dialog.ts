@@ -9,7 +9,7 @@ import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
 
 @Component({
-  selector: "app-demo-dialog",
+  selector: "web-demo-dialog",
   templateUrl: "./demo-dialog.html",
   imports: [
     DialogModule,

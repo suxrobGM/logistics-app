@@ -7,7 +7,7 @@ interface Feature {
 }
 
 @Component({
-  selector: "app-features",
+  selector: "web-features",
   templateUrl: "./features.html",
 })
 export class Features {
@@ -45,7 +45,8 @@ export class Features {
     {
       icon: "pi-comments",
       title: "Real-Time Messaging",
-      description: "Built-in messaging between dispatchers and drivers with read receipts and typing indicators.",
+      description:
+        "Built-in messaging between dispatchers and drivers with read receipts and typing indicators.",
     },
   ];
 }

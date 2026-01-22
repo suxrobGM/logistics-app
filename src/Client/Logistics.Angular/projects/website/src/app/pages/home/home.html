@@ -1,14 +1,14 @@
-<app-navbar (demoRequested)="openDemoDialog()" />
+<web-navbar (demoRequested)="openDemoDialog()" />
 
 <main>
-  <app-hero (demoRequested)="openDemoDialog()" />
-  <app-features />
-  <app-how-it-works />
-  <app-testimonials />
-  <app-pricing (demoRequested)="openDemoDialog()" />
-  <app-faq />
+  <web-hero (demoRequested)="openDemoDialog()" />
+  <web-features />
+  <web-how-it-works />
+  <web-testimonials />
+  <web-pricing (demoRequested)="openDemoDialog()" />
+  <web-faq />
 </main>
 
-<app-footer />
+<web-footer />
 
-<app-demo-dialog [(visible)]="showDemoDialog" />
+<web-demo-dialog [(visible)]="showDemoDialog" />

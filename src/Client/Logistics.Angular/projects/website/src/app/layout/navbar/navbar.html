@@ -76,28 +76,51 @@
   </div>
 
   <!-- Mobile Menu -->
-  @if (mobileMenuOpen()) {
-    <div class="border-t border-gray-200 bg-white md:hidden">
-      <div class="space-y-1 px-4 py-4">
-        <a href="#features" class="block rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100"
-          >Features</a
-        >
-        <a href="#how-it-works" class="block rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100"
-          >How It Works</a
-        >
-        <a href="#pricing" class="block rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100"
-          >Pricing</a
-        >
-        <a href="#faq" class="block rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100">FAQ</a>
-        <div class="pt-2">
-          <p-button
-            label="Request a Demo"
-            (onClick)="demoRequested.emit()"
-            [rounded]="true"
-            class="w-full"
-          />
-        </div>
+  <div
+    class="overflow-hidden border-t border-gray-200 bg-white transition-all duration-300 ease-in-out md:hidden"
+    [class.max-h-0]="!mobileMenuOpen()"
+    [class.border-t-0]="!mobileMenuOpen()"
+    [class.max-h-96]="mobileMenuOpen()"
+    [class.opacity-0]="!mobileMenuOpen()"
+    [class.opacity-100]="mobileMenuOpen()"
+  >
+    <div class="space-y-1 px-4 py-4">
+      <a
+        href="#features"
+        class="block rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100"
+        (click)="mobileMenuOpen.set(false)"
+      >
+        Features
+      </a>
+      <a
+        href="#how-it-works"
+        class="block rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100"
+        (click)="mobileMenuOpen.set(false)"
+      >
+        How It Works
+      </a>
+      <a
+        href="#pricing"
+        class="block rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100"
+        (click)="mobileMenuOpen.set(false)"
+      >
+        Pricing
+      </a>
+      <a
+        href="#faq"
+        class="block rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100"
+        (click)="mobileMenuOpen.set(false)"
+      >
+        FAQ
+      </a>
+      <div class="pt-2">
+        <p-button
+          label="Request a Demo"
+          (onClick)="demoRequested.emit(); mobileMenuOpen.set(false)"
+          [rounded]="true"
+          class="w-full"
+        />
       </div>
     </div>
-  }
+  </div>
 </nav>

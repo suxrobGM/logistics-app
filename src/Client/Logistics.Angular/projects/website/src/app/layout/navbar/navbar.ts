@@ -2,7 +2,7 @@ import { Component, output, signal } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 
 @Component({
-  selector: "app-navbar",
+  selector: "web-navbar",
   templateUrl: "./navbar.html",
   imports: [ButtonModule],
   host: {

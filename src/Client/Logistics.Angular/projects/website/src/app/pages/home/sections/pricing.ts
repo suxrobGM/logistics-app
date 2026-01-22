@@ -2,7 +2,7 @@ import { Component, output } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 
 @Component({
-  selector: "app-pricing",
+  selector: "web-pricing",
   templateUrl: "./pricing.html",
   imports: [ButtonModule],
 })

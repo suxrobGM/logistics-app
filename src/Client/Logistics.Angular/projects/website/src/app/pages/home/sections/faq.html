@@ -13,8 +13,8 @@
     <!-- FAQ Accordion -->
     <div class="mt-12">
       <p-accordion [multiple]="true">
-        @for (faq of faqs; track faq.question) {
-          <p-accordion-panel>
+        @for (faq of faqs; track faq.question; let i = $index) {
+          <p-accordion-panel [value]="i">
             <p-accordion-header>
               <span class="font-medium text-gray-900">{{ faq.question }}</span>
             </p-accordion-header>

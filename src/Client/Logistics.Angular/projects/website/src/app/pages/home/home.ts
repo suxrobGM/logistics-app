@@ -9,7 +9,7 @@ import { Pricing } from "./sections/pricing";
 import { Testimonials } from "./sections/testimonials";
 
 @Component({
-  selector: "app-home",
+  selector: "web-home",
   templateUrl: "./home.html",
   imports: [Navbar, Footer, DemoDialog, Hero, Features, HowItWorks, Testimonials, Pricing, Faq],
 })

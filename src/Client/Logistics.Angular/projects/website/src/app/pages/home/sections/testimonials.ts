@@ -8,7 +8,7 @@ interface Testimonial {
 }
 
 @Component({
-  selector: "app-testimonials",
+  selector: "web-testimonials",
   templateUrl: "./testimonials.html",
 })
 export class Testimonials {
