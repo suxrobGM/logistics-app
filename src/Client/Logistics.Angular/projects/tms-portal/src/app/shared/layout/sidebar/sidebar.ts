@@ -28,6 +28,7 @@ import { sidebarItems } from "./sidebar-items";
 export class Sidebar {
   private readonly authService = inject(AuthService);
   private readonly tenantService = inject(TenantService);
+
   public readonly isOpened = signal(true);
   public readonly companyName = signal<string | null>(null);
   public readonly companyLogoUrl = signal<string | null>(null);
@@ -63,8 +64,8 @@ export class Sidebar {
         this.profileMenuItems[0].label = userData.getFullName();
       }
 
-      const userRole = this.authService.getUserRoleName();
-      this.userRole.set(userRole);
+      const userRole = this.authService.getUserData()?.role;
+      this.userRole.set(this.authService.getUserRoleName());
 
       // Settings menu is only visible to Owner role
       if (userRole !== UserRole.Owner) {
@@ -73,10 +74,6 @@ export class Sidebar {
     });
 
     this.tenantService.tenantDataChanged$.subscribe((tenantData) => {
-      if (tenantData?.subscription == null || !this.tenantService.isSubscriptionActive()) {
-        this.navItems.set(sidebarItems.filter((item) => item.label !== "Subscription"));
-      }
-
       this.companyName.set(tenantData?.companyName ?? null);
       this.companyLogoUrl.set(tenantData?.logoUrl ?? null);
     });

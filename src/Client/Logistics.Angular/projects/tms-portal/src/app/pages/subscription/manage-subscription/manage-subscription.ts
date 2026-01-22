@@ -37,31 +37,30 @@ export class ManageSubscriptionComponent {
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
-  protected readonly subscription: SubscriptionDto;
+  protected readonly subscription: SubscriptionDto | null;
   protected readonly employeeCount: number;
   protected readonly isLoading = signal(false);
   protected readonly isCancelled = signal(false);
+  protected readonly hasSubscription: boolean;
 
   constructor() {
     const tenantData = this.tenantService.getTenantData();
-
-    if (!tenantData?.subscription) {
-      throw new Error("Subscription not found");
-    }
-
-    this.subscription = tenantData.subscription;
-    this.employeeCount = tenantData.employeeCount ?? 0;
+    this.subscription = tenantData?.subscription ?? null;
+    this.hasSubscription = this.subscription != null;
+    this.employeeCount = tenantData?.employeeCount ?? 0;
   }
 
   getSubStatusSeverity(): SeverityLevel {
-    return Labels.subscriptionStatusSeverity(this.subscription);
+    return Labels.subscriptionStatusSeverity(this.subscription!);
   }
 
   getSubStatusLabel(): string {
-    return Labels.subscriptionStatus(this.subscription);
+    return Labels.subscriptionStatus(this.subscription!);
   }
 
   confirmCancelSubscription(): void {
+    if (!this.subscription) return;
+
     this.toastService.confirm({
       message:
         "Are you sure you want to cancel your subscription? Your subscription will be cancelled at the end of the billing cycle.",
@@ -79,7 +78,7 @@ export class ManageSubscriptionComponent {
         this.isLoading.set(true);
 
         await this.api.invoke(cancelSubscription, {
-          id: this.subscription.id!,
+          id: this.subscription!.id!,
         });
 
         this.toastService.showSuccess("Subscription cancelled successfully");
@@ -93,11 +92,11 @@ export class ManageSubscriptionComponent {
   }
 
   isSubscriptionCancelled(): boolean {
-    return this.subscription.status === "cancelled";
+    return this.subscription?.status === "cancelled";
   }
 
   isActiveSubscription(): boolean {
-    return this.subscription.status === "active";
+    return this.subscription?.status === "active";
   }
 
   calcTotalSubscriptionCost(subscription: SubscriptionDto): number {

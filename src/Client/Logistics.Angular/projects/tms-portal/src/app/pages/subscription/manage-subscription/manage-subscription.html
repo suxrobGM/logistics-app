@@ -1,79 +1,99 @@
 <h1 class="text-center">Manage subscription</h1>
 
-<div class="flex flex-col gap-2">
-  <!-- Current Plan Card -->
-  <div class="col-span-12">
-    <p-card header="Current Plan">
-      <div class="grid grid-cols-12">
-        <div class="col-span-6 font-bold">Plan Name:</div>
-        <div class="col-span-6">{{ subscription.plan?.name }}</div>
+@if (hasSubscription) {
+  <div class="flex flex-col gap-2">
+    <!-- Current Plan Card -->
+    <div class="col-span-12">
+      <p-card header="Current Plan">
+        <div class="grid grid-cols-12">
+          <div class="col-span-6 font-bold">Plan Name:</div>
+          <div class="col-span-6">{{ subscription!.plan?.name }}</div>
 
-        <div class="col-span-6 font-bold">Price per Employee:</div>
-        <div class="col-span-6">{{ subscription.plan?.price | currency }}</div>
+          <div class="col-span-6 font-bold">Price per Employee:</div>
+          <div class="col-span-6">{{ subscription!.plan?.price | currency }}</div>
 
-        <div class="col-span-6 font-bold">Number of Employees:</div>
-        <div class="col-span-6">{{ employeeCount }}</div>
+          <div class="col-span-6 font-bold">Number of Employees:</div>
+          <div class="col-span-6">{{ employeeCount }}</div>
 
-        <div class="col-span-6 font-bold">Total Price:</div>
-        <div class="col-span-6">{{ calcTotalSubscriptionCost(subscription) | currency }}</div>
+          <div class="col-span-6 font-bold">Total Price:</div>
+          <div class="col-span-6">{{ calcTotalSubscriptionCost(subscription!) | currency }}</div>
 
-        @if (subscription.endDate) {
-          <div class="col-span-6 font-bold">End Date:</div>
-          <div class="col-span-6">{{ subscription.endDate | date }}</div>
-        }
-
-        @if (isActiveSubscription()) {
-          <div class="col-span-6 font-bold">Next Billing Date:</div>
-          <div class="col-span-6">{{ subscription.nextBillingDate | date }}</div>
-        }
-
-        <div class="col-span-6 font-bold">Status:</div>
-        <div class="col-span-6">
-          <p-tag [severity]="getSubStatusSeverity()" class="text-center">
-            {{ getSubStatusLabel() }}
-          </p-tag>
-        </div>
-      </div>
-
-      <ng-template #footer>
-        <div class="flex gap-2">
-          <p-button
-            [routerLink]="'/subscription/plans'"
-            label="Change Plan"
-            size="small"
-            icon="pi pi-credit-card"
-          />
-          <p-button
-            label="Cancel Subscription"
-            icon="pi pi-times"
-            severity="danger"
-            size="small"
-            [disabled]="isLoading() || isCancelled() || isSubscriptionCancelled()"
-            (click)="confirmCancelSubscription()"
-          />
-
-          @if (isSubscriptionCancelled()) {
-            <p-button
-              label="Renew"
-              icon="pi pi-credit-card"
-              size="small"
-              [routerLink]="'/subscription/renew'"
-            />
+          @if (subscription!.endDate) {
+            <div class="col-span-6 font-bold">End Date:</div>
+            <div class="col-span-6">{{ subscription!.endDate | date }}</div>
           }
+
+          @if (isActiveSubscription()) {
+            <div class="col-span-6 font-bold">Next Billing Date:</div>
+            <div class="col-span-6">{{ subscription!.nextBillingDate | date }}</div>
+          }
+
+          <div class="col-span-6 font-bold">Status:</div>
+          <div class="col-span-6">
+            <p-tag [severity]="getSubStatusSeverity()" class="text-center">
+              {{ getSubStatusLabel() }}
+            </p-tag>
+          </div>
         </div>
-      </ng-template>
+
+        <ng-template #footer>
+          <div class="flex gap-2">
+            <p-button
+              [routerLink]="'/subscription/plans'"
+              label="Change Plan"
+              size="small"
+              icon="pi pi-credit-card"
+            />
+            <p-button
+              label="Cancel Subscription"
+              icon="pi pi-times"
+              severity="danger"
+              size="small"
+              [disabled]="isLoading() || isCancelled() || isSubscriptionCancelled()"
+              (click)="confirmCancelSubscription()"
+            />
+
+            @if (isSubscriptionCancelled()) {
+              <p-button
+                label="Renew"
+                icon="pi pi-credit-card"
+                size="small"
+                [routerLink]="'/subscription/renew'"
+              />
+            }
+          </div>
+        </ng-template>
+      </p-card>
+    </div>
+
+    <!-- Payment Methods Card -->
+    <div class="col-span-12">
+      <app-payment-methods-card />
+    </div>
+
+    <!-- Billing History Table -->
+    <div class="col-span-12">
+      <p-card header="Billing History">
+        <app-billing-history />
+      </p-card>
+    </div>
+  </div>
+} @else {
+  <div class="flex flex-col items-center gap-4 py-8">
+    <p-card class="w-full max-w-lg text-center">
+      <div class="flex flex-col items-center gap-4">
+        <i class="pi pi-credit-card text-6xl text-gray-400"></i>
+        <h2 class="m-0 text-xl font-semibold">No Active Subscription</h2>
+        <p class="m-0 text-gray-600">
+          Your company does not have an active subscription. Choose a plan to get started and
+          unlock all features.
+        </p>
+        <p-button
+          [routerLink]="'/subscription/plans'"
+          label="View Plans"
+          icon="pi pi-shopping-cart"
+        />
+      </div>
     </p-card>
   </div>
-
-  <!-- Payment Methods Card -->
-  <div class="col-span-12">
-    <app-payment-methods-card />
-  </div>
-
-  <!-- Billing History Table -->
-  <div class="col-span-12">
-    <p-card header="Billing History">
-      <app-billing-history />
-    </p-card>
-  </div>
-</div>
+}

@@ -2,14 +2,18 @@ import type { MenuItem } from "@/shared/layout/panel-menu";
 
 export const sidebarItems: MenuItem[] = [
   {
-    label: "Home",
-    icon: "pi pi-home text-3xl!",
-    route: "/home",
-  },
-  {
     label: "Dashboard",
-    icon: "pi pi-chart-bar text-3xl!",
-    route: "/dashboard",
+    icon: "pi pi-home text-3xl!",
+    items: [
+      {
+        label: "Overview",
+        route: "/dashboard",
+      },
+      {
+        label: "Home",
+        route: "/home",
+      },
+    ],
   },
   {
     label: "Messages",
@@ -17,16 +21,94 @@ export const sidebarItems: MenuItem[] = [
     route: "/messages",
   },
   {
-    label: "Loads",
+    label: "Operations",
     icon: "pi pi-server text-3xl!",
     items: [
       {
-        label: "All Loads",
+        label: "Loads",
         route: "/loads",
       },
       {
         label: "Trips",
         route: "/trips",
+      },
+      {
+        label: "Load Board",
+        route: "/loadboard",
+      },
+      {
+        label: "Search Loads",
+        route: "/loadboard/search",
+      },
+      {
+        label: "Posted Trucks",
+        route: "/loadboard/posted-trucks",
+      },
+      {
+        label: "Providers",
+        route: "/loadboard/providers",
+      },
+    ],
+  },
+  {
+    label: "Fleet",
+    icon: "pi pi-truck text-3xl!",
+    items: [
+      {
+        label: "Trucks",
+        route: "/trucks",
+      },
+      {
+        label: "ELD / HOS",
+        route: "/eld",
+      },
+      {
+        label: "Inspections",
+        route: "/inspections",
+      },
+    ],
+  },
+  {
+    label: "Directory",
+    icon: "pi pi-users text-3xl!",
+    items: [
+      {
+        label: "Employees",
+        route: "/employees",
+      },
+      {
+        label: "Customers",
+        route: "/customers",
+      },
+    ],
+  },
+  {
+    label: "Finance",
+    icon: "pi pi-wallet text-3xl!",
+    items: [
+      {
+        label: "Payroll Invoices",
+        route: "/invoices/payroll",
+      },
+      {
+        label: "Load Invoices",
+        route: "/invoices/loads",
+      },
+      {
+        label: "Expenses",
+        route: "/expenses",
+      },
+      {
+        label: "Add Expense",
+        route: "/expenses/add",
+      },
+      {
+        label: "Expense Analytics",
+        route: "/expenses/analytics",
+      },
+      {
+        label: "Financial Report",
+        route: "/reports/financials",
       },
     ],
   },
@@ -46,99 +128,20 @@ export const sidebarItems: MenuItem[] = [
         label: "Drivers Detailed",
         route: "/reports/drivers/detailed",
       },
-      {
-        label: "Financials",
-        route: "/reports/financials",
-      },
     ],
-  },
-  {
-    label: "Trucks",
-    icon: "pi pi-truck text-3xl!",
-    route: "/trucks",
-  },
-  {
-    label: "ELD / HOS",
-    icon: "pi pi-clock text-3xl!",
-    route: "/eld",
-  },
-  {
-    label: "Load Board",
-    icon: "pi pi-search text-3xl!",
-    items: [
-      {
-        label: "Dashboard",
-        route: "/loadboard",
-      },
-      {
-        label: "Search Loads",
-        route: "/loadboard/search",
-      },
-      {
-        label: "Posted Trucks",
-        route: "/loadboard/posted-trucks",
-      },
-      {
-        label: "Providers",
-        route: "/loadboard/providers",
-      },
-    ],
-  },
-  {
-    label: "Employees",
-    icon: "pi pi-users text-3xl!",
-    route: "/employees",
-  },
-  {
-    label: "Customers",
-    icon: "pi pi-shop text-3xl!",
-    route: "/customers",
-  },
-  {
-    label: "Invoices",
-    icon: "pi pi-receipt text-3xl!",
-    items: [
-      {
-        label: "Payroll",
-        route: "/invoices/payroll",
-      },
-      {
-        label: "Load",
-        route: "/invoices/loads",
-      },
-    ],
-  },
-  {
-    label: "Expenses",
-    icon: "pi pi-wallet text-3xl!",
-    items: [
-      {
-        label: "All Expenses",
-        route: "/expenses",
-      },
-      {
-        label: "Add Expense",
-        route: "/expenses/add",
-      },
-      {
-        label: "Analytics",
-        route: "/expenses/analytics",
-      },
-    ],
-  },
-  {
-    label: "Inspections",
-    icon: "pi pi-clipboard text-3xl!",
-    route: "/inspections",
   },
   {
     label: "Settings",
     icon: "pi pi-cog text-3xl!",
-    route: "/settings/company",
-  },
-  {
-    label: "Subscription",
-    icon: "pi pi-credit-card text-3xl!",
-    route: "/subscription/manage",
+    items: [
+      {
+        label: "Company",
+        route: "/settings/company",
+      },
+      {
+        label: "Subscription",
+        route: "/subscription/manage",
+      },
+    ],
   },
 ] as const;
