@@ -88,6 +88,12 @@ if (isPublishMode)
         .WithExternalHttpEndpoints()
         .WaitFor(logisticsApi)
         .WaitFor(identityServer);
+
+    builder.AddContainer("website", "ghcr.io/suxrobgm/logistics-app/website")
+        .WithImageTag("latest")
+        .WithHttpEndpoint(7005, 7005, "website-http")
+        .WithExternalHttpEndpoints()
+        .WaitFor(logisticsApi);
 }
 else
 {
@@ -108,6 +114,11 @@ else
         .WithBunPackageInstallation()
         .WaitFor(logisticsApi)
         .WaitFor(identityServer);
+
+    builder.AddBunApp("website", "../../Client/Logistics.Angular", "start:website", true)
+        .WithHttpEndpoint(7005, 7005, "website-http", isProxied: false)
+        .WithBunPackageInstallation()
+        .WaitFor(logisticsApi);
 }
 
 // Use Stripe CLI only in development mode, on the prod the webhooks are handled by the Stripe Dashboard

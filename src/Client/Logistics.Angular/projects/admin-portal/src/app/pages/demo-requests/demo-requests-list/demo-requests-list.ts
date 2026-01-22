@@ -1,7 +1,7 @@
 import { Component, inject, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { Api, deleteDemoRequest, updateDemoRequest } from "@logistics/shared/api";
-import type { DemoRequestDto } from "@logistics/shared/api";
+import type { DemoRequestDto, DemoRequestStatus } from "@logistics/shared/api";
 import { DataContainer, LabeledField, PageHeader, SearchInput } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -16,7 +16,7 @@ import { DemoRequestsListStore } from "../store/demo-requests-list.store";
 
 interface StatusOption {
   label: string;
-  value: number;
+  value: DemoRequestStatus;
 }
 
 @Component({
@@ -48,15 +48,15 @@ export class DemoRequestsList {
   protected selectedRequest = signal<DemoRequestDto | null>(null);
 
   protected readonly form = new FormGroup({
-    status: new FormControl<number>(0, { nonNullable: true }),
+    status: new FormControl<DemoRequestStatus>("new", { nonNullable: true }),
     notes: new FormControl<string>("", { nonNullable: true }),
   });
 
   protected readonly statusOptions: StatusOption[] = [
-    { label: "New", value: 0 },
-    { label: "Contacted", value: 1 },
-    { label: "Converted", value: 2 },
-    { label: "Closed", value: 3 },
+    { label: "New", value: "new" },
+    { label: "Contacted", value: "contacted" },
+    { label: "Converted", value: "converted" },
+    { label: "Closed", value: "closed" },
   ];
 
   protected search(value: string): void {
@@ -66,7 +66,7 @@ export class DemoRequestsList {
   protected viewRequest(request: DemoRequestDto): void {
     this.selectedRequest.set(request);
     this.form.patchValue({
-      status: this.getStatusValue(request.status),
+      status: request.status ?? "new",
       notes: request.notes ?? "",
     });
     this.viewDialogVisible.set(true);
@@ -100,28 +100,25 @@ export class DemoRequestsList {
     this.store.removeItem(id);
   }
 
-  protected getStatusLabel(status?: string): string {
-    if (!status) return "New";
-    return status;
-  }
-
-  protected getStatusValue(status?: string): number {
-    switch (status?.toLowerCase()) {
+  protected getStatusLabel(status?: DemoRequestStatus): string {
+    switch (status) {
       case "new":
-        return 0;
+        return "New";
       case "contacted":
-        return 1;
+        return "Contacted";
       case "converted":
-        return 2;
+        return "Converted";
       case "closed":
-        return 3;
+        return "Closed";
       default:
-        return 0;
+        return "New";
     }
   }
 
-  protected getStatusSeverity(status?: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
-    switch (status?.toLowerCase()) {
+  protected getStatusSeverity(
+    status?: DemoRequestStatus,
+  ): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+    switch (status) {
       case "new":
         return "info";
       case "contacted":

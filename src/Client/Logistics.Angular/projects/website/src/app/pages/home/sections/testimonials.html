@@ -2,8 +2,10 @@
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <!-- Header -->
     <div class="text-center">
-      <p class="text-sm font-semibold uppercase tracking-wide text-blue-600">Testimonials</p>
-      <h2 class="mt-2 text-3xl font-bold text-gray-900 sm:text-4xl">Trusted by trucking companies nationwide</h2>
+      <p class="text-sm font-semibold tracking-wide text-blue-600 uppercase">Testimonials</p>
+      <h2 class="mt-2 text-3xl font-bold text-gray-900 sm:text-4xl">
+        Trusted by trucking companies nationwide
+      </h2>
       <p class="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
         See what our customers have to say about their experience with Logistics TMS.
       </p>
@@ -14,7 +16,9 @@
       @for (testimonial of testimonials; track testimonial.author) {
         <div class="rounded-2xl bg-white p-8 shadow-lg">
           <!-- Quote Icon -->
-          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600"
+          >
             <i class="pi pi-quote-left text-xl"></i>
           </div>
 
@@ -24,7 +28,7 @@
           <!-- Author -->
           <div class="mt-6 flex items-center gap-4">
             <div
-              class="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-500 text-lg font-bold text-white"
+              class="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-purple-500 text-lg font-bold text-white"
             >
               {{ testimonial.author.charAt(0) }}
             </div>

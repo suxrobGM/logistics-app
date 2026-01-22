@@ -3,8 +3,8 @@ import { ButtonModule } from "primeng/button";
 
 @Component({
   selector: "app-navbar",
-  imports: [ButtonModule],
   templateUrl: "./navbar.html",
+  imports: [ButtonModule],
   host: {
     "(window:scroll)": "onScroll()",
   },

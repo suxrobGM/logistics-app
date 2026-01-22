@@ -60,6 +60,7 @@ export class DemoDialog {
 
     try {
       const formValue = this.form.getRawValue();
+
       await this.api.invoke(createDemoRequest, {
         body: {
           firstName: formValue.firstName,
@@ -74,7 +75,8 @@ export class DemoDialog {
 
       this.isSubmitted.set(true);
       this.form.reset();
-    } catch {
+    } catch (error) {
+      console.error("Error submitting demo request:", error);
       this.errorMessage.set("Failed to submit your request. Please try again.");
     } finally {
       this.isLoading.set(false);

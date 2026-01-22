@@ -3,8 +3,8 @@ import { ButtonModule } from "primeng/button";
 
 @Component({
   selector: "app-pricing",
-  imports: [ButtonModule],
   templateUrl: "./pricing.html",
+  imports: [ButtonModule],
 })
 export class Pricing {
   public readonly demoRequested = output<void>();

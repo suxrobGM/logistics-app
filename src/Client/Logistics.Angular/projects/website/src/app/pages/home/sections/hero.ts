@@ -3,8 +3,8 @@ import { ButtonModule } from "primeng/button";
 
 @Component({
   selector: "app-hero",
-  imports: [ButtonModule],
   templateUrl: "./hero.html",
+  imports: [ButtonModule],
 })
 export class Hero {
   public readonly demoRequested = output<void>();

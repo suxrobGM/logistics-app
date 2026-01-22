@@ -48,6 +48,7 @@ export type { DamageMarkerDto } from './models/damage-marker-dto';
 export type { DecodeVinRequest } from './models/decode-vin-request';
 export type { DemoRequestDto } from './models/demo-request-dto';
 export type { DemoRequestDtoPagedResponse } from './models/demo-request-dto-paged-response';
+export type { DemoRequestStatus } from './models/demo-request-status';
 export type { DocumentDto } from './models/document-dto';
 export type { DocumentOwnerType } from './models/document-owner-type';
 export type { DocumentStatus } from './models/document-status';

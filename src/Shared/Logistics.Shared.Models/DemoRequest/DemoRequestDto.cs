@@ -1,3 +1,5 @@
+using Logistics.Domain.Primitives.Enums;
+
 namespace Logistics.Shared.Models;
 
 public record DemoRequestDto
@@ -11,7 +13,7 @@ public record DemoRequestDto
     public string? FleetSize { get; init; }
     public string? Message { get; init; }
     public string? Notes { get; init; }
-    public int Status { get; init; }
+    public DemoRequestStatus Status { get; init; }
     public DateTime CreatedAt { get; init; }
     public DateTime? UpdatedAt { get; init; }
 }

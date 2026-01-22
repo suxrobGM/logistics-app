@@ -8,8 +8,8 @@ interface FaqItem {
 
 @Component({
   selector: "app-faq",
-  imports: [AccordionModule],
   templateUrl: "./faq.html",
+  imports: [AccordionModule],
 })
 export class Faq {
   protected readonly faqs: FaqItem[] = [
