@@ -1,42 +1,35 @@
-<section id="how-it-works" class="bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 py-24">
-  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <!-- Header -->
-    <div class="text-center">
-      <p class="text-sm font-semibold tracking-wide text-purple-400 uppercase">How It Works</p>
-      <h2 class="mt-2 text-3xl font-bold text-white sm:text-4xl">Get started in minutes</h2>
-      <p class="mx-auto mt-4 max-w-2xl text-lg text-purple-100/90">
-        Simple setup process to get your fleet management up and running quickly.
-      </p>
-    </div>
+<web-section-container sectionId="how-it-works" background="dark">
+  <web-section-header
+    label="How It Works"
+    title="Get started in minutes"
+    subtitle="Simple setup process to get your fleet management up and running quickly."
+    [dark]="true"
+  />
 
-    <!-- Steps -->
-    <div class="mt-16 grid gap-8 md:grid-cols-4">
-      @for (step of steps; track step.number) {
-        <div class="relative text-center">
-          <!-- Connector Line (hidden on last item and mobile) -->
-          @if (step.number < 4) {
-            <div
-              class="absolute top-12 left-1/2 hidden h-0.5 w-full bg-linear-to-r from-purple-500 to-transparent md:block"
-            ></div>
-          }
-
-          <!-- Step Circle -->
+  <div class="mt-16 grid gap-8 md:grid-cols-4">
+    @for (step of steps; track step.number) {
+      <div class="relative text-center">
+        <!-- Connector Line (hidden on last item and mobile) -->
+        @if (step.number < 4) {
           <div
-            class="relative mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-purple-500"
-          >
-            <i [class]="'pi ' + step.icon + ' text-white'" style="font-size: 2.5rem"></i>
-            <div
-              class="absolute -top-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-white text-sm font-bold text-purple-600"
-            >
-              {{ step.number }}
-            </div>
-          </div>
+            class="absolute top-12 left-1/2 hidden h-0.5 w-full bg-linear-to-r from-purple-500 to-transparent md:block"
+          ></div>
+        }
 
-          <!-- Content -->
-          <h3 class="mt-6 text-xl font-semibold text-white">{{ step.title }}</h3>
-          <p class="mt-2 text-purple-200/80">{{ step.description }}</p>
+        <!-- Step Circle -->
+        <div class="relative mx-auto w-fit">
+          <web-icon-circle [icon]="step.icon" size="lg" gradient="blue-purple" />
+          <div
+            class="absolute -top-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-white text-sm font-bold text-purple-600"
+          >
+            {{ step.number }}
+          </div>
         </div>
-      }
-    </div>
+
+        <!-- Content -->
+        <h3 class="mt-6 text-xl font-semibold text-white">{{ step.title }}</h3>
+        <p class="mt-2 text-purple-200/80">{{ step.description }}</p>
+      </div>
+    }
   </div>
-</section>
+</web-section-container>

@@ -1,10 +1,11 @@
 import { Component, output } from "@angular/core";
+import { SectionContainer, SectionHeader } from "@/shared/components";
 import { ButtonModule } from "primeng/button";
 
 @Component({
   selector: "web-pricing",
   templateUrl: "./pricing.html",
-  imports: [ButtonModule],
+  imports: [ButtonModule, SectionContainer, SectionHeader],
 })
 export class Pricing {
   public readonly demoRequested = output<void>();

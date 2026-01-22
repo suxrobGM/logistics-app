@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { SectionContainer, SectionHeader } from "@/shared/components";
 import { AccordionModule } from "primeng/accordion";
 
 interface FaqItem {
@@ -9,7 +10,7 @@ interface FaqItem {
 @Component({
   selector: "web-faq",
   templateUrl: "./faq.html",
-  imports: [AccordionModule],
+  imports: [AccordionModule, SectionContainer, SectionHeader],
 })
 export class Faq {
   protected readonly faqs: FaqItem[] = [

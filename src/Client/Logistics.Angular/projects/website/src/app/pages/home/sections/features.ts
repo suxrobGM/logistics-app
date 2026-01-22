@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { IconCircle, SectionContainer, SectionHeader } from "@/shared/components";
 
 interface Feature {
   icon: string;
@@ -9,6 +10,7 @@ interface Feature {
 @Component({
   selector: "web-features",
   templateUrl: "./features.html",
+  imports: [IconCircle, SectionContainer, SectionHeader],
 })
 export class Features {
   protected readonly features: Feature[] = [

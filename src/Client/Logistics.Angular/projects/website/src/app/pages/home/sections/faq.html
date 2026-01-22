@@ -1,29 +1,22 @@
-<section id="faq" class="bg-slate-50 py-24">
-  <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-    <!-- Header -->
-    <div class="text-center">
-      <p class="text-sm font-semibold tracking-wide text-blue-600 uppercase">FAQ</p>
-      <h2 class="mt-2 text-3xl font-bold text-gray-900 sm:text-4xl">Frequently asked questions</h2>
-      <p class="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-        Got questions? We've got answers. If you don't see what you're looking for, reach out to our
-        team.
-      </p>
-    </div>
+<web-section-container sectionId="faq" background="light" maxWidth="3xl">
+  <web-section-header
+    label="FAQ"
+    title="Frequently asked questions"
+    subtitle="Got questions? We've got answers. If you don't see what you're looking for, reach out to our team."
+  />
 
-    <!-- FAQ Accordion -->
-    <div class="mt-12">
-      <p-accordion [multiple]="true">
-        @for (faq of faqs; track faq.question; let i = $index) {
-          <p-accordion-panel [value]="i">
-            <p-accordion-header>
-              <span class="font-medium text-gray-900">{{ faq.question }}</span>
-            </p-accordion-header>
-            <p-accordion-content>
-              <p class="text-gray-600">{{ faq.answer }}</p>
-            </p-accordion-content>
-          </p-accordion-panel>
-        }
-      </p-accordion>
-    </div>
+  <div class="mt-12">
+    <p-accordion [multiple]="true">
+      @for (faq of faqs; track faq.question; let i = $index) {
+        <p-accordion-panel [value]="i">
+          <p-accordion-header>
+            <span class="font-medium text-gray-900">{{ faq.question }}</span>
+          </p-accordion-header>
+          <p-accordion-content>
+            <p class="text-gray-600">{{ faq.answer }}</p>
+          </p-accordion-content>
+        </p-accordion-panel>
+      }
+    </p-accordion>
   </div>
-</section>
+</web-section-container>

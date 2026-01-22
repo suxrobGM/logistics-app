@@ -1,44 +1,34 @@
-<section id="testimonials" class="bg-slate-50 py-24">
-  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <!-- Header -->
-    <div class="text-center">
-      <p class="text-sm font-semibold tracking-wide text-blue-600 uppercase">Testimonials</p>
-      <h2 class="mt-2 text-3xl font-bold text-gray-900 sm:text-4xl">
-        Trusted by trucking companies nationwide
-      </h2>
-      <p class="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-        See what our customers have to say about their experience with Logistics TMS.
-      </p>
-    </div>
+<web-section-container sectionId="testimonials" background="light">
+  <web-section-header
+    label="Testimonials"
+    title="Trusted by trucking companies nationwide"
+    subtitle="See what our customers have to say about their experience with Logistics TMS."
+  />
 
-    <!-- Testimonials Grid -->
-    <div class="mt-16 grid gap-8 md:grid-cols-3">
-      @for (testimonial of testimonials; track testimonial.author) {
-        <div class="rounded-2xl bg-white p-8 shadow-lg">
-          <!-- Quote Icon -->
+  <div class="mt-16 grid gap-8 md:grid-cols-3">
+    @for (testimonial of testimonials; track testimonial.author) {
+      <div class="rounded-2xl bg-white p-8 shadow-lg">
+        <!-- Quote Icon -->
+        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+          <i class="pi pi-quote-left text-xl"></i>
+        </div>
+
+        <!-- Quote -->
+        <p class="mt-6 text-gray-700">{{ testimonial.quote }}</p>
+
+        <!-- Author -->
+        <div class="mt-6 flex items-center gap-4">
           <div
-            class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600"
+            class="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-purple-500 text-lg font-bold text-white"
           >
-            <i class="pi pi-quote-left text-xl"></i>
+            {{ testimonial.author.charAt(0) }}
           </div>
-
-          <!-- Quote -->
-          <p class="mt-6 text-gray-700">{{ testimonial.quote }}</p>
-
-          <!-- Author -->
-          <div class="mt-6 flex items-center gap-4">
-            <div
-              class="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-purple-500 text-lg font-bold text-white"
-            >
-              {{ testimonial.author.charAt(0) }}
-            </div>
-            <div>
-              <p class="font-semibold text-gray-900">{{ testimonial.author }}</p>
-              <p class="text-sm text-gray-500">{{ testimonial.role }}, {{ testimonial.company }}</p>
-            </div>
+          <div>
+            <p class="font-semibold text-gray-900">{{ testimonial.author }}</p>
+            <p class="text-sm text-gray-500">{{ testimonial.role }}, {{ testimonial.company }}</p>
           </div>
         </div>
-      }
-    </div>
+      </div>
+    }
   </div>
-</section>
+</web-section-container>

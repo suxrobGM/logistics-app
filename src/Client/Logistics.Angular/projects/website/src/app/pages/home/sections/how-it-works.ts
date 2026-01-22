@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { IconCircle, SectionContainer, SectionHeader } from "@/shared/components";
 
 interface Step {
   number: number;
@@ -10,6 +11,7 @@ interface Step {
 @Component({
   selector: "web-how-it-works",
   templateUrl: "./how-it-works.html",
+  imports: [IconCircle, SectionContainer, SectionHeader],
 })
 export class HowItWorks {
   protected readonly steps: Step[] = [

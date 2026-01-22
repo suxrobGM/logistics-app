@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { SectionContainer, SectionHeader } from "@/shared/components";
 
 interface Testimonial {
   quote: string;
@@ -10,6 +11,7 @@ interface Testimonial {
 @Component({
   selector: "web-testimonials",
   templateUrl: "./testimonials.html",
+  imports: [SectionContainer, SectionHeader],
 })
 export class Testimonials {
   protected readonly testimonials: Testimonial[] = [

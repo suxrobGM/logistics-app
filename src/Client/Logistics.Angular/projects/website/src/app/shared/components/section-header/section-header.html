@@ -1,0 +1,25 @@
+<div class="text-center">
+  <p
+    class="text-sm font-semibold uppercase tracking-wide"
+    [class.text-purple-400]="dark()"
+    [class.text-blue-600]="!dark()"
+  >
+    {{ label() }}
+  </p>
+  <h2
+    class="mt-2 text-3xl font-bold sm:text-4xl"
+    [class.text-white]="dark()"
+    [class.text-gray-900]="!dark()"
+  >
+    {{ title() }}
+  </h2>
+  @if (subtitle()) {
+    <p
+      class="mx-auto mt-4 max-w-2xl text-lg"
+      [class.text-purple-100/90]="dark()"
+      [class.text-gray-600]="!dark()"
+    >
+      {{ subtitle() }}
+    </p>
+  }
+</div>
