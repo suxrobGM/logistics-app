@@ -62,3 +62,7 @@ jobs:
       - name: Build Customer Portal
         working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
         run: bun run build:customer
+
+      - name: Build Website
+        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
+        run: bun run build:website

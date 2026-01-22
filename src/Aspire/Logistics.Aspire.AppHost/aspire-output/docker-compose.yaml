@@ -182,6 +182,15 @@ services:
         condition: "service_started"
     networks:
       - "aspire"
+  website:
+    image: "ghcr.io/suxrobgm/logistics-app/website:latest"
+    ports:
+      - "7005:7005"
+    depends_on:
+      api:
+        condition: "service_started"
+    networks:
+      - "aspire"
   portainer-agent:
     image: "portainer/agent:latest"
     expose:

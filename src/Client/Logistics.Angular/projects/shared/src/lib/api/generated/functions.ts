@@ -23,6 +23,16 @@ export type { CreateCustomerUser$Params as CreateCustomerUser$Params } from './f
 export { createCustomerUser as createCustomerUser } from './fn/customer-user/create-customer-user';
 export type { GetApiStatus$Params as GetApiStatus$Params } from './fn/default/get-api-status';
 export { getApiStatus as getApiStatus } from './fn/default/get-api-status';
+export type { GetDemoRequestById$Params as GetDemoRequestById$Params } from './fn/demo-request/get-demo-request-by-id';
+export { getDemoRequestById as getDemoRequestById } from './fn/demo-request/get-demo-request-by-id';
+export type { UpdateDemoRequest$Params as UpdateDemoRequest$Params } from './fn/demo-request/update-demo-request';
+export { updateDemoRequest as updateDemoRequest } from './fn/demo-request/update-demo-request';
+export type { DeleteDemoRequest$Params as DeleteDemoRequest$Params } from './fn/demo-request/delete-demo-request';
+export { deleteDemoRequest as deleteDemoRequest } from './fn/demo-request/delete-demo-request';
+export type { GetDemoRequests$Params as GetDemoRequests$Params } from './fn/demo-request/get-demo-requests';
+export { getDemoRequests as getDemoRequests } from './fn/demo-request/get-demo-requests';
+export type { CreateDemoRequest$Params as CreateDemoRequest$Params } from './fn/demo-request/create-demo-request';
+export { createDemoRequest as createDemoRequest } from './fn/demo-request/create-demo-request';
 export type { GetDocuments$Params as GetDocuments$Params } from './fn/document/get-documents';
 export { getDocuments as getDocuments } from './fn/document/get-documents';
 export type { GetDocumentById$Params as GetDocumentById$Params } from './fn/document/get-document-by-id';

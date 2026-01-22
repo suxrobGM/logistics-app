@@ -1,0 +1,96 @@
+<p-dialog
+  header="Request a Demo"
+  [visible]="visible()"
+  (visibleChange)="visible.set($event)"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [breakpoints]="{ '640px': '95vw' }"
+>
+  @if (isSubmitted()) {
+    <div class="flex flex-col items-center gap-4 py-8 text-center">
+      <div class="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+        <i class="pi pi-check text-3xl text-green-600"></i>
+      </div>
+      <h3 class="text-xl font-semibold text-gray-900">Thank You!</h3>
+      <p class="text-gray-600">
+        Your demo request has been submitted successfully. Our team will contact you within 24 hours.
+      </p>
+      <p-button label="Close" (onClick)="closeDialog()" />
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4 pt-4">
+      @if (errorMessage()) {
+        <div class="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+          <i class="pi pi-exclamation-circle mr-2"></i>
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="flex flex-col gap-1">
+          <label for="firstName" class="text-sm font-medium text-gray-700">First Name *</label>
+          <input pInputText id="firstName" formControlName="firstName" placeholder="John" class="w-full" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label for="lastName" class="text-sm font-medium text-gray-700">Last Name *</label>
+          <input pInputText id="lastName" formControlName="lastName" placeholder="Doe" class="w-full" />
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="email" class="text-sm font-medium text-gray-700">Work Email *</label>
+        <input
+          pInputText
+          id="email"
+          formControlName="email"
+          type="email"
+          placeholder="john@company.com"
+          class="w-full"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="company" class="text-sm font-medium text-gray-700">Company Name *</label>
+        <input pInputText id="company" formControlName="company" placeholder="Acme Trucking" class="w-full" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="phone" class="text-sm font-medium text-gray-700">Phone Number</label>
+        <ui-phone-input id="phone" formControlName="phone" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="fleetSize" class="text-sm font-medium text-gray-700">Fleet Size</label>
+        <p-select
+          id="fleetSize"
+          formControlName="fleetSize"
+          [options]="fleetSizeOptions"
+          placeholder="Select fleet size"
+          class="w-full"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="message" class="text-sm font-medium text-gray-700">Message</label>
+        <textarea
+          pTextarea
+          id="message"
+          formControlName="message"
+          rows="3"
+          placeholder="Tell us about your needs..."
+          class="w-full"
+        ></textarea>
+      </div>
+
+      <div class="mt-2 flex justify-end gap-2">
+        <p-button label="Cancel" severity="secondary" (onClick)="closeDialog()" />
+        <p-button
+          label="Submit Request"
+          type="submit"
+          [disabled]="form.invalid || isLoading()"
+          [loading]="isLoading()"
+        />
+      </div>
+    </form>
+  }
+</p-dialog>

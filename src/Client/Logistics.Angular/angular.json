@@ -304,7 +304,13 @@
     },
     "website": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "none",
+          "standalone": true,
+          "skipTests": true
+        }
+      },
       "root": "projects/website",
       "sourceRoot": "projects/website/src",
       "prefix": "app",
@@ -361,7 +367,10 @@
               "buildTarget": "website:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "port": 7005
+          }
         },
         "test": {
           "builder": "@angular/build:unit-test"

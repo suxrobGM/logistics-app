@@ -7,6 +7,12 @@ export const appRoutes: Routes = [
     loadChildren: () => import("./pages/home/home.routes").then((m) => m.homeRoutes),
   },
   {
+    path: "demo-requests",
+    loadChildren: () =>
+      import("./pages/demo-requests/demo-requests.routes").then((m) => m.demoRequestsRoutes),
+    canActivate: [authGuard],
+  },
+  {
     path: "tenants",
     loadChildren: () => import("./pages/tenants/tenant.routes").then((m) => m.tenantRoutes),
     canActivate: [authGuard],

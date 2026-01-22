@@ -55,6 +55,9 @@ jobs:
           - image: customer-portal
             context: ./src/Client/Logistics.Angular
             file: ./src/Client/Logistics.Angular/Dockerfile.customer
+          - image: website
+            context: ./src/Client/Logistics.Angular
+            file: ./src/Client/Logistics.Angular/Dockerfile.website
 
     steps:
       - name: Checkout code

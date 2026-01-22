@@ -1,0 +1,26 @@
+# Stage 1: Build
+FROM oven/bun:latest AS builder
+WORKDIR /app
+
+# Copy package files
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
+
+# Copy source
+COPY . .
+
+# Build shared library and Website (SSR)
+RUN bun run build:shared
+RUN bun run build:website
+
+# Stage 2: Runtime (Node.js for SSR)
+FROM node:24-alpine
+
+WORKDIR /app
+
+# Copy built SSR app
+COPY --from=builder /app/dist/website .
+
+EXPOSE 7005
+
+CMD ["node", "server/server.mjs"]

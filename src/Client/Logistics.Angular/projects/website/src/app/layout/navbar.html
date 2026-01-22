@@ -1,0 +1,86 @@
+<nav
+  class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+  [class.bg-white]="scrolled()"
+  [class.shadow-md]="scrolled()"
+  [class.bg-transparent]="!scrolled()"
+>
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="flex h-16 items-center justify-between md:h-20">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500">
+          <i class="pi pi-truck text-xl text-white"></i>
+        </div>
+        <span class="text-xl font-bold" [class.text-white]="!scrolled()" [class.text-gray-900]="scrolled()">
+          Logistics TMS
+        </span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden items-center gap-8 md:flex">
+        <a
+          href="#features"
+          class="text-sm font-medium transition-colors hover:text-blue-500"
+          [class.text-gray-200]="!scrolled()"
+          [class.text-gray-600]="scrolled()"
+        >
+          Features
+        </a>
+        <a
+          href="#how-it-works"
+          class="text-sm font-medium transition-colors hover:text-blue-500"
+          [class.text-gray-200]="!scrolled()"
+          [class.text-gray-600]="scrolled()"
+        >
+          How It Works
+        </a>
+        <a
+          href="#pricing"
+          class="text-sm font-medium transition-colors hover:text-blue-500"
+          [class.text-gray-200]="!scrolled()"
+          [class.text-gray-600]="scrolled()"
+        >
+          Pricing
+        </a>
+        <a
+          href="#faq"
+          class="text-sm font-medium transition-colors hover:text-blue-500"
+          [class.text-gray-200]="!scrolled()"
+          [class.text-gray-600]="scrolled()"
+        >
+          FAQ
+        </a>
+      </div>
+
+      <!-- CTA Button -->
+      <div class="hidden md:block">
+        <p-button label="Request a Demo" (onClick)="demoRequested.emit()" [rounded]="true" />
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button
+        class="flex h-10 w-10 items-center justify-center rounded-lg md:hidden"
+        [class.text-white]="!scrolled()"
+        [class.text-gray-900]="scrolled()"
+        (click)="mobileMenuOpen.set(!mobileMenuOpen())"
+      >
+        <i class="pi" [class.pi-bars]="!mobileMenuOpen()" [class.pi-times]="mobileMenuOpen()"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  @if (mobileMenuOpen()) {
+    <div class="border-t border-gray-200 bg-white md:hidden">
+      <div class="space-y-1 px-4 py-4">
+        <a href="#features" class="block rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100">Features</a>
+        <a href="#how-it-works" class="block rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100">How It Works</a>
+        <a href="#pricing" class="block rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100">Pricing</a>
+        <a href="#faq" class="block rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100">FAQ</a>
+        <div class="pt-2">
+          <p-button label="Request a Demo" (onClick)="demoRequested.emit()" [rounded]="true" class="w-full" />
+        </div>
+      </div>
+    </div>
+  }
+</nav>
