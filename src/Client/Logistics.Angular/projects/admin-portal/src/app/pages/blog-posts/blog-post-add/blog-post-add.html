@@ -1,0 +1,12 @@
+<h1>Add Blog Post</h1>
+<p-divider />
+
+<div class="flex flex-col justify-center gap-6 md:flex-row">
+  <p-card class="w-full md:w-3/4 lg:w-2/3">
+    <adm-blog-post-form
+      mode="create"
+      [isLoading]="isLoading()"
+      (save)="onSave($event)"
+    />
+  </p-card>
+</div>

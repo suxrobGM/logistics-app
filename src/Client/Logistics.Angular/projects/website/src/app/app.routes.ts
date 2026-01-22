@@ -22,6 +22,10 @@ export const routes: Routes = [
     loadComponent: () => import("./pages/blog/blog").then((m) => m.Blog),
   },
   {
+    path: "blog/:slug",
+    loadComponent: () => import("./pages/blog-post/blog-post").then((m) => m.BlogPost),
+  },
+  {
     path: "privacy",
     loadComponent: () => import("./pages/legal/privacy/privacy").then((m) => m.Privacy),
   },

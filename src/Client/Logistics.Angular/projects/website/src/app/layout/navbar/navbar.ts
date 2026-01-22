@@ -1,4 +1,5 @@
-import { Component, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal } from "@angular/core";
+import { Router } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { DemoDialogService } from "@/shared/services";
 
@@ -11,10 +12,20 @@ import { DemoDialogService } from "@/shared/services";
   },
 })
 export class Navbar {
+  private readonly router = inject(Router);
   private readonly demoDialogService = inject(DemoDialogService);
 
   protected readonly scrolled = signal(false);
   protected readonly mobileMenuOpen = signal(false);
+
+  // Only home page and blog listing have dark hero - allow transparent navbar there
+  protected readonly hasDarkHero = computed(() => {
+    const url = this.router.url.split("?")[0]; // Remove query params
+    return url === "/" || url === "/blog";
+  });
+
+  // Show solid navbar when scrolled OR on pages without dark hero
+  protected readonly showSolidNavbar = computed(() => this.scrolled() || !this.hasDarkHero());
 
   protected onScroll(): void {
     this.scrolled.set(window.scrollY > 50);

@@ -145,6 +145,12 @@ public static class Permission
         public const string Manage = $"{nameof(Permission)}.{nameof(LoadBoard)}.Manage";
     }
 
+    public static class BlogPost
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(BlogPost)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(BlogPost)}.Manage";
+    }
+
     public static IEnumerable<string> GetAll()
     {
         var list = new List<string>();

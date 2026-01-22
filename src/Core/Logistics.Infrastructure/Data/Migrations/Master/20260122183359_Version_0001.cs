@@ -28,6 +28,29 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                 });
 
             migrationBuilder.CreateTable(
+                name: "BlogPosts",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Title = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Slug = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false),
+                    Excerpt = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    Category = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    AuthorName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    FeaturedImage = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    IsFeatured = table.Column<bool>(type: "boolean", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    PublishedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BlogPosts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DataProtectionKeys",
                 columns: table => new
                 {
@@ -39,6 +62,28 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DataProtectionKeys", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DemoRequests",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    FirstName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Company = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Phone = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    FleetSize = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    Message = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    Notes = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DemoRequests", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -456,6 +501,42 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_BlogPosts_Category",
+                table: "BlogPosts",
+                column: "Category");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BlogPosts_IsFeatured",
+                table: "BlogPosts",
+                column: "IsFeatured");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BlogPosts_PublishedAt",
+                table: "BlogPosts",
+                column: "PublishedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BlogPosts_Slug",
+                table: "BlogPosts",
+                column: "Slug",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BlogPosts_Status",
+                table: "BlogPosts",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DemoRequests_CreatedAt",
+                table: "DemoRequests",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DemoRequests_Email",
+                table: "DemoRequests",
+                column: "Email");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Invitations_AcceptedByUserId",
                 table: "Invitations",
                 column: "AcceptedByUserId");
@@ -544,7 +625,13 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "BlogPosts");
+
+            migrationBuilder.DropTable(
                 name: "DataProtectionKeys");
+
+            migrationBuilder.DropTable(
+                name: "DemoRequests");
 
             migrationBuilder.DropTable(
                 name: "Invitations");

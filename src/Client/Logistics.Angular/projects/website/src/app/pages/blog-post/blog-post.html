@@ -1,0 +1,115 @@
+<web-section-container background="light">
+  @if (isLoading()) {
+    <!-- Loading State -->
+    <div class="mx-auto max-w-4xl">
+      <p-skeleton width="6rem" height="1.5rem" class="rounded-full" />
+      <p-skeleton height="3rem" class="mt-4" />
+      <p-skeleton height="1.5rem" class="mt-4 w-3/4" />
+      <div class="mt-6 flex items-center gap-4">
+        <p-skeleton shape="circle" size="3rem" />
+        <div>
+          <p-skeleton width="8rem" height="1rem" />
+          <p-skeleton width="12rem" height="1rem" class="mt-1" />
+        </div>
+      </div>
+      <p-skeleton height="20rem" class="mt-8 rounded-2xl" />
+      <p-skeleton height="1rem" class="mt-8" />
+      <p-skeleton height="1rem" class="mt-2" />
+      <p-skeleton height="1rem" class="mt-2" />
+      <p-skeleton height="1rem" class="mt-2 w-2/3" />
+    </div>
+  } @else if (error()) {
+    <!-- Error State -->
+    <div class="py-24 text-center">
+      <i class="pi pi-exclamation-triangle text-6xl text-amber-500"></i>
+      <h1 class="mt-6 text-2xl font-bold text-gray-900">{{ error() }}</h1>
+      <p class="mt-2 text-gray-600">
+        The article you're looking for doesn't exist or has been removed.
+      </p>
+      <div class="mt-8">
+        <p-button
+          label="Back to Blog"
+          icon="pi pi-arrow-left"
+          routerLink="/blog"
+          [rounded]="true"
+        />
+      </div>
+    </div>
+  } @else if (post(); as article) {
+    <article class="mx-auto max-w-4xl">
+      <!-- Back Link -->
+      <a
+        routerLink="/blog"
+        class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600"
+      >
+        <i class="pi pi-arrow-left"></i>
+        Back to Blog
+      </a>
+
+      <!-- Header -->
+      <header class="mt-8">
+        @if (article.category) {
+          <span
+            class="inline-flex rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700"
+          >
+            {{ article.category }}
+          </span>
+        }
+
+        <h1 class="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">
+          {{ article.title }}
+        </h1>
+
+        @if (article.excerpt) {
+          <p class="mt-4 text-xl text-gray-600">
+            {{ article.excerpt }}
+          </p>
+        }
+
+        <!-- Author & Meta -->
+        <div class="mt-8 border-b border-gray-200 pb-8">
+          <p class="text-sm text-gray-500">
+            {{ article.publishedAt | date: "MMMM d, yyyy" }} · {{ getReadTime(article.content) }}
+          </p>
+        </div>
+      </header>
+
+      <!-- Featured Image -->
+      @if (article.featuredImage) {
+        <div class="mt-8 overflow-hidden rounded-2xl">
+          <img
+            [src]="article.featuredImage"
+            [alt]="article.title"
+            class="h-auto w-full object-cover"
+          />
+        </div>
+      }
+
+      <!-- Content -->
+      <div
+        class="prose prose-lg prose-headings:font-bold prose-a:text-blue-600 prose-img:rounded-xl mt-8 max-w-none"
+        [innerHTML]="article.content"
+      ></div>
+
+      <!-- Footer -->
+      <footer class="mt-12 border-t border-gray-200 pt-8">
+        <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
+          <div class="flex items-center gap-4">
+            <web-avatar [initials]="article.authorInitials ?? ''" size="md" />
+            <div>
+              <p class="text-sm text-gray-500">Written by</p>
+              <p class="font-semibold text-gray-900">{{ article.authorName }}</p>
+            </div>
+          </div>
+          <p-button
+            label="Back to Blog"
+            icon="pi pi-arrow-left"
+            routerLink="/blog"
+            [outlined]="true"
+            [rounded]="true"
+          />
+        </div>
+      </footer>
+    </article>
+  }
+</web-section-container>

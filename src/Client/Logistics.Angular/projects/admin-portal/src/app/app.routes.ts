@@ -34,6 +34,11 @@ export const appRoutes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: "blog-posts",
+    loadChildren: () => import("./pages/blog-posts/blog-posts.routes").then((m) => m.blogPostsRoutes),
+    canActivate: [authGuard],
+  },
+  {
     path: "",
     loadComponent: () => import("./pages/login/login").then((m) => m.Login),
   },

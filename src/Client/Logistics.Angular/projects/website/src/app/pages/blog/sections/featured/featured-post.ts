@@ -1,32 +1,27 @@
-import { Component } from "@angular/core";
+import { DatePipe } from "@angular/common";
+import { Component, inject } from "@angular/core";
+import { RouterLink } from "@angular/router";
+import { ButtonModule } from "primeng/button";
+import { SkeletonModule } from "primeng/skeleton";
 import { Avatar, SectionContainer } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
-import { ButtonModule } from "primeng/button";
-
-interface BlogPost {
-  title: string;
-  excerpt: string;
-  category: string;
-  author: string;
-  authorInitials: string;
-  date: string;
-  readTime: string;
-}
+import { getReadTime } from "@/shared/utils";
+import { BlogStore } from "../../store/blog.store";
 
 @Component({
   selector: "web-featured-post",
   templateUrl: "./featured-post.html",
-  imports: [SectionContainer, ScrollAnimateDirective, ButtonModule, Avatar],
+  imports: [
+    SectionContainer,
+    ScrollAnimateDirective,
+    ButtonModule,
+    Avatar,
+    SkeletonModule,
+    DatePipe,
+    RouterLink,
+  ],
 })
 export class FeaturedPost {
-  protected readonly featured: BlogPost = {
-    title: "The Future of Fleet Management: AI and Predictive Analytics",
-    excerpt:
-      "Discover how artificial intelligence and predictive analytics are transforming fleet operations, from route optimization to predictive maintenance. Learn what these technologies mean for your business and how to prepare for the future.",
-    category: "Industry",
-    author: "Michael Chen",
-    authorInitials: "MC",
-    date: "January 15, 2026",
-    readTime: "8 min read",
-  };
+  protected readonly store = inject(BlogStore);
+  protected readonly getReadTime = getReadTime;
 }

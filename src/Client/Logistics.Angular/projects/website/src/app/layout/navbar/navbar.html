@@ -1,8 +1,8 @@
 <nav
   class="fixed top-0 right-0 left-0 z-50 transition-all duration-300"
-  [class.bg-white]="scrolled()"
-  [class.shadow-md]="scrolled()"
-  [class.bg-transparent]="!scrolled()"
+  [class.bg-white]="showSolidNavbar()"
+  [class.shadow-md]="showSolidNavbar()"
+  [class.bg-transparent]="!showSolidNavbar()"
 >
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <div class="flex h-16 items-center justify-between md:h-20">
@@ -15,8 +15,8 @@
         </div>
         <span
           class="text-xl font-bold"
-          [class.text-white]="!scrolled()"
-          [class.text-gray-900]="scrolled()"
+          [class.text-white]="!showSolidNavbar()"
+          [class.text-gray-900]="showSolidNavbar()"
         >
           Logistics TMS
         </span>
@@ -27,32 +27,32 @@
         <a
           href="#features"
           class="text-sm font-medium transition-colors hover:text-blue-500"
-          [class.text-gray-200]="!scrolled()"
-          [class.text-gray-600]="scrolled()"
+          [class.text-gray-200]="!showSolidNavbar()"
+          [class.text-gray-600]="showSolidNavbar()"
         >
           Features
         </a>
         <a
           href="#how-it-works"
           class="text-sm font-medium transition-colors hover:text-blue-500"
-          [class.text-gray-200]="!scrolled()"
-          [class.text-gray-600]="scrolled()"
+          [class.text-gray-200]="!showSolidNavbar()"
+          [class.text-gray-600]="showSolidNavbar()"
         >
           How It Works
         </a>
         <a
           href="#pricing"
           class="text-sm font-medium transition-colors hover:text-blue-500"
-          [class.text-gray-200]="!scrolled()"
-          [class.text-gray-600]="scrolled()"
+          [class.text-gray-200]="!showSolidNavbar()"
+          [class.text-gray-600]="showSolidNavbar()"
         >
           Pricing
         </a>
         <a
           href="#faq"
           class="text-sm font-medium transition-colors hover:text-blue-500"
-          [class.text-gray-200]="!scrolled()"
-          [class.text-gray-600]="scrolled()"
+          [class.text-gray-200]="!showSolidNavbar()"
+          [class.text-gray-600]="showSolidNavbar()"
         >
           FAQ
         </a>
@@ -66,8 +66,8 @@
       <!-- Mobile Menu Button -->
       <button
         class="flex h-10 w-10 items-center justify-center rounded-lg md:hidden"
-        [class.text-white]="!scrolled()"
-        [class.text-gray-900]="scrolled()"
+        [class.text-white]="!showSolidNavbar()"
+        [class.text-gray-900]="showSolidNavbar()"
         (click)="mobileMenuOpen.set(!mobileMenuOpen())"
       >
         <i class="pi" [class.pi-bars]="!mobileMenuOpen()" [class.pi-times]="mobileMenuOpen()"></i>
