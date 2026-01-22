@@ -319,6 +319,7 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "projects/website/src/main.ts",
+            "index": "projects/website/src/index.html",
             "tsConfig": "projects/website/tsconfig.app.json",
             "assets": [
               {
