@@ -133,14 +133,8 @@
             <span class="font-bold">Today Gross:</span><br />
             <span class="text-2xl font-bold">{{ todayGross() | currency }}</span>
           </div>
-          <div class="col-span-12 md:col-span-9">
-            <p-chart
-              type="line"
-              [data]="chartData()"
-              [options]="chartOptions()"
-              width="40vw"
-              height="20vh"
-            />
+          <div class="col-span-12 min-w-0 md:col-span-9">
+            <p-chart type="line" [data]="chartData()" [options]="chartOptions()" height="20vh" />
           </div>
         </div>
       }
