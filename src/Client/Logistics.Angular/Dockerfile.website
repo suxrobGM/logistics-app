@@ -1,6 +1,9 @@
 # Stage 1: Build
-FROM oven/bun:latest AS builder
+FROM node:24-alpine AS builder
 WORKDIR /app
+
+# Install bun for fast dependency installation
+RUN npm install -g bun
 
 # Copy package files
 COPY package.json bun.lock ./
@@ -9,9 +12,10 @@ RUN bun install --frozen-lockfile
 # Copy source
 COPY . .
 
-# Build shared library and Website (SSR)
-RUN bun run build:shared
-RUN bun run build:website
+# Build shared library and Website (SSR) using Node.js
+# Note: Angular SSR prerendering requires Node.js (not bun) for module resolution
+RUN npm run build:shared
+RUN npm run build:website
 
 # Stage 2: Runtime (Node.js for SSR)
 FROM node:24-alpine
