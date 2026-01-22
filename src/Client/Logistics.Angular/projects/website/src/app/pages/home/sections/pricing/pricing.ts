@@ -1,5 +1,6 @@
-import { Component, output } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { SectionContainer, SectionHeader } from "@/shared/components";
+import { DemoDialogService } from "@/shared/services";
 import { ScrollAnimateDirective } from "@/shared/directives";
 import { ButtonModule } from "primeng/button";
 
@@ -9,7 +10,7 @@ import { ButtonModule } from "primeng/button";
   imports: [ButtonModule, SectionContainer, SectionHeader, ScrollAnimateDirective],
 })
 export class Pricing {
-  public readonly demoRequested = output<void>();
+  private readonly demoDialogService = inject(DemoDialogService);
 
   protected readonly features = [
     "Real-time GPS tracking",
@@ -23,4 +24,8 @@ export class Pricing {
     "24/7 customer support",
     "Unlimited loads",
   ];
+
+  protected openDemoDialog(): void {
+    this.demoDialogService.open();
+  }
 }

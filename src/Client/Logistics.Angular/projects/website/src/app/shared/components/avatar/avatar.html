@@ -1,0 +1,8 @@
+<div
+  class="flex items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-purple-500 font-bold text-white shadow-lg"
+  [class]="sizeClasses()"
+  [class.transition-transform]="hoverScale()"
+  [class.group-hover:scale-105]="hoverScale()"
+>
+  {{ initials() }}
+</div>

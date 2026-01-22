@@ -1,0 +1,23 @@
+<web-section-container sectionId="values" background="dark">
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="Our Values"
+      title="What Drives Us"
+      subtitle="The principles that guide everything we do."
+      [dark]="true"
+    />
+  </div>
+
+  <!-- Values Grid -->
+  <div class="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+    @for (value of values; track value.title; let i = $index) {
+      <web-icon-card
+        [icon]="value.icon"
+        [title]="value.title"
+        [description]="value.description"
+        [dark]="true"
+        [delay]="i * 100"
+      />
+    }
+  </div>
+</web-section-container>

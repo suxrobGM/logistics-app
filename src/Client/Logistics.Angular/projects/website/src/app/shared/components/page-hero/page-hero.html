@@ -1,0 +1,58 @@
+<section
+  class="relative overflow-hidden bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 py-32"
+>
+  <!-- Gradient Orbs -->
+  <div class="pointer-events-none absolute inset-0 overflow-hidden">
+    <div class="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-purple-500/30 blur-3xl"></div>
+    <div class="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-blue-500/30 blur-3xl"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="relative mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+    <!-- Badge -->
+    <div
+      class="mb-6 inline-flex items-center gap-2 rounded-full border border-purple-400/30 bg-purple-500/10 px-4 py-2 text-sm text-purple-300"
+    >
+      <i [class]="'pi ' + badgeIcon()"></i>
+      <span>{{ badgeText() }}</span>
+    </div>
+
+    <!-- Headline -->
+    <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+      {{ headline() }}
+      @if (accentLine()) {
+        <span
+          class="block bg-linear-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent"
+        >
+          {{ accentLine() }}
+        </span>
+      }
+    </h1>
+
+    <!-- Subheadline -->
+    <p class="mx-auto mt-6 max-w-2xl text-lg text-purple-100/90 sm:text-xl">
+      {{ description() }}
+    </p>
+
+    <!-- CTA Button -->
+    @if (ctaLabel()) {
+      <div class="mt-10">
+        <p-button
+          [label]="ctaLabel()!"
+          [icon]="ctaIcon() ? 'pi ' + ctaIcon() : ''"
+          iconPos="right"
+          size="large"
+          [rounded]="true"
+          (onClick)="ctaClick.emit()"
+        />
+      </div>
+    }
+
+    <!-- Stats -->
+    @if (stats()) {
+      <div class="mt-16">
+        <web-stats-grid [stats]="stats()!" />
+      </div>
+    }
+  </div>
+</section>

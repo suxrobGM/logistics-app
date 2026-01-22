@@ -1,0 +1,70 @@
+<web-section-container sectionId="blog-list" background="light">
+  <div webScrollAnimate="fade-up">
+    <web-section-header label="Latest Articles" title="From Our Blog" />
+  </div>
+
+  <!-- Category Filter -->
+  <div class="mt-12">
+    <web-filter-tabs
+      [options]="categories"
+      [selected]="selectedCategory()"
+      (selectionChange)="selectCategory($event)"
+    />
+  </div>
+
+  <!-- Blog Grid -->
+  <div class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    @for (post of filteredPosts; track post.id; let i = $index) {
+      <article
+        class="group cursor-pointer overflow-hidden rounded-2xl bg-white shadow-sm transition-all hover:shadow-lg"
+        webScrollAnimate="fade-up"
+        [delay]="150 + i * 50"
+      >
+        <!-- Image Placeholder -->
+        <div
+          class="h-48 bg-linear-to-br from-slate-100 to-slate-200 transition-transform group-hover:scale-105"
+        >
+          <div class="flex h-full items-center justify-center">
+            <i class="pi pi-image text-4xl text-slate-300"></i>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6">
+          <!-- Category Badge -->
+          <span
+            class="inline-flex rounded-full px-3 py-1 text-xs font-medium"
+            [class]="getCategoryColor(post.category)"
+          >
+            {{ post.category }}
+          </span>
+
+          <!-- Title -->
+          <h3 class="mt-3 text-lg font-bold text-gray-900 group-hover:text-blue-600">
+            {{ post.title }}
+          </h3>
+
+          <!-- Excerpt -->
+          <p class="mt-2 line-clamp-2 text-sm text-gray-600">
+            {{ post.excerpt }}
+          </p>
+
+          <!-- Meta -->
+          <div class="mt-4 flex items-center gap-3">
+            <!-- Author Avatar -->
+            <web-avatar [initials]="post.authorInitials" size="sm" />
+            <div class="text-sm">
+              <p class="font-medium text-gray-900">{{ post.author }}</p>
+              <p class="text-gray-500">{{ post.date }} · {{ post.readTime }}</p>
+            </div>
+          </div>
+        </div>
+      </article>
+    } @empty {
+      <div class="col-span-full py-12 text-center text-gray-500">
+        <i class="pi pi-inbox text-4xl"></i>
+        <p class="mt-4">No articles in this category yet.</p>
+      </div>
+    }
+  </div>
+</web-section-container>

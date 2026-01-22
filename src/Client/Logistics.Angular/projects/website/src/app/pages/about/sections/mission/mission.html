@@ -1,0 +1,28 @@
+<web-section-container sectionId="mission" background="light">
+  <div webScrollAnimate="fade-up">
+    <web-section-header label="Our Mission" title="Why We Exist" />
+  </div>
+
+  <!-- Mission Statement -->
+  <div class="mt-12 text-center" webScrollAnimate="fade-up" [delay]="100">
+    <blockquote class="mx-auto max-w-4xl text-2xl font-medium text-gray-900 italic sm:text-3xl">
+      "We're building the future of fleet management—one where technology empowers trucking
+      companies to focus on what they do best: moving America forward."
+    </blockquote>
+  </div>
+
+  <!-- Pillars -->
+  <div class="mt-16 grid gap-8 md:grid-cols-3">
+    @for (pillar of pillars; track pillar.title; let i = $index) {
+      <div
+        class="rounded-2xl bg-white p-8 shadow-sm transition-shadow hover:shadow-md"
+        webScrollAnimate="fade-up"
+        [delay]="200 + i * 100"
+      >
+        <web-icon-circle [icon]="pillar.icon" size="lg" gradient="blue-purple" />
+        <h3 class="mt-6 text-xl font-bold text-gray-900">{{ pillar.title }}</h3>
+        <p class="mt-3 text-gray-600">{{ pillar.description }}</p>
+      </div>
+    }
+  </div>
+</web-section-container>

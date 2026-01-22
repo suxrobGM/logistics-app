@@ -1,0 +1,70 @@
+<web-section-container sectionId="positions" background="white">
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="Open Positions"
+      title="Find Your Next Role"
+      subtitle="Explore current openings and find where you fit in our team."
+    />
+  </div>
+
+  <!-- Department Filter -->
+  <div class="mt-12">
+    <web-filter-tabs
+      [options]="departments"
+      [selected]="selectedDepartment()"
+      variant="dark"
+      (selectionChange)="selectDepartment($event)"
+    />
+  </div>
+
+  <!-- Job Listings -->
+  <div class="mt-12 space-y-4">
+    @for (position of filteredPositions; track position.id; let i = $index) {
+      <div
+        class="group rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-blue-300 hover:shadow-md"
+        webScrollAnimate="fade-up"
+        [delay]="150 + i * 50"
+      >
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <!-- Job Info -->
+          <div>
+            <h3 class="text-lg font-bold text-gray-900 group-hover:text-blue-600">
+              {{ position.title }}
+            </h3>
+            <div class="mt-2 flex flex-wrap items-center gap-3 text-sm text-gray-500">
+              <span class="flex items-center gap-1">
+                <i class="pi pi-briefcase"></i>
+                {{ position.department }}
+              </span>
+              <span class="flex items-center gap-1">
+                <i class="pi pi-map-marker"></i>
+                {{ position.location }}
+              </span>
+              <span class="flex items-center gap-1">
+                <i class="pi pi-clock"></i>
+                {{ position.type }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Apply Button -->
+          <div class="flex-shrink-0">
+            <p-button
+              label="Apply Now"
+              icon="pi pi-arrow-right"
+              iconPos="right"
+              [outlined]="true"
+              [rounded]="true"
+            />
+          </div>
+        </div>
+      </div>
+    } @empty {
+      <div class="py-12 text-center text-gray-500">
+        <i class="pi pi-inbox text-4xl"></i>
+        <p class="mt-4">No open positions in this department right now.</p>
+        <p class="text-sm">Check back soon or explore other departments.</p>
+      </div>
+    }
+  </div>
+</web-section-container>

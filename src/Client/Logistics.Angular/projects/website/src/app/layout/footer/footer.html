@@ -24,7 +24,7 @@
           <li><a href="#features" class="transition-colors hover:text-white">Features</a></li>
           <li><a href="#pricing" class="transition-colors hover:text-white">Pricing</a></li>
           <li><a href="#" class="transition-colors hover:text-white">Integrations</a></li>
-          <li><a href="#" class="transition-colors hover:text-white">API Docs</a></li>
+          <!-- <li><a href="#" class="transition-colors hover:text-white">API Docs</a></li> -->
         </ul>
       </div>
 
@@ -32,10 +32,10 @@
       <div>
         <h4 class="mb-4 font-semibold text-white">Company</h4>
         <ul class="space-y-2 text-sm text-purple-300">
-          <li><a href="#" class="transition-colors hover:text-white">About Us</a></li>
-          <li><a href="#" class="transition-colors hover:text-white">Careers</a></li>
-          <li><a href="#" class="transition-colors hover:text-white">Blog</a></li>
-          <li><a href="#" class="transition-colors hover:text-white">Contact</a></li>
+          <li><a routerLink="/about" class="transition-colors hover:text-white">About Us</a></li>
+          <li><a routerLink="/careers" class="transition-colors hover:text-white">Careers</a></li>
+          <li><a routerLink="/blog" class="transition-colors hover:text-white">Blog</a></li>
+          <li><a routerLink="/contact" class="transition-colors hover:text-white">Contact</a></li>
         </ul>
       </div>
 
@@ -43,9 +43,15 @@
       <div>
         <h4 class="mb-4 font-semibold text-white">Legal</h4>
         <ul class="space-y-2 text-sm text-purple-300">
-          <li><a href="#" class="transition-colors hover:text-white">Privacy Policy</a></li>
-          <li><a href="#" class="transition-colors hover:text-white">Terms of Service</a></li>
-          <li><a href="#" class="transition-colors hover:text-white">Cookie Policy</a></li>
+          <li>
+            <a routerLink="/privacy" class="transition-colors hover:text-white">Privacy Policy</a>
+          </li>
+          <li>
+            <a routerLink="/terms" class="transition-colors hover:text-white">Terms of Service</a>
+          </li>
+          <li>
+            <a routerLink="/cookies" class="transition-colors hover:text-white">Cookie Policy</a>
+          </li>
         </ul>
       </div>
     </div>

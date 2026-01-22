@@ -1,0 +1,144 @@
+<web-section-container sectionId="contact-form" background="white">
+  <div class="mx-auto max-w-2xl">
+    @if (isSubmitted()) {
+      <!-- Success State -->
+      <div class="rounded-2xl bg-green-50 p-8 text-center" webScrollAnimate="scale-up">
+        <div
+          class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100"
+        >
+          <i class="pi pi-check text-3xl text-green-600"></i>
+        </div>
+        <h3 class="mt-6 text-2xl font-bold text-gray-900">Message Sent!</h3>
+        <p class="mt-2 text-gray-600">
+          Thank you for reaching out. Our team will get back to you within 24 hours.
+        </p>
+        <p-button
+          label="Send Another Message"
+          [outlined]="true"
+          [rounded]="true"
+          (onClick)="resetForm()"
+          class="mt-6"
+        />
+      </div>
+    } @else {
+      <!-- Form -->
+      <div webScrollAnimate="fade-up">
+        <h2 class="text-center text-2xl font-bold text-gray-900">Send Us a Message</h2>
+        <p class="mt-2 text-center text-gray-600">
+          Fill out the form below and we'll get back to you as soon as possible.
+        </p>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-8 space-y-6">
+          <!-- Name Fields -->
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label for="firstName" class="mb-2 block text-sm font-medium text-gray-700">
+                First Name *
+              </label>
+              <input
+                pInputText
+                id="firstName"
+                formControlName="firstName"
+                placeholder="John"
+                class="w-full"
+              />
+            </div>
+            <div>
+              <label for="lastName" class="mb-2 block text-sm font-medium text-gray-700">
+                Last Name *
+              </label>
+              <input
+                pInputText
+                id="lastName"
+                formControlName="lastName"
+                placeholder="Doe"
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <!-- Email & Phone -->
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label for="email" class="mb-2 block text-sm font-medium text-gray-700">
+                Email *
+              </label>
+              <input
+                pInputText
+                id="email"
+                type="email"
+                formControlName="email"
+                placeholder="john@company.com"
+                class="w-full"
+              />
+            </div>
+            <div>
+              <label for="phone" class="mb-2 block text-sm font-medium text-gray-700">
+                Phone (Optional)
+              </label>
+              <input
+                pInputText
+                id="phone"
+                type="tel"
+                formControlName="phone"
+                placeholder="(555) 123-4567"
+                class="w-full"
+              />
+            </div>
+          </div>
+
+          <!-- Subject -->
+          <div>
+            <label for="subject" class="mb-2 block text-sm font-medium text-gray-700">
+              Subject *
+            </label>
+            <p-select
+              id="subject"
+              formControlName="subject"
+              [options]="subjectOptions"
+              placeholder="Select a subject"
+              styleClass="w-full"
+            />
+          </div>
+
+          <!-- Message -->
+          <div>
+            <label for="message" class="mb-2 block text-sm font-medium text-gray-700">
+              Message *
+            </label>
+            <textarea
+              pTextarea
+              id="message"
+              formControlName="message"
+              rows="5"
+              placeholder="How can we help you?"
+              class="w-full"
+            ></textarea>
+          </div>
+
+          <!-- Error Message -->
+          @if (errorMessage()) {
+            <div class="rounded-lg bg-red-50 p-4 text-sm text-red-600">
+              <i class="pi pi-exclamation-circle mr-2"></i>
+              {{ errorMessage() }}
+            </div>
+          }
+
+          <!-- Submit Button -->
+          <div class="text-center">
+            <p-button
+              type="submit"
+              label="Send Message"
+              icon="pi pi-send"
+              iconPos="right"
+              [loading]="isLoading()"
+              [disabled]="form.invalid"
+              [rounded]="true"
+              size="large"
+            />
+          </div>
+        </form>
+      </div>
+    }
+  </div>
+</web-section-container>

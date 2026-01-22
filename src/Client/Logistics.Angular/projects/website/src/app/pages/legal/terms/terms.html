@@ -1,0 +1,237 @@
+<!-- Hero Section -->
+  <web-section-container background="dark">
+    <div class="text-center" webScrollAnimate="fade-up">
+      <h1 class="text-4xl font-bold text-white sm:text-5xl">Terms of Service</h1>
+      <p class="mt-4 text-lg text-purple-200">Last updated: {{ lastUpdated }}</p>
+    </div>
+  </web-section-container>
+
+  <!-- Content Section -->
+  <web-section-container background="white" maxWidth="3xl">
+    <!-- Table of Contents -->
+    <nav class="mb-12 rounded-lg bg-slate-50 p-6" webScrollAnimate="fade-up">
+      <h2 class="mb-4 text-lg font-semibold text-gray-900">Table of Contents</h2>
+      <ul class="space-y-2">
+        @for (section of sections; track section.id) {
+          <li>
+            <a
+              [href]="'#' + section.id"
+              class="text-blue-600 transition-colors hover:text-blue-800 hover:underline"
+            >
+              {{ section.title }}
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <!-- Content -->
+    <div class="prose prose-lg max-w-none">
+      <!-- Acceptance of Terms -->
+      <section [id]="sections[0].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[0].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          By accessing or using the Logistics TMS platform and services ("Services"), you agree to
+          be bound by these Terms of Service ("Terms"). If you are using the Services on behalf of a
+          company or organization, you represent that you have the authority to bind that entity to
+          these Terms.
+        </p>
+        <p class="mt-4 text-gray-600">
+          If you do not agree to these Terms, you may not access or use the Services. We recommend
+          that you print or save a copy of these Terms for your records.
+        </p>
+      </section>
+
+      <!-- Description of Service -->
+      <section [id]="sections[1].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[1].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          Logistics TMS provides a cloud-based fleet management platform for trucking companies,
+          including but not limited to:
+        </p>
+        <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+          <li>Real-time GPS tracking and dispatching</li>
+          <li>Load management and trip planning</li>
+          <li>Driver and employee management</li>
+          <li>Invoicing and payment processing</li>
+          <li>Payroll calculations and reporting</li>
+          <li>Document management and storage</li>
+          <li>Electronic logging device (ELD) integrations</li>
+          <li>Customer portal and communication tools</li>
+        </ul>
+        <p class="mt-4 text-gray-600">
+          We reserve the right to modify, suspend, or discontinue any part of the Services at any
+          time with or without notice.
+        </p>
+      </section>
+
+      <!-- User Accounts -->
+      <section [id]="sections[2].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[2].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          To use the Services, you must create an account and provide accurate, complete, and
+          current information. You are responsible for:
+        </p>
+        <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+          <li>Maintaining the confidentiality of your account credentials</li>
+          <li>All activities that occur under your account</li>
+          <li>Notifying us immediately of any unauthorized access or use</li>
+          <li>Ensuring all users under your account comply with these Terms</li>
+        </ul>
+        <p class="mt-4 text-gray-600">
+          We reserve the right to suspend or terminate accounts that violate these Terms or engage
+          in fraudulent or illegal activities.
+        </p>
+      </section>
+
+      <!-- Subscriptions and Payments -->
+      <section [id]="sections[3].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[3].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          Access to the Services requires a paid subscription. By subscribing, you agree to:
+        </p>
+        <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+          <li>Pay all fees associated with your selected subscription plan</li>
+          <li>Provide valid payment information and keep it up to date</li>
+          <li>
+            Automatic renewal of subscriptions unless cancelled before the renewal date
+          </li>
+          <li>Non-refundable fees except as required by law or stated in our refund policy</li>
+        </ul>
+        <p class="mt-4 text-gray-600">
+          Pricing is subject to change with 30 days' notice. Continued use after a price change
+          constitutes acceptance of the new pricing.
+        </p>
+      </section>
+
+      <!-- Acceptable Use -->
+      <section [id]="sections[4].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[4].title }}</h2>
+        <p class="mt-4 text-gray-600">You agree not to use the Services to:</p>
+        <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+          <li>Violate any applicable laws, regulations, or third-party rights</li>
+          <li>Transmit malware, viruses, or other harmful code</li>
+          <li>Attempt to gain unauthorized access to our systems or other users' accounts</li>
+          <li>Interfere with or disrupt the integrity or performance of the Services</li>
+          <li>Use automated tools to scrape, harvest, or extract data</li>
+          <li>Resell, sublicense, or redistribute the Services without authorization</li>
+          <li>Submit false, misleading, or fraudulent information</li>
+          <li>Engage in activities that could harm our reputation or business</li>
+        </ul>
+      </section>
+
+      <!-- Intellectual Property -->
+      <section [id]="sections[5].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[5].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          All content, features, and functionality of the Services, including but not limited to
+          text, graphics, logos, software, and documentation, are owned by Logistics TMS and are
+          protected by copyright, trademark, and other intellectual property laws.
+        </p>
+        <p class="mt-4 text-gray-600">
+          You retain ownership of any data you upload to the Services. By using the Services, you
+          grant us a limited license to use, store, and process your data solely to provide the
+          Services to you.
+        </p>
+      </section>
+
+      <!-- Limitation of Liability -->
+      <section [id]="sections[6].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[6].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          TO THE MAXIMUM EXTENT PERMITTED BY LAW, LOGISTICS TMS SHALL NOT BE LIABLE FOR ANY
+          INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT
+          LIMITED TO LOSS OF PROFITS, DATA, OR BUSINESS OPPORTUNITIES.
+        </p>
+        <p class="mt-4 text-gray-600">
+          Our total liability for any claims arising from these Terms or the Services shall not
+          exceed the amount you paid to us in the twelve (12) months preceding the claim.
+        </p>
+        <p class="mt-4 text-gray-600">
+          The Services are provided "AS IS" and "AS AVAILABLE" without warranties of any kind,
+          either express or implied.
+        </p>
+      </section>
+
+      <!-- Indemnification -->
+      <section [id]="sections[7].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[7].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          You agree to indemnify, defend, and hold harmless Logistics TMS, its officers, directors,
+          employees, and agents from any claims, liabilities, damages, losses, and expenses
+          (including reasonable attorneys' fees) arising from:
+        </p>
+        <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+          <li>Your use of the Services</li>
+          <li>Your violation of these Terms</li>
+          <li>Your violation of any applicable laws or third-party rights</li>
+          <li>Any content you submit or transmit through the Services</li>
+        </ul>
+      </section>
+
+      <!-- Termination -->
+      <section [id]="sections[8].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[8].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          You may terminate your account at any time by contacting us or using the account settings.
+          We may terminate or suspend your access to the Services immediately, without prior notice,
+          if:
+        </p>
+        <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+          <li>You breach any provision of these Terms</li>
+          <li>You fail to pay any fees when due</li>
+          <li>We are required to do so by law</li>
+          <li>We discontinue the Services</li>
+        </ul>
+        <p class="mt-4 text-gray-600">
+          Upon termination, your right to use the Services will cease immediately. You may request
+          export of your data within 30 days of termination.
+        </p>
+      </section>
+
+      <!-- Governing Law -->
+      <section [id]="sections[9].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[9].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          These Terms shall be governed by and construed in accordance with the laws of the State of
+          Texas, without regard to its conflict of law provisions. Any disputes arising from these
+          Terms or the Services shall be resolved exclusively in the state or federal courts located
+          in Harris County, Texas.
+        </p>
+      </section>
+
+      <!-- Changes to Terms -->
+      <section [id]="sections[10].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[10].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          We reserve the right to modify these Terms at any time. We will notify you of material
+          changes by posting the updated Terms on our website and updating the "Last updated" date.
+          Your continued use of the Services after such changes constitutes acceptance of the
+          revised Terms.
+        </p>
+      </section>
+
+      <!-- Contact Information -->
+      <section [id]="sections[11].id" class="mb-12" webScrollAnimate="fade-up">
+        <h2 class="text-2xl font-bold text-gray-900">{{ sections[11].title }}</h2>
+        <p class="mt-4 text-gray-600">
+          If you have any questions about these Terms of Service, please contact us:
+        </p>
+        <ul class="mt-4 space-y-2 text-gray-600">
+          <li>
+            <strong>Email:</strong>
+            <a href="mailto:legal@logisticstms.com" class="text-blue-600 hover:underline">
+              legal&#64;logisticstms.com
+            </a>
+          </li>
+          <li>
+            <strong>Address:</strong> 123 Fleet Street, Suite 500, Houston, TX 77001
+          </li>
+          <li>
+            <strong>Phone:</strong>
+            <a href="tel:+18005551234" class="text-blue-600 hover:underline">(800) 555-1234</a>
+          </li>
+        </ul>
+      </section>
+    </div>
+</web-section-container>

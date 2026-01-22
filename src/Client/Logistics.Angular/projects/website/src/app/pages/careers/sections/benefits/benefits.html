@@ -1,0 +1,22 @@
+<web-section-container sectionId="benefits" background="light">
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="Benefits"
+      title="We Take Care of Our Team"
+      subtitle="Competitive compensation and benefits that support your whole life."
+    />
+  </div>
+
+  <!-- Benefits Grid -->
+  <div class="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    @for (benefit of benefits; track benefit.title; let i = $index) {
+      <web-icon-card
+        [icon]="benefit.icon"
+        [title]="benefit.title"
+        [description]="benefit.description"
+        [delay]="i * 100"
+        gradient="blue-purple"
+      />
+    }
+  </div>
+</web-section-container>

@@ -60,7 +60,7 @@
 
       <!-- CTA Button -->
       <div class="hidden md:block">
-        <p-button label="Request a Demo" (onClick)="demoRequested.emit()" [rounded]="true" />
+        <p-button label="Request a Demo" (onClick)="openDemoDialog()" [rounded]="true" />
       </div>
 
       <!-- Mobile Menu Button -->
@@ -116,7 +116,7 @@
       <div class="pt-2">
         <p-button
           label="Request a Demo"
-          (onClick)="demoRequested.emit(); mobileMenuOpen.set(false)"
+          (onClick)="openDemoDialog(); mobileMenuOpen.set(false)"
           [rounded]="true"
           class="w-full"
         />

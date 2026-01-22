@@ -1,0 +1,50 @@
+<web-section-container sectionId="culture" background="white">
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="Our Culture"
+      title="What It's Like to Work Here"
+      subtitle="We've built a culture that attracts and retains the best talent in the industry."
+    />
+  </div>
+
+  <!-- Two Column Layout -->
+  <div class="mt-16 grid items-center gap-12 lg:grid-cols-2">
+    <!-- Left: Description -->
+    <div webScrollAnimate="fade-right">
+      <p class="text-lg text-gray-600">
+        At Logistics TMS, we believe that great products are built by great teams. We foster an
+        environment where everyone can do their best work—where ideas are valued, autonomy is
+        trusted, and impact is recognized.
+      </p>
+      <p class="mt-4 text-lg text-gray-600">
+        Whether you're working from our Houston office or remotely, you'll be part of a collaborative
+        team that's passionate about solving real problems for real businesses.
+      </p>
+
+      <!-- Culture Highlights -->
+      <div class="mt-8 space-y-6">
+        @for (highlight of highlights; track highlight.title; let i = $index) {
+          <div class="flex gap-4">
+            <web-icon-circle [icon]="highlight.icon" size="md" gradient="blue-cyan" />
+            <div>
+              <h3 class="font-bold text-gray-900">{{ highlight.title }}</h3>
+              <p class="mt-1 text-gray-600">{{ highlight.description }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Right: Image Grid -->
+    <div class="grid grid-cols-2 gap-4" webScrollAnimate="fade-left">
+      <div class="space-y-4">
+        <div class="h-48 rounded-2xl bg-linear-to-br from-blue-100 to-cyan-100"></div>
+        <div class="h-32 rounded-2xl bg-linear-to-br from-purple-100 to-pink-100"></div>
+      </div>
+      <div class="space-y-4 pt-8">
+        <div class="h-32 rounded-2xl bg-linear-to-br from-amber-100 to-orange-100"></div>
+        <div class="h-48 rounded-2xl bg-linear-to-br from-green-100 to-emerald-100"></div>
+      </div>
+    </div>
+  </div>
+</web-section-container>
