@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { IconCircle, SectionContainer, SectionHeader } from "@/shared/components";
+import { ScrollAnimateDirective } from "@/shared/directives";
 
 interface Step {
   number: number;
@@ -11,7 +12,7 @@ interface Step {
 @Component({
   selector: "web-how-it-works",
   templateUrl: "./how-it-works.html",
-  imports: [IconCircle, SectionContainer, SectionHeader],
+  imports: [IconCircle, SectionContainer, SectionHeader, ScrollAnimateDirective],
 })
 export class HowItWorks {
   protected readonly steps: Step[] = [

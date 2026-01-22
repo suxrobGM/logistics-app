@@ -1,15 +1,23 @@
 <web-section-container sectionId="testimonials" background="light">
-  <web-section-header
-    label="Testimonials"
-    title="Trusted by trucking companies nationwide"
-    subtitle="See what our customers have to say about their experience with Logistics TMS."
-  />
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="Testimonials"
+      title="Trusted by trucking companies nationwide"
+      subtitle="See what our customers have to say about their experience with Logistics TMS."
+    />
+  </div>
 
   <div class="mt-16 grid gap-8 md:grid-cols-3">
-    @for (testimonial of testimonials; track testimonial.author) {
-      <div class="rounded-2xl bg-white p-8 shadow-lg">
+    @for (testimonial of testimonials; track testimonial.author; let i = $index) {
+      <div
+        webScrollAnimate="fade-up"
+        [delay]="i * 150"
+        class="rounded-2xl bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+      >
         <!-- Quote Icon -->
-        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+        <div
+          class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600"
+        >
           <i class="pi pi-quote-left text-xl"></i>
         </div>
 

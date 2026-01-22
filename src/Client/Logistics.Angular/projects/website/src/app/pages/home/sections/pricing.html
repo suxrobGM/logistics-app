@@ -1,12 +1,14 @@
 <web-section-container sectionId="pricing" background="white">
-  <web-section-header
-    label="Pricing"
-    title="Simple, transparent pricing"
-    subtitle="One plan with everything included. No hidden fees, no surprises."
-  />
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="Pricing"
+      title="Simple, transparent pricing"
+      subtitle="One plan with everything included. No hidden fees, no surprises."
+    />
+  </div>
 
   <!-- Pricing Card -->
-  <div class="mx-auto mt-16 max-w-lg">
+  <div webScrollAnimate="scale-up" [delay]="200" class="mx-auto mt-16 max-w-lg">
     <div
       class="rounded-3xl border-2 border-blue-500 bg-white p-8 shadow-xl ring-1 ring-blue-500/20 sm:p-10"
     >

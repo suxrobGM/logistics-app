@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { SectionContainer, SectionHeader } from "@/shared/components";
+import { ScrollAnimateDirective } from "@/shared/directives";
 
 interface Testimonial {
   quote: string;
@@ -11,7 +12,7 @@ interface Testimonial {
 @Component({
   selector: "web-testimonials",
   templateUrl: "./testimonials.html",
-  imports: [SectionContainer, SectionHeader],
+  imports: [SectionContainer, SectionHeader, ScrollAnimateDirective],
 })
 export class Testimonials {
   protected readonly testimonials: Testimonial[] = [

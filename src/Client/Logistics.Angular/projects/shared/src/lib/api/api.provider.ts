@@ -1,5 +1,5 @@
 import type { HttpInterceptorFn } from "@angular/common/http";
-import { provideHttpClient, withInterceptors } from "@angular/common/http";
+import { provideHttpClient, withFetch, withInterceptors } from "@angular/common/http";
 import type { EnvironmentProviders } from "@angular/core";
 import { InjectionToken, makeEnvironmentProviders } from "@angular/core";
 import { ApiConfiguration } from "./generated/api-configuration";
@@ -60,6 +60,6 @@ export function provideApi(config: ApiConfig): EnvironmentProviders {
         return apiConfig;
       },
     },
-    provideHttpClient(withInterceptors(interceptors)),
+    provideHttpClient(withInterceptors(interceptors), withFetch()),
   ]);
 }

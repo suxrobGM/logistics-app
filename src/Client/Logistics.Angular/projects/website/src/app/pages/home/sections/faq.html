@@ -1,11 +1,13 @@
 <web-section-container sectionId="faq" background="light" maxWidth="3xl">
-  <web-section-header
-    label="FAQ"
-    title="Frequently asked questions"
-    subtitle="Got questions? We've got answers. If you don't see what you're looking for, reach out to our team."
-  />
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="FAQ"
+      title="Frequently asked questions"
+      subtitle="Got questions? We've got answers. If you don't see what you're looking for, reach out to our team."
+    />
+  </div>
 
-  <div class="mt-12">
+  <div webScrollAnimate="fade-up" [delay]="200" class="mt-12">
     <p-accordion [multiple]="true">
       @for (faq of faqs; track faq.question; let i = $index) {
         <p-accordion-panel [value]="i">

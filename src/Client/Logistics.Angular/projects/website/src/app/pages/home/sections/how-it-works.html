@@ -1,14 +1,16 @@
 <web-section-container sectionId="how-it-works" background="dark">
-  <web-section-header
-    label="How It Works"
-    title="Get started in minutes"
-    subtitle="Simple setup process to get your fleet management up and running quickly."
-    [dark]="true"
-  />
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="How It Works"
+      title="Get started in minutes"
+      subtitle="Simple setup process to get your fleet management up and running quickly."
+      [dark]="true"
+    />
+  </div>
 
   <div class="mt-16 grid gap-8 md:grid-cols-4">
-    @for (step of steps; track step.number) {
-      <div class="relative text-center">
+    @for (step of steps; track step.number; let i = $index) {
+      <div webScrollAnimate="fade-up" [delay]="i * 150" class="relative text-center">
         <!-- Connector Line (hidden on last item and mobile) -->
         @if (step.number < 4) {
           <div

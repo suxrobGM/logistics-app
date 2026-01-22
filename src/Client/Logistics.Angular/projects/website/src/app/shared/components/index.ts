@@ -1,3 +1,4 @@
+export * from "./animated-counter/animated-counter";
 export * from "./demo-dialog/demo-dialog";
 export * from "./icon-circle/icon-circle";
 export * from "./section-container/section-container";
