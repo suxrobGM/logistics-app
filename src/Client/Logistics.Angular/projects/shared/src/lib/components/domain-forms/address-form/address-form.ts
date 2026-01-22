@@ -44,13 +44,13 @@ export class AddressForm implements ControlValueAccessor {
       city: new FormControl("", { validators: Validators.required, nonNullable: true }),
       state: new FormControl("", { validators: Validators.required, nonNullable: true }),
       zipCode: new FormControl("", { validators: Validators.required, nonNullable: true }),
-      country: new FormControl(
-        { value: DEFAULT_COUNTRY_OPTION.value, disabled: true },
-        { validators: Validators.required, nonNullable: true },
-      ),
+      country: new FormControl(DEFAULT_COUNTRY_OPTION.value, {
+        validators: Validators.required,
+        nonNullable: true,
+      }),
     });
 
-    this.form.valueChanges.subscribe((values) => this.handleFormValueChange(values));
+    this.form.valueChanges.subscribe(() => this.handleFormValueChange());
   }
 
   writeValue(value: Address | null): void {
@@ -88,8 +88,9 @@ export class AddressForm implements ControlValueAccessor {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private handleFormValueChange(values: any): void {
+  private handleFormValueChange(): void {
+    const values = this.form.getRawValue();
+
     if (
       !values.addressLine1 ||
       !values.city ||

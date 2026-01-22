@@ -67,6 +67,7 @@ public static class TenantRolePermissions
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Invitation)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Expense)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.LoadBoard)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Tenant)));
         return list;
     }
 

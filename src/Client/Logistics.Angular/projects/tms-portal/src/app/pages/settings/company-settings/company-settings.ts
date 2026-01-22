@@ -1,6 +1,6 @@
 import { Component, type OnInit, inject, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { AddressForm } from "@logistics/shared";
+import { AddressForm, PhoneInput } from "@logistics/shared";
 import { Api, getTenantById, updateTenant } from "@logistics/shared/api";
 import type { Address, TenantDto, UpdateTenantCommand } from "@logistics/shared/api/models";
 import { ButtonModule } from "primeng/button";
@@ -24,6 +24,7 @@ import { LabeledField, ValidationSummary } from "@/shared/components";
     LabeledField,
     InputTextModule,
     AddressForm,
+    PhoneInput,
   ],
 })
 export class CompanySettingsComponent implements OnInit {
@@ -45,7 +46,7 @@ export class CompanySettingsComponent implements OnInit {
         validators: [Validators.required, Validators.maxLength(200)],
         nonNullable: true,
       }),
-      phoneNumber: new FormControl("", { nonNullable: true }),
+      phoneNumber: new FormControl<string | null>(null),
       billingEmail: new FormControl("", {
         validators: [Validators.required, Validators.email],
         nonNullable: true,
@@ -165,7 +166,7 @@ export class CompanySettingsComponent implements OnInit {
         this.tenant.set(tenant);
         this.form.patchValue({
           companyName: tenant.companyName ?? "",
-          phoneNumber: tenant.phoneNumber ?? "",
+          phoneNumber: tenant.phoneNumber ?? null,
           billingEmail: tenant.billingEmail ?? "",
           dotNumber: tenant.dotNumber ?? "",
           companyAddress: tenant.companyAddress ?? null,
@@ -195,7 +196,7 @@ export class CompanySettingsComponent implements OnInit {
 
 interface CompanySettingsForm {
   companyName: FormControl<string>;
-  phoneNumber: FormControl<string>;
+  phoneNumber: FormControl<string | null>;
   billingEmail: FormControl<string>;
   dotNumber: FormControl<string>;
   companyAddress: FormControl<Address | null>;

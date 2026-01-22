@@ -2,7 +2,7 @@ import { HttpHeaders } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { CookieService } from "@logistics/shared";
 import { Api, type TenantDto, getTenantById } from "@logistics/shared/api";
-import { Subject } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 
 @Injectable({ providedIn: "root" })
 export class TenantService {
@@ -11,10 +11,11 @@ export class TenantService {
 
   private tenantId: string | null = null;
   private tenantData: TenantDto | null = null;
-  private readonly tenantDataChangedSource = new Subject<TenantDto | null>();
+  private readonly tenantDataChangedSource = new BehaviorSubject<TenantDto | null>(null);
 
   /**
-   * Observable that emits when the tenant data changes
+   * Observable that emits when the tenant data changes.
+   * New subscribers will receive the current tenant data immediately.
    */
   public readonly tenantDataChanged$ = this.tenantDataChangedSource.asObservable();
 

@@ -1,0 +1,27 @@
+<p-inputgroup>
+  <p-select
+    [options]="countries"
+    [ngModel]="selectedCountry()"
+    (ngModelChange)="onCountryChange($event)"
+    optionLabel="dialCode"
+    [disabled]="disabled()"
+    [style]="{ minWidth: '7rem', flex: 'none' }"
+  >
+    <ng-template #selectedItem let-item>
+      <span>{{ item.dialCode }}</span>
+    </ng-template>
+    <ng-template #item let-item>
+      <span>{{ item.dialCode }} {{ item.name }}</span>
+    </ng-template>
+  </p-select>
+  <p-inputmask
+    [mask]="currentMask()"
+    [ngModel]="phoneNumber()"
+    (ngModelChange)="onPhoneChange($event)"
+    [placeholder]="placeholder()"
+    [disabled]="disabled()"
+    (onBlur)="onBlur()"
+    slotChar="_"
+    [autoClear]="false"
+  />
+</p-inputgroup>
