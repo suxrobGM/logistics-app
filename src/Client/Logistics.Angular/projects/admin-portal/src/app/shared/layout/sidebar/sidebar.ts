@@ -20,6 +20,7 @@ export class Sidebar {
   protected readonly navItems: NavItem[] = [
     { label: "Dashboard", icon: "pi pi-home", routerLink: "/home" },
     { label: "Demo Requests", icon: "pi pi-inbox", routerLink: "/demo-requests" },
+    { label: "Contact Submissions", icon: "pi pi-envelope", routerLink: "/contact-submissions" },
     { label: "Tenants", icon: "pi pi-building", routerLink: "/tenants" },
     { label: "Subscription Plans", icon: "pi pi-credit-card", routerLink: "/subscription-plans" },
     { label: "Subscriptions", icon: "pi pi-users", routerLink: "/subscriptions" },

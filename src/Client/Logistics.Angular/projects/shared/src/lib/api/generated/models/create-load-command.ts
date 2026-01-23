@@ -6,7 +6,7 @@ import type { GeoPoint } from '../models/geo-point';
 import type { LoadType } from '../models/load-type';
 export interface CreateLoadCommand {
   assignedDispatcherId?: string;
-  assignedTruckId?: string;
+  assignedTruckId?: string | null;
   customerId?: string;
   deliveryCost?: number;
   destinationAddress?: Address;

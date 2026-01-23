@@ -18,60 +18,46 @@
       <p-button label="Close" (onClick)="closeDialog()" />
     </div>
   } @else {
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4 pt-4">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col pt-4">
       @if (errorMessage()) {
-        <div class="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+        <div class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
           <i class="pi pi-exclamation-circle mr-2"></i>
           {{ errorMessage() }}
         </div>
       }
 
       <div class="grid grid-cols-2 gap-4">
-        <div class="flex flex-col gap-1">
-          <label for="firstName" class="text-sm font-medium text-gray-700">First Name *</label>
+        <ui-labeled-field label="First Name" for="firstName" [required]="true" [control]="form.controls.firstName">
           <input pInputText id="firstName" formControlName="firstName" placeholder="John" class="w-full" />
-        </div>
-        <div class="flex flex-col gap-1">
-          <label for="lastName" class="text-sm font-medium text-gray-700">Last Name *</label>
+        </ui-labeled-field>
+        <ui-labeled-field label="Last Name" for="lastName" [required]="true" [control]="form.controls.lastName">
           <input pInputText id="lastName" formControlName="lastName" placeholder="Doe" class="w-full" />
-        </div>
+        </ui-labeled-field>
       </div>
 
-      <div class="flex flex-col gap-1">
-        <label for="email" class="text-sm font-medium text-gray-700">Work Email *</label>
-        <input
-          pInputText
-          id="email"
-          formControlName="email"
-          type="email"
-          placeholder="john@company.com"
-          class="w-full"
-        />
-      </div>
+      <ui-labeled-field label="Work Email" for="email" [required]="true" [control]="form.controls.email">
+        <input pInputText id="email" formControlName="email" type="email" placeholder="john@company.com" class="w-full" />
+      </ui-labeled-field>
 
-      <div class="flex flex-col gap-1">
-        <label for="company" class="text-sm font-medium text-gray-700">Company Name *</label>
+      <ui-labeled-field label="Company Name" for="company" [required]="true" [control]="form.controls.company">
         <input pInputText id="company" formControlName="company" placeholder="Acme Trucking" class="w-full" />
-      </div>
+      </ui-labeled-field>
 
-      <div class="flex flex-col gap-1">
-        <label for="phone" class="text-sm font-medium text-gray-700">Phone Number</label>
+      <ui-labeled-field label="Phone Number" for="phone">
         <ui-phone-input id="phone" formControlName="phone" />
-      </div>
+      </ui-labeled-field>
 
-      <div class="flex flex-col gap-1">
-        <label for="fleetSize" class="text-sm font-medium text-gray-700">Fleet Size</label>
+      <ui-labeled-field label="Fleet Size" for="fleetSize">
         <p-select
           id="fleetSize"
           formControlName="fleetSize"
           [options]="fleetSizeOptions"
           placeholder="Select fleet size"
-          class="w-full"
+          styleClass="w-full"
         />
-      </div>
+      </ui-labeled-field>
 
-      <div class="flex flex-col gap-1">
-        <label for="message" class="text-sm font-medium text-gray-700">Message</label>
+      <ui-labeled-field label="Message" for="message">
         <textarea
           pTextarea
           id="message"
@@ -80,9 +66,9 @@
           placeholder="Tell us about your needs..."
           class="w-full"
         ></textarea>
-      </div>
+      </ui-labeled-field>
 
-      <div class="mt-2 flex justify-end gap-2">
+      <div class="flex justify-end gap-2">
         <p-button label="Cancel" severity="secondary" (onClick)="closeDialog()" />
         <p-button
           label="Submit Request"

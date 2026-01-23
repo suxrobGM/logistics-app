@@ -124,4 +124,21 @@ export abstract class DateUtils {
 
     return false;
   }
+
+  /**
+   * Formats a date string to a human-readable date time format in US locale.
+   * @param date Date value in string format
+   * @param fallback Value to return if date is null/undefined (defaults to "-")
+   * @returns Formatted date string like "Jan 15, 2024, 02:30 PM"
+   */
+  static formatDateTime(date?: string | null, fallback = "-"): string {
+    if (!date) return fallback;
+    return new Date(date).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
 }

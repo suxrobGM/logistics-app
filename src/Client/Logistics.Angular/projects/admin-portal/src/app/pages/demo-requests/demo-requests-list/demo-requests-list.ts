@@ -3,6 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { Api, deleteDemoRequest, updateDemoRequest } from "@logistics/shared/api";
 import type { DemoRequestDto, DemoRequestStatus } from "@logistics/shared/api";
 import { DataContainer, LabeledField, PageHeader, SearchInput } from "@logistics/shared/components";
+import { DateUtils } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -132,14 +133,5 @@ export class DemoRequestsList {
     }
   }
 
-  protected formatDate(date?: string): string {
-    if (!date) return "-";
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
+  protected readonly formatDate = DateUtils.formatDateTime;
 }

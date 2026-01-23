@@ -8,6 +8,8 @@ import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import type { LoadDtoPagedResponse } from '../../models/load-dto-paged-response';
+import type { LoadStatus } from '../../models/load-status';
+import type { LoadType } from '../../models/load-type';
 
 export interface GetLoads$Params {
   LoadAllPages?: boolean;
@@ -16,8 +18,8 @@ export interface GetLoads$Params {
   TruckId?: string;
   StartDate?: string;
   EndDate?: string;
-  Status?: string;
-  Type?: string;
+  Status?: LoadStatus;
+  Type?: LoadType;
   CustomerId?: string;
   Search?: string;
   OrderBy?: string;

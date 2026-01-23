@@ -1676,7 +1676,7 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     b.Property<double>("TotalDistance")
                         .HasColumnType("double precision");
 
-                    b.Property<Guid>("TruckId")
+                    b.Property<Guid?>("TruckId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -2517,9 +2517,7 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 {
                     b.HasOne("Logistics.Domain.Entities.Truck", "Truck")
                         .WithMany("Trips")
-                        .HasForeignKey("TruckId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TruckId");
 
                     b.Navigation("Truck");
                 });

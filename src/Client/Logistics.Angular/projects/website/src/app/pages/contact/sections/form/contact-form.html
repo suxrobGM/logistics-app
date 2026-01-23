@@ -28,84 +28,42 @@
           Fill out the form below and we'll get back to you as soon as possible.
         </p>
 
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-8 space-y-6">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-8">
           <!-- Name Fields -->
           <div class="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label for="firstName" class="mb-2 block text-sm font-medium text-gray-700">
-                First Name *
-              </label>
-              <input
-                pInputText
-                id="firstName"
-                formControlName="firstName"
-                placeholder="John"
-                class="w-full"
-              />
-            </div>
-            <div>
-              <label for="lastName" class="mb-2 block text-sm font-medium text-gray-700">
-                Last Name *
-              </label>
-              <input
-                pInputText
-                id="lastName"
-                formControlName="lastName"
-                placeholder="Doe"
-                class="w-full"
-              />
-            </div>
+            <ui-labeled-field label="First Name" for="firstName" [required]="true" [control]="form.controls.firstName">
+              <input pInputText id="firstName" formControlName="firstName" placeholder="John" class="w-full" />
+            </ui-labeled-field>
+            <ui-labeled-field label="Last Name" for="lastName" [required]="true" [control]="form.controls.lastName">
+              <input pInputText id="lastName" formControlName="lastName" placeholder="Doe" class="w-full" />
+            </ui-labeled-field>
           </div>
 
           <!-- Email & Phone -->
           <div class="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label for="email" class="mb-2 block text-sm font-medium text-gray-700">
-                Email *
-              </label>
-              <input
-                pInputText
-                id="email"
-                type="email"
-                formControlName="email"
-                placeholder="john@company.com"
-                class="w-full"
-              />
-            </div>
-            <div>
-              <label for="phone" class="mb-2 block text-sm font-medium text-gray-700">
-                Phone (Optional)
-              </label>
-              <input
-                pInputText
-                id="phone"
-                type="tel"
-                formControlName="phone"
-                placeholder="(555) 123-4567"
-                class="w-full"
-              />
-            </div>
+            <ui-labeled-field label="Email" for="email" [required]="true" [control]="form.controls.email">
+              <input pInputText id="email" type="email" formControlName="email" placeholder="john@company.com" class="w-full" />
+            </ui-labeled-field>
+            <ui-labeled-field label="Phone" for="phone" hint="Optional">
+              <input pInputText id="phone" type="tel" formControlName="phone" placeholder="(555) 123-4567" class="w-full" />
+            </ui-labeled-field>
           </div>
 
           <!-- Subject -->
-          <div>
-            <label for="subject" class="mb-2 block text-sm font-medium text-gray-700">
-              Subject *
-            </label>
+          <ui-labeled-field label="Subject" for="subject" [required]="true" [control]="form.controls.subject">
             <p-select
               id="subject"
               formControlName="subject"
               [options]="subjectOptions"
+              optionLabel="label"
+              optionValue="value"
               placeholder="Select a subject"
               styleClass="w-full"
             />
-          </div>
+          </ui-labeled-field>
 
           <!-- Message -->
-          <div>
-            <label for="message" class="mb-2 block text-sm font-medium text-gray-700">
-              Message *
-            </label>
+          <ui-labeled-field label="Message" for="message" [required]="true" [control]="form.controls.message">
             <textarea
               pTextarea
               id="message"
@@ -114,11 +72,11 @@
               placeholder="How can we help you?"
               class="w-full"
             ></textarea>
-          </div>
+          </ui-labeled-field>
 
           <!-- Error Message -->
           @if (errorMessage()) {
-            <div class="rounded-lg bg-red-50 p-4 text-sm text-red-600">
+            <div class="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-600">
               <i class="pi pi-exclamation-circle mr-2"></i>
               {{ errorMessage() }}
             </div>

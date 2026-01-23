@@ -1,11 +1,14 @@
-import { Component, signal } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { SectionContainer } from "@/shared/components";
-import { ScrollAnimateDirective } from "@/shared/directives";
+import { Api, type ContactSubject, createContactSubmission } from "@logistics/shared/api";
+import { LabeledField } from "@logistics/shared/components";
+import type { SelectOption } from "@logistics/shared/models";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
+import { SectionContainer } from "@/shared/components";
+import { ScrollAnimateDirective } from "@/shared/directives";
 
 @Component({
   selector: "web-contact-form",
@@ -18,14 +21,17 @@ import { TextareaModule } from "primeng/textarea";
     ButtonModule,
     SelectModule,
     TextareaModule,
+    LabeledField,
   ],
 })
 export class ContactForm {
+  private readonly api = inject(Api);
+
   protected readonly isLoading = signal(false);
   protected readonly isSubmitted = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
 
-  protected readonly subjectOptions = [
+  protected readonly subjectOptions: SelectOption<ContactSubject>[] = [
     { label: "General Inquiry", value: "general" },
     { label: "Sales", value: "sales" },
     { label: "Technical Support", value: "support" },
@@ -54,11 +60,23 @@ export class ContactForm {
     this.errorMessage.set(null);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const formValue = this.form.getRawValue();
+
+      await this.api.invoke(createContactSubmission, {
+        body: {
+          firstName: formValue.firstName,
+          lastName: formValue.lastName,
+          email: formValue.email,
+          phone: formValue.phone,
+          subject: formValue.subject as ContactSubject,
+          message: formValue.message,
+        },
+      });
+
       this.isSubmitted.set(true);
       this.form.reset();
-    } catch {
+    } catch (error) {
+      console.error("Error submitting contact form:", error);
       this.errorMessage.set("Failed to send your message. Please try again.");
     } finally {
       this.isLoading.set(false);

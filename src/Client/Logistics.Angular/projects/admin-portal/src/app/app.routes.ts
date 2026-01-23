@@ -13,6 +13,14 @@ export const appRoutes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: "contact-submissions",
+    loadChildren: () =>
+      import("./pages/contact-submissions/contact-submissions.routes").then(
+        (m) => m.contactSubmissionsRoutes,
+      ),
+    canActivate: [authGuard],
+  },
+  {
     path: "tenants",
     loadChildren: () => import("./pages/tenants/tenant.routes").then((m) => m.tenantRoutes),
     canActivate: [authGuard],

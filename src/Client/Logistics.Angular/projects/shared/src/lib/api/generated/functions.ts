@@ -19,6 +19,16 @@ export type { PublishBlogPost$Params as PublishBlogPost$Params } from './fn/blog
 export { publishBlogPost as publishBlogPost } from './fn/blog-post/publish-blog-post';
 export type { UnpublishBlogPost$Params as UnpublishBlogPost$Params } from './fn/blog-post/unpublish-blog-post';
 export { unpublishBlogPost as unpublishBlogPost } from './fn/blog-post/unpublish-blog-post';
+export type { GetContactSubmissionById$Params as GetContactSubmissionById$Params } from './fn/contact/get-contact-submission-by-id';
+export { getContactSubmissionById as getContactSubmissionById } from './fn/contact/get-contact-submission-by-id';
+export type { UpdateContactSubmission$Params as UpdateContactSubmission$Params } from './fn/contact/update-contact-submission';
+export { updateContactSubmission as updateContactSubmission } from './fn/contact/update-contact-submission';
+export type { DeleteContactSubmission$Params as DeleteContactSubmission$Params } from './fn/contact/delete-contact-submission';
+export { deleteContactSubmission as deleteContactSubmission } from './fn/contact/delete-contact-submission';
+export type { GetContactSubmissions$Params as GetContactSubmissions$Params } from './fn/contact/get-contact-submissions';
+export { getContactSubmissions as getContactSubmissions } from './fn/contact/get-contact-submissions';
+export type { CreateContactSubmission$Params as CreateContactSubmission$Params } from './fn/contact/create-contact-submission';
+export { createContactSubmission as createContactSubmission } from './fn/contact/create-contact-submission';
 export type { GetCustomerById$Params as GetCustomerById$Params } from './fn/customer/get-customer-by-id';
 export { getCustomerById as getCustomerById } from './fn/customer/get-customer-by-id';
 export type { UpdateCustomer$Params as UpdateCustomer$Params } from './fn/customer/update-customer';
