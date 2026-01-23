@@ -10,10 +10,7 @@ import {
 import { Button } from "primeng/button";
 import { Dialog } from "primeng/dialog";
 import { ToastService } from "@/core/services";
-import {
-  CustomerForm,
-  type CustomerFormValue,
-} from "../../domain-forms/customer-form/customer-form";
+import { CustomerForm, type CustomerFormValue } from "@/shared/components/domain-forms";
 
 @Component({
   selector: "app-search-customer",
@@ -22,12 +19,12 @@ import {
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SearchCustomerComponent),
+      useExisting: forwardRef(() => SearchCustomer),
       multi: true,
     },
   ],
 })
-export class SearchCustomerComponent implements ControlValueAccessor {
+export class SearchCustomer implements ControlValueAccessor {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
 
@@ -40,6 +37,8 @@ export class SearchCustomerComponent implements ControlValueAccessor {
   protected readonly customerDialogVisible = model<boolean>(false);
 
   protected async searchCustomer(event: { query: string }): Promise<void> {
+    console.log("Searching for customers with query:", event.query);
+
     const q = event.query?.trim() ?? "";
     this.lastQuery.set(q);
 
@@ -51,6 +50,8 @@ export class SearchCustomerComponent implements ControlValueAccessor {
     try {
       const result = await this.api.invoke(getCustomers, { Search: q });
       const items = result.items ?? [];
+      console.log("Found customers:", items);
+
       this.suggestedCustomers.set(items); // [] triggers the "empty" template
     } catch {
       this.suggestedCustomers.set([]);
@@ -58,6 +59,8 @@ export class SearchCustomerComponent implements ControlValueAccessor {
   }
 
   protected changeSelectedCustomer(event: AutoCompleteSelectEvent): void {
+    console.log("Selected customer:", event.value);
+
     this.selectedCustomerChange.emit(event.value);
     this.onChange(event.value);
   }
@@ -80,10 +83,14 @@ export class SearchCustomerComponent implements ControlValueAccessor {
   //#region Implementation Reactive forms
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private onChange(value: CustomerDto | null): void {}
+  private onChange(value: CustomerDto | null): void {
+    console.log("onChange called with value:", value);
+  }
   private onTouched(): void {}
 
   writeValue(value: CustomerDto | null): void {
+    console.log("writeValue called with value:", value);
+
     this.selectedCustomer.set(value);
   }
 

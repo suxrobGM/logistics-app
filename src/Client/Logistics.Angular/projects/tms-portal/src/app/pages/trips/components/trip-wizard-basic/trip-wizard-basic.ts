@@ -5,7 +5,7 @@ import type { TruckDto } from "@logistics/shared/api/models";
 import { Button } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { ToastService } from "@/core/services";
-import { LabeledField, SearchTruckComponent, ValidationSummary } from "@/shared/components";
+import { LabeledField, SearchTruck, ValidationSummary } from "@/shared/components";
 import { TripWizardStore } from "../../store/trip-wizard-store";
 
 @Component({
@@ -14,7 +14,7 @@ import { TripWizardStore } from "../../store/trip-wizard-store";
   imports: [
     ValidationSummary,
     LabeledField,
-    SearchTruckComponent,
+    SearchTruck,
     Button,
     RouterLink,
     ReactiveFormsModule,

@@ -16,12 +16,12 @@ import { LoadStatusTag } from "../../tags/load-status-tag/load-status-tag";
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SearchLoadComponent),
+      useExisting: forwardRef(() => SearchLoad),
       multi: true,
     },
   ],
 })
-export class SearchLoadComponent implements ControlValueAccessor {
+export class SearchLoad implements ControlValueAccessor {
   private readonly api = inject(Api);
 
   protected readonly suggestedLoads = signal<LoadDto[]>([]);

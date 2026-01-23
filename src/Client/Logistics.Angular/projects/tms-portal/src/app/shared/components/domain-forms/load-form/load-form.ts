@@ -11,6 +11,7 @@ import {
   loadStatusOptions,
   loadTypeOptions,
 } from "@logistics/shared/api/models";
+import { LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DividerModule } from "primeng/divider";
 import { InputGroupModule } from "primeng/inputgroup";
@@ -22,14 +23,13 @@ import { Select } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
-import { LabeledField, ValidationSummary } from "@logistics/shared/components";
 import {
   AddressAutocomplete,
   DirectionMap,
   type SelectedAddressEvent,
 } from "@/shared/components/maps";
 import type { RouteChangeEvent, Waypoint } from "@/shared/components/maps";
-import { SearchCustomerComponent, SearchTruckComponent } from "@/shared/components/search";
+import { SearchCustomer, SearchTruck } from "@/shared/components/search";
 import { Converters } from "@/shared/utils";
 
 /**
@@ -71,8 +71,8 @@ export interface LoadFormValue {
     DirectionMap,
     ValidationSummary,
     LabeledField,
-    SearchCustomerComponent,
-    SearchTruckComponent,
+    SearchCustomer,
+    SearchTruck,
     DividerModule,
   ],
 })
@@ -200,8 +200,6 @@ export class LoadFormComponent implements OnInit {
   }
 
   protected submit(): void {
-    console.log("form errors", this.form.errors);
-
     if (this.form.invalid) {
       return;
     }

@@ -16,12 +16,12 @@ import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autoco
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SearchTruckComponent),
+      useExisting: forwardRef(() => SearchTruck),
       multi: true,
     },
   ],
 })
-export class SearchTruckComponent implements ControlValueAccessor {
+export class SearchTruck implements ControlValueAccessor {
   private readonly api = inject(Api);
 
   protected readonly suggestedTrucks = signal<TruckDto[]>([]);

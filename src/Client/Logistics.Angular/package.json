@@ -32,7 +32,7 @@
     "@angular/ssr": "^21.1.0",
     "@microsoft/signalr": "^10.0.0",
     "@ngrx/signals": "^21.0.1",
-    "@primeuix/themes": "^2.0.2",
+    "@primeuix/themes": "^2.0.3",
     "@stripe/stripe-js": "^8.6.0",
     "angular-auth-oidc-client": "^21.0.1",
     "chart.js": "^4.5.1",
@@ -41,7 +41,7 @@
     "mapbox-gl": "^3.17.0",
     "ngx-mapbox-gl": "^13.0.0",
     "primeicons": "^7.0.0",
-    "primeng": "^21.0.3",
+    "primeng": "^21.0.4",
     "quill": "^2.0.3",
     "rxjs": "^7.8.2",
     "tslib": "^2.8.1"
