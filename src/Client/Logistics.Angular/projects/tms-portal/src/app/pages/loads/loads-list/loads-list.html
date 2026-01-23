@@ -22,6 +22,116 @@
   />
 </div>
 
+<!-- Filter Panel -->
+<p-card class="mb-4">
+  <div class="mb-4 flex items-center justify-between">
+    <span class="text-lg font-semibold">Filters</span>
+    <div class="flex items-center gap-2">
+      @if (activeFilterCount() > 0) {
+        <span class="text-surface-500 text-sm">{{ activeFilterCount() }} active</span>
+      }
+      <p-button
+        label="Clear All"
+        icon="pi pi-times"
+        severity="secondary"
+        size="small"
+        [text]="true"
+        (click)="clearFilters()"
+        [disabled]="activeFilterCount() === 0"
+      />
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-x-4 md:grid-cols-2 lg:grid-cols-5">
+    <ui-labeled-field label="Search">
+      <ui-search-input class="w-full" (searchChange)="onSearch($event)" />
+    </ui-labeled-field>
+
+    <ui-labeled-field label="Status">
+      <p-multiselect
+        [options]="statusOptions"
+        [(ngModel)]="selectedStatuses"
+        placeholder="Select status"
+        [showClear]="true"
+        (onChange)="applyFilters()"
+        styleClass="w-full"
+      />
+    </ui-labeled-field>
+
+    <ui-labeled-field label="Type">
+      <p-multiselect
+        [options]="typeOptions"
+        [(ngModel)]="selectedTypes"
+        placeholder="Select type"
+        [showClear]="true"
+        (onChange)="applyFilters()"
+        styleClass="w-full"
+      />
+    </ui-labeled-field>
+
+    <ui-labeled-field label="Truck">
+      <app-search-truck [(selectedTruck)]="selectedTruck" (selectedTruckChange)="applyFilters()" />
+    </ui-labeled-field>
+
+    <ui-labeled-field label="Customer">
+      <app-search-customer
+        [(selectedCustomer)]="selectedCustomer"
+        (selectedCustomerChange)="applyFilters()"
+      />
+    </ui-labeled-field>
+  </div>
+
+  <div class="grid grid-cols-1 items-end gap-x-4 md:grid-cols-2 lg:grid-cols-3">
+    <ui-labeled-field label="Date Range">
+      <p-datepicker
+        [(ngModel)]="dateRange"
+        selectionMode="range"
+        placeholder="Select date range"
+        [showIcon]="true"
+        (onSelect)="applyFilters()"
+        class="w-full"
+      />
+    </ui-labeled-field>
+  </div>
+
+  <div class="mt-2 flex items-center gap-4">
+    <div class="flex items-center gap-2">
+      <p-checkbox
+        [(ngModel)]="onlyActiveLoads"
+        [binary]="true"
+        inputId="activeOnly"
+        (onChange)="applyFilters()"
+      />
+      <label for="activeOnly" class="mb-0 cursor-pointer text-sm">Active loads only</label>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <span class="text-surface-500 text-sm">Quick dates:</span>
+      <p-button
+        label="Today"
+        size="small"
+        severity="secondary"
+        [outlined]="true"
+        (click)="setDatePreset('today')"
+      />
+      <p-button
+        label="Week"
+        size="small"
+        severity="secondary"
+        [outlined]="true"
+        (click)="setDatePreset('week')"
+      />
+      <p-button
+        label="Month"
+        size="small"
+        severity="secondary"
+        [outlined]="true"
+        (click)="setDatePreset('month')"
+      />
+    </div>
+  </div>
+</p-card>
+
 <p-card>
   <ui-data-container
     [loading]="store.isLoading()"
@@ -49,9 +159,6 @@
       [loading]="store.isLoading()"
       [rowsPerPageOptions]="[10, 25, 50]"
     >
-      <ng-template #caption>
-        <ui-search-input (searchChange)="onSearch($event)" />
-      </ng-template>
       <ng-template #header>
         <tr>
           <th pSortableColumn="Number">
@@ -103,7 +210,10 @@
         </tr>
       </ng-template>
       <ng-template #body let-load>
-        <tr (click)="selectedRow.set(load)">
+        <tr
+          class="hover:bg-surface-100 transition-colors duration-150"
+          (click)="selectedRow.set(load)"
+        >
           <td>
             <a
               [routerLink]="['/loads', load.id]"
@@ -113,27 +223,51 @@
               {{ load.number }}
             </a>
           </td>
-          <td [pTooltip]="load.name" [showDelay]="500" tooltipPosition="bottom">
-            {{ load.name }}
+          <td>
+            <span
+              class="block max-w-32 truncate"
+              [pTooltip]="load.name"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ load.name }}
+            </span>
           </td>
           <td><app-load-type-tag [type]="load.type" /></td>
-          <td [pTooltip]="load.customer.name" [showDelay]="500" tooltipPosition="bottom">
-            {{ load.customer.name }}
+          <td>
+            <span
+              class="block max-w-32 truncate"
+              [pTooltip]="load.customer.name"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ load.customer.name }}
+            </span>
           </td>
-          <td [pTooltip]="load.originAddress | address" [showDelay]="500" tooltipPosition="bottom">
-            {{ load.originAddress | address }}
+          <td>
+            <span
+              class="block max-w-28 truncate"
+              [pTooltip]="load.originAddress | address"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ load.originAddress | address }}
+            </span>
           </td>
-          <td
-            [pTooltip]="load.destinationAddress | address"
-            [showDelay]="500"
-            tooltipPosition="bottom"
-          >
-            {{ load.destinationAddress | address }}
+          <td>
+            <span
+              class="block max-w-28 truncate"
+              [pTooltip]="load.destinationAddress | address"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ load.destinationAddress | address }}
+            </span>
           </td>
           <td>
             <app-load-status-tag [status]="load.status" />
 
-            <div class="italic">
+            <div class="text-surface-500 text-xs italic">
               @switch (load.status) {
                 @case ("dispatched") {
                   {{ load.dispatchedAt | date: "mediumDate" }}
@@ -147,13 +281,36 @@
               }
             </div>
           </td>
-          <td>{{ load.distance | distanceUnit: "mi" }}</td>
-          <td>{{ load.deliveryCost | currency }}</td>
-          <td>{{ load.tripNumber }} - {{ load.tripName }}</td>
-          <td>{{ load.assignedTruckNumber }}</td>
-          <td>{{ load.assignedDispatcherName }}</td>
+          <td class="text-center">{{ load.distance | distanceUnit: "mi" }}</td>
+          <td class="text-right">{{ load.deliveryCost | currency }}</td>
           <td>
-            <p-button icon="pi pi-ellipsis-v" (click)="menu.toggle($event)" severity="secondary" aria-label="Show actions menu" />
+            <span
+              class="block max-w-24 truncate"
+              [pTooltip]="load.tripNumber + ' - ' + load.tripName"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ load.tripNumber }} - {{ load.tripName }}
+            </span>
+          </td>
+          <td class="text-center">{{ load.assignedTruckNumber }}</td>
+          <td>
+            <span
+              class="block max-w-24 truncate"
+              [pTooltip]="load.assignedDispatcherName"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ load.assignedDispatcherName }}
+            </span>
+          </td>
+          <td>
+            <p-button
+              icon="pi pi-ellipsis-v"
+              (click)="menu.toggle($event)"
+              severity="secondary"
+              aria-label="Show actions menu"
+            />
           </td>
         </tr>
       </ng-template>

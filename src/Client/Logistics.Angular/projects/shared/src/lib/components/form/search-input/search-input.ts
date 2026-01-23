@@ -7,9 +7,11 @@ import { InputTextModule } from "primeng/inputtext";
   selector: "ui-search-input",
   templateUrl: "./search-input.html",
   imports: [IconFieldModule, InputIconModule, InputTextModule],
+  host: { class: "block" },
 })
 export class SearchInput {
   public readonly placeholder = input<string>("Search");
+  public readonly class = input<string>("");
   public readonly searchChange = output<string>();
 
   protected handleInput(event: Event): void {

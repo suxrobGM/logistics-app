@@ -7,23 +7,17 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetLoadsHandler : IAppRequestHandler<GetLoadsQuery, PagedResult<LoadDto>>
+internal sealed class GetLoadsHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<GetLoadsQuery, PagedResult<LoadDto>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetLoadsHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<PagedResult<LoadDto>> Handle(
         GetLoadsQuery req,
         CancellationToken ct)
     {
-        var totalItems = await _tenantUow.Repository<Load>().CountAsync();
+        var totalItems = await tenantUow.Repository<Load>().CountAsync(ct: ct);
         var spec = new SearchLoads(req.Search, req.OrderBy);
 
-        var baseQuery = _tenantUow.Repository<Load>().ApplySpecification(spec);
+        var baseQuery = tenantUow.Repository<Load>().ApplySpecification(spec);
 
         if (req.OnlyActiveLoads)
         {
@@ -40,6 +34,21 @@ internal sealed class GetLoadsHandler : IAppRequestHandler<GetLoadsQuery, PagedR
         if (req.TruckId.HasValue)
         {
             baseQuery = baseQuery.Where(i => i.AssignedTruckId == req.TruckId);
+        }
+
+        if (req.Status.HasValue)
+        {
+            baseQuery = baseQuery.Where(i => i.Status == req.Status.Value);
+        }
+
+        if (req.Type.HasValue)
+        {
+            baseQuery = baseQuery.Where(i => i.Type == req.Type.Value);
+        }
+
+        if (req.CustomerId.HasValue)
+        {
+            baseQuery = baseQuery.Where(i => i.CustomerId == req.CustomerId.Value);
         }
 
         if (req is { StartDate: not null, EndDate: not null })

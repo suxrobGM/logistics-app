@@ -1,5 +1,45 @@
 import { DateRange } from "./date-range";
 
+export type DatePreset = "today" | "week" | "month";
+
+/**
+ * Returns a date range tuple [startDate, endDate] for the given preset.
+ * The start date is normalized to 00:00:00.000 and end date to 23:59:59.999.
+ * Suitable for use with PrimeNG datepicker in range mode.
+ */
+export function getDatePreset(preset: DatePreset): [Date, Date] {
+  const today = new Date();
+  let start: Date;
+  let end: Date;
+
+  switch (preset) {
+    case "today":
+      start = new Date(today);
+      start.setHours(0, 0, 0, 0);
+      end = new Date(today);
+      end.setHours(23, 59, 59, 999);
+      break;
+    case "week": {
+      start = new Date(today);
+      start.setDate(today.getDate() - today.getDay());
+      start.setHours(0, 0, 0, 0);
+      end = new Date(start);
+      end.setDate(start.getDate() + 6);
+      end.setHours(23, 59, 59, 999);
+      break;
+    }
+    case "month": {
+      start = new Date(today.getFullYear(), today.getMonth(), 1);
+      start.setHours(0, 0, 0, 0);
+      end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      end.setHours(23, 59, 59, 999);
+      break;
+    }
+  }
+
+  return [start, end];
+}
+
 export abstract class PredefinedDateRanges {
   static getThisWeek(): DateRange {
     const start = new Date();

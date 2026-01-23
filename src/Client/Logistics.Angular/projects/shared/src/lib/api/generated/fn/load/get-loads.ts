@@ -16,6 +16,9 @@ export interface GetLoads$Params {
   TruckId?: string;
   StartDate?: string;
   EndDate?: string;
+  Status?: string;
+  Type?: string;
+  CustomerId?: string;
   Search?: string;
   OrderBy?: string;
   Page?: number;
@@ -31,6 +34,9 @@ export function getLoads(http: HttpClient, rootUrl: string, params?: GetLoads$Pa
     rb.query('TruckId', params.TruckId, {});
     rb.query('StartDate', params.StartDate, {});
     rb.query('EndDate', params.EndDate, {});
+    rb.query('Status', params.Status, {});
+    rb.query('Type', params.Type, {});
+    rb.query('CustomerId', params.CustomerId, {});
     rb.query('Search', params.Search, {});
     rb.query('OrderBy', params.OrderBy, {});
     rb.query('Page', params.Page, {});

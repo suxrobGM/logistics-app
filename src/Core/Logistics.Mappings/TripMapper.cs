@@ -15,6 +15,8 @@ public static partial class TripMapper
     [MapPropertyFromSource(nameof(TripDto.OriginAddress), Use = nameof(MapOriginAddress))]
     [MapPropertyFromSource(nameof(TripDto.DestinationAddress), Use = nameof(MapDestinationAddress))]
     [MapPropertyFromSource(nameof(TripDto.Loads), Use = nameof(MapLoads))]
+    [MapPropertyFromSource(nameof(TripDto.LoadsCount), Use = nameof(MapLoadsCount))]
+    [MapPropertyFromSource(nameof(TripDto.TotalRevenue), Use = nameof(MapTotalRevenue))]
     public static partial TripDto ToDto(this Trip entity);
 
     private static IEnumerable<TripLoadDto> MapLoads(Trip trip)
@@ -30,5 +32,15 @@ public static partial class TripMapper
     private static Address MapDestinationAddress(Trip trip)
     {
         return trip.GetDestinationAddress();
+    }
+
+    private static int MapLoadsCount(Trip trip)
+    {
+        return trip.GetLoads().Count();
+    }
+
+    private static decimal MapTotalRevenue(Trip trip)
+    {
+        return trip.CalcTotalRevenue();
     }
 }

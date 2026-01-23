@@ -1,20 +1,23 @@
 import { CurrencyPipe, DatePipe } from "@angular/common";
-import { Component, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { Api, deleteTrip } from "@logistics/shared/api";
-import type { TripDto } from "@logistics/shared/api/models";
+import { tripStatusOptions } from "@logistics/shared/api/enums";
+import type { TripDto, TripStatus, TruckDto } from "@logistics/shared/api/models";
 import type { MenuItem } from "primeng/api";
 import { Button } from "primeng/button";
 import { Card } from "primeng/card";
-import { IconField } from "primeng/iconfield";
-import { InputIcon } from "primeng/inputicon";
-import { InputText } from "primeng/inputtext";
+import { Checkbox } from "primeng/checkbox";
+import { DatePicker } from "primeng/datepicker";
 import { MenuModule } from "primeng/menu";
+import { MultiSelect } from "primeng/multiselect";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { DataContainer, LoadStatusTag, LoadTypeTag, TripStatusTag } from "@/shared/components";
+import { DataContainer, LabeledField, LoadStatusTag, LoadTypeTag, SearchInput, SearchTruck, TripStatusTag } from "@/shared/components";
 import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
+import { type DatePreset, getDatePreset } from "@/shared/utils";
 import { TripsListStore } from "../store/trips-list.store";
 
 @Component({
@@ -26,11 +29,9 @@ import { TripsListStore } from "../store/trips-list.store";
     RouterLink,
     Card,
     TableModule,
-    IconField,
-    InputIcon,
+    FormsModule,
     DatePipe,
     DistanceUnitPipe,
-    InputText,
     AddressPipe,
     CurrencyPipe,
     LoadStatusTag,
@@ -39,6 +40,12 @@ import { TripsListStore } from "../store/trips-list.store";
     LoadTypeTag,
     MenuModule,
     DataContainer,
+    MultiSelect,
+    Checkbox,
+    DatePicker,
+    SearchTruck,
+    SearchInput,
+    LabeledField,
   ],
 })
 export class TripsList {
@@ -49,6 +56,25 @@ export class TripsList {
 
   protected readonly selectedRow = signal<TripDto | null>(null);
   protected readonly actionMenuItems: MenuItem[];
+
+  // Filter options
+  protected readonly statusOptions = tripStatusOptions;
+
+  // Filter state (signals for reactivity)
+  protected readonly selectedStatuses = signal<TripStatus[]>([]);
+  protected readonly selectedTruck = signal<TruckDto | null>(null);
+  protected readonly dateRange = signal<Date[] | null>(null);
+  protected readonly onlyActiveTrips = signal<boolean>(false);
+
+  // Computed active filter count
+  protected readonly activeFilterCount = computed(() => {
+    let count = 0;
+    if (this.selectedStatuses().length > 0) count++;
+    if (this.selectedTruck()) count++;
+    if (this.dateRange()?.length === 2) count++;
+    if (this.onlyActiveTrips()) count++;
+    return count;
+  });
 
   constructor() {
     this.actionMenuItems = [
@@ -70,9 +96,34 @@ export class TripsList {
     ];
   }
 
-  protected onSearch(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.store.setSearch(value);
+  protected onSearch(search: string): void {
+    this.store.setSearch(search);
+  }
+
+  protected applyFilters(): void {
+    const statuses = this.selectedStatuses();
+    const truck = this.selectedTruck();
+    const range = this.dateRange();
+    this.store.setFilters({
+      Status: statuses.length === 1 ? statuses[0] : undefined,
+      TruckId: truck?.id,
+      StartDate: range?.[0]?.toISOString(),
+      EndDate: range?.[1]?.toISOString(),
+      OnlyActiveTrips: this.onlyActiveTrips() || undefined,
+    });
+  }
+
+  protected clearFilters(): void {
+    this.selectedStatuses.set([]);
+    this.selectedTruck.set(null);
+    this.dateRange.set(null);
+    this.onlyActiveTrips.set(false);
+    this.store.setFilters({});
+  }
+
+  protected setDatePreset(preset: DatePreset): void {
+    this.dateRange.set(getDatePreset(preset));
+    this.applyFilters();
   }
 
   protected addTrip(): void {

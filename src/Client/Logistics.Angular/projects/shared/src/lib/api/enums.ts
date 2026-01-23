@@ -17,7 +17,7 @@ import type {
   TruckType,
   UsBankAccountHolderType,
   UsBankAccountType,
-} from "../generated";
+} from "./generated";
 import type { SelectOption } from "../models/select-option";
 
 // Options arrays for select dropdowns

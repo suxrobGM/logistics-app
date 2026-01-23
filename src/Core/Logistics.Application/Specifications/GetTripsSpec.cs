@@ -10,6 +10,10 @@ public sealed class GetTripsSpec : BaseSpecification<Trip>
         string? name,
         TripStatus? status,
         string? truckNumber,
+        Guid? truckId,
+        DateTime? startDate,
+        DateTime? endDate,
+        bool onlyActiveTrips,
         string? orderBy,
         int page,
         int pageSize)
@@ -26,7 +30,22 @@ public sealed class GetTripsSpec : BaseSpecification<Trip>
 
         if (!string.IsNullOrEmpty(truckNumber))
         {
-            Criteria = Criteria.AndAlso(i => i.Truck.Number == truckNumber);
+            Criteria = Criteria.AndAlso(i => i.Truck != null && i.Truck.Number == truckNumber);
+        }
+
+        if (truckId.HasValue)
+        {
+            Criteria = Criteria.AndAlso(i => i.TruckId == truckId.Value);
+        }
+
+        if (startDate.HasValue && endDate.HasValue)
+        {
+            Criteria = Criteria.AndAlso(i => i.CreatedAt >= startDate.Value && i.CreatedAt <= endDate.Value);
+        }
+
+        if (onlyActiveTrips)
+        {
+            Criteria = Criteria.AndAlso(i => i.Status != TripStatus.Completed && i.Status != TripStatus.Cancelled);
         }
 
         OrderBy(orderBy);

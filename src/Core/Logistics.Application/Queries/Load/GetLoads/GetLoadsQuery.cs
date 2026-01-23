@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
@@ -11,4 +12,7 @@ public class GetLoadsQuery : SearchableQuery, IAppRequest<PagedResult<LoadDto>>
     public Guid? TruckId { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
+    public LoadStatus? Status { get; set; }
+    public LoadType? Type { get; set; }
+    public Guid? CustomerId { get; set; }
 }

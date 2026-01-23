@@ -12,6 +12,99 @@
   />
 </div>
 
+<!-- Filter Panel -->
+<p-card class="mb-4">
+  <div class="mb-4 flex items-center justify-between">
+    <span class="text-lg font-semibold">Filters</span>
+    <div class="flex items-center gap-2">
+      @if (activeFilterCount() > 0) {
+        <span class="text-surface-500 text-sm">{{ activeFilterCount() }} active</span>
+      }
+      <p-button
+        label="Clear All"
+        icon="pi pi-times"
+        severity="secondary"
+        size="small"
+        [text]="true"
+        (click)="clearFilters()"
+        [disabled]="activeFilterCount() === 0"
+      />
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-x-4 md:grid-cols-2 lg:grid-cols-4">
+    <ui-labeled-field label="Search">
+      <ui-search-input class="w-full" (searchChange)="onSearch($event)" />
+    </ui-labeled-field>
+
+    <ui-labeled-field label="Status">
+      <p-multiselect
+        [options]="statusOptions"
+        [ngModel]="selectedStatuses()"
+        (ngModelChange)="selectedStatuses.set($event); applyFilters()"
+        placeholder="Select status"
+        [showClear]="true"
+        class="w-full"
+      />
+    </ui-labeled-field>
+
+    <ui-labeled-field label="Truck">
+      <app-search-truck
+        [selectedTruck]="selectedTruck()"
+        (selectedTruckChange)="selectedTruck.set($event); applyFilters()"
+      />
+    </ui-labeled-field>
+
+    <ui-labeled-field label="Date Range">
+      <p-datepicker
+        [ngModel]="dateRange()"
+        (ngModelChange)="dateRange.set($event); applyFilters()"
+        selectionMode="range"
+        placeholder="Select date range"
+        [showIcon]="true"
+        class="w-full"
+      />
+    </ui-labeled-field>
+  </div>
+
+  <div class="mt-2 flex flex-wrap items-center gap-x-6 gap-y-2">
+    <div class="flex items-center gap-2">
+      <p-checkbox
+        [ngModel]="onlyActiveTrips()"
+        (ngModelChange)="onlyActiveTrips.set($event); applyFilters()"
+        [binary]="true"
+        inputId="activeTripsOnly"
+      />
+      <label for="activeTripsOnly" class="cursor-pointer text-sm">Active trips only</label>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <span class="text-surface-500 text-sm">Quick dates:</span>
+      <p-button
+        label="Today"
+        size="small"
+        severity="secondary"
+        [outlined]="true"
+        (click)="setDatePreset('today')"
+      />
+      <p-button
+        label="Week"
+        size="small"
+        severity="secondary"
+        [outlined]="true"
+        (click)="setDatePreset('week')"
+      />
+      <p-button
+        label="Month"
+        size="small"
+        severity="secondary"
+        [outlined]="true"
+        (click)="setDatePreset('month')"
+      />
+    </div>
+  </div>
+</p-card>
+
 <p-card>
   <ui-data-container
     [loading]="store.isLoading()"
@@ -39,27 +132,23 @@
       [loading]="store.isLoading()"
       [rowsPerPageOptions]="[10, 25, 50]"
     >
-      <ng-template #caption>
-        <p-icon-field>
-          <p-inputicon class="pi pi-search" />
-          <input pInputText type="text" placeholder="Search" (input)="onSearch($event)" />
-        </p-icon-field>
-      </ng-template>
       <ng-template #header>
         <tr>
           <th></th>
-          <th pSortableColumn="Truck.Number">
-            Truck Number
-            <p-sortIcon field="Truck.Number" />
+          <th pSortableColumn="Number">
+            Number
+            <p-sortIcon field="Number" />
           </th>
           <th pSortableColumn="Name">
             Name
             <p-sortIcon field="Name" />
           </th>
-          <th pSortableColumn="Number">
-            Number
-            <p-sortIcon field="Number" />
+          <th pSortableColumn="Truck.Number">
+            Truck
+            <p-sortIcon field="Truck.Number" />
           </th>
+          <th>Loads</th>
+          <th>Total Revenue</th>
           <th pSortableColumn="OriginAddress.Line1">
             Origin
             <p-sortIcon field="OriginAddress.Line1" />
@@ -69,12 +158,8 @@
             <p-sortIcon field="DestinationAddress.Line1" />
           </th>
           <th pSortableColumn="TotalDistance">
-            Total Distance
+            Distance (mi)
             <p-sortIcon field="TotalDistance" />
-          </th>
-          <th pSortableColumn="CreatedAt">
-            Created Date
-            <p-sortIcon field="CreatedAt" />
           </th>
           <th pSortableColumn="Status">
             Status
@@ -84,7 +169,10 @@
         </tr>
       </ng-template>
       <ng-template #body let-trip let-expanded="expanded">
-        <tr (click)="selectedRow.set(trip)">
+        <tr
+          class="hover:bg-surface-100 transition-colors duration-150"
+          (click)="selectedRow.set(trip)"
+        >
           <td>
             <p-button
               [pRowToggler]="trip"
@@ -95,16 +183,44 @@
               aria-label="Toggle trip details"
             />
           </td>
+          <td class="text-center font-medium">{{ trip.number }}</td>
+          <td>
+            <span
+              class="block max-w-32 truncate"
+              [pTooltip]="trip.name"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ trip.name }}
+            </span>
+          </td>
           <td class="text-center">{{ trip.truckNumber }}</td>
-          <td class="text-center">{{ trip.name }}</td>
-          <td class="text-center">{{ trip.number }}</td>
-          <td>{{ trip.originAddress | address }}</td>
-          <td>{{ trip.destinationAddress | address }}</td>
+          <td class="text-center">{{ trip.loadsCount }}</td>
+          <td class="text-right">{{ trip.totalRevenue | currency }}</td>
+          <td>
+            <span
+              class="block max-w-28 truncate"
+              [pTooltip]="trip.originAddress | address"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ trip.originAddress | address }}
+            </span>
+          </td>
+          <td>
+            <span
+              class="block max-w-28 truncate"
+              [pTooltip]="trip.destinationAddress | address"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ trip.destinationAddress | address }}
+            </span>
+          </td>
           <td class="text-center">{{ trip.totalDistance | distanceUnit: "mi" }}</td>
-          <td>{{ trip.createdAt | date: "mediumDate" }}</td>
           <td>
             <app-trip-status-tag [status]="trip.status" />
-            <div class="italic">
+            <div class="text-surface-500 text-xs italic">
               @switch (trip.status) {
                 @case ("dispatched") {
                   {{ trip.dispatchedAt | date: "mediumDate" }}
@@ -115,15 +231,19 @@
               }
             </div>
           </td>
-
           <td>
-            <p-button icon="pi pi-ellipsis-v" (click)="menu.toggle($event)" severity="secondary" aria-label="Show actions menu" />
+            <p-button
+              icon="pi pi-ellipsis-v"
+              (click)="menu.toggle($event)"
+              severity="secondary"
+              aria-label="Show actions menu"
+            />
           </td>
         </tr>
       </ng-template>
       <ng-template #expandedrow let-trip>
         <tr>
-          <td colspan="12">
+          <td colspan="11">
             <div class="p-4">
               <h5 class="mb-4">Loads in this trip</h5>
               <p-table [value]="trip.loads" [dataKey]="'id'">
@@ -152,15 +272,58 @@
                 </ng-template>
                 <ng-template #body let-load>
                   <tr>
-                    <td>{{ load.number }}</td>
-                    <td>{{ load.name }}</td>
+                    <td class="text-center">{{ load.number }}</td>
+                    <td>
+                      <span
+                        class="block max-w-32 truncate"
+                        [pTooltip]="load.name"
+                        [showDelay]="500"
+                        tooltipPosition="bottom"
+                      >
+                        {{ load.name }}
+                      </span>
+                    </td>
                     <td><app-load-type-tag [type]="load.type" /></td>
-                    <td>{{ load.customer.name }}</td>
-                    <td>{{ load.originAddress | address }}</td>
-                    <td>{{ load.destinationAddress | address }}</td>
+                    <td>
+                      <span
+                        class="block max-w-28 truncate"
+                        [pTooltip]="load.customer.name"
+                        [showDelay]="500"
+                        tooltipPosition="bottom"
+                      >
+                        {{ load.customer.name }}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        class="block max-w-28 truncate"
+                        [pTooltip]="load.originAddress | address"
+                        [showDelay]="500"
+                        tooltipPosition="bottom"
+                      >
+                        {{ load.originAddress | address }}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        class="block max-w-28 truncate"
+                        [pTooltip]="load.destinationAddress | address"
+                        [showDelay]="500"
+                        tooltipPosition="bottom"
+                      >
+                        {{ load.destinationAddress | address }}
+                      </span>
+                    </td>
                     <td><app-load-status-tag [status]="load.status" /></td>
-                    <td>{{ load.distance | distanceUnit: "mi" }}</td>
-                    <td>{{ load.deliveryCost | currency }}</td>
+                    <td class="text-center">{{ load.distance | distanceUnit: "mi" }}</td>
+                    <td class="text-right">{{ load.deliveryCost | currency }}</td>
+                  </tr>
+                </ng-template>
+                <ng-template #footer>
+                  <tr>
+                    <td colspan="7"></td>
+                    <td class="text-right font-semibold">Total:</td>
+                    <td class="text-right font-semibold">{{ trip.totalRevenue | currency }}</td>
                   </tr>
                 </ng-template>
               </p-table>

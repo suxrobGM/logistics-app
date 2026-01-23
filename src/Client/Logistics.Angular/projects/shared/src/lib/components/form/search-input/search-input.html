@@ -1,4 +1,10 @@
-<p-icon-field>
+<p-icon-field [class]="class()">
   <p-inputicon class="pi pi-search" />
-  <input pInputText type="text" [placeholder]="placeholder()" (input)="handleInput($event)" />
+  <input
+    pInputText
+    type="text"
+    class="w-full"
+    [placeholder]="placeholder()"
+    (input)="handleInput($event)"
+  />
 </p-icon-field>

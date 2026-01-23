@@ -14,6 +14,10 @@ export interface GetTrips$Params {
   Name?: string;
   Status?: TripStatus;
   TruckNumber?: string;
+  TruckId?: string;
+  StartDate?: string;
+  EndDate?: string;
+  OnlyActiveTrips?: boolean;
   OrderBy?: string;
   Page?: number;
   PageSize?: number;
@@ -25,6 +29,10 @@ export function getTrips(http: HttpClient, rootUrl: string, params?: GetTrips$Pa
     rb.query('Name', params.Name, {});
     rb.query('Status', params.Status, {});
     rb.query('TruckNumber', params.TruckNumber, {});
+    rb.query('TruckId', params.TruckId, {});
+    rb.query('StartDate', params.StartDate, {});
+    rb.query('EndDate', params.EndDate, {});
+    rb.query('OnlyActiveTrips', params.OnlyActiveTrips, {});
     rb.query('OrderBy', params.OrderBy, {});
     rb.query('Page', params.Page, {});
     rb.query('PageSize', params.PageSize, {});

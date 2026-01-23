@@ -6,6 +6,7 @@ using Hangfire.PostgreSql;
 using Logistics.API.Authorization;
 using Logistics.API.Converters;
 using Logistics.API.Extensions;
+using Logistics.API.ModelBinders;
 using Logistics.API.Jobs;
 using Logistics.API.Middlewares;
 using Logistics.Application;
@@ -88,6 +89,9 @@ internal static class Setup
                     .Build();
 
                 configure.Filters.Add(new AuthorizeFilter(policy));
+
+                // Add custom model binder for snake_case enum query parameters
+                configure.ModelBinderProviders.Insert(0, new SnakeCaseEnumModelBinderProvider());
             })
             .ConfigureApiBehaviorOptions(options =>
             {

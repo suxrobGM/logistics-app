@@ -13,12 +13,14 @@ export interface TripDto {
   dispatchedAt?: string | null;
   id?: string;
   loads?: Array<TripLoadDto> | null;
+  loadsCount?: number;
   name: string | null;
   number?: number;
   originAddress: Address;
   status?: TripStatus;
   stops?: Array<TripStopDto> | null;
   totalDistance?: number;
+  totalRevenue?: number;
   truckId?: string;
   truckNumber?: string | null;
 }

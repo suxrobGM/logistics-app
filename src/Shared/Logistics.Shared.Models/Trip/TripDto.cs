@@ -25,6 +25,16 @@ public record TripDto
     public Guid TruckId { get; set; }
     public string? TruckNumber { get; set; }
 
+    /// <summary>
+    ///     Number of loads in the trip.
+    /// </summary>
+    public int LoadsCount { get; set; }
+
+    /// <summary>
+    ///     Total revenue from all loads in the trip.
+    /// </summary>
+    public decimal TotalRevenue { get; set; }
+
     public IEnumerable<TripStopDto> Stops { get; set; } = [];
 
     public IEnumerable<TripLoadDto> Loads { get; set; } = [];
