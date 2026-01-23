@@ -1,6 +1,6 @@
 <nav
   class="fixed top-0 right-0 left-0 z-50 transition-all duration-300"
-  [class.bg-white]="showSolidNavbar()"
+  [class.bg-paper]="showSolidNavbar()"
   [class.shadow-md]="showSolidNavbar()"
   [class.bg-transparent]="!showSolidNavbar()"
 >
@@ -8,15 +8,13 @@
     <div class="flex h-16 items-center justify-between md:h-20">
       <!-- Logo -->
       <a href="/" class="flex items-center gap-2">
-        <div
-          class="flex h-10 w-10 items-center justify-center rounded-lg bg-linear-to-br from-blue-500 to-cyan-500"
-        >
-          <i class="pi pi-truck text-xl text-white"></i>
+        <div class="bg-accent flex h-10 w-10 items-center justify-center rounded-lg">
+          <i class="pi pi-truck text-paper text-xl"></i>
         </div>
         <span
-          class="text-xl font-bold"
-          [class.text-white]="!showSolidNavbar()"
-          [class.text-gray-900]="showSolidNavbar()"
+          class="font-display text-xl font-bold"
+          [class.text-paper]="!showSolidNavbar()"
+          [class.text-ink]="showSolidNavbar()"
         >
           Logistics TMS
         </span>
@@ -26,33 +24,33 @@
       <div class="hidden items-center gap-8 md:flex">
         <a
           href="#features"
-          class="text-sm font-medium transition-colors hover:text-blue-500"
-          [class.text-gray-200]="!showSolidNavbar()"
-          [class.text-gray-600]="showSolidNavbar()"
+          class="font-display hover:text-accent text-sm font-medium transition-colors"
+          [class.text-steel]="!showSolidNavbar()"
+          [class.text-ink]="showSolidNavbar()"
         >
           Features
         </a>
         <a
           href="#how-it-works"
-          class="text-sm font-medium transition-colors hover:text-blue-500"
-          [class.text-gray-200]="!showSolidNavbar()"
-          [class.text-gray-600]="showSolidNavbar()"
+          class="font-display hover:text-accent text-sm font-medium transition-colors"
+          [class.text-steel]="!showSolidNavbar()"
+          [class.text-ink]="showSolidNavbar()"
         >
           How It Works
         </a>
         <a
           href="#pricing"
-          class="text-sm font-medium transition-colors hover:text-blue-500"
-          [class.text-gray-200]="!showSolidNavbar()"
-          [class.text-gray-600]="showSolidNavbar()"
+          class="font-display hover:text-accent text-sm font-medium transition-colors"
+          [class.text-steel]="!showSolidNavbar()"
+          [class.text-ink]="showSolidNavbar()"
         >
           Pricing
         </a>
         <a
           href="#faq"
-          class="text-sm font-medium transition-colors hover:text-blue-500"
-          [class.text-gray-200]="!showSolidNavbar()"
-          [class.text-gray-600]="showSolidNavbar()"
+          class="font-display hover:text-accent text-sm font-medium transition-colors"
+          [class.text-steel]="!showSolidNavbar()"
+          [class.text-ink]="showSolidNavbar()"
         >
           FAQ
         </a>
@@ -60,14 +58,18 @@
 
       <!-- CTA Button -->
       <div class="hidden md:block">
-        <p-button label="Request a Demo" (onClick)="openDemoDialog()" [rounded]="true" />
+        <p-button
+          label="Request a Demo"
+          (onClick)="openDemoDialog()"
+          styleClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark font-display"
+        />
       </div>
 
       <!-- Mobile Menu Button -->
       <button
         class="flex h-10 w-10 items-center justify-center rounded-lg md:hidden"
-        [class.text-white]="!showSolidNavbar()"
-        [class.text-gray-900]="showSolidNavbar()"
+        [class.text-paper]="!showSolidNavbar()"
+        [class.text-ink]="showSolidNavbar()"
         (click)="mobileMenuOpen.set(!mobileMenuOpen())"
       >
         <i class="pi" [class.pi-bars]="!mobileMenuOpen()" [class.pi-times]="mobileMenuOpen()"></i>
@@ -77,7 +79,7 @@
 
   <!-- Mobile Menu -->
   <div
-    class="overflow-hidden border-t border-gray-200 bg-white transition-all duration-300 ease-in-out md:hidden"
+    class="border-ink/10 bg-paper overflow-hidden border-t transition-all duration-300 ease-in-out md:hidden"
     [class.max-h-0]="!mobileMenuOpen()"
     [class.border-t-0]="!mobileMenuOpen()"
     [class.max-h-96]="mobileMenuOpen()"
@@ -87,28 +89,28 @@
     <div class="space-y-1 px-4 py-4">
       <a
         href="#features"
-        class="block rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100"
+        class="font-display text-ink hover:bg-paper-dark block rounded-lg px-3 py-2"
         (click)="mobileMenuOpen.set(false)"
       >
         Features
       </a>
       <a
         href="#how-it-works"
-        class="block rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100"
+        class="font-display text-ink hover:bg-paper-dark block rounded-lg px-3 py-2"
         (click)="mobileMenuOpen.set(false)"
       >
         How It Works
       </a>
       <a
         href="#pricing"
-        class="block rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100"
+        class="font-display text-ink hover:bg-paper-dark block rounded-lg px-3 py-2"
         (click)="mobileMenuOpen.set(false)"
       >
         Pricing
       </a>
       <a
         href="#faq"
-        class="block rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100"
+        class="font-display text-ink hover:bg-paper-dark block rounded-lg px-3 py-2"
         (click)="mobileMenuOpen.set(false)"
       >
         FAQ
@@ -117,8 +119,7 @@
         <p-button
           label="Request a Demo"
           (onClick)="openDemoDialog(); mobileMenuOpen.set(false)"
-          [rounded]="true"
-          class="w-full"
+          styleClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark font-display w-full"
         />
       </div>
     </div>

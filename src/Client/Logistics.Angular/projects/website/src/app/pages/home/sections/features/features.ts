@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { IconCircle, SectionContainer, SectionHeader } from "@/shared/components";
+import { SectionContainer, SectionHeader } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
 
 interface Feature {
@@ -11,7 +11,7 @@ interface Feature {
 @Component({
   selector: "web-features",
   templateUrl: "./features.html",
-  imports: [IconCircle, SectionContainer, SectionHeader, ScrollAnimateDirective],
+  imports: [SectionContainer, SectionHeader, ScrollAnimateDirective],
 })
 export class Features {
   protected readonly features: Feature[] = [

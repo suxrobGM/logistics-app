@@ -19,5 +19,5 @@ export class IconCard {
   public readonly description = input.required<string>();
   public readonly dark = input(false);
   public readonly delay = input(0);
-  public readonly gradient = input<"blue-cyan" | "blue-purple">("blue-cyan");
+  public readonly variant = input<"accent" | "ink" | "outlined">("accent");
 }

@@ -1,23 +1,23 @@
 @if (dark()) {
   <!-- Dark variant (for dark backgrounds) -->
   <div
-    class="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-sm transition-all hover:border-purple-500/40 hover:bg-white/10"
+    class="border-accent bg-ink-light/50 hover:bg-ink-light border-l-2 p-6 transition-all"
     webScrollAnimate="fade-up"
     [delay]="delay()"
   >
-    <web-icon-circle [icon]="icon()" size="lg" [gradient]="gradient()" />
-    <h3 class="mt-6 text-xl font-bold text-white">{{ title() }}</h3>
-    <p class="mt-3 text-purple-200">{{ description() }}</p>
+    <web-icon-circle [icon]="icon()" size="lg" [variant]="variant()" />
+    <h3 class="font-display text-paper mt-6 text-xl font-bold">{{ title() }}</h3>
+    <p class="text-steel mt-3">{{ description() }}</p>
   </div>
 } @else {
   <!-- Light variant (for light backgrounds) -->
   <div
-    class="rounded-2xl bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+    class="border-ink/10 bg-paper hover:border-accent border-l-2 p-6 transition-all"
     webScrollAnimate="fade-up"
     [delay]="delay()"
   >
-    <web-icon-circle [icon]="icon()" size="md" [gradient]="gradient()" />
-    <h3 class="mt-4 text-lg font-bold text-gray-900">{{ title() }}</h3>
-    <p class="mt-2 text-gray-600">{{ description() }}</p>
+    <web-icon-circle [icon]="icon()" size="md" [variant]="variant()" />
+    <h3 class="font-display text-ink mt-4 text-lg font-bold">{{ title() }}</h3>
+    <p class="text-steel mt-2">{{ description() }}</p>
   </div>
 }

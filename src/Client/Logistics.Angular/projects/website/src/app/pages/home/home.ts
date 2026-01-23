@@ -1,4 +1,5 @@
-import { Component } from "@angular/core";
+import { Component, inject, type OnInit } from "@angular/core";
+import { MetaService, SchemaService } from "@/shared/services";
 import { Faq, Features, Hero, HowItWorks, Integrations, Pricing, Testimonials } from "./sections";
 
 @Component({
@@ -6,4 +7,49 @@ import { Faq, Features, Hero, HowItWorks, Integrations, Pricing, Testimonials } 
   templateUrl: "./home.html",
   imports: [Hero, Features, Integrations, HowItWorks, Testimonials, Pricing, Faq],
 })
-export class Home {}
+export class Home implements OnInit {
+  private readonly metaService = inject(MetaService);
+  private readonly schemaService = inject(SchemaService);
+
+  ngOnInit(): void {
+    this.metaService.updateMeta({
+      title: "Modern Fleet Management Platform",
+      description:
+        "Streamline your trucking operations with real-time GPS tracking, automated dispatching, and seamless invoicing. Request a demo today.",
+      keywords:
+        "TMS, fleet management, trucking software, GPS tracking, dispatching, logistics, transportation management",
+      canonicalUrl: "https://logisticstms.com/",
+    });
+
+    this.schemaService.setOrganizationSchema();
+    this.schemaService.setSoftwareApplicationSchema();
+
+    this.schemaService.setFaqSchema([
+      {
+        question: "What is a TMS?",
+        answer:
+          "A Transportation Management System (TMS) is software that helps trucking companies manage their fleet operations, including dispatching, tracking, invoicing, and compliance.",
+      },
+      {
+        question: "How long does setup take?",
+        answer:
+          "Most companies are up and running within 1-2 days. Our onboarding team will help you import your data, set up your account, and train your staff.",
+      },
+      {
+        question: "Do you integrate with ELD providers?",
+        answer:
+          "Yes! We integrate with major ELD providers including Samsara and Motive (KeepTruckin) for automatic hours of service tracking and FMCSA compliance.",
+      },
+      {
+        question: "Is there a mobile app for drivers?",
+        answer:
+          "Yes, we offer native mobile apps for both iOS and Android. Drivers can capture proof of delivery, scan documents, navigate, and communicate with dispatchers.",
+      },
+      {
+        question: "How is pricing calculated?",
+        answer:
+          "Our pricing is simple: $30 per employee per month. This includes all features with no hidden fees.",
+      },
+    ]);
+  }
+}

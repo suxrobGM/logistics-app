@@ -1,23 +1,19 @@
-<div class="text-center">
-  <p
-    class="text-sm font-semibold uppercase tracking-wide"
-    [class.text-purple-400]="dark()"
-    [class.text-blue-600]="!dark()"
-  >
+<div class="max-w-3xl">
+  <p class="font-display text-accent text-sm font-semibold">
     {{ label() }}
   </p>
   <h2
-    class="mt-2 text-3xl font-bold sm:text-4xl"
-    [class.text-white]="dark()"
-    [class.text-gray-900]="!dark()"
+    class="font-display mt-3 text-3xl leading-tight font-extrabold sm:text-4xl lg:text-5xl"
+    [class.text-paper]="dark()"
+    [class.text-ink]="!dark()"
   >
     {{ title() }}
   </h2>
   @if (subtitle()) {
     <p
-      class="mx-auto mt-4 max-w-2xl text-lg"
-      [class.text-purple-100/90]="dark()"
-      [class.text-gray-600]="!dark()"
+      class="mt-6 text-lg leading-relaxed"
+      [class.text-steel]="dark()"
+      [class.text-steel]="!dark()"
     >
       {{ subtitle() }}
     </p>

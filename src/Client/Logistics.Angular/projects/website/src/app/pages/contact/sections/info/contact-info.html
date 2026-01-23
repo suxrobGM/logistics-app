@@ -11,19 +11,21 @@
   <div class="mt-16 grid gap-8 md:grid-cols-3">
     @for (contact of contacts; track contact.title; let i = $index) {
       <div
-        class="rounded-2xl bg-white p-8 text-center shadow-sm transition-shadow hover:shadow-md"
+        class="bg-paper rounded-2xl p-8 text-center shadow-sm transition-shadow hover:shadow-md"
         webScrollAnimate="fade-up"
         [delay]="i * 100"
       >
-        <web-icon-circle [icon]="contact.icon" size="lg" gradient="blue-purple" />
-        <h3 class="mt-6 text-xl font-bold text-gray-900">{{ contact.title }}</h3>
+        <div class="flex justify-center">
+          <web-icon-circle [icon]="contact.icon" size="lg" variant="accent" />
+        </div>
+        <h3 class="font-display text-ink mt-6 text-xl font-bold">{{ contact.title }}</h3>
         @for (line of contact.lines; track line) {
-          <p class="mt-1 text-sm text-gray-500">{{ line }}</p>
+          <p class="text-steel mt-1 text-sm">{{ line }}</p>
         }
         @if (contact.link) {
           <a
             [href]="contact.link.href"
-            class="mt-4 inline-block text-lg font-medium text-blue-600 transition-colors hover:text-blue-800"
+            class="text-accent hover:text-accent-dark mt-4 inline-block text-lg font-medium transition-colors"
           >
             {{ contact.link.text }}
           </a>
@@ -34,13 +36,13 @@
 
   <!-- Social Links -->
   <div class="mt-16 text-center" webScrollAnimate="fade-up" [delay]="400">
-    <p class="text-sm font-medium text-gray-500">Follow us on social media</p>
+    <p class="text-steel text-sm font-medium">Follow us on social media</p>
     <div class="mt-4 flex justify-center gap-4">
       @for (social of socialLinks; track social.label) {
         <a
           [href]="social.href"
           [attr.aria-label]="social.label"
-          class="flex h-12 w-12 items-center justify-center rounded-full bg-white text-gray-600 shadow-sm transition-all hover:bg-blue-600 hover:text-white hover:shadow-md"
+          class="bg-paper text-steel hover:bg-accent hover:text-paper flex h-12 w-12 items-center justify-center rounded-full shadow-sm transition-all hover:shadow-md"
           target="_blank"
           rel="noopener noreferrer"
         >

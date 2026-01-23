@@ -8,14 +8,14 @@
   </div>
 
   <div webScrollAnimate="fade-up" [delay]="200" class="mt-12">
-    <p-accordion [multiple]="true">
+    <p-accordion [multiple]="true" class="faq-accordion">
       @for (faq of faqs; track faq.question; let i = $index) {
         <p-accordion-panel [value]="i">
           <p-accordion-header>
-            <span class="font-medium text-gray-900">{{ faq.question }}</span>
+            <span class="font-display text-ink font-semibold">{{ faq.question }}</span>
           </p-accordion-header>
           <p-accordion-content>
-            <p class="text-gray-600">{{ faq.answer }}</p>
+            <p class="text-steel leading-relaxed">{{ faq.answer }}</p>
           </p-accordion-content>
         </p-accordion-panel>
       }

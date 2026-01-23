@@ -9,31 +9,27 @@
 
   <div class="mt-16 grid gap-8 md:grid-cols-3">
     @for (testimonial of testimonials; track testimonial.author; let i = $index) {
-      <div
-        webScrollAnimate="fade-up"
-        [delay]="i * 150"
-        class="rounded-2xl bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-      >
-        <!-- Quote Icon -->
-        <div
-          class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600"
+      <div webScrollAnimate="fade-up" [delay]="i * 150" class="bg-paper relative p-10">
+        <!-- Large decorative quote mark -->
+        <span
+          class="font-display text-accent/20 pointer-events-none absolute -top-2 left-8 text-8xl leading-none select-none"
         >
-          <i class="pi pi-quote-left text-xl"></i>
-        </div>
+          "
+        </span>
 
-        <!-- Quote -->
-        <p class="mt-6 text-gray-700">{{ testimonial.quote }}</p>
+        <!-- Quote text -->
+        <blockquote class="font-display text-ink relative text-xl leading-snug font-medium">
+          {{ testimonial.quote }}
+        </blockquote>
 
         <!-- Author -->
-        <div class="mt-6 flex items-center gap-4">
-          <div
-            class="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-purple-500 text-lg font-bold text-white"
-          >
-            {{ testimonial.author.charAt(0) }}
-          </div>
+        <div class="mt-8 flex items-center gap-4">
+          <div class="bg-accent h-1 w-8"></div>
           <div>
-            <p class="font-semibold text-gray-900">{{ testimonial.author }}</p>
-            <p class="text-sm text-gray-500">{{ testimonial.role }}, {{ testimonial.company }}</p>
+            <p class="font-display text-ink font-semibold">
+              {{ testimonial.author }}
+            </p>
+            <p class="text-steel text-sm">{{ testimonial.role }}, {{ testimonial.company }}</p>
           </div>
         </div>
       </div>

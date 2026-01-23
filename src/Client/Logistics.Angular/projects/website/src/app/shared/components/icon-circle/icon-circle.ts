@@ -1,26 +1,24 @@
-import { NgStyle } from "@angular/common";
 import { Component, input } from "@angular/core";
 
 type IconSize = "sm" | "md" | "lg";
-type GradientVariant = "blue-cyan" | "blue-purple";
+type ColorVariant = "accent" | "ink" | "outlined";
 
 @Component({
   selector: "web-icon-circle",
   templateUrl: "./icon-circle.html",
-  imports: [NgStyle],
 })
 export class IconCircle {
   public readonly icon = input.required<string>();
   public readonly size = input<IconSize>("md");
-  public readonly gradient = input<GradientVariant>("blue-cyan");
+  public readonly variant = input<ColorVariant>("accent");
   public readonly hoverScale = input(false);
 
   protected containerClasses(): string {
     const size = this.size();
-    const gradient = this.gradient();
+    const variant = this.variant();
     const hoverScale = this.hoverScale();
 
-    let classes = "flex items-center justify-center text-white transition-transform duration-300";
+    let classes = "flex items-center justify-center transition-all duration-300";
 
     // Size classes
     switch (size) {
@@ -34,10 +32,17 @@ export class IconCircle {
         classes += " h-14 w-14 rounded-xl";
     }
 
-    // Gradient classes
-    classes += gradient === "blue-purple"
-      ? " bg-linear-to-br from-blue-500 to-purple-500"
-      : " bg-linear-to-br from-blue-500 to-cyan-500";
+    // Color variant classes - solid colors, no gradients
+    switch (variant) {
+      case "ink":
+        classes += " bg-ink text-paper";
+        break;
+      case "outlined":
+        classes += " border-2 border-ink/20 text-ink bg-transparent";
+        break;
+      default: // accent
+        classes += " bg-accent text-paper";
+    }
 
     // Hover scale
     if (hoverScale) {

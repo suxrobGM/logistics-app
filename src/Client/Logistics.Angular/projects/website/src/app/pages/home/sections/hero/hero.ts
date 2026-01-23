@@ -1,12 +1,17 @@
 import { Component, inject } from "@angular/core";
-import { type StatItem, StatsGrid } from "@/shared/components";
+import { HeroBackground } from "@/shared/components";
 import { DemoDialogService } from "@/shared/services";
 import { ButtonModule } from "primeng/button";
+
+interface StatItem {
+  value: string;
+  label: string;
+}
 
 @Component({
   selector: "web-hero",
   templateUrl: "./hero.html",
-  imports: [ButtonModule, StatsGrid],
+  imports: [ButtonModule, HeroBackground],
 })
 export class Hero {
   private readonly demoDialogService = inject(DemoDialogService);

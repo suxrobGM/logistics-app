@@ -1,10 +1,27 @@
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap");
 @import "primeicons/primeicons.css";
 @import "tailwindcss";
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+/* Design System: Route Atlas Editorial */
+:root {
+  /* Primary - Rich Black */
+  --color-ink: #141414;
+  --color-ink-light: #2d2d2d;
+
+  /* Background - Warm Paper */
+  --color-paper: #faf7f2;
+  --color-paper-dark: #f0ebe3;
+
+  /* Accent - Rust/Vermillion */
+  --color-accent: #e85d04;
+  --color-accent-dark: #c44d00;
+
+  /* Supporting */
+  --color-steel: #6b7280;
+
+  /* Typography */
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-body: "Instrument Sans", system-ui, sans-serif;
 }
 
 html {
@@ -19,12 +36,11 @@ body {
 }
 
 body {
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: var(--text-primary);
-  background-color: #ffffff;
+  color: var(--color-ink);
+  background-color: var(--color-paper);
 }
 
 /* Typography */
@@ -36,70 +52,33 @@ body {
   h5,
   h6 {
     margin: 0;
+    font-family: var(--font-display);
     font-weight: 700;
-    line-height: 1.2;
+    line-height: 1.1;
+    color: var(--color-ink);
   }
 
   h1 {
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    letter-spacing: -0.02em;
+    font-size: clamp(2.75rem, 6vw, 4.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
   }
 
   h2 {
-    font-size: clamp(2rem, 4vw, 2.5rem);
-    letter-spacing: -0.01em;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
 
   h3 {
     font-size: 1.5rem;
+    font-weight: 700;
   }
 
   p {
     margin: 0;
     line-height: 1.7;
-  }
-}
-
-/* Animations */
-@layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 0.6s ease-out forwards;
-  }
-
-  .animate-fade-in-up {
-    animation: fadeInUp 0.6s ease-out forwards;
-  }
-
-  .animate-fade-in-delay-1 {
-    animation-delay: 0.1s;
-  }
-
-  .animate-fade-in-delay-2 {
-    animation-delay: 0.2s;
-  }
-
-  .animate-fade-in-delay-3 {
-    animation-delay: 0.3s;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+    color: var(--color-steel);
   }
 }
 
@@ -110,25 +89,84 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #1e1b4b;
+  background: var(--color-ink);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  background: var(--color-accent);
   border-radius: 5px;
-  border: 2px solid #1e1b4b;
+  border: 2px solid var(--color-ink);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #818cf8 0%, #a78bfa 50%, #c084fc 100%);
+  background: var(--color-accent-dark);
 }
 
 ::-webkit-scrollbar-corner {
-  background: #1e1b4b;
+  background: var(--color-ink);
 }
 
 /* Firefox scrollbar */
 html {
   scrollbar-width: thin;
-  scrollbar-color: #8b5cf6 #1e1b4b;
+  scrollbar-color: var(--color-accent) var(--color-ink);
+}
+
+/* Utility classes for the design system */
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
+  }
+
+  .text-ink {
+    color: var(--color-ink);
+  }
+
+  .text-paper {
+    color: var(--color-paper);
+  }
+
+  .text-accent {
+    color: var(--color-accent);
+  }
+
+  .text-steel {
+    color: var(--color-steel);
+  }
+
+  .bg-ink {
+    background-color: var(--color-ink);
+  }
+
+  .bg-ink-light {
+    background-color: var(--color-ink-light);
+  }
+
+  .bg-paper {
+    background-color: var(--color-paper);
+  }
+
+  .bg-paper-dark {
+    background-color: var(--color-paper-dark);
+  }
+
+  .bg-accent {
+    background-color: var(--color-accent);
+  }
+
+  .bg-accent-dark {
+    background-color: var(--color-accent-dark);
+  }
+
+  .border-accent {
+    border-color: var(--color-accent);
+  }
+
+  .border-ink {
+    border-color: var(--color-ink);
+  }
 }

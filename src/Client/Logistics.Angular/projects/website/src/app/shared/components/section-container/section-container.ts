@@ -22,11 +22,11 @@ export class SectionContainer {
 
     switch (bg) {
       case "dark":
-        return `${baseClasses} bg-linear-to-br from-slate-900 via-purple-900 to-slate-900`;
+        return `${baseClasses} bg-ink`;
       case "light":
-        return `${baseClasses} bg-slate-50`;
+        return `${baseClasses} bg-paper-dark`;
       default:
-        return `${baseClasses} bg-white`;
+        return `${baseClasses} bg-paper`;
     }
   }
 

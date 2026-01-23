@@ -1,69 +1,67 @@
-<section
-  class="relative min-h-screen overflow-hidden bg-linear-to-br from-slate-900 via-purple-900 to-slate-900"
->
-  <!-- Gradient Orbs -->
-  <div class="pointer-events-none absolute inset-0 overflow-hidden">
-    <div class="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-purple-500/30 blur-3xl"></div>
-    <div class="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-blue-500/30 blur-3xl"></div>
-    <div class="absolute top-1/2 right-1/4 h-64 w-64 rounded-full bg-cyan-500/20 blur-3xl"></div>
-  </div>
+<section class="bg-ink relative min-h-screen overflow-hidden">
+  <web-hero-background />
 
   <!-- Content -->
   <div
-    class="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-4 py-32 text-center sm:px-6 lg:px-8"
+    class="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-6 py-24 lg:px-8 lg:py-32"
   >
-    <!-- Badge -->
-    <div
-      class="mb-6 inline-flex items-center gap-2 rounded-full border border-purple-400/30 bg-purple-500/10 px-4 py-2 text-sm text-purple-300"
-    >
-      <i class="pi pi-sparkles"></i>
-      <span>Modern Fleet Management Platform</span>
-    </div>
+    <!-- Eyebrow -->
+    <p class="font-body text-steel text-sm font-medium tracking-[0.2em] uppercase">
+      Fleet Management Platform
+    </p>
 
     <!-- Headline -->
-    <h1 class="max-w-4xl text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+    <h1
+      class="font-display text-paper mt-6 max-w-4xl text-5xl leading-[0.95] font-extrabold tracking-tight sm:text-6xl lg:text-7xl"
+    >
       Streamline Your
-      <span
-        class="bg-linear-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent"
-      >
-        Fleet Operations
-      </span>
+      <span class="text-accent">Fleet Operations</span>
     </h1>
 
     <!-- Subheadline -->
-    <p class="mt-6 max-w-2xl text-lg text-purple-100/90 sm:text-xl">
-      Real-time GPS tracking, automated dispatching, and seamless invoicing in one powerful
-      platform. Built for modern trucking companies.
+    <p class="text-steel mt-8 max-w-xl text-lg leading-relaxed">
+      Real-time GPS tracking, automated dispatching, and seamless invoicing. Built for modern
+      trucking companies.
     </p>
 
     <!-- CTA Buttons -->
-    <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+    <div class="mt-12 flex flex-wrap items-center gap-6">
       <p-button
         label="Request a Demo"
         icon="pi pi-arrow-right"
         iconPos="right"
         (onClick)="openDemoDialog()"
         size="large"
-        [rounded]="true"
+        styleClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark font-display"
       />
-      <p-button
-        label="Watch Video"
-        icon="pi pi-play"
-        severity="primary"
-        [outlined]="true"
-        size="large"
-        [rounded]="true"
-      />
+      <button
+        type="button"
+        class="group font-display text-paper hover:text-accent flex items-center gap-3 font-semibold transition-colors"
+      >
+        <span
+          class="border-steel/30 group-hover:border-accent flex h-12 w-12 items-center justify-center rounded-full border transition-colors"
+        >
+          <i class="pi pi-play text-sm"></i>
+        </span>
+        Watch Video
+      </button>
     </div>
 
-    <!-- Stats -->
-    <div class="mt-16">
-      <web-stats-grid [stats]="stats" />
+    <!-- Stats as route markers -->
+    <div class="mt-20 flex flex-wrap gap-12 lg:gap-16">
+      @for (stat of stats; track stat.label) {
+        <div class="border-accent relative border-l-2 pl-5">
+          <span class="font-display text-paper text-3xl font-extrabold lg:text-4xl">
+            {{ stat.value }}
+          </span>
+          <p class="text-steel mt-1 text-sm">{{ stat.label }}</p>
+        </div>
+      }
     </div>
 
     <!-- Scroll indicator -->
     <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-      <i class="pi pi-chevron-down text-2xl text-purple-300"></i>
+      <i class="pi pi-chevron-down text-steel text-2xl"></i>
     </div>
   </div>
 </section>

@@ -18,10 +18,10 @@ export class Navbar {
   protected readonly scrolled = signal(false);
   protected readonly mobileMenuOpen = signal(false);
 
-  // Only home page and blog listing have dark hero - allow transparent navbar there
+  // Only home page has dark hero - allow transparent navbar there
   protected readonly hasDarkHero = computed(() => {
     const url = this.router.url.split("?")[0]; // Remove query params
-    return url === "/" || url === "/blog";
+    return url === "/";
   });
 
   // Show solid navbar when scrolled OR on pages without dark hero

@@ -1,11 +1,16 @@
 import { Component, input, output } from "@angular/core";
 import { ButtonModule } from "primeng/button";
-import { StatsGrid, type StatItem } from "../stats-grid/stats-grid";
+import { HeroBackground } from "../hero-background/hero-background";
+
+interface StatItem {
+  value: string;
+  label: string;
+}
 
 @Component({
   selector: "web-page-hero",
   templateUrl: "./page-hero.html",
-  imports: [ButtonModule, StatsGrid],
+  imports: [ButtonModule, HeroBackground],
 })
 export class PageHero {
   public readonly badgeIcon = input.required<string>();
