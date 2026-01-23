@@ -28,23 +28,8 @@ dotnet run --project src/Presentation/Logistics.DbMigrator      # Run migrations
 
 ### Frontend (Angular 21)
 
-```bash
-cd src/Client/Logistics.Angular
-bun install             # Install dependencies
-bun run start:admin     # Admin Portal on https://localhost:7002
-bun run start:tms       # TMS Portal on https://localhost:7003
-bun run start:customer  # Customer Portal on https://localhost:7004
-bun run start:website   # The Website on https://localhost:7005
-bun run build:shared    # Build shared library
-bun run build:admin     # Build Admin Portal
-bun run build:tms       # Build TMS Portal
-bun run build:customer  # Build Customer Portal
-bun run build:website   # Build The Website
-bun run build:all       # Build all projects
-bun run lint            # ESLint
-bun run format          # Prettier
-bun run gen:api         # Regenerate API client from OpenAPI spec
-```
+Multiple Angular applications and a shared library, located in `src/Client/Logistics.Angular`.
+See `src/Client/Logistics.Angular/CLAUDE.md` for detailed instructions.
 
 ### Mobile (Kotlin Multiplatform)
 
@@ -57,6 +42,7 @@ cd src/Client/Logistics.DriverApp
 ### Helper Scripts
 
 ```bash
+scripts/add-migration.cmd       # Create new EF Core migration for master or tenant DB
 scripts/seed-databases.cmd      # Initialize databases
 scripts/run-aspire.cmd          # Launch full stack
 ```
@@ -226,10 +212,6 @@ var dtos = entities.Select(e => e.ToDto()).ToList();
 
 **Do NOT** manually map properties in handlers. Always create or extend mappers in `Logistics.Mappings`.
 
-### Angular Patterns (TMS Portal & Customer Portal)
-
-- Described in detail in `src/Client/Logistics.Angular/CLAUDE.md`
-
 ## External Integrations
 
 - **Stripe**: Payment processing, webhooks at `/webhooks/stripe`
@@ -269,9 +251,3 @@ The ELD (Electronic Logging Device) integration pulls driver Hours of Service da
 ## User Roles
 
 `SuperAdmin`, `Admin` (Admin Portal), `Owner`, `Manager`, `Dispatcher` (TMS Portal), `Driver` (Mobile App), `Customer` (Customer Portal)
-
-## Important Notes
-
-- Angular apps have their own rules in `src/Client/Logistics.Angular/CLAUDE.md`
-- Aspire automatically runs DB migrations on startup
-
