@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Component, forwardRef, inject, model, output, signal } from "@angular/core";
 import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
-import { Api, type CustomerDto, createCustomer, getCustomers } from "@logistics/shared/api";
+import { Api, type CustomerDto, getCustomers } from "@logistics/shared/api";
 import {
   AutoComplete,
   AutoCompleteModule,
@@ -9,11 +9,7 @@ import {
 } from "primeng/autocomplete";
 import { Button } from "primeng/button";
 import { Dialog } from "primeng/dialog";
-import { ToastService } from "@/core/services";
-import {
-  CustomerForm,
-  type CustomerFormValue,
-} from "../../domain-forms/customer-form/customer-form";
+import { CustomerForm } from "@/shared/components/domain-forms";
 
 @Component({
   selector: "app-search-customer",
@@ -22,14 +18,13 @@ import {
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SearchCustomerComponent),
+      useExisting: forwardRef(() => SearchCustomer),
       multi: true,
     },
   ],
 })
-export class SearchCustomerComponent implements ControlValueAccessor {
+export class SearchCustomer implements ControlValueAccessor {
   private readonly api = inject(Api);
-  private readonly toastService = inject(ToastService);
 
   protected readonly suggestedCustomers = signal<CustomerDto[]>([]);
   protected readonly lastQuery = signal<string>("");
@@ -68,13 +63,10 @@ export class SearchCustomerComponent implements ControlValueAccessor {
     this.customerDialogVisible.set(true);
   }
 
-  protected async createCustomer(formValue: CustomerFormValue): Promise<void> {
-    const result = await this.api.invoke(createCustomer, { body: formValue });
-    if (result) {
-      this.toastService.showSuccess("A new customer has been created successfully");
-      this.customerDialogVisible.set(false);
-      this.selectedCustomer.set(result);
-    }
+  protected handleCustomerCreated(customer: CustomerDto): void {
+    this.customerDialogVisible.set(false);
+    this.selectedCustomer.set(customer);
+    this.onChange(customer);
   }
 
   //#region Implementation Reactive forms

@@ -1,11 +1,10 @@
-<p-auto-complete
+<p-autocomplete
   #autoComplete
   class="w-full"
   inputStyleClass="w-full"
   placeholder="Type a customer name"
   [minLength]="2"
   [delay]="300"
-  [forceSelection]="true"
   optionLabel="name"
   [suggestions]="suggestedCustomers()"
   [(ngModel)]="selectedCustomer"
@@ -27,7 +26,7 @@
       />
     </div>
   </ng-template>
-</p-auto-complete>
+</p-autocomplete>
 
 <p-dialog
   header="Create Customer"
@@ -35,5 +34,5 @@
   [(visible)]="customerDialogVisible"
   [style]="{ width: '25rem' }"
 >
-  <app-customer-form [mode]="'create'" (save)="createCustomer($event)" />
+  <app-customer-form [mode]="'create'" (save)="handleCustomerCreated($event)" />
 </p-dialog>

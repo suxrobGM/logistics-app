@@ -6,12 +6,12 @@ export const sidebarItems: MenuItem[] = [
     icon: "pi pi-home text-3xl!",
     items: [
       {
-        label: "Overview",
-        route: "/dashboard",
-      },
-      {
         label: "Home",
         route: "/home",
+      },
+      {
+        label: "Overview",
+        route: "/dashboard",
       },
     ],
   },

@@ -1,23 +1,12 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Extensions;
 using Logistics.Application.Services;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreateLoadHandler : IAppRequestHandler<CreateLoadCommand, Result>
+internal sealed class CreateLoadHandler(ILoadService loadService)
+    : IAppRequestHandler<CreateLoadCommand, Result>
 {
-    private readonly ILoadService _loadService;
-    private readonly IPushNotificationService _pushNotificationService;
-
-    public CreateLoadHandler(
-        ILoadService loadService,
-        IPushNotificationService pushNotificationService)
-    {
-        _loadService = loadService;
-        _pushNotificationService = pushNotificationService;
-    }
-
     public async Task<Result> Handle(
         CreateLoadCommand req, CancellationToken ct)
     {
@@ -34,9 +23,11 @@ internal sealed class CreateLoadHandler : IAppRequestHandler<CreateLoadCommand, 
                 req.AssignedTruckId,
                 req.AssignedDispatcherId);
 
-            var newLoad = await _loadService.CreateLoadAsync(createLoadParameters);
+            // Load.Create() raises domain events for notifications:
+            // - NewLoadCreatedEvent (always)
+            // - LoadAssignedToTruckEvent (if truck assigned)
+            await loadService.CreateLoadAsync(createLoadParameters);
 
-            await _pushNotificationService.SendNewLoadNotificationAsync(newLoad);
             return Result.Ok();
         }
         catch (InvalidOperationException e)

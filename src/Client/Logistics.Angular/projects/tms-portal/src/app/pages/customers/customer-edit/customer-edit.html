@@ -4,9 +4,9 @@
   <p-card class="w-full md:w-1/2">
     <app-customer-form
       [mode]="'edit'"
+      [id]="id()"
       [initial]="initialData()"
-      [isLoading]="isLoading()"
-      (save)="updateCustomer($event)"
+      (save)="handleCustomerUpdated($event)"
       (remove)="deleteCustomer()"
     />
   </p-card>

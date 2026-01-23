@@ -7,7 +7,7 @@ internal sealed class CreateTripValidator : AbstractValidator<CreateTripCommand>
     public CreateTripValidator()
     {
         RuleFor(i => i.Name).NotEmpty();
-        RuleFor(i => i.TruckId).NotEmpty();
+        // TruckId is optional - trip can be created without truck assignment (e.g., from load board)
 
         // Either NewLoads OR AttachedLoadIds (but not both), and whichever is present must be non-empty
         RuleFor(x => x)

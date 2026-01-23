@@ -1,7 +1,9 @@
 <div class="flex h-full flex-col items-center justify-center">
   <div class="w-full max-w-md space-y-6">
     <div class="text-center">
-      <div class="bg-primary/10 mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full">
+      <div
+        class="bg-primary/10 mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full"
+      >
         <i class="pi pi-user-plus text-primary text-4xl"></i>
       </div>
       <h3 class="mb-2 font-semibold text-gray-700">Start a New Conversation</h3>
@@ -31,7 +33,7 @@
           />
         </div>
       } @else {
-        <p-auto-complete
+        <p-autocomplete
           [suggestions]="employeeSuggestions()"
           (completeMethod)="searchEmployees($event)"
           (onSelect)="onRecipientSelect($event)"
@@ -55,7 +57,7 @@
               </div>
             </div>
           </ng-template>
-        </p-auto-complete>
+        </p-autocomplete>
       }
     </div>
 

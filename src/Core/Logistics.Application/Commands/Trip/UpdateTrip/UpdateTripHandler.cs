@@ -8,22 +8,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, Result>
+internal sealed class UpdateTripHandler(
+    ITenantUnitOfWork uow,
+    ILoadService loadService,
+    ILogger<UpdateTripHandler> logger)
+    : IAppRequestHandler<UpdateTripCommand, Result>
 {
-    private readonly ILoadService _loadService;
-    private readonly ILogger<UpdateTripHandler> _logger;
-    private readonly ITenantUnitOfWork _uow;
-
-    public UpdateTripHandler(ITenantUnitOfWork uow, ILoadService loadService, ILogger<UpdateTripHandler> logger)
-    {
-        _uow = uow;
-        _loadService = loadService;
-        _logger = logger;
-    }
-
     public async Task<Result> Handle(UpdateTripCommand req, CancellationToken ct)
     {
-        var trip = await _uow.Repository<Trip>().GetByIdAsync(req.TripId, ct);
+        var trip = await uow.Repository<Trip>().GetByIdAsync(req.TripId, ct);
         if (trip is null)
         {
             return Result.Fail($"Trip '{req.TripId}' not found.");
@@ -40,17 +33,16 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
             trip.Name = req.Name;
         }
 
-        // Truck swap
+        // Truck assignment/swap - use domain method which raises TripAssignedToTruckEvent
         if (req.TruckId is { } newTruckId && newTruckId != trip.TruckId)
         {
-            var newTruck = await _uow.Repository<Truck>().GetByIdAsync(newTruckId, ct);
+            var newTruck = await uow.Repository<Truck>().GetByIdAsync(newTruckId, ct);
             if (newTruck is null)
             {
                 return Result.Fail($"Truck '{newTruckId}' not found.");
             }
 
-            trip.TruckId = newTruck.Id;
-            trip.Truck = newTruck;
+            trip.AssignToTruck(newTruck);
         }
 
         // A map of current loads on the trip for easy access, key is the load ID and value is the load entity
@@ -80,9 +72,10 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
             trip.TotalDistance = req.TotalDistance.Value;
         }
 
-        await _uow.SaveChangesAsync(ct);
+        // SaveChanges dispatches domain events (TripAssignedToTruckEvent if truck changed)
+        await uow.SaveChangesAsync(ct);
 
-        _logger.LogInformation(
+        logger.LogInformation(
             "Updated trip '{TripId}'. Name='{Name}', Truck='{TruckId}'. Loads={LoadCount} (attached {Attached}, created {Created}, removed {Removed})",
             trip.Id, trip.Name, trip.TruckId, loadsMap.Count, attachedCount, createdCount,
             removedCount);
@@ -97,7 +90,7 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
             return 0;
         }
 
-        var loadRepo = _uow.Repository<Load>();
+        var loadRepo = uow.Repository<Load>();
 
         var before = loadsMap.Count;
         foreach (var loadId in loadIdsToRemove.Distinct())
@@ -130,7 +123,7 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
             return Result<int>.Ok(count);
         }
 
-        var toAttach = await _uow.Repository<Load>().GetListAsync(l => ids.Contains(l.Id), ct);
+        var toAttach = await uow.Repository<Load>().GetListAsync(l => ids.Contains(l.Id), ct);
 
         foreach (var load in toAttach)
         {
@@ -147,7 +140,7 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
             // to avoid duplicates. This can happen if the load was previously attached to another trip.
             if (load.TripStops.Count > 0)
             {
-                var previousTrip = await _uow.Repository<Trip>().GetByIdAsync(load.TripStops.First().TripId, ct);
+                var previousTrip = await uow.Repository<Trip>().GetByIdAsync(load.TripStops.First().TripId, ct);
                 previousTrip?.RemoveLoad(load.Id);
             }
 
@@ -192,7 +185,7 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
             createdCount++;
         }
 
-        var newLoads = await _loadService.CreateLoadsAsync(loadParametersList);
+        var newLoads = await loadService.CreateLoadsAsync(loadParametersList);
         foreach (var load in newLoads)
         {
             loadsMap[load.Id] = load;
@@ -221,7 +214,7 @@ internal sealed class UpdateTripHandler : IAppRequestHandler<UpdateTripCommand, 
             }
             else
             {
-                _logger.LogWarning(
+                logger.LogWarning(
                     "Could not find optimized order for stop with LoadId '{LoadId}' and Type '{Type}'",
                     stop.LoadId, stop.Type);
             }

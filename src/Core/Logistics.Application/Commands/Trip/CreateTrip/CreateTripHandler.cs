@@ -7,33 +7,25 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreateTripHandler : IAppRequestHandler<CreateTripCommand, Result>
+internal sealed class CreateTripHandler(
+    ITenantUnitOfWork tenantUow,
+    ILoadService loadService,
+    ILogger<CreateTripHandler> logger)
+    : IAppRequestHandler<CreateTripCommand, Result>
 {
-    private readonly ILoadService _loadService;
-    private readonly ILogger<CreateTripHandler> _logger;
-    private readonly IPushNotificationService _pushNotificationService;
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public CreateTripHandler(
-        ITenantUnitOfWork tenantUow,
-        ILoadService loadService,
-        IPushNotificationService pushNotificationService,
-        ILogger<CreateTripHandler> logger, ITripOptimizer tripOptimizer)
-    {
-        _tenantUow = tenantUow;
-        _loadService = loadService;
-        _pushNotificationService = pushNotificationService;
-        _logger = logger;
-    }
-
     public async Task<Result> Handle(CreateTripCommand req, CancellationToken ct)
     {
-        var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId, ct);
+        Truck? truck = null;
         List<TripStop>? stops = null;
 
-        if (truck is null)
+        // Only fetch truck if TruckId is provided
+        if (req.TruckId.HasValue)
         {
-            return Result.Fail($"Could not find the truck with ID '{req.TruckId}'");
+            truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId.Value, ct);
+            if (truck is null)
+            {
+                return Result.Fail($"Could not find the truck with ID '{req.TruckId}'");
+            }
         }
 
         var existingLoads = await GetExistingLoadsAsync(req, truck);
@@ -50,11 +42,16 @@ internal sealed class CreateTripHandler : IAppRequestHandler<CreateTripCommand, 
 
         var trip = Trip.Create(req.Name, truck, loads, stops, req.TotalDistance);
 
-        await _tenantUow.Repository<Trip>().AddAsync(trip, ct);
-        await _tenantUow.SaveChangesAsync(ct);
-        _logger.LogInformation(
+        await tenantUow.Repository<Trip>().AddAsync(trip, ct);
+
+        // Trip.Create() raises domain events for notifications:
+        // - NewTripCreatedEvent (always)
+        // - TripAssignedToTruckEvent (if truck assigned)
+        await tenantUow.SaveChangesAsync(ct);
+
+        logger.LogInformation(
             "Created trip '{TripName}' with ID '{TripId}' for truck '{TruckId}'",
-            trip.Name, trip.Id, req.TruckId);
+            trip.Name, trip.Id, req.TruckId?.ToString() ?? "unassigned");
         return Result.Ok();
     }
 
@@ -85,7 +82,7 @@ internal sealed class CreateTripHandler : IAppRequestHandler<CreateTripCommand, 
                 command.TruckId,
                 newLoad.AssignedDispatcherId);
 
-            var newLoadEntity = await _loadService.CreateLoadAsync(createLoadParameters, false);
+            var newLoadEntity = await loadService.CreateLoadAsync(createLoadParameters, false);
             loads.Add(newLoadEntity);
 
             // Map temporary ID to actual database ID
@@ -97,9 +94,9 @@ internal sealed class CreateTripHandler : IAppRequestHandler<CreateTripCommand, 
             newLoadsCount++;
         }
 
-        _logger.LogInformation(
+        logger.LogInformation(
             "Created {Count} new loads for trip '{TripName}' with truck '{TruckId}'",
-            newLoadsCount, command.Name, command.TruckId);
+            newLoadsCount, command.Name, command.TruckId?.ToString() ?? "unassigned");
         return (loads, tempIdToLoadMap);
     }
 
@@ -107,24 +104,28 @@ internal sealed class CreateTripHandler : IAppRequestHandler<CreateTripCommand, 
     ///     Retrieves existing loads based on the provided command and assigns them to the specified truck.
     ///     Clears the trip stop to avoid conflicts with the new trip.
     /// </summary>
-    private async Task<List<Load>> GetExistingLoadsAsync(CreateTripCommand command, Truck truck)
+    private async Task<List<Load>> GetExistingLoadsAsync(CreateTripCommand command, Truck? truck)
     {
         if (command.AttachedLoadIds is null || !command.AttachedLoadIds.Any())
         {
             return [];
         }
 
-        var loads = await _tenantUow.Repository<Load>().GetListAsync(i => command.AttachedLoadIds.Contains(i.Id));
+        var loads = await tenantUow.Repository<Load>().GetListAsync(i => command.AttachedLoadIds.Contains(i.Id));
 
-        foreach (var load in loads)
+        // Only assign truck to loads if truck is provided
+        if (truck is not null)
         {
-            load.AssignedTruck = truck;
-            load.AssignedTruckId = truck.Id;
+            foreach (var load in loads)
+            {
+                load.AssignedTruck = truck;
+                load.AssignedTruckId = truck.Id;
+            }
         }
 
-        _logger.LogInformation(
+        logger.LogInformation(
             "Retrieved {Count} existing loads for trip '{TripName}' with truck '{TruckId}'",
-            loads.Count, command.Name, command.TruckId);
+            loads.Count, command.Name, command.TruckId?.ToString() ?? "unassigned");
         return loads;
     }
 
@@ -145,14 +146,14 @@ internal sealed class CreateTripHandler : IAppRequestHandler<CreateTripCommand, 
 
             // If the stop references a temporary ID, map it to the actual database ID
             var stopLoadIdStr = stopDto.LoadId.ToString();
-            if (tempIdToLoadMap.ContainsKey(stopLoadIdStr))
+            if (tempIdToLoadMap.TryGetValue(stopLoadIdStr, out var value))
             {
-                actualLoadId = tempIdToLoadMap[stopLoadIdStr];
+                actualLoadId = value;
             }
 
             if (!loadMap.TryGetValue(actualLoadId, out var load))
             {
-                _logger.LogWarning("Load with ID '{LoadId}' not found for optimized stop", actualLoadId);
+                logger.LogWarning("Load with ID '{LoadId}' not found for optimized stop", actualLoadId);
                 continue;
             }
 

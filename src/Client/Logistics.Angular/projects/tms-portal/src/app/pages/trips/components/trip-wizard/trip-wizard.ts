@@ -15,8 +15,8 @@ import { TripWizardReview } from "../trip-wizard-review/trip-wizard-review";
 
 export interface TripWizardValue {
   tripName: string;
-  truckId: string;
-  truckVehicleCapacity: number;
+  truckId?: string | null; // optional - trip can be created without truck assignment
+  truckVehicleCapacity?: number;
   newLoads?: CreateTripLoadCommand[] | null;
   // attachedLoads removed - API doesn't support attaching existing loads
   detachedLoads?: TripLoadDto[] | null;

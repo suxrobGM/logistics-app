@@ -1,9 +1,11 @@
 <web-section-container background="white">
   @if (store.isLoading()) {
     <!-- Loading State -->
-    <div class="overflow-hidden rounded-3xl bg-linear-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div
+      class="overflow-hidden rounded-3xl bg-linear-to-br from-slate-900 via-purple-900 to-slate-900"
+    >
       <div class="grid items-center lg:grid-cols-2">
-        <div class="h-64 bg-linear-to-br from-blue-500/20 to-purple-500/20 lg:h-full lg:min-h-[400px]">
+        <div class="h-64 bg-linear-to-br from-blue-500/20 to-purple-500/20 lg:h-full lg:min-h-100">
           <div class="flex h-full items-center justify-center">
             <i class="pi pi-spin pi-spinner text-6xl text-purple-300/50"></i>
           </div>
@@ -29,7 +31,7 @@
     >
       <div class="grid items-center lg:grid-cols-2">
         <!-- Image -->
-        <div class="h-64 bg-linear-to-br from-blue-500/20 to-purple-500/20 lg:h-full lg:min-h-[400px]">
+        <div class="h-64 bg-linear-to-br from-blue-500/20 to-purple-500/20 lg:h-full lg:min-h-100">
           @if (featured.featuredImage) {
             <img
               [src]="featured.featuredImage"
@@ -71,7 +73,8 @@
             <div>
               <p class="font-medium text-white">{{ featured.authorName }}</p>
               <p class="text-sm text-purple-300">
-                {{ featured.publishedAt | date : "MMMM d, yyyy" }} · {{ getReadTime(featured.content) }}
+                {{ featured.publishedAt | date: "MMMM d, yyyy" }} ·
+                {{ getReadTime(featured.content) }}
               </p>
             </div>
           </div>

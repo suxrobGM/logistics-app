@@ -16,7 +16,7 @@ import { MessageModule } from "primeng/message";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
-import { LabeledField, SearchTruckComponent } from "@/shared/components";
+import { LabeledField, SearchTruck } from "@/shared/components";
 
 @Component({
   selector: "app-load-import",
@@ -30,7 +30,7 @@ import { LabeledField, SearchTruckComponent } from "@/shared/components";
     MessageModule,
     ToastModule,
     RouterLink,
-    SearchTruckComponent,
+    SearchTruck,
     LabeledField,
     DividerModule,
   ],

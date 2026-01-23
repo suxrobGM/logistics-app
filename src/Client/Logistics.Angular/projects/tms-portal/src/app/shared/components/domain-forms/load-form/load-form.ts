@@ -11,6 +11,7 @@ import {
   loadStatusOptions,
   loadTypeOptions,
 } from "@logistics/shared/api/models";
+import { LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DividerModule } from "primeng/divider";
 import { InputGroupModule } from "primeng/inputgroup";
@@ -22,14 +23,13 @@ import { Select } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
-import { LabeledField, ValidationSummary } from "@logistics/shared/components";
 import {
   AddressAutocomplete,
   DirectionMap,
   type SelectedAddressEvent,
 } from "@/shared/components/maps";
 import type { RouteChangeEvent, Waypoint } from "@/shared/components/maps";
-import { SearchCustomerComponent, SearchTruckComponent } from "@/shared/components/search";
+import { SearchCustomer, SearchTruck } from "@/shared/components/search";
 import { Converters } from "@/shared/utils";
 
 /**
@@ -46,7 +46,7 @@ export interface LoadFormValue {
   deliveryCost: number;
   distance: number; // miles, read-only for users
   status?: LoadStatus | null; // only present in edit-mode
-  assignedTruckId: string;
+  assignedTruckId?: string | null; // optional - load can be created without truck assignment
   assignedDispatcherId: string;
   assignedDispatcherName: string;
   tripId?: string | null;
@@ -71,8 +71,8 @@ export interface LoadFormValue {
     DirectionMap,
     ValidationSummary,
     LabeledField,
-    SearchCustomerComponent,
-    SearchTruckComponent,
+    SearchCustomer,
+    SearchTruck,
     DividerModule,
   ],
 })
@@ -132,12 +132,10 @@ export class LoadFormComponent implements OnInit {
     distance: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
     // only visible/patched when mode === 'edit'
     status: new FormControl<LoadStatus | null>(null),
+    // Truck assignment is optional - load can be created without a truck (e.g., from load board)
     assignedTruck: new FormControl<TruckDto | string | null>(
       { value: null, disabled: !this.canChangeAssignedTruck() },
-      {
-        validators: [Validators.required],
-        nonNullable: true,
-      },
+      { nonNullable: true },
     ),
     assignedDispatcherId: new FormControl("", {
       validators: [Validators.required],
@@ -200,18 +198,17 @@ export class LoadFormComponent implements OnInit {
   }
 
   protected submit(): void {
-    console.log("form errors", this.form.errors);
-
     if (this.form.invalid) {
       return;
     }
 
     const formRawValue = this.form.getRawValue();
+    const truck = formRawValue.assignedTruck as TruckDto | null;
 
     const formValue: LoadFormValue = {
       ...formRawValue,
       distance: Converters.toMeters(formRawValue.distance, "mi"),
-      assignedTruckId: (formRawValue.assignedTruck as TruckDto).id,
+      assignedTruckId: truck?.id ?? null,
     } as LoadFormValue;
 
     this.save.emit(formValue);

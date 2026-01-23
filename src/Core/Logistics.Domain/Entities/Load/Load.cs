@@ -1,24 +1,16 @@
 using Logistics.Domain.Core;
-using Logistics.Domain.Events;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-public class Load : AuditableEntity, ITenantEntity
+/// <summary>
+/// Represents a freight load to be transported.
+/// </summary>
+public partial class Load : AuditableEntity, ITenantEntity
 {
-    private static readonly Dictionary<LoadStatus, LoadStatus[]> Allowed = new()
-    {
-        [LoadStatus.Draft] = [LoadStatus.Dispatched, LoadStatus.Cancelled],
-        [LoadStatus.Dispatched] = [LoadStatus.PickedUp, LoadStatus.Cancelled],
-        [LoadStatus.PickedUp] = [LoadStatus.Delivered, LoadStatus.Cancelled],
-        [LoadStatus.Delivered] = [],
-        [LoadStatus.Cancelled] = []
-    };
-
     public long Number { get; private set; }
     public required string Name { get; set; }
-
     public required LoadType Type { get; set; }
 
     public LoadStatus Status { get; private set; } = LoadStatus.Draft;
@@ -32,7 +24,7 @@ public class Load : AuditableEntity, ITenantEntity
     public required Money DeliveryCost { get; set; }
 
     /// <summary>
-    ///     Total distance of the load in kilometers.
+    /// Total distance of the load in kilometers.
     /// </summary>
     public double Distance { get; set; }
 
@@ -58,221 +50,22 @@ public class Load : AuditableEntity, ITenantEntity
     public virtual ICollection<TripStop> TripStops { get; } = [];
 
     /// <summary>
-    /// If the load was booked from a load board, the provider type
+    /// If the load was booked from a load board, the provider type.
     /// </summary>
     public LoadBoardProviderType? ExternalSourceProvider { get; set; }
 
     /// <summary>
-    /// External listing ID from the load board provider
+    /// External listing ID from the load board provider.
     /// </summary>
     public string? ExternalSourceId { get; set; }
 
     /// <summary>
-    /// Broker reference number from the load board
+    /// Broker reference number from the load board.
     /// </summary>
     public string? ExternalBrokerReference { get; set; }
-
-    public bool CanTransitionTo(LoadStatus next)
-    {
-        return Allowed.TryGetValue(Status, out var nexts) && nexts.Contains(next);
-    }
-
-    /// <summary>
-    ///     Enforces valid status transitions and sets timestamps/flags accordingly.
-    /// </summary>
-    /// <param name="newStatus">Target status.</param>
-    /// <param name="force">
-    ///     If true, bypass transition validation (useful for data import/seeding). Still applies timestamp/flag logic.
-    /// </param>
-    /// <exception cref="InvalidOperationException">Thrown for invalid transitions when <paramref name="force" /> is false.</exception>
-    public void UpdateStatus(LoadStatus newStatus, bool force = false)
-    {
-        if (newStatus == Status)
-        {
-            return;
-        }
-
-        if (!force && !CanTransitionTo(newStatus))
-        {
-            throw new InvalidOperationException($"Cannot change load status from '{Status}' to '{newStatus}'.");
-        }
-
-        switch (newStatus)
-        {
-            case LoadStatus.Draft:
-                // Typically should not revert to Draft; only allowed when force == true.
-                CanConfirmPickUp = false;
-                CanConfirmDelivery = false;
-                break;
-
-            case LoadStatus.Dispatched:
-                DispatchedAt ??= DateTime.UtcNow;
-                CanConfirmPickUp = true;
-                CanConfirmDelivery = false;
-                // When (re)dispatching, future milestones are unset
-                PickedUpAt = null;
-                DeliveredAt = null;
-                CancelledAt = null;
-                break;
-
-            case LoadStatus.PickedUp:
-                PickedUpAt ??= DateTime.UtcNow;
-                CanConfirmPickUp = false;
-                CanConfirmDelivery = true;
-                break;
-
-            case LoadStatus.Delivered:
-                DeliveredAt ??= DateTime.UtcNow;
-                CanConfirmPickUp = false;
-                CanConfirmDelivery = false;
-                break;
-
-            case LoadStatus.Cancelled:
-                CancelledAt ??= DateTime.UtcNow;
-                CanConfirmPickUp = false;
-                CanConfirmDelivery = false;
-                break;
-
-            default:
-                throw new ArgumentOutOfRangeException(nameof(newStatus), newStatus, null);
-        }
-
-        Status = newStatus;
-    }
-
-    // Convenience wrappers for common actions
-    public void Dispatch(DateTime? at = null)
-    {
-        if (at.HasValue)
-        {
-            DispatchedAt = at.Value;
-        }
-        UpdateStatus(LoadStatus.Dispatched);
-    }
-
-    public void ConfirmPickup(DateTime? at = null)
-    {
-        if (at.HasValue)
-        {
-            PickedUpAt = at.Value;
-        }
-        UpdateStatus(LoadStatus.PickedUp);
-    }
-
-    public void ConfirmDelivery(DateTime? at = null)
-    {
-        if (at.HasValue)
-        {
-            DeliveredAt = at.Value;
-        }
-        UpdateStatus(LoadStatus.Delivered);
-    }
-
-    public void Cancel()
-    {
-        UpdateStatus(LoadStatus.Cancelled);
-    }
 
     public decimal CalcDriverShare()
     {
         return DeliveryCost * (decimal)(AssignedTruck?.GetDriversShareRatio() ?? 0);
-    }
-
-    public static Load Create(
-        string name,
-        LoadType type,
-        decimal deliveryCost,
-        Address originAddress,
-        GeoPoint originLocation,
-        Address destinationAddress,
-        GeoPoint destinationLocation,
-        Customer customer,
-        Truck assignedTruck,
-        Employee assignedDispatcher,
-        Trip? trip = null)
-    {
-        var load = new Load
-        {
-            Name = name,
-            Type = type,
-            DeliveryCost = deliveryCost,
-            OriginAddress = originAddress,
-            OriginLocation = originLocation,
-            DestinationAddress = destinationAddress,
-            DestinationLocation = destinationLocation,
-            AssignedTruckId = assignedTruck.Id,
-            AssignedTruck = assignedTruck,
-            AssignedDispatcherId = assignedDispatcher.Id,
-            AssignedDispatcher = assignedDispatcher,
-            CustomerId = customer.Id,
-            Customer = customer
-        };
-
-        // Create trip stops directly in the load entity to avoid EF Core Concurrency issues
-        if (trip is not null)
-        {
-            var tripStops = CreateTripStops(trip, load);
-            load.TripStops.Add(tripStops[0]); // pick up stop
-            load.TripStops.Add(tripStops[1]); // drop off stop
-        }
-
-        load.Distance = load.OriginLocation.DistanceTo(load.DestinationLocation);
-        var invoice = CreateInvoice(load);
-        load.Invoices.Add(invoice);
-        load.DomainEvents.Add(new NewLoadCreatedEvent(load.Id));
-        return load;
-    }
-
-    private static LoadInvoice CreateInvoice(Load load)
-    {
-        var invoice = new LoadInvoice
-        {
-            Total = load.DeliveryCost,
-            Status = InvoiceStatus.Issued,
-            CustomerId = load.CustomerId,
-            Customer = load.Customer,
-            LoadId = load.Id,
-            Load = load
-        };
-        return invoice;
-    }
-
-    /// <summary>
-    ///     Create trip stops in the linear order (pick up, drop off)
-    /// </summary>
-    /// <param name="trip">The trip to which the stops will be added.</param>
-    /// <param name="load">The load to be added.</param>
-    /// <returns>An array of two trip stops.</returns>
-    private static TripStop[] CreateTripStops(Trip trip, Load load)
-    {
-        // Stops are created in the order of loads
-        var startingOrder = trip.Stops.Count == 0 ? 1 : trip.Stops.Max(s => s.Order) + 1;
-        var tripStops = new TripStop[2];
-
-        tripStops[0] = new TripStop
-        {
-            Trip = trip,
-            TripId = trip.Id,
-            Order = startingOrder++,
-            Type = TripStopType.PickUp,
-            Address = load.OriginAddress,
-            Location = load.OriginLocation,
-            Load = load,
-            LoadId = load.Id
-        };
-
-        tripStops[1] = new TripStop
-        {
-            Trip = trip,
-            TripId = trip.Id,
-            Order = startingOrder,
-            Type = TripStopType.DropOff,
-            Address = load.DestinationAddress,
-            Location = load.DestinationLocation,
-            Load = load,
-            LoadId = load.Id
-        };
-
-        return tripStops;
     }
 }
