@@ -34,10 +34,12 @@ bun install             # Install dependencies
 bun run start:admin     # Admin Portal on https://localhost:7002
 bun run start:tms       # TMS Portal on https://localhost:7003
 bun run start:customer  # Customer Portal on https://localhost:7004
+bun run start:website   # The Website on https://localhost:7005
 bun run build:shared    # Build shared library
 bun run build:admin     # Build Admin Portal
 bun run build:tms       # Build TMS Portal
 bun run build:customer  # Build Customer Portal
+bun run build:website   # Build The Website
 bun run build:all       # Build all projects
 bun run lint            # ESLint
 bun run format          # Prettier
@@ -90,7 +92,8 @@ Shared (Models)         → DTOs shared between backend and frontend
 | Admin Portal (Angular) | 7002 |
 | TMS Portal (Angular) | 7003 |
 | Customer Portal (Angular) | 7004 |
-| Aspire Dashboard | 8100 |
+| The Website (Angular) | 7005 |
+| Aspire Dashboard | 7100 |
 
 ## Code Patterns
 
@@ -101,6 +104,70 @@ Shared (Models)         → DTOs shared between backend and frontend
 - **Domain Events**: Entities raise events, handlers in Application layer
 - **Specifications**: Reusable query filters in `Specifications/`
 - **Lazy Loading**: EF Core Proxy Lazy Loading is enabled - navigation properties are loaded automatically on access. No need to use `.Include()` in queries.
+
+### Domain Events for Notifications
+
+Use domain events to decouple notification logic from command handlers. This keeps handlers focused on business logic while ensuring consistent notifications.
+
+**Architecture:**
+
+1. **Domain Events** (`Logistics.Domain/Events/`) - Record types implementing `IDomainEvent`
+2. **Event Handlers** (`Logistics.Application/Events/`) - Implement `IDomainEventHandler<T>`
+3. **Dispatch** - EF Core interceptor (`DispatchDomainEventsInterceptor`) publishes events during `SaveChanges`
+
+**Pattern for assignment notifications:**
+
+```csharp
+// Domain Event - include all data needed for notifications
+public record LoadAssignedToTruckEvent(
+    Guid LoadId,
+    long LoadNumber,
+    Guid TruckId,
+    string TruckNumber,
+    string? DriverDeviceToken,
+    string DriverDisplayName) : IDomainEvent;
+
+// Entity method raises the event
+public void AssignToTruck(Truck truck)
+{
+    AssignedTruckId = truck.Id;
+    AssignedTruck = truck;
+
+    DomainEvents.Add(new LoadAssignedToTruckEvent(
+        Id, Number, truck.Id, truck.Number,
+        truck.MainDriver?.DeviceToken,
+        truck.MainDriver?.GetFullName() ?? truck.Number));
+}
+
+// Handler sends notifications
+internal sealed class LoadAssignedToTruckNotificationHandler(
+    IPushNotificationService pushService,
+    INotificationService notificationService)
+    : IDomainEventHandler<LoadAssignedToTruckEvent>
+{
+    public async Task Handle(LoadAssignedToTruckEvent @event, CancellationToken ct)
+    {
+        // Push notification to driver
+        if (!string.IsNullOrEmpty(@event.DriverDeviceToken))
+            await pushService.SendNotificationAsync(...);
+
+        // In-app notification for TMS users
+        await notificationService.SendNotificationAsync(...);
+    }
+}
+```
+
+**Key events for notifications:**
+
+| Event                       | Trigger                                               | Notifications                          |
+| --------------------------- | ----------------------------------------------------- | -------------------------------------- |
+| `LoadAssignedToTruckEvent`  | `Load.AssignToTruck()` or `Load.Create()` with truck  | Push to driver, in-app to TMS          |
+| `TripAssignedToTruckEvent`  | `Trip.AssignToTruck()` or `Trip.Create()` with truck  | Push to new/old driver, in-app to TMS  |
+
+**When to use domain events vs direct notification calls:**
+
+- **Domain Events**: Assignment notifications, status changes, creation events - anything that should trigger consistent notifications
+- **Direct Calls**: Operational notifications (load updates, removals) that need entity data not suitable for events
 
 ### Adding a New API Endpoint
 
@@ -208,20 +275,3 @@ The ELD (Electronic Logging Device) integration pulls driver Hours of Service da
 - Angular apps have their own rules in `src/Client/Logistics.Angular/CLAUDE.md`
 - Aspire automatically runs DB migrations on startup
 
-## New Features
-
-### Messaging
-
-Real-time in-app messaging between employees via SignalR (`/hubs/messaging`). Supports conversations, read receipts, and typing indicators.
-
-### Proof of Delivery (POD)
-
-Capture delivery confirmation with photos, digital signatures, recipient name, and GPS coordinates. Stored in Azure Blob Storage.
-
-### Vehicle Condition Reports (DVIR)
-
-Pre-trip and post-trip vehicle inspections with visual damage marking on vehicle diagrams. Includes VIN decoding for automatic vehicle info lookup.
-
-### VIN Decoding
-
-Automatic vehicle information lookup via NHTSA API. Decodes 17-character VINs to retrieve make, model, year, body class, and engine specifications.

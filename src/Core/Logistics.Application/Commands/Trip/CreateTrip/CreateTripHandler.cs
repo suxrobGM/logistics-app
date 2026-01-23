@@ -10,8 +10,6 @@ namespace Logistics.Application.Commands;
 internal sealed class CreateTripHandler(
     ITenantUnitOfWork tenantUow,
     ILoadService loadService,
-    IPushNotificationService pushNotificationService,
-    INotificationService notificationService,
     ILogger<CreateTripHandler> logger)
     : IAppRequestHandler<CreateTripCommand, Result>
 {
@@ -45,26 +43,11 @@ internal sealed class CreateTripHandler(
         var trip = Trip.Create(req.Name, truck, loads, stops, req.TotalDistance);
 
         await tenantUow.Repository<Trip>().AddAsync(trip, ct);
+
+        // Trip.Create() raises domain events for notifications:
+        // - NewTripCreatedEvent (always)
+        // - TripAssignedToTruckEvent (if truck assigned)
         await tenantUow.SaveChangesAsync(ct);
-
-        // Send notifications if truck is assigned
-        if (truck is not null)
-        {
-            // Send push notification to driver
-            if (!string.IsNullOrEmpty(truck.MainDriver?.DeviceToken))
-            {
-                await pushNotificationService.SendNotificationAsync(
-                    "New trip assigned",
-                    $"Trip #{trip.Number} '{trip.Name}' has been assigned to you",
-                    truck.MainDriver.DeviceToken);
-            }
-
-            // Send in-app notification for TMS portal users
-            var driverName = truck.MainDriver?.GetFullName() ?? truck.Number;
-            await notificationService.SendNotificationAsync(
-                "New trip created",
-                $"Trip #{trip.Number} has been created and assigned to {driverName}");
-        }
 
         logger.LogInformation(
             "Created trip '{TripName}' with ID '{TripId}' for truck '{TruckId}'",

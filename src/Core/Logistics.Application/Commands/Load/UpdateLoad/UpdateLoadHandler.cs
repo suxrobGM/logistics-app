@@ -1,6 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Extensions;
-using Logistics.Application.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -8,10 +6,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateLoadHandler(
-    ITenantUnitOfWork tenantUow,
-    IPushNotificationService pushNotificationService,
-    INotificationService notificationService)
+internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow)
     : IAppRequestHandler<UpdateLoadCommand, Result>
 {
     public async Task<Result> Handle(UpdateLoadCommand req, CancellationToken ct)
@@ -25,8 +20,7 @@ internal sealed class UpdateLoadHandler(
 
         try
         {
-            var oldTruck = load.AssignedTruck;
-            var newTruck = await AssignTruckIfUpdated(req, load);
+            var truckChanged = await AssignTruckIfUpdated(req, load);
 
             await AssignDispatcherIfUpdated(req, load);
             await UpdateCustomerIfUpdated(req, load);
@@ -46,12 +40,18 @@ internal sealed class UpdateLoadHandler(
                 load.UpdateStatus(req.Status.Value, true);
             }
 
-            var changes = await tenantUow.SaveChangesAsync(ct);
-
-            if (changes > 0)
+            // Raise LoadUpdatedEvent for existing truck (if not changing truck)
+            // Truck change events are handled by AssignToTruck method
+            if (!truckChanged)
             {
-                await NotifyTrucksAboutUpdates(oldTruck, newTruck, load);
+                load.MarkUpdated();
             }
+
+            // SaveChanges dispatches domain events:
+            // - LoadAssignedToTruckEvent (if truck assigned)
+            // - LoadRemovedFromTruckEvent (if truck changed, for old truck)
+            // - LoadUpdatedEvent (if truck not changed but details updated)
+            await tenantUow.SaveChangesAsync(ct);
 
             return Result.Ok();
         }
@@ -80,11 +80,11 @@ internal sealed class UpdateLoadHandler(
         }
     }
 
-    private async Task<Truck?> AssignTruckIfUpdated(UpdateLoadCommand req, Load loadEntity)
+    private async Task<bool> AssignTruckIfUpdated(UpdateLoadCommand req, Load loadEntity)
     {
         if (req.AssignedTruckId is null)
         {
-            return null;
+            return false;
         }
 
         var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.AssignedTruckId.Value);
@@ -95,11 +95,12 @@ internal sealed class UpdateLoadHandler(
 
         if (loadEntity.AssignedTruckId == truck.Id)
         {
-            return null;
+            return false;
         }
 
-        loadEntity.AssignedTruck = truck;
-        return truck;
+        // Use domain method which raises LoadAssignedToTruckEvent for notifications
+        loadEntity.AssignToTruck(truck);
+        return true;
     }
 
     private async Task AssignDispatcherIfUpdated(UpdateLoadCommand req, Load loadEntity)
@@ -118,41 +119,6 @@ internal sealed class UpdateLoadHandler(
         if (loadEntity.AssignedDispatcherId != dispatcher.Id)
         {
             loadEntity.AssignedDispatcher = dispatcher;
-        }
-    }
-
-    private async Task NotifyTrucksAboutUpdates(Truck? oldTruck, Truck? newTruck, Load loadEntity)
-    {
-        if (newTruck != null && oldTruck == null)
-        {
-            // First-time truck assignment - load was created without truck and now assigned
-            await pushNotificationService.SendNewLoadNotificationAsync(loadEntity, newTruck);
-
-            // Send in-app notification for TMS portal users
-            var driverName = newTruck.MainDriver?.GetFullName() ?? newTruck.Number;
-            await notificationService.SendNotificationAsync(
-                "Load assigned to truck",
-                $"Load #{loadEntity.Number} has been assigned to {driverName}");
-            return;
-        }
-
-        if (oldTruck != null)
-        {
-            // Send updates to the old truck
-            await pushNotificationService.SendUpdatedLoadNotificationAsync(loadEntity, oldTruck);
-        }
-
-        if (newTruck != null && oldTruck != null && oldTruck.Id != newTruck.Id)
-        {
-            // The truck was switched
-            await pushNotificationService.SendNewLoadNotificationAsync(loadEntity, newTruck);
-            await pushNotificationService.SendRemovedLoadNotificationAsync(loadEntity, oldTruck);
-
-            // Send in-app notification for TMS portal users
-            var newDriverName = newTruck.MainDriver?.GetFullName() ?? newTruck.Number;
-            await notificationService.SendNotificationAsync(
-                "Load assigned",
-                $"Load #{loadEntity.Number} has been reassigned to {newDriverName}");
         }
     }
 }

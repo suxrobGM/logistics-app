@@ -1,56 +1,27 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Extensions;
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateLoadProximityHandler : IAppRequestHandler<UpdateLoadProximityCommand, Result>
+internal sealed class UpdateLoadProximityHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<UpdateLoadProximityCommand, Result>
 {
-    private readonly IPushNotificationService _pushNotificationService;
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public UpdateLoadProximityHandler(
-        ITenantUnitOfWork tenantUow,
-        IPushNotificationService pushNotificationService)
+    public async Task<Result> Handle(UpdateLoadProximityCommand req, CancellationToken ct)
     {
-        _tenantUow = tenantUow;
-        _pushNotificationService = pushNotificationService;
-    }
-
-    public async Task<Result> Handle(
-        UpdateLoadProximityCommand req, CancellationToken ct)
-    {
-        var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.LoadId);
+        var load = await tenantUow.Repository<Load>().GetByIdAsync(req.LoadId);
 
         if (load is null)
         {
             return Result.Fail($"Could not find load with ID '{req.LoadId}'");
         }
 
-        LoadStatus? loadStatus = null;
-        if (req.CanConfirmPickUp.HasValue && req.CanConfirmPickUp != load.CanConfirmPickUp)
-        {
-            load.CanConfirmPickUp = req.CanConfirmPickUp.Value;
-            loadStatus = LoadStatus.PickedUp;
-        }
+        // UpdateProximity raises LoadProximityChangedEvent for notifications
+        load.UpdateProximity(req.CanConfirmPickUp, req.CanConfirmDelivery);
 
-        if (req.CanConfirmDelivery.HasValue && req.CanConfirmDelivery != load.CanConfirmDelivery)
-        {
-            load.CanConfirmDelivery = req.CanConfirmDelivery.Value;
-            loadStatus = LoadStatus.Delivered;
-        }
-
-        _tenantUow.Repository<Load>().Update(load);
-        var changes = await _tenantUow.SaveChangesAsync();
-
-        if (loadStatus.HasValue && changes > 0)
-        {
-            await _pushNotificationService.SendConfirmLoadStatusNotificationAsync(load, loadStatus.Value);
-        }
+        tenantUow.Repository<Load>().Update(load);
+        await tenantUow.SaveChangesAsync(ct);
 
         return Result.Ok();
     }

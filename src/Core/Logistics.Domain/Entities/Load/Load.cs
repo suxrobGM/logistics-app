@@ -173,6 +173,120 @@ public class Load : AuditableEntity, ITenantEntity
         UpdateStatus(LoadStatus.Cancelled);
     }
 
+    /// <summary>
+    /// Assigns this load to a truck and raises the LoadAssignedToTruckEvent for notifications.
+    /// </summary>
+    /// <param name="truck">The truck to assign this load to.</param>
+    public void AssignToTruck(Truck truck)
+    {
+        var oldTruck = AssignedTruck;
+
+        AssignedTruckId = truck.Id;
+        AssignedTruck = truck;
+
+        // Raise removal event for old truck (if reassigning)
+        if (oldTruck is not null && oldTruck.Id != truck.Id)
+        {
+            DomainEvents.Add(new LoadRemovedFromTruckEvent(
+                Id,
+                Number,
+                oldTruck.Id,
+                oldTruck.Number,
+                oldTruck.MainDriver?.DeviceToken,
+                oldTruck.SecondaryDriver?.DeviceToken));
+        }
+
+        // Raise assignment event for new truck
+        var driverDisplayName = truck.MainDriver?.GetFullName() ?? truck.Number;
+        DomainEvents.Add(new LoadAssignedToTruckEvent(
+            Id,
+            Number,
+            truck.Id,
+            truck.Number,
+            truck.MainDriver?.DeviceToken,
+            truck.SecondaryDriver?.DeviceToken,
+            driverDisplayName));
+    }
+
+    /// <summary>
+    /// Marks this load as removed from the truck and raises the LoadRemovedFromTruckEvent for notifications.
+    /// </summary>
+    public void MarkRemovedFromTruck()
+    {
+        if (AssignedTruck is null)
+        {
+            return;
+        }
+
+        DomainEvents.Add(new LoadRemovedFromTruckEvent(
+            Id,
+            Number,
+            AssignedTruck.Id,
+            AssignedTruck.Number,
+            AssignedTruck.MainDriver?.DeviceToken,
+            AssignedTruck.SecondaryDriver?.DeviceToken));
+    }
+
+    /// <summary>
+    /// Marks this load as updated and raises the LoadUpdatedEvent for notifications.
+    /// </summary>
+    public void MarkUpdated()
+    {
+        if (AssignedTruck is null)
+        {
+            return;
+        }
+
+        DomainEvents.Add(new LoadUpdatedEvent(
+            Id,
+            Number,
+            AssignedTruck.Id,
+            AssignedTruck.Number,
+            AssignedTruck.MainDriver?.DeviceToken,
+            AssignedTruck.SecondaryDriver?.DeviceToken));
+    }
+
+    /// <summary>
+    /// Updates the proximity status and raises the LoadProximityChangedEvent for notifications.
+    /// </summary>
+    /// <param name="canConfirmPickUp">Whether the driver can confirm pickup.</param>
+    /// <param name="canConfirmDelivery">Whether the driver can confirm delivery.</param>
+    public void UpdateProximity(bool? canConfirmPickUp, bool? canConfirmDelivery)
+    {
+        LoadStatus? statusToConfirm = null;
+
+        if (canConfirmPickUp.HasValue && canConfirmPickUp != CanConfirmPickUp)
+        {
+            CanConfirmPickUp = canConfirmPickUp.Value;
+            if (canConfirmPickUp.Value)
+            {
+                statusToConfirm = LoadStatus.PickedUp;
+            }
+        }
+
+        if (canConfirmDelivery.HasValue && canConfirmDelivery != CanConfirmDelivery)
+        {
+            CanConfirmDelivery = canConfirmDelivery.Value;
+            if (canConfirmDelivery.Value)
+            {
+                statusToConfirm = LoadStatus.Delivered;
+            }
+        }
+
+        // Raise event if status confirmation changed and truck is assigned
+        if (statusToConfirm.HasValue && AssignedTruck is not null)
+        {
+            DomainEvents.Add(new LoadProximityChangedEvent(
+                Id,
+                Number,
+                statusToConfirm.Value,
+                AssignedTruck.Id,
+                AssignedTruck.Number,
+                AssignedTruck.MainDriver?.DeviceToken,
+                AssignedTruck.SecondaryDriver?.DeviceToken));
+        }
+    }
+
     public decimal CalcDriverShare()
     {
         return DeliveryCost * (decimal)(AssignedTruck?.GetDriversShareRatio() ?? 0);
@@ -220,6 +334,21 @@ public class Load : AuditableEntity, ITenantEntity
         var invoice = CreateInvoice(load);
         load.Invoices.Add(invoice);
         load.DomainEvents.Add(new NewLoadCreatedEvent(load.Id));
+
+        // Raise notification event if truck is assigned at creation
+        if (assignedTruck is not null)
+        {
+            var driverDisplayName = assignedTruck.MainDriver?.GetFullName() ?? assignedTruck.Number;
+            load.DomainEvents.Add(new LoadAssignedToTruckEvent(
+                load.Id,
+                load.Number,
+                assignedTruck.Id,
+                assignedTruck.Number,
+                assignedTruck.MainDriver?.DeviceToken,
+                assignedTruck.SecondaryDriver?.DeviceToken,
+                driverDisplayName));
+        }
+
         return load;
     }
 

@@ -67,6 +67,23 @@ public class Trip : AuditableEntity, ITenantEntity
         }
 
         trip.DomainEvents.Add(new NewTripCreatedEvent(trip.Id));
+
+        // Raise notification event if truck is assigned at creation
+        if (truck is not null)
+        {
+            var driverDisplayName = truck.MainDriver?.GetFullName() ?? truck.Number;
+            trip.DomainEvents.Add(new TripAssignedToTruckEvent(
+                trip.Id,
+                trip.Number,
+                trip.Name,
+                truck.Id,
+                truck.Number,
+                truck.MainDriver?.DeviceToken,
+                driverDisplayName,
+                OldTruckId: null,
+                OldDriverDeviceToken: null));
+        }
+
         return trip;
     }
 
@@ -90,6 +107,36 @@ public class Trip : AuditableEntity, ITenantEntity
     public Address GetDestinationAddress()
     {
         return Stops.OrderBy(s => s.Order).Last().Address;
+    }
+
+    /// <summary>
+    /// Assigns or reassigns this trip to a truck and raises the TripAssignedToTruckEvent for notifications.
+    /// </summary>
+    /// <param name="newTruck">The new truck to assign this trip to.</param>
+    public void AssignToTruck(Truck newTruck)
+    {
+        if (Status != TripStatus.Draft)
+        {
+            throw new InvalidOperationException("Cannot change truck assignment unless trip is Draft.");
+        }
+
+        var oldTruck = Truck;
+        var oldTruckId = TruckId;
+
+        TruckId = newTruck.Id;
+        Truck = newTruck;
+
+        var newDriverDisplayName = newTruck.MainDriver?.GetFullName() ?? newTruck.Number;
+        DomainEvents.Add(new TripAssignedToTruckEvent(
+            Id,
+            Number,
+            Name,
+            newTruck.Id,
+            newTruck.Number,
+            newTruck.MainDriver?.DeviceToken,
+            newDriverDisplayName,
+            oldTruckId,
+            oldTruck?.MainDriver?.DeviceToken));
     }
 
     public void Dispatch()

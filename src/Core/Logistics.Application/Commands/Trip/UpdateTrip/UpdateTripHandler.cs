@@ -11,9 +11,7 @@ namespace Logistics.Application.Commands;
 internal sealed class UpdateTripHandler(
     ITenantUnitOfWork uow,
     ILoadService loadService,
-    ILogger<UpdateTripHandler> logger,
-    IPushNotificationService pushNotificationService,
-    INotificationService notificationService)
+    ILogger<UpdateTripHandler> logger)
     : IAppRequestHandler<UpdateTripCommand, Result>
 {
     public async Task<Result> Handle(UpdateTripCommand req, CancellationToken ct)
@@ -35,21 +33,16 @@ internal sealed class UpdateTripHandler(
             trip.Name = req.Name;
         }
 
-        // Track old and new truck for notifications
-        var oldTruck = trip.Truck;
-        Truck? newTruck = null;
-
-        // Truck swap
+        // Truck assignment/swap - use domain method which raises TripAssignedToTruckEvent
         if (req.TruckId is { } newTruckId && newTruckId != trip.TruckId)
         {
-            newTruck = await uow.Repository<Truck>().GetByIdAsync(newTruckId, ct);
+            var newTruck = await uow.Repository<Truck>().GetByIdAsync(newTruckId, ct);
             if (newTruck is null)
             {
                 return Result.Fail($"Truck '{newTruckId}' not found.");
             }
 
-            trip.TruckId = newTruck.Id;
-            trip.Truck = newTruck;
+            trip.AssignToTruck(newTruck);
         }
 
         // A map of current loads on the trip for easy access, key is the load ID and value is the load entity
@@ -79,10 +72,8 @@ internal sealed class UpdateTripHandler(
             trip.TotalDistance = req.TotalDistance.Value;
         }
 
+        // SaveChanges dispatches domain events (TripAssignedToTruckEvent if truck changed)
         await uow.SaveChangesAsync(ct);
-
-        // Send notifications for truck assignment changes
-        await NotifyTruckAssignmentAsync(oldTruck, newTruck, trip);
 
         logger.LogInformation(
             "Updated trip '{TripId}'. Name='{Name}', Truck='{TruckId}'. Loads={LoadCount} (attached {Attached}, created {Created}, removed {Removed})",
@@ -90,43 +81,6 @@ internal sealed class UpdateTripHandler(
             removedCount);
 
         return Result.Ok();
-    }
-
-    private async Task NotifyTruckAssignmentAsync(Truck? oldTruck, Truck? newTruck, Trip trip)
-    {
-        if (newTruck != null && oldTruck == null)
-        {
-            // First-time truck assignment - trip was created without truck and now assigned
-            await pushNotificationService.SendNotificationAsync(
-                "New trip assigned",
-                $"Trip #{trip.Number} '{trip.Name}' has been assigned to you",
-                newTruck.MainDriver?.DeviceToken ?? string.Empty);
-
-            // Send in-app notification for TMS portal users
-            var driverName = newTruck.MainDriver?.GetFullName() ?? newTruck.Number;
-            await notificationService.SendNotificationAsync(
-                "Trip assigned to truck",
-                $"Trip #{trip.Number} has been assigned to {driverName}");
-        }
-        else if (newTruck != null && oldTruck != null && oldTruck.Id != newTruck.Id)
-        {
-            // Truck was switched
-            await pushNotificationService.SendNotificationAsync(
-                "New trip assigned",
-                $"Trip #{trip.Number} '{trip.Name}' has been assigned to you",
-                newTruck.MainDriver?.DeviceToken ?? string.Empty);
-
-            await pushNotificationService.SendNotificationAsync(
-                "Trip reassigned",
-                $"Trip #{trip.Number} '{trip.Name}' has been reassigned to another truck",
-                oldTruck.MainDriver?.DeviceToken ?? string.Empty);
-
-            // Send in-app notification for TMS portal users
-            var newDriverName = newTruck.MainDriver?.GetFullName() ?? newTruck.Number;
-            await notificationService.SendNotificationAsync(
-                "Trip reassigned",
-                $"Trip #{trip.Number} has been reassigned to {newDriverName}");
-        }
     }
 
     private int RemoveLoads(Trip trip, Dictionary<Guid, Load> loadsMap, IEnumerable<Guid>? loadIdsToRemove)
