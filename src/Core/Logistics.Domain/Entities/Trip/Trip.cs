@@ -25,8 +25,8 @@ public class Trip : AuditableEntity, ITenantEntity
 
     public TripStatus Status { get; private set; } = TripStatus.Draft;
 
-    public Guid TruckId { get; set; }
-    public virtual required Truck Truck { get; set; }
+    public Guid? TruckId { get; set; }
+    public virtual Truck? Truck { get; set; }
 
     public virtual List<TripStop> Stops { get; } = [];
 
@@ -35,7 +35,7 @@ public class Trip : AuditableEntity, ITenantEntity
 
     public static Trip Create(
         string name,
-        Truck truck,
+        Truck? truck,
         IEnumerable<Load>? loads = null,
         IEnumerable<TripStop>? optimizedStops = null,
         double? optimizedTotalDistance = null)
@@ -45,7 +45,7 @@ public class Trip : AuditableEntity, ITenantEntity
         var trip = new Trip
         {
             Name = name,
-            TruckId = truck.Id,
+            TruckId = truck?.Id,
             Truck = truck,
             // Use optimized distance from route optimizer if provided, otherwise fallback to sum of load distances
             TotalDistance = optimizedTotalDistance ?? loadsArr.Sum(l => l.Distance)

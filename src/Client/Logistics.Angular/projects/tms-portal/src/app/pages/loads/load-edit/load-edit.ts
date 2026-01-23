@@ -46,7 +46,7 @@ export class LoadEditComponent implements OnInit {
       deliveryCost: formValue.deliveryCost!,
       distance: formValue.distance,
       assignedDispatcherId: formValue.assignedDispatcherId!,
-      assignedTruckId: formValue.assignedTruckId!,
+      assignedTruckId: formValue.assignedTruckId ?? undefined,
       customerId: formValue.customer?.id,
       status: formValue.status!,
     };

@@ -28,7 +28,7 @@ export interface TableRow extends Omit<TripLoadDto, "customer"> {
 interface TripWizardState {
   // Step 1 - Basic Info
   tripName: string;
-  truckId: string;
+  truckId: string | null; // optional - trip can be created without truck assignment
   truckVehicleCapacity: number;
 
   // Step 2 - Loads
@@ -56,7 +56,7 @@ interface TripWizardState {
 const initialState: TripWizardState = {
   // Step 1
   tripName: "",
-  truckId: "",
+  truckId: null,
   truckVehicleCapacity: 0,
 
   // Step 2
@@ -84,7 +84,7 @@ const initialState: TripWizardState = {
 interface TripWizardInitializeData {
   mode: "create" | "edit";
   tripName?: string;
-  truckId?: string;
+  truckId?: string | null;
   truckVehicleCapacity?: number;
   loads?: TripLoadDto[];
   stops?: TripStopDto[];
@@ -176,9 +176,9 @@ export const TripWizardStore = signalStore(
       initialStops: store.initialStops(),
     }));
 
-    // Check if we can proceed to next step
+    // Check if we can proceed to next step (truck is now optional)
     const canProceedFromStep1 = computed(() => {
-      return store.tripName().trim() !== "" && store.truckId() !== "";
+      return store.tripName().trim() !== "";
     });
 
     const canProceedFromStep2 = computed(() => {
@@ -226,7 +226,7 @@ export const TripWizardStore = signalStore(
     },
 
     // Step 1 Methods
-    setBasicInfo(data: { tripName: string; truckId: string; truckVehicleCapacity: number }): void {
+    setBasicInfo(data: { tripName: string; truckId: string | null; truckVehicleCapacity: number }): void {
       patchState(store, {
         tripName: data.tripName,
         truckId: data.truckId,

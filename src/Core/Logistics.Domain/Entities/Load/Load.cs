@@ -187,7 +187,7 @@ public class Load : AuditableEntity, ITenantEntity
         Address destinationAddress,
         GeoPoint destinationLocation,
         Customer customer,
-        Truck assignedTruck,
+        Truck? assignedTruck,
         Employee assignedDispatcher,
         Trip? trip = null)
     {
@@ -200,7 +200,7 @@ public class Load : AuditableEntity, ITenantEntity
             OriginLocation = originLocation,
             DestinationAddress = destinationAddress,
             DestinationLocation = destinationLocation,
-            AssignedTruckId = assignedTruck.Id,
+            AssignedTruckId = assignedTruck?.Id,
             AssignedTruck = assignedTruck,
             AssignedDispatcherId = assignedDispatcher.Id,
             AssignedDispatcher = assignedDispatcher,

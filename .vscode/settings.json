@@ -6,6 +6,8 @@
   "files.exclude": {
     "**/node_modules": true,
     "**/.angular": true,
+    "**/bin": true,
+    "**/obj": true
   },
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"

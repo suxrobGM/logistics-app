@@ -6,7 +6,7 @@ namespace Logistics.Application.Commands;
 public class CreateTripCommand : IAppRequest
 {
     public string Name { get; set; } = null!;
-    public Guid TruckId { get; set; }
+    public Guid? TruckId { get; set; }
     public IEnumerable<CreateTripLoadCommand>? NewLoads { get; set; }
     public IEnumerable<Guid>? AttachedLoadIds { get; set; }
     public IEnumerable<TripStopDto>? OptimizedStops { get; set; }

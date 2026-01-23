@@ -29,10 +29,8 @@ export class TripWizardBasic {
 
   protected readonly form = new FormGroup({
     tripName: new FormControl<string>("", { validators: [Validators.required], nonNullable: true }),
-    truck: new FormControl<TruckDto | string | null>(null, {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
+    // Truck assignment is optional - trip can be created without truck (e.g., from load board)
+    truck: new FormControl<TruckDto | string | null>(null, { nonNullable: true }),
   });
 
   constructor() {
@@ -62,9 +60,10 @@ export class TripWizardBasic {
       return;
     }
 
-    const truckType = (this.form.value.truck as TruckDto)?.type;
+    const truck = this.form.value.truck as TruckDto | null;
 
-    if (truckType !== "car_hauler") {
+    // Only validate truck type if a truck is selected
+    if (truck && truck.type !== "car_hauler") {
       this.toastService.showError("The selected truck is not a car hauler truck.");
       return;
     }
@@ -72,8 +71,8 @@ export class TripWizardBasic {
     // Update store with basic info
     this.store.setBasicInfo({
       tripName: this.form.value.tripName ?? "",
-      truckId: (this.form.value.truck as TruckDto)?.id ?? "",
-      truckVehicleCapacity: (this.form.value.truck as TruckDto)?.vehicleCapacity ?? 0,
+      truckId: truck?.id ?? null,
+      truckVehicleCapacity: truck?.vehicleCapacity ?? 0,
     });
 
     // Navigate to next step

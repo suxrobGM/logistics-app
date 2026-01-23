@@ -3,15 +3,8 @@ using Logistics.Domain.Persistence;
 
 namespace Logistics.Application.Services;
 
-internal sealed class LoadService : ILoadService
+internal sealed class LoadService(ITenantUnitOfWork tenantUow) : ILoadService
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public LoadService(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Load> CreateLoadAsync(CreateLoadParameters parameters, bool saveChanges = true,
         CancellationToken ct = default)
     {
@@ -28,17 +21,17 @@ internal sealed class LoadService : ILoadService
             return [];
         }
 
-        // 1) Collect distinct foreign keys
+        // 1) Collect distinct foreign keys (filter out null truck IDs)
         var dispatcherIds = paramList.Select(p => p.DispatcherId).Distinct().ToList();
-        var truckIds = paramList.Select(p => p.TruckId).Distinct().ToList();
+        var truckIds = paramList.Where(p => p.TruckId.HasValue).Select(p => p.TruckId!.Value).Distinct().ToList();
         var customerIds = paramList.Select(p => p.CustomerId).Distinct().ToList();
         var tripIds = paramList.Select(p => p.TripId).Distinct().ToList();
 
         // 2) Batch-load referenced rows (at most 3 queries total)
-        var dispatcherRepo = _tenantUow.Repository<Employee>();
-        var truckRepo = _tenantUow.Repository<Truck>();
-        var customerRepo = _tenantUow.Repository<Customer>();
-        var tripRepo = _tenantUow.Repository<Trip>();
+        var dispatcherRepo = tenantUow.Repository<Employee>();
+        var truckRepo = tenantUow.Repository<Truck>();
+        var customerRepo = tenantUow.Repository<Customer>();
+        var tripRepo = tenantUow.Repository<Trip>();
 
         // Note: EF Core DbContext does not allow parallel queries on the same context;
         // keep these sequential to avoid InvalidOperationException.
@@ -84,7 +77,7 @@ internal sealed class LoadService : ILoadService
         foreach (var p in paramList)
         {
             var dispatcher = dispatcherById[p.DispatcherId];
-            var truck = truckById[p.TruckId];
+            var truck = p.TruckId.HasValue ? truckById[p.TruckId.Value] : null;
             var customer = customerById[p.CustomerId];
             Trip? trip = null;
 
@@ -112,11 +105,11 @@ internal sealed class LoadService : ILoadService
         }
 
         // 5) Single batched add + single SaveChanges
-        await _tenantUow.Repository<Load>().AddRangeAsync(loads, ct);
+        await tenantUow.Repository<Load>().AddRangeAsync(loads, ct);
 
         if (saveChanges)
         {
-            await _tenantUow.SaveChangesAsync(ct);
+            await tenantUow.SaveChangesAsync(ct);
         }
 
         return loads;
@@ -124,8 +117,8 @@ internal sealed class LoadService : ILoadService
 
     public async Task DeleteLoadAsync(Guid loadId)
     {
-        var load = await _tenantUow.Repository<Load>().GetByIdAsync(loadId);
-        _tenantUow.Repository<Load>().Delete(load);
-        await _tenantUow.SaveChangesAsync();
+        var load = await tenantUow.Repository<Load>().GetByIdAsync(loadId);
+        tenantUow.Repository<Load>().Delete(load);
+        await tenantUow.SaveChangesAsync();
     }
 }

@@ -15,6 +15,6 @@ public class CreateLoadCommand : IAppRequest
     public decimal DeliveryCost { get; set; }
     public double Distance { get; set; }
     public Guid AssignedDispatcherId { get; set; }
-    public Guid AssignedTruckId { get; set; }
+    public Guid? AssignedTruckId { get; set; }
     public Guid CustomerId { get; set; }
 }

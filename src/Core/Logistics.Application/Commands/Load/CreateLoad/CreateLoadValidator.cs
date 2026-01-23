@@ -10,7 +10,7 @@ internal sealed class CreateLoadValidator : AbstractValidator<CreateLoadCommand>
         RuleFor(i => i.Name).NotEmpty();
         RuleFor(i => i.Type).IsInEnum();
         RuleFor(i => i.AssignedDispatcherId).NotEmpty();
-        RuleFor(i => i.AssignedTruckId).NotEmpty();
+        // AssignedTruckId is optional - load can be created without truck assignment (e.g., from load board)
         RuleFor(i => i.OriginAddress).NotEmpty();
         RuleFor(i => i.OriginLocation).NotEmpty();
         RuleFor(i => i.DestinationAddress).NotEmpty();

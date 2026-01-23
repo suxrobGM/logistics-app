@@ -8,22 +8,15 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateLoadHandler : IAppRequestHandler<UpdateLoadCommand, Result>
+internal sealed class UpdateLoadHandler(
+    ITenantUnitOfWork tenantUow,
+    IPushNotificationService pushNotificationService,
+    INotificationService notificationService)
+    : IAppRequestHandler<UpdateLoadCommand, Result>
 {
-    private readonly IPushNotificationService _pushNotificationService;
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public UpdateLoadHandler(
-        ITenantUnitOfWork tenantUow,
-        IPushNotificationService pushNotificationService)
-    {
-        _tenantUow = tenantUow;
-        _pushNotificationService = pushNotificationService;
-    }
-
     public async Task<Result> Handle(UpdateLoadCommand req, CancellationToken ct)
     {
-        var load = await _tenantUow.Repository<Load>().GetByIdAsync(req.Id, ct);
+        var load = await tenantUow.Repository<Load>().GetByIdAsync(req.Id, ct);
 
         if (load is null)
         {
@@ -53,7 +46,7 @@ internal sealed class UpdateLoadHandler : IAppRequestHandler<UpdateLoadCommand, 
                 load.UpdateStatus(req.Status.Value, true);
             }
 
-            var changes = await _tenantUow.SaveChangesAsync(ct);
+            var changes = await tenantUow.SaveChangesAsync(ct);
 
             if (changes > 0)
             {
@@ -75,7 +68,7 @@ internal sealed class UpdateLoadHandler : IAppRequestHandler<UpdateLoadCommand, 
             return;
         }
 
-        var customer = await _tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId.Value);
+        var customer = await tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId.Value);
         if (customer is null)
         {
             throw new InvalidOperationException($"Could not find a customer with ID '{req.CustomerId}'");
@@ -94,7 +87,7 @@ internal sealed class UpdateLoadHandler : IAppRequestHandler<UpdateLoadCommand, 
             return null;
         }
 
-        var truck = await _tenantUow.Repository<Truck>().GetByIdAsync(req.AssignedTruckId.Value);
+        var truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.AssignedTruckId.Value);
         if (truck is null)
         {
             throw new InvalidOperationException($"Could not find a truck with ID '{req.AssignedTruckId}'");
@@ -116,7 +109,7 @@ internal sealed class UpdateLoadHandler : IAppRequestHandler<UpdateLoadCommand, 
             return;
         }
 
-        var dispatcher = await _tenantUow.Repository<Employee>().GetByIdAsync(req.AssignedDispatcherId.Value);
+        var dispatcher = await tenantUow.Repository<Employee>().GetByIdAsync(req.AssignedDispatcherId.Value);
         if (dispatcher is null)
         {
             throw new InvalidOperationException($"Could not find a dispatcher with ID '{req.AssignedDispatcherId}'");
@@ -130,17 +123,36 @@ internal sealed class UpdateLoadHandler : IAppRequestHandler<UpdateLoadCommand, 
 
     private async Task NotifyTrucksAboutUpdates(Truck? oldTruck, Truck? newTruck, Load loadEntity)
     {
-        if (oldTruck != null)
-            // send updates to the old truck
+        if (newTruck != null && oldTruck == null)
         {
-            await _pushNotificationService.SendUpdatedLoadNotificationAsync(loadEntity, oldTruck);
+            // First-time truck assignment - load was created without truck and now assigned
+            await pushNotificationService.SendNewLoadNotificationAsync(loadEntity, newTruck);
+
+            // Send in-app notification for TMS portal users
+            var driverName = newTruck.MainDriver?.GetFullName() ?? newTruck.Number;
+            await notificationService.SendNotificationAsync(
+                "Load assigned to truck",
+                $"Load #{loadEntity.Number} has been assigned to {driverName}");
+            return;
+        }
+
+        if (oldTruck != null)
+        {
+            // Send updates to the old truck
+            await pushNotificationService.SendUpdatedLoadNotificationAsync(loadEntity, oldTruck);
         }
 
         if (newTruck != null && oldTruck != null && oldTruck.Id != newTruck.Id)
         {
             // The truck was switched
-            await _pushNotificationService.SendNewLoadNotificationAsync(loadEntity, newTruck);
-            await _pushNotificationService.SendRemovedLoadNotificationAsync(loadEntity, oldTruck);
+            await pushNotificationService.SendNewLoadNotificationAsync(loadEntity, newTruck);
+            await pushNotificationService.SendRemovedLoadNotificationAsync(loadEntity, oldTruck);
+
+            // Send in-app notification for TMS portal users
+            var newDriverName = newTruck.MainDriver?.GetFullName() ?? newTruck.Number;
+            await notificationService.SendNotificationAsync(
+                "Load assigned",
+                $"Load #{loadEntity.Number} has been reassigned to {newDriverName}");
         }
     }
 }

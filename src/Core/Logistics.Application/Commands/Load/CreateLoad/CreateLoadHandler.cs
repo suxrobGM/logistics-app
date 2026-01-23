@@ -5,19 +5,12 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreateLoadHandler : IAppRequestHandler<CreateLoadCommand, Result>
+internal sealed class CreateLoadHandler(
+    ILoadService loadService,
+    IPushNotificationService pushNotificationService,
+    INotificationService notificationService)
+    : IAppRequestHandler<CreateLoadCommand, Result>
 {
-    private readonly ILoadService _loadService;
-    private readonly IPushNotificationService _pushNotificationService;
-
-    public CreateLoadHandler(
-        ILoadService loadService,
-        IPushNotificationService pushNotificationService)
-    {
-        _loadService = loadService;
-        _pushNotificationService = pushNotificationService;
-    }
-
     public async Task<Result> Handle(
         CreateLoadCommand req, CancellationToken ct)
     {
@@ -34,9 +27,20 @@ internal sealed class CreateLoadHandler : IAppRequestHandler<CreateLoadCommand, 
                 req.AssignedTruckId,
                 req.AssignedDispatcherId);
 
-            var newLoad = await _loadService.CreateLoadAsync(createLoadParameters);
+            var newLoad = await loadService.CreateLoadAsync(createLoadParameters);
 
-            await _pushNotificationService.SendNewLoadNotificationAsync(newLoad);
+            // Send push notification to driver (if truck assigned)
+            await pushNotificationService.SendNewLoadNotificationAsync(newLoad);
+
+            // Send in-app notification for TMS portal users (if truck assigned)
+            if (newLoad.AssignedTruck is not null)
+            {
+                var driverName = newLoad.AssignedTruck.MainDriver?.GetFullName() ?? newLoad.AssignedTruck.Number;
+                await notificationService.SendNotificationAsync(
+                    "New load created",
+                    $"Load #{newLoad.Number} has been created and assigned to {driverName}");
+            }
+
             return Result.Ok();
         }
         catch (InvalidOperationException e)

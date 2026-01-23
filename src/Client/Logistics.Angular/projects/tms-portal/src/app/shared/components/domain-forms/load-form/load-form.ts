@@ -46,7 +46,7 @@ export interface LoadFormValue {
   deliveryCost: number;
   distance: number; // miles, read-only for users
   status?: LoadStatus | null; // only present in edit-mode
-  assignedTruckId: string;
+  assignedTruckId?: string | null; // optional - load can be created without truck assignment
   assignedDispatcherId: string;
   assignedDispatcherName: string;
   tripId?: string | null;
@@ -132,12 +132,10 @@ export class LoadFormComponent implements OnInit {
     distance: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
     // only visible/patched when mode === 'edit'
     status: new FormControl<LoadStatus | null>(null),
+    // Truck assignment is optional - load can be created without a truck (e.g., from load board)
     assignedTruck: new FormControl<TruckDto | string | null>(
       { value: null, disabled: !this.canChangeAssignedTruck() },
-      {
-        validators: [Validators.required],
-        nonNullable: true,
-      },
+      { nonNullable: true },
     ),
     assignedDispatcherId: new FormControl("", {
       validators: [Validators.required],
@@ -205,11 +203,12 @@ export class LoadFormComponent implements OnInit {
     }
 
     const formRawValue = this.form.getRawValue();
+    const truck = formRawValue.assignedTruck as TruckDto | null;
 
     const formValue: LoadFormValue = {
       ...formRawValue,
       distance: Converters.toMeters(formRawValue.distance, "mi"),
-      assignedTruckId: (formRawValue.assignedTruck as TruckDto).id,
+      assignedTruckId: truck?.id ?? null,
     } as LoadFormValue;
 
     this.save.emit(formValue);

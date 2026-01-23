@@ -13,7 +13,7 @@ namespace Logistics.Application.Services;
 /// <param name="DeliveryCost">Delivery cost</param>
 /// <param name="Distance">Distance in meters</param>
 /// <param name="CustomerId">Customer ID</param>
-/// <param name="TruckId">Truck ID</param>
+/// <param name="TruckId">Optional Truck ID - load can be created without truck assignment</param>
 /// <param name="DispatcherId">Dispatcher ID</param>
 /// <param name="TripId">Optionally specify trip ID</param>
 public record CreateLoadParameters(
@@ -24,7 +24,7 @@ public record CreateLoadParameters(
     decimal DeliveryCost,
     double Distance,
     Guid CustomerId,
-    Guid TruckId,
+    Guid? TruckId,
     Guid DispatcherId,
     Guid? TripId = null
 );
