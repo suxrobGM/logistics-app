@@ -4,8 +4,7 @@
   <p-card class="w-full md:w-1/2">
     <app-customer-form
       [mode]="'create'"
-      [isLoading]="isLoading()"
-      (save)="createCustomer($event)"
+      (save)="handleCustomerCreated($event)"
     />
   </p-card>
 </div>

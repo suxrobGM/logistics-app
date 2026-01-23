@@ -6,7 +6,6 @@
   [delay]="300"
   [minLength]="2"
   [suggestions]="suggestedTrucks()"
-  [forceSelection]="true"
   [(ngModel)]="selectedTruck"
   (completeMethod)="searchTruck($event)"
   (onSelect)="changeSelectedTruck($event)"

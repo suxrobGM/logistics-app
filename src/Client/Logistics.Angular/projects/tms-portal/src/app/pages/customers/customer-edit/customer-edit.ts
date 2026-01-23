@@ -1,7 +1,7 @@
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { Api, deleteCustomer, getCustomerById, updateCustomer } from "@logistics/shared/api";
-import type { UpdateCustomerCommand } from "@logistics/shared/api/models";
+import { Api, deleteCustomer, getCustomerById } from "@logistics/shared/api";
+import type { CustomerDto } from "@logistics/shared/api/models";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ToastService } from "@/core/services";
@@ -28,20 +28,8 @@ export class CustomerEditComponent implements OnInit {
     }
   }
 
-  protected async updateCustomer(formValue: CustomerFormValue): Promise<void> {
-    this.isLoading.set(true);
-
-    const command: UpdateCustomerCommand = {
-      id: this.id()!,
-      name: formValue.name!,
-    };
-
-    await this.api.invoke(updateCustomer, {
-      id: this.id()!,
-      body: command,
-    });
-    this.toastService.showSuccess("A customer data has been updated successfully");
-    this.isLoading.set(false);
+  protected handleCustomerUpdated(_customer: CustomerDto): void {
+    // Customer form handles the API call and toast, nothing else needed here
   }
 
   protected async deleteCustomer(): Promise<void> {
