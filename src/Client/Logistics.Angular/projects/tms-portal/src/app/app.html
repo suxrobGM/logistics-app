@@ -1,6 +1,3 @@
-<p-toast key="notification" position="top-right" />
-<p-confirm-dialog key="confirmDialog" position="center" />
-
 @if (showLayout()) {
   <!-- Mobile Header (visible only on mobile) -->
   <app-mobile-header />
@@ -24,3 +21,6 @@
 } @else {
   <router-outlet />
 }
+
+<p-toast key="notification" position="top-right" />
+<p-confirm-dialog key="confirmDialog" position="center" />

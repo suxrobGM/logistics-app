@@ -2,6 +2,7 @@
 <div class="mb-6 flex items-start justify-between">
   <ui-page-header title="Load Details" [showAddButton]="false" />
   <div class="flex gap-2">
+    <p-button icon="pi pi-link" label="Tracking Link" [outlined]="true" (click)="showTrackingDialog.set(true)" />
     <p-button icon="pi pi-pencil" label="Edit" [outlined]="true" (click)="onEdit()" />
     <p-button icon="pi pi-arrow-left" label="Back" [routerLink]="['/loads']" [outlined]="true" />
   </div>
@@ -258,6 +259,9 @@
       </p-tabpanels>
     </p-tabs>
   </p-card>
+
+  <!-- Tracking Link Dialog -->
+  <app-tracking-link-dialog [loadId]="id()" [(visible)]="showTrackingDialog" />
 } @else {
   <p-card>
     <div class="py-16 text-center">

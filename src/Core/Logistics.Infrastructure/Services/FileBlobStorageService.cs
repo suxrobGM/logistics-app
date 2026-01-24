@@ -93,6 +93,16 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
         );
     }
 
+    public string GetPublicUrl(string containerName, string blobName, Guid tenantId)
+    {
+        if (!string.IsNullOrEmpty(_options.BaseUrl))
+        {
+            return $"{_options.BaseUrl.TrimEnd('/')}/{tenantId}/{containerName}/{blobName}";
+        }
+
+        return $"/uploads/{tenantId}/{containerName}/{blobName}";
+    }
+
     private string GetContainerPath(string containerName)
     {
         var tenant = tenantService.GetCurrentTenant();
@@ -111,14 +121,7 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
     private string GetFileUri(string containerName, string blobName)
     {
         var tenant = tenantService.GetCurrentTenant();
-        var tenantId = tenant.Id.ToString();
-
-        if (!string.IsNullOrEmpty(_options.BaseUrl))
-        {
-            return $"{_options.BaseUrl.TrimEnd('/')}/{tenantId}/{containerName}/{blobName}";
-        }
-
-        return $"file:///{tenantId}/{containerName}/{blobName}";
+        return GetPublicUrl(containerName, blobName, tenant.Id);
     }
 
     private static void EnsureDirectoryExists(string path)
@@ -140,9 +143,7 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
         var metadataPath = GetMetadataPath(filePath);
         var metadata = new FileMetadata
         {
-            ContentType = contentType,
-            ContentLength = contentLength,
-            CreatedAt = DateTime.UtcNow
+            ContentType = contentType, ContentLength = contentLength, CreatedAt = DateTime.UtcNow
         };
 
         var json = JsonSerializer.Serialize(metadata);
@@ -168,9 +169,7 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
         var json = await File.ReadAllTextAsync(metadataPath);
         return JsonSerializer.Deserialize<FileMetadata>(json) ?? new FileMetadata
         {
-            ContentType = "application/octet-stream",
-            ContentLength = 0,
-            CreatedAt = DateTime.UtcNow
+            ContentType = "application/octet-stream", ContentLength = 0, CreatedAt = DateTime.UtcNow
         };
     }
 }
@@ -178,9 +177,10 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
 public class FileBlobStorageOptions
 {
     public const string SectionName = "FileBlobStorage";
-
     public string RootPath { get; set; } = "wwwroot/uploads";
     public string? BaseUrl { get; set; }
+    public string? RequestPath { get; set; }
+    public int CacheSeconds { get; set; } = 3600;
 }
 
 internal class FileMetadata

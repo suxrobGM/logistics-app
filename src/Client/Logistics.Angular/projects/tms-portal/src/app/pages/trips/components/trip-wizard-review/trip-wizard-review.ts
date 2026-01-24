@@ -1,6 +1,7 @@
 import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, computed, inject, input, output } from "@angular/core";
 import type { TripStopDto, TripStopType } from "@logistics/shared/api/models";
+import { AddressPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
@@ -10,7 +11,7 @@ import {
   type Waypoint,
   type WaypointClickEvent,
 } from "@/shared/components";
-import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
+import { DistanceUnitPipe } from "@/shared/pipes";
 import { TripWizardStore } from "../../store/trip-wizard-store";
 
 @Component({

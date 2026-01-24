@@ -45,4 +45,3 @@ dotnet ef migrations add {MigrationName} --project src/Infrastructure/Logistics.
 2. Review the entity changes to understand the migration scope
 3. Generate the migration with a `Version_{lastMigrationNumber+1}` format
 4. Review the generated migration file for correctness
-5. Test by running the DbMigrator project

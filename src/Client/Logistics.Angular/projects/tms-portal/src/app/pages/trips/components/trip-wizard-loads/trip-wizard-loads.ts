@@ -2,6 +2,7 @@ import { CurrencyPipe } from "@angular/common";
 import { Component, computed, inject, input, model, viewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
+import { AddressPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { Dialog } from "primeng/dialog";
 import { IconField } from "primeng/iconfield";
@@ -11,7 +12,7 @@ import { Table, TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { LoadFormComponent, type LoadFormValue, LoadStatusTag } from "@/shared/components";
-import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
+import { DistanceUnitPipe } from "@/shared/pipes";
 import { type TableRow, TripWizardStore } from "../../store/trip-wizard-store";
 
 @Component({

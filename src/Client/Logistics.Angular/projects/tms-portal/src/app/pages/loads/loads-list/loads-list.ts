@@ -3,7 +3,14 @@ import { Component, computed, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { loadStatusOptions, loadTypeOptions } from "@logistics/shared/api/enums";
-import type { CustomerDto, LoadDto, LoadStatus, LoadType, TruckDto } from "@logistics/shared/api/models";
+import type {
+  CustomerDto,
+  LoadDto,
+  LoadStatus,
+  LoadType,
+  TruckDto,
+} from "@logistics/shared/api/models";
+import { AddressPipe } from "@logistics/shared/pipes";
 import type { MenuItem, SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -13,8 +20,16 @@ import { MenuModule } from "primeng/menu";
 import { MultiSelectModule } from "primeng/multiselect";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { DataContainer, LabeledField, LoadStatusTag, LoadTypeTag, SearchCustomer, SearchInput, SearchTruck } from "@/shared/components";
-import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
+import {
+  DataContainer,
+  LabeledField,
+  LoadStatusTag,
+  LoadTypeTag,
+  SearchCustomer,
+  SearchInput,
+  SearchTruck,
+} from "@/shared/components";
+import { DistanceUnitPipe } from "@/shared/pipes";
 import { type DatePreset, getDatePreset } from "@/shared/utils";
 import { LoadsListStore } from "../store/loads-list.store";
 

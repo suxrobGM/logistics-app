@@ -1,0 +1,24 @@
+<div class="flex items-center justify-between">
+  @for (step of steps(); track step.label; let isLast = $last) {
+    <div class="flex flex-1 flex-col items-center">
+      <div
+        class="flex size-12 items-center justify-center rounded-full"
+        [style.background-color]="getStepColor(step)"
+      >
+        <i [class]="step.icon" class="text-xl text-white"></i>
+      </div>
+      <p class="mt-2 text-sm font-medium text-gray-900">{{ step.label }}</p>
+      @if (step.date) {
+        <p class="text-xs text-gray-500">{{ step.date | date: "short" }}</p>
+      }
+    </div>
+    @if (!isLast) {
+      <div class="mx-2 h-1 flex-1 rounded bg-gray-200">
+        <div
+          class="h-full rounded bg-green-500 transition-all"
+          [style.width]="step.date ? '100%' : '0%'"
+        ></div>
+      </div>
+    }
+  }
+</div>

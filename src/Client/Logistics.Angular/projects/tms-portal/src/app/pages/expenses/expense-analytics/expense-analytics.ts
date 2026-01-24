@@ -4,6 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Api, getExpenseStats } from "@logistics/shared/api";
 import type { ExpenseStatsDto } from "@logistics/shared/api/models";
+import { downloadBlobFile } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
@@ -11,7 +12,6 @@ import { DatePicker } from "primeng/datepicker";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { PageHeader } from "@/shared/components";
-import { downloadBlobFile } from "@/shared/utils";
 
 @Component({
   selector: "app-expense-analytics",

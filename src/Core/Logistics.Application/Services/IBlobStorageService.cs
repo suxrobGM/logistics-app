@@ -49,6 +49,15 @@ public interface IBlobStorageService
     /// <returns>Blob properties</returns>
     Task<BlobFileProperties> GetPropertiesAsync(string containerName, string blobName,
         CancellationToken ct = default);
+
+    /// <summary>
+    ///     Get the public URL for a blob
+    /// </summary>
+    /// <param name="containerName">Container name</param>
+    /// <param name="blobName">Blob name/path</param>
+    /// <param name="tenantId">Tenant ID for tenant-aware storage</param>
+    /// <returns>Public URL for the blob</returns>
+    string GetPublicUrl(string containerName, string blobName, Guid tenantId);
 }
 
 public record BlobFileProperties(

@@ -1,6 +1,7 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import type { AddressDto, TruckDto } from "@logistics/shared/api/models";
+import { AddressPipe } from "@logistics/shared/pipes";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -8,7 +9,6 @@ import { MenuModule } from "primeng/menu";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
-import { AddressPipe } from "@/shared/pipes";
 import { TrucksListStore } from "../store/trucks-list.store";
 
 @Component({

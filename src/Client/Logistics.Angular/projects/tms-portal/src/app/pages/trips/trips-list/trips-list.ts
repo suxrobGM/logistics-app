@@ -5,6 +5,7 @@ import { Router, RouterLink } from "@angular/router";
 import { Api, deleteTrip } from "@logistics/shared/api";
 import { tripStatusOptions } from "@logistics/shared/api/enums";
 import type { TripDto, TripStatus, TruckDto } from "@logistics/shared/api/models";
+import { AddressPipe } from "@logistics/shared/pipes";
 import type { MenuItem } from "primeng/api";
 import { Button } from "primeng/button";
 import { Card } from "primeng/card";
@@ -15,8 +16,16 @@ import { MultiSelect } from "primeng/multiselect";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { DataContainer, LabeledField, LoadStatusTag, LoadTypeTag, SearchInput, SearchTruck, TripStatusTag } from "@/shared/components";
-import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
+import {
+  DataContainer,
+  LabeledField,
+  LoadStatusTag,
+  LoadTypeTag,
+  SearchInput,
+  SearchTruck,
+  TripStatusTag,
+} from "@/shared/components";
+import { DistanceUnitPipe } from "@/shared/pipes";
 import { type DatePreset, getDatePreset } from "@/shared/utils";
 import { TripsListStore } from "../store/trips-list.store";
 

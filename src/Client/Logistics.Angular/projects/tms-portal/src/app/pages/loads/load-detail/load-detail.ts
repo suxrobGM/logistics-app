@@ -3,6 +3,7 @@ import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, getLoadById } from "@logistics/shared/api";
 import type { DocumentType, LoadDto } from "@logistics/shared/api/models";
+import { AddressPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -10,8 +11,8 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TabsModule } from "primeng/tabs";
 import { DocumentManagerComponent, PageHeader } from "@/shared/components";
 import { LoadStatusTag, LoadTypeTag } from "@/shared/components/tags";
-import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
-import { LoadInvoicesContent, LoadPodContent } from "../components";
+import { DistanceUnitPipe } from "@/shared/pipes";
+import { LoadInvoicesContent, LoadPodContent, TrackingLinkDialog } from "../components";
 
 @Component({
   selector: "app-load-detail",
@@ -34,6 +35,7 @@ import { LoadInvoicesContent, LoadPodContent } from "../components";
     DocumentManagerComponent,
     LoadPodContent,
     LoadInvoicesContent,
+    TrackingLinkDialog,
   ],
 })
 export class LoadDetailPage implements OnInit {
@@ -44,6 +46,7 @@ export class LoadDetailPage implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly load = signal<LoadDto | null>(null);
   protected readonly activeTab = signal(0);
+  protected readonly showTrackingDialog = signal(false);
 
   // Document types for the Documents tab
   protected readonly loadDocTypes: DocumentType[] = [

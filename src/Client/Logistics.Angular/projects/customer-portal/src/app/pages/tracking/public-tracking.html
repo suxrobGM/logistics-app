@@ -1,0 +1,155 @@
+<cp-public-page-layout
+  [tenantName]="tracking()?.tenantName"
+  [tenantLogoUrl]="tracking()?.tenantLogoUrl"
+>
+  @if (isLoading()) {
+    <ui-loading-skeleton variant="card" height="20rem" loadingText="Loading tracking information..." />
+  } @else if (error()) {
+    <ui-error-state title="Tracking Unavailable" [message]="error()!" [retryable]="false" />
+  } @else if (tracking(); as data) {
+    <!-- Shipment Status -->
+    <div class="mb-6 rounded-lg bg-white p-6 shadow">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p class="text-sm text-gray-500">Shipment</p>
+          <h2 class="text-2xl font-bold text-gray-900">Load #{{ data.loadNumber }}</h2>
+          @if (data.loadName) {
+            <p class="text-gray-600">{{ data.loadName }}</p>
+          }
+        </div>
+        <p-tag [value]="data.status" [severity]="getStatusSeverity(data.status)" class="px-4 py-2 text-lg" />
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="mb-6 rounded-lg bg-white p-6 shadow">
+      <h3 class="mb-4 text-lg font-semibold text-gray-900">Shipment Progress</h3>
+      <cp-shipment-timeline
+        [dispatchedAt]="data.dispatchedAt"
+        [pickedUpAt]="data.pickedUpAt"
+        [deliveredAt]="data.deliveredAt"
+      />
+    </div>
+
+    <!-- Route & Driver Info -->
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div class="rounded-lg bg-white p-6 shadow">
+        <h3 class="mb-4 text-lg font-semibold text-gray-900">Route Information</h3>
+        <div class="space-y-4">
+          <div>
+            <div class="mb-1 flex items-center gap-2">
+              <i class="pi pi-map-marker text-blue-500"></i>
+              <span class="text-sm font-medium text-gray-500">Origin</span>
+            </div>
+            <p class="font-medium text-gray-900">{{ data.originAddress | address }}</p>
+          </div>
+
+          @if (data.currentAddress) {
+            <div>
+              <div class="mb-1 flex items-center gap-2">
+                <i class="pi pi-truck text-orange-500"></i>
+                <span class="text-sm font-medium text-gray-500">Current Location</span>
+              </div>
+              <p class="font-medium text-gray-900">{{ data.currentAddress | address }}</p>
+            </div>
+          }
+
+          <div>
+            <div class="mb-1 flex items-center gap-2">
+              <i class="pi pi-flag text-green-500"></i>
+              <span class="text-sm font-medium text-gray-500">Destination</span>
+            </div>
+            <p class="font-medium text-gray-900">{{ data.destinationAddress | address }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-lg bg-white p-6 shadow">
+        <h3 class="mb-4 text-lg font-semibold text-gray-900">Driver Information</h3>
+        @if (data.driverName || data.truckNumber) {
+          <div class="flex items-center gap-4">
+            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
+              <i class="pi pi-user text-2xl text-gray-600"></i>
+            </div>
+            <div>
+              @if (data.driverName) {
+                <p class="font-medium text-gray-900">{{ data.driverName }}</p>
+              }
+              @if (data.truckNumber) {
+                <p class="text-sm text-gray-500">Truck: {{ data.truckNumber }}</p>
+              }
+            </div>
+          </div>
+        } @else {
+          <div class="py-4 text-center">
+            <i class="pi pi-user mb-2 text-3xl text-gray-300"></i>
+            <p class="text-gray-500">No driver assigned yet</p>
+          </div>
+        }
+
+        <div class="mt-6 border-t pt-4">
+          <h4 class="mb-3 text-sm font-medium text-gray-500">Document Status</h4>
+          <div class="flex gap-4">
+            <div class="flex items-center gap-2">
+              <i
+                class="pi"
+                [class.pi-check-circle]="data.hasBillOfLading"
+                [class.text-green-500]="data.hasBillOfLading"
+                [class.pi-circle]="!data.hasBillOfLading"
+                [class.text-gray-300]="!data.hasBillOfLading"
+              ></i>
+              <span class="text-sm">Bill of Lading</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i
+                class="pi"
+                [class.pi-check-circle]="data.hasProofOfDelivery"
+                [class.text-green-500]="data.hasProofOfDelivery"
+                [class.pi-circle]="!data.hasProofOfDelivery"
+                [class.text-gray-300]="!data.hasProofOfDelivery"
+              ></i>
+              <span class="text-sm">Proof of Delivery</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documents -->
+    @if (documents().length > 0) {
+      <div class="mt-6 rounded-lg bg-white p-6 shadow">
+        <h3 class="mb-4 text-lg font-semibold text-gray-900">Documents</h3>
+        <p-table [value]="documents()" styleClass="p-datatable-sm">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Document</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th class="text-right">Action</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-doc>
+            <tr>
+              <td>
+                <div class="flex items-center gap-2">
+                  <i class="pi pi-file text-gray-400"></i>
+                  <span class="font-medium">{{ doc.originalFileName || doc.fileName }}</span>
+                </div>
+              </td>
+              <td>{{ doc.documentType }}</td>
+              <td>{{ doc.createdAt | date: "short" }}</td>
+              <td class="text-right">
+                <p-button icon="pi pi-download" [text]="true" label="Download" (click)="downloadDocument(doc)" />
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    }
+
+    <!-- Footer -->
+    <div class="mt-8 text-center text-sm text-gray-500">
+      <p>Tracking provided by {{ data.tenantName }}</p>
+    </div>
+  }
+</cp-public-page-layout>

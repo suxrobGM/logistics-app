@@ -8,6 +8,7 @@ import {
   uploadDocument,
 } from "@logistics/shared/api";
 import type { DocumentDto, DocumentStatus, DocumentType } from "@logistics/shared/api/models";
+import { downloadBlobFile, formatFileSize } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { FileUploadModule } from "primeng/fileupload";
@@ -17,7 +18,7 @@ import { Tag, TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { Converters, downloadBlobFile, formatFileSize } from "@/shared/utils";
+import { Converters } from "@/shared/utils";
 
 @Component({
   selector: "app-document-manager",

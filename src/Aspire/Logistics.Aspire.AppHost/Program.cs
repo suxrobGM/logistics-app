@@ -58,6 +58,8 @@ var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithEnvironment("Stripe__PublishableKey", builder.GetConfigValue("Stripe:PublishableKey"))
     .WithEnvironment("Stripe__WebhookSecret", builder.GetConfigValue("Stripe:WebhookSecret"))
     .WithEnvironment("Mapbox__AccessToken", builder.GetConfigValue("Mapbox:AccessToken"))
+    .WithEnvironment("CustomerPortal__BaseUrl", builder.GetConfigValue("CustomerPortal:BaseUrl"))
+    .WithEnvironment("FileBlobStorage__BaseUrl", builder.GetConfigValue("FileBlobStorage:BaseUrl"))
     .WithEnvironment("TenantsDatabaseConfig__DatabasePassword",
         builder.GetConfigValue("TenantsDatabaseConfig:DatabasePassword"))
     .WithEnvironment("TenantsDatabaseConfig__DatabasePort",

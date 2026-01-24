@@ -1,7 +1,6 @@
 import type { Routes } from "@angular/router";
-
 import { authGuard, tenantGuard } from "@/core/auth";
-import { MainLayout } from "@/layout";
+import { MainLayout } from "@/shared/layout";
 
 export const routes: Routes = [
   {
@@ -11,6 +10,10 @@ export const routes: Routes = [
   {
     path: "unauthorized",
     loadComponent: () => import("./pages/errors/unauthorized").then((m) => m.Unauthorized),
+  },
+  {
+    path: "track/:tenantId/:token",
+    loadComponent: () => import("./pages/tracking/public-tracking").then((m) => m.PublicTracking),
   },
   {
     path: "select-tenant",

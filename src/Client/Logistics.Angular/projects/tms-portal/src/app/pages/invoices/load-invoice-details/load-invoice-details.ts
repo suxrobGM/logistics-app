@@ -3,6 +3,7 @@ import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Api, getInvoiceById } from "@logistics/shared/api";
 import type { AddressDto, InvoiceDto } from "@logistics/shared/api/models";
+import { AddressPipe } from "@logistics/shared/pipes";
 import { jsPDF } from "jspdf";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -10,7 +11,6 @@ import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TenantService } from "@/core/services";
 import { InvoiceStatusTag } from "@/shared/components";
-import { AddressPipe } from "@/shared/pipes";
 
 @Component({
   selector: "app-load-invoice-details",

@@ -84,14 +84,27 @@ public class AzureBlobStorageService(
         );
     }
 
+    public string GetPublicUrl(string containerName, string blobName, Guid tenantId)
+    {
+        var tenantAwareContainerName = GetTenantAwareContainerName(containerName, tenantId);
+        var containerClient = blobServiceClient.GetBlobContainerClient(tenantAwareContainerName);
+        var blobClient = containerClient.GetBlobClient(blobName);
+        return blobClient.Uri.ToString();
+    }
+
     private string GetTenantAwareContainerName(string containerName)
     {
         var tenant = tenantService.GetCurrentTenant();
-        var tenantId = tenant.Id.ToString().ToLowerInvariant().Replace("-", "");
+        return GetTenantAwareContainerName(containerName, tenant.Id);
+    }
+
+    private static string GetTenantAwareContainerName(string containerName, Guid tenantId)
+    {
+        var tenantIdStr = tenantId.ToString().ToLowerInvariant().Replace("-", "");
 
         // Azure container names must be lowercase and can't contain hyphens,
         // So we create a tenant-specific container name
-        return $"tenant{tenantId}-{containerName}".ToLowerInvariant();
+        return $"tenant{tenantIdStr}-{containerName}".ToLowerInvariant();
     }
 
     private async Task<BlobContainerClient> GetContainerClientAsync(string containerName,

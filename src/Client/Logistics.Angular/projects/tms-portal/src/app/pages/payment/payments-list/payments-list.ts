@@ -2,12 +2,12 @@ import { CommonModule } from "@angular/common";
 import { Component, inject } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { type PaymentMethodType, paymentMethodTypeOptions } from "@logistics/shared/api/models";
+import { AddressPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PaymentStatusTag } from "@/shared/components";
-import { AddressPipe } from "@/shared/pipes";
 import { PaymentsListStore } from "../store/payments-list.store";
 
 @Component({

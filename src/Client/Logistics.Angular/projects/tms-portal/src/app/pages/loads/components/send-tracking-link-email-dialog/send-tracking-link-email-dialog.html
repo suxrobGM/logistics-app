@@ -1,0 +1,52 @@
+<p-dialog
+  header="Send Tracking Link"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  (onShow)="onShow()"
+  (onHide)="close()"
+>
+  <p class="text-muted-color mb-4">Send this tracking link to a customer via email.</p>
+
+  <form [formGroup]="form" (ngSubmit)="send()">
+    <div class="mb-4">
+      <label for="email" class="block text-sm font-medium mb-1">
+        Email Address <span class="text-red-500">*</span>
+      </label>
+      <input
+        pInputText
+        id="email"
+        formControlName="email"
+        type="email"
+        placeholder="customer@example.com"
+        class="w-full"
+      />
+      @if (form.controls.email.touched && form.controls.email.errors) {
+        <small class="text-red-500">Please enter a valid email address</small>
+      }
+    </div>
+
+    <div class="mb-4">
+      <label for="personalMessage" class="block text-sm font-medium mb-1">Personal Message</label>
+      <textarea
+        pTextarea
+        id="personalMessage"
+        formControlName="personalMessage"
+        rows="3"
+        placeholder="Add an optional message to include in the email..."
+        class="w-full"
+      ></textarea>
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />
+      <p-button
+        type="submit"
+        icon="pi pi-send"
+        label="Send Email"
+        [loading]="isSending()"
+        [disabled]="form.invalid"
+      />
+    </div>
+  </form>
+</p-dialog>

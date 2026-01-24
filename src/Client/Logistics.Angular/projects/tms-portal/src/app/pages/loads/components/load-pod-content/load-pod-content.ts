@@ -2,6 +2,7 @@ import { CommonModule, DatePipe } from "@angular/common";
 import { Component, effect, inject, input, signal } from "@angular/core";
 import { Api, downloadDocument, getDocuments } from "@logistics/shared/api";
 import type { DocumentDto } from "@logistics/shared/api/models";
+import { downloadBlobFile, formatFileSize } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -10,7 +11,6 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { downloadBlobFile, formatFileSize } from "@/shared/utils";
 
 @Component({
   selector: "app-load-pod-content",

@@ -20,7 +20,9 @@ public static class LocalStorageStaticFilesExtensions
         var storageType = config.GetValue<string>("BlobStorage:Type")?.ToLowerInvariant();
         // Only enable when using local/file storage
         if (storageType is not ("file" or "local" or null))
+        {
             return app;
+        }
 
         var uploadsPath = config.GetValue<string>("FileBlobStorage:RootPath") ?? "wwwroot/uploads";
         var requestPath = new PathString(config.GetValue<string>("FileBlobStorage:RequestPath") ?? "/uploads");

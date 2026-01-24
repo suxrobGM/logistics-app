@@ -3,6 +3,7 @@ import { Component, type OnInit, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Api, getDailyGrosses, getLoads } from "@logistics/shared/api";
 import type { AddressDto, DailyGrossesDto, LoadDto } from "@logistics/shared/api/models";
+import { AddressPipe } from "@logistics/shared/pipes";
 import { SharedModule } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -12,7 +13,7 @@ import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { TrucksMap } from "@/shared/components";
-import { AddressPipe, DistanceUnitPipe } from "@/shared/pipes";
+import { DistanceUnitPipe } from "@/shared/pipes";
 import { Converters, DateUtils } from "@/shared/utils";
 import { NotificationsPanelComponent } from "./components";
 

@@ -1,0 +1,99 @@
+<p-dialog
+  header="Tracking Links"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '650px' }"
+  (onShow)="onShow()"
+  (onHide)="close()"
+>
+  @if (isLoading()) {
+    <div class="flex justify-center py-4">
+      <p-progress-spinner />
+    </div>
+  } @else {
+    <p class="text-muted-color mb-4">
+      Generate tracking links to share with customers so they can track this shipment without
+      creating an account.
+    </p>
+
+    <div class="mb-4 flex justify-end">
+      <p-button
+        icon="pi pi-plus"
+        label="Generate New Link"
+        (click)="generateLink()"
+        [loading]="isGenerating()"
+      />
+    </div>
+
+    @if (trackingLinks().length > 0) {
+      <p-table [value]="trackingLinks()" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Created</th>
+            <th>Expires</th>
+            <th>Views</th>
+            <th>Status</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-link>
+          <tr>
+            <td>{{ link.createdAt | date: "short" }}</td>
+            <td>{{ link.expiresAt | date: "short" }}</td>
+            <td>{{ link.accessCount }}</td>
+            <td>
+              <p-tag [value]="getLinkStatusLabel(link)" [severity]="getLinkStatus(link)" />
+            </td>
+            <td class="text-right">
+              <p-button
+                icon="pi pi-envelope"
+                [text]="true"
+                [rounded]="true"
+                (click)="openEmailDialog(link)"
+                pTooltip="Send by email"
+                [disabled]="!link.isActive || link.isExpired"
+              />
+              <p-button
+                icon="pi pi-copy"
+                [text]="true"
+                [rounded]="true"
+                (click)="copyToClipboard(link.url)"
+                pTooltip="Copy link"
+                [disabled]="!link.isActive || link.isExpired"
+              />
+              <p-button
+                icon="pi pi-trash"
+                [text]="true"
+                [rounded]="true"
+                severity="danger"
+                (click)="revokeLink(link.id)"
+                pTooltip="Revoke"
+                [disabled]="!link.isActive"
+              />
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5" class="text-muted-color py-4 text-center">
+              No tracking links generated yet
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    } @else {
+      <div class="text-muted-color py-4 text-center">
+        <i class="pi pi-link mb-2 text-4xl"></i>
+        <p>No tracking links generated yet</p>
+        <p class="text-sm">Click "Generate New Link" to create a shareable tracking link</p>
+      </div>
+    }
+  }
+</p-dialog>
+
+@if (selectedLinkId()) {
+  <app-send-tracking-link-email-dialog
+    [trackingLinkId]="selectedLinkId()!"
+    [(visible)]="showEmailDialog"
+  />
+}
