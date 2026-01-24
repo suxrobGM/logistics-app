@@ -1,0 +1,57 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet:*)",
+      "Bash(bun:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(./gradlew:*)",
+      "Bash(./gradlew.bat:*)",
+      "Bash(gradlew:*)",
+      "Bash(gradlew.bat:*)",
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(mkdir:*)",
+      "Bash(dir:*)",
+      "Bash(tree:*)",
+      "Bash(del:*)",
+      "Bash(ren:*)",
+      "Bash(copy:*)",
+      "Bash(move:*)",
+      "Bash(where:*)",
+      "Bash(find:*)",
+      "Bash(findstr:*)",
+      "Bash(grep:*)",
+      "Bash(wc:*)",
+      "Bash(xargs:*)",
+      "Bash(cat:*)",
+      "Bash(test:*)",
+      "Bash(cd:*)",
+      "Bash(set:*)",
+      "Bash(cmd /c:*)",
+      "Bash(powershell:*)",
+      "Bash(taskkill:*)",
+      "Bash(Remove-Item:*)",
+      "Bash(Select-String:*)",
+      "Bash(Select-Object:*)",
+      "Read(//c/**)",
+      "Skill(frontend-design:*)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/.claude/hooks/format-file.ps1\""
+          }
+        ]
+      }
+    ]
+  }
+}
