@@ -1,94 +1,18 @@
+/**
+ * TMS Portal - Main Stylesheet
+ * Imports all modular style files
+ */
+
+/* === Core Imports === */
 @import "primeicons/primeicons.css";
 @import "tailwindcss";
+@import "tailwindcss-primeui";
 
-html,
-body {
-  height: 100%;
-  overflow-y: auto;
-}
+/* === Tailwind v4 Dark Mode Configuration === */
+/* Aligns Tailwind's dark: variant with PrimeNG's darkModeSelector */
+@custom-variant dark (&:where(.dark-theme, .dark-theme *));
 
-body {
-  background-color: #dae5f3;
-}
-
-/* Typography base styles */
-@layer base {
-  h1 {
-    font-size: 2rem;
-    font-weight: 500;
-    line-height: 1.2;
-    margin-bottom: 0.5rem;
-  }
-
-  h2 {
-    font-size: 1.75rem;
-    font-weight: 500;
-    line-height: 1.2;
-    margin-bottom: 0.5rem;
-  }
-
-  h3 {
-    font-size: 1.5rem;
-    font-weight: 500;
-    line-height: 1.2;
-    margin-bottom: 0.5rem;
-  }
-
-  h4 {
-    font-size: 1.25rem;
-    font-weight: 500;
-    line-height: 1.2;
-    margin-bottom: 0.5rem;
-  }
-
-  h5 {
-    font-size: 1.125rem;
-    font-weight: 500;
-    line-height: 1.2;
-    margin-bottom: 0.5rem;
-  }
-
-  h6 {
-    font-size: 1rem;
-    font-weight: 500;
-    line-height: 1.2;
-    margin-bottom: 0.5rem;
-  }
-
-  p {
-    margin-bottom: 1rem;
-  }
-
-  small {
-    font-size: 0.875rem;
-  }
-
-  label {
-    display: inline-block;
-    margin-bottom: 0.5rem;
-  }
-}
-
-/* Custom utility classes using PrimeNG CSS variables */
-@layer utilities {
-  .bg-primary {
-    background-color: var(--p-primary-color);
-  }
-
-  .bg-primary-dark {
-    background-color: var(--p-primary-700);
-  }
-
-  .animate-fade-in {
-    animation: fadeIn 0.2s ease-in;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
+/* === Design System Imports === */
+@import "./styles/variables.css";
+@import "./styles/base.css";
+@import "./styles/components.css";

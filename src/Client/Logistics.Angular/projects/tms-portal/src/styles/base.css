@@ -1,0 +1,82 @@
+/**
+ * TMS Portal - Base Styles & Typography
+ * Keep minimal - Tailwind handles most utilities
+ */
+
+/* === Base Element Styles === */
+html,
+body {
+  height: 100%;
+  overflow-y: auto;
+  transition:
+    background-color var(--transition-slow),
+    color var(--transition-slow);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* === Typography === */
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--text-primary);
+  }
+
+  a {
+    color: var(--primary-500);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  a:hover {
+    color: var(--primary-400);
+  }
+
+  code,
+  pre {
+    font-family: var(--font-mono);
+  }
+}
+
+/* === Scrollbar Styling === */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 5px;
+  border: 2px solid var(--bg-base);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-500);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bg-base);
+}
+
+/* Firefox scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) var(--bg-base);
+}

@@ -1,90 +1,173 @@
-// src/app/shared/config/chart.config.ts
+// Loads chart configs
+import { getChartColors } from "./financials-chart.options";
 
 // Colors
 export const LOADS_CHART_PALETTE = [
-  "#2563eb",
-  "#16a34a",
-  "#f59e0b",
-  "#a855f7",
-  "#ef4444",
-  "#06b6d4",
-  "#f97316",
+  "#3b82f6", // Blue
+  "#22c55e", // Green
+  "#f59e0b", // Amber
+  "#8b5cf6", // Purple
+  "#ef4444", // Red
+  "#06b6d4", // Cyan
+  "#f97316", // Orange
 ];
 
-function getCssVar(name: string) {
-  return getComputedStyle(document.documentElement).getPropertyValue(name) || undefined;
-}
-
-export const TEXT_COLOR = getCssVar("--text-color") || "#334155";
-export const GRID_COLOR = "#495057";
-
-// Chart Options
-export const LOADS_PIE_OPTIONS = {
-  responsive: true,
-  maintainAspectRatio: false,
-  aspectRatio: 1,
-  plugins: {
-    legend: {
-      position: "bottom",
-      labels: { color: TEXT_COLOR, usePointStyle: true, boxWidth: 8 },
-    },
-    tooltip: {
-      callbacks: {
-        label: (ctx: { label: string; parsed: number }) => `${ctx.label}: ${ctx.parsed}`,
+export function getLoadsPieOptions(isDark = true) {
+  const colors = getChartColors(isDark);
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    aspectRatio: 1,
+    plugins: {
+      legend: {
+        position: "bottom" as const,
+        labels: {
+          color: colors.textColor,
+          usePointStyle: true,
+          boxWidth: 8,
+        },
+      },
+      tooltip: {
+        backgroundColor: colors.tooltipBg,
+        titleColor: isDark ? "#f1f5f9" : "#0f172a",
+        bodyColor: colors.textColor,
+        borderColor: colors.tooltipBorder,
+        borderWidth: 1,
+        cornerRadius: 8,
+        padding: 12,
+        callbacks: {
+          label: (ctx: { label: string; parsed: number }) => `${ctx.label}: ${ctx.parsed}`,
+        },
       },
     },
-  },
-  layout: { padding: 0 },
-};
+    layout: { padding: 0 },
+  };
+}
 
-export const LOADS_TREND_CHART_OPTIONS = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { position: "top" },
-  },
-  scales: {
-    y: {
-      type: "linear",
-      display: true,
-      position: "left",
-      title: { display: true, text: "Load Count" },
+export function getLoadsTrendChartOptions(isDark = true) {
+  const colors = getChartColors(isDark);
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top" as const,
+        labels: { color: colors.textColor },
+      },
+      tooltip: {
+        backgroundColor: colors.tooltipBg,
+        titleColor: isDark ? "#f1f5f9" : "#0f172a",
+        bodyColor: colors.textColor,
+        borderColor: colors.tooltipBorder,
+        borderWidth: 1,
+        cornerRadius: 8,
+        padding: 12,
+      },
     },
-    y1: {
-      type: "linear",
-      display: true,
-      position: "right",
-      title: { display: true, text: "Revenue ($)" },
-      grid: { drawOnChartArea: false },
+    scales: {
+      y: {
+        type: "linear" as const,
+        display: true,
+        position: "left" as const,
+        title: {
+          display: true,
+          text: "Load Count",
+          color: colors.textColor,
+        },
+        grid: { color: colors.gridColor },
+        ticks: { color: colors.textColor },
+      },
+      y1: {
+        type: "linear" as const,
+        display: true,
+        position: "right" as const,
+        title: {
+          display: true,
+          text: "Revenue ($)",
+          color: colors.textColor,
+        },
+        grid: { drawOnChartArea: false },
+        ticks: { color: colors.textColor },
+      },
+      x: {
+        grid: { color: colors.gridColor },
+        ticks: { color: colors.textColor },
+      },
     },
-  },
-};
+  };
+}
 
-export const LOADS_TYPE_CHART_OPTIONS = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: {
-      position: "bottom",
-      labels: { color: TEXT_COLOR },
+export function getLoadsTypeChartOptions(isDark = true) {
+  const colors = getChartColors(isDark);
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "bottom" as const,
+        labels: { color: colors.textColor },
+      },
+      tooltip: {
+        backgroundColor: colors.tooltipBg,
+        titleColor: isDark ? "#f1f5f9" : "#0f172a",
+        bodyColor: colors.textColor,
+        borderColor: colors.tooltipBorder,
+        borderWidth: 1,
+        cornerRadius: 8,
+        padding: 12,
+      },
     },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      ticks: { color: TEXT_COLOR },
-      grid: { color: GRID_COLOR },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: { color: colors.textColor },
+        grid: { color: colors.gridColor },
+      },
+      x: {
+        ticks: { color: colors.textColor },
+        grid: { color: colors.gridColor },
+      },
     },
-    x: {
-      ticks: { color: TEXT_COLOR },
-      grid: { color: GRID_COLOR },
-    },
-  },
-};
+  };
+}
 
-export const LOADS_PERFORMANCE_CHART_OPTIONS = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: { legend: { display: false } },
-  scales: { y: { beginAtZero: true } },
-};
+export function getLoadsPerformanceChartOptions(isDark = true) {
+  const colors = getChartColors(isDark);
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: colors.tooltipBg,
+        titleColor: isDark ? "#f1f5f9" : "#0f172a",
+        bodyColor: colors.textColor,
+        borderColor: colors.tooltipBorder,
+        borderWidth: 1,
+        cornerRadius: 8,
+        padding: 12,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: { color: colors.gridColor },
+        ticks: { color: colors.textColor },
+      },
+      x: {
+        grid: { color: colors.gridColor },
+        ticks: { color: colors.textColor },
+      },
+    },
+  };
+}
+
+// Legacy exports for backward compatibility
+export const LOADS_PIE_OPTIONS = getLoadsPieOptions(true);
+export const LOADS_TREND_CHART_OPTIONS = getLoadsTrendChartOptions(true);
+export const LOADS_TYPE_CHART_OPTIONS = getLoadsTypeChartOptions(true);
+export const LOADS_PERFORMANCE_CHART_OPTIONS = getLoadsPerformanceChartOptions(true);
+
+// Legacy color exports
+export const TEXT_COLOR = "#94a3b8";
+export const GRID_COLOR = "rgba(45, 53, 72, 0.5)";

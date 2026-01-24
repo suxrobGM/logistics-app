@@ -1,36 +1,37 @@
-<div class="flex items-center">
-  <h1>Trips</h1>
-  <p-button
-    styleClass="text-black ml-2"
-    icon="pi pi-plus-circle"
-    size="large"
-    [rounded]="true"
-    [text]="true"
-    pTooltip="Add a new trip"
-    aria-label="Add a new trip"
-    [routerLink]="['/trips/add']"
-  />
-</div>
-
-<!-- Filter Panel -->
-<p-card class="mb-4">
-  <div class="mb-4 flex items-center justify-between">
-    <span class="text-lg font-semibold">Filters</span>
-    <div class="flex items-center gap-2">
-      @if (activeFilterCount() > 0) {
-        <span class="text-surface-500 text-sm">{{ activeFilterCount() }} active</span>
-      }
-      <p-button
-        label="Clear All"
-        icon="pi pi-times"
-        severity="secondary"
-        size="small"
-        [text]="true"
-        (click)="clearFilters()"
-        [disabled]="activeFilterCount() === 0"
-      />
-    </div>
+<div class="animate-fadein">
+  <div class="flex items-center">
+    <h1 class="text-(--text-primary)">Trips</h1>
+    <p-button
+      styleClass="ml-2"
+      icon="pi pi-plus-circle"
+      size="large"
+      [rounded]="true"
+      [text]="true"
+      pTooltip="Add a new trip"
+      aria-label="Add a new trip"
+      [routerLink]="['/trips/add']"
+    />
   </div>
+
+  <!-- Filter Panel -->
+  <p-card class="mb-4">
+    <div class="mb-4 flex items-center justify-between">
+      <span class="text-lg font-semibold text-(--text-primary)">Filters</span>
+      <div class="flex items-center gap-2">
+        @if (activeFilterCount() > 0) {
+          <span class="text-(--text-muted) text-sm">{{ activeFilterCount() }} active</span>
+        }
+        <p-button
+          label="Clear All"
+          icon="pi pi-times"
+          severity="secondary"
+          size="small"
+          [text]="true"
+          (click)="clearFilters()"
+          [disabled]="activeFilterCount() === 0"
+        />
+      </div>
+    </div>
 
   <div class="grid grid-cols-1 gap-x-4 md:grid-cols-2 lg:grid-cols-4">
     <ui-labeled-field label="Search">
@@ -75,11 +76,11 @@
         [binary]="true"
         inputId="activeTripsOnly"
       />
-      <label for="activeTripsOnly" class="cursor-pointer text-sm">Active trips only</label>
+      <label for="activeTripsOnly" class="cursor-pointer text-sm text-(--text-secondary)">Active trips only</label>
     </div>
 
     <div class="flex items-center gap-2">
-      <span class="text-surface-500 text-sm">Quick dates:</span>
+      <span class="text-(--text-muted) text-sm">Quick dates:</span>
       <p-button
         label="Today"
         size="small"
@@ -170,7 +171,7 @@
       </ng-template>
       <ng-template #body let-trip let-expanded="expanded">
         <tr
-          class="hover:bg-surface-100 transition-colors duration-150"
+          class="hover:bg-(--bg-hover) transition-colors duration-150"
           (click)="selectedRow.set(trip)"
         >
           <td>
@@ -220,7 +221,7 @@
           <td class="text-center">{{ trip.totalDistance | distanceUnit: "mi" }}</td>
           <td>
             <app-trip-status-tag [status]="trip.status" />
-            <div class="text-surface-500 text-xs italic">
+            <div class="text-(--text-muted) text-xs italic">
               @switch (trip.status) {
                 @case ("dispatched") {
                   {{ trip.dispatchedAt | date: "mediumDate" }}
@@ -335,5 +336,6 @@
   </ui-data-container>
 </p-card>
 
-<!-- Reusable context menu for the actions button -->
-<p-menu #menu [model]="actionMenuItems" [popup]="true" />
+  <!-- Reusable context menu for the actions button -->
+  <p-menu #menu [model]="actionMenuItems" [popup]="true" />
+</div>

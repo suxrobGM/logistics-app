@@ -10,6 +10,7 @@ import { AuthService } from "@/core/auth";
 import { TenantService } from "@/core/services";
 import { environment } from "@/env";
 import { PanelMenu } from "../panel-menu";
+import { ThemeToggle } from "../theme-toggle/theme-toggle";
 import { sidebarItems } from "./sidebar-items";
 
 @Component({
@@ -23,6 +24,7 @@ import { sidebarItems } from "./sidebar-items";
     SplitButtonModule,
     PanelMenuModule,
     PanelMenu,
+    ThemeToggle,
   ],
 })
 export class Sidebar {

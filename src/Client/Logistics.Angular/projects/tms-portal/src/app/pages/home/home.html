@@ -1,146 +1,143 @@
-<div class="mt-4 grid grid-cols-12 gap-3">
-  <div class="col-span-12 xl:col-span-7">
-    <p-card>
-      <ng-template #header>
-        <h4 class="py-2 pl-4">Trucks</h4>
-        <p-divider class="m-0" />
-      </ng-template>
-      <app-trucks-map height="700px" />
-    </p-card>
-  </div>
-
-  <div class="col-span-12 xl:col-span-5">
-    <p-card class="h-full">
-      <ng-template #header>
-        <h4 class="py-2 pl-4">Active loads</h4>
-        <p-divider class="m-0" />
-      </ng-template>
-
-      <p-table [value]="loads()" [loading]="isLoadingLoadsData()">
+<div class="animate-fadein">
+  <div class="grid grid-cols-12 gap-4 animate-stagger">
+    <div class="col-span-12 xl:col-span-7">
+      <p-card>
         <ng-template #header>
-          <tr>
-            <th>ID</th>
-            <th>Current Location</th>
-            <th>Truck</th>
-          </tr>
+          <div class="flex items-center gap-2 py-3 pl-4">
+            <i class="pi pi-map-marker text-(--primary-500)"></i>
+            <h4 class="mb-0">Fleet Tracking</h4>
+          </div>
+          <p-divider class="m-0" />
         </ng-template>
-        <ng-template #body let-load>
-          <tr>
-            <td>
-              <a [routerLink]="['/loads', load.id, 'edit']"> {{ load.number }} </a>
-            </td>
-            <td
-              [pTooltip]="formatAddress(load.currentAddress)"
-              [showDelay]="500"
-              tooltipPosition="bottom"
-            >
-              {{ load.currentAddress | address }}
-            </td>
-            <td>
-              <a [routerLink]="['/trucks', load.assignedTruckId]">
-                {{ load.assignedTruckNumber }}
-              </a>
-            </td>
-          </tr>
+        <app-trucks-map height="700px" />
+      </p-card>
+    </div>
+
+    <div class="col-span-12 xl:col-span-5">
+      <p-card class="h-full">
+        <ng-template #header>
+          <div class="flex items-center gap-2 py-3 pl-4">
+            <i class="pi pi-box text-(--primary-500)"></i>
+            <h4 class="mb-0">Active Loads</h4>
+          </div>
+          <p-divider class="m-0" />
         </ng-template>
-        <ng-template #footer>
-          <tr>
-            <td colspan="4" class="text-left">
-              <p-button label="Add" [routerLink]="['/loads/add']" />
-              <p-button class="ml-2" label="View all loads" [routerLink]="['/loads']" />
-            </td>
-          </tr>
+
+        <p-table [value]="loads()" [loading]="isLoadingLoadsData()">
+          <ng-template #header>
+            <tr>
+              <th>ID</th>
+              <th>Current Location</th>
+              <th>Truck</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-load>
+            <tr>
+              <td>
+                <a [routerLink]="['/loads', load.id, 'edit']"> {{ load.number }} </a>
+              </td>
+              <td
+                [pTooltip]="formatAddress(load.currentAddress)"
+                [showDelay]="500"
+                tooltipPosition="bottom"
+              >
+                {{ load.currentAddress | address }}
+              </td>
+              <td>
+                <a [routerLink]="['/trucks', load.assignedTruckId]">
+                  {{ load.assignedTruckNumber }}
+                </a>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template #footer>
+            <tr>
+              <td colspan="4" class="text-left">
+                <p-button label="Add" [routerLink]="['/loads/add']" />
+                <p-button class="ml-2" label="View all loads" [routerLink]="['/loads']" />
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+    </div>
+  </div>
+
+  <div class="mt-4 grid grid-cols-12 gap-4">
+    <div class="col-span-12">
+      <p-card>
+        <ng-template #header>
+          <div class="flex items-center gap-2 py-3 pl-4">
+            <i class="pi pi-chart-bar text-(--primary-500)"></i>
+            <h4 class="mb-0">Weekly Report</h4>
+          </div>
+          <p-divider class="m-0" />
         </ng-template>
-      </p-table>
-    </p-card>
+
+        @if (isLoadingChartData()) {
+          <div class="grid grid-cols-12 gap-4">
+            <div class="col-span-12 md:col-span-4">
+              <p-skeleton height="3rem" styleClass="skeleton-shimmer" />
+            </div>
+            <div class="col-span-12 md:col-span-4">
+              <p-skeleton height="3rem" styleClass="skeleton-shimmer" />
+            </div>
+            <div class="col-span-12 md:col-span-4">
+              <p-skeleton height="3rem" styleClass="skeleton-shimmer" />
+            </div>
+          </div>
+        } @else {
+          <div class="grid grid-cols-12 gap-4">
+            <div class="col-span-12 px-4 md:col-span-4">
+              <span class="text-xs font-medium uppercase tracking-wide text-(--text-muted)">Total Gross</span>
+              <div class="mt-1 font-mono text-2xl font-bold text-(--text-primary)">{{ weeklyGross() | currency }}</div>
+            </div>
+            <div class="col-span-12 px-4 md:col-span-4">
+              <span class="text-xs font-medium uppercase tracking-wide text-(--text-muted)">Billed Miles</span>
+              <div class="mt-1 font-mono text-2xl font-bold text-(--text-primary)">{{ weeklyDistance() | distanceUnit: "mi" }}</div>
+            </div>
+            <div class="col-span-12 px-4 md:col-span-4">
+              <span class="text-xs font-medium uppercase tracking-wide text-(--text-muted)">Rate Per Mile</span>
+              <div class="mt-1 font-mono text-2xl font-bold text-(--text-primary)">{{ weeklyRpm() | currency }}</div>
+            </div>
+          </div>
+        }
+      </p-card>
+    </div>
   </div>
-</div>
 
-<div class="mt-4 grid grid-cols-12 gap-3">
-  <div class="col-span-12">
-    <p-card>
-      <ng-template #header>
-        <h4 class="py-2 pl-4">Weekly Report</h4>
-        <p-divider class="m-0" />
-      </ng-template>
+  <div class="mt-4 grid grid-cols-12 gap-4">
+    <div class="col-span-12 xl:col-span-7">
+      <p-card>
+        <ng-template #header>
+          <div class="flex items-center gap-2 py-3 pl-4">
+            <i class="pi pi-chart-line text-(--primary-500)"></i>
+            <h4 class="mb-0">Daily Gross</h4>
+          </div>
+          <p-divider class="m-0" />
+        </ng-template>
 
-      @if (isLoadingChartData()) {
-        <div class="grid grid-cols-12">
-          <div class="col-span-12 md:col-span-4">
-            <p-skeleton height="3rem" />
+        @if (isLoadingChartData()) {
+          <div class="grid grid-cols-12">
+            <div class="col-span-12">
+              <p-skeleton height="20vh" styleClass="skeleton-shimmer" />
+            </div>
           </div>
-          <div class="col-span-12 md:col-span-4">
-            <p-skeleton height="3rem" />
+        } @else {
+          <div class="grid grid-cols-12 items-center">
+            <div class="col-span-12 mb-2 md:col-span-3">
+              <span class="text-xs font-medium uppercase tracking-wide text-(--text-muted)">Today Gross</span>
+              <div class="mt-1 font-mono text-2xl font-bold text-(--primary-500)">{{ todayGross() | currency }}</div>
+            </div>
+            <div class="col-span-12 min-w-0 md:col-span-9">
+              <p-chart type="line" [data]="chartData()" [options]="chartOptions()" height="20vh" />
+            </div>
           </div>
-          <div class="col-span-12 md:col-span-4">
-            <p-skeleton height="3rem" />
-          </div>
-        </div>
-      } @else {
-        <div class="grid grid-cols-12">
-          <div class="col-span-12 px-4 md:col-span-4">
-            <span class="text-gray-600 uppercase">Total Gross:</span><br />
-            <span class="text-2xl font-bold">{{ weeklyGross() | currency }}</span>
-          </div>
-          <div class="col-span-12 px-4 md:col-span-4">
-            <span class="text-gray-600 uppercase">Billed Miles:</span><br />
-            <span class="text-2xl font-bold">{{ weeklyDistance() | distanceUnit: "mi" }}</span>
-          </div>
-          <div class="col-span-12 px-4 md:col-span-4">
-            <span class="text-gray-600 uppercase">Rate Per Mile:</span><br />
-            <span class="text-2xl font-bold">{{ weeklyRpm() | currency }}</span>
-          </div>
-        </div>
-      }
-
-      <ng-template #data>
-        <div class="grid grid-cols-12">
-          <div class="col-span-12 px-4 md:col-span-4">
-            <span class="text-gray-600 uppercase">Total Gross:</span><br />
-            <span class="text-2xl font-bold">{{ weeklyGross() | currency }}</span>
-          </div>
-          <div class="col-span-12 px-4 md:col-span-4">
-            <span class="text-gray-600 uppercase">Billed Miles:</span><br />
-            <span class="text-2xl font-bold">{{ weeklyDistance() | distanceUnit: "mi" }}</span>
-          </div>
-          <div class="col-span-12 px-4 md:col-span-4">
-            <span class="text-gray-600 uppercase">Rate Per Mile:</span><br />
-            <span class="text-2xl font-bold">{{ weeklyRpm() | currency }}</span>
-          </div>
-        </div>
-      </ng-template>
-    </p-card>
-  </div>
-</div>
-
-<div class="mt-4 grid grid-cols-12 gap-3">
-  <div class="col-span-12 xl:col-span-7">
-    <p-card>
-      <ng-template #header>
-        <h4 class="py-2 pl-4">Daily Gross</h4>
-        <p-divider class="m-0" />
-      </ng-template>
-
-      @if (isLoadingChartData()) {
-        <div class="grid grid-cols-12">
-          <div class="col-span-12">
-            <p-skeleton height="20vh" />
-          </div>
-        </div>
-      } @else {
-        <div class="grid grid-cols-12">
-          <div class="col-span-12 mb-2 md:col-span-3">
-            <span class="font-bold">Today Gross:</span><br />
-            <span class="text-2xl font-bold">{{ todayGross() | currency }}</span>
-          </div>
-          <div class="col-span-12 min-w-0 md:col-span-9">
-            <p-chart type="line" [data]="chartData()" [options]="chartOptions()" height="20vh" />
-          </div>
-        </div>
-      }
-    </p-card>
-  </div>
-  <div class="col-span-12 xl:col-span-5">
-    <app-notifications-panel height="400px" />
+        }
+      </p-card>
+    </div>
+    <div class="col-span-12 xl:col-span-5">
+      <app-notifications-panel height="400px" />
+    </div>
   </div>
 </div>

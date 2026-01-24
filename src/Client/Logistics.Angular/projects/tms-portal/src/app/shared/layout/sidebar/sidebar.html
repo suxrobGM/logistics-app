@@ -1,40 +1,50 @@
 <div class="sidebar" [class.minimized]="!isOpened()">
-  <a class="navbar-brand border-bottom p-2">
+  <!-- Logo Section -->
+  <div class="sidebar-header">
     @if (companyLogoUrl()) {
-      <img [src]="companyLogoUrl()" class="h-10 w-auto max-w-full object-contain" alt="Company logo" />
+      <img [src]="companyLogoUrl()" class="sidebar-logo" alt="Company logo" />
     } @else {
-      <img src="images/logo.svg" class="h-auto max-w-full" height="40" alt="logo" />
+      <img src="images/logo.svg" class="sidebar-logo" alt="logo" />
     }
     @if (isOpened()) {
-      <h4 class="mt-1">{{ companyName() }}</h4>
+      <h4 class="sidebar-company-name">{{ companyName() }}</h4>
     }
-  </a>
+  </div>
 
-  <ul class="nav mb-auto flex-col">
-    <li>
-      <app-panel-menu [items]="navItems()" [(expanded)]="isOpened" />
-    </li>
-    <li>
-      <a class="nav-link border-bottom pt-2 pl-4">
-        <i
-          [class]="isOpened() ? 'pi pi-arrow-left text-3xl!' : 'pi pi-arrow-right text-3xl!'"
-          (click)="toggle()"
-          [pTooltip]="isOpened() ? 'Minimize menu' : 'Maximize menu'"
-          role="presentation"
-        ></i>
-      </a>
-    </li>
-  </ul>
+  <!-- Navigation -->
+  <nav class="sidebar-nav">
+    <app-panel-menu [items]="navItems()" [(expanded)]="isOpened" />
+  </nav>
 
-  @if (userFullName()) {
-    <div class="border-top flex flex-col" [class.items-center]="!isOpened()">
-      @if (userRole() && isOpened()) {
-        <div class="px-3 py-2 text-left select-none">
-          Role: <span class="font-bold">{{ userRole() }}</span>
-        </div>
-      }
+  <!-- Collapse Toggle -->
+  <button
+    class="sidebar-toggle"
+    (click)="toggle()"
+    [pTooltip]="isOpened() ? 'Minimize menu' : 'Maximize menu'"
+    tooltipPosition="right"
+    type="button"
+  >
+    <i [class]="isOpened() ? 'pi pi-chevron-left' : 'pi pi-chevron-right'"></i>
+    @if (isOpened()) {
+      <span>Collapse</span>
+    }
+  </button>
 
-      <app-panel-menu [items]="profileMenuItems" [(expanded)]="isOpened" class="w-full" />
-    </div>
-  }
+  <!-- Footer Section -->
+  <div class="sidebar-footer" [class.sidebar-footer-collapsed]="!isOpened()">
+    <!-- Theme Toggle -->
+    <app-theme-toggle [showLabel]="isOpened()" />
+
+    <!-- User Section -->
+    @if (userFullName()) {
+      <div class="sidebar-user">
+        @if (userRole() && isOpened()) {
+          <div class="sidebar-user-role">
+            Role: <span>{{ userRole() }}</span>
+          </div>
+        }
+        <app-panel-menu [items]="profileMenuItems" [(expanded)]="isOpened" class="w-full" />
+      </div>
+    }
+  </div>
 </div>

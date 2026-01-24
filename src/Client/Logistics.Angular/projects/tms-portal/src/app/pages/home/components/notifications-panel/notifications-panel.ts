@@ -4,6 +4,7 @@ import type { NotificationDto } from "@logistics/shared/api/models";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
+import { DividerModule } from "primeng/divider";
 import { OverlayBadgeModule } from "primeng/overlaybadge";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { NotificationService, ToastService } from "@/core/services";
@@ -17,10 +18,11 @@ import { TimeAgoPipe } from "@/shared/pipes";
     CommonModule,
     CardModule,
     ButtonModule,
-    TimeAgoPipe,
+    DialogModule,
+    DividerModule,
     OverlayBadgeModule,
     ProgressSpinnerModule,
-    DialogModule,
+    TimeAgoPipe,
   ],
 })
 export class NotificationsPanelComponent implements OnDestroy {

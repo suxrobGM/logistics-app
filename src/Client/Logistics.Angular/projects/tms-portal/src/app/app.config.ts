@@ -5,7 +5,6 @@ import { provideRouter, withComponentInputBinding } from "@angular/router";
 import { getAccessToken, PERMISSION_CHECKER } from "@logistics/shared";
 import { provideApi } from "@logistics/shared/api";
 import { PermissionService } from "@/core/auth";
-import Aura from "@primeuix/themes/aura";
 import { provideAuth } from "angular-auth-oidc-client";
 import { provideMapboxGL } from "ngx-mapbox-gl";
 import { ConfirmationService, MessageService } from "primeng/api";
@@ -14,6 +13,7 @@ import { authConfig } from "@/core/auth";
 import { tenantInterceptor } from "@/core/interceptors";
 import { environment } from "@/env";
 import { appRoutes } from "./app.routes";
+import { TmsPreset, TmsThemeOptions } from "@/core/theme/primeng-preset";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,10 +28,8 @@ export const appConfig: ApplicationConfig = {
     }),
     providePrimeNG({
       theme: {
-        preset: Aura,
-        options: {
-          darkModeSelector: false, // force light only
-        },
+        preset: TmsPreset,
+        options: TmsThemeOptions,
       },
     }),
     provideMapboxGL({ accessToken: environment.mapboxToken }),

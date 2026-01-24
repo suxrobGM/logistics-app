@@ -1,0 +1,13 @@
+<button
+  class="theme-toggle"
+  (click)="toggleTheme()"
+  [pTooltip]="isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+  tooltipPosition="right"
+  [attr.aria-label]="isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+  type="button"
+>
+  <i [class]="isDark() ? 'pi pi-sun' : 'pi pi-moon'"></i>
+  @if (showLabel()) {
+    <span class="theme-toggle-label">{{ isDark() ? "Light Mode" : "Dark Mode" }}</span>
+  }
+</button>

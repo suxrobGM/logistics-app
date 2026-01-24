@@ -1,0 +1,133 @@
+/**
+ * TMS Portal Design System - CSS Custom Properties
+ * Dual Theme: Cool Slate Light (default) + Dark Professional
+ */
+
+/* === Light Theme (Default) === */
+:root {
+  /* Typography */
+  --font-sans: "DM Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, monospace;
+
+  /* Background Colors */
+  --bg-base: #f1f5f9;
+  --bg-surface: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-hover: #e2e8f0;
+  --bg-active: #cbd5e1;
+
+  /* Text Colors */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-inverse: #f1f5f9;
+
+  /* Border Colors */
+  --border-subtle: #e2e8f0;
+  --border-default: #cbd5e1;
+  --border-strong: #94a3b8;
+
+  /* Primary Accent (Cyan) */
+  --primary-50: #ecfeff;
+  --primary-100: #cffafe;
+  --primary-200: #a5f3fc;
+  --primary-300: #67e8f9;
+  --primary-400: #22d3ee;
+  --primary-500: #0891b2;
+  --primary-600: #0e7490;
+  --primary-700: #155e75;
+  --primary-800: #164e63;
+  --primary-900: #134e4a;
+
+  /* Status Colors */
+  --status-pending: #d97706;
+  --status-dispatched: #2563eb;
+  --status-pickedup: #7c3aed;
+  --status-delivered: #16a34a;
+  --status-cancelled: #dc2626;
+  --status-completed: #0891b2;
+
+  /* Semantic Colors */
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --info: #2563eb;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 20px rgba(8, 145, 178, 0.1);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Sidebar */
+  --sidebar-bg: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+  --sidebar-border: #e2e8f0;
+
+  /* Shimmer */
+  --shimmer-base: #e2e8f0;
+  --shimmer-highlight: #f1f5f9;
+}
+
+/* === Dark Theme Override === */
+.dark-theme {
+  /* Background Colors */
+  --bg-base: #0f1419;
+  --bg-surface: #1a1f2e;
+  --bg-elevated: #242b3d;
+  --bg-hover: #2d3548;
+  --bg-active: #363f54;
+
+  /* Text Colors */
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverse: #0f172a;
+
+  /* Border Colors */
+  --border-subtle: #2d3548;
+  --border-default: #3d4760;
+  --border-strong: #4d5a78;
+
+  /* Primary Accent - brighter for dark bg */
+  --primary-500: #06b6d4;
+  --primary-600: #0891b2;
+
+  /* Status Colors - brighter for dark bg */
+  --status-pending: #f59e0b;
+  --status-dispatched: #3b82f6;
+  --status-pickedup: #8b5cf6;
+  --status-delivered: #22c55e;
+  --status-cancelled: #ef4444;
+  --status-completed: #06b6d4;
+
+  /* Semantic Colors - brighter for dark bg */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+
+  /* Shadows - darker for dark theme */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 20px rgba(6, 182, 212, 0.15);
+
+  /* Sidebar */
+  --sidebar-bg: linear-gradient(180deg, #1a1f2e 0%, #0f1419 100%);
+  --sidebar-border: #2d3548;
+
+  /* Shimmer */
+  --shimmer-base: #242b3d;
+  --shimmer-highlight: #2d3548;
+}

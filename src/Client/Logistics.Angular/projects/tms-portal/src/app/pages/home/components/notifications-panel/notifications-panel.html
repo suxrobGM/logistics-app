@@ -1,34 +1,35 @@
 <p-card>
   <ng-template #header>
-    <div class="flex gap-3 p-3">
+    <div class="flex items-center gap-2 py-3 pl-4">
       <p-overlaybadge [value]="getUnreadNotificationsCount()">
-        <i class="pi pi-bell text-2xl!"></i>
+        <i class="pi pi-bell text-2xl text-(--primary-500)"></i>
       </p-overlaybadge>
-      <span class="text-lg font-bold">Notifications</span>
+      <h4 class="mb-0">Notifications</h4>
     </div>
+    <p-divider class="m-0" />
   </ng-template>
 
   <div class="notification-list" [style]="{ maxHeight: height() }">
     @if (isLoading()) {
-      <p-progress-spinner />
+      <div class="notification-loading">
+        <p-progress-spinner />
+      </div>
     } @else {
       @for (notification of notifications(); track notification.id) {
         <div
-          class="notification-item border-bottom my-1"
-          [class.bg-lighter]="!notification.isRead"
+          class="notification-item"
+          [class.unread]="!notification.isRead"
           (click)="showNotification(notification)"
           role="presentation"
         >
           <h5>{{ notification.title }}</h5>
-          <div class="row">
-            <div class="col-10">{{ notification.message }}</div>
-            <div class="col-2">
-              <small class="text-muted">{{ notification.createdDate ?? "" | timeAgo }}</small>
-            </div>
+          <div class="flex items-start justify-between gap-2">
+            <span class="notification-message">{{ notification.message }}</span>
+            <span class="notification-time whitespace-nowrap">{{ notification.createdDate ?? "" | timeAgo }}</span>
           </div>
         </div>
       } @empty {
-        <p class="text-muted p-3">No notifications.</p>
+        <p class="notification-empty">No notifications.</p>
       }
     }
   </div>

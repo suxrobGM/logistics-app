@@ -1,8 +1,10 @@
-<h1 class="text-center">Dashboard</h1>
+<div class="animate-fadein">
+  <h1 class="mb-6 text-center">Dashboard</h1>
 
-<div class="mt-4 grid grid-cols-12 gap-3">
-  <app-company-stats class="col-span-12 md:col-span-6" />
-  <app-trucks-map class="col-span-12 md:col-span-6" height="550px" />
-  <app-truck-stats-table class="col-span-12" />
-  <app-grosses-barchart class="col-span-12" chartColor="#88a5d3" />
+  <div class="grid grid-cols-12 gap-4 animate-stagger">
+    <app-company-stats class="col-span-12 md:col-span-6" />
+    <app-trucks-map class="col-span-12 md:col-span-6" height="550px" />
+    <app-truck-stats-table class="col-span-12" />
+    <app-grosses-barchart class="col-span-12" chartColor="#06b6d4" />
+  </div>
 </div>

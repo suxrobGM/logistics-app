@@ -1,0 +1,174 @@
+/**
+ * TMS Portal - Custom Component Styles
+ * App-specific components only - PrimeNG handled by definePreset
+ */
+
+/* === Login Page === */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: var(--bg-base);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 28rem;
+  padding: 2rem;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.login-logo {
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: color-mix(in srgb, var(--primary-500) 10%, transparent);
+}
+
+.login-logo i {
+  font-size: 1.75rem;
+  color: var(--primary-500);
+}
+
+.login-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.login-subtitle,
+.login-description {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* === PrimeNG Dark Mode Overrides === */
+/* Override PrimeNG component backgrounds for dark theme */
+.dark-theme {
+  /* Card */
+  --p-card-background: var(--bg-surface);
+  --p-card-color: var(--text-primary);
+
+  /* DataTable */
+  --p-datatable-header-cell-background: var(--bg-surface);
+  --p-datatable-header-cell-color: var(--text-primary);
+  --p-datatable-row-background: var(--bg-surface);
+  --p-datatable-row-color: var(--text-primary);
+  --p-datatable-body-cell-border-color: var(--border-subtle);
+
+  /* Form fields */
+  --p-inputtext-background: var(--bg-surface);
+  --p-inputtext-color: var(--text-primary);
+  --p-inputtext-border-color: var(--border-default);
+
+  /* Select/Dropdown */
+  --p-select-background: var(--bg-surface);
+  --p-select-color: var(--text-primary);
+  --p-select-border-color: var(--border-default);
+  --p-select-overlay-background: var(--bg-surface);
+
+  /* MultiSelect */
+  --p-multiselect-background: var(--bg-surface);
+  --p-multiselect-color: var(--text-primary);
+  --p-multiselect-border-color: var(--border-default);
+  --p-multiselect-overlay-background: var(--bg-surface);
+
+  /* Paginator */
+  --p-paginator-background: var(--bg-surface);
+
+  /* Panel/Accordion */
+  --p-panel-background: var(--bg-surface);
+  --p-accordion-header-background: var(--bg-surface);
+}
+
+/* === Custom Animations === */
+/* Staggered children animation (not provided by PrimeNG) */
+@keyframes stagger-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .animate-stagger > * {
+    animation: stagger-fade-in 0.3s ease-out forwards;
+    opacity: 0;
+  }
+
+  .animate-stagger > *:nth-child(1) {
+    animation-delay: 0ms;
+  }
+  .animate-stagger > *:nth-child(2) {
+    animation-delay: 50ms;
+  }
+  .animate-stagger > *:nth-child(3) {
+    animation-delay: 100ms;
+  }
+  .animate-stagger > *:nth-child(4) {
+    animation-delay: 150ms;
+  }
+  .animate-stagger > *:nth-child(5) {
+    animation-delay: 200ms;
+  }
+  .animate-stagger > *:nth-child(n + 6) {
+    animation-delay: 250ms;
+  }
+
+  /* Shimmer loading effect */
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--shimmer-base) 0%,
+      var(--shimmer-highlight) 50%,
+      var(--shimmer-base) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* === Accessibility: Reduced Motion === */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

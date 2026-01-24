@@ -5,14 +5,31 @@
     <title>TMS Portal</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="only light" />
+    <meta name="color-scheme" content="dark light" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <!-- DM Sans Font - Modern, geometric, technical aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap"
       rel="stylesheet"
-      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
     />
   </head>
   <body>
     <app-root></app-root>
+    <script>
+      // Initialize theme from localStorage or system preference
+      // Must run before Angular to ensure PrimeNG picks up the correct theme
+      (function () {
+        const stored = localStorage.getItem("tms-theme");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const isDark = stored ? stored === "dark" : prefersDark;
+        if (isDark) {
+          document.documentElement.classList.add("dark-theme");
+        } else {
+          document.documentElement.classList.add("light-theme");
+        }
+      })();
+    </script>
   </body>
 </html>

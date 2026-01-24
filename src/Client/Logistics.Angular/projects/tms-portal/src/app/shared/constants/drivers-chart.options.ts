@@ -1,46 +1,137 @@
+// Drivers chart configs
+import { getChartColors } from "./financials-chart.options";
+
 export const DRIVERS_CHART_PALETTE = [
-  "#2563eb",
-  "#16a34a",
-  "#f59e0b",
-  "#a855f7",
-  "#ef4444",
-  "#06b6d4",
-  "#f97316",
+  "#3b82f6", // Blue
+  "#22c55e", // Green
+  "#f59e0b", // Amber
+  "#8b5cf6", // Purple
+  "#ef4444", // Red
+  "#06b6d4", // Cyan
+  "#f97316", // Orange
 ];
 
-export const DRIVERS_TREND_CHART_OPTIONS = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: { legend: { position: "top" } },
-  scales: {
-    y: {
-      type: "linear",
-      display: true,
-      position: "left",
-      title: { display: true, text: "Active Drivers" },
+export function getDriversTrendChartOptions(isDark = true) {
+  const colors = getChartColors(isDark);
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "top" as const,
+        labels: { color: colors.textColor },
+      },
+      tooltip: {
+        backgroundColor: colors.tooltipBg,
+        titleColor: isDark ? "#f1f5f9" : "#0f172a",
+        bodyColor: colors.textColor,
+        borderColor: colors.tooltipBorder,
+        borderWidth: 1,
+        cornerRadius: 8,
+        padding: 12,
+      },
     },
-    y1: {
-      type: "linear",
-      display: true,
-      position: "right",
-      title: { display: true, text: "Loads Delivered" },
-      grid: { drawOnChartArea: false },
+    scales: {
+      y: {
+        type: "linear" as const,
+        display: true,
+        position: "left" as const,
+        title: {
+          display: true,
+          text: "Active Drivers",
+          color: colors.textColor,
+        },
+        grid: { color: colors.gridColor },
+        ticks: { color: colors.textColor },
+      },
+      y1: {
+        type: "linear" as const,
+        display: true,
+        position: "right" as const,
+        title: {
+          display: true,
+          text: "Loads Delivered",
+          color: colors.textColor,
+        },
+        grid: { drawOnChartArea: false },
+        ticks: { color: colors.textColor },
+      },
+      x: {
+        grid: { color: colors.gridColor },
+        ticks: { color: colors.textColor },
+      },
     },
-  },
-};
+  };
+}
 
-export const DRIVERS_PERFORMANCE_CHART_OPTIONS = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: { legend: { display: false } },
-  scales: {
-    y: { beginAtZero: true, title: { display: true, text: "Earnings ($)" } },
-  },
-};
+export function getDriversPerformanceChartOptions(isDark = true) {
+  const colors = getChartColors(isDark);
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: colors.tooltipBg,
+        titleColor: isDark ? "#f1f5f9" : "#0f172a",
+        bodyColor: colors.textColor,
+        borderColor: colors.tooltipBorder,
+        borderWidth: 1,
+        cornerRadius: 8,
+        padding: 12,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Earnings ($)",
+          color: colors.textColor,
+        },
+        grid: { color: colors.gridColor },
+        ticks: { color: colors.textColor },
+      },
+      x: {
+        grid: { color: colors.gridColor },
+        ticks: { color: colors.textColor },
+      },
+    },
+  };
+}
 
-export const DRIVERS_EFFICIENCY_CHART_OPTIONS = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: { legend: { display: false } },
-  scales: { y: { beginAtZero: true } },
-};
+export function getDriversEfficiencyChartOptions(isDark = true) {
+  const colors = getChartColors(isDark);
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: colors.tooltipBg,
+        titleColor: isDark ? "#f1f5f9" : "#0f172a",
+        bodyColor: colors.textColor,
+        borderColor: colors.tooltipBorder,
+        borderWidth: 1,
+        cornerRadius: 8,
+        padding: 12,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: { color: colors.gridColor },
+        ticks: { color: colors.textColor },
+      },
+      x: {
+        grid: { color: colors.gridColor },
+        ticks: { color: colors.textColor },
+      },
+    },
+  };
+}
+
+// Legacy exports for backward compatibility
+export const DRIVERS_TREND_CHART_OPTIONS = getDriversTrendChartOptions(true);
+export const DRIVERS_PERFORMANCE_CHART_OPTIONS = getDriversPerformanceChartOptions(true);
+export const DRIVERS_EFFICIENCY_CHART_OPTIONS = getDriversEfficiencyChartOptions(true);
