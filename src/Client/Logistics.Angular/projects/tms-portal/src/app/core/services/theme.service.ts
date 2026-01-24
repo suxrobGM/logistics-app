@@ -30,25 +30,30 @@ export class ThemeService {
   }
 
   private initializeTheme(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const stored = localStorage.getItem(THEME_STORAGE_KEY);
-      const isDarkMode = stored === "dark";
-      this.isDark.set(isDarkMode);
-      this.applyTheme(isDarkMode);
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
     }
+
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const stored = localStorage.getItem(THEME_STORAGE_KEY);
+    const isDarkMode = stored ? stored === "dark" : prefersDark;
+    this.isDark.set(isDarkMode);
+    this.applyTheme(isDarkMode);
   }
 
   private applyTheme(isDark: boolean): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const html = document.documentElement;
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
 
-      if (isDark) {
-        html.classList.add("dark-theme");
-        html.classList.remove("light-theme");
-      } else {
-        html.classList.remove("dark-theme");
-        html.classList.add("light-theme");
-      }
+    const html = document.documentElement;
+
+    if (isDark) {
+      html.classList.add("dark-theme");
+      html.classList.remove("light-theme");
+    } else {
+      html.classList.remove("dark-theme");
+      html.classList.add("light-theme");
     }
   }
 

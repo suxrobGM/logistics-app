@@ -20,16 +20,17 @@
     <script>
       // Initialize theme from localStorage or system preference
       // Must run before Angular to ensure PrimeNG picks up the correct theme
-      (function () {
-        const stored = localStorage.getItem("tms-theme");
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        const isDark = stored ? stored === "dark" : prefersDark;
-        if (isDark) {
-          document.documentElement.classList.add("dark-theme");
-        } else {
-          document.documentElement.classList.add("light-theme");
-        }
-      })();
+      const stored = localStorage.getItem("tms-theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const isDark = stored ? stored === "dark" : prefersDark;
+
+      if (isDark) {
+        document.documentElement.classList.add("dark-theme");
+      } else {
+        document.documentElement.classList.add("light-theme");
+      }
+
+      console.log(`Initialized theme: ${isDark ? "dark" : "light"}`);
     </script>
   </body>
 </html>
