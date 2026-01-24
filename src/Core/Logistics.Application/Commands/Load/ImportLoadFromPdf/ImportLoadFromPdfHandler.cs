@@ -113,13 +113,19 @@ internal sealed class ImportLoadFromPdfHandler(
                 "Current user is not an employee. Cannot assign as dispatcher.");
         }
 
-        // Step 6: Find truck (required)
-        var truck = await tenantUow.Repository<Truck>()
-            .GetAsync(t => t.Id == request.AssignedTruckId, ct);
-
-        if (truck is null)
+        // Step 6: Find truck (optional)
+        Guid? truckId = null;
+        if (request.AssignedTruckId.HasValue)
         {
-            return Result<ImportLoadFromPdfResponse>.Fail("Specified truck not found.");
+            var truck = await tenantUow.Repository<Truck>()
+                .GetAsync(t => t.Id == request.AssignedTruckId.Value, ct);
+
+            if (truck is null)
+            {
+                return Result<ImportLoadFromPdfResponse>.Fail("Specified truck not found.");
+            }
+
+            truckId = truck.Id;
         }
 
         // Step 7: Create the load
@@ -133,7 +139,7 @@ internal sealed class ImportLoadFromPdfHandler(
                 extractedData.PaymentAmount ?? 0,
                 0, // Will be calculated from coordinates
                 customer.Id,
-                truck.Id,
+                truckId,
                 dispatcher.Id);
 
             var newLoad = await loadService.CreateLoadAsync(createLoadParameters, ct: ct);

@@ -106,10 +106,7 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
         return Path.Combine(containerPath, blobName);
     }
 
-    private static string GetMetadataPath(string filePath)
-    {
-        return $"{filePath}.metadata";
-    }
+    private static string GetMetadataPath(string filePath) => $"{filePath}.metadata";
 
     private string GetFileUri(string containerName, string blobName)
     {

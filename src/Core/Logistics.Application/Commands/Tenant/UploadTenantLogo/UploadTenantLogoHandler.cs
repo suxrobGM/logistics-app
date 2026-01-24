@@ -28,7 +28,7 @@ internal sealed class UploadTenantLogoHandler(
             return Result<string>.Fail("File size exceeds the maximum allowed (5 MB)");
         }
 
-        var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(req.TenantId);
+        var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(req.TenantId, ct);
         if (tenant is null)
         {
             return Result<string>.Fail($"Could not find a tenant with ID '{req.TenantId}'");
@@ -63,7 +63,7 @@ internal sealed class UploadTenantLogoHandler(
             // Update tenant's logo path
             tenant.LogoPath = blobPath;
             masterUow.Repository<Tenant>().Update(tenant);
-            await masterUow.SaveChangesAsync();
+            await masterUow.SaveChangesAsync(ct);
 
             return Result<string>.Ok(blobPath);
         }

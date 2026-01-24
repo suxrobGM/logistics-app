@@ -85,7 +85,7 @@ csharp_style_conditional_delegate_call = true:suggestion
 
 # Modifier preferences
 csharp_prefer_static_local_function = true:warning
-csharp_preferred_modifier_order = public,private,protected,internal,file,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,required,volatile,async:warning
+csharp_preferred_modifier_order = public, private, protected, internal, file, static, extern, new, virtual, abstract, sealed, override, readonly, unsafe, required, volatile, async:warning
 
 # Code block preferences
 csharp_prefer_braces = true:warning
@@ -192,10 +192,6 @@ dotnet_naming_rule.local_variables_should_be_camel_case.style = camel_case
 dotnet_naming_rule.parameters_should_be_camel_case.severity = suggestion
 dotnet_naming_rule.parameters_should_be_camel_case.symbols = parameters
 dotnet_naming_rule.parameters_should_be_camel_case.style = camel_case
-
-dotnet_naming_rule.async_methods_should_end_with_async.severity = suggestion
-dotnet_naming_rule.async_methods_should_end_with_async.symbols = async_methods
-dotnet_naming_rule.async_methods_should_end_with_async.style = async_suffix
 
 # Symbol specifications
 dotnet_naming_symbols.interface.applicable_kinds = interface

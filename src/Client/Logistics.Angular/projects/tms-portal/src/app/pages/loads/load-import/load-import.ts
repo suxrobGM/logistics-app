@@ -45,19 +45,11 @@ export class LoadImportComponent {
   protected readonly importResult = signal<ImportLoadFromPdfResponse | null>(null);
   protected readonly error = signal<string | null>(null);
   protected readonly selectedTruck = signal<TruckDto | null>(null);
-  protected readonly canUpload = computed(
-    () => this.selectedTruck() !== null && !this.isUploading(),
-  );
+  protected readonly canUpload = computed(() => !this.isUploading());
 
   protected async onFileSelect(event: FileSelectEvent): Promise<void> {
     const file = event.files[0];
     if (!file) return;
-
-    const truck = this.selectedTruck();
-    if (!truck?.id) {
-      this.error.set("Please select a truck before uploading");
-      return;
-    }
 
     // Validate file type
     if (!file.name.toLowerCase().endsWith(".pdf")) {
@@ -80,7 +72,7 @@ export class LoadImportComponent {
       const response = await this.api.invoke(importLoadFromPdf, {
         body: {
           File: file,
-          AssignedTruckId: truck.id,
+          AssignedTruckId: this.selectedTruck()?.id ?? undefined,
         },
       });
 

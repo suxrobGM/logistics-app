@@ -13,11 +13,11 @@
   </ng-template>
 
   @if (!importResult()) {
-    <!-- Truck Selection -->
+    <!-- Truck Selection (Optional) -->
     <ui-labeled-field
       label="Assign Truck"
-      [required]="true"
-      hint="Select a truck to assign to the imported load"
+      [required]="false"
+      hint="Optionally select a truck to assign to the imported load"
     >
       <app-search-truck
         [selectedTruck]="selectedTruck()"
