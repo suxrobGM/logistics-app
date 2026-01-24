@@ -15,7 +15,8 @@ internal sealed class DocumentEntityConfiguration : IEntityTypeConfiguration<Doc
         builder.HasDiscriminator(d => d.OwnerType)
             .HasValue<EmployeeDocument>(DocumentOwnerType.Employee)
             .HasValue<LoadDocument>(DocumentOwnerType.Load)
-            .HasValue<DeliveryDocument>(DocumentOwnerType.Delivery);
+            .HasValue<DeliveryDocument>(DocumentOwnerType.Delivery)
+            .HasValue<TruckDocument>(DocumentOwnerType.Truck);
 
         builder.Property(d => d.FileName)
             .IsRequired()
@@ -115,6 +116,19 @@ internal sealed class DocumentEntityConfiguration : IEntityTypeConfiguration<Doc
                 .WithMany()
                 .HasForeignKey(d => d.TripStopId)
                 .OnDelete(DeleteBehavior.SetNull);
+        }
+    }
+
+    public sealed class TruckDocumentConfiguration : IEntityTypeConfiguration<TruckDocument>
+    {
+        public void Configure(EntityTypeBuilder<TruckDocument> builder)
+        {
+            builder.HasOne(td => td.Truck)
+                .WithMany(t => t.Documents)
+                .HasForeignKey(td => td.TruckId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasIndex(td => td.TruckId);
         }
     }
 

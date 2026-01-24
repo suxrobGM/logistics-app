@@ -8,15 +8,9 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Queries;
 
 internal sealed class
-    GetDocumentsHandler : IAppRequestHandler<GetDocumentsQuery, Result<IEnumerable<DocumentDto>>>
+    GetDocumentsHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<GetDocumentsQuery, Result<IEnumerable<DocumentDto>>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetDocumentsHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<Result<IEnumerable<DocumentDto>>> Handle(
         GetDocumentsQuery req, CancellationToken ct)
     {
@@ -24,17 +18,23 @@ internal sealed class
         switch (req.OwnerType)
         {
             case DocumentOwnerType.Load when req.OwnerId is not null:
-                if (await _tenantUow.Repository<Load>().GetByIdAsync(req.OwnerId.Value, ct) is null)
+                if (await tenantUow.Repository<Load>().GetByIdAsync(req.OwnerId.Value, ct) is null)
                 {
                     return Result<IEnumerable<DocumentDto>>.Fail($"Could not find load with ID '{req.OwnerId}'");
                 }
 
                 break;
-
             case DocumentOwnerType.Employee when req.OwnerId is not null:
-                if (await _tenantUow.Repository<Employee>().GetByIdAsync(req.OwnerId.Value, ct) is null)
+                if (await tenantUow.Repository<Employee>().GetByIdAsync(req.OwnerId.Value, ct) is null)
                 {
                     return Result<IEnumerable<DocumentDto>>.Fail($"Could not find employee with ID '{req.OwnerId}'");
+                }
+
+                break;
+            case DocumentOwnerType.Truck when req.OwnerId is not null:
+                if (await tenantUow.Repository<Truck>().GetByIdAsync(req.OwnerId.Value, ct) is null)
+                {
+                    return Result<IEnumerable<DocumentDto>>.Fail($"Could not find truck with ID '{req.OwnerId}'");
                 }
 
                 break;
@@ -45,7 +45,7 @@ internal sealed class
         List<DocumentDto> dtos;
         if (req is { OwnerType: DocumentOwnerType.Load, OwnerId: not null })
         {
-            var docs = await _tenantUow.Repository<LoadDocument>()
+            List<LoadDocument> docs = await tenantUow.Repository<LoadDocument>()
                 .GetListAsync(d =>
                     d.LoadId == req.OwnerId &&
                     (!req.Status.HasValue || d.Status == req.Status) &&
@@ -55,7 +55,7 @@ internal sealed class
         }
         else if (req is { OwnerType: DocumentOwnerType.Employee, OwnerId: not null })
         {
-            var docs = await _tenantUow.Repository<EmployeeDocument>()
+            List<EmployeeDocument> docs = await tenantUow.Repository<EmployeeDocument>()
                 .GetListAsync(d =>
                     d.EmployeeId == req.OwnerId &&
                     (!req.Status.HasValue || d.Status == req.Status) &&
@@ -63,9 +63,19 @@ internal sealed class
 
             dtos = docs.Select(d => d.ToDto()).ToList();
         }
+        else if (req is { OwnerType: DocumentOwnerType.Truck, OwnerId: not null })
+        {
+            List<TruckDocument> docs = await tenantUow.Repository<TruckDocument>()
+                .GetListAsync(d =>
+                    d.TruckId == req.OwnerId &&
+                    (!req.Status.HasValue || d.Status == req.Status) &&
+                    (!req.Type.HasValue || d.Type == req.Type), ct);
+
+            dtos = docs.Select(d => d.ToDto()).ToList();
+        }
         else
         {
-            var docs = await _tenantUow.Repository<Document>()
+            List<Document> docs = await tenantUow.Repository<Document>()
                 .GetListAsync(d =>
                     (!req.Status.HasValue || d.Status == req.Status) &&
                     (!req.Type.HasValue || d.Type == req.Type), ct);

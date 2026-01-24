@@ -36,15 +36,20 @@ internal sealed class DeleteDocumentHandler(
 
             if (changes > 0)
             {
+                logger.LogInformation(
+                    "Document deleted: {DocumentId}, BlobPath: {BlobPath}",
+                    req.DocumentId, blobPath);
                 // Delete blob in background
                 _ = DeleteBlobAsync(blobContainer, blobPath, ct);
                 return Result.Ok();
             }
 
+            logger.LogWarning("Failed to delete document {DocumentId} from database", req.DocumentId);
             return Result.Fail("Failed to delete document");
         }
         catch (Exception ex)
         {
+            logger.LogError(ex, "Failed to delete document {DocumentId}", req.DocumentId);
             return Result.Fail($"Failed to delete document: {ex.Message}");
         }
     }

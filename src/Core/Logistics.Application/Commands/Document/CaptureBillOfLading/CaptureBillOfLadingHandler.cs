@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Constants;
 using Logistics.Application.Services;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -51,8 +52,8 @@ internal sealed class CaptureBillOfLadingHandler(
             if (!string.IsNullOrEmpty(req.SignatureBase64))
             {
                 var signatureBytes = Convert.FromBase64String(req.SignatureBase64);
-                var signatureFileName = $"{Guid.NewGuid()}_signature.png";
-                signatureBlobPath = $"loads/{req.LoadId}/bol/{signatureFileName}";
+                var signatureFileName = BlobPathHelper.GenerateSignatureFileName();
+                signatureBlobPath = BlobPathHelper.GetLoadBlobPath(req.LoadId, "bol", signatureFileName);
 
                 using var signatureStream = new MemoryStream(signatureBytes);
                 await blobStorage.UploadAsync(
@@ -64,11 +65,11 @@ internal sealed class CaptureBillOfLadingHandler(
             }
 
             // Upload photos
+            var photoIndex = 0;
             foreach (var photo in req.Photos)
             {
-                var ext = Path.GetExtension(photo.FileName);
-                var uniqueFileName = $"{Guid.NewGuid()}{ext}";
-                var blobPath = $"loads/{req.LoadId}/bol/{uniqueFileName}";
+                var uniqueFileName = BlobPathHelper.GenerateUniqueFileName(photo.FileName, photoIndex++);
+                var blobPath = BlobPathHelper.GetLoadBlobPath(req.LoadId, "bol", uniqueFileName);
 
                 await blobStorage.UploadAsync(
                     BlobConstants.DocumentsContainerName,
@@ -102,12 +103,12 @@ internal sealed class CaptureBillOfLadingHandler(
             // If no photos but we have signature/shipper info, create a single BOL record
             if (req.Photos.Count == 0 && (!string.IsNullOrEmpty(req.SignatureBase64) || !string.IsNullOrEmpty(req.RecipientName)))
             {
-                var signatureFileName = $"{Guid.NewGuid()}_bol.json";
-                var blobPath = $"loads/{req.LoadId}/bol/{signatureFileName}";
+                var bolFileName = BlobPathHelper.GeneratePlaceholderFileName("bol");
+                var blobPath = BlobPathHelper.GetLoadBlobPath(req.LoadId, "bol", bolFileName);
 
                 // Create a placeholder document for the signature-only BOL
                 var doc = DeliveryDocument.Create(
-                    signatureFileName,
+                    bolFileName,
                     "bill_of_lading.json",
                     "application/json",
                     0,

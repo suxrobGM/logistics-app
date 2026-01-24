@@ -9,5 +9,6 @@ import type { DocumentOwnerType } from './document-owner-type';
 export const DOCUMENT_OWNER_TYPE: DocumentOwnerType[] = [
   'load',
   'employee',
-  'delivery'
+  'delivery',
+  'truck'
 ];

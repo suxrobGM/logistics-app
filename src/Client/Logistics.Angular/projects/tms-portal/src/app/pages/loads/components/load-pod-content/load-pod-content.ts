@@ -10,7 +10,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { downloadBlobFile } from "@/shared/utils";
+import { downloadBlobFile, formatFileSize } from "@/shared/utils";
 
 @Component({
   selector: "app-load-pod-content",
@@ -86,13 +86,7 @@ export class LoadPodContent {
     }
   }
 
-  protected formatFileSize(bytes?: number): string {
-    if (!bytes || bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  }
+  protected readonly formatFileSize = formatFileSize;
 
   protected getTypeLabel(type?: string): string {
     return type === "proof_of_delivery" ? "Proof of Delivery" : "Bill of Lading";

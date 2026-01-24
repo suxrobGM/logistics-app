@@ -42,5 +42,20 @@ public enum DocumentType
     DeliveryInspection,
 
     [Description("Other"), EnumMember(Value = "other")]
-    Other
+    Other,
+
+    [Description("DOT Inspection"), EnumMember(Value = "dot_inspection")]
+    DotInspection,
+
+    [Description("Title Certificate"), EnumMember(Value = "title_certificate")]
+    TitleCertificate,
+
+    [Description("Lease Agreement"), EnumMember(Value = "lease_agreement")]
+    LeaseAgreement,
+
+    [Description("Maintenance Record"), EnumMember(Value = "maintenance_record")]
+    MaintenanceRecord,
+
+    [Description("Annual Inspection"), EnumMember(Value = "annual_inspection")]
+    AnnualInspection
 }

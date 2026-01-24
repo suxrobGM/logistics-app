@@ -23,6 +23,7 @@ export interface DocumentDto {
   recipientSignature?: string | null;
   status?: DocumentStatus;
   tripStopId?: string | null;
+  truckId?: string | null;
   type?: DocumentType;
   updatedAt?: string | null;
   uploadedById?: string;

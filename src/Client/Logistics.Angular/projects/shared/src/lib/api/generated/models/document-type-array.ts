@@ -19,5 +19,10 @@ export const DOCUMENT_TYPE: DocumentType[] = [
   'identity_document',
   'pickup_inspection',
   'delivery_inspection',
-  'other'
+  'other',
+  'dot_inspection',
+  'title_certificate',
+  'lease_agreement',
+  'maintenance_record',
+  'annual_inspection'
 ];

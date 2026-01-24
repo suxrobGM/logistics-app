@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Constants;
 using Logistics.Application.Services;
+using Logistics.Application.Utilities;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
@@ -12,10 +13,8 @@ internal sealed class UploadExpenseReceiptHandler(IBlobStorageService blobStorag
     {
         try
         {
-            // Generate unique blob path
-            var extension = Path.GetExtension(req.FileName);
-            var uniqueFileName = $"{Guid.NewGuid()}{extension}";
-            var blobPath = $"{DateTime.UtcNow:yyyy/MM}/{uniqueFileName}";
+            var uniqueFileName = BlobPathHelper.GenerateUniqueFileName(req.FileName);
+            var blobPath = BlobPathHelper.GetReceiptBlobPath(uniqueFileName);
 
             await blobStorageService.UploadAsync(
                 BlobConstants.ReceiptsContainerName,

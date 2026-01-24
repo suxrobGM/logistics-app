@@ -1,0 +1,20 @@
+<div class="truck-documents-page mx-auto max-w-7xl p-6">
+  <div class="page-header border-subtle mb-6 border-b pb-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-primary mb-2 text-2xl font-bold">Truck Documents</h1>
+        <p class="text-secondary">
+          Manage documents for truck: {{ truck()?.number }}
+        </p>
+      </div>
+      <p-button
+        icon="pi pi-arrow-left"
+        label="Back to Trucks"
+        [routerLink]="['/trucks']"
+        [outlined]="true"
+      />
+    </div>
+  </div>
+
+  <app-document-manager [truckId]="id()" [types]="truckDocTypes" />
+</div>

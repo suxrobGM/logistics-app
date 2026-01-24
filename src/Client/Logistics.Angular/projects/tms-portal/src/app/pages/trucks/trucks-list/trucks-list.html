@@ -74,17 +74,10 @@
 
           <td class="text-center">
             <p-button
-              icon="pi pi-book"
-              pTooltip="View details"
-              aria-label="View truck details"
-              [routerLink]="['/trucks', truck.id]"
-            />
-            <p-button
-              class="ml-2"
-              icon="pi pi-pen-to-square"
-              pTooltip="Edit truck"
-              aria-label="Edit truck"
-              [routerLink]="['/trucks', truck.id, 'edit']"
+              icon="pi pi-ellipsis-v"
+              [text]="true"
+              aria-label="Show actions menu"
+              (click)="selectedRow.set(truck); menu.toggle($event)"
             />
           </td>
         </tr>
@@ -92,3 +85,6 @@
     </p-table>
   </ui-data-container>
 </p-card>
+
+<!-- Context menu for row actions -->
+<p-menu #menu [model]="actionMenuItems" [popup]="true" />

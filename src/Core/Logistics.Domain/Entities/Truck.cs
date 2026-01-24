@@ -44,6 +44,7 @@ public class Truck : Entity, ITenantEntity
     //public virtual List<Employee> Drivers { get; set; } = [];
     public virtual List<Load> Loads { get; } = [];
     public virtual List<Trip> Trips { get; } = [];
+    public virtual List<TruckDocument> Documents { get; set; } = [];
 
     public static Truck Create(string truckNumber, TruckType type, Employee mainDriver,
         Employee? secondaryDriver = null)

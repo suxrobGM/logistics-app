@@ -1,4 +1,15 @@
-<h1 class="text-center">Truck Details</h1>
+<div class="flex items-center gap-2">
+  <h1 class="text-2xl">Truck Details</h1>
+  <p-button
+    icon="pi pi-file"
+    [routerLink]="['/trucks', id(), 'documents']"
+    [outlined]="true"
+    size="large"
+    [rounded]="true"
+    [text]="true"
+    pTooltip="Truck Documents"
+  />
+</div>
 
 <div class="mt-4 grid grid-cols-12 gap-3">
   <p-card class="col-span-12 sm:col-span-6">

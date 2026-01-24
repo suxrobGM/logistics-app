@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Constants;
 using Logistics.Application.Services;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -39,8 +40,8 @@ internal sealed class CreateConditionReportHandler(
             if (!string.IsNullOrEmpty(req.SignatureBase64))
             {
                 var signatureBytes = Convert.FromBase64String(req.SignatureBase64);
-                var signatureFileName = $"{Guid.NewGuid()}_signature.png";
-                signatureBlobPath = $"loads/{req.LoadId}/inspection/{signatureFileName}";
+                var signatureFileName = BlobPathHelper.GenerateSignatureFileName();
+                signatureBlobPath = BlobPathHelper.GetLoadBlobPath(req.LoadId, "inspection", signatureFileName);
 
                 using var signatureStream = new MemoryStream(signatureBytes);
                 await blobStorage.UploadAsync(
@@ -71,11 +72,11 @@ internal sealed class CreateConditionReportHandler(
             await tenantUow.Repository<VehicleConditionReport>().AddAsync(report, ct);
 
             // Upload and attach photos
+            var photoIndex = 0;
             foreach (var photo in req.Photos)
             {
-                var ext = Path.GetExtension(photo.FileName);
-                var uniqueFileName = $"{Guid.NewGuid()}{ext}";
-                var blobPath = $"loads/{req.LoadId}/inspection/{uniqueFileName}";
+                var uniqueFileName = BlobPathHelper.GenerateUniqueFileName(photo.FileName, photoIndex++);
+                var blobPath = BlobPathHelper.GetLoadBlobPath(req.LoadId, "inspection", uniqueFileName);
 
                 await blobStorage.UploadAsync(
                     BlobConstants.DocumentsContainerName,

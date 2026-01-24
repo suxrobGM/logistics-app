@@ -20,6 +20,7 @@ public sealed record DocumentDto
     // Owner (exactly one will be set)
     public Guid? LoadId { get; init; }
     public Guid? EmployeeId { get; init; }
+    public Guid? TruckId { get; init; }
 
     // POD/BOL capture metadata
     public string? RecipientName { get; init; }

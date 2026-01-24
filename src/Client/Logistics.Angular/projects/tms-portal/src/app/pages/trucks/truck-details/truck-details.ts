@@ -8,8 +8,10 @@ import type {
   TruckDto,
   TruckGeolocationDto,
 } from "@logistics/shared/api/models";
+import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";
+import { TooltipModule } from "primeng/tooltip";
 import { type BarChartDrawnEvent, GeolocationMap, GrossesBarchart } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
 import { type LineChartDrawnEvent, TruckGrossesLinechartComponent } from "../components";
@@ -20,7 +22,9 @@ import { type LineChartDrawnEvent, TruckGrossesLinechartComponent } from "../com
   styleUrl: "./truck-details.css",
   imports: [
     CommonModule,
+    ButtonModule,
     CardModule,
+    TooltipModule,
     SkeletonModule,
     RouterLink,
     CurrencyPipe,

@@ -17,7 +17,7 @@ import { Tag, TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { Converters, downloadBlobFile } from "@/shared/utils";
+import { Converters, downloadBlobFile, formatFileSize } from "@/shared/utils";
 
 @Component({
   selector: "app-document-manager",
@@ -39,11 +39,12 @@ export class DocumentManagerComponent implements OnInit {
   private readonly api = inject(Api);
   private readonly toast = inject(ToastService);
 
-  readonly employeeId = input<string>();
-  readonly loadId = input<string>();
-  readonly types = input<DocumentType[]>([]);
+  public readonly employeeId = input<string>();
+  public readonly loadId = input<string>();
+  public readonly truckId = input<string>();
+  public readonly types = input<DocumentType[]>([]);
 
-  readonly changed = output<void>();
+  public readonly changed = output<void>();
 
   protected readonly isLoading = signal(false);
   protected readonly rows = signal<DocumentDto[]>([]);
@@ -56,9 +57,12 @@ export class DocumentManagerComponent implements OnInit {
   protected async refresh(): Promise<void> {
     this.isLoading.set(true);
 
+    const ownerType = this.employeeId() ? "employee" : this.loadId() ? "load" : "truck";
+    const ownerId = this.employeeId() || this.loadId() || this.truckId() || "";
+
     const result = await this.api.invoke(getDocuments, {
-      OwnerType: this.employeeId() ? "employee" : "load",
-      OwnerId: this.employeeId() || this.loadId() || "",
+      OwnerType: ownerType,
+      OwnerId: ownerId,
     });
 
     if (result) {
@@ -77,20 +81,20 @@ export class DocumentManagerComponent implements OnInit {
   }
 
   protected async upload(file: File, type: DocumentType): Promise<void> {
-    if (file.size > 50 * 1024 * 1024) {
-      this.toast.showError("File exceeds 50MB limit");
+    if (file.size > 20 * 1024 * 1024) {
+      this.toast.showError("File exceeds 20MB limit");
       return;
     }
 
-    const ownerType = this.employeeId() ? "employee" : "load";
-    const ownerId = this.employeeId() || this.loadId() || "";
+    const ownerType = this.employeeId() ? "employee" : this.loadId() ? "load" : "truck";
+    const ownerId = this.employeeId() || this.loadId() || this.truckId() || "";
 
     this.uploadProgress.set({ [type]: 0 });
 
     try {
       await this.api.invoke(uploadDocument, {
         body: {
-          OwnerType: ownerType,
+          OwnerType: ownerType as "employee" | "load",
           OwnerId: ownerId,
           File: file,
           Type: Converters.toPascalCase(type) as DocumentType,
@@ -147,15 +151,7 @@ export class DocumentManagerComponent implements OnInit {
     }
   }
 
-  protected formatFileSize(bytes: number): string {
-    if (bytes === 0) {
-      return "0 Bytes";
-    }
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  }
+  protected readonly formatFileSize = formatFileSize;
 
   // Get a user-friendly label for the document type
   // Remove underscores and capitalize words from the enum value

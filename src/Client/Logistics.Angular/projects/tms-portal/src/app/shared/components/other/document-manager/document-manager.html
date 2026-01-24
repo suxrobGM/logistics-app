@@ -21,7 +21,7 @@
             </div>
             <div class="text-center">
               <h4 class="mb-1 text-sm font-medium">{{ getTypeLabel(type) }}</h4>
-              <p class="text-muted mb-4 text-xs">Max 50MB</p>
+              <p class="text-muted mb-4 text-xs">Max 20MB</p>
             </div>
             <div class="w-full">
               <input
@@ -29,7 +29,7 @@
                 class="hidden"
                 [id]="'file-' + type"
                 (change)="onFileChange($event, type)"
-                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.txt"
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt"
               />
               <label
                 [for]="'file-' + type"
