@@ -131,3 +131,43 @@
   --shimmer-base: #242b3d;
   --shimmer-highlight: #2d3548;
 }
+
+/* === Tailwind v4 Semantic Color Theme Extension === */
+/* Maps CSS variables to Tailwind utilities for theme-aware styling */
+@theme {
+  /* Text Colors - use as: text-primary, text-secondary, text-muted */
+  --color-primary: var(--text-primary);
+  --color-secondary: var(--text-secondary);
+  --color-muted: var(--text-muted);
+  --color-inverse: var(--text-inverse);
+
+  /* Accent Colors - use as: text-accent, bg-accent */
+  --color-accent: var(--primary-500);
+  --color-accent-hover: var(--primary-600);
+
+  /* Background Colors - use as: bg-base, bg-surface, bg-elevated */
+  --color-base: var(--bg-base);
+  --color-surface: var(--bg-surface);
+  --color-elevated: var(--bg-elevated);
+  --color-hover: var(--bg-hover);
+  --color-active: var(--bg-active);
+
+  /* Border Colors - use as: border-subtle, border-default, border-strong */
+  --color-subtle: var(--border-subtle);
+  --color-default: var(--border-default);
+  --color-strong: var(--border-strong);
+
+  /* Semantic Colors - use as: text-success, bg-danger/10 */
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+
+  /* Status Colors - use as: text-pending, text-delivered */
+  --color-pending: var(--status-pending);
+  --color-dispatched: var(--status-dispatched);
+  --color-pickedup: var(--status-pickedup);
+  --color-delivered: var(--status-delivered);
+  --color-cancelled: var(--status-cancelled);
+  --color-completed: var(--status-completed);
+}

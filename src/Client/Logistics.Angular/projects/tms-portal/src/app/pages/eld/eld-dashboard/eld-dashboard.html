@@ -7,12 +7,7 @@
       [showAddButton]="false"
     />
     <div class="flex gap-2">
-      <p-button
-        label="Configure Providers"
-        icon="pi pi-cog"
-        severity="secondary"
-        (onClick)="configureProviders()"
-      />
+      <p-button label="Configure Providers" icon="pi pi-cog" (onClick)="configureProviders()" />
       <p-button
         label="Sync HOS Data"
         icon="pi pi-refresh"
@@ -50,22 +45,22 @@
           <div
             class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full"
             [class.bg-red-600/10]="violationCount() > 0"
-            [class.bg-gray-200]="violationCount() === 0"
+            [class.bg-active]="violationCount() === 0"
           >
             <i
               class="pi pi-exclamation-triangle text-2xl"
-              [class.text-red-600]="violationCount() > 0"
-              [class.text-gray-500]="violationCount() === 0"
+              [class.text-danger]="violationCount() > 0"
+              [class.text-muted]="violationCount() === 0"
             ></i>
           </div>
           <div class="ml-4 grow">
-            <h6 class="mb-1 text-gray-500">HOS Violations</h6>
-            <h4 class="mb-0 text-2xl font-bold" [class.text-red-600]="violationCount() > 0">
+            <h6 class="text-muted mb-1">HOS Violations</h6>
+            <h4 class="mb-0 text-2xl font-bold" [class.text-danger]="violationCount() > 0">
               {{ violationCount() }}
             </h4>
             <small
               [class.text-red-500]="violationCount() > 0"
-              [class.text-gray-400]="violationCount() === 0"
+              [class.text-muted]="violationCount() === 0"
             >
               {{ violationCount() > 0 ? "Requires attention" : "All compliant" }}
             </small>
@@ -92,8 +87,8 @@
         } @else if (drivers().length === 0) {
           <div class="p-5 text-center">
             <i class="pi pi-info-circle mb-3 text-4xl text-blue-500"></i>
-            <p class="text-gray-600">No driver HOS data available.</p>
-            <p class="text-sm text-gray-500">
+            <p class="text-secondary">No driver HOS data available.</p>
+            <p class="text-muted text-sm">
               Configure an ELD provider and map your drivers to start tracking HOS.
             </p>
             <p-button
@@ -133,7 +128,7 @@
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-driver>
-              <tr [class.bg-red-50]="driver.isInViolation">
+              <tr [class.bg-danger/10]="driver.isInViolation">
                 <td>
                   <div class="flex items-center gap-2">
                     @if (driver.isInViolation) {

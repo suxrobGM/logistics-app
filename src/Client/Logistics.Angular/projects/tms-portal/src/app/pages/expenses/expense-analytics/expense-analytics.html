@@ -8,7 +8,7 @@
         [showIcon]="true"
         (onSelect)="onDateChange()"
       />
-      <span class="text-gray-500">to</span>
+      <span class="text-muted">to</span>
       <p-datepicker
         [(ngModel)]="toDate"
         placeholder="To Date"
@@ -19,18 +19,11 @@
     <p-button
       icon="pi pi-download"
       label="Export CSV"
-      severity="secondary"
       [outlined]="true"
       (click)="exportToCsv()"
       [disabled]="!stats()"
     />
-    <p-button
-      icon="pi pi-arrow-left"
-      label="Back"
-      [routerLink]="['/expenses']"
-      severity="secondary"
-      [outlined]="true"
-    />
+    <p-button icon="pi pi-arrow-left" label="Back" [routerLink]="['/expenses']" [outlined]="true" />
   </div>
 </div>
 
@@ -42,35 +35,35 @@
   <!-- Summary Cards -->
   <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
     <p-card class="text-center">
-      <div class="text-gray-500">Total Expenses</div>
-      <div class="text-2xl font-bold text-gray-900">
+      <div class="text-muted">Total Expenses</div>
+      <div class="text-primary text-2xl font-bold">
         {{ stats()!.totalAmount | currency }}
       </div>
-      <div class="text-sm text-gray-400">{{ stats()!.totalCount }} expenses</div>
+      <div class="text-muted text-sm">{{ stats()!.totalCount }} expenses</div>
     </p-card>
 
     <p-card class="text-center">
-      <div class="text-gray-500">Pending</div>
-      <div class="text-2xl font-bold text-yellow-600">
+      <div class="text-muted">Pending</div>
+      <div class="text-warning text-2xl font-bold">
         {{ stats()!.pendingAmount | currency }}
       </div>
-      <div class="text-sm text-gray-400">{{ stats()!.pendingCount }} pending</div>
+      <div class="text-muted text-sm">{{ stats()!.pendingCount }} pending</div>
     </p-card>
 
     <p-card class="text-center">
-      <div class="text-gray-500">Approved</div>
-      <div class="text-2xl font-bold text-green-600">
+      <div class="text-muted">Approved</div>
+      <div class="text-success text-2xl font-bold">
         {{ stats()!.approvedAmount | currency }}
       </div>
-      <div class="text-sm text-gray-400">{{ stats()!.approvedCount }} approved</div>
+      <div class="text-muted text-sm">{{ stats()!.approvedCount }} approved</div>
     </p-card>
 
     <p-card class="text-center">
-      <div class="text-gray-500">Paid</div>
-      <div class="text-2xl font-bold text-blue-600">
+      <div class="text-muted">Paid</div>
+      <div class="text-info text-2xl font-bold">
         {{ stats()!.paidAmount | currency }}
       </div>
-      <div class="text-sm text-gray-400">{{ stats()!.paidCount }} paid</div>
+      <div class="text-muted text-sm">{{ stats()!.paidCount }} paid</div>
     </p-card>
   </div>
 
@@ -160,12 +153,12 @@
                 class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold"
                 [class]="
                   i === 0
-                    ? 'bg-yellow-100 text-yellow-700'
+                    ? 'bg-warning/20 text-warning'
                     : i === 1
-                      ? 'bg-gray-200 text-gray-700'
+                      ? 'bg-active text-secondary'
                       : i === 2
-                        ? 'bg-orange-100 text-orange-700'
-                        : 'bg-gray-100 text-gray-600'
+                        ? 'bg-warning/20 text-warning'
+                        : 'bg-hover text-secondary'
                 "
               >
                 {{ i + 1 }}
@@ -189,8 +182,8 @@
 } @else {
   <p-card>
     <div class="py-16 text-center">
-      <i class="pi pi-chart-bar mb-4 text-4xl text-gray-400"></i>
-      <p class="text-gray-500">No expense data available for the selected period</p>
+      <i class="pi pi-chart-bar text-muted mb-4 text-4xl"></i>
+      <p class="text-muted">No expense data available for the selected period</p>
     </div>
   </p-card>
 }

@@ -1,5 +1,5 @@
 <div
-  class="mx-auto flex h-[calc(100vh-10rem)] max-w-4xl flex-col overflow-hidden rounded-xl bg-white shadow-lg"
+  class="mx-auto flex h-[calc(100vh-10rem)] max-w-4xl flex-col overflow-hidden rounded-xl bg-surface shadow-lg"
 >
   <!-- Header -->
   <app-conversation-header
@@ -12,7 +12,7 @@
   <!-- Messages Area -->
   <div
     #messagesContainer
-    class="flex-1 gap-2 space-y-4 overflow-y-auto bg-linear-to-b from-gray-50 to-gray-100 p-6"
+    class="flex-1 gap-2 space-y-4 overflow-y-auto bg-linear-to-b from-hover to-active p-6"
   >
     @if (isNewConversation()) {
       <app-recipient-selector
@@ -64,13 +64,13 @@
   </div>
 
   <!-- Input Area -->
-  <div class="border-t bg-white p-4">
+  <div class="border-t bg-surface p-4">
     <div class="flex items-end gap-3">
       <div class="relative flex-1">
         <input
           type="text"
           pInputText
-          class="focus:border-primary focus:ring-primary w-full rounded-full border-gray-200 py-3 pr-4 pl-4"
+          class="focus:border-primary focus:ring-primary w-full rounded-full border-subtle py-3 pr-4 pl-4"
           placeholder="Type a message..."
           [ngModel]="messageContent()"
           (ngModelChange)="messageContent.set($event)"

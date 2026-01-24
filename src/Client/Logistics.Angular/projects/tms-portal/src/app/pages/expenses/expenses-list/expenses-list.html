@@ -4,7 +4,6 @@
     icon="pi pi-chart-bar"
     label="Analytics"
     [routerLink]="['/expenses/analytics']"
-    severity="secondary"
     [outlined]="true"
   />
 </div>
@@ -67,7 +66,7 @@
         </tr>
       </ng-template>
       <ng-template #body let-expense>
-        <tr class="cursor-pointer hover:bg-gray-50" (click)="selectedRow.set(expense)">
+        <tr class="hover:bg-hover cursor-pointer" (click)="selectedRow.set(expense)">
           <td>
             <span class="font-mono text-sm">{{ expense.number }}</span>
           </td>
@@ -101,14 +100,13 @@
                 (click)="viewReceipt(expense, $event)"
               />
             } @else {
-              <i class="pi pi-file text-gray-400" pTooltip="No receipt"></i>
+              <i class="pi pi-file text-muted" pTooltip="No receipt"></i>
             }
           </td>
           <td>
             <p-button
               icon="pi pi-ellipsis-v"
               (click)="openActionMenu(expense, menu, $event); $event.stopPropagation()"
-              severity="secondary"
               [text]="true"
               aria-label="Show actions menu"
             />

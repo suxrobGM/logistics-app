@@ -12,9 +12,7 @@
       />
       <div>
         <h1 class="mb-1 text-2xl font-semibold">ELD Provider Configuration</h1>
-        <p class="mb-0 text-gray-500">
-          Connect your ELD devices to sync driver Hours of Service data
-        </p>
+        <p class="text-muted mb-0">Connect your ELD devices to sync driver Hours of Service data</p>
       </div>
     </div>
     <p-button label="Add Provider" icon="pi pi-plus" (onClick)="openAddDialog()" />
@@ -22,12 +20,12 @@
 
   <!-- Info Card -->
   <div class="mb-6">
-    <p-card class="border-0 bg-blue-50 shadow-sm">
+    <p-card class="border-0 bg-blue-500/10 shadow-sm">
       <div class="flex items-start gap-3">
         <i class="pi pi-info-circle text-2xl text-blue-600"></i>
         <div>
           <h6 class="mb-1 font-medium">How ELD Integration Works</h6>
-          <p class="mb-0 text-sm text-gray-600">
+          <p class="text-secondary mb-0 text-sm">
             Connect your ELD provider to automatically sync driver Hours of Service (HOS) data.
             After adding a provider, you'll need to map your TMS drivers to the ELD system drivers.
             The system will then sync HOS data every 5 minutes and receive real-time updates via
@@ -59,9 +57,9 @@
       </div>
     } @else if (providers().length === 0) {
       <div class="p-5 text-center">
-        <i class="pi pi-link mb-3 text-4xl text-gray-400"></i>
-        <p class="text-gray-600">No ELD providers configured yet.</p>
-        <p class="mb-4 text-sm text-gray-500">
+        <i class="pi pi-link text-muted mb-3 text-4xl"></i>
+        <p class="text-secondary">No ELD providers configured yet.</p>
+        <p class="text-muted mb-4 text-sm">
           Add your first ELD provider to start syncing driver HOS data.
         </p>
         <p-button label="Add Provider" icon="pi pi-plus" (onClick)="openAddDialog()" />
@@ -87,7 +85,7 @@
                 </div>
                 <div>
                   <div class="font-medium">{{ getProviderLabel(provider.providerType) }}</div>
-                  <small class="text-gray-500">{{
+                  <small class="text-muted">{{
                     provider.providerName || provider.providerType
                   }}</small>
                 </div>
@@ -101,22 +99,20 @@
               }
             </td>
             <td>
-              <span class="rounded bg-gray-100 px-2 py-1 text-sm">{{
+              <span class="bg-hover rounded px-2 py-1 text-sm">{{
                 provider.mappedDriversCount || 0
               }}</span>
             </td>
             <td>
-              <span class="rounded bg-gray-100 px-2 py-1 text-sm">{{
+              <span class="bg-hover rounded px-2 py-1 text-sm">{{
                 provider.mappedVehiclesCount || 0
               }}</span>
             </td>
             <td>
               @if (provider.lastSyncedAt) {
-                <span class="text-sm text-gray-500">{{
-                  provider.lastSyncedAt | date: "short"
-                }}</span>
+                <span class="text-muted text-sm">{{ provider.lastSyncedAt | date: "short" }}</span>
               } @else {
-                <span class="text-sm text-gray-400">Never</span>
+                <span class="text-muted text-sm">Never</span>
               }
             </td>
             <td>
@@ -175,7 +171,7 @@
         <ng-template pTemplate="item" let-item>
           <div>
             <div class="font-medium">{{ item.label }}</div>
-            <small class="text-gray-500">{{ item.description }}</small>
+            <small class="text-muted">{{ item.description }}</small>
           </div>
         </ng-template>
       </p-select>
@@ -229,12 +225,12 @@
       />
     </ui-labeled-field>
 
-    <div class="rounded bg-yellow-50 p-3">
+    <div class="rounded bg-yellow-500/10 p-3">
       <div class="flex items-start gap-2">
         <i class="pi pi-exclamation-triangle text-yellow-600"></i>
         <div class="text-sm">
           <strong>Where to get credentials:</strong>
-          <ul class="mt-1 mb-0 list-inside list-disc text-gray-600">
+          <ul class="text-secondary mt-1 mb-0 list-inside list-disc">
             <li>Demo: Enter any text as API key (for testing only)</li>
             <li>Samsara: Settings → API Tokens in your Samsara dashboard</li>
             <li>Motive: Settings → Integrations → API Keys</li>
@@ -245,12 +241,7 @@
   </form>
 
   <ng-template pTemplate="footer">
-    <p-button
-      label="Cancel"
-      severity="secondary"
-      (onClick)="showAddDialog.set(false)"
-      [text]="true"
-    />
+    <p-button label="Cancel" (onClick)="showAddDialog.set(false)" [text]="true" />
     <p-button
       label="Add Provider"
       icon="pi pi-check"

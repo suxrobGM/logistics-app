@@ -51,7 +51,7 @@
         </tr>
       </ng-template>
       <ng-template #body let-report>
-        <tr class="cursor-pointer hover:bg-gray-50" (click)="selectedRow.set(report)">
+        <tr class="hover:bg-hover cursor-pointer" (click)="selectedRow.set(report)">
           <td>
             <p-tag [value]="getTypeLabel(report.type)" [severity]="getTypeSeverity(report.type)" />
           </td>
@@ -61,14 +61,14 @@
           <td>
             <span class="text-sm">{{ getVehicleInfo(report) }}</span>
             @if (report.vehicleBodyClass) {
-              <span class="block text-xs text-gray-500">{{ report.vehicleBodyClass }}</span>
+              <span class="text-muted block text-xs">{{ report.vehicleBodyClass }}</span>
             }
           </td>
           <td>
             @if (getDamageCount(report) > 0) {
               <p-tag [value]="getDamageCount(report).toString() + ' damages'" severity="danger" />
             } @else {
-              <span class="text-sm text-gray-400">None</span>
+              <span class="text-muted text-sm">None</span>
             }
           </td>
           <td>{{ report.inspectorName || "N/A" }}</td>
@@ -77,21 +77,20 @@
             @if (report.photos && report.photos.length > 0) {
               <span class="text-sm">{{ report.photos.length }} photo(s)</span>
             } @else {
-              <span class="text-sm text-gray-400">None</span>
+              <span class="text-muted text-sm">None</span>
             }
           </td>
           <td>
             @if (report.hasSignature) {
               <i class="pi pi-check text-green-500"></i>
             } @else {
-              <i class="pi pi-times text-gray-400"></i>
+              <i class="pi pi-times text-muted"></i>
             }
           </td>
           <td>
             <p-button
               icon="pi pi-ellipsis-v"
               (click)="openActionMenu(report, menu, $event); $event.stopPropagation()"
-              severity="secondary"
               [text]="true"
               aria-label="Show actions menu"
             />

@@ -6,7 +6,7 @@
       >
         <div class="flex items-center gap-3">
           <i class="pi pi-comments text-primary text-2xl"></i>
-          <h2 class="text-xl font-semibold text-gray-800">Messages</h2>
+          <h2 class="text-xl font-semibold text-primary">Messages</h2>
         </div>
         <div class="flex gap-2">
           <p-button
@@ -29,7 +29,7 @@
     @if (store.loading()) {
       <div class="space-y-2 p-2">
         @for (i of [1, 2, 3, 4, 5]; track i) {
-          <div class="flex items-center gap-4 rounded-xl bg-gray-50 p-4">
+          <div class="flex items-center gap-4 rounded-xl bg-hover p-4">
             <p-skeleton shape="circle" size="3.5rem" />
             <div class="flex-1">
               <p-skeleton width="50%" height="1.25rem" styleClass="mb-2" />
@@ -43,8 +43,8 @@
         <div class="bg-primary/10 mb-6 flex h-24 w-24 items-center justify-center rounded-full">
           <i class="pi pi-comments text-primary text-5xl"></i>
         </div>
-        <h3 class="mb-2 text-xl font-semibold text-gray-700">No conversations yet</h3>
-        <p class="mb-6 max-w-sm text-gray-500">
+        <h3 class="mb-2 text-xl font-semibold text-secondary">No conversations yet</h3>
+        <p class="mb-6 max-w-sm text-muted">
           Start a conversation with your team members to collaborate and stay connected
         </p>
         <p-button
@@ -74,18 +74,18 @@
 
             <div class="min-w-0 flex-1">
               <div class="flex items-center justify-between gap-2">
-                <span class="truncate font-semibold text-gray-800">
+                <span class="truncate font-semibold text-primary">
                   {{ conversation.name || getParticipantNames(conversation) }}
                 </span>
                 @if (conversation.lastMessageAt) {
-                  <span class="shrink-0 text-xs text-gray-400">
+                  <span class="shrink-0 text-xs text-muted">
                     {{ conversation.lastMessageAt | date: "shortTime" }}
                   </span>
                 }
               </div>
 
               <div class="mt-1 flex items-center justify-between gap-2">
-                <p class="truncate text-sm text-gray-500">
+                <p class="truncate text-sm text-muted">
                   @if (conversation.lastMessage) {
                     {{ conversation.lastMessage.content }}
                   } @else {
@@ -103,7 +103,7 @@
               </div>
             </div>
 
-            <i class="pi pi-angle-right text-gray-300"></i>
+            <i class="pi pi-angle-right text-muted"></i>
           </div>
         }
       </div>

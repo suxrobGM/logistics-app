@@ -2,31 +2,31 @@
   @if (!isOwn()) {
     <p-avatar
       [label]="getInitials(message().senderName)"
-      class="bg-gray-400 text-white shadow-sm"
+      class="bg-active text-inverse shadow-sm"
       shape="circle"
     />
   }
 
   <div
     class="max-w-[70%] rounded-2xl px-4 py-3 shadow-sm"
-    [class.bg-blue-600]="isOwn()"
-    [class.text-white]="isOwn()"
+    [class.bg-accent]="isOwn()"
+    [class.text-inverse]="isOwn()"
     [class.rounded-br-sm]="isOwn()"
-    [class.bg-white]="!isOwn()"
-    [class.text-gray-800]="!isOwn()"
+    [class.bg-surface]="!isOwn()"
+    [class.text-primary]="!isOwn()"
     [class.rounded-bl-sm]="!isOwn()"
   >
     @if (!isOwn()) {
-      <p class="text-primary mb-1 text-xs font-semibold">
+      <p class="text-accent mb-1 text-xs font-semibold">
         {{ message().senderName }}
       </p>
     }
     <p class="leading-relaxed wrap-break-word whitespace-pre-wrap">{{ message().content }}</p>
     <div
       class="mt-2 flex items-center gap-1 text-xs"
-      [class.text-white/60]="isOwn()"
+      [class.text-inverse/60]="isOwn()"
       [class.justify-end]="isOwn()"
-      [class.text-gray-400]="!isOwn()"
+      [class.text-muted]="!isOwn()"
     >
       <span>{{ message().sentAt | date: "shortTime" }}</span>
       @if (isOwn()) {

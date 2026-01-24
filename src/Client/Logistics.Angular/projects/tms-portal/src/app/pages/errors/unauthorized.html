@@ -1,15 +1,15 @@
-<div class="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+<div class="bg-base flex min-h-screen items-center justify-center p-4">
   <div class="w-full max-w-md text-center">
-    <div class="rounded-xl bg-white p-8 shadow-lg">
+    <div class="bg-surface rounded-xl p-8 shadow-lg">
       @if (isSubscriptionIssue()) {
         <div
-          class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-yellow-100"
+          class="bg-warning/10 mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full"
         >
-          <i class="pi pi-credit-card text-4xl text-yellow-600"></i>
+          <i class="pi pi-credit-card text-warning text-4xl"></i>
         </div>
 
-        <h1 class="mb-2 text-xl font-semibold text-gray-900">Subscription Expired</h1>
-        <p class="mb-6 text-gray-600">
+        <h1 class="text-primary mb-2 text-xl font-semibold">Subscription Expired</h1>
+        <p class="text-secondary mb-6">
           Your subscription is not active. Please renew it to continue using the platform.
         </p>
 
@@ -19,56 +19,32 @@
             label="Renew Subscription"
             routerLink="/subscription/renew"
           />
-          <p-button
-            icon="pi pi-arrow-left"
-            label="Go Back"
-            [outlined]="true"
-            (click)="goBack()"
-          />
+          <p-button icon="pi pi-arrow-left" label="Go Back" [outlined]="true" (click)="goBack()" />
         </div>
 
-        <div class="mt-4 border-t border-gray-200 pt-4">
-          <p-button
-            icon="pi pi-sign-out"
-            label="Sign Out"
-            [text]="true"
-            severity="secondary"
-            (click)="logout()"
-          />
+        <div class="border-subtle mt-4 border-t pt-4">
+          <p-button icon="pi pi-sign-out" label="Sign Out" [text]="true" (click)="logout()" />
         </div>
       } @else {
-        <div class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-red-100">
-          <i class="pi pi-lock text-4xl text-red-600"></i>
+        <div
+          class="bg-danger/10 mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full"
+        >
+          <i class="pi pi-lock text-danger text-4xl"></i>
         </div>
 
-        <h1 class="mb-2 text-xl font-semibold text-gray-900">Access Denied</h1>
-        <p class="mb-6 text-gray-600">
+        <h1 class="text-primary mb-2 text-xl font-semibold">Access Denied</h1>
+        <p class="text-secondary mb-6">
           You do not have permission to access this page. Please contact your administrator if you
           believe this is an error.
         </p>
 
         <div class="flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <p-button
-            icon="pi pi-home"
-            label="Go to Dashboard"
-            routerLink="/home"
-          />
-          <p-button
-            icon="pi pi-arrow-left"
-            label="Go Back"
-            [outlined]="true"
-            (click)="goBack()"
-          />
+          <p-button icon="pi pi-home" label="Go to Dashboard" routerLink="/home" />
+          <p-button icon="pi pi-arrow-left" label="Go Back" [outlined]="true" (click)="goBack()" />
         </div>
 
-        <div class="mt-4 border-t border-gray-200 pt-4">
-          <p-button
-            icon="pi pi-sign-out"
-            label="Sign Out"
-            [text]="true"
-            severity="secondary"
-            (click)="logout()"
-          />
+        <div class="border-subtle mt-4 border-t pt-4">
+          <p-button icon="pi pi-sign-out" label="Sign Out" [text]="true" (click)="logout()" />
         </div>
       }
     </div>

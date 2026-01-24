@@ -17,7 +17,7 @@
               <div class="flex items-center gap-4">
                 <!-- Logo Preview -->
                 <div
-                  class="flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-gray-300"
+                  class="flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-default"
                 >
                   @if (logoPreviewUrl()) {
                     <img
@@ -26,7 +26,7 @@
                       class="h-full w-full object-contain"
                     />
                   } @else {
-                    <i class="pi pi-image text-3xl text-gray-400"></i>
+                    <i class="pi pi-image text-3xl text-muted"></i>
                   }
                 </div>
                 <!-- Upload Button -->
@@ -45,7 +45,7 @@
                     (click)="logoInput.click()"
                     [loading]="isUploadingLogo()"
                   />
-                  <p class="mt-1 text-xs text-gray-500">PNG, JPG or GIF. Max 5MB.</p>
+                  <p class="mt-1 text-xs text-muted">PNG, JPG or GIF. Max 5MB.</p>
                 </div>
               </div>
             </ui-labeled-field>

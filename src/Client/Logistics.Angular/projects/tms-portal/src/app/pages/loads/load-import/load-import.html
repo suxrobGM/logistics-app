@@ -37,9 +37,9 @@
     >
       <ng-template #content>
         <div class="flex flex-col items-center p-8">
-          <i class="pi pi-file-pdf mb-4 text-6xl text-gray-400"></i>
-          <p class="text-gray-600">Drag and drop dispatch sheet PDF here</p>
-          <p class="text-sm text-gray-400">Supports: Super Dispatch, Ship.Cars, CentralDispatch</p>
+          <i class="pi pi-file-pdf text-muted mb-4 text-6xl"></i>
+          <p class="text-secondary">Drag and drop dispatch sheet PDF here</p>
+          <p class="text-muted text-sm">Supports: Super Dispatch, Ship.Cars, CentralDispatch</p>
         </div>
       </ng-template>
     </p-fileUpload>
@@ -83,10 +83,10 @@
           </p>
         }
         @if (data.vehicleVin) {
-          <p class="text-sm text-gray-500">VIN: {{ data.vehicleVin }}</p>
+          <p class="text-muted text-sm">VIN: {{ data.vehicleVin }}</p>
         }
         @if (data.vehicleType) {
-          <p class="text-sm text-gray-500">Type: {{ data.vehicleType }}</p>
+          <p class="text-muted text-sm">Type: {{ data.vehicleType }}</p>
         }
       </div>
 
@@ -96,7 +96,7 @@
         @if (data.paymentAmount) {
           <p class="text-xl font-bold text-green-600">{{ data.paymentAmount | currency }}</p>
         } @else {
-          <p class="text-gray-400">Not extracted</p>
+          <p class="text-muted">Not extracted</p>
         }
       </div>
 
@@ -110,7 +110,7 @@
             {{ data.originAddress.zipCode }}
           </p>
         } @else {
-          <p class="text-gray-400">Not extracted</p>
+          <p class="text-muted">Not extracted</p>
         }
       </div>
 
@@ -124,7 +124,7 @@
             {{ data.destinationAddress.zipCode }}
           </p>
         } @else {
-          <p class="text-gray-400">Not extracted</p>
+          <p class="text-muted">Not extracted</p>
         }
       </div>
 
@@ -134,7 +134,7 @@
         @if (data.shipperName) {
           <p>{{ data.shipperName }}</p>
         } @else {
-          <p class="text-gray-400">Not extracted</p>
+          <p class="text-muted">Not extracted</p>
         }
       </div>
 
@@ -148,7 +148,7 @@
           <p>Delivery: {{ data.deliveryDate | date }}</p>
         }
         @if (!data.pickupDate && !data.deliveryDate) {
-          <p class="text-gray-400">Not extracted</p>
+          <p class="text-muted">Not extracted</p>
         }
       </div>
     </div>
@@ -184,19 +184,8 @@
 
       <div class="flex gap-2">
         <p-button label="View Load" icon="pi pi-eye" (onClick)="viewLoad()" />
-        <p-button
-          label="Import Another"
-          icon="pi pi-plus"
-          severity="secondary"
-          (onClick)="reset()"
-        />
-        <p-button
-          label="Back to Loads"
-          icon="pi pi-arrow-left"
-          severity="secondary"
-          [text]="true"
-          routerLink="/loads"
-        />
+        <p-button label="Import Another" icon="pi pi-plus" (onClick)="reset()" />
+        <p-button label="Back to Loads" icon="pi pi-arrow-left" [text]="true" routerLink="/loads" />
       </div>
     </div>
   </p-card>

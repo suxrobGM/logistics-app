@@ -8,6 +8,7 @@ import { LayoutService } from "@/core/services/layout.service";
 import { environment } from "@/env";
 import type { MenuItem } from "../panel-menu";
 import { sidebarItems } from "../sidebar/sidebar-items";
+import { ThemeToggle } from "../theme-toggle/theme-toggle";
 
 interface MobileMenuItem {
   label: string;
@@ -21,7 +22,7 @@ interface MobileMenuItem {
   selector: "app-mobile-drawer",
   templateUrl: "./mobile-drawer.html",
   styleUrl: "./mobile-drawer.css",
-  imports: [DrawerModule, ButtonModule],
+  imports: [DrawerModule, ButtonModule, ThemeToggle],
 })
 export class MobileDrawer {
   private readonly router = inject(Router);

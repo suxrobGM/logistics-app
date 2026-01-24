@@ -3,7 +3,6 @@
   <p-button
     icon="pi pi-refresh"
     label="Refresh"
-    severity="secondary"
     [outlined]="true"
     size="small"
     (click)="refresh()"
@@ -12,7 +11,7 @@
 </div>
 
 <!-- Documents List -->
-<p-card>
+<p-card class="border-default border">
   <ng-template #header>
     <div class="flex items-center gap-2 p-4 pb-0">
       <i class="pi pi-file-check text-primary"></i>
@@ -39,7 +38,7 @@
       </ng-template>
 
       <ng-template #body let-doc>
-        <tr class="cursor-pointer hover:bg-gray-50" (click)="viewDetails(doc)">
+        <tr class="hover:bg-hover cursor-pointer" (click)="viewDetails(doc)">
           <td>
             <p-tag
               [value]="getTypeLabel(doc.type)"
@@ -50,17 +49,17 @@
           <td>
             <div class="flex flex-col">
               <span class="text-sm font-medium">{{ doc.originalFileName || doc.fileName }}</span>
-              <span class="text-xs text-gray-500">{{ formatFileSize(doc.fileSizeBytes) }}</span>
+              <span class="text-muted text-xs">{{ formatFileSize(doc.fileSizeBytes) }}</span>
             </div>
           </td>
           <td>
             @if (doc.recipientName) {
               <div class="flex items-center gap-2">
-                <i class="pi pi-user text-gray-400"></i>
+                <i class="pi pi-user text-muted"></i>
                 <span class="text-sm">{{ doc.recipientName }}</span>
               </div>
             } @else {
-              <span class="text-sm text-gray-400">—</span>
+              <span class="text-muted text-sm">—</span>
             }
           </td>
           <td>
@@ -75,14 +74,14 @@
                 <span>View on Map</span>
               </a>
             } @else {
-              <span class="text-sm text-gray-400">—</span>
+              <span class="text-muted text-sm">—</span>
             }
           </td>
           <td>
             @if (doc.capturedAt) {
               <span class="text-sm">{{ doc.capturedAt | date: "medium" }}</span>
             } @else {
-              <span class="text-sm text-gray-400">{{ doc.createdAt | date: "medium" }}</span>
+              <span class="text-muted text-sm">{{ doc.createdAt | date: "medium" }}</span>
             }
           </td>
           <td>
@@ -111,7 +110,7 @@
       <ng-template #empty>
         <tr>
           <td colspan="6" class="py-8 text-center">
-            <div class="flex flex-col items-center gap-3 text-gray-500">
+            <div class="text-muted flex flex-col items-center gap-3">
               <i class="pi pi-file-check text-4xl"></i>
               <div>
                 <p class="font-medium">No POD/BOL documents found</p>
@@ -142,7 +141,7 @@
           [value]="getTypeLabel(selectedDocument()!.type)"
           [severity]="getTypeSeverity(selectedDocument()!.type)"
         />
-        <span class="text-sm text-gray-500">
+        <span class="text-muted text-sm">
           {{ selectedDocument()!.capturedAt | date: "medium" }}
         </span>
       </div>
@@ -150,21 +149,21 @@
       <!-- File Info -->
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="mb-1 block text-xs font-medium text-gray-500">File Name</label>
+          <span class="text-muted mb-1 block text-xs font-medium">File Name</span>
           <p class="text-sm">
             {{ selectedDocument()!.originalFileName || selectedDocument()!.fileName }}
           </p>
         </div>
         <div>
-          <label class="mb-1 block text-xs font-medium text-gray-500">File Size</label>
+          <span class="text-muted mb-1 block text-xs font-medium">File Size</span>
           <p class="text-sm">{{ formatFileSize(selectedDocument()!.fileSizeBytes) }}</p>
         </div>
       </div>
 
       <!-- Recipient Info -->
       @if (selectedDocument()!.recipientName) {
-        <div class="rounded-lg bg-blue-50 p-3">
-          <label class="mb-1 block text-xs font-medium text-blue-600">Recipient</label>
+        <div class="bg-info/10 rounded-lg p-3">
+          <span class="text-info mb-1 block text-xs font-medium">Recipient</span>
           <p class="text-sm font-medium">{{ selectedDocument()!.recipientName }}</p>
         </div>
       }
@@ -172,8 +171,8 @@
       <!-- Signature Preview -->
       @if (selectedDocument()!.recipientSignature) {
         <div>
-          <label class="mb-2 block text-xs font-medium text-gray-500">Signature</label>
-          <div class="rounded border bg-white p-2">
+          <span class="text-muted mb-2 block text-xs font-medium">Signature</span>
+          <div class="bg-surface rounded border p-2">
             @if (
               selectedDocument()!.recipientSignature!.startsWith("data:") ||
               selectedDocument()!.recipientSignature!.length > 100
@@ -184,7 +183,7 @@
                 class="max-h-24 w-auto"
               />
             } @else {
-              <p class="text-sm text-gray-500">Signature captured</p>
+              <p class="text-muted text-sm">Signature captured</p>
             }
           </div>
         </div>
@@ -192,8 +191,8 @@
 
       <!-- Location -->
       @if (selectedDocument()!.captureLatitude && selectedDocument()!.captureLongitude) {
-        <div class="rounded-lg bg-green-50 p-3">
-          <label class="mb-1 block text-xs font-medium text-green-600">Capture Location</label>
+        <div class="bg-success/10 rounded-lg p-3">
+          <span class="text-success mb-1 block text-xs font-medium">Capture Location</span>
           <div class="flex items-center justify-between">
             <p class="text-sm">
               {{
@@ -223,17 +222,17 @@
       <!-- Notes -->
       @if (selectedDocument()!.notes) {
         <div>
-          <label class="mb-1 block text-xs font-medium text-gray-500">Notes</label>
-          <p class="rounded bg-gray-50 p-2 text-sm">{{ selectedDocument()!.notes }}</p>
+          <span class="text-muted mb-1 block text-xs font-medium">Notes</span>
+          <p class="bg-hover rounded p-2 text-sm">{{ selectedDocument()!.notes }}</p>
         </div>
       }
 
       <!-- Image Preview -->
       @if (isImage(selectedDocument()!)) {
         <div>
-          <label class="mb-2 block text-xs font-medium text-gray-500">Document Preview</label>
-          <div class="rounded border bg-gray-100 p-2">
-            <p class="text-center text-sm text-gray-500">
+          <span class="text-muted mb-2 block text-xs font-medium">Document Preview</span>
+          <div class="bg-hover rounded border p-2">
+            <p class="text-muted text-center text-sm">
               <i class="pi pi-image mr-1"></i>
               Image document - click Download to view
             </p>
@@ -249,12 +248,7 @@
           severity="success"
           (click)="download(selectedDocument()!)"
         />
-        <p-button
-          label="Close"
-          severity="secondary"
-          [outlined]="true"
-          (click)="showDetailDialog.set(false)"
-        />
+        <p-button label="Close" [outlined]="true" (click)="showDetailDialog.set(false)" />
       </div>
     </div>
   }

@@ -1,6 +1,6 @@
 <div class="document-manager mb-4">
   <!-- Upload Section -->
-  <p-card class="mb-4 p-2">
+  <p-card class="border-default mb-4 border p-2">
     <ng-template #header>
       <div class="flex items-center gap-2">
         <i class="pi pi-upload text-primary"></i>
@@ -11,17 +11,17 @@
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       @for (type of types(); track type) {
         <div
-          class="group upload-card hover:border-primary rounded-lg border border-gray-200 p-4 transition-all duration-200 hover:shadow-md"
+          class="group upload-card hover:border-primary border-default rounded-lg border p-4 transition-all duration-200 hover:shadow-md"
         >
           <div class="flex flex-col items-center gap-3">
             <div
-              class="upload-icon group flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 transition-all duration-200 hover:shadow-md"
+              class="upload-icon group bg-hover flex h-12 w-12 items-center justify-center rounded-full transition-all duration-200 hover:shadow-md"
             >
-              <i class="pi pi-file text-gray-600"></i>
+              <i class="pi pi-file text-secondary"></i>
             </div>
             <div class="text-center">
               <h4 class="mb-1 text-sm font-medium">{{ getTypeLabel(type) }}</h4>
-              <p class="mb-4 text-xs text-gray-500">Max 50MB</p>
+              <p class="text-muted mb-4 text-xs">Max 50MB</p>
             </div>
             <div class="w-full">
               <input
@@ -42,7 +42,7 @@
 
             @if (uploadProgress()[type] > 0) {
               <div class="w-full">
-                <div class="h-2 w-full rounded-full bg-gray-200">
+                <div class="bg-active h-2 w-full rounded-full">
                   <div
                     class="bg-primary h-2 rounded-full transition-all duration-300"
                     [style.width.%]="uploadProgress()[type]"
@@ -58,7 +58,7 @@
   </p-card>
 
   <!-- Documents List -->
-  <p-card class="p-2">
+  <p-card class="border-default border p-2">
     <ng-template #header>
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
@@ -94,10 +94,10 @@
         </ng-template>
 
         <ng-template #body let-doc>
-          <tr class="hover:bg-gray-50">
+          <tr class="hover:bg-hover">
             <td>
               <div class="flex items-center gap-2">
-                <i class="pi pi-file text-gray-500"></i>
+                <i class="pi pi-file text-muted"></i>
                 <span class="text-sm font-medium">{{ getTypeLabel(doc.type) }}</span>
               </div>
             </td>
@@ -105,7 +105,7 @@
               <div class="flex flex-col">
                 <span class="text-sm font-medium">{{ doc.fileName }}</span>
                 @if (doc.description) {
-                  <span class="text-xs text-gray-500">{{ doc.description }}</span>
+                  <span class="text-muted text-xs">{{ doc.description }}</span>
                 }
               </div>
             </td>
@@ -113,10 +113,10 @@
               <p-tag [value]="doc.status" [severity]="statusSeverity(doc.status)" class="text-xs" />
             </td>
             <td>
-              <span class="text-sm text-gray-600">{{ formatFileSize(doc.fileSizeBytes) }}</span>
+              <span class="text-secondary text-sm">{{ formatFileSize(doc.fileSizeBytes) }}</span>
             </td>
             <td>
-              <span class="text-sm text-gray-600">{{ doc.createdAt | date: "short" }}</span>
+              <span class="text-secondary text-sm">{{ doc.createdAt | date: "short" }}</span>
             </td>
             <td>
               <div class="flex gap-1">
@@ -144,7 +144,7 @@
         <ng-template #empty>
           <tr>
             <td colspan="6" class="py-8 text-center">
-              <div class="flex flex-col items-center gap-3 text-gray-500">
+              <div class="text-muted flex flex-col items-center gap-3">
                 <i class="pi pi-folder-open text-4xl"></i>
                 <div>
                   <p class="font-medium">No documents found</p>

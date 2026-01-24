@@ -1,6 +1,6 @@
 <div class="animate-fadein">
   <div class="flex items-center">
-    <h1 class="text-(--text-primary)">List Loads</h1>
+    <h1 class="text-primary text-2xl">List Loads</h1>
     <p-button
       styleClass="ml-2"
       icon="pi pi-plus-circle"
@@ -26,15 +26,14 @@
   <!-- Filter Panel -->
   <p-card class="mb-4">
     <div class="mb-4 flex items-center justify-between">
-      <span class="text-lg font-semibold text-(--text-primary)">Filters</span>
+      <span class="text-primary text-lg font-semibold">Filters</span>
       <div class="flex items-center gap-2">
         @if (activeFilterCount() > 0) {
-          <span class="text-sm text-(--text-muted)">{{ activeFilterCount() }} active</span>
+          <span class="text-muted text-sm">{{ activeFilterCount() }} active</span>
         }
         <p-button
           label="Clear All"
           icon="pi pi-times"
-          severity="secondary"
           size="small"
           [text]="true"
           (click)="clearFilters()"
@@ -55,7 +54,7 @@
           placeholder="Select status"
           [showClear]="true"
           (onChange)="applyFilters()"
-          styleClass="w-full"
+          class="w-full"
         />
       </ui-labeled-field>
 
@@ -66,7 +65,7 @@
           placeholder="Select type"
           [showClear]="true"
           (onChange)="applyFilters()"
-          styleClass="w-full"
+          class="w-full"
         />
       </ui-labeled-field>
 
@@ -106,34 +105,19 @@
           inputId="activeOnly"
           (onChange)="applyFilters()"
         />
-        <label for="activeOnly" class="mb-0 cursor-pointer text-sm text-(--text-secondary)">
+        <label
+          for="activeOnly"
+          class="text-secondary mb-0 cursor-pointer text-sm dark:text-gray-300"
+        >
           Active loads only
         </label>
       </div>
 
       <div class="flex items-center gap-2">
-        <span class="text-sm text-(--text-muted)">Quick dates:</span>
-        <p-button
-          label="Today"
-          size="small"
-          severity="secondary"
-          [outlined]="true"
-          (click)="setDatePreset('today')"
-        />
-        <p-button
-          label="Week"
-          size="small"
-          severity="secondary"
-          [outlined]="true"
-          (click)="setDatePreset('week')"
-        />
-        <p-button
-          label="Month"
-          size="small"
-          severity="secondary"
-          [outlined]="true"
-          (click)="setDatePreset('month')"
-        />
+        <span class="text-secondary text-sm dark:text-gray-300">Quick dates:</span>
+        <p-button label="Today" size="small" [outlined]="true" (click)="setDatePreset('today')" />
+        <p-button label="Week" size="small" [outlined]="true" (click)="setDatePreset('week')" />
+        <p-button label="Month" size="small" [outlined]="true" (click)="setDatePreset('month')" />
       </div>
     </div>
   </p-card>
@@ -216,10 +200,7 @@
           </tr>
         </ng-template>
         <ng-template #body let-load>
-          <tr
-            class="transition-colors duration-150 hover:bg-(--bg-hover)"
-            (click)="selectedRow.set(load)"
-          >
+          <tr class="hover:bg-hover transition-colors duration-150" (click)="selectedRow.set(load)">
             <td>
               <a
                 [routerLink]="['/loads', load.id]"
@@ -273,7 +254,7 @@
             <td>
               <app-load-status-tag [status]="load.status" />
 
-              <div class="text-xs text-(--text-muted) italic">
+              <div class="text-muted text-xs italic">
                 @switch (load.status) {
                   @case ("dispatched") {
                     {{ load.dispatchedAt | date: "mediumDate" }}
@@ -314,7 +295,6 @@
               <p-button
                 icon="pi pi-ellipsis-v"
                 (click)="menu.toggle($event)"
-                severity="secondary"
                 aria-label="Show actions menu"
               />
             </td>

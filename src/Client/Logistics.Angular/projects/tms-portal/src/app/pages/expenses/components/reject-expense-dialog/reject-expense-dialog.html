@@ -7,7 +7,7 @@
   (onHide)="service.cancelReject()"
 >
   <div class="flex flex-col gap-4">
-    <p class="text-gray-600">
+    <p class="text-secondary">
       Please provide a reason for rejecting expense #{{ service.pendingExpenseNumber() }}.
     </p>
     <textarea
@@ -19,7 +19,7 @@
     ></textarea>
   </div>
   <ng-template #footer>
-    <p-button label="Cancel" severity="secondary" [text]="true" (click)="service.cancelReject()" />
+    <p-button label="Cancel" [text]="true" (click)="service.cancelReject()" />
     <p-button
       label="Reject"
       severity="danger"

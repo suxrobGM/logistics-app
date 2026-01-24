@@ -7,7 +7,6 @@
       icon="pi pi-arrow-left"
       label="Back"
       [routerLink]="['/expenses', id()]"
-      severity="secondary"
       [outlined]="true"
     />
   </div>
@@ -187,12 +186,7 @@
         </ui-labeled-field>
 
         <div class="flex justify-end gap-2 pt-4">
-          <p-button
-            label="Cancel"
-            [routerLink]="['/expenses', id()]"
-            severity="secondary"
-            [outlined]="true"
-          />
+          <p-button label="Cancel" [routerLink]="['/expenses', id()]" [outlined]="true" />
           <p-button type="submit" label="Save Changes" icon="pi pi-save" [loading]="isSaving()" />
         </div>
       </form>
@@ -200,14 +194,9 @@
   } @else {
     <p-card>
       <div class="py-16 text-center">
-        <i class="pi pi-exclamation-circle mb-4 text-4xl text-gray-400"></i>
-        <p class="text-gray-500">Expense not found</p>
-        <p-button
-          label="Back to Expenses"
-          [routerLink]="['/expenses']"
-          severity="secondary"
-          class="mt-4"
-        />
+        <i class="pi pi-exclamation-circle text-muted mb-4 text-4xl"></i>
+        <p class="text-muted">Expense not found</p>
+        <p-button label="Back to Expenses" [routerLink]="['/expenses']" class="mt-4" />
       </div>
     </p-card>
   }

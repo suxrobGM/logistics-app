@@ -2,7 +2,7 @@
 <div class="mb-6 flex items-center justify-between">
   <div>
     <h1 class="mb-1 text-2xl font-semibold">Loads Dashboard</h1>
-    <p class="mb-0 text-gray-500">Comprehensive overview of load performance and trends</p>
+    <p class="mb-0 text-muted">Comprehensive overview of load performance and trends</p>
   </div>
   <ui-range-calendar [(startDate)]="startDate" [(endDate)]="endDate" (applyButtonClick)="filter()">
   </ui-range-calendar>
@@ -29,9 +29,9 @@
             <i class="pi pi-server text-2xl text-blue-600"></i>
           </div>
           <div class="ml-4 grow">
-            <h6 class="mb-1 text-gray-500">Total Loads</h6>
+            <h6 class="mb-1 text-muted">Total Loads</h6>
             <h4 class="mb-0">{{ data()?.totalLoads || 0 | number }}</h4>
-            <small class="text-green-600">
+            <small class="text-success">
               <i class="pi pi-arrow-up"></i> +5.2% vs last period
             </small>
           </div>
@@ -45,14 +45,14 @@
           <div
             class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-green-600/10"
           >
-            <i class="pi pi-dollar text-2xl text-green-600"></i>
+            <i class="pi pi-dollar text-2xl text-success"></i>
           </div>
           <div class="ml-4 grow">
-            <h6 class="mb-1 text-gray-500">Total Revenue</h6>
+            <h6 class="mb-1 text-muted">Total Revenue</h6>
             <h4 class="mb-0">
               {{ data()?.totalRevenue || 0 | currency: "USD" : "symbol" : "1.0-0" }}
             </h4>
-            <small class="text-green-600">
+            <small class="text-success">
               <i class="pi pi-arrow-up"></i> +8.1% vs last period
             </small>
           </div>
@@ -69,9 +69,9 @@
             <i class="pi pi-map text-2xl text-cyan-500"></i>
           </div>
           <div class="ml-4 grow">
-            <h6 class="mb-1 text-gray-500">Total Distance</h6>
+            <h6 class="mb-1 text-muted">Total Distance</h6>
             <h4 class="mb-0">{{ data()?.totalDistance || 0 | number: "1.0-0" }} km</h4>
-            <small class="text-green-600">
+            <small class="text-success">
               <i class="pi pi-arrow-up"></i> +3.7% vs last period
             </small>
           </div>
@@ -88,9 +88,9 @@
             <i class="pi pi-times-circle text-2xl text-yellow-500"></i>
           </div>
           <div class="ml-4 grow">
-            <h6 class="mb-1 text-gray-500">Cancellation Rate</h6>
+            <h6 class="mb-1 text-muted">Cancellation Rate</h6>
             <h4 class="mb-0">{{ data()?.cancellationRate || 0 | number: "1.1-1" }}%</h4>
-            <small class="text-red-600">
+            <small class="text-danger">
               <i class="pi pi-arrow-down"></i> -1.2% vs last period
             </small>
           </div>
@@ -112,7 +112,7 @@
         <div class="grid grid-cols-12 gap-1">
           @for (metric of data()?.performanceMetrics || []; track metric.metric) {
             <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
-              <div class="flex items-center rounded bg-gray-100 p-4">
+              <div class="flex items-center rounded bg-hover p-4">
                 <div class="grow">
                   <h6 class="mb-1">{{ metric.metric }}</h6>
                   <h4 class="mb-0">{{ metric.value | number: "1.1-1" }} {{ metric.unit }}</h4>

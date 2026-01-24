@@ -12,18 +12,11 @@
           (click)="onReject()"
         />
       }
-      <p-button
-        icon="pi pi-pencil"
-        label="Edit"
-        severity="secondary"
-        [outlined]="true"
-        (click)="onEdit()"
-      />
+      <p-button icon="pi pi-pencil" label="Edit" [outlined]="true" (click)="onEdit()" />
       <p-button
         icon="pi pi-arrow-left"
         label="Back"
         [routerLink]="['/expenses']"
-        severity="secondary"
         [outlined]="true"
       />
     </div>
@@ -45,44 +38,44 @@
 
         <div class="space-y-4">
           <div class="flex items-center justify-between">
-            <span class="text-gray-500">Expense #</span>
+            <span class="text-muted">Expense #</span>
             <span class="font-mono font-semibold">{{ expense()!.number }}</span>
           </div>
 
           <p-divider />
 
           <div class="flex items-center justify-between">
-            <span class="text-gray-500">Type</span>
+            <span class="text-muted">Type</span>
             <app-expense-type-tag [type]="expense()!.type" />
           </div>
 
           <div class="flex items-center justify-between">
-            <span class="text-gray-500">Status</span>
+            <span class="text-muted">Status</span>
             <app-expense-status-tag [status]="expense()!.status" />
           </div>
 
           <div class="flex items-center justify-between">
-            <span class="text-gray-500">Category</span>
+            <span class="text-muted">Category</span>
             <span class="font-medium">{{ getCategoryLabel() }}</span>
           </div>
 
           <p-divider />
 
           <div class="flex items-center justify-between">
-            <span class="text-gray-500">Amount</span>
-            <span class="text-xl font-bold text-green-600">
+            <span class="text-muted">Amount</span>
+            <span class="text-success text-xl font-bold">
               {{ expense()!.amount?.amount ?? 0 | currency: expense()!.amount?.currency ?? "USD" }}
             </span>
           </div>
 
           <div class="flex items-center justify-between">
-            <span class="text-gray-500">Expense Date</span>
+            <span class="text-muted">Expense Date</span>
             <span>{{ expense()!.expenseDate | date: "mediumDate" }}</span>
           </div>
 
           @if (expense()!.vendorName) {
             <div class="flex items-center justify-between">
-              <span class="text-gray-500">Vendor</span>
+              <span class="text-muted">Vendor</span>
               <span>{{ expense()!.vendorName }}</span>
             </div>
           }
@@ -100,7 +93,7 @@
         <div class="space-y-4">
           @if (expense()!.truck) {
             <div class="flex items-center justify-between">
-              <span class="text-gray-500">Truck</span>
+              <span class="text-muted">Truck</span>
               <a
                 [routerLink]="['/trucks', expense()!.truckId, 'edit']"
                 class="text-primary font-medium hover:underline"
@@ -112,7 +105,7 @@
 
           @if (expense()!.odometerReading) {
             <div class="flex items-center justify-between">
-              <span class="text-gray-500">Odometer</span>
+              <span class="text-muted">Odometer</span>
               <span>{{ expense()!.odometerReading | number }} mi</span>
             </div>
           }
@@ -120,35 +113,35 @@
           @if (expense()!.type === "body_shop") {
             @if (expense()!.vendorAddress) {
               <div class="flex items-center justify-between">
-                <span class="text-gray-500">Shop Address</span>
+                <span class="text-muted">Shop Address</span>
                 <span class="text-right">{{ expense()!.vendorAddress }}</span>
               </div>
             }
 
             @if (expense()!.vendorPhone) {
               <div class="flex items-center justify-between">
-                <span class="text-gray-500">Shop Phone</span>
+                <span class="text-muted">Shop Phone</span>
                 <span>{{ expense()!.vendorPhone }}</span>
               </div>
             }
 
             @if (expense()!.repairDescription) {
               <div>
-                <span class="block text-gray-500">Repair Description</span>
+                <span class="text-muted block">Repair Description</span>
                 <span class="mt-1 block">{{ expense()!.repairDescription }}</span>
               </div>
             }
 
             @if (expense()!.estimatedCompletionDate) {
               <div class="flex items-center justify-between">
-                <span class="text-gray-500">Est. Completion</span>
+                <span class="text-muted">Est. Completion</span>
                 <span>{{ expense()!.estimatedCompletionDate | date: "mediumDate" }}</span>
               </div>
             }
 
             @if (expense()!.actualCompletionDate) {
               <div class="flex items-center justify-between">
-                <span class="text-gray-500">Actual Completion</span>
+                <span class="text-muted">Actual Completion</span>
                 <span>{{ expense()!.actualCompletionDate | date: "mediumDate" }}</span>
               </div>
             }
@@ -157,7 +150,7 @@
           @if (expense()!.notes) {
             <p-divider />
             <div>
-              <span class="block text-gray-500">Notes</span>
+              <span class="text-muted block">Notes</span>
               <span class="mt-1 block">{{ expense()!.notes }}</span>
             </div>
           }
@@ -166,11 +159,10 @@
 
           @if (expense()!.receiptBlobPath) {
             <div class="flex items-center justify-between">
-              <span class="text-gray-500">Receipt</span>
+              <span class="text-muted">Receipt</span>
               <p-button
                 icon="pi pi-file"
                 label="View Receipt"
-                severity="secondary"
                 [outlined]="true"
                 size="small"
                 (click)="viewReceipt()"
@@ -178,8 +170,8 @@
             </div>
           } @else {
             <div class="flex items-center justify-between">
-              <span class="text-gray-500">Receipt</span>
-              <span class="text-gray-400">No receipt attached</span>
+              <span class="text-muted">Receipt</span>
+              <span class="text-muted">No receipt attached</span>
             </div>
           }
         </div>
@@ -196,27 +188,27 @@
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div>
-          <span class="block text-sm text-gray-500">Created By</span>
+          <span class="text-muted block text-sm">Created By</span>
           <span class="font-medium">{{ expense()!.createdByName || "N/A" }}</span>
         </div>
         <div>
-          <span class="block text-sm text-gray-500">Created At</span>
+          <span class="text-muted block text-sm">Created At</span>
           <span>{{ expense()!.createdAt | date: "medium" }}</span>
         </div>
         @if (expense()!.approvedByName) {
           <div>
-            <span class="block text-sm text-gray-500">Approved By</span>
+            <span class="text-muted block text-sm">Approved By</span>
             <span class="font-medium">{{ expense()!.approvedByName }}</span>
           </div>
           <div>
-            <span class="block text-sm text-gray-500">Approved At</span>
+            <span class="text-muted block text-sm">Approved At</span>
             <span>{{ expense()!.approvedAt | date: "medium" }}</span>
           </div>
         }
         @if (expense()!.rejectionReason) {
           <div class="col-span-full">
-            <span class="block text-sm text-gray-500">Rejection Reason</span>
-            <span class="text-red-600">{{ expense()!.rejectionReason }}</span>
+            <span class="text-muted block text-sm">Rejection Reason</span>
+            <span class="text-danger">{{ expense()!.rejectionReason }}</span>
           </div>
         }
       </div>
@@ -224,14 +216,9 @@
   } @else {
     <p-card>
       <div class="py-16 text-center">
-        <i class="pi pi-exclamation-circle mb-4 text-4xl text-gray-400"></i>
-        <p class="text-gray-500">Expense not found</p>
-        <p-button
-          label="Back to Expenses"
-          [routerLink]="['/expenses']"
-          severity="secondary"
-          class="mt-4"
-        />
+        <i class="pi pi-exclamation-circle text-muted mb-4 text-4xl"></i>
+        <p class="text-muted">Expense not found</p>
+        <p-button label="Back to Expenses" [routerLink]="['/expenses']" class="mt-4" />
       </div>
     </p-card>
   }

@@ -1,4 +1,4 @@
-<p-card>
+<p-card class="border-default border">
   <ng-template #header>
     <div class="flex items-center justify-between p-4 pb-0">
       <div class="flex items-center gap-2">
@@ -7,7 +7,6 @@
       </div>
       <p-button
         icon="pi pi-refresh"
-        severity="secondary"
         [outlined]="true"
         size="small"
         (click)="refresh()"
@@ -64,7 +63,7 @@
       <ng-template #empty>
         <tr>
           <td colspan="6" class="py-8 text-center">
-            <div class="flex flex-col items-center gap-3 text-gray-500">
+            <div class="text-muted flex flex-col items-center gap-3">
               <i class="pi pi-book text-4xl"></i>
               <div>
                 <p class="font-medium">No invoices found</p>

@@ -75,7 +75,7 @@
         <div class="grid grid-cols-12 gap-1">
           @for (metric of data()?.efficiencyMetrics || []; track metric.metric) {
             <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
-              <div class="flex items-center rounded bg-gray-100 p-4">
+              <div class="flex items-center rounded bg-hover p-4">
                 <div class="grow">
                   <h6 class="mb-1">{{ metric.metric }}</h6>
                   <h4 class="mb-0">{{ metric.value | number: "1.1-1" }} {{ metric.unit }}</h4>

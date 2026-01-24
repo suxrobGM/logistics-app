@@ -2,7 +2,7 @@
 <div class="mb-6 flex items-center justify-between">
   <div>
     <h1 class="mb-1 text-2xl font-semibold">Drivers Report</h1>
-    <p class="mb-0 text-gray-500">Detailed driver performance and statistics</p>
+    <p class="mb-0 text-muted">Detailed driver performance and statistics</p>
   </div>
   <div class="flex items-center gap-2">
     <div class="flex items-center gap-2">
@@ -89,12 +89,12 @@
             </div>
             <div>
               <div class="font-medium">{{ driver.driverName }}</div>
-              <small class="text-gray-500">ID: {{ driver.driverId }}</small>
+              <small class="text-muted">ID: {{ driver.driverId }}</small>
             </div>
           </div>
         </td>
         <td>
-          <span class="rounded bg-gray-500 px-2 py-1 text-sm text-white">{{
+          <span class="rounded bg-secondary px-2 py-1 text-sm text-white">{{
             driver.truckNumber
           }}</span>
         </td>
@@ -117,7 +117,7 @@
           }}</span>
         </td>
         <td>
-          <span class="text-gray-500">{{
+          <span class="text-muted">{{
             driver.averageEarningsPerLoad | currency: "USD" : "symbol" : "1.0-0"
           }}</span>
         </td>
@@ -137,9 +137,9 @@
       <tr>
         <td colspan="9" class="py-4 text-center">
           <div class="flex flex-col items-center">
-            <i class="pi pi-users text-gray-500" style="font-size: 3rem"></i>
-            <h6 class="mt-2 text-gray-500">No drivers found</h6>
-            <p class="mb-0 text-gray-500">Try adjusting your search criteria or date range</p>
+            <i class="pi pi-users text-muted" style="font-size: 3rem"></i>
+            <h6 class="mt-2 text-muted">No drivers found</h6>
+            <p class="mb-0 text-muted">Try adjusting your search criteria or date range</p>
           </div>
         </td>
       </tr>

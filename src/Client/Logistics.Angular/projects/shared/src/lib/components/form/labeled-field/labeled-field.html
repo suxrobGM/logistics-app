@@ -2,22 +2,22 @@
   @if (label()) {
     <div class="mb-2 flex items-center gap-1 text-sm font-medium">
       @if (required()) {
-        <span class="text-red-600">*</span>
+        <span class="text-red-600 dark:text-red-400">*</span>
       }
-      <label class="text-gray-700" [for]="for()">{{ label() }}</label>
+      <label class="text-gray-700 dark:text-gray-300" [for]="for()">{{ label() }}</label>
     </div>
   }
 
   <ng-content></ng-content>
 
   @if (hint() && !isFieldInvalid()) {
-    <div class="text-sm text-gray-500">
+    <div class="text-sm text-gray-500 dark:text-gray-400">
       {{ hint() }}
     </div>
   }
 
   @if (isFieldInvalid()) {
-    <div class="text-red-600">
+    <div class="text-red-600 dark:text-red-400">
       @let errors = control()?.errors;
       @if (errors?.["required"]) {
         This field is required.

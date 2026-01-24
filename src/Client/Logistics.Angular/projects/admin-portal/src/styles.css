@@ -1,6 +1,9 @@
 @import "primeicons/primeicons.css";
 @import "tailwindcss";
 
+/* Disable dark mode - this project only supports light theme */
+@custom-variant dark (&:where(.dark-theme-disabled));
+
 html,
 body {
   height: 100%;

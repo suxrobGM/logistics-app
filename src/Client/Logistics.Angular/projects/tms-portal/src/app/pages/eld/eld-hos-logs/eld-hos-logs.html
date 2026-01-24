@@ -11,7 +11,7 @@
       />
       <div>
         <h1 class="mb-1 text-2xl font-semibold">HOS Logs - {{ employeeName() }}</h1>
-        <p class="mb-0 text-gray-500">View driver duty status history</p>
+        <p class="text-muted mb-0">View driver duty status history</p>
       </div>
     </div>
   </div>
@@ -42,13 +42,7 @@
           />
         </ui-labeled-field>
       </div>
-      <p-button
-        label="Refresh"
-        icon="pi pi-refresh"
-        severity="secondary"
-        (onClick)="loadData()"
-        [loading]="loading()"
-      />
+      <p-button label="Refresh" icon="pi pi-refresh" (onClick)="loadData()" [loading]="loading()" />
     </p-card>
   </div>
 
@@ -63,7 +57,7 @@
             <i class="pi pi-car text-xl text-green-600"></i>
           </div>
           <div class="ml-4">
-            <h6 class="mb-1 text-gray-500">Total Driving Time</h6>
+            <h6 class="text-muted mb-1">Total Driving Time</h6>
             <h4 class="mb-0 text-xl font-bold">{{ formatMinutes(totalDrivingMinutes()) }}</h4>
           </div>
         </div>
@@ -78,7 +72,7 @@
             <i class="pi pi-clock text-xl text-blue-600"></i>
           </div>
           <div class="ml-4">
-            <h6 class="mb-1 text-gray-500">Total On-Duty Time</h6>
+            <h6 class="text-muted mb-1">Total On-Duty Time</h6>
             <h4 class="mb-0 text-xl font-bold">{{ formatMinutes(totalOnDutyMinutes()) }}</h4>
           </div>
         </div>
@@ -107,9 +101,9 @@
       </div>
     } @else if (logs().length === 0) {
       <div class="p-5 text-center">
-        <i class="pi pi-inbox mb-3 text-4xl text-gray-400"></i>
-        <p class="text-gray-600">No HOS logs found for the selected date range.</p>
-        <p class="mb-0 text-sm text-gray-500">Try adjusting the date filter above.</p>
+        <i class="pi pi-inbox text-muted mb-3 text-4xl"></i>
+        <p class="text-secondary">No HOS logs found for the selected date range.</p>
+        <p class="text-muted mb-0 text-sm">Try adjusting the date filter above.</p>
       </div>
     } @else {
       <p-table
@@ -143,7 +137,7 @@
               @if (log.endTime) {
                 {{ log.endTime | date: "shortTime" }}
               } @else {
-                <span class="text-gray-400">Ongoing</span>
+                <span class="text-muted">Ongoing</span>
               }
             </td>
             <td>
@@ -157,18 +151,18 @@
               @if (log.location) {
                 <span class="text-sm">{{ log.location }}</span>
               } @else if (log.latitude && log.longitude) {
-                <span class="text-sm text-gray-500">
+                <span class="text-muted text-sm">
                   {{ log.latitude | number: "1.4-4" }}, {{ log.longitude | number: "1.4-4" }}
                 </span>
               } @else {
-                <span class="text-gray-400">-</span>
+                <span class="text-muted">-</span>
               }
             </td>
             <td>
               @if (log.remark) {
                 <span class="text-sm">{{ log.remark }}</span>
               } @else {
-                <span class="text-gray-400">-</span>
+                <span class="text-muted">-</span>
               }
             </td>
           </tr>

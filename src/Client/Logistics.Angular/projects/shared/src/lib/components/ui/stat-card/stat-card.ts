@@ -18,36 +18,36 @@ export class StatCard {
 
   protected readonly iconClasses = computed(() => {
     const colorMap: Record<ColorVariant, string> = {
-      blue: "text-blue-600",
-      green: "text-green-600",
-      orange: "text-orange-600",
-      red: "text-red-600",
-      purple: "text-purple-600",
-      gray: "text-gray-600",
+      blue: "text-blue-600 dark:text-blue-400",
+      green: "text-green-600 dark:text-green-400",
+      orange: "text-orange-600 dark:text-orange-400",
+      red: "text-red-600 dark:text-red-400",
+      purple: "text-purple-600 dark:text-purple-400",
+      gray: "text-gray-600 dark:text-gray-400",
     };
     return `pi ${this.icon()} text-2xl ${colorMap[this.color()]}`;
   });
 
   protected readonly bgClasses = computed(() => {
     const colorMap: Record<ColorVariant, string> = {
-      blue: "bg-blue-600/10",
-      green: "bg-green-600/10",
-      orange: "bg-orange-600/10",
-      red: "bg-red-600/10",
-      purple: "bg-purple-600/10",
-      gray: "bg-gray-600/10",
+      blue: "bg-blue-600/10 dark:bg-blue-400/15",
+      green: "bg-green-600/10 dark:bg-green-400/15",
+      orange: "bg-orange-600/10 dark:bg-orange-400/15",
+      red: "bg-red-600/10 dark:bg-red-400/15",
+      purple: "bg-purple-600/10 dark:bg-purple-400/15",
+      gray: "bg-gray-600/10 dark:bg-gray-400/15",
     };
     return `flex h-14 w-14 shrink-0 items-center justify-center rounded-full ${colorMap[this.color()]}`;
   });
 
   protected readonly trendClasses = computed(() => {
     if (this.trendDirection() === "up") {
-      return "text-green-600";
+      return "text-green-600 dark:text-green-400";
     }
     if (this.trendDirection() === "down") {
-      return "text-red-600";
+      return "text-red-600 dark:text-red-400";
     }
-    return "text-gray-500";
+    return "text-gray-500 dark:text-gray-400";
   });
 
   protected readonly trendIcon = computed(() => {

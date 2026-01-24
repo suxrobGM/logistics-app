@@ -14,11 +14,11 @@
   <ng-template #item let-truck>
     <div class="flex items-center gap-2">
       <span class="font-bold">{{ truck.number }} - </span>
-      <span class="text-sm text-gray-500">{{ truck.mainDriver.fullName }}</span>
+      <span class="text-sm text-muted">{{ truck.mainDriver.fullName }}</span>
       @if (truck.secondaryDriver) {
-        <span class="text-sm text-gray-500">and {{ truck.secondaryDriver.fullName }}</span>
+        <span class="text-sm text-muted">and {{ truck.secondaryDriver.fullName }}</span>
       }
-      <span class="text-sm text-gray-500">({{ truck.type }})</span>
+      <span class="text-sm text-muted">({{ truck.type }})</span>
     </div>
   </ng-template>
 </p-autocomplete>

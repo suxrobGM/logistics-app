@@ -1,19 +1,13 @@
 <div
   class="from-primary/5 flex items-center gap-4 border-b bg-linear-to-r to-transparent px-4 py-3"
 >
-  <p-button
-    icon="pi pi-arrow-left"
-    [text]="true"
-    [rounded]="true"
-    severity="secondary"
-    routerLink="/messages"
-  />
+  <p-button icon="pi pi-arrow-left" [text]="true" [rounded]="true" routerLink="/messages" />
 
   @if (isNewConversation()) {
     <i class="pi pi-plus-circle text-primary text-2xl"></i>
     <div class="flex-1">
-      <h2 class="font-semibold text-gray-800">New Conversation</h2>
-      <p class="text-xs text-gray-400">Select a recipient to start messaging</p>
+      <h2 class="text-primary font-semibold">New Conversation</h2>
+      <p class="text-muted text-xs">Select a recipient to start messaging</p>
     </div>
   } @else {
     <p-avatar
@@ -22,20 +16,19 @@
       shape="circle"
     />
     <div class="flex-1 cursor-pointer" (click)="toggleDetails.emit()">
-      <h2 class="font-semibold text-gray-800">
+      <h2 class="text-primary font-semibold">
         {{ getConversationTitle(conversation()) }}
       </h2>
       @if (isTyping()) {
         <p class="text-primary animate-pulse text-sm">typing...</p>
       } @else {
-        <p class="text-xs text-gray-400">Click to view details</p>
+        <p class="text-muted text-xs">Click to view details</p>
       }
     </div>
     <p-button
       icon="pi pi-info-circle"
       [text]="true"
       [rounded]="true"
-      severity="secondary"
       (onClick)="toggleDetails.emit()"
       pTooltip="View details"
     />

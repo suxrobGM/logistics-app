@@ -1,9 +1,9 @@
 <div class="employee-documents-page mx-auto max-w-7xl p-6">
-  <div class="page-header mb-6 border-b border-gray-200 pb-4">
+  <div class="page-header border-subtle mb-6 border-b pb-4">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="mb-2 text-2xl font-bold text-gray-900">Employee Documents</h1>
-        <p class="text-gray-600">
+        <h1 class="text-primary mb-2 text-2xl font-bold">Employee Documents</h1>
+        <p class="text-secondary">
           Manage documents for employee: {{ employee()?.firstName }} {{ employee()?.lastName }}
         </p>
       </div>
@@ -11,7 +11,6 @@
         icon="pi pi-arrow-left"
         label="Back to Employees"
         [routerLink]="['/employees']"
-        severity="secondary"
         [outlined]="true"
       />
     </div>

@@ -5,7 +5,6 @@
     <p-button
       icon="pi pi-send"
       label="Invite Employee"
-      severity="secondary"
       [outlined]="true"
       (click)="openInviteDialog()"
     />
@@ -14,7 +13,6 @@
     <p-button
       icon="pi pi-clock"
       label="Pending Invitations"
-      severity="secondary"
       [outlined]="true"
       routerLink="/employees/invitations"
     />
@@ -103,7 +101,6 @@
           <td>
             <p-button
               icon="pi pi-ellipsis-v"
-              severity="secondary"
               [text]="true"
               aria-label="Show actions menu"
               (click)="selectedRow.set(employee); menu.toggle($event)"

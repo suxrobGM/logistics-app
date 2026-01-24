@@ -1,17 +1,17 @@
 <div class="condition-report-detail mx-auto max-w-7xl p-6">
   <!-- Header -->
-  <div class="page-header mb-6 border-b border-gray-200 pb-4">
+  <div class="page-header border-subtle mb-6 border-b pb-4">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="mb-2 text-2xl font-bold text-gray-900">Condition Report Details</h1>
+        <h1 class="text-primary mb-2 text-2xl font-bold">Condition Report Details</h1>
         @if (report()) {
           <div class="flex items-center gap-3">
             <p-tag
               [value]="getTypeLabel(report()!.type ?? '')"
               [severity]="getTypeSeverity(report()!.type ?? '')"
             />
-            <span class="text-gray-500">|</span>
-            <span class="font-mono text-sm text-gray-600">VIN: {{ report()!.vin || "N/A" }}</span>
+            <span class="text-muted">|</span>
+            <span class="text-secondary font-mono text-sm">VIN: {{ report()!.vin || "N/A" }}</span>
           </div>
         }
       </div>
@@ -20,7 +20,6 @@
           icon="pi pi-arrow-left"
           label="Back to List"
           [routerLink]="['/inspections']"
-          severity="secondary"
           [outlined]="true"
         />
       </div>
@@ -46,16 +45,16 @@
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="mb-1 block text-xs font-medium text-gray-500">VIN</label>
+              <label class="text-muted mb-1 block text-xs font-medium">VIN</label>
               <p class="font-mono text-sm">{{ report()!.vin || "N/A" }}</p>
             </div>
             <div>
-              <label class="mb-1 block text-xs font-medium text-gray-500">Vehicle</label>
+              <label class="text-muted mb-1 block text-xs font-medium">Vehicle</label>
               <p class="text-sm">{{ getVehicleInfo() }}</p>
             </div>
             @if (report()!.vehicleBodyClass) {
               <div class="col-span-2">
-                <label class="mb-1 block text-xs font-medium text-gray-500">Body Class</label>
+                <label class="text-muted mb-1 block text-xs font-medium">Body Class</label>
                 <p class="text-sm">{{ report()!.vehicleBodyClass }}</p>
               </div>
             }
@@ -86,7 +85,7 @@
           <p-card>
             <ng-template #header>
               <div class="flex items-center gap-2 p-4 pb-0">
-                <i class="pi pi-exclamation-triangle text-orange-500"></i>
+                <i class="pi pi-exclamation-triangle text-warning"></i>
                 <h3 class="m-0 text-lg font-semibold">Damage Details</h3>
               </div>
             </ng-template>
@@ -130,21 +129,21 @@
           <div class="space-y-4">
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="mb-1 block text-xs font-medium text-gray-500">Inspection Type</label>
+                <label class="text-muted mb-1 block text-xs font-medium">Inspection Type</label>
                 <p-tag
                   [value]="getTypeLabel(report()!.type ?? '')"
                   [severity]="getTypeSeverity(report()!.type ?? '')"
                 />
               </div>
               <div>
-                <label class="mb-1 block text-xs font-medium text-gray-500">Signature</label>
+                <label class="text-muted mb-1 block text-xs font-medium">Signature</label>
                 @if (report()!.hasSignature) {
-                  <span class="flex items-center gap-1 text-green-600">
+                  <span class="text-success flex items-center gap-1">
                     <i class="pi pi-check-circle"></i>
                     Captured
                   </span>
                 } @else {
-                  <span class="text-gray-400">Not captured</span>
+                  <span class="text-muted">Not captured</span>
                 }
               </div>
             </div>
@@ -153,18 +152,18 @@
 
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="mb-1 block text-xs font-medium text-gray-500">Inspector</label>
+                <label class="text-muted mb-1 block text-xs font-medium">Inspector</label>
                 <p class="text-sm">{{ report()!.inspectorName || "N/A" }}</p>
               </div>
               <div>
-                <label class="mb-1 block text-xs font-medium text-gray-500">Inspected At</label>
+                <label class="text-muted mb-1 block text-xs font-medium">Inspected At</label>
                 <p class="text-sm">{{ report()!.inspectedAt | date: "medium" }}</p>
               </div>
             </div>
 
             @if (report()!.latitude && report()!.longitude) {
-              <div class="rounded-lg bg-green-50 p-3">
-                <label class="mb-1 block text-xs font-medium text-green-600">Location</label>
+              <div class="bg-success/10 rounded-lg p-3">
+                <label class="text-success mb-1 block text-xs font-medium">Location</label>
                 <div class="flex items-center justify-between">
                   <p class="text-sm">
                     {{ formatCoordinates(report()!.latitude, report()!.longitude) }}
@@ -182,7 +181,7 @@
             }
 
             <div>
-              <label class="mb-1 block text-xs font-medium text-gray-500">Load ID</label>
+              <label class="text-muted mb-1 block text-xs font-medium">Load ID</label>
               <a
                 [routerLink]="['/loads', report()!.loadId]"
                 class="text-primary text-sm hover:underline"
@@ -204,7 +203,7 @@
               </div>
             </ng-template>
 
-            <p class="text-sm whitespace-pre-wrap text-gray-700">{{ report()!.notes }}</p>
+            <p class="text-secondary text-sm whitespace-pre-wrap">{{ report()!.notes }}</p>
           </p-card>
         }
 
@@ -224,8 +223,11 @@
             <div class="grid grid-cols-3 gap-3">
               @for (photo of report()!.photos; track photo.id; let i = $index) {
                 <div
-                  class="group relative cursor-pointer overflow-hidden rounded-lg border"
+                  class="group relative cursor-pointer overflow-hidden rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary"
+                  role="button"
+                  tabindex="0"
                   (click)="openGallery(i)"
+                  (keydown.enter)="openGallery(i)"
                 >
                   <img
                     [src]="getPhotoUrl(photo.blobPath)"
@@ -246,12 +248,11 @@
     </div>
   } @else {
     <div class="py-16 text-center">
-      <i class="pi pi-exclamation-circle mb-4 text-4xl text-gray-400"></i>
-      <p class="text-gray-500">Condition report not found</p>
+      <i class="pi pi-exclamation-circle text-muted mb-4 text-4xl"></i>
+      <p class="text-muted">Condition report not found</p>
       <p-button
         label="Back to List"
         [routerLink]="['/inspections']"
-        severity="secondary"
         [outlined]="true"
         class="mt-4"
       />
