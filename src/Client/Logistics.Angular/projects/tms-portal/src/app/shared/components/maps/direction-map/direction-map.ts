@@ -1,10 +1,11 @@
 import { HttpClient } from "@angular/common/http";
-import { Component, effect, inject, input, model, output, signal } from "@angular/core";
+import { Component, computed, effect, inject, input, model, output, signal } from "@angular/core";
 import type { GeoPointDto } from "@logistics/shared/api/models";
 import type { LineString } from "geojson";
 import type { LngLatLike, MapMouseEvent } from "mapbox-gl";
 import { GeoJSONSourceComponent, LayerComponent, MapComponent } from "ngx-mapbox-gl";
 import { firstValueFrom } from "rxjs";
+import { ThemeService } from "@/core/services";
 import { environment } from "@/env";
 import type { MapboxDirectionsResponse } from "@/shared/types/mapbox";
 import type {
@@ -23,6 +24,9 @@ import type {
   imports: [MapComponent, LayerComponent, GeoJSONSourceComponent],
 })
 export class DirectionMap {
+  private readonly http = inject(HttpClient);
+  private readonly themeService = inject(ThemeService);
+
   protected readonly accessToken = environment.mapboxToken;
   private readonly defaultCenter: LngLatLike = [-95, 35];
   private readonly defaultZoom = 3;
@@ -34,7 +38,12 @@ export class DirectionMap {
     "#B10DC9", // purple
   ];
 
-  private readonly http = inject(HttpClient);
+  /** Mapbox style URL based on current theme */
+  protected readonly mapStyle = computed(() =>
+    this.themeService.isDark()
+      ? "mapbox://styles/mapbox/dark-v11"
+      : "mapbox://styles/mapbox/streets-v12",
+  );
 
   // States
   protected readonly segments = signal<SegmentLayer[]>([]);

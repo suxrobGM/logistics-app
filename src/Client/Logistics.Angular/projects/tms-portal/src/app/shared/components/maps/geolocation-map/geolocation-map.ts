@@ -1,6 +1,7 @@
-import { Component, input, signal } from "@angular/core";
+import { Component, computed, inject, input, signal } from "@angular/core";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { MapComponent, MarkerComponent, PopupComponent } from "ngx-mapbox-gl";
+import { ThemeService } from "@/core/services";
 import { AddressPipe } from "@/shared/pipes";
 
 @Component({
@@ -9,7 +10,16 @@ import { AddressPipe } from "@/shared/pipes";
   imports: [AddressPipe, MapComponent, MarkerComponent, PopupComponent],
 })
 export class GeolocationMap {
+  private readonly themeService = inject(ThemeService);
+
   protected readonly selectedMarker = signal<Marker | null>(null);
+
+  /** Mapbox style URL based on current theme */
+  protected readonly mapStyle = computed(() =>
+    this.themeService.isDark()
+      ? "mapbox://styles/mapbox/dark-v11"
+      : "mapbox://styles/mapbox/streets-v12",
+  );
 
   public readonly geolocationData = input<TruckGeolocationDto[]>([]);
   public readonly zoom = input<number>(3);

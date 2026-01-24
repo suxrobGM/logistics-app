@@ -4,5 +4,6 @@ export * from "./messaging.service";
 export * from "./tenant.service";
 export * from "./stripe.service";
 export * from "./layout.service";
+export * from "./theme.service";
 
 export { ToastService } from "@logistics/shared";

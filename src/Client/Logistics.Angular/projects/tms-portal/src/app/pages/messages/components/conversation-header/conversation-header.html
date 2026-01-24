@@ -15,7 +15,13 @@
       class="bg-primary text-white"
       shape="circle"
     />
-    <div class="flex-1 cursor-pointer" (click)="toggleDetails.emit()">
+    <div
+      class="flex-1 cursor-pointer"
+      role="button"
+      tabindex="0"
+      (click)="toggleDetails.emit()"
+      (keydown.enter)="toggleDetails.emit()"
+    >
       <h2 class="text-primary font-semibold">
         {{ getConversationTitle(conversation()) }}
       </h2>
