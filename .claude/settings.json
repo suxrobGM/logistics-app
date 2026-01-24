@@ -36,7 +36,8 @@
       "Bash(Select-String:*)",
       "Bash(Select-Object:*)",
       "Read(//c/**)",
-      "Skill(frontend-design:*)"
+      "Skill(frontend-design:*)",
+      "mcp__plugin_playwright_playwright__*"
     ],
     "deny": [],
     "ask": []

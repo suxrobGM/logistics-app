@@ -378,3 +378,6 @@ KotlinProject/
 sample-pdf/
 
 PLAN.md
+
+# Playwright test artifacts
+.playwright-mcp/

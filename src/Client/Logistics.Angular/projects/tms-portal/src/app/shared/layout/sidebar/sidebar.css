@@ -116,7 +116,7 @@
   gap: 0.5rem;
   padding: 0.75rem;
   border-top: 1px solid var(--border-subtle);
-  background-color: var(--bg-elevated);
+  background: var(--sidebar-footer-bg);
 }
 
 .sidebar-footer-collapsed {

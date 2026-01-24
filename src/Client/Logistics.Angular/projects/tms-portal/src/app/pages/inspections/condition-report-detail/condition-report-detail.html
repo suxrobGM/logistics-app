@@ -45,16 +45,16 @@
 
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="text-muted mb-1 block text-xs font-medium">VIN</label>
+              <span class="text-muted mb-1 block text-xs font-medium">VIN</span>
               <p class="font-mono text-sm">{{ report()!.vin || "N/A" }}</p>
             </div>
             <div>
-              <label class="text-muted mb-1 block text-xs font-medium">Vehicle</label>
+              <span class="text-muted mb-1 block text-xs font-medium">Vehicle</span>
               <p class="text-sm">{{ getVehicleInfo() }}</p>
             </div>
             @if (report()!.vehicleBodyClass) {
               <div class="col-span-2">
-                <label class="text-muted mb-1 block text-xs font-medium">Body Class</label>
+                <span class="text-muted mb-1 block text-xs font-medium">Body Class</span>
                 <p class="text-sm">{{ report()!.vehicleBodyClass }}</p>
               </div>
             }
@@ -129,14 +129,14 @@
           <div class="space-y-4">
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="text-muted mb-1 block text-xs font-medium">Inspection Type</label>
+                <span class="text-muted mb-1 block text-xs font-medium">Inspection Type</span>
                 <p-tag
                   [value]="getTypeLabel(report()!.type ?? '')"
                   [severity]="getTypeSeverity(report()!.type ?? '')"
                 />
               </div>
               <div>
-                <label class="text-muted mb-1 block text-xs font-medium">Signature</label>
+                <span class="text-muted mb-1 block text-xs font-medium">Signature</span>
                 @if (report()!.hasSignature) {
                   <span class="text-success flex items-center gap-1">
                     <i class="pi pi-check-circle"></i>
@@ -152,18 +152,18 @@
 
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="text-muted mb-1 block text-xs font-medium">Inspector</label>
+                <span class="text-muted mb-1 block text-xs font-medium">Inspector</span>
                 <p class="text-sm">{{ report()!.inspectorName || "N/A" }}</p>
               </div>
               <div>
-                <label class="text-muted mb-1 block text-xs font-medium">Inspected At</label>
+                <span class="text-muted mb-1 block text-xs font-medium">Inspected At</span>
                 <p class="text-sm">{{ report()!.inspectedAt | date: "medium" }}</p>
               </div>
             </div>
 
             @if (report()!.latitude && report()!.longitude) {
               <div class="bg-success/10 rounded-lg p-3">
-                <label class="text-success mb-1 block text-xs font-medium">Location</label>
+                <span class="text-success mb-1 block text-xs font-medium">Location</span>
                 <div class="flex items-center justify-between">
                   <p class="text-sm">
                     {{ formatCoordinates(report()!.latitude, report()!.longitude) }}
@@ -181,7 +181,7 @@
             }
 
             <div>
-              <label class="text-muted mb-1 block text-xs font-medium">Load ID</label>
+              <span class="text-muted mb-1 block text-xs font-medium">Load ID</span>
               <a
                 [routerLink]="['/loads', report()!.loadId]"
                 class="text-primary text-sm hover:underline"
@@ -223,7 +223,7 @@
             <div class="grid grid-cols-3 gap-3">
               @for (photo of report()!.photos; track photo.id; let i = $index) {
                 <div
-                  class="group relative cursor-pointer overflow-hidden rounded-lg border focus:outline-none focus:ring-2 focus:ring-primary"
+                  class="group focus:ring-primary relative cursor-pointer overflow-hidden rounded-lg border focus:ring-2 focus:outline-none"
                   role="button"
                   tabindex="0"
                   (click)="openGallery(i)"

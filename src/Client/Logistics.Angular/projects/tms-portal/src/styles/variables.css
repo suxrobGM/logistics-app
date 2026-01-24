@@ -71,8 +71,9 @@
   --radius-xl: 1rem;
 
   /* Sidebar */
-  --sidebar-bg: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+  --sidebar-bg: linear-gradient(165deg, #ffffff 0%, #f1f5f9 30%, #e2e8f0 70%, #cfe2eb 100%);
   --sidebar-border: #e2e8f0;
+  --sidebar-footer-bg: linear-gradient(180deg, #fefefe 0%, #d4e4ed 100%);
 
   /* Shimmer */
   --shimmer-base: #e2e8f0;
@@ -124,8 +125,9 @@
   --shadow-glow: 0 0 20px rgba(6, 182, 212, 0.15);
 
   /* Sidebar */
-  --sidebar-bg: linear-gradient(180deg, #1a1f2e 0%, #0f1419 100%);
+  --sidebar-bg: linear-gradient(165deg, #252d40 0%, #1a2030 35%, #111720 70%, #0a0e14 100%);
   --sidebar-border: #2d3548;
+  --sidebar-footer-bg: var(--bg-elevated);
 
   /* Shimmer */
   --shimmer-base: #242b3d;
