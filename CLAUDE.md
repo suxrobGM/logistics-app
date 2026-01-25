@@ -41,6 +41,29 @@ cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 
 `Tenant`, `User`, `Customer`, `Load`, `Trip`, `Employee/Driver`, `Invoice`, `Payment`, `Truck`, `Document`
 
+### Invoice System
+
+Three invoice types using Table Per Hierarchy (TPH):
+
+- **LoadInvoice**: Auto-created when a Load is created, linked to Customer
+- **PayrollInvoice**: For employee salary payments
+- **SubscriptionInvoice**: Platform subscription payments
+
+Related entities:
+
+- **InvoiceLineItem**: Individual line items on invoices (BaseRate, FuelSurcharge, Detention, etc.)
+- **PaymentLink**: Shareable public payment links with expiration
+- **Payment**: Records of payments against invoices (supports partial payments)
+
+### Stripe Connect Integration
+
+Payments flow directly to trucking company bank accounts via Stripe Connect:
+
+- **Destination Charges**: Funds go to connected account with optional platform fee
+- **Express Accounts**: Simplified onboarding for trucking companies
+- Commands: `CreateConnectAccountCommand`, `GetOnboardingLinkQuery`, `GetConnectStatusQuery`
+- Service: `IStripeConnectService` (separate from subscription `IStripeService`)
+
 ## User Roles
 
 `SuperAdmin`, `Admin`, `Owner`, `Manager`, `Dispatcher`, `Driver`, `Customer`
@@ -48,6 +71,7 @@ cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 ## External Integrations
 
 - **Stripe**: Payments (`/webhooks/stripe`)
+- **Stripe Connect**: Direct company payments (destination charges)
 - **Firebase**: Push notifications
 - **SignalR**: Real-time GPS tracking
 - **Azure Blob**: Document storage

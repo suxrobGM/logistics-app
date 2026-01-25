@@ -2,6 +2,7 @@ namespace Logistics.Infrastructure.Services.Email;
 
 public class SmtpOptions
 {
+    public const string SectionName = "Smtp";
     public string? SenderEmail { get; set; }
     public string? SenderName { get; set; }
     public string? UserName { get; set; }

@@ -20,6 +20,18 @@ public abstract class Invoice : AuditableEntity, IMasterEntity, ITenantEntity, I
     public string? StripeInvoiceId { get; set; }
 
     public virtual List<Payment> Payments { get; set; } = [];
+    public virtual List<InvoiceLineItem> LineItems { get; set; } = [];
+    public virtual List<PaymentLink> PaymentLinks { get; set; } = [];
+
+    /// <summary>
+    /// When the invoice was sent to the customer.
+    /// </summary>
+    public DateTime? SentAt { get; set; }
+
+    /// <summary>
+    /// Email address the invoice was sent to.
+    /// </summary>
+    public string? SentToEmail { get; set; }
 
     public void ApplyPayment(Payment payment)
     {

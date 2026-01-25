@@ -13,4 +13,23 @@ public class Payment : AuditableEntity, IMasterEntity, ITenantEntity
     public string? Description { get; set; }
     public required Address BillingAddress { get; set; }
     public string? StripePaymentIntentId { get; set; }
+
+    #region Manual Payment Fields
+
+    /// <summary>
+    /// Reference number for manual payments (check number, receipt number, etc.).
+    /// </summary>
+    public string? ReferenceNumber { get; set; }
+
+    /// <summary>
+    /// User ID who recorded the manual payment.
+    /// </summary>
+    public Guid? RecordedByUserId { get; set; }
+
+    /// <summary>
+    /// When the manual payment was recorded.
+    /// </summary>
+    public DateTime? RecordedAt { get; set; }
+
+    #endregion
 }

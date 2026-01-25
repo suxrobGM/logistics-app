@@ -33,10 +33,7 @@ public class MessagingHub(MessagingHubContext hubContext) : Hub<IMessagingHubCli
     /// <summary>
     /// Unregister from a tenant group.
     /// </summary>
-    public async Task UnregisterTenant(string tenantId)
-    {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, tenantId);
-    }
+    public async Task UnregisterTenant(string tenantId) => await Groups.RemoveFromGroupAsync(Context.ConnectionId, tenantId);
 
     /// <summary>
     /// Register the current user ID for the connection.

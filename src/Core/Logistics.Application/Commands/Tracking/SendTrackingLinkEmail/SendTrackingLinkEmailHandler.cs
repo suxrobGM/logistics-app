@@ -2,8 +2,9 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Options;
 using Logistics.Shared.Models;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Commands;
 
@@ -11,7 +12,7 @@ internal sealed class SendTrackingLinkEmailHandler(
     ITenantUnitOfWork tenantUow,
     IEmailSender emailSender,
     IEmailTemplateService emailTemplateService,
-    IConfiguration configuration)
+    IOptions<CustomerPortalOptions> portalOptions)
     : IAppRequestHandler<SendTrackingLinkEmailCommand, Result>
 {
     public async Task<Result> Handle(SendTrackingLinkEmailCommand req, CancellationToken ct)
@@ -34,8 +35,7 @@ internal sealed class SendTrackingLinkEmailHandler(
         }
 
         var tenant = tenantUow.GetCurrentTenant();
-        var portalBaseUrl = configuration["CustomerPortal:BaseUrl"] ?? "http://localhost:7004";
-        var trackingUrl = $"{portalBaseUrl}/track/{tenant.Id}/{trackingLink.Token}";
+        var trackingUrl = $"{portalOptions.Value.BaseUrl}/track/{tenant.Id}/{trackingLink.Token}";
         var companyName = tenant.CompanyName ?? tenant.Name;
 
         var originCity = load.OriginAddress?.City ?? "Origin";

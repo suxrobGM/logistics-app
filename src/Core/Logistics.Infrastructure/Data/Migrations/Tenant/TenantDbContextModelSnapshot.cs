@@ -646,6 +646,12 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Number"));
 
+                    b.Property<DateTime?>("SentAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SentToEmail")
+                        .HasColumnType("text");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -688,6 +694,54 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     b.HasDiscriminator<int>("Type");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.InvoiceLineItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Amount", "Logistics.Domain.Entities.InvoiceLineItem.Amount#Money", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("character varying(3)");
+                        });
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.ToTable("InvoiceLineItems", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Load", b =>
@@ -1319,6 +1373,15 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     b.Property<Guid>("MethodId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("RecordedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("RecordedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReferenceNumber")
+                        .HasColumnType("text");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -1384,6 +1447,67 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     b.HasIndex("InvoiceId");
 
                     b.ToTable("Payments", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.PaymentLink", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("AccessCount")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("InvoiceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastAccessedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpiresAt");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.ToTable("PaymentLinks", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.PaymentMethod", b =>
@@ -2456,6 +2580,17 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     b.Navigation("Employee");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.InvoiceLineItem", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Invoice", "Invoice")
+                        .WithMany("LineItems")
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Invoice");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Load", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Employee", "AssignedDispatcher")
@@ -2562,6 +2697,17 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     b.HasOne("Logistics.Domain.Entities.Invoice", null)
                         .WithMany("Payments")
                         .HasForeignKey("InvoiceId");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.PaymentLink", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Invoice", "Invoice")
+                        .WithMany("PaymentLinks")
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Invoice");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.PostedTruck", b =>
@@ -2776,6 +2922,10 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.Invoice", b =>
                 {
+                    b.Navigation("LineItems");
+
+                    b.Navigation("PaymentLinks");
+
                     b.Navigation("Payments");
                 });
 

@@ -1,12 +1,13 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Commands;
 
@@ -15,7 +16,7 @@ internal sealed class ResendInvitationHandler(
     ITenantUnitOfWork tenantUow,
     IEmailSender emailSender,
     IEmailTemplateService emailTemplateService,
-    IConfiguration configuration)
+    IOptions<IdentityServerOptions> identityServerOptions)
     : IAppRequestHandler<ResendInvitationCommand, Result>
 {
     public async Task<Result> Handle(ResendInvitationCommand req, CancellationToken ct)
@@ -56,8 +57,7 @@ internal sealed class ResendInvitationHandler(
 
     private async Task SendInvitationEmailAsync(Invitation invitation, Tenant tenant)
     {
-        var identityServerUrl = configuration["IdentityServer:Authority"];
-        var acceptUrl = $"{identityServerUrl}/Account/AcceptInvitation?token={invitation.Token}";
+        var acceptUrl = $"{identityServerOptions.Value.Authority}/Account/AcceptInvitation?token={invitation.Token}";
         var companyName = tenant.CompanyName ?? tenant.Name;
 
         var model = new InvitationEmailModel

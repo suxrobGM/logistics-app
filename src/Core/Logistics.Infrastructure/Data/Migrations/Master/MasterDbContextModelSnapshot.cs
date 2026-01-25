@@ -391,6 +391,12 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Number"));
 
+                    b.Property<DateTime?>("SentAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SentToEmail")
+                        .HasColumnType("text");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -460,6 +466,15 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
 
                     b.Property<Guid>("MethodId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("RecordedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("RecordedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReferenceNumber")
+                        .HasColumnType("text");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -651,8 +666,14 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("ChargesEnabled")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("CompanyName")
                         .HasColumnType("text");
+
+                    b.Property<int>("ConnectStatus")
+                        .HasColumnType("integer");
 
                     b.Property<string>("ConnectionString")
                         .IsRequired()
@@ -668,7 +689,13 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("PayoutsEnabled")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StripeConnectedAccountId")
                         .HasColumnType("text");
 
                     b.Property<string>("StripeCustomerId")

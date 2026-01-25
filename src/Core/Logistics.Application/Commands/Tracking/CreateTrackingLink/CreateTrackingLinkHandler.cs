@@ -1,25 +1,25 @@
-using System.Security.Claims;
-using System.Security.Cryptography;
 using Logistics.Application.Abstractions;
+using Logistics.Application.Services;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Options;
 using Logistics.Shared.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Commands;
 
 internal sealed class CreateTrackingLinkHandler(
     ITenantUnitOfWork tenantUow,
-    IHttpContextAccessor httpContextAccessor,
-    IConfiguration configuration)
+    ICurrentUserService currentUserService,
+    IOptions<CustomerPortalOptions> portalOptions)
     : IAppRequestHandler<CreateTrackingLinkCommand, Result<TrackingLinkDto>>
 {
     private const int DefaultExpirationDays = 30;
 
     public async Task<Result<TrackingLinkDto>> Handle(CreateTrackingLinkCommand req, CancellationToken ct)
     {
-        var currentUserId = GetCurrentUserId();
+        var currentUserId = currentUserService.GetUserId();
         if (currentUserId is null)
         {
             return Result<TrackingLinkDto>.Fail("User not authenticated.");
@@ -33,7 +33,7 @@ internal sealed class CreateTrackingLinkHandler(
 
         var trackingLink = new TrackingLink
         {
-            Token = GenerateSecureToken(),
+            Token = TokenGenerator.GenerateSecureToken(64),
             LoadId = req.LoadId,
             ExpiresAt = DateTime.UtcNow.AddDays(DefaultExpirationDays),
             CreatedByUserId = currentUserId.Value
@@ -43,13 +43,12 @@ internal sealed class CreateTrackingLinkHandler(
         await tenantUow.SaveChangesAsync(ct);
 
         var tenant = tenantUow.GetCurrentTenant();
-        var portalBaseUrl = configuration["CustomerPortal:BaseUrl"] ?? "http://localhost:7004";
 
         return Result<TrackingLinkDto>.Ok(new TrackingLinkDto
         {
             Id = trackingLink.Id,
             Token = trackingLink.Token,
-            Url = $"{portalBaseUrl}/track/{tenant.Id}/{trackingLink.Token}",
+            Url = $"{portalOptions.Value.BaseUrl}/track/{tenant.Id}/{trackingLink.Token}",
             LoadId = load.Id,
             LoadNumber = load.Number,
             LoadName = load.Name,
@@ -60,19 +59,5 @@ internal sealed class CreateTrackingLinkHandler(
             LastAccessedAt = null,
             CreatedAt = trackingLink.CreatedAt
         });
-    }
-
-    private static string GenerateSecureToken()
-    {
-        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64))
-            .Replace("+", "-")
-            .Replace("/", "_")
-            .TrimEnd('=');
-    }
-
-    private Guid? GetCurrentUserId()
-    {
-        var userIdClaim = httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-        return Guid.TryParse(userIdClaim, out var userId) ? userId : null;
     }
 }

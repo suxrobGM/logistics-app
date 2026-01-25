@@ -1,31 +1,23 @@
 using System.Collections.Concurrent;
-
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Hubs;
 
 public class LiveTrackingHubContext
 {
-    private readonly ConcurrentDictionary<string, TruckGeolocationDto?> _connectedClients = new();
+    private readonly ConcurrentDictionary<string, TruckGeolocationDto?> connectedClients = new();
 
-    public void AddClient(string connectionId, TruckGeolocationDto? geolocationData)
-    {
-        _connectedClients.TryAdd(connectionId, geolocationData);
-    }
+    public void AddClient(string connectionId, TruckGeolocationDto? geolocationData) =>
+        connectedClients.TryAdd(connectionId, geolocationData);
 
     public TruckGeolocationDto? GetGeolocationData(string connectionId)
     {
-        _connectedClients.TryGetValue(connectionId, out var geolocationData);
+        connectedClients.TryGetValue(connectionId, out var geolocationData);
         return geolocationData;
     }
 
-    public void UpdateGeolocationData(string connectionId, TruckGeolocationDto truckGeolocationDto)
-    {
-        _connectedClients.AddOrUpdate(connectionId, truckGeolocationDto, (_, _) => truckGeolocationDto);
-    }
+    public void UpdateGeolocationData(string connectionId, TruckGeolocationDto truckGeolocationDto) =>
+        connectedClients.AddOrUpdate(connectionId, truckGeolocationDto, (_, _) => truckGeolocationDto);
 
-    public void RemoveClient(string connectionId)
-    {
-        _connectedClients.TryRemove(connectionId, out _);
-    }
+    public void RemoveClient(string connectionId) => connectedClients.TryRemove(connectionId, out _);
 }

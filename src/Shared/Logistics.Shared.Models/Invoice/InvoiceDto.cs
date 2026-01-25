@@ -22,6 +22,17 @@ public record InvoiceDto
     public string? StripeInvoiceId { get; set; }
 
     public IEnumerable<PaymentDto> Payments { get; set; } = [];
+    public IEnumerable<InvoiceLineItemDto> LineItems { get; set; } = [];
+
+    /// <summary>
+    /// When the invoice was sent to the customer.
+    /// </summary>
+    public DateTime? SentAt { get; set; }
+
+    /// <summary>
+    /// Email address the invoice was sent to.
+    /// </summary>
+    public string? SentToEmail { get; set; }
 
     // LoadInvoice fields
     public long LoadNumber { get; set; }

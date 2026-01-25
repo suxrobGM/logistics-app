@@ -1,16 +1,15 @@
-using System.Security.Claims;
-using System.Security.Cryptography;
 using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
+using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Commands;
 
@@ -20,13 +19,13 @@ internal sealed class CreateInvitationHandler(
     UserManager<User> userManager,
     IEmailSender emailSender,
     IEmailTemplateService emailTemplateService,
-    IHttpContextAccessor httpContextAccessor,
-    IConfiguration configuration)
+    ICurrentUserService currentUserService,
+    IOptions<IdentityServerOptions> identityServerOptions)
     : IAppRequestHandler<CreateInvitationCommand, Result<InvitationDto>>
 {
     public async Task<Result<InvitationDto>> Handle(CreateInvitationCommand req, CancellationToken ct)
     {
-        var currentUserId = GetCurrentUserId();
+        var currentUserId = currentUserService.GetUserId();
         if (currentUserId is null)
         {
             return Result<InvitationDto>.Fail("User not authenticated.");
@@ -98,7 +97,7 @@ internal sealed class CreateInvitationHandler(
         var invitation = new Invitation
         {
             Email = req.Email,
-            Token = GenerateSecureToken(),
+            Token = TokenGenerator.GenerateSecureToken(64),
             TenantId = tenant.Id,
             Type = req.Type,
             TenantRole = req.TenantRole,
@@ -138,18 +137,9 @@ internal sealed class CreateInvitationHandler(
         }
     }
 
-    private static string GenerateSecureToken()
-    {
-        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64))
-            .Replace("+", "-")
-            .Replace("/", "_")
-            .TrimEnd('=');
-    }
-
     private async Task SendInvitationEmailAsync(Invitation invitation, Tenant tenant, string invitedByName)
     {
-        var identityServerUrl = configuration["IdentityServer:Authority"];
-        var acceptUrl = $"{identityServerUrl}/Account/AcceptInvitation?token={invitation.Token}";
+        var acceptUrl = $"{identityServerOptions.Value.Authority}/Account/AcceptInvitation?token={invitation.Token}";
         var companyName = tenant.CompanyName ?? tenant.Name;
 
         var model = new InvitationEmailModel
@@ -167,11 +157,5 @@ internal sealed class CreateInvitationHandler(
         var body = await emailTemplateService.RenderAsync("Invitation", model);
 
         await emailSender.SendEmailAsync(invitation.Email, subject, body);
-    }
-
-    private Guid? GetCurrentUserId()
-    {
-        var userIdClaim = httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
-        return Guid.TryParse(userIdClaim, out var userId) ? userId : null;
     }
 }

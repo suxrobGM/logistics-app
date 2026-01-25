@@ -35,13 +35,8 @@ public class LiveTrackingHub(
         hubContext.UpdateGeolocationData(Context.ConnectionId, truckGeolocation);
     }
 
-    public async Task RegisterTenant(string tenantId)
-    {
-        await Groups.AddToGroupAsync(Context.ConnectionId, tenantId);
-    }
+    public async Task RegisterTenant(string tenantId) => await Groups.AddToGroupAsync(Context.ConnectionId, tenantId);
 
-    public async Task UnregisterTenant(string tenantId)
-    {
+    public async Task UnregisterTenant(string tenantId) =>
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, tenantId);
-    }
 }

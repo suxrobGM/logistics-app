@@ -1,15 +1,16 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Options;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Queries;
 
 internal sealed class GetTrackingLinksForLoadHandler(
     ITenantUnitOfWork tenantUow,
-    IConfiguration configuration)
+    IOptions<CustomerPortalOptions> portalOptions)
     : IAppRequestHandler<GetTrackingLinksForLoadQuery, Result<IEnumerable<TrackingLinkDto>>>
 {
     public async Task<Result<IEnumerable<TrackingLinkDto>>> Handle(
@@ -23,7 +24,6 @@ internal sealed class GetTrackingLinksForLoadHandler(
         }
 
         var tenant = tenantUow.GetCurrentTenant();
-        var portalBaseUrl = configuration["CustomerPortal:BaseUrl"] ?? "http://localhost:7004";
 
         var trackingLinks = await tenantUow.Repository<TrackingLink>().Query()
             .Where(t => t.LoadId == req.LoadId)
@@ -34,7 +34,7 @@ internal sealed class GetTrackingLinksForLoadHandler(
         {
             Id = t.Id,
             Token = t.Token,
-            Url = $"{portalBaseUrl}/track/{tenant.Id}/{t.Token}",
+            Url = $"{portalOptions.Value.BaseUrl}/track/{tenant.Id}/{t.Token}",
             LoadId = load.Id,
             LoadNumber = load.Number,
             LoadName = load.Name,

@@ -1,6 +1,7 @@
 using Logistics.Application.Services;
 using Logistics.Application.Services.Geocoding;
 using Logistics.Application.Services.PdfImport;
+using Logistics.Domain.Options;
 using Logistics.Infrastructure.Builder;
 using Logistics.Infrastructure.Extensions;
 using Logistics.Infrastructure.Interceptors;
@@ -11,8 +12,10 @@ using Logistics.Infrastructure.Services.Email;
 using Logistics.Infrastructure.Services.OneTwo3;
 using Logistics.Infrastructure.Services.Trip;
 using Logistics.Infrastructure.Services.Truckstop;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using MapboxGeocodingService = Logistics.Infrastructure.Services.Geocoding.MapboxGeocodingService;
 using TemplateBasedDataExtractor = Logistics.Infrastructure.Services.PdfImport.TemplateBasedDataExtractor;
 
@@ -42,8 +45,19 @@ public static class Registrar
         // Blob Storage (Azure or File based on configuration)
         services.AddFileBlobStorage(configuration);
 
-        services.Configure<MapboxOptions>(configuration.GetSection("Mapbox"));
+        services.Configure<MapboxOptions>(configuration.GetSection(MapboxOptions.SectionName));
+        services.Configure<CustomerPortalOptions>(configuration.GetSection(CustomerPortalOptions.SectionName));
+        services.Configure<IdentityServerOptions>(configuration.GetSection(IdentityServerOptions.SectionName));
         services.AddHttpClient<MapboxMatrixClient>();
+
+        // Current user service (only for web apps with IHttpContextAccessor)
+        services.TryAddScoped<ICurrentUserService>(sp =>
+        {
+            var httpContextAccessor = sp.GetService<IHttpContextAccessor>();
+            return httpContextAccessor is not null
+                ? new CurrentUserService(httpContextAccessor)
+                : new NoopCurrentUserService();
+        });
 
         services.AddScoped<HeuristicTripOptimizer>();
         services.AddScoped<MapboxMatrixTripOptimizer>();
@@ -74,36 +88,18 @@ public static class Registrar
         services.AddHttpClient<IVinDecoderService, NhtsaVinDecoderService>();
 
         // Email Services
-        var smtpOptions = configuration.GetSection("Smtp").Get<SmtpOptions>();
-        if (smtpOptions is not null)
-        {
-            services.Configure<SmtpOptions>(configuration.GetSection("Smtp"));
-            services.AddSingleton<IEmailSender, SmtpEmailSender>();
-            services.AddSingleton<IEmailTemplateService, FluidEmailTemplateService>();
-        }
+        services.Configure<SmtpOptions>(configuration.GetSection(SmtpOptions.SectionName));
+        services.AddSingleton<IEmailSender, SmtpEmailSender>();
+        services.AddSingleton<IEmailTemplateService, FluidEmailTemplateService>();
 
-        var googleRecaptchaOptions = configuration.GetSection("GoogleRecaptcha").Get<GoogleRecaptchaOptions>();
-        if (googleRecaptchaOptions is not null)
-        {
-            services.Configure<GoogleRecaptchaOptions>(options =>
-            {
-                options.SecretKey = googleRecaptchaOptions.SecretKey;
-                options.SiteKey = googleRecaptchaOptions.SiteKey;
-            });
-            services.AddSingleton<ICaptchaService, GoogleRecaptchaService>();
-        }
+        // Google Recaptcha
+        services.Configure<GoogleRecaptchaOptions>(configuration.GetSection(GoogleRecaptchaOptions.SectionName));
+        services.AddSingleton<ICaptchaService, GoogleRecaptchaService>();
 
-        var stripeOptions = configuration.GetSection("Stripe").Get<StripeOptions>();
-        if (stripeOptions is not null)
-        {
-            services.Configure<StripeOptions>(options =>
-            {
-                options.PublishableKey = stripeOptions.PublishableKey;
-                options.SecretKey = stripeOptions.SecretKey;
-                options.WebhookSecret = stripeOptions.WebhookSecret;
-            });
-            services.AddSingleton<IStripeService, StripeService>();
-        }
+        // Stripe Payment Services
+        services.Configure<StripeOptions>(configuration.GetSection(StripeOptions.SectionName));
+        services.AddSingleton<IStripeService, StripeService>();
+        services.AddSingleton<IStripeConnectService, StripeConnectService>();
 
         services.AddSingleton<IPushNotificationService, PushNotificationService>();
         return new InfrastructureBuilder(services, configuration);
