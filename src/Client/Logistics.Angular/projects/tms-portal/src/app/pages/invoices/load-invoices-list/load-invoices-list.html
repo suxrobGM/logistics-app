@@ -1,12 +1,36 @@
-<div class="flex items-center">
-  <h1>Load invoices</h1>
-  <!-- <button pButton pRipple
-    class="p-button-lg p-button-rounded p-button-text text-black ml-2"
-    icon="pi pi-plus-circle"
-    pTooltip="Add a new invoice"
-    routerLink="/invoices/loads/add">
-  </button> -->
+<div class="mb-4 flex items-center justify-between">
+  <h1 class="text-2xl">Load Invoices</h1>
+  <a routerLink="/invoices" class="no-underline">
+    <p-button icon="pi pi-chart-bar" label="Dashboard" [outlined]="true" />
+  </a>
 </div>
+
+<!-- Status Filter -->
+<div class="mb-4">
+  <p-selectButton
+    [options]="statusOptions"
+    [(ngModel)]="statusFilter"
+    optionLabel="label"
+    optionValue="value"
+  />
+</div>
+
+<!-- Selection Toolbar -->
+@if (selectedInvoices().length > 0) {
+  <p-toolbar styleClass="mb-4">
+    <ng-template #start>
+      <span class="font-semibold">{{ selectedInvoices().length }} selected</span>
+    </ng-template>
+    <ng-template #end>
+      <p-button
+        icon="pi pi-times"
+        label="Clear Selection"
+        [text]="true"
+        (click)="clearSelection()"
+      />
+    </ng-template>
+  </p-toolbar>
+}
 
 <p-card>
   <ui-data-container
@@ -20,7 +44,7 @@
     (retry)="store.retry()"
   >
     <p-table
-      [value]="store.data()"
+      [value]="getFilteredData()"
       [lazy]="true"
       [paginator]="true"
       [showCurrentPageReport]="true"
@@ -30,11 +54,17 @@
       [totalRecords]="store.totalRecords()"
       [loading]="store.isLoading()"
       [rowsPerPageOptions]="[10, 25, 50]"
+      [(selection)]="selectedInvoices"
+      dataKey="id"
+      (selectionChange)="onSelectionChange($any($event))"
     >
       <ng-template #header>
         <tr>
+          <th style="width: 3rem">
+            <p-tableHeaderCheckbox />
+          </th>
           <th pSortableColumn="Number">
-            Load Number
+            Load #
             <p-sortIcon field="Number" />
           </th>
           <th pSortableColumn="Customer.Name">
@@ -42,41 +72,75 @@
             <p-sortIcon field="Customer.Name" />
           </th>
           <th pSortableColumn="Total">
-            Invoice Total
+            Amount
             <p-sortIcon field="Total" />
           </th>
           <th pSortableColumn="CreatedDate">
-            Invoice Date
+            Issue Date
             <p-sortIcon field="CreatedDate" />
           </th>
+          <th>Due Date</th>
           <th pSortableColumn="Status">
-            Invoice Status
+            Status
             <p-sortIcon field="Status" />
           </th>
-          <th>Action</th>
+          <th style="width: 10rem">Actions</th>
         </tr>
       </ng-template>
 
       <ng-template #body let-invoice>
-        <tr>
+        <tr [class.bg-red-50]="isOverdue(invoice)">
+          <td>
+            <p-tableCheckbox [value]="invoice" />
+          </td>
           <td>{{ invoice.loadNumber }}</td>
-          <td>{{ invoice.customer.name }}</td>
-          <td>{{ invoice.total.amount | currency }}</td>
-          <td>{{ invoice.createdDate | date: "mediumDate" }}</td>
+          <td>{{ invoice.customer?.name ?? "-" }}</td>
+          <td>{{ invoice.total?.amount | currency }}</td>
+          <td>{{ invoice.createdDate | date: "shortDate" }}</td>
+          <td>
+            @if (invoice.dueDate) {
+              <span [class.text-red-600]="isOverdue(invoice)">
+                {{ invoice.dueDate | date: "shortDate" }}
+              </span>
+              @if (isOverdue(invoice)) {
+                <i class="pi pi-exclamation-triangle ml-1 text-red-600" pTooltip="Overdue"></i>
+              }
+            } @else {
+              -
+            }
+          </td>
           <td>
             <app-invoice-status-tag [status]="invoice.status" />
           </td>
           <td>
-            <p-button
-              styleClass="ml-2"
-              icon="pi pi-book"
-              pTooltip="View details"
-              aria-label="View invoice details"
-              [routerLink]="['/invoices/loads', invoice.loadId, invoice.id]"
-            />
+            <div class="flex gap-1">
+              <p-button
+                icon="pi pi-eye"
+                [rounded]="true"
+                [text]="true"
+                pTooltip="View Details"
+                [routerLink]="['/invoices/loads', invoice.loadId, invoice.id]"
+              />
+              <p-button
+                icon="pi pi-send"
+                [rounded]="true"
+                [text]="true"
+                pTooltip="Send Invoice"
+                (click)="openSendDialog(invoice)"
+              />
+            </div>
           </td>
         </tr>
       </ng-template>
     </p-table>
   </ui-data-container>
 </p-card>
+
+<!-- Send Invoice Dialog -->
+@if (selectedInvoiceId()) {
+  <app-send-invoice-dialog
+    [invoiceId]="selectedInvoiceId()!"
+    [(visible)]="showSendInvoiceDialog"
+    (sent)="onInvoiceSent()"
+  />
+}

@@ -14,7 +14,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { SendTrackingLinkEmailDialog } from "../send-tracking-link-email-dialog/send-tracking-link-email-dialog";
+import { SendTrackingLinkDialog } from "../send-tracking-link-dialog/send-tracking-link-dialog";
 
 @Component({
   selector: "app-tracking-link-dialog",
@@ -27,7 +27,7 @@ import { SendTrackingLinkEmailDialog } from "../send-tracking-link-email-dialog/
     TooltipModule,
     TagModule,
     DatePipe,
-    SendTrackingLinkEmailDialog,
+    SendTrackingLinkDialog,
   ],
 })
 export class TrackingLinkDialog {

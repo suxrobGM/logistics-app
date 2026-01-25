@@ -1,0 +1,186 @@
+<cp-public-layout [tenantName]="invoice()?.companyName">
+  @if (isLoading()) {
+    <ui-loading-skeleton variant="card" height="20rem" loadingText="Loading invoice..." />
+  } @else if (error()) {
+    <ui-error-state title="Invoice Unavailable" [message]="error()!" [retryable]="false" />
+  } @else if (paymentSuccess()) {
+    <!-- Payment Success -->
+    <div class="rounded-lg bg-white p-8 text-center shadow">
+      <div class="mb-6">
+        <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
+          <i class="pi pi-check text-4xl text-green-600"></i>
+        </div>
+      </div>
+      <h2 class="mb-2 text-2xl font-bold text-gray-900">Payment Successful!</h2>
+      <p class="mb-4 text-gray-600">
+        Thank you for your payment. A confirmation has been sent to your email.
+      </p>
+      <p class="text-sm text-gray-500">
+        Invoice #{{ invoice()?.number }} - {{ invoice()?.companyName }}
+      </p>
+    </div>
+  } @else if (invoice(); as inv) {
+    <!-- Invoice Header -->
+    <div class="mb-6 rounded-lg bg-white p-6 shadow">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p class="text-sm text-gray-500">Invoice</p>
+          <h2 class="text-2xl font-bold text-gray-900">
+            Invoice #{{ inv.number }}
+            @if (inv.loadNumber) {
+              <span class="text-lg font-normal text-gray-500">- Load #{{ inv.loadNumber }}</span>
+            }
+          </h2>
+          <p class="text-gray-600">{{ inv.companyName }}</p>
+        </div>
+        <p-tag
+          [value]="getStatusLabel()"
+          [severity]="getStatusSeverity()"
+          class="px-4 py-2 text-lg"
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <!-- Invoice Details -->
+      <div class="lg:col-span-2">
+        <div class="rounded-lg bg-white p-6 shadow">
+          <h3 class="mb-4 text-lg font-semibold text-gray-900">Invoice Details</h3>
+
+          <div class="mb-4 grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-sm text-gray-500">Bill To</p>
+              <p class="font-medium">{{ inv.customerName ?? "Customer" }}</p>
+            </div>
+            <div class="text-right">
+              @if (inv.dueDate) {
+                <p class="text-sm text-gray-500">Due Date</p>
+                <p class="font-medium">{{ inv.dueDate | date: "mediumDate" }}</p>
+              }
+            </div>
+          </div>
+
+          <!-- Line Items -->
+          @if (inv.lineItems && inv.lineItems.length > 0) {
+            <p-divider />
+            <p-table [value]="inv.lineItems" styleClass="p-datatable-sm">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Description</th>
+                  <th class="text-right" style="width: 80px">Qty</th>
+                  <th class="text-right" style="width: 100px">Rate</th>
+                  <th class="text-right" style="width: 100px">Amount</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-item>
+                <tr>
+                  <td>{{ item.description }}</td>
+                  <td class="text-right">{{ item.quantity ?? 1 }}</td>
+                  <td class="text-right">{{ item.amount?.amount | currency }}</td>
+                  <td class="text-right">{{ item.total | currency }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          }
+
+          <p-divider />
+
+          <div class="flex justify-end">
+            <div class="w-64">
+              <div class="flex justify-between py-1">
+                <span>Total:</span>
+                <span class="font-semibold">{{ inv.total?.amount | currency }}</span>
+              </div>
+              @if ((inv.total?.amount ?? 0) > (inv.amountDue ?? 0)) {
+                <div class="flex justify-between py-1 text-green-600">
+                  <span>Paid:</span>
+                  <span>{{ (inv.total?.amount ?? 0) - (inv.amountDue ?? 0) | currency }}</span>
+                </div>
+              }
+              <div class="mt-2 flex justify-between border-t py-1 pt-2 text-lg font-bold">
+                <span>Amount Due:</span>
+                <span>{{ inv.amountDue | currency }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Form -->
+      <div class="lg:col-span-1">
+        <div class="rounded-lg bg-white p-6 shadow">
+          <h3 class="mb-4 text-lg font-semibold text-gray-900">Make a Payment</h3>
+
+          @if (canPay()) {
+            <div class="mb-4">
+              <span class="mb-2 block text-sm font-medium text-gray-700">Payment Amount</span>
+              <p-inputnumber
+                [(ngModel)]="paymentAmount"
+                mode="currency"
+                currency="USD"
+                locale="en-US"
+                [min]="0.01"
+                [max]="inv.amountDue ?? 0"
+                class="w-full"
+              />
+              <p class="mt-1 text-sm text-gray-500">Maximum: {{ inv.amountDue | currency }}</p>
+            </div>
+
+            <p-divider />
+
+            <div class="mb-4">
+              <p class="mb-2 text-sm text-gray-500">
+                Payment will be securely processed via Stripe.
+              </p>
+              <div class="flex items-center gap-2 text-gray-400">
+                <i class="pi pi-lock"></i>
+                <span class="text-sm">SSL Secured</span>
+              </div>
+            </div>
+
+            <p-button
+              label="Pay Now"
+              icon="pi pi-credit-card"
+              styleClass="w-full"
+              [loading]="isProcessing()"
+              (click)="processPayment()"
+              [disabled]="!paymentAmount() || paymentAmount()! <= 0"
+            />
+          } @else if (inv.status === "paid") {
+            <div class="py-4 text-center">
+              <div
+                class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100"
+              >
+                <i class="pi pi-check text-2xl text-green-600"></i>
+              </div>
+              <p class="font-medium text-green-600">This invoice has been paid in full.</p>
+            </div>
+          } @else {
+            <div class="py-4 text-center">
+              <div
+                class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100"
+              >
+                <i class="pi pi-info-circle text-2xl text-gray-400"></i>
+              </div>
+              <p class="text-gray-500">Online payment is not available for this invoice.</p>
+              <p class="mt-2 text-sm text-gray-400">
+                Please contact the company for payment options.
+              </p>
+            </div>
+          }
+        </div>
+
+        <!-- Contact Info -->
+        <div class="mt-4 rounded-lg bg-gray-50 p-4 text-center">
+          <p class="text-sm text-gray-500">Questions about this invoice?</p>
+          <p class="text-sm font-medium">Contact {{ inv.companyName }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-8 text-center text-sm text-gray-500">
+      <p>Invoice provided by {{ inv.companyName }}</p>
+    </div>
+  }
+</cp-public-layout>

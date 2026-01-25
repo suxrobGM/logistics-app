@@ -9,10 +9,7 @@
   <p class="text-muted-color mb-4">Send this tracking link to a customer via email.</p>
 
   <form [formGroup]="form" (ngSubmit)="send()">
-    <div class="mb-4">
-      <label for="email" class="block text-sm font-medium mb-1">
-        Email Address <span class="text-red-500">*</span>
-      </label>
+    <ui-labeled-field label="Email Address" for="email" [required]="true" [control]="form.controls.email">
       <input
         pInputText
         id="email"
@@ -21,13 +18,9 @@
         placeholder="customer@example.com"
         class="w-full"
       />
-      @if (form.controls.email.touched && form.controls.email.errors) {
-        <small class="text-red-500">Please enter a valid email address</small>
-      }
-    </div>
+    </ui-labeled-field>
 
-    <div class="mb-4">
-      <label for="personalMessage" class="block text-sm font-medium mb-1">Personal Message</label>
+    <ui-labeled-field label="Personal Message" for="personalMessage">
       <textarea
         pTextarea
         id="personalMessage"
@@ -36,7 +29,7 @@
         placeholder="Add an optional message to include in the email..."
         class="w-full"
       ></textarea>
-    </div>
+    </ui-labeled-field>
 
     <div class="flex justify-end gap-2">
       <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />

@@ -87,6 +87,10 @@ export const sidebarItems: MenuItem[] = [
     icon: "pi pi-wallet text-3xl!",
     items: [
       {
+        label: "Invoice Dashboard",
+        route: "/invoices",
+      },
+      {
         label: "Payroll Invoices",
         route: "/invoices/payroll",
       },

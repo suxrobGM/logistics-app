@@ -1,9 +1,10 @@
-<cp-public-page-layout
-  [tenantName]="tracking()?.tenantName"
-  [tenantLogoUrl]="tracking()?.tenantLogoUrl"
->
+<cp-public-layout [tenantName]="tracking()?.tenantName" [tenantLogoUrl]="tracking()?.tenantLogoUrl">
   @if (isLoading()) {
-    <ui-loading-skeleton variant="card" height="20rem" loadingText="Loading tracking information..." />
+    <ui-loading-skeleton
+      variant="card"
+      height="20rem"
+      loadingText="Loading tracking information..."
+    />
   } @else if (error()) {
     <ui-error-state title="Tracking Unavailable" [message]="error()!" [retryable]="false" />
   } @else if (tracking(); as data) {
@@ -17,7 +18,11 @@
             <p class="text-gray-600">{{ data.loadName }}</p>
           }
         </div>
-        <p-tag [value]="data.status" [severity]="getStatusSeverity(data.status)" class="px-4 py-2 text-lg" />
+        <p-tag
+          [value]="data.status"
+          [severity]="getStatusSeverity(data.status)"
+          class="px-4 py-2 text-lg"
+        />
       </div>
     </div>
 
@@ -139,7 +144,12 @@
               <td>{{ doc.documentType }}</td>
               <td>{{ doc.createdAt | date: "short" }}</td>
               <td class="text-right">
-                <p-button icon="pi pi-download" [text]="true" label="Download" (click)="downloadDocument(doc)" />
+                <p-button
+                  icon="pi pi-download"
+                  [text]="true"
+                  label="Download"
+                  (click)="downloadDocument(doc)"
+                />
               </td>
             </tr>
           </ng-template>
@@ -152,4 +162,4 @@
       <p>Tracking provided by {{ data.tenantName }}</p>
     </div>
   }
-</cp-public-page-layout>
+</cp-public-layout>

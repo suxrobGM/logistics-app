@@ -1,31 +1,201 @@
-<h1 class="text-center">Load Invoice Details</h1>
+<div class="animate-fadein">
+  <h1 class="mb-6 text-center text-2xl">Load Invoice Details</h1>
 
-<p-card class="col-span-12 sm:col-span-6">
   @if (isLoading()) {
     <div class="flex justify-center py-8">
       <p-progress-spinner />
     </div>
   } @else if (invoice()) {
-    <h2>{{ companyName() }}</h2>
-    <p>{{ companyAddress() | address }}</p>
-    <p-divider />
+    <div class="grid grid-cols-12 gap-4">
+      <!-- Invoice Header -->
+      <div class="col-span-12 lg:col-span-8">
+        <p-card>
+          <div class="mb-4 flex items-start justify-between">
+            <div>
+              <h2 class="mb-1 text-xl font-bold">{{ companyName() }}</h2>
+              <p class="text-muted-color">{{ companyAddress() | address }}</p>
+            </div>
+            <div class="text-right">
+              <h3 class="text-lg font-semibold">Invoice #{{ invoice()!.number }}</h3>
+              @if (invoice()!.status) {
+                <app-invoice-status-tag [status]="invoice()!.status!" />
+              }
+            </div>
+          </div>
 
-    <p><strong>Load Number:</strong> {{ invoice()!.loadNumber }}</p>
-    <p><strong>Date:</strong> {{ invoice()!.createdDate | date: "mediumDate" }}</p>
-    <p><strong>Customer:</strong> {{ invoice()!.customer?.name ?? "N/A" }}</p>
-    <p><strong>Amount:</strong> {{ invoice()!.total?.amount | currency }}</p>
-    <p>
-      <strong>Status:</strong>
-      @if (invoice()!.status) {
-        <app-invoice-status-tag [status]="invoice()!.status!" />
-      }
-    </p>
+          <p-divider />
 
-    <p-button icon="pi pi-file-pdf" label="Export to PDF" (click)="exportToPdf()" />
-  } @else {
-    <div class="py-8 text-center text-muted">
-      <i class="pi pi-exclamation-circle mb-4 text-4xl"></i>
-      <p>Invoice not found</p>
+          <div class="mb-4 grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-muted-color mb-1 text-sm">Bill To</p>
+              <p class="font-semibold">{{ invoice()!.customer?.name ?? "N/A" }}</p>
+            </div>
+            <div class="text-right">
+              <p><strong>Load Number:</strong> {{ invoice()!.loadNumber }}</p>
+              <p><strong>Issue Date:</strong> {{ invoice()!.createdDate | date: "mediumDate" }}</p>
+              <p><strong>Due Date:</strong> {{ invoice()!.dueDate | date: "mediumDate" }}</p>
+              @if (invoice()!.sentAt) {
+                <p class="text-muted-color text-sm">
+                  Sent to {{ invoice()!.sentToEmail }} on {{ invoice()!.sentAt | date: "short" }}
+                </p>
+              }
+            </div>
+          </div>
+
+          <!-- Line Items -->
+          @if (invoice()!.lineItems && invoice()!.lineItems!.length > 0) {
+            <p-divider />
+            <h4 class="mb-2 font-semibold">Line Items</h4>
+            <p-table [value]="invoice()!.lineItems!" styleClass="p-datatable-sm">
+              <ng-template #header>
+                <tr>
+                  <th>Description</th>
+                  <th class="text-right" style="width: 100px">Qty</th>
+                  <th class="text-right" style="width: 120px">Rate</th>
+                  <th class="text-right" style="width: 120px">Amount</th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-item>
+                <tr>
+                  <td>
+                    <span>{{ item.description }}</span>
+                    @if (item.type) {
+                      <p-tag [value]="item.type" severity="secondary" styleClass="ml-2 text-xs" />
+                    }
+                  </td>
+                  <td class="text-right">{{ item.quantity ?? 1 }}</td>
+                  <td class="text-right">{{ item.amount?.amount | currency }}</td>
+                  <td class="text-right">{{ item.total | currency }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          }
+
+          <p-divider />
+
+          <div class="flex justify-end">
+            <div class="w-64">
+              <div class="flex justify-between py-1">
+                <span>Subtotal:</span>
+                <span>{{ invoice()!.total?.amount | currency }}</span>
+              </div>
+              <div class="mt-2 flex justify-between border-t py-1 pt-2 text-lg font-bold">
+                <span>Total:</span>
+                <span>{{ invoice()!.total?.amount | currency }}</span>
+              </div>
+              @if (
+                getOutstandingAmount() > 0 &&
+                getOutstandingAmount() < (invoice()!.total?.amount ?? 0)
+              ) {
+                <div class="flex justify-between py-1 text-green-600">
+                  <span>Paid:</span>
+                  <span>{{
+                    (invoice()!.total?.amount ?? 0) - getOutstandingAmount() | currency
+                  }}</span>
+                </div>
+                <div class="flex justify-between py-1 font-semibold text-red-600">
+                  <span>Outstanding:</span>
+                  <span>{{ getOutstandingAmount() | currency }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </p-card>
+      </div>
+
+      <!-- Actions Sidebar -->
+      <div class="col-span-12 lg:col-span-4">
+        <p-card header="Actions">
+          <div class="flex flex-col gap-2">
+            <p-button
+              icon="pi pi-send"
+              label="Send Invoice"
+              styleClass="w-full"
+              (click)="showSendInvoiceDialog.set(true)"
+            />
+            <p-button
+              icon="pi pi-dollar"
+              label="Record Payment"
+              styleClass="w-full"
+              [outlined]="true"
+              (click)="showRecordPaymentDialog.set(true)"
+              [disabled]="getOutstandingAmount() <= 0"
+            />
+            <p-button
+              icon="pi pi-link"
+              label="Payment Link"
+              styleClass="w-full"
+              [outlined]="true"
+              (click)="showPaymentLinkDialog.set(true)"
+            />
+            <p-button
+              icon="pi pi-file-pdf"
+              label="Export to PDF"
+              styleClass="w-full"
+              [outlined]="true"
+              (click)="exportToPdf()"
+            />
+            <a [routerLink]="['/loads', invoice()!.loadId]" class="no-underline">
+              <p-button
+                icon="pi pi-truck"
+                label="View Load"
+                styleClass="w-full"
+                [outlined]="true"
+              />
+            </a>
+          </div>
+        </p-card>
+
+        <!-- Payment History -->
+        @if (invoice()!.payments && invoice()!.payments!.length > 0) {
+          <p-card header="Payment History" styleClass="mt-4">
+            <div class="flex flex-col gap-3">
+              @for (payment of invoice()!.payments; track payment.id) {
+                <div class="flex items-center justify-between rounded bg-gray-50 p-2">
+                  <div>
+                    <p class="font-semibold">{{ payment.amount?.amount | currency }}</p>
+                    <p class="text-muted-color text-sm">
+                      {{ payment.createdDate | date: "short" }}
+                    </p>
+                  </div>
+                  @if (payment.status) {
+                    <app-payment-status-tag [paymentStatus]="payment.status" />
+                  }
+                </div>
+              }
+            </div>
+          </p-card>
+        }
+
+        @if (invoice()!.notes) {
+          <p-card header="Notes" styleClass="mt-4">
+            <p class="text-muted-color">{{ invoice()!.notes }}</p>
+          </p-card>
+        }
+      </div>
     </div>
+
+    <!-- Dialogs -->
+    <app-send-invoice-dialog
+      [invoiceId]="invoiceId()"
+      [(visible)]="showSendInvoiceDialog"
+      (sent)="onInvoiceSent()"
+    />
+
+    <app-record-payment-dialog
+      [invoiceId]="invoiceId()"
+      [outstandingAmount]="getOutstandingAmount()"
+      [(visible)]="showRecordPaymentDialog"
+      (recorded)="onPaymentRecorded()"
+    />
+
+    <app-payment-link-dialog [invoiceId]="invoiceId()" [(visible)]="showPaymentLinkDialog" />
+  } @else {
+    <p-card>
+      <div class="text-muted-color py-8 text-center">
+        <i class="pi pi-exclamation-circle mb-4 text-4xl"></i>
+        <p>Invoice not found</p>
+      </div>
+    </p-card>
   }
-</p-card>
+</div>

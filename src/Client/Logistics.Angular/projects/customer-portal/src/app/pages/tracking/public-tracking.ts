@@ -19,7 +19,7 @@ import { ButtonModule } from "primeng/button";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { ShipmentTimeline } from "@/shared/components";
-import { PublicPageLayout } from "@/shared/layout";
+import { PublicLayout } from "@/shared/layout";
 
 @Component({
   selector: "cp-public-tracking",
@@ -32,7 +32,7 @@ import { PublicPageLayout } from "@/shared/layout";
     AddressPipe,
     ErrorState,
     LoadingSkeleton,
-    PublicPageLayout,
+    PublicLayout,
     ShipmentTimeline,
   ],
 })

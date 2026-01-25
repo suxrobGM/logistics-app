@@ -1,0 +1,71 @@
+<p-dialog
+  header="Record Manual Payment"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  (onShow)="onShow()"
+  (onHide)="close()"
+>
+  <p class="text-muted-color mb-4">Record a cash or check payment received from the customer.</p>
+
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <ui-labeled-field label="Amount" for="amount" [required]="true" [control]="form.controls.amount">
+      <p-inputNumber
+        id="amount"
+        formControlName="amount"
+        mode="currency"
+        currency="USD"
+        locale="en-US"
+        [min]="0.01"
+        class="w-full"
+      />
+    </ui-labeled-field>
+
+    <ui-labeled-field label="Payment Type" for="type" [required]="true" [control]="form.controls.type">
+      <p-select
+        id="type"
+        formControlName="type"
+        [options]="paymentTypes"
+        optionLabel="label"
+        optionValue="value"
+        class="w-full"
+      />
+    </ui-labeled-field>
+
+    <ui-labeled-field label="Reference Number" for="referenceNumber" hint="Check number, receipt ID, etc.">
+      <input pInputText id="referenceNumber" formControlName="referenceNumber" class="w-full" />
+    </ui-labeled-field>
+
+    <ui-labeled-field label="Received Date" for="receivedDate">
+      <p-datepicker
+        id="receivedDate"
+        formControlName="receivedDate"
+        [showIcon]="true"
+        dateFormat="mm/dd/yy"
+        class="w-full"
+      />
+    </ui-labeled-field>
+
+    <ui-labeled-field label="Notes" for="notes">
+      <textarea
+        pTextarea
+        id="notes"
+        formControlName="notes"
+        rows="2"
+        placeholder="Add any additional notes about this payment..."
+        class="w-full"
+      ></textarea>
+    </ui-labeled-field>
+
+    <div class="flex justify-end gap-2">
+      <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />
+      <p-button
+        type="submit"
+        icon="pi pi-check"
+        label="Record Payment"
+        [loading]="isSaving()"
+        [disabled]="form.invalid"
+      />
+    </div>
+  </form>
+</p-dialog>

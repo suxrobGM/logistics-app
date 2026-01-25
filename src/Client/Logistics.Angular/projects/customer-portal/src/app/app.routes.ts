@@ -16,6 +16,10 @@ export const routes: Routes = [
     loadComponent: () => import("./pages/tracking/public-tracking").then((m) => m.PublicTracking),
   },
   {
+    path: "pay/:tenantId/:token",
+    loadComponent: () => import("./pages/payment/public-payment").then((m) => m.PublicPayment),
+  },
+  {
     path: "select-tenant",
     canActivate: [authGuard],
     loadComponent: () => import("./pages/select-tenant/select-tenant").then((m) => m.SelectTenant),

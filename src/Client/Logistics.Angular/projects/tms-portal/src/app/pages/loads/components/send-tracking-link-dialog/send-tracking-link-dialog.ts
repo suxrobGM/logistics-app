@@ -1,5 +1,6 @@
 import { Component, inject, input, model, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { LabeledField } from "@logistics/shared";
 import { Api, sendTrackingLinkEmail } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
@@ -8,11 +9,11 @@ import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
 
 @Component({
-  selector: "app-send-tracking-link-email-dialog",
-  templateUrl: "./send-tracking-link-email-dialog.html",
-  imports: [DialogModule, ButtonModule, ReactiveFormsModule, InputTextModule, TextareaModule],
+  selector: "app-send-tracking-link-dialog",
+  templateUrl: "./send-tracking-link-dialog.html",
+  imports: [DialogModule, ButtonModule, ReactiveFormsModule, InputTextModule, TextareaModule, LabeledField],
 })
-export class SendTrackingLinkEmailDialog {
+export class SendTrackingLinkDialog {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
 

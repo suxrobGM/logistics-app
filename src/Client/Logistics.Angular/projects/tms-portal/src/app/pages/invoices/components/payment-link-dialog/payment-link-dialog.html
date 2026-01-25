@@ -1,0 +1,77 @@
+<p-dialog
+  header="Payment Links"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '650px' }"
+  (onShow)="onShow()"
+  (onHide)="close()"
+>
+  <p class="text-muted-color mb-4">
+    Generate payment links to share with customers so they can pay this invoice online.
+  </p>
+
+  <div class="mb-4 flex justify-end">
+    <p-button
+      icon="pi pi-plus"
+      label="Generate New Link"
+      (click)="generateLink()"
+      [loading]="isGenerating()"
+    />
+  </div>
+
+  @if (links().length > 0) {
+    <p-table [value]="links()">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Created</th>
+          <th>Expires</th>
+          <th>Views</th>
+          <th>Status</th>
+          <th class="text-right">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-link>
+        <tr>
+          <td>{{ link.createdAt | date: "short" }}</td>
+          <td>{{ link.expiresAt | date: "short" }}</td>
+          <td>{{ link.accessCount }}</td>
+          <td>
+            <p-tag [value]="getLinkStatusLabel(link)" [severity]="getLinkStatus(link)" />
+          </td>
+          <td class="text-right">
+            <p-button
+              icon="pi pi-copy"
+              [text]="true"
+              [rounded]="true"
+              (click)="copyToClipboard(link.url)"
+              pTooltip="Copy link"
+              [disabled]="!link.isActive || !link.isValid"
+            />
+            <p-button
+              icon="pi pi-trash"
+              [text]="true"
+              [rounded]="true"
+              severity="danger"
+              (click)="revokeLink(link.id)"
+              pTooltip="Revoke"
+              [disabled]="!link.isActive"
+            />
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="text-muted-color py-4 text-center">
+            No payment links generated yet
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  } @else {
+    <div class="text-muted-color py-4 text-center">
+      <i class="pi pi-link mb-2 text-4xl"></i>
+      <p>No payment links generated yet</p>
+      <p class="text-sm">Click "Generate New Link" to create a shareable payment link</p>
+    </div>
+  }
+</p-dialog>

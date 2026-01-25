@@ -92,7 +92,7 @@
 </p-dialog>
 
 @if (selectedLinkId()) {
-  <app-send-tracking-link-email-dialog
+  <app-send-tracking-link-dialog
     [trackingLinkId]="selectedLinkId()!"
     [(visible)]="showEmailDialog"
   />

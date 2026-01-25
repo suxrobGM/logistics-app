@@ -2,12 +2,22 @@ import type { Routes } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
 import { EmployeePayrollInvoicesListComponent } from "./employee-payroll-invoices-list/employee-payroll-invoices-list";
+import { InvoiceDashboard } from "./invoice-dashboard/invoice-dashboard";
 import { LoadInvoiceDetailsComponent } from "./load-invoice-details/load-invoice-details";
 import { LoadInvoicesListComponent } from "./load-invoices-list/load-invoices-list";
 import { PayrollInvoiceEditComponent } from "./payroll-invoice-edit/payroll-invoice-edit";
 import { PayrollInvoicesListComponent } from "./payroll-invoices-list/payroll-invoices-list";
 
 export const invoiceRoutes: Routes = [
+  {
+    path: "",
+    component: InvoiceDashboard,
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: "Invoice Dashboard",
+      permission: Permission.Invoice.View,
+    },
+  },
   {
     path: "loads",
     component: LoadInvoicesListComponent,
