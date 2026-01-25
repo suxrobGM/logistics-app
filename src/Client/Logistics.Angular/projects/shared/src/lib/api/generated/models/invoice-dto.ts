@@ -3,6 +3,7 @@
 
 import type { CustomerDto } from '../models/customer-dto';
 import type { EmployeeDto } from '../models/employee-dto';
+import type { InvoiceLineItemDto } from '../models/invoice-line-item-dto';
 import type { InvoiceStatus } from '../models/invoice-status';
 import type { InvoiceType } from '../models/invoice-type';
 import type { Money } from '../models/money';
@@ -17,6 +18,7 @@ export interface InvoiceDto {
   employee?: EmployeeDto;
   employeeId?: string | null;
   id?: string;
+  lineItems?: Array<InvoiceLineItemDto> | null;
   loadId?: string | null;
   loadNumber?: number;
   notes?: string | null;
@@ -24,6 +26,8 @@ export interface InvoiceDto {
   payments?: Array<PaymentDto> | null;
   periodEnd?: string | null;
   periodStart?: string | null;
+  sentAt?: string | null;
+  sentToEmail?: string | null;
   status?: InvoiceStatus;
   stripeInvoiceId?: string | null;
   subscriptionId?: string | null;
