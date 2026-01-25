@@ -1,6 +1,6 @@
 <!-- Welcome Header -->
 <div class="mb-8">
-  <h1 class="text-2xl font-bold text-gray-900">
+  <h1 class="text-gray-900">
     Welcome back{{ profile()?.displayName ? ", " + profile()?.displayName : "" }}
   </h1>
   @if (companyName()) {
@@ -71,7 +71,7 @@
   <!-- Recent Shipments -->
   <div class="rounded-lg bg-white p-6 shadow">
     <div class="mb-4 flex items-center justify-between">
-      <h2 class="text-lg font-semibold text-gray-900">Recent Shipments</h2>
+      <h2 class="text-gray-900">Recent Shipments</h2>
       <a routerLink="/shipments" class="text-primary text-sm font-medium hover:underline">
         View All
       </a>

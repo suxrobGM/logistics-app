@@ -8,7 +8,7 @@ import { Tag } from "primeng/tag";
   templateUrl: "./trip-status-tag.html",
 })
 export class TripStatusTag {
-  /** Accepts enum or raw string ('planned', 'in_transit', etc.) */
+  /** Accepts enum or raw string ('draft', 'in_transit', etc.) */
   public readonly status = input.required<TripStatus | string>();
 
   public readonly rounded = input<boolean>(true);

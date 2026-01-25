@@ -23,16 +23,58 @@ body {
 
 /* === Typography === */
 @layer base {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  h1 {
     font-family: var(--font-sans);
+    font-size: 1.5rem; /* text-2xl */
     font-weight: 600;
     line-height: 1.2;
     color: var(--text-primary);
+    margin-bottom: 1.5rem; /* mb-6 */
+  }
+
+  h2 {
+    font-family: var(--font-sans);
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin-bottom: 1rem; /* mb-4 */
+  }
+
+  h3 {
+    font-family: var(--font-sans);
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem; /* mb-3 */
+  }
+
+  h4 {
+    font-family: var(--font-sans);
+    font-size: 1rem; /* text-base */
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem; /* mb-2 */
+  }
+
+  h5 {
+    font-family: var(--font-sans);
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem; /* mb-1 */
+  }
+
+  h6 {
+    font-family: var(--font-sans);
+    font-size: 0.75rem; /* text-xs */
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem; /* mb-1 */
   }
 
   a {

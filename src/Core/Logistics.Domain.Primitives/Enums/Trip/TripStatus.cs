@@ -5,7 +5,7 @@ namespace Logistics.Domain.Primitives.Enums;
 
 public enum TripStatus
 {
-    [Description("Draft")] [EnumMember(Value = "planned")]
+    [Description("Draft")] [EnumMember(Value = "draft")]
     Draft, // loads assigned, not yet dispatched
 
     [Description("Dispatched")] [EnumMember(Value = "dispatched")]

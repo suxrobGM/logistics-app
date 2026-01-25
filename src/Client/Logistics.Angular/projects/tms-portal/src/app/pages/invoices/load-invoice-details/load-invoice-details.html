@@ -1,5 +1,5 @@
 <div class="animate-fadein">
-  <h1 class="mb-6 text-center text-2xl">Load Invoice Details</h1>
+  <h1 class="text-center">Load Invoice Details</h1>
 
   @if (isLoading()) {
     <div class="flex justify-center py-8">
@@ -12,11 +12,11 @@
         <p-card>
           <div class="mb-4 flex items-start justify-between">
             <div>
-              <h2 class="mb-1 text-xl font-bold">{{ companyName() }}</h2>
+              <h2 class="mb-1">{{ companyName() }}</h2>
               <p class="text-muted-color">{{ companyAddress() | address }}</p>
             </div>
             <div class="text-right">
-              <h3 class="text-lg font-semibold">Invoice #{{ invoice()!.number }}</h3>
+              <h3>Invoice #{{ invoice()!.number }}</h3>
               @if (invoice()!.status) {
                 <app-invoice-status-tag [status]="invoice()!.status!" />
               }
@@ -45,7 +45,7 @@
           <!-- Line Items -->
           @if (invoice()!.lineItems && invoice()!.lineItems!.length > 0) {
             <p-divider />
-            <h4 class="mb-2 font-semibold">Line Items</h4>
+            <h4>Line Items</h4>
             <p-table [value]="invoice()!.lineItems!">
               <ng-template #header>
                 <tr>
