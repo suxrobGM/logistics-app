@@ -51,6 +51,27 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                 });
 
             migrationBuilder.CreateTable(
+                name: "ContactSubmissions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    FirstName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Phone = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    Subject = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Message = table.Column<string>(type: "character varying(5000)", maxLength: 5000, nullable: false),
+                    Notes = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    Status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContactSubmissions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DataProtectionKeys",
                 columns: table => new
                 {
@@ -98,6 +119,8 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                     Notes = table.Column<string>(type: "text", nullable: true),
                     DueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     StripeInvoiceId = table.Column<string>(type: "text", nullable: true),
+                    SentAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    SentToEmail = table.Column<string>(type: "text", nullable: true),
                     Total_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Total_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     LoadId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -156,6 +179,10 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                     StripeCustomerId = table.Column<string>(type: "text", nullable: true),
                     LogoPath = table.Column<string>(type: "text", nullable: true),
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    StripeConnectedAccountId = table.Column<string>(type: "text", nullable: true),
+                    ConnectStatus = table.Column<int>(type: "integer", nullable: false),
+                    PayoutsEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    ChargesEnabled = table.Column<bool>(type: "boolean", nullable: false),
                     CompanyAddress_City = table.Column<string>(type: "text", nullable: false),
                     CompanyAddress_Country = table.Column<string>(type: "text", nullable: false),
                     CompanyAddress_Line1 = table.Column<string>(type: "text", nullable: false),
@@ -199,6 +226,9 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                     TenantId = table.Column<Guid>(type: "uuid", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     StripePaymentIntentId = table.Column<string>(type: "text", nullable: true),
+                    ReferenceNumber = table.Column<string>(type: "text", nullable: true),
+                    RecordedByUserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    RecordedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     InvoiceId = table.Column<Guid>(type: "uuid", nullable: true),
                     Amount_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Amount_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
@@ -527,6 +557,21 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                 column: "Status");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ContactSubmissions_CreatedAt",
+                table: "ContactSubmissions",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContactSubmissions_Email",
+                table: "ContactSubmissions",
+                column: "Email");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContactSubmissions_Status",
+                table: "ContactSubmissions",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DemoRequests_CreatedAt",
                 table: "DemoRequests",
                 column: "CreatedAt");
@@ -626,6 +671,9 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
 
             migrationBuilder.DropTable(
                 name: "BlogPosts");
+
+            migrationBuilder.DropTable(
+                name: "ContactSubmissions");
 
             migrationBuilder.DropTable(
                 name: "DataProtectionKeys");

@@ -45,7 +45,8 @@ public partial class Load : AuditableEntity, ITenantEntity
     public Guid? AssignedDispatcherId { get; set; }
     public virtual Employee? AssignedDispatcher { get; set; }
 
-    public virtual List<LoadInvoice> Invoices { get; set; } = [];
+    public virtual LoadInvoice? Invoice { get; set; }
+
     public virtual List<LoadDocument> Documents { get; set; } = [];
     public virtual ICollection<TripStop> TripStops { get; } = [];
 

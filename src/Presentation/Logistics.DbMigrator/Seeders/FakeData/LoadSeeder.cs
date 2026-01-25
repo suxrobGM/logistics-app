@@ -61,12 +61,12 @@ internal class LoadSeeder(ILogger<LoadSeeder> logger) : SeederBase(logger)
             var load = BuildLoad(i, origin, dest, LoadType.GeneralFreight, truck, dispatcher, customer);
             await loadRepository.AddAsync(load, cancellationToken);
 
-            // Get the invoice created by LoadFactory (Load.Create() already creates an invoice)
-            // The Dispatch() call sets its status to Issued
-            var invoice = load.Invoices.First();
-
-            // Add line item details and set due date
-            ConfigureInvoice(invoice, load);
+            // Invoice is created by LoadFactory with line items
+            // Dispatch() sets its status to Issued
+            var invoice = load.Invoice!;
+            var deliveredAt = load.DeliveredAt ?? DateTime.UtcNow;
+            invoice.DueDate = deliveredAt.AddDays(30);
+            invoice.SentAt = deliveredAt.AddDays(1);
 
             // Randomly mark some invoices as paid (80% chance for delivered loads)
             var isPaid = random.NextDouble() < 0.8;
@@ -82,26 +82,6 @@ internal class LoadSeeder(ILogger<LoadSeeder> logger) : SeederBase(logger)
 
         await context.TenantUnitOfWork.SaveChangesAsync(cancellationToken);
         LogCompleted(count);
-    }
-
-    private void ConfigureInvoice(LoadInvoice invoice, Load load)
-    {
-        var deliveredAt = load.DeliveredAt ?? DateTime.UtcNow;
-
-        invoice.DueDate = deliveredAt.AddDays(30);
-        invoice.SentAt = deliveredAt.AddDays(1);
-
-        // Add freight line item
-        var lineItem = new InvoiceLineItem
-        {
-            InvoiceId = invoice.Id,
-            Description = $"Freight charges for Load #{load.Number}",
-            Type = InvoiceLineItemType.BaseRate,
-            Amount = load.DeliveryCost,
-            Quantity = 1,
-            Order = 0
-        };
-        invoice.LineItems.Add(lineItem);
     }
 
     private Payment CreatePayment(Load load, Tenant tenant)

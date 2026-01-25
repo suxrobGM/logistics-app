@@ -2329,7 +2329,8 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("LoadId");
+                    b.HasIndex("LoadId")
+                        .IsUnique();
 
                     b.HasDiscriminator().HasValue(0);
                 });
@@ -2875,8 +2876,8 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                         .IsRequired();
 
                     b.HasOne("Logistics.Domain.Entities.Load", "Load")
-                        .WithMany("Invoices")
-                        .HasForeignKey("LoadId")
+                        .WithOne("Invoice")
+                        .HasForeignKey("Logistics.Domain.Entities.LoadInvoice", "LoadId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -2933,7 +2934,7 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 {
                     b.Navigation("Documents");
 
-                    b.Navigation("Invoices");
+                    b.Navigation("Invoice");
 
                     b.Navigation("TripStops");
                 });

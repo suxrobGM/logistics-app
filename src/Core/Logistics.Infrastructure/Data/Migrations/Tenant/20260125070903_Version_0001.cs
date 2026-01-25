@@ -554,7 +554,7 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     CompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CancelledAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    TruckId = table.Column<Guid>(type: "uuid", nullable: false),
+                    TruckId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -567,8 +567,7 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                         name: "FK_Trips_Trucks_TruckId",
                         column: x => x.TruckId,
                         principalTable: "Trucks",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -605,6 +604,8 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     Notes = table.Column<string>(type: "text", nullable: true),
                     DueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     StripeInvoiceId = table.Column<string>(type: "text", nullable: true),
+                    SentAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    SentToEmail = table.Column<string>(type: "text", nullable: true),
                     Total_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Total_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     LoadId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -702,6 +703,34 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                         principalTable: "Loads",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TrackingLinks",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Token = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    LoadId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AccessCount = table.Column<int>(type: "integer", nullable: false),
+                    LastAccessedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TrackingLinks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TrackingLinks_Loads_LoadId",
+                        column: x => x.LoadId,
+                        principalTable: "Loads",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -839,6 +868,59 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 });
 
             migrationBuilder.CreateTable(
+                name: "InvoiceLineItems",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    InvoiceId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    Order = table.Column<int>(type: "integer", nullable: false),
+                    Notes = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    Amount_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Amount_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InvoiceLineItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InvoiceLineItems_Invoices_InvoiceId",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PaymentLinks",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Token = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    InvoiceId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    AccessCount = table.Column<int>(type: "integer", nullable: false),
+                    LastAccessedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentLinks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PaymentLinks_Invoices_InvoiceId",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Payments",
                 columns: table => new
                 {
@@ -848,6 +930,9 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     TenantId = table.Column<Guid>(type: "uuid", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     StripePaymentIntentId = table.Column<string>(type: "text", nullable: true),
+                    ReferenceNumber = table.Column<string>(type: "text", nullable: true),
+                    RecordedByUserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    RecordedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     InvoiceId = table.Column<Guid>(type: "uuid", nullable: true),
                     Amount_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Amount_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
@@ -898,6 +983,7 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                     CapturedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     TripStopId = table.Column<Guid>(type: "uuid", nullable: true),
                     Notes = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    TruckId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -930,6 +1016,12 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                         principalTable: "TripStops",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Documents_Trucks_TruckId",
+                        column: x => x.TruckId,
+                        principalTable: "Trucks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Documents_VehicleConditionReports_VehicleConditionReportId",
                         column: x => x.VehicleConditionReportId,
@@ -1014,6 +1106,11 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 name: "IX_Documents_TripStopId",
                 table: "Documents",
                 column: "TripStopId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Documents_TruckId",
+                table: "Documents",
+                column: "TruckId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Documents_UploadedById",
@@ -1128,6 +1225,11 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 column: "ExternalViolationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_InvoiceLineItems_InvoiceId",
+                table: "InvoiceLineItems",
+                column: "InvoiceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Invoices_CustomerId",
                 table: "Invoices",
                 column: "CustomerId");
@@ -1140,7 +1242,8 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
             migrationBuilder.CreateIndex(
                 name: "IX_Invoices_LoadId",
                 table: "Invoices",
-                column: "LoadId");
+                column: "LoadId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoices_Number",
@@ -1223,6 +1326,22 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 column: "SentAt");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PaymentLinks_ExpiresAt",
+                table: "PaymentLinks",
+                column: "ExpiresAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentLinks_InvoiceId",
+                table: "PaymentLinks",
+                column: "InvoiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PaymentLinks_Token",
+                table: "PaymentLinks",
+                column: "Token",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PaymentMethods_StripePaymentMethodId",
                 table: "PaymentMethods",
                 column: "StripePaymentMethodId",
@@ -1253,6 +1372,22 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 name: "IX_RoleClaims_RoleId",
                 table: "RoleClaims",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrackingLinks_ExpiresAt",
+                table: "TrackingLinks",
+                column: "ExpiresAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrackingLinks_LoadId",
+                table: "TrackingLinks",
+                column: "LoadId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TrackingLinks_Token",
+                table: "TrackingLinks",
+                column: "Token",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Trips_Number",
@@ -1346,6 +1481,9 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 name: "HosViolations");
 
             migrationBuilder.DropTable(
+                name: "InvoiceLineItems");
+
+            migrationBuilder.DropTable(
                 name: "LoadBoardConfigurations");
 
             migrationBuilder.DropTable(
@@ -1358,6 +1496,9 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 name: "Notifications");
 
             migrationBuilder.DropTable(
+                name: "PaymentLinks");
+
+            migrationBuilder.DropTable(
                 name: "PaymentMethods");
 
             migrationBuilder.DropTable(
@@ -1368,6 +1509,9 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "TrackingLinks");
 
             migrationBuilder.DropTable(
                 name: "TripStops");

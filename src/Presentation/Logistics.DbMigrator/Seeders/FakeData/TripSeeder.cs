@@ -71,9 +71,12 @@ internal class TripSeeder(ILogger<TripSeeder> logger) : SeederBase(logger)
                 loads.Add(load);
                 await loadRepo.AddAsync(load, cancellationToken);
 
-                // Configure invoice created by LoadFactory
-                var invoice = load.Invoices.First();
-                ConfigureInvoice(invoice, load);
+                // Invoice is created by LoadFactory with line items
+                // Dispatch() sets its status to Issued
+                var invoice = load.Invoice!;
+                var deliveredAt = load.DeliveredAt ?? DateTime.UtcNow;
+                invoice.DueDate = deliveredAt.AddDays(30);
+                invoice.SentAt = deliveredAt.AddDays(1);
 
                 // Randomly mark some invoices as paid (80% chance)
                 var isPaid = _random.NextDouble() < 0.8;
@@ -100,26 +103,6 @@ internal class TripSeeder(ILogger<TripSeeder> logger) : SeederBase(logger)
 
         await context.TenantUnitOfWork.SaveChangesAsync(cancellationToken);
         LogCompleted(count);
-    }
-
-    private static void ConfigureInvoice(LoadInvoice invoice, Load load)
-    {
-        var deliveredAt = load.DeliveredAt ?? DateTime.UtcNow;
-
-        invoice.DueDate = deliveredAt.AddDays(30);
-        invoice.SentAt = deliveredAt.AddDays(1);
-
-        // Add freight line item
-        var lineItem = new InvoiceLineItem
-        {
-            InvoiceId = invoice.Id,
-            Description = $"Vehicle transport for Load #{load.Number}",
-            Type = InvoiceLineItemType.BaseRate,
-            Amount = load.DeliveryCost,
-            Quantity = 1,
-            Order = 0
-        };
-        invoice.LineItems.Add(lineItem);
     }
 
     private Payment CreatePayment(Load load, Tenant tenant)

@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Data.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20260125010156_Version_0005")]
-    partial class Version_0005
+    [Migration("20260125070903_Version_0001")]
+    partial class Version_0001
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2332,7 +2332,8 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("LoadId");
+                    b.HasIndex("LoadId")
+                        .IsUnique();
 
                     b.HasDiscriminator().HasValue(0);
                 });
@@ -2878,8 +2879,8 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                         .IsRequired();
 
                     b.HasOne("Logistics.Domain.Entities.Load", "Load")
-                        .WithMany("Invoices")
-                        .HasForeignKey("LoadId")
+                        .WithOne("Invoice")
+                        .HasForeignKey("Logistics.Domain.Entities.LoadInvoice", "LoadId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -2936,7 +2937,7 @@ namespace Logistics.Infrastructure.Data.Migrations.Tenant
                 {
                     b.Navigation("Documents");
 
-                    b.Navigation("Invoices");
+                    b.Navigation("Invoice");
 
                     b.Navigation("TripStops");
                 });

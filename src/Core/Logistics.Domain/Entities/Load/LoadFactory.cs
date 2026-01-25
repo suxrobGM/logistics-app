@@ -51,9 +51,7 @@ public static class LoadFactory
         }
 
         load.Distance = originLocation.DistanceTo(destinationLocation);
-
-        var invoice = CreateInvoice(load);
-        load.Invoices.Add(invoice);
+        load.Invoice = CreateInvoice(load);
 
         load.DomainEvents.Add(new NewLoadCreatedEvent(load.Id));
 
@@ -74,12 +72,12 @@ public static class LoadFactory
     }
 
     /// <summary>
-    /// Creates an invoice for the load with Draft status.
+    /// Creates an invoice for the load with Draft status and base rate line item.
     /// The invoice will be set to Issued when the load is dispatched.
     /// </summary>
     public static LoadInvoice CreateInvoice(Load load)
     {
-        return new LoadInvoice
+        var invoice = new LoadInvoice
         {
             Total = load.DeliveryCost,
             Status = InvoiceStatus.Draft,
@@ -87,6 +85,31 @@ public static class LoadFactory
             Customer = load.Customer,
             LoadId = load.Id,
             Load = load
+        };
+
+        // Add base rate line item
+        var lineItem = new InvoiceLineItem
+        {
+            InvoiceId = invoice.Id,
+            Description = GetLineItemDescription(load),
+            Type = InvoiceLineItemType.BaseRate,
+            Amount = load.DeliveryCost,
+            Quantity = 1,
+            Order = 0
+        };
+        invoice.LineItems.Add(lineItem);
+
+        return invoice;
+    }
+
+    private static string GetLineItemDescription(Load load)
+    {
+        return load.Type switch
+        {
+            LoadType.Vehicle => "Vehicle transport charges",
+            LoadType.RefrigeratedGoods => "Refrigerated transport charges",
+            LoadType.HazardousMaterials => "Hazmat transport charges",
+            _ => "Freight charges"
         };
     }
 

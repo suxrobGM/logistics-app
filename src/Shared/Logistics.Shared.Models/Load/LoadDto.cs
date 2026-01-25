@@ -36,5 +36,5 @@ public class LoadDto
     public string? TripName { get; set; }
 
     public IEnumerable<string>? AssignedTruckDriversName { get; set; }
-    public IEnumerable<InvoiceDto> Invoices { get; set; } = [];
+    public InvoiceDto? Invoice { get; set; }
 }

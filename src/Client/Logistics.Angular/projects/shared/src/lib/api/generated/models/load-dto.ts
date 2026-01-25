@@ -27,7 +27,7 @@ export interface LoadDto {
   dispatchedAt?: string | null;
   distance?: number;
   id?: string;
-  invoices?: Array<InvoiceDto> | null;
+  invoice?: InvoiceDto;
   name?: string | null;
   number?: number;
   originAddress: Address;
