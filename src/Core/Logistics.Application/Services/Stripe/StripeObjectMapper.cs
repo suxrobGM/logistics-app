@@ -1,6 +1,6 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-
+using Logistics.Shared.Geo;
 using Stripe;
 
 using AddressValueObject = Logistics.Domain.Primitives.ValueObjects.Address;
@@ -14,18 +14,32 @@ public static class StripeObjectMapper
 {
     public static AddressOptions ToStripeAddressOptions(this AddressValueObject address)
     {
-        // var country = Countries.FindCountry(address.Country) ??
-        //               throw new InvalidOperationException($"Country {address.Country} not found");
-
         return new AddressOptions
         {
             City = address.City,
-            Country = address.Country,
+            Country = GetCountryCode(address.Country),
             Line1 = address.Line1,
             Line2 = address.Line2,
             PostalCode = address.ZipCode,
             State = address.State
         };
+    }
+
+    private static string? GetCountryCode(string? country)
+    {
+        if (string.IsNullOrEmpty(country))
+        {
+            return null;
+        }
+
+        // If already a 2-letter code, return as-is
+        if (country.Length == 2)
+        {
+            return country.ToUpperInvariant();
+        }
+
+        // Look up the country by name and return the ISO code
+        return Countries.FindCountry(country)?.Code;
     }
 
     public static AddressValueObject ToAddressEntity(this StripeAddress stripeAddress)

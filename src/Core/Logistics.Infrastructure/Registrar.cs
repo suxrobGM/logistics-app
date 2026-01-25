@@ -1,5 +1,6 @@
 using Logistics.Application.Services;
 using Logistics.Application.Services.Geocoding;
+using Logistics.Application.Services.Pdf;
 using Logistics.Application.Services.PdfImport;
 using Logistics.Domain.Options;
 using Logistics.Infrastructure.Builder;
@@ -10,6 +11,7 @@ using Logistics.Infrastructure.Services;
 using Logistics.Infrastructure.Services.Dat;
 using Logistics.Infrastructure.Services.Email;
 using Logistics.Infrastructure.Services.OneTwo3;
+using Logistics.Infrastructure.Services.Pdf;
 using Logistics.Infrastructure.Services.Trip;
 using Logistics.Infrastructure.Services.Truckstop;
 using Microsoft.AspNetCore.Http;
@@ -63,8 +65,9 @@ public static class Registrar
         services.AddScoped<MapboxMatrixTripOptimizer>();
         services.AddScoped<ITripOptimizer, CompositeTripOptimizer>();
 
-        // PDF Import services
+        // PDF services
         services.AddScoped<IPdfDataExtractor, TemplateBasedDataExtractor>();
+        services.AddScoped<IInvoicePdfService, InvoicePdfService>();
 
         // Geocoding services
         services.AddHttpClient<IGeocodingService, MapboxGeocodingService>();

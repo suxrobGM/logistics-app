@@ -1,10 +1,10 @@
 import { formatSortField, getInvoices } from "@logistics/shared/api";
-import type { InvoiceDto } from "@logistics/shared/api/models";
+import type { InvoiceDto, InvoiceStatus, SalaryType } from "@logistics/shared/api/models";
 import { createListStore } from "@/shared/stores";
 
 /**
  * Store for the payroll invoices list page.
- * Filters to only show payroll invoices.
+ * Supports filtering by employee, status, salary type, and date range.
  */
 export const PayrollInvoicesListStore = createListStore<InvoiceDto>(getInvoices, {
   defaultSortField: "-CreatedAt",
@@ -18,6 +18,10 @@ export const PayrollInvoicesListStore = createListStore<InvoiceDto>(getInvoices,
       EmployeeName: state.search || undefined,
       OrderBy: orderBy,
       InvoiceType: "payroll",
+      Status: state.filters["Status"] as InvoiceStatus | undefined,
+      SalaryType: state.filters["SalaryType"] as SalaryType | undefined,
+      StartDate: state.filters["StartDate"] as string | undefined,
+      EndDate: state.filters["EndDate"] as string | undefined,
     };
   },
 });

@@ -1,15 +1,16 @@
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Utilities;
+using Logistics.Shared.Geo;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Stripe;
+using Address = Logistics.Domain.Primitives.ValueObjects.Address;
 
 namespace Logistics.Infrastructure.Services;
 
 /// <summary>
-/// Stripe Connect service implementation for handling connected accounts and destination charges.
+///     Stripe Connect service implementation for handling connected accounts and destination charges.
 /// </summary>
 internal class StripeConnectService : IStripeConnectService
 {
@@ -29,22 +30,21 @@ internal class StripeConnectService : IStripeConnectService
             Country = GetCountryFromAddress(tenant.CompanyAddress),
             Email = tenant.BillingEmail,
             BusinessType = "company",
-            Company = new AccountCompanyOptions
-            {
-                Name = tenant.CompanyName ?? tenant.Name,
-                Address = tenant.CompanyAddress.ToStripeAddressOptions(),
-                Phone = tenant.PhoneNumber
-            },
+            Company =
+                new AccountCompanyOptions
+                {
+                    Name = tenant.CompanyName ?? tenant.Name,
+                    Address = tenant.CompanyAddress.ToStripeAddressOptions(),
+                    Phone = tenant.PhoneNumber
+                },
             Capabilities = new AccountCapabilitiesOptions
             {
                 CardPayments = new AccountCapabilitiesCardPaymentsOptions { Requested = true },
                 Transfers = new AccountCapabilitiesTransfersOptions { Requested = true },
-                UsBankAccountAchPayments = new AccountCapabilitiesUsBankAccountAchPaymentsOptions { Requested = true }
+                UsBankAccountAchPayments =
+                    new AccountCapabilitiesUsBankAccountAchPaymentsOptions { Requested = true }
             },
-            Metadata = new Dictionary<string, string>
-            {
-                [StripeMetadataKeys.TenantId] = tenant.Id.ToString()
-            }
+            Metadata = new Dictionary<string, string> { [StripeMetadataKeys.TenantId] = tenant.Id.ToString() }
         };
 
         var account = await new AccountService().CreateAsync(options);
@@ -72,13 +72,14 @@ internal class StripeConnectService : IStripeConnectService
 
         var accountLink = await new AccountLinkService().CreateAsync(options);
         logger.LogInformation(
-            "Created account link for tenant {TenantId}, expires at {ExpiresAt}",
-            tenant.Id, accountLink.ExpiresAt);
+            "Created account link for tenant {TenantId}, expires at {ExpiresAt}, link: {Link}",
+            tenant.Id, accountLink.ExpiresAt, accountLink.Url);
 
         return accountLink;
     }
 
-    public async Task<Account> GetConnectedAccountAsync(string accountId) => await new AccountService().GetAsync(accountId);
+    public async Task<Account> GetConnectedAccountAsync(string accountId) =>
+        await new AccountService().GetAsync(accountId);
 
     public async Task<Account> SyncConnectedAccountStatusAsync(Tenant tenant)
     {
@@ -112,20 +113,11 @@ internal class StripeConnectService : IStripeConnectService
         {
             Amount = amountInCents,
             Currency = payment.Amount.Currency.ToLower(),
-            AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
-            {
-                Enabled = true
-            },
+            AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions { Enabled = true },
             Description = payment.Description,
-            Metadata = new Dictionary<string, string>
-            {
-                ["PaymentId"] = payment.Id.ToString()
-            },
+            Metadata = new Dictionary<string, string> { ["PaymentId"] = payment.Id.ToString() },
             // Use destination charges to route payment to the connected account
-            TransferData = new PaymentIntentTransferDataOptions
-            {
-                Destination = connectedAccountId
-            }
+            TransferData = new PaymentIntentTransferDataOptions { Destination = connectedAccountId }
         };
 
         // Calculate and set application fee if specified
@@ -147,15 +139,9 @@ internal class StripeConnectService : IStripeConnectService
     {
         var options = new SetupIntentCreateOptions
         {
-            AutomaticPaymentMethods = new SetupIntentAutomaticPaymentMethodsOptions
-            {
-                Enabled = true
-            },
+            AutomaticPaymentMethods = new SetupIntentAutomaticPaymentMethodsOptions { Enabled = true },
             OnBehalfOf = connectedAccountId,
-            Metadata = new Dictionary<string, string>
-            {
-                ["ConnectedAccountId"] = connectedAccountId
-            }
+            Metadata = new Dictionary<string, string> { ["ConnectedAccountId"] = connectedAccountId }
         };
 
         var setupIntent = await new SetupIntentService().CreateAsync(options);
@@ -197,10 +183,22 @@ internal class StripeConnectService : IStripeConnectService
 
     #region Helpers
 
-    private static string GetCountryFromAddress(Domain.Primitives.ValueObjects.Address address)
+    private static string GetCountryFromAddress(Address address)
     {
-        // Default to US if not specified
-        return string.IsNullOrEmpty(address.Country) ? "US" : address.Country;
+        if (string.IsNullOrEmpty(address.Country))
+        {
+            return "US";
+        }
+
+        // If already a 2-letter code, return as-is
+        if (address.Country.Length == 2)
+        {
+            return address.Country.ToUpperInvariant();
+        }
+
+        // Look up the country by name and return the ISO code
+        var country = Countries.FindCountry(address.Country);
+        return country?.Code ?? "US";
     }
 
     private static StripeConnectStatus DetermineConnectStatus(Account account)

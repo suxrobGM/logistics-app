@@ -7,11 +7,12 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import type { CreateConnectAccountDto } from '../../models/create-connect-account-dto';
 
 export interface CreateConnectAccount$Params {
 }
 
-export function createConnectAccount(http: HttpClient, rootUrl: string, params?: CreateConnectAccount$Params, context?: HttpContext): Observable<StrictHttpResponse<string>> {
+export function createConnectAccount(http: HttpClient, rootUrl: string, params?: CreateConnectAccount$Params, context?: HttpContext): Observable<StrictHttpResponse<CreateConnectAccountDto>> {
   const rb = new RequestBuilder(rootUrl, createConnectAccount.PATH, 'post');
   if (params) {
   }
@@ -21,7 +22,7 @@ export function createConnectAccount(http: HttpClient, rootUrl: string, params?:
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<string>;
+      return r as StrictHttpResponse<CreateConnectAccountDto>;
     })
   );
 }

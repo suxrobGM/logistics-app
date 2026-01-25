@@ -11,11 +11,17 @@ public enum InvoiceStatus
     [Description("Issued"), EnumMember(Value = "issued")]
     Issued,
 
+    [Description("Sent"), EnumMember(Value = "sent")]
+    Sent,
+
     [Description("Partially Paid"), EnumMember(Value = "partially_paid")]
     PartiallyPaid,
 
     [Description("Paid"), EnumMember(Value = "paid")]
     Paid,
+
+    [Description("Overdue"), EnumMember(Value = "overdue")]
+    Overdue,
 
     [Description("Cancelled"), EnumMember(Value = "cancelled")]
     Cancelled

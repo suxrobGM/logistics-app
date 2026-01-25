@@ -14,11 +14,11 @@ namespace Logistics.Infrastructure.Services;
 
 internal class StripeService : IStripeService
 {
-    private readonly ILogger<StripeService> _logger;
+    private readonly ILogger<StripeService> logger;
 
     public StripeService(IOptions<StripeOptions> options, ILogger<StripeService> logger)
     {
-        _logger = logger;
+        this.logger = logger;
         StripeConfiguration.ApiKey = options.Value.SecretKey;
         WebhookSecret = options.Value.WebhookSecret ??
                         throw new ArgumentNullException(nameof(options.Value.WebhookSecret));
@@ -51,7 +51,7 @@ internal class StripeService : IStripeService
 
         var setupIntentService = new SetupIntentService();
         var setupIntent = await setupIntentService.CreateAsync(options);
-        _logger.LogInformation("Created SetupIntent for tenant {TenantId}", tenant.Id);
+        logger.LogInformation("Created SetupIntent for tenant {TenantId}", tenant.Id);
         return setupIntent;
     }
 
@@ -78,7 +78,7 @@ internal class StripeService : IStripeService
         options.Metadata = new Dictionary<string, string> { { StripeMetadataKeys.TenantId, tenant.Id.ToString() } };
 
         var customer = await new CustomerService().CreateAsync(options);
-        _logger.LogInformation("Created Stripe customer for tenant {TenantId}", tenant.Id);
+        logger.LogInformation("Created Stripe customer for tenant {TenantId}", tenant.Id);
         return customer;
     }
 
@@ -143,7 +143,7 @@ internal class StripeService : IStripeService
         }
 
         var subscription = await new SubscriptionService().CreateAsync(options);
-        _logger.LogInformation("Created Stripe subscription for tenant {TenantId}", tenant.Id);
+        logger.LogInformation("Created Stripe subscription for tenant {TenantId}", tenant.Id);
         return subscription;
     }
 
@@ -161,7 +161,7 @@ internal class StripeService : IStripeService
                 InvoiceNow = true,
                 Prorate = true
             });
-            _logger.LogInformation("Canceled immediately Stripe subscription {StripeSubscriptionId}",
+            logger.LogInformation("Canceled immediately Stripe subscription {StripeSubscriptionId}",
                 stripeSubscriptionId);
             return stripeSubscription;
         }
@@ -171,7 +171,7 @@ internal class StripeService : IStripeService
         {
             CancelAtPeriodEnd = true
         });
-        _logger.LogInformation("Canceled at period end Stripe subscription {StripeSubscriptionId}",
+        logger.LogInformation("Canceled at period end Stripe subscription {StripeSubscriptionId}",
             stripeSubscriptionId);
         return stripeSubscription;
     }
@@ -182,7 +182,7 @@ internal class StripeService : IStripeService
         var item = subscription.Items.Data[0]; // Assuming single item per subscription
         var options = new SubscriptionItemUpdateOptions { Quantity = employeeCount };
         var stripeSubscriptionItem = await new SubscriptionItemService().UpdateAsync(item.Id, options);
-        _logger.LogInformation("Updated Stripe subscription {StripeSubscriptionId} with new quantity {EmployeeCount}",
+        logger.LogInformation("Updated Stripe subscription {StripeSubscriptionId} with new quantity {EmployeeCount}",
             stripeSubscriptionId, employeeCount);
         return stripeSubscriptionItem;
     }
@@ -204,7 +204,7 @@ internal class StripeService : IStripeService
         // Never had a Stripe subscription → create new one
         if (subEntity is null || string.IsNullOrEmpty(subEntity.StripeSubscriptionId))
         {
-            _logger.LogInformation("Tenant {TenantId} is creating first subscription", tenant.Id);
+            logger.LogInformation("Tenant {TenantId} is creating first subscription", tenant.Id);
             return await CreateSubscriptionAsync(plan, tenant, employeeCount);
         }
 
@@ -220,14 +220,14 @@ internal class StripeService : IStripeService
                 ProrationBehavior = "none"
             });
 
-            _logger.LogInformation("Tenant {TenantId} reactivated subscription", tenant.Id);
+            logger.LogInformation("Tenant {TenantId} reactivated subscription", tenant.Id);
             return upd;
         }
 
         // already canceled or incomplete_expired -> start fresh
         if (stripeSub.Status is "canceled" or "incomplete_expired")
         {
-            _logger.LogInformation("Subscription {SubId} is canceled, creating a new one", stripeSub.Id);
+            logger.LogInformation("Subscription {SubId} is canceled, creating a new one", stripeSub.Id);
             return await CreateSubscriptionAsync(plan, tenant, employeeCount);
         }
 
@@ -265,7 +265,7 @@ internal class StripeService : IStripeService
             }
         });
 
-        _logger.LogInformation("Created Stripe product for plan {PlanId}", plan.Id);
+        logger.LogInformation("Created Stripe product for plan {PlanId}", plan.Id);
 
         // 2. Create Price linked to the Product
         var priceService = new PriceService();
@@ -297,12 +297,12 @@ internal class StripeService : IStripeService
                 }
             });
 
-            _logger.LogInformation(
+            logger.LogInformation(
                 "Updated Stripe price for plan {PlanId} with billing cycle anchor {BillingCycleAnchor}", plan.Id,
                 billingCycleAnchorStr);
         }
 
-        _logger.LogInformation("Created Stripe price for plan {PlanId}", plan.Id);
+        logger.LogInformation("Created Stripe price for plan {PlanId}", plan.Id);
         return (product, price);
     }
 
@@ -330,7 +330,7 @@ internal class StripeService : IStripeService
             }
         });
 
-        _logger.LogInformation("Updated Stripe product for plan {PlanId}", plan.Id);
+        logger.LogInformation("Updated Stripe product for plan {PlanId}", plan.Id);
 
         // Check if price needs update
         var priceService = new PriceService();
@@ -368,7 +368,7 @@ internal class StripeService : IStripeService
 
             // Update the plan's StripePriceId to point to the new price
             plan.StripePriceId = activePrice.Id;
-            _logger.LogInformation("Created new Stripe price for plan {PlanId}", plan.Id);
+            logger.LogInformation("Created new Stripe price for plan {PlanId}", plan.Id);
         }
 
         return (product, activePrice);
@@ -402,7 +402,7 @@ internal class StripeService : IStripeService
         }
 
         var updatedMethod = await service.UpdateAsync(paymentMethod.StripePaymentMethodId, options);
-        _logger.LogInformation("Updated Stripe payment method {PaymentMethodId}", paymentMethod.StripePaymentMethodId);
+        logger.LogInformation("Updated Stripe payment method {PaymentMethodId}", paymentMethod.StripePaymentMethodId);
         return updatedMethod;
     }
 
@@ -414,7 +414,7 @@ internal class StripeService : IStripeService
         }
 
         await new PaymentMethodService().DetachAsync(paymentMethod.StripePaymentMethodId);
-        _logger.LogInformation("Removed Stripe payment method {PaymentMethodId}", paymentMethod.StripePaymentMethodId);
+        logger.LogInformation("Removed Stripe payment method {PaymentMethodId}", paymentMethod.StripePaymentMethodId);
     }
 
     public async Task SetDefaultPaymentMethodAsync(PaymentMethod paymentMethod, Tenant tenant)
@@ -437,7 +437,7 @@ internal class StripeService : IStripeService
             }
         });
 
-        _logger.LogInformation(
+        logger.LogInformation(
             "Set default Stripe payment method for tenant {TenantId}, Stripe payment method ID {StripePaymentMethodId}",
             tenant.Id, paymentMethod.StripePaymentMethodId);
     }
@@ -476,7 +476,7 @@ internal class StripeService : IStripeService
         };
 
         var paymentIntent = await new PaymentIntentService().CreateAsync(options);
-        _logger.LogInformation("Created PaymentIntent {PaymentIntentId} for tenant {TenantId}",
+        logger.LogInformation("Created PaymentIntent {PaymentIntentId} for tenant {TenantId}",
             paymentIntent.Id, tenant.Id);
         return paymentIntent;
     }
@@ -499,7 +499,7 @@ internal class StripeService : IStripeService
             Customer = tenant.StripeCustomerId
         });
 
-        _logger.LogInformation("Attached payment method {PaymentMethodId} to customer {CustomerId}",
+        logger.LogInformation("Attached payment method {PaymentMethodId} to customer {CustomerId}",
             stripePaymentMethodId, tenant.StripeCustomerId);
         return attachedMethod;
     }

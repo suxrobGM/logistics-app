@@ -49,6 +49,7 @@ public partial class Load
 
     /// <summary>
     /// Dispatches the load to the assigned truck.
+    /// Also sets all draft invoices to Issued status.
     /// </summary>
     public void Dispatch(DateTime? at = null)
     {
@@ -58,6 +59,12 @@ public partial class Load
         }
 
         UpdateStatus(LoadStatus.Dispatched);
+
+        // Set all draft invoices to issued when load is dispatched
+        foreach (var invoice in Invoices.Where(i => i.Status == InvoiceStatus.Draft))
+        {
+            invoice.Status = InvoiceStatus.Issued;
+        }
     }
 
     /// <summary>

@@ -74,14 +74,15 @@ public static class LoadFactory
     }
 
     /// <summary>
-    /// Creates an invoice for the load.
+    /// Creates an invoice for the load with Draft status.
+    /// The invoice will be set to Issued when the load is dispatched.
     /// </summary>
     public static LoadInvoice CreateInvoice(Load load)
     {
         return new LoadInvoice
         {
             Total = load.DeliveryCost,
-            Status = InvoiceStatus.Issued,
+            Status = InvoiceStatus.Draft,
             CustomerId = load.CustomerId,
             Customer = load.Customer,
             LoadId = load.Id,

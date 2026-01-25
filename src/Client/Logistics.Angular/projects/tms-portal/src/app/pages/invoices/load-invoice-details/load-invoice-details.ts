@@ -4,7 +4,6 @@ import { RouterModule } from "@angular/router";
 import { Api, getInvoiceById } from "@logistics/shared/api";
 import type { AddressDto, InvoiceDto } from "@logistics/shared/api/models";
 import { AddressPipe } from "@logistics/shared/pipes";
-import { jsPDF } from "jspdf";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -12,7 +11,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { TenantService } from "@/core/services";
+import { PdfService, TenantService, ToastService } from "@/core/services";
 import { InvoiceStatusTag, PaymentStatusTag } from "@/shared/components";
 import { PaymentLinkDialog, RecordPaymentDialog, SendInvoiceDialog } from "../components";
 
@@ -42,9 +41,12 @@ import { PaymentLinkDialog, RecordPaymentDialog, SendInvoiceDialog } from "../co
 export class LoadInvoiceDetailsComponent implements OnInit {
   private readonly api = inject(Api);
   private readonly tenantService = inject(TenantService);
+  private readonly pdfService = inject(PdfService);
+  private readonly toastService = inject(ToastService);
 
   readonly invoiceId = input.required<string>();
   readonly isLoading = signal(false);
+  readonly isDownloadingPdf = signal(false);
   readonly companyName = signal<string | null>(null);
   readonly companyAddress = signal<AddressDto | null>(null);
   readonly invoice = signal<InvoiceDto | null>(null);
@@ -61,34 +63,22 @@ export class LoadInvoiceDetailsComponent implements OnInit {
     this.fetchInvoice();
   }
 
-  exportToPdf(): void {
+  async exportToPdf(): Promise<void> {
     const invoice = this.invoice();
-    if (!invoice) {
+    if (!invoice?.id) {
       return;
     }
 
-    const doc = new jsPDF();
-    doc.setFont("helvetica", "bold");
-
-    // Adding 'Invoice' text centered
-    const middleOfPage = doc.internal.pageSize.getWidth() / 2;
-    doc.setFontSize(18); // Larger font size
-    doc.text("Invoice", middleOfPage, 10, { align: "center" });
-
-    // Reverting to normal font for the rest of the text
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(12);
-
-    doc.text(`Company: ${this.companyName()}`, 10, 20);
-    doc.text(`Address: ${this.companyAddress()}`, 10, 30);
-    doc.text(`Load Number: ${invoice.loadNumber}`, 10, 40);
-    doc.text(`Date: ${invoice.createdDate?.toString() ?? "N/A"}`, 10, 60);
-    doc.text(`Customer Name: ${invoice.customer?.name ?? "N/A"}`, 10, 70);
-    doc.text(`Invoice Status: ${invoice.status}`, 10, 90);
-    doc.text(`Amount: $${invoice.total?.amount ?? 0}`, 10, 100);
-
-    // Save the PDF
-    doc.save(`load-invoice-${invoice.number}.pdf`);
+    this.isDownloadingPdf.set(true);
+    try {
+      await this.pdfService.downloadLoadInvoicePdf(invoice.id, {
+        filename: `Invoice_${invoice.number}.pdf`,
+      });
+    } catch {
+      this.toastService.showError("Failed to download invoice PDF");
+    } finally {
+      this.isDownloadingPdf.set(false);
+    }
   }
 
   getOutstandingAmount(): number {
@@ -96,8 +86,7 @@ export class LoadInvoiceDetailsComponent implements OnInit {
     if (!invoice) return 0;
 
     const total = invoice.total?.amount ?? 0;
-    const paid =
-      invoice.payments?.reduce((sum, p) => sum + (p.amount?.amount ?? 0), 0) ?? 0;
+    const paid = invoice.payments?.reduce((sum, p) => sum + (p.amount?.amount ?? 0), 0) ?? 0;
     return Math.max(0, total - paid);
   }
 

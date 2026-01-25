@@ -28,9 +28,11 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.27.0" />
     <PackageReference Include="PdfPig" Version="0.1.13" />
+    <PackageReference Include="QuestPDF" Version="2025.1.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Logistics.Shared.Geo\Logistics.Shared.Geo.csproj" />
     <ProjectReference Include="..\..\Shared\Logistics.Shared.Identity\Logistics.Shared.Identity.csproj" />
     <ProjectReference Include="..\..\Shared\Logistics.Shared.Models\Logistics.Shared.Models.csproj" />
     <ProjectReference Include="..\Logistics.Application\Logistics.Application.csproj" />

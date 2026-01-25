@@ -11,9 +11,9 @@ internal sealed class CreateConnectAccountHandler(
     ITenantUnitOfWork tenantUow,
     IStripeConnectService stripeConnectService,
     ILogger<CreateConnectAccountHandler> logger)
-    : IAppRequestHandler<CreateConnectAccountCommand, Result<string>>
+    : IAppRequestHandler<CreateConnectAccountCommand, Result<CreateConnectAccountDto>>
 {
-    public async Task<Result<string>> Handle(CreateConnectAccountCommand req, CancellationToken ct)
+    public async Task<Result<CreateConnectAccountDto>> Handle(CreateConnectAccountCommand req, CancellationToken ct)
     {
         var tenant = tenantUow.GetCurrentTenant();
 
@@ -23,7 +23,10 @@ internal sealed class CreateConnectAccountHandler(
             logger.LogInformation(
                 "Tenant {TenantId} already has Connect account {AccountId}",
                 tenant.Id, tenant.StripeConnectedAccountId);
-            return Result<string>.Ok(tenant.StripeConnectedAccountId);
+            return Result<CreateConnectAccountDto>.Ok(new CreateConnectAccountDto
+            {
+                AccountId = tenant.StripeConnectedAccountId
+            });
         }
 
         try
@@ -42,12 +45,15 @@ internal sealed class CreateConnectAccountHandler(
                 "Created Stripe Connect account {AccountId} for tenant {TenantId}",
                 account.Id, tenant.Id);
 
-            return Result<string>.Ok(account.Id);
+            return Result<CreateConnectAccountDto>.Ok(new CreateConnectAccountDto
+            {
+                AccountId = account.Id
+            });
         }
         catch (Stripe.StripeException ex)
         {
             logger.LogError(ex, "Failed to create Stripe Connect account for tenant {TenantId}", tenant.Id);
-            return Result<string>.Fail($"Failed to create Stripe Connect account: {ex.Message}");
+            return Result<CreateConnectAccountDto>.Fail($"Failed to create Stripe Connect account: {ex.Message}");
         }
     }
 }

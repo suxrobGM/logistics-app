@@ -20,13 +20,13 @@ public class StripeConnectController(IMediator mediator) : ControllerBase
     /// Creates a Stripe Connect Express account for the current tenant.
     /// </summary>
     [HttpPost("account", Name = "CreateConnectAccount")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(CreateConnectAccountDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Payment.Manage)]
     public async Task<IActionResult> CreateAccount()
     {
         var result = await mediator.Send(new CreateConnectAccountCommand());
-        return result.IsSuccess ? Ok(new { accountId = result.Value }) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     /// <summary>
@@ -34,7 +34,7 @@ public class StripeConnectController(IMediator mediator) : ControllerBase
     /// The user should be redirected to this URL to complete onboarding.
     /// </summary>
     [HttpGet("onboarding-link", Name = "GetOnboardingLink")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(OnboardingLinkDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Payment.Manage)]
     public async Task<IActionResult> GetOnboardingLink(
@@ -42,7 +42,7 @@ public class StripeConnectController(IMediator mediator) : ControllerBase
         [FromQuery] string refreshUrl)
     {
         var result = await mediator.Send(new GetOnboardingLinkQuery(returnUrl, refreshUrl));
-        return result.IsSuccess ? Ok(new { url = result.Value }) : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     /// <summary>
@@ -54,6 +54,19 @@ public class StripeConnectController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetStatus()
     {
         var result = await mediator.Send(new GetConnectStatusQuery());
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
+    /// Gets a login link for the Stripe Express dashboard.
+    /// </summary>
+    [HttpGet("dashboard-link", Name = "GetDashboardLink")]
+    [ProducesResponseType(typeof(DashboardLinkDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Payment.View)]
+    public async Task<IActionResult> GetDashboardLink()
+    {
+        var result = await mediator.Send(new GetDashboardLinkQuery());
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 }

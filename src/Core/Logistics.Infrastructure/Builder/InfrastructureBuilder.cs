@@ -15,19 +15,19 @@ namespace Logistics.Infrastructure.Builder;
 
 internal class InfrastructureBuilder : IInfrastructureBuilder
 {
-    private readonly IConfiguration _configuration;
-    private readonly IServiceCollection _services;
-    private ILogger<IInfrastructureBuilder>? _logger;
+    private readonly IConfiguration configuration;
+    private readonly IServiceCollection services;
+    private ILogger<IInfrastructureBuilder>? logger;
 
     internal InfrastructureBuilder(IServiceCollection services, IConfiguration configuration)
     {
-        _configuration = configuration;
-        _services = services;
+        this.configuration = configuration;
+        this.services = services;
     }
 
     public IInfrastructureBuilder AddIdentity(Action<IdentityBuilder>? configure = null)
     {
-        var identityBuilder = _services.AddIdentityCore<User>(options =>
+        var identityBuilder = services.AddIdentityCore<User>(options =>
             {
                 options.Password.RequiredLength = 8;
                 options.Password.RequireUppercase = false;
@@ -48,16 +48,16 @@ internal class InfrastructureBuilder : IInfrastructureBuilder
         var options = new MasterDbContextOptions();
         configure?.Invoke(options);
 
-        var connectionString = _configuration.GetConnectionString(options.DbConnectionSection);
+        var connectionString = configuration.GetConnectionString(options.DbConnectionSection);
         options.ConnectionString = connectionString;
 
-        _services.AddSingleton(options);
-        _services.AddDbContext<MasterDbContext>();
-        _services.AddScoped<IMasterUnitOfWork, MasterUnitOfWork>();
-        _services.AddScoped(typeof(MasterRepository<,>));
-        _services.AddScoped<ITenantService, TenantService>();
-        _services.AddScoped<IUserService, UserService>();
-        _logger?.LogInformation("Added master database with connection string: {ConnectionString}", connectionString);
+        services.AddSingleton(options);
+        services.AddDbContext<MasterDbContext>();
+        services.AddScoped<IMasterUnitOfWork, MasterUnitOfWork>();
+        services.AddScoped(typeof(MasterRepository<,>));
+        services.AddScoped<ITenantService, TenantService>();
+        services.AddScoped<IUserService, UserService>();
+        logger?.LogInformation("Added master database with connection string: {ConnectionString}", connectionString);
         return this;
     }
 
@@ -66,36 +66,37 @@ internal class InfrastructureBuilder : IInfrastructureBuilder
         var options = new TenantDbContextOptions();
         configure?.Invoke(options);
 
-        var tenantsSettings = _configuration.GetSection(options.TenantsConfigSection).Get<TenantsDatabaseOptions>();
-        var connectionString = _configuration.GetConnectionString(options.DefaultTenantDbConnectionSection);
+        var tenantsSettings =
+            configuration.GetSection(TenantsDatabaseOptions.SectionName).Get<TenantsDatabaseOptions>();
+        var connectionString = configuration.GetConnectionString(options.DefaultTenantDbConnectionSection);
 
         if (tenantsSettings is not null)
         {
-            _services.AddScoped<ITenantDatabaseService, TenantDatabaseService>();
-            _services.AddSingleton(tenantsSettings);
-            _logger?.LogInformation("Tenants database settings: {Settings}", tenantsSettings);
+            services.AddScoped<ITenantDatabaseService, TenantDatabaseService>();
+            services.AddSingleton(tenantsSettings);
+            logger?.LogInformation("Tenants database settings: {Settings}", tenantsSettings);
         }
 
         options.ConnectionString = connectionString;
-        _services.AddSingleton(options);
-        _services.AddDbContext<TenantDbContext>();
-        _services.AddScoped<ITenantUnitOfWork, TenantUnitOfWork>();
-        _services.AddScoped(typeof(TenantRepository<,>));
-        _logger?.LogInformation("Added default tenant database with connection string: {ConnectionString}",
+        services.AddSingleton(options);
+        services.AddDbContext<TenantDbContext>();
+        services.AddScoped<ITenantUnitOfWork, TenantUnitOfWork>();
+        services.AddScoped(typeof(TenantRepository<,>));
+        logger?.LogInformation("Added default tenant database with connection string: {ConnectionString}",
             connectionString);
         return this;
     }
 
     public IInfrastructureBuilder AddNotifications()
     {
-        _services.AddScoped<INotificationService, NotificationService>();
-        _logger?.LogInformation("Added notification services");
+        services.AddScoped<INotificationService, NotificationService>();
+        logger?.LogInformation("Added notification services");
         return this;
     }
 
     public IInfrastructureBuilder UseLogger(ILogger<IInfrastructureBuilder> logger)
     {
-        _logger = logger;
+        this.logger = logger;
         return this;
     }
 }

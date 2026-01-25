@@ -37,7 +37,6 @@
     "angular-auth-oidc-client": "^21.0.1",
     "chart.js": "^4.5.1",
     "express": "^5.1.0",
-    "jspdf": "^4.0.0",
     "mapbox-gl": "^3.17.0",
     "ngx-mapbox-gl": "^13.0.0",
     "primeicons": "^7.0.0",

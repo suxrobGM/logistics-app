@@ -7,13 +7,14 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import type { OnboardingLinkDto } from '../../models/onboarding-link-dto';
 
 export interface GetOnboardingLink$Params {
   returnUrl?: string;
   refreshUrl?: string;
 }
 
-export function getOnboardingLink(http: HttpClient, rootUrl: string, params?: GetOnboardingLink$Params, context?: HttpContext): Observable<StrictHttpResponse<string>> {
+export function getOnboardingLink(http: HttpClient, rootUrl: string, params?: GetOnboardingLink$Params, context?: HttpContext): Observable<StrictHttpResponse<OnboardingLinkDto>> {
   const rb = new RequestBuilder(rootUrl, getOnboardingLink.PATH, 'get');
   if (params) {
     rb.query('returnUrl', params.returnUrl, {});
@@ -25,7 +26,7 @@ export function getOnboardingLink(http: HttpClient, rootUrl: string, params?: Ge
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<string>;
+      return r as StrictHttpResponse<OnboardingLinkDto>;
     })
   );
 }

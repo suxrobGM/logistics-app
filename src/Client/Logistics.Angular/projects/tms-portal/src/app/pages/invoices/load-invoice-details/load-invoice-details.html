@@ -130,9 +130,10 @@
             />
             <p-button
               icon="pi pi-file-pdf"
-              label="Export to PDF"
+              label="Download PDF"
               styleClass="w-full"
               [outlined]="true"
+              [loading]="isDownloadingPdf()"
               (click)="exportToPdf()"
             />
             <a [routerLink]="['/loads', invoice()!.loadId]" class="no-underline">

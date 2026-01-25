@@ -173,6 +173,8 @@ export type { GetInvoiceDashboard$Params as GetInvoiceDashboard$Params } from '.
 export { getInvoiceDashboard as getInvoiceDashboard } from './fn/invoices/get-invoice-dashboard';
 export type { CreateLoadInvoice$Params as CreateLoadInvoice$Params } from './fn/invoices/create-load-invoice';
 export { createLoadInvoice as createLoadInvoice } from './fn/invoices/create-load-invoice';
+export type { DownloadLoadInvoicePdf$Params as DownloadLoadInvoicePdf$Params } from './fn/invoices/download-load-invoice-pdf';
+export { downloadLoadInvoicePdf as downloadLoadInvoicePdf } from './fn/invoices/download-load-invoice-pdf';
 export type { RecordManualPayment$Params as RecordManualPayment$Params } from './fn/invoices/record-manual-payment';
 export { recordManualPayment as recordManualPayment } from './fn/invoices/record-manual-payment';
 export type { SendInvoice$Params as SendInvoice$Params } from './fn/invoices/send-invoice';
@@ -311,6 +313,8 @@ export type { GetOnboardingLink$Params as GetOnboardingLink$Params } from './fn/
 export { getOnboardingLink as getOnboardingLink } from './fn/stripe-connect/get-onboarding-link';
 export type { GetConnectStatus$Params as GetConnectStatus$Params } from './fn/stripe-connect/get-connect-status';
 export { getConnectStatus as getConnectStatus } from './fn/stripe-connect/get-connect-status';
+export type { GetDashboardLink$Params as GetDashboardLink$Params } from './fn/stripe-connect/get-dashboard-link';
+export { getDashboardLink as getDashboardLink } from './fn/stripe-connect/get-dashboard-link';
 export type { GetSubscriptionById$Params as GetSubscriptionById$Params } from './fn/subscription/get-subscription-by-id';
 export { getSubscriptionById as getSubscriptionById } from './fn/subscription/get-subscription-by-id';
 export type { DeleteSubscription$Params as DeleteSubscription$Params } from './fn/subscription/delete-subscription';

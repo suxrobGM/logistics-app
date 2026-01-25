@@ -1,15 +1,27 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject } from "@angular/core";
+import { Component, computed, inject, signal } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
-import { type SalaryType, salaryTypeOptions } from "@logistics/shared/api/models";
+import { invoiceStatusOptions } from "@logistics/shared/api/enums";
+import {
+  type InvoiceStatus,
+  type SalaryType,
+  salaryTypeOptions,
+} from "@logistics/shared/api/models";
+import type { SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { IconFieldModule } from "primeng/iconfield";
-import { InputIconModule } from "primeng/inputicon";
-import { InputTextModule } from "primeng/inputtext";
+import { DatePickerModule } from "primeng/datepicker";
+import { MultiSelectModule } from "primeng/multiselect";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { DataContainer, InvoiceStatusTag } from "@/shared/components";
+import {
+  DataContainer,
+  InvoiceStatusTag,
+  LabeledField,
+  SearchInput,
+} from "@/shared/components";
+import { type DatePreset, getDatePreset } from "@/shared/utils";
 import { PayrollInvoicesListStore } from "../store/payroll-invoices-list.store";
 
 @Component({
@@ -18,25 +30,81 @@ import { PayrollInvoicesListStore } from "../store/payroll-invoices-list.store";
   providers: [PayrollInvoicesListStore],
   imports: [
     CommonModule,
+    FormsModule,
     TableModule,
     CardModule,
-    InputTextModule,
     RouterModule,
     ButtonModule,
     TooltipModule,
     InvoiceStatusTag,
-    IconFieldModule,
-    InputIconModule,
     DataContainer,
+    MultiSelectModule,
+    DatePickerModule,
+    SearchInput,
+    LabeledField,
   ],
 })
 export class PayrollInvoicesListComponent {
   private readonly router = inject(Router);
   protected readonly store = inject(PayrollInvoicesListStore);
 
-  protected onSearch(event: Event): void {
-    const searchValue = (event.target as HTMLInputElement).value;
-    this.store.setSearch(searchValue);
+  // Filter state
+  protected readonly selectedStatuses = signal<InvoiceStatus[]>([]);
+  protected readonly selectedSalaryTypes = signal<SalaryType[]>([]);
+  protected readonly dateRange = signal<Date[] | null>(null);
+
+  // Filter options
+  protected readonly statusOptions: SelectItem[] = invoiceStatusOptions;
+  protected readonly salaryTypeOptions: SelectItem[] = salaryTypeOptions;
+
+  // Computed: count of active filters
+  protected readonly activeFilterCount = computed(() => {
+    let count = 0;
+    if (this.selectedStatuses().length > 0) count++;
+    if (this.selectedSalaryTypes().length > 0) count++;
+    if (this.dateRange()?.length === 2) count++;
+    return count;
+  });
+
+  protected onSearch(value: string): void {
+    this.store.setSearch(value);
+  }
+
+  protected applyFilters(): void {
+    const filters: Record<string, unknown> = {};
+
+    // Status filter
+    const statuses = this.selectedStatuses();
+    if (statuses.length > 0) {
+      filters["Status"] = statuses[0];
+    }
+
+    // Salary type filter
+    const salaryTypes = this.selectedSalaryTypes();
+    if (salaryTypes.length > 0) {
+      filters["SalaryType"] = salaryTypes[0];
+    }
+
+    // Date range filter
+    const range = this.dateRange();
+    if (range?.length === 2) {
+      filters["StartDate"] = range[0].toISOString();
+      filters["EndDate"] = range[1].toISOString();
+    }
+
+    this.store.setFilters(filters);
+  }
+
+  protected clearFilters(): void {
+    this.selectedStatuses.set([]);
+    this.selectedSalaryTypes.set([]);
+    this.dateRange.set(null);
+    this.store.setFilters({});
+  }
+
+  protected setDatePreset(preset: DatePreset): void {
+    this.dateRange.set(getDatePreset(preset));
+    this.applyFilters();
   }
 
   protected addInvoice(): void {

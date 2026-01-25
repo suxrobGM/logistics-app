@@ -1,119 +1,178 @@
-<div class="flex items-center">
-  <h1 class="text-2xl">Payroll Invoices</h1>
-  <p-button
-    styleClass="ml-2"
-    icon="pi pi-plus-circle"
-    size="large"
-    [rounded]="true"
-    [text]="true"
-    pTooltip="Add a new payroll invoice"
-    [routerLink]="['/invoices/payroll/add']"
-  />
-</div>
+<div class="animate-fadein">
+  <div class="mb-4 flex items-center justify-between">
+    <div class="flex items-center">
+      <h1 class="text-primary text-2xl">Payroll Invoices</h1>
+      <p-button
+        class="ml-2"
+        icon="pi pi-plus-circle"
+        size="large"
+        [rounded]="true"
+        [text]="true"
+        pTooltip="Add a new payroll invoice"
+        [routerLink]="['/invoices/payroll/add']"
+      />
+    </div>
+    <a routerLink="/invoices" class="no-underline">
+      <p-button icon="pi pi-chart-bar" label="Dashboard" [outlined]="true" />
+    </a>
+  </div>
 
-<p-card>
-  <ui-data-container
-    [loading]="store.isLoading()"
-    [error]="store.error()"
-    [isEmpty]="store.isEmpty()"
-    skeletonVariant="table"
-    [skeletonRows]="10"
-    emptyTitle="No payroll invoices yet"
-    emptyMessage="Create your first payroll invoice to get started."
-    emptyActionLabel="Add Invoice"
-    (retry)="store.retry()"
-    (emptyAction)="addInvoice()"
-  >
-    <p-table
-      [value]="store.data()"
-      [lazy]="true"
-      [paginator]="true"
-      [showCurrentPageReport]="true"
-      (onLazyLoad)="store.onLazyLoad($event)"
-      [rows]="store.pageSize()"
-      [first]="store.first()"
-      [totalRecords]="store.totalRecords()"
+  <!-- Filter Panel -->
+  <p-card class="mb-4">
+    <div class="mb-4 flex items-center justify-between">
+      <span class="text-primary text-lg font-semibold">Filters</span>
+      <div class="flex items-center gap-2">
+        @if (activeFilterCount() > 0) {
+          <span class="text-muted text-sm">{{ activeFilterCount() }} active</span>
+        }
+        <p-button
+          label="Clear All"
+          icon="pi pi-times"
+          size="small"
+          [text]="true"
+          (click)="clearFilters()"
+          [disabled]="activeFilterCount() === 0"
+        />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-x-4 md:grid-cols-2 lg:grid-cols-4">
+      <ui-labeled-field label="Search Employee">
+        <ui-search-input
+          class="w-full"
+          placeholder="Search by employee name"
+          (searchChange)="onSearch($event)"
+        />
+      </ui-labeled-field>
+
+      <ui-labeled-field label="Status">
+        <p-multiselect
+          [options]="statusOptions"
+          [(ngModel)]="selectedStatuses"
+          placeholder="Select status"
+          [showClear]="true"
+          (onChange)="applyFilters()"
+          class="w-full"
+        />
+      </ui-labeled-field>
+
+      <ui-labeled-field label="Salary Type">
+        <p-multiselect
+          [options]="salaryTypeOptions"
+          [(ngModel)]="selectedSalaryTypes"
+          placeholder="Select salary type"
+          [showClear]="true"
+          (onChange)="applyFilters()"
+          class="w-full"
+        />
+      </ui-labeled-field>
+
+      <ui-labeled-field label="Period Range">
+        <p-datepicker
+          [(ngModel)]="dateRange"
+          selectionMode="range"
+          placeholder="Select date range"
+          [showIcon]="true"
+          (onSelect)="applyFilters()"
+          class="w-full"
+        />
+      </ui-labeled-field>
+    </div>
+
+    <div class="mt-2 flex items-center gap-2">
+      <span class="text-secondary text-sm dark:text-gray-300">Quick dates:</span>
+      <p-button label="This Week" size="small" [outlined]="true" (click)="setDatePreset('week')" />
+      <p-button label="This Month" size="small" [outlined]="true" (click)="setDatePreset('month')" />
+    </div>
+  </p-card>
+
+  <p-card>
+    <ui-data-container
       [loading]="store.isLoading()"
-      [rowsPerPageOptions]="[10, 25, 50]"
+      [error]="store.error()"
+      [isEmpty]="store.isEmpty()"
+      skeletonVariant="table"
+      [skeletonRows]="10"
+      emptyTitle="No payroll invoices yet"
+      emptyMessage="Create your first payroll invoice to get started."
+      emptyActionLabel="Add Invoice"
+      (retry)="store.retry()"
+      (emptyAction)="addInvoice()"
     >
-      <ng-template #caption>
-        <p-icon-field>
-          <p-inputicon class="pi pi-search" />
-          <input
-            pInputText
-            type="text"
-            placeholder="Search by employee name"
-            (input)="onSearch($event)"
-          />
-        </p-icon-field>
-      </ng-template>
+      <p-table
+        [value]="store.data()"
+        [lazy]="true"
+        [paginator]="true"
+        [showCurrentPageReport]="true"
+        (onLazyLoad)="store.onLazyLoad($event)"
+        [rows]="store.pageSize()"
+        [first]="store.first()"
+        [totalRecords]="store.totalRecords()"
+        [loading]="store.isLoading()"
+        [rowsPerPageOptions]="[10, 25, 50]"
+      >
+        <ng-template #header>
+          <tr>
+            <th pSortableColumn="PeriodStart">
+              Period
+              <p-sortIcon field="PeriodStart" />
+            </th>
+            <th pSortableColumn="Employee.FirstName">
+              Employee
+              <p-sortIcon field="Employee.FirstName" />
+            </th>
+            <th pSortableColumn="Employee.SalaryType">
+              Salary Type
+              <p-sortIcon field="Employee.SalaryType" />
+            </th>
+            <th pSortableColumn="Employee.Salary">
+              Employee Salary
+              <p-sortIcon field="Employee.Salary" />
+            </th>
+            <th pSortableColumn="Total">
+              Invoice Total
+              <p-sortIcon field="Total" />
+            </th>
+            <th pSortableColumn="Status">
+              Status
+              <p-sortIcon field="Status" />
+            </th>
+            <th style="width: 6rem">Action</th>
+          </tr>
+        </ng-template>
 
-      <ng-template #header>
-        <tr>
-          <th>Period</th>
-          <th pSortableColumn="Employee.FirstName">
-            Employee
-            <p-sortIcon field="Employee.FirstName" />
-          </th>
-          <th pSortableColumn="Employee.SalaryType">
-            Employee Salary Type
-            <p-sortIcon field="Employee.SalaryType" />
-          </th>
-          <th pSortableColumn="Employee.Salary">
-            Employee Salary
-            <p-sortIcon field="Employee.Salary" />
-          </th>
-          <th pSortableColumn="Total">
-            Invoice Total
-            <p-sortIcon field="Total" />
-          </th>
-          <th pSortableColumn="Status">
-            Invoice Status
-            <p-sortIcon field="Status" />
-          </th>
-          <th>Action</th>
-        </tr>
-      </ng-template>
-
-      <ng-template #body let-invoice>
-        <tr>
-          <td>
-            {{ invoice.periodStart | date: "MMM d" }} -
-            {{ invoice.periodEnd | date: "mediumDate" }}
-          </td>
-          <td>{{ invoice.employee.fullName }}</td>
-          <td>{{ getSalaryTypeDesc(invoice.employee.salaryType) }}</td>
-          <td>
-            @if (invoice.employee.salaryType === "share_of_gross") {
-              {{ invoice.employee.salary | percent }}
-            } @else {
-              {{ invoice.employee.salary | currency }}
-            }
-          </td>
-          <td>{{ invoice.total.amount | currency }}</td>
-          <td>
-            <app-invoice-status-tag [status]="invoice.status"></app-invoice-status-tag>
-          </td>
-          <td class="overflow-visible">
-            <!-- @if (invoice.payment.status === "pending") {
-                <p-button
-                  icon="pi pi-credit-card"
-                  pTooltip="Make payment"
-                  tooltipPosition="bottom"
-                  [routerLink]="['/payment/payroll', invoice.id]"
-                />
-              } -->
-
-            <p-button
-              class="ml-2"
-              icon="pi pi-pen-to-square"
-              pTooltip="Edit payroll invoice"
-              tooltipPosition="bottom"
-              [routerLink]="['/invoices/payroll', invoice.id, 'edit']"
-            />
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </ui-data-container>
-</p-card>
+        <ng-template #body let-invoice>
+          <tr>
+            <td>
+              {{ invoice.periodStart | date: "MMM d" }} -
+              {{ invoice.periodEnd | date: "mediumDate" }}
+            </td>
+            <td>{{ invoice.employee?.fullName ?? "-" }}</td>
+            <td>{{ getSalaryTypeDesc(invoice.employee?.salaryType) }}</td>
+            <td class="text-right">
+              @if (invoice.employee?.salaryType === "share_of_gross") {
+                {{ invoice.employee?.salary | percent }}
+              } @else {
+                {{ invoice.employee?.salary | currency }}
+              }
+            </td>
+            <td class="text-right">{{ invoice.total?.amount | currency }}</td>
+            <td>
+              <app-invoice-status-tag [status]="invoice.status" />
+            </td>
+            <td>
+              <p-button
+                icon="pi pi-pen-to-square"
+                [rounded]="true"
+                [text]="true"
+                pTooltip="Edit payroll invoice"
+                tooltipPosition="bottom"
+                [routerLink]="['/invoices/payroll', invoice.id, 'edit']"
+              />
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </ui-data-container>
+  </p-card>
+</div>

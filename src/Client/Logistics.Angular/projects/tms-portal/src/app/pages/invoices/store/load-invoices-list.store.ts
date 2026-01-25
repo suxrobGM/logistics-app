@@ -1,10 +1,10 @@
 import { formatSortField, getInvoices } from "@logistics/shared/api";
-import type { InvoiceDto } from "@logistics/shared/api/models";
+import type { InvoiceDto, InvoiceStatus } from "@logistics/shared/api/models";
 import { createListStore } from "@/shared/stores";
 
 /**
  * Store for the load invoices list page.
- * Requires LoadId to be set via setFilters before loading.
+ * Supports filtering by LoadId, Status, CustomerId, CustomerName, date range, and overdue status.
  */
 export const LoadInvoicesListStore = createListStore<InvoiceDto>(getInvoices, {
   defaultSortField: "-CreatedAt",
@@ -16,8 +16,15 @@ export const LoadInvoicesListStore = createListStore<InvoiceDto>(getInvoices, {
       Page: state.page,
       PageSize: state.pageSize,
       OrderBy: orderBy,
-      LoadId: state.filters["LoadId"] as string | undefined,
+      Search: state.search || undefined,
       InvoiceType: "load",
+      LoadId: state.filters["LoadId"] as string | undefined,
+      Status: state.filters["Status"] as InvoiceStatus | undefined,
+      CustomerId: state.filters["CustomerId"] as string | undefined,
+      CustomerName: state.filters["CustomerName"] as string | undefined,
+      StartDate: state.filters["StartDate"] as string | undefined,
+      EndDate: state.filters["EndDate"] as string | undefined,
+      OverdueOnly: state.filters["OverdueOnly"] as boolean | undefined,
     };
   },
 });

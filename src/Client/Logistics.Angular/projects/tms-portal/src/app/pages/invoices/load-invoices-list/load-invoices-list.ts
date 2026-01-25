@@ -1,24 +1,29 @@
 import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
-import { Component, inject, input, signal, type OnInit } from "@angular/core";
+import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
-import type { InvoiceDto, InvoiceStatus } from "@logistics/shared/api/models";
+import { invoiceStatusOptions } from "@logistics/shared/api/enums";
+import type { CustomerDto, InvoiceDto, InvoiceStatus } from "@logistics/shared/api/models";
+import type { SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
-import { SelectButtonModule } from "primeng/selectbutton";
+import { DatePickerModule } from "primeng/datepicker";
+import { MultiSelectModule } from "primeng/multiselect";
 import { TableModule } from "primeng/table";
 import { ToolbarModule } from "primeng/toolbar";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { DataContainer, InvoiceStatusTag } from "@/shared/components";
+import {
+  DataContainer,
+  InvoiceStatusTag,
+  LabeledField,
+  SearchCustomer,
+  SearchInput,
+} from "@/shared/components";
+import { type DatePreset, getDatePreset } from "@/shared/utils";
 import { SendInvoiceDialog } from "../components";
 import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
-
-interface StatusOption {
-  label: string;
-  value: InvoiceStatus | "all";
-}
 
 @Component({
   selector: "app-load-invoices-list",
@@ -37,9 +42,13 @@ interface StatusOption {
     InvoiceStatusTag,
     DataContainer,
     CheckboxModule,
-    SelectButtonModule,
     ToolbarModule,
     SendInvoiceDialog,
+    MultiSelectModule,
+    DatePickerModule,
+    SearchInput,
+    SearchCustomer,
+    LabeledField,
   ],
 })
 export class LoadInvoicesListComponent implements OnInit {
@@ -47,24 +56,96 @@ export class LoadInvoicesListComponent implements OnInit {
   protected readonly store = inject(LoadInvoicesListStore);
   protected readonly loadId = input<string>();
 
+  // Filter state
+  protected readonly selectedStatuses = signal<InvoiceStatus[]>([]);
+  protected readonly selectedCustomer = signal<CustomerDto | null>(null);
+  protected readonly overdueOnly = signal<boolean>(false);
+  protected readonly dateRange = signal<Date[] | null>(null);
+
+  // Filter options
+  protected readonly statusOptions: SelectItem[] = invoiceStatusOptions;
+
+  // Computed: count of active filters
+  protected readonly activeFilterCount = computed(() => {
+    let count = 0;
+    if (this.selectedStatuses().length > 0) count++;
+    if (this.selectedCustomer()) count++;
+    if (this.overdueOnly()) count++;
+    if (this.dateRange()?.length === 2) count++;
+    return count;
+  });
+
+  // UI state
   protected readonly selectedInvoices = signal<InvoiceDto[]>([]);
-  protected readonly statusFilter = signal<InvoiceStatus | "all">("all");
   protected readonly showSendInvoiceDialog = signal(false);
   protected readonly selectedInvoiceId = signal<string | null>(null);
 
-  protected readonly statusOptions: StatusOption[] = [
-    { label: "All", value: "all" },
-    { label: "Draft", value: "draft" },
-    { label: "Issued", value: "issued" },
-    { label: "Partially Paid", value: "partially_paid" },
-    { label: "Paid", value: "paid" },
-  ];
+  // Check if we're viewing invoices for a specific load
+  protected readonly isLoadSpecific = computed(() => !!this.loadId());
 
   ngOnInit(): void {
     const id = this.loadId();
     if (id) {
       this.store.setFilters({ LoadId: id });
+    } else {
+      this.store.load();
     }
+  }
+
+  protected onSearch(value: string): void {
+    this.store.setSearch(value);
+  }
+
+  protected applyFilters(): void {
+    const filters: Record<string, unknown> = {};
+
+    // Preserve LoadId if set
+    const loadId = this.loadId();
+    if (loadId) {
+      filters["LoadId"] = loadId;
+    }
+
+    // Status filter (take first if multiple - API typically expects single value)
+    const statuses = this.selectedStatuses();
+    if (statuses.length > 0) {
+      filters["Status"] = statuses[0];
+    }
+
+    // Customer filter
+    const customer = this.selectedCustomer();
+    if (customer?.id) {
+      filters["CustomerId"] = customer.id;
+    }
+
+    // Overdue only filter
+    if (this.overdueOnly()) {
+      filters["OverdueOnly"] = true;
+    }
+
+    // Date range filter
+    const range = this.dateRange();
+    if (range?.length === 2) {
+      filters["StartDate"] = range[0].toISOString();
+      filters["EndDate"] = range[1].toISOString();
+    }
+
+    this.store.setFilters(filters);
+  }
+
+  protected clearFilters(): void {
+    this.selectedStatuses.set([]);
+    this.selectedCustomer.set(null);
+    this.overdueOnly.set(false);
+    this.dateRange.set(null);
+
+    // Preserve LoadId if set
+    const loadId = this.loadId();
+    this.store.setFilters(loadId ? { LoadId: loadId } : {});
+  }
+
+  protected setDatePreset(preset: DatePreset): void {
+    this.dateRange.set(getDatePreset(preset));
+    this.applyFilters();
   }
 
   onSelectionChange(invoices: InvoiceDto[]): void {
@@ -82,17 +163,11 @@ export class LoadInvoicesListComponent implements OnInit {
 
   onInvoiceSent(): void {
     this.toastService.showSuccess("Invoice sent successfully");
+    this.store.load();
   }
 
   isOverdue(invoice: InvoiceDto): boolean {
     if (!invoice.dueDate || invoice.status === "paid") return false;
     return new Date(invoice.dueDate) < new Date();
-  }
-
-  getFilteredData(): InvoiceDto[] {
-    const data = this.store.data();
-    const status = this.statusFilter();
-    if (status === "all") return data;
-    return data.filter((inv) => inv.status === status);
   }
 }

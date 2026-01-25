@@ -8,13 +8,23 @@ import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import type { InvoiceDtoPagedResponse } from '../../models/invoice-dto-paged-response';
+import type { InvoiceStatus } from '../../models/invoice-status';
 import type { InvoiceType } from '../../models/invoice-type';
+import type { SalaryType } from '../../models/salary-type';
 
 export interface GetInvoices$Params {
   LoadId?: string;
   EmployeeId?: string;
   EmployeeName?: string;
   InvoiceType?: InvoiceType;
+  Status?: InvoiceStatus;
+  CustomerId?: string;
+  CustomerName?: string;
+  StartDate?: string;
+  EndDate?: string;
+  OverdueOnly?: boolean;
+  SalaryType?: SalaryType;
+  Search?: string;
   OrderBy?: string;
   Page?: number;
   PageSize?: number;
@@ -27,6 +37,14 @@ export function getInvoices(http: HttpClient, rootUrl: string, params?: GetInvoi
     rb.query('EmployeeId', params.EmployeeId, {});
     rb.query('EmployeeName', params.EmployeeName, {});
     rb.query('InvoiceType', params.InvoiceType, {});
+    rb.query('Status', params.Status, {});
+    rb.query('CustomerId', params.CustomerId, {});
+    rb.query('CustomerName', params.CustomerName, {});
+    rb.query('StartDate', params.StartDate, {});
+    rb.query('EndDate', params.EndDate, {});
+    rb.query('OverdueOnly', params.OverdueOnly, {});
+    rb.query('SalaryType', params.SalaryType, {});
+    rb.query('Search', params.Search, {});
     rb.query('OrderBy', params.OrderBy, {});
     rb.query('Page', params.Page, {});
     rb.query('PageSize', params.PageSize, {});

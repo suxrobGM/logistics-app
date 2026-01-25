@@ -77,6 +77,25 @@ public class InvoicesController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    /// <summary>
+    ///     Download a load invoice as PDF.
+    /// </summary>
+    [HttpGet("loads/{id:guid}/pdf", Name = "DownloadLoadInvoicePdf")]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.Invoice.View)]
+    public async Task<IActionResult> DownloadLoadInvoicePdf(Guid id)
+    {
+        var result = await mediator.Send(new GetLoadInvoicePdfQuery { InvoiceId = id });
+
+        if (!result.IsSuccess)
+        {
+            return NotFound(ErrorResponse.FromResult(result));
+        }
+
+        return File(result.Value!.PdfBytes, "application/pdf", result.Value.FileName);
+    }
+
     #endregion
 
     #region Manual Payments

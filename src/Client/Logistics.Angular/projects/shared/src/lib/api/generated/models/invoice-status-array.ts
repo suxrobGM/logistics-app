@@ -9,7 +9,9 @@ import type { InvoiceStatus } from './invoice-status';
 export const INVOICE_STATUS: InvoiceStatus[] = [
   'draft',
   'issued',
+  'sent',
   'partially_paid',
   'paid',
+  'overdue',
   'cancelled'
 ];

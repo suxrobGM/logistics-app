@@ -2,29 +2,26 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Specifications;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetInvoicesHandler : IAppRequestHandler<GetInvoicesQuery, PagedResult<InvoiceDto>>
+internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<GetInvoicesQuery, PagedResult<InvoiceDto>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetInvoicesHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public Task<PagedResult<InvoiceDto>> Handle(GetInvoicesQuery req, CancellationToken ct)
     {
-        if (req.LoadId.HasValue)
+        // Determine which type of invoices to query
+        if (req.InvoiceType == InvoiceType.Load || req.LoadId.HasValue ||
+            req.CustomerId.HasValue || !string.IsNullOrEmpty(req.CustomerName))
         {
             return GetLoadInvoices(req);
         }
 
-        if (req.EmployeeId.HasValue || !string.IsNullOrEmpty(req.EmployeeName))
+        if (req.EmployeeId.HasValue || !string.IsNullOrEmpty(req.EmployeeName) ||
+            req.InvoiceType == InvoiceType.Payroll)
         {
             return GetPayrollInvoices(req);
         }
@@ -34,8 +31,8 @@ internal sealed class GetInvoicesHandler : IAppRequestHandler<GetInvoicesQuery, 
 
     private async Task<PagedResult<InvoiceDto>> GetAllInvoices(GetInvoicesQuery req)
     {
-        var totalItems = await _tenantUow.Repository<Invoice>().CountAsync();
-        var invoicesDto = _tenantUow.Repository<Invoice>()
+        var totalItems = await tenantUow.Repository<Invoice>().CountAsync();
+        var invoicesDto = tenantUow.Repository<Invoice>()
             .ApplySpecification(new GetInvoices(req.InvoiceType, req.OrderBy, req.Page, req.PageSize))
             .Select(i => i.ToDto())
             .ToArray();
@@ -45,38 +42,79 @@ internal sealed class GetInvoicesHandler : IAppRequestHandler<GetInvoicesQuery, 
 
     private async Task<PagedResult<InvoiceDto>> GetLoadInvoices(GetInvoicesQuery req)
     {
-        var totalItems = await _tenantUow.Repository<LoadInvoice>()
-            .CountAsync(i => i.LoadId == req.LoadId);
+        var specification = new FilterLoadInvoices(
+            req.LoadId,
+            req.Status,
+            req.CustomerId,
+            req.CustomerName,
+            req.Search,
+            req.StartDate,
+            req.EndDate,
+            req.OverdueOnly,
+            req.OrderBy,
+            req.Page,
+            req.PageSize);
 
-        var invoicesDto = _tenantUow.Repository<LoadInvoice>()
-            .ApplySpecification(new FilterInvoicesByLoadId(req.LoadId!.Value, req.OrderBy, req.Page, req.PageSize))
+        var repository = tenantUow.Repository<LoadInvoice>();
+
+        // Count with the same filter criteria (excluding pagination)
+        var countSpec = new FilterLoadInvoices(
+            req.LoadId,
+            req.Status,
+            req.CustomerId,
+            req.CustomerName,
+            req.Search,
+            req.StartDate,
+            req.EndDate,
+            req.OverdueOnly,
+            null,
+            1,
+            int.MaxValue);
+
+        var totalItems = repository.ApplySpecification(countSpec).Count();
+
+        var invoicesDto = repository
+            .ApplySpecification(specification)
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<InvoiceDto>.Succeed(invoicesDto, totalItems, 1);
+        return PagedResult<InvoiceDto>.Succeed(invoicesDto, totalItems, req.PageSize);
     }
 
-    private async Task<PagedResult<InvoiceDto>> GetPayrollInvoices(GetInvoicesQuery req)
+    private Task<PagedResult<InvoiceDto>> GetPayrollInvoices(GetInvoicesQuery req)
     {
-        int totalItems;
-        BaseSpecification<PayrollInvoice> specification;
-        var repository = _tenantUow.Repository<PayrollInvoice>();
+        var specification = new FilterPayrollInvoices(
+            req.EmployeeId,
+            req.EmployeeName,
+            req.Status,
+            req.SalaryType,
+            req.StartDate,
+            req.EndDate,
+            req.OrderBy,
+            req.Page,
+            req.PageSize);
 
-        if (req.EmployeeId.HasValue)
-        {
-            specification = new FilterInvoicesByEmployeeId(req.EmployeeId.Value, req.OrderBy, req.Page, req.PageSize);
-            totalItems = await repository.CountAsync(i => i.EmployeeId == req.EmployeeId);
-        }
-        else
-        {
-            specification = new FilterInvoicesByEmployeeName(req.EmployeeName!, req.OrderBy, req.Page, req.PageSize);
-            totalItems = await repository.CountAsync();
-        }
+        var repository = tenantUow.Repository<PayrollInvoice>();
 
-        var invoice = repository.ApplySpecification(specification)
+        // Count with the same filter criteria (excluding pagination)
+        var countSpec = new FilterPayrollInvoices(
+            req.EmployeeId,
+            req.EmployeeName,
+            req.Status,
+            req.SalaryType,
+            req.StartDate,
+            req.EndDate,
+            null,
+            1,
+            int.MaxValue);
+
+        var totalItems = repository.ApplySpecification(countSpec).Count();
+
+        var invoicesDto = repository
+            .ApplySpecification(specification)
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<InvoiceDto>.Succeed(invoice, totalItems, req.PageSize);
+        return Task.FromResult(PagedResult<InvoiceDto>.Succeed(invoicesDto, totalItems, req.PageSize));
     }
 }

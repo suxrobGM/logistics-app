@@ -11,8 +11,6 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
     builder.AddServiceDefaults();
-    // Optional local configuration file and excluded from git
-    builder.Configuration.AddJsonFile("appsettings.local.json", true, true);
 
     builder.Host.UseSerilog((ctx, lc) => lc
         .WriteTo.Console()

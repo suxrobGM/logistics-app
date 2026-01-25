@@ -1,0 +1,151 @@
+<h1 class="text-center">Payment Settings</h1>
+
+<div class="flex justify-center">
+  <div class="w-full md:w-2/3 lg:w-1/2">
+    <p-card>
+      @if (isLoading()) {
+        <ui-loading-skeleton variant="card" height="16rem" loadingText="Loading payment settings..." />
+      } @else {
+        <div class="mb-6">
+          <h2 class="text-primary mb-2 text-lg font-semibold">Stripe Connect</h2>
+          <p class="text-muted text-sm">
+            Connect your Stripe account to receive payments directly from customer invoices.
+          </p>
+        </div>
+
+        <!-- Status Display -->
+        <div class="bg-surface-ground mb-6 rounded-lg p-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-muted text-sm">Connection Status</span>
+              <div class="mt-1 flex items-center gap-2">
+                <p-tag [value]="statusLabel()" [severity]="statusSeverity()" />
+                @if (connectStatus()?.accountId) {
+                  <span class="text-muted text-xs">
+                    Account: {{ connectStatus()?.accountId }}
+                  </span>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        @switch (connectStatus()?.status) {
+          @case ('active') {
+            <!-- Active State with Capabilities -->
+            <div class="mb-4 text-center">
+              <div class="mb-4">
+                <i class="pi pi-check-circle text-6xl text-green-500"></i>
+              </div>
+              <h3 class="mb-2 text-lg font-medium">Ready to Accept Payments</h3>
+              <p class="text-muted text-sm">
+                Your Stripe Connect account is fully set up and ready to receive customer payments.
+              </p>
+            </div>
+
+            <!-- Capabilities Grid -->
+            <div class="mt-6 grid grid-cols-2 gap-4">
+              <div class="bg-surface-ground rounded-lg p-4">
+                <div class="flex items-center gap-2">
+                  <i
+                    class="pi"
+                    [class.pi-check-circle]="connectStatus()?.chargesEnabled"
+                    [class.text-green-500]="connectStatus()?.chargesEnabled"
+                    [class.pi-times-circle]="!connectStatus()?.chargesEnabled"
+                    [class.text-red-500]="!connectStatus()?.chargesEnabled"
+                  ></i>
+                  <span class="font-medium">Charges</span>
+                </div>
+                <p class="text-muted mt-1 text-xs">
+                  {{ connectStatus()?.chargesEnabled ? 'Enabled' : 'Not enabled' }}
+                </p>
+              </div>
+              <div class="bg-surface-ground rounded-lg p-4">
+                <div class="flex items-center gap-2">
+                  <i
+                    class="pi"
+                    [class.pi-check-circle]="connectStatus()?.payoutsEnabled"
+                    [class.text-green-500]="connectStatus()?.payoutsEnabled"
+                    [class.pi-times-circle]="!connectStatus()?.payoutsEnabled"
+                    [class.text-red-500]="!connectStatus()?.payoutsEnabled"
+                  ></i>
+                  <span class="font-medium">Payouts</span>
+                </div>
+                <p class="text-muted mt-1 text-xs">
+                  {{ connectStatus()?.payoutsEnabled ? 'Enabled' : 'Not enabled' }}
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-6 flex justify-center gap-3">
+              <p-button
+                icon="pi pi-chart-bar"
+                label="Open Dashboard"
+                (click)="openDashboard()"
+                [loading]="isOpeningDashboard()"
+              />
+              <p-button
+                icon="pi pi-cog"
+                label="Account Settings"
+                [outlined]="true"
+                (click)="continueOnboarding()"
+                [loading]="isGettingLink()"
+              />
+            </div>
+          }
+
+          @case ('pending') {
+            <ui-empty-state
+              icon="clock"
+              title="Complete Your Setup"
+              message="Your Stripe Connect account has been created but onboarding is not complete. Please continue the setup process to start receiving payments."
+              actionLabel="Continue Setup"
+              actionIcon="pi pi-external-link"
+              (action)="continueOnboarding()"
+            />
+          }
+
+          @case ('restricted') {
+            <ui-empty-state
+              icon="exclamation-triangle"
+              title="Account Restricted"
+              message="Your Stripe Connect account has some restrictions. Please complete the required steps to restore full functionality."
+              actionLabel="Resolve Issues"
+              actionIcon="pi pi-external-link"
+              (action)="continueOnboarding()"
+            />
+          }
+
+          @case ('disabled') {
+            <ui-empty-state
+              icon="ban"
+              title="Account Disabled"
+              message="Your Stripe Connect account has been disabled. Please contact support for assistance."
+              actionLabel="Contact Support"
+              actionIcon="pi pi-external-link"
+              (action)="continueOnboarding()"
+            />
+          }
+
+          @default {
+            <!-- Not Connected State -->
+            <div class="flex flex-col items-center justify-center py-12 text-center">
+              <i class="pi pi-credit-card text-muted mb-4 text-6xl"></i>
+              <h3 class="mb-2 text-lg font-medium">Connect Your Bank Account</h3>
+              <p class="text-muted mb-6 max-w-md text-sm">
+                Set up Stripe Connect to receive payments from your customers directly into your bank
+                account. You'll be redirected to Stripe to complete the secure onboarding process.
+              </p>
+              <p-button
+                icon="pi pi-external-link"
+                label="Connect with Stripe"
+                (click)="startOnboarding()"
+                [loading]="isCreatingAccount() || isGettingLink()"
+              />
+            </div>
+          }
+        }
+      }
+    </p-card>
+  </div>
+</div>

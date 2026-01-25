@@ -143,6 +143,10 @@ export const sidebarItems: MenuItem[] = [
         route: "/settings/company",
       },
       {
+        label: "Payments",
+        route: "/settings/payments",
+      },
+      {
         label: "Subscription",
         route: "/subscription/manage",
       },
