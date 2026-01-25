@@ -100,6 +100,7 @@ public static class Permission
     {
         public const string View = $"{nameof(Permission)}.{nameof(Payroll)}.View";
         public const string Manage = $"{nameof(Permission)}.{nameof(Payroll)}.Manage";
+        public const string Approve = $"{nameof(Permission)}.{nameof(Payroll)}.Approve";
     }
 
     public static class Eld

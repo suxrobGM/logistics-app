@@ -44,8 +44,7 @@ export const salaryTypeOptions: SelectOption<SalaryType>[] = [
   { label: "Monthly", value: "monthly" },
   { label: "Weekly", value: "weekly" },
   { label: "Share of Gross", value: "share_of_gross" },
-  { label: "Rate per Mile", value: "rate_per_mile" },
-  { label: "Rate per Kilometer", value: "rate_per_kilometer" },
+  { label: "Rate per Distance", value: "rate_per_distance" },
   { label: "Hourly", value: "hourly" },
 ];
 
@@ -113,6 +112,9 @@ export const tripStatusOptions: SelectOption<TripStatus>[] = [
 
 export const invoiceStatusOptions: SelectOption<InvoiceStatus>[] = [
   { label: "Draft", value: "draft" },
+  { label: "Pending Approval", value: "pending_approval" },
+  { label: "Approved", value: "approved" },
+  { label: "Rejected", value: "rejected" },
   { label: "Issued", value: "issued" },
   { label: "Partially Paid", value: "partially_paid" },
   { label: "Paid", value: "paid" },

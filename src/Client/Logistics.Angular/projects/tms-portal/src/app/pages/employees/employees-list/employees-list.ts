@@ -56,6 +56,12 @@ export class EmployeeListComponent {
         this.router.navigateByUrl(`/invoices/payroll/employee/${this.selectedRow()!.id}`),
     },
     {
+      label: "View time entries",
+      icon: "pi pi-clock",
+      command: () =>
+        this.router.navigateByUrl(`/time-entries/employee/${this.selectedRow()!.id}`),
+    },
+    {
       label: "Manage documents",
       icon: "pi pi-paperclip",
       command: () => this.router.navigateByUrl(`/employees/${this.selectedRow()!.id}/documents`),

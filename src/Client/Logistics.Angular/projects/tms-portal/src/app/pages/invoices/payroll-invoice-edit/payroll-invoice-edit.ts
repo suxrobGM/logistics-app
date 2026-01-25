@@ -14,7 +14,6 @@ import {
   type CreatePayrollInvoiceCommand,
   type EmployeeDto,
   type InvoiceDto,
-  type PaymentStatus,
   type SalaryType,
   type UpdatePayrollInvoiceCommand,
   salaryTypeOptions,
@@ -55,12 +54,15 @@ export class PayrollInvoiceEdit implements OnInit {
 
   protected readonly todayDate = new Date();
   protected readonly form: FormGroup<PayrollForm>;
-  protected readonly id = input<string>();
+
+  protected readonly invoiceId = input<string>();
   protected readonly isLoading = signal(false);
   protected readonly suggestedEmployees = signal<EmployeeDto[]>([]);
   protected readonly selectedEmployee = signal<EmployeeDto | null>(null);
   protected readonly previewPayrollInvoice = signal<InvoiceDto | null>(null);
-  protected readonly title = computed(() => (this.id() ? "Edit payroll" : "Add a new payroll"));
+  protected readonly title = computed(() =>
+    this.invoiceId() ? "Edit payroll" : "Add a new payroll",
+  );
 
   constructor() {
     const lastWeek = [
@@ -75,7 +77,7 @@ export class PayrollInvoiceEdit implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.id()) {
+    if (this.invoiceId()) {
       this.fetchPayroll();
     }
   }
@@ -98,7 +100,8 @@ export class PayrollInvoiceEdit implements OnInit {
   }
 
   handleAutoCompleteSelectEvent(event: AutoCompleteSelectEvent): void {
-    this.fetchPreviewPayrollInvoice(event.value);
+    const employee = event.value as EmployeeDto;
+    this.fetchPreviewPayrollInvoice(employee.id!);
   }
 
   async fetchPreviewPayrollInvoice(employeeId: string): Promise<void> {
@@ -121,7 +124,7 @@ export class PayrollInvoiceEdit implements OnInit {
       return;
     }
 
-    if (this.id()) {
+    if (this.invoiceId()) {
       this.updatePayroll();
     } else {
       this.addPayroll();
@@ -133,25 +136,8 @@ export class PayrollInvoiceEdit implements OnInit {
     return salaryTypeOptions.find((option) => option.value === salaryType)?.label ?? "";
   }
 
-  private setConditionalValidators(paymentStatus: PaymentStatus | null): void {
-    if (!paymentStatus) {
-      return;
-    }
-
-    const paymentMethodControl = this.form.get("paymentMethod");
-    const billingAddressControl = this.form.get("paymentBillingAddress");
-
-    if (paymentStatus === "paid") {
-      paymentMethodControl?.setValidators(Validators.required);
-      billingAddressControl?.setValidators(Validators.required);
-    } else {
-      paymentMethodControl?.clearValidators();
-      billingAddressControl?.clearValidators();
-    }
-  }
-
   private async fetchPayroll(): Promise<void> {
-    const invoiceId = this.id();
+    const invoiceId = this.invoiceId();
     if (!invoiceId) {
       return;
     }
@@ -194,14 +180,14 @@ export class PayrollInvoiceEdit implements OnInit {
     this.isLoading.set(true);
 
     const command: UpdatePayrollInvoiceCommand = {
-      id: this.id()!,
+      id: this.invoiceId()!,
       employeeId: this.form.value.employee!.id ?? undefined,
       periodStart: this.form.value.dateRange![0].toISOString(),
       periodEnd: this.form.value.dateRange![1].toISOString(),
     };
 
     await this.api.invoke(updatePayrollInvoice, {
-      id: this.id()!,
+      id: this.invoiceId()!,
       body: command,
     });
     this.toastService.showSuccess("A payroll data has been updated successfully");

@@ -17,6 +17,17 @@ export class InvoiceStatusTag {
   }
 
   getStatusTagSeverity(): Tag["severity"] {
-    return this.status() === "paid" ? "success" : "warn";
+    switch (this.status()) {
+      case "paid":
+      case "approved":
+        return "success";
+      case "rejected":
+      case "cancelled":
+        return "danger";
+      case "pending_approval":
+        return "info";
+      default:
+        return "warn";
+    }
   }
 }

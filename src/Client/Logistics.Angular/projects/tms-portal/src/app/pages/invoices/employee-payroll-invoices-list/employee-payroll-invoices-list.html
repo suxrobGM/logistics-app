@@ -1,5 +1,5 @@
 <div class="flex items-center">
-  <h1>Employee Payroll Invoices</h1>
+  <h1 class="mb-0">Employee Payroll Invoices</h1>
   <p-button
     styleClass="text-black ml-2"
     icon="pi pi-plus-circle"
@@ -109,13 +109,16 @@
       <ng-template #body let-invoice>
         <tr>
           <td>
-            {{ invoice.startDate | date: "MMM d" }} - {{ invoice.endDate | date: "mediumDate" }}
+            {{ invoice.periodStart | date: "MMM d" }} - {{ invoice.periodEnd | date: "mediumDate" }}
           </td>
-          <td>{{ invoice.total.amount | currency }}</td>
+          <td>{{ invoice.total?.amount | currency }}</td>
           <td>
-            <app-invoice-status-tag [status]="invoice.status" />
+            @if (invoice.status) {
+              <app-invoice-status-tag [status]="invoice.status" />
+            } @else {
+              <span class="text-muted-color">-</span>
+            }
           </td>
-          <td>{{ getPaymentMethodDesc(invoice.payment.method) }}</td>
           <td class="overflow-visible">
             <p-button
               class="ml-2"
@@ -123,6 +126,14 @@
               pTooltip="Edit payroll"
               tooltipPosition="bottom"
               [routerLink]="['/invoices/payroll', invoice.id, 'edit']"
+            />
+            <p-button
+              class="ml-2"
+              icon="pi pi-eye"
+              pTooltip="View payroll"
+              tooltipPosition="bottom"
+              [routerLink]="['/invoices/payroll', invoice.id]"
+              [outlined]="true"
             />
           </td>
         </tr>

@@ -115,6 +115,14 @@ export const appRoutes: Routes = [
     },
   },
   {
+    path: "time-entries",
+    loadChildren: () =>
+      import("./pages/time-entries/time-entry.routes").then((m) => m.timeEntryRoutes),
+    data: {
+      breadcrumb: "Time Entries",
+    },
+  },
+  {
     path: "",
     component: LoginComponent,
   },

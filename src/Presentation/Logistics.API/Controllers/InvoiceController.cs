@@ -251,5 +251,69 @@ public class InvoicesController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    /// <summary>
+    ///     Submit a payroll invoice for approval.
+    /// </summary>
+    [HttpPost("payrolls/{id:guid}/submit", Name = "SubmitPayrollForApproval")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Payroll.Manage)]
+    public async Task<IActionResult> SubmitPayrollForApproval(Guid id)
+    {
+        var result = await mediator.Send(new SubmitPayrollForApprovalCommand { Id = id });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
+    ///     Approve a payroll invoice.
+    /// </summary>
+    [HttpPost("payrolls/{id:guid}/approve", Name = "ApprovePayrollInvoice")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Payroll.Approve)]
+    public async Task<IActionResult> ApprovePayrollInvoice(Guid id, [FromBody] ApprovePayrollRequest? request = null)
+    {
+        var result = await mediator.Send(new ApprovePayrollInvoiceCommand
+        {
+            Id = id,
+            Notes = request?.Notes
+        });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
+    ///     Reject a payroll invoice.
+    /// </summary>
+    [HttpPost("payrolls/{id:guid}/reject", Name = "RejectPayrollInvoice")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Payroll.Approve)]
+    public async Task<IActionResult> RejectPayrollInvoice(Guid id, [FromBody] RejectPayrollRequest request)
+    {
+        var result = await mediator.Send(new RejectPayrollInvoiceCommand
+        {
+            Id = id,
+            Reason = request.Reason
+        });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
+    ///     Batch approve multiple payroll invoices.
+    /// </summary>
+    [HttpPost("payrolls/batch-approve", Name = "BatchApprovePayroll")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Payroll.Approve)]
+    public async Task<IActionResult> BatchApprovePayroll([FromBody] BatchApprovePayrollRequest request)
+    {
+        var result = await mediator.Send(new BatchApprovePayrollCommand
+        {
+            Ids = request.Ids,
+            Notes = request.Notes
+        });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     #endregion
 }

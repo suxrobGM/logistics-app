@@ -1,0 +1,164 @@
+<div class="animate-fadein">
+  <h1 class="text-center">Payroll Dashboard</h1>
+
+  <div class="animate-stagger grid grid-cols-12 gap-4">
+    <!-- Stats Cards -->
+    @if (isLoading()) {
+      @for (_ of [1, 2, 3, 4]; track $index) {
+        <div class="col-span-12 md:col-span-6 lg:col-span-3">
+          <p-card>
+            <p-skeleton height="4rem" />
+          </p-card>
+        </div>
+      }
+    } @else {
+      <!-- Draft -->
+      <div class="col-span-12 md:col-span-6 lg:col-span-3">
+        <p-card class="h-full">
+          <div class="flex flex-col items-center gap-2">
+            <span class="text-sm text-gray-500">Draft</span>
+            <span class="text-2xl font-bold">{{ dashboard()?.draftCount ?? 0 }}</span>
+            <span class="text-lg text-gray-600">{{ dashboard()?.draftAmount | currency }}</span>
+          </div>
+        </p-card>
+      </div>
+
+      <!-- Pending Approval -->
+      <div class="col-span-12 md:col-span-6 lg:col-span-3">
+        <p-card class="h-full border-yellow-200">
+          <div class="flex flex-col items-center gap-2">
+            <span class="text-sm text-gray-500">Pending Approval</span>
+            <span class="text-2xl font-bold text-yellow-600">{{
+              dashboard()?.pendingApprovalCount ?? 0
+            }}</span>
+            <span class="text-lg text-yellow-600">{{
+              dashboard()?.pendingApprovalAmount | currency
+            }}</span>
+          </div>
+        </p-card>
+      </div>
+
+      <!-- Approved -->
+      <div class="col-span-12 md:col-span-6 lg:col-span-3">
+        <p-card class="h-full border-blue-200">
+          <div class="flex flex-col items-center gap-2">
+            <span class="text-sm text-gray-500">Approved</span>
+            <span class="text-2xl font-bold text-blue-600">{{
+              dashboard()?.approvedCount ?? 0
+            }}</span>
+            <span class="text-lg text-blue-600">{{ dashboard()?.approvedAmount | currency }}</span>
+          </div>
+        </p-card>
+      </div>
+
+      <!-- Paid -->
+      <div class="col-span-12 md:col-span-6 lg:col-span-3">
+        <p-card class="h-full border-green-200">
+          <div class="flex flex-col items-center gap-2">
+            <span class="text-sm text-gray-500">Paid</span>
+            <span class="text-2xl font-bold text-green-600">{{ dashboard()?.paidCount ?? 0 }}</span>
+            <span class="text-lg text-green-600">{{ dashboard()?.paidAmount | currency }}</span>
+          </div>
+        </p-card>
+      </div>
+    }
+
+    <!-- Quick Actions -->
+    <div class="col-span-12">
+      <p-card header="Quick Actions">
+        <div class="flex flex-wrap gap-2">
+          <a routerLink="/invoices/payroll/add" class="no-underline">
+            <p-button label="Create Payroll" icon="pi pi-plus" />
+          </a>
+          <a routerLink="/invoices/payroll" class="no-underline">
+            <p-button label="View All Payrolls" icon="pi pi-list" [outlined]="true" />
+          </a>
+          <a routerLink="/employees" class="no-underline">
+            <p-button label="Manage Employees" icon="pi pi-users" [outlined]="true" />
+          </a>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- Pending Approval List -->
+    @if ((dashboard()?.pendingApprovalCount ?? 0) > 0) {
+      <div class="col-span-12">
+        <p-card header="Pending Approval">
+          <p class="mb-4 text-gray-600">
+            These payroll invoices are waiting for your approval before payment can be processed.
+          </p>
+          <a routerLink="/invoices/payroll" [queryParams]="{ status: 'pending_approval' }">
+            <p-button
+              label="Review {{ dashboard()?.pendingApprovalCount }} Pending Payroll(s)"
+              icon="pi pi-check-circle"
+              severity="warn"
+            />
+          </a>
+        </p-card>
+      </div>
+    }
+
+    <!-- Recent Payrolls -->
+    <div class="col-span-12">
+      <p-card header="Recent Payrolls">
+        @if (isLoading()) {
+          <p-skeleton height="12rem" />
+        } @else {
+          <p-table
+            [value]="dashboard()?.recentPayrolls ?? []"
+            [rows]="10"
+            [tableStyle]="{ 'min-width': '50rem' }"
+          >
+            <ng-template #header>
+              <tr>
+                <th>Invoice #</th>
+                <th>Employee</th>
+                <th>Period</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Created Date</th>
+                <th style="width: 6rem">Actions</th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-invoice>
+              <tr>
+                <td>
+                  <a [routerLink]="['/invoices/payroll', invoice.id, 'edit']">
+                    {{ invoice.number }}
+                  </a>
+                </td>
+                <td>{{ invoice.employee?.fullName ?? "-" }}</td>
+                <td>
+                  {{ invoice.periodStart | date: "shortDate" }} -
+                  {{ invoice.periodEnd | date: "shortDate" }}
+                </td>
+                <td>{{ invoice.total?.amount | currency }}</td>
+                <td><app-invoice-status-tag [status]="invoice.status" /></td>
+                <td>{{ invoice.createdDate | date: "shortDate" }}</td>
+                <td>
+                  <a [routerLink]="['/invoices/payroll', invoice.id, 'edit']">
+                    <p-button
+                      icon="pi pi-pencil"
+                      [rounded]="true"
+                      [text]="true"
+                      pTooltip="Edit"
+                      tooltipPosition="top"
+                    />
+                  </a>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template #emptymessage>
+              <tr>
+                <td colspan="7" class="p-4 text-center text-gray-500">
+                  No payroll invoices yet.
+                  <a routerLink="/invoices/payroll/add" class="text-primary ml-2">Create one now</a>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        }
+      </p-card>
+    </div>
+  </div>
+</div>

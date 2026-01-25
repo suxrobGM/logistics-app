@@ -17,12 +17,12 @@ public enum SalaryType
     [Description("Share of gross")] [EnumMember(Value = "share_of_gross")]
     ShareOfGross,
 
-    // For drivers who get paid per mile or kilometer driven
-    [Description("Rate per mile")] [EnumMember(Value = "rate_per_mile")]
-    RatePerMile,
-
-    [Description("Rate per kilometer")] [EnumMember(Value = "rate_per_kilometer")]
-    RatePerKilometer,
+    /// <summary>
+    /// For drivers who get paid per distance unit driven.
+    /// Rate stored in Employee.Salary, distance unit determined by tenant settings.
+    /// </summary>
+    [Description("Rate per distance")] [EnumMember(Value = "rate_per_distance")]
+    RatePerDistance,
 
     [Description("Rate per hour")] [EnumMember(Value = "hourly")]
     Hourly

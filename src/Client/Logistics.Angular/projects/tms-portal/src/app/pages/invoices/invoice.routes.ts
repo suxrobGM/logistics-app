@@ -5,6 +5,8 @@ import { EmployeePayrollInvoicesList } from "./employee-payroll-invoices-list/em
 import { InvoiceDashboard } from "./invoice-dashboard/invoice-dashboard";
 import { LoadInvoiceDetails } from "./load-invoice-details/load-invoice-details";
 import { LoadInvoicesList } from "./load-invoices-list/load-invoices-list";
+import { PayrollDashboard } from "./payroll-dashboard/payroll-dashboard";
+import { PayrollInvoiceDetails } from "./payroll-invoice-details/payroll-invoice-details";
 import { PayrollInvoiceEdit } from "./payroll-invoice-edit/payroll-invoice-edit";
 import { PayrollInvoicesList } from "./payroll-invoices-list/payroll-invoices-list";
 
@@ -55,11 +57,11 @@ export const invoiceRoutes: Routes = [
     },
   },
   {
-    path: "payroll/:invoiceId/edit",
-    component: PayrollInvoiceEdit,
+    path: "payroll/dashboard",
+    component: PayrollDashboard,
     canActivate: [authGuard],
     data: {
-      breadcrumb: "Edit Payroll Invoice",
+      breadcrumb: "Payroll Dashboard",
       permission: Permission.Payroll.View,
     },
   },
@@ -79,6 +81,24 @@ export const invoiceRoutes: Routes = [
     data: {
       breadcrumb: "Employee Payroll Invoices",
       permission: Permission.Payroll.Manage,
+    },
+  },
+  {
+    path: "payroll/:invoiceId",
+    component: PayrollInvoiceDetails,
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: "Payroll Invoice Details",
+      permission: Permission.Payroll.View,
+    },
+  },
+  {
+    path: "payroll/:invoiceId/edit",
+    component: PayrollInvoiceEdit,
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: "Edit Payroll Invoice",
+      permission: Permission.Payroll.View,
     },
   },
 ];

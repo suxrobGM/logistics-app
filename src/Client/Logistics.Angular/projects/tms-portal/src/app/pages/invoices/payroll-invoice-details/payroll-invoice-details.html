@@ -1,0 +1,272 @@
+<div class="animate-fadein">
+  <h1 class="text-center">Payroll Invoice Details</h1>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-8">
+      <p-progress-spinner />
+    </div>
+  } @else if (invoice()) {
+    <div class="grid grid-cols-12 gap-4">
+      <!-- Invoice Header -->
+      <div class="col-span-12 lg:col-span-8">
+        <p-card>
+          <div class="mb-4 flex items-start justify-between">
+            <div>
+              <h2 class="mb-1">Payroll Invoice</h2>
+              <p class="text-muted-color">
+                Period: {{ invoice()!.periodStart | date: "mediumDate" }} -
+                {{ invoice()!.periodEnd | date: "mediumDate" }}
+              </p>
+            </div>
+            <div class="text-right">
+              <h3>Invoice #{{ invoice()!.number }}</h3>
+              @if (invoice()!.status) {
+                <app-invoice-status-tag [status]="invoice()!.status!" />
+              }
+            </div>
+          </div>
+
+          <p-divider />
+
+          <!-- Employee Info -->
+          <div class="mb-4 grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-muted-color mb-1 text-sm">Employee</p>
+              <p class="font-semibold">{{ invoice()!.employee?.fullName ?? "N/A" }}</p>
+              <p class="text-muted-color text-sm">{{ invoice()!.employee?.email }}</p>
+            </div>
+            <div class="text-right">
+              <p>
+                <strong>Salary Type:</strong>
+                {{ getSalaryTypeLabel(invoice()!.employee?.salaryType) }}
+              </p>
+              <p>
+                <strong>Rate:</strong>
+                @if (invoice()!.employee?.salaryType === "share_of_gross") {
+                  {{ invoice()!.employee?.salary | percent }}
+                } @else {
+                  {{ invoice()!.employee?.salary | currency }}
+                }
+              </p>
+              <p><strong>Issue Date:</strong> {{ invoice()!.createdDate | date: "mediumDate" }}</p>
+            </div>
+          </div>
+
+          <!-- Earnings Breakdown -->
+          @if (invoice()!.lineItems && invoice()!.lineItems!.length > 0) {
+            <p-divider />
+            <h4>Earnings Breakdown</h4>
+            <p-table [value]="invoice()!.lineItems!">
+              <ng-template #header>
+                <tr>
+                  <th>Description</th>
+                  <th class="text-right" style="width: 100px">Qty</th>
+                  <th class="text-right" style="width: 120px">Rate</th>
+                  <th class="text-right" style="width: 120px">Amount</th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-item>
+                <tr>
+                  <td>
+                    <span>{{ item.description }}</span>
+                    @if (item.type) {
+                      <p-tag [value]="item.type" severity="secondary" styleClass="ml-2 text-xs" />
+                    }
+                  </td>
+                  <td class="text-right">{{ item.quantity ?? 1 }}</td>
+                  <td class="text-right">{{ item.amount?.amount | currency }}</td>
+                  <td class="text-right">{{ item.total | currency }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          }
+
+          <p-divider />
+
+          <!-- Totals -->
+          <div class="flex justify-end">
+            <div class="w-64">
+              <div class="mt-2 flex justify-between border-t py-1 pt-2 text-lg font-bold">
+                <span>Total Earnings:</span>
+                <span>{{ invoice()!.total?.amount | currency }}</span>
+              </div>
+              @if (
+                getOutstandingAmount() > 0 &&
+                getOutstandingAmount() < (invoice()!.total?.amount ?? 0)
+              ) {
+                <div class="flex justify-between py-1 text-green-600">
+                  <span>Paid:</span>
+                  <span>{{
+                    (invoice()!.total?.amount ?? 0) - getOutstandingAmount() | currency
+                  }}</span>
+                </div>
+                <div class="flex justify-between py-1 font-semibold text-red-600">
+                  <span>Outstanding:</span>
+                  <span>{{ getOutstandingAmount() | currency }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Approval Info -->
+          @if (invoice()!.status === "approved" || invoice()!.status === "issued" || invoice()!.status === "paid" || invoice()!.status === "partially_paid") {
+            <p-divider />
+            <div class="rounded bg-green-50 p-3">
+              <p class="font-semibold text-green-700">
+                <i class="pi pi-check-circle mr-2"></i>Approved
+              </p>
+            </div>
+          }
+
+          @if (invoice()!.status === "rejected") {
+            <p-divider />
+            <div class="rounded bg-red-50 p-3">
+              <p class="font-semibold text-red-700">
+                <i class="pi pi-times-circle mr-2"></i>Rejected
+              </p>
+            </div>
+          }
+        </p-card>
+      </div>
+
+      <!-- Actions Sidebar -->
+      <div class="col-span-12 lg:col-span-4">
+        <p-card header="Actions">
+          <div class="flex flex-col gap-2">
+            @if (canSubmitForApproval()) {
+              <p-button
+                icon="pi pi-send"
+                label="Submit for Approval"
+                styleClass="w-full"
+                [loading]="isSubmitting()"
+                (click)="submitForApproval()"
+              />
+            }
+
+            @if (canApprove()) {
+              <p-button
+                icon="pi pi-check"
+                label="Approve"
+                styleClass="w-full"
+                severity="success"
+                [loading]="isApproving()"
+                (click)="approve()"
+              />
+              <p-button
+                icon="pi pi-times"
+                label="Reject"
+                styleClass="w-full"
+                severity="danger"
+                [outlined]="true"
+                (click)="openRejectDialog()"
+              />
+            }
+
+            @if (canRecordPayment()) {
+              <p-button
+                icon="pi pi-dollar"
+                label="Record Payment"
+                styleClass="w-full"
+                [outlined]="true"
+                (click)="showRecordPaymentDialog.set(true)"
+              />
+            }
+
+            <a [routerLink]="['/invoices/payroll', invoice()!.id, 'edit']" class="no-underline">
+              <p-button icon="pi pi-pencil" label="Edit" styleClass="w-full" [outlined]="true" />
+            </a>
+
+            <a
+              [routerLink]="['/invoices/payroll/employee', invoice()!.employee?.id]"
+              class="no-underline"
+            >
+              <p-button
+                icon="pi pi-user"
+                label="View Employee Payrolls"
+                styleClass="w-full"
+                [outlined]="true"
+              />
+            </a>
+
+            <a routerLink="/invoices/payroll" class="no-underline">
+              <p-button
+                icon="pi pi-arrow-left"
+                label="Back to List"
+                styleClass="w-full"
+                [outlined]="true"
+              />
+            </a>
+          </div>
+        </p-card>
+
+        <!-- Payment History -->
+        @if (invoice()!.payments && invoice()!.payments!.length > 0) {
+          <p-card header="Payment History" styleClass="mt-4">
+            <div class="flex flex-col gap-3">
+              @for (payment of invoice()!.payments; track payment.id) {
+                <div class="flex items-center justify-between rounded bg-gray-50 p-2">
+                  <div>
+                    <p class="font-semibold">{{ payment.amount?.amount | currency }}</p>
+                    <p class="text-muted-color text-sm">
+                      {{ payment.createdDate | date: "short" }}
+                    </p>
+                  </div>
+                  @if (payment.status) {
+                    <app-payment-status-tag [paymentStatus]="payment.status" />
+                  }
+                </div>
+              }
+            </div>
+          </p-card>
+        }
+      </div>
+    </div>
+
+    <!-- Dialogs -->
+    <app-record-payment-dialog
+      [invoiceId]="invoiceId()"
+      [outstandingAmount]="getOutstandingAmount()"
+      [(visible)]="showRecordPaymentDialog"
+      (recorded)="onPaymentRecorded()"
+    />
+
+    <p-dialog
+      header="Reject Payroll"
+      [(visible)]="showRejectDialog"
+      [modal]="true"
+      [style]="{ width: '400px' }"
+    >
+      <p class="mb-4">Please provide a reason for rejecting this payroll:</p>
+      <textarea
+        pInputTextarea
+        [rows]="4"
+        class="w-full"
+        placeholder="Enter rejection reason..."
+        [ngModel]="rejectionReason()"
+        (ngModelChange)="rejectionReason.set($event)"
+      ></textarea>
+      <ng-template #footer>
+        <p-button
+          label="Cancel"
+          [text]="true"
+          (click)="showRejectDialog.set(false)"
+        />
+        <p-button
+          label="Reject"
+          severity="danger"
+          [loading]="isRejecting()"
+          (click)="confirmReject()"
+        />
+      </ng-template>
+    </p-dialog>
+
+    <p-confirm-dialog />
+  } @else {
+    <p-card>
+      <div class="text-muted-color py-8 text-center">
+        <i class="pi pi-exclamation-circle mb-4 text-4xl"></i>
+        <p>Payroll invoice not found</p>
+      </div>
+    </p-card>
+  }
+</div>

@@ -79,16 +79,18 @@ internal class PayrollService(
 
     public PayrollInvoice CreatePayrollInvoice(Employee employee, DateTime startDate, DateTime endDate)
     {
-        var invoiceAmount = CalculateSalary(employee, startDate, endDate);
+        var (invoiceAmount, totalDistance, totalHours) = CalculateSalaryWithDetails(employee, startDate, endDate);
 
         var payrollInvoice = new PayrollInvoice
         {
             Total = invoiceAmount,
-            Status = InvoiceStatus.Issued,
+            Status = InvoiceStatus.Draft,
             PeriodStart = startDate,
             PeriodEnd = endDate,
             EmployeeId = employee.Id,
-            Employee = employee
+            Employee = employee,
+            TotalDistanceDriven = totalDistance,
+            TotalHoursWorked = totalHours
         };
         return payrollInvoice;
     }
@@ -103,39 +105,89 @@ internal class PayrollService(
         return payroll != null;
     }
 
-    private decimal CalculateSalary(Employee employee, DateTime startDate, DateTime endDate)
+    /// <summary>
+    /// Calculates salary with additional tracking data (distance, hours).
+    /// Returns (salary amount, total distance in km, total hours worked).
+    /// </summary>
+    private (decimal Amount, double TotalDistance, decimal TotalHours) CalculateSalaryWithDetails(
+        Employee employee,
+        DateTime startDate,
+        DateTime endDate)
     {
-        // Share-of-gross: sum every load that was delivered in the period
-        // by ANY truck where this employee was the main OR secondary driver.
-        if (employee.SalaryType == SalaryType.ShareOfGross)
+        return employee.SalaryType switch
         {
-            var totalGross = tenantUow.Repository<Truck>()
-                .Query()
-                .Where(t => t.MainDriverId == employee.Id ||
-                            t.SecondaryDriverId == employee.Id)
-                .SelectMany(t => t.Loads.Where(l =>
-                    l.DeliveredAt.HasValue &&
-                    l.DeliveredAt.Value >= startDate &&
-                    l.DeliveredAt.Value <= endDate))
-                .Sum(l => l.DeliveryCost.Amount);
+            SalaryType.ShareOfGross => (CalculateShareOfGross(employee, startDate, endDate), 0, 0),
+            SalaryType.Weekly => (CountWeeks(startDate, endDate) * employee.Salary, 0, 0),
+            SalaryType.Monthly => (CountMonths(startDate, endDate) * employee.Salary, 0, 0),
+            SalaryType.RatePerDistance => CalculateRatePerDistance(employee, startDate, endDate),
+            SalaryType.Hourly => CalculateHourly(employee, startDate, endDate),
+            _ => (employee.Salary, 0, 0)
+        };
+    }
 
-            return totalGross * employee.Salary; // Salary holds the share ratio (0-1)
-        }
+    /// <summary>
+    /// Share-of-gross: sum every load that was delivered in the period
+    /// by ANY truck where this employee was the main OR secondary driver.
+    /// </summary>
+    private decimal CalculateShareOfGross(Employee employee, DateTime startDate, DateTime endDate)
+    {
+        var totalGross = tenantUow.Repository<Truck>()
+            .Query()
+            .Where(t => t.MainDriverId == employee.Id ||
+                        t.SecondaryDriverId == employee.Id)
+            .SelectMany(t => t.Loads.Where(l =>
+                l.DeliveredAt.HasValue &&
+                l.DeliveredAt.Value >= startDate &&
+                l.DeliveredAt.Value <= endDate))
+            .Sum(l => l.DeliveryCost.Amount);
 
-        // Weekly
-        if (employee.SalaryType == SalaryType.Weekly)
-        {
-            return CountWeeks(startDate, endDate) * employee.Salary;
-        }
+        return totalGross * employee.Salary; // Salary holds the share ratio (0-1)
+    }
 
-        // Monthly
-        if (employee.SalaryType == SalaryType.Monthly)
-        {
-            return CountMonths(startDate, endDate) * employee.Salary;
-        }
+    /// <summary>
+    /// Rate per distance: sum all load distances for delivered loads where driver was assigned.
+    /// Distance is stored in kilometers. Multiply by rate stored in Employee.Salary.
+    /// </summary>
+    private (decimal Amount, double TotalDistance, decimal TotalHours) CalculateRatePerDistance(
+        Employee employee,
+        DateTime startDate,
+        DateTime endDate)
+    {
+        var totalDistanceKm = tenantUow.Repository<Truck>()
+            .Query()
+            .Where(t => t.MainDriverId == employee.Id ||
+                        t.SecondaryDriverId == employee.Id)
+            .SelectMany(t => t.Loads.Where(l =>
+                l.DeliveredAt.HasValue &&
+                l.DeliveredAt.Value >= startDate &&
+                l.DeliveredAt.Value <= endDate))
+            .Sum(l => l.Distance);
 
-        // Fallback – fixed amount
-        return employee.Salary;
+        // Employee.Salary holds rate per km (or rate per mile, depending on tenant settings)
+        var amount = (decimal)totalDistanceKm * employee.Salary;
+
+        return (amount, totalDistanceKm, 0);
+    }
+
+    /// <summary>
+    /// Hourly: sum all time entries for the employee in the period.
+    /// Multiply total hours by rate stored in Employee.Salary.
+    /// </summary>
+    private (decimal Amount, double TotalDistance, decimal TotalHours) CalculateHourly(
+        Employee employee,
+        DateTime startDate,
+        DateTime endDate)
+    {
+        var totalHours = tenantUow.Repository<TimeEntry>()
+            .Query()
+            .Where(te => te.EmployeeId == employee.Id &&
+                         te.Date >= startDate.Date &&
+                         te.Date <= endDate.Date)
+            .Sum(te => te.TotalHours);
+
+        var amount = totalHours * employee.Salary;
+
+        return (amount, 0, totalHours);
     }
 
     private static int CountWeeks(DateTime startDate, DateTime endDate)

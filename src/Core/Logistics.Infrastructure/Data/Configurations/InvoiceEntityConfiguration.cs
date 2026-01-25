@@ -63,6 +63,20 @@ internal sealed class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invo
             builder.HasOne(i => i.Employee)
                 .WithMany(e => e.PayrollInvoices)
                 .HasForeignKey(i => i.EmployeeId);
+
+            builder.HasOne(i => i.ApprovedBy)
+                .WithMany()
+                .HasForeignKey(i => i.ApprovedById)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            builder.Property(i => i.TotalHoursWorked)
+                .HasPrecision(10, 2);
+
+            builder.Property(i => i.ApprovalNotes)
+                .HasMaxLength(1000);
+
+            builder.Property(i => i.RejectionReason)
+                .HasMaxLength(1000);
         }
     }
 

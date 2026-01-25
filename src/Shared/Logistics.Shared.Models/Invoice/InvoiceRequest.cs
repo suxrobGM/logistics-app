@@ -90,3 +90,41 @@ public record AddLineItemRequest
     /// </summary>
     public string? Notes { get; set; }
 }
+
+/// <summary>
+/// Request body for approving a payroll invoice.
+/// </summary>
+public record ApprovePayrollRequest
+{
+    /// <summary>
+    /// Optional approval notes.
+    /// </summary>
+    public string? Notes { get; set; }
+}
+
+/// <summary>
+/// Request body for rejecting a payroll invoice.
+/// </summary>
+public record RejectPayrollRequest
+{
+    /// <summary>
+    /// Reason for rejection.
+    /// </summary>
+    public required string Reason { get; set; }
+}
+
+/// <summary>
+/// Request body for batch approving payroll invoices.
+/// </summary>
+public record BatchApprovePayrollRequest
+{
+    /// <summary>
+    /// List of payroll invoice IDs to approve.
+    /// </summary>
+    public required List<Guid> Ids { get; set; }
+
+    /// <summary>
+    /// Optional approval notes.
+    /// </summary>
+    public string? Notes { get; set; }
+}

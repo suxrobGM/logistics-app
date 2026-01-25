@@ -5,6 +5,8 @@ export type { AcceptInvitationCommand } from './models/accept-invitation-command
 export type { AcceptInvitationResult } from './models/accept-invitation-result';
 export type { AddLineItemRequest } from './models/add-line-item-request';
 export type { Address } from './models/address';
+export type { ApprovePayrollRequest } from './models/approve-payroll-request';
+export type { BatchApprovePayrollRequest } from './models/batch-approve-payroll-request';
 export type { BillingInterval } from './models/billing-interval';
 export type { BlogPostDto } from './models/blog-post-dto';
 export type { BlogPostDtoPagedResponse } from './models/blog-post-dto-paged-response';
@@ -42,6 +44,7 @@ export type { CreatePayrollInvoiceCommand } from './models/create-payroll-invoic
 export type { CreateSubscriptionCommand } from './models/create-subscription-command';
 export type { CreateSubscriptionPlanCommand } from './models/create-subscription-plan-command';
 export type { CreateTenantCommand } from './models/create-tenant-command';
+export type { CreateTimeEntryCommand } from './models/create-time-entry-command';
 export type { CreateTrackingLinkCommand } from './models/create-tracking-link-command';
 export type { CreateTripCommand } from './models/create-trip-command';
 export type { CreateTripLoadCommand } from './models/create-trip-load-command';
@@ -156,6 +159,7 @@ export type { PublicInvoiceDto } from './models/public-invoice-dto';
 export type { PublicTrackingDto } from './models/public-tracking-dto';
 export type { RecordManualPaymentRequest } from './models/record-manual-payment-request';
 export type { RejectExpenseRequest } from './models/reject-expense-request';
+export type { RejectPayrollRequest } from './models/reject-payroll-request';
 export type { RenewSubscriptionCommand } from './models/renew-subscription-command';
 export type { RevenueTrendDto } from './models/revenue-trend-dto';
 export type { RoleDto } from './models/role-dto';
@@ -180,6 +184,9 @@ export type { SubscriptionPlanDtoPagedResponse } from './models/subscription-pla
 export type { SubscriptionStatus } from './models/subscription-status';
 export type { TenantDto } from './models/tenant-dto';
 export type { TenantDtoPagedResponse } from './models/tenant-dto-paged-response';
+export type { TimeEntryDto } from './models/time-entry-dto';
+export type { TimeEntryDtoPagedResponse } from './models/time-entry-dto-paged-response';
+export type { TimeEntryType } from './models/time-entry-type';
 export type { TopCustomerDto } from './models/top-customer-dto';
 export type { TopCustomerLoadDto } from './models/top-customer-load-dto';
 export type { TrackingLinkDto } from './models/tracking-link-dto';
@@ -216,6 +223,7 @@ export type { UpdatePaymentMethodCommand } from './models/update-payment-method-
 export type { UpdatePayrollInvoiceCommand } from './models/update-payroll-invoice-command';
 export type { UpdateSubscriptionPlanCommand } from './models/update-subscription-plan-command';
 export type { UpdateTenantCommand } from './models/update-tenant-command';
+export type { UpdateTimeEntryCommand } from './models/update-time-entry-command';
 export type { UpdateTripCommand } from './models/update-trip-command';
 export type { UpdateTruckCommand } from './models/update-truck-command';
 export type { UpdateUserCommand } from './models/update-user-command';

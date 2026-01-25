@@ -44,15 +44,22 @@ export class EmployeePayrollInvoicesList {
   protected readonly employee = signal<EmployeeDto | null>(null);
   protected readonly isLoadingEmployee = signal(false);
 
+  private lastLoadedEmployeeId: string | null = null;
+
   constructor() {
     // Set the EmployeeId filter when the input changes
-    effect(() => {
-      const id = this.employeeId();
-      if (id) {
-        this.store.setFilters({ EmployeeId: id });
-        this.fetchEmployee();
-      }
-    });
+    effect(
+      () => {
+        const id = this.employeeId();
+        // Only load if the employeeId has changed to prevent infinite loops
+        if (id && id !== this.lastLoadedEmployeeId) {
+          this.lastLoadedEmployeeId = id;
+          this.store.setFilters({ EmployeeId: id });
+          this.fetchEmployee();
+        }
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   protected addInvoice(): void {

@@ -11,7 +11,6 @@ export const SALARY_TYPE: SalaryType[] = [
   'monthly',
   'weekly',
   'share_of_gross',
-  'rate_per_mile',
-  'rate_per_kilometer',
+  'rate_per_distance',
   'hourly'
 ];

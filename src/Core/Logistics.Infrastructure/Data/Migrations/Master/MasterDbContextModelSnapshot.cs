@@ -1004,6 +1004,16 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                 {
                     b.HasBaseType("Logistics.Domain.Entities.Invoice");
 
+                    b.Property<string>("ApprovalNotes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ApprovedById")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uuid");
 
@@ -1012,6 +1022,19 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
 
                     b.Property<DateTime>("PeriodStart")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RejectionReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<double>("TotalDistanceDriven")
+                        .HasColumnType("double precision");
+
+                    b.Property<decimal>("TotalHoursWorked")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.HasIndex("ApprovedById");
 
                     b.HasDiscriminator().HasValue(2);
                 });
@@ -1164,6 +1187,16 @@ namespace Logistics.Infrastructure.Data.Migrations.Master
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.PayrollInvoice", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.User", "ApprovedBy")
+                        .WithMany()
+                        .HasForeignKey("ApprovedById")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ApprovedBy");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.AppRole", b =>

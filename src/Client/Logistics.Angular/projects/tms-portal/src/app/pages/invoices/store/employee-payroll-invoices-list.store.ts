@@ -16,6 +16,7 @@ export const EmployeePayrollInvoicesListStore = createListStore<InvoiceDto>(getI
       Page: state.page,
       PageSize: state.pageSize,
       OrderBy: orderBy,
+      InvoiceType: "payroll",
       EmployeeId: state.filters["EmployeeId"] as string | undefined,
     };
   },

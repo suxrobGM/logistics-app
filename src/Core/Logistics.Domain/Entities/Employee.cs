@@ -34,6 +34,11 @@ public class Employee : Entity, ITenantEntity
     public virtual List<PayrollInvoice> PayrollInvoices { get; set; } = [];
 
     /// <summary>
+    ///     Time entries for hourly employees
+    /// </summary>
+    public virtual List<TimeEntry> TimeEntries { get; set; } = [];
+
+    /// <summary>
     ///     User tenant role
     /// </summary>
     public Guid? RoleId { get; set; }

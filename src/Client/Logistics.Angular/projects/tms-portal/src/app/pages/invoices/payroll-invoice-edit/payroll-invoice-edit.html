@@ -23,11 +23,6 @@
 
         <div class="mb-4">
           <label for="employee" class="mb-2 block text-sm font-medium">Employee</label>
-          <p-autocomplete formControlName="employee" class="w-full" inputStyleClass="w-full" />
-        </div>
-
-        <div class="mb-4">
-          <label for="employee" class="mb-2 block text-sm font-medium">Employee</label>
           <p-autocomplete
             formControlName="employee"
             class="w-full"
@@ -66,36 +61,6 @@
             {{ previewPayrollInvoice()!.total?.amount | currency }}
           </p>
         }
-
-        <!-- @if (id()) {
-          <div class="mb-3">
-            <label for="paymentStatus" class="form-label">Payment Status</label>
-            <p-select
-              formControlName="paymentStatus"
-              styleClass="w-full"
-              [options]="paymentStatusOptions"
-            >
-            </p-select>
-          </div>
-
-          @if (form.get("paymentStatus")?.value === "paid") {
-            <h4>Payment details</h4>
-            <p-divider />
-
-            <div class="mb-3">
-              <label for="paymentMethod" class="form-label">Payment Method</label>
-              <p-select
-                formControlName="paymentMethod"
-                styleClass="w-full"
-                [options]="paymentMethodOptions"
-              >
-              </p-select>
-            </div>
-
-            <h5>Billing address</h5>
-            <ui-address-form formControlName="paymentBillingAddress"></ui-address-form>
-          }
-        } -->
 
         <div class="flex gap-2">
           <p-button

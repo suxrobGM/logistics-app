@@ -1,7 +1,7 @@
 <div class="animate-fadein">
   <div class="mb-4 flex items-center justify-between">
     <div class="flex items-center">
-      <h1 class="text-primary">Payroll Invoices</h1>
+      <h1 class="text-primary mb-0">Payroll Invoices</h1>
       <p-button
         class="ml-2"
         icon="pi pi-plus-circle"
@@ -12,9 +12,21 @@
         [routerLink]="['/invoices/payroll/add']"
       />
     </div>
-    <a routerLink="/invoices" class="no-underline">
-      <p-button icon="pi pi-chart-bar" label="Dashboard" [outlined]="true" />
-    </a>
+    <div class="flex items-center gap-2">
+      @if (selectedInvoices().length > 0) {
+        <p-button
+          icon="pi pi-check-circle"
+          label="Approve Selected ({{ selectedInvoices().length }})"
+          severity="success"
+          [loading]="isBatchApproving()"
+          (click)="batchApprove()"
+        />
+        <p-button icon="pi pi-times" label="Clear" [text]="true" (click)="clearSelection()" />
+      }
+      <a routerLink="/invoices/payroll/dashboard" class="no-underline">
+        <p-button icon="pi pi-chart-bar" label="Dashboard" [outlined]="true" />
+      </a>
+    </div>
   </div>
 
   <!-- Filter Panel -->
@@ -82,7 +94,12 @@
     <div class="mt-2 flex items-center gap-2">
       <span class="text-secondary text-sm dark:text-gray-300">Quick dates:</span>
       <p-button label="This Week" size="small" [outlined]="true" (click)="setDatePreset('week')" />
-      <p-button label="This Month" size="small" [outlined]="true" (click)="setDatePreset('month')" />
+      <p-button
+        label="This Month"
+        size="small"
+        [outlined]="true"
+        (click)="setDatePreset('month')"
+      />
     </div>
   </p-card>
 
@@ -110,9 +127,14 @@
         [totalRecords]="store.totalRecords()"
         [loading]="store.isLoading()"
         [rowsPerPageOptions]="[10, 25, 50]"
+        [(selection)]="selectedInvoices"
+        dataKey="id"
       >
         <ng-template #header>
           <tr>
+            <th style="width: 3rem">
+              <p-tableHeaderCheckbox />
+            </th>
             <th pSortableColumn="PeriodStart">
               Period
               <p-sortIcon field="PeriodStart" />
@@ -137,12 +159,17 @@
               Status
               <p-sortIcon field="Status" />
             </th>
-            <th style="width: 6rem">Action</th>
+            <th style="width: 10rem">Actions</th>
           </tr>
         </ng-template>
 
         <ng-template #body let-invoice>
           <tr>
+            <td>
+              @if (invoice.status === "pending_approval") {
+                <p-tableCheckbox [value]="invoice" />
+              }
+            </td>
             <td>
               {{ invoice.periodStart | date: "MMM d" }} -
               {{ invoice.periodEnd | date: "mediumDate" }}
@@ -161,18 +188,80 @@
               <app-invoice-status-tag [status]="invoice.status" />
             </td>
             <td>
-              <p-button
-                icon="pi pi-pen-to-square"
-                [rounded]="true"
-                [text]="true"
-                pTooltip="Edit payroll invoice"
-                tooltipPosition="bottom"
-                [routerLink]="['/invoices/payroll', invoice.id, 'edit']"
-              />
+              <div class="flex items-center gap-1">
+                <p-button
+                  icon="pi pi-eye"
+                  [rounded]="true"
+                  [text]="true"
+                  pTooltip="View details"
+                  tooltipPosition="bottom"
+                  [routerLink]="['/invoices/payroll', invoice.id]"
+                />
+                @if (invoice.status === "pending_approval") {
+                  <p-button
+                    icon="pi pi-check"
+                    [rounded]="true"
+                    [text]="true"
+                    severity="success"
+                    pTooltip="Approve"
+                    tooltipPosition="bottom"
+                    (click)="approveInvoice(invoice)"
+                  />
+                  <p-button
+                    icon="pi pi-times"
+                    [rounded]="true"
+                    [text]="true"
+                    severity="danger"
+                    pTooltip="Reject"
+                    tooltipPosition="bottom"
+                    (click)="openRejectDialog(invoice)"
+                  />
+                }
+                @if (invoice.status === "draft") {
+                  <p-button
+                    icon="pi pi-pen-to-square"
+                    [rounded]="true"
+                    [text]="true"
+                    pTooltip="Edit"
+                    tooltipPosition="bottom"
+                    [routerLink]="['/invoices/payroll', invoice.id, 'edit']"
+                  />
+                }
+              </div>
             </td>
           </tr>
         </ng-template>
       </p-table>
     </ui-data-container>
   </p-card>
+
+  <!-- Reject Dialog -->
+  <p-dialog
+    header="Reject Payroll"
+    [(visible)]="showRejectDialog"
+    [modal]="true"
+    [style]="{ width: '400px' }"
+  >
+    <div class="flex flex-col gap-4">
+      <p>Please provide a reason for rejecting this payroll invoice.</p>
+      <textarea
+        pInputTextarea
+        [(ngModel)]="rejectionReason"
+        rows="3"
+        class="w-full"
+        placeholder="Enter rejection reason..."
+      ></textarea>
+    </div>
+    <ng-template #footer>
+      <p-button label="Cancel" [text]="true" (click)="showRejectDialog.set(false)" />
+      <p-button
+        label="Reject"
+        severity="danger"
+        [loading]="isRejecting()"
+        (click)="confirmReject()"
+      />
+    </ng-template>
+  </p-dialog>
+
+  <p-confirmDialog />
 </div>
