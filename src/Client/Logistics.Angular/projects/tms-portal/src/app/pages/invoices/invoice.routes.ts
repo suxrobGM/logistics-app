@@ -1,12 +1,12 @@
 import type { Routes } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
-import { EmployeePayrollInvoicesListComponent } from "./employee-payroll-invoices-list/employee-payroll-invoices-list";
+import { EmployeePayrollInvoicesList } from "./employee-payroll-invoices-list/employee-payroll-invoices-list";
 import { InvoiceDashboard } from "./invoice-dashboard/invoice-dashboard";
-import { LoadInvoiceDetailsComponent } from "./load-invoice-details/load-invoice-details";
-import { LoadInvoicesListComponent } from "./load-invoices-list/load-invoices-list";
-import { PayrollInvoiceEditComponent } from "./payroll-invoice-edit/payroll-invoice-edit";
-import { PayrollInvoicesListComponent } from "./payroll-invoices-list/payroll-invoices-list";
+import { LoadInvoiceDetails } from "./load-invoice-details/load-invoice-details";
+import { LoadInvoicesList } from "./load-invoices-list/load-invoices-list";
+import { PayrollInvoiceEdit } from "./payroll-invoice-edit/payroll-invoice-edit";
+import { PayrollInvoicesList } from "./payroll-invoices-list/payroll-invoices-list";
 
 export const invoiceRoutes: Routes = [
   {
@@ -20,7 +20,7 @@ export const invoiceRoutes: Routes = [
   },
   {
     path: "loads",
-    component: LoadInvoicesListComponent,
+    component: LoadInvoicesList,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Load Invoices",
@@ -29,7 +29,7 @@ export const invoiceRoutes: Routes = [
   },
   {
     path: "loads/:loadId",
-    component: LoadInvoicesListComponent,
+    component: LoadInvoicesList,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Load Invoices Details",
@@ -38,7 +38,7 @@ export const invoiceRoutes: Routes = [
   },
   {
     path: "loads/:loadId/:invoiceId",
-    component: LoadInvoiceDetailsComponent,
+    component: LoadInvoiceDetails,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Load Invoice Details",
@@ -47,7 +47,7 @@ export const invoiceRoutes: Routes = [
   },
   {
     path: "payroll",
-    component: PayrollInvoicesListComponent,
+    component: PayrollInvoicesList,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Payroll Invoices",
@@ -56,7 +56,7 @@ export const invoiceRoutes: Routes = [
   },
   {
     path: "payroll/:invoiceId/edit",
-    component: PayrollInvoiceEditComponent,
+    component: PayrollInvoiceEdit,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Edit Payroll Invoice",
@@ -65,7 +65,7 @@ export const invoiceRoutes: Routes = [
   },
   {
     path: "payroll/add",
-    component: PayrollInvoiceEditComponent,
+    component: PayrollInvoiceEdit,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Add Payroll Invoice",
@@ -74,7 +74,7 @@ export const invoiceRoutes: Routes = [
   },
   {
     path: "payroll/employee/:employeeId",
-    component: EmployeePayrollInvoicesListComponent,
+    component: EmployeePayrollInvoicesList,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Employee Payroll Invoices",

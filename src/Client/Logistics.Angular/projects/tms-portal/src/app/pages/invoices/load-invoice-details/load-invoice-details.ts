@@ -38,23 +38,23 @@ import { PaymentLinkDialog, RecordPaymentDialog, SendInvoiceDialog } from "../co
     PaymentLinkDialog,
   ],
 })
-export class LoadInvoiceDetailsComponent implements OnInit {
+export class LoadInvoiceDetails implements OnInit {
   private readonly api = inject(Api);
   private readonly tenantService = inject(TenantService);
   private readonly pdfService = inject(PdfService);
   private readonly toastService = inject(ToastService);
 
-  readonly invoiceId = input.required<string>();
-  readonly isLoading = signal(false);
-  readonly isDownloadingPdf = signal(false);
-  readonly companyName = signal<string | null>(null);
-  readonly companyAddress = signal<AddressDto | null>(null);
-  readonly invoice = signal<InvoiceDto | null>(null);
+  protected readonly invoiceId = input.required<string>();
+  protected readonly isLoading = signal(false);
+  protected readonly isDownloadingPdf = signal(false);
+  protected readonly companyName = signal<string | null>(null);
+  protected readonly companyAddress = signal<AddressDto | null>(null);
+  protected readonly invoice = signal<InvoiceDto | null>(null);
 
   // Dialog visibility signals
-  readonly showSendInvoiceDialog = signal(false);
-  readonly showRecordPaymentDialog = signal(false);
-  readonly showPaymentLinkDialog = signal(false);
+  protected readonly showSendInvoiceDialog = signal(false);
+  protected readonly showRecordPaymentDialog = signal(false);
+  protected readonly showPaymentLinkDialog = signal(false);
 
   ngOnInit(): void {
     const tenantData = this.tenantService.getTenantData();

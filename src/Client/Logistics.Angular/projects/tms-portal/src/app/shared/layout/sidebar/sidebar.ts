@@ -61,12 +61,16 @@ export class Sidebar {
     ];
 
     this.authService.onUserDataChanged().subscribe((userData) => {
-      if (userData?.getFullName()) {
+      if (!userData) {
+        return; // Wait until user data is available before processing
+      }
+
+      if (userData.getFullName()) {
         this.userFullName.set(userData.getFullName());
         this.profileMenuItems[0].label = userData.getFullName();
       }
 
-      const userRole = this.authService.getUserData()?.role;
+      const userRole = userData.role;
       this.userRole.set(this.authService.getUserRoleName());
 
       // Settings menu is only visible to Owner role

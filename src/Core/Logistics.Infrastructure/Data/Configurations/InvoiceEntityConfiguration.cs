@@ -1,6 +1,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Logistics.Infrastructure.Data.Configurations;
@@ -19,7 +20,8 @@ internal sealed class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invo
 
         builder.Property(i => i.Number)
             .UseIdentityAlwaysColumn()
-            .IsRequired();
+            .IsRequired()
+            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
 
         builder.HasIndex(i => i.Number)
             .IsUnique();

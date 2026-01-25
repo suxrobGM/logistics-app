@@ -1,5 +1,5 @@
 import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
-import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
+import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { invoiceStatusOptions } from "@logistics/shared/api/enums";
@@ -51,7 +51,7 @@ import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
     LabeledField,
   ],
 })
-export class LoadInvoicesListComponent implements OnInit {
+export class LoadInvoicesList implements OnInit {
   private readonly toastService = inject(ToastService);
   protected readonly store = inject(LoadInvoicesListStore);
   protected readonly loadId = input<string>();

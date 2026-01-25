@@ -35,7 +35,7 @@ import { EmployeePayrollInvoicesListStore } from "../store/employee-payroll-invo
     DividerModule,
   ],
 })
-export class EmployeePayrollInvoicesListComponent {
+export class EmployeePayrollInvoicesList {
   private readonly api = inject(Api);
   private readonly router = inject(Router);
   protected readonly store = inject(EmployeePayrollInvoicesListStore);

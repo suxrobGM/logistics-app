@@ -46,7 +46,7 @@
           @if (invoice()!.lineItems && invoice()!.lineItems!.length > 0) {
             <p-divider />
             <h4 class="mb-2 font-semibold">Line Items</h4>
-            <p-table [value]="invoice()!.lineItems!" styleClass="p-datatable-sm">
+            <p-table [value]="invoice()!.lineItems!">
               <ng-template #header>
                 <tr>
                   <th>Description</th>

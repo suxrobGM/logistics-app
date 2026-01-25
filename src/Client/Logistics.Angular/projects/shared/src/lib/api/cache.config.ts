@@ -11,6 +11,7 @@ const cacheRules: CacheRule[] = [
   // No caching for frequently mutated data
   { pattern: /\/documents/, ttl: 0 }, // Documents change often, don't cache
   { pattern: /\/messages/, ttl: 0 }, // Real-time data, don't cache
+  { pattern: /\/invoices/, ttl: 0 }, // Invoices change often with payments, don't cache
 
   // Reference/static data - longer TTL
   { pattern: /\/settings/, ttl: 30 * 60 * 1000 }, // 30 min

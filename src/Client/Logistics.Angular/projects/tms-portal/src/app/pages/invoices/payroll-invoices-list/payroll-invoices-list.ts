@@ -15,12 +15,7 @@ import { DatePickerModule } from "primeng/datepicker";
 import { MultiSelectModule } from "primeng/multiselect";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import {
-  DataContainer,
-  InvoiceStatusTag,
-  LabeledField,
-  SearchInput,
-} from "@/shared/components";
+import { DataContainer, InvoiceStatusTag, LabeledField, SearchInput } from "@/shared/components";
 import { type DatePreset, getDatePreset } from "@/shared/utils";
 import { PayrollInvoicesListStore } from "../store/payroll-invoices-list.store";
 
@@ -44,7 +39,7 @@ import { PayrollInvoicesListStore } from "../store/payroll-invoices-list.store";
     LabeledField,
   ],
 })
-export class PayrollInvoicesListComponent {
+export class PayrollInvoicesList {
   private readonly router = inject(Router);
   protected readonly store = inject(PayrollInvoicesListStore);
 

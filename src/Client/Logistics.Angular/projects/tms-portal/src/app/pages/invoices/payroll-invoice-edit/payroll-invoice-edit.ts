@@ -48,7 +48,7 @@ import { DateUtils } from "@/shared/utils";
     DividerModule,
   ],
 })
-export class PayrollInvoiceEditComponent implements OnInit {
+export class PayrollInvoiceEdit implements OnInit {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
