@@ -29,7 +29,6 @@ export const DEFAULT_DATE_PRESETS: DatePreset[] = [
   imports: [DatePicker, FormsModule, ButtonModule],
 })
 export class DateRangePicker {
-  public readonly label = input<string | null>(null);
   public readonly presets = input<DatePreset[]>(DEFAULT_DATE_PRESETS);
   public readonly dates = model<Date[]>([]);
   public readonly datesChange = output<Date[]>();

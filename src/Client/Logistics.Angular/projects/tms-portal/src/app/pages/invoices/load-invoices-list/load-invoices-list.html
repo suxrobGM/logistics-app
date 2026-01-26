@@ -50,18 +50,11 @@
         </ui-labeled-field>
 
         <ui-labeled-field label="Date Range">
-          <p-datepicker
-            [(ngModel)]="dateRange"
-            selectionMode="range"
-            placeholder="Select date range"
-            [showIcon]="true"
-            (onSelect)="applyFilters()"
-            class="w-full"
-          />
+          <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
         </ui-labeled-field>
       </div>
 
-      <div class="mt-2 flex items-center gap-4">
+      <div class="mt-4 flex items-center gap-4">
         <div class="flex items-center gap-2">
           <p-checkbox
             [(ngModel)]="overdueOnly"
@@ -76,7 +69,6 @@
             Overdue invoices only
           </label>
         </div>
-
       </div>
     </p-card>
   }
@@ -175,10 +167,7 @@
               </a>
             </td>
             <td>
-              <a
-                [routerLink]="['/loads', invoice.loadId]"
-                class="text-primary hover:underline"
-              >
+              <a [routerLink]="['/loads', invoice.loadId]" class="text-primary hover:underline">
                 {{ invoice.loadNumber }}
               </a>
             </td>

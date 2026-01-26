@@ -13,14 +13,13 @@ import { invoiceStatusOptions, salaryTypeOptions } from "@logistics/shared/api/e
 import type { SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { DatePickerModule } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
 import { TableModule } from "primeng/table";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { DataContainer, InvoiceStatusTag, LabeledField, SearchInput } from "@/shared/components";
+import { DataContainer, DateRangePicker, InvoiceStatusTag, LabeledField, SearchInput } from "@/shared/components";
 import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
 
 @Component({
@@ -38,7 +37,7 @@ import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
     InvoiceStatusTag,
     DataContainer,
     MultiSelectModule,
-    DatePickerModule,
+    DateRangePicker,
     SearchInput,
     LabeledField,
     DialogModule,
@@ -120,6 +119,11 @@ export class PayrollInvoicesList {
     this.selectedSalaryTypes.set([]);
     this.dateRange.set(null);
     this.store.setFilters({});
+  }
+
+  protected onDateRangeChange(dates: Date[]): void {
+    this.dateRange.set(dates);
+    this.applyFilters();
   }
 
   protected addInvoice(): void {

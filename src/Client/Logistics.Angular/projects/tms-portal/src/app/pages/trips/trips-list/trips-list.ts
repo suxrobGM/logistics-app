@@ -10,7 +10,6 @@ import type { MenuItem } from "primeng/api";
 import { Button } from "primeng/button";
 import { Card } from "primeng/card";
 import { Checkbox } from "primeng/checkbox";
-import { DatePicker } from "primeng/datepicker";
 import { MenuModule } from "primeng/menu";
 import { MultiSelect } from "primeng/multiselect";
 import { TableModule } from "primeng/table";
@@ -18,6 +17,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import {
   DataContainer,
+  DateRangePicker,
   LabeledField,
   LoadStatusTag,
   LoadTypeTag,
@@ -50,7 +50,7 @@ import { TripsListStore } from "../store/trips-list.store";
     DataContainer,
     MultiSelect,
     Checkbox,
-    DatePicker,
+    DateRangePicker,
     SearchTruck,
     SearchInput,
     LabeledField,
@@ -127,6 +127,11 @@ export class TripsList {
     this.dateRange.set(null);
     this.onlyActiveTrips.set(false);
     this.store.setFilters({});
+  }
+
+  protected onDateRangeChange(dates: Date[]): void {
+    this.dateRange.set(dates);
+    this.applyFilters();
   }
 
   protected addTrip(): void {

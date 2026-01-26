@@ -86,13 +86,7 @@
 
     <div class="flex items-center gap-4">
       <ui-labeled-field label="Date Range">
-        <p-datepicker
-          [(ngModel)]="dateRange"
-          selectionMode="range"
-          placeholder="Select date range"
-          [showIcon]="true"
-          (onSelect)="applyFilters()"
-        />
+        <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
       </ui-labeled-field>
 
       <div class="mt-2 flex items-center gap-2">

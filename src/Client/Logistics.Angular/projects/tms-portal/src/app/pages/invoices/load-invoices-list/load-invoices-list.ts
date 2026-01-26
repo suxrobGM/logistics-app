@@ -8,7 +8,6 @@ import type { SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
-import { DatePickerModule } from "primeng/datepicker";
 import { MultiSelectModule } from "primeng/multiselect";
 import { TableModule } from "primeng/table";
 import { ToolbarModule } from "primeng/toolbar";
@@ -16,6 +15,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import {
   DataContainer,
+  DateRangePicker,
   InvoiceStatusTag,
   LabeledField,
   SearchCustomer,
@@ -44,7 +44,7 @@ import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
     ToolbarModule,
     SendInvoiceDialog,
     MultiSelectModule,
-    DatePickerModule,
+    DateRangePicker,
     SearchInput,
     SearchCustomer,
     LabeledField,
@@ -140,6 +140,11 @@ export class LoadInvoicesList implements OnInit {
     // Preserve LoadId if set
     const loadId = this.loadId();
     this.store.setFilters(loadId ? { LoadId: loadId } : {});
+  }
+
+  protected onDateRangeChange(dates: Date[]): void {
+    this.dateRange.set(dates);
+    this.applyFilters();
   }
 
   onSelectionChange(invoices: InvoiceDto[]): void {

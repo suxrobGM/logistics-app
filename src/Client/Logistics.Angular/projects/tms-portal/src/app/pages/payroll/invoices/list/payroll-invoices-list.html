@@ -79,18 +79,10 @@
         />
       </ui-labeled-field>
 
-      <ui-labeled-field label="Period Range">
-        <p-datepicker
-          [(ngModel)]="dateRange"
-          selectionMode="range"
-          placeholder="Select date range"
-          [showIcon]="true"
-          (onSelect)="applyFilters()"
-          class="w-full"
-        />
+      <ui-labeled-field label="Date Range">
+        <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
       </ui-labeled-field>
     </div>
-
   </p-card>
 
   <p-card>

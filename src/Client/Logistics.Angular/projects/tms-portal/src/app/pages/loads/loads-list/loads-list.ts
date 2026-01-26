@@ -9,13 +9,13 @@ import type { MenuItem, SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
-import { DatePickerModule } from "primeng/datepicker";
 import { MenuModule } from "primeng/menu";
 import { MultiSelectModule } from "primeng/multiselect";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import {
   DataContainer,
+  DateRangePicker,
   LabeledField,
   LoadStatusTag,
   LoadTypeTag,
@@ -47,7 +47,7 @@ import { LoadsListStore } from "../store/loads-list.store";
     SearchInput,
     FormsModule,
     CheckboxModule,
-    DatePickerModule,
+    DateRangePicker,
     MultiSelectModule,
     SearchTruck,
     SearchCustomer,
@@ -168,4 +168,8 @@ export class LoadsListComponent {
     this.store.setFilters({});
   }
 
+  protected onDateRangeChange(dates: Date[]): void {
+    this.dateRange.set(dates);
+    this.applyFilters();
+  }
 }
