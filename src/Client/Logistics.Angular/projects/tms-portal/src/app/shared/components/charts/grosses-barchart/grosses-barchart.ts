@@ -6,7 +6,7 @@ import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
-import { RangeCalendar } from "@/shared/components/other";
+import { DateRangePicker } from "@/shared/components/other";
 import { Converters, DateUtils } from "@/shared/utils";
 
 const chartInitialData = {
@@ -31,7 +31,7 @@ const chartInitialOptions = {
   selector: "app-grosses-barchart",
   templateUrl: "./grosses-barchart.html",
   styleUrls: [],
-  imports: [CommonModule, CardModule, SkeletonModule, ChartModule, RangeCalendar, DividerModule],
+  imports: [CommonModule, CardModule, SkeletonModule, ChartModule, DateRangePicker, DividerModule],
 })
 export class GrossesBarchart implements OnInit {
   private readonly api = inject(Api);
@@ -52,6 +52,14 @@ export class GrossesBarchart implements OnInit {
 
   ngOnInit(): void {
     this.fetchMonthlyGrosses();
+  }
+
+  onDateRangeChange(dates: Date[]): void {
+    if (dates.length === 2) {
+      this.startDate.set(dates[0]);
+      this.endDate.set(dates[1]);
+      this.fetchMonthlyGrosses();
+    }
   }
 
   async fetchMonthlyGrosses(): Promise<void> {

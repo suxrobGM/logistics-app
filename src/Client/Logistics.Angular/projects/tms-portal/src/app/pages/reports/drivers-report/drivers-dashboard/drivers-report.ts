@@ -14,8 +14,8 @@ import { Tag, TagModule } from "primeng/tag";
 import {
   BaseReportComponent,
   DashboardCard,
+  DateRangePicker,
   PageHeader,
-  RangeCalendar,
   type ReportQueryParams,
   StatCard,
 } from "@/shared/components";
@@ -33,7 +33,7 @@ import {
     ChartModule,
     TableModule,
     CurrencyPipe,
-    RangeCalendar,
+    DateRangePicker,
     DecimalPipe,
     SkeletonModule,
     TagModule,

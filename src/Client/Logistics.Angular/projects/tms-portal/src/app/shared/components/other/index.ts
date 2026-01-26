@@ -1,5 +1,5 @@
 export {
-  DateRangePicker as RangeCalendar,
+  DateRangePicker,
   BaseTableComponent,
   type TableQueryParams,
 } from "@logistics/shared/components";

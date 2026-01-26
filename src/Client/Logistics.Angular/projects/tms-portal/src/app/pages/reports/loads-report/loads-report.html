@@ -4,12 +4,7 @@
     <h1 class="mb-1">Loads Dashboard</h1>
     <p class="text-muted mb-0">Comprehensive overview of load performance and trends</p>
   </div>
-  <ui-date-range-picker
-    [(startDate)]="startDate"
-    [(endDate)]="endDate"
-    (applyButtonClick)="filter()"
-  >
-  </ui-date-range-picker>
+  <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
 </div>
 
 @if (isLoading()) {

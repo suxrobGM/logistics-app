@@ -39,4 +39,12 @@ export abstract class BaseReportComponent<T> {
   filter(): void {
     this.fetch({ startDate: this.startDate(), endDate: this.endDate(), search: this.search() });
   }
+
+  onDateRangeChange(dates: Date[]): void {
+    if (dates.length === 2) {
+      this.startDate.set(dates[0]);
+      this.endDate.set(dates[1]);
+      this.filter();
+    }
+  }
 }

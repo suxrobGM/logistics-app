@@ -5,11 +5,7 @@
     subtitle="Comprehensive overview of driver performance and efficiency"
     [showAddButton]="false"
   />
-  <ui-date-range-picker
-    [(startDate)]="startDate"
-    [(endDate)]="endDate"
-    (applyButtonClick)="filter()"
-  />
+  <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
 </div>
 
 @if (isLoading()) {

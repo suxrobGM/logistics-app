@@ -84,7 +84,7 @@
       </ui-labeled-field>
     </div>
 
-    <div class="grid grid-cols-1 items-end gap-x-4 md:grid-cols-2 lg:grid-cols-3">
+    <div class="flex items-center gap-4">
       <ui-labeled-field label="Date Range">
         <p-datepicker
           [(ngModel)]="dateRange"
@@ -92,13 +92,10 @@
           placeholder="Select date range"
           [showIcon]="true"
           (onSelect)="applyFilters()"
-          class="w-full"
         />
       </ui-labeled-field>
-    </div>
 
-    <div class="mt-2 flex items-center gap-4">
-      <div class="flex items-center gap-2">
+      <div class="mt-2 flex items-center gap-2">
         <p-checkbox
           [(ngModel)]="onlyActiveLoads"
           [binary]="true"
@@ -111,13 +108,6 @@
         >
           Active loads only
         </label>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <span class="text-secondary text-sm dark:text-gray-300">Quick dates:</span>
-        <p-button label="Today" size="small" [outlined]="true" (click)="setDatePreset('today')" />
-        <p-button label="Week" size="small" [outlined]="true" (click)="setDatePreset('week')" />
-        <p-button label="Month" size="small" [outlined]="true" (click)="setDatePreset('month')" />
       </div>
     </div>
   </p-card>

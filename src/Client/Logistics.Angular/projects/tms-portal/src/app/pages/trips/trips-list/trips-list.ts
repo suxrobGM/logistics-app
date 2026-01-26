@@ -26,7 +26,6 @@ import {
   TripStatusTag,
 } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
-import { type DatePreset, getDatePreset } from "@/shared/utils";
 import { TripsListStore } from "../store/trips-list.store";
 
 @Component({
@@ -128,11 +127,6 @@ export class TripsList {
     this.dateRange.set(null);
     this.onlyActiveTrips.set(false);
     this.store.setFilters({});
-  }
-
-  protected setDatePreset(preset: DatePreset): void {
-    this.dateRange.set(getDatePreset(preset));
-    this.applyFilters();
   }
 
   protected addTrip(): void {

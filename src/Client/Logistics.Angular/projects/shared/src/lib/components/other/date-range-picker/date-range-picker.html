@@ -2,40 +2,28 @@
   <span class="mb-2 block font-bold">{{ label() }}</span>
 }
 
-<!-- Date Presets -->
-@if (showPresets()) {
-  <div class="mb-3 flex flex-wrap gap-2">
-    @for (preset of availablePresets(); track preset.value) {
-      <p-button
-        type="button"
-        [label]="preset.label"
-        [severity]="selectedPreset() === preset.value ? 'primary' : 'secondary'"
-        [outlined]="selectedPreset() !== preset.value"
-        size="small"
-        (onClick)="selectPreset(preset)"
-      />
-    }
-  </div>
-}
-
-<!-- Date Picker -->
 <p-datepicker
   class="w-full"
   inputStyleClass="w-full"
-  [ngModel]="dates()"
-  (ngModelChange)="dates.set($event); onDatePickerChange()"
+  [(ngModel)]="dates"
   selectionMode="range"
   [showIcon]="true"
-  [maxDate]="todayDate"
   dateFormat="mm/dd/yy"
   placeholder="Select date range"
-/>
-
-@if (showApplyButton()) {
-  <p-button
-    class="ml-2"
-    [disabled]="!areDatesValid()"
-    (onClick)="onClickApplyButton()"
-    label="Apply"
-  />
-}
+  [numberOfMonths]="2"
+>
+  <ng-template pTemplate="footer">
+    <div class="flex flex-wrap gap-2 border-t p-2">
+      @for (preset of presets(); track preset.label) {
+        <p-button
+          type="button"
+          [label]="preset.label"
+          severity="secondary"
+          [text]="true"
+          size="small"
+          (onClick)="selectPreset(preset)"
+        />
+      }
+    </div>
+  </ng-template>
+</p-datepicker>

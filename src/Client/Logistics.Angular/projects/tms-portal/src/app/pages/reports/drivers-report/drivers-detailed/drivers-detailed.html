@@ -18,12 +18,7 @@
         style="width: 200px"
       />
     </div>
-    <ui-date-range-picker
-      [(startDate)]="startDate"
-      [(endDate)]="endDate"
-      (applyButtonClick)="filterByDate()"
-    >
-    </ui-date-range-picker>
+    <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
   </div>
 </div>
 

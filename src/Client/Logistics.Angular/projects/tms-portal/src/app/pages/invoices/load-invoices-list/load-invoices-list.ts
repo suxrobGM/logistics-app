@@ -21,7 +21,6 @@ import {
   SearchCustomer,
   SearchInput,
 } from "@/shared/components";
-import { type DatePreset, getDatePreset } from "@/shared/utils";
 import { SendInvoiceDialog } from "../components";
 import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
 
@@ -141,11 +140,6 @@ export class LoadInvoicesList implements OnInit {
     // Preserve LoadId if set
     const loadId = this.loadId();
     this.store.setFilters(loadId ? { LoadId: loadId } : {});
-  }
-
-  protected setDatePreset(preset: DatePreset): void {
-    this.dateRange.set(getDatePreset(preset));
-    this.applyFilters();
   }
 
   onSelectionChange(invoices: InvoiceDto[]): void {

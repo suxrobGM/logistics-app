@@ -7,7 +7,7 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { type TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { RangeCalendar } from "@/shared/components";
+import { DateRangePicker } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
 import { DateUtils } from "@/shared/utils";
 
@@ -23,7 +23,7 @@ import { DateUtils } from "@/shared/utils";
     DistanceUnitPipe,
     CardModule,
     ButtonModule,
-    RangeCalendar,
+    DateRangePicker,
     TooltipModule,
   ],
 })
@@ -36,8 +36,12 @@ export class TruckStatsTableComponent {
   protected readonly startDate = signal<Date>(DateUtils.daysAgo(30));
   protected readonly endDate = signal<Date>(DateUtils.today());
 
-  protected reloadTable(): void {
-    this.fetchTrucksStats({ first: 0, rows: 10 });
+  protected onDateRangeChange(dates: Date[]): void {
+    if (dates.length === 2) {
+      this.startDate.set(dates[0]);
+      this.endDate.set(dates[1]);
+      this.fetchTrucksStats({ first: 0, rows: 10 });
+    }
   }
 
   protected async fetchTrucksStats(event: TableLazyLoadEvent): Promise<void> {

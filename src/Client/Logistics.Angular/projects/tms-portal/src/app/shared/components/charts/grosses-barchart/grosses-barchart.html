@@ -14,11 +14,7 @@
     </div>
   } @else {
     <div class="mb-2">
-      <ui-date-range-picker
-        [(startDate)]="startDate"
-        [(endDate)]="endDate"
-        (applyButtonClick)="fetchMonthlyGrosses()"
-      />
+      <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
     </div>
     <p-chart
       type="bar"

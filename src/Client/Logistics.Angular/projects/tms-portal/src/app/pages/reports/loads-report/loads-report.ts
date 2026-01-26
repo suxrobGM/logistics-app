@@ -13,7 +13,7 @@ import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
-import { BaseReportComponent, RangeCalendar, type ReportQueryParams } from "@/shared/components";
+import { BaseReportComponent, DateRangePicker, type ReportQueryParams } from "@/shared/components";
 import {
   LOADS_CHART_PALETTE,
   LOADS_PERFORMANCE_CHART_OPTIONS,
@@ -30,7 +30,7 @@ import {
     ChartModule,
     TableModule,
     CurrencyPipe,
-    RangeCalendar,
+    DateRangePicker,
     DecimalPipe,
     SkeletonModule,
     TagModule,

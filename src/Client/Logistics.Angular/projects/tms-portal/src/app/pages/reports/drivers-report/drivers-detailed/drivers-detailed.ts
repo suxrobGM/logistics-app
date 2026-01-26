@@ -11,7 +11,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
 import { Observable, from } from "rxjs";
-import { BaseTableComponent, RangeCalendar, type TableQueryParams } from "@/shared/components";
+import { BaseTableComponent, DateRangePicker, type TableQueryParams } from "@/shared/components";
 import { DateUtils } from "@/shared/utils";
 
 @Component({
@@ -24,7 +24,7 @@ import { DateUtils } from "@/shared/utils";
     InputTextModule,
     TableModule,
     DatePickerModule,
-    RangeCalendar,
+    DateRangePicker,
     CurrencyPipe,
     DecimalPipe,
     TagModule,
@@ -50,8 +50,12 @@ export class DriversDetailedComponent extends BaseTableComponent<DriverReportDto
       }),
     );
   }
-  protected filterByDate(): void {
-    this.fetch({ page: 0, size: 10 });
+  protected onDateRangeChange(dates: Date[]): void {
+    if (dates.length === 2) {
+      this.startDate.set(dates[0]);
+      this.endDate.set(dates[1]);
+      this.fetch({ page: 0, size: 10 });
+    }
   }
 
   protected getPerformanceLevel(efficiency: number): string {

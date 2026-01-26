@@ -21,7 +21,6 @@ import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { DataContainer, InvoiceStatusTag, LabeledField, SearchInput } from "@/shared/components";
-import { type DatePreset, getDatePreset } from "@/shared/utils";
 import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
 
 @Component({
@@ -121,11 +120,6 @@ export class PayrollInvoicesList {
     this.selectedSalaryTypes.set([]);
     this.dateRange.set(null);
     this.store.setFilters({});
-  }
-
-  protected setDatePreset(preset: DatePreset): void {
-    this.dateRange.set(getDatePreset(preset));
-    this.applyFilters();
   }
 
   protected addInvoice(): void {

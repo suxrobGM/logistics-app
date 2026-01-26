@@ -11,11 +11,7 @@
     <p-skeleton class="my-2" height="20rem" width="100%" />
   } @else {
     <div class="mb-2">
-      <ui-date-range-picker
-        [(startDate)]="startDate"
-        [(endDate)]="endDate"
-        (applyButtonClick)="fetchDailyGrosses()"
-      />
+      <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
     </div>
 
     <p-chart

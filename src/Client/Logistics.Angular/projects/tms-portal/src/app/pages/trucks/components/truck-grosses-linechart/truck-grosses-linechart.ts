@@ -6,7 +6,7 @@ import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
-import { RangeCalendar } from "@/shared/components";
+import { DateRangePicker } from "@/shared/components";
 import { Converters, DateUtils } from "@/shared/utils";
 
 const chartInitialData = {
@@ -30,7 +30,7 @@ const chartOptions = {
 @Component({
   selector: "app-truck-grosses-linechart",
   templateUrl: "./truck-grosses-linechart.html",
-  imports: [DatePipe, CardModule, SkeletonModule, ChartModule, RangeCalendar, DividerModule],
+  imports: [DatePipe, CardModule, SkeletonModule, ChartModule, DateRangePicker, DividerModule],
 })
 export class TruckGrossesLinechartComponent implements OnInit {
   private readonly api = inject(Api);
@@ -48,6 +48,14 @@ export class TruckGrossesLinechartComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchDailyGrosses();
+  }
+
+  protected onDateRangeChange(dates: Date[]): void {
+    if (dates.length === 2) {
+      this.startDate.set(dates[0]);
+      this.endDate.set(dates[1]);
+      this.fetchDailyGrosses();
+    }
   }
 
   protected async fetchDailyGrosses(): Promise<void> {

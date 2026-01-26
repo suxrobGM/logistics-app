@@ -32,9 +32,8 @@
       <!-- Date Range Section -->
       <ui-labeled-field label="Pay Period" [control]="form.controls.dateRange">
         <ui-date-range-picker
-          [showPresets]="true"
-          initialPreset="last_week"
-          (dateRangeChange)="onDateRangeChange($event)"
+          [dates]="form.value.dateRange ?? []"
+          (datesChange)="onDateRangeChange($event)"
         />
       </ui-labeled-field>
 

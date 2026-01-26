@@ -24,7 +24,6 @@ import {
   SearchTruck,
 } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
-import { type DatePreset, getDatePreset } from "@/shared/utils";
 import { LoadsListStore } from "../store/loads-list.store";
 
 @Component({
@@ -169,8 +168,4 @@ export class LoadsListComponent {
     this.store.setFilters({});
   }
 
-  protected setDatePreset(preset: DatePreset): void {
-    this.dateRange.set(getDatePreset(preset));
-    this.applyFilters();
-  }
 }
