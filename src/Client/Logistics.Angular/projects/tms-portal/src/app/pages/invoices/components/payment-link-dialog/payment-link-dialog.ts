@@ -1,7 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject, input, model, signal } from "@angular/core";
 import { Api, createPaymentLink, revokePaymentLink } from "@logistics/shared/api";
-import type { PaymentLinkDto } from "@logistics/shared/api/models";
+import type { PaymentLinkDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

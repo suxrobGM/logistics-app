@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, downloadExpenseReceipt, getExpenseById } from "@logistics/shared/api";
-import type { ExpenseDto } from "@logistics/shared/api/models";
+import type { ExpenseDto } from "@logistics/shared/api";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

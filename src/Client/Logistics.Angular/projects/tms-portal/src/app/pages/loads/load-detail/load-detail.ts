@@ -2,7 +2,7 @@ import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, getLoadById } from "@logistics/shared/api";
-import type { DocumentType, LoadDto } from "@logistics/shared/api/models";
+import type { DocumentType, LoadDto } from "@logistics/shared/api";
 import { AddressPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

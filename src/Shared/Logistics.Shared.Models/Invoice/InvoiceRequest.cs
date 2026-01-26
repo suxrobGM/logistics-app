@@ -92,6 +92,37 @@ public record AddLineItemRequest
 }
 
 /// <summary>
+/// Request body for updating a line item on an invoice.
+/// </summary>
+public record UpdateLineItemRequest
+{
+    /// <summary>
+    /// Description of the line item.
+    /// </summary>
+    public string? Description { get; set; }
+
+    /// <summary>
+    /// Type of the line item.
+    /// </summary>
+    public InvoiceLineItemType? Type { get; set; }
+
+    /// <summary>
+    /// Amount per unit.
+    /// </summary>
+    public decimal? Amount { get; set; }
+
+    /// <summary>
+    /// Quantity.
+    /// </summary>
+    public int? Quantity { get; set; }
+
+    /// <summary>
+    /// Optional notes.
+    /// </summary>
+    public string? Notes { get; set; }
+}
+
+/// <summary>
 /// Request body for approving a payroll invoice.
 /// </summary>
 public record ApprovePayrollRequest
@@ -127,4 +158,25 @@ public record BatchApprovePayrollRequest
     /// Optional approval notes.
     /// </summary>
     public string? Notes { get; set; }
+}
+
+/// <summary>
+/// Request body for batch creating payroll invoices.
+/// </summary>
+public record BatchCreatePayrollInvoicesRequest
+{
+    /// <summary>
+    /// List of employee IDs to create payrolls for.
+    /// </summary>
+    public required List<Guid> EmployeeIds { get; set; }
+
+    /// <summary>
+    /// Start date of the payroll period.
+    /// </summary>
+    public required DateTime PeriodStart { get; set; }
+
+    /// <summary>
+    /// End date of the payroll period.
+    /// </summary>
+    public required DateTime PeriodEnd { get; set; }
 }

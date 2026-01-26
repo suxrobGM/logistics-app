@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, computed, effect, inject, input, model, output, signal } from "@angular/core";
-import type { GeoPointDto } from "@logistics/shared/api/models";
+import type { GeoPoint } from "@logistics/shared/api";
 import type { LineString } from "geojson";
 import type { LngLatLike, MapMouseEvent } from "mapbox-gl";
 import { GeoJSONSourceComponent, LayerComponent, MapComponent } from "ngx-mapbox-gl";
@@ -168,7 +168,7 @@ export class DirectionMap {
    * @param index Index of the segment in the route.
    * @returns A GeoJSONSourceSpecification for the segment.
    */
-  private async buildDirectionsSegment(a: GeoPointDto, b: GeoPointDto): Promise<SegmentFeature> {
+  private async buildDirectionsSegment(a: GeoPoint, b: GeoPoint): Promise<SegmentFeature> {
     const coords = `${a.longitude},${a.latitude};${b.longitude},${b.latitude}`;
 
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coords}?geometries=geojson&access_token=${this.accessToken}`;

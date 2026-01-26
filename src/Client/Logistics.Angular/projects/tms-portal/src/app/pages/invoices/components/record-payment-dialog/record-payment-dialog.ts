@@ -2,7 +2,7 @@ import { Component, inject, input, model, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { LabeledField } from "@logistics/shared";
 import { Api, recordManualPayment } from "@logistics/shared/api";
-import type { PaymentMethodType } from "@logistics/shared/api/models";
+import type { PaymentMethodType } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { DatePickerModule } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";

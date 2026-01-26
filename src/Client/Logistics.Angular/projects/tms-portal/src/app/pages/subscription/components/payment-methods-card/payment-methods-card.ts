@@ -5,10 +5,7 @@ import {
   getPaymentMethods,
   setDefaultPaymentMethod,
 } from "@logistics/shared/api";
-import type {
-  PaymentMethodDto,
-  SetDefaultPaymentMethodCommand,
-} from "@logistics/shared/api/models";
+import type { PaymentMethodDto, SetDefaultPaymentMethodCommand } from "@logistics/shared/api";
 import { AddressPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

@@ -16,6 +16,7 @@ interface MobileMenuItem {
   route?: string;
   items?: MobileMenuItem[];
   expanded?: boolean;
+  isSeparator?: boolean;
 }
 
 @Component({
@@ -96,6 +97,7 @@ export class MobileDrawer {
           .map((subItem) => ({
             label: subItem.label,
             route: (subItem as MenuItem).route,
+            isSeparator: subItem.styleClass === "menu-separator",
           })),
         expanded: false,
       }));

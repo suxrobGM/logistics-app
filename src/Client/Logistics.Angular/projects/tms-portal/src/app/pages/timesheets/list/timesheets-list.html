@@ -1,0 +1,165 @@
+<ui-page-header [title]="pageTitle" />
+
+<div class="mb-4 flex flex-wrap items-center gap-2">
+  <lib-permission-guard [permissions]="Permission.Payroll.Manage">
+    <p-button icon="pi pi-plus" label="Add Entry" (click)="openAddDialog()" />
+  </lib-permission-guard>
+
+  <div class="flex-1"></div>
+
+  <!-- Filters -->
+  <p-select
+    [ngModel]="filterType()"
+    (ngModelChange)="applyTypeFilter($event)"
+    [options]="typeOptions"
+    optionValue="value"
+    optionLabel="label"
+    placeholder="Filter by type"
+    [showClear]="true"
+    appendTo="body"
+  />
+
+  <p-datepicker
+    [ngModel]="filterStartDate()"
+    (ngModelChange)="filterStartDate.set($event); applyDateFilter()"
+    dateFormat="mm/dd/yy"
+    placeholder="Start date"
+    [showIcon]="true"
+    appendTo="body"
+  />
+
+  <p-datepicker
+    [ngModel]="filterEndDate()"
+    (ngModelChange)="filterEndDate.set($event); applyDateFilter()"
+    dateFormat="mm/dd/yy"
+    placeholder="End date"
+    [showIcon]="true"
+    appendTo="body"
+  />
+
+  @if (filterType() || filterStartDate() || filterEndDate()) {
+    <p-button
+      icon="pi pi-filter-slash"
+      label="Clear"
+      [outlined]="true"
+      severity="secondary"
+      (click)="clearFilters()"
+    />
+  }
+</div>
+
+<p-card>
+  <ui-data-container
+    [loading]="store.isLoading()"
+    [error]="store.error()"
+    [isEmpty]="store.isEmpty()"
+    skeletonVariant="table"
+    [skeletonRows]="10"
+    emptyTitle="No timesheet entries yet"
+    emptyMessage="Add your first timesheet entry to track employee hours."
+    emptyActionLabel="Add Entry"
+    (retry)="store.retry()"
+    (emptyAction)="openAddDialog()"
+  >
+    <p-table
+      [value]="store.data()"
+      [lazy]="true"
+      [paginator]="true"
+      [showCurrentPageReport]="true"
+      (onLazyLoad)="store.onLazyLoad($event)"
+      [rows]="store.pageSize()"
+      [first]="store.first()"
+      [totalRecords]="store.totalRecords()"
+      [loading]="store.isLoading()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="Date">
+            Date
+            <p-sortIcon field="Date" />
+          </th>
+          @if (!employee()) {
+            <th>Employee</th>
+          }
+          <th pSortableColumn="TotalHours">
+            Hours
+            <p-sortIcon field="TotalHours" />
+          </th>
+          <th>Time</th>
+          <th>Type</th>
+          <th>Notes</th>
+          <th>Payroll</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-entry>
+        <tr>
+          <td>{{ entry.date | date: "mediumDate" }}</td>
+          @if (!employee()) {
+            <td>{{ entry.employeeName }}</td>
+          }
+          <td>
+            <span class="font-semibold">{{ entry.totalHours | number: "1.1-2" }}</span>
+          </td>
+          <td>
+            @if (entry.startTime && entry.endTime) {
+              {{ entry.startTime | slice: 0 : 5 }} - {{ entry.endTime | slice: 0 : 5 }}
+            } @else {
+              <span class="text-muted-color">-</span>
+            }
+          </td>
+          <td>
+            <p-tag [value]="getTypeLabel(entry.type)" [severity]="getTypeSeverity(entry.type)" />
+          </td>
+          <td>
+            @if (entry.notes) {
+              <span class="text-sm" [pTooltip]="entry.notes" tooltipPosition="top">
+                {{ entry.notes | slice: 0 : 30 }}{{ entry.notes.length > 30 ? "..." : "" }}
+              </span>
+            } @else {
+              <span class="text-muted-color">-</span>
+            }
+          </td>
+          <td>
+            @if (entry.payrollInvoiceId) {
+              <p-tag value="Linked" severity="success" />
+            } @else {
+              <p-tag value="Unlinked" severity="secondary" />
+            }
+          </td>
+          <td>
+            <div class="flex gap-1">
+              <lib-permission-guard [permissions]="Permission.Payroll.Manage">
+                <p-button
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  pTooltip="Edit"
+                  tooltipPosition="top"
+                  [disabled]="!!entry.payrollInvoiceId"
+                  (click)="openEditDialog(entry)"
+                />
+                <p-button
+                  icon="pi pi-trash"
+                  [text]="true"
+                  severity="danger"
+                  pTooltip="Delete"
+                  tooltipPosition="top"
+                  [disabled]="!!entry.payrollInvoiceId"
+                  (click)="confirmDelete(entry)"
+                />
+              </lib-permission-guard>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ui-data-container>
+</p-card>
+
+<app-timesheet-form-dialog
+  [(visible)]="formDialogVisible"
+  [timeEntry]="selectedTimeEntry()"
+  [preselectedEmployeeId]="preselectedEmployeeId"
+  (saved)="onSaved()"
+/>

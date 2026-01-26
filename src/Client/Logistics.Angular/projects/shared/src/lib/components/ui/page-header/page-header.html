@@ -1,5 +1,15 @@
-<div class="mb-3">
-  <div class="flex items-center">
+<div class="mb-3" [class.text-center]="centered()">
+  <div class="flex items-center" [class.justify-center]="centered()">
+    @if (backLink()) {
+      <p-button
+        icon="pi pi-arrow-left"
+        [rounded]="true"
+        [text]="true"
+        [routerLink]="[backLink()]"
+        pTooltip="Go back"
+        styleClass="mr-2"
+      />
+    }
     <h1 class="mb-0">{{ title() }}</h1>
     @if (showAddButton()) {
       @if (addRoute()) {

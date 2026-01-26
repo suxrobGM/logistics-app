@@ -1,0 +1,41 @@
+@if (label()) {
+  <span class="mb-2 block font-bold">{{ label() }}</span>
+}
+
+<!-- Date Presets -->
+@if (showPresets()) {
+  <div class="mb-3 flex flex-wrap gap-2">
+    @for (preset of availablePresets(); track preset.value) {
+      <p-button
+        type="button"
+        [label]="preset.label"
+        [severity]="selectedPreset() === preset.value ? 'primary' : 'secondary'"
+        [outlined]="selectedPreset() !== preset.value"
+        size="small"
+        (onClick)="selectPreset(preset)"
+      />
+    }
+  </div>
+}
+
+<!-- Date Picker -->
+<p-datepicker
+  class="w-full"
+  inputStyleClass="w-full"
+  [ngModel]="dates()"
+  (ngModelChange)="dates.set($event); onDatePickerChange()"
+  selectionMode="range"
+  [showIcon]="true"
+  [maxDate]="todayDate"
+  dateFormat="mm/dd/yy"
+  placeholder="Select date range"
+/>
+
+@if (showApplyButton()) {
+  <p-button
+    class="ml-2"
+    [disabled]="!areDatesValid()"
+    (onClick)="onClickApplyButton()"
+    label="Apply"
+  />
+}

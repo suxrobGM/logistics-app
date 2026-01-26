@@ -1,7 +1,7 @@
 import { CommonModule, CurrencyPipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Api, getCompanyStats } from "@logistics/shared/api";
-import type { CompanyStatsDto } from "@logistics/shared/api/models";
+import type { CompanyStatsDto } from "@logistics/shared/api";
 import { SharedModule } from "primeng/api";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";

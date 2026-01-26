@@ -15,5 +15,10 @@ export const INVOICE_LINE_ITEM_TYPE: InvoiceLineItemType[] = [
   'accessorial',
   'discount',
   'tax',
-  'other'
+  'other',
+  'base_pay',
+  'bonus',
+  'deduction',
+  'reimbursement',
+  'adjustment'
 ];

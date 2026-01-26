@@ -7,7 +7,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { Api, updateEmployee } from "@logistics/shared/api";
-import type { RoleDto, UpdateEmployeeCommand } from "@logistics/shared/api/models";
+import type { RoleDto, UpdateEmployeeCommand } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

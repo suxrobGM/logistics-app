@@ -83,23 +83,49 @@ export const sidebarItems: MenuItem[] = [
     ],
   },
   {
-    label: "Finance",
+    label: "Accounting",
     icon: "pi pi-wallet text-3xl!",
     items: [
+      // Payroll Section
       {
-        label: "Invoice Dashboard",
-        route: "/invoices",
+        label: "Payroll",
+        styleClass: "menu-separator",
+        disabled: true,
+      },
+      {
+        label: "Payroll Dashboard",
+        route: "/payroll",
       },
       {
         label: "Payroll Invoices",
-        route: "/invoices/payroll",
+        route: "/payroll/invoices",
+      },
+      {
+        label: "Timesheets",
+        route: "/timesheets",
+      },
+      // Invoicing Section
+      {
+        label: "Invoicing",
+        styleClass: "menu-separator",
+        disabled: true,
+      },
+      {
+        label: "Load Invoice Dashboard",
+        route: "/invoices",
       },
       {
         label: "Load Invoices",
         route: "/invoices/loads",
       },
+      // Expenses Section
       {
         label: "Expenses",
+        styleClass: "menu-separator",
+        disabled: true,
+      },
+      {
+        label: "All Expenses",
         route: "/expenses",
       },
       {
@@ -109,10 +135,6 @@ export const sidebarItems: MenuItem[] = [
       {
         label: "Expense Analytics",
         route: "/expenses/analytics",
-      },
-      {
-        label: "Financial Report",
-        route: "/reports/financials",
       },
     ],
   },
@@ -131,6 +153,10 @@ export const sidebarItems: MenuItem[] = [
       {
         label: "Drivers Detailed",
         route: "/reports/drivers/detailed",
+      },
+      {
+        label: "Financial Report",
+        route: "/reports/financials",
       },
     ],
   },

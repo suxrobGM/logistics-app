@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, type OnDestroy, inject, model, signal } from "@angular/core";
-import type { NotificationDto } from "@logistics/shared/api/models";
+import type { NotificationDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";

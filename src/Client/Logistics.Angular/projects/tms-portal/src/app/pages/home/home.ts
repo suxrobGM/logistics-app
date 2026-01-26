@@ -2,7 +2,7 @@ import { CurrencyPipe } from "@angular/common";
 import { Component, type OnInit, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Api, getDailyGrosses, getLoads } from "@logistics/shared/api";
-import type { AddressDto, DailyGrossesDto, LoadDto } from "@logistics/shared/api/models";
+import type { Address, DailyGrossesDto, LoadDto } from "@logistics/shared/api";
 import { AddressPipe } from "@logistics/shared/pipes";
 import { SharedModule } from "primeng/api";
 import { ButtonModule } from "primeng/button";
@@ -75,7 +75,7 @@ export class HomeComponent implements OnInit {
     this.fetchLastTenDaysGross();
   }
 
-  protected formatAddress(addressObj: AddressDto): string {
+  protected formatAddress(addressObj: Address): string {
     return this.addressPipe.transform(addressObj) || "No address provided";
   }
 

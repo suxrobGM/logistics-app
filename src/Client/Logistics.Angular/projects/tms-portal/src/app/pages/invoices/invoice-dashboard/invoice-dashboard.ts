@@ -2,7 +2,7 @@ import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Api, getInvoiceDashboard } from "@logistics/shared/api";
-import type { InvoiceDashboardDto, InvoiceDto } from "@logistics/shared/api/models";
+import type { InvoiceDashboardDto, InvoiceDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";
@@ -48,9 +48,6 @@ export class InvoiceDashboard {
   }
 
   getInvoiceLink(invoice: InvoiceDto): string {
-    if (invoice.type === "payroll") {
-      return `/invoices/payroll/${invoice.id}/edit`;
-    }
     return `/invoices/loads/${invoice.loadId}/${invoice.id}`;
   }
 }

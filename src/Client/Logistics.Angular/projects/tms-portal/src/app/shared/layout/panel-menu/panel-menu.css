@@ -133,4 +133,43 @@ app-panel-menu {
     box-shadow: inset 0 0 0 2px var(--primary-500);
     border-radius: var(--radius-md);
   }
+
+  /* Menu Separator/Section Labels */
+  .p-panelmenu-submenu .p-menuitem.menu-separator {
+    margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .p-panelmenu-submenu .p-menuitem.menu-separator:first-child {
+    margin-top: 0;
+  }
+
+  .p-panelmenu-submenu .p-menuitem.menu-separator .p-menuitem-content {
+    background: transparent;
+    cursor: default;
+  }
+
+  .p-panelmenu-submenu .p-menuitem.menu-separator .p-menuitem-content:hover {
+    background: transparent;
+  }
+
+  .p-panelmenu-submenu .p-menuitem.menu-separator .p-menuitem-link {
+    padding: 0.25rem 1rem;
+    color: var(--text-muted);
+    font-size: 0.625rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .p-panelmenu-submenu .p-menuitem.menu-separator .p-menuitem-link::before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: var(--border-color);
+    margin-bottom: 0.5rem;
+  }
 }

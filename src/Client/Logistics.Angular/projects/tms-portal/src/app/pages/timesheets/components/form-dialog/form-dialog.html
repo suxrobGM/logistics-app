@@ -1,0 +1,143 @@
+<p-dialog
+  [header]="dialogTitle"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  (onHide)="close()"
+>
+  @if (isLoading()) {
+    <div class="flex justify-center py-4">
+      <p-progress-spinner />
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      @if (!isEditMode) {
+        <ui-labeled-field
+          label="Employee"
+          for="employeeId"
+          [required]="true"
+          [control]="form.controls.employeeId"
+        >
+          <p-select
+            formControlName="employeeId"
+            id="employeeId"
+            class="w-full"
+            appendTo="body"
+            [options]="employees()"
+            optionValue="id"
+            optionLabel="fullName"
+            placeholder="Select an employee"
+            [filter]="true"
+            filterBy="fullName"
+          />
+        </ui-labeled-field>
+      }
+
+      <ui-labeled-field label="Date" for="date" [required]="true" [control]="form.controls.date">
+        <p-datepicker
+          formControlName="date"
+          id="date"
+          dateFormat="mm/dd/yy"
+          [showIcon]="true"
+          appendTo="body"
+          styleClass="w-full"
+        />
+      </ui-labeled-field>
+
+      <div class="grid grid-cols-2 gap-4">
+        <ui-labeled-field
+          label="Start Time"
+          for="startTime"
+          [required]="true"
+          [control]="form.controls.startTime"
+        >
+          <p-datepicker
+            formControlName="startTime"
+            id="startTime"
+            [timeOnly]="true"
+            [showIcon]="true"
+            appendTo="body"
+            styleClass="w-full"
+            (onSelect)="calculateHours()"
+          />
+        </ui-labeled-field>
+
+        <ui-labeled-field
+          label="End Time"
+          for="endTime"
+          [required]="true"
+          [control]="form.controls.endTime"
+        >
+          <p-datepicker
+            formControlName="endTime"
+            id="endTime"
+            [timeOnly]="true"
+            [showIcon]="true"
+            appendTo="body"
+            styleClass="w-full"
+            (onSelect)="calculateHours()"
+          />
+        </ui-labeled-field>
+      </div>
+
+      @if (timeError()) {
+        <div class="text-red-500 text-sm mb-2">
+          <i class="pi pi-exclamation-circle mr-1"></i>
+          {{ timeError() }}
+        </div>
+      }
+
+      <div class="grid grid-cols-2 gap-4">
+        <ui-labeled-field
+          label="Total Hours"
+          for="totalHours"
+          hint="Calculated from start and end time"
+        >
+          <p-inputNumber
+            formControlName="totalHours"
+            id="totalHours"
+            mode="decimal"
+            [minFractionDigits]="1"
+            [maxFractionDigits]="2"
+            [min]="0"
+            [max]="24"
+            styleClass="w-full"
+          />
+        </ui-labeled-field>
+
+        <ui-labeled-field label="Type" for="type" [required]="true" [control]="form.controls.type">
+          <p-select
+            formControlName="type"
+            id="type"
+            class="w-full"
+            appendTo="body"
+            [options]="typeOptions"
+            optionValue="value"
+            optionLabel="label"
+          />
+        </ui-labeled-field>
+      </div>
+
+      <ui-labeled-field label="Notes" for="notes" hint="Optional notes about this entry">
+        <textarea
+          pTextarea
+          id="notes"
+          formControlName="notes"
+          rows="3"
+          placeholder="Add notes..."
+          class="w-full"
+        ></textarea>
+      </ui-labeled-field>
+
+      <div class="flex justify-end gap-2 mt-4">
+        <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />
+        <p-button
+          type="submit"
+          icon="pi pi-check"
+          [label]="isEditMode ? 'Update' : 'Create'"
+          [disabled]="isLoading() || form.invalid || timeError()"
+        />
+      </div>
+    </form>
+  }
+</p-dialog>

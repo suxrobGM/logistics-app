@@ -1,7 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, type OnInit, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import type { ConditionReportDto } from "@logistics/shared/api/models";
+import type { ConditionReportDto } from "@logistics/shared/api";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

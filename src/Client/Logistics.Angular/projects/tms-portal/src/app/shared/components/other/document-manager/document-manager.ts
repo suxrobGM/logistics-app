@@ -7,7 +7,7 @@ import {
   getDocuments,
   uploadDocument,
 } from "@logistics/shared/api";
-import type { DocumentDto, DocumentStatus, DocumentType } from "@logistics/shared/api/models";
+import type { DocumentDto, DocumentStatus, DocumentType } from "@logistics/shared/api";
 import { downloadBlobFile, formatFileSize } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

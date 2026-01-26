@@ -2,14 +2,8 @@ import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
+import type { CustomerDto, LoadDto, LoadStatus, LoadType, TruckDto } from "@logistics/shared/api";
 import { loadStatusOptions, loadTypeOptions } from "@logistics/shared/api/enums";
-import type {
-  CustomerDto,
-  LoadDto,
-  LoadStatus,
-  LoadType,
-  TruckDto,
-} from "@logistics/shared/api/models";
 import { AddressPipe } from "@logistics/shared/pipes";
 import type { MenuItem, SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";

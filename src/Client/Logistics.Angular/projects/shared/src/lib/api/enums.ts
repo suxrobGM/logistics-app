@@ -5,6 +5,7 @@
  */
 import type {
   DocumentType,
+  InvoiceLineItemType,
   InvoiceStatus,
   LoadStatus,
   LoadType,
@@ -148,4 +149,24 @@ export const timeEntryTypeOptions: SelectOption<TimeEntryType>[] = [
   { label: "Double Time", value: "double_time" },
   { label: "Paid Time Off", value: "paid_time_off" },
   { label: "Holiday", value: "holiday" },
+];
+
+export const invoiceLineItemTypeOptions: SelectOption<InvoiceLineItemType>[] = [
+  { label: "Base Rate", value: "base_rate" },
+  { label: "Fuel Surcharge", value: "fuel_surcharge" },
+  { label: "Detention", value: "detention" },
+  { label: "Layover", value: "layover" },
+  { label: "Lumper", value: "lumper" },
+  { label: "Accessorial", value: "accessorial" },
+  { label: "Discount", value: "discount" },
+  { label: "Tax", value: "tax" },
+  { label: "Other", value: "other" },
+];
+
+export const payrollLineItemTypeOptions: SelectOption<InvoiceLineItemType>[] = [
+  { label: "Base Pay", value: "base_pay" },
+  { label: "Bonus", value: "bonus" },
+  { label: "Deduction", value: "deduction" },
+  { label: "Reimbursement", value: "reimbursement" },
+  { label: "Adjustment", value: "adjustment" },
 ];

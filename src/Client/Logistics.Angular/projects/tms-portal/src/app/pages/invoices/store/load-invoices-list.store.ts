@@ -1,5 +1,5 @@
 import { formatSortField, getInvoices } from "@logistics/shared/api";
-import type { InvoiceDto, InvoiceStatus } from "@logistics/shared/api/models";
+import type { InvoiceDto, InvoiceStatus } from "@logistics/shared/api";
 import { createListStore } from "@/shared/stores";
 
 /**

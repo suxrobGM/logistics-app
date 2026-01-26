@@ -7,7 +7,7 @@ import type {
   LoadsReportDto,
   StatusDto,
   TypeDto,
-} from "@logistics/shared/api/models";
+} from "@logistics/shared/api";
 import { Card } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";

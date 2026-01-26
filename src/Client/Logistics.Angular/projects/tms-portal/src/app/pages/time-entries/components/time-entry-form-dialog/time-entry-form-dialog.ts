@@ -7,14 +7,14 @@ import {
   Validators,
 } from "@angular/forms";
 import { Api, createTimeEntry, getEmployees, updateTimeEntry } from "@logistics/shared/api";
-import { timeEntryTypeOptions } from "@logistics/shared/api/enums";
 import type {
   CreateTimeEntryCommand,
   EmployeeDto,
   TimeEntryDto,
   TimeEntryType,
   UpdateTimeEntryCommand,
-} from "@logistics/shared/api/models";
+} from "@logistics/shared/api";
+import { timeEntryTypeOptions } from "@logistics/shared/api/enums";
 import { ButtonModule } from "primeng/button";
 import { DatePickerModule } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";

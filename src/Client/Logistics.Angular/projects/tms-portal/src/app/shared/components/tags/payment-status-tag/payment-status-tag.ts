@@ -1,5 +1,6 @@
 import { Component, input } from "@angular/core";
-import { type PaymentStatus, paymentStatusOptions } from "@logistics/shared/api/models";
+import { type PaymentStatus } from "@logistics/shared/api";
+import { paymentStatusOptions } from "@logistics/shared/api/enums";
 import { Tag, TagModule } from "primeng/tag";
 
 @Component({

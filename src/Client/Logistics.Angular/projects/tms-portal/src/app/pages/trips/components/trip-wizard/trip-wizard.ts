@@ -1,5 +1,5 @@
 import { Component, effect, inject, input, output } from "@angular/core";
-import type { CreateTripLoadCommand, TripLoadDto, TripStopDto } from "@logistics/shared/api/models";
+import type { CreateTripLoadCommand, TripLoadDto, TripStopDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputTextModule } from "primeng/inputtext";

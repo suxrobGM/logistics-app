@@ -1,7 +1,7 @@
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { Api, deleteLoad, getLoadById, updateLoad } from "@logistics/shared/api";
-import type { UpdateLoadCommand } from "@logistics/shared/api/models";
+import type { UpdateLoadCommand } from "@logistics/shared/api";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

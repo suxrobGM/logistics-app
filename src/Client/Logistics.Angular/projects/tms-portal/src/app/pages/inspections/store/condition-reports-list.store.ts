@@ -1,6 +1,6 @@
 import { computed, inject } from "@angular/core";
 import { Api, getConditionReports } from "@logistics/shared/api";
-import type { ConditionReportDto } from "@logistics/shared/api/models";
+import type { ConditionReportDto } from "@logistics/shared/api";
 import type { AppError } from "@logistics/shared/errors";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 
@@ -42,7 +42,7 @@ export const ConditionReportsListStore = signalStore(
             r.vin?.toLowerCase().includes(search) ||
             r.inspectorName?.toLowerCase().includes(search) ||
             r.vehicleMake?.toLowerCase().includes(search) ||
-            r.vehicleModel?.toLowerCase().includes(search)
+            r.vehicleModel?.toLowerCase().includes(search),
         );
       }
 
@@ -89,5 +89,5 @@ export const ConditionReportsListStore = signalStore(
     reset(): void {
       patchState(store, initialState);
     },
-  }))
+  })),
 );

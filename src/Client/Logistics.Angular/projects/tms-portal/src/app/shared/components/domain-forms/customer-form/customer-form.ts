@@ -2,7 +2,7 @@ import { Component, effect, inject, input, output, signal } from "@angular/core"
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { Api, createCustomer, updateCustomer } from "@logistics/shared/api";
-import type { CustomerDto, UpdateCustomerCommand } from "@logistics/shared/api/models";
+import type { CustomerDto, UpdateCustomerCommand } from "@logistics/shared/api";
 import { LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";

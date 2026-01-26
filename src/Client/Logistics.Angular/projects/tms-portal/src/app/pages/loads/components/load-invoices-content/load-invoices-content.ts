@@ -1,8 +1,8 @@
 import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
-import { Component, inject, input, type OnInit, signal } from "@angular/core";
+import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Api, getInvoices } from "@logistics/shared/api";
-import type { InvoiceDto } from "@logistics/shared/api/models";
+import type { InvoiceDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

@@ -1,6 +1,6 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import type { AddressDto, TruckDto } from "@logistics/shared/api/models";
+import type { Address, TruckDto } from "@logistics/shared/api";
 import { AddressPipe } from "@logistics/shared/pipes";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
@@ -60,7 +60,7 @@ export class TrucksListComponent {
     this.router.navigate(["/trucks/add"]);
   }
 
-  protected formatAddress(address: AddressDto): string {
+  protected formatAddress(address: Address): string {
     return this.addressPipe.transform(address) || "No address provided";
   }
 }

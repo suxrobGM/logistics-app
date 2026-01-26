@@ -115,11 +115,18 @@ export const appRoutes: Routes = [
     },
   },
   {
-    path: "time-entries",
-    loadChildren: () =>
-      import("./pages/time-entries/time-entry.routes").then((m) => m.timeEntryRoutes),
+    path: "payroll",
+    loadChildren: () => import("./pages/payroll/payroll.routes").then((m) => m.payrollRoutes),
     data: {
-      breadcrumb: "Time Entries",
+      breadcrumb: "Payroll",
+    },
+  },
+  {
+    path: "timesheets",
+    loadChildren: () =>
+      import("./pages/timesheets/timesheets.routes").then((m) => m.timesheetsRoutes),
+    data: {
+      breadcrumb: "Timesheets",
     },
   },
   {

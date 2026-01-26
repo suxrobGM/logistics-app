@@ -2,15 +2,14 @@ import { Component, type OnInit, effect, inject, input, output, signal } from "@
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import {
-  type AddressDto,
+  type Address,
   type CustomerDto,
-  type GeoPointDto,
+  type GeoPoint,
   type LoadStatus,
   type LoadType,
   type TruckDto,
-  loadStatusOptions,
-  loadTypeOptions,
-} from "@logistics/shared/api/models";
+} from "@logistics/shared/api";
+import { loadStatusOptions, loadTypeOptions } from "@logistics/shared/api/enums";
 import { LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DividerModule } from "primeng/divider";
@@ -39,10 +38,10 @@ export interface LoadFormValue {
   name: string;
   type: LoadType;
   customer: CustomerDto;
-  originAddress: AddressDto;
-  originLocation: GeoPointDto;
-  destinationAddress: AddressDto;
-  destinationLocation: GeoPointDto;
+  originAddress: Address;
+  originLocation: GeoPoint;
+  destinationAddress: Address;
+  destinationLocation: GeoPoint;
   deliveryCost: number;
   distance: number; // miles, read-only for users
   status?: LoadStatus | null; // only present in edit-mode
@@ -79,7 +78,7 @@ export interface LoadFormValue {
 export class LoadFormComponent implements OnInit {
   protected readonly loadTypes = loadTypeOptions;
   protected readonly loadStatuses = loadStatusOptions;
-  private readonly dummyLocation: GeoPointDto = { longitude: 0, latitude: 0 };
+  private readonly dummyLocation: GeoPoint = { longitude: 0, latitude: 0 };
 
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
@@ -112,19 +111,19 @@ export class LoadFormComponent implements OnInit {
       validators: [Validators.required],
       nonNullable: true,
     }),
-    originAddress: new FormControl<AddressDto | null>(null, {
+    originAddress: new FormControl<Address | null>(null, {
       validators: [Validators.required],
       nonNullable: true,
     }),
-    originLocation: new FormControl<GeoPointDto>(this.dummyLocation, {
+    originLocation: new FormControl<GeoPoint>(this.dummyLocation, {
       validators: [Validators.required],
       nonNullable: true,
     }),
-    destinationAddress: new FormControl<AddressDto | null>(null, {
+    destinationAddress: new FormControl<Address | null>(null, {
       validators: [Validators.required],
       nonNullable: true,
     }),
-    destinationLocation: new FormControl<GeoPointDto>(this.dummyLocation, {
+    destinationLocation: new FormControl<GeoPoint>(this.dummyLocation, {
       validators: [Validators.required],
       nonNullable: true,
     }),

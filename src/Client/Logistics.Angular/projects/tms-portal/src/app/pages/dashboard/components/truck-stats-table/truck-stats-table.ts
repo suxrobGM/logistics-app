@@ -2,7 +2,7 @@ import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Api, formatSortField, getTrucksStats } from "@logistics/shared/api";
-import type { TruckStatsDto } from "@logistics/shared/api/models";
+import type { TruckStatsDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { type TableLazyLoadEvent, TableModule } from "primeng/table";

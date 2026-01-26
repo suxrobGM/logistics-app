@@ -9,7 +9,7 @@ import {
   updateExpense,
   uploadExpenseReceipt,
 } from "@logistics/shared/api";
-import type { ExpenseDto, TruckDto } from "@logistics/shared/api/models";
+import type { ExpenseDto, TruckDto } from "@logistics/shared/api";
 import { MessageService } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

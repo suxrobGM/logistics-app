@@ -3,7 +3,7 @@ import { Component, type OnInit, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { Api, getExpenseStats } from "@logistics/shared/api";
-import type { ExpenseStatsDto } from "@logistics/shared/api/models";
+import type { ExpenseStatsDto } from "@logistics/shared/api";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

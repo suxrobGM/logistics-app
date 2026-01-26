@@ -2,7 +2,7 @@ import { Component, type OnInit, inject, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AddressForm, PhoneInput } from "@logistics/shared";
 import { Api, getTenantById, updateTenant } from "@logistics/shared/api";
-import type { Address, TenantDto, UpdateTenantCommand } from "@logistics/shared/api/models";
+import type { Address, TenantDto, UpdateTenantCommand } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { InputTextModule } from "primeng/inputtext";

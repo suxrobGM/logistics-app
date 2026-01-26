@@ -2,7 +2,7 @@
 <div class="mb-6 flex items-center justify-between">
   <div>
     <h1 class="mb-1">Drivers Report</h1>
-    <p class="mb-0 text-muted">Detailed driver performance and statistics</p>
+    <p class="text-muted mb-0">Detailed driver performance and statistics</p>
   </div>
   <div class="flex items-center gap-2">
     <div class="flex items-center gap-2">
@@ -18,12 +18,12 @@
         style="width: 200px"
       />
     </div>
-    <ui-range-calendar
+    <ui-date-range-picker
       [(startDate)]="startDate"
       [(endDate)]="endDate"
       (applyButtonClick)="filterByDate()"
     >
-    </ui-range-calendar>
+    </ui-date-range-picker>
   </div>
 </div>
 
@@ -94,7 +94,7 @@
           </div>
         </td>
         <td>
-          <span class="rounded bg-secondary px-2 py-1 text-sm text-white">{{
+          <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{
             driver.truckNumber
           }}</span>
         </td>
@@ -138,8 +138,8 @@
         <td colspan="9" class="py-4 text-center">
           <div class="flex flex-col items-center">
             <i class="pi pi-users text-muted" style="font-size: 3rem"></i>
-            <h6 class="mt-2 text-muted">No drivers found</h6>
-            <p class="mb-0 text-muted">Try adjusting your search criteria or date range</p>
+            <h6 class="text-muted mt-2">No drivers found</h6>
+            <p class="text-muted mb-0">Try adjusting your search criteria or date range</p>
           </div>
         </td>
       </tr>

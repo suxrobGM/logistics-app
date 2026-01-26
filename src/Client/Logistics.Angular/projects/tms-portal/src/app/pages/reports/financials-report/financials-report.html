@@ -5,7 +5,7 @@
     subtitle="Comprehensive financial overview and performance metrics"
     [showAddButton]="false"
   />
-  <ui-range-calendar
+  <ui-date-range-picker
     [(startDate)]="startDate"
     [(endDate)]="endDate"
     (applyButtonClick)="filter()"
@@ -75,7 +75,7 @@
         <div class="grid grid-cols-12 gap-1">
           @for (metric of data()?.financialMetrics || []; track metric.metric) {
             <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
-              <div class="flex items-start rounded bg-hover p-4">
+              <div class="bg-hover flex items-start rounded p-4">
                 <div class="grow">
                   <div class="mb-1 flex items-center gap-2">
                     <h6 class="mb-0">{{ metric.metric }}</h6>
@@ -202,7 +202,7 @@
               <td>{{ customer.totalInvoiced | currency: "USD" : "symbol" : "1.0-0" }}</td>
               <td>{{ customer.totalPaid | currency: "USD" : "symbol" : "1.0-0" }}</td>
               <td>
-                <span class="rounded bg-secondary px-2 py-1 text-sm text-white">{{
+                <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{
                   customer.invoiceCount
                 }}</span>
               </td>

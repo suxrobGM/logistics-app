@@ -1,7 +1,8 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { type PaymentMethodType, paymentMethodTypeOptions } from "@logistics/shared/api/models";
+import { type PaymentMethodType } from "@logistics/shared/api";
+import { paymentMethodTypeOptions } from "@logistics/shared/api/enums";
 import { AddressPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

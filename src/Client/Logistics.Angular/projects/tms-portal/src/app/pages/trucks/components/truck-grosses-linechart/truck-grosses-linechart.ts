@@ -1,7 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, type OnInit, inject, input, model, output, signal } from "@angular/core";
 import { Api, getDailyGrosses } from "@logistics/shared/api";
-import type { DailyGrossesDto } from "@logistics/shared/api/models";
+import type { DailyGrossesDto } from "@logistics/shared/api";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { DividerModule } from "primeng/divider";

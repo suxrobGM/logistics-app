@@ -16,8 +16,8 @@ import {
   type InvoiceDto,
   type SalaryType,
   type UpdatePayrollInvoiceCommand,
-  salaryTypeOptions,
-} from "@logistics/shared/api/models";
+} from "@logistics/shared/api";
+import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

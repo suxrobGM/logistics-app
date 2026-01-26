@@ -8,15 +8,12 @@ import {
 } from "@angular/forms";
 import { Api, createPaymentMethod } from "@logistics/shared/api";
 import {
-  type AddressDto,
+  type Address,
   type CreatePaymentMethodCommand,
   type PaymentMethodType,
   type UsBankAccountHolderType,
   type UsBankAccountType,
-  paymentMethodTypeOptions,
-  usBankAccountHolderTypeOptions,
-  usBankAccountTypeOptions,
-} from "@logistics/shared/api/models";
+} from "@logistics/shared/api";
 import type { StripeCardNumberElement } from "@stripe/stripe-js";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -28,6 +25,7 @@ import { KeyFilterModule } from "primeng/keyfilter";
 import { SelectModule } from "primeng/select";
 import { StripeService, TenantService, ToastService } from "@/core/services";
 import { AddressForm, LabeledField, StripeCard, ValidationSummary } from "@/shared/components";
+import { paymentMethodTypeOptions, usBankAccountHolderTypeOptions, usBankAccountTypeOptions } from "@logistics/shared/api/enums";
 
 const enabledPaymentTypes: PaymentMethodType[] = [
   "card",
@@ -208,7 +206,7 @@ export class PaymentMethodDialogComponent {
 interface PaymentMethodForm {
   methodType: FormControl<PaymentMethodType | null>;
   cardHolderName: FormControl<string | null>;
-  billingAddress: FormControl<AddressDto | null>;
+  billingAddress: FormControl<Address | null>;
   bankName: FormControl<string | null>;
   bankAccountNumber: FormControl<string | null>;
   bankRoutingNumber: FormControl<string | null>;

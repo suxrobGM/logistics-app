@@ -7,7 +7,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { Api, createInvitation, getCustomers } from "@logistics/shared/api";
-import type { CreateInvitationCommand, CustomerDto } from "@logistics/shared/api/models";
+import type { CreateInvitationCommand, CustomerDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";

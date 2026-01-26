@@ -1,7 +1,7 @@
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Api, getTruckById } from "@logistics/shared/api";
-import type { DocumentType, TruckDto } from "@logistics/shared/api/models";
+import type { DocumentType, TruckDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ToastModule } from "primeng/toast";

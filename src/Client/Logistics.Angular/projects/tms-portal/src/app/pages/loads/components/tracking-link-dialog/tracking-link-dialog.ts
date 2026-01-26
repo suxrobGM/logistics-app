@@ -6,7 +6,7 @@ import {
   getTrackingLinksForLoad,
   revokeTrackingLink,
 } from "@logistics/shared/api";
-import type { TrackingLinkDto } from "@logistics/shared/api/models";
+import type { TrackingLinkDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

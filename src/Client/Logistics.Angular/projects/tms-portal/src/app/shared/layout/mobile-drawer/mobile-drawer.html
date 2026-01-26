@@ -46,12 +46,21 @@
             @if (item.expanded) {
               <div class="mt-1 ml-6 space-y-1 border-l-2 border-subtle pl-4">
                 @for (subItem of item.items; track subItem.label) {
-                  <button
-                    class="mobile-nav-subitem block w-full rounded-lg px-4 py-2 text-left text-secondary hover:bg-hover hover:text-primary"
-                    (click)="navigateTo(subItem.route!)"
-                  >
-                    {{ subItem.label }}
-                  </button>
+                  @if (subItem.isSeparator) {
+                    <div class="mobile-nav-separator px-4 py-2">
+                      <div class="border-t border-subtle mb-2"></div>
+                      <span class="text-xs font-semibold uppercase tracking-wider text-muted">
+                        {{ subItem.label }}
+                      </span>
+                    </div>
+                  } @else {
+                    <button
+                      class="mobile-nav-subitem block w-full rounded-lg px-4 py-2 text-left text-secondary hover:bg-hover hover:text-primary"
+                      (click)="navigateTo(subItem.route!)"
+                    >
+                      {{ subItem.label }}
+                    </button>
+                  }
                 }
               </div>
             }

@@ -6,7 +6,7 @@ import {
   getDashboardLink,
   getOnboardingLink,
 } from "@logistics/shared/api";
-import type { StripeConnectStatus, StripeConnectStatusDto } from "@logistics/shared/api/models";
+import type { StripeConnectStatus, StripeConnectStatusDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";

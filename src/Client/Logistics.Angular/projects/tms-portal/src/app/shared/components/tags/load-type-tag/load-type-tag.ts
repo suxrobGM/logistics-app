@@ -1,5 +1,5 @@
 import { Component, input } from "@angular/core";
-import type { LoadType } from "@logistics/shared/api/models";
+import type { LoadType } from "@logistics/shared/api";
 import { Tag } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 

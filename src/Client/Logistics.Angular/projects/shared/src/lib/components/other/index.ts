@@ -1,2 +1,2 @@
-export * from "./range-calendar";
+export * from "./date-range-picker";
 export * from "./base-table";

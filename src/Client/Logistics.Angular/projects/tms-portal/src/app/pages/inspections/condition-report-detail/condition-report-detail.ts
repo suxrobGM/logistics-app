@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Api, getConditionReportById } from "@logistics/shared/api";
-import type { ConditionReportDto, DamageMarkerDto } from "@logistics/shared/api/models";
+import type { ConditionReportDto, DamageMarkerDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";

@@ -1,4 +1,4 @@
-import type { AddressDto } from "@logistics/shared/api/models";
+import type { Address } from "@logistics/shared/api";
 
 export abstract class Converters {
   /**
@@ -6,7 +6,7 @@ export abstract class Converters {
    * @param value Address object
    * @returns A formatted string
    */
-  static addressToString(value: AddressDto | null): string {
+  static addressToString(value: Address | null): string {
     if (!value) {
       return "";
     }

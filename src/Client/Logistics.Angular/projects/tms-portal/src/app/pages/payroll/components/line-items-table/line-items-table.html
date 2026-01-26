@@ -1,0 +1,130 @@
+<div class="mb-3 flex items-center justify-between">
+  <h3 class="text-lg font-medium">Line Items</h3>
+  <p-button
+    icon="pi pi-plus"
+    label="Add Item"
+    severity="secondary"
+    [text]="true"
+    (onClick)="openAddDialog()"
+  />
+</div>
+
+@if (lineItems().length > 0) {
+  <p-table [value]="lineItems()" styleClass="p-datatable-sm">
+    <ng-template #header>
+      <tr>
+        <th>Description</th>
+        <th>Type</th>
+        <th class="text-right">Amount</th>
+        <th class="text-right">Qty</th>
+        <th class="text-right">Total</th>
+        <th class="w-24"></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-item>
+      <tr>
+        <td>{{ item.description }}</td>
+        <td>
+          <span
+            class="rounded px-2 py-1 text-xs"
+            [class.bg-green-100]="item.type !== 'deduction'"
+            [class.text-green-800]="item.type !== 'deduction'"
+            [class.bg-red-100]="item.type === 'deduction'"
+            [class.text-red-800]="item.type === 'deduction'"
+          >
+            {{ getTypeLabel(item.type) }}
+          </span>
+        </td>
+        <td class="text-right">{{ item.amount?.amount | currency }}</td>
+        <td class="text-right">{{ item.quantity }}</td>
+        <td class="text-right font-medium">
+          @if (item.type === "deduction") {
+            <span class="text-red-600">-{{ item.total | currency }}</span>
+          } @else {
+            {{ item.total | currency }}
+          }
+        </td>
+        <td class="text-right">
+          <p-button
+            icon="pi pi-pencil"
+            severity="secondary"
+            [text]="true"
+            [rounded]="true"
+            size="small"
+            pTooltip="Edit"
+            (onClick)="openEditDialog(item)"
+          />
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            [text]="true"
+            [rounded]="true"
+            size="small"
+            pTooltip="Delete"
+            (onClick)="confirmDelete(item)"
+          />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+} @else {
+  <div class="text-muted py-8 text-center">
+    <i class="pi pi-inbox mb-2 text-4xl"></i>
+    <p>No line items yet. Click "Add Item" to add payroll items.</p>
+  </div>
+}
+
+<!-- Line Item Dialog -->
+<p-dialog
+  [visible]="showDialog()"
+  (visibleChange)="showDialog.set($event)"
+  [header]="editingItem() ? 'Edit Line Item' : 'Add Line Item'"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+>
+  <form [formGroup]="form" class="space-y-4">
+    <ui-labeled-field label="Description" [required]="true">
+      <input pInputText formControlName="description" class="w-full" />
+    </ui-labeled-field>
+
+    <ui-labeled-field label="Type" [required]="true">
+      <p-select
+        formControlName="type"
+        [options]="typeOptions"
+        optionLabel="label"
+        optionValue="value"
+        styleClass="w-full"
+      />
+    </ui-labeled-field>
+
+    <div class="grid grid-cols-2 gap-4">
+      <ui-labeled-field label="Amount" [required]="true">
+        <p-inputnumber
+          formControlName="amount"
+          mode="currency"
+          currency="USD"
+          styleClass="w-full"
+        />
+      </ui-labeled-field>
+
+      <ui-labeled-field label="Quantity" [required]="true">
+        <p-inputnumber formControlName="quantity" [min]="1" styleClass="w-full" />
+      </ui-labeled-field>
+    </div>
+
+    <ui-labeled-field label="Notes">
+      <textarea pTextarea formControlName="notes" rows="2" class="w-full"></textarea>
+    </ui-labeled-field>
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" [text]="true" (onClick)="showDialog.set(false)" />
+    <p-button
+      [label]="editingItem() ? 'Update' : 'Add'"
+      icon="pi pi-check"
+      [loading]="isSaving()"
+      [disabled]="!form.valid"
+      (onClick)="saveItem()"
+    />
+  </ng-template>
+</p-dialog>

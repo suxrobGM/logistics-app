@@ -17,6 +17,8 @@ export class PageHeader {
   public readonly addRoute = input<string | null>(null);
   public readonly addTooltip = input<string>("Add new item");
   public readonly showAddButton = input<boolean>(true);
+  public readonly centered = input<boolean>(false);
+  public readonly backLink = input<string | null>(null);
   public readonly addClick = output<void>();
 
   protected handleAdd(): void {

@@ -1,5 +1,5 @@
 import { getLoads } from "@logistics/shared/api";
-import type { LoadDto } from "@logistics/shared/api/models";
+import type { LoadDto } from "@logistics/shared/api";
 import { createListStore } from "@/shared/stores";
 
 /**

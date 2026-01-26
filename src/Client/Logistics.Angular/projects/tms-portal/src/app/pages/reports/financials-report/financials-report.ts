@@ -5,7 +5,7 @@ import type {
   FinancialMetricDto,
   FinancialsReportDto,
   RevenueTrendDto,
-} from "@logistics/shared/api/models";
+} from "@logistics/shared/api";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";

@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, model, signal } from "@angular/core";
 import { Api, formatSortField, getPayments } from "@logistics/shared/api";
-import type { PaymentDto } from "@logistics/shared/api/models";
+import type { PaymentDto } from "@logistics/shared/api";
 import { AddressPipe } from "@logistics/shared/pipes";
 import { type TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";

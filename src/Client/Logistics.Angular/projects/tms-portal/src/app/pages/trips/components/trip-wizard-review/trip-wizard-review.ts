@@ -1,6 +1,6 @@
 import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, computed, inject, input, output } from "@angular/core";
-import type { TripStopDto, TripStopType } from "@logistics/shared/api/models";
+import type { TripStopDto, TripStopType } from "@logistics/shared/api";
 import { AddressPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

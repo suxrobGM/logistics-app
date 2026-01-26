@@ -3,7 +3,7 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Component, inject, input, model, output, signal } from "@angular/core";
 import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
-import type { AddressDto } from "@logistics/shared/api/models";
+import type { Address } from "@logistics/shared/api";
 import { InputTextModule } from "primeng/inputtext";
 import { catchError } from "rxjs";
 import { environment } from "@/env";
@@ -39,8 +39,8 @@ export class AddressAutocomplete implements ControlValueAccessor {
   public readonly placeholder = input("Type address...");
   public readonly country = input("us");
   public readonly forceSelection = input(false);
-  public readonly address = model<AddressDto | null>(null);
-  public readonly addressChange = output<AddressDto>();
+  public readonly address = model<Address | null>(null);
+  public readonly addressChange = output<Address>();
   public readonly selectedAddress = output<SelectedAddressEvent>();
 
   constructor() {
@@ -90,7 +90,7 @@ export class AddressAutocomplete implements ControlValueAccessor {
     const zipCode = geocodingFeature.properties.context.postcode.name;
     const country = geocodingFeature.properties.context.country.name;
 
-    const addressObj: AddressDto = {
+    const addressObj: Address = {
       line1: street,
       city: city,
       state: region,
@@ -123,13 +123,13 @@ export class AddressAutocomplete implements ControlValueAccessor {
     }, 100);
   }
 
-  private setAddressString(address: AddressDto | null): void {
+  private setAddressString(address: Address | null): void {
     this.addressString.set(Converters.addressToString(address));
   }
 
   // #region Reactive forms methods
 
-  private onChange(value: AddressDto | null): void {}
+  private onChange(value: Address | null): void {}
   private onTouched(): void {}
 
   private markAsTouched() {
@@ -139,12 +139,12 @@ export class AddressAutocomplete implements ControlValueAccessor {
     }
   }
 
-  writeValue(value: AddressDto): void {
+  writeValue(value: Address): void {
     this.address.set(value);
     this.setAddressString(value);
   }
 
-  registerOnChange(fn: (value: AddressDto | null) => void): void {
+  registerOnChange(fn: (value: Address | null) => void): void {
     this.onChange = fn;
   }
 
@@ -160,6 +160,6 @@ export class AddressAutocomplete implements ControlValueAccessor {
 }
 
 export interface SelectedAddressEvent {
-  address: AddressDto;
+  address: Address;
   center: GeoPoint;
 }

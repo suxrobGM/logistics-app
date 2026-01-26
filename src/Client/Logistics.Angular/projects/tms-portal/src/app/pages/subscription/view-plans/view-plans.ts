@@ -1,7 +1,7 @@
 import { CurrencyPipe } from "@angular/common";
 import { Component, type OnInit, inject, signal } from "@angular/core";
 import { Api, getSubscriptionPlans } from "@logistics/shared/api";
-import type { SubscriptionPlanDto } from "@logistics/shared/api/models";
+import type { SubscriptionPlanDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TenantService } from "@/core/services";

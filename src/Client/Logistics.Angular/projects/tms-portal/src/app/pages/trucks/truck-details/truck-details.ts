@@ -2,12 +2,8 @@ import { CommonModule, CurrencyPipe } from "@angular/common";
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Api, getTruckById } from "@logistics/shared/api";
-import type {
-  DailyGrossesDto,
-  MonthlyGrossesDto,
-  TruckDto,
-  TruckGeolocationDto,
-} from "@logistics/shared/api/models";
+import type { DailyGrossesDto, MonthlyGrossesDto, TruckDto } from "@logistics/shared/api";
+import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";

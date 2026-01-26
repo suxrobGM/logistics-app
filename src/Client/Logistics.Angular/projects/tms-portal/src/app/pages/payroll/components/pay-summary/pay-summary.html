@@ -1,0 +1,15 @@
+<div class="space-y-3">
+  <div class="flex justify-between">
+    <span class="text-muted">Gross Pay</span>
+    <span class="font-medium">{{ grossPay() | currency }}</span>
+  </div>
+  <div class="flex justify-between">
+    <span class="text-muted">Deductions</span>
+    <span class="font-medium text-red-600">-{{ totalDeductions() | currency }}</span>
+  </div>
+  <p-divider />
+  <div class="flex justify-between text-lg">
+    <span class="font-semibold">Net Pay</span>
+    <span class="text-primary font-bold">{{ netPay() | currency }}</span>
+  </div>
+</div>

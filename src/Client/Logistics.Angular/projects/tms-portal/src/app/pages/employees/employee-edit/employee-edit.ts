@@ -8,8 +8,8 @@ import {
   type EmployeeDto,
   type SalaryType,
   type UpdateEmployeeCommand,
-  salaryTypeOptions,
-} from "@logistics/shared/api/models";
+} from "@logistics/shared/api";
+import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";

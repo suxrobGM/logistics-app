@@ -1,7 +1,7 @@
 import { computed, inject } from "@angular/core";
 import { Api, cancelInvitation, getInvitations, resendInvitation } from "@logistics/shared/api";
 import { formatSortField } from "@logistics/shared/api";
-import type { InvitationDto } from "@logistics/shared/api/models";
+import type { InvitationDto } from "@logistics/shared/api";
 import type { AppError } from "@logistics/shared/errors";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 import type { TableLazyLoadEvent } from "primeng/table";

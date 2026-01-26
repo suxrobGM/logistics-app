@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, type OnInit, inject, input, output, signal } from "@angular/core";
 import { Api, getMonthlyGrosses } from "@logistics/shared/api";
-import type { MonthlyGrossesDto } from "@logistics/shared/api/models";
+import type { MonthlyGrossesDto } from "@logistics/shared/api";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { DividerModule } from "primeng/divider";

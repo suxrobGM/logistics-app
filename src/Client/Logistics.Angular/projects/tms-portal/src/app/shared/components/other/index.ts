@@ -1,4 +1,8 @@
-export { RangeCalendar, BaseTableComponent, type TableQueryParams } from "@logistics/shared/components";
+export {
+  DateRangePicker as RangeCalendar,
+  BaseTableComponent,
+  type TableQueryParams,
+} from "@logistics/shared/components";
 export * from "./stripe-card/stripe-card";
 export * from "./base-report/base-report";
 export * from "./document-manager/document-manager";

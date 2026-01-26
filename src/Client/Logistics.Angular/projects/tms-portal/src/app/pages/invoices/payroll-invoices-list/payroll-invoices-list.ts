@@ -2,19 +2,14 @@ import { CommonModule } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
-import { invoiceStatusOptions } from "@logistics/shared/api/enums";
 import {
   Api,
   approvePayrollInvoice,
   batchApprovePayroll,
   rejectPayrollInvoice,
 } from "@logistics/shared/api";
-import {
-  type InvoiceDto,
-  type InvoiceStatus,
-  type SalaryType,
-  salaryTypeOptions,
-} from "@logistics/shared/api/models";
+import { type InvoiceDto, type InvoiceStatus, type SalaryType } from "@logistics/shared/api";
+import { invoiceStatusOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
 import { ConfirmationService, type SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -22,11 +17,11 @@ import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { DatePickerModule } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
-import { TextareaModule } from "primeng/textarea";
 import { TableModule } from "primeng/table";
+import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
-import { DataContainer, InvoiceStatusTag, LabeledField, SearchInput } from "@/shared/components";
 import { ToastService } from "@/core/services";
+import { DataContainer, InvoiceStatusTag, LabeledField, SearchInput } from "@/shared/components";
 import { type DatePreset, getDatePreset } from "@/shared/utils";
 import { PayrollInvoicesListStore } from "../store/payroll-invoices-list.store";
 

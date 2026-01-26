@@ -5,7 +5,7 @@ import type {
   OptimizeTripStopsCommand,
   TripLoadDto,
   TripStopDto,
-} from "@logistics/shared/api/models";
+} from "@logistics/shared/api";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 import { rxMethod } from "@ngrx/signals/rxjs-interop";
 import { from, pipe, switchMap, tap } from "rxjs";
@@ -226,7 +226,11 @@ export const TripWizardStore = signalStore(
     },
 
     // Step 1 Methods
-    setBasicInfo(data: { tripName: string; truckId: string | null; truckVehicleCapacity: number }): void {
+    setBasicInfo(data: {
+      tripName: string;
+      truckId: string | null;
+      truckVehicleCapacity: number;
+    }): void {
       patchState(store, {
         tripName: data.tripName,
         truckId: data.truckId,

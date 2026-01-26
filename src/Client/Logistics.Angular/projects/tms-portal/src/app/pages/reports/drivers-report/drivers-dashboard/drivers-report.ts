@@ -6,7 +6,7 @@ import type {
   DriverEfficiencyDto,
   DriverPerformanceDto,
   DriverTrendDto,
-} from "@logistics/shared/api/models";
+} from "@logistics/shared/api";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";

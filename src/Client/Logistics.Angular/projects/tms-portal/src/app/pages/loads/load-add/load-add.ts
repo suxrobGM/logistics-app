@@ -1,7 +1,7 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { Api, createLoad } from "@logistics/shared/api";
-import type { CreateLoadCommand } from "@logistics/shared/api/models";
+import type { CreateLoadCommand } from "@logistics/shared/api";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";

@@ -30,5 +30,21 @@ public enum InvoiceLineItemType
     Tax,
 
     [Description("Other"), EnumMember(Value = "other")]
-    Other
+    Other,
+
+    // Payroll-specific line item types
+    [Description("Base Pay"), EnumMember(Value = "base_pay")]
+    BasePay,
+
+    [Description("Bonus"), EnumMember(Value = "bonus")]
+    Bonus,
+
+    [Description("Deduction"), EnumMember(Value = "deduction")]
+    Deduction,
+
+    [Description("Reimbursement"), EnumMember(Value = "reimbursement")]
+    Reimbursement,
+
+    [Description("Adjustment"), EnumMember(Value = "adjustment")]
+    Adjustment
 }

@@ -1,7 +1,7 @@
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, deleteCustomer, getCustomerById } from "@logistics/shared/api";
-import type { CustomerDto } from "@logistics/shared/api/models";
+import type { CustomerDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ToastService } from "@/core/services";

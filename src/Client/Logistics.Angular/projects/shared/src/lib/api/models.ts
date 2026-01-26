@@ -1,16 +1,4 @@
-// Truck geolocation type for map visualization (custom type, not generated)
-import type { Address, GeoPoint, PaginationMeta } from "../generated/models";
-
-/**
- * Re-export all models from generated code for backwards compatibility.
- * Import from '@logistics/shared/api' or '@logistics/shared/api/models' - both work.
- */
-export * from "../generated/models";
-export * from "./enums";
-
-// Backwards-compatible type aliases for renamed types
-export type { Address as AddressDto } from "../generated/models/address";
-export type { GeoPoint as GeoPointDto } from "../generated/models/geo-point";
+import type { Address, GeoPoint, PaginationMeta } from "./generated";
 
 // Re-export common query types used by consumers
 export interface SearchableQuery {

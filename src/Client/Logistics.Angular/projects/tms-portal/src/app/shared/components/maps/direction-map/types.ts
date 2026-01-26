@@ -1,4 +1,4 @@
-import type { GeoPointDto } from "@logistics/shared/api/models";
+import type { GeoPoint } from "@logistics/shared/api";
 import type { Feature, FeatureCollection, LineString, Point } from "geojson";
 
 /**
@@ -20,8 +20,8 @@ export interface WaypointClickEvent {
  * Represents a change in the route.
  */
 export interface RouteChangeEvent {
-  origin: GeoPointDto;
-  destination: GeoPointDto;
+  origin: GeoPoint;
+  destination: GeoPoint;
   distance: number;
 }
 
@@ -30,7 +30,7 @@ export interface RouteChangeEvent {
  */
 export interface Waypoint {
   id: string;
-  location: GeoPointDto;
+  location: GeoPoint;
 }
 
 interface WaypointProps {

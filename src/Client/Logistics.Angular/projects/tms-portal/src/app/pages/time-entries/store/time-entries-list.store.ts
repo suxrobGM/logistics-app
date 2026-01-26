@@ -1,5 +1,5 @@
 import { getTimeEntries } from "@logistics/shared/api";
-import type { TimeEntryDto } from "@logistics/shared/api/models";
+import type { TimeEntryDto } from "@logistics/shared/api";
 import { createListStore } from "@/shared/stores";
 
 /**

@@ -168,6 +168,28 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
+    ///     Update a line item on an invoice.
+    /// </summary>
+    [HttpPut("{invoiceId:guid}/line-items/{lineItemId:guid}", Name = "UpdateLineItem")]
+    [ProducesResponseType(typeof(InvoiceLineItemDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Invoice.Manage)]
+    public async Task<IActionResult> UpdateLineItem(Guid invoiceId, Guid lineItemId, [FromBody] UpdateLineItemRequest request)
+    {
+        var result = await mediator.Send(new UpdateLineItemCommand
+        {
+            InvoiceId = invoiceId,
+            LineItemId = lineItemId,
+            Description = request.Description,
+            Type = request.Type,
+            Amount = request.Amount,
+            Quantity = request.Quantity,
+            Notes = request.Notes
+        });
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
     ///     Remove a line item from an invoice.
     /// </summary>
     [HttpDelete("{invoiceId:guid}/line-items/{lineItemId:guid}", Name = "DeleteLineItem")]
@@ -238,6 +260,24 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
+    ///     Batch create payroll invoices for multiple employees.
+    /// </summary>
+    [HttpPost("payrolls/batch", Name = "BatchCreatePayrollInvoices")]
+    [ProducesResponseType(typeof(BatchCreatePayrollInvoicesResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Payroll.Manage)]
+    public async Task<IActionResult> BatchCreatePayrollInvoices([FromBody] BatchCreatePayrollInvoicesRequest request)
+    {
+        var result = await mediator.Send(new BatchCreatePayrollInvoicesCommand
+        {
+            EmployeeIds = request.EmployeeIds,
+            PeriodStart = request.PeriodStart,
+            PeriodEnd = request.PeriodEnd
+        });
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPut("payrolls/{id:guid}", Name = "UpdatePayrollInvoice")]

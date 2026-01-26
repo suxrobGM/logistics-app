@@ -1,5 +1,5 @@
 import { Component, computed, input } from "@angular/core";
-import type { TripStatus } from "@logistics/shared/api/models";
+import type { TripStatus } from "@logistics/shared/api";
 import { Tag } from "primeng/tag";
 
 @Component({

@@ -1,5 +1,5 @@
 import { Component, input } from "@angular/core";
-import type { ExpenseType } from "@logistics/shared/api/models";
+import type { ExpenseType } from "@logistics/shared/api";
 import { Tag, TagModule } from "primeng/tag";
 
 @Component({

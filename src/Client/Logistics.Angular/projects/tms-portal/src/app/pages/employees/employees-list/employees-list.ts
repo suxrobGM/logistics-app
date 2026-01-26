@@ -2,8 +2,8 @@ import { CurrencyPipe, DatePipe, PercentPipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { Permission, PermissionGuard } from "@logistics/shared";
-import type { EmployeeDto, SalaryType } from "@logistics/shared/api/models";
-import { salaryTypeOptions } from "@logistics/shared/api/models";
+import type { EmployeeDto, SalaryType } from "@logistics/shared/api";
+import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -52,14 +52,12 @@ export class EmployeeListComponent {
     {
       label: "View payrolls",
       icon: "pi pi-file-o",
-      command: () =>
-        this.router.navigateByUrl(`/invoices/payroll/employee/${this.selectedRow()!.id}`),
+      command: () => this.router.navigateByUrl(`/payroll/employee/${this.selectedRow()!.id}`),
     },
     {
-      label: "View time entries",
+      label: "View timesheets",
       icon: "pi pi-clock",
-      command: () =>
-        this.router.navigateByUrl(`/time-entries/employee/${this.selectedRow()!.id}`),
+      command: () => this.router.navigateByUrl(`/timesheets/employee/${this.selectedRow()!.id}`),
     },
     {
       label: "Manage documents",

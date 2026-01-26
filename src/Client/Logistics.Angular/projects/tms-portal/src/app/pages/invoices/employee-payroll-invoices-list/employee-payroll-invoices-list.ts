@@ -2,13 +2,8 @@ import { CommonModule } from "@angular/common";
 import { Component, effect, inject, input, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, getEmployeeById } from "@logistics/shared/api";
-import {
-  type EmployeeDto,
-  type PaymentMethodType,
-  type SalaryType,
-  paymentMethodTypeOptions,
-  salaryTypeOptions,
-} from "@logistics/shared/api/models";
+import { type EmployeeDto, type PaymentMethodType, type SalaryType } from "@logistics/shared/api";
+import { paymentMethodTypeOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";

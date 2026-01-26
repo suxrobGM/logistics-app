@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, renewSubscription } from "@logistics/shared/api";
-import type { SubscriptionDto } from "@logistics/shared/api/models";
+import type { SubscriptionDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";

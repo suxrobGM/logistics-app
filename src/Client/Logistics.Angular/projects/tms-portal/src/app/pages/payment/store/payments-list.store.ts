@@ -1,5 +1,5 @@
 import { formatSortField, getPayments } from "@logistics/shared/api";
-import type { PaymentDto } from "@logistics/shared/api/models";
+import type { PaymentDto } from "@logistics/shared/api";
 import { createListStore } from "@/shared/stores";
 import { PredefinedDateRanges } from "@/shared/utils";
 

@@ -4,24 +4,24 @@ import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import {
   Api,
-  getInvoiceById,
   approvePayrollInvoice,
+  getInvoiceById,
   rejectPayrollInvoice,
   submitPayrollForApproval,
 } from "@logistics/shared/api";
-import type { InvoiceDto } from "@logistics/shared/api/models";
-import { salaryTypeOptions } from "@logistics/shared/api/models";
+import type { InvoiceDto } from "@logistics/shared/api";
+import { salaryTypeOptions } from "@logistics/shared/api/enums";
+import { ConfirmationService } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { DialogModule } from "primeng/dialog";
 import { DividerModule } from "primeng/divider";
-import { TextareaModule } from "primeng/textarea";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
+import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
-import { ConfirmationService } from "primeng/api";
 import { ToastService } from "@/core/services";
 import { InvoiceStatusTag, PaymentStatusTag } from "@/shared/components";
 import { RecordPaymentDialog } from "../components";

@@ -1,0 +1,109 @@
+<ui-page-header
+  title="Edit Payroll Invoice"
+  [showAddButton]="false"
+  [centered]="true"
+  backLink="/payroll/invoices"
+/>
+
+<div class="mx-auto max-w-4xl">
+  @if (isLoading()) {
+    <div class="flex justify-center py-8">
+      <p-progress-spinner />
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <!-- Employee & Date Range Section -->
+      <p-card class="mb-4">
+        <ng-template #title>Pay Period Details</ng-template>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <ui-labeled-field label="Employee">
+            <p-autocomplete
+              formControlName="employee"
+              class="w-full"
+              inputStyleClass="w-full"
+              placeholder="Type employee's name"
+              optionLabel="fullName"
+              [minLength]="2"
+              [suggestions]="suggestedEmployees()"
+              (completeMethod)="searchEmployee($event)"
+              (onSelect)="handleAutoCompleteSelectEvent($event)"
+            />
+          </ui-labeled-field>
+
+          <ui-labeled-field label="Date Range">
+            <p-date-picker
+              formControlName="dateRange"
+              selectionMode="range"
+              [showIcon]="true"
+              [maxDate]="todayDate"
+              class="w-full"
+              (onSelect)="tryCalculatePayroll()"
+            />
+          </ui-labeled-field>
+        </div>
+
+        @if (selectedEmployee()) {
+          <p-divider />
+          <div class="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
+            <div>
+              <span class="text-muted">Role</span>
+              <p class="font-medium">{{ selectedEmployee()!.role?.displayName ?? "N/A" }}</p>
+            </div>
+            <div>
+              <span class="text-muted">Salary Type</span>
+              <p class="font-medium">{{ getSalaryTypeDesc(selectedEmployee()!.salaryType) }}</p>
+            </div>
+            <div>
+              <span class="text-muted">Rate</span>
+              <p class="font-medium">
+                @if (selectedEmployee()!.salaryType === "share_of_gross") {
+                  {{ selectedEmployee()!.salary | percent }}
+                } @else {
+                  {{ selectedEmployee()!.salary | currency }}
+                }
+              </p>
+            </div>
+            <div>
+              <span class="text-muted">Status</span>
+              <p class="font-medium">{{ invoice()?.status ?? "Draft" | titlecase }}</p>
+            </div>
+          </div>
+        }
+      </p-card>
+
+      <!-- Line Items Section - Using shared component -->
+      <p-card class="mb-4">
+        <app-payroll-line-items-table
+          [invoiceId]="invoiceId()"
+          [lineItems]="lineItems()"
+          (itemsChanged)="onLineItemsChanged()"
+        />
+      </p-card>
+
+      <!-- Summary Section - Using shared component -->
+      <p-card class="mb-4">
+        <ng-template #title>Summary</ng-template>
+        <app-payroll-pay-summary [lineItems]="lineItems()" />
+      </p-card>
+
+      <!-- Actions -->
+      <div class="flex gap-2">
+        <p-button
+          type="submit"
+          icon="pi pi-check"
+          label="Save Changes"
+          [loading]="isSaving()"
+          [disabled]="!form.valid"
+        />
+        <p-button
+          type="button"
+          icon="pi pi-arrow-left"
+          label="Cancel"
+          [outlined]="true"
+          routerLink="/payroll/invoices"
+        />
+      </div>
+    </form>
+  }
+</div>

@@ -21,9 +21,8 @@ import {
   type TruckStatus,
   type TruckType,
   type UpdateTruckCommand,
-  truckStatusOptions,
-  truckTypeOptions,
-} from "@logistics/shared/api/models";
+} from "@logistics/shared/api";
+import { truckStatusOptions, truckTypeOptions } from "@logistics/shared/api/enums";
 import { AutoCompleteModule } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

@@ -1,5 +1,6 @@
 import { Component, input } from "@angular/core";
-import { type LoadStatus, loadStatusOptions } from "@logistics/shared/api/models";
+import { type LoadStatus } from "@logistics/shared/api";
+import { loadStatusOptions } from "@logistics/shared/api/enums";
 import { Tag, TagModule } from "primeng/tag";
 
 @Component({
