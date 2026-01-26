@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+        <div style="background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 40px;">
+            <div style="text-align: center; margin-bottom: 24px;">
+                <div style="display: inline-block; background-color: #f8d7da; border-radius: 50%; padding: 16px;">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                </div>
+            </div>
+
+            <h1 style="color: #dc3545; font-size: 24px; margin: 0 0 24px 0; text-align: center;">Payroll Rejected</h1>
+
+            <p style="color: #4a4a4a; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
+                Hi {{ EmployeeName }},
+            </p>
+
+            <p style="color: #4a4a4a; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+                Unfortunately, your payroll submission has been rejected and requires revision.
+            </p>
+
+            <div style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; margin: 24px 0;">
+                <p style="color: #6c757d; font-size: 14px; margin: 0 0 16px 0; font-weight: 600;">Payroll Details</p>
+
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="color: #6c757d; font-size: 14px;">Payroll Number:</span>
+                    <span style="color: #1a1a1a; font-size: 14px; font-weight: 500;">#{{ PayrollNumber }}</span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="color: #6c757d; font-size: 14px;">Pay Period:</span>
+                    <span style="color: #1a1a1a; font-size: 14px;">{{ PeriodStart }} - {{ PeriodEnd }}</span>
+                </div>
+            </div>
+
+            <div style="background-color: #f8d7da; border-left: 4px solid #dc3545; padding: 16px; margin: 24px 0; border-radius: 0 4px 4px 0;">
+                <p style="color: #721c24; font-size: 14px; font-weight: 600; margin: 0 0 8px 0;">Rejection Reason:</p>
+                <p style="color: #721c24; font-size: 14px; margin: 0;">{{ RejectionReason }}</p>
+            </div>
+
+            <p style="color: #4a4a4a; font-size: 14px; line-height: 1.6; margin: 24px 0 0 0;">
+                Please review the rejection reason and contact your manager if you need clarification or wish to dispute this decision.
+            </p>
+
+            <hr style="border: none; border-top: 1px solid #e9ecef; margin: 24px 0;">
+
+            <p style="color: #6c757d; font-size: 12px; line-height: 1.6; margin: 0; text-align: center;">
+                This is an automated notification. Please do not reply to this email.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

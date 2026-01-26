@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5;">
+    <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+        <div style="background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 40px;">
+            <h1 style="color: #1a1a1a; font-size: 24px; margin: 0 0 24px 0;">Invoice #{{ InvoiceNumber }}</h1>
+
+            <p style="color: #4a4a4a; font-size: 16px; line-height: 1.6; margin: 0 0 16px 0;">
+                <strong>{{ CompanyName }}</strong> has sent you an invoice.
+            </p>
+
+            {% if PersonalMessage %}
+            <div style="background-color: #e7f3ff; border-left: 4px solid #007bff; padding: 16px; margin: 16px 0; border-radius: 0 4px 4px 0;">
+                <p style="color: #4a4a4a; font-size: 14px; font-style: italic; margin: 0;">"{{ PersonalMessage }}"</p>
+            </div>
+            {% endif %}
+
+            <div style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; margin: 24px 0;">
+                <p style="color: #6c757d; font-size: 14px; margin: 0 0 8px 0;">Invoice Summary</p>
+
+                {% if CustomerName %}
+                <p style="color: #4a4a4a; font-size: 14px; margin: 0 0 8px 0;">
+                    <strong>Customer:</strong> {{ CustomerName }}
+                </p>
+                {% endif %}
+
+                {% if LoadNumber %}
+                <p style="color: #4a4a4a; font-size: 14px; margin: 0 0 8px 0;">
+                    <strong>Load:</strong> #{{ LoadNumber }}
+                </p>
+                {% endif %}
+
+                {% if DueDate %}
+                <p style="color: #4a4a4a; font-size: 14px; margin: 0 0 8px 0;">
+                    <strong>Due Date:</strong> {{ DueDate }}
+                </p>
+                {% endif %}
+
+                <hr style="border: none; border-top: 1px solid #e9ecef; margin: 16px 0;">
+
+                {% if LineItems.size > 0 %}
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px;">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left; padding: 8px 0; color: #6c757d; font-size: 12px; border-bottom: 1px solid #e9ecef;">Description</th>
+                            <th style="text-align: right; padding: 8px 0; color: #6c757d; font-size: 12px; border-bottom: 1px solid #e9ecef;">Qty</th>
+                            <th style="text-align: right; padding: 8px 0; color: #6c757d; font-size: 12px; border-bottom: 1px solid #e9ecef;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in LineItems %}
+                        <tr>
+                            <td style="padding: 8px 0; color: #4a4a4a; font-size: 14px;">{{ item.Description }}</td>
+                            <td style="text-align: right; padding: 8px 0; color: #4a4a4a; font-size: 14px;">{{ item.Quantity }}</td>
+                            <td style="text-align: right; padding: 8px 0; color: #4a4a4a; font-size: 14px;">{{ item.Total }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px;">
+                    <span style="color: #6c757d; font-size: 14px;">Total</span>
+                    <span style="color: #1a1a1a; font-size: 18px; font-weight: 600;">{{ Total }}</span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px; background-color: #e8f5e9; margin: 8px -20px -20px -20px; padding: 16px 20px; border-radius: 0 0 8px 8px;">
+                    <span style="color: #2e7d32; font-size: 16px; font-weight: 600;">Amount Due</span>
+                    <span style="color: #2e7d32; font-size: 20px; font-weight: 700;">{{ AmountDue }}</span>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 32px 0;">
+                <a href="{{ PaymentUrl }}" style="display: inline-block; background-color: #28a745; color: white; padding: 14px 32px; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: 500;">
+                    Pay Invoice
+                </a>
+            </div>
+
+            <p style="color: #6c757d; font-size: 14px; line-height: 1.6; margin: 16px 0 0 0;">
+                This payment link expires on {{ ExpiresAt }}.
+            </p>
+
+            <hr style="border: none; border-top: 1px solid #e9ecef; margin: 24px 0;">
+
+            <p style="color: #6c757d; font-size: 12px; line-height: 1.6; margin: 0;">
+                If you have any questions about this invoice, please contact {{ CompanyName }} directly.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

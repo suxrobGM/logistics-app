@@ -13,10 +13,8 @@ namespace Logistics.Infrastructure.Persistence;
 public static class Registrar
 {
     /// <summary>
-    ///     Add the infrastructure layer to the service collection.
-    ///     It also adds the domain layer and the necessary services.
-    ///     To add master and tenant databases, use the AddMasterDatabase and AddTenantDatabase methods.
-    ///     To add identity, use the AddIdentity method.
+    ///     Add a persistence infrastructure layer (databases, repositories, multi-tenancy).
+    ///     Returns IInfrastructureBuilder for fluent configuration of Master/Tenant databases.
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <param name="configuration">The configuration.</param>
