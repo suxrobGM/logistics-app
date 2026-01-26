@@ -2,15 +2,16 @@ namespace Logistics.Infrastructure.Services;
 
 public record LoadBoardOptions
 {
+    public const string SectionName = "LoadBoard";
     public DatOptions? Dat { get; set; }
     public TruckstopOptions? Truckstop { get; set; }
     public OneTwo3LoadboardOptions? OneTwo3Loadboard { get; set; }
 }
 
 /// <summary>
-/// DAT Load Board API configuration.
-/// Authentication: Bearer Token (Service Account or User Account)
-/// API Docs: https://freight.api.dat.com/docs
+///     DAT Load Board API configuration.
+///     Authentication: Bearer Token (Service Account or User Account)
+///     API Docs: https://freight.api.dat.com/docs
 /// </summary>
 public record DatOptions
 {
@@ -19,10 +20,10 @@ public record DatOptions
 }
 
 /// <summary>
-/// Truckstop.com Load Board API configuration.
-/// Authentication: OAuth 2.0 (Resource Owner Password grant)
-/// Access Token validity: 20 minutes
-/// Refresh Token validity: 6 months
+///     Truckstop.com Load Board API configuration.
+///     Authentication: OAuth 2.0 (Resource Owner Password grant)
+///     Access Token validity: 20 minutes
+///     Refresh Token validity: 6 months
 /// </summary>
 public record TruckstopOptions
 {
@@ -31,9 +32,9 @@ public record TruckstopOptions
 }
 
 /// <summary>
-/// 123Loadboard API configuration.
-/// Authentication: API Key (X-API-Key header)
-/// Rate Limits: 100 searches/hour, 300/day, 2000/month
+///     123Loadboard API configuration.
+///     Authentication: API Key (X-API-Key header)
+///     Rate Limits: 100 searches/hour, 300/day, 2000/month
 /// </summary>
 public record OneTwo3LoadboardOptions
 {

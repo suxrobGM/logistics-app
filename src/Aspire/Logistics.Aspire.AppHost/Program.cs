@@ -39,7 +39,7 @@ var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-serv
     .WithEnvironment("Smtp__Password", builder.GetConfigValue("Smtp:Password"))
     .WithEnvironment("Smtp__Host", builder.GetConfigValue("Smtp:Host"))
     .WithEnvironment("Smtp__Port", builder.GetConfigValue("Smtp:Port"))
-    .WaitFor(migrator);
+    .WaitForCompletion(migrator);
 
 var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithExternalHttpEndpoints()
@@ -64,7 +64,7 @@ var logisticsApi = builder.AddProject<Logistics_API>("api")
         builder.GetConfigValue("TenantsDatabaseConfig:DatabasePassword"))
     .WithEnvironment("TenantsDatabaseConfig__DatabasePort",
         builder.GetConfigValue("TenantsDatabaseConfig:DatabasePort"))
-    .WaitFor(migrator)
+    .WaitForCompletion(migrator) // Wait for migrator to complete successfully
     .WaitFor(identityServer);
 
 // Use BunApp for local dev, Container for publishing

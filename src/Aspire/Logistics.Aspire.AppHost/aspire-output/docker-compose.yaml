@@ -97,7 +97,7 @@ services:
       - "${IDENTITY_SERVER_PORT}:${IDENTITY_SERVER_PORT}"
     depends_on:
       migrator:
-        condition: "service_started"
+        condition: "service_completed_successfully"
     networks:
       - "aspire"
   api:
@@ -147,7 +147,7 @@ services:
       - "${API_PORT}:${API_PORT}"
     depends_on:
       migrator:
-        condition: "service_started"
+        condition: "service_completed_successfully"
       identity-server:
         condition: "service_started"
     networks:

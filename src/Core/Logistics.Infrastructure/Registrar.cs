@@ -81,7 +81,7 @@ public static class Registrar
         services.AddScoped<IEldProviderFactory, EldProviderFactory>();
 
         // Load Board Provider Services
-        services.Configure<LoadBoardOptions>(configuration.GetSection("LoadBoard"));
+        services.Configure<LoadBoardOptions>(configuration.GetSection(LoadBoardOptions.SectionName));
         services.AddHttpClient<DatLoadBoardService>();
         services.AddHttpClient<TruckstopLoadBoardService>();
         services.AddHttpClient<OneTwo3LoadBoardService>();
