@@ -174,7 +174,7 @@ For commercial licensing, contact me.
 
 Created by **Sukhrob Ilyosbekov**
 
-- Email: [suxrobgm@test.com](mailto:suxrobgm@test.com)
+- Email: [suxrobgm@gmail.com](mailto:suxrobgm@gmail.com)
 - Telegram: [@suxrobgm](https://t.me/suxrobgm)
 
 ## Preview
