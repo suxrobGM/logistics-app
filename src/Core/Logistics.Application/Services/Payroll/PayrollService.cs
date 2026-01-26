@@ -95,6 +95,56 @@ internal class PayrollService(
         return payrollInvoice;
     }
 
+    public void RecalculatePayroll(PayrollInvoice payroll)
+    {
+        var (invoiceAmount, totalDistance, totalHours) = CalculateSalaryWithDetails(
+            payroll.Employee,
+            payroll.PeriodStart,
+            payroll.PeriodEnd);
+
+        payroll.Total = invoiceAmount;
+        payroll.TotalDistanceDriven = totalDistance;
+        payroll.TotalHoursWorked = totalHours;
+
+        logger.LogInformation(
+            "Recalculated payroll {PayrollId} for employee {EmployeeId}: Amount={Amount}, Distance={Distance}, Hours={Hours}",
+            payroll.Id, payroll.EmployeeId, invoiceAmount, totalDistance, totalHours);
+    }
+
+    public async Task<int> LinkTimeEntriesToPayrollAsync(PayrollInvoice payroll)
+    {
+        // Only link for hourly employees
+        if (payroll.Employee?.SalaryType != SalaryType.Hourly)
+        {
+            return 0;
+        }
+
+        // Find unlinked time entries within the payroll period
+        var timeEntries = await tenantUow.Repository<TimeEntry>()
+            .GetListAsync(te =>
+                te.EmployeeId == payroll.EmployeeId &&
+                te.PayrollInvoiceId == null &&
+                te.Date >= payroll.PeriodStart.Date &&
+                te.Date <= payroll.PeriodEnd.Date);
+
+        foreach (var entry in timeEntries)
+        {
+            entry.PayrollInvoiceId = payroll.Id;
+            tenantUow.Repository<TimeEntry>().Update(entry);
+        }
+
+        logger.LogInformation(
+            "Linked {Count} time entries to payroll {PayrollId}",
+            timeEntries.Count, payroll.Id);
+
+        return timeEntries.Count;
+    }
+
+    public bool ValidateTimeEntryDate(DateTime entryDate, DateTime periodStart, DateTime periodEnd)
+    {
+        return entryDate.Date >= periodStart.Date && entryDate.Date <= periodEnd.Date;
+    }
+
     private async Task<bool> IsPayrollInvoiceExisting(Guid employeeId, DateTime startDate, DateTime endDate)
     {
         var payroll = await tenantUow.Repository<PayrollInvoice>().GetAsync(p =>

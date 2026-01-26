@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -6,7 +7,9 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class RejectPayrollInvoiceHandler(ITenantUnitOfWork tenantUow)
+internal sealed class RejectPayrollInvoiceHandler(
+    ITenantUnitOfWork tenantUow,
+    ICurrentUserService currentUserService)
     : IAppRequestHandler<RejectPayrollInvoiceCommand, Result>
 {
     public async Task<Result> Handle(RejectPayrollInvoiceCommand req, CancellationToken ct)
@@ -23,9 +26,8 @@ internal sealed class RejectPayrollInvoiceHandler(ITenantUnitOfWork tenantUow)
             return Result.Fail("Only payroll invoices pending approval can be rejected");
         }
 
-        payroll.Status = InvoiceStatus.Rejected;
-        payroll.RejectionReason = req.Reason;
-
+        var currentUserId = currentUserService.GetUserId() ?? Guid.Empty;
+        payroll.Reject(currentUserId, req.Reason);
         tenantUow.Repository<PayrollInvoice>().Update(payroll);
         await tenantUow.SaveChangesAsync();
 

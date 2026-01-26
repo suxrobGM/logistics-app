@@ -56,7 +56,7 @@ internal sealed class UpdateUserHandler : IAppRequestHandler<UpdateUserCommand, 
 
         employee.FirstName = user.FirstName;
         employee.LastName = user.LastName;
-        employee.Email = user.Email;
+        employee.Email = user.Email!;
         employee.PhoneNumber = user.PhoneNumber;
     }
 }

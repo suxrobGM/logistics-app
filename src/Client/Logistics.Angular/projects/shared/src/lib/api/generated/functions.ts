@@ -305,6 +305,8 @@ export type { GetFinancialsReport$Params as GetFinancialsReport$Params } from '.
 export { getFinancialsReport as getFinancialsReport } from './fn/report/get-financials-report';
 export type { GetDriverDashboard$Params as GetDriverDashboard$Params } from './fn/report/get-driver-dashboard';
 export { getDriverDashboard as getDriverDashboard } from './fn/report/get-driver-dashboard';
+export type { GetPayrollReport$Params as GetPayrollReport$Params } from './fn/report/get-payroll-report';
+export { getPayrollReport as getPayrollReport } from './fn/report/get-payroll-report';
 export type { GetAppRoles$Params as GetAppRoles$Params } from './fn/role/get-app-roles';
 export { getAppRoles as getAppRoles } from './fn/role/get-app-roles';
 export type { GetTenantRoles$Params as GetTenantRoles$Params } from './fn/role/get-tenant-roles';

@@ -88,7 +88,16 @@ internal sealed class RecordManualPaymentHandler(
         await tenantUow.Repository<Payment>().AddAsync(payment, ct);
 
         // Apply to invoice (this updates status automatically)
-        invoice.ApplyPayment(payment);
+        // Use event-raising method for PayrollInvoice to send notifications
+        if (invoice is PayrollInvoice payrollInvoice)
+        {
+            payrollInvoice.ApplyPaymentWithEvent(payment);
+        }
+        else
+        {
+            invoice.ApplyPayment(payment);
+        }
+
         tenantUow.Repository<Invoice>().Update(invoice);
 
         await tenantUow.SaveChangesAsync(ct);

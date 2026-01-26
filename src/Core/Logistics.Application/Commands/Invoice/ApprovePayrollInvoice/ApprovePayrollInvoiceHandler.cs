@@ -32,11 +32,7 @@ internal sealed class ApprovePayrollInvoiceHandler(
             return Result.Fail("Unable to determine the current user");
         }
 
-        payroll.Status = InvoiceStatus.Approved;
-        payroll.ApprovedById = currentUserId.Value;
-        payroll.ApprovedAt = DateTime.UtcNow;
-        payroll.ApprovalNotes = req.Notes;
-
+        payroll.Approve(currentUserId.Value, req.Notes);
         tenantUow.Repository<PayrollInvoice>().Update(payroll);
         await tenantUow.SaveChangesAsync();
 

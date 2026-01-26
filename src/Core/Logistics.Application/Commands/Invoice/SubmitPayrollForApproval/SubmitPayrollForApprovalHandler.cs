@@ -23,7 +23,7 @@ internal sealed class SubmitPayrollForApprovalHandler(ITenantUnitOfWork tenantUo
             return Result.Fail("Only draft payroll invoices can be submitted for approval");
         }
 
-        payroll.Status = InvoiceStatus.PendingApproval;
+        payroll.SubmitForApproval();
         tenantUow.Repository<PayrollInvoice>().Update(payroll);
         await tenantUow.SaveChangesAsync();
 

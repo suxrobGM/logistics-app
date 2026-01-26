@@ -2,6 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
+import { downloadBlobFile } from "@logistics/shared";
 import {
   Api,
   approvePayrollInvoice,
@@ -19,7 +20,13 @@ import { TableModule } from "primeng/table";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { DataContainer, DateRangePicker, InvoiceStatusTag, LabeledField, SearchInput } from "@/shared/components";
+import {
+  DataContainer,
+  DateRangePicker,
+  InvoiceStatusTag,
+  LabeledField,
+  SearchInput,
+} from "@/shared/components";
 import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
 
 @Component({
@@ -66,6 +73,7 @@ export class PayrollInvoicesList {
   // Loading states
   protected readonly isBatchApproving = signal(false);
   protected readonly isRejecting = signal(false);
+  protected readonly isExporting = signal(false);
 
   // Filter options
   protected readonly statusOptions: SelectItem[] = invoiceStatusOptions;
@@ -227,5 +235,53 @@ export class PayrollInvoicesList {
 
   getSalaryTypeDesc(enumValue: SalaryType): string {
     return salaryTypeOptions.find((option) => option.value === enumValue)?.label ?? "N/A";
+  }
+
+  protected async exportToCsv(): Promise<void> {
+    const data = this.store.data();
+    if (data.length === 0) {
+      this.toastService.showWarning("No data to export");
+      return;
+    }
+
+    this.isExporting.set(true);
+    try {
+      const headers = [
+        "Invoice #",
+        "Employee",
+        "Period Start",
+        "Period End",
+        "Salary Type",
+        "Employee Salary",
+        "Invoice Total",
+        "Status",
+        "Created Date",
+      ];
+
+      const rows = data.map((invoice) => [
+        invoice.number?.toString() ?? "",
+        invoice.employee?.fullName ?? "",
+        invoice.periodStart ? new Date(invoice.periodStart).toLocaleDateString() : "",
+        invoice.periodEnd ? new Date(invoice.periodEnd).toLocaleDateString() : "",
+        this.getSalaryTypeDesc(invoice.employee?.salaryType as SalaryType),
+        invoice.employee?.salary?.toString() ?? "",
+        invoice.total?.amount?.toString() ?? "",
+        invoice.status ?? "",
+        invoice.createdDate ? new Date(invoice.createdDate).toLocaleDateString() : "",
+      ]);
+
+      const csvContent = [headers, ...rows]
+        .map((row) => row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(","))
+        .join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      downloadBlobFile(blob, `payroll-invoices-${new Date().toISOString().split("T")[0]}.csv`);
+
+      this.toastService.showSuccess("Export completed");
+    } catch {
+      this.toastService.showError("Failed to export data");
+    } finally {
+      this.isExporting.set(false);
+    }
   }
 }

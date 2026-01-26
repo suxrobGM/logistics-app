@@ -46,6 +46,11 @@ internal sealed class CreatePayrollInvoiceHandler : IAppRequestHandler<CreatePay
         var payroll = _payrollService.CreatePayrollInvoice(employee, req.PeriodStart, req.PeriodEnd);
         await _tenantUow.Repository<PayrollInvoice>().AddAsync(payroll);
         await _tenantUow.SaveChangesAsync();
+
+        // Link time entries to the payroll (for hourly employees)
+        await _payrollService.LinkTimeEntriesToPayrollAsync(payroll);
+        await _tenantUow.SaveChangesAsync();
+
         return Result.Ok();
     }
 }

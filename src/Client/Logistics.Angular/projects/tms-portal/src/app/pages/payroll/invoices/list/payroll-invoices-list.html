@@ -23,6 +23,13 @@
         />
         <p-button icon="pi pi-times" label="Clear" [text]="true" (click)="clearSelection()" />
       }
+      <p-button
+        icon="pi pi-download"
+        label="Export CSV"
+        [outlined]="true"
+        [loading]="isExporting()"
+        (click)="exportToCsv()"
+      />
       <a routerLink="/payroll" class="no-underline">
         <p-button icon="pi pi-chart-bar" label="Dashboard" [outlined]="true" />
       </a>

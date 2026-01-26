@@ -151,6 +151,9 @@ export type { PaymentMethodVerificationStatus } from './models/payment-method-ve
 export type { PaymentStatus } from './models/payment-status';
 export type { PaymentTrendDto } from './models/payment-trend-dto';
 export type { PayrollDto } from './models/payroll-dto';
+export type { PayrollReportDto } from './models/payroll-report-dto';
+export type { PayrollStatusBreakdownDto } from './models/payroll-status-breakdown-dto';
+export type { PayrollTrendDto } from './models/payroll-trend-dto';
 export type { PermissionDto } from './models/permission-dto';
 export type { PortalInvoiceDto } from './models/portal-invoice-dto';
 export type { PortalInvoiceDtoPagedResponse } from './models/portal-invoice-dto-paged-response';
@@ -173,6 +176,7 @@ export type { RevenueTrendDto } from './models/revenue-trend-dto';
 export type { RoleDto } from './models/role-dto';
 export type { RoleDtoPagedResponse } from './models/role-dto-paged-response';
 export type { SalaryType } from './models/salary-type';
+export type { SalaryTypeBreakdownDto } from './models/salary-type-breakdown-dto';
 export type { SearchLoadBoardCommand } from './models/search-load-board-command';
 export type { SendInvoiceRequest } from './models/send-invoice-request';
 export type { SendMessageRequest } from './models/send-message-request';
@@ -197,6 +201,7 @@ export type { TimeEntryDtoPagedResponse } from './models/time-entry-dto-paged-re
 export type { TimeEntryType } from './models/time-entry-type';
 export type { TopCustomerDto } from './models/top-customer-dto';
 export type { TopCustomerLoadDto } from './models/top-customer-load-dto';
+export type { TopEmployeePayrollDto } from './models/top-employee-payroll-dto';
 export type { TrackingLinkDto } from './models/tracking-link-dto';
 export type { TrialPeriod } from './models/trial-period';
 export type { TripDto } from './models/trip-dto';
@@ -548,6 +553,8 @@ export type { GetFinancialsReport$Params as GetFinancialsReport$Params } from '.
 export { getFinancialsReport as getFinancialsReport } from './fn/report/get-financials-report';
 export type { GetDriverDashboard$Params as GetDriverDashboard$Params } from './fn/report/get-driver-dashboard';
 export { getDriverDashboard as getDriverDashboard } from './fn/report/get-driver-dashboard';
+export type { GetPayrollReport$Params as GetPayrollReport$Params } from './fn/report/get-payroll-report';
+export { getPayrollReport as getPayrollReport } from './fn/report/get-payroll-report';
 export type { GetAppRoles$Params as GetAppRoles$Params } from './fn/role/get-app-roles';
 export { getAppRoles as getAppRoles } from './fn/role/get-app-roles';
 export type { GetTenantRoles$Params as GetTenantRoles$Params } from './fn/role/get-tenant-roles';

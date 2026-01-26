@@ -7,6 +7,7 @@ using LoadsReportQuery = Logistics.Application.Queries.LoadsReportQuery;
 using DriversReportQuery = Logistics.Application.Queries.DriversReportQuery;
 using FinancialsReportQuery = Logistics.Application.Queries.FinancialsReportQuery;
 using DriverDashboardQuery = Logistics.Application.Queries.DriverDashboardQuery;
+using PayrollReportQuery = Logistics.Application.Queries.PayrollReportQuery;
 
 namespace Logistics.API.Controllers;
 
@@ -50,6 +51,16 @@ public class ReportController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Stat.View)]
     public async Task<IActionResult> GetDriverDashboard([FromQuery] DriverDashboardQuery request)
+    {
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpGet("payroll", Name = "GetPayrollReport")]
+    [ProducesResponseType(typeof(PayrollReportDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Payroll.View)]
+    public async Task<IActionResult> GetPayrollReport([FromQuery] PayrollReportQuery request)
     {
         var result = await mediator.Send(request);
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));

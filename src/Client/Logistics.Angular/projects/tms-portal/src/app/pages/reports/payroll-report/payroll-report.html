@@ -1,0 +1,278 @@
+<!-- Header -->
+<div class="flex items-center justify-between">
+  <ui-page-header
+    title="Payroll Report"
+    subtitle="Comprehensive payroll overview and employee earnings"
+    [showAddButton]="false"
+  />
+  <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
+</div>
+
+@if (isLoading()) {
+  <!-- Loading State -->
+  <div class="grid grid-cols-12">
+    @for (item of [1, 2, 3, 4]; track item) {
+      <div class="col-span-12 mb-6 md:col-span-6 lg:col-span-3">
+        <p-skeleton height="120px"></p-skeleton>
+      </div>
+    }
+  </div>
+} @else {
+  <!-- Key Payroll Metrics Cards -->
+  <div class="mb-6 grid grid-cols-12 gap-2">
+    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+      <ui-stat-card
+        icon="pi-money-bill"
+        label="Total Payroll"
+        [value]="(data()?.totalPayroll || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        color="blue"
+      />
+    </div>
+
+    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+      <ui-stat-card
+        icon="pi-check-circle"
+        label="Total Paid"
+        [value]="(data()?.totalPaid || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        color="green"
+      />
+    </div>
+
+    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+      <ui-stat-card
+        icon="pi-clock"
+        label="Outstanding"
+        [value]="(data()?.totalOutstanding || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        color="orange"
+        [trend]="(data()?.totalPayrolls || 0) + ' payrolls'"
+      />
+    </div>
+
+    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+      <ui-stat-card
+        icon="pi-users"
+        label="Employees"
+        [value]="(data()?.uniqueEmployees || 0).toString()"
+        color="blue"
+        [trend]="
+          'Avg: ' +
+          ((data()?.averagePayrollAmount || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0')
+        "
+      />
+    </div>
+  </div>
+
+  <!-- Charts Row 1 -->
+  <div class="mb-6 grid grid-cols-12 gap-2">
+    <div class="col-span-12 mb-6 lg:col-span-6">
+      <ui-dashboard-card title="Payroll Status Distribution" icon="pi-chart-pie" iconColor="blue">
+        @if (hasStatusChartData()) {
+          <p-chart
+            type="doughnut"
+            [data]="statusChartData()"
+            [options]="statusChartOptions"
+            style="height: 300px"
+          />
+        } @else {
+          <div class="text-muted flex h-75 items-center justify-center">
+            <span>No data available</span>
+          </div>
+        }
+      </ui-dashboard-card>
+    </div>
+
+    <div class="col-span-12 mb-6 lg:col-span-6">
+      <ui-dashboard-card title="Salary Type Breakdown" icon="pi-chart-bar" iconColor="blue">
+        @if (hasSalaryTypeChartData()) {
+          <p-chart
+            type="bar"
+            [data]="salaryTypeChartData()"
+            [options]="salaryTypeChartOptions"
+            style="height: 300px"
+          />
+        } @else {
+          <div class="text-muted flex h-75 items-center justify-center">
+            <span>No data available</span>
+          </div>
+        }
+      </ui-dashboard-card>
+    </div>
+  </div>
+
+  <!-- Payroll Trends Chart -->
+  <div class="mb-6 grid grid-cols-12 gap-2">
+    <div class="col-span-12">
+      <ui-dashboard-card title="Payroll Trends" icon="pi-chart-line" iconColor="blue">
+        @if (hasTrendChartData()) {
+          <p-chart
+            type="line"
+            [data]="trendChartData()"
+            [options]="trendChartOptions"
+            style="height: 400px"
+          />
+        } @else {
+          <div class="text-muted flex h-100 items-center justify-center">
+            <span>No trend data available</span>
+          </div>
+        }
+      </ui-dashboard-card>
+    </div>
+  </div>
+
+  <!-- Data Tables -->
+  <div class="grid grid-cols-12 gap-2">
+    <div class="col-span-12 mb-6 lg:col-span-6">
+      <ui-dashboard-card title="Payroll Trends by Period" icon="pi-table" iconColor="blue">
+        <p-table [value]="data()?.payrollTrends || []" [paginator]="true" [rows]="5">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Period</th>
+              <th class="text-right">Total</th>
+              <th class="text-right">Paid</th>
+              <th class="text-right">Employees</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-trend>
+            <tr>
+              <td>{{ trend.period }}</td>
+              <td class="text-right">
+                {{ trend.totalAmount | currency: "USD" : "symbol" : "1.0-0" }}
+              </td>
+              <td class="text-right">
+                {{ trend.paidAmount | currency: "USD" : "symbol" : "1.0-0" }}
+              </td>
+              <td class="text-right">
+                <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{
+                  trend.employeeCount
+                }}</span>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="text-muted text-center">No trend data available</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </ui-dashboard-card>
+    </div>
+
+    <div class="col-span-12 mb-6 lg:col-span-6">
+      <ui-dashboard-card title="Top Employees by Earnings" icon="pi-users" iconColor="blue">
+        <p-table [value]="data()?.topEmployees || []" [paginator]="true" [rows]="5">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Employee</th>
+              <th class="text-right">Total Earnings</th>
+              <th class="text-right">Average</th>
+              <th class="text-right">Payrolls</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-employee>
+            <tr>
+              <td>
+                <a
+                  [routerLink]="['/employees', employee.employeeId, 'payroll']"
+                  class="flex items-center no-underline hover:underline"
+                >
+                  <div
+                    class="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600/10"
+                  >
+                    <span class="text-xs font-medium text-blue-600">{{
+                      getEmployeeInitials(employee.employeeName)
+                    }}</span>
+                  </div>
+                  <span class="font-medium">{{ employee.employeeName }}</span>
+                </a>
+              </td>
+              <td class="text-right">
+                {{ employee.totalEarnings | currency: "USD" : "symbol" : "1.0-0" }}
+              </td>
+              <td class="text-right">
+                {{ employee.averageEarnings | currency: "USD" : "symbol" : "1.0-0" }}
+              </td>
+              <td class="text-right">
+                <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{
+                  employee.payrollCount
+                }}</span>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="text-muted text-center">No employee data available</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </ui-dashboard-card>
+    </div>
+  </div>
+
+  <!-- Salary Type Breakdown Table -->
+  <div class="grid grid-cols-12 gap-2">
+    <div class="col-span-12 mb-6">
+      <ui-dashboard-card title="Salary Type Summary" icon="pi-list" iconColor="blue">
+        <p-table [value]="data()?.salaryTypeBreakdown || []">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Salary Type</th>
+              <th class="text-right">Employees</th>
+              <th class="text-right">Total Amount</th>
+              <th class="text-right">Percentage</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-item>
+            <tr>
+              <td>
+                <div class="flex items-center">
+                  <div
+                    class="mr-2 h-3 w-3 rounded-full"
+                    [style.backgroundColor]="
+                      item.salaryType
+                        ? item.salaryType === 'monthly'
+                          ? '#3b82f6'
+                          : item.salaryType === 'weekly'
+                            ? '#8b5cf6'
+                            : item.salaryType === 'hourly'
+                              ? '#06b6d4'
+                              : item.salaryType === 'share_of_gross'
+                                ? '#f59e0b'
+                                : item.salaryType === 'rate_per_distance'
+                                  ? '#22c55e'
+                                  : '#64748b'
+                        : '#64748b'
+                    "
+                  ></div>
+                  <span class="font-medium">{{ getSalaryTypeLabel(item.salaryType) }}</span>
+                </div>
+              </td>
+              <td class="text-right">{{ item.employeeCount }}</td>
+              <td class="text-right">
+                {{ item.totalAmount | currency: "USD" : "symbol" : "1.0-0" }}
+              </td>
+              <td class="text-right">
+                <span
+                  class="rounded px-2 py-1 text-sm"
+                  [class]="
+                    (item.percentage || 0) >= 30
+                      ? 'bg-green-600/10 text-green-600'
+                      : (item.percentage || 0) >= 15
+                        ? 'bg-blue-600/10 text-blue-600'
+                        : 'bg-slate-600/10 text-slate-600'
+                  "
+                >
+                  {{ item.percentage | percent: "1.1-1" }}
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="4" class="text-muted text-center">No salary type data available</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </ui-dashboard-card>
+    </div>
+  </div>
+}

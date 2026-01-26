@@ -158,6 +158,10 @@ export const sidebarItems: MenuItem[] = [
         label: "Financial Report",
         route: "/reports/financials",
       },
+      {
+        label: "Payroll Report",
+        route: "/reports/payroll",
+      },
     ],
   },
   {
