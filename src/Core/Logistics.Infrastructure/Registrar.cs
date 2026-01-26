@@ -106,6 +106,10 @@ public static class Registrar
         services.AddSingleton<IStripeConnectService, StripeConnectService>();
 
         services.AddSingleton<IPushNotificationService, PushNotificationService>();
+
+        // Real-time tracking services
+        services.AddScoped<ITripTrackingService, TripTrackingService>();
+
         return new InfrastructureBuilder(services, configuration);
     }
 }

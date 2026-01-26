@@ -75,12 +75,14 @@ export class TripEditPage implements OnInit {
       this.initialData.set({
         tripName: trip.name ?? undefined,
         truckId: trip.truckId,
+        truckNumber: trip.truckNumber ?? undefined,
         initialLoads: trip.loads ?? undefined,
         initialStops: trip.stops ?? undefined,
         totalDistance: trip.totalDistance ?? 0,
       });
 
-      this.disabledForEditing.set(trip.status !== "draft");
+      // Allow editing for draft and dispatched trips
+      this.disabledForEditing.set(trip.status !== "draft" && trip.status !== "dispatched");
       this.tripNumber.set(trip.number ?? null);
     }
 

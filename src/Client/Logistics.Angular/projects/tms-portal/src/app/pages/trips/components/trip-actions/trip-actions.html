@@ -1,0 +1,26 @@
+<div class="flex flex-wrap gap-2">
+  @if (canDispatch()) {
+    <p-button
+      icon="pi pi-send"
+      label="Dispatch Trip"
+      severity="success"
+      [loading]="isProcessing()"
+      (onClick)="onDispatch()"
+    />
+  }
+
+  @if (canCancel()) {
+    <p-button
+      icon="pi pi-times"
+      label="Cancel Trip"
+      severity="danger"
+      [outlined]="true"
+      [loading]="isProcessing()"
+      (onClick)="onCancelClick()"
+    />
+  }
+
+  @if (showEdit()) {
+    <p-button icon="pi pi-pen-to-square" label="Edit" [routerLink]="editLink()" />
+  }
+</div>

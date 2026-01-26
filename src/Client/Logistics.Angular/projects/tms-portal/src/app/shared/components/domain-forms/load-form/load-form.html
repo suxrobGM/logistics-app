@@ -71,9 +71,11 @@
         />
       </ui-labeled-field>
 
-      <ui-labeled-field label="Assigned Truck" for="assignedTruck">
-        <app-search-truck formControlName="assignedTruck" />
-      </ui-labeled-field>
+      @if (canChangeAssignedTruck()) {
+        <ui-labeled-field label="Assigned Truck" for="assignedTruck">
+          <app-search-truck formControlName="assignedTruck" />
+        </ui-labeled-field>
+      }
 
       @if (mode() === "edit") {
         <ui-labeled-field label="Status" for="status">

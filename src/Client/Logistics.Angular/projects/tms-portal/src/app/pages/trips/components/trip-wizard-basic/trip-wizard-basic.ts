@@ -72,6 +72,7 @@ export class TripWizardBasic {
     this.store.setBasicInfo({
       tripName: this.form.value.tripName ?? "",
       truckId: truck?.id ?? null,
+      truckNumber: truck?.number ?? null,
       truckVehicleCapacity: truck?.vehicleCapacity ?? 0,
     });
 

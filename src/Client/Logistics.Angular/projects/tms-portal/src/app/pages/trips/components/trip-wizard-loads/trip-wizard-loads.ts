@@ -2,6 +2,7 @@ import { CurrencyPipe } from "@angular/common";
 import { Component, computed, inject, input, model, viewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
+import type { LoadDto } from "@logistics/shared/api";
 import { AddressPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { Dialog } from "primeng/dialog";
@@ -14,6 +15,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { LoadFormComponent, type LoadFormValue, LoadStatusTag } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
 import { type TableRow, TripWizardStore } from "../../store/trip-wizard-store";
+import { AttachLoadDialog } from "../attach-load-dialog/attach-load-dialog";
 
 @Component({
   selector: "app-trip-wizard-loads",
@@ -34,6 +36,7 @@ import { type TableRow, TripWizardStore } from "../../store/trip-wizard-store";
     InputIcon,
     Dialog,
     LoadFormComponent,
+    AttachLoadDialog,
   ],
 })
 export class TripFormStepLoads {
@@ -41,10 +44,16 @@ export class TripFormStepLoads {
 
   protected readonly dataTable = viewChild<Table<TableRow>>("dataTable");
   protected readonly tripLoadDialogVisible = model(false);
+  protected readonly attachLoadDialogVisible = model(false);
 
   // Expose store computed values for template
   protected readonly rows = this.store.tableRows;
   protected readonly totalLoads = this.store.totalLoads;
+
+  // Load IDs already in the trip (to exclude from attach dialog)
+  protected readonly excludeLoadIds = computed(() =>
+    this.rows().map((row) => row.id).filter((id): id is string => !!id)
+  );
 
   protected readonly initialLoadData = computed(
     () =>
@@ -78,6 +87,24 @@ export class TripFormStepLoads {
 
   protected removeNewLoad(loadId: string): void {
     this.store.removeNewLoad(loadId);
+  }
+
+  protected attachExistingLoad(load: LoadDto): void {
+    // Convert LoadDto to TripLoadDto format for the store
+    this.store.attachExistingLoad({
+      id: load.id!,
+      name: load.name!,
+      number: load.number ?? 0,
+      type: load.type,
+      status: load.status!,
+      originAddress: load.originAddress!,
+      originLocation: load.originLocation!,
+      destinationAddress: load.destinationAddress!,
+      destinationLocation: load.destinationLocation!,
+      deliveryCost: load.deliveryCost,
+      distance: load.distance,
+      customer: load.customer ?? { id: "", name: "" },
+    });
   }
 
   protected goToPreviousStep(): void {

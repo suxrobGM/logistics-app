@@ -7,14 +7,13 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Logistics.Infrastructure.Interceptors;
 
-public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
+public class DispatchDomainEventsInterceptor(IMediator mediator) : SaveChangesInterceptor
 {
-    private readonly IMediator _mediator;
-
-    public DispatchDomainEventsInterceptor(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    /// <summary>
+    /// Re-entry guard to prevent infinite loops when handlers call SaveChangesAsync.
+    /// Uses AsyncLocal to be safe in async contexts.
+    /// </summary>
+    private static readonly AsyncLocal<bool> isDispatching = new();
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
@@ -27,11 +26,16 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
         return base.SavingChanges(eventData, result);
     }
 
-    public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
+    public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(
+        DbContextEventData eventData,
+        InterceptionResult<int> result,
+        CancellationToken cancellationToken = default)
     {
+        // Save first, then dispatch events
+        // This ensures entities exist in DB when handlers query them
         var response = await base.SavingChangesAsync(eventData, result, cancellationToken);
-        var context = eventData.Context;
 
+        var context = eventData.Context;
         if (context is not null)
         {
             await DispatchDomainEvents(context.ChangeTracker, cancellationToken);
@@ -42,19 +46,47 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
 
     private async Task DispatchDomainEvents(ChangeTracker changeTracker, CancellationToken cancellationToken = default)
     {
-        var domainEventEntities = changeTracker.Entries<Entity>()
-            .Select(i => i.Entity)
-            .Where(i => i.DomainEvents.Any())
-            .ToArray();
-
-        foreach (var entity in domainEventEntities)
+        // Re-entry guard: if we're already dispatching, skip to prevent infinite loops
+        if (isDispatching.Value)
         {
-            foreach (var entityDomainEvent in entity.DomainEvents)
-            {
-                await _mediator.Publish(entityDomainEvent, cancellationToken);
-            }
+            return;
+        }
 
-            entity.DomainEvents.Clear();
+        try
+        {
+            isDispatching.Value = true;
+
+            // Loop until no more events are raised (handlers may raise new events)
+            while (true)
+            {
+                var domainEventEntities = changeTracker.Entries<Entity>()
+                    .Select(i => i.Entity)
+                    .Where(i => i.DomainEvents.Any())
+                    .ToArray();
+
+                if (domainEventEntities.Length == 0)
+                {
+                    break;
+                }
+
+                // Collect all events and clear them BEFORE dispatching to prevent re-dispatch
+                var allEvents = new List<IDomainEvent>();
+                foreach (var entity in domainEventEntities)
+                {
+                    allEvents.AddRange(entity.DomainEvents);
+                    entity.DomainEvents.Clear();
+                }
+
+                // Now dispatch all collected events
+                foreach (var domainEvent in allEvents)
+                {
+                    await mediator.Publish(domainEvent, cancellationToken);
+                }
+            }
+        }
+        finally
+        {
+            isDispatching.Value = false;
         }
     }
 }

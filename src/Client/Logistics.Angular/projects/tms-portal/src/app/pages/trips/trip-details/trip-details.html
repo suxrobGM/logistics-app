@@ -1,16 +1,27 @@
-<div class="flex items-center">
-  <h1>Trip #{{ trip()?.number }} — {{ trip()?.name }}</h1>
-</div>
+<h1>Trip #{{ store.trip()?.number }} — {{ store.trip()?.name }}</h1>
+
+<!-- Action Buttons -->
+@if (store.trip()) {
+  <div class="mb-4">
+    <app-trip-actions
+      [status]="store.trip()!.status"
+      [truckId]="store.trip()!.truckId"
+      [tripId]="store.trip()!.id"
+      [isProcessing]="store.isProcessing()"
+      (dispatch)="onDispatch()"
+      (cancel)="onCancel($event)"
+    />
+  </div>
+}
 
 <div class="flex flex-col gap-4">
   <p-card>
     <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-      @if (isLoading() || !trip()) {
-        <p-skeleton class="h-96!" />
+      @if (store.isLoading() || !store.trip()) {
         <p-skeleton class="h-96!" />
         <p-skeleton class="h-96!" />
       } @else {
-        @let tripDetails = trip()!;
+        @let tripDetails = store.trip()!;
 
         <app-direction-map
           [waypoints]="waypoints()"
@@ -20,32 +31,102 @@
           (waypointClick)="onWaypointClick($event)"
         />
 
-        <!-- Summary card -->
-        <div>
-          <h5 class="mb-3 font-semibold">Summary</h5>
-          <p><b>Created&nbsp;at:</b> {{ tripDetails.createdAt | date: "medium" }}</p>
-          <p><b>Dispatched&nbsp;at:</b> {{ tripDetails.dispatchedAt | date: "medium" }}</p>
-          <p><b>Completed&nbsp;at:</b> {{ tripDetails.completedAt | date: "medium" }}</p>
-          <p class="flex gap-2">
-            <b>Status:</b> <app-trip-status-tag [status]="tripDetails.status ?? 'draft'" />
-          </p>
-          <p><b>Truck:</b> {{ tripDetails.truckNumber }}</p>
-          <p><b>Total&nbsp;distance:</b> {{ tripDetails.totalDistance | distanceUnit: "mi" }} mi</p>
-          <p><b>Loads:</b> {{ tripDetails.loads?.length ?? 0 }}</p>
+        <!-- Summary card - improved layout -->
+        <div class="flex flex-col gap-4">
+          <!-- Status and Progress Header -->
+          <div class="flex items-center justify-between">
+            <app-trip-status-tag [status]="tripDetails.status ?? 'draft'" />
+            <span class="text-muted-color text-sm">
+              Created {{ tripDetails.createdAt | date: "mediumDate" }}
+            </span>
+          </div>
+
+          <!-- Progress indicator -->
+          <div class="bg-surface-100 dark:bg-surface-800 rounded-lg p-4">
+            <div class="mb-2 flex items-center justify-between">
+              <span class="font-medium">Trip Progress</span>
+              <span class="text-primary font-semibold">{{ store.progressPercentage() }}%</span>
+            </div>
+            <p-progressBar
+              [value]="store.progressPercentage()"
+              [showValue]="false"
+              class="h-2!"
+            />
+            <div class="text-muted-color mt-2 flex items-center gap-1 text-sm">
+              <i class="pi pi-map-marker"></i>
+              <span>
+                {{ store.completedStops().length }} of {{ store.sortedStops().length }} stops
+                completed
+              </span>
+            </div>
+          </div>
+
+          <!-- Key Metrics Grid -->
+          <div class="grid grid-cols-2 gap-3">
+            <!-- Distance -->
+            <div class="bg-surface-50 dark:bg-surface-900 rounded-lg p-3">
+              <div class="text-muted-color mb-1 flex items-center gap-2 text-sm">
+                <i class="pi pi-map"></i>
+                <span>Total Distance</span>
+              </div>
+              <span class="text-xl font-semibold">
+                {{ tripDetails.totalDistance | distanceUnit: "mi" }} mi
+              </span>
+            </div>
+
+            <!-- Loads -->
+            <div class="bg-surface-50 dark:bg-surface-900 rounded-lg p-3">
+              <div class="text-muted-color mb-1 flex items-center gap-2 text-sm">
+                <i class="pi pi-box"></i>
+                <span>Loads</span>
+              </div>
+              <span class="text-xl font-semibold">{{ tripDetails.loads?.length ?? 0 }}</span>
+            </div>
+
+            <!-- Truck -->
+            <div class="bg-surface-50 dark:bg-surface-900 rounded-lg p-3">
+              <div class="text-muted-color mb-1 flex items-center gap-2 text-sm">
+                <i class="pi pi-truck"></i>
+                <span>Truck</span>
+              </div>
+              <span class="font-semibold">
+                {{ tripDetails.truckNumber ?? "Not assigned" }}
+              </span>
+            </div>
+
+            <!-- Stops -->
+            <div class="bg-surface-50 dark:bg-surface-900 rounded-lg p-3">
+              <div class="text-muted-color mb-1 flex items-center gap-2 text-sm">
+                <i class="pi pi-flag"></i>
+                <span>Stops</span>
+              </div>
+              <span class="text-xl font-semibold">{{ store.sortedStops().length }}</span>
+            </div>
+          </div>
+
+          <!-- Timestamps -->
+          <div class="border-surface-200 dark:border-surface-700 space-y-2 border-t pt-3">
+            @if (tripDetails.dispatchedAt) {
+              <div class="flex items-center gap-2 text-sm">
+                <i class="pi pi-send text-blue-500"></i>
+                <span class="text-muted-color">Dispatched:</span>
+                <span>{{ tripDetails.dispatchedAt | date: "medium" }}</span>
+              </div>
+            }
+            @if (tripDetails.completedAt) {
+              <div class="flex items-center gap-2 text-sm">
+                <i class="pi pi-check-circle text-green-500"></i>
+                <span class="text-muted-color">Completed:</span>
+                <span>{{ tripDetails.completedAt | date: "medium" }}</span>
+              </div>
+            }
+          </div>
         </div>
       }
     </div>
 
     <ng-template #footer>
       <div class="flex flex-row gap-2">
-        @if (trip()) {
-          <p-button
-            icon="pi pi-pen-to-square"
-            label="Edit"
-            [routerLink]="['/trips', trip()!.id, 'edit']"
-          />
-        }
-
         <p-button
           type="button"
           icon="pi pi-arrow-left"
@@ -56,87 +137,134 @@
     </ng-template>
   </p-card>
 
-  @if (trip()) {
-    @let tripDetails = trip()!;
+  @if (store.trip()) {
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <!-- Left side: Stops and Loads tables stacked -->
+      <div class="flex flex-col gap-4 lg:col-span-2">
+        <!-- Trip Stops table -->
+        <p-card>
+          <ng-template #header>
+            <div class="flex items-center gap-2 p-3 pb-0">
+              <i class="pi pi-map-marker text-primary"></i>
+              <h5 class="m-0">Stops</h5>
+            </div>
+          </ng-template>
 
-    <!-- Trip Stops table -->
-    <p-card>
-      <ng-template #header>
-        <div class="flex items-center gap-2 p-3 pb-0">
-          <h5>Stops</h5>
-        </div>
-      </ng-template>
+          <p-table
+            [value]="store.sortedStops()"
+            dataKey="id"
+            sortField="order"
+            sortMode="single"
+            selectionMode="single"
+            [paginator]="false"
+          >
+            <ng-template #header>
+              <tr>
+                <th pSortableColumn="order">#<p-sortIcon field="order" /></th>
+                <th>Type</th>
+                <th>Address</th>
+                <th>Arrived</th>
+                @if (store.isActive()) {
+                  <th>Actions</th>
+                }
+              </tr>
+            </ng-template>
+            <ng-template #body let-tripStop>
+              <tr [pSelectableRow]="tripStop">
+                <td>{{ tripStop.order }}</td>
+                <td>{{ stopLabel(tripStop.type) }}</td>
+                <td>{{ tripStop.address | address }}</td>
+                <td>
+                  @if (tripStop.arrivedAt) {
+                    {{ tripStop.arrivedAt | date: "short" }}
+                  } @else {
+                    <span class="text-muted-color">Pending</span>
+                  }
+                </td>
+                @if (store.isActive()) {
+                  <td>
+                    @if (!tripStop.arrivedAt) {
+                      <p-button
+                        icon="pi pi-check"
+                        label="Mark Arrived"
+                        severity="success"
+                        [text]="true"
+                        size="small"
+                        [loading]="store.isProcessing()"
+                        (onClick)="onMarkStopArrived(tripStop)"
+                      />
+                    } @else {
+                      <i class="pi pi-check-circle text-green-500"></i>
+                    }
+                  </td>
+                }
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-card>
 
-      <p-table
-        [value]="tripDetails.stops ?? []"
-        dataKey="id"
-        sortField="order"
-        sortMode="single"
-        selectionMode="single"
-        [paginator]="false"
-        [(selection)]="selectedStop"
-      >
-        <ng-template #header>
-          <tr>
-            <th pSortableColumn="order">#<p-sortIcon field="order" /></th>
-            <th>Type</th>
-            <th>Address</th>
-            <th>Arrived</th>
-          </tr>
-        </ng-template>
-        <ng-template #body let-tripStop>
-          <tr [pSelectableRow]="tripStop">
-            <td>{{ tripStop.order }}</td>
-            <td>{{ stopLabel(tripStop.type) }}</td>
-            <td>{{ tripStop.address | address }}</td>
-            <td>{{ tripStop.arrivedAt | date: "short" }}</td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </p-card>
+        <!-- Loads table -->
+        <p-card>
+          <ng-template #header>
+            <div class="flex items-center gap-2 p-3 pb-0">
+              <i class="pi pi-box text-primary"></i>
+              <h5 class="m-0">Loads</h5>
+            </div>
+          </ng-template>
 
-    <!-- Loads table -->
-    <p-card>
-      <ng-template #header>
-        <div class="flex items-center gap-2 p-3 pb-0">
-          <h5>Loads</h5>
-        </div>
-      </ng-template>
+          <p-table [value]="store.trip()!.loads ?? []" [dataKey]="'id'">
+            <ng-template #header>
+              <tr>
+                <th pSortableColumn="number">Load # <p-sortIcon field="number" /></th>
+                <th pSortableColumn="name">Name <p-sortIcon field="name" /></th>
+                <th pSortableColumn="customer.name">Customer <p-sortIcon field="customer.name" /></th>
+                <th pSortableColumn="originAddress.line1">
+                  Origin <p-sortIcon field="originAddress.line1" />
+                </th>
+                <th pSortableColumn="destinationAddress.line1">
+                  Dest <p-sortIcon field="destinationAddress.line1" />
+                </th>
+                <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
+                <th pSortableColumn="deliveryCost">
+                  Cost <p-sortIcon field="deliveryCost" />
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template #body let-load>
+              <tr>
+                <td>{{ load.number }}</td>
+                <td>{{ load.name }}</td>
+                <td>{{ load.customer.name }}</td>
+                <td>{{ load.originAddress | address }}</td>
+                <td>{{ load.destinationAddress | address }}</td>
+                <td><app-load-status-tag [status]="load.status" /></td>
+                <td>{{ load.deliveryCost | currency }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </p-card>
+      </div>
 
-      <p-table [value]="tripDetails.loads ?? []" [dataKey]="'id'">
-        <ng-template #header>
-          <tr>
-            <th pSortableColumn="number">Load Number <p-sortIcon field="number" /></th>
-            <th pSortableColumn="name">Load Name <p-sortIcon field="name" /></th>
-            <th pSortableColumn="type">Load Type <p-sortIcon field="type" /></th>
-            <th pSortableColumn="customer.name">Customer <p-sortIcon field="customer.name" /></th>
-            <th pSortableColumn="originAddress.line1">
-              Origin <p-sortIcon field="originAddress.line1" />
-            </th>
-            <th pSortableColumn="destinationAddress.line1">
-              Destination <p-sortIcon field="destinationAddress.line1" />
-            </th>
-            <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
-            <th pSortableColumn="distance">Distance (mi) <p-sortIcon field="distance" /></th>
-            <th pSortableColumn="deliveryCost">
-              Delivery Cost <p-sortIcon field="deliveryCost" />
-            </th>
-          </tr>
-        </ng-template>
-        <ng-template #body let-load>
-          <tr>
-            <td>{{ load.number }}</td>
-            <td>{{ load.name }}</td>
-            <td><app-load-type-tag [type]="load.type" /></td>
-            <td>{{ load.customer.name }}</td>
-            <td>{{ load.originAddress | address }}</td>
-            <td>{{ load.destinationAddress | address }}</td>
-            <td><app-load-status-tag [status]="load.status" /></td>
-            <td>{{ load.distance | distanceUnit: "mi" }}</td>
-            <td>{{ load.deliveryCost | currency }}</td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </p-card>
+      <!-- Right side: Timeline -->
+      <div>
+        <p-card class="h-full">
+          <ng-template #header>
+            <div class="flex items-center gap-2 p-3 pb-0">
+              <i class="pi pi-history text-primary"></i>
+              <h5 class="m-0">Timeline</h5>
+            </div>
+          </ng-template>
+
+          @if (store.timelineEvents().length > 0) {
+            <app-trip-timeline [events]="store.timelineEvents()" />
+          } @else {
+            <div class="text-muted-color flex flex-col items-center gap-2 py-8">
+              <i class="pi pi-clock text-4xl opacity-50"></i>
+              <p class="m-0">No timeline events yet.</p>
+            </div>
+          }
+        </p-card>
+      </div>
+    </div>
   }
 </div>

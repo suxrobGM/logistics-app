@@ -31,8 +31,8 @@ paths:
 
 ```typescript
 // Correct
-readonly data = input<DataDto>();
-readonly dataChange = output<DataDto>();
+public readonly data = input<DataDto>();
+public readonly dataChange = output<DataDto>();
 protected readonly isLoading = signal(false);
 protected readonly items = computed(() => this.store.items());
 
@@ -56,6 +56,7 @@ protected readonly store = inject(MyStore);
 
 - Use native control flow: `@if`, `@for`, `@switch` (NOT `*ngIf`, `*ngFor`)
 - Use `@empty` block for empty states in `@for`
+- Avoid complex nested ternary expressions in templates
 
 ```html
 @if (isLoading()) {
@@ -80,3 +81,15 @@ protected readonly store = inject(MyStore);
 - Import shared library: `import { X } from "@logistics/shared";`
 - Import API models: `import type { XDto } from "@logistics/shared/api/models";`
 - Import within app: `import { X } from "@/core/services";`
+
+## Styling
+
+- Use Tailwind CSS utility classes for styling
+- Avoid custom CSS unless necessary
+- Use `class` attribute for static classes and avoid `[ngClass]` when possible
+
+## Inline Templates & Styles
+
+- Avoid inline templates and styles in component decorators
+- Always use external files for better readability and maintainability
+- Don't use `standalone: true` attribute to the component decorator because it's redundant and on Angular 20+ it's default behavior.

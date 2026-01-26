@@ -22,9 +22,9 @@ internal sealed class UpdateTripHandler(
             return Result.Fail($"Trip '{req.TripId}' not found.");
         }
 
-        if (trip.Status != TripStatus.Draft)
+        if (!TripStatusMachine.CanModify(trip.Status))
         {
-            return Result.Fail("Only trips in 'Draft' status can be updated.");
+            return Result.Fail("Only trips in 'Draft' or 'Dispatched' status can be updated.");
         }
 
         // Name field
@@ -34,19 +34,36 @@ internal sealed class UpdateTripHandler(
         }
 
         // Truck assignment/swap - use domain method which raises TripAssignedToTruckEvent
+        Truck? newTruck = null;
+        var truckChanged = false;
         if (req.TruckId is { } newTruckId && newTruckId != trip.TruckId)
         {
-            var newTruck = await uow.Repository<Truck>().GetByIdAsync(newTruckId, ct);
+            newTruck = await uow.Repository<Truck>().GetByIdAsync(newTruckId, ct);
             if (newTruck is null)
             {
                 return Result.Fail($"Truck '{newTruckId}' not found.");
             }
 
             trip.AssignToTruck(newTruck);
+            truckChanged = true;
         }
 
         // A map of current loads on the trip for easy access, key is the load ID and value is the load entity
         var loadsMap = trip.GetLoads().ToDictionary(l => l.Id);
+
+        // When truck changes, update all loads' truck assignment
+        if (truckChanged)
+        {
+            foreach (var load in loadsMap.Values)
+            {
+                load.AssignedTruckId = trip.TruckId;
+                load.AssignedTruck = newTruck;
+            }
+
+            logger.LogInformation(
+                "Updated truck assignment for {LoadCount} loads in trip '{TripId}' to truck '{TruckId}'",
+                loadsMap.Count, trip.Id, trip.TruckId);
+        }
 
         var removedCount = RemoveLoads(trip, loadsMap, req.DetachedLoadIds);
 

@@ -35,8 +35,15 @@
         }
 
         <p-button
+          icon="pi pi-link"
+          label="Attach Existing"
+          variant="outlined"
+          [disabled]="disabled()"
+          (click)="attachLoadDialogVisible.set(true)"
+        />
+        <p-button
           icon="pi pi-plus"
-          label="Add Load"
+          label="Create New"
           variant="outlined"
           [disabled]="disabled()"
           (click)="tripLoadDialogVisible.set(true)"
@@ -46,53 +53,60 @@
 
     <ng-template #header>
       <tr>
-        <th pSortableColumn="number"># <p-sortIcon field="number" /></th>
         <th pSortableColumn="name">Load <p-sortIcon field="name" /></th>
         <th pSortableColumn="customerName">Customer <p-sortIcon field="customerName" /></th>
         <th pSortableColumn="origin">Origin <p-sortIcon field="origin" /></th>
         <th pSortableColumn="destination">Destination <p-sortIcon field="destination" /></th>
         <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
-        <th pSortableColumn="distance" class="text-right">
-          Distance (mi) <p-sortIcon field="distance" />
-        </th>
-        <th pSortableColumn="deliveryCost" class="w-40 text-right">
-          Delivery Cost <p-sortIcon field="deliveryCost" />
-        </th>
-        <th>Actions</th>
+        <th pSortableColumn="distance" class="text-right">Distance <p-sortIcon field="distance" /></th>
+        <th pSortableColumn="deliveryCost" class="text-right">Cost <p-sortIcon field="deliveryCost" /></th>
+        <th></th>
       </tr>
     </ng-template>
 
     <ng-template #body let-row>
       <tr [class.opacity-70]="row.pendingDetach">
-        <td>{{ row.number ?? "—" }}</td>
         <td>
-          <span>{{ row.name }}</span>
-          @if (row.kind === "new") {
-            <p-tag class="ml-2" value="New" severity="success" />
-          } @else if (row.pendingDetach) {
-            <p-tag class="ml-2" value="Will detach" severity="danger" />
-          }
+          <div class="flex items-center gap-2">
+            <span class="font-medium">{{ row.name }}</span>
+            @if (row.kind === "new") {
+              <p-tag value="New" severity="success" [rounded]="true" />
+            } @else if (row.pendingDetach) {
+              <p-tag value="Detach" severity="danger" [rounded]="true" />
+            }
+          </div>
         </td>
-        <td>{{ row.customer?.name ?? "—" }}</td>
-        <td>{{ row.originAddress | address }}</td>
-        <td>{{ row.destinationAddress | address }}</td>
+        <td>
+          <span class="truncate" [title]="row.customer?.name">{{ row.customer?.name ?? "—" }}</span>
+        </td>
+        <td>
+          <span class="truncate" [title]="row.originAddress | address">
+            {{ row.originAddress?.city }}, {{ row.originAddress?.state }}
+          </span>
+        </td>
+        <td>
+          <span class="truncate" [title]="row.destinationAddress | address">
+            {{ row.destinationAddress?.city }}, {{ row.destinationAddress?.state }}
+          </span>
+        </td>
         <td>
           @if (row.kind === "existing") {
             <app-load-status-tag [status]="row.status" />
           } @else {
-            <p-tag value="Draft" severity="warn" />
+            <p-tag value="Draft" severity="warn" [rounded]="true" />
           }
         </td>
-        <td class="text-right">{{ row.distance | distanceUnit: "mi" }}</td>
-        <td class="text-right">{{ row.deliveryCost | currency }}</td>
+        <td class="text-right font-medium">{{ row.distance | distanceUnit: "mi" }}</td>
+        <td class="text-right font-medium">{{ row.deliveryCost | currency }}</td>
         <td>
-          <div class="flex justify-end gap-2">
+          <div class="flex justify-end gap-1">
             @if (row.kind === "existing") {
               <p-button
                 icon="pi pi-pencil"
                 pTooltip="Edit load"
                 tooltipPosition="bottom"
-                variant="outlined"
+                variant="text"
+                size="small"
                 [routerLink]="['/loads', row.id, 'edit']"
                 [disabled]="row.pendingDetach || disabled()"
               />
@@ -101,7 +115,8 @@
                   icon="pi pi-undo"
                   pTooltip="Undo detach"
                   tooltipPosition="bottom"
-                  variant="outlined"
+                  variant="text"
+                  size="small"
                   (click)="undoDetachLoad(row.id)"
                   [disabled]="disabled()"
                 />
@@ -111,7 +126,8 @@
                   severity="danger"
                   pTooltip="Detach"
                   tooltipPosition="bottom"
-                  variant="outlined"
+                  variant="text"
+                  size="small"
                   (click)="detachLoad(row.id)"
                   [disabled]="disabled()"
                 />
@@ -120,8 +136,9 @@
               <p-button
                 icon="pi pi-times"
                 severity="danger"
-                pTooltip="Remove new load"
-                variant="outlined"
+                pTooltip="Remove"
+                variant="text"
+                size="small"
                 (click)="removeNewLoad(row.id)"
                 [disabled]="disabled()"
               />
@@ -133,9 +150,11 @@
 
     <ng-template #footer>
       <tr>
-        <td colspan="6" class="font-bold">Totals</td>
-        <td class="text-right">{{ store["totalDistanceFromLoads"]() | distanceUnit: "mi" }}</td>
-        <td class="text-right">{{ store["totalCostFromLoads"]() | currency }}</td>
+        <td colspan="5" class="font-bold">Totals</td>
+        <td class="text-right font-bold">
+          {{ store["totalDistanceFromLoads"]() | distanceUnit: "mi" }}
+        </td>
+        <td class="text-right font-bold">{{ store["totalCostFromLoads"]() | currency }}</td>
         <td></td>
       </tr>
     </ng-template>
@@ -153,10 +172,17 @@
   </div>
 </div>
 
+<!-- Attach existing load dialog -->
+<app-attach-load-dialog
+  [(visible)]="attachLoadDialogVisible"
+  [excludeLoadIds]="excludeLoadIds()"
+  (loadAttached)="attachExistingLoad($event)"
+/>
+
 <!-- Initialize dialog component only when it's visible to avoid unnecessary mapbox rendering on background -->
 @if (tripLoadDialogVisible()) {
   <p-dialog
-    header="Add a new load to this trip"
+    header="Create a new load for this trip"
     [modal]="true"
     [(visible)]="tripLoadDialogVisible"
     [style]="{ width: '70vw' }"

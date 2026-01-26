@@ -47,8 +47,10 @@ public static class TripStatusMachine
 
     /// <summary>
     /// Checks if the trip can be modified (loads added/removed, truck changed).
+    /// Allows modification in Draft and Dispatched statuses.
     /// </summary>
-    public static bool CanModify(TripStatus status) => status == TripStatus.Draft;
+    public static bool CanModify(TripStatus status) =>
+        status == TripStatus.Draft || status == TripStatus.Dispatched;
 
     /// <summary>
     /// Checks if the trip can be cancelled.

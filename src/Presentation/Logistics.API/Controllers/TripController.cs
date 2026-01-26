@@ -33,13 +33,13 @@ public class TripController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost(Name = "CreateTrip")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(Result<Guid>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Load.Manage)]
     public async Task<IActionResult> CreateTrip([FromBody] CreateTripCommand request)
     {
         var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+        return result.IsSuccess ? Ok(result) : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPost("optimize", Name = "OptimizeTripStops")]
@@ -71,5 +71,47 @@ public class TripController(IMediator mediator) : ControllerBase
     {
         var result = await mediator.Send(new DeleteTripCommand { Id = id });
         return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPost("{tripId:guid}/dispatch", Name = "DispatchTrip")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Load.Manage)]
+    public async Task<IActionResult> DispatchTrip(Guid tripId)
+    {
+        var result = await mediator.Send(new DispatchTripCommand { TripId = tripId });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPost("{tripId:guid}/cancel", Name = "CancelTrip")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Load.Manage)]
+    public async Task<IActionResult> CancelTrip(Guid tripId, [FromBody] CancelTripCommand? request = null)
+    {
+        var command = request ?? new CancelTripCommand();
+        command.TripId = tripId;
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPost("{tripId:guid}/stops/{stopId:guid}/arrive", Name = "MarkStopArrived")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Load.Manage)]
+    public async Task<IActionResult> MarkStopArrived(Guid tripId, Guid stopId)
+    {
+        var result = await mediator.Send(new MarkStopArrivedCommand { TripId = tripId, StopId = stopId });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpGet("{tripId:guid}/timeline", Name = "GetTripTimeline")]
+    [ProducesResponseType(typeof(TripTimelineDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.Load.View)]
+    public async Task<IActionResult> GetTripTimeline(Guid tripId)
+    {
+        var result = await mediator.Send(new GetTripTimelineQuery { TripId = tripId });
+        return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
 }

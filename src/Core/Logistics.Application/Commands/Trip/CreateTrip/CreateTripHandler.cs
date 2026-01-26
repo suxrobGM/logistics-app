@@ -11,9 +11,9 @@ internal sealed class CreateTripHandler(
     ITenantUnitOfWork tenantUow,
     ILoadService loadService,
     ILogger<CreateTripHandler> logger)
-    : IAppRequestHandler<CreateTripCommand, Result>
+    : IAppRequestHandler<CreateTripCommand, Result<Guid>>
 {
-    public async Task<Result> Handle(CreateTripCommand req, CancellationToken ct)
+    public async Task<Result<Guid>> Handle(CreateTripCommand req, CancellationToken ct)
     {
         Truck? truck = null;
         List<TripStop>? stops = null;
@@ -24,7 +24,7 @@ internal sealed class CreateTripHandler(
             truck = await tenantUow.Repository<Truck>().GetByIdAsync(req.TruckId.Value, ct);
             if (truck is null)
             {
-                return Result.Fail($"Could not find the truck with ID '{req.TruckId}'");
+                return Result<Guid>.Fail($"Could not find the truck with ID '{req.TruckId}'");
             }
         }
 
@@ -52,7 +52,7 @@ internal sealed class CreateTripHandler(
         logger.LogInformation(
             "Created trip '{TripName}' with ID '{TripId}' for truck '{TruckId}'",
             trip.Name, trip.Id, req.TruckId?.ToString() ?? "unassigned");
-        return Result.Ok();
+        return Result<Guid>.Ok(trip.Id);
     }
 
     /// <summary>

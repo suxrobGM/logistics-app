@@ -8,23 +8,24 @@ import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import type { CreateTripCommand } from '../../models/create-trip-command';
+import type { GuidResult } from '../../models/guid-result';
 
 export interface CreateTrip$Params {
       body?: CreateTripCommand
 }
 
-export function createTrip(http: HttpClient, rootUrl: string, params?: CreateTrip$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+export function createTrip(http: HttpClient, rootUrl: string, params?: CreateTrip$Params, context?: HttpContext): Observable<StrictHttpResponse<GuidResult>> {
   const rb = new RequestBuilder(rootUrl, createTrip.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/*+json');
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'application/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return r as StrictHttpResponse<GuidResult>;
     })
   );
 }

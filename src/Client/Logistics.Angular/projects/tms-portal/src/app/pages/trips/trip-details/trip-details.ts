@@ -1,28 +1,33 @@
 import { CommonModule } from "@angular/common";
-import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
+import { Component, computed, effect, inject, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { Api, getTripById } from "@logistics/shared/api";
-import type { TripDto, TripStopDto, TripStopType } from "@logistics/shared/api";
+import { ToastService } from "@logistics/shared";
+import type { TripStopDto, TripStopType } from "@logistics/shared/api";
 import { AddressPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
+import { ProgressBarModule } from "primeng/progressbar";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
+import { ToastModule } from "primeng/toast";
 import {
   DirectionMap,
   LoadStatusTag,
-  LoadTypeTag,
   type RouteSegmentClickEvent,
   TripStatusTag,
+  TripTimeline,
   type Waypoint,
   type WaypointClickEvent,
 } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
+import { TripActions } from "../components";
+import { TripDetailsStore } from "../store/trip-details.store";
 
 @Component({
   selector: "app-trip-details",
   templateUrl: "./trip-details.html",
+  providers: [TripDetailsStore],
   imports: [
     CommonModule,
     RouterLink,
@@ -36,25 +41,22 @@ import { DistanceUnitPipe } from "@/shared/pipes";
     AddressPipe,
     SkeletonModule,
     TripStatusTag,
-    LoadTypeTag,
+    ProgressBarModule,
+    ToastModule,
+    TripTimeline,
+    TripActions,
   ],
 })
-export class TripDetailsPage implements OnInit {
-  private readonly api = inject(Api);
+export class TripDetailsPage {
+  protected readonly store = inject(TripDetailsStore);
+  private readonly toastService = inject(ToastService);
 
   protected readonly tripId = input<string>();
 
-  protected readonly isLoading = signal<boolean>(false);
-  protected readonly trip = signal<TripDto | null>(null);
-  protected readonly selectedStop = signal<TripStopDto | null>(null);
-
-  protected readonly sortedStops = computed<TripStopDto[]>(() => {
-    return (this.trip()?.stops ?? []).slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-  });
-
   // Transform TripStopDto[] to Waypoint[] for DirectionMap
   protected readonly waypoints = computed<Waypoint[]>(() =>
-    this.sortedStops()
+    this.store
+      .sortedStops()
       .filter((stop) => stop.id != null)
       .map((stop) => ({
         id: stop.id!,
@@ -64,42 +66,64 @@ export class TripDetailsPage implements OnInit {
 
   // Transform selectedStop to Waypoint | null for DirectionMap
   protected readonly selectedWaypoint = computed<Waypoint | null>(() => {
-    const stop = this.selectedStop();
+    const stop = this.store.selectedStop();
     if (!stop || !stop.id) return null;
     return { id: stop.id, location: stop.location };
   });
 
-  ngOnInit(): void {
-    this.fetchTrip();
+  constructor() {
+    // React to tripId changes
+    effect(() => {
+      const id = this.tripId();
+      if (id) {
+        this.store.loadTrip(id);
+      }
+    });
   }
 
-  protected onRouteSegmentClick(e: RouteSegmentClickEvent) {
-    const stop = this.trip()?.stops?.find((s) => s.id === e.fromWaypoint.id);
-    this.selectedStop.set(stop ?? null);
+  protected onRouteSegmentClick(e: RouteSegmentClickEvent): void {
+    const stop = this.store.trip()?.stops?.find((s) => s.id === e.fromWaypoint.id);
+    this.store.selectStop(stop ?? null);
   }
 
-  protected onWaypointClick(e: WaypointClickEvent) {
-    const stop = this.trip()?.stops?.find((s) => s.id === e.waypoint.id);
-    this.selectedStop.set(stop ?? null);
+  protected onWaypointClick(e: WaypointClickEvent): void {
+    const stop = this.store.trip()?.stops?.find((s) => s.id === e.waypoint.id);
+    this.store.selectStop(stop ?? null);
   }
 
   protected stopLabel(tripStopType: TripStopType): string {
     return tripStopType === "pick_up" ? "Pick Up" : "Drop Off";
   }
 
-  private async fetchTrip(): Promise<void> {
-    const id = this.tripId();
-
-    if (!id) {
-      return;
+  protected async onDispatch(): Promise<void> {
+    const success = await this.store.dispatchTrip();
+    if (success) {
+      this.toastService.showSuccess(
+        "The trip has been dispatched successfully.",
+        "Trip Dispatched",
+      );
+    } else {
+      this.toastService.showError(this.store.error() ?? "Failed to dispatch trip.");
     }
+  }
 
-    this.isLoading.set(true);
-    const result = await this.api.invoke(getTripById, { tripId: id });
-    if (result) {
-      this.trip.set(result);
+  protected async onCancel(reason?: string): Promise<void> {
+    const success = await this.store.cancelTrip(reason);
+    if (success) {
+      this.toastService.showInfo("The trip has been cancelled.", "Trip Cancelled");
+    } else {
+      this.toastService.showError(this.store.error() ?? "Failed to cancel trip.");
     }
+  }
 
-    this.isLoading.set(false);
+  protected async onMarkStopArrived(stop: TripStopDto): Promise<void> {
+    if (!stop.id) return;
+
+    const success = await this.store.markStopArrived(stop.id);
+    if (success) {
+      this.toastService.showSuccess("Stop marked as arrived.", "Stop Marked");
+    } else {
+      this.toastService.showError(this.store.error() ?? "Failed to mark stop as arrived.");
+    }
   }
 }

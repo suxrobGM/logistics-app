@@ -25,7 +25,7 @@ export class TripAddPage {
       name: formValue.tripName,
       truckId: formValue.truckId ?? undefined,
       newLoads: formValue.newLoads,
-      // attachedLoadIds: formValue.attachedLoads?.map((l) => l.id),
+      attachedLoadIds: formValue.attachedLoadIds,
       optimizedStops: formValue.stops,
       totalDistance: formValue.totalDistance,
     };

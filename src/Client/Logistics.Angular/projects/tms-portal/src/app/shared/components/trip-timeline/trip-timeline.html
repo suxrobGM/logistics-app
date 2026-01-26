@@ -1,0 +1,29 @@
+<p-timeline [value]="events()">
+  <ng-template #content let-event>
+    <div class="flex flex-col gap-1 pb-4">
+      <div class="flex flex-wrap items-center gap-2">
+        <p-tag
+          [severity]="getEventSeverity(event.eventType)"
+          [value]="getEventLabel(event.eventType)"
+        />
+        <span class="text-muted-color text-xs">
+          {{ event.timestamp | date: "short" }}
+        </span>
+      </div>
+      <p class="m-0 text-sm">{{ event.description }}</p>
+      @if (event.loadName) {
+        <span class="text-muted-color text-xs">
+          <i class="pi pi-box mr-1"></i>{{ event.loadName }}
+        </span>
+      }
+    </div>
+  </ng-template>
+  <ng-template #marker let-event>
+    <span
+      class="z-10 flex h-7 w-7 items-center justify-center rounded-full shadow-sm"
+      [class]="getMarkerClass(event.eventType)"
+    >
+      <i [class]="getEventIcon(event.eventType)" class="text-xs"></i>
+    </span>
+  </ng-template>
+</p-timeline>

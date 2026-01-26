@@ -21,6 +21,6 @@ export interface TripDto {
   stops?: Array<TripStopDto> | null;
   totalDistance?: number;
   totalRevenue?: number;
-  truckId?: string;
+  truckId?: string | null;
   truckNumber?: string | null;
 }

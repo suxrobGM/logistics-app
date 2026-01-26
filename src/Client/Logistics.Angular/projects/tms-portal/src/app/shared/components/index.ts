@@ -50,3 +50,6 @@ export * from "./inspections";
 
 // Other
 export * from "./other";
+
+// Trip Timeline
+export * from "./trip-timeline/trip-timeline";

@@ -1,0 +1,122 @@
+<p-dialog
+  header="Attach Existing Load"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{ width: '80vw', maxWidth: '1200px' }"
+  (onShow)="onDialogShow()"
+>
+  <div class="flex flex-col gap-4">
+    <!-- Search -->
+    <div class="flex items-center gap-2">
+      <p-icon-field class="flex-1">
+        <p-inputicon class="pi pi-search" />
+        <input
+          pInputText
+          type="text"
+          placeholder="Search by load name, customer, origin, or destination..."
+          class="w-full"
+          [(ngModel)]="searchQuery"
+        />
+      </p-icon-field>
+      <p-button
+        icon="pi pi-refresh"
+        variant="outlined"
+        pTooltip="Refresh"
+        [loading]="isLoading()"
+        (click)="loadUnassignedLoads()"
+      />
+    </div>
+
+    <!-- Loading state -->
+    @if (isLoading()) {
+      <div class="flex items-center justify-center p-8">
+        <p-progressSpinner strokeWidth="4" />
+      </div>
+    } @else if (filteredLoads().length === 0) {
+      <div class="text-muted-color flex flex-col items-center p-8 text-center">
+        <i class="pi pi-inbox mb-2 text-4xl"></i>
+        @if (searchQuery()) {
+          <p>No loads match your search criteria</p>
+        } @else {
+          <p>No unassigned loads available</p>
+          <small>All loads are already assigned to trips</small>
+        }
+      </div>
+    } @else {
+      <!-- Loads table -->
+      <p-table
+        [value]="filteredLoads()"
+        [scrollable]="true"
+        scrollHeight="400px"
+        selectionMode="multiple"
+        [(selection)]="selectedLoads"
+        dataKey="id"
+      >
+        <ng-template #header>
+          <tr>
+            <th style="width: 3rem">
+              <p-tableHeaderCheckbox />
+            </th>
+            <th>Load</th>
+            <th>Type</th>
+            <th>Customer</th>
+            <th>Origin</th>
+            <th>Destination</th>
+            <th class="text-right">Distance</th>
+            <th class="text-right">Cost</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-load>
+          <tr>
+            <td>
+              <p-tableCheckbox [value]="load" />
+            </td>
+            <td>
+              <div class="font-medium">{{ load.name }}</div>
+              <div class="text-muted-color text-sm">#{{ load.number }}</div>
+            </td>
+            <td>
+              @if (load.type) {
+                <app-load-type-tag [type]="load.type" />
+              }
+            </td>
+            <td>{{ load.customer?.name ?? "—" }}</td>
+            <td>{{ load.originAddress | address }}</td>
+            <td>{{ load.destinationAddress | address }}</td>
+            <td class="text-right">{{ load.distance | distanceUnit: "mi" }}</td>
+            <td class="text-right">{{ load.deliveryCost | currency }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <!-- Selection summary -->
+      @if (selectedLoads().length > 0) {
+        <div class="bg-surface-100 flex items-center justify-between rounded-lg p-3">
+          <span class="font-medium"> {{ selectedLoads().length }} load(s) selected </span>
+          <div class="flex items-center gap-4 text-sm">
+            <span>
+              Total Distance:
+              <strong>{{ totalSelectedDistance() | distanceUnit: "mi" }}</strong>
+            </span>
+            <span>
+              Total Cost:
+              <strong class="text-green-600">{{ totalSelectedCost() | currency }}</strong>
+            </span>
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  <ng-template #footer>
+    <div class="flex justify-end gap-2">
+      <p-button label="Cancel" variant="outlined" (click)="visible.set(false)" />
+      <p-button
+        label="Attach Selected"
+        icon="pi pi-plus"
+        [disabled]="selectedLoads().length === 0"
+        (click)="attachSelected()"
+      />
+    </div>
+  </ng-template>
+</p-dialog>

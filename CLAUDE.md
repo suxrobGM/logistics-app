@@ -25,6 +25,7 @@ cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 | Service              | Port |
 | -------------------- | ---- |
 | API                  | 7000 |
+| Admin Portal         | 7002 |
 | Identity Server      | 7001 |
 | TMS Portal           | 7003 |
 | Customer Portal      | 7004 |

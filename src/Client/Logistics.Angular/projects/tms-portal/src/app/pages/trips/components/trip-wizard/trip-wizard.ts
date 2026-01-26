@@ -16,9 +16,10 @@ import { TripWizardReview } from "../trip-wizard-review/trip-wizard-review";
 export interface TripWizardValue {
   tripName: string;
   truckId?: string | null; // optional - trip can be created without truck assignment
+  truckNumber?: string | null; // Display-friendly truck number
   truckVehicleCapacity?: number;
   newLoads?: CreateTripLoadCommand[] | null;
-  // attachedLoads removed - API doesn't support attaching existing loads
+  attachedLoadIds?: string[] | null; // IDs of existing loads to attach to this trip
   detachedLoads?: TripLoadDto[] | null;
   stops: TripStopDto[];
   totalDistance: number;
@@ -69,6 +70,7 @@ export class TripWizard {
           mode,
           tripName: initialData.tripName,
           truckId: initialData.truckId,
+          truckNumber: initialData.truckNumber,
           truckVehicleCapacity: initialData.truckVehicleCapacity,
           loads: initialData.initialLoads,
           stops: initialData.initialStops,

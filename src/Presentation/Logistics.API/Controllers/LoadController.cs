@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using CreateLoadCommand = Logistics.Application.Commands.CreateLoadCommand;
 using GetLoadsQuery = Logistics.Application.Queries.GetLoadsQuery;
+using GetUnassignedLoadsQuery = Logistics.Application.Queries.GetUnassignedLoadsQuery;
 using UpdateLoadCommand = Logistics.Application.Commands.UpdateLoadCommand;
 
 namespace Logistics.API.Controllers;
@@ -31,6 +32,15 @@ public class LoadController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(PagedResponse<LoadDto>), StatusCodes.Status200OK)]
     [Authorize(Policy = Permission.Load.View)]
     public async Task<IActionResult> GetList([FromQuery] GetLoadsQuery query)
+    {
+        var result = await mediator.Send(query);
+        return Ok(PagedResponse<LoadDto>.FromPagedResult(result, query.Page, query.PageSize));
+    }
+
+    [HttpGet("unassigned", Name = "GetUnassignedLoads")]
+    [ProducesResponseType(typeof(PagedResponse<LoadDto>), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Load.View)]
+    public async Task<IActionResult> GetUnassignedLoads([FromQuery] GetUnassignedLoadsQuery query)
     {
         var result = await mediator.Send(query);
         return Ok(PagedResponse<LoadDto>.FromPagedResult(result, query.Page, query.PageSize));

@@ -1,4 +1,5 @@
 import { computed, inject } from "@angular/core";
+import { isEmptyGuid } from "@logistics/shared";
 import { Api, optimizeTripStops } from "@logistics/shared/api";
 import type {
   CreateTripLoadCommand,
@@ -7,8 +8,6 @@ import type {
   TripStopDto,
 } from "@logistics/shared/api";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
-import { rxMethod } from "@ngrx/signals/rxjs-interop";
-import { from, pipe, switchMap, tap } from "rxjs";
 
 // Internal types for store state
 interface NewLoad extends CreateTripLoadCommand {
@@ -29,6 +28,7 @@ interface TripWizardState {
   // Step 1 - Basic Info
   tripName: string;
   truckId: string | null; // optional - trip can be created without truck assignment
+  truckNumber: string | null; // Display-friendly truck number
   truckVehicleCapacity: number;
 
   // Step 2 - Loads
@@ -57,6 +57,7 @@ const initialState: TripWizardState = {
   // Step 1
   tripName: "",
   truckId: null,
+  truckNumber: null,
   truckVehicleCapacity: 0,
 
   // Step 2
@@ -85,6 +86,7 @@ interface TripWizardInitializeData {
   mode: "create" | "edit";
   tripName?: string;
   truckId?: string | null;
+  truckNumber?: string | null;
   truckVehicleCapacity?: number;
   loads?: TripLoadDto[];
   stops?: TripStopDto[];
@@ -149,6 +151,7 @@ export const TripWizardStore = signalStore(
     const reviewData = computed(() => ({
       tripName: store.tripName(),
       truckId: store.truckId(),
+      truckNumber: store.truckNumber(),
       totalLoads: totalLoads(),
       newLoadsCount: newLoadsCount(),
       pendingDetachLoadsCount: pendingDetachLoadsCount(),
@@ -159,14 +162,29 @@ export const TripWizardStore = signalStore(
       stops: store.stops(),
     }));
 
+    // Newly attached load IDs (loads added in create mode, not from initial edit data)
+    const attachedLoadIds = computed<string[]>(() => {
+      if (store.mode() === "edit") {
+        // In edit mode, attached loads are the ones not in the initial loads
+        const initialIds = new Set(store.initialLoads().map((l) => l.id));
+        return store.attachedLoads()
+          .filter((l) => l.id && !initialIds.has(l.id))
+          .map((l) => l.id!)
+          .filter((id): id is string => !!id);
+      }
+      // In create mode, all attached loads are newly added
+      return store.attachedLoads()
+        .map((l) => l.id)
+        .filter((id): id is string => !!id);
+    });
+
     // Final wizard value for submission
     const wizardValue = computed(() => ({
       tripName: store.tripName(),
       truckId: store.truckId(),
       truckVehicleCapacity: store.truckVehicleCapacity(),
       newLoads: store.newLoads().length > 0 ? store.newLoads() : null,
-      // attachedLoads removed - API doesn't support attaching existing loads
-      // attachedLoads: store.attachedLoads().length > 0 ? store.attachedLoads() : null,
+      attachedLoadIds: attachedLoadIds().length > 0 ? attachedLoadIds() : null,
       detachedLoads: store.detachedLoads().length > 0 ? store.detachedLoads() : null,
       stops: store.stops(),
       totalDistance: store.totalDistance(),
@@ -197,6 +215,7 @@ export const TripWizardStore = signalStore(
       wizardValue,
       canProceedFromStep1,
       canProceedFromStep2,
+      attachedLoadIds,
     };
   }),
   withMethods((store, api = inject(Api)) => ({
@@ -207,10 +226,14 @@ export const TripWizardStore = signalStore(
 
     // Initialize wizard (for edit mode)
     initialize(data: TripWizardInitializeData) {
+      // Normalize empty GUID to null
+      const normalizedTruckId = isEmptyGuid(data.truckId) ? null : data.truckId;
+
       patchState(store, {
         mode: data.mode,
         tripName: data.tripName ?? "",
-        truckId: data.truckId ?? "",
+        truckId: normalizedTruckId,
+        truckNumber: data.truckNumber ?? null,
         truckVehicleCapacity: data.truckVehicleCapacity ?? 0,
         attachedLoads: data.loads ?? [],
         stops: data.stops ?? [],
@@ -229,11 +252,13 @@ export const TripWizardStore = signalStore(
     setBasicInfo(data: {
       tripName: string;
       truckId: string | null;
+      truckNumber: string | null;
       truckVehicleCapacity: number;
     }): void {
       patchState(store, {
         tripName: data.tripName,
         truckId: data.truckId,
+        truckNumber: data.truckNumber,
         truckVehicleCapacity: data.truckVehicleCapacity,
       });
     },
@@ -260,14 +285,24 @@ export const TripWizardStore = signalStore(
       });
     },
 
-    // attachExistingLoad removed - API doesn't support attaching existing loads
-    // The attachedLoads state is only used for edit mode to show existing loads
-    // attachExistingLoad(load: TripLoadDto): void {
-    //   patchState(store, {
-    //     attachedLoads: [...store.attachedLoads(), load],
-    //     stopsNeedRegeneration: true, // Mark stops as needing regeneration
-    //   });
-    // },
+    // Attach an existing unassigned load to this trip
+    attachExistingLoad(load: TripLoadDto): void {
+      // Check if already attached
+      if (store.attachedLoads().some((l) => l.id === load.id)) return;
+
+      patchState(store, {
+        attachedLoads: [...store.attachedLoads(), load],
+        stopsNeedRegeneration: true, // Mark stops as needing regeneration
+      });
+    },
+
+    // Remove an attached existing load (not detach - used for undoing attach)
+    removeAttachedLoad(loadId: string): void {
+      patchState(store, {
+        attachedLoads: store.attachedLoads().filter((l) => l.id !== loadId),
+        stopsNeedRegeneration: true,
+      });
+    },
 
     detachLoad(loadId: string): void {
       const load = store.tableRows().find((l) => l.id === loadId);
@@ -312,86 +347,64 @@ export const TripWizardStore = signalStore(
     },
 
     // Optimization - Step 2 (initial optimization)
-    optimizeStopsFromStep2: rxMethod<void>(
-      pipe(
-        switchMap(() => {
-          patchState(store, { isOptimizing: true });
+    async optimizeStopsFromStep2(): Promise<void> {
+      patchState(store, { isOptimizing: true });
 
-          const activeLoads = store.activeLoads();
-          const totalCostFromLoads = store.totalCostFromLoads();
-          const stops = buildStopsFromLoads(activeLoads);
+      const activeLoads = store.activeLoads();
+      const totalCostFromLoads = store.totalCostFromLoads();
+      const stops = buildStopsFromLoads(activeLoads);
 
-          const command: OptimizeTripStopsCommand = {
-            maxVehicles: store.truckVehicleCapacity(),
-            stops: stops,
-          };
+      const command: OptimizeTripStopsCommand = {
+        // Use truck capacity if assigned, otherwise default to 8 (typical car hauler capacity)
+        maxVehicles: store.truckVehicleCapacity() || 8,
+        stops: stops,
+      };
 
-          return from(
-            api.invoke(optimizeTripStops, {
-              body: command,
-            }),
-          ).pipe(
-            tap({
-              next: (result) => {
-                patchState(store, {
-                  stops: result?.orderedStops ?? stops,
-                  totalDistance: result?.totalDistance ?? 0,
-                  totalCost: totalCostFromLoads,
-                  isOptimizing: false,
-                  stopsNeedRegeneration: false,
-                });
-              },
-              error: (error: unknown) => {
-                console.error("Failed to optimize stops:", error);
-                // Fallback to non-optimized stops
-                patchState(store, {
-                  stops: stops,
-                  totalDistance: 0,
-                  totalCost: totalCostFromLoads,
-                  isOptimizing: false,
-                  stopsNeedRegeneration: false,
-                });
-              },
-            }),
-          );
-        }),
-      ),
-    ),
+      try {
+        const result = await api.invoke(optimizeTripStops, { body: command });
+        patchState(store, {
+          stops: result?.orderedStops ?? stops,
+          totalDistance: result?.totalDistance ?? 0,
+          totalCost: totalCostFromLoads,
+          isOptimizing: false,
+          stopsNeedRegeneration: false,
+        });
+      } catch (error) {
+        console.error("Failed to optimize stops:", error);
+        // Fallback to non-optimized stops
+        patchState(store, {
+          stops: stops,
+          totalDistance: 0,
+          totalCost: totalCostFromLoads,
+          isOptimizing: false,
+          stopsNeedRegeneration: false,
+        });
+      }
+    },
 
     // Re-optimization - Step 3
-    reOptimizeStops: rxMethod<void>(
-      pipe(
-        switchMap(() => {
-          patchState(store, { isOptimizing: true });
+    async reOptimizeStops(): Promise<void> {
+      patchState(store, { isOptimizing: true });
 
-          const currentStops = store.stops();
-          const command: OptimizeTripStopsCommand = {
-            maxVehicles: store.truckVehicleCapacity(),
-            stops: currentStops,
-          };
+      const currentStops = store.stops();
+      const command: OptimizeTripStopsCommand = {
+        // Use truck capacity if assigned, otherwise default to 8 (typical car hauler capacity)
+        maxVehicles: store.truckVehicleCapacity() || 8,
+        stops: currentStops,
+      };
 
-          return from(
-            api.invoke(optimizeTripStops, {
-              body: command,
-            }),
-          ).pipe(
-            tap({
-              next: (result) => {
-                patchState(store, {
-                  stops: result?.orderedStops ?? currentStops,
-                  totalDistance: result?.totalDistance ?? store.totalDistance(),
-                  isOptimizing: false,
-                });
-              },
-              error: (error: unknown) => {
-                console.error("Failed to re-optimize stops:", error);
-                patchState(store, { isOptimizing: false });
-              },
-            }),
-          );
-        }),
-      ),
-    ),
+      try {
+        const result = await api.invoke(optimizeTripStops, { body: command });
+        patchState(store, {
+          stops: result?.orderedStops ?? currentStops,
+          totalDistance: result?.totalDistance ?? store.totalDistance(),
+          isOptimizing: false,
+        });
+      } catch (error) {
+        console.error("Failed to re-optimize stops:", error);
+        patchState(store, { isOptimizing: false });
+      }
+    },
   })),
 );
 

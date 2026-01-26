@@ -135,6 +135,7 @@
               Status
               <p-sortIcon field="Status" />
             </th>
+            <th>Progress</th>
             <th>Action</th>
           </tr>
         </ng-template>
@@ -198,6 +199,20 @@
               </div>
             </td>
             <td>
+              @if (trip.status !== "draft" && trip.status !== "cancelled") {
+                <div class="flex items-center gap-2" style="min-width: 100px">
+                  <p-progressBar
+                    [value]="getProgressPercentage(trip)"
+                    [showValue]="false"
+                    class="h-2"
+                  />
+                  <span class="text-sm">{{ getProgressPercentage(trip) }}%</span>
+                </div>
+              } @else {
+                <span class="text-muted-color text-sm">—</span>
+              }
+            </td>
+            <td>
               <p-button
                 icon="pi pi-ellipsis-v"
                 [text]="true"
@@ -209,7 +224,7 @@
         </ng-template>
         <ng-template #expandedrow let-trip>
           <tr>
-            <td colspan="11">
+            <td colspan="12">
               <div class="p-4">
                 <h5 class="mb-4">Loads in this trip</h5>
                 <p-table [value]="trip.loads" [dataKey]="'id'">
@@ -302,5 +317,5 @@
   </p-card>
 
   <!-- Reusable context menu for the actions button -->
-  <p-menu #menu [model]="actionMenuItems" [popup]="true" />
+  <p-menu #menu [model]="actionMenuItems()" [popup]="true" />
 </div>

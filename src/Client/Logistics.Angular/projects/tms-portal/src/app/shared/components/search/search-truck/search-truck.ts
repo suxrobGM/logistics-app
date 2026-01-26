@@ -2,6 +2,7 @@
 import { Component, forwardRef, inject, model, output, signal } from "@angular/core";
 import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
 import { Api, type TruckDto, getTruckById, getTrucks } from "@logistics/shared/api";
+import { isEmptyGuid } from "@logistics/shared";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 
 /**
@@ -46,7 +47,7 @@ export class SearchTruck implements ControlValueAccessor {
   }
 
   private async fetchTruckById(id: string): Promise<void> {
-    if (!id) {
+    if (isEmptyGuid(id)) {
       this.selectedTruck.set(null);
       return;
     }
