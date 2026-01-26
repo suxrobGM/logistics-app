@@ -1,10 +1,14 @@
-import { Component, inject, type OnInit, signal } from "@angular/core";
+import { Component, type OnInit, inject, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
-import { Api, createSubscription, getSubscriptionPlans, getTenants } from "@logistics/shared/api";
-import type { CreateSubscriptionCommand, SubscriptionPlanDto, TenantDto } from "@logistics/shared/api/models";
-import { LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ToastService } from "@logistics/shared";
+import { Api, createSubscription, getSubscriptionPlans, getTenants } from "@logistics/shared/api";
+import type {
+  CreateSubscriptionCommand,
+  SubscriptionPlanDto,
+  TenantDto,
+} from "@logistics/shared/api";
+import { LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -63,21 +67,24 @@ export class SubscriptionAdd implements OnInit {
 
     // Filter out tenants that already have an active subscription
     const tenantsWithoutSubscription = tenants.filter(
-      (t) => !t.subscription || t.subscription.status === "cancelled" || t.subscription.status === "unpaid"
+      (t) =>
+        !t.subscription ||
+        t.subscription.status === "cancelled" ||
+        t.subscription.status === "unpaid",
     );
 
     this.tenantOptions.set(
       tenantsWithoutSubscription.map((t) => ({
         label: `${t.name} (${t.companyName})`,
         value: t.id!,
-      }))
+      })),
     );
 
     this.planOptions.set(
       plans.map((p) => ({
         label: `${p.name} - $${p.price}/${p.interval}`,
         value: p.id!,
-      }))
+      })),
     );
 
     this.isFetching.set(false);

@@ -1,8 +1,8 @@
-import { Component, inject, type OnInit, signal } from "@angular/core";
+import { Component, type OnInit, inject, signal } from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { Api, deleteTenant, getTenantById, updateTenant } from "@logistics/shared/api";
-import type { TenantDto, UpdateTenantCommand } from "@logistics/shared/api/models";
 import { ToastService } from "@logistics/shared";
+import { Api, deleteTenant, getTenantById, updateTenant } from "@logistics/shared/api";
+import type { TenantDto, UpdateTenantCommand } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";

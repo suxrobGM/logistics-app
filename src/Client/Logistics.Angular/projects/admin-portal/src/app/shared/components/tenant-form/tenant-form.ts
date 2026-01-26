@@ -1,9 +1,9 @@
 import { Component, effect, inject, input, output } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import type { Address } from "@logistics/shared/api/models";
-import { AddressForm, LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ToastService } from "@logistics/shared";
+import type { Address } from "@logistics/shared/api";
+import { AddressForm, LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -43,7 +43,10 @@ export class TenantForm {
   protected readonly form = new FormGroup({
     name: new FormControl("", { validators: Validators.required, nonNullable: true }),
     companyName: new FormControl("", { validators: Validators.required, nonNullable: true }),
-    billingEmail: new FormControl("", { validators: [Validators.required, Validators.email], nonNullable: true }),
+    billingEmail: new FormControl("", {
+      validators: [Validators.required, Validators.email],
+      nonNullable: true,
+    }),
     dotNumber: new FormControl("", { nonNullable: true }),
     companyAddress: new FormControl<Address | null>(null),
   });

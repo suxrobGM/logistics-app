@@ -1,8 +1,8 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { Api, createSubscriptionPlan } from "@logistics/shared/api";
-import type { CreateSubscriptionPlanCommand } from "@logistics/shared/api/models";
 import { ToastService } from "@logistics/shared";
+import { Api, createSubscriptionPlan } from "@logistics/shared/api";
+import type { CreateSubscriptionPlanCommand } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";

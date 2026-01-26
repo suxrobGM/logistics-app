@@ -1,15 +1,15 @@
-import { Component, inject, type OnInit, signal } from "@angular/core";
+import { Component, type OnInit, inject, signal } from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { ToastService } from "@logistics/shared";
 import {
   Api,
   deleteBlogPost,
   getBlogPostById,
-  updateBlogPost,
   publishBlogPost,
   unpublishBlogPost,
+  updateBlogPost,
 } from "@logistics/shared/api";
-import type { BlogPostDto, UpdateBlogPostCommand } from "@logistics/shared/api/models";
-import { ToastService } from "@logistics/shared";
+import type { BlogPostDto, UpdateBlogPostCommand } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";

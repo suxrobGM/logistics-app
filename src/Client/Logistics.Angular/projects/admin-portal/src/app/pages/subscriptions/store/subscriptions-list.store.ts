@@ -1,5 +1,5 @@
 import { getSubscriptions } from "@logistics/shared/api";
-import type { SubscriptionDto } from "@logistics/shared/api/models";
+import type { SubscriptionDto } from "@logistics/shared/api";
 import { createListStore } from "@/shared/stores";
 
 /**

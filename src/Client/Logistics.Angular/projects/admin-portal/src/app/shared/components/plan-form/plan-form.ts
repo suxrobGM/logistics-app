@@ -1,15 +1,15 @@
 import { Component, effect, inject, input, output } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import type { BillingInterval, TrialPeriod } from "@logistics/shared/api/models";
-import { CurrencyInput, LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ToastService } from "@logistics/shared";
+import type { BillingInterval, TrialPeriod } from "@logistics/shared/api";
+import { CurrencyInput, LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
-import { TextareaModule } from "primeng/textarea";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
+import { TextareaModule } from "primeng/textarea";
 
 export interface PlanFormValue {
   name: string;
@@ -67,9 +67,18 @@ export class PlanForm {
   protected readonly form = new FormGroup({
     name: new FormControl("", { validators: Validators.required, nonNullable: true }),
     description: new FormControl("", { nonNullable: true }),
-    price: new FormControl<number>(0, { validators: [Validators.required, Validators.min(0)], nonNullable: true }),
-    interval: new FormControl<BillingInterval>("month", { validators: Validators.required, nonNullable: true }),
-    intervalCount: new FormControl<number>(1, { validators: [Validators.required, Validators.min(1)], nonNullable: true }),
+    price: new FormControl<number>(0, {
+      validators: [Validators.required, Validators.min(0)],
+      nonNullable: true,
+    }),
+    interval: new FormControl<BillingInterval>("month", {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    intervalCount: new FormControl<number>(1, {
+      validators: [Validators.required, Validators.min(1)],
+      nonNullable: true,
+    }),
     trialPeriod: new FormControl<TrialPeriod>("none", { nonNullable: true }),
   });
 
@@ -90,7 +99,8 @@ export class PlanForm {
 
   protected askRemove(): void {
     this.toastService.confirm({
-      message: "Are you sure that you want to delete this subscription plan? This action cannot be undone.",
+      message:
+        "Are you sure that you want to delete this subscription plan? This action cannot be undone.",
       header: "Confirm Delete",
       icon: "pi pi-exclamation-triangle",
       acceptButtonStyleClass: "p-button-danger",
