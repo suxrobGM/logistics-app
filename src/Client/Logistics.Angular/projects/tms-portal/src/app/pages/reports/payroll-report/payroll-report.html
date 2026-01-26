@@ -227,21 +227,7 @@
                 <div class="flex items-center">
                   <div
                     class="mr-2 h-3 w-3 rounded-full"
-                    [style.backgroundColor]="
-                      item.salaryType
-                        ? item.salaryType === 'monthly'
-                          ? '#3b82f6'
-                          : item.salaryType === 'weekly'
-                            ? '#8b5cf6'
-                            : item.salaryType === 'hourly'
-                              ? '#06b6d4'
-                              : item.salaryType === 'share_of_gross'
-                                ? '#f59e0b'
-                                : item.salaryType === 'rate_per_distance'
-                                  ? '#22c55e'
-                                  : '#64748b'
-                        : '#64748b'
-                    "
+                    [style.backgroundColor]="getSalaryTypeColor(item.salaryType)"
                   ></div>
                   <span class="font-medium">{{ getSalaryTypeLabel(item.salaryType) }}</span>
                 </div>
@@ -251,16 +237,7 @@
                 {{ item.totalAmount | currency: "USD" : "symbol" : "1.0-0" }}
               </td>
               <td class="text-right">
-                <span
-                  class="rounded px-2 py-1 text-sm"
-                  [class]="
-                    (item.percentage || 0) >= 30
-                      ? 'bg-green-600/10 text-green-600'
-                      : (item.percentage || 0) >= 15
-                        ? 'bg-blue-600/10 text-blue-600'
-                        : 'bg-slate-600/10 text-slate-600'
-                  "
-                >
+                <span class="rounded px-2 py-1 text-sm" [class]="getPercentageClass(item.percentage)">
                   {{ item.percentage | percent: "1.1-1" }}
                 </span>
               </td>

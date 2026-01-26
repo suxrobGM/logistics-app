@@ -21,14 +21,25 @@ import {
   StatCard,
 } from "@/shared/components";
 import {
-  PAYROLL_STATUS_BACKGROUND_COLORS,
-  PAYROLL_STATUS_HOVER_COLORS,
   PAYROLL_STATUS_LABELS,
   SALARY_TYPE_COLORS,
   getPayrollStatusChartOptions,
   getPayrollTrendChartOptions,
   getSalaryTypeChartOptions,
 } from "@/shared/constants";
+
+// Status chart colors - aligned with PAYROLL_STATUS_LABELS order
+const STATUS_COLORS = {
+  background: [
+    "#64748b", // Draft - slate
+    "#f59e0b", // Pending Approval - amber
+    "#22c55e", // Approved - green
+    "#ef4444", // Rejected - red
+    "#3b82f6", // Partially Paid - blue
+    "#10b981", // Paid - emerald
+  ],
+  hover: ["#475569", "#d97706", "#16a34a", "#dc2626", "#2563eb", "#059669"],
+};
 import { Converters } from "@/shared/utils";
 
 @Component({
@@ -101,8 +112,8 @@ export class PayrollReportComponent
           datasets: [
             {
               data: statusData,
-              backgroundColor: PAYROLL_STATUS_BACKGROUND_COLORS,
-              hoverBackgroundColor: PAYROLL_STATUS_HOVER_COLORS,
+              backgroundColor: STATUS_COLORS.background,
+              hoverBackgroundColor: STATUS_COLORS.hover,
             },
           ],
         });
@@ -158,6 +169,17 @@ export class PayrollReportComponent
 
   protected getSalaryTypeLabel(salaryType?: string | null): string {
     return salaryTypeOptions.find((opt) => opt.value === salaryType)?.label ?? salaryType ?? "N/A";
+  }
+
+  protected getSalaryTypeColor(salaryType?: string | null): string {
+    return SALARY_TYPE_COLORS[salaryType ?? "none"] ?? "#64748b";
+  }
+
+  protected getPercentageClass(percentage?: number | null): string {
+    const value = percentage ?? 0;
+    if (value >= 30) return "bg-green-600/10 text-green-600";
+    if (value >= 15) return "bg-blue-600/10 text-blue-600";
+    return "bg-slate-600/10 text-slate-600";
   }
 
   protected getEmployeeInitials(name?: string | null): string {

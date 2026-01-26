@@ -31,6 +31,10 @@ export abstract class BaseReportComponent<T> {
         this.data.set(result);
         this.drawChart(result);
       }
+    } catch (error) {
+      console.error("Report fetch failed:", error);
+      this.toastService.showError("Failed to load report data. Please try again.");
+      this.data.set(null);
     } finally {
       this.isLoading.set(false);
     }

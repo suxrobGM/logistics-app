@@ -10,7 +10,7 @@ import type {
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
-import { Tag, TagModule } from "primeng/tag";
+import { TagModule } from "primeng/tag";
 import {
   BaseReportComponent,
   DashboardCard,
@@ -25,6 +25,7 @@ import {
   DRIVERS_PERFORMANCE_CHART_OPTIONS,
   DRIVERS_TREND_CHART_OPTIONS,
 } from "@/shared/constants/drivers-chart.options";
+import { getPerformanceLevel, getPerformanceSeverity } from "@/shared/utils";
 
 @Component({
   selector: "app-drivers-report",
@@ -131,17 +132,6 @@ export class DriversReportComponent
     }
   }
 
-  protected getPerformanceLevel(efficiency: number): string {
-    if (efficiency >= 2.0) return "Excellent";
-    if (efficiency >= 1.5) return "Good";
-    if (efficiency >= 1.0) return "Average";
-    return "Below Average";
-  }
-
-  protected getPerformanceSeverity(efficiency: number): Tag["severity"] {
-    if (efficiency >= 2.0) return "success";
-    if (efficiency >= 1.5) return "info";
-    if (efficiency >= 1.0) return "warn";
-    return "danger";
-  }
+  protected getPerformanceLevel = getPerformanceLevel;
+  protected getPerformanceSeverity = getPerformanceSeverity;
 }

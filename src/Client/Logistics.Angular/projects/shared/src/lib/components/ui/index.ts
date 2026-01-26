@@ -1,3 +1,3 @@
-export * from "./page-header";
-export * from "./stat-card";
-export * from "./dashboard-card";
+export * from "./page-header/page-header";
+export * from "./stat-card/stat-card";
+export * from "./dashboard-card/dashboard-card";

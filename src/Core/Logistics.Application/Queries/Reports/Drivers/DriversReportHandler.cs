@@ -24,6 +24,11 @@ internal sealed class DriversReportHandler(ITenantUnitOfWork tenantUow) : IAppRe
             loads = loads.Where(l => l.CreatedAt <= to);
         }
 
+        // Calculate efficiency based on actual period
+        var periodDays = req.StartDate != default && req.EndDate != default
+            ? Math.Max(1, (req.EndDate - req.StartDate).TotalDays)
+            : 30.0;
+
         var mainDriverStats = trucks
             .Where(t => t.MainDriver != null)
             .Select(t => new
@@ -78,7 +83,7 @@ internal sealed class DriversReportHandler(ITenantUnitOfWork tenantUow) : IAppRe
                 IsMainDriver = d.IsMainDriver,
                 AverageDistancePerLoad = d.LoadsDelivered > 0 ? d.DistanceDriven / d.LoadsDelivered : 0,
                 AverageEarningsPerLoad = d.LoadsDelivered > 0 ? d.GrossEarnings / d.LoadsDelivered : 0,
-                Efficiency = d.LoadsDelivered > 0 ? d.LoadsDelivered / 30.0 : 0 // Assuming 30 days period
+                Efficiency = d.LoadsDelivered > 0 ? d.LoadsDelivered / periodDays : 0
             });
 
         if (!string.IsNullOrWhiteSpace(req.Search))

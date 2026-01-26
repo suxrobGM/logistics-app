@@ -12,7 +12,7 @@ import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
 import { Observable, from } from "rxjs";
 import { BaseTableComponent, DateRangePicker, type TableQueryParams } from "@/shared/components";
-import { DateUtils } from "@/shared/utils";
+import { DateUtils, getPerformanceLevel, getPerformanceSeverity } from "@/shared/utils";
 
 @Component({
   selector: "app-drivers-detailed",
@@ -58,19 +58,8 @@ export class DriversDetailedComponent extends BaseTableComponent<DriverReportDto
     }
   }
 
-  protected getPerformanceLevel(efficiency: number): string {
-    if (efficiency >= 2.0) return "Excellent";
-    if (efficiency >= 1.5) return "Good";
-    if (efficiency >= 1.0) return "Average";
-    return "Below Average";
-  }
-
-  protected getPerformanceSeverity(efficiency: number): Tag["severity"] {
-    if (efficiency >= 2.0) return "success";
-    if (efficiency >= 1.5) return "info";
-    if (efficiency >= 1.0) return "warn";
-    return "danger";
-  }
+  protected getPerformanceLevel = getPerformanceLevel;
+  protected getPerformanceSeverity = getPerformanceSeverity;
 
   protected getDriverTypeSeverity(isMainDriver: boolean): Tag["severity"] {
     return isMainDriver ? "success" : "info";

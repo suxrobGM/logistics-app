@@ -8,23 +8,6 @@ export const PAYROLL_STATUS_LABELS = [
   "Partially Paid",
   "Paid",
 ];
-export const PAYROLL_STATUS_BACKGROUND_COLORS = [
-  "#64748b", // Draft - slate
-  "#f59e0b", // Pending Approval - amber
-  "#22c55e", // Approved - green
-  "#ef4444", // Rejected - red
-  "#3b82f6", // Partially Paid - blue
-  "#10b981", // Paid - emerald
-];
-export const PAYROLL_STATUS_HOVER_COLORS = [
-  "#475569",
-  "#d97706",
-  "#16a34a",
-  "#dc2626",
-  "#2563eb",
-  "#059669",
-];
-
 export const SALARY_TYPE_COLORS: Record<string, string> = {
   monthly: "#3b82f6", // blue
   weekly: "#8b5cf6", // violet

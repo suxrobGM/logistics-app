@@ -155,16 +155,7 @@
               <td>{{ trend.invoiced | currency: "USD" : "symbol" : "1.0-0" }}</td>
               <td>{{ trend.paid | currency: "USD" : "symbol" : "1.0-0" }}</td>
               <td>
-                <span
-                  class="font-medium"
-                  [class]="
-                    trend.collectionRate >= 80
-                      ? 'text-green-600'
-                      : trend.collectionRate >= 60
-                        ? 'text-yellow-500'
-                        : 'text-red-600'
-                  "
-                >
+                <span class="font-medium" [class]="getCollectionRateClass(trend.collectionRate)">
                   {{ trend.collectionRate | number: "1.1-1" }}%
                 </span>
               </td>

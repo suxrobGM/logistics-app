@@ -118,7 +118,3 @@ export function getInvoiceStatusChartOptions(isDark = true) {
   };
 }
 
-// Legacy exports for backward compatibility
-export const FINANCIAL_METRICS_CHART_OPTIONS = getFinancialMetricsChartOptions(true);
-export const REVENUE_TREND_CHART_OPTIONS = getRevenueTrendChartOptions(true);
-export const INVOICE_STATUS_CHART_OPTIONS = getInvoiceStatusChartOptions(true);

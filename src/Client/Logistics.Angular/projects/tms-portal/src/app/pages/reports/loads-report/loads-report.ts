@@ -8,12 +8,18 @@ import type {
   StatusDto,
   TypeDto,
 } from "@logistics/shared/api";
-import { Card } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
-import { BaseReportComponent, DateRangePicker, type ReportQueryParams } from "@/shared/components";
+import {
+  BaseReportComponent,
+  DashboardCard,
+  DateRangePicker,
+  PageHeader,
+  type ReportQueryParams,
+  StatCard,
+} from "@/shared/components";
 import {
   LOADS_CHART_PALETTE,
   LOADS_PERFORMANCE_CHART_OPTIONS,
@@ -26,7 +32,6 @@ import {
   selector: "app-loads-report",
   templateUrl: "./loads-report.html",
   imports: [
-    Card,
     ChartModule,
     TableModule,
     CurrencyPipe,
@@ -34,6 +39,9 @@ import {
     DecimalPipe,
     SkeletonModule,
     TagModule,
+    PageHeader,
+    StatCard,
+    DashboardCard,
   ],
 })
 export class LoadsReportComponent extends BaseReportComponent<LoadsReportDto> implements OnInit {

@@ -73,7 +73,7 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IAppRequ
         return Result<LoadsReportDto>.Ok(dto);
     }
 
-    private List<LoadTrendDto> CalculateLoadTrends(IQueryable<Load> queryable, DateTime startDate, DateTime endDate)
+    private static List<LoadTrendDto> CalculateLoadTrends(IQueryable<Load> queryable, DateTime startDate, DateTime endDate)
     {
         var trends = new List<LoadTrendDto>();
         var currentDate = startDate == default ? DateTime.UtcNow.AddMonths(-6) : DateTime.SpecifyKind(startDate, DateTimeKind.Utc);
@@ -102,7 +102,7 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IAppRequ
         return trends;
     }
 
-    private List<TopCustomerLoadDto> GetTopCustomersByLoads(IQueryable<Load> queryable)
+    private static List<TopCustomerLoadDto> GetTopCustomersByLoads(IQueryable<Load> queryable)
     {
         return queryable
             .Where(l => l.Customer != null)
@@ -120,20 +120,28 @@ internal sealed class LoadsReportHandler(ITenantUnitOfWork tenantUow) : IAppRequ
             .ToList();
     }
 
-    private List<LoadPerformanceDto> CalculatePerformanceMetrics(IQueryable<Load> queryable, int totalLoads, decimal totalRevenue, double totalDistance)
+    private static List<LoadPerformanceDto> CalculatePerformanceMetrics(IQueryable<Load> queryable, int totalLoads, decimal totalRevenue, double totalDistance)
     {
         var deliveredLoads = queryable.Count(l => l.Status == LoadStatus.Delivered);
-        var onTimeDeliveries = queryable.Count(l => l.Status == LoadStatus.Delivered && l.DeliveredAt <= l.CreatedAt.AddDays(7));
+
+        // Estimate on-time delivery based on distance (average 500km/day including rest stops)
+        // Load is on-time if delivered within estimated travel days from dispatch
+        var onTimeDeliveries = queryable.Count(l =>
+            l.Status == LoadStatus.Delivered &&
+            l.DeliveredAt.HasValue &&
+            l.DispatchedAt.HasValue &&
+            l.DeliveredAt <= l.DispatchedAt.Value.AddDays(Math.Max(1, l.Distance / 500)));
+
         var deliveryRate = totalLoads > 0 ? (double)deliveredLoads / totalLoads * 100 : 0;
         var onTimeRate = deliveredLoads > 0 ? (double)onTimeDeliveries / deliveredLoads * 100 : 0;
 
-        return new List<LoadPerformanceDto>
-        {
-            new() { Metric = "Delivery Rate", Value = deliveryRate, Unit = "%", Trend = 5.2 },
-            new() { Metric = "On-Time Delivery", Value = onTimeRate, Unit = "%", Trend = 3.1 },
-            new() { Metric = "Average Load Value", Value = (double)(totalRevenue / Math.Max(totalLoads, 1)), Unit = "$", Trend = 2.8 },
-            new() { Metric = "Distance Efficiency", Value = totalDistance / Math.Max(totalLoads, 1), Unit = "km", Trend = -1.5 }
-        };
+        return
+        [
+            new() { Metric = "Delivery Rate", Value = deliveryRate, Unit = "%" },
+            new() { Metric = "On-Time Delivery", Value = onTimeRate, Unit = "%" },
+            new() { Metric = "Average Load Value", Value = (double)(totalRevenue / Math.Max(totalLoads, 1)), Unit = "$" },
+            new() { Metric = "Distance Efficiency", Value = totalDistance / Math.Max(totalLoads, 1), Unit = "km" }
+        ];
     }
 }
 

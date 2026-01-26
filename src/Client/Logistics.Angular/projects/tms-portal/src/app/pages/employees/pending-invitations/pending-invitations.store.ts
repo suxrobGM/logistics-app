@@ -47,7 +47,7 @@ export const PendingInvitationsStore = signalStore(
           Page: store.page(),
           PageSize: store.pageSize(),
           OrderBy: formatSortField(store.sortField(), store.sortOrder()),
-          Search: store.search() || undefined,
+          Search: store.search(),
           Status: "pending",
         });
 
@@ -56,7 +56,7 @@ export const PendingInvitationsStore = signalStore(
           totalRecords: result.pagination?.total ?? 0,
           isLoading: false,
         });
-      } catch (err) {
+      } catch {
         patchState(store, {
           error: { category: "unknown", message: "Failed to load invitations", retryable: true },
           isLoading: false,

@@ -11,6 +11,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
     public async Task<Result<FinancialsReportDto>> Handle(FinancialsReportQuery req, CancellationToken ct)
     {
         var invoicesQuery = tenantUow.Repository<LoadInvoice>().Query();
+        var expenseQuery = tenantUow.Repository<Expense>().Query();
 
         if (req.StartDate != default)
         {
@@ -48,7 +49,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
 
         var topCustomers = GetTopCustomersByValue(invoices);
         var statusDistribution = GetStatusDistribution(invoices, fullyPaidInvoices, partiallyPaidInvoices, unpaidInvoices);
-        var revenueTrends = CalculateRevenueTrends(invoices, req.StartDate, req.EndDate);
+        var revenueTrends = CalculateRevenueTrends(invoices, expenseQuery, req.StartDate, req.EndDate);
         var financialMetrics = CalculateFinancialMetrics(invoices, totalInvoiced, totalPaid, totalDue);
 
         var dto = new FinancialsReportDto
@@ -74,7 +75,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
         return Result<FinancialsReportDto>.Ok(dto);
     }
 
-    private List<PaymentTrendDto> CalculatePaymentTrends(
+    private static List<PaymentTrendDto> CalculatePaymentTrends(
         List<LoadInvoice> invoices,
         DateTime startDate,
         DateTime endDate)
@@ -124,7 +125,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
             .ToList();
     }
 
-    private StatusDistributionDto GetStatusDistribution(
+    private static StatusDistributionDto GetStatusDistribution(
         List<LoadInvoice> invoices,
         int fullyPaidInvoices,
         int partiallyPaidInvoices,
@@ -132,13 +133,17 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
     {
         return new StatusDistributionDto
         {
-            PaidPercentage = invoices.Any() ? (fullyPaidInvoices * 100.0) / invoices.Count : 0,
-            PartialPercentage = invoices.Any() ? (partiallyPaidInvoices * 100.0) / invoices.Count : 0,
-            UnpaidPercentage = invoices.Any() ? (unpaidInvoices * 100.0) / invoices.Count : 0
+            PaidPercentage = invoices.Count != 0 ? (fullyPaidInvoices * 100.0) / invoices.Count : 0,
+            PartialPercentage = invoices.Count != 0 ? (partiallyPaidInvoices * 100.0) / invoices.Count : 0,
+            UnpaidPercentage = invoices.Count != 0 ? (unpaidInvoices * 100.0) / invoices.Count : 0
         };
     }
 
-    private List<RevenueTrendDto> CalculateRevenueTrends(List<LoadInvoice> invoices, DateTime startDate, DateTime endDate)
+    private static List<RevenueTrendDto> CalculateRevenueTrends(
+        List<LoadInvoice> invoices,
+        IQueryable<Expense> expenseQuery,
+        DateTime startDate,
+        DateTime endDate)
     {
         var trends = new List<RevenueTrendDto>();
         var currentDate = startDate == default ? DateTime.UtcNow.AddMonths(-6) : DateTime.SpecifyKind(startDate, DateTimeKind.Utc);
@@ -155,7 +160,12 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
 
             var revenue = monthInvoices.Sum(i => i.Total.Amount);
             var paid = monthInvoices.Sum(i => i.Payments.Sum(p => p.Amount.Amount));
-            var expenses = revenue * 0.3m; // Assuming 30% expenses
+
+            // Query actual expenses for this month
+            var expenses = expenseQuery
+                .Where(e => e.ExpenseDate >= monthStart && e.ExpenseDate <= monthEnd)
+                .Sum(e => e.Amount.Amount);
+
             var profit = paid - expenses;
             var profitMargin = revenue > 0 ? (double)(profit / revenue) * 100 : 0;
 
@@ -174,24 +184,24 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
         return trends;
     }
 
-    private List<FinancialMetricDto> CalculateFinancialMetrics(List<LoadInvoice> invoices, decimal totalInvoiced, decimal totalPaid, decimal totalDue)
+    private static List<FinancialMetricDto> CalculateFinancialMetrics(List<LoadInvoice> invoices, decimal totalInvoiced, decimal totalPaid, decimal totalDue)
     {
-        var avgInvoiceValue = invoices.Any() ? totalInvoiced / invoices.Count : 0;
+        var avgInvoiceValue = invoices.Count != 0 ? totalInvoiced / invoices.Count : 0;
         var collectionRate = totalInvoiced > 0 ? (double)(totalPaid / totalInvoiced) * 100 : 0;
         var overdueAmount = GetOverdueAmount(invoices);
         var overdueCount = GetOverdueInvoicesCount(invoices);
 
-        return new List<FinancialMetricDto>
-        {
-            new() { Metric = "Average Invoice Value", Value = avgInvoiceValue, Unit = "$", Trend = 5.2, Category = "Revenue" },
-            new() { Metric = "Collection Rate", Value = (decimal)collectionRate, Unit = "%", Trend = 3.1, Category = "Performance" },
-            new() { Metric = "Outstanding Amount", Value = totalDue, Unit = "$", Trend = -2.5, Category = "Risk" },
-            new() { Metric = "Overdue Amount", Value = overdueAmount, Unit = "$", Trend = -1.8, Category = "Risk" },
-            new() { Metric = "Overdue Invoices", Value = overdueCount, Unit = "count", Trend = -0.9, Category = "Risk" }
-        };
+        return
+        [
+            new() { Metric = "Average Invoice Value", Value = avgInvoiceValue, Unit = "$", Category = "Revenue" },
+            new() { Metric = "Collection Rate", Value = (decimal)collectionRate, Unit = "%", Category = "Performance" },
+            new() { Metric = "Outstanding Amount", Value = totalDue, Unit = "$", Category = "Risk" },
+            new() { Metric = "Overdue Amount", Value = overdueAmount, Unit = "$", Category = "Risk" },
+            new() { Metric = "Overdue Invoices", Value = overdueCount, Unit = "count", Category = "Risk" }
+        ];
     }
 
-    private decimal GetOverdueAmount(List<LoadInvoice> invoices)
+    private static decimal GetOverdueAmount(List<LoadInvoice> invoices)
     {
         var today = DateTime.Today;
         return invoices
@@ -199,7 +209,7 @@ internal sealed class FinancialsReportHandler(ITenantUnitOfWork tenantUow)
             .Sum(i => i.Total.Amount - i.Payments.Sum(p => p.Amount.Amount));
     }
 
-    private int GetOverdueInvoicesCount(List<LoadInvoice> invoices)
+    private static int GetOverdueInvoicesCount(List<LoadInvoice> invoices)
     {
         var today = DateTime.Today;
         return invoices

@@ -7,3 +7,4 @@ export * from "./predefined-date-ranges";
 export * from "./labels";
 export * from "./select-utils";
 export * from "./async-operation";
+export * from "./performance-utils";

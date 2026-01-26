@@ -22,9 +22,9 @@ import {
   FINANCIALS_CHART_BACKGROUND_COLORS,
   FINANCIALS_CHART_HOVER_BACKGROUND_COLORS,
   FINANCIALS_CHART_LABELS,
-  FINANCIAL_METRICS_CHART_OPTIONS,
-  INVOICE_STATUS_CHART_OPTIONS,
-  REVENUE_TREND_CHART_OPTIONS,
+  getFinancialMetricsChartOptions,
+  getInvoiceStatusChartOptions,
+  getRevenueTrendChartOptions,
 } from "@/shared/constants";
 
 @Component({
@@ -51,9 +51,9 @@ export class FinancialsReportComponent
   protected readonly revenueTrendChartData = signal<Record<string, unknown>>({});
   protected readonly financialMetricsChartData = signal<Record<string, unknown>>({});
 
-  protected readonly invoiceStatusChartOptions = INVOICE_STATUS_CHART_OPTIONS;
-  protected revenueTrendChartOptions = REVENUE_TREND_CHART_OPTIONS;
-  protected financialMetricsChartOptions = FINANCIAL_METRICS_CHART_OPTIONS;
+  protected readonly invoiceStatusChartOptions = getInvoiceStatusChartOptions();
+  protected revenueTrendChartOptions = getRevenueTrendChartOptions();
+  protected financialMetricsChartOptions = getFinancialMetricsChartOptions();
 
   ngOnInit(): void {
     this.fetch({ startDate: this.startDate(), endDate: this.endDate() });
@@ -160,5 +160,11 @@ export class FinancialsReportComponent
       default:
         return "secondary";
     }
+  }
+
+  protected getCollectionRateClass(rate: number): string {
+    if (rate >= 80) return "text-green-600";
+    if (rate >= 60) return "text-yellow-500";
+    return "text-red-600";
   }
 }

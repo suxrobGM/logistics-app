@@ -1,9 +1,10 @@
 <!-- Header -->
-<div class="mb-6 flex items-center justify-between">
-  <div>
-    <h1 class="mb-1">Loads Dashboard</h1>
-    <p class="text-muted mb-0">Comprehensive overview of load performance and trends</p>
-  </div>
+<div class="flex items-center justify-between">
+  <ui-page-header
+    title="Loads Dashboard"
+    subtitle="Comprehensive overview of load performance and trends"
+    [showAddButton]="false"
+  />
   <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
 </div>
 
@@ -20,94 +21,46 @@
   <!-- Key Metrics Cards -->
   <div class="mb-6 grid grid-cols-12 gap-2">
     <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
-      <p-card class="h-full border-0 shadow-sm">
-        <div class="flex items-center">
-          <div
-            class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-blue-600/10"
-          >
-            <i class="pi pi-server text-2xl text-blue-600"></i>
-          </div>
-          <div class="ml-4 grow">
-            <h6 class="text-muted mb-1">Total Loads</h6>
-            <h4 class="mb-0">{{ data()?.totalLoads || 0 | number }}</h4>
-            <small class="text-success">
-              <i class="pi pi-arrow-up"></i> +5.2% vs last period
-            </small>
-          </div>
-        </div>
-      </p-card>
+      <ui-stat-card
+        icon="pi-server"
+        label="Total Loads"
+        [value]="(data()?.totalLoads || 0 | number) ?? '0'"
+        color="blue"
+      />
     </div>
 
     <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
-      <p-card class="h-full border-0 shadow-sm">
-        <div class="flex items-center">
-          <div
-            class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-green-600/10"
-          >
-            <i class="pi pi-dollar text-success text-2xl"></i>
-          </div>
-          <div class="ml-4 grow">
-            <h6 class="text-muted mb-1">Total Revenue</h6>
-            <h4 class="mb-0">
-              {{ data()?.totalRevenue || 0 | currency: "USD" : "symbol" : "1.0-0" }}
-            </h4>
-            <small class="text-success">
-              <i class="pi pi-arrow-up"></i> +8.1% vs last period
-            </small>
-          </div>
-        </div>
-      </p-card>
+      <ui-stat-card
+        icon="pi-dollar"
+        label="Total Revenue"
+        [value]="(data()?.totalRevenue || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        color="green"
+      />
     </div>
 
     <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
-      <p-card class="h-full border-0 shadow-sm">
-        <div class="flex items-center">
-          <div
-            class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-cyan-500/10"
-          >
-            <i class="pi pi-map text-2xl text-cyan-500"></i>
-          </div>
-          <div class="ml-4 grow">
-            <h6 class="text-muted mb-1">Total Distance</h6>
-            <h4 class="mb-0">{{ data()?.totalDistance || 0 | number: "1.0-0" }} km</h4>
-            <small class="text-success">
-              <i class="pi pi-arrow-up"></i> +3.7% vs last period
-            </small>
-          </div>
-        </div>
-      </p-card>
+      <ui-stat-card
+        icon="pi-map"
+        label="Total Distance"
+        [value]="(data()?.totalDistance || 0 | number: '1.0-0') + ' km'"
+        color="blue"
+      />
     </div>
 
     <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
-      <p-card class="h-full border-0 shadow-sm">
-        <div class="flex items-center">
-          <div
-            class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-yellow-500/10"
-          >
-            <i class="pi pi-times-circle text-2xl text-yellow-500"></i>
-          </div>
-          <div class="ml-4 grow">
-            <h6 class="text-muted mb-1">Cancellation Rate</h6>
-            <h4 class="mb-0">{{ data()?.cancellationRate || 0 | number: "1.1-1" }}%</h4>
-            <small class="text-danger">
-              <i class="pi pi-arrow-down"></i> -1.2% vs last period
-            </small>
-          </div>
-        </div>
-      </p-card>
+      <ui-stat-card
+        icon="pi-times-circle"
+        label="Cancellation Rate"
+        [value]="(data()?.cancellationRate || 0 | number: '1.1-1') + '%'"
+        color="orange"
+      />
     </div>
   </div>
 
   <!-- Performance Metrics -->
   <div class="mb-6 grid grid-cols-12 gap-2">
     <div class="col-span-12">
-      <p-card class="border-0 p-2 shadow-sm">
-        <ng-template pTemplate="header">
-          <div class="flex items-center">
-            <i class="pi pi-chart-line mr-2 text-blue-600"></i>
-            <h5 class="mb-0">Performance Metrics</h5>
-          </div>
-        </ng-template>
+      <ui-dashboard-card title="Performance Metrics" icon="pi-chart-line" iconColor="blue">
         <div class="grid grid-cols-12 gap-1">
           @for (metric of data()?.performanceMetrics || []; track metric.metric) {
             <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
@@ -120,103 +73,68 @@
                   <p-tag
                     [value]="((metric.trend ?? 0) >= 0 ? '+' : '') + (metric.trend ?? 0) + '%'"
                     [severity]="(metric.trend ?? 0) >= 0 ? 'success' : 'danger'"
-                  >
-                  </p-tag>
+                  />
                 </div>
               </div>
             </div>
           }
         </div>
-      </p-card>
+      </ui-dashboard-card>
     </div>
   </div>
 
   <!-- Charts Row 1 -->
   <div class="mb-6 grid grid-cols-12 gap-2">
     <div class="col-span-12 mb-6 lg:col-span-6">
-      <p-card class="h-full border-0 p-2 shadow-sm">
-        <ng-template pTemplate="header">
-          <div class="flex items-center">
-            <i class="pi pi-chart-pie mr-2 text-blue-600"></i>
-            <h5 class="mb-0">Loads by Status</h5>
-          </div>
-        </ng-template>
-        <p-chart type="pie" [data]="chartData()" [options]="pieOptions" style="height: 300px">
-        </p-chart>
-      </p-card>
+      <ui-dashboard-card title="Loads by Status" icon="pi-chart-pie" iconColor="blue">
+        <p-chart type="pie" [data]="chartData()" [options]="pieOptions" style="height: 300px" />
+      </ui-dashboard-card>
     </div>
 
     <div class="col-span-12 mb-6 lg:col-span-6">
-      <p-card class="d-flex justify-content-between h-full border-0 p-2 shadow-sm">
-        <ng-template pTemplate="header">
-          <div class="flex items-center">
-            <i class="pi pi-chart-bar mr-2 text-blue-600"></i>
-            <h5 class="mb-0">Revenue by Load Type</h5>
-          </div>
-        </ng-template>
+      <ui-dashboard-card title="Revenue by Load Type" icon="pi-chart-bar" iconColor="blue">
         <p-chart
           type="bar"
           [data]="typeChartData()"
           [options]="typeChartOptions"
           style="height: 300px"
-        >
-        </p-chart>
-      </p-card>
+        />
+      </ui-dashboard-card>
     </div>
   </div>
 
   <!-- Trends Chart -->
   <div class="mb-6 grid grid-cols-12 gap-2">
     <div class="col-span-12">
-      <p-card class="border-0 p-2 shadow-sm">
-        <ng-template pTemplate="header">
-          <div class="flex items-center">
-            <i class="pi pi-chart-line mr-2 text-blue-600"></i>
-            <h5 class="mb-0">Load Trends Over Time</h5>
-          </div>
-        </ng-template>
+      <ui-dashboard-card title="Load Trends Over Time" icon="pi-chart-line" iconColor="blue">
         <p-chart
           type="line"
           [data]="trendChartData()"
           [options]="trendChartOptions"
           style="height: 400px"
-        >
-        </p-chart>
-      </p-card>
+        />
+      </ui-dashboard-card>
     </div>
   </div>
 
   <!-- Performance Chart -->
   <div class="mb-6 grid grid-cols-12 gap-2">
     <div class="col-span-12">
-      <p-card class="border-0 p-2 shadow-sm">
-        <ng-template pTemplate="header">
-          <div class="flex items-center">
-            <i class="pi pi-chart-bar mr-2 text-blue-600"></i>
-            <h5 class="mb-0">Performance Metrics</h5>
-          </div>
-        </ng-template>
+      <ui-dashboard-card title="Performance Metrics" icon="pi-chart-bar" iconColor="blue">
         <p-chart
           type="bar"
           [data]="performanceChartData()"
           [options]="performanceChartOptions"
           style="height: 300px"
-        >
-        </p-chart>
-      </p-card>
+        />
+      </ui-dashboard-card>
     </div>
   </div>
 
   <!-- Data Tables -->
   <div class="grid grid-cols-12 gap-2">
     <div class="col-span-12 mb-6 lg:col-span-6">
-      <p-card class="h-full border-0 p-2 shadow-sm">
-        <ng-template pTemplate="header">
-          <div class="flex items-center">
-            <i class="pi pi-table mr-2 text-blue-600"></i>
-            <h5 class="mb-0">Status Breakdown</h5>
-          </div>
-        </ng-template>
+      <ui-dashboard-card title="Status Breakdown" icon="pi-table" iconColor="blue">
         <p-table [value]="data()?.statusBreakdown || []" [paginator]="true" [rows]="5">
           <ng-template pTemplate="header">
             <tr>
@@ -229,7 +147,7 @@
           <ng-template pTemplate="body" let-item>
             <tr>
               <td>
-                <p-tag [value]="item.status" [severity]="getStatusSeverity(item.status)"></p-tag>
+                <p-tag [value]="item.status" [severity]="getStatusSeverity(item.status)" />
               </td>
               <td>{{ item.count | number }}</td>
               <td>{{ item.totalRevenue | currency: "USD" : "symbol" : "1.0-0" }}</td>
@@ -237,17 +155,11 @@
             </tr>
           </ng-template>
         </p-table>
-      </p-card>
+      </ui-dashboard-card>
     </div>
 
     <div class="col-span-12 mb-6 lg:col-span-6">
-      <p-card class="h-full border-0 p-2 shadow-sm">
-        <ng-template pTemplate="header">
-          <div class="flex items-center">
-            <i class="pi pi-users mr-2 text-blue-600"></i>
-            <h5 class="mb-0">Top Customers</h5>
-          </div>
-        </ng-template>
+      <ui-dashboard-card title="Top Customers" icon="pi-users" iconColor="blue">
         <p-table [value]="data()?.topCustomers || []" [paginator]="true" [rows]="5">
           <ng-template pTemplate="header">
             <tr>
@@ -266,7 +178,7 @@
             </tr>
           </ng-template>
         </p-table>
-      </p-card>
+      </ui-dashboard-card>
     </div>
   </div>
 }

@@ -83,6 +83,11 @@ internal sealed class DriverDashboardHandler(ITenantUnitOfWork tenantUow) : IApp
         var totalDistance = driverStats.Sum(d => d.DistanceDriven);
         var totalLoadsDelivered = driverStats.Sum(d => d.LoadsDelivered);
 
+        // Calculate efficiency based on actual period
+        var periodDays = req.StartDate != default && req.EndDate != default
+            ? Math.Max(1, (req.EndDate - req.StartDate).TotalDays)
+            : 30.0;
+
         var topPerformers = driverStats
             .OrderByDescending(d => d.GrossEarnings)
             .Take(5)
@@ -92,7 +97,7 @@ internal sealed class DriverDashboardHandler(ITenantUnitOfWork tenantUow) : IApp
                 LoadsDelivered = d.LoadsDelivered,
                 Earnings = d.GrossEarnings,
                 Distance = d.DistanceDriven,
-                Efficiency = d.LoadsDelivered > 0 ? d.LoadsDelivered / 30.0 : 0
+                Efficiency = d.LoadsDelivered > 0 ? d.LoadsDelivered / periodDays : 0
             })
             .ToList();
 
@@ -131,9 +136,16 @@ internal sealed class DriverDashboardHandler(ITenantUnitOfWork tenantUow) : IApp
                 .Where(l => l.CreatedAt >= monthStart && l.CreatedAt <= monthEnd)
                 .ToList();
 
+            // Count only drivers who delivered loads in this month
+            var truckIdsWithDeliveries = monthLoads
+                .Where(l => l.Status == LoadStatus.Delivered && l.AssignedTruckId.HasValue)
+                .Select(l => l.AssignedTruckId!.Value)
+                .Distinct()
+                .ToHashSet();
+
             var activeDriversCount = trucks
-                .Where(t => t.MainDriver != null || t.SecondaryDriver != null)
-                .Count();
+                .Where(t => truckIdsWithDeliveries.Contains(t.Id))
+                .Count(t => t.MainDriver != null || t.SecondaryDriver != null);
 
             trends.Add(new DriverTrendDto
             {

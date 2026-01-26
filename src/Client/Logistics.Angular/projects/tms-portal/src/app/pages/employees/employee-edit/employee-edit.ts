@@ -129,7 +129,7 @@ export class EmployeeEditComponent implements OnInit {
         body: command,
       });
       this.toastService.showSuccess("The employee data has been successfully saved");
-    } catch (error) {
+    } catch {
       this.toastService.showError("An error occurred while saving employee data");
     } finally {
       this.isLoading.set(false);
