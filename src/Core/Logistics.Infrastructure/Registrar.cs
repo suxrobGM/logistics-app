@@ -68,6 +68,7 @@ public static class Registrar
         // PDF services
         services.AddScoped<IPdfDataExtractor, TemplateBasedDataExtractor>();
         services.AddScoped<IInvoicePdfService, InvoicePdfService>();
+        services.AddScoped<IPayrollPayStubService, PayrollPayStubService>();
 
         // Geocoding services
         services.AddHttpClient<IGeocodingService, MapboxGeocodingService>();

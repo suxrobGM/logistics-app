@@ -177,6 +177,15 @@
               />
             }
 
+            <p-button
+              icon="pi pi-download"
+              label="Download Pay Stub"
+              styleClass="w-full"
+              [outlined]="true"
+              [loading]="isDownloadingPdf()"
+              (click)="downloadPayStub()"
+            />
+
             <a [routerLink]="['/payroll/invoices', invoice()!.id, 'edit']" class="no-underline">
               <p-button icon="pi pi-pencil" label="Edit" styleClass="w-full" [outlined]="true" />
             </a>

@@ -448,6 +448,8 @@ export type { RejectPayrollInvoice$Params as RejectPayrollInvoice$Params } from 
 export { rejectPayrollInvoice as rejectPayrollInvoice } from './fn/invoices/reject-payroll-invoice';
 export type { BatchApprovePayroll$Params as BatchApprovePayroll$Params } from './fn/invoices/batch-approve-payroll';
 export { batchApprovePayroll as batchApprovePayroll } from './fn/invoices/batch-approve-payroll';
+export type { DownloadPayrollPayStubPdf$Params as DownloadPayrollPayStubPdf$Params } from './fn/invoices/download-payroll-pay-stub-pdf';
+export { downloadPayrollPayStubPdf as downloadPayrollPayStubPdf } from './fn/invoices/download-payroll-pay-stub-pdf';
 export type { GetLoadById$Params as GetLoadById$Params } from './fn/load/get-load-by-id';
 export { getLoadById as getLoadById } from './fn/load/get-load-by-id';
 export type { UpdateLoad$Params as UpdateLoad$Params } from './fn/load/update-load';

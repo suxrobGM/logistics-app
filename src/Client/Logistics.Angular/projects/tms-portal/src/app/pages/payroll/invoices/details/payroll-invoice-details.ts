@@ -20,7 +20,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
-import { ToastService } from "@/core/services";
+import { PdfService, ToastService } from "@/core/services";
 import { RecordPaymentDialog } from "@/pages/invoices/components";
 import { InvoiceStatusTag, PaymentStatusTag } from "@/shared/components";
 
@@ -50,10 +50,12 @@ import { InvoiceStatusTag, PaymentStatusTag } from "@/shared/components";
 })
 export class PayrollInvoiceDetails implements OnInit {
   private readonly api = inject(Api);
+  private readonly pdfService = inject(PdfService);
   private readonly toastService = inject(ToastService);
 
   protected readonly invoiceId = input.required<string>();
   protected readonly isLoading = signal(false);
+  protected readonly isDownloadingPdf = signal(false);
   protected readonly invoice = signal<InvoiceDto | null>(null);
 
   // Dialog signals
@@ -174,6 +176,24 @@ export class PayrollInvoiceDetails implements OnInit {
 
   onPaymentRecorded(): void {
     this.fetchInvoice();
+  }
+
+  async downloadPayStub(): Promise<void> {
+    const invoice = this.invoice();
+    if (!invoice?.id) {
+      return;
+    }
+
+    this.isDownloadingPdf.set(true);
+    try {
+      await this.pdfService.downloadPayrollPayStubPdf(invoice.id, {
+        filename: `PayStub_${invoice.number}.pdf`,
+      });
+    } catch {
+      this.toastService.showError("Failed to download pay stub");
+    } finally {
+      this.isDownloadingPdf.set(false);
+    }
   }
 
   private async fetchInvoice(): Promise<void> {

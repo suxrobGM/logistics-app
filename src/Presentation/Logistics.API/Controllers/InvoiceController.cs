@@ -355,5 +355,24 @@ public class InvoicesController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    /// <summary>
+    ///     Download a payroll invoice as PDF pay stub.
+    /// </summary>
+    [HttpGet("payrolls/{id:guid}/pdf", Name = "DownloadPayrollPayStubPdf")]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.Payroll.View)]
+    public async Task<IActionResult> DownloadPayrollPayStubPdf(Guid id)
+    {
+        var result = await mediator.Send(new GetPayrollPayStubPdfQuery { PayrollInvoiceId = id });
+
+        if (!result.IsSuccess)
+        {
+            return NotFound(ErrorResponse.FromResult(result));
+        }
+
+        return File(result.Value!.PdfBytes, "application/pdf", result.Value.FileName);
+    }
+
     #endregion
 }
