@@ -45,6 +45,7 @@ class ApiFactory(
     val messageApi: MessageApi by lazy { MessageApi(baseUrl, httpClient) }
     val reportApi: ReportApi by lazy { ReportApi(baseUrl, httpClient) }
     val statApi: StatApi by lazy { StatApi(baseUrl, httpClient) }
+    val tripApi: TripApi by lazy { TripApi(baseUrl, httpClient) }
     val truckApi: TruckApi by lazy { TruckApi(baseUrl, httpClient) }
     val userApi: UserApi by lazy { UserApi(baseUrl, httpClient) }
 

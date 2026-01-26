@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.jfleets.driver.api.models.LoadDto
+import com.jfleets.driver.api.models.TripDto
 import com.jfleets.driver.model.driversList
 import com.jfleets.driver.model.fullName
 import com.jfleets.driver.permission.RequestBackgroundLocationIfNeeded
@@ -36,6 +37,7 @@ import com.jfleets.driver.ui.components.CardContainer
 import com.jfleets.driver.ui.components.ErrorView
 import com.jfleets.driver.ui.components.LoadCard
 import com.jfleets.driver.ui.components.LoadingIndicator
+import com.jfleets.driver.ui.components.TripCard
 import com.jfleets.driver.viewmodel.DashboardUiState
 import com.jfleets.driver.viewmodel.DashboardViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -44,6 +46,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun DashboardScreen(
     onLoadClick: (String) -> Unit,
+    onTripClick: (String) -> Unit,
     onLogout: () -> Unit,
     viewModel: DashboardViewModel = koinViewModel()
 ) {
@@ -140,6 +143,41 @@ fun DashboardScreen(
                                 LoadCard(
                                     load = load,
                                     onClick = { onLoadClick(load.id!!) }
+                                )
+                            }
+                        }
+
+                        // Active Trips Section
+                        item {
+                            Text(
+                                text = "Active Trips",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
+
+                        if (state.trips.isEmpty()) {
+                            item {
+                                CardContainer {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(32.dp)
+                                    ) {
+                                        Text(
+                                            text = "No active trips",
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            items(state.trips) { trip: TripDto ->
+                                TripCard(
+                                    trip = trip,
+                                    onClick = { onTripClick(trip.id!!) }
                                 )
                             }
                         }

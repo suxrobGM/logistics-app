@@ -10,6 +10,7 @@ import com.jfleets.driver.api.LoadApi
 import com.jfleets.driver.api.MessageApi
 import com.jfleets.driver.api.ReportApi
 import com.jfleets.driver.api.StatApi
+import com.jfleets.driver.api.TripApi
 import com.jfleets.driver.api.TruckApi
 import com.jfleets.driver.api.UserApi
 import com.jfleets.driver.api.models.InspectionType
@@ -28,6 +29,8 @@ import com.jfleets.driver.viewmodel.PastLoadsViewModel
 import com.jfleets.driver.viewmodel.PodCaptureViewModel
 import com.jfleets.driver.viewmodel.SettingsViewModel
 import com.jfleets.driver.viewmodel.StatsViewModel
+import com.jfleets.driver.viewmodel.TripDetailViewModel
+import com.jfleets.driver.viewmodel.TripsViewModel
 import io.ktor.client.HttpClient
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
@@ -53,6 +56,7 @@ fun commonModule(baseUrl: String) = module {
     single<MessageApi> { get<ApiFactory>().messageApi }
     single<ReportApi> { get<ApiFactory>().reportApi }
     single<StatApi> { get<ApiFactory>().statApi }
+    single<TripApi> { get<ApiFactory>().tripApi }
     single<TruckApi> { get<ApiFactory>().truckApi }
     single<UserApi> { get<ApiFactory>().userApi }
 
@@ -68,6 +72,15 @@ fun commonModule(baseUrl: String) = module {
     viewModelOf(::SettingsViewModel)
     viewModelOf(::ConversationListViewModel)
     viewModelOf(::EmployeeSelectViewModel)
+    viewModelOf(::TripsViewModel)
+
+    // TripDetailViewModel with tripId parameter
+    viewModel { params ->
+        TripDetailViewModel(
+            tripApi = get(),
+            tripId = params.get<String>()
+        )
+    }
 
     // ChatViewModel with conversationId parameter
     viewModel { params ->

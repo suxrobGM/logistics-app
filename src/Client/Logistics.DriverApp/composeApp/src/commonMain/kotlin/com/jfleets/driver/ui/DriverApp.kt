@@ -4,10 +4,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Route
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -37,8 +36,8 @@ import com.jfleets.driver.navigation.MessagesRoute
 import com.jfleets.driver.navigation.Navigator
 import com.jfleets.driver.navigation.PastLoadsRoute
 import com.jfleets.driver.navigation.PodCaptureRoute
-import com.jfleets.driver.navigation.SettingsRoute
-import com.jfleets.driver.navigation.StatsRoute
+import com.jfleets.driver.navigation.TripDetailRoute
+import com.jfleets.driver.navigation.TripsRoute
 import com.jfleets.driver.navigation.createEntryProvider
 import com.jfleets.driver.service.PreferencesManager
 import com.jfleets.driver.service.auth.AuthEvent
@@ -90,11 +89,10 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
 
     val bottomNavItems = listOf(
         BottomNavItem("Dashboard", DashboardRoute, Icons.Default.Dashboard),
-        BottomNavItem("Stats", StatsRoute, Icons.Default.BarChart),
+        BottomNavItem("Trips", TripsRoute, Icons.Default.Route),
         BottomNavItem("Messages", MessagesRoute, Icons.Default.Email),
-        BottomNavItem("Past Loads", PastLoadsRoute, Icons.AutoMirrored.Filled.List),
+        BottomNavItem("Loads", PastLoadsRoute, Icons.AutoMirrored.Filled.List),
         BottomNavItem("Account", AccountRoute, Icons.Default.AccountCircle),
-        BottomNavItem("Settings", SettingsRoute, Icons.Default.Settings),
     )
 
     // Determine current destination for bottom bar visibility
@@ -103,6 +101,7 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
     val showBottomBar = currentDestination != null &&
             currentDestination !is LoginRoute &&
             currentDestination !is LoadDetailRoute &&
+            currentDestination !is TripDetailRoute &&
             currentDestination !is ConversationRoute &&
             currentDestination !is EmployeeSelectRoute &&
             currentDestination !is ConditionReportRoute &&
@@ -119,7 +118,8 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
                     NavigationBar {
                         bottomNavItems.forEach { item ->
                             val isSelected = currentDestination == item.route ||
-                                    (currentDestination is LoadDetailRoute && item.route == DashboardRoute)
+                                    (currentDestination is LoadDetailRoute && item.route == DashboardRoute) ||
+                                    (currentDestination is TripDetailRoute && item.route == TripsRoute)
 
                             NavigationBarItem(
                                 icon = { Icon(item.icon, contentDescription = item.label) },

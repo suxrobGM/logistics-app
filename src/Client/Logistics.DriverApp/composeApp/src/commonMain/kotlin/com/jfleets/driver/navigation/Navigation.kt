@@ -6,6 +6,7 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import com.jfleets.driver.api.DriverApi
 import com.jfleets.driver.api.LoadApi
+import com.jfleets.driver.api.TripApi
 import com.jfleets.driver.api.models.InspectionType
 import com.jfleets.driver.ui.screens.AboutScreen
 import com.jfleets.driver.ui.screens.AccountScreen
@@ -20,8 +21,11 @@ import com.jfleets.driver.ui.screens.PastLoadsScreen
 import com.jfleets.driver.ui.screens.PodCaptureScreen
 import com.jfleets.driver.ui.screens.SettingsScreen
 import com.jfleets.driver.ui.screens.StatsScreen
+import com.jfleets.driver.ui.screens.TripDetailScreen
+import com.jfleets.driver.ui.screens.TripsScreen
 import com.jfleets.driver.viewmodel.DocumentCaptureType
 import com.jfleets.driver.viewmodel.LoadDetailViewModel
+import com.jfleets.driver.viewmodel.TripDetailViewModel
 import org.koin.compose.koinInject
 
 /**
@@ -47,6 +51,9 @@ fun createEntryProvider(
             onLoadClick = { loadId ->
                 navigator.navigate(LoadDetailRoute(loadId))
             },
+            onTripClick = { tripId ->
+                navigator.navigate(TripDetailRoute(tripId))
+            },
             onLogout = {
                 navigator.clearAndNavigate(LoginRoute)
             }
@@ -64,6 +71,30 @@ fun createEntryProvider(
             onLoadClick = { loadId ->
                 navigator.navigate(LoadDetailRoute(loadId))
             }
+        )
+    }
+
+    // Trips Screen
+    entry<TripsRoute> {
+        TripsScreen(
+            onTripClick = { tripId ->
+                navigator.navigate(TripDetailRoute(tripId))
+            }
+        )
+    }
+
+    // Trip Detail Screen
+    entry<TripDetailRoute> { key ->
+        val tripApi: TripApi = koinInject()
+        val viewModel = TripDetailViewModel(tripApi, key.tripId)
+
+        TripDetailScreen(
+            onNavigateBack = { navigator.goBack() },
+            onOpenMaps = onOpenUrl,
+            onLoadClick = { loadId ->
+                navigator.navigate(LoadDetailRoute(loadId))
+            },
+            viewModel = viewModel
         )
     }
 
@@ -155,7 +186,10 @@ fun createEntryProvider(
 
     // Account Screen
     entry<AccountRoute> {
-        AccountScreen()
+        AccountScreen(
+            onNavigateToStats = { navigator.navigate(StatsRoute) },
+            onNavigateToSettings = { navigator.navigate(SettingsRoute) }
+        )
     }
 
     // Settings Screen

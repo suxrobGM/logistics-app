@@ -21,6 +21,12 @@ data object StatsRoute : NavKey
 data object PastLoadsRoute : NavKey
 
 @Serializable
+data object TripsRoute : NavKey
+
+@Serializable
+data class TripDetailRoute(val tripId: String) : NavKey
+
+@Serializable
 data class LoadDetailRoute(val loadId: String) : NavKey
 
 @Serializable
@@ -60,9 +66,8 @@ data object AboutRoute : NavKey
  */
 val topLevelRoutes: Set<NavKey> = setOf(
     DashboardRoute,
-    StatsRoute,
+    TripsRoute,
     MessagesRoute,
     PastLoadsRoute,
-    AccountRoute,
-    SettingsRoute
+    AccountRoute
 )
