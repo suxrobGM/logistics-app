@@ -1,4 +1,5 @@
 <div class="animate-fadein">
+  <!-- Header -->
   <div class="flex items-center">
     <h1 class="text-primary mb-0">List Loads</h1>
     <p-button
@@ -42,332 +43,40 @@
   />
 
   <!-- Filter Panel -->
-  <p-card class="mb-4">
-    <div class="mb-4 flex items-center justify-between">
-      <span class="text-primary text-lg font-semibold">Filters</span>
-      <div class="flex items-center gap-2">
-        @if (activeFilterCount() > 0) {
-          <span class="text-muted text-sm">{{ activeFilterCount() }} active</span>
-        }
-        <p-button
-          label="Clear All"
-          icon="pi pi-times"
-          size="small"
-          [text]="true"
-          (click)="clearFilters()"
-          [disabled]="activeFilterCount() === 0"
-        />
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 gap-x-4 md:grid-cols-2 lg:grid-cols-5">
-      <ui-labeled-field label="Search">
-        <ui-search-input class="w-full" (searchChange)="onSearch($event)" />
-      </ui-labeled-field>
-
-      <ui-labeled-field label="Status">
-        <p-multiselect
-          [options]="statusOptions"
-          [(ngModel)]="selectedStatuses"
-          placeholder="Select status"
-          [showClear]="true"
-          (onChange)="applyFilters()"
-          class="w-full"
-        />
-      </ui-labeled-field>
-
-      <ui-labeled-field label="Type">
-        <p-multiselect
-          [options]="typeOptions"
-          [(ngModel)]="selectedTypes"
-          placeholder="Select type"
-          [showClear]="true"
-          (onChange)="applyFilters()"
-          class="w-full"
-        />
-      </ui-labeled-field>
-
-      <ui-labeled-field label="Truck">
-        <app-search-truck
-          [(selectedTruck)]="selectedTruck"
-          (selectedTruckChange)="applyFilters()"
-        />
-      </ui-labeled-field>
-
-      <ui-labeled-field label="Customer">
-        <app-search-customer
-          [(selectedCustomer)]="selectedCustomer"
-          (selectedCustomerChange)="applyFilters()"
-        />
-      </ui-labeled-field>
-    </div>
-
-    <div class="flex items-center gap-4">
-      <ui-labeled-field label="Date Range">
-        <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
-      </ui-labeled-field>
-
-      <div class="mt-2 flex items-center gap-2">
-        <p-checkbox
-          [(ngModel)]="onlyActiveLoads"
-          [binary]="true"
-          inputId="activeOnly"
-          (onChange)="applyFilters()"
-        />
-        <label
-          for="activeOnly"
-          class="text-secondary mb-0 cursor-pointer text-sm dark:text-gray-300"
-        >
-          Active loads only
-        </label>
-      </div>
-    </div>
-  </p-card>
+  <app-loads-filter-panel
+    [isLoading]="store.isLoading()"
+    (filtersChanged)="onFiltersChanged($event)"
+    (searchChanged)="onSearchChanged($event)"
+  />
 
   <!-- Bulk Action Toolbar -->
   @if (selectedLoads().length > 0) {
-    <div
-      class="bg-surface-100 dark:bg-surface-800 mb-4 flex items-center justify-between rounded-lg p-3"
-    >
-      <span class="text-primary font-medium"> {{ selectedLoads().length }} load(s) selected </span>
-      <div class="flex gap-2">
-        <p-button
-          label="Assign to Truck"
-          icon="pi pi-truck"
-          size="small"
-          [outlined]="true"
-          (click)="openBulkAssignDialog()"
-          [loading]="isBulkProcessing()"
-        />
-        <p-button
-          label="Dispatch"
-          icon="pi pi-send"
-          size="small"
-          [outlined]="true"
-          (click)="bulkDispatch()"
-          [disabled]="!canDispatchSelected()"
-          [loading]="isBulkProcessing()"
-          pTooltip="Only Draft loads can be dispatched"
-        />
-        <p-button
-          label="Delete"
-          icon="pi pi-trash"
-          size="small"
-          severity="danger"
-          [outlined]="true"
-          (click)="bulkDelete()"
-          [disabled]="!canDeleteSelected()"
-          [loading]="isBulkProcessing()"
-          pTooltip="Only Draft loads can be deleted"
-        />
-        <p-button
-          icon="pi pi-times"
-          size="small"
-          [text]="true"
-          (click)="clearSelection()"
-          pTooltip="Clear selection"
-        />
-      </div>
-    </div>
+    <app-loads-bulk-toolbar
+      [selectedLoads]="selectedLoads()"
+      [isProcessing]="isBulkProcessing()"
+      (assignRequested)="openBulkAssignDialog()"
+      (dispatched)="onBulkDispatched()"
+      (deleted)="onBulkDeleted()"
+      (selectionCleared)="clearSelection()"
+    />
   }
 
-  <p-card>
-    <ui-data-container
-      [loading]="store.isLoading()"
-      [error]="store.error()"
-      [isEmpty]="store.isEmpty()"
-      skeletonVariant="table"
-      [skeletonRows]="10"
-      emptyTitle="No loads yet"
-      emptyMessage="Create your first load to get started."
-      emptyActionLabel="Add Load"
-      (retry)="store.retry()"
-      (emptyAction)="addLoad()"
-    >
-      <p-table
-        [value]="store.data()"
-        dataKey="id"
-        [scrollable]="true"
-        [lazy]="true"
-        [paginator]="true"
-        [showCurrentPageReport]="true"
-        (onLazyLoad)="store.onLazyLoad($event)"
-        [rows]="store.pageSize()"
-        [first]="store.first()"
-        [totalRecords]="store.totalRecords()"
-        [loading]="store.isLoading()"
-        [rowsPerPageOptions]="[10, 25, 50]"
-        [(selection)]="selectedLoads"
-        selectionMode="multiple"
-      >
-        <ng-template #header>
-          <tr>
-            <th style="width: 3rem">
-              <p-tableHeaderCheckbox />
-            </th>
-            <th pSortableColumn="Number">
-              Number
-              <p-sortIcon field="Number" />
-            </th>
-            <th pSortableColumn="Name">
-              Name
-              <p-sortIcon field="Name" />
-            </th>
-            <th pSortableColumn="Type">
-              Type
-              <p-sortIcon field="Type" />
-            </th>
-            <th pSortableColumn="Customer.Name">
-              Customer
-              <p-sortIcon field="Customer.Name" />
-            </th>
-            <th pSortableColumn="OriginAddress.Line1">
-              Origin
-              <p-sortIcon field="OriginAddress.Line1" />
-            </th>
-            <th pSortableColumn="DestinationAddress.Line1">
-              Destination
-              <p-sortIcon field="DestinationAddress.Line1" />
-            </th>
-            <th>Status</th>
-            <th pSortableColumn="Distance">
-              Distance (mi)
-              <p-sortIcon field="Distance" />
-            </th>
-            <th pSortableColumn="DeliveryCost.Amount">
-              Cost
-              <p-sortIcon field="DeliveryCost.Amount" />
-            </th>
-            <th pSortableColumn="TripStop.Trip.Number">
-              Trip
-              <p-sortIcon field="TripStop.Trip.Number" />
-            </th>
-            <th pSortableColumn="AssignedTruck.Number">
-              Truck
-              <p-sortIcon field="AssignedTruck.Number" />
-            </th>
-            <th pSortableColumn="AssignedDispatcher.Name">
-              Dispatcher
-              <p-sortIcon field="AssignedDispatcher.Name" />
-            </th>
-            <th>Action</th>
-          </tr>
-        </ng-template>
-        <ng-template #body let-load>
-          <tr
-            class="hover:bg-hover transition-colors duration-150"
-            [class]="getStatusBorderClass(load.status)"
-            (click)="selectedRow.set(load)"
-          >
-            <td (click)="$event.stopPropagation()">
-              <p-tableCheckbox [value]="load" />
-            </td>
-            <td>
-              <a
-                [routerLink]="['/loads', load.id]"
-                class="text-primary text-base font-bold hover:underline"
-                (click)="$event.stopPropagation()"
-              >
-                #{{ load.number }}
-              </a>
-            </td>
-            <td>
-              <span
-                class="block max-w-32 truncate"
-                [pTooltip]="load.name"
-                [showDelay]="500"
-                tooltipPosition="bottom"
-              >
-                {{ load.name }}
-              </span>
-            </td>
-            <td><app-load-type-tag [type]="load.type" /></td>
-            <td>
-              <span
-                class="block max-w-32 truncate"
-                [pTooltip]="load.customer.name"
-                [showDelay]="500"
-                tooltipPosition="bottom"
-              >
-                {{ load.customer.name }}
-              </span>
-            </td>
-            <td>
-              <span
-                class="block max-w-28 truncate"
-                [pTooltip]="load.originAddress | address"
-                [showDelay]="500"
-                tooltipPosition="bottom"
-              >
-                {{ load.originAddress | address }}
-              </span>
-            </td>
-            <td>
-              <span
-                class="block max-w-28 truncate"
-                [pTooltip]="load.destinationAddress | address"
-                [showDelay]="500"
-                tooltipPosition="bottom"
-              >
-                {{ load.destinationAddress | address }}
-              </span>
-            </td>
-            <td>
-              <app-load-status-tag [status]="load.status" />
-
-              <div class="text-muted text-xs italic">
-                @switch (load.status) {
-                  @case ("dispatched") {
-                    {{ load.dispatchedAt | date: "mediumDate" }}
-                  }
-                  @case ("pickedUp") {
-                    {{ load.pickedUpAt | date: "mediumDate" }}
-                  }
-                  @case ("delivered") {
-                    {{ load.deliveredAt | date: "mediumDate" }}
-                  }
-                }
-              </div>
-            </td>
-            <td class="text-center">{{ load.distance | distanceUnit: "mi" }}</td>
-            <td class="text-center">{{ load.deliveryCost | currency }}</td>
-            <td>
-              <span
-                class="block max-w-24 truncate"
-                [pTooltip]="load.tripNumber + ' - ' + load.tripName"
-                [showDelay]="500"
-                tooltipPosition="bottom"
-              >
-                {{ load.tripNumber }} - {{ load.tripName }}
-              </span>
-            </td>
-            <td class="text-center">{{ load.assignedTruckNumber }}</td>
-            <td>
-              <span
-                class="block max-w-24 truncate"
-                [pTooltip]="load.assignedDispatcherName"
-                [showDelay]="500"
-                tooltipPosition="bottom"
-              >
-                {{ load.assignedDispatcherName }}
-              </span>
-            </td>
-            <td>
-              <p-button
-                icon="pi pi-ellipsis-v"
-                [text]="true"
-                (click)="menu.toggle($event)"
-                aria-label="Show actions menu"
-              />
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </ui-data-container>
-  </p-card>
-
-  <!-- Reusable context menu for the actions button -->
-  <p-menu #menu [model]="actionMenuItems()" [popup]="true" />
+  <!-- Data Table -->
+  <app-loads-table
+    [data]="store.data()"
+    [isLoading]="store.isLoading()"
+    [error]="store.error()"
+    [isEmpty]="store.isEmpty()"
+    [totalRecords]="store.totalRecords()"
+    [pageSize]="store.pageSize()"
+    [first]="store.first()"
+    [(selectedLoads)]="selectedLoads"
+    (lazyLoad)="store.onLazyLoad($event)"
+    (retry)="store.retry()"
+    (addLoad)="addLoad()"
+    (assignLoad)="onAssignLoad($event)"
+    (dispatchLoad)="onDispatchLoad($event)"
+  />
 
   <!-- Bulk Assign Dialog -->
   <app-bulk-assign-dialog

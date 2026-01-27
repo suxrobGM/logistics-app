@@ -11,7 +11,7 @@ import { TimelineModule } from "primeng/timeline";
   imports: [CommonModule, TimelineModule, CardModule, TagModule],
 })
 export class TripTimeline {
-  readonly events = input<TripTimelineEventDto[]>([]);
+  public readonly events = input<TripTimelineEventDto[]>([]);
 
   protected getEventIcon(eventType: string | null): string {
     switch (eventType) {

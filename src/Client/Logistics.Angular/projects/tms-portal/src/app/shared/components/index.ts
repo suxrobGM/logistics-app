@@ -3,11 +3,7 @@
 // =============================================================================
 
 // UI Components (layout, display, cards)
-export {
-  PageHeader,
-  StatCard,
-  DashboardCard,
-} from "@logistics/shared/components";
+export { PageHeader, StatCard, DashboardCard } from "@logistics/shared/components";
 
 // Form Components (inputs, buttons, validation)
 export {
@@ -30,29 +26,10 @@ export {
 // TMS-SPECIFIC COMPONENTS
 // =============================================================================
 
-// Tags and Status
 export * from "./tags";
-
-// Maps
 export * from "./maps";
-
-// Charts
 export * from "./charts";
-
-// Domain-specific Forms
 export * from "./domain-forms";
-
-// Search Components
 export * from "./search";
-
-// Inspections
 export * from "./inspections";
-
-// Other
 export * from "./other";
-
-// Trip Timeline
-export * from "./trip-timeline/trip-timeline";
-
-// Load Status Stepper
-export * from "./load-status-stepper/load-status-stepper";

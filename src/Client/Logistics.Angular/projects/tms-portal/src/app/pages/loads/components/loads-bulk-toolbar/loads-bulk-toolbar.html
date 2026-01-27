@@ -1,0 +1,41 @@
+<div class="mb-4 flex items-center justify-between rounded-lg border border-default bg-subtle p-3">
+  <span class="text-primary font-medium">{{ selectedLoads().length }} load(s) selected</span>
+  <div class="flex gap-2">
+    <p-button
+      label="Assign to Truck"
+      icon="pi pi-truck"
+      size="small"
+      [outlined]="true"
+      (click)="openBulkAssignDialog()"
+      [loading]="isProcessing()"
+    />
+    <p-button
+      label="Dispatch"
+      icon="pi pi-send"
+      size="small"
+      [outlined]="true"
+      (click)="bulkDispatch()"
+      [disabled]="!canDispatchSelected()"
+      [loading]="isProcessing()"
+      pTooltip="Only Draft loads can be dispatched"
+    />
+    <p-button
+      label="Delete"
+      icon="pi pi-trash"
+      size="small"
+      severity="danger"
+      [outlined]="true"
+      (click)="bulkDelete()"
+      [disabled]="!canDeleteSelected()"
+      [loading]="isProcessing()"
+      pTooltip="Only Draft loads can be deleted"
+    />
+    <p-button
+      icon="pi pi-times"
+      size="small"
+      [text]="true"
+      (click)="clearSelection()"
+      pTooltip="Clear selection"
+    />
+  </div>
+</div>

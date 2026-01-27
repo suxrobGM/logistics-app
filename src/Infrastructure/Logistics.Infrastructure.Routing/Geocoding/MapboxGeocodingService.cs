@@ -27,7 +27,7 @@ public sealed class MapboxGeocodingService(
         string state,
         string? zipCode = null,
         string country = "USA",
-        CancellationToken cancellationToken = default)
+        CancellationToken ct = default)
     {
         try
         {
@@ -51,7 +51,7 @@ public sealed class MapboxGeocodingService(
 
             logger.LogDebug("Geocoding address: {Address}", searchText);
 
-            var response = await http.GetFromJsonAsync<MapboxGeocodingResponse>(url, cancellationToken);
+            var response = await http.GetFromJsonAsync<MapboxGeocodingResponse>(url, ct);
 
             if (response?.Features is null || response.Features.Count == 0)
             {

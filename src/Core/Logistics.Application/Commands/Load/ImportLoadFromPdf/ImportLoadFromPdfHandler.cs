@@ -115,7 +115,7 @@ internal sealed class ImportLoadFromPdfHandler(
 
         // Step 6: Find truck (optional)
         Guid? truckId = null;
-        if (request.AssignedTruckId.HasValue)
+        if (request.AssignedTruckId.HasValue && request.AssignedTruckId.Value != Guid.Empty)
         {
             var truck = await tenantUow.Repository<Truck>()
                 .GetAsync(t => t.Id == request.AssignedTruckId.Value, ct);
@@ -168,7 +168,7 @@ internal sealed class ImportLoadFromPdfHandler(
         string? shipperName,
         CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(shipperName))
+        if (string.IsNullOrEmpty(shipperName))
         {
             // Use default customer name
             shipperName = "Imported Customer";
@@ -184,10 +184,7 @@ internal sealed class ImportLoadFromPdfHandler(
         }
 
         // Create new customer
-        var newCustomer = new Customer
-        {
-            Name = shipperName
-        };
+        var newCustomer = new Customer { Name = shipperName };
 
         await tenantUow.Repository<Customer>().AddAsync(newCustomer, ct);
         await tenantUow.SaveChangesAsync(ct);

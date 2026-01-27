@@ -16,12 +16,11 @@ import {
   LoadStatusTag,
   type RouteSegmentClickEvent,
   TripStatusTag,
-  TripTimeline,
   type Waypoint,
   type WaypointClickEvent,
 } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
-import { TripActions } from "../components";
+import { TripActions, TripTimeline } from "../components";
 import { TripDetailsStore } from "../store/trip-details.store";
 
 @Component({

@@ -1,0 +1,199 @@
+<p-card>
+  <ui-data-container
+    [loading]="isLoading()"
+    [error]="error()"
+    [isEmpty]="isEmpty()"
+    skeletonVariant="table"
+    [skeletonRows]="10"
+    emptyTitle="No loads yet"
+    emptyMessage="Create your first load to get started."
+    emptyActionLabel="Add Load"
+    (retry)="onRetry()"
+    (emptyAction)="onAddLoad()"
+  >
+    <p-table
+      [value]="data()"
+      dataKey="id"
+      [scrollable]="true"
+      [lazy]="true"
+      [paginator]="true"
+      [showCurrentPageReport]="true"
+      (onLazyLoad)="onLazyLoad($event)"
+      [rows]="pageSize()"
+      [first]="first()"
+      [totalRecords]="totalRecords()"
+      [loading]="isLoading()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [(selection)]="selectedLoads"
+      selectionMode="multiple"
+    >
+      <ng-template #header>
+        <tr>
+          <th style="width: 3rem">
+            <p-tableHeaderCheckbox />
+          </th>
+          <th pSortableColumn="Number">
+            Number
+            <p-sortIcon field="Number" />
+          </th>
+          <th pSortableColumn="Name">
+            Name
+            <p-sortIcon field="Name" />
+          </th>
+          <th pSortableColumn="Type">
+            Type
+            <p-sortIcon field="Type" />
+          </th>
+          <th pSortableColumn="Customer.Name">
+            Customer
+            <p-sortIcon field="Customer.Name" />
+          </th>
+          <th pSortableColumn="OriginAddress.Line1">
+            Origin
+            <p-sortIcon field="OriginAddress.Line1" />
+          </th>
+          <th pSortableColumn="DestinationAddress.Line1">
+            Destination
+            <p-sortIcon field="DestinationAddress.Line1" />
+          </th>
+          <th>Status</th>
+          <th pSortableColumn="Distance">
+            Distance (mi)
+            <p-sortIcon field="Distance" />
+          </th>
+          <th pSortableColumn="DeliveryCost.Amount">
+            Cost
+            <p-sortIcon field="DeliveryCost.Amount" />
+          </th>
+          <th pSortableColumn="TripStop.Trip.Number">
+            Trip
+            <p-sortIcon field="TripStop.Trip.Number" />
+          </th>
+          <th pSortableColumn="AssignedTruck.Number">
+            Truck
+            <p-sortIcon field="AssignedTruck.Number" />
+          </th>
+          <th pSortableColumn="AssignedDispatcher.Name">
+            Dispatcher
+            <p-sortIcon field="AssignedDispatcher.Name" />
+          </th>
+          <th>Action</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-load>
+        <tr
+          class="hover:bg-hover transition-colors duration-150"
+          [class]="getStatusBorderClass(load.status)"
+          (click)="selectedRow.set(load)"
+        >
+          <td (click)="$event.stopPropagation()">
+            <p-tableCheckbox [value]="load" />
+          </td>
+          <td>
+            <a
+              [routerLink]="['/loads', load.id]"
+              class="text-primary text-base font-bold hover:underline"
+              (click)="$event.stopPropagation()"
+            >
+              #{{ load.number }}
+            </a>
+          </td>
+          <td>
+            <span
+              class="block max-w-32 truncate"
+              [pTooltip]="load.name"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ load.name }}
+            </span>
+          </td>
+          <td><app-load-type-tag [type]="load.type" /></td>
+          <td>
+            <span
+              class="block max-w-32 truncate"
+              [pTooltip]="load.customer?.name"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ load.customer?.name }}
+            </span>
+          </td>
+          <td>
+            <span
+              class="block max-w-28 truncate"
+              [pTooltip]="load.originAddress | address"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ load.originAddress | address }}
+            </span>
+          </td>
+          <td>
+            <span
+              class="block max-w-28 truncate"
+              [pTooltip]="load.destinationAddress | address"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ load.destinationAddress | address }}
+            </span>
+          </td>
+          <td>
+            <app-load-status-tag [status]="load.status" />
+            <div class="text-muted text-xs italic">
+              @switch (load.status) {
+                @case ("dispatched") {
+                  {{ load.dispatchedAt | date: "mediumDate" }}
+                }
+                @case ("pickedUp") {
+                  {{ load.pickedUpAt | date: "mediumDate" }}
+                }
+                @case ("delivered") {
+                  {{ load.deliveredAt | date: "mediumDate" }}
+                }
+              }
+            </div>
+          </td>
+          <td class="text-center">{{ load.distance | distanceUnit: "mi" }}</td>
+          <td class="text-center">{{ load.deliveryCost | currency }}</td>
+          <td>
+            @if (load.tripNumber) {
+              <span
+                class="block max-w-24 truncate"
+                [pTooltip]="load.tripNumber + ' - ' + load.tripName"
+                [showDelay]="500"
+                tooltipPosition="bottom"
+              >
+                {{ load.tripNumber }} - {{ load.tripName }}
+              </span>
+            }
+          </td>
+          <td class="text-center">{{ load.assignedTruckNumber }}</td>
+          <td>
+            <span
+              class="block max-w-24 truncate"
+              [pTooltip]="load.assignedDispatcherName"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ load.assignedDispatcherName }}
+            </span>
+          </td>
+          <td>
+            <p-button
+              icon="pi pi-ellipsis-v"
+              [text]="true"
+              (click)="menu.toggle($event)"
+              aria-label="Show actions menu"
+            />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ui-data-container>
+</p-card>
+
+<!-- Context menu -->
+<p-menu #menu [model]="actionMenuItems()" [popup]="true" />

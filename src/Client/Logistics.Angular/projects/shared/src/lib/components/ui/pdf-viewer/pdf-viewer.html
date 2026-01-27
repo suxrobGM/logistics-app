@@ -1,0 +1,70 @@
+@if (pdfUrl(); as url) {
+  @if (showCard()) {
+    <p-card>
+      <ng-template #header>
+        <div class="flex items-center justify-between p-4 pb-0">
+          <div class="flex items-center gap-2">
+            <i class="pi pi-file-pdf text-primary"></i>
+            <h3 class="m-0 text-lg font-semibold">{{ title() }}</h3>
+          </div>
+          <div class="flex gap-1">
+            <p-button
+              icon="pi pi-external-link"
+              [text]="true"
+              [rounded]="true"
+              size="small"
+              pTooltip="Open in new tab"
+              (click)="openInNewTab()"
+            />
+            @if (collapsible()) {
+              <p-button
+                [icon]="isCollapsed() ? 'pi pi-chevron-down' : 'pi pi-chevron-up'"
+                [text]="true"
+                [rounded]="true"
+                size="small"
+                [pTooltip]="isCollapsed() ? 'Expand' : 'Collapse'"
+                (click)="toggleCollapse()"
+              />
+            }
+          </div>
+        </div>
+      </ng-template>
+
+      @if (!isCollapsed()) {
+        <object
+          [data]="url"
+          type="application/pdf"
+          class="w-full rounded border"
+          [style.height]="height()"
+        >
+          <p class="text-muted p-4 text-center">
+            Your browser does not support PDF preview.
+            <a
+              class="text-primary cursor-pointer underline"
+              (click)="openInNewTab()"
+            >
+              Open PDF in new tab
+            </a>
+          </p>
+        </object>
+      }
+    </p-card>
+  } @else {
+    <object
+      [data]="url"
+      type="application/pdf"
+      class="w-full rounded border"
+      [style.height]="height()"
+    >
+      <p class="text-muted p-4 text-center">
+        Your browser does not support PDF preview.
+        <a
+          class="text-primary cursor-pointer underline"
+          (click)="openInNewTab()"
+        >
+          Open PDF in new tab
+        </a>
+      </p>
+    </object>
+  }
+}

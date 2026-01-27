@@ -51,7 +51,7 @@ internal static class Setup
         services.AddEldIntegrations(configuration);
         services.AddLoadBoardIntegrations(configuration);
         services.AddPaymentsInfrastructure(configuration);
-        services.AddRoutingInfrastructure();
+        services.AddRoutingInfrastructure(configuration);
         services.AddStorageInfrastructure(configuration);
         services.AddPersistenceInfrastructure(configuration)
             .UseLogger(serilogLogger)

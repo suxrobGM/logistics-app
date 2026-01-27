@@ -8,6 +8,7 @@ import type {
   ImportLoadFromPdfResponse,
   TruckDto,
 } from "@logistics/shared/api";
+import { PdfViewer } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -33,6 +34,7 @@ import { LabeledField, SearchTruck } from "@/shared/components";
     SearchTruck,
     LabeledField,
     DividerModule,
+    PdfViewer,
   ],
 })
 export class LoadImportComponent {
@@ -45,6 +47,7 @@ export class LoadImportComponent {
   protected readonly importResult = signal<ImportLoadFromPdfResponse | null>(null);
   protected readonly error = signal<string | null>(null);
   protected readonly selectedTruck = signal<TruckDto | null>(null);
+  protected readonly selectedFile = signal<File | null>(null);
   protected readonly canUpload = computed(() => !this.isUploading());
 
   protected async onFileSelect(event: FileSelectEvent): Promise<void> {
@@ -62,6 +65,9 @@ export class LoadImportComponent {
       this.error.set("File size exceeds 10 MB limit");
       return;
     }
+
+    // Store file for preview
+    this.selectedFile.set(file);
 
     this.error.set(null);
     this.isUploading.set(true);
@@ -96,6 +102,7 @@ export class LoadImportComponent {
     this.importResult.set(null);
     this.error.set(null);
     this.selectedTruck.set(null);
+    this.selectedFile.set(null);
   }
 
   protected viewLoad(): void {

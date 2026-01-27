@@ -9,12 +9,13 @@ import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TabsModule } from "primeng/tabs";
-import { DocumentManagerComponent, LoadStatusStepper, PageHeader } from "@/shared/components";
+import { DocumentManagerComponent, PageHeader } from "@/shared/components";
 import { LoadStatusTag, LoadTypeTag } from "@/shared/components/tags";
 import { DistanceUnitPipe } from "@/shared/pipes";
 import {
   LoadExceptionsContent,
   LoadPodContent,
+  LoadStatusStepper,
   ReportExceptionDialog,
   ResolveExceptionDialog,
   TrackingLinkDialog,
