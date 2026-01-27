@@ -4,6 +4,7 @@ WORKDIR /logistics
 # Copy solution and project files
 COPY *.slnx ./
 COPY src/Core/ src/Core/
+COPY src/Infrastructure/ src/Infrastructure/
 COPY src/Shared/ src/Shared/
 COPY src/Aspire/ src/Aspire/
 COPY src/Presentation/Logistics.API/ src/Presentation/Logistics.API/

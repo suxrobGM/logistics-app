@@ -1,6 +1,6 @@
 @echo off
 title Create Migrations
-cd ../src/Core/Logistics.Infrastructure
+cd ../src/Infrastructure/Logistics.Infrastructure.Persistence
 
 call :CreateMigration "master database" "MasterDbContext" "Master"
 call :CreateMigration "tenant database" "TenantDbContext" "Tenant"

@@ -12,6 +12,7 @@ public static class Registrar
     {
         // Geocoding services
         services.AddHttpClient<IGeocodingService, MapboxGeocodingService>();
+        services.AddHttpClient<MapboxMatrixClient>();
 
         // Trip optimization services
         services.AddSingleton<HeuristicTripOptimizer>();
