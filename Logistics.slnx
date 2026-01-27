@@ -25,6 +25,7 @@
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Payments/Logistics.Infrastructure.Payments.csproj" />
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Persistence/Logistics.Infrastructure.Persistence.csproj" />
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Routing/Logistics.Infrastructure.Routing.csproj" />
+    <Project Path="src/Infrastructure/Logistics.Infrastructure.Storage/Logistics.Infrastructure.Storage.csproj" />
   </Folder>
   <Folder Name="/Presentation/">
     <Project Path="src/Presentation/Logistics.API/Logistics.API.csproj" />
