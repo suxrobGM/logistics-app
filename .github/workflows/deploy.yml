@@ -143,7 +143,7 @@ jobs:
             docker compose down
 
             # Remove old images for the app (not postgres/portainer/dashboard)
-            docker images | grep "ghcr.io/$REPO_LOWER" | awk '{print $3}' | xargs -r docker rmi -f || true
+            docker images --format "{{.ID}}" --filter "reference=ghcr.io/$REPO_LOWER/*" | xargs -r docker rmi -f || true
 
             # Pull latest images
             docker compose pull
