@@ -2,9 +2,10 @@ using Duende.IdentityServer;
 using Logistics.Application;
 using Logistics.Domain.Entities;
 using Logistics.IdentityServer.Services;
-using Logistics.Infrastructure;
-using Logistics.Infrastructure.Builder;
-using Logistics.Infrastructure.Data;
+using Logistics.Infrastructure.Communications;
+using Logistics.Infrastructure.Persistence;
+using Logistics.Infrastructure.Persistence.Builder;
+using Logistics.Infrastructure.Persistence.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -21,16 +22,18 @@ internal static class Setup
         var services = builder.Services;
         var configuration = builder.Configuration;
 
-        var microsoftLogger = new SerilogLoggerFactory(Log.Logger)
-            .CreateLogger<IInfrastructureBuilder>();
+        var serilogLogger = new SerilogLoggerFactory(Log.Logger)
+            .CreateLogger<IPersistenceInfrastructureBuilder>();
 
-        services.AddRazorPages();
+        // Application layers
         services.AddApplicationLayer();
-        services.AddInfrastructureLayer(configuration)
-            .UseLogger(microsoftLogger)
+
+        // Infrastructure layers
+        services.AddCommunicationsInfrastructure(configuration);
+        services.AddPersistenceInfrastructure(configuration)
+            .UseLogger(serilogLogger)
             .AddMasterDatabase()
             .AddTenantDatabase()
-            .AddNotifications()
             .AddIdentity(identityBuilder =>
             {
                 identityBuilder
@@ -39,6 +42,7 @@ internal static class Setup
                     .AddDefaultTokenProviders();
             });
 
+        services.AddRazorPages();
         AddAuthSchemes(services);
 
         services.AddDataProtection()

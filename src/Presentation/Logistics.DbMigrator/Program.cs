@@ -2,8 +2,7 @@ using Logistics.DbMigrator.Data;
 using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Services;
 using Logistics.DbMigrator.Workers;
-using Logistics.Infrastructure;
-
+using Logistics.Infrastructure.Persistence;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -15,9 +14,9 @@ Log.Information("Starting up");
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.AddServiceDefaults();
-builder.Configuration.AddJsonFile(Path.Combine(AppContext.BaseDirectory, "fake-dataset.json"), optional: true);
+builder.Configuration.AddJsonFile("fake-dataset.json", true);
 
-builder.Services.AddInfrastructureLayer(builder.Configuration)
+builder.Services.AddPersistenceInfrastructure(builder.Configuration)
     .AddMasterDatabase()
     .AddTenantDatabase()
     .AddIdentity();

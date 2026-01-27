@@ -14,19 +14,19 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.Persistence.Builder;
 
-internal class InfrastructureBuilder : IInfrastructureBuilder
+internal sealed class PersistenceInfrastructureBuilder : IPersistenceInfrastructureBuilder
 {
     private readonly IConfiguration configuration;
     private readonly IServiceCollection services;
-    private ILogger<IInfrastructureBuilder>? logger;
+    private ILogger<IPersistenceInfrastructureBuilder>? logger;
 
-    internal InfrastructureBuilder(IServiceCollection services, IConfiguration configuration)
+    internal PersistenceInfrastructureBuilder(IServiceCollection services, IConfiguration configuration)
     {
         this.configuration = configuration;
         this.services = services;
     }
 
-    public IInfrastructureBuilder AddIdentity(Action<IdentityBuilder>? configure = null)
+    public IPersistenceInfrastructureBuilder AddIdentity(Action<IdentityBuilder>? configure = null)
     {
         var identityBuilder = services.AddIdentityCore<User>(options =>
             {
@@ -44,13 +44,13 @@ internal class InfrastructureBuilder : IInfrastructureBuilder
         return this;
     }
 
-    public IInfrastructureBuilder UseLogger(ILogger<IInfrastructureBuilder> infrastructureLogger)
+    public IPersistenceInfrastructureBuilder UseLogger(ILogger<IPersistenceInfrastructureBuilder> infrastructureLogger)
     {
         logger = infrastructureLogger;
         return this;
     }
 
-    public IInfrastructureBuilder AddMasterDatabase(Action<MasterDbContextOptions>? configure = null)
+    public IPersistenceInfrastructureBuilder AddMasterDatabase(Action<MasterDbContextOptions>? configure = null)
     {
         var options = new MasterDbContextOptions();
         configure?.Invoke(options);
@@ -68,7 +68,7 @@ internal class InfrastructureBuilder : IInfrastructureBuilder
         return this;
     }
 
-    public IInfrastructureBuilder AddTenantDatabase(Action<TenantDbContextOptions>? configure = null)
+    public IPersistenceInfrastructureBuilder AddTenantDatabase(Action<TenantDbContextOptions>? configure = null)
     {
         var options = new TenantDbContextOptions();
         configure?.Invoke(options);

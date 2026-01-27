@@ -6,13 +6,20 @@ using Hangfire.PostgreSql;
 using Logistics.API.Authorization;
 using Logistics.API.Converters;
 using Logistics.API.Extensions;
-using Logistics.API.ModelBinders;
 using Logistics.API.Jobs;
 using Logistics.API.Middlewares;
+using Logistics.API.ModelBinders;
 using Logistics.Application;
 using Logistics.Application.Hubs;
-using Logistics.Infrastructure;
-using Logistics.Infrastructure.Builder;
+using Logistics.Infrastructure.Communications;
+using Logistics.Infrastructure.Documents;
+using Logistics.Infrastructure.Integrations.Eld;
+using Logistics.Infrastructure.Integrations.LoadBoard;
+using Logistics.Infrastructure.Payments;
+using Logistics.Infrastructure.Persistence;
+using Logistics.Infrastructure.Persistence.Builder;
+using Logistics.Infrastructure.Routing;
+using Logistics.Infrastructure.Storage;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -32,17 +39,25 @@ internal static class Setup
         var services = builder.Services;
         var configuration = builder.Configuration;
 
+        var serilogLogger = new SerilogLoggerFactory(Log.Logger)
+            .CreateLogger<IPersistenceInfrastructureBuilder>();
 
-        var microsoftLogger = new SerilogLoggerFactory(Log.Logger)
-            .CreateLogger<IInfrastructureBuilder>();
-
+        // Application layers
         services.AddApplicationLayer();
-        services.AddInfrastructureLayer(configuration)
-            .UseLogger(microsoftLogger)
+
+        // Infrastructure layers
+        services.AddCommunicationsInfrastructure(configuration);
+        services.AddDocumentsInfrastructure();
+        services.AddEldIntegrations(configuration);
+        services.AddLoadBoardIntegrations(configuration);
+        services.AddPaymentsInfrastructure(configuration);
+        services.AddRoutingInfrastructure();
+        services.AddStorageInfrastructure(configuration);
+        services.AddPersistenceInfrastructure(configuration)
+            .UseLogger(serilogLogger)
             .AddMasterDatabase()
             .AddTenantDatabase()
-            .AddIdentity()
-            .AddNotifications();
+            .AddIdentity();
 
         services.AddHttpContextAccessor();
         services.AddMemoryCache();

@@ -19,7 +19,7 @@ public static class Registrar
     /// <param name="services">The service collection.</param>
     /// <param name="configuration">The configuration.</param>
     /// <returns>The infrastructure builder.</returns>
-    public static IInfrastructureBuilder AddPersistenceInfrastructure(
+    public static IPersistenceInfrastructureBuilder AddPersistenceInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -41,6 +41,6 @@ public static class Registrar
                 : new NoopCurrentUserService();
         });
 
-        return new InfrastructureBuilder(services, configuration);
+        return new PersistenceInfrastructureBuilder(services, configuration);
     }
 }
