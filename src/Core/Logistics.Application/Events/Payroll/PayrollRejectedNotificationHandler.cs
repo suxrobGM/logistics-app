@@ -1,14 +1,15 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Contracts.Models.Email;
+using Logistics.Application.Contracts.Services.Email;
 using Logistics.Application.Services;
-using Logistics.Application.Services.EmailSender;
 using Logistics.Domain.Events;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Events;
 
 /// <summary>
-/// Handles notifications when a payroll invoice is rejected.
-/// Sends push notification and email to employee with rejection reason.
+///     Handles notifications when a payroll invoice is rejected.
+///     Sends push notification and email to employee with rejection reason.
 /// </summary>
 internal sealed class PayrollRejectedNotificationHandler(
     IPushNotificationService pushNotificationService,
@@ -26,8 +27,7 @@ internal sealed class PayrollRejectedNotificationHandler(
 
         var data = new Dictionary<string, string>
         {
-            ["payrollId"] = @event.PayrollId.ToString(),
-            ["type"] = "payroll_rejected"
+            ["payrollId"] = @event.PayrollId.ToString(), ["type"] = "payroll_rejected"
         };
 
         // Send push notification to employee

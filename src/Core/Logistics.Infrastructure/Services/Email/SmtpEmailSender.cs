@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Mail;
-
+using Logistics.Application.Contracts.Services.Email;
 using Logistics.Application.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

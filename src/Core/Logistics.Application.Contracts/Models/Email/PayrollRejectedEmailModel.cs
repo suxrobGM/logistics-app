@@ -1,4 +1,4 @@
-namespace Logistics.Application.Services.EmailSender;
+namespace Logistics.Application.Contracts.Models.Email;
 
 /// <summary>
 /// Email model for payroll rejected notification.

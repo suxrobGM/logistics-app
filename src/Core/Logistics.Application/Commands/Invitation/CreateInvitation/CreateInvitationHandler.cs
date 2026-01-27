@@ -1,4 +1,6 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Contracts.Models.Email;
+using Logistics.Application.Contracts.Services.Email;
 using Logistics.Application.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;

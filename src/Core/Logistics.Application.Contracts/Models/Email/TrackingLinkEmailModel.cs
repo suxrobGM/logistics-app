@@ -1,7 +1,7 @@
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Contracts.Models.Email;
 
 /// <summary>
-/// Model for tracking link email templates.
+///     Model for tracking link email templates.
 /// </summary>
 public record TrackingLinkEmailModel
 {

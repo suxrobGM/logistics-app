@@ -1,8 +1,9 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Services;
+using Logistics.Application.Contracts.Models.Email;
+using Logistics.Application.Contracts.Services.Email;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Persistence;
 using Logistics.Domain.Options;
+using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Options;
 

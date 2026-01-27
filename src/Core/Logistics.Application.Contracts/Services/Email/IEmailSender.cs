@@ -1,12 +1,12 @@
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Contracts.Services.Email;
 
 /// <summary>
-/// Email service
+///     Email service
 /// </summary>
 public interface IEmailSender
 {
     /// <summary>
-    /// Sends mail to specified address.
+    ///     Sends mail to a specified address.
     /// </summary>
     /// <param name="recipient">Receiver email address</param>
     /// <param name="subject">Mail subject</param>

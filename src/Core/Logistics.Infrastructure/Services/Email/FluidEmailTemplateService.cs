@@ -1,18 +1,19 @@
 using System.Collections.Concurrent;
 using System.Reflection;
 using Fluid;
-using Logistics.Application.Services;
+using Logistics.Application.Contracts.Models.Email;
+using Logistics.Application.Contracts.Services.Email;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.Services.Email;
 
 internal sealed class FluidEmailTemplateService : IEmailTemplateService
 {
+    private readonly Assembly assembly;
+    private readonly ILogger<FluidEmailTemplateService> logger;
+    private readonly TemplateOptions options;
     private readonly FluidParser parser = new();
     private readonly ConcurrentDictionary<string, IFluidTemplate> templateCache = new();
-    private readonly TemplateOptions options;
-    private readonly ILogger<FluidEmailTemplateService> logger;
-    private readonly Assembly assembly;
     private readonly string templateNamespace;
 
     public FluidEmailTemplateService(ILogger<FluidEmailTemplateService> logger)

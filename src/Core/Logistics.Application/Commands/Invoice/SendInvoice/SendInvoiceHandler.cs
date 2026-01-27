@@ -1,9 +1,12 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Contracts.Models.Email;
+using Logistics.Application.Contracts.Services.Email;
 using Logistics.Application.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Persistence;
 using Logistics.Domain.Options;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -31,7 +34,7 @@ internal sealed class SendInvoiceHandler(
             return Result.Fail("Invoice not found.");
         }
 
-        if (invoice.Status == Domain.Primitives.Enums.InvoiceStatus.Cancelled)
+        if (invoice.Status == InvoiceStatus.Cancelled)
         {
             return Result.Fail("Cannot send a cancelled invoice.");
         }

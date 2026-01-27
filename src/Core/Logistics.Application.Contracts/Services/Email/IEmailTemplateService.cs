@@ -1,4 +1,4 @@
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Contracts.Services.Email;
 
 /// <summary>
 /// Service for rendering email templates with dynamic data.

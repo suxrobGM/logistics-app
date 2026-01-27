@@ -1,7 +1,8 @@
 using System.Collections.Concurrent;
 using System.Reflection;
 using Fluid;
-using Logistics.Application.Services;
+using Logistics.Application.Contracts.Models.Email;
+using Logistics.Application.Contracts.Services.Email;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.Communications.Email;

@@ -1,9 +1,7 @@
 using System.Text;
 using System.Text.Encodings.Web;
-
-using Logistics.Application.Services;
+using Logistics.Application.Contracts.Services.Email;
 using Logistics.Domain.Entities;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,8 +13,8 @@ namespace Logistics.IdentityServer.Pages.Account.ResendEmailConfirmation;
 [AllowAnonymous]
 public class ResendEmailConfirmationModel : PageModel
 {
-    private readonly UserManager<User> _userManager;
     private readonly IEmailSender _emailSenderService;
+    private readonly UserManager<User> _userManager;
 
     public ResendEmailConfirmationModel(UserManager<User> userManager, IEmailSender emailSenderService)
     {
@@ -51,7 +49,7 @@ public class ResendEmailConfirmationModel : PageModel
         var callbackUrl = Url.Page(
             "/Account/ConfirmEmail",
             null,
-            new { userId = userId, code = code },
+            new { userId, code },
             Request.Scheme);
         await _emailSenderService.SendEmailAsync(
             Input.Email,

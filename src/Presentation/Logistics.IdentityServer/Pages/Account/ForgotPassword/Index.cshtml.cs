@@ -1,6 +1,6 @@
 using System.Text;
 using System.Text.Encodings.Web;
-
+using Logistics.Application.Contracts.Services.Email;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 

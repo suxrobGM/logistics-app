@@ -1,5 +1,4 @@
 using Duende.IdentityServer;
-using Logistics.Application;
 using Logistics.Domain.Entities;
 using Logistics.IdentityServer.Services;
 using Logistics.Infrastructure.Communications;
@@ -24,9 +23,6 @@ internal static class Setup
 
         var serilogLogger = new SerilogLoggerFactory(Log.Logger)
             .CreateLogger<IPersistenceInfrastructureBuilder>();
-
-        // Application layers
-        services.AddApplicationLayer();
 
         // Infrastructure layers
         services.AddCommunicationsInfrastructure(configuration);

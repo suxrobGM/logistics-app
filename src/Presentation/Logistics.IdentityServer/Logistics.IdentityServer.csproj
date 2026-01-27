@@ -10,13 +10,13 @@
 
   <ItemGroup>
     <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="7.4.5"/>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.2"/>
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0"/>
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.2"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Logistics.Application\Logistics.Application.csproj"/>
+    <ProjectReference Include="..\..\Core\Logistics.Application.Contracts\Logistics.Application.Contracts.csproj"/>
     <ProjectReference Include="..\..\Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj"/>
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Communications\Logistics.Infrastructure.Communications.csproj"/>
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Persistence\Logistics.Infrastructure.Persistence.csproj"/>

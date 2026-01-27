@@ -1,5 +1,5 @@
 using System.Text;
-
+using Logistics.Application.Contracts.Services.Email;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 
