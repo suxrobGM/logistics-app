@@ -106,6 +106,68 @@ public class LoadController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(cmd);
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
+
+    [HttpPost("{id:guid}/dispatch", Name = "DispatchLoad")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Load.Manage)]
+    public async Task<IActionResult> Dispatch(Guid id)
+    {
+        var result = await mediator.Send(new DispatchLoadCommand { Id = id });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPost("{id:guid}/assign", Name = "AssignLoadToTruck")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Load.Manage)]
+    public async Task<IActionResult> Assign(Guid id, [FromBody] AssignLoadRequest request)
+    {
+        var result = await mediator.Send(new AssignLoadToTruckCommand
+        {
+            LoadId = id,
+            TruckId = request.TruckId
+        });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPost("bulk-assign", Name = "BulkAssignLoads")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Load.Manage)]
+    public async Task<IActionResult> BulkAssign([FromBody] BulkAssignRequest request)
+    {
+        var result = await mediator.Send(new BulkAssignLoadsCommand
+        {
+            LoadIds = request.LoadIds,
+            TruckId = request.TruckId
+        });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpGet("{id:guid}/exceptions", Name = "GetLoadExceptions")]
+    [ProducesResponseType(typeof(List<LoadExceptionDto>), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Load.View)]
+    public async Task<IActionResult> GetExceptions(Guid id)
+    {
+        var result = await mediator.Send(new GetLoadExceptionsQuery { LoadId = id });
+        return Ok(result);
+    }
+
+    [HttpPost("{id:guid}/exceptions", Name = "ReportLoadException")]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Load.Manage)]
+    public async Task<IActionResult> ReportException(Guid id, [FromBody] ReportExceptionRequest request)
+    {
+        var result = await mediator.Send(new ReportLoadExceptionCommand
+        {
+            LoadId = id,
+            Type = request.Type,
+            Reason = request.Reason
+        });
+        return result.IsSuccess ? Ok() : BadRequest(ErrorResponse.FromResult(result));
+    }
 }
 
 /// <summary>

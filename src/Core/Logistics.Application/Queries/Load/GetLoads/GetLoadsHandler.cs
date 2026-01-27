@@ -36,14 +36,14 @@ internal sealed class GetLoadsHandler(ITenantUnitOfWork tenantUow)
             baseQuery = baseQuery.Where(i => i.AssignedTruckId == req.TruckId);
         }
 
-        if (req.Status.HasValue)
+        if (req.Statuses?.Length > 0)
         {
-            baseQuery = baseQuery.Where(i => i.Status == req.Status.Value);
+            baseQuery = baseQuery.Where(i => req.Statuses.Contains(i.Status));
         }
 
-        if (req.Type.HasValue)
+        if (req.Types?.Length > 0)
         {
-            baseQuery = baseQuery.Where(i => i.Type == req.Type.Value);
+            baseQuery = baseQuery.Where(i => req.Types.Contains(i.Type));
         }
 
         if (req.CustomerId.HasValue)
