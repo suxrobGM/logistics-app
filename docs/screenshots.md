@@ -2,41 +2,41 @@
 
 Visual tour of Logistics TMS applications.
 
-## Office App (Angular)
+## TMS Portal (Angular)
 
-The dispatcher and manager web interface for managing loads, customers, and operations.
+The dispatcher and manager web interface for managing loads, customers, operations, invoices, payrolls, and more.
 
 ### Dashboard
 
-![Dashboard](images/office-app/office_app_1.jpg)
+![Dashboard](images/tms-portal/tms-portal-1.jpg)
 
 ### Load Management
 
-![Load List](images/office-app/office_app_2.jpg)
+![Load List](images/tms-portal/tms-portal-2.jpg)
 
-![Load Details](images/office-app/office_app_3.jpg)
+![Load Details](images/tms-portal/tms-portal-3.jpg)
 
 ### Customer Management
 
-![Customers](images/office-app/office_app_4.jpg)
+![Customers](images/tms-portal/tms-portal-4.jpg)
 
 ### Employee & Driver Management
 
-![Employees](images/office-app/office_app_5.jpg)
+![Employees](images/tms-portal/tms-portal-5.jpg)
 
-![Driver Details](images/office-app/office_app_6.jpg)
+![Driver Details](images/tms-portal/tms-portal-6.jpg)
 
 ### Fleet & Trucks
 
-![Trucks](images/office-app/office_app_7.jpg)
+![Trucks](images/tms-portal/tms-portal-7.jpg)
 
 ### Invoicing
 
-![Invoices](images/office-app/office_app_8.jpg)
+![Invoices](images/tms-portal/tms-portal-8.jpg)
 
 ### Reports
 
-![Reports](images/office-app/office_app_9.jpg)
+![Reports](images/tms-portal/tms-portal-9.jpg)
 
 ---
 
@@ -76,8 +76,8 @@ The original driver app built with .NET MAUI. Now replaced by the Kotlin Multipl
 
 | Login | Dashboard | Load Details |
 |:-----:|:---------:|:------------:|
-| ![Login](images/driver-app/driver_app_1.jpg) | ![Dashboard](images/driver-app/driver_app_2.jpg) | ![Load](images/driver-app/driver_app_3.jpg) |
+| ![Login](images/driver-app/driver-app-1.jpg) | ![Dashboard](images/driver-app/driver-app-2.jpg) | ![Load](images/driver-app/driver-app-3.jpg) |
 
 | Statistics | Charts | Account |
 |:----------:|:------:|:-------:|
-| ![Stats](images/driver-app/driver_app_4.jpg) | ![Charts](images/driver-app/driver_app_5.jpg) | ![Account](images/driver-app/driver_app_6.jpg) |
+| ![Stats](images/driver-app/driver-app-4.jpg) | ![Charts](images/driver-app/driver-app-5.jpg) | ![Account](images/driver-app/driver-app-6.jpg) |

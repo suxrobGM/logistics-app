@@ -179,6 +179,6 @@ Created by **Sukhrob Ilyosbekov**
 
 ## Preview
 
-![Office App](docs/images/office-app/office_app_1.jpg)
+![TMS Portal](docs/images/tms-portal/tms-portal-1.jpg)
 
 [View all screenshots](docs/screenshots.md)
