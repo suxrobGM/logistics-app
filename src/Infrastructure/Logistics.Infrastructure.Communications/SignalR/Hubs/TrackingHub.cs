@@ -1,13 +1,14 @@
 using Logistics.Application.Commands;
+using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Logistics.Application.Hubs;
+namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
-public class LiveTrackingHub(
+public class TrackingHub(
     IMediator mediator,
-    LiveTrackingHubContext hubContext) : Hub<ILiveTrackingHubClient>
+    TrackingHubContext hubContext) : Hub<ITrackingHubClient>
 {
     // Group name prefixes for organizing subscriptions
     private const string TripGroupPrefix = "trip:";
@@ -45,43 +46,55 @@ public class LiveTrackingHub(
 
     #region Tenant Subscription
 
-    public async Task RegisterTenant(string tenantId) =>
+    public async Task RegisterTenant(string tenantId)
+    {
         await Groups.AddToGroupAsync(Context.ConnectionId, tenantId);
+    }
 
-    public async Task UnregisterTenant(string tenantId) =>
+    public async Task UnregisterTenant(string tenantId)
+    {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, tenantId);
+    }
 
     #endregion
 
     #region Trip Subscription
 
     /// <summary>
-    /// Subscribe to updates for a specific trip.
+    ///     Subscribe to updates for a specific trip.
     /// </summary>
-    public async Task SubscribeToTrip(string tripId) =>
+    public async Task SubscribeToTrip(string tripId)
+    {
         await Groups.AddToGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
+    }
 
     /// <summary>
-    /// Unsubscribe from updates for a specific trip.
+    ///     Unsubscribe from updates for a specific trip.
     /// </summary>
-    public async Task UnsubscribeFromTrip(string tripId) =>
+    public async Task UnsubscribeFromTrip(string tripId)
+    {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
+    }
 
     #endregion
 
     #region Dispatch Board Subscription
 
     /// <summary>
-    /// Subscribe to dispatch board updates for a tenant.
+    ///     Subscribe to dispatch board updates for a tenant.
     /// </summary>
-    public async Task SubscribeToDispatchBoard(string tenantId) =>
+    public async Task SubscribeToDispatchBoard(string tenantId)
+    {
         await Groups.AddToGroupAsync(Context.ConnectionId, $"{DispatchBoardGroupPrefix}{tenantId}");
+    }
 
     /// <summary>
-    /// Unsubscribe from dispatch board updates.
+    ///     Unsubscribe from dispatch board updates.
     /// </summary>
-    public async Task UnsubscribeFromDispatchBoard(string tenantId) =>
+    public async Task UnsubscribeFromDispatchBoard(string tenantId)
+    {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{DispatchBoardGroupPrefix}{tenantId}");
+    }
 
     #endregion
 }

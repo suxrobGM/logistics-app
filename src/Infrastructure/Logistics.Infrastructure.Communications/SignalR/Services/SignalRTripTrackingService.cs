@@ -1,5 +1,6 @@
-using Logistics.Application.Hubs;
 using Logistics.Application.Services;
+using Logistics.Infrastructure.Communications.SignalR.Clients;
+using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.SignalR;
 
@@ -8,7 +9,7 @@ namespace Logistics.Infrastructure.Communications.SignalR.Services;
 /// <summary>
 ///     Implementation of a trip tracking service using SignalR.
 /// </summary>
-internal sealed class SignalRTripTrackingService(IHubContext<LiveTrackingHub, ILiveTrackingHubClient> hubContext)
+internal sealed class SignalRTripTrackingService(IHubContext<TrackingHub, ITrackingHubClient> hubContext)
     : ITripTrackingService
 {
     private const string TripGroupPrefix = "trip:";

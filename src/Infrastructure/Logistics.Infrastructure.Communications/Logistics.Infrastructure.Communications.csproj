@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="FirebaseAdmin" Version="3.4.0"/>
     <PackageReference Include="Fluid.Core" Version="2.31.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.9" />
   </ItemGroup>
 
   <ItemGroup>

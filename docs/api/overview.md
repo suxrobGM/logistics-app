@@ -180,9 +180,9 @@ See [Webhooks](../configuration/stripe-integration.md) for configuration.
 
 For real-time features, connect to SignalR hubs:
 
-- **GPS Tracking**: `/hubs/live-tracking`
+- **GPS Tracking**: `/hubs/tracking`
 - **Notifications**: `/hubs/notification`
-- **Messaging**: `/hubs/messaging`
+- **Chat**: `/hubs/chat`
 
 See [SignalR Hubs](signalr-hubs.md) for details.
 

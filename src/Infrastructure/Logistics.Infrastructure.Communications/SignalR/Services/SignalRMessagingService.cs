@@ -1,37 +1,71 @@
 ﻿using Logistics.Application.Services.Realtime;
+using Logistics.Infrastructure.Communications.SignalR.Clients;
+using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Shared.Models.Messaging;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.Infrastructure.Communications.SignalR.Services;
 
-internal sealed class SignalRMessagingService : IRealtimeMessagingService
+/// <summary>
+///     SignalR implementation of real-time messaging service.
+/// </summary>
+internal sealed class SignalRMessagingService(IHubContext<ChatHub, IChatHubClient> hubContext)
+    : IRealtimeMessagingService
 {
-    public Task BroadcastMessageToConversationAsync(Guid conversationId, MessageDto message,
-        CancellationToken cancellationToken = default)
+    public async Task BroadcastMessageToConversationAsync(
+        Guid conversationId,
+        MessageDto message,
+        CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        await hubContext.Clients
+            .Group($"conversation-{conversationId}")
+            .ReceiveMessage(message);
     }
 
-    public Task BroadcastMessageReadAsync(Guid conversationId, Guid messageId, string readById,
-        CancellationToken cancellationToken = default)
+    public async Task BroadcastMessageReadAsync(
+        Guid conversationId,
+        Guid messageId,
+        string readById,
+        CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        await hubContext.Clients
+            .Group($"conversation-{conversationId}")
+            .MessageRead(messageId, Guid.Parse(readById));
     }
 
-    public Task BroadcastTypingIndicatorAsync(Guid conversationId, string userId, bool isTyping,
-        CancellationToken cancellationToken = default)
+    public async Task BroadcastTypingIndicatorAsync(
+        Guid conversationId,
+        string userId,
+        bool isTyping,
+        CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        var indicator = new TypingIndicatorDto
+        {
+            ConversationId = conversationId, UserId = Guid.Parse(userId), IsTyping = isTyping
+        };
+
+        await hubContext.Clients
+            .Group($"conversation-{conversationId}")
+            .TypingIndicator(indicator);
     }
 
-    public Task BroadcastUserJoinedAsync(Guid conversationId, string userId,
-        CancellationToken cancellationToken = default)
+    public async Task BroadcastUserJoinedAsync(
+        Guid conversationId,
+        string userId,
+        CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        await hubContext.Clients
+            .Group($"conversation-{conversationId}")
+            .UserJoinedConversation(conversationId, Guid.Parse(userId), null);
     }
 
-    public Task BroadcastUserLeftAsync(Guid conversationId, string userId,
-        CancellationToken cancellationToken = default)
+    public async Task BroadcastUserLeftAsync(
+        Guid conversationId,
+        string userId,
+        CancellationToken ct = default)
     {
-        throw new NotImplementedException();
+        await hubContext.Clients
+            .Group($"conversation-{conversationId}")
+            .UserLeftConversation(conversationId, Guid.Parse(userId));
     }
 }

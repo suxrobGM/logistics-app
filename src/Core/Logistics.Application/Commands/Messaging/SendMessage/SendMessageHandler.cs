@@ -1,19 +1,18 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Hubs;
 using Logistics.Application.Services;
+using Logistics.Application.Services.Realtime;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Logistics.Shared.Models.Messaging;
-using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.Application.Commands;
 
 internal sealed class SendMessageHandler(
     ITenantUnitOfWork tenantUow,
-    IHubContext<MessagingHub, IMessagingHubClient> messagingHub,
+    IRealtimeMessagingService messagingService,
     IPushNotificationService pushNotificationService)
     : IAppRequestHandler<SendMessageCommand, Result<MessageDto>>
 {
@@ -72,9 +71,10 @@ internal sealed class SendMessageHandler(
         var messageDto = message.ToDto(false);
 
         // Broadcast message to conversation group
-        await messagingHub.Clients
-            .Group($"conversation-{req.ConversationId}")
-            .ReceiveMessage(messageDto);
+        await messagingService.BroadcastMessageToConversationAsync(
+            req.ConversationId,
+            messageDto,
+            ct);
 
         // Send push notifications to participants
         foreach (var participant in conversation.Participants.Where(p => p.EmployeeId != req.SenderId))

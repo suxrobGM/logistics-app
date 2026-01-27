@@ -41,7 +41,7 @@ class ConversationStateManager(
         scope.launch {
             try {
                 messagingService.connect()
-                Logger.d("ConversationStateManager: Connected to messaging hub")
+                Logger.d("ConversationStateManager: Connected to chat hub")
             } catch (e: Exception) {
                 Logger.e("ConversationStateManager: Failed to connect - ${e.message}")
             }

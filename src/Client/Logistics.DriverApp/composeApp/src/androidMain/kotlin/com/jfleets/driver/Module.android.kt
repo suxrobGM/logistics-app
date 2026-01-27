@@ -17,8 +17,8 @@ import org.koin.dsl.module
 
 const val API_BASE_URL = "http://10.0.2.2:7000/"
 const val IDENTITY_SERVER_URL = "http://10.0.2.2:7001/"
-const val SIGNALR_HUB_URL = "http://10.0.2.2:7000/hubs/live-tracking"
-const val MESSAGING_HUB_URL = "http://10.0.2.2:7000/hubs/messaging"
+const val SIGNALR_HUB_URL = "http://10.0.2.2:7000/hubs/tracking"
+const val MESSAGING_HUB_URL = "http://10.0.2.2:7000/hubs/chat"
 
 private var koinInitialized = false
 

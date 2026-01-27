@@ -1,13 +1,13 @@
+using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Shared.Models.Messaging;
-
 using Microsoft.AspNetCore.SignalR;
 
-namespace Logistics.Application.Hubs;
+namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
 /// <summary>
-/// SignalR hub for real-time messaging between dispatchers and drivers.
+///     SignalR hub for real-time messaging between dispatchers and drivers.
 /// </summary>
-public class MessagingHub(MessagingHubContext hubContext) : Hub<IMessagingHubClient>
+public class ChatHub(ChatHubContext hubContext) : Hub<IChatHubClient>
 {
     public override Task OnConnectedAsync()
     {
@@ -22,7 +22,7 @@ public class MessagingHub(MessagingHubContext hubContext) : Hub<IMessagingHubCli
     }
 
     /// <summary>
-    /// Register the connection with a tenant for multi-tenant message routing.
+    ///     Register the connection with a tenant for multi-tenant message routing.
     /// </summary>
     public async Task RegisterTenant(string tenantId)
     {
@@ -31,12 +31,15 @@ public class MessagingHub(MessagingHubContext hubContext) : Hub<IMessagingHubCli
     }
 
     /// <summary>
-    /// Unregister from a tenant group.
+    ///     Unregister from a tenant group.
     /// </summary>
-    public async Task UnregisterTenant(string tenantId) => await Groups.RemoveFromGroupAsync(Context.ConnectionId, tenantId);
+    public async Task UnregisterTenant(string tenantId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, tenantId);
+    }
 
     /// <summary>
-    /// Register the current user ID for the connection.
+    ///     Register the current user ID for the connection.
     /// </summary>
     public Task RegisterUser(Guid userId)
     {
@@ -45,7 +48,7 @@ public class MessagingHub(MessagingHubContext hubContext) : Hub<IMessagingHubCli
     }
 
     /// <summary>
-    /// Join a conversation to receive messages.
+    ///     Join a conversation to receive messages.
     /// </summary>
     public async Task JoinConversation(string conversationId)
     {
@@ -60,7 +63,7 @@ public class MessagingHub(MessagingHubContext hubContext) : Hub<IMessagingHubCli
     }
 
     /// <summary>
-    /// Leave a conversation.
+    ///     Leave a conversation.
     /// </summary>
     public async Task LeaveConversation(string conversationId)
     {
@@ -75,8 +78,8 @@ public class MessagingHub(MessagingHubContext hubContext) : Hub<IMessagingHubCli
     }
 
     /// <summary>
-    /// Send a message to a conversation.
-    /// Messages are persisted via the API and then broadcast here.
+    ///     Send a message to a conversation.
+    ///     Messages are persisted via the API and then broadcast here.
     /// </summary>
     public async Task SendMessage(MessageDto message)
     {
@@ -85,7 +88,7 @@ public class MessagingHub(MessagingHubContext hubContext) : Hub<IMessagingHubCli
     }
 
     /// <summary>
-    /// Notify that a message has been read.
+    ///     Notify that a message has been read.
     /// </summary>
     public async Task MarkAsRead(Guid conversationId, Guid messageId, Guid readById)
     {
@@ -94,7 +97,7 @@ public class MessagingHub(MessagingHubContext hubContext) : Hub<IMessagingHubCli
     }
 
     /// <summary>
-    /// Send typing indicator to a conversation.
+    ///     Send typing indicator to a conversation.
     /// </summary>
     public async Task SendTypingIndicator(string conversationId, bool isTyping)
     {
@@ -106,9 +109,7 @@ public class MessagingHub(MessagingHubContext hubContext) : Hub<IMessagingHubCli
 
         var indicator = new TypingIndicatorDto
         {
-            ConversationId = Guid.Parse(conversationId),
-            UserId = userId.Value,
-            IsTyping = isTyping
+            ConversationId = Guid.Parse(conversationId), UserId = userId.Value, IsTyping = isTyping
         };
 
         await Clients.GroupExcept($"conversation-{conversationId}", Context.ConnectionId)

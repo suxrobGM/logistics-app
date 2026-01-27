@@ -1,7 +1,7 @@
 import { computed, inject } from "@angular/core";
 import type { ConversationDto, MessageDto } from "@logistics/shared/api";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
-import { MessagingService } from "@/core/services";
+import { ChatService } from "@/core/services";
 
 interface MessagesState {
   conversations: ConversationDto[];
@@ -36,7 +36,7 @@ export const MessagesStore = signalStore(
     ),
   })),
 
-  withMethods((store, messagingService = inject(MessagingService)) => {
+  withMethods((store, messagingService = inject(ChatService)) => {
     const setupRealtimeHandlers = () => {
       if (store.initialized()) return;
 

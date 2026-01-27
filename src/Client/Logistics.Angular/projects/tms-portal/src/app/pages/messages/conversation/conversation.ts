@@ -12,12 +12,12 @@ import {
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import type { ConversationDto, EmployeeDto, MessageDto } from "@logistics/shared/api";
+import { EmptyState } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { SkeletonModule } from "primeng/skeleton";
 import { AuthService } from "@/core/auth";
-import { MessagingService } from "@/core/services";
-import { EmptyState } from "@logistics/shared/components";
+import { ChatService } from "@/core/services";
 import {
   ConversationDetails,
   ConversationHeader,
@@ -46,7 +46,7 @@ export class ConversationComponent implements OnInit, OnDestroy {
   protected readonly messagesContainer = viewChild<ElementRef<HTMLDivElement>>("messagesContainer");
 
   private readonly router = inject(Router);
-  private readonly messagingService = inject(MessagingService);
+  private readonly messagingService = inject(ChatService);
   private readonly authService = inject(AuthService);
   protected readonly store = inject(MessagesStore);
 
@@ -209,7 +209,10 @@ export class ConversationComponent implements OnInit, OnDestroy {
     }
   }
 
-  private findExistingConversation(currentUserId: string, recipientId: string): ConversationDto | null {
+  private findExistingConversation(
+    currentUserId: string,
+    recipientId: string,
+  ): ConversationDto | null {
     const targetIds = new Set([currentUserId, recipientId]);
 
     return (

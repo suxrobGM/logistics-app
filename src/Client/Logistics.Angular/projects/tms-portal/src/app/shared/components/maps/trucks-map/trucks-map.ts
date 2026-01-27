@@ -1,7 +1,7 @@
 import { Component, type OnDestroy, inject, input, signal } from "@angular/core";
 import { Api, getTrucks } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
-import { LiveTrackingService } from "@/core/services";
+import { TrackingService } from "@/core/services";
 import { GeolocationMap } from "@/shared/components";
 
 @Component({
@@ -11,7 +11,7 @@ import { GeolocationMap } from "@/shared/components";
 })
 export class TrucksMap implements OnDestroy {
   private readonly api = inject(Api);
-  private readonly liveTrackingService = inject(LiveTrackingService);
+  private readonly liveTrackingService = inject(TrackingService);
 
   protected readonly truckLocations = signal<TruckGeolocationDto[]>([]);
   public readonly width = input("100%");

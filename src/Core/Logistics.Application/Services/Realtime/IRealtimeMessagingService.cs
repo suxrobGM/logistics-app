@@ -10,27 +10,27 @@ public interface IRealtimeMessagingService
     Task BroadcastMessageToConversationAsync(
         Guid conversationId,
         MessageDto message,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 
     Task BroadcastMessageReadAsync(
         Guid conversationId,
         Guid messageId,
         string readById,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 
     Task BroadcastTypingIndicatorAsync(
         Guid conversationId,
         string userId,
         bool isTyping,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 
     Task BroadcastUserJoinedAsync(
         Guid conversationId,
         string userId,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 
     Task BroadcastUserLeftAsync(
         Guid conversationId,
         string userId,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 }

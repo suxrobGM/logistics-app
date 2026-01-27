@@ -3,9 +3,9 @@ import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { BaseHubConnection } from "./base-hub-connection";
 
 @Injectable({ providedIn: "root" })
-export class LiveTrackingService extends BaseHubConnection {
+export class TrackingService extends BaseHubConnection {
   constructor() {
-    super("live-tracking");
+    super("tracking");
   }
 
   set onReceiveGeolocationData(callback: OnReceiveGeolocationDataCallback) {

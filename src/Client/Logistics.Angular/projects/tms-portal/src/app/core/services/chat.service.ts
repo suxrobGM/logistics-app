@@ -23,14 +23,14 @@ export interface TypingIndicatorDto {
 }
 
 @Injectable({ providedIn: "root" })
-export class MessagingService extends BaseHubConnection {
+export class ChatService extends BaseHubConnection {
   private readonly api = inject(Api);
 
-  readonly unreadCount = signal(0);
-  readonly typingUsers = signal<Map<string, Set<string>>>(new Map());
+  public readonly unreadCount = signal(0);
+  public readonly typingUsers = signal<Map<string, Set<string>>>(new Map());
 
   constructor() {
-    super("messaging");
+    super("chat");
   }
 
   set onReceiveMessage(callback: (message: MessageDto) => void) {

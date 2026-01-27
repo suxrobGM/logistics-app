@@ -10,5 +10,5 @@ public interface IRealtimeNotificationService
     Task BroadcastNotificationAsync(
         string tenantId,
         NotificationDto notification,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 }

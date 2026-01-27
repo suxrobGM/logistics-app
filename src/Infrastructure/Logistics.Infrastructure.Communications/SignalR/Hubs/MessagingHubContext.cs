@@ -5,7 +5,7 @@ namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 /// <summary>
 ///     Tracks active connections for the messaging hub.
 /// </summary>
-public class MessagingHubContext
+public class ChatHubContext
 {
     private readonly ConcurrentDictionary<string, ActiveConnection> connectedClients = new();
 

@@ -22,8 +22,8 @@ public static class Registrar
     {
         // SignalR real-time communication
         services.AddSignalR();
-        services.AddSingleton<LiveTrackingHubContext>();
-        services.AddSingleton<MessagingHubContext>();
+        services.AddSingleton<TrackingHubContext>();
+        services.AddSingleton<ChatHubContext>();
 
         // SignalR abstractions for Application layer
         services.AddScoped<IRealtimeMessagingService, SignalRMessagingService>();

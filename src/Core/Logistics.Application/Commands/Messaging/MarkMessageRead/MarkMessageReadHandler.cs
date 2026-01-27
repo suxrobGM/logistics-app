@@ -1,15 +1,14 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Hubs;
+using Logistics.Application.Services.Realtime;
 using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
-using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.Application.Commands;
 
 internal sealed class MarkMessageReadHandler(
     ITenantUnitOfWork tenantUow,
-    IHubContext<MessagingHub, IMessagingHubClient> messagingHub)
+    IRealtimeMessagingService messagingService)
     : IAppRequestHandler<MarkMessageReadCommand, Result>
 {
     public async Task<Result> Handle(MarkMessageReadCommand req, CancellationToken ct)
@@ -53,9 +52,11 @@ internal sealed class MarkMessageReadHandler(
         await tenantUow.SaveChangesAsync(ct);
 
         // Notify via SignalR
-        await messagingHub.Clients
-            .Group($"conversation-{message.ConversationId}")
-            .MessageRead(req.MessageId, req.ReadById);
+        await messagingService.BroadcastMessageReadAsync(
+            message.ConversationId,
+            req.MessageId,
+            req.ReadById.ToString(),
+            ct);
 
         return Result.Ok();
     }

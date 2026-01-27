@@ -1,11 +1,11 @@
 using Logistics.Shared.Models.Messaging;
 
-namespace Logistics.Application.Hubs;
+namespace Logistics.Infrastructure.Communications.SignalR.Clients;
 
 /// <summary>
 /// Hub client interface for receiving messaging events.
 /// </summary>
-public interface IMessagingHubClient
+public interface IChatHubClient
 {
     /// <summary>
     /// Called when a new message is received.

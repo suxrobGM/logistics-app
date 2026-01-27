@@ -10,8 +10,8 @@ using Logistics.API.Jobs;
 using Logistics.API.Middlewares;
 using Logistics.API.ModelBinders;
 using Logistics.Application;
-using Logistics.Application.Hubs;
 using Logistics.Infrastructure.Communications;
+using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Infrastructure.Documents;
 using Logistics.Infrastructure.Integrations.Eld;
 using Logistics.Infrastructure.Integrations.LoadBoard;
@@ -165,9 +165,9 @@ internal static class Setup
         app.MapControllers();
 
         // SignalR Hubs
-        app.MapHub<LiveTrackingHub>("/hubs/live-tracking");
+        app.MapHub<TrackingHub>("/hubs/tracking");
         app.MapHub<NotificationHub>("/hubs/notification");
-        app.MapHub<MessagingHub>("/hubs/messaging");
+        app.MapHub<ChatHub>("/hubs/chat");
         return app;
     }
 

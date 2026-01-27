@@ -1,11 +1,11 @@
 using Logistics.Shared.Models;
 
-namespace Logistics.Application.Hubs;
+namespace Logistics.Infrastructure.Communications.SignalR.Clients;
 
 /// <summary>
 /// Hub client for geolocation live tracking and trip updates.
 /// </summary>
-public interface ILiveTrackingHubClient
+public interface ITrackingHubClient
 {
     /// <summary>
     /// Receives truck geolocation data updates.

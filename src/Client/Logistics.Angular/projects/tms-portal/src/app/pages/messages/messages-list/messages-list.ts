@@ -9,7 +9,7 @@ import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
 import { AuthService } from "@/core/auth";
-import { MessagingService } from "@/core/services";
+import { ChatService } from "@/core/services";
 import { Converters } from "@/shared/utils";
 import { MessagesStore } from "../store/messages.store";
 
@@ -30,7 +30,7 @@ import { MessagesStore } from "../store/messages.store";
 export class MessagesListComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
-  private readonly messagingService = inject(MessagingService);
+  private readonly messagingService = inject(ChatService);
   protected readonly store = inject(MessagesStore);
 
   async ngOnInit(): Promise<void> {

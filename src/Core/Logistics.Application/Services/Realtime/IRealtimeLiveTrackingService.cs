@@ -11,21 +11,21 @@ public interface IRealtimeLiveTrackingService
     Task BroadcastGeolocationDataAsync(
         string tenantId,
         TruckGeolocationDto geolocationData,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 
     Task BroadcastTripStatusUpdateAsync(
         string tenantId,
         Guid tripId,
         TripStatus newStatus,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 
     Task BroadcastStopArrivalAsync(
         string tenantId,
         Guid tripId,
         Guid stopId,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 
     Task BroadcastDispatchBoardUpdateAsync(
         string tenantId,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct = default);
 }

@@ -6,9 +6,9 @@ Real-time communication via SignalR WebSocket connections.
 
 | Hub | URL | Purpose |
 |-----|-----|---------|
-| Live Tracking | `/hubs/live-tracking` | GPS location updates |
+| Live Tracking | `/hubs/chat` | GPS location updates |
 | Notifications | `/hubs/notification` | Push notifications |
-| Messaging | `/hubs/messaging` | Real-time chat messages |
+| Messaging | `/hubs/chat` | Real-time chat messages |
 
 ## Connecting to Hubs
 
