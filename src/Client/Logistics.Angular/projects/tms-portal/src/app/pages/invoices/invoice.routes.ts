@@ -3,7 +3,6 @@ import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
 import { InvoiceDashboard } from "./invoice-dashboard/invoice-dashboard";
 import { LoadInvoiceDetails } from "./load-invoice-details/load-invoice-details";
-import { LoadInvoicesList } from "./load-invoices-list/load-invoices-list";
 
 export const invoiceRoutes: Routes = [
   {
@@ -17,21 +16,8 @@ export const invoiceRoutes: Routes = [
   },
   {
     path: "loads",
-    component: LoadInvoicesList,
-    canActivate: [authGuard],
-    data: {
-      breadcrumb: "Load Invoices",
-      permission: Permission.Payment.View,
-    },
-  },
-  {
-    path: "loads/:loadId",
-    component: LoadInvoicesList,
-    canActivate: [authGuard],
-    data: {
-      breadcrumb: "Load Invoices Details",
-      permission: Permission.Invoice.View,
-    },
+    redirectTo: "",
+    pathMatch: "full",
   },
   {
     path: "loads/:loadId/:invoiceId",

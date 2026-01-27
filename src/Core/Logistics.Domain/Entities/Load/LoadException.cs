@@ -17,8 +17,16 @@ public class LoadException : AuditableEntity, ITenantEntity
     public DateTime OccurredAt { get; set; } = DateTime.UtcNow;
     public DateTime? ResolvedAt { get; set; }
 
+    /// <summary>
+    /// The user ID who reported the exception. Stored as reference only (no FK constraint)
+    /// since users may exist in master DB.
+    /// </summary>
     public Guid ReportedById { get; set; }
-    public virtual User ReportedBy { get; set; } = null!;
+
+    /// <summary>
+    /// Denormalized name of the user who reported the exception.
+    /// </summary>
+    public string ReportedByName { get; set; } = string.Empty;
 
     public string? Resolution { get; set; }
 

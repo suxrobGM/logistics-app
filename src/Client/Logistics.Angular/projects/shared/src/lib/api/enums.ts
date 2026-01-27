@@ -3,10 +3,12 @@
  * The generated code uses string union types, but consuming code expects enum-like objects.
  * These shadow the type-only exports from generated/models with both type + value.
  */
+import type { SelectOption } from "../models/select-option";
 import type {
   DocumentType,
   InvoiceLineItemType,
   InvoiceStatus,
+  LoadExceptionType,
   LoadStatus,
   LoadType,
   PaymentMethodType,
@@ -20,7 +22,6 @@ import type {
   UsBankAccountHolderType,
   UsBankAccountType,
 } from "./generated";
-import type { SelectOption } from "../models/select-option";
 
 // Options arrays for select dropdowns
 export const paymentMethodTypeOptions: SelectOption<PaymentMethodType>[] = [
@@ -169,4 +170,14 @@ export const payrollLineItemTypeOptions: SelectOption<InvoiceLineItemType>[] = [
   { label: "Deduction", value: "deduction" },
   { label: "Reimbursement", value: "reimbursement" },
   { label: "Adjustment", value: "adjustment" },
+];
+
+export const loadExceptionTypeOptions: SelectOption<LoadExceptionType>[] = [
+  { label: "Delay", value: "delay" },
+  { label: "Accident", value: "accident" },
+  { label: "Weather Delay", value: "weather_delay" },
+  { label: "Mechanical Failure", value: "mechanical_failure" },
+  { label: "Route Change", value: "route_change" },
+  { label: "Customer Request", value: "customer_request" },
+  { label: "Other", value: "other" },
 ];

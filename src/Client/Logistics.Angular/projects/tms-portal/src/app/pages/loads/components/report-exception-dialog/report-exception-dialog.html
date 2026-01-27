@@ -1,0 +1,51 @@
+<p-dialog
+  header="Report Exception"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [closable]="true"
+  (onHide)="close()"
+>
+  <div class="space-y-4">
+    <div class="bg-surface-100 dark:bg-surface-800 rounded-lg p-4">
+      <p class="text-muted m-0 text-sm">
+        Report an exception or issue that occurred during load transportation. This will be recorded
+        in the load's history.
+      </p>
+    </div>
+
+    <ui-labeled-field label="Exception Type" [required]="true">
+      <p-select
+        [options]="typeOptions"
+        [(ngModel)]="selectedType"
+        placeholder="Select exception type"
+        [showClear]="true"
+        class="w-full"
+        styleClass="w-full"
+      />
+    </ui-labeled-field>
+
+    <ui-labeled-field label="Reason" [required]="true">
+      <textarea
+        pTextarea
+        [(ngModel)]="reason"
+        rows="4"
+        placeholder="Describe the exception or issue..."
+        class="w-full"
+      ></textarea>
+    </ui-labeled-field>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-2">
+      <p-button label="Cancel" [text]="true" (click)="close()" [disabled]="isSubmitting()" />
+      <p-button
+        label="Report Exception"
+        icon="pi pi-exclamation-triangle"
+        (click)="submit()"
+        [loading]="isSubmitting()"
+        [disabled]="!selectedType() || !reason().trim()"
+      />
+    </div>
+  </ng-template>
+</p-dialog>

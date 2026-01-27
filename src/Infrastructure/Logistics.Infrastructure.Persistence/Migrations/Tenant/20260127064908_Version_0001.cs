@@ -841,6 +841,35 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 });
 
             migrationBuilder.CreateTable(
+                name: "LoadExceptions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    LoadId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Reason = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    OccurredAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ResolvedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ReportedById = table.Column<Guid>(type: "uuid", nullable: false),
+                    ReportedByName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Resolution = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LoadExceptions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LoadExceptions_Loads_LoadId",
+                        column: x => x.LoadId,
+                        principalTable: "Loads",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TrackingLinks",
                 columns: table => new
                 {
@@ -1454,6 +1483,16 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 column: "Status");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LoadExceptions_LoadId",
+                table: "LoadExceptions",
+                column: "LoadId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LoadExceptions_ResolvedAt",
+                table: "LoadExceptions",
+                column: "ResolvedAt");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Loads_AssignedDispatcherId",
                 table: "Loads",
                 column: "AssignedDispatcherId");
@@ -1689,6 +1728,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
             migrationBuilder.DropTable(
                 name: "LoadBoardListings");
+
+            migrationBuilder.DropTable(
+                name: "LoadExceptions");
 
             migrationBuilder.DropTable(
                 name: "MessageReadReceipts");

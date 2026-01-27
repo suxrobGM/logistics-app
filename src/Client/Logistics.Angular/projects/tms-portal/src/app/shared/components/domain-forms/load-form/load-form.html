@@ -7,83 +7,137 @@
     <form [formGroup]="form" (ngSubmit)="submit()">
       <ui-validation-summary [form]="form" />
 
-      <ui-labeled-field label="Name" for="name" [required]="true">
-        <input pInputText id="name" formControlName="name" type="text" placeholder="Load name" />
-      </ui-labeled-field>
-      <ui-labeled-field label="Load Type" for="type" [required]="true">
-        <p-select formControlName="type" [options]="loadTypes" />
-      </ui-labeled-field>
+      <!-- Load Information Section -->
+      <div class="mb-6">
+        <h3 class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide">
+          <i class="pi pi-box"></i>
+          Load Information
+        </h3>
+        <div class="rounded-lg border border-default bg-elevated p-4">
+          <ui-labeled-field label="Name" for="name" [required]="true">
+            <input pInputText id="name" formControlName="name" type="text" placeholder="Load name" />
+          </ui-labeled-field>
+          <ui-labeled-field label="Load Type" for="type" [required]="true" class="mb-0">
+            <p-select formControlName="type" [options]="loadTypes" />
+          </ui-labeled-field>
+        </div>
+      </div>
 
       @if (initial()?.tripNumber && initial()?.tripId) {
-        <ui-labeled-field label="Trip" for="tripNumber">
-          <input
-            pInputText
-            id="tripNumber"
-            formControlName="tripNumber"
-            type="text"
-            placeholder="Trip"
-          />
-        </ui-labeled-field>
+        <!-- Trip Section (only shown when associated with a trip) -->
+        <div class="mb-6">
+          <h3 class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide">
+            <i class="pi pi-directions"></i>
+            Trip Association
+          </h3>
+          <div class="rounded-lg border border-default bg-elevated p-4">
+            <ui-labeled-field label="Trip" for="tripNumber" class="mb-0">
+              <input
+                pInputText
+                id="tripNumber"
+                formControlName="tripNumber"
+                type="text"
+                placeholder="Trip"
+              />
+            </ui-labeled-field>
+          </div>
+        </div>
       }
 
-      <ui-labeled-field label="Customer" for="customer" [required]="true">
-        <app-search-customer formControlName="customer" />
-      </ui-labeled-field>
+      <!-- Customer Section -->
+      <div class="mb-6">
+        <h3 class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide">
+          <i class="pi pi-building"></i>
+          Customer
+        </h3>
+        <div class="rounded-lg border border-default bg-elevated p-4">
+          <ui-labeled-field label="Customer" for="customer" [required]="true" class="mb-0">
+            <app-search-customer formControlName="customer" />
+          </ui-labeled-field>
+        </div>
+      </div>
 
-      <ui-labeled-field label="Origin Address" for="originAddress" [required]="true">
-        <app-address-autocomplete
-          field="originAddress"
-          formControlName="originAddress"
-          [forceSelection]="true"
-          (selectedAddress)="updateOrigin($event)"
-        />
-      </ui-labeled-field>
+      <!-- Route Section -->
+      <div class="mb-6">
+        <h3 class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide">
+          <i class="pi pi-map-marker"></i>
+          Route
+        </h3>
+        <div class="rounded-lg border border-default bg-elevated p-4">
+          <ui-labeled-field label="Origin Address" for="originAddress" [required]="true">
+            <app-address-autocomplete
+              field="originAddress"
+              formControlName="originAddress"
+              [forceSelection]="true"
+              (selectedAddress)="updateOrigin($event)"
+            />
+          </ui-labeled-field>
 
-      <ui-labeled-field label="Destination Address" for="destinationAddress" [required]="true">
-        <app-address-autocomplete
-          field="destinationAddress"
-          formControlName="destinationAddress"
-          [forceSelection]="true"
-          (selectedAddress)="updateDestination($event)"
-        />
-      </ui-labeled-field>
+          <ui-labeled-field label="Destination Address" for="destinationAddress" [required]="true" class="mb-0">
+            <app-address-autocomplete
+              field="destinationAddress"
+              formControlName="destinationAddress"
+              [forceSelection]="true"
+              (selectedAddress)="updateDestination($event)"
+            />
+          </ui-labeled-field>
+        </div>
+      </div>
 
-      <ui-labeled-field label="Delivery Cost" for="deliveryCost" [required]="true">
-        <p-inputgroup>
-          <p-inputgroup-addon>$$</p-inputgroup-addon>
-          <p-input-number id="deliveryCost" formControlName="deliveryCost" [min]="0" />
-        </p-inputgroup>
-      </ui-labeled-field>
+      <!-- Pricing Section -->
+      <div class="mb-6">
+        <h3 class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide">
+          <i class="pi pi-dollar"></i>
+          Pricing & Distance
+        </h3>
+        <div class="rounded-lg border border-default bg-elevated p-4">
+          <ui-labeled-field label="Delivery Cost" for="deliveryCost" [required]="true">
+            <p-inputgroup>
+              <p-inputgroup-addon>$$</p-inputgroup-addon>
+              <p-input-number id="deliveryCost" formControlName="deliveryCost" [min]="0" />
+            </p-inputgroup>
+          </ui-labeled-field>
 
-      <ui-labeled-field label="Estimated Distance" for="distance">
-        <p-inputgroup>
-          <p-inputgroup-addon>mi</p-inputgroup-addon>
-          <p-input-number id="distance" formControlName="distance" [min]="0" />
-        </p-inputgroup>
-      </ui-labeled-field>
+          <ui-labeled-field label="Estimated Distance" for="distance" class="mb-0">
+            <p-inputgroup>
+              <p-inputgroup-addon>mi</p-inputgroup-addon>
+              <p-input-number id="distance" formControlName="distance" [min]="0" />
+            </p-inputgroup>
+          </ui-labeled-field>
+        </div>
+      </div>
 
-      <ui-labeled-field label="Assigned Dispatcher" for="dispatcherName">
-        <input
-          pInputText
-          id="dispatcherName"
-          formControlName="assignedDispatcherName"
-          type="text"
-        />
-      </ui-labeled-field>
+      <!-- Assignment Section -->
+      <div class="mb-6">
+        <h3 class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide">
+          <i class="pi pi-users"></i>
+          Assignment
+        </h3>
+        <div class="rounded-lg border border-default bg-elevated p-4">
+          <ui-labeled-field label="Assigned Dispatcher" for="dispatcherName">
+            <input
+              pInputText
+              id="dispatcherName"
+              formControlName="assignedDispatcherName"
+              type="text"
+            />
+          </ui-labeled-field>
 
-      @if (canChangeAssignedTruck()) {
-        <ui-labeled-field label="Assigned Truck" for="assignedTruck">
-          <app-search-truck formControlName="assignedTruck" />
-        </ui-labeled-field>
-      }
+          @if (canChangeAssignedTruck()) {
+            <ui-labeled-field label="Assigned Truck" for="assignedTruck">
+              <app-search-truck formControlName="assignedTruck" />
+            </ui-labeled-field>
+          }
 
-      @if (mode() === "edit") {
-        <ui-labeled-field label="Status" for="status">
-          <p-select formControlName="status" [options]="loadStatuses" />
-        </ui-labeled-field>
-      }
+          @if (mode() === "edit") {
+            <ui-labeled-field label="Status" for="status" class="mb-0">
+              <p-select formControlName="status" [options]="loadStatuses" />
+            </ui-labeled-field>
+          }
+        </div>
+      </div>
 
-      <!-- action buttons -->
+      <!-- Action Buttons -->
       <div class="flex gap-2">
         <p-button
           type="submit"

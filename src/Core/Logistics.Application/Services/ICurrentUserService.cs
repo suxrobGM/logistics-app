@@ -10,4 +10,10 @@ public interface ICurrentUserService
     /// </summary>
     /// <returns>The user's GUID if authenticated, null otherwise.</returns>
     Guid? GetUserId();
+
+    /// <summary>
+    /// Gets the current user's full name from the authentication context.
+    /// </summary>
+    /// <returns>The user's full name if available, "Unknown" otherwise.</returns>
+    string GetUserName();
 }

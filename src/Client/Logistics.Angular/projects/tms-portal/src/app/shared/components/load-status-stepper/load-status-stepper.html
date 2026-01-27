@@ -1,0 +1,70 @@
+@if (isCancelled()) {
+  <!-- Cancelled State -->
+  <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 text-center">
+    <div class="mb-2 flex items-center justify-center gap-2">
+      <i class="pi pi-times-circle text-danger text-2xl"></i>
+      <span class="text-danger text-lg font-semibold">Load Cancelled</span>
+    </div>
+    @if (cancelledAt()) {
+      <span class="text-muted text-sm">{{ cancelledAt() | date: "medium" }}</span>
+    }
+  </div>
+} @else {
+  <!-- Stepper -->
+  <div class="flex items-start justify-between">
+    @for (step of steps; track step.status; let i = $index; let last = $last) {
+      <div class="flex flex-1 flex-col items-center">
+        <!-- Step Circle -->
+        <div
+          class="relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all"
+          [class.border-green-500]="isStepCompleted(i)"
+          [class.bg-green-500]="isStepCompleted(i)"
+          [class.border-blue-500]="isStepCurrent(i)"
+          [class.bg-blue-500]="isStepCurrent(i)"
+          [class.border-surface-300]="isStepPending(i)"
+          [class.bg-surface]="isStepPending(i)"
+        >
+          @if (isStepCompleted(i)) {
+            <i class="pi pi-check text-white"></i>
+          } @else {
+            <i
+              class="pi {{ step.icon }}"
+              [class.text-white]="isStepCurrent(i)"
+              [class.text-muted]="isStepPending(i)"
+            ></i>
+          }
+        </div>
+
+        <!-- Step Label -->
+        <span
+          class="mt-2 text-center text-sm font-medium"
+          [class.text-green-600]="isStepCompleted(i)"
+          [class.dark:text-green-400]="isStepCompleted(i)"
+          [class.text-blue-600]="isStepCurrent(i)"
+          [class.dark:text-blue-400]="isStepCurrent(i)"
+          [class.text-muted]="isStepPending(i)"
+        >
+          {{ step.label }}
+        </span>
+
+        <!-- Step Date -->
+        @if (getStepDate(step.status); as date) {
+          <span class="text-muted mt-1 text-xs">
+            {{ date | date: "MMM d" }}
+          </span>
+        }
+      </div>
+
+      <!-- Connector Line (except for last step) -->
+      @if (!last) {
+        <div class="mt-5 flex-1 px-2">
+          <div
+            class="h-0.5 w-full transition-colors"
+            [class.bg-green-500]="isStepCompleted(i + 1) || isStepCurrent(i + 1)"
+            [class.bg-surface-300]="isStepPending(i + 1)"
+          ></div>
+        </div>
+      }
+    }
+  </div>
+}

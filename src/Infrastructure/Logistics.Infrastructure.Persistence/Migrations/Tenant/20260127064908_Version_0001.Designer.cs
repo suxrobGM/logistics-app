@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20260127011359_Version_0001")]
+    [Migration("20260127064908_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -1199,6 +1199,70 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .IsUnique();
 
                     b.ToTable("LoadBoardListings", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.LoadException", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<Guid>("LoadId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("OccurredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<Guid>("ReportedById")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReportedByName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Resolution")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LoadId");
+
+                    b.HasIndex("ResolvedAt");
+
+                    b.ToTable("LoadExceptions", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Messaging.Conversation", b =>
@@ -2988,6 +3052,17 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Load");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.LoadException", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Load", "Load")
+                        .WithMany("Exceptions")
+                        .HasForeignKey("LoadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Load");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Messaging.Conversation", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Load", "Load")
@@ -3350,6 +3425,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
             modelBuilder.Entity("Logistics.Domain.Entities.Load", b =>
                 {
                     b.Navigation("Documents");
+
+                    b.Navigation("Exceptions");
 
                     b.Navigation("Invoice");
 

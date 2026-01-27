@@ -151,7 +151,7 @@ public class LoadController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetExceptions(Guid id)
     {
         var result = await mediator.Send(new GetLoadExceptionsQuery { LoadId = id });
-        return Ok(result);
+        return Ok(result.Value);
     }
 
     [HttpPost("{id:guid}/exceptions", Name = "ReportLoadException")]
@@ -167,6 +167,47 @@ public class LoadController(IMediator mediator) : ControllerBase
             Reason = request.Reason
         });
         return result.IsSuccess ? Ok() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPost("{id:guid}/exceptions/{exceptionId:guid}/resolve", Name = "ResolveLoadException")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Load.Manage)]
+    public async Task<IActionResult> ResolveException(Guid id, Guid exceptionId, [FromBody] ResolveExceptionRequest request)
+    {
+        var result = await mediator.Send(new ResolveLoadExceptionCommand
+        {
+            LoadId = id,
+            ExceptionId = exceptionId,
+            Resolution = request.Resolution
+        });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPost("bulk-dispatch", Name = "BulkDispatchLoads")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Load.Manage)]
+    public async Task<IActionResult> BulkDispatch([FromBody] BulkDispatchRequest request)
+    {
+        var result = await mediator.Send(new BulkDispatchLoadsCommand
+        {
+            LoadIds = request.LoadIds
+        });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpDelete("bulk-delete", Name = "BulkDeleteLoads")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Load.Manage)]
+    public async Task<IActionResult> BulkDelete([FromBody] BulkDeleteRequest request)
+    {
+        var result = await mediator.Send(new BulkDeleteLoadsCommand
+        {
+            LoadIds = request.LoadIds
+        });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 }
 

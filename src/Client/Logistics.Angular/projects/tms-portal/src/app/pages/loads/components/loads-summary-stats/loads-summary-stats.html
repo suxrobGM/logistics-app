@@ -1,0 +1,53 @@
+<div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+  <!-- Total Loads -->
+  <div class="rounded-lg border border-default bg-elevated p-4">
+    <div class="text-muted mb-1 text-sm font-medium">Total Loads</div>
+    <div class="text-primary text-2xl font-bold">
+      @if (isLoading()) {
+        <span class="text-muted">...</span>
+      } @else {
+        {{ totalRecords() }}
+      }
+    </div>
+    <div class="text-muted text-xs">
+      {{ loads().length }} shown on current page
+    </div>
+  </div>
+
+  <!-- Total Value -->
+  <div class="rounded-lg border border-default bg-elevated p-4">
+    <div class="text-muted mb-1 text-sm font-medium">Page Total Value</div>
+    <div class="text-success text-2xl font-bold">
+      @if (isLoading()) {
+        <span class="text-muted">...</span>
+      } @else {
+        {{ totalValue() | currency }}
+      }
+    </div>
+    <div class="text-muted text-xs">Sum of delivery costs on current page</div>
+  </div>
+
+  <!-- Status Breakdown -->
+  <div class="rounded-lg border border-default bg-elevated p-4">
+    <div class="text-muted mb-2 text-sm font-medium">Status Breakdown</div>
+    @if (isLoading()) {
+      <span class="text-muted">...</span>
+    } @else {
+      <div class="flex flex-wrap gap-2">
+        @for (status of statuses; track status) {
+          @if (statusBreakdown()[status] > 0) {
+            <span
+              class="rounded-full px-2 py-1 text-xs font-medium"
+              [class]="getStatusColor(status)"
+            >
+              {{ statusBreakdown()[status] }} {{ getStatusLabel(status) }}
+            </span>
+          }
+        }
+        @if (loads().length === 0) {
+          <span class="text-muted text-sm">No loads</span>
+        }
+      </div>
+    }
+  </div>
+</div>

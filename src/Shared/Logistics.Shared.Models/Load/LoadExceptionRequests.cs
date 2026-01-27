@@ -14,3 +14,18 @@ public record BulkAssignRequest(Guid[] LoadIds, Guid TruckId);
 ///     Request model for reporting a load exception.
 /// </summary>
 public record ReportExceptionRequest(LoadExceptionType Type, string Reason);
+
+/// <summary>
+///     Request model for resolving a load exception.
+/// </summary>
+public record ResolveExceptionRequest(string Resolution);
+
+/// <summary>
+///     Request model for bulk dispatching loads.
+/// </summary>
+public record BulkDispatchRequest(Guid[] LoadIds);
+
+/// <summary>
+///     Request model for bulk deleting loads.
+/// </summary>
+public record BulkDeleteRequest(Guid[] LoadIds);

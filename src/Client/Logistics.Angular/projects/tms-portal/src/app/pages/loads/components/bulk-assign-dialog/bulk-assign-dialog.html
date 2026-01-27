@@ -1,0 +1,44 @@
+<p-dialog
+  header="Assign Loads to Truck"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [closable]="true"
+  (onHide)="close()"
+>
+  <div class="space-y-4">
+    <div class="bg-surface-100 dark:bg-surface-800 rounded-lg p-4">
+      <div class="text-muted mb-1 text-sm">Selected Loads</div>
+      <div class="text-primary text-xl font-semibold">{{ loads().length }} load(s)</div>
+      <div class="text-muted text-sm">Total value: {{ totalCost() | currency }}</div>
+    </div>
+
+    <div>
+      <span class="text-secondary mb-2 block text-sm font-medium">Select Truck</span>
+      <app-search-truck [(selectedTruck)]="selectedTruck" />
+    </div>
+
+    @if (selectedTruck()) {
+      <div class="bg-surface-50 dark:bg-surface-700 rounded-lg p-3">
+        <div class="text-muted text-sm">Assigning to</div>
+        <div class="text-primary font-semibold">Truck #{{ selectedTruck()!.number }}</div>
+        @if (selectedTruck()!.mainDriver) {
+          <div class="text-muted text-sm">Driver: {{ selectedTruck()!.mainDriver }}</div>
+        }
+      </div>
+    }
+  </div>
+
+  <ng-template #footer>
+    <div class="flex justify-end gap-2">
+      <p-button label="Cancel" [text]="true" (click)="close()" [disabled]="isAssigning()" />
+      <p-button
+        label="Assign"
+        icon="pi pi-check"
+        (click)="assign()"
+        [loading]="isAssigning()"
+        [disabled]="!selectedTruck()"
+      />
+    </div>
+  </ng-template>
+</p-dialog>

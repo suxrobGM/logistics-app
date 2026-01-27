@@ -14,7 +14,7 @@ public static class LoadExceptionMapper
             Reason = entity.Reason,
             OccurredAt = entity.OccurredAt,
             ResolvedAt = entity.ResolvedAt,
-            ReportedByName = entity.ReportedBy?.GetFullName() ?? "Unknown",
+            ReportedByName = entity.ReportedByName,
             Resolution = entity.Resolution
         };
     }

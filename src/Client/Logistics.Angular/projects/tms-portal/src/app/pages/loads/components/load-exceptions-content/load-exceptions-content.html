@@ -1,0 +1,117 @@
+<p-card class="border-default border">
+  <ng-template #header>
+    <div class="flex items-center justify-between p-4 pb-0">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-exclamation-triangle text-warning"></i>
+        <h3 class="m-0 text-lg font-semibold">Load Exceptions</h3>
+        @if (unresolvedCount() > 0) {
+          <p-badge [value]="unresolvedCount().toString()" severity="danger" />
+        }
+      </div>
+      <div class="flex gap-2">
+        <p-button
+          icon="pi pi-plus"
+          label="Report Exception"
+          [outlined]="true"
+          size="small"
+          (click)="onReportException()"
+        />
+        <p-button
+          icon="pi pi-refresh"
+          [outlined]="true"
+          size="small"
+          (click)="refresh()"
+          [loading]="isLoading()"
+        />
+      </div>
+    </div>
+  </ng-template>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-8">
+      <p-progress-spinner />
+    </div>
+  } @else {
+    <p-table [value]="exceptions()" [dataKey]="'id'" class="p-datatable-sm">
+      <ng-template #header>
+        <tr>
+          <th class="w-36">Type</th>
+          <th>Reason</th>
+          <th class="w-40">Occurred</th>
+          <th class="w-36">Reported By</th>
+          <th class="w-32">Status</th>
+          <th class="w-24">Action</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-exception>
+        <tr [class.bg-subtle]="isResolved(exception)">
+          <td>
+            <app-exception-type-tag [type]="exception.type" />
+          </td>
+          <td>
+            <span
+              class="block max-w-xs truncate"
+              [pTooltip]="exception.reason"
+              [showDelay]="500"
+              tooltipPosition="bottom"
+            >
+              {{ exception.reason }}
+            </span>
+          </td>
+          <td>{{ exception.occurredAt | date: "medium" }}</td>
+          <td>{{ exception.reportedByName }}</td>
+          <td>
+            @if (isResolved(exception)) {
+              <span class="text-success flex items-center gap-1 text-sm font-medium">
+                <i class="pi pi-check-circle"></i>
+                Resolved
+              </span>
+              <span class="text-muted text-xs">{{ exception.resolvedAt | date: "mediumDate" }}</span>
+            } @else {
+              <span class="text-warning flex items-center gap-1 text-sm font-medium">
+                <i class="pi pi-clock"></i>
+                Unresolved
+              </span>
+            }
+          </td>
+          <td>
+            @if (!isResolved(exception)) {
+              <p-button
+                icon="pi pi-check"
+                size="small"
+                [text]="true"
+                severity="success"
+                pTooltip="Resolve exception"
+                (click)="onResolveException(exception)"
+              />
+            } @else {
+              <span
+                class="text-muted cursor-help text-sm"
+                [pTooltip]="exception.resolution"
+                [showDelay]="300"
+                tooltipPosition="left"
+              >
+                <i class="pi pi-info-circle"></i>
+              </span>
+            }
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #empty>
+        <tr>
+          <td colspan="6" class="py-8 text-center">
+            <div class="text-muted flex flex-col items-center gap-3">
+              <i class="pi pi-check-circle text-success text-4xl"></i>
+              <div>
+                <p class="font-medium">No exceptions reported</p>
+                <p class="text-sm">This load has no reported exceptions.</p>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  }
+</p-card>

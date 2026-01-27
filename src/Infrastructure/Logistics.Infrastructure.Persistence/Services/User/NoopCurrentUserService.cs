@@ -11,4 +11,9 @@ public sealed class NoopCurrentUserService : ICurrentUserService
     {
         return null;
     }
+
+    public string GetUserName()
+    {
+        return "System";
+    }
 }

@@ -48,6 +48,7 @@ public partial class Load : AuditableEntity, ITenantEntity
     public virtual LoadInvoice? Invoice { get; set; }
 
     public virtual List<LoadDocument> Documents { get; set; } = [];
+    public virtual List<LoadException> Exceptions { get; set; } = [];
     public virtual ICollection<TripStop> TripStops { get; } = [];
 
     /// <summary>

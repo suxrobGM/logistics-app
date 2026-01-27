@@ -2,7 +2,12 @@
 <div class="mb-6 flex items-start justify-between">
   <ui-page-header title="Load Details" [showAddButton]="false" />
   <div class="flex gap-2">
-    <p-button icon="pi pi-link" label="Tracking Link" [outlined]="true" (click)="showTrackingDialog.set(true)" />
+    <p-button
+      icon="pi pi-link"
+      label="Tracking Link"
+      [outlined]="true"
+      (click)="showTrackingDialog.set(true)"
+    />
     <p-button icon="pi pi-pencil" label="Edit" [outlined]="true" (click)="onEdit()" />
     <p-button icon="pi pi-arrow-left" label="Back" [routerLink]="['/loads']" [outlined]="true" />
   </div>
@@ -13,6 +18,30 @@
     <p-progress-spinner />
   </div>
 } @else if (load()) {
+  <!-- Enhanced Header with Load Number -->
+  <div class="mb-6 rounded-lg border border-default bg-elevated p-4">
+    <div class="mb-4 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <span class="text-primary text-3xl font-bold">#{{ load()!.number }}</span>
+        <app-load-status-tag [status]="load()!.status!" />
+        <app-load-type-tag [type]="load()!.type!" />
+      </div>
+      @if (load()!.name) {
+        <span class="text-secondary text-lg">{{ load()!.name }}</span>
+      }
+    </div>
+
+    <!-- Status Stepper -->
+    <app-load-status-stepper
+      [currentStatus]="load()!.status!"
+      [createdAt]="load()!.createdAt"
+      [dispatchedAt]="load()!.dispatchedAt"
+      [pickedUpAt]="load()!.pickedUpAt"
+      [deliveredAt]="load()!.deliveredAt"
+      [cancelledAt]="load()!.cancelledAt"
+    />
+  </div>
+
   <p-card>
     <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
       <p-tablist>
@@ -29,8 +58,8 @@
           POD / BOL
         </p-tab>
         <p-tab [value]="3">
-          <i class="pi pi-book mr-2"></i>
-          Invoices
+          <i class="pi pi-exclamation-triangle mr-2"></i>
+          Exceptions
         </p-tab>
       </p-tablist>
 
@@ -84,6 +113,21 @@
                   <div class="flex items-center justify-between">
                     <span>Distance</span>
                     <span>{{ load()!.distance | distanceUnit: "mi" }}</span>
+                  </div>
+                }
+
+                <p-divider />
+
+                @if (load()!.invoice) {
+                  <div class="flex items-center justify-between">
+                    <span>Invoice</span>
+                    <a
+                      [routerLink]="['/invoices/loads', id(), load()!.invoice!.id]"
+                      class="text-primary flex items-center gap-1 font-medium hover:underline"
+                    >
+                      <i class="pi pi-external-link text-xs"></i>
+                      #{{ load()!.invoice!.number }}
+                    </a>
                   </div>
                 }
               </div>
@@ -250,10 +294,14 @@
           </div>
         </p-tabpanel>
 
-        <!-- Invoices Tab -->
+        <!-- Exceptions Tab -->
         <p-tabpanel [value]="3">
           <div class="pt-4">
-            <app-load-invoices-content [loadId]="id()" />
+            <app-load-exceptions-content
+              [loadId]="id()"
+              (reportException)="onReportException()"
+              (resolveException)="onResolveException($event)"
+            />
           </div>
         </p-tabpanel>
       </p-tabpanels>
@@ -262,6 +310,21 @@
 
   <!-- Tracking Link Dialog -->
   <app-tracking-link-dialog [loadId]="id()" [(visible)]="showTrackingDialog" />
+
+  <!-- Report Exception Dialog -->
+  <app-report-exception-dialog
+    [loadId]="id()"
+    [(visible)]="showReportExceptionDialog"
+    (reported)="onExceptionReported()"
+  />
+
+  <!-- Resolve Exception Dialog -->
+  <app-resolve-exception-dialog
+    [loadId]="id()"
+    [exception]="selectedExceptionToResolve()"
+    [(visible)]="showResolveExceptionDialog"
+    (resolved)="onExceptionResolved()"
+  />
 } @else {
   <p-card>
     <div class="py-16 text-center">

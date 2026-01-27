@@ -30,7 +30,8 @@ internal sealed class ReportLoadExceptionHandler(
             Type = req.Type,
             Reason = req.Reason,
             OccurredAt = DateTime.UtcNow,
-            ReportedById = userId.Value
+            ReportedById = userId.Value,
+            ReportedByName = currentUserService.GetUserName()
         };
 
         await tenantUow.Repository<LoadException>().AddAsync(exception, ct);
