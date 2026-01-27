@@ -8,9 +8,9 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";
 import { TooltipModule } from "primeng/tooltip";
-import { type BarChartDrawnEvent, GeolocationMap, GrossesBarchart } from "@/shared/components";
+import { type BarChartDrawnEvent, GeolocationMap, GrossBarchart } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
-import { type LineChartDrawnEvent, TruckGrossesLinechartComponent } from "../components";
+import { type LineChartDrawnEvent, TruckGrossLinechart } from "../components";
 
 @Component({
   selector: "app-truck-details",
@@ -26,8 +26,8 @@ import { type LineChartDrawnEvent, TruckGrossesLinechartComponent } from "../com
     CurrencyPipe,
     DistanceUnitPipe,
     GeolocationMap,
-    TruckGrossesLinechartComponent,
-    GrossesBarchart,
+    TruckGrossLinechart,
+    GrossBarchart,
   ],
 })
 export class TruckDetailsComponent implements OnInit {

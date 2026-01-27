@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Specifications;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 
@@ -21,7 +22,8 @@ internal sealed class GetLoadsHandler(ITenantUnitOfWork tenantUow)
 
         if (req.OnlyActiveLoads)
         {
-            baseQuery = baseQuery.Where(i => i.DeliveredAt == null);
+            baseQuery = baseQuery.Where(i =>
+                i.Status == LoadStatus.Dispatched || i.Status == LoadStatus.PickedUp);
         }
 
         if (req.UserId.HasValue)

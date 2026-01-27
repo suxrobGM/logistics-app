@@ -2,7 +2,7 @@
   <ng-template #header>
     <div class="flex items-center gap-2 py-3 pl-4">
       <p-overlaybadge [value]="getUnreadNotificationsCount()">
-        <i class="pi pi-bell text-2xl text-accent"></i>
+        <i class="pi pi-bell text-accent text-2xl"></i>
       </p-overlaybadge>
       <h4 class="mb-0">Notifications</h4>
     </div>
@@ -25,7 +25,9 @@
           <h5>{{ notification.title }}</h5>
           <div class="flex items-start justify-between gap-2">
             <span class="notification-message">{{ notification.message }}</span>
-            <span class="notification-time whitespace-nowrap">{{ notification.createdDate ?? "" | timeAgo }}</span>
+            <span class="notification-time whitespace-nowrap">
+              {{ notification.createdDate | relativeTime }}
+            </span>
           </div>
         </div>
       } @empty {

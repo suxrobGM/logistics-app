@@ -22,10 +22,10 @@ import {
 } from "@/shared/components";
 import {
   LOADS_CHART_PALETTE,
-  LOADS_PERFORMANCE_CHART_OPTIONS,
-  LOADS_PIE_OPTIONS,
-  LOADS_TREND_CHART_OPTIONS,
-  LOADS_TYPE_CHART_OPTIONS,
+  getLoadsPerformanceChartOptions,
+  getLoadsPieOptions,
+  getLoadsTrendChartOptions,
+  getLoadsTypeChartOptions,
 } from "@/shared/constants";
 
 @Component({
@@ -52,10 +52,10 @@ export class LoadsReportComponent extends BaseReportComponent<LoadsReportDto> im
   protected readonly typeChartData = signal<Record<string, unknown>>({});
 
   // charts state
-  protected pieOptions = LOADS_PIE_OPTIONS;
-  protected typeChartOptions = LOADS_TYPE_CHART_OPTIONS;
-  protected trendChartOptions = LOADS_TREND_CHART_OPTIONS;
-  protected performanceChartOptions = LOADS_PERFORMANCE_CHART_OPTIONS;
+  protected pieOptions = getLoadsPieOptions();
+  protected typeChartOptions = getLoadsTypeChartOptions();
+  protected trendChartOptions = getLoadsTrendChartOptions();
+  protected performanceChartOptions = getLoadsPerformanceChartOptions();
 
   ngOnInit(): void {
     this.fetch({ startDate: this.startDate(), endDate: this.endDate() });

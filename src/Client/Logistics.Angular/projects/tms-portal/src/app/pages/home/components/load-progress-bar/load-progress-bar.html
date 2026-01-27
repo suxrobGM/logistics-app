@@ -1,0 +1,66 @@
+@if (compact()) {
+  <!-- Compact version for table cells -->
+  <div class="flex items-center gap-2">
+    <div class="bg-surface-200 dark:bg-surface-700 relative h-1.5 w-full min-w-16 rounded-full">
+      <div
+        class="absolute top-0 left-0 h-full rounded-full transition-all duration-300"
+        [class]="status() === 'cancelled' ? 'bg-red-500' : 'bg-primary'"
+        [style.width.%]="progress()"
+      ></div>
+    </div>
+    <span class="text-muted text-xs whitespace-nowrap">{{ progress() }}%</span>
+  </div>
+} @else {
+  <!-- Full version with cities -->
+  <div class="flex flex-col gap-1">
+    <div class="text-muted flex items-center justify-between text-xs">
+      <span class="max-w-24 truncate" [pTooltip]="originCity()">
+        {{ originCity() || "Origin" }}
+      </span>
+      <span
+        class="text-center text-xs font-medium"
+        [class]="status() === 'cancelled' ? 'text-red-600' : 'text-primary'"
+      >
+        {{ statusLabel() }}
+      </span>
+      <span class="max-w-24 truncate text-right" [pTooltip]="destinationCity()">
+        {{ destinationCity() || "Destination" }}
+      </span>
+    </div>
+    <div class="relative flex items-center">
+      <!-- Track -->
+      <div class="bg-surface-200 dark:bg-surface-700 absolute h-1 w-full rounded-full"></div>
+      <!-- Progress -->
+      <div
+        class="absolute h-1 rounded-full transition-all duration-500"
+        [class]="status() === 'cancelled' ? 'bg-red-500' : 'bg-primary'"
+        [style.width.%]="progress()"
+      ></div>
+      <!-- Markers -->
+      <div class="relative flex w-full items-center justify-between">
+        <div
+          class="dark:border-surface-900 z-10 h-3 w-3 rounded-full border-2 border-white"
+          [class]="progress() >= 0 ? 'bg-primary' : 'bg-surface-300 dark:bg-surface-600'"
+        ></div>
+        <div
+          class="dark:border-surface-900 z-10 h-3 w-3 rounded-full border-2 border-white"
+          [class]="progress() >= 33 ? 'bg-primary' : 'bg-surface-300 dark:bg-surface-600'"
+        ></div>
+        <div
+          class="dark:border-surface-900 z-10 h-3 w-3 rounded-full border-2 border-white"
+          [class]="progress() >= 66 ? 'bg-primary' : 'bg-surface-300 dark:bg-surface-600'"
+        ></div>
+        <div
+          class="dark:border-surface-900 z-10 h-3 w-3 rounded-full border-2 border-white"
+          [class]="progress() >= 100 ? 'bg-primary' : 'bg-surface-300 dark:bg-surface-600'"
+        ></div>
+      </div>
+    </div>
+    <div class="text-muted flex items-center justify-between text-xs">
+      <span>Start</span>
+      <span>Pickup</span>
+      <span>Transit</span>
+      <span>Delivered</span>
+    </div>
+  </div>
+}

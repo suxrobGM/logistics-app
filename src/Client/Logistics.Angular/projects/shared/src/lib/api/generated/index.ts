@@ -212,6 +212,7 @@ export type { TimeEntryType } from './models/time-entry-type';
 export type { TopCustomerDto } from './models/top-customer-dto';
 export type { TopCustomerLoadDto } from './models/top-customer-load-dto';
 export type { TopEmployeePayrollDto } from './models/top-employee-payroll-dto';
+export type { TopTruckDto } from './models/top-truck-dto';
 export type { TrackingLinkDto } from './models/tracking-link-dto';
 export type { TrialPeriod } from './models/trial-period';
 export type { TripDto } from './models/trip-dto';

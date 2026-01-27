@@ -1,0 +1,57 @@
+<p-card class="h-full">
+  <ng-template #header>
+    <div class="flex items-center justify-between py-3 pr-4 pl-4">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-chart-line text-xl text-cyan-600"></i>
+        <h4 class="mb-0 font-semibold">Daily Gross Revenue</h4>
+      </div>
+      <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
+    </div>
+    <p-divider class="m-0" />
+  </ng-template>
+
+  @if (isLoading()) {
+    <div class="flex flex-col gap-4">
+      <div class="flex gap-6">
+        <p-skeleton width="120px" height="3rem" />
+        <p-skeleton width="120px" height="3rem" />
+        <p-skeleton width="120px" height="3rem" />
+        <p-skeleton width="120px" height="3rem" />
+      </div>
+      <p-skeleton height="280px" />
+    </div>
+  } @else {
+    <!-- Summary Stats -->
+    <div class="mb-4 flex flex-wrap gap-6">
+      <div>
+        <div class="text-xs font-medium uppercase tracking-wide text-muted">Total Gross</div>
+        <div class="mt-1 font-mono text-xl font-bold text-emerald-600">
+          {{ totalGross() | currency }}
+        </div>
+      </div>
+      <div>
+        <div class="text-xs font-medium uppercase tracking-wide text-muted">Total Miles</div>
+        <div class="mt-1 font-mono text-xl font-bold text-primary">
+          {{ totalDistance() | number: "1.0-0" }} mi
+        </div>
+      </div>
+      <div>
+        <div class="text-xs font-medium uppercase tracking-wide text-muted">Rate/Mile</div>
+        <div class="mt-1 font-mono text-xl font-bold text-purple-600">
+          {{ rpm() | currency }}
+        </div>
+      </div>
+      <div>
+        <div class="text-xs font-medium uppercase tracking-wide text-muted">Avg/Day</div>
+        <div class="mt-1 font-mono text-xl font-bold text-cyan-600">
+          {{ avgDailyGross() | currency }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="relative h-72">
+      <p-chart type="line" [data]="chartData()" [options]="chartOptions()" class="h-full w-full" />
+    </div>
+  }
+</p-card>

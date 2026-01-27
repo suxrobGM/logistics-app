@@ -1,0 +1,76 @@
+<p-card class="h-full">
+  <ng-template #header>
+    <div class="flex items-center gap-2 py-3 pl-4">
+      <i class="pi pi-calendar text-xl text-blue-600"></i>
+      <h4 class="mb-0">Upcoming Activity</h4>
+    </div>
+    <p-divider class="m-0" />
+  </ng-template>
+
+  @if (isLoading()) {
+    <div class="flex flex-col gap-3">
+      @for (_ of [1, 2, 3, 4]; track $index) {
+        <p-skeleton height="4rem" />
+      }
+    </div>
+  } @else if (scheduleItems().length === 0) {
+    <div class="text-muted flex flex-col items-center justify-center py-8 text-center">
+      <i class="pi pi-calendar-times mb-2 text-4xl"></i>
+      <p>No upcoming activity</p>
+    </div>
+  } @else {
+    <div class="flex flex-col gap-3">
+      @for (item of scheduleItems(); track item.loadId + item.type) {
+        <a
+          [routerLink]="['/loads', item.loadId, 'edit']"
+          class="hover:bg-surface-100 dark:hover:bg-surface-800 flex items-center gap-3 rounded-lg p-3 transition-colors"
+        >
+          <!-- Icon -->
+          <div
+            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+            [class]="
+              item.type === 'pickup'
+                ? 'bg-blue-100 dark:bg-blue-900'
+                : 'bg-emerald-100 dark:bg-emerald-900'
+            "
+          >
+            <i
+              class="pi"
+              [class]="
+                item.type === 'pickup'
+                  ? 'pi-upload text-blue-600 dark:text-blue-400'
+                  : 'pi-download text-emerald-600 dark:text-emerald-400'
+              "
+            ></i>
+          </div>
+
+          <!-- Content -->
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2">
+              <span class="text-primary font-semibold">Load #{{ item.loadNumber }}</span>
+              <p-badge
+                [value]="item.type === 'pickup' ? 'Pickup' : 'Delivery'"
+                [severity]="item.type === 'pickup' ? 'info' : 'success'"
+              />
+            </div>
+            <div class="text-muted mt-1 flex items-center gap-1 text-sm">
+              <span class="max-w-20 truncate">{{ item.originCity }}</span>
+              <i class="pi pi-arrow-right text-xs"></i>
+              <span class="max-w-20 truncate">{{ item.destinationCity }}</span>
+            </div>
+          </div>
+
+          <!-- Meta -->
+          <div class="text-muted flex flex-col items-end text-right text-xs">
+            @if (item.date) {
+              <span>{{ item.date | date: "MMM d" }}</span>
+            }
+            @if (item.truckNumber) {
+              <span class="text-primary mt-1 font-medium">{{ item.truckNumber }}</span>
+            }
+          </div>
+        </a>
+      }
+    </div>
+  }
+</p-card>

@@ -130,8 +130,3 @@ export function getDriversEfficiencyChartOptions(isDark = true) {
     },
   };
 }
-
-// Legacy exports for backward compatibility
-export const DRIVERS_TREND_CHART_OPTIONS = getDriversTrendChartOptions(true);
-export const DRIVERS_PERFORMANCE_CHART_OPTIONS = getDriversPerformanceChartOptions(true);
-export const DRIVERS_EFFICIENCY_CHART_OPTIONS = getDriversEfficiencyChartOptions(true);

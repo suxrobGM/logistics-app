@@ -21,9 +21,9 @@ import {
 } from "@/shared/components";
 import {
   DRIVERS_CHART_PALETTE,
-  DRIVERS_EFFICIENCY_CHART_OPTIONS,
-  DRIVERS_PERFORMANCE_CHART_OPTIONS,
-  DRIVERS_TREND_CHART_OPTIONS,
+  getDriversEfficiencyChartOptions,
+  getDriversPerformanceChartOptions,
+  getDriversTrendChartOptions,
 } from "@/shared/constants/drivers-chart.options";
 import { getPerformanceLevel, getPerformanceSeverity } from "@/shared/utils";
 
@@ -51,9 +51,9 @@ export class DriversReportComponent
   protected readonly efficiencyChartData = signal<Record<string, unknown>>({});
   protected readonly performanceChartData = signal<Record<string, unknown>>({});
 
-  protected trendChartOptions = DRIVERS_TREND_CHART_OPTIONS;
-  protected efficiencyChartOptions = DRIVERS_EFFICIENCY_CHART_OPTIONS;
-  protected performanceChartOptions = DRIVERS_PERFORMANCE_CHART_OPTIONS;
+  protected trendChartOptions = getDriversTrendChartOptions();
+  protected efficiencyChartOptions = getDriversEfficiencyChartOptions();
+  protected performanceChartOptions = getDriversPerformanceChartOptions();
 
   ngOnInit(): void {
     this.fetch({ startDate: this.startDate(), endDate: this.endDate() });

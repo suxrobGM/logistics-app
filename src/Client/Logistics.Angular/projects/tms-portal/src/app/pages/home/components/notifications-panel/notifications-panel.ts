@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, type OnDestroy, inject, model, signal } from "@angular/core";
 import type { NotificationDto } from "@logistics/shared/api";
+import { RelativeTimePipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -8,7 +9,6 @@ import { DividerModule } from "primeng/divider";
 import { OverlayBadgeModule } from "primeng/overlaybadge";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { NotificationService, ToastService } from "@/core/services";
-import { TimeAgoPipe } from "@/shared/pipes";
 
 @Component({
   selector: "app-notifications-panel",
@@ -22,7 +22,7 @@ import { TimeAgoPipe } from "@/shared/pipes";
     DividerModule,
     OverlayBadgeModule,
     ProgressSpinnerModule,
-    TimeAgoPipe,
+    RelativeTimePipe,
   ],
 })
 export class NotificationsPanelComponent implements OnDestroy {

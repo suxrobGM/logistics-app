@@ -1,0 +1,78 @@
+<p-card class="h-full">
+  <ng-template #header>
+    <div class="flex items-center gap-2 py-3 pl-4">
+      <i class="pi pi-wallet text-xl text-emerald-600"></i>
+      <h4 class="mb-0">Financial Health</h4>
+    </div>
+    <p-divider class="m-0" />
+  </ng-template>
+
+  @if (isLoading()) {
+    <div class="flex flex-col gap-4">
+      <p-skeleton height="4rem" />
+      <p-skeleton height="4rem" />
+      <p-skeleton height="4rem" />
+    </div>
+  } @else {
+    <div class="flex flex-col gap-4">
+      <!-- Outstanding Invoices -->
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-muted text-xs font-medium tracking-wide uppercase">Outstanding</div>
+          <div class="text-primary mt-1 font-mono text-xl font-bold">
+            {{ outstandingInvoiceTotal() | currency }}
+          </div>
+        </div>
+        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40">
+          <i class="pi pi-file-edit text-blue-600 dark:text-blue-400"></i>
+        </div>
+      </div>
+
+      <!-- Payments This Week -->
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-muted text-xs font-medium tracking-wide uppercase">
+            Received This Week
+          </div>
+          <div class="mt-1 font-mono text-xl font-bold text-emerald-600">
+            {{ paymentsReceivedThisWeek() | currency }}
+          </div>
+        </div>
+        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/40">
+          <i class="pi pi-check-circle text-emerald-600 dark:text-emerald-400"></i>
+        </div>
+      </div>
+
+      <!-- Overdue Invoices -->
+      <a
+        [routerLink]="['/invoices']"
+        [queryParams]="{ status: 'overdue' }"
+        class="-mx-3 flex items-center justify-between rounded-lg px-3 py-2 transition-colors hover:bg-slate-100 dark:hover:bg-slate-700/50"
+      >
+        <div>
+          <div class="text-muted text-xs font-medium tracking-wide uppercase">Overdue Invoices</div>
+          <div class="mt-1 flex items-center gap-2">
+            <span
+              class="font-mono text-xl font-bold"
+              [class]="overdueInvoiceCount() > 0 ? 'text-red-600' : 'text-primary'"
+            >
+              {{ overdueInvoiceCount() }}
+            </span>
+            @if (overdueInvoiceCount() > 0) {
+              <p-badge value="Action Required" severity="danger" />
+            }
+          </div>
+        </div>
+        <div
+          class="flex h-10 w-10 items-center justify-center rounded-full"
+          [class]="overdueInvoiceCount() > 0 ? 'bg-red-100 dark:bg-red-900/40' : 'bg-gray-100 dark:bg-gray-800/40'"
+        >
+          <i
+            class="pi pi-exclamation-triangle"
+            [class]="overdueInvoiceCount() > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-500'"
+          ></i>
+        </div>
+      </a>
+    </div>
+  }
+</p-card>

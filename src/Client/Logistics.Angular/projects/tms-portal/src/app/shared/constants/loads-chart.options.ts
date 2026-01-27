@@ -161,13 +161,3 @@ export function getLoadsPerformanceChartOptions(isDark = true) {
     },
   };
 }
-
-// Legacy exports for backward compatibility
-export const LOADS_PIE_OPTIONS = getLoadsPieOptions(true);
-export const LOADS_TREND_CHART_OPTIONS = getLoadsTrendChartOptions(true);
-export const LOADS_TYPE_CHART_OPTIONS = getLoadsTypeChartOptions(true);
-export const LOADS_PERFORMANCE_CHART_OPTIONS = getLoadsPerformanceChartOptions(true);
-
-// Legacy color exports
-export const TEXT_COLOR = "#94a3b8";
-export const GRID_COLOR = "rgba(45, 53, 72, 0.5)";

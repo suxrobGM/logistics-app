@@ -1,0 +1,110 @@
+<p-card class="h-full">
+  <ng-template #header>
+    <div class="flex items-center gap-2 py-3 pl-4">
+      <i class="pi pi-users text-xl text-indigo-600"></i>
+      <h4 class="mb-0">Team & Fleet</h4>
+    </div>
+    <p-divider class="m-0" />
+  </ng-template>
+
+  @if (isLoading()) {
+    <div class="flex flex-col gap-4">
+      <p-skeleton height="3rem" />
+      <p-skeleton height="3rem" />
+      <p-skeleton height="3rem" />
+    </div>
+  } @else {
+    <div class="flex flex-col gap-4">
+      <!-- Team Section -->
+      <div>
+        <div class="mb-3 text-xs font-medium uppercase tracking-wide text-muted">Team Members</div>
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Total Employees -->
+          <a
+            [routerLink]="['/employees']"
+            class="flex items-center gap-3 rounded-lg bg-slate-50 p-3 transition-colors hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-700/50"
+          >
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/40">
+              <i class="pi pi-users text-indigo-600 dark:text-indigo-400"></i>
+            </div>
+            <div>
+              <div class="font-mono text-xl font-bold text-primary">{{ employeesCount() }}</div>
+              <div class="text-xs text-muted">Total</div>
+            </div>
+          </a>
+
+          <!-- Drivers -->
+          <a
+            [routerLink]="['/employees']"
+            [queryParams]="{ role: 'driver' }"
+            class="flex items-center gap-3 rounded-lg bg-slate-50 p-3 transition-colors hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-700/50"
+          >
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40">
+              <i class="pi pi-id-card text-blue-600 dark:text-blue-400"></i>
+            </div>
+            <div>
+              <div class="font-mono text-xl font-bold text-primary">{{ driversCount() }}</div>
+              <div class="text-xs text-muted">Drivers</div>
+            </div>
+          </a>
+
+          <!-- Dispatchers -->
+          <a
+            [routerLink]="['/employees']"
+            [queryParams]="{ role: 'dispatcher' }"
+            class="flex items-center gap-3 rounded-lg bg-slate-50 p-3 transition-colors hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-700/50"
+          >
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/40">
+              <i class="pi pi-phone text-amber-600 dark:text-amber-400"></i>
+            </div>
+            <div>
+              <div class="font-mono text-xl font-bold text-primary">{{ dispatchersCount() }}</div>
+              <div class="text-xs text-muted">Dispatchers</div>
+            </div>
+          </a>
+
+          <!-- Managers -->
+          <a
+            [routerLink]="['/employees']"
+            [queryParams]="{ role: 'manager' }"
+            class="flex items-center gap-3 rounded-lg bg-slate-50 p-3 transition-colors hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-700/50"
+          >
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/40">
+              <i class="pi pi-briefcase text-purple-600 dark:text-purple-400"></i>
+            </div>
+            <div>
+              <div class="font-mono text-xl font-bold text-primary">{{ managersCount() }}</div>
+              <div class="text-xs text-muted">Managers</div>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Fleet Section -->
+      <div class="border-t border-subtle pt-4">
+        <div class="mb-3 text-xs font-medium uppercase tracking-wide text-muted">Fleet Status</div>
+        <a
+          [routerLink]="['/trucks']"
+          class="flex items-center justify-between rounded-lg bg-slate-50 p-3 transition-colors hover:bg-slate-100 dark:bg-slate-800/50 dark:hover:bg-slate-700/50"
+        >
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/40">
+              <i class="pi pi-truck text-emerald-600 dark:text-emerald-400"></i>
+            </div>
+            <div>
+              <div class="font-mono text-xl font-bold text-primary">{{ trucksCount() }}</div>
+              <div class="text-xs text-muted">Total Trucks</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-sm">
+              <span class="font-semibold text-emerald-600">{{ activeTrucks() }}</span>
+              <span class="text-muted"> active</span>
+            </div>
+            <div class="text-xs text-muted">{{ truckUtilization() }}% utilization</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  }
+</p-card>

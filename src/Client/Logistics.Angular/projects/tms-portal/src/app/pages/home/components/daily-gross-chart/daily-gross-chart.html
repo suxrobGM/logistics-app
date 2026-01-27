@@ -1,0 +1,52 @@
+<p-card class="h-full">
+  <ng-template #header>
+    <div class="flex items-center justify-between py-3 pr-4 pl-4">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-chart-line text-xl text-cyan-600"></i>
+        <h4 class="mb-0 font-semibold">Daily Gross</h4>
+        <span class="rounded-full bg-surface-100 px-2 py-0.5 text-xs text-muted dark:bg-surface-700">
+          Last 7 Days
+        </span>
+      </div>
+    </div>
+    <p-divider class="m-0" />
+  </ng-template>
+
+  @if (isLoading()) {
+    <div class="flex flex-col gap-4">
+      <div class="flex gap-6">
+        <p-skeleton width="100px" height="2.5rem" />
+        <p-skeleton width="100px" height="2.5rem" />
+        <p-skeleton width="100px" height="2.5rem" />
+      </div>
+      <p-skeleton height="180px" />
+    </div>
+  } @else {
+    <!-- Summary Stats -->
+    <div class="mb-4 flex flex-wrap gap-6">
+      <div>
+        <div class="text-xs font-medium uppercase tracking-wide text-muted">Weekly Total</div>
+        <div class="mt-1 font-mono text-lg font-bold text-emerald-600">
+          {{ totalGross() | currency }}
+        </div>
+      </div>
+      <div>
+        <div class="text-xs font-medium uppercase tracking-wide text-muted">Today</div>
+        <div class="mt-1 font-mono text-lg font-bold text-cyan-600">
+          {{ todayGross() | currency }}
+        </div>
+      </div>
+      <div>
+        <div class="text-xs font-medium uppercase tracking-wide text-muted">Avg/Day</div>
+        <div class="mt-1 font-mono text-lg font-bold text-primary">
+          {{ totalGross() / 7 | currency }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="relative h-44">
+      <p-chart type="line" [data]="chartData()" [options]="chartOptions()" class="h-full w-full" />
+    </div>
+  }
+</p-card>

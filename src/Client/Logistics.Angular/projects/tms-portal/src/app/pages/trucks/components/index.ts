@@ -1,1 +1,1 @@
-export * from "./truck-grosses-linechart/truck-grosses-linechart";
+export * from "./truck-gross-linechart/truck-gross-linechart";

@@ -1,0 +1,50 @@
+<p-card class="h-full">
+  <ng-template #header>
+    <div class="flex items-center gap-2 py-3 pl-4">
+      <i class="pi pi-trophy text-xl text-yellow-500"></i>
+      <h4 class="mb-0">Top Performers</h4>
+      <span class="text-muted text-xs">(This Month)</span>
+    </div>
+    <p-divider class="m-0" />
+  </ng-template>
+
+  @if (isLoading()) {
+    <div class="flex flex-col gap-4">
+      <p-skeleton height="4rem" />
+      <p-skeleton height="4rem" />
+      <p-skeleton height="4rem" />
+    </div>
+  } @else if (!topTrucks() || topTrucks()!.length === 0) {
+    <div class="text-muted flex flex-col items-center justify-center py-8 text-center">
+      <i class="pi pi-chart-bar mb-2 text-4xl"></i>
+      <p>No data available yet</p>
+    </div>
+  } @else {
+    <div class="flex flex-col gap-4">
+      @for (truck of topTrucks(); track truck.truckId; let i = $index) {
+        <a
+          [routerLink]="['/trucks', truck.truckId]"
+          class="flex flex-col gap-2 rounded-lg p-3 transition-colors hover:bg-slate-100 dark:hover:bg-slate-700/50"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <i [class]="getRankIcon(i)"></i>
+              <div>
+                <div class="font-medium">{{ truck.truckNumber || "Unknown" }}</div>
+                <div class="text-muted text-xs">{{ truck.driverName || "No driver assigned" }}</div>
+              </div>
+            </div>
+            <div class="font-mono font-bold text-emerald-600">
+              {{ truck.revenue | currency }}
+            </div>
+          </div>
+          <p-progressBar
+            [value]="getProgressValue(truck.revenue)"
+            [showValue]="false"
+            class="h-1"
+          />
+        </a>
+      }
+    </div>
+  }
+</p-card>

@@ -1,0 +1,50 @@
+<p-card class="h-full">
+  <ng-template #header>
+    <div class="flex items-center gap-2 py-3 pl-4">
+      <i class="pi pi-history text-xl text-purple-600"></i>
+      <h4 class="mb-0">Recent Activity</h4>
+    </div>
+    <p-divider class="m-0" />
+  </ng-template>
+
+  @if (isLoading()) {
+    <div class="flex flex-col gap-3">
+      @for (_ of [1, 2, 3, 4, 5]; track $index) {
+        <p-skeleton height="2.5rem" />
+      }
+    </div>
+  } @else if (activities().length === 0) {
+    <div class="text-muted flex flex-col items-center justify-center py-8 text-center">
+      <i class="pi pi-inbox mb-2 text-4xl"></i>
+      <p>No recent activity</p>
+    </div>
+  } @else {
+    <div class="flex flex-col">
+      @for (activity of activities(); track activity.loadId + activity.action; let last = $last) {
+        <a
+          [routerLink]="['/loads', activity.loadId, 'edit']"
+          class="hover:bg-surface-100 dark:hover:bg-surface-800 flex items-center gap-3 rounded-lg px-2 py-3 transition-colors"
+        >
+          <!-- Icon -->
+          <i class="pi {{ activity.icon }} {{ activity.iconClass }} text-lg"></i>
+
+          <!-- Content -->
+          <div class="min-w-0 flex-1">
+            <span class="text-sm">
+              <span class="text-primary font-semibold">Load #{{ activity.loadNumber }}</span>
+              <span class="text-muted"> {{ activity.action }}</span>
+            </span>
+          </div>
+
+          <!-- Timestamp -->
+          <span class="text-muted text-xs whitespace-nowrap">
+            {{ activity.timestamp | relativeTime }}
+          </span>
+        </a>
+        @if (!last) {
+          <div class="border-surface-200 dark:border-surface-700 ml-5 border-l-2 py-1"></div>
+        }
+      }
+    </div>
+  }
+</p-card>
