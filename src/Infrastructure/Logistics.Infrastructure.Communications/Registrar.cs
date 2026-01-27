@@ -1,5 +1,6 @@
 ﻿using Logistics.Application.Services;
 using Logistics.Application.Services.Realtime;
+using Logistics.Infrastructure.Communications.Captcha;
 using Logistics.Infrastructure.Communications.Email;
 using Logistics.Infrastructure.Communications.Services;
 using Logistics.Infrastructure.Communications.SignalR.Hubs;
@@ -27,6 +28,7 @@ public static class Registrar
         services.AddScoped<IRealtimeMessagingService, SignalRMessagingService>();
         services.AddScoped<IRealtimeLiveTrackingService, SignalRLiveTrackingService>();
         services.AddScoped<IRealtimeNotificationService, SignalRNotificationService>();
+        services.AddScoped<ITripTrackingService, SignalRTripTrackingService>();
 
         // Email services
         services.Configure<SmtpOptions>(configuration.GetSection(SmtpOptions.SectionName));
@@ -36,6 +38,10 @@ public static class Registrar
         // Push notifications
         services.AddScoped<INotificationService, NotificationService>();
         services.AddSingleton<IPushNotificationService, PushNotificationService>();
+
+        // Google Recaptcha
+        services.Configure<GoogleRecaptchaOptions>(configuration.GetSection(GoogleRecaptchaOptions.SectionName));
+        services.AddSingleton<ICaptchaService, GoogleRecaptchaService>();
 
         return services;
     }
