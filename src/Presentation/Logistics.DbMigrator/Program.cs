@@ -28,5 +28,6 @@ builder.Services.AddSeeders();
 builder.Services.AddHostedService<MigrateDatabaseWorker>();
 builder.Services.AddHostedService<SeederOrchestrationWorker>();
 builder.Services.AddHostedService<CreateSqlFunctionsWorker>();
+builder.Services.AddHostedService<ShutdownWorker>();
 
 builder.Build().Run();
