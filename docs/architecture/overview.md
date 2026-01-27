@@ -11,12 +11,17 @@ Logistics TMS follows Domain-Driven Design (DDD) with CQRS pattern.
 ```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                     Presentation Layer                          │
-│  Logistics.API │ Logistics.IdentityServer │ Logistics.AdminApp  │
+│  Logistics.API │ Logistics.IdentityServer │ Logistics.DbMigrator │
 └─────────────────────────────────────────────────────────────────┘
                               │
 ┌─────────────────────────────────────────────────────────────────┐
 │                     Application Layer                           │
-│         Commands │ Queries │ Services │ SignalR Hubs            │
+│         Commands │ Queries │ Services (Interfaces)              │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+┌─────────────────────────────────────────────────────────────────┐
+│                 Application Contracts Layer                     │
+│      Service Interfaces │ Realtime Abstractions                 │
 └─────────────────────────────────────────────────────────────────┘
                               │
 ┌─────────────────────────────────────────────────────────────────┐
@@ -26,7 +31,9 @@ Logistics TMS follows Domain-Driven Design (DDD) with CQRS pattern.
                               │
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Infrastructure Layer                         │
-│              EF Core │ Repositories │ Unit of Work              │
+│    8 Focused Projects: Persistence, Communications,            │
+│    Integrations (ELD, LoadBoard), Payments, Documents,         │
+│    Routing, Storage                                             │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -36,30 +43,39 @@ Logistics TMS follows Domain-Driven Design (DDD) with CQRS pattern.
 src/
 ├── Aspire/
 │   ├── Logistics.Aspire.AppHost            # Orchestration
-│   └── Logistics.Aspire.ServiceDefaults    # Aspire service defaults project
+│   └── Logistics.Aspire.ServiceDefaults    # Aspire service defaults
 ├── Client/
-│   ├── Logistics.Angular/             # Angular workspace
+│   ├── Logistics.Angular/                  # Angular workspace
 │   │   ├── projects/
-│   │   │   ├── shared/                # @logistics/shared library
-│   │   │   ├── tms-portal/            # TMS Portal (dispatchers)
-|   |   |   ├── admin-portal/          # Admin Portal (super admin)
-│   │   │   └── customer-portal/       # Customer Portal (self-service)    
+│   │   │   ├── shared/                     # @logistics/shared library
+│   │   │   ├── tms-portal/                 # TMS Portal (dispatchers)
+│   │   │   ├── admin-portal/               # Admin Portal (super admin)
+│   │   │   └── customer-portal/            # Customer Portal (self-service)
 │   │   └── angular.json
-│   └── Logistics.DriverApp            # Kotlin Multiplatform mobile
+│   └── Logistics.DriverApp                 # Kotlin Multiplatform mobile
 ├── Core/
-│   ├── Logistics.Application          # Business logic (CQRS)
-│   ├── Logistics.Domain               # Entities, domain events
-│   ├── Logistics.Domain.Primitives    # Value objects, enums
-│   ├── Logistics.Mappings             # Entity-to-DTO mappers
-│   └── Logistics.Infrastructure       # EF Core, repositories, implementations for external services
+│   ├── Logistics.Application               # Business logic (CQRS)
+│   ├── Logistics.Application.Contracts     # Service interfaces
+│   ├── Logistics.Domain                    # Entities, domain events
+│   ├── Logistics.Domain.Primitives         # Value objects, enums
+│   └── Logistics.Mappings                  # Entity-to-DTO mappers
+├── Infrastructure/
+│   ├── Logistics.Infrastructure.Persistence            # EF Core, DbContexts, migrations
+│   ├── Logistics.Infrastructure.Communications         # SignalR, email, notifications
+│   ├── Logistics.Infrastructure.Integrations.Eld       # Samsara, Motive integrations
+│   ├── Logistics.Infrastructure.Integrations.LoadBoard # DAT, Truckstop, 123Loadboard
+│   ├── Logistics.Infrastructure.Payments               # Stripe services
+│   ├── Logistics.Infrastructure.Documents              # PDF, storage, VIN decoder
+│   ├── Logistics.Infrastructure.Routing                # Trip optimization, geocoding
+│   └── Logistics.Infrastructure.Storage                # Azure Blob, file storage
 ├── Shared/
-│   ├── Logistics.Shared.Geo           # Geolocation utilities
-│   ├── Logistics.Shared.Identity      # Identity models
-│   └── Logistics.Shared.Models        # DTOs for contracts
+│   ├── Logistics.Shared.Geo                # Geolocation utilities
+│   ├── Logistics.Shared.Identity           # Identity models
+│   └── Logistics.Shared.Models             # DTOs for contracts
 └── Presentation/
-    ├── Logistics.API                  # REST API
-    ├── Logistics.IdentityServer       # OAuth2/OIDC
-    └── Logistics.DbMigrator           # Migrations runner
+    ├── Logistics.API                       # REST API
+    ├── Logistics.IdentityServer            # OAuth2/OIDC
+    └── Logistics.DbMigrator                # Migrations runner
 ```
 
 ## Tech Stack
@@ -187,6 +203,106 @@ public interface IUnitOfWork
     Task<int> SaveChangesAsync();
 }
 ```
+
+## Infrastructure Projects
+
+The infrastructure layer is split into 8 focused projects for better maintainability:
+
+### Logistics.Infrastructure.Persistence
+
+**Purpose**: Database access, repositories, multi-tenancy
+
+**Contents**:
+
+- MasterDbContext (tenants, subscriptions)
+- TenantDbContext (operational data per company)
+- 43 Entity Configurations
+- Migrations (Master and Tenant)
+- Repository and Unit of Work implementations
+- Multi-tenancy services
+- EF Core interceptors (domain events, auditing)
+
+### Logistics.Infrastructure.Communications
+
+**Purpose**: Real-time communication and messaging
+
+**Contents**:
+
+- SignalR Hubs: `TrackingHub`, `ChatHub`, `NotificationHub`
+- Real-time service implementations (wraps SignalR)
+- Email services (SMTP, Fluid templates)
+- Push notifications (Firebase)
+- Captcha validation (Google reCAPTCHA)
+
+### Logistics.Infrastructure.Integrations.Eld
+
+**Purpose**: ELD provider integrations for HOS compliance
+
+**Providers**:
+
+- Samsara ELD
+- Motive (KeepTruckin) ELD
+- Demo provider for testing
+
+**Features**: Factory pattern for provider selection, webhook handlers
+
+### Logistics.Infrastructure.Integrations.LoadBoard
+
+**Purpose**: Load board integrations for freight search
+
+**Providers**:
+
+- DAT Load Board
+- Truckstop.com
+- 123Loadboard
+- Demo provider for testing
+
+**Features**: Search loads, post trucks, provider-specific mappers
+
+### Logistics.Infrastructure.Payments
+
+**Purpose**: Payment processing
+
+**Contents**:
+
+- Stripe standard payment processing
+- Stripe Connect (destination charges)
+- Payment link generation
+- Webhook handling
+
+### Logistics.Infrastructure.Documents
+
+**Purpose**: Document generation and storage
+
+**Contents**:
+
+- PDF generation (QuestPDF) - invoices, payroll stubs
+- PDF import with template-based extraction
+- Azure Blob Storage service
+- File-based storage service
+- VIN decoder (NHTSA API)
+
+### Logistics.Infrastructure.Routing
+
+**Purpose**: Trip optimization and geocoding
+
+**Contents**:
+
+- Heuristic trip optimizer (nearest neighbor)
+- Mapbox Matrix trip optimizer
+- Composite optimizer (combines both)
+- Mapbox geocoding service
+- Trip tracking service
+
+### Logistics.Infrastructure.Storage
+
+**Purpose**: File and document storage
+
+**Contents**:
+
+- Azure Blob Storage implementation
+- File-based storage implementation
+- Storage abstraction layer
 
 ## Multi-Tenancy
 

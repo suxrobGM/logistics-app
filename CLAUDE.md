@@ -37,6 +37,21 @@ cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 - **DDD + CQRS**: Commands/Queries via MediatR in `src/Core/Logistics.Application/`
 - **Multi-Tenant**: Master DB (tenants, subscriptions) + Tenant DBs (sharded per company)
 - **Lazy Loading**: EF Core lazy loading enabled - no `.Include()` needed
+- **Clean Architecture**: Application layer references only interfaces; all implementations in Infrastructure layer
+- **Modular Infrastructure**: Split into focused projects (Persistence, Communications, Integrations, etc.)
+
+### Infrastructure Projects
+
+| Project | Purpose |
+|---------|---------|
+| **Logistics.Infrastructure.Persistence** | EF Core DbContexts, repositories, migrations, multi-tenancy |
+| **Logistics.Infrastructure.Communications** | SignalR hubs, real-time services, email, push notifications |
+| **Logistics.Infrastructure.Integrations.Eld** | ELD provider integrations (Samsara, Motive) |
+| **Logistics.Infrastructure.Integrations.LoadBoard** | Load board integrations (DAT, Truckstop, 123Loadboard) |
+| **Logistics.Infrastructure.Payments** | Stripe payment processing and Stripe Connect |
+| **Logistics.Infrastructure.Documents** | PDF generation, document storage, VIN decoder |
+| **Logistics.Infrastructure.Routing** | Trip optimization, route planning, geocoding |
+| **Logistics.Infrastructure.Storage** | Azure Blob Storage and file-based storage |
 
 ## Key Entities
 
@@ -74,6 +89,9 @@ Payments flow directly to trucking company bank accounts via Stripe Connect:
 - **Stripe**: Payments (`/webhooks/stripe`)
 - **Stripe Connect**: Direct company payments (destination charges)
 - **Firebase**: Push notifications
-- **SignalR**: Real-time GPS tracking
+- **SignalR**: Real-time communication (`/hubs/tracking`, `/hubs/chat`, `/hubs/notification`)
 - **Azure Blob**: Document storage
 - **ELD Providers**: Samsara, Motive (`/webhooks/eld/*`)
+- **Load Boards**: DAT, Truckstop, 123Loadboard
+- **Mapbox**: Geocoding, route optimization
+- **NHTSA**: VIN decoder

@@ -14,9 +14,15 @@ src/Core/Logistics.Application/
 │   └── Load/
 │       ├── GetLoadByIdQuery.cs
 │       └── GetLoadByIdHandler.cs
-├── Services/           # Application services
+├── Services/           # Application services (interfaces only)
 ├── Behaviors/          # MediatR pipeline
 └── Validators/         # FluentValidation
+
+src/Core/Logistics.Application.Contracts/
+└── Services/           # Service interfaces (shared)
+    ├── Email/
+    ├── Realtime/       # SignalR abstractions
+    └── Payment/
 
 src/Core/Logistics.Domain/
 ├── Entities/           # Domain entities
@@ -25,10 +31,36 @@ src/Core/Logistics.Domain/
 ├── Specifications/     # Query specifications
 └── Interfaces/         # Abstractions
 
-src/Infrastructure/Logistics.Infrastructure/
-├── Data/               # DbContext, migrations
-├── Repositories/       # Repository implementations
-└── Services/           # External service integrations
+src/Infrastructure/
+├── Logistics.Infrastructure.Persistence/
+│   ├── Data/                      # DbContext, migrations
+│   ├── Persistence/               # Repositories, UnitOfWork
+│   └── Services/                  # Multi-tenancy services
+│
+├── Logistics.Infrastructure.Communications/
+│   ├── SignalR/                   # Hubs, real-time services
+│   ├── Email/                     # Email services
+│   └── Notifications/             # Push notifications
+│
+├── Logistics.Infrastructure.Integrations.Eld/
+│   └── Providers/                 # Samsara, Motive
+│
+├── Logistics.Infrastructure.Integrations.LoadBoard/
+│   └── Providers/                 # DAT, Truckstop, 123Loadboard
+│
+├── Logistics.Infrastructure.Payments/
+│   └── Stripe/                    # Stripe, Stripe Connect
+│
+├── Logistics.Infrastructure.Documents/
+│   ├── Pdf/                       # PDF generation
+│   ├── Storage/                   # Azure Blob, file storage
+│   └── Vin/                       # VIN decoder
+│
+├── Logistics.Infrastructure.Routing/
+│   └── Trip/                      # Trip optimization, geocoding
+│
+└── Logistics.Infrastructure.Storage/
+    └── (Blob storage implementations)
 ```
 
 ## Adding a New Feature
