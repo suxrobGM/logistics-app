@@ -25,6 +25,6 @@ if "%MigrationName%" == "" (
 )
 
 echo Running migration for the %DbType%...
-dotnet ef migrations add %MigrationName% -c %DbContext% -o Data/Migrations/%MigrationFolder%
+dotnet ef migrations add %MigrationName% -c %DbContext% -o Migrations/%MigrationFolder%
 echo Migrations completed.
 goto :eof
