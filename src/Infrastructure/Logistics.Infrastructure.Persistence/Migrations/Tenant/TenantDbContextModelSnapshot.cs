@@ -32,9 +32,67 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Address", "Logistics.Domain.Entities.Customer.Address#Address", b1 =>
+                        {
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Line1")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Line2")
+                                .HasColumnType("text");
+
+                            b1.Property<string>("State")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("ZipCode")
+                                .IsRequired()
+                                .HasColumnType("text");
+                        });
 
                     b.HasKey("Id");
 
@@ -1937,8 +1995,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "CompanyAddress", "Logistics.Domain.Entities.Tenant.CompanyAddress#Address", b1 =>
                         {
-                            b1.IsRequired();
-
                             b1.Property<string>("City")
                                 .IsRequired()
                                 .HasColumnType("text");
@@ -2296,8 +2352,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "CurrentAddress", "Logistics.Domain.Entities.Truck.CurrentAddress#Address", b1 =>
                         {
-                            b1.IsRequired();
-
                             b1.Property<string>("City")
                                 .IsRequired()
                                 .HasColumnType("text");
@@ -2324,8 +2378,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "CurrentLocation", "Logistics.Domain.Entities.Truck.CurrentLocation#GeoPoint", b1 =>
                         {
-                            b1.IsRequired();
-
                             b1.Property<double>("Latitude")
                                 .HasColumnType("double precision");
 

@@ -41,7 +41,7 @@ public static partial class LoadMapper
             TripNumber = entity.TripStops.FirstOrDefault()?.Trip.Number
         };
 
-        if (entity.AssignedTruck?.CurrentAddress.IsNotNull() ?? false)
+        if (entity.AssignedTruck?.CurrentAddress is not null)
         {
             dto.CurrentAddress = entity.AssignedTruck.CurrentAddress;
             dto.CurrentLocation = entity.AssignedTruck.CurrentLocation;

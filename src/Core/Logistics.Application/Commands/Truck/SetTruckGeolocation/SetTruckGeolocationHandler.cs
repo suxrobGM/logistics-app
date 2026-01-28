@@ -1,7 +1,6 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
@@ -25,7 +24,7 @@ internal sealed class SetTruckGeolocationHandler(
             return Result.Ok();
         }
 
-        truck.CurrentAddress = req.GeolocationData.CurrentAddress ?? Address.NullAddress;
+        truck.CurrentAddress = req.GeolocationData.CurrentAddress;
         truck.CurrentLocation = req.GeolocationData.CurrentLocation;
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();

@@ -1,27 +1,28 @@
-<div class="flex flex-col gap-6">
-  @if (isLoading()) {
-    <p-progress-spinner />
-  }
-
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <ui-validation-summary [form]="form" />
-
-    <ui-labeled-field label="Customer Name" for="name" [required]="true">
+<p-dialog
+  header="Edit Customer"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [closable]="true"
+  [draggable]="false"
+>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <ui-labeled-field label="Name" for="name" [required]="true">
       <input
         pInputText
-        id="name"
         formControlName="name"
+        id="name"
         class="w-full"
         placeholder="Customer name"
       />
     </ui-labeled-field>
 
-    <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div class="mt-4 grid grid-cols-2 gap-4">
       <ui-labeled-field label="Email" for="email">
         <input
           pInputText
-          id="email"
           formControlName="email"
+          id="email"
           type="email"
           class="w-full"
           placeholder="email@example.com"
@@ -31,8 +32,8 @@
       <ui-labeled-field label="Phone" for="phone">
         <input
           pInputText
-          id="phone"
           formControlName="phone"
+          id="phone"
           type="tel"
           class="w-full"
           placeholder="(555) 555-5555"
@@ -66,27 +67,36 @@
       ></textarea>
     </ui-labeled-field>
 
-    <div class="mt-6 flex gap-2">
-      <p-button type="submit" icon="pi pi-check" label="Save" [disabled]="isLoading()" />
+    <ui-validation-summary [form]="form" class="mt-4" />
 
-      @if (mode() === "edit") {
-        <p-button
-          type="button"
-          icon="pi pi-trash"
-          label="Delete"
-          severity="danger"
-          [disabled]="isLoading()"
-          (click)="askRemove()"
-        />
-
-        <p-button
-          type="button"
-          icon="pi pi-arrow-left"
-          label="Back to list"
-          [outlined]="true"
-          [routerLink]="['/customers']"
-        />
-      }
+    <div class="mt-6 flex justify-end gap-2">
+      <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />
+      <p-button
+        type="submit"
+        label="Save Changes"
+        icon="pi pi-check"
+        [loading]="isLoading()"
+        [disabled]="!form.valid"
+      />
     </div>
   </form>
-</div>
+
+  <p-accordion class="mt-6">
+    <p-accordion-panel value="danger">
+      <ng-template pTemplate="header">
+        <span class="text-danger">Danger Zone</span>
+      </ng-template>
+      <ng-template pTemplate="content">
+        <p class="text-muted mb-4">
+          Deleting a customer will remove all associated data. This action cannot be undone.
+        </p>
+        <p-button
+          label="Delete Customer"
+          icon="pi pi-trash"
+          severity="danger"
+          (click)="deleted.emit()"
+        />
+      </ng-template>
+    </p-accordion-panel>
+  </p-accordion>
+</p-dialog>

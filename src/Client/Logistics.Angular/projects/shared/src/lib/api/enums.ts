@@ -5,6 +5,7 @@
  */
 import type { SelectOption } from "../models/select-option";
 import type {
+  CustomerStatus,
   DocumentType,
   EmployeeStatus,
   InvoiceLineItemType,
@@ -57,6 +58,12 @@ export const employeeStatusOptions: SelectOption<EmployeeStatus>[] = [
   { label: "On Leave", value: "on_leave" },
   { label: "Suspended", value: "suspended" },
   { label: "Terminated", value: "terminated" },
+];
+
+export const customerStatusOptions: SelectOption<CustomerStatus>[] = [
+  { label: "Active", value: "active" },
+  { label: "Inactive", value: "inactive" },
+  { label: "Prospect", value: "prospect" },
 ];
 
 export const documentTypeOptions: SelectOption<DocumentType>[] = [

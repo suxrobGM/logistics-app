@@ -1,4 +1,4 @@
-<ui-page-header title="List Customers" addRoute="/customers/add" addTooltip="Add a new customer" />
+<ui-page-header title="Customers" addRoute="/customers/add" addTooltip="Add a new customer" />
 
 <div class="mb-4 flex gap-2">
   <lib-permission-guard [permissions]="Permission.Invitation.Manage">
@@ -45,32 +45,46 @@
             Name
             <p-sortIcon field="Name" />
           </th>
-          <th class="text-center">Action</th>
+          <th>Status</th>
+          <th pSortableColumn="Email">
+            Email
+            <p-sortIcon field="Email" />
+          </th>
+          <th pSortableColumn="Phone">
+            Phone
+            <p-sortIcon field="Phone" />
+          </th>
+          <th pSortableColumn="CreatedDate">
+            Created
+            <p-sortIcon field="CreatedDate" />
+          </th>
+          <th></th>
         </tr>
       </ng-template>
       <ng-template #body let-customer>
-        <tr>
-          <td>{{ customer.name }}</td>
-          <td class="text-center">
+        <tr class="hover:bg-hover cursor-pointer" (click)="onRowClick(customer)">
+          <td>
+            <div class="flex items-center gap-3">
+              <app-customer-avatar [customer]="customer" size="normal" />
+              <div>
+                <div class="font-medium">{{ customer.name }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            @if (customer.status) {
+              <app-customer-status-tag [status]="customer.status" />
+            }
+          </td>
+          <td>{{ customer.email || "-" }}</td>
+          <td>{{ customer.phone || "-" }}</td>
+          <td>{{ customer.createdAt | date: "mediumDate" }}</td>
+          <td>
             <p-button
-              icon="pi pi-send"
-              pTooltip="Invite Portal User"
-              aria-label="Invite portal user"
-              (click)="openInviteDialog(customer.id, customer.name)"
-            />
-            <p-button
-              styleClass="ml-2"
-              icon="pi pi-pen-to-square"
-              pTooltip="Edit Customer"
-              aria-label="Edit customer"
-              [routerLink]="['/customers', customer.id, 'edit']"
-            />
-            <p-button
-              styleClass="ml-2"
-              icon="pi pi-trash"
-              pTooltip="Delete Customer"
-              aria-label="Delete customer"
-              (click)="confirmToDelete(customer.id)"
+              icon="pi pi-ellipsis-v"
+              [text]="true"
+              aria-label="Show actions menu"
+              (click)="$event.stopPropagation(); selectedRow.set(customer); menu.toggle($event)"
             />
           </td>
         </tr>
@@ -85,3 +99,6 @@
   [customerName]="selectedCustomerName()"
   (invitationSent)="onInvitationSent()"
 />
+
+<!-- Context menu for row actions -->
+<p-menu #menu [model]="actionMenuItems" [popup]="true" />

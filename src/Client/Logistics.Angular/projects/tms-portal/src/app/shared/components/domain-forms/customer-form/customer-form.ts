@@ -2,15 +2,29 @@ import { Component, effect, inject, input, output, signal } from "@angular/core"
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { Api, createCustomer, updateCustomer } from "@logistics/shared/api";
-import type { CustomerDto, UpdateCustomerCommand } from "@logistics/shared/api";
-import { LabeledField, ValidationSummary } from "@logistics/shared/components";
+import type {
+  Address,
+  CreateCustomerCommand,
+  CustomerDto,
+  CustomerStatus,
+  UpdateCustomerCommand,
+} from "@logistics/shared/api";
+import { customerStatusOptions } from "@logistics/shared/api/enums";
+import { AddressForm, LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { SelectModule } from "primeng/select";
+import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
 
 export interface CustomerFormValue {
   name: string;
+  email: string | null;
+  phone: string | null;
+  status: CustomerStatus;
+  address: Address | null;
+  notes: string | null;
 }
 
 @Component({
@@ -24,6 +38,9 @@ export interface CustomerFormValue {
     ProgressSpinnerModule,
     LabeledField,
     InputTextModule,
+    TextareaModule,
+    SelectModule,
+    AddressForm,
   ],
 })
 export class CustomerForm {
@@ -31,6 +48,7 @@ export class CustomerForm {
   private readonly toastService = inject(ToastService);
 
   protected readonly isLoading = signal(false);
+  protected readonly statusOptions = customerStatusOptions;
 
   public readonly mode = input.required<"create" | "edit">();
   public readonly id = input<string>(); // Required for edit mode
@@ -41,6 +59,14 @@ export class CustomerForm {
 
   protected readonly form = new FormGroup({
     name: new FormControl("", { validators: Validators.required, nonNullable: true }),
+    email: new FormControl<string | null>(null),
+    phone: new FormControl<string | null>(null),
+    status: new FormControl<CustomerStatus>("active", {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+    address: new FormControl<Address | null>(null),
+    notes: new FormControl<string | null>(null),
   });
 
   constructor() {
@@ -57,10 +83,19 @@ export class CustomerForm {
     }
 
     this.isLoading.set(true);
-    const formValue = this.form.getRawValue() as CustomerFormValue;
+    const formValue = this.form.getRawValue();
 
     if (this.mode() === "create") {
-      const result = await this.api.invoke(createCustomer, { body: formValue });
+      const command: CreateCustomerCommand = {
+        name: formValue.name,
+        email: formValue.email,
+        phone: formValue.phone,
+        status: formValue.status,
+        address: formValue.address!,
+        notes: formValue.notes,
+      };
+
+      const result = await this.api.invoke(createCustomer, { body: command });
       if (result) {
         this.toastService.showSuccess("A new customer has been created successfully");
         this.save.emit(result);
@@ -69,6 +104,11 @@ export class CustomerForm {
       const command: UpdateCustomerCommand = {
         id: this.id()!,
         name: formValue.name,
+        email: formValue.email,
+        phone: formValue.phone,
+        status: formValue.status,
+        address: formValue.address!,
+        notes: formValue.notes,
       };
       await this.api.invoke(updateCustomer, { id: this.id()!, body: command });
       this.toastService.showSuccess("Customer data has been updated successfully");

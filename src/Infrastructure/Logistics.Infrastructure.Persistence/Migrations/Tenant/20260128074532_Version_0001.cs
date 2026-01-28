@@ -17,7 +17,21 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    Phone = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Notes = table.Column<string>(type: "text", nullable: true),
+                    Address_City = table.Column<string>(type: "text", nullable: true),
+                    Address_Country = table.Column<string>(type: "text", nullable: true),
+                    Address_Line1 = table.Column<string>(type: "text", nullable: true),
+                    Address_Line2 = table.Column<string>(type: "text", nullable: true),
+                    Address_State = table.Column<string>(type: "text", nullable: true),
+                    Address_ZipCode = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -177,12 +191,12 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     ConnectStatus = table.Column<int>(type: "integer", nullable: false),
                     PayoutsEnabled = table.Column<bool>(type: "boolean", nullable: false),
                     ChargesEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    CompanyAddress_City = table.Column<string>(type: "text", nullable: false),
-                    CompanyAddress_Country = table.Column<string>(type: "text", nullable: false),
-                    CompanyAddress_Line1 = table.Column<string>(type: "text", nullable: false),
+                    CompanyAddress_City = table.Column<string>(type: "text", nullable: true),
+                    CompanyAddress_Country = table.Column<string>(type: "text", nullable: true),
+                    CompanyAddress_Line1 = table.Column<string>(type: "text", nullable: true),
                     CompanyAddress_Line2 = table.Column<string>(type: "text", nullable: true),
-                    CompanyAddress_State = table.Column<string>(type: "text", nullable: false),
-                    CompanyAddress_ZipCode = table.Column<string>(type: "text", nullable: false)
+                    CompanyAddress_State = table.Column<string>(type: "text", nullable: true),
+                    CompanyAddress_ZipCode = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -226,6 +240,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     LastName = table.Column<string>(type: "text", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
                     SalaryType = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     JoinedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DeviceToken = table.Column<string>(type: "text", nullable: true),
                     RoleId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -450,14 +465,14 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     Status = table.Column<int>(type: "integer", nullable: false),
                     MainDriverId = table.Column<Guid>(type: "uuid", nullable: true),
                     SecondaryDriverId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CurrentAddress_City = table.Column<string>(type: "text", nullable: false),
-                    CurrentAddress_Country = table.Column<string>(type: "text", nullable: false),
-                    CurrentAddress_Line1 = table.Column<string>(type: "text", nullable: false),
+                    CurrentAddress_City = table.Column<string>(type: "text", nullable: true),
+                    CurrentAddress_Country = table.Column<string>(type: "text", nullable: true),
+                    CurrentAddress_Line1 = table.Column<string>(type: "text", nullable: true),
                     CurrentAddress_Line2 = table.Column<string>(type: "text", nullable: true),
-                    CurrentAddress_State = table.Column<string>(type: "text", nullable: false),
-                    CurrentAddress_ZipCode = table.Column<string>(type: "text", nullable: false),
-                    CurrentLocation_Latitude = table.Column<double>(type: "double precision", nullable: false),
-                    CurrentLocation_Longitude = table.Column<double>(type: "double precision", nullable: false)
+                    CurrentAddress_State = table.Column<string>(type: "text", nullable: true),
+                    CurrentAddress_ZipCode = table.Column<string>(type: "text", nullable: true),
+                    CurrentLocation_Latitude = table.Column<double>(type: "double precision", nullable: true),
+                    CurrentLocation_Longitude = table.Column<double>(type: "double precision", nullable: true)
                 },
                 constraints: table =>
                 {

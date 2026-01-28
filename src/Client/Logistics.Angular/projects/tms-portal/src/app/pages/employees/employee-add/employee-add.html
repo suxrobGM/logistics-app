@@ -1,4 +1,4 @@
-<h1 class="text-center">Add a new employee</h1>
+<ui-page-header title="Add Employee" [showAddButton]="false" />
 
 <div class="flex justify-center">
   <div class="w-full md:w-1/2">
@@ -10,7 +10,7 @@
       <form [formGroup]="form" (ngSubmit)="submit()">
         <ui-validation-summary [form]="form" />
 
-        <ui-labeled-field label="User Name" for="name">
+        <ui-labeled-field label="User Name" for="name" hint="Start typing (minimum 3 characters)">
           <p-autocomplete
             formControlName="user"
             class="w-full"
@@ -48,7 +48,7 @@
         </ui-labeled-field>
 
         <div class="flex gap-2">
-          <p-button type="submit" icon="pi pi-pencil" label="Add" [disabled]="isLoading()" />
+          <p-button type="submit" icon="pi pi-plus" label="Add" [disabled]="isLoading()" />
           <p-button
             type="button"
             icon="pi pi-arrow-left"

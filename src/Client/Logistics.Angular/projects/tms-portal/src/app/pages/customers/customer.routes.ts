@@ -2,13 +2,13 @@ import type { Routes } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
 import { CustomerAddComponent } from "./customer-add/customer-add";
-import { CustomerEditComponent } from "./customer-edit/customer-edit";
-import { CustomersListComponent } from "./customers-list/customers-list";
+import { CustomerDetails } from "./customer-details/customer-details";
+import { CustomersList } from "./customers-list/customers-list";
 
 export const customerRoutes: Routes = [
   {
     path: "",
-    component: CustomersListComponent,
+    component: CustomersList,
     canActivate: [authGuard],
     data: {
       breadcrumb: "",
@@ -25,12 +25,12 @@ export const customerRoutes: Routes = [
     },
   },
   {
-    path: ":id/edit",
-    component: CustomerEditComponent,
+    path: ":id",
+    component: CustomerDetails,
     canActivate: [authGuard],
     data: {
-      breadcrumb: "Edit",
-      permission: Permission.Customer.Manage,
+      breadcrumb: "Details",
+      permission: Permission.Customer.View,
     },
   },
 ];

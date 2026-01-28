@@ -20,12 +20,12 @@ public class Truck : Entity, ITenantEntity
     /// <summary>
     ///     Truck's last known location address
     /// </summary>
-    public required Address CurrentAddress { get; set; }
+    public Address? CurrentAddress { get; set; }
 
     /// <summary>
     ///     Truck's last known location longitude
     /// </summary>
-    public required GeoPoint CurrentLocation { get; set; }
+    public GeoPoint? CurrentLocation { get; set; }
 
     /// <summary>
     ///     The main assigned driver for the truck
@@ -51,12 +51,7 @@ public class Truck : Entity, ITenantEntity
     {
         return new Truck
         {
-            Number = truckNumber,
-            Type = type,
-            MainDriver = mainDriver,
-            SecondaryDriver = secondaryDriver,
-            CurrentAddress = Address.NullAddress,
-            CurrentLocation = GeoPoint.NullGeoPoint
+            Number = truckNumber, Type = type, MainDriver = mainDriver, SecondaryDriver = secondaryDriver
         };
     }
 

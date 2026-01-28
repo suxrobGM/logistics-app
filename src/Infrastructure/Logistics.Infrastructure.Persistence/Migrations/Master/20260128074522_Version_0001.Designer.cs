@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Persistence.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20260127064900_Version_0001")]
+    [Migration("20260128074522_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -706,8 +706,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "CompanyAddress", "Logistics.Domain.Entities.Tenant.CompanyAddress#Address", b1 =>
                         {
-                            b1.IsRequired();
-
                             b1.Property<string>("City")
                                 .IsRequired()
                                 .HasColumnType("text");

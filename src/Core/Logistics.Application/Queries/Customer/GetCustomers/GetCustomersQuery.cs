@@ -3,6 +3,4 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetCustomersQuery : SearchableQuery, IAppRequest<PagedResult<CustomerDto>>
-{
-}
+public class GetCustomersQuery : SearchableQuery, IAppRequest<PagedResult<CustomerDto>>;

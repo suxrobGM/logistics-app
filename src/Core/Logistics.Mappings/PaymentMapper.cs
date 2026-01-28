@@ -15,13 +15,9 @@ public static class PaymentMapper
             MethodId = entity.MethodId,
             TenantId = entity.TenantId,
             Status = entity.Status,
-            Description = entity.Description
+            Description = entity.Description,
+            BillingAddress = entity.BillingAddress
         };
-
-        if (entity.BillingAddress.IsNotNull())
-        {
-            dto.BillingAddress = entity.BillingAddress;
-        }
 
         return dto;
     }

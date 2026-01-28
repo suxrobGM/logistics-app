@@ -703,8 +703,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "CompanyAddress", "Logistics.Domain.Entities.Tenant.CompanyAddress#Address", b1 =>
                         {
-                            b1.IsRequired();
-
                             b1.Property<string>("City")
                                 .IsRequired()
                                 .HasColumnType("text");

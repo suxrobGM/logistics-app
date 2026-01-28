@@ -20,7 +20,12 @@ internal sealed class CreateCustomerHandler(ITenantUnitOfWork tenantUow)
 
         var newCustomer = new Customer
         {
-            Name = req.Name
+            Name = req.Name,
+            Email = req.Email,
+            Phone = req.Phone,
+            Address = req.Address,
+            Status = req.Status,
+            Notes = req.Notes
         };
         await tenantUow.Repository<Customer>().AddAsync(newCustomer, ct);
         await tenantUow.SaveChangesAsync(ct);

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20260127064908_Version_0001")]
+    [Migration("20260128074532_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -35,9 +35,67 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Address", "Logistics.Domain.Entities.Customer.Address#Address", b1 =>
+                        {
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Country")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Line1")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("Line2")
+                                .HasColumnType("text");
+
+                            b1.Property<string>("State")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("ZipCode")
+                                .IsRequired()
+                                .HasColumnType("text");
+                        });
 
                     b.HasKey("Id");
 
@@ -402,6 +460,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("uuid");
 
                     b.Property<int>("SalaryType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
                         .HasColumnType("integer");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Salary", "Logistics.Domain.Entities.Employee.Salary#Money", b1 =>
@@ -1937,8 +1998,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "CompanyAddress", "Logistics.Domain.Entities.Tenant.CompanyAddress#Address", b1 =>
                         {
-                            b1.IsRequired();
-
                             b1.Property<string>("City")
                                 .IsRequired()
                                 .HasColumnType("text");
@@ -2296,8 +2355,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "CurrentAddress", "Logistics.Domain.Entities.Truck.CurrentAddress#Address", b1 =>
                         {
-                            b1.IsRequired();
-
                             b1.Property<string>("City")
                                 .IsRequired()
                                 .HasColumnType("text");
@@ -2324,8 +2381,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "CurrentLocation", "Logistics.Domain.Entities.Truck.CurrentLocation#GeoPoint", b1 =>
                         {
-                            b1.IsRequired();
-
                             b1.Property<double>("Latitude")
                                 .HasColumnType("double precision");
 
@@ -2522,6 +2577,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Shared.Models.CompanyStatsDto", b =>
                 {
+                    b.Property<int>("ActiveLoadsCount")
+                        .HasColumnType("integer");
+
                     b.Property<int>("DispatchersCount")
                         .HasColumnType("integer");
 
@@ -2531,10 +2589,19 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<int>("EmployeesCount")
                         .HasColumnType("integer");
 
+                    b.Property<int>("IdleTrucksCount")
+                        .HasColumnType("integer");
+
                     b.Property<double>("LastMonthDistance")
                         .HasColumnType("double precision");
 
                     b.Property<decimal>("LastMonthGross")
+                        .HasColumnType("numeric");
+
+                    b.Property<double>("LastThreeMonthsDistance")
+                        .HasColumnType("double precision");
+
+                    b.Property<decimal>("LastThreeMonthsGross")
                         .HasColumnType("numeric");
 
                     b.Property<double>("LastWeekDistance")
@@ -2543,11 +2610,26 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<decimal>("LastWeekGross")
                         .HasColumnType("numeric");
 
+                    b.Property<double>("LastYearDistance")
+                        .HasColumnType("double precision");
+
+                    b.Property<decimal>("LastYearGross")
+                        .HasColumnType("numeric");
+
                     b.Property<int>("ManagersCount")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("OutstandingInvoiceTotal")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("OverdueInvoiceCount")
                         .HasColumnType("integer");
 
                     b.Property<string>("OwnerName")
                         .HasColumnType("text");
+
+                    b.Property<decimal>("PaymentsReceivedThisWeek")
+                        .HasColumnType("numeric");
 
                     b.Property<double>("ThisMonthDistance")
                         .HasColumnType("double precision");
@@ -2568,6 +2650,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("numeric");
 
                     b.Property<int>("TrucksCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UnassignedLoadsCount")
                         .HasColumnType("integer");
 
                     b.ToTable((string)null);

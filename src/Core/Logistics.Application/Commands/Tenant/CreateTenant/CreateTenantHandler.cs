@@ -2,24 +2,15 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreateTenantHandler : IAppRequestHandler<CreateTenantCommand, Result>
+internal sealed class CreateTenantHandler(
+    ITenantDatabaseService tenantDatabase,
+    IMasterUnitOfWork masterUow)
+    : IAppRequestHandler<CreateTenantCommand, Result>
 {
-    private readonly IMasterUnitOfWork _masterUow;
-    private readonly ITenantDatabaseService _tenantDatabase;
-
-    public CreateTenantHandler(
-        ITenantDatabaseService tenantDatabase,
-        IMasterUnitOfWork masterUow)
-    {
-        _tenantDatabase = tenantDatabase;
-        _masterUow = masterUow;
-    }
-
     public async Task<Result> Handle(CreateTenantCommand req, CancellationToken ct)
     {
         var tenantName = req.Name.Trim().ToLower();
@@ -28,26 +19,26 @@ internal sealed class CreateTenantHandler : IAppRequestHandler<CreateTenantComma
             Name = tenantName,
             CompanyName = req.CompanyName,
             DotNumber = req.DotNumber,
-            CompanyAddress = req.CompanyAddress ?? Address.NullAddress,
+            CompanyAddress = req.CompanyAddress,
             BillingEmail = req.BillingEmail!,
-            ConnectionString = _tenantDatabase.GenerateConnectionString(tenantName)
+            ConnectionString = tenantDatabase.GenerateConnectionString(tenantName)
         };
 
-        var existingTenant = await _masterUow.Repository<Tenant>().GetAsync(i => i.Name == tenant.Name);
+        var existingTenant = await masterUow.Repository<Tenant>().GetAsync(i => i.Name == tenant.Name, ct);
 
         if (existingTenant is not null)
         {
             return Result.Fail($"Tenant name '{tenant.Name}' is already taken, please chose another name");
         }
 
-        var created = await _tenantDatabase.CreateDatabaseAsync(tenant.ConnectionString);
+        var created = await tenantDatabase.CreateDatabaseAsync(tenant.ConnectionString);
         if (!created)
         {
             return Result.Fail("Could not create the tenant's database");
         }
 
-        await _masterUow.Repository<Tenant>().AddAsync(tenant);
-        await _masterUow.SaveChangesAsync();
+        await masterUow.Repository<Tenant>().AddAsync(tenant, ct);
+        await masterUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

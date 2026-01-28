@@ -65,6 +65,7 @@ export type { CreateTruckCommand } from './models/create-truck-command';
 export type { CreateTruckExpenseCommand } from './models/create-truck-expense-command';
 export type { CustomerDto } from './models/customer-dto';
 export type { CustomerDtoPagedResponse } from './models/customer-dto-paged-response';
+export type { CustomerStatus } from './models/customer-status';
 export type { CustomerUserDto } from './models/customer-user-dto';
 export type { DailyGrossDto } from './models/daily-gross-dto';
 export type { DailyGrossesDto } from './models/daily-grosses-dto';

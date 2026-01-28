@@ -1,0 +1,86 @@
+@if (invoices().length === 0) {
+  <div class="py-8 text-center">
+    <i class="pi pi-inbox text-muted mb-3 text-4xl"></i>
+    <p class="text-muted">No invoices found for this customer</p>
+    <p class="text-muted text-sm">Invoices will appear here when created for loads</p>
+  </div>
+} @else {
+  <p-table [value]="invoices()" dataKey="id" [scrollable]="true">
+    <ng-template #header>
+      <tr>
+        <th>Invoice #</th>
+        <th>Status</th>
+        <th>Amount</th>
+        <th>Due Date</th>
+        <th>Created</th>
+        <th style="width: 5rem"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-invoice>
+      <tr class="hover:bg-hover transition-colors duration-150">
+        <td>
+          <a
+            [routerLink]="['/invoices', invoice.id]"
+            class="text-primary font-bold hover:underline"
+          >
+            #{{ invoice.number }}
+          </a>
+          @if (invoice.loadNumber) {
+            <div class="text-muted text-xs">Load #{{ invoice.loadNumber }}</div>
+          }
+        </td>
+        <td>
+          <app-invoice-status-tag [status]="invoice.status" />
+        </td>
+        <td>
+          <span class="font-medium">{{
+            invoice.total?.amount | currency: invoice.total?.currency || "USD"
+          }}</span>
+        </td>
+        <td>
+          @if (invoice.dueDate) {
+            <span class="text-sm">{{ invoice.dueDate | date: "mediumDate" }}</span>
+          } @else {
+            <span class="text-muted">—</span>
+          }
+        </td>
+        <td>
+          @if (invoice.createdDate) {
+            <span class="text-sm">{{ invoice.createdDate | date: "mediumDate" }}</span>
+          } @else {
+            <span class="text-muted">—</span>
+          }
+        </td>
+        <td>
+          <p-button
+            icon="pi pi-eye"
+            [rounded]="true"
+            [text]="true"
+            pTooltip="View invoice"
+            [routerLink]="['/invoices', invoice.id]"
+          />
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="6" class="text-center">
+          <span class="text-muted">No invoices found</span>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  @if (customerId()) {
+    <div class="mt-4 text-right">
+      <p-button
+        label="View All Invoices"
+        [outlined]="true"
+        [routerLink]="['/invoices']"
+        [queryParams]="{ customerId: customerId() }"
+      />
+    </div>
+  }
+}

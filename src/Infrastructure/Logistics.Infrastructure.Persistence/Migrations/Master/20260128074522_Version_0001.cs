@@ -149,12 +149,12 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     ConnectStatus = table.Column<int>(type: "integer", nullable: false),
                     PayoutsEnabled = table.Column<bool>(type: "boolean", nullable: false),
                     ChargesEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    CompanyAddress_City = table.Column<string>(type: "text", nullable: false),
-                    CompanyAddress_Country = table.Column<string>(type: "text", nullable: false),
-                    CompanyAddress_Line1 = table.Column<string>(type: "text", nullable: false),
+                    CompanyAddress_City = table.Column<string>(type: "text", nullable: true),
+                    CompanyAddress_Country = table.Column<string>(type: "text", nullable: true),
+                    CompanyAddress_Line1 = table.Column<string>(type: "text", nullable: true),
                     CompanyAddress_Line2 = table.Column<string>(type: "text", nullable: true),
-                    CompanyAddress_State = table.Column<string>(type: "text", nullable: false),
-                    CompanyAddress_ZipCode = table.Column<string>(type: "text", nullable: false)
+                    CompanyAddress_State = table.Column<string>(type: "text", nullable: true),
+                    CompanyAddress_ZipCode = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

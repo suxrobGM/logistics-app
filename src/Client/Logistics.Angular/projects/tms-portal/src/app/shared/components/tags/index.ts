@@ -1,3 +1,4 @@
+export * from "./customer-status-tag/customer-status-tag";
 export * from "./employee-status-tag/employee-status-tag";
 export * from "./exception-type-tag/exception-type-tag";
 export * from "./expense-status-tag/expense-status-tag";

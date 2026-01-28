@@ -1,0 +1,273 @@
+<!-- Header with actions -->
+<div class="mb-6 flex items-start justify-between">
+  <ui-page-header title="Customer Details" [showAddButton]="false" />
+  <div class="flex gap-2">
+    <p-button icon="pi pi-pencil" label="Edit" [outlined]="true" (click)="openEditDialog()" />
+    <p-button
+      icon="pi pi-arrow-left"
+      label="Back"
+      [routerLink]="['/customers']"
+      [outlined]="true"
+    />
+  </div>
+</div>
+
+@if (store.isLoading()) {
+  <div class="flex justify-center py-16">
+    <p-progress-spinner />
+  </div>
+} @else if (store.customer(); as customer) {
+  <!-- Enhanced Header with Customer Info -->
+  <div class="mb-6">
+    <div class="border-default bg-elevated rounded-lg border p-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <app-customer-avatar [customer]="customer" size="xlarge" />
+          <div>
+            <h2 class="m-0 text-2xl font-bold">{{ customer.name }}</h2>
+            <div class="mt-2 flex items-center gap-2">
+              @if (customer.status) {
+                <app-customer-status-tag [status]="customer.status" />
+              }
+            </div>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="text-muted text-sm">Created</div>
+          <div class="font-medium">{{ customer.createdAt | date: "mediumDate" }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p-card>
+    <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
+      <p-tablist>
+        <p-tab [value]="0">
+          <i class="pi pi-user mr-2"></i>
+          Overview
+        </p-tab>
+        <p-tab [value]="1">
+          <i class="pi pi-file-invoice mr-2"></i>
+          Invoices
+          @if (store.invoicesCount()) {
+            <span class="bg-info/15 text-info ml-1 rounded-full px-2 py-0.5 text-xs">
+              {{ store.invoicesCount() }}
+            </span>
+          }
+        </p-tab>
+        <p-tab [value]="2">
+          <i class="pi pi-box mr-2"></i>
+          Loads
+          @if (store.loadsCount()) {
+            <span class="bg-info/15 text-info ml-1 rounded-full px-2 py-0.5 text-xs">
+              {{ store.loadsCount() }}
+            </span>
+          }
+        </p-tab>
+        <p-tab [value]="3">
+          <i class="pi pi-users mr-2"></i>
+          Portal Users
+          @if (store.portalUsersCount()) {
+            <span class="bg-info/15 text-info ml-1 rounded-full px-2 py-0.5 text-xs">
+              {{ store.portalUsersCount() }}
+            </span>
+          }
+        </p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+        <!-- Overview Tab -->
+        <p-tabpanel [value]="0">
+          <div class="grid grid-cols-1 gap-6 pt-4 lg:grid-cols-2">
+            <!-- Contact Info Card -->
+            <p-card class="border-default border">
+              <ng-template #header>
+                <div class="p-4 pb-0">
+                  <h3 class="m-0 text-lg font-semibold">Contact Information</h3>
+                </div>
+              </ng-template>
+
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <span class="text-muted">Email</span>
+                  @if (customer.email) {
+                    <a
+                      [href]="'mailto:' + customer.email"
+                      class="text-accent font-medium hover:underline"
+                    >
+                      {{ customer.email }}
+                    </a>
+                  } @else {
+                    <span class="text-muted">Not provided</span>
+                  }
+                </div>
+
+                <p-divider />
+
+                <div class="flex items-center justify-between">
+                  <span class="text-muted">Phone</span>
+                  @if (customer.phone) {
+                    <a
+                      [href]="'tel:' + customer.phone"
+                      class="text-accent font-medium hover:underline"
+                    >
+                      {{ customer.phone }}
+                    </a>
+                  } @else {
+                    <span class="text-muted">Not provided</span>
+                  }
+                </div>
+
+                <p-divider />
+
+                <div class="flex items-center justify-between">
+                  <span class="text-muted">Created Date</span>
+                  <span class="font-medium">{{ customer.createdAt | date: "mediumDate" }}</span>
+                </div>
+              </div>
+            </p-card>
+
+            <!-- Address Card -->
+            <p-card class="border-default border">
+              <ng-template #header>
+                <div class="p-4 pb-0">
+                  <h3 class="m-0 text-lg font-semibold">Address</h3>
+                </div>
+              </ng-template>
+
+              @if (customer.address) {
+                <div class="space-y-2">
+                  @if (customer.address.line1) {
+                    <div>{{ customer.address.line1 }}</div>
+                  }
+                  @if (customer.address.line2) {
+                    <div>{{ customer.address.line2 }}</div>
+                  }
+                  <div>
+                    @if (customer.address.city) {
+                      {{ customer.address.city }}
+                      @if (customer.address.state) {
+                        ,
+                      }
+                    }
+                    @if (customer.address.state) {
+                      {{ customer.address.state }}
+                    }
+                    @if (customer.address.zipCode) {
+                      {{ customer.address.zipCode }}
+                    }
+                  </div>
+                  @if (customer.address.country) {
+                    <div>{{ customer.address.country }}</div>
+                  }
+                </div>
+              } @else {
+                <span class="text-muted">No address provided</span>
+              }
+            </p-card>
+          </div>
+
+          <!-- Notes Card -->
+          @if (customer.notes) {
+            <p-card class="border-default mt-6 border">
+              <ng-template #header>
+                <div class="p-4 pb-0">
+                  <h3 class="m-0 text-lg font-semibold">Notes</h3>
+                </div>
+              </ng-template>
+
+              <p class="whitespace-pre-wrap">{{ customer.notes }}</p>
+            </p-card>
+          }
+
+          <!-- Quick Actions Card -->
+          <p-card class="border-default mt-6 border">
+            <ng-template #header>
+              <div class="p-4 pb-0">
+                <h3 class="m-0 text-lg font-semibold">Quick Actions</h3>
+              </div>
+            </ng-template>
+
+            <div class="flex flex-wrap gap-2">
+              <p-button
+                icon="pi pi-plus"
+                label="New Load"
+                [outlined]="true"
+                [routerLink]="['/loads/add']"
+                [queryParams]="{ customerId: id() }"
+              />
+              <p-button
+                icon="pi pi-file-invoice"
+                label="View Invoices"
+                [outlined]="true"
+                [routerLink]="['/invoices']"
+                [queryParams]="{ customerId: id() }"
+              />
+            </div>
+          </p-card>
+        </p-tabpanel>
+
+        <!-- Invoices Tab -->
+        <p-tabpanel [value]="1">
+          <div class="pt-4">
+            <app-customer-invoices-list [invoices]="store.invoices()" [customerId]="id()" />
+          </div>
+        </p-tabpanel>
+
+        <!-- Loads Tab -->
+        <p-tabpanel [value]="2">
+          <div class="pt-4">
+            <app-customer-loads-list [loads]="store.loads()" [customerId]="id()" />
+          </div>
+        </p-tabpanel>
+
+        <!-- Portal Users Tab -->
+        <p-tabpanel [value]="3">
+          <div class="pt-4">
+            <div class="mb-4 flex items-center justify-between">
+              <h3 class="m-0">Portal Users</h3>
+              <p-button icon="pi pi-plus" label="Invite User" [outlined]="true" />
+            </div>
+            @if (store.portalUsers().length) {
+              <div class="space-y-2">
+                @for (user of store.portalUsers(); track user.id) {
+                  <div
+                    class="border-default flex items-center justify-between rounded-lg border p-3"
+                  >
+                    <div>
+                      <div class="font-medium">{{ user.displayName || user.email }}</div>
+                      <div class="text-muted text-sm">{{ user.email }}</div>
+                    </div>
+                    <p-button icon="pi pi-ellipsis-v" [text]="true" [rounded]="true" />
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="text-muted">
+                No portal users have been invited to this customer account yet.
+              </p>
+            }
+          </div>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </p-card>
+} @else {
+  <p-card>
+    <div class="py-16 text-center">
+      <i class="pi pi-exclamation-circle text-muted mb-4 text-4xl"></i>
+      <p class="text-muted">Customer not found</p>
+      <p-button label="Back to Customers" [routerLink]="['/customers']" class="mt-4" />
+    </div>
+  </p-card>
+}
+
+<!-- Edit Dialog -->
+<app-customer-edit-dialog
+  [visible]="store.editDialogVisible()"
+  (visibleChange)="store.closeEditDialog()"
+  [customer]="store.customer()"
+  (saved)="onCustomerSaved()"
+  (deleted)="onDeleteCustomer()"
+/>
