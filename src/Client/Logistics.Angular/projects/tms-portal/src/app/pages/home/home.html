@@ -20,6 +20,15 @@
         />
       </div>
       <p-button
+        icon="pi pi-cog"
+        [rounded]="true"
+        [text]="true"
+        severity="secondary"
+        (click)="showSettingsDialog.set(true)"
+        pTooltip="Customize Dashboard"
+        tooltipPosition="bottom"
+      />
+      <p-button
         label="Quick Actions"
         icon="pi pi-plus"
         [outlined]="true"
@@ -31,48 +40,49 @@
 
   <!-- KPI Cards Row -->
   <div class="animate-stagger mb-6 grid grid-cols-12 gap-4">
-    <ui-stat-card
-      class="col-span-12 sm:col-span-6 lg:col-span-3"
-      icon="pi-dollar"
-      label="Weekly Gross"
-      [value]="(weeklyGross() | currency) ?? '$0'"
-      color="green"
-    />
-    <ui-stat-card
-      class="col-span-12 sm:col-span-6 lg:col-span-3"
-      icon="pi-map"
-      label="Billed Miles"
-      [value]="(weeklyDistance() | distanceUnit: 'mi') ?? '0 mi'"
-      color="blue"
-    />
-    <ui-stat-card
-      class="col-span-12 sm:col-span-6 lg:col-span-3"
-      icon="pi-chart-line"
-      label="Rate Per Mile"
-      [value]="(weeklyRpm() | currency) ?? '$0'"
-      color="purple"
-    />
-    <ui-stat-card
-      class="col-span-12 sm:col-span-6 lg:col-span-3"
-      icon="pi-calendar"
-      label="Today's Gross"
-      [value]="(todayGross() | currency) ?? '$0'"
-      color="orange"
-    />
+    @if (isPanelVisible('kpi-weekly-gross')) {
+      <ui-stat-card
+        [class]="getPanelClass('kpi-weekly-gross')"
+        icon="pi-dollar"
+        label="Weekly Gross"
+        [value]="(weeklyGross() | currency) ?? '$0'"
+        color="green"
+      />
+    }
+    @if (isPanelVisible('kpi-billed-miles')) {
+      <ui-stat-card
+        [class]="getPanelClass('kpi-billed-miles')"
+        icon="pi-map"
+        label="Billed Miles"
+        [value]="(weeklyDistance() | distanceUnit: 'mi') ?? '0 mi'"
+        color="blue"
+      />
+    }
+    @if (isPanelVisible('kpi-rate-per-mile')) {
+      <ui-stat-card
+        [class]="getPanelClass('kpi-rate-per-mile')"
+        icon="pi-chart-line"
+        label="Rate Per Mile"
+        [value]="(weeklyRpm() | currency) ?? '$0'"
+        color="purple"
+      />
+    }
+    @if (isPanelVisible('kpi-today-gross')) {
+      <ui-stat-card
+        [class]="getPanelClass('kpi-today-gross')"
+        icon="pi-calendar"
+        label="Today's Gross"
+        [value]="(todayGross() | currency) ?? '$0'"
+        color="orange"
+      />
+    }
   </div>
 
-  <!-- Main Content Row -->
-  <div class="mb-6 grid grid-cols-12 gap-4">
-    <!-- My Schedule -->
-    <app-my-schedule
-      class="col-span-12 lg:col-span-4"
-      [loads]="loads()"
-      [isLoading]="isLoadingLoadsData()"
-    />
-
-    <!-- Active Loads Table -->
-    <div class="col-span-12 lg:col-span-8">
-      <p-card class="h-full">
+  <!-- Active Loads Table -->
+  @if (isPanelVisible('active-loads')) {
+    <div class="mb-6 grid grid-cols-12 gap-4">
+      <div [class]="getPanelClass('active-loads')">
+        <p-card class="h-full">
         <ng-template #header>
           <div class="flex items-center justify-between py-3 pr-2 pl-4">
             <div class="flex items-center gap-2">
@@ -149,40 +159,48 @@
           </ng-template>
         </p-table>
       </p-card>
+      </div>
     </div>
-  </div>
+  }
 
-  <!-- Second Row -->
+  <!-- Recent Activity + Fleet Map Row -->
   <div class="mb-6 grid grid-cols-12 gap-4">
-    <!-- Recent Activity -->
-    <app-recent-activity
-      class="col-span-12 lg:col-span-4"
-      [loads]="recentLoads()"
-      [isLoading]="isLoadingLoadsData()"
-    />
+    @if (isPanelVisible('recent-activity')) {
+      <!-- Recent Activity -->
+      <app-recent-activity
+        [class]="getPanelClass('recent-activity')"
+        [loads]="recentLoads()"
+        [isLoading]="isLoadingLoadsData()"
+      />
+    }
 
-    <!-- Notifications -->
-    <div class="col-span-12 lg:col-span-4">
-      <app-notifications-panel height="400px" />
-    </div>
-
-    <!-- Fleet Map -->
-    <div class="col-span-12 lg:col-span-4">
-      <p-card class="h-full">
-        <ng-template #header>
-          <div class="flex items-center gap-2 py-3 pl-4">
-            <i class="pi pi-map-marker text-accent"></i>
-            <h4 class="mb-0">Fleet Overview</h4>
-          </div>
-          <p-divider class="m-0" />
-        </ng-template>
-        <app-trucks-map height="340px" />
-      </p-card>
-    </div>
+    @if (isPanelVisible('fleet-map')) {
+      <!-- Fleet Map (Expanded) -->
+      <div [class]="getPanelClass('fleet-map')">
+        <p-card class="h-full">
+          <ng-template #header>
+            <div class="flex items-center justify-between py-3 pr-2 pl-4">
+              <div class="flex items-center gap-2">
+                <i class="pi pi-map-marker text-accent"></i>
+                <h4 class="mb-0">Fleet Overview</h4>
+              </div>
+              <p-button label="View Full Map" [text]="true" [routerLink]="['/trucks']" icon="pi pi-external-link" iconPos="right" />
+            </div>
+            <p-divider class="m-0" />
+          </ng-template>
+          <app-trucks-map height="450px" />
+        </p-card>
+      </div>
+    }
   </div>
 
   <!-- Daily Gross Chart -->
-  <div class="grid grid-cols-12 gap-4">
-    <app-daily-gross-chart class="col-span-12" (dataLoaded)="onChartDataLoaded($event)" />
-  </div>
+  @if (isPanelVisible('daily-gross-chart')) {
+    <div class="grid grid-cols-12 gap-4">
+      <app-daily-gross-chart [class]="getPanelClass('daily-gross-chart')" (dataLoaded)="onChartDataLoaded($event)" />
+    </div>
+  }
 </div>
+
+<!-- Dashboard Settings Dialog -->
+<app-dashboard-settings-dialog [(visible)]="showSettingsDialog" />

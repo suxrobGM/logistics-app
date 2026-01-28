@@ -32,6 +32,9 @@
 
   <!-- Footer Section -->
   <div class="sidebar-footer" [class.sidebar-footer-collapsed]="!isOpened()">
+    <!-- Notifications -->
+    <app-notification-bell [expanded]="isOpened()" />
+
     <!-- Theme Toggle -->
     <app-theme-toggle [showLabel]="isOpened()" />
 

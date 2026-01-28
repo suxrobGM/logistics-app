@@ -100,6 +100,14 @@ export const appRoutes: Routes = [
     },
   },
   {
+    path: "notifications",
+    loadChildren: () =>
+      import("./pages/notifications/notifications.routes").then((m) => m.notificationsRoutes),
+    data: {
+      breadcrumb: "Notifications",
+    },
+  },
+  {
     path: "inspections",
     loadChildren: () =>
       import("./pages/inspections/inspection.routes").then((m) => m.inspectionRoutes),

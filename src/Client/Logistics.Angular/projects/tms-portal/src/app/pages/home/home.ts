@@ -16,14 +16,14 @@ import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "@/core/auth";
+import { DashboardSettingsService, type PanelType } from "@/core/services";
 import { TrucksMap } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
 import {
   DailyGrossChartComponent,
   type DailyGrossChartData,
+  DashboardSettingsDialog,
   LoadProgressBarComponent,
-  MyScheduleComponent,
-  NotificationsPanelComponent,
   RecentActivityComponent,
 } from "./components";
 
@@ -42,15 +42,14 @@ import {
     DatePipe,
     DistanceUnitPipe,
     TrucksMap,
-    NotificationsPanelComponent,
     LoadProgressBarComponent,
-    MyScheduleComponent,
     RecentActivityComponent,
     DailyGrossChartComponent,
     DividerModule,
     BadgeModule,
     MenuModule,
     StatCard,
+    DashboardSettingsDialog,
   ],
   providers: [AddressPipe],
 })
@@ -58,7 +57,9 @@ export class HomeComponent implements OnInit {
   private readonly api = inject(Api);
   private readonly addressPipe = inject(AddressPipe);
   private readonly authService = inject(AuthService);
+  private readonly dashboardSettings = inject(DashboardSettingsService);
 
+  protected readonly showSettingsDialog = signal(false);
   protected readonly todayGross = signal(0);
   protected readonly weeklyGross = signal(0);
   protected readonly weeklyDistance = signal(0);
@@ -131,6 +132,14 @@ export class HomeComponent implements OnInit {
     this.lastUpdated.set(new Date());
     this.fetchActiveLoads();
     this.fetchRecentLoads();
+  }
+
+  protected isPanelVisible(panelId: PanelType): boolean {
+    return this.dashboardSettings.isPanelVisible(panelId);
+  }
+
+  protected getPanelClass(panelId: PanelType): string {
+    return this.dashboardSettings.getPanelClass(panelId);
   }
 
   protected onChartDataLoaded(data: DailyGrossChartData): void {

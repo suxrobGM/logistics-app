@@ -1,0 +1,172 @@
+<div class="mx-auto max-w-225">
+  <!-- Page Header -->
+  <div
+    class="mb-6 flex flex-wrap items-center justify-between gap-4 max-sm:flex-col max-sm:items-start"
+  >
+    <div class="flex items-center gap-3">
+      <h1 class="text-primary m-0 text-2xl font-semibold">Notifications</h1>
+      @if (unreadCount() > 0) {
+        <p-tag [value]="unreadCount() + ' unread'" severity="info" [rounded]="true" />
+      }
+    </div>
+    <div class="flex items-center gap-2">
+      @if (unreadCount() > 0) {
+        <p-button
+          label="Mark all as read"
+          icon="pi pi-check-circle"
+          [text]="true"
+          (click)="markAllAsRead()"
+        />
+      }
+      <p-button
+        icon="pi pi-refresh"
+        [rounded]="true"
+        [text]="true"
+        (click)="fetchNotifications()"
+        pTooltip="Refresh"
+        tooltipPosition="bottom"
+      />
+    </div>
+  </div>
+
+  <!-- Filters & Search -->
+  <div
+    class="mb-4 flex flex-wrap items-center justify-between gap-4 max-sm:flex-col max-sm:items-stretch"
+  >
+    <p-selectButton
+      [options]="filterOptions"
+      [(ngModel)]="filterType"
+      optionLabel="label"
+      optionValue="value"
+      size="small"
+    />
+
+    <ui-search-input
+      placeholder="Search notifications..."
+      class="w-64 max-sm:w-full"
+      (searchChange)="searchQuery.set($event)"
+    />
+  </div>
+
+  <!-- Bulk Actions -->
+  @if (hasSelection()) {
+    <div class="bg-accent/10 mb-4 flex items-center gap-3 rounded-lg px-4 py-3">
+      <span class="text-accent text-sm font-medium">{{ selectedIds().size }} selected</span>
+      <p-button
+        label="Mark as read"
+        icon="pi pi-check"
+        size="small"
+        [outlined]="true"
+        (click)="markSelectedAsRead()"
+      />
+      <p-button
+        label="Clear selection"
+        icon="pi pi-times"
+        size="small"
+        [text]="true"
+        severity="secondary"
+        (click)="clearSelection()"
+      />
+    </div>
+  }
+
+  <!-- Notifications List -->
+  <p-card>
+    @if (isLoading()) {
+      <div class="flex items-center justify-center p-16">
+        <p-progress-spinner strokeWidth="4" [style]="{ width: '50px', height: '50px' }" />
+      </div>
+    } @else if (filteredNotifications().length === 0) {
+      <div class="flex flex-col items-center justify-center px-8 py-16 text-center">
+        <i class="pi pi-bell-slash text-muted mb-4 text-5xl"></i>
+        <h3 class="text-primary m-0 mb-2 text-lg font-semibold">No notifications</h3>
+        <p class="text-muted m-0 text-sm">
+          @if (searchQuery()) {
+            No notifications match your search.
+          } @else if (filterType() === "unread") {
+            You're all caught up!
+          } @else if (filterType() === "read") {
+            No read notifications found.
+          } @else {
+            You don't have any notifications yet.
+          }
+        </p>
+      </div>
+    } @else {
+      <!-- Select All Header -->
+      <div class="flex items-center justify-between px-4 py-3">
+        <span
+          class="text-secondary flex cursor-pointer items-center gap-2 text-sm"
+          tabindex="0"
+          role="checkbox"
+          [attr.aria-checked]="allSelected()"
+          (click)="toggleSelectAll()"
+          (keydown.enter)="toggleSelectAll()"
+        >
+          <p-checkbox [ngModel]="allSelected()" [binary]="true" />
+          <span>Select all</span>
+        </span>
+        <span class="text-muted text-xs">{{ filteredNotifications().length }} notifications</span>
+      </div>
+
+      <p-divider class="m-0" />
+
+      <!-- Notification Items -->
+      <div class="flex flex-col">
+        @for (notification of filteredNotifications(); track notification.id) {
+          <div
+            class="notification-item border-subtle hover:bg-hover flex items-start gap-3 border-b p-4 transition-colors last:border-b-0"
+            [class.unread]="!notification.isRead"
+            [class.selected]="isSelected(notification)"
+          >
+            <div class="pt-0.5">
+              <p-checkbox
+                [ngModel]="isSelected(notification)"
+                (ngModelChange)="toggleSelection(notification)"
+                [binary]="true"
+              />
+            </div>
+
+            <div
+              class="min-w-0 flex-1 cursor-pointer"
+              tabindex="0"
+              role="button"
+              (click)="markAsRead(notification)"
+              (keydown.enter)="markAsRead(notification)"
+            >
+              <div class="mb-1 flex items-start justify-between gap-4 max-sm:flex-col max-sm:gap-1">
+                <h4 class="text-primary m-0 flex items-center gap-2 text-sm font-semibold">
+                  @if (!notification.isRead) {
+                    <span class="bg-accent h-2 w-2 shrink-0 rounded-full"></span>
+                  }
+                  {{ notification.title }}
+                </h4>
+                <span class="text-muted shrink-0 text-xs whitespace-nowrap">
+                  {{ notification.createdDate | relativeTime }}
+                </span>
+              </div>
+              <p class="text-secondary m-0 mb-2 text-sm leading-normal">
+                {{ notification.message }}
+              </p>
+              <div
+                class="flex items-center justify-between gap-4 max-sm:flex-col max-sm:items-start max-sm:gap-2"
+              >
+                <span class="text-muted text-xs">
+                  {{ notification.createdDate | date: "MMM d, yyyy 'at' h:mm a" }}
+                </span>
+                @if (!notification.isRead) {
+                  <p-button
+                    label="Mark as read"
+                    size="small"
+                    [text]="true"
+                    (click)="markAsRead(notification); $event.stopPropagation()"
+                  />
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </p-card>
+</div>

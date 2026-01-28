@@ -9,6 +9,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "@/core/auth";
 import { TenantService } from "@/core/services";
 import { environment } from "@/env";
+import { NotificationBell } from "../notification-bell";
 import { PanelMenu } from "../panel-menu";
 import { ThemeToggle } from "../theme-toggle/theme-toggle";
 import { sidebarItems } from "./sidebar-items";
@@ -25,6 +26,7 @@ import { sidebarItems } from "./sidebar-items";
     PanelMenuModule,
     PanelMenu,
     ThemeToggle,
+    NotificationBell,
   ],
 })
 export class Sidebar {

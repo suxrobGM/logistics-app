@@ -1,0 +1,86 @@
+<button
+  class="notification-bell border-subtle text-secondary flex w-full cursor-pointer items-center gap-3 rounded-lg border bg-transparent px-4 py-2.5 text-sm"
+  (click)="togglePopover($event)"
+  [pTooltip]="expanded() ? '' : 'Notifications'"
+  tooltipPosition="right"
+  aria-label="Open notifications"
+  type="button"
+>
+  <p-overlaybadge [value]="unreadCount() > 0 ? unreadCount().toString() : null" severity="danger">
+    <i class="pi pi-bell text-lg"></i>
+  </p-overlaybadge>
+  @if (expanded()) {
+    <span class="font-medium">Notifications</span>
+  }
+</button>
+
+<p-popover #popover [style]="{ width: '380px' }" appendTo="body">
+  <div class="flex flex-col">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-4 py-3">
+      <h4 class="text-primary m-0 text-[1rem] font-semibold">Notifications</h4>
+      @if (unreadCount() > 0) {
+        <button class="mark-all-read" (click)="markAllAsRead()" type="button">
+          Mark all as read
+        </button>
+      }
+    </div>
+
+    <p-divider class="m-0" />
+
+    <!-- Content -->
+    <div class="max-h-100 overflow-y-auto">
+      @if (isLoading()) {
+        <div class="flex items-center justify-center p-8">
+          <p-progress-spinner strokeWidth="4" [style]="{ width: '40px', height: '40px' }" />
+        </div>
+      } @else if (displayedNotifications().length === 0) {
+        <div class="text-muted flex flex-col items-center justify-center p-8">
+          <i class="pi pi-bell-slash mb-2 text-3xl"></i>
+          <p class="m-0 text-sm">No notifications</p>
+        </div>
+      } @else {
+        @for (notification of displayedNotifications(); track notification.id) {
+          <div
+            class="notification-item cursor-pointer border-l-3 border-transparent px-4 py-3"
+            [class.unread]="!notification.isRead"
+            [class.expanded]="selectedNotification()?.id === notification.id"
+            (click)="onNotificationClick(notification)"
+            role="button"
+            tabindex="0"
+          >
+            <div class="mb-1 flex items-start justify-between gap-2">
+              <span class="text-primary text-sm leading-tight font-semibold">{{
+                notification.title
+              }}</span>
+              <span class="text-muted shrink-0 text-xs whitespace-nowrap">{{
+                notification.createdDate | relativeTime
+              }}</span>
+            </div>
+            <p
+              class="notification-message text-secondary m-0 text-[0.8125rem] leading-snug"
+              [class.truncated]="selectedNotification()?.id !== notification.id"
+            >
+              {{ notification.message }}
+            </p>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Footer -->
+    @if (notifications().length > 0) {
+      <p-divider class="m-0" />
+      <div class="px-4 py-3">
+        <a
+          routerLink="/notifications"
+          class="view-all-link text-accent flex items-center justify-center gap-2 rounded p-2 text-sm font-medium no-underline"
+          (click)="popover.hide()"
+        >
+          View all notifications
+          <i class="pi pi-arrow-right text-xs"></i>
+        </a>
+      </div>
+    }
+  </div>
+</p-popover>

@@ -4,11 +4,12 @@ import { toSignal } from "@angular/core/rxjs-interop";
 import { filter, map, startWith } from "rxjs";
 import { ButtonModule } from "primeng/button";
 import { LayoutService } from "@/core/services/layout.service";
+import { NotificationBell } from "../notification-bell";
 
 @Component({
   selector: "app-mobile-header",
   templateUrl: "./mobile-header.html",
-  imports: [ButtonModule, RouterLink],
+  imports: [ButtonModule, RouterLink, NotificationBell],
 })
 export class MobileHeader {
   private readonly layoutService = inject(LayoutService);
