@@ -6,20 +6,14 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateTruckHandler : IAppRequestHandler<UpdateTruckCommand, Result>
+internal sealed class UpdateTruckHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<UpdateTruckCommand, Result>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public UpdateTruckHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
 
     public async Task<Result> Handle(
         UpdateTruckCommand req, CancellationToken ct)
     {
-        var truckRepository = _tenantUow.Repository<Truck>();
-        var truck = await truckRepository.GetByIdAsync(req.Id);
+        var truckRepository = tenantUow.Repository<Truck>();
+        var truck = await truckRepository.GetByIdAsync(req.Id, ct);
 
         if (truck is null)
         {
@@ -47,8 +41,9 @@ internal sealed class UpdateTruckHandler : IAppRequestHandler<UpdateTruckCommand
         truck.Number = PropertyUpdater.UpdateIfChanged(req.TruckNumber, truck.Number);
         truck.Type = PropertyUpdater.UpdateIfChanged(req.TruckType, truck.Type);
         truck.Status = PropertyUpdater.UpdateIfChanged(req.TruckStatus, truck.Status);
+        truck.VehicleCapacity = PropertyUpdater.UpdateIfChanged(req.VehicleCapacity, truck.VehicleCapacity);
 
-        await _tenantUow.SaveChangesAsync();
+        await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 
@@ -78,7 +73,7 @@ internal sealed class UpdateTruckHandler : IAppRequestHandler<UpdateTruckCommand
             return null;
         }
 
-        var driver = await _tenantUow.Repository<Employee>().GetByIdAsync(newDriverId.Value);
+        var driver = await tenantUow.Repository<Employee>().GetByIdAsync(newDriverId.Value);
         if (driver is null)
         {
             return Result.Fail($"Could not find a driver with ID {newDriverId}");

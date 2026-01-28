@@ -1,0 +1,27 @@
+@if (providerInfo()) {
+  <span
+    class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium"
+    [class]="
+      isConnected()
+        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+        : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+    "
+    [pTooltip]="statusText() + (lastSyncText() ? ' • Last sync: ' + lastSyncText() : '')"
+  >
+    <i [class]="providerInfo()!.icon + ' text-xs ' + (isConnected() ? 'text-green-600' : 'text-red-500')"></i>
+    {{ providerInfo()!.label }}
+    @if (isConnected()) {
+      <i class="pi pi-check-circle text-xs"></i>
+    } @else {
+      <i class="pi pi-times-circle text-xs"></i>
+    }
+  </span>
+} @else {
+  <span
+    class="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+    pTooltip="No ELD provider configured"
+  >
+    <i class="pi pi-wifi text-xs"></i>
+    No ELD
+  </span>
+}

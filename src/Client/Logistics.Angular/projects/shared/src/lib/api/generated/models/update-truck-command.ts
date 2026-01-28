@@ -10,4 +10,5 @@ export interface UpdateTruckCommand {
   truckNumber?: string | null;
   truckStatus?: TruckStatus;
   truckType?: TruckType;
+  vehicleCapacity?: number | null;
 }

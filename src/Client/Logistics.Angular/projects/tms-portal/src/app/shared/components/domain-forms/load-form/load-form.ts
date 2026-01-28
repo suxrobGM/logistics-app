@@ -75,7 +75,7 @@ export interface LoadFormValue {
     DividerModule,
   ],
 })
-export class LoadFormComponent implements OnInit {
+export class LoadForm implements OnInit {
   protected readonly loadTypes = loadTypeOptions;
   protected readonly loadStatuses = loadStatusOptions;
   private readonly dummyLocation: GeoPoint = { longitude: 0, latitude: 0 };

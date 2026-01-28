@@ -21,7 +21,7 @@ bun run lint               # Lint code
 | `tms-portal`      | 7003 | `app-` |
 | `customer-portal` | 7004 | `cp-`  |
 | `website`         | 7005 | `web-` |
-| `shared`          | N/A  | N/A    |
+| `shared`          | N/A  | `ui-`  |
 
 ## Key Patterns
 

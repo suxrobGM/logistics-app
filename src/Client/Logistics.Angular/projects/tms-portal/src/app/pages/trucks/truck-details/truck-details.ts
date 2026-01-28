@@ -1,16 +1,38 @@
 import { CommonModule, CurrencyPipe } from "@angular/common";
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { Api, getTruckById } from "@logistics/shared/api";
-import type { DailyGrossesDto, MonthlyGrossesDto, TruckDto } from "@logistics/shared/api";
+import { Api, getDocuments, getTruckById } from "@logistics/shared/api";
+import type {
+  DailyGrossesDto,
+  DocumentDto,
+  DocumentType,
+  MonthlyGrossesDto,
+  TruckDto,
+} from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
+import { AddressPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { SkeletonModule } from "primeng/skeleton";
+import { DividerModule } from "primeng/divider";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { TabsModule } from "primeng/tabs";
 import { TooltipModule } from "primeng/tooltip";
-import { type BarChartDrawnEvent, GeolocationMap, GrossBarchart } from "@/shared/components";
+import {
+  type BarChartDrawnEvent,
+  DocumentManagerComponent,
+  GeolocationMap,
+  GrossBarchart,
+  PageHeader,
+  TruckStatusTag,
+  TruckTypeTag,
+} from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
-import { type LineChartDrawnEvent, TruckGrossLinechart } from "../components";
+import {
+  DocumentStatusOverview,
+  type LineChartDrawnEvent,
+  TruckGrossLinechart,
+  TruckLoadsList,
+} from "../components";
 
 @Component({
   selector: "app-truck-details",
@@ -21,13 +43,22 @@ import { type LineChartDrawnEvent, TruckGrossLinechart } from "../components";
     ButtonModule,
     CardModule,
     TooltipModule,
-    SkeletonModule,
+    TabsModule,
+    DividerModule,
+    ProgressSpinnerModule,
     RouterLink,
     CurrencyPipe,
+    AddressPipe,
     DistanceUnitPipe,
     GeolocationMap,
     TruckGrossLinechart,
     GrossBarchart,
+    PageHeader,
+    TruckStatusTag,
+    TruckTypeTag,
+    DocumentManagerComponent,
+    TruckLoadsList,
+    DocumentStatusOverview,
   ],
 })
 export class TruckDetailsComponent implements OnInit {
@@ -41,9 +72,28 @@ export class TruckDetailsComponent implements OnInit {
   protected readonly rpmCurrent = signal(0);
   protected readonly rpmAllTime = signal(0);
   protected readonly truckLocations = signal<TruckGeolocationDto[]>([]);
+  protected readonly documents = signal<DocumentDto[]>([]);
+  protected readonly activeTab = signal(0);
+
+  protected readonly truckDocTypes: DocumentType[] = [
+    "vehicle_registration",
+    "insurance_certificate",
+    "dot_inspection",
+    "title_certificate",
+    "lease_agreement",
+    "maintenance_record",
+    "annual_inspection",
+    "photo",
+    "other",
+  ];
 
   ngOnInit(): void {
     this.fetchTruck();
+    this.fetchDocuments();
+  }
+
+  onTabChange(index: unknown): void {
+    this.activeTab.set(index as number);
   }
 
   onLineChartDrawn(event: LineChartDrawnEvent): void {
@@ -82,5 +132,21 @@ export class TruckDetailsComponent implements OnInit {
     }
 
     this.isLoading.set(false);
+  }
+
+  private async fetchDocuments(): Promise<void> {
+    const id = this.id();
+    if (!id) {
+      return;
+    }
+
+    const docs = await this.api.invoke(getDocuments, {
+      OwnerType: "truck",
+      OwnerId: id,
+    });
+
+    if (docs) {
+      this.documents.set(docs);
+    }
   }
 }

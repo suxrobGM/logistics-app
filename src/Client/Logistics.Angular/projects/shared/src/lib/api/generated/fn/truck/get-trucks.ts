@@ -8,9 +8,13 @@ import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import type { TruckDtoPagedResponse } from '../../models/truck-dto-paged-response';
+import type { TruckStatus } from '../../models/truck-status';
+import type { TruckType } from '../../models/truck-type';
 
 export interface GetTrucks$Params {
   IncludeLoads?: boolean;
+  Statuses?: Array<TruckStatus>;
+  Types?: Array<TruckType>;
   Search?: string;
   OrderBy?: string;
   Page?: number;
@@ -21,6 +25,8 @@ export function getTrucks(http: HttpClient, rootUrl: string, params?: GetTrucks$
   const rb = new RequestBuilder(rootUrl, getTrucks.PATH, 'get');
   if (params) {
     rb.query('IncludeLoads', params.IncludeLoads, {});
+    rb.query('Statuses', params.Statuses, {});
+    rb.query('Types', params.Types, {});
     rb.query('Search', params.Search, {});
     rb.query('OrderBy', params.OrderBy, {});
     rb.query('Page', params.Page, {});

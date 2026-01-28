@@ -1,0 +1,34 @@
+<div class="border-default bg-elevated rounded-lg border">
+  <!-- Map Header -->
+  <div class="border-default flex items-center justify-between border-b p-3">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-map text-primary"></i>
+      <span class="font-medium">Fleet Map</span>
+    </div>
+    <div class="flex items-center gap-3 text-sm">
+      @if (trucksWithLocation() > 0) {
+        <span class="text-muted">
+          <i class="pi pi-map-marker text-success mr-1"></i>
+          {{ trucksWithLocation() }} tracked
+        </span>
+      }
+      @if (trucksWithoutLocation() > 0) {
+        <span class="text-muted">
+          <i class="pi pi-question-circle text-warning mr-1"></i>
+          {{ trucksWithoutLocation() }} no location
+        </span>
+      }
+    </div>
+  </div>
+
+  <!-- Map Container -->
+  <div class="relative h-125">
+    @if (isLoading()) {
+      <div class="bg-subtle absolute inset-0 flex items-center justify-center">
+        <i class="pi pi-spin pi-spinner text-4xl"></i>
+      </div>
+    } @else {
+      <app-geolocation-map [geolocationData]="truckLocations()" [zoom]="4" height="500px" />
+    }
+  </div>
+</div>

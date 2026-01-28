@@ -1,168 +1,101 @@
 import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from "@angular/forms";
-import { Router, RouterLink } from "@angular/router";
-import {
-  Api,
-  createTruck,
-  deleteTruck,
-  getEmployees,
-  getTruckById,
-  updateTruck,
-} from "@logistics/shared/api";
-import {
-  type CreateTruckCommand,
-  type EmployeeDto,
-  type TruckStatus,
-  type TruckType,
-  type UpdateTruckCommand,
-} from "@logistics/shared/api";
-import { truckStatusOptions, truckTypeOptions } from "@logistics/shared/api/enums";
-import { AutoCompleteModule } from "primeng/autocomplete";
-import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
+import { Router } from "@angular/router";
+import { Api, createTruck, deleteTruck, getTruckById, updateTruck } from "@logistics/shared/api";
+import type { CreateTruckCommand, TruckDto, UpdateTruckCommand } from "@logistics/shared/api";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
-import { LabeledField } from "@/shared/components";
+import { PageHeader } from "@/shared/components";
+import { TruckForm, type TruckFormData } from "../components";
 
 @Component({
   selector: "app-truck-edit",
   templateUrl: "./truck-edit.html",
-  imports: [
-    ToastModule,
-    ConfirmDialogModule,
-    CardModule,
-    ProgressSpinnerModule,
-    FormsModule,
-    ReactiveFormsModule,
-    AutoCompleteModule,
-    ButtonModule,
-    RouterLink,
-    LabeledField,
-    InputTextModule,
-    SelectModule,
-  ],
+  imports: [ToastModule, ConfirmDialogModule, ProgressSpinnerModule, PageHeader, TruckForm],
 })
-export class TruckEditComponent implements OnInit {
-  protected readonly truckTypes = truckTypeOptions;
-  protected readonly truckStatuses = truckStatusOptions;
-
+export class TruckEdit implements OnInit {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
-  protected readonly id = input<string | null>(null);
+  public readonly id = input<string | null>(null);
+  protected readonly truck = signal<TruckDto | null>(null);
   protected readonly isLoading = signal(false);
-  protected readonly suggestedDrivers = signal<EmployeeDto[]>([]);
-  protected readonly title = computed(() => (this.id() ? "Edit a truck" : "Add a new truck"));
 
-  protected readonly form = new FormGroup({
-    truckNumber: new FormControl<string>("", {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
-    truckType: new FormControl<TruckType>("freight_truck", {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
-    truckStatus: new FormControl<TruckStatus>("available", {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
-    mainDriver: new FormControl<EmployeeDto | null>(null),
-    secondaryDriver: new FormControl<EmployeeDto | null>(null),
-  });
+  protected readonly mode = computed(() => (this.id() ? "edit" : "create") as "create" | "edit");
+  protected readonly pageTitle = computed(() =>
+    this.id() ? `Edit Truck #${this.truck()?.number ?? ""}` : "Add New Truck",
+  );
 
   ngOnInit(): void {
     const id = this.id();
-
     if (id) {
       this.fetchTruck(id);
     }
   }
 
-  protected async searchDriver(event: { query: string }): Promise<void> {
-    const result = await this.api.invoke(getEmployees, {
-      Search: event.query,
-      Role: "Driver",
-    });
-    if (result.items) {
-      this.suggestedDrivers.set(result.items);
-    }
-  }
-
-  protected submit(): void {
+  protected async onSave(data: TruckFormData): Promise<void> {
     if (this.id()) {
-      this.updateTruck();
+      await this.updateTruck(data);
     } else {
-      this.createTruck();
+      await this.createTruck(data);
     }
   }
 
-  protected confirmToDelete(): void {
-    this.toastService.confirm({
-      message: "Are you sure that you want to delete this truck?",
-      accept: () => this.deleteTruck(),
-    });
+  protected async onRemove(): Promise<void> {
+    await this.deleteTruck();
   }
 
   private async fetchTruck(id: string): Promise<void> {
-    const truck = await this.api.invoke(getTruckById, { truckOrDriverId: id });
-    if (truck) {
-      this.form.patchValue({
-        truckNumber: truck.number ?? undefined,
-        truckStatus: truck.status,
-        truckType: truck.type,
-        mainDriver: truck.mainDriver,
-        secondaryDriver: truck.secondaryDriver,
-      });
+    this.isLoading.set(true);
+    try {
+      const truck = await this.api.invoke(getTruckById, { truckOrDriverId: id });
+      this.truck.set(truck);
+    } finally {
+      this.isLoading.set(false);
     }
   }
 
-  private async createTruck(): Promise<void> {
+  private async createTruck(data: TruckFormData): Promise<void> {
     this.isLoading.set(true);
+    try {
+      const command: CreateTruckCommand = {
+        truckNumber: data.truckNumber,
+        truckType: data.truckType,
+        mainDriverId: data.mainDriver?.id ?? undefined,
+        vehicleCapacity: data.vehicleCapacity ?? undefined,
+      };
 
-    const command: CreateTruckCommand = {
-      truckNumber: this.form.value.truckNumber!,
-      truckType: this.form.value.truckType!,
-      mainDriverId: this.form.value.mainDriver?.id ?? undefined,
-    };
-
-    await this.api.invoke(createTruck, { body: command });
-    this.toastService.showSuccess("A new truck has been created successfully");
-    this.router.navigateByUrl("/trucks");
-
-    this.isLoading.set(false);
+      await this.api.invoke(createTruck, { body: command });
+      this.toastService.showSuccess("Truck has been created successfully");
+      this.router.navigateByUrl("/trucks");
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
-  private async updateTruck(): Promise<void> {
+  private async updateTruck(data: TruckFormData): Promise<void> {
     this.isLoading.set(true);
+    try {
+      const command: UpdateTruckCommand = {
+        id: this.id()!,
+        truckNumber: data.truckNumber,
+        truckType: data.truckType,
+        truckStatus: data.truckStatus,
+        mainDriverId: data.mainDriver?.id,
+        secondaryDriverId: data.secondaryDriver?.id,
+        vehicleCapacity: data.vehicleCapacity,
+      };
 
-    const updateTruckCommand: UpdateTruckCommand = {
-      id: this.id()!,
-      truckNumber: this.form.value.truckNumber,
-      truckType: this.form.value.truckType,
-      truckStatus: this.form.value.truckStatus,
-      mainDriverId: this.form.value.mainDriver?.id,
-      secondaryDriverId: this.form.value.secondaryDriver?.id,
-    };
-
-    await this.api.invoke(updateTruck, {
-      id: this.id()!,
-      body: updateTruckCommand,
-    });
-    this.toastService.showSuccess("Truck has been updated successfully");
-
-    this.isLoading.set(false);
+      await this.api.invoke(updateTruck, {
+        id: this.id()!,
+        body: command,
+      });
+      this.toastService.showSuccess("Truck has been updated successfully");
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   private async deleteTruck(): Promise<void> {
@@ -171,10 +104,12 @@ export class TruckEditComponent implements OnInit {
     }
 
     this.isLoading.set(true);
-    await this.api.invoke(deleteTruck, { id: this.id()! });
-    this.toastService.showSuccess("A truck has been deleted successfully");
-    this.router.navigateByUrl("/trucks");
-
-    this.isLoading.set(false);
+    try {
+      await this.api.invoke(deleteTruck, { id: this.id()! });
+      this.toastService.showSuccess("Truck has been deleted successfully");
+      this.router.navigateByUrl("/trucks");
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 }

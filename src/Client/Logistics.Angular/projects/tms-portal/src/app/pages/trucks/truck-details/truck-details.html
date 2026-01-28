@@ -1,114 +1,252 @@
-<div class="flex items-center gap-2">
-  <h1>Truck Details</h1>
-  <p-button
-    icon="pi pi-file"
-    [routerLink]="['/trucks', id(), 'documents']"
-    [outlined]="true"
-    size="large"
-    [rounded]="true"
-    [text]="true"
-    pTooltip="Truck Documents"
-  />
-</div>
-
-<div class="mt-4 grid grid-cols-12 gap-3">
-  <p-card class="col-span-12 sm:col-span-6">
-    @if (isLoading()) {
-      <div class="mb-4 grid grid-cols-12">
-        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
-          <p-skeleton class="my-2" height="3rem" />
-        </div>
-        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
-          <p-skeleton class="my-2" height="3rem" />
-        </div>
-      </div>
-
-      <div class="mb-4 grid grid-cols-12">
-        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
-          <p-skeleton class="my-2" height="3rem" />
-        </div>
-        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
-          <p-skeleton class="my-2" height="3rem" />
-        </div>
-      </div>
-
-      <div class="mb-4 grid grid-cols-12">
-        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
-          <p-skeleton class="my-2" height="3rem" />
-        </div>
-        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
-          <p-skeleton class="my-2" height="3rem" />
-        </div>
-      </div>
-
-      <div class="mb-4 grid grid-cols-12">
-        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
-          <p-skeleton class="my-2" height="3rem" />
-        </div>
-        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
-          <p-skeleton class="my-2" height="3rem" />
-        </div>
-      </div>
-    } @else {
-      <div class="mb-4 grid grid-cols-12">
-        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
-          <span class="font-bold">Drivers: </span><br />
-          <span class="mr-1">{{ truck()?.mainDriver?.fullName }}</span>
-
-          @if (truck()?.secondaryDriver) {
-            <span class="mr-1">and {{ truck()?.secondaryDriver?.fullName }}</span>
-          }
-        </div>
-        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
-          <span class="font-bold">Truck Number: </span><br />
-          <a [routerLink]="['/trucks', truck()?.id, 'edit']">{{ truck()?.number }}</a>
-        </div>
-      </div>
-
-      <div class="mb-4 grid grid-cols-12">
-        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
-          <span class="font-bold">Total Gross this year: </span><br />
-          <span>{{ monthlyGrosses()?.totalGross | currency }}</span>
-        </div>
-        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
-          <span class="font-bold">Total Gross last 30 days: </span><br />
-          <span>{{ dailyGrosses()?.totalGross | currency }}</span>
-        </div>
-      </div>
-
-      <div class="mb-4 grid grid-cols-12">
-        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
-          <span class="font-bold">Total distance this year: </span><br />
-          <span>{{ monthlyGrosses()?.totalDistance | distanceUnit: "mi" }} mi</span>
-        </div>
-        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
-          <span class="font-bold">Total distance last 30 days: </span><br />
-          <span>{{ dailyGrosses()?.totalDistance | distanceUnit: "mi" }} mi</span>
-        </div>
-      </div>
-
-      <div class="mb-4 grid grid-cols-12">
-        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
-          <span class="font-bold">RPM this year: </span><br />
-          <span>{{ rpmAllTime() | currency }}</span>
-        </div>
-        <div class="col-span-12 mb-2 md:col-span-6 md:mb-0">
-          <span class="font-bold">RPM last 30 days: </span><br />
-          <span>{{ rpmCurrent() | currency }}</span>
-        </div>
-      </div>
-    }
-  </p-card>
-
-  <div class="map-container col-span-12 sm:col-span-6">
-    <app-geolocation-map [geolocationData]="truckLocations()" />
+<!-- Header with actions -->
+<div class="mb-6 flex items-start justify-between">
+  <ui-page-header title="Truck Details" [showAddButton]="false" />
+  <div class="flex gap-2">
+    <p-button
+      icon="pi pi-pencil"
+      label="Edit"
+      [outlined]="true"
+      [routerLink]="['/trucks', id(), 'edit']"
+    />
+    <p-button icon="pi pi-arrow-left" label="Back" [routerLink]="['/trucks']" [outlined]="true" />
   </div>
 </div>
 
-<div class="mt-3">
-  <app-truck-gross-linechart [truckId]="id()!" (chartDrawn)="onLineChartDrawn($event)" />
-</div>
+@if (isLoading()) {
+  <div class="flex justify-center py-16">
+    <p-progress-spinner />
+  </div>
+} @else if (truck()) {
+  <!-- Enhanced Header with Truck Number -->
+  <div class="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <div class="border-default bg-elevated rounded-lg border p-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <span class="text-primary text-3xl font-bold">#{{ truck()!.number }}</span>
+          <app-truck-status-tag [status]="truck()!.status!" />
+          <app-truck-type-tag [type]="truck()!.type!" />
+        </div>
+        <div class="text-secondary">
+          @if (truck()!.mainDriver) {
+            <span>{{ truck()!.mainDriver!.fullName }}</span>
+            @if (truck()!.secondaryDriver) {
+              <span class="ml-1">& {{ truck()!.secondaryDriver!.fullName }}</span>
+            }
+          }
+        </div>
+      </div>
+    </div>
 
-<div class="mt-3">
-  <app-gross-barchart class="mt-3" [truckId]="id()!" (chartDrawn)="onBarChartDrawn($event)" />
-</div>
+    <app-document-status-overview [documents]="documents()" />
+  </div>
+
+  <p-card>
+    <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
+      <p-tablist>
+        <p-tab [value]="0">
+          <i class="pi pi-info-circle mr-2"></i>
+          Details
+        </p-tab>
+        <p-tab [value]="1">
+          <i class="pi pi-box mr-2"></i>
+          Loads
+          @if (truck()!.loads?.length) {
+            <span
+              class="ml-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+            >
+              {{ truck()!.loads!.length }}
+            </span>
+          }
+        </p-tab>
+        <p-tab [value]="2">
+          <i class="pi pi-folder mr-2"></i>
+          Documents
+        </p-tab>
+        <p-tab [value]="3">
+          <i class="pi pi-chart-line mr-2"></i>
+          Analytics
+        </p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+        <!-- Details Tab -->
+        <p-tabpanel [value]="0">
+          <div class="grid grid-cols-1 gap-6 pt-4 lg:grid-cols-2">
+            <!-- Truck Info Card -->
+            <p-card class="border-default border">
+              <ng-template #header>
+                <div class="p-4 pb-0">
+                  <h3 class="m-0 text-lg font-semibold">Truck Information</h3>
+                </div>
+              </ng-template>
+
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <span>Truck #</span>
+                  <span class="font-mono font-semibold">{{ truck()!.number }}</span>
+                </div>
+
+                <p-divider />
+
+                <div class="flex items-center justify-between">
+                  <span>Type</span>
+                  <app-truck-type-tag [type]="truck()!.type!" />
+                </div>
+
+                <div class="flex items-center justify-between">
+                  <span>Status</span>
+                  <app-truck-status-tag [status]="truck()!.status!" />
+                </div>
+
+                @if (truck()!.vehicleCapacity) {
+                  <p-divider />
+                  <div class="flex items-center justify-between">
+                    <span>Vehicle Capacity</span>
+                    <span class="font-semibold">{{ truck()!.vehicleCapacity }} vehicles</span>
+                  </div>
+                }
+              </div>
+            </p-card>
+
+            <!-- Assignment Card -->
+            <p-card class="border-default border">
+              <ng-template #header>
+                <div class="p-4 pb-0">
+                  <h3 class="m-0 text-lg font-semibold">Assignment</h3>
+                </div>
+              </ng-template>
+
+              <div class="space-y-4">
+                @if (truck()!.mainDriver) {
+                  <div class="flex items-center justify-between">
+                    <span>Main Driver</span>
+                    <a
+                      [routerLink]="['/employees', truck()!.mainDriver!.id]"
+                      class="text-primary font-medium hover:underline"
+                    >
+                      {{ truck()!.mainDriver!.fullName }}
+                    </a>
+                  </div>
+                } @else {
+                  <div class="flex items-center justify-between">
+                    <span>Main Driver</span>
+                    <span class="text-muted">Unassigned</span>
+                  </div>
+                }
+
+                @if (truck()!.secondaryDriver) {
+                  <div class="flex items-center justify-between">
+                    <span>Secondary Driver</span>
+                    <a
+                      [routerLink]="['/employees', truck()!.secondaryDriver!.id]"
+                      class="text-primary font-medium hover:underline"
+                    >
+                      {{ truck()!.secondaryDriver!.fullName }}
+                    </a>
+                  </div>
+                }
+
+                <p-divider />
+
+                <div class="flex items-center justify-between">
+                  <span>Active Loads</span>
+                  <span class="font-semibold">{{ truck()!.loads?.length ?? 0 }}</span>
+                </div>
+              </div>
+            </p-card>
+          </div>
+
+          <!-- Location Card (full width) -->
+          <p-card class="border-default mt-6 border">
+            <ng-template #header>
+              <div class="p-4 pb-0">
+                <h3 class="m-0 text-lg font-semibold">Current Location</h3>
+              </div>
+            </ng-template>
+
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div>
+                <div class="mb-2 flex items-center gap-2">
+                  <i class="pi pi-map-marker text-primary"></i>
+                  <span class="font-medium">Address</span>
+                </div>
+                @if (truck()!.currentAddress) {
+                  <p class="text-secondary">{{ truck()!.currentAddress | address }}</p>
+                } @else {
+                  <p class="text-muted">No location data available</p>
+                }
+              </div>
+              <div class="map-container">
+                <app-geolocation-map [geolocationData]="truckLocations()" />
+              </div>
+            </div>
+          </p-card>
+
+          <!-- Quick Stats Card -->
+          <p-card class="border-default mt-6 border">
+            <ng-template #header>
+              <div class="p-4 pb-0">
+                <h3 class="m-0 text-lg font-semibold">Performance Summary</h3>
+              </div>
+            </ng-template>
+
+            <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+              <div>
+                <span class="text-muted block text-sm">Gross (30 days)</span>
+                <span class="text-success text-xl font-bold">{{
+                  dailyGrosses()?.totalGross | currency
+                }}</span>
+              </div>
+              <div>
+                <span class="text-muted block text-sm">Gross (Year)</span>
+                <span class="text-success text-xl font-bold">{{
+                  monthlyGrosses()?.totalGross | currency
+                }}</span>
+              </div>
+              <div>
+                <span class="text-muted block text-sm">Distance (30 days)</span>
+                <span class="font-bold"
+                  >{{ dailyGrosses()?.totalDistance | distanceUnit: "mi" }} mi</span
+                >
+              </div>
+              <div>
+                <span class="text-muted block text-sm">RPM (30 days)</span>
+                <span class="font-bold">{{ rpmCurrent() | currency }}</span>
+              </div>
+            </div>
+          </p-card>
+        </p-tabpanel>
+
+        <!-- Loads Tab -->
+        <p-tabpanel [value]="1">
+          <div class="pt-4">
+            <app-truck-loads-list [loads]="truck()!.loads ?? []" />
+          </div>
+        </p-tabpanel>
+
+        <!-- Documents Tab -->
+        <p-tabpanel [value]="2">
+          <div class="pt-4">
+            <app-document-manager [truckId]="id()" [types]="truckDocTypes" />
+          </div>
+        </p-tabpanel>
+
+        <!-- Analytics Tab -->
+        <p-tabpanel [value]="3">
+          <div class="space-y-6 pt-4">
+            <app-truck-gross-linechart [truckId]="id()!" (chartDrawn)="onLineChartDrawn($event)" />
+            <app-gross-barchart [truckId]="id()!" (chartDrawn)="onBarChartDrawn($event)" />
+          </div>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </p-card>
+} @else {
+  <p-card>
+    <div class="py-16 text-center">
+      <i class="pi pi-exclamation-circle text-muted mb-4 text-4xl"></i>
+      <p class="text-muted">Truck not found</p>
+      <p-button label="Back to Trucks" [routerLink]="['/trucks']" class="mt-4" />
+    </div>
+  </p-card>
+}

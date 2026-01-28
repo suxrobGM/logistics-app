@@ -7,27 +7,32 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetTrucksHandler : IAppRequestHandler<GetTrucksQuery, PagedResult<TruckDto>>
+internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<GetTrucksQuery, PagedResult<TruckDto>>
 {
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public GetTrucksHandler(ITenantUnitOfWork tenantUow)
-    {
-        _tenantUow = tenantUow;
-    }
-
     public async Task<PagedResult<TruckDto>> Handle(
         GetTrucksQuery req,
         CancellationToken ct)
     {
-        var totalItems = await _tenantUow.Repository<Truck>().CountAsync();
-        var spec = new SearchTrucks(req.Search, req.OrderBy, req.Page, req.PageSize);
+        var spec = new SearchTrucks(req.Search, req.OrderBy);
+        var baseQuery = tenantUow.Repository<Truck>().ApplySpecification(spec);
 
-        var truckQuery = _tenantUow.Repository<Truck>().ApplySpecification(spec);
+        if (req.Statuses?.Length > 0)
+        {
+            baseQuery = baseQuery.Where(i => req.Statuses.Contains(i.Status));
+        }
+
+        if (req.Types?.Length > 0)
+        {
+            baseQuery = baseQuery.Where(i => req.Types.Contains(i.Type));
+        }
+
+        var totalItems = baseQuery.Count();
+        baseQuery = baseQuery.ApplyPaging(req.Page, req.PageSize);
 
         var trucks = (req.IncludeLoads
-                ? truckQuery.Select(i => i.ToDto(i.Loads.Select(load => load.ToDto())))
-                : truckQuery.Select(i => i.ToDto(new List<LoadDto>())))
+                ? baseQuery.Select(i => i.ToDto(i.Loads.Select(load => load.ToDto())))
+                : baseQuery.Select(i => i.ToDto(new List<LoadDto>())))
             .ToArray();
 
         return PagedResult<TruckDto>.Succeed(trucks, totalItems, req.PageSize);

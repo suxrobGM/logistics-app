@@ -1,0 +1,62 @@
+<div class="border-default bg-elevated rounded-lg border p-4">
+  <div class="mb-3 flex items-center justify-between">
+    <h4
+      class="text-secondary flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
+    >
+      <i class="pi pi-file"></i>
+      Document Status
+    </h4>
+    @if (summary().isComplete) {
+      <span
+        class="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900 dark:text-green-300"
+      >
+        <i class="pi pi-check mr-1"></i>
+        Complete
+      </span>
+    } @else {
+      <span
+        class="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700 dark:bg-amber-900 dark:text-amber-300"
+      >
+        <i class="pi pi-exclamation-triangle mr-1"></i>
+        {{ summary().missingRequired.length }} Missing
+      </span>
+    }
+  </div>
+
+  <div class="flex flex-wrap gap-2">
+    @for (docType of documentTypes; track docType.type) {
+      @if (hasDocument(docType.type)) {
+        <span
+          class="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400"
+          [pTooltip]="docType.label + ' uploaded'"
+        >
+          <i class="pi pi-check text-xs"></i>
+          {{ docType.label }}
+        </span>
+      } @else if (docType.required) {
+        <span
+          class="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-1 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400"
+          [pTooltip]="docType.label + ' required - not uploaded'"
+        >
+          <i class="pi pi-times text-xs"></i>
+          {{ docType.label }}
+        </span>
+      } @else {
+        <span
+          class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+          [pTooltip]="docType.label + ' not uploaded (optional)'"
+        >
+          <i class="pi pi-minus text-xs"></i>
+          {{ docType.label }}
+        </span>
+      }
+    }
+  </div>
+
+  @if (summary().missingRequired.length > 0) {
+    <div class="text-muted mt-3 text-xs">
+      <i class="pi pi-info-circle mr-1"></i>
+      Missing required documents: {{ summary().missingRequiredLabels }}
+    </div>
+  }
+</div>

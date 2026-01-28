@@ -1,90 +1,148 @@
-<ui-page-header title="List Trucks" addRoute="/trucks/add" addTooltip="Add a new truck" />
+<div class="animate-fadein">
+  <!-- Header -->
+  <div class="mb-4 flex items-center justify-between">
+    <div class="flex items-center">
+      <h1 class="text-primary mb-0">List Trucks</h1>
+      <p-button
+        styleClass="ml-2"
+        icon="pi pi-plus-circle"
+        size="large"
+        [rounded]="true"
+        [text]="true"
+        pTooltip="Add a new truck"
+        aria-label="Add a new truck"
+        [routerLink]="['/trucks/add']"
+      />
+    </div>
 
-<p-card>
-  <ui-data-container
-    [loading]="store.isLoading()"
-    [error]="store.error()"
-    [isEmpty]="store.isEmpty()"
-    skeletonVariant="table"
-    [skeletonRows]="10"
-    emptyTitle="No trucks yet"
-    emptyMessage="Add your first truck to get started."
-    emptyActionLabel="Add Truck"
-    (retry)="store.retry()"
-    (emptyAction)="addTruck()"
-  >
-    <p-table
-      [value]="store.data()"
-      [lazy]="true"
-      [paginator]="true"
-      [showCurrentPageReport]="true"
-      (onLazyLoad)="store.onLazyLoad($event)"
-      [rows]="store.pageSize()"
-      [first]="store.first()"
-      [totalRecords]="store.totalRecords()"
+    <!-- View Toggle -->
+    <div class="flex gap-1 rounded-lg border border-default bg-elevated p-1">
+      <p-button
+        icon="pi pi-table"
+        [text]="viewMode() !== 'table'"
+        [severity]="viewMode() === 'table' ? 'primary' : 'secondary'"
+        size="small"
+        pTooltip="Table view"
+        (click)="viewMode.set('table')"
+      />
+      <p-button
+        icon="pi pi-map"
+        [text]="viewMode() !== 'map'"
+        [severity]="viewMode() === 'map' ? 'primary' : 'secondary'"
+        size="small"
+        pTooltip="Map view"
+        (click)="viewMode.set('map')"
+      />
+    </div>
+  </div>
+
+  <!-- Summary Stats -->
+  <app-trucks-summary-stats
+    [trucks]="store.data()"
+    [totalRecords]="store.totalRecords()"
+    [isLoading]="store.isLoading()"
+  />
+
+  <!-- Filter Panel -->
+  <app-trucks-filter-panel
+    [isLoading]="store.isLoading()"
+    (filtersChanged)="onFiltersChanged($event)"
+    (searchChanged)="onSearchChanged($event)"
+  />
+
+  @if (viewMode() === "table") {
+  <!-- Data Table -->
+  <p-card>
+    <ui-data-container
       [loading]="store.isLoading()"
-      [rowsPerPageOptions]="[10, 25, 50]"
+      [error]="store.error()"
+      [isEmpty]="store.isEmpty()"
+      skeletonVariant="table"
+      [skeletonRows]="10"
+      emptyTitle="No trucks yet"
+      emptyMessage="Add your first truck to get started."
+      emptyActionLabel="Add Truck"
+      (retry)="store.retry()"
+      (emptyAction)="addTruck()"
     >
-      <ng-template #caption>
-        <ui-search-input (searchChange)="search($event)" />
-      </ng-template>
-      <ng-template #header>
-        <tr>
-          <th class="text-center" pSortableColumn="Number">
-            Number
-            <p-sortIcon field="Number" />
-          </th>
-          <th class="text-center" pSortableColumn="Type">
-            Type
-            <p-sortIcon field="Type" />
-          </th>
-          <th class="text-center" pSortableColumn="Status">
-            Status
-            <p-sortIcon field="Status" />
-          </th>
-          <th class="text-center">Current Location</th>
-          <th class="text-center">Driver(s)</th>
-          <th class="text-center">Action</th>
-        </tr>
-      </ng-template>
-      <ng-template #body let-truck>
-        <tr>
-          <td class="text-center">
-            {{ truck.number }}
-          </td>
-          <td class="text-center">
-            {{ truck.type }}
-          </td>
-          <td class="text-center">
-            {{ truck.status }}
-          </td>
-          <td
-            class="text-center"
-            [pTooltip]="formatAddress(truck.currentAddress)"
-            [showDelay]="500"
-          >
-            {{ truck.currentAddress | address }}
-          </td>
-          <td class="text-center">
-            <span>{{ truck.mainDriver?.fullName }}</span>
-            @if (truck.secondaryDriver) {
-              <span class="ml-1">and {{ truck.secondaryDriver?.fullName }}</span>
-            }
-          </td>
+      <p-table
+        [value]="store.data()"
+        [lazy]="true"
+        [paginator]="true"
+        [showCurrentPageReport]="true"
+        (onLazyLoad)="store.onLazyLoad($event)"
+        [rows]="store.pageSize()"
+        [first]="store.first()"
+        [totalRecords]="store.totalRecords()"
+        [loading]="store.isLoading()"
+        [rowsPerPageOptions]="[10, 25, 50]"
+      >
+        <ng-template #header>
+          <tr>
+            <th class="text-center" pSortableColumn="Number">
+              Number
+              <p-sortIcon field="Number" />
+            </th>
+            <th class="text-center" pSortableColumn="Type">
+              Type
+              <p-sortIcon field="Type" />
+            </th>
+            <th class="text-center" pSortableColumn="Status">
+              Status
+              <p-sortIcon field="Status" />
+            </th>
+            <th class="text-center">Current Location</th>
+            <th class="text-center">Driver(s)</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-truck>
+          <tr>
+            <td class="text-center font-semibold">
+              {{ truck.number }}
+            </td>
+            <td class="text-center">
+              <app-truck-type-tag [type]="truck.type" />
+            </td>
+            <td class="text-center">
+              <app-truck-status-tag [status]="truck.status" />
+            </td>
+            <td
+              class="text-center"
+              [pTooltip]="formatAddress(truck.currentAddress)"
+              [showDelay]="500"
+            >
+              {{ truck.currentAddress | address }}
+            </td>
+            <td class="text-center">
+              @if (truck.mainDriver) {
+                <span>{{ truck.mainDriver.fullName }}</span>
+                @if (truck.secondaryDriver) {
+                  <span class="text-muted ml-1">& {{ truck.secondaryDriver.fullName }}</span>
+                }
+              } @else {
+                <span class="text-muted">Unassigned</span>
+              }
+            </td>
 
-          <td class="text-center">
-            <p-button
-              icon="pi pi-ellipsis-v"
-              [text]="true"
-              aria-label="Show actions menu"
-              (click)="selectedRow.set(truck); menu.toggle($event)"
-            />
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </ui-data-container>
-</p-card>
+            <td class="text-center">
+              <p-button
+                icon="pi pi-ellipsis-v"
+                [text]="true"
+                aria-label="Show actions menu"
+                (click)="selectedRow.set(truck); menu.toggle($event)"
+              />
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </ui-data-container>
+  </p-card>
 
-<!-- Context menu for row actions -->
-<p-menu #menu [model]="actionMenuItems" [popup]="true" />
+  <!-- Context menu for row actions -->
+  <p-menu #menu [model]="actionMenuItems" [popup]="true" />
+  } @else {
+    <!-- Map View -->
+    <app-trucks-map-view [trucks]="store.data()" [isLoading]="store.isLoading()" />
+  }
+</div>

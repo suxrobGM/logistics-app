@@ -13,7 +13,7 @@ internal sealed class CreateTruckValidator : AbstractValidator<CreateTruckComman
 
         When(i => i.TruckType is TruckType.CarHauler, () =>
         {
-            RuleFor(i => i.CarHaulerMaxVehicles).NotEmpty().GreaterThan(0);
+            RuleFor(i => i.VehicleCapacity).NotEmpty().GreaterThan(0);
         });
     }
 }

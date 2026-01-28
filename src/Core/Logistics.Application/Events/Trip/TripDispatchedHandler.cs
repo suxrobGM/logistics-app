@@ -12,7 +12,6 @@ namespace Logistics.Application.Events;
 internal sealed class TripDispatchedHandler(
     ILogger<TripDispatchedHandler> logger,
     ITenantUnitOfWork tenantUow,
-    ICurrentUserService currentUserService,
     ITripTrackingService tripTrackingService)
     : IDomainEventHandler<TripDispatchedEvent>
 {

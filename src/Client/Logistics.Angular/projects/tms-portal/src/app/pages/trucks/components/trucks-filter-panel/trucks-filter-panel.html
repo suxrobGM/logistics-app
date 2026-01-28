@@ -1,0 +1,46 @@
+<p-card class="mb-4">
+  <div class="mb-4 flex items-center justify-between">
+    <span class="text-primary text-lg font-semibold">Filters</span>
+    <div class="flex items-center gap-2">
+      @if (activeFilterCount() > 0) {
+        <span class="text-muted text-sm">{{ activeFilterCount() }} active</span>
+      }
+      <p-button
+        label="Clear All"
+        icon="pi pi-times"
+        size="small"
+        [text]="true"
+        (click)="clearFilters()"
+        [disabled]="activeFilterCount() === 0"
+      />
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-x-4 md:grid-cols-3">
+    <ui-labeled-field label="Search">
+      <ui-search-input class="w-full" (searchChange)="onSearch($event)" />
+    </ui-labeled-field>
+
+    <ui-labeled-field label="Status">
+      <p-multiselect
+        [options]="statusOptions"
+        [(ngModel)]="selectedStatuses"
+        placeholder="Select status"
+        [showClear]="true"
+        (onChange)="applyFilters()"
+        class="w-full"
+      />
+    </ui-labeled-field>
+
+    <ui-labeled-field label="Type">
+      <p-multiselect
+        [options]="typeOptions"
+        [(ngModel)]="selectedTypes"
+        placeholder="Select type"
+        [showClear]="true"
+        (onChange)="applyFilters()"
+        class="w-full"
+      />
+    </ui-labeled-field>
+  </div>
+</p-card>

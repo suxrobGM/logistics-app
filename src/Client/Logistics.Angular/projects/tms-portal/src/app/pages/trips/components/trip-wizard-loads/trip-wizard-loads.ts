@@ -12,7 +12,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { Table, TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { LoadFormComponent, type LoadFormValue, LoadStatusTag } from "@/shared/components";
+import { LoadForm, type LoadFormValue, LoadStatusTag } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
 import { type TableRow, TripWizardStore } from "../../store/trip-wizard-store";
 import { AttachLoadDialog } from "../attach-load-dialog/attach-load-dialog";
@@ -35,7 +35,7 @@ import { AttachLoadDialog } from "../attach-load-dialog/attach-load-dialog";
     IconField,
     InputIcon,
     Dialog,
-    LoadFormComponent,
+    LoadForm,
     AttachLoadDialog,
   ],
 })
@@ -52,7 +52,9 @@ export class TripFormStepLoads {
 
   // Load IDs already in the trip (to exclude from attach dialog)
   protected readonly excludeLoadIds = computed(() =>
-    this.rows().map((row) => row.id).filter((id): id is string => !!id)
+    this.rows()
+      .map((row) => row.id)
+      .filter((id): id is string => !!id),
   );
 
   protected readonly initialLoadData = computed(

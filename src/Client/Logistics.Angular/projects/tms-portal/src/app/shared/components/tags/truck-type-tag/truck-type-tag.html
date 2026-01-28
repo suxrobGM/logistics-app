@@ -1,0 +1,8 @@
+<p-tag
+  [severity]="info.severity"
+  [value]="info.label"
+  [icon]="showIcon() && info.icon ? info.icon : undefined"
+  [pTooltip]="tooltip() ?? info.label"
+  [tooltipOptions]="{ showDelay: 300 }"
+  class="whitespace-nowrap"
+/>

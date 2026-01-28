@@ -4,9 +4,7 @@ import type { ApiFnOptional, ApiFnRequired } from "@logistics/shared/api/generat
 import type { PagedResponse } from "@logistics/shared/api/models";
 import type { AppError } from "@logistics/shared/errors";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
-import { rxMethod } from "@ngrx/signals/rxjs-interop";
 import type { TableLazyLoadEvent } from "primeng/table";
-import { catchError, from, of, pipe, switchMap, tap } from "rxjs";
 import type { ListQueryParams, ListState, ListStoreConfig } from "./base-list.types";
 
 /**
@@ -96,36 +94,29 @@ export function createListStore<T, P extends ListQueryParams = ListQueryParams>(
       };
 
       /**
-       * Loads data from the API using rxMethod for reactive handling.
+       * Loads data from the API.
        */
-      const load = rxMethod<void>(
-        pipe(
-          tap(() => patchState(store, { isLoading: true, error: null })),
-          switchMap(() => {
-            const params = buildQueryParams();
+      async function load(): Promise<void> {
+        patchState(store, { isLoading: true, error: null });
 
-            return from(api.invoke(apiFn, params)).pipe(
-              tap((result: PagedResponse<T>) => {
-                patchState(store, {
-                  data: result.items ?? [],
-                  totalRecords: result.pagination?.total ?? 0,
-                  totalPages: result.pagination?.totalPages ?? 0,
-                  isLoading: false,
-                  error: null,
-                });
-              }),
+        try {
+          const params = buildQueryParams();
+          const result = await api.invoke(apiFn, params);
 
-              catchError((error: AppError) => {
-                patchState(store, {
-                  isLoading: false,
-                  error: error,
-                });
-                return of(null);
-              }),
-            );
-          }),
-        ),
-      );
+          patchState(store, {
+            data: result.items ?? [],
+            totalRecords: result.pagination?.total ?? 0,
+            totalPages: result.pagination?.totalPages ?? 0,
+            isLoading: false,
+            error: null,
+          });
+        } catch (error) {
+          patchState(store, {
+            isLoading: false,
+            error: error as AppError,
+          });
+        }
+      }
 
       return {
         /**

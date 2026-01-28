@@ -6,12 +6,12 @@ import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
-import { LoadFormComponent, type LoadFormValue } from "@/shared/components";
+import { LoadForm, type LoadFormValue } from "@/shared/components";
 
 @Component({
   selector: "app-load-add",
   templateUrl: "./load-add.html",
-  imports: [ToastModule, CardModule, ProgressSpinnerModule, LoadFormComponent],
+  imports: [ToastModule, CardModule, ProgressSpinnerModule, LoadForm],
 })
 export class LoadAddComponent {
   private readonly api = inject(Api);

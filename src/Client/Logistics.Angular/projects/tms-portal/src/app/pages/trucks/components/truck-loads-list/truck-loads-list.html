@@ -1,0 +1,75 @@
+@if (loads().length === 0) {
+  <div class="py-8 text-center">
+    <i class="pi pi-inbox text-muted mb-3 text-4xl"></i>
+    <p class="text-muted">No loads assigned to this truck</p>
+  </div>
+} @else {
+  <p-table [value]="loads()" dataKey="id" [scrollable]="true">
+    <ng-template #header>
+      <tr>
+        <th>Load #</th>
+        <th>Type</th>
+        <th>Status</th>
+        <th>Origin</th>
+        <th>Destination</th>
+        <th>Cost</th>
+        <th>Trip</th>
+        <th style="width: 5rem"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-load>
+      <tr class="hover:bg-hover transition-colors duration-150">
+        <td>
+          <a [routerLink]="['/loads', load.id]" class="text-primary font-bold hover:underline">
+            #{{ load.number }}
+          </a>
+          @if (load.name) {
+            <div class="text-muted text-xs">{{ load.name }}</div>
+          }
+        </td>
+        <td>
+          <app-load-type-tag [type]="load.type" />
+        </td>
+        <td>
+          <app-load-status-tag [status]="load.status" />
+        </td>
+        <td>
+          <span class="text-sm">{{ load.originAddress | address }}</span>
+        </td>
+        <td>
+          <span class="text-sm">{{ load.destinationAddress | address }}</span>
+        </td>
+        <td>
+          <span class="font-medium">{{ load.deliveryCost | currency }}</span>
+        </td>
+        <td>
+          @if (load.tripNumber) {
+            <a [routerLink]="['/trips', load.tripId]" class="text-primary hover:underline">
+              #{{ load.tripNumber }}
+            </a>
+          } @else {
+            <span class="text-muted">—</span>
+          }
+        </td>
+        <td>
+          <p-button
+            icon="pi pi-eye"
+            [rounded]="true"
+            [text]="true"
+            pTooltip="View load"
+            [routerLink]="['/loads', load.id]"
+          />
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="8" class="text-center">
+          <span class="text-muted">No loads assigned</span>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+}

@@ -5,11 +5,7 @@ namespace Logistics.Application.Specifications;
 
 public sealed class SearchTrucks : BaseSpecification<Truck>
 {
-    public SearchTrucks(
-        string? search,
-        string? orderBy,
-        int page,
-        int pageSize)
+    public SearchTrucks(string? search, string? orderBy)
     {
         if (!string.IsNullOrEmpty(search))
         {
@@ -22,6 +18,5 @@ public sealed class SearchTrucks : BaseSpecification<Truck>
         }
 
         OrderBy(orderBy);
-        ApplyPaging(page, pageSize);
     }
 }

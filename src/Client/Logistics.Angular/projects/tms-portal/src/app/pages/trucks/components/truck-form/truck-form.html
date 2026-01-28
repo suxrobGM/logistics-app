@@ -1,0 +1,184 @@
+<div class="flex flex-col gap-6 md:flex-row">
+  <!-- Left: Form -->
+  <div class="w-full md:w-1/2">
+    @if (isLoading()) {
+      <div class="flex justify-center py-8">
+        <i class="pi pi-spin pi-spinner text-4xl"></i>
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <ui-validation-summary [form]="form" />
+
+      <!-- Truck Information Section -->
+      <div class="mb-6">
+        <h3
+          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
+        >
+          <i class="pi pi-truck"></i>
+          Truck Information
+        </h3>
+        <div class="border-default bg-elevated rounded-lg border p-4">
+          <ui-labeled-field label="Truck Number" for="truckNumber" [required]="true">
+            <input
+              pInputText
+              id="truckNumber"
+              formControlName="truckNumber"
+              type="text"
+              placeholder="e.g., T-001"
+            />
+          </ui-labeled-field>
+
+          <ui-labeled-field label="Truck Type" for="truckType" [required]="true">
+            <p-select
+              formControlName="truckType"
+              [options]="truckTypes"
+              placeholder="Select truck type"
+              class="w-full"
+            />
+          </ui-labeled-field>
+
+          @if (mode() === "edit") {
+            <ui-labeled-field label="Status" for="truckStatus" [required]="true">
+              <p-select
+                formControlName="truckStatus"
+                [options]="truckStatuses"
+                placeholder="Select status"
+                class="w-full"
+              />
+            </ui-labeled-field>
+          }
+
+          @if (isCarHauler()) {
+            <ui-labeled-field
+              label="Vehicle Capacity"
+              for="vehicleCapacity"
+              hint="Maximum number of vehicles this hauler can carry"
+              class="mb-0"
+            >
+              <p-inputNumber
+                formControlName="vehicleCapacity"
+                inputId="vehicleCapacity"
+                [min]="1"
+                [max]="12"
+                placeholder="e.g., 8"
+              />
+            </ui-labeled-field>
+          }
+        </div>
+      </div>
+
+      <!-- Driver Assignment Section -->
+      <div class="mb-6">
+        <h3
+          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
+        >
+          <i class="pi pi-users"></i>
+          Driver Assignment
+        </h3>
+        <div class="border-default bg-elevated rounded-lg border p-4">
+          <ui-labeled-field label="Main Driver" for="mainDriver">
+            <p-autocomplete
+              formControlName="mainDriver"
+              class="w-full"
+              inputStyleClass="w-full"
+              placeholder="Search for a driver..."
+              optionLabel="fullName"
+              [minLength]="2"
+              [suggestions]="suggestedDrivers()"
+              (completeMethod)="searchDriver($event)"
+            />
+          </ui-labeled-field>
+
+          <ui-labeled-field label="Secondary Driver" for="secondaryDriver" class="mb-0">
+            <p-autocomplete
+              formControlName="secondaryDriver"
+              class="w-full"
+              inputStyleClass="w-full"
+              placeholder="Search for a driver..."
+              optionLabel="fullName"
+              [minLength]="2"
+              [suggestions]="suggestedDrivers()"
+              (completeMethod)="searchDriver($event)"
+            />
+          </ui-labeled-field>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex gap-2">
+        <p-button
+          type="submit"
+          icon="pi pi-check"
+          [label]="mode() === 'create' ? 'Create Truck' : 'Update Truck'"
+          [disabled]="isLoading()"
+        />
+
+        @if (mode() === "edit") {
+          <p-button
+            type="button"
+            icon="pi pi-trash"
+            label="Delete"
+            severity="danger"
+            [disabled]="isLoading()"
+            (click)="askRemove()"
+          />
+        }
+
+        <p-button
+          type="button"
+          icon="pi pi-arrow-left"
+          label="Back to list"
+          [outlined]="true"
+          [routerLink]="['/trucks']"
+        />
+      </div>
+    </form>
+  </div>
+
+  <!-- Right: Tips Panel -->
+  <div class="w-full md:w-1/2">
+    <div class="border-default bg-subtle rounded-lg border p-4">
+      <h4 class="text-secondary mb-3 flex items-center gap-2 font-semibold">
+        <i class="pi pi-info-circle"></i>
+        Tips
+      </h4>
+
+      <div class="space-y-4 text-sm">
+        <div>
+          <span class="font-medium">Truck Types</span>
+          <p class="text-muted mt-1">
+            Choose the type that matches your vehicle. Car Haulers require specifying the maximum
+            vehicle capacity.
+          </p>
+        </div>
+
+        <div>
+          <span class="font-medium">Driver Assignment</span>
+          <p class="text-muted mt-1">
+            Assign a main driver to this truck. Secondary driver is optional and useful for team
+            driving operations.
+          </p>
+        </div>
+
+        @if (mode() === "edit") {
+          <div>
+            <span class="font-medium">Status</span>
+            <p class="text-muted mt-1">
+              Set to "Available" when ready for dispatch. Use "Maintenance" for scheduled service or
+              "Out of Service" for breakdowns.
+            </p>
+          </div>
+        }
+
+        <div>
+          <span class="font-medium">Truck Number</span>
+          <p class="text-muted mt-1">
+            Use a unique identifier for this truck. This will be displayed throughout the system and
+            on documents.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

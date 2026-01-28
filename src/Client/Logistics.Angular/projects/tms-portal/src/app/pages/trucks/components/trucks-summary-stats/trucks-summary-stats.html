@@ -1,0 +1,73 @@
+<div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+  <!-- Total Trucks -->
+  <div class="border-default bg-elevated rounded-lg border p-4">
+    <div class="text-muted mb-1 text-sm font-medium">Total Trucks</div>
+    <div class="text-primary text-2xl font-bold">
+      @if (isLoading()) {
+        <span class="text-muted">...</span>
+      } @else {
+        {{ totalRecords() }}
+      }
+    </div>
+    <div class="text-muted text-xs">{{ trucks().length }} shown on current page</div>
+  </div>
+
+  <!-- Availability Summary -->
+  <div class="border-default bg-elevated rounded-lg border p-4">
+    <div class="text-muted mb-2 text-sm font-medium">Availability</div>
+    @if (isLoading()) {
+      <span class="text-muted">...</span>
+    } @else {
+      <div class="flex flex-wrap gap-2">
+        @if (availableCount() > 0) {
+          <span
+            class="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900 dark:text-green-300"
+          >
+            {{ availableCount() }} Available
+          </span>
+        }
+        @if (inUseCount() > 0) {
+          <span
+            class="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+          >
+            {{ inUseCount() }} In Use
+          </span>
+        }
+        @if (unavailableCount() > 0) {
+          <span
+            class="rounded-full bg-orange-100 px-2 py-1 text-xs font-medium text-orange-700 dark:bg-orange-900 dark:text-orange-300"
+          >
+            {{ unavailableCount() }} Unavailable
+          </span>
+        }
+        @if (trucks().length === 0) {
+          <span class="text-muted text-sm">No trucks</span>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Status Breakdown -->
+  <div class="border-default bg-elevated rounded-lg border p-4">
+    <div class="text-muted mb-2 text-sm font-medium">Status Breakdown</div>
+    @if (isLoading()) {
+      <span class="text-muted">...</span>
+    } @else {
+      <div class="flex flex-wrap gap-2">
+        @for (status of statuses; track status) {
+          @if (statusBreakdown()[status] > 0) {
+            <span
+              class="rounded-full px-2 py-1 text-xs font-medium"
+              [class]="getStatusColor(status)"
+            >
+              {{ statusBreakdown()[status] }} {{ getStatusLabel(status) }}
+            </span>
+          }
+        }
+        @if (trucks().length === 0) {
+          <span class="text-muted text-sm">No trucks</span>
+        }
+      </div>
+    }
+  </div>
+</div>

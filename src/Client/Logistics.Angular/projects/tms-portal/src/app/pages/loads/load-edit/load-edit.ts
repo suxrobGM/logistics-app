@@ -7,13 +7,13 @@ import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
-import { LoadFormComponent, type LoadFormValue } from "@/shared/components";
+import { LoadForm, type LoadFormValue } from "@/shared/components";
 import { Converters } from "@/shared/utils";
 
 @Component({
   selector: "app-load-edit",
   templateUrl: "./load-edit.html",
-  imports: [ToastModule, ConfirmDialogModule, CardModule, ProgressSpinnerModule, LoadFormComponent],
+  imports: [ToastModule, ConfirmDialogModule, CardModule, ProgressSpinnerModule, LoadForm],
 })
 export class LoadEditComponent implements OnInit {
   private readonly api = inject(Api);

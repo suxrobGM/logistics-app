@@ -3,8 +3,8 @@
 
 import type { TruckType } from '../models/truck-type';
 export interface CreateTruckCommand {
-  carHaulerMaxVehicles?: number | null;
   mainDriverId?: string;
   truckNumber?: string | null;
   truckType?: TruckType;
+  vehicleCapacity?: number | null;
 }

@@ -8,5 +8,5 @@ public class CreateTruckCommand : IAppRequest
     public string TruckNumber { get; set; } = null!;
     public TruckType TruckType { get; set; }
     public Guid MainDriverId { get; set; }
-    public int? CarHaulerMaxVehicles { get; set; }
+    public int? VehicleCapacity { get; set; }
 }

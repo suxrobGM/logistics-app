@@ -11,4 +11,5 @@ public class UpdateTruckCommand : IAppRequest
     public TruckStatus? TruckStatus { get; set; }
     public Guid? MainDriverId { get; set; }
     public Guid? SecondaryDriverId { get; set; }
+    public int? VehicleCapacity { get; set; }
 }

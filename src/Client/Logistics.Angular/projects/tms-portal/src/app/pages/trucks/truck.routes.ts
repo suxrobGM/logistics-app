@@ -1,15 +1,15 @@
 import type { Routes } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
-import { TruckDetailsComponent } from "./truck-details/truck-details";
+import { TruckDetailsComponent as TruckDetails } from "./truck-details/truck-details";
 import { TruckDocumentsPage } from "./truck-documents/truck-documents";
-import { TruckEditComponent } from "./truck-edit/truck-edit";
-import { TrucksListComponent } from "./trucks-list/trucks-list";
+import { TruckEdit } from "./truck-edit/truck-edit";
+import { TrucksList } from "./trucks-list/trucks-list";
 
 export const truckRoutes: Routes = [
   {
     path: "",
-    component: TrucksListComponent,
+    component: TrucksList,
     canActivate: [authGuard],
     data: {
       breadcrumb: "",
@@ -18,7 +18,7 @@ export const truckRoutes: Routes = [
   },
   {
     path: "add",
-    component: TruckEditComponent,
+    component: TruckEdit,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Add",
@@ -27,7 +27,7 @@ export const truckRoutes: Routes = [
   },
   {
     path: ":id/edit",
-    component: TruckEditComponent,
+    component: TruckEdit,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Edit",
@@ -45,7 +45,7 @@ export const truckRoutes: Routes = [
   },
   {
     path: ":id",
-    component: TruckDetailsComponent,
+    component: TruckDetails,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Details",
