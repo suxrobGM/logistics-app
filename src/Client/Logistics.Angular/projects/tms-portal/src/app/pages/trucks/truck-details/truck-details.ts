@@ -19,7 +19,7 @@ import { TabsModule } from "primeng/tabs";
 import { TooltipModule } from "primeng/tooltip";
 import {
   type BarChartDrawnEvent,
-  DocumentManagerComponent,
+  DocumentManager,
   GeolocationMap,
   GrossBarchart,
   PageHeader,
@@ -56,7 +56,7 @@ import {
     PageHeader,
     TruckStatusTag,
     TruckTypeTag,
-    DocumentManagerComponent,
+    DocumentManager,
     TruckLoadsList,
     DocumentStatusOverview,
   ],

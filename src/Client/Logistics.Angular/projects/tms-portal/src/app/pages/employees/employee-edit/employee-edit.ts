@@ -23,7 +23,7 @@ import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import { CurrencyInput, LabeledField, UnitInput, ValidationSummary } from "@/shared/components";
 import { NumberUtils } from "@/shared/utils";
-import { ChangeRoleDialogComponent } from "../components";
+import { ChangeRoleDialog } from "../components";
 
 @Component({
   selector: "app-employee-edit",
@@ -31,7 +31,7 @@ import { ChangeRoleDialogComponent } from "../components";
   imports: [
     ToastModule,
     ConfirmDialogModule,
-    ChangeRoleDialogComponent,
+    ChangeRoleDialog,
     CardModule,
     ProgressSpinnerModule,
     ButtonModule,
@@ -47,7 +47,7 @@ import { ChangeRoleDialogComponent } from "../components";
     CurrencyInput,
   ],
 })
-export class EmployeeEditComponent implements OnInit {
+export class EmployeeEdit implements OnInit {
   protected readonly form: FormGroup<UpdateEmployeeForm>;
   protected readonly salaryTypes = salaryTypeOptions;
 

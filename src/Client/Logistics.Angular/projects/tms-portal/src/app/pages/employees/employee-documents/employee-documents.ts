@@ -5,12 +5,12 @@ import type { DocumentType, EmployeeDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ToastModule } from "primeng/toast";
-import { DocumentManagerComponent } from "@/shared/components";
+import { DocumentManager } from "@/shared/components";
 
 @Component({
   selector: "app-employee-documents",
   templateUrl: "./employee-documents.html",
-  imports: [CardModule, ToastModule, RouterLink, DocumentManagerComponent, ButtonModule],
+  imports: [CardModule, ToastModule, RouterLink, DocumentManager, ButtonModule],
 })
 export class EmployeeDocumentsPage implements OnInit {
   private readonly api = inject(Api);

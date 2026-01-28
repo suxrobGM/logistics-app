@@ -1,16 +1,16 @@
 import type { Routes } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
-import { EmployeeAddComponent } from "./employee-add/employee-add";
+import { EmployeeAdd } from "./employee-add/employee-add";
 import { EmployeeDocumentsPage } from "./employee-documents/employee-documents";
-import { EmployeeEditComponent } from "./employee-edit/employee-edit";
-import { EmployeeListComponent } from "./employees-list/employees-list";
-import { PendingInvitationsComponent } from "./pending-invitations/pending-invitations";
+import { EmployeeEdit } from "./employee-edit/employee-edit";
+import { EmployeeList } from "./employees-list/employees-list";
+import { PendingInvitations } from "./pending-invitations/pending-invitations";
 
 export const employeeRoutes: Routes = [
   {
     path: "",
-    component: EmployeeListComponent,
+    component: EmployeeList,
     canActivate: [authGuard],
     data: {
       breadcrumb: "",
@@ -19,7 +19,7 @@ export const employeeRoutes: Routes = [
   },
   {
     path: "add",
-    component: EmployeeAddComponent,
+    component: EmployeeAdd,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Add",
@@ -28,7 +28,7 @@ export const employeeRoutes: Routes = [
   },
   {
     path: "invitations",
-    component: PendingInvitationsComponent,
+    component: PendingInvitations,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Invitations",
@@ -37,7 +37,7 @@ export const employeeRoutes: Routes = [
   },
   {
     path: ":id/edit",
-    component: EmployeeEditComponent,
+    component: EmployeeEdit,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Edit",

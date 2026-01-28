@@ -23,7 +23,6 @@ import { Converters } from "@/shared/utils";
 @Component({
   selector: "app-document-manager",
   templateUrl: "./document-manager.html",
-  styleUrl: "./document-manager.css",
   imports: [
     CommonModule,
     ButtonModule,
@@ -36,7 +35,7 @@ import { Converters } from "@/shared/utils";
     TooltipModule,
   ],
 })
-export class DocumentManagerComponent implements OnInit {
+export class DocumentManager implements OnInit {
   private readonly api = inject(Api);
   private readonly toast = inject(ToastService);
 

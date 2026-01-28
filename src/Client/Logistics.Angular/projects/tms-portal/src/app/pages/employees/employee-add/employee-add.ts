@@ -53,7 +53,7 @@ import { UserService } from "../services";
     CurrencyInput,
   ],
 })
-export class EmployeeAddComponent {
+export class EmployeeAdd {
   protected readonly form: FormGroup<CreateEmployeeForm>;
   protected readonly salaryTypes = salaryTypeOptions;
 

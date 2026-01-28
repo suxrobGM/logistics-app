@@ -27,7 +27,7 @@ import { UserService } from "../../services";
     SelectModule,
   ],
 })
-export class ChangeRoleDialogComponent {
+export class ChangeRoleDialog {
   protected readonly form: FormGroup;
 
   private readonly api = inject(Api);

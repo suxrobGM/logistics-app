@@ -34,7 +34,7 @@ import { LabeledField } from "@/shared/components";
     LabeledField,
   ],
 })
-export class InviteEmployeeDialogComponent {
+export class InviteEmployeeDialog {
   protected readonly form = new FormGroup({
     email: new FormControl("", [Validators.required, Validators.email]),
     role: new FormControl("", Validators.required),

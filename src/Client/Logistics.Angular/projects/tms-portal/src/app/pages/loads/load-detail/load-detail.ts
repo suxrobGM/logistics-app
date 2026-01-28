@@ -9,7 +9,7 @@ import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TabsModule } from "primeng/tabs";
-import { DocumentManagerComponent, PageHeader } from "@/shared/components";
+import { DocumentManager, PageHeader } from "@/shared/components";
 import { LoadStatusTag, LoadTypeTag } from "@/shared/components/tags";
 import { DistanceUnitPipe } from "@/shared/pipes";
 import {
@@ -39,7 +39,7 @@ import {
     LoadTypeTag,
     AddressPipe,
     DistanceUnitPipe,
-    DocumentManagerComponent,
+    DocumentManager,
     LoadStatusStepper,
     LoadPodContent,
     LoadExceptionsContent,

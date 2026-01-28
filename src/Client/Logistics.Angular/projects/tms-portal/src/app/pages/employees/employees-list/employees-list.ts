@@ -11,8 +11,8 @@ import { MenuModule } from "primeng/menu";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
-import { InviteEmployeeDialogComponent } from "../components/invite-employee-dialog/invite-employee-dialog";
-import { EmployeesListStore } from "../store/employees-list.store";
+import { InviteEmployeeDialog } from "../components";
+import { EmployeesListStore } from "../store";
 
 @Component({
   selector: "app-employees-list",
@@ -31,11 +31,11 @@ import { EmployeesListStore } from "../store/employees-list.store";
     DataContainer,
     PageHeader,
     SearchInput,
-    InviteEmployeeDialogComponent,
+    InviteEmployeeDialog,
     PermissionGuard,
   ],
 })
-export class EmployeeListComponent {
+export class EmployeeList {
   private readonly router = inject(Router);
   protected readonly store = inject(EmployeesListStore);
   protected readonly Permission = Permission;
