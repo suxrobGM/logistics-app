@@ -35,6 +35,11 @@ internal sealed class UpdateEmployeeHandler(ITenantUnitOfWork tenantUow)
             employeeEntity.Salary = req.SalaryType == SalaryType.None ? 0 : req.Salary.Value;
         }
 
+        if (req.Status.HasValue && employeeEntity.Status != req.Status)
+        {
+            employeeEntity.Status = req.Status.Value;
+        }
+
         tenantUow.Repository<Employee>().Update(employeeEntity);
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();

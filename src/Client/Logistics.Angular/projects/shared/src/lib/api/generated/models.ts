@@ -88,6 +88,7 @@ export type { EldProviderConfigurationDto } from './models/eld-provider-configur
 export type { EldProviderType } from './models/eld-provider-type';
 export type { EmployeeDto } from './models/employee-dto';
 export type { EmployeeDtoPagedResponse } from './models/employee-dto-paged-response';
+export type { EmployeeStatus } from './models/employee-status';
 export type { ErrorResponse } from './models/error-response';
 export type { ExpenseCategoryStatDto } from './models/expense-category-stat-dto';
 export type { ExpenseDto } from './models/expense-dto';

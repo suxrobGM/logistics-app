@@ -15,6 +15,7 @@ public class EmployeeDto
     public double? LastKnownLocationLng { get; set; }
     public decimal Salary { get; set; }
     public SalaryType SalaryType { get; set; }
+    public EmployeeStatus Status { get; set; }
     public DateTime JoinedDate { get; set; }
     public RoleDto? Role { get; set; }
 }

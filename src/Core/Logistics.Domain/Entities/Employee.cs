@@ -13,6 +13,7 @@ public class Employee : Entity, ITenantEntity
 
     public Money Salary { get; set; } = Money.Zero();
     public SalaryType SalaryType { get; set; } = SalaryType.None;
+    public EmployeeStatus Status { get; set; } = EmployeeStatus.Active;
 
     /// <summary>
     ///     When employee joined to this tenant

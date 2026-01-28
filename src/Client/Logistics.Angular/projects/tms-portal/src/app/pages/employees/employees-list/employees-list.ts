@@ -9,10 +9,14 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
 import { TableModule } from "primeng/table";
+import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
-import { InviteEmployeeDialog } from "../components";
+import { EmployeeStatusTag } from "@/shared/components/tags";
+import { EmployeeAvatar, InviteEmployeeDialog } from "../components";
 import { EmployeesListStore } from "../store";
+
+type SeverityType = "success" | "secondary" | "info" | "warn" | "danger" | "contrast";
 
 @Component({
   selector: "app-employees-list",
@@ -25,6 +29,7 @@ import { EmployeesListStore } from "../store";
     CardModule,
     TableModule,
     MenuModule,
+    TagModule,
     DatePipe,
     PercentPipe,
     CurrencyPipe,
@@ -33,6 +38,8 @@ import { EmployeesListStore } from "../store";
     SearchInput,
     InviteEmployeeDialog,
     PermissionGuard,
+    EmployeeAvatar,
+    EmployeeStatusTag,
   ],
 })
 export class EmployeeList {
@@ -45,9 +52,9 @@ export class EmployeeList {
 
   protected readonly actionMenuItems: MenuItem[] = [
     {
-      label: "Edit employee",
-      icon: "pi pi-pen-to-square",
-      command: () => this.router.navigateByUrl(`/employees/${this.selectedRow()!.id}/edit`),
+      label: "View details",
+      icon: "pi pi-eye",
+      command: () => this.router.navigateByUrl(`/employees/${this.selectedRow()!.id}`),
     },
     {
       label: "View payrolls",
@@ -59,12 +66,26 @@ export class EmployeeList {
       icon: "pi pi-clock",
       command: () => this.router.navigateByUrl(`/timesheets/employee/${this.selectedRow()!.id}`),
     },
-    {
-      label: "Manage documents",
-      icon: "pi pi-paperclip",
-      command: () => this.router.navigateByUrl(`/employees/${this.selectedRow()!.id}/documents`),
-    },
   ];
+
+  protected getRoleSeverity(roleName: string | undefined): SeverityType {
+    switch (roleName?.toLowerCase()) {
+      case "owner":
+        return "warn";
+      case "manager":
+        return "info";
+      case "dispatcher":
+        return "secondary";
+      case "driver":
+        return "success";
+      default:
+        return "secondary";
+    }
+  }
+
+  protected onRowClick(employee: EmployeeDto): void {
+    this.router.navigateByUrl(`/employees/${employee.id}`);
+  }
 
   protected onSearch(value: string): void {
     this.store.setSearch(value);

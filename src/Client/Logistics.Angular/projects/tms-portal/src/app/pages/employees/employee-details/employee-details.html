@@ -1,0 +1,260 @@
+<!-- Header with actions -->
+<div class="mb-6 flex items-start justify-between">
+  <ui-page-header title="Employee Details" [showAddButton]="false" />
+  <div class="flex gap-2">
+    <p-button
+      icon="pi pi-pencil"
+      label="Edit"
+      [outlined]="true"
+      (click)="openEditDialog()"
+    />
+    <p-button
+      icon="pi pi-chart-line"
+      label="View Report"
+      [outlined]="true"
+      [routerLink]="['/reports/drivers/detailed']"
+      [queryParams]="{driverId: id()}"
+    />
+    <p-button icon="pi pi-arrow-left" label="Back" [routerLink]="['/employees']" [outlined]="true" />
+  </div>
+</div>
+
+@if (store.isLoading()) {
+  <div class="flex justify-center py-16">
+    <p-progress-spinner />
+  </div>
+} @else if (store.employee(); as employee) {
+  <!-- Enhanced Header with Employee Info -->
+  <div class="mb-6">
+    <div class="border-default bg-elevated rounded-lg border p-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <app-employee-avatar [employee]="employee" size="xlarge" />
+          <div>
+            <h2 class="m-0 text-2xl font-bold">{{ employee.fullName }}</h2>
+            <div class="mt-2 flex items-center gap-2">
+              @if (employee.status) {
+                <app-employee-status-tag [status]="employee.status" />
+              }
+              @if (employee.role?.displayName) {
+                <p-tag [value]="employee.role!.displayName!" severity="info" />
+              }
+            </div>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="text-muted text-sm">Joined</div>
+          <div class="font-medium">{{ employee.joinedDate | date: 'mediumDate' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p-card>
+    <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
+      <p-tablist>
+        <p-tab [value]="0">
+          <i class="pi pi-user mr-2"></i>
+          Overview
+        </p-tab>
+        <p-tab [value]="1">
+          <i class="pi pi-folder mr-2"></i>
+          Documents
+          @if (store.documentsCount()) {
+            <span class="ml-1 rounded-full bg-info/15 px-2 py-0.5 text-xs text-info">
+              {{ store.documentsCount() }}
+            </span>
+          }
+        </p-tab>
+        <p-tab [value]="2">
+          <i class="pi pi-box mr-2"></i>
+          Loads
+          @if (store.recentLoadsCount()) {
+            <span class="ml-1 rounded-full bg-info/15 px-2 py-0.5 text-xs text-info">
+              {{ store.recentLoadsCount() }}
+            </span>
+          }
+        </p-tab>
+        <p-tab [value]="3">
+          <i class="pi pi-dollar mr-2"></i>
+          Payroll
+        </p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+        <!-- Overview Tab -->
+        <p-tabpanel [value]="0">
+          <div class="grid grid-cols-1 gap-6 pt-4 lg:grid-cols-2">
+            <!-- Contact Info Card -->
+            <p-card class="border-default border">
+              <ng-template #header>
+                <div class="p-4 pb-0">
+                  <h3 class="m-0 text-lg font-semibold">Contact Information</h3>
+                </div>
+              </ng-template>
+
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <span class="text-muted">Email</span>
+                  <a [href]="'mailto:' + employee.email" class="text-accent font-medium hover:underline">
+                    {{ employee.email }}
+                  </a>
+                </div>
+
+                <p-divider />
+
+                <div class="flex items-center justify-between">
+                  <span class="text-muted">Phone</span>
+                  @if (employee.phoneNumber) {
+                    <a [href]="'tel:' + employee.phoneNumber" class="text-accent font-medium hover:underline">
+                      {{ employee.phoneNumber }}
+                    </a>
+                  } @else {
+                    <span class="text-muted">Not provided</span>
+                  }
+                </div>
+
+                <p-divider />
+
+                <div class="flex items-center justify-between">
+                  <span class="text-muted">Joined Date</span>
+                  <span class="font-medium">{{ employee.joinedDate | date: 'mediumDate' }}</span>
+                </div>
+              </div>
+            </p-card>
+
+            <!-- Salary Info Card -->
+            <p-card class="border-default border">
+              <ng-template #header>
+                <div class="p-4 pb-0">
+                  <h3 class="m-0 text-lg font-semibold">Salary Information</h3>
+                </div>
+              </ng-template>
+
+              <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <span class="text-muted">Salary Type</span>
+                  <span class="font-medium capitalize">
+                    {{ employee.salaryType?.replace('_', ' ') || 'None' }}
+                  </span>
+                </div>
+
+                <p-divider />
+
+                <div class="flex items-center justify-between">
+                  <span class="text-muted">Salary</span>
+                  <span class="text-lg font-bold">{{ salaryDisplay() }}</span>
+                </div>
+
+                <p-divider />
+
+                <div class="flex items-center justify-between">
+                  <span class="text-muted">Role</span>
+                  @if (employee.role?.displayName) {
+                    <p-tag [value]="employee.role!.displayName!" severity="info" />
+                  } @else {
+                    <span class="text-muted">No role assigned</span>
+                  }
+                </div>
+              </div>
+            </p-card>
+          </div>
+
+          <!-- Location Card (if available) -->
+          @if (employee.lastKnownLocation) {
+            <p-card class="border-default mt-6 border">
+              <ng-template #header>
+                <div class="p-4 pb-0">
+                  <h3 class="m-0 text-lg font-semibold">Last Known Location</h3>
+                </div>
+              </ng-template>
+
+              <div class="flex items-center gap-2">
+                <i class="pi pi-map-marker text-accent"></i>
+                <span>{{ employee.lastKnownLocation }}</span>
+              </div>
+            </p-card>
+          }
+
+          <!-- Quick Actions Card -->
+          <p-card class="border-default mt-6 border">
+            <ng-template #header>
+              <div class="p-4 pb-0">
+                <h3 class="m-0 text-lg font-semibold">Quick Actions</h3>
+              </div>
+            </ng-template>
+
+            <div class="flex flex-wrap gap-2">
+              <p-button
+                icon="pi pi-dollar"
+                label="View Payroll"
+                [outlined]="true"
+                [routerLink]="['/payroll/employee', id()]"
+              />
+              <p-button
+                icon="pi pi-clock"
+                label="View Timesheets"
+                [outlined]="true"
+                [routerLink]="['/timesheets/employee', id()]"
+              />
+              <p-button
+                icon="pi pi-chart-line"
+                label="View Report"
+                [outlined]="true"
+                [routerLink]="['/reports/drivers/detailed']"
+                [queryParams]="{driverId: id()}"
+              />
+            </div>
+          </p-card>
+        </p-tabpanel>
+
+        <!-- Documents Tab -->
+        <p-tabpanel [value]="1">
+          <div class="pt-4">
+            <app-document-manager [employeeId]="id()" [types]="employeeDocTypes" />
+          </div>
+        </p-tabpanel>
+
+        <!-- Loads Tab -->
+        <p-tabpanel [value]="2">
+          <div class="pt-4">
+            <app-employee-loads-list [loads]="store.recentLoads()" [employeeId]="id()" />
+          </div>
+        </p-tabpanel>
+
+        <!-- Payroll Tab -->
+        <p-tabpanel [value]="3">
+          <div class="pt-4">
+            <div class="mb-4 flex items-center justify-between">
+              <h3 class="m-0">Recent Payroll</h3>
+              <p-button
+                label="View All Payroll"
+                [outlined]="true"
+                [routerLink]="['/payroll/employee', id()]"
+              />
+            </div>
+            <p class="text-muted">
+              View detailed payroll history and invoices for this employee.
+            </p>
+          </div>
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </p-card>
+} @else {
+  <p-card>
+    <div class="py-16 text-center">
+      <i class="pi pi-exclamation-circle text-muted mb-4 text-4xl"></i>
+      <p class="text-muted">Employee not found</p>
+      <p-button label="Back to Employees" [routerLink]="['/employees']" class="mt-4" />
+    </div>
+  </p-card>
+}
+
+<!-- Edit Dialog -->
+<app-employee-edit-dialog
+  [visible]="store.editDialogVisible()"
+  (visibleChange)="store.closeEditDialog()"
+  [employee]="store.employee()"
+  (saved)="onEmployeeSaved()"
+/>

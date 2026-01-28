@@ -18,6 +18,7 @@ public static class EmployeeMapper
             JoinedDate = entity.JoinedDate,
             Salary = entity.Salary,
             SalaryType = entity.SalaryType,
+            Status = entity.Status,
             Role = entity.Role?.ToDto()
         };
     }

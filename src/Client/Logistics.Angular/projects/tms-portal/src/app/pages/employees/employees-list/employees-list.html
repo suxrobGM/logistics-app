@@ -53,35 +53,51 @@
             Name
             <p-sortIcon field="FirstName" />
           </th>
+          <th>Status</th>
           <th pSortableColumn="Email">
             Email
             <p-sortIcon field="Email" />
           </th>
           <th pSortableColumn="PhoneNumber">
-            Phone Number
+            Phone
             <p-sortIcon field="PhoneNumber" />
           </th>
+          <th>Role</th>
           <th pSortableColumn="Salary">
             Salary
             <p-sortIcon field="Salary" />
           </th>
-          <th pSortableColumn="SalaryType">
-            Salary Type
-            <p-sortIcon field="SalaryType" />
-          </th>
-          <th>Role</th>
           <th pSortableColumn="JoinedDate">
-            Joined Date
+            Joined
             <p-sortIcon field="JoinedDate" />
           </th>
-          <th>Action</th>
+          <th></th>
         </tr>
       </ng-template>
       <ng-template #body let-employee>
-        <tr>
-          <td>{{ employee.fullName }}</td>
+        <tr class="cursor-pointer hover:bg-hover" (click)="onRowClick(employee)">
+          <td>
+            <div class="flex items-center gap-3">
+              <app-employee-avatar [employee]="employee" size="normal" />
+              <div>
+                <div class="font-medium">{{ employee.fullName }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            @if (employee.status) {
+              <app-employee-status-tag [status]="employee.status" />
+            }
+          </td>
           <td>{{ employee.email }}</td>
-          <td>{{ employee.phoneNumber }}</td>
+          <td>{{ employee.phoneNumber || '-' }}</td>
+          <td>
+            @if (employee.role) {
+              <p-tag [value]="employee.role.displayName" [severity]="getRoleSeverity(employee.role.name)" />
+            } @else {
+              <span class="text-muted">-</span>
+            }
+          </td>
           <td>
             @if (employee.salaryType === "share_of_gross") {
               {{ employee.salary | percent }}
@@ -95,15 +111,13 @@
               {{ employee.salary | currency }}
             }
           </td>
-          <td>{{ getSalaryTypeDesc(employee.salaryType) }}</td>
-          <td>{{ employee.role?.displayName }}</td>
           <td>{{ employee.joinedDate | date: "mediumDate" }}</td>
           <td>
             <p-button
               icon="pi pi-ellipsis-v"
               [text]="true"
               aria-label="Show actions menu"
-              (click)="selectedRow.set(employee); menu.toggle($event)"
+              (click)="$event.stopPropagation(); selectedRow.set(employee); menu.toggle($event)"
             />
           </td>
         </tr>

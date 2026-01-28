@@ -6,6 +6,7 @@
 import type { SelectOption } from "../models/select-option";
 import type {
   DocumentType,
+  EmployeeStatus,
   InvoiceLineItemType,
   InvoiceStatus,
   LoadExceptionType,
@@ -49,6 +50,13 @@ export const salaryTypeOptions: SelectOption<SalaryType>[] = [
   { label: "Share of Gross", value: "share_of_gross" },
   { label: "Rate per Distance", value: "rate_per_distance" },
   { label: "Hourly", value: "hourly" },
+];
+
+export const employeeStatusOptions: SelectOption<EmployeeStatus>[] = [
+  { label: "Active", value: "active" },
+  { label: "On Leave", value: "on_leave" },
+  { label: "Suspended", value: "suspended" },
+  { label: "Terminated", value: "terminated" },
 ];
 
 export const documentTypeOptions: SelectOption<DocumentType>[] = [
