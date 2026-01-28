@@ -1,0 +1,33 @@
+<!-- Native Mapbox Controls -->
+@if (showNavigation()) {
+  <mgl-control mglNavigation [position]="navigationPosition()" />
+}
+
+@if (showFullscreen()) {
+  <mgl-control mglFullscreen [position]="navigationPosition()" />
+}
+
+@if (showScale()) {
+  <mgl-control mglScale [position]="scalePosition()" [unit]="scaleUnit()" />
+}
+
+<!-- Custom Controls Panel -->
+@if (showLayerToggle()) {
+  <mgl-control position="top-left">
+    <div class="bg-surface rounded p-1">
+      <p-selectbutton
+        [options]="mapStyleService.layerOptions"
+        [ngModel]="mapStyleService.activeLayer()"
+        (ngModelChange)="onLayerChange($event)"
+        optionLabel="label"
+        optionValue="value"
+        size="small"
+        aria-label="Select map layer style"
+      >
+        <ng-template #item let-item>
+          <i [class]="'pi ' + item.icon" [pTooltip]="item.label" tooltipPosition="bottom"></i>
+        </ng-template>
+      </p-selectbutton>
+    </div>
+  </mgl-control>
+}

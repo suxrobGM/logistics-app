@@ -29,7 +29,7 @@
     @if (store.loading()) {
       <div class="space-y-2 p-2">
         @for (i of [1, 2, 3, 4, 5]; track i) {
-          <div class="flex items-center gap-4 rounded-xl bg-hover p-4">
+          <div class="bg-hover flex items-center gap-4 rounded-xl p-4">
             <p-skeleton shape="circle" size="3.5rem" />
             <div class="flex-1">
               <p-skeleton width="50%" height="1.25rem" styleClass="mb-2" />
@@ -43,8 +43,8 @@
         <div class="bg-primary/10 mb-6 flex h-24 w-24 items-center justify-center rounded-full">
           <i class="pi pi-comments text-primary text-5xl"></i>
         </div>
-        <h3 class="mb-2 text-secondary">No conversations yet</h3>
-        <p class="mb-6 max-w-sm text-muted">
+        <h3 class="text-secondary mb-2">No conversations yet</h3>
+        <p class="text-muted mb-6 max-w-sm">
           Start a conversation with your team members to collaborate and stay connected
         </p>
         <p-button
@@ -65,27 +65,22 @@
             (click)="selectConversation(conversation)"
             (keydown.enter)="selectConversation(conversation)"
           >
-            <p-avatar
-              [label]="getInitials(conversation)"
-              styleClass="bg-primary text-white shadow-md"
-              size="large"
-              shape="circle"
-            />
+            <app-user-avatar [initials]="getInitials(conversation)" size="large" />
 
             <div class="min-w-0 flex-1">
               <div class="flex items-center justify-between gap-2">
-                <span class="truncate font-semibold text-primary">
+                <span class="text-primary truncate font-semibold">
                   {{ conversation.name || getParticipantNames(conversation) }}
                 </span>
                 @if (conversation.lastMessageAt) {
-                  <span class="shrink-0 text-xs text-muted">
+                  <span class="text-muted shrink-0 text-xs">
                     {{ conversation.lastMessageAt | date: "shortTime" }}
                   </span>
                 }
               </div>
 
               <div class="mt-1 flex items-center justify-between gap-2">
-                <p class="truncate text-sm text-muted">
+                <p class="text-muted truncate text-sm">
                   @if (conversation.lastMessage) {
                     {{ conversation.lastMessage.content }}
                   } @else {

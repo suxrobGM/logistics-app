@@ -10,6 +10,7 @@ import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
 import { AuthService } from "@/core/auth";
 import { ChatService } from "@/core/services";
+import { UserAvatar } from "@/shared/components";
 import { Converters } from "@/shared/utils";
 import { MessagesStore } from "../store/messages.store";
 
@@ -25,6 +26,7 @@ import { MessagesStore } from "../store/messages.store";
     DividerModule,
     SkeletonModule,
     DatePipe,
+    UserAvatar,
   ],
 })
 export class MessagesListComponent implements OnInit, OnDestroy {

@@ -1,4 +1,4 @@
-import { Component, type OnDestroy, inject, input, signal } from "@angular/core";
+import { Component, type OnDestroy, computed, inject, input, output, signal } from "@angular/core";
 import { Api, getTrucks } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { TrackingService } from "@/core/services";
@@ -14,8 +14,31 @@ export class TrucksMap implements OnDestroy {
   private readonly liveTrackingService = inject(TrackingService);
 
   protected readonly truckLocations = signal<TruckGeolocationDto[]>([]);
+
+  /** Loading state for initial data fetch */
+  protected readonly loading = signal(true);
+
+  /** Count of trucks with valid location data */
+  public readonly trucksWithLocation = computed(
+    () => this.truckLocations().filter((t) => t.currentLocation).length,
+  );
+
+  /** Count of trucks without location data */
+  public readonly trucksWithoutLocation = computed(
+    () => this.truckLocations().filter((t) => !t.currentLocation).length,
+  );
+
   public readonly width = input("100%");
   public readonly height = input("100%");
+
+  /** Show map controls */
+  public readonly showControls = input(true);
+
+  /** Show layer toggle in controls */
+  public readonly showLayerToggle = input(true);
+
+  /** Emitted when a truck is selected on the map */
+  public readonly truckSelect = output<TruckGeolocationDto>();
 
   constructor() {
     this.fetchTrucksData();
@@ -24,6 +47,15 @@ export class TrucksMap implements OnDestroy {
 
   ngOnDestroy(): void {
     this.liveTrackingService.disconnect();
+  }
+
+  /** Retry fetching truck data after an error */
+  public retry(): void {
+    this.fetchTrucksData();
+  }
+
+  protected onTruckSelect(truck: TruckGeolocationDto): void {
+    this.truckSelect.emit(truck);
   }
 
   private connectToLiveTracking(): void {
@@ -45,29 +77,38 @@ export class TrucksMap implements OnDestroy {
   }
 
   private async fetchTrucksData(): Promise<void> {
-    const result = await this.api.invoke(getTrucks, { PageSize: 100 });
+    this.loading.set(true);
 
-    if (!result.items) {
-      return;
-    }
+    try {
+      const result = await this.api.invoke(getTrucks, { PageSize: 100 });
 
-    const truckLocations: TruckGeolocationDto[] = result.items.flatMap((truck) => {
-      if (truck.currentLocation) {
-        return [
-          {
-            latitude: truck.currentLocation.latitude,
-            longitude: truck.currentLocation.longitude,
-            truckId: truck.id ?? undefined,
-            truckNumber: truck.number ?? undefined,
-            driversName: [truck.mainDriver?.fullName, truck.secondaryDriver?.fullName]
-              .filter(Boolean)
-              .join(", "),
-          },
-        ];
+      if (!result.items) {
+        this.truckLocations.set([]);
+        return;
       }
-      return [];
-    });
 
-    this.truckLocations.set(truckLocations);
+      const truckLocations: TruckGeolocationDto[] = result.items.flatMap((truck) => {
+        if (truck.currentLocation) {
+          return [
+            {
+              latitude: truck.currentLocation.latitude,
+              longitude: truck.currentLocation.longitude,
+              truckId: truck.id,
+              truckNumber: truck.number,
+              driversName: [truck.mainDriver?.fullName, truck.secondaryDriver?.fullName]
+                .filter(Boolean)
+                .join(", "),
+              currentLocation: truck.currentLocation,
+              currentAddress: truck.currentAddress,
+            },
+          ];
+        }
+        return [];
+      });
+
+      this.truckLocations.set(truckLocations);
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

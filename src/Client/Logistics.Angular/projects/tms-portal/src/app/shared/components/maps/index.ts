@@ -3,3 +3,7 @@ export * from "./address-autocomplete/address-autocomplete";
 export * from "./direction-map/direction-map";
 export * from "./direction-map/types";
 export * from "./trucks-map/trucks-map";
+export * from "./map-container/map-container";
+export * from "./map-controls/map-controls";
+export * from "./route-info-panel/route-info-panel";
+export * from "./types";

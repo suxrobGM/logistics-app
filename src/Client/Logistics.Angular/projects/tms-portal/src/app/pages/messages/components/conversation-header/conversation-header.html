@@ -10,11 +10,7 @@
       <p class="text-muted text-xs">Select a recipient to start messaging</p>
     </div>
   } @else {
-    <p-avatar
-      [label]="getInitials(getConversationTitle(conversation()))"
-      class="bg-primary text-white"
-      shape="circle"
-    />
+    <app-user-avatar [initials]="getInitials(getConversationTitle(conversation()))" size="large" />
     <div
       class="flex-1 cursor-pointer"
       role="button"

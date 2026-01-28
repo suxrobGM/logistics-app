@@ -1,16 +1,26 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { Component, computed, effect, inject, input, model, output, signal } from "@angular/core";
 import type { GeoPoint } from "@logistics/shared/api";
+import type { AppError } from "@logistics/shared/errors";
 import type { LineString } from "geojson";
 import type { LngLatLike, MapMouseEvent } from "mapbox-gl";
-import { GeoJSONSourceComponent, LayerComponent, MapComponent } from "ngx-mapbox-gl";
+import {
+  GeoJSONSourceComponent,
+  LayerComponent,
+  MapComponent,
+  PopupComponent,
+} from "ngx-mapbox-gl";
 import { firstValueFrom } from "rxjs";
-import { ThemeService } from "@/core/services";
+import { MapStyleService } from "@/core/services";
 import { environment } from "@/env";
 import type { MapboxDirectionsResponse } from "@/shared/types/mapbox";
+import { MapContainer } from "../map-container/map-container";
+import { MapControls } from "../map-controls/map-controls";
+import { formatDistanceMiles, formatDuration } from "../types";
 import type {
   RouteChangeEvent,
   RouteSegmentClickEvent,
+  RouteSegmentInfo,
   SegmentFeature,
   SegmentLayer,
   Waypoint,
@@ -21,11 +31,18 @@ import type {
 @Component({
   selector: "app-direction-map",
   templateUrl: "./direction-map.html",
-  imports: [MapComponent, LayerComponent, GeoJSONSourceComponent],
+  imports: [
+    MapComponent,
+    LayerComponent,
+    GeoJSONSourceComponent,
+    PopupComponent,
+    MapContainer,
+    MapControls,
+  ],
 })
 export class DirectionMap {
   private readonly http = inject(HttpClient);
-  private readonly themeService = inject(ThemeService);
+  private readonly mapStyleService = inject(MapStyleService);
 
   protected readonly accessToken = environment.mapboxToken;
   private readonly defaultCenter: LngLatLike = [-95, 35];
@@ -38,19 +55,24 @@ export class DirectionMap {
     "#B10DC9", // purple
   ];
 
-  /** Mapbox style URL based on current theme */
-  protected readonly mapStyle = computed(() =>
-    this.themeService.isDark()
-      ? "mapbox://styles/mapbox/dark-v11"
-      : "mapbox://styles/mapbox/streets-v12",
-  );
+  /** Mapbox style URL based on current layer and theme */
+  protected readonly mapStyle = this.mapStyleService.currentStyle;
 
   // States
+  protected readonly loading = signal(false);
+  protected readonly error = signal<AppError | null>(null);
   protected readonly segments = signal<SegmentLayer[]>([]);
   protected readonly waypointsData = signal<WaypointFeature | null>(null);
-  protected readonly waypointHighlight = signal<WaypointFeature | null>(null); // prettier-ignore
+  protected readonly waypointHighlight = signal<WaypointFeature | null>(null);
   protected readonly segmentHighlight = signal<SegmentFeature | null>(null);
   protected readonly bounds = signal<[LngLatLike, LngLatLike] | null>(null);
+  protected readonly hoveredSegment = signal<SegmentLayer | null>(null);
+
+  /** Whether the map has no valid waypoints */
+  protected readonly isEmpty = computed(() => {
+    const pts = this.waypoints();
+    return !pts || pts.length < 2 || !this.coordsAreValid(pts);
+  });
 
   /** The center coordinates of the map. Default is [-95, 35]. */
   public readonly center = model<LngLatLike>(this.defaultCenter);
@@ -73,6 +95,12 @@ export class DirectionMap {
   /** The height of the map container. Default is 100%. */
   public readonly height = input<string>("100%");
 
+  /** Show map controls */
+  public readonly showControls = input(true);
+
+  /** Show layer toggle in controls */
+  public readonly showLayerToggle = input(true);
+
   /** Emitted when the route changes. */
   public readonly routeChange = output<RouteChangeEvent>();
 
@@ -92,6 +120,20 @@ export class DirectionMap {
     });
   }
 
+  /** Public method to fit map bounds to all waypoints */
+  public fitToBounds(): void {
+    const pts = this.waypoints();
+    if (pts && pts.length >= 2) {
+      this.fitAndCenter(pts);
+    }
+  }
+
+  /** Retry loading after an error */
+  protected handleRetry(): void {
+    this.error.set(null);
+    this.draw();
+  }
+
   protected setCursor(cursor: string, evt: MapMouseEvent): void {
     evt.target.getCanvas().style.cursor = cursor;
   }
@@ -103,6 +145,16 @@ export class DirectionMap {
       fromWaypoint: seg.fromWaypoint,
       toWaypoint: seg.toWaypoint,
     });
+  }
+
+  protected onSegmentMouseEnter(evt: MapMouseEvent, seg: SegmentLayer): void {
+    this.setCursor("pointer", evt);
+    this.hoveredSegment.set(seg);
+  }
+
+  protected onSegmentMouseLeave(evt: MapMouseEvent): void {
+    this.setCursor("", evt);
+    this.hoveredSegment.set(null);
   }
 
   protected onWaypointClick(evt: MapMouseEvent): void {
@@ -117,6 +169,15 @@ export class DirectionMap {
     this.selectSegmentByWaypoint(waypoint.id);
   }
 
+  /** Format segment info for tooltip display */
+  protected formatSegmentTooltip(seg: SegmentLayer): string {
+    const distance = seg.data.properties?.distance ?? 0;
+    const duration = seg.data.properties?.duration ?? 0;
+    const miles = formatDistanceMiles(distance);
+    const time = formatDuration(duration);
+    return `${miles} mi · ${time}`;
+  }
+
   /**
    * Draws the direction map.
    */
@@ -127,46 +188,72 @@ export class DirectionMap {
       return this.clear();
     }
 
-    // build waypoint FeatureCollection with labels
-    this.waypointsData.set(this.toWaypointFC(pts));
+    this.loading.set(true);
+    this.error.set(null);
 
-    // build one LineString per leg
-    const segs: SegmentLayer[] = [];
-    for (let i = 0; i < pts.length - 1; i++) {
-      const from = pts[i];
-      const to = pts[i + 1];
-      const feature = await this.buildDirectionsSegment(from.location, to.location);
+    try {
+      // build waypoint FeatureCollection with labels
+      this.waypointsData.set(this.toWaypointFC(pts));
 
-      segs.push({
-        layerId: `seg-${from.id}-${to.id}`,
-        data: feature,
-        fromWaypoint: from,
-        toWaypoint: to,
+      // build one LineString per leg
+      const segs: SegmentLayer[] = [];
+      for (let i = 0; i < pts.length - 1; i++) {
+        const from = pts[i];
+        const to = pts[i + 1];
+        const feature = await this.buildDirectionsSegment(from.location, to.location);
+
+        segs.push({
+          layerId: `seg-${from.id}-${to.id}`,
+          data: feature,
+          fromWaypoint: from,
+          toWaypoint: to,
+        });
+      }
+      this.segments.set(segs);
+
+      // Fit bounds & center
+      this.fitAndCenter(pts);
+
+      // Emit route info (sum of legs)
+      const distance = segs.reduce((sum, s) => sum + (s.data.properties?.distance ?? 0), 0);
+      const duration = segs.reduce((sum, s) => sum + (s.data.properties?.duration ?? 0), 0);
+      const segmentInfos: RouteSegmentInfo[] = segs.map((s, i) => ({
+        index: i,
+        distance: s.data.properties?.distance ?? 0,
+        duration: s.data.properties?.duration ?? 0,
+        fromWaypointId: s.fromWaypoint.id,
+        toWaypointId: s.toWaypoint.id,
+      }));
+
+      this.routeChange.emit({
+        origin: pts[0].location,
+        destination: pts.at(-1)!.location,
+        distance,
+        duration,
+        segments: segmentInfos,
       });
+
+      // Clear any previous selection
+      this.clearHighlight();
+    } catch (err) {
+      const message =
+        err instanceof HttpErrorResponse
+          ? "Failed to load route directions. Please check your internet connection."
+          : "An unexpected error occurred while loading the route.";
+
+      this.error.set({
+        category: "network",
+        message,
+        retryable: true,
+        originalError: err,
+      });
+    } finally {
+      this.loading.set(false);
     }
-    this.segments.set(segs);
-
-    // Fit bounds & center
-    this.fitAndCenter(pts);
-
-    // Emit route distance (sum of legs)
-    const distance = segs.reduce((sum, s) => sum + (s.data.properties?.distance ?? 0), 0);
-    this.routeChange.emit({
-      origin: pts[0].location,
-      destination: pts.at(-1)!.location,
-      distance,
-    });
-
-    // Clear any previous selection
-    this.clearHighlight();
   }
 
   /**
    * Builds a segment for the directions map using Mapbox Directions API.
-   * @param a Starting point coordinates.
-   * @param b Ending point coordinates.
-   * @param index Index of the segment in the route.
-   * @returns A GeoJSONSourceSpecification for the segment.
    */
   private async buildDirectionsSegment(a: GeoPoint, b: GeoPoint): Promise<SegmentFeature> {
     const coords = `${a.longitude},${a.latitude};${b.longitude},${b.latitude}`;
@@ -177,16 +264,17 @@ export class DirectionMap {
     return {
       type: "Feature",
       geometry: res.routes?.[0]?.geometry as LineString,
-      properties: { distance: res.routes?.[0]?.distance },
+      properties: {
+        distance: res.routes?.[0]?.distance ?? 0,
+        duration: res.routes?.[0]?.duration ?? 0,
+      },
     };
   }
 
   /**
    * Fits the map to the given waypoints.
-   * @param waypoints Array of waypoints.
    */
   private fitAndCenter(waypoints: Waypoint[]): void {
-    // Calculate bounds
     const xs = waypoints.map((p) => p.location.longitude ?? 0);
     const ys = waypoints.map((p) => p.location.latitude ?? 0);
     const minX = Math.min(...xs);
@@ -226,16 +314,6 @@ export class DirectionMap {
       (f) => f.properties?.id === seg.fromWaypoint.id || f.properties?.id === seg.toWaypoint.id,
     );
 
-    // const selectedWaypoints = selected.map((f) => ({
-    //   id: f.properties?.id,
-    //   location: {
-    //     longitude: f.geometry.coordinates[0],
-    //     latitude: f.geometry.coordinates[1],
-    //   },
-    // }));
-
-    // this.fitAndCenter(selectedWaypoints);
-
     this.waypointHighlight.set({
       type: "FeatureCollection",
       features: selected,
@@ -262,8 +340,6 @@ export class DirectionMap {
 
   /**
    * Converts an array of waypoints to a FeatureCollection.
-   * @param pts Array of waypoints.
-   * @returns A FeatureCollection representing the waypoints.
    */
   private toWaypointFC(pts: Waypoint[]): WaypointFeature {
     return {
@@ -281,10 +357,6 @@ export class DirectionMap {
 
   /**
    * Validates if the given point is a valid GeoPoint.
-   * A valid GeoPoint is an array of two numbers: [longitude, latitude].
-   * Longitude must be between -180 and 180, latitude must be between -90 and 90.
-   * @param point The point to validate.
-   * @returns True if the point is valid, false otherwise.
    */
   private isValidPoint(point: Waypoint): boolean {
     const longitude = point.location.longitude ?? 0;

@@ -1,108 +1,143 @@
-<mgl-map
-  [style]="mapStyle()"
-  [zoom]="[zoom()]"
-  [center]="center()"
-  [fitBounds]="bounds()!"
-  [fitBoundsOptions]="{ padding: 50 }"
-  [style.width]="width()"
-  [style.height]="height()"
+<app-map-container
+  [loading]="loading()"
+  [error]="error()"
+  [height]="height()"
+  emptyTitle="No route data"
+  emptyMessage="Add at least two waypoints to display a route."
+  emptyIcon="directions"
+  (retry)="handleRetry()"
 >
-  <mgl-geojson-source id="waypoints-src" [data]="waypointsData()!" />
-  <mgl-geojson-source id="segment-highlight-src" [data]="segmentHighlight()!" />
-  <mgl-geojson-source id="waypoint-highlight-src" [data]="waypointHighlight()!" />
+  <mgl-map
+    [style]="mapStyle()"
+    [zoom]="[zoom()]"
+    [center]="center()"
+    [fitBounds]="bounds()!"
+    [fitBoundsOptions]="{ padding: 50 }"
+    [style.width]="width()"
+    [style.height]="height()"
+    role="application"
+    aria-label="Route map showing trip waypoints and directions"
+    [attr.aria-busy]="loading()"
+  >
+    <!-- Map Controls -->
+    @if (showControls()) {
+      <app-map-controls [showLayerToggle]="showLayerToggle()" (fitBoundsClick)="fitToBounds()" />
+    }
 
-  <!-- <mgl-image
-    id="waypoint-pin"
-    url="https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png"
-  /> -->
-
-  <mgl-layer
-    id="waypoint-bubbles"
-    type="circle"
-    source="waypoints-src"
-    [paint]="{
-      'circle-radius': 12,
-      'circle-color': '#ffffff',
-      'circle-stroke-color': '#000',
-      'circle-stroke-width': 1,
-    }"
-  />
-
-  <mgl-layer
-    id="waypoint-labels"
-    type="symbol"
-    source="waypoints-src"
-    [layout]="{
-      'icon-offset': [0, -15],
-      'text-field': ['get', 'label'],
-      'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
-      'text-size': 16,
-      'text-offset': [0, -0.6],
-      'text-anchor': 'top',
-    }"
-    [paint]="{
-      'text-color': '#000',
-      'text-halo-color': '#fff',
-      'text-halo-width': 1,
-    }"
-    (layerClick)="onWaypointClick($event)"
-  />
-
-  <!-- one layer per segment -->
-  @for (segment of segments(); track segment.layerId; let i = $index) {
-    <mgl-geojson-source [id]="segment.layerId" [data]="segment.data" />
+    <mgl-geojson-source id="waypoints-src" [data]="waypointsData()!" />
+    <mgl-geojson-source id="segment-highlight-src" [data]="segmentHighlight()!" />
+    <mgl-geojson-source id="waypoint-highlight-src" [data]="waypointHighlight()!" />
 
     <mgl-layer
-      [id]="segment.layerId"
-      type="line"
-      before="waypoint-bubbles"
-      [source]="segment.layerId"
+      id="waypoint-bubbles"
+      type="circle"
+      source="waypoints-src"
       [paint]="{
-        'line-color': segmentColors[i % segmentColors.length],
-        'line-width': 5,
-        'line-opacity': 0.8,
+        'circle-radius': 12,
+        'circle-color': '#ffffff',
+        'circle-stroke-color': '#000',
+        'circle-stroke-width': 1,
       }"
-      (layerClick)="onSegmentClick($event, segment)"
     />
 
-    <!-- wide, almost invisible hit area for clicks -->
     <mgl-layer
-      [id]="segment.layerId + '-hit'"
-      type="line"
-      before="waypoint-bubbles"
-      [source]="segment.layerId"
-      [paint]="{
-        'line-color': '#000000',
-        'line-opacity': 0.001,
-        'line-width': ['interpolate', ['linear'], ['zoom'], 3, 16, 8, 24, 12, 32, 16, 40],
+      id="waypoint-labels"
+      type="symbol"
+      source="waypoints-src"
+      [layout]="{
+        'icon-offset': [0, -15],
+        'text-field': ['get', 'label'],
+        'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+        'text-size': 16,
+        'text-offset': [0, -0.6],
+        'text-anchor': 'top',
       }"
-      (layerClick)="onSegmentClick($event, segment)"
-      (layerMouseEnter)="setCursor('pointer', $event)"
-      (layerMouseLeave)="setCursor('', $event)"
+      [paint]="{
+        'text-color': '#000',
+        'text-halo-color': '#fff',
+        'text-halo-width': 1,
+      }"
+      (layerClick)="onWaypointClick($event)"
     />
-  }
 
-  <mgl-layer
-    id="segment-highlight"
-    type="line"
-    source="segment-highlight-src"
-    before="waypoint-bubbles"
-    [paint]="{
-      'line-color': highlightColor(),
-      'line-width': 9,
-      'line-opacity': 0.95,
-    }"
-  />
+    <!-- One layer per segment -->
+    @for (segment of segments(); track segment.layerId; let i = $index) {
+      <mgl-geojson-source [id]="segment.layerId" [data]="segment.data" />
 
-  <mgl-layer
-    id="waypoint-highlight"
-    type="circle"
-    source="waypoint-highlight-src"
-    [paint]="{
-      'circle-radius': 9,
-      'circle-color': highlightColor(),
-      'circle-stroke-color': '#ffffff',
-      'circle-stroke-width': 2,
-    }"
-  />
-</mgl-map>
+      <mgl-layer
+        [id]="segment.layerId"
+        type="line"
+        before="waypoint-bubbles"
+        [source]="segment.layerId"
+        [paint]="{
+          'line-color': segmentColors[i % segmentColors.length],
+          'line-width': 5,
+          'line-opacity': 0.8,
+        }"
+        (layerClick)="onSegmentClick($event, segment)"
+      />
+
+      <!-- Wide hit area for clicks and hover -->
+      <mgl-layer
+        [id]="segment.layerId + '-hit'"
+        type="line"
+        before="waypoint-bubbles"
+        [source]="segment.layerId"
+        [paint]="{
+          'line-color': '#000000',
+          'line-opacity': 0.001,
+          'line-width': ['interpolate', ['linear'], ['zoom'], 3, 16, 8, 24, 12, 32, 16, 40],
+        }"
+        (layerClick)="onSegmentClick($event, segment)"
+        (layerMouseEnter)="onSegmentMouseEnter($event, segment)"
+        (layerMouseLeave)="onSegmentMouseLeave($event)"
+      />
+    }
+
+    <mgl-layer
+      id="segment-highlight"
+      type="line"
+      source="segment-highlight-src"
+      before="waypoint-bubbles"
+      [paint]="{
+        'line-color': highlightColor(),
+        'line-width': 9,
+        'line-opacity': 0.95,
+      }"
+    />
+
+    <mgl-layer
+      id="waypoint-highlight"
+      type="circle"
+      source="waypoint-highlight-src"
+      [paint]="{
+        'circle-radius': 9,
+        'circle-color': highlightColor(),
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 2,
+      }"
+    />
+
+    <!-- Segment hover tooltip -->
+    @if (hoveredSegment()) {
+      <mgl-popup
+        [lngLat]="[
+          (hoveredSegment()!.fromWaypoint.location.longitude! +
+            hoveredSegment()!.toWaypoint.location.longitude!) /
+            2,
+          (hoveredSegment()!.fromWaypoint.location.latitude! +
+            hoveredSegment()!.toWaypoint.location.latitude!) /
+            2,
+        ]"
+        [closeButton]="false"
+        [closeOnClick]="false"
+        anchor="bottom"
+      >
+        <div class="segment-tooltip">
+          <i class="pi pi-car mr-1"></i>
+          {{ formatSegmentTooltip(hoveredSegment()!) }}
+        </div>
+      </mgl-popup>
+    }
+  </mgl-map>
+</app-map-container>

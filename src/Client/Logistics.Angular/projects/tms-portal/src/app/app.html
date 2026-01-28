@@ -1,4 +1,12 @@
-@if (showLayout()) {
+@if (showAuthLoading()) {
+  <!-- Full-page loading state while auth initializes -->
+  <div class="auth-loading-container">
+    <div class="auth-loading-card">
+      <p-progress-spinner strokeWidth="4" />
+      <p class="auth-loading-text">Loading your workspace...</p>
+    </div>
+  </div>
+} @else if (showLayout()) {
   <!-- Mobile Header (visible only on mobile) -->
   <app-mobile-header />
 

@@ -6,5 +6,6 @@ export * from "./tenant.service";
 export * from "./stripe.service";
 export * from "./layout.service";
 export * from "./theme.service";
+export * from "./map-style.service";
 
 export { ToastService } from "@logistics/shared";

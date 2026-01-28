@@ -1,0 +1,51 @@
+@if (compact()) {
+  <!-- Compact inline display -->
+  <div class="route-info-compact flex items-center gap-3 text-sm">
+    <span class="flex items-center gap-1">
+      <i class="pi pi-map text-primary"></i>
+      <strong>{{ routeInfo().distanceMiles }}</strong> mi
+    </span>
+    <span class="text-muted">·</span>
+    <span class="flex items-center gap-1">
+      <i class="pi pi-clock text-primary"></i>
+      <strong>{{ routeInfo().durationFormatted }}</strong>
+    </span>
+  </div>
+} @else {
+  <!-- Full panel display -->
+  <div class="route-info-panel bg-elevated border-default rounded-lg border p-4">
+    <div class="mb-3 flex items-center gap-2">
+      <i class="pi pi-directions text-primary"></i>
+      <span class="font-medium">Route Summary</span>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="text-center">
+        <div class="text-muted mb-1 text-xs uppercase">Distance</div>
+        <div class="text-2xl font-semibold">{{ routeInfo().distanceMiles }}</div>
+        <div class="text-muted text-sm">miles</div>
+      </div>
+      <div class="text-center">
+        <div class="text-muted mb-1 text-xs uppercase">Est. Time</div>
+        <div class="text-2xl font-semibold">{{ routeInfo().durationFormatted }}</div>
+        <div class="text-muted text-sm">driving</div>
+      </div>
+    </div>
+
+    @if (showSegments() && segments().length > 0) {
+      <div class="border-default mt-4 border-t pt-4">
+        <div class="text-muted mb-2 text-xs uppercase">Segments</div>
+        <div class="space-y-2">
+          @for (seg of segments(); track seg.index) {
+            <div class="bg-subtle flex items-center justify-between rounded px-3 py-2 text-sm">
+              <span class="font-medium">Stop {{ seg.index + 1 }} → {{ seg.index + 2 }}</span>
+              <span class="text-muted">
+                {{ formatSegment(seg).miles }} mi · {{ formatSegment(seg).time }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}

@@ -4,13 +4,14 @@ import type { ConversationDto } from "@logistics/shared/api";
 import { AvatarModule } from "primeng/avatar";
 import { ButtonModule } from "primeng/button";
 import { TooltipModule } from "primeng/tooltip";
+import { UserAvatar } from "@/shared/components";
 import { Converters } from "@/shared/utils";
 
 @Component({
   selector: "app-conversation-header",
   templateUrl: "./conversation-header.html",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AvatarModule, ButtonModule, RouterLink, TooltipModule],
+  imports: [AvatarModule, ButtonModule, RouterLink, TooltipModule, UserAvatar],
 })
 export class ConversationHeader {
   readonly conversation = input<ConversationDto | null>(null);

@@ -4,7 +4,7 @@
       <div class="flex items-center gap-2">
         <i class="pi pi-chart-line text-xl text-cyan-600"></i>
         <h4 class="mb-0 font-semibold">Daily Gross</h4>
-        <span class="rounded-full bg-surface-100 px-2 py-0.5 text-xs text-muted dark:bg-surface-700">
+        <span class="bg-surface-100 dark:bg-surface-700 rounded-full px-2 py-0.5 text-xs">
           Last 7 Days
         </span>
       </div>
@@ -25,20 +25,20 @@
     <!-- Summary Stats -->
     <div class="mb-4 flex flex-wrap gap-6">
       <div>
-        <div class="text-xs font-medium uppercase tracking-wide text-muted">Weekly Total</div>
+        <div class="text-muted text-xs font-medium tracking-wide uppercase">Weekly Total</div>
         <div class="mt-1 font-mono text-lg font-bold text-emerald-600">
           {{ totalGross() | currency }}
         </div>
       </div>
       <div>
-        <div class="text-xs font-medium uppercase tracking-wide text-muted">Today</div>
+        <div class="text-muted text-xs font-medium tracking-wide uppercase">Today</div>
         <div class="mt-1 font-mono text-lg font-bold text-cyan-600">
           {{ todayGross() | currency }}
         </div>
       </div>
       <div>
-        <div class="text-xs font-medium uppercase tracking-wide text-muted">Avg/Day</div>
-        <div class="mt-1 font-mono text-lg font-bold text-primary">
+        <div class="text-muted text-xs font-medium tracking-wide uppercase">Avg/Day</div>
+        <div class="text-primary mt-1 font-mono text-lg font-bold">
           {{ totalGross() / 7 | currency }}
         </div>
       </div>

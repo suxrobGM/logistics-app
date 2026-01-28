@@ -1,35 +1,80 @@
-<mgl-map
-  [style]="mapStyle()"
-  [zoom]="[zoom()]"
-  [center]="center()"
-  [style.width]="width()"
-  [style.height]="height()"
+<app-map-container
+  [loading]="loading()"
+  [height]="height()"
+  emptyTitle="No trucks with location"
+  emptyMessage="No trucks are currently reporting their location."
+  emptyIcon="truck"
 >
-  @for (geoData of geolocationData(); track geoData.truckId) {
-    @if (geoData.currentLocation) {
-      <mgl-marker
-        #marker
-        [lngLat]="[geoData.currentLocation.longitude ?? 0, geoData.currentLocation.latitude ?? 0]"
-      >
-        <div class="text-center" (click)="onSelectMarker(geoData, marker)" role="presentation">
-          <div class="rounded bg-surface-800 dark:bg-surface-200 text-surface-100 dark:text-surface-800">{{ geoData.truckNumber }}</div>
-          <div class="text-red-600">
-            <i class="pi pi-map-marker text-xl"></i>
-          </div>
-        </div>
-      </mgl-marker>
+  <mgl-map
+    [style]="mapStyle()"
+    [zoom]="[zoom()]"
+    [center]="center()"
+    [fitBounds]="bounds()!"
+    [fitBoundsOptions]="{ padding: 50, maxZoom: 12 }"
+    [style.width]="width()"
+    [style.height]="height()"
+    role="application"
+    aria-label="Fleet map showing truck locations"
+  >
+    <!-- Map Controls -->
+    @if (showControls()) {
+      <app-map-controls [showLayerToggle]="showLayerToggle()" (fitBoundsClick)="fitToBounds()" />
     }
-  }
-  @if (selectedMarker()) {
-    <mgl-popup [marker]="selectedMarker()!.component">
-      <span> <strong>Truck:</strong> {{ selectedMarker()!.data.truckNumber }} </span><br />
-      <span> <strong>Drivers:</strong> {{ selectedMarker()!.data.driversName }} </span><br />
-      @if (selectedMarker()!.data.currentAddress) {
-        <span>
-          <strong>Address:</strong>
-          {{ selectedMarker()!.data.currentAddress | address }}
-        </span>
+
+    @for (geoData of geolocationData(); track geoData.truckId) {
+      @if (geoData.currentLocation) {
+        <mgl-marker
+          #marker
+          [lngLat]="[geoData.currentLocation.longitude ?? 0, geoData.currentLocation.latitude ?? 0]"
+        >
+          <div
+            class="truck-marker text-center"
+            role="button"
+            tabindex="0"
+            [attr.aria-label]="'Truck ' + geoData.truckNumber + ' location'"
+            (click)="onSelectMarker(geoData, marker)"
+            (keydown)="onMarkerKeydown($event, geoData, marker)"
+          >
+            <div
+              class="truck-label bg-surface-800 text-surface-100 dark:bg-surface-200 dark:text-surface-800 rounded px-1.5 py-0.5 text-xs font-medium"
+            >
+              {{ geoData.truckNumber }}
+            </div>
+            <div class="truck-pin text-red-600">
+              <i class="pi pi-map-marker text-xl"></i>
+            </div>
+          </div>
+        </mgl-marker>
       }
-    </mgl-popup>
-  }
-</mgl-map>
+    }
+
+    @if (selectedMarker()) {
+      <mgl-popup
+        [marker]="selectedMarker()!.component"
+        [closeButton]="true"
+        (popupClose)="closePopup()"
+      >
+        <div class="truck-popup min-w-48 p-1">
+          <div
+            class="border-surface-200 dark:border-surface-700 mb-2 flex items-center gap-2 border-b pb-2"
+          >
+            <i class="pi pi-truck text-primary"></i>
+            <strong class="text-base">{{ selectedMarker()!.data.truckNumber }}</strong>
+          </div>
+          @if (selectedMarker()!.data.driversName) {
+            <div class="mb-1 flex items-start gap-2 text-sm">
+              <i class="pi pi-user text-muted mt-0.5"></i>
+              <span>{{ selectedMarker()!.data.driversName }}</span>
+            </div>
+          }
+          @if (selectedMarker()!.data.currentAddress) {
+            <div class="flex items-start gap-2 text-sm">
+              <i class="pi pi-map-marker text-muted mt-0.5"></i>
+              <span>{{ selectedMarker()!.data.currentAddress | address }}</span>
+            </div>
+          }
+        </div>
+      </mgl-popup>
+    }
+  </mgl-map>
+</app-map-container>

@@ -1,0 +1,34 @@
+<div class="relative overflow-hidden rounded-lg" [style.height]="height()">
+  @if (error()) {
+    <ui-error-state
+      [message]="error()!.message"
+      [retryable]="error()!.retryable"
+      (retry)="handleRetry()"
+    />
+  } @else if (isEmpty() && !loading()) {
+    <ui-empty-state
+      [title]="emptyTitle()"
+      [message]="emptyMessage()"
+      [icon]="emptyIcon()"
+      [actionLabel]="emptyActionLabel()"
+      (action)="handleEmptyAction()"
+    />
+  } @else {
+    <!-- Map content -->
+    <ng-content />
+
+    <!-- Loading overlay -->
+    @if (loading()) {
+      <div
+        class="bg-surface/80 absolute inset-0 flex items-center justify-center backdrop-blur-sm"
+        role="status"
+        aria-label="Loading map data"
+      >
+        <div class="text-center">
+          <i class="pi pi-spin pi-spinner text-primary text-4xl"></i>
+          <p class="text-muted mt-2 text-sm">Loading map...</p>
+        </div>
+      </div>
+    }
+  }
+</div>

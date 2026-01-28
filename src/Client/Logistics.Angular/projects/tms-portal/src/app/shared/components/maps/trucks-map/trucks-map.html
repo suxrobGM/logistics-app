@@ -1,1 +1,9 @@
-<app-geolocation-map [height]="height()" [width]="width()" [geolocationData]="truckLocations()" />
+<app-geolocation-map
+  [height]="height()"
+  [width]="width()"
+  [geolocationData]="truckLocations()"
+  [loading]="loading()"
+  [showControls]="showControls()"
+  [showLayerToggle]="showLayerToggle()"
+  (truckSelect)="onTruckSelect($event)"
+/>

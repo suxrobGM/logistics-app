@@ -1,15 +1,13 @@
 import { inject } from "@angular/core";
-import { HttpTransportType, HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
+import { HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
 import { environment } from "@/env";
 import { TenantService } from "./tenant.service";
 
 export abstract class BaseHubConnection {
   private readonly tenantService = inject(TenantService);
   protected readonly hubConnection: HubConnection;
-  private isConnected: boolean;
 
   constructor(private readonly hubName: string) {
-    this.isConnected = false;
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(`${environment.apiUrl}/hubs/${hubName}`, {
         skipNegotiation: true,
@@ -19,7 +17,8 @@ export abstract class BaseHubConnection {
   }
 
   async connect(): Promise<void> {
-    if (this.isConnected) {
+    // Only start if in Disconnected state
+    if (this.hubConnection.state !== HubConnectionState.Disconnected) {
       return;
     }
 
@@ -33,15 +32,14 @@ export abstract class BaseHubConnection {
 
       await this.hubConnection.start();
       await this.hubConnection.invoke("RegisterTenant", tenant.id);
-      this.isConnected = true;
     } catch (error) {
       console.error(`Failed to connect to the ${this.hubName} hub`, error);
-      this.isConnected = false;
     }
   }
 
   async disconnect(): Promise<void> {
-    if (!this.isConnected) {
+    // Only disconnect if in Connected state
+    if (this.hubConnection.state !== HubConnectionState.Connected) {
       return;
     }
 
@@ -55,7 +53,6 @@ export abstract class BaseHubConnection {
 
       await this.hubConnection.invoke("UnregisterTenant", tenant.id);
       await this.hubConnection.stop();
-      this.isConnected = false;
     } catch (error) {
       console.error(`Failed to disconnect from the ${this.hubName} hub`, error);
     }

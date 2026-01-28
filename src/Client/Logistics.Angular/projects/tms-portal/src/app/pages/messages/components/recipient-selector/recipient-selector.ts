@@ -8,13 +8,14 @@ import {
 import { AvatarModule } from "primeng/avatar";
 import { ButtonModule } from "primeng/button";
 import { TooltipModule } from "primeng/tooltip";
+import { UserAvatar } from "@/shared/components";
 import { Converters } from "@/shared/utils";
 
 @Component({
   selector: "app-recipient-selector",
   templateUrl: "./recipient-selector.html",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AvatarModule, AutoCompleteModule, ButtonModule, TooltipModule],
+  imports: [AvatarModule, AutoCompleteModule, ButtonModule, TooltipModule, UserAvatar],
 })
 export class RecipientSelector {
   private readonly api = inject(Api);

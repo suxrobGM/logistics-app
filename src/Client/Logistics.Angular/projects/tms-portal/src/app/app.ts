@@ -1,6 +1,8 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { NavigationEnd, Router, RouterOutlet } from "@angular/router";
+import { CardModule } from "primeng/card";
 import { ConfirmDialog } from "primeng/confirmdialog";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { filter } from "rxjs";
 import { AuthService } from "@/core/auth";
@@ -13,7 +15,17 @@ const STANDALONE_ROUTES = ["/", "/unauthorized", "/404"];
 @Component({
   selector: "app-root",
   templateUrl: "./app.html",
-  imports: [ToastModule, RouterOutlet, Sidebar, ConfirmDialog, MobileHeader, MobileDrawer],
+  styleUrl: "./app.css",
+  imports: [
+    ToastModule,
+    RouterOutlet,
+    Sidebar,
+    ConfirmDialog,
+    MobileHeader,
+    MobileDrawer,
+    ProgressSpinnerModule,
+    CardModule,
+  ],
 })
 export class App {
   private readonly authService = inject(AuthService);
@@ -26,6 +38,14 @@ export class App {
   /** Show layout only when authenticated AND not on a standalone page */
   protected readonly showLayout = computed(
     () => this.isAuthenticated() && !STANDALONE_ROUTES.includes(this.currentUrl()),
+  );
+
+  /** Show loading state when authenticated but auth not fully initialized */
+  protected readonly showAuthLoading = computed(
+    () =>
+      this.isAuthenticated() &&
+      !this.authService.authInitialized() &&
+      !STANDALONE_ROUTES.includes(this.currentUrl()),
   );
 
   constructor() {

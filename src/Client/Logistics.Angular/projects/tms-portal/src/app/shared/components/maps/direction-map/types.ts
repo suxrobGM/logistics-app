@@ -22,7 +22,25 @@ export interface WaypointClickEvent {
 export interface RouteChangeEvent {
   origin: GeoPoint;
   destination: GeoPoint;
+  /** Total distance in meters */
   distance: number;
+  /** Total duration in seconds */
+  duration: number;
+  /** Per-segment breakdown */
+  segments: RouteSegmentInfo[];
+}
+
+/**
+ * Information about a single route segment.
+ */
+export interface RouteSegmentInfo {
+  index: number;
+  /** Distance in meters */
+  distance: number;
+  /** Duration in seconds */
+  duration: number;
+  fromWaypointId: string;
+  toWaypointId: string;
 }
 
 /**
@@ -38,7 +56,7 @@ interface WaypointProps {
   label: string;
 }
 
-export type SegmentFeature = Feature<LineString, { distance: number }>;
+export type SegmentFeature = Feature<LineString, { distance: number; duration: number }>;
 export type WaypointFeature = FeatureCollection<Point, WaypointProps>;
 
 /**
