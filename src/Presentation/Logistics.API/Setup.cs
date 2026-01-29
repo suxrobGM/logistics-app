@@ -176,7 +176,6 @@ internal static class Setup
         PayrollGenerationJob.ScheduleJobs();
         EldSyncJob.ScheduleJobs();
         LoadBoardSyncJob.ScheduleJobs();
-        CertificationExpirationJob.ScheduleJobs();
         MaintenanceReminderJob.ScheduleJobs();
         return app;
     }

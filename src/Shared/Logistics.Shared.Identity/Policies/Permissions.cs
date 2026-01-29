@@ -171,13 +171,6 @@ public static class Permission
         public const string Manage = $"{nameof(Permission)}.{nameof(Maintenance)}.Manage";
     }
 
-    public static class Certification
-    {
-        public const string View = $"{nameof(Permission)}.{nameof(Certification)}.View";
-        public const string Manage = $"{nameof(Permission)}.{nameof(Certification)}.Manage";
-        public const string Verify = $"{nameof(Permission)}.{nameof(Certification)}.Verify";
-    }
-
     public static IEnumerable<string> GetAll()
     {
         var list = new List<string>();

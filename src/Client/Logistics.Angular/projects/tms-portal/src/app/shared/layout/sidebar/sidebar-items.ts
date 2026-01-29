@@ -51,20 +51,78 @@ export const sidebarItems: MenuItem[] = [
     ],
   },
   {
-    label: "Fleet",
+    label: "Fleet & Equipment",
     icon: "pi pi-truck text-3xl!",
     items: [
+      // Vehicles Section
+      {
+        label: "Vehicles",
+        styleClass: "menu-separator",
+        disabled: true,
+      },
       {
         label: "Trucks",
         route: "/trucks",
       },
       {
+        label: "DVIR Reports",
+        route: "/safety/dvir",
+      },
+      // Maintenance Section
+      {
+        label: "Maintenance",
+        styleClass: "menu-separator",
+        disabled: true,
+      },
+      {
+        label: "Maintenance Dashboard",
+        route: "/maintenance",
+      },
+      {
+        label: "Service Records",
+        route: "/maintenance/records",
+      },
+      {
+        label: "Upcoming Service",
+        route: "/maintenance/upcoming",
+      },
+    ],
+  },
+  {
+    label: "Compliance & Safety",
+    icon: "pi pi-shield text-3xl!",
+    items: [
+      // Compliance Section
+      {
+        label: "Compliance",
+        styleClass: "menu-separator",
+        disabled: true,
+      },
+      {
         label: "ELD / HOS",
         route: "/eld",
       },
+      // Safety Section
       {
-        label: "Inspections",
-        route: "/inspections",
+        label: "Safety",
+        styleClass: "menu-separator",
+        disabled: true,
+      },
+      {
+        label: "Safety Dashboard",
+        route: "/safety",
+      },
+      {
+        label: "Driver Behavior",
+        route: "/safety/behavior",
+      },
+      {
+        label: "Accident Reports",
+        route: "/safety/accidents",
+      },
+      {
+        label: "Emergency Contacts",
+        route: "/safety/emergency",
       },
     ],
   },
@@ -161,6 +219,14 @@ export const sidebarItems: MenuItem[] = [
       {
         label: "Payroll Report",
         route: "/reports/payroll",
+      },
+      {
+        label: "Safety Report",
+        route: "/reports/safety",
+      },
+      {
+        label: "Maintenance Report",
+        route: "/reports/maintenance",
       },
     ],
   },

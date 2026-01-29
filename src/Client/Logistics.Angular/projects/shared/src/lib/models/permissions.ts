@@ -62,6 +62,24 @@ export const Permission = {
     Post: "Permission.LoadBoard.Post",
     Manage: "Permission.LoadBoard.Manage",
   },
+  Dvir: {
+    View: "Permission.Dvir.View",
+    Manage: "Permission.Dvir.Manage",
+    Review: "Permission.Dvir.Review",
+  },
+  Safety: {
+    View: "Permission.Safety.View",
+    Manage: "Permission.Safety.Manage",
+  },
+  Maintenance: {
+    View: "Permission.Maintenance.View",
+    Manage: "Permission.Maintenance.Manage",
+  },
+  Accident: {
+    View: "Permission.Accident.View",
+    Manage: "Permission.Accident.Manage",
+    Review: "Permission.Accident.Review",
+  },
 } as const;
 
 /**

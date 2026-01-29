@@ -1,0 +1,83 @@
+<ui-page-header title="Upcoming Service" />
+
+<p-card>
+  <ui-data-container
+    [loading]="store.isLoading()"
+    [error]="store.error()"
+    [isEmpty]="store.isEmpty()"
+    skeletonVariant="table"
+    [skeletonRows]="10"
+    emptyTitle="No upcoming maintenance"
+    emptyMessage="All vehicles are up to date on maintenance."
+    (retry)="store.retry()"
+  >
+    <p-table
+      [value]="store.data()"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
+      <ng-template #header>
+        <tr>
+          <th>Status</th>
+          <th pSortableColumn="TruckNumber">
+            Truck
+            <p-sortIcon field="TruckNumber" />
+          </th>
+          <th>Service Type</th>
+          <th>Interval</th>
+          <th pSortableColumn="NextServiceDate">
+            Due Date
+            <p-sortIcon field="NextServiceDate" />
+          </th>
+          <th>Due In</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-schedule>
+        <tr class="cursor-pointer hover:bg-hover" (click)="onRowClick(schedule)">
+          <td>
+            <p-tag [value]="getStatusLabel(schedule)" [severity]="getStatusSeverity(schedule)" />
+          </td>
+          <td>{{ schedule.truckNumber || '-' }}</td>
+          <td>{{ schedule.typeDisplay || schedule.type }}</td>
+          <td>{{ getIntervalTypeLabel(schedule.intervalType) }}</td>
+          <td>
+            @if (schedule.nextServiceDate) {
+              {{ schedule.nextServiceDate | date: "mediumDate" }}
+            } @else {
+              -
+            }
+          </td>
+          <td>
+            @if (schedule.isOverdue) {
+              <span class="text-danger font-medium">
+                <i class="pi pi-exclamation-triangle mr-1"></i>
+                Overdue
+              </span>
+            } @else if (schedule.daysUntilDue != null) {
+              <span [class]="(schedule.daysUntilDue ?? 0) <= 7 ? 'text-warn font-medium' : ''">
+                {{ schedule.daysUntilDue }} days
+              </span>
+            } @else if (schedule.milesUntilDue != null) {
+              {{ schedule.milesUntilDue | number }} mi
+            } @else {
+              -
+            }
+          </td>
+          <td>
+            <p-button
+              icon="pi pi-ellipsis-v"
+              [text]="true"
+              aria-label="Show actions menu"
+              (click)="$event.stopPropagation(); selectedRow.set(schedule); menu.toggle($event)"
+            />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ui-data-container>
+</p-card>
+
+<!-- Context menu for row actions -->
+<p-menu #menu [model]="actionMenuItems" [popup]="true" />

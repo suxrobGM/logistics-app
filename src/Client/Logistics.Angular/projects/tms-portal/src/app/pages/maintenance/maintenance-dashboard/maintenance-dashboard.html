@@ -1,0 +1,127 @@
+<ui-page-header title="Maintenance Dashboard" />
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+  <ui-stat-card
+    label="Overdue"
+    [value]="overdueCount()"
+    icon="pi pi-exclamation-triangle"
+    [color]="overdueCount() > 0 ? 'red' : 'green'"
+  />
+  <ui-stat-card
+    label="Due Soon"
+    [value]="dueSoonCount()"
+    icon="pi pi-clock"
+    [color]="dueSoonCount() > 5 ? 'orange' : 'blue'"
+  />
+  <ui-stat-card
+    label="This Month"
+    [value]="totalCostThisMonth()"
+    icon="pi pi-dollar"
+    color="gray"
+  />
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+  <!-- Upcoming Maintenance -->
+  <ui-dashboard-card title="Upcoming Maintenance" icon="pi-calendar">
+    @if (loading()) {
+      <div class="text-center py-4">
+        <i class="pi pi-spin pi-spinner text-2xl"></i>
+      </div>
+    } @else if (upcomingMaintenance().length > 0) {
+      <p-table [value]="upcomingMaintenance()" [rows]="5" styleClass="p-datatable-sm">
+        <ng-template #header>
+          <tr>
+            <th>Truck</th>
+            <th>Service</th>
+            <th>Due</th>
+            <th>Status</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-item>
+          <tr class="cursor-pointer hover:bg-hover" (click)="viewTruckMaintenance(item.truckId)">
+            <td>{{ item.truckNumber || '-' }}</td>
+            <td>{{ item.typeDisplay || item.type }}</td>
+            <td>
+              @if (item.nextServiceDate) {
+                {{ item.nextServiceDate | date: "mediumDate" }}
+              } @else if (item.milesUntilDue) {
+                {{ item.milesUntilDue | number }} mi
+              } @else {
+                -
+              }
+            </td>
+            <td>
+              @if (item.isOverdue) {
+                <p-tag value="Overdue" severity="danger" />
+              } @else if ((item.daysUntilDue ?? 0) <= 7) {
+                <p-tag value="Due Soon" severity="warn" />
+              } @else {
+                <p-tag value="Scheduled" severity="info" />
+              }
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <div class="mt-2 text-right">
+        <p-button label="View All" [text]="true" (click)="viewAllUpcoming()" />
+      </div>
+    } @else {
+      <div class="text-center py-4 text-muted">
+        <i class="pi pi-check-circle text-4xl mb-2"></i>
+        <p>No upcoming maintenance scheduled</p>
+      </div>
+    }
+  </ui-dashboard-card>
+
+  <!-- Recent Service Records -->
+  <ui-dashboard-card title="Recent Service Records" icon="pi-wrench">
+    @if (loading()) {
+      <div class="text-center py-4">
+        <i class="pi pi-spin pi-spinner text-2xl"></i>
+      </div>
+    } @else if (recentRecords().length > 0) {
+      <p-table [value]="recentRecords()" [rows]="5" styleClass="p-datatable-sm">
+        <ng-template #header>
+          <tr>
+            <th>Date</th>
+            <th>Truck</th>
+            <th>Service</th>
+            <th>Cost</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-record>
+          <tr>
+            <td>{{ record.serviceDate | date: "shortDate" }}</td>
+            <td>{{ record.truckNumber || '-' }}</td>
+            <td>{{ record.typeDisplay || record.type }}</td>
+            <td>{{ record.totalCost | currency }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <div class="mt-2 text-right">
+        <p-button label="View All" [text]="true" (click)="viewAllRecords()" />
+      </div>
+    } @else {
+      <div class="text-center py-4 text-muted">
+        <i class="pi pi-inbox text-4xl mb-2"></i>
+        <p>No recent service records</p>
+      </div>
+    }
+  </ui-dashboard-card>
+</div>
+
+<div class="mt-4 flex gap-2">
+  <p-button
+    icon="pi pi-plus"
+    label="Log Service"
+    (click)="addServiceRecord()"
+  />
+  <p-button
+    icon="pi pi-refresh"
+    label="Refresh"
+    [outlined]="true"
+    (click)="loadData()"
+    [loading]="loading()"
+  />
+</div>

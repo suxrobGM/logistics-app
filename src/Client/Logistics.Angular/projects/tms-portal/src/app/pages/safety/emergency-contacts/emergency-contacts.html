@@ -1,0 +1,106 @@
+<ui-page-header title="Emergency Contacts" addRoute="/safety/emergency/add" addTooltip="Add emergency contact" />
+
+<p-card>
+  <ui-data-container
+    [loading]="store.isLoading()"
+    [error]="store.error()"
+    [isEmpty]="store.isEmpty()"
+    skeletonVariant="table"
+    [skeletonRows]="10"
+    emptyTitle="No emergency contacts"
+    emptyMessage="Add emergency contacts to be notified in case of incidents."
+    emptyActionLabel="Add Contact"
+    (retry)="store.retry()"
+    (emptyAction)="addContact()"
+  >
+    <p-table
+      [value]="store.data()"
+      [lazy]="true"
+      [paginator]="true"
+      [showCurrentPageReport]="true"
+      (onLazyLoad)="store.onLazyLoad($event)"
+      [rows]="store.pageSize()"
+      [first]="store.first()"
+      [totalRecords]="store.totalRecords()"
+      [loading]="store.isLoading()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
+      <ng-template #caption>
+        <ui-search-input (searchChange)="onSearch($event)" />
+      </ng-template>
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="Priority">
+            Priority
+            <p-sortIcon field="Priority" />
+          </th>
+          <th pSortableColumn="Name">
+            Name
+            <p-sortIcon field="Name" />
+          </th>
+          <th>Type</th>
+          <th pSortableColumn="PhoneNumber">
+            Phone
+            <p-sortIcon field="PhoneNumber" />
+          </th>
+          <th pSortableColumn="Email">
+            Email
+            <p-sortIcon field="Email" />
+          </th>
+          <th>Active</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-contact>
+        <tr>
+          <td>
+            <span class="font-medium">{{ contact.priority }}</span>
+          </td>
+          <td>{{ contact.name }}</td>
+          <td>
+            <p-tag
+              [value]="getContactTypeLabel(contact.contactType)"
+              [severity]="getContactTypeSeverity(contact.contactType)"
+            />
+          </td>
+          <td>
+            @if (contact.phoneNumber) {
+              <a [href]="'tel:' + contact.phoneNumber" class="text-primary" (click)="$event.stopPropagation()">
+                {{ contact.phoneNumber }}
+              </a>
+            } @else {
+              <span class="text-muted">-</span>
+            }
+          </td>
+          <td>
+            @if (contact.email) {
+              <a [href]="'mailto:' + contact.email" class="text-primary" (click)="$event.stopPropagation()">
+                {{ contact.email }}
+              </a>
+            } @else {
+              <span class="text-muted">-</span>
+            }
+          </td>
+          <td>
+            @if (contact.isActive) {
+              <i class="pi pi-check-circle text-success"></i>
+            } @else {
+              <i class="pi pi-times-circle text-muted"></i>
+            }
+          </td>
+          <td>
+            <p-button
+              icon="pi pi-ellipsis-v"
+              [text]="true"
+              aria-label="Show actions menu"
+              (click)="$event.stopPropagation(); selectedRow.set(contact); menu.toggle($event)"
+            />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ui-data-container>
+</p-card>
+
+<!-- Context menu for row actions -->
+<p-menu #menu [model]="actionMenuItems" [popup]="true" />

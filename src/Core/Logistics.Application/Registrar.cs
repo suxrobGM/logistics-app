@@ -21,7 +21,6 @@ public static class Registrar
 
         services.AddScoped<IPayrollService, PayrollService>();
         services.AddScoped<ILoadService, LoadService>();
-        services.AddScoped<ICertificationReminderService, CertificationReminderService>();
         services.AddScoped<IMaintenanceReminderService, MaintenanceReminderService>();
         return services;
     }

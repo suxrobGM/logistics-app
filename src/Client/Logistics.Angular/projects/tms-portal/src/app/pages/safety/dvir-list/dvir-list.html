@@ -1,0 +1,88 @@
+<ui-page-header title="DVIR Reports" />
+
+<p-card>
+  <ui-data-container
+    [loading]="store.isLoading()"
+    [error]="store.error()"
+    [isEmpty]="store.isEmpty()"
+    skeletonVariant="table"
+    [skeletonRows]="10"
+    emptyTitle="No DVIR reports"
+    emptyMessage="No inspection reports have been submitted yet."
+    (retry)="store.retry()"
+  >
+    <p-table
+      [value]="store.data()"
+      [lazy]="true"
+      [paginator]="true"
+      [showCurrentPageReport]="true"
+      (onLazyLoad)="store.onLazyLoad($event)"
+      [rows]="store.pageSize()"
+      [first]="store.first()"
+      [totalRecords]="store.totalRecords()"
+      [loading]="store.isLoading()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
+      <ng-template #caption>
+        <ui-search-input (searchChange)="onSearch($event)" />
+      </ng-template>
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="InspectionDate">
+            Date
+            <p-sortIcon field="InspectionDate" />
+          </th>
+          <th>Type</th>
+          <th pSortableColumn="TruckNumber">
+            Truck
+            <p-sortIcon field="TruckNumber" />
+          </th>
+          <th pSortableColumn="DriverName">
+            Driver
+            <p-sortIcon field="DriverName" />
+          </th>
+          <th>Defects</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-dvir>
+        <tr class="cursor-pointer hover:bg-hover" (click)="onRowClick(dvir)">
+          <td>{{ dvir.inspectionDate | date: "short" }}</td>
+          <td>
+            <p-tag [value]="getTypeLabel(dvir.type)" [severity]="getTypeSeverity(dvir.type)" />
+          </td>
+          <td>{{ dvir.truckNumber || '-' }}</td>
+          <td>{{ dvir.driverName || '-' }}</td>
+          <td>
+            @if (dvir.hasDefects) {
+              <span class="text-danger font-medium">
+                <i class="pi pi-exclamation-triangle mr-1"></i>
+                {{ dvir.defects?.length || 0 }}
+              </span>
+            } @else {
+              <span class="text-success">
+                <i class="pi pi-check mr-1"></i>
+                None
+              </span>
+            }
+          </td>
+          <td>
+            <p-tag [value]="getStatusLabel(dvir.status)" [severity]="getStatusSeverity(dvir.status)" />
+          </td>
+          <td>
+            <p-button
+              icon="pi pi-ellipsis-v"
+              [text]="true"
+              aria-label="Show actions menu"
+              (click)="$event.stopPropagation(); selectedRow.set(dvir); menu.toggle($event)"
+            />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ui-data-container>
+</p-card>
+
+<!-- Context menu for row actions -->
+<p-menu #menu [model]="actionMenuItems" [popup]="true" />

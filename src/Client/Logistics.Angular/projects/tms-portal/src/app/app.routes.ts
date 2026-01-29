@@ -138,6 +138,21 @@ export const appRoutes: Routes = [
     },
   },
   {
+    path: "safety",
+    loadChildren: () => import("./pages/safety/safety.routes").then((m) => m.safetyRoutes),
+    data: {
+      breadcrumb: "Safety",
+    },
+  },
+  {
+    path: "maintenance",
+    loadChildren: () =>
+      import("./pages/maintenance/maintenance.routes").then((m) => m.maintenanceRoutes),
+    data: {
+      breadcrumb: "Maintenance",
+    },
+  },
+  {
     path: "",
     component: LoginComponent,
   },

@@ -6,9 +6,9 @@ public static class AppRolePermissions
 {
     private static readonly Dictionary<string, Func<IEnumerable<string>>> RolePermissions = new()
     {
-        [AppRoles.SuperAdmin] = () => Permission.GetAll(),
+        [AppRoles.SuperAdmin] = Permission.GetAll,
         [AppRoles.Admin] = GetAdminPermissions,
-        [AppRoles.Manager] = GetManagerPermissions,
+        [AppRoles.Manager] = GetManagerPermissions
     };
 
     public static IEnumerable<string> SuperAdmin => Permission.GetAll();
@@ -18,8 +18,8 @@ public static class AppRolePermissions
     public static IEnumerable<string> Manager => GetManagerPermissions();
 
     /// <summary>
-    /// Gets permissions for a specific role by name.
-    /// Returns empty if role is not found.
+    ///     Gets permissions for a specific role by name.
+    ///     Returns empty if role is not found.
     /// </summary>
     public static IEnumerable<string> GetPermissionsForRole(string roleName)
     {
@@ -29,7 +29,7 @@ public static class AppRolePermissions
     }
 
     /// <summary>
-    /// Registers permissions for a role. Use this to add new roles dynamically.
+    ///     Registers permissions for a role. Use this to add new roles dynamically.
     /// </summary>
     public static void RegisterRole(string roleName, Func<IEnumerable<string>> permissionsFunc)
     {
@@ -37,7 +37,7 @@ public static class AppRolePermissions
     }
 
     /// <summary>
-    /// Checks if a role has registered permissions.
+    ///     Checks if a role has registered permissions.
     /// </summary>
     public static bool HasRegisteredPermissions(string roleName)
     {
@@ -69,8 +69,10 @@ public static class AppRolePermissions
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Payroll)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Expense)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.BlogPost)));
-        list.Add(Permission.Tenant.Manage);
-        list.Add(Permission.Tenant.View);
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Tenant)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Dvir)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Safety)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.Maintenance)));
         return list;
     }
 
