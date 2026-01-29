@@ -58,8 +58,12 @@
         <th pSortableColumn="origin">Origin <p-sortIcon field="origin" /></th>
         <th pSortableColumn="destination">Destination <p-sortIcon field="destination" /></th>
         <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
-        <th pSortableColumn="distance" class="text-right">Distance <p-sortIcon field="distance" /></th>
-        <th pSortableColumn="deliveryCost" class="text-right">Cost <p-sortIcon field="deliveryCost" /></th>
+        <th pSortableColumn="distance" class="text-right">
+          Distance <p-sortIcon field="distance" />
+        </th>
+        <th pSortableColumn="deliveryCost" class="text-right">
+          Cost <p-sortIcon field="deliveryCost" />
+        </th>
         <th></th>
       </tr>
     </ng-template>
@@ -185,7 +189,7 @@
     header="Create a new load for this trip"
     [modal]="true"
     [(visible)]="tripLoadDialogVisible"
-    [style]="{ width: '70vw' }"
+    [style]="{ width: '90vw', maxWidth: '1200px' }"
   >
     <app-load-form
       [initial]="initialLoadData()"

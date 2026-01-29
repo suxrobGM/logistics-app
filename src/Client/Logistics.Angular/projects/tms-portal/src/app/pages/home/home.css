@@ -7,13 +7,39 @@
   overflow: hidden;
 }
 
-/* Override gridster default styles for better theme integration */
 :host {
+  /* Override gridster default styles for better theme integration */
   ::ng-deep gridster {
     background: transparent !important;
   }
 
   ::ng-deep gridster-item {
     background: transparent !important;
+  }
+
+  /* Ensure p-card fills gridster panel and propagates height to content */
+  ::ng-deep .dashboard-panel > p-card {
+    display: block;
+    height: 100%;
+  }
+
+  ::ng-deep .dashboard-panel .p-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  ::ng-deep .dashboard-panel .p-card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  ::ng-deep .dashboard-panel .p-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
   }
 }

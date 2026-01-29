@@ -3,7 +3,7 @@ import { Component, computed, effect, inject, input, model, output, signal } fro
 import type { GeoPoint } from "@logistics/shared/api";
 import type { AppError } from "@logistics/shared/errors";
 import type { LineString } from "geojson";
-import type { LngLatLike, MapMouseEvent } from "mapbox-gl";
+import type { LngLatLike, Map, MapMouseEvent } from "mapbox-gl";
 import {
   GeoJSONSourceComponent,
   LayerComponent,
@@ -13,6 +13,7 @@ import {
 import { firstValueFrom } from "rxjs";
 import { MapStyleService } from "@/core/services";
 import { environment } from "@/env";
+import { MapResizeDirective } from "@/shared/directives";
 import type { MapboxDirectionsResponse } from "@/shared/types/mapbox";
 import { MapContainer } from "../map-container/map-container";
 import { MapControls } from "../map-controls/map-controls";
@@ -38,6 +39,7 @@ import type {
     PopupComponent,
     MapContainer,
     MapControls,
+    MapResizeDirective,
   ],
 })
 export class DirectionMap {
@@ -61,6 +63,7 @@ export class DirectionMap {
   // States
   protected readonly loading = signal(false);
   protected readonly error = signal<AppError | null>(null);
+  protected readonly mapInstance = signal<Map | null>(null);
   protected readonly segments = signal<SegmentLayer[]>([]);
   protected readonly waypointsData = signal<WaypointFeature | null>(null);
   protected readonly waypointHighlight = signal<WaypointFeature | null>(null);
@@ -118,6 +121,10 @@ export class DirectionMap {
       }
       this.selectSegmentByWaypoint(wp.id);
     });
+  }
+
+  protected onMapLoad(map: Map): void {
+    this.mapInstance.set(map);
   }
 
   /** Public method to fit map bounds to all waypoints */

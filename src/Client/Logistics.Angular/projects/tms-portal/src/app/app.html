@@ -13,14 +13,14 @@
   <!-- Mobile Drawer (slides in from left) -->
   <app-mobile-drawer />
 
-  <div class="flex">
+  <div class="flex h-screen">
     <!-- Desktop Sidebar (hidden on mobile) -->
     <div class="hidden md:block">
       <app-sidebar />
     </div>
 
     <!-- Main Content -->
-    <div class="w-full pb-10">
+    <div class="w-full overflow-y-auto pb-10">
       <div [class.p-2]="layoutService.isMobile()" [class.p-4]="!layoutService.isMobile()">
         <router-outlet />
       </div>

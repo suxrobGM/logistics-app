@@ -1,21 +1,23 @@
 import { Component, computed, inject, input, output, signal } from "@angular/core";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { AddressPipe } from "@logistics/shared/pipes";
-import type { LngLatBoundsLike } from "mapbox-gl";
+import type { LngLatBoundsLike, Map } from "mapbox-gl";
 import { MapComponent, MarkerComponent, PopupComponent } from "ngx-mapbox-gl";
 import { MapStyleService } from "@/core/services";
+import { MapResizeDirective } from "@/shared/directives";
 import { MapContainer } from "../map-container/map-container";
 import { MapControls } from "../map-controls/map-controls";
 
 @Component({
   selector: "app-geolocation-map",
   templateUrl: "./geolocation-map.html",
-  imports: [AddressPipe, MapComponent, MarkerComponent, PopupComponent, MapContainer, MapControls],
+  imports: [AddressPipe, MapComponent, MarkerComponent, PopupComponent, MapContainer, MapControls, MapResizeDirective],
 })
 export class GeolocationMap {
   private readonly mapStyleService = inject(MapStyleService);
 
   protected readonly selectedMarker = signal<Marker | null>(null);
+  protected readonly mapInstance = signal<Map | null>(null);
 
   /** Mapbox style URL based on current layer and theme */
   protected readonly mapStyle = this.mapStyleService.currentStyle;
@@ -85,6 +87,10 @@ export class GeolocationMap {
 
   protected closePopup(): void {
     this.selectedMarker.set(null);
+  }
+
+  protected onMapLoad(map: Map): void {
+    this.mapInstance.set(map);
   }
 }
 

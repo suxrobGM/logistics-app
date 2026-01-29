@@ -7,18 +7,20 @@
   emptyIcon="directions"
   (retry)="handleRetry()"
 >
-  <mgl-map
-    [style]="mapStyle()"
-    [zoom]="[zoom()]"
-    [center]="center()"
-    [fitBounds]="bounds()!"
-    [fitBoundsOptions]="{ padding: 50 }"
-    [style.width]="width()"
-    [style.height]="height()"
-    role="application"
-    aria-label="Route map showing trip waypoints and directions"
-    [attr.aria-busy]="loading()"
-  >
+  <div class="h-full w-full" [appMapResize]="mapInstance()">
+    <mgl-map
+      [style]="mapStyle()"
+      [zoom]="[zoom()]"
+      [center]="center()"
+      [fitBounds]="bounds()!"
+      [fitBoundsOptions]="{ padding: 50 }"
+      [style.width]="width()"
+      [style.height]="height()"
+      role="application"
+      aria-label="Route map showing trip waypoints and directions"
+      [attr.aria-busy]="loading()"
+      (mapLoad)="onMapLoad($event.target)"
+    >
     <!-- Map Controls -->
     @if (showControls()) {
       <app-map-controls [showLayerToggle]="showLayerToggle()" (fitBoundsClick)="fitToBounds()" />
@@ -139,5 +141,6 @@
         </div>
       </mgl-popup>
     }
-  </mgl-map>
+    </mgl-map>
+  </div>
 </app-map-container>

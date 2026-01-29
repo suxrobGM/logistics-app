@@ -5,17 +5,19 @@
   emptyMessage="No trucks are currently reporting their location."
   emptyIcon="truck"
 >
-  <mgl-map
-    [style]="mapStyle()"
-    [zoom]="[zoom()]"
-    [center]="center()"
-    [fitBounds]="bounds()!"
-    [fitBoundsOptions]="{ padding: 50, maxZoom: 12 }"
-    [style.width]="width()"
-    [style.height]="height()"
-    role="application"
-    aria-label="Fleet map showing truck locations"
-  >
+  <div class="h-full w-full" [appMapResize]="mapInstance()">
+    <mgl-map
+      [style]="mapStyle()"
+      [zoom]="[zoom()]"
+      [center]="center()"
+      [fitBounds]="bounds()!"
+      [fitBoundsOptions]="{ padding: 50, maxZoom: 12 }"
+      [style.width]="width()"
+      [style.height]="height()"
+      role="application"
+      aria-label="Fleet map showing truck locations"
+      (mapLoad)="onMapLoad($event.target)"
+    >
     <!-- Map Controls -->
     @if (showControls()) {
       <app-map-controls [showLayerToggle]="showLayerToggle()" (fitBoundsClick)="fitToBounds()" />
@@ -76,5 +78,6 @@
         </div>
       </mgl-popup>
     }
-  </mgl-map>
+    </mgl-map>
+  </div>
 </app-map-container>
