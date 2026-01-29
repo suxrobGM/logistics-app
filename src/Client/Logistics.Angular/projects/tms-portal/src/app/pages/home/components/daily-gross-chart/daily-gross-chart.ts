@@ -1,5 +1,5 @@
 import { CurrencyPipe } from "@angular/common";
-import { Component, type OnInit, computed, inject, output, signal } from "@angular/core";
+import { Component, type OnInit, computed, inject, input, output, signal } from "@angular/core";
 import { Api, getDailyGrosses } from "@logistics/shared/api";
 import type { DailyGrossesDto } from "@logistics/shared/api";
 import { CardModule } from "primeng/card";
@@ -23,6 +23,8 @@ export interface DailyGrossChartData {
 export class DailyGrossChartComponent implements OnInit {
   private readonly api = inject(Api);
 
+  public readonly chartClass = input<string>("");
+
   protected readonly isLoading = signal(false);
   protected readonly dailyGrosses = signal<DailyGrossesDto | null>(null);
   protected readonly chartData = signal<Record<string, unknown>>({ labels: [], datasets: [] });
@@ -37,6 +39,7 @@ export class DailyGrossChartComponent implements OnInit {
     const distance = this.totalDistance();
     return distance > 0 ? this.totalGross() / distance : 0;
   });
+
   protected readonly todayGross = computed(() => {
     const today = new Date();
     let total = 0;

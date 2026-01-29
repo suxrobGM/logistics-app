@@ -23,7 +23,7 @@
     </div>
   } @else {
     <!-- Summary Stats -->
-    <div class="mb-4 flex flex-wrap gap-6">
+    <div [class]="'mb-4 flex flex-wrap gap-6 ' + chartClass()">
       <div>
         <div class="text-muted text-xs font-medium tracking-wide uppercase">Weekly Total</div>
         <div class="mt-1 font-mono text-lg font-bold text-emerald-600">

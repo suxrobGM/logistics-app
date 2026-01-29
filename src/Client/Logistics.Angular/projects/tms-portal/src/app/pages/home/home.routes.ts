@@ -1,12 +1,12 @@
 import type { Routes } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
-import { HomeComponent } from "./home";
+import { Home } from "./home";
 
 export const homeRoutes: Routes = [
   {
     path: "",
-    component: HomeComponent,
+    component: Home,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Home",

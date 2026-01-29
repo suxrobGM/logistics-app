@@ -1,10 +1,9 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Injectable, PLATFORM_ID, computed, inject, signal } from "@angular/core";
+import { Injectable, PLATFORM_ID, inject, signal } from "@angular/core";
 
 const DASHBOARD_SETTINGS_KEY = "tms-dashboard-settings";
 const CURRENT_VERSION = 1;
 
-export type PanelSize = "small" | "medium" | "large" | "full";
 export type PanelType =
   | "kpi-weekly-gross"
   | "kpi-billed-miles"
@@ -18,9 +17,12 @@ export type PanelType =
 export interface DashboardPanelConfig {
   id: PanelType;
   label: string;
-  visible: boolean;
-  order: number;
-  size: PanelSize;
+  x: number;
+  y: number;
+  cols: number;
+  rows: number;
+  minItemCols?: number;
+  minItemRows?: number;
 }
 
 interface DashboardSettings {
@@ -29,94 +31,132 @@ interface DashboardSettings {
 }
 
 const DEFAULT_PANELS: DashboardPanelConfig[] = [
-  { id: "kpi-weekly-gross", label: "Weekly Gross", visible: true, order: 0, size: "small" },
-  { id: "kpi-billed-miles", label: "Billed Miles", visible: true, order: 1, size: "small" },
-  { id: "kpi-rate-per-mile", label: "Rate Per Mile", visible: true, order: 2, size: "small" },
-  { id: "kpi-today-gross", label: "Today's Gross", visible: true, order: 3, size: "small" },
-  { id: "active-loads", label: "Active Loads", visible: true, order: 4, size: "full" },
-  { id: "recent-activity", label: "Recent Activity", visible: true, order: 5, size: "small" },
-  { id: "fleet-map", label: "Fleet Map", visible: true, order: 6, size: "large" },
-  { id: "daily-gross-chart", label: "Daily Gross Chart", visible: true, order: 7, size: "full" },
+  // KPI Cards Row (y=0)
+  {
+    id: "kpi-weekly-gross",
+    label: "Weekly Gross",
+    x: 0,
+    y: 0,
+    cols: 3,
+    rows: 1,
+    minItemCols: 2,
+    minItemRows: 1,
+  },
+  {
+    id: "kpi-billed-miles",
+    label: "Billed Miles",
+    x: 3,
+    y: 0,
+    cols: 3,
+    rows: 1,
+    minItemCols: 2,
+    minItemRows: 1,
+  },
+  {
+    id: "kpi-rate-per-mile",
+    label: "Rate Per Mile",
+    x: 6,
+    y: 0,
+    cols: 3,
+    rows: 1,
+    minItemCols: 2,
+    minItemRows: 1,
+  },
+  {
+    id: "kpi-today-gross",
+    label: "Today's Gross",
+    x: 9,
+    y: 0,
+    cols: 3,
+    rows: 1,
+    minItemCols: 2,
+    minItemRows: 1,
+  },
+  // Active Loads Table (y=1)
+  {
+    id: "active-loads",
+    label: "Active Loads",
+    x: 0,
+    y: 1,
+    cols: 12,
+    rows: 3,
+    minItemCols: 6,
+    minItemRows: 2,
+  },
+  // Recent Activity + Fleet Map Row (y=4)
+  {
+    id: "recent-activity",
+    label: "Recent Activity",
+    x: 0,
+    y: 4,
+    cols: 4,
+    rows: 4,
+    minItemCols: 3,
+    minItemRows: 2,
+  },
+  {
+    id: "fleet-map",
+    label: "Fleet Map",
+    x: 4,
+    y: 4,
+    cols: 8,
+    rows: 4,
+    minItemCols: 4,
+    minItemRows: 2,
+  },
+  // Daily Gross Chart (y=8)
+  {
+    id: "daily-gross-chart",
+    label: "Daily Gross Chart",
+    x: 0,
+    y: 8,
+    cols: 12,
+    rows: 3,
+    minItemCols: 6,
+    minItemRows: 2,
+  },
 ];
-
-const DEFAULT_SETTINGS: DashboardSettings = {
-  version: CURRENT_VERSION,
-  panels: DEFAULT_PANELS,
-};
 
 @Injectable({ providedIn: "root" })
 export class DashboardSettingsService {
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly _settings = signal<DashboardSettings>(DEFAULT_SETTINGS);
+  private readonly _panels = signal<DashboardPanelConfig[]>(DEFAULT_PANELS);
 
-  /** Current dashboard settings */
-  public readonly settings = this._settings.asReadonly();
-
-  /** Panels sorted by order */
-  public readonly sortedPanels = computed(() =>
-    [...this._settings().panels].sort((a, b) => a.order - b.order),
-  );
+  /** Current dashboard panels */
+  public readonly panels = this._panels.asReadonly();
 
   constructor() {
     this.loadSettings();
   }
 
-  /** Check if a panel is visible */
-  public isPanelVisible(panelId: PanelType): boolean {
-    return this._settings().panels.find((p) => p.id === panelId)?.visible ?? true;
+  /** Get a panel by ID */
+  public getPanel(panelId: PanelType): DashboardPanelConfig | undefined {
+    return this._panels().find((p) => p.id === panelId);
   }
 
-  /** Get the CSS class for a panel based on its size */
-  public getPanelClass(panelId: PanelType): string {
-    const panel = this._settings().panels.find((p) => p.id === panelId);
-    if (!panel?.visible) return "hidden";
-
-    switch (panel.size) {
-      case "small":
-        return "col-span-12 sm:col-span-6 lg:col-span-3";
-      case "medium":
-        return "col-span-12 lg:col-span-6";
-      case "large":
-        return "col-span-12 lg:col-span-8";
-      case "full":
-        return "col-span-12";
-      default:
-        return "col-span-12 lg:col-span-4";
-    }
-  }
-
-  /** Update a single panel's configuration */
-  public updatePanel(panelId: PanelType, config: Partial<Omit<DashboardPanelConfig, "id">>): void {
-    this._settings.update((s) => ({
-      ...s,
-      panels: s.panels.map((p) => (p.id === panelId ? { ...p, ...config } : p)),
-    }));
+  /** Update a panel's position and size (called by gridster on item change) */
+  public updatePanelLayout(
+    panelId: PanelType,
+    x: number,
+    y: number,
+    cols: number,
+    rows: number,
+  ): void {
+    this._panels.update((panels) =>
+      panels.map((p) => (p.id === panelId ? { ...p, x, y, cols, rows } : p)),
+    );
     this.persistSettings();
   }
 
-  /** Toggle a panel's visibility */
-  public togglePanelVisibility(panelId: PanelType): void {
-    const panel = this._settings().panels.find((p) => p.id === panelId);
-    if (panel) {
-      this.updatePanel(panelId, { visible: !panel.visible });
-    }
-  }
-
-  /** Reorder panels based on new order array */
-  public reorderPanels(panelIds: PanelType[]): void {
-    this._settings.update((s) => ({
-      ...s,
-      panels: s.panels.map((p) => {
-        const newOrder = panelIds.indexOf(p.id);
-        return newOrder >= 0 ? { ...p, order: newOrder } : p;
-      }),
-    }));
+  /** Update all panels at once (for batch updates) */
+  public updateAllPanels(panels: DashboardPanelConfig[]): void {
+    this._panels.set(panels);
     this.persistSettings();
   }
 
   /** Reset all settings to defaults */
   public resetToDefaults(): void {
-    this._settings.set(DEFAULT_SETTINGS);
+    this._panels.set(DEFAULT_PANELS);
     this.persistSettings();
   }
 
@@ -129,30 +169,29 @@ export class DashboardSettingsService {
     if (stored) {
       try {
         const parsed = JSON.parse(stored) as DashboardSettings;
-        this._settings.set(this.mergeWithDefaults(parsed));
+        if (parsed.version === CURRENT_VERSION) {
+          this._panels.set(this.mergeWithDefaults(parsed.panels));
+        }
       } catch {
-        this._settings.set(DEFAULT_SETTINGS);
+        this._panels.set(DEFAULT_PANELS);
       }
     }
   }
 
   private persistSettings(): void {
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem(DASHBOARD_SETTINGS_KEY, JSON.stringify(this._settings()));
+      const settings: DashboardSettings = {
+        version: CURRENT_VERSION,
+        panels: this._panels(),
+      };
+      localStorage.setItem(DASHBOARD_SETTINGS_KEY, JSON.stringify(settings));
     }
   }
 
-  /** Merge stored settings with defaults to handle new panels added in future versions */
-  private mergeWithDefaults(stored: DashboardSettings): DashboardSettings {
-    const existingIds = new Set(stored.panels.map((p) => p.id));
-    const newPanels = DEFAULT_PANELS.filter((p) => !existingIds.has(p.id)).map((p, i) => ({
-      ...p,
-      order: stored.panels.length + i,
-    }));
-
-    return {
-      version: CURRENT_VERSION,
-      panels: [...stored.panels, ...newPanels],
-    };
+  /** Merge stored panels with defaults to handle new panels added in future versions */
+  private mergeWithDefaults(storedPanels: DashboardPanelConfig[]): DashboardPanelConfig[] {
+    const existingIds = new Set(storedPanels.map((p) => p.id));
+    const newPanels = DEFAULT_PANELS.filter((p) => !existingIds.has(p.id));
+    return [...storedPanels, ...newPanels];
   }
 }

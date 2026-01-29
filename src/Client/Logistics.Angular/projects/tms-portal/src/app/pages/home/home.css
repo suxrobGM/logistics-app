@@ -1,0 +1,19 @@
+.dashboard-grid {
+  height: calc(100vh);
+}
+
+.dashboard-panel {
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+/* Override gridster default styles for better theme integration */
+:host {
+  ::ng-deep gridster {
+    background: transparent !important;
+  }
+
+  ::ng-deep gridster-item {
+    background: transparent !important;
+  }
+}

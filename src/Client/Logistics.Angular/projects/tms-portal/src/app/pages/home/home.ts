@@ -5,6 +5,7 @@ import { Api, getLoads } from "@logistics/shared/api";
 import type { Address, LoadDto } from "@logistics/shared/api";
 import { StatCard } from "@logistics/shared/components";
 import { AddressPipe } from "@logistics/shared/pipes";
+import { Gridster, type GridsterConfig, GridsterItem } from "angular-gridster2";
 import { SharedModule } from "primeng/api";
 import type { MenuItem } from "primeng/api";
 import { BadgeModule } from "primeng/badge";
@@ -16,13 +17,12 @@ import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "@/core/auth";
-import { DashboardSettingsService, type PanelType } from "@/core/services";
+import { type DashboardPanelConfig, DashboardSettingsService } from "@/core/services";
 import { TrucksMap } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
 import {
   DailyGrossChartComponent,
   type DailyGrossChartData,
-  DashboardSettingsDialog,
   LoadProgressBarComponent,
   RecentActivityComponent,
 } from "./components";
@@ -30,6 +30,7 @@ import {
 @Component({
   selector: "app-home",
   templateUrl: "./home.html",
+  styleUrl: "./home.css",
   imports: [
     CardModule,
     SharedModule,
@@ -49,17 +50,17 @@ import {
     BadgeModule,
     MenuModule,
     StatCard,
-    DashboardSettingsDialog,
+    Gridster,
+    GridsterItem,
   ],
   providers: [AddressPipe],
 })
-export class HomeComponent implements OnInit {
+export class Home implements OnInit {
   private readonly api = inject(Api);
   private readonly addressPipe = inject(AddressPipe);
   private readonly authService = inject(AuthService);
   private readonly dashboardSettings = inject(DashboardSettingsService);
 
-  protected readonly showSettingsDialog = signal(false);
   protected readonly todayGross = signal(0);
   protected readonly weeklyGross = signal(0);
   protected readonly weeklyDistance = signal(0);
@@ -69,6 +70,38 @@ export class HomeComponent implements OnInit {
   protected readonly recentLoads = signal<LoadDto[]>([]);
   protected readonly lastUpdated = signal<Date>(new Date());
   protected readonly currentDate = new Date();
+
+  /** Dashboard panels from settings service */
+  protected readonly dashboardPanels = this.dashboardSettings.panels;
+
+  /** Gridster configuration */
+  protected readonly gridsterOptions: GridsterConfig = {
+    gridType: "fit",
+    fixedRowHeight: 120,
+    minCols: 12,
+    maxCols: 12,
+    minRows: 1,
+    maxRows: 100,
+    margin: 8,
+    outerMargin: false,
+    mobileBreakpoint: 768,
+    pushItems: true,
+    swap: false,
+    draggable: {
+      enabled: true,
+      ignoreContentClass: "no-drag",
+    },
+    resizable: {
+      enabled: true,
+    },
+    displayGrid: "onDrag&Resize",
+    itemChangeCallback: this.onPanelChange.bind(this),
+  };
+
+  private onPanelChange(item: unknown): void {
+    const panel = item as DashboardPanelConfig;
+    this.dashboardSettings.updatePanelLayout(panel.id, panel.x, panel.y, panel.cols, panel.rows);
+  }
 
   protected readonly greeting = computed(() => {
     const hour = new Date().getHours();
@@ -134,12 +167,8 @@ export class HomeComponent implements OnInit {
     this.fetchRecentLoads();
   }
 
-  protected isPanelVisible(panelId: PanelType): boolean {
-    return this.dashboardSettings.isPanelVisible(panelId);
-  }
-
-  protected getPanelClass(panelId: PanelType): string {
-    return this.dashboardSettings.getPanelClass(panelId);
+  protected resetLayout(): void {
+    this.dashboardSettings.resetToDefaults();
   }
 
   protected onChartDataLoaded(data: DailyGrossChartData): void {
