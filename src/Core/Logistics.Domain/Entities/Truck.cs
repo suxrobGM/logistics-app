@@ -18,6 +18,16 @@ public class Truck : Entity, ITenantEntity
     public TruckStatus Status { get; set; } = TruckStatus.Available;
 
     /// <summary>
+    ///     Vehicle license plate number
+    /// </summary>
+    public string? LicensePlate { get; set; }
+
+    /// <summary>
+    ///     State where the license plate is registered (e.g., "TX", "CA")
+    /// </summary>
+    public string? LicensePlateState { get; set; }
+
+    /// <summary>
     ///     Truck's last known location address
     /// </summary>
     public Address? CurrentAddress { get; set; }

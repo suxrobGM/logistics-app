@@ -152,6 +152,32 @@ public static class Permission
         public const string Manage = $"{nameof(Permission)}.{nameof(BlogPost)}.Manage";
     }
 
+    public static class Dvir
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(Dvir)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Dvir)}.Manage";
+        public const string Review = $"{nameof(Permission)}.{nameof(Dvir)}.Review";
+    }
+
+    public static class Safety
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(Safety)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Safety)}.Manage";
+    }
+
+    public static class Maintenance
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(Maintenance)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Maintenance)}.Manage";
+    }
+
+    public static class Certification
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(Certification)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Certification)}.Manage";
+        public const string Verify = $"{nameof(Permission)}.{nameof(Certification)}.Verify";
+    }
+
     public static IEnumerable<string> GetAll()
     {
         var list = new List<string>();
