@@ -1,0 +1,170 @@
+<ui-page-header [title]="pageTitle()" [showAddButton]="false" backLink="/maintenance/records">
+  @if (record()) {
+    <p-button icon="pi pi-pencil" label="Edit" (click)="editRecord()" />
+  }
+</ui-page-header>
+
+@if (isLoading()) {
+  <div class="flex justify-center py-16">
+    <p-progress-spinner />
+  </div>
+} @else if (record()) {
+  <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+    <!-- Main Info -->
+    <div class="lg:col-span-2">
+      <p-card header="Service Details">
+        <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div>
+            <div class="text-muted mb-1 text-sm">Service Type</div>
+            <p-tag [value]="record()!.typeDisplay ?? 'Unknown'" severity="info" />
+          </div>
+          <div>
+            <div class="text-muted mb-1 text-sm">Service Date</div>
+            <div class="font-medium">{{ record()!.serviceDate | date: "mediumDate" }}</div>
+          </div>
+          <div>
+            <div class="text-muted mb-1 text-sm">Odometer</div>
+            <div class="font-medium">
+              @if (record()!.odometerReading) {
+                {{ record()!.odometerReading | number }} mi
+              } @else {
+                <span class="text-muted">Not recorded</span>
+              }
+            </div>
+          </div>
+          <div>
+            <div class="text-muted mb-1 text-sm">Engine Hours</div>
+            <div class="font-medium">
+              @if (record()!.engineHours) {
+                {{ record()!.engineHours | number }} hrs
+              } @else {
+                <span class="text-muted">Not recorded</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-4">
+          <div>
+            <div class="text-muted mb-1 text-sm">Truck</div>
+            <a [routerLink]="['/trucks', record()!.truckId]" class="text-primary font-medium">
+              {{ record()!.truckNumber }}
+            </a>
+          </div>
+          <div>
+            <div class="text-muted mb-1 text-sm">Performed By</div>
+            <div class="font-medium">{{ record()!.performedByName ?? "Not specified" }}</div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <div class="text-muted mb-1 text-sm">Description</div>
+          <p>{{ record()!.description ?? "No description provided" }}</p>
+        </div>
+
+        @if (record()!.notes) {
+          <div class="mt-4">
+            <div class="text-muted mb-1 text-sm">Notes</div>
+            <p class="text-muted">{{ record()!.notes }}</p>
+          </div>
+        }
+      </p-card>
+
+      <!-- Parts Used -->
+      @if (record()!.parts && record()!.parts!.length > 0) {
+        <p-card header="Parts Used" class="mt-4">
+          <div class="overflow-x-auto">
+            <table class="min-w-full">
+              <thead>
+                <tr class="border-b">
+                  <th class="text-muted py-2 text-left text-sm font-medium">Part Name</th>
+                  <th class="text-muted py-2 text-left text-sm font-medium">Part Number</th>
+                  <th class="text-muted py-2 text-right text-sm font-medium">Quantity</th>
+                  <th class="text-muted py-2 text-right text-sm font-medium">Unit Cost</th>
+                  <th class="text-muted py-2 text-right text-sm font-medium">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (part of record()!.parts; track part.id) {
+                  <tr class="border-b">
+                    <td class="py-2">{{ part.partName }}</td>
+                    <td class="py-2">{{ part.partNumber ?? "-" }}</td>
+                    <td class="py-2 text-right">{{ part.quantity }}</td>
+                    <td class="py-2 text-right">{{ part.unitCost | currency }}</td>
+                    <td class="py-2 text-right">{{ part.totalCost | currency }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </p-card>
+      }
+
+      <!-- Documents -->
+      @if (record()!.documents && record()!.documents!.length > 0) {
+        <p-card header="Documents" class="mt-4">
+          <div class="flex flex-wrap gap-2">
+            @for (doc of record()!.documents; track doc.id) {
+              <span class="flex items-center gap-1">
+                <i class="pi pi-file"></i>
+                {{ doc.fileName ?? doc.originalFileName ?? "Document" }}
+              </span>
+            }
+          </div>
+        </p-card>
+      }
+    </div>
+
+    <!-- Sidebar - Costs -->
+    <div class="flex flex-col gap-4">
+      <p-card header="Cost Summary">
+        <div class="flex flex-col gap-3">
+          <div class="flex justify-between">
+            <span class="text-muted">Labor Cost</span>
+            <span class="font-medium">{{ record()!.laborCost | currency }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-muted">Parts Cost</span>
+            <span class="font-medium">{{ record()!.partsCost | currency }}</span>
+          </div>
+          <div class="border-t pt-3">
+            <div class="flex justify-between">
+              <span class="font-semibold">Total Cost</span>
+              <span class="text-primary text-lg font-bold">{{ record()!.totalCost | currency }}</span>
+            </div>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Vendor Info -->
+      @if (record()!.vendorName || record()!.invoiceNumber) {
+        <p-card header="Vendor Information">
+          <div class="flex flex-col gap-3">
+            @if (record()!.vendorName) {
+              <div>
+                <div class="text-muted mb-1 text-sm">Vendor Name</div>
+                <div class="font-medium">{{ record()!.vendorName }}</div>
+              </div>
+            }
+            @if (record()!.invoiceNumber) {
+              <div>
+                <div class="text-muted mb-1 text-sm">Invoice Number</div>
+                <div class="font-medium">{{ record()!.invoiceNumber }}</div>
+              </div>
+            }
+          </div>
+        </p-card>
+      }
+
+      <!-- Meta Info -->
+      <p-card header="Record Information">
+        <div class="flex flex-col gap-3">
+          <div>
+            <div class="text-muted mb-1 text-sm">Created</div>
+            <div class="text-sm">{{ record()!.createdAt | date: "medium" }}</div>
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </div>
+}

@@ -1,0 +1,5 @@
+<ui-page-header title="Add Emergency Contact" [showAddButton]="false" backLink="/safety/emergency" />
+
+<p-card>
+  <app-emergency-contact-form mode="create" (save)="onSave($event)" />
+</p-card>

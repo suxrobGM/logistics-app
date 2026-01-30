@@ -1,0 +1,491 @@
+<ui-page-header [title]="pageTitle()" [showAddButton]="false" backLink="/safety/accidents" />
+
+@if (isLoading()) {
+  <div class="flex justify-center py-16">
+    <p-progress-spinner />
+  </div>
+} @else if (report()) {
+  <p-tabs value="0">
+    <p-tablist>
+      <p-tab value="0">Overview</p-tab>
+      <p-tab value="1">Injuries & Damage</p-tab>
+      <p-tab value="2">Third Parties</p-tab>
+      <p-tab value="3">Witnesses</p-tab>
+      <p-tab value="4">Police & Insurance</p-tab>
+      <p-tab value="5">Documents</p-tab>
+    </p-tablist>
+
+    <p-tabpanels>
+      <!-- Overview Tab -->
+      <p-tabpanel value="0">
+        <div class="grid grid-cols-1 gap-4 py-4 lg:grid-cols-3">
+          <div class="lg:col-span-2">
+            <p-card header="Incident Details">
+              <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+                <div>
+                  <div class="text-muted mb-1 text-sm">Status</div>
+                  <p-tag [value]="report()!.statusDisplay ?? 'Unknown'" [severity]="getStatusSeverity(report()!.status)" />
+                </div>
+                <div>
+                  <div class="text-muted mb-1 text-sm">Severity</div>
+                  <p-tag
+                    [value]="report()!.severityDisplay ?? 'Unknown'"
+                    [severity]="getSeveritySeverity(report()!.severity)"
+                  />
+                </div>
+                <div>
+                  <div class="text-muted mb-1 text-sm">Type</div>
+                  <p-tag [value]="report()!.typeDisplay ?? 'Unknown'" severity="info" />
+                </div>
+                <div>
+                  <div class="text-muted mb-1 text-sm">Date & Time</div>
+                  <div class="font-medium">{{ report()!.accidentDateTime | date: "medium" }}</div>
+                </div>
+              </div>
+
+              <div class="mt-4 grid grid-cols-2 gap-4">
+                <div>
+                  <div class="text-muted mb-1 text-sm">Truck</div>
+                  <a [routerLink]="['/trucks', report()!.truckId]" class="text-primary font-medium">
+                    {{ report()!.truckNumber }}
+                  </a>
+                </div>
+                <div>
+                  <div class="text-muted mb-1 text-sm">Driver</div>
+                  <div class="font-medium">{{ report()!.driverName }}</div>
+                </div>
+              </div>
+
+              <div class="mt-4">
+                <div class="text-muted mb-1 text-sm">Location</div>
+                <div class="flex items-center gap-2">
+                  <i class="pi pi-map-marker text-muted"></i>
+                  <span>{{ report()!.location ?? "Not specified" }}</span>
+                </div>
+              </div>
+
+              <div class="mt-4">
+                <div class="text-muted mb-1 text-sm">Description</div>
+                <p>{{ report()!.description ?? "No description provided" }}</p>
+              </div>
+
+              <div class="mt-4 grid grid-cols-2 gap-4">
+                @if (report()!.weatherConditions) {
+                  <div>
+                    <div class="text-muted mb-1 text-sm">Weather Conditions</div>
+                    <div>{{ report()!.weatherConditions }}</div>
+                  </div>
+                }
+                @if (report()!.roadConditions) {
+                  <div>
+                    <div class="text-muted mb-1 text-sm">Road Conditions</div>
+                    <div>{{ report()!.roadConditions }}</div>
+                  </div>
+                }
+              </div>
+            </p-card>
+
+            <!-- Review Section -->
+            @if (report()!.reviewedAt) {
+              <p-card header="Review Information" class="mt-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <div class="text-muted mb-1 text-sm">Reviewed By</div>
+                    <div class="font-medium">{{ report()!.reviewedByName }}</div>
+                  </div>
+                  <div>
+                    <div class="text-muted mb-1 text-sm">Reviewed At</div>
+                    <div>{{ report()!.reviewedAt | date: "medium" }}</div>
+                  </div>
+                </div>
+                @if (report()!.reviewNotes) {
+                  <div class="mt-4">
+                    <div class="text-muted mb-1 text-sm">Review Notes</div>
+                    <p>{{ report()!.reviewNotes }}</p>
+                  </div>
+                }
+              </p-card>
+            }
+          </div>
+
+          <div class="flex flex-col gap-4">
+            <p-card header="Quick Info">
+              <div class="flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-muted">Injuries Reported</span>
+                  @if (report()!.injuriesReported) {
+                    <span class="text-danger font-medium">Yes ({{ report()!.numberOfInjuries ?? 0 }})</span>
+                  } @else {
+                    <span class="text-success font-medium">No</span>
+                  }
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-muted">Fatalities</span>
+                  @if (report()!.fatalitiesReported) {
+                    <span class="text-danger font-medium">Yes ({{ report()!.numberOfFatalities ?? 0 }})</span>
+                  } @else {
+                    <span class="text-success font-medium">No</span>
+                  }
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-muted">Hazmat Involved</span>
+                  @if (report()!.hazmatInvolved) {
+                    <span class="text-danger font-medium">Yes</span>
+                  } @else {
+                    <span class="text-success font-medium">No</span>
+                  }
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-muted">Vehicle Towed</span>
+                  @if (report()!.vehicleTowed) {
+                    <span class="text-warn font-medium">Yes</span>
+                  } @else {
+                    <span class="text-success font-medium">No</span>
+                  }
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-muted">Police Report Filed</span>
+                  @if (report()!.policeReportFiled) {
+                    <span class="text-info font-medium">Yes</span>
+                  } @else {
+                    <span class="text-muted font-medium">No</span>
+                  }
+                </div>
+              </div>
+            </p-card>
+
+            <p-card header="Record Info">
+              <div class="flex flex-col gap-3">
+                <div>
+                  <div class="text-muted mb-1 text-sm">Report Created</div>
+                  <div class="text-sm">{{ report()!.createdAt | date: "medium" }}</div>
+                </div>
+                @if (report()!.tripId) {
+                  <div>
+                    <div class="text-muted mb-1 text-sm">Associated Trip</div>
+                    <a [routerLink]="['/trips', report()!.tripId]" class="text-primary text-sm">View Trip</a>
+                  </div>
+                }
+              </div>
+            </p-card>
+          </div>
+        </div>
+      </p-tabpanel>
+
+      <!-- Injuries & Damage Tab -->
+      <p-tabpanel value="1">
+        <div class="grid grid-cols-1 gap-4 py-4 lg:grid-cols-2">
+          <p-card header="Injuries">
+            <div class="flex flex-col gap-4">
+              <div class="flex items-center gap-2">
+                @if (report()!.injuriesReported) {
+                  <i class="pi pi-exclamation-triangle text-danger text-2xl"></i>
+                  <span class="text-danger text-lg font-semibold"
+                    >{{ report()!.numberOfInjuries ?? 0 }} Injuries Reported</span
+                  >
+                } @else {
+                  <i class="pi pi-check-circle text-success text-2xl"></i>
+                  <span class="text-success text-lg font-semibold">No Injuries Reported</span>
+                }
+              </div>
+              @if (report()!.injuryDescription) {
+                <div>
+                  <div class="text-muted mb-1 text-sm">Injury Details</div>
+                  <p>{{ report()!.injuryDescription }}</p>
+                </div>
+              }
+
+              @if (report()!.fatalitiesReported) {
+                <div class="mt-4 border-t pt-4">
+                  <div class="flex items-center gap-2">
+                    <i class="pi pi-exclamation-circle text-danger text-2xl"></i>
+                    <span class="text-danger text-lg font-semibold"
+                      >{{ report()!.numberOfFatalities ?? 0 }} Fatalities Reported</span
+                    >
+                  </div>
+                </div>
+              }
+            </div>
+          </p-card>
+
+          <p-card header="Damage">
+            <div class="flex flex-col gap-4">
+              @if (report()!.estimatedDamage) {
+                <div>
+                  <div class="text-muted mb-1 text-sm">Estimated Damage</div>
+                  <div class="text-primary text-2xl font-bold">{{ report()!.estimatedDamage | currency }}</div>
+                </div>
+              }
+
+              @if (report()!.damageDescription) {
+                <div>
+                  <div class="text-muted mb-1 text-sm">Damage Description</div>
+                  <p>{{ report()!.damageDescription }}</p>
+                </div>
+              }
+
+              @if (report()!.vehicleTowed) {
+                <div class="mt-2 border-t pt-4">
+                  <div class="flex items-center gap-2">
+                    <i class="pi pi-truck text-warn text-xl"></i>
+                    <span class="font-medium">Vehicle was towed</span>
+                  </div>
+                  @if (report()!.towCompany) {
+                    <div class="mt-2 text-sm">Tow Company: {{ report()!.towCompany }}</div>
+                  }
+                </div>
+              }
+
+              @if (report()!.hazmatInvolved) {
+                <div class="mt-2 border-t pt-4">
+                  <div class="flex items-center gap-2">
+                    <i class="pi pi-exclamation-triangle text-danger text-xl"></i>
+                    <span class="text-danger font-semibold">Hazmat Involved</span>
+                  </div>
+                  @if (report()!.hazmatDescription) {
+                    <div class="mt-2">
+                      <div class="text-muted mb-1 text-sm">Hazmat Details</div>
+                      <p>{{ report()!.hazmatDescription }}</p>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </p-card>
+        </div>
+      </p-tabpanel>
+
+      <!-- Third Parties Tab -->
+      <p-tabpanel value="2">
+        <div class="py-4">
+          @if (report()!.thirdParties && report()!.thirdParties!.length > 0) {
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+              @for (party of report()!.thirdParties; track party.id; let i = $index) {
+                <p-card [header]="'Third Party ' + (i + 1)">
+                  <div class="flex flex-col gap-3">
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <div class="text-muted mb-1 text-sm">Driver Name</div>
+                        <div class="font-medium">{{ party.driverName ?? "Not provided" }}</div>
+                      </div>
+                      <div>
+                        <div class="text-muted mb-1 text-sm">Phone</div>
+                        <div>{{ party.driverPhone ?? "Not provided" }}</div>
+                      </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <div class="text-muted mb-1 text-sm">License</div>
+                        <div>{{ party.driverLicense ?? "-" }} {{ party.driverLicenseState ?? "" }}</div>
+                      </div>
+                      <div>
+                        <div class="text-muted mb-1 text-sm">License Plate</div>
+                        <div>{{ party.licensePlate ?? "-" }} {{ party.licensePlateState ?? "" }}</div>
+                      </div>
+                    </div>
+
+                    <div class="border-t pt-3">
+                      <div class="text-muted mb-1 text-sm">Vehicle</div>
+                      <div>
+                        {{ party.vehicleYear ?? "" }} {{ party.vehicleMake ?? "" }} {{ party.vehicleModel ?? "" }}
+                        @if (party.vehicleColor) {
+                          ({{ party.vehicleColor }})
+                        }
+                      </div>
+                      @if (party.vinNumber) {
+                        <div class="text-muted mt-1 text-sm">VIN: {{ party.vinNumber }}</div>
+                      }
+                    </div>
+
+                    @if (party.insuranceCompany) {
+                      <div class="border-t pt-3">
+                        <div class="text-muted mb-1 text-sm">Insurance</div>
+                        <div>{{ party.insuranceCompany }}</div>
+                        @if (party.insurancePolicyNumber) {
+                          <div class="text-sm">Policy: {{ party.insurancePolicyNumber }}</div>
+                        }
+                        @if (party.insurancePhone) {
+                          <div class="text-sm">Phone: {{ party.insurancePhone }}</div>
+                        }
+                      </div>
+                    }
+
+                    @if (party.notes) {
+                      <div class="border-t pt-3">
+                        <div class="text-muted mb-1 text-sm">Notes</div>
+                        <p class="text-sm">{{ party.notes }}</p>
+                      </div>
+                    }
+                  </div>
+                </p-card>
+              }
+            </div>
+          } @else {
+            <div class="flex flex-col items-center justify-center py-16 text-center">
+              <i class="pi pi-car text-muted mb-4 text-5xl"></i>
+              <h3 class="text-lg font-medium">No Third Parties</h3>
+              <p class="text-muted">No other vehicles or parties were involved in this incident.</p>
+            </div>
+          }
+        </div>
+      </p-tabpanel>
+
+      <!-- Witnesses Tab -->
+      <p-tabpanel value="3">
+        <div class="py-4">
+          @if (report()!.witnesses && report()!.witnesses!.length > 0) {
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              @for (witness of report()!.witnesses; track witness.id; let i = $index) {
+                <p-card [header]="witness.name ?? 'Witness ' + (i + 1)">
+                  <div class="flex flex-col gap-3">
+                    @if (witness.phone) {
+                      <div>
+                        <div class="text-muted mb-1 text-sm">Phone</div>
+                        <div>{{ witness.phone }}</div>
+                      </div>
+                    }
+                    @if (witness.email) {
+                      <div>
+                        <div class="text-muted mb-1 text-sm">Email</div>
+                        <div>{{ witness.email }}</div>
+                      </div>
+                    }
+                    @if (witness.address) {
+                      <div>
+                        <div class="text-muted mb-1 text-sm">Address</div>
+                        <div class="text-sm">{{ witness.address }}</div>
+                      </div>
+                    }
+                    @if (witness.statement) {
+                      <div class="border-t pt-3">
+                        <div class="text-muted mb-1 text-sm">Statement</div>
+                        <p class="text-sm">{{ witness.statement }}</p>
+                        @if (witness.statementDate) {
+                          <div class="text-muted mt-1 text-xs">Dated: {{ witness.statementDate | date: "mediumDate" }}</div>
+                        }
+                      </div>
+                    }
+                  </div>
+                </p-card>
+              }
+            </div>
+          } @else {
+            <div class="flex flex-col items-center justify-center py-16 text-center">
+              <i class="pi pi-users text-muted mb-4 text-5xl"></i>
+              <h3 class="text-lg font-medium">No Witnesses</h3>
+              <p class="text-muted">No witnesses have been recorded for this incident.</p>
+            </div>
+          }
+        </div>
+      </p-tabpanel>
+
+      <!-- Police & Insurance Tab -->
+      <p-tabpanel value="4">
+        <div class="grid grid-cols-1 gap-4 py-4 lg:grid-cols-2">
+          <p-card header="Police Report">
+            @if (report()!.policeReportFiled) {
+              <div class="flex flex-col gap-3">
+                <div class="flex items-center gap-2">
+                  <i class="pi pi-check-circle text-success text-xl"></i>
+                  <span class="font-medium">Police report filed</span>
+                </div>
+                @if (report()!.policeReportNumber) {
+                  <div>
+                    <div class="text-muted mb-1 text-sm">Report Number</div>
+                    <div class="font-medium">{{ report()!.policeReportNumber }}</div>
+                  </div>
+                }
+                @if (report()!.policeDepartment) {
+                  <div>
+                    <div class="text-muted mb-1 text-sm">Department</div>
+                    <div>{{ report()!.policeDepartment }}</div>
+                  </div>
+                }
+                @if (report()!.policeOfficerName) {
+                  <div>
+                    <div class="text-muted mb-1 text-sm">Officer Name</div>
+                    <div>{{ report()!.policeOfficerName }}</div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="flex flex-col items-center py-8 text-center">
+                <i class="pi pi-times-circle text-muted mb-2 text-3xl"></i>
+                <span class="text-muted">No police report filed</span>
+              </div>
+            }
+          </p-card>
+
+          <p-card header="Insurance">
+            @if (report()!.insuranceClaimNumber || report()!.insuranceNotifiedAt) {
+              <div class="flex flex-col gap-3">
+                @if (report()!.insuranceClaimNumber) {
+                  <div>
+                    <div class="text-muted mb-1 text-sm">Claim Number</div>
+                    <div class="font-medium">{{ report()!.insuranceClaimNumber }}</div>
+                  </div>
+                }
+                @if (report()!.insuranceNotifiedAt) {
+                  <div>
+                    <div class="text-muted mb-1 text-sm">Insurance Notified</div>
+                    <div>{{ report()!.insuranceNotifiedAt | date: "medium" }}</div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="flex flex-col items-center py-8 text-center">
+                <i class="pi pi-clock text-muted mb-2 text-3xl"></i>
+                <span class="text-muted">Insurance claim not yet filed</span>
+              </div>
+            }
+          </p-card>
+        </div>
+      </p-tabpanel>
+
+      <!-- Documents Tab -->
+      <p-tabpanel value="5">
+        <div class="py-4">
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <!-- Photos -->
+            <p-card header="Photos">
+              @if (report()!.photos && report()!.photos!.length > 0) {
+                <div class="grid grid-cols-2 gap-2 md:grid-cols-3">
+                  @for (photo of report()!.photos; track photo.id) {
+                    <div class="bg-subtle aspect-video overflow-hidden rounded-lg">
+                      <img [src]="photo.blobPath" [alt]="photo.fileName" class="h-full w-full object-cover" />
+                    </div>
+                  }
+                </div>
+              } @else {
+                <div class="flex flex-col items-center py-8 text-center">
+                  <i class="pi pi-image text-muted mb-2 text-3xl"></i>
+                  <span class="text-muted">No photos uploaded</span>
+                </div>
+              }
+            </p-card>
+
+            <!-- Documents -->
+            <p-card header="Documents">
+              @if (report()!.documents && report()!.documents!.length > 0) {
+                <div class="flex flex-col gap-2">
+                  @for (doc of report()!.documents; track doc.id) {
+                    <span class="flex items-center gap-2 rounded p-2">
+                      <i class="pi pi-file text-primary"></i>
+                      <span>{{ doc.fileName ?? doc.originalFileName ?? "Document" }}</span>
+                    </span>
+                  }
+                </div>
+              } @else {
+                <div class="flex flex-col items-center py-8 text-center">
+                  <i class="pi pi-folder-open text-muted mb-2 text-3xl"></i>
+                  <span class="text-muted">No documents uploaded</span>
+                </div>
+              }
+            </p-card>
+          </div>
+        </div>
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+}

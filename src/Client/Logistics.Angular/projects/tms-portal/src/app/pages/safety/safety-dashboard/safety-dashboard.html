@@ -1,0 +1,180 @@
+<ui-page-header title="Safety Dashboard" [showAddButton]="false" />
+
+@if (isLoading()) {
+  <div class="flex justify-center py-16">
+    <p-progress-spinner />
+  </div>
+} @else {
+  <!-- Stats Cards -->
+  <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <p-card class="cursor-pointer transition-shadow hover:shadow-lg" (click)="navigateTo('/safety/dvir')">
+      <div class="flex items-center gap-4">
+        <div class="bg-warning/10 flex h-12 w-12 items-center justify-center rounded-lg">
+          <i class="pi pi-clipboard text-warning text-2xl"></i>
+        </div>
+        <div>
+          <div class="text-muted text-sm">Pending DVIR Reviews</div>
+          <div class="text-2xl font-bold">{{ pendingDvirCount() }}</div>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card class="cursor-pointer transition-shadow hover:shadow-lg" (click)="navigateTo('/safety/accidents')">
+      <div class="flex items-center gap-4">
+        <div class="bg-danger/10 flex h-12 w-12 items-center justify-center rounded-lg">
+          <i class="pi pi-exclamation-triangle text-danger text-2xl"></i>
+        </div>
+        <div>
+          <div class="text-muted text-sm">Open Accidents</div>
+          <div class="text-2xl font-bold">{{ openAccidentsCount() }}</div>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card class="cursor-pointer transition-shadow hover:shadow-lg" (click)="navigateTo('/safety/emergency')">
+      <div class="flex items-center gap-4">
+        <div class="bg-info/10 flex h-12 w-12 items-center justify-center rounded-lg">
+          <i class="pi pi-bell text-info text-2xl"></i>
+        </div>
+        <div>
+          <div class="text-muted text-sm">Active Alerts</div>
+          <div class="text-2xl font-bold">{{ activeAlertsCount() }}</div>
+        </div>
+      </div>
+    </p-card>
+
+    <p-card class="cursor-pointer transition-shadow hover:shadow-lg" (click)="navigateTo('/safety/behavior')">
+      <div class="flex items-center gap-4">
+        <div class="bg-purple-500/10 flex h-12 w-12 items-center justify-center rounded-lg">
+          <i class="pi pi-user text-purple-500 text-2xl"></i>
+        </div>
+        <div>
+          <div class="text-muted text-sm">Driver Behavior</div>
+          <div class="text-2xl font-bold">-</div>
+        </div>
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="mb-6 flex flex-wrap gap-2">
+    <p-button label="Report Accident" icon="pi pi-plus" (click)="navigateTo('/safety/accidents/add')" />
+    <p-button label="View DVIRs" icon="pi pi-clipboard" [outlined]="true" (click)="navigateTo('/safety/dvir')" />
+    <p-button
+      label="Emergency Contacts"
+      icon="pi pi-phone"
+      [outlined]="true"
+      (click)="navigateTo('/safety/emergency')"
+    />
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <!-- Recent DVIRs -->
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="flex items-center justify-between p-4 pb-0">
+          <h3 class="text-lg font-semibold">Recent DVIRs</h3>
+          <p-button label="View All" [link]="true" (click)="navigateTo('/safety/dvir')" />
+        </div>
+      </ng-template>
+
+      @if (recentDvirs().length > 0) {
+        <p-table [value]="recentDvirs()" [tableStyle]="{ 'min-width': '100%' }">
+          <ng-template #header>
+            <tr>
+              <th>Date</th>
+              <th>Truck</th>
+              <th>Driver</th>
+              <th>Status</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-dvir>
+            <tr class="cursor-pointer hover:bg-hover" (click)="viewDvir(dvir)">
+              <td>{{ dvir.inspectionDate | date: "shortDate" }}</td>
+              <td>{{ dvir.truckNumber }}</td>
+              <td>{{ dvir.driverName }}</td>
+              <td>
+                <p-tag [value]="dvir.statusDisplay ?? dvir.status" [severity]="getDvirStatusSeverity(dvir.status)" />
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      } @else {
+        <div class="flex flex-col items-center py-8 text-center">
+          <i class="pi pi-clipboard text-muted mb-2 text-3xl"></i>
+          <p class="text-muted">No recent DVIRs</p>
+        </div>
+      }
+    </p-card>
+
+    <!-- Recent Accidents -->
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="flex items-center justify-between p-4 pb-0">
+          <h3 class="text-lg font-semibold">Recent Accidents</h3>
+          <p-button label="View All" [link]="true" (click)="navigateTo('/safety/accidents')" />
+        </div>
+      </ng-template>
+
+      @if (recentAccidents().length > 0) {
+        <p-table [value]="recentAccidents()" [tableStyle]="{ 'min-width': '100%' }">
+          <ng-template #header>
+            <tr>
+              <th>Date</th>
+              <th>Driver</th>
+              <th>Severity</th>
+              <th>Status</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-accident>
+            <tr class="cursor-pointer hover:bg-hover" (click)="viewAccident(accident)">
+              <td>{{ accident.accidentDateTime | date: "shortDate" }}</td>
+              <td>{{ accident.driverName }}</td>
+              <td>
+                <p-tag
+                  [value]="accident.severityDisplay ?? accident.severity"
+                  [severity]="getAccidentSeveritySeverity(accident.severity)"
+                />
+              </td>
+              <td>
+                <p-tag
+                  [value]="accident.statusDisplay ?? accident.status"
+                  [severity]="getAccidentStatusSeverity(accident.status)"
+                />
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      } @else {
+        <div class="flex flex-col items-center py-8 text-center">
+          <i class="pi pi-check-circle text-success mb-2 text-3xl"></i>
+          <p class="text-muted">No recent accidents</p>
+        </div>
+      }
+    </p-card>
+  </div>
+
+  <!-- Active Alerts -->
+  @if (activeAlerts().length > 0) {
+    <p-card class="mt-4">
+      <ng-template pTemplate="header">
+        <div class="flex items-center justify-between p-4 pb-0">
+          <h3 class="text-lg font-semibold">Active Emergency Alerts</h3>
+        </div>
+      </ng-template>
+
+      <div class="flex flex-col gap-2">
+        @for (alert of activeAlerts(); track alert.id) {
+          <div class="bg-danger/5 border-danger flex items-center gap-4 rounded-lg border-l-4 p-4">
+            <i class="pi pi-exclamation-circle text-danger text-xl"></i>
+            <div class="flex-1">
+              <div class="font-medium">{{ alert.typeDisplay }}</div>
+              <div class="text-muted text-sm">{{ alert.driverMessage }}</div>
+            </div>
+            <div class="text-muted text-sm">{{ alert.createdAt | date: "short" }}</div>
+          </div>
+        }
+      </div>
+    </p-card>
+  }
+}

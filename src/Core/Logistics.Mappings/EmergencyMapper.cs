@@ -1,5 +1,5 @@
 using Logistics.Domain.Entities.Safety;
-using Logistics.Domain.Primitives.Enums.Safety;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
 namespace Logistics.Mappings;
@@ -17,11 +17,11 @@ public static class EmergencyMapper
             TruckNumber = entity.Truck?.Number,
             TripId = entity.TripId,
             Type = entity.AlertType,
-            TypeDisplay = GetAlertTypeDisplay(entity.AlertType),
+            TypeDisplay = entity.AlertType.GetDescription(),
             Status = entity.Status,
-            StatusDisplay = GetAlertStatusDisplay(entity.Status),
+            StatusDisplay = entity.Status.GetDescription(),
             Source = entity.Source,
-            SourceDisplay = GetAlertSourceDisplay(entity.Source),
+            SourceDisplay = entity.Source.GetDescription(),
             TriggeredAt = entity.TriggeredAt,
             Latitude = entity.Latitude,
             Longitude = entity.Longitude,
@@ -48,7 +48,7 @@ public static class EmergencyMapper
             EmployeeName = entity.Employee?.GetFullName(),
             Name = entity.Name,
             Type = entity.ContactType,
-            TypeDisplay = GetContactTypeDisplay(entity.ContactType),
+            TypeDisplay = entity.ContactType.GetDescription(),
             Phone = entity.PhoneNumber,
             Email = entity.Email,
             Priority = entity.Priority,
@@ -70,63 +70,6 @@ public static class EmergencyMapper
             DeliveredAt = entity.DeliveredAt,
             Acknowledged = entity.IsAcknowledged,
             AcknowledgedAt = entity.AcknowledgedAt
-        };
-    }
-
-    private static string GetAlertTypeDisplay(EmergencyAlertType type)
-    {
-        return type switch
-        {
-            EmergencyAlertType.PanicButton => "Panic Button",
-            EmergencyAlertType.CrashDetected => "Crash Detected",
-            EmergencyAlertType.RolloverDetected => "Rollover Detected",
-            EmergencyAlertType.AirbagDeployed => "Airbag Deployed",
-            EmergencyAlertType.MedicalEmergency => "Medical Emergency",
-            EmergencyAlertType.SecurityThreat => "Security Threat",
-            EmergencyAlertType.VehicleDisabled => "Vehicle Disabled",
-            EmergencyAlertType.Other => "Other Emergency",
-            _ => "Unknown"
-        };
-    }
-
-    private static string GetAlertStatusDisplay(EmergencyAlertStatus status)
-    {
-        return status switch
-        {
-            EmergencyAlertStatus.Active => "Active",
-            EmergencyAlertStatus.Acknowledged => "Acknowledged",
-            EmergencyAlertStatus.Dispatching => "Dispatching Help",
-            EmergencyAlertStatus.OnScene => "On Scene",
-            EmergencyAlertStatus.Resolved => "Resolved",
-            EmergencyAlertStatus.FalseAlarm => "False Alarm",
-            _ => "Unknown"
-        };
-    }
-
-    private static string GetAlertSourceDisplay(EmergencyAlertSource source)
-    {
-        return source switch
-        {
-            EmergencyAlertSource.DriverApp => "Driver App",
-            EmergencyAlertSource.EldDevice => "ELD Device",
-            EmergencyAlertSource.DispatcherInitiated => "Dispatcher Initiated",
-            EmergencyAlertSource.AutomaticDetection => "Automatic Detection",
-            _ => "Unknown"
-        };
-    }
-
-    private static string GetContactTypeDisplay(EmergencyContactType type)
-    {
-        return type switch
-        {
-            EmergencyContactType.SafetyManager => "Safety Manager",
-            EmergencyContactType.Dispatcher => "Dispatcher",
-            EmergencyContactType.FleetManager => "Fleet Manager",
-            EmergencyContactType.EmergencyServices => "Emergency Services",
-            EmergencyContactType.FamilyMember => "Family Member",
-            EmergencyContactType.Insurance => "Insurance Company",
-            EmergencyContactType.TowService => "Tow Service",
-            _ => "Unknown"
         };
     }
 }

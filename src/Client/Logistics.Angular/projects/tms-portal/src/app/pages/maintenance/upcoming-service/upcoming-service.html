@@ -1,4 +1,8 @@
-<ui-page-header title="Upcoming Service" />
+<ui-page-header
+  title="Upcoming Service"
+  addRoute="/maintenance/records/add"
+  addTooltip="Log service record"
+/>
 
 <p-card>
   <ui-data-container
@@ -35,11 +39,11 @@
         </tr>
       </ng-template>
       <ng-template #body let-schedule>
-        <tr class="cursor-pointer hover:bg-hover" (click)="onRowClick(schedule)">
+        <tr class="hover:bg-hover cursor-pointer" (click)="onRowClick(schedule)">
           <td>
             <p-tag [value]="getStatusLabel(schedule)" [severity]="getStatusSeverity(schedule)" />
           </td>
-          <td>{{ schedule.truckNumber || '-' }}</td>
+          <td>{{ schedule.truckNumber || "-" }}</td>
           <td>{{ schedule.typeDisplay || schedule.type }}</td>
           <td>{{ getIntervalTypeLabel(schedule.intervalType) }}</td>
           <td>

@@ -1,0 +1,40 @@
+@if (defects().length === 0) {
+  <div class="text-muted py-4 text-center">
+    <i class="pi pi-check-circle text-success mb-2 text-2xl"></i>
+    <p>No defects found during inspection</p>
+  </div>
+} @else {
+  <div class="flex flex-col gap-3">
+    @for (defect of defects(); track defect.id) {
+      <div class="bg-subtle border-default rounded-lg border p-4">
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1">
+            <div class="flex items-center gap-2">
+              <span class="font-semibold">{{ defect.categoryDisplay }}</span>
+              <p-tag [value]="defect.severityDisplay ?? 'Unknown'" [severity]="getSeverityColor(defect.severity)" />
+              @if (defect.isCorrected) {
+                <p-tag value="Corrected" severity="success" />
+              }
+            </div>
+            <p class="text-secondary mt-1">{{ defect.description }}</p>
+          </div>
+        </div>
+
+        @if (defect.isCorrected && defect.correctionNotes) {
+          <div class="bg-surface-100 dark:bg-surface-700 mt-3 rounded p-3">
+            <div class="text-muted mb-1 text-xs font-medium">Correction Notes</div>
+            <p class="text-sm">{{ defect.correctionNotes }}</p>
+            @if (defect.correctedByName) {
+              <p class="text-muted mt-1 text-xs">
+                Corrected by {{ defect.correctedByName }}
+                @if (defect.correctedAt) {
+                  on {{ defect.correctedAt | date: "short" }}
+                }
+              </p>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+}

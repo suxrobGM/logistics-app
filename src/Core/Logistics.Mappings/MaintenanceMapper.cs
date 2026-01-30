@@ -1,5 +1,5 @@
 using Logistics.Domain.Entities.Maintenance;
-using Logistics.Domain.Primitives.Enums.Maintenance;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
 namespace Logistics.Mappings;
@@ -14,7 +14,7 @@ public static class MaintenanceMapper
             TruckId = entity.TruckId,
             TruckNumber = entity.Truck?.Number ?? string.Empty,
             Type = entity.MaintenanceType,
-            TypeDisplay = GetMaintenanceTypeDisplay(entity.MaintenanceType),
+            TypeDisplay = entity.MaintenanceType.GetDescription(),
             Description = entity.Description,
             ServiceDate = entity.ServiceDate,
             OdometerReading = entity.OdometerReading,
@@ -70,7 +70,7 @@ public static class MaintenanceMapper
             TruckId = entity.TruckId,
             TruckNumber = entity.Truck?.Number ?? string.Empty,
             Type = entity.MaintenanceType,
-            TypeDisplay = GetMaintenanceTypeDisplay(entity.MaintenanceType),
+            TypeDisplay = entity.MaintenanceType.GetDescription(),
             IntervalType = entity.IntervalType,
             MileageInterval = entity.MileageInterval,
             DaysInterval = entity.DaysInterval,
@@ -87,35 +87,6 @@ public static class MaintenanceMapper
             IsActive = entity.IsActive,
             Notes = entity.Notes,
             CreatedAt = entity.CreatedAt
-        };
-    }
-
-    private static string GetMaintenanceTypeDisplay(MaintenanceType type)
-    {
-        return type switch
-        {
-            MaintenanceType.OilChange => "Oil Change",
-            MaintenanceType.TireRotation => "Tire Rotation",
-            MaintenanceType.TireReplacement => "Tire Replacement",
-            MaintenanceType.BrakeInspection => "Brake Inspection",
-            MaintenanceType.BrakeReplacement => "Brake Replacement",
-            MaintenanceType.AirFilterReplacement => "Air Filter Replacement",
-            MaintenanceType.FuelFilterReplacement => "Fuel Filter Replacement",
-            MaintenanceType.TransmissionService => "Transmission Service",
-            MaintenanceType.CoolantFlush => "Coolant Flush",
-            MaintenanceType.BeltInspection => "Belt Inspection",
-            MaintenanceType.Battery => "Battery Check/Replacement",
-            MaintenanceType.AnnualDotInspection => "Annual DOT Inspection",
-            MaintenanceType.PreventiveMaintenance => "Preventive Maintenance",
-            MaintenanceType.EngineService => "Engine Service",
-            MaintenanceType.SuspensionService => "Suspension Service",
-            MaintenanceType.ElectricalRepair => "Electrical Repair",
-            MaintenanceType.BodyWork => "Body Work",
-            MaintenanceType.HvacService => "HVAC Service",
-            MaintenanceType.ExhaustSystem => "Exhaust System",
-            MaintenanceType.SteeringRepair => "Steering Repair",
-            MaintenanceType.Other => "Other",
-            _ => "Unknown"
         };
     }
 }

@@ -1,5 +1,5 @@
 using Logistics.Domain.Entities.Safety;
-using Logistics.Domain.Primitives.Enums.Safety;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
 namespace Logistics.Mappings;
@@ -16,11 +16,11 @@ public static class AccidentMapper
             DriverId = entity.DriverId,
             DriverName = entity.Driver?.GetFullName() ?? string.Empty,
             Type = entity.AccidentType,
-            TypeDisplay = GetAccidentTypeDisplay(entity.AccidentType),
+            TypeDisplay = entity.AccidentType.GetDescription(),
             Severity = entity.Severity,
-            SeverityDisplay = GetAccidentSeverityDisplay(entity.Severity),
+            SeverityDisplay = entity.Severity.GetDescription(),
             Status = entity.Status,
-            StatusDisplay = GetAccidentStatusDisplay(entity.Status),
+            StatusDisplay = entity.Status.GetDescription(),
             AccidentDateTime = entity.AccidentDateTime,
             Location = entity.Address ?? string.Empty,
             Latitude = entity.Latitude,
@@ -81,53 +81,6 @@ public static class AccidentMapper
             InsuranceCompany = entity.InsuranceCompany,
             InsurancePolicyNumber = entity.InsurancePolicyNumber,
             InsurancePhone = entity.InsuranceAgentPhone
-        };
-    }
-
-    private static string GetAccidentTypeDisplay(AccidentType type)
-    {
-        return type switch
-        {
-            AccidentType.Collision => "Collision",
-            AccidentType.Rollover => "Rollover",
-            AccidentType.Jackknife => "Jackknife",
-            AccidentType.RunOffRoad => "Run Off Road",
-            AccidentType.RearEnd => "Rear End",
-            AccidentType.Sideswipe => "Sideswipe",
-            AccidentType.HeadOn => "Head-On",
-            AccidentType.HitAndRun => "Hit and Run",
-            AccidentType.PedestrianInvolved => "Pedestrian Involved",
-            AccidentType.PropertyDamageOnly => "Property Damage Only",
-            AccidentType.CargoSpill => "Cargo Spill",
-            AccidentType.Other => "Other",
-            _ => "Unknown"
-        };
-    }
-
-    private static string GetAccidentSeverityDisplay(AccidentSeverity severity)
-    {
-        return severity switch
-        {
-            AccidentSeverity.Minor => "Minor",
-            AccidentSeverity.Moderate => "Moderate",
-            AccidentSeverity.Severe => "Severe",
-            AccidentSeverity.Fatal => "Fatal",
-            _ => "Unknown"
-        };
-    }
-
-    private static string GetAccidentStatusDisplay(AccidentReportStatus status)
-    {
-        return status switch
-        {
-            AccidentReportStatus.Draft => "Draft",
-            AccidentReportStatus.Submitted => "Submitted",
-            AccidentReportStatus.UnderReview => "Under Review",
-            AccidentReportStatus.PendingDocumentation => "Pending Documentation",
-            AccidentReportStatus.InsuranceFiled => "Insurance Filed",
-            AccidentReportStatus.Resolved => "Resolved",
-            AccidentReportStatus.Closed => "Closed",
-            _ => "Unknown"
         };
     }
 }

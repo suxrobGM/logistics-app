@@ -27,14 +27,6 @@ export type { PublishBlogPost$Params as PublishBlogPost$Params } from './fn/blog
 export { publishBlogPost as publishBlogPost } from './fn/blog-post/publish-blog-post';
 export type { UnpublishBlogPost$Params as UnpublishBlogPost$Params } from './fn/blog-post/unpublish-blog-post';
 export { unpublishBlogPost as unpublishBlogPost } from './fn/blog-post/unpublish-blog-post';
-export type { GetCertifications$Params as GetCertifications$Params } from './fn/certification/get-certifications';
-export { getCertifications as getCertifications } from './fn/certification/get-certifications';
-export type { CreateCertification$Params as CreateCertification$Params } from './fn/certification/create-certification';
-export { createCertification as createCertification } from './fn/certification/create-certification';
-export type { GetExpiringCertifications$Params as GetExpiringCertifications$Params } from './fn/certification/get-expiring-certifications';
-export { getExpiringCertifications as getExpiringCertifications } from './fn/certification/get-expiring-certifications';
-export type { GetEmployeeCertifications$Params as GetEmployeeCertifications$Params } from './fn/certification/get-employee-certifications';
-export { getEmployeeCertifications as getEmployeeCertifications } from './fn/certification/get-employee-certifications';
 export type { GetContactSubmissionById$Params as GetContactSubmissionById$Params } from './fn/contact/get-contact-submission-by-id';
 export { getContactSubmissionById as getContactSubmissionById } from './fn/contact/get-contact-submission-by-id';
 export type { UpdateContactSubmission$Params as UpdateContactSubmission$Params } from './fn/contact/update-contact-submission';
@@ -101,6 +93,12 @@ export type { ConfirmLoadStatus$Params as ConfirmLoadStatus$Params } from './fn/
 export { confirmLoadStatus as confirmLoadStatus } from './fn/driver/confirm-load-status';
 export type { UpdateLoadProximity$Params as UpdateLoadProximity$Params } from './fn/driver/update-load-proximity';
 export { updateLoadProximity as updateLoadProximity } from './fn/driver/update-load-proximity';
+export type { GetDriverBehaviorEvents$Params as GetDriverBehaviorEvents$Params } from './fn/driver-behavior/get-driver-behavior-events';
+export { getDriverBehaviorEvents as getDriverBehaviorEvents } from './fn/driver-behavior/get-driver-behavior-events';
+export type { GetDriverBehaviorEventById$Params as GetDriverBehaviorEventById$Params } from './fn/driver-behavior/get-driver-behavior-event-by-id';
+export { getDriverBehaviorEventById as getDriverBehaviorEventById } from './fn/driver-behavior/get-driver-behavior-event-by-id';
+export type { ReviewDriverBehaviorEvent$Params as ReviewDriverBehaviorEvent$Params } from './fn/driver-behavior/review-driver-behavior-event';
+export { reviewDriverBehaviorEvent as reviewDriverBehaviorEvent } from './fn/driver-behavior/review-driver-behavior-event';
 export type { GetDvirReports$Params as GetDvirReports$Params } from './fn/dvir/get-dvir-reports';
 export { getDvirReports as getDvirReports } from './fn/dvir/get-dvir-reports';
 export type { CreateDvirReport$Params as CreateDvirReport$Params } from './fn/dvir/create-dvir-report';
@@ -309,6 +307,10 @@ export type { GetTruckMaintenanceHistory$Params as GetTruckMaintenanceHistory$Pa
 export { getTruckMaintenanceHistory as getTruckMaintenanceHistory } from './fn/maintenance/get-truck-maintenance-history';
 export type { GetUpcomingMaintenance$Params as GetUpcomingMaintenance$Params } from './fn/maintenance/get-upcoming-maintenance';
 export { getUpcomingMaintenance as getUpcomingMaintenance } from './fn/maintenance/get-upcoming-maintenance';
+export type { GetMaintenanceRecordById$Params as GetMaintenanceRecordById$Params } from './fn/maintenance/get-maintenance-record-by-id';
+export { getMaintenanceRecordById as getMaintenanceRecordById } from './fn/maintenance/get-maintenance-record-by-id';
+export type { UpdateMaintenanceRecord$Params as UpdateMaintenanceRecord$Params } from './fn/maintenance/update-maintenance-record';
+export { updateMaintenanceRecord as updateMaintenanceRecord } from './fn/maintenance/update-maintenance-record';
 export type { GetConversations$Params as GetConversations$Params } from './fn/message/get-conversations';
 export { getConversations as getConversations } from './fn/message/get-conversations';
 export type { CreateConversation$Params as CreateConversation$Params } from './fn/message/create-conversation';

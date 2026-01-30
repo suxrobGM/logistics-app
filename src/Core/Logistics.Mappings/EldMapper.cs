@@ -13,7 +13,7 @@ public static class EldMapper
         {
             Id = entity.Id,
             ProviderType = entity.ProviderType,
-            ProviderName = GetProviderName(entity.ProviderType),
+            ProviderName = entity.ProviderType.GetDescription(),
             IsActive = entity.IsActive,
             LastSyncedAt = entity.LastSyncedAt,
             IsConnected = entity.IsActive && !string.IsNullOrEmpty(entity.ApiKey),
@@ -29,7 +29,7 @@ public static class EldMapper
             EmployeeId = entity.EmployeeId,
             EmployeeName = employeeName ?? entity.Employee?.GetFullName(),
             CurrentDutyStatus = entity.CurrentDutyStatus,
-            CurrentDutyStatusDisplay = GetDutyStatusDisplay(entity.CurrentDutyStatus),
+            CurrentDutyStatusDisplay = entity.CurrentDutyStatus.GetDescription(),
             StatusChangedAt = entity.StatusChangedAt,
             DrivingMinutesRemaining = entity.DrivingMinutesRemaining,
             OnDutyMinutesRemaining = entity.OnDutyMinutesRemaining,
@@ -85,7 +85,7 @@ public static class EldMapper
             EmployeeName = employeeName ?? entity.Employee?.GetFullName(),
             LogDate = entity.LogDate,
             DutyStatus = entity.DutyStatus,
-            DutyStatusDisplay = GetDutyStatusDisplay(entity.DutyStatus),
+            DutyStatusDisplay = entity.DutyStatus.GetDescription(),
             StartTime = entity.StartTime,
             EndTime = entity.EndTime,
             DurationMinutes = entity.DurationMinutes,
@@ -107,53 +107,12 @@ public static class EldMapper
             EmployeeName = employeeName ?? entity.Employee?.GetFullName(),
             ViolationDate = entity.ViolationDate,
             ViolationType = entity.ViolationType,
-            ViolationTypeDisplay = GetViolationTypeDisplay(entity.ViolationType),
+            ViolationTypeDisplay = entity.ViolationType.GetDescription(),
             Description = entity.Description,
             SeverityLevel = entity.SeverityLevel,
             IsResolved = entity.IsResolved,
             ResolvedAt = entity.ResolvedAt,
             ProviderType = entity.ProviderType
-        };
-    }
-
-    private static string GetProviderName(EldProviderType providerType)
-    {
-        return providerType switch
-        {
-            EldProviderType.Samsara => "Samsara",
-            EldProviderType.Motive => "Motive (KeepTruckin)",
-            EldProviderType.Geotab => "Geotab",
-            EldProviderType.Omnitracs => "Omnitracs",
-            EldProviderType.PeopleNet => "PeopleNet",
-            _ => "Unknown"
-        };
-    }
-
-    private static string GetDutyStatusDisplay(DutyStatus status)
-    {
-        return status switch
-        {
-            DutyStatus.OffDuty => "Off Duty",
-            DutyStatus.SleeperBerth => "Sleeper Berth",
-            DutyStatus.Driving => "Driving",
-            DutyStatus.OnDutyNotDriving => "On Duty (Not Driving)",
-            DutyStatus.YardMove => "Yard Move",
-            DutyStatus.PersonalConveyance => "Personal Conveyance",
-            _ => "Unknown"
-        };
-    }
-
-    private static string GetViolationTypeDisplay(HosViolationType violationType)
-    {
-        return violationType switch
-        {
-            HosViolationType.Driving11Hour => "11-Hour Driving Limit",
-            HosViolationType.OnDuty14Hour => "14-Hour On-Duty Limit",
-            HosViolationType.Break30Minute => "30-Minute Break Required",
-            HosViolationType.Cycle70Hour => "70-Hour/8-Day Cycle Limit",
-            HosViolationType.RestartRequired => "34-Hour Restart Required",
-            HosViolationType.FormAndMannerViolation => "Form and Manner Violation",
-            _ => "Unknown"
         };
     }
 

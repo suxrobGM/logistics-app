@@ -1,0 +1,136 @@
+<div class="flex flex-col gap-6">
+  @if (isLoading()) {
+    <div class="flex justify-center py-8">
+      <p-progress-spinner />
+    </div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <ui-validation-summary [form]="form" />
+
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <ui-labeled-field label="Truck" for="truck" [required]="true">
+        <app-search-truck formControlName="truck" />
+      </ui-labeled-field>
+
+      <ui-labeled-field label="Service Type" for="type" [required]="true">
+        <p-select
+          formControlName="type"
+          id="type"
+          class="w-full"
+          [options]="maintenanceTypeOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select service type"
+        />
+      </ui-labeled-field>
+    </div>
+
+    <ui-labeled-field label="Description" for="description" [required]="true" class="mt-4">
+      <textarea
+        pInputTextarea
+        formControlName="description"
+        id="description"
+        class="w-full"
+        rows="2"
+        placeholder="Describe the maintenance performed..."
+      ></textarea>
+    </ui-labeled-field>
+
+    <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+      <ui-labeled-field label="Service Date" for="serviceDate" [required]="true">
+        <p-datepicker
+          formControlName="serviceDate"
+          id="serviceDate"
+          [showIcon]="true"
+          [iconDisplay]="'input'"
+          dateFormat="mm/dd/yy"
+          class="w-full"
+        />
+      </ui-labeled-field>
+
+      <ui-labeled-field label="Odometer Reading" for="odometerReading">
+        <p-inputnumber
+          formControlName="odometerReading"
+          id="odometerReading"
+          class="w-full"
+          [useGrouping]="true"
+          suffix=" mi"
+        />
+      </ui-labeled-field>
+
+      <ui-labeled-field label="Engine Hours" for="engineHours">
+        <p-inputnumber formControlName="engineHours" id="engineHours" class="w-full" [useGrouping]="true" suffix=" hrs" />
+      </ui-labeled-field>
+    </div>
+
+    <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <ui-labeled-field label="Vendor Name" for="vendorName">
+        <input
+          pInputText
+          id="vendorName"
+          formControlName="vendorName"
+          class="w-full"
+          placeholder="Service provider name"
+        />
+      </ui-labeled-field>
+
+      <ui-labeled-field label="Invoice Number" for="invoiceNumber">
+        <input
+          pInputText
+          id="invoiceNumber"
+          formControlName="invoiceNumber"
+          class="w-full"
+          placeholder="INV-12345"
+        />
+      </ui-labeled-field>
+    </div>
+
+    <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <ui-labeled-field label="Labor Cost" for="laborCost">
+        <p-inputnumber
+          formControlName="laborCost"
+          id="laborCost"
+          class="w-full"
+          mode="currency"
+          currency="USD"
+          locale="en-US"
+        />
+      </ui-labeled-field>
+
+      <ui-labeled-field label="Parts Cost" for="partsCost">
+        <p-inputnumber
+          formControlName="partsCost"
+          id="partsCost"
+          class="w-full"
+          mode="currency"
+          currency="USD"
+          locale="en-US"
+        />
+      </ui-labeled-field>
+    </div>
+
+    <ui-labeled-field label="Notes" for="notes" class="mt-4">
+      <textarea
+        pInputTextarea
+        formControlName="notes"
+        id="notes"
+        class="w-full"
+        rows="3"
+        placeholder="Additional notes about this service..."
+      ></textarea>
+    </ui-labeled-field>
+
+    <div class="mt-6 flex gap-2">
+      <p-button type="submit" icon="pi pi-check" label="Save" [disabled]="isLoading()" />
+
+      <p-button
+        type="button"
+        icon="pi pi-arrow-left"
+        label="Back to list"
+        [outlined]="true"
+        [routerLink]="['/maintenance/records']"
+      />
+    </div>
+  </form>
+</div>

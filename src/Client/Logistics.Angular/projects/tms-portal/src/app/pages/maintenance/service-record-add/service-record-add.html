@@ -1,0 +1,7 @@
+<ui-page-header title="Log Service Record" [showAddButton]="false" backLink="/maintenance/records" />
+
+<div class="mx-auto max-w-4xl">
+  <p-card>
+    <app-maintenance-record-form mode="create" (save)="onSave($event)" />
+  </p-card>
+</div>

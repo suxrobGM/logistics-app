@@ -53,6 +53,24 @@ cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 | **Logistics.Infrastructure.Routing** | Trip optimization, route planning, geocoding |
 | **Logistics.Infrastructure.Storage** | Azure Blob Storage and file-based storage |
 
+## Coding Patterns
+
+### Enum Display Names
+
+Use `[Description]` attribute on enum values and the `GetDescription()` extension method from `Logistics.Domain.Primitives.Enums.EnumExtensions` for display strings. Do NOT create manual switch expressions for enum-to-string mappings.
+
+```csharp
+// Good - use Description attribute
+EventTypeDisplay = entity.EventType.GetDescription()
+
+// Bad - manual switch expression
+EventTypeDisplay = eventType switch
+{
+    EventType.Foo => "Foo Display",
+    _ => "Unknown"
+}
+```
+
 ## Key Entities
 
 `Tenant`, `User`, `Customer`, `Load`, `Trip`, `Employee/Driver`, `Invoice`, `Payment`, `Truck`, `Document`

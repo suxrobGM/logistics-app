@@ -1,0 +1,223 @@
+<ui-page-header title="Driver Behavior Events" [showAddButton]="false" />
+
+<p-card>
+  <!-- Filters -->
+  <div class="mb-4 flex flex-wrap items-center gap-4">
+    <div class="flex-1">
+      <ui-search-input (searchChange)="onSearch($event)" placeholder="Search by driver name..." />
+    </div>
+
+    <p-multiSelect
+      [(ngModel)]="selectedEventTypes"
+      [options]="eventTypeOptions"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Filter by event type"
+      [maxSelectedLabels]="2"
+      class="w-64"
+      (onChange)="onFilterChange()"
+    />
+
+    <p-select
+      [(ngModel)]="selectedReviewStatus"
+      [options]="reviewStatusOptions"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Review status"
+      class="w-40"
+      (onChange)="onFilterChange()"
+    />
+  </div>
+
+  <ui-data-container
+    [loading]="isLoading()"
+    [isEmpty]="events().length === 0"
+    skeletonVariant="table"
+    [skeletonRows]="10"
+    emptyTitle="No events found"
+    emptyMessage="No driver behavior events match your filters."
+  >
+    <p-table [value]="events()" [tableStyle]="{ 'min-width': '100%' }">
+      <ng-template #header>
+        <tr>
+          <th>Date/Time</th>
+          <th>Driver</th>
+          <th>Truck</th>
+          <th>Event Type</th>
+          <th>Location</th>
+          <th>Speed</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-event>
+        <tr class="cursor-pointer hover:bg-hover" (click)="onRowClick(event)">
+          <td>{{ event.occurredAt | date: "short" }}</td>
+          <td>{{ event.driverName }}</td>
+          <td>{{ event.truckNumber ?? "-" }}</td>
+          <td>
+            <p-tag [value]="event.eventTypeDisplay" [severity]="getEventTypeSeverity(event.eventType)" />
+          </td>
+          <td>{{ event.location ?? "-" }}</td>
+          <td>{{ getSpeedDisplay(event) }}</td>
+          <td>
+            @if (event.isReviewed) {
+              @if (event.isDismissed) {
+                <p-tag value="Dismissed" severity="secondary" />
+              } @else {
+                <p-tag value="Reviewed" severity="success" />
+              }
+            } @else {
+              <p-tag value="Pending" severity="warn" />
+            }
+          </td>
+          <td>
+            <p-button icon="pi pi-eye" [text]="true" (click)="$event.stopPropagation(); openReviewDialog(event)" />
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="8" class="py-8 text-center">
+            <div class="text-muted">No driver behavior events found</div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ui-data-container>
+</p-card>
+
+<!-- Review Dialog -->
+<p-dialog
+  header="Review Event"
+  [(visible)]="showReviewDialog"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [closable]="true"
+  (onHide)="closeReviewDialog()"
+>
+  @if (selectedEvent()) {
+    <div class="flex flex-col gap-4">
+      <!-- Event Details -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <div class="text-muted mb-1 text-sm">Event Type</div>
+          <p-tag
+            [value]="selectedEvent()!.eventTypeDisplay"
+            [severity]="getEventTypeSeverity(selectedEvent()!.eventType)"
+          />
+        </div>
+        <div>
+          <div class="text-muted mb-1 text-sm">Date/Time</div>
+          <div class="font-medium">{{ selectedEvent()!.occurredAt | date: "medium" }}</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <div class="text-muted mb-1 text-sm">Driver</div>
+          <div class="font-medium">{{ selectedEvent()!.driverName }}</div>
+        </div>
+        <div>
+          <div class="text-muted mb-1 text-sm">Truck</div>
+          <div class="font-medium">{{ selectedEvent()!.truckNumber ?? "N/A" }}</div>
+        </div>
+      </div>
+
+      @if (selectedEvent()!.location) {
+        <div>
+          <div class="text-muted mb-1 text-sm">Location</div>
+          <div class="flex items-center gap-2">
+            <i class="pi pi-map-marker text-muted"></i>
+            <span>{{ selectedEvent()!.location }}</span>
+          </div>
+        </div>
+      }
+
+      @if (selectedEvent()!.speedMph != null) {
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="text-muted mb-1 text-sm">Speed</div>
+            <div class="font-medium">{{ selectedEvent()!.speedMph | number: "1.0-0" }} mph</div>
+          </div>
+          @if (selectedEvent()!.speedLimitMph != null) {
+            <div>
+              <div class="text-muted mb-1 text-sm">Speed Limit</div>
+              <div class="font-medium">{{ selectedEvent()!.speedLimitMph | number: "1.0-0" }} mph</div>
+            </div>
+          }
+        </div>
+      }
+
+      @if (selectedEvent()!.gForce != null) {
+        <div>
+          <div class="text-muted mb-1 text-sm">G-Force</div>
+          <div class="font-medium">{{ selectedEvent()!.gForce | number: "1.2-2" }} G</div>
+        </div>
+      }
+
+      @if (selectedEvent()!.durationSeconds != null) {
+        <div>
+          <div class="text-muted mb-1 text-sm">Duration</div>
+          <div class="font-medium">{{ selectedEvent()!.durationSeconds }} seconds</div>
+        </div>
+      }
+
+      <div>
+        <div class="text-muted mb-1 text-sm">Source</div>
+        <div>{{ selectedEvent()!.providerTypeDisplay }}</div>
+      </div>
+
+      <!-- Review Section -->
+      @if (selectedEvent()!.isReviewed) {
+        <div class="border-t pt-4">
+          <h4 class="mb-2 font-semibold">Previous Review</h4>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <div class="text-muted mb-1 text-sm">Reviewed By</div>
+              <div>{{ selectedEvent()!.reviewedByName }}</div>
+            </div>
+            <div>
+              <div class="text-muted mb-1 text-sm">Reviewed At</div>
+              <div>{{ selectedEvent()!.reviewedAt | date: "medium" }}</div>
+            </div>
+          </div>
+          @if (selectedEvent()!.reviewNotes) {
+            <div class="mt-2">
+              <div class="text-muted mb-1 text-sm">Notes</div>
+              <p>{{ selectedEvent()!.reviewNotes }}</p>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="border-t pt-4">
+          <h4 class="mb-2 font-semibold">Review This Event</h4>
+
+          <div class="mb-4 flex items-center justify-between">
+            <span>Dismiss this event (false positive)?</span>
+            <p-toggleswitch [(ngModel)]="isDismissed" />
+          </div>
+
+          <div>
+            <label for="reviewNotes" class="text-muted mb-1 block text-sm">Review Notes</label>
+            <textarea
+              pInputTextarea
+              id="reviewNotes"
+              [(ngModel)]="reviewNotes"
+              class="w-full"
+              rows="3"
+              placeholder="Add any notes about this event..."
+            ></textarea>
+          </div>
+        </div>
+      }
+    </div>
+
+    <ng-template pTemplate="footer">
+      <p-button label="Close" [outlined]="true" (click)="closeReviewDialog()" />
+      @if (!selectedEvent()!.isReviewed) {
+        <p-button label="Submit Review" icon="pi pi-check" [loading]="isReviewing()" (click)="submitReview()" />
+      }
+    </ng-template>
+  }
+</p-dialog>

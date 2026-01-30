@@ -59,14 +59,14 @@
           <td>{{ contact.name }}</td>
           <td>
             <p-tag
-              [value]="getContactTypeLabel(contact.contactType)"
-              [severity]="getContactTypeSeverity(contact.contactType)"
+              [value]="contact.typeDisplay ?? getContactTypeLabel(contact.type)"
+              [severity]="getContactTypeSeverity(contact.type)"
             />
           </td>
           <td>
-            @if (contact.phoneNumber) {
-              <a [href]="'tel:' + contact.phoneNumber" class="text-primary" (click)="$event.stopPropagation()">
-                {{ contact.phoneNumber }}
+            @if (contact.phone) {
+              <a [href]="'tel:' + contact.phone" class="text-primary" (click)="$event.stopPropagation()">
+                {{ contact.phone }}
               </a>
             } @else {
               <span class="text-muted">-</span>

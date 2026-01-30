@@ -1,5 +1,6 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
+import { Api, deleteEmergencyContact } from "@logistics/shared/api";
 import type { EmergencyContactDto, EmergencyContactType } from "@logistics/shared/api";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
@@ -9,6 +10,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
+import { ToastService } from "@/core/services";
 import type { TagSeverity } from "@/shared/types";
 import { EmergencyContactsStore } from "../store";
 
@@ -30,6 +32,8 @@ import { EmergencyContactsStore } from "../store";
 })
 export class EmergencyContactsPage {
   private readonly router = inject(Router);
+  private readonly api = inject(Api);
+  private readonly toastService = inject(ToastService);
   protected readonly store = inject(EmergencyContactsStore);
 
   protected readonly selectedRow = signal<EmergencyContactDto | null>(null);
@@ -91,7 +95,18 @@ export class EmergencyContactsPage {
   }
 
   protected deleteContact(contact: EmergencyContactDto): void {
-    // TODO: Add delete confirmation dialog
-    console.log("Delete contact:", contact.id);
+    this.toastService.confirm({
+      header: "Delete Contact",
+      message: `Are you sure you want to delete ${contact.name}?`,
+      accept: async () => {
+        try {
+          await this.api.invoke(deleteEmergencyContact, { id: contact.id! });
+          this.toastService.showSuccess("Emergency contact deleted successfully");
+          this.store.load();
+        } catch {
+          this.toastService.showError("Failed to delete emergency contact");
+        }
+      },
+    });
   }
 }
