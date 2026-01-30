@@ -9,9 +9,6 @@ import { AccidentsListPage } from "./accidents-list/accidents-list";
 import { AccidentAddPage } from "./accident-add/accident-add";
 import { AccidentDetailPage } from "./accident-detail/accident-detail";
 import { DriverBehaviorListPage } from "./driver-behavior-list/driver-behavior-list";
-import { EmergencyContactsPage } from "./emergency-contacts/emergency-contacts";
-import { EmergencyContactAddPage } from "./emergency-contact-add/emergency-contact-add";
-import { EmergencyContactEditPage } from "./emergency-contact-edit/emergency-contact-edit";
 
 export const safetyRoutes: Routes = [
   {
@@ -75,33 +72,6 @@ export const safetyRoutes: Routes = [
     data: {
       breadcrumb: "Accident Details",
       permission: Permission.Safety.View,
-    },
-  },
-  {
-    path: "emergency",
-    component: EmergencyContactsPage,
-    canActivate: [authGuard],
-    data: {
-      breadcrumb: "Emergency Contacts",
-      permission: Permission.Safety.View,
-    },
-  },
-  {
-    path: "emergency/add",
-    component: EmergencyContactAddPage,
-    canActivate: [authGuard],
-    data: {
-      breadcrumb: "Add Contact",
-      permission: Permission.Safety.Manage,
-    },
-  },
-  {
-    path: "emergency/:id/edit",
-    component: EmergencyContactEditPage,
-    canActivate: [authGuard],
-    data: {
-      breadcrumb: "Edit Contact",
-      permission: Permission.Safety.Manage,
     },
   },
   {
