@@ -92,7 +92,7 @@
   <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
     <!-- Recent DVIRs -->
     <p-card>
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <div class="flex items-center justify-between p-4 pb-0">
           <h3 class="text-lg font-semibold">Recent DVIRs</h3>
           <p-button label="View All" [link]="true" (click)="navigateTo('/inspections/dvir')" />
@@ -133,7 +133,7 @@
 
     <!-- Recent Accidents -->
     <p-card>
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <div class="flex items-center justify-between p-4 pb-0">
           <h3 class="text-lg font-semibold">Recent Accidents</h3>
           <p-button label="View All" [link]="true" (click)="navigateTo('/inspections/accidents')" />
@@ -181,7 +181,7 @@
   <!-- Recent Condition Reports -->
   @if (recentConditionReports().length > 0) {
     <p-card class="mt-4">
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <div class="flex items-center justify-between p-4 pb-0">
           <h3 class="text-lg font-semibold">Recent Condition Reports</h3>
           <p-button

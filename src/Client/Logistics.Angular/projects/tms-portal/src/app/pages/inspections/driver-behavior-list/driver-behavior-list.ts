@@ -1,11 +1,11 @@
 import { DatePipe, DecimalPipe } from "@angular/common";
-import { Component, type OnInit, inject, signal } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Router } from "@angular/router";
 import {
   Api,
   type DriverBehaviorEventDto,
   type DriverBehaviorEventType,
+  reviewDriverBehaviorEvent,
 } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -13,7 +13,6 @@ import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { MenuModule } from "primeng/menu";
 import { MultiSelectModule } from "primeng/multiselect";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
@@ -22,6 +21,7 @@ import { ToggleSwitchModule } from "primeng/toggleswitch";
 import { ToastService } from "@/core/services";
 import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
 import type { TagSeverity } from "@/shared/types";
+import { DriverBehaviorListStore } from "../store";
 
 const eventTypeOptions = [
   { label: "Harsh Braking", value: "harsh_braking" },
@@ -48,6 +48,7 @@ const reviewStatusOptions = [
 @Component({
   selector: "app-driver-behavior-list",
   templateUrl: "./driver-behavior-list.html",
+  providers: [DriverBehaviorListStore],
   imports: [
     FormsModule,
     DatePipe,
@@ -58,7 +59,6 @@ const reviewStatusOptions = [
     InputTextModule,
     MenuModule,
     MultiSelectModule,
-    ProgressSpinnerModule,
     SelectModule,
     TableModule,
     TagModule,
@@ -69,13 +69,10 @@ const reviewStatusOptions = [
     SearchInput,
   ],
 })
-export class DriverBehaviorListPage implements OnInit {
-  private readonly router = inject(Router);
+export class DriverBehaviorListPage {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
-
-  protected readonly isLoading = signal(true);
-  protected readonly events = signal<DriverBehaviorEventDto[]>([]);
+  protected readonly store = inject(DriverBehaviorListStore);
 
   // Filters
   protected readonly eventTypeOptions = eventTypeOptions;
@@ -89,28 +86,6 @@ export class DriverBehaviorListPage implements OnInit {
   protected readonly isReviewing = signal(false);
   protected reviewNotes = "";
   protected isDismissed = false;
-
-  async ngOnInit(): Promise<void> {
-    await this.loadEvents();
-  }
-
-  private async loadEvents(): Promise<void> {
-    this.isLoading.set(true);
-    try {
-      // TODO: Replace with actual API call once regenerated
-      // const result = await this.api.invoke(getDriverBehaviorEvents, {
-      //   eventTypes: this.selectedEventTypes.length > 0 ? this.selectedEventTypes : undefined,
-      //   isReviewed: this.selectedReviewStatus === 'all' ? undefined : this.selectedReviewStatus === 'reviewed',
-      // });
-      // this.events.set(result?.data ?? []);
-
-      // Placeholder until API is regenerated
-      this.events.set([]);
-      this.toastService.showInfo("Driver behavior API pending regeneration");
-    } finally {
-      this.isLoading.set(false);
-    }
-  }
 
   protected getEventTypeSeverity(eventType: DriverBehaviorEventType): TagSeverity {
     switch (eventType) {
@@ -134,13 +109,21 @@ export class DriverBehaviorListPage implements OnInit {
   }
 
   protected onFilterChange(): void {
-    this.loadEvents();
+    const filters: Record<string, unknown> = {};
+
+    if (this.selectedEventTypes.length === 1) {
+      filters["EventType"] = this.selectedEventTypes[0];
+    }
+
+    if (this.selectedReviewStatus !== "all") {
+      filters["IsReviewed"] = this.selectedReviewStatus === "reviewed";
+    }
+
+    this.store.setFilters(filters);
   }
 
   protected onSearch(value: string): void {
-    // Filter events locally by driver name
-    // In a real implementation, this would be a server-side search
-    console.log("Search:", value);
+    this.store.setSearch(value);
   }
 
   protected onRowClick(event: DriverBehaviorEventDto): void {
@@ -163,23 +146,28 @@ export class DriverBehaviorListPage implements OnInit {
 
   protected async submitReview(): Promise<void> {
     const event = this.selectedEvent();
-    if (!event) return;
+    if (!event?.id) return;
 
     this.isReviewing.set(true);
     try {
-      // TODO: Replace with actual API call once regenerated
-      // await this.api.invoke(reviewDriverBehaviorEvent, {
-      //   id: event.id,
-      //   body: {
-      //     eventId: event.id,
-      //     notes: this.reviewNotes,
-      //     isDismissed: this.isDismissed,
-      //   },
-      // });
+      await this.api.invoke(reviewDriverBehaviorEvent, {
+        id: event.id,
+        body: {
+          id: event.id,
+          reviewNotes: this.reviewNotes || undefined,
+          isDismissed: this.isDismissed,
+        },
+      });
+
+      // Optimistically update the item in the store
+      this.store.updateItem(event.id, {
+        isReviewed: true,
+        isDismissed: this.isDismissed,
+        reviewNotes: this.reviewNotes || undefined,
+      });
 
       this.toastService.showSuccess("Event reviewed successfully");
       this.closeReviewDialog();
-      await this.loadEvents();
     } catch {
       this.toastService.showError("Failed to review event");
     } finally {

@@ -134,7 +134,7 @@
     <div class="col-span-12">
       <ui-dashboard-card title="Top Performing Drivers" icon="pi-star" iconColor="blue">
         <p-table [value]="data()?.topPerformers || []" [paginator]="true" [rows]="10">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <tr>
               <th>Driver Name</th>
               <th>Loads Delivered</th>
@@ -144,7 +144,7 @@
               <th>Performance</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-driver>
+          <ng-template #body let-driver>
             <tr>
               <td>
                 <div class="flex items-center">

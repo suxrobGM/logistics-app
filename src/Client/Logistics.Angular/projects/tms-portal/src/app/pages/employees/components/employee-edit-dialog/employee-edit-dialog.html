@@ -74,12 +74,13 @@
 
   <p-accordion class="mt-6">
     <p-accordion-panel value="danger">
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <span class="text-danger">Danger Zone</span>
       </ng-template>
-      <ng-template pTemplate="content">
+      <ng-template #content>
         <p class="text-muted mb-4">
-          Removing an employee will revoke their access to this tenant. This action cannot be undone.
+          Removing an employee will revoke their access to this tenant. This action cannot be
+          undone.
         </p>
         <p-button
           label="Remove Employee"

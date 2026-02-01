@@ -141,7 +141,7 @@
     <div class="col-span-12 mb-6 lg:col-span-6">
       <ui-dashboard-card title="Payment Trends" icon="pi-table" iconColor="blue">
         <p-table [value]="data()?.paymentTrends || []" [paginator]="true" [rows]="5">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <tr>
               <th>Period</th>
               <th>Invoiced</th>
@@ -149,7 +149,7 @@
               <th>Collection Rate</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-trend>
+          <ng-template #body let-trend>
             <tr>
               <td>{{ trend.period }}</td>
               <td>{{ trend.invoiced | currency: "USD" : "symbol" : "1.0-0" }}</td>
@@ -168,7 +168,7 @@
     <div class="col-span-12 mb-6 lg:col-span-6">
       <ui-dashboard-card title="Top Customers" icon="pi-users" iconColor="blue">
         <p-table [value]="data()?.topCustomers || []" [paginator]="true" [rows]="5">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <tr>
               <th>Customer</th>
               <th>Invoiced</th>
@@ -176,7 +176,7 @@
               <th>Invoices</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-customer>
+          <ng-template #body let-customer>
             <tr>
               <td>
                 <div class="flex items-center">

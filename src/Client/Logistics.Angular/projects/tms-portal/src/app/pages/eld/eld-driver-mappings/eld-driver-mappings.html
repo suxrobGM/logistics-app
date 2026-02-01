@@ -12,7 +12,7 @@
       />
       <div>
         <h1 class="mb-1">Driver Mappings</h1>
-        <p class="mb-0 text-muted">Map your TMS drivers to {{ providerName() }} ELD drivers</p>
+        <p class="text-muted mb-0">Map your TMS drivers to {{ providerName() }} ELD drivers</p>
       </div>
     </div>
   </div>
@@ -23,7 +23,7 @@
     </div>
   } @else if (error()) {
     <div class="p-4 text-center">
-      <i class="pi pi-exclamation-circle mb-3 text-4xl text-danger"></i>
+      <i class="pi pi-exclamation-circle text-danger mb-3 text-4xl"></i>
       <p class="text-danger">{{ error() }}</p>
       <p-button label="Retry" icon="pi pi-refresh" (onClick)="loadData()" />
     </div>
@@ -32,7 +32,7 @@
       <!-- Current Mappings -->
       <div class="col-span-12">
         <p-card class="border-0 shadow-sm">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <div class="flex items-center justify-between p-3">
               <div class="flex items-center">
                 <i class="pi pi-link mr-2 text-blue-600"></i>
@@ -43,15 +43,15 @@
 
           @if (mappings().length === 0) {
             <div class="p-5 text-center">
-              <i class="pi pi-users mb-3 text-4xl text-muted"></i>
+              <i class="pi pi-users text-muted mb-3 text-4xl"></i>
               <p class="text-secondary">No driver mappings configured yet.</p>
-              <p class="mb-0 text-sm text-muted">
+              <p class="text-muted mb-0 text-sm">
                 Select an ELD driver and TMS employee below to create a mapping.
               </p>
             </div>
           } @else {
             <p-table [value]="mappings()" [size]="'small'">
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <tr>
                   <th>TMS Employee</th>
                   <th>ELD Driver</th>
@@ -60,7 +60,7 @@
                   <th>Actions</th>
                 </tr>
               </ng-template>
-              <ng-template pTemplate="body" let-mapping>
+              <ng-template #body let-mapping>
                 <tr>
                   <td>
                     <div class="flex items-center gap-2">
@@ -94,11 +94,11 @@
                   </td>
                   <td>
                     @if (mapping.lastSyncedAt) {
-                      <span class="text-sm text-muted">{{
+                      <span class="text-muted text-sm">{{
                         mapping.lastSyncedAt | date: "short"
                       }}</span>
                     } @else {
-                      <span class="text-sm text-muted">Never</span>
+                      <span class="text-muted text-sm">Never</span>
                     }
                   </td>
                   <td>
@@ -122,7 +122,7 @@
       <!-- Create New Mapping -->
       <div class="col-span-12">
         <p-card class="border-0 shadow-sm">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <div class="flex items-center p-3">
               <i class="pi pi-plus-circle mr-2 text-green-600"></i>
               <h5 class="mb-0">Create New Mapping</h5>
@@ -142,13 +142,13 @@
                   [style]="{ width: '100%' }"
                   [showClear]="true"
                 >
-                  <ng-template pTemplate="selectedItem" let-item>
+                  <ng-template #selectedItem let-item>
                     <div class="flex items-center gap-2">
                       <i class="pi pi-id-card text-green-600"></i>
                       <span>{{ item.name }} ({{ item.externalDriverId }})</span>
                     </div>
                   </ng-template>
-                  <ng-template pTemplate="item" let-item>
+                  <ng-template #item let-item>
                     <div>
                       <div class="font-medium">{{ item.name }}</div>
                       <small class="text-muted">ID: {{ item.externalDriverId }}</small>
@@ -159,7 +159,7 @@
             </div>
 
             <div class="col-span-12 flex items-end justify-center md:col-span-2">
-              <i class="pi pi-arrows-h text-2xl text-muted"></i>
+              <i class="pi pi-arrows-h text-muted text-2xl"></i>
             </div>
 
             <div class="col-span-12 md:col-span-5">
@@ -174,13 +174,13 @@
                   [style]="{ width: '100%' }"
                   [showClear]="true"
                 >
-                  <ng-template pTemplate="selectedItem" let-item>
+                  <ng-template #selectedItem let-item>
                     <div class="flex items-center gap-2">
                       <i class="pi pi-user text-blue-600"></i>
                       <span>{{ item.fullName }}</span>
                     </div>
                   </ng-template>
-                  <ng-template pTemplate="item" let-item>
+                  <ng-template #item let-item>
                     <div>
                       <div class="font-medium">{{ item.fullName }}</div>
                       <small class="text-muted">{{ item.email }}</small>

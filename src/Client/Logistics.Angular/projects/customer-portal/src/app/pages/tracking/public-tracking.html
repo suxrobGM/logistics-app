@@ -125,7 +125,7 @@
       <div class="mt-6 rounded-lg bg-white p-6 shadow">
         <h3 class="mb-4 text-lg font-semibold text-gray-900">Documents</h3>
         <p-table [value]="documents()" styleClass="p-datatable-sm">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <tr>
               <th>Document</th>
               <th>Type</th>
@@ -133,7 +133,7 @@
               <th class="text-right">Action</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-doc>
+          <ng-template #body let-doc>
             <tr>
               <td>
                 <div class="flex items-center gap-2">

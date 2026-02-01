@@ -107,7 +107,7 @@
             [showCurrentPageReport]="true"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} drivers"
           >
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <tr>
                 <th pSortableColumn="employeeName">
                   Driver <p-sortIcon field="employeeName"></p-sortIcon>
@@ -127,7 +127,7 @@
                 <th>Actions</th>
               </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-driver>
+            <ng-template #body let-driver>
               <tr [class.bg-danger/10]="driver.isInViolation">
                 <td>
                   <div class="flex items-center gap-2">

@@ -30,19 +30,41 @@
   </div>
 
   <ui-data-container
-    [loading]="isLoading()"
-    [isEmpty]="events().length === 0"
+    [loading]="store.isLoading()"
+    [error]="store.error()"
+    [isEmpty]="store.isEmpty()"
     skeletonVariant="table"
     [skeletonRows]="10"
     emptyTitle="No events found"
     emptyMessage="No driver behavior events match your filters."
+    (retry)="store.retry()"
   >
-    <p-table [value]="events()" [tableStyle]="{ 'min-width': '100%' }">
+    <p-table
+      [value]="store.data()"
+      [lazy]="true"
+      [paginator]="true"
+      [showCurrentPageReport]="true"
+      (onLazyLoad)="store.onLazyLoad($event)"
+      [rows]="store.pageSize()"
+      [first]="store.first()"
+      [totalRecords]="store.totalRecords()"
+      [loading]="store.isLoading()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
       <ng-template #header>
         <tr>
-          <th>Date/Time</th>
-          <th>Driver</th>
-          <th>Truck</th>
+          <th pSortableColumn="OccurredAt">
+            Date/Time
+            <p-sortIcon field="OccurredAt" />
+          </th>
+          <th pSortableColumn="DriverName">
+            Driver
+            <p-sortIcon field="DriverName" />
+          </th>
+          <th pSortableColumn="TruckNumber">
+            Truck
+            <p-sortIcon field="TruckNumber" />
+          </th>
           <th>Event Type</th>
           <th>Location</th>
           <th>Speed</th>
@@ -80,13 +102,6 @@
               [text]="true"
               (click)="$event.stopPropagation(); openReviewDialog(event)"
             />
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template #emptymessage>
-        <tr>
-          <td colspan="8" class="py-8 text-center">
-            <div class="text-muted">No driver behavior events found</div>
           </td>
         </tr>
       </ng-template>
@@ -226,7 +241,7 @@
       }
     </div>
 
-    <ng-template pTemplate="footer">
+    <ng-template #footer>
       <p-button label="Close" [outlined]="true" (click)="closeReviewDialog()" />
       @if (!selectedEvent()!.isReviewed) {
         <p-button

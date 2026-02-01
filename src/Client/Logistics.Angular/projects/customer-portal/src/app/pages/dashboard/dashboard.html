@@ -78,8 +78,8 @@
     </div>
 
     @if (recentLoads().length > 0) {
-      <p-table [value]="recentLoads()" styleClass="p-datatable-sm">
-        <ng-template pTemplate="header">
+      <p-table [value]="recentLoads()">
+        <ng-template #header>
           <tr>
             <th>Load #</th>
             <th>Name</th>
@@ -88,7 +88,7 @@
             <th></th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-load>
+        <ng-template #body let-load>
           <tr>
             <td class="font-medium">{{ load.number }}</td>
             <td>{{ load.name || "-" }}</td>

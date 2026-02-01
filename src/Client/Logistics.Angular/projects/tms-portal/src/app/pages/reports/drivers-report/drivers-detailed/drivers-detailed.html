@@ -24,7 +24,7 @@
 
 <!-- Drivers Table -->
 <p-card class="border-0 p-2 shadow-sm">
-  <ng-template pTemplate="header">
+  <ng-template #header>
     <div class="flex items-center">
       <i class="pi pi-users mr-2 text-blue-600"></i>
       <h5 class="mb-0">Driver Performance Details</h5>
@@ -47,7 +47,7 @@
     [loading]="isLoading()"
     [rowsPerPageOptions]="[10, 25, 50]"
   >
-    <ng-template pTemplate="header">
+    <ng-template #header>
       <tr>
         <th>Driver</th>
         <th>Truck</th>
@@ -75,7 +75,7 @@
         <th>Performance</th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-driver>
+    <ng-template #body let-driver>
       <tr>
         <td>
           <div class="flex items-center">
@@ -128,7 +128,7 @@
         </td>
       </tr>
     </ng-template>
-    <ng-template pTemplate="emptymessage">
+    <ng-template #emptymessage>
       <tr>
         <td colspan="9" class="py-4 text-center">
           <div class="flex flex-col items-center">

@@ -64,7 +64,7 @@
           @if (inv.lineItems && inv.lineItems.length > 0) {
             <p-divider />
             <p-table [value]="inv.lineItems" styleClass="p-datatable-sm">
-              <ng-template pTemplate="header">
+              <ng-template #header>
                 <tr>
                   <th>Description</th>
                   <th class="text-right" style="width: 80px">Qty</th>
@@ -72,7 +72,7 @@
                   <th class="text-right" style="width: 100px">Amount</th>
                 </tr>
               </ng-template>
-              <ng-template pTemplate="body" let-item>
+              <ng-template #body let-item>
                 <tr>
                   <td>{{ item.description }}</td>
                   <td class="text-right">{{ item.quantity ?? 1 }}</td>

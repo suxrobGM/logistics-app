@@ -82,7 +82,7 @@
 
   <!-- Logs Table -->
   <p-card class="border-0 shadow-sm">
-    <ng-template pTemplate="header">
+    <ng-template #header>
       <div class="flex items-center p-3">
         <i class="pi pi-history mr-2 text-blue-600"></i>
         <h5 class="mb-0">Duty Status Logs</h5>
@@ -118,7 +118,7 @@
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} logs"
         (onLazyLoad)="onLazyLoad($event)"
       >
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <tr>
             <th>Date</th>
             <th>Start Time</th>
@@ -129,7 +129,7 @@
             <th>Remark</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-log>
+        <ng-template #body let-log>
           <tr>
             <td>{{ log.logDate | date: "mediumDate" }}</td>
             <td>{{ log.startTime | date: "shortTime" }}</td>

@@ -10,7 +10,7 @@
 } @else {
   <div class="rounded-lg bg-white shadow">
     <p-table [value]="documents()" [tableStyle]="{ 'min-width': '50rem' }">
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <tr>
           <th>Document</th>
           <th>Type</th>
@@ -19,7 +19,7 @@
           <th></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-doc>
+      <ng-template #body let-doc>
         <tr>
           <td class="font-medium">{{ doc.fileName }}</td>
           <td>
@@ -40,7 +40,7 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage">
+      <ng-template #emptymessage>
         <tr>
           <td colspan="5" class="py-12 text-center">
             <i class="pi pi-file mb-2 text-4xl text-gray-300"></i>

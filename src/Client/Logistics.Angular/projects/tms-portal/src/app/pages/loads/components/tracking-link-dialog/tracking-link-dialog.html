@@ -27,7 +27,7 @@
 
     @if (trackingLinks().length > 0) {
       <p-table [value]="trackingLinks()" styleClass="p-datatable-sm">
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <tr>
             <th>Created</th>
             <th>Expires</th>
@@ -36,7 +36,7 @@
             <th class="text-right">Actions</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-link>
+        <ng-template #body let-link>
           <tr>
             <td>{{ link.createdAt | date: "short" }}</td>
             <td>{{ link.expiresAt | date: "short" }}</td>
@@ -73,7 +73,7 @@
             </td>
           </tr>
         </ng-template>
-        <ng-template pTemplate="emptymessage">
+        <ng-template #emptymessage>
           <tr>
             <td colspan="5" class="text-muted-color py-4 text-center">
               No tracking links generated yet

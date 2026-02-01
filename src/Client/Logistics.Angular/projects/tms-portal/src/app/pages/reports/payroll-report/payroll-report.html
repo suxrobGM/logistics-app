@@ -124,7 +124,7 @@
     <div class="col-span-12 mb-6 lg:col-span-6">
       <ui-dashboard-card title="Payroll Trends by Period" icon="pi-table" iconColor="blue">
         <p-table [value]="data()?.payrollTrends || []" [paginator]="true" [rows]="5">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <tr>
               <th>Period</th>
               <th class="text-right">Total</th>
@@ -132,7 +132,7 @@
               <th class="text-right">Employees</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-trend>
+          <ng-template #body let-trend>
             <tr>
               <td>{{ trend.period }}</td>
               <td class="text-right">
@@ -148,7 +148,7 @@
               </td>
             </tr>
           </ng-template>
-          <ng-template pTemplate="emptymessage">
+          <ng-template #emptymessage>
             <tr>
               <td colspan="4" class="text-muted text-center">No trend data available</td>
             </tr>
@@ -160,7 +160,7 @@
     <div class="col-span-12 mb-6 lg:col-span-6">
       <ui-dashboard-card title="Top Employees by Earnings" icon="pi-users" iconColor="blue">
         <p-table [value]="data()?.topEmployees || []" [paginator]="true" [rows]="5">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <tr>
               <th>Employee</th>
               <th class="text-right">Total Earnings</th>
@@ -168,7 +168,7 @@
               <th class="text-right">Payrolls</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-employee>
+          <ng-template #body let-employee>
             <tr>
               <td>
                 <a
@@ -198,7 +198,7 @@
               </td>
             </tr>
           </ng-template>
-          <ng-template pTemplate="emptymessage">
+          <ng-template #emptymessage>
             <tr>
               <td colspan="4" class="text-muted text-center">No employee data available</td>
             </tr>
@@ -213,7 +213,7 @@
     <div class="col-span-12 mb-6">
       <ui-dashboard-card title="Salary Type Summary" icon="pi-list" iconColor="blue">
         <p-table [value]="data()?.salaryTypeBreakdown || []">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <tr>
               <th>Salary Type</th>
               <th class="text-right">Employees</th>
@@ -221,7 +221,7 @@
               <th class="text-right">Percentage</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-item>
+          <ng-template #body let-item>
             <tr>
               <td>
                 <div class="flex items-center">
@@ -237,13 +237,16 @@
                 {{ item.totalAmount | currency: "USD" : "symbol" : "1.0-0" }}
               </td>
               <td class="text-right">
-                <span class="rounded px-2 py-1 text-sm" [class]="getPercentageClass(item.percentage)">
+                <span
+                  class="rounded px-2 py-1 text-sm"
+                  [class]="getPercentageClass(item.percentage)"
+                >
                   {{ item.percentage | percent: "1.1-1" }}
                 </span>
               </td>
             </tr>
           </ng-template>
-          <ng-template pTemplate="emptymessage">
+          <ng-template #emptymessage>
             <tr>
               <td colspan="4" class="text-muted text-center">No salary type data available</td>
             </tr>

@@ -50,7 +50,7 @@
 
         @if (documents().length > 0) {
           <p-table [value]="documents()">
-            <ng-template pTemplate="header">
+            <ng-template #header>
               <tr>
                 <th>Document</th>
                 <th>Type</th>
@@ -58,7 +58,7 @@
                 <th></th>
               </tr>
             </ng-template>
-            <ng-template pTemplate="body" let-doc>
+            <ng-template #body let-doc>
               <tr>
                 <td class="font-medium">{{ doc.fileName }}</td>
                 <td>{{ doc.documentType }}</td>

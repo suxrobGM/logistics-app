@@ -38,7 +38,7 @@
 
   <!-- Providers List -->
   <p-card class="border-0 shadow-sm">
-    <ng-template pTemplate="header">
+    <ng-template #header>
       <div class="flex items-center p-3">
         <i class="pi pi-cog mr-2 text-blue-600"></i>
         <h5 class="mb-0">Configured Providers</h5>
@@ -66,7 +66,7 @@
       </div>
     } @else {
       <p-table [value]="providers()">
-        <ng-template pTemplate="header">
+        <ng-template #header>
           <tr>
             <th>Provider</th>
             <th>Status</th>
@@ -76,7 +76,7 @@
             <th>Actions</th>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-provider>
+        <ng-template #body let-provider>
           <tr>
             <td>
               <div class="flex items-center gap-3">
@@ -168,7 +168,7 @@
         class="w-full"
         [style]="{ width: '100%' }"
       >
-        <ng-template pTemplate="item" let-item>
+        <ng-template #item let-item>
           <div>
             <div class="font-medium">{{ item.label }}</div>
             <small class="text-muted">{{ item.description }}</small>
@@ -240,7 +240,7 @@
     </div>
   </form>
 
-  <ng-template pTemplate="footer">
+  <ng-template #footer>
     <p-button label="Cancel" (onClick)="showAddDialog.set(false)" [text]="true" />
     <p-button
       label="Add Provider"

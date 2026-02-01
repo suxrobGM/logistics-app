@@ -59,14 +59,14 @@
         </div>
       } @else {
         <p-table [value]="providers()" [scrollable]="true" scrollHeight="250px">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <tr>
               <th>Provider</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-provider>
+          <ng-template #body let-provider>
             <tr>
               <td>
                 <div class="flex items-center gap-2">
@@ -113,7 +113,7 @@
         </div>
       } @else {
         <p-table [value]="postedTrucks()" [scrollable]="true" scrollHeight="250px">
-          <ng-template pTemplate="header">
+          <ng-template #header>
             <tr>
               <th>Truck</th>
               <th>Provider</th>
@@ -121,7 +121,7 @@
               <th>Status</th>
             </tr>
           </ng-template>
-          <ng-template pTemplate="body" let-truck>
+          <ng-template #body let-truck>
             <tr>
               <td>
                 <span class="font-medium">{{ truck.truckNumber || "N/A" }}</span>
@@ -144,7 +144,7 @@
   <!-- Quick Actions Card -->
   <div class="mt-6">
     <p-card class="border-0 shadow-sm">
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <div class="flex items-center p-3">
           <i class="pi pi-bolt mr-2 text-yellow-600"></i>
           <h5 class="mb-0">Quick Actions</h5>

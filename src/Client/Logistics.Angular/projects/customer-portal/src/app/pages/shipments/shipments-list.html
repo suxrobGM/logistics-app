@@ -26,7 +26,7 @@
       [tableStyle]="{ 'min-width': '50rem' }"
       (onLazyLoad)="onLazyLoad($event)"
     >
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <tr>
           <th>Load #</th>
           <th>Name</th>
@@ -37,7 +37,7 @@
           <th></th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-load>
+      <ng-template #body let-load>
         <tr>
           <td class="font-medium">{{ load.number }}</td>
           <td>{{ load.name || "-" }}</td>
@@ -57,7 +57,7 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template pTemplate="emptymessage">
+      <ng-template #emptymessage>
         <tr>
           <td colspan="7" class="py-12 text-center">
             <i class="pi pi-inbox mb-2 text-4xl text-gray-300"></i>

@@ -16,7 +16,7 @@
 
 <!-- Search Filters -->
 <p-card class="mb-6 border-0 shadow-sm">
-  <ng-template pTemplate="header">
+  <ng-template #header>
     <div class="flex items-center p-3">
       <i class="pi pi-filter mr-2 text-blue-600"></i>
       <h5 class="mb-0">Search Filters</h5>
@@ -146,7 +146,7 @@
 
 <!-- Results -->
 <p-card class="border-0 shadow-sm">
-  <ng-template pTemplate="header">
+  <ng-template #header>
     <div class="flex items-center justify-between p-3">
       <div class="flex items-center">
         <i class="pi pi-list mr-2 text-blue-600"></i>
@@ -176,7 +176,7 @@
       [rowsPerPageOptions]="[10, 25, 50]"
       [scrollable]="true"
     >
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <tr>
           <th>Provider</th>
           <th>Route</th>
@@ -188,7 +188,7 @@
           <th>Actions</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-listing>
+      <ng-template #body let-listing>
         <tr>
           <td>
             <p-tag
@@ -288,7 +288,7 @@
           class="w-full"
           [style]="{ width: '100%' }"
         >
-          <ng-template pTemplate="item" let-truck>
+          <ng-template #item let-truck>
             <div>
               <div class="font-medium">{{ truck.number }}</div>
               <small class="text-muted">{{ truck.type }}</small>
@@ -344,7 +344,7 @@
     </div>
   }
 
-  <ng-template pTemplate="footer">
+  <ng-template #footer>
     <p-button label="Cancel" (onClick)="showBookDialog.set(false)" [text]="true" />
     <p-button label="Book Load" icon="pi pi-check" (onClick)="bookLoad()" [loading]="booking()" />
   </ng-template>

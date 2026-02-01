@@ -63,7 +63,7 @@
 
 <!-- Posted Trucks List -->
 <p-card class="border-0 shadow-sm">
-  <ng-template pTemplate="header">
+  <ng-template #header>
     <div class="flex items-center justify-between p-3">
       <div class="flex items-center">
         <i class="pi pi-truck mr-2 text-blue-600"></i>
@@ -98,7 +98,7 @@
     </div>
   } @else {
     <p-table [value]="postedTrucks()" [paginator]="true" [rows]="10">
-      <ng-template pTemplate="header">
+      <ng-template #header>
         <tr>
           <th>Truck</th>
           <th>Provider</th>
@@ -111,7 +111,7 @@
           <th>Actions</th>
         </tr>
       </ng-template>
-      <ng-template pTemplate="body" let-truck>
+      <ng-template #body let-truck>
         <tr>
           <td>
             <div class="flex items-center gap-2">
@@ -200,7 +200,7 @@
           class="w-full"
           [style]="{ width: '100%' }"
         >
-          <ng-template pTemplate="item" let-truck>
+          <ng-template #item let-truck>
             <div>
               <div class="font-medium">{{ truck.number }}</div>
               <small class="text-muted">{{ truck.type }}</small>
@@ -374,7 +374,7 @@
     </div>
   </form>
 
-  <ng-template pTemplate="footer">
+  <ng-template #footer>
     <p-button label="Cancel" (onClick)="showPostDialog.set(false)" [text]="true" />
     <p-button
       label="Post Truck"

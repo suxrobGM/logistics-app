@@ -25,7 +25,7 @@
     [tableStyle]="{ 'min-width': '50rem' }"
     (onLazyLoad)="onLazyLoad($event)"
   >
-    <ng-template pTemplate="header">
+    <ng-template #header>
       <tr>
         <th>Invoice #</th>
         <th>Load</th>
@@ -36,7 +36,7 @@
         <th></th>
       </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-invoice>
+    <ng-template #body let-invoice>
       <tr>
         <td class="font-medium">INV-{{ invoice.number }}</td>
         <td>
@@ -64,7 +64,7 @@
         </td>
       </tr>
     </ng-template>
-    <ng-template pTemplate="emptymessage">
+    <ng-template #emptymessage>
       <tr>
         <td colspan="7" class="py-12 text-center">
           <i class="pi pi-inbox mb-2 text-4xl text-gray-300"></i>
