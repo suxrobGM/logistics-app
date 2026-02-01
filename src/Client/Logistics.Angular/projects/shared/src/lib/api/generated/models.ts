@@ -260,6 +260,7 @@ export type { TruckStatsDtoPagedResponse } from './models/truck-stats-dto-paged-
 export type { TruckStatus } from './models/truck-status';
 export type { TruckType } from './models/truck-type';
 export type { TypeDto } from './models/type-dto';
+export type { UpdateAccidentReportCommand } from './models/update-accident-report-command';
 export type { UpdateBlogPostCommand } from './models/update-blog-post-command';
 export type { UpdateContactSubmissionCommand } from './models/update-contact-submission-command';
 export type { UpdateCustomerCommand } from './models/update-customer-command';

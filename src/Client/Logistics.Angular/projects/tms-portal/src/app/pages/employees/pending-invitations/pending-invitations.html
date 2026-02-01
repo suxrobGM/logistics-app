@@ -3,6 +3,9 @@
 </ui-page-header>
 
 <p-card>
+  <div class="mb-4">
+    <ui-search-input (searchChange)="onSearch($event)" />
+  </div>
   <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
@@ -27,9 +30,6 @@
       [loading]="store.isLoading()"
       [rowsPerPageOptions]="[10, 25, 50]"
     >
-      <ng-template #caption>
-        <ui-search-input (searchChange)="onSearch($event)" />
-      </ng-template>
       <ng-template #header>
         <tr>
           <th pSortableColumn="Email">

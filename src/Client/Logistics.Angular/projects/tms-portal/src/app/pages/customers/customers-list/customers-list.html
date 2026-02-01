@@ -12,6 +12,9 @@
 </div>
 
 <p-card>
+  <div class="mb-4">
+    <ui-search-input (searchChange)="search($event)" />
+  </div>
   <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
@@ -36,9 +39,6 @@
       [loading]="store.isLoading()"
       [rowsPerPageOptions]="[10, 25, 50]"
     >
-      <ng-template #caption>
-        <ui-search-input (searchChange)="search($event)" />
-      </ng-template>
       <ng-template #header>
         <tr>
           <th pSortableColumn="Name">

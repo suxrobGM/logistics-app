@@ -1,4 +1,8 @@
-<ui-page-header title="Report Accident" [showAddButton]="false" backLink="/inspections/accidents" />
+<ui-page-header
+  title="Edit Accident Report"
+  [showAddButton]="false"
+  backLink="/inspections/accidents"
+/>
 
 @if (isLoading()) {
   <div class="flex justify-center py-16">
@@ -10,7 +14,7 @@
       <p-step-list>
         <p-step [value]="1">Incident Details</p-step>
         <p-step [value]="2">Injuries & Damage</p-step>
-        <p-step [value]="3">Review & Submit</p-step>
+        <p-step [value]="3">Review & Save</p-step>
       </p-step-list>
 
       <p-step-panels>
@@ -272,11 +276,11 @@
           </ng-template>
         </p-step-panel>
 
-        <!-- Step 3: Review & Submit -->
+        <!-- Step 3: Review & Save -->
         <p-step-panel [value]="3">
           <ng-template #content>
             <div class="py-4">
-              <h3 class="mb-4 text-lg font-semibold">Review Report</h3>
+              <h3 class="mb-4 text-lg font-semibold">Review Changes</h3>
 
               <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 <!-- Incident Summary -->
@@ -415,7 +419,7 @@
                   (click)="prevStep()"
                 />
                 <p-button
-                  label="Submit Report"
+                  label="Save Changes"
                   icon="pi pi-check"
                   [loading]="isSaving()"
                   (click)="submit()"

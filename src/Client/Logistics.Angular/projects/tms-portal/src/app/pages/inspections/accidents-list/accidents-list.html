@@ -5,6 +5,9 @@
 />
 
 <p-card>
+  <div class="mb-4">
+    <ui-search-input (searchChange)="onSearch($event)" />
+  </div>
   <ui-data-container
     [loading]="store.isLoading()"
     [error]="store.error()"
@@ -29,14 +32,11 @@
       [loading]="store.isLoading()"
       [rowsPerPageOptions]="[10, 25, 50]"
     >
-      <ng-template #caption>
-        <ui-search-input (searchChange)="onSearch($event)" />
-      </ng-template>
       <ng-template #header>
         <tr>
-          <th pSortableColumn="AccidentDate">
+          <th pSortableColumn="AccidentDateTime">
             Date
-            <p-sortIcon field="AccidentDate" />
+            <p-sortIcon field="AccidentDateTime" />
           </th>
           <th pSortableColumn="TruckNumber">
             Truck
@@ -55,10 +55,10 @@
       </ng-template>
       <ng-template #body let-accident>
         <tr class="hover:bg-hover cursor-pointer" (click)="onRowClick(accident)">
-          <td>{{ accident.accidentDate | date: "short" }}</td>
+          <td>{{ accident.accidentDateTime | date: "short" }}</td>
           <td>{{ accident.truckNumber || "-" }}</td>
           <td>{{ accident.driverName || "-" }}</td>
-          <td>{{ accident.address || "-" }}</td>
+          <td>{{ accident.location || "-" }}</td>
           <td>
             <p-tag
               [value]="getSeverityLabel(accident.severity)"
@@ -66,7 +66,7 @@
             />
           </td>
           <td>
-            @if (accident.anyInjuries) {
+            @if (accident.injuriesReported) {
               <span class="text-danger font-medium">
                 <i class="pi pi-exclamation-triangle mr-1"></i>
                 Yes

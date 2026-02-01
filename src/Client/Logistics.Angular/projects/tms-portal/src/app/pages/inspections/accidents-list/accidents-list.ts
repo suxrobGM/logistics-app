@@ -1,10 +1,12 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import type {
-  AccidentReportDto,
-  AccidentReportStatus,
-  AccidentSeverity,
+import {
+  Api,
+  submitAccidentReport,
+  type AccidentReportDto,
+  type AccidentReportStatus,
+  type AccidentSeverity,
 } from "@logistics/shared/api";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
@@ -14,6 +16,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
+import { ToastService } from "@/core/services";
 import type { TagSeverity } from "@/shared/types";
 import { AccidentsListStore } from "../store";
 
@@ -36,6 +39,8 @@ import { AccidentsListStore } from "../store";
 })
 export class AccidentsListPage {
   private readonly router = inject(Router);
+  private readonly api = inject(Api);
+  private readonly toastService = inject(ToastService);
   protected readonly store = inject(AccidentsListStore);
 
   protected readonly selectedRow = signal<AccidentReportDto | null>(null);
@@ -133,7 +138,18 @@ export class AccidentsListPage {
     this.router.navigateByUrl(`/inspections/accidents/${accident.id}`);
   }
 
-  protected submitReport(accident: AccidentReportDto): void {
-    this.router.navigateByUrl(`/inspections/accidents/${accident.id}/submit`);
+  protected async submitReport(accident: AccidentReportDto): Promise<void> {
+    if (accident.status !== "draft") {
+      this.toastService.showError("Only draft reports can be submitted");
+      return;
+    }
+
+    try {
+      await this.api.invoke(submitAccidentReport, { id: accident.id! });
+      this.toastService.showSuccess("Accident report submitted successfully");
+      this.store.load();
+    } catch {
+      this.toastService.showError("Failed to submit accident report");
+    }
   }
 }

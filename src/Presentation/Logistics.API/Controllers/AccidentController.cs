@@ -57,6 +57,20 @@ public class AccidentController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
+    /// Update an accident report
+    /// </summary>
+    [HttpPut("{id:guid}", Name = "UpdateAccidentReport")]
+    [ProducesResponseType(typeof(AccidentReportDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Safety.Manage)]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateAccidentReportCommand request)
+    {
+        request.Id = id;
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
     /// Submit an accident report for review
     /// </summary>
     [HttpPost("{id:guid}/submit", Name = "SubmitAccidentReport")]

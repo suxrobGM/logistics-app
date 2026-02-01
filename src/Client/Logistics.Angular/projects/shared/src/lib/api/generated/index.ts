@@ -265,6 +265,7 @@ export type { TruckStatsDtoPagedResponse } from './models/truck-stats-dto-paged-
 export type { TruckStatus } from './models/truck-status';
 export type { TruckType } from './models/truck-type';
 export type { TypeDto } from './models/type-dto';
+export type { UpdateAccidentReportCommand } from './models/update-accident-report-command';
 export type { UpdateBlogPostCommand } from './models/update-blog-post-command';
 export type { UpdateContactSubmissionCommand } from './models/update-contact-submission-command';
 export type { UpdateCustomerCommand } from './models/update-customer-command';
@@ -302,6 +303,8 @@ export type { CreateAccidentReport$Params as CreateAccidentReport$Params } from 
 export { createAccidentReport as createAccidentReport } from './fn/accident/create-accident-report';
 export type { GetAccidentReportById$Params as GetAccidentReportById$Params } from './fn/accident/get-accident-report-by-id';
 export { getAccidentReportById as getAccidentReportById } from './fn/accident/get-accident-report-by-id';
+export type { UpdateAccidentReport$Params as UpdateAccidentReport$Params } from './fn/accident/update-accident-report';
+export { updateAccidentReport as updateAccidentReport } from './fn/accident/update-accident-report';
 export type { SubmitAccidentReport$Params as SubmitAccidentReport$Params } from './fn/accident/submit-accident-report';
 export { submitAccidentReport as submitAccidentReport } from './fn/accident/submit-accident-report';
 export type { GetPublishedBlogPosts$Params as GetPublishedBlogPosts$Params } from './fn/blog-post/get-published-blog-posts';

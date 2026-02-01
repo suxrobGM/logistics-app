@@ -1,15 +1,19 @@
-import { Component, computed, inject, input, type OnInit, signal } from "@angular/core";
-import { Router, RouterLink } from "@angular/router";
 import { CurrencyPipe, DatePipe } from "@angular/common";
-import { Api, getAccidentReportById } from "@logistics/shared/api";
-import type { AccidentReportDto, AccidentReportStatus, AccidentSeverity } from "@logistics/shared/api";
+import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
+import { Router, RouterLink } from "@angular/router";
+import { Api, getAccidentReportById, submitAccidentReport } from "@logistics/shared/api";
+import type {
+  AccidentReportDto,
+  AccidentReportStatus,
+  AccidentSeverity,
+} from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TabsModule } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
-import { PageHeader } from "@/shared/components";
 import { ToastService } from "@/core/services";
+import { PageHeader } from "@/shared/components";
 import type { TagSeverity } from "@/shared/types";
 
 @Component({
@@ -35,12 +39,18 @@ export class AccidentDetailPage implements OnInit {
   public readonly id = input.required<string>();
 
   protected readonly isLoading = signal(true);
+  protected readonly isSubmitting = signal(false);
   protected readonly report = signal<AccidentReportDto | null>(null);
+
+  protected readonly canSubmit = computed(() => this.report()?.status === "draft");
+  protected readonly canEdit = computed(() => this.report()?.status === "draft");
 
   protected readonly pageTitle = computed(() => {
     const rep = this.report();
     if (!rep) return "Accident Report";
-    const date = rep.accidentDateTime ? new Date(rep.accidentDateTime).toLocaleDateString() : "Unknown Date";
+    const date = rep.accidentDateTime
+      ? new Date(rep.accidentDateTime).toLocaleDateString()
+      : "Unknown Date";
     return `Accident - ${date}`;
   });
 
@@ -56,7 +66,7 @@ export class AccidentDetailPage implements OnInit {
         this.report.set(result);
       } else {
         this.toastService.showError("Accident report not found");
-        this.router.navigateByUrl("/safety/accidents");
+        this.router.navigateByUrl("/inspections/accidents");
       }
     } finally {
       this.isLoading.set(false);
@@ -92,6 +102,34 @@ export class AccidentDetailPage implements OnInit {
         return "danger";
       default:
         return "secondary";
+    }
+  }
+
+  protected editReport(): void {
+    this.router.navigateByUrl(`/inspections/accidents/${this.id()}/edit`);
+  }
+
+  protected submitReport(): void {
+    this.toastService.confirm({
+      message: "Are you sure you want to submit this accident report? Once submitted, it cannot be edited.",
+      header: "Confirm Submission",
+      icon: "pi pi-exclamation-triangle",
+      accept: () => this.doSubmitReport(),
+    });
+  }
+
+  private async doSubmitReport(): Promise<void> {
+    this.isSubmitting.set(true);
+    try {
+      const result = await this.api.invoke(submitAccidentReport, { id: this.id() });
+      if (result) {
+        this.report.set(result);
+        this.toastService.showSuccess("Accident report submitted successfully");
+      }
+    } catch {
+      this.toastService.showError("Failed to submit accident report");
+    } finally {
+      this.isSubmitting.set(false);
     }
   }
 }

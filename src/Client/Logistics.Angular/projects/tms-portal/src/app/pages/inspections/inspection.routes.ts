@@ -3,6 +3,7 @@ import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
 import { AccidentAddPage } from "./accident-add/accident-add";
 import { AccidentDetailPage } from "./accident-detail/accident-detail";
+import { AccidentEditPage } from "./accident-edit/accident-edit";
 import { AccidentsListPage } from "./accidents-list/accidents-list";
 import { ConditionReportDetailPage } from "./condition-report-detail/condition-report-detail";
 import { ConditionReportsListPage } from "./condition-reports-list/condition-reports-list";
@@ -95,6 +96,15 @@ export const inspectionRoutes: Routes = [
     data: {
       breadcrumb: "Accident Details",
       permission: Permission.Safety.View,
+    },
+  },
+  {
+    path: "accidents/:id/edit",
+    component: AccidentEditPage,
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: "Edit Accident",
+      permission: Permission.Safety.Manage,
     },
   },
   // Driver Behavior

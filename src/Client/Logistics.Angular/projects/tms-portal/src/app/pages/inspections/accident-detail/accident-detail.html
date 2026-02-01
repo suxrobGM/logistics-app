@@ -1,4 +1,19 @@
-<ui-page-header [title]="pageTitle()" [showAddButton]="false" backLink="/inspections/accidents" />
+<div class="mb-6 flex items-start justify-between">
+  <ui-page-header [title]="pageTitle()" [showAddButton]="false" backLink="/inspections/accidents" />
+  <div class="flex gap-2">
+    @if (canEdit()) {
+      <p-button label="Edit" icon="pi pi-pencil" [outlined]="true" (click)="editReport()" />
+    }
+    @if (canSubmit()) {
+      <p-button
+        label="Submit Report"
+        icon="pi pi-send"
+        (click)="submitReport()"
+        [loading]="isSubmitting()"
+      />
+    }
+  </div>
+</div>
 
 @if (isLoading()) {
   <div class="flex justify-center py-16">

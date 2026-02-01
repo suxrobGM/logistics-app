@@ -7,6 +7,8 @@ export type { CreateAccidentReport$Params as CreateAccidentReport$Params } from 
 export { createAccidentReport as createAccidentReport } from './fn/accident/create-accident-report';
 export type { GetAccidentReportById$Params as GetAccidentReportById$Params } from './fn/accident/get-accident-report-by-id';
 export { getAccidentReportById as getAccidentReportById } from './fn/accident/get-accident-report-by-id';
+export type { UpdateAccidentReport$Params as UpdateAccidentReport$Params } from './fn/accident/update-accident-report';
+export { updateAccidentReport as updateAccidentReport } from './fn/accident/update-accident-report';
 export type { SubmitAccidentReport$Params as SubmitAccidentReport$Params } from './fn/accident/submit-accident-report';
 export { submitAccidentReport as submitAccidentReport } from './fn/accident/submit-accident-report';
 export type { GetPublishedBlogPosts$Params as GetPublishedBlogPosts$Params } from './fn/blog-post/get-published-blog-posts';
