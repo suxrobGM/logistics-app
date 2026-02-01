@@ -1,7 +1,11 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import type { AccidentReportDto, AccidentReportStatus, AccidentSeverity } from "@logistics/shared/api";
+import type {
+  AccidentReportDto,
+  AccidentReportStatus,
+  AccidentSeverity,
+} from "@logistics/shared/api";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -114,7 +118,7 @@ export class AccidentsListPage {
   }
 
   protected onRowClick(accident: AccidentReportDto): void {
-    this.router.navigateByUrl(`/safety/accidents/${accident.id}`);
+    this.router.navigateByUrl(`/inspections/accidents/${accident.id}`);
   }
 
   protected onSearch(value: string): void {
@@ -122,14 +126,14 @@ export class AccidentsListPage {
   }
 
   protected addAccident(): void {
-    this.router.navigate(["/safety/accidents/add"]);
+    this.router.navigate(["/inspections/accidents/add"]);
   }
 
   protected viewDetails(accident: AccidentReportDto): void {
-    this.router.navigateByUrl(`/safety/accidents/${accident.id}`);
+    this.router.navigateByUrl(`/inspections/accidents/${accident.id}`);
   }
 
   protected submitReport(accident: AccidentReportDto): void {
-    this.router.navigateByUrl(`/safety/accidents/${accident.id}/submit`);
+    this.router.navigateByUrl(`/inspections/accidents/${accident.id}/submit`);
   }
 }

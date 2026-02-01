@@ -3,6 +3,7 @@ using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -47,6 +48,7 @@ internal sealed class GetConditionReportsHandler(ITenantUnitOfWork tenantUow)
             {
                 Id = report.Id,
                 LoadId = report.LoadId,
+                LoadReferenceId = report.Load?.Number.ToString(),
                 Vin = report.Vin,
                 Type = report.Type,
                 VehicleYear = report.VehicleYear,
@@ -62,21 +64,7 @@ internal sealed class GetConditionReportsHandler(ITenantUnitOfWork tenantUow)
                 InspectedById = report.InspectedById,
                 InspectorName = report.InspectedBy?.GetFullName(),
                 DamageMarkers = ParseDamageMarkers(report.DamageMarkersJson),
-                Photos = photos.Select(p => new DocumentDto
-                {
-                    Id = p.Id,
-                    FileName = p.FileName,
-                    OriginalFileName = p.OriginalFileName,
-                    ContentType = p.ContentType,
-                    FileSizeBytes = p.FileSizeBytes,
-                    BlobPath = p.BlobPath,
-                    BlobContainer = p.BlobContainer,
-                    Type = p.Type,
-                    Status = p.Status,
-                    UploadedById = p.UploadedById,
-                    LoadId = p.LoadId,
-                    CreatedAt = p.CreatedAt
-                }).ToList()
+                Photos = [.. photos.Select(p => p.ToDto())]
             };
 
             dtos.Add(dto);

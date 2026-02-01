@@ -1,0 +1,22 @@
+<p-autocomplete
+  class="w-full"
+  inputStyleClass="w-full"
+  [placeholder]="placeholder()"
+  optionLabel="fullName"
+  [delay]="300"
+  [minLength]="2"
+  [suggestions]="suggestedEmployees()"
+  [(ngModel)]="selectedEmployee"
+  (completeMethod)="searchEmployee($event)"
+  (onSelect)="changeSelectedEmployee($event)"
+  [disabled]="disabled()"
+>
+  <ng-template #item let-employee>
+    <div class="flex items-center gap-2">
+      <span class="font-bold">{{ employee.fullName }}</span>
+      @if (employee.email) {
+        <span class="text-muted text-sm">({{ employee.email }})</span>
+      }
+    </div>
+  </ng-template>
+</p-autocomplete>

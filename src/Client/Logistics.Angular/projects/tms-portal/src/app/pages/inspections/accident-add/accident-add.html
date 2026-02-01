@@ -1,4 +1,4 @@
-<ui-page-header title="Report Accident" [showAddButton]="false" backLink="/safety/accidents" />
+<ui-page-header title="Report Accident" [showAddButton]="false" backLink="/inspections/accidents" />
 
 @if (isLoading()) {
   <div class="flex justify-center py-16">
@@ -47,16 +47,11 @@
                   <app-search-truck formControlName="truck" />
                 </ui-labeled-field>
 
-                <ui-labeled-field label="Driver" for="driverId" [required]="true">
-                  <p-select
-                    formControlName="driverId"
-                    id="driverId"
-                    class="w-full"
-                    [options]="drivers()"
-                    optionLabel="fullName"
-                    optionValue="id"
-                    placeholder="Select driver"
-                    [filter]="true"
+                <ui-labeled-field label="Driver" for="driver" [required]="true">
+                  <app-search-employee
+                    formControlName="driver"
+                    [role]="'tenant.driver'"
+                    placeholder="Search for driver..."
                   />
                 </ui-labeled-field>
               </div>

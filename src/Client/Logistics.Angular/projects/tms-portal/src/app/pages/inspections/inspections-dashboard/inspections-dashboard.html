@@ -7,7 +7,10 @@
 } @else {
   <!-- Stats Cards -->
   <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-    <p-card class="cursor-pointer transition-shadow hover:shadow-lg" (click)="navigateTo('/inspections/dvir')">
+    <p-card
+      class="cursor-pointer transition-shadow hover:shadow-lg"
+      (click)="navigateTo('/inspections/dvir')"
+    >
       <div class="flex items-center gap-4">
         <div class="bg-warning/10 flex h-12 w-12 items-center justify-center rounded-lg">
           <i class="pi pi-clipboard text-warning text-2xl"></i>
@@ -19,7 +22,10 @@
       </div>
     </p-card>
 
-    <p-card class="cursor-pointer transition-shadow hover:shadow-lg" (click)="navigateTo('/inspections/accidents')">
+    <p-card
+      class="cursor-pointer transition-shadow hover:shadow-lg"
+      (click)="navigateTo('/inspections/accidents')"
+    >
       <div class="flex items-center gap-4">
         <div class="bg-danger/10 flex h-12 w-12 items-center justify-center rounded-lg">
           <i class="pi pi-exclamation-triangle text-danger text-2xl"></i>
@@ -51,8 +57,8 @@
       (click)="navigateTo('/inspections/driver-behavior')"
     >
       <div class="flex items-center gap-4">
-        <div class="bg-purple-500/10 flex h-12 w-12 items-center justify-center rounded-lg">
-          <i class="pi pi-user text-purple-500 text-2xl"></i>
+        <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-500/10">
+          <i class="pi pi-user text-2xl text-purple-500"></i>
         </div>
         <div>
           <div class="text-muted text-sm">Driver Behavior</div>
@@ -64,8 +70,17 @@
 
   <!-- Quick Actions -->
   <div class="mb-6 flex flex-wrap gap-2">
-    <p-button label="Report Accident" icon="pi pi-plus" (click)="navigateTo('/inspections/accidents/add')" />
-    <p-button label="View DVIRs" icon="pi pi-clipboard" [outlined]="true" (click)="navigateTo('/inspections/dvir')" />
+    <p-button
+      label="Report Accident"
+      icon="pi pi-plus"
+      (click)="navigateTo('/inspections/accidents/add')"
+    />
+    <p-button
+      label="View DVIRs"
+      icon="pi pi-clipboard"
+      [outlined]="true"
+      (click)="navigateTo('/inspections/dvir')"
+    />
     <p-button
       label="Condition Reports"
       icon="pi pi-file-edit"
@@ -95,12 +110,15 @@
             </tr>
           </ng-template>
           <ng-template #body let-dvir>
-            <tr class="cursor-pointer hover:bg-hover" (click)="viewDvir(dvir)">
+            <tr class="hover:bg-hover cursor-pointer" (click)="viewDvir(dvir)">
               <td>{{ dvir.inspectionDate | date: "shortDate" }}</td>
               <td>{{ dvir.truckNumber }}</td>
               <td>{{ dvir.driverName }}</td>
               <td>
-                <p-tag [value]="dvir.statusDisplay ?? dvir.status" [severity]="getDvirStatusSeverity(dvir.status)" />
+                <p-tag
+                  [value]="dvir.statusDisplay ?? dvir.status"
+                  [severity]="getDvirStatusSeverity(dvir.status)"
+                />
               </td>
             </tr>
           </ng-template>
@@ -133,7 +151,7 @@
             </tr>
           </ng-template>
           <ng-template #body let-accident>
-            <tr class="cursor-pointer hover:bg-hover" (click)="viewAccident(accident)">
+            <tr class="hover:bg-hover cursor-pointer" (click)="viewAccident(accident)">
               <td>{{ accident.accidentDateTime | date: "shortDate" }}</td>
               <td>{{ accident.driverName }}</td>
               <td>
@@ -166,7 +184,11 @@
       <ng-template pTemplate="header">
         <div class="flex items-center justify-between p-4 pb-0">
           <h3 class="text-lg font-semibold">Recent Condition Reports</h3>
-          <p-button label="View All" [link]="true" (click)="navigateTo('/inspections/condition-reports')" />
+          <p-button
+            label="View All"
+            [link]="true"
+            (click)="navigateTo('/inspections/condition-reports')"
+          />
         </div>
       </ng-template>
 
@@ -180,10 +202,10 @@
           </tr>
         </ng-template>
         <ng-template #body let-report>
-          <tr class="cursor-pointer hover:bg-hover" (click)="viewConditionReport(report)">
-            <td>{{ report.reportedAt | date: "shortDate" }}</td>
+          <tr class="hover:bg-hover cursor-pointer" (click)="viewConditionReport(report)">
+            <td>{{ report.inspectedAt | date: "shortDate" }}</td>
             <td>{{ report.loadReferenceId }}</td>
-            <td>{{ report.driverName }}</td>
+            <td>{{ report.inspectorName }}</td>
             <td>
               <p-tag [value]="report.typeDisplay ?? report.type" />
             </td>

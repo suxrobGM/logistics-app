@@ -14,6 +14,7 @@ export interface ConditionReportDto {
   inspectorName?: string | null;
   latitude?: number | null;
   loadId?: string;
+  loadReferenceId?: string | null;
   longitude?: number | null;
   notes?: string | null;
   photos?: Array<DocumentDto> | null;

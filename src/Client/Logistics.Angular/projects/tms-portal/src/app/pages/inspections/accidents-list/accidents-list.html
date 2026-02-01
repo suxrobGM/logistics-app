@@ -1,4 +1,8 @@
-<ui-page-header title="Accident Reports" addRoute="/safety/accidents/add" addTooltip="Report a new accident" />
+<ui-page-header
+  title="Accident Reports"
+  addRoute="/inspections/accidents/add"
+  addTooltip="Report a new accident"
+/>
 
 <p-card>
   <ui-data-container
@@ -50,13 +54,16 @@
         </tr>
       </ng-template>
       <ng-template #body let-accident>
-        <tr class="cursor-pointer hover:bg-hover" (click)="onRowClick(accident)">
+        <tr class="hover:bg-hover cursor-pointer" (click)="onRowClick(accident)">
           <td>{{ accident.accidentDate | date: "short" }}</td>
-          <td>{{ accident.truckNumber || '-' }}</td>
-          <td>{{ accident.driverName || '-' }}</td>
-          <td>{{ accident.address || '-' }}</td>
+          <td>{{ accident.truckNumber || "-" }}</td>
+          <td>{{ accident.driverName || "-" }}</td>
+          <td>{{ accident.address || "-" }}</td>
           <td>
-            <p-tag [value]="getSeverityLabel(accident.severity)" [severity]="getSeveritySeverity(accident.severity)" />
+            <p-tag
+              [value]="getSeverityLabel(accident.severity)"
+              [severity]="getSeveritySeverity(accident.severity)"
+            />
           </td>
           <td>
             @if (accident.anyInjuries) {
@@ -69,7 +76,10 @@
             }
           </td>
           <td>
-            <p-tag [value]="getStatusLabel(accident.status)" [severity]="getStatusSeverity(accident.status)" />
+            <p-tag
+              [value]="getStatusLabel(accident.status)"
+              [severity]="getStatusSeverity(accident.status)"
+            />
           </td>
           <td>
             <p-button

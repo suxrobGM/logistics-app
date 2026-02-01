@@ -1,12 +1,8 @@
-import { Component, inject, type OnInit, signal } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { CurrencyPipe, DatePipe } from "@angular/common";
-import {
-  Api,
-  createAccidentReport,
-  getEmployees,
-} from "@logistics/shared/api";
+import { Api, createAccidentReport } from "@logistics/shared/api";
 import type {
   AccidentSeverity,
   AccidentType,
@@ -28,7 +24,7 @@ import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { ToggleSwitchModule } from "primeng/toggleswitch";
 import { PageHeader } from "@/shared/components";
-import { SearchTruck } from "@/shared/components/search";
+import { SearchEmployee, SearchTruck } from "@/shared/components/search";
 import { AddressAutocomplete } from "@/shared/components/maps";
 import { ToastService } from "@/core/services";
 import { Converters } from "@/shared/utils";
@@ -76,20 +72,19 @@ const severityOptions = [
     PageHeader,
     LabeledField,
     ValidationSummary,
+    SearchEmployee,
     SearchTruck,
     AddressAutocomplete,
   ],
 })
-export class AccidentAddPage implements OnInit {
+export class AccidentAddPage {
   private readonly router = inject(Router);
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
 
-  protected readonly isLoading = signal(true);
+  protected readonly isLoading = signal(false);
   protected readonly isSaving = signal(false);
   protected readonly activeStep = signal(1);
-
-  protected readonly drivers = signal<EmployeeDto[]>([]);
 
   protected readonly accidentTypeOptions = accidentTypeOptions;
   protected readonly severityOptions = severityOptions;
@@ -102,7 +97,7 @@ export class AccidentAddPage implements OnInit {
     }),
     location: new FormControl<Address | null>(null, { validators: Validators.required }),
     truck: new FormControl<TruckDto | null>(null, { validators: Validators.required }),
-    driverId: new FormControl<string>("", { validators: Validators.required, nonNullable: true }),
+    driver: new FormControl<EmployeeDto | null>(null, { validators: Validators.required }),
     type: new FormControl<AccidentType>("collision", {
       validators: Validators.required,
       nonNullable: true,
@@ -130,20 +125,6 @@ export class AccidentAddPage implements OnInit {
     vehicleTowed: new FormControl<boolean>(false, { nonNullable: true }),
     towCompany: new FormControl<string | null>(null),
   });
-
-  async ngOnInit(): Promise<void> {
-    await this.loadData();
-  }
-
-  private async loadData(): Promise<void> {
-    this.isLoading.set(true);
-    try {
-      const employeesResult = await this.api.invoke(getEmployees, { Role: "Driver" });
-      this.drivers.set(employeesResult?.items ?? []);
-    } finally {
-      this.isLoading.set(false);
-    }
-  }
 
   protected nextStep(): void {
     if (this.activeStep() === 1) {
@@ -181,7 +162,7 @@ export class AccidentAddPage implements OnInit {
         accidentDateTime: step1.accidentDateTime.toISOString(),
         location: Converters.addressToString(step1.location),
         truckId: step1.truck?.id ?? "",
-        driverId: step1.driverId,
+        driverId: step1.driver?.id ?? "",
         type: step1.type,
         severity: step1.severity,
         description: step1.description,
@@ -203,7 +184,7 @@ export class AccidentAddPage implements OnInit {
       const result = await this.api.invoke(createAccidentReport, { body: command });
       if (result) {
         this.toastService.showSuccess("Accident report created successfully");
-        this.router.navigateByUrl(`/safety/accidents/${result.id}`);
+        this.router.navigateByUrl(`/inspections/accidents/${result.id}`);
       }
     } catch {
       this.toastService.showError("Failed to create accident report");
@@ -216,9 +197,8 @@ export class AccidentAddPage implements OnInit {
     return this.step1Form.get("truck")?.value ?? null;
   }
 
-  protected getSelectedDriver(): EmployeeDto | undefined {
-    const driverId = this.step1Form.get("driverId")?.value;
-    return this.drivers().find((d) => d.id === driverId);
+  protected getSelectedDriver(): EmployeeDto | null {
+    return this.step1Form.get("driver")?.value ?? null;
   }
 
   protected getLocationString(): string {

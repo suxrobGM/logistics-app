@@ -1,4 +1,4 @@
-<ui-page-header [title]="pageTitle()" [showAddButton]="false" backLink="/safety/accidents" />
+<ui-page-header [title]="pageTitle()" [showAddButton]="false" backLink="/inspections/accidents" />
 
 @if (isLoading()) {
   <div class="flex justify-center py-16">
@@ -24,7 +24,10 @@
               <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
                 <div>
                   <div class="text-muted mb-1 text-sm">Status</div>
-                  <p-tag [value]="report()!.statusDisplay ?? 'Unknown'" [severity]="getStatusSeverity(report()!.status)" />
+                  <p-tag
+                    [value]="report()!.statusDisplay ?? 'Unknown'"
+                    [severity]="getStatusSeverity(report()!.status)"
+                  />
                 </div>
                 <div>
                   <div class="text-muted mb-1 text-sm">Severity</div>
@@ -114,7 +117,9 @@
                 <div class="flex items-center justify-between">
                   <span class="text-muted">Injuries Reported</span>
                   @if (report()!.injuriesReported) {
-                    <span class="text-danger font-medium">Yes ({{ report()!.numberOfInjuries ?? 0 }})</span>
+                    <span class="text-danger font-medium"
+                      >Yes ({{ report()!.numberOfInjuries ?? 0 }})</span
+                    >
                   } @else {
                     <span class="text-success font-medium">No</span>
                   }
@@ -122,7 +127,9 @@
                 <div class="flex items-center justify-between">
                   <span class="text-muted">Fatalities</span>
                   @if (report()!.fatalitiesReported) {
-                    <span class="text-danger font-medium">Yes ({{ report()!.numberOfFatalities ?? 0 }})</span>
+                    <span class="text-danger font-medium"
+                      >Yes ({{ report()!.numberOfFatalities ?? 0 }})</span
+                    >
                   } @else {
                     <span class="text-success font-medium">No</span>
                   }
@@ -163,7 +170,9 @@
                 @if (report()!.tripId) {
                   <div>
                     <div class="text-muted mb-1 text-sm">Associated Trip</div>
-                    <a [routerLink]="['/trips', report()!.tripId]" class="text-primary text-sm">View Trip</a>
+                    <a [routerLink]="['/trips', report()!.tripId]" class="text-primary text-sm"
+                      >View Trip</a
+                    >
                   </div>
                 }
               </div>
@@ -213,7 +222,9 @@
               @if (report()!.estimatedDamage) {
                 <div>
                   <div class="text-muted mb-1 text-sm">Estimated Damage</div>
-                  <div class="text-primary text-2xl font-bold">{{ report()!.estimatedDamage | currency }}</div>
+                  <div class="text-primary text-2xl font-bold">
+                    {{ report()!.estimatedDamage | currency }}
+                  </div>
                 </div>
               }
 
@@ -277,18 +288,23 @@
                     <div class="grid grid-cols-2 gap-3">
                       <div>
                         <div class="text-muted mb-1 text-sm">License</div>
-                        <div>{{ party.driverLicense ?? "-" }} {{ party.driverLicenseState ?? "" }}</div>
+                        <div>
+                          {{ party.driverLicense ?? "-" }} {{ party.driverLicenseState ?? "" }}
+                        </div>
                       </div>
                       <div>
                         <div class="text-muted mb-1 text-sm">License Plate</div>
-                        <div>{{ party.licensePlate ?? "-" }} {{ party.licensePlateState ?? "" }}</div>
+                        <div>
+                          {{ party.licensePlate ?? "-" }} {{ party.licensePlateState ?? "" }}
+                        </div>
                       </div>
                     </div>
 
                     <div class="border-t pt-3">
                       <div class="text-muted mb-1 text-sm">Vehicle</div>
                       <div>
-                        {{ party.vehicleYear ?? "" }} {{ party.vehicleMake ?? "" }} {{ party.vehicleModel ?? "" }}
+                        {{ party.vehicleYear ?? "" }} {{ party.vehicleMake ?? "" }}
+                        {{ party.vehicleModel ?? "" }}
                         @if (party.vehicleColor) {
                           ({{ party.vehicleColor }})
                         }
@@ -362,7 +378,9 @@
                         <div class="text-muted mb-1 text-sm">Statement</div>
                         <p class="text-sm">{{ witness.statement }}</p>
                         @if (witness.statementDate) {
-                          <div class="text-muted mt-1 text-xs">Dated: {{ witness.statementDate | date: "mediumDate" }}</div>
+                          <div class="text-muted mt-1 text-xs">
+                            Dated: {{ witness.statementDate | date: "mediumDate" }}
+                          </div>
                         }
                       </div>
                     }
@@ -453,7 +471,11 @@
                 <div class="grid grid-cols-2 gap-2 md:grid-cols-3">
                   @for (photo of report()!.photos; track photo.id) {
                     <div class="bg-subtle aspect-video overflow-hidden rounded-lg">
-                      <img [src]="photo.blobPath" [alt]="photo.fileName" class="h-full w-full object-cover" />
+                      <img
+                        [src]="photo.blobPath"
+                        [alt]="photo.fileName"
+                        class="h-full w-full object-cover"
+                      />
                     </div>
                   }
                 </div>

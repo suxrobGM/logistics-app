@@ -6,6 +6,7 @@ public class ConditionReportDto
 {
     public Guid Id { get; set; }
     public Guid LoadId { get; set; }
+    public string? LoadReferenceId { get; set; }
     public string Vin { get; set; } = string.Empty;
     public InspectionType Type { get; set; }
 
