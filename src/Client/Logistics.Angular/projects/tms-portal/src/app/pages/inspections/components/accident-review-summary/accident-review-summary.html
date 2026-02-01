@@ -1,0 +1,120 @@
+<div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+  <!-- Incident Summary -->
+  <p-card header="Incident Details">
+    <div class="flex flex-col gap-3">
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <div class="text-muted mb-1 text-sm">Date & Time</div>
+          <div class="font-medium">
+            {{ incidentForm().get("accidentDateTime")?.value | date: "medium" }}
+          </div>
+        </div>
+        <div>
+          <div class="text-muted mb-1 text-sm">Location</div>
+          <div class="font-medium">{{ locationString() }}</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <div class="text-muted mb-1 text-sm">Truck</div>
+          <div class="font-medium">{{ incidentForm().get("truck")?.value?.number ?? "-" }}</div>
+        </div>
+        <div>
+          <div class="text-muted mb-1 text-sm">Driver</div>
+          <div class="font-medium">{{ incidentForm().get("driver")?.value?.fullName ?? "-" }}</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <div class="text-muted mb-1 text-sm">Type</div>
+          <p-tag [value]="typeLabel()" severity="info" />
+        </div>
+        <div>
+          <div class="text-muted mb-1 text-sm">Severity</div>
+          <p-tag [value]="severityLabel()" severity="warn" />
+        </div>
+      </div>
+
+      <div>
+        <div class="text-muted mb-1 text-sm">Description</div>
+        <p class="text-sm">{{ incidentForm().get("description")?.value }}</p>
+      </div>
+
+      @if (
+        incidentForm().get("weatherConditions")?.value ||
+        incidentForm().get("roadConditions")?.value
+      ) {
+        <div class="grid grid-cols-2 gap-3 border-t pt-3">
+          @if (incidentForm().get("weatherConditions")?.value) {
+            <div>
+              <div class="text-muted mb-1 text-sm">Weather</div>
+              <div class="text-sm">{{ incidentForm().get("weatherConditions")?.value }}</div>
+            </div>
+          }
+          @if (incidentForm().get("roadConditions")?.value) {
+            <div>
+              <div class="text-muted mb-1 text-sm">Road Conditions</div>
+              <div class="text-sm">{{ incidentForm().get("roadConditions")?.value }}</div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </p-card>
+
+  <!-- Injuries & Damage Summary -->
+  <p-card header="Injuries & Damage">
+    <div class="flex flex-col gap-3">
+      <div class="flex items-center justify-between">
+        <span class="text-muted">Injuries Reported</span>
+        @if (injuriesDamageForm().get("injuriesReported")?.value) {
+          <span class="text-danger font-medium"
+            >Yes ({{ injuriesDamageForm().get("numberOfInjuries")?.value ?? 0 }})</span
+          >
+        } @else {
+          <span class="text-success font-medium">No</span>
+        }
+      </div>
+
+      <div class="flex items-center justify-between">
+        <span class="text-muted">Fatalities</span>
+        @if (injuriesDamageForm().get("fatalitiesReported")?.value) {
+          <span class="text-danger font-medium"
+            >Yes ({{ injuriesDamageForm().get("numberOfFatalities")?.value ?? 0 }})</span
+          >
+        } @else {
+          <span class="text-success font-medium">No</span>
+        }
+      </div>
+
+      <div class="flex items-center justify-between">
+        <span class="text-muted">Hazmat Involved</span>
+        @if (injuriesDamageForm().get("hazmatInvolved")?.value) {
+          <span class="text-danger font-medium">Yes</span>
+        } @else {
+          <span class="text-success font-medium">No</span>
+        }
+      </div>
+
+      <div class="flex items-center justify-between">
+        <span class="text-muted">Vehicle Towed</span>
+        @if (injuriesDamageForm().get("vehicleTowed")?.value) {
+          <span class="text-warn font-medium">Yes</span>
+        } @else {
+          <span class="text-success font-medium">No</span>
+        }
+      </div>
+
+      @if (injuriesDamageForm().get("estimatedDamage")?.value) {
+        <div class="flex items-center justify-between border-t pt-3">
+          <span class="text-muted">Estimated Damage</span>
+          <span class="text-primary font-bold">{{
+            injuriesDamageForm().get("estimatedDamage")?.value | currency
+          }}</span>
+        </div>
+      }
+    </div>
+  </p-card>
+</div>

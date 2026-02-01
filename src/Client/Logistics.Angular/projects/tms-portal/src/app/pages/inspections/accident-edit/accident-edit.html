@@ -21,258 +21,38 @@
         <!-- Step 1: Incident Details -->
         <p-step-panel [value]="1">
           <ng-template #content>
-            <form [formGroup]="step1Form" class="py-4">
-              <ui-validation-summary [form]="step1Form" />
+            <app-accident-incident-form [form]="step1Form" />
 
-              <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <ui-labeled-field label="Date & Time" for="accidentDateTime" [required]="true">
-                  <p-datepicker
-                    formControlName="accidentDateTime"
-                    id="accidentDateTime"
-                    [showTime]="true"
-                    [showIcon]="true"
-                    dateFormat="mm/dd/yy"
-                    [fluid]="true"
-                  />
-                </ui-labeled-field>
-
-                <ui-labeled-field label="Location" for="location" [required]="true">
-                  <app-address-autocomplete
-                    formControlName="location"
-                    placeholder="Type address..."
-                    [forceSelection]="true"
-                  />
-                </ui-labeled-field>
-              </div>
-
-              <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-                <ui-labeled-field label="Truck" for="truck" [required]="true">
-                  <app-search-truck formControlName="truck" />
-                </ui-labeled-field>
-
-                <ui-labeled-field label="Driver" for="driver" [required]="true">
-                  <app-search-employee
-                    formControlName="driver"
-                    [role]="'tenant.driver'"
-                    placeholder="Search for driver..."
-                  />
-                </ui-labeled-field>
-              </div>
-
-              <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-                <ui-labeled-field label="Accident Type" for="type" [required]="true">
-                  <p-select
-                    formControlName="type"
-                    id="type"
-                    class="w-full"
-                    [options]="accidentTypeOptions"
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="Select type"
-                  />
-                </ui-labeled-field>
-
-                <ui-labeled-field label="Severity" for="severity" [required]="true">
-                  <p-select
-                    formControlName="severity"
-                    id="severity"
-                    class="w-full"
-                    [options]="severityOptions"
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="Select severity"
-                  />
-                </ui-labeled-field>
-              </div>
-
-              <ui-labeled-field
-                label="Description"
-                for="description"
-                [required]="true"
-                class="mt-4"
-              >
-                <textarea
-                  pInputTextarea
-                  formControlName="description"
-                  id="description"
-                  class="w-full"
-                  rows="4"
-                  placeholder="Describe what happened..."
-                ></textarea>
-              </ui-labeled-field>
-
-              <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-                <ui-labeled-field label="Weather Conditions" for="weatherConditions">
-                  <input
-                    pInputText
-                    formControlName="weatherConditions"
-                    id="weatherConditions"
-                    class="w-full"
-                    placeholder="e.g., Clear, Rainy, Foggy"
-                  />
-                </ui-labeled-field>
-
-                <ui-labeled-field label="Road Conditions" for="roadConditions">
-                  <input
-                    pInputText
-                    formControlName="roadConditions"
-                    id="roadConditions"
-                    class="w-full"
-                    placeholder="e.g., Dry, Wet, Icy"
-                  />
-                </ui-labeled-field>
-              </div>
-
-              <div class="mt-6 flex justify-end gap-2">
-                <p-button
-                  label="Next"
-                  icon="pi pi-arrow-right"
-                  iconPos="right"
-                  (click)="nextStep()"
-                />
-              </div>
-            </form>
+            <div class="flex justify-end gap-2 py-4">
+              <p-button
+                label="Next"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                (click)="nextStep()"
+              />
+            </div>
           </ng-template>
         </p-step-panel>
 
         <!-- Step 2: Injuries & Damage -->
         <p-step-panel [value]="2">
           <ng-template #content>
-            <form [formGroup]="step2Form" class="py-4">
-              <ui-validation-summary [form]="step2Form" />
+            <app-accident-injuries-damage-form [form]="step2Form" />
 
-              <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <!-- Injuries Section -->
-                <p-card header="Injuries">
-                  <div class="flex flex-col gap-4">
-                    <div class="flex items-center justify-between">
-                      <span>Were there any injuries?</span>
-                      <p-toggleswitch formControlName="injuriesReported" />
-                    </div>
-
-                    @if (step2Form.get("injuriesReported")?.value) {
-                      <ui-labeled-field label="Number of Injuries" for="numberOfInjuries">
-                        <p-inputnumber
-                          formControlName="numberOfInjuries"
-                          id="numberOfInjuries"
-                          class="w-full"
-                          [min]="0"
-                        />
-                      </ui-labeled-field>
-
-                      <ui-labeled-field label="Injury Description" for="injuryDescription">
-                        <textarea
-                          pInputTextarea
-                          formControlName="injuryDescription"
-                          id="injuryDescription"
-                          class="w-full"
-                          rows="2"
-                          placeholder="Describe the injuries..."
-                        ></textarea>
-                      </ui-labeled-field>
-                    }
-
-                    <div class="flex items-center justify-between border-t pt-4">
-                      <span>Were there any fatalities?</span>
-                      <p-toggleswitch formControlName="fatalitiesReported" />
-                    </div>
-
-                    @if (step2Form.get("fatalitiesReported")?.value) {
-                      <ui-labeled-field label="Number of Fatalities" for="numberOfFatalities">
-                        <p-inputnumber
-                          formControlName="numberOfFatalities"
-                          id="numberOfFatalities"
-                          class="w-full"
-                          [min]="0"
-                        />
-                      </ui-labeled-field>
-                    }
-                  </div>
-                </p-card>
-
-                <!-- Damage Section -->
-                <p-card header="Damage">
-                  <div class="flex flex-col gap-4">
-                    <ui-labeled-field label="Estimated Damage" for="estimatedDamage">
-                      <p-inputnumber
-                        formControlName="estimatedDamage"
-                        id="estimatedDamage"
-                        class="w-full"
-                        mode="currency"
-                        currency="USD"
-                        locale="en-US"
-                      />
-                    </ui-labeled-field>
-
-                    <ui-labeled-field label="Damage Description" for="damageDescription">
-                      <textarea
-                        pInputTextarea
-                        formControlName="damageDescription"
-                        id="damageDescription"
-                        class="w-full"
-                        rows="2"
-                        placeholder="Describe the damage..."
-                      ></textarea>
-                    </ui-labeled-field>
-
-                    <div class="flex items-center justify-between border-t pt-4">
-                      <span>Was the vehicle towed?</span>
-                      <p-toggleswitch formControlName="vehicleTowed" />
-                    </div>
-
-                    @if (step2Form.get("vehicleTowed")?.value) {
-                      <ui-labeled-field label="Tow Company" for="towCompany">
-                        <input
-                          pInputText
-                          formControlName="towCompany"
-                          id="towCompany"
-                          class="w-full"
-                          placeholder="Name of tow company"
-                        />
-                      </ui-labeled-field>
-                    }
-                  </div>
-                </p-card>
-              </div>
-
-              <!-- Hazmat Section -->
-              <p-card header="Hazardous Materials" class="mt-4">
-                <div class="flex flex-col gap-4">
-                  <div class="flex items-center justify-between">
-                    <span>Was hazardous material involved?</span>
-                    <p-toggleswitch formControlName="hazmatInvolved" />
-                  </div>
-
-                  @if (step2Form.get("hazmatInvolved")?.value) {
-                    <ui-labeled-field label="Hazmat Description" for="hazmatDescription">
-                      <textarea
-                        pInputTextarea
-                        formControlName="hazmatDescription"
-                        id="hazmatDescription"
-                        class="w-full"
-                        rows="2"
-                        placeholder="Describe the hazardous materials involved..."
-                      ></textarea>
-                    </ui-labeled-field>
-                  }
-                </div>
-              </p-card>
-
-              <div class="mt-6 flex justify-between">
-                <p-button
-                  label="Back"
-                  icon="pi pi-arrow-left"
-                  [outlined]="true"
-                  (click)="prevStep()"
-                />
-                <p-button
-                  label="Next"
-                  icon="pi pi-arrow-right"
-                  iconPos="right"
-                  (click)="nextStep()"
-                />
-              </div>
-            </form>
+            <div class="flex justify-between py-4">
+              <p-button
+                label="Back"
+                icon="pi pi-arrow-left"
+                [outlined]="true"
+                (click)="prevStep()"
+              />
+              <p-button
+                label="Next"
+                icon="pi pi-arrow-right"
+                iconPos="right"
+                (click)="nextStep()"
+              />
+            </div>
           </ng-template>
         </p-step-panel>
 
@@ -282,134 +62,10 @@
             <div class="py-4">
               <h3 class="mb-4 text-lg font-semibold">Review Changes</h3>
 
-              <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                <!-- Incident Summary -->
-                <p-card header="Incident Details">
-                  <div class="flex flex-col gap-3">
-                    <div class="grid grid-cols-2 gap-3">
-                      <div>
-                        <div class="text-muted mb-1 text-sm">Date & Time</div>
-                        <div class="font-medium">
-                          {{ step1Form.get("accidentDateTime")?.value | date: "medium" }}
-                        </div>
-                      </div>
-                      <div>
-                        <div class="text-muted mb-1 text-sm">Location</div>
-                        <div class="font-medium">{{ getLocationString() }}</div>
-                      </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                      <div>
-                        <div class="text-muted mb-1 text-sm">Truck</div>
-                        <div class="font-medium">{{ getSelectedTruck()?.number ?? "-" }}</div>
-                      </div>
-                      <div>
-                        <div class="text-muted mb-1 text-sm">Driver</div>
-                        <div class="font-medium">{{ getSelectedDriver()?.fullName ?? "-" }}</div>
-                      </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
-                      <div>
-                        <div class="text-muted mb-1 text-sm">Type</div>
-                        <p-tag
-                          [value]="getTypeLabel(step1Form.get('type')?.value!)"
-                          severity="info"
-                        />
-                      </div>
-                      <div>
-                        <div class="text-muted mb-1 text-sm">Severity</div>
-                        <p-tag
-                          [value]="getSeverityLabel(step1Form.get('severity')?.value!)"
-                          severity="warn"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <div class="text-muted mb-1 text-sm">Description</div>
-                      <p class="text-sm">{{ step1Form.get("description")?.value }}</p>
-                    </div>
-
-                    @if (
-                      step1Form.get("weatherConditions")?.value ||
-                      step1Form.get("roadConditions")?.value
-                    ) {
-                      <div class="grid grid-cols-2 gap-3 border-t pt-3">
-                        @if (step1Form.get("weatherConditions")?.value) {
-                          <div>
-                            <div class="text-muted mb-1 text-sm">Weather</div>
-                            <div class="text-sm">
-                              {{ step1Form.get("weatherConditions")?.value }}
-                            </div>
-                          </div>
-                        }
-                        @if (step1Form.get("roadConditions")?.value) {
-                          <div>
-                            <div class="text-muted mb-1 text-sm">Road Conditions</div>
-                            <div class="text-sm">{{ step1Form.get("roadConditions")?.value }}</div>
-                          </div>
-                        }
-                      </div>
-                    }
-                  </div>
-                </p-card>
-
-                <!-- Injuries & Damage Summary -->
-                <p-card header="Injuries & Damage">
-                  <div class="flex flex-col gap-3">
-                    <div class="flex items-center justify-between">
-                      <span class="text-muted">Injuries Reported</span>
-                      @if (step2Form.get("injuriesReported")?.value) {
-                        <span class="text-danger font-medium"
-                          >Yes ({{ step2Form.get("numberOfInjuries")?.value ?? 0 }})</span
-                        >
-                      } @else {
-                        <span class="text-success font-medium">No</span>
-                      }
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                      <span class="text-muted">Fatalities</span>
-                      @if (step2Form.get("fatalitiesReported")?.value) {
-                        <span class="text-danger font-medium"
-                          >Yes ({{ step2Form.get("numberOfFatalities")?.value ?? 0 }})</span
-                        >
-                      } @else {
-                        <span class="text-success font-medium">No</span>
-                      }
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                      <span class="text-muted">Hazmat Involved</span>
-                      @if (step2Form.get("hazmatInvolved")?.value) {
-                        <span class="text-danger font-medium">Yes</span>
-                      } @else {
-                        <span class="text-success font-medium">No</span>
-                      }
-                    </div>
-
-                    <div class="flex items-center justify-between">
-                      <span class="text-muted">Vehicle Towed</span>
-                      @if (step2Form.get("vehicleTowed")?.value) {
-                        <span class="text-warn font-medium">Yes</span>
-                      } @else {
-                        <span class="text-success font-medium">No</span>
-                      }
-                    </div>
-
-                    @if (step2Form.get("estimatedDamage")?.value) {
-                      <div class="flex items-center justify-between border-t pt-3">
-                        <span class="text-muted">Estimated Damage</span>
-                        <span class="text-primary font-bold">{{
-                          step2Form.get("estimatedDamage")?.value | currency
-                        }}</span>
-                      </div>
-                    }
-                  </div>
-                </p-card>
-              </div>
+              <app-accident-review-summary
+                [incidentForm]="step1Form"
+                [injuriesDamageForm]="step2Form"
+              />
 
               <div class="mt-6 flex justify-between">
                 <p-button

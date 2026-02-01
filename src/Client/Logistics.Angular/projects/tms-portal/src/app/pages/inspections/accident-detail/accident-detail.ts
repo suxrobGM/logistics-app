@@ -15,6 +15,7 @@ import { TagModule } from "primeng/tag";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import type { TagSeverity } from "@/shared/types";
+import { AccidentQuickInfo } from "../components";
 
 @Component({
   selector: "app-accident-detail",
@@ -29,6 +30,7 @@ import type { TagSeverity } from "@/shared/types";
     TabsModule,
     TagModule,
     PageHeader,
+    AccidentQuickInfo,
   ],
 })
 export class AccidentDetailPage implements OnInit {

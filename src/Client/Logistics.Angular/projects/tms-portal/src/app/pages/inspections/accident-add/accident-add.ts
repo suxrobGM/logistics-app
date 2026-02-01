@@ -1,7 +1,6 @@
 import { Component, inject, signal } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Api, createAccidentReport } from "@logistics/shared/api";
 import type {
   AccidentSeverity,
@@ -11,70 +10,31 @@ import type {
   EmployeeDto,
   TruckDto,
 } from "@logistics/shared/api";
-import { LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { DatePickerModule } from "primeng/datepicker";
 import { CardModule } from "primeng/card";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { SelectModule } from "primeng/select";
 import { StepperModule } from "primeng/stepper";
-import { TagModule } from "primeng/tag";
-import { TextareaModule } from "primeng/textarea";
-import { ToggleSwitchModule } from "primeng/toggleswitch";
 import { PageHeader } from "@/shared/components";
-import { SearchEmployee, SearchTruck } from "@/shared/components/search";
-import { AddressAutocomplete } from "@/shared/components/maps";
 import { ToastService } from "@/core/services";
 import { Converters } from "@/shared/utils";
-
-const accidentTypeOptions = [
-  { label: "Collision", value: "collision" },
-  { label: "Rollover", value: "rollover" },
-  { label: "Jackknife", value: "jackknife" },
-  { label: "Run Off Road", value: "run_off_road" },
-  { label: "Rear End", value: "rear_end" },
-  { label: "Sideswipe", value: "sideswipe" },
-  { label: "Head On", value: "head_on" },
-  { label: "Hit and Run", value: "hit_and_run" },
-  { label: "Pedestrian Involved", value: "pedestrian_involved" },
-  { label: "Property Damage Only", value: "property_damage_only" },
-  { label: "Cargo Spill", value: "cargo_spill" },
-  { label: "Other", value: "other" },
-];
-
-const severityOptions = [
-  { label: "Minor", value: "minor" },
-  { label: "Moderate", value: "moderate" },
-  { label: "Severe", value: "severe" },
-  { label: "Fatal", value: "fatal" },
-];
+import {
+  AccidentIncidentForm,
+  AccidentInjuriesDamageForm,
+  AccidentReviewSummary,
+} from "../components";
 
 @Component({
   selector: "app-accident-add",
   templateUrl: "./accident-add.html",
   imports: [
-    CurrencyPipe,
-    DatePipe,
-    ReactiveFormsModule,
     ButtonModule,
-    DatePickerModule,
     CardModule,
-    InputNumberModule,
-    InputTextModule,
     ProgressSpinnerModule,
-    SelectModule,
     StepperModule,
-    TagModule,
-    TextareaModule,
-    ToggleSwitchModule,
     PageHeader,
-    LabeledField,
-    ValidationSummary,
-    SearchEmployee,
-    SearchTruck,
-    AddressAutocomplete,
+    AccidentIncidentForm,
+    AccidentInjuriesDamageForm,
+    AccidentReviewSummary,
   ],
 })
 export class AccidentAddPage {
@@ -85,9 +45,6 @@ export class AccidentAddPage {
   protected readonly isLoading = signal(false);
   protected readonly isSaving = signal(false);
   protected readonly activeStep = signal(1);
-
-  protected readonly accidentTypeOptions = accidentTypeOptions;
-  protected readonly severityOptions = severityOptions;
 
   // Step 1: Incident Details
   protected readonly step1Form = new FormGroup({
@@ -146,7 +103,6 @@ export class AccidentAddPage {
   }
 
   protected goToStep(step: number): void {
-    // Only allow going back, not forward (validation needed)
     if (step < this.activeStep()) {
       this.activeStep.set(step);
     }
@@ -191,26 +147,5 @@ export class AccidentAddPage {
     } finally {
       this.isSaving.set(false);
     }
-  }
-
-  protected getSelectedTruck(): TruckDto | null {
-    return this.step1Form.get("truck")?.value ?? null;
-  }
-
-  protected getSelectedDriver(): EmployeeDto | null {
-    return this.step1Form.get("driver")?.value ?? null;
-  }
-
-  protected getLocationString(): string {
-    const address = this.step1Form.get("location")?.value ?? null;
-    return Converters.addressToString(address) ?? "-";
-  }
-
-  protected getTypeLabel(type: AccidentType): string {
-    return accidentTypeOptions.find((o) => o.value === type)?.label ?? type;
-  }
-
-  protected getSeverityLabel(severity: AccidentSeverity): string {
-    return severityOptions.find((o) => o.value === severity)?.label ?? severity;
   }
 }

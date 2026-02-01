@@ -1,0 +1,120 @@
+<form [formGroup]="form()" class="py-4">
+  <ui-validation-summary [form]="form()" />
+
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <!-- Injuries Section -->
+    <p-card header="Injuries">
+      <div class="flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <span>Were there any injuries?</span>
+          <p-toggleswitch formControlName="injuriesReported" />
+        </div>
+
+        @if (form().get("injuriesReported")?.value) {
+          <ui-labeled-field label="Number of Injuries" for="numberOfInjuries">
+            <p-inputnumber
+              formControlName="numberOfInjuries"
+              id="numberOfInjuries"
+              class="w-full"
+              [min]="0"
+            />
+          </ui-labeled-field>
+
+          <ui-labeled-field label="Injury Description" for="injuryDescription">
+            <textarea
+              pInputTextarea
+              formControlName="injuryDescription"
+              id="injuryDescription"
+              class="w-full"
+              rows="2"
+              placeholder="Describe the injuries..."
+            ></textarea>
+          </ui-labeled-field>
+        }
+
+        <div class="flex items-center justify-between border-t pt-4">
+          <span>Were there any fatalities?</span>
+          <p-toggleswitch formControlName="fatalitiesReported" />
+        </div>
+
+        @if (form().get("fatalitiesReported")?.value) {
+          <ui-labeled-field label="Number of Fatalities" for="numberOfFatalities">
+            <p-inputnumber
+              formControlName="numberOfFatalities"
+              id="numberOfFatalities"
+              class="w-full"
+              [min]="0"
+            />
+          </ui-labeled-field>
+        }
+      </div>
+    </p-card>
+
+    <!-- Damage Section -->
+    <p-card header="Damage">
+      <div class="flex flex-col gap-4">
+        <ui-labeled-field label="Estimated Damage" for="estimatedDamage">
+          <p-inputnumber
+            formControlName="estimatedDamage"
+            id="estimatedDamage"
+            class="w-full"
+            mode="currency"
+            currency="USD"
+            locale="en-US"
+          />
+        </ui-labeled-field>
+
+        <ui-labeled-field label="Damage Description" for="damageDescription">
+          <textarea
+            pInputTextarea
+            formControlName="damageDescription"
+            id="damageDescription"
+            class="w-full"
+            rows="2"
+            placeholder="Describe the damage..."
+          ></textarea>
+        </ui-labeled-field>
+
+        <div class="flex items-center justify-between border-t pt-4">
+          <span>Was the vehicle towed?</span>
+          <p-toggleswitch formControlName="vehicleTowed" />
+        </div>
+
+        @if (form().get("vehicleTowed")?.value) {
+          <ui-labeled-field label="Tow Company" for="towCompany">
+            <input
+              pInputText
+              formControlName="towCompany"
+              id="towCompany"
+              class="w-full"
+              placeholder="Name of tow company"
+            />
+          </ui-labeled-field>
+        }
+      </div>
+    </p-card>
+  </div>
+
+  <!-- Hazmat Section -->
+  <p-card header="Hazardous Materials" class="mt-4">
+    <div class="flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <span>Was hazardous material involved?</span>
+        <p-toggleswitch formControlName="hazmatInvolved" />
+      </div>
+
+      @if (form().get("hazmatInvolved")?.value) {
+        <ui-labeled-field label="Hazmat Description" for="hazmatDescription">
+          <textarea
+            pInputTextarea
+            formControlName="hazmatDescription"
+            id="hazmatDescription"
+            class="w-full"
+            rows="2"
+            placeholder="Describe the hazardous materials involved..."
+          ></textarea>
+        </ui-labeled-field>
+      }
+    </div>
+  </p-card>
+</form>

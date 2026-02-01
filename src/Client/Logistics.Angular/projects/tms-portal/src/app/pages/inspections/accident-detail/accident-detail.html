@@ -127,54 +127,7 @@
           </div>
 
           <div class="flex flex-col gap-4">
-            <p-card header="Quick Info">
-              <div class="flex flex-col gap-3">
-                <div class="flex items-center justify-between">
-                  <span class="text-muted">Injuries Reported</span>
-                  @if (report()!.injuriesReported) {
-                    <span class="text-danger font-medium"
-                      >Yes ({{ report()!.numberOfInjuries ?? 0 }})</span
-                    >
-                  } @else {
-                    <span class="text-success font-medium">No</span>
-                  }
-                </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-muted">Fatalities</span>
-                  @if (report()!.fatalitiesReported) {
-                    <span class="text-danger font-medium"
-                      >Yes ({{ report()!.numberOfFatalities ?? 0 }})</span
-                    >
-                  } @else {
-                    <span class="text-success font-medium">No</span>
-                  }
-                </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-muted">Hazmat Involved</span>
-                  @if (report()!.hazmatInvolved) {
-                    <span class="text-danger font-medium">Yes</span>
-                  } @else {
-                    <span class="text-success font-medium">No</span>
-                  }
-                </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-muted">Vehicle Towed</span>
-                  @if (report()!.vehicleTowed) {
-                    <span class="text-warn font-medium">Yes</span>
-                  } @else {
-                    <span class="text-success font-medium">No</span>
-                  }
-                </div>
-                <div class="flex items-center justify-between">
-                  <span class="text-muted">Police Report Filed</span>
-                  @if (report()!.policeReportFiled) {
-                    <span class="text-info font-medium">Yes</span>
-                  } @else {
-                    <span class="text-muted font-medium">No</span>
-                  }
-                </div>
-              </div>
-            </p-card>
+<app-accident-quick-info [report]="report()!" />
 
             <p-card header="Record Info">
               <div class="flex flex-col gap-3">
