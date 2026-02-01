@@ -68,6 +68,97 @@
         </div>
       </div>
 
+      <!-- Vehicle Details Section -->
+      <div class="mb-6">
+        <h3
+          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
+        >
+          <i class="pi pi-car"></i>
+          Vehicle Details
+        </h3>
+        <div class="border-default bg-elevated rounded-lg border p-4">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <ui-labeled-field label="Make" for="make">
+              <input
+                pInputText
+                id="make"
+                formControlName="make"
+                type="text"
+                placeholder="e.g., Freightliner"
+              />
+            </ui-labeled-field>
+
+            <ui-labeled-field label="Model" for="model">
+              <input
+                pInputText
+                id="model"
+                formControlName="model"
+                type="text"
+                placeholder="e.g., Cascadia"
+              />
+            </ui-labeled-field>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <ui-labeled-field label="Year" for="year">
+              <p-inputNumber
+                formControlName="year"
+                inputId="year"
+                [min]="1900"
+                [max]="2100"
+                [useGrouping]="false"
+                placeholder="e.g., 2023"
+              />
+            </ui-labeled-field>
+
+            <ui-labeled-field label="VIN" for="vin" hint="17-character Vehicle Identification Number">
+              <input
+                pInputText
+                id="vin"
+                formControlName="vin"
+                type="text"
+                placeholder="e.g., 1FUJGLDR5BSAV1234"
+                maxlength="17"
+              />
+            </ui-labeled-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registration Section -->
+      <div class="mb-6">
+        <h3
+          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
+        >
+          <i class="pi pi-id-card"></i>
+          Registration
+        </h3>
+        <div class="border-default bg-elevated rounded-lg border p-4">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <ui-labeled-field label="License Plate" for="licensePlate">
+              <input
+                pInputText
+                id="licensePlate"
+                formControlName="licensePlate"
+                type="text"
+                placeholder="e.g., ABC-1234"
+              />
+            </ui-labeled-field>
+
+            <ui-labeled-field label="License Plate State" for="licensePlateState" class="mb-0">
+              <input
+                pInputText
+                id="licensePlateState"
+                formControlName="licensePlateState"
+                type="text"
+                placeholder="e.g., TX"
+                maxlength="2"
+              />
+            </ui-labeled-field>
+          </div>
+        </div>
+      </div>
+
       <!-- Driver Assignment Section -->
       <div class="mb-6">
         <h3

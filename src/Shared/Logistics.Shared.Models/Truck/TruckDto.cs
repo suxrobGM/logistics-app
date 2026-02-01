@@ -10,6 +10,12 @@ public record TruckDto
     public int VehicleCapacity { get; set; }
     public TruckType Type { get; set; }
     public TruckStatus Status { get; set; }
+    public string? Make { get; set; }
+    public string? Model { get; set; }
+    public int? Year { get; set; }
+    public string? Vin { get; set; }
+    public string? LicensePlate { get; set; }
+    public string? LicensePlateState { get; set; }
     public Address? CurrentAddress { get; set; }
     public GeoPoint? CurrentLocation { get; set; }
     public EmployeeDto? MainDriver { get; set; }

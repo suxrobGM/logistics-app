@@ -105,6 +105,49 @@
                     <span class="font-semibold">{{ truck()!.vehicleCapacity }} vehicles</span>
                   </div>
                 }
+
+                @if (truck()!.make || truck()!.model || truck()!.year) {
+                  <p-divider />
+                  @if (truck()!.make) {
+                    <div class="flex items-center justify-between">
+                      <span>Make</span>
+                      <span class="font-semibold">{{ truck()!.make }}</span>
+                    </div>
+                  }
+                  @if (truck()!.model) {
+                    <div class="flex items-center justify-between">
+                      <span>Model</span>
+                      <span class="font-semibold">{{ truck()!.model }}</span>
+                    </div>
+                  }
+                  @if (truck()!.year) {
+                    <div class="flex items-center justify-between">
+                      <span>Year</span>
+                      <span class="font-semibold">{{ truck()!.year }}</span>
+                    </div>
+                  }
+                }
+
+                @if (truck()!.vin) {
+                  <p-divider />
+                  <div class="flex items-center justify-between">
+                    <span>VIN</span>
+                    <span class="font-mono font-semibold">{{ truck()!.vin }}</span>
+                  </div>
+                }
+
+                @if (truck()!.licensePlate) {
+                  <p-divider />
+                  <div class="flex items-center justify-between">
+                    <span>License Plate</span>
+                    <span class="font-mono font-semibold">
+                      {{ truck()!.licensePlate }}
+                      @if (truck()!.licensePlateState) {
+                        <span class="text-muted ml-1">({{ truck()!.licensePlateState }})</span>
+                      }
+                    </span>
+                  </div>
+                }
               </div>
             </p-card>
 

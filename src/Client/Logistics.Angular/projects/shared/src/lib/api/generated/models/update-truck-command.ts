@@ -5,10 +5,16 @@ import type { TruckStatus } from '../models/truck-status';
 import type { TruckType } from '../models/truck-type';
 export interface UpdateTruckCommand {
   id?: string;
+  licensePlate?: string | null;
+  licensePlateState?: string | null;
   mainDriverId?: string | null;
+  make?: string | null;
+  model?: string | null;
   secondaryDriverId?: string | null;
   truckNumber?: string | null;
   truckStatus?: TruckStatus;
   truckType?: TruckType;
   vehicleCapacity?: number | null;
+  vin?: string | null;
+  year?: number | null;
 }

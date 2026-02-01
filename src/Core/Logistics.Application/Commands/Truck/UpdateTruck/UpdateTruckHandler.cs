@@ -8,7 +8,6 @@ namespace Logistics.Application.Commands;
 
 internal sealed class UpdateTruckHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<UpdateTruckCommand, Result>
 {
-
     public async Task<Result> Handle(
         UpdateTruckCommand req, CancellationToken ct)
     {
@@ -42,6 +41,17 @@ internal sealed class UpdateTruckHandler(ITenantUnitOfWork tenantUow) : IAppRequ
         truck.Type = PropertyUpdater.UpdateIfChanged(req.TruckType, truck.Type);
         truck.Status = PropertyUpdater.UpdateIfChanged(req.TruckStatus, truck.Status);
         truck.VehicleCapacity = PropertyUpdater.UpdateIfChanged(req.VehicleCapacity, truck.VehicleCapacity);
+        truck.Make = PropertyUpdater.UpdateIfChanged(req.Make, truck.Make);
+        truck.Model = PropertyUpdater.UpdateIfChanged(req.Model, truck.Model);
+
+        truck.Vin = PropertyUpdater.UpdateIfChanged(req.Vin, truck.Vin);
+        truck.LicensePlate = PropertyUpdater.UpdateIfChanged(req.LicensePlate, truck.LicensePlate);
+        truck.LicensePlateState = PropertyUpdater.UpdateIfChanged(req.LicensePlateState, truck.LicensePlateState);
+
+        if (req.Year is not null && truck.Year != req.Year)
+        {
+            truck.Year = req.Year.Value;
+        }
 
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();

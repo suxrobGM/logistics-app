@@ -25,6 +25,12 @@ export interface TruckFormData {
   mainDriver: EmployeeDto | null;
   secondaryDriver: EmployeeDto | null;
   vehicleCapacity: number | null;
+  make: string | null;
+  model: string | null;
+  year: number | null;
+  vin: string | null;
+  licensePlate: string | null;
+  licensePlateState: string | null;
 }
 
 @Component({
@@ -74,6 +80,12 @@ export class TruckForm implements OnInit {
     mainDriver: new FormControl<EmployeeDto | null>(null),
     secondaryDriver: new FormControl<EmployeeDto | null>(null),
     vehicleCapacity: new FormControl<number | null>(null),
+    make: new FormControl<string | null>(null),
+    model: new FormControl<string | null>(null),
+    year: new FormControl<number | null>(null),
+    vin: new FormControl<string | null>(null),
+    licensePlate: new FormControl<string | null>(null),
+    licensePlateState: new FormControl<string | null>(null),
   });
 
   protected readonly isCarHauler = computed(() => {
@@ -90,6 +102,12 @@ export class TruckForm implements OnInit {
         mainDriver: initial.mainDriver ?? null,
         secondaryDriver: initial.secondaryDriver ?? null,
         vehicleCapacity: initial.vehicleCapacity ?? null,
+        make: initial.make ?? null,
+        model: initial.model ?? null,
+        year: initial.year ?? null,
+        vin: initial.vin ?? null,
+        licensePlate: initial.licensePlate ?? null,
+        licensePlateState: initial.licensePlateState ?? null,
       });
     }
 
@@ -124,6 +142,12 @@ export class TruckForm implements OnInit {
       mainDriver: this.form.value.mainDriver ?? null,
       secondaryDriver: this.form.value.secondaryDriver ?? null,
       vehicleCapacity: this.form.value.vehicleCapacity ?? null,
+      make: this.form.value.make ?? null,
+      model: this.form.value.model ?? null,
+      year: this.form.value.year ?? null,
+      vin: this.form.value.vin ?? null,
+      licensePlate: this.form.value.licensePlate ?? null,
+      licensePlateState: this.form.value.licensePlateState ?? null,
     });
   }
 

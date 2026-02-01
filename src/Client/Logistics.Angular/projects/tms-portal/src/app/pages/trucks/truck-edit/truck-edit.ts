@@ -64,7 +64,13 @@ export class TruckEdit implements OnInit {
         truckNumber: data.truckNumber,
         truckType: data.truckType,
         mainDriverId: data.mainDriver?.id ?? undefined,
-        vehicleCapacity: data.vehicleCapacity ?? undefined,
+        vehicleCapacity: data.vehicleCapacity,
+        make: data.make,
+        model: data.model,
+        year: data.year,
+        vin: data.vin,
+        licensePlate: data.licensePlate,
+        licensePlateState: data.licensePlateState,
       };
 
       await this.api.invoke(createTruck, { body: command });
@@ -86,6 +92,12 @@ export class TruckEdit implements OnInit {
         mainDriverId: data.mainDriver?.id,
         secondaryDriverId: data.secondaryDriver?.id,
         vehicleCapacity: data.vehicleCapacity,
+        make: data.make ?? undefined,
+        model: data.model ?? undefined,
+        year: data.year ?? undefined,
+        vin: data.vin ?? undefined,
+        licensePlate: data.licensePlate ?? undefined,
+        licensePlateState: data.licensePlateState ?? undefined,
       };
 
       await this.api.invoke(updateTruck, {

@@ -91,6 +91,10 @@
               Status
               <p-sortIcon field="Status" />
             </th>
+            <th class="text-center" pSortableColumn="LicensePlate">
+              License Plate
+              <p-sortIcon field="LicensePlate" />
+            </th>
             <th class="text-center">Current Location</th>
             <th class="text-center">Driver(s)</th>
             <th class="text-center">Action</th>
@@ -106,6 +110,16 @@
             </td>
             <td class="text-center">
               <app-truck-status-tag [status]="truck.status" />
+            </td>
+            <td class="text-center">
+              @if (truck.licensePlate) {
+                <span class="font-mono">{{ truck.licensePlate }}</span>
+                @if (truck.licensePlateState) {
+                  <span class="text-muted ml-1">({{ truck.licensePlateState }})</span>
+                }
+              } @else {
+                <span class="text-muted">—</span>
+              }
             </td>
             <td
               class="text-center"

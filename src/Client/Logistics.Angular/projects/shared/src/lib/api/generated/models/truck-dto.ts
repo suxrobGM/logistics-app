@@ -11,11 +11,17 @@ export interface TruckDto {
   currentAddress?: Address;
   currentLocation?: GeoPoint;
   id?: string | null;
+  licensePlate?: string | null;
+  licensePlateState?: string | null;
   loads?: Array<LoadDto> | null;
   mainDriver?: EmployeeDto;
+  make?: string | null;
+  model?: string | null;
   number?: string | null;
   secondaryDriver?: EmployeeDto;
   status?: TruckStatus;
   type?: TruckType;
   vehicleCapacity?: number;
+  vin?: string | null;
+  year?: number | null;
 }

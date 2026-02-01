@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20260129073843_Version_0002")]
-    partial class Version_0002
+    [Migration("20260201092754_Version_0001")]
+    partial class Version_0001
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2393,98 +2393,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.ToTable("DriverBehaviorEvents", (string)null);
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.DriverCertification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int?>("CdlClass")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("CertificationNumber")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<int>("CertificationType")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("CreatedAt")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("CreatedBy");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Endorsements")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsVerified")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("IssuedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("IssuingAuthority")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("IssuingState")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
-
-                    b.Property<string>("Restrictions")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("LastModifiedAt");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("LastModifiedBy");
-
-                    b.Property<DateTime?>("VerifiedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("VerifiedById")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExpirationDate");
-
-                    b.HasIndex("Status");
-
-                    b.HasIndex("VerifiedById");
-
-                    b.HasIndex("EmployeeId", "CertificationType");
-
-                    b.ToTable("DriverCertifications", (string)null);
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.Safety.DvirDefect", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2621,257 +2529,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.HasIndex("TruckId", "InspectionDate");
 
                     b.ToTable("DvirReports", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.EmergencyAlert", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("AcknowledgedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("AcknowledgedById")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Address")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<int>("AlertType")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("CreatedAt")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("CreatedBy");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
-
-                    b.Property<Guid>("DriverId")
-                        .HasColumnType("uuid");
-
-                    b.Property<double?>("Latitude")
-                        .HasColumnType("double precision");
-
-                    b.Property<double?>("Longitude")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("ResolutionNotes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
-
-                    b.Property<DateTime?>("ResolvedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("ResolvedById")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Source")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("TriggeredAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("TripId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("TruckId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("LastModifiedAt");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("LastModifiedBy");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AcknowledgedById");
-
-                    b.HasIndex("DriverId");
-
-                    b.HasIndex("ResolvedById");
-
-                    b.HasIndex("Status");
-
-                    b.HasIndex("TriggeredAt");
-
-                    b.HasIndex("TripId");
-
-                    b.HasIndex("TruckId");
-
-                    b.ToTable("EmergencyAlerts", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.EmergencyContact", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("ContactType")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<Guid?>("EmployeeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<int>("Priority")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContactType");
-
-                    b.HasIndex("EmployeeId");
-
-                    b.HasIndex("Priority");
-
-                    b.ToTable("EmergencyContacts", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.EmergencyContactNotification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("AcknowledgedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeliveredAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("EmergencyAlertId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("EmergencyContactId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsAcknowledged")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsDelivered")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("Method")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("SentAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmergencyAlertId");
-
-                    b.HasIndex("EmergencyContactId");
-
-                    b.ToTable("EmergencyContactNotifications", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.TrainingRecord", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("CertificateNumber")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<DateTime>("CompletedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("CreatedAt")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("CreatedBy");
-
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ExpirationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal?>("Hours")
-                        .HasColumnType("numeric");
-
-                    b.Property<bool>("IsPassed")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
-
-                    b.Property<string>("Provider")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<decimal?>("Score")
-                        .HasColumnType("numeric");
-
-                    b.Property<string>("TrainingName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<int>("TrainingType")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("LastModifiedAt");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("LastModifiedBy");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompletedDate");
-
-                    b.HasIndex("EmployeeId", "TrainingType");
-
-                    b.ToTable("TrainingRecords", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Subscription", b =>
@@ -3377,6 +3034,12 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Property<Guid?>("MainDriverId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Make")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Model")
+                        .HasColumnType("text");
+
                     b.Property<string>("Number")
                         .IsRequired()
                         .HasColumnType("text");
@@ -3391,6 +3054,12 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasColumnType("integer");
 
                     b.Property<int>("VehicleCapacity")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Vin")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Year")
                         .HasColumnType("integer");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "CurrentAddress", "Logistics.Domain.Entities.Truck.CurrentAddress#Address", b1 =>
@@ -3739,20 +3408,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 {
                     b.HasBaseType("Logistics.Domain.Entities.Document");
 
-                    b.Property<Guid?>("DriverCertificationId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("TrainingRecordId")
-                        .HasColumnType("uuid");
-
-                    b.HasIndex("DriverCertificationId");
-
                     b.HasIndex("EmployeeId");
-
-                    b.HasIndex("TrainingRecordId");
 
                     b.HasDiscriminator().HasValue("Employee");
                 });
@@ -4436,24 +4095,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Truck");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.DriverCertification", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Logistics.Domain.Entities.Employee", "VerifiedBy")
-                        .WithMany()
-                        .HasForeignKey("VerifiedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Employee");
-
-                    b.Navigation("VerifiedBy");
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.Safety.DvirDefect", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Employee", "CorrectedBy")
@@ -4503,85 +4144,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Trip");
 
                     b.Navigation("Truck");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.EmergencyAlert", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Employee", "AcknowledgedBy")
-                        .WithMany()
-                        .HasForeignKey("AcknowledgedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Logistics.Domain.Entities.Employee", "Driver")
-                        .WithMany()
-                        .HasForeignKey("DriverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Logistics.Domain.Entities.Employee", "ResolvedBy")
-                        .WithMany()
-                        .HasForeignKey("ResolvedById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Logistics.Domain.Entities.Trip", "Trip")
-                        .WithMany()
-                        .HasForeignKey("TripId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Logistics.Domain.Entities.Truck", "Truck")
-                        .WithMany()
-                        .HasForeignKey("TruckId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("AcknowledgedBy");
-
-                    b.Navigation("Driver");
-
-                    b.Navigation("ResolvedBy");
-
-                    b.Navigation("Trip");
-
-                    b.Navigation("Truck");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.EmergencyContact", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Employee");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.EmergencyContactNotification", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Safety.EmergencyAlert", "EmergencyAlert")
-                        .WithMany("Notifications")
-                        .HasForeignKey("EmergencyAlertId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Logistics.Domain.Entities.Safety.EmergencyContact", "EmergencyContact")
-                        .WithMany()
-                        .HasForeignKey("EmergencyContactId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("EmergencyAlert");
-
-                    b.Navigation("EmergencyContact");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.TrainingRecord", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Subscription", b =>
@@ -4718,19 +4280,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
             modelBuilder.Entity("Logistics.Domain.Entities.EmployeeDocument", b =>
                 {
-                    b.HasOne("Logistics.Domain.Entities.Safety.DriverCertification", null)
-                        .WithMany("Documents")
-                        .HasForeignKey("DriverCertificationId");
-
                     b.HasOne("Logistics.Domain.Entities.Employee", "Employee")
                         .WithMany("Documents")
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Logistics.Domain.Entities.Safety.TrainingRecord", null)
-                        .WithMany("Documents")
-                        .HasForeignKey("TrainingRecordId");
 
                     b.Navigation("Employee");
                 });
@@ -4906,26 +4460,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("Witnesses");
                 });
 
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.DriverCertification", b =>
-                {
-                    b.Navigation("Documents");
-                });
-
             modelBuilder.Entity("Logistics.Domain.Entities.Safety.DvirReport", b =>
                 {
                     b.Navigation("Defects");
 
                     b.Navigation("Photos");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.EmergencyAlert", b =>
-                {
-                    b.Navigation("Notifications");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.Safety.TrainingRecord", b =>
-                {
-                    b.Navigation("Documents");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPlan", b =>

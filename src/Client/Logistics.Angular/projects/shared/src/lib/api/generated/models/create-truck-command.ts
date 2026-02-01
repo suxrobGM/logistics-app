@@ -3,8 +3,14 @@
 
 import type { TruckType } from '../models/truck-type';
 export interface CreateTruckCommand {
+  licensePlate?: string | null;
+  licensePlateState?: string | null;
   mainDriverId?: string;
+  make?: string | null;
+  model?: string | null;
   truckNumber?: string | null;
   truckType?: TruckType;
   vehicleCapacity?: number | null;
+  vin?: string | null;
+  year?: number | null;
 }

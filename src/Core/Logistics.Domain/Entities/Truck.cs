@@ -18,6 +18,26 @@ public class Truck : Entity, ITenantEntity
     public TruckStatus Status { get; set; } = TruckStatus.Available;
 
     /// <summary>
+    ///     Manufacturer name (e.g., Freightliner, Peterbilt, Kenworth, Volvo)
+    /// </summary>
+    public string? Make { get; set; }
+
+    /// <summary>
+    ///     Model name (e.g., Cascadia, 579, T680, VNL)
+    /// </summary>
+    public string? Model { get; set; }
+
+    /// <summary>
+    ///     Year of manufacture
+    /// </summary>
+    public int? Year { get; set; }
+
+    /// <summary>
+    ///     Vehicle Identification Number (17-character unique identifier)
+    /// </summary>
+    public string? Vin { get; set; }
+
+    /// <summary>
     ///     Vehicle license plate number
     /// </summary>
     public string? LicensePlate { get; set; }
@@ -61,7 +81,10 @@ public class Truck : Entity, ITenantEntity
     {
         return new Truck
         {
-            Number = truckNumber, Type = type, MainDriver = mainDriver, SecondaryDriver = secondaryDriver
+            Number = truckNumber,
+            Type = type,
+            MainDriver = mainDriver,
+            SecondaryDriver = secondaryDriver
         };
     }
 

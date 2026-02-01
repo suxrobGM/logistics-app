@@ -40,6 +40,13 @@ internal sealed class CreateTruckHandler(ITenantUnitOfWork tenantUow) : IAppRequ
             truckEntity.VehicleCapacity = req.VehicleCapacity.Value;
         }
 
+        truckEntity.Make = req.Make;
+        truckEntity.Model = req.Model;
+        truckEntity.Year = req.Year;
+        truckEntity.Vin = req.Vin;
+        truckEntity.LicensePlate = req.LicensePlate;
+        truckEntity.LicensePlateState = req.LicensePlateState;
+
         await tenantUow.Repository<Truck>().AddAsync(truckEntity, ct);
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
