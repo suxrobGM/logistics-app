@@ -52,6 +52,12 @@ data class ConditionReportRoute(
 ) : NavKey
 
 @Serializable
+data class DvirFormRoute(
+    val truckId: String? = null,
+    val tripId: String? = null
+) : NavKey
+
+@Serializable
 data object AccountRoute : NavKey
 
 @Serializable

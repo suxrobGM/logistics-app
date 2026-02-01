@@ -1,8 +1,12 @@
-import { Component, inject, type OnInit, signal } from "@angular/core";
-import { Router } from "@angular/router";
 import { DatePipe, DecimalPipe } from "@angular/common";
+import { Component, type OnInit, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Api } from "@logistics/shared/api";
+import { Router } from "@angular/router";
+import {
+  Api,
+  type DriverBehaviorEventDto,
+  type DriverBehaviorEventType,
+} from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -15,51 +19,9 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { ToggleSwitchModule } from "primeng/toggleswitch";
-import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
 import { ToastService } from "@/core/services";
+import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
 import type { TagSeverity } from "@/shared/types";
-
-// Temporary interface until API is regenerated
-export interface DriverBehaviorEventDto {
-  id: string;
-  driverId: string;
-  driverName: string;
-  truckId?: string | null;
-  truckNumber?: string | null;
-  eventType: DriverBehaviorEventType;
-  eventTypeDisplay: string;
-  occurredAt: string;
-  providerType: string;
-  providerTypeDisplay: string;
-  latitude?: number | null;
-  longitude?: number | null;
-  location?: string | null;
-  speedMph?: number | null;
-  speedLimitMph?: number | null;
-  gForce?: number | null;
-  durationSeconds?: number | null;
-  isReviewed: boolean;
-  reviewedById?: string | null;
-  reviewedByName?: string | null;
-  reviewedAt?: string | null;
-  reviewNotes?: string | null;
-  isDismissed?: boolean | null;
-}
-
-export type DriverBehaviorEventType =
-  | "harsh_braking"
-  | "harsh_acceleration"
-  | "harsh_cornering"
-  | "speeding"
-  | "distracted_driving"
-  | "drowsiness"
-  | "tailgating"
-  | "rolling_stop"
-  | "cell_phone_use"
-  | "seatbelt_violation"
-  | "camera_obstruction"
-  | "forward_collision_warning"
-  | "lane_departure_warning";
 
 const eventTypeOptions = [
   { label: "Harsh Braking", value: "harsh_braking" },

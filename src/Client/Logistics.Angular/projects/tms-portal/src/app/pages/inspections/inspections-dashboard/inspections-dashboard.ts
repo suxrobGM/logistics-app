@@ -6,12 +6,12 @@ import {
   getPendingDvirReviews,
   getDvirReports,
   getAccidentReports,
-  getActiveEmergencyAlerts,
+  getConditionReports,
 } from "@logistics/shared/api";
 import type {
   DvirReportDto,
   AccidentReportDto,
-  EmergencyAlertDto,
+  ConditionReportDto,
   AccidentReportStatus,
   AccidentSeverity,
   DvirStatus,
@@ -25,8 +25,8 @@ import { PageHeader } from "@/shared/components";
 import type { TagSeverity } from "@/shared/types";
 
 @Component({
-  selector: "app-safety-dashboard",
-  templateUrl: "./safety-dashboard.html",
+  selector: "app-inspections-dashboard",
+  templateUrl: "./inspections-dashboard.html",
   imports: [
     DatePipe,
     ButtonModule,
@@ -37,7 +37,7 @@ import type { TagSeverity } from "@/shared/types";
     PageHeader,
   ],
 })
-export class SafetyDashboardPage implements OnInit {
+export class InspectionsDashboardPage implements OnInit {
   private readonly router = inject(Router);
   private readonly api = inject(Api);
 
@@ -46,12 +46,12 @@ export class SafetyDashboardPage implements OnInit {
   // Stats
   protected readonly pendingDvirCount = signal(0);
   protected readonly openAccidentsCount = signal(0);
-  protected readonly activeAlertsCount = signal(0);
+  protected readonly conditionReportsCount = signal(0);
 
   // Recent data
   protected readonly recentDvirs = signal<DvirReportDto[]>([]);
   protected readonly recentAccidents = signal<AccidentReportDto[]>([]);
-  protected readonly activeAlerts = signal<EmergencyAlertDto[]>([]);
+  protected readonly recentConditionReports = signal<ConditionReportDto[]>([]);
 
   async ngOnInit(): Promise<void> {
     await this.loadDashboardData();
@@ -60,11 +60,11 @@ export class SafetyDashboardPage implements OnInit {
   private async loadDashboardData(): Promise<void> {
     this.isLoading.set(true);
     try {
-      const [pendingDvirs, dvirs, accidents, alerts] = await Promise.all([
+      const [pendingDvirs, dvirs, accidents, conditionReports] = await Promise.all([
         this.api.invoke(getPendingDvirReviews, {}),
-        this.api.invoke(getDvirReports, { PageSize: 5, OrderBy: "InspectionDate desc" }),
-        this.api.invoke(getAccidentReports, { PageSize: 5, OrderBy: "AccidentDateTime desc" }),
-        this.api.invoke(getActiveEmergencyAlerts, {}),
+        this.api.invoke(getDvirReports, { PageSize: 5, OrderBy: "-InspectionDate" }),
+        this.api.invoke(getAccidentReports, { PageSize: 5, OrderBy: "-AccidentDateTime" }),
+        this.api.invoke(getConditionReports, {}),
       ]);
 
       // Stats
@@ -72,12 +72,12 @@ export class SafetyDashboardPage implements OnInit {
       this.openAccidentsCount.set(
         accidents?.items?.filter((a: AccidentReportDto) => a.status !== "resolved").length ?? 0
       );
-      this.activeAlertsCount.set(alerts?.items?.length ?? 0);
+      this.conditionReportsCount.set(conditionReports?.length ?? 0);
 
       // Recent data
       this.recentDvirs.set(dvirs?.items ?? []);
       this.recentAccidents.set(accidents?.items ?? []);
-      this.activeAlerts.set(alerts?.items ?? []);
+      this.recentConditionReports.set(conditionReports?.slice(0, 5) ?? []);
     } finally {
       this.isLoading.set(false);
     }
@@ -131,11 +131,15 @@ export class SafetyDashboardPage implements OnInit {
   }
 
   protected viewDvir(dvir: DvirReportDto): void {
-    this.router.navigateByUrl(`/safety/dvir/${dvir.id}`);
+    this.router.navigateByUrl(`/inspections/dvir/${dvir.id}`);
   }
 
   protected viewAccident(accident: AccidentReportDto): void {
-    this.router.navigateByUrl(`/safety/accidents/${accident.id}`);
+    this.router.navigateByUrl(`/inspections/accidents/${accident.id}`);
+  }
+
+  protected viewConditionReport(report: ConditionReportDto): void {
+    this.router.navigateByUrl(`/inspections/condition-reports/${report.id}`);
   }
 
   protected navigateTo(route: string): void {

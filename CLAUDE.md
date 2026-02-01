@@ -71,6 +71,20 @@ EventTypeDisplay = eventType switch
 }
 ```
 
+### API Query Sorting
+
+Use `-FieldName` prefix for descending order, plain `FieldName` for ascending. Do NOT use "FieldName desc" or "FieldName asc" syntax.
+
+```typescript
+// Good
+OrderBy: "-CreatedAt"      // Descending
+OrderBy: "Name"            // Ascending
+
+// Bad
+OrderBy: "CreatedAt desc"
+OrderBy: "Name asc"
+```
+
 ## Key Entities
 
 `Tenant`, `User`, `Customer`, `Load`, `Trip`, `Employee/Driver`, `Invoice`, `Payment`, `Truck`, `Document`

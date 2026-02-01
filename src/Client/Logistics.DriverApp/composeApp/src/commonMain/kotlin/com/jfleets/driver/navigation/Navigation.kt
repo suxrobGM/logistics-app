@@ -13,6 +13,7 @@ import com.jfleets.driver.ui.screens.AccountScreen
 import com.jfleets.driver.ui.screens.ConditionReportScreen
 import com.jfleets.driver.ui.screens.ConversationScreen
 import com.jfleets.driver.ui.screens.DashboardScreen
+import com.jfleets.driver.ui.screens.DvirFormScreen
 import com.jfleets.driver.ui.screens.EmployeeSelectScreen
 import com.jfleets.driver.ui.screens.LoadDetailScreen
 import com.jfleets.driver.ui.screens.LoginScreen
@@ -54,6 +55,9 @@ fun createEntryProvider(
             onTripClick = { tripId ->
                 navigator.navigate(TripDetailRoute(tripId))
             },
+            onDvirClick = { truckId ->
+                navigator.navigate(DvirFormRoute(truckId = truckId))
+            },
             onLogout = {
                 navigator.clearAndNavigate(LoginRoute)
             }
@@ -93,6 +97,9 @@ fun createEntryProvider(
             onOpenMaps = onOpenUrl,
             onLoadClick = { loadId ->
                 navigator.navigate(LoadDetailRoute(loadId))
+            },
+            onDvirClick = { tripId ->
+                navigator.navigate(DvirFormRoute(tripId = tripId))
             },
             viewModel = viewModel
         )
@@ -180,6 +187,15 @@ fun createEntryProvider(
         ConditionReportScreen(
             loadId = key.loadId,
             inspectionType = inspectionType,
+            onNavigateBack = { navigator.goBack() }
+        )
+    }
+
+    // DVIR Form Screen
+    entry<DvirFormRoute> { key ->
+        DvirFormScreen(
+            truckId = key.truckId,
+            tripId = key.tripId,
             onNavigateBack = { navigator.goBack() }
         )
     }

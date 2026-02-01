@@ -39,6 +39,7 @@ class ApiFactory(
     val customerApi: CustomerApi by lazy { CustomerApi(baseUrl, httpClient) }
     val documentApi: DocumentApi by lazy { DocumentApi(baseUrl, httpClient) }
     val driverApi: DriverApi by lazy { DriverApi(baseUrl, httpClient) }
+    val dvirApi: DvirApi by lazy { DvirApi(baseUrl, httpClient) }
     val employeeApi: EmployeeApi by lazy { EmployeeApi(baseUrl, httpClient) }
     val inspectionApi: InspectionApi by lazy { InspectionApi(baseUrl, httpClient) }
     val loadApi: LoadApi by lazy { LoadApi(baseUrl, httpClient) }

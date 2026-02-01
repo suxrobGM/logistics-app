@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.LocalShipping
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.Button
@@ -58,6 +59,7 @@ fun TripDetailScreen(
     onNavigateBack: () -> Unit,
     onOpenMaps: (String) -> Unit,
     onLoadClick: (String) -> Unit,
+    onDvirClick: (tripId: String) -> Unit,
     viewModel: TripDetailViewModel
 ) {
     val userSettings = LocalUserSettings.current
@@ -106,6 +108,16 @@ fun TripDetailScreen(
                         Icon(Icons.Default.Map, "Map")
                         Spacer(modifier = Modifier.width(8.dp))
                         Text("View Full Route on Maps")
+                    }
+
+                    // DVIR Inspection Button
+                    OutlinedButton(
+                        onClick = { trip.id?.let { onDvirClick(it) } },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.Assignment, "DVIR")
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Start DVIR Inspection")
                     }
 
                     if (stops.isNotEmpty()) {

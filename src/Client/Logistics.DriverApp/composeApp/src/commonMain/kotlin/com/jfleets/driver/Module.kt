@@ -4,6 +4,7 @@ import com.jfleets.driver.api.ApiFactory
 import com.jfleets.driver.api.CustomerApi
 import com.jfleets.driver.api.DocumentApi
 import com.jfleets.driver.api.DriverApi
+import com.jfleets.driver.api.DvirApi
 import com.jfleets.driver.api.EmployeeApi
 import com.jfleets.driver.api.InspectionApi
 import com.jfleets.driver.api.LoadApi
@@ -22,6 +23,7 @@ import com.jfleets.driver.viewmodel.ConditionReportViewModel
 import com.jfleets.driver.viewmodel.ConversationListViewModel
 import com.jfleets.driver.viewmodel.DashboardViewModel
 import com.jfleets.driver.viewmodel.DocumentCaptureType
+import com.jfleets.driver.viewmodel.DvirFormViewModel
 import com.jfleets.driver.viewmodel.EmployeeSelectViewModel
 import com.jfleets.driver.viewmodel.LoadDetailViewModel
 import com.jfleets.driver.viewmodel.LoginViewModel
@@ -50,6 +52,7 @@ fun commonModule(baseUrl: String) = module {
     single<CustomerApi> { get<ApiFactory>().customerApi }
     single<DocumentApi> { get<ApiFactory>().documentApi }
     single<DriverApi> { get<ApiFactory>().driverApi }
+    single<DvirApi> { get<ApiFactory>().dvirApi }
     single<EmployeeApi> { get<ApiFactory>().employeeApi }
     single<InspectionApi> { get<ApiFactory>().inspectionApi }
     single<LoadApi> { get<ApiFactory>().loadApi }
@@ -73,44 +76,9 @@ fun commonModule(baseUrl: String) = module {
     viewModelOf(::ConversationListViewModel)
     viewModelOf(::EmployeeSelectViewModel)
     viewModelOf(::TripsViewModel)
-
-    // TripDetailViewModel with tripId parameter
-    viewModel { params ->
-        TripDetailViewModel(
-            tripApi = get(),
-            tripId = params.get<String>()
-        )
-    }
-
-    // ChatViewModel with conversationId parameter
-    viewModel { params ->
-        ChatViewModel(
-            messageApi = get(),
-            preferencesManager = get(),
-            messagingService = get(),
-            conversationStateManager = get(),
-            conversationId = params.get<String>()
-        )
-    }
-
-    // PodCaptureViewModel with parameters
-    viewModel { params ->
-        PodCaptureViewModel(
-            documentApi = get(),
-            locationService = get(),
-            loadId = params.get<String>(),
-            tripStopId = params.getOrNull<String>(),
-            captureType = params.get<DocumentCaptureType>()
-        )
-    }
-
-    // ConditionReportViewModel with parameters
-    viewModel { params ->
-        ConditionReportViewModel(
-            inspectionApi = get(),
-            locationService = get(),
-            loadId = params.get<String>(),
-            inspectionType = params.get<InspectionType>()
-        )
-    }
+    viewModelOf(::TripDetailViewModel)
+    viewModelOf(::ChatViewModel)
+    viewModelOf(::PodCaptureViewModel)
+    viewModelOf(::ConditionReportViewModel)
+    viewModelOf(::DvirFormViewModel)
 }

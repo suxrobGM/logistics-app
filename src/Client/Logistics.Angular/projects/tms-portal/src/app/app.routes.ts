@@ -112,7 +112,7 @@ export const appRoutes: Routes = [
     loadChildren: () =>
       import("./pages/inspections/inspection.routes").then((m) => m.inspectionRoutes),
     data: {
-      breadcrumb: "Inspections",
+      breadcrumb: "Inspections & Safety",
     },
   },
   {
@@ -135,13 +135,6 @@ export const appRoutes: Routes = [
       import("./pages/timesheets/timesheets.routes").then((m) => m.timesheetsRoutes),
     data: {
       breadcrumb: "Timesheets",
-    },
-  },
-  {
-    path: "safety",
-    loadChildren: () => import("./pages/safety/safety.routes").then((m) => m.safetyRoutes),
-    data: {
-      breadcrumb: "Safety",
     },
   },
   {

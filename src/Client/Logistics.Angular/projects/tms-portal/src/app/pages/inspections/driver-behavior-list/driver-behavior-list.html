@@ -51,12 +51,15 @@
         </tr>
       </ng-template>
       <ng-template #body let-event>
-        <tr class="cursor-pointer hover:bg-hover" (click)="onRowClick(event)">
+        <tr class="hover:bg-hover cursor-pointer" (click)="onRowClick(event)">
           <td>{{ event.occurredAt | date: "short" }}</td>
           <td>{{ event.driverName }}</td>
           <td>{{ event.truckNumber ?? "-" }}</td>
           <td>
-            <p-tag [value]="event.eventTypeDisplay" [severity]="getEventTypeSeverity(event.eventType)" />
+            <p-tag
+              [value]="event.eventTypeDisplay"
+              [severity]="getEventTypeSeverity(event.eventType)"
+            />
           </td>
           <td>{{ event.location ?? "-" }}</td>
           <td>{{ getSpeedDisplay(event) }}</td>
@@ -72,7 +75,11 @@
             }
           </td>
           <td>
-            <p-button icon="pi pi-eye" [text]="true" (click)="$event.stopPropagation(); openReviewDialog(event)" />
+            <p-button
+              icon="pi pi-eye"
+              [text]="true"
+              (click)="$event.stopPropagation(); openReviewDialog(event)"
+            />
           </td>
         </tr>
       </ng-template>
@@ -103,8 +110,12 @@
         <div>
           <div class="text-muted mb-1 text-sm">Event Type</div>
           <p-tag
-            [value]="selectedEvent()!.eventTypeDisplay"
-            [severity]="getEventTypeSeverity(selectedEvent()!.eventType)"
+            [value]="selectedEvent()!.eventTypeDisplay ?? ''"
+            [severity]="
+              selectedEvent()!.eventType
+                ? getEventTypeSeverity(selectedEvent()!.eventType!)
+                : 'secondary'
+            "
           />
         </div>
         <div>
@@ -134,29 +145,31 @@
         </div>
       }
 
-      @if (selectedEvent()!.speedMph != null) {
+      @if (selectedEvent()!.speedMph) {
         <div class="grid grid-cols-2 gap-4">
           <div>
             <div class="text-muted mb-1 text-sm">Speed</div>
             <div class="font-medium">{{ selectedEvent()!.speedMph | number: "1.0-0" }} mph</div>
           </div>
-          @if (selectedEvent()!.speedLimitMph != null) {
+          @if (selectedEvent()!.speedLimitMph) {
             <div>
               <div class="text-muted mb-1 text-sm">Speed Limit</div>
-              <div class="font-medium">{{ selectedEvent()!.speedLimitMph | number: "1.0-0" }} mph</div>
+              <div class="font-medium">
+                {{ selectedEvent()!.speedLimitMph | number: "1.0-0" }} mph
+              </div>
             </div>
           }
         </div>
       }
 
-      @if (selectedEvent()!.gForce != null) {
+      @if (selectedEvent()!.gForce) {
         <div>
           <div class="text-muted mb-1 text-sm">G-Force</div>
           <div class="font-medium">{{ selectedEvent()!.gForce | number: "1.2-2" }} G</div>
         </div>
       }
 
-      @if (selectedEvent()!.durationSeconds != null) {
+      @if (selectedEvent()!.durationSeconds) {
         <div>
           <div class="text-muted mb-1 text-sm">Duration</div>
           <div class="font-medium">{{ selectedEvent()!.durationSeconds }} seconds</div>
@@ -216,7 +229,12 @@
     <ng-template pTemplate="footer">
       <p-button label="Close" [outlined]="true" (click)="closeReviewDialog()" />
       @if (!selectedEvent()!.isReviewed) {
-        <p-button label="Submit Review" icon="pi pi-check" [loading]="isReviewing()" (click)="submitReview()" />
+        <p-button
+          label="Submit Review"
+          icon="pi pi-check"
+          [loading]="isReviewing()"
+          (click)="submitReview()"
+        />
       }
     </ng-template>
   }
