@@ -31,7 +31,7 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
 
         if (users.Count == 0)
         {
-            Logger.LogWarning("No users available to create employees from");
+            logger.LogWarning("No users available to create employees from");
             LogCompleted(0);
             return;
         }
@@ -103,7 +103,7 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
         user.TenantId = tenantId;
         await employeeRepository.AddAsync(employee);
         employee.Role = role;
-        Logger.LogInformation("Created employee {Name} with role {Role}", user.UserName, role.Name);
+        logger.LogInformation("Created employee {Name} with role {Role}", user.UserName, role.Name);
         return employee;
     }
 }

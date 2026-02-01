@@ -13,9 +13,8 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// </summary>
 internal class TripSeeder(ILogger<TripSeeder> logger) : SeederBase(logger)
 {
-    private readonly Random _random = new();
-    private readonly DateTime _startDate = DateTime.UtcNow.AddMonths(-2);
-    private readonly DateTime _endDate = DateTime.UtcNow.AddDays(-1);
+    private readonly DateTime startDate = DateTime.UtcNow.AddMonths(-2);
+    private readonly DateTime endDate = DateTime.UtcNow.AddDays(-1);
 
     public override string Name => nameof(TripSeeder);
     public override SeederType Type => SeederType.FakeData;
@@ -41,7 +40,7 @@ internal class TripSeeder(ILogger<TripSeeder> logger) : SeederBase(logger)
 
         if (carHaulerTrucks.Count == 0)
         {
-            Logger.LogWarning("No car hauler trucks available for trips");
+            logger.LogWarning("No car hauler trucks available for trips");
             LogCompleted(0);
             return;
         }
@@ -53,13 +52,13 @@ internal class TripSeeder(ILogger<TripSeeder> logger) : SeederBase(logger)
 
         for (var tripIdx = 0; tripIdx < 30; tripIdx++)
         {
-            var truck = _random.Pick(carHaulerTrucks);
-            var dispatcher = _random.Pick(employees.Dispatchers);
-            var customer = _random.Pick(customers);
+            var truck = random.Pick(carHaulerTrucks);
+            var dispatcher = random.Pick(employees.Dispatchers);
+            var customer = random.Pick(customers);
 
-            var loadsCount = _random.Next(2, 5);
+            var loadsCount = random.Next(2, 5);
             var maxStart = RoutePoints.Points.Length - (loadsCount + 1);
-            var startIndex = _random.Next(0, maxStart + 1);
+            var startIndex = random.Next(0, maxStart + 1);
             var loads = new List<Load>();
 
             for (var leg = 0; leg < loadsCount; leg++)
@@ -79,7 +78,7 @@ internal class TripSeeder(ILogger<TripSeeder> logger) : SeederBase(logger)
                 invoice.SentAt = deliveredAt.AddDays(1);
 
                 // Randomly mark some invoices as paid (80% chance)
-                var isPaid = _random.NextDouble() < 0.8;
+                var isPaid = random.NextDouble() < 0.8;
                 if (isPaid)
                 {
                     var payment = CreatePayment(load, tenant);
@@ -98,7 +97,7 @@ internal class TripSeeder(ILogger<TripSeeder> logger) : SeederBase(logger)
 
             await tripRepo.AddAsync(trip, cancellationToken);
             count++;
-            Logger.LogInformation("Created Trip {Trip} with {LoadCount} loads", trip.Name, loadsCount);
+            logger.LogInformation("Created Trip {Trip} with {LoadCount} loads", trip.Name, loadsCount);
         }
 
         await context.TenantUnitOfWork.SaveChangesAsync(cancellationToken);
@@ -118,7 +117,7 @@ internal class TripSeeder(ILogger<TripSeeder> logger) : SeederBase(logger)
             Description = $"Payment for Load #{load.Number}",
             BillingAddress = tenant.CompanyAddress,
             ReferenceNumber = $"SEED-{load.Number:D6}",
-            RecordedAt = deliveredAt.AddDays(_random.Next(5, 25))
+            RecordedAt = deliveredAt.AddDays(random.Next(5, 25))
         };
     }
 
@@ -130,10 +129,10 @@ internal class TripSeeder(ILogger<TripSeeder> logger) : SeederBase(logger)
         Employee dispatcher,
         Customer customer)
     {
-        var dispatchedAt = _random.UtcDate(_startDate, _endDate);
-        var pickedUpAt = dispatchedAt.AddHours(_random.Next(1, 12));
-        var deliveredAt = pickedUpAt.AddHours(_random.Next(4, 48));
-        var deliveryCost = _random.Next(1_000, 3_000);
+        var dispatchedAt = random.UtcDate(startDate, endDate);
+        var pickedUpAt = dispatchedAt.AddHours(random.Next(1, 12));
+        var deliveredAt = pickedUpAt.AddHours(random.Next(4, 48));
+        var deliveryCost = random.Next(1_000, 3_000);
         var originLocation = new GeoPoint(origin.Longitude, origin.Latitude);
         var destLocation = new GeoPoint(dest.Longitude, dest.Latitude);
 

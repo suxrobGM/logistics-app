@@ -29,7 +29,7 @@ internal class CustomerUserSeeder(ILogger<CustomerUserSeeder> logger) : SeederBa
         var portalUsers = context.Configuration.GetSection("CustomerPortalUsers").Get<CustomerPortalUserData[]>();
         if (portalUsers is null || portalUsers.Length == 0)
         {
-            Logger.LogWarning("No customer portal users found in configuration");
+            logger.LogWarning("No customer portal users found in configuration");
             LogCompleted(0);
             return;
         }
@@ -65,7 +65,7 @@ internal class CustomerUserSeeder(ILogger<CustomerUserSeeder> logger) : SeederBa
                         $"Failed to create portal user {portalUserData.Email}: {result.Errors.First().Description}");
                 }
 
-                Logger.LogInformation("Created portal user {Email}", portalUserData.Email);
+                logger.LogInformation("Created portal user {Email}", portalUserData.Email);
             }
 
             // Create CustomerUser for each associated customer
@@ -74,7 +74,7 @@ internal class CustomerUserSeeder(ILogger<CustomerUserSeeder> logger) : SeederBa
                 var customer = customers.FirstOrDefault(c => c.Name == customerName);
                 if (customer is null)
                 {
-                    Logger.LogWarning("Customer '{CustomerName}' not found for portal user {Email}",
+                    logger.LogWarning("Customer '{CustomerName}' not found for portal user {Email}",
                         customerName, portalUserData.Email);
                     continue;
                 }
@@ -97,7 +97,7 @@ internal class CustomerUserSeeder(ILogger<CustomerUserSeeder> logger) : SeederBa
                     };
 
                     await customerUserRepository.AddAsync(customerUser, cancellationToken);
-                    Logger.LogInformation("Created CustomerUser linking {Email} to {CustomerName}",
+                    logger.LogInformation("Created CustomerUser linking {Email} to {CustomerName}",
                         portalUserData.Email, customerName);
                 }
                 else
@@ -127,7 +127,7 @@ internal class CustomerUserSeeder(ILogger<CustomerUserSeeder> logger) : SeederBa
                         };
 
                         await tenantAccessRepository.AddAsync(tenantAccess, cancellationToken);
-                        Logger.LogInformation("Created UserTenantAccess for {Email} to tenant {TenantName}",
+                        logger.LogInformation("Created UserTenantAccess for {Email} to tenant {TenantName}",
                             portalUserData.Email, tenant.Name);
                     }
 

@@ -31,7 +31,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         {
             await repo.AddAsync(standardPlan, cancellationToken);
             await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
-            Logger.LogInformation("Created subscription plan '{PlanName}'", standardPlan.Name);
+            logger.LogInformation("Created subscription plan '{PlanName}'", standardPlan.Name);
         }
         else
         {
@@ -52,11 +52,11 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
             if (updated)
             {
                 await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
-                Logger.LogInformation("Updated subscription plan '{PlanName}'", standardPlan.Name);
+                logger.LogInformation("Updated subscription plan '{PlanName}'", standardPlan.Name);
             }
             else
             {
-                Logger.LogInformation("Subscription plan '{PlanName}' already up to date", standardPlan.Name);
+                logger.LogInformation("Subscription plan '{PlanName}' already up to date", standardPlan.Name);
             }
         }
 

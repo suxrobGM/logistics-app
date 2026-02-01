@@ -34,7 +34,7 @@ internal class UserSeeder(ILogger<UserSeeder> logger) : SeederBase(logger)
 
         if (testUsers is null)
         {
-            Logger.LogWarning("No test users found in configuration");
+            logger.LogWarning("No test users found in configuration");
             context.CreatedUsers = usersList;
             LogCompleted();
             return;
@@ -67,7 +67,7 @@ internal class UserSeeder(ILogger<UserSeeder> logger) : SeederBase(logger)
             }
 
             usersList.Add(user);
-            Logger.LogInformation("Created user {FirstName} {LastName}", fakeUser.FirstName, fakeUser.LastName);
+            logger.LogInformation("Created user {FirstName} {LastName}", fakeUser.FirstName, fakeUser.LastName);
         }
 
         context.CreatedUsers = usersList;

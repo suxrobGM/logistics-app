@@ -49,7 +49,7 @@ internal class DefaultTenantSeeder(ILogger<DefaultTenantSeeder> logger) : Seeder
             await repo.AddAsync(defaultTenant, cancellationToken);
             await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
             await databaseProvider.CreateDatabaseAsync(defaultTenant.ConnectionString);
-            Logger.LogInformation("Created default tenant with connection string: {ConnectionString}",
+            logger.LogInformation("Created default tenant with connection string: {ConnectionString}",
                 defaultTenant.ConnectionString);
 
             context.DefaultTenant = defaultTenant;
@@ -73,11 +73,11 @@ internal class DefaultTenantSeeder(ILogger<DefaultTenantSeeder> logger) : Seeder
             if (updated)
             {
                 await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
-                Logger.LogInformation("Updated default tenant");
+                logger.LogInformation("Updated default tenant");
             }
             else
             {
-                Logger.LogInformation("Default tenant already up to date");
+                logger.LogInformation("Default tenant already up to date");
             }
 
             context.DefaultTenant = existingTenant;

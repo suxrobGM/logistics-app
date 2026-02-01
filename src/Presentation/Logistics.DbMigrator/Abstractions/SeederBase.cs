@@ -7,7 +7,8 @@ namespace Logistics.DbMigrator.Abstractions;
 /// </summary>
 public abstract class SeederBase(ILogger logger) : ISeeder
 {
-    protected readonly ILogger Logger = logger;
+    protected readonly ILogger logger = logger;
+    protected readonly Random random = new();
 
     public abstract string Name { get; }
     public abstract SeederType Type { get; }
@@ -40,23 +41,23 @@ public abstract class SeederBase(ILogger logger) : ISeeder
 
     protected void LogSkipping(string reason)
     {
-        Logger.LogInformation("Skipping {SeederName}: {Reason}", Name, reason);
+        logger.LogInformation("Skipping {SeederName}: {Reason}", Name, reason);
     }
 
     protected void LogStarting()
     {
-        Logger.LogInformation("Starting {SeederName}...", Name);
+        logger.LogInformation("Starting {SeederName}...", Name);
     }
 
     protected void LogCompleted(int count = 0)
     {
         if (count > 0)
         {
-            Logger.LogInformation("Completed {SeederName}: {Count} entities processed", Name, count);
+            logger.LogInformation("Completed {SeederName}: {Count} entities processed", Name, count);
         }
         else
         {
-            Logger.LogInformation("Completed {SeederName}", Name);
+            logger.LogInformation("Completed {SeederName}", Name);
         }
     }
 }

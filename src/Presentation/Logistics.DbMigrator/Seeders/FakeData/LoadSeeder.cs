@@ -14,7 +14,6 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 internal class LoadSeeder(ILogger<LoadSeeder> logger) : SeederBase(logger)
 {
     private readonly DateTime endDate = DateTime.UtcNow.AddDays(-1);
-    private readonly Random random = new();
     private readonly DateTime startDate = DateTime.UtcNow.AddMonths(-2);
 
     public override string Name => nameof(LoadSeeder);
@@ -41,7 +40,7 @@ internal class LoadSeeder(ILogger<LoadSeeder> logger) : SeederBase(logger)
 
         if (dryVanTrucks.Count == 0)
         {
-            Logger.LogWarning("No freight trucks available for loads");
+            logger.LogWarning("No freight trucks available for loads");
             LogCompleted();
             return;
         }

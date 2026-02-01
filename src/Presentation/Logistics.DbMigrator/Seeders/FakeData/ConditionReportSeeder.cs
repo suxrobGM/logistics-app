@@ -14,10 +14,8 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// </summary>
 internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : SeederBase(logger)
 {
-    private readonly Random _random = new();
-
     // Sample VIN data with decoded vehicle info
-    private static readonly (string Vin, int Year, string Make, string Model, string BodyClass)[] SampleVehicles =
+    private static readonly (string Vin, int Year, string Make, string Model, string BodyClass)[] sampleVehicles =
     [
         ("1HGCM82633A004352", 2020, "Honda", "Accord", "Sedan/Saloon"),
         ("5YJSA1E26MF123456", 2021, "Tesla", "Model S", "Hatchback"),
@@ -33,7 +31,7 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
         ("5NPEB4AC1BH123456", 2022, "Hyundai", "Sonata", "Sedan/Saloon")
     ];
 
-    private static readonly string[] DamageDescriptions =
+    private static readonly string[] damageDescriptions =
     [
         "Minor scratch on door panel",
         "Small dent on rear bumper",
@@ -45,7 +43,7 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
         "Small crack in taillight cover"
     ];
 
-    private static readonly string[] DamageSeverities = ["minor", "moderate", "severe"];
+    private static readonly string[] damageSeverities = ["minor", "moderate", "severe"];
 
     public override string Name => nameof(ConditionReportSeeder);
     public override SeederType Type => SeederType.FakeData;
@@ -70,7 +68,7 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
         var loads = await loadRepository.GetListAsync(ct: cancellationToken);
         if (loads.Count == 0)
         {
-            Logger.LogWarning("No loads available for condition report seeding");
+            logger.LogWarning("No loads available for condition report seeding");
             LogCompleted(0);
             return;
         }
@@ -80,7 +78,7 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
             ?? await employeeRepository.GetListAsync(e => e.Role != null && e.Role.Name == TenantRoles.Driver, ct: cancellationToken);
         if (drivers.Count == 0)
         {
-            Logger.LogWarning("No drivers available for condition report seeding");
+            logger.LogWarning("No drivers available for condition report seeding");
             LogCompleted(0);
             return;
         }
@@ -90,9 +88,9 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
         // Create condition reports for about 40% of loads
         foreach (var load in loads.Take((int)(loads.Count * 0.4)))
         {
-            var driver = _random.Pick(drivers);
-            var vehicle = _random.Pick(SampleVehicles);
-            var captureLocation = _random.Pick(RoutePoints.Points);
+            var driver = random.Pick(drivers);
+            var vehicle = random.Pick(sampleVehicles);
+            var captureLocation = random.Pick(RoutePoints.Points);
 
             // Create pickup inspection
             var pickupReport = CreateConditionReport(
@@ -101,21 +99,21 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
                 vehicle,
                 InspectionType.Pickup,
                 captureLocation,
-                load.PickedUpAt ?? load.DispatchedAt ?? DateTime.UtcNow.AddDays(-_random.Next(1, 30)));
+                load.PickedUpAt ?? load.DispatchedAt ?? DateTime.UtcNow.AddDays(-random.Next(1, 30)));
             await reportRepository.AddAsync(pickupReport, cancellationToken);
             count++;
 
             // Create delivery inspection (50% chance to have delivery inspection)
-            if (_random.NextDouble() > 0.5)
+            if (random.NextDouble() > 0.5)
             {
-                var deliveryLocation = _random.Pick(RoutePoints.Points.Where(p => p != captureLocation).ToArray());
+                var deliveryLocation = random.Pick(RoutePoints.Points.Where(p => p != captureLocation).ToArray());
                 var deliveryReport = CreateConditionReport(
                     load,
                     driver,
                     vehicle,
                     InspectionType.Delivery,
                     deliveryLocation,
-                    load.DeliveredAt ?? load.PickedUpAt?.AddHours(_random.Next(4, 48)) ?? DateTime.UtcNow.AddDays(-_random.Next(1, 15)));
+                    load.DeliveredAt ?? load.PickedUpAt?.AddHours(random.Next(4, 48)) ?? DateTime.UtcNow.AddDays(-random.Next(1, 15)));
                 await reportRepository.AddAsync(deliveryReport, cancellationToken);
                 count++;
             }
@@ -142,8 +140,8 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
             inspectedById: driver.Id,
             damageMarkersJson: damageMarkers.Count > 0 ? JsonSerializer.Serialize(damageMarkers) : null,
             notes: GenerateNotes(type, damageMarkers.Count),
-            latitude: location.Latitude + (_random.NextDouble() - 0.5) * 0.01,
-            longitude: location.Longitude + (_random.NextDouble() - 0.5) * 0.01
+            latitude: location.Latitude + (random.NextDouble() - 0.5) * 0.01,
+            longitude: location.Longitude + (random.NextDouble() - 0.5) * 0.01
         );
 
         // Set vehicle info from VIN decode
@@ -162,22 +160,22 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
         var markers = new List<object>();
 
         // 60% chance of no damage, 30% chance of 1-2 damages, 10% chance of 3+ damages
-        var damageChance = _random.NextDouble();
+        var damageChance = random.NextDouble();
         var damageCount = damageChance switch
         {
             < 0.6 => 0,
-            < 0.9 => _random.Next(1, 3),
-            _ => _random.Next(3, 6)
+            < 0.9 => random.Next(1, 3),
+            _ => random.Next(3, 6)
         };
 
         for (var i = 0; i < damageCount; i++)
         {
             markers.Add(new
             {
-                x = Math.Round(_random.NextDouble(), 2),
-                y = Math.Round(_random.NextDouble(), 2),
-                description = _random.Pick(DamageDescriptions),
-                severity = _random.Pick(DamageSeverities)
+                x = Math.Round(random.NextDouble(), 2),
+                y = Math.Round(random.NextDouble(), 2),
+                description = random.Pick(damageDescriptions),
+                severity = random.Pick(damageSeverities)
             });
         }
 
@@ -201,7 +199,7 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
     private string GenerateFakeSignature()
     {
         var signatureBytes = new byte[100];
-        _random.NextBytes(signatureBytes);
+        random.NextBytes(signatureBytes);
         return Convert.ToBase64String(signatureBytes);
     }
 }

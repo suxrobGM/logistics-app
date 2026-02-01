@@ -1,6 +1,7 @@
+import type { SelectOption } from "@logistics/shared";
 import type { AccidentSeverity, AccidentType } from "@logistics/shared/api";
 
-export const ACCIDENT_TYPE_OPTIONS = [
+export const ACCIDENT_TYPE_OPTIONS: SelectOption<AccidentType>[] = [
   { label: "Collision", value: "collision" },
   { label: "Rollover", value: "rollover" },
   { label: "Jackknife", value: "jackknife" },
@@ -13,14 +14,14 @@ export const ACCIDENT_TYPE_OPTIONS = [
   { label: "Property Damage Only", value: "property_damage_only" },
   { label: "Cargo Spill", value: "cargo_spill" },
   { label: "Other", value: "other" },
-] as const;
+];
 
-export const ACCIDENT_SEVERITY_OPTIONS = [
+export const ACCIDENT_SEVERITY_OPTIONS: SelectOption<AccidentSeverity>[] = [
   { label: "Minor", value: "minor" },
   { label: "Moderate", value: "moderate" },
   { label: "Severe", value: "severe" },
   { label: "Fatal", value: "fatal" },
-] as const;
+];
 
 export function getAccidentTypeLabel(type: AccidentType | undefined): string {
   return ACCIDENT_TYPE_OPTIONS.find((o) => o.value === type)?.label ?? type ?? "Unknown";

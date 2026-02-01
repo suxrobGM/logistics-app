@@ -28,6 +28,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISeeder, LoadSeeder>();
         services.AddScoped<ISeeder, DocumentSeeder>();
         services.AddScoped<ISeeder, ConditionReportSeeder>();
+        services.AddScoped<ISeeder, DvirReportSeeder>();
+        services.AddScoped<ISeeder, DriverBehaviorEventSeeder>();
+        services.AddScoped<ISeeder, AccidentReportSeeder>();
         services.AddScoped<ISeeder, ExpenseSeeder>();
         services.AddScoped<ISeeder, TripSeeder>();
         services.AddScoped<ISeeder, NotificationSeeder>();

@@ -12,11 +12,10 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// </summary>
 internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
 {
-    private readonly Random _random = new();
-    private readonly DateTime _startDate = DateTime.UtcNow.AddMonths(-3);
-    private readonly DateTime _endDate = DateTime.UtcNow.AddDays(-1);
+    private readonly DateTime startDate = DateTime.UtcNow.AddMonths(-3);
+    private readonly DateTime endDate = DateTime.UtcNow.AddDays(-1);
 
-    private static readonly string[] VendorNames =
+    private static readonly string[] vendorNames =
     [
         "Office Depot", "Staples", "Amazon", "Microsoft", "Google Cloud",
         "State Farm Insurance", "Progressive", "Legal Shield", "Shell",
@@ -25,10 +24,10 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
         "Joe's Body Shop", "Premier Collision Center", "Elite Auto Body"
     ];
 
-    private static readonly CompanyExpenseCategory[] CompanyCategories =
+    private static readonly CompanyExpenseCategory[] companyCategories =
         Enum.GetValues<CompanyExpenseCategory>();
 
-    private static readonly TruckExpenseCategory[] TruckCategories =
+    private static readonly TruckExpenseCategory[] truckCategories =
         Enum.GetValues<TruckExpenseCategory>();
 
     public override string Name => nameof(ExpenseSeeder);
@@ -53,7 +52,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
         var trucks = context.CreatedTrucks ?? await truckRepository.GetListAsync(ct: cancellationToken);
         if (trucks.Count == 0)
         {
-            Logger.LogWarning("No trucks available for expense seeding");
+            logger.LogWarning("No trucks available for expense seeding");
             LogCompleted(0);
             return;
         }
@@ -70,7 +69,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
         // Seed 30 truck expenses
         for (var i = 0; i < 30; i++)
         {
-            var truck = _random.Pick(trucks);
+            var truck = random.Pick(trucks);
             var expense = CreateTruckExpense(truck);
             await expenseRepository.AddAsync(expense, cancellationToken);
             count++;
@@ -79,7 +78,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
         // Seed 10 body shop expenses
         for (var i = 0; i < 10; i++)
         {
-            var truck = _random.Pick(trucks);
+            var truck = random.Pick(trucks);
             var expense = CreateBodyShopExpense(truck);
             await expenseRepository.AddAsync(expense, cancellationToken);
             count++;
@@ -91,22 +90,22 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
 
     private CompanyExpense CreateCompanyExpense()
     {
-        var expenseDate = _random.UtcDate(_startDate, _endDate);
-        var category = _random.Pick(CompanyCategories);
+        var expenseDate = random.UtcDate(startDate, endDate);
+        var category = random.Pick(companyCategories);
         var amount = category switch
         {
-            CompanyExpenseCategory.Office => _random.Next(50, 500),
-            CompanyExpenseCategory.Software => _random.Next(100, 2000),
-            CompanyExpenseCategory.Insurance => _random.Next(500, 5000),
-            CompanyExpenseCategory.Legal => _random.Next(200, 3000),
-            CompanyExpenseCategory.Travel => _random.Next(100, 1500),
-            _ => _random.Next(50, 1000)
+            CompanyExpenseCategory.Office => random.Next(50, 500),
+            CompanyExpenseCategory.Software => random.Next(100, 2000),
+            CompanyExpenseCategory.Insurance => random.Next(500, 5000),
+            CompanyExpenseCategory.Legal => random.Next(200, 3000),
+            CompanyExpenseCategory.Travel => random.Next(100, 1500),
+            _ => random.Next(50, 1000)
         };
 
         var expense = new CompanyExpense
         {
             Amount = new Money { Amount = amount, Currency = "USD" },
-            VendorName = _random.Pick(VendorNames),
+            VendorName = random.Pick(vendorNames),
             ExpenseDate = expenseDate,
             ReceiptBlobPath = $"receipts/company/{Guid.NewGuid()}.pdf",
             Notes = $"Company expense for {category}",
@@ -119,29 +118,29 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
 
     private TruckExpense CreateTruckExpense(Truck truck)
     {
-        var expenseDate = _random.UtcDate(_startDate, _endDate);
-        var category = _random.Pick(TruckCategories);
+        var expenseDate = random.UtcDate(startDate, endDate);
+        var category = random.Pick(truckCategories);
         var amount = category switch
         {
-            TruckExpenseCategory.Fuel => _random.Next(200, 800),
-            TruckExpenseCategory.Maintenance => _random.Next(100, 2000),
-            TruckExpenseCategory.Tires => _random.Next(500, 3000),
-            TruckExpenseCategory.Registration => _random.Next(100, 500),
-            TruckExpenseCategory.Toll => _random.Next(10, 100),
-            TruckExpenseCategory.Parking => _random.Next(10, 50),
-            _ => _random.Next(50, 500)
+            TruckExpenseCategory.Fuel => random.Next(200, 800),
+            TruckExpenseCategory.Maintenance => random.Next(100, 2000),
+            TruckExpenseCategory.Tires => random.Next(500, 3000),
+            TruckExpenseCategory.Registration => random.Next(100, 500),
+            TruckExpenseCategory.Toll => random.Next(10, 100),
+            TruckExpenseCategory.Parking => random.Next(10, 50),
+            _ => random.Next(50, 500)
         };
 
         var expense = new TruckExpense
         {
             Amount = new Money { Amount = amount, Currency = "USD" },
-            VendorName = _random.Pick(VendorNames),
+            VendorName = random.Pick(vendorNames),
             ExpenseDate = expenseDate,
             ReceiptBlobPath = $"receipts/truck/{Guid.NewGuid()}.pdf",
             Notes = $"Truck expense for {truck.Number}",
             TruckId = truck.Id,
             Category = category,
-            OdometerReading = category == TruckExpenseCategory.Fuel ? _random.Next(100000, 500000) : null,
+            OdometerReading = category == TruckExpenseCategory.Fuel ? random.Next(100000, 500000) : null,
             Status = GetRandomStatus()
         };
 
@@ -150,8 +149,8 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
 
     private BodyShopExpense CreateBodyShopExpense(Truck truck)
     {
-        var expenseDate = _random.UtcDate(_startDate, _endDate);
-        var completionDate = expenseDate.AddDays(_random.Next(3, 14));
+        var expenseDate = random.UtcDate(startDate, endDate);
+        var completionDate = expenseDate.AddDays(random.Next(3, 14));
 
         var repairDescriptions = new[]
         {
@@ -166,17 +165,17 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
 
         var expense = new BodyShopExpense
         {
-            Amount = new Money { Amount = _random.Next(1000, 8000), Currency = "USD" },
-            VendorName = _random.Pick(["Joe's Body Shop", "Premier Collision Center", "Elite Auto Body", "Quality Auto Repair"]),
+            Amount = new Money { Amount = random.Next(1000, 8000), Currency = "USD" },
+            VendorName = random.Pick(["Joe's Body Shop", "Premier Collision Center", "Elite Auto Body", "Quality Auto Repair"]),
             ExpenseDate = expenseDate,
             ReceiptBlobPath = $"receipts/bodyshop/{Guid.NewGuid()}.pdf",
             Notes = $"Body shop repair for truck {truck.Number}",
             TruckId = truck.Id,
             VendorAddress = "123 Auto Repair Lane, Dallas, TX 75001",
             VendorPhone = "(555) 123-4567",
-            RepairDescription = _random.Pick(repairDescriptions),
+            RepairDescription = random.Pick(repairDescriptions),
             EstimatedCompletionDate = completionDate,
-            ActualCompletionDate = completionDate.AddDays(_random.Next(-2, 3)),
+            ActualCompletionDate = completionDate.AddDays(random.Next(-2, 3)),
             Status = GetRandomStatus()
         };
 
@@ -186,6 +185,6 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
     private ExpenseStatus GetRandomStatus()
     {
         var statuses = new[] { ExpenseStatus.Pending, ExpenseStatus.Approved, ExpenseStatus.Approved, ExpenseStatus.Paid };
-        return _random.Pick(statuses);
+        return random.Pick(statuses);
     }
 }

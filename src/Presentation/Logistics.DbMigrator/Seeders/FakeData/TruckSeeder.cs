@@ -11,8 +11,6 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// </summary>
 internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
 {
-    private readonly Random _random = new();
-
     public override string Name => nameof(TruckSeeder);
     public override SeederType Type => SeederType.FakeData;
     public override int Order => 130;
@@ -32,7 +30,7 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
 
         if (drivers.Count == 0)
         {
-            Logger.LogWarning("No drivers available to assign trucks to");
+            logger.LogWarning("No drivers available to assign trucks to");
             context.CreatedTrucks = [];
             LogCompleted(0);
             return;
@@ -44,14 +42,14 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
 
         foreach (var driver in drivers)
         {
-            var truckType = _random.Pick([TruckType.CarHauler, TruckType.FreightTruck]);
+            var truckType = random.Pick([TruckType.CarHauler, TruckType.FreightTruck]);
             var truck = Truck.Create(truckNumber.ToString(), truckType, driver);
             truck.VehicleCapacity = truckType == TruckType.CarHauler ? 7 : 0;
 
             truckNumber++;
             trucksList.Add(truck);
             await truckRepository.AddAsync(truck, cancellationToken);
-            Logger.LogInformation("Created truck {Number} of type {Type}", truck.Number, truck.Type);
+            logger.LogInformation("Created truck {Number} of type {Type}", truck.Number, truck.Type);
         }
 
         await context.TenantUnitOfWork.SaveChangesAsync(cancellationToken);

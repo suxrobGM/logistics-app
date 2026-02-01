@@ -40,7 +40,7 @@ internal class SuperAdminSeeder(ILogger<SuperAdminSeeder> logger) : SeederBase(l
                     $"Failed to create super admin: {result.Errors.First().Description}");
             }
 
-            Logger.LogInformation("Created super admin '{Admin}'", superAdmin.UserName);
+            logger.LogInformation("Created super admin '{Admin}'", superAdmin.UserName);
         }
         else
         {
@@ -61,7 +61,7 @@ internal class SuperAdminSeeder(ILogger<SuperAdminSeeder> logger) : SeederBase(l
             if (updated)
             {
                 await userManager.UpdateAsync(superAdmin);
-                Logger.LogInformation("Updated super admin '{Admin}'", superAdmin.UserName);
+                logger.LogInformation("Updated super admin '{Admin}'", superAdmin.UserName);
             }
         }
 
@@ -69,7 +69,7 @@ internal class SuperAdminSeeder(ILogger<SuperAdminSeeder> logger) : SeederBase(l
         if (!hasSuperAdminRole)
         {
             await userManager.AddToRoleAsync(superAdmin, AppRoles.SuperAdmin);
-            Logger.LogInformation("Added '{Role}' role to user '{Admin}'", AppRoles.SuperAdmin, superAdmin.UserName);
+            logger.LogInformation("Added '{Role}' role to user '{Admin}'", AppRoles.SuperAdmin, superAdmin.UserName);
         }
 
         LogCompleted();

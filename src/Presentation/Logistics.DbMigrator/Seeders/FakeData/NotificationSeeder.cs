@@ -10,8 +10,6 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// </summary>
 internal class NotificationSeeder(ILogger<NotificationSeeder> logger) : SeederBase(logger)
 {
-    private readonly Random _random = new();
-
     public override string Name => nameof(NotificationSeeder);
     public override SeederType Type => SeederType.FakeData;
     public override int Order => 160;
@@ -33,12 +31,12 @@ internal class NotificationSeeder(ILogger<NotificationSeeder> logger) : SeederBa
                 Title = $"Test notification {i}",
                 Message = $"Notification {i} description",
                 CreatedDate = DateTime.SpecifyKind(
-                    _random.UtcDate(DateTime.UtcNow.AddMonths(-1), DateTime.UtcNow.AddDays(-1)),
+                    random.UtcDate(DateTime.UtcNow.AddMonths(-1), DateTime.UtcNow.AddDays(-1)),
                     DateTimeKind.Utc)
             };
 
             await notificationRepository.AddAsync(notification, cancellationToken);
-            Logger.LogInformation("Created notification {Title}", notification.Title);
+            logger.LogInformation("Created notification {Title}", notification.Title);
         }
 
         await context.TenantUnitOfWork.SaveChangesAsync(cancellationToken);

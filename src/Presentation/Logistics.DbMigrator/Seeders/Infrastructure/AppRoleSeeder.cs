@@ -36,7 +36,7 @@ internal class AppRoleSeeder(ILogger<AppRoleSeeder> logger) : SeederBase(logger)
             if (existingRole is not null)
             {
                 await UpdateRolePermissionsAsync(roleManager, existingRole);
-                Logger.LogInformation("Updated app role '{Role}'", existingRole.Name);
+                logger.LogInformation("Updated app role '{Role}'", existingRole.Name);
             }
             else
             {
@@ -45,11 +45,11 @@ internal class AppRoleSeeder(ILogger<AppRoleSeeder> logger) : SeederBase(logger)
                 {
                     await AddPermissionsAsync(roleManager, role, AppRolePermissions.GetBasicPermissions());
                     await AddPermissionsAsync(roleManager, role, AppRolePermissions.GetPermissionsForRole(role.Name!));
-                    Logger.LogInformation("Created app role '{RoleName}'", role.Name);
+                    logger.LogInformation("Created app role '{RoleName}'", role.Name);
                 }
                 else
                 {
-                    Logger.LogError("Failed to create role '{RoleName}': {Errors}",
+                    logger.LogError("Failed to create role '{RoleName}': {Errors}",
                         role.Name, string.Join(", ", result.Errors.Select(e => e.Description)));
                 }
             }
@@ -74,7 +74,7 @@ internal class AppRoleSeeder(ILogger<AppRoleSeeder> logger) : SeederBase(logger)
             if (!currentClaims.Any(c => c.Type == CustomClaimTypes.Permission && c.Value == permission))
             {
                 await roleManager.AddClaimAsync(role, new Claim(CustomClaimTypes.Permission, permission));
-                Logger.LogInformation("Added permission '{Permission}' to role '{Role}'", permission, role.Name);
+                logger.LogInformation("Added permission '{Permission}' to role '{Role}'", permission, role.Name);
             }
         }
 
@@ -86,7 +86,7 @@ internal class AppRoleSeeder(ILogger<AppRoleSeeder> logger) : SeederBase(logger)
         foreach (var claim in permissionsToRemove)
         {
             await roleManager.RemoveClaimAsync(role, claim);
-            Logger.LogInformation("Removed permission '{Permission}' from role '{Role}'", claim.Value, role.Name);
+            logger.LogInformation("Removed permission '{Permission}' from role '{Role}'", claim.Value, role.Name);
         }
     }
 
@@ -102,7 +102,7 @@ internal class AppRoleSeeder(ILogger<AppRoleSeeder> logger) : SeederBase(logger)
                 var result = await roleManager.AddClaimAsync(role, claim);
                 if (result.Succeeded)
                 {
-                    Logger.LogInformation("Added claim '{ClaimValue}' to role '{Role}'", claim.Value, role.Name);
+                    logger.LogInformation("Added claim '{ClaimValue}' to role '{Role}'", claim.Value, role.Name);
                 }
             }
         }

@@ -12,9 +12,7 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// </summary>
 internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logger)
 {
-    private readonly Random _random = new();
-
-    private static readonly string[] RecipientNames =
+    private static readonly string[] recipientNames =
     [
         "John Smith", "Maria Garcia", "Robert Johnson", "Jennifer Williams",
         "Michael Brown", "Sarah Davis", "David Miller", "Emily Wilson",
@@ -44,7 +42,7 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
         var loads = await loadRepository.GetListAsync(ct: cancellationToken);
         if (loads.Count == 0)
         {
-            Logger.LogWarning("No loads available for document seeding");
+            logger.LogWarning("No loads available for document seeding");
             LogCompleted(0);
             return;
         }
@@ -54,7 +52,7 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
             ?? await employeeRepository.GetListAsync(e => e.Role != null && e.Role.Name == "Driver", ct: cancellationToken);
         if (drivers.Count == 0)
         {
-            Logger.LogWarning("No drivers available for document seeding");
+            logger.LogWarning("No drivers available for document seeding");
             LogCompleted(0);
             return;
         }
@@ -64,8 +62,8 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
         // Create POD and BOL for about 60% of loads
         foreach (var load in loads.Take((int)(loads.Count * 0.6)))
         {
-            var driver = _random.Pick(drivers);
-            var captureLocation = _random.Pick(RoutePoints.Points);
+            var driver = random.Pick(drivers);
+            var captureLocation = random.Pick(RoutePoints.Points);
 
             // Create Bill of Lading (pickup)
             var bol = CreateBillOfLading(load, driver, captureLocation);
@@ -87,22 +85,22 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
         Employee driver,
         (Domain.Primitives.ValueObjects.Address Address, double Longitude, double Latitude) location)
     {
-        var capturedAt = load.PickedUpAt ?? load.DispatchedAt ?? DateTime.UtcNow.AddDays(-_random.Next(1, 30));
+        var capturedAt = load.PickedUpAt ?? load.DispatchedAt ?? DateTime.UtcNow.AddDays(-random.Next(1, 30));
 
         return DeliveryDocument.Create(
             fileName: $"bol_{load.Id}_{Guid.NewGuid():N}.jpg",
             originalFileName: $"BOL_{load.Number}.jpg",
             contentType: "image/jpeg",
-            fileSizeBytes: _random.Next(500_000, 2_000_000),
+            fileSizeBytes: random.Next(500_000, 2_000_000),
             blobPath: $"documents/loads/{load.Id}/bol_{Guid.NewGuid():N}.jpg",
             blobContainer: "load-documents",
             type: DocumentType.BillOfLading,
             loadId: load.Id,
             uploadedById: driver.Id,
-            recipientName: _random.Pick(RecipientNames),
+            recipientName: random.Pick(recipientNames),
             recipientSignature: GenerateFakeSignature(),
-            captureLatitude: location.Latitude + (_random.NextDouble() - 0.5) * 0.01,
-            captureLongitude: location.Longitude + (_random.NextDouble() - 0.5) * 0.01,
+            captureLatitude: location.Latitude + (random.NextDouble() - 0.5) * 0.01,
+            captureLongitude: location.Longitude + (random.NextDouble() - 0.5) * 0.01,
             capturedAt: capturedAt,
             tripStopId: null,
             notes: "Shipper verified load contents and condition."
@@ -114,22 +112,22 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
         Employee driver,
         (Domain.Primitives.ValueObjects.Address Address, double Longitude, double Latitude) location)
     {
-        var capturedAt = load.DeliveredAt ?? load.PickedUpAt?.AddHours(_random.Next(4, 48)) ?? DateTime.UtcNow.AddDays(-_random.Next(1, 15));
+        var capturedAt = load.DeliveredAt ?? load.PickedUpAt?.AddHours(random.Next(4, 48)) ?? DateTime.UtcNow.AddDays(-random.Next(1, 15));
 
         return DeliveryDocument.Create(
             fileName: $"pod_{load.Id}_{Guid.NewGuid():N}.jpg",
             originalFileName: $"POD_{load.Number}.jpg",
             contentType: "image/jpeg",
-            fileSizeBytes: _random.Next(500_000, 2_000_000),
+            fileSizeBytes: random.Next(500_000, 2_000_000),
             blobPath: $"documents/loads/{load.Id}/pod_{Guid.NewGuid():N}.jpg",
             blobContainer: "load-documents",
             type: DocumentType.ProofOfDelivery,
             loadId: load.Id,
             uploadedById: driver.Id,
-            recipientName: _random.Pick(RecipientNames),
+            recipientName: random.Pick(recipientNames),
             recipientSignature: GenerateFakeSignature(),
-            captureLatitude: location.Latitude + (_random.NextDouble() - 0.5) * 0.01,
-            captureLongitude: location.Longitude + (_random.NextDouble() - 0.5) * 0.01,
+            captureLatitude: location.Latitude + (random.NextDouble() - 0.5) * 0.01,
+            captureLongitude: location.Longitude + (random.NextDouble() - 0.5) * 0.01,
             capturedAt: capturedAt,
             tripStopId: null,
             notes: "Delivery completed successfully. No damage reported."
@@ -141,7 +139,7 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
         // Generate a simple placeholder for base64 signature data
         // In reality, this would be actual signature image data
         var signatureBytes = new byte[100];
-        _random.NextBytes(signatureBytes);
+        random.NextBytes(signatureBytes);
         return Convert.ToBase64String(signatureBytes);
     }
 }
