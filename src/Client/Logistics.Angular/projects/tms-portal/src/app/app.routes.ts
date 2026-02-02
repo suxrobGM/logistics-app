@@ -109,8 +109,7 @@ export const appRoutes: Routes = [
   },
   {
     path: "safety",
-    loadChildren: () =>
-      import("./pages/inspections/inspection.routes").then((m) => m.inspectionRoutes),
+    loadChildren: () => import("./pages/safety/safety.routes").then((m) => m.inspectionRoutes),
     data: {
       breadcrumb: "Safety & Compliance",
     },
