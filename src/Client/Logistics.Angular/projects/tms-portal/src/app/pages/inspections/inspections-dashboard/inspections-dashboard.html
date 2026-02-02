@@ -9,7 +9,7 @@
   <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
     <p-card
       class="cursor-pointer transition-shadow hover:shadow-lg"
-      (click)="navigateTo('/inspections/dvir')"
+      (click)="navigateTo('/safety/dvir')"
     >
       <div class="flex items-center gap-4">
         <div class="bg-warning/10 flex h-12 w-12 items-center justify-center rounded-lg">
@@ -24,7 +24,7 @@
 
     <p-card
       class="cursor-pointer transition-shadow hover:shadow-lg"
-      (click)="navigateTo('/inspections/accidents')"
+      (click)="navigateTo('/safety/accidents')"
     >
       <div class="flex items-center gap-4">
         <div class="bg-danger/10 flex h-12 w-12 items-center justify-center rounded-lg">
@@ -39,7 +39,7 @@
 
     <p-card
       class="cursor-pointer transition-shadow hover:shadow-lg"
-      (click)="navigateTo('/inspections/condition-reports')"
+      (click)="navigateTo('/safety/condition-reports')"
     >
       <div class="flex items-center gap-4">
         <div class="bg-info/10 flex h-12 w-12 items-center justify-center rounded-lg">
@@ -54,7 +54,7 @@
 
     <p-card
       class="cursor-pointer transition-shadow hover:shadow-lg"
-      (click)="navigateTo('/inspections/driver-behavior')"
+      (click)="navigateTo('/safety/driver-behavior')"
     >
       <div class="flex items-center gap-4">
         <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-500/10">
@@ -73,19 +73,19 @@
     <p-button
       label="Report Accident"
       icon="pi pi-plus"
-      (click)="navigateTo('/inspections/accidents/add')"
+      (click)="navigateTo('/safety/accidents/add')"
     />
     <p-button
       label="View DVIRs"
       icon="pi pi-clipboard"
       [outlined]="true"
-      (click)="navigateTo('/inspections/dvir')"
+      (click)="navigateTo('/safety/dvir')"
     />
     <p-button
       label="Condition Reports"
       icon="pi pi-file-edit"
       [outlined]="true"
-      (click)="navigateTo('/inspections/condition-reports')"
+      (click)="navigateTo('/safety/condition-reports')"
     />
   </div>
 
@@ -95,7 +95,7 @@
       <ng-template #header>
         <div class="flex items-center justify-between p-4 pb-0">
           <h3 class="text-lg font-semibold">Recent DVIRs</h3>
-          <p-button label="View All" [link]="true" (click)="navigateTo('/inspections/dvir')" />
+          <p-button label="View All" [link]="true" (click)="navigateTo('/safety/dvir')" />
         </div>
       </ng-template>
 
@@ -136,7 +136,7 @@
       <ng-template #header>
         <div class="flex items-center justify-between p-4 pb-0">
           <h3 class="text-lg font-semibold">Recent Accidents</h3>
-          <p-button label="View All" [link]="true" (click)="navigateTo('/inspections/accidents')" />
+          <p-button label="View All" [link]="true" (click)="navigateTo('/safety/accidents')" />
         </div>
       </ng-template>
 
@@ -187,7 +187,7 @@
           <p-button
             label="View All"
             [link]="true"
-            (click)="navigateTo('/inspections/condition-reports')"
+            (click)="navigateTo('/safety/condition-reports')"
           />
         </div>
       </ng-template>

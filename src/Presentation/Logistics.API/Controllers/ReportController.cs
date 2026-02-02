@@ -8,6 +8,8 @@ using DriversReportQuery = Logistics.Application.Queries.DriversReportQuery;
 using FinancialsReportQuery = Logistics.Application.Queries.FinancialsReportQuery;
 using DriverDashboardQuery = Logistics.Application.Queries.DriverDashboardQuery;
 using PayrollReportQuery = Logistics.Application.Queries.PayrollReportQuery;
+using SafetyReportQuery = Logistics.Application.Queries.SafetyReportQuery;
+using MaintenanceReportQuery = Logistics.Application.Queries.MaintenanceReportQuery;
 
 namespace Logistics.API.Controllers;
 
@@ -61,6 +63,32 @@ public class ReportController(IMediator mediator) : ControllerBase
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Payroll.View)]
     public async Task<IActionResult> GetPayrollReport([FromQuery] PayrollReportQuery request)
+    {
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
+    /// Get safety report with DVIR, accident, and driver behavior metrics
+    /// </summary>
+    [HttpGet("safety", Name = "GetSafetyReport")]
+    [ProducesResponseType(typeof(SafetyReportDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Safety.View)]
+    public async Task<IActionResult> GetSafetyReport([FromQuery] SafetyReportQuery request)
+    {
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
+    /// Get maintenance report with service records, costs, and schedule metrics
+    /// </summary>
+    [HttpGet("maintenance", Name = "GetMaintenanceReport")]
+    [ProducesResponseType(typeof(MaintenanceReportDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Truck.View)]
+    public async Task<IActionResult> GetMaintenanceReport([FromQuery] MaintenanceReportQuery request)
     {
         var result = await mediator.Send(request);
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));

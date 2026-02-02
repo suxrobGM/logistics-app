@@ -108,11 +108,11 @@ export const appRoutes: Routes = [
     },
   },
   {
-    path: "inspections",
+    path: "safety",
     loadChildren: () =>
       import("./pages/inspections/inspection.routes").then((m) => m.inspectionRoutes),
     data: {
-      breadcrumb: "Inspections & Safety",
+      breadcrumb: "Safety & Compliance",
     },
   },
   {

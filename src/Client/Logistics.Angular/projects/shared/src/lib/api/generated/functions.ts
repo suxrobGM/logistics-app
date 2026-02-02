@@ -11,6 +11,10 @@ export type { UpdateAccidentReport$Params as UpdateAccidentReport$Params } from 
 export { updateAccidentReport as updateAccidentReport } from './fn/accident/update-accident-report';
 export type { SubmitAccidentReport$Params as SubmitAccidentReport$Params } from './fn/accident/submit-accident-report';
 export { submitAccidentReport as submitAccidentReport } from './fn/accident/submit-accident-report';
+export type { ReviewAccidentReport$Params as ReviewAccidentReport$Params } from './fn/accident/review-accident-report';
+export { reviewAccidentReport as reviewAccidentReport } from './fn/accident/review-accident-report';
+export type { ResolveAccidentReport$Params as ResolveAccidentReport$Params } from './fn/accident/resolve-accident-report';
+export { resolveAccidentReport as resolveAccidentReport } from './fn/accident/resolve-accident-report';
 export type { GetPublishedBlogPosts$Params as GetPublishedBlogPosts$Params } from './fn/blog-post/get-published-blog-posts';
 export { getPublishedBlogPosts as getPublishedBlogPosts } from './fn/blog-post/get-published-blog-posts';
 export type { GetPublishedBlogPostBySlug$Params as GetPublishedBlogPostBySlug$Params } from './fn/blog-post/get-published-blog-post-by-slug';
@@ -113,6 +117,10 @@ export type { SubmitDvirReport$Params as SubmitDvirReport$Params } from './fn/dv
 export { submitDvirReport as submitDvirReport } from './fn/dvir/submit-dvir-report';
 export type { ReviewDvirReport$Params as ReviewDvirReport$Params } from './fn/dvir/review-dvir-report';
 export { reviewDvirReport as reviewDvirReport } from './fn/dvir/review-dvir-report';
+export type { DismissDvirReport$Params as DismissDvirReport$Params } from './fn/dvir/dismiss-dvir-report';
+export { dismissDvirReport as dismissDvirReport } from './fn/dvir/dismiss-dvir-report';
+export type { RejectDvirReport$Params as RejectDvirReport$Params } from './fn/dvir/reject-dvir-report';
+export { rejectDvirReport as rejectDvirReport } from './fn/dvir/reject-dvir-report';
 export type { GetEldProviders$Params as GetEldProviders$Params } from './fn/eld/get-eld-providers';
 export { getEldProviders as getEldProviders } from './fn/eld/get-eld-providers';
 export type { CreateEldProvider$Params as CreateEldProvider$Params } from './fn/eld/create-eld-provider';
@@ -365,6 +373,10 @@ export type { GetDriverDashboard$Params as GetDriverDashboard$Params } from './f
 export { getDriverDashboard as getDriverDashboard } from './fn/report/get-driver-dashboard';
 export type { GetPayrollReport$Params as GetPayrollReport$Params } from './fn/report/get-payroll-report';
 export { getPayrollReport as getPayrollReport } from './fn/report/get-payroll-report';
+export type { GetSafetyReport$Params as GetSafetyReport$Params } from './fn/report/get-safety-report';
+export { getSafetyReport as getSafetyReport } from './fn/report/get-safety-report';
+export type { GetMaintenanceReport$Params as GetMaintenanceReport$Params } from './fn/report/get-maintenance-report';
+export { getMaintenanceReport as getMaintenanceReport } from './fn/report/get-maintenance-report';
 export type { GetAppRoles$Params as GetAppRoles$Params } from './fn/role/get-app-roles';
 export { getAppRoles as getAppRoles } from './fn/role/get-app-roles';
 export type { GetTenantRoles$Params as GetTenantRoles$Params } from './fn/role/get-tenant-roles';

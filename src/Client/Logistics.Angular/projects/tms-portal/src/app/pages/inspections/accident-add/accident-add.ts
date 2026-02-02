@@ -140,7 +140,7 @@ export class AccidentAddPage {
       const result = await this.api.invoke(createAccidentReport, { body: command });
       if (result) {
         this.toastService.showSuccess("Accident report created successfully");
-        this.router.navigateByUrl(`/inspections/accidents/${result.id}`);
+        this.router.navigateByUrl(`/safety/accidents/${result.id}`);
       }
     } catch {
       this.toastService.showError("Failed to create accident report");

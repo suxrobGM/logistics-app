@@ -131,15 +131,15 @@ export class InspectionsDashboardPage implements OnInit {
   }
 
   protected viewDvir(dvir: DvirReportDto): void {
-    this.router.navigateByUrl(`/inspections/dvir/${dvir.id}`);
+    this.router.navigateByUrl(`/safety/dvir/${dvir.id}`);
   }
 
   protected viewAccident(accident: AccidentReportDto): void {
-    this.router.navigateByUrl(`/inspections/accidents/${accident.id}`);
+    this.router.navigateByUrl(`/safety/accidents/${accident.id}`);
   }
 
   protected viewConditionReport(report: ConditionReportDto): void {
-    this.router.navigateByUrl(`/inspections/condition-reports/${report.id}`);
+    this.router.navigateByUrl(`/safety/condition-reports/${report.id}`);
   }
 
   protected navigateTo(route: string): void {

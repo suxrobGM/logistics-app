@@ -85,35 +85,47 @@ export const sidebarItems: MenuItem[] = [
     ],
   },
   {
-    label: "Inspections & Safety",
-    icon: "pi pi-clipboard text-3xl!",
+    label: "Safety & Compliance",
+    icon: "pi pi-shield text-3xl!",
     items: [
       {
-        label: "Dashboard",
-        route: "/inspections",
+        label: "Overview",
+        route: "/safety",
+      },
+      // DVIRs Section
+      {
+        label: "DVIRs",
+        styleClass: "menu-separator",
+        disabled: true,
       },
       {
         label: "DVIR Reports",
-        route: "/inspections/dvir",
+        route: "/safety/dvir",
       },
+      // Incidents Section
       {
-        label: "Condition Reports",
-        route: "/inspections/condition-reports",
+        label: "Incidents",
+        styleClass: "menu-separator",
+        disabled: true,
       },
       {
         label: "Accident Reports",
-        route: "/inspections/accidents",
+        route: "/safety/accidents",
       },
       {
         label: "Driver Behavior",
-        route: "/inspections/driver-behavior",
+        route: "/safety/driver-behavior",
       },
-    ],
-  },
-  {
-    label: "Compliance",
-    icon: "pi pi-shield text-3xl!",
-    items: [
+      {
+        label: "Condition Reports",
+        route: "/safety/condition-reports",
+      },
+      // Compliance Section
+      {
+        label: "Compliance",
+        styleClass: "menu-separator",
+        disabled: true,
+      },
       {
         label: "ELD / HOS",
         route: "/eld",

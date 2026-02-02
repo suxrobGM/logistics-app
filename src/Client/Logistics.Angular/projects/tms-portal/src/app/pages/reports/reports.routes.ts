@@ -62,6 +62,26 @@ export const reportsRoutes: Routes = [
           permission: Permission.Payroll.View,
         },
       },
+      {
+        path: "safety",
+        loadComponent: () =>
+          import("./safety-report/safety-report").then((m) => m.SafetyReportComponent),
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: "",
+          permission: Permission.Safety.View,
+        },
+      },
+      {
+        path: "maintenance",
+        loadComponent: () =>
+          import("./maintenance-report/maintenance-report").then((m) => m.MaintenanceReportComponent),
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: "",
+          permission: Permission.Truck.View,
+        },
+      },
       { path: "", redirectTo: "loads", pathMatch: "full" },
     ],
   },

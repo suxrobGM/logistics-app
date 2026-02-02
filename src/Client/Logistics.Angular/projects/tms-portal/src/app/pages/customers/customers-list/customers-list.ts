@@ -85,10 +85,6 @@ export class CustomersList {
     this.router.navigate(["/customers/add"]);
   }
 
-  protected onRowClick(customer: CustomerDto): void {
-    this.router.navigate(["/customers", customer.id]);
-  }
-
   protected viewCustomer(id?: string): void {
     if (id) {
       this.router.navigate(["/customers", id]);

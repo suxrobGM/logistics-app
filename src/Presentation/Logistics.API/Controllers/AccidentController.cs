@@ -82,4 +82,44 @@ public class AccidentController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new SubmitAccidentReportCommand { ReportId = id });
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
+
+    /// <summary>
+    /// Review an accident report (changes status to UnderReview)
+    /// </summary>
+    [HttpPost("{id:guid}/review", Name = "ReviewAccidentReport")]
+    [ProducesResponseType(typeof(AccidentReportDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Safety.Manage)]
+    public async Task<IActionResult> Review(Guid id, [FromBody] ReviewAccidentReportRequest request)
+    {
+        var command = new ReviewAccidentReportCommand
+        {
+            ReportId = id,
+            ReviewedById = request.ReviewedById,
+            ReviewNotes = request.ReviewNotes
+        };
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
+    /// Resolve an accident report (changes status to Resolved)
+    /// </summary>
+    [HttpPost("{id:guid}/resolve", Name = "ResolveAccidentReport")]
+    [ProducesResponseType(typeof(AccidentReportDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Safety.Manage)]
+    public async Task<IActionResult> Resolve(Guid id, [FromBody] ResolveAccidentReportRequest request)
+    {
+        var command = new ResolveAccidentReportCommand
+        {
+            ReportId = id,
+            ResolutionNotes = request.ResolutionNotes
+        };
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
 }
+
+public record ReviewAccidentReportRequest(Guid ReviewedById, string? ReviewNotes);
+public record ResolveAccidentReportRequest(string? ResolutionNotes);

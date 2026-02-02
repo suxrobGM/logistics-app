@@ -88,10 +88,6 @@ export class UpcomingServicePage implements OnInit {
     }
   }
 
-  protected onRowClick(schedule: MaintenanceScheduleDto): void {
-    this.router.navigateByUrl(`/trucks/${schedule.truckId}/maintenance`);
-  }
-
   protected logService(schedule: MaintenanceScheduleDto): void {
     this.router.navigate(["/maintenance/records/add"], {
       queryParams: { truckId: schedule.truckId, type: schedule.type },

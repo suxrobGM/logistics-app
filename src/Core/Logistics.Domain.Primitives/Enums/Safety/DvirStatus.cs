@@ -18,5 +18,8 @@ public enum DvirStatus
     RequiresRepair,
 
     [Description("Cleared")] [EnumMember(Value = "cleared")]
-    Cleared
+    Cleared,
+
+    [Description("Rejected")] [EnumMember(Value = "rejected")]
+    Rejected
 }

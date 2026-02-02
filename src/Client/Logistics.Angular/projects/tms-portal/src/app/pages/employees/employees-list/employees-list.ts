@@ -83,10 +83,6 @@ export class EmployeeList {
     }
   }
 
-  protected onRowClick(employee: EmployeeDto): void {
-    this.router.navigateByUrl(`/employees/${employee.id}`);
-  }
-
   protected onSearch(value: string): void {
     this.store.setSearch(value);
   }

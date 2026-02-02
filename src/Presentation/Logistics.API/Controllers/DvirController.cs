@@ -95,4 +95,45 @@ public class DvirController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(request);
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
+
+    /// <summary>
+    /// Dismiss a DVIR report (quick clear for reports with no issues)
+    /// </summary>
+    [HttpPost("{id:guid}/dismiss", Name = "DismissDvirReport")]
+    [ProducesResponseType(typeof(DvirReportDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Dvir.Review)]
+    public async Task<IActionResult> Dismiss(Guid id, [FromBody] DismissDvirReportRequest request)
+    {
+        var command = new DismissDvirReportCommand
+        {
+            ReportId = id,
+            DismissedById = request.DismissedById,
+            Notes = request.Notes
+        };
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
+    /// Reject a DVIR report (sends back to driver for resubmission)
+    /// </summary>
+    [HttpPost("{id:guid}/reject", Name = "RejectDvirReport")]
+    [ProducesResponseType(typeof(DvirReportDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Dvir.Review)]
+    public async Task<IActionResult> Reject(Guid id, [FromBody] RejectDvirReportRequest request)
+    {
+        var command = new RejectDvirReportCommand
+        {
+            ReportId = id,
+            RejectedById = request.RejectedById,
+            RejectionReason = request.RejectionReason
+        };
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
 }
+
+public record DismissDvirReportRequest(Guid DismissedById, string? Notes);
+public record RejectDvirReportRequest(Guid RejectedById, string RejectionReason);

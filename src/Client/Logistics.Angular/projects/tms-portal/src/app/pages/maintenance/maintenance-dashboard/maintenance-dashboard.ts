@@ -103,4 +103,8 @@ export class MaintenanceDashboardPage implements OnInit {
   protected viewTruckMaintenance(truckId: string): void {
     this.router.navigate(["/trucks", truckId, "maintenance"]);
   }
+
+  protected viewServiceRecord(recordId: string): void {
+    this.router.navigate(["/maintenance/records", recordId]);
+  }
 }

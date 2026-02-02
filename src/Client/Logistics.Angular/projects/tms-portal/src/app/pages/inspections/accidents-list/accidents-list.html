@@ -1,6 +1,6 @@
 <ui-page-header
   title="Accident Reports"
-  addRoute="/inspections/accidents/add"
+  addRoute="/safety/accidents/add"
   addTooltip="Report a new accident"
 />
 
@@ -54,7 +54,7 @@
         </tr>
       </ng-template>
       <ng-template #body let-accident>
-        <tr class="hover:bg-hover cursor-pointer" (click)="onRowClick(accident)">
+        <tr>
           <td>{{ accident.accidentDateTime | date: "short" }}</td>
           <td>{{ accident.truckNumber || "-" }}</td>
           <td>{{ accident.driverName || "-" }}</td>

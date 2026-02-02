@@ -42,7 +42,7 @@ export class ConditionReportsListPage implements OnInit {
         label: "View details",
         icon: "pi pi-eye",
         command: () =>
-          this.router.navigateByUrl(`/inspections/condition-reports/${this.selectedRow()!.id}`),
+          this.router.navigateByUrl(`/safety/condition-reports/${this.selectedRow()!.id}`),
       },
       {
         label: "View load",

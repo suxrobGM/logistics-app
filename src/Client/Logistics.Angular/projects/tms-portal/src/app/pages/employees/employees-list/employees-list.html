@@ -75,7 +75,7 @@
         </tr>
       </ng-template>
       <ng-template #body let-employee>
-        <tr class="cursor-pointer hover:bg-hover" (click)="onRowClick(employee)">
+        <tr>
           <td>
             <div class="flex items-center gap-3">
               <app-employee-avatar [employee]="employee" size="normal" />
@@ -90,10 +90,13 @@
             }
           </td>
           <td>{{ employee.email }}</td>
-          <td>{{ employee.phoneNumber || '-' }}</td>
+          <td>{{ employee.phoneNumber || "-" }}</td>
           <td>
             @if (employee.role) {
-              <p-tag [value]="employee.role.displayName" [severity]="getRoleSeverity(employee.role.name)" />
+              <p-tag
+                [value]="employee.role.displayName"
+                [severity]="getRoleSeverity(employee.role.name)"
+              />
             } @else {
               <span class="text-muted">-</span>
             }

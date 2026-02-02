@@ -1,7 +1,27 @@
 <ui-page-header [title]="pageTitle()" [showAddButton]="false" backLink="/safety/dvir">
-  @if (canReview()) {
-    <p-button icon="pi pi-check-square" label="Review" (click)="reviewReport()" />
-  }
+  <div class="flex gap-2">
+    @if (canDismiss()) {
+      <p-button
+        icon="pi pi-check"
+        label="Dismiss"
+        severity="success"
+        [outlined]="true"
+        (click)="openDismissDialog()"
+      />
+    }
+    @if (canReject()) {
+      <p-button
+        icon="pi pi-times"
+        label="Reject"
+        severity="danger"
+        [outlined]="true"
+        (click)="openRejectDialog()"
+      />
+    }
+    @if (canReview()) {
+      <p-button icon="pi pi-check-square" label="Review" (click)="reviewReport()" />
+    }
+  </div>
 </ui-page-header>
 
 @if (isLoading()) {
@@ -9,130 +29,205 @@
     <p-progress-spinner />
   </div>
 } @else if (report()) {
-  <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
-    <!-- Main info -->
-    <div class="lg:col-span-2">
-      <p-card header="Inspection Details">
-        <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-          <div>
-            <div class="text-muted mb-1 text-sm">Status</div>
-            <p-tag [value]="getStatusLabel(report()!.status)" [severity]="getStatusSeverity(report()!.status)" />
-          </div>
-          <div>
-            <div class="text-muted mb-1 text-sm">Type</div>
-            <p-tag [value]="getTypeLabel(report()!.type)" [severity]="getTypeSeverity(report()!.type)" />
-          </div>
-          <div>
-            <div class="text-muted mb-1 text-sm">Date</div>
-            <div class="font-medium">{{ report()!.inspectionDate | date: "medium" }}</div>
-          </div>
-          <div>
-            <div class="text-muted mb-1 text-sm">Odometer</div>
-            <div class="font-medium">{{ report()!.odometerReading | number }} mi</div>
-          </div>
+  <div class="mx-auto flex max-w-4xl flex-col gap-4">
+    <!-- Inspection Details -->
+    <p-card header="Inspection Details" class="w-full">
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div>
+          <div class="text-muted mb-1 text-sm">Status</div>
+          <p-tag [value]="getStatusLabel(report()!.status)" [severity]="getStatusSeverity(report()!.status)" />
         </div>
-
-        <div class="mt-4 grid grid-cols-2 gap-4">
-          <div>
-            <div class="text-muted mb-1 text-sm">Truck</div>
-            <a [routerLink]="['/trucks', report()!.truckId]" class="text-primary font-medium">
-              {{ report()!.truckNumber }}
-            </a>
-          </div>
-          <div>
-            <div class="text-muted mb-1 text-sm">Driver</div>
-            <div class="font-medium">{{ report()!.driverName }}</div>
-          </div>
+        <div>
+          <div class="text-muted mb-1 text-sm">Type</div>
+          <p-tag [value]="getTypeLabel(report()!.type)" [severity]="getTypeSeverity(report()!.type)" />
         </div>
+        <div>
+          <div class="text-muted mb-1 text-sm">Date</div>
+          <div class="font-medium">{{ report()!.inspectionDate | date: "medium" }}</div>
+        </div>
+        <div>
+          <div class="text-muted mb-1 text-sm">Odometer</div>
+          <div class="font-medium">{{ report()!.odometerReading | number }} mi</div>
+        </div>
+      </div>
 
-        @if (report()!.driverNotes) {
-          <div class="mt-4">
-            <div class="text-muted mb-1 text-sm">Driver Notes</div>
-            <p>{{ report()!.driverNotes }}</p>
+      <div class="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div>
+          <div class="text-muted mb-1 text-sm">Truck</div>
+          <a [routerLink]="['/trucks', report()!.truckId]" class="text-primary font-medium">
+            {{ report()!.truckNumber }}
+          </a>
+        </div>
+        <div>
+          <div class="text-muted mb-1 text-sm">Driver</div>
+          <div class="font-medium">{{ report()!.driverName }}</div>
+        </div>
+      </div>
+
+      @if (report()!.driverNotes) {
+        <div class="mt-4">
+          <div class="text-muted mb-1 text-sm">Driver Notes</div>
+          <p>{{ report()!.driverNotes }}</p>
+        </div>
+      }
+
+      <div class="mt-4 flex items-center gap-4">
+        @if (report()!.hasDriverSignature) {
+          <div class="text-success flex items-center gap-1">
+            <i class="pi pi-check-circle"></i>
+            <span class="text-sm">Driver signed</span>
           </div>
         }
+        @if (report()!.hasDefects) {
+          <div class="text-danger flex items-center gap-1">
+            <i class="pi pi-exclamation-triangle"></i>
+            <span class="text-sm">{{ report()!.defects?.length ?? 0 }} defect(s) found</span>
+          </div>
+        } @else {
+          <div class="text-success flex items-center gap-1">
+            <i class="pi pi-check-circle"></i>
+            <span class="text-sm">No defects</span>
+          </div>
+        }
+      </div>
+    </p-card>
 
-        <div class="mt-4 flex items-center gap-4">
-          @if (report()!.hasDriverSignature) {
-            <div class="text-success flex items-center gap-1">
-              <i class="pi pi-check-circle"></i>
-              <span class="text-sm">Driver signed</span>
+    <!-- Mechanic Review - below Inspection Details -->
+    @if (report()!.reviewedAt) {
+      <p-card header="Mechanic Review" class="w-full">
+        <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div>
+            <div class="text-muted mb-1 text-sm">Reviewed By</div>
+            <div class="font-medium">{{ report()!.reviewedByName }}</div>
+          </div>
+          <div>
+            <div class="text-muted mb-1 text-sm">Reviewed At</div>
+            <div>{{ report()!.reviewedAt | date: "medium" }}</div>
+          </div>
+          @if (report()!.defectsCorrected !== null) {
+            <div>
+              <div class="text-muted mb-1 text-sm">Defects Corrected</div>
+              @if (report()!.defectsCorrected) {
+                <span class="text-success font-medium">Yes</span>
+              } @else {
+                <span class="text-danger font-medium">No</span>
+              }
             </div>
           }
-          @if (report()!.hasDefects) {
-            <div class="text-danger flex items-center gap-1">
-              <i class="pi pi-exclamation-triangle"></i>
-              <span class="text-sm">{{ report()!.defects?.length ?? 0 }} defect(s) found</span>
-            </div>
-          } @else {
-            <div class="text-success flex items-center gap-1">
-              <i class="pi pi-check-circle"></i>
-              <span class="text-sm">No defects</span>
-            </div>
-          }
-        </div>
-      </p-card>
-
-      <!-- Defects -->
-      @if (report()!.defects && report()!.defects!.length > 0) {
-        <p-card header="Defects" class="mt-4">
-          <app-dvir-defects-list [defects]="report()!.defects!" />
-        </p-card>
-      }
-    </div>
-
-    <!-- Sidebar -->
-    <div class="flex flex-col gap-4">
-      <!-- Mechanic Review -->
-      @if (report()!.reviewedAt) {
-        <p-card header="Mechanic Review">
-          <div class="flex flex-col gap-3">
+          @if (report()!.hasMechanicSignature) {
             <div>
-              <div class="text-muted mb-1 text-sm">Reviewed By</div>
-              <div class="font-medium">{{ report()!.reviewedByName }}</div>
-            </div>
-            <div>
-              <div class="text-muted mb-1 text-sm">Reviewed At</div>
-              <div>{{ report()!.reviewedAt | date: "medium" }}</div>
-            </div>
-            @if (report()!.defectsCorrected !== null) {
-              <div>
-                <div class="text-muted mb-1 text-sm">Defects Corrected</div>
-                @if (report()!.defectsCorrected) {
-                  <span class="text-success font-medium">Yes</span>
-                } @else {
-                  <span class="text-danger font-medium">No</span>
-                }
-              </div>
-            }
-            @if (report()!.mechanicNotes) {
-              <div>
-                <div class="text-muted mb-1 text-sm">Mechanic Notes</div>
-                <p>{{ report()!.mechanicNotes }}</p>
-              </div>
-            }
-            @if (report()!.hasMechanicSignature) {
+              <div class="text-muted mb-1 text-sm">Signature</div>
               <div class="text-success flex items-center gap-1">
                 <i class="pi pi-check-circle"></i>
                 <span class="text-sm">Mechanic signed</span>
               </div>
-            }
+            </div>
+          }
+        </div>
+        @if (report()!.mechanicNotes) {
+          <div class="mt-4">
+            <div class="text-muted mb-1 text-sm">Mechanic Notes</div>
+            <p>{{ report()!.mechanicNotes }}</p>
           </div>
-        </p-card>
-      }
+        }
+      </p-card>
+    }
 
-      <!-- Photos -->
-      @if (report()!.photos && report()!.photos!.length > 0) {
-        <p-card header="Photos">
-          <div class="grid grid-cols-2 gap-2">
-            @for (photo of report()!.photos; track photo.id) {
-              <div class="bg-subtle aspect-video overflow-hidden rounded-lg">
-                <img [src]="photo.blobPath" [alt]="photo.fileName" class="h-full w-full object-cover" />
-              </div>
-            }
-          </div>
-        </p-card>
-      }
-    </div>
+    <!-- Defects -->
+    @if (report()!.defects && report()!.defects!.length > 0) {
+      <p-card header="Defects" class="w-full">
+        <app-dvir-defects-list [defects]="report()!.defects!" />
+      </p-card>
+    }
+
+    <!-- Photos -->
+    @if (report()!.photos && report()!.photos!.length > 0) {
+      <p-card header="Photos" class="w-full">
+        <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+          @for (photo of report()!.photos; track photo.id) {
+            <div class="bg-subtle aspect-video overflow-hidden rounded-lg">
+              <img [src]="photo.blobPath" [alt]="photo.fileName" class="h-full w-full object-cover" />
+            </div>
+          }
+        </div>
+      </p-card>
+    }
   </div>
 }
+
+<!-- Dismiss Dialog -->
+<p-dialog
+  header="Dismiss DVIR Report"
+  [modal]="true"
+  [(visible)]="showDismissDialog"
+  [style]="{ width: '450px' }"
+>
+  <div class="flex flex-col gap-4">
+    <p class="text-muted">
+      Dismissing this report will mark it as cleared. This is typically used for reports with no
+      defects that don't require mechanic review.
+    </p>
+    <div>
+      <label for="dismissNotes" class="mb-2 block font-medium">Notes (Optional)</label>
+      <textarea
+        pTextarea
+        id="dismissNotes"
+        [(ngModel)]="dismissNotes"
+        rows="3"
+        class="w-full"
+        placeholder="Add any notes..."
+      ></textarea>
+    </div>
+  </div>
+  <ng-template #footer>
+    <div class="flex justify-end gap-2">
+      <p-button label="Cancel" [text]="true" (click)="showDismissDialog.set(false)" />
+      <p-button
+        label="Dismiss"
+        icon="pi pi-check"
+        severity="success"
+        (click)="confirmDismiss()"
+        [loading]="isSubmitting()"
+      />
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Reject Dialog -->
+<p-dialog
+  header="Reject DVIR Report"
+  [modal]="true"
+  [(visible)]="showRejectDialog"
+  [style]="{ width: '450px' }"
+>
+  <div class="flex flex-col gap-4">
+    <p class="text-muted">
+      Rejecting this report will send it back to the driver for corrections. Please provide a
+      reason.
+    </p>
+    <div>
+      <label for="rejectionReason" class="mb-2 block font-medium">Rejection Reason *</label>
+      <textarea
+        pTextarea
+        id="rejectionReason"
+        [(ngModel)]="rejectionReason"
+        rows="3"
+        class="w-full"
+        placeholder="Explain why this report is being rejected..."
+      ></textarea>
+    </div>
+  </div>
+  <ng-template #footer>
+    <div class="flex justify-end gap-2">
+      <p-button label="Cancel" [text]="true" (click)="showRejectDialog.set(false)" />
+      <p-button
+        label="Reject"
+        icon="pi pi-times"
+        severity="danger"
+        (click)="confirmReject()"
+        [loading]="isSubmitting()"
+        [disabled]="!rejectionReason.trim()"
+      />
+    </div>
+  </ng-template>
+</p-dialog>

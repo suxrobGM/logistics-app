@@ -73,7 +73,7 @@
         </tr>
       </ng-template>
       <ng-template #body let-event>
-        <tr class="hover:bg-hover cursor-pointer" (click)="onRowClick(event)">
+        <tr>
           <td>{{ event.occurredAt | date: "short" }}</td>
           <td>{{ event.driverName }}</td>
           <td>{{ event.truckNumber ?? "-" }}</td>

@@ -2,11 +2,11 @@ import { DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import {
-  Api,
-  submitAccidentReport,
   type AccidentReportDto,
   type AccidentReportStatus,
   type AccidentSeverity,
+  Api,
+  submitAccidentReport,
 } from "@logistics/shared/api";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
@@ -15,8 +15,8 @@ import { MenuModule } from "primeng/menu";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
 import { ToastService } from "@/core/services";
+import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
 import type { TagSeverity } from "@/shared/types";
 import { AccidentsListStore } from "../store";
 
@@ -122,20 +122,16 @@ export class AccidentsListPage {
     }
   }
 
-  protected onRowClick(accident: AccidentReportDto): void {
-    this.router.navigateByUrl(`/inspections/accidents/${accident.id}`);
-  }
-
   protected onSearch(value: string): void {
     this.store.setSearch(value);
   }
 
   protected addAccident(): void {
-    this.router.navigate(["/inspections/accidents/add"]);
+    this.router.navigate(["/safety/accidents/add"]);
   }
 
   protected viewDetails(accident: AccidentReportDto): void {
-    this.router.navigateByUrl(`/inspections/accidents/${accident.id}`);
+    this.router.navigateByUrl(`/safety/accidents/${accident.id}`);
   }
 
   protected async submitReport(accident: AccidentReportDto): Promise<void> {

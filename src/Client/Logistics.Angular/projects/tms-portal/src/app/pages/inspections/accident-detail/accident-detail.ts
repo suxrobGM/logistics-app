@@ -1,14 +1,24 @@
 import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
-import { Api, getAccidentReportById, submitAccidentReport } from "@logistics/shared/api";
+import {
+  Api,
+  getAccidentReportById,
+  submitAccidentReport,
+  reviewAccidentReport,
+  resolveAccidentReport,
+} from "@logistics/shared/api";
 import type {
   AccidentReportDto,
   AccidentReportStatus,
   AccidentSeverity,
 } from "@logistics/shared/api";
+import { AuthService } from "@/core/auth";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
+import { DialogModule } from "primeng/dialog";
+import { TextareaModule } from "primeng/textarea";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TabsModule } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
@@ -22,10 +32,13 @@ import { AccidentQuickInfo } from "../components";
   templateUrl: "./accident-detail.html",
   imports: [
     RouterLink,
+    FormsModule,
     CurrencyPipe,
     DatePipe,
     ButtonModule,
     CardModule,
+    DialogModule,
+    TextareaModule,
     ProgressSpinnerModule,
     TabsModule,
     TagModule,
@@ -37,6 +50,7 @@ export class AccidentDetailPage implements OnInit {
   private readonly router = inject(Router);
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
+  private readonly authService = inject(AuthService);
 
   public readonly id = input.required<string>();
 
@@ -44,8 +58,21 @@ export class AccidentDetailPage implements OnInit {
   protected readonly isSubmitting = signal(false);
   protected readonly report = signal<AccidentReportDto | null>(null);
 
+  // Dialog visibility
+  protected readonly showReviewDialog = signal(false);
+  protected readonly showResolveDialog = signal(false);
+
+  // Form data
+  protected reviewNotes = "";
+  protected resolutionNotes = "";
+
   protected readonly canSubmit = computed(() => this.report()?.status === "draft");
   protected readonly canEdit = computed(() => this.report()?.status === "draft");
+  protected readonly canReview = computed(() => this.report()?.status === "submitted");
+  protected readonly canResolve = computed(() => {
+    const status = this.report()?.status;
+    return status === "submitted" || status === "under_review";
+  });
 
   protected readonly pageTitle = computed(() => {
     const rep = this.report();
@@ -68,7 +95,7 @@ export class AccidentDetailPage implements OnInit {
         this.report.set(result);
       } else {
         this.toastService.showError("Accident report not found");
-        this.router.navigateByUrl("/inspections/accidents");
+        this.router.navigateByUrl("/safety/accidents");
       }
     } finally {
       this.isLoading.set(false);
@@ -108,7 +135,7 @@ export class AccidentDetailPage implements OnInit {
   }
 
   protected editReport(): void {
-    this.router.navigateByUrl(`/inspections/accidents/${this.id()}/edit`);
+    this.router.navigateByUrl(`/safety/accidents/${this.id()}/edit`);
   }
 
   protected submitReport(): void {
@@ -130,6 +157,67 @@ export class AccidentDetailPage implements OnInit {
       }
     } catch {
       this.toastService.showError("Failed to submit accident report");
+    } finally {
+      this.isSubmitting.set(false);
+    }
+  }
+
+  protected openReviewDialog(): void {
+    this.reviewNotes = "";
+    this.showReviewDialog.set(true);
+  }
+
+  protected async confirmReview(): Promise<void> {
+    this.isSubmitting.set(true);
+    try {
+      const userId = this.authService.getUserData()?.id;
+      if (!userId) {
+        this.toastService.showError("User not authenticated");
+        return;
+      }
+
+      const result = await this.api.invoke(reviewAccidentReport, {
+        id: this.id(),
+        body: {
+          reviewedById: userId,
+          reviewNotes: this.reviewNotes || null,
+        },
+      });
+
+      if (result) {
+        this.report.set(result);
+        this.toastService.showSuccess("Accident report is now under review");
+        this.showReviewDialog.set(false);
+      }
+    } catch {
+      this.toastService.showError("Failed to start review");
+    } finally {
+      this.isSubmitting.set(false);
+    }
+  }
+
+  protected openResolveDialog(): void {
+    this.resolutionNotes = "";
+    this.showResolveDialog.set(true);
+  }
+
+  protected async confirmResolve(): Promise<void> {
+    this.isSubmitting.set(true);
+    try {
+      const result = await this.api.invoke(resolveAccidentReport, {
+        id: this.id(),
+        body: {
+          resolutionNotes: this.resolutionNotes || null,
+        },
+      });
+
+      if (result) {
+        this.report.set(result);
+        this.toastService.showSuccess("Accident report resolved successfully");
+        this.showResolveDialog.set(false);
+      }
+    } catch {
+      this.toastService.showError("Failed to resolve accident report");
     } finally {
       this.isSubmitting.set(false);
     }

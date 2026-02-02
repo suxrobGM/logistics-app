@@ -126,10 +126,6 @@ export class DriverBehaviorListPage {
     this.store.setSearch(value);
   }
 
-  protected onRowClick(event: DriverBehaviorEventDto): void {
-    this.openReviewDialog(event);
-  }
-
   protected openReviewDialog(event: DriverBehaviorEventDto): void {
     this.selectedEvent.set(event);
     this.reviewNotes = event.reviewNotes ?? "";

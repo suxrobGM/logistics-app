@@ -62,7 +62,7 @@
         </tr>
       </ng-template>
       <ng-template #body let-customer>
-        <tr class="hover:bg-hover cursor-pointer" (click)="onRowClick(customer)">
+        <tr>
           <td>
             <div class="flex items-center gap-3">
               <app-customer-avatar [customer]="customer" size="normal" />

@@ -1,0 +1,272 @@
+<!-- Header -->
+<div class="flex items-center justify-between">
+  <ui-page-header
+    title="Maintenance Report"
+    subtitle="Service records, costs, and schedule metrics"
+    [showAddButton]="false"
+  />
+  <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
+</div>
+
+@if (isLoading()) {
+  <!-- Loading State -->
+  <div class="grid grid-cols-12">
+    @for (item of [1, 2, 3, 4]; track item) {
+      <div class="col-span-12 mb-6 md:col-span-6 lg:col-span-3">
+        <p-skeleton height="120px"></p-skeleton>
+      </div>
+    }
+  </div>
+} @else {
+  <!-- Key Maintenance Metrics Cards -->
+  <div class="mb-6 grid grid-cols-12 gap-2">
+    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+      <ui-stat-card
+        icon="pi-dollar"
+        label="Total Cost"
+        [value]="(data()?.totalCost || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        color="blue"
+        [trend]="(data()?.totalServices || 0) + ' services'"
+      />
+    </div>
+
+    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+      <ui-stat-card
+        icon="pi-wrench"
+        label="Labor Cost"
+        [value]="(data()?.laborCost || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        color="green"
+        [trend]="(data()?.scheduledServices || 0) + ' scheduled'"
+      />
+    </div>
+
+    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+      <ui-stat-card
+        icon="pi-box"
+        label="Parts Cost"
+        [value]="(data()?.partsCost || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        color="orange"
+        [trend]="(data()?.unscheduledServices || 0) + ' unscheduled'"
+      />
+    </div>
+
+    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+      <ui-stat-card
+        icon="pi-calendar-times"
+        label="Overdue"
+        [value]="(data()?.overdueCount || 0).toString()"
+        color="red"
+        [trend]="(data()?.dueSoonCount || 0) + ' due soon'"
+      />
+    </div>
+  </div>
+
+  <!-- Charts Row 1 -->
+  <div class="mb-6 grid grid-cols-12 gap-2">
+    <div class="col-span-12 mb-6 lg:col-span-6">
+      <ui-dashboard-card title="Cost by Service Type" icon="pi-chart-bar" iconColor="blue">
+        @if (hasServiceTypeData()) {
+          <p-chart
+            type="bar"
+            [data]="serviceTypeChartData()"
+            [options]="barChartOptions"
+            style="height: 300px"
+          />
+        } @else {
+          <div class="text-muted flex h-75 items-center justify-center">
+            <span>No service type data available</span>
+          </div>
+        }
+      </ui-dashboard-card>
+    </div>
+
+    <div class="col-span-12 mb-6 lg:col-span-6">
+      <ui-dashboard-card title="Cost by Vendor" icon="pi-chart-pie" iconColor="green">
+        @if (hasVendorData()) {
+          <p-chart
+            type="doughnut"
+            [data]="vendorChartData()"
+            [options]="pieChartOptions"
+            style="height: 300px"
+          />
+        } @else {
+          <div class="text-muted flex h-75 items-center justify-center">
+            <span>No vendor data available</span>
+          </div>
+        }
+      </ui-dashboard-card>
+    </div>
+  </div>
+
+  <!-- Cost Trends Chart -->
+  <div class="mb-6 grid grid-cols-12 gap-2">
+    <div class="col-span-12">
+      <ui-dashboard-card title="Cost Trends" icon="pi-chart-line" iconColor="blue">
+        @if (hasCostTrendData()) {
+          <p-chart
+            type="line"
+            [data]="costTrendChartData()"
+            [options]="trendChartOptions"
+            style="height: 350px"
+          />
+        } @else {
+          <div class="text-muted flex h-88 items-center justify-center">
+            <span>No trend data available</span>
+          </div>
+        }
+      </ui-dashboard-card>
+    </div>
+  </div>
+
+  <!-- Data Tables -->
+  <div class="grid grid-cols-12 gap-2">
+    <div class="col-span-12 mb-6 lg:col-span-6">
+      <ui-dashboard-card title="Service Type Summary" icon="pi-list" iconColor="blue">
+        <p-table [value]="data()?.byServiceType || []" [paginator]="true" [rows]="5">
+          <ng-template #header>
+            <tr>
+              <th>Service Type</th>
+              <th class="text-right">Count</th>
+              <th class="text-right">Total Cost</th>
+              <th class="text-right">Avg Cost</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-item>
+            <tr>
+              <td>
+                <span class="font-medium">{{ item.maintenanceTypeDisplay || item.maintenanceType }}</span>
+              </td>
+              <td class="text-right">
+                <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{ item.count }}</span>
+              </td>
+              <td class="text-right">
+                {{ item.totalCost | currency: "USD" : "symbol" : "1.0-0" }}
+              </td>
+              <td class="text-right">
+                {{ item.averageCost | currency: "USD" : "symbol" : "1.0-0" }}
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template #emptymessage>
+            <tr>
+              <td colspan="4" class="text-muted text-center">No service type data available</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </ui-dashboard-card>
+    </div>
+
+    <div class="col-span-12 mb-6 lg:col-span-6">
+      <ui-dashboard-card title="Top Trucks by Cost" icon="pi-truck" iconColor="orange">
+        <p-table [value]="data()?.topCostTrucks || []" [paginator]="true" [rows]="5">
+          <ng-template #header>
+            <tr>
+              <th>Truck</th>
+              <th class="text-right">Services</th>
+              <th class="text-right">Total Cost</th>
+              <th class="text-right">Last Service</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-truck>
+            <tr>
+              <td>
+                <a
+                  [routerLink]="['/fleet/trucks', truck.truckId]"
+                  class="flex items-center no-underline hover:underline"
+                >
+                  <div
+                    class="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600/10"
+                  >
+                    <i class="pi pi-truck text-sm text-blue-600"></i>
+                  </div>
+                  <span class="font-medium">{{ truck.truckNumber }}</span>
+                </a>
+              </td>
+              <td class="text-right">
+                <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{
+                  truck.serviceCount
+                }}</span>
+              </td>
+              <td class="text-right">
+                {{ truck.totalCost | currency: "USD" : "symbol" : "1.0-0" }}
+              </td>
+              <td class="text-right">
+                @if (truck.lastServiceDate) {
+                  {{ truck.lastServiceDate | date: "MMM d, yyyy" }}
+                } @else {
+                  <span class="text-muted">N/A</span>
+                }
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template #emptymessage>
+            <tr>
+              <td colspan="4" class="text-muted text-center">No truck data available</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </ui-dashboard-card>
+    </div>
+  </div>
+
+  <!-- Vendor Breakdown Table -->
+  <div class="grid grid-cols-12 gap-2">
+    <div class="col-span-12 mb-6">
+      <ui-dashboard-card title="Vendor Summary" icon="pi-building" iconColor="green">
+        <p-table [value]="data()?.byVendor || []">
+          <ng-template #header>
+            <tr>
+              <th>Vendor</th>
+              <th class="text-right">Services</th>
+              <th class="text-right">Total Cost</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-vendor>
+            <tr>
+              <td>
+                <span class="font-medium">{{ vendor.vendorName || "Unknown" }}</span>
+              </td>
+              <td class="text-right">
+                <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{
+                  vendor.serviceCount
+                }}</span>
+              </td>
+              <td class="text-right">
+                {{ vendor.totalCost | currency: "USD" : "symbol" : "1.0-0" }}
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template #emptymessage>
+            <tr>
+              <td colspan="3" class="text-muted text-center">No vendor data available</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </ui-dashboard-card>
+    </div>
+  </div>
+
+  <!-- Schedule Summary Card -->
+  <div class="grid grid-cols-12 gap-2">
+    <div class="col-span-12 mb-6">
+      <ui-dashboard-card title="Schedule Summary" icon="pi-calendar" iconColor="blue">
+        <div class="grid grid-cols-12 gap-4 p-4">
+          <div class="col-span-12 md:col-span-4">
+            <div class="text-muted text-sm">Total Schedules</div>
+            <div class="text-2xl font-semibold">{{ data()?.totalSchedules || 0 }}</div>
+          </div>
+          <div class="col-span-12 md:col-span-4">
+            <div class="text-muted text-sm">Overdue</div>
+            <div class="text-2xl font-semibold" [class]="getOverdueClass(data()?.overdueCount)">
+              {{ data()?.overdueCount || 0 }}
+            </div>
+          </div>
+          <div class="col-span-12 md:col-span-4">
+            <div class="text-muted text-sm">Due Soon</div>
+            <div class="text-2xl font-semibold text-amber-600">{{ data()?.dueSoonCount || 0 }}</div>
+          </div>
+        </div>
+      </ui-dashboard-card>
+    </div>
+  </div>
+}

@@ -1,5 +1,6 @@
 <ui-page-header
   title="Upcoming Service"
+  backLink="/maintenance"
   addRoute="/maintenance/records/add"
   addTooltip="Log service record"
 />
@@ -39,7 +40,7 @@
         </tr>
       </ng-template>
       <ng-template #body let-schedule>
-        <tr class="hover:bg-hover cursor-pointer" (click)="onRowClick(schedule)">
+        <tr>
           <td>
             <p-tag [value]="getStatusLabel(schedule)" [severity]="getStatusSeverity(schedule)" />
           </td>
@@ -59,11 +60,11 @@
                 <i class="pi pi-exclamation-triangle mr-1"></i>
                 Overdue
               </span>
-            } @else if (schedule.daysUntilDue != null) {
+            } @else if (schedule.daysUntilDue) {
               <span [class]="(schedule.daysUntilDue ?? 0) <= 7 ? 'text-warn font-medium' : ''">
                 {{ schedule.daysUntilDue }} days
               </span>
-            } @else if (schedule.milesUntilDue != null) {
+            } @else if (schedule.milesUntilDue) {
               {{ schedule.milesUntilDue | number }} mi
             } @else {
               -

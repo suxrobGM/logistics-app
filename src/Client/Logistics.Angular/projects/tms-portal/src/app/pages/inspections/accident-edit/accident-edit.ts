@@ -100,7 +100,7 @@ export class AccidentEditPage implements OnInit {
         this.populateForm(result);
       } else {
         this.toastService.showError("Accident report not found");
-        this.router.navigateByUrl("/inspections/accidents");
+        this.router.navigateByUrl("/safety/accidents");
       }
     } finally {
       this.isLoading.set(false);
@@ -199,7 +199,7 @@ export class AccidentEditPage implements OnInit {
       const result = await this.api.invoke(updateAccidentReport, { id: this.id(), body: command });
       if (result) {
         this.toastService.showSuccess("Accident report updated successfully");
-        this.router.navigateByUrl(`/inspections/accidents/${result.id}`);
+        this.router.navigateByUrl(`/safety/accidents/${result.id}`);
       }
     } catch {
       this.toastService.showError("Failed to update accident report");

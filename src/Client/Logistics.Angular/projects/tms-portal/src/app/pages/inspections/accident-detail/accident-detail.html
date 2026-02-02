@@ -1,5 +1,5 @@
 <div class="mb-6 flex items-start justify-between">
-  <ui-page-header [title]="pageTitle()" [showAddButton]="false" backLink="/inspections/accidents" />
+  <ui-page-header [title]="pageTitle()" [showAddButton]="false" backLink="/safety/accidents" />
   <div class="flex gap-2">
     @if (canEdit()) {
       <p-button label="Edit" icon="pi pi-pencil" [outlined]="true" (click)="editReport()" />
@@ -10,6 +10,23 @@
         icon="pi pi-send"
         (click)="submitReport()"
         [loading]="isSubmitting()"
+      />
+    }
+    @if (canReview()) {
+      <p-button
+        label="Start Review"
+        icon="pi pi-eye"
+        severity="info"
+        [outlined]="true"
+        (click)="openReviewDialog()"
+      />
+    }
+    @if (canResolve()) {
+      <p-button
+        label="Resolve"
+        icon="pi pi-check-circle"
+        severity="success"
+        (click)="openResolveDialog()"
       />
     }
   </div>
@@ -479,3 +496,77 @@
     </p-tabpanels>
   </p-tabs>
 }
+
+<!-- Review Dialog -->
+<p-dialog
+  header="Start Review"
+  [modal]="true"
+  [(visible)]="showReviewDialog"
+  [style]="{ width: '450px' }"
+>
+  <div class="flex flex-col gap-4">
+    <p class="text-muted">
+      Starting a review will change the report status to "Under Review". You can add optional notes
+      below.
+    </p>
+    <div>
+      <label for="reviewNotes" class="mb-2 block font-medium">Review Notes (Optional)</label>
+      <textarea
+        pTextarea
+        id="reviewNotes"
+        [(ngModel)]="reviewNotes"
+        rows="4"
+        class="w-full"
+        placeholder="Add any notes about this review..."
+      ></textarea>
+    </div>
+  </div>
+  <ng-template #footer>
+    <div class="flex justify-end gap-2">
+      <p-button label="Cancel" [text]="true" (click)="showReviewDialog.set(false)" />
+      <p-button
+        label="Start Review"
+        icon="pi pi-eye"
+        (click)="confirmReview()"
+        [loading]="isSubmitting()"
+      />
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- Resolve Dialog -->
+<p-dialog
+  header="Resolve Accident Report"
+  [modal]="true"
+  [(visible)]="showResolveDialog"
+  [style]="{ width: '450px' }"
+>
+  <div class="flex flex-col gap-4">
+    <p class="text-muted">
+      Resolving this report marks it as complete. You can add resolution notes below.
+    </p>
+    <div>
+      <label for="resolutionNotes" class="mb-2 block font-medium">Resolution Notes (Optional)</label>
+      <textarea
+        pTextarea
+        id="resolutionNotes"
+        [(ngModel)]="resolutionNotes"
+        rows="4"
+        class="w-full"
+        placeholder="Add any resolution notes..."
+      ></textarea>
+    </div>
+  </div>
+  <ng-template #footer>
+    <div class="flex justify-end gap-2">
+      <p-button label="Cancel" [text]="true" (click)="showResolveDialog.set(false)" />
+      <p-button
+        label="Resolve"
+        icon="pi pi-check-circle"
+        severity="success"
+        (click)="confirmResolve()"
+        [loading]="isSubmitting()"
+      />
+    </div>
+  </ng-template>
+</p-dialog>

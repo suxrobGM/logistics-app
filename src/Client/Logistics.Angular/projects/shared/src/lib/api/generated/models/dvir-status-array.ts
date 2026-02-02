@@ -11,5 +11,6 @@ export const DVIR_STATUS: DvirStatus[] = [
   'submitted',
   'reviewed',
   'requires_repair',
-  'cleared'
+  'cleared',
+  'rejected'
 ];

@@ -66,10 +66,6 @@ export class ServiceRecordsPage {
     }
   }
 
-  protected onRowClick(record: MaintenanceRecordDto): void {
-    this.router.navigateByUrl(`/maintenance/records/${record.id}`);
-  }
-
   protected onSearch(value: string): void {
     this.store.setSearch(value);
   }
