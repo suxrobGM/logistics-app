@@ -10,10 +10,7 @@ import { GalleriaModule } from "primeng/galleria";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import {
-  type DamageMarker,
-  VehicleDiagramComponent,
-} from "@/shared/components/inspections/vehicle-diagram/vehicle-diagram";
+import { type DamageMarker, VehicleDiagram } from "@/shared/components/inspections";
 
 @Component({
   selector: "app-condition-report-detail",
@@ -28,7 +25,7 @@ import {
     TableModule,
     TagModule,
     GalleriaModule,
-    VehicleDiagramComponent,
+    VehicleDiagram,
   ],
 })
 export class ConditionReportDetailPage implements OnInit {

@@ -14,7 +14,7 @@ export interface DamageMarker {
   styleUrl: "vehicle-diagram.css",
   imports: [TooltipModule],
 })
-export class VehicleDiagramComponent {
+export class VehicleDiagram {
   readonly markers = input<DamageMarker[]>([]);
   readonly showLegend = input(true);
 
