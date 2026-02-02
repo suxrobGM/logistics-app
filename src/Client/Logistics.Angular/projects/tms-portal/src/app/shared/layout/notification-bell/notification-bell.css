@@ -1,27 +1,116 @@
-/* Bell button states */
-.notification-bell { transition: all var(--transition-fast); }
-.notification-bell:hover { background-color: var(--bg-hover); color: var(--text-primary); border-color: var(--border-default); }
-.notification-bell:focus { outline: none; box-shadow: 0 0 0 2px var(--primary-500); }
-.notification-bell:active { transform: scale(0.98); }
-.notification-bell:hover i { transform: rotate(-15deg); }
-.notification-bell i { transition: transform var(--transition-fast); }
+.notification-bell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.5625rem 0.875rem;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.notification-bell:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+.notification-bell:focus {
+  outline: none;
+}
+.notification-bell:focus-visible {
+  box-shadow: 0 0 0 2px var(--primary-500);
+}
+.notification-bell:active {
+  transform: scale(0.98);
+}
+.notification-bell i {
+  font-size: 1.125rem;
+  transition:
+    transform var(--transition-fast),
+    color var(--transition-fast);
+}
+.notification-bell:hover i {
+  color: var(--primary-500);
+  animation: bell-ring 0.5s ease-in-out;
+}
 
-/* Compact mode */
-:host-context(.minimized) .notification-bell, :host(.mobile-bell) .notification-bell { justify-content: center; padding: 0.625rem; width: auto; border: none; }
-:host-context(header) .notification-bell { width: auto; border: none; padding: 0.5rem; }
-:host-context(header) .notification-bell:hover { background-color: transparent; }
+@keyframes bell-ring {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20% {
+    transform: rotate(-12deg);
+  }
+  40% {
+    transform: rotate(10deg);
+  }
+  60% {
+    transform: rotate(-8deg);
+  }
+  80% {
+    transform: rotate(5deg);
+  }
+}
 
-/* Mark all read button */
-.mark-all-read { background: 0; border: 0; color: var(--primary-500); font-size: 0.75rem; font-weight: 500; cursor: pointer; padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); transition: background-color var(--transition-fast); }
-.mark-all-read:hover { background-color: color-mix(in srgb, var(--primary-500) 10%, transparent); }
+:host-context(.minimized) .notification-bell,
+:host(.mobile-bell) .notification-bell {
+  justify-content: center;
+  width: auto;
+  padding: 0.5625rem;
+}
+:host-context(header) .notification-bell {
+  width: auto;
+  padding: 0.5rem;
+  border: none;
+}
+:host-context(header) .notification-bell:hover {
+  background-color: transparent;
+}
 
-/* Notification items */
-.notification-item { transition: background-color var(--transition-fast); }
-.notification-item:hover { background-color: var(--bg-hover); }
-.notification-item.unread { background-color: color-mix(in srgb, var(--primary-500) 8%, transparent); border-left-color: var(--primary-500); }
-.notification-item.expanded { background-color: var(--bg-elevated); }
-.notification-message.truncated { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.mark-all-read {
+  background: transparent;
+  border: none;
+  color: var(--primary-500);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast);
+}
+.mark-all-read:hover {
+  background-color: color-mix(in srgb, var(--primary-500) 10%, transparent);
+}
 
-/* View all link */
-.view-all-link { transition: background-color var(--transition-fast); }
-.view-all-link:hover { background-color: color-mix(in srgb, var(--primary-500) 10%, transparent); }
+.notification-item {
+  transition: background-color var(--transition-fast);
+}
+.notification-item:hover {
+  background-color: var(--bg-hover);
+}
+.notification-item.unread {
+  background-color: color-mix(in srgb, var(--primary-500) 8%, transparent);
+  border-left-color: var(--primary-500);
+}
+.notification-item.expanded {
+  background-color: var(--bg-elevated);
+}
+.notification-message.truncated {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.view-all-link {
+  transition: background-color var(--transition-fast);
+}
+.view-all-link:hover {
+  background-color: color-mix(in srgb, var(--primary-500) 10%, transparent);
+}

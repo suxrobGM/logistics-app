@@ -45,7 +45,7 @@ export class Sidebar {
     this.profileMenuItems = [
       {
         label: "User name",
-        icon: "pi pi-user text-3xl!",
+        icon: "pi pi-user",
         items: [
           {
             label: "Profile",

@@ -3,7 +3,7 @@ import type { MenuItem } from "@/shared/layout/panel-menu";
 export const sidebarItems: MenuItem[] = [
   {
     label: "Dashboard",
-    icon: "pi pi-home text-3xl!",
+    icon: "pi pi-home",
     items: [
       {
         label: "Home",
@@ -17,12 +17,12 @@ export const sidebarItems: MenuItem[] = [
   },
   {
     label: "Messages",
-    icon: "pi pi-comments text-3xl!",
+    icon: "pi pi-comments",
     route: "/messages",
   },
   {
     label: "Operations",
-    icon: "pi pi-server text-3xl!",
+    icon: "pi pi-server",
     items: [
       {
         label: "Loads",
@@ -52,7 +52,7 @@ export const sidebarItems: MenuItem[] = [
   },
   {
     label: "Fleet & Equipment",
-    icon: "pi pi-truck text-3xl!",
+    icon: "pi pi-truck",
     items: [
       // Vehicles Section
       {
@@ -86,7 +86,7 @@ export const sidebarItems: MenuItem[] = [
   },
   {
     label: "Safety & Compliance",
-    icon: "pi pi-shield text-3xl!",
+    icon: "pi pi-shield",
     items: [
       {
         label: "Overview",
@@ -134,7 +134,7 @@ export const sidebarItems: MenuItem[] = [
   },
   {
     label: "Directory",
-    icon: "pi pi-users text-3xl!",
+    icon: "pi pi-users",
     items: [
       {
         label: "Employees",
@@ -148,7 +148,7 @@ export const sidebarItems: MenuItem[] = [
   },
   {
     label: "Accounting",
-    icon: "pi pi-wallet text-3xl!",
+    icon: "pi pi-wallet",
     items: [
       // Payroll Section
       {
@@ -204,7 +204,7 @@ export const sidebarItems: MenuItem[] = [
   },
   {
     label: "Reports",
-    icon: "pi pi-chart-line text-3xl!",
+    icon: "pi pi-chart-line",
     items: [
       {
         label: "Loads",
@@ -238,7 +238,7 @@ export const sidebarItems: MenuItem[] = [
   },
   {
     label: "Settings",
-    icon: "pi pi-cog text-3xl!",
+    icon: "pi pi-cog",
     items: [
       {
         label: "Company",

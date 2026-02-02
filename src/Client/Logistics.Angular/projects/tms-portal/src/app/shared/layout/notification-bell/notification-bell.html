@@ -1,5 +1,5 @@
 <button
-  class="notification-bell border-subtle text-secondary flex w-full cursor-pointer items-center gap-3 rounded-lg border bg-transparent px-4 py-2.5 text-sm"
+  class="notification-bell"
   (click)="togglePopover($event)"
   [pTooltip]="expanded() ? '' : 'Notifications'"
   tooltipPosition="right"
@@ -7,10 +7,10 @@
   type="button"
 >
   <p-overlaybadge [value]="unreadCount() > 0 ? unreadCount().toString() : null" severity="danger">
-    <i class="pi pi-bell text-lg"></i>
+    <i class="pi pi-bell"></i>
   </p-overlaybadge>
   @if (expanded()) {
-    <span class="font-medium">Notifications</span>
+    <span>Notifications</span>
   }
 </button>
 

@@ -9,55 +9,47 @@
   styleClass="mobile-nav-drawer"
 >
   <ng-template #header>
-    <div class="flex items-center gap-3">
+    <div class="mobile-nav-header">
       @if (companyLogoUrl()) {
-        <img [src]="companyLogoUrl()" class="h-10 w-auto object-contain" alt="Company logo" />
+        <img [src]="companyLogoUrl()" class="mobile-nav-logo" alt="Company logo" />
       } @else {
-        <img src="images/logo.svg" class="h-10 w-auto" alt="Logo" />
+        <img src="images/logo.svg" class="mobile-nav-logo" alt="Logo" />
       }
       @if (companyName()) {
-        <h4 class="font-semibold text-primary">{{ companyName() }}</h4>
+        <h4 class="mobile-nav-company">{{ companyName() }}</h4>
       }
     </div>
   </ng-template>
 
   <nav class="mobile-nav-menu flex h-full flex-col">
     <!-- Navigation Items -->
-    <div class="flex-1 overflow-y-auto py-2">
+    <div class="flex-1 overflow-y-auto py-3">
       @for (item of navItems(); track item.label) {
         @if (item.items && item.items.length > 0) {
           <!-- Expandable Menu Item -->
-          <div class="mb-1">
+          <div class="mb-0.5">
             <button
-              class="mobile-nav-item flex w-full items-center justify-between rounded-lg px-4 py-3 text-left text-secondary hover:bg-hover"
+              class="mobile-nav-item"
+              [attr.aria-expanded]="item.expanded"
               (click)="toggleExpanded(item)"
             >
-              <div class="flex items-center gap-3">
+              <div class="flex items-center gap-3.5">
                 <i [class]="item.icon"></i>
-                <span class="font-medium">{{ item.label }}</span>
+                <span>{{ item.label }}</span>
               </div>
-              <i
-                class="pi transition-transform duration-200"
-                [class.pi-chevron-down]="!item.expanded"
-                [class.pi-chevron-up]="item.expanded"
-              ></i>
+              <i class="mobile-nav-chevron pi pi-chevron-down" [class.expanded]="item.expanded"></i>
             </button>
 
             @if (item.expanded) {
-              <div class="mt-1 ml-6 space-y-1 border-l-2 border-subtle pl-4">
+              <div class="mobile-nav-submenu mt-0.5 space-y-0.5">
                 @for (subItem of item.items; track subItem.label) {
                   @if (subItem.isSeparator) {
-                    <div class="mobile-nav-separator px-4 py-2">
-                      <div class="border-t border-subtle mb-2"></div>
-                      <span class="text-xs font-semibold uppercase tracking-wider text-muted">
-                        {{ subItem.label }}
-                      </span>
+                    <div class="mobile-nav-separator">
+                      <div class="mobile-nav-separator-line"></div>
+                      <span class="mobile-nav-separator-label">{{ subItem.label }}</span>
                     </div>
                   } @else {
-                    <button
-                      class="mobile-nav-subitem block w-full rounded-lg px-4 py-2 text-left text-secondary hover:bg-hover hover:text-primary"
-                      (click)="navigateTo(subItem.route!)"
-                    >
+                    <button class="mobile-nav-subitem" (click)="navigateTo(subItem.route!)">
                       {{ subItem.label }}
                     </button>
                   }
@@ -67,56 +59,47 @@
           </div>
         } @else {
           <!-- Direct Link Item -->
-          <button
-            class="mobile-nav-item flex w-full items-center gap-3 rounded-lg px-4 py-3 text-secondary hover:bg-hover"
-            (click)="navigateTo(item.route!)"
-          >
-            <i [class]="item.icon"></i>
-            <span class="font-medium">{{ item.label }}</span>
+          <button class="mobile-nav-item" (click)="navigateTo(item.route!)">
+            <div class="flex items-center gap-3.5">
+              <i [class]="item.icon"></i>
+              <span>{{ item.label }}</span>
+            </div>
           </button>
         }
       }
     </div>
 
     <!-- User Section -->
-    <div class="border-t border-subtle pt-4">
+    <div class="mobile-user-section">
       @if (userFullName()) {
-        <div class="px-4 pb-3">
-          <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-active">
-              <i class="pi pi-user text-secondary"></i>
-            </div>
-            <div>
-              <p class="font-medium text-primary">{{ userFullName() }}</p>
-              @if (userRole()) {
-                <p class="text-sm text-muted">{{ userRole() }}</p>
-              }
-            </div>
+        <div class="mobile-user-info">
+          <div class="mobile-user-avatar">
+            <i class="pi pi-user"></i>
+          </div>
+          <div>
+            <p class="mobile-user-name">{{ userFullName() }}</p>
+            @if (userRole()) {
+              <p class="mobile-user-role">{{ userRole() }}</p>
+            }
           </div>
         </div>
       }
 
-      <button
-        class="flex w-full items-center gap-3 px-4 py-3 text-secondary hover:bg-hover"
-        (click)="openAccountUrl()"
-      >
-        <i class="pi pi-user-edit text-lg"></i>
+      <button class="mobile-action-button" (click)="openAccountUrl()">
+        <i class="pi pi-user-edit"></i>
         <span>Manage Profile</span>
       </button>
 
-      <div class="flex items-center justify-between px-4 py-3">
-        <div class="flex items-center gap-3 text-secondary">
-          <i class="pi pi-palette text-lg"></i>
+      <div class="mobile-theme-row">
+        <div class="mobile-theme-label">
+          <i class="pi pi-palette"></i>
           <span>Theme</span>
         </div>
         <app-theme-toggle [showLabel]="false" />
       </div>
 
-      <button
-        class="flex w-full items-center gap-3 px-4 py-3 text-danger hover:bg-danger/10"
-        (click)="logout()"
-      >
-        <i class="pi pi-sign-out text-lg"></i>
+      <button class="mobile-action-button mobile-logout-button" (click)="logout()">
+        <i class="pi pi-sign-out"></i>
         <span>Sign Out</span>
       </button>
     </div>

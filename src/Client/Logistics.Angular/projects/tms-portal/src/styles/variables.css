@@ -73,7 +73,20 @@
   /* Sidebar */
   --sidebar-bg: linear-gradient(165deg, #ffffff 0%, #f1f5f9 30%, #e2e8f0 70%, #cfe2eb 100%);
   --sidebar-border: #e2e8f0;
-  --sidebar-footer-bg: linear-gradient(180deg, #fefefe 0%, #d4e4ed 100%);
+  --sidebar-footer-bg: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg-surface) 95%, transparent) 0%,
+    color-mix(in srgb, var(--primary-50) 30%, var(--bg-surface)) 100%
+  );
+  --sidebar-item-active-bg: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--primary-500) 12%, transparent) 0%,
+    color-mix(in srgb, var(--primary-500) 4%, transparent) 100%
+  );
+
+  /* Touch Targets */
+  --touch-target-min: 44px;
+  --touch-target-comfortable: 52px;
 
   /* Shimmer */
   --shimmer-base: #e2e8f0;
@@ -127,7 +140,16 @@
   /* Sidebar */
   --sidebar-bg: linear-gradient(165deg, #252d40 0%, #1a2030 35%, #111720 70%, #0a0e14 100%);
   --sidebar-border: #2d3548;
-  --sidebar-footer-bg: var(--bg-elevated);
+  --sidebar-footer-bg: linear-gradient(
+    180deg,
+    var(--bg-elevated) 0%,
+    color-mix(in srgb, var(--primary-900) 15%, var(--bg-elevated)) 100%
+  );
+  --sidebar-item-active-bg: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--primary-500) 15%, transparent) 0%,
+    color-mix(in srgb, var(--primary-500) 5%, transparent) 100%
+  );
 
   /* Shimmer */
   --shimmer-base: #242b3d;

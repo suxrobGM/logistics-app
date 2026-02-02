@@ -2,52 +2,54 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.625rem 1rem;
+  width: 100%;
+  padding: 0.5625rem 0.875rem;
   background: transparent;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
   cursor: pointer;
   transition: all var(--transition-fast);
-  width: 100%;
-  font-size: 0.875rem;
-  font-family: var(--font-sans);
 }
-
 .theme-toggle:hover {
   background-color: var(--bg-hover);
   color: var(--text-primary);
   border-color: var(--border-default);
 }
-
 .theme-toggle:focus {
   outline: none;
+}
+.theme-toggle:focus-visible {
   box-shadow: 0 0 0 2px var(--primary-500);
 }
-
 .theme-toggle:active {
   transform: scale(0.98);
 }
-
 .theme-toggle i {
   font-size: 1.125rem;
-  transition: transform var(--transition-fast);
+  transition:
+    transform var(--transition-base),
+    color var(--transition-fast);
 }
-
 .theme-toggle:hover i {
-  transform: rotate(15deg);
+  color: var(--primary-500);
 }
-
+.theme-toggle:hover i.pi-sun {
+  transform: rotate(45deg) scale(1.1);
+}
+.theme-toggle:hover i.pi-moon {
+  transform: rotate(-15deg) scale(1.1);
+}
 .theme-toggle-label {
   font-weight: 500;
 }
-
-/* Compact mode (when sidebar is minimized) */
 :host-context(.minimized) .theme-toggle {
   justify-content: center;
-  padding: 0.625rem;
+  padding: 0.5625rem;
 }
-
 :host-context(.minimized) .theme-toggle-label {
   display: none;
 }
