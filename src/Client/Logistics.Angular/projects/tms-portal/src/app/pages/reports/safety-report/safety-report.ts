@@ -69,6 +69,7 @@ export class SafetyReportComponent extends BaseReportComponent<SafetyReportDto> 
   protected readonly accidentSeverityChartData = signal<Record<string, unknown>>({});
   protected readonly behaviorEventChartData = signal<Record<string, unknown>>({});
   protected readonly trendChartData = signal<Record<string, unknown>>({});
+  protected readonly trendDataPointCount = signal(0);
 
   protected readonly hasDvirStatusData = computed(() => Object.keys(this.dvirStatusChartData()).length > 0);
   protected readonly hasAccidentSeverityData = computed(
@@ -76,6 +77,9 @@ export class SafetyReportComponent extends BaseReportComponent<SafetyReportDto> 
   );
   protected readonly hasBehaviorEventData = computed(() => Object.keys(this.behaviorEventChartData()).length > 0);
   protected readonly hasTrendData = computed(() => Object.keys(this.trendChartData()).length > 0);
+
+  // Use bar chart for small datasets (3 or fewer points)
+  protected readonly trendChartType = computed(() => (this.trendDataPointCount() <= 3 ? "bar" : "line"));
 
   protected readonly pieChartOptions = {
     plugins: {
@@ -94,15 +98,46 @@ export class SafetyReportComponent extends BaseReportComponent<SafetyReportDto> 
     maintainAspectRatio: false,
   };
 
-  protected readonly trendChartOptions = {
-    plugins: {
-      legend: { position: "bottom" as const },
-    },
-    scales: {
-      y: { beginAtZero: true },
-    },
-    maintainAspectRatio: false,
-  };
+  protected readonly trendChartOptions = computed(() => {
+    const pointCount = this.trendDataPointCount();
+    const isBarChart = pointCount <= 3;
+
+    return {
+      plugins: {
+        legend: { position: "bottom" as const },
+      },
+      layout: {
+        padding: { left: 10 },
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: "Month",
+            font: { weight: "bold" as const },
+          },
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: "Count",
+            font: { weight: "bold" as const },
+          },
+        },
+      },
+      maintainAspectRatio: false,
+      // For line charts, show larger points when there are few data points
+      ...(!isBarChart && {
+        elements: {
+          point: {
+            radius: pointCount <= 6 ? 6 : 3,
+            hoverRadius: pointCount <= 6 ? 8 : 5,
+          },
+        },
+      }),
+    };
+  });
 
   ngOnInit(): void {
     this.fetch({ startDate: this.startDate(), endDate: this.endDate() });
@@ -161,13 +196,21 @@ export class SafetyReportComponent extends BaseReportComponent<SafetyReportDto> 
       });
     }
 
-    // Combined trends line chart
+    // Combined trends chart (bar for small datasets, line for larger)
     const dvirTrends = result.dvirTrends ?? [];
     const accidentTrends = result.accidentTrends ?? [];
     const behaviorTrends = result.behaviorTrends ?? [];
 
     if (dvirTrends.length > 0 || accidentTrends.length > 0 || behaviorTrends.length > 0) {
       const periods = dvirTrends.map((t: SafetyTrendDto) => t.period);
+      const pointCount = periods.length;
+      this.trendDataPointCount.set(pointCount);
+
+      // Use bar chart styling for small datasets, line chart for larger ones
+      const isBarChart = pointCount <= 3;
+      // Reduce tension for small datasets to avoid misleading curves
+      const tension = pointCount <= 4 ? 0 : 0.4;
+
       this.trendChartData.set({
         labels: periods,
         datasets: [
@@ -175,28 +218,33 @@ export class SafetyReportComponent extends BaseReportComponent<SafetyReportDto> 
             label: "DVIR Reports",
             data: dvirTrends.map((t: SafetyTrendDto) => t.count),
             borderColor: "#3b82f6",
-            backgroundColor: "rgba(59, 130, 246, 0.1)",
-            tension: 0.4,
-            fill: true,
+            backgroundColor: isBarChart ? "#3b82f6" : "rgba(59, 130, 246, 0.1)",
+            tension,
+            fill: !isBarChart,
+            pointBackgroundColor: "#3b82f6",
           },
           {
             label: "Accidents",
             data: accidentTrends.map((t: SafetyTrendDto) => t.count),
             borderColor: "#ef4444",
-            backgroundColor: "rgba(239, 68, 68, 0.1)",
-            tension: 0.4,
-            fill: true,
+            backgroundColor: isBarChart ? "#ef4444" : "rgba(239, 68, 68, 0.1)",
+            tension,
+            fill: !isBarChart,
+            pointBackgroundColor: "#ef4444",
           },
           {
             label: "Behavior Events",
             data: behaviorTrends.map((t: SafetyTrendDto) => t.count),
             borderColor: "#f59e0b",
-            backgroundColor: "rgba(245, 158, 11, 0.1)",
-            tension: 0.4,
-            fill: true,
+            backgroundColor: isBarChart ? "#f59e0b" : "rgba(245, 158, 11, 0.1)",
+            tension,
+            fill: !isBarChart,
+            pointBackgroundColor: "#f59e0b",
           },
         ],
       });
+    } else {
+      this.trendDataPointCount.set(0);
     }
   }
 

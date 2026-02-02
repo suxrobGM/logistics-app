@@ -121,9 +121,9 @@
       <ui-dashboard-card title="Safety Trends" icon="pi-chart-line" iconColor="blue">
         @if (hasTrendData()) {
           <p-chart
-            type="line"
+            [type]="trendChartType()"
             [data]="trendChartData()"
-            [options]="trendChartOptions"
+            [options]="trendChartOptions()"
             style="height: 350px"
           />
         } @else {

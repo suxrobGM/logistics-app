@@ -104,9 +104,9 @@
       <ui-dashboard-card title="Cost Trends" icon="pi-chart-line" iconColor="blue">
         @if (hasCostTrendData()) {
           <p-chart
-            type="line"
+            [type]="trendChartType()"
             [data]="costTrendChartData()"
-            [options]="trendChartOptions"
+            [options]="trendChartOptions()"
             style="height: 350px"
           />
         } @else {

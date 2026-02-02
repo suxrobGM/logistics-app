@@ -27,22 +27,44 @@ internal sealed class MaintenanceReportHandler(ITenantUnitOfWork tenantUow)
         var activeScheduleQuery = scheduleRepo.Query()
             .Where(s => s.IsActive);
 
-        // Execute aggregations at database level in parallel
-        var totalCostTask = recordQuery.SumAsync(r => r.TotalCost, ct);
-        var laborCostTask = recordQuery.SumAsync(r => r.LaborCost, ct);
-        var partsCostTask = recordQuery.SumAsync(r => r.PartsCost, ct);
+        // Combined record summary (1 query instead of 6)
+        var recordSummary = await recordQuery
+            .GroupBy(_ => 1)
+            .Select(g => new
+            {
+                TotalCost = g.Sum(r => r.TotalCost),
+                LaborCost = g.Sum(r => r.LaborCost),
+                PartsCost = g.Sum(r => r.PartsCost),
+                TotalServices = g.Count(),
+                ScheduledServices = g.Count(r => r.MaintenanceScheduleId.HasValue),
+                UnscheduledServices = g.Count(r => !r.MaintenanceScheduleId.HasValue)
+            })
+            .FirstOrDefaultAsync(ct);
 
-        var totalServicesTask = recordQuery.CountAsync(ct);
-        var scheduledServicesTask = recordQuery.CountAsync(r => r.MaintenanceScheduleId.HasValue, ct);
-        var unscheduledServicesTask = recordQuery.CountAsync(r => !r.MaintenanceScheduleId.HasValue, ct);
+        var totalCost = recordSummary?.TotalCost ?? 0;
+        var laborCost = recordSummary?.LaborCost ?? 0;
+        var partsCost = recordSummary?.PartsCost ?? 0;
+        var totalServices = recordSummary?.TotalServices ?? 0;
+        var scheduledServices = recordSummary?.ScheduledServices ?? 0;
+        var unscheduledServices = recordSummary?.UnscheduledServices ?? 0;
 
-        var totalSchedulesTask = activeScheduleQuery.CountAsync(ct);
-        var overdueCountTask = activeScheduleQuery.CountAsync(s => s.NextDueDate.HasValue && s.NextDueDate.Value < now, ct);
-        var dueSoonCountTask = activeScheduleQuery.CountAsync(s =>
-            s.NextDueDate.HasValue && s.NextDueDate.Value >= now && s.NextDueDate.Value <= dueSoonThreshold, ct);
+        // Combined schedule summary (1 query instead of 3)
+        var scheduleSummary = await activeScheduleQuery
+            .GroupBy(_ => 1)
+            .Select(g => new
+            {
+                TotalSchedules = g.Count(),
+                OverdueCount = g.Count(s => s.NextDueDate.HasValue && s.NextDueDate.Value < now),
+                DueSoonCount = g.Count(s => s.NextDueDate.HasValue && s.NextDueDate.Value >= now && s.NextDueDate.Value <= dueSoonThreshold)
+            })
+            .FirstOrDefaultAsync(ct);
 
-        // Breakdowns - execute at database level
-        var serviceTypeBreakdownTask = recordQuery
+        var totalSchedules = scheduleSummary?.TotalSchedules ?? 0;
+        var overdueCount = scheduleSummary?.OverdueCount ?? 0;
+        var dueSoonCount = scheduleSummary?.DueSoonCount ?? 0;
+
+        // Breakdowns
+        var serviceTypeBreakdownData = await recordQuery
             .GroupBy(r => r.MaintenanceType)
             .Select(g => new
             {
@@ -52,7 +74,7 @@ internal sealed class MaintenanceReportHandler(ITenantUnitOfWork tenantUow)
             })
             .ToListAsync(ct);
 
-        var vendorBreakdownTask = recordQuery
+        var vendorBreakdown = await recordQuery
             .Where(r => r.VendorName != null && r.VendorName != "")
             .GroupBy(r => r.VendorName)
             .Select(g => new
@@ -65,8 +87,8 @@ internal sealed class MaintenanceReportHandler(ITenantUnitOfWork tenantUow)
             .Take(10)
             .ToListAsync(ct);
 
-        // Trends - group by year/month at database level
-        var trendsTask = recordQuery
+        // Trends - group by year/month
+        var trendsData = await recordQuery
             .GroupBy(r => new { r.ServiceDate.Year, r.ServiceDate.Month })
             .Select(g => new
             {
@@ -79,8 +101,8 @@ internal sealed class MaintenanceReportHandler(ITenantUnitOfWork tenantUow)
             })
             .ToListAsync(ct);
 
-        // Top cost trucks - aggregate at database level
-        var topTrucksTask = recordQuery
+        // Top cost trucks
+        var topTrucks = await recordQuery
             .GroupBy(r => r.TruckId)
             .Select(g => new
             {
@@ -93,15 +115,7 @@ internal sealed class MaintenanceReportHandler(ITenantUnitOfWork tenantUow)
             .Take(5)
             .ToListAsync(ct);
 
-        // Await all tasks
-        await Task.WhenAll(
-            totalCostTask, laborCostTask, partsCostTask,
-            totalServicesTask, scheduledServicesTask, unscheduledServicesTask,
-            totalSchedulesTask, overdueCountTask, dueSoonCountTask,
-            serviceTypeBreakdownTask, vendorBreakdownTask, trendsTask, topTrucksTask);
-
         // Fetch truck numbers for top trucks
-        var topTrucks = await topTrucksTask;
         var topTruckIds = topTrucks.Select(t => t.TruckId).ToList();
         var truckNumbers = await tenantUow.Repository<Truck>().Query()
             .Where(t => topTruckIds.Contains(t.Id))
@@ -109,7 +123,7 @@ internal sealed class MaintenanceReportHandler(ITenantUnitOfWork tenantUow)
             .ToDictionaryAsync(t => t.Id, t => t.Number, ct);
 
         // Build service type breakdown with display names and calculated average
-        var serviceTypeBreakdown = (await serviceTypeBreakdownTask)
+        var serviceTypeBreakdown = serviceTypeBreakdownData
             .Select(x => new MaintenanceTypeBreakdownDto
             {
                 MaintenanceType = x.MaintenanceType.ToString(),
@@ -122,29 +136,28 @@ internal sealed class MaintenanceReportHandler(ITenantUnitOfWork tenantUow)
             .ToList();
 
         // Build trends with gaps filled in
-        var trendsData = await trendsTask;
         var trends = BuildTrends(trendsData, startDate, endDate);
 
         var dto = new MaintenanceReportDto
         {
             // Cost Summary
-            TotalCost = await totalCostTask,
-            LaborCost = await laborCostTask,
-            PartsCost = await partsCostTask,
+            TotalCost = totalCost,
+            LaborCost = laborCost,
+            PartsCost = partsCost,
 
             // Service Summary
-            TotalServices = await totalServicesTask,
-            ScheduledServices = await scheduledServicesTask,
-            UnscheduledServices = await unscheduledServicesTask,
+            TotalServices = totalServices,
+            ScheduledServices = scheduledServices,
+            UnscheduledServices = unscheduledServices,
 
             // Schedule Summary
-            TotalSchedules = await totalSchedulesTask,
-            OverdueCount = await overdueCountTask,
-            DueSoonCount = await dueSoonCountTask,
+            TotalSchedules = totalSchedules,
+            OverdueCount = overdueCount,
+            DueSoonCount = dueSoonCount,
 
             // Breakdowns
             ByServiceType = serviceTypeBreakdown,
-            ByVendor = (await vendorBreakdownTask)
+            ByVendor = vendorBreakdown
                 .Select(x => new MaintenanceVendorBreakdownDto
                 {
                     VendorName = x.VendorName ?? "Unknown",

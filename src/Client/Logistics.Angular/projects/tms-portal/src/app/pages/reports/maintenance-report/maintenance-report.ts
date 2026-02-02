@@ -56,10 +56,14 @@ export class MaintenanceReportComponent extends BaseReportComponent<MaintenanceR
   protected readonly costTrendChartData = signal<Record<string, unknown>>({});
   protected readonly serviceTypeChartData = signal<Record<string, unknown>>({});
   protected readonly vendorChartData = signal<Record<string, unknown>>({});
+  protected readonly trendDataPointCount = signal(0);
 
   protected readonly hasCostTrendData = computed(() => Object.keys(this.costTrendChartData()).length > 0);
   protected readonly hasServiceTypeData = computed(() => Object.keys(this.serviceTypeChartData()).length > 0);
   protected readonly hasVendorData = computed(() => Object.keys(this.vendorChartData()).length > 0);
+
+  // Use bar chart for small datasets (3 or fewer points)
+  protected readonly trendChartType = computed(() => (this.trendDataPointCount() <= 3 ? "bar" : "line"));
 
   protected readonly pieChartOptions = {
     plugins: {
@@ -83,20 +87,49 @@ export class MaintenanceReportComponent extends BaseReportComponent<MaintenanceR
     maintainAspectRatio: false,
   };
 
-  protected readonly trendChartOptions = {
-    plugins: {
-      legend: { position: "bottom" as const },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        ticks: {
-          callback: (value: number) => "$" + value.toLocaleString(),
+  protected readonly trendChartOptions = computed(() => {
+    const pointCount = this.trendDataPointCount();
+    const isBarChart = pointCount <= 3;
+
+    return {
+      plugins: {
+        legend: { position: "bottom" as const },
+      },
+      layout: {
+        padding: { left: 10 },
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: "Month",
+            font: { weight: "bold" as const },
+          },
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: "Cost ($)",
+            font: { weight: "bold" as const },
+          },
+          ticks: {
+            callback: (value: number) => "$" + value.toLocaleString(),
+          },
         },
       },
-    },
-    maintainAspectRatio: false,
-  };
+      maintainAspectRatio: false,
+      // For line charts, show larger points when there are few data points
+      ...(!isBarChart && {
+        elements: {
+          point: {
+            radius: pointCount <= 6 ? 6 : 3,
+            hoverRadius: pointCount <= 6 ? 8 : 5,
+          },
+        },
+      }),
+    };
+  });
 
   ngOnInit(): void {
     this.fetch({ startDate: this.startDate(), endDate: this.endDate() });
@@ -110,9 +143,17 @@ export class MaintenanceReportComponent extends BaseReportComponent<MaintenanceR
   }
 
   protected override drawChart(result: MaintenanceReportDto): void {
-    // Cost trends line chart
+    // Cost trends chart (bar for small datasets, line for larger)
     const costTrends = result.costTrends ?? [];
     if (costTrends.length > 0) {
+      const pointCount = costTrends.length;
+      this.trendDataPointCount.set(pointCount);
+
+      // Use bar chart styling for small datasets, line chart for larger ones
+      const isBarChart = pointCount <= 3;
+      // Reduce tension for small datasets to avoid misleading curves
+      const tension = pointCount <= 4 ? 0 : 0.4;
+
       this.costTrendChartData.set({
         labels: costTrends.map((t: MaintenanceTrendDto) => t.period),
         datasets: [
@@ -120,28 +161,33 @@ export class MaintenanceReportComponent extends BaseReportComponent<MaintenanceR
             label: "Total Cost",
             data: costTrends.map((t: MaintenanceTrendDto) => t.totalCost),
             borderColor: "#3b82f6",
-            backgroundColor: "rgba(59, 130, 246, 0.1)",
-            tension: 0.4,
-            fill: true,
+            backgroundColor: isBarChart ? "#3b82f6" : "rgba(59, 130, 246, 0.1)",
+            tension,
+            fill: !isBarChart,
+            pointBackgroundColor: "#3b82f6",
           },
           {
             label: "Labor Cost",
             data: costTrends.map((t: MaintenanceTrendDto) => t.laborCost),
             borderColor: "#22c55e",
-            backgroundColor: "rgba(34, 197, 94, 0.1)",
-            tension: 0.4,
-            fill: true,
+            backgroundColor: isBarChart ? "#22c55e" : "rgba(34, 197, 94, 0.1)",
+            tension,
+            fill: !isBarChart,
+            pointBackgroundColor: "#22c55e",
           },
           {
             label: "Parts Cost",
             data: costTrends.map((t: MaintenanceTrendDto) => t.partsCost),
             borderColor: "#f59e0b",
-            backgroundColor: "rgba(245, 158, 11, 0.1)",
-            tension: 0.4,
-            fill: true,
+            backgroundColor: isBarChart ? "#f59e0b" : "rgba(245, 158, 11, 0.1)",
+            tension,
+            fill: !isBarChart,
+            pointBackgroundColor: "#f59e0b",
           },
         ],
       });
+    } else {
+      this.trendDataPointCount.set(0);
     }
 
     // Service type breakdown bar chart

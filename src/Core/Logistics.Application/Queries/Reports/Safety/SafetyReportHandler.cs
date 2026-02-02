@@ -29,71 +29,95 @@ internal sealed class SafetyReportHandler(ITenantUnitOfWork tenantUow)
         var behaviorQuery = behaviorRepo.Query()
             .Where(b => b.OccurredAt >= startDate && b.OccurredAt <= endDate);
 
-        // Execute aggregations at database level in parallel
-        var totalDvirsTask = dvirQuery.CountAsync(ct);
-        var pendingDvirReviewsTask = dvirQuery.CountAsync(d => d.Status == DvirStatus.Submitted, ct);
-        var dvirsWithDefectsTask = dvirQuery.CountAsync(d => d.HasDefects, ct);
-
-        var totalAccidentsTask = accidentQuery.CountAsync(ct);
-        var unresolvedAccidentsTask = accidentQuery.CountAsync(a => a.Status != AccidentReportStatus.Resolved, ct);
-        var estimatedDamageCostTask = accidentQuery.SumAsync(a => a.EstimatedDamageCost ?? 0, ct);
-        var injuriesReportedTask = accidentQuery.SumAsync(a => a.NumberOfInjuries ?? 0, ct);
-
-        var totalBehaviorEventsTask = behaviorQuery.CountAsync(ct);
-        var unreviewedBehaviorEventsTask = behaviorQuery.CountAsync(b => !b.ReviewedAt.HasValue, ct);
-
-        // Breakdowns - execute at database level
-        var dvirStatusBreakdownTask = dvirQuery
+        // DVIR: Combined summary stats (1 query instead of 3) + status breakdown with defect count
+        var dvirStatusBreakdown = await dvirQuery
             .GroupBy(d => d.Status)
-            .Select(g => new { Status = g.Key, Count = g.Count() })
+            .Select(g => new
+            {
+                Status = g.Key,
+                Count = g.Count(),
+                WithDefects = g.Count(d => d.HasDefects)
+            })
             .ToListAsync(ct);
 
-        var accidentStatusBreakdownTask = accidentQuery
+        var totalDvirs = dvirStatusBreakdown.Sum(x => x.Count);
+        var pendingDvirReviews = dvirStatusBreakdown
+            .Where(x => x.Status == DvirStatus.Submitted)
+            .Sum(x => x.Count);
+        var dvirsWithDefects = dvirStatusBreakdown.Sum(x => x.WithDefects);
+
+        // Accidents: Combined summary stats (1 query instead of 4) + status/severity breakdowns
+        var accidentSummary = await accidentQuery
+            .GroupBy(_ => 1)
+            .Select(g => new
+            {
+                Total = g.Count(),
+                Unresolved = g.Count(a => a.Status != AccidentReportStatus.Resolved),
+                EstimatedDamageCost = g.Sum(a => a.EstimatedDamageCost ?? 0),
+                InjuriesReported = g.Sum(a => a.NumberOfInjuries ?? 0)
+            })
+            .FirstOrDefaultAsync(ct);
+
+        var totalAccidents = accidentSummary?.Total ?? 0;
+        var unresolvedAccidents = accidentSummary?.Unresolved ?? 0;
+        var estimatedDamageCost = accidentSummary?.EstimatedDamageCost ?? 0;
+        var injuriesReported = accidentSummary?.InjuriesReported ?? 0;
+
+        var accidentStatusBreakdown = await accidentQuery
             .GroupBy(a => a.Status)
             .Select(g => new { Status = g.Key, Count = g.Count() })
             .ToListAsync(ct);
 
-        var accidentSeverityBreakdownTask = accidentQuery
+        var accidentSeverityBreakdown = await accidentQuery
             .GroupBy(a => a.Severity)
             .Select(g => new { Severity = g.Key, Count = g.Count(), TotalDamage = g.Sum(a => a.EstimatedDamageCost ?? 0) })
             .ToListAsync(ct);
 
-        var behaviorEventBreakdownTask = behaviorQuery
+        // Behavior: Combined summary in breakdown (1 query instead of 3)
+        var behaviorEventBreakdown = await behaviorQuery
             .GroupBy(e => e.EventType)
-            .Select(g => new { EventType = g.Key, Count = g.Count() })
+            .Select(g => new
+            {
+                EventType = g.Key,
+                Count = g.Count(),
+                Unreviewed = g.Count(b => !b.ReviewedAt.HasValue)
+            })
             .ToListAsync(ct);
+        var totalBehaviorEvents = behaviorEventBreakdown.Sum(x => x.Count);
+        var unreviewedBehaviorEvents = behaviorEventBreakdown.Sum(x => x.Unreviewed);
 
-        // Trends - group by year/month at database level
-        var dvirTrendsTask = dvirQuery
+        // Trends - group by year/month
+        var dvirTrends = await dvirQuery
             .GroupBy(d => new { d.InspectionDate.Year, d.InspectionDate.Month })
             .Select(g => new { g.Key.Year, g.Key.Month, Count = g.Count() })
             .ToListAsync(ct);
 
-        var accidentTrendsTask = accidentQuery
+        var accidentTrends = await accidentQuery
             .GroupBy(a => new { a.AccidentDateTime.Year, a.AccidentDateTime.Month })
             .Select(g => new { g.Key.Year, g.Key.Month, Count = g.Count(), Value = g.Sum(a => a.EstimatedDamageCost ?? 0) })
             .ToListAsync(ct);
 
-        var behaviorTrendsTask = behaviorQuery
+        var behaviorTrends = await behaviorQuery
             .GroupBy(b => new { b.OccurredAt.Year, b.OccurredAt.Month })
             .Select(g => new { g.Key.Year, g.Key.Month, Count = g.Count() })
             .ToListAsync(ct);
 
-        // Top drivers - aggregate at database level
-        var topDriverBehaviorTask = behaviorQuery
+        // Top drivers with accident counts in single query
+        var topDriverBehavior = await behaviorQuery
             .GroupBy(b => b.EmployeeId)
             .Select(g => new { DriverId = g.Key, BehaviorCount = g.Count() })
             .OrderByDescending(x => x.BehaviorCount)
             .Take(10)
             .ToListAsync(ct);
 
-        var driverAccidentCountsTask = accidentQuery
+        var driverAccidentCounts = (await accidentQuery
             .GroupBy(a => a.DriverId)
             .Select(g => new { DriverId = g.Key, AccidentCount = g.Count() })
-            .ToListAsync(ct);
+            .ToListAsync(ct))
+            .ToDictionary(x => x.DriverId, x => x.AccidentCount);
 
-        // Top trucks - aggregate at database level
-        var topTruckDefectsTask = dvirQuery
+        // Top trucks with defects
+        var topTruckDefects = await dvirQuery
             .Where(d => d.HasDefects)
             .GroupBy(d => d.TruckId)
             .Select(g => new { TruckId = g.Key, DefectCount = g.Sum(d => d.Defects.Count) })
@@ -101,27 +125,13 @@ internal sealed class SafetyReportHandler(ITenantUnitOfWork tenantUow)
             .Take(10)
             .ToListAsync(ct);
 
-        var truckAccidentCountsTask = accidentQuery
+        var truckAccidentCounts = (await accidentQuery
             .GroupBy(a => a.TruckId)
             .Select(g => new { TruckId = g.Key, AccidentCount = g.Count() })
-            .ToListAsync(ct);
-
-        // Await all tasks
-        await Task.WhenAll(
-            totalDvirsTask, pendingDvirReviewsTask, dvirsWithDefectsTask,
-            totalAccidentsTask, unresolvedAccidentsTask, estimatedDamageCostTask, injuriesReportedTask,
-            totalBehaviorEventsTask, unreviewedBehaviorEventsTask,
-            dvirStatusBreakdownTask, accidentStatusBreakdownTask, accidentSeverityBreakdownTask, behaviorEventBreakdownTask,
-            dvirTrendsTask, accidentTrendsTask, behaviorTrendsTask,
-            topDriverBehaviorTask, driverAccidentCountsTask,
-            topTruckDefectsTask, truckAccidentCountsTask);
-
-        var totalDvirs = await totalDvirsTask;
-        var dvirsWithDefects = await dvirsWithDefectsTask;
+            .ToListAsync(ct))
+            .ToDictionary(x => x.TruckId, x => x.AccidentCount);
 
         // Fetch driver names for top drivers
-        var topDriverBehavior = await topDriverBehaviorTask;
-        var driverAccidentCounts = (await driverAccidentCountsTask).ToDictionary(x => x.DriverId, x => x.AccidentCount);
         var topDriverIds = topDriverBehavior.Select(x => x.DriverId).ToList();
         var driverNames = await tenantUow.Repository<Employee>().Query()
             .Where(e => topDriverIds.Contains(e.Id))
@@ -129,8 +139,6 @@ internal sealed class SafetyReportHandler(ITenantUnitOfWork tenantUow)
             .ToDictionaryAsync(e => e.Id, e => $"{e.FirstName} {e.LastName}", ct);
 
         // Fetch truck numbers for top trucks
-        var topTruckDefects = await topTruckDefectsTask;
-        var truckAccidentCounts = (await truckAccidentCountsTask).ToDictionary(x => x.TruckId, x => x.AccidentCount);
         var topTruckIds = topTruckDefects.Select(x => x.TruckId).ToList();
         var truckNumbers = await tenantUow.Repository<Truck>().Query()
             .Where(t => topTruckIds.Contains(t.Id))
@@ -141,24 +149,24 @@ internal sealed class SafetyReportHandler(ITenantUnitOfWork tenantUow)
         {
             // DVIR Summary
             TotalDvirs = totalDvirs,
-            PendingDvirReviews = await pendingDvirReviewsTask,
+            PendingDvirReviews = pendingDvirReviews,
             DvirsWithDefects = dvirsWithDefects,
             DvirDefectRate = totalDvirs > 0
                 ? Math.Round((double)dvirsWithDefects / totalDvirs * 100, 1)
                 : 0,
 
             // Accident Summary
-            TotalAccidents = await totalAccidentsTask,
-            UnresolvedAccidents = await unresolvedAccidentsTask,
-            EstimatedDamageCost = await estimatedDamageCostTask,
-            InjuriesReported = await injuriesReportedTask,
+            TotalAccidents = totalAccidents,
+            UnresolvedAccidents = unresolvedAccidents,
+            EstimatedDamageCost = estimatedDamageCost,
+            InjuriesReported = injuriesReported,
 
             // Driver Behavior Summary
-            TotalBehaviorEvents = await totalBehaviorEventsTask,
-            UnreviewedBehaviorEvents = await unreviewedBehaviorEventsTask,
+            TotalBehaviorEvents = totalBehaviorEvents,
+            UnreviewedBehaviorEvents = unreviewedBehaviorEvents,
 
             // Breakdowns - map to DTOs with display names
-            DvirStatusBreakdown = (await dvirStatusBreakdownTask)
+            DvirStatusBreakdown = dvirStatusBreakdown
                 .Select(x => new SafetyStatusBreakdownDto
                 {
                     Status = x.Status.ToString(),
@@ -168,7 +176,7 @@ internal sealed class SafetyReportHandler(ITenantUnitOfWork tenantUow)
                 .OrderByDescending(x => x.Count)
                 .ToList(),
 
-            AccidentStatusBreakdown = (await accidentStatusBreakdownTask)
+            AccidentStatusBreakdown = accidentStatusBreakdown
                 .Select(x => new SafetyStatusBreakdownDto
                 {
                     Status = x.Status.ToString(),
@@ -178,7 +186,7 @@ internal sealed class SafetyReportHandler(ITenantUnitOfWork tenantUow)
                 .OrderByDescending(x => x.Count)
                 .ToList(),
 
-            AccidentSeverityBreakdown = (await accidentSeverityBreakdownTask)
+            AccidentSeverityBreakdown = accidentSeverityBreakdown
                 .Select(x => new SafetySeverityBreakdownDto
                 {
                     Severity = x.Severity.ToString(),
@@ -189,7 +197,7 @@ internal sealed class SafetyReportHandler(ITenantUnitOfWork tenantUow)
                 .OrderByDescending(x => x.Count)
                 .ToList(),
 
-            BehaviorEventBreakdown = (await behaviorEventBreakdownTask)
+            BehaviorEventBreakdown = behaviorEventBreakdown
                 .Select(x => new SafetyEventTypeBreakdownDto
                 {
                     EventType = x.EventType.ToString(),
@@ -200,9 +208,9 @@ internal sealed class SafetyReportHandler(ITenantUnitOfWork tenantUow)
                 .ToList(),
 
             // Trends - fill in gaps for months with no data
-            DvirTrends = BuildTrends(await dvirTrendsTask, startDate, endDate),
-            AccidentTrends = BuildAccidentTrends(await accidentTrendsTask, startDate, endDate),
-            BehaviorTrends = BuildTrends(await behaviorTrendsTask, startDate, endDate),
+            DvirTrends = BuildTrends(dvirTrends, startDate, endDate),
+            AccidentTrends = BuildAccidentTrends(accidentTrends, startDate, endDate),
+            BehaviorTrends = BuildTrends(behaviorTrends, startDate, endDate),
 
             // Top offenders
             TopDriversByEvents = topDriverBehavior
