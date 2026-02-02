@@ -73,6 +73,10 @@ public class TenantDbContext : DbContext
         // for entities implementing ITenantEntity
         builder.ApplyTenantConfigurationsFromAssembly<TenantDbContext>();
 
+        // Prune entity types that are only relevant for the master database
+        // It avoids issues with master-specific entities being included in the tenant context and migration errors
+        builder.PruneMasterOnlyTypesForTenant();
+
         builder.Entity<CompanyStatsDto>(entity =>
         {
             entity.HasNoKey();
