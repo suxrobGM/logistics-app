@@ -1,5 +1,6 @@
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
-import { Component, type OnInit, signal } from "@angular/core";
+import { Component, inject, type OnInit, signal } from "@angular/core";
+import { LocalizationService } from "@logistics/shared";
 import { getDriverDashboard } from "@logistics/shared/api";
 import type {
   DriverDashboardDto,
@@ -47,6 +48,9 @@ export class DriversReportComponent
   extends BaseReportComponent<DriverDashboardDto>
   implements OnInit
 {
+  private readonly localization = inject(LocalizationService);
+  protected readonly distanceUnitLabel = this.localization.getDistanceUnitLabel();
+
   protected readonly trendChartData = signal<Record<string, unknown>>({});
   protected readonly efficiencyChartData = signal<Record<string, unknown>>({});
   protected readonly performanceChartData = signal<Record<string, unknown>>({});

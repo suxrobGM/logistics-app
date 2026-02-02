@@ -48,9 +48,9 @@
             -
           }
         </td>
-        <td>{{ invoice.createdAt | date: "mediumDate" }}</td>
-        <td>{{ invoice.dueDate | date: "mediumDate" }}</td>
-        <td class="font-medium">{{ invoice.total | currency }}</td>
+        <td>{{ invoice.createdAt | dateFormat: "mediumDate" }}</td>
+        <td>{{ invoice.dueDate | dateFormat: "mediumDate" }}</td>
+        <td class="font-medium">{{ invoice.total | currencyFormat }}</td>
         <td>
           <p-tag [value]="invoice.status" [severity]="getStatusSeverity(invoice.status)" />
         </td>

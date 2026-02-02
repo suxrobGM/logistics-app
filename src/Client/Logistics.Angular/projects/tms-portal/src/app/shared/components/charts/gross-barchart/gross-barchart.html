@@ -25,19 +25,19 @@
       <div>
         <div class="text-xs font-medium uppercase tracking-wide text-muted">Total Gross</div>
         <div class="mt-1 font-mono text-xl font-bold text-emerald-600">
-          {{ totalGross() | currency }}
+          {{ totalGross() | currencyFormat }}
         </div>
       </div>
       <div>
-        <div class="text-xs font-medium uppercase tracking-wide text-muted">Total Miles</div>
+        <div class="text-xs font-medium uppercase tracking-wide text-muted">Total Distance</div>
         <div class="mt-1 font-mono text-xl font-bold text-primary">
-          {{ totalDistance() | number: "1.0-0" }} mi
+          {{ totalDistance() | distanceUnit }}
         </div>
       </div>
       <div>
         <div class="text-xs font-medium uppercase tracking-wide text-muted">Avg Rate/Mile</div>
         <div class="mt-1 font-mono text-xl font-bold text-purple-600">
-          {{ rpm() | currency }}
+          {{ rpm() | currencyFormat }}
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
-import { DatePipe, DecimalPipe } from "@angular/common";
-import { Component, type OnInit, inject, signal } from "@angular/core";
+import { DecimalPipe } from "@angular/common";
+import { Component, computed, type OnInit, inject, signal } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import {
@@ -11,6 +11,8 @@ import {
   getTrucks,
   searchLoadBoard,
 } from "@logistics/shared/api";
+import { DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
+import { LocalizationService } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePickerModule } from "primeng/datepicker";
@@ -37,10 +39,11 @@ interface EquipmentOption {
   imports: [
     ButtonModule,
     CardModule,
-    DatePipe,
+    DateFormatPipe,
     DatePickerModule,
     DecimalPipe,
     DialogModule,
+    DistanceUnitPipe,
     InputNumberModule,
     InputTextModule,
     LabeledField,
@@ -59,6 +62,11 @@ export class LoadBoardSearchComponent implements OnInit {
   private readonly api = inject(Api);
   private readonly fb = inject(FormBuilder);
   private readonly toastService = inject(ToastService);
+  private readonly localizationService = inject(LocalizationService, { optional: true });
+
+  protected readonly distanceUnitLabel = computed(
+    () => this.localizationService?.getDistanceUnitLabel() ?? "mi",
+  );
 
   protected readonly loading = signal(false);
   protected readonly searching = signal(false);

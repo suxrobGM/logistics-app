@@ -3,7 +3,8 @@ import { Component, computed, effect, inject, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import type { TripStopDto, TripStopType } from "@logistics/shared/api";
-import { AddressPipe } from "@logistics/shared/pipes";
+import { AddressPipe, CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
+import { LocalizationService } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressBarModule } from "primeng/progressbar";
@@ -19,7 +20,6 @@ import {
   type Waypoint,
   type WaypointClickEvent,
 } from "@/shared/components";
-import { DistanceUnitPipe } from "@/shared/pipes";
 import { TripActions, TripTimeline } from "../components";
 import { TripDetailsStore } from "../store/trip-details.store";
 
@@ -36,6 +36,8 @@ import { TripDetailsStore } from "../store/trip-details.store";
     ButtonModule,
     DirectionMap,
     DistanceUnitPipe,
+    DateFormatPipe,
+    CurrencyFormatPipe,
     LoadStatusTag,
     AddressPipe,
     SkeletonModule,
@@ -49,8 +51,13 @@ import { TripDetailsStore } from "../store/trip-details.store";
 export class TripDetailsPage {
   protected readonly store = inject(TripDetailsStore);
   private readonly toastService = inject(ToastService);
+  private readonly localizationService = inject(LocalizationService, { optional: true });
 
   protected readonly tripId = input<string>();
+
+  protected readonly distanceUnitLabel = computed(
+    () => this.localizationService?.getDistanceUnitLabel() ?? "mi",
+  );
 
   // Transform TripStopDto[] to Waypoint[] for DirectionMap
   protected readonly waypoints = computed<Waypoint[]>(() =>

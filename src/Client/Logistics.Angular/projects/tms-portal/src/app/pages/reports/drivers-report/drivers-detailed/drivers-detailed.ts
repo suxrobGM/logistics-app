@@ -1,6 +1,7 @@
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { LocalizationService } from "@logistics/shared";
 import { Api, formatSortField, getDriversReport } from "@logistics/shared/api";
 import type { DriverReportDto } from "@logistics/shared/api";
 import type { PagedResponse } from "@logistics/shared/api/models";
@@ -32,6 +33,8 @@ import { DateUtils, getPerformanceLevel, getPerformanceSeverity } from "@/shared
 })
 export class DriversDetailedComponent extends BaseTableComponent<DriverReportDto> {
   private readonly api = inject(Api);
+  private readonly localization = inject(LocalizationService);
+  protected readonly distanceUnitLabel = this.localization.getDistanceUnitLabel();
 
   protected readonly startDate = signal(DateUtils.thisYear());
   protected readonly endDate = signal(DateUtils.today());

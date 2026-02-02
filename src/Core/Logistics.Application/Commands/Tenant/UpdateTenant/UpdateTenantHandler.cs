@@ -36,6 +36,7 @@ internal sealed class UpdateTenantHandler : IAppRequestHandler<UpdateTenantComma
         tenant.BillingEmail = PropertyUpdater.UpdateIfChanged(req.BillingEmail, tenant.BillingEmail);
         tenant.DotNumber = PropertyUpdater.UpdateIfChanged(req.DotNumber, tenant.DotNumber);
         tenant.PhoneNumber = PropertyUpdater.UpdateIfChanged(req.PhoneNumber, tenant.PhoneNumber);
+        tenant.Settings = PropertyUpdater.UpdateIfChanged(req.Settings, tenant.Settings);
 
         if (!string.IsNullOrEmpty(tenant.StripeCustomerId))
         {

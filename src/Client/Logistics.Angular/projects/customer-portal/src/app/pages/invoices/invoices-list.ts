@@ -1,7 +1,7 @@
-import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Api, type PortalInvoiceDto, getPortalInvoices } from "@logistics/shared/api";
+import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import { MessageService } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { IconFieldModule } from "primeng/iconfield";
@@ -16,8 +16,8 @@ import { ToastModule } from "primeng/toast";
   selector: "cp-invoices-list",
   templateUrl: "./invoices-list.html",
   imports: [
-    CurrencyPipe,
-    DatePipe,
+    CurrencyFormatPipe,
+    DateFormatPipe,
     RouterLink,
     TableModule,
     ButtonModule,

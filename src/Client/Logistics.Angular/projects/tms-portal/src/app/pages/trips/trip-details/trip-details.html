@@ -37,7 +37,7 @@
           <div class="flex items-center justify-between">
             <app-trip-status-tag [status]="tripDetails.status ?? 'draft'" />
             <span class="text-muted-color text-sm">
-              Created {{ tripDetails.createdAt | date: "mediumDate" }}
+              Created {{ tripDetails.createdAt | dateFormat: "mediumDate" }}
             </span>
           </div>
 
@@ -70,7 +70,7 @@
                 <span>Total Distance</span>
               </div>
               <span class="text-xl font-semibold">
-                {{ tripDetails.totalDistance | distanceUnit: "mi" }} mi
+                {{ tripDetails.totalDistance | distanceUnit }}
               </span>
             </div>
 
@@ -110,14 +110,14 @@
               <div class="flex items-center gap-2 text-sm">
                 <i class="pi pi-send text-blue-500"></i>
                 <span class="text-muted-color">Dispatched:</span>
-                <span>{{ tripDetails.dispatchedAt | date: "medium" }}</span>
+                <span>{{ tripDetails.dispatchedAt | dateFormat: "medium" }}</span>
               </div>
             }
             @if (tripDetails.completedAt) {
               <div class="flex items-center gap-2 text-sm">
                 <i class="pi pi-check-circle text-green-500"></i>
                 <span class="text-muted-color">Completed:</span>
-                <span>{{ tripDetails.completedAt | date: "medium" }}</span>
+                <span>{{ tripDetails.completedAt | dateFormat: "medium" }}</span>
               </div>
             }
           </div>
@@ -176,7 +176,7 @@
                 <td>{{ tripStop.address | address }}</td>
                 <td>
                   @if (tripStop.arrivedAt) {
-                    {{ tripStop.arrivedAt | date: "short" }}
+                    {{ tripStop.arrivedAt | dateFormat: "short" }}
                   } @else {
                     <span class="text-muted-color">Pending</span>
                   }
@@ -238,7 +238,7 @@
                 <td>{{ load.originAddress | address }}</td>
                 <td>{{ load.destinationAddress | address }}</td>
                 <td><app-load-status-tag [status]="load.status" /></td>
-                <td>{{ load.deliveryCost | currency }}</td>
+                <td>{{ load.deliveryCost | currencyFormat }}</td>
               </tr>
             </ng-template>
           </p-table>

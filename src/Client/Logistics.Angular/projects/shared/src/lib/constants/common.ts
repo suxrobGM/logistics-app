@@ -1,3 +1,5 @@
+import type { TenantSettings } from "../api";
+
 /**
  * Represents an empty/null GUID value.
  * Used to check if a GUID is effectively null/unassigned.
@@ -19,3 +21,14 @@ export const TenantRole = {
 } as const;
 
 export type TenantRoleValue = (typeof TenantRole)[keyof typeof TenantRole];
+
+/**
+ * Default tenant localization settings matches with US locales
+ */
+export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
+  distanceUnit: "miles",
+  currency: "usd",
+  dateFormat: "us",
+  timezone: "America/New_York",
+  weightUnit: "pounds",
+};

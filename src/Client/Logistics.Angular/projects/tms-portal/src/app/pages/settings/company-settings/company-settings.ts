@@ -2,11 +2,17 @@ import { Component, type OnInit, inject, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AddressForm, PhoneInput } from "@logistics/shared";
 import { Api, getTenantById, updateTenant } from "@logistics/shared/api";
-import type { Address, TenantDto, UpdateTenantCommand } from "@logistics/shared/api";
+import type {
+  Address,
+  TenantDto,
+  TenantSettings,
+  UpdateTenantCommand,
+} from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { TenantService, ToastService } from "@/core/services";
 import { LabeledField, ValidationSummary } from "@/shared/components";
@@ -25,6 +31,7 @@ import { LabeledField, ValidationSummary } from "@/shared/components";
     InputTextModule,
     AddressForm,
     PhoneInput,
+    SelectModule,
   ],
 })
 export class CompanySettingsComponent implements OnInit {
@@ -39,6 +46,40 @@ export class CompanySettingsComponent implements OnInit {
   protected readonly isUploadingLogo = signal(false);
   protected readonly logoPreviewUrl = signal<string | null>(null);
   protected readonly tenant = signal<TenantDto | null>(null);
+
+  // Regional settings options
+  protected readonly distanceUnitOptions = [
+    { label: "Miles", value: "miles" },
+    { label: "Kilometers", value: "kilometers" },
+  ];
+
+  protected readonly weightUnitOptions = [
+    { label: "Pounds (lbs)", value: "pounds" },
+    { label: "Kilograms (kg)", value: "kilograms" },
+  ];
+
+  protected readonly dateFormatOptions = [
+    { label: "MM/DD/YYYY (US)", value: "us" },
+    { label: "DD/MM/YYYY (European)", value: "european" },
+    { label: "YYYY-MM-DD (ISO)", value: "iso" },
+  ];
+
+  protected readonly timezoneOptions = [
+    { label: "America/New_York (Eastern)", value: "America/New_York" },
+    { label: "America/Chicago (Central)", value: "America/Chicago" },
+    { label: "America/Denver (Mountain)", value: "America/Denver" },
+    { label: "America/Los_Angeles (Pacific)", value: "America/Los_Angeles" },
+    { label: "America/Phoenix (Arizona)", value: "America/Phoenix" },
+    { label: "America/Anchorage (Alaska)", value: "America/Anchorage" },
+    { label: "Pacific/Honolulu (Hawaii)", value: "Pacific/Honolulu" },
+    { label: "America/Toronto (Eastern Canada)", value: "America/Toronto" },
+    { label: "America/Vancouver (Pacific Canada)", value: "America/Vancouver" },
+    { label: "America/Mexico_City (Mexico Central)", value: "America/Mexico_City" },
+    { label: "Europe/London (UK)", value: "Europe/London" },
+    { label: "Europe/Paris (Central Europe)", value: "Europe/Paris" },
+    { label: "Europe/Berlin (Germany)", value: "Europe/Berlin" },
+    { label: "Australia/Sydney (Australia Eastern)", value: "Australia/Sydney" },
+  ];
 
   constructor() {
     this.form = new FormGroup<CompanySettingsForm>({
@@ -55,6 +96,11 @@ export class CompanySettingsComponent implements OnInit {
       companyAddress: new FormControl<Address | null>(null, {
         validators: Validators.required,
       }),
+      // Regional settings
+      distanceUnit: new FormControl("miles", { nonNullable: true }),
+      weightUnit: new FormControl("pounds", { nonNullable: true }),
+      dateFormat: new FormControl("us", { nonNullable: true }),
+      timezone: new FormControl("America/New_York", { nonNullable: true }),
     });
   }
 
@@ -79,6 +125,13 @@ export class CompanySettingsComponent implements OnInit {
       billingEmail: this.form.value.billingEmail,
       dotNumber: this.form.value.dotNumber || null,
       companyAddress: this.form.value.companyAddress ?? undefined,
+      settings: {
+        distanceUnit: this.form.value.distanceUnit,
+        weightUnit: this.form.value.weightUnit,
+        dateFormat: this.form.value.dateFormat,
+        timezone: this.form.value.timezone,
+        currency: "usd",
+      } as TenantSettings,
     };
 
     this.isSaving.set(true);
@@ -170,6 +223,11 @@ export class CompanySettingsComponent implements OnInit {
           billingEmail: tenant.billingEmail ?? "",
           dotNumber: tenant.dotNumber ?? "",
           companyAddress: tenant.companyAddress ?? null,
+          // Regional settings
+          distanceUnit: tenant.settings?.distanceUnit ?? "miles",
+          weightUnit: tenant.settings?.weightUnit ?? "pounds",
+          dateFormat: tenant.settings?.dateFormat ?? "us",
+          timezone: tenant.settings?.timezone ?? "America/New_York",
         });
 
         if (tenant.logoUrl) {
@@ -200,4 +258,9 @@ interface CompanySettingsForm {
   billingEmail: FormControl<string>;
   dotNumber: FormControl<string>;
   companyAddress: FormControl<Address | null>;
+  // Regional settings
+  distanceUnit: FormControl<string>;
+  weightUnit: FormControl<string>;
+  dateFormat: FormControl<string>;
+  timezone: FormControl<string>;
 }

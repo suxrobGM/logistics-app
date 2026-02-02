@@ -21,7 +21,8 @@ public static partial class UserTenantAccessMapper
             CompanyName = entity.Tenant?.CompanyName,
             CustomerName = entity.CustomerName,
             IsActive = entity.IsActive,
-            LastAccessedAt = entity.LastAccessedAt
+            LastAccessedAt = entity.LastAccessedAt,
+            Settings = entity.Tenant?.Settings
         };
     }
 }

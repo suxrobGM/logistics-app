@@ -27,7 +27,7 @@
             <p class="font-medium">{{ formatAddress(load()?.originAddress) }}</p>
             @if (load()?.dispatchedAt) {
               <p class="mt-1 text-sm text-gray-500">
-                Dispatched: {{ load()?.dispatchedAt | date: "medium" }}
+                Dispatched: {{ load()?.dispatchedAt | dateFormat: "medium" }}
               </p>
             }
           </div>
@@ -37,7 +37,7 @@
             <p class="font-medium">{{ formatAddress(load()?.destinationAddress) }}</p>
             @if (load()?.deliveredAt) {
               <p class="mt-1 text-sm text-gray-500">
-                Delivered: {{ load()?.deliveredAt | date: "medium" }}
+                Delivered: {{ load()?.deliveredAt | dateFormat: "medium" }}
               </p>
             }
           </div>
@@ -62,7 +62,7 @@
               <tr>
                 <td class="font-medium">{{ doc.fileName }}</td>
                 <td>{{ doc.documentType }}</td>
-                <td>{{ doc.createdAt | date: "short" }}</td>
+                <td>{{ doc.createdAt | dateFormat: "short" }}</td>
                 <td class="text-right">
                   <p-button icon="pi pi-download" [text]="true" label="Download" />
                 </td>
@@ -105,13 +105,13 @@
           @if (load()?.distance) {
             <div class="flex justify-between">
               <span class="text-gray-500">Distance</span>
-              <span class="font-medium">{{ load()?.distance | number: "1.0-0" }} mi</span>
+              <span class="font-medium">{{ load()?.distance | distanceUnit }}</span>
             </div>
           }
           @if (load()?.deliveryCost) {
             <div class="flex justify-between">
               <span class="text-gray-500">Delivery Cost</span>
-              <span class="font-medium">{{ load()?.deliveryCost | currency }}</span>
+              <span class="font-medium">{{ load()?.deliveryCost | currencyFormat }}</span>
             </div>
           }
           <div class="flex justify-between">

@@ -81,10 +81,10 @@
           </td>
           <td>
             <span class="font-medium">
-              {{ expense.amount?.amount | currency: expense.amount?.currency }}
+              {{ expense.amount?.amount | currencyFormat }}
             </span>
           </td>
-          <td>{{ expense.expenseDate | date: "mediumDate" }}</td>
+          <td>{{ expense.expenseDate | dateFormat: "mediumDate" }}</td>
           <td>
             <app-expense-status-tag [status]="expense.status" />
           </td>

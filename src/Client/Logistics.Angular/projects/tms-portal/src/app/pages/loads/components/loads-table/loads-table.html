@@ -58,7 +58,7 @@
           </th>
           <th>Status</th>
           <th pSortableColumn="Distance">
-            Distance (mi)
+            Distance ({{ distanceUnitLabel() }})
             <p-sortIcon field="Distance" />
           </th>
           <th pSortableColumn="DeliveryCost.Amount">
@@ -145,19 +145,19 @@
             <div class="text-muted text-xs italic">
               @switch (load.status) {
                 @case ("dispatched") {
-                  {{ load.dispatchedAt | date: "mediumDate" }}
+                  {{ load.dispatchedAt | dateFormat: "mediumDate" }}
                 }
                 @case ("pickedUp") {
-                  {{ load.pickedUpAt | date: "mediumDate" }}
+                  {{ load.pickedUpAt | dateFormat: "mediumDate" }}
                 }
                 @case ("delivered") {
-                  {{ load.deliveredAt | date: "mediumDate" }}
+                  {{ load.deliveredAt | dateFormat: "mediumDate" }}
                 }
               }
             </div>
           </td>
-          <td class="text-center">{{ load.distance | distanceUnit: "mi" }}</td>
-          <td class="text-center">{{ load.deliveryCost | currency }}</td>
+          <td class="text-center">{{ load.distance | distanceUnit }}</td>
+          <td class="text-center">{{ load.deliveryCost | currencyFormat }}</td>
           <td>
             @if (load.tripNumber) {
               <span

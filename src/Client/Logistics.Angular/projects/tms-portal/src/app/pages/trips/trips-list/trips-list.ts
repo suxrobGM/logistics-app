@@ -1,11 +1,11 @@
-import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import { Api, deleteTrip, dispatchTrip, cancelTrip } from "@logistics/shared/api";
 import type { TripDto, TripStatus, TruckDto } from "@logistics/shared/api";
 import { tripStatusOptions } from "@logistics/shared/api/enums";
-import { AddressPipe } from "@logistics/shared/pipes";
+import { AddressPipe, CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
+import { LocalizationService } from "@logistics/shared/services";
 import type { MenuItem } from "primeng/api";
 import { Button } from "primeng/button";
 import { Card } from "primeng/card";
@@ -26,7 +26,6 @@ import {
   SearchTruck,
   TripStatusTag,
 } from "@/shared/components";
-import { DistanceUnitPipe } from "@/shared/pipes";
 import { TripsListStore } from "../store/trips-list.store";
 
 @Component({
@@ -39,10 +38,10 @@ import { TripsListStore } from "../store/trips-list.store";
     Card,
     TableModule,
     FormsModule,
-    DatePipe,
+    DateFormatPipe,
     DistanceUnitPipe,
     AddressPipe,
-    CurrencyPipe,
+    CurrencyFormatPipe,
     LoadStatusTag,
     TooltipModule,
     TripStatusTag,
@@ -62,7 +61,12 @@ export class TripsList {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
+  private readonly localizationService = inject(LocalizationService, { optional: true });
   protected readonly store = inject(TripsListStore);
+
+  protected readonly distanceUnitLabel = computed(
+    () => this.localizationService?.getDistanceUnitLabel() ?? "mi",
+  );
 
   protected readonly selectedRow = signal<TripDto | null>(null);
   protected readonly isProcessing = signal<boolean>(false);

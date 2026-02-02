@@ -1,9 +1,9 @@
-import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, computed, inject, input, model, output, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import type { AppError } from "@logistics/shared";
 import type { LoadDto, LoadStatus } from "@logistics/shared/api";
-import { AddressPipe } from "@logistics/shared/pipes";
+import { AddressPipe, CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
+import { LocalizationService } from "@logistics/shared/services";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -12,7 +12,6 @@ import { type TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { DataContainer, LoadStatusTag, LoadTypeTag } from "@/shared/components";
-import { DistanceUnitPipe } from "@/shared/pipes";
 
 @Component({
   selector: "app-loads-table",
@@ -24,10 +23,10 @@ import { DistanceUnitPipe } from "@/shared/pipes";
     TooltipModule,
     MenuModule,
     RouterLink,
-    DatePipe,
-    CurrencyPipe,
     AddressPipe,
     DistanceUnitPipe,
+    CurrencyFormatPipe,
+    DateFormatPipe,
     LoadStatusTag,
     LoadTypeTag,
     DataContainer,
@@ -36,6 +35,10 @@ import { DistanceUnitPipe } from "@/shared/pipes";
 export class LoadsTable {
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
+  private readonly localizationService = inject(LocalizationService);
+
+  // Localization
+  protected readonly distanceUnitLabel = computed(() => this.localizationService.getDistanceUnitLabel());
 
   // Data inputs
   public readonly data = input.required<LoadDto[]>();

@@ -727,6 +727,27 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                                 .HasColumnType("text");
                         });
 
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Settings", "Logistics.Domain.Entities.Tenant.Settings#TenantSettings", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("DateFormat")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("DistanceUnit")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("Timezone")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<int>("WeightUnit")
+                                .HasColumnType("integer");
+                        });
+
                     b.HasKey("Id");
 
                     b.ToTable("Tenants", (string)null);

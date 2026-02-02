@@ -1,5 +1,5 @@
-import { CommonModule, CurrencyPipe } from "@angular/common";
-import { Component, type OnInit, inject, input, signal } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Component, computed, type OnInit, inject, input, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Api, getDocuments, getTruckById } from "@logistics/shared/api";
 import type {
@@ -10,7 +10,8 @@ import type {
   TruckDto,
 } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
-import { AddressPipe } from "@logistics/shared/pipes";
+import { AddressPipe, CurrencyFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
+import { LocalizationService } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -26,7 +27,6 @@ import {
   TruckStatusTag,
   TruckTypeTag,
 } from "@/shared/components";
-import { DistanceUnitPipe } from "@/shared/pipes";
 import {
   DocumentStatusOverview,
   type LineChartDrawnEvent,
@@ -47,7 +47,7 @@ import {
     DividerModule,
     ProgressSpinnerModule,
     RouterLink,
-    CurrencyPipe,
+    CurrencyFormatPipe,
     AddressPipe,
     DistanceUnitPipe,
     GeolocationMap,
@@ -63,8 +63,13 @@ import {
 })
 export class TruckDetailsComponent implements OnInit {
   private readonly api = inject(Api);
+  private readonly localizationService = inject(LocalizationService, { optional: true });
 
   protected readonly id = input<string>();
+
+  protected readonly distanceUnitLabel = computed(
+    () => this.localizationService?.getDistanceUnitLabel() ?? "mi",
+  );
   protected readonly isLoading = signal(false);
   protected readonly truck = signal<TruckDto | null>(null);
   protected readonly dailyGrosses = signal<DailyGrossesDto | null>(null);

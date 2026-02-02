@@ -1,8 +1,9 @@
-import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Api, getInvoiceDashboard } from "@logistics/shared/api";
 import type { InvoiceDashboardDto, InvoiceDto } from "@logistics/shared/api";
+import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";
@@ -21,8 +22,8 @@ import { InvoiceStatusTag } from "@/shared/components";
     TableModule,
     SkeletonModule,
     TooltipModule,
-    CurrencyPipe,
-    DatePipe,
+    CurrencyFormatPipe,
+    DateFormatPipe,
     InvoiceStatusTag,
   ],
 })

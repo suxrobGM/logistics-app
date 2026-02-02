@@ -105,14 +105,14 @@
                 <div class="flex items-center justify-between">
                   <span>Delivery Cost</span>
                   <span class="text-success text-xl font-bold">
-                    {{ load()!.deliveryCost | currency }}
+                    {{ load()!.deliveryCost | currencyFormat }}
                   </span>
                 </div>
 
                 @if (load()!.distance) {
                   <div class="flex items-center justify-between">
                     <span>Distance</span>
-                    <span>{{ load()!.distance | distanceUnit: "mi" }}</span>
+                    <span>{{ load()!.distance | distanceUnit }}</span>
                   </div>
                 }
 
@@ -246,25 +246,25 @@
             <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
               <div>
                 <span class="text-muted block text-sm">Created</span>
-                <span class="font-medium">{{ load()!.createdAt | date: "medium" }}</span>
+                <span class="font-medium">{{ load()!.createdAt | dateFormat: "medium" }}</span>
               </div>
               @if (load()!.dispatchedAt) {
                 <div>
                   <span class="text-muted block text-sm">Dispatched</span>
-                  <span class="font-medium">{{ load()!.dispatchedAt | date: "medium" }}</span>
+                  <span class="font-medium">{{ load()!.dispatchedAt | dateFormat: "medium" }}</span>
                 </div>
               }
               @if (load()!.pickedUpAt) {
                 <div>
                   <span class="text-muted block text-sm">Picked Up</span>
-                  <span class="font-medium">{{ load()!.pickedUpAt | date: "medium" }}</span>
+                  <span class="font-medium">{{ load()!.pickedUpAt | dateFormat: "medium" }}</span>
                 </div>
               }
               @if (load()!.deliveredAt) {
                 <div>
                   <span class="text-muted block text-sm">Delivered</span>
                   <span class="text-success font-medium">
-                    {{ load()!.deliveredAt | date: "medium" }}
+                    {{ load()!.deliveredAt | dateFormat: "medium" }}
                   </span>
                 </div>
               }
@@ -272,7 +272,7 @@
                 <div>
                   <span class="text-muted block text-sm">Cancelled</span>
                   <span class="text-danger font-medium">
-                    {{ load()!.cancelledAt | date: "medium" }}
+                    {{ load()!.cancelledAt | dateFormat: "medium" }}
                   </span>
                 </div>
               }

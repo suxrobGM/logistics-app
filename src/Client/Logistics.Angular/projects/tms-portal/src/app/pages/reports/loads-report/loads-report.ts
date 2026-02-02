@@ -1,5 +1,6 @@
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
-import { Component, type OnInit, signal } from "@angular/core";
+import { Component, inject, type OnInit, signal } from "@angular/core";
+import { LocalizationService } from "@logistics/shared";
 import { getLoadsReport } from "@logistics/shared/api";
 import type {
   LoadPerformanceDto,
@@ -45,6 +46,9 @@ import {
   ],
 })
 export class LoadsReportComponent extends BaseReportComponent<LoadsReportDto> implements OnInit {
+  private readonly localization = inject(LocalizationService);
+  protected readonly distanceUnitLabel = this.localization.getDistanceUnitLabel();
+
   // signals
   protected readonly chartData = signal<Record<string, unknown>>({});
   protected readonly trendChartData = signal<Record<string, unknown>>({});

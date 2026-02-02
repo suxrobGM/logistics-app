@@ -1,9 +1,9 @@
-import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { Component, type OnInit, inject, input, signal, viewChild } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, getLoadById } from "@logistics/shared/api";
 import type { DocumentType, LoadDto, LoadExceptionDto } from "@logistics/shared/api";
-import { AddressPipe } from "@logistics/shared/pipes";
+import { AddressPipe, CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -11,7 +11,6 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TabsModule } from "primeng/tabs";
 import { DocumentManager, PageHeader } from "@/shared/components";
 import { LoadStatusTag, LoadTypeTag } from "@/shared/components/tags";
-import { DistanceUnitPipe } from "@/shared/pipes";
 import {
   LoadExceptionsContent,
   LoadPodContent,
@@ -32,8 +31,8 @@ import {
     TabsModule,
     DividerModule,
     ProgressSpinnerModule,
-    DatePipe,
-    CurrencyPipe,
+    DateFormatPipe,
+    CurrencyFormatPipe,
     PageHeader,
     LoadStatusTag,
     LoadTypeTag,

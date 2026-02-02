@@ -1,10 +1,9 @@
-import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, type OnInit, computed, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Api, getLoads } from "@logistics/shared/api";
 import type { Address, LoadDto } from "@logistics/shared/api";
 import { StatCard } from "@logistics/shared/components";
-import { AddressPipe } from "@logistics/shared/pipes";
+import { AddressPipe, CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { Gridster, type GridsterConfig, GridsterItem } from "angular-gridster2";
 import { SharedModule } from "primeng/api";
 import type { MenuItem } from "primeng/api";
@@ -19,7 +18,6 @@ import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "@/core/auth";
 import { type DashboardPanelConfig, DashboardSettingsService } from "@/core/services";
 import { TrucksMap } from "@/shared/components";
-import { DistanceUnitPipe } from "@/shared/pipes";
 import {
   DailyGrossChartComponent,
   type DailyGrossChartData,
@@ -39,8 +37,8 @@ import {
     TooltipModule,
     ButtonModule,
     SkeletonModule,
-    CurrencyPipe,
-    DatePipe,
+    CurrencyFormatPipe,
+    DateFormatPipe,
     DistanceUnitPipe,
     TrucksMap,
     LoadProgressBarComponent,

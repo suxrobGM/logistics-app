@@ -24,6 +24,11 @@ public class Tenant : Entity, IMasterEntity
     public string? LogoPath { get; set; }
     public string? PhoneNumber { get; set; }
 
+    /// <summary>
+    ///     Regional and localization settings for this tenant.
+    /// </summary>
+    public TenantSettings Settings { get; set; } = new();
+
     public virtual Subscription? Subscription { get; set; }
 
     /// <summary>

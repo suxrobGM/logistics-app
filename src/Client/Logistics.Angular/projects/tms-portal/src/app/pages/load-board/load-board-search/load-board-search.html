@@ -46,7 +46,7 @@
         />
       </ui-labeled-field>
 
-      <ui-labeled-field label="Origin Radius (mi)" for="originRadius">
+      <ui-labeled-field label="Origin Radius ({{ distanceUnitLabel() }})" for="originRadius">
         <p-inputNumber
           id="originRadius"
           formControlName="originRadius"
@@ -78,7 +78,7 @@
         />
       </ui-labeled-field>
 
-      <ui-labeled-field label="Dest. Radius (mi)" for="destinationRadius">
+      <ui-labeled-field label="Dest. Radius ({{ distanceUnitLabel() }})" for="destinationRadius">
         <p-inputNumber
           id="destinationRadius"
           formControlName="destinationRadius"
@@ -206,13 +206,13 @@
                 {{ listing.destinationAddress.city }}, {{ listing.destinationAddress.state }}
               </div>
               @if (listing.distance) {
-                <div class="text-muted text-xs">{{ listing.distance }} mi</div>
+                <div class="text-muted text-xs">{{ listing.distance | distanceUnit }}</div>
               }
             </div>
           </td>
           <td>
             @if (listing.pickupDateStart) {
-              <div class="text-sm">{{ listing.pickupDateStart | date: "shortDate" }}</div>
+              <div class="text-sm">{{ listing.pickupDateStart | dateFormat: "shortDate" }}</div>
             } @else {
               <span class="text-muted">-</span>
             }

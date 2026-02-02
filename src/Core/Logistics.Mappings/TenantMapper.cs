@@ -21,6 +21,7 @@ public static class TenantMapper
             PhoneNumber = entity.PhoneNumber,
             Subscription = entity.Subscription?.ToDto(),
             EmployeeCount = employeeCount,
+            Settings = entity.Settings
         };
     }
 }

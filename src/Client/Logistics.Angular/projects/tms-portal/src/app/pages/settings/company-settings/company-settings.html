@@ -82,6 +82,63 @@
             <ui-address-form formControlName="companyAddress" />
           </ui-labeled-field>
 
+          <!-- Regional Settings Section -->
+          <div class="mt-8 border-t border-default pt-6">
+            <h2 class="mb-4 text-lg font-semibold">Regional Settings</h2>
+
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <!-- Distance Unit -->
+              <ui-labeled-field label="Distance Unit" for="distanceUnit">
+                <p-select
+                  id="distanceUnit"
+                  formControlName="distanceUnit"
+                  [options]="distanceUnitOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  styleClass="w-full"
+                />
+              </ui-labeled-field>
+
+              <!-- Weight Unit -->
+              <ui-labeled-field label="Weight Unit" for="weightUnit">
+                <p-select
+                  id="weightUnit"
+                  formControlName="weightUnit"
+                  [options]="weightUnitOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  styleClass="w-full"
+                />
+              </ui-labeled-field>
+
+              <!-- Date Format -->
+              <ui-labeled-field label="Date Format" for="dateFormat">
+                <p-select
+                  id="dateFormat"
+                  formControlName="dateFormat"
+                  [options]="dateFormatOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  styleClass="w-full"
+                />
+              </ui-labeled-field>
+
+              <!-- Timezone -->
+              <ui-labeled-field label="Timezone" for="timezone">
+                <p-select
+                  id="timezone"
+                  formControlName="timezone"
+                  [options]="timezoneOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  styleClass="w-full"
+                  [filter]="true"
+                  filterPlaceholder="Search timezone..."
+                />
+              </ui-labeled-field>
+            </div>
+          </div>
+
           <!-- Actions -->
           <div class="mt-6 flex gap-2">
             <p-button

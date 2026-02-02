@@ -1,8 +1,8 @@
-import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
 import { Api, getCompanyStats } from "@logistics/shared/api";
 import type { CompanyStatsDto } from "@logistics/shared/api";
 import { StatCard } from "@logistics/shared/components";
+import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { MenuModule } from "primeng/menu";
@@ -30,8 +30,8 @@ import {
     GrossSummaryWidgetComponent,
     TeamOverviewWidgetComponent,
     StatCard,
-    CurrencyPipe,
-    DatePipe,
+    CurrencyFormatPipe,
+    DateFormatPipe,
     ButtonModule,
     MenuModule,
     TooltipModule,

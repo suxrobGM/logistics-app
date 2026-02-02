@@ -13,4 +13,5 @@ public class UpdateTenantCommand : IAppRequest
     public string? PhoneNumber { get; set; }
     public Address? CompanyAddress { get; set; }
     public string? ConnectionString { get; set; }
+    public TenantSettings? Settings { get; set; }
 }

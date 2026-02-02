@@ -128,7 +128,7 @@
               <p-sortIcon field="DestinationAddress.Line1" />
             </th>
             <th pSortableColumn="TotalDistance">
-              Distance (mi)
+              Distance ({{ distanceUnitLabel() }})
               <p-sortIcon field="TotalDistance" />
             </th>
             <th pSortableColumn="Status">
@@ -163,7 +163,7 @@
             </td>
             <td class="text-center">{{ trip.truckNumber }}</td>
             <td class="text-center">{{ trip.loadsCount }}</td>
-            <td class="text-right">{{ trip.totalRevenue | currency }}</td>
+            <td class="text-right">{{ trip.totalRevenue | currencyFormat }}</td>
             <td>
               <span
                 class="block max-w-28 truncate"
@@ -184,16 +184,16 @@
                 {{ trip.destinationAddress | address }}
               </span>
             </td>
-            <td class="text-center">{{ trip.totalDistance | distanceUnit: "mi" }}</td>
+            <td class="text-center">{{ trip.totalDistance | distanceUnit }}</td>
             <td>
               <app-trip-status-tag [status]="trip.status" />
               <div class="text-muted text-xs italic">
                 @switch (trip.status) {
                   @case ("dispatched") {
-                    {{ trip.dispatchedAt | date: "mediumDate" }}
+                    {{ trip.dispatchedAt | dateFormat: "mediumDate" }}
                   }
                   @case ("completed") {
-                    {{ trip.completedAt | date: "mediumDate" }}
+                    {{ trip.completedAt | dateFormat: "mediumDate" }}
                   }
                 }
               </div>
@@ -244,7 +244,7 @@
                       </th>
                       <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
                       <th pSortableColumn="distance">
-                        Distance (mi) <p-sortIcon field="distance" />
+                        Distance ({{ distanceUnitLabel() }}) <p-sortIcon field="distance" />
                       </th>
                       <th pSortableColumn="deliveryCost">
                         Delivery Cost <p-sortIcon field="deliveryCost" />
@@ -296,15 +296,15 @@
                         </span>
                       </td>
                       <td><app-load-status-tag [status]="load.status" /></td>
-                      <td class="text-center">{{ load.distance | distanceUnit: "mi" }}</td>
-                      <td class="text-right">{{ load.deliveryCost | currency }}</td>
+                      <td class="text-center">{{ load.distance | distanceUnit }}</td>
+                      <td class="text-right">{{ load.deliveryCost | currencyFormat }}</td>
                     </tr>
                   </ng-template>
                   <ng-template #footer>
                     <tr>
                       <td colspan="7"></td>
                       <td class="text-right font-semibold">Total:</td>
-                      <td class="text-right font-semibold">{{ trip.totalRevenue | currency }}</td>
+                      <td class="text-right font-semibold">{{ trip.totalRevenue | currencyFormat }}</td>
                     </tr>
                   </ng-template>
                 </p-table>

@@ -45,7 +45,7 @@
       <ui-stat-card
         icon="pi-map"
         label="Total Distance"
-        [value]="(data()?.totalDistance || 0 | number: '1.0-0') + ' km'"
+        [value]="(data()?.totalDistance || 0 | number: '1.0-0') + ' ' + distanceUnitLabel"
         color="blue"
         trend="+7.3% vs last period"
         trendDirection="up"
@@ -156,7 +156,7 @@
               </td>
               <td>{{ driver.loadsDelivered | number }}</td>
               <td>{{ driver.earnings | currency: "USD" : "symbol" : "1.0-0" }}</td>
-              <td>{{ driver.distance | number: "1.0-0" }} km</td>
+              <td>{{ driver.distance | number: "1.0-0" }} {{ distanceUnitLabel }}</td>
               <td>{{ driver.efficiency | number: "1.1-1" }} loads/day</td>
               <td>
                 <p-tag

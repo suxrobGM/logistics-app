@@ -23,4 +23,6 @@ public record TenantDto
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public int? EmployeeCount { get; set; }
+
+    public TenantSettings? Settings { get; set; }
 }

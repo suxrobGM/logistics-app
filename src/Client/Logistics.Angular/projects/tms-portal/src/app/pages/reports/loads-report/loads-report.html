@@ -42,7 +42,7 @@
       <ui-stat-card
         icon="pi-map"
         label="Total Distance"
-        [value]="(data()?.totalDistance || 0 | number: '1.0-0') + ' km'"
+        [value]="(data()?.totalDistance || 0 | number: '1.0-0') + ' ' + distanceUnitLabel"
         color="blue"
       />
     </div>
@@ -174,7 +174,7 @@
               <td>{{ customer.customerName }}</td>
               <td>{{ customer.loadCount | number }}</td>
               <td>{{ customer.totalRevenue | currency: "USD" : "symbol" : "1.0-0" }}</td>
-              <td>{{ customer.averageDistance | number: "1.0-0" }} km</td>
+              <td>{{ customer.averageDistance | number: "1.0-0" }} {{ distanceUnitLabel }}</td>
             </tr>
           </ng-template>
         </p-table>

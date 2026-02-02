@@ -3,6 +3,7 @@
 
 import type { Address } from '../models/address';
 import type { SubscriptionDto } from '../models/subscription-dto';
+import type { TenantSettings } from '../models/tenant-settings';
 export interface TenantDto {
   billingEmail?: string | null;
   companyAddress?: Address;
@@ -14,6 +15,7 @@ export interface TenantDto {
   logoUrl?: string | null;
   name?: string | null;
   phoneNumber?: string | null;
+  settings?: TenantSettings;
   stripeCustomerId?: string | null;
   subscription?: SubscriptionDto;
 }

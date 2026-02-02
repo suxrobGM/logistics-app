@@ -1,4 +1,3 @@
-import { CurrencyPipe, DatePipe, DecimalPipe } from "@angular/common";
 import { Component, effect, inject, input, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import {
@@ -8,6 +7,7 @@ import {
   getPortalLoad,
   getPortalLoadDocuments,
 } from "@logistics/shared/api";
+import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -18,9 +18,9 @@ import { TagModule } from "primeng/tag";
   selector: "cp-shipment-details",
   templateUrl: "./shipment-details.html",
   imports: [
-    CurrencyPipe,
-    DatePipe,
-    DecimalPipe,
+    CurrencyFormatPipe,
+    DateFormatPipe,
+    DistanceUnitPipe,
     RouterLink,
     CardModule,
     ButtonModule,

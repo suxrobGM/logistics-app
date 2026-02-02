@@ -3,12 +3,12 @@
   <div class="mb-6 flex items-center justify-between">
     <div>
       <h1 class="mb-1 text-2xl font-semibold">{{ greeting() }}</h1>
-      <p class="text-muted">{{ currentDate | date: 'EEEE, MMMM d, yyyy' }}</p>
+      <p class="text-muted">{{ currentDate | dateFormat: 'EEEE, MMMM d, yyyy' }}</p>
     </div>
     <div class="flex items-center gap-3">
       <!-- Data Freshness Indicator -->
       <div class="flex items-center gap-2 text-sm text-muted">
-        <span>Updated {{ lastUpdated() | date: 'shortTime' }}</span>
+        <span>Updated {{ lastUpdated() | dateFormat: 'shortTime' }}</span>
         <p-button
           icon="pi pi-refresh"
           [rounded]="true"
@@ -49,7 +49,7 @@
       class="col-span-12 sm:col-span-6 lg:col-span-3"
       icon="pi-dollar"
       label="This Week Gross"
-      [value]="(companyStats()?.thisWeekGross ?? 0 | currency) ?? '$0'"
+      [value]="(companyStats()?.thisWeekGross ?? 0 | currencyFormat) ?? '$0'"
       color="green"
       [trend]="thisWeekGrossTrend()?.value ?? null"
       [trendDirection]="thisWeekGrossTrend()?.direction ?? null"
@@ -58,7 +58,7 @@
       class="col-span-12 sm:col-span-6 lg:col-span-3"
       icon="pi-chart-line"
       label="Rate Per Mile"
-      [value]="(thisWeekRpm() | currency) ?? '$0'"
+      [value]="(thisWeekRpm() | currencyFormat) ?? '$0'"
       color="purple"
       [trend]="rpmTrend()?.value ?? null"
       [trendDirection]="rpmTrend()?.direction ?? null"

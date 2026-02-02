@@ -18,7 +18,7 @@
           <div class="flex flex-col items-center gap-2">
             <span class="text-sm text-gray-500">Draft</span>
             <span class="text-2xl font-bold">{{ dashboard()?.draftCount ?? 0 }}</span>
-            <span class="text-lg text-gray-600">{{ dashboard()?.draftAmount | currency }}</span>
+            <span class="text-lg text-gray-600">{{ dashboard()?.draftAmount | currencyFormat }}</span>
           </div>
         </p-card>
       </div>
@@ -31,7 +31,7 @@
             <span class="text-2xl font-bold text-yellow-600">{{
               dashboard()?.pendingCount ?? 0
             }}</span>
-            <span class="text-lg text-gray-600">{{ dashboard()?.pendingAmount | currency }}</span>
+            <span class="text-lg text-gray-600">{{ dashboard()?.pendingAmount | currencyFormat }}</span>
           </div>
         </p-card>
       </div>
@@ -44,7 +44,7 @@
             <span class="text-2xl font-bold text-red-600">{{
               dashboard()?.overdueCount ?? 0
             }}</span>
-            <span class="text-lg text-red-600">{{ dashboard()?.overdueAmount | currency }}</span>
+            <span class="text-lg text-red-600">{{ dashboard()?.overdueAmount | currencyFormat }}</span>
           </div>
         </p-card>
       </div>
@@ -58,7 +58,7 @@
               dashboard()?.partiallyPaidCount ?? 0
             }}</span>
             <span class="text-lg text-gray-600">{{
-              dashboard()?.partiallyPaidAmount | currency
+              dashboard()?.partiallyPaidAmount | currencyFormat
             }}</span>
           </div>
         </p-card>
@@ -70,7 +70,7 @@
           <div class="flex flex-col items-center gap-2">
             <span class="text-sm text-gray-500">Paid</span>
             <span class="text-2xl font-bold text-green-600">{{ dashboard()?.paidCount ?? 0 }}</span>
-            <span class="text-lg text-gray-600">{{ dashboard()?.paidAmount | currency }}</span>
+            <span class="text-lg text-gray-600">{{ dashboard()?.paidAmount | currencyFormat }}</span>
           </div>
         </p-card>
       </div>
@@ -81,10 +81,10 @@
           <div class="flex flex-col items-center gap-2">
             <span class="text-sm text-gray-500">Outstanding</span>
             <span class="text-2xl font-bold text-blue-600">{{
-              dashboard()?.totalOutstanding | currency
+              dashboard()?.totalOutstanding | currencyFormat
             }}</span>
             <span class="text-sm text-gray-500"
-              >This Month: {{ dashboard()?.collectedThisMonth | currency }}</span
+              >This Month: {{ dashboard()?.collectedThisMonth | currencyFormat }}</span
             >
           </div>
         </p-card>
@@ -135,10 +135,10 @@
                   </a>
                 </td>
                 <td>{{ invoice.customer?.name ?? "-" }}</td>
-                <td>{{ invoice.total?.amount | currency }}</td>
+                <td>{{ invoice.total?.amount | currencyFormat }}</td>
                 <td><app-invoice-status-tag [status]="invoice.status" /></td>
-                <td>{{ invoice.createdDate | date: "shortDate" }}</td>
-                <td>{{ invoice.dueDate | date: "shortDate" }}</td>
+                <td>{{ invoice.createdDate | dateFormat: "shortDate" }}</td>
+                <td>{{ invoice.dueDate | dateFormat: "shortDate" }}</td>
                 <td>
                   <a [routerLink]="getInvoiceLink(invoice)">
                     <p-button

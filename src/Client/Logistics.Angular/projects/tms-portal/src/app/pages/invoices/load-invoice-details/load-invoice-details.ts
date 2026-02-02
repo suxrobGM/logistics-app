@@ -1,9 +1,9 @@
-import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Api, getInvoiceById } from "@logistics/shared/api";
 import type { Address, InvoiceDto } from "@logistics/shared/api";
-import { AddressPipe } from "@logistics/shared/pipes";
+import { AddressPipe, CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -31,8 +31,8 @@ import { PaymentLinkDialog, RecordPaymentDialog, SendInvoiceDialog } from "../co
     TableModule,
     TagModule,
     TooltipModule,
-    CurrencyPipe,
-    DatePipe,
+    CurrencyFormatPipe,
+    DateFormatPipe,
     SendInvoiceDialog,
     RecordPaymentDialog,
     PaymentLinkDialog,

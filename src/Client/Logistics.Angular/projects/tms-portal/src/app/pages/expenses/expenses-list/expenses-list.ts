@@ -3,6 +3,7 @@ import { Component, computed, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, downloadExpenseReceipt } from "@logistics/shared/api";
 import type { ExpenseDto } from "@logistics/shared/api";
+import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
@@ -28,6 +29,8 @@ import { ExpensesListStore } from "../store/expenses-list.store";
     ButtonModule,
     MenuModule,
     TooltipModule,
+    CurrencyFormatPipe,
+    DateFormatPipe,
     DataContainer,
     PageHeader,
     SearchInput,

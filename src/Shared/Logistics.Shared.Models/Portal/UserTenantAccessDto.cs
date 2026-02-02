@@ -1,3 +1,5 @@
+using Logistics.Domain.Primitives.ValueObjects;
+
 namespace Logistics.Shared.Models;
 
 /// <summary>
@@ -13,4 +15,5 @@ public class UserTenantAccessDto
     public string? CustomerName { get; set; }
     public bool IsActive { get; set; }
     public DateTime? LastAccessedAt { get; set; }
+    public TenantSettings? Settings { get; set; }
 }

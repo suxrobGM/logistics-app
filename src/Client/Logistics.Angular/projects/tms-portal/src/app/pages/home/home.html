@@ -3,12 +3,12 @@
   <div class="mb-6 flex items-center justify-between">
     <div>
       <h1 class="mb-1 text-2xl font-semibold">{{ greeting() }}</h1>
-      <p class="text-muted">{{ currentDate | date: "EEEE, MMMM d, yyyy" }}</p>
+      <p class="text-muted">{{ currentDate | dateFormat: "EEEE, MMMM d, yyyy" }}</p>
     </div>
     <div class="flex items-center gap-3">
       <!-- Data Freshness Indicator -->
       <div class="text-muted flex items-center gap-2 text-sm">
-        <span>Updated {{ lastUpdated() | date: "shortTime" }}</span>
+        <span>Updated {{ lastUpdated() | dateFormat: "shortTime" }}</span>
         <p-button
           icon="pi pi-refresh"
           [rounded]="true"
@@ -49,7 +49,7 @@
                 class="h-full"
                 icon="pi-dollar"
                 label="Weekly Gross"
-                [value]="(weeklyGross() | currency) ?? '$0'"
+                [value]="(weeklyGross() | currencyFormat) ?? '$0'"
                 color="green"
               />
             }
@@ -58,7 +58,7 @@
                 class="h-full"
                 icon="pi-map"
                 label="Billed Miles"
-                [value]="(weeklyDistance() | distanceUnit: 'mi') ?? '0 mi'"
+                [value]="(weeklyDistance() | distanceUnit) ?? '0 mi'"
                 color="blue"
               />
             }
@@ -67,7 +67,7 @@
                 class="h-full"
                 icon="pi-chart-line"
                 label="Rate Per Mile"
-                [value]="(weeklyRpm() | currency) ?? '$0'"
+                [value]="(weeklyRpm() | currencyFormat) ?? '$0'"
                 color="purple"
               />
             }
@@ -76,7 +76,7 @@
                 class="h-full"
                 icon="pi-calendar"
                 label="Today's Gross"
-                [value]="(todayGross() | currency) ?? '$0'"
+                [value]="(todayGross() | currencyFormat) ?? '$0'"
                 color="orange"
               />
             }

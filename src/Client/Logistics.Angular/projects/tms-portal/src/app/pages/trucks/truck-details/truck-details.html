@@ -237,24 +237,22 @@
               <div>
                 <span class="text-muted block text-sm">Gross (30 days)</span>
                 <span class="text-success text-xl font-bold">{{
-                  dailyGrosses()?.totalGross | currency
+                  dailyGrosses()?.totalGross | currencyFormat
                 }}</span>
               </div>
               <div>
                 <span class="text-muted block text-sm">Gross (Year)</span>
                 <span class="text-success text-xl font-bold">{{
-                  monthlyGrosses()?.totalGross | currency
+                  monthlyGrosses()?.totalGross | currencyFormat
                 }}</span>
               </div>
               <div>
                 <span class="text-muted block text-sm">Distance (30 days)</span>
-                <span class="font-bold"
-                  >{{ dailyGrosses()?.totalDistance | distanceUnit: "mi" }} mi</span
-                >
+                <span class="font-bold">{{ dailyGrosses()?.totalDistance | distanceUnit }}</span>
               </div>
               <div>
                 <span class="text-muted block text-sm">RPM (30 days)</span>
-                <span class="font-bold">{{ rpmCurrent() | currency }}</span>
+                <span class="font-bold">{{ rpmCurrent() | currencyFormat }}</span>
               </div>
             </div>
           </p-card>
