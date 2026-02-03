@@ -41,17 +41,14 @@ internal sealed class DocumentEntityConfiguration : IEntityTypeConfiguration<Doc
             .HasMaxLength(128);
 
         builder.Property(d => d.Type)
-            .IsRequired()
-            .HasConversion<string>();
+            .IsRequired();
 
         builder.Property(d => d.Status)
             .IsRequired()
-            .HasConversion<string>()
             .HasDefaultValue(DocumentStatus.Active);
 
         builder.Property(d => d.OwnerType)
-            .IsRequired()
-            .HasConversion<string>();
+            .IsRequired();
 
         builder.Property(d => d.Description)
             .HasMaxLength(1000);

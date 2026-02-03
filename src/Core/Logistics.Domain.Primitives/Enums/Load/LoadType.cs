@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Runtime.Serialization;
 
 namespace Logistics.Domain.Primitives.Enums;
 
@@ -10,27 +9,21 @@ namespace Logistics.Domain.Primitives.Enums;
 /// </summary>
 public enum LoadType
 {
-    [Description("General Freight")] [EnumMember(Value = "general_freight")]
     GeneralFreight,
-
-    [Description("Refrigerated Goods")] [EnumMember(Value = "refrigerated_goods")]
     RefrigeratedGoods,
-
-    [Description("Hazardous Materials")] [EnumMember(Value = "hazardous_materials")]
     HazardousMaterials,
 
-    [Description("Oversize / Heavy")] [EnumMember(Value = "oversize_heavy")]
+    [Description("Oversize / Heavy")]
     OversizeHeavy,
 
-    [Description("Liquid / Tanker")] [EnumMember(Value = "liquid")]
+    [Description("Liquid / Tanker")]
     Liquid,
 
-    [Description("Bulk (Gravel, Grain)")] [EnumMember(Value = "bulk")]
+    [Description("Bulk (Gravel, Grain)")]
     Bulk,
 
-    [Description("Vehicle / Car")] [EnumMember(Value = "vehicle")]
+    [Description("Vehicle / Car")]
     Vehicle,
 
-    [Description("Livestock")] [EnumMember(Value = "livestock")]
     Livestock
 }

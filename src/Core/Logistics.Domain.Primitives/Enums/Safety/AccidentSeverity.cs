@@ -1,19 +1,18 @@
 using System.ComponentModel;
-using System.Runtime.Serialization;
 
 namespace Logistics.Domain.Primitives.Enums.Safety;
 
 public enum AccidentSeverity
 {
-    [Description("Minor - No injuries, minimal damage")] [EnumMember(Value = "minor")]
+    [Description("Minor - No injuries, minimal damage")]
     Minor,
 
-    [Description("Moderate - Minor injuries or significant damage")] [EnumMember(Value = "moderate")]
+    [Description("Moderate - Minor injuries or significant damage")]
     Moderate,
 
-    [Description("Severe - Serious injuries")] [EnumMember(Value = "severe")]
+    [Description("Severe - Serious injuries")]
     Severe,
 
-    [Description("Fatal - Fatalities involved")] [EnumMember(Value = "fatal")]
+    [Description("Fatal - Fatalities involved")]
     Fatal
 }

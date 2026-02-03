@@ -15,8 +15,7 @@ internal sealed class VehicleConditionReportEntityConfiguration : IEntityTypeCon
             .HasMaxLength(17);
 
         builder.Property(v => v.Type)
-            .IsRequired()
-            .HasConversion<string>();
+            .IsRequired();
 
         builder.Property(v => v.VehicleYear);
 

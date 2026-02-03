@@ -40,7 +40,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     AuthorName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     FeaturedImage = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     IsFeatured = table.Column<bool>(type: "boolean", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     PublishedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
@@ -86,6 +86,19 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 });
 
             migrationBuilder.CreateTable(
+                name: "DefaultFeatureConfigs",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Feature = table.Column<string>(type: "text", nullable: false),
+                    IsEnabledByDefault = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DefaultFeatureConfigs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DemoRequests",
                 columns: table => new
                 {
@@ -98,7 +111,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     FleetSize = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     Message = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
                     Notes = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
@@ -116,10 +129,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     Description = table.Column<string>(type: "text", nullable: true),
                     StripePriceId = table.Column<string>(type: "text", nullable: true),
                     StripeProductId = table.Column<string>(type: "text", nullable: true),
-                    Interval = table.Column<int>(type: "integer", nullable: false),
+                    Interval = table.Column<string>(type: "text", nullable: false),
                     IntervalCount = table.Column<int>(type: "integer", nullable: false),
                     BillingCycleAnchor = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    TrialPeriod = table.Column<int>(type: "integer", nullable: false),
+                    TrialPeriod = table.Column<string>(type: "text", nullable: false),
                     Price_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     Price_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
@@ -146,7 +159,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     LogoPath = table.Column<string>(type: "text", nullable: true),
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
                     StripeConnectedAccountId = table.Column<string>(type: "text", nullable: true),
-                    ConnectStatus = table.Column<int>(type: "integer", nullable: false),
+                    ConnectStatus = table.Column<string>(type: "text", nullable: false),
                     PayoutsEnabled = table.Column<bool>(type: "boolean", nullable: false),
                     ChargesEnabled = table.Column<bool>(type: "boolean", nullable: false),
                     CompanyAddress_City = table.Column<string>(type: "text", nullable: true),
@@ -154,7 +167,12 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     CompanyAddress_Line1 = table.Column<string>(type: "text", nullable: true),
                     CompanyAddress_Line2 = table.Column<string>(type: "text", nullable: true),
                     CompanyAddress_State = table.Column<string>(type: "text", nullable: true),
-                    CompanyAddress_ZipCode = table.Column<string>(type: "text", nullable: true)
+                    CompanyAddress_ZipCode = table.Column<string>(type: "text", nullable: true),
+                    Settings_Currency = table.Column<int>(type: "integer", nullable: false),
+                    Settings_DateFormat = table.Column<int>(type: "integer", nullable: false),
+                    Settings_DistanceUnit = table.Column<int>(type: "integer", nullable: false),
+                    Settings_Timezone = table.Column<string>(type: "text", nullable: false),
+                    Settings_WeightUnit = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -225,7 +243,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     TenantId = table.Column<Guid>(type: "uuid", nullable: false),
                     PlanId = table.Column<Guid>(type: "uuid", nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -246,6 +264,31 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Subscriptions_Tenants_TenantId",
+                        column: x => x.TenantId,
+                        principalTable: "Tenants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TenantFeatureConfigs",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Feature = table.Column<string>(type: "text", nullable: false),
+                    IsEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    IsAdminLocked = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TenantFeatureConfigs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TenantFeatureConfigs_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
                         principalColumn: "Id",
@@ -345,11 +388,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     Token = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     TenantId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
                     TenantRole = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: true),
                     ExpiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     AcceptedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     AcceptedByUserId = table.Column<Guid>(type: "uuid", nullable: true),
                     InvitedByUserId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -391,8 +434,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Number = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
-                    Type = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     Notes = table.Column<string>(type: "text", nullable: true),
                     DueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     StripeInvoiceId = table.Column<string>(type: "text", nullable: true),
@@ -468,7 +511,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     MethodId = table.Column<Guid>(type: "uuid", nullable: false),
                     TenantId = table.Column<Guid>(type: "uuid", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
@@ -584,6 +627,12 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 column: "Status");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DefaultFeatureConfigs_Feature",
+                table: "DefaultFeatureConfigs",
+                column: "Feature",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DemoRequests_CreatedAt",
                 table: "DemoRequests",
                 column: "CreatedAt");
@@ -652,6 +701,12 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_TenantFeatureConfigs_TenantId_Feature",
+                table: "TenantFeatureConfigs",
+                columns: new[] { "TenantId", "Feature" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserTenantAccess_TenantId",
                 table: "UserTenantAccess",
                 column: "TenantId");
@@ -696,6 +751,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 name: "DataProtectionKeys");
 
             migrationBuilder.DropTable(
+                name: "DefaultFeatureConfigs");
+
+            migrationBuilder.DropTable(
                 name: "DemoRequests");
 
             migrationBuilder.DropTable(
@@ -706,6 +764,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
             migrationBuilder.DropTable(
                 name: "Subscriptions");
+
+            migrationBuilder.DropTable(
+                name: "TenantFeatureConfigs");
 
             migrationBuilder.DropTable(
                 name: "UserTenantAccess");

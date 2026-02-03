@@ -1,19 +1,17 @@
 using System.ComponentModel;
-using System.Runtime.Serialization;
 
 namespace Logistics.Domain.Primitives.Enums;
 
 public enum TrialPeriod
 {
-    [Description("None"), EnumMember(Value = "none")]
     None,
 
-    [Description("7 Days"), EnumMember(Value = "7d")]
+    [Description("7 Days")]
     SevenDays,
 
-    [Description("14 Days"), EnumMember(Value = "14d")]
+    [Description("14 Days")]
     FourteenDays,
 
-    [Description("30 Days"), EnumMember(Value = "30d")]
+    [Description("30 Days")]
     ThirtyDays
 }

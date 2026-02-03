@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Logistics.Domain.Entities;
+using Logistics.Infrastructure.Persistence.Conventions;
 using Logistics.Infrastructure.Persistence.Extensions;
 using Logistics.Infrastructure.Persistence.Helpers;
 using Logistics.Infrastructure.Persistence.Interceptors;
@@ -63,6 +64,11 @@ public class TenantDbContext : DbContext
             DbContextHelpers.ConfigurePostgreSql(defaultConnectionString, options);
             logger?.LogInformation("Configured tenant database with default connection string.");
         }
+    }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.Conventions.Add(_ => new SnakeCaseEnumConvention());
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

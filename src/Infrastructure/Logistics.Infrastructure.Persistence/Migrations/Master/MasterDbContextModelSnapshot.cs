@@ -121,8 +121,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -215,8 +216,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Feature")
-                        .HasColumnType("integer");
+                    b.Property<string>("Feature")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsEnabledByDefault")
                         .HasColumnType("boolean");
@@ -274,8 +276,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -336,8 +339,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<int>("SendCount")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid");
@@ -352,8 +356,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -417,14 +422,16 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<string>("SentToEmail")
                         .HasColumnType("text");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("StripeInvoiceId")
                         .HasColumnType("text");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -456,7 +463,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
                     b.ToTable("Invoices", (string)null);
 
-                    b.HasDiscriminator<int>("Type");
+                    b.HasDiscriminator<string>("Type");
 
                     b.UseTphMappingStrategy();
                 });
@@ -496,8 +503,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<string>("ReferenceNumber")
                         .HasColumnType("text");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("StripePaymentIntentId")
                         .HasColumnType("text");
@@ -581,8 +589,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("StripeCustomerId")
                         .HasColumnType("text");
@@ -629,8 +638,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<int>("Interval")
-                        .HasColumnType("integer");
+                    b.Property<string>("Interval")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("IntervalCount")
                         .HasColumnType("integer");
@@ -645,8 +655,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<string>("StripeProductId")
                         .HasColumnType("text");
 
-                    b.Property<int>("TrialPeriod")
-                        .HasColumnType("integer");
+                    b.Property<string>("TrialPeriod")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -692,8 +703,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<string>("CompanyName")
                         .HasColumnType("text");
 
-                    b.Property<int>("ConnectStatus")
-                        .HasColumnType("integer");
+                    b.Property<string>("ConnectStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("ConnectionString")
                         .IsRequired()
@@ -790,8 +802,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnType("character varying(50)")
                         .HasColumnName("CreatedBy");
 
-                    b.Property<int>("Feature")
-                        .HasColumnType("integer");
+                    b.Property<string>("Feature")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsAdminLocked")
                         .HasColumnType("boolean");
@@ -1082,7 +1095,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<Guid>("LoadId")
                         .HasColumnType("uuid");
 
-                    b.HasDiscriminator().HasValue(0);
+                    b.HasDiscriminator().HasValue("load");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.PayrollInvoice", b =>
@@ -1121,7 +1134,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
                     b.HasIndex("ApprovedById");
 
-                    b.HasDiscriminator().HasValue(2);
+                    b.HasDiscriminator().HasValue("payroll");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionInvoice", b =>
@@ -1137,7 +1150,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<Guid>("SubscriptionId")
                         .HasColumnType("uuid");
 
-                    b.HasDiscriminator().HasValue(1);
+                    b.HasDiscriminator().HasValue("subscription");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.AppRoleClaim", b =>

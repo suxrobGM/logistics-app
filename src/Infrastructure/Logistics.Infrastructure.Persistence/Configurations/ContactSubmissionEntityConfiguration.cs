@@ -14,10 +14,10 @@ internal sealed class ContactSubmissionEntityConfiguration : IEntityTypeConfigur
         builder.Property(x => x.LastName).HasMaxLength(100).IsRequired();
         builder.Property(x => x.Email).HasMaxLength(255).IsRequired();
         builder.Property(x => x.Phone).HasMaxLength(50);
-        builder.Property(x => x.Subject).HasConversion<string>().HasMaxLength(50);
+        builder.Property(x => x.Subject).HasMaxLength(50);
         builder.Property(x => x.Message).HasMaxLength(5000).IsRequired();
         builder.Property(x => x.Notes).HasMaxLength(2000);
-        builder.Property(x => x.Status).HasConversion<string>().HasMaxLength(50);
+        builder.Property(x => x.Status).HasMaxLength(50);
 
         builder.HasIndex(x => x.Email);
         builder.HasIndex(x => x.CreatedAt);

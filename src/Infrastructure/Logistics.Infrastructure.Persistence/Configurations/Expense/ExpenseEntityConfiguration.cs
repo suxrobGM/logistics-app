@@ -54,7 +54,6 @@ internal sealed class ExpenseEntityConfiguration : IEntityTypeConfiguration<Expe
         public void Configure(EntityTypeBuilder<CompanyExpense> builder)
         {
             // CompanyExpense has no navigation properties, just the Category enum
-            builder.Property(e => e.Category).HasConversion<string>();
         }
     }
 
@@ -62,8 +61,6 @@ internal sealed class ExpenseEntityConfiguration : IEntityTypeConfiguration<Expe
     {
         public void Configure(EntityTypeBuilder<TruckExpense> builder)
         {
-            builder.Property(e => e.Category).HasConversion<string>();
-
             builder.HasOne(e => e.Truck)
                 .WithMany()
                 .HasForeignKey(e => e.TruckId)

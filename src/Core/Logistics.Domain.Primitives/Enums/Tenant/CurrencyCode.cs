@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Runtime.Serialization;
 
 namespace Logistics.Domain.Primitives.Enums;
 
@@ -8,7 +7,7 @@ namespace Logistics.Domain.Primitives.Enums;
 /// </summary>
 public enum CurrencyCode
 {
-    [Description("US Dollar"), EnumMember(Value = "usd")]
+    [Description("US Dollar")]
     USD
 
     // Future currencies:

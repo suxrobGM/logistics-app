@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Runtime.Serialization;
+using System.ComponentModel;
 
 namespace Logistics.Domain.Primitives.Enums;
 
@@ -8,15 +7,15 @@ namespace Logistics.Domain.Primitives.Enums;
 /// </summary>
 public enum DocumentOwnerType
 {
-    [Description("Load Document")] [EnumMember(Value = "load")]
+    [Description("Load Document")]
     Load,
 
-    [Description("Employee Document")] [EnumMember(Value = "employee")]
+    [Description("Employee Document")]
     Employee,
 
-    [Description("Delivery Document")] [EnumMember(Value = "delivery")]
+    [Description("Delivery Document")]
     Delivery,
 
-    [Description("Truck Document")] [EnumMember(Value = "truck")]
+    [Description("Truck Document")]
     Truck
 }

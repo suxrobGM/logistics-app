@@ -20,7 +20,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     Name = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: true),
                     Phone = table.Column<string>(type: "text", nullable: true),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     Notes = table.Column<string>(type: "text", nullable: true),
                     Address_City = table.Column<string>(type: "text", nullable: true),
                     Address_Country = table.Column<string>(type: "text", nullable: true),
@@ -43,7 +43,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProviderType = table.Column<int>(type: "integer", nullable: false),
+                    ProviderType = table.Column<string>(type: "text", nullable: false),
                     ApiKey = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     ApiSecret = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     AccessToken = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
@@ -64,7 +64,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProviderType = table.Column<int>(type: "integer", nullable: false),
+                    ProviderType = table.Column<string>(type: "text", nullable: false),
                     ApiKey = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     ApiSecret = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     AccessToken = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
@@ -102,11 +102,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
                     StripePaymentMethodId = table.Column<string>(type: "text", nullable: true),
                     IsDefault = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    VerificationStatus = table.Column<int>(type: "integer", nullable: false),
+                    VerificationStatus = table.Column<string>(type: "text", nullable: false),
                     BillingAddress_City = table.Column<string>(type: "text", nullable: false),
                     BillingAddress_Country = table.Column<string>(type: "text", nullable: false),
                     BillingAddress_Line1 = table.Column<string>(type: "text", nullable: false),
@@ -126,8 +126,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     UsBankAccountPaymentMethod_AccountHolderName = table.Column<string>(type: "text", nullable: true),
                     UsBankAccountPaymentMethod_AccountNumber = table.Column<string>(type: "text", nullable: true),
                     RoutingNumber = table.Column<string>(type: "text", nullable: true),
-                    AccountHolderType = table.Column<int>(type: "integer", nullable: true),
-                    AccountType = table.Column<int>(type: "integer", nullable: true),
+                    AccountHolderType = table.Column<string>(type: "text", nullable: true),
+                    AccountType = table.Column<string>(type: "text", nullable: true),
                     VerificationUrl = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -147,60 +147,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Roles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SubscriptionPlan",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true),
-                    StripePriceId = table.Column<string>(type: "text", nullable: true),
-                    StripeProductId = table.Column<string>(type: "text", nullable: true),
-                    Interval = table.Column<int>(type: "integer", nullable: false),
-                    IntervalCount = table.Column<int>(type: "integer", nullable: false),
-                    BillingCycleAnchor = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    TrialPeriod = table.Column<int>(type: "integer", nullable: false),
-                    Price_Amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    Price_Currency = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SubscriptionPlan", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tenant",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    CompanyName = table.Column<string>(type: "text", nullable: true),
-                    ConnectionString = table.Column<string>(type: "text", nullable: false),
-                    BillingEmail = table.Column<string>(type: "text", nullable: false),
-                    DotNumber = table.Column<string>(type: "text", nullable: true),
-                    StripeCustomerId = table.Column<string>(type: "text", nullable: true),
-                    LogoPath = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    StripeConnectedAccountId = table.Column<string>(type: "text", nullable: true),
-                    ConnectStatus = table.Column<int>(type: "integer", nullable: false),
-                    PayoutsEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    ChargesEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    CompanyAddress_City = table.Column<string>(type: "text", nullable: true),
-                    CompanyAddress_Country = table.Column<string>(type: "text", nullable: true),
-                    CompanyAddress_Line1 = table.Column<string>(type: "text", nullable: true),
-                    CompanyAddress_Line2 = table.Column<string>(type: "text", nullable: true),
-                    CompanyAddress_State = table.Column<string>(type: "text", nullable: true),
-                    CompanyAddress_ZipCode = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tenant", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -239,8 +185,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     FirstName = table.Column<string>(type: "text", nullable: false),
                     LastName = table.Column<string>(type: "text", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    SalaryType = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    SalaryType = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     JoinedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DeviceToken = table.Column<string>(type: "text", nullable: true),
                     RoleId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -279,83 +225,14 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 });
 
             migrationBuilder.CreateTable(
-                name: "Subscription",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    TenantId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PlanId = table.Column<Guid>(type: "uuid", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    NextBillingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    TrialEndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    StripeSubscriptionId = table.Column<string>(type: "text", nullable: true),
-                    StripeCustomerId = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Subscription", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Subscription_SubscriptionPlan_PlanId",
-                        column: x => x.PlanId,
-                        principalTable: "SubscriptionPlan",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Subscription_Tenant_TenantId",
-                        column: x => x.TenantId,
-                        principalTable: "Tenant",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "User",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    FirstName = table.Column<string>(type: "text", nullable: false),
-                    LastName = table.Column<string>(type: "text", nullable: false),
-                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    UserName = table.Column<string>(type: "text", nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "text", nullable: true),
-                    Email = table.Column<string>(type: "text", nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "text", nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    PasswordHash = table.Column<string>(type: "text", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "text", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "boolean", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "boolean", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_User", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_User_Tenant_TenantId",
-                        column: x => x.TenantId,
-                        principalTable: "Tenant",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DriverHosStatuses",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
                     ExternalDriverId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    ProviderType = table.Column<int>(type: "integer", nullable: false),
-                    CurrentDutyStatus = table.Column<int>(type: "integer", nullable: false),
+                    ProviderType = table.Column<string>(type: "text", nullable: false),
+                    CurrentDutyStatus = table.Column<string>(type: "text", nullable: false),
                     StatusChangedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DrivingMinutesRemaining = table.Column<int>(type: "integer", nullable: false),
                     OnDutyMinutesRemaining = table.Column<int>(type: "integer", nullable: false),
@@ -382,7 +259,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProviderType = table.Column<int>(type: "integer", nullable: false),
+                    ProviderType = table.Column<string>(type: "text", nullable: false),
                     ExternalDriverId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     ExternalDriverName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     IsSyncEnabled = table.Column<bool>(type: "boolean", nullable: false),
@@ -406,7 +283,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
                     LogDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DutyStatus = table.Column<int>(type: "integer", nullable: false),
+                    DutyStatus = table.Column<string>(type: "text", nullable: false),
                     StartTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     DurationMinutes = table.Column<int>(type: "integer", nullable: false),
@@ -415,7 +292,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     Longitude = table.Column<double>(type: "double precision", nullable: true),
                     Remark = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     ExternalLogId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    ProviderType = table.Column<int>(type: "integer", nullable: false)
+                    ProviderType = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -435,13 +312,13 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
                     ViolationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ViolationType = table.Column<int>(type: "integer", nullable: false),
+                    ViolationType = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
                     SeverityLevel = table.Column<int>(type: "integer", nullable: false),
                     IsResolved = table.Column<bool>(type: "boolean", nullable: false),
                     ResolvedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ExternalViolationId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    ProviderType = table.Column<int>(type: "integer", nullable: false)
+                    ProviderType = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -460,9 +337,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Number = table.Column<string>(type: "text", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
                     VehicleCapacity = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     Make = table.Column<string>(type: "text", nullable: true),
                     Model = table.Column<string>(type: "text", nullable: true),
                     Year = table.Column<int>(type: "integer", nullable: true),
@@ -504,9 +381,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     EmployeeId = table.Column<Guid>(type: "uuid", nullable: false),
                     TruckId = table.Column<Guid>(type: "uuid", nullable: true),
-                    EventType = table.Column<int>(type: "integer", nullable: false),
+                    EventType = table.Column<string>(type: "text", nullable: false),
                     OccurredAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ProviderType = table.Column<int>(type: "integer", nullable: false),
+                    ProviderType = table.Column<string>(type: "text", nullable: false),
                     Latitude = table.Column<double>(type: "double precision", nullable: true),
                     Longitude = table.Column<double>(type: "double precision", nullable: true),
                     Location = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
@@ -551,7 +428,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     TruckId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProviderType = table.Column<int>(type: "integer", nullable: false),
+                    ProviderType = table.Column<string>(type: "text", nullable: false),
                     ExternalVehicleId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     ExternalVehicleName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     IsSyncEnabled = table.Column<bool>(type: "boolean", nullable: false),
@@ -575,8 +452,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Number = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
-                    Type = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     VendorName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     ExpenseDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ReceiptBlobPath = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
@@ -626,8 +503,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     Number = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     Distance = table.Column<double>(type: "double precision", nullable: false),
                     CanConfirmPickUp = table.Column<bool>(type: "boolean", nullable: false),
                     CanConfirmDelivery = table.Column<bool>(type: "boolean", nullable: false),
@@ -638,7 +515,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     CustomerId = table.Column<Guid>(type: "uuid", nullable: false),
                     AssignedTruckId = table.Column<Guid>(type: "uuid", nullable: true),
                     AssignedDispatcherId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ExternalSourceProvider = table.Column<int>(type: "integer", nullable: true),
+                    ExternalSourceProvider = table.Column<string>(type: "text", nullable: true),
                     ExternalSourceId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     ExternalBrokerReference = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     DeliveryCost_Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
@@ -692,8 +569,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     TruckId = table.Column<Guid>(type: "uuid", nullable: false),
-                    MaintenanceType = table.Column<int>(type: "integer", nullable: false),
-                    IntervalType = table.Column<int>(type: "integer", nullable: false),
+                    MaintenanceType = table.Column<string>(type: "text", nullable: false),
+                    IntervalType = table.Column<string>(type: "text", nullable: false),
                     MileageInterval = table.Column<int>(type: "integer", nullable: true),
                     DaysInterval = table.Column<int>(type: "integer", nullable: true),
                     EngineHoursInterval = table.Column<int>(type: "integer", nullable: true),
@@ -727,7 +604,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     TruckId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProviderType = table.Column<int>(type: "integer", nullable: false),
+                    ProviderType = table.Column<string>(type: "text", nullable: false),
                     ExternalPostId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     DestinationRadius = table.Column<int>(type: "integer", nullable: true),
                     AvailableFrom = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -735,7 +612,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     EquipmentType = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     MaxWeight = table.Column<int>(type: "integer", nullable: true),
                     MaxLength = table.Column<int>(type: "integer", nullable: true),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     ExpiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LastRefreshedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     AvailableAtAddress_City = table.Column<string>(type: "text", nullable: false),
@@ -780,7 +657,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     DispatchedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CompletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CancelledAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     TruckId = table.Column<Guid>(type: "uuid", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
@@ -826,8 +703,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Number = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
-                    Type = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     Notes = table.Column<string>(type: "text", nullable: true),
                     DueDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     StripeInvoiceId = table.Column<string>(type: "text", nullable: true),
@@ -875,12 +752,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         principalTable: "Loads",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Invoices_User_ApprovedById",
-                        column: x => x.ApprovedById,
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -889,7 +760,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ExternalListingId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    ProviderType = table.Column<int>(type: "integer", nullable: false),
+                    ProviderType = table.Column<string>(type: "text", nullable: false),
                     RatePerMile = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: true),
                     Distance = table.Column<double>(type: "double precision", nullable: true),
                     Weight = table.Column<int>(type: "integer", nullable: true),
@@ -904,7 +775,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     BrokerPhone = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: true),
                     BrokerEmail = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     BrokerMcNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     BookedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     LoadId = table.Column<Guid>(type: "uuid", nullable: true),
                     Notes = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
@@ -950,7 +821,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     LoadId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
                     Reason = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
                     OccurredAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ResolvedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -1049,7 +920,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     TruckId = table.Column<Guid>(type: "uuid", nullable: false),
                     MaintenanceScheduleId = table.Column<Guid>(type: "uuid", nullable: true),
-                    MaintenanceType = table.Column<int>(type: "integer", nullable: false),
+                    MaintenanceType = table.Column<string>(type: "text", nullable: false),
                     ServiceDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     OdometerReading = table.Column<int>(type: "integer", nullable: false),
                     EngineHours = table.Column<int>(type: "integer", nullable: true),
@@ -1098,9 +969,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     DriverId = table.Column<Guid>(type: "uuid", nullable: false),
                     TruckId = table.Column<Guid>(type: "uuid", nullable: false),
                     TripId = table.Column<Guid>(type: "uuid", nullable: true),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    AccidentType = table.Column<int>(type: "integer", nullable: false),
-                    Severity = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    AccidentType = table.Column<string>(type: "text", nullable: false),
+                    Severity = table.Column<string>(type: "text", nullable: false),
                     AccidentDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Latitude = table.Column<double>(type: "double precision", nullable: false),
                     Longitude = table.Column<double>(type: "double precision", nullable: false),
@@ -1170,8 +1041,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     TruckId = table.Column<Guid>(type: "uuid", nullable: false),
                     DriverId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     InspectionDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Latitude = table.Column<double>(type: "double precision", nullable: true),
                     Longitude = table.Column<double>(type: "double precision", nullable: true),
@@ -1224,7 +1095,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
                     TripId = table.Column<Guid>(type: "uuid", nullable: false),
                     Order = table.Column<int>(type: "integer", nullable: false),
                     ArrivedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -1319,7 +1190,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     InvoiceId = table.Column<Guid>(type: "uuid", nullable: false),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     Order = table.Column<int>(type: "integer", nullable: false),
                     Notes = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
@@ -1370,7 +1241,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
                     MethodId = table.Column<Guid>(type: "uuid", nullable: false),
                     TenantId = table.Column<Guid>(type: "uuid", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
@@ -1412,7 +1283,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     StartTime = table.Column<TimeSpan>(type: "interval", nullable: false),
                     EndTime = table.Column<TimeSpan>(type: "interval", nullable: false),
                     TotalHours = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
                     PayrollInvoiceId = table.Column<Guid>(type: "uuid", nullable: true),
                     Notes = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
@@ -1520,9 +1391,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     DvirReportId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Category = table.Column<int>(type: "integer", nullable: false),
+                    Category = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
-                    Severity = table.Column<int>(type: "integer", nullable: false),
+                    Severity = table.Column<string>(type: "text", nullable: false),
                     IsCorrected = table.Column<bool>(type: "boolean", nullable: false),
                     CorrectionNotes = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     CorrectedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -1558,7 +1429,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     BlobPath = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
                     BlobContainer = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     Type = table.Column<string>(type: "text", nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: false, defaultValue: "Active"),
+                    Status = table.Column<string>(type: "text", nullable: false, defaultValue: "active"),
                     Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
                     UploadedById = table.Column<Guid>(type: "uuid", nullable: false),
                     EmployeeId = table.Column<Guid>(type: "uuid", nullable: true),
@@ -1956,11 +1827,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 column: "InvoiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Invoices_ApprovedById",
-                table: "Invoices",
-                column: "ApprovedById");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Invoices_CustomerId",
                 table: "Invoices",
                 column: "CustomerId");
@@ -2155,17 +2021,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Subscription_PlanId",
-                table: "Subscription",
-                column: "PlanId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Subscription_TenantId",
-                table: "Subscription",
-                column: "TenantId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_TimeEntries_EmployeeId_Date",
                 table: "TimeEntries",
                 columns: new[] { "EmployeeId", "Date" });
@@ -2227,11 +2082,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 name: "IX_Trucks_SecondaryDriverId",
                 table: "Trucks",
                 column: "SecondaryDriverId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_User_TenantId",
-                table: "User",
-                column: "TenantId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_VehicleConditionReports_InspectedAt",
@@ -2336,9 +2186,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 name: "RoleClaims");
 
             migrationBuilder.DropTable(
-                name: "Subscription");
-
-            migrationBuilder.DropTable(
                 name: "TimeEntries");
 
             migrationBuilder.DropTable(
@@ -2363,9 +2210,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 name: "Messages");
 
             migrationBuilder.DropTable(
-                name: "SubscriptionPlan");
-
-            migrationBuilder.DropTable(
                 name: "Invoices");
 
             migrationBuilder.DropTable(
@@ -2378,13 +2222,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 name: "Conversations");
 
             migrationBuilder.DropTable(
-                name: "User");
-
-            migrationBuilder.DropTable(
                 name: "Loads");
-
-            migrationBuilder.DropTable(
-                name: "Tenant");
 
             migrationBuilder.DropTable(
                 name: "Customers");

@@ -1,16 +1,15 @@
 using System.ComponentModel;
-using System.Runtime.Serialization;
 
 namespace Logistics.Domain.Primitives.Enums.Safety;
 
 public enum CdlClass
 {
-    [Description("Class A - Combination vehicles 26,001+ lbs")] [EnumMember(Value = "class_a")]
+    [Description("Class A - Combination vehicles 26,001+ lbs")]
     ClassA,
 
-    [Description("Class B - Single vehicles 26,001+ lbs")] [EnumMember(Value = "class_b")]
+    [Description("Class B - Single vehicles 26,001+ lbs")]
     ClassB,
 
-    [Description("Class C - Vehicles under 26,001 lbs with hazmat or 16+ passengers")] [EnumMember(Value = "class_c")]
+    [Description("Class C - Vehicles under 26,001 lbs with hazmat or 16+ passengers")]
     ClassC
 }

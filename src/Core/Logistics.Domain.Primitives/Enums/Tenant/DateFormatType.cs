@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Runtime.Serialization;
 
 namespace Logistics.Domain.Primitives.Enums;
 
@@ -8,12 +7,12 @@ namespace Logistics.Domain.Primitives.Enums;
 /// </summary>
 public enum DateFormatType
 {
-    [Description("MM/DD/YYYY"), EnumMember(Value = "us")]
+    [Description("MM/DD/YYYY")]
     US,
 
-    [Description("DD/MM/YYYY"), EnumMember(Value = "european")]
+    [Description("DD/MM/YYYY")]
     European,
 
-    [Description("YYYY-MM-DD"), EnumMember(Value = "iso")]
+    [Description("YYYY-MM-DD")]
     ISO
 }

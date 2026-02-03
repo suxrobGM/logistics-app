@@ -1,13 +1,12 @@
 using System.ComponentModel;
-using System.Runtime.Serialization;
 
 namespace Logistics.Domain.Primitives.Enums.Safety;
 
 public enum DvirType
 {
-    [Description("Pre-Trip Inspection")] [EnumMember(Value = "pre_trip")]
+    [Description("Pre-Trip Inspection")]
     PreTrip,
 
-    [Description("Post-Trip Inspection")] [EnumMember(Value = "post_trip")]
+    [Description("Post-Trip Inspection")]
     PostTrip
 }

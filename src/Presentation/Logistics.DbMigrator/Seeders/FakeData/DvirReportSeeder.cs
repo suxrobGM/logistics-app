@@ -60,7 +60,7 @@ internal class DvirReportSeeder(ILogger<DvirReportSeeder> logger) : SeederBase(l
             "Chip in windshield spreading",
             "Windshield seal leaking"
         ],
-        [DvirInspectionCategory.Wipers] =
+        [DvirInspectionCategory.Wheels] =
         [
             "Wiper blades streaking",
             "Wiper motor weak",

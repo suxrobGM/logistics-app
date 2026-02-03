@@ -1,4 +1,5 @@
 using Logistics.Domain.Entities;
+using Logistics.Infrastructure.Persistence.Conventions;
 using Logistics.Infrastructure.Persistence.Extensions;
 using Logistics.Infrastructure.Persistence.Helpers;
 using Logistics.Infrastructure.Persistence.Interceptors;
@@ -59,6 +60,11 @@ public class MasterDbContext : IdentityDbContext<
             logger?.LogInformation("Configured master database with connection string: {ConnectionString}",
                 connectionString);
         }
+    }
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.Conventions.Add(_ => new SnakeCaseEnumConvention());
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
