@@ -44,8 +44,8 @@
           id="serviceDate"
           [showIcon]="true"
           [iconDisplay]="'input'"
+          [fluid]="true"
           dateFormat="mm/dd/yy"
-          class="w-full"
         />
       </ui-labeled-field>
 
@@ -60,7 +60,13 @@
       </ui-labeled-field>
 
       <ui-labeled-field label="Engine Hours" for="engineHours">
-        <p-inputnumber formControlName="engineHours" id="engineHours" class="w-full" [useGrouping]="true" suffix=" hrs" />
+        <p-inputnumber
+          formControlName="engineHours"
+          id="engineHours"
+          class="w-full"
+          [useGrouping]="true"
+          suffix=" hrs"
+        />
       </ui-labeled-field>
     </div>
 

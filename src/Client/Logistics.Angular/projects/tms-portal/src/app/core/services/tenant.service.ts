@@ -1,26 +1,24 @@
 import { HttpHeaders } from "@angular/common/http";
-import { Injectable, inject } from "@angular/core";
+import { Injectable, inject, signal } from "@angular/core";
 import { CookieService } from "@logistics/shared";
 import { Api, type TenantDto, getTenantById } from "@logistics/shared/api";
-import { BehaviorSubject } from "rxjs";
 
 @Injectable({ providedIn: "root" })
 export class TenantService {
   private readonly cookieService = inject(CookieService);
   private readonly api = inject(Api);
 
-  private tenantId: string | null = null;
-  private tenantData: TenantDto | null = null;
-  private readonly tenantDataChangedSource = new BehaviorSubject<TenantDto | null>(null);
+  private readonly tenantId = signal<string | null>(null);
+  private readonly _tenantData = signal<TenantDto | null>(null);
 
   /**
-   * Observable that emits when the tenant data changes.
-   * New subscribers will receive the current tenant data immediately.
+   * Signal that holds the current tenant data.
+   * Use effect() to react to changes.
    */
-  public readonly tenantDataChanged$ = this.tenantDataChangedSource.asObservable();
+  public readonly tenantData = this._tenantData.asReadonly();
 
   getTenantData(): TenantDto | null {
-    return this.tenantData;
+    return this._tenantData();
   }
 
   /**
@@ -28,7 +26,7 @@ export class TenantService {
    * @param tenantId Tenant ID
    */
   setTenantId(tenantId: string): void {
-    this.tenantId = tenantId;
+    this.tenantId.set(tenantId);
     this.setTenantCookie(tenantId);
     this.fetchTenantData(tenantId);
   }
@@ -37,7 +35,7 @@ export class TenantService {
    * Get tenant id
    */
   getTenantId(): string | null {
-    return this.tenantId;
+    return this.tenantId();
   }
 
   /**
@@ -46,12 +44,12 @@ export class TenantService {
    * @returns Updated HttpHeaders
    */
   generateTenantHeaders(headers: HttpHeaders): HttpHeaders {
-    if (!this.tenantId) {
-      //throw new Error("TenantId is not set");
+    const tenantId = this.tenantId();
+    if (!tenantId) {
       return headers;
     }
 
-    return headers.append("X-Tenant", this.tenantId);
+    return headers.append("X-Tenant", tenantId);
   }
 
   /**
@@ -60,32 +58,30 @@ export class TenantService {
    * @returns True if the tenant has an active subscription, otherwise false
    */
   isSubscriptionActive(): boolean {
-    if (!this.tenantData) {
+    const data = this._tenantData();
+    if (!data) {
       return false;
     }
 
     // If subscription is null, it means the tenant is not required to have a subscription
-    if (this.tenantData.subscription == null) {
+    if (data.subscription == null) {
       return true;
     }
 
-    return (
-      this.tenantData?.subscription?.status === "active" ||
-      this.tenantData?.subscription?.status === "trialing"
-    );
+    return data.subscription.status === "active" || data.subscription.status === "trialing";
   }
 
   /**
    * Refetch tenant data from the server.
-   * Sets the tenantData to updated data.
-   * Emits the updated tenant data to the tenantDataChanged$ observable.
+   * Updates the tenantData signal with fresh data.
    */
   public refetchTenantData(): void {
-    if (!this.tenantId) {
+    const tenantId = this.tenantId();
+    if (!tenantId) {
       return;
     }
 
-    this.fetchTenantData(this.tenantId);
+    this.fetchTenantData(tenantId);
   }
 
   private setTenantCookie(tenantId: string): void {
@@ -107,7 +103,7 @@ export class TenantService {
   }
 
   /**
-   * Fetch tenant data and save it to the tenantData
+   * Fetch tenant data and save it to the tenantData signal
    * @param tenantId The tenant ID
    */
   private async fetchTenantData(tenantId: string): Promise<void> {
@@ -117,8 +113,7 @@ export class TenantService {
       return;
     }
 
-    this.tenantData = tenant;
-    this.tenantDataChangedSource.next(tenant);
+    this._tenantData.set(tenant);
     console.log("Fetched tenant data:", tenant);
   }
 }

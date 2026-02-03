@@ -1,5 +1,5 @@
 import { Location } from "@angular/common";
-import { Component, computed, inject, input } from "@angular/core";
+import { Component, computed, effect, inject, input } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { AuthService } from "@/core/auth";
@@ -21,7 +21,8 @@ export class UnauthorizedComponent {
   protected readonly isSubscriptionIssue = computed(() => this.reason() === "subscription");
 
   constructor() {
-    this.tenantService.tenantDataChanged$.subscribe(() => {
+    effect(() => {
+      this.tenantService.tenantData();
       if (this.reason() === "subscription" && this.tenantService.isSubscriptionActive()) {
         console.log("Subscription is active, redirecting to home page");
         this.router.navigate(["/"]);

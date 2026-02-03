@@ -1,11 +1,11 @@
-import { Component, inject, input, type OnInit, signal } from "@angular/core";
+import { Component, type OnInit, inject, input, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { Api, getMaintenanceRecords } from "@logistics/shared/api";
 import type { MaintenanceRecordDto, TruckDto } from "@logistics/shared/api";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { PageHeader } from "@/shared/components";
 import { ToastService } from "@/core/services";
+import { PageHeader } from "@/shared/components";
 import {
   MaintenanceRecordForm,
   type MaintenanceRecordFormValue,
@@ -46,7 +46,7 @@ export class ServiceRecordEditPage implements OnInit {
         const formValue: Partial<MaintenanceRecordFormValue> = {
           truck: {
             id: found.truckId,
-            truckNumber: found.truckNumber,
+            number: found.truckNumber,
           } as TruckDto,
           type: found.type,
           description: found.description ?? "",

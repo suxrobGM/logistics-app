@@ -1,4 +1,4 @@
-import { Component, inject, signal } from "@angular/core";
+import { Component, effect, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { DrawerModule } from "primeng/drawer";
@@ -48,7 +48,8 @@ export class MobileDrawer {
       this.userRole.set(this.authService.getUserRoleName());
     });
 
-    this.tenantService.tenantDataChanged$.subscribe((tenantData) => {
+    effect(() => {
+      const tenantData = this.tenantService.tenantData();
       if (tenantData?.subscription == null || !this.tenantService.isSubscriptionActive()) {
         this.navItems.set(
           this.transformMenuItems(

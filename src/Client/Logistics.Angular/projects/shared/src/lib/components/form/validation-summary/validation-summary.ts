@@ -1,25 +1,24 @@
-import { AsyncPipe, CommonModule } from "@angular/common";
-import { Component, type OnInit, input } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Component, DestroyRef, type OnInit, inject, input, signal } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormGroup } from "@angular/forms";
-import { BehaviorSubject } from "rxjs";
 
 @Component({
   selector: "ui-validation-summary",
   templateUrl: "./validation-summary.html",
   styleUrl: "./validation-summary.css",
-  imports: [CommonModule, AsyncPipe],
+  imports: [CommonModule],
 })
 export class ValidationSummary implements OnInit {
-  private readonly formErrorsSubject = new BehaviorSubject<string[]>([]);
-  protected readonly formErrors$ = this.formErrorsSubject.asObservable();
+  private readonly destroyRef = inject(DestroyRef);
+  protected readonly formErrors = signal<string[]>([]);
 
   public readonly form = input.required<FormGroup>();
 
   ngOnInit(): void {
-    this.form().valueChanges.subscribe(() => {
-      const errors = this.calculateErrors();
-      this.formErrorsSubject.next(errors);
-    });
+    this.form()
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.formErrors.set(this.calculateErrors()));
   }
 
   private calculateErrors(): string[] {

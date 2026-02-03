@@ -1,12 +1,13 @@
 import { Component, effect, inject, input, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import { Api, createMaintenanceRecord } from "@logistics/shared/api";
+import { Api, createMaintenanceRecord, updateMaintenanceRecord } from "@logistics/shared/api";
 import type {
   CreateMaintenanceRecordCommand,
   MaintenanceRecordDto,
   MaintenanceType,
   TruckDto,
+  UpdateMaintenanceRecordCommand,
 } from "@logistics/shared/api";
 import { LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
@@ -147,8 +148,29 @@ export class MaintenanceRecordForm {
           this.save.emit(result);
         }
       } else {
-        // Update functionality will be added when API is regenerated
-        this.toastService.showWarning("Update functionality pending API regeneration");
+        const command: UpdateMaintenanceRecordCommand = {
+          id: this.id()!,
+          truckId: formValue.truck!.id!,
+          type: formValue.type,
+          description: formValue.description,
+          serviceDate: formValue.serviceDate.toISOString(),
+          odometerReading: formValue.odometerReading,
+          engineHours: formValue.engineHours,
+          vendorName: formValue.vendorName,
+          invoiceNumber: formValue.invoiceNumber,
+          laborCost: formValue.laborCost,
+          partsCost: formValue.partsCost,
+          notes: formValue.notes,
+        };
+
+        const result = await this.api.invoke(updateMaintenanceRecord, {
+          id: this.id()!,
+          body: command,
+        });
+        if (result) {
+          this.toastService.showSuccess("Maintenance record updated successfully");
+          this.save.emit(result);
+        }
       }
     } finally {
       this.isLoading.set(false);

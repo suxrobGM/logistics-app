@@ -1,6 +1,6 @@
-@if ((formErrors$ | async)?.length) {
+@if (formErrors().length) {
   <ul class="validation-list">
-    @for (error of formErrors$ | async; track error) {
+    @for (error of formErrors(); track error) {
       <li>{{ error }}</li>
     }
   </ul>

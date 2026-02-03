@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from "@angular/core";
+import { Injectable, effect, inject, signal } from "@angular/core";
 import { Api, getCurrentTenantFeatures } from "@logistics/shared/api";
 import type { FeatureStatusDto } from "@logistics/shared/api";
 import { type FeatureProvider } from "@logistics/shared/services";
@@ -19,7 +19,8 @@ export class TmsFeatureProvider implements FeatureProvider {
 
   constructor() {
     // Refresh features when tenant data changes
-    this.tenantService.tenantDataChanged$.subscribe(() => {
+    effect(() => {
+      this.tenantService.tenantData();
       if (this.tenantService.getTenantId()) {
         this.refreshFeatures();
       }

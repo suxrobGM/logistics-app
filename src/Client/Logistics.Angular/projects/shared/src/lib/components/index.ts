@@ -1,5 +1,5 @@
 export * from "./permission/permission-guard";
-export { PERMISSION_CHECKER, type PermissionChecker } from "./permission/permission-checker";
+export * from "./permission/permission-checker";
 
 // Feature Components
 export * from "./feature/feature-guard";

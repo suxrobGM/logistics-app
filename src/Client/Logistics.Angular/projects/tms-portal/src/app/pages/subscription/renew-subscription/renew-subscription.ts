@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, signal } from "@angular/core";
+import { Component, effect, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, renewSubscription } from "@logistics/shared/api";
 import type { SubscriptionDto } from "@logistics/shared/api";
@@ -41,11 +41,8 @@ export class RenewSubscriptionComponent {
   protected readonly isLoading = signal(false);
 
   constructor() {
-    const tenantData = this.tenantService.getTenantData();
-    this.subscription.set(tenantData?.subscription ?? null);
-    this.employeeCount.set(tenantData?.employeeCount ?? 0);
-
-    this.tenantService.tenantDataChanged$.subscribe((tenantData) => {
+    effect(() => {
+      const tenantData = this.tenantService.tenantData();
       this.subscription.set(tenantData?.subscription ?? null);
       this.employeeCount.set(tenantData?.employeeCount ?? 0);
     });

@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, signal } from "@angular/core";
+import { Component, effect, inject, signal } from "@angular/core";
 import { UserRole } from "@logistics/shared";
 import { FeatureService } from "@logistics/shared/services";
 import type { MenuItem as PrimeMenuItem } from "primeng/api";
@@ -82,7 +82,8 @@ export class Sidebar {
       this.updateNavItems(userRole);
     });
 
-    this.tenantService.tenantDataChanged$.subscribe((tenantData) => {
+    effect(() => {
+      const tenantData = this.tenantService.tenantData();
       this.companyName.set(tenantData?.companyName ?? null);
       this.companyLogoUrl.set(tenantData?.logoUrl ?? null);
 
