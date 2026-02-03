@@ -1,5 +1,7 @@
+using System.Threading.RateLimiting;
 using Duende.IdentityServer;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Options;
 using Logistics.IdentityServer.Services;
 using Logistics.Infrastructure.Communications;
 using Logistics.Infrastructure.Persistence;
@@ -23,6 +25,9 @@ internal static class Setup
 
         var serilogLogger = new SerilogLoggerFactory(Log.Logger)
             .CreateLogger<IPersistenceInfrastructureBuilder>();
+
+        // Configuration options
+        services.Configure<ImpersonationOptions>(configuration.GetSection(ImpersonationOptions.SectionName));
 
         // Infrastructure layers
         services.AddCommunicationsInfrastructure(configuration);
@@ -90,6 +95,42 @@ internal static class Setup
             });
         });
 
+        // Rate limiting configuration
+        services.AddRateLimiter(options =>
+        {
+            // Rate limit for login attempts per IP
+            options.AddPolicy("login", context =>
+                RateLimitPartition.GetSlidingWindowLimiter(
+                    partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                    factory: _ => new SlidingWindowRateLimiterOptions
+                    {
+                        AutoReplenishment = true,
+                        PermitLimit = 10,
+                        Window = TimeSpan.FromMinutes(15),
+                        SegmentsPerWindow = 3,
+                        QueueLimit = 0
+                    }));
+
+            // Rate limit for impersonation token validation
+            options.AddPolicy("impersonate", context =>
+                RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                    factory: _ => new FixedWindowRateLimiterOptions
+                    {
+                        AutoReplenishment = true,
+                        PermitLimit = 5,
+                        Window = TimeSpan.FromMinutes(15),
+                        QueueLimit = 0
+                    }));
+
+            options.OnRejected = async (context, _) =>
+            {
+                context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                context.HttpContext.Response.Redirect("/Account/Login?error=TooManyAttempts");
+                await Task.CompletedTask;
+            };
+        });
+
         return builder.Build();
     }
 
@@ -114,6 +155,7 @@ internal static class Setup
         app.UseRouting();
         app.UseCors(app.Environment.IsDevelopment() ? "AnyCors" : "DefaultCors");
 
+        app.UseRateLimiter();
         app.UseIdentityServer();
         app.UseAuthorization();
         app.MapRazorPages().RequireAuthorization();

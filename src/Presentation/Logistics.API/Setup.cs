@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Logistics.API.Authorization;
@@ -10,6 +11,7 @@ using Logistics.API.Jobs;
 using Logistics.API.Middlewares;
 using Logistics.API.ModelBinders;
 using Logistics.Application;
+using Logistics.Domain.Options;
 using Logistics.Infrastructure.Communications;
 using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Infrastructure.Documents;
@@ -64,6 +66,43 @@ internal static class Setup
         services.AddAuthorization();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+
+        // Impersonation configuration
+        services.Configure<ImpersonationOptions>(configuration.GetSection(ImpersonationOptions.SectionName));
+
+        // Rate limiting configuration
+        services.AddRateLimiter(options =>
+        {
+            options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+                RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: context.User.Identity?.Name ?? context.Request.Headers.Host.ToString(),
+                    factory: _ => new FixedWindowRateLimiterOptions
+                    {
+                        AutoReplenishment = true,
+                        PermitLimit = 100,
+                        Window = TimeSpan.FromMinutes(1)
+                    }));
+
+            // Strict rate limit for impersonation endpoint
+            options.AddPolicy("impersonation", context =>
+                RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                    factory: _ => new FixedWindowRateLimiterOptions
+                    {
+                        AutoReplenishment = true,
+                        PermitLimit = 5,
+                        Window = TimeSpan.FromMinutes(15),
+                        QueueLimit = 0
+                    }));
+
+            options.OnRejected = async (context, cancellationToken) =>
+            {
+                context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                await context.HttpContext.Response.WriteAsJsonAsync(
+                    new { error = "Too many requests. Please try again later." },
+                    cancellationToken);
+            };
+        });
 
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
@@ -159,6 +198,7 @@ internal static class Setup
         app.UseLocalStorageStaticFiles();
 
         app.UseAuthentication();
+        app.UseRateLimiter();
         app.UseAuthorization();
         app.UseHangfireDashboard();
 

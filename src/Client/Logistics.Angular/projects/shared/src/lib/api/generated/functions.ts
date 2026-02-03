@@ -183,6 +183,8 @@ export type { GetTenantFeatures$Params as GetTenantFeatures$Params } from './fn/
 export { getTenantFeatures as getTenantFeatures } from './fn/features/get-tenant-features';
 export type { UpdateTenantFeatures$Params as UpdateTenantFeatures$Params } from './fn/features/update-tenant-features';
 export { updateTenantFeatures as updateTenantFeatures } from './fn/features/update-tenant-features';
+export type { ImpersonateUser$Params as ImpersonateUser$Params } from './fn/impersonation/impersonate-user';
+export { impersonateUser as impersonateUser } from './fn/impersonation/impersonate-user';
 export type { DecodeVin$Params as DecodeVin$Params } from './fn/inspection/decode-vin';
 export { decodeVin as decodeVin } from './fn/inspection/decode-vin';
 export type { GetConditionReports$Params as GetConditionReports$Params } from './fn/inspection/get-condition-reports';

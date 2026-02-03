@@ -11,7 +11,15 @@
         believe this is an error.
       </p>
 
-      <p-button label="Go to Login" icon="pi pi-arrow-left" routerLink="/" />
+      <div class="flex justify-center gap-3">
+        <p-button label="Go to Login" icon="pi pi-arrow-left" routerLink="/" />
+        <p-button
+          label="Sign Out"
+          icon="pi pi-sign-out"
+          severity="secondary"
+          (onClick)="logout()"
+        />
+      </div>
     </div>
   </p-card>
 </div>

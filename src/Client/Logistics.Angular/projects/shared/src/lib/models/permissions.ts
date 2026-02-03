@@ -1,4 +1,8 @@
 export const Permission = {
+  AppRole: {
+    View: "Permission.AppRole.View",
+    Manage: "Permission.AppRole.Manage",
+  },
   Employee: {
     View: "Permission.Employee.View",
     Manage: "Permission.Employee.Manage",
@@ -14,6 +18,10 @@ export const Permission = {
   Stat: {
     View: "Permission.Stat.View",
   },
+  Tenant: {
+    View: "Permission.Tenant.View",
+    Manage: "Permission.Tenant.Manage",
+  },
   TenantRole: {
     View: "Permission.TenantRole.View",
     Manage: "Permission.TenantRole.Manage",
@@ -21,6 +29,10 @@ export const Permission = {
   Truck: {
     View: "Permission.Truck.View",
     Manage: "Permission.Truck.Manage",
+  },
+  User: {
+    View: "Permission.User.View",
+    Manage: "Permission.User.Manage",
   },
   Customer: {
     View: "Permission.Customer.View",
@@ -51,6 +63,12 @@ export const Permission = {
     View: "Permission.Invitation.View",
     Manage: "Permission.Invitation.Manage",
   },
+  Portal: {
+    Access: "Permission.Portal.Access",
+    ViewLoads: "Permission.Portal.ViewLoads",
+    ViewInvoices: "Permission.Portal.ViewInvoices",
+    ViewDocuments: "Permission.Portal.ViewDocuments",
+  },
   Expense: {
     View: "Permission.Expense.View",
     Manage: "Permission.Expense.Manage",
@@ -61,6 +79,10 @@ export const Permission = {
     Book: "Permission.LoadBoard.Book",
     Post: "Permission.LoadBoard.Post",
     Manage: "Permission.LoadBoard.Manage",
+  },
+  BlogPost: {
+    View: "Permission.BlogPost.View",
+    Manage: "Permission.BlogPost.Manage",
   },
   Dvir: {
     View: "Permission.Dvir.View",

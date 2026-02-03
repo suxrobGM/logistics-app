@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, inject, signal } from "@angular/core";
+import { Component, computed, effect, inject, signal } from "@angular/core";
 import { UserRole } from "@logistics/shared";
 import { FeatureService } from "@logistics/shared/services";
 import type { MenuItem as PrimeMenuItem } from "primeng/api";
@@ -11,9 +11,26 @@ import { AuthService } from "@/core/auth";
 import { TenantService, TmsFeatureProvider } from "@/core/services";
 import { environment } from "@/env";
 import { NotificationBell } from "../notification-bell";
-import { PanelMenu, type MenuItem } from "../panel-menu";
+import { type MenuItem, PanelMenu } from "../panel-menu";
 import { ThemeToggle } from "../theme-toggle/theme-toggle";
 import { sidebarItems } from "./sidebar-items";
+
+const ROLE_MENU_ACCESS: Record<string, string[] | "*"> = {
+  [UserRole.Driver]: ["Home", "Messages"],
+  [UserRole.Dispatcher]: ["Home", "Messages", "Operations", "Directory"],
+  [UserRole.Manager]: [
+    "Home",
+    "Dashboard",
+    "Messages",
+    "Operations",
+    "Fleet",
+    "Safety",
+    "Directory",
+    "Accounting",
+    "Reports",
+  ],
+  [UserRole.Owner]: "*",
+};
 
 @Component({
   selector: "app-sidebar",
@@ -36,137 +53,114 @@ export class Sidebar {
   private readonly featureService = inject(FeatureService);
   private readonly featureProvider = inject(TmsFeatureProvider);
 
-  public readonly isOpened = signal(true);
-  public readonly companyName = signal<string | null>(null);
-  public readonly companyLogoUrl = signal<string | null>(null);
-  public readonly userRole = signal<string | null>(null);
-  public readonly userFullName = signal<string | null>(null);
-  public readonly navItems = signal<MenuItem[]>([]);
-  public readonly profileMenuItems: PrimeMenuItem[];
+  protected readonly isOpened = signal(true);
+  protected readonly companyName = computed(
+    () => this.tenantService.tenantData()?.companyName ?? null,
+  );
+  protected readonly companyLogoUrl = computed(
+    () => this.tenantService.tenantData()?.logoUrl ?? null,
+  );
+  protected readonly userRole = computed(() => this.authService.getUserRoleName());
+  protected readonly userFullName = computed(
+    () => this.authService.getUserData()?.getFullName() ?? null,
+  );
+  protected readonly navItems = signal<MenuItem[]>(sidebarItems as MenuItem[]);
+
+  protected readonly profileMenuItems: PrimeMenuItem[] = [
+    {
+      label: "User name",
+      icon: "pi pi-user",
+      items: [
+        { label: "Profile", command: () => this.openAccountUrl() },
+        { separator: true },
+        { label: "Sign out", command: () => this.logout() },
+      ],
+    },
+  ];
 
   constructor() {
-    this.profileMenuItems = [
-      {
-        label: "User name",
-        icon: "pi pi-user",
-        items: [
-          {
-            label: "Profile",
-            command: () => this.openAccountUrl(),
-          },
-          {
-            separator: true,
-          },
-          {
-            label: "Sign out",
-            command: () => this.logout(),
-          },
-        ],
-      },
-    ];
-
-    this.authService.onUserDataChanged().subscribe((userData) => {
-      if (!userData) {
-        return; // Wait until user data is available before processing
+    // Update profile menu label when user data changes
+    effect(() => {
+      const fullName = this.userFullName();
+      if (fullName) {
+        this.profileMenuItems[0].label = fullName;
       }
-
-      if (userData.getFullName()) {
-        this.userFullName.set(userData.getFullName());
-        this.profileMenuItems[0].label = userData.getFullName();
-      }
-
-      const userRole = userData.role;
-      this.userRole.set(this.authService.getUserRoleName());
-
-      // Refresh nav items with role and feature filtering
-      this.updateNavItems(userRole);
     });
 
+    // Refresh nav items when tenant/features change
     effect(() => {
-      const tenantData = this.tenantService.tenantData();
-      this.companyName.set(tenantData?.companyName ?? null);
-      this.companyLogoUrl.set(tenantData?.logoUrl ?? null);
-
-      // Refresh features when tenant data changes
+      this.tenantService.tenantData(); // Track tenant changes
       this.featureProvider.refreshFeatures().then(() => {
         this.updateNavItems(this.authService.getUserData()?.role ?? null);
       });
     });
 
-    // Initial nav items (before features are loaded)
-    this.navItems.set(sidebarItems as MenuItem[]);
+    // Update nav items when user role changes
+    this.authService.onUserDataChanged().subscribe((userData) => {
+      if (userData?.role) {
+        this.updateNavItems(userData.role);
+      }
+    });
   }
 
   private updateNavItems(userRole: string | null): void {
-    let filteredItems = this.filterMenuItemsByFeature(sidebarItems as MenuItem[]);
-
-    // Settings menu is only visible to Owner role
-    if (userRole !== UserRole.Owner) {
-      filteredItems = filteredItems.filter((item) => item.label !== "Settings");
+    if (!userRole) {
+      this.navItems.set([]);
+      return;
     }
 
-    this.navItems.set(filteredItems);
+    let items = this.filterByFeature(sidebarItems as MenuItem[]);
+    const allowedMenus = ROLE_MENU_ACCESS[userRole];
+
+    if (allowedMenus === "*") {
+      this.navItems.set(items);
+      return;
+    }
+
+    if (allowedMenus) {
+      items = items.filter((item) => item.label && allowedMenus.includes(item.label));
+
+      // Dispatcher: only show Customers in Directory
+      if (userRole === UserRole.Dispatcher) {
+        items = items.map((item) =>
+          item.label === "Directory" && item.items
+            ? {
+                ...item,
+                items: item.items.filter((child) => (child as MenuItem).label === "Customers"),
+              }
+            : item,
+        );
+      }
+    } else {
+      items = [];
+    }
+
+    this.navItems.set(items);
   }
 
-  /**
-   * Recursively filters menu items based on feature availability.
-   * Items with disabled features are removed.
-   * Parent items are kept only if they have visible children after filtering.
-   */
-  private filterMenuItemsByFeature(items: MenuItem[]): MenuItem[] {
+  private filterByFeature(items: MenuItem[]): MenuItem[] {
     return items
-      .filter((item) => {
-        // If item has a feature requirement, check if it's enabled
-        if (item.feature && !this.featureService.isEnabled(item.feature)) {
-          return false;
-        }
-        return true;
-      })
+      .filter((item) => !item.feature || this.featureService.isEnabled(item.feature))
       .map((item) => {
-        // Recursively filter children
-        if (item.items && item.items.length > 0) {
-          const filteredChildren = this.filterMenuItemsByFeature(item.items as MenuItem[]);
+        if (!item.items?.length) return item;
 
-          // Filter out separator items that have no content following them
-          const cleanedChildren = this.cleanupSeparators(filteredChildren);
+        const children = this.filterByFeature(item.items as MenuItem[]);
+        const cleaned = this.cleanupSeparators(children);
 
-          // If all children are filtered out, hide the parent too (unless it has its own route)
-          if (cleanedChildren.length === 0 && !item.route) {
-            return null;
-          }
-
-          return { ...item, items: cleanedChildren };
-        }
-        return item;
+        return cleaned.length === 0 && !item.route ? null : { ...item, items: cleaned };
       })
       .filter((item): item is MenuItem => item !== null);
   }
 
-  /**
-   * Removes separator items that don't have valid content following them.
-   */
   private cleanupSeparators(items: MenuItem[]): MenuItem[] {
-    const result: MenuItem[] = [];
-
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i];
+    return items.filter((item, i) => {
       const isSeparator = item.styleClass === "menu-separator" && item.disabled;
+      if (!isSeparator) return true;
 
-      if (isSeparator) {
-        // Check if there are any non-separator items following this one
-        const hasFollowingContent = items.slice(i + 1).some(
-          (nextItem) => !(nextItem.styleClass === "menu-separator" && nextItem.disabled)
-        );
-
-        if (hasFollowingContent) {
-          result.push(item);
-        }
-      } else {
-        result.push(item);
-      }
-    }
-
-    return result;
+      return items
+        .slice(i + 1)
+        .some((next) => !(next.styleClass === "menu-separator" && next.disabled));
+    });
   }
 
   protected toggle(): void {

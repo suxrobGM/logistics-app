@@ -36,6 +36,7 @@
           <th>Role</th>
           <th>Tenant</th>
           <th>Phone</th>
+          <th class="w-24">Actions</th>
         </tr>
       </ng-template>
       <ng-template #body let-user>
@@ -55,8 +56,54 @@
             }
           </td>
           <td>{{ user.phoneNumber ?? "-" }}</td>
+          <td>
+            <p-button
+              icon="pi pi-user"
+              severity="secondary"
+              size="small"
+              [text]="true"
+              pTooltip="Impersonate User"
+              (onClick)="openImpersonateDialog(user.email)"
+            />
+          </td>
         </tr>
       </ng-template>
     </p-table>
   </ui-data-container>
 </p-card>
+
+<!-- Impersonate Dialog -->
+<p-dialog
+  header="Impersonate User"
+  [(visible)]="showImpersonateDialog"
+  [modal]="true"
+  [style]="{ width: '400px' }"
+>
+  <div class="flex flex-col gap-4">
+    <p class="text-gray-600">
+      You are about to impersonate
+      <strong>{{ impersonateEmail() }}</strong>
+      . Enter the master password to continue.
+    </p>
+    <div class="flex flex-col gap-2">
+      <label for="masterPassword" class="font-medium">Master Password</label>
+      <p-password
+        id="masterPassword"
+        [(ngModel)]="masterPassword"
+        [feedback]="false"
+        [toggleMask]="true"
+        inputStyleClass="w-full"
+        placeholder="Enter master password"
+      />
+    </div>
+  </div>
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" (onClick)="showImpersonateDialog.set(false)" />
+    <p-button
+      label="Impersonate"
+      icon="pi pi-user"
+      [loading]="isImpersonating()"
+      (onClick)="impersonate()"
+    />
+  </ng-template>
+</p-dialog>

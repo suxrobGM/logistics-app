@@ -8,22 +8,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1"/>
-    <PackageReference Include="MediatR" Version="14.0.0"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.2"/>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.2"/>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.2"/>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.2"/>
-    <PackageReference Include="Stripe.net" Version="50.2.0"/>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <PackageReference Include="MediatR" Version="14.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.2" />
+    <PackageReference Include="Stripe.net" Version="50.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Logistics.Shared.Geo\Logistics.Shared.Geo.csproj"/>
-    <ProjectReference Include="..\..\Shared\Logistics.Shared.Identity\Logistics.Shared.Identity.csproj"/>
-    <ProjectReference Include="..\..\Shared\Logistics.Shared.Models\Logistics.Shared.Models.csproj"/>
-    <ProjectReference Include="..\Logistics.Application.Contracts\Logistics.Application.Contracts.csproj"/>
-    <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj"/>
-    <ProjectReference Include="..\Logistics.Mappings\Logistics.Mappings.csproj"/>
+    <ProjectReference Include="..\..\Shared\Logistics.Shared.Geo\Logistics.Shared.Geo.csproj" />
+    <ProjectReference Include="..\..\Shared\Logistics.Shared.Identity\Logistics.Shared.Identity.csproj" />
+    <ProjectReference Include="..\..\Shared\Logistics.Shared.Models\Logistics.Shared.Models.csproj" />
+    <ProjectReference Include="..\Logistics.Application.Contracts\Logistics.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
+    <ProjectReference Include="..\Logistics.Mappings\Logistics.Mappings.csproj" />
   </ItemGroup>
 
 </Project>

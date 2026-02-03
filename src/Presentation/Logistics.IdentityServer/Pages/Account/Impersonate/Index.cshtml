@@ -1,0 +1,18 @@
+@page
+@model Logistics.IdentityServer.Pages.Account.Impersonate.Index
+
+@{
+    ViewData["Title"] = "Impersonation";
+}
+
+<div class="text-center">
+    <h2>Processing Impersonation...</h2>
+    <p>Please wait while we set up your session.</p>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">
+            @Model.ErrorMessage
+        </div>
+    }
+</div>

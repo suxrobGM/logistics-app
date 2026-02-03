@@ -48,6 +48,6 @@ export const DVIR_INSPECTION_CATEGORY: DvirInspectionCategory[] = [
   'wheels',
   'windows',
   'windshield',
-  'wipers',
+  'windshield_wipers',
   'other'
 ];
