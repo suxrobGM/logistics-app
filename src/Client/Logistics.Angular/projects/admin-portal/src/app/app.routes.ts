@@ -47,6 +47,11 @@ export const appRoutes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: "features",
+    loadChildren: () => import("./pages/features/features.routes").then((m) => m.featuresRoutes),
+    canActivate: [authGuard],
+  },
+  {
     path: "",
     loadComponent: () => import("./pages/login/login").then((m) => m.Login),
   },

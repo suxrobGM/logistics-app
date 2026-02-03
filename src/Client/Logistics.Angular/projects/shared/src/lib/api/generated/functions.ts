@@ -175,6 +175,14 @@ export type { ApproveExpense$Params as ApproveExpense$Params } from './fn/expens
 export { approveExpense as approveExpense } from './fn/expense/approve-expense';
 export type { RejectExpense$Params as RejectExpense$Params } from './fn/expense/reject-expense';
 export { rejectExpense as rejectExpense } from './fn/expense/reject-expense';
+export type { GetDefaultFeatures$Params as GetDefaultFeatures$Params } from './fn/features/get-default-features';
+export { getDefaultFeatures as getDefaultFeatures } from './fn/features/get-default-features';
+export type { UpdateDefaultFeatures$Params as UpdateDefaultFeatures$Params } from './fn/features/update-default-features';
+export { updateDefaultFeatures as updateDefaultFeatures } from './fn/features/update-default-features';
+export type { GetTenantFeatures$Params as GetTenantFeatures$Params } from './fn/features/get-tenant-features';
+export { getTenantFeatures as getTenantFeatures } from './fn/features/get-tenant-features';
+export type { UpdateTenantFeatures$Params as UpdateTenantFeatures$Params } from './fn/features/update-tenant-features';
+export { updateTenantFeatures as updateTenantFeatures } from './fn/features/update-tenant-features';
 export type { DecodeVin$Params as DecodeVin$Params } from './fn/inspection/decode-vin';
 export { decodeVin as decodeVin } from './fn/inspection/decode-vin';
 export type { GetConditionReports$Params as GetConditionReports$Params } from './fn/inspection/get-condition-reports';
@@ -435,6 +443,10 @@ export type { DeleteTenant$Params as DeleteTenant$Params } from './fn/tenant/del
 export { deleteTenant as deleteTenant } from './fn/tenant/delete-tenant';
 export type { UploadTenantLogo$Params as UploadTenantLogo$Params } from './fn/tenant/upload-tenant-logo';
 export { uploadTenantLogo as uploadTenantLogo } from './fn/tenant/upload-tenant-logo';
+export type { GetCurrentTenantFeatures$Params as GetCurrentTenantFeatures$Params } from './fn/tenant-features/get-current-tenant-features';
+export { getCurrentTenantFeatures as getCurrentTenantFeatures } from './fn/tenant-features/get-current-tenant-features';
+export type { UpdateCurrentTenantFeature$Params as UpdateCurrentTenantFeature$Params } from './fn/tenant-features/update-current-tenant-feature';
+export { updateCurrentTenantFeature as updateCurrentTenantFeature } from './fn/tenant-features/update-current-tenant-feature';
 export type { GetTimeEntryById$Params as GetTimeEntryById$Params } from './fn/time-entry/get-time-entry-by-id';
 export { getTimeEntryById as getTimeEntryById } from './fn/time-entry/get-time-entry-by-id';
 export type { UpdateTimeEntry$Params as UpdateTimeEntry$Params } from './fn/time-entry/update-time-entry';

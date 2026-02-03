@@ -1,0 +1,57 @@
+<h1 class="text-center">Feature Settings</h1>
+
+<div class="flex justify-center">
+  <div class="w-full md:w-2/3 lg:w-1/2">
+    <p-card>
+      @if (isLoading()) {
+        <div class="flex justify-center py-8">
+          <p-progress-spinner />
+        </div>
+      } @else {
+        <p class="mb-6 text-muted">
+          Enable or disable features for your organization. Disabled features will be hidden from
+          all users and inaccessible via API.
+        </p>
+
+        <div class="flex flex-col gap-2">
+          @for (feature of features(); track feature.feature) {
+            <div
+              class="flex items-center justify-between rounded-lg border border-default p-4"
+              [class.opacity-60]="feature.isAdminLocked"
+            >
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <span class="font-medium">{{ feature.name }}</span>
+                  @if (feature.isAdminLocked) {
+                    <i
+                      class="pi pi-lock text-sm text-muted"
+                      pTooltip="This feature is locked by the administrator"
+                      tooltipPosition="top"
+                    ></i>
+                  }
+                </div>
+                <p class="mt-1 text-sm text-muted">
+                  {{ getFeatureDescription(feature.feature) }}
+                </p>
+              </div>
+              <div class="ml-4">
+                <p-toggleswitch
+                  [ngModel]="feature.isEnabled"
+                  [disabled]="feature.isAdminLocked || isSaving() === feature.feature"
+                  (onChange)="toggleFeature(feature)"
+                />
+              </div>
+            </div>
+          }
+        </div>
+
+        @if (features().length === 0) {
+          <div class="py-8 text-center text-muted">
+            <i class="pi pi-info-circle mb-2 text-2xl"></i>
+            <p>No features available to configure.</p>
+          </div>
+        }
+      }
+    </p-card>
+  </div>
+</div>

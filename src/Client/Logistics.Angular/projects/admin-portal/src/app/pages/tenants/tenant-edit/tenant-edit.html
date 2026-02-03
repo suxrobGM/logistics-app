@@ -2,22 +2,39 @@
 <p-divider />
 
 <div class="flex flex-col justify-center gap-6 md:flex-row">
-  <p-card class="w-full md:w-2/3 lg:w-1/2">
-    @if (isFetching()) {
-      <div class="space-y-4">
-        <p-skeleton height="3rem" />
-        <p-skeleton height="3rem" />
-        <p-skeleton height="3rem" />
-        <p-skeleton height="3rem" />
-      </div>
-    } @else {
-      <adm-tenant-form
-        mode="edit"
-        [initial]="getInitialValue()"
-        [isLoading]="isLoading()"
-        (save)="onSave($event)"
-        (remove)="onRemove()"
-      />
+  <div class="flex w-full flex-col gap-6 md:w-2/3 lg:w-1/2">
+    <p-card>
+      @if (isFetching()) {
+        <div class="space-y-4">
+          <p-skeleton height="3rem" />
+          <p-skeleton height="3rem" />
+          <p-skeleton height="3rem" />
+          <p-skeleton height="3rem" />
+        </div>
+      } @else {
+        <adm-tenant-form
+          mode="edit"
+          [initial]="getInitialValue()"
+          [isLoading]="isLoading()"
+          (save)="onSave($event)"
+          (remove)="onRemove()"
+        />
+      }
+    </p-card>
+
+    <!-- Feature Configuration Card -->
+    @if (tenant()) {
+      <p-card header="Feature Configuration">
+        <p class="mb-4 text-muted">
+          Configure which features are enabled for this tenant and lock features to prevent owner
+          changes.
+        </p>
+        <p-button
+          icon="pi pi-cog"
+          label="Configure Features"
+          [routerLink]="['/features/tenant', tenant()!.id]"
+        />
+      </p-card>
     }
-  </p-card>
+  </div>
 </div>

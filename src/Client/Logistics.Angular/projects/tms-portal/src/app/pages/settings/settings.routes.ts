@@ -21,4 +21,11 @@ export const settingsRoutes: Routes = [
     canActivate: [authGuard],
     data: { breadcrumb: "Payments" },
   },
+  {
+    path: "features",
+    loadComponent: () =>
+      import("./feature-settings/feature-settings").then((m) => m.FeatureSettingsComponent),
+    canActivate: [authGuard],
+    data: { breadcrumb: "Features" },
+  },
 ];

@@ -8,7 +8,8 @@ namespace Logistics.Application.Commands;
 
 internal sealed class CreateTenantHandler(
     ITenantDatabaseService tenantDatabase,
-    IMasterUnitOfWork masterUow)
+    IMasterUnitOfWork masterUow,
+    IFeatureService featureService)
     : IAppRequestHandler<CreateTenantCommand, Result>
 {
     public async Task<Result> Handle(CreateTenantCommand req, CancellationToken ct)
@@ -39,6 +40,10 @@ internal sealed class CreateTenantHandler(
 
         await masterUow.Repository<Tenant>().AddAsync(tenant, ct);
         await masterUow.SaveChangesAsync(ct);
+
+        // Initialize feature configurations for the new tenant based on defaults
+        await featureService.InitializeFeaturesForTenantAsync(tenant.Id);
+
         return Result.Ok();
     }
 }

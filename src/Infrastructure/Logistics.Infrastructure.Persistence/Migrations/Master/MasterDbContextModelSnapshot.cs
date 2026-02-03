@@ -209,6 +209,26 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.ToTable("ContactSubmissions", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.DefaultFeatureConfig", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Feature")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsEnabledByDefault")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Feature")
+                        .IsUnique();
+
+                    b.ToTable("DefaultFeatureConfigs", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.DemoRequest", b =>
                 {
                     b.Property<Guid>("Id")
@@ -753,6 +773,52 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.ToTable("Tenants", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.TenantFeatureConfig", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<int>("Feature")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsAdminLocked")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TenantId", "Feature")
+                        .IsUnique();
+
+                    b.ToTable("TenantFeatureConfigs", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1137,6 +1203,17 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Navigation("Tenant");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.TenantFeatureConfig", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Tenant", "Tenant")
+                        .WithMany("FeatureConfigs")
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Tenant", "Tenant")
@@ -1235,6 +1312,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
             modelBuilder.Entity("Logistics.Domain.Entities.Tenant", b =>
                 {
+                    b.Navigation("FeatureConfigs");
+
                     b.Navigation("Subscription");
 
                     b.Navigation("Users");

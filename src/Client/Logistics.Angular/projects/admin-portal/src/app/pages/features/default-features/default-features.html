@@ -1,0 +1,48 @@
+<ui-page-header title="Default Feature Configuration" [showAddButton]="false">
+  <p-button
+    icon="pi pi-save"
+    label="Save Changes"
+    [loading]="isSaving()"
+    (onClick)="saveAll()"
+  />
+</ui-page-header>
+
+<p-card>
+  @if (isLoading()) {
+    <div class="flex justify-center py-8">
+      <p-progress-spinner />
+    </div>
+  } @else {
+    <p class="mb-4 text-muted">
+      Configure the default feature settings for new tenants. These settings will be applied
+      when a new tenant is created.
+    </p>
+
+    <p-table [value]="features()" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template #header>
+        <tr>
+          <th>Feature</th>
+          <th>Description</th>
+          <th class="text-center" style="width: 150px">Enabled by Default</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-feature>
+        <tr>
+          <td class="font-medium">{{ feature.name }}</td>
+          <td class="text-muted">{{ getFeatureDescription(feature.feature) }}</td>
+          <td class="text-center">
+            <p-toggleswitch
+              [ngModel]="feature.isEnabledByDefault"
+              (onChange)="toggleFeature(feature)"
+            />
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="3" class="text-center text-muted">No features available</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  }
+</p-card>

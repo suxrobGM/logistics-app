@@ -17,6 +17,7 @@ public static class Registrar
             cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
             cfg.AddOpenBehavior(typeof(UnhandledExceptionBehaviour<,>));
             cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
+            cfg.AddOpenBehavior(typeof(FeatureCheckBehaviour<,>));
         });
 
         services.AddScoped<IPayrollService, PayrollService>();

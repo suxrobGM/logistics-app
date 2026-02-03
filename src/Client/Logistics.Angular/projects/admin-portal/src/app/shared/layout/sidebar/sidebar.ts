@@ -22,6 +22,7 @@ export class Sidebar {
     { label: "Demo Requests", icon: "pi pi-inbox", routerLink: "/demo-requests" },
     { label: "Contact Submissions", icon: "pi pi-envelope", routerLink: "/contact-submissions" },
     { label: "Tenants", icon: "pi pi-building", routerLink: "/tenants" },
+    { label: "Features", icon: "pi pi-th-large", routerLink: "/features" },
     { label: "Subscription Plans", icon: "pi pi-credit-card", routerLink: "/subscription-plans" },
     { label: "Subscriptions", icon: "pi pi-users", routerLink: "/subscriptions" },
     { label: "Users", icon: "pi pi-user", routerLink: "/users" },

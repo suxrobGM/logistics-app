@@ -2,23 +2,21 @@ import type { MenuItem } from "@/shared/layout/panel-menu";
 
 export const sidebarItems: MenuItem[] = [
   {
-    label: "Dashboard",
+    label: "Home",
     icon: "pi pi-home",
-    items: [
-      {
-        label: "Home",
-        route: "/home",
-      },
-      {
-        label: "Overview",
-        route: "/dashboard",
-      },
-    ],
+    route: "/home",
+  },
+  {
+    label: "Dashboard",
+    icon: "pi pi-chart-bar",
+    route: "/dashboard",
+    feature: "dashboard",
   },
   {
     label: "Messages",
     icon: "pi pi-comments",
     route: "/messages",
+    feature: "messages",
   },
   {
     label: "Operations",
@@ -27,31 +25,37 @@ export const sidebarItems: MenuItem[] = [
       {
         label: "Loads",
         route: "/loads",
+        feature: "loads",
       },
       {
         label: "Trips",
         route: "/trips",
+        feature: "trips",
       },
       {
         label: "Load Board",
         route: "/loadboard",
+        feature: "loadboard",
       },
       {
         label: "Search Loads",
         route: "/loadboard/search",
+        feature: "loadboard",
       },
       {
         label: "Posted Trucks",
         route: "/loadboard/posted-trucks",
+        feature: "loadboard",
       },
       {
         label: "Providers",
         route: "/loadboard/providers",
+        feature: "loadboard",
       },
     ],
   },
   {
-    label: "Fleet & Equipment",
+    label: "Fleet",
     icon: "pi pi-truck",
     items: [
       // Vehicles Section
@@ -63,6 +67,7 @@ export const sidebarItems: MenuItem[] = [
       {
         label: "Trucks",
         route: "/trucks",
+        feature: "trucks",
       },
       // Maintenance Section
       {
@@ -73,24 +78,28 @@ export const sidebarItems: MenuItem[] = [
       {
         label: "Maintenance Dashboard",
         route: "/maintenance",
+        feature: "maintenance",
       },
       {
         label: "Service Records",
         route: "/maintenance/records",
+        feature: "maintenance",
       },
       {
         label: "Upcoming Service",
         route: "/maintenance/upcoming",
+        feature: "maintenance",
       },
     ],
   },
   {
-    label: "Safety & Compliance",
+    label: "Safety",
     icon: "pi pi-shield",
     items: [
       {
         label: "Overview",
         route: "/safety",
+        feature: "safety",
       },
       // DVIRs Section
       {
@@ -101,6 +110,7 @@ export const sidebarItems: MenuItem[] = [
       {
         label: "DVIR Reports",
         route: "/safety/dvir",
+        feature: "safety",
       },
       // Incidents Section
       {
@@ -111,14 +121,17 @@ export const sidebarItems: MenuItem[] = [
       {
         label: "Accident Reports",
         route: "/safety/accidents",
+        feature: "safety",
       },
       {
         label: "Driver Behavior",
         route: "/safety/driver-behavior",
+        feature: "safety",
       },
       {
         label: "Condition Reports",
         route: "/safety/condition-reports",
+        feature: "safety",
       },
       // Compliance Section
       {
@@ -129,6 +142,7 @@ export const sidebarItems: MenuItem[] = [
       {
         label: "ELD / HOS",
         route: "/eld",
+        feature: "eld",
       },
     ],
   },
@@ -139,10 +153,12 @@ export const sidebarItems: MenuItem[] = [
       {
         label: "Employees",
         route: "/employees",
+        feature: "employees",
       },
       {
         label: "Customers",
         route: "/customers",
+        feature: "customers",
       },
     ],
   },
@@ -159,14 +175,17 @@ export const sidebarItems: MenuItem[] = [
       {
         label: "Payroll Dashboard",
         route: "/payroll",
+        feature: "payroll",
       },
       {
         label: "Payroll Invoices",
         route: "/payroll/invoices",
+        feature: "payroll",
       },
       {
         label: "Timesheets",
         route: "/timesheets",
+        feature: "timesheets",
       },
       // Invoicing Section
       {
@@ -177,10 +196,12 @@ export const sidebarItems: MenuItem[] = [
       {
         label: "Load Invoice Dashboard",
         route: "/invoices",
+        feature: "invoices",
       },
       {
         label: "Load Invoices",
         route: "/invoices/loads",
+        feature: "invoices",
       },
       // Expenses Section
       {
@@ -191,20 +212,24 @@ export const sidebarItems: MenuItem[] = [
       {
         label: "All Expenses",
         route: "/expenses",
+        feature: "expenses",
       },
       {
         label: "Add Expense",
         route: "/expenses/add",
+        feature: "expenses",
       },
       {
         label: "Expense Analytics",
         route: "/expenses/analytics",
+        feature: "expenses",
       },
     ],
   },
   {
     label: "Reports",
     icon: "pi pi-chart-line",
+    feature: "reports",
     items: [
       {
         label: "Loads",
@@ -249,9 +274,13 @@ export const sidebarItems: MenuItem[] = [
         route: "/settings/payments",
       },
       {
+        label: "Features",
+        route: "/settings/features",
+      },
+      {
         label: "Subscription",
         route: "/subscription/manage",
       },
     ],
   },
-] as const;
+];

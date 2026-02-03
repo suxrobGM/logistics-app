@@ -36,6 +36,11 @@ public class Tenant : Entity, IMasterEntity
     /// </summary>
     public virtual List<User> Users { get; } = [];
 
+    /// <summary>
+    ///     Feature toggle configurations for this tenant.
+    /// </summary>
+    public virtual List<TenantFeatureConfig> FeatureConfigs { get; } = [];
+
     #region Stripe Connect
 
     /// <summary>
