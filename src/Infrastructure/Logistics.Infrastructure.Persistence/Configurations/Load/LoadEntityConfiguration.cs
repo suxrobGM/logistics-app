@@ -9,7 +9,7 @@ internal sealed class LoadEntityConfiguration : IEntityTypeConfiguration<Load>
 {
     public void Configure(EntityTypeBuilder<Load> builder)
     {
-        builder.ToTable("Loads");
+        builder.ToTable("loads");
 
         builder.ComplexProperty(i => i.DeliveryCost, money =>
         {

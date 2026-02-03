@@ -8,7 +8,7 @@ internal sealed class HosLogEntityConfiguration : IEntityTypeConfiguration<HosLo
 {
     public void Configure(EntityTypeBuilder<HosLog> builder)
     {
-        builder.ToTable("HosLogs");
+        builder.ToTable("hos_logs");
 
         builder.HasIndex(i => new { i.EmployeeId, i.LogDate });
 

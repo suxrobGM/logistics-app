@@ -8,7 +8,7 @@ internal sealed class TripStopEntityConfiguration : IEntityTypeConfiguration<Tri
 {
     public void Configure(EntityTypeBuilder<TripStop> builder)
     {
-        builder.ToTable("TripStops");
+        builder.ToTable("trip_stops");
 
         builder.HasOne(i => i.Trip)
             .WithMany(i => i.Stops)

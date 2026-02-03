@@ -8,7 +8,8 @@ internal sealed class TenantRoleEntityConfiguration : IEntityTypeConfiguration<T
 {
     public void Configure(EntityTypeBuilder<TenantRole> builder)
     {
-        builder.ToTable("Roles");
+        builder.ToTable("tenant_roles");
+
         builder.HasMany(i => i.Claims)
             .WithOne(i => i.Role)
             .HasForeignKey(i => i.RoleId)

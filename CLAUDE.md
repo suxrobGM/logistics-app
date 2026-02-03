@@ -57,17 +57,23 @@ cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 
 ### Enum Display Names
 
-Use `[Description]` attribute on enum values and the `GetDescription()` extension method from `Logistics.Domain.Primitives.Enums.EnumExtensions` for display strings. Do NOT create manual switch expressions for enum-to-string mappings.
+Use `GetDescription()` from `Logistics.Domain.Primitives.Enums.EnumExtensions` for display strings. It auto-humanizes enum names (e.g., `PickedUp` → "Picked Up"), so `[Description]` is only needed when the display differs significantly:
+
+- Acronyms: `Eld` → "ELD / HOS"
+- Special formatting: `OnDutyNotDriving` → "On Duty (Not Driving)"
+- Domain-specific: `Driving11Hour` → "11-Hour Driving Limit"
 
 ```csharp
-// Good - use Description attribute
-EventTypeDisplay = entity.EventType.GetDescription()
+// Most enums - no attribute needed
+public enum LoadStatus { Draft, PickedUp, InTransit, Delivered }
+// GetDescription() returns: "Draft", "Picked Up", "In Transit", "Delivered"
 
-// Bad - manual switch expression
-EventTypeDisplay = eventType switch
+// Only use [Description] when auto-humanization isn't enough
+public enum TenantFeature
 {
-    EventType.Foo => "Foo Display",
-    _ => "Unknown"
+    Dispatch,                              // → "Dispatch" (auto)
+    [Description("ELD / HOS")] Eld,        // → "ELD / HOS" (custom)
+    [Description("Safety & Compliance")] Safety
 }
 ```
 

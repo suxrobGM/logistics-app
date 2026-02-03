@@ -8,7 +8,7 @@ internal sealed class ConversationEntityConfiguration : IEntityTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<Conversation> builder)
     {
-        builder.ToTable("Conversations");
+        builder.ToTable("conversations");
 
         builder.Property(c => c.Name)
             .HasMaxLength(200);

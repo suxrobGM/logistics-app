@@ -8,7 +8,7 @@ internal sealed class VehicleConditionReportEntityConfiguration : IEntityTypeCon
 {
     public void Configure(EntityTypeBuilder<VehicleConditionReport> builder)
     {
-        builder.ToTable("VehicleConditionReports");
+        builder.ToTable("vehicle_condition_reports");
 
         builder.Property(v => v.Vin)
             .IsRequired()

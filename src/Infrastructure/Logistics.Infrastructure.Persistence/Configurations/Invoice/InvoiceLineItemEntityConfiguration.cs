@@ -8,7 +8,7 @@ internal sealed class InvoiceLineItemEntityConfiguration : IEntityTypeConfigurat
 {
     public void Configure(EntityTypeBuilder<InvoiceLineItem> builder)
     {
-        builder.ToTable("InvoiceLineItems");
+        builder.ToTable("invoice_line_items");
 
         builder.Property(i => i.Description)
             .IsRequired()

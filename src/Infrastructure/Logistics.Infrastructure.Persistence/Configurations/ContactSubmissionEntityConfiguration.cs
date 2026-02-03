@@ -8,7 +8,7 @@ internal sealed class ContactSubmissionEntityConfiguration : IEntityTypeConfigur
 {
     public void Configure(EntityTypeBuilder<ContactSubmission> builder)
     {
-        builder.ToTable("ContactSubmissions");
+        builder.ToTable("contact_submissions");
 
         builder.Property(x => x.FirstName).HasMaxLength(100).IsRequired();
         builder.Property(x => x.LastName).HasMaxLength(100).IsRequired();

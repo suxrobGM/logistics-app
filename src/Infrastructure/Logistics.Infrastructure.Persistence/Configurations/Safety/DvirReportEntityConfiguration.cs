@@ -8,7 +8,7 @@ internal sealed class DvirReportEntityConfiguration : IEntityTypeConfiguration<D
 {
     public void Configure(EntityTypeBuilder<DvirReport> builder)
     {
-        builder.ToTable("DvirReports");
+        builder.ToTable("dvir_reports");
 
         builder.HasIndex(i => new { i.TruckId, i.InspectionDate });
         builder.HasIndex(i => new { i.DriverId, i.InspectionDate });

@@ -8,7 +8,7 @@ internal sealed class DriverBehaviorEventEntityConfiguration : IEntityTypeConfig
 {
     public void Configure(EntityTypeBuilder<DriverBehaviorEvent> builder)
     {
-        builder.ToTable("DriverBehaviorEvents");
+        builder.ToTable("driver_behavior_events");
 
         builder.HasIndex(i => new { i.EmployeeId, i.OccurredAt });
         builder.HasIndex(i => i.EventType);

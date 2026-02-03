@@ -8,7 +8,7 @@ internal sealed class UserTenantAccessEntityConfiguration : IEntityTypeConfigura
 {
     public void Configure(EntityTypeBuilder<UserTenantAccess> builder)
     {
-        builder.ToTable("UserTenantAccess");
+        builder.ToTable("user_tenant_accesses");
 
         builder.HasIndex(i => i.UserId);
         builder.HasIndex(i => new { i.UserId, i.TenantId }).IsUnique();

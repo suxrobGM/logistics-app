@@ -8,7 +8,7 @@ internal sealed class DemoRequestEntityConfiguration : IEntityTypeConfiguration<
 {
     public void Configure(EntityTypeBuilder<DemoRequest> builder)
     {
-        builder.ToTable("DemoRequests");
+        builder.ToTable("demo_requests");
 
         builder.Property(x => x.FirstName).HasMaxLength(100).IsRequired();
         builder.Property(x => x.LastName).HasMaxLength(100).IsRequired();

@@ -8,7 +8,7 @@ internal sealed class MessageReadReceiptEntityConfiguration : IEntityTypeConfigu
 {
     public void Configure(EntityTypeBuilder<MessageReadReceipt> builder)
     {
-        builder.ToTable("MessageReadReceipts");
+        builder.ToTable("message_read_receipts");
 
         builder.HasIndex(r => new { r.MessageId, r.ReadById })
             .IsUnique();

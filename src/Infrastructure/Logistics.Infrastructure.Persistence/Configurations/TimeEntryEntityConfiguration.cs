@@ -8,7 +8,7 @@ internal sealed class TimeEntryEntityConfiguration : IEntityTypeConfiguration<Ti
 {
     public void Configure(EntityTypeBuilder<TimeEntry> builder)
     {
-        builder.ToTable("TimeEntries");
+        builder.ToTable("time_entries");
 
         builder.Property(t => t.TotalHours)
             .HasPrecision(10, 2);

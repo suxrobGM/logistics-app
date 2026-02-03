@@ -83,16 +83,17 @@ public class TenantDbContext : DbContext
         // It avoids issues with master-specific entities being included in the tenant context and migration errors
         builder.PruneMasterOnlyTypesForTenant();
 
+        // Query-only DTOs for PostgreSQL functions - no table generation
         builder.Entity<CompanyStatsDto>(entity =>
         {
             entity.HasNoKey();
-            entity.ToView(null);
+            entity.ToTable((string?)null);
         });
 
         builder.Entity<TruckStatsDto>(entity =>
         {
             entity.HasNoKey();
-            entity.ToView(null);
+            entity.ToTable((string?)null);
 
             entity.Property(t => t.Drivers)
                 .HasColumnType("jsonb")

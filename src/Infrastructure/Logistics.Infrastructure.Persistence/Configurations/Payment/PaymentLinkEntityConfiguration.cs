@@ -8,7 +8,7 @@ internal sealed class PaymentLinkEntityConfiguration : IEntityTypeConfiguration<
 {
     public void Configure(EntityTypeBuilder<PaymentLink> builder)
     {
-        builder.ToTable("PaymentLinks");
+        builder.ToTable("payment_links");
 
         builder.Property(p => p.Token)
             .IsRequired()

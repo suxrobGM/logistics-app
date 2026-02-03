@@ -8,7 +8,7 @@ internal sealed class LoadExceptionEntityConfiguration : IEntityTypeConfiguratio
 {
     public void Configure(EntityTypeBuilder<LoadException> builder)
     {
-        builder.ToTable("LoadExceptions");
+        builder.ToTable("load_exceptions");
 
         builder.Property(e => e.Reason)
             .HasMaxLength(1000)

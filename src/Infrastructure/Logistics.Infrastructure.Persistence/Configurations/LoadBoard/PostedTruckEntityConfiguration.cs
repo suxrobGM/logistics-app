@@ -8,7 +8,7 @@ internal sealed class PostedTruckEntityConfiguration : IEntityTypeConfiguration<
 {
     public void Configure(EntityTypeBuilder<PostedTruck> builder)
     {
-        builder.ToTable("PostedTrucks");
+        builder.ToTable("posted_trucks");
 
         builder.HasIndex(i => new { i.TruckId, i.ProviderType })
             .IsUnique();

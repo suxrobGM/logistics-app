@@ -7,24 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="10.0.2"/>
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.9"/>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.2"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="10.0.2"/>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.2"/>
+    <PackageReference Include="EFCore.NamingConventions" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="10.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="10.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0"/>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Logistics.Application\Logistics.Application.csproj"/>
+    <ProjectReference Include="..\..\Core\Logistics.Application\Logistics.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\"/>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

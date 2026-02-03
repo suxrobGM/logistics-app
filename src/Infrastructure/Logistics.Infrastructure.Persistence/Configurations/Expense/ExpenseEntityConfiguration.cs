@@ -11,7 +11,7 @@ internal sealed class ExpenseEntityConfiguration : IEntityTypeConfiguration<Expe
     // Expense (TPH)
     public void Configure(EntityTypeBuilder<Expense> builder)
     {
-        builder.ToTable("Expenses");
+        builder.ToTable("expenses");
 
         builder.HasDiscriminator(e => e.Type)
             .HasValue<CompanyExpense>(ExpenseType.Company)

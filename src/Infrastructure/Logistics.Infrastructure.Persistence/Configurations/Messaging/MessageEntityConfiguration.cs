@@ -8,7 +8,7 @@ internal sealed class MessageEntityConfiguration : IEntityTypeConfiguration<Mess
 {
     public void Configure(EntityTypeBuilder<Message> builder)
     {
-        builder.ToTable("Messages");
+        builder.ToTable("messages");
 
         builder.Property(m => m.Content)
             .HasMaxLength(2000)

@@ -11,7 +11,7 @@ internal sealed class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invo
     // Invoice (TPH)
     public void Configure(EntityTypeBuilder<Invoice> builder)
     {
-        builder.ToTable("Invoices");
+        builder.ToTable("invoices");
 
         builder.HasDiscriminator(i => i.Type)
             .HasValue<LoadInvoice>(InvoiceType.Load)

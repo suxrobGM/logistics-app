@@ -8,7 +8,7 @@ internal sealed class AccidentThirdPartyEntityConfiguration : IEntityTypeConfigu
 {
     public void Configure(EntityTypeBuilder<AccidentThirdParty> builder)
     {
-        builder.ToTable("AccidentThirdParties");
+        builder.ToTable("accident_third_parties");
 
         builder.HasIndex(i => i.AccidentReportId);
 

@@ -27,8 +27,10 @@ internal static class DbContextHelpers
     public static void ConfigurePostgreSql(string connectionString, DbContextOptionsBuilder options)
     {
         options.UseNpgsql(connectionString, o =>
-        {
-            o.EnableRetryOnFailure(8, TimeSpan.FromSeconds(15), null);
-        }).UseLazyLoadingProxies();
+            {
+                o.EnableRetryOnFailure(8, TimeSpan.FromSeconds(15), null);
+            })
+            .UseSnakeCaseNamingConvention()
+            .UseLazyLoadingProxies();
     }
 }

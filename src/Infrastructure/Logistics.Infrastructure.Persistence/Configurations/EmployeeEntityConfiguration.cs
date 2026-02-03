@@ -8,7 +8,7 @@ internal sealed class EmployeeEntityConfiguration : IEntityTypeConfiguration<Emp
 {
     public void Configure(EntityTypeBuilder<Employee> builder)
     {
-        builder.ToTable("Employees");
+        builder.ToTable("employees");
 
         builder.ComplexProperty(i => i.Salary, money =>
         {

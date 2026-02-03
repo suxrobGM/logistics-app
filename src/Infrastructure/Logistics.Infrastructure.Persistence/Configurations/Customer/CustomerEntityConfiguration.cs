@@ -6,5 +6,5 @@ namespace Logistics.Infrastructure.Persistence.Configurations;
 
 internal sealed class CustomerEntityConfiguration : IEntityTypeConfiguration<Customer>
 {
-    public void Configure(EntityTypeBuilder<Customer> builder) => builder.ToTable("Customers");
+    public void Configure(EntityTypeBuilder<Customer> builder) => builder.ToTable("customers");
 }

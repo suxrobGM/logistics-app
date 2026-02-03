@@ -8,7 +8,7 @@ internal sealed class InvitationEntityConfiguration : IEntityTypeConfiguration<I
 {
     public void Configure(EntityTypeBuilder<Invitation> builder)
     {
-        builder.ToTable("Invitations");
+        builder.ToTable("invitations");
 
         builder.HasKey(i => i.Id);
 

@@ -8,7 +8,7 @@ internal sealed class MaintenanceScheduleEntityConfiguration : IEntityTypeConfig
 {
     public void Configure(EntityTypeBuilder<MaintenanceSchedule> builder)
     {
-        builder.ToTable("MaintenanceSchedules");
+        builder.ToTable("maintenance_schedules");
 
         builder.HasIndex(i => new { i.TruckId, i.MaintenanceType });
         builder.HasIndex(i => i.NextDueDate);

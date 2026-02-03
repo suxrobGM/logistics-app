@@ -6,5 +6,5 @@ namespace Logistics.Infrastructure.Persistence.Configurations;
 
 internal sealed class TenantEntityConfiguration : IEntityTypeConfiguration<Tenant>
 {
-    public void Configure(EntityTypeBuilder<Tenant> builder) => builder.ToTable("Tenants");
+    public void Configure(EntityTypeBuilder<Tenant> builder) => builder.ToTable("tenants");
 }

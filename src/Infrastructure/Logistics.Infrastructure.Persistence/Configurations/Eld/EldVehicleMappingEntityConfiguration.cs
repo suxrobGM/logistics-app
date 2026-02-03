@@ -8,7 +8,7 @@ internal sealed class EldVehicleMappingEntityConfiguration : IEntityTypeConfigur
 {
     public void Configure(EntityTypeBuilder<EldVehicleMapping> builder)
     {
-        builder.ToTable("EldVehicleMappings");
+        builder.ToTable("eld_vehicle_mappings");
 
         builder.HasIndex(i => new { i.ProviderType, i.ExternalVehicleId })
             .IsUnique();

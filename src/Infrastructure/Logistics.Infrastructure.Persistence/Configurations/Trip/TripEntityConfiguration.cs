@@ -9,7 +9,7 @@ internal sealed class TripEntityConfiguration : IEntityTypeConfiguration<Trip>
 {
     public void Configure(EntityTypeBuilder<Trip> builder)
     {
-        builder.ToTable("Trips");
+        builder.ToTable("trips");
 
         builder.Property(i => i.Number)
             .UseIdentityAlwaysColumn()

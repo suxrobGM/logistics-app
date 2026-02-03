@@ -8,7 +8,7 @@ internal sealed class EldDriverMappingEntityConfiguration : IEntityTypeConfigura
 {
     public void Configure(EntityTypeBuilder<EldDriverMapping> builder)
     {
-        builder.ToTable("EldDriverMappings");
+        builder.ToTable("eld_driver_mappings");
 
         builder.HasIndex(i => new { i.ProviderType, i.ExternalDriverId })
             .IsUnique();

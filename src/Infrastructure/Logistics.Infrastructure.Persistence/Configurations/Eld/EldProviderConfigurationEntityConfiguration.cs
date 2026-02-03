@@ -8,7 +8,7 @@ internal sealed class EldProviderConfigurationEntityConfiguration : IEntityTypeC
 {
     public void Configure(EntityTypeBuilder<EldProviderConfiguration> builder)
     {
-        builder.ToTable("EldProviderConfigurations");
+        builder.ToTable("eld_provider_configurations");
 
         builder.HasIndex(i => i.ProviderType)
             .IsUnique();

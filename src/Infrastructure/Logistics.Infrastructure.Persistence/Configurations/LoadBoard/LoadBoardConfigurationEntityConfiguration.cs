@@ -8,7 +8,7 @@ internal sealed class LoadBoardConfigurationEntityConfiguration : IEntityTypeCon
 {
     public void Configure(EntityTypeBuilder<LoadBoardConfiguration> builder)
     {
-        builder.ToTable("LoadBoardConfigurations");
+        builder.ToTable("load_board_configurations");
 
         builder.HasIndex(i => i.ProviderType)
             .IsUnique();

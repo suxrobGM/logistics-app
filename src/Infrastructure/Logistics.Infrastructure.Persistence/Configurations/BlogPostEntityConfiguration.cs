@@ -8,7 +8,7 @@ internal sealed class BlogPostEntityConfiguration : IEntityTypeConfiguration<Blo
 {
     public void Configure(EntityTypeBuilder<BlogPost> builder)
     {
-        builder.ToTable("BlogPosts");
+        builder.ToTable("blog_posts");
 
         builder.Property(x => x.Title).HasMaxLength(200).IsRequired();
         builder.Property(x => x.Slug).HasMaxLength(200).IsRequired();

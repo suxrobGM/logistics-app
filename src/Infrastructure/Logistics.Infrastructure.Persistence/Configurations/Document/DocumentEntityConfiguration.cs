@@ -9,7 +9,7 @@ internal sealed class DocumentEntityConfiguration : IEntityTypeConfiguration<Doc
 {
     public void Configure(EntityTypeBuilder<Document> builder)
     {
-        builder.ToTable("Documents");
+        builder.ToTable("documents");
 
         builder.HasDiscriminator(d => d.OwnerType)
             .HasValue<EmployeeDocument>(DocumentOwnerType.Employee)

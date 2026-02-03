@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Persistence.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20260203074007_Version_0001")]
+    [Migration("20260203082409_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -33,279 +33,348 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("concurrency_stamp");
 
                     b.Property<string>("DisplayName")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("display_name");
 
                     b.Property<string>("Name")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("name");
 
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("normalized_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_roles");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("roles", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.AppRoleClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("claim_type");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("claim_value");
 
                     b.Property<Guid>("RoleId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("role_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_role_claims");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_role_claims_role_id");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("role_claims", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.BlogPost", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("AuthorName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("author_name");
 
                     b.Property<string>("Category")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("category");
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("content");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Excerpt")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("excerpt");
 
                     b.Property<string>("FeaturedImage")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("featured_image");
 
                     b.Property<bool>("IsFeatured")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_featured");
 
                     b.Property<DateTime?>("PublishedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("published_at");
 
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("slug");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("status");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("title");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_blog_posts");
 
-                    b.HasIndex("Category");
+                    b.HasIndex("Category")
+                        .HasDatabaseName("ix_blog_posts_category");
 
-                    b.HasIndex("IsFeatured");
+                    b.HasIndex("IsFeatured")
+                        .HasDatabaseName("ix_blog_posts_is_featured");
 
-                    b.HasIndex("PublishedAt");
+                    b.HasIndex("PublishedAt")
+                        .HasDatabaseName("ix_blog_posts_published_at");
 
                     b.HasIndex("Slug")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_blog_posts_slug");
 
-                    b.HasIndex("Status");
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_blog_posts_status");
 
-                    b.ToTable("BlogPosts", (string)null);
+                    b.ToTable("blog_posts", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.ContactSubmission", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("email");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("first_name");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("last_name");
 
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasMaxLength(5000)
-                        .HasColumnType("character varying(5000)");
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("message");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("notes");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("phone");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("status");
 
                     b.Property<string>("Subject")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("subject");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_contact_submissions");
 
-                    b.HasIndex("CreatedAt");
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("ix_contact_submissions_created_at");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("Email")
+                        .HasDatabaseName("ix_contact_submissions_email");
 
-                    b.HasIndex("Status");
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_contact_submissions_status");
 
-                    b.ToTable("ContactSubmissions", (string)null);
+                    b.ToTable("contact_submissions", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.DefaultFeatureConfig", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("Feature")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("feature");
 
                     b.Property<bool>("IsEnabledByDefault")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_enabled_by_default");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_default_feature_configs");
 
                     b.HasIndex("Feature")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_default_feature_configs_feature");
 
-                    b.ToTable("DefaultFeatureConfigs", (string)null);
+                    b.ToTable("default_feature_configs", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.DemoRequest", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("Company")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("company");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("email");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("first_name");
 
                     b.Property<string>("FleetSize")
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("fleet_size");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("last_name");
 
                     b.Property<string>("Message")
                         .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("message");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)");
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("notes");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("phone");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("status");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_demo_requests");
 
-                    b.HasIndex("CreatedAt");
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("ix_demo_requests_created_at");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("Email")
+                        .HasDatabaseName("ix_demo_requests_email");
 
-                    b.ToTable("DemoRequests", (string)null);
+                    b.ToTable("demo_requests", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Invitation", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTime?>("AcceptedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("accepted_at");
 
                     b.Property<Guid?>("AcceptedByUserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("accepted_by_user_id");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -319,49 +388,61 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnName("CreatedBy");
 
                     b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("customer_id");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("email");
 
                     b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
 
                     b.Property<Guid>("InvitedByUserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("invited_by_user_id");
 
                     b.Property<DateTime?>("LastSentAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_sent_at");
 
                     b.Property<string>("PersonalMessage")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("personal_message");
 
                     b.Property<int>("SendCount")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("send_count");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("status");
 
                     b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
 
                     b.Property<string>("TenantRole")
                         .IsRequired()
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("tenant_role");
 
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("token");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("type");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -372,29 +453,37 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnType("character varying(50)")
                         .HasColumnName("LastModifiedBy");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_invitations");
 
-                    b.HasIndex("AcceptedByUserId");
+                    b.HasIndex("AcceptedByUserId")
+                        .HasDatabaseName("ix_invitations_accepted_by_user_id");
 
-                    b.HasIndex("ExpiresAt");
+                    b.HasIndex("ExpiresAt")
+                        .HasDatabaseName("ix_invitations_expires_at");
 
-                    b.HasIndex("InvitedByUserId");
+                    b.HasIndex("InvitedByUserId")
+                        .HasDatabaseName("ix_invitations_invited_by_user_id");
 
-                    b.HasIndex("TenantId");
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_invitations_tenant_id");
 
                     b.HasIndex("Token")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_invitations_token");
 
-                    b.HasIndex("Email", "TenantId", "Status");
+                    b.HasIndex("Email", "TenantId", "Status")
+                        .HasDatabaseName("ix_invitations_email_tenant_id_status");
 
-                    b.ToTable("Invitations", (string)null);
+                    b.ToTable("invitations", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Invoice", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -408,33 +497,41 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnName("CreatedBy");
 
                     b.Property<DateTime?>("DueDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("due_date");
 
                     b.Property<string>("Notes")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("notes");
 
                     b.Property<long>("Number")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("number");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Number"));
 
                     b.Property<DateTime?>("SentAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("sent_at");
 
                     b.Property<string>("SentToEmail")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("sent_to_email");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("status");
 
                     b.Property<string>("StripeInvoiceId")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("stripe_invoice_id");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("type");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -451,20 +548,24 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
                             b1.Property<decimal>("Amount")
                                 .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)");
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("total_amount");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
                                 .HasMaxLength(3)
-                                .HasColumnType("character varying(3)");
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("total_currency");
                         });
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_invoices");
 
                     b.HasIndex("Number")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_invoices_number");
 
-                    b.ToTable("Invoices", (string)null);
+                    b.ToTable("invoices", (string)null);
 
                     b.HasDiscriminator<string>("Type");
 
@@ -475,7 +576,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -489,32 +591,41 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnName("CreatedBy");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("description");
 
                     b.Property<Guid?>("InvoiceId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("invoice_id");
 
                     b.Property<Guid>("MethodId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("method_id");
 
                     b.Property<DateTime?>("RecordedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("recorded_at");
 
                     b.Property<Guid?>("RecordedByUserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("recorded_by_user_id");
 
                     b.Property<string>("ReferenceNumber")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("reference_number");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("status");
 
                     b.Property<string>("StripePaymentIntentId")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("stripe_payment_intent_id");
 
                     b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -531,12 +642,14 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
                             b1.Property<decimal>("Amount")
                                 .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)");
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("amount_amount");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
                                 .HasMaxLength(3)
-                                .HasColumnType("character varying(3)");
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("amount_currency");
                         });
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "BillingAddress", "Logistics.Domain.Entities.Payment.BillingAddress#Address", b1 =>
@@ -545,87 +658,110 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
                             b1.Property<string>("City")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("billing_address_city");
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("billing_address_country");
 
                             b1.Property<string>("Line1")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("billing_address_line1");
 
                             b1.Property<string>("Line2")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("billing_address_line2");
 
                             b1.Property<string>("State")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("billing_address_state");
 
                             b1.Property<string>("ZipCode")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("billing_address_zip_code");
                         });
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_payments");
 
-                    b.HasIndex("InvoiceId");
+                    b.HasIndex("InvoiceId")
+                        .HasDatabaseName("ix_payments_invoice_id");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("payments", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Subscription", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTime?>("EndDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("end_date");
 
                     b.Property<DateTime?>("NextBillingDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("next_billing_date");
 
                     b.Property<Guid>("PlanId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("plan_id");
 
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("start_date");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("status");
 
                     b.Property<string>("StripeCustomerId")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("stripe_customer_id");
 
                     b.Property<string>("StripeSubscriptionId")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("stripe_subscription_id");
 
                     b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
 
                     b.Property<DateTime?>("TrialEndDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("trial_end_date");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_subscriptions");
 
-                    b.HasIndex("PlanId");
+                    b.HasIndex("PlanId")
+                        .HasDatabaseName("ix_subscriptions_plan_id");
 
                     b.HasIndex("TenantId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_subscriptions_tenant_id");
 
-                    b.ToTable("Subscriptions", (string)null);
+                    b.ToTable("subscriptions", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPlan", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTime?>("BillingCycleAnchor")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("billing_cycle_anchor");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -639,28 +775,35 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnName("CreatedBy");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("description");
 
                     b.Property<string>("Interval")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("interval");
 
                     b.Property<int>("IntervalCount")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("interval_count");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
                     b.Property<string>("StripePriceId")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("stripe_price_id");
 
                     b.Property<string>("StripeProductId")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("stripe_product_id");
 
                     b.Property<string>("TrialPeriod")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("trial_period");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -677,89 +820,111 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
                             b1.Property<decimal>("Amount")
                                 .HasPrecision(18, 2)
-                                .HasColumnType("numeric(18,2)");
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("price_amount");
 
                             b1.Property<string>("Currency")
                                 .IsRequired()
                                 .HasMaxLength(3)
-                                .HasColumnType("character varying(3)");
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("price_currency");
                         });
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_subscription_plans");
 
-                    b.ToTable("SubscriptionPlans", (string)null);
+                    b.ToTable("subscription_plans", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Tenant", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("BillingEmail")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("billing_email");
 
                     b.Property<bool>("ChargesEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("charges_enabled");
 
                     b.Property<string>("CompanyName")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("company_name");
 
                     b.Property<string>("ConnectStatus")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("connect_status");
 
                     b.Property<string>("ConnectionString")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("connection_string");
 
                     b.Property<string>("DotNumber")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("dot_number");
 
                     b.Property<string>("LogoPath")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("logo_path");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
                     b.Property<bool>("PayoutsEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("payouts_enabled");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("phone_number");
 
                     b.Property<string>("StripeConnectedAccountId")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("stripe_connected_account_id");
 
                     b.Property<string>("StripeCustomerId")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("stripe_customer_id");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "CompanyAddress", "Logistics.Domain.Entities.Tenant.CompanyAddress#Address", b1 =>
                         {
                             b1.Property<string>("City")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("company_address_city");
 
                             b1.Property<string>("Country")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("company_address_country");
 
                             b1.Property<string>("Line1")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("company_address_line1");
 
                             b1.Property<string>("Line2")
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("company_address_line2");
 
                             b1.Property<string>("State")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("company_address_state");
 
                             b1.Property<string>("ZipCode")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("company_address_zip_code");
                         });
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Settings", "Logistics.Domain.Entities.Tenant.Settings#TenantSettings", b1 =>
@@ -767,32 +932,39 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                             b1.IsRequired();
 
                             b1.Property<int>("Currency")
-                                .HasColumnType("integer");
+                                .HasColumnType("integer")
+                                .HasColumnName("settings_currency");
 
                             b1.Property<int>("DateFormat")
-                                .HasColumnType("integer");
+                                .HasColumnType("integer")
+                                .HasColumnName("settings_date_format");
 
                             b1.Property<int>("DistanceUnit")
-                                .HasColumnType("integer");
+                                .HasColumnType("integer")
+                                .HasColumnName("settings_distance_unit");
 
                             b1.Property<string>("Timezone")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("settings_timezone");
 
                             b1.Property<int>("WeightUnit")
-                                .HasColumnType("integer");
+                                .HasColumnType("integer")
+                                .HasColumnName("settings_weight_unit");
                         });
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_tenants");
 
-                    b.ToTable("Tenants", (string)null);
+                    b.ToTable("tenants", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.TenantFeatureConfig", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -807,16 +979,20 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
                     b.Property<string>("Feature")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("feature");
 
                     b.Property<bool>("IsAdminLocked")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_admin_locked");
 
                     b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_enabled");
 
                     b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -827,26 +1003,31 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnType("character varying(50)")
                         .HasColumnName("LastModifiedBy");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_tenant_feature_configs");
 
                     b.HasIndex("TenantId", "Feature")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_tenant_feature_configs_tenant_id_feature");
 
-                    b.ToTable("TenantFeatureConfigs", (string)null);
+                    b.ToTable("tenant_feature_configs", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<int>("AccessFailedCount")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("access_failed_count");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("concurrency_stamp");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -861,50 +1042,64 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("email");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("email_confirmed");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("first_name");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("last_name");
 
                     b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("lockout_enabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("lockout_end");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("normalized_email");
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("normalized_user_name");
 
                     b.Property<string>("PasswordHash")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("password_hash");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("phone_number");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("phone_number_confirmed");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("security_stamp");
 
                     b.Property<Guid?>("TenantId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
 
                     b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("two_factor_enabled");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -917,9 +1112,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("user_name");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_users");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -928,16 +1125,18 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.HasIndex("TenantId");
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_users_tenant_id");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.UserTenantAccess", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -952,19 +1151,24 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
                     b.Property<string>("CustomerName")
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("customer_name");
 
                     b.Property<Guid?>("CustomerUserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("customer_user_id");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
 
                     b.Property<DateTime?>("LastAccessedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_accessed_at");
 
                     b.Property<Guid>("TenantId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -976,116 +1180,146 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnName("LastModifiedBy");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_user_tenant_accesses");
 
-                    b.HasIndex("TenantId");
+                    b.HasIndex("TenantId")
+                        .HasDatabaseName("ix_user_tenant_accesses_tenant_id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_user_tenant_accesses_user_id");
 
                     b.HasIndex("UserId", "TenantId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("ix_user_tenant_accesses_user_id_tenant_id");
 
-                    b.ToTable("UserTenantAccess", (string)null);
+                    b.ToTable("user_tenant_accesses", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.DataProtection.EntityFrameworkCore.DataProtectionKey", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("FriendlyName")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("friendly_name");
 
                     b.Property<string>("Xml")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("xml");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_data_protection_keys");
 
-                    b.ToTable("DataProtectionKeys");
+                    b.ToTable("data_protection_keys", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ClaimType")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("claim_type");
 
                     b.Property<string>("ClaimValue")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("claim_value");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("pk_user_claims");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_user_claims_user_id");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("user_claims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("login_provider");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("provider_key");
 
                     b.Property<string>("ProviderDisplayName")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("provider_display_name");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
-                    b.HasKey("LoginProvider", "ProviderKey");
+                    b.HasKey("LoginProvider", "ProviderKey")
+                        .HasName("pk_user_logins");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_user_logins_user_id");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("user_logins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
                     b.Property<Guid>("RoleId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("role_id");
 
-                    b.HasKey("UserId", "RoleId");
+                    b.HasKey("UserId", "RoleId")
+                        .HasName("pk_user_roles");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("RoleId")
+                        .HasDatabaseName("ix_user_roles_role_id");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("user_roles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("login_provider");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
                     b.Property<string>("Value")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("value");
 
-                    b.HasKey("UserId", "LoginProvider", "Name");
+                    b.HasKey("UserId", "LoginProvider", "Name")
+                        .HasName("pk_user_tokens");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("user_tokens", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.LoadInvoice", b =>
@@ -1093,10 +1327,14 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.HasBaseType("Logistics.Domain.Entities.Invoice");
 
                     b.Property<Guid>("CustomerId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("customer_id");
 
                     b.Property<Guid>("LoadId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("load_id");
+
+                    b.ToTable("invoices", (string)null);
 
                     b.HasDiscriminator().HasValue("load");
                 });
@@ -1107,35 +1345,47 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
                     b.Property<string>("ApprovalNotes")
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("approval_notes");
 
                     b.Property<DateTime?>("ApprovedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("approved_at");
 
                     b.Property<Guid?>("ApprovedById")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("approved_by_id");
 
                     b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("employee_id");
 
                     b.Property<DateTime>("PeriodEnd")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("period_end");
 
                     b.Property<DateTime>("PeriodStart")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("period_start");
 
                     b.Property<string>("RejectionReason")
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("rejection_reason");
 
                     b.Property<double>("TotalDistanceDriven")
-                        .HasColumnType("double precision");
+                        .HasColumnType("double precision")
+                        .HasColumnName("total_distance_driven");
 
                     b.Property<decimal>("TotalHoursWorked")
                         .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)");
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("total_hours_worked");
 
-                    b.HasIndex("ApprovedById");
+                    b.HasIndex("ApprovedById")
+                        .HasDatabaseName("ix_invoices_approved_by_id");
+
+                    b.ToTable("invoices", (string)null);
 
                     b.HasDiscriminator().HasValue("payroll");
                 });
@@ -1145,13 +1395,18 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.HasBaseType("Logistics.Domain.Entities.Invoice");
 
                     b.Property<DateTime>("BillingPeriodEnd")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("billing_period_end");
 
                     b.Property<DateTime>("BillingPeriodStart")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("billing_period_start");
 
                     b.Property<Guid>("SubscriptionId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("subscription_id");
+
+                    b.ToTable("invoices", (string)null);
 
                     b.HasDiscriminator().HasValue("subscription");
                 });
@@ -1162,7 +1417,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .WithMany("Claims")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_role_claims_roles_role_id");
 
                     b.Navigation("Role");
                 });
@@ -1172,19 +1428,22 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.HasOne("Logistics.Domain.Entities.User", "AcceptedByUser")
                         .WithMany()
                         .HasForeignKey("AcceptedByUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_invitations_users_accepted_by_user_id");
 
                     b.HasOne("Logistics.Domain.Entities.User", "InvitedByUser")
                         .WithMany()
                         .HasForeignKey("InvitedByUserId")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_invitations_users_invited_by_user_id");
 
                     b.HasOne("Logistics.Domain.Entities.Tenant", "Tenant")
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_invitations_tenant_tenant_id");
 
                     b.Navigation("AcceptedByUser");
 
@@ -1197,7 +1456,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 {
                     b.HasOne("Logistics.Domain.Entities.Invoice", null)
                         .WithMany("Payments")
-                        .HasForeignKey("InvoiceId");
+                        .HasForeignKey("InvoiceId")
+                        .HasConstraintName("fk_payments_invoices_invoice_id");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Subscription", b =>
@@ -1206,13 +1466,15 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .WithMany("Subscriptions")
                         .HasForeignKey("PlanId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_subscriptions_subscription_plan_plan_id");
 
                     b.HasOne("Logistics.Domain.Entities.Tenant", "Tenant")
                         .WithOne("Subscription")
                         .HasForeignKey("Logistics.Domain.Entities.Subscription", "TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_subscriptions_tenant_tenant_id");
 
                     b.Navigation("Plan");
 
@@ -1225,7 +1487,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .WithMany("FeatureConfigs")
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_tenant_feature_configs_tenants_tenant_id");
 
                     b.Navigation("Tenant");
                 });
@@ -1235,7 +1498,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.HasOne("Logistics.Domain.Entities.Tenant", "Tenant")
                         .WithMany("Users")
                         .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_users_tenant_tenant_id");
 
                     b.Navigation("Tenant");
                 });
@@ -1246,13 +1510,15 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_tenant_accesses_tenants_tenant_id");
 
                     b.HasOne("Logistics.Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_tenant_accesses_users_user_id");
 
                     b.Navigation("Tenant");
 
@@ -1265,7 +1531,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_claims_users_user_id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
@@ -1274,7 +1541,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_logins_users_user_id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
@@ -1283,13 +1551,15 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_roles_roles_role_id");
 
                     b.HasOne("Logistics.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_roles_users_user_id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -1298,7 +1568,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_tokens_users_user_id");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.PayrollInvoice", b =>
@@ -1306,7 +1577,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.HasOne("Logistics.Domain.Entities.User", "ApprovedBy")
                         .WithMany()
                         .HasForeignKey("ApprovedById")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_invoices_users_approved_by_id");
 
                     b.Navigation("ApprovedBy");
                 });

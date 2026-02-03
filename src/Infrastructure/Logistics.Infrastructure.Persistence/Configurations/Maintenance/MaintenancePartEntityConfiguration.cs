@@ -8,7 +8,7 @@ internal sealed class MaintenancePartEntityConfiguration : IEntityTypeConfigurat
 {
     public void Configure(EntityTypeBuilder<MaintenancePart> builder)
     {
-        builder.ToTable("MaintenanceParts");
+        builder.ToTable("maintenance_parts");
 
         builder.HasIndex(i => i.MaintenanceRecordId);
 

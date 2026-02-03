@@ -8,7 +8,7 @@ internal sealed class DefaultFeatureConfigEntityConfiguration : IEntityTypeConfi
 {
     public void Configure(EntityTypeBuilder<DefaultFeatureConfig> builder)
     {
-        builder.ToTable("DefaultFeatureConfigs");
+        builder.ToTable("default_feature_configs");
 
         // Unique constraint: one config per feature
         builder.HasIndex(e => e.Feature)

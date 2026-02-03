@@ -8,7 +8,7 @@ internal sealed class SubscriptionPlanEntityConfiguration : IEntityTypeConfigura
 {
     public void Configure(EntityTypeBuilder<SubscriptionPlan> builder)
     {
-        builder.ToTable("SubscriptionPlans");
+        builder.ToTable("subscription_plans");
 
         builder.ComplexProperty(i => i.Price, money =>
         {

@@ -6,5 +6,5 @@ namespace Logistics.Infrastructure.Persistence.Configurations;
 
 internal sealed class TenantRoleClaimEntityConfiguration : IEntityTypeConfiguration<TenantRoleClaim>
 {
-    public void Configure(EntityTypeBuilder<TenantRoleClaim> builder) => builder.ToTable("RoleClaims");
+    public void Configure(EntityTypeBuilder<TenantRoleClaim> builder) => builder.ToTable("tenant_role_claims");
 }

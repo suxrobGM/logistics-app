@@ -8,7 +8,7 @@ internal sealed class TrackingLinkEntityConfiguration : IEntityTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<TrackingLink> builder)
     {
-        builder.ToTable("TrackingLinks");
+        builder.ToTable("tracking_links");
 
         builder.Property(t => t.Token)
             .IsRequired()

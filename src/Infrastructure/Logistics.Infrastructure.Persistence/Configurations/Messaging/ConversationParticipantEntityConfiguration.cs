@@ -8,7 +8,7 @@ internal sealed class ConversationParticipantEntityConfiguration : IEntityTypeCo
 {
     public void Configure(EntityTypeBuilder<ConversationParticipant> builder)
     {
-        builder.ToTable("ConversationParticipants");
+        builder.ToTable("conversation_participants");
 
         builder.HasIndex(p => new { p.ConversationId, p.EmployeeId })
             .IsUnique();

@@ -8,7 +8,8 @@ internal sealed class PaymentEntityConfiguration : IEntityTypeConfiguration<Paym
 {
     public void Configure(EntityTypeBuilder<Payment> builder)
     {
-        builder.ToTable("Payments");
+        builder.ToTable("payments");
+
         builder.ComplexProperty(i => i.Amount, money =>
         {
             money.Property(m => m.Amount).HasPrecision(18, 2);

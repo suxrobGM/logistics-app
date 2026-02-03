@@ -8,7 +8,7 @@ internal sealed class CustomerUserEntityConfiguration : IEntityTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<CustomerUser> builder)
     {
-        builder.ToTable("CustomerUsers");
+        builder.ToTable("customer_users");
 
         builder.HasIndex(cu => cu.UserId);
         builder.HasIndex(cu => cu.Email);

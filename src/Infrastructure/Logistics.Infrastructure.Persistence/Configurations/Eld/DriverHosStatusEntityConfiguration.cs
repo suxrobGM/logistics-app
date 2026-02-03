@@ -8,7 +8,7 @@ internal sealed class DriverHosStatusEntityConfiguration : IEntityTypeConfigurat
 {
     public void Configure(EntityTypeBuilder<DriverHosStatus> builder)
     {
-        builder.ToTable("DriverHosStatuses");
+        builder.ToTable("driver_hos_statuses");
 
         builder.HasIndex(i => i.EmployeeId)
             .IsUnique();

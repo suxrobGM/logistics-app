@@ -8,8 +8,7 @@ internal sealed class SubscriptionEntityConfiguration : IEntityTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<Subscription> builder)
     {
-        builder.ToTable("Subscriptions");
-
+        builder.ToTable("subscriptions");
         builder.HasOne(i => i.Tenant)
             .WithOne(i => i.Subscription)
             .HasForeignKey<Subscription>(i => i.TenantId);

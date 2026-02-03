@@ -9,7 +9,7 @@ internal sealed class PaymentMethodEntityConfiguration : IEntityTypeConfiguratio
 {
     public void Configure(EntityTypeBuilder<PaymentMethod> builder)
     {
-        builder.ToTable("PaymentMethods");
+        builder.ToTable("payment_methods");
 
         builder.HasDiscriminator(pm => pm.Type)
             .HasValue<CardPaymentMethod>(PaymentMethodType.Card)

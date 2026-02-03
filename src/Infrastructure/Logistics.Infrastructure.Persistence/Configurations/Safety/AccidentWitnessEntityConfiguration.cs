@@ -8,7 +8,7 @@ internal sealed class AccidentWitnessEntityConfiguration : IEntityTypeConfigurat
 {
     public void Configure(EntityTypeBuilder<AccidentWitness> builder)
     {
-        builder.ToTable("AccidentWitnesses");
+        builder.ToTable("accident_witnesses");
 
         builder.HasIndex(i => i.AccidentReportId);
 

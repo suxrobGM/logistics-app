@@ -8,7 +8,7 @@ internal sealed class TenantFeatureConfigEntityConfiguration : IEntityTypeConfig
 {
     public void Configure(EntityTypeBuilder<TenantFeatureConfig> builder)
     {
-        builder.ToTable("TenantFeatureConfigs");
+        builder.ToTable("tenant_feature_configs");
 
         // Unique constraint: one config per feature per tenant
         builder.HasIndex(e => new { e.TenantId, e.Feature })

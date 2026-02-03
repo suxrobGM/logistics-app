@@ -75,6 +75,15 @@ public class MasterDbContext : IdentityDbContext<
         // until proper Passkey support is implemented
         builder.Ignore<IdentityPasskeyData>();
 
+        // Override Identity table names to use snake_case (convention doesn't apply to explicit ToTable calls)
+        builder.Entity<User>().ToTable("users");
+        builder.Entity<AppRole>().ToTable("roles");
+        builder.Entity<AppRoleClaim>().ToTable("role_claims");
+        builder.Entity<IdentityUserClaim<Guid>>().ToTable("user_claims");
+        builder.Entity<IdentityUserLogin<Guid>>().ToTable("user_logins");
+        builder.Entity<IdentityUserRole<Guid>>().ToTable("user_roles");
+        builder.Entity<IdentityUserToken<Guid>>().ToTable("user_tokens");
+
         // Scan and apply all configurations from the /Data/Configurations folder
         // for entities implementing IMasterEntity
         builder.ApplyMasterConfigurationsFromAssembly<MasterDbContext>();

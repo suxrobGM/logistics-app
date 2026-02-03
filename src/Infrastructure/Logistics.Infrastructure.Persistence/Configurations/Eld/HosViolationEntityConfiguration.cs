@@ -8,7 +8,7 @@ internal sealed class HosViolationEntityConfiguration : IEntityTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<HosViolation> builder)
     {
-        builder.ToTable("HosViolations");
+        builder.ToTable("hos_violations");
 
         builder.HasIndex(i => new { i.EmployeeId, i.ViolationDate });
 
