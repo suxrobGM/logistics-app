@@ -16,7 +16,10 @@ export function errorHandlerInterceptor(
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      errorHandlerService.handleError(error);
+      // Skip showing toast for 401 errors - auth flow handles session expiry
+      if (error.status !== 401) {
+        errorHandlerService.handleError(error);
+      }
       return throwError(() => error);
     }),
   );

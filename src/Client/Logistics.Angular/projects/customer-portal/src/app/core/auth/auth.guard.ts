@@ -1,15 +1,17 @@
 import { inject } from "@angular/core";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { type CanActivateFn, Router } from "@angular/router";
-import { Permission, UserRole } from "@logistics/shared";
-import { PermissionService } from "@logistics/shared/services";
 import { filter, map, switchMap, take } from "rxjs";
 import { AuthService } from "./auth.service";
 
+/**
+ * Guard that checks if the user is authenticated.
+ * Allows users with tenant.customer role immediately.
+ * For CustomerUser (no role), tenantGuard will verify Portal.Access permission after tenant is set.
+ */
 export const authGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
-  const permissionService = inject(PermissionService);
 
   // Wait for auth initialization to complete before checking
   return toObservable(authService.authInitialized).pipe(
@@ -21,15 +23,10 @@ export const authGuard: CanActivateFn = () => {
         return router.parseUrl("/login");
       }
 
-      // Allow tenant.customer role OR users with Portal.Access permission (CustomerUser)
-      const userData = authService.getUserData();
-      const userRole = userData?.role;
-      const hasPortalPermission = permissionService.hasPermission(Permission.Portal.Access);
-
-      if (userRole !== UserRole.Customer && !hasPortalPermission) {
-        return router.parseUrl("/unauthorized");
-      }
-
+      // Allow all authenticated users to proceed
+      // - Users with tenant.customer role are allowed
+      // - CustomerUser (no role) will be verified in tenantGuard via Portal.Access permission
+      // - Users without any tenant access will be redirected in tenantGuard
       return true;
     }),
   );

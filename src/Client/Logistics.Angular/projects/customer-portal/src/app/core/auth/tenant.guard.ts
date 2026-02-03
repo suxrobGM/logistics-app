@@ -1,37 +1,42 @@
 import { inject } from "@angular/core";
 import type { CanActivateFn } from "@angular/router";
 import { Router } from "@angular/router";
+import { Permission } from "@logistics/shared";
+import { PermissionService } from "@logistics/shared/services";
 import { TenantContextService } from "../services";
 
 /**
- * Guard that ensures user has selected a tenant before accessing protected routes.
+ * Guard that ensures user has selected a tenant and has portal access permission.
  * If user has multiple tenants and none is selected, redirects to tenant selection page.
+ * After tenant is set, loads and verifies portal access permissions.
  */
 export const tenantGuard: CanActivateFn = async () => {
   const router = inject(Router);
   const tenantService = inject(TenantContextService);
+  const permissionService = inject(PermissionService);
 
-  // Make sure tenants are loaded
+  // Load tenants (cached after first call)
   await tenantService.loadTenants();
 
-  // If user has no tenants, redirect to select-tenant page to show "No Access" message
+  // No tenant access - show "No Access" message
   if (tenantService.availableTenants().length === 0) {
-    console.warn("User has no tenant access");
     router.navigate(["/select-tenant"]);
     return false;
   }
 
-  // If single tenant, it's auto-selected
-  if (tenantService.hasSingleTenant()) {
-    return true;
+  // Multiple tenants but none selected - need to pick one
+  if (tenantService.hasMultipleTenants() && !tenantService.currentTenant()) {
+    router.navigate(["/select-tenant"]);
+    return false;
   }
 
-  // If multiple tenants and one is selected, proceed
-  if (tenantService.currentTenant()) {
-    return true;
+  // Tenant is set (single auto-selected or manually selected) - verify permissions
+  await permissionService.loadPermissions();
+
+  if (!permissionService.hasPermission(Permission.Portal.Access)) {
+    router.navigate(["/unauthorized"]);
+    return false;
   }
 
-  // Need to select tenant
-  router.navigate(["/select-tenant"]);
-  return false;
+  return true;
 };
