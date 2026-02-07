@@ -37,7 +37,7 @@ export class SchemaService {
         "@type": "ContactPoint",
         contactType: "sales",
       },
-      sameAs: ["https://x.com/logisticstms", "https://linkedin.com/company/logisticstms"],
+      sameAs: ["https://www.linkedin.com/in/suxrobgm"],
     });
   }
 
@@ -101,12 +101,26 @@ export class SchemaService {
       applicationCategory: "BusinessApplication",
       operatingSystem: "Web",
       description: "Fleet management and dispatching software for trucking companies",
-      offers: {
-        "@type": "Offer",
-        priceCurrency: "USD",
-        price: "0",
-        description: "Contact for pricing",
-      },
+      offers: [
+        {
+          "@type": "Offer",
+          priceCurrency: "USD",
+          price: "19",
+          description: "Starter plan - $19/mo base + $12/truck/mo",
+        },
+        {
+          "@type": "Offer",
+          priceCurrency: "USD",
+          price: "79",
+          description: "Professional plan - $79/mo base + $7/truck/mo",
+        },
+        {
+          "@type": "Offer",
+          priceCurrency: "USD",
+          price: "149",
+          description: "Enterprise plan - $149/mo base + $4/truck/mo",
+        },
+      ],
     });
   }
 

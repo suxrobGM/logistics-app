@@ -3,60 +3,76 @@
 
   <!-- Content -->
   <div
-    class="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-6 py-24 lg:px-8 lg:py-32"
+    class="relative mx-auto flex min-h-screen max-w-7xl items-center px-6 py-24 lg:px-8 lg:py-32"
   >
-    <!-- Eyebrow -->
-    <p class="font-body text-steel text-sm font-medium tracking-[0.2em] uppercase">
-      Fleet Management Platform
-    </p>
+    <div class="grid w-full items-center gap-12 lg:grid-cols-2">
+      <!-- Left: Text content -->
+      <div>
+        <!-- Eyebrow -->
+        <p class="font-body text-steel text-sm font-medium tracking-[0.2em] uppercase">
+          Fleet Management Platform
+        </p>
 
-    <!-- Headline -->
-    <h1
-      class="font-display text-paper mt-6 max-w-4xl text-5xl leading-[0.95] font-extrabold tracking-tight sm:text-6xl lg:text-7xl"
-    >
-      Streamline Your
-      <span class="text-accent">Fleet Operations</span>
-    </h1>
-
-    <!-- Subheadline -->
-    <p class="text-steel mt-8 max-w-xl text-lg leading-relaxed">
-      Real-time GPS tracking, automated dispatching, and seamless invoicing. Built for modern
-      trucking companies.
-    </p>
-
-    <!-- CTA Buttons -->
-    <div class="mt-12 flex flex-wrap items-center gap-6">
-      <p-button
-        label="Request a Demo"
-        icon="pi pi-arrow-right"
-        iconPos="right"
-        (onClick)="openDemoDialog()"
-        size="large"
-        styleClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark font-display"
-      />
-      <button
-        type="button"
-        class="group font-display text-paper hover:text-accent flex items-center gap-3 font-semibold transition-colors"
-      >
-        <span
-          class="border-steel/30 group-hover:border-accent flex h-12 w-12 items-center justify-center rounded-full border transition-colors"
+        <!-- Headline -->
+        <h1
+          class="font-display text-paper mt-6 text-5xl leading-[0.95] font-extrabold tracking-tight sm:text-6xl lg:text-7xl"
         >
-          <i class="pi pi-play text-sm"></i>
-        </span>
-        Watch Video
-      </button>
-    </div>
+          Streamline Your
+          <span class="text-accent">Fleet Operations</span>
+        </h1>
 
-    <!-- Stats as route markers -->
-    <div class="mt-20 flex flex-wrap gap-12 lg:gap-16">
-      @for (stat of stats; track stat.label) {
-        <div class="border-accent relative border-l-2 pl-5">
-          <span class="font-display text-paper text-3xl font-extrabold lg:text-4xl">
-            {{ stat.value }}
-          </span>
-          <p class="text-steel mt-1 text-sm">{{ stat.label }}</p>
+        <!-- Subheadline -->
+        <p class="text-steel mt-8 max-w-xl text-lg leading-relaxed">
+          Real-time GPS tracking, automated dispatching, and seamless invoicing. Built for modern
+          trucking companies.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="mt-12 flex flex-wrap items-center gap-6">
+          <p-button
+            label="Request a Demo"
+            icon="pi pi-arrow-right"
+            iconPos="right"
+            (onClick)="openDemoDialog()"
+            size="large"
+            styleClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark font-display"
+          />
+          <a
+            href="#product"
+            class="group font-display text-paper hover:text-accent flex items-center gap-3 font-semibold transition-colors"
+          >
+            <span
+              class="border-steel/30 group-hover:border-accent flex h-12 w-12 items-center justify-center rounded-full border transition-colors"
+            >
+              <i class="pi pi-desktop text-sm"></i>
+            </span>
+            View Product
+          </a>
         </div>
-      }
+
+        <!-- Stats -->
+        <div class="mt-16 flex flex-wrap gap-12 lg:gap-16">
+          @for (stat of stats; track stat.label) {
+            <div class="border-accent relative border-l-2 pl-5">
+              <span class="font-display text-paper text-3xl font-extrabold lg:text-4xl">
+                {{ stat.value }}
+              </span>
+              <p class="text-steel mt-1 text-sm">{{ stat.label }}</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Right: Product screenshot -->
+      <div
+        class="hidden lg:block"
+        style="transform: perspective(1200px) rotateY(-8deg)"
+      >
+        <web-browser-frame
+          src="images/screenshots/tms-home.png"
+          alt="TMS Dashboard with fleet stats, active loads, map, and revenue metrics"
+        />
+      </div>
     </div>
 
     <!-- Scroll indicator -->

@@ -8,9 +8,9 @@ import { PageHero, type StatItem } from "@/shared/components";
 })
 export class AboutHero {
   protected readonly stats: StatItem[] = [
-    { value: "2018", label: "Founded" },
-    { value: "500+", label: "Companies" },
-    { value: "150+", label: "Employees" },
-    { value: "50K+", label: "Trucks Managed" },
+    { value: "2024", label: "Founded" },
+    { value: "3", label: "Product Portals" },
+    { value: "8+", label: "Integrations" },
+    { value: "24/7", label: "Cloud Platform" },
   ];
 }

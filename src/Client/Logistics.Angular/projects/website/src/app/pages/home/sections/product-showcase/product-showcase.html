@@ -1,0 +1,85 @@
+<web-section-container sectionId="product" background="light">
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="Product"
+      title="See it in action"
+      subtitle="A modern platform designed to simplify every aspect of fleet management."
+    />
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="mt-12 flex flex-wrap justify-center gap-2" webScrollAnimate="fade-up" [delay]="100">
+    @for (item of items; track item.title; let i = $index) {
+      <button
+        type="button"
+        class="font-display flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all"
+        [class]="
+          activeTab() === i
+            ? 'bg-accent text-paper shadow-lg'
+            : 'bg-paper text-steel hover:text-ink hover:bg-paper-dark'
+        "
+        (click)="setActiveTab(i)"
+      >
+        <i class="pi {{ item.icon }} text-xs"></i>
+        {{ item.title }}
+      </button>
+    }
+  </div>
+
+  <!-- Active Item Content -->
+  @for (item of items; track item.title; let i = $index) {
+    @if (activeTab() === i) {
+      <div class="mt-12 grid items-center gap-12 lg:grid-cols-2" webScrollAnimate="fade-up">
+        <!-- Text -->
+        <div>
+          <h3 class="font-display text-ink text-3xl font-bold">{{ item.title }}</h3>
+          <p class="text-steel mt-4 text-lg leading-relaxed">{{ item.description }}</p>
+          <ul class="mt-8 space-y-4">
+            @for (feature of item.features; track feature) {
+              <li class="flex items-center gap-3">
+                <div
+                  class="bg-accent/10 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg"
+                >
+                  <i class="pi pi-check text-accent text-sm"></i>
+                </div>
+                <span class="text-ink font-medium">{{ feature }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <!-- Screenshots -->
+        <div>
+          <!-- Screenshot Toggle -->
+          @if (item.screenshots.length > 1) {
+            <div class="mb-4 flex justify-center gap-2">
+              @for (ss of item.screenshots; track ss.src; let j = $index) {
+                <button
+                  type="button"
+                  class="rounded-lg px-4 py-1.5 text-sm font-medium transition-all"
+                  [class]="
+                    activeScreenshot() === j
+                      ? 'bg-accent/10 text-accent'
+                      : 'text-steel hover:text-ink hover:bg-paper-dark'
+                  "
+                  (click)="setActiveScreenshot(j)"
+                >
+                  {{ ss.label }}
+                </button>
+              }
+            </div>
+          }
+
+          <!-- Screenshot Display -->
+          @for (ss of item.screenshots; track ss.src; let j = $index) {
+            @if (activeScreenshot() === j) {
+              <div class="transition-shadow hover:drop-shadow-2xl">
+                <web-browser-frame [src]="ss.src" [alt]="ss.alt" />
+              </div>
+            }
+          }
+        </div>
+      </div>
+    }
+  }
+</web-section-container>

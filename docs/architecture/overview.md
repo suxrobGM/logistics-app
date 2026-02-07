@@ -48,9 +48,10 @@ src/
 │   ├── Logistics.Angular/                  # Angular workspace
 │   │   ├── projects/
 │   │   │   ├── shared/                     # @logistics/shared library
-│   │   │   ├── tms-portal/                 # TMS Portal (dispatchers)
 │   │   │   ├── admin-portal/               # Admin Portal (super admin)
-│   │   │   └── customer-portal/            # Customer Portal (self-service)
+│   │   │   ├── tms-portal/                 # TMS Portal (dispatchers)
+│   │   │   ├── customer-portal/            # Customer Portal (self-service)
+│   │   │   └── website/                    # Marketing Website (SSR)
 │   │   └── angular.json
 │   └── Logistics.DriverApp                 # Kotlin Multiplatform mobile
 ├── Core/
@@ -118,11 +119,14 @@ src/
 
 | Service | Purpose |
 |---------|---------|
-| Stripe | Payment processing |
+| Stripe | Payment processing and subscriptions |
+| Stripe Connect | Direct bank deposits for trucking companies |
 | Firebase | Push notifications |
-| Mapbox | Maps and geocoding |
+| Mapbox | Maps, geocoding, and route optimization |
 | Azure Blob Storage | Document/photo storage |
 | NHTSA API | VIN decoding (vehicle info) |
+| Samsara / Motive | ELD provider integrations |
+| DAT / Truckstop / 123Loadboard | Load board integrations |
 
 ## Design Patterns
 

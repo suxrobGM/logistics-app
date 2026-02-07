@@ -6,6 +6,8 @@ Welcome to the Logistics TMS documentation.
 
 | Section | Description |
 |---------|-------------|
+| [Features](features.md) | Complete feature list |
+| [Screenshots](screenshots.md) | Visual tour of all applications |
 | [Getting Started](getting-started/prerequisites.md) | Prerequisites, local setup, Docker |
 | [Architecture](architecture/overview.md) | System design, domain model, patterns |
 | [API Reference](api/overview.md) | Authentication, endpoints, webhooks |
@@ -27,19 +29,23 @@ Welcome to the Logistics TMS documentation.
 
 ## Features
 
-- **Multi-Tenant Architecture**: Isolated databases per company
-- **Role-Based Access Control**: Super admin, owner, manager, dispatcher, driver, customer
-- **Load Management**: Create, track, and manage shipments
-- **GPS Tracking**: Real-time driver tracking via SignalR
-- **Real-Time Messaging**: In-app chat between dispatchers and drivers with read receipts and typing indicators
-- **Proof of Delivery (POD)**: Capture photos, signatures, recipient info, and GPS location for delivery confirmation
-- **Vehicle Condition Reports**: Pre-trip/post-trip inspections (DVIR) with visual damage marking and VIN decoding
-- **VIN Decoding**: Automatic vehicle information lookup via NHTSA API
-- **Invoicing & Payments**: Stripe integration
-- **Payroll Management**: Employee payroll tracking
-- **Document Management**: Load-related documents with Azure Blob Storage
-- **Analytics Dashboard**: Operations insights
-- **Notifications**: Real-time push notifications via Firebase
+- **Load Management & Dispatching**: Create, assign, and track shipments end-to-end
+- **Trip Planning & Route Optimization**: Multi-stop routing with Mapbox integration
+- **Real-Time GPS Tracking**: Live fleet map via SignalR WebSockets
+- **Fleet & Maintenance Tracking**: Trucks, trailers, schedules, and VIN decoding
+- **Load Board Integration**: Search DAT, Truckstop, 123Loadboard; book loads and post trucks
+- **Invoicing & Payments**: Stripe + Stripe Connect with payment links and partial payments
+- **Payroll & Timesheets**: Driver pay calculation and payroll invoice generation
+- **Expense Tracking**: Categorized fleet expenses with reporting
+- **ELD / HOS Compliance**: Samsara and Motive integrations
+- **Safety & DVIR**: Digital inspections, incident tracking, compliance records
+- **Reports & Analytics**: 7 report types — driver, truck, revenue, customer, payroll, expense, operations
+- **Real-Time Messaging**: In-app chat with read receipts and typing indicators
+- **Customer Self-Service Portal**: Shipment tracking, invoices, documents, online payments
+- **Driver Mobile App**: Kotlin Multiplatform for Android & iOS
+- **Multi-Tenant Architecture**: Isolated PostgreSQL databases per company
+
+[Complete feature list](features.md)
 
 ## Service Ports
 
@@ -50,4 +56,5 @@ Welcome to the Logistics TMS documentation.
 | Admin App | <https://localhost:7002> | admin.yourdomain.com |
 | TMS Portal | <https://localhost:7003> | tms.yourdomain.com |
 | Customer Portal | <https://localhost:7004> | customer.yourdomain.com |
-| Aspire Dashboard | <http://localhost:8100> | (dev only) |
+| Website | <http://localhost:7005> | yourdomain.com |
+| Aspire Dashboard | <http://localhost:7100> | (dev only) |

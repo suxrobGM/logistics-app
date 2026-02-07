@@ -16,52 +16,88 @@ interface Feature {
 export class Features {
   protected readonly features: Feature[] = [
     {
+      icon: "pi-box",
+      title: "Load Management",
+      description:
+        "Create, assign, and track shipments from pickup to delivery. Manage stops, cargo details, and special instructions.",
+    },
+    {
+      icon: "pi-directions",
+      title: "Trip Planning & Route Optimization",
+      description:
+        "Organize loads into optimized trips with multi-stop routing, driver assignment, and automatic conflict detection.",
+    },
+    {
       icon: "pi-map-marker",
       title: "Real-Time GPS Tracking",
       description:
-        "Track your entire fleet in real-time with live map updates, geofencing alerts, and detailed route history.",
+        "Track your entire fleet on a live map with driver locations, route visualization, and geofencing alerts via SignalR.",
     },
     {
-      icon: "pi-send",
-      title: "Automated Dispatching",
+      icon: "pi-truck",
+      title: "Fleet & Maintenance",
       description:
-        "Intelligent load assignment and route optimization to maximize efficiency and reduce empty miles.",
+        "Manage trucks, trailers, and equipment. Track maintenance schedules, registration expiry, and vehicle assignments.",
     },
     {
-      icon: "pi-mobile",
-      title: "Driver Mobile App",
+      icon: "pi-search",
+      title: "Load Board Integration",
       description:
-        "Empower drivers with a native app for POD capture, navigation, document scanning, and real-time communication.",
+        "Search freight across DAT, Truckstop, and 123Loadboard from one interface. Book loads and post available trucks.",
     },
     {
       icon: "pi-credit-card",
       title: "Invoicing & Payments",
       description:
-        "Automated invoicing with Stripe integration for seamless payment processing and faster cash flow.",
+        "Automated invoicing with Stripe and Stripe Connect for direct bank deposits. Shareable payment links and partial payments.",
+    },
+    {
+      icon: "pi-wallet",
+      title: "Payroll & Timesheets",
+      description:
+        "Calculate driver pay by miles, percentage, or flat rate. Track timesheets and generate payroll reports.",
+    },
+    {
+      icon: "pi-receipt",
+      title: "Expense Tracking",
+      description:
+        "Record and categorize fleet expenses — fuel, tolls, repairs, and more. Monitor spending with detailed breakdowns.",
     },
     {
       icon: "pi-clock",
-      title: "ELD/HOS Compliance",
+      title: "ELD / HOS Compliance",
       description:
         "Integrated with Samsara and Motive for automatic hours of service tracking and FMCSA compliance.",
     },
     {
-      icon: "pi-comments",
-      title: "Real-Time Messaging",
+      icon: "pi-shield",
+      title: "Safety & Compliance",
       description:
-        "Built-in messaging between dispatchers and drivers with read receipts and typing indicators.",
+        "Digital DVIR inspections with photo documentation, incident reporting, and safety tracking for compliance audits.",
+    },
+    {
+      icon: "pi-chart-bar",
+      title: "Reports & Analytics",
+      description:
+        "Driver performance, revenue, fleet utilization, and operational dashboards. Export data for informed decision-making.",
+    },
+    {
+      icon: "pi-mobile",
+      title: "Driver Mobile App",
+      description:
+        "Native Kotlin Multiplatform app for assignments, POD capture, navigation, inspections, and real-time communication.",
     },
     {
       icon: "pi-user",
       title: "Customer Self-Service Portal",
       description:
-        "Give your customers 24/7 access to track shipments, view invoices, request quotes, and download delivery documents.",
+        "24/7 access for customers to track shipments, view invoices, download documents, and make payments online.",
     },
     {
-      icon: "pi-clipboard",
-      title: "Vehicle Inspections (DVIR)",
+      icon: "pi-comments",
+      title: "Real-Time Messaging",
       description:
-        "Digital pre-trip and post-trip inspections with photo documentation and automated maintenance alerts.",
+        "Built-in chat between dispatchers and drivers with read receipts, typing indicators, and push notifications.",
     },
   ];
 }

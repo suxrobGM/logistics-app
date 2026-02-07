@@ -20,16 +20,24 @@ src/Client/Logistics.Angular/
 │   │   │   ├── services/           # Shared services (toast, cache)
 │   │   │   └── interceptors/       # HTTP interceptors
 │   │   └── ng-package.json
+│   ├── admin-portal/               # Admin Portal (super admin)
+│   │   └── src/app/
+│   │       ├── core/               # Admin auth
+│   │       └── pages/              # Tenant, subscription management
 │   ├── tms-portal/                 # TMS Portal (dispatchers/managers)
 │   │   └── src/app/
 │   │       ├── core/               # App-specific auth, services
 │   │       ├── shared/             # TMS-specific components
 │   │       └── pages/              # Feature pages
-│   └── customer-portal/            # Customer Portal (self-service)
+│   ├── customer-portal/            # Customer Portal (self-service)
+│   │   └── src/app/
+│   │       ├── core/               # Customer auth
+│   │       ├── shared/             # Customer components
+│   │       └── pages/              # Customer features
+│   └── website/                    # Marketing Website (SSR)
 │       └── src/app/
-│           ├── core/               # Customer auth
-│           ├── shared/             # Customer components
-│           └── pages/              # Customer features
+│           ├── layout/             # Header, footer
+│           └── pages/              # Home, about, blog
 └── scripts/
 ```
 
@@ -37,9 +45,11 @@ src/Client/Logistics.Angular/
 
 | Project | Prefix | Port | Description |
 |---------|--------|------|-------------|
-| @logistics/shared | `ui-` | N/A | Shared library (API, services) |
+| @logistics/shared | `ui-` | N/A | Shared library (API, services, pipes) |
+| @logistics/admin-portal | `adm-` | 7002 | Super admin management |
 | @logistics/tms-portal | `app-` | 7003 | Internal TMS for dispatchers |
 | @logistics/customer-portal | `cp-` | 7004 | Customer self-service portal |
+| @logistics/website | `web-` | 7005 | Marketing website (SSR) |
 
 ## TMS Portal Structure
 
@@ -262,8 +272,10 @@ import { ToastService, HttpCacheService } from '@logistics/shared/services';
 
 ```bash
 # Development servers
+bun run start:admin       # Admin Portal on https://localhost:7002
 bun run start:tms         # TMS Portal on https://localhost:7003
 bun run start:customer    # Customer Portal on https://localhost:7004
+bun run start:website     # Website on http://localhost:7005
 
 # Build
 bun run build:shared      # Build shared library

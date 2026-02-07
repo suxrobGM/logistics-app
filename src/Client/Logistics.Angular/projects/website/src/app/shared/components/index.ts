@@ -1,5 +1,6 @@
 export * from "./animated-counter/animated-counter";
 export * from "./avatar/avatar";
+export * from "./browser-frame/browser-frame";
 export * from "./demo-dialog/demo-dialog";
 export * from "./filter-tabs/filter-tabs";
 export * from "./hero-background/hero-background";

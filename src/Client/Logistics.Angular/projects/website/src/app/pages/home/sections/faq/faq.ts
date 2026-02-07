@@ -38,7 +38,7 @@ export class Faq {
     {
       question: "How is pricing calculated?",
       answer:
-        "Our pricing is simple: $30 per employee per month. This includes all features with no hidden fees. Whether you have 5 trucks or 500, you get access to the complete platform.",
+        "We offer three plans: Starter ($19/mo + $12/truck), Professional ($79/mo + $7/truck), and Enterprise ($149/mo + $4/truck). Each plan includes a base fee plus a per-truck charge. The more trucks you add, the lower your per-truck cost.",
     },
     {
       question: "Do you offer a free trial?",

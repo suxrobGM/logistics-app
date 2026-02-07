@@ -2,59 +2,72 @@
   <div webScrollAnimate="fade-up">
     <web-section-header
       label="Pricing"
-      title="Simple, transparent pricing"
-      subtitle="One plan with everything included. No hidden fees, no surprises."
+      title="Plans that scale with your fleet"
+      subtitle="Base fee plus a per-truck charge. No hidden fees, cancel anytime."
     />
   </div>
 
-  <!-- Pricing Card -->
-  <div webScrollAnimate="scale-up" [delay]="200" class="mx-auto mt-16 max-w-lg">
-    <div
-      class="rounded-3xl border-2 border-blue-500 bg-white p-8 shadow-xl ring-1 ring-blue-500/20 sm:p-10"
-    >
-      <!-- Badge -->
+  <div class="mt-16 grid gap-8 lg:grid-cols-3">
+    @for (tier of tiers; track tier.name; let i = $index) {
       <div
-        class="mb-4 inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700"
+        webScrollAnimate="fade-up"
+        [delay]="i * 150"
+        class="relative rounded-2xl border-2 bg-white p-8 transition-shadow sm:p-10"
+        [class.border-accent]="tier.highlighted"
+        [class.shadow-xl]="tier.highlighted"
+        [class.ring-1]="tier.highlighted"
+        [class.ring-accent/20]="tier.highlighted"
+        [class.border-gray-200]="!tier.highlighted"
       >
-        All Features Included
-      </div>
+        <!-- Badge -->
+        @if (tier.badge) {
+          <div
+            class="bg-accent text-paper absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-sm font-semibold whitespace-nowrap"
+          >
+            {{ tier.badge }}
+          </div>
+        }
 
-      <!-- Price -->
-      <div class="flex items-baseline gap-2">
-        <span class="text-5xl font-bold text-gray-900">$30</span>
-        <div class="flex flex-col text-left">
-          <span class="text-lg text-gray-500">per employee</span>
-          <span class="text-sm text-gray-400">per month</span>
+        <!-- Plan name -->
+        <h3 class="font-display text-ink text-xl font-bold">{{ tier.name }}</h3>
+        <p class="text-steel mt-2 text-sm">{{ tier.description }}</p>
+
+        <!-- Price -->
+        <div class="mt-6">
+          <div class="flex items-baseline gap-1">
+            <span class="font-display text-ink text-4xl font-extrabold">${{ tier.basePrice }}</span>
+            <span class="text-steel text-sm">/mo base</span>
+          </div>
+          <p class="text-steel mt-1 text-sm">+ ${{ tier.perTruckPrice }}/truck/mo</p>
         </div>
-      </div>
 
-      <p class="mt-4 text-gray-600">Everything you need to manage your fleet efficiently.</p>
+        <!-- CTA -->
+        <div class="mt-6">
+          <p-button
+            label="Request a Demo"
+            (onClick)="openDemoDialog()"
+            [rounded]="true"
+            class="w-full"
+            styleClass="w-full justify-center"
+            [outlined]="!tier.highlighted"
+            [styleClass]="
+              tier.highlighted
+                ? 'w-full justify-center bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark'
+                : 'w-full justify-center'
+            "
+          />
+        </div>
 
-      <!-- CTA -->
-      <div class="mt-8">
-        <p-button
-          label="Request a Demo"
-          icon="pi pi-arrow-right"
-          iconPos="right"
-          (onClick)="openDemoDialog()"
-          [rounded]="true"
-          class="w-full"
-          styleClass="w-full justify-center"
-        />
-      </div>
-
-      <!-- Features -->
-      <div class="mt-8 border-t border-gray-200 pt-8">
-        <p class="font-semibold text-gray-900">What's included:</p>
-        <ul class="mt-4 space-y-3">
-          @for (feature of features; track feature) {
+        <!-- Features -->
+        <ul class="mt-8 space-y-3">
+          @for (feature of tier.features; track feature) {
             <li class="flex items-center gap-3">
-              <i class="pi pi-check-circle text-lg text-green-500"></i>
-              <span class="text-gray-700">{{ feature }}</span>
+              <i class="pi pi-check text-accent text-sm"></i>
+              <span class="text-ink text-sm">{{ feature }}</span>
             </li>
           }
         </ul>
       </div>
-    </div>
+    }
   </div>
 </web-section-container>

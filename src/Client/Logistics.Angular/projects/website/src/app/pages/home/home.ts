@@ -1,11 +1,20 @@
 import { Component, inject, type OnInit } from "@angular/core";
 import { MetaService, SchemaService } from "@/shared/services";
-import { Faq, Features, Hero, HowItWorks, Integrations, Pricing, Testimonials } from "./sections";
+import {
+  Faq,
+  Features,
+  Hero,
+  HowItWorks,
+  Integrations,
+  Pricing,
+  ProductShowcase,
+  Testimonials,
+} from "./sections";
 
 @Component({
   selector: "web-home",
   templateUrl: "./home.html",
-  imports: [Hero, Features, Integrations, HowItWorks, Testimonials, Pricing, Faq],
+  imports: [Hero, Features, ProductShowcase, Integrations, HowItWorks, Testimonials, Pricing, Faq],
 })
 export class Home implements OnInit {
   private readonly metaService = inject(MetaService);
@@ -48,7 +57,7 @@ export class Home implements OnInit {
       {
         question: "How is pricing calculated?",
         answer:
-          "Our pricing is simple: $30 per employee per month. This includes all features with no hidden fees.",
+          "We offer three plans: Starter ($19/mo + $12/truck), Professional ($79/mo + $7/truck), and Enterprise ($149/mo + $4/truck). Each plan includes a base fee plus a per-truck charge. The more trucks you add, the lower your per-truck cost.",
       },
     ]);
   }

@@ -8,41 +8,59 @@ The dispatcher and manager web interface for managing loads, customers, operatio
 
 ### Dashboard
 
-![Dashboard](images/tms-portal/tms-portal-1.jpg)
+![Dashboard](images/tms-portal/tms-home.png)
 
 ### Load Management
 
-![Load List](images/tms-portal/tms-portal-2.jpg)
+![Loads List](images/tms-portal/tms-loads.png)
 
-![Load Details](images/tms-portal/tms-portal-3.jpg)
+![Load Details](images/tms-portal/tms-load-details.png)
 
-### Customer Management
+### Trips & Route Optimization
 
-![Customers](images/tms-portal/tms-portal-4.jpg)
+![Trips List](images/tms-portal/tms-trips.png)
 
-### Employee & Driver Management
-
-![Employees](images/tms-portal/tms-portal-5.jpg)
-
-![Driver Details](images/tms-portal/tms-portal-6.jpg)
+![Trip Details](images/tms-portal/tms-trip-details.png)
 
 ### Fleet & Trucks
 
-![Trucks](images/tms-portal/tms-portal-7.jpg)
+![Fleet](images/tms-portal/tms-fleet.png)
 
-### Invoicing
+### Invoicing & Payments
 
-![Invoices](images/tms-portal/tms-portal-8.jpg)
+![Invoice Dashboard](images/tms-portal/tms-invoice-dashboard.png)
+
+### Payroll
+
+![Payroll](images/tms-portal/tms-payroll.png)
+
+![Payroll Invoice](images/tms-portal/tms-payroll-invoice.png)
 
 ### Reports
 
-![Reports](images/tms-portal/tms-portal-9.jpg)
+![Reports](images/tms-portal/tms-reports.png)
+
+![Driver Report](images/tms-portal/tms-drivers-report.png)
+
+---
+
+## Customer Portal (Angular)
+
+Self-service portal for customers to track shipments, view documents, and access invoices.
+
+### Dashboard
+
+![Customer Dashboard](images/customer-portal/customer-dashboard.png)
+
+### Shipment Details
+
+![Shipment Details](images/customer-portal/customer-shipment.png)
 
 ---
 
 ## Driver Mobile App (Kotlin Multiplatform)
 
-The new driver app built with Kotlin Multiplatform and Compose, supporting both Android and iOS.
+Native driver app built with Kotlin Multiplatform and Compose, supporting both Android and iOS.
 
 ### Dashboard & Statistics
 
@@ -67,17 +85,3 @@ The new driver app built with Kotlin Multiplatform and Compose, supporting both 
 | Account | Settings |
 |:-------:|:--------:|
 | ![Account](../src/Client/Logistics.DriverApp/docs/images/screenshot_7.png) | ![Settings](../src/Client/Logistics.DriverApp/docs/images/screenshot_8.png) |
-
----
-
-## Legacy Driver App (.NET MAUI) - Deprecated
-
-The original driver app built with .NET MAUI. Now replaced by the Kotlin Multiplatform version above.
-
-| Login | Dashboard | Load Details |
-|:-----:|:---------:|:------------:|
-| ![Login](images/driver-app/driver-app-1.jpg) | ![Dashboard](images/driver-app/driver-app-2.jpg) | ![Load](images/driver-app/driver-app-3.jpg) |
-
-| Statistics | Charts | Account |
-|:----------:|:------:|:-------:|
-| ![Stats](images/driver-app/driver-app-4.jpg) | ![Charts](images/driver-app/driver-app-5.jpg) | ![Account](images/driver-app/driver-app-6.jpg) |

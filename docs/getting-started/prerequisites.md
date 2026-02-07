@@ -17,7 +17,7 @@ dotnet --version
 
 ### Bun Runtime
 
-Required for the Angular Office App.
+Required for the Angular frontend applications.
 
 **Windows** (PowerShell):
 
@@ -122,9 +122,11 @@ Ensure these ports are available:
 | 5432 | PostgreSQL |
 | 7000 | API |
 | 7001 | Identity Server |
-| 7002 | Admin App |
-| 7003 | Office App |
-| 8100 | Aspire Dashboard |
+| 7002 | Admin Portal |
+| 7003 | TMS Portal |
+| 7004 | Customer Portal |
+| 7005 | Website |
+| 7100 | Aspire Dashboard |
 
 Check port availability:
 
