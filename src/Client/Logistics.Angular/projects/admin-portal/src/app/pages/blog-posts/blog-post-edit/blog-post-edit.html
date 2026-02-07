@@ -14,7 +14,7 @@
     } @else {
       <adm-blog-post-form
         mode="edit"
-        [initial]="getInitialValue()"
+        [initial]="initialValue()"
         [isLoading]="isLoading()"
         [status]="blogPost()?.status"
         (save)="onSave($event)"

@@ -14,7 +14,7 @@
       } @else {
         <adm-tenant-form
           mode="edit"
-          [initial]="getInitialValue()"
+          [initial]="initialValue()"
           [isLoading]="isLoading()"
           (save)="onSave($event)"
           (remove)="onRemove()"

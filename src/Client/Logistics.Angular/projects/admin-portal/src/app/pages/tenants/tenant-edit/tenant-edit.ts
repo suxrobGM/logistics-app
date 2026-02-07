@@ -1,4 +1,4 @@
-import { Component, type OnInit, inject, signal } from "@angular/core";
+import { Component, type OnInit, computed, inject, signal } from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import { Api, deleteTenant, getTenantById, updateTenant } from "@logistics/shared/api";
@@ -48,7 +48,7 @@ export class TenantEdit implements OnInit {
     this.isFetching.set(false);
   }
 
-  protected getInitialValue(): Partial<TenantFormValue> | null {
+  protected readonly initialValue = computed<Partial<TenantFormValue> | null>(() => {
     const tenant = this.tenant();
     if (!tenant) return null;
 
@@ -59,7 +59,7 @@ export class TenantEdit implements OnInit {
       dotNumber: tenant.dotNumber ?? "",
       companyAddress: tenant.companyAddress,
     };
-  }
+  });
 
   protected async onSave(formValue: TenantFormValue): Promise<void> {
     const tenant = this.tenant();

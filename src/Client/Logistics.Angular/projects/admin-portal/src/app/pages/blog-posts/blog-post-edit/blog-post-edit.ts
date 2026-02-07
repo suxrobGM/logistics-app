@@ -1,4 +1,4 @@
-import { Component, type OnInit, inject, signal } from "@angular/core";
+import { Component, type OnInit, computed, inject, signal } from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import {
@@ -55,7 +55,7 @@ export class BlogPostEdit implements OnInit {
     this.isFetching.set(false);
   }
 
-  protected getInitialValue(): Partial<BlogPostFormValue> | null {
+  protected readonly initialValue = computed<Partial<BlogPostFormValue> | null>(() => {
     const post = this.blogPost();
     if (!post) return null;
 
@@ -68,7 +68,7 @@ export class BlogPostEdit implements OnInit {
       featuredImage: post.featuredImage ?? "",
       isFeatured: post.isFeatured ?? false,
     };
-  }
+  });
 
   protected async onSave(formValue: BlogPostFormValue): Promise<void> {
     const post = this.blogPost();

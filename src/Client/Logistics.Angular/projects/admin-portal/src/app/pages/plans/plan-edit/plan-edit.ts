@@ -1,4 +1,4 @@
-import { Component, type OnInit, inject, signal } from "@angular/core";
+import { Component, type OnInit, computed, inject, signal } from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import {
@@ -53,7 +53,7 @@ export class PlanEdit implements OnInit {
     this.isFetching.set(false);
   }
 
-  protected getInitialValue(): Partial<PlanFormValue> | null {
+  protected readonly initialValue = computed<Partial<PlanFormValue> | null>(() => {
     const plan = this.plan();
     if (!plan) return null;
 
@@ -69,7 +69,7 @@ export class PlanEdit implements OnInit {
       intervalCount: plan.intervalCount ?? 1,
       trialPeriod: plan.trialPeriod ?? "none",
     };
-  }
+  });
 
   protected async onSave(formValue: PlanFormValue): Promise<void> {
     const plan = this.plan();
