@@ -1,8 +1,40 @@
-import type { SubscriptionDto } from "@logistics/shared/api";
+import type { PlanTier, SubscriptionDto } from "@logistics/shared/api";
 
 export type SeverityLevel = "success" | "warn" | "danger" | "info";
 
 export const Labels = {
+  /**
+   * Get the display label for a plan tier.
+   */
+  planTierLabel(tier: PlanTier): string {
+    switch (tier) {
+      case "starter":
+        return "Starter";
+      case "professional":
+        return "Professional";
+      case "enterprise":
+        return "Enterprise";
+      default:
+        return "Unknown";
+    }
+  },
+
+  /**
+   * Get the severity for a plan tier badge.
+   */
+  planTierSeverity(tier: PlanTier): SeverityLevel {
+    switch (tier) {
+      case "starter":
+        return "info";
+      case "professional":
+        return "success";
+      case "enterprise":
+        return "warn";
+      default:
+        return "info";
+    }
+  },
+
   /**
    * Get the severity of the subscription status.
    * @param subscription The subscription object.

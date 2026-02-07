@@ -1,4 +1,5 @@
 import { CurrencyPipe, TitleCasePipe } from "@angular/common";
+import type { PlanTier } from "@logistics/shared/api";
 import { Component, inject } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { Api, deleteSubscriptionPlan } from "@logistics/shared/api";
@@ -71,6 +72,32 @@ export class PlansList {
         return "30 days";
       default:
         return "None";
+    }
+  }
+
+  protected formatTier(tier?: PlanTier): string {
+    switch (tier) {
+      case "starter":
+        return "Starter";
+      case "professional":
+        return "Professional";
+      case "enterprise":
+        return "Enterprise";
+      default:
+        return "-";
+    }
+  }
+
+  protected tierSeverity(tier?: PlanTier): "success" | "info" | "warn" | "secondary" {
+    switch (tier) {
+      case "starter":
+        return "info";
+      case "professional":
+        return "warn";
+      case "enterprise":
+        return "success";
+      default:
+        return "secondary";
     }
   }
 }

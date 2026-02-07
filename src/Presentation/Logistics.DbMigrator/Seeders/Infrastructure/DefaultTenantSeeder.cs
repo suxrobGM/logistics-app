@@ -39,7 +39,8 @@ internal class DefaultTenantSeeder(ILogger<DefaultTenantSeeder> logger) : Seeder
             CompanyName = "Test Company",
             BillingEmail = "test@test.com",
             CompanyAddress = companyAddress,
-            ConnectionString = defaultTenantConnectionString
+            ConnectionString = defaultTenantConnectionString,
+            IsSubscriptionRequired = false
         };
 
         var existingTenant = await repo.GetAsync(i => i.Name == defaultTenant.Name, cancellationToken);

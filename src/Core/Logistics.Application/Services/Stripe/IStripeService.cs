@@ -47,10 +47,10 @@ public interface IStripeService
     /// </summary>
     /// <param name="plan">Subscription plan.</param>
     /// <param name="tenant">Tenant entity.</param>
-    /// <param name="employeeCount">Number of employees in the tenant company to calculate the subscription price.</param>
+    /// <param name="truckCount">Number of trucks in the tenant company to calculate the per-truck subscription price.</param>
     /// <param name="trial">Whether to create a trial subscription (true) or not (false). Default is false.</param>
     /// <returns>Stripe subscription object.</returns>
-    Task<StripeSubscription> CreateSubscriptionAsync(SubscriptionPlan plan, Tenant tenant, int employeeCount,
+    Task<StripeSubscription> CreateSubscriptionAsync(SubscriptionPlan plan, Tenant tenant, int truckCount,
         bool trial = false);
 
     /// <summary>
@@ -65,9 +65,9 @@ public interface IStripeService
     ///     Update the quantity of the subscription in Stripe.
     /// </summary>
     /// <param name="stripeSubscriptionId">Stripe subscription ID.</param>
-    /// <param name="employeeCount">New number of employees in the tenant company.</param>
+    /// <param name="truckCount">New number of trucks in the tenant company.</param>
     /// <returns>Stripe subscription item object.</returns>
-    Task<SubscriptionItem> UpdateSubscriptionQuantityAsync(string stripeSubscriptionId, int employeeCount);
+    Task<SubscriptionItem> UpdateSubscriptionQuantityAsync(string stripeSubscriptionId, int truckCount);
 
     /// <summary>
     ///     Renew an existing subscription or create a new one if it doesn't exist in Stripe.
@@ -75,27 +75,27 @@ public interface IStripeService
     /// <param name="subEntity">Subscription entity to be renewed.</param>
     /// <param name="plan">Subscription plan to be used for renewal.</param>
     /// <param name="tenant">Tenant entity.</param>
-    /// <param name="employeeCount">Number of employees in the tenant company to calculate the subscription price.</param>
+    /// <param name="truckCount">Number of trucks in the tenant company to calculate the per-truck subscription price.</param>
     /// <returns>Stripe subscription object.</returns>
     Task<StripeSubscription> RenewSubscriptionAsync(
         Subscription? subEntity,
         SubscriptionPlan plan,
         Tenant tenant,
-        int employeeCount);
+        int truckCount);
 
     /// <summary>
     ///     Create a new subscription plan in Stripe.
     /// </summary>
     /// <param name="plan">Subscription plan to be created.</param>
-    /// <returns>Stripe price and product object.</returns>
-    Task<(Product Product, Price Price)> CreateSubscriptionPlanAsync(SubscriptionPlan plan);
+    /// <returns>Stripe product, base price, and per-truck price objects.</returns>
+    Task<(Product Product, Price BasePrice, Price PerTruckPrice)> CreateSubscriptionPlanAsync(SubscriptionPlan plan);
 
     /// <summary>
     ///     Update an existing subscription plan in Stripe.
     /// </summary>
     /// <param name="plan"> Subscription plan to be updated.</param>
-    /// <returns>Stripe price and product object.</returns>
-    Task<(Product Product, Price ActivePrice)> UpdateSubscriptionPlanAsync(SubscriptionPlan plan);
+    /// <returns>Stripe product, active base price, and active per-truck price objects.</returns>
+    Task<(Product Product, Price ActiveBasePrice, Price ActivePerTruckPrice)> UpdateSubscriptionPlanAsync(SubscriptionPlan plan);
 
     /// <summary>
     ///     Updates an existing payment method in Stripe.

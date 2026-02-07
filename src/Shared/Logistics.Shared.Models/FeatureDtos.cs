@@ -9,7 +9,8 @@ public record FeatureStatusDto(
     TenantFeature Feature,
     string Name,
     bool IsEnabled,
-    bool IsAdminLocked);
+    bool IsAdminLocked,
+    bool IsIncludedInPlan);
 
 /// <summary>
 /// Represents the default configuration for a feature.

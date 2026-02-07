@@ -5,7 +5,7 @@ namespace Logistics.Mappings;
 
 public static class TenantMapper
 {
-    public static TenantDto ToDto(this Tenant entity, bool includeConnectionString = false, int? employeeCount = null)
+    public static TenantDto ToDto(this Tenant entity, bool includeConnectionString = false, int? truckCount = null)
     {
         return new TenantDto
         {
@@ -20,7 +20,8 @@ public static class TenantMapper
             LogoUrl = entity.LogoPath,
             PhoneNumber = entity.PhoneNumber,
             Subscription = entity.Subscription?.ToDto(),
-            EmployeeCount = employeeCount,
+            TruckCount = truckCount,
+            IsSubscriptionRequired = entity.IsSubscriptionRequired,
             Settings = entity.Settings
         };
     }

@@ -22,7 +22,9 @@ public record TenantDto
     public SubscriptionDto? Subscription { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public int? EmployeeCount { get; set; }
+    public int? TruckCount { get; set; }
+
+    public bool IsSubscriptionRequired { get; set; } = true;
 
     public TenantSettings? Settings { get; set; }
 }

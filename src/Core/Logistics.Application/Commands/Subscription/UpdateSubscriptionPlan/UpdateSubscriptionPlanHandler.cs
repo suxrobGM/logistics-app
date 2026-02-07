@@ -37,12 +37,21 @@ internal sealed class UpdateSubscriptionPlanHandler : IAppRequestHandler<UpdateS
         subscriptionPlan.Name = PropertyUpdater.UpdateIfChanged(req.Name, subscriptionPlan.Name);
         subscriptionPlan.Description = PropertyUpdater.UpdateIfChanged(req.Description, subscriptionPlan.Description);
         subscriptionPlan.Price = PropertyUpdater.UpdateIfChanged(req.Price, subscriptionPlan.Price.Amount);
+        subscriptionPlan.PerTruckPrice = PropertyUpdater.UpdateIfChanged(req.PerTruckPrice, subscriptionPlan.PerTruckPrice.Amount);
         subscriptionPlan.TrialPeriod = PropertyUpdater.UpdateIfChanged(req.TrialPeriod, subscriptionPlan.TrialPeriod);
         subscriptionPlan.Interval = PropertyUpdater.UpdateIfChanged(req.Interval, subscriptionPlan.Interval);
         subscriptionPlan.IntervalCount =
             PropertyUpdater.UpdateIfChanged(req.IntervalCount, subscriptionPlan.IntervalCount);
+        if (req.MaxTrucks.HasValue)
+        {
+            subscriptionPlan.MaxTrucks = req.MaxTrucks;
+        }
+        subscriptionPlan.AnnualDiscountPercent = PropertyUpdater.UpdateIfChanged(req.AnnualDiscountPercent, subscriptionPlan.AnnualDiscountPercent);
+        subscriptionPlan.Tier = PropertyUpdater.UpdateIfChanged(req.Tier, subscriptionPlan.Tier);
 
-        await _stripeService.UpdateSubscriptionPlanAsync(subscriptionPlan);
+        var (product, activeBasePrice, activePerTruckPrice) = await _stripeService.UpdateSubscriptionPlanAsync(subscriptionPlan);
+        subscriptionPlan.StripePriceId = activeBasePrice.Id;
+        subscriptionPlan.StripePerTruckPriceId = activePerTruckPrice.Id;
         _masterUow.Repository<SubscriptionPlan>().Update(subscriptionPlan);
         await _masterUow.SaveChangesAsync();
         _logger.LogInformation("Updated subscription plan {SubscriptionPlanId}", subscriptionPlan.Id);

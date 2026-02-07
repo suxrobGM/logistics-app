@@ -82,7 +82,7 @@ export class SubscriptionAdd implements OnInit {
 
     this.planOptions.set(
       plans.map((p) => ({
-        label: `${p.name} - $${p.price}/${p.interval}`,
+        label: `${p.name} - $${p.price}/mo + $${p.perTruckPrice}/truck`,
         value: p.id!,
       })),
     );

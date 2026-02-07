@@ -203,6 +203,7 @@ export type { PayrollReportDto } from './models/payroll-report-dto';
 export type { PayrollStatusBreakdownDto } from './models/payroll-status-breakdown-dto';
 export type { PayrollTrendDto } from './models/payroll-trend-dto';
 export type { PermissionDto } from './models/permission-dto';
+export type { PlanTier } from './models/plan-tier';
 export type { PortalInvoiceDto } from './models/portal-invoice-dto';
 export type { PortalInvoiceDtoPagedResponse } from './models/portal-invoice-dto-paged-response';
 export type { PortalLoadDto } from './models/portal-load-dto';

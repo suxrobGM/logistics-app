@@ -33,13 +33,18 @@ internal sealed class CreateSubscriptionPlanHandler : IAppRequestHandler<CreateS
             Price = req.Price,
             TrialPeriod = req.TrialPeriod,
             Interval = req.Interval,
-            IntervalCount = req.IntervalCount
+            IntervalCount = req.IntervalCount,
+            Tier = req.Tier,
+            PerTruckPrice = req.PerTruckPrice,
+            MaxTrucks = req.MaxTrucks,
+            AnnualDiscountPercent = req.AnnualDiscountPercent
         };
 
-        var (product, price) = await _stripeService.CreateSubscriptionPlanAsync(subscriptionPlan);
+        var (product, basePrice, perTruckPrice) = await _stripeService.CreateSubscriptionPlanAsync(subscriptionPlan);
 
         subscriptionPlan.StripeProductId = product.Id;
-        subscriptionPlan.StripePriceId = price.Id;
+        subscriptionPlan.StripePriceId = basePrice.Id;
+        subscriptionPlan.StripePerTruckPriceId = perTruckPrice.Id;
         await _masterUow.Repository<SubscriptionPlan>().AddAsync(subscriptionPlan);
         await _masterUow.SaveChangesAsync();
         return Result.Ok();

@@ -16,6 +16,16 @@ internal sealed class SubscriptionPlanEntityConfiguration : IEntityTypeConfigura
             money.Property(m => m.Currency).HasMaxLength(3);
         });
 
+        builder.ComplexProperty(i => i.PerTruckPrice, money =>
+        {
+            money.Property(m => m.Amount).HasPrecision(18, 2);
+            money.Property(m => m.Currency).HasMaxLength(3);
+        });
+
+        builder.Property(i => i.AnnualDiscountPercent).HasPrecision(5, 2);
+
+        builder.HasIndex(i => i.Tier).IsUnique();
+
         builder.HasMany(i => i.Subscriptions)
             .WithOne(i => i.Plan)
             .HasForeignKey(i => i.PlanId);

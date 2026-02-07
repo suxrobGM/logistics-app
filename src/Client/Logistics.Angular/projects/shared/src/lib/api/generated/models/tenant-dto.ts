@@ -10,12 +10,13 @@ export interface TenantDto {
   companyName?: string | null;
   connectionString?: string | null;
   dotNumber?: string | null;
-  employeeCount?: number | null;
   id?: string | null;
+  isSubscriptionRequired?: boolean;
   logoUrl?: string | null;
   name?: string | null;
   phoneNumber?: string | null;
   settings?: TenantSettings;
   stripeCustomerId?: string | null;
   subscription?: SubscriptionDto;
+  truckCount?: number | null;
 }

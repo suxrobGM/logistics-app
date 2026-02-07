@@ -39,7 +39,7 @@
             <p-sortIcon field="CompanyName" />
           </th>
           <th>Subscription</th>
-          <th>Employees</th>
+          <th>Trucks</th>
           <th class="text-center">Actions</th>
         </tr>
       </ng-template>
@@ -53,7 +53,7 @@
               [severity]="getStatusSeverity(getSubscriptionStatus(tenant))"
             />
           </td>
-          <td>{{ tenant.employeeCount ?? 0 }}</td>
+          <td>{{ tenant.truckCount ?? 0 }}</td>
           <td class="text-center">
             <p-button
               icon="pi pi-pen-to-square"

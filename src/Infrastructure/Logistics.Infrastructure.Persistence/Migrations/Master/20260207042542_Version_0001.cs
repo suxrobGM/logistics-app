@@ -106,6 +106,44 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 });
 
             migrationBuilder.CreateTable(
+                name: "impersonation_audit_logs",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    admin_user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    admin_email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    target_user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    target_email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ip_address = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    user_agent = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
+                    was_successful = table.Column<bool>(type: "boolean", nullable: false),
+                    failure_reason = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_impersonation_audit_logs", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "impersonation_tokens",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    token = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    admin_user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    target_user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    expires_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    is_used = table.Column<bool>(type: "boolean", nullable: false),
+                    used_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_impersonation_tokens", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "roles",
                 columns: table => new
                 {
@@ -127,12 +165,18 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "text", nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
+                    tier = table.Column<string>(type: "text", nullable: false),
                     stripe_price_id = table.Column<string>(type: "text", nullable: true),
                     stripe_product_id = table.Column<string>(type: "text", nullable: true),
+                    stripe_per_truck_price_id = table.Column<string>(type: "text", nullable: true),
+                    max_trucks = table.Column<int>(type: "integer", nullable: true),
+                    annual_discount_percent = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
                     interval = table.Column<string>(type: "text", nullable: false),
                     interval_count = table.Column<int>(type: "integer", nullable: false),
                     billing_cycle_anchor = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     trial_period = table.Column<string>(type: "text", nullable: false),
+                    per_truck_price_amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    per_truck_price_currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     price_amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     price_currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
@@ -158,6 +202,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     stripe_customer_id = table.Column<string>(type: "text", nullable: true),
                     logo_path = table.Column<string>(type: "text", nullable: true),
                     phone_number = table.Column<string>(type: "text", nullable: true),
+                    is_subscription_required = table.Column<bool>(type: "boolean", nullable: false),
                     stripe_connected_account_id = table.Column<string>(type: "text", nullable: true),
                     connect_status = table.Column<string>(type: "text", nullable: false),
                     payouts_enabled = table.Column<bool>(type: "boolean", nullable: false),
@@ -196,6 +241,25 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         name: "fk_role_claims_roles_role_id",
                         column: x => x.role_id,
                         principalTable: "roles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "plan_features",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    plan_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    feature = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_plan_features", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_plan_features_subscription_plan_plan_id",
+                        column: x => x.plan_id,
+                        principalTable: "subscription_plans",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -601,6 +665,42 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 column: "email");
 
             migrationBuilder.CreateIndex(
+                name: "ix_impersonation_audit_logs_admin_user_id",
+                table: "impersonation_audit_logs",
+                column: "admin_user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_impersonation_audit_logs_target_user_id",
+                table: "impersonation_audit_logs",
+                column: "target_user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_impersonation_audit_logs_timestamp",
+                table: "impersonation_audit_logs",
+                column: "timestamp");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_impersonation_audit_logs_was_successful_timestamp",
+                table: "impersonation_audit_logs",
+                columns: new[] { "was_successful", "timestamp" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_impersonation_tokens_expires_at",
+                table: "impersonation_tokens",
+                column: "expires_at");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_impersonation_tokens_is_used_expires_at",
+                table: "impersonation_tokens",
+                columns: new[] { "is_used", "expires_at" });
+
+            migrationBuilder.CreateIndex(
+                name: "ix_impersonation_tokens_token",
+                table: "impersonation_tokens",
+                column: "token",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "ix_invitations_accepted_by_user_id",
                 table: "invitations",
                 column: "accepted_by_user_id");
@@ -648,6 +748,12 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 column: "invoice_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_plan_features_plan_id_feature",
+                table: "plan_features",
+                columns: new[] { "plan_id", "feature" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "ix_role_claims_role_id",
                 table: "role_claims",
                 column: "role_id");
@@ -656,6 +762,12 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 name: "RoleNameIndex",
                 table: "roles",
                 column: "normalized_name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_subscription_plans_tier",
+                table: "subscription_plans",
+                column: "tier",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -742,10 +854,19 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 name: "demo_requests");
 
             migrationBuilder.DropTable(
+                name: "impersonation_audit_logs");
+
+            migrationBuilder.DropTable(
+                name: "impersonation_tokens");
+
+            migrationBuilder.DropTable(
                 name: "invitations");
 
             migrationBuilder.DropTable(
                 name: "payments");
+
+            migrationBuilder.DropTable(
+                name: "plan_features");
 
             migrationBuilder.DropTable(
                 name: "role_claims");

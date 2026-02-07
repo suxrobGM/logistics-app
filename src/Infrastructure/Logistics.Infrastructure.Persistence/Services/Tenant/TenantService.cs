@@ -131,9 +131,15 @@ internal class TenantService(
 
     private void CheckSubscription(Tenant? tenant)
     {
-        if (tenant?.Subscription is null || ShouldBypassSubscriptionCheck())
+        if (tenant is null || !tenant.IsSubscriptionRequired || ShouldBypassSubscriptionCheck())
         {
             return;
+        }
+
+        if (tenant.Subscription is null)
+        {
+            throw new SubscriptionExpiredException(
+                $"Tenant '{tenant.Name}' does not have a subscription.");
         }
 
         var status = tenant.Subscription.Status;

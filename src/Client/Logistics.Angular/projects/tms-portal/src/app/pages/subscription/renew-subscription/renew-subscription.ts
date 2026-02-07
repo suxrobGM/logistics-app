@@ -36,15 +36,16 @@ export class RenewSubscriptionComponent {
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
 
-  protected readonly employeeCount = signal(0);
+  protected readonly truckCount = signal(0);
   protected readonly subscription = signal<SubscriptionDto | null>(null);
   protected readonly isLoading = signal(false);
+  protected readonly Labels = Labels;
 
   constructor() {
     effect(() => {
       const tenantData = this.tenantService.tenantData();
       this.subscription.set(tenantData?.subscription ?? null);
-      this.employeeCount.set(tenantData?.employeeCount ?? 0);
+      this.truckCount.set(tenantData?.truckCount ?? 0);
     });
   }
 
@@ -63,7 +64,9 @@ export class RenewSubscriptionComponent {
   }
 
   calcTotalSubscriptionCost(): number {
-    return (this.subscription()?.plan?.price ?? 0) * this.employeeCount();
+    const baseFee = this.subscription()?.plan?.price ?? 0;
+    const perTruckFee = this.subscription()?.plan?.perTruckPrice ?? 0;
+    return baseFee + perTruckFee * this.truckCount();
   }
 
   confirmRenewSubscription(): void {

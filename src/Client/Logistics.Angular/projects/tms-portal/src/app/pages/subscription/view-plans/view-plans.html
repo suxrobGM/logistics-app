@@ -1,28 +1,60 @@
-<h1 class="text-center">View subscription plans</h1>
+<ui-page-header
+  title="Subscription Plans"
+  subtitle="Choose the plan that fits your fleet. All plans include a 30-day free trial."
+  [centered]="true"
+  [showAddButton]="false"
+/>
 
-@for (subscriptionPlan of subscriptionPlans(); track subscriptionPlan.id) {
-  <div class="flex flex-col gap-2">
-    <div class="col-span-6">
-      <p-card header="{{ subscriptionPlan.name }}">
-        <div class="grid grid-cols-12">
-          <div class="col-span-6 font-bold">Price per Employee:</div>
-          <div class="col-span-6">{{ subscriptionPlan.price | currency }}</div>
-
-          <div class="col-span-6 font-bold">Billing Cycle:</div>
-          <div class="col-span-6">Monthly</div>
-
-          <div class="col-span-6 font-bold">Description:</div>
-          <div class="col-span-6">{{ subscriptionPlan.description }}</div>
+<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+  @for (plan of subscriptionPlans(); track plan.id) {
+    <p-card>
+      <ng-template #header>
+        <div class="flex flex-col items-center gap-2 p-4 pb-0">
+          <p-tag [severity]="getTierSeverity(plan)" [value]="Labels.planTierLabel(plan.tier!)" />
+          <h2 class="m-0">{{ plan.name }}</h2>
+          <p class="text-secondary m-0 text-center">{{ plan.description }}</p>
         </div>
+      </ng-template>
 
-        <ng-template #footer>
-          @if (isCurrentPlan(subscriptionPlan)) {
-            <p-button label="Current Plan" icon="pi pi-check" disabled />
+      <!-- Pricing -->
+      <div class="mb-4 flex flex-col items-center gap-1">
+        <div class="text-3xl font-bold">
+          {{ plan.price | currency }}<span class="text-base font-normal">/mo</span>
+        </div>
+        <div class="text-secondary">+ {{ plan.perTruckPrice | currency }} per truck / mo</div>
+        <div class="text-secondary text-sm">{{ getMaxTrucksLabel(plan) }}</div>
+        @if (plan.annualDiscountPercent) {
+          <div class="text-sm font-medium text-green-600">
+            Save {{ plan.annualDiscountPercent }}% with annual billing
+          </div>
+        }
+      </div>
+
+      <!-- Feature list -->
+      <div class="flex flex-col gap-1">
+        <div class="mb-1 font-bold">Features:</div>
+        @for (feature of allFeatures; track feature) {
+          <div class="flex items-center gap-2">
+            @if (planHasFeature(plan, feature)) {
+              <i class="pi pi-check-circle text-green-500"></i>
+              <span>{{ getFeatureLabel(feature) }}</span>
+            } @else {
+              <i class="pi pi-minus-circle text-gray-300"></i>
+              <span class="text-gray-400">{{ getFeatureLabel(feature) }}</span>
+            }
+          </div>
+        }
+      </div>
+
+      <ng-template #footer>
+        <div class="flex justify-center">
+          @if (isCurrentPlan(plan)) {
+            <p-button label="Current Plan" icon="pi pi-check" disabled class="w-full" />
           } @else {
-            <p-button label="Select Plan" icon="pi pi-credit-card" />
+            <p-button label="Select Plan" icon="pi pi-credit-card" class="w-full" />
           }
-        </ng-template>
-      </p-card>
-    </div>
-  </div>
-}
+        </div>
+      </ng-template>
+    </p-card>
+  }
+</div>

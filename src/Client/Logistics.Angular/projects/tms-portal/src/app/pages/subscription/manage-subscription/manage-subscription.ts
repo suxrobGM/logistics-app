@@ -38,16 +38,17 @@ export class ManageSubscriptionComponent {
   private readonly router = inject(Router);
 
   protected readonly subscription: SubscriptionDto | null;
-  protected readonly employeeCount: number;
+  protected readonly truckCount: number;
   protected readonly isLoading = signal(false);
   protected readonly isCancelled = signal(false);
   protected readonly hasSubscription: boolean;
+  protected readonly Labels = Labels;
 
   constructor() {
     const tenantData = this.tenantService.getTenantData();
     this.subscription = tenantData?.subscription ?? null;
     this.hasSubscription = this.subscription != null;
-    this.employeeCount = tenantData?.employeeCount ?? 0;
+    this.truckCount = tenantData?.truckCount ?? 0;
   }
 
   getSubStatusSeverity(): SeverityLevel {
@@ -100,6 +101,8 @@ export class ManageSubscriptionComponent {
   }
 
   calcTotalSubscriptionCost(subscription: SubscriptionDto): number {
-    return (subscription.plan?.price ?? 0) * this.employeeCount;
+    const baseFee = subscription.plan?.price ?? 0;
+    const perTruckFee = subscription.plan?.perTruckPrice ?? 0;
+    return baseFee + perTruckFee * this.truckCount;
   }
 }

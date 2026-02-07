@@ -13,7 +13,7 @@
   </div>
 
   <div class="mb-4 grid grid-cols-12 gap-4">
-    <div class="col-span-12">
+    <div class="col-span-12 md:col-span-6">
       <ui-labeled-field label="Description">
         <textarea
           pInputTextarea
@@ -24,22 +24,66 @@
         ></textarea>
       </ui-labeled-field>
     </div>
+
+    <div class="col-span-12 md:col-span-6">
+      <ui-labeled-field label="Plan Tier" [required]="true">
+        <p-select
+          formControlName="tier"
+          [options]="tierOptions"
+          placeholder="Select tier"
+          class="w-full"
+        />
+      </ui-labeled-field>
+    </div>
   </div>
 
   <div class="mb-4 grid grid-cols-12 gap-4">
-    <div class="col-span-12 md:col-span-4">
-      <ui-labeled-field label="Price" [required]="true">
+    <div class="col-span-12 md:col-span-3">
+      <ui-labeled-field label="Base Monthly Fee" [required]="true">
         <ui-currency-input [control]="form.controls.price" placeholder="0.00" />
       </ui-labeled-field>
     </div>
 
+    <div class="col-span-12 md:col-span-3">
+      <ui-labeled-field label="Per Truck Fee" [required]="true">
+        <ui-currency-input [control]="form.controls.perTruckPrice" placeholder="0.00" />
+      </ui-labeled-field>
+    </div>
+
+    <div class="col-span-12 md:col-span-3">
+      <ui-labeled-field label="Max Trucks">
+        <p-inputNumber
+          formControlName="maxTrucks"
+          [min]="1"
+          [showButtons]="true"
+          placeholder="Unlimited"
+          class="w-full"
+        />
+      </ui-labeled-field>
+    </div>
+
+    <div class="col-span-12 md:col-span-3">
+      <ui-labeled-field label="Annual Discount %">
+        <p-inputNumber
+          formControlName="annualDiscountPercent"
+          [min]="0"
+          [max]="100"
+          suffix="%"
+          [showButtons]="true"
+          class="w-full"
+        />
+      </ui-labeled-field>
+    </div>
+  </div>
+
+  <div class="mb-4 grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-4">
       <ui-labeled-field label="Billing Interval" [required]="true">
         <p-select
           formControlName="interval"
           [options]="intervalOptions"
           placeholder="Select interval"
-          styleClass="w-full"
+          class="w-full"
         />
       </ui-labeled-field>
     </div>
@@ -51,20 +95,18 @@
           [min]="1"
           [max]="12"
           [showButtons]="true"
-          styleClass="w-full"
+          class="w-full"
         />
       </ui-labeled-field>
     </div>
-  </div>
 
-  <div class="mb-4 grid grid-cols-12 gap-4">
-    <div class="col-span-12 md:col-span-6">
+    <div class="col-span-12 md:col-span-4">
       <ui-labeled-field label="Trial Period">
         <p-select
           formControlName="trialPeriod"
           [options]="trialPeriodOptions"
           placeholder="Select trial period"
-          styleClass="w-full"
+          class="w-full"
         />
       </ui-labeled-field>
     </div>

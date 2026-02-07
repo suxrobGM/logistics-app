@@ -6,5 +6,6 @@ export interface FeatureStatusDto {
   feature?: TenantFeature;
   isAdminLocked?: boolean;
   isEnabled?: boolean;
+  isIncludedInPlan?: boolean;
   name?: string | null;
 }

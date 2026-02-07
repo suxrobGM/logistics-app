@@ -2,7 +2,7 @@ import { Component, effect, inject, input, output } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
-import type { BillingInterval, TrialPeriod } from "@logistics/shared/api";
+import type { BillingInterval, PlanTier, TrialPeriod } from "@logistics/shared/api";
 import { CurrencyInput, LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -14,11 +14,21 @@ import { TextareaModule } from "primeng/textarea";
 export interface PlanFormValue {
   name: string;
   description: string;
+  tier: PlanTier;
   price: number;
+  perTruckPrice: number;
+  maxTrucks: number | null;
+  annualDiscountPercent: number;
   interval: BillingInterval;
   intervalCount: number;
   trialPeriod: TrialPeriod;
 }
+
+const TIER_OPTIONS = [
+  { label: "Starter", value: "starter" },
+  { label: "Professional", value: "professional" },
+  { label: "Enterprise", value: "enterprise" },
+];
 
 const INTERVAL_OPTIONS = [
   { label: "Day", value: "day" },
@@ -61,14 +71,28 @@ export class PlanForm {
   public readonly save = output<PlanFormValue>();
   public readonly remove = output<void>();
 
+  protected readonly tierOptions = TIER_OPTIONS;
   protected readonly intervalOptions = INTERVAL_OPTIONS;
   protected readonly trialPeriodOptions = TRIAL_PERIOD_OPTIONS;
 
   protected readonly form = new FormGroup({
     name: new FormControl("", { validators: Validators.required, nonNullable: true }),
     description: new FormControl("", { nonNullable: true }),
+    tier: new FormControl<PlanTier>("starter", {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
     price: new FormControl<number>(0, {
       validators: [Validators.required, Validators.min(0)],
+      nonNullable: true,
+    }),
+    perTruckPrice: new FormControl<number>(0, {
+      validators: [Validators.required, Validators.min(0)],
+      nonNullable: true,
+    }),
+    maxTrucks: new FormControl<number | null>(null),
+    annualDiscountPercent: new FormControl<number>(0, {
+      validators: [Validators.min(0), Validators.max(100)],
       nonNullable: true,
     }),
     interval: new FormControl<BillingInterval>("month", {

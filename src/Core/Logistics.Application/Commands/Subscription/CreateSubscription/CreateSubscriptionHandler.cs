@@ -30,7 +30,7 @@ internal sealed class CreateSubscriptionHandler : IAppRequestHandler<CreateSubsc
         CreateSubscriptionCommand req, CancellationToken ct)
     {
         var tenant = await _tenantUow.SetCurrentTenantByIdAsync(req.TenantId);
-        var tenantEmployeeCount = await _tenantUow.Repository<Employee>().CountAsync(ct: ct);
+        var truckCount = await _tenantUow.Repository<Truck>().CountAsync(ct: ct);
 
         if (tenant.StripeCustomerId is null)
         {
@@ -46,13 +46,13 @@ internal sealed class CreateSubscriptionHandler : IAppRequestHandler<CreateSubsc
 
         var subscription = Subscription.CreateTrial(tenant, subscriptionPlan);
         var stripeSubscription =
-            await _stripeService.CreateSubscriptionAsync(subscriptionPlan, tenant, tenantEmployeeCount, true);
+            await _stripeService.CreateSubscriptionAsync(subscriptionPlan, tenant, truckCount, true);
         subscription.StripeSubscriptionId = stripeSubscription.Id;
 
         await _masterUow.Repository<Subscription>().AddAsync(subscription, ct);
         await _masterUow.SaveChangesAsync(ct);
-        _logger.LogInformation("Created Subscription for tenant {TenantId}, employee count: {EmployeeCount}", tenant.Id,
-            tenantEmployeeCount);
+        _logger.LogInformation("Created Subscription for tenant {TenantId}, truck count: {TruckCount}", tenant.Id,
+            truckCount);
         return Result.Ok();
     }
 

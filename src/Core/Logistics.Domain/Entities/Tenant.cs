@@ -29,6 +29,12 @@ public class Tenant : Entity, IMasterEntity
     /// </summary>
     public TenantSettings Settings { get; set; } = new();
 
+    /// <summary>
+    ///     Whether this tenant requires an active subscription to access the platform.
+    ///     Set to false for internal/test tenants.
+    /// </summary>
+    public bool IsSubscriptionRequired { get; set; } = true;
+
     public virtual Subscription? Subscription { get; set; }
 
     /// <summary>

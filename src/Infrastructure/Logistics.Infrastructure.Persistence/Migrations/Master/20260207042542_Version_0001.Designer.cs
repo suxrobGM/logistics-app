@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Persistence.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20260203110204_Version_0002")]
-    partial class Version_0002
+    [Migration("20260207042542_Version_0001")]
+    partial class Version_0001
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -818,6 +818,32 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.ToTable("payments", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.PlanFeature", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Feature")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("feature");
+
+                    b.Property<Guid>("PlanId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("plan_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_plan_features");
+
+                    b.HasIndex("PlanId", "Feature")
+                        .IsUnique()
+                        .HasDatabaseName("ix_plan_features_plan_id_feature");
+
+                    b.ToTable("plan_features", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Subscription", b =>
                 {
                     b.Property<Guid>("Id")
@@ -882,6 +908,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<decimal>("AnnualDiscountPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)")
+                        .HasColumnName("annual_discount_percent");
+
                     b.Property<DateTime?>("BillingCycleAnchor")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("billing_cycle_anchor");
@@ -910,10 +941,18 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnType("integer")
                         .HasColumnName("interval_count");
 
+                    b.Property<int?>("MaxTrucks")
+                        .HasColumnType("integer")
+                        .HasColumnName("max_trucks");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("name");
+
+                    b.Property<string>("StripePerTruckPriceId")
+                        .HasColumnType("text")
+                        .HasColumnName("stripe_per_truck_price_id");
 
                     b.Property<string>("StripePriceId")
                         .HasColumnType("text")
@@ -922,6 +961,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<string>("StripeProductId")
                         .HasColumnType("text")
                         .HasColumnName("stripe_product_id");
+
+                    b.Property<string>("Tier")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("tier");
 
                     b.Property<string>("TrialPeriod")
                         .IsRequired()
@@ -936,6 +980,22 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("LastModifiedBy");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "PerTruckPrice", "Logistics.Domain.Entities.SubscriptionPlan.PerTruckPrice#Money", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("per_truck_price_amount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("per_truck_price_currency");
+                        });
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Price", "Logistics.Domain.Entities.SubscriptionPlan.Price#Money", b1 =>
                         {
@@ -955,6 +1015,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
                     b.HasKey("Id")
                         .HasName("pk_subscription_plans");
+
+                    b.HasIndex("Tier")
+                        .IsUnique()
+                        .HasDatabaseName("ix_subscription_plans_tier");
 
                     b.ToTable("subscription_plans", (string)null);
                 });
@@ -992,6 +1056,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<string>("DotNumber")
                         .HasColumnType("text")
                         .HasColumnName("dot_number");
+
+                    b.Property<bool>("IsSubscriptionRequired")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_subscription_required");
 
                     b.Property<string>("LogoPath")
                         .HasColumnType("text")
@@ -1583,6 +1651,18 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasConstraintName("fk_payments_invoices_invoice_id");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.PlanFeature", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.SubscriptionPlan", "Plan")
+                        .WithMany("Features")
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_plan_features_subscription_plan_plan_id");
+
+                    b.Navigation("Plan");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Subscription", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.SubscriptionPlan", "Plan")
@@ -1718,6 +1798,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
             modelBuilder.Entity("Logistics.Domain.Entities.SubscriptionPlan", b =>
                 {
+                    b.Navigation("Features");
+
                     b.Navigation("Subscriptions");
                 });
 

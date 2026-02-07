@@ -12,13 +12,16 @@ internal sealed class RenewSubscriptionHandler : IAppRequestHandler<RenewSubscri
     private readonly ILogger<RenewSubscriptionHandler> _logger;
     private readonly IMasterUnitOfWork _masterUow;
     private readonly IStripeService _stripeService;
+    private readonly ITenantUnitOfWork _tenantUow;
 
     public RenewSubscriptionHandler(
         IMasterUnitOfWork masterUow,
+        ITenantUnitOfWork tenantUow,
         IStripeService stripeService,
         ILogger<RenewSubscriptionHandler> logger)
     {
         _masterUow = masterUow;
+        _tenantUow = tenantUow;
         _stripeService = stripeService;
         _logger = logger;
     }
@@ -33,13 +36,14 @@ internal sealed class RenewSubscriptionHandler : IAppRequestHandler<RenewSubscri
             return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
         }
 
-        var employeeCount = await _masterUow.Repository<User>().CountAsync(i => i.TenantId == subscription.TenantId);
+        await _tenantUow.SetCurrentTenantByIdAsync(subscription.TenantId);
+        var truckCount = await _tenantUow.Repository<Truck>().CountAsync(ct: ct);
 
         _logger.LogInformation("Renewing stripe subscription {StripeSubscriptionId}",
             subscription.StripeSubscriptionId);
         var stripeSubscription =
             await _stripeService.RenewSubscriptionAsync(subscription, subscription.Plan, subscription.Tenant,
-                employeeCount);
+                truckCount);
         subscription.StripeSubscriptionId = stripeSubscription.Id;
         subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
         subscription.StartDate = stripeSubscription.StartDate;

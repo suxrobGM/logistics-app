@@ -71,11 +71,13 @@ internal class StripeService : IStripeService
     public async Task<StripeCustomer> CreateCustomerAsync(Tenant tenant)
     {
         // ReSharper disable once UseObjectOrCollectionInitializer
-        var options = new CustomerCreateOptions();
-        options.Email = tenant.BillingEmail;
-        options.Name = tenant.CompanyName;
-        options.Address = tenant.CompanyAddress.ToStripeAddressOptions();
-        options.Metadata = new Dictionary<string, string> { { StripeMetadataKeys.TenantId, tenant.Id.ToString() } };
+        var options = new CustomerCreateOptions
+        {
+            Email = tenant.BillingEmail,
+            Name = tenant.CompanyName,
+            Address = tenant.CompanyAddress?.ToStripeAddressOptions(),
+            Metadata = new Dictionary<string, string> { { StripeMetadataKeys.TenantId, tenant.Id.ToString() } }
+        };
 
         var customer = await new CustomerService().CreateAsync(options);
         logger.LogInformation("Created Stripe customer for tenant {TenantId}", tenant.Id);
@@ -90,11 +92,13 @@ internal class StripeService : IStripeService
         }
 
         // ReSharper disable once UseObjectOrCollectionInitializer
-        var options = new CustomerUpdateOptions();
-        options.Email = tenant.BillingEmail;
-        options.Name = tenant.CompanyName;
-        options.Address = tenant.CompanyAddress.ToStripeAddressOptions();
-        options.Metadata = new Dictionary<string, string> { { StripeMetadataKeys.TenantId, tenant.Id.ToString() } };
+        var options = new CustomerUpdateOptions
+        {
+            Email = tenant.BillingEmail,
+            Name = tenant.CompanyName,
+            Address = tenant.CompanyAddress?.ToStripeAddressOptions(),
+            Metadata = new Dictionary<string, string> { { StripeMetadataKeys.TenantId, tenant.Id.ToString() } }
+        };
 
         return new CustomerService().UpdateAsync(tenant.StripeCustomerId, options);
     }
@@ -110,7 +114,7 @@ internal class StripeService : IStripeService
     #region Subscription API
 
     public async Task<StripeSubscription> CreateSubscriptionAsync(SubscriptionPlan plan, Tenant tenant,
-        int employeeCount, bool trial = false)
+        int truckCount, bool trial = false)
     {
         if (tenant.StripeCustomerId is null)
         {
@@ -118,23 +122,30 @@ internal class StripeService : IStripeService
         }
 
         // ReSharper disable once UseObjectOrCollectionInitializer
-        var options = new SubscriptionCreateOptions();
-        options.Customer = tenant.StripeCustomerId;
-        options.Items =
-        [
-            new SubscriptionItemOptions
-            {
-                Price = plan.StripePriceId, // Store Stripe Price ID in SubscriptionPlan
-                Quantity = employeeCount
-            }
-        ];
-        options.Metadata = new Dictionary<string, string>
+        var options = new SubscriptionCreateOptions
         {
-            { StripeMetadataKeys.TenantId, tenant.Id.ToString() },
-            { StripeMetadataKeys.PlanId, plan.Id.ToString() }
-        };
+            Customer = tenant.StripeCustomerId,
+            Items =
+            [
+                new SubscriptionItemOptions
+                {
+                    Price = plan.StripePriceId, // Base monthly fee
+                    Quantity = 1
+                },
+                new SubscriptionItemOptions
+                {
+                    Price = plan.StripePerTruckPriceId, // Per-truck fee
+                    Quantity = truckCount
+                }
+            ],
+            Metadata = new Dictionary<string, string>
+            {
+                { StripeMetadataKeys.TenantId, tenant.Id.ToString() },
+                { StripeMetadataKeys.PlanId, plan.Id.ToString() }
+            },
 
-        options.BillingCycleAnchor = plan.BillingCycleAnchor;
+            BillingCycleAnchor = plan.BillingCycleAnchor
+        };
 
         if (trial)
         {
@@ -176,14 +187,14 @@ internal class StripeService : IStripeService
         return stripeSubscription;
     }
 
-    public async Task<SubscriptionItem> UpdateSubscriptionQuantityAsync(string stripeSubscriptionId, int employeeCount)
+    public async Task<SubscriptionItem> UpdateSubscriptionQuantityAsync(string stripeSubscriptionId, int truckCount)
     {
         var subscription = await new SubscriptionService().GetAsync(stripeSubscriptionId);
-        var item = subscription.Items.Data[0]; // Assuming single item per subscription
-        var options = new SubscriptionItemUpdateOptions { Quantity = employeeCount };
+        var item = subscription.Items.Data.FirstOrDefault(i => i.Quantity != 1) ?? subscription.Items.Data.Last();
+        var options = new SubscriptionItemUpdateOptions { Quantity = truckCount };
         var stripeSubscriptionItem = await new SubscriptionItemService().UpdateAsync(item.Id, options);
-        logger.LogInformation("Updated Stripe subscription {StripeSubscriptionId} with new quantity {EmployeeCount}",
-            stripeSubscriptionId, employeeCount);
+        logger.LogInformation("Updated Stripe subscription {StripeSubscriptionId} with new truck count {TruckCount}",
+            stripeSubscriptionId, truckCount);
         return stripeSubscriptionItem;
     }
 
@@ -191,7 +202,7 @@ internal class StripeService : IStripeService
         Subscription? subEntity,
         SubscriptionPlan plan,
         Tenant tenant,
-        int employeeCount)
+        int truckCount)
     {
         if (string.IsNullOrEmpty(tenant.StripeCustomerId))
         {
@@ -205,7 +216,7 @@ internal class StripeService : IStripeService
         if (subEntity is null || string.IsNullOrEmpty(subEntity.StripeSubscriptionId))
         {
             logger.LogInformation("Tenant {TenantId} is creating first subscription", tenant.Id);
-            return await CreateSubscriptionAsync(plan, tenant, employeeCount);
+            return await CreateSubscriptionAsync(plan, tenant, truckCount);
         }
 
         var stripeSub = await subSvc.GetAsync(subEntity.StripeSubscriptionId);
@@ -228,7 +239,7 @@ internal class StripeService : IStripeService
         if (stripeSub.Status is "canceled" or "incomplete_expired")
         {
             logger.LogInformation("Subscription {SubId} is canceled, creating a new one", stripeSub.Id);
-            return await CreateSubscriptionAsync(plan, tenant, employeeCount);
+            return await CreateSubscriptionAsync(plan, tenant, truckCount);
         }
 
         // still fully active -> just bill immediately
@@ -251,7 +262,7 @@ internal class StripeService : IStripeService
 
     #region Subscription Plan API
 
-    public async Task<(Product Product, Price Price)> CreateSubscriptionPlanAsync(SubscriptionPlan plan)
+    public async Task<(Product Product, Price BasePrice, Price PerTruckPrice)> CreateSubscriptionPlanAsync(SubscriptionPlan plan)
     {
         // 1. First create the Product
         var productService = new ProductService();
@@ -267,9 +278,9 @@ internal class StripeService : IStripeService
 
         logger.LogInformation("Created Stripe product for plan {PlanId}", plan.Id);
 
-        // 2. Create Price linked to the Product
+        // 2. Create base price linked to the Product
         var priceService = new PriceService();
-        var price = await priceService.CreateAsync(new PriceCreateOptions
+        var basePrice = await priceService.CreateAsync(new PriceCreateOptions
         {
             Product = product.Id,
             UnitAmountDecimal = plan.Price * 100,
@@ -282,31 +293,60 @@ internal class StripeService : IStripeService
             },
             Metadata = new Dictionary<string, string>
             {
-                [StripeMetadataKeys.PlanId] = plan.Id.ToString()
+                [StripeMetadataKeys.PlanId] = plan.Id.ToString(),
+                ["price_type"] = "base"
+            }
+        });
+
+        // 3. Create per-truck price linked to the Product
+        var perTruckPrice = await priceService.CreateAsync(new PriceCreateOptions
+        {
+            Product = product.Id,
+            UnitAmountDecimal = plan.PerTruckPrice * 100,
+            Currency = plan.PerTruckPrice.Currency.ToLower(),
+            Recurring = new PriceRecurringOptions
+            {
+                Interval = plan.Interval.ToString().ToLower(),
+                IntervalCount = plan.IntervalCount,
+                UsageType = "licensed"
+            },
+            Metadata = new Dictionary<string, string>
+            {
+                [StripeMetadataKeys.PlanId] = plan.Id.ToString(),
+                ["price_type"] = "per_truck"
             }
         });
 
         if (plan.BillingCycleAnchor.HasValue)
         {
             var billingCycleAnchorStr = plan.BillingCycleAnchor.Value.ToString("O");
-            await new PriceService().UpdateAsync(price.Id, new PriceUpdateOptions
+            await priceService.UpdateAsync(basePrice.Id, new PriceUpdateOptions
             {
                 Metadata = new Dictionary<string, string>
                 {
-                    [StripeMetadataKeys.BillingCycleAnchor] = billingCycleAnchorStr
+                    [StripeMetadataKeys.BillingCycleAnchor] = billingCycleAnchorStr,
+                    ["price_type"] = "base"
+                }
+            });
+            await priceService.UpdateAsync(perTruckPrice.Id, new PriceUpdateOptions
+            {
+                Metadata = new Dictionary<string, string>
+                {
+                    [StripeMetadataKeys.BillingCycleAnchor] = billingCycleAnchorStr,
+                    ["price_type"] = "per_truck"
                 }
             });
 
             logger.LogInformation(
-                "Updated Stripe price for plan {PlanId} with billing cycle anchor {BillingCycleAnchor}", plan.Id,
+                "Updated Stripe prices for plan {PlanId} with billing cycle anchor {BillingCycleAnchor}", plan.Id,
                 billingCycleAnchorStr);
         }
 
-        logger.LogInformation("Created Stripe price for plan {PlanId}", plan.Id);
-        return (product, price);
+        logger.LogInformation("Created Stripe base price and per-truck price for plan {PlanId}", plan.Id);
+        return (product, basePrice, perTruckPrice);
     }
 
-    public async Task<(Product Product, Price ActivePrice)> UpdateSubscriptionPlanAsync(SubscriptionPlan plan)
+    public async Task<(Product Product, Price ActiveBasePrice, Price ActivePerTruckPrice)> UpdateSubscriptionPlanAsync(SubscriptionPlan plan)
     {
         if (string.IsNullOrEmpty(plan.StripeProductId))
         {
@@ -332,24 +372,25 @@ internal class StripeService : IStripeService
 
         logger.LogInformation("Updated Stripe product for plan {PlanId}", plan.Id);
 
-        // Check if price needs update
         var priceService = new PriceService();
-        var existingPrice = await priceService.GetAsync(plan.StripePriceId);
-        var priceChanged = existingPrice.UnitAmountDecimal != plan.Price * 100;
-        var currencyChanged = !existingPrice.Currency.Equals(plan.Price.Currency, StringComparison.OrdinalIgnoreCase);
+
+        // Check if base price needs update
+        var existingBasePrice = await priceService.GetAsync(plan.StripePriceId);
+        var basePriceChanged = existingBasePrice.UnitAmountDecimal != plan.Price * 100;
+        var baseCurrencyChanged = !existingBasePrice.Currency.Equals(plan.Price.Currency, StringComparison.OrdinalIgnoreCase);
 
         // Check if billing cycle changed
         var billingChanged =
-            !existingPrice.Recurring.Interval.Equals(plan.Interval.ToString(),
+            !existingBasePrice.Recurring.Interval.Equals(plan.Interval.ToString(),
                 StringComparison.CurrentCultureIgnoreCase) ||
-            existingPrice.Recurring.IntervalCount != plan.IntervalCount;
+            existingBasePrice.Recurring.IntervalCount != plan.IntervalCount;
 
-        var activePrice = existingPrice;
+        var activeBasePrice = existingBasePrice;
 
-        // Create a new price if any of the price, currency, or billing cycle has changed
-        if (priceChanged || currencyChanged || billingChanged)
+        // Create a new base price if any of the price, currency, or billing cycle has changed
+        if (basePriceChanged || baseCurrencyChanged || billingChanged)
         {
-            activePrice = await priceService.CreateAsync(new PriceCreateOptions
+            activeBasePrice = await priceService.CreateAsync(new PriceCreateOptions
             {
                 Product = plan.StripeProductId,
                 UnitAmountDecimal = plan.Price * 100,
@@ -362,16 +403,76 @@ internal class StripeService : IStripeService
                 },
                 Metadata = new Dictionary<string, string>
                 {
-                    [StripeMetadataKeys.PlanId] = plan.Id.ToString()
+                    [StripeMetadataKeys.PlanId] = plan.Id.ToString(),
+                    ["price_type"] = "base"
                 }
             });
 
-            // Update the plan's StripePriceId to point to the new price
-            plan.StripePriceId = activePrice.Id;
-            logger.LogInformation("Created new Stripe price for plan {PlanId}", plan.Id);
+            plan.StripePriceId = activeBasePrice.Id;
+            logger.LogInformation("Created new Stripe base price for plan {PlanId}", plan.Id);
         }
 
-        return (product, activePrice);
+        // Check if per-truck price needs update
+        Price activePerTruckPrice;
+
+        if (!string.IsNullOrEmpty(plan.StripePerTruckPriceId))
+        {
+            var existingPerTruckPrice = await priceService.GetAsync(plan.StripePerTruckPriceId);
+            var perTruckPriceChanged = existingPerTruckPrice.UnitAmountDecimal != plan.PerTruckPrice * 100;
+            var perTruckCurrencyChanged = !existingPerTruckPrice.Currency.Equals(plan.PerTruckPrice.Currency, StringComparison.OrdinalIgnoreCase);
+
+            activePerTruckPrice = existingPerTruckPrice;
+
+            if (perTruckPriceChanged || perTruckCurrencyChanged || billingChanged)
+            {
+                activePerTruckPrice = await priceService.CreateAsync(new PriceCreateOptions
+                {
+                    Product = plan.StripeProductId,
+                    UnitAmountDecimal = plan.PerTruckPrice * 100,
+                    Currency = plan.PerTruckPrice.Currency.ToLower(),
+                    Recurring = new PriceRecurringOptions
+                    {
+                        Interval = plan.Interval.ToString().ToLower(),
+                        IntervalCount = plan.IntervalCount,
+                        UsageType = "licensed"
+                    },
+                    Metadata = new Dictionary<string, string>
+                    {
+                        [StripeMetadataKeys.PlanId] = plan.Id.ToString(),
+                        ["price_type"] = "per_truck"
+                    }
+                });
+
+                plan.StripePerTruckPriceId = activePerTruckPrice.Id;
+                logger.LogInformation("Created new Stripe per-truck price for plan {PlanId}", plan.Id);
+            }
+        }
+        else
+        {
+            // No existing per-truck price, create one
+            activePerTruckPrice = await priceService.CreateAsync(new PriceCreateOptions
+            {
+                Product = plan.StripeProductId,
+                UnitAmountDecimal = plan.PerTruckPrice * 100,
+                Currency = plan.PerTruckPrice.Currency.ToLower(),
+                Recurring = new PriceRecurringOptions
+                {
+                    Interval = plan.Interval.ToString().ToLower(),
+                    IntervalCount = plan.IntervalCount,
+                    UsageType = "licensed"
+                },
+                Metadata = new Dictionary<string, string>
+                {
+                    [StripeMetadataKeys.PlanId] = plan.Id.ToString(),
+                    ["price_type"] = "per_truck"
+                }
+            });
+
+            plan.StripePerTruckPriceId = activePerTruckPrice.Id;
+            logger.LogInformation("Created Stripe per-truck price for plan {PlanId}", plan.Id);
+        }
+
+        return (product, activeBasePrice, activePerTruckPrice);
     }
 
     #endregion

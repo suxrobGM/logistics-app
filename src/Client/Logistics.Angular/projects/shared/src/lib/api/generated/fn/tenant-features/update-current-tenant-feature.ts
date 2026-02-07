@@ -7,7 +7,7 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { TenantFeature } from '../../models/tenant-feature';
+import { TenantFeature } from '../../models/tenant-feature';
 import type { UpdateTenantFeatureRequest } from '../../models/update-tenant-feature-request';
 
 export interface UpdateCurrentTenantFeature$Params {

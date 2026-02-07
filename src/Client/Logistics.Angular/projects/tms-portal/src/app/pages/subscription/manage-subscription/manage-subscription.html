@@ -6,16 +6,27 @@
     <div class="col-span-12">
       <p-card header="Current Plan">
         <div class="grid grid-cols-12">
-          <div class="col-span-6 font-bold">Plan Name:</div>
-          <div class="col-span-6">{{ subscription!.plan?.name }}</div>
+          <div class="col-span-6 font-bold">Plan:</div>
+          <div class="col-span-6 flex items-center gap-2">
+            {{ subscription!.plan?.name }}
+            @if (subscription!.plan?.tier) {
+              <p-tag
+                [severity]="Labels.planTierSeverity(subscription!.plan!.tier!)"
+                [value]="Labels.planTierLabel(subscription!.plan!.tier!)"
+              />
+            }
+          </div>
 
-          <div class="col-span-6 font-bold">Price per Employee:</div>
+          <div class="col-span-6 font-bold">Base Monthly Fee:</div>
           <div class="col-span-6">{{ subscription!.plan?.price | currency }}</div>
 
-          <div class="col-span-6 font-bold">Number of Employees:</div>
-          <div class="col-span-6">{{ employeeCount }}</div>
+          <div class="col-span-6 font-bold">Per Truck Fee:</div>
+          <div class="col-span-6">{{ subscription!.plan?.perTruckPrice | currency }} / truck</div>
 
-          <div class="col-span-6 font-bold">Total Price:</div>
+          <div class="col-span-6 font-bold">Number of Trucks:</div>
+          <div class="col-span-6">{{ truckCount }}</div>
+
+          <div class="col-span-6 font-bold">Total Monthly Cost:</div>
           <div class="col-span-6">{{ calcTotalSubscriptionCost(subscription!) | currency }}</div>
 
           @if (subscription!.endDate) {

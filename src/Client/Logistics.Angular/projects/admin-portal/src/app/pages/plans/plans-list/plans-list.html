@@ -38,10 +38,16 @@
             Name
             <p-sortIcon field="Name" />
           </th>
+          <th pSortableColumn="Tier">
+            Tier
+            <p-sortIcon field="Tier" />
+          </th>
           <th pSortableColumn="Price">
-            Price
+            Base Fee
             <p-sortIcon field="Price" />
           </th>
+          <th>Per Truck</th>
+          <th>Max Trucks</th>
           <th>Billing Interval</th>
           <th>Trial Period</th>
           <th class="text-center">Actions</th>
@@ -57,7 +63,15 @@
               }
             </div>
           </td>
-          <td>{{ plan.price | currency }}</td>
+          <td>
+            <p-tag
+              [value]="formatTier(plan.tier)"
+              [severity]="tierSeverity(plan.tier)"
+            />
+          </td>
+          <td>{{ plan.price | currency }}/mo</td>
+          <td>{{ plan.perTruckPrice | currency }}/truck</td>
+          <td>{{ plan.maxTrucks ?? 'Unlimited' }}</td>
           <td>{{ formatInterval(plan.interval, plan.intervalCount) | titlecase }}</td>
           <td>{{ formatTrialPeriod(plan.trialPeriod) }}</td>
           <td class="text-center">
