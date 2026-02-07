@@ -82,7 +82,6 @@ docker compose version
 
 | IDE | Best For |
 |-----|----------|
-| **Visual Studio 2022** | Full .NET development, debugging |
 | **VS Code** | Lightweight, Angular development |
 | **JetBrains Rider** | Cross-platform .NET development |
 | **Android Studio** | Driver mobile app (Kotlin) |

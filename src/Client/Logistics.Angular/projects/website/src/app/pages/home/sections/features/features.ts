@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { SectionContainer, SectionHeader } from "@/shared/components";
+import { IconCircle, SectionContainer, SectionHeader } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
 
 interface Feature {
@@ -11,10 +11,10 @@ interface Feature {
 @Component({
   selector: "web-features",
   templateUrl: "./features.html",
-  imports: [SectionContainer, SectionHeader, ScrollAnimateDirective],
+  imports: [SectionContainer, SectionHeader, IconCircle, ScrollAnimateDirective],
 })
 export class Features {
-  protected readonly features: Feature[] = [
+  protected readonly highlightedFeatures: Feature[] = [
     {
       icon: "pi-box",
       title: "Load Management",
@@ -22,16 +22,31 @@ export class Features {
         "Create, assign, and track shipments from pickup to delivery. Manage stops, cargo details, and special instructions.",
     },
     {
-      icon: "pi-directions",
-      title: "Trip Planning & Route Optimization",
-      description:
-        "Organize loads into optimized trips with multi-stop routing, driver assignment, and automatic conflict detection.",
-    },
-    {
       icon: "pi-map-marker",
       title: "Real-Time GPS Tracking",
       description:
         "Track your entire fleet on a live map with driver locations, route visualization, and geofencing alerts via SignalR.",
+    },
+    {
+      icon: "pi-credit-card",
+      title: "Invoicing & Payments",
+      description:
+        "Automated invoicing with Stripe and Stripe Connect for direct bank deposits. Shareable payment links and partial payments.",
+    },
+    {
+      icon: "pi-mobile",
+      title: "Driver Mobile App",
+      description:
+        "Native Kotlin Multiplatform app for assignments, POD capture, navigation, inspections, and real-time communication.",
+    },
+  ];
+
+  protected readonly moreFeatures: Feature[] = [
+    {
+      icon: "pi-directions",
+      title: "Trip Planning & Route Optimization",
+      description:
+        "Organize loads into optimized trips with multi-stop routing, driver assignment, and automatic conflict detection.",
     },
     {
       icon: "pi-truck",
@@ -44,12 +59,6 @@ export class Features {
       title: "Load Board Integration",
       description:
         "Search freight across DAT, Truckstop, and 123Loadboard from one interface. Book loads and post available trucks.",
-    },
-    {
-      icon: "pi-credit-card",
-      title: "Invoicing & Payments",
-      description:
-        "Automated invoicing with Stripe and Stripe Connect for direct bank deposits. Shareable payment links and partial payments.",
     },
     {
       icon: "pi-wallet",
@@ -80,12 +89,6 @@ export class Features {
       title: "Reports & Analytics",
       description:
         "Driver performance, revenue, fleet utilization, and operational dashboards. Export data for informed decision-making.",
-    },
-    {
-      icon: "pi-mobile",
-      title: "Driver Mobile App",
-      description:
-        "Native Kotlin Multiplatform app for assignments, POD capture, navigation, inspections, and real-time communication.",
     },
     {
       icon: "pi-user",
