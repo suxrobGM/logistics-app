@@ -7,22 +7,13 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateTenantHandler : IAppRequestHandler<UpdateTenantCommand, Result>
+internal sealed class UpdateTenantHandler(
+    IMasterUnitOfWork masterUow,
+    IStripeCustomerService stripeCustomerService) : IAppRequestHandler<UpdateTenantCommand, Result>
 {
-    private readonly IMasterUnitOfWork _masterUow;
-    private readonly IStripeService _stripeService;
-
-    public UpdateTenantHandler(
-        IMasterUnitOfWork masterUow,
-        IStripeService stripeService)
-    {
-        _masterUow = masterUow;
-        _stripeService = stripeService;
-    }
-
     public async Task<Result> Handle(UpdateTenantCommand req, CancellationToken ct)
     {
-        var tenant = await _masterUow.Repository<Tenant>().GetByIdAsync(req.Id);
+        var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(req.Id, ct);
 
         if (tenant is null)
         {
@@ -40,11 +31,11 @@ internal sealed class UpdateTenantHandler : IAppRequestHandler<UpdateTenantComma
 
         if (!string.IsNullOrEmpty(tenant.StripeCustomerId))
         {
-            await _stripeService.UpdateCustomerAsync(tenant);
+            await stripeCustomerService.UpdateCustomerAsync(tenant);
         }
 
-        _masterUow.Repository<Tenant>().Update(tenant);
-        await _masterUow.SaveChangesAsync();
+        masterUow.Repository<Tenant>().Update(tenant);
+        await masterUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

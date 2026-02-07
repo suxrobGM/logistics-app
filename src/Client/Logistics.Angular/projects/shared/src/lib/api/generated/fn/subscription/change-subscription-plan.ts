@@ -7,18 +7,17 @@ import { filter, map } from 'rxjs/operators';
 import type { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import type { TenantFeature } from '../../models/tenant-feature';
-import type { UpdateTenantFeatureRequest } from '../../models/update-tenant-feature-request';
+import type { ChangeSubscriptionPlanCommand } from '../../models/change-subscription-plan-command';
 
-export interface UpdateCurrentTenantFeature$Params {
-  feature: TenantFeature;
-      body?: UpdateTenantFeatureRequest
+export interface ChangeSubscriptionPlan$Params {
+  id: string;
+      body?: ChangeSubscriptionPlanCommand
 }
 
-export function updateCurrentTenantFeature(http: HttpClient, rootUrl: string, params: UpdateCurrentTenantFeature$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, updateCurrentTenantFeature.PATH, 'put');
+export function changeSubscriptionPlan(http: HttpClient, rootUrl: string, params: ChangeSubscriptionPlan$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, changeSubscriptionPlan.PATH, 'put');
   if (params) {
-    rb.path('feature', params.feature, {});
+    rb.path('id', params.id, {});
     rb.body(params.body, 'application/*+json');
   }
 
@@ -32,4 +31,4 @@ export function updateCurrentTenantFeature(http: HttpClient, rootUrl: string, pa
   );
 }
 
-updateCurrentTenantFeature.PATH = '/tenantfeatures/{feature}';
+changeSubscriptionPlan.PATH = '/subscriptions/{id}/change-plan';

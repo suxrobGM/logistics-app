@@ -1,11 +1,17 @@
 import { CurrencyPipe } from "@angular/common";
 import { Component, type OnInit, inject, signal } from "@angular/core";
-import { Api, getSubscriptionPlans } from "@logistics/shared/api";
+import { Router } from "@angular/router";
+import {
+  Api,
+  changeSubscriptionPlan,
+  createSubscription,
+  getSubscriptionPlans,
+} from "@logistics/shared/api";
 import type { SubscriptionPlanDto, TenantFeature } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
-import { TenantService } from "@/core/services";
+import { TenantService, ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import { Labels, type SeverityLevel } from "@/shared/utils";
 
@@ -61,8 +67,11 @@ const allFeatures: TenantFeature[] = [
 export class ViewPlansComponent implements OnInit {
   private readonly api = inject(Api);
   private readonly tenantService = inject(TenantService);
+  private readonly toastService = inject(ToastService);
+  private readonly router = inject(Router);
 
   protected readonly subscriptionPlans = signal<SubscriptionPlanDto[]>([]);
+  protected readonly isLoading = signal(false);
   protected readonly allFeatures = allFeatures;
   protected readonly Labels = Labels;
 
@@ -97,5 +106,45 @@ export class ViewPlansComponent implements OnInit {
 
   protected getMaxTrucksLabel(plan: SubscriptionPlanDto): string {
     return plan.maxTrucks ? `Up to ${plan.maxTrucks} trucks` : "Unlimited trucks";
+  }
+
+  protected selectPlan(plan: SubscriptionPlanDto): void {
+    const subscription = this.tenantService.getTenantData()?.subscription;
+    const hasSubscription = subscription != null;
+
+    const message = hasSubscription
+      ? `Are you sure you want to switch to the ${plan.name} plan? Your billing will be prorated.`
+      : `Are you sure you want to subscribe to the ${plan.name} plan? You'll start with a free trial.`;
+
+    this.toastService.confirm({
+      message,
+      header: hasSubscription ? "Change Plan" : "Subscribe to Plan",
+      icon: "pi pi-credit-card",
+      acceptLabel: hasSubscription ? "Yes, Switch" : "Yes, Subscribe",
+      rejectLabel: "Cancel",
+      accept: async () => {
+        this.isLoading.set(true);
+
+        if (hasSubscription) {
+          await this.api.invoke(changeSubscriptionPlan, {
+            id: subscription!.id as string,
+            body: { newPlanId: plan.id ?? undefined },
+          });
+        } else {
+          const tenantId = this.tenantService.getTenantId() ?? undefined;
+          await this.api.invoke(createSubscription, {
+            body: { tenantId, planId: plan.id ?? undefined },
+          });
+        }
+
+        this.toastService.showSuccess(
+          hasSubscription ? "Plan changed successfully" : "Subscription created successfully",
+        );
+        this.tenantService.refetchTenantData();
+        this.router.navigateByUrl("/subscription/manage");
+
+        this.isLoading.set(false);
+      },
+    });
   }
 }

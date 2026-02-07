@@ -8,26 +8,19 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class UpdateSubscriptionPlanHandler : IAppRequestHandler<UpdateSubscriptionPlanCommand, Result>
+internal sealed class UpdateSubscriptionPlanHandler(
+    IMasterUnitOfWork masterUow,
+    IStripeSubscriptionService stripeSubscriptionService,
+    ILogger<UpdateSubscriptionPlanHandler> logger) : IAppRequestHandler<UpdateSubscriptionPlanCommand, Result>
 {
-    private readonly ILogger<UpdateSubscriptionPlanHandler> _logger;
-    private readonly IMasterUnitOfWork _masterUow;
-    private readonly IStripeService _stripeService;
-
-    public UpdateSubscriptionPlanHandler(
-        IMasterUnitOfWork masterUow,
-        IStripeService stripeService,
-        ILogger<UpdateSubscriptionPlanHandler> logger)
-    {
-        _masterUow = masterUow;
-        _stripeService = stripeService;
-        _logger = logger;
-    }
+    private readonly ILogger<UpdateSubscriptionPlanHandler> logger = logger;
+    private readonly IMasterUnitOfWork masterUow = masterUow;
+    private readonly IStripeSubscriptionService stripeSubscriptionService = stripeSubscriptionService;
 
     public async Task<Result> Handle(
         UpdateSubscriptionPlanCommand req, CancellationToken ct)
     {
-        var subscriptionPlan = await _masterUow.Repository<SubscriptionPlan>().GetByIdAsync(req.Id);
+        var subscriptionPlan = await masterUow.Repository<SubscriptionPlan>().GetByIdAsync(req.Id, ct);
 
         if (subscriptionPlan is null)
         {
@@ -49,12 +42,12 @@ internal sealed class UpdateSubscriptionPlanHandler : IAppRequestHandler<UpdateS
         subscriptionPlan.AnnualDiscountPercent = PropertyUpdater.UpdateIfChanged(req.AnnualDiscountPercent, subscriptionPlan.AnnualDiscountPercent);
         subscriptionPlan.Tier = PropertyUpdater.UpdateIfChanged(req.Tier, subscriptionPlan.Tier);
 
-        var (product, activeBasePrice, activePerTruckPrice) = await _stripeService.UpdateSubscriptionPlanAsync(subscriptionPlan);
+        var (product, activeBasePrice, activePerTruckPrice) = await stripeSubscriptionService.UpdateSubscriptionPlanAsync(subscriptionPlan);
         subscriptionPlan.StripePriceId = activeBasePrice.Id;
         subscriptionPlan.StripePerTruckPriceId = activePerTruckPrice.Id;
-        _masterUow.Repository<SubscriptionPlan>().Update(subscriptionPlan);
-        await _masterUow.SaveChangesAsync();
-        _logger.LogInformation("Updated subscription plan {SubscriptionPlanId}", subscriptionPlan.Id);
+        masterUow.Repository<SubscriptionPlan>().Update(subscriptionPlan);
+        await masterUow.SaveChangesAsync(ct);
+        logger.LogInformation("Updated subscription plan {SubscriptionPlanId}", subscriptionPlan.Id);
         return Result.Ok();
     }
 }

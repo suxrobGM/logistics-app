@@ -7,22 +7,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreateSubscriptionPlanHandler : IAppRequestHandler<CreateSubscriptionPlanCommand, Result>
+internal sealed class CreateSubscriptionPlanHandler(
+    IMasterUnitOfWork masterUow,
+    IStripeSubscriptionService stripeSubscriptionService,
+    ILogger<CreateSubscriptionPlanHandler> logger) : IAppRequestHandler<CreateSubscriptionPlanCommand, Result>
 {
-    private readonly ILogger<CreateSubscriptionPlanHandler> _logger;
-    private readonly IMasterUnitOfWork _masterUow;
-    private readonly IStripeService _stripeService;
-
-    public CreateSubscriptionPlanHandler(
-        IMasterUnitOfWork masterUow,
-        IStripeService stripeService,
-        ILogger<CreateSubscriptionPlanHandler> logger)
-    {
-        _masterUow = masterUow;
-        _stripeService = stripeService;
-        _logger = logger;
-    }
-
     public async Task<Result> Handle(
         CreateSubscriptionPlanCommand req, CancellationToken ct)
     {
@@ -40,13 +29,13 @@ internal sealed class CreateSubscriptionPlanHandler : IAppRequestHandler<CreateS
             AnnualDiscountPercent = req.AnnualDiscountPercent
         };
 
-        var (product, basePrice, perTruckPrice) = await _stripeService.CreateSubscriptionPlanAsync(subscriptionPlan);
+        var (product, basePrice, perTruckPrice) = await stripeSubscriptionService.CreateSubscriptionPlanAsync(subscriptionPlan);
 
         subscriptionPlan.StripeProductId = product.Id;
         subscriptionPlan.StripePriceId = basePrice.Id;
         subscriptionPlan.StripePerTruckPriceId = perTruckPrice.Id;
-        await _masterUow.Repository<SubscriptionPlan>().AddAsync(subscriptionPlan);
-        await _masterUow.SaveChangesAsync();
+        await masterUow.Repository<SubscriptionPlan>().AddAsync(subscriptionPlan, ct);
+        await masterUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

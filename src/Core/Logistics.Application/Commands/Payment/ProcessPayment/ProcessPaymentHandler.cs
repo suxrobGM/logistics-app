@@ -12,7 +12,7 @@ namespace Logistics.Application.Commands;
 
 internal sealed class ProcessPaymentHandler(
     ITenantUnitOfWork tenantUow,
-    IStripeService stripeService,
+    IStripePaymentService stripePaymentService,
     ILogger<ProcessPaymentHandler> logger)
     : IAppRequestHandler<ProcessPaymentCommand, Result>
 {
@@ -42,7 +42,7 @@ internal sealed class ProcessPaymentHandler(
 
         try
         {
-            var paymentIntent = await stripeService.CreatePaymentIntentAsync(payment, paymentMethod, tenant);
+            var paymentIntent = await stripePaymentService.CreatePaymentIntentAsync(payment, paymentMethod, tenant);
 
             payment.StripePaymentIntentId = paymentIntent.Id;
 

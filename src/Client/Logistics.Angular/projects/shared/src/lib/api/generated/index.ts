@@ -32,6 +32,7 @@ export type { BulkDeleteRequest } from './models/bulk-delete-request';
 export type { BulkDispatchRequest } from './models/bulk-dispatch-request';
 export type { CancelSubscriptionCommand } from './models/cancel-subscription-command';
 export type { CancelTripCommand } from './models/cancel-trip-command';
+export type { ChangeSubscriptionPlanCommand } from './models/change-subscription-plan-command';
 export type { CompanyExpenseCategory } from './models/company-expense-category';
 export type { CompanyStatsDto } from './models/company-stats-dto';
 export type { ConditionReportDto } from './models/condition-report-dto';
@@ -750,6 +751,8 @@ export type { CreateSubscription$Params as CreateSubscription$Params } from './f
 export { createSubscription as createSubscription } from './fn/subscription/create-subscription';
 export type { CancelSubscription$Params as CancelSubscription$Params } from './fn/subscription/cancel-subscription';
 export { cancelSubscription as cancelSubscription } from './fn/subscription/cancel-subscription';
+export type { ChangeSubscriptionPlan$Params as ChangeSubscriptionPlan$Params } from './fn/subscription/change-subscription-plan';
+export { changeSubscriptionPlan as changeSubscriptionPlan } from './fn/subscription/change-subscription-plan';
 export type { RenewSubscription$Params as RenewSubscription$Params } from './fn/subscription/renew-subscription';
 export { renewSubscription as renewSubscription } from './fn/subscription/renew-subscription';
 export type { GetSubscriptionPlanById$Params as GetSubscriptionPlanById$Params } from './fn/subscription/get-subscription-plan-by-id';

@@ -9,6 +9,7 @@ using CancelSubscriptionCommand = Logistics.Application.Commands.CancelSubscript
 using CreateSubscriptionCommand = Logistics.Application.Commands.CreateSubscriptionCommand;
 using CreateSubscriptionPlanCommand = Logistics.Application.Commands.CreateSubscriptionPlanCommand;
 using UpdateSubscriptionPlanCommand = Logistics.Application.Commands.UpdateSubscriptionPlanCommand;
+using ChangeSubscriptionPlanCommand = Logistics.Application.Commands.ChangeSubscriptionPlanCommand;
 
 namespace Logistics.API.Controllers;
 
@@ -54,6 +55,16 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> CancelSubscription(Guid id, [FromBody] CancelSubscriptionCommand request)
     {
         request.Id = id;
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPut("{id:guid}/change-plan", Name = "ChangeSubscriptionPlan")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ChangeSubscriptionPlan(Guid id, [FromBody] ChangeSubscriptionPlanCommand request)
+    {
+        request.SubscriptionId = id;
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }

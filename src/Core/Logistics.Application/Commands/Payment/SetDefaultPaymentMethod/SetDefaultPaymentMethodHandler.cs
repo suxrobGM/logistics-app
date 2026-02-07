@@ -7,29 +7,18 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class SetDefaultPaymentMethodHandler : IAppRequestHandler<SetDefaultPaymentMethodCommand, Result>
+internal sealed class SetDefaultPaymentMethodHandler(
+    ITenantUnitOfWork tenantUow,
+    IStripePaymentService stripePaymentService,
+    ILogger<SetDefaultPaymentMethodHandler> logger) : IAppRequestHandler<SetDefaultPaymentMethodCommand, Result>
 {
-    private readonly ILogger<SetDefaultPaymentMethodHandler> _logger;
-    private readonly IStripeService _stripeService;
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public SetDefaultPaymentMethodHandler(
-        ITenantUnitOfWork tenantUow,
-        IStripeService stripeService,
-        ILogger<SetDefaultPaymentMethodHandler> logger)
-    {
-        _tenantUow = tenantUow;
-        _stripeService = stripeService;
-        _logger = logger;
-    }
-
     public async Task<Result> Handle(
         SetDefaultPaymentMethodCommand req, CancellationToken ct)
     {
-        var tenant = _tenantUow.GetCurrentTenant();
+        var tenant = tenantUow.GetCurrentTenant();
 
         // Load all payment methods for the tenant
-        var paymentMethods = await _tenantUow.Repository<PaymentMethod>().GetListAsync();
+        var paymentMethods = await tenantUow.Repository<PaymentMethod>().GetListAsync(ct: ct);
 
         if (paymentMethods.Count == 0)
         {
@@ -51,11 +40,11 @@ internal sealed class SetDefaultPaymentMethodHandler : IAppRequestHandler<SetDef
 
         paymentMethodToSetDefault.IsDefault = true;
 
-        await _stripeService.SetDefaultPaymentMethodAsync(paymentMethodToSetDefault, tenant);
-        _tenantUow.Repository<PaymentMethod>().Update(paymentMethodToSetDefault);
-        await _tenantUow.SaveChangesAsync();
+        await stripePaymentService.SetDefaultPaymentMethodAsync(paymentMethodToSetDefault, tenant);
+        tenantUow.Repository<PaymentMethod>().Update(paymentMethodToSetDefault);
+        await tenantUow.SaveChangesAsync(ct);
 
-        _logger.LogInformation("Set payment method with ID {Id} as default for tenant {TenantId}",
+        logger.LogInformation("Set payment method with ID {Id} as default for tenant {TenantId}",
             paymentMethodToSetDefault.Id, tenant.Id);
         return Result.Ok();
     }

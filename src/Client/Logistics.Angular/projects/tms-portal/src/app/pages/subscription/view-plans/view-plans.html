@@ -51,7 +51,13 @@
           @if (isCurrentPlan(plan)) {
             <p-button label="Current Plan" icon="pi pi-check" disabled class="w-full" />
           } @else {
-            <p-button label="Select Plan" icon="pi pi-credit-card" class="w-full" />
+            <p-button
+              label="Select Plan"
+              icon="pi pi-credit-card"
+              class="w-full"
+              [loading]="isLoading()"
+              (click)="selectPlan(plan)"
+            />
           }
         </div>
       </ng-template>

@@ -7,26 +7,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class DeleteSubscriptionHandler : IAppRequestHandler<DeleteSubscriptionCommand, Result>
+internal sealed class DeleteSubscriptionHandler(
+    IMasterUnitOfWork masterUow,
+    IStripeSubscriptionService stripeSubscriptionService,
+    ILogger<DeleteSubscriptionHandler> logger) : IAppRequestHandler<DeleteSubscriptionCommand, Result>
 {
-    private readonly ILogger<DeleteSubscriptionHandler> _logger;
-    private readonly IMasterUnitOfWork _masterUow;
-    private readonly IStripeService _stripeService;
-
-    public DeleteSubscriptionHandler(
-        IMasterUnitOfWork masterUow,
-        IStripeService stripeService,
-        ILogger<DeleteSubscriptionHandler> logger)
-    {
-        _masterUow = masterUow;
-        _stripeService = stripeService;
-        _logger = logger;
-    }
-
     public async Task<Result> Handle(
         DeleteSubscriptionCommand req, CancellationToken ct)
     {
-        var subscription = await _masterUow.Repository<Subscription>().GetByIdAsync(req.Id);
+        var subscription = await masterUow.Repository<Subscription>().GetByIdAsync(req.Id, ct);
 
         if (subscription is null)
         {
@@ -35,14 +24,14 @@ internal sealed class DeleteSubscriptionHandler : IAppRequestHandler<DeleteSubsc
 
         if (!string.IsNullOrEmpty(subscription.StripeSubscriptionId))
         {
-            _logger.LogInformation("Cancelling stripe subscription {StripeSubscriptionId}",
+            logger.LogInformation("Cancelling stripe subscription {StripeSubscriptionId}",
                 subscription.StripeSubscriptionId);
-            await _stripeService.CancelSubscriptionAsync(subscription.StripeSubscriptionId);
+            await stripeSubscriptionService.CancelSubscriptionAsync(subscription.StripeSubscriptionId);
         }
 
-        _masterUow.Repository<Subscription>().Delete(subscription);
-        await _masterUow.SaveChangesAsync();
-        _logger.LogInformation("Deleted subscription {SubscriptionId}", subscription.Id);
+        masterUow.Repository<Subscription>().Delete(subscription);
+        await masterUow.SaveChangesAsync(ct);
+        logger.LogInformation("Deleted subscription {SubscriptionId}", subscription.Id);
         return Result.Ok();
     }
 }

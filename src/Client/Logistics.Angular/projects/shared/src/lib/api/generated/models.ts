@@ -27,6 +27,7 @@ export type { BulkDeleteRequest } from './models/bulk-delete-request';
 export type { BulkDispatchRequest } from './models/bulk-dispatch-request';
 export type { CancelSubscriptionCommand } from './models/cancel-subscription-command';
 export type { CancelTripCommand } from './models/cancel-trip-command';
+export type { ChangeSubscriptionPlanCommand } from './models/change-subscription-plan-command';
 export type { CompanyExpenseCategory } from './models/company-expense-category';
 export type { CompanyStatsDto } from './models/company-stats-dto';
 export type { ConditionReportDto } from './models/condition-report-dto';

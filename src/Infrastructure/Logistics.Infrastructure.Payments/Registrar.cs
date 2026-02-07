@@ -20,6 +20,9 @@ public static class Registrar
 
         // Stripe services
         services.AddSingleton<IStripeService, StripeService>();
+        services.AddSingleton<IStripeCustomerService, StripeCustomerService>();
+        services.AddSingleton<IStripeSubscriptionService, StripeSubscriptionService>();
+        services.AddSingleton<IStripePaymentService, StripePaymentService>();
         services.AddSingleton<IStripeConnectService, StripeConnectService>();
 
         return services;

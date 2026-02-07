@@ -19,6 +19,7 @@ internal sealed class ProcessStripEventHandler(
     ITenantUnitOfWork tenantUow,
     IMasterUnitOfWork masterUow,
     IStripeService stripeService,
+    IStripeCustomerService stripeCustomerService,
     ILogger<ProcessStripEventHandler> logger)
     : IAppRequestHandler<ProcessStripEventCommand, Result>
 {
@@ -63,7 +64,7 @@ internal sealed class ProcessStripEventHandler(
 
     private async Task<Result> HandleInvoicePaid(StripeInvoice stripeInvoice)
     {
-        var customer = await stripeService.GetCustomerAsync(stripeInvoice.CustomerId);
+        var customer = await stripeCustomerService.GetCustomerAsync(stripeInvoice.CustomerId);
         if (!customer.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId))
         {
             return Result.Fail($"{StripeMetadataKeys.TenantId} not found in invoice metadata.");

@@ -6,32 +6,25 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class DeleteTenantHandler : IAppRequestHandler<DeleteTenantCommand, Result>
+internal sealed class DeleteTenantHandler(
+    ITenantDatabaseService tenantDatabase,
+    IMasterUnitOfWork masterRepository,
+    IStripeCustomerService stripeCustomerService) : IAppRequestHandler<DeleteTenantCommand, Result>
 {
-    private readonly IMasterUnitOfWork _masterRepository;
-    private readonly IStripeService _stripeService;
-    private readonly ITenantDatabaseService _tenantDatabase;
-
-    public DeleteTenantHandler(
-        ITenantDatabaseService tenantDatabase,
-        IMasterUnitOfWork masterRepository,
-        IStripeService stripeService)
-    {
-        _tenantDatabase = tenantDatabase;
-        _masterRepository = masterRepository;
-        _stripeService = stripeService;
-    }
+    private readonly IMasterUnitOfWork masterUow = masterRepository;
+    private readonly IStripeCustomerService stripeCustomerService = stripeCustomerService;
+    private readonly ITenantDatabaseService tenantDatabase = tenantDatabase;
 
     public async Task<Result> Handle(DeleteTenantCommand req, CancellationToken ct)
     {
-        var tenant = await _masterRepository.Repository<Tenant>().GetByIdAsync(req.Id);
+        var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(req.Id, ct);
 
         if (tenant is null)
         {
             return Result.Fail($"Could not find a tenant with ID '{req.Id}'");
         }
 
-        var isDeleted = await _tenantDatabase.DeleteDatabaseAsync(tenant.ConnectionString!);
+        var isDeleted = await tenantDatabase.DeleteDatabaseAsync(tenant.ConnectionString!);
 
         if (!isDeleted)
         {
@@ -40,11 +33,11 @@ internal sealed class DeleteTenantHandler : IAppRequestHandler<DeleteTenantComma
 
         if (!string.IsNullOrEmpty(tenant.StripeCustomerId))
         {
-            await _stripeService.DeleteCustomerAsync(tenant.StripeCustomerId);
+            await stripeCustomerService.DeleteCustomerAsync(tenant.StripeCustomerId);
         }
 
-        _masterRepository.Repository<Tenant>().Delete(tenant);
-        await _masterRepository.SaveChangesAsync();
+        masterUow.Repository<Tenant>().Delete(tenant);
+        await masterUow.SaveChangesAsync(ct);
         return Result.Ok();
     }
 }

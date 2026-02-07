@@ -13,7 +13,7 @@ namespace Logistics.Application.Commands;
 
 internal sealed class CreatePaymentMethodHandler(
     ITenantUnitOfWork tenantUow,
-    IStripeService stripeService,
+    IStripePaymentService stripePaymentService,
     ILogger<CreatePaymentMethodHandler> logger)
     : IAppRequestHandler<CreatePaymentMethodCommand, Result>
 {
@@ -63,7 +63,7 @@ internal sealed class CreatePaymentMethodHandler(
         // Verify and attach Stripe payment method if provided
         if (!string.IsNullOrEmpty(command.StripePaymentMethodId))
         {
-            var stripePaymentMethod = await stripeService.GetPaymentMethodAsync(command.StripePaymentMethodId);
+            var stripePaymentMethod = await stripePaymentService.GetPaymentMethodAsync(command.StripePaymentMethodId);
             if (stripePaymentMethod is null)
             {
                 throw new ArgumentException($"Payment method {command.StripePaymentMethodId} not found in Stripe");
@@ -72,7 +72,7 @@ internal sealed class CreatePaymentMethodHandler(
             // Attach to customer if not already attached
             if (stripePaymentMethod.CustomerId != tenant.StripeCustomerId)
             {
-                await stripeService.AttachPaymentMethodAsync(command.StripePaymentMethodId, tenant);
+                await stripePaymentService.AttachPaymentMethodAsync(command.StripePaymentMethodId, tenant);
             }
         }
 
@@ -93,7 +93,7 @@ internal sealed class CreatePaymentMethodHandler(
 
         if (setDefault && !string.IsNullOrEmpty(paymentMethod.StripePaymentMethodId))
         {
-            await stripeService.SetDefaultPaymentMethodAsync(paymentMethod, tenant);
+            await stripePaymentService.SetDefaultPaymentMethodAsync(paymentMethod, tenant);
         }
 
         logger.LogInformation(
@@ -109,7 +109,7 @@ internal sealed class CreatePaymentMethodHandler(
         // Verify and attach Stripe payment method if provided
         if (!string.IsNullOrEmpty(command.StripePaymentMethodId))
         {
-            var stripePaymentMethod = await stripeService.GetPaymentMethodAsync(command.StripePaymentMethodId);
+            var stripePaymentMethod = await stripePaymentService.GetPaymentMethodAsync(command.StripePaymentMethodId);
             if (stripePaymentMethod is null)
             {
                 throw new ArgumentException($"Payment method {command.StripePaymentMethodId} not found in Stripe");
@@ -118,7 +118,7 @@ internal sealed class CreatePaymentMethodHandler(
             // Attach to customer if not already attached
             if (stripePaymentMethod.CustomerId != tenant.StripeCustomerId)
             {
-                await stripeService.AttachPaymentMethodAsync(command.StripePaymentMethodId, tenant);
+                await stripePaymentService.AttachPaymentMethodAsync(command.StripePaymentMethodId, tenant);
             }
         }
 
@@ -141,7 +141,7 @@ internal sealed class CreatePaymentMethodHandler(
 
         if (setDefault && !string.IsNullOrEmpty(paymentMethod.StripePaymentMethodId))
         {
-            await stripeService.SetDefaultPaymentMethodAsync(paymentMethod, tenant);
+            await stripePaymentService.SetDefaultPaymentMethodAsync(paymentMethod, tenant);
         }
 
         logger.LogInformation(

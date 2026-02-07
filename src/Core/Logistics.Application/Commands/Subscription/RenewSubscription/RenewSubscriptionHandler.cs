@@ -7,42 +7,29 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class RenewSubscriptionHandler : IAppRequestHandler<RenewSubscriptionCommand, Result>
+internal sealed class RenewSubscriptionHandler(
+    IMasterUnitOfWork masterUow,
+    ITenantUnitOfWork tenantUow,
+    IStripeSubscriptionService stripeSubscriptionService,
+    ILogger<RenewSubscriptionHandler> logger) : IAppRequestHandler<RenewSubscriptionCommand, Result>
 {
-    private readonly ILogger<RenewSubscriptionHandler> _logger;
-    private readonly IMasterUnitOfWork _masterUow;
-    private readonly IStripeService _stripeService;
-    private readonly ITenantUnitOfWork _tenantUow;
-
-    public RenewSubscriptionHandler(
-        IMasterUnitOfWork masterUow,
-        ITenantUnitOfWork tenantUow,
-        IStripeService stripeService,
-        ILogger<RenewSubscriptionHandler> logger)
-    {
-        _masterUow = masterUow;
-        _tenantUow = tenantUow;
-        _stripeService = stripeService;
-        _logger = logger;
-    }
-
     public async Task<Result> Handle(
         RenewSubscriptionCommand req, CancellationToken ct)
     {
-        var subscription = await _masterUow.Repository<Subscription>().GetByIdAsync(req.Id);
+        var subscription = await masterUow.Repository<Subscription>().GetByIdAsync(req.Id, ct);
 
         if (subscription is null)
         {
             return Result.Fail($"Could not find a subscription with ID '{req.Id}'");
         }
 
-        await _tenantUow.SetCurrentTenantByIdAsync(subscription.TenantId);
-        var truckCount = await _tenantUow.Repository<Truck>().CountAsync(ct: ct);
+        await tenantUow.SetCurrentTenantByIdAsync(subscription.TenantId);
+        var truckCount = await tenantUow.Repository<Truck>().CountAsync(ct: ct);
 
-        _logger.LogInformation("Renewing stripe subscription {StripeSubscriptionId}",
+        logger.LogInformation("Renewing stripe subscription {StripeSubscriptionId}",
             subscription.StripeSubscriptionId);
         var stripeSubscription =
-            await _stripeService.RenewSubscriptionAsync(subscription, subscription.Plan, subscription.Tenant,
+            await stripeSubscriptionService.RenewSubscriptionAsync(subscription, subscription.Plan, subscription.Tenant,
                 truckCount);
         subscription.StripeSubscriptionId = stripeSubscription.Id;
         subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
@@ -50,9 +37,9 @@ internal sealed class RenewSubscriptionHandler : IAppRequestHandler<RenewSubscri
         subscription.NextBillingDate = stripeSubscription.Items.Data.First().CurrentPeriodEnd;
         subscription.TrialEndDate = stripeSubscription.TrialEnd;
 
-        _masterUow.Repository<Subscription>().Update(subscription);
-        await _masterUow.SaveChangesAsync();
-        _logger.LogInformation("Renewed subscription {SubscriptionId}", subscription.Id);
+        masterUow.Repository<Subscription>().Update(subscription);
+        await masterUow.SaveChangesAsync(ct);
+        logger.LogInformation("Renewed subscription {SubscriptionId}", subscription.Id);
         return Result.Ok();
     }
 }
