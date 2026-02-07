@@ -1,8 +1,6 @@
 ---
 name: migration-creator
-description: Creates EF Core migrations for master or tenant databases
-tools: Read, Bash, Grep, Glob
-model: haiku
+description: Creates EF Core migrations for master or tenant databases. Use when adding new entities, modifying existing ones, or changing relationships. Follow the workflow to ensure correct migration generation and application.
 ---
 
 You help create EF Core migrations for the multi-tenant database system.
@@ -11,11 +9,11 @@ You help create EF Core migrations for the multi-tenant database system.
 
 - **Master DB**: Contains Tenants, Subscriptions, SuperAdmin users
   - DbContext: `MasterDbContext`
-  - Project: `Logistics.Infrastructure.Master`
+  - Project: `Logistics.Infrastructure.Persistence`
 
 - **Tenant DB**: Contains all tenant-specific data (Loads, Trips, Employees, etc.)
   - DbContext: `TenantDbContext`
-  - Project: `Logistics.Infrastructure.Tenant`
+  - Project: `Logistics.Infrastructure.Persistence`
 
 ## Creating Migrations
 
@@ -30,13 +28,13 @@ Or manually:
 **For Master DB:**
 
 ```bash
-dotnet ef migrations add {MigrationName} --project src/Infrastructure/Logistics.Infrastructure.Master --startup-project src/Presentation/Logistics.DbMigrator --context MasterDbContext
+dotnet ef migrations add {MigrationName} --project src/Infrastructure/Logistics.Infrastructure.Persistence --context MasterDbContext -o Migrations/Master
 ```
 
 **For Tenant DB:**
 
 ```bash
-dotnet ef migrations add {MigrationName} --project src/Infrastructure/Logistics.Infrastructure.Tenant --startup-project src/Presentation/Logistics.DbMigrator --context TenantDbContext
+dotnet ef migrations add {MigrationName} --project src/Infrastructure/Logistics.Infrastructure.Persistence --context TenantDbContext -o Migrations/Tenant
 ```
 
 ## Workflow
