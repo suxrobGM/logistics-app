@@ -1,4 +1,6 @@
-using Logistics.Domain.Persistence;
+using Logistics.Domain.Entities;
+using Logistics.Infrastructure.Persistence.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.DbMigrator.Data;
 
@@ -9,20 +11,33 @@ internal class CreateSqlFunctionsWorker(
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        try
-        {
-            using var scope = scopeFactory.CreateScope();
-            var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
+        using var scope = scopeFactory.CreateScope();
+        var masterDb = scope.ServiceProvider.GetRequiredService<MasterDbContext>();
 
-            logger.LogInformation("Creating Stored Procedures");
-            await CreateSqlFunction("CreateCompanyStats.psql", tenantUow);
-            await CreateSqlFunction("CreateTrucksStats.psql", tenantUow);
+        var tenants = await masterDb.Set<Tenant>()
+            .Where(t => t.ConnectionString != null && t.ConnectionString != "")
+            .Select(t => new { t.Name, t.ConnectionString })
+            .ToListAsync(cancellationToken);
 
-            logger.LogInformation("Stored Procedures Created");
-        }
-        catch (Exception ex)
+        logger.LogInformation("Creating SQL functions for {Count} tenant database(s)", tenants.Count);
+
+        foreach (var tenant in tenants)
         {
-            logger.LogError("Thrown exception in PopulateData.ExecuteAsync(): {Exception}", ex);
+            try
+            {
+                using var tenantScope = scopeFactory.CreateScope();
+                var tenantDb = tenantScope.ServiceProvider.GetRequiredService<TenantDbContext>();
+                tenantDb.Database.SetConnectionString(tenant.ConnectionString);
+
+                logger.LogInformation("Creating SQL functions for tenant '{TenantName}'...", tenant.Name);
+                await CreateSqlFunction("CreateCompanyStats.psql", tenantDb);
+                await CreateSqlFunction("CreateTrucksStats.psql", tenantDb);
+                logger.LogInformation("SQL functions created for tenant '{TenantName}'", tenant.Name);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to create SQL functions for tenant '{TenantName}'", tenant.Name);
+            }
         }
     }
 
@@ -31,9 +46,9 @@ internal class CreateSqlFunctionsWorker(
         return Task.CompletedTask;
     }
 
-    private static async Task CreateSqlFunction(string fileName, ITenantUnitOfWork tenantUow)
+    private static async Task CreateSqlFunction(string fileName, TenantDbContext db)
     {
         var sql = await File.ReadAllTextAsync($"SqlFunctions/{fileName}");
-        await tenantUow.ExecuteRawSql(sql);
+        await db.Database.ExecuteSqlRawAsync(sql);
     }
 }
