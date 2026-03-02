@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Logistics Driver</string>
+    <string name="app_name">LogisticsX Driver</string>
 
     <!-- Navigation -->
     <string name="nav_dashboard">Dashboard</string>
@@ -61,8 +61,8 @@
     <string name="about_title">About</string>
 
     <!-- Notifications -->
-    <string name="default_notification_channel_id">logistics_driver_channel</string>
-    <string name="notification_channel_name">Logistics Notifications</string>
+    <string name="default_notification_channel_id">logisticsx_driver_channel</string>
+    <string name="notification_channel_name">LogisticsX Notifications</string>
     <string name="notification_channel_description">Notifications for load updates</string>
     <string name="location_tracking_channel_name">Location Tracking</string>
     <string name="location_tracking_channel_description">Tracking your location in the background</string>

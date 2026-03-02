@@ -1,6 +1,6 @@
 # Multi-Tenancy Architecture
 
-Logistics TMS uses database-per-tenant isolation for complete data separation.
+LogisticsX uses database-per-tenant isolation for complete data separation.
 
 ## Overview
 

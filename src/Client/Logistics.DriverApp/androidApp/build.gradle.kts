@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.jfleets.driver"
+    namespace = "com.logisticsx.driver"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.jfleets.driver"
+        applicationId = "com.logisticsx.driver"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -35,14 +35,14 @@ android {
             dimension = "environment"
             applicationIdSuffix = ".staging"
             versionNameSuffix = "-staging"
-            buildConfigField("String", "API_BASE_URL", "\"https://api.suxrobgm.net/\"")
-            buildConfigField("String", "IDENTITY_SERVER_URL", "\"https://id.suxrobgm.net/\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://api.logisticsx.app/\"")
+            buildConfigField("String", "IDENTITY_SERVER_URL", "\"https://id.logisticsx.app/\"")
             manifestPlaceholders["allowCleartext"] = "false"
         }
         create("prod") {
             dimension = "environment"
-            buildConfigField("String", "API_BASE_URL", "\"https://api.suxrobgm.net/\"")
-            buildConfigField("String", "IDENTITY_SERVER_URL", "\"https://id.suxrobgm.net/\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://api.logisticsx.app/\"")
+            buildConfigField("String", "IDENTITY_SERVER_URL", "\"https://id.logisticsx.app/\"")
             manifestPlaceholders["allowCleartext"] = "false"
         }
     }

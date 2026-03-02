@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="mGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6"/>
+      <stop offset="100%" style="stop-color:#06B6D4"/>
+    </linearGradient>
+  </defs>
+  
+  <rect width="256" height="256" rx="56" fill="#0F172A"/>
+  
+  <g transform="translate(128, 128)">
+    <line x1="-48" y1="-48" x2="48" y2="48" stroke="url(#mGrad)" stroke-width="8" stroke-linecap="round"/>
+    <line x1="48" y1="-48" x2="-48" y2="48" stroke="url(#mGrad)" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="0" cy="0" r="11" fill="url(#mGrad)"/>
+    <circle cx="0" cy="0" r="5" fill="#0F172A"/>
+    <circle cx="-48" cy="-48" r="7" fill="#3B82F6"/>
+    <circle cx="48" cy="-48" r="7" fill="#0EA5E9"/>
+    <circle cx="48" cy="48" r="7" fill="#06B6D4"/>
+    <circle cx="-48" cy="48" r="7" fill="#0EA5E9"/>
+  </g>
+</svg>

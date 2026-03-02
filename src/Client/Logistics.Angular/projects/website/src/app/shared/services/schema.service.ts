@@ -20,16 +20,21 @@ export interface BreadcrumbItem {
   url: string;
 }
 
+/**
+ * Service for managing structured data schemas (JSON-LD) for SEO purposes.
+ * Provides methods to set organization, blog post, FAQ, breadcrumb, and software application schemas.
+ * Schemas are injected into the document head as <script type="application/ld+json"> tags.
+ */
 @Injectable({ providedIn: "root" })
 export class SchemaService {
   private readonly document = inject(DOCUMENT);
-  private readonly baseUrl = "https://logisticstms.com";
+  private readonly baseUrl = "https://logisticsx.app";
 
   public setOrganizationSchema(): void {
     this.setSchema("organization", {
       "@context": "https://schema.org",
       "@type": "Organization",
-      name: "Logistics TMS",
+      name: "LogisticsX",
       url: this.baseUrl,
       logo: `${this.baseUrl}/images/logo.png`,
       description: "Modern fleet management platform for trucking companies",
@@ -56,7 +61,7 @@ export class SchemaService {
       url: `${this.baseUrl}/blog/${post.slug}`,
       publisher: {
         "@type": "Organization",
-        name: "Logistics TMS",
+        name: "LogisticsX",
         logo: {
           "@type": "ImageObject",
           url: `${this.baseUrl}/images/logo.png`,
@@ -97,7 +102,7 @@ export class SchemaService {
     this.setSchema("software", {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      name: "Logistics TMS",
+      name: "LogisticsX",
       applicationCategory: "BusinessApplication",
       operatingSystem: "Web",
       description: "Fleet management and dispatching software for trucking companies",

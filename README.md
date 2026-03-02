@@ -1,4 +1,4 @@
-# Logistics TMS
+# LogisticsX
 
 [![Build Status](https://github.com/suxrobgm/logistics-app/actions/workflows/build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/build.yml)
 [![Deploy](https://github.com/suxrobGM/logistics-app/actions/workflows/deploy.yml/badge.svg)](https://github.com/suxrobGM/logistics-app/actions/workflows/deploy.yml)
@@ -13,7 +13,7 @@
 
 ## Overview
 
-Logistics TMS is purpose-built for trucking fleets specializing in intermodal containers and vehicle transport. It replaces spreadsheet-based workflows with an end-to-end digital system connecting dispatchers, drivers, and customers through web and mobile applications with real-time synchronization.
+LogisticsX is purpose-built for trucking fleets specializing in intermodal containers and vehicle transport. It replaces spreadsheet-based workflows with an end-to-end digital system connecting dispatchers, drivers, and customers through web and mobile applications with real-time synchronization.
 
 **Dispatchers** create loads, assign drivers, search load boards, and monitor deliveries in real-time.
 **Drivers** receive assignments, navigate routes, capture proof of delivery, and communicate with dispatch via the mobile app.
@@ -49,8 +49,8 @@ See [Local Development Guide](docs/getting-started/local-development.md)
 
 | Portal | URL |
 |--------|-----|
-| TMS Portal | [tms.suxrobgm.net](https://tms.suxrobgm.net) |
-| Customer Portal | [customer.suxrobgm.net](https://customer.suxrobgm.net) |
+| TMS Portal | [tms.logisticsx.app](https://tms.logisticsx.app) |
+| Customer Portal | [customer.logisticsx.app](https://customer.logisticsx.app) |
 
 **Test Credentials:**
 

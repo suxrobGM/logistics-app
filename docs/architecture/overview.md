@@ -1,6 +1,6 @@
 # Architecture Overview
 
-Logistics TMS follows Domain-Driven Design (DDD) with CQRS pattern.
+LogisticsX follows Domain-Driven Design (DDD) with CQRS pattern.
 
 ## System Architecture
 

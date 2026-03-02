@@ -1,6 +1,6 @@
 # Screenshots
 
-Visual tour of Logistics TMS applications.
+Visual tour of LogisticsX applications.
 
 ## TMS Portal (Angular)
 

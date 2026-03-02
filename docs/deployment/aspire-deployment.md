@@ -1,6 +1,6 @@
 # Docker Compose Deployment
 
-Deploy Logistics TMS using the pre-generated Docker Compose configuration from .NET Aspire.
+Deploy LogisticsX using the pre-generated Docker Compose configuration from .NET Aspire.
 
 ## Overview
 

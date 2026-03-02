@@ -19,7 +19,7 @@ export class MetaService {
   private readonly document = inject(DOCUMENT);
 
   public updateMeta(config: PageMeta): void {
-    this.title.setTitle(`${config.title} | Logistics TMS`);
+    this.title.setTitle(`${config.title} | LogisticsX`);
 
     this.meta.updateTag({ name: "description", content: config.description });
 

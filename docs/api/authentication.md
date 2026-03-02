@@ -1,6 +1,6 @@
 # API Authentication
 
-Logistics TMS uses OAuth 2.0 / OpenID Connect via Duende IdentityServer.
+LogisticsX uses OAuth 2.0 / OpenID Connect via Duende IdentityServer.
 
 ## Identity Server URLs
 

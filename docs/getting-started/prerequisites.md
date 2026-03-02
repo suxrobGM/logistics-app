@@ -1,6 +1,6 @@
 # Prerequisites
 
-Required software to run Logistics TMS locally.
+Required software to run LogisticsX locally.
 
 ## Required Software
 

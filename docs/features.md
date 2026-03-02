@@ -1,6 +1,6 @@
 # Features
 
-Complete feature list for Logistics TMS.
+Complete feature list for LogisticsX.
 
 ## TMS Portal
 

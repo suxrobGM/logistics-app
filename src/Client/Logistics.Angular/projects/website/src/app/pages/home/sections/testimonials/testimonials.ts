@@ -18,7 +18,7 @@ export class Testimonials {
   protected readonly testimonials: Testimonial[] = [
     {
       quote:
-        "Logistics TMS has transformed how we manage our fleet. We've reduced empty miles by 25% and our dispatchers can handle twice the workload.",
+        "LogisticsX has transformed how we manage our fleet. We've reduced empty miles by 25% and our dispatchers can handle twice the workload.",
       author: "Mike Johnson",
       role: "Operations Director",
       company: "Midwest Freight Solutions",

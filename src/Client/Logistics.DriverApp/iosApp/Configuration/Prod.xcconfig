@@ -1,6 +1,6 @@
 #include "Config.xcconfig"
 
 // Production environment
-API_BASE_URL = https:/$()/api.suxrobgm.net/
-IDENTITY_SERVER_URL = https:/$()/id.suxrobgm.net/
+API_BASE_URL = https:/$()/api.logisticsx.app/
+IDENTITY_SERVER_URL = https:/$()/id.logisticsx.app/
 IS_PRODUCTION = YES

@@ -1,6 +1,6 @@
 # VPS Initial Setup
 
-Prepare your Ubuntu/Debian VPS for Logistics TMS deployment.
+Prepare your Ubuntu/Debian VPS for LogisticsX deployment.
 
 ## Prerequisites
 

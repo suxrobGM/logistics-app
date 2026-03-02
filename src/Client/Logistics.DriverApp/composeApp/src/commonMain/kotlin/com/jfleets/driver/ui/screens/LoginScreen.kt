@@ -1,5 +1,6 @@
 package com.jfleets.driver.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -43,6 +45,9 @@ import com.jfleets.driver.service.LocationTracker
 import com.jfleets.driver.ui.components.LoadingIndicator
 import com.jfleets.driver.viewmodel.LoginUiState
 import com.jfleets.driver.viewmodel.LoginViewModel
+import logisticsdriver.composeapp.generated.resources.Res
+import logisticsdriver.composeapp.generated.resources.logisticsx_brandmark
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 
@@ -90,8 +95,16 @@ fun LoginScreen(onLoginSuccess: () -> Unit = {}) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
+                    Image(
+                        painter = painterResource(Res.drawable.logisticsx_brandmark),
+                        contentDescription = "LogisticsX",
+                        modifier = Modifier.size(80.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     Text(
-                        text = "Logistics Driver",
+                        text = "LogisticsX Driver",
                         style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary

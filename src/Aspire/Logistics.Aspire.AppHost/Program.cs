@@ -83,6 +83,8 @@ if (isPublishMode)
         .WithImageTag("latest")
         .WithHttpEndpoint(7003, 80, "tms-http")
         .WithExternalHttpEndpoints()
+        .WithEnvironment("MAPBOX_TOKEN", builder.GetConfigValue("Mapbox:AccessToken"))
+        .WithEnvironment("STRIPE_PUBLISHABLE_KEY", builder.GetConfigValue("Stripe:PublishableKey"))
         .WaitFor(logisticsApi)
         .WaitFor(identityServer);
 
