@@ -49,3 +49,5 @@ webApp/build/
 
 google-services.json
 GoogleService-Info.plist
+
+gradle/
