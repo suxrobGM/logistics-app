@@ -85,7 +85,7 @@ Logistics.DriverApp/
 ├── composeApp/                     # KMP Application Module
 │   ├── src/
 │   │   ├── commonMain/             # Shared code (~90%)
-│   │   │   └── kotlin/com/jfleets/driver/
+│   │   │   └── kotlin/com/logisticsx/driver/
 │   │   │       ├── api/            # API clients & networking
 │   │   │       ├── model/          # Domain models
 │   │   │       ├── navigation/     # Navigation routes & graphs

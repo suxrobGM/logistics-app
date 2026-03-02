@@ -27,15 +27,15 @@
 -dontwarn org.slf4j.**
 
 # OpenAPI generated API models
--keep class com.jfleets.driver.api.models.** { *; }
+-keep class com.logisticsx.driver.api.models.** { *; }
 
 # App models
--keep class com.jfleets.driver.model.** { *; }
+-keep class com.logisticsx.driver.model.** { *; }
 
 # Service models
--keep class com.jfleets.driver.service.realtime.TruckGeolocation { *; }
--keep class com.jfleets.driver.service.auth.TokenResponse { *; }
--keep class com.jfleets.driver.service.auth.TokenErrorResponse { *; }
+-keep class com.logisticsx.driver.service.realtime.TruckGeolocation { *; }
+-keep class com.logisticsx.driver.service.auth.TokenResponse { *; }
+-keep class com.logisticsx.driver.service.auth.TokenErrorResponse { *; }
 
 # SignalR client
 -keep class com.microsoft.signalr.** { *; }

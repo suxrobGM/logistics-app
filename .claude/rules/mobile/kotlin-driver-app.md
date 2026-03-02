@@ -10,7 +10,7 @@ Kotlin Multiplatform mobile app for truck drivers using Compose Multiplatform.
 ## Project Structure
 
 ```text
-composeApp/src/commonMain/kotlin/com/jfleets/driver/
+composeApp/src/commonMain/kotlin/com/logisticsx/driver/
 ├── api/           # ApiFactory and generated API clients
 ├── model/         # Domain models, extensions, settings
 ├── navigation/    # Routes, Navigator, entry provider
@@ -42,7 +42,7 @@ Platform-specific: `androidMain/`, `iosMain/` for expect/actual implementations.
 ## API Layer
 
 - Generated from backend swagger.json: `./gradlew openApiGenerate`
-- Package: `com.jfleets.driver.api` (clients), `com.jfleets.driver.api.models` (DTOs)
+- Package: `com.logisticsx.driver.api` (clients), `com.logisticsx.driver.api.models` (DTOs)
 - APIs accessed via `ApiFactory` (registered in Koin as singletons)
 - APIs return `Response<T>` — use `.body()` to get data
 - Include `X-Tenant` header via PreferencesManager
