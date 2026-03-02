@@ -1,6 +1,6 @@
 # Environment Variables
 
-Configuration reference for Logistics TMS Docker deployment.
+Configuration reference for LogisticsX Docker deployment.
 
 ## Docker Compose Environment (.env)
 
@@ -61,7 +61,7 @@ GoogleRecaptcha__SecretKey="your-secret-key"
 
 ```bash
 Smtp__SenderEmail="noreply@example.com"
-Smtp__SenderName="Logistics NoReply"
+Smtp__SenderName="LogisticsX"
 Smtp__UserName="smtp-username"
 Smtp__Password="smtp-password"
 Smtp__Host="smtp.example.com"
@@ -73,6 +73,21 @@ Smtp__Port="587"
 ```bash
 Mapbox__AccessToken="pk.xxx"
 ```
+
+### TMS Portal (Runtime)
+
+The TMS portal Docker image uses runtime environment variable substitution for secrets. These are injected at container startup via the entrypoint script.
+
+```bash
+# Mapped from Mapbox__AccessToken and Stripe__PublishableKey in docker-compose.yaml
+MAPBOX_TOKEN="pk.xxx"
+STRIPE_PUBLISHABLE_KEY="pk_live_xxx"
+```
+
+| Variable | Description |
+|----------|-------------|
+| `MAPBOX_TOKEN` | Mapbox public access token for maps |
+| `STRIPE_PUBLISHABLE_KEY` | Stripe publishable key (client-side) |
 
 ### Database Migrator
 
@@ -130,7 +145,7 @@ TenantsDatabaseConfig__DatabasePassword="your-secure-tenant-db-password"
 
 # Optional: SMTP
 Smtp__SenderEmail="noreply@yourdomain.com"
-Smtp__SenderName="Logistics NoReply"
+Smtp__SenderName="LogisticsX"
 Smtp__UserName="smtp-username"
 Smtp__Password="smtp-password"
 Smtp__Host="smtp.yourdomain.com"

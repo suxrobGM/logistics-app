@@ -82,7 +82,7 @@ internal static class Setup
             options.AddPolicy("DefaultCors", cors =>
             {
                 cors.SetIsOriginAllowedToAllowWildcardSubdomains()
-                    .WithOrigins("https://*.suxrobgm.net")
+                    .WithOrigins("https://*.logisticsx.app")
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });

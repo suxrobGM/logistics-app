@@ -1,6 +1,6 @@
 # Local Development Setup
 
-Step-by-step guide to run Logistics TMS without Docker.
+Step-by-step guide to run LogisticsX without Docker.
 
 ## Step 1: Clone Repository
 

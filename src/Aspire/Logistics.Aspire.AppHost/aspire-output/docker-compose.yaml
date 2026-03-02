@@ -167,6 +167,9 @@ services:
       - "aspire"
   tms-portal:
     image: "ghcr.io/suxrobgm/logistics-app/tms-portal:latest"
+    environment:
+      MAPBOX_TOKEN: "${Mapbox__AccessToken}"
+      STRIPE_PUBLISHABLE_KEY: "${Stripe__PublishableKey}"
     ports:
       - "7003:80"
     depends_on:

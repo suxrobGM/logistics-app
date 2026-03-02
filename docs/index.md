@@ -1,6 +1,6 @@
-# Logistics TMS Documentation
+# LogisticsX Documentation
 
-Welcome to the Logistics TMS documentation.
+Welcome to the LogisticsX documentation.
 
 ## Quick Links
 

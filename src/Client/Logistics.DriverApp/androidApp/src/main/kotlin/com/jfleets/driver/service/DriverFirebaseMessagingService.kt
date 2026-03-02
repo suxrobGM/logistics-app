@@ -25,7 +25,7 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     companion object {
-        private const val CHANNEL_ID = "logistics_driver_channel"
+        private const val CHANNEL_ID = "logisticsx_driver_channel"
         private const val NOTIFICATION_ID = 2001
     }
 
@@ -59,7 +59,7 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
 
         // Handle notification payload
         message.notification?.let { notification ->
-            val title = notification.title ?: "Logistics Driver"
+            val title = notification.title ?: "LogisticsX Driver"
             val body = notification.body ?: "New notification"
             showNotification(title, body)
         }
@@ -121,7 +121,7 @@ class DriverFirebaseMessagingService : FirebaseMessagingService() {
     private fun createNotificationChannel() {
         val channel = NotificationChannel(
             CHANNEL_ID,
-            "Logistics Notifications",
+            "LogisticsX Notifications",
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
             description = "Notifications for load updates and assignments"

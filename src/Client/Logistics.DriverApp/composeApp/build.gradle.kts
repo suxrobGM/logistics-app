@@ -17,9 +17,9 @@ openApiGenerate {
             .getOrElse("http://localhost:7000/swagger/v1/swagger.json")
     )
     outputDir.set(layout.buildDirectory.dir("generated/openapi").get().asFile.absolutePath)
-    packageName.set("com.jfleets.driver")
-    apiPackage.set("com.jfleets.driver.api")
-    modelPackage.set("com.jfleets.driver.api.models")
+    packageName.set("com.logisticsx.driver")
+    apiPackage.set("com.logisticsx.driver.api")
+    modelPackage.set("com.logisticsx.driver.api.models")
     configOptions.set(
         mapOf(
             "library" to "multiplatform",
@@ -32,7 +32,7 @@ openApiGenerate {
 
 kotlin {
     androidLibrary {
-        namespace = "com.jfleets.driver.shared"
+        namespace = "com.logisticsx.driver.shared"
         compileSdk = 36
         minSdk = 26
     }

@@ -4,7 +4,7 @@ Default accounts available after seeding the database.
 
 ## Live Demo
 
-A live demo is available at [https://tms.suxrobgm.net](https://tms.suxrobgm.net)
+A live demo is available at [https://tms.logisticsx.app](https://tms.logisticsx.app)
 
 > **Warning**: The demo uses test Stripe keys. Do not enter real payment information.
 
