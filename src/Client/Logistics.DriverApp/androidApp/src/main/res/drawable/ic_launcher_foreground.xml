@@ -8,12 +8,12 @@
 
     <!-- X lines -->
     <path
-        android:pathData="M196,170L316,290"
+        android:pathData="M196,196L316,316"
         android:strokeWidth="10"
         android:strokeLineCap="round"
         android:strokeColor="#3B82F6" />
     <path
-        android:pathData="M316,170L196,290"
+        android:pathData="M316,196L196,316"
         android:strokeWidth="10"
         android:strokeLineCap="round"
         android:strokeColor="#06B6D4" />
@@ -21,28 +21,28 @@
     <!-- Center hub -->
     <path
         android:fillColor="#0EA5E9"
-        android:pathData="M256,230m-14,0a14,14 0,1 1,28 0a14,14 0,1 1,-28 0" />
+        android:pathData="M256,256m-14,0a14,14 0,1 1,28 0a14,14 0,1 1,-28 0" />
     <path
         android:fillColor="#0F172A"
-        android:pathData="M256,230m-6,0a6,6 0,1 1,12 0a6,6 0,1 1,-12 0" />
+        android:pathData="M256,256m-6,0a6,6 0,1 1,12 0a6,6 0,1 1,-12 0" />
 
     <!-- Corner nodes -->
     <path
         android:fillColor="#3B82F6"
-        android:pathData="M196,170m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
+        android:pathData="M196,196m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
     <path
         android:fillColor="#0EA5E9"
-        android:pathData="M316,170m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
+        android:pathData="M316,196m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
     <path
         android:fillColor="#06B6D4"
-        android:pathData="M316,290m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
+        android:pathData="M316,316m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
     <path
         android:fillColor="#0EA5E9"
-        android:pathData="M196,290m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
+        android:pathData="M196,316m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
 
     <!-- Hex frame -->
     <path
-        android:pathData="M256,120L351,175L351,285L256,340L161,285L161,175Z"
+        android:pathData="M256,146L351,201L351,311L256,366L161,311L161,201Z"
         android:strokeWidth="4"
         android:strokeLineJoin="round"
         android:strokeColor="#3B82F6"

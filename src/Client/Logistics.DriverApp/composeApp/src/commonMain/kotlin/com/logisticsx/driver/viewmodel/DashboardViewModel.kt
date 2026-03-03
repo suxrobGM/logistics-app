@@ -41,7 +41,7 @@ class DashboardViewModel(
         launchWithState(_uiState) {
             val userId = preferencesManager.getUserId()
             if (userId.isNullOrEmpty()) {
-                throw IllegalStateException("User ID not available")
+                error("Please log in to view your dashboard")
             }
 
             val driver = driverApi.getDriverByUserId(userId).bodyOrThrow()

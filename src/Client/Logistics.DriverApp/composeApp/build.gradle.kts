@@ -35,6 +35,9 @@ kotlin {
         namespace = "com.logisticsx.driver.shared"
         compileSdk = 36
         minSdk = 26
+
+        // Required for Compose Multiplatform resources in Android library targets (AGP 8.8.0+)
+        androidResources.enable = true
     }
 
     sourceSets.all {
