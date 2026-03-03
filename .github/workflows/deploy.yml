@@ -43,9 +43,6 @@ jobs:
           - image: identity
             context: .
             file: ./src/Presentation/Logistics.IdentityServer/Dockerfile
-          - image: migrator
-            context: .
-            file: ./src/Presentation/Logistics.DbMigrator/Dockerfile
           - image: admin-portal
             context: ./src/Client/Logistics.Angular
             file: ./src/Client/Logistics.Angular/Dockerfile.admin
