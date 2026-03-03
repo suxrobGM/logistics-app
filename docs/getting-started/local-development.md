@@ -24,15 +24,15 @@ cd ../../..
 Connect to PostgreSQL and create the required databases:
 
 ```sql
-CREATE DATABASE master_logistics;
-CREATE DATABASE default_logistics;
+CREATE DATABASE master_logisticsx;
+CREATE DATABASE default_logisticsx;
 ```
 
 Or via command line:
 
 ```bash
-psql -U postgres -c "CREATE DATABASE master_logistics;"
-psql -U postgres -c "CREATE DATABASE default_logistics;"
+psql -U postgres -c "CREATE DATABASE master_logisticsx;"
+psql -U postgres -c "CREATE DATABASE default_logisticsx;"
 ```
 
 ### Update Connection Strings
@@ -42,11 +42,11 @@ Edit `src/Presentation/Logistics.API/appsettings.json`:
 ```json
 {
   "ConnectionStrings": {
-    "MasterDatabase": "Host=localhost;Port=5432;Database=master_logistics;Username=postgres;Password=YOUR_PASSWORD",
-    "DefaultTenantDatabase": "Host=localhost;Port=5432;Database=default_logistics;Username=postgres;Password=YOUR_PASSWORD"
+    "MasterDatabase": "Host=localhost;Port=5432;Database=master_logisticsx;Username=postgres;Password=YOUR_PASSWORD",
+    "DefaultTenantDatabase": "Host=localhost;Port=5432;Database=default_logisticsx;Username=postgres;Password=YOUR_PASSWORD"
   },
   "TenantsDatabaseConfig": {
-    "DatabaseNameTemplate": "{tenant}_logistics",
+    "DatabaseNameTemplate": "{tenant}_logisticsx",
     "DatabaseHost": "localhost",
     "DatabaseUserId": "postgres",
     "DatabasePassword": "YOUR_PASSWORD"

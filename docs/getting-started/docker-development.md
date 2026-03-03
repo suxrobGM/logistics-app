@@ -57,8 +57,8 @@ From `src/Aspire/Logistics.Aspire.AppHost/Program.cs`:
 │                    Aspire AppHost                           │
 ├─────────────────────────────────────────────────────────────┤
 │  PostgreSQL Container (port 5432)                          │
-│    ├── master_logistics database                           │
-│    └── default_logistics database                          │
+│    ├── master_logisticsx database                          │
+│    └── default_logisticsx database                         │
 │                                                             │
 │  pgAdmin Container (port 5050)                             │
 │                                                             │

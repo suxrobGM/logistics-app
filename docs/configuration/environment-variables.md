@@ -164,11 +164,11 @@ For local development, configure `src/Presentation/Logistics.API/appsettings.jso
 ```json
 {
   "ConnectionStrings": {
-    "MasterDatabase": "Host=localhost;Port=5432;Database=master_logistics;Username=postgres;Password=password",
-    "DefaultTenantDatabase": "Host=localhost;Port=5432;Database=default_logistics;Username=postgres;Password=password"
+    "MasterDatabase": "Host=localhost;Port=5432;Database=master_logisticsx;Username=postgres;Password=password",
+    "DefaultTenantDatabase": "Host=localhost;Port=5432;Database=default_logisticsx;Username=postgres;Password=password"
   },
   "TenantsDatabaseConfig": {
-    "DatabaseNameTemplate": "{tenant}_logistics",
+    "DatabaseNameTemplate": "{tenant}_logisticsx",
     "DatabaseHost": "localhost",
     "DatabaseUserId": "postgres",
     "DatabasePassword": "password"
@@ -182,7 +182,7 @@ For local development, configure `src/Presentation/Logistics.API/appsettings.jso
 {
   "IdentityServer": {
     "Authority": "http://localhost:7001",
-    "Audience": "logistics.api",
+    "Audience": "logisticsx.api",
     "ValidIssuers": [
       "http://localhost:7001",
       "https://localhost:7001",

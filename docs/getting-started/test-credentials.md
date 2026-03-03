@@ -80,7 +80,7 @@ The default tenant (company) for testing:
 
 - **Tenant ID**: default
 - **Company Name**: Default Logistics
-- **Database**: default_logistics
+- **Database**: default_logisticsx
 
 ## Creating Additional Test Users
 
@@ -105,10 +105,10 @@ To reset to initial test data:
 
 ```bash
 # Drop and recreate databases
-psql -U postgres -c "DROP DATABASE IF EXISTS master_logistics;"
-psql -U postgres -c "DROP DATABASE IF EXISTS default_logistics;"
-psql -U postgres -c "CREATE DATABASE master_logistics;"
-psql -U postgres -c "CREATE DATABASE default_logistics;"
+psql -U postgres -c "DROP DATABASE IF EXISTS master_logisticsx;"
+psql -U postgres -c "DROP DATABASE IF EXISTS default_logisticsx;"
+psql -U postgres -c "CREATE DATABASE master_logisticsx;"
+psql -U postgres -c "CREATE DATABASE default_logisticsx;"
 
 # Re-run migrations and seeding
 dotnet run --project src/Presentation/Logistics.DbMigrator

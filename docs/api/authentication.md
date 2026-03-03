@@ -29,11 +29,11 @@ Host: id.yourdomain.com
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=password
-&client_id=logistics.client
+&client_id=logisticsx.client
 &client_secret=client_secret
 &username=user@example.com
 &password=password123
-&scope=openid profile logistics.api
+&scope=openid profile logisticsx.api
 ```
 
 Response:
@@ -44,7 +44,7 @@ Response:
   "token_type": "Bearer",
   "expires_in": 3600,
   "refresh_token": "abc123...",
-  "scope": "openid profile logistics.api"
+  "scope": "openid profile logisticsx.api"
 }
 ```
 
@@ -57,7 +57,7 @@ GET /connect/authorize?
   response_type=code
   &client_id=third_party_app
   &redirect_uri=https://app.example.com/callback
-  &scope=openid profile logistics.api
+  &scope=openid profile logisticsx.api
   &state=random_state
 ```
 
@@ -69,7 +69,7 @@ Host: id.yourdomain.com
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=refresh_token
-&client_id=logistics.client
+&client_id=logisticsx.client
 &client_secret=client_secret
 &refresh_token=abc123...
 ```
@@ -138,7 +138,7 @@ In `appsettings.json`:
 {
   "IdentityServer": {
     "Authority": "https://id.yourdomain.com",
-    "Audience": "logistics.api",
+    "Audience": "logisticsx.api",
     "ValidIssuers": [
       "https://id.yourdomain.com",
       "https://localhost:7001"
@@ -156,7 +156,7 @@ In `appsettings.json`:
 export const environment = {
   identityUrl: 'https://id.yourdomain.com',
   apiUrl: 'https://api.yourdomain.com',
-  clientId: 'logistics.office'
+  clientId: 'logisticsx.office'
 };
 ```
 
@@ -165,8 +165,8 @@ export const environment = {
 ```kotlin
 object AuthConfig {
     const val AUTHORITY = "https://id.yourdomain.com"
-    const val CLIENT_ID = "logistics.mobile"
-    const val REDIRECT_URI = "logistics://callback"
+    const val CLIENT_ID = "logisticsx.mobile"
+    const val REDIRECT_URI = "logisticsx://callback"
 }
 ```
 

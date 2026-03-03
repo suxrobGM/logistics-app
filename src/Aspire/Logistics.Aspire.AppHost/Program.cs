@@ -14,13 +14,13 @@ var postgres = builder.AddPostgres("postgres", port: 5433)
     .WithVolume("logistics-pg-data", "/var/lib/postgresql")
     .WithEndpoint("tcp", endpoint => endpoint.IsExternal = true);
 
-var masterDb = postgres.AddDatabase("master", "master_logistics");
-var tenantDb = postgres.AddDatabase("default-tenant", "default_logistics");
+var masterDb = postgres.AddDatabase("master", "master_logisticsx");
+var defaultTenantDb = postgres.AddDatabase("default-tenant", "default_logisticsx");
 
 // Runs the migrations for the "master" and tenant databases
 var migrator = builder.AddProject<Logistics_DbMigrator>("migrator")
     .WithReference(masterDb, "MasterDatabase")
-    .WithReference(tenantDb, "DefaultTenantDatabase")
+    .WithReference(defaultTenantDb, "DefaultTenantDatabase")
     .WithEnvironment("SuperAdmin__Email", builder.GetConfigValue("SuperAdmin:Email"))
     .WithEnvironment("SuperAdmin__Password", builder.GetConfigValue("SuperAdmin:Password"))
     .WithEnvironment("TenantsDatabaseConfig__DatabasePassword",
@@ -30,7 +30,7 @@ var migrator = builder.AddProject<Logistics_DbMigrator>("migrator")
 var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-server")
     .WithExternalHttpEndpoints()
     .WithReference(masterDb, "MasterDatabase")
-    .WithReference(tenantDb, "DefaultTenantDatabase")
+    .WithReference(defaultTenantDb, "DefaultTenantDatabase")
     .WithEnvironment("GoogleRecaptcha__SecretKey", builder.GetConfigValue("GoogleRecaptcha:SecretKey"))
     .WithEnvironment("GoogleRecaptcha__SiteKey", builder.GetConfigValue("GoogleRecaptcha:SiteKey"))
     .WithEnvironment("Impersonation__TmsPortalUrl", builder.GetConfigValue("Impersonation:TmsPortalUrl"))
@@ -42,7 +42,7 @@ var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-serv
 var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithExternalHttpEndpoints()
     .WithReference(masterDb, "MasterDatabase")
-    .WithReference(tenantDb, "DefaultTenantDatabase")
+    .WithReference(defaultTenantDb, "DefaultTenantDatabase")
     .WithEnvironment("IdentityServer__Authority",
         isPublishMode ? "http://identity-server:7001" : "http://localhost:7001")
     .WithEnvironment("IdentityServer__RequireHttpsMetadata", "false")
