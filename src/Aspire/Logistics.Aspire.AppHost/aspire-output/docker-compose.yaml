@@ -9,22 +9,6 @@ services:
     networks:
       - "aspire"
     restart: "always"
-  migrator:
-    image: "${MIGRATOR_IMAGE}"
-    environment:
-      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
-      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
-      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
-      ConnectionStrings__MasterDatabase: "${ConnectionStrings__MasterDatabase}"
-      ConnectionStrings__DefaultTenantDatabase: "${ConnectionStrings__DefaultTenantDatabase}"
-      SuperAdmin__Email: "${SuperAdmin__Email}"
-      SuperAdmin__Password: "${SuperAdmin__Password}"
-      TenantsDatabaseConfig__DatabasePassword: "${TenantsDatabaseConfig__DatabasePassword}"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://compose-dashboard:18889"
-      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
-      OTEL_SERVICE_NAME: "migrator"
-    networks:
-      - "aspire"
   identity-server:
     image: "${IDENTITY_SERVER_IMAGE}"
     environment:
@@ -46,9 +30,6 @@ services:
       OTEL_SERVICE_NAME: "identity-server"
     ports:
       - "${IDENTITY_SERVER_PORT}:${IDENTITY_SERVER_PORT}"
-    depends_on:
-      migrator:
-        condition: "service_completed_successfully"
     networks:
       - "aspire"
   api:
@@ -81,8 +62,6 @@ services:
     ports:
       - "${API_PORT}:${API_PORT}"
     depends_on:
-      migrator:
-        condition: "service_completed_successfully"
       identity-server:
         condition: "service_started"
     networks:

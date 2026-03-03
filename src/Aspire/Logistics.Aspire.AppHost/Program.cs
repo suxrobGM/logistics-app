@@ -30,15 +30,6 @@ else
     defaultTenantDb = postgres.AddDatabase("default-tenant", "default_logisticsx");
 }
 
-// Runs the migrations for the "master" and tenant databases
-var migrator = builder.AddProject<Logistics_DbMigrator>("migrator")
-    .WithReference(masterDb, "MasterDatabase")
-    .WithReference(defaultTenantDb, "DefaultTenantDatabase")
-    .WithEnvironment("SuperAdmin__Email", builder.GetConfigValue("SuperAdmin:Email"))
-    .WithEnvironment("SuperAdmin__Password", builder.GetConfigValue("SuperAdmin:Password"))
-    .WithEnvironment("TenantsDatabaseConfig__DatabasePassword",
-        builder.GetConfigValue("TenantsDatabaseConfig:DatabasePassword"));
-
 var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-server")
     .WithExternalHttpEndpoints()
     .WithReference(masterDb, "MasterDatabase")
@@ -48,8 +39,7 @@ var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-serv
     .WithEnvironment("Impersonation__TmsPortalUrl", builder.GetConfigValue("Impersonation:TmsPortalUrl"))
     .WithEnvironment("Resend__ApiKey", builder.GetConfigValue("Resend:ApiKey"))
     .WithEnvironment("Resend__SenderEmail", builder.GetConfigValue("Resend:SenderEmail"))
-    .WithEnvironment("Resend__SenderName", builder.GetConfigValue("Resend:SenderName"))
-    .WaitForCompletion(migrator);
+    .WithEnvironment("Resend__SenderName", builder.GetConfigValue("Resend:SenderName"));
 
 var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithExternalHttpEndpoints()
@@ -72,8 +62,22 @@ var logisticsApi = builder.AddProject<Logistics_API>("api")
         builder.GetConfigValue("TenantsDatabaseConfig:DatabasePassword"))
     .WithEnvironment("TenantsDatabaseConfig__DatabasePort",
         builder.GetConfigValue("TenantsDatabaseConfig:DatabasePort"))
-    .WaitForCompletion(migrator) // Wait for migrator to complete successfully
     .WaitFor(identityServer);
+
+// Development only: run the migrator before starting services
+if (!isPublishMode)
+{
+    var migrator = builder.AddProject<Logistics_DbMigrator>("migrator")
+        .WithReference(masterDb, "MasterDatabase")
+        .WithReference(defaultTenantDb, "DefaultTenantDatabase")
+        .WithEnvironment("SuperAdmin__Email", builder.GetConfigValue("SuperAdmin:Email"))
+        .WithEnvironment("SuperAdmin__Password", builder.GetConfigValue("SuperAdmin:Password"))
+        .WithEnvironment("TenantsDatabaseConfig__DatabasePassword",
+            builder.GetConfigValue("TenantsDatabaseConfig:DatabasePassword"));
+
+    identityServer.WaitForCompletion(migrator);
+    logisticsApi.WaitForCompletion(migrator);
+}
 
 // Use BunApp for local dev, Container for publishing
 if (isPublishMode)
