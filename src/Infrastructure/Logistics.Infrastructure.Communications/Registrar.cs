@@ -42,7 +42,7 @@ public static class Registrar
                          ?? throw new InvalidOperationException("Resend:ApiKey is not configured");
         });
         services.AddTransient<IResend, ResendClient>();
-        services.AddSingleton<IEmailSender, ResendEmailSender>();
+        services.AddScoped<IEmailSender, ResendEmailSender>();
         services.AddSingleton<IEmailTemplateService, FluidEmailTemplateService>();
 
         // Push notifications
