@@ -7,15 +7,28 @@ var isPublishMode = builder.ExecutionContext.IsPublishMode;
 builder.AddDockerComposeEnvironment("compose")
     .WithDashboard(dashboard => dashboard.WithHostPort(7100));
 
-var postgres = builder.AddPostgres("postgres", port: 5433)
-    .WithImage("postgres:latest")
-    .WithPgAdmin(container =>
-        container.WithImage("dpage/pgadmin4:latest").WithHostPort(5434))
-    .WithVolume("logistics-pg-data", "/var/lib/postgresql")
-    .WithEndpoint("tcp", endpoint => endpoint.IsExternal = true);
+IResourceBuilder<IResourceWithConnectionString> masterDb;
+IResourceBuilder<IResourceWithConnectionString> defaultTenantDb;
 
-var masterDb = postgres.AddDatabase("master", "master_logisticsx");
-var defaultTenantDb = postgres.AddDatabase("default-tenant", "default_logisticsx");
+// Development: use containerized PostgreSQL
+// Production: use external (installed) PostgreSQL via connection strings from appsettings
+if (isPublishMode)
+{
+    masterDb = builder.AddConnectionString("MasterDatabase");
+    defaultTenantDb = builder.AddConnectionString("DefaultTenantDatabase");
+}
+else
+{
+    var postgres = builder.AddPostgres("postgres", port: 5433)
+        .WithImage("postgres:latest")
+        .WithPgAdmin(container =>
+            container.WithImage("dpage/pgadmin4:latest").WithHostPort(5434))
+        .WithVolume("logistics-pg-data", "/var/lib/postgresql")
+        .WithEndpoint("tcp", endpoint => endpoint.IsExternal = true);
+
+    masterDb = postgres.AddDatabase("master", "master_logisticsx");
+    defaultTenantDb = postgres.AddDatabase("default-tenant", "default_logisticsx");
+}
 
 // Runs the migrations for the "master" and tenant databases
 var migrator = builder.AddProject<Logistics_DbMigrator>("migrator")
@@ -24,8 +37,7 @@ var migrator = builder.AddProject<Logistics_DbMigrator>("migrator")
     .WithEnvironment("SuperAdmin__Email", builder.GetConfigValue("SuperAdmin:Email"))
     .WithEnvironment("SuperAdmin__Password", builder.GetConfigValue("SuperAdmin:Password"))
     .WithEnvironment("TenantsDatabaseConfig__DatabasePassword",
-        builder.GetConfigValue("TenantsDatabaseConfig:DatabasePassword"))
-    .WaitFor(postgres);
+        builder.GetConfigValue("TenantsDatabaseConfig:DatabasePassword"));
 
 var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-server")
     .WithExternalHttpEndpoints()

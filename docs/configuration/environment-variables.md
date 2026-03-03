@@ -26,13 +26,19 @@ ADMIN_APP_PORT=7002
 | `IDENTITY_SERVER_PORT` | Port for the Identity Server (default: 7001) |
 | `ADMIN_APP_PORT` | Port for the Admin App (default: 7002) |
 
-### Database
+### Database (External PostgreSQL)
+
+Production uses an external (installed) PostgreSQL instance instead of a containerized one.
 
 ```bash
-POSTGRES_PASSWORD="your-secure-postgres-password"
+ConnectionStrings__MasterDatabase="Host=localhost;Port=5432;Database=master_logisticsx;Username=postgres;Password=your-secure-password"
+ConnectionStrings__DefaultTenantDatabase="Host=localhost;Port=5432;Database=default_logisticsx;Username=postgres;Password=your-secure-password"
 ```
 
-The database connection strings are configured automatically using this password.
+| Variable | Description |
+|----------|-------------|
+| `ConnectionStrings__MasterDatabase` | Full connection string for the master database |
+| `ConnectionStrings__DefaultTenantDatabase` | Full connection string for the default tenant database |
 
 ### Stripe Integration
 
@@ -127,12 +133,9 @@ API_PORT=7000
 IDENTITY_SERVER_PORT=7001
 ADMIN_APP_PORT=7002
 
-# Database
-POSTGRES_PASSWORD="your-secure-postgres-password"
-
-# Identity Server
-IdentityServer__Authority="http://identity-server:7001"
-IdentityServer__RequireHttpsMetadata="false"
+# Database (external PostgreSQL)
+ConnectionStrings__MasterDatabase="Host=localhost;Port=5432;Database=master_logisticsx;Username=postgres;Password=your-secure-password"
+ConnectionStrings__DefaultTenantDatabase="Host=localhost;Port=5432;Database=default_logisticsx;Username=postgres;Password=your-secure-password"
 
 # Stripe
 Stripe__SecretKey="sk_live_xxx"
