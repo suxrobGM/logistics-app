@@ -10,6 +10,10 @@ const INITIAL_TRANSFORMS: Record<AnimationType, string> = {
   "scale-up": "scale(0.95)",
 };
 
+/**
+ * Directive to animate elements on scroll using Intersection Observer.
+ * Usage: <div webScrollAnimate="fade-up" [delay]="200" [threshold]="0.2">...</div>
+ */
 @Directive({
   selector: "[webScrollAnimate]",
 })

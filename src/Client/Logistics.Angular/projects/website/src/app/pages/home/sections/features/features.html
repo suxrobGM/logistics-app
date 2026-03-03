@@ -42,7 +42,7 @@
       <div
         webScrollAnimate="fade-up"
         [delay]="j * 50"
-        class="group rounded-xl p-4 transition-all duration-300 hover:bg-paper-dark"
+        class="group relative rounded-xl p-4 transition-colors duration-300 hover:bg-paper-dark"
       >
         <div class="flex items-start gap-3">
           <web-icon-circle [icon]="feature.icon" size="sm" variant="outlined" />
@@ -50,12 +50,14 @@
             <h4 class="font-display text-base font-semibold text-ink">
               {{ feature.title }}
             </h4>
-            <p
-              class="mt-1 max-h-0 overflow-hidden text-sm leading-relaxed text-steel opacity-0 transition-all duration-300 group-hover:mt-2 group-hover:max-h-40 group-hover:opacity-100"
-            >
-              {{ feature.description }}
-            </p>
           </div>
+        </div>
+        <div
+          class="pointer-events-none absolute left-0 top-full z-10 w-full rounded-b-xl bg-paper-dark px-4 pb-4 opacity-0 shadow-lg transition-opacity duration-300 group-hover:opacity-100"
+        >
+          <p class="text-sm leading-relaxed text-steel">
+            {{ feature.description }}
+          </p>
         </div>
       </div>
     }
