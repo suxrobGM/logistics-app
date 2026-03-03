@@ -57,16 +57,19 @@ GoogleRecaptcha__SiteKey="your-site-key"
 GoogleRecaptcha__SecretKey="your-secret-key"
 ```
 
-### SMTP Email (Optional)
+### Resend Email
 
 ```bash
-Smtp__SenderEmail="noreply@example.com"
-Smtp__SenderName="LogisticsX"
-Smtp__UserName="smtp-username"
-Smtp__Password="smtp-password"
-Smtp__Host="smtp.example.com"
-Smtp__Port="587"
+Resend__ApiKey="re_your_api_key_here"
+Resend__SenderEmail="noreply@logisticsx.com"
+Resend__SenderName="LogisticsX"
 ```
+
+| Variable | Description |
+|----------|-------------|
+| `Resend__ApiKey` | Resend API key from resend.com dashboard |
+| `Resend__SenderEmail` | Sender email address (must be from a verified domain) |
+| `Resend__SenderName` | Display name for the sender |
 
 ### Mapbox (Optional)
 
@@ -143,13 +146,10 @@ SuperAdmin__FirstName="Admin"
 SuperAdmin__LastName="Admin"
 TenantsDatabaseConfig__DatabasePassword="your-secure-tenant-db-password"
 
-# Optional: SMTP
-Smtp__SenderEmail="noreply@yourdomain.com"
-Smtp__SenderName="LogisticsX"
-Smtp__UserName="smtp-username"
-Smtp__Password="smtp-password"
-Smtp__Host="smtp.yourdomain.com"
-Smtp__Port="587"
+# Resend (Email)
+Resend__ApiKey="re_your_api_key_here"
+Resend__SenderEmail="noreply@logisticsx.com"
+Resend__SenderName="LogisticsX"
 
 # Optional: Mapbox
 Mapbox__AccessToken="pk.xxx"

@@ -8,6 +8,7 @@ using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Infrastructure.Communications.SignalR.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Resend;
 
 namespace Logistics.Infrastructure.Communications;
 
@@ -31,9 +32,17 @@ public static class Registrar
         services.AddScoped<IRealtimeNotificationService, SignalRNotificationService>();
         services.AddScoped<ITripTrackingService, SignalRTripTrackingService>();
 
-        // Email services
-        services.Configure<SmtpOptions>(configuration.GetSection(SmtpOptions.SectionName));
-        services.AddSingleton<IEmailSender, SmtpEmailSender>();
+        // Email services (Resend)
+        services.Configure<ResendOptions>(configuration.GetSection(ResendOptions.SectionName));
+        services.AddOptions();
+        services.AddHttpClient<ResendClient>();
+        services.Configure<ResendClientOptions>(o =>
+        {
+            o.ApiToken = configuration.GetSection(ResendOptions.SectionName)["ApiKey"]
+                         ?? throw new InvalidOperationException("Resend:ApiKey is not configured");
+        });
+        services.AddTransient<IResend, ResendClient>();
+        services.AddSingleton<IEmailSender, ResendEmailSender>();
         services.AddSingleton<IEmailTemplateService, FluidEmailTemplateService>();
 
         // Push notifications

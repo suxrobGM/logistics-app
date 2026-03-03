@@ -60,7 +60,7 @@ office.yourdomain.com   -> YOUR_VPS_IP
 - [ ] VPS with SSH access
 - [ ] Domain with DNS configured
 - [ ] Stripe API keys (for payments)
-- [ ] SMTP credentials (optional, for emails)
+- [ ] Resend API key (for emails)
 - [ ] Mapbox access token (for maps)
 
 ## Guides

@@ -234,7 +234,7 @@ The infrastructure layer is split into 8 focused projects for better maintainabi
 
 - SignalR Hubs: `TrackingHub`, `ChatHub`, `NotificationHub`
 - Real-time service implementations (wraps SignalR)
-- Email services (SMTP, Fluid templates)
+- Email services (Resend, Fluid templates)
 - Push notifications (Firebase)
 - Captcha validation (Google reCAPTCHA)
 
