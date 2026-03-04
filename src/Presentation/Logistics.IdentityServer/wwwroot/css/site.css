@@ -1,7 +1,7 @@
 /* Variables */
 :root {
-  --primary-color: #2563eb;
-  --primary-hover: #1d4ed8;
+  --primary-color: #3B82F6;
+  --primary-hover: #2563eb;
   --secondary-color: #64748b;
   --success-color: #22c55e;
   --danger-color: #ef4444;
@@ -84,7 +84,7 @@ body {
 
 .form-control:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .form-control::placeholder {

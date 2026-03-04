@@ -67,7 +67,7 @@ GoogleRecaptcha__SecretKey="your-secret-key"
 
 ```bash
 Resend__ApiKey="re_your_api_key_here"
-Resend__SenderEmail="noreply@logisticsx.com"
+Resend__SenderEmail="noreply@logisticsx.app"
 Resend__SenderName="LogisticsX"
 ```
 
@@ -151,7 +151,7 @@ TenantsDatabaseConfig__DatabasePassword="your-secure-tenant-db-password"
 
 # Resend (Email)
 Resend__ApiKey="re_your_api_key_here"
-Resend__SenderEmail="noreply@logisticsx.com"
+Resend__SenderEmail="noreply@logisticsx.app"
 Resend__SenderName="LogisticsX"
 
 # Optional: Mapbox
