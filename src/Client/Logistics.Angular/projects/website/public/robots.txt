@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://logisticstms.com/sitemap.xml
+Sitemap: https://logisticsx.app/sitemap.xml
 
 # Disallow internal/admin paths
 Disallow: /api/

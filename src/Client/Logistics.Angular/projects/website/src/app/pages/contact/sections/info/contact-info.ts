@@ -20,18 +20,18 @@ export class ContactInfo {
       icon: "pi-envelope",
       title: "Email Us",
       lines: ["General inquiries", "Sales questions"],
-      link: { href: "mailto:hello@logisticstms.com", text: "hello@logisticstms.com" },
+      link: { href: "mailto:hello@logisticsx.app", text: "hello@logisticsx.app" },
     },
     {
       icon: "pi-phone",
       title: "Call Us",
       lines: ["Monday - Friday", "9:00 AM - 6:00 PM CT"],
-      link: { href: "tel:+18005551234", text: "(800) 555-1234" },
+      link: { href: "tel:+18578671942", text: "(857) 867-1942" },
     },
     {
       icon: "pi-map-marker",
       title: "Visit Us",
-      lines: ["123 Fleet Street, Suite 500", "Houston, TX 77001"],
+      lines: ["10016 Sandmeyer Ln", "Philadelphia, PA 19116"],
     },
   ];
 

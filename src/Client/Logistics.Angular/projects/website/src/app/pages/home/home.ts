@@ -27,7 +27,7 @@ export class Home implements OnInit {
         "Streamline your trucking operations with real-time GPS tracking, automated dispatching, and seamless invoicing. Request a demo today.",
       keywords:
         "TMS, fleet management, trucking software, GPS tracking, dispatching, logistics, transportation management",
-      canonicalUrl: "https://logisticstms.com/",
+      canonicalUrl: "https://logisticsx.app/",
     });
 
     this.schemaService.setOrganizationSchema();
