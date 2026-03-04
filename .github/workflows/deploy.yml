@@ -6,11 +6,13 @@
 # - SSH_PRIVATE_KEY: SSH private key for VPS access
 # - GHCR_PAT: Personal Access Token with read:packages, write:packages scope
 # - DOCKER_ENV: Full .env file content for docker-compose (includes all config)
+# - FIREBASE_CREDENTIALS_JSON: Firebase Admin SDK service account JSON (for push notifications)
 #
 # Setup instructions:
 # 1. Create PAT: GitHub Settings -> Developer settings -> Personal access tokens with read:packages, write:packages scope
 # 2. On VPS: mkdir -p /deploy/logistics
 # 3. Add DOCKER_ENV secret with all environment variables
+# 4. Add FIREBASE_CREDENTIALS_JSON secret with the contents of firebase-adminsdk-key.json
 
 name: Build and Deploy
 
@@ -73,6 +75,10 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_PAT }}
+
+      - name: Write Firebase credentials
+        if: matrix.image == 'api'
+        run: echo '${{ secrets.FIREBASE_CREDENTIALS_JSON }}' > ./src/Presentation/Logistics.API/firebase-adminsdk-key.json
 
       - name: Build and push ${{ matrix.image }}
         uses: docker/build-push-action@v6
