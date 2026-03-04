@@ -37,17 +37,22 @@
             size="large"
             styleClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark font-display"
           />
-          <a
-            href="#product"
-            class="group font-display text-paper hover:text-accent flex items-center gap-3 font-semibold transition-colors"
-          >
-            <span
-              class="border-steel/30 group-hover:border-accent flex h-12 w-12 items-center justify-center rounded-full border transition-colors"
+          <div class="flex flex-col items-start gap-1.5">
+            <a
+              href="https://tms.logisticsx.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              pTooltip="Login: owner@test.com / Test12345#"
+              tooltipPosition="bottom"
+              class="bg-paper/10 hover:bg-paper/20 border-paper/20 font-display text-paper inline-flex items-center gap-2.5 rounded-lg border px-6 py-3 text-base font-semibold backdrop-blur-sm transition-all"
             >
-              <i class="pi pi-desktop text-sm"></i>
+              <i class="pi pi-external-link text-accent text-sm"></i>
+              View Test Product
+            </a>
+            <span class="block text-xs text-white/50 lg:hidden">
+              Login: owner&#64;test.com / Test12345#
             </span>
-            View Product
-          </a>
+          </div>
         </div>
 
         <!-- Stats -->

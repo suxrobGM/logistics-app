@@ -11,6 +11,12 @@
 
 ![TMS Portal — Dashboard](docs/images/tms-portal/tms-home.png)
 
+<!-- markdownlint-disable MD033 -->
+<p align="center">
+  <a href="https://logisticsx.app"><img src="https://img.shields.io/badge/Website-logisticsx.app-7c3aed?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Website"></a>
+  <a href="https://tms.logisticsx.app"><img src="https://img.shields.io/badge/Live_Demo-Try_It_Now-10b981?style=for-the-badge&logo=rocket&logoColor=white" alt="Live Demo"></a>
+</p>
+
 ## Overview
 
 LogisticsX is purpose-built for trucking fleets specializing in intermodal containers and vehicle transport. It replaces spreadsheet-based workflows with an end-to-end digital system connecting dispatchers, drivers, and customers through web and mobile applications with real-time synchronization.
