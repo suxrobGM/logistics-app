@@ -25,6 +25,8 @@
 -dontwarn io.netty.**
 -dontwarn com.typesafe.**
 -dontwarn org.slf4j.**
+-dontwarn java.lang.management.ManagementFactory
+-dontwarn java.lang.management.RuntimeMXBean
 
 # OpenAPI generated API models
 -keep class com.logisticsx.driver.api.models.** { *; }

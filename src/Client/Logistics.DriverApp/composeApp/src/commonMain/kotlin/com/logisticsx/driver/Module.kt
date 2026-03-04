@@ -64,7 +64,7 @@ fun commonModule() = module {
     single<UserApi> { get<ApiFactory>().userApi }
 
     // ConversationStateManager service for shared messaging state
-    single { ConversationStateManager(get()) }
+    singleOf(::ConversationStateManager)
 
     viewModelOf(::DashboardViewModel)
     viewModelOf(::AccountViewModel)

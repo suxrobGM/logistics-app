@@ -127,10 +127,11 @@ kotlin {
     }
 }
 
-// Apply OpenAPI generator post-processing fixes
+// Apply OpenAPI generator post-processing fixes and ensure task ordering
 apply(from = "../gradle/openapi-fix.gradle.kts")
 
-// Ensure OpenAPI code is generated before Kotlin compilation
-tasks.withType<KotlinCompile>().configureEach {
-    dependsOn(tasks.named("openApiGenerate"))
+tasks.configureEach {
+    if (this is KotlinCompile || name.contains("ArtProfile", ignoreCase = true)) {
+        dependsOn(tasks.named("openApiGenerate"))
+    }
 }

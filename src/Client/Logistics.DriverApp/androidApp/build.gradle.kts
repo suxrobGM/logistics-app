@@ -47,20 +47,17 @@ android {
 
     signingConfigs {
         create("release") {
-            val keystoreFile = providers.gradleProperty("RELEASE_KEYSTORE_FILE").orNull
-            if (keystoreFile != null) {
-                storeFile = file(keystoreFile)
-                storePassword = providers.gradleProperty("RELEASE_KEYSTORE_PASSWORD").get()
-                keyAlias = providers.gradleProperty("RELEASE_KEY_ALIAS").get()
-                keyPassword = providers.gradleProperty("RELEASE_KEY_PASSWORD").get()
-            }
+            storeFile = rootProject.file("release-keystore.jks")
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: "logisticsx"
+            keyAlias = "release"
+            keyPassword = System.getenv("KEY_PASSWORD") ?: "logisticsx"
         }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
-            signingConfig = signingConfigs.findByName("release")
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
