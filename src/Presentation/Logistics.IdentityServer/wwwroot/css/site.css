@@ -36,9 +36,25 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+.navbar.navbar-dark {
+  background-color: #0F172A !important;
+}
+
 .navbar-brand {
   font-weight: 600;
   letter-spacing: -0.025em;
+}
+
+.navbar-dark .navbar-brand,
+.navbar-dark .nav-link,
+.navbar-dark .navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.navbar-dark .navbar-brand:hover,
+.navbar-dark .nav-link:hover {
+  color: #fff !important;
+  text-decoration: none;
 }
 
 /* Card improvements */
