@@ -20,7 +20,6 @@ internal class SeederOrchestrationWorker(
     {
         using var scope = scopeFactory.CreateScope();
         var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-        var populateFakeData = configuration.GetValue<bool>("PopulateFakeData");
 
         var context = new SeederContext
         {
@@ -39,9 +38,10 @@ internal class SeederOrchestrationWorker(
 
         foreach (var seeder in seeders)
         {
-            if (seeder.Type == SeederType.FakeData && !populateFakeData)
+            // Fake data is only populated for the default (test) tenant
+            if (seeder.Type == SeederType.FakeData && context.DefaultTenant is null)
             {
-                logger.LogInformation("Skipping {SeederName} (PopulateFakeData is disabled)", seeder.Name);
+                logger.LogInformation("Skipping {SeederName} (no default tenant)", seeder.Name);
                 continue;
             }
 

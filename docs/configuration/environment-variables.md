@@ -110,8 +110,7 @@ TenantsDatabaseConfig__DatabasePassword="your-secure-tenant-db-password"
 
 | Variable | Description |
 |----------|-------------|
-| `PopulateFakeData` | Set to `true` to seed demo data |
-| `SuperAdmin__*` | Initial super admin account credentials |
+| `SuperAdmin__*` | Initial super admin account credentials (synced on each run) |
 | `TenantsDatabaseConfig__DatabasePassword` | Password used when creating new tenant databases |
 
 ### ASP.NET Core
