@@ -2,7 +2,8 @@ using Logistics.Aspire.AppHost;
 using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
-var isPublishMode = builder.ExecutionContext.IsPublishMode;
+var isProdEnv = builder.ExecutionContext.IsPublishMode;
+var isDevEnv = !isProdEnv;
 
 builder.AddDockerComposeEnvironment("compose")
     .WithDashboard(dashboard => dashboard.WithHostPort(7100));
@@ -12,7 +13,7 @@ IResourceBuilder<IResourceWithConnectionString> defaultTenantDb;
 
 // Development: use containerized PostgreSQL
 // Production: use external (installed) PostgreSQL via connection strings from appsettings
-if (isPublishMode)
+if (isProdEnv)
 {
     masterDb = builder.AddConnectionString("MasterDatabase");
     defaultTenantDb = builder.AddConnectionString("DefaultTenantDatabase");
@@ -46,7 +47,7 @@ var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithReference(masterDb, "MasterDatabase")
     .WithReference(defaultTenantDb, "DefaultTenantDatabase")
     .WithEnvironment("IdentityServer__Authority",
-        isPublishMode ? "http://identity-server:7001" : "http://localhost:7001")
+        isProdEnv ? "http://identity-server:7001" : "http://localhost:7001")
     .WithEnvironment("IdentityServer__RequireHttpsMetadata", "false")
     .WithEnvironment("Impersonation__MasterPassword", builder.GetConfigValue("Impersonation:MasterPassword"))
     .WithEnvironment("Resend__ApiKey", builder.GetConfigValue("Resend:ApiKey"))
@@ -58,20 +59,34 @@ var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithEnvironment("Mapbox__AccessToken", builder.GetConfigValue("Mapbox:AccessToken"))
     .WithEnvironment("CustomerPortal__BaseUrl", builder.GetConfigValue("CustomerPortal:BaseUrl"))
     .WithEnvironment("FileBlobStorage__BaseUrl", builder.GetConfigValue("FileBlobStorage:BaseUrl"))
-    .WithEnvironment("TenantsDatabaseConfig__DatabasePassword",
-        builder.GetConfigValue("TenantsDatabaseConfig:DatabasePassword"))
+    .WithEnvironment("TenantsDatabaseConfig__DatabaseNameTemplate",
+        builder.GetConfigValue("TenantsDatabaseConfig:DatabaseNameTemplate"))
+    .WithEnvironment("TenantsDatabaseConfig__DatabaseHost",
+        builder.GetConfigValue("TenantsDatabaseConfig:DatabaseHost"))
     .WithEnvironment("TenantsDatabaseConfig__DatabasePort",
         builder.GetConfigValue("TenantsDatabaseConfig:DatabasePort"))
+    .WithEnvironment("TenantsDatabaseConfig__DatabaseUserId",
+        builder.GetConfigValue("TenantsDatabaseConfig:DatabaseUserId"))
+    .WithEnvironment("TenantsDatabaseConfig__DatabasePassword",
+        builder.GetConfigValue("TenantsDatabaseConfig:DatabasePassword"))
     .WaitFor(identityServer);
 
 // Development only: run the migrator before starting services
-if (!isPublishMode)
+if (isDevEnv)
 {
     var migrator = builder.AddProject<Logistics_DbMigrator>("migrator")
         .WithReference(masterDb, "MasterDatabase")
         .WithReference(defaultTenantDb, "DefaultTenantDatabase")
         .WithEnvironment("SuperAdmin__Email", builder.GetConfigValue("SuperAdmin:Email"))
         .WithEnvironment("SuperAdmin__Password", builder.GetConfigValue("SuperAdmin:Password"))
+        .WithEnvironment("TenantsDatabaseConfig__DatabaseNameTemplate",
+            builder.GetConfigValue("TenantsDatabaseConfig:DatabaseNameTemplate"))
+        .WithEnvironment("TenantsDatabaseConfig__DatabaseHost",
+            builder.GetConfigValue("TenantsDatabaseConfig:DatabaseHost"))
+        .WithEnvironment("TenantsDatabaseConfig__DatabasePort",
+            builder.GetConfigValue("TenantsDatabaseConfig:DatabasePort"))
+        .WithEnvironment("TenantsDatabaseConfig__DatabaseUserId",
+            builder.GetConfigValue("TenantsDatabaseConfig:DatabaseUserId"))
         .WithEnvironment("TenantsDatabaseConfig__DatabasePassword",
             builder.GetConfigValue("TenantsDatabaseConfig:DatabasePassword"));
 
@@ -80,7 +95,7 @@ if (!isPublishMode)
 }
 
 // Use BunApp for local dev, Container for publishing
-if (isPublishMode)
+if (isProdEnv)
 {
     builder.AddContainer("admin-portal", "ghcr.io/suxrobgm/logistics-app/admin-portal")
         .WithImageTag("latest")
@@ -138,7 +153,7 @@ else
 }
 
 // Use Stripe CLI only in development mode, on the prod the webhooks are handled by the Stripe Dashboard
-if (!isPublishMode)
+if (isDevEnv)
 {
     // Listen for Stripe webhooks and forward them to the logistics API
     builder.AddContainer("stripe-cli", "stripe/stripe-cli:latest")
@@ -152,7 +167,7 @@ if (!isPublishMode)
 }
 
 // Use portainer only in publish mode, on the dev the containers are managed by Aspire Dashboard
-if (isPublishMode)
+if (isProdEnv)
 {
     // Portainer Agent: Exposes Docker API to Portainer CE
     var portainerAgent = builder.AddContainer("portainer-agent", "portainer/agent:latest")

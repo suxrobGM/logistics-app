@@ -4,7 +4,7 @@
 
 ## Promotional Text (170 chars max — iOS only, shown above description)
 
-```
+```text
 Stay on the road. Stay connected. LogisticsX Driver puts your loads, routes, and dispatcher in the palm of your hand.
 ```
 
@@ -12,7 +12,7 @@ Stay on the road. Stay connected. LogisticsX Driver puts your loads, routes, and
 
 ## Short Description (80 chars max — Android only, shown in search results)
 
-```
+```text
 Manage loads, track routes, and stay connected with your dispatcher.
 ```
 
@@ -20,7 +20,7 @@ Manage loads, track routes, and stay connected with your dispatcher.
 
 ## Description (4000 chars max — iOS & Android)
 
-```
+```text
 LogisticsX Driver is the professional companion app for truck drivers working with the LogisticsX fleet management platform. Built for speed and reliability on the road, it gives drivers instant access to everything they need — without the paperwork.
 
 KNOW YOUR LOADS BEFORE YOU ROLL
@@ -52,11 +52,12 @@ LogisticsX Driver is available to drivers whose trucking company uses the Logist
 
 ## Keywords (100 chars max — iOS only, comma-separated, no spaces after commas)
 
-```
+```text
 truck driver,load tracking,fleet management,dispatch,delivery,logistics,freight,trucking,TMS,route
 ```
 
 ### Extended keyword ideas (pick/swap to stay under 100 chars)
+
 - `trucker app`
 - `driver app`
 - `load board`
