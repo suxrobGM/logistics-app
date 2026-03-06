@@ -1,5 +1,8 @@
 ﻿using Logistics.Application.Services;
+using Logistics.Infrastructure.Integrations.Eld.Motive;
 using Logistics.Infrastructure.Integrations.Eld.Providers;
+using Logistics.Infrastructure.Integrations.Eld.Samsara;
+using Logistics.Infrastructure.Integrations.Eld.TtEld;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,7 +11,7 @@ namespace Logistics.Infrastructure.Integrations.Eld;
 public static class Registrar
 {
     /// <summary>
-    ///     Add ELD provider integrations (Samsara, Motive, Demo).
+    ///     Add ELD provider integrations (Samsara, Motive, TT ELD, Demo).
     /// </summary>
     public static IServiceCollection AddEldIntegrations(
         this IServiceCollection services,
@@ -20,6 +23,7 @@ public static class Registrar
         // ELD providers (with HttpClient for external APIs)
         services.AddHttpClient<SamsaraEldService>();
         services.AddHttpClient<MotiveEldService>();
+        services.AddHttpClient<TtEldService>();
         services.AddScoped<DemoEldService>();
 
         // Factory pattern for provider selection

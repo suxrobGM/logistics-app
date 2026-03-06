@@ -56,6 +56,13 @@ public class WebhookController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok() : BadRequest();
     }
 
+    [HttpPost("eld/tteld", Name = "ProcessTtEldWebhook")]
+    public Task<IActionResult> TtEldWebhook()
+    {
+        // TT ELD does not support webhooks - GPS data is polled via EldSyncJob
+        return Task.FromResult<IActionResult>(Ok());
+    }
+
     #region Load Board Webhooks
 
     [HttpPost("loadboard/dat", Name = "ProcessDatWebhook")]

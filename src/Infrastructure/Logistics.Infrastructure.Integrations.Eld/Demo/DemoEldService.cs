@@ -12,9 +12,9 @@ namespace Logistics.Infrastructure.Integrations.Eld.Providers;
 /// </summary>
 internal class DemoEldService(ILogger<DemoEldService> logger) : IEldProviderService
 {
-    private static readonly Random Random = new();
+    private static readonly Random random = new();
 
-    private static readonly string[] DemoDriverNames =
+    private static readonly string[] demoDriverNames =
     [
         "John Smith", "Maria Garcia", "James Johnson", "Emily Davis",
         "Michael Brown", "Sarah Wilson", "David Martinez", "Lisa Anderson"
@@ -40,8 +40,8 @@ internal class DemoEldService(ILogger<DemoEldService> logger) : IEldProviderServ
 
     public Task<EldDriverHosDataDto?> GetDriverHosStatusAsync(string externalDriverId)
     {
-        var driverIndex = Math.Abs(externalDriverId.GetHashCode()) % DemoDriverNames.Length;
-        var dto = GenerateDriverHosData(externalDriverId, DemoDriverNames[driverIndex]);
+        var driverIndex = Math.Abs(externalDriverId.GetHashCode()) % demoDriverNames.Length;
+        var dto = GenerateDriverHosData(externalDriverId, demoDriverNames[driverIndex]);
         return Task.FromResult<EldDriverHosDataDto?>(dto);
     }
 
@@ -49,10 +49,10 @@ internal class DemoEldService(ILogger<DemoEldService> logger) : IEldProviderServ
     {
         var drivers = new List<EldDriverHosDataDto>();
 
-        for (var i = 0; i < DemoDriverNames.Length; i++)
+        for (var i = 0; i < demoDriverNames.Length; i++)
         {
             var driverId = $"demo-driver-{i + 1}";
-            drivers.Add(GenerateDriverHosData(driverId, DemoDriverNames[i]));
+            drivers.Add(GenerateDriverHosData(driverId, demoDriverNames[i]));
         }
 
         logger.LogDebug("Demo provider returned {Count} drivers", drivers.Count);
@@ -85,13 +85,13 @@ internal class DemoEldService(ILogger<DemoEldService> logger) : IEldProviderServ
         var violations = new List<EldViolationDataDto>();
         var days = (endDate - startDate).Days;
 
-        if (days > 7 && Random.NextDouble() > 0.7)
+        if (days > 7 && random.NextDouble() > 0.7)
         {
             violations.Add(new EldViolationDataDto
             {
                 ExternalViolationId = $"demo-violation-{Guid.NewGuid():N}",
                 ExternalDriverId = externalDriverId,
-                ViolationDate = startDate.AddDays(Random.Next(days)),
+                ViolationDate = startDate.AddDays(random.Next(days)),
                 ViolationType = HosViolationType.Break30Minute,
                 Description = "30-minute break violation - Demo",
                 SeverityLevel = 2
@@ -105,15 +105,15 @@ internal class DemoEldService(ILogger<DemoEldService> logger) : IEldProviderServ
     {
         var drivers = new List<EldDriverDto>();
 
-        for (var i = 0; i < DemoDriverNames.Length; i++)
+        for (var i = 0; i < demoDriverNames.Length; i++)
         {
             drivers.Add(new EldDriverDto
             {
                 ExternalDriverId = $"demo-driver-{i + 1}",
-                Name = DemoDriverNames[i],
+                Name = demoDriverNames[i],
                 Email = $"driver{i + 1}@demo.example.com",
                 Phone = $"555-010{i}",
-                LicenseNumber = $"DL{Random.Next(100000, 999999)}"
+                LicenseNumber = $"DL{random.Next(100000, 999999)}"
             });
         }
 
@@ -130,8 +130,8 @@ internal class DemoEldService(ILogger<DemoEldService> logger) : IEldProviderServ
             {
                 ExternalVehicleId = $"demo-vehicle-{i + 1}",
                 Name = $"Truck {1000 + i}",
-                Vin = $"1HGBH41JXMN{Random.Next(100000, 999999)}",
-                LicensePlate = $"ABC{Random.Next(1000, 9999)}",
+                Vin = $"1HGBH41JXMN{random.Next(100000, 999999)}",
+                LicensePlate = $"ABC{random.Next(1000, 9999)}",
                 Make = i % 2 == 0 ? "Freightliner" : "Kenworth",
                 Model = i % 2 == 0 ? "Cascadia" : "T680",
                 Year = 2020 + (i % 4)
@@ -160,29 +160,29 @@ internal class DemoEldService(ILogger<DemoEldService> logger) : IEldProviderServ
         {
             DutyStatus.Driving, DutyStatus.OnDutyNotDriving, DutyStatus.OffDuty, DutyStatus.SleeperBerth
         };
-        var status = statuses[Random.Next(statuses.Length)];
+        var status = statuses[random.Next(statuses.Length)];
 
         // Simulate realistic remaining times based on status
         var drivingMinutes = status == DutyStatus.Driving
-            ? Random.Next(30, 600) // 30 min to 10 hours
-            : Random.Next(300, 660); // More time if not driving
+            ? random.Next(30, 600) // 30 min to 10 hours
+            : random.Next(300, 660); // More time if not driving
 
-        var onDutyMinutes = Random.Next(60, 840); // 1-14 hours
-        var cycleMinutes = Random.Next(600, 4200); // 10-70 hours
+        var onDutyMinutes = random.Next(60, 840); // 1-14 hours
+        var cycleMinutes = random.Next(600, 4200); // 10-70 hours
 
-        var isInViolation = Random.NextDouble() < 0.05; // 5% chance of violation
+        var isInViolation = random.NextDouble() < 0.05; // 5% chance of violation
 
         return new EldDriverHosDataDto
         {
             ExternalDriverId = driverId,
             ExternalDriverName = driverName,
             CurrentDutyStatus = status,
-            StatusChangedAt = DateTime.UtcNow.AddMinutes(-Random.Next(5, 180)),
+            StatusChangedAt = DateTime.UtcNow.AddMinutes(-random.Next(5, 180)),
             DrivingMinutesRemaining = drivingMinutes,
             OnDutyMinutesRemaining = onDutyMinutes,
             CycleMinutesRemaining = cycleMinutes,
             TimeUntilBreakRequired = status == DutyStatus.Driving
-                ? TimeSpan.FromMinutes(Random.Next(30, 480))
+                ? TimeSpan.FromMinutes(random.Next(30, 480))
                 : null,
             IsInViolation = isInViolation
         };
@@ -212,7 +212,7 @@ internal class DemoEldService(ILogger<DemoEldService> logger) : IEldProviderServ
                 break;
             }
 
-            var duration = Random.Next(minDuration, maxDuration);
+            var duration = random.Next(minDuration, maxDuration);
             var endLogTime = currentTime.AddMinutes(duration);
 
             logs.Add(new EldHosLogEntryDto
@@ -225,8 +225,8 @@ internal class DemoEldService(ILogger<DemoEldService> logger) : IEldProviderServ
                 EndTime = endLogTime,
                 DurationMinutes = duration,
                 Location = GetRandomLocation(),
-                Latitude = 39.0 + (Random.NextDouble() * 2),
-                Longitude = -104.0 + (Random.NextDouble() * 2)
+                Latitude = 39.0 + (random.NextDouble() * 2),
+                Longitude = -104.0 + (random.NextDouble() * 2)
             });
 
             currentTime = endLogTime;
@@ -242,7 +242,7 @@ internal class DemoEldService(ILogger<DemoEldService> logger) : IEldProviderServ
             "Denver, CO", "Kansas City, MO", "Dallas, TX", "Phoenix, AZ", "Salt Lake City, UT", "Albuquerque, NM",
             "Oklahoma City, OK", "Truck Stop - I-70 Mile 134", "Rest Area - US-40"
         };
-        return locations[Random.Next(locations.Length)];
+        return locations[random.Next(locations.Length)];
     }
 
     #endregion

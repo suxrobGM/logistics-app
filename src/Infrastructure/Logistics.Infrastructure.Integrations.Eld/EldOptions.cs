@@ -5,14 +5,20 @@ public record EldOptions
     public const string SectionName = "Eld";
     public SamsaraOptions? Samsara { get; set; }
     public MotiveOptions? Motive { get; set; }
+    public TtEldOptions? TtEld { get; set; }
 }
 
 public record SamsaraOptions
 {
-    public string? BaseUrl { get; set; } = "https://api.samsara.com";
+    public string BaseUrl { get; set; } = "https://api.samsara.com";
 }
 
 public record MotiveOptions
 {
-    public string? BaseUrl { get; set; } = "https://api.keeptruckin.com/v1";
+    public string BaseUrl { get; set; } = "https://api.keeptruckin.com/v1";
+}
+
+public record TtEldOptions
+{
+    public string BaseUrl { get; set; } = "https://read.tteld.com";
 }

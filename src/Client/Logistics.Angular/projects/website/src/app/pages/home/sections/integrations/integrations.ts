@@ -16,6 +16,7 @@ export class Integrations {
   protected readonly integrations: Integration[] = [
     { name: "Samsara", logo: "images/samsara-logo.png" },
     { name: "Motive", logo: "images/motive-logo.jpg" },
+    { name: "TT ELD", logo: "images/tteld-logo.png" },
     { name: "Stripe", logo: "images/stripe-logo.svg" },
     { name: "Mapbox", logo: "images/mapbox-logo.svg" },
     { name: "Firebase", logo: "images/firebase-logo.svg" },

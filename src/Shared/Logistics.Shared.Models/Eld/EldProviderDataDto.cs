@@ -102,6 +102,19 @@ public enum EldWebhookEventType
 }
 
 /// <summary>
+/// Real-time vehicle location from an ELD/GPS tracking provider
+/// </summary>
+public record EldVehicleLocationDto
+{
+    public required string ExternalVehicleId { get; set; }
+    public string? TruckNumber { get; set; }
+    public string? Vin { get; set; }
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+    public DateTime Timestamp { get; set; }
+}
+
+/// <summary>
 /// Result of an OAuth token refresh
 /// </summary>
 public record OAuthTokenResultDto
