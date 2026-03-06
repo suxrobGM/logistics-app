@@ -4,6 +4,8 @@ import com.logisticsx.driver.api.TripApi
 import com.logisticsx.driver.api.bodyOrThrow
 import com.logisticsx.driver.api.models.TripDto
 import com.logisticsx.driver.api.models.TripStopDto
+import com.logisticsx.driver.util.buildDirectionsUrl
+import com.logisticsx.driver.util.buildLocationUrl
 import com.logisticsx.driver.viewmodel.base.BaseViewModel
 import com.logisticsx.driver.viewmodel.base.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,33 +34,27 @@ class TripDetailViewModel(
         loadTripDetails()
     }
 
-    fun getGoogleMapsUrl(trip: TripDto): String {
+    fun getMapsUrl(trip: TripDto): String {
         val origin = trip.originAddress
         val destination = trip.destinationAddress
         val stops = trip.stops?.sortedBy { it.order } ?: emptyList()
 
-        val originStr = "${origin.line1 ?: ""}, ${origin.city ?: ""}, ${origin.state ?: ""}"
-        val destinationStr = "${destination.line1 ?: ""}, ${destination.city ?: ""}, ${destination.state ?: ""}"
+        val originStr = "${origin.line1 ?: ""}, ${origin.city ?: ""}, ${origin.state ?: ""}".encodeUrl()
+        val destinationStr = "${destination.line1 ?: ""}, ${destination.city ?: ""}, ${destination.state ?: ""}".encodeUrl()
 
-        var url = "https://www.google.com/maps/dir/?api=1" +
-                "&origin=${originStr.encodeUrl()}" +
-                "&destination=${destinationStr.encodeUrl()}" +
-                "&travelmode=driving"
-
-        if (stops.size > 2) {
-            val waypoints = stops.drop(1).dropLast(1).joinToString("|") { stop ->
+        val waypoints = if (stops.size > 2) {
+            stops.drop(1).dropLast(1).joinToString("%7C") { stop ->
                 val addr = stop.address
-                "${addr.line1 ?: ""}, ${addr.city ?: ""}, ${addr.state ?: ""}"
+                "${addr.line1 ?: ""}, ${addr.city ?: ""}, ${addr.state ?: ""}".encodeUrl()
             }
-            url += "&waypoints=${waypoints.encodeUrl()}"
-        }
+        } else null
 
-        return url
+        return buildDirectionsUrl(originStr, destinationStr, waypoints)
     }
 
-    fun getStopGoogleMapsUrl(stop: TripStopDto): String {
+    fun getStopMapsUrl(stop: TripStopDto): String {
         val location = stop.location
-        return "https://www.google.com/maps/search/?api=1&query=${location.latitude},${location.longitude}"
+        return buildLocationUrl(location.latitude ?: 0.0, location.longitude ?: 0.0)
     }
 
     private fun String.encodeUrl(): String {

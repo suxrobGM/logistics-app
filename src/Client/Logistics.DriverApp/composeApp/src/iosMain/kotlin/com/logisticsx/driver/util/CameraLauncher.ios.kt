@@ -1,6 +1,8 @@
 package com.logisticsx.driver.util
 
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.usePinned
 import platform.Foundation.NSData
 import platform.Foundation.NSUUID
 import platform.UIKit.UIApplication
@@ -111,7 +113,7 @@ actual class CameraLauncher {
         val length = this.length.toInt()
         val bytes = ByteArray(length)
         if (length > 0) {
-            kotlinx.cinterop.usePinned(bytes) { pinned ->
+            bytes.usePinned { pinned ->
                 platform.posix.memcpy(pinned.addressOf(0), this.bytes, this.length)
             }
         }

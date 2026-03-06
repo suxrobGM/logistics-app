@@ -25,15 +25,14 @@ android/app/*.iml
 
 # iOS-specific
 iosApp/build/
-iosApp/*.xcodeproj/project.pbxproj
 iosApp/*.xcworkspace/
 iosApp/Podfile.lock
 iosApp/Pods/
 iosApp/.idea/
 iosApp/.gradle/
 iosApp/*.iml
-iosApp/*.xcworkspace/xcuserdata/
-iosApp/*.xcodeproj/xcuserdata/
+xcuserdata/
+*.xcuserstate
 
 # macOS-specific (if targeting macOS)
 macosApp/build/

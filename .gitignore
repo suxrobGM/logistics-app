@@ -383,3 +383,5 @@ PLAN.md
 .playwright-mcp/
 
 src/Aspire/.aspire/
+
+.DS_Store

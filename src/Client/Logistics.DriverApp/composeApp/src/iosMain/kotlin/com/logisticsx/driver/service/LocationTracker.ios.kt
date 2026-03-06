@@ -147,7 +147,7 @@ private class LocationTrackerDelegate(
                 truckId = preferencesManager.getTruckId() ?: "",
                 tenantId = preferencesManager.getTenantId() ?: "",
                 currentLocation = GeoPoint(latitude = latitude, longitude = longitude),
-                currentAddress = Address(line1 = addressLine, city = city, state = state),
+                currentAddress = Address(line1 = addressLine, city = city, state = state, zipCode = null, country = null),
                 truckNumber = preferencesManager.getTruckNumber(),
                 driversName = preferencesManager.getDriverName()
             )

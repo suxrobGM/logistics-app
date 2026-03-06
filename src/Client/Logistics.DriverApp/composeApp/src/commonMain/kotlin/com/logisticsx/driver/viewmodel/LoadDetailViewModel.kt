@@ -6,7 +6,7 @@ import com.logisticsx.driver.api.bodyOrThrow
 import com.logisticsx.driver.api.models.ConfirmLoadStatusCommand
 import com.logisticsx.driver.api.models.LoadDto
 import com.logisticsx.driver.api.models.LoadStatus
-import com.logisticsx.driver.model.getGoogleMapsUrl
+import com.logisticsx.driver.model.getMapsUrl
 import com.logisticsx.driver.util.Logger
 import com.logisticsx.driver.viewmodel.base.BaseViewModel
 import com.logisticsx.driver.viewmodel.base.UiState
@@ -59,5 +59,5 @@ class LoadDetailViewModel(
         loadDetails()
     }
 
-    fun getGoogleMapsUrl(load: LoadDto): String = load.getGoogleMapsUrl()
+    fun getMapsUrl(load: LoadDto): String = load.getMapsUrl()
 }

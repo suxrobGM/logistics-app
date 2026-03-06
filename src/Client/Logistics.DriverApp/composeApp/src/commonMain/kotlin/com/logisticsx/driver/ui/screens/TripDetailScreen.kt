@@ -103,7 +103,7 @@ fun TripDetailScreen(
 
                     // View Route on Maps Button
                     Button(
-                        onClick = { onOpenMaps(viewModel.getGoogleMapsUrl(trip)) },
+                        onClick = { onOpenMaps(viewModel.getMapsUrl(trip)) },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(Icons.Default.Map, "Map")
@@ -125,7 +125,7 @@ fun TripDetailScreen(
                         TripStopsCard(
                             stops = stops,
                             onNavigateToStop = { stop ->
-                                onOpenMaps(viewModel.getStopGoogleMapsUrl(stop))
+                                onOpenMaps(viewModel.getStopMapsUrl(stop))
                             }
                         )
                     }

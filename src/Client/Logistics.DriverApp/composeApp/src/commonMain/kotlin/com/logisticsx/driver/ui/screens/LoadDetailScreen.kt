@@ -150,7 +150,7 @@ fun LoadDetailScreen(
                     // Map Button - always show since coordinates are required
                     Button(
                         onClick = {
-                            val mapsUrl = viewModel.getGoogleMapsUrl(load)
+                            val mapsUrl = viewModel.getMapsUrl(load)
                             onOpenMaps(mapsUrl)
                         },
                         modifier = Modifier.fillMaxWidth()

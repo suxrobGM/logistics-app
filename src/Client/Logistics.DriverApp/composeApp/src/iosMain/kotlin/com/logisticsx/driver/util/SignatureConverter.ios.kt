@@ -49,8 +49,6 @@ actual object SignatureConverter {
 
                     val bezierPath = UIBezierPath()
                     bezierPath.lineWidth = strokeWidth.toDouble()
-                    bezierPath.lineCapStyle = platform.CoreGraphics.kCGLineCapRound
-                    bezierPath.lineJoinStyle = platform.CoreGraphics.kCGLineJoinRound
 
                     val firstPoint = pathData.points.first()
                     bezierPath.moveToPoint(CGPointMake(firstPoint.x.toDouble(), firstPoint.y.toDouble()))

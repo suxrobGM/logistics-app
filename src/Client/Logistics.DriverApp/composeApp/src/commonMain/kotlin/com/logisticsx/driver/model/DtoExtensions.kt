@@ -6,6 +6,7 @@ import com.logisticsx.driver.api.models.EmployeeDto
 import com.logisticsx.driver.api.models.LoadDto
 import com.logisticsx.driver.api.models.MonthlyGrossDto
 import com.logisticsx.driver.api.models.TruckDto
+import com.logisticsx.driver.util.buildDirectionsUrl
 import kotlin.time.Instant
 
 // Address extensions
@@ -14,10 +15,10 @@ fun Address.toDisplayString(): String {
     return parts.joinToString(", ")
 }
 
-fun LoadDto.getGoogleMapsUrl(): String {
+fun LoadDto.getMapsUrl(): String {
     val origin = "${originLocation.latitude},${originLocation.longitude}"
     val destination = "${destinationLocation.latitude},${destinationLocation.longitude}"
-    return "https://www.google.com/maps/dir/?api=1&origin=$origin&destination=$destination&travelmode=driving"
+    return buildDirectionsUrl(origin, destination)
 }
 
 // TruckDto extensions

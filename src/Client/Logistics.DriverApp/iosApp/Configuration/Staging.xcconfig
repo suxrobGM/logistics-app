@@ -1,6 +1,0 @@
-#include "Config.xcconfig"
-
-// Staging environment
-API_BASE_URL = https:/$()/api.logisticsx.app/
-IDENTITY_SERVER_URL = https:/$()/id.logisticsx.app/
-IS_PRODUCTION = NO

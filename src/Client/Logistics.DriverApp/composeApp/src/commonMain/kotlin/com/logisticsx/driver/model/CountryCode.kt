@@ -23,10 +23,10 @@ enum class CountryCode(
     AU("+61", "Australia", "\uD83C\uDDE6\uD83C\uDDFA", 9);
 
     val displayText: String
-        get() = "$flag $dialCode"
+        get() = "$name $dialCode"
 
     val fullDisplayText: String
-        get() = "$flag $countryName ($dialCode)"
+        get() = "$name  $countryName ($dialCode)"
 
     companion object {
         val DEFAULT = US

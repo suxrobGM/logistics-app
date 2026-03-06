@@ -12,7 +12,7 @@ fun MainViewController(): UIViewController {
         DriverApp(
             onOpenUrl = { url ->
                 NSURL.URLWithString(url)?.let { nsUrl ->
-                    UIApplication.sharedApplication.openURL(nsUrl)
+                    UIApplication.sharedApplication.openURL(nsUrl, emptyMap<Any?, Any?>(), null)
                 }
             }
         )
