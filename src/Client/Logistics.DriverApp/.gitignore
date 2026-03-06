@@ -48,6 +48,7 @@ webApp/build/
 
 google-services.json
 GoogleService-Info.plist
+*.mobileprovision
 *.jks
 *.keystore
 
