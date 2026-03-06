@@ -129,6 +129,10 @@ indent_size = 2
 trim_trailing_whitespace = false
 indent_size = 2
 
+# Liquid Templates
+[*.liquid]
+indent_size = 2
+
 # Shell Scripts
 [*.{sh,bash,zsh}]
 indent_size = 2

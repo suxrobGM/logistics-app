@@ -1,5 +1,4 @@
 using FluentValidation;
-
 using Logistics.Application.Constants;
 
 namespace Logistics.Application.Commands;
@@ -16,5 +15,15 @@ internal sealed class CreateTenantValidator : AbstractValidator<CreateTenantComm
         RuleFor(i => i.BillingEmail)
             .NotEmpty()
             .EmailAddress();
+
+        RuleFor(i => i.OwnerEmail)
+            .NotEmpty()
+            .EmailAddress();
+
+        RuleFor(i => i.OwnerFirstName)
+            .NotEmpty();
+
+        RuleFor(i => i.OwnerLastName)
+            .NotEmpty();
     }
 }

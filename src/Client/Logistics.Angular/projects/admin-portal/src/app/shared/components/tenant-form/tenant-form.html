@@ -1,57 +1,63 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
-  <div class="mb-4 grid grid-cols-12 gap-4">
-    <div class="col-span-12 md:col-span-6">
-      <ui-labeled-field label="Tenant Name" [required]="true">
-        <input
-          pInputText
-          formControlName="name"
-          placeholder="Enter tenant identifier"
-          class="w-full"
-        />
-      </ui-labeled-field>
-    </div>
+  <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+    <ui-labeled-field label="Tenant Name" [required]="true">
+      <input pInputText formControlName="name" placeholder="Enter tenant identifier" />
+    </ui-labeled-field>
 
-    <div class="col-span-12 md:col-span-6">
-      <ui-labeled-field label="Company Name" [required]="true">
-        <input
-          pInputText
-          formControlName="companyName"
-          placeholder="Enter company name"
-          class="w-full"
-        />
-      </ui-labeled-field>
-    </div>
+    <ui-labeled-field label="Company Name" [required]="true">
+      <input pInputText formControlName="companyName" placeholder="Enter company name" />
+    </ui-labeled-field>
   </div>
 
-  <div class="mb-4 grid grid-cols-12 gap-4">
-    <div class="col-span-12 md:col-span-6">
-      <ui-labeled-field label="Billing Email" [required]="true">
-        <input
-          pInputText
-          formControlName="billingEmail"
-          placeholder="Enter billing email"
-          type="email"
-          class="w-full"
-        />
-      </ui-labeled-field>
-    </div>
+  <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+    <ui-labeled-field label="Billing Email" [required]="true">
+      <input
+        pInputText
+        formControlName="billingEmail"
+        placeholder="Enter billing email"
+        type="email"
+      />
+    </ui-labeled-field>
 
-    <div class="col-span-12 md:col-span-6">
-      <ui-labeled-field label="DOT Number">
-        <input
-          pInputText
-          formControlName="dotNumber"
-          placeholder="Enter DOT number"
-          class="w-full"
-        />
-      </ui-labeled-field>
-    </div>
+    <ui-labeled-field label="DOT Number">
+      <input pInputText formControlName="dotNumber" placeholder="Enter DOT number" />
+    </ui-labeled-field>
   </div>
 
   <div class="mb-4">
     <h4 class="mb-2 font-semibold">Company Address</h4>
     <ui-address-form formControlName="companyAddress" />
   </div>
+
+  @if (mode() === "create") {
+    <div class="mb-4">
+      <h4 class="mb-2 font-semibold">Owner Account</h4>
+      <p class="text-surface-500 mb-4 text-sm">
+        The owner will receive login credentials via email.
+      </p>
+
+      <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <ui-labeled-field label="First Name" [required]="true">
+          <input pInputText formControlName="ownerFirstName" placeholder="Enter first name" />
+        </ui-labeled-field>
+
+        <ui-labeled-field label="Last Name" [required]="true">
+          <input pInputText formControlName="ownerLastName" placeholder="Enter last name" />
+        </ui-labeled-field>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <ui-labeled-field label="Email" [required]="true">
+          <input
+            pInputText
+            formControlName="ownerEmail"
+            placeholder="Enter owner email"
+            type="email"
+          />
+        </ui-labeled-field>
+      </div>
+    </div>
+  }
 
   <ui-validation-summary [form]="form" />
 

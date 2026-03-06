@@ -27,14 +27,19 @@ export class TenantAdd {
       name: formValue.name,
       companyName: formValue.companyName,
       billingEmail: formValue.billingEmail,
-      dotNumber: formValue.dotNumber || undefined,
+      dotNumber: formValue.dotNumber,
       companyAddress: formValue.companyAddress ?? undefined,
+      ownerEmail: formValue.ownerEmail,
+      ownerFirstName: formValue.ownerFirstName,
+      ownerLastName: formValue.ownerLastName,
     };
 
     await this.api.invoke(createTenant, { body: command });
-    this.toastService.showSuccess("Tenant has been created successfully");
-    this.router.navigateByUrl("/tenants");
+    this.toastService.showSuccess(
+      "Tenant has been created successfully. Owner will receive login credentials via email.",
+    );
 
+    this.router.navigateByUrl("/tenants");
     this.isLoading.set(false);
   }
 }

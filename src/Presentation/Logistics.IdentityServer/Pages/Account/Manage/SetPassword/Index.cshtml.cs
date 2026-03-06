@@ -37,7 +37,7 @@ namespace Logistics.IdentityServer.Pages.Account.Manage.SetPassword
 
             if (hasPassword)
             {
-                return RedirectToPage("./ChangePassword");
+                return RedirectToPage("../ChangePassword/Index");
             }
 
             return Page();

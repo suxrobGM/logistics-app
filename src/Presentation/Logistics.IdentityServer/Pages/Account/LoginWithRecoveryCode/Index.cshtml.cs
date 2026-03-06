@@ -64,7 +64,7 @@ public class LoginWithRecoveryCodeModel : PageModel
         if (result.IsLockedOut)
         {
             _logger.LogWarning("User with ID '{UserId}' account locked out.", user.Id);
-            return RedirectToPage("./Lockout");
+            return RedirectToPage("../Lockout");
         }
         else
         {

@@ -53,11 +53,9 @@ internal partial class TenantDatabaseService(
     {
         try
         {
-            // Build a main connection for the database to drop
             var sourceBuilder = new NpgsqlConnectionStringBuilder(connectionString);
             var targetDbName = sourceBuilder.Database;
 
-            // Switch to a different database like 'postgres' to perform the drop
             var masterBuilder = new NpgsqlConnectionStringBuilder
             {
                 Host = sourceBuilder.Host,
@@ -70,9 +68,16 @@ internal partial class TenantDatabaseService(
             await using var connection = new NpgsqlConnection(masterBuilder.ConnectionString);
             await connection.OpenAsync();
 
-            var dropQuery = $"DROP DATABASE {targetDbName}";
-            await using var cmd = new NpgsqlCommand(dropQuery, connection);
-            await cmd.ExecuteNonQueryAsync();
+            // Terminate all active connections to the target database before dropping
+            await using (var terminateCmd = new NpgsqlCommand(
+                $"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '{targetDbName}' AND pid <> pg_backend_pid()",
+                connection))
+            {
+                await terminateCmd.ExecuteNonQueryAsync();
+            }
+
+            await using var dropCmd = new NpgsqlCommand($"DROP DATABASE IF EXISTS \"{targetDbName}\"", connection);
+            await dropCmd.ExecuteNonQueryAsync();
             return true;
         }
         catch (DbException ex)

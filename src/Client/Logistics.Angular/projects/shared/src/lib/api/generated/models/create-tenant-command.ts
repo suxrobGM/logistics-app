@@ -8,4 +8,7 @@ export interface CreateTenantCommand {
   companyName?: string | null;
   dotNumber?: string | null;
   name?: string | null;
+  ownerEmail?: string | null;
+  ownerFirstName?: string | null;
+  ownerLastName?: string | null;
 }

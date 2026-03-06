@@ -39,7 +39,7 @@ namespace Logistics.IdentityServer.Pages.Account.Manage.ChangePassword
             var hasPassword = await _userManager.HasPasswordAsync(user);
             if (!hasPassword)
             {
-                return RedirectToPage("./SetPassword");
+                return RedirectToPage("../SetPassword/Index");
             }
 
             return Page();

@@ -19,13 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Email\Templates\Invitation.liquid" />
-    <EmbeddedResource Include="Email\Templates\InvitationReminder.liquid" />
-    <EmbeddedResource Include="Email\Templates\Invoice.liquid" />
-    <EmbeddedResource Include="Email\Templates\PayrollApproved.liquid" />
-    <EmbeddedResource Include="Email\Templates\PayrollPaid.liquid" />
-    <EmbeddedResource Include="Email\Templates\PayrollRejected.liquid" />
-    <EmbeddedResource Include="Email\Templates\TrackingLink.liquid" />
+    <EmbeddedResource Include="Email\Templates\*.liquid" />
   </ItemGroup>
 
 </Project>

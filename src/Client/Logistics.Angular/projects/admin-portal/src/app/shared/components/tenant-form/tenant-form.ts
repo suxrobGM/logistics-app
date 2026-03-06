@@ -14,6 +14,9 @@ export interface TenantFormValue {
   billingEmail: string;
   dotNumber: string;
   companyAddress: Address | null;
+  ownerEmail: string;
+  ownerFirstName: string;
+  ownerLastName: string;
 }
 
 @Component({
@@ -49,9 +52,29 @@ export class TenantForm {
     }),
     dotNumber: new FormControl("", { nonNullable: true }),
     companyAddress: new FormControl<Address | null>(null),
+    ownerFirstName: new FormControl("", { nonNullable: true }),
+    ownerLastName: new FormControl("", { nonNullable: true }),
+    ownerEmail: new FormControl("", { nonNullable: true }),
   });
 
   constructor() {
+    // Set owner field validators based on mode
+    effect(() => {
+      if (this.mode() === "create") {
+        this.form.controls.ownerFirstName.setValidators(Validators.required);
+        this.form.controls.ownerLastName.setValidators(Validators.required);
+        this.form.controls.ownerEmail.setValidators([Validators.required, Validators.email]);
+      } else {
+        this.form.controls.ownerFirstName.clearValidators();
+        this.form.controls.ownerLastName.clearValidators();
+        this.form.controls.ownerEmail.clearValidators();
+      }
+
+      this.form.controls.ownerFirstName.updateValueAndValidity();
+      this.form.controls.ownerLastName.updateValueAndValidity();
+      this.form.controls.ownerEmail.updateValueAndValidity();
+    });
+
     effect(() => {
       if (this.initial()) {
         this.patch(this.initial()!);

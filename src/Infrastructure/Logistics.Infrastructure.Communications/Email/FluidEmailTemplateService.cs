@@ -1,7 +1,6 @@
 using System.Collections.Concurrent;
 using System.Reflection;
 using Fluid;
-using Logistics.Application.Contracts.Models.Email;
 using Logistics.Application.Contracts.Services.Email;
 using Microsoft.Extensions.Logging;
 
@@ -23,10 +22,7 @@ internal sealed class FluidEmailTemplateService : IEmailTemplateService
         templateNamespace = $"{assembly.GetName().Name}.Email.Templates";
 
         options = new TemplateOptions();
-        options.MemberAccessStrategy.Register<InvitationEmailModel>();
-        options.MemberAccessStrategy.Register<TrackingLinkEmailModel>();
-        options.MemberAccessStrategy.Register<InvoiceEmailModel>();
-        options.MemberAccessStrategy.Register<InvoiceLineItemEmailModel>();
+        RegisterEmailModels();
     }
 
     public async Task<string> RenderAsync<TModel>(string templateName, TModel model) where TModel : class
@@ -44,6 +40,22 @@ internal sealed class FluidEmailTemplateService : IEmailTemplateService
         {
             logger.LogError(ex, "Failed to render email template '{TemplateName}'", templateName);
             throw new InvalidOperationException($"Failed to render email template '{templateName}'.", ex);
+        }
+    }
+
+    private void RegisterEmailModels()
+    {
+        const string emailModelNamespace = "Logistics.Application.Contracts.Models.Email";
+        var emailModelAssembly = AppDomain.CurrentDomain.GetAssemblies()
+            .FirstOrDefault(a => a.GetName().Name == "Logistics.Application.Contracts")
+            ?? Assembly.Load("Logistics.Application.Contracts");
+
+        var emailModelTypes = emailModelAssembly.GetTypes()
+            .Where(t => t.Namespace == emailModelNamespace && t is { IsClass: true, IsAbstract: false });
+
+        foreach (var type in emailModelTypes)
+        {
+            options.MemberAccessStrategy.Register(type);
         }
     }
 

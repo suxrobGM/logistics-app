@@ -64,7 +64,7 @@
               styleClass="ml-2 p-button-danger"
               icon="pi pi-trash"
               pTooltip="Delete Tenant"
-              (click)="confirmToDelete(tenant.id)"
+              (click)="openDeleteDialog(tenant.id, tenant.name)"
             />
           </td>
         </tr>
@@ -72,3 +72,11 @@
     </p-table>
   </ui-data-container>
 </p-card>
+
+<ui-confirm-delete-dialog
+  entityLabel="Tenant"
+  [entityName]="deletingTenantName()"
+  [(visible)]="deleteDialogVisible"
+  [deleting]="isDeleting()"
+  (confirm)="confirmDelete()"
+/>

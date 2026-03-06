@@ -1,3 +1,4 @@
+export * from "./confirm-delete-dialog/confirm-delete-dialog";
 export * from "./dashboard-card/dashboard-card";
 export * from "./page-header/page-header";
 export * from "./pdf-viewer/pdf-viewer";

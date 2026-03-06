@@ -1,0 +1,42 @@
+<p-dialog
+  header="Confirm {{ entityLabel() }} Deletion"
+  [modal]="true"
+  [(visible)]="visible"
+  [style]="{ width: '28rem' }"
+  [closable]="!deleting()"
+>
+  <div class="flex flex-col gap-4">
+    <p>
+      This will permanently delete the {{ entityLabel() | lowercase }}
+      <strong>{{ entityName() }}</strong>
+      and all its data. This action cannot be undone.
+    </p>
+    <p class="text-sm text-surface-500">
+      Type <strong>{{ entityName() }}</strong> to confirm:
+    </p>
+    <input
+      pInputText
+      class="w-full"
+      [placeholder]="'Enter ' + (entityLabel() | lowercase) + ' name'"
+      [ngModel]="confirmInput()"
+      (ngModelChange)="confirmInput.set($event)"
+      [disabled]="deleting()"
+    />
+  </div>
+  <ng-template #footer>
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      (click)="visible.set(false)"
+      [disabled]="deleting()"
+    />
+    <p-button
+      [label]="'Delete ' + entityLabel()"
+      severity="danger"
+      icon="pi pi-trash"
+      [loading]="deleting()"
+      [disabled]="!isConfirmValid() || deleting()"
+      (click)="onConfirm()"
+    />
+  </ng-template>
+</p-dialog>

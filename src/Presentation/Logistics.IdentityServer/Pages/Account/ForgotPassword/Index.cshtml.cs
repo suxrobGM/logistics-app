@@ -1,9 +1,7 @@
 using System.Text;
 using System.Text.Encodings.Web;
 using Logistics.Application.Contracts.Services.Email;
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,47 +11,41 @@ using Microsoft.AspNetCore.WebUtilities;
 namespace Logistics.IdentityServer.Pages.Account.ForgotPassword;
 
 [AllowAnonymous]
-public class ForgotPasswordModel : PageModel
+public class ForgotPasswordModel(UserManager<User> userManager, IEmailSender emailSender) : PageModel
 {
-    private readonly UserManager<User> _userManager;
-    private readonly IEmailSender _emailSenderService;
-
-    public ForgotPasswordModel(UserManager<User> userManager, IEmailSender emailSenderService)
-    {
-        _userManager = userManager;
-        _emailSenderService = emailSenderService;
-    }
-
     [BindProperty]
-    public InputModel Input { get; set; }
+    public InputModel Input { get; set; } = null!;
 
     public async Task<IActionResult> OnPostAsync()
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            var user = await _userManager.FindByEmailAsync(Input.Email);
-            if (user == null) //|| !(await _userManager.IsEmailConfirmedAsync(user)))
-            {
-                // Don't reveal that the user does not exist or is not confirmed
-                return RedirectToPage("./ForgotPasswordConfirmation");
-            }
-
-            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            var callbackUrl = Url.Page(
-                "/Account/ResetPassword",
-                null,
-                new { area = "Identity", code },
-                Request.Scheme);
-
-            await _emailSenderService.SendEmailAsync(
-                Input.Email,
-                "Reset Password",
-                $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-            return RedirectToPage("./ForgotPasswordConfirmation");
+            return Page();
         }
 
-        return Page();
+        var user = await userManager.FindByEmailAsync(Input.Email);
+        if (user is null)
+        {
+            // Don't reveal that the user does not exist
+            return RedirectToPage("../ForgotPasswordConfirmation");
+        }
+
+        var code = await userManager.GeneratePasswordResetTokenAsync(user);
+        code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+        var callbackUrl = Url.Page(
+            "/Account/ResetPassword/Index",
+            null,
+            new { code },
+            Request.Scheme)
+                ?? throw new InvalidOperationException("Could not generate password reset callback URL.");
+
+        var encodedUrl = HtmlEncoder.Default.Encode(callbackUrl);
+        await emailSender.SendEmailAsync(
+            Input.Email,
+            "Reset Password",
+            $"Please reset your password by <a href='{encodedUrl}'>clicking here</a>.");
+
+        return RedirectToPage("../ForgotPasswordConfirmation");
     }
 }
