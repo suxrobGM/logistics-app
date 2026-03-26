@@ -142,19 +142,13 @@ jobs:
             # Create proxy network if it doesn't exist
             docker network create proxy 2>/dev/null || true
 
-            # Stop existing containers to force fresh deployment
-            docker compose down
-
-            # Remove old images for the app (not postgres/portainer/dashboard)
-            docker images --format "{{.ID}}" --filter "reference=ghcr.io/$REPO_LOWER/*" | xargs -r docker rmi -f || true
-
-            # Pull latest images
+            # Pull latest images BEFORE stopping anything (minimizes downtime)
             docker compose pull
 
-            # Deploy with forced recreation to ensure new images are used
+            # Recreate containers in-place with new images (no down/up cycle)
             docker compose up -d --force-recreate --remove-orphans
 
-            # Clean up dangling images
+            # Clean up old images after new containers are running
             docker image prune -f
 
             # Show running containers
