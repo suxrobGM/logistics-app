@@ -76,6 +76,6 @@ internal sealed class GetInvitationsHandler(
                 customerName);
         }).ToList();
 
-        return PagedResult<InvitationDto>.Succeed(dtos, totalItems, req.PageSize);
+        return PagedResult<InvitationDto>.Ok(dtos, totalItems, req.PageSize);
     }
 }

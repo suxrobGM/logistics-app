@@ -100,7 +100,7 @@ internal sealed class DriversReportHandler(ITenantUnitOfWork tenantUow) : IAppRe
             .ToList();
 
 
-        return PagedResult<DriverReportDto>.Succeed(items, totalCount, req.PageSize);
+        return PagedResult<DriverReportDto>.Ok(items, totalCount, req.PageSize);
     }
 }
 

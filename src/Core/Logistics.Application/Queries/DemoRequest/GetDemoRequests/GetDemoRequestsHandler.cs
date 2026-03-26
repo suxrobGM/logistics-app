@@ -20,6 +20,6 @@ internal sealed class GetDemoRequestsHandler(
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<DemoRequestDto>.Succeed(items, totalItems, req.PageSize);
+        return PagedResult<DemoRequestDto>.Ok(items, totalItems, req.PageSize);
     }
 }

@@ -39,6 +39,6 @@ internal sealed class GetDispatchSessionsHandler(
             })
             .ToList();
 
-        return PagedResult<DispatchSessionDto>.Succeed(dtos, totalItems, request.PageSize);
+        return PagedResult<DispatchSessionDto>.Ok(dtos, totalItems, request.PageSize);
     }
 }

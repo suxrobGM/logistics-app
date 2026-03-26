@@ -26,6 +26,6 @@ internal sealed class GetAppRolesHandler : IAppRequestHandler<GetAppRolesQuery, 
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<RoleDto>.Succeed(rolesDto, totalItems, req.PageSize);
+        return PagedResult<RoleDto>.Ok(rolesDto, totalItems, req.PageSize);
     }
 }

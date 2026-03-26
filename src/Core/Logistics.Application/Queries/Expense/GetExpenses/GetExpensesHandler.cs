@@ -67,7 +67,7 @@ internal sealed class GetExpensesHandler(ITenantUnitOfWork tenantUow)
 
         var dtos = expenses.Select(e => e.ToDto()).ToArray();
 
-        return PagedResult<ExpenseDto>.Succeed(dtos, totalItems, req.PageSize);
+        return PagedResult<ExpenseDto>.Ok(dtos, totalItems, req.PageSize);
     }
 
     private static IQueryable<Expense> ApplySorting(IQueryable<Expense> query, string? orderBy)

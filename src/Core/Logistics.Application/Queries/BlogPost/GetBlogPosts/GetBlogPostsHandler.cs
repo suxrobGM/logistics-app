@@ -20,6 +20,6 @@ internal sealed class GetBlogPostsHandler(
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<BlogPostDto>.Succeed(items, totalItems, req.PageSize);
+        return PagedResult<BlogPostDto>.Ok(items, totalItems, req.PageSize);
     }
 }

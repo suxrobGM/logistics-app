@@ -27,6 +27,6 @@ internal sealed class GetUsersHandler : IAppRequestHandler<GetUsersQuery, PagedR
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<UserDto>.Succeed(users, totalItems, req.PageSize);
+        return PagedResult<UserDto>.Ok(users, totalItems, req.PageSize);
     }
 }

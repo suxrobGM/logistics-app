@@ -35,6 +35,6 @@ internal sealed class GetTrucksHandler(ITenantUnitOfWork tenantUow)
                 : baseQuery.Select(i => i.ToDto(new List<LoadDto>())))
             .ToArray();
 
-        return PagedResult<TruckDto>.Succeed(trucks, totalItems, req.PageSize);
+        return PagedResult<TruckDto>.Ok(trucks, totalItems, req.PageSize);
     }
 }

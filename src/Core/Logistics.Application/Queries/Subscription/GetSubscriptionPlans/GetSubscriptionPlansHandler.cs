@@ -28,6 +28,6 @@ internal sealed class
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<SubscriptionPlanDto>.Succeed(items, totalItems, req.PageSize);
+        return PagedResult<SubscriptionPlanDto>.Ok(items, totalItems, req.PageSize);
     }
 }

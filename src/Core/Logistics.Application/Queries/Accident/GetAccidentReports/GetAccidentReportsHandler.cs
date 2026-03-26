@@ -50,6 +50,6 @@ internal sealed class GetAccidentReportsHandler(ITenantUnitOfWork tenantUow)
 
         var dtos = baseQuery.Select(r => r.ToDto()).ToArray();
 
-        return Task.FromResult(PagedResult<AccidentReportDto>.Succeed(dtos, totalItems, req.PageSize));
+        return Task.FromResult(PagedResult<AccidentReportDto>.Ok(dtos, totalItems, req.PageSize));
     }
 }

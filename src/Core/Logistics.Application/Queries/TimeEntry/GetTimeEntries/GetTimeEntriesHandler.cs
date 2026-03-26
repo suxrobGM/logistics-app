@@ -73,6 +73,6 @@ internal sealed class GetTimeEntriesHandler(ITenantUnitOfWork tenantUow)
         var timeEntries = query.ToList();
         var dtos = timeEntries.Select(t => t.ToDto()).ToArray();
 
-        return PagedResult<TimeEntryDto>.Succeed(dtos, totalItems, req.PageSize);
+        return PagedResult<TimeEntryDto>.Ok(dtos, totalItems, req.PageSize);
     }
 }

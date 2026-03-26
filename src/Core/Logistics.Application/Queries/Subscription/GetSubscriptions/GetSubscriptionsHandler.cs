@@ -27,6 +27,6 @@ internal sealed class GetSubscriptionsHandler : IAppRequestHandler<GetSubscripti
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<SubscriptionDto>.Succeed(items, totalItems, req.PageSize);
+        return PagedResult<SubscriptionDto>.Ok(items, totalItems, req.PageSize);
     }
 }

@@ -65,6 +65,6 @@ internal sealed class GetPortalInvoicesHandler(ITenantUnitOfWork tenantUow)
             DueDate = i.DueDate
         }).ToArrayAsync(ct);
 
-        return PagedResult<PortalInvoiceDto>.Succeed(invoices, totalItems, req.PageSize);
+        return PagedResult<PortalInvoiceDto>.Ok(invoices, totalItems, req.PageSize);
     }
 }

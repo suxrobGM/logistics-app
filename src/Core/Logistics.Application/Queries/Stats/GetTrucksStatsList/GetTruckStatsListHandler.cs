@@ -28,6 +28,6 @@ public class GetTruckStatsListHandler : IAppRequestHandler<GetTrucksStatsListQue
         var truckStatsDto = await _tenantUow.ExecuteRawSql<TruckStatsDto>(query);
         var totalItems = truckStatsDto.FirstOrDefault()?.TotalItems ?? 0;
 
-        return PagedResult<TruckStatsDto>.Succeed(truckStatsDto, totalItems, req.PageSize);
+        return PagedResult<TruckStatsDto>.Ok(truckStatsDto, totalItems, req.PageSize);
     }
 }

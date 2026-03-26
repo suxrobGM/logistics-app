@@ -50,6 +50,6 @@ internal sealed class GetDvirReportsHandler(ITenantUnitOfWork tenantUow)
 
         var dtos = baseQuery.Select(r => r.ToDto()).ToArray();
 
-        return Task.FromResult(PagedResult<DvirReportDto>.Succeed(dtos, totalItems, req.PageSize));
+        return Task.FromResult(PagedResult<DvirReportDto>.Ok(dtos, totalItems, req.PageSize));
     }
 }

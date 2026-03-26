@@ -80,6 +80,6 @@ internal sealed class GetPortalLoadsHandler(ITenantUnitOfWork tenantUow)
             HasBillOfLading = l.Documents.Any(d => d.Type == DocumentType.BillOfLading)
         }).ToArray();
 
-        return PagedResult<PortalLoadDto>.Succeed(loads, totalItems, req.PageSize);
+        return PagedResult<PortalLoadDto>.Ok(loads, totalItems, req.PageSize);
     }
 }

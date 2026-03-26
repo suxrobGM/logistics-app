@@ -50,6 +50,6 @@ internal sealed class GetDriverBehaviorEventsHandler(ITenantUnitOfWork tenantUow
 
         var dtos = baseQuery.Select(e => e.ToDto()).ToArray();
 
-        return Task.FromResult(PagedResult<DriverBehaviorEventDto>.Succeed(dtos, totalItems, req.PageSize));
+        return Task.FromResult(PagedResult<DriverBehaviorEventDto>.Ok(dtos, totalItems, req.PageSize));
     }
 }

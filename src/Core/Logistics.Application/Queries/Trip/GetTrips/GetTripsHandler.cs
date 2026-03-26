@@ -31,6 +31,6 @@ internal sealed class GetTripsHandler(ITenantUnitOfWork tenantUow)
             .Select(trip => trip.ToDto())
             .ToArray();
 
-        return PagedResult<TripDto>.Succeed(items, totalItems, req.PageSize);
+        return PagedResult<TripDto>.Ok(items, totalItems, req.PageSize);
     }
 }

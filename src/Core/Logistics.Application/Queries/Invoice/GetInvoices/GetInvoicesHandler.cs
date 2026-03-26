@@ -37,7 +37,7 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<InvoiceDto>.Succeed(invoicesDto, totalItems, req.PageSize);
+        return PagedResult<InvoiceDto>.Ok(invoicesDto, totalItems, req.PageSize);
     }
 
     private async Task<PagedResult<InvoiceDto>> GetLoadInvoices(GetInvoicesQuery req)
@@ -78,7 +78,7 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<InvoiceDto>.Succeed(invoicesDto, totalItems, req.PageSize);
+        return PagedResult<InvoiceDto>.Ok(invoicesDto, totalItems, req.PageSize);
     }
 
     private Task<PagedResult<InvoiceDto>> GetPayrollInvoices(GetInvoicesQuery req)
@@ -115,6 +115,6 @@ internal sealed class GetInvoicesHandler(ITenantUnitOfWork tenantUow)
             .Select(i => i.ToDto())
             .ToArray();
 
-        return Task.FromResult(PagedResult<InvoiceDto>.Succeed(invoicesDto, totalItems, req.PageSize));
+        return Task.FromResult(PagedResult<InvoiceDto>.Ok(invoicesDto, totalItems, req.PageSize));
     }
 }

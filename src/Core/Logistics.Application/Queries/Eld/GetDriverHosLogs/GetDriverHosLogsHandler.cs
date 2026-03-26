@@ -29,6 +29,6 @@ internal sealed class GetDriverHosLogsHandler(ITenantUnitOfWork tenantUow)
             .Select(l => l.ToDto(l.Employee.FirstName + " " + l.Employee.LastName))
             .ToArrayAsync(ct);
 
-        return PagedResult<HosLogDto>.Succeed(logs, totalItems, req.PageSize);
+        return PagedResult<HosLogDto>.Ok(logs, totalItems, req.PageSize);
     }
 }

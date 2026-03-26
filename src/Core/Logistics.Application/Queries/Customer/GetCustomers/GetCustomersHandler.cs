@@ -20,6 +20,6 @@ internal sealed class GetCustomersHandler(ITenantUnitOfWork tenantUow)
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<CustomerDto>.Succeed(customers, totalItems, req.PageSize);
+        return PagedResult<CustomerDto>.Ok(customers, totalItems, req.PageSize);
     }
 }

@@ -40,6 +40,6 @@ internal sealed class GetMaintenanceRecordsHandler(ITenantUnitOfWork tenantUow)
 
         var dtos = baseQuery.Select(r => r.ToDto()).ToArray();
 
-        return Task.FromResult(PagedResult<MaintenanceRecordDto>.Succeed(dtos, totalItems, req.PageSize));
+        return Task.FromResult(PagedResult<MaintenanceRecordDto>.Ok(dtos, totalItems, req.PageSize));
     }
 }

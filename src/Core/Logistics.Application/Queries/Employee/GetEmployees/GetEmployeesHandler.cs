@@ -20,6 +20,6 @@ internal sealed class GetEmployeesHandler(ITenantUnitOfWork tenantUow) : IAppReq
             .Select(employeeEntity => employeeEntity.ToDto())
             .ToArray();
 
-        return PagedResult<EmployeeDto>.Succeed(employeeDto, totalItems, req.PageSize);
+        return PagedResult<EmployeeDto>.Ok(employeeDto, totalItems, req.PageSize);
     }
 }

@@ -30,6 +30,6 @@ internal sealed class GetPaymentsHandler : IAppRequestHandler<GetPaymentsQuery, 
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<PaymentDto>.Succeed(payments, totalItems, req.PageSize);
+        return PagedResult<PaymentDto>.Ok(payments, totalItems, req.PageSize);
     }
 }

@@ -20,6 +20,6 @@ internal sealed class GetContactSubmissionsHandler(
             .Select(i => i.ToDto())
             .ToArray();
 
-        return PagedResult<ContactSubmissionDto>.Succeed(items, totalItems, req.PageSize);
+        return PagedResult<ContactSubmissionDto>.Ok(items, totalItems, req.PageSize);
     }
 }

@@ -27,6 +27,6 @@ internal sealed class GetTenantsHandler : IAppRequestHandler<GetTenantsQuery, Pa
             .Select(i => i.ToDto(req.IncludeConnectionStrings, null))
             .ToArray();
 
-        return PagedResult<TenantDto>.Succeed(items, totalItems, req.PageSize);
+        return PagedResult<TenantDto>.Ok(items, totalItems, req.PageSize);
     }
 }

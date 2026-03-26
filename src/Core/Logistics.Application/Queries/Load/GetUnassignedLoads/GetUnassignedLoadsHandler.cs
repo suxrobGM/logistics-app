@@ -32,6 +32,6 @@ internal sealed class GetUnassignedLoadsHandler(ITenantUnitOfWork uow)
             .Select(l => l.ToDto())
             .ToArray();
 
-        return PagedResult<LoadDto>.Succeed(loads, totalItems, req.PageSize);
+        return PagedResult<LoadDto>.Ok(loads, totalItems, req.PageSize);
     }
 }
