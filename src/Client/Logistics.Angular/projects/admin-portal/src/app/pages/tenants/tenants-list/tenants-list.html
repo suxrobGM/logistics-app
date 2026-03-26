@@ -56,15 +56,10 @@
           <td>{{ tenant.truckCount ?? 0 }}</td>
           <td class="text-center">
             <p-button
-              icon="pi pi-pen-to-square"
-              pTooltip="Edit Tenant"
-              [routerLink]="['/tenants', tenant.id, 'edit']"
-            />
-            <p-button
-              styleClass="ml-2 p-button-danger"
-              icon="pi pi-trash"
-              pTooltip="Delete Tenant"
-              (click)="openDeleteDialog(tenant.id, tenant.name)"
+              icon="pi pi-ellipsis-v"
+              [text]="true"
+              (click)="openActionMenu($event, tenant)"
+              aria-label="Show actions menu"
             />
           </td>
         </tr>
@@ -72,6 +67,8 @@
     </p-table>
   </ui-data-container>
 </p-card>
+
+<p-menu #actionMenu [model]="actionMenuItems()" [popup]="true" />
 
 <ui-confirm-delete-dialog
   entityLabel="Tenant"

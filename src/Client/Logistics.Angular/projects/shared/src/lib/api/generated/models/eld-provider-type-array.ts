@@ -12,5 +12,6 @@ export const ELD_PROVIDER_TYPE: EldProviderType[] = [
   'geotab',
   'omnitracs',
   'people_net',
+  'tt_eld',
   'demo'
 ];

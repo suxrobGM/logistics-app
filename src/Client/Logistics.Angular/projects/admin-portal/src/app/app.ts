@@ -5,6 +5,8 @@ import { ToastModule } from "primeng/toast";
 import { filter } from "rxjs";
 import { AuthService } from "@/core/auth";
 import { Sidebar } from "@/shared/layout";
+import { MobileDrawer } from "@/shared/layout/mobile-drawer/mobile-drawer";
+import { MobileHeader } from "@/shared/layout/mobile-header/mobile-header";
 
 /** Routes that should not show the sidebar layout */
 const STANDALONE_ROUTES = ["/", "/unauthorized"];
@@ -12,7 +14,7 @@ const STANDALONE_ROUTES = ["/", "/unauthorized"];
 @Component({
   selector: "adm-root",
   templateUrl: "./app.html",
-  imports: [ToastModule, RouterOutlet, Sidebar, ConfirmDialog],
+  imports: [ToastModule, RouterOutlet, Sidebar, ConfirmDialog, MobileHeader, MobileDrawer],
 })
 export class App {
   private readonly authService = inject(AuthService);

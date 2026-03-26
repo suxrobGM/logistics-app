@@ -108,7 +108,7 @@ internal sealed class CreateTenantHandler(
 
     private async Task SendWelcomeEmailAsync(User owner, Tenant tenant, string? temporaryPassword = null)
     {
-        var loginUrl = $"{identityServerOptions.Value.Authority}/Account/Login";
+        var loginUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/Login";
         var companyName = tenant.CompanyName ?? tenant.Name;
 
         var model = new TenantWelcomeEmailModel

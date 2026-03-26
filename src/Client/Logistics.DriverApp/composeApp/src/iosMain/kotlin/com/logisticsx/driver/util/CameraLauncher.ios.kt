@@ -14,6 +14,8 @@ import platform.UIKit.UIImagePickerControllerEditedImage
 import platform.UIKit.UIImagePickerControllerOriginalImage
 import platform.UIKit.UIImagePickerControllerSourceType
 import platform.UIKit.UINavigationControllerDelegateProtocol
+import platform.UIKit.UIWindow
+import platform.UIKit.UIWindowScene
 import platform.darwin.NSObject
 
 /**
@@ -62,7 +64,12 @@ actual class CameraLauncher {
             }
             picker.delegate = imagePickerDelegate
 
-            val rootViewController = UIApplication.sharedApplication.keyWindow?.rootViewController
+            val windowScene = UIApplication.sharedApplication.connectedScenes
+                .firstOrNull { it is UIWindowScene } as? UIWindowScene
+            val rootViewController = windowScene?.windows
+                ?.firstOrNull { (it as? UIWindow)?.isKeyWindow == true }
+                ?.let { it as UIWindow }
+                ?.rootViewController
             if (rootViewController != null) {
                 rootViewController.presentViewController(picker, animated = true, completion = null)
             } else {

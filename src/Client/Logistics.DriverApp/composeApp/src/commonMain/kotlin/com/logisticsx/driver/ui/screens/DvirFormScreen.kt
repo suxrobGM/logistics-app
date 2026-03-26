@@ -1,5 +1,6 @@
 package com.logisticsx.driver.ui.screens
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +28,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.logisticsx.driver.api.models.DvirType
@@ -59,6 +62,8 @@ fun DvirFormScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     var showAddDefectDialog by remember { mutableStateOf(false) }
 
+    val focusManager = LocalFocusManager.current
+
     HandleSideEffects(
         error = uiState.error,
         isSuccess = uiState.isSuccess,
@@ -89,7 +94,8 @@ fun DvirFormScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(16.dp),
+                .padding(16.dp)
+                .pointerInput(Unit) { detectTapGestures { focusManager.clearFocus() } },
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Inspection Type Selection
@@ -106,7 +112,8 @@ fun DvirFormScreen(
                     selectedTruck = uiState.selectedTruck,
                     availableTrucks = uiState.availableTrucks,
                     isLoading = uiState.isLoadingTrucks,
-                    onTruckSelected = viewModel::selectTruck
+                    onTruckSelected = viewModel::selectTruck,
+                    enabled = truckId == null
                 )
             }
 

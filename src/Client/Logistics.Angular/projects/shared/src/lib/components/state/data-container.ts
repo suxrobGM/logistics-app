@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject, input, output } from "@angular/core";
+import { OidcSecurityService } from "angular-auth-oidc-client";
 import type { AppError } from "../../errors/error.types";
 import { EmptyState } from "./empty-state";
 import { ErrorState } from "./error-state";
@@ -15,6 +16,8 @@ import { LoadingSkeleton } from "./loading-skeleton";
   imports: [LoadingSkeleton, ErrorState, EmptyState],
 })
 export class DataContainer {
+  private readonly oidcService = inject(OidcSecurityService);
+
   /** Whether data is currently loading */
   public readonly loading = input(false);
 
@@ -54,11 +57,20 @@ export class DataContainer {
   /** Emitted when user clicks action button on empty state */
   public readonly emptyAction = output<void>();
 
+  protected get isAuthError(): boolean {
+    const err = this.error();
+    return err?.category === "auth" || err?.statusCode === 401 || err?.statusCode === 403;
+  }
+
   protected handleRetry(): void {
     this.retry.emit();
   }
 
   protected handleEmptyAction(): void {
     this.emptyAction.emit();
+  }
+
+  protected handleLogout(): void {
+    this.oidcService.logoff().subscribe();
   }
 }

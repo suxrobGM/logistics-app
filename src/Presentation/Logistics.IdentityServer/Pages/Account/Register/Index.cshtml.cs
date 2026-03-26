@@ -1,5 +1,5 @@
 using System.Text;
-using System.Text.Encodings.Web;
+using Logistics.Application.Contracts.Models.Email;
 using Logistics.Application.Contracts.Services.Email;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
@@ -19,6 +19,7 @@ public class Index : PageModel
     private readonly SignInManager<User> _signInManager;
     private readonly UserManager<User> _userManager;
     private readonly IEmailSender _emailSender;
+    private readonly IEmailTemplateService _emailTemplateService;
     private readonly ICaptchaService _captchaService;
     private readonly ILogger<Index> _logger;
 
@@ -27,12 +28,14 @@ public class Index : PageModel
         SignInManager<User> signInManager,
         UserManager<User> userManager,
         IEmailSender emailSender,
+        IEmailTemplateService emailTemplateService,
         ICaptchaService captchaService,
         ILogger<Index> logger)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _emailSender = emailSender;
+        _emailTemplateService = emailTemplateService;
         _captchaService = captchaService;
         _logger = logger;
         CaptchaSiteKey = configuration.GetValue<string>("GoogleRecaptcha:SiteKey");
@@ -80,8 +83,9 @@ public class Index : PageModel
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
             var callbackUrl = Url.Page("/Account/ConfirmEmail", null, new { userId = user.Id, code, returnUrl }, Request.Scheme);
 
-            await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl!)}'>clicking here</a>.");
+            var confirmModel = new EmailConfirmationEmailModel { ConfirmUrl = callbackUrl! };
+            var confirmBody = await _emailTemplateService.RenderAsync("EmailConfirmation", confirmModel);
+            await _emailSender.SendEmailAsync(Input.Email, "Confirm your email", confirmBody);
 
             if (_userManager.Options.SignIn.RequireConfirmedAccount)
             {

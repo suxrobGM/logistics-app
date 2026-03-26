@@ -58,7 +58,7 @@ internal sealed class ResendInvitationHandler(
 
     private async Task SendInvitationEmailAsync(Invitation invitation, Tenant tenant)
     {
-        var acceptUrl = $"{identityServerOptions.Value.Authority}/Account/AcceptInvitation?token={invitation.Token}";
+        var acceptUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/AcceptInvitation?token={invitation.Token}";
         var companyName = tenant.CompanyName ?? tenant.Name;
 
         var model = new InvitationEmailModel

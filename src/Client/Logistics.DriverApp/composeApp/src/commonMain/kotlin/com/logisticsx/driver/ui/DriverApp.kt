@@ -1,5 +1,6 @@
 package com.logisticsx.driver.ui
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
@@ -110,6 +111,7 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
     CompositionLocalProvider(LocalUserSettings provides userSettings) {
         LogisticsDriverTheme {
             Scaffold(
+                contentWindowInsets = WindowInsets(0, 0, 0, 0),
                 bottomBar = {
                     if (!showBottomBar) {
                         return@Scaffold

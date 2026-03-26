@@ -1,0 +1,50 @@
+<p-drawer
+  [visible]="visible()"
+  (visibleChange)="onVisibleChange($event)"
+  position="left"
+  [modal]="true"
+  [closeOnEscape]="true"
+  [dismissible]="true"
+  [showCloseIcon]="true"
+  styleClass="adm-mobile-drawer"
+>
+  <ng-template #header>
+    <div class="flex items-center gap-3">
+      <h4 class="text-primary-600 m-0 text-base font-semibold">Admin Portal</h4>
+    </div>
+  </ng-template>
+
+  <nav class="flex h-full flex-col">
+    <!-- Navigation Items -->
+    <div class="flex-1 overflow-y-auto py-3">
+      @for (item of navItems(); track item.route) {
+        <button class="adm-mobile-nav-item" (click)="navigateTo(item.route)">
+          <i [class]="item.icon + ' text-lg'"></i>
+          <span>{{ item.label }}</span>
+        </button>
+      }
+    </div>
+
+    <!-- User Section -->
+    <div class="border-t border-gray-200 p-4">
+      @if (userName()) {
+        <div class="mb-3 flex items-center gap-3">
+          <div
+            class="bg-primary-100 text-primary-600 flex h-10 w-10 items-center justify-center rounded-full"
+          >
+            <i class="pi pi-user"></i>
+          </div>
+          <div>
+            <p class="m-0 text-sm font-medium text-gray-900">{{ userName() }}</p>
+            <p class="m-0 text-xs text-gray-500">Super Admin</p>
+          </div>
+        </div>
+      }
+
+      <button class="adm-mobile-nav-item text-red-600!" (click)="logout()">
+        <i class="pi pi-sign-out text-lg"></i>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </nav>
+</p-drawer>

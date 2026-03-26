@@ -1,5 +1,5 @@
 using System.Text;
-using System.Text.Encodings.Web;
+using Logistics.Application.Contracts.Models.Email;
 using Logistics.Application.Contracts.Services.Email;
 using Logistics.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +11,10 @@ using Microsoft.AspNetCore.WebUtilities;
 namespace Logistics.IdentityServer.Pages.Account.ForgotPassword;
 
 [AllowAnonymous]
-public class ForgotPasswordModel(UserManager<User> userManager, IEmailSender emailSender) : PageModel
+public class ForgotPasswordModel(
+    UserManager<User> userManager,
+    IEmailSender emailSender,
+    IEmailTemplateService emailTemplateService) : PageModel
 {
     [BindProperty]
     public InputModel Input { get; set; } = null!;
@@ -40,11 +43,9 @@ public class ForgotPasswordModel(UserManager<User> userManager, IEmailSender ema
             Request.Scheme)
                 ?? throw new InvalidOperationException("Could not generate password reset callback URL.");
 
-        var encodedUrl = HtmlEncoder.Default.Encode(callbackUrl);
-        await emailSender.SendEmailAsync(
-            Input.Email,
-            "Reset Password",
-            $"Please reset your password by <a href='{encodedUrl}'>clicking here</a>.");
+        var model = new PasswordResetEmailModel { ResetUrl = callbackUrl! };
+        var body = await emailTemplateService.RenderAsync("PasswordReset", model);
+        await emailSender.SendEmailAsync(Input.Email, "Reset Password", body);
 
         return RedirectToPage("../ForgotPasswordConfirmation");
     }

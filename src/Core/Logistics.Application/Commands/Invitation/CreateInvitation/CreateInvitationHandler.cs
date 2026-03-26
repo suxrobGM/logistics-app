@@ -141,7 +141,7 @@ internal sealed class CreateInvitationHandler(
 
     private async Task SendInvitationEmailAsync(Invitation invitation, Tenant tenant, string invitedByName)
     {
-        var acceptUrl = $"{identityServerOptions.Value.Authority}/Account/AcceptInvitation?token={invitation.Token}";
+        var acceptUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/AcceptInvitation?token={invitation.Token}";
         var companyName = tenant.CompanyName ?? tenant.Name;
 
         var model = new InvitationEmailModel

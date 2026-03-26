@@ -1,0 +1,15 @@
+<header
+  class="sticky top-0 z-40 flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 md:hidden"
+>
+  <p-button
+    [icon]="mobileMenuOpen() ? 'pi pi-times' : 'pi pi-bars'"
+    [text]="true"
+    (click)="toggleMenu()"
+    aria-label="Toggle navigation menu"
+    styleClass="text-xl"
+  />
+
+  <span class="text-primary-600 text-lg font-semibold">Admin Portal</span>
+
+  <div class="w-10"></div>
+</header>

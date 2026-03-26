@@ -23,7 +23,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  APP_DIR: home/deploy/logistics
+  APP_DIR: ~/deploy/logistics
 
 jobs:
   build:

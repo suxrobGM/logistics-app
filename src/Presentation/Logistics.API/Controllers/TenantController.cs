@@ -81,6 +81,16 @@ public class TenantController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
 
+    [HttpPost("{id:guid}/resend-welcome", Name = "ResendTenantWelcome")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Tenant.Manage)]
+    public async Task<IActionResult> ResendWelcome(Guid id)
+    {
+        var result = await mediator.Send(new ResendTenantWelcomeCommand(id));
+        return result.IsSuccess ? Ok() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     [HttpPost("{id:guid}/logo", Name = "UploadTenantLogo")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

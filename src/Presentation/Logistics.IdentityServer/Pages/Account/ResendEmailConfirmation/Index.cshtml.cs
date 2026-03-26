@@ -1,5 +1,5 @@
 using System.Text;
-using System.Text.Encodings.Web;
+using Logistics.Application.Contracts.Models.Email;
 using Logistics.Application.Contracts.Services.Email;
 using Logistics.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -11,16 +11,11 @@ using Microsoft.AspNetCore.WebUtilities;
 namespace Logistics.IdentityServer.Pages.Account.ResendEmailConfirmation;
 
 [AllowAnonymous]
-public class ResendEmailConfirmationModel : PageModel
+public class ResendEmailConfirmationModel(
+    UserManager<User> userManager,
+    IEmailSender emailSenderService,
+    IEmailTemplateService emailTemplateService) : PageModel
 {
-    private readonly IEmailSender _emailSenderService;
-    private readonly UserManager<User> _userManager;
-
-    public ResendEmailConfirmationModel(UserManager<User> userManager, IEmailSender emailSenderService)
-    {
-        _userManager = userManager;
-        _emailSenderService = emailSenderService;
-    }
 
     [BindProperty]
     public InputModel Input { get; set; }
@@ -36,25 +31,26 @@ public class ResendEmailConfirmationModel : PageModel
             return Page();
         }
 
-        var user = await _userManager.FindByEmailAsync(Input.Email);
+        var user = await userManager.FindByEmailAsync(Input.Email);
         if (user == null)
         {
             ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
             return Page();
         }
 
-        var userId = await _userManager.GetUserIdAsync(user);
-        var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        var userId = await userManager.GetUserIdAsync(user);
+        var code = await userManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
         var callbackUrl = Url.Page(
             "/Account/ConfirmEmail",
             null,
             new { userId, code },
             Request.Scheme);
-        await _emailSenderService.SendEmailAsync(
-            Input.Email,
-            "Confirm your email",
-            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+        var model = new EmailConfirmationEmailModel { ConfirmUrl = callbackUrl! };
+        var body = await emailTemplateService.RenderAsync("EmailConfirmation", model);
+        await emailSenderService.SendEmailAsync(Input.Email, "Confirm your email", body);
 
         ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
         return Page();

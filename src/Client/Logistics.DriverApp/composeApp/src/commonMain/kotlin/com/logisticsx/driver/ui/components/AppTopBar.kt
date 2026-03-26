@@ -1,7 +1,6 @@
 package com.logisticsx.driver.ui.components
 
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -23,7 +22,6 @@ fun AppTopBar(
     TopAppBar(
         title = { Text(title) },
         navigationIcon = navigationIcon,
-        actions = actions,
-        windowInsets = WindowInsets(0, 0, 0, 0)
+        actions = actions
     )
 }

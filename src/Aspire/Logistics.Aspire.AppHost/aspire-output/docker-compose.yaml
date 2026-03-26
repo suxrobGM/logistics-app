@@ -43,6 +43,7 @@ services:
       ConnectionStrings__MasterDatabase: "${ConnectionStrings__MasterDatabase}"
       ConnectionStrings__DefaultTenantDatabase: "${ConnectionStrings__DefaultTenantDatabase}"
       IdentityServer__Authority: "http://identity-server:7001"
+      IdentityServer__ExternalAuthority: "${IdentityServer__ExternalAuthority}"
       IdentityServer__RequireHttpsMetadata: "false"
       Impersonation__MasterPassword: "${Impersonation__MasterPassword}"
       Resend__ApiKey: "${Resend__ApiKey}"

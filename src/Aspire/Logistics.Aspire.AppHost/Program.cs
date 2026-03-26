@@ -48,6 +48,8 @@ var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithReference(defaultTenantDb, "DefaultTenantDatabase")
     .WithEnvironment("IdentityServer__Authority",
         isProdEnv ? "http://identity-server:7001" : "http://localhost:7001")
+    .WithEnvironment("IdentityServer__ExternalAuthority",
+        isProdEnv ? builder.GetConfigValue("IdentityServer:ExternalAuthority") : "http://localhost:7001")
     .WithEnvironment("IdentityServer__RequireHttpsMetadata", "false")
     .WithEnvironment("Impersonation__MasterPassword", builder.GetConfigValue("Impersonation:MasterPassword"))
     .WithEnvironment("Resend__ApiKey", builder.GetConfigValue("Resend:ApiKey"))

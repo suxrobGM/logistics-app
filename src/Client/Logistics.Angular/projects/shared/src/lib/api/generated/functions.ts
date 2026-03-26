@@ -445,6 +445,8 @@ export type { UpdateTenant$Params as UpdateTenant$Params } from './fn/tenant/upd
 export { updateTenant as updateTenant } from './fn/tenant/update-tenant';
 export type { DeleteTenant$Params as DeleteTenant$Params } from './fn/tenant/delete-tenant';
 export { deleteTenant as deleteTenant } from './fn/tenant/delete-tenant';
+export type { ResendTenantWelcome$Params as ResendTenantWelcome$Params } from './fn/tenant/resend-tenant-welcome';
+export { resendTenantWelcome as resendTenantWelcome } from './fn/tenant/resend-tenant-welcome';
 export type { UploadTenantLogo$Params as UploadTenantLogo$Params } from './fn/tenant/upload-tenant-logo';
 export { uploadTenantLogo as uploadTenantLogo } from './fn/tenant/upload-tenant-logo';
 export type { GetCurrentTenantFeatures$Params as GetCurrentTenantFeatures$Params } from './fn/tenant-features/get-current-tenant-features';
@@ -521,6 +523,8 @@ export type { ProcessSamsaraWebhook$Params as ProcessSamsaraWebhook$Params } fro
 export { processSamsaraWebhook as processSamsaraWebhook } from './fn/webhook/process-samsara-webhook';
 export type { ProcessMotiveWebhook$Params as ProcessMotiveWebhook$Params } from './fn/webhook/process-motive-webhook';
 export { processMotiveWebhook as processMotiveWebhook } from './fn/webhook/process-motive-webhook';
+export type { ProcessTtEldWebhook$Params as ProcessTtEldWebhook$Params } from './fn/webhook/process-tt-eld-webhook';
+export { processTtEldWebhook as processTtEldWebhook } from './fn/webhook/process-tt-eld-webhook';
 export type { ProcessDatWebhook$Params as ProcessDatWebhook$Params } from './fn/webhook/process-dat-webhook';
 export { processDatWebhook as processDatWebhook } from './fn/webhook/process-dat-webhook';
 export type { ProcessTruckstopWebhook$Params as ProcessTruckstopWebhook$Params } from './fn/webhook/process-truckstop-webhook';

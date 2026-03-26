@@ -88,7 +88,7 @@ internal sealed class ImpersonateUserHandler(
         await masterUow.SaveChangesAsync(ct);
 
         // 7. Build impersonation URL
-        var impersonationUrl = $"{identityServerOptions.Value.Authority}/Account/Impersonate?token={impersonationToken.Token}";
+        var impersonationUrl = $"{identityServerOptions.Value.UserFacingAuthority}/Account/Impersonate?token={impersonationToken.Token}";
 
         return Result<ImpersonateUserResult>.Ok(new ImpersonateUserResult
         {

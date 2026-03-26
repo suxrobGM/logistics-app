@@ -4,7 +4,9 @@
   <ui-error-state
     [message]="error()!.message"
     [retryable]="error()!.retryable"
+    [showLogout]="isAuthError"
     (retry)="handleRetry()"
+    (logout)="handleLogout()"
   />
 } @else if (isEmpty()) {
   <ui-empty-state

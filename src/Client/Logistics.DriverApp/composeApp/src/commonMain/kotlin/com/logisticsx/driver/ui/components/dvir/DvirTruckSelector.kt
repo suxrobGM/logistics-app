@@ -30,7 +30,8 @@ fun DvirTruckSelector(
     availableTrucks: List<TruckDto>,
     isLoading: Boolean,
     onTruckSelected: (TruckDto) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -50,12 +51,13 @@ fun DvirTruckSelector(
         } else {
             ExposedDropdownMenuBox(
                 expanded = expanded,
-                onExpandedChange = { expanded = it }
+                onExpandedChange = { if (enabled) expanded = it }
             ) {
                 OutlinedTextField(
                     value = selectedTruck?.number ?: "",
                     onValueChange = {},
                     readOnly = true,
+                    enabled = enabled,
                     label = { Text("Truck") },
                     placeholder = { Text("Select a truck") },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
