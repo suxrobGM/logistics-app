@@ -7,9 +7,9 @@
 [cc-by-nc]: https://creativecommons.org/licenses/by-nc/4.0/
 [cc-by-nc-shield]: https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg
 
-> AI-powered multi-tenant fleet management platform for trucking companies. Features an agentic dispatcher that autonomously optimizes load-to-truck assignments, ensures HOS compliance, and searches load boards — with real-time GPS tracking, invoicing, and payroll built on a modern cloud-native architecture.
+> AI-powered multi-tenant fleet management platform for trucking companies. Features an agentic dispatcher that autonomously optimizes load-to-truck assignments, ensures HOS compliance, and searches load boards - with real-time GPS tracking, invoicing, and payroll built on a modern cloud-native architecture.
 
-![TMS Portal — Dashboard](docs/images/tms-portal/tms-home.png)
+![TMS Portal - Dashboard](docs/images/tms-portal/tms-home.png)
 
 <!-- markdownlint-disable MD033 -->
 <p align="center">
@@ -21,9 +21,9 @@
 
 LogisticsX is purpose-built for trucking fleets specializing in intermodal containers and vehicle transport. It replaces spreadsheet-based workflows with an end-to-end digital system connecting dispatchers, drivers, and customers through web and mobile applications with real-time synchronization.
 
-The platform's standout feature is its **AI-powered dispatch agent** — an agentic system that analyzes fleet state, matches loads to trucks, verifies HOS compliance, optimizes trip routes, and proactively searches load boards for revenue opportunities. It operates in two modes: **human-in-the-loop** (suggests assignments for dispatcher approval) and **fully autonomous** (executes decisions in real-time).
+The platform's standout feature is its **AI-powered dispatch agent** - an agentic system that analyzes fleet state, matches loads to trucks, verifies HOS compliance, optimizes trip routes, and proactively searches load boards for revenue opportunities. It operates in two modes: **human-in-the-loop** (suggests assignments for dispatcher approval) and **fully autonomous** (executes decisions in real-time).
 
-**Dispatchers** create loads, assign drivers, search load boards, monitor deliveries in real-time — or let the AI agent handle it.
+**Dispatchers** create loads, assign drivers, search load boards, monitor deliveries in real-time - or let the AI agent handle it.
 **Drivers** receive assignments, navigate routes, capture proof of delivery, and communicate with dispatch via the mobile app.
 **Customers** track shipments, download documents, and pay invoices through the self-service portal.
 **Owners** access financial reports, driver performance metrics, payroll, and operational analytics.
