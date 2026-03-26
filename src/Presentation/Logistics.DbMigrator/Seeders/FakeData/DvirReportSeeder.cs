@@ -14,7 +14,7 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// </summary>
 internal class DvirReportSeeder(ILogger<DvirReportSeeder> logger) : SeederBase(logger)
 {
-    private static readonly Dictionary<DvirInspectionCategory, string[]> defectDescriptions = new()
+    private static readonly Dictionary<DvirInspectionCategory, string[]> DefectDescriptions = new()
     {
         [DvirInspectionCategory.Tires] =
         [
@@ -92,7 +92,7 @@ internal class DvirReportSeeder(ILogger<DvirReportSeeder> logger) : SeederBase(l
         ]
     };
 
-    private static readonly string[] driverNotes =
+    private static readonly string[] DriverNotes =
     [
         "All systems checked and operational.",
         "Vehicle in good working condition.",
@@ -102,7 +102,7 @@ internal class DvirReportSeeder(ILogger<DvirReportSeeder> logger) : SeederBase(l
         "Post-trip inspection - no new issues found."
     ];
 
-    private static readonly string[] mechanicNotes =
+    private static readonly string[] MechanicNotes =
     [
         "Repairs completed, vehicle cleared for operation.",
         "Defects corrected as noted.",
@@ -209,19 +209,19 @@ internal class DvirReportSeeder(ILogger<DvirReportSeeder> logger) : SeederBase(l
             OdometerReading = random.Next(50000, 500000),
             HasDefects = hasDefects,
             DriverSignature = GenerateFakeSignature(),
-            DriverNotes = hasDefects ? "Issues noted during inspection." : random.Pick(driverNotes)
+            DriverNotes = hasDefects ? "Issues noted during inspection." : random.Pick(DriverNotes)
         };
 
         // Add defects if any
         if (hasDefects)
         {
             var defectCount = random.Next(1, 4);
-            var categories = defectDescriptions.Keys.ToList();
+            var categories = DefectDescriptions.Keys.ToList();
 
             for (var i = 0; i < defectCount; i++)
             {
                 var category = random.Pick(categories);
-                var descriptions = defectDescriptions[category];
+                var descriptions = DefectDescriptions[category];
                 var severity = PickDefectSeverity();
 
                 var defect = new DvirDefect
@@ -248,7 +248,7 @@ internal class DvirReportSeeder(ILogger<DvirReportSeeder> logger) : SeederBase(l
         {
             report.ReviewedAt = inspectionDate.AddHours(random.Next(1, 8));
             report.MechanicSignature = GenerateFakeSignature();
-            report.MechanicNotes = random.Pick(mechanicNotes);
+            report.MechanicNotes = random.Pick(MechanicNotes);
             report.DefectsCorrected = status == DvirStatus.Cleared || !hasDefects;
         }
 

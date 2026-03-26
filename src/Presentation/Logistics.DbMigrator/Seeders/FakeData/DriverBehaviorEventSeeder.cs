@@ -15,7 +15,7 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// </summary>
 internal class DriverBehaviorEventSeeder(ILogger<DriverBehaviorEventSeeder> logger) : SeederBase(logger)
 {
-    private static readonly string[] reviewNotes =
+    private static readonly string[] ReviewNotes =
     [
         "Reviewed dashcam footage, event confirmed.",
         "Spoke with driver, coaching completed.",
@@ -26,7 +26,7 @@ internal class DriverBehaviorEventSeeder(ILogger<DriverBehaviorEventSeeder> logg
         "Driver acknowledged, no further action needed."
     ];
 
-    private static readonly string[] locationDescriptions =
+    private static readonly string[] LocationDescriptions =
     [
         "Interstate highway near exit ramp",
         "City street intersection",
@@ -122,7 +122,7 @@ internal class DriverBehaviorEventSeeder(ILogger<DriverBehaviorEventSeeder> logg
             ProviderType = random.Pick(new[] { EldProviderType.Samsara, EldProviderType.Motive, EldProviderType.Demo }),
             Latitude = location.Latitude + (random.NextDouble() - 0.5) * 0.05,
             Longitude = location.Longitude + (random.NextDouble() - 0.5) * 0.05,
-            Location = $"{random.Pick(locationDescriptions)} near {location.Address.City}, {location.Address.State}",
+            Location = $"{random.Pick(LocationDescriptions)} near {location.Address.City}, {location.Address.State}",
             ExternalEventId = $"ELD-{Guid.NewGuid():N}".ToUpperInvariant()[..20],
             IsReviewed = isReviewed,
             IsDismissed = isDismissed
@@ -135,7 +135,7 @@ internal class DriverBehaviorEventSeeder(ILogger<DriverBehaviorEventSeeder> logg
         if (isReviewed)
         {
             behaviorEvent.ReviewedAt = eventDate.AddHours(random.Next(1, 72));
-            behaviorEvent.ReviewNotes = random.Pick(reviewNotes);
+            behaviorEvent.ReviewNotes = random.Pick(ReviewNotes);
         }
 
         return behaviorEvent;

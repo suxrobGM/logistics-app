@@ -13,7 +13,7 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// </summary>
 internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase(logger)
 {
-    private static readonly string[] vendorNames =
+    private static readonly string[] VendorNames =
     [
         "Fleet Services Inc",
         "Truck Pro",
@@ -27,7 +27,7 @@ internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase
         "Freightliner Dealer"
     ];
 
-    private static readonly string[] workDescriptions = new Dictionary<MaintenanceType, string[]>
+    private static readonly string[] WorkDescriptions = new Dictionary<MaintenanceType, string[]>
     {
         [MaintenanceType.OilChange] =
         [
@@ -61,7 +61,7 @@ internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase
         ]
     }.SelectMany(kv => kv.Value.Select(v => v)).ToArray();
 
-    private static readonly Dictionary<MaintenanceType, (decimal min, decimal max)> costRanges = new()
+    private static readonly Dictionary<MaintenanceType, (decimal min, decimal max)> CostRanges = new()
     {
         [MaintenanceType.OilChange] = (150, 350),
         [MaintenanceType.TireRotation] = (50, 150),
@@ -86,7 +86,7 @@ internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase
         [MaintenanceType.Other] = (100, 500)
     };
 
-    private static readonly Dictionary<MaintenanceType, string[]> partsUsed = new()
+    private static readonly Dictionary<MaintenanceType, string[]> PartsUsed = new()
     {
         [MaintenanceType.OilChange] = ["Oil Filter", "Engine Oil 15W-40 (gallon)", "Drain Plug Gasket"],
         [MaintenanceType.TireReplacement] = ["Steer Tire 295/75R22.5", "Drive Tire 295/75R22.5", "Valve Stem"],
@@ -99,7 +99,7 @@ internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase
     };
 
     // Schedules should generally be based on these common maintenance types
-    private static readonly MaintenanceType[] scheduledMaintenanceTypes =
+    private static readonly MaintenanceType[] ScheduledMaintenanceTypes =
     [
         MaintenanceType.OilChange,
         MaintenanceType.TireRotation,
@@ -154,8 +154,8 @@ internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase
                 MaintenanceType maintenanceType;
                 do
                 {
-                    maintenanceType = random.Pick(scheduledMaintenanceTypes);
-                } while (usedTypes.Contains(maintenanceType) && usedTypes.Count < scheduledMaintenanceTypes.Length);
+                    maintenanceType = random.Pick(ScheduledMaintenanceTypes);
+                } while (usedTypes.Contains(maintenanceType) && usedTypes.Count < ScheduledMaintenanceTypes.Length);
 
                 if (usedTypes.Contains(maintenanceType)) continue;
                 usedTypes.Add(maintenanceType);
@@ -234,7 +234,7 @@ internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase
 
     private MaintenanceRecord CreateMaintenanceRecord(Truck truck, MaintenanceType maintenanceType, DateTime serviceDate)
     {
-        var (minCost, maxCost) = costRanges.GetValueOrDefault(maintenanceType, (100, 500));
+        var (minCost, maxCost) = CostRanges.GetValueOrDefault(maintenanceType, (100, 500));
         var totalCost = Math.Round((decimal)(random.NextDouble() * (double)(maxCost - minCost)) + minCost, 2);
         var laborRatio = 0.3 + random.NextDouble() * 0.4; // 30-70% labor
         var laborCost = Math.Round(totalCost * (decimal)laborRatio, 2);
@@ -247,17 +247,17 @@ internal class MaintenanceSeeder(ILogger<MaintenanceSeeder> logger) : SeederBase
             ServiceDate = serviceDate,
             OdometerReading = random.Next(100000, 500000),
             EngineHours = random.NextDouble() < 0.5 ? random.Next(5000, 20000) : null,
-            VendorName = random.Pick(vendorNames),
+            VendorName = random.Pick(VendorNames),
             InvoiceNumber = $"INV-{random.Next(10000, 99999)}",
             LaborCost = laborCost,
             PartsCost = partsCost,
             TotalCost = totalCost,
             Description = maintenanceType.GetDescription(),
-            WorkPerformed = random.Pick(workDescriptions)
+            WorkPerformed = random.Pick(WorkDescriptions)
         };
 
         // Add parts for some records (60% chance)
-        if (random.NextDouble() < 0.6 && partsUsed.TryGetValue(maintenanceType, out var parts))
+        if (random.NextDouble() < 0.6 && PartsUsed.TryGetValue(maintenanceType, out var parts))
         {
             var partsToAdd = random.Next(1, Math.Min(4, parts.Length + 1));
             var usedParts = new HashSet<string>();

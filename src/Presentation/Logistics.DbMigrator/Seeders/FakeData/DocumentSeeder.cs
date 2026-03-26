@@ -12,7 +12,7 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// </summary>
 internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logger)
 {
-    private static readonly string[] recipientNames =
+    private static readonly string[] RecipientNames =
     [
         "John Smith", "Maria Garcia", "Robert Johnson", "Jennifer Williams",
         "Michael Brown", "Sarah Davis", "David Miller", "Emily Wilson",
@@ -97,7 +97,7 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
             type: DocumentType.BillOfLading,
             loadId: load.Id,
             uploadedById: driver.Id,
-            recipientName: random.Pick(recipientNames),
+            recipientName: random.Pick(RecipientNames),
             recipientSignature: GenerateFakeSignature(),
             captureLatitude: location.Latitude + (random.NextDouble() - 0.5) * 0.01,
             captureLongitude: location.Longitude + (random.NextDouble() - 0.5) * 0.01,
@@ -124,7 +124,7 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
             type: DocumentType.ProofOfDelivery,
             loadId: load.Id,
             uploadedById: driver.Id,
-            recipientName: random.Pick(recipientNames),
+            recipientName: random.Pick(RecipientNames),
             recipientSignature: GenerateFakeSignature(),
             captureLatitude: location.Latitude + (random.NextDouble() - 0.5) * 0.01,
             captureLongitude: location.Longitude + (random.NextDouble() - 0.5) * 0.01,

@@ -15,7 +15,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
     private readonly DateTime startDate = DateTime.UtcNow.AddMonths(-3);
     private readonly DateTime endDate = DateTime.UtcNow.AddDays(-1);
 
-    private static readonly string[] vendorNames =
+    private static readonly string[] VendorNames =
     [
         "Office Depot", "Staples", "Amazon", "Microsoft", "Google Cloud",
         "State Farm Insurance", "Progressive", "Legal Shield", "Shell",
@@ -24,10 +24,10 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
         "Joe's Body Shop", "Premier Collision Center", "Elite Auto Body"
     ];
 
-    private static readonly CompanyExpenseCategory[] companyCategories =
+    private static readonly CompanyExpenseCategory[] CompanyCategories =
         Enum.GetValues<CompanyExpenseCategory>();
 
-    private static readonly TruckExpenseCategory[] truckCategories =
+    private static readonly TruckExpenseCategory[] TruckCategories =
         Enum.GetValues<TruckExpenseCategory>();
 
     public override string Name => nameof(ExpenseSeeder);
@@ -91,7 +91,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
     private CompanyExpense CreateCompanyExpense()
     {
         var expenseDate = random.UtcDate(startDate, endDate);
-        var category = random.Pick(companyCategories);
+        var category = random.Pick(CompanyCategories);
         var amount = category switch
         {
             CompanyExpenseCategory.Office => random.Next(50, 500),
@@ -105,7 +105,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
         var expense = new CompanyExpense
         {
             Amount = new Money { Amount = amount, Currency = "USD" },
-            VendorName = random.Pick(vendorNames),
+            VendorName = random.Pick(VendorNames),
             ExpenseDate = expenseDate,
             ReceiptBlobPath = $"receipts/company/{Guid.NewGuid()}.pdf",
             Notes = $"Company expense for {category}",
@@ -119,7 +119,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
     private TruckExpense CreateTruckExpense(Truck truck)
     {
         var expenseDate = random.UtcDate(startDate, endDate);
-        var category = random.Pick(truckCategories);
+        var category = random.Pick(TruckCategories);
         var amount = category switch
         {
             TruckExpenseCategory.Fuel => random.Next(200, 800),
@@ -134,7 +134,7 @@ internal class ExpenseSeeder(ILogger<ExpenseSeeder> logger) : SeederBase(logger)
         var expense = new TruckExpense
         {
             Amount = new Money { Amount = amount, Currency = "USD" },
-            VendorName = random.Pick(vendorNames),
+            VendorName = random.Pick(VendorNames),
             ExpenseDate = expenseDate,
             ReceiptBlobPath = $"receipts/truck/{Guid.NewGuid()}.pdf",
             Notes = $"Truck expense for {truck.Number}",

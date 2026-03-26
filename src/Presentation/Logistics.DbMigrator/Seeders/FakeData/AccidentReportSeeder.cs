@@ -14,17 +14,17 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// </summary>
 internal class AccidentReportSeeder(ILogger<AccidentReportSeeder> logger) : SeederBase(logger)
 {
-    private static readonly string[] weatherConditions =
+    private static readonly string[] WeatherConditions =
     [
         "Clear", "Cloudy", "Rain", "Heavy Rain", "Snow", "Fog", "Sleet", "Windy"
     ];
 
-    private static readonly string[] roadConditions =
+    private static readonly string[] RoadConditions =
     [
         "Dry", "Wet", "Icy", "Snowy", "Muddy", "Gravel", "Construction Zone"
     ];
 
-    private static readonly string[] accidentDescriptions =
+    private static readonly string[] AccidentDescriptions =
     [
         "Minor fender bender in parking lot while backing up.",
         "Rear-ended by another vehicle at red light. Other driver admitted fault.",
@@ -38,7 +38,7 @@ internal class AccidentReportSeeder(ILogger<AccidentReportSeeder> logger) : Seed
         "Hit pothole at highway speed causing suspension damage."
     ];
 
-    private static readonly string[] injuryDescriptions =
+    private static readonly string[] InjuryDescriptions =
     [
         "Minor whiplash, driver went to urgent care for evaluation.",
         "Small cuts from broken glass, treated on scene.",
@@ -46,7 +46,7 @@ internal class AccidentReportSeeder(ILogger<AccidentReportSeeder> logger) : Seed
         "No visible injuries but driver reported headache."
     ];
 
-    private static readonly string[] damageDescriptions =
+    private static readonly string[] DamageDescriptions =
     [
         "Dent and scratches on rear bumper.",
         "Cracked taillight and minor body damage.",
@@ -141,9 +141,9 @@ internal class AccidentReportSeeder(ILogger<AccidentReportSeeder> logger) : Seed
             Latitude = location.Latitude + (random.NextDouble() - 0.5) * 0.01,
             Longitude = location.Longitude + (random.NextDouble() - 0.5) * 0.01,
             Address = $"{location.Address.Line1}, {location.Address.City}, {location.Address.State} {location.Address.ZipCode}",
-            Description = random.Pick(accidentDescriptions),
-            WeatherConditions = random.Pick(weatherConditions),
-            RoadConditions = random.Pick(roadConditions),
+            Description = random.Pick(AccidentDescriptions),
+            WeatherConditions = random.Pick(WeatherConditions),
+            RoadConditions = random.Pick(RoadConditions),
             AnyInjuries = hasInjuries,
             VehicleDamaged = hasDamage,
             VehicleDrivable = severity != AccidentSeverity.Severe && severity != AccidentSeverity.Fatal,
@@ -153,12 +153,12 @@ internal class AccidentReportSeeder(ILogger<AccidentReportSeeder> logger) : Seed
         if (hasInjuries)
         {
             report.NumberOfInjuries = random.Next(1, 4);
-            report.InjuryDescription = random.Pick(injuryDescriptions);
+            report.InjuryDescription = random.Pick(InjuryDescriptions);
         }
 
         if (hasDamage)
         {
-            report.VehicleDamageDescription = random.Pick(damageDescriptions);
+            report.VehicleDamageDescription = random.Pick(DamageDescriptions);
             report.EstimatedDamageCost = random.Next(500, 15000);
         }
 

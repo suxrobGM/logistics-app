@@ -16,7 +16,7 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
     public override int Order => 130;
     public override IReadOnlyList<string> DependsOn => [nameof(EmployeeSeeder)];
 
-    private static readonly (string Make, string Model)[] freightTruckModels =
+    private static readonly (string Make, string Model)[] FreightTruckModels =
     [
         ("Freightliner", "Cascadia"),
         ("Peterbilt", "579"),
@@ -27,7 +27,7 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
         ("Western Star", "5700XE"),
     ];
 
-    private static readonly (string Make, string Model)[] carHaulerModels =
+    private static readonly (string Make, string Model)[] CarHaulerModels =
     [
         ("Peterbilt", "389"),
         ("Kenworth", "W900"),
@@ -36,7 +36,7 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
         ("International", "HX"),
     ];
 
-    private static readonly string[] usStates =
+    private static readonly string[] UsStates =
     [
         "TX", "CA", "FL", "GA", "IL", "OH", "PA", "NC", "MI", "NJ",
         "VA", "AZ", "TN", "IN", "MO", "WI", "CO", "AL", "SC", "LA"
@@ -74,8 +74,8 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
 
             // Set make and model based on truck type
             var (make, model) = truckType == TruckType.CarHauler
-                ? random.Pick(carHaulerModels)
-                : random.Pick(freightTruckModels);
+                ? random.Pick(CarHaulerModels)
+                : random.Pick(FreightTruckModels);
             truck.Make = make;
             truck.Model = model;
 
@@ -87,7 +87,7 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
 
             // Generate license plate and state
             truck.LicensePlate = GenerateLicensePlate();
-            truck.LicensePlateState = random.Pick(usStates);
+            truck.LicensePlateState = random.Pick(UsStates);
 
             truckNumber++;
             trucksList.Add(truck);

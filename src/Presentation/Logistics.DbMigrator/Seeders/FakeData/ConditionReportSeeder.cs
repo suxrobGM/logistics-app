@@ -15,7 +15,7 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : SeederBase(logger)
 {
     // Sample VIN data with decoded vehicle info
-    private static readonly (string Vin, int Year, string Make, string Model, string BodyClass)[] sampleVehicles =
+    private static readonly (string Vin, int Year, string Make, string Model, string BodyClass)[] SampleVehicles =
     [
         ("1HGCM82633A004352", 2020, "Honda", "Accord", "Sedan/Saloon"),
         ("5YJSA1E26MF123456", 2021, "Tesla", "Model S", "Hatchback"),
@@ -31,7 +31,7 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
         ("5NPEB4AC1BH123456", 2022, "Hyundai", "Sonata", "Sedan/Saloon")
     ];
 
-    private static readonly string[] damageDescriptions =
+    private static readonly string[] DamageDescriptions =
     [
         "Minor scratch on door panel",
         "Small dent on rear bumper",
@@ -43,7 +43,7 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
         "Small crack in taillight cover"
     ];
 
-    private static readonly string[] damageSeverities = ["minor", "moderate", "severe"];
+    private static readonly string[] DamageSeverities = ["minor", "moderate", "severe"];
 
     public override string Name => nameof(ConditionReportSeeder);
     public override SeederType Type => SeederType.FakeData;
@@ -89,7 +89,7 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
         foreach (var load in loads.Take((int)(loads.Count * 0.4)))
         {
             var driver = random.Pick(drivers);
-            var vehicle = random.Pick(sampleVehicles);
+            var vehicle = random.Pick(SampleVehicles);
             var captureLocation = random.Pick(RoutePoints.Points);
 
             // Create pickup inspection
@@ -174,8 +174,8 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
             {
                 x = Math.Round(random.NextDouble(), 2),
                 y = Math.Round(random.NextDouble(), 2),
-                description = random.Pick(damageDescriptions),
-                severity = random.Pick(damageSeverities)
+                description = random.Pick(DamageDescriptions),
+                severity = random.Pick(DamageSeverities)
             });
         }
 
