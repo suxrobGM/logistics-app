@@ -55,6 +55,7 @@ services:
       Stripe__PublishableKey: "${Stripe__PublishableKey}"
       Stripe__WebhookSecret: "${Stripe__WebhookSecret}"
       Mapbox__AccessToken: "${Mapbox__AccessToken}"
+      Claude__ApiKey: "${Claude__ApiKey}"
       CustomerPortal__BaseUrl: "${CustomerPortal__BaseUrl}"
       FileBlobStorage__BaseUrl: "${FileBlobStorage__BaseUrl}"
       TenantsDatabaseConfig__DatabaseNameTemplate: "${TenantsDatabaseConfig__DatabaseNameTemplate}"

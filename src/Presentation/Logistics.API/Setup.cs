@@ -21,6 +21,7 @@ using Logistics.Infrastructure.Payments;
 using Logistics.Infrastructure.Persistence;
 using Logistics.Infrastructure.Persistence.Builder;
 using Logistics.Infrastructure.Routing;
+using Logistics.Infrastructure.AI;
 using Logistics.Infrastructure.Storage;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -54,6 +55,7 @@ internal static class Setup
         services.AddLoadBoardIntegrations(configuration);
         services.AddPaymentsInfrastructure(configuration);
         services.AddRoutingInfrastructure(configuration);
+        services.AddAIInfrastructure(configuration);
         services.AddStorageInfrastructure(configuration);
         services.AddPersistenceInfrastructure(configuration)
             .UseLogger(serilogLogger)

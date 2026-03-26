@@ -27,5 +27,8 @@ public enum TenantFeature
     Timesheets,
     Maintenance,
     Trips,
-    Reports
+    Reports,
+
+    [Description("AI Dispatch")]
+    AgenticDispatch
 }

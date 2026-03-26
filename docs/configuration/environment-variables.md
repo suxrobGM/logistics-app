@@ -83,6 +83,16 @@ Resend__SenderName="LogisticsX"
 Mapbox__AccessToken="pk.xxx"
 ```
 
+### Claude API (Optional — AI Dispatch)
+
+```bash
+Claude__ApiKey="sk-ant-xxx"
+```
+
+| Variable | Description |
+|----------|-------------|
+| `Claude__ApiKey` | Anthropic Claude API key for the AI dispatch agent (Enterprise plan feature) |
+
 ### TMS Portal (Runtime)
 
 The TMS portal Docker image uses runtime environment variable substitution for secrets. These are injected at container startup via the entrypoint script.
@@ -155,6 +165,9 @@ Resend__SenderName="LogisticsX"
 
 # Optional: Mapbox
 Mapbox__AccessToken="pk.xxx"
+
+# Optional: Claude API (AI Dispatch)
+Claude__ApiKey="sk-ant-xxx"
 ```
 
 ## API Configuration (appsettings.json)
