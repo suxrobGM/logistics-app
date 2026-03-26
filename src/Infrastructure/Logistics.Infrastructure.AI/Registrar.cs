@@ -16,7 +16,7 @@ public static class Registrar
         IConfiguration configuration)
     {
         services.Configure<ClaudeOptions>(configuration.GetSection(ClaudeOptions.SectionName));
-        services.AddHttpClient<IDispatchAgentService, ClaudeDispatchAgentService>();
+        services.AddScoped<IDispatchAgentService, ClaudeDispatchAgentService>();
         services.AddScoped<IDispatchToolExecutor, DispatchToolExecutor>();
         services.AddSingleton<IDispatchToolRegistry, DispatchToolRegistry>();
         return services;

@@ -18,10 +18,10 @@ export class Hero {
   private readonly demoDialogService = inject(DemoDialogService);
 
   protected readonly stats: StatItem[] = [
+    { value: "AI", label: "Powered Dispatch" },
     { value: "8+", label: "Integrations" },
     { value: "3", label: "Portals" },
     { value: "24/7", label: "Real-time Tracking" },
-    { value: "100%", label: "Cloud-based" },
   ];
 
   protected openDemoDialog(): void {

@@ -63,6 +63,7 @@ export class Pricing {
       description: "Full platform access for large operations.",
       features: [
         "Everything in Professional",
+        "AI-powered dispatch",
         "Safety & compliance",
         "Maintenance tracking",
         "Unlimited trucks",

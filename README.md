@@ -30,10 +30,11 @@ LogisticsX is purpose-built for trucking fleets specializing in intermodal conta
 
 | Operations | Financial | Compliance | Communication |
 |:-----------|:----------|:-----------|:--------------|
-| Load management & dispatching | Invoicing & Stripe payments | ELD / HOS (Samsara, Motive) | Real-time messaging |
-| Trip planning & route optimization | Payroll & timesheets | Safety & DVIR inspections | Push notifications |
-| Fleet & maintenance tracking | Expense tracking | Document management (POD, BOL) | Customer self-service portal |
-| Load board integration (DAT, Truckstop) | Reports & analytics | Role-based access control | Driver mobile app |
+| AI-powered dispatching | Invoicing & Stripe payments | ELD / HOS (Samsara, Motive) | Real-time messaging |
+| Load management & dispatching | Payroll & timesheets | Safety & DVIR inspections | Push notifications |
+| Trip planning & route optimization | Expense tracking | Document management (POD, BOL) | Customer self-service portal |
+| Fleet & maintenance tracking | Reports & analytics | Role-based access control | Driver mobile app |
+| Load board integration (DAT, Truckstop) | | | |
 
 [Complete feature list](docs/features.md)
 
@@ -80,7 +81,7 @@ See [Local Development Guide](docs/getting-started/local-development.md)
 | **Database** | PostgreSQL 18 |
 | **Payments** | Stripe, Stripe Connect |
 | **Infrastructure** | Docker, .NET Aspire, Nginx, GitHub Actions |
-| **Integrations** | Mapbox, Firebase, Samsara, Motive, DAT, Truckstop, 123Loadboard |
+| **Integrations** | Mapbox, Firebase, Samsara, Motive, DAT, Truckstop, 123Loadboard, Claude API |
 
 ## Applications
 
@@ -141,6 +142,7 @@ src/
 | [Architecture](docs/architecture/overview.md) | System design, patterns, domain model |
 | [API Reference](docs/api/overview.md) | Authentication, endpoints, webhooks |
 | [Deployment](docs/deployment/overview.md) | VPS setup, Docker Compose, Nginx, SSL |
+| [AI Dispatch](docs/ai-dispatch.md) | Agentic dispatcher architecture & API |
 | [Development](docs/development/backend-guide.md) | Backend, Angular, mobile guides |
 
 ## Contributing

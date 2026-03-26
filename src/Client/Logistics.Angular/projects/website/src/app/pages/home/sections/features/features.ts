@@ -39,6 +39,12 @@ export class Features {
       description:
         "Native Kotlin Multiplatform app for assignments, POD capture, navigation, inspections, and real-time communication.",
     },
+    {
+      icon: "pi-sparkles",
+      title: "AI-Powered Dispatch",
+      description:
+        "Autonomous load-to-truck matching powered by Claude AI. Checks HOS compliance, minimizes deadhead miles, and searches load boards for opportunities.",
+    },
   ];
 
   protected readonly moreFeatures: Feature[] = [

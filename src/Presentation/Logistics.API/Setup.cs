@@ -219,6 +219,7 @@ internal static class Setup
         EldSyncJob.ScheduleJobs();
         LoadBoardSyncJob.ScheduleJobs();
         MaintenanceReminderJob.ScheduleJobs();
+        DispatchAgentJob.ScheduleJobs();
         return app;
     }
 

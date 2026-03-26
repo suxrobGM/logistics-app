@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Logistics.Domain.Primitives.ValueObjects;
 
@@ -48,7 +47,6 @@ public record GeoPoint
     /// </summary>
     /// <param name="other">The other geographical point to which the distance is calculated.</param>
     /// <returns>Distance in metres.</returns>
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public double DistanceTo(GeoPoint other)
     {
         const double R = 6_371_000; // Earth radius (m)

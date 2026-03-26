@@ -146,6 +146,12 @@ public static class Permission
         public const string Manage = $"{nameof(Permission)}.{nameof(LoadBoard)}.Manage";
     }
 
+    public static class Dispatch
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(Dispatch)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Dispatch)}.Manage";
+    }
+
     public static class BlogPost
     {
         public const string View = $"{nameof(Permission)}.{nameof(BlogPost)}.View";
