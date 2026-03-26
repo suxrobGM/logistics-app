@@ -14,6 +14,7 @@ const PROVIDER_INFO: Record<EldProviderType, ProviderInfo> = {
   geotab: { label: "Geotab", icon: "pi pi-wifi", color: "text-purple-600" },
   omnitracs: { label: "Omnitracs", icon: "pi pi-wifi", color: "text-orange-600" },
   people_net: { label: "PeopleNet", icon: "pi pi-wifi", color: "text-teal-600" },
+  tt_eld: { label: "T&T ELD", icon: "pi pi-wifi", color: "text-red-600" },
   demo: { label: "Demo", icon: "pi pi-wifi", color: "text-gray-600" },
 };
 
