@@ -6,6 +6,7 @@ using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
+using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -15,6 +16,7 @@ namespace Logistics.Application.Commands;
 internal sealed class CreateTenantHandler(
     ITenantDatabaseService tenantDatabase,
     IMasterUnitOfWork masterUow,
+    ITenantUnitOfWork tenantUow,
     IFeatureService featureService,
     UserManager<User> userManager,
     IEmailSender emailSender,
@@ -67,6 +69,7 @@ internal sealed class CreateTenantHandler(
     private async Task<Result> CreateOwnerAccountAsync(CreateTenantCommand req, Tenant tenant)
     {
         var existingUser = await userManager.FindByEmailAsync(req.OwnerEmail);
+        User owner;
 
         if (existingUser is not null)
         {
@@ -80,29 +83,47 @@ internal sealed class CreateTenantHandler(
             existingUser.FirstName = req.OwnerFirstName;
             existingUser.LastName = req.OwnerLastName;
             await userManager.UpdateAsync(existingUser);
-            await SendWelcomeEmailAsync(existingUser, tenant);
-            return Result.Ok();
+            owner = existingUser;
+            await SendWelcomeEmailAsync(owner, tenant);
+        }
+        else
+        {
+            var temporaryPassword = TokenGenerator.GenerateSecureToken(12);
+            owner = new User
+            {
+                UserName = req.OwnerEmail,
+                Email = req.OwnerEmail,
+                FirstName = req.OwnerFirstName,
+                LastName = req.OwnerLastName,
+                EmailConfirmed = true,
+                TenantId = tenant.Id
+            };
+
+            var createResult = await userManager.CreateAsync(owner, temporaryPassword);
+            if (!createResult.Succeeded)
+            {
+                return Result.Fail(
+                    $"Failed to create owner account: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
+            }
+
+            await SendWelcomeEmailAsync(owner, tenant, temporaryPassword);
         }
 
-        var temporaryPassword = TokenGenerator.GenerateSecureToken(12);
-        var owner = new User
-        {
-            UserName = req.OwnerEmail,
-            Email = req.OwnerEmail,
-            FirstName = req.OwnerFirstName,
-            LastName = req.OwnerLastName,
-            EmailConfirmed = true,
-            TenantId = tenant.Id
-        };
+        // Create employee record in tenant database with Owner role
+        await tenantUow.SetCurrentTenantByIdAsync(tenant.Id);
 
-        var createResult = await userManager.CreateAsync(owner, temporaryPassword);
-        if (!createResult.Succeeded)
+        var ownerRole = await tenantUow.Repository<TenantRole>()
+            .GetAsync(r => r.Name == TenantRoles.Owner);
+
+        var employee = Employee.CreateEmployeeFromUser(owner);
+        if (ownerRole is not null)
         {
-            return Result.Fail(
-                $"Failed to create owner account: {string.Join(", ", createResult.Errors.Select(e => e.Description))}");
+            employee.Role = ownerRole;
         }
 
-        await SendWelcomeEmailAsync(owner, tenant, temporaryPassword);
+        await tenantUow.Repository<Employee>().AddAsync(employee);
+        await tenantUow.SaveChangesAsync();
+
         return Result.Ok();
     }
 
