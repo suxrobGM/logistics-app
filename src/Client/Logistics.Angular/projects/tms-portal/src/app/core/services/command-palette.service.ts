@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from "@angular/core";
-import type { NavItem, NavSection } from "@/shared/layout/nav-menu";
+import type { NavSection } from "@/shared/layout/nav-menu";
 import { RecentPagesService } from "./recent-pages.service";
 
 export interface SearchableItem {
