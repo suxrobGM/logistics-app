@@ -1,0 +1,84 @@
+@if (isOpen()) {
+  <div
+    class="palette-backdrop"
+    role="none"
+    (click)="onBackdropClick($event)"
+    (keydown.escape)="close()"
+  >
+    <div
+      class="bg-elevated border-default w-140 max-w-[90vw] animate-[palette-slide-in_150ms_ease-out] overflow-hidden rounded-xl border shadow-lg"
+    >
+      <!-- Search input -->
+      <div class="border-subtle flex items-center gap-3 border-b px-5 py-3.5">
+        <i class="pi pi-search text-muted shrink-0 text-lg"></i>
+        <input
+          #searchInput
+          type="text"
+          class="text-primary placeholder:text-muted flex-1 border-none bg-transparent outline-none"
+          placeholder="Search pages, actions..."
+          [value]="query()"
+          (input)="onQueryChange($any($event.target).value)"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <kbd class="kbd">ESC</kbd>
+      </div>
+
+      <!-- Results -->
+      <div class="max-h-90 overflow-y-auto p-1.5">
+        @for (item of results(); track item.id; let i = $index) {
+          <button
+            class="text-secondary flex w-full cursor-pointer items-center justify-between rounded-md border-none bg-transparent px-3 py-2.5 text-left transition-colors"
+            [class.bg-hover]="i === selectedIndex()"
+            [class.bg-accent/12]="i === selectedIndex()"
+            [class.text-primary]="i === selectedIndex()"
+            (click)="selectItem(item)"
+            (mouseenter)="selectedIndex.set(i)"
+            type="button"
+          >
+            <div class="flex min-w-0 items-center gap-3">
+              @if (item.icon) {
+                <i
+                  [class]="item.icon"
+                  class="text-muted w-6 shrink-0 text-center"
+                  [class.text-accent]="i === selectedIndex()"
+                ></i>
+              }
+              <div>
+                <span class="block text-sm font-medium">{{ item.label }}</span>
+                <span class="text-muted mt-px block text-[0.6875rem]">{{ item.section }}</span>
+              </div>
+            </div>
+            @if (item.type === "action") {
+              <span
+                class="bg-accent/12 text-accent shrink-0 rounded-lg px-2 py-0.5 text-[0.625rem] font-semibold tracking-wider uppercase"
+                >Action</span
+              >
+            } @else if (item.type === "recent") {
+              <span
+                class="bg-muted/12 text-muted shrink-0 rounded-lg px-2 py-0.5 text-[0.625rem] font-semibold tracking-wider uppercase"
+                >Recent</span
+              >
+            }
+          </button>
+        } @empty {
+          <div class="text-muted flex flex-col items-center gap-2 py-8 text-sm">
+            <i class="pi pi-search text-2xl opacity-50"></i>
+            <span>No results found</span>
+          </div>
+        }
+      </div>
+
+      <!-- Footer hints -->
+      <div
+        class="border-subtle text-muted flex items-center gap-5 border-t px-5 py-2 text-[0.6875rem]"
+      >
+        <span class="flex items-center gap-1.5"
+          ><kbd class="kbd">&uarr;</kbd><kbd class="kbd">&darr;</kbd> Navigate</span
+        >
+        <span class="flex items-center gap-1.5"><kbd class="kbd">Enter</kbd> Select</span>
+        <span class="flex items-center gap-1.5"><kbd class="kbd">Esc</kbd> Close</span>
+      </div>
+    </div>
+  </div>
+}

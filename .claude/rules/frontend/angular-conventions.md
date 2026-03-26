@@ -31,5 +31,25 @@ paths:
 - API models: `import type { XDto } from "@logistics/shared/api/models";`
 - App-internal: `import { X } from "@/core/services";`
 
+## Host Bindings
+- Use `host` property in `@Component` decorator — NOT `@HostListener` / `@HostBinding` decorators
+```typescript
+// Good
+@Component({
+  host: {
+    '(document:keydown)': 'onKeydown($event)',
+    '[class.active]': 'isActive()',
+  }
+})
+
+// Bad — deprecated pattern
+@HostListener('document:keydown', ['$event'])
+onKeydown(event: KeyboardEvent) {}
+```
+
+## Animations
+- `provideAnimationsAsync()` is deprecated in Angular 21+ — do NOT add it to app.config.ts
+- Angular 21 enables animations by default, no provider needed
+
 ## Styling
 - Tailwind CSS utilities preferred, avoid custom CSS unless necessary

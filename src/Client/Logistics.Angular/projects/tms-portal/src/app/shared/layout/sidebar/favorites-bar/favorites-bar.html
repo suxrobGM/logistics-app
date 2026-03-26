@@ -1,0 +1,91 @@
+@if (favoriteItems().length > 0) {
+  <div
+    class="border-subtle border-b"
+    [class.p-2.5]="!collapsed()"
+    [class.px-1]="collapsed()"
+    [class.py-2]="collapsed()"
+  >
+    @if (!collapsed()) {
+      <div class="flex items-center justify-between px-1 pb-1.5">
+        <span class="text-muted text-[0.625rem] font-bold tracking-widest uppercase">
+          Favorites
+        </span>
+        @if (!isFull()) {
+          <button
+            class="border-default text-muted hover:border-accent hover:text-accent hover:bg-accent/8 flex size-5.5 cursor-pointer items-center justify-center rounded-sm border border-dashed transition-all"
+            (click)="addPopover.toggle($event)"
+            pTooltip="Add favorite"
+            tooltipPosition="top"
+            type="button"
+          >
+            <i class="pi pi-plus text-[0.625rem]"></i>
+          </button>
+        }
+      </div>
+      <div class="flex flex-wrap gap-1.5">
+        @for (item of favoriteItems(); track item.id) {
+          <button
+            class="group bg-accent/8 border-accent/20 text-secondary hover:bg-accent/15 hover:border-accent/35 hover:text-primary inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2 py-1 text-[0.6875rem] font-medium whitespace-nowrap transition-all"
+            (click)="onFavoriteClick(item)"
+            [pTooltip]="item.label"
+            tooltipPosition="top"
+            type="button"
+          >
+            @if (item.icon) {
+              <i [class]="item.icon" class="text-accent text-xs"></i>
+            }
+            <span class="max-w-24 truncate">{{ item.label }}</span>
+            <button
+              class="pi pi-times text-muted hover:text-danger ml-0.5 cursor-pointer border-none bg-transparent p-0 text-[0.5rem] opacity-0 transition-opacity group-hover:opacity-100"
+              (click)="removeFavorite($event, item.id)"
+              type="button"
+              aria-label="Remove from favorites"
+            ></button>
+          </button>
+        }
+      </div>
+    } @else {
+      <!-- Collapsed: vertical icon stack -->
+      <div class="flex flex-col items-center gap-1">
+        @for (item of favoriteItems(); track item.id) {
+          <button
+            class="bg-accent/8 border-accent/15 text-accent hover:bg-accent/18 hover:border-accent flex size-9 cursor-pointer items-center justify-center rounded-md border transition-all hover:scale-105"
+            (click)="onFavoriteClick(item)"
+            [pTooltip]="item.label"
+            tooltipPosition="right"
+            type="button"
+          >
+            <i [class]="item.icon ?? 'pi pi-star'" class="text-[1rem]"></i>
+          </button>
+        }
+      </div>
+    }
+  </div>
+}
+
+<!-- Add favorite popover -->
+<p-popover #addPopover>
+  <div class="w-55">
+    <div
+      class="text-muted border-subtle border-b px-3 py-2 text-[0.6875rem] font-bold tracking-wider uppercase"
+    >
+      Add to Favorites
+    </div>
+    <div class="max-h-62 overflow-y-auto p-1">
+      @for (item of availableItems(); track item.id) {
+        <button
+          class="text-secondary hover:bg-hover hover:text-primary flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent px-2.5 py-2 text-left text-[0.8125rem] transition-all"
+          (click)="addFavorite(item.id); addPopover.hide()"
+          type="button"
+        >
+          @if (item.icon) {
+            <i [class]="item.icon" class="text-muted w-5 text-center"></i>
+          }
+          <span>{{ item.label }}</span>
+        </button>
+      } @empty {
+        <div class="text-muted p-4 text-center text-[0.8125rem]">No more items to add</div>
+      }
+    </div>
+  </div>
+</p-popover>

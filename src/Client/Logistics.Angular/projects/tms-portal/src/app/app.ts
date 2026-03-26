@@ -7,6 +7,7 @@ import { ToastModule } from "primeng/toast";
 import { filter } from "rxjs";
 import { AuthService } from "@/core/auth";
 import { LayoutService } from "@/core/services";
+import { CommandPalette } from "@/shared/layout/command-palette/command-palette";
 import { MobileDrawer, MobileHeader, Sidebar } from "@/shared/layout";
 
 /** Routes that should not show the sidebar/breadcrumb layout */
@@ -25,6 +26,7 @@ const STANDALONE_ROUTES = ["/", "/unauthorized", "/404"];
     MobileDrawer,
     ProgressSpinnerModule,
     CardModule,
+    CommandPalette,
   ],
 })
 export class App {

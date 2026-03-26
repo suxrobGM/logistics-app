@@ -1,285 +1,311 @@
-import type { MenuItem } from "@/shared/layout/panel-menu";
+import type { NavSection } from "@/shared/layout/nav-menu";
 
-export const sidebarItems: MenuItem[] = [
+export const sidebarSections: NavSection[] = [
   {
-    label: "Home",
-    icon: "pi pi-home",
-    route: "/home",
-  },
-  {
-    label: "Dashboard",
-    icon: "pi pi-chart-bar",
-    route: "/dashboard",
-    feature: "dashboard",
-  },
-  {
-    label: "Messages",
-    icon: "pi pi-comments",
-    route: "/messages",
-    feature: "messages",
-  },
-  {
-    label: "Operations",
-    icon: "pi pi-server",
+    id: "main",
+    label: "Main",
     items: [
       {
+        id: "home",
+        label: "Home",
+        icon: "pi pi-home",
+        route: "/home",
+      },
+      {
+        id: "dashboard",
+        label: "Dashboard",
+        icon: "pi pi-chart-bar",
+        route: "/dashboard",
+        feature: "dashboard",
+      },
+      {
+        id: "messages",
+        label: "Messages",
+        icon: "pi pi-comments",
+        route: "/messages",
+        feature: "messages",
+        // badge wired in sidebar.ts via ChatService
+      },
+    ],
+  },
+  {
+    id: "dispatch",
+    label: "Dispatch",
+    items: [
+      {
+        id: "loads",
         label: "Loads",
+        icon: "pi pi-box",
         route: "/loads",
         feature: "loads",
       },
       {
+        id: "trips",
         label: "Trips",
+        icon: "pi pi-map",
         route: "/trips",
         feature: "trips",
       },
       {
+        id: "loadboard",
         label: "Load Board",
-        route: "/loadboard",
-        feature: "loadboard",
-      },
-      {
-        label: "Search Loads",
-        route: "/loadboard/search",
-        feature: "loadboard",
-      },
-      {
-        label: "Posted Trucks",
-        route: "/loadboard/posted-trucks",
-        feature: "loadboard",
-      },
-      {
-        label: "Providers",
-        route: "/loadboard/providers",
-        feature: "loadboard",
+        icon: "pi pi-search",
+        feature: "load_board",
+        children: [
+          {
+            id: "loadboard-search",
+            label: "Search Loads",
+            route: "/loadboard/search",
+          },
+          {
+            id: "loadboard-posted-trucks",
+            label: "Posted Trucks",
+            route: "/loadboard/posted-trucks",
+          },
+          {
+            id: "loadboard-providers",
+            label: "Providers",
+            route: "/loadboard/providers",
+          },
+        ],
       },
     ],
   },
   {
-    label: "Fleet",
-    icon: "pi pi-truck",
+    id: "fleet",
+    label: "Fleet & Compliance",
     items: [
-      // Vehicles Section
       {
-        label: "Vehicles",
-        styleClass: "menu-separator",
-        disabled: true,
-      },
-      {
+        id: "trucks",
         label: "Trucks",
+        icon: "pi pi-truck",
         route: "/trucks",
         feature: "trucks",
       },
-      // Maintenance Section
       {
-        label: "Maintenance",
-        styleClass: "menu-separator",
-        disabled: true,
-      },
-      {
-        label: "Maintenance Dashboard",
-        route: "/maintenance",
-        feature: "maintenance",
-      },
-      {
-        label: "Service Records",
-        route: "/maintenance/records",
-        feature: "maintenance",
-      },
-      {
-        label: "Upcoming Service",
-        route: "/maintenance/upcoming",
-        feature: "maintenance",
-      },
-    ],
-  },
-  {
-    label: "Safety",
-    icon: "pi pi-shield",
-    items: [
-      {
-        label: "Overview",
-        route: "/safety",
-        feature: "safety",
-      },
-      // DVIRs Section
-      {
-        label: "DVIRs",
-        styleClass: "menu-separator",
-        disabled: true,
-      },
-      {
-        label: "DVIR Reports",
-        route: "/safety/dvir",
-        feature: "safety",
-      },
-      // Incidents Section
-      {
-        label: "Incidents",
-        styleClass: "menu-separator",
-        disabled: true,
-      },
-      {
-        label: "Accident Reports",
-        route: "/safety/accidents",
-        feature: "safety",
-      },
-      {
-        label: "Driver Behavior",
-        route: "/safety/driver-behavior",
-        feature: "safety",
-      },
-      {
-        label: "Condition Reports",
-        route: "/safety/condition-reports",
-        feature: "safety",
-      },
-      // Compliance Section
-      {
-        label: "Compliance",
-        styleClass: "menu-separator",
-        disabled: true,
-      },
-      {
+        id: "eld",
         label: "ELD / HOS",
+        icon: "pi pi-clock",
         route: "/eld",
         feature: "eld",
       },
+      {
+        id: "maintenance",
+        label: "Maintenance",
+        icon: "pi pi-wrench",
+        feature: "maintenance",
+        children: [
+          {
+            id: "maintenance-dashboard",
+            label: "Dashboard",
+            route: "/maintenance",
+          },
+          {
+            id: "maintenance-records",
+            label: "Service Records",
+            route: "/maintenance/records",
+          },
+          {
+            id: "maintenance-upcoming",
+            label: "Upcoming Service",
+            route: "/maintenance/upcoming",
+          },
+        ],
+      },
+      {
+        id: "safety",
+        label: "Safety",
+        icon: "pi pi-shield",
+        feature: "safety",
+        children: [
+          {
+            id: "safety-overview",
+            label: "Overview",
+            route: "/safety",
+          },
+          {
+            id: "safety-dvir",
+            label: "DVIR Reports",
+            route: "/safety/dvir",
+          },
+          {
+            id: "safety-accidents",
+            label: "Accidents",
+            route: "/safety/accidents",
+          },
+          {
+            id: "safety-driver-behavior",
+            label: "Driver Behavior",
+            route: "/safety/driver-behavior",
+          },
+          {
+            id: "safety-condition-reports",
+            label: "Condition Reports",
+            route: "/safety/condition-reports",
+          },
+        ],
+      },
     ],
   },
   {
-    label: "Directory",
-    icon: "pi pi-users",
+    id: "business",
+    label: "Business",
     items: [
       {
+        id: "employees",
         label: "Employees",
+        icon: "pi pi-users",
         route: "/employees",
         feature: "employees",
       },
       {
+        id: "customers",
         label: "Customers",
+        icon: "pi pi-building",
         route: "/customers",
         feature: "customers",
       },
-    ],
-  },
-  {
-    label: "Accounting",
-    icon: "pi pi-wallet",
-    items: [
-      // Payroll Section
       {
+        id: "payroll",
         label: "Payroll",
-        styleClass: "menu-separator",
-        disabled: true,
-      },
-      {
-        label: "Payroll Dashboard",
-        route: "/payroll",
+        icon: "pi pi-wallet",
         feature: "payroll",
+        children: [
+          {
+            id: "payroll-dashboard",
+            label: "Dashboard",
+            route: "/payroll",
+          },
+          {
+            id: "payroll-invoices",
+            label: "Invoices",
+            route: "/payroll/invoices",
+          },
+          {
+            id: "payroll-timesheets",
+            label: "Timesheets",
+            route: "/timesheets",
+            feature: "timesheets",
+          },
+        ],
       },
       {
-        label: "Payroll Invoices",
-        route: "/payroll/invoices",
-        feature: "payroll",
-      },
-      {
-        label: "Timesheets",
-        route: "/timesheets",
-        feature: "timesheets",
-      },
-      // Invoicing Section
-      {
+        id: "invoicing",
         label: "Invoicing",
-        styleClass: "menu-separator",
-        disabled: true,
-      },
-      {
-        label: "Load Invoice Dashboard",
-        route: "/invoices",
+        icon: "pi pi-file-edit",
         feature: "invoices",
+        children: [
+          {
+            id: "invoicing-dashboard",
+            label: "Dashboard",
+            route: "/invoices",
+          },
+          {
+            id: "invoicing-loads",
+            label: "Load Invoices",
+            route: "/invoices/loads",
+          },
+        ],
       },
       {
-        label: "Load Invoices",
-        route: "/invoices/loads",
-        feature: "invoices",
-      },
-      // Expenses Section
-      {
+        id: "expenses",
         label: "Expenses",
-        styleClass: "menu-separator",
-        disabled: true,
+        icon: "pi pi-money-bill",
+        feature: "expenses",
+        children: [
+          {
+            id: "expenses-all",
+            label: "All Expenses",
+            route: "/expenses",
+          },
+          {
+            id: "expenses-add",
+            label: "Add Expense",
+            route: "/expenses/add",
+          },
+          {
+            id: "expenses-analytics",
+            label: "Analytics",
+            route: "/expenses/analytics",
+          },
+        ],
       },
       {
-        label: "All Expenses",
-        route: "/expenses",
-        feature: "expenses",
-      },
-      {
-        label: "Add Expense",
-        route: "/expenses/add",
-        feature: "expenses",
-      },
-      {
-        label: "Expense Analytics",
-        route: "/expenses/analytics",
-        feature: "expenses",
+        id: "reports",
+        label: "Reports",
+        icon: "pi pi-chart-line",
+        feature: "reports",
+        children: [
+          {
+            id: "reports-loads",
+            label: "Loads",
+            route: "/reports/loads",
+          },
+          {
+            id: "reports-drivers",
+            label: "Drivers",
+            route: "/reports/drivers",
+          },
+          {
+            id: "reports-drivers-detailed",
+            label: "Drivers Detailed",
+            route: "/reports/drivers/detailed",
+          },
+          {
+            id: "reports-financial",
+            label: "Financial Report",
+            route: "/reports/financials",
+          },
+          {
+            id: "reports-payroll",
+            label: "Payroll Report",
+            route: "/reports/payroll",
+          },
+          {
+            id: "reports-safety",
+            label: "Safety Report",
+            route: "/reports/safety",
+          },
+          {
+            id: "reports-maintenance",
+            label: "Maintenance Report",
+            route: "/reports/maintenance",
+          },
+        ],
       },
     ],
   },
   {
-    label: "Reports",
-    icon: "pi pi-chart-line",
-    feature: "reports",
+    id: "system",
+    label: "System",
+    pinToBottom: true,
     items: [
       {
-        label: "Loads",
-        route: "/reports/loads",
-      },
-      {
-        label: "Drivers",
-        route: "/reports/drivers",
-      },
-      {
-        label: "Drivers Detailed",
-        route: "/reports/drivers/detailed",
-      },
-      {
-        label: "Financial Report",
-        route: "/reports/financials",
-      },
-      {
-        label: "Payroll Report",
-        route: "/reports/payroll",
-      },
-      {
-        label: "Safety Report",
-        route: "/reports/safety",
-      },
-      {
-        label: "Maintenance Report",
-        route: "/reports/maintenance",
-      },
-    ],
-  },
-  {
-    label: "Settings",
-    icon: "pi pi-cog",
-    items: [
-      {
-        label: "Company",
-        route: "/settings/company",
-      },
-      {
-        label: "Payments",
-        route: "/settings/payments",
-      },
-      {
-        label: "Features",
-        route: "/settings/features",
-      },
-      {
-        label: "Subscription",
-        route: "/subscription/manage",
+        id: "settings",
+        label: "Settings",
+        icon: "pi pi-cog",
+        children: [
+          {
+            id: "settings-company",
+            label: "Company",
+            route: "/settings/company",
+          },
+          {
+            id: "settings-payments",
+            label: "Payments",
+            route: "/settings/payments",
+          },
+          {
+            id: "settings-features",
+            label: "Features",
+            route: "/settings/features",
+          },
+          {
+            id: "settings-subscription",
+            label: "Subscription",
+            route: "/subscription/manage",
+          },
+        ],
       },
     ],
   },

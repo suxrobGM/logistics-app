@@ -7,14 +7,41 @@
       <img src="images/logo.svg" class="sidebar-logo" alt="logo" />
     }
     @if (isOpened()) {
-      <h4 class="sidebar-company-name">{{ companyName() }}</h4>
+      <h4
+        class="text-primary m-0 max-w-full animate-[fade-slide-in_200ms_ease-out] truncate text-[0.8125rem] leading-tight font-semibold"
+      >
+        {{ companyName() }}
+      </h4>
     }
   </div>
 
+  <!-- Search Trigger -->
+  <button
+    class="sidebar-search-trigger"
+    (click)="openCommandPalette()"
+    [pTooltip]="isOpened() ? '' : 'Search (Ctrl+K)'"
+    tooltipPosition="right"
+    type="button"
+  >
+    <i class="pi pi-search shrink-0 text-sm"></i>
+    @if (isOpened()) {
+      <span class="flex-1 text-left">Search...</span>
+      <kbd
+        class="bg-surface border-subtle text-muted inline-flex items-center rounded-sm border px-1.5 py-0.5 text-[0.625rem]"
+        >Ctrl+K</kbd
+      >
+    }
+  </button>
+
+  <!-- Favorites -->
+  <app-favorites-bar [sections]="filteredSections()" [collapsed]="!isOpened()" />
+
   <!-- Navigation -->
-  <nav class="sidebar-nav">
-    <app-panel-menu [items]="navItems()" [(expanded)]="isOpened" />
-  </nav>
+  <app-nav-menu
+    [sections]="filteredSections()"
+    [collapsed]="!isOpened()"
+    (itemContextMenu)="onNavContextMenu($event)"
+  />
 
   <!-- Collapse Toggle -->
   <button
@@ -24,30 +51,79 @@
     tooltipPosition="right"
     type="button"
   >
-    <i [class]="isOpened() ? 'pi pi-chevron-left' : 'pi pi-chevron-right'"></i>
+    <i [class]="isOpened() ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" class="text-xs"></i>
     @if (isOpened()) {
       <span>Collapse</span>
     }
   </button>
 
-  <!-- Footer Section -->
+  <!-- Footer -->
   <div class="sidebar-footer" [class.sidebar-footer-collapsed]="!isOpened()">
-    <!-- Notifications -->
-    <app-notification-bell [expanded]="isOpened()" />
+    <!-- Notifications + Theme row -->
+    <div class="flex items-center" [class.gap-1]="!isOpened()" [class.gap-2]="isOpened()">
+      <app-notification-bell [expanded]="false" />
+      <app-theme-toggle [showLabel]="false" />
+    </div>
 
-    <!-- Theme Toggle -->
-    <app-theme-toggle [showLabel]="isOpened()" />
-
-    <!-- User Section -->
+    <!-- User profile button -->
     @if (userFullName()) {
-      <div class="sidebar-user">
-        @if (userRole() && isOpened()) {
-          <div class="sidebar-user-role">
-            Role: <span>{{ userRole() }}</span>
+      <button
+        class="text-secondary hover:bg-hover hover:text-primary flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent py-1.5 text-left text-[0.8125rem] font-medium transition-all"
+        [class.justify-center]="!isOpened()"
+        [class.px-2]="isOpened()"
+        (click)="userPopover.toggle($event)"
+        type="button"
+      >
+        <div
+          class="bg-accent/12 border-accent/20 flex size-7 shrink-0 items-center justify-center rounded-full border"
+        >
+          <i class="pi pi-user text-accent text-xs"></i>
+        </div>
+        @if (isOpened()) {
+          <div class="min-w-0 flex-1">
+            <span class="block truncate text-[0.8125rem] font-medium">{{ userFullName() }}</span>
+            @if (userRole()) {
+              <span
+                class="text-accent block text-[0.625rem] font-semibold tracking-wider uppercase"
+                >{{ userRole() }}</span
+              >
+            }
           </div>
+          <i class="pi pi-ellipsis-v text-muted text-xs"></i>
         }
-        <app-panel-menu [items]="profileMenuItems" [(expanded)]="isOpened" class="w-full" />
-      </div>
+      </button>
     }
   </div>
 </div>
+
+<!-- User profile popover -->
+<p-popover #userPopover appendTo="body">
+  <div class="w-52">
+    @if (userFullName()) {
+      <div class="border-subtle border-b px-3.5 py-2.5">
+        <div class="text-primary text-sm font-semibold">{{ userFullName() }}</div>
+        @if (userRole()) {
+          <div class="text-accent text-[0.6875rem] font-medium">{{ userRole() }}</div>
+        }
+      </div>
+    }
+    <div class="p-1">
+      <button
+        class="text-secondary hover:bg-hover hover:text-primary flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent px-3 py-2 text-left text-[0.8125rem] font-medium transition-all"
+        (click)="openAccountUrl(); userPopover.hide()"
+        type="button"
+      >
+        <i class="pi pi-user-edit text-muted w-5 text-center"></i>
+        <span>Manage Profile</span>
+      </button>
+      <button
+        class="text-danger hover:bg-danger/10 flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent px-3 py-2 text-left text-[0.8125rem] font-medium transition-all"
+        (click)="logout(); userPopover.hide()"
+        type="button"
+      >
+        <i class="pi pi-sign-out w-5 text-center"></i>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </div>
+</p-popover>

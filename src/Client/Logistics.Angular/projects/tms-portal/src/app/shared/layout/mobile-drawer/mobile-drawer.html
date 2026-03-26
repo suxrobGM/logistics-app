@@ -22,86 +22,90 @@
   </ng-template>
 
   <nav class="mobile-nav-menu flex h-full flex-col">
-    <!-- Navigation Items -->
-    <div class="flex-1 overflow-y-auto py-3">
-      @for (item of navItems(); track item.label) {
-        @if (item.items && item.items.length > 0) {
-          <!-- Expandable Menu Item -->
-          <div class="mb-0.5">
-            <button
-              class="mobile-nav-item"
-              [attr.aria-expanded]="item.expanded"
-              (click)="toggleExpanded(item)"
-            >
-              <div class="flex items-center gap-3.5">
-                <i [class]="item.icon"></i>
-                <span>{{ item.label }}</span>
-              </div>
-              <i class="mobile-nav-chevron pi pi-chevron-down" [class.expanded]="item.expanded"></i>
-            </button>
+    <!-- Search trigger -->
+    <button class="mobile-search-trigger" (click)="openSearch()" type="button">
+      <i class="pi pi-search"></i>
+      <span>Search...</span>
+    </button>
 
-            @if (item.expanded) {
-              <div class="mobile-nav-submenu mt-0.5 space-y-0.5">
-                @for (subItem of item.items; track subItem.label) {
-                  @if (subItem.isSeparator) {
-                    <div class="mobile-nav-separator">
-                      <div class="mobile-nav-separator-line"></div>
-                      <span class="mobile-nav-separator-label">{{ subItem.label }}</span>
-                    </div>
-                  } @else {
-                    <button class="mobile-nav-subitem" (click)="navigateTo(subItem.route!)">
-                      {{ subItem.label }}
-                    </button>
-                  }
-                }
-              </div>
-            }
-          </div>
-        } @else {
-          <!-- Direct Link Item -->
-          <button class="mobile-nav-item" (click)="navigateTo(item.route!)">
-            <div class="flex items-center gap-3.5">
-              <i [class]="item.icon"></i>
-              <span>{{ item.label }}</span>
-            </div>
-          </button>
-        }
-      }
-    </div>
+    <!-- Favorites -->
+    <app-favorites-bar
+      [sections]="filteredSections()"
+      [collapsed]="false"
+      (navigate)="onFavoriteNavigate()"
+    />
 
-    <!-- User Section -->
-    <div class="mobile-user-section">
-      @if (userFullName()) {
-        <div class="mobile-user-info">
-          <div class="mobile-user-avatar">
-            <i class="pi pi-user"></i>
-          </div>
-          <div>
-            <p class="mobile-user-name">{{ userFullName() }}</p>
-            @if (userRole()) {
-              <p class="mobile-user-role">{{ userRole() }}</p>
-            }
-          </div>
-        </div>
-      }
+    <!-- Navigation -->
+    <app-nav-menu
+      [sections]="filteredSections()"
+      [collapsed]="false"
+      (itemClick)="onNavItemClick()"
+    />
 
-      <button class="mobile-action-button" (click)="openAccountUrl()">
-        <i class="pi pi-user-edit"></i>
-        <span>Manage Profile</span>
-      </button>
-
-      <div class="mobile-theme-row">
-        <div class="mobile-theme-label">
-          <i class="pi pi-palette"></i>
-          <span>Theme</span>
-        </div>
+    <!-- Footer -->
+    <div class="border-subtle border-t px-4 py-3">
+      <!-- Notifications + Theme row -->
+      <div class="flex items-center gap-2 pb-2.5">
+        <app-notification-bell [expanded]="false" />
         <app-theme-toggle [showLabel]="false" />
       </div>
 
-      <button class="mobile-action-button mobile-logout-button" (click)="logout()">
-        <i class="pi pi-sign-out"></i>
-        <span>Sign Out</span>
-      </button>
+      <!-- User profile button -->
+      @if (userFullName()) {
+        <button
+          class="text-secondary hover:bg-hover hover:text-primary flex w-full cursor-pointer items-center gap-3 rounded-md border-none bg-transparent px-1 py-2 text-left text-[0.9375rem] font-medium transition-all"
+          (click)="mobileUserPopover.toggle($event)"
+          type="button"
+        >
+          <div
+            class="bg-accent/12 border-accent/20 flex size-9 shrink-0 items-center justify-center rounded-full border"
+          >
+            <i class="pi pi-user text-accent text-sm"></i>
+          </div>
+          <div class="min-w-0 flex-1">
+            <span class="block truncate text-sm font-medium">{{ userFullName() }}</span>
+            @if (userRole()) {
+              <span
+                class="text-accent block text-[0.6875rem] font-semibold tracking-wider uppercase"
+                >{{ userRole() }}</span
+              >
+            }
+          </div>
+          <i class="pi pi-ellipsis-v text-muted text-xs"></i>
+        </button>
+      }
     </div>
   </nav>
 </p-drawer>
+
+<!-- User profile popover -->
+<p-popover #mobileUserPopover appendTo="body">
+  <div class="w-52">
+    @if (userFullName()) {
+      <div class="border-subtle border-b px-3.5 py-2.5">
+        <div class="text-primary text-sm font-semibold">{{ userFullName() }}</div>
+        @if (userRole()) {
+          <div class="text-accent text-[0.6875rem] font-medium">{{ userRole() }}</div>
+        }
+      </div>
+    }
+    <div class="p-1">
+      <button
+        class="text-secondary hover:bg-hover hover:text-primary flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent px-3 py-2 text-left text-[0.8125rem] font-medium transition-all"
+        (click)="openAccountUrl(); mobileUserPopover.hide()"
+        type="button"
+      >
+        <i class="pi pi-user-edit text-muted w-5 text-center"></i>
+        <span>Manage Profile</span>
+      </button>
+      <button
+        class="text-danger hover:bg-danger/10 flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent px-3 py-2 text-left text-[0.8125rem] font-medium transition-all"
+        (click)="logout(); mobileUserPopover.hide()"
+        type="button"
+      >
+        <i class="pi pi-sign-out w-5 text-center"></i>
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </div>
+</p-popover>

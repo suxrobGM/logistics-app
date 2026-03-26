@@ -9,5 +9,8 @@ export * from "./theme.service";
 export * from "./map-style.service";
 export * from "./dashboard-settings.service";
 export * from "./feature.provider";
+export * from "./sidebar-favorites.service";
+export * from "./recent-pages.service";
+export * from "./command-palette.service";
 
 export { ToastService } from "@logistics/shared";

@@ -1,33 +1,42 @@
-import { CommonModule } from "@angular/common";
 import { Component, computed, effect, inject, signal } from "@angular/core";
 import { UserRole } from "@logistics/shared";
 import { FeatureService } from "@logistics/shared/services";
-import type { MenuItem as PrimeMenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
-import { PanelMenuModule } from "primeng/panelmenu";
-import { SplitButtonModule } from "primeng/splitbutton";
+import { PopoverModule } from "primeng/popover";
 import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "@/core/auth";
-import { TenantService, TmsFeatureProvider } from "@/core/services";
+import {
+  ChatService,
+  CommandPaletteService,
+  SidebarFavoritesService,
+  TenantService,
+  TmsFeatureProvider,
+} from "@/core/services";
 import { environment } from "@/env";
+import { type NavItem, NavMenu, type NavSection } from "../nav-menu";
 import { NotificationBell } from "../notification-bell";
-import { type MenuItem, PanelMenu } from "../panel-menu";
 import { ThemeToggle } from "../theme-toggle/theme-toggle";
-import { sidebarItems } from "./sidebar-items";
+import { FavoritesBar } from "./favorites-bar/favorites-bar";
+import { sidebarSections } from "./sidebar-items";
 
-const ROLE_MENU_ACCESS: Record<string, string[] | "*"> = {
-  [UserRole.Driver]: ["Home", "Messages"],
-  [UserRole.Dispatcher]: ["Home", "Messages", "Operations", "Directory"],
+const ROLE_ITEM_ACCESS: Record<string, string[] | "*"> = {
+  [UserRole.Driver]: ["home", "messages"],
+  [UserRole.Dispatcher]: ["home", "messages", "loads", "trips", "loadboard", "customers"],
   [UserRole.Manager]: [
-    "Home",
-    "Dashboard",
-    "Messages",
-    "Operations",
-    "Fleet",
-    "Safety",
-    "Directory",
-    "Accounting",
-    "Reports",
+    "home",
+    "messages",
+    "loads",
+    "trips",
+    "loadboard",
+    "trucks",
+    "eld",
+    "maintenance",
+    "safety",
+    "employees",
+    "customers",
+    "payroll",
+    "invoicing",
+    "expenses",
+    "reports",
   ],
   [UserRole.Owner]: "*",
 };
@@ -36,22 +45,16 @@ const ROLE_MENU_ACCESS: Record<string, string[] | "*"> = {
   selector: "app-sidebar",
   templateUrl: "./sidebar.html",
   styleUrl: "./sidebar.css",
-  imports: [
-    CommonModule,
-    TooltipModule,
-    ButtonModule,
-    SplitButtonModule,
-    PanelMenuModule,
-    PanelMenu,
-    ThemeToggle,
-    NotificationBell,
-  ],
+  imports: [TooltipModule, PopoverModule, NavMenu, FavoritesBar, ThemeToggle, NotificationBell],
 })
 export class Sidebar {
   private readonly authService = inject(AuthService);
   private readonly tenantService = inject(TenantService);
   private readonly featureService = inject(FeatureService);
   private readonly featureProvider = inject(TmsFeatureProvider);
+  private readonly chatService = inject(ChatService);
+  private readonly favoritesService = inject(SidebarFavoritesService);
+  private readonly commandPaletteService = inject(CommandPaletteService);
 
   protected readonly isOpened = signal(true);
   protected readonly companyName = computed(
@@ -64,32 +67,13 @@ export class Sidebar {
   protected readonly userFullName = computed(
     () => this.authService.getUserData()?.getFullName() ?? null,
   );
-  protected readonly navItems = signal<MenuItem[]>(sidebarItems as MenuItem[]);
 
-  protected readonly profileMenuItems: PrimeMenuItem[] = [
-    {
-      label: "User name",
-      icon: "pi pi-user",
-      items: [
-        { label: "Profile", command: () => this.openAccountUrl() },
-        { separator: true },
-        { label: "Sign out", command: () => this.logout() },
-      ],
-    },
-  ];
+  protected readonly filteredSections = signal<NavSection[]>([]);
 
   constructor() {
-    // Update profile menu label when user data changes
-    effect(() => {
-      const fullName = this.userFullName();
-      if (fullName) {
-        this.profileMenuItems[0].label = fullName;
-      }
-    });
-
     // Refresh nav items when tenant/features change
     effect(() => {
-      this.tenantService.tenantData(); // Track tenant changes
+      this.tenantService.tenantData();
       this.featureProvider.refreshFeatures().then(() => {
         this.updateNavItems(this.authService.getUserData()?.role ?? null);
       });
@@ -105,62 +89,74 @@ export class Sidebar {
 
   private updateNavItems(userRole: string | null): void {
     if (!userRole) {
-      this.navItems.set([]);
+      this.filteredSections.set([]);
       return;
     }
 
-    let items = this.filterByFeature(sidebarItems as MenuItem[]);
-    const allowedMenus = ROLE_MENU_ACCESS[userRole];
+    this.favoritesService.initWithRole(userRole);
+    const allowedItems = ROLE_ITEM_ACCESS[userRole];
+    const sections = this.wireBadges(structuredClone(sidebarSections));
 
-    if (allowedMenus === "*") {
-      this.navItems.set(items);
-      return;
-    }
+    const filtered = sections
+      .map((section) => ({
+        ...section,
+        items: this.filterItems(section.items, allowedItems),
+      }))
+      .filter((section) => section.items.length > 0);
 
-    if (allowedMenus) {
-      items = items.filter((item) => item.label && allowedMenus.includes(item.label));
-
-      // Dispatcher: only show Customers in Directory
-      if (userRole === UserRole.Dispatcher) {
-        items = items.map((item) =>
-          item.label === "Directory" && item.items
-            ? {
-                ...item,
-                items: item.items.filter((child) => (child as MenuItem).label === "Customers"),
-              }
-            : item,
-        );
-      }
-    } else {
-      items = [];
-    }
-
-    this.navItems.set(items);
+    this.filteredSections.set(filtered);
+    this.commandPaletteService.buildIndex(filtered);
   }
 
-  private filterByFeature(items: MenuItem[]): MenuItem[] {
+  private filterItems(items: NavItem[], allowedItems: string[] | "*"): NavItem[] {
     return items
-      .filter((item) => !item.feature || this.featureService.isEnabled(item.feature))
-      .map((item) => {
-        if (!item.items?.length) return item;
-
-        const children = this.filterByFeature(item.items as MenuItem[]);
-        const cleaned = this.cleanupSeparators(children);
-
-        return cleaned.length === 0 && !item.route ? null : { ...item, items: cleaned };
+      .filter((item) => {
+        // Check role access
+        if (allowedItems !== "*" && !allowedItems.includes(item.id)) {
+          return false;
+        }
+        // Check feature flag
+        if (item.feature && !this.featureService.isEnabled(item.feature)) {
+          return false;
+        }
+        return true;
       })
-      .filter((item): item is MenuItem => item !== null);
+      .map((item) => {
+        if (!item.children) return item;
+        // Filter children by feature
+        const children = item.children.filter(
+          (child) => !child.feature || this.featureService.isEnabled(child.feature),
+        );
+        return children.length > 0 ? { ...item, children } : null;
+      })
+      .filter((item): item is NavItem => item !== null);
   }
 
-  private cleanupSeparators(items: MenuItem[]): MenuItem[] {
-    return items.filter((item, i) => {
-      const isSeparator = item.styleClass === "menu-separator" && item.disabled;
-      if (!isSeparator) return true;
+  private wireBadges(sections: NavSection[]): NavSection[] {
+    for (const section of sections) {
+      for (const item of section.items) {
+        if (item.id === "messages") {
+          item.badge = () => {
+            const count = this.chatService.unreadCount();
+            return count > 0 ? count : null;
+          };
+        }
+      }
+    }
+    return sections;
+  }
 
-      return items
-        .slice(i + 1)
-        .some((next) => !(next.styleClass === "menu-separator" && next.disabled));
-    });
+  protected openCommandPalette(): void {
+    this.commandPaletteService.open();
+  }
+
+  protected onNavContextMenu({ item }: { event: MouseEvent; item: NavItem }): void {
+    // Toggle favorite on right-click
+    if (this.favoritesService.isFavorite(item.id)) {
+      this.favoritesService.remove(item.id);
+    } else {
+      this.favoritesService.add(item.id);
+    }
   }
 
   protected toggle(): void {
