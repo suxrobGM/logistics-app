@@ -51,6 +51,15 @@ public class DispatchAgentController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : NotFound(ErrorResponse.FromResult(result));
     }
 
+    [HttpGet("quota", Name = "GetAiQuotaStatus")]
+    [ProducesResponseType(typeof(AiQuotaStatusDto), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Dispatch.View)]
+    public async Task<IActionResult> GetQuotaStatus()
+    {
+        var result = await mediator.Send(new GetAiQuotaStatusQuery());
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     [HttpGet("pending", Name = "GetPendingDecisions")]
     [ProducesResponseType(typeof(List<DispatchDecisionDto>), StatusCodes.Status200OK)]
     [Authorize(Policy = Permission.Dispatch.View)]

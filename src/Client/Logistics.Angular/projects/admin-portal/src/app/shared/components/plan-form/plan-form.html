@@ -78,6 +78,20 @@
 
   <div class="mb-4 grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-4">
+      <ui-labeled-field label="Weekly AI Session Quota" hint="Leave empty for unlimited">
+        <p-inputNumber
+          formControlName="weeklyAiSessionQuota"
+          [min]="1"
+          [showButtons]="true"
+          placeholder="Unlimited"
+          class="w-full"
+        />
+      </ui-labeled-field>
+    </div>
+  </div>
+
+  <div class="mb-4 grid grid-cols-12 gap-4">
+    <div class="col-span-12 md:col-span-4">
       <ui-labeled-field label="Billing Interval" [required]="true">
         <p-select
           formControlName="interval"

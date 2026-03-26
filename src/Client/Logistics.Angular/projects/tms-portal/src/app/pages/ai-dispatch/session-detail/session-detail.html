@@ -10,7 +10,7 @@
           (onClick)="goBack()"
         />
         <h1 class="text-primary mb-0">Session #{{ session.number }}</h1>
-        <p-tag [value]="session.status ?? ''" [severity]="getStatusSeverity(session.status ?? '')" />
+        <p-tag [value]="session.status ?? ''" [severity]="Labels.dispatchStatusSeverity(session.status ?? '')" />
         @if (session.mode === "autonomous") {
           <p-tag value="Autonomous" severity="warn" />
         } @else {
@@ -85,10 +85,10 @@
       <ng-template #body let-decision>
         <tr>
           <td>
-            <p-tag [value]="getDecisionTypeLabel(decision.type)" severity="info" />
+            <p-tag [value]="Labels.decisionTypeLabel(decision.type)" severity="info" />
           </td>
           <td>
-            <p-tag [value]="decision.status" [severity]="getStatusSeverity(decision.status)" />
+            <p-tag [value]="decision.status" [severity]="Labels.dispatchStatusSeverity(decision.status)" />
           </td>
           <td>
             <code class="text-xs">{{ decision.toolName }}</code>

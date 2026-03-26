@@ -25,7 +25,7 @@ export class Pricing {
   protected readonly tiers: PricingTier[] = [
     {
       name: "Starter",
-      basePrice: 19,
+      basePrice: 29,
       perTruckPrice: 12,
       description: "Essential tools for small fleets getting started.",
       features: [
@@ -36,13 +36,15 @@ export class Pricing {
         "Expenses tracking",
         "Reports & analytics",
         "Real-time messaging",
+        "AI Dispatch (25 runs/week)",
+        "Up to 10 trucks",
       ],
       highlighted: false,
     },
     {
       name: "Professional",
       basePrice: 79,
-      perTruckPrice: 7,
+      perTruckPrice: 9,
       description: "Advanced features for growing fleets.",
       features: [
         "Everything in Starter",
@@ -50,7 +52,8 @@ export class Pricing {
         "Load board integrations",
         "Payroll management",
         "Timesheets tracking",
-        "Up to 50 trucks",
+        "AI Dispatch (100 runs/week)",
+        "Up to 30 trucks",
         "Priority support",
       ],
       highlighted: true,
@@ -59,11 +62,11 @@ export class Pricing {
     {
       name: "Enterprise",
       basePrice: 149,
-      perTruckPrice: 4,
+      perTruckPrice: 6,
       description: "Full platform access for large operations.",
       features: [
         "Everything in Professional",
-        "AI-powered dispatch",
+        "AI Dispatch (250 runs/week)",
         "Safety & compliance",
         "Maintenance tracking",
         "Unlimited trucks",

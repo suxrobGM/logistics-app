@@ -45,6 +45,12 @@ public class DispatchSession : AuditableEntity, ITenantEntity
     /// </summary>
     public string? ErrorMessage { get; set; }
 
+    /// <summary>
+    /// Whether this session exceeded the tenant's weekly AI session quota.
+    /// Overage sessions are billed at the plan's overage rate.
+    /// </summary>
+    public bool IsOverage { get; set; }
+
     public virtual List<DispatchDecision> Decisions { get; } = [];
 
     public void Complete(string? summary = null)

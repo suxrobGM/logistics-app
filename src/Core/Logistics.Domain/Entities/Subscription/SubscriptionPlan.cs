@@ -23,6 +23,13 @@ public class SubscriptionPlan : AuditableEntity, IMasterEntity
     public string? StripePriceId { get; set; }
     public string? StripeProductId { get; set; }
     public string? StripePerTruckPriceId { get; set; }
+    public string? StripeAiOveragePriceId { get; set; }
+
+    /// <summary>
+    /// Maximum AI dispatch sessions per week. Null means unlimited.
+    /// Sessions exceeding this quota are billed as overages via Stripe metered billing.
+    /// </summary>
+    public int? WeeklyAiSessionQuota { get; set; }
 
     /// <summary>
     /// Maximum number of trucks allowed on this plan. Null means unlimited.

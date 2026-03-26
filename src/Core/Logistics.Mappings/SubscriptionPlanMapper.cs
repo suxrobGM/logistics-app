@@ -22,6 +22,7 @@ public static class SubscriptionPlanMapper
             TrialPeriod = entity.TrialPeriod,
             Interval = entity.Interval,
             IntervalCount = entity.IntervalCount,
+            WeeklyAiSessionQuota = entity.WeeklyAiSessionQuota,
             Features = entity.Features.Select(f => f.Feature).ToList()
         };
     }

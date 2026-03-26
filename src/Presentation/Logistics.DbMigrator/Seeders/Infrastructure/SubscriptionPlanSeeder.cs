@@ -27,7 +27,8 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         TenantFeature.Messages,
         TenantFeature.Notifications,
         TenantFeature.Expenses,
-        TenantFeature.Reports
+        TenantFeature.Reports,
+        TenantFeature.AgenticDispatch
     ];
 
     private static readonly TenantFeature[] ProfessionalFeatures =
@@ -54,12 +55,13 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
             {
                 Name = "Starter",
                 Description = "Essential tools for small fleets getting started",
-                Price = 19m,
+                Price = 29m,
                 PerTruckPrice = 12m,
                 MaxTrucks = (int?)10,
                 AnnualDiscountPercent = 15m,
                 Tier = PlanTier.Starter,
                 TrialPeriod = TrialPeriod.ThirtyDays,
+                WeeklyAiSessionQuota = (int?)25,
                 Features = StarterFeatures
             },
             new
@@ -67,11 +69,12 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 Name = "Professional",
                 Description = "Advanced features for growing fleets",
                 Price = 79m,
-                PerTruckPrice = 7m,
-                MaxTrucks = (int?)50,
+                PerTruckPrice = 9m,
+                MaxTrucks = (int?)30,
                 AnnualDiscountPercent = 20m,
                 Tier = PlanTier.Professional,
                 TrialPeriod = TrialPeriod.ThirtyDays,
+                WeeklyAiSessionQuota = (int?)100,
                 Features = ProfessionalFeatures
             },
             new
@@ -79,11 +82,12 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 Name = "Enterprise",
                 Description = "Full platform access for large operations",
                 Price = 149m,
-                PerTruckPrice = 4m,
+                PerTruckPrice = 6m,
                 MaxTrucks = (int?)null,
                 AnnualDiscountPercent = 20m,
                 Tier = PlanTier.Enterprise,
                 TrialPeriod = TrialPeriod.ThirtyDays,
+                WeeklyAiSessionQuota = (int?)250,
                 Features = EnterpriseFeatures
             }
         };
@@ -103,7 +107,8 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                     MaxTrucks = planDef.MaxTrucks,
                     AnnualDiscountPercent = planDef.AnnualDiscountPercent,
                     Tier = planDef.Tier,
-                    TrialPeriod = planDef.TrialPeriod
+                    TrialPeriod = planDef.TrialPeriod,
+                    WeeklyAiSessionQuota = planDef.WeeklyAiSessionQuota
                 };
 
                 await planRepo.AddAsync(newPlan, cancellationToken);
@@ -166,6 +171,12 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 if (existingPlan.TrialPeriod != planDef.TrialPeriod)
                 {
                     existingPlan.TrialPeriod = planDef.TrialPeriod;
+                    updated = true;
+                }
+
+                if (existingPlan.WeeklyAiSessionQuota != planDef.WeeklyAiSessionQuota)
+                {
+                    existingPlan.WeeklyAiSessionQuota = planDef.WeeklyAiSessionQuota;
                     updated = true;
                 }
 

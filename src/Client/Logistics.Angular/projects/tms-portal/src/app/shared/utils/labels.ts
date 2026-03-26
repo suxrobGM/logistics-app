@@ -1,6 +1,6 @@
 import type { PlanTier, SubscriptionDto } from "@logistics/shared/api";
 
-export type SeverityLevel = "success" | "warn" | "danger" | "info";
+export type SeverityLevel = "success" | "warn" | "danger" | "info" | "secondary";
 
 export const Labels = {
   /**
@@ -75,6 +75,42 @@ export const Labels = {
         return "Cancelled";
       default:
         return "Unknown";
+    }
+  },
+
+  dispatchStatusSeverity(status: string): SeverityLevel {
+    switch (status) {
+      case "completed":
+      case "executed":
+      case "approved":
+        return "success";
+      case "running":
+      case "suggested":
+        return "info";
+      case "failed":
+        return "danger";
+      case "cancelled":
+      case "rejected":
+        return "warn";
+      default:
+        return "secondary";
+    }
+  },
+
+  decisionTypeLabel(type: string): string {
+    switch (type) {
+      case "assign_load":
+        return "Assign Load";
+      case "create_trip":
+        return "Create Trip";
+      case "dispatch_trip":
+        return "Dispatch Trip";
+      case "book_load_board_load":
+        return "Book Load";
+      case "reassign_load":
+        return "Reassign";
+      default:
+        return type;
     }
   },
 } as const;

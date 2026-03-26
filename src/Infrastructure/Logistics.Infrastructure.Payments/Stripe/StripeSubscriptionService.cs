@@ -26,19 +26,7 @@ internal class StripeSubscriptionService(IOptions<StripeOptions> options, ILogge
         var options = new SubscriptionCreateOptions
         {
             Customer = tenant.StripeCustomerId,
-            Items =
-            [
-                new SubscriptionItemOptions
-                {
-                    Price = plan.StripePriceId, // Base monthly fee
-                    Quantity = 1
-                },
-                new SubscriptionItemOptions
-                {
-                    Price = plan.StripePerTruckPriceId, // Per-truck fee
-                    Quantity = truckCount
-                }
-            ],
+            Items = BuildSubscriptionItems(plan, truckCount),
             Metadata = new Dictionary<string, string>
             {
                 { StripeMetadataKeys.TenantId, tenant.Id.ToString() },
@@ -177,16 +165,10 @@ internal class StripeSubscriptionService(IOptions<StripeOptions> options, ILogge
             });
         }
 
-        items.Add(new SubscriptionItemOptions
+        foreach (var newItem in BuildSubscriptionItems(newPlan, truckCount))
         {
-            Price = newPlan.StripePriceId, // Base fee
-            Quantity = 1
-        });
-        items.Add(new SubscriptionItemOptions
-        {
-            Price = newPlan.StripePerTruckPriceId, // Per-truck fee
-            Quantity = truckCount
-        });
+            items.Add(newItem);
+        }
 
         var updated = await subSvc.UpdateAsync(stripeSubscriptionId, new SubscriptionUpdateOptions
         {
@@ -206,10 +188,27 @@ internal class StripeSubscriptionService(IOptions<StripeOptions> options, ILogge
 
     #endregion
 
+    private static List<SubscriptionItemOptions> BuildSubscriptionItems(SubscriptionPlan plan, int truckCount)
+    {
+        var items = new List<SubscriptionItemOptions>
+        {
+            new() { Price = plan.StripePriceId, Quantity = 1 },         // Base fee
+            new() { Price = plan.StripePerTruckPriceId, Quantity = truckCount } // Per-truck fee
+        };
+
+        // Add metered AI overage price if configured
+        if (!string.IsNullOrEmpty(plan.StripeAiOveragePriceId))
+        {
+            items.Add(new SubscriptionItemOptions { Price = plan.StripeAiOveragePriceId });
+        }
+
+        return items;
+    }
+
     #region Subscription Plan API
 
-    public async Task<(Product Product, Price BasePrice, Price PerTruckPrice)> CreateSubscriptionPlanAsync(
-        SubscriptionPlan plan)
+    public async Task<(Product Product, Price BasePrice, Price PerTruckPrice, Price? AiOveragePrice)>
+        CreateSubscriptionPlanAsync(SubscriptionPlan plan)
     {
         // 1. First create the Product
         var productService = new ProductService();
@@ -289,8 +288,34 @@ internal class StripeSubscriptionService(IOptions<StripeOptions> options, ILogge
                 billingCycleAnchorStr);
         }
 
-        Logger.LogInformation("Created Stripe base price and per-truck price for plan {PlanId}", plan.Id);
-        return (product, basePrice, perTruckPrice);
+        // 4. Create AI overage metered price if plan has a weekly quota
+        Price? aiOveragePrice = null;
+        if (plan.WeeklyAiSessionQuota.HasValue)
+        {
+            aiOveragePrice = await priceService.CreateAsync(new PriceCreateOptions
+            {
+                Product = product.Id,
+                UnitAmountDecimal = 40, // $0.40 per session
+                Currency = plan.Price.Currency.ToLower(),
+                Recurring = new PriceRecurringOptions
+                {
+                    Interval = plan.Interval.ToString().ToLower(),
+                    IntervalCount = plan.IntervalCount,
+                    UsageType = "metered",
+                    Meter = options.Value.AiOverageMeterId
+                },
+                Metadata = new Dictionary<string, string>
+                {
+                    [StripeMetadataKeys.PlanId] = plan.Id.ToString(),
+                    ["price_type"] = "ai_overage"
+                }
+            });
+
+            Logger.LogInformation("Created Stripe AI overage metered price for plan {PlanId}", plan.Id);
+        }
+
+        Logger.LogInformation("Created Stripe prices for plan {PlanId}", plan.Id);
+        return (product, basePrice, perTruckPrice, aiOveragePrice);
     }
 
     public async Task<(Product Product, Price ActiveBasePrice, Price ActivePerTruckPrice)>

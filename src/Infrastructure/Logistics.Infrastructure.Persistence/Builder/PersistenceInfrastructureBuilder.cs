@@ -65,6 +65,7 @@ internal sealed class PersistenceInfrastructureBuilder : IPersistenceInfrastruct
         services.AddScoped<ITenantService, TenantService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IFeatureService, FeatureService>();
+        services.AddScoped<IAiQuotaService, AiQuotaService>();
         logger?.LogInformation("Added master database with connection string: {ConnectionString}", connectionString);
         return this;
     }

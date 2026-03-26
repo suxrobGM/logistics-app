@@ -30,6 +30,17 @@
         }
       </div>
 
+      <!-- AI Dispatch quota -->
+      @if (plan.weeklyAiSessionQuota) {
+        <div class="bg-subtle mb-3 flex items-center gap-2 rounded-lg p-3">
+          <i class="pi pi-bolt text-primary"></i>
+          <div>
+            <div class="font-medium">{{ plan.weeklyAiSessionQuota }} AI sessions/week</div>
+            <div class="text-secondary text-xs">$0.40 per additional session</div>
+          </div>
+        </div>
+      }
+
       <!-- Feature list -->
       <div class="flex flex-col gap-1">
         <div class="mb-1 font-bold">Features:</div>

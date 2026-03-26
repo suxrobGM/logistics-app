@@ -17,5 +17,6 @@ public record SubscriptionPlanDto
     public TrialPeriod TrialPeriod { get; set; } = TrialPeriod.ThirtyDays;
     public BillingInterval Interval { get; set; } = BillingInterval.Month;
     public int IntervalCount { get; set; } = 1;
+    public int? WeeklyAiSessionQuota { get; set; }
     public List<TenantFeature> Features { get; set; } = [];
 }

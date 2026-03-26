@@ -15,5 +15,6 @@ public class DispatchSessionDto
     public int DecisionCount { get; set; }
     public string? Summary { get; set; }
     public string? ErrorMessage { get; set; }
+    public bool IsOverage { get; set; }
     public List<DispatchDecisionDto> Decisions { get; set; } = [];
 }

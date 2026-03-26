@@ -16,6 +16,7 @@ internal sealed class ClaudeDispatchAgentService(
     DispatchDecisionProcessor decisionProcessor,
     ITenantUnitOfWork tenantUow,
     ITripTrackingService trackingService,
+    IStripeUsageService stripeUsageService,
     ILogger<ClaudeDispatchAgentService> logger) : IDispatchAgentService
 {
     private const int MaxIterations = 25;
@@ -26,7 +27,8 @@ internal sealed class ClaudeDispatchAgentService(
         {
             Mode = request.Mode,
             TriggeredByUserId = request.TriggeredByUserId,
-            StartedAt = DateTime.UtcNow
+            StartedAt = DateTime.UtcNow,
+            IsOverage = request.IsOverage
         };
 
         await tenantUow.Repository<DispatchSession>().AddAsync(session);
@@ -57,6 +59,7 @@ internal sealed class ClaudeDispatchAgentService(
 
         await tenantUow.SaveChangesAsync(CancellationToken.None);
         await BroadcastSessionUpdateAsync(session);
+        await ReportOverageIfNeededAsync(session, request.TenantId);
         return session;
     }
 
@@ -160,6 +163,22 @@ internal sealed class ClaudeDispatchAgentService(
         catch (Exception ex)
         {
             logger.LogWarning(ex, "Failed to broadcast dispatch agent update for session {SessionId}", session.Id);
+        }
+    }
+
+    private async Task ReportOverageIfNeededAsync(DispatchSession session, Guid tenantId)
+    {
+        if (!session.IsOverage || session.Status != DispatchSessionStatus.Completed)
+            return;
+
+        try
+        {
+            await stripeUsageService.ReportAiSessionOverageAsync(tenantId);
+            logger.LogInformation("Reported AI session overage for session {SessionId}", session.Id);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Failed to report AI session overage for session {SessionId}", session.Id);
         }
     }
 }

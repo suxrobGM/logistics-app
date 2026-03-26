@@ -85,15 +85,20 @@ public class DispatchAgentJob(
             return;
         }
 
+        // Check AI quota status
+        var quotaService = scope.ServiceProvider.GetRequiredService<IAiQuotaService>();
+        var quotaStatus = await quotaService.GetQuotaStatusAsync(tenant.Id, ct);
+
         logger.LogInformation(
-            "Running dispatch agent for tenant {TenantName} ({UnassignedLoads} unassigned loads)",
-            tenant.Name, unassignedCount);
+            "Running dispatch agent for tenant {TenantName} ({UnassignedLoads} unassigned loads, quota: {Used}/{Quota})",
+            tenant.Name, unassignedCount, quotaStatus.UsedThisWeek, quotaStatus.WeeklyQuota);
 
         var agentService = scope.ServiceProvider.GetRequiredService<IDispatchAgentService>();
 
         await agentService.RunAsync(new DispatchAgentRequest(
             TenantId: tenant.Id,
             Mode: DispatchAgentMode.Autonomous,
-            TriggeredByUserId: null), ct);
+            TriggeredByUserId: null,
+            IsOverage: quotaStatus.IsOverQuota), ct);
     }
 }

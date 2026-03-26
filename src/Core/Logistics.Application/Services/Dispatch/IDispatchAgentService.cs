@@ -16,4 +16,5 @@ public interface IDispatchAgentService
 public record DispatchAgentRequest(
     Guid TenantId,
     DispatchAgentMode Mode,
-    Guid? TriggeredByUserId);
+    Guid? TriggeredByUserId,
+    bool IsOverage = false);

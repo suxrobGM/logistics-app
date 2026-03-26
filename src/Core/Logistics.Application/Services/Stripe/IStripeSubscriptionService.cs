@@ -41,7 +41,8 @@ public interface IStripeSubscriptionService
     /// <summary>
     ///     Create a new subscription plan in Stripe.
     /// </summary>
-    Task<(Product Product, Price BasePrice, Price PerTruckPrice)> CreateSubscriptionPlanAsync(SubscriptionPlan plan);
+    Task<(Product Product, Price BasePrice, Price PerTruckPrice, Price? AiOveragePrice)> CreateSubscriptionPlanAsync(
+        SubscriptionPlan plan);
 
     /// <summary>
     ///     Update an existing subscription plan in Stripe.

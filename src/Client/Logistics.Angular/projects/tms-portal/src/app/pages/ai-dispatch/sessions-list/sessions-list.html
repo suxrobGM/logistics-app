@@ -3,7 +3,6 @@
   <div class="mb-6 flex items-center justify-between">
     <div class="flex items-center gap-3">
       <h1 class="text-primary mb-0">AI Dispatch</h1>
-      <p-tag value="Enterprise" severity="info" [rounded]="true" />
     </div>
     <div class="flex gap-2">
       <p-button
@@ -24,6 +23,33 @@
       />
     </div>
   </div>
+
+  <!-- AI Quota Usage -->
+  @if (quotaStatus(); as quota) {
+    @if (quota.weeklyQuota! > 0) {
+      <div class="bg-subtle border-default mb-6 flex items-center gap-4 rounded-lg border p-4">
+        <i class="pi pi-bolt text-primary text-xl"></i>
+        <div class="flex-1">
+          <div class="mb-1 flex items-center justify-between">
+            <span class="font-medium">
+              AI Dispatch: {{ quota.usedThisWeek }} / {{ quota.weeklyQuota }} sessions this week
+            </span>
+            <span class="text-secondary text-sm">{{ quota.remaining }} remaining</span>
+          </div>
+          <div class="bg-surface-200 h-2 rounded-full">
+            <div
+              class="h-2 rounded-full transition-all"
+              [class]="quota.isOverQuota ? 'bg-orange-500' : 'bg-primary'"
+              [style.width.%]="Math.min((quota.usedThisWeek! / quota.weeklyQuota!) * 100, 100)"
+            ></div>
+          </div>
+        </div>
+        @if (quota.isOverQuota) {
+          <p-tag value="Overage — $0.40/session" severity="warn" />
+        }
+      </div>
+    }
+  }
 
   <!-- Pending Decisions -->
   @if (pendingDecisions().length > 0) {
@@ -46,7 +72,7 @@
         <ng-template #body let-decision>
           <tr>
             <td>
-              <p-tag [value]="getDecisionTypeLabel(decision.type)" severity="info" />
+              <p-tag [value]="Labels.decisionTypeLabel(decision.type)" severity="info" />
             </td>
             <td class="max-w-md truncate">{{ decision.reasoning }}</td>
             <td>
@@ -119,7 +145,7 @@
           }
         </td>
         <td>
-          <p-tag [value]="session.status" [severity]="getStatusSeverity(session.status)" />
+          <p-tag [value]="session.status" [severity]="Labels.dispatchStatusSeverity(session.status)" />
         </td>
         <td>{{ session.startedAt | date: "short" }}</td>
         <td>{{ session.decisionCount }}</td>

@@ -1,24 +1,30 @@
 import { DatePipe, DecimalPipe } from "@angular/common";
 import { Component, type OnInit, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import type {
-  DispatchAgentMode,
-  DispatchDecisionDto,
-  DispatchSessionDto,
+import {
+  type AiQuotaStatusDto,
+  Api,
+  type DispatchAgentMode,
+  type DispatchDecisionDto,
+  type DispatchSessionDto,
+  approveDispatchDecision,
+  getAiQuotaStatus,
+  getDispatchSessions,
+  getPendingDecisions,
+  rejectDispatchDecision,
+  runDispatchAgent,
 } from "@logistics/shared/api";
-import { ConfirmationService } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { DispatchAgentService } from "../store/dispatch-agent.service";
+import { Labels } from "@/shared/utils";
 
 @Component({
   selector: "app-sessions-list",
   templateUrl: "./sessions-list.html",
-  providers: [ConfirmationService],
   imports: [
     ButtonModule,
     TableModule,
@@ -30,13 +36,15 @@ import { DispatchAgentService } from "../store/dispatch-agent.service";
   ],
 })
 export class SessionsListPage implements OnInit {
-  private readonly agentService = inject(DispatchAgentService);
+  private readonly api = inject(Api);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
-  private readonly confirmService = inject(ConfirmationService);
 
+  protected readonly Labels = Labels;
+  protected readonly Math = Math;
   protected readonly sessions = signal<DispatchSessionDto[]>([]);
   protected readonly pendingDecisions = signal<DispatchDecisionDto[]>([]);
+  protected readonly quotaStatus = signal<AiQuotaStatusDto | null>(null);
   protected readonly isLoading = signal(false);
   protected readonly isRunning = signal(false);
 
@@ -47,12 +55,14 @@ export class SessionsListPage implements OnInit {
   protected async loadData(): Promise<void> {
     this.isLoading.set(true);
     try {
-      const [sessionsRes, pending] = await Promise.all([
-        this.agentService.getSessions(1, 20),
-        this.agentService.getPendingDecisions(),
+      const [sessionsRes, pending, quota] = await Promise.all([
+        this.api.invoke(getDispatchSessions, { Page: 1, PageSize: 20 }),
+        this.api.invoke(getPendingDecisions),
+        this.api.invoke(getAiQuotaStatus),
       ]);
       this.sessions.set(sessionsRes.items ?? []);
       this.pendingDecisions.set(pending ?? []);
+      this.quotaStatus.set(quota);
     } finally {
       this.isLoading.set(false);
     }
@@ -61,7 +71,7 @@ export class SessionsListPage implements OnInit {
   protected async runAgent(mode: DispatchAgentMode): Promise<void> {
     this.isRunning.set(true);
     try {
-      await this.agentService.run(mode);
+      await this.api.invoke(runDispatchAgent, { body: { mode } });
       this.toastService.showSuccess("Agent session started");
       await this.loadData();
     } catch {
@@ -73,7 +83,7 @@ export class SessionsListPage implements OnInit {
 
   protected async approveDecision(decision: DispatchDecisionDto): Promise<void> {
     try {
-      await this.agentService.approveDecision(decision.id!);
+      await this.api.invoke(approveDispatchDecision, { decisionId: decision.id! });
       this.toastService.showSuccess("Decision approved and executed");
       await this.loadData();
     } catch {
@@ -82,13 +92,13 @@ export class SessionsListPage implements OnInit {
   }
 
   protected rejectDecision(decision: DispatchDecisionDto): void {
-    this.confirmService.confirm({
+    this.toastService.confirm({
       message: "Are you sure you want to reject this decision?",
       header: "Reject Decision",
       icon: "pi pi-exclamation-triangle",
       accept: async () => {
         try {
-          await this.agentService.rejectDecision(decision.id!);
+          await this.api.invoke(rejectDispatchDecision, { decisionId: decision.id! });
           this.toastService.showSuccess("Decision rejected");
           await this.loadData();
         } catch {
@@ -100,43 +110,5 @@ export class SessionsListPage implements OnInit {
 
   protected viewSession(session: DispatchSessionDto): void {
     this.router.navigate(["/ai-dispatch", session.id]);
-  }
-
-  protected getStatusSeverity(
-    status: string,
-  ): "success" | "info" | "warn" | "danger" | "secondary" {
-    switch (status) {
-      case "completed":
-      case "executed":
-      case "approved":
-        return "success";
-      case "running":
-      case "suggested":
-        return "info";
-      case "failed":
-        return "danger";
-      case "cancelled":
-      case "rejected":
-        return "warn";
-      default:
-        return "secondary";
-    }
-  }
-
-  protected getDecisionTypeLabel(type: string): string {
-    switch (type) {
-      case "assign_load":
-        return "Assign Load";
-      case "create_trip":
-        return "Create Trip";
-      case "dispatch_trip":
-        return "Dispatch Trip";
-      case "book_load_board_load":
-        return "Book Load";
-      case "reassign_load":
-        return "Reassign";
-      default:
-        return type;
-    }
   }
 }

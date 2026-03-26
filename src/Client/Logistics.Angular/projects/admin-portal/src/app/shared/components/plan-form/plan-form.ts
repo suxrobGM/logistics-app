@@ -19,6 +19,7 @@ export interface PlanFormValue {
   perTruckPrice: number;
   maxTrucks: number | null;
   annualDiscountPercent: number;
+  weeklyAiSessionQuota: number | null;
   interval: BillingInterval;
   intervalCount: number;
   trialPeriod: TrialPeriod;
@@ -91,6 +92,7 @@ export class PlanForm {
       nonNullable: true,
     }),
     maxTrucks: new FormControl<number | null>(null),
+    weeklyAiSessionQuota: new FormControl<number | null>(null),
     annualDiscountPercent: new FormControl<number>(0, {
       validators: [Validators.min(0), Validators.max(100)],
       nonNullable: true,
