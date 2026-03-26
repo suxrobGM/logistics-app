@@ -13,10 +13,10 @@ namespace Logistics.Infrastructure.AI.Tests.Services;
 
 public class DispatchConversationBuilderTests
 {
-    private readonly IDispatchToolRegistry toolRegistry = Substitute.For<IDispatchToolRegistry>();
     private readonly ILogger<DispatchConversationBuilder> logger = NullLogger<DispatchConversationBuilder>.Instance;
 
     private readonly DispatchConversationBuilder sut;
+    private readonly IDispatchToolRegistry toolRegistry = Substitute.For<IDispatchToolRegistry>();
 
     public DispatchConversationBuilderTests()
     {
@@ -81,8 +81,8 @@ public class DispatchConversationBuilderTests
         var session = new DispatchSession { Mode = DispatchAgentMode.Autonomous, StartedAt = DateTime.UtcNow };
         var config = new ClaudeOptions { ApiKey = apiKey!, Model = "test", MaxTokens = 100 };
 
-        var ex = Assert.Throws<InvalidOperationException>(
-            () => sut.Build(session, DispatchAgentMode.Autonomous, config));
+        var ex =
+            Assert.Throws<InvalidOperationException>(() => sut.Build(session, DispatchAgentMode.Autonomous, config));
 
         Assert.Contains("API key", ex.Message);
     }

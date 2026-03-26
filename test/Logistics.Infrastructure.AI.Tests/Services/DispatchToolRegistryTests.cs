@@ -22,7 +22,7 @@ public class DispatchToolRegistryTests
 
         foreach (var tool in tools)
         {
-            Assert.False(string.IsNullOrWhiteSpace(tool.Name), $"Tool has empty name");
+            Assert.False(string.IsNullOrWhiteSpace(tool.Name), "Tool has empty name");
             Assert.False(string.IsNullOrWhiteSpace(tool.Description), $"Tool '{tool.Name}' has empty description");
             Assert.NotNull(tool.InputSchema);
         }
@@ -40,7 +40,7 @@ public class DispatchToolRegistryTests
     [Fact]
     public void GetToolDefinitions_IncludesLoadBoardTools_WhenRequested()
     {
-        var tools = sut.GetToolDefinitions(includeLoadBoardTools: true);
+        var tools = sut.GetToolDefinitions(true);
 
         Assert.Contains(tools, t => t.Name == "search_load_board");
         Assert.Contains(tools, t => t.Name == "book_load_board_load");
@@ -74,7 +74,7 @@ public class DispatchToolRegistryTests
     [Fact]
     public void GetToolDefinitions_HasUniqueToolNames()
     {
-        var tools = sut.GetToolDefinitions(includeLoadBoardTools: true);
+        var tools = sut.GetToolDefinitions(true);
 
         var names = tools.Select(t => t.Name).ToList();
         Assert.Equal(names.Count, names.Distinct().Count());

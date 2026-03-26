@@ -1,4 +1,3 @@
-
 using System.Text.Json.Nodes;
 using Anthropic.SDK.Messaging;
 using Logistics.Application.Services;
@@ -17,13 +16,15 @@ namespace Logistics.Infrastructure.AI.Tests.Services;
 
 public class DispatchDecisionProcessorTests
 {
-    private readonly IDispatchToolExecutor toolExecutor = Substitute.For<IDispatchToolExecutor>();
-    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITripTrackingService trackingService = Substitute.For<ITripTrackingService>();
+    private readonly ITenantRepository<DispatchDecision, Guid> decisionRepo =
+        Substitute.For<ITenantRepository<DispatchDecision, Guid>>();
+
     private readonly ILogger<DispatchDecisionProcessor> logger = NullLogger<DispatchDecisionProcessor>.Instance;
-    private readonly ITenantRepository<DispatchDecision, Guid> decisionRepo = Substitute.For<ITenantRepository<DispatchDecision, Guid>>();
 
     private readonly DispatchDecisionProcessor sut;
+    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly IDispatchToolExecutor toolExecutor = Substitute.For<IDispatchToolExecutor>();
+    private readonly ITripTrackingService trackingService = Substitute.For<ITripTrackingService>();
 
     public DispatchDecisionProcessorTests()
     {
@@ -38,11 +39,89 @@ public class DispatchDecisionProcessorTests
         sut = new DispatchDecisionProcessor(toolExecutor, tenantUow, trackingService, logger);
     }
 
-    private static DispatchSession CreateSession(DispatchAgentMode mode = DispatchAgentMode.Autonomous) =>
-        new() { Mode = mode, StartedAt = DateTime.UtcNow };
+    private static DispatchSession CreateSession(DispatchAgentMode mode = DispatchAgentMode.Autonomous)
+    {
+        return new DispatchSession { Mode = mode, StartedAt = DateTime.UtcNow };
+    }
 
-    private static ToolUseContent CreateToolUse(string name, JsonObject? input = null) =>
-        new() { Id = Guid.NewGuid().ToString(), Name = name, Input = input ?? new JsonObject() };
+    private static ToolUseContent CreateToolUse(string name, JsonObject? input = null)
+    {
+        return new ToolUseContent { Id = Guid.NewGuid().ToString(), Name = name, Input = input ?? new JsonObject() };
+    }
+
+    #region Tool execution failure
+
+    [Fact]
+    public async Task ProcessToolCalls_ToolThrows_MarksDecisionFailed()
+    {
+        var session = CreateSession();
+        var toolUse = CreateToolUse("dispatch_trip", new JsonObject
+        {
+            ["trip_id"] = Guid.NewGuid().ToString()
+        });
+
+        toolExecutor.ExecuteToolAsync("dispatch_trip", Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .ThrowsAsync(new InvalidOperationException("Trip is not in Draft status"));
+
+        var results = await sut.ProcessToolCallsAsync(
+            session, DispatchAgentMode.Autonomous, [toolUse], null, CancellationToken.None);
+
+        Assert.Single(results);
+
+        await decisionRepo.Received(1).AddAsync(
+            Arg.Is<DispatchDecision>(d =>
+                d.Status == DispatchDecisionStatus.Failed &&
+                d.ToolOutput!.Contains("Trip is not in Draft status")),
+            Arg.Any<CancellationToken>());
+    }
+
+    #endregion
+
+    #region Decision type mapping
+
+    [Theory]
+    [InlineData("assign_load_to_truck", DispatchDecisionType.AssignLoad)]
+    [InlineData("create_trip", DispatchDecisionType.CreateTrip)]
+    [InlineData("dispatch_trip", DispatchDecisionType.DispatchTrip)]
+    [InlineData("book_load_board_load", DispatchDecisionType.BookLoadBoardLoad)]
+    [InlineData("get_fleet_overview", DispatchDecisionType.Query)]
+    [InlineData("get_available_trucks", DispatchDecisionType.Query)]
+    [InlineData("check_hos_feasibility", DispatchDecisionType.Query)]
+    [InlineData("unknown_tool", DispatchDecisionType.Query)]
+    public async Task ProcessToolCalls_MapsCorrectDecisionType(string toolName, DispatchDecisionType expectedType)
+    {
+        var session = CreateSession(DispatchAgentMode.HumanInTheLoop);
+        var toolUse = CreateToolUse(toolName);
+
+        toolExecutor.ExecuteToolAsync(toolName, Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns("{}");
+
+        await sut.ProcessToolCallsAsync(
+            session, DispatchAgentMode.HumanInTheLoop, [toolUse], null, CancellationToken.None);
+
+        await decisionRepo.Received(1).AddAsync(
+            Arg.Is<DispatchDecision>(d => d.Type == expectedType),
+            Arg.Any<CancellationToken>());
+    }
+
+    #endregion
+
+    #region IsWriteTool
+
+    [Theory]
+    [InlineData("assign_load_to_truck", true)]
+    [InlineData("create_trip", true)]
+    [InlineData("dispatch_trip", true)]
+    [InlineData("book_load_board_load", true)]
+    [InlineData("get_fleet_overview", false)]
+    [InlineData("get_available_trucks", false)]
+    [InlineData("calculate_distance", false)]
+    public void IsWriteTool_ClassifiesCorrectly(string toolName, bool expected)
+    {
+        Assert.Equal(expected, DispatchDecisionProcessor.IsWriteTool(toolName));
+    }
+
+    #endregion
 
     #region Mode-aware execution
 
@@ -118,63 +197,6 @@ public class DispatchDecisionProcessorTests
         // Read tools always execute, even in HumanInTheLoop mode
         await toolExecutor.Received(1).ExecuteToolAsync(
             "get_fleet_overview", Arg.Any<string>(), Arg.Any<CancellationToken>());
-    }
-
-    #endregion
-
-    #region Tool execution failure
-
-    [Fact]
-    public async Task ProcessToolCalls_ToolThrows_MarksDecisionFailed()
-    {
-        var session = CreateSession();
-        var toolUse = CreateToolUse("dispatch_trip", new JsonObject
-        {
-            ["trip_id"] = Guid.NewGuid().ToString()
-        });
-
-        toolExecutor.ExecuteToolAsync("dispatch_trip", Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .ThrowsAsync(new InvalidOperationException("Trip is not in Draft status"));
-
-        var results = await sut.ProcessToolCallsAsync(
-            session, DispatchAgentMode.Autonomous, [toolUse], null, CancellationToken.None);
-
-        Assert.Single(results);
-
-        await decisionRepo.Received(1).AddAsync(
-            Arg.Is<DispatchDecision>(d =>
-                d.Status == DispatchDecisionStatus.Failed &&
-                d.ToolOutput!.Contains("Trip is not in Draft status")),
-            Arg.Any<CancellationToken>());
-    }
-
-    #endregion
-
-    #region Decision type mapping
-
-    [Theory]
-    [InlineData("assign_load_to_truck", DispatchDecisionType.AssignLoad)]
-    [InlineData("create_trip", DispatchDecisionType.CreateTrip)]
-    [InlineData("dispatch_trip", DispatchDecisionType.DispatchTrip)]
-    [InlineData("book_load_board_load", DispatchDecisionType.BookLoadBoardLoad)]
-    [InlineData("get_fleet_overview", DispatchDecisionType.Query)]
-    [InlineData("get_available_trucks", DispatchDecisionType.Query)]
-    [InlineData("check_hos_feasibility", DispatchDecisionType.Query)]
-    [InlineData("unknown_tool", DispatchDecisionType.Query)]
-    public async Task ProcessToolCalls_MapsCorrectDecisionType(string toolName, DispatchDecisionType expectedType)
-    {
-        var session = CreateSession(DispatchAgentMode.HumanInTheLoop);
-        var toolUse = CreateToolUse(toolName);
-
-        toolExecutor.ExecuteToolAsync(toolName, Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns("{}");
-
-        await sut.ProcessToolCallsAsync(
-            session, DispatchAgentMode.HumanInTheLoop, [toolUse], null, CancellationToken.None);
-
-        await decisionRepo.Received(1).AddAsync(
-            Arg.Is<DispatchDecision>(d => d.Type == expectedType),
-            Arg.Any<CancellationToken>());
     }
 
     #endregion
@@ -308,23 +330,6 @@ public class DispatchDecisionProcessorTests
 
         await trackingService.DidNotReceive().BroadcastDispatchDecisionAsync(
             Arg.Any<Guid>(), Arg.Any<DispatchDecisionDto>());
-    }
-
-    #endregion
-
-    #region IsWriteTool
-
-    [Theory]
-    [InlineData("assign_load_to_truck", true)]
-    [InlineData("create_trip", true)]
-    [InlineData("dispatch_trip", true)]
-    [InlineData("book_load_board_load", true)]
-    [InlineData("get_fleet_overview", false)]
-    [InlineData("get_available_trucks", false)]
-    [InlineData("calculate_distance", false)]
-    public void IsWriteTool_ClassifiesCorrectly(string toolName, bool expected)
-    {
-        Assert.Equal(expected, DispatchDecisionProcessor.IsWriteTool(toolName));
     }
 
     #endregion

@@ -55,7 +55,7 @@ public class DispatchSystemPromptTests
     [Fact]
     public void Build_WithoutLoadBoard_ExcludesLoadBoardReferences()
     {
-        var prompt = DispatchSystemPrompt.Build("Fleet", DispatchAgentMode.Autonomous, hasLoadBoardIntegration: false);
+        var prompt = DispatchSystemPrompt.Build("Fleet", DispatchAgentMode.Autonomous, false);
 
         Assert.DoesNotContain("search_load_board", prompt);
         Assert.DoesNotContain("load board opportunities", prompt);
@@ -64,7 +64,7 @@ public class DispatchSystemPromptTests
     [Fact]
     public void Build_WithLoadBoard_IncludesLoadBoardReferences()
     {
-        var prompt = DispatchSystemPrompt.Build("Fleet", DispatchAgentMode.Autonomous, hasLoadBoardIntegration: true);
+        var prompt = DispatchSystemPrompt.Build("Fleet", DispatchAgentMode.Autonomous, true);
 
         Assert.Contains("search_load_board", prompt);
         Assert.Contains("load board opportunities", prompt);
