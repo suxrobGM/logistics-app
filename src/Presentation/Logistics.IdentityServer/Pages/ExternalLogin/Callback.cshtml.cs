@@ -134,7 +134,7 @@ public class Callback : PageModel
             FirstName = firstName ?? name ?? "",
             LastName = lastName ?? "",
             Email = email,
-            UserName = sub.ToString(), // don't need a username, since the user will be using an external provider to login
+            UserName = email ?? sub.ToString("N"), // use email as username, or GUID without hyphens for external-only users
         };
 
         // create a list of claims that we want to transfer into our store
