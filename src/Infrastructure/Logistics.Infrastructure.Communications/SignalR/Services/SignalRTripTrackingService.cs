@@ -41,4 +41,16 @@ internal sealed class SignalRTripTrackingService(IHubContext<TrackingHub, ITrack
         var dispatchBoardGroup = $"{DispatchBoardGroupPrefix}{tenantId}";
         await hubContext.Clients.Group(dispatchBoardGroup).ReceiveDispatchBoardUpdate(update);
     }
+
+    public async Task BroadcastDispatchAgentUpdateAsync(Guid tenantId, DispatchAgentUpdateDto update)
+    {
+        var dispatchBoardGroup = $"{DispatchBoardGroupPrefix}{tenantId}";
+        await hubContext.Clients.Group(dispatchBoardGroup).ReceiveDispatchAgentUpdate(update);
+    }
+
+    public async Task BroadcastDispatchDecisionAsync(Guid tenantId, DispatchDecisionDto decision)
+    {
+        var dispatchBoardGroup = $"{DispatchBoardGroupPrefix}{tenantId}";
+        await hubContext.Clients.Group(dispatchBoardGroup).ReceiveDispatchDecision(decision);
+    }
 }

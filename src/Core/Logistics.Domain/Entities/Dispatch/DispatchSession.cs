@@ -14,15 +14,15 @@ public class DispatchSession : AuditableEntity, ITenantEntity
     /// </summary>
     public long Number { get; private set; }
 
-    public DispatchAgentMode Mode { get; set; }
+    public DispatchAgentMode Mode { get; init; }
     public DispatchSessionStatus Status { get; private set; } = DispatchSessionStatus.Running;
 
     /// <summary>
     /// The user who triggered this session. Null if triggered by background job.
     /// </summary>
-    public Guid? TriggeredByUserId { get; set; }
+    public Guid? TriggeredByUserId { get; init; }
 
-    public DateTime StartedAt { get; set; } = DateTime.UtcNow;
+    public DateTime StartedAt { get; init; } = DateTime.UtcNow;
     public DateTime? CompletedAt { get; set; }
 
     /// <summary>

@@ -15,17 +15,24 @@ internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow) : IDis
         var trucks = await tenantUow.Repository<Truck>()
             .GetListAsync(t => t.Status == TruckStatus.Available, ct);
 
-        var truckData = new List<object>();
-        foreach (var truck in trucks)
-        {
-            DriverHosStatus? hosStatus = null;
-            if (truck.MainDriverId is not null)
-            {
-                hosStatus = await tenantUow.Repository<DriverHosStatus>()
-                    .GetAsync(h => h.EmployeeId == truck.MainDriverId.Value, ct);
-            }
+        // Batch-load HOS statuses to avoid N+1 queries
+        var driverIds = trucks
+            .Where(t => t.MainDriverId is not null)
+            .Select(t => t.MainDriverId!.Value)
+            .ToList();
 
-            truckData.Add(new
+        var hosStatuses = driverIds.Count > 0
+            ? (await tenantUow.Repository<DriverHosStatus>()
+                .GetListAsync(h => driverIds.Contains(h.EmployeeId), ct))
+                .ToDictionary(h => h.EmployeeId)
+            : [];
+
+        var truckData = trucks.Select(truck =>
+        {
+            var hosStatus = truck.MainDriverId is not null
+                && hosStatuses.TryGetValue(truck.MainDriverId.Value, out var hos) ? hos : null;
+
+            return new
             {
                 id = truck.Id,
                 number = truck.Number,
@@ -44,10 +51,10 @@ internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow) : IDis
                         cycle_minutes_remaining = hosStatus.CycleMinutesRemaining,
                         is_in_violation = hosStatus.IsInViolation,
                         is_available = hosStatus.IsAvailableForDispatch()
-                    } : null
-                } : null
-            });
-        }
+                    } : (object?)null
+                } : (object?)null
+            };
+        }).ToList();
 
         return JsonSerializer.Serialize(new { trucks = truckData, count = trucks.Count });
     }

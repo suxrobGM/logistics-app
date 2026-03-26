@@ -29,7 +29,7 @@ public class DispatchAgentJob(
         var masterUow = scope.ServiceProvider.GetRequiredService<IMasterUnitOfWork>();
 
         var tenants = await masterUow.Repository<Tenant>()
-            .GetListAsync(t => t.ConnectionString != null);
+            .GetListAsync(t => t.ConnectionString != null, ct);
 
         logger.LogInformation("Starting dispatch agent cycle for {TenantCount} tenants", tenants.Count);
 

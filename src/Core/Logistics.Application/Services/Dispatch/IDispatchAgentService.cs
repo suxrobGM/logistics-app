@@ -10,7 +10,7 @@ namespace Logistics.Application.Services;
 public interface IDispatchAgentService
 {
     Task<DispatchSession> RunAsync(DispatchAgentRequest request, CancellationToken ct = default);
-    Task CancelAsync(Guid sessionId, CancellationToken ct = default);
+    Task<bool> CancelAsync(Guid sessionId, CancellationToken ct = default);
 }
 
 public record DispatchAgentRequest(

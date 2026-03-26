@@ -1,15 +1,10 @@
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using Anthropic.SDK;
 using Anthropic.SDK.Messaging;
-using Tool = Anthropic.SDK.Common.Tool;
-using Function = Anthropic.SDK.Common.Function;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Options;
-using Logistics.Infrastructure.AI.Prompts;
+using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -17,19 +12,12 @@ namespace Logistics.Infrastructure.AI.Services;
 
 internal sealed class ClaudeDispatchAgentService(
     IOptions<ClaudeOptions> options,
-    IDispatchToolRegistry toolRegistry,
-    IDispatchToolExecutor toolExecutor,
+    DispatchConversationBuilder conversationBuilder,
+    DispatchDecisionProcessor decisionProcessor,
     ITenantUnitOfWork tenantUow,
+    ITripTrackingService trackingService,
     ILogger<ClaudeDispatchAgentService> logger) : IDispatchAgentService
 {
-    private static readonly HashSet<string> WriteTools =
-    [
-        "assign_load_to_truck",
-        "create_trip",
-        "dispatch_trip",
-        "book_load_board_load"
-    ];
-
     private const int MaxIterations = 25;
 
     public async Task<DispatchSession> RunAsync(DispatchAgentRequest request, CancellationToken ct = default)
@@ -64,21 +52,26 @@ internal sealed class ClaudeDispatchAgentService(
         catch (Exception ex)
         {
             logger.LogError(ex, "Dispatch agent session {SessionId} failed", session.Id);
-            session.Fail(ex.Message);
+            session.Fail(SanitizeErrorMessage(ex));
         }
 
-        await tenantUow.SaveChangesAsync(ct);
+        await tenantUow.SaveChangesAsync(CancellationToken.None);
+        await BroadcastSessionUpdateAsync(session);
         return session;
     }
 
-    public async Task CancelAsync(Guid sessionId, CancellationToken ct = default)
+    public async Task<bool> CancelAsync(Guid sessionId, CancellationToken ct = default)
     {
-        var session = await tenantUow.Repository<DispatchSession>().GetByIdAsync(sessionId);
-        if (session is null || session.Status != DispatchSessionStatus.Running)
-            return;
+        var session = await tenantUow.Repository<DispatchSession>().GetByIdAsync(sessionId, ct);
+        if (session is null)
+            return false;
+
+        if (session.Status != DispatchSessionStatus.Running)
+            return false;
 
         session.Cancel();
         await tenantUow.SaveChangesAsync(ct);
+        return true;
     }
 
     private async Task RunAgentLoopAsync(
@@ -87,7 +80,7 @@ internal sealed class ClaudeDispatchAgentService(
         CancellationToken ct)
     {
         var config = options.Value;
-        var (client, parameters, messages) = BuildConversation(session, request.Mode, config);
+        var (client, parameters, messages) = conversationBuilder.Build(session, request.Mode, config);
 
         var totalInputTokens = 0;
         var totalOutputTokens = 0;
@@ -117,141 +110,12 @@ internal sealed class ClaudeDispatchAgentService(
                 break;
             }
 
-            var toolResults = await ProcessToolCallsAsync(
+            var toolResults = await decisionProcessor.ProcessToolCallsAsync(
                 session, request.Mode, toolUseBlocks, textContent, ct);
 
             messages.Add(new Message { Role = RoleType.User, Content = toolResults });
             await tenantUow.SaveChangesAsync(ct);
         }
-    }
-
-    private (AnthropicClient client, MessageParameters parameters, List<Message> messages)
-        BuildConversation(DispatchSession session, DispatchAgentMode mode, ClaudeOptions config)
-    {
-        var systemPrompt = DispatchSystemPrompt.Build("Fleet", mode);
-
-        var tools = toolRegistry.GetToolDefinitions()
-            .Select<DispatchToolDefinition, Tool>(t =>
-                new Function(t.Name, t.Description, (JsonNode)t.InputSchema))
-            .ToList();
-
-        logger.LogInformation(
-            "Agent session {SessionId} initialized with {ToolCount} tools, model {Model}",
-            session.Id, tools.Count, config.Model);
-
-        var messages = new List<Message>
-        {
-            new(RoleType.User,
-                "Analyze the current fleet state and optimize dispatch assignments. " +
-                "Start by getting a fleet overview, then process all unassigned loads.")
-        };
-
-        var client = new AnthropicClient(config.ApiKey);
-
-        var parameters = new MessageParameters
-        {
-            Messages = messages,
-            MaxTokens = config.MaxTokens,
-            Model = config.Model,
-            Stream = false,
-            Temperature = 0m,
-            System = [new SystemMessage(systemPrompt)],
-            Tools = tools
-        };
-
-        return (client, parameters, messages);
-    }
-
-    private async Task<List<ContentBase>> ProcessToolCallsAsync(
-        DispatchSession session,
-        DispatchAgentMode mode,
-        List<ToolUseContent> toolUseBlocks,
-        string? reasoning,
-        CancellationToken ct)
-    {
-        var toolResults = new List<ContentBase>();
-
-        foreach (var toolUse in toolUseBlocks)
-        {
-            var decision = CreateDecision(session, toolUse, reasoning);
-            var toolResult = await ExecuteOrSuggestAsync(session, decision, toolUse, mode, ct);
-
-            ExtractEntityIds(decision, toolUse.Input);
-            await tenantUow.Repository<DispatchDecision>().AddAsync(decision);
-            session.DecisionCount++;
-
-            toolResults.Add(new ToolResultContent
-            {
-                ToolUseId = toolUse.Id,
-                Content = [new TextContent { Text = toolResult }]
-            });
-        }
-
-        return toolResults;
-    }
-
-    private async Task<string> ExecuteOrSuggestAsync(
-        DispatchSession session,
-        DispatchDecision decision,
-        ToolUseContent toolUse,
-        DispatchAgentMode mode,
-        CancellationToken ct)
-    {
-        var toolInputJson = toolUse.Input?.ToJsonString() ?? "{}";
-        var isWriteTool = WriteTools.Contains(toolUse.Name);
-
-        if (isWriteTool && mode == DispatchAgentMode.HumanInTheLoop)
-        {
-            decision.Status = DispatchDecisionStatus.Suggested;
-            var result = JsonSerializer.Serialize(new
-            {
-                status = "suggested",
-                message = "This action has been recorded as a suggestion for dispatcher approval."
-            });
-            decision.ToolOutput = result;
-            logger.LogInformation("Session {SessionId}: tool {ToolName} queued as suggestion",
-                session.Id, toolUse.Name);
-            return result;
-        }
-
-        try
-        {
-            var result = await toolExecutor.ExecuteToolAsync(toolUse.Name, toolInputJson, ct);
-            decision.ToolOutput = result;
-
-            if (isWriteTool)
-            {
-                decision.Status = DispatchDecisionStatus.Executed;
-                decision.MarkExecuted();
-                logger.LogInformation("Session {SessionId}: write tool {ToolName} executed successfully",
-                    session.Id, toolUse.Name);
-            }
-
-            return result;
-        }
-        catch (Exception ex)
-        {
-            logger.LogWarning(ex, "Session {SessionId}: tool {ToolName} failed",
-                session.Id, toolUse.Name);
-            var errorResult = JsonSerializer.Serialize(new { error = ex.Message });
-            decision.MarkFailed(errorResult);
-            return errorResult;
-        }
-    }
-
-    private static DispatchDecision CreateDecision(
-        DispatchSession session,
-        ToolUseContent toolUse,
-        string? reasoning)
-    {
-        return new DispatchDecision
-        {
-            SessionId = session.Id,
-            Type = MapToolToDecisionType(toolUse.Name),
-            ToolName = toolUse.Name,
-            ToolInput = toolUse.Input?.ToJsonString() ?? "{}",
-            Reasoning = reasoning ?? ""
-        };
     }
 
     private static void TrackTokenUsage(
@@ -265,27 +129,37 @@ internal sealed class ClaudeDispatchAgentService(
         session.TotalTokensUsed = totalInputTokens + totalOutputTokens;
     }
 
-    private static DispatchDecisionType MapToolToDecisionType(string toolName) => toolName switch
+    private static string SanitizeErrorMessage(Exception ex)
     {
-        "assign_load_to_truck" => DispatchDecisionType.AssignLoad,
-        "create_trip" => DispatchDecisionType.CreateTrip,
-        "dispatch_trip" => DispatchDecisionType.DispatchTrip,
-        "book_load_board_load" => DispatchDecisionType.BookLoadBoardLoad,
-        _ => DispatchDecisionType.AssignLoad
-    };
+        var message = ex.Message;
+        if (ex is HttpRequestException or UnauthorizedAccessException
+            || message.Contains("api key", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("authentication", StringComparison.OrdinalIgnoreCase)
+            || message.Contains("unauthorized", StringComparison.OrdinalIgnoreCase))
+        {
+            return "API authentication error. Check the Claude API key configuration.";
+        }
 
-    private static void ExtractEntityIds(DispatchDecision decision, JsonNode? input)
+        return message.Length > 500 ? message[..500] : message;
+    }
+
+    private async Task BroadcastSessionUpdateAsync(DispatchSession session)
     {
-        if (input is null)
-            return;
-
-        if (input["load_id"] is JsonValue loadIdVal && Guid.TryParse(loadIdVal.GetValue<string>(), out var loadId))
-            decision.LoadId = loadId;
-
-        if (input["truck_id"] is JsonValue truckIdVal && Guid.TryParse(truckIdVal.GetValue<string>(), out var truckId))
-            decision.TruckId = truckId;
-
-        if (input["trip_id"] is JsonValue tripIdVal && Guid.TryParse(tripIdVal.GetValue<string>(), out var tripId))
-            decision.TripId = tripId;
+        try
+        {
+            var tenantId = tenantUow.GetCurrentTenant().Id;
+            await trackingService.BroadcastDispatchAgentUpdateAsync(tenantId, new DispatchAgentUpdateDto
+            {
+                SessionId = session.Id,
+                Status = session.Status,
+                Mode = session.Mode,
+                DecisionCount = session.DecisionCount,
+                Summary = session.Summary
+            });
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Failed to broadcast dispatch agent update for session {SessionId}", session.Id);
+        }
     }
 }

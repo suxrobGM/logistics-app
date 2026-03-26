@@ -5,6 +5,9 @@ namespace Logistics.Infrastructure.AI.Services;
 
 internal sealed class DispatchToolRegistry : IDispatchToolRegistry
 {
+    private static readonly HashSet<string> LoadBoardTools =
+        ["search_load_board", "book_load_board_load"];
+
     private static readonly List<DispatchToolDefinition> Tools =
     [
         // ── Read Tools ──
@@ -172,7 +175,13 @@ internal sealed class DispatchToolRegistry : IDispatchToolRegistry
             }))
     ];
 
-    public IReadOnlyList<DispatchToolDefinition> GetToolDefinitions() => Tools;
+    public IReadOnlyList<DispatchToolDefinition> GetToolDefinitions(bool includeLoadBoardTools = false)
+    {
+        if (includeLoadBoardTools)
+            return Tools;
+
+        return Tools.Where(t => !LoadBoardTools.Contains(t.Name)).ToList();
+    }
 
     private static JsonNode BuildSchema(JsonObject schema) => schema;
 

@@ -11,8 +11,11 @@ internal sealed class AssignLoadToTruckTool(IMediator mediator) : IDispatchTool
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
-        var loadId = Guid.Parse(input["load_id"]!.GetValue<string>());
-        var truckId = Guid.Parse(input["truck_id"]!.GetValue<string>());
+        if (!Guid.TryParse(input["load_id"]?.GetValue<string>(), out var loadId))
+            return JsonSerializer.Serialize(new { error = "Invalid or missing load_id" });
+
+        if (!Guid.TryParse(input["truck_id"]?.GetValue<string>(), out var truckId))
+            return JsonSerializer.Serialize(new { error = "Invalid or missing truck_id" });
 
         var result = await mediator.Send(new AssignLoadToTruckCommand { LoadId = loadId, TruckId = truckId }, ct);
 

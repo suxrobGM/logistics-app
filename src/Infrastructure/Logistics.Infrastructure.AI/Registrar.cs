@@ -20,6 +20,8 @@ public static class Registrar
 
         // Agent services
         services.AddScoped<IDispatchAgentService, ClaudeDispatchAgentService>();
+        services.AddScoped<DispatchConversationBuilder>();
+        services.AddScoped<DispatchDecisionProcessor>();
         services.AddScoped<IDispatchToolExecutor, DispatchToolExecutor>();
         services.AddSingleton<IDispatchToolRegistry, DispatchToolRegistry>();
 
@@ -31,11 +33,12 @@ public static class Registrar
         services.AddScoped<IDispatchTool, CheckHosFeasibilityTool>();
         services.AddScoped<IDispatchTool, CalculateDistanceTool>();
         services.AddScoped<IDispatchTool, OptimizeTripStopsTool>();
-        services.AddScoped<IDispatchTool, SearchLoadBoardTool>();
+        // Load board tools are stubs — register only when integration is configured
+        // services.AddScoped<IDispatchTool, SearchLoadBoardTool>();
         services.AddScoped<IDispatchTool, AssignLoadToTruckTool>();
         services.AddScoped<IDispatchTool, CreateTripTool>();
         services.AddScoped<IDispatchTool, DispatchTripTool>();
-        services.AddScoped<IDispatchTool, BookLoadBoardLoadTool>();
+        // services.AddScoped<IDispatchTool, BookLoadBoardLoadTool>();
 
         return services;
     }

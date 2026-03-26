@@ -9,7 +9,10 @@ internal sealed class CancelDispatchSessionHandler(
 {
     public async Task<Result> Handle(CancelDispatchSessionCommand request, CancellationToken ct)
     {
-        await agentService.CancelAsync(request.SessionId, ct);
-        return Result.Ok();
+        var cancelled = await agentService.CancelAsync(request.SessionId, ct);
+
+        return cancelled
+            ? Result.Ok()
+            : Result.Fail("Session not found or is not currently running");
     }
 }

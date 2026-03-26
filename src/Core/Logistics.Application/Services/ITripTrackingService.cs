@@ -21,4 +21,14 @@ public interface ITripTrackingService
     /// Broadcasts a dispatch board update to dispatch board subscribers.
     /// </summary>
     Task BroadcastDispatchBoardUpdateAsync(Guid tenantId, DispatchBoardUpdateDto update);
+
+    /// <summary>
+    /// Broadcasts an AI dispatch agent session status update.
+    /// </summary>
+    Task BroadcastDispatchAgentUpdateAsync(Guid tenantId, DispatchAgentUpdateDto update);
+
+    /// <summary>
+    /// Broadcasts an individual AI dispatch agent decision notification.
+    /// </summary>
+    Task BroadcastDispatchDecisionAsync(Guid tenantId, DispatchDecisionDto decision);
 }

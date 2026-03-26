@@ -33,14 +33,14 @@ internal sealed class ApproveDispatchDecisionHandler(
                 decision.ToolName!, decision.ToolInput!, ct);
             decision.ToolOutput = result;
             decision.MarkExecuted();
+            await tenantUow.SaveChangesAsync(ct);
+            return Result.Ok();
         }
         catch (Exception ex)
         {
             decision.MarkFailed(ex.Message);
+            await tenantUow.SaveChangesAsync(ct);
             return Result.Fail($"Failed to execute decision: {ex.Message}");
         }
-
-        await tenantUow.SaveChangesAsync(ct);
-        return Result.Ok();
     }
 }

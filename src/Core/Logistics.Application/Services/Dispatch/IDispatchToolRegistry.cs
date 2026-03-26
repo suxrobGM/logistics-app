@@ -6,7 +6,7 @@ namespace Logistics.Application.Services;
 /// </summary>
 public interface IDispatchToolRegistry
 {
-    IReadOnlyList<DispatchToolDefinition> GetToolDefinitions();
+    IReadOnlyList<DispatchToolDefinition> GetToolDefinitions(bool includeLoadBoardTools = false);
 }
 
 /// <summary>

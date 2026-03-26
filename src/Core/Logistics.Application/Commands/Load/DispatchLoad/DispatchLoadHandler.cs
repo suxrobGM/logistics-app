@@ -16,7 +16,14 @@ internal sealed class DispatchLoadHandler(ITenantUnitOfWork tenantUow) : IAppReq
             return Result.Fail($"Load not found with ID '{req.Id}'");
         }
 
-        load.Dispatch();
+        try
+        {
+            load.Dispatch();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Result.Fail(ex.Message);
+        }
 
         await tenantUow.SaveChangesAsync(ct);
 

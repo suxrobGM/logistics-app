@@ -11,7 +11,9 @@ internal sealed class DispatchTripTool(IMediator mediator) : IDispatchTool
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
-        var tripId = Guid.Parse(input["trip_id"]!.GetValue<string>());
+        if (!Guid.TryParse(input["trip_id"]?.GetValue<string>(), out var tripId))
+            return JsonSerializer.Serialize(new { error = "Invalid or missing trip_id" });
+
         var result = await mediator.Send(new DispatchTripCommand { TripId = tripId }, ct);
 
         return result.IsSuccess

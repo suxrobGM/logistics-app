@@ -11,7 +11,9 @@ internal sealed class GetDriverHosTool(ITenantUnitOfWork tenantUow) : IDispatchT
 
     public async Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {
-        var driverId = Guid.Parse(input["driver_id"]!.GetValue<string>());
+        if (!Guid.TryParse(input["driver_id"]?.GetValue<string>(), out var driverId))
+            return JsonSerializer.Serialize(new { error = "Invalid or missing driver_id" });
+
         var hos = await tenantUow.Repository<DriverHosStatus>()
             .GetAsync(h => h.EmployeeId == driverId, ct);
 

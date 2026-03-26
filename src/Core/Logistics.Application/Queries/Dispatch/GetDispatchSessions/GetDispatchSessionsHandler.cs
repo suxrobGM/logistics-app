@@ -1,7 +1,9 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mappings;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Queries;
 
@@ -11,33 +13,20 @@ internal sealed class GetDispatchSessionsHandler(
     public async Task<PagedResult<DispatchSessionDto>> Handle(
         GetDispatchSessionsQuery request, CancellationToken ct)
     {
-        var totalItems = await tenantUow.Repository<DispatchSession>()
-            .CountAsync(s => request.Status == null || s.Status == request.Status.Value, ct);
+        var query = tenantUow.Repository<DispatchSession>().Query();
 
-        var sessions = await tenantUow.Repository<DispatchSession>()
-            .GetListAsync(
-                s => request.Status == null || s.Status == request.Status.Value,
-                ct);
+        if (request.Status.HasValue)
+            query = query.Where(s => s.Status == request.Status.Value);
 
-        var dtos = sessions
+        var totalItems = await query.CountAsync(ct);
+
+        var sessions = await query
             .OrderByDescending(s => s.StartedAt)
             .Skip((request.Page - 1) * request.PageSize)
             .Take(request.PageSize)
-            .Select(s => new DispatchSessionDto
-            {
-                Id = s.Id,
-                Number = s.Number,
-                Mode = s.Mode,
-                Status = s.Status,
-                TriggeredByUserId = s.TriggeredByUserId,
-                StartedAt = s.StartedAt,
-                CompletedAt = s.CompletedAt,
-                TotalTokensUsed = s.TotalTokensUsed,
-                DecisionCount = s.DecisionCount,
-                Summary = s.Summary,
-                ErrorMessage = s.ErrorMessage
-            })
-            .ToList();
+            .ToListAsync(ct);
+
+        var dtos = sessions.Select(s => s.ToDto()).ToList();
 
         return PagedResult<DispatchSessionDto>.Ok(dtos, totalItems, request.PageSize);
     }
