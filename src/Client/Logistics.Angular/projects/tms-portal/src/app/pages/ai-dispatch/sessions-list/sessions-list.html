@@ -24,6 +24,21 @@
     </div>
   </div>
 
+  <!-- How it works -->
+  <div class="bg-subtle border-default mb-6 rounded-lg border p-4">
+    <div class="mb-2 flex items-center gap-2">
+      <i class="pi pi-info-circle text-primary"></i>
+      <span class="font-semibold">How it works</span>
+    </div>
+    <p class="text-secondary m-0 text-sm leading-relaxed">
+      The AI dispatcher analyzes your fleet state, unassigned loads, truck locations, and driver HOS
+      hours to optimize load-to-truck assignments. In <strong>Suggestions</strong> mode, it proposes
+      assignments for your review — approve or reject each one. In <strong>Autonomous</strong> mode,
+      it executes assignments immediately. The agent checks HOS compliance before every assignment
+      and minimizes deadhead miles by matching loads to the closest available trucks.
+    </p>
+  </div>
+
   <!-- AI Quota Usage -->
   @if (quotaStatus(); as quota) {
     @if (quota.weeklyQuota! > 0) {
@@ -145,7 +160,10 @@
           }
         </td>
         <td>
-          <p-tag [value]="session.status" [severity]="Labels.dispatchStatusSeverity(session.status)" />
+          <p-tag
+            [value]="session.status"
+            [severity]="Labels.dispatchStatusSeverity(session.status)"
+          />
         </td>
         <td>{{ session.startedAt | date: "short" }}</td>
         <td>{{ session.decisionCount }}</td>
