@@ -114,7 +114,6 @@ public class Callback : PageModel
 
     private async Task<User> AutoProvisionUserAsync(string provider, string providerUserId, IEnumerable<Claim> claims)
     {
-        var sub = Guid.NewGuid();
         var claimsArr = claims.ToArray();
         var firstName = claimsArr.FirstOrDefault(x => x.Type == JwtClaimTypes.GivenName)?.Value ??
                         claimsArr.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value;
@@ -128,13 +127,29 @@ public class Callback : PageModel
         var name = claimsArr.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value ??
                    claimsArr.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
 
-        var user = new User
+        // Check if a user with this email already exists and link the external login
+        var user = email is not null ? await _userManager.FindByEmailAsync(email) : null;
+
+        if (user is not null)
+        {
+            var identityResult = await _userManager.AddLoginAsync(user, new UserLoginInfo(provider, providerUserId, provider));
+            if (!identityResult.Succeeded)
+            {
+                throw new Exception(identityResult.Errors.First().Description);
+            }
+
+            return user;
+        }
+
+        var sub = Guid.NewGuid();
+        user = new User
         {
             Id = sub,
             FirstName = firstName ?? name ?? "",
             LastName = lastName ?? "",
             Email = email,
-            UserName = email ?? sub.ToString("N"), // use email as username, or GUID without hyphens for external-only users
+            EmailConfirmed = true,
+            UserName = email ?? sub.ToString("N"),
         };
 
         // create a list of claims that we want to transfer into our store
@@ -146,7 +161,6 @@ public class Callback : PageModel
         }
         else
         {
-
             if (firstName != null && lastName != null)
             {
                 filtered.Add(new Claim(JwtClaimTypes.Name, firstName + " " + lastName));
@@ -161,20 +175,20 @@ public class Callback : PageModel
             }
         }
 
-        var identityResult = await _userManager.CreateAsync(user);
-        if (!identityResult.Succeeded)
-            throw new Exception(identityResult.Errors.First().Description);
+        var identityResult2 = await _userManager.CreateAsync(user);
+        if (!identityResult2.Succeeded)
+            throw new Exception(identityResult2.Errors.First().Description);
 
         if (filtered.Count != 0)
         {
-            identityResult = await _userManager.AddClaimsAsync(user, filtered);
-            if (!identityResult.Succeeded)
-                throw new Exception(identityResult.Errors.First().Description);
+            identityResult2 = await _userManager.AddClaimsAsync(user, filtered);
+            if (!identityResult2.Succeeded)
+                throw new Exception(identityResult2.Errors.First().Description);
         }
 
-        identityResult = await _userManager.AddLoginAsync(user, new UserLoginInfo(provider, providerUserId, provider));
-        if (!identityResult.Succeeded)
-            throw new Exception(identityResult.Errors.First().Description);
+        identityResult2 = await _userManager.AddLoginAsync(user, new UserLoginInfo(provider, providerUserId, provider));
+        if (!identityResult2.Succeeded)
+            throw new Exception(identityResult2.Errors.First().Description);
 
         return user;
     }
