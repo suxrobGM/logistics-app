@@ -28,3 +28,5 @@ paths:
 - Commands: `{Action}{Entity}Command` → Handlers: `{Command}Handler` (internal sealed)
 - Queries: `Get{Entity}ByIdQuery`, `Get{Entities}Query`
 - DTOs: `{Entity}Dto`, Mappers: `{Entity}Mapper`
+- Private fields: `camelCase` (no `_` prefix) — enforced by `.editorconfig`
+- Constants and static readonly: `PascalCase`

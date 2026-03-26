@@ -1,3 +1,5 @@
+using Xunit;
+
 namespace Logistics.Application.Tests;
 
 public class CommandsTest
