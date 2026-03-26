@@ -10,7 +10,8 @@ bun run start:tms          # TMS Portal: https://localhost:7003
 bun run start:customer     # Customer Portal: https://localhost:7004
 bun run start:website      # Website: https://localhost:7005
 bun run build:all          # Build all projects
-bun run gen:api            # Regenerate API client
+bun run gen:api            # Regenerate API client from swagger.json
+bun run gen:api:live       # Fetch latest spec from running API + regenerate
 bun run lint               # Lint code
 ```
 

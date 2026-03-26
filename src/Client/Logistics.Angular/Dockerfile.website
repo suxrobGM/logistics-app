@@ -12,8 +12,9 @@ RUN bun install --frozen-lockfile
 # Copy source
 COPY . .
 
-# Build shared library and Website (SSR) using Node.js
+# Generate API client and build
 # Note: Angular SSR prerendering requires Node.js (not bun) for module resolution
+RUN bun run gen:api
 RUN npm run build:shared
 RUN npm run build:website
 

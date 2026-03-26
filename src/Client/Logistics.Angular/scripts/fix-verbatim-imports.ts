@@ -73,11 +73,11 @@ function isTypeOnlyImport(
     // instanceof checks
     new RegExp(`instanceof\\s+${importName}\\b`),
     // Function calls
-    new RegExp(`${importName}\\s*\\(`),
+    new RegExp(`\\b${importName}\\s*\\(`),
     // new keyword
     new RegExp(`new\\s+${importName}\\b`),
     // Property access (could be static methods/properties)
-    new RegExp(`${importName}\\.`),
+    new RegExp(`\\b${importName}\\.`),
     // Used as a value (assigned to variable)
     new RegExp(`=\\s*${importName}\\b(?!\\s*[<>])`),
   ];

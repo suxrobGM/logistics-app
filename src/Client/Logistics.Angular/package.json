@@ -18,7 +18,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "format": "prettier --write ./projects",
-    "gen:api": "ng-openapi-gen && bun scripts/fix-verbatim-imports.ts"
+    "gen:api": "ng-openapi-gen && bun scripts/fix-verbatim-imports.ts",
+    "gen:api:live": "bun scripts/fetch-openapi.ts && bun run gen:api"
   },
   "dependencies": {
     "@angular/animations": "^21.1.0",

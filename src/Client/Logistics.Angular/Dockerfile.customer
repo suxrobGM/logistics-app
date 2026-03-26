@@ -9,7 +9,8 @@ RUN bun install --frozen-lockfile
 # Copy source
 COPY . .
 
-# Build shared library and Customer Portal
+# Generate API client and build
+RUN bun run gen:api
 RUN bun run build:shared
 RUN bun run build:customer
 

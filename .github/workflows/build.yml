@@ -47,6 +47,10 @@ jobs:
         working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
         run: bun install --force
 
+      - name: Generate API client
+        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
+        run: bun run gen:api
+
       - name: Build shared library
         working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
         run: bun run build:shared

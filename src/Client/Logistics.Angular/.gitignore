@@ -37,6 +37,9 @@ yarn-error.log
 testem.log
 /typings
 
+# Generated API client
+/projects/shared/src/lib/api/generated
+
 # System files
 .DS_Store
 Thumbs.db
