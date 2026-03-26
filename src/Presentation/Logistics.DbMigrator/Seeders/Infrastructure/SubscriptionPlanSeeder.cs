@@ -14,7 +14,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
     public override SeederType Type => SeederType.Infrastructure;
     public override int Order => 30;
 
-    private static readonly TenantFeature[] starterFeatures =
+    private static readonly TenantFeature[] StarterFeatures =
     [
         TenantFeature.Dashboard,
         TenantFeature.Employees,
@@ -30,16 +30,16 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         TenantFeature.Reports
     ];
 
-    private static readonly TenantFeature[] professionalFeatures =
+    private static readonly TenantFeature[] ProfessionalFeatures =
     [
-        ..starterFeatures,
+        ..StarterFeatures,
         TenantFeature.Eld,
         TenantFeature.LoadBoard,
         TenantFeature.Payroll,
         TenantFeature.Timesheets
     ];
 
-    private static readonly TenantFeature[] enterpriseFeatures =
+    private static readonly TenantFeature[] EnterpriseFeatures =
         Enum.GetValues<TenantFeature>();
 
     public override async Task SeedAsync(SeederContext context, CancellationToken cancellationToken = default)
@@ -60,7 +60,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 AnnualDiscountPercent = 15m,
                 Tier = PlanTier.Starter,
                 TrialPeriod = TrialPeriod.ThirtyDays,
-                Features = starterFeatures
+                Features = StarterFeatures
             },
             new
             {
@@ -72,7 +72,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 AnnualDiscountPercent = 20m,
                 Tier = PlanTier.Professional,
                 TrialPeriod = TrialPeriod.ThirtyDays,
-                Features = professionalFeatures
+                Features = ProfessionalFeatures
             },
             new
             {
@@ -84,7 +84,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 AnnualDiscountPercent = 20m,
                 Tier = PlanTier.Enterprise,
                 TrialPeriod = TrialPeriod.ThirtyDays,
-                Features = enterpriseFeatures
+                Features = EnterpriseFeatures
             }
         };
 

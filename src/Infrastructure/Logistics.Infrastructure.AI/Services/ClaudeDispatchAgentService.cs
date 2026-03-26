@@ -22,10 +22,6 @@ internal sealed class ClaudeDispatchAgentService(
     ITenantUnitOfWork tenantUow,
     ILogger<ClaudeDispatchAgentService> logger) : IDispatchAgentService
 {
-    /// <summary>
-    /// Set of tools that modify state (write operations).
-    /// In HumanInTheLoop mode, these create suggestions instead of executing.
-    /// </summary>
     private static readonly HashSet<string> WriteTools =
     [
         "assign_load_to_truck",
@@ -48,14 +44,22 @@ internal sealed class ClaudeDispatchAgentService(
         await tenantUow.Repository<DispatchSession>().AddAsync(session);
         await tenantUow.SaveChangesAsync(ct);
 
+        logger.LogInformation(
+            "Starting dispatch agent session {SessionId} in {Mode} mode (triggered by {UserId})",
+            session.Id, request.Mode, request.TriggeredByUserId?.ToString() ?? "background-job");
+
         try
         {
             await RunAgentLoopAsync(session, request, ct);
             session.Complete(session.Summary);
+            logger.LogInformation(
+                "Dispatch agent session {SessionId} completed: {DecisionCount} decisions, {Tokens} tokens",
+                session.Id, session.DecisionCount, session.TotalTokensUsed);
         }
         catch (OperationCanceledException)
         {
             session.Cancel();
+            logger.LogInformation("Dispatch agent session {SessionId} was cancelled", session.Id);
         }
         catch (Exception ex)
         {
@@ -83,18 +87,58 @@ internal sealed class ClaudeDispatchAgentService(
         CancellationToken ct)
     {
         var config = options.Value;
+        var (client, parameters, messages) = BuildConversation(session, request.Mode, config);
 
-        // Resolve tenant name for system prompt
-        var tenantName = "Fleet"; // Default — could be resolved from tenant entity
-        var systemPrompt = DispatchSystemPrompt.Build(tenantName, request.Mode);
+        var totalInputTokens = 0;
+        var totalOutputTokens = 0;
 
-        // Build Claude API tools from registry
-        var toolDefinitions = toolRegistry.GetToolDefinitions();
-        var tools = toolDefinitions.Select<DispatchToolDefinition, Tool>(t =>
-            new Function(t.Name, t.Description, (JsonNode)t.InputSchema))
+        for (var iteration = 0; iteration < MaxIterations; iteration++)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            logger.LogDebug("Agent loop iteration {Iteration} for session {SessionId}",
+                iteration, session.Id);
+
+            var response = await client.Messages.GetClaudeMessageAsync(parameters, ct);
+
+            TrackTokenUsage(session, response, ref totalInputTokens, ref totalOutputTokens);
+            messages.Add(response.Message);
+
+            var textContent = response.Content?.OfType<TextContent>().FirstOrDefault()?.Text;
+            if (textContent is not null)
+                session.Summary = textContent;
+
+            var toolUseBlocks = response.Content?.OfType<ToolUseContent>().ToList() ?? [];
+            if (response.StopReason == "end_turn" || toolUseBlocks.Count == 0)
+            {
+                logger.LogInformation(
+                    "Agent session {SessionId} completed after {Iterations} iterations, {Tokens} tokens",
+                    session.Id, iteration + 1, session.TotalTokensUsed);
+                break;
+            }
+
+            var toolResults = await ProcessToolCallsAsync(
+                session, request.Mode, toolUseBlocks, textContent, ct);
+
+            messages.Add(new Message { Role = RoleType.User, Content = toolResults });
+            await tenantUow.SaveChangesAsync(ct);
+        }
+    }
+
+    private (AnthropicClient client, MessageParameters parameters, List<Message> messages)
+        BuildConversation(DispatchSession session, DispatchAgentMode mode, ClaudeOptions config)
+    {
+        var systemPrompt = DispatchSystemPrompt.Build("Fleet", mode);
+
+        var tools = toolRegistry.GetToolDefinitions()
+            .Select<DispatchToolDefinition, Tool>(t =>
+                new Function(t.Name, t.Description, (JsonNode)t.InputSchema))
             .ToList();
 
-        // Initialize conversation
+        logger.LogInformation(
+            "Agent session {SessionId} initialized with {ToolCount} tools, model {Model}",
+            session.Id, tools.Count, config.Model);
+
         var messages = new List<Message>
         {
             new(RoleType.User,
@@ -115,118 +159,110 @@ internal sealed class ClaudeDispatchAgentService(
             Tools = tools
         };
 
-        var totalInputTokens = 0;
-        var totalOutputTokens = 0;
+        return (client, parameters, messages);
+    }
 
-        for (var iteration = 0; iteration < MaxIterations; iteration++)
+    private async Task<List<ContentBase>> ProcessToolCallsAsync(
+        DispatchSession session,
+        DispatchAgentMode mode,
+        List<ToolUseContent> toolUseBlocks,
+        string? reasoning,
+        CancellationToken ct)
+    {
+        var toolResults = new List<ContentBase>();
+
+        foreach (var toolUse in toolUseBlocks)
         {
-            ct.ThrowIfCancellationRequested();
+            var decision = CreateDecision(session, toolUse, reasoning);
+            var toolResult = await ExecuteOrSuggestAsync(session, decision, toolUse, mode, ct);
 
-            logger.LogDebug("Agent loop iteration {Iteration} for session {SessionId}",
-                iteration, session.Id);
+            ExtractEntityIds(decision, toolUse.Input);
+            await tenantUow.Repository<DispatchDecision>().AddAsync(decision);
+            session.DecisionCount++;
 
-            var response = await client.Messages.GetClaudeMessageAsync(parameters, ct);
-
-            // Track token usage
-            totalInputTokens += response.Usage?.InputTokens ?? 0;
-            totalOutputTokens += response.Usage?.OutputTokens ?? 0;
-            session.TotalTokensUsed = totalInputTokens + totalOutputTokens;
-
-            // Add assistant response to conversation
-            messages.Add(response.Message);
-
-            // Extract text content for session summary
-            var textContent = response.Content?.OfType<TextContent>().FirstOrDefault()?.Text;
-            if (textContent is not null)
+            toolResults.Add(new ToolResultContent
             {
-                session.Summary = textContent;
-            }
-
-            // Check if done
-            var toolUseBlocks = response.Content?.OfType<ToolUseContent>().ToList() ?? [];
-            if (response.StopReason == "end_turn" || toolUseBlocks.Count == 0)
-            {
-                logger.LogInformation(
-                    "Agent session {SessionId} completed after {Iterations} iterations, {Tokens} tokens",
-                    session.Id, iteration + 1, session.TotalTokensUsed);
-                break;
-            }
-
-            // Process tool calls
-            var toolResults = new List<ContentBase>();
-            foreach (var toolUse in toolUseBlocks)
-            {
-                var toolInputJson = toolUse.Input?.ToJsonString() ?? "{}";
-                var isWriteTool = WriteTools.Contains(toolUse.Name);
-
-                // Record decision
-                var decision = new DispatchDecision
-                {
-                    SessionId = session.Id,
-                    Type = MapToolToDecisionType(toolUse.Name),
-                    ToolName = toolUse.Name,
-                    ToolInput = toolInputJson,
-                    Reasoning = textContent ?? ""
-                };
-
-                string toolResult;
-
-                if (isWriteTool && request.Mode == DispatchAgentMode.HumanInTheLoop)
-                {
-                    // In suggestion mode, don't execute write tools — just record the suggestion
-                    decision.Status = DispatchDecisionStatus.Suggested;
-                    toolResult = JsonSerializer.Serialize(new
-                    {
-                        status = "suggested",
-                        message = "This action has been recorded as a suggestion for dispatcher approval."
-                    });
-                    decision.ToolOutput = toolResult;
-                }
-                else
-                {
-                    // Execute the tool (read tools always execute, write tools execute in autonomous mode)
-                    try
-                    {
-                        toolResult = await toolExecutor.ExecuteToolAsync(toolUse.Name, toolInputJson, ct);
-                        decision.ToolOutput = toolResult;
-
-                        if (isWriteTool)
-                        {
-                            decision.Status = DispatchDecisionStatus.Executed;
-                            decision.MarkExecuted();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogWarning(ex, "Tool {ToolName} failed in session {SessionId}",
-                            toolUse.Name, session.Id);
-                        toolResult = JsonSerializer.Serialize(new { error = ex.Message });
-                        decision.MarkFailed(toolResult);
-                    }
-                }
-
-                // Extract entity IDs from tool input for the decision record
-                ExtractEntityIds(decision, toolUse.Input);
-
-                await tenantUow.Repository<DispatchDecision>().AddAsync(decision);
-                session.DecisionCount++;
-
-                toolResults.Add(new ToolResultContent
-                {
-                    ToolUseId = toolUse.Id,
-                    Content = [new TextContent { Text = toolResult }]
-                });
-            }
-
-            // Add tool results to conversation
-            messages.Add(new Message
-            {
-                Role = RoleType.User,
-                Content = toolResults
+                ToolUseId = toolUse.Id,
+                Content = [new TextContent { Text = toolResult }]
             });
-
-            await tenantUow.SaveChangesAsync(ct);
         }
+
+        return toolResults;
+    }
+
+    private async Task<string> ExecuteOrSuggestAsync(
+        DispatchSession session,
+        DispatchDecision decision,
+        ToolUseContent toolUse,
+        DispatchAgentMode mode,
+        CancellationToken ct)
+    {
+        var toolInputJson = toolUse.Input?.ToJsonString() ?? "{}";
+        var isWriteTool = WriteTools.Contains(toolUse.Name);
+
+        if (isWriteTool && mode == DispatchAgentMode.HumanInTheLoop)
+        {
+            decision.Status = DispatchDecisionStatus.Suggested;
+            var result = JsonSerializer.Serialize(new
+            {
+                status = "suggested",
+                message = "This action has been recorded as a suggestion for dispatcher approval."
+            });
+            decision.ToolOutput = result;
+            logger.LogInformation("Session {SessionId}: tool {ToolName} queued as suggestion",
+                session.Id, toolUse.Name);
+            return result;
+        }
+
+        try
+        {
+            var result = await toolExecutor.ExecuteToolAsync(toolUse.Name, toolInputJson, ct);
+            decision.ToolOutput = result;
+
+            if (isWriteTool)
+            {
+                decision.Status = DispatchDecisionStatus.Executed;
+                decision.MarkExecuted();
+                logger.LogInformation("Session {SessionId}: write tool {ToolName} executed successfully",
+                    session.Id, toolUse.Name);
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Session {SessionId}: tool {ToolName} failed",
+                session.Id, toolUse.Name);
+            var errorResult = JsonSerializer.Serialize(new { error = ex.Message });
+            decision.MarkFailed(errorResult);
+            return errorResult;
+        }
+    }
+
+    private static DispatchDecision CreateDecision(
+        DispatchSession session,
+        ToolUseContent toolUse,
+        string? reasoning)
+    {
+        return new DispatchDecision
+        {
+            SessionId = session.Id,
+            Type = MapToolToDecisionType(toolUse.Name),
+            ToolName = toolUse.Name,
+            ToolInput = toolUse.Input?.ToJsonString() ?? "{}",
+            Reasoning = reasoning ?? ""
+        };
+    }
+
+    private static void TrackTokenUsage(
+        DispatchSession session,
+        MessageResponse response,
+        ref int totalInputTokens,
+        ref int totalOutputTokens)
+    {
+        totalInputTokens += response.Usage?.InputTokens ?? 0;
+        totalOutputTokens += response.Usage?.OutputTokens ?? 0;
+        session.TotalTokensUsed = totalInputTokens + totalOutputTokens;
     }
 
     private static DispatchDecisionType MapToolToDecisionType(string toolName) => toolName switch
@@ -235,12 +271,13 @@ internal sealed class ClaudeDispatchAgentService(
         "create_trip" => DispatchDecisionType.CreateTrip,
         "dispatch_trip" => DispatchDecisionType.DispatchTrip,
         "book_load_board_load" => DispatchDecisionType.BookLoadBoardLoad,
-        _ => DispatchDecisionType.AssignLoad // Read tools default
+        _ => DispatchDecisionType.AssignLoad
     };
 
     private static void ExtractEntityIds(DispatchDecision decision, JsonNode? input)
     {
-        if (input is null) return;
+        if (input is null)
+            return;
 
         if (input["load_id"] is JsonValue loadIdVal && Guid.TryParse(loadIdVal.GetValue<string>(), out var loadId))
             decision.LoadId = loadId;
