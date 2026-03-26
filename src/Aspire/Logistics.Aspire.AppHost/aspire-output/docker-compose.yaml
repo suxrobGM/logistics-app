@@ -19,6 +19,8 @@ services:
       HTTP_PORTS: "${IDENTITY_SERVER_PORT}"
       ConnectionStrings__MasterDatabase: "${ConnectionStrings__MasterDatabase}"
       ConnectionStrings__DefaultTenantDatabase: "${ConnectionStrings__DefaultTenantDatabase}"
+      Authentication__Google__ClientId: "${Authentication__Google__ClientId}"
+      Authentication__Google__ClientSecret: "${Authentication__Google__ClientSecret}"
       GoogleRecaptcha__SecretKey: "${GoogleRecaptcha__SecretKey}"
       GoogleRecaptcha__SiteKey: "${GoogleRecaptcha__SiteKey}"
       Impersonation__TmsPortalUrl: "${Impersonation__TmsPortalUrl}"

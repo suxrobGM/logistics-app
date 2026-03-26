@@ -38,6 +38,8 @@ var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-serv
     .WithEnvironment("GoogleRecaptcha__SecretKey", builder.GetConfigValue("GoogleRecaptcha:SecretKey"))
     .WithEnvironment("GoogleRecaptcha__SiteKey", builder.GetConfigValue("GoogleRecaptcha:SiteKey"))
     .WithEnvironment("Impersonation__TmsPortalUrl", builder.GetConfigValue("Impersonation:TmsPortalUrl"))
+    .WithEnvironment("Authentication__Google__ClientId", builder.GetConfigValue("Authentication:Google:ClientId"))
+    .WithEnvironment("Authentication__Google__ClientSecret", builder.GetConfigValue("Authentication:Google:ClientSecret"))
     .WithEnvironment("Resend__ApiKey", builder.GetConfigValue("Resend:ApiKey"))
     .WithEnvironment("Resend__SenderEmail", builder.GetConfigValue("Resend:SenderEmail"))
     .WithEnvironment("Resend__SenderName", builder.GetConfigValue("Resend:SenderName"));
