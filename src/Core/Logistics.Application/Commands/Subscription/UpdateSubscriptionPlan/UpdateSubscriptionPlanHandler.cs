@@ -10,12 +10,9 @@ namespace Logistics.Application.Commands;
 
 internal sealed class UpdateSubscriptionPlanHandler(
     IMasterUnitOfWork masterUow,
-    IStripeSubscriptionService stripeSubscriptionService,
+    IStripePlanService stripePlanService,
     ILogger<UpdateSubscriptionPlanHandler> logger) : IAppRequestHandler<UpdateSubscriptionPlanCommand, Result>
 {
-    private readonly ILogger<UpdateSubscriptionPlanHandler> logger = logger;
-    private readonly IMasterUnitOfWork masterUow = masterUow;
-    private readonly IStripeSubscriptionService stripeSubscriptionService = stripeSubscriptionService;
 
     public async Task<Result> Handle(
         UpdateSubscriptionPlanCommand req, CancellationToken ct)
@@ -42,9 +39,9 @@ internal sealed class UpdateSubscriptionPlanHandler(
         subscriptionPlan.AnnualDiscountPercent = PropertyUpdater.UpdateIfChanged(req.AnnualDiscountPercent, subscriptionPlan.AnnualDiscountPercent);
         subscriptionPlan.Tier = PropertyUpdater.UpdateIfChanged(req.Tier, subscriptionPlan.Tier);
 
-        var (product, activeBasePrice, activePerTruckPrice) = await stripeSubscriptionService.UpdateSubscriptionPlanAsync(subscriptionPlan);
-        subscriptionPlan.StripePriceId = activeBasePrice.Id;
-        subscriptionPlan.StripePerTruckPriceId = activePerTruckPrice.Id;
+        var result = await stripePlanService.UpdatePlanAsync(subscriptionPlan);
+        subscriptionPlan.StripePriceId = result.BasePrice.Id;
+        subscriptionPlan.StripePerTruckPriceId = result.PerTruckPrice.Id;
         masterUow.Repository<SubscriptionPlan>().Update(subscriptionPlan);
         await masterUow.SaveChangesAsync(ct);
         logger.LogInformation("Updated subscription plan {SubscriptionPlanId}", subscriptionPlan.Id);

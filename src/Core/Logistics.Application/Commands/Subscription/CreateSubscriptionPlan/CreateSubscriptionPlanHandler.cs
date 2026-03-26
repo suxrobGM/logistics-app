@@ -9,7 +9,7 @@ namespace Logistics.Application.Commands;
 
 internal sealed class CreateSubscriptionPlanHandler(
     IMasterUnitOfWork masterUow,
-    IStripeSubscriptionService stripeSubscriptionService,
+    IStripePlanService stripePlanService,
     ILogger<CreateSubscriptionPlanHandler> logger) : IAppRequestHandler<CreateSubscriptionPlanCommand, Result>
 {
     public async Task<Result> Handle(
@@ -29,13 +29,12 @@ internal sealed class CreateSubscriptionPlanHandler(
             AnnualDiscountPercent = req.AnnualDiscountPercent
         };
 
-        var (product, basePrice, perTruckPrice, aiOveragePrice) =
-            await stripeSubscriptionService.CreateSubscriptionPlanAsync(subscriptionPlan);
+        var result = await stripePlanService.CreatePlanAsync(subscriptionPlan);
 
-        subscriptionPlan.StripeProductId = product.Id;
-        subscriptionPlan.StripePriceId = basePrice.Id;
-        subscriptionPlan.StripePerTruckPriceId = perTruckPrice.Id;
-        subscriptionPlan.StripeAiOveragePriceId = aiOveragePrice?.Id;
+        subscriptionPlan.StripeProductId = result.Product.Id;
+        subscriptionPlan.StripePriceId = result.BasePrice.Id;
+        subscriptionPlan.StripePerTruckPriceId = result.PerTruckPrice.Id;
+        subscriptionPlan.StripeAiOveragePriceId = result.AiOveragePrice?.Id;
         await masterUow.Repository<SubscriptionPlan>().AddAsync(subscriptionPlan, ct);
         await masterUow.SaveChangesAsync(ct);
         return Result.Ok();

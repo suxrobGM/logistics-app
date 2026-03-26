@@ -18,6 +18,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISeeder, AppRoleSeeder>();
         services.AddScoped<ISeeder, SuperAdminSeeder>();
         services.AddScoped<ISeeder, SubscriptionPlanSeeder>();
+        services.AddScoped<ISeeder, StripeSeeder>();
         services.AddScoped<ISeeder, DefaultTenantSeeder>();
         services.AddScoped<ISeeder, TenantRoleSeeder>();
 

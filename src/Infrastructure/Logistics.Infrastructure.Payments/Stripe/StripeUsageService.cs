@@ -9,16 +9,18 @@ namespace Logistics.Infrastructure.Payments.Stripe;
 
 internal sealed class StripeUsageService(
     IMasterUnitOfWork masterUow,
+    ISystemSettingService settingService,
     IOptions<StripeOptions> options,
     ILogger<StripeUsageService> logger) : IStripeUsageService
 {
+    private const string MeterSettingKey = "Stripe:AiOverageMeterId";
+
     public async Task ReportAiSessionOverageAsync(Guid tenantId, CancellationToken ct = default)
     {
-        var config = options.Value;
-
-        if (string.IsNullOrEmpty(config.AiOverageMeterId))
+        var meterId = await settingService.GetAsync(MeterSettingKey, ct);
+        if (string.IsNullOrEmpty(meterId))
         {
-            logger.LogDebug("AI overage meter not configured, skipping usage report");
+            logger.LogDebug("AI overage meter not configured in system settings, skipping usage report");
             return;
         }
 
@@ -34,7 +36,7 @@ internal sealed class StripeUsageService(
         var meterEventService = new MeterEventService();
         await meterEventService.CreateAsync(new MeterEventCreateOptions
         {
-            EventName = config.AiOverageMeterEventName,
+            EventName = options.Value.AiOverageMeterEventName,
             Payload = new Dictionary<string, string>
             {
                 ["stripe_customer_id"] = tenant.StripeCustomerId,
