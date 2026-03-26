@@ -24,5 +24,6 @@ export const TENANT_FEATURE: TenantFeature[] = [
   'timesheets',
   'maintenance',
   'trips',
-  'reports'
+  'reports',
+  'agentic_dispatch'
 ];

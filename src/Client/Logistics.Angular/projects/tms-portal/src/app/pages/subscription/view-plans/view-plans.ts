@@ -35,6 +35,7 @@ const featureLabels: Record<TenantFeature, string> = {
   maintenance: "Maintenance",
   trips: "Trips",
   reports: "Reports",
+  agentic_dispatch: "AI Dispatch",
 };
 
 /** All features in display order */
@@ -57,6 +58,7 @@ const allFeatures: TenantFeature[] = [
   "timesheets",
   "safety",
   "maintenance",
+  "agentic_dispatch",
 ];
 
 @Component({

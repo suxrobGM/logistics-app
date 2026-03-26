@@ -1,15 +1,12 @@
-import { HttpClient } from "@angular/common/http";
 import { Component, inject, input, model, output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { LabeledField } from "@logistics/shared";
-import { ApiConfiguration } from "@logistics/shared/api";
-import { type LoadExceptionType } from "@logistics/shared/api";
+import { Api, reportLoadException, type LoadExceptionType } from "@logistics/shared/api";
 import { loadExceptionTypeOptions } from "@logistics/shared/api/enums";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
-import { firstValueFrom } from "rxjs";
 import { ToastService } from "@/core/services";
 
 @Component({
@@ -25,8 +22,7 @@ import { ToastService } from "@/core/services";
   ],
 })
 export class ReportExceptionDialog {
-  private readonly http = inject(HttpClient);
-  private readonly apiConfig = inject(ApiConfiguration);
+  private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
 
   public readonly loadId = input.required<string>();
@@ -55,13 +51,10 @@ export class ReportExceptionDialog {
 
     this.isSubmitting.set(true);
     try {
-      const url = `${this.apiConfig.rootUrl}/loads/${this.loadId()}/exceptions`;
-      await firstValueFrom(
-        this.http.post(url, {
-          type,
-          reason: reasonText,
-        }),
-      );
+      await this.api.invoke(reportLoadException, {
+        id: this.loadId(),
+        body: { type, reason: reasonText },
+      });
       this.toastService.showSuccess("Exception reported successfully");
       this.reported.emit();
       this.close();

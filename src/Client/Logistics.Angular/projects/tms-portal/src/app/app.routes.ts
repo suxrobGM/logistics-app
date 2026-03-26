@@ -90,6 +90,16 @@ export const appRoutes: Routes = [
       import("./pages/subscription/subscription.routes").then((m) => m.subscriptionRoutes),
   },
   {
+    path: "ai-dispatch",
+    loadChildren: () =>
+      import("./pages/ai-dispatch/ai-dispatch.routes").then((m) => m.aiDispatchRoutes),
+    canActivate: [featureGuardFromData],
+    data: {
+      breadcrumb: "AI Dispatch",
+      feature: "agentic_dispatch",
+    },
+  },
+  {
     path: "trips",
     loadChildren: () => import("./pages/trips/trip.routes").then((m) => m.tripRoutes),
     canActivate: [featureGuardFromData],

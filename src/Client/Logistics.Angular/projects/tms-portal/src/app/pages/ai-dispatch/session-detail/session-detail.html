@@ -1,0 +1,141 @@
+@if (session(); as session) {
+  <div class="animate-fadein">
+    <!-- Header -->
+    <div class="mb-6 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <p-button
+          icon="pi pi-arrow-left"
+          [rounded]="true"
+          [text]="true"
+          (onClick)="goBack()"
+        />
+        <h1 class="text-primary mb-0">Session #{{ session.number }}</h1>
+        <p-tag [value]="session.status ?? ''" [severity]="getStatusSeverity(session.status ?? '')" />
+        @if (session.mode === "autonomous") {
+          <p-tag value="Autonomous" severity="warn" />
+        } @else {
+          <p-tag value="Suggestions" severity="info" />
+        }
+      </div>
+      @if (session.status === "running") {
+        <p-button
+          label="Cancel"
+          icon="pi pi-stop-circle"
+          severity="danger"
+          [outlined]="true"
+          (onClick)="cancelSession()"
+        />
+      }
+    </div>
+
+    <!-- Summary -->
+    <div class="border-default bg-elevated mb-6 rounded-lg border p-4">
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div>
+          <span class="text-muted text-sm">Started</span>
+          <p class="font-medium">{{ session.startedAt | date: "medium" }}</p>
+        </div>
+        <div>
+          <span class="text-muted text-sm">Completed</span>
+          <p class="font-medium">
+            {{ session.completedAt ? (session.completedAt | date: "medium") : "—" }}
+          </p>
+        </div>
+        <div>
+          <span class="text-muted text-sm">Decisions</span>
+          <p class="font-medium">{{ session.decisionCount }}</p>
+        </div>
+        <div>
+          <span class="text-muted text-sm">Tokens Used</span>
+          <p class="font-mono font-medium">{{ session.totalTokensUsed | number }}</p>
+        </div>
+      </div>
+      @if (session.summary) {
+        <div class="mt-4 border-t pt-4">
+          <span class="text-muted text-sm">Agent Summary</span>
+          <p class="mt-1">{{ session.summary }}</p>
+        </div>
+      }
+      @if (session.errorMessage) {
+        <div class="mt-4 border-t pt-4">
+          <span class="text-sm text-red-500">Error</span>
+          <p class="mt-1 text-red-600">{{ session.errorMessage }}</p>
+        </div>
+      }
+    </div>
+
+    <!-- Decisions Table -->
+    <h2 class="text-primary mb-3 text-lg font-semibold">Decisions</h2>
+
+    <p-table
+      [value]="session.decisions ?? []"
+      [rows]="50"
+      styleClass="p-datatable-sm"
+    >
+      <ng-template #header>
+        <tr>
+          <th>Type</th>
+          <th>Status</th>
+          <th>Tool</th>
+          <th>Reasoning</th>
+          <th>Created</th>
+          <th class="w-32">Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-decision>
+        <tr>
+          <td>
+            <p-tag [value]="getDecisionTypeLabel(decision.type)" severity="info" />
+          </td>
+          <td>
+            <p-tag [value]="decision.status" [severity]="getStatusSeverity(decision.status)" />
+          </td>
+          <td>
+            <code class="text-xs">{{ decision.toolName }}</code>
+          </td>
+          <td class="max-w-md">
+            <p class="truncate text-sm" [pTooltip]="decision.reasoning">
+              {{ decision.reasoning }}
+            </p>
+          </td>
+          <td>{{ decision.createdAt | date: "shortTime" }}</td>
+          <td>
+            @if (decision.status === "suggested") {
+              <div class="flex gap-1">
+                <p-button
+                  icon="pi pi-check"
+                  severity="success"
+                  size="small"
+                  [rounded]="true"
+                  [text]="true"
+                  pTooltip="Approve & Execute"
+                  (onClick)="approveDecision(decision)"
+                />
+                <p-button
+                  icon="pi pi-times"
+                  severity="danger"
+                  size="small"
+                  [rounded]="true"
+                  [text]="true"
+                  pTooltip="Reject"
+                  (onClick)="rejectDecision(decision)"
+                />
+              </div>
+            }
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="6" class="text-muted text-center">No decisions in this session</td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <p-confirmDialog />
+  </div>
+} @else if (isLoading()) {
+  <div class="flex items-center justify-center py-20">
+    <i class="pi pi-spin pi-spinner text-4xl"></i>
+  </div>
+}

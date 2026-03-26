@@ -1,13 +1,11 @@
-import { HttpClient } from "@angular/common/http";
 import { Component, computed, inject, input, model, output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { LabeledField } from "@logistics/shared";
-import { ApiConfiguration } from "@logistics/shared/api";
+import { Api, resolveLoadException } from "@logistics/shared/api";
 import type { LoadExceptionDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { TextareaModule } from "primeng/textarea";
-import { firstValueFrom } from "rxjs";
 import { ToastService } from "@/core/services";
 import { ExceptionTypeTag } from "@/shared/components/tags";
 
@@ -24,8 +22,7 @@ import { ExceptionTypeTag } from "@/shared/components/tags";
   ],
 })
 export class ResolveExceptionDialog {
-  private readonly http = inject(HttpClient);
-  private readonly apiConfig = inject(ApiConfiguration);
+  private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
 
   public readonly loadId = input.required<string>();
@@ -53,12 +50,11 @@ export class ResolveExceptionDialog {
 
     this.isSubmitting.set(true);
     try {
-      const url = `${this.apiConfig.rootUrl}/loads/${this.loadId()}/exceptions/${exc.id}/resolve`;
-      await firstValueFrom(
-        this.http.post(url, {
-          resolution: resolutionText,
-        }),
-      );
+      await this.api.invoke(resolveLoadException, {
+        id: this.loadId(),
+        exceptionId: exc.id!,
+        body: { resolution: resolutionText },
+      });
       this.toastService.showSuccess("Exception resolved successfully");
       this.resolved.emit();
       this.close();

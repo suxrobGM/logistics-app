@@ -1,0 +1,146 @@
+<div class="animate-fadein">
+  <!-- Header -->
+  <div class="mb-6 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <h1 class="text-primary mb-0">AI Dispatch</h1>
+      <p-tag value="Enterprise" severity="info" [rounded]="true" />
+    </div>
+    <div class="flex gap-2">
+      <p-button
+        label="Run (Suggestions)"
+        icon="pi pi-play"
+        severity="primary"
+        [loading]="isRunning()"
+        (onClick)="runAgent('human_in_the_loop')"
+      />
+      <p-button
+        label="Run (Autonomous)"
+        icon="pi pi-bolt"
+        severity="warn"
+        [outlined]="true"
+        [loading]="isRunning()"
+        pTooltip="Experimental: executes assignments without approval"
+        (onClick)="runAgent('autonomous')"
+      />
+    </div>
+  </div>
+
+  <!-- Pending Decisions -->
+  @if (pendingDecisions().length > 0) {
+    <div class="mb-6">
+      <h2 class="text-primary mb-3 text-lg font-semibold">
+        Pending Decisions
+        <p-tag [value]="pendingDecisions().length.toString()" severity="warn" [rounded]="true" />
+      </h2>
+
+      <p-table [value]="pendingDecisions()" [rows]="10" styleClass="p-datatable-sm">
+        <ng-template #header>
+          <tr>
+            <th>Type</th>
+            <th>Reasoning</th>
+            <th>Tool</th>
+            <th>Created</th>
+            <th class="w-40">Actions</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-decision>
+          <tr>
+            <td>
+              <p-tag [value]="getDecisionTypeLabel(decision.type)" severity="info" />
+            </td>
+            <td class="max-w-md truncate">{{ decision.reasoning }}</td>
+            <td>
+              <code class="text-xs">{{ decision.toolName }}</code>
+            </td>
+            <td>{{ decision.createdAt | date: "short" }}</td>
+            <td>
+              <div class="flex gap-1">
+                <p-button
+                  icon="pi pi-check"
+                  severity="success"
+                  size="small"
+                  [rounded]="true"
+                  [text]="true"
+                  pTooltip="Approve & Execute"
+                  (onClick)="approveDecision(decision)"
+                />
+                <p-button
+                  icon="pi pi-times"
+                  severity="danger"
+                  size="small"
+                  [rounded]="true"
+                  [text]="true"
+                  pTooltip="Reject"
+                  (onClick)="rejectDecision(decision)"
+                />
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+          <tr>
+            <td colspan="5" class="text-muted text-center">No pending decisions</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  }
+
+  <!-- Sessions History -->
+  <h2 class="text-primary mb-3 text-lg font-semibold">Session History</h2>
+
+  <p-table
+    [value]="sessions()"
+    [loading]="isLoading()"
+    [rows]="20"
+    styleClass="p-datatable-sm"
+    [rowHover]="true"
+  >
+    <ng-template #header>
+      <tr>
+        <th>#</th>
+        <th>Mode</th>
+        <th>Status</th>
+        <th>Started</th>
+        <th>Decisions</th>
+        <th>Tokens</th>
+        <th>Summary</th>
+        <th class="w-20"></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-session>
+      <tr class="cursor-pointer" (click)="viewSession(session)">
+        <td class="font-mono text-sm">{{ session.number }}</td>
+        <td>
+          @if (session.mode === "autonomous") {
+            <p-tag value="Autonomous" severity="warn" />
+          } @else {
+            <p-tag value="Suggestions" severity="info" />
+          }
+        </td>
+        <td>
+          <p-tag [value]="session.status" [severity]="getStatusSeverity(session.status)" />
+        </td>
+        <td>{{ session.startedAt | date: "short" }}</td>
+        <td>{{ session.decisionCount }}</td>
+        <td class="font-mono text-sm">{{ session.totalTokensUsed | number }}</td>
+        <td class="max-w-xs truncate text-sm">{{ session.summary }}</td>
+        <td>
+          <p-button icon="pi pi-eye" [rounded]="true" [text]="true" size="small" />
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="8" class="py-8 text-center">
+          <div class="text-muted">
+            <i class="pi pi-sparkles mb-2 text-4xl"></i>
+            <p>No dispatch sessions yet. Click "Run" to start the AI dispatcher.</p>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-confirmDialog />
+</div>

@@ -47,6 +47,13 @@ export const sidebarSections: NavSection[] = [
         feature: "trips",
       },
       {
+        id: "ai-dispatch",
+        label: "AI Dispatch",
+        icon: "pi pi-sparkles",
+        route: "/ai-dispatch",
+        feature: "agentic_dispatch",
+      },
+      {
         id: "loadboard",
         label: "Load Board",
         icon: "pi pi-search",

@@ -1,7 +1,6 @@
 import { CommonModule, DatePipe } from "@angular/common";
-import { HttpClient } from "@angular/common/http";
 import { Component, type OnInit, inject, input, output, signal } from "@angular/core";
-import { ApiConfiguration } from "@logistics/shared/api";
+import { Api, getLoadExceptions } from "@logistics/shared/api";
 import type { LoadExceptionDto } from "@logistics/shared/api";
 import { BadgeModule } from "primeng/badge";
 import { ButtonModule } from "primeng/button";
@@ -9,7 +8,6 @@ import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { firstValueFrom } from "rxjs";
 import { ExceptionTypeTag } from "@/shared/components/tags";
 
 @Component({
@@ -28,8 +26,7 @@ import { ExceptionTypeTag } from "@/shared/components/tags";
   ],
 })
 export class LoadExceptionsContent implements OnInit {
-  private readonly http = inject(HttpClient);
-  private readonly apiConfig = inject(ApiConfiguration);
+  private readonly api = inject(Api);
 
   public readonly loadId = input.required<string>();
   public readonly reportException = output<void>();
@@ -67,8 +64,7 @@ export class LoadExceptionsContent implements OnInit {
     this.isLoading.set(true);
 
     try {
-      const url = `${this.apiConfig.rootUrl}/loads/${loadId}/exceptions`;
-      const result = await firstValueFrom(this.http.get<LoadExceptionDto[]>(url));
+      const result = await this.api.invoke(getLoadExceptions, { id: loadId });
       this.exceptions.set(result ?? []);
       this.unresolvedCount.set(result?.filter((e) => !e.resolvedAt).length ?? 0);
     } catch {
