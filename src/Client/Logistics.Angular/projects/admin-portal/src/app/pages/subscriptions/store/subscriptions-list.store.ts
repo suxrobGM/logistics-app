@@ -6,6 +6,6 @@ import { createListStore } from "@/shared/stores";
  * Store for the subscriptions list page.
  */
 export const SubscriptionsListStore = createListStore<SubscriptionDto>(getSubscriptions, {
-  defaultSortField: "-StartDate",
+  defaultSortField: "-Status",
   defaultPageSize: 10,
 });
