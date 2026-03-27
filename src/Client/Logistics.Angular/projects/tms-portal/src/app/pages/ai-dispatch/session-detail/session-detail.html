@@ -64,7 +64,10 @@
           <i class="pi pi-sparkles text-primary"></i>
           <span class="font-semibold">Agent Summary</span>
         </div>
-        <div class="prose prose-sm dark:prose-invert max-w-none" [innerHTML]="session.summary | markdown"></div>
+        <div
+          class="prose prose-sm dark:prose-invert max-w-none"
+          [innerHTML]="session.summary | markdown"
+        ></div>
       </div>
     }
 
@@ -102,9 +105,21 @@
 
             <!-- Reasoning -->
             @if (decision.reasoning) {
-              <p class="text-secondary mb-2 line-clamp-3 text-sm leading-relaxed">
-                {{ stripMarkdown(decision.reasoning) }}
-              </p>
+              <div class="mb-2">
+                <div
+                  class="prose prose-sm dark:prose-invert max-w-none text-sm leading-relaxed"
+                  [class.line-clamp-3]="!isExpanded(decision.id!)"
+                  [innerHTML]="decision.reasoning | markdown"
+                ></div>
+                @if (decision.reasoning.length > 150) {
+                  <button
+                    class="text-primary mt-1 cursor-pointer border-none bg-transparent p-0 text-xs hover:underline"
+                    (click)="toggleExpand(decision.id!); $event.stopPropagation()"
+                  >
+                    {{ isExpanded(decision.id!) ? "Show less" : "Show more" }}
+                  </button>
+                }
+              </div>
             }
 
             <!-- Tool output summary -->
@@ -116,25 +131,38 @@
                     <i class="pi pi-times-circle text-xs"></i>
                     <span>{{ output.error }}</span>
                   </div>
-                } @else if (output.totalTrucks !== undefined) {
-                  <!-- Fleet overview -->
+                } @else if (output.trucks) {
+                  <!-- Available trucks + fleet summary -->
                   <div class="flex flex-wrap gap-3">
-                    <span
-                      >Trucks: <strong>{{ output.totalTrucks }}</strong></span
-                    >
-                    <span
-                      >Available: <strong>{{ output.availableTrucks }}</strong></span
-                    >
-                    <span
-                      >Unassigned loads: <strong>{{ output.unassignedLoads }}</strong></span
-                    >
-                    <span
-                      >Active trips: <strong>{{ output.activeTrips }}</strong></span
-                    >
-                    @if (output.driversInViolation) {
-                      <span class="text-red-500">
-                        Violations: <strong>{{ output.driversInViolation }}</strong>
+                    <span>{{ output.trucks.length }} available trucks</span>
+
+                    @if (output.totalTrucks !== undefined) {
+                      <span class="text-muted">·</span>
+                      <span>
+                        Total: <strong>{{ output.totalTrucks }}</strong>
                       </span>
+                      <span>
+                        Active trips: <strong>{{ output.activeTrips }}</strong>
+                      </span>
+                      @if (output.driversInViolation) {
+                        <span class="text-red-500">
+                          Violations: <strong>{{ output.driversInViolation }}</strong>
+                        </span>
+                      }
+                    }
+                  </div>
+                } @else if (output.batchResults) {
+                  <!-- Batch HOS feasibility -->
+                  <div class="flex flex-col gap-1">
+                    @for (r of output.batchResults; track r.driver_id) {
+                      <div class="flex items-center gap-2">
+                        @if (r.feasible) {
+                          <i class="pi pi-check-circle text-xs text-green-500"></i>
+                        } @else {
+                          <i class="pi pi-times-circle text-xs text-red-500"></i>
+                        }
+                        <span class="text-muted">{{ r.reason }}</span>
+                      </div>
                     }
                   </div>
                 } @else if (output.feasible !== undefined) {
@@ -160,9 +188,6 @@
                 } @else if (output.loads) {
                   <!-- Unassigned loads -->
                   <span>{{ output.loads.length }} unassigned loads found</span>
-                } @else if (output.trucks) {
-                  <!-- Available trucks -->
-                  <span>{{ output.trucks.length }} available trucks</span>
                 } @else if (output.success !== undefined) {
                   <!-- Write tool result -->
                   <div class="flex items-center gap-1">

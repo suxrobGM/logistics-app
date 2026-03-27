@@ -121,6 +121,9 @@ internal sealed class ClaudeDispatchAgentService(
 
             messages.Add(new Message { Role = RoleType.User, Content = toolResults });
             await tenantUow.SaveChangesAsync(ct);
+
+            // Broadcast progress after each iteration so the UI updates in real-time
+            await BroadcastSessionUpdateAsync(session);
         }
     }
 

@@ -33,7 +33,7 @@ import {
   isWriteTool,
   parseToolOutput,
 } from "../utils/decision-utils";
-import { MarkdownPipe, stripMarkdown } from "../utils/markdown";
+import { MarkdownPipe } from "../utils/markdown";
 
 @Component({
   selector: "app-session-detail",
@@ -68,7 +68,25 @@ export class SessionDetailPage implements OnInit, OnDestroy {
   protected readonly getToolMarkerClass = getToolMarkerClass;
   protected readonly isWriteTool = isWriteTool;
   protected readonly parseToolOutput = parseToolOutput;
-  protected readonly stripMarkdown = stripMarkdown;
+
+  /** Track which decision IDs have expanded reasoning */
+  protected readonly expandedDecisions = signal<Set<string>>(new Set());
+
+  protected toggleExpand(decisionId: string): void {
+    this.expandedDecisions.update((set) => {
+      const next = new Set(set);
+      if (next.has(decisionId)) {
+        next.delete(decisionId);
+      } else {
+        next.add(decisionId);
+      }
+      return next;
+    });
+  }
+
+  protected isExpanded(decisionId: string): boolean {
+    return this.expandedDecisions().has(decisionId);
+  }
 
   protected readonly duration = computed(() => {
     const s = this.session();

@@ -31,14 +31,15 @@ public class ClaudeDispatchAgentServiceTests
             Id = Guid.NewGuid(),
             Name = "Test",
             ConnectionString = "test",
-            BillingEmail = "test@test.com"
+            BillingEmail = "test@test.com",
+            CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
         });
 
         var toolRegistry = Substitute.For<IDispatchToolRegistry>();
         toolRegistry.GetToolDefinitions(Arg.Any<bool>()).Returns([]);
 
         var conversationBuilder1 = new DispatchConversationBuilder(
-            toolRegistry, NullLogger<DispatchConversationBuilder>.Instance);
+            toolRegistry, tenantUow, NullLogger<DispatchConversationBuilder>.Instance);
 
         var toolExecutor = Substitute.For<IDispatchToolExecutor>();
         var decisionProcessor1 = new DispatchDecisionProcessor(

@@ -67,6 +67,11 @@ export class SessionsListPage implements OnInit, OnDestroy {
     this.pendingDecisions().filter((d) => d.type !== "query"),
   );
 
+  /** Disable run buttons when a session is already running */
+  protected readonly hasRunningSession = computed(() =>
+    this.sessions().some((s) => s.status === "running"),
+  );
+
   protected readonly truckLocations = computed<TruckGeolocationDto[]>(() => {
     return this.trucks()
       .filter((t) => t.currentLocation?.latitude && t.currentLocation?.longitude)
@@ -133,15 +138,9 @@ export class SessionsListPage implements OnInit, OnDestroy {
   protected async runAgent(mode: DispatchAgentMode): Promise<void> {
     this.isRunning.set(true);
     try {
-      const sessionId = await this.api.invoke(runDispatchAgent, { body: { mode } });
+      await this.api.invoke(runDispatchAgent, { body: { mode } });
       this.toastService.showSuccess("Agent session started");
-
-      // Navigate to the session detail to watch progress
-      if (sessionId) {
-        this.router.navigate(["/ai-dispatch", sessionId]);
-      } else {
-        await this.loadData();
-      }
+      await this.loadData();
     } catch {
       this.toastService.showError("Failed to start agent session");
     } finally {

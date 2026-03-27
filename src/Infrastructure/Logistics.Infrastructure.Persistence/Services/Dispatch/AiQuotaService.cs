@@ -38,7 +38,7 @@ internal sealed class AiQuotaService(
     {
         var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(tenantId, ct);
 
-        if (tenant is null || !tenant.IsSubscriptionRequired || tenant.Subscription is null)
+        if (tenant is null || tenant.Subscription is null)
             return null;
 
         var plan = await masterUow.Repository<SubscriptionPlan>()

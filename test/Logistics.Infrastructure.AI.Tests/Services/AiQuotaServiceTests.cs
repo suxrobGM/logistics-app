@@ -38,6 +38,7 @@ public class AiQuotaServiceTests
             Name = "Test",
             ConnectionString = "test",
             BillingEmail = "test@test.com",
+            CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" },
             IsSubscriptionRequired = true,
             Subscription = new Subscription { PlanId = planId, TenantId = tenantId, Tenant = null!, Plan = null! }
         };
@@ -100,6 +101,7 @@ public class AiQuotaServiceTests
             Name = "Free Tenant",
             ConnectionString = "test",
             BillingEmail = "test@test.com",
+            CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" },
             IsSubscriptionRequired = false
         };
         tenantRepo.GetByIdAsync(tenantId, Arg.Any<CancellationToken>()).Returns(tenant);

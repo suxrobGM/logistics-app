@@ -46,8 +46,7 @@ internal sealed class DispatchDecisionProcessor(
             await tenantUow.Repository<DispatchDecision>().AddAsync(decision, CancellationToken.None);
             session.DecisionCount++;
 
-            if (WriteTools.Contains(toolUse.Name))
-                await BroadcastDecisionAsync(decision);
+            await BroadcastDecisionAsync(decision);
 
             toolResults.Add(new ToolResultContent
             {

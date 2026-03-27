@@ -1,6 +1,7 @@
 using System.Text.Json.Nodes;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Options;
 using Logistics.Infrastructure.AI.Services;
@@ -17,14 +18,23 @@ public class DispatchConversationBuilderTests
 
     private readonly DispatchConversationBuilder sut;
     private readonly IDispatchToolRegistry toolRegistry = Substitute.For<IDispatchToolRegistry>();
+    private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
 
     public DispatchConversationBuilderTests()
     {
         toolRegistry.GetToolDefinitions(Arg.Any<bool>()).Returns(
             [new DispatchToolDefinition("test_tool", "A test tool", new JsonObject { ["type"] = "object" })]);
 
+        tenantUow.GetCurrentTenant().Returns(new Tenant
+        {
+            Id = Guid.NewGuid(),
+            Name = "Test Fleet",
+            ConnectionString = "test",
+            BillingEmail = "test@test.com",
+            CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
+        });
 
-        sut = new DispatchConversationBuilder(toolRegistry, logger);
+        sut = new DispatchConversationBuilder(toolRegistry, tenantUow, logger);
     }
 
     private static ClaudeOptions ValidConfig => new()

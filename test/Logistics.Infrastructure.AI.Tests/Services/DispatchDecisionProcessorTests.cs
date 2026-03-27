@@ -34,7 +34,8 @@ public class DispatchDecisionProcessorTests
             Id = Guid.NewGuid(),
             Name = "Test Tenant",
             ConnectionString = "test-connection",
-            BillingEmail = "test@test.com"
+            BillingEmail = "test@test.com",
+            CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
         });
         sut = new DispatchDecisionProcessor(toolExecutor, tenantUow, trackingService, logger);
     }
@@ -315,7 +316,7 @@ public class DispatchDecisionProcessorTests
     }
 
     [Fact]
-    public async Task ProcessToolCalls_ReadTool_DoesNotBroadcast()
+    public async Task ProcessToolCalls_ReadTool_BroadcastsDecision()
     {
         var session = CreateSession();
         var toolUse = CreateToolUse("get_available_trucks");
@@ -326,7 +327,7 @@ public class DispatchDecisionProcessorTests
         await sut.ProcessToolCallsAsync(
             session, DispatchAgentMode.Autonomous, [toolUse], null, CancellationToken.None);
 
-        await trackingService.DidNotReceive().BroadcastDispatchDecisionAsync(
+        await trackingService.Received(1).BroadcastDispatchDecisionAsync(
             Arg.Any<Guid>(), Arg.Any<DispatchDecisionDto>());
     }
 

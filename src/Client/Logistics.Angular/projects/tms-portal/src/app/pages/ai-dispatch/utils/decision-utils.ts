@@ -49,6 +49,15 @@ export interface ParsedToolOutput {
       };
     };
   }[];
+  batchResults?: {
+    driver_id: string;
+    distance_km: number;
+    feasible: boolean;
+    estimated_driving_minutes: number;
+    driving_minutes_remaining: number | null;
+    on_duty_minutes_remaining: number | null;
+    reason: string;
+  }[];
 }
 
 export function parseToolInput(json: string | null | undefined): ParsedToolInput {
@@ -74,6 +83,8 @@ export function parseToolOutput(json: string | null | undefined): ParsedToolOutp
   if (!json) return {};
   try {
     const parsed = JSON.parse(json);
+    // get_available_trucks now includes fleet_summary
+    const summary = parsed.fleet_summary;
     return {
       success: parsed.success,
       error: parsed.error,
@@ -81,13 +92,14 @@ export function parseToolOutput(json: string | null | undefined): ParsedToolOutp
       reason: parsed.reason,
       estimatedDrivingMinutes: parsed.estimated_driving_minutes,
       drivingMinutesRemaining: parsed.driving_minutes_remaining,
-      totalTrucks: parsed.total_trucks,
-      availableTrucks: parsed.available_trucks,
-      unassignedLoads: parsed.unassigned_loads,
-      activeTrips: parsed.active_trips,
-      driversInViolation: parsed.drivers_in_violation,
+      totalTrucks: summary?.total_trucks ?? parsed.total_trucks,
+      availableTrucks: summary?.available_trucks ?? parsed.available_trucks,
+      unassignedLoads: summary?.unassigned_loads ?? parsed.unassigned_loads,
+      activeTrips: summary?.active_trips ?? parsed.active_trips,
+      driversInViolation: summary?.drivers_in_violation ?? parsed.drivers_in_violation,
       loads: parsed.loads,
       trucks: parsed.trucks,
+      batchResults: parsed.results,
     };
   } catch {
     return {};
@@ -96,16 +108,16 @@ export function parseToolOutput(json: string | null | undefined): ParsedToolOutp
 
 export function getToolLabel(toolName: string | null | undefined): string {
   switch (toolName) {
-    case "get_fleet_overview":
-      return "Fleet Overview";
     case "get_unassigned_loads":
       return "Unassigned Loads";
     case "get_available_trucks":
-      return "Available Trucks";
+      return "Available Trucks & Fleet Overview";
     case "get_driver_hos_status":
       return "Driver HOS Status";
     case "check_hos_feasibility":
       return "HOS Feasibility Check";
+    case "batch_check_hos_feasibility":
+      return "Batch HOS Feasibility Check";
     case "calculate_distance":
       return "Distance Calculation";
     case "assign_load_to_truck":
@@ -125,8 +137,6 @@ export function getToolLabel(toolName: string | null | undefined): string {
 
 export function getToolIcon(toolName: string | null | undefined): string {
   switch (toolName) {
-    case "get_fleet_overview":
-      return "pi pi-chart-bar";
     case "get_unassigned_loads":
       return "pi pi-box";
     case "get_available_trucks":
@@ -134,6 +144,7 @@ export function getToolIcon(toolName: string | null | undefined): string {
     case "get_driver_hos_status":
       return "pi pi-clock";
     case "check_hos_feasibility":
+    case "batch_check_hos_feasibility":
       return "pi pi-shield";
     case "calculate_distance":
       return "pi pi-map";

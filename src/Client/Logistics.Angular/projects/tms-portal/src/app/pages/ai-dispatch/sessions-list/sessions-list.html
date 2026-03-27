@@ -8,6 +8,8 @@
         severity="primary"
         size="small"
         [loading]="isRunning()"
+        [disabled]="hasRunningSession()"
+        [pTooltip]="hasRunningSession() ? 'A session is already running' : ''"
         (onClick)="runAgent('human_in_the_loop')"
       />
       <p-button
@@ -17,7 +19,12 @@
         size="small"
         [outlined]="true"
         [loading]="isRunning()"
-        pTooltip="Executes assignments without approval"
+        [disabled]="hasRunningSession()"
+        [pTooltip]="
+          hasRunningSession()
+            ? 'A session is already running'
+            : 'Executes assignments without approval'
+        "
         (onClick)="runAgent('autonomous')"
       />
     </div>
