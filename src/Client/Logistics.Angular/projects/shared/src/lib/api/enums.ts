@@ -21,27 +21,15 @@ import type {
   TripStatus,
   TruckStatus,
   TruckType,
-  UsBankAccountHolderType,
-  UsBankAccountType,
 } from "./generated";
 
 // Options arrays for select dropdowns
 export const paymentMethodTypeOptions: SelectOption<PaymentMethodType>[] = [
-  { label: "Card", value: "card" },
-  { label: "US Bank Account", value: "us_bank_account" },
-  { label: "International Bank Account", value: "international_bank_account" },
+  // { label: "Card", value: "card" },
+  // { label: "US Bank Account", value: "us_bank_account" },
+  // { label: "International Bank Account", value: "international_bank_account" },
   { label: "Cash", value: "cash" },
   { label: "Check", value: "check" },
-];
-
-export const usBankAccountHolderTypeOptions: SelectOption<UsBankAccountHolderType>[] = [
-  { label: "Individual", value: "individual" },
-  { label: "Business", value: "business" },
-];
-
-export const usBankAccountTypeOptions: SelectOption<UsBankAccountType>[] = [
-  { label: "Checking", value: "checking" },
-  { label: "Savings", value: "savings" },
 ];
 
 export const salaryTypeOptions: SelectOption<SalaryType>[] = [

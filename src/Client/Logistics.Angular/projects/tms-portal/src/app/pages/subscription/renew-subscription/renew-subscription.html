@@ -27,11 +27,6 @@
         <div class="col-span-6 font-bold">Total Monthly Cost:</div>
         <div class="col-span-6">{{ calcTotalSubscriptionCost() | currency }}</div>
 
-        @if (subscription()?.endDate) {
-          <div class="col-span-6 font-bold">End Date:</div>
-          <div class="col-span-6">{{ subscription()?.endDate | date }}</div>
-        }
-
         <div class="col-span-6 font-bold">Status:</div>
         <div class="col-span-6">
           <p-tag [severity]="getSubStatusSeverity()" class="text-center">
@@ -59,8 +54,4 @@
     </p-card>
   </div>
 
-  <!-- Payment Methods Card -->
-  <div class="col-span-12">
-    <app-payment-methods-card />
-  </div>
 </div>

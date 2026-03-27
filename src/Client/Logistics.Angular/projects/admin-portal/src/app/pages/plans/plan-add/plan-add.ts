@@ -30,10 +30,9 @@ export class PlanAdd {
       price: formValue.price,
       perTruckPrice: formValue.perTruckPrice,
       maxTrucks: formValue.maxTrucks,
-      annualDiscountPercent: formValue.annualDiscountPercent,
+      weeklyAiSessionQuota: formValue.weeklyAiSessionQuota,
       interval: formValue.interval,
       intervalCount: formValue.intervalCount,
-      trialPeriod: formValue.trialPeriod,
     };
 
     await this.api.invoke(createSubscriptionPlan, { body: command });

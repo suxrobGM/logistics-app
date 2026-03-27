@@ -37,11 +37,6 @@
           <th>Tenant</th>
           <th>Plan</th>
           <th>Status</th>
-          <th pSortableColumn="StartDate">
-            Start Date
-            <p-sortIcon field="StartDate" />
-          </th>
-          <th>Next Billing</th>
           <th class="w-16"></th>
         </tr>
       </ng-template>
@@ -56,8 +51,6 @@
           <td>
             <p-tag [value]="sub.status ?? 'unknown'" [severity]="getStatusSeverity(sub.status)" />
           </td>
-          <td>{{ sub.startDate | date: "mediumDate" }}</td>
-          <td>{{ sub.nextBillingDate | date: "mediumDate" }}</td>
           <td>
             <p-button
               icon="pi pi-ellipsis-v"

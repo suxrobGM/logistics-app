@@ -12,7 +12,6 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TenantService, ToastService } from "@/core/services";
 import { Labels, type SeverityLevel } from "@/shared/utils";
-import { PaymentMethodsCardComponent } from "../components";
 
 @Component({
   selector: "app-renew-subscription",
@@ -27,7 +26,6 @@ import { PaymentMethodsCardComponent } from "../components";
     TagModule,
     ConfirmDialogModule,
     RouterModule,
-    PaymentMethodsCardComponent,
   ],
 })
 export class RenewSubscriptionComponent {

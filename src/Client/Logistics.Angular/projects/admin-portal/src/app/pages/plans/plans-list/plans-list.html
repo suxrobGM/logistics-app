@@ -49,7 +49,6 @@
           <th>Per Truck</th>
           <th>Max Trucks</th>
           <th>Billing Interval</th>
-          <th>Trial Period</th>
           <th class="w-16"></th>
         </tr>
       </ng-template>
@@ -70,7 +69,6 @@
           <td>{{ plan.perTruckPrice | currency }}/truck</td>
           <td>{{ plan.maxTrucks ?? "Unlimited" }}</td>
           <td>{{ formatInterval(plan.interval, plan.intervalCount) | titlecase }}</td>
-          <td>{{ formatTrialPeriod(plan.trialPeriod) }}</td>
           <td>
             <p-button
               icon="pi pi-ellipsis-v"

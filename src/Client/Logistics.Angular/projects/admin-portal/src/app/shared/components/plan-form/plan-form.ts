@@ -2,7 +2,7 @@ import { Component, effect, inject, input, output } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
-import type { BillingInterval, PlanTier, TrialPeriod } from "@logistics/shared/api";
+import type { BillingInterval, PlanTier } from "@logistics/shared/api";
 import { CurrencyInput, LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -18,11 +18,9 @@ export interface PlanFormValue {
   price: number;
   perTruckPrice: number;
   maxTrucks: number | null;
-  annualDiscountPercent: number;
   weeklyAiSessionQuota: number | null;
   interval: BillingInterval;
   intervalCount: number;
-  trialPeriod: TrialPeriod;
 }
 
 const TIER_OPTIONS = [
@@ -36,13 +34,6 @@ const INTERVAL_OPTIONS = [
   { label: "Week", value: "week" },
   { label: "Month", value: "month" },
   { label: "Year", value: "year" },
-];
-
-const TRIAL_PERIOD_OPTIONS = [
-  { label: "None", value: "none" },
-  { label: "7 Days", value: "seven_days" },
-  { label: "14 Days", value: "fourteen_days" },
-  { label: "30 Days", value: "thirty_days" },
 ];
 
 @Component({
@@ -74,7 +65,6 @@ export class PlanForm {
 
   protected readonly tierOptions = TIER_OPTIONS;
   protected readonly intervalOptions = INTERVAL_OPTIONS;
-  protected readonly trialPeriodOptions = TRIAL_PERIOD_OPTIONS;
 
   protected readonly form = new FormGroup({
     name: new FormControl("", { validators: Validators.required, nonNullable: true }),
@@ -93,10 +83,6 @@ export class PlanForm {
     }),
     maxTrucks: new FormControl<number | null>(null),
     weeklyAiSessionQuota: new FormControl<number | null>(null),
-    annualDiscountPercent: new FormControl<number>(0, {
-      validators: [Validators.min(0), Validators.max(100)],
-      nonNullable: true,
-    }),
     interval: new FormControl<BillingInterval>("month", {
       validators: Validators.required,
       nonNullable: true,
@@ -105,7 +91,6 @@ export class PlanForm {
       validators: [Validators.required, Validators.min(1)],
       nonNullable: true,
     }),
-    trialPeriod: new FormControl<TrialPeriod>("none", { nonNullable: true }),
   });
 
   constructor() {

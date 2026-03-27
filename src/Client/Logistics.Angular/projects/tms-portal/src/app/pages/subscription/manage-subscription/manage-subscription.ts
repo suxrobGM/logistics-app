@@ -1,18 +1,14 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { Api, cancelSubscription } from "@logistics/shared/api";
+import { Api, cancelSubscription, getBillingPortalUrl } from "@logistics/shared/api";
 import type { SubscriptionDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TenantService, ToastService } from "@/core/services";
 import { Labels, type SeverityLevel } from "@/shared/utils";
-import { BillingHistoryComponent, PaymentMethodsCardComponent } from "../components";
 
 @Component({
   selector: "app-manage-subscription",
@@ -21,14 +17,9 @@ import { BillingHistoryComponent, PaymentMethodsCardComponent } from "../compone
     CommonModule,
     CardModule,
     ButtonModule,
-    TableModule,
-    DialogModule,
-    InputNumberModule,
     TagModule,
     ConfirmDialogModule,
-    BillingHistoryComponent,
     RouterModule,
-    PaymentMethodsCardComponent,
   ],
 })
 export class ManageSubscriptionComponent {
@@ -90,6 +81,18 @@ export class ManageSubscriptionComponent {
         this.isLoading.set(false);
       },
     });
+  }
+
+  async openBillingPortal(): Promise<void> {
+    this.isLoading.set(true);
+    const result = await this.api.invoke(getBillingPortalUrl, {
+      returnUrl: window.location.href,
+    });
+
+    if (result.url) {
+      window.location.href = result.url;
+    }
+    this.isLoading.set(false);
   }
 
   isSubscriptionCancelled(): boolean {

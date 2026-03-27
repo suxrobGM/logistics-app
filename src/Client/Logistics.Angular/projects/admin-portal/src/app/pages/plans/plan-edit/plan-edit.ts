@@ -64,11 +64,9 @@ export class PlanEdit implements OnInit {
       price: plan.price ?? 0,
       perTruckPrice: plan.perTruckPrice ?? 0,
       maxTrucks: plan.maxTrucks ?? null,
-      annualDiscountPercent: plan.annualDiscountPercent ?? 0,
       weeklyAiSessionQuota: plan.weeklyAiSessionQuota ?? null,
       interval: plan.interval ?? "month",
       intervalCount: plan.intervalCount ?? 1,
-      trialPeriod: plan.trialPeriod ?? "none",
     };
   });
 
@@ -86,10 +84,9 @@ export class PlanEdit implements OnInit {
       price: formValue.price,
       perTruckPrice: formValue.perTruckPrice,
       maxTrucks: formValue.maxTrucks,
-      annualDiscountPercent: formValue.annualDiscountPercent,
+      weeklyAiSessionQuota: formValue.weeklyAiSessionQuota,
       interval: formValue.interval,
       intervalCount: formValue.intervalCount,
-      trialPeriod: formValue.trialPeriod,
     };
 
     await this.api.invoke(updateSubscriptionPlan, { id: plan.id!, body: command });

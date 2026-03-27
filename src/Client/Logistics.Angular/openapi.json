@@ -8571,201 +8571,6 @@
         }
       }
     },
-    "/payments/methods/{id}": {
-      "get": {
-        "tags": [
-          "Payment"
-        ],
-        "operationId": "GetPaymentMethodById",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PaymentMethodDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Payment"
-        ],
-        "operationId": "DeletePaymentMethod",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/payments/methods": {
-      "get": {
-        "tags": [
-          "Payment"
-        ],
-        "operationId": "GetPaymentMethods",
-        "parameters": [
-          {
-            "name": "OrderBy",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PaymentMethodDto"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Payment"
-        ],
-        "operationId": "CreatePaymentMethod",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePaymentMethodCommand"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePaymentMethodCommand"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePaymentMethodCommand"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Payment"
-        ],
-        "operationId": "UpdatePaymentMethod",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePaymentMethodCommand"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePaymentMethodCommand"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePaymentMethodCommand"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/payments/methods/setup-intent": {
       "post": {
         "tags": [
@@ -8782,48 +8587,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/payments/methods/default": {
-      "put": {
-        "tags": [
-          "Payment"
-        ],
-        "operationId": "SetDefaultPaymentMethod",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SetDefaultPaymentMethodCommand"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SetDefaultPaymentMethodCommand"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/SetDefaultPaymentMethodCommand"
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
@@ -10669,6 +10432,45 @@
         "responses": {
           "204": {
             "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/billing-portal": {
+      "get": {
+        "tags": [
+          "Subscription"
+        ],
+        "operationId": "GetBillingPortalUrl",
+        "parameters": [
+          {
+            "name": "returnUrl",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingPortalUrlDto"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -13572,6 +13374,19 @@
         ],
         "type": "string"
       },
+      "BillingPortalUrlDto": {
+        "required": [
+          "url"
+        ],
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "BlogPostDto": {
         "type": "object",
         "properties": {
@@ -14769,9 +14584,9 @@
             "type": "string",
             "format": "uuid"
           },
-          "paymentMethodId": {
+          "stripePaymentMethodId": {
             "type": "string",
-            "format": "uuid"
+            "nullable": true
           },
           "paymentAmount": {
             "type": "number",
@@ -14888,9 +14703,9 @@
       "CreatePaymentCommand": {
         "type": "object",
         "properties": {
-          "paymentMethodId": {
+          "stripePaymentMethodId": {
             "type": "string",
-            "format": "uuid"
+            "nullable": true
           },
           "amount": {
             "type": "number",
@@ -14912,77 +14727,6 @@
           "expiresInDays": {
             "type": "integer",
             "format": "int32",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CreatePaymentMethodCommand": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "$ref": "#/components/schemas/PaymentMethodType"
-          },
-          "verificationStatus": {
-            "$ref": "#/components/schemas/PaymentMethodVerificationStatus"
-          },
-          "billingAddress": {
-            "$ref": "#/components/schemas/Address"
-          },
-          "stripePaymentMethodId": {
-            "type": "string",
-            "nullable": true
-          },
-          "cardHolderName": {
-            "type": "string",
-            "nullable": true
-          },
-          "cardNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "cvc": {
-            "type": "string",
-            "nullable": true
-          },
-          "expMonth": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "expYear": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "accountNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "accountHolderName": {
-            "type": "string",
-            "nullable": true
-          },
-          "bankName": {
-            "type": "string",
-            "nullable": true
-          },
-          "routingNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "accountHolderType": {
-            "$ref": "#/components/schemas/UsBankAccountHolderType"
-          },
-          "accountType": {
-            "$ref": "#/components/schemas/UsBankAccountType"
-          },
-          "verificationUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "swiftCode": {
-            "type": "string",
             "nullable": true
           }
         },
@@ -15016,6 +14760,11 @@
           "planId": {
             "type": "string",
             "format": "uuid"
+          },
+          "trialDays": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -15047,12 +14796,10 @@
             "format": "int32",
             "nullable": true
           },
-          "annualDiscountPercent": {
-            "type": "number",
-            "format": "double"
-          },
-          "trialPeriod": {
-            "$ref": "#/components/schemas/TrialPeriod"
+          "weeklyAiSessionQuota": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           },
           "interval": {
             "$ref": "#/components/schemas/BillingInterval"
@@ -16925,6 +16672,10 @@
             "type": "string",
             "nullable": true
           },
+          "errorCode": {
+            "type": "string",
+            "nullable": true
+          },
           "details": {
             "type": "object",
             "additionalProperties": {
@@ -17465,6 +17216,10 @@
         "type": "object",
         "properties": {
           "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorCode": {
             "type": "string",
             "nullable": true
           },
@@ -19392,9 +19147,9 @@
           "amount": {
             "$ref": "#/components/schemas/Money"
           },
-          "methodId": {
+          "stripePaymentMethodId": {
             "type": "string",
-            "format": "uuid"
+            "nullable": true
           },
           "tenantId": {
             "type": "string",
@@ -19481,99 +19236,10 @@
         },
         "additionalProperties": false
       },
-      "PaymentMethodDto": {
-        "required": [
-          "billingAddress"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "type": {
-            "$ref": "#/components/schemas/PaymentMethodType"
-          },
-          "verificationStatus": {
-            "$ref": "#/components/schemas/PaymentMethodVerificationStatus"
-          },
-          "isDefault": {
-            "type": "boolean"
-          },
-          "billingAddress": {
-            "$ref": "#/components/schemas/Address"
-          },
-          "cardHolderName": {
-            "type": "string",
-            "nullable": true
-          },
-          "cardNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "cvc": {
-            "type": "string",
-            "nullable": true
-          },
-          "expMonth": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "expYear": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "accountNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "accountHolderName": {
-            "type": "string",
-            "nullable": true
-          },
-          "bankName": {
-            "type": "string",
-            "nullable": true
-          },
-          "routingNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "accountHolderType": {
-            "$ref": "#/components/schemas/UsBankAccountHolderType"
-          },
-          "accountType": {
-            "$ref": "#/components/schemas/UsBankAccountType"
-          },
-          "verificationUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "swiftCode": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "PaymentMethodType": {
         "enum": [
-          "card",
-          "us_bank_account",
-          "international_bank_account",
           "cash",
           "check"
-        ],
-        "type": "string"
-      },
-      "PaymentMethodVerificationStatus": {
-        "enum": [
-          "unverified",
-          "pending",
-          "failed",
-          "verified"
         ],
         "type": "string"
       },
@@ -20133,41 +19799,6 @@
           "paymentId": {
             "type": "string",
             "format": "uuid"
-          },
-          "paymentMethod": {
-            "$ref": "#/components/schemas/PaymentMethodType"
-          },
-          "cardholderName": {
-            "type": "string",
-            "nullable": true
-          },
-          "cardNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "cardExpirationDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "cardCvv": {
-            "type": "string",
-            "nullable": true
-          },
-          "bankName": {
-            "type": "string",
-            "nullable": true
-          },
-          "bankAccountNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "bankRoutingNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "billingAddress": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -20973,16 +20604,6 @@
         },
         "additionalProperties": false
       },
-      "SetDefaultPaymentMethodCommand": {
-        "type": "object",
-        "properties": {
-          "paymentMethodId": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "additionalProperties": false
-      },
       "SetDriverDeviceTokenCommand": {
         "type": "object",
         "properties": {
@@ -21049,6 +20670,10 @@
         "type": "object",
         "properties": {
           "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "errorCode": {
             "type": "string",
             "nullable": true
           },
@@ -21131,25 +20756,6 @@
           "plan": {
             "$ref": "#/components/schemas/SubscriptionPlanDto"
           },
-          "startDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "endDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "nextBillingDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "trialEndDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
           "stripeSubscriptionId": {
             "type": "string",
             "nullable": true
@@ -21208,21 +20814,6 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
-          },
-          "annualDiscountPercent": {
-            "type": "number",
-            "format": "double"
-          },
-          "stripePriceId": {
-            "type": "string",
-            "nullable": true
-          },
-          "stripeProductId": {
-            "type": "string",
-            "nullable": true
-          },
-          "trialPeriod": {
-            "$ref": "#/components/schemas/TrialPeriod"
           },
           "interval": {
             "$ref": "#/components/schemas/BillingInterval"
@@ -21621,15 +21212,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "TrialPeriod": {
-        "enum": [
-          "none",
-          "seven_days",
-          "fourteen_days",
-          "thirty_days"
-        ],
-        "type": "string"
       },
       "TripDto": {
         "required": [
@@ -22679,9 +22261,8 @@
             "type": "string",
             "format": "uuid"
           },
-          "paymentMethodId": {
+          "stripePaymentMethodId": {
             "type": "string",
-            "format": "uuid",
             "nullable": true
           },
           "amount": {
@@ -22696,70 +22277,6 @@
             "$ref": "#/components/schemas/Address"
           },
           "description": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "UpdatePaymentMethodCommand": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "type": {
-            "$ref": "#/components/schemas/PaymentMethodType"
-          },
-          "billingAddress": {
-            "$ref": "#/components/schemas/Address"
-          },
-          "cardHolderName": {
-            "type": "string",
-            "nullable": true
-          },
-          "cardNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "cvc": {
-            "type": "string",
-            "nullable": true
-          },
-          "expMonth": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "expYear": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "accountNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "accountHolderName": {
-            "type": "string",
-            "nullable": true
-          },
-          "bankName": {
-            "type": "string",
-            "nullable": true
-          },
-          "routingNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "accountHolderType": {
-            "$ref": "#/components/schemas/UsBankAccountHolderType"
-          },
-          "accountType": {
-            "$ref": "#/components/schemas/UsBankAccountType"
-          },
-          "swiftCode": {
             "type": "string",
             "nullable": true
           }
@@ -22824,13 +22341,10 @@
             "format": "int32",
             "nullable": true
           },
-          "annualDiscountPercent": {
-            "type": "number",
-            "format": "double",
+          "weeklyAiSessionQuota": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
-          },
-          "trialPeriod": {
-            "$ref": "#/components/schemas/TrialPeriod"
           },
           "interval": {
             "$ref": "#/components/schemas/BillingInterval"
@@ -23099,20 +22613,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "UsBankAccountHolderType": {
-        "enum": [
-          "individual",
-          "business"
-        ],
-        "type": "string"
-      },
-      "UsBankAccountType": {
-        "enum": [
-          "checking",
-          "savings"
-        ],
-        "type": "string"
       },
       "UserDto": {
         "type": "object",

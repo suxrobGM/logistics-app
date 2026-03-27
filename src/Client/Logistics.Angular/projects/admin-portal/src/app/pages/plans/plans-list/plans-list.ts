@@ -90,18 +90,6 @@ export class PlansList {
     return `${count ?? 1} ${interval}${plural}`;
   }
 
-  protected formatTrialPeriod(trial?: string): string {
-    switch (trial) {
-      case "seven_days":
-        return "7 days";
-      case "fourteen_days":
-        return "14 days";
-      case "thirty_days":
-        return "30 days";
-      default:
-        return "None";
-    }
-  }
 
   protected formatTier(tier?: PlanTier): string {
     switch (tier) {
