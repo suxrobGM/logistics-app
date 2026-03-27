@@ -21112,7 +21112,10 @@
           "maintenance",
           "trips",
           "reports",
-          "agentic_dispatch"
+          "agentic_dispatch",
+          "priority_support",
+          "api_access",
+          "telegram_bot"
         ],
         "type": "string"
       },
