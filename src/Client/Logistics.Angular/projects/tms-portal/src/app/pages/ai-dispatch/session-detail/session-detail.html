@@ -80,9 +80,10 @@
       <p-timeline [value]="session.decisions ?? []">
         <ng-template #content let-decision>
           <div class="animate-slide-in mb-4 pb-2">
-            <!-- Tool name + status -->
+            <!-- Tool name + time + status -->
             <div class="mb-1 flex flex-wrap items-center gap-2">
               <span class="text-sm font-medium">{{ getToolLabel(decision.toolName) }}</span>
+              <span class="text-muted text-xs">{{ decision.createdAt | date: "MMM d, h:mm a" }}</span>
               @if (isWriteTool(decision.toolName)) {
                 <p-tag
                   [value]="decision.status"
@@ -137,12 +138,6 @@
             [class]="getToolMarkerClass(decision.toolName)"
           >
             <i [class]="getToolIcon(decision.toolName)" class="text-xs"></i>
-          </span>
-        </ng-template>
-
-        <ng-template #opposite let-decision>
-          <span class="text-muted text-xs">
-            {{ decision.createdAt | date: "shortTime" }}
           </span>
         </ng-template>
       </p-timeline>

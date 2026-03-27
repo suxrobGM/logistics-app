@@ -38,6 +38,7 @@ import { MarkdownPipe } from "../utils/markdown";
 @Component({
   selector: "app-session-detail",
   templateUrl: "./session-detail.html",
+  styleUrl: "./session-detail.css",
   imports: [
     ButtonModule,
     TagModule,

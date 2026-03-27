@@ -101,15 +101,27 @@
 
       <!-- Decision Cards -->
       <div class="max-h-135 overflow-y-auto lg:col-span-2">
-        <div class="flex flex-col gap-3">
-          @for (decision of writeDecisions(); track decision.id) {
-            <app-decision-card
-              [decision]="decision"
-              (approve)="approveDecision($event)"
-              (reject)="rejectDecision($event)"
-            />
-          }
-        </div>
+        @if (writeDecisions().length) {
+          <div class="flex flex-col gap-3">
+            @for (decision of writeDecisions(); track decision.id) {
+              <app-decision-card
+                [decision]="decision"
+                (approve)="approveDecision($event)"
+                (reject)="rejectDecision($event)"
+              />
+            }
+          </div>
+        } @else {
+          <div
+            class="border-default bg-elevated flex h-full flex-col items-center justify-center rounded-lg border p-8 text-center"
+          >
+            <i class="pi pi-check-circle text-muted mb-3 text-4xl"></i>
+            <p class="text-secondary mb-1 font-medium">No pending decisions</p>
+            <p class="text-muted text-sm">
+              Run the AI dispatcher to generate load-to-truck assignment suggestions for review.
+            </p>
+          </div>
+        }
       </div>
     </div>
   </div>
