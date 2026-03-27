@@ -6,7 +6,6 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Stripe;
-using PaymentMethod = Logistics.Domain.Entities.PaymentMethod;
 
 namespace Logistics.Application.Commands;
 
@@ -26,23 +25,16 @@ internal sealed class ProcessPaymentHandler(
             return Result.Fail($"Could not find a payment with ID '{req.PaymentId}'");
         }
 
-        var paymentMethod = await tenantUow.Repository<PaymentMethod>().GetByIdAsync(payment.MethodId, ct);
-
-        if (paymentMethod is null)
+        if (string.IsNullOrEmpty(payment.StripePaymentMethodId))
         {
-            return Result.Fail($"Could not find payment method with ID '{payment.MethodId}'");
-        }
-
-        if (string.IsNullOrEmpty(paymentMethod.StripePaymentMethodId))
-        {
-            return Result.Fail("Payment method is not synced with Stripe");
+            return Result.Fail("Payment does not have a Stripe payment method");
         }
 
         var tenant = tenantUow.GetCurrentTenant();
 
         try
         {
-            var paymentIntent = await stripePaymentService.CreatePaymentIntentAsync(payment, paymentMethod, tenant);
+            var paymentIntent = await stripePaymentService.CreatePaymentIntentAsync(payment, tenant);
 
             payment.StripePaymentIntentId = paymentIntent.Id;
 

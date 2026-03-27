@@ -25,6 +25,7 @@ public static class Registrar
         services.AddScoped<IStripePlanService, StripePlanService>();
         services.AddSingleton<IStripePaymentService, StripePaymentService>();
         services.AddSingleton<IStripeConnectService, StripeConnectService>();
+        services.AddSingleton<IStripePortalService, StripePortalService>();
         services.AddScoped<IStripeUsageService, StripeUsageService>();
 
         return services;

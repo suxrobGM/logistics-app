@@ -30,10 +30,6 @@ internal sealed class CreateSubscriptionPlanValidator : AbstractValidator<Create
             .When(i => i.Interval == BillingInterval.Week)
             .WithMessage("Interval count must be between 1 and 156 for weekly billing interval.");
 
-        RuleFor(i => i.TrialPeriod)
-            .IsInEnum()
-            .WithMessage("Trial period must be a valid enum value.");
-
         RuleFor(i => i.Interval)
             .IsInEnum()
             .WithMessage("Billing interval must be a valid enum value.");

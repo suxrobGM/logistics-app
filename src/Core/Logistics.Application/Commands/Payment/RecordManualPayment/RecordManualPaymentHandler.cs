@@ -68,7 +68,7 @@ internal sealed class RecordManualPaymentHandler(
         {
             Amount = new Money { Amount = req.Amount, Currency = invoice.Total.Currency },
             Status = PaymentStatus.Paid, // Manual payments are immediately considered paid
-            MethodId = Guid.Empty, // No stored method for manual payments
+            StripePaymentMethodId = null, // Manual payments don't use Stripe
             TenantId = tenant.Id,
             Description = req.Notes ?? $"Manual {req.Type} payment for Invoice #{invoice.Number}",
             BillingAddress = tenant.CompanyAddress ?? new Address

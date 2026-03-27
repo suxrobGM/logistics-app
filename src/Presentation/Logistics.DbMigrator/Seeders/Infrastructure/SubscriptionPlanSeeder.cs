@@ -58,9 +58,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 Price = 29m,
                 PerTruckPrice = 12m,
                 MaxTrucks = (int?)10,
-                AnnualDiscountPercent = 15m,
                 Tier = PlanTier.Starter,
-                TrialPeriod = TrialPeriod.ThirtyDays,
                 WeeklyAiSessionQuota = (int?)25,
                 Features = StarterFeatures
             },
@@ -71,9 +69,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 Price = 79m,
                 PerTruckPrice = 9m,
                 MaxTrucks = (int?)30,
-                AnnualDiscountPercent = 20m,
                 Tier = PlanTier.Professional,
-                TrialPeriod = TrialPeriod.ThirtyDays,
                 WeeklyAiSessionQuota = (int?)100,
                 Features = ProfessionalFeatures
             },
@@ -84,9 +80,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 Price = 149m,
                 PerTruckPrice = 6m,
                 MaxTrucks = (int?)null,
-                AnnualDiscountPercent = 20m,
                 Tier = PlanTier.Enterprise,
-                TrialPeriod = TrialPeriod.ThirtyDays,
                 WeeklyAiSessionQuota = (int?)250,
                 Features = EnterpriseFeatures
             }
@@ -105,9 +99,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                     Price = planDef.Price,
                     PerTruckPrice = planDef.PerTruckPrice,
                     MaxTrucks = planDef.MaxTrucks,
-                    AnnualDiscountPercent = planDef.AnnualDiscountPercent,
                     Tier = planDef.Tier,
-                    TrialPeriod = planDef.TrialPeriod,
                     WeeklyAiSessionQuota = planDef.WeeklyAiSessionQuota
                 };
 
@@ -156,21 +148,9 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                     updated = true;
                 }
 
-                if (existingPlan.AnnualDiscountPercent != planDef.AnnualDiscountPercent)
-                {
-                    existingPlan.AnnualDiscountPercent = planDef.AnnualDiscountPercent;
-                    updated = true;
-                }
-
                 if (existingPlan.Tier != planDef.Tier)
                 {
                     existingPlan.Tier = planDef.Tier;
-                    updated = true;
-                }
-
-                if (existingPlan.TrialPeriod != planDef.TrialPeriod)
-                {
-                    existingPlan.TrialPeriod = planDef.TrialPeriod;
                     updated = true;
                 }
 

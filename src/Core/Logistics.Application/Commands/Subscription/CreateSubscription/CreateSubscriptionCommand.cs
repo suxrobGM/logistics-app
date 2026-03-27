@@ -6,4 +6,5 @@ public class CreateSubscriptionCommand : IAppRequest
 {
     public Guid TenantId { get; set; }
     public Guid PlanId { get; set; }
+    public int? TrialDays { get; set; }
 }

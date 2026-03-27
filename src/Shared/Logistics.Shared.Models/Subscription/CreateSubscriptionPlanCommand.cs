@@ -10,8 +10,7 @@ public class CreateSubscriptionPlanCommand
     public PlanTier Tier { get; set; }
     public decimal PerTruckPrice { get; set; }
     public int? MaxTrucks { get; set; }
-    public decimal AnnualDiscountPercent { get; set; }
-    public TrialPeriod TrialPeriod { get; set; }
+    public int? WeeklyAiSessionQuota { get; set; }
     public BillingInterval Interval { get; set; }
     public int IntervalCount { get; set; }
 }

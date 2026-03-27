@@ -1,6 +1,5 @@
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
-using Logistics.Domain.Utilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Stripe;
@@ -18,7 +17,7 @@ internal sealed class StripeSubscriptionService(
     : StripeServiceBase(options, logger), IStripeSubscriptionService
 {
     public async Task<StripeSubscription> CreateSubscriptionAsync(
-        SubscriptionPlan plan, Tenant tenant, int truckCount, bool trial = false)
+        SubscriptionPlan plan, Tenant tenant, int truckCount, int? trialDays = null)
     {
         if (tenant.StripeCustomerId is null)
             throw new ArgumentException("Tenant must have a StripeCustomerId");
@@ -31,14 +30,13 @@ internal sealed class StripeSubscriptionService(
             {
                 { StripeMetadataKeys.TenantId, tenant.Id.ToString() },
                 { StripeMetadataKeys.PlanId, plan.Id.ToString() }
-            },
-            BillingCycleAnchor = plan.BillingCycleAnchor
+            }
         };
 
-        if (trial)
+        if (trialDays.HasValue && trialDays.Value > 0)
         {
             createOptions.PaymentBehavior = "default_incomplete";
-            createOptions.TrialEnd = SubscriptionUtils.GetTrialEndDate(plan.TrialPeriod);
+            createOptions.TrialEnd = DateTime.UtcNow.AddDays(trialDays.Value);
         }
 
         var subscription = await new SubscriptionService().CreateAsync(createOptions);

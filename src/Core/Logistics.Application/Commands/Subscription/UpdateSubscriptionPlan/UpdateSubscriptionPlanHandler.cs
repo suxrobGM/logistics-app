@@ -28,7 +28,6 @@ internal sealed class UpdateSubscriptionPlanHandler(
         subscriptionPlan.Description = PropertyUpdater.UpdateIfChanged(req.Description, subscriptionPlan.Description);
         subscriptionPlan.Price = PropertyUpdater.UpdateIfChanged(req.Price, subscriptionPlan.Price.Amount);
         subscriptionPlan.PerTruckPrice = PropertyUpdater.UpdateIfChanged(req.PerTruckPrice, subscriptionPlan.PerTruckPrice.Amount);
-        subscriptionPlan.TrialPeriod = PropertyUpdater.UpdateIfChanged(req.TrialPeriod, subscriptionPlan.TrialPeriod);
         subscriptionPlan.Interval = PropertyUpdater.UpdateIfChanged(req.Interval, subscriptionPlan.Interval);
         subscriptionPlan.IntervalCount =
             PropertyUpdater.UpdateIfChanged(req.IntervalCount, subscriptionPlan.IntervalCount);
@@ -36,7 +35,10 @@ internal sealed class UpdateSubscriptionPlanHandler(
         {
             subscriptionPlan.MaxTrucks = req.MaxTrucks;
         }
-        subscriptionPlan.AnnualDiscountPercent = PropertyUpdater.UpdateIfChanged(req.AnnualDiscountPercent, subscriptionPlan.AnnualDiscountPercent);
+        if (req.WeeklyAiSessionQuota.HasValue)
+        {
+            subscriptionPlan.WeeklyAiSessionQuota = req.WeeklyAiSessionQuota;
+        }
         subscriptionPlan.Tier = PropertyUpdater.UpdateIfChanged(req.Tier, subscriptionPlan.Tier);
 
         var result = await stripePlanService.UpdatePlanAsync(subscriptionPlan);

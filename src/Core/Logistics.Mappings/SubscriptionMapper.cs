@@ -11,10 +11,6 @@ public static class SubscriptionMapper
         {
             Id = entity.Id,
             Status = entity.Status,
-            StartDate = entity.StartDate,
-            EndDate = entity.EndDate,
-            NextBillingDate = entity.NextBillingDate,
-            TrialEndDate = entity.TrialEndDate,
             Tenant = GetTenantDto(entity.Tenant),
             Plan = entity.Plan.ToDto(),
             StripeSubscriptionId = entity.StripeSubscriptionId,

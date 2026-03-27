@@ -88,7 +88,7 @@ internal sealed class ProcessPublicPaymentHandler(
             {
                 Amount = new Money { Amount = paymentAmount, Currency = invoice.Total.Currency },
                 Status = PaymentStatus.Pending,
-                MethodId = Guid.Empty, // Public payment doesn't have a stored method
+                StripePaymentMethodId = null, // Public payment — method provided via PaymentIntent
                 TenantId = tenant.Id,
                 Description = $"Payment for Invoice #{invoice.Number}",
                 BillingAddress = tenant.CompanyAddress // Use tenant's address as placeholder

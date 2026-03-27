@@ -112,7 +112,7 @@ internal class TripSeeder(ILogger<TripSeeder> logger) : SeederBase(logger)
         {
             Amount = load.DeliveryCost,
             Status = PaymentStatus.Paid,
-            MethodId = Guid.Empty,
+            StripePaymentMethodId = null,
             TenantId = tenant.Id,
             Description = $"Payment for Load #{load.Number}",
             BillingAddress = tenant.CompanyAddress,

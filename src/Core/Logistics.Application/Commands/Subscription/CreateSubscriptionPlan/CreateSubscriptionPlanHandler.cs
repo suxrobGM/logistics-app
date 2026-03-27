@@ -20,13 +20,12 @@ internal sealed class CreateSubscriptionPlanHandler(
             Name = req.Name,
             Description = req.Description,
             Price = req.Price,
-            TrialPeriod = req.TrialPeriod,
             Interval = req.Interval,
             IntervalCount = req.IntervalCount,
             Tier = req.Tier,
             PerTruckPrice = req.PerTruckPrice,
             MaxTrucks = req.MaxTrucks,
-            AnnualDiscountPercent = req.AnnualDiscountPercent
+            WeeklyAiSessionQuota = req.WeeklyAiSessionQuota
         };
 
         var result = await stripePlanService.CreatePlanAsync(subscriptionPlan);

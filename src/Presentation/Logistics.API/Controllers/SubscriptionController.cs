@@ -89,6 +89,16 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
 
+    [HttpGet("billing-portal", Name = "GetBillingPortalUrl")]
+    [ProducesResponseType(typeof(BillingPortalUrlDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
+    public async Task<IActionResult> GetBillingPortalUrl([FromQuery] string returnUrl)
+    {
+        var result = await mediator.Send(new GetBillingPortalUrlQuery { ReturnUrl = returnUrl });
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     #endregion
 
     #region Subscription Plans

@@ -8,7 +8,9 @@ public record UpdateSubscriptionPlanCommand
     public string? Name { get; set; }
     public string? Description { get; set; }
     public decimal? Price { get; set; }
-    public TrialPeriod? TrialPeriod { get; set; }
+    public decimal? PerTruckPrice { get; set; }
+    public int? MaxTrucks { get; set; }
+    public int? WeeklyAiSessionQuota { get; set; }
     public BillingInterval? Interval { get; set; }
     public int? IntervalCount { get; set; }
 }

@@ -7,7 +7,7 @@ namespace Logistics.Application.Commands;
 public class UpdatePaymentCommand : IAppRequest
 {
     public Guid Id { get; set; }
-    public Guid? PaymentMethodId { get; set; }
+    public string? StripePaymentMethodId { get; set; }
     public decimal? Amount { get; set; }
     public PaymentStatus? Status { get; set; }
     public Address? BillingAddress { get; set; }

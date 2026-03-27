@@ -91,7 +91,7 @@ internal class LoadSeeder(ILogger<LoadSeeder> logger) : SeederBase(logger)
         {
             Amount = load.DeliveryCost,
             Status = PaymentStatus.Paid,
-            MethodId = Guid.Empty, // No stored method for seeded payments
+            StripePaymentMethodId = null, // No stored method for seeded payments
             TenantId = tenant.Id,
             Description = $"Payment for Load #{load.Number}",
             BillingAddress = tenant.CompanyAddress,

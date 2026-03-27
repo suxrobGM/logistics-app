@@ -29,18 +29,15 @@ internal sealed class CreateSubscriptionHandler(
 
         if (subscriptionPlan is null)
         {
-            return Result.Fail($"Could not find a subscription plan with ID '{req.TenantId}'");
+            return Result.Fail($"Could not find a subscription plan with ID '{req.PlanId}'");
         }
 
-        var subscription = Subscription.CreateTrial(tenant, subscriptionPlan);
-        var stripeSubscription =
-            await stripeSubscriptionService.CreateSubscriptionAsync(subscriptionPlan, tenant, truckCount, true);
-        subscription.StripeSubscriptionId = stripeSubscription.Id;
+        // Create subscription in Stripe — the webhook will create the local record
+        await stripeSubscriptionService.CreateSubscriptionAsync(
+            subscriptionPlan, tenant, truckCount, req.TrialDays);
 
-        await masterUow.Repository<Subscription>().AddAsync(subscription, ct);
-        await masterUow.SaveChangesAsync(ct);
-        logger.LogInformation("Created Subscription for tenant {TenantId}, truck count: {TruckCount}", tenant.Id,
-            truckCount);
+        logger.LogInformation("Created Stripe subscription for tenant {TenantId}, truck count: {TruckCount}",
+            tenant.Id, truckCount);
         return Result.Ok();
     }
 

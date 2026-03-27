@@ -59,9 +59,6 @@ internal sealed class ChangeSubscriptionPlanHandler(
 
         subscription.PlanId = newPlan.Id;
         subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
-        subscription.StartDate = stripeSubscription.StartDate;
-        subscription.NextBillingDate = stripeSubscription.Items.Data.First().CurrentPeriodEnd;
-        subscription.TrialEndDate = stripeSubscription.TrialEnd;
 
         masterUow.Repository<Subscription>().Update(subscription);
         await masterUow.SaveChangesAsync(ct);

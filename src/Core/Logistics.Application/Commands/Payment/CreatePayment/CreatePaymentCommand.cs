@@ -5,7 +5,7 @@ namespace Logistics.Application.Commands;
 
 public class CreatePaymentCommand : IAppRequest
 {
-    public Guid PaymentMethodId { get; set; }
+    public string? StripePaymentMethodId { get; set; }
     public decimal Amount { get; set; }
     public Address? BillingAddress { get; set; }
     public string? Description { get; set; }

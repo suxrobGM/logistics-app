@@ -1,12 +1,9 @@
-using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Geo;
 using Stripe;
 
 using AddressValueObject = Logistics.Domain.Primitives.ValueObjects.Address;
-using PaymentMethod = Logistics.Domain.Entities.PaymentMethod;
 using StripeAddress = Stripe.Address;
-using StripePaymentMethod = Stripe.PaymentMethod;
 
 namespace Logistics.Application.Services;
 
@@ -65,58 +62,6 @@ public static class StripeObjectMapper
             Line2 = addressOptions.Line2,
             ZipCode = addressOptions.PostalCode,
             State = addressOptions.State
-        };
-    }
-
-    public static PaymentMethod ToPaymentMethodEntity(this StripePaymentMethod stripePaymentMethod)
-    {
-        if (stripePaymentMethod.Card is not null)
-            return new CardPaymentMethod
-            {
-                CardHolderName = stripePaymentMethod.BillingDetails.Name,
-                CardNumber = $"**** **** **** {stripePaymentMethod.Card.Last4}",
-                Cvc = "***",
-                ExpMonth = (int)stripePaymentMethod.Card.ExpMonth,
-                ExpYear = (int)stripePaymentMethod.Card.ExpYear,
-                BillingAddress = stripePaymentMethod.BillingDetails.Address.ToAddressEntity(),
-                StripePaymentMethodId = stripePaymentMethod.Id,
-                VerificationStatus = PaymentMethodVerificationStatus.Verified
-            };
-
-        if (stripePaymentMethod.UsBankAccount is not null)
-            return new UsBankAccountPaymentMethod
-            {
-                AccountHolderName = stripePaymentMethod.BillingDetails.Name,
-                AccountNumber = $"********{stripePaymentMethod.UsBankAccount.Last4}",
-                RoutingNumber = stripePaymentMethod.UsBankAccount.RoutingNumber,
-                BankName = stripePaymentMethod.UsBankAccount.BankName,
-                AccountHolderType = GetAccountHolderType(stripePaymentMethod.UsBankAccount.AccountHolderType),
-                AccountType = GetAccountType(stripePaymentMethod.UsBankAccount.AccountType),
-                BillingAddress = stripePaymentMethod.BillingDetails.Address.ToAddressEntity(),
-                StripePaymentMethodId = stripePaymentMethod.Id,
-                VerificationStatus = PaymentMethodVerificationStatus.Verified
-            };
-
-        throw new NotSupportedException("Unsupported payment method type.");
-    }
-
-    public static UsBankAccountHolderType GetAccountHolderType(string accountHolderType)
-    {
-        return accountHolderType switch
-        {
-            "individual" => UsBankAccountHolderType.Individual,
-            "company" => UsBankAccountHolderType.Business,
-            _ => throw new ArgumentOutOfRangeException(nameof(accountHolderType), accountHolderType)
-        };
-    }
-
-    public static UsBankAccountType GetAccountType(string accountType)
-    {
-        return accountType switch
-        {
-            "checking" => UsBankAccountType.Checking,
-            "savings" => UsBankAccountType.Savings,
-            _ => throw new ArgumentOutOfRangeException(nameof(accountType), accountType)
         };
     }
 

@@ -11,7 +11,7 @@ namespace Logistics.Application.Services;
 public interface IStripeSubscriptionService
 {
     Task<StripeSubscription> CreateSubscriptionAsync(SubscriptionPlan plan, Tenant tenant, int truckCount,
-        bool trial = false);
+        int? trialDays = null);
 
     Task<StripeSubscription> CancelSubscriptionAsync(string stripeSubscriptionId, bool cancelImmediately = true);
 

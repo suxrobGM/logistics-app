@@ -33,9 +33,6 @@ internal sealed class RenewSubscriptionHandler(
                 truckCount);
         subscription.StripeSubscriptionId = stripeSubscription.Id;
         subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
-        subscription.StartDate = stripeSubscription.StartDate;
-        subscription.NextBillingDate = stripeSubscription.Items.Data.First().CurrentPeriodEnd;
-        subscription.TrialEndDate = stripeSubscription.TrialEnd;
 
         masterUow.Repository<Subscription>().Update(subscription);
         await masterUow.SaveChangesAsync(ct);

@@ -9,8 +9,7 @@ public record PaymentDto
     public DateTime CreatedDate { get; set; }
 
     public Money Amount { get; set; } = null!;
-    //public PaymentMethodDto? Method { get; set; }
-    public Guid MethodId { get; set; }
+    public string? StripePaymentMethodId { get; set; }
     public Guid TenantId { get; set; }
     public PaymentStatus Status { get; set; }
     public Address? BillingAddress { get; set; }

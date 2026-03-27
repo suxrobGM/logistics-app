@@ -42,15 +42,7 @@ internal sealed class StripePlanService(
         var perTruckPrice = await CreateLicensedPriceAsync(priceService, product.Id, plan,
             plan.PerTruckPrice * 100, plan.PerTruckPrice.Currency, "per_truck");
 
-        // 4. Apply billing cycle anchor metadata if configured
-        if (plan.BillingCycleAnchor.HasValue)
-        {
-            var anchor = plan.BillingCycleAnchor.Value.ToString("O");
-            await UpdatePriceMetadataAsync(priceService, basePrice.Id, anchor, "base");
-            await UpdatePriceMetadataAsync(priceService, perTruckPrice.Id, anchor, "per_truck");
-        }
-
-        // 5. Create AI overage metered price if plan has a weekly quota
+        // 4. Create AI overage metered price if plan has a weekly quota
         Price? aiOveragePrice = null;
         if (plan.WeeklyAiSessionQuota.HasValue)
         {
@@ -184,16 +176,4 @@ internal sealed class StripePlanService(
         return newPrice;
     }
 
-    private static async Task UpdatePriceMetadataAsync(
-        PriceService priceService, string priceId, string billingAnchor, string priceType)
-    {
-        await priceService.UpdateAsync(priceId, new PriceUpdateOptions
-        {
-            Metadata = new Dictionary<string, string>
-            {
-                [StripeMetadataKeys.BillingCycleAnchor] = billingAnchor,
-                ["price_type"] = priceType
-            }
-        });
-    }
 }
