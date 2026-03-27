@@ -1,0 +1,18 @@
+<div class="flex gap-2">
+  <p-button
+    label="Approve"
+    icon="pi pi-check"
+    severity="success"
+    size="small"
+    [outlined]="true"
+    (onClick)="approve.emit(decision())"
+  />
+  <p-button
+    label="Reject"
+    icon="pi pi-times"
+    severity="danger"
+    size="small"
+    [outlined]="true"
+    (onClick)="reject.emit(decision())"
+  />
+</div>

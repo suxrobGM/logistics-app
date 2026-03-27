@@ -7,6 +7,7 @@ import { AuthService } from "@/core/auth";
 import {
   ChatService,
   CommandPaletteService,
+  DispatchBadgeService,
   SidebarFavoritesService,
   TenantService,
   TmsFeatureProvider,
@@ -53,6 +54,7 @@ export class Sidebar {
   private readonly featureService = inject(FeatureService);
   private readonly featureProvider = inject(TmsFeatureProvider);
   private readonly chatService = inject(ChatService);
+  private readonly dispatchBadgeService = inject(DispatchBadgeService);
   private readonly favoritesService = inject(SidebarFavoritesService);
   private readonly commandPaletteService = inject(CommandPaletteService);
 
@@ -138,6 +140,14 @@ export class Sidebar {
         if (item.id === "messages") {
           item.badge = () => {
             const count = this.chatService.unreadCount();
+            return count > 0 ? count : null;
+          };
+        }
+
+        if (item.id === "ai-dispatch") {
+          this.dispatchBadgeService.refresh();
+          item.badge = () => {
+            const count = this.dispatchBadgeService.pendingCount();
             return count > 0 ? count : null;
           };
         }

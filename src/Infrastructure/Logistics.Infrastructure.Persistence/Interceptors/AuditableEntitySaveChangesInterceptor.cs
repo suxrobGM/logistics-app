@@ -63,6 +63,16 @@ public static class Extensions
             r.TargetEntry.State is EntityState.Modified);
     }
 
-    public static string? GetUserId(this HttpContext? httpContext) =>
-        httpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+    public static string? GetUserId(this HttpContext? httpContext)
+    {
+        try
+        {
+            return httpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
+        catch (ObjectDisposedException)
+        {
+            // HttpContext is disposed when running in a background task
+            return null;
+        }
+    }
 }

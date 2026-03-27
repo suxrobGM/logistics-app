@@ -53,3 +53,10 @@ onKeydown(event: KeyboardEvent) {}
 
 ## Styling
 - Tailwind CSS utilities preferred, avoid custom CSS unless necessary
+
+## HTTP Caching
+- In-memory cache interceptor (`cacheInterceptor`) caches GET requests based on rules in `projects/shared/src/lib/api/cache.config.ts`
+- Rules are evaluated in order — first match wins, catch-all default is 2 min TTL
+- **Set `ttl: 0`** for endpoints that receive real-time updates via SignalR (e.g., dispatch, messages)
+- Cache is auto-invalidated on POST/PUT/PATCH/DELETE to the same base path
+- When adding new real-time features, always add a no-cache rule BEFORE the catch-all

@@ -11,11 +11,7 @@
           [value]="session.status ?? ''"
           [severity]="Labels.dispatchStatusSeverity(session.status ?? '')"
         />
-        @if (session.mode === "autonomous") {
-          <p-tag value="Autonomous" severity="warn" />
-        } @else {
-          <p-tag value="Suggestions" severity="info" />
-        }
+        <app-mode-badge [mode]="session.mode" />
         @if (session.status === "running") {
           <p-button
             label="Cancel"
@@ -30,42 +26,37 @@
     </ui-page-header>
 
     <!-- Stats -->
-    <div class="border-default bg-elevated mb-6 rounded-lg border p-4">
+    <div class="border-default bg-elevated mb-6 rounded-lg border p-4 transition-all duration-300">
+      @if (session.status === "running") {
+        <div class="bg-primary/10 -mx-4 -mt-4 mb-4 flex items-center gap-2 rounded-t-lg px-4 py-2">
+          <i class="pi pi-spin pi-spinner text-primary text-sm"></i>
+          <span class="text-primary text-sm font-medium">Agent is running...</span>
+        </div>
+      }
       <div class="grid grid-cols-2 gap-4 md:grid-cols-5">
-        <div>
-          <span class="text-muted text-sm">Started</span>
-          <p class="font-medium">{{ session.startedAt | date: "medium" }}</p>
-        </div>
-        <div>
-          <span class="text-muted text-sm">Completed</span>
-          <p class="font-medium">
-            {{ session.completedAt ? (session.completedAt | date: "medium") : "—" }}
-          </p>
-        </div>
-        <div>
-          <span class="text-muted text-sm">Duration</span>
-          <p class="font-medium">{{ duration() ?? "—" }}</p>
-        </div>
-        <div>
-          <span class="text-muted text-sm">Decisions</span>
-          <p class="font-medium">{{ session.decisionCount }}</p>
-        </div>
-        <div>
-          <span class="text-muted text-sm">Tokens Used</span>
-          <p class="font-mono font-medium">{{ session.totalTokensUsed | number }}</p>
-        </div>
+        @for (stat of statsItems(); track stat.label) {
+          <div>
+            <span class="text-muted text-sm">{{ stat.label }}</span>
+            <p class="font-medium" [class.font-mono]="stat.mono">{{ stat.value }}</p>
+          </div>
+        }
       </div>
     </div>
 
     <!-- Agent Summary (markdown) -->
     @if (session.summary) {
-      <div class="border-default bg-elevated mb-6 rounded-lg border p-5">
+      <div
+        class="animate-fadein border-default bg-elevated mb-6 rounded-lg border p-5 transition-all duration-300"
+      >
         <div class="mb-3 flex items-center gap-2">
           <i class="pi pi-sparkles text-primary"></i>
           <span class="font-semibold">Agent Summary</span>
+          @if (session.status === "running") {
+            <i class="pi pi-spin pi-spinner text-muted text-xs"></i>
+          }
         </div>
         <div
-          class="prose prose-sm dark:prose-invert max-w-none"
+          class="prose prose-sm dark:prose-invert max-w-none transition-opacity duration-500"
           [innerHTML]="session.summary | markdown"
         ></div>
       </div>
@@ -73,24 +64,22 @@
 
     <!-- Error -->
     @if (session.errorMessage) {
-      <div
-        class="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950"
-      >
+      <div class="bg-danger/10 border-danger/20 mb-6 rounded-lg border p-4">
         <div class="flex items-center gap-2">
-          <i class="pi pi-exclamation-triangle text-red-500"></i>
-          <span class="font-semibold text-red-700 dark:text-red-400">Error</span>
+          <i class="pi pi-exclamation-triangle text-danger"></i>
+          <span class="text-danger font-semibold">Error</span>
         </div>
-        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ session.errorMessage }}</p>
+        <p class="text-danger mt-1 text-sm">{{ session.errorMessage }}</p>
       </div>
     }
 
     <!-- Agent Timeline -->
-    @if (session.decisions && session.decisions.length > 0) {
+    @if (session.decisions?.length) {
       <h2 class="text-primary mb-4 text-lg font-semibold">Agent Timeline</h2>
 
-      <p-timeline [value]="session.decisions">
+      <p-timeline [value]="session.decisions ?? []">
         <ng-template #content let-decision>
-          <div class="mb-4 pb-2">
+          <div class="animate-slide-in mb-4 pb-2">
             <!-- Tool name + status -->
             <div class="mb-1 flex flex-wrap items-center gap-2">
               <span class="text-sm font-medium">{{ getToolLabel(decision.toolName) }}</span>
@@ -103,7 +92,7 @@
               }
             </div>
 
-            <!-- Reasoning -->
+            <!-- Reasoning (expandable markdown) -->
             @if (decision.reasoning) {
               <div class="mb-2">
                 <div
@@ -122,107 +111,20 @@
               </div>
             }
 
-            <!-- Tool output summary -->
+            <!-- Tool output -->
             @if (decision.toolOutput) {
-              @let output = parseToolOutput(decision.toolOutput);
               <div class="bg-subtle rounded-md p-3 text-xs">
-                @if (output.error) {
-                  <div class="flex items-center gap-1 text-red-500">
-                    <i class="pi pi-times-circle text-xs"></i>
-                    <span>{{ output.error }}</span>
-                  </div>
-                } @else if (output.trucks) {
-                  <!-- Available trucks + fleet summary -->
-                  <div class="flex flex-wrap gap-3">
-                    <span>{{ output.trucks.length }} available trucks</span>
-
-                    @if (output.totalTrucks !== undefined) {
-                      <span class="text-muted">·</span>
-                      <span>
-                        Total: <strong>{{ output.totalTrucks }}</strong>
-                      </span>
-                      <span>
-                        Active trips: <strong>{{ output.activeTrips }}</strong>
-                      </span>
-                      @if (output.driversInViolation) {
-                        <span class="text-red-500">
-                          Violations: <strong>{{ output.driversInViolation }}</strong>
-                        </span>
-                      }
-                    }
-                  </div>
-                } @else if (output.batchResults) {
-                  <!-- Batch HOS feasibility -->
-                  <div class="flex flex-col gap-1">
-                    @for (r of output.batchResults; track r.driver_id) {
-                      <div class="flex items-center gap-2">
-                        @if (r.feasible) {
-                          <i class="pi pi-check-circle text-xs text-green-500"></i>
-                        } @else {
-                          <i class="pi pi-times-circle text-xs text-red-500"></i>
-                        }
-                        <span class="text-muted">{{ r.reason }}</span>
-                      </div>
-                    }
-                  </div>
-                } @else if (output.feasible !== undefined) {
-                  <!-- HOS feasibility -->
-                  <div class="flex items-center gap-2">
-                    @if (output.feasible) {
-                      <i class="pi pi-check-circle text-green-500"></i>
-                      <span class="text-green-700 dark:text-green-400">Feasible</span>
-                    } @else {
-                      <i class="pi pi-times-circle text-red-500"></i>
-                      <span class="text-red-600 dark:text-red-400">Not feasible</span>
-                    }
-                    @if (output.reason) {
-                      <span class="text-muted">— {{ output.reason }}</span>
-                    }
-                  </div>
-                  @if (output.estimatedDrivingMinutes) {
-                    <div class="text-muted mt-1">
-                      Need: {{ output.estimatedDrivingMinutes }}min · Remaining:
-                      {{ output.drivingMinutesRemaining }}min
-                    </div>
-                  }
-                } @else if (output.loads) {
-                  <!-- Unassigned loads -->
-                  <span>{{ output.loads.length }} unassigned loads found</span>
-                } @else if (output.success !== undefined) {
-                  <!-- Write tool result -->
-                  <div class="flex items-center gap-1">
-                    @if (output.success) {
-                      <i class="pi pi-check-circle text-green-500"></i>
-                      <span class="text-green-700 dark:text-green-400">Executed successfully</span>
-                    } @else {
-                      <i class="pi pi-times-circle text-red-500"></i>
-                      <span class="text-red-600 dark:text-red-400">Failed</span>
-                    }
-                  </div>
-                } @else {
-                  <span class="text-muted">Tool executed</span>
-                }
+                <app-tool-output-summary [toolOutput]="decision.toolOutput" />
               </div>
             }
 
-            <!-- Approve/reject for suggested write-tool decisions only -->
+            <!-- Approve/reject for suggested write-tool decisions -->
             @if (decision.status === "suggested" && isWriteTool(decision.toolName)) {
-              <div class="mt-2 flex gap-2">
-                <p-button
-                  label="Approve"
-                  icon="pi pi-check"
-                  severity="success"
-                  size="small"
-                  [outlined]="true"
-                  (onClick)="approveDecision(decision)"
-                />
-                <p-button
-                  label="Reject"
-                  icon="pi pi-times"
-                  severity="danger"
-                  size="small"
-                  [outlined]="true"
-                  (onClick)="rejectDecision(decision)"
+              <div class="mt-2">
+                <app-approve-reject-actions
+                  [decision]="decision"
+                  (approve)="approveDecision(decision)"
+                  (reject)="rejectDecision(decision)"
                 />
               </div>
             }

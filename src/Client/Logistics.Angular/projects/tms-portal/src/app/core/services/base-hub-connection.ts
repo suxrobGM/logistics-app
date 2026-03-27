@@ -1,5 +1,10 @@
 import { inject } from "@angular/core";
-import { HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
+import {
+  HttpTransportType,
+  HubConnection,
+  HubConnectionBuilder,
+  HubConnectionState,
+} from "@microsoft/signalr";
 import { environment } from "@/env";
 import { TenantService } from "./tenant.service";
 
@@ -13,7 +18,12 @@ export abstract class BaseHubConnection {
         skipNegotiation: true,
         transport: HttpTransportType.WebSockets,
       })
+      .withAutomaticReconnect()
       .build();
+  }
+
+  get isConnected(): boolean {
+    return this.hubConnection.state === HubConnectionState.Connected;
   }
 
   async connect(): Promise<void> {

@@ -21,12 +21,14 @@ import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TableModule } from "primeng/table";
+import type { TableLazyLoadEvent } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { TenantService, ToastService, TrackingService } from "@/core/services";
+import { DispatchBadgeService, TenantService, ToastService, TrackingService } from "@/core/services";
 import { GeolocationMap } from "@/shared/components";
 import { Labels } from "@/shared/utils";
 import { DecisionCard } from "../components/decision-card/decision-card";
+import { ModeBadge } from "../components/mode-badge/mode-badge";
 import { stripMarkdown } from "../utils/markdown";
 
 @Component({
@@ -42,6 +44,7 @@ import { stripMarkdown } from "../utils/markdown";
     PageHeader,
     GeolocationMap,
     DecisionCard,
+    ModeBadge,
   ],
 })
 export class SessionsListPage implements OnInit, OnDestroy {
@@ -50,12 +53,17 @@ export class SessionsListPage implements OnInit, OnDestroy {
   private readonly toastService = inject(ToastService);
   private readonly trackingService = inject(TrackingService);
   private readonly tenantService = inject(TenantService);
+  private readonly dispatchBadgeService = inject(DispatchBadgeService);
 
   protected readonly Labels = Labels;
   protected readonly Math = Math;
   protected readonly stripMarkdown = stripMarkdown;
 
   protected readonly sessions = signal<DispatchSessionDto[]>([]);
+  protected readonly totalRecords = signal(0);
+  protected readonly page = signal(1);
+  protected readonly pageSize = signal(10);
+  protected readonly first = signal(0);
   protected readonly pendingDecisions = signal<DispatchDecisionDto[]>([]);
   protected readonly quotaStatus = signal<AiQuotaStatusDto | null>(null);
   protected readonly trucks = signal<TruckDto[]>([]);
@@ -87,7 +95,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    this.loadData();
+    // Session data loads via p-table's onLazyLoad on first render
     this.setupSignalR();
   }
 
@@ -102,9 +110,6 @@ export class SessionsListPage implements OnInit, OnDestroy {
     const tenant = this.tenantService.getTenantData();
     if (!tenant?.id) return;
 
-    await this.trackingService.connect();
-    await this.trackingService.subscribeToDispatchBoard(tenant.id);
-
     this.trackingService.onReceiveDispatchAgentUpdate = () => {
       this.loadData();
     };
@@ -114,32 +119,50 @@ export class SessionsListPage implements OnInit, OnDestroy {
         this.pendingDecisions.update((list) => [...list, decision]);
       }
     };
+
+    await this.trackingService.connect();
+    await this.trackingService.subscribeToDispatchBoard(tenant.id);
   }
 
   protected async loadData(): Promise<void> {
     this.isLoading.set(true);
     try {
       const [sessionsRes, pending, quota, trucksRes] = await Promise.all([
-        this.api.invoke(getDispatchSessions, { Page: 1, PageSize: 20, OrderBy: "-StartedAt" }),
+        this.api.invoke(getDispatchSessions, {
+          Page: this.page(),
+          PageSize: this.pageSize(),
+          OrderBy: "-StartedAt",
+        }),
         this.api.invoke(getPendingDecisions),
         this.api.invoke(getAiQuotaStatus),
         this.api.invoke(getTrucks, { Status: "Available", PageSize: 100 }),
       ]);
 
       this.sessions.set(sessionsRes.items ?? []);
+      this.totalRecords.set(sessionsRes.pagination?.total ?? 0);
       this.pendingDecisions.set(pending ?? []);
       this.quotaStatus.set(quota);
       this.trucks.set(trucksRes.items ?? []);
+      this.dispatchBadgeService.pendingCount.set(this.writeDecisions().length);
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  protected onPageChange(event: TableLazyLoadEvent): void {
+    const first = event.first ?? 0;
+    const rows = event.rows ?? this.pageSize();
+    this.page.set(Math.floor(first / rows) + 1);
+    this.pageSize.set(rows);
+    this.first.set(first);
+    this.loadData();
   }
 
   protected async runAgent(mode: DispatchAgentMode): Promise<void> {
     this.isRunning.set(true);
     try {
       await this.api.invoke(runDispatchAgent, { body: { mode } });
-      this.toastService.showSuccess("Agent session started");
+      this.toastService.showSuccess("Agent session started — updates will appear in real-time");
       await this.loadData();
     } catch {
       this.toastService.showError("Failed to start agent session");

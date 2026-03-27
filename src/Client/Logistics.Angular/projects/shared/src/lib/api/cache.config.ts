@@ -9,6 +9,7 @@ interface CacheRule {
  */
 const cacheRules: CacheRule[] = [
   // No caching for frequently mutated data
+  { pattern: /\/dispatch\/agent/, ttl: 0 }, // AI dispatch - real-time updates via SignalR
   { pattern: /\/documents/, ttl: 0 }, // Documents change often, don't cache
   { pattern: /\/messages/, ttl: 0 }, // Real-time data, don't cache
   { pattern: /\/invoices/, ttl: 0 }, // Invoices change often with payments, don't cache

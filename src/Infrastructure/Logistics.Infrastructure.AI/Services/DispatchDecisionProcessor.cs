@@ -36,6 +36,7 @@ internal sealed class DispatchDecisionProcessor(
         CancellationToken ct)
     {
         var toolResults = new List<ContentBase>();
+        var decisions = new List<DispatchDecision>();
 
         foreach (var toolUse in toolUseBlocks)
         {
@@ -45,14 +46,21 @@ internal sealed class DispatchDecisionProcessor(
             ExtractEntityIds(decision, toolUse.Input);
             await tenantUow.Repository<DispatchDecision>().AddAsync(decision, CancellationToken.None);
             session.DecisionCount++;
-
-            await BroadcastDecisionAsync(decision);
+            decisions.Add(decision);
 
             toolResults.Add(new ToolResultContent
             {
                 ToolUseId = toolUse.Id,
                 Content = [new TextContent { Text = toolResult }]
             });
+        }
+
+        // Save all decisions first, then broadcast — ensures clients see committed data
+        await tenantUow.SaveChangesAsync(ct);
+
+        foreach (var decision in decisions)
+        {
+            await BroadcastDecisionAsync(decision);
         }
 
         return toolResults;

@@ -21,18 +21,24 @@ export class TrackingService extends BaseHubConnection {
   }
 
   set onReceiveGeolocationData(callback: (geolocation: TruckGeolocationDto) => void) {
+    this.hubConnection.off("ReceiveGeolocationData");
     this.hubConnection.on("ReceiveGeolocationData", callback);
   }
 
   set onReceiveDispatchAgentUpdate(callback: (update: DispatchAgentUpdate) => void) {
+    this.hubConnection.off("ReceiveDispatchAgentUpdate");
     this.hubConnection.on("ReceiveDispatchAgentUpdate", callback);
   }
 
   set onReceiveDispatchDecision(callback: (decision: DispatchDecisionDto) => void) {
+    this.hubConnection.off("ReceiveDispatchDecision");
     this.hubConnection.on("ReceiveDispatchDecision", callback);
   }
 
   async subscribeToDispatchBoard(tenantId: string): Promise<void> {
+    if (!this.isConnected) {
+      return;
+    }
     try {
       await this.hubConnection.invoke("SubscribeToDispatchBoard", tenantId);
     } catch (error) {
@@ -41,6 +47,9 @@ export class TrackingService extends BaseHubConnection {
   }
 
   async unsubscribeFromDispatchBoard(tenantId: string): Promise<void> {
+    if (!this.isConnected) {
+      return;
+    }
     try {
       await this.hubConnection.invoke("UnsubscribeFromDispatchBoard", tenantId);
     } catch (error) {

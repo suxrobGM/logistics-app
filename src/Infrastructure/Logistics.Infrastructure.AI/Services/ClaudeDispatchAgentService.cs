@@ -34,8 +34,9 @@ internal sealed class ClaudeDispatchAgentService(
             IsOverage = request.IsOverage
         };
 
-        await tenantUow.Repository<DispatchSession>().AddAsync(session);
+        await tenantUow.Repository<DispatchSession>().AddAsync(session, ct);
         await tenantUow.SaveChangesAsync(ct);
+        await BroadcastSessionUpdateAsync(session);
 
         logger.LogInformation(
             "Starting dispatch agent session {SessionId} in {Mode} mode (triggered by {UserId})",
@@ -94,13 +95,13 @@ internal sealed class ClaudeDispatchAgentService(
         for (var iteration = 0; iteration < MaxIterations; iteration++)
         {
             ct.ThrowIfCancellationRequested();
-
-            logger.LogDebug("Agent loop iteration {Iteration} for session {SessionId}",
-                iteration, session.Id);
-
             var response = await SendWithRetryAsync(client, parameters, session.Id, ct);
 
-            TrackTokenUsage(session, response, ref totalInputTokens, ref totalOutputTokens);
+            // Update token usage
+            totalInputTokens += response.Usage?.InputTokens ?? 0;
+            totalOutputTokens += response.Usage?.OutputTokens ?? 0;
+            session.TotalTokensUsed = totalInputTokens + totalOutputTokens;
+
             messages.Add(response.Message);
 
             var textContent = response.Content?.OfType<TextContent>().FirstOrDefault()?.Text;
@@ -120,9 +121,8 @@ internal sealed class ClaudeDispatchAgentService(
                 session, request.Mode, toolUseBlocks, textContent, ct);
 
             messages.Add(new Message { Role = RoleType.User, Content = toolResults });
-            await tenantUow.SaveChangesAsync(ct);
 
-            // Broadcast progress after each iteration so the UI updates in real-time
+            // Broadcast session progress after each iteration (decisions already saved + broadcast by ProcessToolCallsAsync)
             await BroadcastSessionUpdateAsync(session);
         }
     }
@@ -150,17 +150,6 @@ internal sealed class ClaudeDispatchAgentService(
         }
 
         throw new HttpRequestException("Rate limited by Claude API after maximum retries. Please try again later.");
-    }
-
-    private static void TrackTokenUsage(
-        DispatchSession session,
-        MessageResponse response,
-        ref int totalInputTokens,
-        ref int totalOutputTokens)
-    {
-        totalInputTokens += response.Usage?.InputTokens ?? 0;
-        totalOutputTokens += response.Usage?.OutputTokens ?? 0;
-        session.TotalTokensUsed = totalInputTokens + totalOutputTokens;
     }
 
     private static string SanitizeErrorMessage(Exception ex)

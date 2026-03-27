@@ -1,4 +1,5 @@
 export * from "./tracking.service";
+export * from "./dispatch-badge.service";
 export * from "./notification.service";
 export * from "./chat.service";
 export * from "./pdf.service";

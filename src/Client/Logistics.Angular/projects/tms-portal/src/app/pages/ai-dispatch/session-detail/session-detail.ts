@@ -1,4 +1,4 @@
-import { DatePipe, DecimalPipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import {
   Component,
   type OnDestroy,
@@ -8,7 +8,6 @@ import {
   input,
   signal,
 } from "@angular/core";
-import { Router } from "@angular/router";
 import { PageHeader } from "@logistics/shared";
 import {
   Api,
@@ -23,15 +22,16 @@ import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
-import { TooltipModule } from "primeng/tooltip";
 import { TenantService, ToastService, TrackingService } from "@/core/services";
 import { DateUtils, Labels } from "@/shared/utils";
+import { ApproveRejectActions } from "../components/approve-reject-actions/approve-reject-actions";
+import { ModeBadge } from "../components/mode-badge/mode-badge";
+import { ToolOutputSummary } from "../components/tool-output-summary/tool-output-summary";
 import {
   getToolIcon,
   getToolLabel,
   getToolMarkerClass,
   isWriteTool,
-  parseToolOutput,
 } from "../utils/decision-utils";
 import { MarkdownPipe } from "../utils/markdown";
 
@@ -41,18 +41,18 @@ import { MarkdownPipe } from "../utils/markdown";
   imports: [
     ButtonModule,
     TagModule,
-    TooltipModule,
     TimelineModule,
     ConfirmDialogModule,
     DatePipe,
-    DecimalPipe,
     PageHeader,
     MarkdownPipe,
+    ModeBadge,
+    ToolOutputSummary,
+    ApproveRejectActions,
   ],
 })
 export class SessionDetailPage implements OnInit, OnDestroy {
   private readonly api = inject(Api);
-  private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
   private readonly trackingService = inject(TrackingService);
   private readonly tenantService = inject(TenantService);
@@ -67,10 +67,29 @@ export class SessionDetailPage implements OnInit, OnDestroy {
   protected readonly getToolIcon = getToolIcon;
   protected readonly getToolMarkerClass = getToolMarkerClass;
   protected readonly isWriteTool = isWriteTool;
-  protected readonly parseToolOutput = parseToolOutput;
 
-  /** Track which decision IDs have expanded reasoning */
   protected readonly expandedDecisions = signal<Set<string>>(new Set());
+
+  protected readonly duration = computed(() => {
+    const s = this.session();
+    return DateUtils.formatDuration(s?.startedAt, s?.completedAt);
+  });
+
+  protected readonly statsItems = computed(() => {
+    const s = this.session();
+    if (!s) return [];
+    const datePipe = new DatePipe("en-US");
+    return [
+      { label: "Started", value: datePipe.transform(s.startedAt, "medium") ?? "—" },
+      {
+        label: "Completed",
+        value: s.completedAt ? datePipe.transform(s.completedAt, "medium") : "—",
+      },
+      { label: "Duration", value: this.duration() ?? "—" },
+      { label: "Decisions", value: String(s.decisionCount ?? 0) },
+      { label: "Tokens Used", value: (s.totalTokensUsed ?? 0).toLocaleString(), mono: true },
+    ];
+  });
 
   protected toggleExpand(decisionId: string): void {
     this.expandedDecisions.update((set) => {
@@ -88,11 +107,6 @@ export class SessionDetailPage implements OnInit, OnDestroy {
     return this.expandedDecisions().has(decisionId);
   }
 
-  protected readonly duration = computed(() => {
-    const s = this.session();
-    return DateUtils.formatDuration(s?.startedAt, s?.completedAt);
-  });
-
   ngOnInit(): void {
     this.loadSession();
     this.setupSignalR();
@@ -109,9 +123,6 @@ export class SessionDetailPage implements OnInit, OnDestroy {
     const tenant = this.tenantService.getTenantData();
     if (!tenant?.id) return;
 
-    await this.trackingService.connect();
-    await this.trackingService.subscribeToDispatchBoard(tenant.id);
-
     this.trackingService.onReceiveDispatchAgentUpdate = (update) => {
       if (update.sessionId === this.id()) {
         this.loadSession();
@@ -120,7 +131,6 @@ export class SessionDetailPage implements OnInit, OnDestroy {
 
     this.trackingService.onReceiveDispatchDecision = (decision) => {
       if (decision.sessionId === this.id()) {
-        // Add the new decision to the timeline in real-time
         this.session.update((s) => {
           if (!s) return s;
           const decisions = [...(s.decisions ?? []), decision];
@@ -128,6 +138,9 @@ export class SessionDetailPage implements OnInit, OnDestroy {
         });
       }
     };
+
+    await this.trackingService.connect();
+    await this.trackingService.subscribeToDispatchBoard(tenant.id);
   }
 
   protected async loadSession(): Promise<void> {
@@ -180,9 +193,5 @@ export class SessionDetailPage implements OnInit, OnDestroy {
     } catch {
       this.toastService.showError("Failed to cancel session");
     }
-  }
-
-  protected goBack(): void {
-    this.router.navigate(["/ai-dispatch"]);
   }
 }

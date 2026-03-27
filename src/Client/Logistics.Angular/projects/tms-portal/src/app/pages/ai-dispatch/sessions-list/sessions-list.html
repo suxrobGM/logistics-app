@@ -57,10 +57,10 @@
             </span>
             <span class="text-secondary text-sm">{{ quota.remaining }} remaining</span>
           </div>
-          <div class="bg-surface-200 h-2 rounded-full">
+          <div class="bg-subtle h-2 rounded-full">
             <div
               class="h-2 rounded-full transition-all"
-              [class]="quota.isOverQuota ? 'bg-orange-500' : 'bg-primary'"
+              [class]="quota.isOverQuota ? 'bg-warning' : 'bg-primary'"
               [style.width.%]="Math.min((quota.usedThisWeek! / quota.weeklyQuota!) * 100, 100)"
             ></div>
           </div>
@@ -110,7 +110,19 @@
   <!-- Session History -->
   <h2 class="text-primary mb-3 text-lg font-semibold">Session History</h2>
 
-  <p-table [value]="sessions()" [loading]="isLoading()" [rows]="20" [rowHover]="true">
+  <p-table
+    [value]="sessions()"
+    [loading]="isLoading()"
+    [lazy]="true"
+    [paginator]="true"
+    [rows]="pageSize()"
+    [first]="first()"
+    [totalRecords]="totalRecords()"
+    [rowsPerPageOptions]="[10, 25, 50]"
+    [showCurrentPageReport]="true"
+    [rowHover]="true"
+    (onLazyLoad)="onPageChange($event)"
+  >
     <ng-template #header>
       <tr>
         <th class="w-16">#</th>
@@ -125,13 +137,7 @@
     <ng-template #body let-session>
       <tr class="cursor-pointer" (click)="viewSession(session)">
         <td class="font-mono text-sm">{{ session.number }}</td>
-        <td>
-          @if (session.mode === "autonomous") {
-            <p-tag value="Autonomous" severity="warn" />
-          } @else {
-            <p-tag value="Suggestions" severity="info" />
-          }
-        </td>
+        <td><app-mode-badge [mode]="session.mode" /></td>
         <td>
           <p-tag
             [value]="session.status"
