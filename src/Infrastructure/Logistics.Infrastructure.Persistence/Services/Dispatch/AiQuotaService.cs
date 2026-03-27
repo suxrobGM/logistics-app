@@ -13,10 +13,10 @@ internal sealed class AiQuotaService(
 {
     public async Task<AiQuotaStatus> GetQuotaStatusAsync(Guid tenantId, CancellationToken ct = default)
     {
-        var weeklyQuota = await GetWeeklyQuotaAsync(tenantId, ct);
+        var (quota, planName) = await GetWeeklyQuotaAsync(tenantId, ct);
 
         // Unlimited quota (non-subscription tenants or plans without quota)
-        if (weeklyQuota is null)
+        if (quota is null)
             return new AiQuotaStatus(0, 0, 0, IsOverQuota: false);
 
         var weekStart = GetCurrentIsoWeekStart();
@@ -26,25 +26,26 @@ internal sealed class AiQuotaService(
                 (s.Status == DispatchSessionStatus.Running ||
                  s.Status == DispatchSessionStatus.Completed), ct);
 
-        var remaining = Math.Max(0, weeklyQuota.Value - usedThisWeek);
+        var remaining = Math.Max(0, quota.Value - usedThisWeek);
         return new AiQuotaStatus(
-            WeeklyQuota: weeklyQuota.Value,
+            WeeklyQuota: quota.Value,
             UsedThisWeek: usedThisWeek,
             Remaining: remaining,
-            IsOverQuota: usedThisWeek >= weeklyQuota.Value);
+            IsOverQuota: usedThisWeek >= quota.Value,
+            PlanName: planName);
     }
 
-    private async Task<int?> GetWeeklyQuotaAsync(Guid tenantId, CancellationToken ct)
+    private async Task<(int? Quota, string? PlanName)> GetWeeklyQuotaAsync(Guid tenantId, CancellationToken ct)
     {
         var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(tenantId, ct);
 
         if (tenant is null || tenant.Subscription is null)
-            return null;
+            return (null, null);
 
         var plan = await masterUow.Repository<SubscriptionPlan>()
             .GetByIdAsync(tenant.Subscription.PlanId, ct);
 
-        return plan?.WeeklyAiSessionQuota;
+        return (plan?.WeeklyAiSessionQuota, plan?.Name);
     }
 
     private static DateTime GetCurrentIsoWeekStart()

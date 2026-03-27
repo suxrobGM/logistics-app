@@ -9,4 +9,5 @@ public record AiQuotaStatus(
     int WeeklyQuota,
     int UsedThisWeek,
     int Remaining,
-    bool IsOverQuota);
+    bool IsOverQuota,
+    string? PlanName = null);

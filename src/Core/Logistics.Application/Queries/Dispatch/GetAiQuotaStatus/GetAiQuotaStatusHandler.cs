@@ -19,7 +19,8 @@ internal sealed class GetAiQuotaStatusHandler(
             WeeklyQuota = status.WeeklyQuota,
             UsedThisWeek = status.UsedThisWeek,
             Remaining = status.Remaining,
-            IsOverQuota = status.IsOverQuota
+            IsOverQuota = status.IsOverQuota,
+            PlanName = status.PlanName
         });
     }
 }

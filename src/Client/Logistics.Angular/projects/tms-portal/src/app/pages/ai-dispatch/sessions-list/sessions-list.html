@@ -46,30 +46,37 @@
   </div>
 
   <!-- AI Quota Usage -->
-  @if (quotaStatus(); as quota) {
-    @if (quota.weeklyQuota! > 0) {
-      <div class="bg-subtle border-default mb-6 flex items-center gap-4 rounded-lg border p-4">
-        <i class="pi pi-bolt text-primary text-xl"></i>
-        <div class="flex-1">
-          <div class="mb-1 flex items-center justify-between">
-            <span class="font-medium">
-              AI Dispatch: {{ quota.usedThisWeek }} / {{ quota.weeklyQuota }} sessions this week
-            </span>
-            <span class="text-secondary text-sm">{{ quota.remaining }} remaining</span>
-          </div>
-          <div class="bg-subtle h-2 rounded-full">
-            <div
-              class="h-2 rounded-full transition-all"
-              [class]="quota.isOverQuota ? 'bg-warning' : 'bg-primary'"
-              [style.width.%]="Math.min((quota.usedThisWeek! / quota.weeklyQuota!) * 100, 100)"
-            ></div>
-          </div>
+  @let quota = quotaStatus();
+
+  @if (quota && quota.weeklyQuota! > 0) {
+    <div class="border-default bg-elevated mb-6 rounded-lg border p-4">
+      <div class="mb-3 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i class="pi pi-bolt text-primary"></i>
+          <span class="font-semibold">AI Dispatch Usage</span>
+          @if (quota.planName) {
+            <p-tag [value]="quota.planName" severity="info" [style]="{ fontSize: '0.7rem' }" />
+          }
         </div>
         @if (quota.isOverQuota) {
           <p-tag value="Overage — $0.40/session" severity="warn" />
         }
       </div>
-    }
+      <div class="mb-2 flex items-baseline justify-between">
+        <span class="text-2xl font-bold">
+          {{ quota.usedThisWeek }}
+          <span class="text-muted text-sm font-normal">/ {{ quota.weeklyQuota }}</span>
+        </span>
+        <span class="text-muted text-sm">{{ quota.remaining }} remaining this week</span>
+      </div>
+      <div class="bg-default h-2 overflow-hidden rounded-full">
+        <div
+          class="h-2 rounded-full transition-all duration-500"
+          [class]="quota.isOverQuota ? 'bg-warning' : 'bg-primary'"
+          [style.width.%]="Math.min((quota.usedThisWeek! / quota.weeklyQuota!) * 100, 100)"
+        ></div>
+      </div>
+    </div>
   }
 
   <!-- Pending Decisions with Map -->
@@ -165,6 +172,4 @@
       </tr>
     </ng-template>
   </p-table>
-
-  <p-confirmDialog />
 </div>
