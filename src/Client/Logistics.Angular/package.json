@@ -34,6 +34,7 @@
     "@microsoft/signalr": "^10.0.0",
     "@ngrx/signals": "^21.0.1",
     "@primeuix/themes": "^2.0.3",
+    "@tailwindcss/typography": "^0.5.19",
     "angular-auth-oidc-client": "^21.0.1",
     "angular-gridster2": "^21.0.1",
     "chart.js": "^4.5.1",
