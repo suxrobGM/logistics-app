@@ -172,6 +172,7 @@ internal sealed class ProcessStripEventHandler(
         }
 
         subscription.Status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
+        subscription.CancelAtPeriodEnd = stripeSubscription.CancelAtPeriodEnd;
 
         // Update plan if changed
         if (metadata.TryGetValue(StripeMetadataKeys.PlanId, out var planId)

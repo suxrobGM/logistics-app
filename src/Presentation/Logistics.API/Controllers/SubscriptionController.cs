@@ -92,7 +92,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     [HttpGet("billing-portal", Name = "GetBillingPortalUrl")]
     [ProducesResponseType(typeof(BillingPortalUrlDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager},{TenantRoles.Owner},{TenantRoles.Manager}")]
     public async Task<IActionResult> GetBillingPortalUrl([FromQuery] string returnUrl)
     {
         var result = await mediator.Send(new GetBillingPortalUrlQuery { ReturnUrl = returnUrl });

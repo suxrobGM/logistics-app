@@ -31,6 +31,7 @@ internal sealed class CancelSubscriptionHandler(
             var stripeSubscription =
                 await stripeSubscriptionService.CancelSubscriptionAsync(subscription.StripeSubscriptionId, false);
             status = StripeObjectMapper.GetSubscriptionStatus(stripeSubscription.Status);
+            subscription.CancelAtPeriodEnd = stripeSubscription.CancelAtPeriodEnd;
         }
 
         subscription.Status = status ?? SubscriptionStatus.Cancelled;

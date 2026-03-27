@@ -1,10 +1,10 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, inject, signal, viewChild } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
+import { ToastService } from "@logistics/shared";
 import { Api, cancelSubscription, deleteSubscription } from "@logistics/shared/api";
 import type { SubscriptionDto } from "@logistics/shared/api";
 import { DataContainer, PageHeader, SearchInput } from "@logistics/shared/components";
-import { ToastService } from "@logistics/shared";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -30,7 +30,6 @@ import { SubscriptionsListStore } from "../store/subscriptions-list.store";
     PageHeader,
     SearchInput,
     TagModule,
-    DatePipe,
     MenuModule,
   ],
 })
@@ -80,7 +79,8 @@ export class SubscriptionsList {
 
   protected confirmToCancel(id: string): void {
     this.toastService.confirm({
-      message: "Are you sure you want to cancel this subscription? The subscription will be cancelled at the end of the current billing period.",
+      message:
+        "Are you sure you want to cancel this subscription? The subscription will be cancelled at the end of the current billing period.",
       header: "Confirm Cancel",
       icon: "pi pi-exclamation-triangle",
       acceptButtonStyleClass: "p-button-warning",
@@ -104,7 +104,9 @@ export class SubscriptionsList {
     this.store.removeItem(id);
   }
 
-  protected getStatusSeverity(status?: string): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
+  protected getStatusSeverity(
+    status?: string,
+  ): "success" | "secondary" | "info" | "warn" | "danger" | "contrast" {
     switch (status) {
       case "active":
         return "success";

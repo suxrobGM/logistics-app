@@ -10,6 +10,7 @@ public class Subscription : Entity, IMasterEntity
     public virtual required Tenant Tenant { get; set; }
     public required Guid PlanId { get; set; }
     public virtual required SubscriptionPlan Plan { get; set; }
+    public bool CancelAtPeriodEnd { get; set; }
     public string? StripeSubscriptionId { get; set; }
     public string? StripeCustomerId { get; set; }
 }

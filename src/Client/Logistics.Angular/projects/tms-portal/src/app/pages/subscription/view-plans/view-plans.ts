@@ -36,6 +36,9 @@ const featureLabels: Record<TenantFeature, string> = {
   trips: "Trips",
   reports: "Reports",
   agentic_dispatch: "AI Dispatch",
+  priority_support: "Priority Support",
+  api_access: "API Access",
+  telegram_bot: "Telegram Bot",
 };
 
 /** All features in display order */
@@ -59,6 +62,9 @@ const allFeatures: TenantFeature[] = [
   "safety",
   "maintenance",
   "agentic_dispatch",
+  "priority_support",
+  "api_access",
+  "telegram_bot",
 ];
 
 @Component({

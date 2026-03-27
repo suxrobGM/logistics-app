@@ -101,12 +101,18 @@ internal sealed class StripeSubscriptionService(
         // Scheduled to cancel but not yet → reactivate
         if (stripeSub.CancelAtPeriodEnd && stripeSub.Status != "canceled")
         {
-            var reactivated = await subSvc.UpdateAsync(stripeSub.Id, new SubscriptionUpdateOptions
+            var updateOptions = new SubscriptionUpdateOptions
             {
-                CancelAtPeriodEnd = false,
-                BillingCycleAnchor = SubscriptionBillingCycleAnchor.Now,
-                ProrationBehavior = "none"
-            });
+                CancelAtPeriodEnd = false
+            };
+
+            // Clear trial if it conflicts with the current period
+            if (stripeSub.TrialEnd.HasValue && stripeSub.TrialEnd.Value > DateTime.UtcNow)
+            {
+                updateOptions.TrialEnd = SubscriptionTrialEnd.Now;
+            }
+
+            var reactivated = await subSvc.UpdateAsync(stripeSub.Id, updateOptions);
             Logger.LogInformation("Tenant {TenantId} reactivated subscription", tenant.Id);
             return reactivated;
         }

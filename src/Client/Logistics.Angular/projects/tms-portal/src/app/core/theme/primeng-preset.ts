@@ -28,18 +28,17 @@ export const TmsPreset = definePreset(Nora, {
     },
     button: {
       css: ({ dt }) => `
-        .p-button:not(.p-button-text):not(.p-button-outlined):not(.p-button-link):not([severity]) {
+        .p-button-primary:not(.p-button-text):not(.p-button-outlined):not(.p-button-link) {
           background: linear-gradient(135deg, ${dt("primary.500")}, ${dt("primary.600")});
           border: none;
           font-weight: 600;
         }
-        .p-button:not(.p-button-text):not(.p-button-outlined):not(.p-button-link):not([severity]):hover:not(:disabled) {
+        .p-button-primary:not(.p-button-text):not(.p-button-outlined):not(.p-button-link):hover:not(:disabled) {
           background: linear-gradient(135deg, ${dt("primary.400")}, ${dt("primary.500")});
         }
       `,
     },
   },
-
   semantic: {
     primary: {
       50: "{cyan.50}",

@@ -37,7 +37,9 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         TenantFeature.Eld,
         TenantFeature.LoadBoard,
         TenantFeature.Payroll,
-        TenantFeature.Timesheets
+        TenantFeature.Timesheets,
+        TenantFeature.Safety,
+        TenantFeature.Maintenance
     ];
 
     private static readonly TenantFeature[] EnterpriseFeatures =

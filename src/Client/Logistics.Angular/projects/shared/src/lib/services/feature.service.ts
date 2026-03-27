@@ -117,4 +117,7 @@ export const FEATURE_DESCRIPTIONS: Record<TenantFeature, string> = {
   trips: "Trip planning and management",
   reports: "Generate and view reports",
   agentic_dispatch: "AI-powered dispatch agent",
+  priority_support: "Priority customer support",
+  api_access: "API access and documentation",
+  telegram_bot: "Telegram bot integration",
 };

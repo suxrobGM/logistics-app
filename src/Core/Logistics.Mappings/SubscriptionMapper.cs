@@ -13,6 +13,7 @@ public static class SubscriptionMapper
             Status = entity.Status,
             Tenant = GetTenantDto(entity.Tenant),
             Plan = entity.Plan.ToDto(),
+            CancelAtPeriodEnd = entity.CancelAtPeriodEnd,
             StripeSubscriptionId = entity.StripeSubscriptionId,
             StripeCustomerId = entity.StripeCustomerId,
         };

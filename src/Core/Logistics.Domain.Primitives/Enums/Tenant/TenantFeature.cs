@@ -30,5 +30,14 @@ public enum TenantFeature
     Reports,
 
     [Description("AI Dispatch")]
-    AgenticDispatch
+    AgenticDispatch,
+
+    [Description("Priority Support")]
+    PrioritySupport,
+
+    [Description("API Access")]
+    ApiAccess,
+
+    [Description("Telegram Bot")]
+    TelegramBot
 }

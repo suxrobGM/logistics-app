@@ -1,14 +1,11 @@
 import { CommonModule } from "@angular/common";
-import { Component, effect, inject, signal } from "@angular/core";
+import { Component, computed, effect, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, renewSubscription } from "@logistics/shared/api";
 import type { SubscriptionDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TenantService, ToastService } from "@/core/services";
 import { Labels, type SeverityLevel } from "@/shared/utils";
@@ -16,17 +13,7 @@ import { Labels, type SeverityLevel } from "@/shared/utils";
 @Component({
   selector: "app-renew-subscription",
   templateUrl: "./renew-subscription.html",
-  imports: [
-    CommonModule,
-    CardModule,
-    ButtonModule,
-    TableModule,
-    DialogModule,
-    InputNumberModule,
-    TagModule,
-    ConfirmDialogModule,
-    RouterModule,
-  ],
+  imports: [CommonModule, CardModule, ButtonModule, TagModule, ConfirmDialogModule, RouterModule],
 })
 export class RenewSubscriptionComponent {
   private readonly tenantService = inject(TenantService);
@@ -34,10 +21,12 @@ export class RenewSubscriptionComponent {
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
 
-  protected readonly truckCount = signal(0);
   protected readonly subscription = signal<SubscriptionDto | null>(null);
+  protected readonly truckCount = signal(0);
   protected readonly isLoading = signal(false);
   protected readonly Labels = Labels;
+
+  protected readonly planName = computed(() => this.subscription()?.plan?.name ?? "Unknown");
 
   constructor() {
     effect(() => {
@@ -48,16 +37,12 @@ export class RenewSubscriptionComponent {
   }
 
   getSubStatusSeverity(): SeverityLevel {
-    if (!this.subscription()) {
-      return "info";
-    }
+    if (!this.subscription()) return "info";
     return Labels.subscriptionStatusSeverity(this.subscription()!);
   }
 
   getSubStatusLabel(): string {
-    if (!this.subscription()) {
-      return "Unknown";
-    }
+    if (!this.subscription()) return "Unknown";
     return Labels.subscriptionStatus(this.subscription()!);
   }
 
@@ -69,11 +54,12 @@ export class RenewSubscriptionComponent {
 
   confirmRenewSubscription(): void {
     this.toastService.confirm({
-      message:
-        "Are you sure you want to renew the subscription? By renewing the subscription, you agree to the terms and conditions.",
-      accept: () => {
-        this.renewSubscription();
-      },
+      message: `Resume your ${this.planName()} subscription? Your billing will restart and you'll regain full access.`,
+      header: "Resume Subscription",
+      icon: "pi pi-refresh",
+      acceptLabel: "Yes, Resume",
+      rejectLabel: "Cancel",
+      accept: () => this.renewSubscription(),
     });
   }
 
@@ -82,11 +68,12 @@ export class RenewSubscriptionComponent {
 
     await this.api.invoke(renewSubscription, {
       id: this.subscription()!.id!,
+      body: {},
     });
 
     this.tenantService.refetchTenantData();
-    this.toastService.showSuccess("Subscription renewed successfully", "Renew Subscription");
-    this.router.navigateByUrl("/");
+    this.toastService.showSuccess("Subscription resumed successfully");
+    this.router.navigateByUrl("/subscription/manage");
 
     this.isLoading.set(false);
   }

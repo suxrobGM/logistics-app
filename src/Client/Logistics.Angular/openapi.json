@@ -20900,6 +20900,9 @@
           "plan": {
             "$ref": "#/components/schemas/SubscriptionPlanDto"
           },
+          "cancelAtPeriodEnd": {
+            "type": "boolean"
+          },
           "stripeSubscriptionId": {
             "type": "string",
             "nullable": true

@@ -1,12 +1,24 @@
-<h1 class="text-center">Renew subscription</h1>
+<div class="mx-auto max-w-2xl py-8">
+  <!-- Warning Banner -->
+  <div class="mb-6 rounded-xl border border-orange-200 bg-orange-50 p-5">
+    <div class="flex items-start gap-3">
+      <i class="pi pi-exclamation-triangle mt-0.5 text-xl text-orange-500"></i>
+      <div>
+        <h3 class="m-0 text-lg font-semibold text-orange-800">Subscription Pending Cancellation</h3>
+        <p class="mt-1 mb-0 text-sm text-orange-700">
+          Your {{ planName() }} plan is scheduled to be cancelled at the end of the current billing
+          period. Resume now to keep your access.
+        </p>
+      </div>
+    </div>
+  </div>
 
-<div class="flex flex-col gap-2">
-  <div class="col-span-12">
-    <p-card header="Current Plan">
-      <div class="grid grid-cols-12">
-        <div class="col-span-6 font-bold">Plan:</div>
-        <div class="col-span-6 flex items-center gap-2">
-          {{ subscription()?.plan?.name }}
+  <!-- Plan Summary -->
+  <p-card>
+    <ng-template #header>
+      <div class="p-4 pb-0">
+        <div class="flex items-center justify-between">
+          <h3 class="m-0 text-lg font-semibold">Resume {{ planName() }} Plan</h3>
           @if (subscription()?.plan?.tier) {
             <p-tag
               [severity]="Labels.planTierSeverity(subscription()!.plan!.tier!)"
@@ -14,44 +26,49 @@
             />
           }
         </div>
+      </div>
+    </ng-template>
 
-        <div class="col-span-6 font-bold">Base Monthly Fee:</div>
-        <div class="col-span-6">{{ subscription()?.plan?.price | currency }}</div>
-
-        <div class="col-span-6 font-bold">Per Truck Fee:</div>
-        <div class="col-span-6">{{ subscription()?.plan?.perTruckPrice | currency }} / truck</div>
-
-        <div class="col-span-6 font-bold">Number of Trucks:</div>
-        <div class="col-span-6">{{ truckCount() }}</div>
-
-        <div class="col-span-6 font-bold">Total Monthly Cost:</div>
-        <div class="col-span-6">{{ calcTotalSubscriptionCost() | currency }}</div>
-
-        <div class="col-span-6 font-bold">Status:</div>
-        <div class="col-span-6">
-          <p-tag [severity]="getSubStatusSeverity()" class="text-center">
-            {{ getSubStatusLabel() }}
-          </p-tag>
+    <div class="space-y-3">
+      <div class="flex items-center justify-between">
+        <span class="text-muted">Base monthly fee</span>
+        <span class="font-medium">{{ subscription()?.plan?.price | currency }}</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-muted">Per truck fee</span>
+        <span class="font-medium">
+          {{ subscription()?.plan?.perTruckPrice | currency }} / truck
+        </span>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-muted">Active trucks</span>
+        <span class="font-medium">{{ truckCount() }}</span>
+      </div>
+      <div class="border-default border-t pt-3">
+        <div class="flex items-center justify-between">
+          <span class="font-semibold">Estimated monthly total</span>
+          <span class="text-lg font-bold">{{ calcTotalSubscriptionCost() | currency }}</span>
         </div>
       </div>
+    </div>
 
-      <ng-template #footer>
-        <div class="flex gap-2">
-          <!-- <p-button
-            [routerLink]="'/subscription/plans'"
-            label="Change Plan"
-            icon="pi pi-credit-card"
-          /> -->
-          <p-button
-            label="Renew"
-            icon="pi pi-credit-card"
-            [disabled]="isLoading()"
-            [loading]="isLoading()"
-            (click)="confirmRenewSubscription()"
-          />
-        </div>
-      </ng-template>
-    </p-card>
-  </div>
-
+    <ng-template #footer>
+      <div class="flex gap-2">
+        <p-button
+          label="Resume Subscription"
+          icon="pi pi-refresh"
+          severity="success"
+          [loading]="isLoading()"
+          [disabled]="isLoading()"
+          (click)="confirmRenewSubscription()"
+        />
+        <p-button
+          label="Back"
+          icon="pi pi-arrow-left"
+          severity="secondary"
+          [routerLink]="'/subscription/manage'"
+        />
+      </div>
+    </ng-template>
+  </p-card>
 </div>

@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, signal } from "@angular/core";
-import { Router, RouterModule } from "@angular/router";
+import { Component, computed, effect, inject, signal } from "@angular/core";
+import { RouterModule } from "@angular/router";
 import { Api, cancelSubscription, getBillingPortalUrl } from "@logistics/shared/api";
 import type { SubscriptionDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
@@ -13,45 +13,43 @@ import { Labels, type SeverityLevel } from "@/shared/utils";
 @Component({
   selector: "app-manage-subscription",
   templateUrl: "./manage-subscription.html",
-  imports: [
-    CommonModule,
-    CardModule,
-    ButtonModule,
-    TagModule,
-    ConfirmDialogModule,
-    RouterModule,
-  ],
+  imports: [CommonModule, CardModule, ButtonModule, TagModule, ConfirmDialogModule, RouterModule],
 })
 export class ManageSubscriptionComponent {
   private readonly tenantService = inject(TenantService);
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
-  private readonly router = inject(Router);
 
-  protected readonly subscription: SubscriptionDto | null;
-  protected readonly truckCount: number;
+  protected readonly subscription = signal<SubscriptionDto | null>(null);
+  protected readonly truckCount = signal(0);
   protected readonly isLoading = signal(false);
-  protected readonly isCancelled = signal(false);
-  protected readonly hasSubscription: boolean;
   protected readonly Labels = Labels;
 
+  protected readonly hasSubscription = computed(() => this.subscription() != null);
+  protected readonly isCancelledOrPending = computed(() => {
+    const sub = this.subscription();
+    return sub?.status === "cancelled" || sub?.cancelAtPeriodEnd === true;
+  });
+
   constructor() {
-    const tenantData = this.tenantService.getTenantData();
-    this.subscription = tenantData?.subscription ?? null;
-    this.hasSubscription = this.subscription != null;
-    this.truckCount = tenantData?.truckCount ?? 0;
+    effect(() => {
+      const tenantData = this.tenantService.tenantData();
+      this.subscription.set(tenantData?.subscription ?? null);
+      this.truckCount.set(tenantData?.truckCount ?? 0);
+    });
   }
 
   getSubStatusSeverity(): SeverityLevel {
-    return Labels.subscriptionStatusSeverity(this.subscription!);
+    return Labels.subscriptionStatusSeverity(this.subscription()!);
   }
 
   getSubStatusLabel(): string {
-    return Labels.subscriptionStatus(this.subscription!);
+    return Labels.subscriptionStatus(this.subscription()!);
   }
 
   confirmCancelSubscription(): void {
-    if (!this.subscription) return;
+    const sub = this.subscription();
+    if (!sub) return;
 
     this.toastService.confirm({
       message:
@@ -70,14 +68,12 @@ export class ManageSubscriptionComponent {
         this.isLoading.set(true);
 
         await this.api.invoke(cancelSubscription, {
-          id: this.subscription!.id!,
+          id: sub.id!,
+          body: {},
         });
 
         this.toastService.showSuccess("Subscription cancelled successfully");
-        this.isCancelled.set(true);
         this.tenantService.refetchTenantData();
-        this.router.navigateByUrl("/");
-
         this.isLoading.set(false);
       },
     });
@@ -95,17 +91,11 @@ export class ManageSubscriptionComponent {
     this.isLoading.set(false);
   }
 
-  isSubscriptionCancelled(): boolean {
-    return this.subscription?.status === "cancelled";
-  }
-
-  isActiveSubscription(): boolean {
-    return this.subscription?.status === "active";
-  }
-
-  calcTotalSubscriptionCost(subscription: SubscriptionDto): number {
-    const baseFee = subscription.plan?.price ?? 0;
-    const perTruckFee = subscription.plan?.perTruckPrice ?? 0;
-    return baseFee + perTruckFee * this.truckCount;
+  calcTotalSubscriptionCost(): number {
+    const sub = this.subscription();
+    if (!sub) return 0;
+    const baseFee = sub.plan?.price ?? 0;
+    const perTruckFee = sub.plan?.perTruckPrice ?? 0;
+    return baseFee + perTruckFee * this.truckCount();
   }
 }
