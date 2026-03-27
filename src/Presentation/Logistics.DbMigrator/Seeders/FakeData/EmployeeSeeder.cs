@@ -28,12 +28,11 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
 
         var tenant = context.DefaultTenant ?? throw new InvalidOperationException("Default tenant not seeded");
 
-        // Load users from shared context or from database (if UserSeeder was skipped)
+        // Load users from shared context or from database in config order (if UserSeeder was skipped)
         var users = context.CreatedUsers;
         if (users is null || users.Count == 0)
         {
-            users = await context.MasterUnitOfWork.Repository<User>()
-                .GetListAsync(u => u.TenantId == tenant.Id, cancellationToken);
+            users = await LoadUsersInConfigOrderAsync(context, cancellationToken);
         }
 
         if (users.Count == 0)
@@ -88,6 +87,27 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
 
         context.CreatedEmployees = companyEmployees;
         LogCompleted(companyEmployees.AllEmployees.Count);
+    }
+
+    /// <summary>
+    /// Loads users from database in the same order as fake-dataset.json to preserve role assignments.
+    /// </summary>
+    private static async Task<IList<User>> LoadUsersInConfigOrderAsync(
+        SeederContext context, CancellationToken ct)
+    {
+        var testUsers = context.Configuration.GetSection("Users").Get<UserData[]>();
+        if (testUsers is null || testUsers.Length == 0)
+            return [];
+
+        var orderedUsers = new List<User>();
+        foreach (var fakeUser in testUsers)
+        {
+            var user = await context.UserManager.FindByNameAsync(fakeUser.Email);
+            if (user is not null)
+                orderedUsers.Add(user);
+        }
+
+        return orderedUsers;
     }
 
     private async Task<Employee> CreateEmployeeAsync(
