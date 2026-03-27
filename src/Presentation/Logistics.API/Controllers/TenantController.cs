@@ -116,4 +116,26 @@ public class TenantController(IMediator mediator) : ControllerBase
     }
 
     #endregion
+
+    #region AI Quota Management
+
+    [HttpGet("quotas", Name = "GetTenantQuotaUsages")]
+    [ProducesResponseType(typeof(PagedResponse<TenantQuotaUsageDto>), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Tenant.Manage)]
+    public async Task<IActionResult> GetQuotaUsages([FromQuery] GetTenantQuotaUsagesQuery query)
+    {
+        var result = await mediator.Send(query);
+        return Ok(PagedResponse<TenantQuotaUsageDto>.FromPagedResult(result, query.Page, query.PageSize));
+    }
+
+    [HttpPost("quotas/reset", Name = "ResetTenantQuotas")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [Authorize(Policy = Permission.Tenant.Manage)]
+    public async Task<IActionResult> ResetQuotas([FromBody] ResetTenantQuotasCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    #endregion
 }

@@ -22,6 +22,7 @@ import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TableModule } from "primeng/table";
 import type { TableLazyLoadEvent } from "primeng/table";
+import { ProgressBar } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DispatchBadgeService, TenantService, ToastService, TrackingService } from "@/core/services";
@@ -42,6 +43,7 @@ import { stripMarkdown } from "../utils/markdown";
     ConfirmDialogModule,
     DatePipe,
     PageHeader,
+    ProgressBar,
     GeolocationMap,
     DecisionCard,
     ModeBadge,

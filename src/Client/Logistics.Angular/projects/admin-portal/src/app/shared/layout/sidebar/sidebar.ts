@@ -32,6 +32,12 @@ export class Sidebar {
       permission: Permission.Tenant.View,
     },
     {
+      label: "AI Quotas",
+      icon: "pi pi-sparkles",
+      routerLink: "/tenants/quotas",
+      permission: Permission.Tenant.Manage,
+    },
+    {
       label: "Features",
       icon: "pi pi-th-large",
       routerLink: "/features",

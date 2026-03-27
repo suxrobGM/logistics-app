@@ -1,7 +1,7 @@
-using System.Globalization;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,47 +13,51 @@ internal sealed class AiQuotaService(
 {
     public async Task<AiQuotaStatus> GetQuotaStatusAsync(Guid tenantId, CancellationToken ct = default)
     {
-        var (quota, planName) = await GetWeeklyQuotaAsync(tenantId, ct);
+        var tenantInfo = await GetTenantQuotaInfoAsync(tenantId, ct);
 
         // Unlimited quota (non-subscription tenants or plans without quota)
-        if (quota is null)
+        if (tenantInfo is null)
             return new AiQuotaStatus(0, 0, 0, IsOverQuota: false);
 
-        var weekStart = GetCurrentIsoWeekStart();
+        var (quota, planName, quotaResetAt) = tenantInfo.Value;
+
+        // If tenant has a quota reset this week, count from that date; otherwise use ISO week start
+        var weekStart = DateTimeHelpers.GetCurrentIsoWeekStart();
+        var countFrom = quotaResetAt > weekStart ? quotaResetAt.Value : weekStart;
+
         var usedThisWeek = await tenantUow.Repository<DispatchSession>().Query()
             .CountAsync(s =>
-                s.StartedAt >= weekStart &&
+                s.StartedAt >= countFrom &&
                 (s.Status == DispatchSessionStatus.Running ||
                  s.Status == DispatchSessionStatus.Completed), ct);
 
-        var remaining = Math.Max(0, quota.Value - usedThisWeek);
+        var remaining = Math.Max(0, quota - usedThisWeek);
+        var resetsAt = countFrom.AddDays(7);
+
         return new AiQuotaStatus(
-            WeeklyQuota: quota.Value,
+            WeeklyQuota: quota,
             UsedThisWeek: usedThisWeek,
             Remaining: remaining,
-            IsOverQuota: usedThisWeek >= quota.Value,
-            PlanName: planName);
+            IsOverQuota: usedThisWeek >= quota,
+            PlanName: planName,
+            ResetsAt: resetsAt);
     }
 
-    private async Task<(int? Quota, string? PlanName)> GetWeeklyQuotaAsync(Guid tenantId, CancellationToken ct)
+    private async Task<(int Quota, string? PlanName, DateTime? QuotaResetAt)?> GetTenantQuotaInfoAsync(
+        Guid tenantId, CancellationToken ct)
     {
         var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(tenantId, ct);
 
         if (tenant is null || tenant.Subscription is null)
-            return (null, null);
+            return null;
 
         var plan = await masterUow.Repository<SubscriptionPlan>()
             .GetByIdAsync(tenant.Subscription.PlanId, ct);
 
-        return (plan?.WeeklyAiSessionQuota, plan?.Name);
+        if (plan?.WeeklyAiSessionQuota is null)
+            return null;
+
+        return (plan.WeeklyAiSessionQuota.Value, plan.Name, tenant.QuotaResetAt);
     }
 
-    private static DateTime GetCurrentIsoWeekStart()
-    {
-        var today = DateTime.UtcNow.Date;
-        var dayOfWeek = (int)today.DayOfWeek;
-        // ISO weeks start on Monday (DayOfWeek.Sunday = 0, Monday = 1)
-        var daysToSubtract = dayOfWeek == 0 ? 6 : dayOfWeek - 1;
-        return today.AddDays(-daysToSubtract);
-    }
 }

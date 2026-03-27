@@ -1,6 +1,7 @@
 import type { Routes } from "@angular/router";
 import { TenantAdd } from "./tenant-add/tenant-add";
 import { TenantEdit } from "./tenant-edit/tenant-edit";
+import { TenantQuotas } from "./tenant-quotas/tenant-quotas";
 import { TenantsList } from "./tenants-list/tenants-list";
 
 export const tenantRoutes: Routes = [
@@ -16,6 +17,13 @@ export const tenantRoutes: Routes = [
     component: TenantAdd,
     data: {
       breadcrumb: "Add",
+    },
+  },
+  {
+    path: "quotas",
+    component: TenantQuotas,
+    data: {
+      breadcrumb: "AI Quotas",
     },
   },
   {

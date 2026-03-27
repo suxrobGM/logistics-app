@@ -7,4 +7,5 @@ public record AiQuotaStatusDto
     public int Remaining { get; set; }
     public bool IsOverQuota { get; set; }
     public string? PlanName { get; set; }
+    public DateTime ResetsAt { get; set; }
 }

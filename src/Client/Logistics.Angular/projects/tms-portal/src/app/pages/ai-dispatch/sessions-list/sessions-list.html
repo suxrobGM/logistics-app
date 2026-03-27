@@ -67,15 +67,15 @@
           {{ quota.usedThisWeek }}
           <span class="text-muted text-sm font-normal">/ {{ quota.weeklyQuota }}</span>
         </span>
-        <span class="text-muted text-sm">{{ quota.remaining }} remaining this week</span>
+        <span class="text-muted text-sm">
+          {{ quota.remaining }} remaining · Resets {{ quota.resetsAt | date: "EEE, MMM d, h:mm a" }}
+        </span>
       </div>
-      <div class="bg-default h-2 overflow-hidden rounded-full">
-        <div
-          class="h-2 rounded-full transition-all duration-500"
-          [class]="quota.isOverQuota ? 'bg-warning' : 'bg-primary'"
-          [style.width.%]="Math.min((quota.usedThisWeek! / quota.weeklyQuota!) * 100, 100)"
-        ></div>
-      </div>
+      <p-progressBar
+        [value]="Math.min((quota.usedThisWeek! / quota.weeklyQuota!) * 100, 100)"
+        [showValue]="false"
+        [style]="{ height: '0.5rem' }"
+      />
     </div>
   }
 

@@ -10,4 +10,5 @@ public record AiQuotaStatus(
     int UsedThisWeek,
     int Remaining,
     bool IsOverQuota,
-    string? PlanName = null);
+    string? PlanName = null,
+    DateTime ResetsAt = default);

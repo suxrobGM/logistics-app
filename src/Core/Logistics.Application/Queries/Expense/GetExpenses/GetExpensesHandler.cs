@@ -50,49 +50,19 @@ internal sealed class GetExpensesHandler(ITenantUnitOfWork tenantUow)
         {
             var search = req.Search.ToLower();
             query = query.Where(e =>
-                (e.VendorName ?? "").ToLower().Contains(search) ||
-                (e.Notes ?? "").ToLower().Contains(search));
+                (e.VendorName ?? "").Contains(search, StringComparison.CurrentCultureIgnoreCase) ||
+                (e.Notes ?? "").Contains(search, StringComparison.CurrentCultureIgnoreCase));
         }
 
         var totalItems = await query.CountAsync(ct);
 
-        // Apply sorting
-        query = ApplySorting(query, req.OrderBy);
-
-        // Apply pagination
         var expenses = await query
-            .Skip((req.Page - 1) * req.PageSize)
-            .Take(req.PageSize)
+            .OrderBy(req.OrderBy ?? "-ExpenseDate")
+            .ApplyPaging(req.Page, req.PageSize)
             .ToListAsync(ct);
 
         var dtos = expenses.Select(e => e.ToDto()).ToArray();
 
         return PagedResult<ExpenseDto>.Ok(dtos, totalItems, req.PageSize);
-    }
-
-    private static IQueryable<Expense> ApplySorting(IQueryable<Expense> query, string? orderBy)
-    {
-        if (string.IsNullOrEmpty(orderBy))
-        {
-            return query.OrderByDescending(e => e.ExpenseDate);
-        }
-
-        var descending = orderBy.StartsWith('-');
-        var field = descending ? orderBy[1..] : orderBy;
-
-        return field.ToLowerInvariant() switch
-        {
-            "expensedate" => descending
-                ? query.OrderByDescending(e => e.ExpenseDate)
-                : query.OrderBy(e => e.ExpenseDate),
-            "amount" => descending
-                ? query.OrderByDescending(e => e.Amount.Amount)
-                : query.OrderBy(e => e.Amount.Amount),
-            "number" => descending ? query.OrderByDescending(e => e.Number) : query.OrderBy(e => e.Number),
-            "status" => descending ? query.OrderByDescending(e => e.Status) : query.OrderBy(e => e.Status),
-            "type" => descending ? query.OrderByDescending(e => e.Type) : query.OrderBy(e => e.Type),
-            "createdat" => descending ? query.OrderByDescending(e => e.CreatedAt) : query.OrderBy(e => e.CreatedAt),
-            _ => query.OrderByDescending(e => e.ExpenseDate)
-        };
     }
 }

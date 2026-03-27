@@ -11143,6 +11143,83 @@
         }
       }
     },
+    "/tenants/quotas": {
+      "get": {
+        "tags": [
+          "Tenant"
+        ],
+        "operationId": "GetTenantQuotaUsages",
+        "parameters": [
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantQuotaUsageDtoPagedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tenants/quotas/reset": {
+      "post": {
+        "tags": [
+          "Tenant"
+        ],
+        "operationId": "ResetTenantQuotas",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetTenantQuotasCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetTenantQuotasCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetTenantQuotasCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
     "/tenantfeatures": {
       "get": {
         "tags": [
@@ -13380,6 +13457,14 @@
           },
           "isOverQuota": {
             "type": "boolean"
+          },
+          "planName": {
+            "type": "string",
+            "nullable": true
+          },
+          "resetsAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -20215,6 +20300,20 @@
         },
         "additionalProperties": false
       },
+      "ResetTenantQuotasCommand": {
+        "type": "object",
+        "properties": {
+          "tenantIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ResolveAccidentReportRequest": {
         "type": "object",
         "properties": {
@@ -21118,6 +21217,68 @@
           "telegram_bot"
         ],
         "type": "string"
+      },
+      "TenantQuotaUsageDto": {
+        "type": "object",
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenantName": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyName": {
+            "type": "string",
+            "nullable": true
+          },
+          "planName": {
+            "type": "string",
+            "nullable": true
+          },
+          "weeklyQuota": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "usedThisWeek": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "remaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOverQuota": {
+            "type": "boolean"
+          },
+          "overageCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quotaResetAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TenantQuotaUsageDtoPagedResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TenantQuotaUsageDto"
+            },
+            "nullable": true
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          }
+        },
+        "additionalProperties": false
       },
       "TenantSettings": {
         "type": "object",

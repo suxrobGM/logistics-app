@@ -35,6 +35,12 @@ public class Tenant : Entity, IMasterEntity
     /// </summary>
     public bool IsSubscriptionRequired { get; set; } = true;
 
+    /// <summary>
+    ///     When set, AI quota counting starts from this date instead of the ISO week start.
+    ///     Used by admins to reset a tenant's weekly AI session quota mid-week.
+    /// </summary>
+    public DateTime? QuotaResetAt { get; set; }
+
     public virtual Subscription? Subscription { get; set; }
 
     /// <summary>

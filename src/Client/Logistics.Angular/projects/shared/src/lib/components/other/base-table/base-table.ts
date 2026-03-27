@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import type { TableLazyLoadEvent } from "primeng/table";
-import { Observable, finalize } from "rxjs";
+import { Observable, finalize, from } from "rxjs";
 import type { PagedResponse } from "../../../api/models";
 
 /**
@@ -62,12 +62,20 @@ export abstract class BaseTableComponent<T> {
   protected readonly data = signal<T[]>([]);
 
   /**
-   * Abstract method to be implemented by subclasses to query data.
-   * This method should return an Observable that emits a PagedResponse.
-   * @param params - The parameters for pagination, sorting, and searching.
-   * @return An Observable that emits a PagedResponse of type T.
+   * Override this to provide data via Observable (RxJS).
+   * At least one of `query` or `queryAsync` must be implemented.
    */
-  protected abstract query(params: TableQueryParams): Observable<PagedResponse<T>>;
+  protected query(params: TableQueryParams): Observable<PagedResponse<T>> {
+    return from(this.queryAsync(params));
+  }
+
+  /**
+   * Override this to provide data via Promise (async/await).
+   * Simpler alternative to `query` for components using the Api service.
+   */
+  protected queryAsync(params: TableQueryParams): Promise<PagedResponse<T>> {
+    throw new Error("Implement either query() or queryAsync() in the subclass.");
+  }
 
   /**
    * Fetches data based on the provided parameters.

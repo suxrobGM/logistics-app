@@ -14,6 +14,7 @@
           <a
             [routerLink]="item.routerLink"
             routerLinkActive="bg-primary-50 text-primary-600"
+            [routerLinkActiveOptions]="{ exact: true }"
             class="flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-100"
           >
             <i [class]="item.icon + ' mr-3 text-lg'"></i>
