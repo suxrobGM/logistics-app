@@ -219,7 +219,9 @@ internal static class Setup
         EldSyncJob.ScheduleJobs();
         LoadBoardSyncJob.ScheduleJobs();
         MaintenanceReminderJob.ScheduleJobs();
-        DispatchAgentJob.ScheduleJobs();
+
+        // TODO: Disable AI dispatch agent job for now until we can optimize it - will re-enable in a future release
+        // DispatchAgentJob.ScheduleJobs();
         return app;
     }
 

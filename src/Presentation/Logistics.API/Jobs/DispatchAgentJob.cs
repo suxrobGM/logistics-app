@@ -55,9 +55,10 @@ public class DispatchAgentJob(
     {
         using var scope = scopeFactory.CreateScope();
         var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
+        var isFeatureEnabled = await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.AgenticDispatch);
 
         // Check if feature is enabled for this tenant
-        if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.AgenticDispatch))
+        if (!isFeatureEnabled)
         {
             return;
         }

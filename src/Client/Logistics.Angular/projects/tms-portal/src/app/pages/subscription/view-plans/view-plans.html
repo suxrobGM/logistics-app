@@ -19,7 +19,7 @@
       <!-- Pricing -->
       <div class="mb-4 flex flex-col items-center gap-1">
         <div class="text-3xl font-bold">
-          {{ plan.price | currency }}<span class="text-base font-normal">/mo</span>
+          {{ plan.price | currency }}<span class="text-secondary font-normal">/mo</span>
         </div>
         <div class="text-secondary">+ {{ plan.perTruckPrice | currency }} per truck / mo</div>
         <div class="text-secondary text-sm">{{ getMaxTrucksLabel(plan) }}</div>
