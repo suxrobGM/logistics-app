@@ -1863,6 +1863,26 @@
         }
       }
     },
+    "/dispatch/agent/quota": {
+      "get": {
+        "tags": [
+          "DispatchAgent"
+        ],
+        "operationId": "GetAiQuotaStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiQuotaStatusDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/dispatch/agent/pending": {
       "get": {
         "tags": [
@@ -13418,6 +13438,27 @@
         },
         "additionalProperties": false
       },
+      "AiQuotaStatusDto": {
+        "type": "object",
+        "properties": {
+          "weeklyQuota": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "usedThisWeek": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "remaining": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOverQuota": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "ApprovePayrollRequest": {
         "type": "object",
         "properties": {
@@ -15725,6 +15766,7 @@
       },
       "DispatchDecisionType": {
         "enum": [
+          "query",
           "assign_load",
           "create_trip",
           "dispatch_trip",
@@ -15779,6 +15821,9 @@
           "errorMessage": {
             "type": "string",
             "nullable": true
+          },
+          "isOverage": {
+            "type": "boolean"
           },
           "decisions": {
             "type": "array",
@@ -21185,6 +21230,11 @@
           "intervalCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "weeklyAiSessionQuota": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           },
           "features": {
             "type": "array",

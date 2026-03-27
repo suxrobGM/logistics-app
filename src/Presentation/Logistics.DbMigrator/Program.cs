@@ -2,6 +2,7 @@ using Logistics.DbMigrator.Data;
 using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Services;
 using Logistics.DbMigrator.Workers;
+using Logistics.Infrastructure.Payments;
 using Logistics.Infrastructure.Persistence;
 using Serilog;
 
@@ -21,6 +22,7 @@ builder.Services.AddPersistenceInfrastructure(builder.Configuration)
     .AddTenantDatabase()
     .AddIdentity();
 
+builder.Services.AddPaymentsInfrastructure(builder.Configuration);
 builder.Services.AddScoped<PayrollService>();
 builder.Services.AddSeeders();
 

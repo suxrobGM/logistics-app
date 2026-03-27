@@ -3,15 +3,15 @@ import { Router, RouterModule } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import { Api, createSubscriptionPlan } from "@logistics/shared/api";
 import type { CreateSubscriptionPlanCommand } from "@logistics/shared/api";
+import { PageHeader } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
 import { PlanForm, type PlanFormValue } from "@/shared/components";
 
 @Component({
   selector: "adm-plan-add",
   templateUrl: "./plan-add.html",
-  imports: [CardModule, ButtonModule, RouterModule, PlanForm, DividerModule],
+  imports: [CardModule, ButtonModule, RouterModule, PlanForm, PageHeader],
 })
 export class PlanAdd {
   private readonly api = inject(Api);

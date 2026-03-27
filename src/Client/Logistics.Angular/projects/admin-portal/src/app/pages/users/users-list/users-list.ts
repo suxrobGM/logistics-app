@@ -1,11 +1,13 @@
-import { Component, inject, signal } from "@angular/core";
+import { Component, inject, signal, viewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { DataContainer, PageHeader, SearchInput } from "@logistics/shared/components";
+import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
+import { Menu, MenuModule } from "primeng/menu";
 import { PasswordModule } from "primeng/password";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
@@ -29,6 +31,7 @@ import { UsersListStore } from "../store/users-list.store";
     ButtonModule,
     DialogModule,
     InputTextModule,
+    MenuModule,
     PasswordModule,
     FormsModule,
   ],
@@ -38,10 +41,26 @@ export class UsersList {
   private readonly impersonationService = inject(ImpersonationService);
   private readonly toast = inject(ToastService);
 
+  private readonly actionMenu = viewChild<Menu>("actionMenu");
+  private readonly selectedEmail = signal("");
+
+  protected readonly actionMenuItems: MenuItem[] = [
+    {
+      label: "Impersonate User",
+      icon: "pi pi-user",
+      command: () => this.openImpersonateDialog(this.selectedEmail()),
+    },
+  ];
+
   protected readonly showImpersonateDialog = signal(false);
   protected readonly impersonateEmail = signal("");
   protected readonly masterPassword = signal("");
   protected readonly isImpersonating = signal(false);
+
+  protected openActionMenu(event: Event, user: { email?: string | null }): void {
+    this.selectedEmail.set(user.email ?? "");
+    this.actionMenu()?.toggle(event);
+  }
 
   protected search(value: string): void {
     this.store.setSearch(value);

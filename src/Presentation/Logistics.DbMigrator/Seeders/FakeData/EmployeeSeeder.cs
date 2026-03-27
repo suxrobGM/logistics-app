@@ -26,8 +26,15 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
     {
         LogStarting();
 
-        var users = context.CreatedUsers ?? throw new InvalidOperationException("Users not seeded");
         var tenant = context.DefaultTenant ?? throw new InvalidOperationException("Default tenant not seeded");
+
+        // Load users from shared context or from database (if UserSeeder was skipped)
+        var users = context.CreatedUsers;
+        if (users is null || users.Count == 0)
+        {
+            users = await context.MasterUnitOfWork.Repository<User>()
+                .GetListAsync(u => u.TenantId == tenant.Id, cancellationToken);
+        }
 
         if (users.Count == 0)
         {

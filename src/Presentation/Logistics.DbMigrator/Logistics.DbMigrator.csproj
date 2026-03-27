@@ -16,11 +16,11 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0"/>
-    <PackageReference Include="Stripe.net" Version="50.2.0"/>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj"/>
+    <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Payments\Logistics.Infrastructure.Payments.csproj"/>
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Persistence\Logistics.Infrastructure.Persistence.csproj"/>
   </ItemGroup>
 </Project>

@@ -1,12 +1,15 @@
 import { DatePipe } from "@angular/common";
-import { Component, inject } from "@angular/core";
+import { Component, computed, inject, signal, viewChild } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { Api, cancelSubscription, deleteSubscription } from "@logistics/shared/api";
+import type { SubscriptionDto } from "@logistics/shared/api";
 import { DataContainer, PageHeader, SearchInput } from "@logistics/shared/components";
 import { ToastService } from "@logistics/shared";
+import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { Menu, MenuModule } from "primeng/menu";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
@@ -28,6 +31,7 @@ import { SubscriptionsListStore } from "../store/subscriptions-list.store";
     SearchInput,
     TagModule,
     DatePipe,
+    MenuModule,
   ],
 })
 export class SubscriptionsList {
@@ -35,6 +39,36 @@ export class SubscriptionsList {
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
   protected readonly store = inject(SubscriptionsListStore);
+
+  private readonly actionMenu = viewChild<Menu>("actionMenu");
+  private readonly selectedRow = signal<SubscriptionDto | null>(null);
+
+  protected readonly actionMenuItems = computed<MenuItem[]>(() => {
+    const sub = this.selectedRow();
+    const items: MenuItem[] = [];
+
+    if (sub?.status === "active" || sub?.status === "trialing") {
+      items.push({
+        label: "Cancel Subscription",
+        icon: "pi pi-times-circle",
+        command: () => this.confirmToCancel(sub!.id!),
+      });
+    }
+
+    items.push({
+      label: "Delete",
+      icon: "pi pi-trash",
+      styleClass: "text-red-600",
+      command: () => this.confirmToDelete(sub!.id!),
+    });
+
+    return items;
+  });
+
+  protected openActionMenu(event: Event, sub: SubscriptionDto): void {
+    this.selectedRow.set(sub);
+    this.actionMenu()?.toggle(event);
+  }
 
   protected search(value: string): void {
     this.store.setSearch(value);

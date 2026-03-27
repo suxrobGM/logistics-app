@@ -36,7 +36,7 @@
           <th>Role</th>
           <th>Tenant</th>
           <th>Phone</th>
-          <th class="w-24">Actions</th>
+          <th class="w-16"></th>
         </tr>
       </ng-template>
       <ng-template #body let-user>
@@ -58,12 +58,10 @@
           <td>{{ user.phoneNumber ?? "-" }}</td>
           <td>
             <p-button
-              icon="pi pi-user"
-              severity="secondary"
-              size="small"
+              icon="pi pi-ellipsis-v"
               [text]="true"
-              pTooltip="Impersonate User"
-              (onClick)="openImpersonateDialog(user.email)"
+              (click)="openActionMenu($event, user)"
+              aria-label="Show actions menu"
             />
           </td>
         </tr>
@@ -71,6 +69,8 @@
     </p-table>
   </ui-data-container>
 </p-card>
+
+<p-menu #actionMenu [model]="actionMenuItems" [popup]="true" />
 
 <!-- Impersonate Dialog -->
 <p-dialog

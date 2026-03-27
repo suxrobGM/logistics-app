@@ -8,16 +8,16 @@ import {
   updateSubscriptionPlan,
 } from "@logistics/shared/api";
 import type { SubscriptionPlanDto, UpdateSubscriptionPlanCommand } from "@logistics/shared/api";
+import { PageHeader } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
 import { PlanForm, type PlanFormValue } from "@/shared/components";
 
 @Component({
   selector: "adm-plan-edit",
   templateUrl: "./plan-edit.html",
-  imports: [CardModule, ButtonModule, RouterModule, PlanForm, DividerModule, SkeletonModule],
+  imports: [CardModule, ButtonModule, RouterModule, PlanForm, SkeletonModule, PageHeader],
 })
 export class PlanEdit implements OnInit {
   private readonly api = inject(Api);
@@ -65,6 +65,7 @@ export class PlanEdit implements OnInit {
       perTruckPrice: plan.perTruckPrice ?? 0,
       maxTrucks: plan.maxTrucks ?? null,
       annualDiscountPercent: plan.annualDiscountPercent ?? 0,
+      weeklyAiSessionQuota: plan.weeklyAiSessionQuota ?? null,
       interval: plan.interval ?? "month",
       intervalCount: plan.intervalCount ?? 1,
       trialPeriod: plan.trialPeriod ?? "none",

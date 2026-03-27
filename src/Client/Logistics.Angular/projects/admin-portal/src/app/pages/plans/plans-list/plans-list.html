@@ -50,7 +50,7 @@
           <th>Max Trucks</th>
           <th>Billing Interval</th>
           <th>Trial Period</th>
-          <th class="text-center">Actions</th>
+          <th class="w-16"></th>
         </tr>
       </ng-template>
       <ng-template #body let-plan>
@@ -64,27 +64,19 @@
             </div>
           </td>
           <td>
-            <p-tag
-              [value]="formatTier(plan.tier)"
-              [severity]="tierSeverity(plan.tier)"
-            />
+            <p-tag [value]="formatTier(plan.tier)" [severity]="tierSeverity(plan.tier)" />
           </td>
           <td>{{ plan.price | currency }}/mo</td>
           <td>{{ plan.perTruckPrice | currency }}/truck</td>
-          <td>{{ plan.maxTrucks ?? 'Unlimited' }}</td>
+          <td>{{ plan.maxTrucks ?? "Unlimited" }}</td>
           <td>{{ formatInterval(plan.interval, plan.intervalCount) | titlecase }}</td>
           <td>{{ formatTrialPeriod(plan.trialPeriod) }}</td>
-          <td class="text-center">
+          <td>
             <p-button
-              icon="pi pi-pen-to-square"
-              pTooltip="Edit Plan"
-              [routerLink]="['/subscription-plans', plan.id, 'edit']"
-            />
-            <p-button
-              styleClass="ml-2 p-button-danger"
-              icon="pi pi-trash"
-              pTooltip="Delete Plan"
-              (click)="confirmToDelete(plan.id)"
+              icon="pi pi-ellipsis-v"
+              [text]="true"
+              (click)="openActionMenu($event, plan)"
+              aria-label="Show actions menu"
             />
           </td>
         </tr>
@@ -92,3 +84,5 @@
     </p-table>
   </ui-data-container>
 </p-card>
+
+<p-menu #actionMenu [model]="actionMenuItems()" [popup]="true" />

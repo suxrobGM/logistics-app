@@ -42,7 +42,7 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
         var planService = context.ServiceProvider.GetRequiredService<IStripePlanService>();
         var planRepo = context.MasterUnitOfWork.Repository<SubscriptionPlan>();
 
-        // 1. Ensure billing meter exists
+        // 1. Ensure billing meter exists (one-time setup, stored in SystemSetting)
         await EnsureBillingMeterAsync(settingService, ct);
 
         // 2. Create Stripe products and prices for plans without Stripe IDs

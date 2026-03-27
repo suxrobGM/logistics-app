@@ -42,7 +42,7 @@
             <p-sortIcon field="StartDate" />
           </th>
           <th>Next Billing</th>
-          <th class="text-center">Actions</th>
+          <th class="w-16"></th>
         </tr>
       </ng-template>
       <ng-template #body let-sub>
@@ -58,21 +58,12 @@
           </td>
           <td>{{ sub.startDate | date: "mediumDate" }}</td>
           <td>{{ sub.nextBillingDate | date: "mediumDate" }}</td>
-          <td class="text-center">
-            @if (sub.status === "active" || sub.status === "trialing") {
-              <p-button
-                icon="pi pi-times-circle"
-                pTooltip="Cancel Subscription"
-                severity="warn"
-                [outlined]="true"
-                (click)="confirmToCancel(sub.id)"
-              />
-            }
+          <td>
             <p-button
-              styleClass="ml-2 p-button-danger"
-              icon="pi pi-trash"
-              pTooltip="Delete Subscription"
-              (click)="confirmToDelete(sub.id)"
+              icon="pi pi-ellipsis-v"
+              [text]="true"
+              (click)="openActionMenu($event, sub)"
+              aria-label="Show actions menu"
             />
           </td>
         </tr>
@@ -80,3 +71,5 @@
     </p-table>
   </ui-data-container>
 </p-card>
+
+<p-menu #actionMenu [model]="actionMenuItems()" [popup]="true" />
