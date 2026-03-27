@@ -80,13 +80,11 @@ public class AiQuotaServiceTests
 
     #endregion
 
-    private static DispatchSession CreateSessionAt(DateTime startedAt)
+    private static DispatchSession CreateCompletedSessionAt(DateTime startedAt)
     {
-        return new DispatchSession
-        {
-            StartedAt = startedAt
-            // Default status is Running, which counts toward quota
-        };
+        var session = new DispatchSession { StartedAt = startedAt };
+        session.Complete("done");
+        return session;
     }
 
     #region Non-subscription tenants
@@ -140,27 +138,27 @@ public class AiQuotaServiceTests
     #region Session counting
 
     [Fact]
-    public async Task GetQuotaStatus_CountsOnlyCompletedAndRunningSessions()
+    public async Task GetQuotaStatus_CountsOnlyCompletedSessions()
     {
         var tenantId = Guid.NewGuid();
         SetupTenantWithPlan(tenantId, 25);
 
         var now = DateTime.UtcNow;
-        var completed = CreateSessionAt(now);
+        var completed = new DispatchSession { StartedAt = now };
         completed.Complete("done");
-        var running = CreateSessionAt(now); // default status is Running
-        var failed = CreateSessionAt(now);
+        var running = new DispatchSession { StartedAt = now };
+        var failed = new DispatchSession { StartedAt = now };
         failed.Fail("error");
-        var cancelled = CreateSessionAt(now);
+        var cancelled = new DispatchSession { StartedAt = now };
         cancelled.Cancel();
 
         SetupSessions(completed, running, failed, cancelled);
 
         var status = await sut.GetQuotaStatusAsync(tenantId);
 
-        // Only Completed + Running count
-        Assert.Equal(2, status.UsedThisWeek);
-        Assert.Equal(23, status.Remaining);
+        // Only Completed sessions count toward quota
+        Assert.Equal(1, status.UsedThisWeek);
+        Assert.Equal(24, status.Remaining);
     }
 
     [Fact]
@@ -170,10 +168,8 @@ public class AiQuotaServiceTests
         SetupTenantWithPlan(tenantId, 25);
 
         var now = DateTime.UtcNow;
-        var thisWeek = CreateSessionAt(now);
-        thisWeek.Complete("done");
-        var lastWeek = CreateSessionAt(now.AddDays(-14));
-        lastWeek.Complete("done");
+        var thisWeek = CreateCompletedSessionAt(now);
+        var lastWeek = CreateCompletedSessionAt(now.AddDays(-14));
 
         SetupSessions(thisWeek, lastWeek);
 
@@ -191,9 +187,10 @@ public class AiQuotaServiceTests
     {
         var tenantId = Guid.NewGuid();
         SetupTenantWithPlan(tenantId, 25);
+        var now = DateTime.UtcNow;
         SetupSessions(
-            CreateSessionAt(DateTime.UtcNow),
-            CreateSessionAt(DateTime.UtcNow)
+            CreateCompletedSessionAt(now),
+            CreateCompletedSessionAt(now)
         );
 
         var status = await sut.GetQuotaStatusAsync(tenantId);
@@ -210,9 +207,9 @@ public class AiQuotaServiceTests
 
         var now = DateTime.UtcNow;
         SetupSessions(
-            CreateSessionAt(now),
-            CreateSessionAt(now),
-            CreateSessionAt(now)
+            CreateCompletedSessionAt(now),
+            CreateCompletedSessionAt(now),
+            CreateCompletedSessionAt(now)
         );
 
         var status = await sut.GetQuotaStatusAsync(tenantId);
@@ -229,11 +226,11 @@ public class AiQuotaServiceTests
 
         var now = DateTime.UtcNow;
         SetupSessions(
-            CreateSessionAt(now),
-            CreateSessionAt(now),
-            CreateSessionAt(now),
-            CreateSessionAt(now),
-            CreateSessionAt(now)
+            CreateCompletedSessionAt(now),
+            CreateCompletedSessionAt(now),
+            CreateCompletedSessionAt(now),
+            CreateCompletedSessionAt(now),
+            CreateCompletedSessionAt(now)
         );
 
         var status = await sut.GetQuotaStatusAsync(tenantId);

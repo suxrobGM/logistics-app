@@ -10,7 +10,8 @@ dotnet run --project src/Aspire/Logistics.Aspire.AppHost  # Dashboard: http://lo
 
 # Backend only
 dotnet build                                              # Build all
-dotnet test                                               # Run tests
+dotnet test                                               # Run all tests
+dotnet test --filter "ClassName"                          # Filter by class
 dotnet run --project src/Presentation/Logistics.API      # API: https://localhost:7000
 
 # Frontend (Angular) - see /angular-workspace skill
@@ -53,6 +54,13 @@ cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 | **Logistics.Infrastructure.Routing** | Trip optimization, route planning, geocoding |
 | **Logistics.Infrastructure.Storage** | Azure Blob Storage and file-based storage |
 | **Logistics.Infrastructure.AI** | Claude API dispatch agent, tool registry, agent loop |
+
+### Test Projects
+
+| Project                              | Tests For                        | Key Packages                      |
+| ------------------------------------ | -------------------------------- | --------------------------------- |
+| `Logistics.Application.Tests`        | Application layer (handlers)     | xUnit, NSubstitute                |
+| `Logistics.Infrastructure.AI.Tests`  | AI agent, quota, tools, prompts  | xUnit, NSubstitute, MockQueryable |
 
 ## Coding Patterns
 

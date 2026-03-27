@@ -28,8 +28,7 @@ internal sealed class AiQuotaService(
         var usedThisWeek = await tenantUow.Repository<DispatchSession>().Query()
             .CountAsync(s =>
                 s.StartedAt >= countFrom &&
-                (s.Status == DispatchSessionStatus.Running ||
-                 s.Status == DispatchSessionStatus.Completed), ct);
+                s.Status == DispatchSessionStatus.Completed, ct);
 
         var remaining = Math.Max(0, quota - usedThisWeek);
         var resetsAt = countFrom.AddDays(7);
