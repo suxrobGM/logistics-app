@@ -26,7 +26,7 @@ internal class StripeCustomerService(IOptions<StripeOptions> options, ILogger<St
         {
             Email = tenant.BillingEmail,
             Name = tenant.CompanyName,
-            Address = tenant.CompanyAddress?.ToStripeAddressOptions(),
+            Address = tenant.CompanyAddress.ToStripeAddressOptions(),
             Metadata = new Dictionary<string, string> { { StripeMetadataKeys.TenantId, tenant.Id.ToString() } }
         };
 
@@ -47,7 +47,7 @@ internal class StripeCustomerService(IOptions<StripeOptions> options, ILogger<St
         {
             Email = tenant.BillingEmail,
             Name = tenant.CompanyName,
-            Address = tenant.CompanyAddress?.ToStripeAddressOptions(),
+            Address = tenant.CompanyAddress.ToStripeAddressOptions(),
             Metadata = new Dictionary<string, string> { { StripeMetadataKeys.TenantId, tenant.Id.ToString() } }
         };
 

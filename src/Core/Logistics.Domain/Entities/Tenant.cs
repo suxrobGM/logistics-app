@@ -16,7 +16,7 @@ public class Tenant : Entity, IMasterEntity
     /// </summary>
     public string? CompanyName { get; set; }
 
-    public Address? CompanyAddress { get; set; }
+    public required Address CompanyAddress { get; set; }
     public required string ConnectionString { get; set; }
     public required string BillingEmail { get; set; }
     public string? DotNumber { get; set; }

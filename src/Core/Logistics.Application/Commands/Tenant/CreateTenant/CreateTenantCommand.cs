@@ -9,7 +9,7 @@ public class CreateTenantCommand : IAppRequest
     public string? CompanyName { get; set; }
     public string? BillingEmail { get; set; }
     public string? DotNumber { get; set; }
-    public Address? CompanyAddress { get; set; }
+    public required Address CompanyAddress { get; set; }
 
     // Owner account created alongside the tenant
     public string OwnerEmail { get; set; } = null!;

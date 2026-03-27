@@ -69,10 +69,7 @@ internal sealed class PayPayrollInvoiceHandler(
                 StripePaymentIntentId = transfer.Id,
                 TenantId = tenant.Id,
                 Description = $"Stripe payout for Payroll #{payrollInvoice.Number}",
-                BillingAddress = tenant.CompanyAddress ?? new Address
-                {
-                    Line1 = "N/A", City = "N/A", State = "N/A", ZipCode = "00000", Country = "US"
-                }
+                BillingAddress = tenant.CompanyAddress
             };
 
             await tenantUow.Repository<Payment>().AddAsync(payment, ct);

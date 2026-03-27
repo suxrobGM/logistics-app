@@ -3923,6 +3923,95 @@
         }
       }
     },
+    "/employees/{userId}/payout/setup": {
+      "post": {
+        "tags": [
+          "Employee"
+        ],
+        "operationId": "SetupEmployeePayout",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/employees/{userId}/payout/onboarding-link": {
+      "get": {
+        "tags": [
+          "Employee"
+        ],
+        "operationId": "GetEmployeePayoutOnboardingLink",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "returnUrl",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "refreshUrl",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeePayoutOnboardingLinkDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/expenses/{id}": {
       "get": {
         "tags": [
@@ -6397,6 +6486,40 @@
             }
           }
         },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invoices/payrolls/{id}/pay": {
+      "post": {
+        "tags": [
+          "Invoices"
+        ],
+        "operationId": "PayPayrollInvoice",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "204": {
             "description": "No Content"
@@ -14812,6 +14935,9 @@
         "additionalProperties": false
       },
       "CreateTenantCommand": {
+        "required": [
+          "companyAddress"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -16634,6 +16760,10 @@
             "type": "string",
             "format": "date-time"
           },
+          "stripeConnectedAccountId": {
+            "type": "string",
+            "nullable": true
+          },
           "role": {
             "$ref": "#/components/schemas/RoleDto"
           }
@@ -16652,6 +16782,19 @@
           },
           "pagination": {
             "$ref": "#/components/schemas/PaginationMeta"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EmployeePayoutOnboardingLinkDto": {
+        "required": [
+          "url"
+        ],
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -19239,7 +19382,8 @@
       "PaymentMethodType": {
         "enum": [
           "cash",
-          "check"
+          "check",
+          "zelle"
         ],
         "type": "string"
       },
@@ -20867,6 +21011,9 @@
         "type": "string"
       },
       "TenantDto": {
+        "required": [
+          "companyAddress"
+        ],
         "type": "object",
         "properties": {
           "id": {

@@ -121,9 +121,9 @@ export class CompanySettingsComponent implements OnInit {
 
     const command: UpdateTenantCommand = {
       companyName: this.form.value.companyName,
-      phoneNumber: this.form.value.phoneNumber || null,
+      phoneNumber: this.form.value.phoneNumber,
       billingEmail: this.form.value.billingEmail,
-      dotNumber: this.form.value.dotNumber || null,
+      dotNumber: this.form.value.dotNumber,
       companyAddress: this.form.value.companyAddress ?? undefined,
       settings: {
         distanceUnit: this.form.value.distanceUnit,
@@ -222,7 +222,7 @@ export class CompanySettingsComponent implements OnInit {
           phoneNumber: tenant.phoneNumber ?? null,
           billingEmail: tenant.billingEmail ?? "",
           dotNumber: tenant.dotNumber ?? "",
-          companyAddress: tenant.companyAddress ?? null,
+          companyAddress: tenant.companyAddress,
           // Regional settings
           distanceUnit: tenant.settings?.distanceUnit ?? "miles",
           weightUnit: tenant.settings?.weightUnit ?? "pounds",

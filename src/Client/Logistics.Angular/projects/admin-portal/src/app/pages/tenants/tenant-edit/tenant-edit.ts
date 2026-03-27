@@ -73,7 +73,7 @@ export class TenantEdit implements OnInit {
       companyName: formValue.companyName,
       billingEmail: formValue.billingEmail,
       dotNumber: formValue.dotNumber || undefined,
-      companyAddress: formValue.companyAddress ?? undefined,
+      companyAddress: formValue.companyAddress,
     };
 
     await this.api.invoke(updateTenant, { id: tenant.id!, body: command });

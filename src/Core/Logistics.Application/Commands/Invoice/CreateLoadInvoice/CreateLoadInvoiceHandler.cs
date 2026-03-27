@@ -1,7 +1,6 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
@@ -33,10 +32,7 @@ internal sealed class CreateLoadInvoiceHandler(ITenantUnitOfWork tenantUow)
             StripePaymentMethodId = req.StripePaymentMethodId,
             TenantId = tenant.Id,
             Amount = req.PaymentAmount,
-            BillingAddress = tenant.CompanyAddress ?? new Address
-            {
-                Line1 = "N/A", City = "N/A", State = "N/A", ZipCode = "00000", Country = "US"
-            }
+            BillingAddress = tenant.CompanyAddress
         };
 
         var invoice = new LoadInvoice

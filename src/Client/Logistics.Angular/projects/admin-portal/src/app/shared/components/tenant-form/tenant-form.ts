@@ -13,7 +13,7 @@ export interface TenantFormValue {
   companyName: string;
   billingEmail: string;
   dotNumber: string;
-  companyAddress: Address | null;
+  companyAddress: Address;
   ownerEmail: string;
   ownerFirstName: string;
   ownerLastName: string;
@@ -51,7 +51,7 @@ export class TenantForm {
       nonNullable: true,
     }),
     dotNumber: new FormControl("", { nonNullable: true }),
-    companyAddress: new FormControl<Address | null>(null),
+    companyAddress: new FormControl<Address | null>(null, { validators: Validators.required }),
     ownerFirstName: new FormControl("", { nonNullable: true }),
     ownerLastName: new FormControl("", { nonNullable: true }),
     ownerEmail: new FormControl("", { nonNullable: true }),

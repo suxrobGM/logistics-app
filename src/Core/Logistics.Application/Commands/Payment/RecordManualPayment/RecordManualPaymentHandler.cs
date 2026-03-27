@@ -71,14 +71,7 @@ internal sealed class RecordManualPaymentHandler(
             StripePaymentMethodId = null, // Manual payments don't use Stripe
             TenantId = tenant.Id,
             Description = req.Notes ?? $"Manual {req.Type} payment for Invoice #{invoice.Number}",
-            BillingAddress = tenant.CompanyAddress ?? new Address
-            {
-                Line1 = "Unknown",
-                City = "Unknown",
-                State = "Unknown",
-                ZipCode = "00000",
-                Country = "US"
-            },
+            BillingAddress = tenant.CompanyAddress,
             ReferenceNumber = req.ReferenceNumber,
             RecordedByUserId = currentUserId.Value,
             RecordedAt = req.ReceivedDate ?? DateTime.UtcNow

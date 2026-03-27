@@ -28,7 +28,7 @@ export class TenantAdd {
       companyName: formValue.companyName,
       billingEmail: formValue.billingEmail,
       dotNumber: formValue.dotNumber,
-      companyAddress: formValue.companyAddress ?? undefined,
+      companyAddress: formValue.companyAddress,
       ownerEmail: formValue.ownerEmail,
       ownerFirstName: formValue.ownerFirstName,
       ownerLastName: formValue.ownerLastName,
