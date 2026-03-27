@@ -2,7 +2,7 @@ import { Component, computed, inject, input, model, output, signal } from "@angu
 import { Router, RouterLink } from "@angular/router";
 import type { AppError } from "@logistics/shared";
 import type { LoadDto, LoadStatus } from "@logistics/shared/api";
-import { AddressPipe, CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
+import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
@@ -11,7 +11,7 @@ import { MenuModule } from "primeng/menu";
 import { type TableLazyLoadEvent, TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { DataContainer, LoadStatusTag, LoadTypeTag } from "@/shared/components";
+import { DataContainer, LoadStatusTag, LoadTypeTag, RouteBadge } from "@/shared/components";
 
 @Component({
   selector: "app-loads-table",
@@ -23,12 +23,12 @@ import { DataContainer, LoadStatusTag, LoadTypeTag } from "@/shared/components";
     TooltipModule,
     MenuModule,
     RouterLink,
-    AddressPipe,
     DistanceUnitPipe,
     CurrencyFormatPipe,
     DateFormatPipe,
     LoadStatusTag,
     LoadTypeTag,
+    RouteBadge,
     DataContainer,
   ],
 })
@@ -132,6 +132,10 @@ export class LoadsTable {
         this.dispatchLoad.emit(load);
       },
     });
+  }
+
+  protected navigateToLoad(load: LoadDto): void {
+    this.router.navigateByUrl(`/loads/${load.id}`);
   }
 
   protected getStatusBorderClass(status: LoadStatus | undefined): string {

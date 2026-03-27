@@ -1,11 +1,17 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
-import { Api, deleteTrip, dispatchTrip, cancelTrip } from "@logistics/shared/api";
+import { Api, cancelTrip, deleteTrip, dispatchTrip } from "@logistics/shared/api";
 import type { TripDto, TripStatus, TruckDto } from "@logistics/shared/api";
 import { tripStatusOptions } from "@logistics/shared/api/enums";
-import { AddressPipe, CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
+import {
+  AddressPipe,
+  CurrencyFormatPipe,
+  DateFormatPipe,
+  DistanceUnitPipe,
+} from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
+import { downloadBlobFile } from "@logistics/shared/utils";
 import type { MenuItem } from "primeng/api";
 import { Button } from "primeng/button";
 import { Card } from "primeng/card";
@@ -22,10 +28,12 @@ import {
   LabeledField,
   LoadStatusTag,
   LoadTypeTag,
+  RouteBadge,
   SearchInput,
   SearchTruck,
   TripStatusTag,
 } from "@/shared/components";
+import { TripsSummaryStats } from "../components";
 import { TripsListStore } from "../store/trips-list.store";
 
 @Component({
@@ -40,7 +48,6 @@ import { TripsListStore } from "../store/trips-list.store";
     FormsModule,
     DateFormatPipe,
     DistanceUnitPipe,
-    AddressPipe,
     CurrencyFormatPipe,
     LoadStatusTag,
     TooltipModule,
@@ -55,6 +62,8 @@ import { TripsListStore } from "../store/trips-list.store";
     SearchInput,
     LabeledField,
     ProgressBarModule,
+    RouteBadge,
+    TripsSummaryStats,
   ],
 })
 export class TripsList {
@@ -62,6 +71,7 @@ export class TripsList {
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
   private readonly localizationService = inject(LocalizationService, { optional: true });
+  private readonly addressPipe = new AddressPipe();
   protected readonly store = inject(TripsListStore);
 
   protected readonly distanceUnitLabel = computed(
@@ -120,7 +130,11 @@ export class TripsList {
     }
 
     // Cancel available for non-completed/cancelled trips
-    if (trip?.status === "draft" || trip?.status === "dispatched" || trip?.status === "in_transit") {
+    if (
+      trip?.status === "draft" ||
+      trip?.status === "dispatched" ||
+      trip?.status === "in_transit"
+    ) {
       items.push({
         label: "Cancel trip",
         icon: "pi pi-times",
@@ -236,11 +250,60 @@ export class TripsList {
     }
   }
 
-  // Calculate progress percentage for a trip
   protected getProgressPercentage(trip: TripDto): number {
     const stops = trip.stops ?? [];
     if (stops.length === 0) return 0;
-    const completed = stops.filter((s) => s.arrivedAt).length;
-    return Math.round((completed / stops.length) * 100);
+    return Math.round((this.getCompletedStops(trip) / stops.length) * 100);
+  }
+
+  protected getCompletedStops(trip: TripDto): number {
+    return (trip.stops ?? []).filter((s) => s.arrivedAt).length;
+  }
+
+  protected navigateToTrip(trip: TripDto): void {
+    this.router.navigate(["/trips", trip.id]);
+  }
+
+  protected getRouteTooltip(trip: TripDto): string {
+    const origin = this.addressPipe.transform(trip.originAddress, "short");
+    const dest = this.addressPipe.transform(trip.destinationAddress, "short");
+    return `${trip.name} (${origin} → ${dest})`;
+  }
+
+  protected exportToCsv(): void {
+    const trips = this.store.data();
+    if (trips.length === 0) return;
+
+    const headers = [
+      "Number",
+      "Name",
+      "Truck",
+      "Loads",
+      "Total Revenue",
+      "Origin",
+      "Destination",
+      "Distance",
+      "Status",
+    ];
+
+    const rows = trips.map((trip) => [
+      trip.number ?? "",
+      trip.name ?? "",
+      trip.truckNumber ?? "",
+      trip.loadsCount ?? "",
+      trip.totalRevenue ?? "",
+      this.addressPipe.transform(trip.originAddress),
+      this.addressPipe.transform(trip.destinationAddress),
+      trip.totalDistance ?? "",
+      trip.status ?? "",
+    ]);
+
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    downloadBlobFile(blob, `trips-export-${new Date().toISOString().split("T")[0]}.csv`);
+    this.toastService.showSuccess(`Exported ${trips.length} trip(s) to CSV`);
   }
 }

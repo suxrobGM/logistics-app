@@ -42,16 +42,12 @@
           </div>
 
           <!-- Progress indicator -->
-          <div class="bg-surface-100 dark:bg-surface-800 rounded-lg p-4">
+          <div class="bg-subtle border-default rounded-lg border p-4">
             <div class="mb-2 flex items-center justify-between">
               <span class="font-medium">Trip Progress</span>
               <span class="text-primary font-semibold">{{ store.progressPercentage() }}%</span>
             </div>
-            <p-progressBar
-              [value]="store.progressPercentage()"
-              [showValue]="false"
-              class="h-2!"
-            />
+            <p-progressBar [value]="store.progressPercentage()" [showValue]="false" class="h-2!" />
             <div class="text-muted-color mt-2 flex items-center gap-1 text-sm">
               <i class="pi pi-map-marker"></i>
               <span>
@@ -64,7 +60,7 @@
           <!-- Key Metrics Grid -->
           <div class="grid grid-cols-2 gap-3">
             <!-- Distance -->
-            <div class="bg-surface-50 dark:bg-surface-900 rounded-lg p-3">
+            <div class="bg-subtle border-default rounded-lg border p-3">
               <div class="text-muted-color mb-1 flex items-center gap-2 text-sm">
                 <i class="pi pi-map"></i>
                 <span>Total Distance</span>
@@ -75,7 +71,7 @@
             </div>
 
             <!-- Loads -->
-            <div class="bg-surface-50 dark:bg-surface-900 rounded-lg p-3">
+            <div class="bg-subtle border-default rounded-lg border p-3">
               <div class="text-muted-color mb-1 flex items-center gap-2 text-sm">
                 <i class="pi pi-box"></i>
                 <span>Loads</span>
@@ -84,7 +80,7 @@
             </div>
 
             <!-- Truck -->
-            <div class="bg-surface-50 dark:bg-surface-900 rounded-lg p-3">
+            <div class="bg-subtle border-default rounded-lg border p-3">
               <div class="text-muted-color mb-1 flex items-center gap-2 text-sm">
                 <i class="pi pi-truck"></i>
                 <span>Truck</span>
@@ -95,7 +91,7 @@
             </div>
 
             <!-- Stops -->
-            <div class="bg-surface-50 dark:bg-surface-900 rounded-lg p-3">
+            <div class="bg-subtle border-default rounded-lg border p-3">
               <div class="text-muted-color mb-1 flex items-center gap-2 text-sm">
                 <i class="pi pi-flag"></i>
                 <span>Stops</span>
@@ -105,7 +101,7 @@
           </div>
 
           <!-- Timestamps -->
-          <div class="border-surface-200 dark:border-surface-700 space-y-2 border-t pt-3">
+          <div class="border-default space-y-2 border-t pt-3">
             @if (tripDetails.dispatchedAt) {
               <div class="flex items-center gap-2 text-sm">
                 <i class="pi pi-send text-blue-500"></i>
@@ -217,7 +213,9 @@
               <tr>
                 <th pSortableColumn="number">Load # <p-sortIcon field="number" /></th>
                 <th pSortableColumn="name">Name <p-sortIcon field="name" /></th>
-                <th pSortableColumn="customer.name">Customer <p-sortIcon field="customer.name" /></th>
+                <th pSortableColumn="customer.name">
+                  Customer <p-sortIcon field="customer.name" />
+                </th>
                 <th pSortableColumn="originAddress.line1">
                   Origin <p-sortIcon field="originAddress.line1" />
                 </th>
@@ -225,9 +223,7 @@
                   Dest <p-sortIcon field="destinationAddress.line1" />
                 </th>
                 <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
-                <th pSortableColumn="deliveryCost">
-                  Cost <p-sortIcon field="deliveryCost" />
-                </th>
+                <th pSortableColumn="deliveryCost">Cost <p-sortIcon field="deliveryCost" /></th>
               </tr>
             </ng-template>
             <ng-template #body let-load>

@@ -1,6 +1,7 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { Api, type Address, type LoadDto, dispatchLoad } from "@logistics/shared/api";
+import { Api, type LoadDto, dispatchLoad } from "@logistics/shared/api";
+import { AddressPipe } from "@logistics/shared/pipes";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { TooltipModule } from "primeng/tooltip";
@@ -34,6 +35,7 @@ export class LoadsListComponent {
   private readonly api = inject(Api);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
+  private readonly addressPipe = new AddressPipe();
   protected readonly store = inject(LoadsListStore);
 
   // Bulk selection state
@@ -89,7 +91,7 @@ export class LoadsListComponent {
       "Destination",
       "Status",
       "Distance (mi)",
-      "Cost",
+      "Revenue",
       "Truck",
       "Dispatcher",
     ];
@@ -99,8 +101,8 @@ export class LoadsListComponent {
       load.name ?? "",
       load.type ?? "",
       load.customer?.name ?? "",
-      this.formatAddress(load.originAddress),
-      this.formatAddress(load.destinationAddress),
+      this.addressPipe.transform(load.originAddress),
+      this.addressPipe.transform(load.destinationAddress),
       load.status ?? "",
       load.distance ?? "",
       load.deliveryCost ?? "",
@@ -157,11 +159,5 @@ export class LoadsListComponent {
     } catch {
       this.toastService.showError("Failed to dispatch load");
     }
-  }
-
-  private formatAddress(address: Address | null | undefined): string {
-    if (!address) return "";
-    const parts = [address.line1, address.city, address.state].filter(Boolean);
-    return parts.join(", ");
   }
 }

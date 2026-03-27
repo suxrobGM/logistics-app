@@ -11,7 +11,25 @@
       aria-label="Add a new trip"
       [routerLink]="['/trips/add']"
     />
+    <p-button
+      styleClass="ml-2"
+      icon="pi pi-download"
+      size="large"
+      [rounded]="true"
+      [text]="true"
+      pTooltip="Export to CSV"
+      aria-label="Export to CSV"
+      (click)="exportToCsv()"
+      [disabled]="store.isEmpty()"
+    />
   </div>
+
+  <!-- Summary Stats -->
+  <app-trips-summary-stats
+    [trips]="store.data()"
+    [totalRecords]="store.totalRecords()"
+    [isLoading]="store.isLoading()"
+  />
 
   <!-- Filter Panel -->
   <p-card class="mb-4">
@@ -119,13 +137,9 @@
             </th>
             <th>Loads</th>
             <th>Total Revenue</th>
-            <th pSortableColumn="OriginAddress.Line1">
-              Origin
-              <p-sortIcon field="OriginAddress.Line1" />
-            </th>
-            <th pSortableColumn="DestinationAddress.Line1">
-              Destination
-              <p-sortIcon field="DestinationAddress.Line1" />
+            <th pSortableColumn="OriginAddress.City">
+              Route
+              <p-sortIcon field="OriginAddress.City" />
             </th>
             <th pSortableColumn="TotalDistance">
               Distance ({{ distanceUnitLabel() }})
@@ -140,8 +154,11 @@
           </tr>
         </ng-template>
         <ng-template #body let-trip let-expanded="expanded">
-          <tr class="hover:bg-hover transition-colors duration-150" (click)="selectedRow.set(trip)">
-            <td>
+          <tr
+            class="hover:bg-hover cursor-pointer transition-colors duration-150"
+            (click)="navigateToTrip(trip)"
+          >
+            <td (click)="$event.stopPropagation()">
               <p-button
                 [pRowToggler]="trip"
                 class="mr-2 text-sm no-underline"
@@ -154,7 +171,7 @@
             <td>
               <span
                 class="block max-w-32 truncate"
-                [pTooltip]="trip.name"
+                [pTooltip]="getRouteTooltip(trip)"
                 [showDelay]="500"
                 tooltipPosition="bottom"
               >
@@ -165,24 +182,10 @@
             <td class="text-center">{{ trip.loadsCount }}</td>
             <td class="text-right">{{ trip.totalRevenue | currencyFormat }}</td>
             <td>
-              <span
-                class="block max-w-28 truncate"
-                [pTooltip]="trip.originAddress | address"
-                [showDelay]="500"
-                tooltipPosition="bottom"
-              >
-                {{ trip.originAddress | address }}
-              </span>
-            </td>
-            <td>
-              <span
-                class="block max-w-28 truncate"
-                [pTooltip]="trip.destinationAddress | address"
-                [showDelay]="500"
-                tooltipPosition="bottom"
-              >
-                {{ trip.destinationAddress | address }}
-              </span>
+              <app-route-badge
+                [origin]="trip.originAddress"
+                [destination]="trip.destinationAddress"
+              />
             </td>
             <td class="text-center">{{ trip.totalDistance | distanceUnit }}</td>
             <td>
@@ -200,23 +203,25 @@
             </td>
             <td>
               @if (trip.status !== "draft" && trip.status !== "cancelled") {
-                <div class="flex items-center gap-2" style="min-width: 100px">
-                  <p-progressBar
-                    [value]="getProgressPercentage(trip)"
-                    [showValue]="false"
-                    class="h-2"
-                  />
-                  <span class="text-sm">{{ getProgressPercentage(trip) }}%</span>
+                @let progress = getProgressPercentage(trip);
+                <div style="min-width: 110px">
+                  <div class="mb-1 flex items-center justify-between text-xs">
+                    <span class="text-muted">{{ progress }}%</span>
+                    <span class="text-muted">
+                      {{ getCompletedStops(trip) }}/{{ trip.stops?.length ?? 0 }} stops
+                    </span>
+                  </div>
+                  <p-progressBar [value]="progress" [showValue]="false" class="h-2!" />
                 </div>
               } @else {
-                <span class="text-muted-color text-sm">—</span>
+                <span class="text-muted-color text-sm">&mdash;</span>
               }
             </td>
-            <td>
+            <td (click)="$event.stopPropagation()">
               <p-button
                 icon="pi pi-ellipsis-v"
                 [text]="true"
-                (click)="menu.toggle($event)"
+                (click)="selectedRow.set(trip); menu.toggle($event)"
                 aria-label="Show actions menu"
               />
             </td>
@@ -224,7 +229,7 @@
         </ng-template>
         <ng-template #expandedrow let-trip>
           <tr>
-            <td colspan="12">
+            <td colspan="11">
               <div class="p-4">
                 <h5 class="mb-4">Loads in this trip</h5>
                 <p-table [value]="trip.loads" [dataKey]="'id'">
@@ -237,17 +242,14 @@
                         Customer <p-sortIcon field="customer.name" />
                       </th>
                       <th pSortableColumn="originAddress.line1">
-                        Origin <p-sortIcon field="originAddress.line1" />
-                      </th>
-                      <th pSortableColumn="destinationAddress.line1">
-                        Destination <p-sortIcon field="destinationAddress.line1" />
+                        Route <p-sortIcon field="originAddress.line1" />
                       </th>
                       <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
                       <th pSortableColumn="distance">
                         Distance ({{ distanceUnitLabel() }}) <p-sortIcon field="distance" />
                       </th>
                       <th pSortableColumn="deliveryCost">
-                        Delivery Cost <p-sortIcon field="deliveryCost" />
+                        Revenue <p-sortIcon field="deliveryCost" />
                       </th>
                     </tr>
                   </ng-template>
@@ -276,24 +278,10 @@
                         </span>
                       </td>
                       <td>
-                        <span
-                          class="block max-w-28 truncate"
-                          [pTooltip]="load.originAddress | address"
-                          [showDelay]="500"
-                          tooltipPosition="bottom"
-                        >
-                          {{ load.originAddress | address }}
-                        </span>
-                      </td>
-                      <td>
-                        <span
-                          class="block max-w-28 truncate"
-                          [pTooltip]="load.destinationAddress | address"
-                          [showDelay]="500"
-                          tooltipPosition="bottom"
-                        >
-                          {{ load.destinationAddress | address }}
-                        </span>
+                        <app-route-badge
+                          [origin]="load.originAddress"
+                          [destination]="load.destinationAddress"
+                        />
                       </td>
                       <td><app-load-status-tag [status]="load.status" /></td>
                       <td class="text-center">{{ load.distance | distanceUnit }}</td>
@@ -302,9 +290,11 @@
                   </ng-template>
                   <ng-template #footer>
                     <tr>
-                      <td colspan="7"></td>
+                      <td colspan="6"></td>
                       <td class="text-right font-semibold">Total:</td>
-                      <td class="text-right font-semibold">{{ trip.totalRevenue | currencyFormat }}</td>
+                      <td class="text-right font-semibold">
+                        {{ trip.totalRevenue | currencyFormat }}
+                      </td>
                     </tr>
                   </ng-template>
                 </p-table>
