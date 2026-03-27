@@ -22,16 +22,7 @@ internal sealed class DispatchToolRegistry : IDispatchToolRegistry
             })),
 
         new("get_available_trucks",
-            "Get all trucks with Available status along with their driver info and HOS (Hours of Service) status. Returns truck ID, number, type, current location, driver name, and remaining driving/on-duty hours.",
-            BuildSchema(new JsonObject
-            {
-                ["type"] = "object",
-                ["properties"] = new JsonObject(),
-                ["required"] = new JsonArray()
-            })),
-
-        new("get_fleet_overview",
-            "Get a high-level summary of the fleet: total trucks, available trucks, unassigned loads, active trips, drivers in violation. Use this first to understand the current state before making decisions.",
+            "Get all trucks with Available status along with their driver info, HOS (Hours of Service) status, and a fleet summary (total trucks, available trucks, active trips, drivers in violation). Returns truck ID, number, type, current location, driver name, and remaining driving/on-duty hours.",
             BuildSchema(new JsonObject
             {
                 ["type"] = "object",
@@ -62,6 +53,32 @@ internal sealed class DispatchToolRegistry : IDispatchToolRegistry
                     ["distance_km"] = Prop("number", "Estimated driving distance in kilometers")
                 },
                 ["required"] = new JsonArray("driver_id", "distance_km")
+            })),
+
+        new("batch_check_hos_feasibility",
+            "Check HOS feasibility for multiple driver-distance pairs in a single call. More efficient than calling check_hos_feasibility multiple times. Returns feasibility result for each pair.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["checks"] = new JsonObject
+                    {
+                        ["type"] = "array",
+                        ["description"] = "Array of driver/distance pairs to check",
+                        ["items"] = new JsonObject
+                        {
+                            ["type"] = "object",
+                            ["properties"] = new JsonObject
+                            {
+                                ["driver_id"] = Prop("string", "The driver's employee ID (GUID)"),
+                                ["distance_km"] = Prop("number", "Estimated driving distance in kilometers")
+                            },
+                            ["required"] = new JsonArray("driver_id", "distance_km")
+                        }
+                    }
+                },
+                ["required"] = new JsonArray("checks")
             })),
 
         new("calculate_distance",

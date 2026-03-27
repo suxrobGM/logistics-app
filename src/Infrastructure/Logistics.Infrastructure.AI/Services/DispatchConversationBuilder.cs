@@ -47,7 +47,7 @@ internal sealed class DispatchConversationBuilder(
             new(RoleType.User,
                 $"Analyze the current fleet state and optimize dispatch assignments. " +
                 $"Current time: {timestamp}. Mode: {modeLabel}. " +
-                $"Start by gathering fleet overview, unassigned loads, and available trucks, then process all unassigned loads.")
+                $"Start by calling get_unassigned_loads and get_available_trucks together, then process all loads efficiently.")
         };
 
         var client = new AnthropicClient(config.ApiKey);

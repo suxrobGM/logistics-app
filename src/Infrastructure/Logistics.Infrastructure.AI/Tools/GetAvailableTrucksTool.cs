@@ -27,6 +27,12 @@ internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow) : IDis
                 .ToDictionary(h => h.EmployeeId)
             : [];
 
+        // Fleet summary (replaces separate get_fleet_overview tool)
+        var totalTrucks = await tenantUow.Repository<Truck>().CountAsync(ct: ct);
+        var activeTrips = await tenantUow.Repository<Trip>()
+            .CountAsync(t => t.Status == TripStatus.Dispatched || t.Status == TripStatus.InTransit, ct);
+        var driversInViolation = hosStatuses.Values.Count(h => h.IsInViolation);
+
         var truckData = trucks.Select(truck =>
         {
             var hosStatus = truck.MainDriverId is not null
@@ -56,6 +62,17 @@ internal sealed class GetAvailableTrucksTool(ITenantUnitOfWork tenantUow) : IDis
             };
         }).ToList();
 
-        return JsonSerializer.Serialize(new { trucks = truckData, count = trucks.Count });
+        return JsonSerializer.Serialize(new
+        {
+            trucks = truckData,
+            count = trucks.Count,
+            fleet_summary = new
+            {
+                total_trucks = totalTrucks,
+                available_trucks = trucks.Count,
+                active_trips = activeTrips,
+                drivers_in_violation = driversInViolation
+            }
+        });
     }
 }

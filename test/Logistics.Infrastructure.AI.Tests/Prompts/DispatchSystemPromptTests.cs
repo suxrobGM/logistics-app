@@ -19,8 +19,8 @@ public class DispatchSystemPromptTests
     {
         var prompt = DispatchSystemPrompt.Build("Fleet", DispatchAgentMode.Autonomous);
 
-        Assert.Contains("AUTONOMOUS MODE", prompt);
-        Assert.DoesNotContain("SUGGESTION MODE", prompt);
+        Assert.Contains("Operating Mode: AUTONOMOUS", prompt);
+        Assert.DoesNotContain("Operating Mode: SUGGESTIONS", prompt);
     }
 
     [Fact]
@@ -28,8 +28,8 @@ public class DispatchSystemPromptTests
     {
         var prompt = DispatchSystemPrompt.Build("Fleet", DispatchAgentMode.HumanInTheLoop);
 
-        Assert.Contains("SUGGESTION MODE", prompt);
-        Assert.DoesNotContain("AUTONOMOUS MODE", prompt);
+        Assert.Contains("Operating Mode: SUGGESTIONS", prompt);
+        Assert.DoesNotContain("Operating Mode: AUTONOMOUS", prompt);
     }
 
     [Fact]
@@ -37,7 +37,7 @@ public class DispatchSystemPromptTests
     {
         var prompt = DispatchSystemPrompt.Build("Fleet", DispatchAgentMode.Autonomous);
 
-        Assert.Contains("ALWAYS check HOS feasibility", prompt);
+        Assert.Contains("ALWAYS verify HOS feasibility", prompt);
     }
 
     [Fact]
@@ -45,10 +45,9 @@ public class DispatchSystemPromptTests
     {
         var prompt = DispatchSystemPrompt.Build("Fleet", DispatchAgentMode.Autonomous);
 
-        Assert.Contains("get_fleet_overview", prompt);
         Assert.Contains("get_unassigned_loads", prompt);
         Assert.Contains("get_available_trucks", prompt);
-        Assert.Contains("check_hos_feasibility", prompt);
+        Assert.Contains("batch_check_hos_feasibility", prompt);
         Assert.Contains("assign_load_to_truck", prompt);
     }
 
@@ -58,7 +57,6 @@ public class DispatchSystemPromptTests
         var prompt = DispatchSystemPrompt.Build("Fleet", DispatchAgentMode.Autonomous, false);
 
         Assert.DoesNotContain("search_load_board", prompt);
-        Assert.DoesNotContain("load board opportunities", prompt);
     }
 
     [Fact]
@@ -67,7 +65,6 @@ public class DispatchSystemPromptTests
         var prompt = DispatchSystemPrompt.Build("Fleet", DispatchAgentMode.Autonomous, true);
 
         Assert.Contains("search_load_board", prompt);
-        Assert.Contains("load board opportunities", prompt);
     }
 
     #region Company name sanitization

@@ -84,7 +84,6 @@ public class DispatchDecisionProcessorTests
     [InlineData("create_trip", DispatchDecisionType.CreateTrip)]
     [InlineData("dispatch_trip", DispatchDecisionType.DispatchTrip)]
     [InlineData("book_load_board_load", DispatchDecisionType.BookLoadBoardLoad)]
-    [InlineData("get_fleet_overview", DispatchDecisionType.Query)]
     [InlineData("get_available_trucks", DispatchDecisionType.Query)]
     [InlineData("check_hos_feasibility", DispatchDecisionType.Query)]
     [InlineData("unknown_tool", DispatchDecisionType.Query)]
@@ -113,7 +112,6 @@ public class DispatchDecisionProcessorTests
     [InlineData("create_trip", true)]
     [InlineData("dispatch_trip", true)]
     [InlineData("book_load_board_load", true)]
-    [InlineData("get_fleet_overview", false)]
     [InlineData("get_available_trucks", false)]
     [InlineData("calculate_distance", false)]
     public void IsWriteTool_ClassifiesCorrectly(string toolName, bool expected)
@@ -184,9 +182,9 @@ public class DispatchDecisionProcessorTests
     public async Task ProcessToolCalls_ReadTool_ExecutesRegardlessOfMode()
     {
         var session = CreateSession(DispatchAgentMode.HumanInTheLoop);
-        var toolUse = CreateToolUse("get_fleet_overview");
+        var toolUse = CreateToolUse("get_available_trucks");
 
-        toolExecutor.ExecuteToolAsync("get_fleet_overview", Arg.Any<string>(), Arg.Any<CancellationToken>())
+        toolExecutor.ExecuteToolAsync("get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{\"total_trucks\": 5}");
 
         var results = await sut.ProcessToolCallsAsync(
@@ -196,7 +194,7 @@ public class DispatchDecisionProcessorTests
 
         // Read tools always execute, even in HumanInTheLoop mode
         await toolExecutor.Received(1).ExecuteToolAsync(
-            "get_fleet_overview", Arg.Any<string>(), Arg.Any<CancellationToken>());
+            "get_available_trucks", Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
     #endregion
@@ -264,7 +262,7 @@ public class DispatchDecisionProcessorTests
 
         var tools = new List<ToolUseContent>
         {
-            CreateToolUse("get_fleet_overview"),
+            CreateToolUse("get_available_trucks"),
             CreateToolUse("get_unassigned_loads"),
             CreateToolUse("get_available_trucks")
         };
@@ -279,7 +277,7 @@ public class DispatchDecisionProcessorTests
     public async Task ProcessToolCalls_StoresReasoning()
     {
         var session = CreateSession();
-        var toolUse = CreateToolUse("get_fleet_overview");
+        var toolUse = CreateToolUse("get_available_trucks");
 
         toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{}");
@@ -320,7 +318,7 @@ public class DispatchDecisionProcessorTests
     public async Task ProcessToolCalls_ReadTool_DoesNotBroadcast()
     {
         var session = CreateSession();
-        var toolUse = CreateToolUse("get_fleet_overview");
+        var toolUse = CreateToolUse("get_available_trucks");
 
         toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{}");

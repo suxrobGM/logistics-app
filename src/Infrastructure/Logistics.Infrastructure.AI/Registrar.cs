@@ -26,18 +26,19 @@ public static class Registrar
         services.AddSingleton<IDispatchToolRegistry, DispatchToolRegistry>();
 
         // Individual dispatch tools
-        services.AddScoped<IDispatchTool, GetFleetOverviewTool>();
         services.AddScoped<IDispatchTool, GetUnassignedLoadsTool>();
         services.AddScoped<IDispatchTool, GetAvailableTrucksTool>();
         services.AddScoped<IDispatchTool, GetDriverHosTool>();
         services.AddScoped<IDispatchTool, CheckHosFeasibilityTool>();
+        services.AddScoped<IDispatchTool, BatchCheckHosFeasibilityTool>();
         services.AddScoped<IDispatchTool, CalculateDistanceTool>();
         services.AddScoped<IDispatchTool, OptimizeTripStopsTool>();
-        // Load board tools are stubs — register only when integration is configured
-        // services.AddScoped<IDispatchTool, SearchLoadBoardTool>();
         services.AddScoped<IDispatchTool, AssignLoadToTruckTool>();
         services.AddScoped<IDispatchTool, CreateTripTool>();
         services.AddScoped<IDispatchTool, DispatchTripTool>();
+
+        // TODO: Load board tools are stubs - register only when integration is configured
+        // services.AddScoped<IDispatchTool, SearchLoadBoardTool>();
         // services.AddScoped<IDispatchTool, BookLoadBoardLoadTool>();
 
         return services;

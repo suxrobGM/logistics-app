@@ -52,11 +52,11 @@ public class DispatchToolRegistryTests
         var tools = sut.GetToolDefinitions();
         var names = tools.Select(t => t.Name).ToHashSet();
 
-        Assert.Contains("get_fleet_overview", names);
         Assert.Contains("get_unassigned_loads", names);
         Assert.Contains("get_available_trucks", names);
         Assert.Contains("get_driver_hos_status", names);
         Assert.Contains("check_hos_feasibility", names);
+        Assert.Contains("batch_check_hos_feasibility", names);
         Assert.Contains("calculate_distance", names);
     }
 
