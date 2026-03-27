@@ -1,9 +1,12 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Attributes;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.Enums.Safety;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
+[RequiresFeature(TenantFeature.Safety)]
 public record UpdateAccidentReportCommand : IAppRequest<Result<AccidentReportDto>>
 {
     public required Guid Id { get; set; }

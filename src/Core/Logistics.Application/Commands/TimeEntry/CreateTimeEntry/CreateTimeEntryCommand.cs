@@ -1,9 +1,11 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Attributes;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
+[RequiresFeature(TenantFeature.Timesheets)]
 public class CreateTimeEntryCommand : IAppRequest<Result<Guid>>
 {
     public required Guid EmployeeId { get; set; }

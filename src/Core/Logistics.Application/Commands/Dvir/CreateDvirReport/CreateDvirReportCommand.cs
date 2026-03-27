@@ -1,9 +1,12 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Attributes;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.Enums.Safety;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
+[RequiresFeature(TenantFeature.Safety)]
 public record CreateDvirReportCommand : IAppRequest<Result<DvirReportDto>>
 {
     public required Guid TruckId { get; set; }

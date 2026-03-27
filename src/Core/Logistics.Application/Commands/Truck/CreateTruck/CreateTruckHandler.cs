@@ -1,16 +1,24 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreateTruckHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<CreateTruckCommand, Result>
+internal sealed class CreateTruckHandler(
+    ITenantUnitOfWork tenantUow,
+    ITenantService tenantService,
+    IMasterUnitOfWork masterUow) : IAppRequestHandler<CreateTruckCommand, Result>
 {
 
     public async Task<Result> Handle(
         CreateTruckCommand req, CancellationToken ct)
     {
+        var limitResult = await CheckTruckLimitAsync(ct);
+        if (!limitResult.IsSuccess) return limitResult;
+
         var truckWithThisNumber = await tenantUow.Repository<Truck>().GetAsync(i => i.Number == req.TruckNumber, ct);
 
         if (truckWithThisNumber is not null)
@@ -49,6 +57,34 @@ internal sealed class CreateTruckHandler(ITenantUnitOfWork tenantUow) : IAppRequ
 
         await tenantUow.Repository<Truck>().AddAsync(truckEntity, ct);
         await tenantUow.SaveChangesAsync(ct);
+        return Result.Ok();
+    }
+
+    private async Task<Result> CheckTruckLimitAsync(CancellationToken ct)
+    {
+        var tenant = tenantService.GetCurrentTenant();
+
+        if (tenant.Subscription is null)
+        {
+            return Result.Ok();
+        }
+
+        var maxTrucks = tenant.Subscription.Plan.MaxTrucks;
+
+        if (maxTrucks is null)
+        {
+            return Result.Ok();
+        }
+
+        var currentCount = await tenantUow.Repository<Truck>().Query().CountAsync(ct);
+
+        if (currentCount >= maxTrucks.Value)
+        {
+            return Result.Fail(
+                $"Your {tenant.Subscription.Plan.Name} plan allows a maximum of {maxTrucks.Value} trucks. Please upgrade your plan to add more.",
+                ErrorCodes.ResourceLimitReached);
+        }
+
         return Result.Ok();
     }
 }

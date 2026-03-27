@@ -22,4 +22,9 @@ public interface IResult
     ///     <see cref="Result.Fail(string)" /> or <see cref="Result{T}.Fail(string)" />.
     /// </remarks>
     string? Error { get; init; }
+
+    /// <summary>
+    ///     Machine-readable error code for programmatic handling (e.g., "FEATURE_NOT_IN_PLAN").
+    /// </summary>
+    string? ErrorCode { get; init; }
 }

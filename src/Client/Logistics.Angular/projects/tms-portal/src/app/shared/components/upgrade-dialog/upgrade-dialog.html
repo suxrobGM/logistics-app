@@ -1,0 +1,115 @@
+<p-dialog
+  header="Upgrade Your Plan"
+  [visible]="visible()"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  [style]="{ width: '36rem' }"
+  (onHide)="dismiss()"
+>
+  @if (data(); as prompt) {
+    <!-- Message -->
+    <div class="bg-subtle border-default mb-4 flex items-start gap-3 rounded-lg border p-4">
+      <i
+        class="pi mt-0.5 text-lg"
+        [class]="
+          isResourceLimit() ? 'pi-exclamation-triangle text-warning' : 'pi-lock text-primary'
+        "
+      >
+      </i>
+      <p class="text-secondary m-0 text-sm">{{ prompt.message }}</p>
+    </div>
+
+    <!-- Plan comparison cards -->
+    @if (prompt.currentPlan || prompt.recommendedPlan) {
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <!-- Current plan -->
+        @if (prompt.currentPlan; as current) {
+          <div class="border-default rounded-lg border p-4">
+            <div class="mb-3 flex items-center gap-2">
+              <p-tag
+                [severity]="getTierSeverity(current)"
+                [value]="tierLabel(current)"
+                [rounded]="true"
+              />
+              <span class="text-secondary text-xs">Current</span>
+            </div>
+            <div class="mb-1 text-xl font-bold">
+              {{ current.price | currency
+              }}<span class="text-secondary text-sm font-normal">/mo</span>
+            </div>
+            <div class="text-secondary mb-2 text-xs">
+              + {{ current.perTruckPrice | currency }}/truck
+            </div>
+            <div class="text-secondary flex flex-col gap-1 text-xs">
+              <div class="flex items-center gap-1.5">
+                <i class="pi pi-truck text-xs"></i>
+                <span>{{ getMaxTrucksLabel(current) }}</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <i class="pi pi-bolt text-xs"></i>
+                <span>{{ getAiQuotaLabel(current) }}</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Recommended plan -->
+        @if (prompt.recommendedPlan; as recommended) {
+          <div class="border-primary bg-primary/5 rounded-lg border-2 p-4">
+            <div class="mb-3 flex items-center gap-2">
+              <p-tag
+                [severity]="getTierSeverity(recommended)"
+                [value]="tierLabel(recommended)"
+                [rounded]="true"
+              />
+              <span class="text-primary text-xs font-medium">Recommended</span>
+            </div>
+            <div class="mb-1 text-xl font-bold">
+              {{ recommended.price | currency
+              }}<span class="text-secondary text-sm font-normal">/mo</span>
+            </div>
+            <div class="text-secondary mb-2 text-xs">
+              + {{ recommended.perTruckPrice | currency }}/truck
+            </div>
+            <div class="text-secondary flex flex-col gap-1 text-xs">
+              <div class="flex items-center gap-1.5">
+                <i class="pi pi-truck text-xs"></i>
+                <span>{{ getMaxTrucksLabel(recommended) }}</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <i class="pi pi-bolt text-xs"></i>
+                <span>{{ getAiQuotaLabel(recommended) }}</span>
+              </div>
+              @if (getExtraFeatures(prompt.currentPlan, recommended); as extras) {
+                @if (extras.length > 0) {
+                  <div class="border-default mt-2 border-t pt-2">
+                    <div class="mb-1 font-medium">Additional features:</div>
+                    @for (feature of extras; track feature) {
+                      <div class="flex items-center gap-1.5">
+                        <i class="pi pi-check text-xs text-green-500"></i>
+                        <span>{{ feature }}</span>
+                      </div>
+                    }
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Actions -->
+    <div class="mt-5 flex justify-end gap-2">
+      <p-button label="View All Plans" [outlined]="true" icon="pi pi-list" (click)="viewPlans()" />
+      @if (prompt.recommendedPlan) {
+        <p-button
+          [label]="'Upgrade to ' + recommendedPlanLabel()"
+          icon="pi pi-arrow-up"
+          (click)="upgradeNow()"
+        />
+      }
+    </div>
+  }
+</p-dialog>

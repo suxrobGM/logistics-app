@@ -12,5 +12,6 @@ export * from "./feature.provider";
 export * from "./sidebar-favorites.service";
 export * from "./recent-pages.service";
 export * from "./command-palette.service";
+export * from "./upgrade-prompt.service";
 
 export { ToastService } from "@logistics/shared";

@@ -33,14 +33,15 @@ public record PagedResponse<T>(IEnumerable<T> Items, PaginationMeta Pagination)
 ///     Standard error response for API errors.
 /// </summary>
 /// <param name="Error">The error message.</param>
+/// <param name="ErrorCode">Machine-readable error code for programmatic handling.</param>
 /// <param name="Details">Optional field-level validation errors.</param>
-public record ErrorResponse(string Error, Dictionary<string, string[]>? Details = null)
+public record ErrorResponse(string Error, string? ErrorCode = null, Dictionary<string, string[]>? Details = null)
 {
     /// <summary>
     ///     Creates an ErrorResponse from a Result.
     /// </summary>
     public static ErrorResponse FromResult(IResult result)
     {
-        return new ErrorResponse(result.Error ?? "An error occurred");
+        return new ErrorResponse(result.Error ?? "An error occurred", result.ErrorCode);
     }
 }

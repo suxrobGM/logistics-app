@@ -2,6 +2,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
 import { ToastService } from "../services/toast.service";
 import type { AppError, ErrorCategory } from "./error.types";
+import { UPGRADE_HANDLER, isUpgradeError } from "./upgrade-handler";
 
 /**
  * Service for categorizing and handling application errors consistently.
@@ -9,6 +10,7 @@ import type { AppError, ErrorCategory } from "./error.types";
 @Injectable({ providedIn: "root" })
 export class ErrorHandlerService {
   private readonly toastService = inject(ToastService);
+  private readonly upgradeHandler = inject(UPGRADE_HANDLER, { optional: true });
 
   /**
    * Categorizes an HTTP error response into a standardized AppError.
@@ -99,6 +101,14 @@ export class ErrorHandlerService {
    * Handles an AppError by displaying appropriate feedback to the user.
    */
   handleError(error: HttpErrorResponse): void {
+    // Check for upgrade-related errors before showing generic toast
+    const errorCode = error.error?.errorCode;
+    if (this.upgradeHandler && isUpgradeError(errorCode)) {
+      const message = this.extractErrorMessage(error) || "This feature requires a plan upgrade.";
+      this.upgradeHandler.showUpgradePrompt(errorCode, message);
+      return;
+    }
+
     const categorizedError = this.categorizeError(error);
 
     // Log for debugging

@@ -15,6 +15,10 @@ public record Result : IResult
     public string? Error { get; init; }
 
     /// <inheritdoc />
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string? ErrorCode { get; init; }
+
+    /// <inheritdoc />
     public bool IsSuccess => string.IsNullOrEmpty(Error);
 
     /// <summary>
@@ -31,6 +35,14 @@ public record Result : IResult
     public static Result Fail(string error)
     {
         return new Result { Error = error };
+    }
+
+    /// <summary>
+    ///     Creates a failed result with the specified error message and machine-readable error code.
+    /// </summary>
+    public static Result Fail(string error, string errorCode)
+    {
+        return new Result { Error = error, ErrorCode = errorCode };
     }
 }
 
@@ -70,8 +82,16 @@ public record Result<T> : Result
     /// <summary>
     ///     Creates a failed result with the specified error message.
     /// </summary>
-    public new static Result<T> Fail(string error)
+    public static new Result<T> Fail(string error)
     {
         return new Result<T> { Error = error };
+    }
+
+    /// <summary>
+    ///     Creates a failed result with the specified error message and machine-readable error code.
+    /// </summary>
+    public static new Result<T> Fail(string error, string errorCode)
+    {
+        return new Result<T> { Error = error, ErrorCode = errorCode };
     }
 }

@@ -91,7 +91,7 @@ public class ExceptionHandlingMiddleware(
                     g => g.Select(e => e.ErrorMessage).ToArray()
                 );
 
-            return new ErrorResponse("Validation failed", details);
+            return new ErrorResponse("Validation failed", Details: details);
         }
 
         return new ErrorResponse(exception.Message);

@@ -1,10 +1,12 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Attributes;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
+[RequiresFeature(TenantFeature.LoadBoard)]
 public class PostTruckToLoadBoardCommand : IAppRequest<Result<PostTruckResultDto>>
 {
     public Guid TruckId { get; set; }

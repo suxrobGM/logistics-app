@@ -1,9 +1,12 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Attributes;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.Enums.Maintenance;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
+[RequiresFeature(TenantFeature.Maintenance)]
 public record CreateMaintenanceRecordCommand : IAppRequest<Result<MaintenanceRecordDto>>
 {
     public required Guid TruckId { get; set; }
