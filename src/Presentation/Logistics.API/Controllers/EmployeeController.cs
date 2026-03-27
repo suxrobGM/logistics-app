@@ -64,4 +64,40 @@ public class EmployeeController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(new DeleteEmployeeCommand { UserId = userId });
         return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
+
+    #region Payout
+
+    /// <summary>
+    ///     Set up a Stripe Connect Express account for employee payroll payouts.
+    /// </summary>
+    [HttpPost("{userId:guid}/payout/setup", Name = "SetupEmployeePayout")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Employee.Manage)]
+    public async Task<IActionResult> SetupEmployeePayout(Guid userId)
+    {
+        var result = await mediator.Send(new SetupEmployeePayoutCommand { EmployeeId = userId });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
+    ///     Get the Stripe onboarding link for an employee to complete their payout account setup.
+    /// </summary>
+    [HttpGet("{userId:guid}/payout/onboarding-link", Name = "GetEmployeePayoutOnboardingLink")]
+    [ProducesResponseType(typeof(EmployeePayoutOnboardingLinkDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Employee.Manage)]
+    public async Task<IActionResult> GetEmployeePayoutOnboardingLink(
+        Guid userId, [FromQuery] string returnUrl, [FromQuery] string refreshUrl)
+    {
+        var result = await mediator.Send(new GetEmployeePayoutOnboardingLinkQuery
+        {
+            EmployeeId = userId,
+            ReturnUrl = returnUrl,
+            RefreshUrl = refreshUrl
+        });
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    #endregion
 }

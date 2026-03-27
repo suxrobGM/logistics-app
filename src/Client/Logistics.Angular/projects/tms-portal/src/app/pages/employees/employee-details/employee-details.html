@@ -226,16 +226,51 @@
         <p-tabpanel [value]="3">
           <div class="pt-4">
             <div class="mb-4 flex items-center justify-between">
-              <h3 class="m-0">Recent Payroll</h3>
+              <h3 class="m-0">Payroll</h3>
               <p-button
                 label="View All Payroll"
                 [outlined]="true"
                 [routerLink]="['/payroll/employee', id()]"
               />
             </div>
-            <p class="text-muted">
-              View detailed payroll history and invoices for this employee.
-            </p>
+
+            <!-- Payout Setup Card -->
+            <p-card class="border-default mb-4 border">
+              <ng-template #header>
+                <div class="p-4 pb-0">
+                  <h3 class="m-0 text-lg font-semibold">Bank Payout Setup</h3>
+                </div>
+              </ng-template>
+
+              @if (employee.stripeConnectedAccountId) {
+                <div class="flex items-center gap-2">
+                  <i class="pi pi-check-circle text-green-500"></i>
+                  <span>Payout account connected</span>
+                </div>
+                <p-button
+                  label="Update Bank Details"
+                  icon="pi pi-external-link"
+                  size="small"
+                  [outlined]="true"
+                  class="mt-3"
+                  [loading]="isPayoutLoading()"
+                  (click)="openPayoutOnboarding()"
+                />
+              } @else {
+                <div class="flex items-center gap-2">
+                  <i class="pi pi-info-circle text-orange-500"></i>
+                  <span>No payout account set up. Set up Stripe Connect to pay this employee via bank transfer.</span>
+                </div>
+                <p-button
+                  label="Set Up Payout Account"
+                  icon="pi pi-credit-card"
+                  size="small"
+                  class="mt-3"
+                  [loading]="isPayoutLoading()"
+                  (click)="setupPayout()"
+                />
+              }
+            </p-card>
           </div>
         </p-tabpanel>
       </p-tabpanels>

@@ -356,6 +356,19 @@ public class InvoicesController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
+    ///     Pay a payroll invoice via Stripe Connect transfer to the employee's bank account.
+    /// </summary>
+    [HttpPost("payrolls/{id:guid}/pay", Name = "PayPayrollInvoice")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Payroll.Manage)]
+    public async Task<IActionResult> PayPayrollInvoice(Guid id)
+    {
+        var result = await mediator.Send(new PayPayrollInvoiceCommand { InvoiceId = id });
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    /// <summary>
     ///     Download a payroll invoice as PDF pay stub.
     /// </summary>
     [HttpGet("payrolls/{id:guid}/pdf", Name = "DownloadPayrollPayStubPdf")]

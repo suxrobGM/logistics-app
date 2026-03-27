@@ -169,8 +169,18 @@
 
             @if (canRecordPayment()) {
               <p-button
+                icon="pi pi-credit-card"
+                label="Pay via Bank Transfer"
+                styleClass="w-full"
+                severity="success"
+                [loading]="isPaying()"
+                [disabled]="!canPayViaStripe()"
+                [pTooltip]="canPayViaStripe() ? '' : 'Employee must set up a payout account first'"
+                (click)="payViaStripe()"
+              />
+              <p-button
                 icon="pi pi-dollar"
-                label="Record Payment"
+                label="Record Manual Payment"
                 styleClass="w-full"
                 [outlined]="true"
                 (click)="showRecordPaymentDialog.set(true)"

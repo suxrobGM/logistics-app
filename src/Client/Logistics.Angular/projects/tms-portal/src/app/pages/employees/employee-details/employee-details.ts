@@ -1,6 +1,7 @@
 import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
+import { Api, getEmployeePayoutOnboardingLink, setupEmployeePayout } from "@logistics/shared/api";
 import type { DocumentType } from "@logistics/shared/api";
 import { ToastService } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
@@ -45,6 +46,9 @@ export class EmployeeDetails implements OnInit {
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
   private readonly currencyPipe = inject(CurrencyPipe);
+  private readonly api = inject(Api);
+
+  protected readonly isPayoutLoading = signal(false);
 
   protected readonly id = input<string>();
   protected readonly activeTab = signal(0);
@@ -63,7 +67,8 @@ export class EmployeeDetails implements OnInit {
     const salary = emp.salary ?? 0;
     const type = emp.salaryType;
 
-    const formatCurrency = (value: number) => this.currencyPipe.transform(value, "USD", "symbol", "1.2-2") ?? "";
+    const formatCurrency = (value: number) =>
+      this.currencyPipe.transform(value, "USD", "symbol", "1.2-2") ?? "";
 
     switch (type) {
       case "share_of_gross":
@@ -118,5 +123,44 @@ export class EmployeeDetails implements OnInit {
         }
       },
     });
+  }
+
+  async setupPayout(): Promise<void> {
+    const employeeId = this.id();
+    if (!employeeId) return;
+
+    this.isPayoutLoading.set(true);
+    try {
+      await this.api.invoke(setupEmployeePayout, { userId: employeeId });
+      this.toast.showSuccess("Payout account created. Opening onboarding...");
+      await this.openPayoutOnboarding();
+      this.store.refreshEmployee();
+    } catch {
+      this.toast.showError("Failed to set up payout account");
+    } finally {
+      this.isPayoutLoading.set(false);
+    }
+  }
+
+  async openPayoutOnboarding(): Promise<void> {
+    const employeeId = this.id();
+    if (!employeeId) return;
+
+    this.isPayoutLoading.set(true);
+    try {
+      const result = await this.api.invoke(getEmployeePayoutOnboardingLink, {
+        userId: employeeId,
+        returnUrl: window.location.href,
+        refreshUrl: window.location.href,
+      });
+
+      if (result?.url) {
+        window.location.href = result.url;
+      }
+    } catch {
+      this.toast.showError("Failed to get onboarding link");
+    } finally {
+      this.isPayoutLoading.set(false);
+    }
   }
 }

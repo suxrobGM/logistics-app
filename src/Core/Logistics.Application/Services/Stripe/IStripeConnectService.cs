@@ -17,6 +17,17 @@ public interface IStripeConnectService
     Task<Account> CreateConnectedAccountAsync(Tenant tenant);
 
     /// <summary>
+    /// Creates a new Stripe Connect Express account for an employee (individual) to receive payroll payouts.
+    /// </summary>
+    Task<Account> CreateEmployeeConnectedAccountAsync(Employee employee);
+
+    /// <summary>
+    /// Creates an account link for the employee's onboarding flow.
+    /// </summary>
+    Task<AccountLink> CreateEmployeeAccountLinkAsync(
+        string stripeConnectedAccountId, string returnUrl, string refreshUrl);
+
+    /// <summary>
     /// Creates an account link for the onboarding flow.
     /// The user will be redirected to this URL to complete their Stripe onboarding.
     /// </summary>

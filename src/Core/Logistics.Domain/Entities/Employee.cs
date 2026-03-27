@@ -32,6 +32,11 @@ public class Employee : Entity, ITenantEntity
     /// </summary>
     public virtual List<Load> DispatchedLoads { get; } = [];
 
+    /// <summary>
+    ///     Stripe Connected Account ID for receiving payroll payouts via bank transfer.
+    /// </summary>
+    public string? StripeConnectedAccountId { get; set; }
+
     public virtual List<PayrollInvoice> PayrollInvoices { get; set; } = [];
 
     /// <summary>

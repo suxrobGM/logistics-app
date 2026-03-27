@@ -6,6 +6,7 @@ import {
   Api,
   approvePayrollInvoice,
   getInvoiceById,
+  payPayrollInvoice,
   rejectPayrollInvoice,
   submitPayrollForApproval,
 } from "@logistics/shared/api";
@@ -56,6 +57,7 @@ export class PayrollInvoiceDetails implements OnInit {
   protected readonly invoiceId = input.required<string>();
   protected readonly isLoading = signal(false);
   protected readonly isDownloadingPdf = signal(false);
+  protected readonly isPaying = signal(false);
   protected readonly invoice = signal<InvoiceDto | null>(null);
 
   // Dialog signals
@@ -172,6 +174,37 @@ export class PayrollInvoiceDetails implements OnInit {
     } finally {
       this.isRejecting.set(false);
     }
+  }
+
+  canPayViaStripe(): boolean {
+    return !!this.invoice()?.employee?.stripeConnectedAccountId;
+  }
+
+  async payViaStripe(): Promise<void> {
+    const invoice = this.invoice();
+    if (!invoice?.id) return;
+
+    this.toastService.confirm({
+      message: `Pay ${this.getOutstandingAmount().toLocaleString("en-US", { style: "currency", currency: "USD" })} to ${invoice.employee?.fullName ?? "employee"} via bank transfer?`,
+      header: "Confirm Payout",
+      icon: "pi pi-credit-card",
+      acceptLabel: "Yes, Pay Now",
+      rejectLabel: "Cancel",
+      accept: async () => {
+        this.isPaying.set(true);
+        try {
+          await this.api.invoke(payPayrollInvoice, { id: invoice.id! });
+          this.toastService.showSuccess("Payroll paid successfully via bank transfer");
+          await this.fetchInvoice();
+        } catch {
+          this.toastService.showError(
+            "Failed to process payout. Ensure the employee has completed Stripe onboarding.",
+          );
+        } finally {
+          this.isPaying.set(false);
+        }
+      },
+    });
   }
 
   onPaymentRecorded(): void {

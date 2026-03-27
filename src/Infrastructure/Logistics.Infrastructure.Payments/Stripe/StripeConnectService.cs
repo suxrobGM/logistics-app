@@ -55,6 +55,59 @@ internal class StripeConnectService : IStripeConnectService
         return account;
     }
 
+    public async Task<Account> CreateEmployeeConnectedAccountAsync(Employee employee)
+    {
+        var options = new AccountCreateOptions
+        {
+            Type = "express",
+            Country = "US",
+            Email = employee.Email,
+            BusinessType = "individual",
+            Individual = new AccountIndividualOptions
+            {
+                FirstName = employee.FirstName,
+                LastName = employee.LastName,
+                Email = employee.Email,
+                Phone = employee.PhoneNumber
+            },
+            Capabilities = new AccountCapabilitiesOptions
+            {
+                Transfers = new AccountCapabilitiesTransfersOptions { Requested = true }
+            },
+            Metadata = new Dictionary<string, string>
+            {
+                ["employee_id"] = employee.Id.ToString(),
+                ["type"] = "employee_payout"
+            }
+        };
+
+        var account = await new AccountService().CreateAsync(options);
+        logger.LogInformation(
+            "Created Stripe Connect account {AccountId} for employee {EmployeeId}",
+            account.Id, employee.Id);
+
+        return account;
+    }
+
+    public async Task<AccountLink> CreateEmployeeAccountLinkAsync(
+        string stripeConnectedAccountId, string returnUrl, string refreshUrl)
+    {
+        var options = new AccountLinkCreateOptions
+        {
+            Account = stripeConnectedAccountId,
+            RefreshUrl = refreshUrl,
+            ReturnUrl = returnUrl,
+            Type = "account_onboarding"
+        };
+
+        var accountLink = await new AccountLinkService().CreateAsync(options);
+        logger.LogInformation(
+            "Created account link for employee account {AccountId}",
+            stripeConnectedAccountId);
+
+        return accountLink;
+    }
+
     public async Task<AccountLink> CreateAccountLinkAsync(Tenant tenant, string returnUrl, string refreshUrl)
     {
         if (string.IsNullOrEmpty(tenant.StripeConnectedAccountId))

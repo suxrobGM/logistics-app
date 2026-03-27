@@ -17,5 +17,6 @@ public class EmployeeDto
     public SalaryType SalaryType { get; set; }
     public EmployeeStatus Status { get; set; }
     public DateTime JoinedDate { get; set; }
+    public string? StripeConnectedAccountId { get; set; }
     public RoleDto? Role { get; set; }
 }

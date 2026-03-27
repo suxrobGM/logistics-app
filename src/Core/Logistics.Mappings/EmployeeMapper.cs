@@ -19,6 +19,7 @@ public static class EmployeeMapper
             Salary = entity.Salary,
             SalaryType = entity.SalaryType,
             Status = entity.Status,
+            StripeConnectedAccountId = entity.StripeConnectedAccountId,
             Role = entity.Role?.ToDto()
         };
     }

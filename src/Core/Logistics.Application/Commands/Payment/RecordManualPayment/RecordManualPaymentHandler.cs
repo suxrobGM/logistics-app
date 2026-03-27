@@ -23,10 +23,10 @@ internal sealed class RecordManualPaymentHandler(
             return Result.Fail("User not authenticated.");
         }
 
-        // Validate payment type is Cash or Check
-        if (req.Type != PaymentMethodType.Cash && req.Type != PaymentMethodType.Check)
+        // Validate payment type is a manual payment method
+        if (req.Type is not (PaymentMethodType.Cash or PaymentMethodType.Check or PaymentMethodType.Zelle))
         {
-            return Result.Fail("Manual payments can only be Cash or Check.");
+            return Result.Fail("Manual payments can only be Cash, Check, or Zelle.");
         }
 
         // Get the invoice

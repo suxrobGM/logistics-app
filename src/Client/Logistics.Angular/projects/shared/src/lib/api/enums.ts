@@ -25,11 +25,9 @@ import type {
 
 // Options arrays for select dropdowns
 export const paymentMethodTypeOptions: SelectOption<PaymentMethodType>[] = [
-  // { label: "Card", value: "card" },
-  // { label: "US Bank Account", value: "us_bank_account" },
-  // { label: "International Bank Account", value: "international_bank_account" },
   { label: "Cash", value: "cash" },
   { label: "Check", value: "check" },
+  { label: "Zelle", value: "zelle" },
 ];
 
 export const salaryTypeOptions: SelectOption<SalaryType>[] = [

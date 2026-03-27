@@ -3,6 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angula
 import { LabeledField } from "@logistics/shared";
 import { Api, recordManualPayment } from "@logistics/shared/api";
 import type { PaymentMethodType } from "@logistics/shared/api";
+import { paymentMethodTypeOptions } from "@logistics/shared/api/enums";
 import { ButtonModule } from "primeng/button";
 import { DatePickerModule } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
@@ -11,11 +12,6 @@ import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
-
-interface PaymentTypeOption {
-  label: string;
-  value: PaymentMethodType;
-}
 
 @Component({
   selector: "app-record-payment-dialog",
@@ -43,10 +39,7 @@ export class RecordPaymentDialog {
 
   protected readonly isSaving = signal(false);
 
-  protected readonly paymentTypes: PaymentTypeOption[] = [
-    { label: "Cash", value: "cash" },
-    { label: "Check", value: "check" },
-  ];
+  protected readonly paymentTypes = paymentMethodTypeOptions;
 
   protected readonly form = new FormGroup({
     amount: new FormControl<number | null>(null, [Validators.required, Validators.min(0.01)]),
