@@ -39,6 +39,7 @@
     "chart.js": "^4.5.1",
     "express": "^5.1.0",
     "mapbox-gl": "^3.17.0",
+    "marked": "^17.0.5",
     "ngx-mapbox-gl": "^13.0.0",
     "primeicons": "^7.0.0",
     "primeng": "^21.0.4",

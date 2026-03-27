@@ -79,24 +79,6 @@ internal sealed class DispatchToolRegistry : IDispatchToolRegistry
                 ["required"] = new JsonArray("origin_lat", "origin_lng", "dest_lat", "dest_lng")
             })),
 
-        new("optimize_trip_stops",
-            "Optimize the order of stops for a set of loads assigned to a truck. Minimizes total driving distance by reordering pickup and delivery stops while respecting pickup-before-delivery constraints.",
-            BuildSchema(new JsonObject
-            {
-                ["type"] = "object",
-                ["properties"] = new JsonObject
-                {
-                    ["load_ids"] = new JsonObject
-                    {
-                        ["type"] = "array",
-                        ["items"] = new JsonObject { ["type"] = "string" },
-                        ["description"] = "List of load IDs (GUIDs) to include in the trip"
-                    },
-                    ["truck_id"] = Prop("string", "The truck ID (GUID) that will execute this trip")
-                },
-                ["required"] = new JsonArray("load_ids", "truck_id")
-            })),
-
         new("search_load_board",
             "Search load boards (DAT, Truckstop, 123Loadboard) for available loads matching criteria. Use this when trucks have capacity gaps to find revenue opportunities.",
             BuildSchema(new JsonObject

@@ -1,36 +1,37 @@
 @if (session(); as session) {
   <div class="animate-fadein">
     <!-- Header -->
-    <div class="mb-6 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <p-button
-          icon="pi pi-arrow-left"
-          [rounded]="true"
-          [text]="true"
-          (onClick)="goBack()"
+    <ui-page-header
+      [title]="'Session #' + session.number"
+      backLink="/ai-dispatch"
+      [showAddButton]="false"
+    >
+      <div class="flex items-center gap-2">
+        <p-tag
+          [value]="session.status ?? ''"
+          [severity]="Labels.dispatchStatusSeverity(session.status ?? '')"
         />
-        <h1 class="text-primary mb-0">Session #{{ session.number }}</h1>
-        <p-tag [value]="session.status ?? ''" [severity]="Labels.dispatchStatusSeverity(session.status ?? '')" />
         @if (session.mode === "autonomous") {
           <p-tag value="Autonomous" severity="warn" />
         } @else {
           <p-tag value="Suggestions" severity="info" />
         }
+        @if (session.status === "running") {
+          <p-button
+            label="Cancel"
+            icon="pi pi-stop-circle"
+            severity="danger"
+            [outlined]="true"
+            size="small"
+            (onClick)="cancelSession()"
+          />
+        }
       </div>
-      @if (session.status === "running") {
-        <p-button
-          label="Cancel"
-          icon="pi pi-stop-circle"
-          severity="danger"
-          [outlined]="true"
-          (onClick)="cancelSession()"
-        />
-      }
-    </div>
+    </ui-page-header>
 
-    <!-- Summary -->
+    <!-- Stats -->
     <div class="border-default bg-elevated mb-6 rounded-lg border p-4">
-      <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-5">
         <div>
           <span class="text-muted text-sm">Started</span>
           <p class="font-medium">{{ session.startedAt | date: "medium" }}</p>
@@ -42,6 +43,10 @@
           </p>
         </div>
         <div>
+          <span class="text-muted text-sm">Duration</span>
+          <p class="font-medium">{{ duration() ?? "—" }}</p>
+        </div>
+        <div>
           <span class="text-muted text-sm">Decisions</span>
           <p class="font-medium">{{ session.decisionCount }}</p>
         </div>
@@ -50,89 +55,171 @@
           <p class="font-mono font-medium">{{ session.totalTokensUsed | number }}</p>
         </div>
       </div>
-      @if (session.summary) {
-        <div class="mt-4 border-t pt-4">
-          <span class="text-muted text-sm">Agent Summary</span>
-          <p class="mt-1">{{ session.summary }}</p>
-        </div>
-      }
-      @if (session.errorMessage) {
-        <div class="mt-4 border-t pt-4">
-          <span class="text-sm text-red-500">Error</span>
-          <p class="mt-1 text-red-600">{{ session.errorMessage }}</p>
-        </div>
-      }
     </div>
 
-    <!-- Decisions Table -->
-    <h2 class="text-primary mb-3 text-lg font-semibold">Decisions</h2>
+    <!-- Agent Summary (markdown) -->
+    @if (session.summary) {
+      <div class="border-default bg-elevated mb-6 rounded-lg border p-5">
+        <div class="mb-3 flex items-center gap-2">
+          <i class="pi pi-sparkles text-primary"></i>
+          <span class="font-semibold">Agent Summary</span>
+        </div>
+        <div class="prose prose-sm max-w-none" [innerHTML]="session.summary | markdown"></div>
+      </div>
+    }
 
-    <p-table
-      [value]="session.decisions ?? []"
-      [rows]="50"
-      styleClass="p-datatable-sm"
-    >
-      <ng-template #header>
-        <tr>
-          <th>Type</th>
-          <th>Status</th>
-          <th>Tool</th>
-          <th>Reasoning</th>
-          <th>Created</th>
-          <th class="w-32">Actions</th>
-        </tr>
-      </ng-template>
-      <ng-template #body let-decision>
-        <tr>
-          <td>
-            <p-tag [value]="Labels.decisionTypeLabel(decision.type)" severity="info" />
-          </td>
-          <td>
-            <p-tag [value]="decision.status" [severity]="Labels.dispatchStatusSeverity(decision.status)" />
-          </td>
-          <td>
-            <code class="text-xs">{{ decision.toolName }}</code>
-          </td>
-          <td class="max-w-md">
-            <p class="truncate text-sm" [pTooltip]="decision.reasoning">
-              {{ decision.reasoning }}
-            </p>
-          </td>
-          <td>{{ decision.createdAt | date: "shortTime" }}</td>
-          <td>
-            @if (decision.status === "suggested") {
-              <div class="flex gap-1">
+    <!-- Error -->
+    @if (session.errorMessage) {
+      <div
+        class="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950"
+      >
+        <div class="flex items-center gap-2">
+          <i class="pi pi-exclamation-triangle text-red-500"></i>
+          <span class="font-semibold text-red-700 dark:text-red-400">Error</span>
+        </div>
+        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ session.errorMessage }}</p>
+      </div>
+    }
+
+    <!-- Agent Timeline -->
+    @if (session.decisions && session.decisions.length > 0) {
+      <h2 class="text-primary mb-4 text-lg font-semibold">Agent Timeline</h2>
+
+      <p-timeline [value]="session.decisions">
+        <ng-template #content let-decision>
+          <div class="mb-4 pb-2">
+            <!-- Tool name + status -->
+            <div class="mb-1 flex flex-wrap items-center gap-2">
+              <span class="text-sm font-medium">{{ getToolLabel(decision.toolName) }}</span>
+              @if (isWriteTool(decision.toolName)) {
+                <p-tag
+                  [value]="decision.status"
+                  [severity]="Labels.dispatchStatusSeverity(decision.status)"
+                  [style]="{ fontSize: '0.7rem' }"
+                />
+              }
+            </div>
+
+            <!-- Reasoning -->
+            @if (decision.reasoning) {
+              <p class="text-secondary mb-2 line-clamp-3 text-sm leading-relaxed">
+                {{ stripMarkdown(decision.reasoning) }}
+              </p>
+            }
+
+            <!-- Tool output summary -->
+            @if (decision.toolOutput) {
+              @let output = parseToolOutput(decision.toolOutput);
+              <div class="bg-subtle rounded-md p-3 text-xs">
+                @if (output.error) {
+                  <div class="flex items-center gap-1 text-red-500">
+                    <i class="pi pi-times-circle text-xs"></i>
+                    <span>{{ output.error }}</span>
+                  </div>
+                } @else if (output.totalTrucks !== undefined) {
+                  <!-- Fleet overview -->
+                  <div class="flex flex-wrap gap-3">
+                    <span
+                      >Trucks: <strong>{{ output.totalTrucks }}</strong></span
+                    >
+                    <span
+                      >Available: <strong>{{ output.availableTrucks }}</strong></span
+                    >
+                    <span
+                      >Unassigned loads: <strong>{{ output.unassignedLoads }}</strong></span
+                    >
+                    <span
+                      >Active trips: <strong>{{ output.activeTrips }}</strong></span
+                    >
+                    @if (output.driversInViolation) {
+                      <span class="text-red-500">
+                        Violations: <strong>{{ output.driversInViolation }}</strong>
+                      </span>
+                    }
+                  </div>
+                } @else if (output.feasible !== undefined) {
+                  <!-- HOS feasibility -->
+                  <div class="flex items-center gap-2">
+                    @if (output.feasible) {
+                      <i class="pi pi-check-circle text-green-500"></i>
+                      <span class="text-green-700 dark:text-green-400">Feasible</span>
+                    } @else {
+                      <i class="pi pi-times-circle text-red-500"></i>
+                      <span class="text-red-600 dark:text-red-400">Not feasible</span>
+                    }
+                    @if (output.reason) {
+                      <span class="text-muted">— {{ output.reason }}</span>
+                    }
+                  </div>
+                  @if (output.estimatedDrivingMinutes) {
+                    <div class="text-muted mt-1">
+                      Need: {{ output.estimatedDrivingMinutes }}min · Remaining:
+                      {{ output.drivingMinutesRemaining }}min
+                    </div>
+                  }
+                } @else if (output.loads) {
+                  <!-- Unassigned loads -->
+                  <span>{{ output.loads.length }} unassigned loads found</span>
+                } @else if (output.trucks) {
+                  <!-- Available trucks -->
+                  <span>{{ output.trucks.length }} available trucks</span>
+                } @else if (output.success !== undefined) {
+                  <!-- Write tool result -->
+                  <div class="flex items-center gap-1">
+                    @if (output.success) {
+                      <i class="pi pi-check-circle text-green-500"></i>
+                      <span class="text-green-700 dark:text-green-400">Executed successfully</span>
+                    } @else {
+                      <i class="pi pi-times-circle text-red-500"></i>
+                      <span class="text-red-600 dark:text-red-400">Failed</span>
+                    }
+                  </div>
+                } @else {
+                  <span class="text-muted">Tool executed</span>
+                }
+              </div>
+            }
+
+            <!-- Approve/reject for suggested write-tool decisions only -->
+            @if (decision.status === "suggested" && isWriteTool(decision.toolName)) {
+              <div class="mt-2 flex gap-2">
                 <p-button
+                  label="Approve"
                   icon="pi pi-check"
                   severity="success"
                   size="small"
-                  [rounded]="true"
-                  [text]="true"
-                  pTooltip="Approve & Execute"
+                  [outlined]="true"
                   (onClick)="approveDecision(decision)"
                 />
                 <p-button
+                  label="Reject"
                   icon="pi pi-times"
                   severity="danger"
                   size="small"
-                  [rounded]="true"
-                  [text]="true"
-                  pTooltip="Reject"
+                  [outlined]="true"
                   (onClick)="rejectDecision(decision)"
                 />
               </div>
             }
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template #emptymessage>
-        <tr>
-          <td colspan="6" class="text-muted text-center">No decisions in this session</td>
-        </tr>
-      </ng-template>
-    </p-table>
+          </div>
+        </ng-template>
 
-    <p-confirmDialog />
+        <ng-template #marker let-decision>
+          <span
+            class="z-10 flex h-7 w-7 items-center justify-center rounded-full shadow-sm"
+            [class]="getToolMarkerClass(decision.toolName)"
+          >
+            <i [class]="getToolIcon(decision.toolName)" class="text-xs"></i>
+          </span>
+        </ng-template>
+
+        <ng-template #opposite let-decision>
+          <span class="text-muted text-xs">
+            {{ decision.createdAt | date: "shortTime" }}
+          </span>
+        </ng-template>
+      </p-timeline>
+    }
   </div>
 } @else if (isLoading()) {
   <div class="flex items-center justify-center py-20">

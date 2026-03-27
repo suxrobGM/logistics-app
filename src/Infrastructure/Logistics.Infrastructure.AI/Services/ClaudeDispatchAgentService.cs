@@ -1,3 +1,4 @@
+using Anthropic.SDK;
 using Anthropic.SDK.Messaging;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
@@ -20,6 +21,8 @@ internal sealed class ClaudeDispatchAgentService(
     ILogger<ClaudeDispatchAgentService> logger) : IDispatchAgentService
 {
     private const int MaxIterations = 25;
+    private const int MaxRetries = 3;
+    private static readonly int[] RetryDelaysMs = [2000, 4000, 8000];
 
     public async Task<DispatchSession> RunAsync(DispatchAgentRequest request, CancellationToken ct = default)
     {
@@ -95,7 +98,7 @@ internal sealed class ClaudeDispatchAgentService(
             logger.LogDebug("Agent loop iteration {Iteration} for session {SessionId}",
                 iteration, session.Id);
 
-            var response = await client.Messages.GetClaudeMessageAsync(parameters, ct);
+            var response = await SendWithRetryAsync(client, parameters, session.Id, ct);
 
             TrackTokenUsage(session, response, ref totalInputTokens, ref totalOutputTokens);
             messages.Add(response.Message);
@@ -119,6 +122,31 @@ internal sealed class ClaudeDispatchAgentService(
             messages.Add(new Message { Role = RoleType.User, Content = toolResults });
             await tenantUow.SaveChangesAsync(ct);
         }
+    }
+
+    private async Task<MessageResponse> SendWithRetryAsync(
+        AnthropicClient client,
+        MessageParameters parameters,
+        Guid sessionId,
+        CancellationToken ct)
+    {
+        for (var attempt = 0; attempt <= MaxRetries; attempt++)
+        {
+            try
+            {
+                return await client.Messages.GetClaudeMessageAsync(parameters, ct);
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests && attempt < MaxRetries)
+            {
+                var delay = RetryDelaysMs[attempt];
+                logger.LogWarning(
+                    "Rate limited on session {SessionId}, attempt {Attempt}/{MaxRetries}. Retrying in {Delay}ms",
+                    sessionId, attempt + 1, MaxRetries, delay);
+                await Task.Delay(delay, ct);
+            }
+        }
+
+        throw new HttpRequestException("Rate limited by Claude API after maximum retries. Please try again later.");
     }
 
     private static void TrackTokenUsage(

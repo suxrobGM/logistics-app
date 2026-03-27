@@ -1,6 +1,15 @@
 import { DatePipe, DecimalPipe } from "@angular/common";
-import { Component, type OnInit, inject, input, signal } from "@angular/core";
+import {
+  Component,
+  type OnDestroy,
+  type OnInit,
+  computed,
+  inject,
+  input,
+  signal,
+} from "@angular/core";
 import { Router } from "@angular/router";
+import { PageHeader } from "@logistics/shared";
 import {
   Api,
   type DispatchDecisionDto,
@@ -12,31 +21,41 @@ import {
 } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { PanelModule } from "primeng/panel";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
+import { TimelineModule } from "primeng/timeline";
 import { TooltipModule } from "primeng/tooltip";
-import { ToastService } from "@/core/services";
-import { Labels } from "@/shared/utils";
+import { TenantService, ToastService, TrackingService } from "@/core/services";
+import { DateUtils, Labels } from "@/shared/utils";
+import {
+  getToolIcon,
+  getToolLabel,
+  getToolMarkerClass,
+  isWriteTool,
+  parseToolOutput,
+} from "../utils/decision-utils";
+import { MarkdownPipe, stripMarkdown } from "../utils/markdown";
 
 @Component({
   selector: "app-session-detail",
   templateUrl: "./session-detail.html",
   imports: [
     ButtonModule,
-    TableModule,
     TagModule,
     TooltipModule,
-    PanelModule,
+    TimelineModule,
     ConfirmDialogModule,
     DatePipe,
     DecimalPipe,
+    PageHeader,
+    MarkdownPipe,
   ],
 })
-export class SessionDetailPage implements OnInit {
+export class SessionDetailPage implements OnInit, OnDestroy {
   private readonly api = inject(Api);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
+  private readonly trackingService = inject(TrackingService);
+  private readonly tenantService = inject(TenantService);
 
   public readonly id = input.required<string>();
 
@@ -44,9 +63,53 @@ export class SessionDetailPage implements OnInit {
   protected readonly isLoading = signal(false);
 
   protected readonly Labels = Labels;
+  protected readonly getToolLabel = getToolLabel;
+  protected readonly getToolIcon = getToolIcon;
+  protected readonly getToolMarkerClass = getToolMarkerClass;
+  protected readonly isWriteTool = isWriteTool;
+  protected readonly parseToolOutput = parseToolOutput;
+  protected readonly stripMarkdown = stripMarkdown;
+
+  protected readonly duration = computed(() => {
+    const s = this.session();
+    return DateUtils.formatDuration(s?.startedAt, s?.completedAt);
+  });
 
   ngOnInit(): void {
     this.loadSession();
+    this.setupSignalR();
+  }
+
+  ngOnDestroy(): void {
+    const tenant = this.tenantService.getTenantData();
+    if (tenant?.id) {
+      this.trackingService.unsubscribeFromDispatchBoard(tenant.id);
+    }
+  }
+
+  private async setupSignalR(): Promise<void> {
+    const tenant = this.tenantService.getTenantData();
+    if (!tenant?.id) return;
+
+    await this.trackingService.connect();
+    await this.trackingService.subscribeToDispatchBoard(tenant.id);
+
+    this.trackingService.onReceiveDispatchAgentUpdate = (update) => {
+      if (update.sessionId === this.id()) {
+        this.loadSession();
+      }
+    };
+
+    this.trackingService.onReceiveDispatchDecision = (decision) => {
+      if (decision.sessionId === this.id()) {
+        // Add the new decision to the timeline in real-time
+        this.session.update((s) => {
+          if (!s) return s;
+          const decisions = [...(s.decisions ?? []), decision];
+          return { ...s, decisions, decisionCount: decisions.length };
+        });
+      }
+    };
   }
 
   protected async loadSession(): Promise<void> {

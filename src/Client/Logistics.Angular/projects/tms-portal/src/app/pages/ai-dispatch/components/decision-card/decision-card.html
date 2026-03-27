@@ -1,0 +1,63 @@
+<div class="border-default bg-elevated rounded-lg border p-4">
+  <!-- Header -->
+  <div class="mb-3 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <p-tag [value]="Labels.decisionTypeLabel(decision().type ?? '')" severity="info" />
+      <p-tag
+        [value]="decision().status ?? ''"
+        [severity]="Labels.dispatchStatusSeverity(decision().status ?? '')"
+      />
+    </div>
+    <span class="text-muted text-xs">{{ toolLabel() }}</span>
+  </div>
+
+  <!-- Reasoning -->
+  @if (decision().reasoning) {
+    <p class="text-secondary mb-3 line-clamp-3 text-sm leading-relaxed">
+      {{ stripMarkdown(decision().reasoning) }}
+    </p>
+  }
+
+  <!-- Tool input details -->
+  @if (parsedInput().loadId) {
+    <div class="bg-subtle mb-3 rounded-md p-3 text-sm">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-box text-muted text-xs"></i>
+        <span class="text-muted">Load:</span>
+        <span class="font-mono text-xs">{{ parsedInput().loadId }}</span>
+      </div>
+      @if (parsedInput().truckId) {
+        <div class="mt-1 flex items-center gap-2">
+          <i class="pi pi-truck text-muted text-xs"></i>
+          <span class="text-muted">Truck:</span>
+          <span class="font-mono text-xs">{{ parsedInput().truckId }}</span>
+        </div>
+      }
+      @if (parsedInput().reasoning) {
+        <div class="text-secondary mt-2 text-xs italic">"{{ parsedInput().reasoning }}"</div>
+      }
+    </div>
+  }
+
+  <!-- Actions -->
+  @if (decision().status === "suggested") {
+    <div class="flex gap-2">
+      <p-button
+        label="Approve"
+        icon="pi pi-check"
+        severity="success"
+        size="small"
+        [outlined]="true"
+        (onClick)="onApprove()"
+      />
+      <p-button
+        label="Reject"
+        icon="pi pi-times"
+        severity="danger"
+        size="small"
+        [outlined]="true"
+        (onClick)="onReject()"
+      />
+    </div>
+  }
+</div>

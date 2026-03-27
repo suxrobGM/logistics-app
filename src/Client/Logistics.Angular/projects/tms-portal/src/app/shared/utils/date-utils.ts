@@ -124,4 +124,28 @@ export abstract class DateUtils {
 
     return false;
   }
+
+  /**
+   * Formats the duration between two date strings as a human-readable string.
+   * @param startDate The start date string or Date object.
+   * @param endDate The end date string or Date object.
+   * @returns A formatted duration string (e.g., "45s", "2m 30s", "1h 15m"), or `null` if either date is missing.
+   */
+  static formatDuration(startDate: string | Date | null | undefined, endDate: string | Date | null | undefined): string | null {
+    if (!startDate || !endDate) return null;
+
+    const ms = new Date(endDate).getTime() - new Date(startDate).getTime();
+    if (ms < 0) return null;
+
+    const seconds = Math.floor(ms / 1000);
+    if (seconds < 60) return `${seconds}s`;
+
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    if (minutes < 60) return `${minutes}m ${remainingSeconds}s`;
+
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return `${hours}h ${remainingMinutes}m`;
+  }
 }

@@ -5,6 +5,7 @@ using Tool = Anthropic.SDK.Common.Tool;
 using Function = Anthropic.SDK.Common.Function;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Options;
 using Logistics.Infrastructure.AI.Prompts;
@@ -17,6 +18,7 @@ namespace Logistics.Infrastructure.AI.Services;
 /// </summary>
 internal sealed class DispatchConversationBuilder(
     IDispatchToolRegistry toolRegistry,
+    ITenantUnitOfWork tenantUow,
     ILogger<DispatchConversationBuilder> logger)
 {
     public (AnthropicClient Client, MessageParameters Parameters, List<Message> Messages)
@@ -25,7 +27,9 @@ internal sealed class DispatchConversationBuilder(
         if (string.IsNullOrWhiteSpace(config.ApiKey))
             throw new InvalidOperationException("Claude API key is not configured.");
 
-        var systemPrompt = DispatchSystemPrompt.Build("Fleet", mode);
+        var tenant = tenantUow.GetCurrentTenant();
+        var companyName = tenant.Name ?? "Fleet";
+        var systemPrompt = DispatchSystemPrompt.Build(companyName, mode);
 
         var tools = toolRegistry.GetToolDefinitions()
             .Select<DispatchToolDefinition, Tool>(t => new Function(t.Name, t.Description, (JsonNode)t.InputSchema))
@@ -35,11 +39,15 @@ internal sealed class DispatchConversationBuilder(
             "Agent session {SessionId} initialized with {ToolCount} tools, model {Model}",
             session.Id, tools.Count, config.Model);
 
+        var modeLabel = mode == DispatchAgentMode.Autonomous ? "autonomous" : "suggestions";
+        var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm UTC");
+
         var messages = new List<Message>
         {
             new(RoleType.User,
-                "Analyze the current fleet state and optimize dispatch assignments. " +
-                "Start by getting a fleet overview, then process all unassigned loads.")
+                $"Analyze the current fleet state and optimize dispatch assignments. " +
+                $"Current time: {timestamp}. Mode: {modeLabel}. " +
+                $"Start by gathering fleet overview, unassigned loads, and available trucks, then process all unassigned loads.")
         };
 
         var client = new AnthropicClient(config.ApiKey);
