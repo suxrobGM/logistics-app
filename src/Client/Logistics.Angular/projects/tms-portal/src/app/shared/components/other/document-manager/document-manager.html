@@ -27,17 +27,18 @@
               <input
                 type="file"
                 class="hidden"
-                [id]="'file-' + type"
+                #fileInput
                 (change)="onFileChange($event, type)"
                 accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt"
               />
-              <label
-                [for]="'file-' + type"
-                class="bg-primary hover:bg-primary-dark flex w-full cursor-pointer items-center justify-center gap-2 rounded px-3 py-2 text-sm text-white transition-colors"
-              >
-                <i class="pi pi-plus text-xs"></i>
-                Choose File
-              </label>
+              <p-button
+                label="Choose File"
+                icon="pi pi-plus"
+                styleClass="w-full"
+                [outlined]="true"
+                size="small"
+                (click)="fileInput.click()"
+              />
             </div>
 
             @if (uploadProgress()[type] > 0) {

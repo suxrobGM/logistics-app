@@ -1,9 +1,9 @@
 .popup {
   position: absolute;
   z-index: 100;
-  border: 1px solid #dee2e6;
-  background: white;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-default);
+  background: var(--bg-elevated);
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
   border-radius: 0.25rem;
   max-height: 200px;
   overflow-y: auto;
@@ -13,8 +13,9 @@
 
 .popup-item {
   padding: 0.5rem;
+  cursor: pointer;
 }
 
 .popup-item:hover {
-  background-color: #f8f9fa;
+  background-color: var(--bg-hover);
 }
