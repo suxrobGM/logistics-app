@@ -120,6 +120,8 @@ export function getToolLabel(toolName: string | null | undefined): string {
       return "Batch HOS Feasibility Check";
     case "calculate_distance":
       return "Distance Calculation";
+    case "calculate_assignment_metrics":
+      return "Assignment Metrics";
     case "assign_load_to_truck":
       return "Assign Load";
     case "create_trip":
@@ -148,6 +150,8 @@ export function getToolIcon(toolName: string | null | undefined): string {
       return "pi pi-shield";
     case "calculate_distance":
       return "pi pi-map";
+    case "calculate_assignment_metrics":
+      return "pi pi-chart-bar";
     case "assign_load_to_truck":
       return "pi pi-link";
     case "create_trip":

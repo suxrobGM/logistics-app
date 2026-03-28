@@ -28,6 +28,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         TenantFeature.Notifications,
         TenantFeature.Expenses,
         TenantFeature.Reports,
+        TenantFeature.Eld,
         TenantFeature.AgenticDispatch
     ];
 
@@ -44,8 +45,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
         TenantFeature.McpServer
     ];
 
-    private static readonly TenantFeature[] EnterpriseFeatures =
-        Enum.GetValues<TenantFeature>();
+    private static readonly TenantFeature[] EnterpriseFeatures = Enum.GetValues<TenantFeature>();
 
     public override async Task SeedAsync(SeederContext context, CancellationToken cancellationToken = default)
     {
@@ -183,12 +183,14 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
 
                 if (!existingFeatureSet.SetEquals(desiredFeatureSet))
                 {
-                    foreach (var oldFeature in existingFeatures)
+                    // Remove features no longer in the plan
+                    foreach (var oldFeature in existingFeatures.Where(f => !desiredFeatureSet.Contains(f.Feature)))
                     {
                         featureRepo.Delete(oldFeature);
                     }
 
-                    foreach (var feature in planDef.Features)
+                    // Add new features not yet in the plan
+                    foreach (var feature in desiredFeatureSet.Except(existingFeatureSet))
                     {
                         await featureRepo.AddAsync(new PlanFeature
                         {

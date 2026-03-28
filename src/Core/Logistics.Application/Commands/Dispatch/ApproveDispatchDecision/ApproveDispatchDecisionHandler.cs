@@ -4,18 +4,26 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace Logistics.Application.Commands;
 
 internal sealed class ApproveDispatchDecisionHandler(
     ITenantUnitOfWork tenantUow,
     IDispatchToolExecutor toolExecutor,
-    ICurrentUserService currentUser) : IAppRequestHandler<ApproveDispatchDecisionCommand, Result>
+    ICurrentUserService currentUser,
+    IConfiguration configuration) : IAppRequestHandler<ApproveDispatchDecisionCommand, Result>
 {
     public async Task<Result> Handle(ApproveDispatchDecisionCommand request, CancellationToken ct)
     {
+        var tenant = tenantUow.GetCurrentTenant();
+        var bypassGate = configuration.GetValue<bool>("Llm:BypassLlmGate");
+
+        if (!bypassGate && tenant.Settings.LlmEnabled == false)
+            return Result.Fail("AI dispatch is disabled for this tenant");
+
         var decision = await tenantUow.Repository<DispatchDecision>()
-            .GetByIdAsync(request.DecisionId);
+            .GetByIdAsync(request.DecisionId, ct);
 
         if (decision is null)
             return Result.Fail("Decision not found");
