@@ -18,28 +18,31 @@ export class HowItWorks {
   protected readonly steps: Step[] = [
     {
       number: 1,
-      title: "Sign Up",
+      title: "Set Up Your Fleet",
       description:
-        "Create your company account in just a few minutes with a simple onboarding process.",
-      icon: "pi-user-plus",
-    },
-    {
-      number: 2,
-      title: "Add Your Fleet",
-      description: "Import your trucks, trailers, and driver information quickly and easily.",
+        "Add trucks, drivers, and fleet details. Connect your ELD provider for automatic HOS tracking.",
       icon: "pi-truck",
     },
     {
+      number: 2,
+      title: "Create Loads",
+      description:
+        "Enter shipments or import from load boards. The AI agent sees them instantly.",
+      icon: "pi-box",
+    },
+    {
       number: 3,
-      title: "Start Dispatching",
-      description: "Assign loads, track deliveries, and communicate with drivers in real-time.",
-      icon: "pi-play",
+      title: "Let AI Dispatch",
+      description:
+        "The agent analyzes availability, HOS, deadhead miles, and revenue to find optimal assignments.",
+      icon: "pi-sparkles",
     },
     {
       number: 4,
-      title: "Get Paid",
-      description: "Automated invoicing and payment collection to improve your cash flow.",
-      icon: "pi-wallet",
+      title: "Review & Go",
+      description:
+        "Approve suggestions or let the agent run autonomously. Trips are created and dispatched automatically.",
+      icon: "pi-check-circle",
     },
   ];
 }

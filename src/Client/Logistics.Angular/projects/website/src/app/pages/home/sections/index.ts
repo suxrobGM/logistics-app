@@ -1,3 +1,4 @@
+export * from "./ai-showcase/ai-showcase";
 export * from "./faq/faq";
 export * from "./hero/hero";
 export * from "./integrations/integrations";

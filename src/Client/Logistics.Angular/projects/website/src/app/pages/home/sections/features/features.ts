@@ -40,10 +40,10 @@ export class Features {
         "Native Kotlin Multiplatform app for assignments, POD capture, navigation, inspections, and real-time communication.",
     },
     {
-      icon: "pi-sparkles",
-      title: "AI-Powered Dispatch",
+      icon: "pi-search",
+      title: "Load Board Integration",
       description:
-        "Autonomous load-to-truck matching that checks HOS compliance, minimizes deadhead miles, and searches load boards for opportunities.",
+        "Search freight across DAT, Truckstop, and 123Loadboard from one interface. Book loads and post available trucks.",
     },
   ];
 
@@ -59,12 +59,6 @@ export class Features {
       title: "Fleet & Maintenance",
       description:
         "Manage trucks, trailers, and equipment. Track maintenance schedules, registration expiry, and vehicle assignments.",
-    },
-    {
-      icon: "pi-search",
-      title: "Load Board Integration",
-      description:
-        "Search freight across DAT, Truckstop, and 123Loadboard from one interface. Book loads and post available trucks.",
     },
     {
       icon: "pi-wallet",

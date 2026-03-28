@@ -65,9 +65,72 @@
       </p>
     </section>
 
-    <!-- User Accounts -->
+    <!-- AI Services and Usage -->
     <section [id]="sections[2].id" class="mb-12" webScrollAnimate="fade-up">
       <h2 class="text-2xl font-bold text-gray-900">{{ sections[2].title }}</h2>
+      <p class="mt-4 text-gray-600">
+        LogisticsX offers AI-powered dispatch features ("AI Services") that use third-party large
+        language model providers (including Anthropic, OpenAI, and DeepSeek) to analyze fleet data
+        and generate dispatch recommendations. By using AI Services, you acknowledge and agree to the
+        following:
+      </p>
+      <h3 class="mt-6 text-lg font-semibold text-gray-800">Usage Quotas and Limits</h3>
+      <ul class="mt-3 list-disc space-y-2 pl-6 text-gray-600">
+        <li>
+          AI Services are subject to weekly usage quotas that vary by subscription plan. Quotas are
+          measured in request units, where different AI models consume different amounts per session.
+        </li>
+        <li>
+          Weekly quota limits, model availability, and per-session costs may be adjusted at any time
+          based on demand, provider pricing changes, or operational requirements. We will make
+          reasonable efforts to notify you of material changes to quota allocations.
+        </li>
+        <li>
+          Usage beyond your plan's included quota may incur overage charges billed automatically
+          through your payment method on file.
+        </li>
+        <li>
+          Unused quota does not roll over between weekly cycles. Quota resets occur on a fixed weekly
+          schedule.
+        </li>
+      </ul>
+      <h3 class="mt-6 text-lg font-semibold text-gray-800">AI Output and Accuracy</h3>
+      <ul class="mt-3 list-disc space-y-2 pl-6 text-gray-600">
+        <li>
+          AI-generated recommendations, including load-to-truck assignments, route suggestions, and
+          compliance assessments, are provided as decision-support tools and do not constitute
+          professional advice.
+        </li>
+        <li>
+          You are solely responsible for reviewing, approving, and acting on AI-generated
+          recommendations. LogisticsX does not guarantee the accuracy, completeness, or suitability
+          of any AI output.
+        </li>
+        <li>
+          In "human-in-the-loop" mode, all AI suggestions require explicit dispatcher approval before
+          execution. In "autonomous" mode, the AI agent executes decisions in real-time; enabling
+          autonomous mode constitutes your consent to automated dispatch actions.
+        </li>
+      </ul>
+      <h3 class="mt-6 text-lg font-semibold text-gray-800">Data Processing</h3>
+      <ul class="mt-3 list-disc space-y-2 pl-6 text-gray-600">
+        <li>
+          To provide AI Services, your fleet data (including load details, truck information, driver
+          availability, and HOS records) is transmitted to third-party AI providers for processing.
+          This data is used solely to generate dispatch recommendations and is not retained by AI
+          providers beyond the duration of each request.
+        </li>
+        <li>
+          We select AI providers that maintain appropriate data security and privacy practices.
+          However, you acknowledge that third-party provider terms and policies may also apply to the
+          processing of your data.
+        </li>
+      </ul>
+    </section>
+
+    <!-- User Accounts -->
+    <section [id]="sections[3].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[3].title }}</h2>
       <p class="mt-4 text-gray-600">
         To use the Services, you must create an account and provide accurate, complete, and current
         information. You are responsible for:
@@ -85,8 +148,8 @@
     </section>
 
     <!-- Subscriptions and Payments -->
-    <section [id]="sections[3].id" class="mb-12" webScrollAnimate="fade-up">
-      <h2 class="text-2xl font-bold text-gray-900">{{ sections[3].title }}</h2>
+    <section [id]="sections[4].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[4].title }}</h2>
       <p class="mt-4 text-gray-600">
         Access to the Services requires a paid subscription. By subscribing, you agree to:
       </p>
@@ -103,8 +166,8 @@
     </section>
 
     <!-- Acceptable Use -->
-    <section [id]="sections[4].id" class="mb-12" webScrollAnimate="fade-up">
-      <h2 class="text-2xl font-bold text-gray-900">{{ sections[4].title }}</h2>
+    <section [id]="sections[5].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[5].title }}</h2>
       <p class="mt-4 text-gray-600">You agree not to use the Services to:</p>
       <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
         <li>Violate any applicable laws, regulations, or third-party rights</li>
@@ -119,8 +182,8 @@
     </section>
 
     <!-- Intellectual Property -->
-    <section [id]="sections[5].id" class="mb-12" webScrollAnimate="fade-up">
-      <h2 class="text-2xl font-bold text-gray-900">{{ sections[5].title }}</h2>
+    <section [id]="sections[6].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[6].title }}</h2>
       <p class="mt-4 text-gray-600">
         All content, features, and functionality of the Services, including but not limited to text,
         graphics, logos, software, and documentation, are owned by LogisticsX and are protected by
@@ -134,8 +197,8 @@
     </section>
 
     <!-- Limitation of Liability -->
-    <section [id]="sections[6].id" class="mb-12" webScrollAnimate="fade-up">
-      <h2 class="text-2xl font-bold text-gray-900">{{ sections[6].title }}</h2>
+    <section [id]="sections[7].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[7].title }}</h2>
       <p class="mt-4 text-gray-600">
         TO THE MAXIMUM EXTENT PERMITTED BY LAW, LOGISTICS TMS SHALL NOT BE LIABLE FOR ANY INDIRECT,
         INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS
@@ -152,8 +215,8 @@
     </section>
 
     <!-- Indemnification -->
-    <section [id]="sections[7].id" class="mb-12" webScrollAnimate="fade-up">
-      <h2 class="text-2xl font-bold text-gray-900">{{ sections[7].title }}</h2>
+    <section [id]="sections[8].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[8].title }}</h2>
       <p class="mt-4 text-gray-600">
         You agree to indemnify, defend, and hold harmless LogisticsX, its officers, directors,
         employees, and agents from any claims, liabilities, damages, losses, and expenses (including
@@ -168,8 +231,8 @@
     </section>
 
     <!-- Termination -->
-    <section [id]="sections[8].id" class="mb-12" webScrollAnimate="fade-up">
-      <h2 class="text-2xl font-bold text-gray-900">{{ sections[8].title }}</h2>
+    <section [id]="sections[9].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[9].title }}</h2>
       <p class="mt-4 text-gray-600">
         You may terminate your account at any time by contacting us or using the account settings.
         We may terminate or suspend your access to the Services immediately, without prior notice,
@@ -188,8 +251,8 @@
     </section>
 
     <!-- Governing Law -->
-    <section [id]="sections[9].id" class="mb-12" webScrollAnimate="fade-up">
-      <h2 class="text-2xl font-bold text-gray-900">{{ sections[9].title }}</h2>
+    <section [id]="sections[10].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[10].title }}</h2>
       <p class="mt-4 text-gray-600">
         These Terms shall be governed by and construed in accordance with the laws of the State of
         Texas, without regard to its conflict of law provisions. Any disputes arising from these
@@ -199,8 +262,8 @@
     </section>
 
     <!-- Changes to Terms -->
-    <section [id]="sections[10].id" class="mb-12" webScrollAnimate="fade-up">
-      <h2 class="text-2xl font-bold text-gray-900">{{ sections[10].title }}</h2>
+    <section [id]="sections[11].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[11].title }}</h2>
       <p class="mt-4 text-gray-600">
         We reserve the right to modify these Terms at any time. We will notify you of material
         changes by posting the updated Terms on our website and updating the "Last updated" date.
@@ -210,8 +273,8 @@
     </section>
 
     <!-- Contact Information -->
-    <section [id]="sections[11].id" class="mb-12" webScrollAnimate="fade-up">
-      <h2 class="text-2xl font-bold text-gray-900">{{ sections[11].title }}</h2>
+    <section [id]="sections[12].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[12].title }}</h2>
       <p class="mt-4 text-gray-600">
         If you have any questions about these Terms of Service, please contact us:
       </p>

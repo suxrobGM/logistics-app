@@ -1,0 +1,55 @@
+<web-section-container sectionId="ai-dispatch" background="light">
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="AI Dispatch"
+      title="See the agent think, decide, and act"
+      subtitle="A transparent AI agent that analyzes your fleet in real-time — every decision is logged, every reasoning step is visible."
+    />
+  </div>
+
+  <!-- Two-column: Workflow + Screenshot -->
+  <div class="mt-16 grid items-center gap-12 lg:grid-cols-2">
+    <!-- Left: Workflow stepper -->
+    <div webScrollAnimate="fade-right">
+      <div class="space-y-6">
+        @for (step of workflowSteps; track step.title; let i = $index) {
+          <div class="flex items-start gap-4">
+            <div class="relative flex flex-col items-center">
+              <web-icon-circle [icon]="step.icon" size="sm" variant="accent" />
+              @if (i < workflowSteps.length - 1) {
+                <div class="bg-accent/30 mt-1 h-8 w-0.5"></div>
+              }
+            </div>
+            <div class="-mt-0.5">
+              <h3 class="font-display text-ink text-lg font-bold">{{ step.title }}</h3>
+              <p class="text-steel mt-1 text-sm leading-relaxed">{{ step.description }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Right: Session detail screenshot -->
+    <div webScrollAnimate="fade-left" [delay]="200">
+      <web-browser-frame
+        src="images/screenshots/ai-dispatch-agent-timeline.png"
+        alt="AI Dispatch agent timeline showing tool calls, HOS checks, reasoning, and decisions"
+      />
+    </div>
+  </div>
+
+  <!-- Capability cards -->
+  <div class="mt-20 grid gap-8 md:grid-cols-3">
+    @for (card of capabilities; track card.title; let i = $index) {
+      <div
+        webScrollAnimate="fade-up"
+        [delay]="i * 150"
+        class="border-ink/5 rounded-2xl border bg-white p-8 shadow-sm transition-shadow hover:shadow-md"
+      >
+        <web-icon-circle [icon]="card.icon" size="md" variant="accent" />
+        <h3 class="font-display text-ink mt-5 text-xl font-bold">{{ card.title }}</h3>
+        <p class="text-steel mt-3 leading-relaxed">{{ card.description }}</p>
+      </div>
+    }
+  </div>
+</web-section-container>

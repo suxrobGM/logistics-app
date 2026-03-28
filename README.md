@@ -7,9 +7,9 @@
 [cc-by-nc]: https://creativecommons.org/licenses/by-nc/4.0/
 [cc-by-nc-shield]: https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg
 
-> AI-powered multi-tenant fleet management platform for trucking companies. Features an agentic dispatcher that autonomously optimizes load-to-truck assignments, ensures HOS compliance, and searches load boards - with real-time GPS tracking, invoicing, and payroll built on a modern cloud-native architecture.
+> AI-first fleet management platform with an autonomous dispatch agent that matches loads to trucks, verifies HOS compliance, optimizes routes, and searches load boards — all with full reasoning transparency. Built for trucking companies on a modern multi-tenant cloud-native architecture with real-time GPS tracking, invoicing, and payroll.
 
-![TMS Portal - Dashboard](docs/images/tms-portal/tms-home.png)
+![AI Dispatch - Sessions & Decisions](docs/images/tms-portal/ai-dispatch-sessions.png)
 
 <!-- markdownlint-disable MD033 -->
 <p align="center">
@@ -19,9 +19,9 @@
 
 ## Overview
 
-LogisticsX is purpose-built for trucking fleets specializing in intermodal containers and vehicle transport. It replaces spreadsheet-based workflows with an end-to-end digital system connecting dispatchers, drivers, and customers through web and mobile applications with real-time synchronization.
+LogisticsX is an AI-first fleet management platform purpose-built for trucking fleets specializing in intermodal containers and vehicle transport. It replaces spreadsheet-based workflows with an end-to-end digital system connecting dispatchers, drivers, and customers through web and mobile applications with real-time synchronization.
 
-The platform's standout feature is its **AI-powered dispatch agent** - an agentic system that analyzes fleet state, matches loads to trucks, verifies HOS compliance, optimizes trip routes, and proactively searches load boards for revenue opportunities. It operates in two modes: **human-in-the-loop** (suggests assignments for dispatcher approval) and **fully autonomous** (executes decisions in real-time).
+The platform is built around its **AI dispatch agent** — an agentic system that autonomously analyzes fleet state, matches loads to trucks, verifies HOS compliance, optimizes trip routes, and proactively searches load boards for revenue opportunities. It operates in two modes: **human-in-the-loop** (suggests assignments for dispatcher approval) and **fully autonomous** (executes decisions in real-time). Every decision is logged with full reasoning transparency, and dispatchers can approve, reject, or re-plan with context.
 
 **Dispatchers** create loads, assign drivers, search load boards, monitor deliveries in real-time - or let the AI agent handle it.
 **Drivers** receive assignments, navigate routes, capture proof of delivery, and communicate with dispatch via the mobile app.
@@ -116,6 +116,12 @@ src/
 [Full architecture docs](docs/architecture/overview.md)
 
 ## Screenshots
+
+### AI Dispatch
+
+| Sessions & Decisions | Agent Timeline |
+|:--------------------:|:--------------:|
+| ![Sessions](docs/images/tms-portal/ai-dispatch-sessions.png) | ![Timeline](docs/images/tms-portal/ai-dispatch-agent-timeline.png) |
 
 ### TMS Portal
 

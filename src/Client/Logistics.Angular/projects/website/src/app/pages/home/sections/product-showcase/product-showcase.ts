@@ -27,6 +27,34 @@ export class ProductShowcase {
 
   protected readonly items: ShowcaseItem[] = [
     {
+      title: "AI Dispatch",
+      description:
+        "Watch the AI agent analyze your fleet, match loads to trucks, verify compliance, and optimize routes — all in real-time with full transparency into every decision.",
+      screenshots: [
+        {
+          src: "images/screenshots/ai-dispatch-sessions.png",
+          alt: "AI Dispatch sessions list with fleet map and pending decision cards",
+          label: "Sessions & Decisions",
+        },
+        {
+          src: "images/screenshots/ai-dispatch-session-detail.png",
+          alt: "AI Dispatch session detail with summary, assignments, and reasoning",
+          label: "Session Summary",
+        },
+        {
+          src: "images/screenshots/ai-dispatch-agent-timeline.png",
+          alt: "AI Dispatch agent timeline with tool calls, HOS checks, and decisions",
+          label: "Agent Timeline",
+        },
+      ],
+      features: [
+        "Autonomous or human-in-the-loop modes",
+        "Full agent reasoning timeline",
+        "Approve or reject each suggestion",
+      ],
+      icon: "pi-sparkles",
+    },
+    {
       title: "TMS Dashboard",
       description:
         "Get a bird's-eye view of your entire operation with real-time metrics, fleet maps, active loads, and financial health — all on one screen.",

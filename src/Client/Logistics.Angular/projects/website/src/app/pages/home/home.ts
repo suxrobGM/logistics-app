@@ -1,6 +1,7 @@
-import { Component, inject, type OnInit } from "@angular/core";
+import { Component, type OnInit, inject } from "@angular/core";
 import { MetaService, SchemaService } from "@/shared/services";
 import {
+  AiShowcase,
   Faq,
   Features,
   Hero,
@@ -13,7 +14,7 @@ import {
 @Component({
   selector: "web-home",
   templateUrl: "./home.html",
-  imports: [Hero, Features, ProductShowcase, Integrations, HowItWorks, Pricing, Faq],
+  imports: [Hero, AiShowcase, Features, ProductShowcase, Integrations, HowItWorks, Pricing, Faq],
 })
 export class Home implements OnInit {
   private readonly metaService = inject(MetaService);
@@ -21,11 +22,11 @@ export class Home implements OnInit {
 
   ngOnInit(): void {
     this.metaService.updateMeta({
-      title: "Modern Fleet Management Platform",
+      title: "AI-Powered Fleet Management Platform",
       description:
-        "Streamline your trucking operations with real-time GPS tracking, automated dispatching, and seamless invoicing. Request a demo today.",
+        "AI-powered fleet dispatch that autonomously matches loads to trucks, verifies HOS compliance, and optimizes routes. Real-time GPS tracking, invoicing, and payroll for modern trucking companies.",
       keywords:
-        "TMS, fleet management, trucking software, GPS tracking, dispatching, logistics, transportation management",
+        "AI dispatch, AI fleet management, autonomous dispatching, TMS, trucking software, GPS tracking, load matching, HOS compliance, logistics",
       canonicalUrl: "https://logisticsx.app/",
     });
 
@@ -57,6 +58,21 @@ export class Home implements OnInit {
         question: "How is pricing calculated?",
         answer:
           "We offer three plans: Starter ($29/mo + $12/truck), Professional ($79/mo + $9/truck), and Enterprise ($169/mo + $6/truck). Each plan includes a base fee plus a per-truck charge. The more trucks you add, the lower your per-truck cost.",
+      },
+      {
+        question: "How does AI Dispatch work?",
+        answer:
+          "The AI agent analyzes unassigned loads, available trucks, HOS compliance, truck type compatibility, and revenue per mile to find optimal assignments. In human-in-the-loop mode it suggests assignments for your approval; in autonomous mode it executes immediately.",
+      },
+      {
+        question: "Which AI models does it support?",
+        answer:
+          "We support Anthropic (Claude Sonnet, Haiku, Opus), OpenAI (GPT-5.4 series), and DeepSeek. Model access is tiered by plan — Starter gets base models, Professional unlocks premium, and Enterprise gets all models.",
+      },
+      {
+        question: "Is AI Dispatch safe to use?",
+        answer:
+          "Yes. Human-in-the-loop mode lets you review every decision before execution. Every action has a full audit trail with reasoning. Autonomous mode is opt-in only.",
       },
     ]);
   }

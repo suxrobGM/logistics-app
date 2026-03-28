@@ -6,6 +6,19 @@ Complete feature list for LogisticsX.
 
 The dispatcher and manager web interface for managing all fleet operations.
 
+### AI Dispatch
+
+| Feature | Description |
+|---------|-------------|
+| **Autonomous Dispatch** | AI agent analyzes unassigned loads, truck locations, HOS hours, truck type compatibility, and revenue per mile to find optimal load-to-truck assignments. |
+| **Human-in-the-Loop Mode** | Agent suggests assignments for dispatcher approval. Approve, reject, or re-plan with rejection context for refined suggestions. |
+| **Fully Autonomous Mode** | Agent executes decisions in real-time — assigns loads, creates trips, and dispatches without manual intervention. |
+| **Multi-Provider LLM** | Pluggable AI providers: Anthropic (Claude Sonnet, Haiku, Opus), OpenAI (GPT-5.4 series), and DeepSeek. Model selection per session. |
+| **Agent Tool Registry** | 7+ tools including fleet search, HOS feasibility checks, assignment scoring, load board search, trip creation, and dispatch execution. |
+| **Session Audit Trail** | Full transparency — every tool call, reasoning step, and decision is logged in a visual timeline with timestamps. |
+| **Re-Planning** | Reject suggestions and re-run the agent with rejection context so it can find alternative assignments. |
+| **Quota Management** | Multiplier-based weekly quotas with tiered model access by subscription plan. Overage billing via Stripe. |
+
 ### Operations
 
 | Feature | Description |

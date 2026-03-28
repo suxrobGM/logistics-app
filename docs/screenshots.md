@@ -6,6 +6,14 @@ Visual tour of LogisticsX applications.
 
 The dispatcher and manager web interface for managing loads, customers, operations, invoices, payrolls, and more.
 
+### AI Dispatch
+
+![AI Dispatch Sessions](images/tms-portal/ai-dispatch-sessions.png)
+
+![AI Dispatch Session Detail](images/tms-portal/ai-dispatch-session-detail.png)
+
+![AI Dispatch Agent Timeline](images/tms-portal/ai-dispatch-agent-timeline.png)
+
 ### Dashboard
 
 ![Dashboard](images/tms-portal/tms-home.png)

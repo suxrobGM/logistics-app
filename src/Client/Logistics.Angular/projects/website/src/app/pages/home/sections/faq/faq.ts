@@ -55,5 +55,20 @@ export class Faq {
       answer:
         "Absolutely. We use enterprise-grade security including encryption at rest and in transit, regular security audits, and compliance with industry standards. Your data is backed up daily and stored in secure data centers.",
     },
+    {
+      question: "How does AI Dispatch work?",
+      answer:
+        "The AI agent analyzes unassigned loads, available trucks, HOS compliance, truck type compatibility, and revenue per mile to find optimal assignments. In human-in-the-loop mode it suggests assignments for your approval; in autonomous mode it executes immediately. Every decision is logged with full reasoning.",
+    },
+    {
+      question: "Which AI models does it support?",
+      answer:
+        "We support multiple providers: Anthropic (Claude Sonnet, Haiku, Opus), OpenAI (GPT-5.4 series), and DeepSeek. You choose the model per session. Model access is tiered by plan — Starter gets base models, Professional unlocks premium, and Enterprise gets all models including Opus.",
+    },
+    {
+      question: "Is AI Dispatch safe to use?",
+      answer:
+        "Yes. Human-in-the-loop mode lets you review every decision before execution. Every action has a full audit trail with the agent's reasoning. Autonomous mode is opt-in only, and there's a maximum iteration limit per session to prevent runaway usage.",
+    },
   ];
 }

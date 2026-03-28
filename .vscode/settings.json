@@ -17,6 +17,16 @@
     "bun.lock",
     "openapi.json",
   ],
+  "VSCodeCounter.languages": {
+    "kotlin": {
+      "aliases": ["Kotlin"],
+      "filenames": [],
+      "extensions": [".kt", ".kts"],
+      "lineComments": ["//"],
+      "blockComments": [["/*", "*/"]],
+      "blockStrings": [["\"\"\"", "\"\"\""]]
+    }
+  },
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

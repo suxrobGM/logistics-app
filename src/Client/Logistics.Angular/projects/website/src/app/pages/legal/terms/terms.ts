@@ -8,11 +8,12 @@ import { ScrollAnimateDirective } from "@/shared/directives";
   imports: [SectionContainer, ScrollAnimateDirective],
 })
 export class Terms {
-  protected readonly lastUpdated = "January 15, 2026";
+  protected readonly lastUpdated = "March 28, 2026";
 
   protected readonly sections = [
     { id: "acceptance", title: "Acceptance of Terms" },
     { id: "description", title: "Description of Service" },
+    { id: "ai-services", title: "AI Services and Usage" },
     { id: "accounts", title: "User Accounts" },
     { id: "subscriptions", title: "Subscriptions and Payments" },
     { id: "acceptable-use", title: "Acceptable Use" },
