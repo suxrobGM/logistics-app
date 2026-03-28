@@ -1,0 +1,30 @@
+<p-dialog
+  header="Run AI Dispatch Agent"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '480px' }"
+>
+  <p class="text-muted-color mt-0 mb-4 text-sm">
+    @if (mode() === "human_in_the_loop") {
+      The agent will propose assignments for your review.
+    } @else {
+      The agent will execute assignments immediately without approval.
+    }
+  </p>
+  <textarea
+    pTextarea
+    [(ngModel)]="instructions"
+    placeholder="Optional instructions (e.g., 'Don't assign to Truck 42', 'Prioritize Customer X loads')"
+    [rows]="3"
+    class="w-full text-sm"
+  ></textarea>
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" [text]="true" (onClick)="cancel()" />
+    <p-button
+      [label]="modeLabel"
+      [icon]="modeIcon"
+      [severity]="modeSeverity"
+      (onClick)="confirm()"
+    />
+  </ng-template>
+</p-dialog>

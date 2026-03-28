@@ -10,7 +10,7 @@
         [loading]="isRunning()"
         [disabled]="hasRunningSession()"
         [pTooltip]="hasRunningSession() ? 'A session is already running' : ''"
-        (onClick)="runAgent('human_in_the_loop')"
+        (onClick)="openRunDialog('human_in_the_loop')"
       />
       <p-button
         label="Run (Autonomous)"
@@ -25,35 +25,43 @@
             ? 'A session is already running'
             : 'Executes assignments without approval'
         "
-        (onClick)="runAgent('autonomous')"
+        (onClick)="openRunDialog('autonomous')"
       />
     </div>
   </ui-page-header>
 
-  <!-- Instructions -->
-  <div class="mb-4">
-    <textarea
-      pInputTextarea
-      [(ngModel)]="instructions"
-      placeholder="Optional: add instructions for the agent (e.g., 'Don't assign to Truck 42', 'Prioritize Customer X loads')"
-      [rows]="2"
-      class="w-full text-sm"
-    ></textarea>
-  </div>
+  <!-- Run Agent Dialog -->
+  <app-run-agent-dialog
+    [(visible)]="showRunDialog"
+    [mode]="runMode()"
+    (run)="onRunConfirmed($event)"
+  />
 
   <!-- How it works -->
   <div class="bg-subtle border-default mb-6 rounded-lg border p-4">
-    <div class="mb-2 flex items-center gap-2">
+    <div class="mb-3 flex items-center gap-2">
       <i class="pi pi-info-circle text-primary"></i>
       <span class="font-semibold">How it works</span>
     </div>
-    <p class="text-secondary m-0 text-sm leading-relaxed">
-      The AI dispatcher analyzes your fleet state, unassigned loads, truck locations, and driver HOS
-      hours to optimize load-to-truck assignments. In <strong>Suggestions</strong> mode, it proposes
-      assignments for your review — approve or reject each one. In <strong>Autonomous</strong> mode,
-      it executes assignments immediately. The agent checks HOS compliance before every assignment
-      and minimizes deadhead miles by matching loads to the closest available trucks.
-    </p>
+    <div class="text-secondary flex flex-col gap-2 text-sm leading-relaxed">
+      <p class="m-0">
+        The AI agent analyzes unassigned loads, truck locations, HOS hours, truck type
+        compatibility, and revenue per mile to find optimal assignments.
+      </p>
+      <p class="m-0">
+        <i class="pi pi-play text-primary mr-1 text-xs"></i>
+        <strong>Suggestions</strong> — proposes assignments for your review. Approve or reject each
+        one, then use <strong>Re-plan</strong> to retry with rejection context.
+        <i class="pi pi-bolt mr-1 ml-3 text-xs text-orange-500"></i>
+        <strong>Autonomous</strong> — executes assignments, creates trips, and dispatches
+        immediately.
+      </p>
+      <p class="text-muted-color m-0">
+        <i class="pi pi-comment mr-1 text-xs"></i>
+        Add custom instructions when running to guide priorities (e.g., "Prioritize Customer X" or
+        "Skip Truck 42").
+      </p>
+    </div>
   </div>
 
   <!-- AI Quota Usage -->

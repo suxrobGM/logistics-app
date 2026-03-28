@@ -18,19 +18,27 @@ import {
   runDispatchAgent,
 } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
-import { FormsModule } from "@angular/forms";
 import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { ProgressBar } from "primeng/progressbar";
 import { TableModule } from "primeng/table";
 import type { TableLazyLoadEvent } from "primeng/table";
-import { ProgressBar } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { DispatchAgentHubService, DispatchBadgeService, TenantService, ToastService } from "@/core/services";
+import {
+  DispatchAgentHubService,
+  DispatchBadgeService,
+  TenantService,
+  ToastService,
+} from "@/core/services";
 import { GeolocationMap } from "@/shared/components";
 import { Labels } from "@/shared/utils";
 import { DecisionCard } from "../components/decision-card/decision-card";
 import { ModeBadge } from "../components/mode-badge/mode-badge";
+import {
+  RunAgentDialog,
+  type RunAgentDialogData,
+} from "../components/run-agent-dialog/run-agent-dialog";
 import { stripMarkdown } from "../utils/markdown";
 
 @Component({
@@ -43,12 +51,12 @@ import { stripMarkdown } from "../utils/markdown";
     TooltipModule,
     ConfirmDialogModule,
     DatePipe,
-    FormsModule,
     PageHeader,
     ProgressBar,
     GeolocationMap,
     DecisionCard,
     ModeBadge,
+    RunAgentDialog,
   ],
 })
 export class SessionsListPage implements OnInit, OnDestroy {
@@ -73,7 +81,8 @@ export class SessionsListPage implements OnInit, OnDestroy {
   protected readonly trucks = signal<TruckDto[]>([]);
   protected readonly isLoading = signal(false);
   protected readonly isRunning = signal(false);
-  protected instructions = "";
+  protected readonly showRunDialog = signal(false);
+  protected readonly runMode = signal<DispatchAgentMode>("human_in_the_loop");
 
   /** Only write-tool decisions (assign, create trip, dispatch) that need approval */
   protected readonly writeDecisions = computed(() =>
@@ -100,7 +109,6 @@ export class SessionsListPage implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    // Session data loads via p-table's onLazyLoad on first render
     this.setupSignalR();
   }
 
@@ -163,12 +171,17 @@ export class SessionsListPage implements OnInit, OnDestroy {
     this.loadData();
   }
 
-  protected async runAgent(mode: DispatchAgentMode): Promise<void> {
+  protected openRunDialog(mode: DispatchAgentMode): void {
+    this.runMode.set(mode);
+    this.showRunDialog.set(true);
+  }
+
+  protected async onRunConfirmed(event: RunAgentDialogData): Promise<void> {
     this.isRunning.set(true);
     try {
-      const instructions = this.instructions.trim() || undefined;
-      await this.api.invoke(runDispatchAgent, { body: { mode, instructions } });
-      this.instructions = "";
+      await this.api.invoke(runDispatchAgent, {
+        body: { mode: event.mode, instructions: event.instructions },
+      });
       this.toastService.showSuccess("Agent session started — updates will appear in real-time");
       await this.loadData();
     } catch {
