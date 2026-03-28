@@ -45,7 +45,6 @@ Key settings to configure:
 |----------|-------------|
 | `POSTGRES_PASSWORD` | Database password |
 | `Stripe__SecretKey` | Stripe API secret key |
-| `Stripe__PublishableKey` | Stripe publishable key |
 | `Stripe__WebhookSecret` | Stripe webhook secret |
 | `SuperAdmin__Email` | Super admin email |
 | `SuperAdmin__Password` | Super admin password |

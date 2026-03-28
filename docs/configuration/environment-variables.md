@@ -45,14 +45,12 @@ ConnectionStrings__DefaultTenantDatabase="Host=localhost;Port=5432;Database=defa
 ```bash
 Stripe__SecretKey="sk_live_xxx"
 Stripe__WebhookSecret="whsec_xxx"
-Stripe__PublishableKey="pk_live_xxx"
 STRIPE_API_KEY="sk_live_xxx"
 ```
 
 | Variable | Description |
 |----------|-------------|
 | `Stripe__SecretKey` | Stripe API secret key |
-| `Stripe__PublishableKey` | Stripe publishable key (client-side) |
 | `Stripe__WebhookSecret` | Webhook signature verification secret |
 | `STRIPE_API_KEY` | Used by Stripe CLI for webhook forwarding |
 
@@ -98,15 +96,13 @@ Llm__ApiKey="sk-ant-xxx"
 The TMS portal Docker image uses runtime environment variable substitution for secrets. These are injected at container startup via the entrypoint script.
 
 ```bash
-# Mapped from Mapbox__AccessToken and Stripe__PublishableKey in docker-compose.yaml
+# Mapped from Mapbox__AccessToken in docker-compose.yaml
 MAPBOX_TOKEN="pk.xxx"
-STRIPE_PUBLISHABLE_KEY="pk_live_xxx"
 ```
 
 | Variable | Description |
 |----------|-------------|
 | `MAPBOX_TOKEN` | Mapbox public access token for maps |
-| `STRIPE_PUBLISHABLE_KEY` | Stripe publishable key (client-side) |
 
 ### Database Migrator
 
@@ -149,7 +145,6 @@ ConnectionStrings__DefaultTenantDatabase="Host=localhost;Port=5432;Database=defa
 # Stripe
 Stripe__SecretKey="sk_live_xxx"
 Stripe__WebhookSecret="whsec_xxx"
-Stripe__PublishableKey="pk_live_xxx"
 
 # Super Admin and Tenant Database
 SuperAdmin__Email="admin@yourdomain.com"
@@ -213,7 +208,6 @@ For local development, configure `src/Presentation/Logistics.API/appsettings.jso
 ```json
 {
   "Stripe": {
-    "PublishableKey": "pk_test_...",
     "SecretKey": "sk_test_...",
     "WebhookSecret": "whsec_..."
   }

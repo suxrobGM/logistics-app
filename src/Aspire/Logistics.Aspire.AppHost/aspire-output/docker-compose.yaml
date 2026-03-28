@@ -52,7 +52,6 @@ services:
       Resend__SenderEmail: "${Resend__SenderEmail}"
       Resend__SenderName: "${Resend__SenderName}"
       Stripe__SecretKey: "${Stripe__SecretKey}"
-      Stripe__PublishableKey: "${Stripe__PublishableKey}"
       Stripe__WebhookSecret: "${Stripe__WebhookSecret}"
       Mapbox__AccessToken: "${Mapbox__AccessToken}"
       Llm__ApiKey: "${Llm__ApiKey}"
