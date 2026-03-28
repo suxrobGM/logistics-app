@@ -12,4 +12,7 @@ public record TenantQuotaUsageDto
     public bool IsOverQuota { get; set; }
     public int OverageCount { get; set; }
     public DateTime? QuotaResetAt { get; set; }
+    public int TotalTokensUsed { get; set; }
+    public decimal TotalEstimatedCostUsd { get; set; }
+    public string? LastModelUsed { get; set; }
 }

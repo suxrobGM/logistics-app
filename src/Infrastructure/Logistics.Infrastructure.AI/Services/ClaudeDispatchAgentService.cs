@@ -143,7 +143,7 @@ internal sealed class ClaudeDispatchAgentService(
         }
 
         // Calculate estimated cost
-        session.EstimatedCostUsd = ClaudeModelPricing.Calculate(
+        session.EstimatedCostUsd = LlmPricing.Calculate(
             session.ModelUsed ?? config.Model,
             totalInputTokens, totalOutputTokens,
             totalCacheReadTokens, totalCacheCreationTokens);

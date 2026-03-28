@@ -49,6 +49,9 @@ internal sealed class GetTenantQuotaUsagesHandler(
 
             var countFrom = tenant.QuotaResetAt > weekStart ? tenant.QuotaResetAt.Value : weekStart;
             int usedThisWeek;
+            int totalTokens = 0;
+            decimal totalCost = 0;
+            string? lastModel = null;
 
             try
             {
@@ -56,11 +59,24 @@ internal sealed class GetTenantQuotaUsagesHandler(
                 var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
                 tenantUow.SetCurrentTenant(tenant);
 
-                usedThisWeek = await tenantUow.Repository<DispatchSession>().Query()
-                    .CountAsync(s =>
+                var sessions = await tenantUow.Repository<DispatchSession>().Query()
+                    .Where(s =>
                         s.StartedAt >= countFrom &&
                         (s.Status == DispatchSessionStatus.Running ||
-                         s.Status == DispatchSessionStatus.Completed), ct);
+                         s.Status == DispatchSessionStatus.Completed))
+                    .Select(s => new
+                    {
+                        s.InputTokensUsed,
+                        s.OutputTokensUsed,
+                        s.EstimatedCostUsd,
+                        s.ModelUsed
+                    })
+                    .ToListAsync(ct);
+
+                usedThisWeek = sessions.Count;
+                totalTokens = sessions.Sum(s => s.InputTokensUsed + s.OutputTokensUsed);
+                totalCost = sessions.Sum(s => s.EstimatedCostUsd);
+                lastModel = sessions.LastOrDefault()?.ModelUsed;
             }
             catch
             {
@@ -79,7 +95,10 @@ internal sealed class GetTenantQuotaUsagesHandler(
                 Remaining = remaining,
                 IsOverQuota = usedThisWeek >= weeklyQuota,
                 OverageCount = Math.Max(0, usedThisWeek - weeklyQuota),
-                QuotaResetAt = tenant.QuotaResetAt
+                QuotaResetAt = tenant.QuotaResetAt,
+                TotalTokensUsed = totalTokens,
+                TotalEstimatedCostUsd = totalCost,
+                LastModelUsed = lastModel
             });
         }
 

@@ -71,6 +71,9 @@
           <p-sortIcon field="OverageCount" />
         </th>
         <th>Usage</th>
+        <th class="text-right">Tokens</th>
+        <th class="text-right">Est. Cost</th>
+        <th>Model</th>
         <th>Last Reset</th>
       </tr>
     </ng-template>
@@ -117,6 +120,21 @@
             [style]="{ height: '0.5rem' }"
           />
         </td>
+        <td class="text-right">
+          <span class="font-mono text-sm">{{ (usage.totalTokensUsed ?? 0).toLocaleString() }}</span>
+        </td>
+        <td class="text-right">
+          <span class="font-mono text-sm"
+            >${{ (usage.totalEstimatedCostUsd ?? 0).toFixed(4) }}</span
+          >
+        </td>
+        <td>
+          @if (usage.lastModelUsed) {
+            <span class="text-muted text-sm">{{ usage.lastModelUsed }}</span>
+          } @else {
+            <span class="text-muted text-sm">—</span>
+          }
+        </td>
         <td>
           @if (usage.quotaResetAt) {
             <span class="text-muted text-sm">{{ usage.quotaResetAt | date: "short" }}</span>
@@ -128,7 +146,7 @@
     </ng-template>
     <ng-template #emptymessage>
       <tr>
-        <td colspan="8" class="py-8 text-center">
+        <td colspan="11" class="py-8 text-center">
           <div class="text-muted">
             <i class="pi pi-chart-bar mb-2 text-4xl"></i>
             <p>No tenants with AI quota configured.</p>

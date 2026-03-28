@@ -25,7 +25,7 @@
     <!-- Feature Configuration Card -->
     @if (tenant()) {
       <p-card header="Feature Configuration">
-        <p class="mb-4 text-muted">
+        <p class="text-muted mb-4">
           Configure which features are enabled for this tenant and lock features to prevent owner
           changes.
         </p>
@@ -34,6 +34,50 @@
           label="Configure Features"
           [routerLink]="['/features/tenant', tenant()!.id]"
         />
+      </p-card>
+    }
+
+    <!-- AI Dispatch Settings Card -->
+    @if (tenant()) {
+      <p-card header="AI Dispatch Settings">
+        <p class="text-muted mb-4">
+          Configure which LLM model and settings are used for the AI dispatch agent.
+        </p>
+        <div class="flex flex-col gap-4">
+          <ui-labeled-field
+            label="LLM Model"
+            for="llmModel"
+            hint="Leave empty to use the system default"
+          >
+            <select
+              id="llmModel"
+              [formField]="llmSettingsForm.llmModel"
+              class="border-surface-300 bg-surface-0 w-full rounded-md border p-2"
+            >
+              <option value="">System Default</option>
+              @for (opt of aiModelOptions; track opt.value) {
+                <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          </ui-labeled-field>
+
+          <div class="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="extendedThinking"
+              [formField]="llmSettingsForm.enableExtendedThinking"
+              class="h-4 w-4"
+            />
+            <label for="extendedThinking">Enable Extended Thinking</label>
+          </div>
+
+          <p-button
+            icon="pi pi-save"
+            label="Save LLM Settings"
+            [loading]="isSavingLlmSettings()"
+            (onClick)="saveLlmSettings()"
+          />
+        </div>
       </p-card>
     }
   </div>

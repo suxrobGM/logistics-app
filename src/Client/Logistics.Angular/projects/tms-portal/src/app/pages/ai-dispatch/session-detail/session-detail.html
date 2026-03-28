@@ -22,6 +22,17 @@
             (onClick)="cancelSession()"
           />
         }
+        @if (session.status !== "running" && hasRejectedDecisions()) {
+          <p-button
+            label="Re-plan"
+            icon="pi pi-refresh"
+            severity="help"
+            [outlined]="true"
+            size="small"
+            pTooltip="Start a new session with rejection context"
+            (onClick)="replanSession()"
+          />
+        }
       </div>
     </ui-page-header>
 
@@ -42,6 +53,17 @@
         }
       </div>
     </div>
+
+    <!-- Instructions -->
+    @if (session.instructions) {
+      <div class="border-default bg-subtle mb-6 rounded-lg border p-4">
+        <div class="mb-2 flex items-center gap-2">
+          <i class="pi pi-comment text-primary"></i>
+          <span class="text-sm font-semibold">Dispatcher Instructions</span>
+        </div>
+        <p class="text-secondary m-0 text-sm">{{ session.instructions }}</p>
+      </div>
+    }
 
     <!-- Agent Summary (markdown) -->
     @if (session.summary) {

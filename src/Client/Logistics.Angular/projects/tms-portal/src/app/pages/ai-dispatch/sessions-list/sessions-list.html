@@ -30,6 +30,17 @@
     </div>
   </ui-page-header>
 
+  <!-- Instructions -->
+  <div class="mb-4">
+    <textarea
+      pInputTextarea
+      [(ngModel)]="instructions"
+      placeholder="Optional: add instructions for the agent (e.g., 'Don't assign to Truck 42', 'Prioritize Customer X loads')"
+      [rows]="2"
+      class="w-full text-sm"
+    ></textarea>
+  </div>
+
   <!-- How it works -->
   <div class="bg-subtle border-default mb-6 rounded-lg border p-4">
     <div class="mb-2 flex items-center gap-2">

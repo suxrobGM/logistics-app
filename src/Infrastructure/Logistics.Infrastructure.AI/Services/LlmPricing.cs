@@ -1,9 +1,9 @@
 namespace Logistics.Infrastructure.AI.Services;
 
 /// <summary>
-/// Calculates estimated cost in USD for Claude API usage based on model and token counts.
+/// Calculates estimated cost in USD for LLM API usage based on model and token counts.
 /// </summary>
-internal static class ClaudeModelPricing
+internal static class LlmPricing
 {
     private record ModelPricing(
         decimal InputPerMToken,

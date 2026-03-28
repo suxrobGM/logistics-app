@@ -17,6 +17,7 @@ import {
   cancelDispatchSession,
   getDispatchSessionById,
   rejectDispatchDecision,
+  replanDispatchSession,
 } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
@@ -76,11 +77,16 @@ export class SessionDetailPage implements OnInit, OnDestroy {
     return DateUtils.formatDuration(s?.startedAt, s?.completedAt);
   });
 
+  protected readonly hasRejectedDecisions = computed(() => {
+    const s = this.session();
+    return s?.decisions?.some((d) => d.status === "rejected") ?? false;
+  });
+
   protected readonly statsItems = computed(() => {
     const s = this.session();
     if (!s) return [];
     const datePipe = new DatePipe("en-US");
-    return [
+    const items = [
       { label: "Started", value: datePipe.transform(s.startedAt, "medium") ?? "—" },
       {
         label: "Completed",
@@ -90,6 +96,7 @@ export class SessionDetailPage implements OnInit, OnDestroy {
       { label: "Decisions", value: String(s.decisionCount ?? 0) },
       { label: "Tokens Used", value: (s.totalTokensUsed ?? 0).toLocaleString(), mono: true },
     ];
+    return items;
   });
 
   protected toggleExpand(decisionId: string): void {
@@ -181,6 +188,21 @@ export class SessionDetailPage implements OnInit, OnDestroy {
         }
       },
     });
+  }
+
+  protected async replanSession(): Promise<void> {
+    const session = this.session();
+    if (!session) return;
+
+    try {
+      await this.api.invoke(replanDispatchSession, {
+        sessionId: session.id!,
+        body: {},
+      });
+      this.toastService.showSuccess("Re-plan session started with rejection context");
+    } catch {
+      this.toastService.showError("Failed to start re-plan session");
+    }
   }
 
   protected async cancelSession(): Promise<void> {

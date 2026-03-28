@@ -1,37 +1,6 @@
-:host ::ng-deep {
-  .adm-mobile-drawer {
-    width: 300px !important;
-    max-width: 85vw;
-  }
-  .adm-mobile-drawer .p-drawer-content {
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-}
-
-.adm-mobile-nav-item {
+:host ::ng-deep .p-drawer-content {
+  padding: 0;
   display: flex;
-  align-items: center;
-  gap: 0.875rem;
-  width: 100%;
-  min-height: 48px;
-  padding: 0.75rem 1.25rem;
-  background: transparent;
-  border: none;
-  color: #4b5563;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-.adm-mobile-nav-item:hover {
-  background-color: #f3f4f6;
-  color: #111827;
-}
-.adm-mobile-nav-item:active {
-  background-color: #e5e7eb;
+  flex-direction: column;
+  height: 100%;
 }

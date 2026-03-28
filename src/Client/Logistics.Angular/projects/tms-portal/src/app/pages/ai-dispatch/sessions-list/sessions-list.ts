@@ -18,6 +18,7 @@ import {
   runDispatchAgent,
 } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
+import { FormsModule } from "@angular/forms";
 import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TableModule } from "primeng/table";
@@ -42,6 +43,7 @@ import { stripMarkdown } from "../utils/markdown";
     TooltipModule,
     ConfirmDialogModule,
     DatePipe,
+    FormsModule,
     PageHeader,
     ProgressBar,
     GeolocationMap,
@@ -71,6 +73,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
   protected readonly trucks = signal<TruckDto[]>([]);
   protected readonly isLoading = signal(false);
   protected readonly isRunning = signal(false);
+  protected instructions = "";
 
   /** Only write-tool decisions (assign, create trip, dispatch) that need approval */
   protected readonly writeDecisions = computed(() =>
@@ -163,7 +166,9 @@ export class SessionsListPage implements OnInit, OnDestroy {
   protected async runAgent(mode: DispatchAgentMode): Promise<void> {
     this.isRunning.set(true);
     try {
-      await this.api.invoke(runDispatchAgent, { body: { mode } });
+      const instructions = this.instructions.trim() || undefined;
+      await this.api.invoke(runDispatchAgent, { body: { mode, instructions } });
+      this.instructions = "";
       this.toastService.showSuccess("Agent session started — updates will appear in real-time");
       await this.loadData();
     } catch {

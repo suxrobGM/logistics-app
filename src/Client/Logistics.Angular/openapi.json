@@ -1940,6 +1940,66 @@
         }
       }
     },
+    "/dispatch/agent/sessions/{sessionId}/replan": {
+      "post": {
+        "tags": [
+          "DispatchAgent"
+        ],
+        "operationId": "ReplanDispatchSession",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplanDispatchSessionCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplanDispatchSessionCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplanDispatchSessionCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuidResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/dispatch/agent/decisions/{decisionId}/reject": {
       "post": {
         "tags": [
@@ -15768,11 +15828,39 @@
             "type": "integer",
             "format": "int32"
           },
+          "inputTokensUsed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "outputTokensUsed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cacheReadTokens": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cacheCreationTokens": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "estimatedCostUsd": {
+            "type": "number",
+            "format": "double"
+          },
+          "modelUsed": {
+            "type": "string",
+            "nullable": true
+          },
           "decisionCount": {
             "type": "integer",
             "format": "int32"
           },
           "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "instructions": {
             "type": "string",
             "nullable": true
           },
@@ -20287,6 +20375,20 @@
         },
         "additionalProperties": false
       },
+      "ReplanDispatchSessionCommand": {
+        "type": "object",
+        "properties": {
+          "originalSessionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "additionalInstructions": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ReportExceptionRequest": {
         "type": "object",
         "properties": {
@@ -20459,6 +20561,10 @@
         "properties": {
           "mode": {
             "$ref": "#/components/schemas/DispatchAgentMode"
+          },
+          "instructions": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -21260,6 +21366,18 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "totalTokensUsed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalEstimatedCostUsd": {
+            "type": "number",
+            "format": "double"
+          },
+          "lastModelUsed": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -21298,6 +21416,14 @@
           },
           "weightUnit": {
             "$ref": "#/components/schemas/WeightUnit"
+          },
+          "llmModel": {
+            "type": "string",
+            "nullable": true
+          },
+          "llmExtendedThinking": {
+            "type": "boolean",
+            "nullable": true
           }
         },
         "additionalProperties": false

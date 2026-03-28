@@ -6,45 +6,55 @@
   [closeOnEscape]="true"
   [dismissible]="true"
   [showCloseIcon]="true"
-  styleClass="adm-mobile-drawer"
 >
   <ng-template #header>
     <div class="flex items-center gap-3">
-      <h4 class="text-primary-600 m-0 text-base font-semibold">Admin Portal</h4>
+      <span class="text-primary text-base font-semibold">Admin Portal</span>
     </div>
   </ng-template>
 
-  <nav class="flex h-full flex-col">
-    <!-- Navigation Items -->
-    <div class="flex-1 overflow-y-auto py-3">
-      @for (item of navItems(); track item.route) {
-        <button class="adm-mobile-nav-item" (click)="navigateTo(item.route)">
-          <i [class]="item.icon + ' text-lg'"></i>
-          <span>{{ item.label }}</span>
-        </button>
+  <div class="flex h-full flex-col">
+    <!-- Navigation -->
+    <div class="flex-1 overflow-y-auto px-2">
+      @for (section of sections(); track section.label; let isLast = $last) {
+        <p class="text-muted-color mt-3 mb-1 px-2 text-xs font-semibold tracking-wider uppercase">
+          {{ section.label }}
+        </p>
+        @for (item of section.items; track item.route) {
+          <button
+            class="text-color hover:bg-surface-100 mb-0.5 flex w-full items-center gap-3 rounded-lg border-none bg-transparent px-3 py-2.5 text-left text-sm font-medium transition-colors"
+            (click)="navigateTo(item.route)"
+          >
+            <i [class]="item.icon + ' text-base'"></i>
+            <span>{{ item.label }}</span>
+          </button>
+        }
+        @if (!isLast) {
+          <p-divider />
+        }
       }
     </div>
 
     <!-- User Section -->
-    <div class="border-t border-gray-200 p-4">
+    <div class="border-surface border-t p-4">
       @if (userName()) {
         <div class="mb-3 flex items-center gap-3">
-          <div
-            class="bg-primary-100 text-primary-600 flex h-10 w-10 items-center justify-center rounded-full"
-          >
-            <i class="pi pi-user"></i>
-          </div>
+          <p-avatar [label]="userInitials()" shape="circle" />
           <div>
-            <p class="m-0 text-sm font-medium text-gray-900">{{ userName() }}</p>
-            <p class="m-0 text-xs text-gray-500">Super Admin</p>
+            <p class="text-color m-0 text-sm font-medium">{{ userName() }}</p>
+            <p class="text-muted-color m-0 text-xs">Super Admin</p>
           </div>
         </div>
       }
 
-      <button class="adm-mobile-nav-item text-red-600!" (click)="logout()">
-        <i class="pi pi-sign-out text-lg"></i>
-        <span>Sign Out</span>
-      </button>
+      <p-button
+        label="Sign Out"
+        icon="pi pi-sign-out"
+        severity="danger"
+        [outlined]="true"
+        styleClass="w-full"
+        (onClick)="logout()"
+      />
     </div>
-  </nav>
+  </div>
 </p-drawer>

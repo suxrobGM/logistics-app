@@ -1,24 +1,20 @@
 import { Component, computed, inject } from "@angular/core";
 import { Router } from "@angular/router";
-import { Permission } from "@logistics/shared";
+import { Converters } from "@logistics/shared";
 import { PermissionService } from "@logistics/shared/services";
+import { AvatarModule } from "primeng/avatar";
 import { ButtonModule } from "primeng/button";
+import { DividerModule } from "primeng/divider";
 import { DrawerModule } from "primeng/drawer";
 import { AuthService } from "@/core/auth";
 import { LayoutService } from "@/core/services/layout.service";
-
-interface MobileNavItem {
-  label: string;
-  icon: string;
-  route: string;
-  permission?: string;
-}
+import { type AdminNavSection, sidebarSections } from "../sidebar/sidebar-items";
 
 @Component({
   selector: "adm-mobile-drawer",
   templateUrl: "./mobile-drawer.html",
   styleUrl: "./mobile-drawer.css",
-  imports: [DrawerModule, ButtonModule],
+  imports: [DrawerModule, ButtonModule, AvatarModule, DividerModule],
 })
 export class MobileDrawer {
   private readonly router = inject(Router);
@@ -28,44 +24,18 @@ export class MobileDrawer {
 
   protected readonly visible = this.layoutService.mobileMenuOpen;
   protected readonly userName = this.authService.userName;
+  protected readonly userInitials = computed(() => Converters.getInitials(this.userName()));
 
-  private readonly allNavItems: MobileNavItem[] = [
-    { label: "Dashboard", icon: "pi pi-home", route: "/home" },
-    { label: "Demo Requests", icon: "pi pi-inbox", route: "/demo-requests" },
-    { label: "Contact Submissions", icon: "pi pi-envelope", route: "/contact-submissions" },
-    {
-      label: "Tenants",
-      icon: "pi pi-building",
-      route: "/tenants",
-      permission: Permission.Tenant.View,
-    },
-    {
-      label: "Features",
-      icon: "pi pi-th-large",
-      route: "/features",
-      permission: Permission.Tenant.Manage,
-    },
-    { label: "Subscription Plans", icon: "pi pi-credit-card", route: "/subscription-plans" },
-    {
-      label: "Subscriptions",
-      icon: "pi pi-users",
-      route: "/subscriptions",
-      permission: Permission.Tenant.View,
-    },
-    { label: "Users", icon: "pi pi-user", route: "/users", permission: Permission.User.Manage },
-    {
-      label: "Blog Posts",
-      icon: "pi pi-file-edit",
-      route: "/blog-posts",
-      permission: Permission.BlogPost.Manage,
-    },
-  ];
-
-  protected readonly navItems = computed(() => {
-    return this.allNavItems.filter((item) => {
-      if (!item.permission) return true;
-      return this.permissionService.hasPermission(item.permission);
-    });
+  protected readonly sections = computed<AdminNavSection[]>(() => {
+    return sidebarSections
+      .map((section) => ({
+        ...section,
+        items: section.items.filter((item) => {
+          if (!item.permission) return true;
+          return this.permissionService.hasPermission(item.permission);
+        }),
+      }))
+      .filter((section) => section.items.length > 0);
   });
 
   protected onVisibleChange(visible: boolean): void {

@@ -1,41 +1,41 @@
 <aside
-  class="fixed top-0 left-0 z-40 hidden h-screen w-64 border-r border-gray-200 bg-white md:block"
+  class="bg-surface-0 border-surface fixed top-0 left-0 z-40 hidden h-screen w-64 flex-col border-r md:flex"
 >
   <!-- Header -->
-  <div class="flex h-16 items-center justify-center border-b border-gray-200 px-4">
-    <h1 class="text-primary-600 mt-4">Admin Portal</h1>
+  <div class="border-surface flex h-16 items-center justify-center border-b px-4">
+    <span class="text-primary text-xl font-semibold">Admin Portal</span>
   </div>
 
   <!-- Navigation -->
-  <nav class="flex-1 p-4">
-    <ul class="space-y-2">
-      @for (item of navItems(); track item.routerLink) {
-        <li>
-          <a
-            [routerLink]="item.routerLink"
-            routerLinkActive="bg-primary-50 text-primary-600"
-            [routerLinkActiveOptions]="{ exact: true }"
-            class="flex items-center rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-100"
-          >
-            <i [class]="item.icon + ' mr-3 text-lg'"></i>
-            <span>{{ item.label }}</span>
-          </a>
-        </li>
+  <nav class="flex-1 overflow-y-auto px-3 py-2">
+    @for (section of sections(); track section.label; let isLast = $last) {
+      <p class="text-muted-color mt-3 mb-1 px-2 text-xs font-semibold tracking-wider uppercase">
+        {{ section.label }}
+      </p>
+      @for (item of section.items; track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="bg-primary-50 text-primary"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="text-color hover:bg-surface-100 mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors"
+        >
+          <i [class]="item.icon + ' text-base'"></i>
+          <span>{{ item.label }}</span>
+        </a>
       }
-    </ul>
+      @if (!isLast) {
+        <p-divider />
+      }
+    }
   </nav>
 
   <!-- User section -->
-  <div class="border-t border-gray-200 p-4">
-    <div class="mb-3 flex items-center">
-      <div
-        class="bg-primary-100 text-primary-600 flex h-10 w-10 items-center justify-center rounded-full"
-      >
-        <i class="pi pi-user"></i>
-      </div>
-      <div class="ml-3">
-        <p class="text-sm font-medium text-gray-900">{{ userName() }}</p>
-        <p class="text-xs text-gray-500">Super Admin</p>
+  <div class="border-surface border-t p-4">
+    <div class="mb-3 flex items-center gap-3">
+      <p-avatar [label]="userInitials()" shape="circle" />
+      <div>
+        <p class="text-color m-0 text-sm font-medium">{{ userName() }}</p>
+        <p class="text-muted-color m-0 text-xs">Super Admin</p>
       </div>
     </div>
     <p-button
