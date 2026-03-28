@@ -101,6 +101,7 @@
             @for (decision of writeDecisions(); track decision.id) {
               <app-decision-card
                 [decision]="decision"
+                [showSessionLink]="true"
                 (approve)="approveDecision($event)"
                 (reject)="rejectDecision($event)"
               />

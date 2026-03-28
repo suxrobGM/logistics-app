@@ -19,24 +19,35 @@
   }
 
   <!-- Tool input details -->
-  @if (parsedInput().loadId) {
+  @if (decision().loadId || parsedInput().loadId) {
     <div class="bg-subtle mb-3 rounded-md p-3 text-sm">
       <div class="flex items-center gap-2">
         <i class="pi pi-box text-muted text-xs"></i>
         <span class="text-muted">Load:</span>
-        <span class="font-mono text-xs">{{ parsedInput().loadId }}</span>
+        <span class="font-semibold">{{ decision().loadName ?? parsedInput().loadId }}</span>
       </div>
-      @if (parsedInput().truckId) {
+      @if (decision().truckId || parsedInput().truckId) {
         <div class="mt-1 flex items-center gap-2">
           <i class="pi pi-truck text-muted text-xs"></i>
           <span class="text-muted">Truck:</span>
-          <span class="font-mono text-xs">{{ parsedInput().truckId }}</span>
+          <span class="font-semibold">{{ decision().truckNumber ?? parsedInput().truckId }}</span>
         </div>
       }
       @if (parsedInput().reasoning) {
         <div class="text-secondary mt-2 text-xs italic">"{{ parsedInput().reasoning }}"</div>
       }
     </div>
+  }
+
+  <!-- Session link -->
+  @if (showSessionLink()) {
+    <a
+      [routerLink]="['/ai-dispatch', decision().sessionId]"
+      class="text-primary mb-3 inline-flex items-center gap-1 text-xs hover:underline"
+    >
+      <i class="pi pi-external-link text-xs"></i>
+      View session
+    </a>
   }
 
   <!-- Actions -->

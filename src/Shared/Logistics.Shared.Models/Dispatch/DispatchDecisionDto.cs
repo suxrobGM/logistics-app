@@ -13,7 +13,9 @@ public class DispatchDecisionDto
     public string? ToolInput { get; set; }
     public string? ToolOutput { get; set; }
     public Guid? LoadId { get; set; }
+    public string? LoadName { get; set; }
     public Guid? TruckId { get; set; }
+    public string? TruckNumber { get; set; }
     public Guid? TripId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? ExecutedAt { get; set; }

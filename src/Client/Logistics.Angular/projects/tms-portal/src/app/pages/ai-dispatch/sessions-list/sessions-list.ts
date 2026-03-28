@@ -207,7 +207,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
       icon: "pi pi-exclamation-triangle",
       accept: async () => {
         try {
-          await this.api.invoke(rejectDispatchDecision, { decisionId: decision.id! });
+          await this.api.invoke(rejectDispatchDecision, { decisionId: decision.id!, body: {} });
           this.toastService.showSuccess("Decision rejected");
           await this.loadData();
         } catch {

@@ -15786,9 +15786,17 @@
             "format": "uuid",
             "nullable": true
           },
+          "loadName": {
+            "type": "string",
+            "nullable": true
+          },
           "truckId": {
             "type": "string",
             "format": "uuid",
+            "nullable": true
+          },
+          "truckNumber": {
+            "type": "string",
             "nullable": true
           },
           "tripId": {

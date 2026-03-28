@@ -4,8 +4,18 @@ namespace Logistics.Infrastructure.AI.Prompts;
 
 internal static class DispatchSystemPrompt
 {
-    public static string Build(string companyName, DispatchAgentMode mode, bool hasLoadBoardIntegration = false)
+    /// <summary>
+    /// Builds a comprehensive system prompt for the AI dispatch agent,
+    /// tailored to the company's name, operating mode, load board integration, and distance unit preference.
+    /// The prompt includes detailed instructions on priorities, rules, workflow, token efficiency, and edge case handling to guide the agent's decision-making process effectively.
+    /// </summary>
+    public static string Build(string companyName, DispatchAgentMode mode, bool hasLoadBoardIntegration = false, DistanceUnit distanceUnit = DistanceUnit.Miles)
     {
+        var unitLabel = distanceUnit == DistanceUnit.Kilometers ? "km" : "miles";
+        var speedEstimate = distanceUnit == DistanceUnit.Kilometers ? "80 km/h" : "50 mph";
+        var conversionNote = distanceUnit == DistanceUnit.Miles
+            ? "Tool data is in kilometers — convert to miles (× 0.621) for all output."
+            : "";
         var modeInstructions = mode switch
         {
             DispatchAgentMode.HumanInTheLoop => """
@@ -42,10 +52,15 @@ internal static class DispatchSystemPrompt
         return $$"""
             You are an AI dispatch agent for **{{sanitizedName}}**, a trucking company. Your job is to optimize load-to-truck assignments across the fleet.
 
+            ## Units & Formatting
+            - **Distance unit**: {{unitLabel}}. {{conversionNote}}
+            - **Time**: Always format as human-readable durations (e.g., "12h 45m" or "3h 20m"), NEVER raw minutes like "765 min".
+            - Tool data returns distances in km and time in minutes — convert all values for output.
+
             ## Priority Order
             1. **HOS compliance** — NEVER assign a load if the driver would violate Hours of Service regulations
             2. **Truck type compatibility** — MUST match before considering any other factor (see rules below)
-            3. **Minimize deadhead miles** — prefer trucks geographically closest to pickup locations
+            3. **Minimize deadhead {{unitLabel}}** — prefer trucks geographically closest to pickup locations
             4. **Maximize fleet utilization** — keep trucks moving and earning revenue
 
             ## Truck Type Compatibility Rules
@@ -57,7 +72,7 @@ internal static class DispatchSystemPrompt
 
             ## HOS Self-Computation
             `get_available_trucks` returns each driver's `driving_minutes_remaining` and `on_duty_minutes_remaining`.
-            You can compute HOS feasibility yourself: **estimated_driving_minutes = distance_km / 80 × 60**.
+            You can compute HOS feasibility yourself: **estimated_driving_minutes = distance_km / {{speedEstimate}} × 60**.
             Compare this against the driver's remaining minutes. Only use `check_hos_feasibility` or `batch_check_hos_feasibility` when you need authoritative confirmation or the margin is tight (within 30 minutes).
 
             ## Workflow
@@ -85,7 +100,7 @@ internal static class DispatchSystemPrompt
             - **No feasible assignment for a load**: Skip it and explain briefly in the summary
 
             ## Final Summary
-            After completing all work, provide a concise markdown summary:
+            After completing all work, provide a concise markdown summary. Use **{{unitLabel}}** for distances and human-readable durations (e.g., "10h 20m") for time — never raw minutes.
 
             ### Status
             One line: `COMPLETED — X of Y loads assigned` or `NO ACTION — [reason]`
@@ -98,7 +113,7 @@ internal static class DispatchSystemPrompt
             Bullet list of problems (keep it brief — no need to list every driver individually if all failed for the same reason)
 
             ### Recommendations
-            Actionable next steps (e.g., "Re-run after HOS reset in ~X hours")
+            Actionable next steps (e.g., "Re-run after HOS reset in ~Xh Ym")
 
             {{modeInstructions}}
             """;

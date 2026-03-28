@@ -1,4 +1,5 @@
 import { Component, computed, input, output, signal } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import type { DispatchDecisionDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
@@ -10,10 +11,11 @@ import { stripMarkdown } from "../../utils/markdown";
 @Component({
   selector: "app-decision-card",
   templateUrl: "./decision-card.html",
-  imports: [ButtonModule, TagModule, TooltipModule],
+  imports: [ButtonModule, TagModule, TooltipModule, RouterLink],
 })
 export class DecisionCard {
   public readonly decision = input.required<DispatchDecisionDto>();
+  public readonly showSessionLink = input(false);
   public readonly approve = output<DispatchDecisionDto>();
   public readonly reject = output<DispatchDecisionDto>();
 

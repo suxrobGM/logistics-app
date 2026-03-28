@@ -32,7 +32,7 @@
       </span>
     </div>
     <div class="text-muted mt-1 flex flex-wrap gap-x-4 gap-y-0.5">
-      @for (r of o.batchResults; track r.driver_id) {
+      @for (r of o.batchResults; track $index) {
         <span>
           {{ r.driving_minutes_remaining }}min avail / {{ r.estimated_driving_minutes }}min needed
         </span>
@@ -40,7 +40,7 @@
     </div>
   } @else {
     <div class="flex flex-col gap-1">
-      @for (r of o.batchResults; track r.driver_id) {
+      @for (r of o.batchResults; track $index) {
         <div class="flex items-center gap-2">
           <i
             class="text-xs"

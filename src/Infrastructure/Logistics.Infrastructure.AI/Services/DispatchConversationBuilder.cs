@@ -39,7 +39,7 @@ internal sealed class DispatchConversationBuilder(
 
         // Check load board feature for this tenant
         var hasLoadBoard = await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.LoadBoard);
-        var systemPrompt = DispatchSystemPrompt.Build(companyName, request.Mode, hasLoadBoard);
+        var systemPrompt = DispatchSystemPrompt.Build(companyName, request.Mode, hasLoadBoard, tenant.Settings.DistanceUnit);
         var tools = toolRegistry.GetToolDefinitions(includeLoadBoardTools: hasLoadBoard);
 
         // Resolve model: tenant selection → provider default

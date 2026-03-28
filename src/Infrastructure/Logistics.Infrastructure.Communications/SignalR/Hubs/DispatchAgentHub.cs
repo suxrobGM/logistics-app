@@ -7,6 +7,16 @@ public class DispatchAgentHub : Hub<IDispatchAgentHubClient>
 {
     private const string DispatchBoardGroupPrefix = "dispatch-board:";
 
+    public async Task RegisterTenant(string tenantId)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, tenantId);
+    }
+
+    public async Task UnregisterTenant(string tenantId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, tenantId);
+    }
+
     /// <summary>
     ///     Subscribe to dispatch board updates for a tenant.
     /// </summary>
