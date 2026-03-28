@@ -22,7 +22,7 @@ import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
-import { TenantService, ToastService, TrackingService } from "@/core/services";
+import { DispatchAgentHubService, TenantService, ToastService } from "@/core/services";
 import { DateUtils, Labels } from "@/shared/utils";
 import { ApproveRejectActions } from "../components/approve-reject-actions/approve-reject-actions";
 import { ModeBadge } from "../components/mode-badge/mode-badge";
@@ -55,7 +55,7 @@ import { MarkdownPipe } from "../utils/markdown";
 export class SessionDetailPage implements OnInit, OnDestroy {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
-  private readonly trackingService = inject(TrackingService);
+  private readonly dispatchAgentHub = inject(DispatchAgentHubService);
   private readonly tenantService = inject(TenantService);
 
   public readonly id = input.required<string>();
@@ -116,7 +116,7 @@ export class SessionDetailPage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     const tenant = this.tenantService.getTenantData();
     if (tenant?.id) {
-      this.trackingService.unsubscribeFromDispatchBoard(tenant.id);
+      this.dispatchAgentHub.unsubscribeFromDispatchBoard(tenant.id);
     }
   }
 
@@ -124,13 +124,13 @@ export class SessionDetailPage implements OnInit, OnDestroy {
     const tenant = this.tenantService.getTenantData();
     if (!tenant?.id) return;
 
-    this.trackingService.onReceiveDispatchAgentUpdate = (update) => {
+    this.dispatchAgentHub.onReceiveDispatchAgentUpdate = (update) => {
       if (update.sessionId === this.id()) {
         this.loadSession();
       }
     };
 
-    this.trackingService.onReceiveDispatchDecision = (decision) => {
+    this.dispatchAgentHub.onReceiveDispatchDecision = (decision) => {
       if (decision.sessionId === this.id()) {
         this.session.update((s) => {
           if (!s) return s;
@@ -140,8 +140,8 @@ export class SessionDetailPage implements OnInit, OnDestroy {
       }
     };
 
-    await this.trackingService.connect();
-    await this.trackingService.subscribeToDispatchBoard(tenant.id);
+    await this.dispatchAgentHub.connect();
+    await this.dispatchAgentHub.subscribeToDispatchBoard(tenant.id);
   }
 
   protected async loadSession(): Promise<void> {

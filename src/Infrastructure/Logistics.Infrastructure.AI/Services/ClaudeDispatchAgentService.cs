@@ -12,11 +12,12 @@ using Microsoft.Extensions.Options;
 namespace Logistics.Infrastructure.AI.Services;
 
 internal sealed class ClaudeDispatchAgentService(
-    IOptions<ClaudeOptions> options,
+    IOptions<LlmOptions> options,
     DispatchConversationBuilder conversationBuilder,
     DispatchDecisionProcessor decisionProcessor,
+    DispatchSessionCancellationRegistry cancellationRegistry,
     ITenantUnitOfWork tenantUow,
-    ITripTrackingService trackingService,
+    IDispatchAgentBroadcastService broadcastService,
     IStripeUsageService stripeUsageService,
     ILogger<ClaudeDispatchAgentService> logger) : IDispatchAgentService
 {
@@ -31,12 +32,15 @@ internal sealed class ClaudeDispatchAgentService(
             Mode = request.Mode,
             TriggeredByUserId = request.TriggeredByUserId,
             StartedAt = DateTime.UtcNow,
-            IsOverage = request.IsOverage
+            IsOverage = request.IsOverage,
+            Instructions = request.Instructions
         };
 
         await tenantUow.Repository<DispatchSession>().AddAsync(session, ct);
         await tenantUow.SaveChangesAsync(ct);
         await BroadcastSessionUpdateAsync(session);
+
+        var linkedCt = cancellationRegistry.Register(session.Id, ct);
 
         logger.LogInformation(
             "Starting dispatch agent session {SessionId} in {Mode} mode (triggered by {UserId})",
@@ -44,7 +48,7 @@ internal sealed class ClaudeDispatchAgentService(
 
         try
         {
-            await RunAgentLoopAsync(session, request, ct);
+            await RunAgentLoopAsync(session, request, linkedCt);
             session.Complete(session.Summary);
             logger.LogInformation(
                 "Dispatch agent session {SessionId} completed: {DecisionCount} decisions, {Tokens} tokens",
@@ -59,6 +63,10 @@ internal sealed class ClaudeDispatchAgentService(
         {
             logger.LogError(ex, "Dispatch agent session {SessionId} failed", session.Id);
             session.Fail(SanitizeErrorMessage(ex));
+        }
+        finally
+        {
+            cancellationRegistry.Unregister(session.Id);
         }
 
         await tenantUow.SaveChangesAsync(CancellationToken.None);
@@ -76,6 +84,7 @@ internal sealed class ClaudeDispatchAgentService(
         if (session.Status != DispatchSessionStatus.Running)
             return false;
 
+        cancellationRegistry.TryCancel(sessionId);
         session.Cancel();
         await tenantUow.SaveChangesAsync(ct);
         return true;
@@ -87,29 +96,36 @@ internal sealed class ClaudeDispatchAgentService(
         CancellationToken ct)
     {
         var config = options.Value;
-        var (client, parameters, messages) = conversationBuilder.Build(session, request.Mode, config);
+        var (client, parameters, messages) = await conversationBuilder.BuildAsync(session, request, config);
 
         var totalInputTokens = 0;
         var totalOutputTokens = 0;
+        var totalCacheReadTokens = 0;
+        var totalCacheCreationTokens = 0;
 
         for (var iteration = 0; iteration < MaxIterations; iteration++)
         {
             ct.ThrowIfCancellationRequested();
-            var response = await SendWithRetryAsync(client, parameters, session.Id, ct);
+            var result = await SendWithRetryAsync(client, parameters, session, ct);
 
             // Update token usage
-            totalInputTokens += response.Usage?.InputTokens ?? 0;
-            totalOutputTokens += response.Usage?.OutputTokens ?? 0;
-            session.TotalTokensUsed = totalInputTokens + totalOutputTokens;
+            totalInputTokens += result.InputTokens;
+            totalOutputTokens += result.OutputTokens;
+            totalCacheReadTokens += result.CacheReadTokens;
+            totalCacheCreationTokens += result.CacheCreationTokens;
 
-            messages.Add(response.Message);
+            session.InputTokensUsed = totalInputTokens;
+            session.OutputTokensUsed = totalOutputTokens;
+            session.CacheReadTokens = totalCacheReadTokens;
+            session.CacheCreationTokens = totalCacheCreationTokens;
 
-            var textContent = response.Content?.OfType<TextContent>().FirstOrDefault()?.Text;
+            messages.Add(result.AssistantMessage);
+
+            var textContent = result.TextContent;
             if (textContent is not null)
                 session.Summary = textContent;
 
-            var toolUseBlocks = response.Content?.OfType<ToolUseContent>().ToList() ?? [];
-            if (response.StopReason == "end_turn" || toolUseBlocks.Count == 0)
+            if (result.StopReason == "end_turn" || result.ToolUseBlocks.Count == 0)
             {
                 logger.LogInformation(
                     "Agent session {SessionId} completed after {Iterations} iterations, {Tokens} tokens",
@@ -118,33 +134,52 @@ internal sealed class ClaudeDispatchAgentService(
             }
 
             var toolResults = await decisionProcessor.ProcessToolCallsAsync(
-                session, request.Mode, toolUseBlocks, textContent, ct);
+                session, request.Mode, result.ToolUseBlocks, textContent, ct);
 
             messages.Add(new Message { Role = RoleType.User, Content = toolResults });
 
             // Broadcast session progress after each iteration (decisions already saved + broadcast by ProcessToolCallsAsync)
             await BroadcastSessionUpdateAsync(session);
         }
+
+        // Calculate estimated cost
+        session.EstimatedCostUsd = ClaudeModelPricing.Calculate(
+            session.ModelUsed ?? config.Model,
+            totalInputTokens, totalOutputTokens,
+            totalCacheReadTokens, totalCacheCreationTokens);
     }
 
-    private async Task<MessageResponse> SendWithRetryAsync(
+    private async Task<IterationResult> SendWithRetryAsync(
         AnthropicClient client,
         MessageParameters parameters,
-        Guid sessionId,
+        DispatchSession session,
         CancellationToken ct)
     {
         for (var attempt = 0; attempt <= MaxRetries; attempt++)
         {
             try
             {
-                return await client.Messages.GetClaudeMessageAsync(parameters, ct);
+                var response = await client.Messages.GetClaudeMessageAsync(parameters, ct);
+
+                var textContent = response.Content?.OfType<TextContent>().FirstOrDefault()?.Text;
+                var toolUseBlocks = response.Content?.OfType<ToolUseContent>().ToList() ?? [];
+
+                return new IterationResult(
+                    response.Message,
+                    textContent,
+                    response.StopReason,
+                    toolUseBlocks,
+                    response.Usage?.InputTokens ?? 0,
+                    response.Usage?.OutputTokens ?? 0,
+                    response.Usage?.CacheReadInputTokens ?? 0,
+                    response.Usage?.CacheCreationInputTokens ?? 0);
             }
             catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests && attempt < MaxRetries)
             {
                 var delay = RetryDelaysMs[attempt];
                 logger.LogWarning(
                     "Rate limited on session {SessionId}, attempt {Attempt}/{MaxRetries}. Retrying in {Delay}ms",
-                    sessionId, attempt + 1, MaxRetries, delay);
+                    session.Id, attempt + 1, MaxRetries, delay);
                 await Task.Delay(delay, ct);
             }
         }
@@ -171,7 +206,7 @@ internal sealed class ClaudeDispatchAgentService(
         try
         {
             var tenantId = tenantUow.GetCurrentTenant().Id;
-            await trackingService.BroadcastDispatchAgentUpdateAsync(tenantId, new DispatchAgentUpdateDto
+            await broadcastService.BroadcastSessionUpdateAsync(tenantId, new DispatchAgentUpdateDto
             {
                 SessionId = session.Id,
                 Status = session.Status,
@@ -201,4 +236,16 @@ internal sealed class ClaudeDispatchAgentService(
             logger.LogWarning(ex, "Failed to report AI session overage for session {SessionId}", session.Id);
         }
     }
+
+    #region Inner classes
+    private record IterationResult(
+        Message AssistantMessage,
+        string? TextContent,
+        string? StopReason,
+        List<ToolUseContent> ToolUseBlocks,
+        int InputTokens,
+        int OutputTokens,
+        int CacheReadTokens,
+        int CacheCreationTokens);
+    #endregion
 }

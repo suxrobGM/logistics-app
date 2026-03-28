@@ -83,15 +83,15 @@ Resend__SenderName="LogisticsX"
 Mapbox__AccessToken="pk.xxx"
 ```
 
-### Claude API (Optional — AI Dispatch)
+### LLM API (Optional — AI Dispatch)
 
 ```bash
-Claude__ApiKey="sk-ant-xxx"
+Llm__ApiKey="sk-ant-xxx"
 ```
 
 | Variable | Description |
 |----------|-------------|
-| `Claude__ApiKey` | Anthropic Claude API key for the AI dispatch agent (Enterprise plan feature) |
+| `Llm__ApiKey` | LLM API key for the AI dispatch agent (Enterprise plan feature) |
 
 ### TMS Portal (Runtime)
 
@@ -166,8 +166,8 @@ Resend__SenderName="LogisticsX"
 # Optional: Mapbox
 Mapbox__AccessToken="pk.xxx"
 
-# Optional: Claude API (AI Dispatch)
-Claude__ApiKey="sk-ant-xxx"
+# Optional: LLM API (AI Dispatch)
+Llm__ApiKey="sk-ant-xxx"
 ```
 
 ## API Configuration (appsettings.json)

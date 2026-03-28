@@ -6,8 +6,8 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.AgenticDispatch)]
-public class RunDispatchAgentCommand : IAppRequest<Result<Guid>>
+public class ReplanDispatchSessionCommand : IAppRequest<Result<Guid>>
 {
-    public DispatchAgentMode Mode { get; set; } = DispatchAgentMode.HumanInTheLoop;
-    public string? Instructions { get; set; }
+    public Guid OriginalSessionId { get; set; }
+    public string? AdditionalInstructions { get; set; }
 }

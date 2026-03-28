@@ -17,4 +17,6 @@ public record DispatchAgentRequest(
     Guid TenantId,
     DispatchAgentMode Mode,
     Guid? TriggeredByUserId,
-    bool IsOverage = false);
+    bool IsOverage = false,
+    string? Instructions = null,
+    string? RejectionContext = null);

@@ -17,7 +17,7 @@ namespace Logistics.Infrastructure.AI.Services;
 internal sealed class DispatchDecisionProcessor(
     IDispatchToolExecutor toolExecutor,
     ITenantUnitOfWork tenantUow,
-    ITripTrackingService trackingService,
+    IDispatchAgentBroadcastService broadcastService,
     ILogger<DispatchDecisionProcessor> logger)
 {
     private static readonly HashSet<string> WriteTools =
@@ -160,7 +160,7 @@ internal sealed class DispatchDecisionProcessor(
         try
         {
             var tenantId = tenantUow.GetCurrentTenant().Id;
-            await trackingService.BroadcastDispatchDecisionAsync(tenantId, decision.ToDto());
+            await broadcastService.BroadcastDecisionAsync(tenantId, decision.ToDto());
         }
         catch (Exception ex)
         {

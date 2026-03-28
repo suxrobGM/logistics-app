@@ -10,15 +10,16 @@ namespace Logistics.Infrastructure.AI;
 public static class Registrar
 {
     /// <summary>
-    ///     Add AI infrastructure (Claude API dispatch agent).
+    ///     Add AI infrastructure, including LLM services, agent orchestration, and tools.
     /// </summary>
     public static IServiceCollection AddAIInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.Configure<ClaudeOptions>(configuration.GetSection(ClaudeOptions.SectionName));
+        services.Configure<LlmOptions>(configuration.GetSection(LlmOptions.SectionName));
 
         // Agent services
+        services.AddSingleton<DispatchSessionCancellationRegistry>();
         services.AddScoped<IDispatchAgentService, ClaudeDispatchAgentService>();
         services.AddScoped<DispatchConversationBuilder>();
         services.AddScoped<DispatchDecisionProcessor>();
@@ -36,10 +37,11 @@ public static class Registrar
         services.AddScoped<IDispatchTool, AssignLoadToTruckTool>();
         services.AddScoped<IDispatchTool, CreateTripTool>();
         services.AddScoped<IDispatchTool, DispatchTripTool>();
+        services.AddScoped<IDispatchTool, CalculateAssignmentMetricsTool>();
 
-        // TODO: Load board tools are stubs - register only when integration is configured
-        // services.AddScoped<IDispatchTool, SearchLoadBoardTool>();
-        // services.AddScoped<IDispatchTool, BookLoadBoardLoadTool>();
+        // Load board tools (conditionally included in tool definitions based on tenant feature flag)
+        services.AddScoped<IDispatchTool, SearchLoadBoardTool>();
+        services.AddScoped<IDispatchTool, BookLoadBoardLoadTool>();
 
         return services;
     }

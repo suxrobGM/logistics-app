@@ -26,9 +26,44 @@ public class DispatchSession : AuditableEntity, ITenantEntity
     public DateTime? CompletedAt { get; set; }
 
     /// <summary>
+    /// User-provided instructions for this session.
+    /// </summary>
+    public string? Instructions { get; set; }
+
+    /// <summary>
     /// Total Claude API tokens consumed during this session.
     /// </summary>
-    public int TotalTokensUsed { get; set; }
+    public int TotalTokensUsed => InputTokensUsed + OutputTokensUsed;
+
+    /// <summary>
+    /// Input tokens consumed during this session.
+    /// </summary>
+    public int InputTokensUsed { get; set; }
+
+    /// <summary>
+    /// Output tokens consumed during this session.
+    /// </summary>
+    public int OutputTokensUsed { get; set; }
+
+    /// <summary>
+    /// Cached input tokens read from prompt cache.
+    /// </summary>
+    public int CacheReadTokens { get; set; }
+
+    /// <summary>
+    /// Tokens written to prompt cache.
+    /// </summary>
+    public int CacheCreationTokens { get; set; }
+
+    /// <summary>
+    /// Estimated cost in USD for this session.
+    /// </summary>
+    public decimal EstimatedCostUsd { get; set; }
+
+    /// <summary>
+    /// The Claude model used for this session.
+    /// </summary>
+    public string? ModelUsed { get; set; }
 
     /// <summary>
     /// Number of decisions made by the agent.

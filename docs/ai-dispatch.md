@@ -86,9 +86,9 @@ Each decision within a session is a **DispatchDecision** with:
 
 | Variable | Description |
 |----------|-------------|
-| `Claude__ApiKey` | Anthropic API key |
-| `Claude__Model` | Model to use (default: `claude-sonnet-4-6`) |
-| `Claude__MaxTokens` | Max tokens per response (default: 4096) |
+| `Llm__ApiKey` | Anthropic API key |
+| `Llm__Model` | Model to use (default: `claude-sonnet-4-6`) |
+| `Llm__MaxTokens` | Max tokens per response (default: 4096) |
 
 ### Feature Gating
 
@@ -108,7 +108,7 @@ The feature is gated behind `TenantFeature.AgenticDispatch`, available on the En
 ```text
 src/Infrastructure/Logistics.Infrastructure.AI/
 ├── Registrar.cs                    # DI registration
-├── Options/ClaudeOptions.cs        # Configuration
+├── Options/LlmOptions.cs           # Configuration
 ├── Services/
 │   ├── ClaudeDispatchAgentService  # Agent loop orchestration
 │   ├── DispatchToolExecutor        # Maps tool calls to MediatR

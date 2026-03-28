@@ -10,9 +10,7 @@ public class TrackingHub(
     IMediator mediator,
     TrackingHubContext hubContext) : Hub<ITrackingHubClient>
 {
-    // Group name prefixes for organizing subscriptions
     private const string TripGroupPrefix = "trip:";
-    private const string DispatchBoardGroupPrefix = "dispatch-board:";
 
     public override Task OnConnectedAsync()
     {
@@ -74,26 +72,6 @@ public class TrackingHub(
     public async Task UnsubscribeFromTrip(string tripId)
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{TripGroupPrefix}{tripId}");
-    }
-
-    #endregion
-
-    #region Dispatch Board Subscription
-
-    /// <summary>
-    ///     Subscribe to dispatch board updates for a tenant.
-    /// </summary>
-    public async Task SubscribeToDispatchBoard(string tenantId)
-    {
-        await Groups.AddToGroupAsync(Context.ConnectionId, $"{DispatchBoardGroupPrefix}{tenantId}");
-    }
-
-    /// <summary>
-    ///     Unsubscribe from dispatch board updates.
-    /// </summary>
-    public async Task UnsubscribeFromDispatchBoard(string tenantId)
-    {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"{DispatchBoardGroupPrefix}{tenantId}");
     }
 
     #endregion

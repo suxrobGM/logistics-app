@@ -208,6 +208,7 @@ internal static class Setup
 
         // SignalR Hubs
         app.MapHub<TrackingHub>("/hubs/tracking");
+        app.MapHub<DispatchAgentHub>("/hubs/dispatch-agent");
         app.MapHub<NotificationHub>("/hubs/notification");
         app.MapHub<ChatHub>("/hubs/chat");
         return app;

@@ -20,7 +20,8 @@ internal sealed class RunDispatchAgentHandler(
         var agentRequest = new DispatchAgentRequest(
             TenantId: tenant.Id,
             Mode: request.Mode,
-            TriggeredByUserId: currentUser.GetUserId());
+            TriggeredByUserId: currentUser.GetUserId(),
+            Instructions: request.Instructions);
 
         // Fire-and-forget: run the agent in a background scope so the HTTP response returns immediately
         _ = Task.Run(async () =>

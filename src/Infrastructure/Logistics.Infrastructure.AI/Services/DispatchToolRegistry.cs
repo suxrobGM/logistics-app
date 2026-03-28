@@ -96,6 +96,32 @@ internal sealed class DispatchToolRegistry : IDispatchToolRegistry
                 ["required"] = new JsonArray("origin_lat", "origin_lng", "dest_lat", "dest_lng")
             })),
 
+        new("calculate_assignment_metrics",
+            "Calculate revenue per mile/km, deadhead ratio, and profitability for candidate truck-load pairs. Use this when multiple trucks are candidates for a load to pick the most profitable option.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["candidates"] = new JsonObject
+                    {
+                        ["type"] = "array",
+                        ["description"] = "Array of truck/load pairs to evaluate",
+                        ["items"] = new JsonObject
+                        {
+                            ["type"] = "object",
+                            ["properties"] = new JsonObject
+                            {
+                                ["load_id"] = Prop("string", "The load ID (GUID)"),
+                                ["truck_id"] = Prop("string", "The truck ID (GUID)")
+                            },
+                            ["required"] = new JsonArray("load_id", "truck_id")
+                        }
+                    }
+                },
+                ["required"] = new JsonArray("candidates")
+            })),
+
         new("search_load_board",
             "Search load boards (DAT, Truckstop, 123Loadboard) for available loads matching criteria. Use this when trucks have capacity gaps to find revenue opportunities.",
             BuildSchema(new JsonObject

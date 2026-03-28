@@ -24,7 +24,7 @@ public class DispatchDecisionProcessorTests
     private readonly DispatchDecisionProcessor sut;
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly IDispatchToolExecutor toolExecutor = Substitute.For<IDispatchToolExecutor>();
-    private readonly ITripTrackingService trackingService = Substitute.For<ITripTrackingService>();
+    private readonly IDispatchAgentBroadcastService broadcastService = Substitute.For<IDispatchAgentBroadcastService>();
 
     public DispatchDecisionProcessorTests()
     {
@@ -37,7 +37,7 @@ public class DispatchDecisionProcessorTests
             BillingEmail = "test@test.com",
             CompanyAddress = new() { Line1 = "123 Test St", City = "Test", State = "TX", ZipCode = "12345", Country = "US" }
         });
-        sut = new DispatchDecisionProcessor(toolExecutor, tenantUow, trackingService, logger);
+        sut = new DispatchDecisionProcessor(toolExecutor, tenantUow, broadcastService, logger);
     }
 
     private static DispatchSession CreateSession(DispatchAgentMode mode = DispatchAgentMode.Autonomous)
@@ -311,7 +311,7 @@ public class DispatchDecisionProcessorTests
         await sut.ProcessToolCallsAsync(
             session, DispatchAgentMode.Autonomous, [toolUse], null, CancellationToken.None);
 
-        await trackingService.Received(1).BroadcastDispatchDecisionAsync(
+        await broadcastService.Received(1).BroadcastDecisionAsync(
             Arg.Any<Guid>(), Arg.Any<DispatchDecisionDto>());
     }
 
@@ -327,7 +327,7 @@ public class DispatchDecisionProcessorTests
         await sut.ProcessToolCallsAsync(
             session, DispatchAgentMode.Autonomous, [toolUse], null, CancellationToken.None);
 
-        await trackingService.Received(1).BroadcastDispatchDecisionAsync(
+        await broadcastService.Received(1).BroadcastDecisionAsync(
             Arg.Any<Guid>(), Arg.Any<DispatchDecisionDto>());
     }
 

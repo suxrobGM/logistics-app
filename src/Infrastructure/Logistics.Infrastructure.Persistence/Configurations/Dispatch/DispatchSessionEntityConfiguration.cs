@@ -19,6 +19,8 @@ internal sealed class DispatchSessionEntityConfiguration : IEntityTypeConfigurat
         builder.HasIndex(s => s.Number)
             .IsUnique();
 
+        builder.Ignore(s => s.TotalTokensUsed);
+
         builder.Property(s => s.Summary)
             .HasMaxLength(4000);
 

@@ -6,7 +6,7 @@ All AI agent code lives in `src/Infrastructure/Logistics.Infrastructure.AI/`:
 - `Services/` — Agent loop, tool executor, tool registry
 - `Tools/` — Individual tool implementations (future)
 - `Prompts/` — System prompt builders
-- `Options/` — Configuration (ClaudeOptions)
+- `Options/` — Configuration (LlmOptions)
 
 ## Adding a New Agent Tool
 
@@ -37,4 +37,4 @@ Max 25 iterations per session to prevent runaway token usage.
 
 ## Configuration
 
-Claude config is in `appsettings.json` under `"Claude"` section. API key is passed via environment variable `Claude__ApiKey` in all deployment targets (Aspire, Docker, .env).
+LLM config is in `appsettings.json` under `"Llm"` section. API key is passed via environment variable `Llm__ApiKey` in all deployment targets (Aspire, Docker, .env).

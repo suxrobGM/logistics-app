@@ -31,6 +31,7 @@ public static class Registrar
         services.AddScoped<IRealtimeLiveTrackingService, SignalRLiveTrackingService>();
         services.AddScoped<IRealtimeNotificationService, SignalRNotificationService>();
         services.AddScoped<ITripTrackingService, SignalRTripTrackingService>();
+        services.AddScoped<IDispatchAgentBroadcastService, SignalRDispatchAgentBroadcastService>();
 
         // Email services (Resend)
         services.Configure<ResendOptions>(configuration.GetSection(ResendOptions.SectionName));

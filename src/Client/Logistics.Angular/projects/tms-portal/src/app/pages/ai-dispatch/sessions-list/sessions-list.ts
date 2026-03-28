@@ -25,7 +25,7 @@ import type { TableLazyLoadEvent } from "primeng/table";
 import { ProgressBar } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { DispatchBadgeService, TenantService, ToastService, TrackingService } from "@/core/services";
+import { DispatchAgentHubService, DispatchBadgeService, TenantService, ToastService } from "@/core/services";
 import { GeolocationMap } from "@/shared/components";
 import { Labels } from "@/shared/utils";
 import { DecisionCard } from "../components/decision-card/decision-card";
@@ -53,7 +53,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
   private readonly api = inject(Api);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
-  private readonly trackingService = inject(TrackingService);
+  private readonly dispatchAgentHub = inject(DispatchAgentHubService);
   private readonly tenantService = inject(TenantService);
   private readonly dispatchBadgeService = inject(DispatchBadgeService);
 
@@ -104,7 +104,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     const tenant = this.tenantService.getTenantData();
     if (tenant?.id) {
-      this.trackingService.unsubscribeFromDispatchBoard(tenant.id);
+      this.dispatchAgentHub.unsubscribeFromDispatchBoard(tenant.id);
     }
   }
 
@@ -112,18 +112,18 @@ export class SessionsListPage implements OnInit, OnDestroy {
     const tenant = this.tenantService.getTenantData();
     if (!tenant?.id) return;
 
-    this.trackingService.onReceiveDispatchAgentUpdate = () => {
+    this.dispatchAgentHub.onReceiveDispatchAgentUpdate = () => {
       this.loadData();
     };
 
-    this.trackingService.onReceiveDispatchDecision = (decision) => {
+    this.dispatchAgentHub.onReceiveDispatchDecision = (decision) => {
       if (decision.status === "suggested") {
         this.pendingDecisions.update((list) => [...list, decision]);
       }
     };
 
-    await this.trackingService.connect();
-    await this.trackingService.subscribeToDispatchBoard(tenant.id);
+    await this.dispatchAgentHub.connect();
+    await this.dispatchAgentHub.subscribeToDispatchBoard(tenant.id);
   }
 
   protected async loadData(): Promise<void> {

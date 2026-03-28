@@ -36,7 +36,7 @@ internal static class DispatchSystemPrompt
         var sanitizedName = SanitizeCompanyName(companyName);
 
         var loadBoardStep = hasLoadBoardIntegration
-            ? "\n7. If trucks have no loads after assignments, search load boards with `search_load_board`"
+            ? "\n9. If trucks have no loads after assignments, search load boards with `search_load_board`"
             : "";
 
         return $$"""
@@ -67,7 +67,8 @@ internal static class DispatchSystemPrompt
             4. If a candidate is clearly feasible (driving time well under remaining hours), assign directly with `assign_load_to_truck`
             5. If borderline or you need confirmation, use `batch_check_hos_feasibility` with all candidates at once
             6. Use `calculate_distance` only when trucks have location data and you need to compare deadhead miles
-            7. In autonomous mode: after assignments, group loads into trips with `create_trip` and dispatch with `dispatch_trip`{{loadBoardStep}}
+            7. When multiple trucks are candidates for a load, use `calculate_assignment_metrics` to compare revenue per mile and pick the most profitable option
+            8. In autonomous mode: after assignments, group loads into trips with `create_trip` and dispatch with `dispatch_trip`{{loadBoardStep}}
 
             ## Token Efficiency Rules
             - Gather all data in the FEWEST tool calls possible

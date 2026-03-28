@@ -14,4 +14,14 @@ public record TenantSettings
     public DateFormatType DateFormat { get; set; } = DateFormatType.US;
     public string Timezone { get; set; } = "America/New_York";
     public WeightUnit WeightUnit { get; set; } = WeightUnit.Pounds;
+
+    /// <summary>
+    /// Override LLM model for dispatch agent. Null uses the system default.
+    /// </summary>
+    public string? LlmModel { get; set; }
+
+    /// <summary>
+    /// Override extended thinking for dispatch agent. Null uses the system default.
+    /// </summary>
+    public bool? LlmExtendedThinking { get; set; }
 }

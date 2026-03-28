@@ -21,7 +21,7 @@ public class ClaudeDispatchAgentServiceTests
 
     private readonly ClaudeDispatchAgentService sut;
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
-    private readonly ITripTrackingService trackingService = Substitute.For<ITripTrackingService>();
+    private readonly IDispatchAgentBroadcastService broadcastService = Substitute.For<IDispatchAgentBroadcastService>();
 
     public ClaudeDispatchAgentServiceTests()
     {
@@ -38,14 +38,18 @@ public class ClaudeDispatchAgentServiceTests
         var toolRegistry = Substitute.For<IDispatchToolRegistry>();
         toolRegistry.GetToolDefinitions(Arg.Any<bool>()).Returns([]);
 
-        var conversationBuilder1 = new DispatchConversationBuilder(
-            toolRegistry, tenantUow, NullLogger<DispatchConversationBuilder>.Instance);
+        var featureService = Substitute.For<IFeatureService>();
+
+        var conversationBuilder = new DispatchConversationBuilder(
+            toolRegistry, featureService, tenantUow, NullLogger<DispatchConversationBuilder>.Instance);
 
         var toolExecutor = Substitute.For<IDispatchToolExecutor>();
-        var decisionProcessor1 = new DispatchDecisionProcessor(
-            toolExecutor, tenantUow, trackingService, NullLogger<DispatchDecisionProcessor>.Instance);
+        var decisionProcessor = new DispatchDecisionProcessor(
+            toolExecutor, tenantUow, broadcastService, NullLogger<DispatchDecisionProcessor>.Instance);
 
-        var options = MsOptions.Options.Create(new ClaudeOptions
+        var cancellationRegistry = new DispatchSessionCancellationRegistry();
+
+        var options = MsOptions.Options.Create(new LlmOptions
         {
             ApiKey = "sk-ant-test-key",
             Model = "claude-haiku-4-5",
@@ -53,8 +57,8 @@ public class ClaudeDispatchAgentServiceTests
         });
 
         sut = new ClaudeDispatchAgentService(
-            options, conversationBuilder1, decisionProcessor1,
-            tenantUow, trackingService, stripeUsageService,
+            options, conversationBuilder, decisionProcessor, cancellationRegistry,
+            tenantUow, broadcastService, stripeUsageService,
             NullLogger<ClaudeDispatchAgentService>.Instance);
     }
 
