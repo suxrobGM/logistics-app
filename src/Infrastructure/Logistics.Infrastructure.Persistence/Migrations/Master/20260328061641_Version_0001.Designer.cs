@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Persistence.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20260328021702_Version_0008")]
-    partial class Version_0008
+    [Migration("20260328061641_Version_0001")]
+    partial class Version_0001
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -896,6 +896,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<string>("AllowedModelTier")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("allowed_model_tier");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -959,9 +964,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnType("character varying(50)")
                         .HasColumnName("LastModifiedBy");
 
-                    b.Property<int?>("WeeklyAiSessionQuota")
+                    b.Property<int?>("WeeklyAiRequestQuota")
                         .HasColumnType("integer")
-                        .HasColumnName("weekly_ai_session_quota");
+                        .HasColumnName("weekly_ai_request_quota");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "PerTruckPrice", "Logistics.Domain.Entities.SubscriptionPlan.PerTruckPrice#Money", b1 =>
                         {
@@ -1171,6 +1176,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                             b1.Property<string>("LlmModel")
                                 .HasColumnType("text")
                                 .HasColumnName("settings_llm_model");
+
+                            b1.Property<int?>("LlmProvider")
+                                .HasColumnType("integer")
+                                .HasColumnName("settings_llm_provider");
 
                             b1.Property<string>("Timezone")
                                 .IsRequired()

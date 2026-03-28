@@ -39,6 +39,40 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 });
 
             migrationBuilder.CreateTable(
+                name: "dispatch_sessions",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    number = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityAlwaysColumn),
+                    mode = table.Column<string>(type: "text", nullable: false),
+                    status = table.Column<string>(type: "text", nullable: false),
+                    triggered_by_user_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    started_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    completed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    instructions = table.Column<string>(type: "text", nullable: true),
+                    input_tokens_used = table.Column<int>(type: "integer", nullable: false),
+                    output_tokens_used = table.Column<int>(type: "integer", nullable: false),
+                    cache_read_tokens = table.Column<int>(type: "integer", nullable: false),
+                    cache_creation_tokens = table.Column<int>(type: "integer", nullable: false),
+                    estimated_cost_usd = table.Column<decimal>(type: "numeric", nullable: false),
+                    model_used = table.Column<string>(type: "text", nullable: true),
+                    decision_count = table.Column<int>(type: "integer", nullable: false),
+                    summary = table.Column<string>(type: "character varying(4000)", maxLength: 4000, nullable: true),
+                    error_message = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    request_cost = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
+                    is_overage = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    CreatedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    LastModifiedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    LastModifiedBy = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_dispatch_sessions", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "eld_provider_configurations",
                 columns: table => new
                 {
@@ -98,44 +132,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 });
 
             migrationBuilder.CreateTable(
-                name: "payment_methods",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    type = table.Column<string>(type: "text", nullable: false),
-                    stripe_payment_method_id = table.Column<string>(type: "text", nullable: true),
-                    is_default = table.Column<bool>(type: "boolean", nullable: false),
-                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    verification_status = table.Column<string>(type: "text", nullable: false),
-                    billing_address_city = table.Column<string>(type: "text", nullable: false),
-                    billing_address_country = table.Column<string>(type: "text", nullable: false),
-                    billing_address_line1 = table.Column<string>(type: "text", nullable: false),
-                    billing_address_line2 = table.Column<string>(type: "text", nullable: true),
-                    billing_address_state = table.Column<string>(type: "text", nullable: false),
-                    billing_address_zip_code = table.Column<string>(type: "text", nullable: false),
-                    bank_name = table.Column<string>(type: "text", nullable: true),
-                    account_number = table.Column<string>(type: "text", nullable: true),
-                    account_holder_name = table.Column<string>(type: "text", nullable: true),
-                    swift_code = table.Column<string>(type: "text", nullable: true),
-                    card_holder_name = table.Column<string>(type: "text", nullable: true),
-                    card_number = table.Column<string>(type: "text", nullable: true),
-                    cvc = table.Column<string>(type: "text", nullable: true),
-                    exp_month = table.Column<int>(type: "integer", nullable: true),
-                    exp_year = table.Column<int>(type: "integer", nullable: true),
-                    us_bank_account_payment_method_bank_name = table.Column<string>(type: "text", nullable: true),
-                    us_bank_account_payment_method_account_holder_name = table.Column<string>(type: "text", nullable: true),
-                    us_bank_account_payment_method_account_number = table.Column<string>(type: "text", nullable: true),
-                    routing_number = table.Column<string>(type: "text", nullable: true),
-                    account_holder_type = table.Column<string>(type: "text", nullable: true),
-                    account_type = table.Column<string>(type: "text", nullable: true),
-                    verification_url = table.Column<string>(type: "text", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_payment_methods", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "tenant_roles",
                 columns: table => new
                 {
@@ -177,6 +173,37 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 });
 
             migrationBuilder.CreateTable(
+                name: "dispatch_decisions",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    session_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    type = table.Column<string>(type: "text", nullable: false),
+                    status = table.Column<string>(type: "text", nullable: false),
+                    reasoning = table.Column<string>(type: "character varying(4000)", maxLength: 4000, nullable: false),
+                    tool_name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    tool_input = table.Column<string>(type: "text", nullable: true),
+                    tool_output = table.Column<string>(type: "text", nullable: true),
+                    load_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    truck_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    trip_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    executed_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    approved_by_user_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    rejection_reason = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_dispatch_decisions", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_dispatch_decisions_dispatch_session_session_id",
+                        column: x => x.session_id,
+                        principalTable: "dispatch_sessions",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "employees",
                 columns: table => new
                 {
@@ -189,6 +216,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     status = table.Column<string>(type: "text", nullable: false),
                     joined_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     device_token = table.Column<string>(type: "text", nullable: true),
+                    stripe_connected_account_id = table.Column<string>(type: "text", nullable: true),
                     role_id = table.Column<Guid>(type: "uuid", nullable: true),
                     salary_amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     salary_currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false)
@@ -1242,7 +1270,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     status = table.Column<string>(type: "text", nullable: false),
-                    method_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    stripe_payment_method_id = table.Column<string>(type: "text", nullable: true),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
                     stripe_payment_intent_id = table.Column<string>(type: "text", nullable: true),
@@ -1608,6 +1636,22 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 name: "ix_customer_users_user_id",
                 table: "customer_users",
                 column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_dispatch_decisions_session_id",
+                table: "dispatch_decisions",
+                column: "session_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_dispatch_decisions_status",
+                table: "dispatch_decisions",
+                column: "status");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_dispatch_sessions_number",
+                table: "dispatch_sessions",
+                column: "number",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_documents_accident_report_id",
@@ -1989,12 +2033,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_payment_methods_stripe_payment_method_id",
-                table: "payment_methods",
-                column: "stripe_payment_method_id",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "ix_payments_invoice_id",
                 table: "payments",
                 column: "invoice_id");
@@ -2120,6 +2158,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 name: "customer_users");
 
             migrationBuilder.DropTable(
+                name: "dispatch_decisions");
+
+            migrationBuilder.DropTable(
                 name: "documents");
 
             migrationBuilder.DropTable(
@@ -2174,9 +2215,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                 name: "payment_links");
 
             migrationBuilder.DropTable(
-                name: "payment_methods");
-
-            migrationBuilder.DropTable(
                 name: "payments");
 
             migrationBuilder.DropTable(
@@ -2190,6 +2228,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
             migrationBuilder.DropTable(
                 name: "tracking_links");
+
+            migrationBuilder.DropTable(
+                name: "dispatch_sessions");
 
             migrationBuilder.DropTable(
                 name: "accident_reports");

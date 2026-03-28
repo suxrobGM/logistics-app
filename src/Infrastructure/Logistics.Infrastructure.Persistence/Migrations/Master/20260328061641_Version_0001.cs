@@ -169,12 +169,12 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     stripe_price_id = table.Column<string>(type: "text", nullable: true),
                     stripe_product_id = table.Column<string>(type: "text", nullable: true),
                     stripe_per_truck_price_id = table.Column<string>(type: "text", nullable: true),
+                    stripe_ai_overage_price_id = table.Column<string>(type: "text", nullable: true),
+                    weekly_ai_request_quota = table.Column<int>(type: "integer", nullable: true),
+                    allowed_model_tier = table.Column<string>(type: "text", nullable: false),
                     max_trucks = table.Column<int>(type: "integer", nullable: true),
-                    annual_discount_percent = table.Column<decimal>(type: "numeric(5,2)", precision: 5, scale: 2, nullable: false),
                     interval = table.Column<string>(type: "text", nullable: false),
                     interval_count = table.Column<int>(type: "integer", nullable: false),
-                    billing_cycle_anchor = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    trial_period = table.Column<string>(type: "text", nullable: false),
                     per_truck_price_amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
                     per_truck_price_currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     price_amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
@@ -187,6 +187,21 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_subscription_plans", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "system_settings",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    key = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    value = table.Column<string>(type: "character varying(4000)", maxLength: 4000, nullable: false),
+                    description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_system_settings", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -203,19 +218,24 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     logo_path = table.Column<string>(type: "text", nullable: true),
                     phone_number = table.Column<string>(type: "text", nullable: true),
                     is_subscription_required = table.Column<bool>(type: "boolean", nullable: false),
+                    quota_reset_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     stripe_connected_account_id = table.Column<string>(type: "text", nullable: true),
                     connect_status = table.Column<string>(type: "text", nullable: false),
                     payouts_enabled = table.Column<bool>(type: "boolean", nullable: false),
                     charges_enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    company_address_city = table.Column<string>(type: "text", nullable: true),
-                    company_address_country = table.Column<string>(type: "text", nullable: true),
-                    company_address_line1 = table.Column<string>(type: "text", nullable: true),
+                    company_address_city = table.Column<string>(type: "text", nullable: false),
+                    company_address_country = table.Column<string>(type: "text", nullable: false),
+                    company_address_line1 = table.Column<string>(type: "text", nullable: false),
                     company_address_line2 = table.Column<string>(type: "text", nullable: true),
-                    company_address_state = table.Column<string>(type: "text", nullable: true),
-                    company_address_zip_code = table.Column<string>(type: "text", nullable: true),
+                    company_address_state = table.Column<string>(type: "text", nullable: false),
+                    company_address_zip_code = table.Column<string>(type: "text", nullable: false),
                     settings_currency = table.Column<int>(type: "integer", nullable: false),
                     settings_date_format = table.Column<int>(type: "integer", nullable: false),
                     settings_distance_unit = table.Column<int>(type: "integer", nullable: false),
+                    settings_llm_enabled = table.Column<bool>(type: "boolean", nullable: true),
+                    settings_llm_extended_thinking = table.Column<bool>(type: "boolean", nullable: true),
+                    settings_llm_model = table.Column<string>(type: "text", nullable: true),
+                    settings_llm_provider = table.Column<int>(type: "integer", nullable: true),
                     settings_timezone = table.Column<string>(type: "text", nullable: false),
                     settings_weight_unit = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -272,10 +292,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     status = table.Column<string>(type: "text", nullable: false),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false),
                     plan_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    start_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    end_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    next_billing_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    trial_end_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    cancel_at_period_end = table.Column<bool>(type: "boolean", nullable: false),
                     stripe_subscription_id = table.Column<string>(type: "text", nullable: true),
                     stripe_customer_id = table.Column<string>(type: "text", nullable: true)
                 },
@@ -576,7 +593,7 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     status = table.Column<string>(type: "text", nullable: false),
-                    method_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    stripe_payment_method_id = table.Column<string>(type: "text", nullable: true),
                     tenant_id = table.Column<Guid>(type: "uuid", nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
                     stripe_payment_intent_id = table.Column<string>(type: "text", nullable: true),
@@ -782,6 +799,12 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "ix_system_settings_key",
+                table: "system_settings",
+                column: "key",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "ix_tenant_feature_configs_tenant_id_feature",
                 table: "tenant_feature_configs",
                 columns: new[] { "tenant_id", "feature" },
@@ -873,6 +896,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
 
             migrationBuilder.DropTable(
                 name: "subscriptions");
+
+            migrationBuilder.DropTable(
+                name: "system_settings");
 
             migrationBuilder.DropTable(
                 name: "tenant_feature_configs");
