@@ -1,10 +1,11 @@
 <!-- Hero -->
-<web-section-container sectionId="compare-hero" background="gradient">
+<web-section-container sectionId="compare-hero" background="dark">
   <div webScrollAnimate="fade-up" class="text-center">
     <web-section-header
       label="Compare"
       title="How We Compare"
       subtitle="Choosing the right TMS matters. See how our platform stacks up against the competition."
+      [dark]="true"
     />
   </div>
 </web-section-container>
@@ -19,38 +20,81 @@
     />
   </div>
 
-  <div class="mt-16 overflow-x-auto">
-    <table class="w-full min-w-180 border-collapse text-sm">
+  <div class="mt-12 max-w-4xl overflow-x-auto" webScrollAnimate="fade-up" [delay]="150">
+    <table class="w-full border-collapse text-sm">
       <thead>
         <tr class="border-b-2 border-gray-200">
-          <th class="text-ink py-4 pr-4 text-left font-semibold">Feature</th>
-          <th class="text-accent px-4 py-4 text-center font-semibold">Us</th>
-          <th class="text-steel px-4 py-4 text-center font-semibold">DataTruck</th>
-          <th class="text-steel px-4 py-4 text-center font-semibold">Alvys</th>
-          <th class="text-steel px-4 py-4 text-center font-semibold">Rose Rocket</th>
+          <th
+            class="py-3 pr-4 text-left text-xs font-semibold tracking-wider text-gray-400 uppercase"
+          >
+            Feature
+          </th>
+          <th
+            class="bg-accent/5 border-accent/10 text-accent border-x px-3 py-3 text-center text-xs font-bold tracking-wider uppercase"
+          >
+            LogisticsX
+          </th>
+          <th
+            class="px-3 py-3 text-center text-xs font-medium tracking-wider text-gray-400 uppercase"
+          >
+            DataTruck
+          </th>
+          <th
+            class="px-3 py-3 text-center text-xs font-medium tracking-wider text-gray-400 uppercase"
+          >
+            Alvys
+          </th>
+          <th
+            class="px-3 py-3 text-center text-xs font-medium tracking-wider text-gray-400 uppercase"
+          >
+            Rose Rocket
+          </th>
         </tr>
       </thead>
       <tbody>
         @for (category of features; track category.category) {
           <tr>
-            <td
-              colspan="5"
-              class="text-ink bg-gray-50 px-0 py-3 text-xs font-bold tracking-wider uppercase"
-            >
+            <td colspan="5" class="text-ink pt-5 pb-1 text-xs font-bold tracking-wider uppercase">
               {{ category.category }}
             </td>
           </tr>
           @for (row of category.rows; track row.name) {
-            <tr class="border-b border-gray-100 transition-colors hover:bg-gray-50/50">
-              <td class="text-ink py-3 pr-4">{{ row.name }}</td>
-              <td class="px-4 py-3 text-center font-medium">
-                <span [class]="row.us === '✓' ? 'text-accent' : 'text-steel'">
-                  {{ row.us }}
-                </span>
+            <tr class="border-b border-gray-100">
+              <td class="text-ink py-2.5 pr-4 text-sm">{{ row.name }}</td>
+              <td class="bg-accent/5 border-accent/10 border-x px-3 py-2.5 text-center">
+                @if (row.us === "✓") {
+                  <i class="pi pi-check text-accent text-sm font-bold"></i>
+                } @else {
+                  <span class="text-accent text-xs font-semibold">{{ row.us }}</span>
+                }
               </td>
-              <td class="text-steel px-4 py-3 text-center">{{ row.dataTruck }}</td>
-              <td class="text-steel px-4 py-3 text-center">{{ row.alvys }}</td>
-              <td class="text-steel px-4 py-3 text-center">{{ row.roseRocket }}</td>
+              <td class="px-3 py-2.5 text-center">
+                @if (row.dataTruck === "✓") {
+                  <i class="pi pi-check text-sm text-gray-400"></i>
+                } @else if (row.dataTruck === "—") {
+                  <span class="text-gray-200">—</span>
+                } @else {
+                  <span class="text-steel text-xs">{{ row.dataTruck }}</span>
+                }
+              </td>
+              <td class="px-3 py-2.5 text-center">
+                @if (row.alvys === "✓") {
+                  <i class="pi pi-check text-sm text-gray-400"></i>
+                } @else if (row.alvys === "—") {
+                  <span class="text-gray-200">—</span>
+                } @else {
+                  <span class="text-steel text-xs">{{ row.alvys }}</span>
+                }
+              </td>
+              <td class="px-3 py-2.5 text-center">
+                @if (row.roseRocket === "✓") {
+                  <i class="pi pi-check text-sm text-gray-400"></i>
+                } @else if (row.roseRocket === "—") {
+                  <span class="text-gray-200">—</span>
+                } @else {
+                  <span class="text-steel text-xs">{{ row.roseRocket }}</span>
+                }
+              </td>
             </tr>
           }
         }
@@ -65,34 +109,41 @@
     <web-section-header
       label="Pricing"
       title="Cost comparison at scale"
-      subtitle="Monthly cost on our Enterprise plan vs. competitors. Transparent pricing with no hidden fees."
+      subtitle="Monthly cost on our Professional plan vs. competitors. Transparent pricing with no hidden fees."
     />
   </div>
 
-  <div class="mt-16 overflow-x-auto" webScrollAnimate="fade-up" [delay]="150">
-    <table class="w-full min-w-135 border-collapse text-sm">
-      <thead>
-        <tr class="border-b-2 border-gray-200">
-          <th class="text-ink py-4 pr-4 text-left font-semibold">Fleet Size</th>
-          <th class="text-accent px-4 py-4 text-center font-semibold">Us (Enterprise)</th>
-          <th class="text-steel px-4 py-4 text-center font-semibold">DataTruck</th>
-          <th class="text-steel px-4 py-4 text-center font-semibold">Alvys</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (row of pricing; track row.trucks) {
-          <tr class="border-b border-gray-100">
-            <td class="text-ink py-4 pr-4 font-medium">{{ row.trucks }} trucks</td>
-            <td class="px-4 py-4 text-center">
-              <span class="text-accent font-bold">{{ row.us }}</span>
-              <span class="text-steel block text-xs">({{ row.usDetail }})</span>
-            </td>
-            <td class="text-steel px-4 py-4 text-center">{{ row.dataTruck }}</td>
-            <td class="text-steel px-4 py-4 text-center">{{ row.alvys }}</td>
-          </tr>
-        }
-      </tbody>
-    </table>
+  <div
+    class="mx-auto mt-16 grid max-w-4xl gap-6 md:grid-cols-3"
+    webScrollAnimate="fade-up"
+    [delay]="150"
+  >
+    @for (row of pricing; track row.trucks; let i = $index) {
+      <div class="rounded-2xl border-2 border-gray-200 bg-white p-6 text-center shadow-sm">
+        <div class="text-steel text-sm font-medium tracking-wide uppercase">
+          {{ row.trucks }} trucks
+        </div>
+
+        <div class="mt-4">
+          <span class="font-display text-accent text-3xl font-extrabold">{{ row.us }}</span>
+          <span class="text-steel text-sm">/mo</span>
+        </div>
+        <p class="text-steel mt-1 text-xs">{{ row.usDetail }}</p>
+
+        <div class="my-4 border-t border-gray-100"></div>
+
+        <div class="space-y-2 text-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-steel">DataTruck</span>
+            <span class="text-ink font-medium">{{ row.dataTruck }}</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-steel">Alvys</span>
+            <span class="text-ink font-medium">{{ row.alvys }}</span>
+          </div>
+        </div>
+      </div>
+    }
   </div>
 </web-section-container>
 

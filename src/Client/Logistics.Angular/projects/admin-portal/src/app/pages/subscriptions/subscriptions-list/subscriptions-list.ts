@@ -1,4 +1,3 @@
-import { DatePipe } from "@angular/common";
 import { Component, computed, inject, signal, viewChild } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";

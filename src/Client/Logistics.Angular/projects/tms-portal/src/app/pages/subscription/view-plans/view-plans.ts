@@ -39,6 +39,7 @@ const featureLabels: Record<TenantFeature, string> = {
   priority_support: "Priority Support",
   api_access: "API Access",
   telegram_bot: "Telegram Bot",
+  mcp_server: "MCP Server",
 };
 
 /** All features in display order */
@@ -65,6 +66,7 @@ const allFeatures: TenantFeature[] = [
   "priority_support",
   "api_access",
   "telegram_bot",
+  "mcp_server",
 ];
 
 @Component({

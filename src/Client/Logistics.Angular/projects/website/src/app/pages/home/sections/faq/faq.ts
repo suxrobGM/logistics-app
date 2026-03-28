@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
+import { AccordionModule } from "primeng/accordion";
 import { SectionContainer, SectionHeader } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
-import { AccordionModule } from "primeng/accordion";
 
 interface FaqItem {
   question: string;
@@ -38,7 +38,7 @@ export class Faq {
     {
       question: "How is pricing calculated?",
       answer:
-        "We offer three plans: Starter ($19/mo + $12/truck), Professional ($79/mo + $7/truck), and Enterprise ($149/mo + $4/truck). Each plan includes a base fee plus a per-truck charge. The more trucks you add, the lower your per-truck cost.",
+        "We offer three plans: Starter ($29/mo + $12/truck), Professional ($79/mo + $9/truck), and Enterprise ($169/mo + $6/truck). Each plan includes a base fee plus a per-truck charge. The more trucks you add, the lower your per-truck cost.",
     },
     {
       question: "Do you offer a free trial?",

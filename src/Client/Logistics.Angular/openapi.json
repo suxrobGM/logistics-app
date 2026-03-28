@@ -13563,6 +13563,10 @@
           "allowedModelTier": {
             "type": "string",
             "nullable": true
+          },
+          "currentModel": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -21380,7 +21384,8 @@
           "agentic_dispatch",
           "priority_support",
           "api_access",
-          "telegram_bot"
+          "telegram_bot",
+          "mcp_server"
         ],
         "type": "string"
       },

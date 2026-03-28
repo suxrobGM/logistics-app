@@ -39,5 +39,8 @@ public enum TenantFeature
     ApiAccess,
 
     [Description("Telegram Bot")]
-    TelegramBot
+    TelegramBot,
+
+    [Description("MCP Server")]
+    McpServer
 }

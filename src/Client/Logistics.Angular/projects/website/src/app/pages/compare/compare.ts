@@ -89,9 +89,9 @@ export class Compare {
   ];
 
   protected readonly pricing: PricingRow[] = [
-    { trucks: 5, us: "$199", usDetail: "$169 + $30", dataTruck: "$99–299", alvys: "~$514+" },
-    { trucks: 15, us: "$259", usDetail: "$169 + $90", dataTruck: "$299–499", alvys: "Custom" },
-    { trucks: 30, us: "$349", usDetail: "$169 + $180", dataTruck: "$499+", alvys: "Custom" },
+    { trucks: 5, us: "$89", usDetail: "Starter: $29 + $60", dataTruck: "$99–299", alvys: "~$514+" },
+    { trucks: 15, us: "$214", usDetail: "Professional: $79 + $135", dataTruck: "$299–499", alvys: "Custom" },
+    { trucks: 30, us: "$349", usDetail: "Professional: $79 + $270", dataTruck: "$499+", alvys: "Custom" },
   ];
 
   protected openDemoDialog(): void {

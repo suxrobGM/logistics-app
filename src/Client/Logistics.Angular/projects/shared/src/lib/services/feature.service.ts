@@ -120,4 +120,5 @@ export const FEATURE_DESCRIPTIONS: Record<TenantFeature, string> = {
   priority_support: "Priority customer support",
   api_access: "API access and documentation",
   telegram_bot: "Telegram bot integration",
+  mcp_server: "MCP server for third-party integrations",
 };

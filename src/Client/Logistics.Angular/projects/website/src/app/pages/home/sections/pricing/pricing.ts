@@ -1,8 +1,8 @@
 import { Component, inject } from "@angular/core";
-import { SectionContainer, SectionHeader } from "@/shared/components";
-import { DemoDialogService } from "@/shared/services";
-import { ScrollAnimateDirective } from "@/shared/directives";
 import { ButtonModule } from "primeng/button";
+import { SectionContainer, SectionHeader } from "@/shared/components";
+import { ScrollAnimateDirective } from "@/shared/directives";
+import { DemoDialogService } from "@/shared/services";
 
 interface PricingTier {
   name: string;
@@ -54,6 +54,8 @@ export class Pricing {
         "Timesheets tracking",
         "Safety & compliance",
         "Maintenance tracking",
+        "Telegram bot integration",
+        "MCP Server",
         "AI Dispatch — premium models, 4× usage",
         "Up to 30 trucks",
       ],
@@ -71,8 +73,6 @@ export class Pricing {
         "Unlimited trucks",
         "Priority support",
         "API access & documentation",
-        "Telegram bot integration",
-        "Dedicated account manager",
         "Custom integrations",
       ],
       highlighted: false,
