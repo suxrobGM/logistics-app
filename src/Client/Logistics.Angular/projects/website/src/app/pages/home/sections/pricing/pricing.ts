@@ -32,6 +32,7 @@ export class Pricing {
         "Load management & dispatching",
         "Trip & route optimization",
         "Fleet & driver management",
+        "ELD / HOS compliance",
         "Invoicing & payments",
         "Expenses tracking",
         "Reports & analytics",
@@ -48,7 +49,6 @@ export class Pricing {
       description: "Advanced features for growing fleets.",
       features: [
         "Everything in Starter",
-        "ELD / HOS compliance",
         "Load board integrations",
         "Payroll management",
         "Timesheets tracking",
