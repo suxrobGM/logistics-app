@@ -5,10 +5,12 @@ using Logistics.Application.Services;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Application.Commands;
@@ -21,12 +23,20 @@ internal sealed class CreateTenantHandler(
     UserManager<User> userManager,
     IEmailSender emailSender,
     IEmailTemplateService emailTemplateService,
-    IOptions<IdentityServerOptions> identityServerOptions)
+    IOptions<IdentityServerOptions> identityServerOptions,
+    IConfiguration configuration)
     : IAppRequestHandler<CreateTenantCommand, Result>
 {
     public async Task<Result> Handle(CreateTenantCommand req, CancellationToken ct)
     {
         var tenantName = req.Name.Trim().ToLower();
+
+        // Get default LLM settings from configuration for new tenants
+        var defaultProvider = configuration["Llm:DefaultProvider"];
+        var defaultModel = defaultProvider is not null
+            ? configuration[$"Llm:Providers:{defaultProvider}:Model"]
+            : null;
+
         var tenant = new Tenant
         {
             Name = tenantName,
@@ -34,7 +44,12 @@ internal sealed class CreateTenantHandler(
             DotNumber = req.DotNumber,
             CompanyAddress = req.CompanyAddress,
             BillingEmail = req.BillingEmail!,
-            ConnectionString = tenantDatabase.GenerateConnectionString(tenantName)
+            ConnectionString = tenantDatabase.GenerateConnectionString(tenantName),
+            Settings = new()
+            {
+                LlmProvider = Enum.TryParse<LlmProvider>(defaultProvider, out var provider) ? provider : null,
+                LlmModel = defaultModel
+            }
         };
 
         var existingTenant = await masterUow.Repository<Tenant>().GetAsync(i => i.Name == tenant.Name, ct);

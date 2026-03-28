@@ -66,19 +66,19 @@ public class SnakeCaseEnumConverter<TEnum> : ValueConverter<TEnum, string>
         for (var i = 0; i < pascalCase.Length; i++)
         {
             var c = pascalCase[i];
-            if (char.IsUpper(c))
+            if (char.IsUpper(c) && i > 0)
             {
-                if (i > 0)
+                var prevIsLower = char.IsLower(pascalCase[i - 1]);
+                var nextIsLower = i + 1 < pascalCase.Length && char.IsLower(pascalCase[i + 1]);
+
+                // Insert _ before: lowercase→Upper (e.g., "pickedUp") or Upper→Upper+lower (e.g., "USDate" → "us_date")
+                if (prevIsLower || nextIsLower)
                 {
                     sb.Append('_');
                 }
+            }
 
-                sb.Append(char.ToLowerInvariant(c));
-            }
-            else
-            {
-                sb.Append(c);
-            }
+            sb.Append(char.ToLowerInvariant(c));
         }
 
         return sb.ToString();

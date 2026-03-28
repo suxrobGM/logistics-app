@@ -116,6 +116,17 @@ export class ViewPlansComponent implements OnInit {
     return plan.maxTrucks ? `Up to ${plan.maxTrucks} trucks` : "Unlimited trucks";
   }
 
+  protected getModelTierLabel(tier: string): string {
+    switch (tier) {
+      case "ultra":
+        return "all models incl. Opus, 8× usage";
+      case "premium":
+        return "base + premium models, 4× usage";
+      default:
+        return "base models";
+    }
+  }
+
   protected selectPlan(plan: SubscriptionPlanDto): void {
     const subscription = this.tenantService.getTenantData()?.subscription;
     const hasSubscription = subscription != null;

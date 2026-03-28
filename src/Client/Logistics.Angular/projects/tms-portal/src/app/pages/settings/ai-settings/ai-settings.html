@@ -2,76 +2,84 @@
 
 <div class="flex justify-center">
   <div class="w-full md:w-2/3 lg:w-1/2">
-    <p-card>
-      @if (isLoading()) {
-        <div class="flex justify-center py-8">
-          <p-progress-spinner />
-        </div>
-      } @else {
-        @let quota = quotaStatus();
+    @if (isLoading()) {
+      <div class="flex justify-center py-8">
+        <p-progress-spinner />
+      </div>
+    } @else {
+      @let quota = quotaStatus();
 
+      <!-- Quota Usage -->
+      @if (quota && quota.usagePercent !== undefined) {
+        <div class="mb-6">
+          <app-ai-quota-usage [quota]="quota" />
+        </div>
+      }
+
+      <p-card>
         <p class="text-muted mb-6">
           Configure your preferred AI provider and model for the dispatch agent.
         </p>
 
-        <!-- Plan Info -->
-        @if (quota) {
-          <div class="border-default bg-subtle mb-6 flex items-center gap-3 rounded-lg border p-4">
-            <i class="pi pi-sparkles text-primary text-xl"></i>
-            <div class="flex flex-1 items-center gap-2">
-              <span class="font-medium">Current Plan</span>
-              @if (quota.planName) {
-                <p-tag [value]="quota.planName" severity="info" [style]="{ fontSize: '0.7rem' }" />
-              }
-              @if (quota.allowedModelTier) {
-                <p-tag
-                  [value]="quota.allowedModelTier + ' models'"
-                  severity="secondary"
-                  [style]="{ fontSize: '0.7rem' }"
-                />
-              }
-            </div>
-          </div>
-        }
-
-        <!-- Provider -->
-        <ui-labeled-field label="Provider" for="provider">
-          <p-select
-            id="provider"
-            [(ngModel)]="selectedProvider"
-            [options]="providerOptions"
-            optionLabel="label"
-            optionValue="value"
-            styleClass="w-full"
-          />
-        </ui-labeled-field>
-
         <!-- Model -->
-        <ui-labeled-field label="Model" for="model">
+        <ui-labeled-field label="Model" for="model" class="mb-4">
           <p-select
             id="model"
             [(ngModel)]="selectedModel"
             [options]="modelOptions()"
             optionLabel="label"
             optionValue="value"
-            styleClass="w-full"
-          />
+            [fluid]="true"
+          >
+            <ng-template #selectedItem let-item>
+              <div class="flex items-center gap-2">
+                <span>{{ item.label }}</span>
+                @if (item.multiplier > 1) {
+                  <p-tag
+                    [value]="item.multiplier + 'x'"
+                    severity="warn"
+                    [style]="{ fontSize: '0.65rem' }"
+                  />
+                } @else {
+                  <p-tag value="1x" severity="success" [style]="{ fontSize: '0.65rem' }" />
+                }
+              </div>
+            </ng-template>
+            <ng-template #item let-item>
+              <div class="flex w-full items-center justify-between">
+                <span>{{ item.label }}</span>
+                @if (item.multiplier > 1) {
+                  <p-tag
+                    [value]="item.multiplier + 'x per request'"
+                    severity="warn"
+                    [style]="{ fontSize: '0.65rem' }"
+                  />
+                } @else {
+                  <p-tag
+                    value="1x per request"
+                    severity="success"
+                    [style]="{ fontSize: '0.65rem' }"
+                  />
+                }
+              </div>
+            </ng-template>
+          </p-select>
         </ui-labeled-field>
 
-        <p class="text-muted mt-2 mb-6 text-sm">
-          Leaving either field as "System Default" will use the platform's default configuration.
-        </p>
+        <!-- Multiplier Warning -->
+        @if (showMultiplierWarning()) {
+          <p-message severity="warn" class="mb-4">
+            <strong>{{ selectedModelInfo().label }}</strong> uses
+            <strong>{{ selectedModelInfo().multiplier }}x</strong> requests per session. This will
+            consume your weekly AI quota faster.
+          </p-message>
+        }
 
         <!-- Save -->
-        <div class="flex justify-end">
-          <p-button
-            label="Save"
-            icon="pi pi-check"
-            [loading]="isSaving()"
-            (onClick)="save()"
-          />
+        <div class="mt-6 flex justify-end">
+          <p-button label="Save" icon="pi pi-check" [loading]="isSaving()" (onClick)="save()" />
         </div>
-      }
-    </p-card>
+      </p-card>
+    }
   </div>
 </div>

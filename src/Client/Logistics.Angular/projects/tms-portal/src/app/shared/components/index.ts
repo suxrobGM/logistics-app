@@ -33,3 +33,4 @@ export * from "./domain-forms";
 export * from "./search";
 export * from "./inspections";
 export * from "./other";
+export * from "./ai-quota-usage/ai-quota-usage";

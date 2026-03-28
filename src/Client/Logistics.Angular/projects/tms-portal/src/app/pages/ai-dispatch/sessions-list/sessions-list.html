@@ -69,37 +69,8 @@
   @let quota = quotaStatus();
 
   @if (quota && quota.usagePercent !== undefined) {
-    <div class="border-default bg-elevated mb-6 rounded-lg border p-4">
-      <div class="mb-3 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <i class="pi pi-bolt text-primary"></i>
-          <span class="font-semibold">AI Dispatch Usage</span>
-          @if (quota.planName) {
-            <p-tag [value]="quota.planName" severity="info" [style]="{ fontSize: '0.7rem' }" />
-          }
-          @if (quota.allowedModelTier) {
-            <p-tag
-              [value]="quota.allowedModelTier"
-              severity="secondary"
-              [style]="{ fontSize: '0.7rem' }"
-            />
-          }
-        </div>
-        <div class="flex items-center gap-2">
-          @if (quota.isOverQuota) {
-            <p-tag value="Overage charges apply" severity="warn" />
-          }
-          <span class="text-muted text-sm">
-            Resets {{ quota.resetsAt | date: "EEE, MMM d, h:mm a" }}
-          </span>
-        </div>
-      </div>
-      <p-progressBar
-        [value]="Math.min(quota.usagePercent!, 100)"
-        [showValue]="false"
-        [style]="{ height: '0.5rem' }"
-        [color]="progressBarColor()"
-      />
+    <div class="mb-6">
+      <app-ai-quota-usage [quota]="quota" />
     </div>
   }
 

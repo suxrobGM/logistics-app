@@ -20,7 +20,6 @@ import {
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { ProgressBar } from "primeng/progressbar";
 import { TableModule } from "primeng/table";
 import type { TableLazyLoadEvent } from "primeng/table";
 import { TagModule } from "primeng/tag";
@@ -31,7 +30,7 @@ import {
   TenantService,
   ToastService,
 } from "@/core/services";
-import { GeolocationMap } from "@/shared/components";
+import { AiQuotaUsage, GeolocationMap } from "@/shared/components";
 import { Labels } from "@/shared/utils";
 import { DecisionCard } from "../components/decision-card/decision-card";
 import { ModeBadge } from "../components/mode-badge/mode-badge";
@@ -52,7 +51,7 @@ import { stripMarkdown } from "../utils/markdown";
     ConfirmDialogModule,
     DatePipe,
     PageHeader,
-    ProgressBar,
+    AiQuotaUsage,
     GeolocationMap,
     DecisionCard,
     ModeBadge,
@@ -70,14 +69,6 @@ export class SessionsListPage implements OnInit, OnDestroy {
   protected readonly Labels = Labels;
   protected readonly Math = Math;
   protected readonly stripMarkdown = stripMarkdown;
-
-  /** Dynamic color for the quota progress bar: green → yellow at 70% → red at 90% */
-  protected readonly progressBarColor = computed(() => {
-    const percent = this.quotaStatus()?.usagePercent ?? 0;
-    if (percent >= 90) return "var(--red-500)";
-    if (percent >= 70) return "var(--yellow-500)";
-    return "var(--green-500)";
-  });
 
   protected readonly sessions = signal<DispatchSessionDto[]>([]);
   protected readonly totalRecords = signal(0);

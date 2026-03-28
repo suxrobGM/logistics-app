@@ -19,10 +19,18 @@
   <textarea
     pTextarea
     [(ngModel)]="instructions"
+    [maxlength]="500"
     placeholder="Optional instructions (e.g., 'Don't assign to Truck 42', 'Prioritize Customer X loads')"
-    [rows]="3"
+    [rows]="5"
     class="w-full text-sm"
   ></textarea>
+  <div
+    class="mt-1 text-right text-xs"
+    [class.text-muted]="charsRemaining() > 50"
+    [class.text-red-500]="charsRemaining() <= 50"
+  >
+    {{ charsRemaining() }} / 500
+  </div>
   <ng-template #footer>
     <p-button label="Cancel" severity="secondary" [text]="true" (onClick)="cancel()" />
     <p-button

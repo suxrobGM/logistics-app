@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Persistence.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20260328061641_Version_0001")]
+    [Migration("20260328102905_Version_0001")]
     partial class Version_0001
     {
         /// <inheritdoc />
@@ -1153,16 +1153,19 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         {
                             b1.IsRequired();
 
-                            b1.Property<int>("Currency")
-                                .HasColumnType("integer")
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasColumnType("text")
                                 .HasColumnName("settings_currency");
 
-                            b1.Property<int>("DateFormat")
-                                .HasColumnType("integer")
+                            b1.Property<string>("DateFormat")
+                                .IsRequired()
+                                .HasColumnType("text")
                                 .HasColumnName("settings_date_format");
 
-                            b1.Property<int>("DistanceUnit")
-                                .HasColumnType("integer")
+                            b1.Property<string>("DistanceUnit")
+                                .IsRequired()
+                                .HasColumnType("text")
                                 .HasColumnName("settings_distance_unit");
 
                             b1.Property<bool?>("LlmEnabled")
@@ -1177,8 +1180,8 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                                 .HasColumnType("text")
                                 .HasColumnName("settings_llm_model");
 
-                            b1.Property<int?>("LlmProvider")
-                                .HasColumnType("integer")
+                            b1.Property<string>("LlmProvider")
+                                .HasColumnType("text")
                                 .HasColumnName("settings_llm_provider");
 
                             b1.Property<string>("Timezone")
@@ -1186,8 +1189,9 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                                 .HasColumnType("text")
                                 .HasColumnName("settings_timezone");
 
-                            b1.Property<int>("WeightUnit")
-                                .HasColumnType("integer")
+                            b1.Property<string>("WeightUnit")
+                                .IsRequired()
+                                .HasColumnType("text")
                                 .HasColumnName("settings_weight_unit");
                         });
 

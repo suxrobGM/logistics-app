@@ -1,4 +1,4 @@
-import { DatePipe } from "@angular/common";
+import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
 import {
   Api,
@@ -10,8 +10,8 @@ import {
 import type { PagedResponse } from "@logistics/shared/api/models";
 import {
   BaseTableComponent,
-  type TableQueryParams,
   PageHeader,
+  type TableQueryParams,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -33,6 +33,7 @@ import { ToastService } from "@/core/services";
     TooltipModule,
     DatePipe,
     PageHeader,
+    CurrencyPipe,
   ],
 })
 export class TenantQuotas extends BaseTableComponent<TenantQuotaUsageDto> {
@@ -49,7 +50,9 @@ export class TenantQuotas extends BaseTableComponent<TenantQuotaUsageDto> {
 
   protected readonly Math = Math;
 
-  protected override async queryAsync(params: TableQueryParams): Promise<PagedResponse<TenantQuotaUsageDto>> {
+  protected override async queryAsync(
+    params: TableQueryParams,
+  ): Promise<PagedResponse<TenantQuotaUsageDto>> {
     return this.api.invoke(getTenantQuotaUsages, {
       Page: params.page + 1,
       PageSize: params.size,

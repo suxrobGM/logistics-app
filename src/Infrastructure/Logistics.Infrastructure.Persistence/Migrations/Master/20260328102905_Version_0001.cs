@@ -229,15 +229,15 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     company_address_line2 = table.Column<string>(type: "text", nullable: true),
                     company_address_state = table.Column<string>(type: "text", nullable: false),
                     company_address_zip_code = table.Column<string>(type: "text", nullable: false),
-                    settings_currency = table.Column<int>(type: "integer", nullable: false),
-                    settings_date_format = table.Column<int>(type: "integer", nullable: false),
-                    settings_distance_unit = table.Column<int>(type: "integer", nullable: false),
+                    settings_currency = table.Column<string>(type: "text", nullable: false),
+                    settings_date_format = table.Column<string>(type: "text", nullable: false),
+                    settings_distance_unit = table.Column<string>(type: "text", nullable: false),
                     settings_llm_enabled = table.Column<bool>(type: "boolean", nullable: true),
                     settings_llm_extended_thinking = table.Column<bool>(type: "boolean", nullable: true),
                     settings_llm_model = table.Column<string>(type: "text", nullable: true),
-                    settings_llm_provider = table.Column<int>(type: "integer", nullable: true),
+                    settings_llm_provider = table.Column<string>(type: "text", nullable: true),
                     settings_timezone = table.Column<string>(type: "text", nullable: false),
-                    settings_weight_unit = table.Column<int>(type: "integer", nullable: false)
+                    settings_weight_unit = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {

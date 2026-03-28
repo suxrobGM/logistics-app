@@ -10,18 +10,20 @@ internal sealed class UpdateTenantAiSettingsHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow) : IAppRequestHandler<UpdateTenantAiSettingsCommand, Result>
 {
+
+
     /// <summary>
-    /// Model-to-tier mapping for validation. Must stay in sync with LlmPricing.GetModelTier().
+    /// Model-to-tier and provider mapping. Must stay in sync with LlmPricing.GetModelTier().
     /// </summary>
-    private static readonly Dictionary<string, LlmModelTier> ModelTiers = new()
+    private static readonly Dictionary<string, ModelInfo> Models = new()
     {
-        ["deepseek-chat"] = LlmModelTier.Base,
-        ["deepseek-reasoner"] = LlmModelTier.Base,
-        ["gpt-5.4-mini"] = LlmModelTier.Base,
-        ["claude-haiku-4-5"] = LlmModelTier.Base,
-        ["gpt-5.4"] = LlmModelTier.Premium,
-        ["claude-sonnet-4-6"] = LlmModelTier.Premium,
-        ["claude-opus-4-6"] = LlmModelTier.Ultra,
+        ["deepseek-chat"] = new(LlmModelTier.Base, LlmProvider.DeepSeek),
+        ["deepseek-reasoner"] = new(LlmModelTier.Base, LlmProvider.DeepSeek),
+        ["gpt-5.4-mini"] = new(LlmModelTier.Base, LlmProvider.OpenAi),
+        ["claude-haiku-4-5"] = new(LlmModelTier.Base, LlmProvider.Anthropic),
+        ["gpt-5.4"] = new(LlmModelTier.Premium, LlmProvider.OpenAi),
+        ["claude-sonnet-4-6"] = new(LlmModelTier.Premium, LlmProvider.Anthropic),
+        ["claude-opus-4-6"] = new(LlmModelTier.Ultra, LlmProvider.Anthropic),
     };
 
     public async Task<Result> Handle(UpdateTenantAiSettingsCommand req, CancellationToken ct)
@@ -30,21 +32,22 @@ internal sealed class UpdateTenantAiSettingsHandler(
         var masterTenant = await masterUow.Repository<Tenant>().GetByIdAsync(tenant.Id, ct);
 
         if (masterTenant is null)
-            return Result.Fail("Tenant not found.");
+            return Result.Fail("Tenant not found");
 
-        // Validate model against plan's AllowedModelTier
-        if (req.Model is not null)
+        // Validate model against plan's AllowedModelTier and infer provider
+        var provider = masterTenant.Settings.LlmProvider;
+        if (req.Model is not null && Models.TryGetValue(req.Model, out var info))
         {
-            var modelTier = ModelTiers.GetValueOrDefault(req.Model, LlmModelTier.Base);
             var allowedTier = await GetAllowedModelTierAsync(masterTenant, ct);
+            if (info.Tier > allowedTier)
+                return Result.Fail($"Your plan does not include access to this model. Upgrade to use {info.Tier} tier models.", ErrorCodes.ResourceLimitReached);
 
-            if (modelTier > allowedTier)
-                return Result.Fail($"Your plan does not include access to this model. Upgrade to use {modelTier} tier models.");
+            provider = info.Provider;
         }
 
         masterTenant.Settings = masterTenant.Settings with
         {
-            LlmProvider = req.Provider,
+            LlmProvider = provider,
             LlmModel = req.Model
         };
 
@@ -63,4 +66,10 @@ internal sealed class UpdateTenantAiSettingsHandler(
 
         return plan?.AllowedModelTier ?? LlmModelTier.Base;
     }
+
+    #region Internal records
+
+    private record ModelInfo(LlmModelTier Tier, LlmProvider Provider);
+
+    #endregion
 }

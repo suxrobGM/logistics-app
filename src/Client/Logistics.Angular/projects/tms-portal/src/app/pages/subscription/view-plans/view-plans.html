@@ -25,13 +25,13 @@
         <div class="text-secondary text-sm">{{ getMaxTrucksLabel(plan) }}</div>
       </div>
 
-      <!-- AI Dispatch quota -->
-      @if (plan.weeklyAiSessionQuota) {
+      <!-- AI Dispatch model access -->
+      @if (plan.allowedModelTier) {
         <div class="bg-subtle mb-3 flex items-center gap-2 rounded-lg p-3">
           <i class="pi pi-bolt text-primary"></i>
           <div>
-            <div class="font-medium">{{ plan.weeklyAiSessionQuota }} AI sessions/week</div>
-            <div class="text-secondary text-xs">$0.40 per additional session</div>
+            <div class="font-medium">AI Dispatch — {{ getModelTierLabel(plan.allowedModelTier) }}</div>
+            <div class="text-secondary text-xs">Overage charges apply beyond weekly limit</div>
           </div>
         </div>
       }

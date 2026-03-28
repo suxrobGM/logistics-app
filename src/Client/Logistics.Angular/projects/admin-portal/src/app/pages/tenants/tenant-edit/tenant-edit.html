@@ -2,7 +2,7 @@
 <p-divider />
 
 <div class="flex flex-col justify-center gap-6 md:flex-row">
-  <div class="flex w-full flex-col gap-6 md:w-2/3 lg:w-1/2">
+  <div class="flex w-full flex-col gap-6 lg:w-2/3">
     <p-card>
       @if (isFetching()) {
         <div class="space-y-4">
@@ -41,30 +41,10 @@
     @if (tenant()) {
       <p-card header="AI Dispatch Settings">
         <p class="text-muted mb-4">
-          Configure which LLM model and settings are used for the AI dispatch agent.
+          Configure LLM settings for the AI dispatch agent. Tenants select their own model in AI
+          Settings.
         </p>
         <div class="flex flex-col gap-4">
-          <ui-labeled-field
-            label="LLM Model"
-            for="llmModel"
-            hint="Leave empty to use the system default"
-          >
-            <select
-              id="llmModel"
-              [formField]="llmSettingsForm.llmModel"
-              class="border-surface-300 bg-surface-0 w-full rounded-md border p-2"
-            >
-              <option value="">System Default</option>
-              @for (group of llmModelOptions; track group.group) {
-                <optgroup [label]="group.group">
-                  @for (opt of group.items; track opt.value) {
-                    <option [value]="opt.value">{{ opt.label }}</option>
-                  }
-                </optgroup>
-              }
-            </select>
-          </ui-labeled-field>
-
           <div class="flex items-center gap-3">
             <input
               type="checkbox"

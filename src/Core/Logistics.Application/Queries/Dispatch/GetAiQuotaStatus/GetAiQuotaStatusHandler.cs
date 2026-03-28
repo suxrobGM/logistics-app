@@ -11,8 +11,8 @@ internal sealed class GetAiQuotaStatusHandler(
 {
     public async Task<Result<AiQuotaStatusDto>> Handle(GetAiQuotaStatusQuery request, CancellationToken ct)
     {
-        var tenantId = tenantUow.GetCurrentTenant().Id;
-        var status = await quotaService.GetQuotaStatusAsync(tenantId, ct);
+        var tenant = tenantUow.GetCurrentTenant();
+        var status = await quotaService.GetQuotaStatusAsync(tenant.Id, ct);
 
         return Result<AiQuotaStatusDto>.Ok(new AiQuotaStatusDto
         {
@@ -22,7 +22,8 @@ internal sealed class GetAiQuotaStatusHandler(
             IsOverQuota = status.IsOverQuota,
             PlanName = status.PlanName,
             ResetsAt = status.ResetsAt,
-            AllowedModelTier = status.AllowedModelTier.ToString()
+            AllowedModelTier = status.AllowedModelTier.ToString(),
+            CurrentModel = tenant.Settings.LlmModel
         });
     }
 }

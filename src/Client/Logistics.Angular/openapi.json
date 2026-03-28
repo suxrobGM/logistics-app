@@ -21491,10 +21491,6 @@
           },
           "llmProvider": {
             "$ref": "#/components/schemas/LlmProvider"
-          },
-          "preferredLlmModel": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -22877,7 +22873,7 @@
           "provider": {
             "$ref": "#/components/schemas/LlmProvider"
           },
-          "preferredModel": {
+          "model": {
             "type": "string",
             "nullable": true
           }

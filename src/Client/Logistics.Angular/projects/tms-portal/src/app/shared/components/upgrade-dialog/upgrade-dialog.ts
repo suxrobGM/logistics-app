@@ -32,9 +32,14 @@ export class UpgradeDialog {
   }
 
   protected getAiQuotaLabel(plan: SubscriptionPlanDto): string {
-    return plan.weeklyAiSessionQuota
-      ? `${plan.weeklyAiSessionQuota} AI sessions/week`
-      : "Unlimited AI sessions";
+    switch (plan.allowedModelTier) {
+      case "ultra":
+        return "All AI models incl. Opus, 8× usage";
+      case "premium":
+        return "Base + premium AI models, 4× usage";
+      default:
+        return "Base AI models";
+    }
   }
 
   protected getTierSeverity(plan: SubscriptionPlanDto): "info" | "warn" | "success" {

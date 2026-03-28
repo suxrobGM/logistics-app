@@ -1,7 +1,7 @@
 import { Component, type OnInit, computed, inject, signal } from "@angular/core";
 import { FormField, form } from "@angular/forms/signals";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { LabeledField, ToastService } from "@logistics/shared";
+import { ToastService } from "@logistics/shared";
 import { Api, deleteTenant, getTenantById, updateTenant } from "@logistics/shared/api";
 import type { TenantDto, UpdateTenantCommand } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
@@ -21,7 +21,6 @@ import { TenantForm, type TenantFormValue } from "@/shared/components";
     TenantForm,
     DividerModule,
     SkeletonModule,
-    LabeledField,
   ],
 })
 export class TenantEdit implements OnInit {
@@ -37,36 +36,10 @@ export class TenantEdit implements OnInit {
 
   protected readonly llmSettingsModel = signal({
     llmEnabled: true,
-    llmModel: "" as string,
     enableExtendedThinking: false,
   });
 
   protected readonly llmSettingsForm = form(this.llmSettingsModel);
-
-  protected readonly llmModelOptions = [
-    {
-      group: "Anthropic",
-      items: [
-        { label: "Claude Sonnet 4.6", value: "claude-sonnet-4-6" },
-        { label: "Claude Haiku 4.5", value: "claude-haiku-4-5" },
-        { label: "Claude Opus 4.6", value: "claude-opus-4-6" },
-      ],
-    },
-    {
-      group: "OpenAI",
-      items: [
-        { label: "GPT-5.4 Mini", value: "gpt-5.4-mini" },
-        { label: "GPT-5.4", value: "gpt-5.4" },
-      ],
-    },
-    {
-      group: "DeepSeek",
-      items: [
-        { label: "DeepSeek Chat (V3.2)", value: "deepseek-chat" },
-        { label: "DeepSeek Reasoner (V3.2)", value: "deepseek-reasoner" },
-      ],
-    },
-  ];
 
   ngOnInit(): void {
     this.fetchTenant();
@@ -91,7 +64,6 @@ export class TenantEdit implements OnInit {
     this.tenant.set(tenant);
     this.llmSettingsModel.set({
       llmEnabled: tenant.settings?.llmEnabled !== false,
-      llmModel: tenant.settings?.llmModel ?? "",
       enableExtendedThinking: tenant.settings?.llmExtendedThinking ?? false,
     });
     this.isFetching.set(false);
@@ -144,7 +116,6 @@ export class TenantEdit implements OnInit {
         settings: {
           ...tenant.settings,
           llmEnabled: settings.llmEnabled,
-          llmModel: settings.llmModel,
           llmExtendedThinking: settings.enableExtendedThinking,
         },
       };

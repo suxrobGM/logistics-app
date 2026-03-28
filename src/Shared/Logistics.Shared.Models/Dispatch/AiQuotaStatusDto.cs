@@ -10,4 +10,5 @@ public record AiQuotaStatusDto
     public string? PlanName { get; set; }
     public DateTime ResetsAt { get; set; }
     public string? AllowedModelTier { get; set; }
+    public string? CurrentModel { get; set; }
 }

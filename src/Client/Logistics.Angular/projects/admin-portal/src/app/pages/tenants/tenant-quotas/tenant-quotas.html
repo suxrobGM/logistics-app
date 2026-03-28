@@ -4,8 +4,8 @@
   <!-- Actions bar -->
   <div class="mb-4 flex items-center justify-between">
     <p class="text-secondary m-0 text-sm">
-      Manage weekly AI dispatch request unit quotas. Resetting a tenant's quota zeroes their usage count
-      for the current week.
+      Manage weekly AI dispatch request unit quotas. Resetting a tenant's quota zeroes their usage
+      count for the current week.
     </p>
     <div class="flex gap-2">
       <p-button
@@ -124,9 +124,7 @@
           <span class="font-mono text-sm">{{ (usage.totalTokensUsed ?? 0).toLocaleString() }}</span>
         </td>
         <td class="text-right">
-          <span class="font-mono text-sm"
-            >${{ (usage.totalEstimatedCostUsd ?? 0).toFixed(4) }}</span
-          >
+          <span class="font-mono text-sm">{{ usage.totalEstimatedCostUsd | currency }}</span>
         </td>
         <td>
           @if (usage.lastModelUsed) {
