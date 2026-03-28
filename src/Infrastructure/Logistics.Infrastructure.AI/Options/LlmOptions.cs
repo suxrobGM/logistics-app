@@ -1,3 +1,5 @@
+using Logistics.Domain.Primitives.Enums;
+
 namespace Logistics.Infrastructure.AI.Options;
 
 public class LlmOptions
@@ -7,12 +9,12 @@ public class LlmOptions
     /// <summary>
     /// The default provider to use when no tenant override is set.
     /// </summary>
-    public LlmProviderType DefaultProvider { get; set; } = LlmProviderType.Anthropic;
+    public LlmProvider DefaultProvider { get; set; } = LlmProvider.Anthropic;
 
     /// <summary>
     /// Provider-specific configurations keyed by provider type.
     /// </summary>
-    public Dictionary<LlmProviderType, LlmProviderOptions> Providers { get; set; } = [];
+    public Dictionary<LlmProvider, LlmProviderOptions> Providers { get; set; } = [];
 
     public int MaxTokens { get; set; } = 8192;
     public bool EnableExtendedThinking { get; set; }
@@ -26,7 +28,7 @@ public class LlmOptions
     /// <summary>
     /// Gets the provider config for the specified type, or throws if not configured.
     /// </summary>
-    public LlmProviderOptions GetProviderConfig(LlmProviderType type) =>
+    public LlmProviderOptions GetProviderConfig(LlmProvider type) =>
         Providers.GetValueOrDefault(type)
         ?? throw new InvalidOperationException($"LLM provider '{type}' is not configured. Add it to Llm:Providers:{type} in appsettings.");
 }
@@ -41,12 +43,4 @@ public class LlmProviderOptions
     /// Not used by the Anthropic provider.
     /// </summary>
     public string? BaseUrl { get; set; }
-}
-
-public enum LlmProviderType
-{
-    Anthropic,
-    OpenAi,
-    DeepSeek,
-    Glm
 }

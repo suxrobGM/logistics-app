@@ -1,0 +1,77 @@
+<h1 class="text-center">AI Settings</h1>
+
+<div class="flex justify-center">
+  <div class="w-full md:w-2/3 lg:w-1/2">
+    <p-card>
+      @if (isLoading()) {
+        <div class="flex justify-center py-8">
+          <p-progress-spinner />
+        </div>
+      } @else {
+        @let quota = quotaStatus();
+
+        <p class="text-muted mb-6">
+          Configure your preferred AI provider and model for the dispatch agent.
+        </p>
+
+        <!-- Plan Info -->
+        @if (quota) {
+          <div class="border-default bg-subtle mb-6 flex items-center gap-3 rounded-lg border p-4">
+            <i class="pi pi-sparkles text-primary text-xl"></i>
+            <div class="flex flex-1 items-center gap-2">
+              <span class="font-medium">Current Plan</span>
+              @if (quota.planName) {
+                <p-tag [value]="quota.planName" severity="info" [style]="{ fontSize: '0.7rem' }" />
+              }
+              @if (quota.allowedModelTier) {
+                <p-tag
+                  [value]="quota.allowedModelTier + ' models'"
+                  severity="secondary"
+                  [style]="{ fontSize: '0.7rem' }"
+                />
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Provider -->
+        <ui-labeled-field label="Provider" for="provider">
+          <p-select
+            id="provider"
+            [(ngModel)]="selectedProvider"
+            [options]="providerOptions"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="w-full"
+          />
+        </ui-labeled-field>
+
+        <!-- Model -->
+        <ui-labeled-field label="Model" for="model">
+          <p-select
+            id="model"
+            [(ngModel)]="selectedModel"
+            [options]="modelOptions()"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="w-full"
+          />
+        </ui-labeled-field>
+
+        <p class="text-muted mt-2 mb-6 text-sm">
+          Leaving either field as "System Default" will use the platform's default configuration.
+        </p>
+
+        <!-- Save -->
+        <div class="flex justify-end">
+          <p-button
+            label="Save"
+            icon="pi pi-check"
+            [loading]="isSaving()"
+            (onClick)="save()"
+          />
+        </div>
+      }
+    </p-card>
+  </div>
+</div>

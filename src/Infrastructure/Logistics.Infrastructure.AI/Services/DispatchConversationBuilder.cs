@@ -29,9 +29,10 @@ internal sealed class DispatchConversationBuilder(
         var tenant = tenantUow.GetCurrentTenant();
         var companyName = tenant.Name ?? "Fleet";
 
-        // Resolve provider: system default (no tenant override yet — extend TenantSettings if needed)
-        var provider = providerFactory.Create();
-        var providerConfig = config.GetProviderConfig(config.DefaultProvider);
+        // Resolve provider: tenant preference → system default
+        var resolvedProvider = tenant.Settings.LlmProvider ?? config.DefaultProvider;
+        var provider = providerFactory.Create(resolvedProvider);
+        var providerConfig = config.GetProviderConfig(resolvedProvider);
 
         if (string.IsNullOrWhiteSpace(providerConfig.ApiKey))
             throw new InvalidOperationException("LLM API key is not configured.");
@@ -41,13 +42,13 @@ internal sealed class DispatchConversationBuilder(
         var systemPrompt = DispatchSystemPrompt.Build(companyName, request.Mode, hasLoadBoard);
         var tools = toolRegistry.GetToolDefinitions(includeLoadBoardTools: hasLoadBoard);
 
-        // Resolve model: per-tenant override → provider default
+        // Resolve model: tenant selection → provider default
         var model = tenant.Settings.LlmModel ?? providerConfig.Model;
         session.ModelUsed = model;
 
         logger.LogInformation(
             "Agent session {SessionId} initialized with {ToolCount} tools, model {Model}, provider {Provider}",
-            session.Id, tools.Count, model, config.DefaultProvider);
+            session.Id, tools.Count, model, resolvedProvider);
 
         // Build user message with optional context
         var userMessage = BuildUserMessage(request);

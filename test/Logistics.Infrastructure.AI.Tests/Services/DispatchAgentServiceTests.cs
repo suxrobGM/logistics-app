@@ -44,9 +44,9 @@ public class DispatchAgentServiceTests
         var llmOptions = MsOptions.Options.Create(new LlmOptions
         {
             MaxTokens = 100,
-            Providers = new Dictionary<LlmProviderType, LlmProviderOptions>
+            Providers = new Dictionary<LlmProvider, LlmProviderOptions>
             {
-                [LlmProviderType.Anthropic] = new() { ApiKey = "sk-ant-test-key", Model = "claude-haiku-4-5" }
+                [LlmProvider.Anthropic] = new() { ApiKey = "sk-ant-test-key", Model = "claude-haiku-4-5" }
             }
         });
 
@@ -143,7 +143,7 @@ public class DispatchAgentServiceTests
 
         // Session failed (API error), not completed — overage should NOT be reported
         await stripeUsageService.DidNotReceive()
-            .ReportAiSessionOverageAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+            .ReportAiSessionOverageAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -161,13 +161,13 @@ public class DispatchAgentServiceTests
         }
 
         await stripeUsageService.DidNotReceive()
-            .ReportAiSessionOverageAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>());
+            .ReportAiSessionOverageAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
     public async Task ReportOverageIfNeeded_DoesNotThrow_WhenStripeServiceFails()
     {
-        stripeUsageService.ReportAiSessionOverageAsync(Arg.Any<Guid>(), Arg.Any<CancellationToken>())
+        stripeUsageService.ReportAiSessionOverageAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(new Exception("Stripe API error"));
 
         var request = CreateRequest(true);

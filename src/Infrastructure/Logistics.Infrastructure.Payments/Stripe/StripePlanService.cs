@@ -44,7 +44,7 @@ internal sealed class StripePlanService(
 
         // 4. Create AI overage metered price if plan has a weekly quota
         Price? aiOveragePrice = null;
-        if (plan.WeeklyAiSessionQuota.HasValue)
+        if (plan.WeeklyAiRequestQuota.HasValue)
         {
             aiOveragePrice = await CreateMeteredOveragePriceAsync(priceService, product.Id, plan);
         }
@@ -135,7 +135,7 @@ internal sealed class StripePlanService(
         var price = await priceService.CreateAsync(new PriceCreateOptions
         {
             Product = productId,
-            UnitAmountDecimal = 40, // $0.40 per session
+            UnitAmountDecimal = 20, // $0.20 per billing unit (base=1, premium=2, ultra=4)
             Currency = plan.Price.Currency.ToLower(),
             Recurring = new PriceRecurringOptions
             {

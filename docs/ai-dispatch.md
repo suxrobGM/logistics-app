@@ -167,7 +167,7 @@ Tool definitions use JSON Schema, compatible with both Claude API tool schemas a
 
 ## Adding a New Provider
 
-1. **OpenAI-compatible** (most providers): Add a new `LlmProviderType` enum value and configure with `BaseUrl` in appsettings
+1. **OpenAI-compatible** (most providers): Add a new `LlmProvider` enum value and configure with `BaseUrl` in appsettings
 2. **Custom SDK**: Create a new `ILlmProvider` implementation, add a case in `LlmProviderFactory`
 3. Add model pricing to `LlmPricing.cs`
 4. Add model options to admin portal `tenant-edit.ts` → `llmModelOptions`

@@ -61,7 +61,8 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 PerTruckPrice = 12m,
                 MaxTrucks = (int?)10,
                 Tier = PlanTier.Starter,
-                WeeklyAiSessionQuota = (int?)25,
+                WeeklyAiRequestQuota = (int?)100,
+                AllowedModelTier = LlmModelTier.Base,
                 Features = StarterFeatures
             },
             new
@@ -72,18 +73,20 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 PerTruckPrice = 9m,
                 MaxTrucks = (int?)30,
                 Tier = PlanTier.Professional,
-                WeeklyAiSessionQuota = (int?)100,
+                WeeklyAiRequestQuota = (int?)400,
+                AllowedModelTier = LlmModelTier.Premium,
                 Features = ProfessionalFeatures
             },
             new
             {
                 Name = "Enterprise",
                 Description = "Full platform access for large operations",
-                Price = 149m,
+                Price = 169m,
                 PerTruckPrice = 6m,
                 MaxTrucks = (int?)null,
                 Tier = PlanTier.Enterprise,
-                WeeklyAiSessionQuota = (int?)250,
+                WeeklyAiRequestQuota = (int?)800,
+                AllowedModelTier = LlmModelTier.Ultra,
                 Features = EnterpriseFeatures
             }
         };
@@ -102,7 +105,8 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                     PerTruckPrice = planDef.PerTruckPrice,
                     MaxTrucks = planDef.MaxTrucks,
                     Tier = planDef.Tier,
-                    WeeklyAiSessionQuota = planDef.WeeklyAiSessionQuota
+                    WeeklyAiRequestQuota = planDef.WeeklyAiRequestQuota,
+                    AllowedModelTier = planDef.AllowedModelTier
                 };
 
                 await planRepo.AddAsync(newPlan, cancellationToken);
@@ -156,9 +160,15 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                     updated = true;
                 }
 
-                if (existingPlan.WeeklyAiSessionQuota != planDef.WeeklyAiSessionQuota)
+                if (existingPlan.WeeklyAiRequestQuota != planDef.WeeklyAiRequestQuota)
                 {
-                    existingPlan.WeeklyAiSessionQuota = planDef.WeeklyAiSessionQuota;
+                    existingPlan.WeeklyAiRequestQuota = planDef.WeeklyAiRequestQuota;
+                    updated = true;
+                }
+
+                if (existingPlan.AllowedModelTier != planDef.AllowedModelTier)
+                {
+                    existingPlan.AllowedModelTier = planDef.AllowedModelTier;
                     updated = true;
                 }
 

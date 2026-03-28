@@ -34,6 +34,7 @@
   <app-run-agent-dialog
     [(visible)]="showRunDialog"
     [mode]="runMode()"
+    [quotaStatus]="quotaStatus()"
     (run)="onRunConfirmed($event)"
   />
 
@@ -67,7 +68,7 @@
   <!-- AI Quota Usage -->
   @let quota = quotaStatus();
 
-  @if (quota && quota.weeklyQuota! > 0) {
+  @if (quota && quota.usagePercent !== undefined) {
     <div class="border-default bg-elevated mb-6 rounded-lg border p-4">
       <div class="mb-3 flex items-center justify-between">
         <div class="flex items-center gap-2">
@@ -76,24 +77,28 @@
           @if (quota.planName) {
             <p-tag [value]="quota.planName" severity="info" [style]="{ fontSize: '0.7rem' }" />
           }
+          @if (quota.allowedModelTier) {
+            <p-tag
+              [value]="quota.allowedModelTier"
+              severity="secondary"
+              [style]="{ fontSize: '0.7rem' }"
+            />
+          }
         </div>
-        @if (quota.isOverQuota) {
-          <p-tag value="Overage — $0.40/session" severity="warn" />
-        }
-      </div>
-      <div class="mb-2 flex items-baseline justify-between">
-        <span class="text-2xl font-bold">
-          {{ quota.usedThisWeek }}
-          <span class="text-muted text-sm font-normal">/ {{ quota.weeklyQuota }}</span>
-        </span>
-        <span class="text-muted text-sm">
-          {{ quota.remaining }} remaining · Resets {{ quota.resetsAt | date: "EEE, MMM d, h:mm a" }}
-        </span>
+        <div class="flex items-center gap-2">
+          @if (quota.isOverQuota) {
+            <p-tag value="Overage charges apply" severity="warn" />
+          }
+          <span class="text-muted text-sm">
+            Resets {{ quota.resetsAt | date: "EEE, MMM d, h:mm a" }}
+          </span>
+        </div>
       </div>
       <p-progressBar
-        [value]="Math.min((quota.usedThisWeek! / quota.weeklyQuota!) * 100, 100)"
+        [value]="Math.min(quota.usagePercent!, 100)"
         [showValue]="false"
         [style]="{ height: '0.5rem' }"
+        [color]="progressBarColor()"
       />
     </div>
   }

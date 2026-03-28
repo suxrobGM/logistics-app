@@ -2000,6 +2000,48 @@
         }
       }
     },
+    "/dispatch/agent/ai-settings": {
+      "put": {
+        "tags": [
+          "DispatchAgent"
+        ],
+        "operationId": "UpdateTenantAiSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTenantAiSettingsCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTenantAiSettingsCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTenantAiSettingsCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/dispatch/agent/decisions/{decisionId}/reject": {
       "post": {
         "tags": [
@@ -13503,17 +13545,9 @@
       "AiQuotaStatusDto": {
         "type": "object",
         "properties": {
-          "weeklyQuota": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "usedThisWeek": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "remaining": {
-            "type": "integer",
-            "format": "int32"
+          "usagePercent": {
+            "type": "number",
+            "format": "double"
           },
           "isOverQuota": {
             "type": "boolean"
@@ -13525,6 +13559,10 @@
           "resetsAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "allowedModelTier": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -15064,10 +15102,13 @@
             "format": "int32",
             "nullable": true
           },
-          "weeklyAiSessionQuota": {
+          "weeklyAiRequestQuota": {
             "type": "integer",
             "format": "int32",
             "nullable": true
+          },
+          "allowedModelTier": {
+            "$ref": "#/components/schemas/LlmModelTier"
           },
           "interval": {
             "$ref": "#/components/schemas/BillingInterval"
@@ -18114,6 +18155,22 @@
           "subscription",
           "payroll",
           "other"
+        ],
+        "type": "string"
+      },
+      "LlmModelTier": {
+        "enum": [
+          "base",
+          "premium",
+          "ultra"
+        ],
+        "type": "string"
+      },
+      "LlmProvider": {
+        "enum": [
+          "anthropic",
+          "open_ai",
+          "deep_seek"
         ],
         "type": "string"
       },
@@ -21174,10 +21231,13 @@
             "type": "integer",
             "format": "int32"
           },
-          "weeklyAiSessionQuota": {
+          "weeklyAiRequestQuota": {
             "type": "integer",
             "format": "int32",
             "nullable": true
+          },
+          "allowedModelTier": {
+            "$ref": "#/components/schemas/LlmModelTier"
           },
           "features": {
             "type": "array",
@@ -21427,6 +21487,13 @@
           },
           "llmExtendedThinking": {
             "type": "boolean",
+            "nullable": true
+          },
+          "llmProvider": {
+            "$ref": "#/components/schemas/LlmProvider"
+          },
+          "preferredLlmModel": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -22785,10 +22852,13 @@
             "format": "int32",
             "nullable": true
           },
-          "weeklyAiSessionQuota": {
+          "weeklyAiRequestQuota": {
             "type": "integer",
             "format": "int32",
             "nullable": true
+          },
+          "allowedModelTier": {
+            "$ref": "#/components/schemas/LlmModelTier"
           },
           "interval": {
             "$ref": "#/components/schemas/BillingInterval"
@@ -22796,6 +22866,19 @@
           "intervalCount": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateTenantAiSettingsCommand": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "$ref": "#/components/schemas/LlmProvider"
+          },
+          "preferredModel": {
+            "type": "string",
             "nullable": true
           }
         },

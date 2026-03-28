@@ -81,7 +81,13 @@ public class DispatchSession : AuditableEntity, ITenantEntity
     public string? ErrorMessage { get; set; }
 
     /// <summary>
-    /// Whether this session exceeded the tenant's weekly AI session quota.
+    /// Quota cost multiplier for this session based on model tier.
+    /// Base models = 1, Premium (Sonnet/GPT-5.4) = 5, Ultra (Opus) = 10.
+    /// </summary>
+    public int RequestCost { get; set; } = 1;
+
+    /// <summary>
+    /// Whether this session exceeded the tenant's weekly AI request quota.
     /// Overage sessions are billed at the plan's overage rate.
     /// </summary>
     public bool IsOverage { get; set; }

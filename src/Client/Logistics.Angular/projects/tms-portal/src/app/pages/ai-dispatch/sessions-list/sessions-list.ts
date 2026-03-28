@@ -71,6 +71,14 @@ export class SessionsListPage implements OnInit, OnDestroy {
   protected readonly Math = Math;
   protected readonly stripMarkdown = stripMarkdown;
 
+  /** Dynamic color for the quota progress bar: green → yellow at 70% → red at 90% */
+  protected readonly progressBarColor = computed(() => {
+    const percent = this.quotaStatus()?.usagePercent ?? 0;
+    if (percent >= 90) return "var(--red-500)";
+    if (percent >= 70) return "var(--yellow-500)";
+    return "var(--green-500)";
+  });
+
   protected readonly sessions = signal<DispatchSessionDto[]>([]);
   protected readonly totalRecords = signal(0);
   protected readonly page = signal(1);

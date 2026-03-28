@@ -25,12 +25,13 @@ export class PlanAdd {
 
     const command: CreateSubscriptionPlanCommand = {
       name: formValue.name,
-      description: formValue.description || null,
+      description: formValue.description,
       tier: formValue.tier,
       price: formValue.price,
       perTruckPrice: formValue.perTruckPrice,
       maxTrucks: formValue.maxTrucks,
-      weeklyAiSessionQuota: formValue.weeklyAiSessionQuota,
+      weeklyAiRequestQuota: formValue.weeklyAiRequestQuota,
+      allowedModelTier: formValue.allowedModelTier,
       interval: formValue.interval,
       intervalCount: formValue.intervalCount,
     };

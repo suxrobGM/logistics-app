@@ -156,7 +156,9 @@ internal sealed class DispatchAgentService(
             await BroadcastSessionUpdateAsync(session);
         }
 
-        // Calculate estimated cost
+        // Set quota cost and estimated cost
+        var modelUsed = session.ModelUsed ?? config.GetProviderConfig(config.DefaultProvider).Model;
+        session.RequestCost = LlmPricing.GetMultiplier(modelUsed);
         session.EstimatedCostUsd = LlmPricing.Calculate(
             session.ModelUsed ?? config.GetProviderConfig(config.DefaultProvider).Model,
             totalInputTokens, totalOutputTokens,
@@ -253,8 +255,10 @@ internal sealed class DispatchAgentService(
 
         try
         {
-            await stripeUsageService.ReportAiSessionOverageAsync(tenantId);
-            logger.LogInformation("Reported AI session overage for session {SessionId}", session.Id);
+            var billingUnits = LlmPricing.GetOverageBillingUnits(session.ModelUsed ?? "");
+            await stripeUsageService.ReportAiSessionOverageAsync(tenantId, billingUnits);
+            logger.LogInformation("Reported AI session overage for session {SessionId} ({BillingUnits} units)",
+                session.Id, billingUnits);
         }
         catch (Exception ex)
         {

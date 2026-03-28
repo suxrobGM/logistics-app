@@ -51,7 +51,7 @@ public class AiQuotaServiceTests
                 Name = "Test Plan",
                 Price = 29m,
                 PerTruckPrice = 12m,
-                WeeklyAiSessionQuota = weeklyQuota
+                WeeklyAiRequestQuota = weeklyQuota
             });
     }
 
@@ -176,6 +176,56 @@ public class AiQuotaServiceTests
         var status = await sut.GetQuotaStatusAsync(tenantId);
 
         Assert.Equal(1, status.UsedThisWeek);
+    }
+
+    #endregion
+
+    #region Weighted request cost
+
+    [Fact]
+    public async Task GetQuotaStatus_SumsRequestCostNotSessionCount()
+    {
+        var tenantId = Guid.NewGuid();
+        SetupTenantWithPlan(tenantId, 100);
+
+        var now = DateTime.UtcNow;
+        // 3 sessions with RequestCost 5 each = 15 used, not 3
+        var s1 = CreateCompletedSessionAt(now);
+        s1.RequestCost = 5;
+        var s2 = CreateCompletedSessionAt(now);
+        s2.RequestCost = 5;
+        var s3 = CreateCompletedSessionAt(now);
+        s3.RequestCost = 5;
+
+        SetupSessions(s1, s2, s3);
+
+        var status = await sut.GetQuotaStatusAsync(tenantId);
+
+        Assert.Equal(15, status.UsedThisWeek);
+        Assert.Equal(85, status.Remaining);
+        Assert.False(status.IsOverQuota);
+    }
+
+    [Fact]
+    public async Task GetQuotaStatus_MixedRequestCosts_SumsCorrectly()
+    {
+        var tenantId = Guid.NewGuid();
+        SetupTenantWithPlan(tenantId, 20);
+
+        var now = DateTime.UtcNow;
+        var base1 = CreateCompletedSessionAt(now); // RequestCost = 1 (default)
+        var premium = CreateCompletedSessionAt(now);
+        premium.RequestCost = 5;
+        var ultra = CreateCompletedSessionAt(now);
+        ultra.RequestCost = 10;
+
+        SetupSessions(base1, premium, ultra);
+
+        var status = await sut.GetQuotaStatusAsync(tenantId);
+
+        Assert.Equal(16, status.UsedThisWeek); // 1 + 5 + 10
+        Assert.Equal(4, status.Remaining);
+        Assert.False(status.IsOverQuota);
     }
 
     #endregion

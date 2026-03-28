@@ -19,16 +19,15 @@ internal sealed class AiQuotaService(
         if (tenantInfo is null)
             return new AiQuotaStatus(0, 0, 0, IsOverQuota: false);
 
-        var (quota, planName, quotaResetAt) = tenantInfo.Value;
+        var (quota, planName, quotaResetAt, allowedModelTier) = tenantInfo;
 
         // If tenant has a quota reset this week, count from that date; otherwise use ISO week start
         var weekStart = DateTimeHelpers.GetCurrentIsoWeekStart();
         var countFrom = quotaResetAt > weekStart ? quotaResetAt.Value : weekStart;
 
         var usedThisWeek = await tenantUow.Repository<DispatchSession>().Query()
-            .CountAsync(s =>
-                s.StartedAt >= countFrom &&
-                s.Status == DispatchSessionStatus.Completed, ct);
+            .Where(s => s.StartedAt >= countFrom && s.Status == DispatchSessionStatus.Completed)
+            .SumAsync(s => s.RequestCost, ct);
 
         var remaining = Math.Max(0, quota - usedThisWeek);
         var resetsAt = countFrom.AddDays(7);
@@ -39,10 +38,11 @@ internal sealed class AiQuotaService(
             Remaining: remaining,
             IsOverQuota: usedThisWeek >= quota,
             PlanName: planName,
-            ResetsAt: resetsAt);
+            ResetsAt: resetsAt,
+            AllowedModelTier: allowedModelTier);
     }
 
-    private async Task<(int Quota, string? PlanName, DateTime? QuotaResetAt)?> GetTenantQuotaInfoAsync(
+    private async Task<TenantQuotaInfo?> GetTenantQuotaInfoAsync(
         Guid tenantId, CancellationToken ct)
     {
         var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(tenantId, ct);
@@ -53,10 +53,23 @@ internal sealed class AiQuotaService(
         var plan = await masterUow.Repository<SubscriptionPlan>()
             .GetByIdAsync(tenant.Subscription.PlanId, ct);
 
-        if (plan?.WeeklyAiSessionQuota is null)
+        if (plan?.WeeklyAiRequestQuota is null)
             return null;
 
-        return (plan.WeeklyAiSessionQuota.Value, plan.Name, tenant.QuotaResetAt);
+        return new TenantQuotaInfo(
+            Quota: plan.WeeklyAiRequestQuota.Value,
+            PlanName: plan.Name,
+            QuotaResetAt: tenant.QuotaResetAt,
+            AllowedModelTier: plan.AllowedModelTier);
     }
 
+    #region Internal records
+
+    public record TenantQuotaInfo(
+        int Quota,
+        string? PlanName,
+        DateTime? QuotaResetAt,
+        LlmModelTier AllowedModelTier);
+
+    #endregion
 }

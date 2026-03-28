@@ -23,7 +23,8 @@ public record TenantSettings
     public bool? LlmEnabled { get; set; }
 
     /// <summary>
-    /// Override LLM model for dispatch agent. Null uses the system default.
+    /// Selected LLM model for dispatch agent. Validated against the plan's AllowedModelTier.
+    /// Null uses the system default.
     /// </summary>
     public string? LlmModel { get; set; }
 
@@ -31,4 +32,9 @@ public record TenantSettings
     /// Override extended thinking for dispatch agent. Null uses the system default.
     /// </summary>
     public bool? LlmExtendedThinking { get; set; }
+
+    /// <summary>
+    /// Selected LLM provider. Null uses the system default.
+    /// </summary>
+    public LlmProvider? LlmProvider { get; set; }
 }

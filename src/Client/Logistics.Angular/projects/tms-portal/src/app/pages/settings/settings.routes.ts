@@ -28,4 +28,10 @@ export const settingsRoutes: Routes = [
     canActivate: [authGuard],
     data: { breadcrumb: "Features" },
   },
+  {
+    path: "ai",
+    loadComponent: () => import("./ai-settings/ai-settings").then((m) => m.AiSettingsComponent),
+    canActivate: [authGuard],
+    data: { breadcrumb: "AI" },
+  },
 ];

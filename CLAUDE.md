@@ -142,4 +142,4 @@ Payments flow directly to trucking company bank accounts via Stripe Connect:
 - **Load Boards**: DAT, Truckstop, 123Loadboard
 - **Mapbox**: Geocoding, route optimization
 - **NHTSA**: VIN decoder
-- **LLM Providers**: AI dispatch agent with pluggable providers (Anthropic Claude, OpenAI GPT, DeepSeek)
+- **LLM Providers**: AI dispatch agent with pluggable providers (Anthropic Claude, OpenAI GPT, DeepSeek). Tiered model access by plan (Base/Premium/Ultra), multiplier-based request quotas (1x/5x/10x)

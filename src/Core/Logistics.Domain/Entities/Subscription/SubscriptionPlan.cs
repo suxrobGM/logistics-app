@@ -26,10 +26,17 @@ public class SubscriptionPlan : AuditableEntity, IMasterEntity
     public string? StripeAiOveragePriceId { get; set; }
 
     /// <summary>
-    /// Maximum AI dispatch sessions per week. Null means unlimited.
+    /// Maximum AI dispatch request units per week. Null means unlimited.
+    /// Each session costs 1x (base), 5x (premium), or 10x (ultra) request units based on model tier.
     /// Sessions exceeding this quota are billed as overages via Stripe metered billing.
     /// </summary>
-    public int? WeeklyAiSessionQuota { get; set; }
+    public int? WeeklyAiRequestQuota { get; set; }
+
+    /// <summary>
+    /// Highest model tier accessible on this plan. Base = budget models only,
+    /// Premium = adds Sonnet/GPT-5.4, Ultra = adds Opus.
+    /// </summary>
+    public LlmModelTier AllowedModelTier { get; set; } = LlmModelTier.Base;
 
     /// <summary>
     /// Maximum number of trucks allowed on this plan. Null means unlimited.

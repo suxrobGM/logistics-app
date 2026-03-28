@@ -57,7 +57,6 @@ export class TenantEdit implements OnInit {
       items: [
         { label: "GPT-5.4 Mini", value: "gpt-5.4-mini" },
         { label: "GPT-5.4", value: "gpt-5.4" },
-        { label: "GPT-5.4 Nano", value: "gpt-5.4-nano" },
       ],
     },
     {

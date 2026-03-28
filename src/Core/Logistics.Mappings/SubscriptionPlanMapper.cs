@@ -18,7 +18,8 @@ public static class SubscriptionPlanMapper
             MaxTrucks = entity.MaxTrucks,
             Interval = entity.Interval,
             IntervalCount = entity.IntervalCount,
-            WeeklyAiSessionQuota = entity.WeeklyAiSessionQuota,
+            WeeklyAiRequestQuota = entity.WeeklyAiRequestQuota,
+            AllowedModelTier = entity.AllowedModelTier,
             Features = entity.Features.Select(f => f.Feature).ToList()
         };
     }

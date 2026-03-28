@@ -53,18 +53,18 @@ public class DispatchConversationBuilderTests
     private static LlmOptions ValidConfig => new()
     {
         MaxTokens = 4096,
-        Providers = new Dictionary<LlmProviderType, LlmProviderOptions>
+        Providers = new Dictionary<LlmProvider, LlmProviderOptions>
         {
-            [LlmProviderType.Anthropic] = new() { ApiKey = "sk-ant-test-key", Model = "claude-sonnet-4-6" }
+            [LlmProvider.Anthropic] = new() { ApiKey = "sk-ant-test-key", Model = "claude-sonnet-4-6" }
         }
     };
 
     private static LlmOptions EmptyApiKeyConfig => new()
     {
         MaxTokens = 100,
-        Providers = new Dictionary<LlmProviderType, LlmProviderOptions>
+        Providers = new Dictionary<LlmProvider, LlmProviderOptions>
         {
-            [LlmProviderType.Anthropic] = new() { ApiKey = "", Model = "test" }
+            [LlmProvider.Anthropic] = new() { ApiKey = "", Model = "test" }
         }
     };
 

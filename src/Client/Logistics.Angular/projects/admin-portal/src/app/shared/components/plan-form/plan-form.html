@@ -61,17 +61,27 @@
         />
       </ui-labeled-field>
     </div>
-
   </div>
 
   <div class="mb-4 grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-4">
-      <ui-labeled-field label="Weekly AI Session Quota" hint="Leave empty for unlimited">
+      <ui-labeled-field label="Weekly AI Request Quota" hint="Leave empty for unlimited">
         <p-inputNumber
-          formControlName="weeklyAiSessionQuota"
+          formControlName="weeklyAiRequestQuota"
           [min]="1"
           [showButtons]="true"
           placeholder="Unlimited"
+          [fluid]="true"
+        />
+      </ui-labeled-field>
+    </div>
+
+    <div class="col-span-12 md:col-span-4">
+      <ui-labeled-field label="Allowed Model Tier" [required]="true">
+        <p-select
+          formControlName="allowedModelTier"
+          [options]="modelTierOptions"
+          placeholder="Select model tier"
           [fluid]="true"
         />
       </ui-labeled-field>
@@ -101,7 +111,6 @@
         />
       </ui-labeled-field>
     </div>
-
   </div>
 
   <ui-validation-summary [form]="form" />

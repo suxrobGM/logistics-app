@@ -90,6 +90,16 @@ public class DispatchAgentController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result) : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    [HttpPut("ai-settings", Name = "UpdateTenantAiSettings")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Dispatch.Manage)]
+    public async Task<IActionResult> UpdateAiSettings([FromBody] UpdateTenantAiSettingsCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     [HttpPost("decisions/{decisionId:guid}/reject", Name = "RejectDispatchDecision")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

@@ -5,7 +5,7 @@
 | Project | Tests For | Extra Dependencies |
 |---------|-----------|-------------------|
 | `Logistics.Application.Tests` | Application layer (handlers, services) | — |
-| `Logistics.Infrastructure.AI.Tests` | AI agent, quota, tools, prompts | `MockQueryable.NSubstitute` |
+| `Logistics.Infrastructure.AI.Tests` | AI agent, quota, tools, prompts, LLM pricing | `MockQueryable.NSubstitute` |
 
 ## Stack
 

@@ -1,8 +1,9 @@
-import { Component, input, model, output } from "@angular/core";
+import { Component, computed, input, model, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import type { DispatchAgentMode } from "@logistics/shared/api";
+import type { AiQuotaStatusDto, DispatchAgentMode } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
+import { MessageModule } from "primeng/message";
 import { TextareaModule } from "primeng/textarea";
 
 export interface RunAgentDialogData {
@@ -13,14 +14,17 @@ export interface RunAgentDialogData {
 @Component({
   selector: "app-run-agent-dialog",
   templateUrl: "./run-agent-dialog.html",
-  imports: [DialogModule, ButtonModule, FormsModule, TextareaModule],
+  imports: [DialogModule, ButtonModule, FormsModule, TextareaModule, MessageModule],
 })
 export class RunAgentDialog {
   public readonly visible = model(false);
   public readonly mode = input<DispatchAgentMode>("human_in_the_loop");
+  public readonly quotaStatus = input<AiQuotaStatusDto | null>(null);
   public readonly run = output<RunAgentDialogData>();
 
   protected readonly instructions = model("");
+
+  protected readonly isOverQuota = computed(() => this.quotaStatus()?.isOverQuota === true);
 
   protected get modeLabel(): string {
     return this.mode() === "human_in_the_loop" ? "Run (Suggestions)" : "Run (Autonomous)";

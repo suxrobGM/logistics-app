@@ -22,7 +22,7 @@ internal sealed class GetTenantQuotaUsagesHandler(
 
         var planIds = subscriptions.Select(s => s.PlanId).Distinct().ToList();
         var plans = (await masterUow.Repository<SubscriptionPlan>()
-            .GetListAsync(p => planIds.Contains(p.Id) && p.WeeklyAiSessionQuota != null, ct))
+            .GetListAsync(p => planIds.Contains(p.Id) && p.WeeklyAiRequestQuota != null, ct))
             .ToDictionary(p => p.Id);
 
         // Only fetch tenants that have plans with AI quotas
@@ -43,9 +43,11 @@ internal sealed class GetTenantQuotaUsagesHandler(
         {
             if (!subscriptionByTenant.TryGetValue(tenant.Id, out var subscription)
                 || !plans.TryGetValue(subscription.PlanId, out var plan))
+            {
                 continue;
+            }
 
-            var weeklyQuota = plan.WeeklyAiSessionQuota!.Value;
+            var weeklyQuota = plan.WeeklyAiRequestQuota!.Value;
 
             var countFrom = tenant.QuotaResetAt > weekStart ? tenant.QuotaResetAt.Value : weekStart;
             int usedThisWeek;
@@ -69,11 +71,12 @@ internal sealed class GetTenantQuotaUsagesHandler(
                         s.InputTokensUsed,
                         s.OutputTokensUsed,
                         s.EstimatedCostUsd,
-                        s.ModelUsed
+                        s.ModelUsed,
+                        s.RequestCost
                     })
                     .ToListAsync(ct);
 
-                usedThisWeek = sessions.Count;
+                usedThisWeek = sessions.Sum(s => s.RequestCost);
                 totalTokens = sessions.Sum(s => s.InputTokensUsed + s.OutputTokensUsed);
                 totalCost = sessions.Sum(s => s.EstimatedCostUsd);
                 lastModel = sessions.LastOrDefault()?.ModelUsed;

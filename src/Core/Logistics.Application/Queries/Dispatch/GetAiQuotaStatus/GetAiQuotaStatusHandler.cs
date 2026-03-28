@@ -16,12 +16,13 @@ internal sealed class GetAiQuotaStatusHandler(
 
         return Result<AiQuotaStatusDto>.Ok(new AiQuotaStatusDto
         {
-            WeeklyQuota = status.WeeklyQuota,
-            UsedThisWeek = status.UsedThisWeek,
-            Remaining = status.Remaining,
+            UsagePercent = status.WeeklyQuota > 0
+                ? (double)status.UsedThisWeek / status.WeeklyQuota
+                : 0,
             IsOverQuota = status.IsOverQuota,
             PlanName = status.PlanName,
-            ResetsAt = status.ResetsAt
+            ResetsAt = status.ResetsAt,
+            AllowedModelTier = status.AllowedModelTier.ToString()
         });
     }
 }

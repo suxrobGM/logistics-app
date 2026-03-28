@@ -1,0 +1,116 @@
+<!-- Hero -->
+<web-section-container sectionId="compare-hero" background="gradient">
+  <div webScrollAnimate="fade-up" class="text-center">
+    <web-section-header
+      label="Compare"
+      title="How We Compare"
+      subtitle="Choosing the right TMS matters. See how our platform stacks up against the competition."
+    />
+  </div>
+</web-section-container>
+
+<!-- Feature comparison -->
+<web-section-container sectionId="compare-features" background="white">
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="Features"
+      title="Feature-by-feature comparison"
+      subtitle="A detailed look at what each platform offers across the categories that matter most."
+    />
+  </div>
+
+  <div class="mt-16 overflow-x-auto">
+    <table class="w-full min-w-180 border-collapse text-sm">
+      <thead>
+        <tr class="border-b-2 border-gray-200">
+          <th class="text-ink py-4 pr-4 text-left font-semibold">Feature</th>
+          <th class="text-accent px-4 py-4 text-center font-semibold">Us</th>
+          <th class="text-steel px-4 py-4 text-center font-semibold">DataTruck</th>
+          <th class="text-steel px-4 py-4 text-center font-semibold">Alvys</th>
+          <th class="text-steel px-4 py-4 text-center font-semibold">Rose Rocket</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (category of features; track category.category) {
+          <tr>
+            <td
+              colspan="5"
+              class="text-ink bg-gray-50 px-0 py-3 text-xs font-bold tracking-wider uppercase"
+            >
+              {{ category.category }}
+            </td>
+          </tr>
+          @for (row of category.rows; track row.name) {
+            <tr class="border-b border-gray-100 transition-colors hover:bg-gray-50/50">
+              <td class="text-ink py-3 pr-4">{{ row.name }}</td>
+              <td class="px-4 py-3 text-center font-medium">
+                <span [class]="row.us === '✓' ? 'text-accent' : 'text-steel'">
+                  {{ row.us }}
+                </span>
+              </td>
+              <td class="text-steel px-4 py-3 text-center">{{ row.dataTruck }}</td>
+              <td class="text-steel px-4 py-3 text-center">{{ row.alvys }}</td>
+              <td class="text-steel px-4 py-3 text-center">{{ row.roseRocket }}</td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
+</web-section-container>
+
+<!-- Pricing comparison -->
+<web-section-container sectionId="compare-pricing" background="light">
+  <div webScrollAnimate="fade-up">
+    <web-section-header
+      label="Pricing"
+      title="Cost comparison at scale"
+      subtitle="Monthly cost on our Enterprise plan vs. competitors. Transparent pricing with no hidden fees."
+    />
+  </div>
+
+  <div class="mt-16 overflow-x-auto" webScrollAnimate="fade-up" [delay]="150">
+    <table class="w-full min-w-135 border-collapse text-sm">
+      <thead>
+        <tr class="border-b-2 border-gray-200">
+          <th class="text-ink py-4 pr-4 text-left font-semibold">Fleet Size</th>
+          <th class="text-accent px-4 py-4 text-center font-semibold">Us (Enterprise)</th>
+          <th class="text-steel px-4 py-4 text-center font-semibold">DataTruck</th>
+          <th class="text-steel px-4 py-4 text-center font-semibold">Alvys</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of pricing; track row.trucks) {
+          <tr class="border-b border-gray-100">
+            <td class="text-ink py-4 pr-4 font-medium">{{ row.trucks }} trucks</td>
+            <td class="px-4 py-4 text-center">
+              <span class="text-accent font-bold">{{ row.us }}</span>
+              <span class="text-steel block text-xs">({{ row.usDetail }})</span>
+            </td>
+            <td class="text-steel px-4 py-4 text-center">{{ row.dataTruck }}</td>
+            <td class="text-steel px-4 py-4 text-center">{{ row.alvys }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</web-section-container>
+
+<!-- CTA -->
+<web-section-container sectionId="compare-cta" background="white">
+  <div webScrollAnimate="fade-up" class="text-center">
+    <h2 class="font-display text-ink text-3xl font-bold sm:text-4xl">Ready to switch?</h2>
+    <p class="text-steel mx-auto mt-4 max-w-xl text-lg">
+      See why growing fleets choose our platform. Request a personalized demo and we'll show you how
+      it fits your operation.
+    </p>
+    <div class="mt-8">
+      <p-button
+        label="Request a Demo"
+        (onClick)="openDemoDialog()"
+        [rounded]="true"
+        styleClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark"
+      />
+    </div>
+  </div>
+</web-section-container>

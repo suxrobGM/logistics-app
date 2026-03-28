@@ -11,6 +11,11 @@
       The agent will execute assignments immediately without approval.
     }
   </p>
+  @if (isOverQuota()) {
+    <p-message severity="warn" styleClass="mb-4 w-full">
+      Your weekly AI limit has been reached. Running a session will incur additional charges.
+    </p-message>
+  }
   <textarea
     pTextarea
     [(ngModel)]="instructions"
