@@ -25,22 +25,36 @@ internal sealed class CheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) : IDi
         // Estimate driving time: assume average 80 km/h
         var estimatedDrivingMinutes = (int)(distanceKm / 80.0 * 60);
 
-        var feasible = !hos.IsInViolation
+        var singleWindowFeasible = !hos.IsInViolation
             && hos.DrivingMinutesRemaining >= estimatedDrivingMinutes
             && hos.OnDutyMinutesRemaining >= estimatedDrivingMinutes;
 
+        var multiDay = !singleWindowFeasible && !hos.IsInViolation
+            && hos.DrivingMinutesRemaining >= 120; // at least 2h remaining to make progress
+
+        var reason = $"Insufficient hours: need {estimatedDrivingMinutes}min, have {hos.DrivingMinutesRemaining}min driving — too low to make meaningful progress";
+        if (singleWindowFeasible)
+        {
+            reason = "Driver has sufficient hours to complete in one stretch";
+        }
+        else if (hos.IsInViolation)
+        {
+            reason = "Driver is currently in HOS violation";
+        }
+        else if (multiDay)
+        {
+            reason = $"Not completable in current window (need {estimatedDrivingMinutes}min, have {hos.DrivingMinutesRemaining}min), but feasible as multi-day trip with rest stops";
+        }
+
         return JsonSerializer.Serialize(new
         {
-            feasible,
+            feasible = singleWindowFeasible,
+            feasible_multi_day = multiDay,
             estimated_driving_minutes = estimatedDrivingMinutes,
             driving_minutes_remaining = hos.DrivingMinutesRemaining,
             on_duty_minutes_remaining = hos.OnDutyMinutesRemaining,
             is_in_violation = hos.IsInViolation,
-            reason = !feasible
-                ? hos.IsInViolation
-                    ? "Driver is currently in HOS violation"
-                    : $"Insufficient hours: need {estimatedDrivingMinutes}min, have {hos.DrivingMinutesRemaining}min driving"
-                : "Driver has sufficient hours for this trip"
+            reason
         });
     }
 }

@@ -29,6 +29,7 @@ import { ApproveRejectActions } from "../components/approve-reject-actions/appro
 import { ModeBadge } from "../components/mode-badge/mode-badge";
 import { ToolOutputSummary } from "../components/tool-output-summary/tool-output-summary";
 import {
+  buildDecisionDetail,
   getToolIcon,
   getToolLabel,
   getToolMarkerClass,
@@ -164,21 +165,30 @@ export class SessionDetailPage implements OnInit, OnDestroy {
     }
   }
 
-  protected async approveDecision(decision: DispatchDecisionDto): Promise<void> {
-    try {
-      await this.api.invoke(approveDispatchDecision, { decisionId: decision.id! });
-      this.toastService.showSuccess("Decision approved and executed");
-      await this.loadSession();
-    } catch {
-      this.toastService.showError("Failed to approve decision");
-    }
+  protected approveDecision(decision: DispatchDecisionDto): void {
+    this.toastService.confirm({
+      message: `Are you sure you want to approve and execute this decision?\n\n${buildDecisionDetail(decision)}`,
+      header: "Approve Decision",
+      icon: "pi pi-check-circle",
+      acceptButtonStyleClass: "p-button-success",
+      accept: async () => {
+        try {
+          await this.api.invoke(approveDispatchDecision, { decisionId: decision.id! });
+          this.toastService.showSuccess("Decision approved and executed");
+          await this.loadSession();
+        } catch {
+          this.toastService.showError("Failed to approve decision");
+        }
+      },
+    });
   }
 
   protected rejectDecision(decision: DispatchDecisionDto): void {
     this.toastService.confirm({
-      message: "Are you sure you want to reject this decision?",
+      message: `Are you sure you want to reject this decision?\n\n${buildDecisionDetail(decision)}`,
       header: "Reject Decision",
       icon: "pi pi-exclamation-triangle",
+      acceptButtonStyleClass: "p-button-danger",
       accept: async () => {
         try {
           await this.api.invoke(rejectDispatchDecision, { decisionId: decision.id!, body: {} });

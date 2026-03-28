@@ -46,29 +46,44 @@ internal sealed class BatchCheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) 
                     driver_id = driverId.ToString(),
                     distance_km = check.DistanceKm,
                     feasible = false,
+                    feasible_multi_day = false,
                     estimated_driving_minutes = estimatedDrivingMinutes,
                     driving_minutes_remaining = (int?)null,
                     on_duty_minutes_remaining = (int?)null,
                     reason = "No HOS data available for this driver"
                 };
 
-            var feasible = !hos.IsInViolation
+            var singleWindowFeasible = !hos.IsInViolation
                 && hos.DrivingMinutesRemaining >= estimatedDrivingMinutes
                 && hos.OnDutyMinutesRemaining >= estimatedDrivingMinutes;
+
+            var multiDay = !singleWindowFeasible && !hos.IsInViolation
+                && hos.DrivingMinutesRemaining >= 120;
+
+            var reason = $"Insufficient hours: need {estimatedDrivingMinutes}min, have {hos.DrivingMinutesRemaining}min driving — too low to make meaningful progress";
+            if (singleWindowFeasible)
+            {
+                reason = "Driver has sufficient hours to complete in one stretch";
+            }
+            else if (hos.IsInViolation)
+            {
+                reason = "Driver is currently in HOS violation";
+            }
+            else if (multiDay)
+            {
+                reason = $"Not completable in current window (need {estimatedDrivingMinutes}min, have {hos.DrivingMinutesRemaining}min), but feasible as multi-day trip with rest stops";
+            }
 
             return new
             {
                 driver_id = driverId.ToString(),
                 distance_km = check.DistanceKm,
-                feasible,
+                feasible = singleWindowFeasible,
+                feasible_multi_day = multiDay,
                 estimated_driving_minutes = estimatedDrivingMinutes,
                 driving_minutes_remaining = (int?)hos.DrivingMinutesRemaining,
                 on_duty_minutes_remaining = (int?)hos.OnDutyMinutesRemaining,
-                reason = !feasible
-                    ? hos.IsInViolation
-                        ? "Driver is currently in HOS violation"
-                        : $"Insufficient hours: need {estimatedDrivingMinutes}min, have {hos.DrivingMinutesRemaining}min driving"
-                    : "Driver has sufficient hours for this trip"
+                reason
             };
         }).ToList();
 

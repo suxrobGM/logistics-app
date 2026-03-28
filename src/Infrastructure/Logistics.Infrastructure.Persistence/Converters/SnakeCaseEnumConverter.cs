@@ -12,13 +12,13 @@ namespace Logistics.Infrastructure.Persistence.Converters;
 public class SnakeCaseEnumConverter<TEnum> : ValueConverter<TEnum, string>
     where TEnum : struct, Enum
 {
-    private static readonly FrozenDictionary<TEnum, string> enumToSnake = BuildEnumToSnakeCache();
-    private static readonly FrozenDictionary<string, TEnum> snakeToEnum = BuildSnakeToEnumCache();
+    private static readonly FrozenDictionary<TEnum, string> EnumToSnake = BuildEnumToSnakeCache();
+    private static readonly FrozenDictionary<string, TEnum> SnakeToEnum = BuildSnakeToEnumCache();
 
     public SnakeCaseEnumConverter()
         : base(
-            v => enumToSnake.GetValueOrDefault(v, ToSnakeCase(v.ToString())),
-            v => snakeToEnum.GetValueOrDefault(v, ParseFallback(v)))
+            v => EnumToSnake.GetValueOrDefault(v, ToSnakeCase(v.ToString())),
+            v => SnakeToEnum.GetValueOrDefault(v, ParseFallback(v)))
     {
     }
 

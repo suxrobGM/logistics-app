@@ -163,6 +163,33 @@ export function getToolIcon(toolName: string | null | undefined): string {
   }
 }
 
+/** Builds a human-readable detail string for confirmation dialogs */
+export function buildDecisionDetail(decision: {
+  toolName?: string | null;
+  loadName?: string | null;
+  truckNumber?: string | null;
+  reasoning?: string | null;
+  toolInput?: string | null;
+}): string {
+  const parsed = parseToolInput(decision.toolInput);
+  const lines: string[] = [];
+
+  const action = getToolLabel(decision.toolName);
+  lines.push(`Action: ${action}`);
+
+  if (decision.loadName || parsed.loadId) {
+    lines.push(`Load: ${decision.loadName ?? parsed.loadId}`);
+  }
+  if (decision.truckNumber || parsed.truckId) {
+    lines.push(`Truck: ${decision.truckNumber ?? parsed.truckId}`);
+  }
+  if (parsed.reasoning) {
+    lines.push(`AI Reasoning: ${parsed.reasoning}`);
+  }
+
+  return lines.join("\n");
+}
+
 export function isWriteTool(toolName: string | null | undefined): boolean {
   return ["assign_load_to_truck", "create_trip", "dispatch_trip", "book_load_board_load"].includes(
     toolName ?? "",
