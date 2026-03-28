@@ -55,8 +55,12 @@
               class="border-surface-300 bg-surface-0 w-full rounded-md border p-2"
             >
               <option value="">System Default</option>
-              @for (opt of aiModelOptions; track opt.value) {
-                <option [value]="opt.value">{{ opt.label }}</option>
+              @for (group of llmModelOptions; track group.group) {
+                <optgroup [label]="group.group">
+                  @for (opt of group.items; track opt.value) {
+                    <option [value]="opt.value">{{ opt.label }}</option>
+                  }
+                </optgroup>
               }
             </select>
           </ui-labeled-field>

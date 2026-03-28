@@ -43,10 +43,30 @@ export class TenantEdit implements OnInit {
 
   protected readonly llmSettingsForm = form(this.llmSettingsModel);
 
-  protected readonly aiModelOptions = [
-    { label: "Claude Sonnet 4.6", value: "claude-sonnet-4-6" },
-    { label: "Claude Haiku 4.5", value: "claude-haiku-4-5" },
-    { label: "Claude Opus 4.6", value: "claude-opus-4-6" },
+  protected readonly llmModelOptions = [
+    {
+      group: "Anthropic",
+      items: [
+        { label: "Claude Sonnet 4.6", value: "claude-sonnet-4-6" },
+        { label: "Claude Haiku 4.5", value: "claude-haiku-4-5" },
+        { label: "Claude Opus 4.6", value: "claude-opus-4-6" },
+      ],
+    },
+    {
+      group: "OpenAI",
+      items: [
+        { label: "GPT-5.4 Mini", value: "gpt-5.4-mini" },
+        { label: "GPT-5.4", value: "gpt-5.4" },
+        { label: "GPT-5.4 Nano", value: "gpt-5.4-nano" },
+      ],
+    },
+    {
+      group: "DeepSeek",
+      items: [
+        { label: "DeepSeek Chat (V3.2)", value: "deepseek-chat" },
+        { label: "DeepSeek Reasoner (V3.2)", value: "deepseek-reasoner" },
+      ],
+    },
   ];
 
   ngOnInit(): void {

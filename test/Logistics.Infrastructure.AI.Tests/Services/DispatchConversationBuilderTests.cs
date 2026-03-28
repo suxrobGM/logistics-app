@@ -4,12 +4,14 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Options;
+using Logistics.Infrastructure.AI.Providers;
 using Logistics.Infrastructure.AI.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using MockQueryable;
 using NSubstitute;
 using Xunit;
+using MsOptions = Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.AI.Tests.Services;
 
@@ -42,14 +44,28 @@ public class DispatchConversationBuilderTests
         sessionRepo.Query().Returns(emptySessionList);
         tenantUow.Repository<DispatchSession>().Returns(sessionRepo);
 
-        sut = new DispatchConversationBuilder(toolRegistry, featureService, tenantUow, logger);
+        var llmOptions = MsOptions.Options.Create(ValidConfig);
+        var providerFactory = new LlmProviderFactory(llmOptions);
+
+        sut = new DispatchConversationBuilder(toolRegistry, featureService, providerFactory, tenantUow, logger);
     }
 
     private static LlmOptions ValidConfig => new()
     {
-        ApiKey = "sk-ant-test-key",
-        Model = "claude-sonnet-4-6",
-        MaxTokens = 4096
+        MaxTokens = 4096,
+        Providers = new Dictionary<LlmProviderType, LlmProviderOptions>
+        {
+            [LlmProviderType.Anthropic] = new() { ApiKey = "sk-ant-test-key", Model = "claude-sonnet-4-6" }
+        }
+    };
+
+    private static LlmOptions EmptyApiKeyConfig => new()
+    {
+        MaxTokens = 100,
+        Providers = new Dictionary<LlmProviderType, LlmProviderOptions>
+        {
+            [LlmProviderType.Anthropic] = new() { ApiKey = "", Model = "test" }
+        }
     };
 
     private static DispatchAgentRequest CreateRequest(DispatchAgentMode mode = DispatchAgentMode.Autonomous)
@@ -58,18 +74,16 @@ public class DispatchConversationBuilderTests
     }
 
     [Fact]
-    public async Task BuildAsync_ValidConfig_ReturnsClientAndParameters()
+    public async Task BuildAsync_ValidConfig_ReturnsConversation()
     {
         var session = new DispatchSession { Mode = DispatchAgentMode.Autonomous, StartedAt = DateTime.UtcNow };
 
-        var (client, parameters, messages) = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
 
-        Assert.NotNull(client);
-        Assert.NotNull(parameters);
-        Assert.Single(messages);
-        Assert.Equal(ValidConfig.MaxTokens, parameters.MaxTokens);
-        Assert.Equal(ValidConfig.Model, parameters.Model);
-        Assert.Equal(0m, parameters.Temperature);
+        Assert.NotNull(conversation.Provider);
+        Assert.Single(conversation.Messages);
+        Assert.Equal(ValidConfig.MaxTokens, conversation.MaxTokens);
+        Assert.Equal("claude-sonnet-4-6", conversation.Model);
     }
 
     [Fact]
@@ -77,10 +91,9 @@ public class DispatchConversationBuilderTests
     {
         var session = new DispatchSession { Mode = DispatchAgentMode.Autonomous, StartedAt = DateTime.UtcNow };
 
-        var (_, parameters, _) = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
 
-        Assert.NotNull(parameters.Tools);
-        Assert.Single(parameters.Tools);
+        Assert.Single(conversation.Tools);
     }
 
     [Fact]
@@ -88,23 +101,19 @@ public class DispatchConversationBuilderTests
     {
         var session = new DispatchSession { Mode = DispatchAgentMode.Autonomous, StartedAt = DateTime.UtcNow };
 
-        var (_, parameters, _) = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
 
-        Assert.NotNull(parameters.System);
-        Assert.NotEmpty(parameters.System);
+        Assert.NotNull(conversation.SystemPrompt);
+        Assert.NotEmpty(conversation.SystemPrompt);
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("  ")]
-    public async Task BuildAsync_MissingApiKey_Throws(string? apiKey)
+    [Fact]
+    public async Task BuildAsync_MissingApiKey_Throws()
     {
         var session = new DispatchSession { Mode = DispatchAgentMode.Autonomous, StartedAt = DateTime.UtcNow };
-        var config = new LlmOptions { ApiKey = apiKey!, Model = "test", MaxTokens = 100 };
 
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => sut.BuildAsync(session, CreateRequest(), config));
+            () => sut.BuildAsync(session, CreateRequest(), EmptyApiKeyConfig));
 
         Assert.Contains("API key", ex.Message);
     }
@@ -114,10 +123,9 @@ public class DispatchConversationBuilderTests
     {
         var session = new DispatchSession { Mode = DispatchAgentMode.Autonomous, StartedAt = DateTime.UtcNow };
 
-        var (_, _, messages) = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
+        var conversation = await sut.BuildAsync(session, CreateRequest(), ValidConfig);
 
-        Assert.Single(messages);
-        var content = messages[0].Content?.FirstOrDefault();
-        Assert.NotNull(content);
+        Assert.Single(conversation.Messages);
+        Assert.NotEmpty(conversation.Messages[0].Content);
     }
 }

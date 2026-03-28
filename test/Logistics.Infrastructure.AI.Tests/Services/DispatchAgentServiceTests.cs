@@ -3,6 +3,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Options;
+using Logistics.Infrastructure.AI.Providers;
 using Logistics.Infrastructure.AI.Services;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -12,18 +13,18 @@ using MsOptions = Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.AI.Tests.Services;
 
-public class ClaudeDispatchAgentServiceTests
+public class DispatchAgentServiceTests
 {
     private readonly ITenantRepository<DispatchSession, Guid> sessionRepo =
         Substitute.For<ITenantRepository<DispatchSession, Guid>>();
 
     private readonly IStripeUsageService stripeUsageService = Substitute.For<IStripeUsageService>();
 
-    private readonly ClaudeDispatchAgentService sut;
+    private readonly DispatchAgentService sut;
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
     private readonly IDispatchAgentBroadcastService broadcastService = Substitute.For<IDispatchAgentBroadcastService>();
 
-    public ClaudeDispatchAgentServiceTests()
+    public DispatchAgentServiceTests()
     {
         tenantUow.Repository<DispatchSession>().Returns(sessionRepo);
         tenantUow.GetCurrentTenant().Returns(new Tenant
@@ -40,8 +41,20 @@ public class ClaudeDispatchAgentServiceTests
 
         var featureService = Substitute.For<IFeatureService>();
 
+        var llmOptions = MsOptions.Options.Create(new LlmOptions
+        {
+            MaxTokens = 100,
+            Providers = new Dictionary<LlmProviderType, LlmProviderOptions>
+            {
+                [LlmProviderType.Anthropic] = new() { ApiKey = "sk-ant-test-key", Model = "claude-haiku-4-5" }
+            }
+        });
+
+        var providerFactory = new LlmProviderFactory(llmOptions);
+
         var conversationBuilder = new DispatchConversationBuilder(
-            toolRegistry, featureService, tenantUow, NullLogger<DispatchConversationBuilder>.Instance);
+            toolRegistry, featureService, providerFactory, tenantUow,
+            NullLogger<DispatchConversationBuilder>.Instance);
 
         var toolExecutor = Substitute.For<IDispatchToolExecutor>();
         var decisionProcessor = new DispatchDecisionProcessor(
@@ -49,17 +62,10 @@ public class ClaudeDispatchAgentServiceTests
 
         var cancellationRegistry = new DispatchSessionCancellationRegistry();
 
-        var options = MsOptions.Options.Create(new LlmOptions
-        {
-            ApiKey = "sk-ant-test-key",
-            Model = "claude-haiku-4-5",
-            MaxTokens = 100
-        });
-
-        sut = new ClaudeDispatchAgentService(
-            options, conversationBuilder, decisionProcessor, cancellationRegistry,
+        sut = new DispatchAgentService(
+            llmOptions, conversationBuilder, decisionProcessor, cancellationRegistry,
             tenantUow, broadcastService, stripeUsageService,
-            NullLogger<ClaudeDispatchAgentService>.Instance);
+            NullLogger<DispatchAgentService>.Instance);
     }
 
     private static DispatchAgentRequest CreateRequest(bool isOverage = false)
@@ -80,7 +86,7 @@ public class ClaudeDispatchAgentServiceTests
         sessionRepo.AddAsync(Arg.Do<DispatchSession>(s => capturedSession = s), Arg.Any<CancellationToken>())
             .Returns(Task.CompletedTask);
 
-        // The agent loop will fail because we don't have a real Claude client
+        // The agent loop will fail because we don't have a real LLM API
         // but the session should still be created with IsOverage set
         try
         {
@@ -173,11 +179,11 @@ public class ClaudeDispatchAgentServiceTests
         }
         catch (Exception ex) when (ex.Message != "Stripe API error")
         {
-            // Expected — API error from Claude, not from Stripe
+            // Expected — API error from LLM, not from Stripe
         }
 
         // The important thing: the Stripe error doesn't propagate
-        // (the session fails due to Claude API, not Stripe)
+        // (the session fails due to LLM API, not Stripe)
     }
 
     #endregion

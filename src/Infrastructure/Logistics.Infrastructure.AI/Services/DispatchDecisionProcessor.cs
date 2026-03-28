@@ -1,17 +1,17 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Anthropic.SDK.Messaging;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Infrastructure.AI.Providers;
 using Logistics.Mappings;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.AI.Services;
 
 /// <summary>
-/// Processes Claude tool calls into DispatchDecision entities.
+/// Processes LLM tool calls into DispatchDecision entities.
 /// Handles mode-aware execution (HumanInTheLoop suggests, Autonomous executes).
 /// </summary>
 internal sealed class DispatchDecisionProcessor(
@@ -28,31 +28,27 @@ internal sealed class DispatchDecisionProcessor(
         "book_load_board_load"
     ];
 
-    public async Task<List<ContentBase>> ProcessToolCallsAsync(
+    public async Task<List<LlmToolResultBlock>> ProcessToolCallsAsync(
         DispatchSession session,
         DispatchAgentMode mode,
-        List<ToolUseContent> toolUseBlocks,
+        List<LlmToolUseBlock> toolCalls,
         string? reasoning,
         CancellationToken ct)
     {
-        var toolResults = new List<ContentBase>();
+        var toolResults = new List<LlmToolResultBlock>();
         var decisions = new List<DispatchDecision>();
 
-        foreach (var toolUse in toolUseBlocks)
+        foreach (var toolCall in toolCalls)
         {
-            var decision = CreateDecision(session, toolUse, reasoning);
-            var toolResult = await ExecuteOrSuggestAsync(session, decision, toolUse, mode, ct);
+            var decision = CreateDecision(session, toolCall, reasoning);
+            var toolResult = await ExecuteOrSuggestAsync(session, decision, toolCall, mode, ct);
 
-            ExtractEntityIds(decision, toolUse.Input);
+            ExtractEntityIds(decision, toolCall.Input);
             await tenantUow.Repository<DispatchDecision>().AddAsync(decision, CancellationToken.None);
             session.DecisionCount++;
             decisions.Add(decision);
 
-            toolResults.Add(new ToolResultContent
-            {
-                ToolUseId = toolUse.Id,
-                Content = [new TextContent { Text = toolResult }]
-            });
+            toolResults.Add(new LlmToolResultBlock(toolCall.Id, toolResult));
         }
 
         // Save all decisions first, then broadcast — ensures clients see committed data
@@ -71,12 +67,12 @@ internal sealed class DispatchDecisionProcessor(
     private async Task<string> ExecuteOrSuggestAsync(
         DispatchSession session,
         DispatchDecision decision,
-        ToolUseContent toolUse,
+        LlmToolUseBlock toolCall,
         DispatchAgentMode mode,
         CancellationToken ct)
     {
-        var toolInputJson = toolUse.Input?.ToJsonString() ?? "{}";
-        var isWriteTool = WriteTools.Contains(toolUse.Name);
+        var toolInputJson = toolCall.Input?.ToJsonString() ?? "{}";
+        var isWriteTool = WriteTools.Contains(toolCall.Name);
 
         if (isWriteTool && mode == DispatchAgentMode.HumanInTheLoop)
         {
@@ -88,20 +84,20 @@ internal sealed class DispatchDecisionProcessor(
             });
             decision.ToolOutput = result;
             logger.LogInformation("Session {SessionId}: tool {ToolName} queued as suggestion",
-                session.Id, toolUse.Name);
+                session.Id, toolCall.Name);
             return result;
         }
 
         try
         {
-            var result = await toolExecutor.ExecuteToolAsync(toolUse.Name, toolInputJson, ct);
+            var result = await toolExecutor.ExecuteToolAsync(toolCall.Name, toolInputJson, ct);
             decision.ToolOutput = result;
 
             if (isWriteTool)
             {
                 decision.MarkExecuted();
                 logger.LogInformation("Session {SessionId}: write tool {ToolName} executed successfully",
-                    session.Id, toolUse.Name);
+                    session.Id, toolCall.Name);
             }
 
             return result;
@@ -109,7 +105,7 @@ internal sealed class DispatchDecisionProcessor(
         catch (Exception ex)
         {
             logger.LogWarning(ex, "Session {SessionId}: tool {ToolName} failed",
-                session.Id, toolUse.Name);
+                session.Id, toolCall.Name);
             var errorResult = JsonSerializer.Serialize(new { error = ex.Message });
             decision.MarkFailed(errorResult);
             return errorResult;
@@ -118,15 +114,15 @@ internal sealed class DispatchDecisionProcessor(
 
     private static DispatchDecision CreateDecision(
         DispatchSession session,
-        ToolUseContent toolUse,
+        LlmToolUseBlock toolCall,
         string? reasoning)
     {
         return new DispatchDecision
         {
             SessionId = session.Id,
-            Type = MapToolToDecisionType(toolUse.Name),
-            ToolName = toolUse.Name,
-            ToolInput = toolUse.Input?.ToJsonString() ?? "{}",
+            Type = MapToolToDecisionType(toolCall.Name),
+            ToolName = toolCall.Name,
+            ToolInput = toolCall.Input?.ToJsonString() ?? "{}",
             Reasoning = reasoning ?? ""
         };
     }

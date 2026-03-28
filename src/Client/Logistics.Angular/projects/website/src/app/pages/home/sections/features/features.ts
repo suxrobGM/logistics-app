@@ -43,7 +43,7 @@ export class Features {
       icon: "pi-sparkles",
       title: "AI-Powered Dispatch",
       description:
-        "Autonomous load-to-truck matching powered by Claude AI. Checks HOS compliance, minimizes deadhead miles, and searches load boards for opportunities.",
+        "Autonomous load-to-truck matching that checks HOS compliance, minimizes deadhead miles, and searches load boards for opportunities.",
     },
   ];
 

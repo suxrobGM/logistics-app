@@ -1,9 +1,9 @@
 using System.Text.Json.Nodes;
-using Anthropic.SDK.Messaging;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Infrastructure.AI.Providers;
 using Logistics.Infrastructure.AI.Services;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
@@ -45,9 +45,9 @@ public class DispatchDecisionProcessorTests
         return new DispatchSession { Mode = mode, StartedAt = DateTime.UtcNow };
     }
 
-    private static ToolUseContent CreateToolUse(string name, JsonObject? input = null)
+    private static LlmToolUseBlock CreateToolUse(string name, JsonObject? input = null)
     {
-        return new ToolUseContent { Id = Guid.NewGuid().ToString(), Name = name, Input = input ?? new JsonObject() };
+        return new LlmToolUseBlock(Guid.NewGuid().ToString(), name, input ?? new JsonObject());
     }
 
     #region Tool execution failure
@@ -261,7 +261,7 @@ public class DispatchDecisionProcessorTests
         toolExecutor.ExecuteToolAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
             .Returns("{}");
 
-        var tools = new List<ToolUseContent>
+        var tools = new List<LlmToolUseBlock>
         {
             CreateToolUse("get_available_trucks"),
             CreateToolUse("get_unassigned_loads"),

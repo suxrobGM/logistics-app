@@ -3,18 +3,28 @@
 ## Project Structure
 
 All AI agent code lives in `src/Infrastructure/Logistics.Infrastructure.AI/`:
-- `Services/` — Agent loop, tool executor, tool registry
-- `Tools/` — Individual tool implementations (future)
+- `Providers/` — `ILlmProvider` interface, `LlmTypes`, `AnthropicLlmProvider`, `OpenAiLlmProvider`, `LlmProviderFactory`
+- `Services/` — Agent loop (`DispatchAgentService`), tool executor, tool registry, conversation builder, pricing
+- `Tools/` — Individual tool implementations
 - `Prompts/` — System prompt builders
-- `Options/` — Configuration (LlmOptions)
+- `Options/` — Configuration (`LlmOptions`, `LlmProviderOptions`, `LlmProviderType`)
+
+## Multi-Provider Architecture
+
+The agent is provider-agnostic via the `ILlmProvider` adapter pattern:
+- `AnthropicLlmProvider` — Claude API via `Anthropic.SDK` (supports prompt caching, extended thinking)
+- `OpenAiLlmProvider` — OpenAI-compatible APIs via `OpenAI` SDK (supports OpenAI, DeepSeek, GLM via configurable `BaseUrl`)
+- `LlmProviderFactory` — Resolves provider from `LlmOptions.DefaultProvider`
+
+Provider-specific SDK types never leak outside the provider classes. The agent loop, tools, and decision processor all use `LlmTypes` (`LlmRequest`, `LlmResponse`, `LlmToolUseBlock`, etc.).
 
 ## Adding a New Agent Tool
 
 1. Add the tool definition in `DispatchToolRegistry.cs` with name, description, and JSON schema
 2. Add the handler case in `DispatchToolExecutor.ExecuteToolAsync()` switch
-3. If it's a write tool, add its name to `ClaudeDispatchAgentService.WriteTools` HashSet
-4. Tool names use `snake_case` (Claude API convention)
-5. Tool schemas follow JSON Schema format (compatible with MCP)
+3. If it's a write tool, add its name to `DispatchDecisionProcessor.WriteTools` HashSet
+4. Tool names use `snake_case` (standard across all LLM providers)
+5. Tool schemas follow JSON Schema format (compatible with both Claude and OpenAI function calling)
 
 ## Tool Classification
 
@@ -23,18 +33,32 @@ All AI agent code lives in `src/Infrastructure/Logistics.Infrastructure.AI/`:
 
 ## Agent Loop Pattern
 
-The agent loop in `ClaudeDispatchAgentService` follows: send message → receive tool_use → record decision → execute or suggest → send tool_result → repeat until end_turn.
+The agent loop in `DispatchAgentService` follows: send message → receive tool calls → record decision → execute or suggest → send tool results → repeat until end_turn.
 
 Max 25 iterations per session to prevent runaway token usage.
 
-## Anthropic SDK Usage
-
-- Client: `new AnthropicClient(apiKey)` — do NOT use DI for the client itself
-- System prompt: `System = [new SystemMessage(text)]` on `MessageParameters`
-- Tools: `new Function(name, description, jsonSchemaNode)` cast to `Tool`
-- Tool results: `ToolResultContent` with `ToolUseId` matching the request
-- Disambiguation: `using Tool = Anthropic.SDK.Common.Tool` (conflicts with Messaging namespace)
-
 ## Configuration
 
-LLM config is in `appsettings.json` under `"Llm"` section. API key is passed via environment variable `Llm__ApiKey` in all deployment targets (Aspire, Docker, .env).
+LLM config is in `appsettings.json` under `"Llm"` section with nested provider configs:
+
+```json
+{
+  "Llm": {
+    "DefaultProvider": "Anthropic",
+    "Providers": {
+      "Anthropic": { "ApiKey": "...", "Model": "claude-haiku-4-5" },
+      "OpenAi": { "ApiKey": "...", "Model": "gpt-5.4-mini" },
+      "DeepSeek": { "ApiKey": "...", "Model": "deepseek-chat", "BaseUrl": "https://api.deepseek.com/v1" }
+    }
+  }
+}
+```
+
+API keys are passed via environment variables: `Llm__Providers__Anthropic__ApiKey`, `Llm__Providers__OpenAi__ApiKey`, `Llm__Providers__DeepSeek__ApiKey`.
+
+## Adding a New LLM Provider
+
+1. If OpenAI-compatible: just add a new entry to `LlmProviderType` enum and configure with `BaseUrl`
+2. If custom SDK: create a new `ILlmProvider` implementation and add a case in `LlmProviderFactory`
+3. Add pricing to `LlmPricing.cs`
+4. Add model options to admin portal `tenant-edit.ts` → `llmModelOptions`

@@ -1,10 +1,18 @@
 # AI-Powered Dispatch
 
-Autonomous and semi-autonomous load-to-truck dispatch powered by the Claude API. Available on the **Enterprise** plan.
+Autonomous and semi-autonomous load-to-truck dispatch with pluggable LLM providers. Available on the **Enterprise** plan.
 
 ## Overview
 
 The agentic dispatcher analyzes your fleet state — unassigned loads, available trucks, driver HOS status, and load board opportunities — then optimizes assignments to maximize fleet utilization while ensuring compliance.
+
+Supports multiple LLM providers out of the box:
+
+| Provider | Models | Notes |
+|----------|--------|-------|
+| **Anthropic** | Claude Sonnet 4.6, Haiku 4.5, Opus 4.6 | Default. Supports prompt caching and extended thinking |
+| **OpenAI** | GPT-5.4 Mini, GPT-5.4, GPT-5.4 Nano | Via official OpenAI SDK |
+| **DeepSeek** | DeepSeek Chat, DeepSeek Reasoner (V3.2) | OpenAI-compatible API |
 
 ## Operating Modes
 
@@ -20,7 +28,7 @@ The agent executes assignments immediately without human approval. Recommended o
 
 ```text
 1. Gather fleet state (loads, trucks, drivers, HOS)
-2. Send context + tools to Claude API
+2. Send context + tools to LLM provider
 3. Agent reasons about optimal assignments
 4. Agent calls tools (assign load, create trip, etc.)
    - Human mode: tools create suggestions
@@ -33,12 +41,13 @@ The agent executes assignments immediately without human approval. Recommended o
 
 | Tool | Type | Description |
 |------|------|-------------|
-| `get_fleet_overview` | Read | Fleet summary: truck count, loads, active trips, violations |
 | `get_unassigned_loads` | Read | All Draft loads not in any trip |
 | `get_available_trucks` | Read | Available trucks with driver HOS data |
 | `get_driver_hos_status` | Read | Detailed HOS for a specific driver |
 | `check_hos_feasibility` | Read | Can a driver complete a trip given HOS remaining? |
+| `batch_check_hos_feasibility` | Read | Batch HOS feasibility for multiple driver-load pairs |
 | `calculate_distance` | Read | Driving distance between two points |
+| `calculate_assignment_metrics` | Read | Revenue/deadhead analysis for a potential assignment |
 | `optimize_trip_stops` | Read | Optimize stop ordering for multi-load trips |
 | `search_load_board` | Read | Search DAT/Truckstop/123Loadboard for opportunities |
 | `assign_load_to_truck` | Write | Assign a load to a truck |
@@ -69,7 +78,8 @@ Every agent run creates a **DispatchSession** with:
 - Mode (HumanInTheLoop / Autonomous)
 - Who triggered it (user or background job)
 - Start/end timestamps
-- Total tokens consumed
+- Total tokens consumed and estimated cost (USD)
+- Model used and provider
 - Agent's summary
 
 Each decision within a session is a **DispatchDecision** with:
@@ -86,9 +96,41 @@ Each decision within a session is a **DispatchDecision** with:
 
 | Variable | Description |
 |----------|-------------|
-| `Llm__ApiKey` | Anthropic API key |
-| `Llm__Model` | Model to use (default: `claude-sonnet-4-6`) |
-| `Llm__MaxTokens` | Max tokens per response (default: 4096) |
+| `Llm__DefaultProvider` | LLM provider: `Anthropic`, `OpenAi`, `DeepSeek`, `Glm` (default: `Anthropic`) |
+| `Llm__Providers__Anthropic__ApiKey` | Anthropic API key |
+| `Llm__Providers__OpenAi__ApiKey` | OpenAI API key |
+| `Llm__Providers__DeepSeek__ApiKey` | DeepSeek API key |
+| `Llm__MaxTokens` | Max tokens per response (default: 8192) |
+
+### appsettings.json
+
+```json
+{
+  "Llm": {
+    "DefaultProvider": "Anthropic",
+    "MaxTokens": 8192,
+    "Providers": {
+      "Anthropic": {
+        "ApiKey": "<key>",
+        "Model": "claude-haiku-4-5"
+      },
+      "OpenAi": {
+        "ApiKey": "<key>",
+        "Model": "gpt-5.4-mini"
+      },
+      "DeepSeek": {
+        "ApiKey": "<key>",
+        "Model": "deepseek-chat",
+        "BaseUrl": "https://api.deepseek.com/v1"
+      }
+    }
+  }
+}
+```
+
+### Per-Tenant Overrides
+
+Admins can override the model per tenant via the Admin Portal → Tenant Edit → AI Dispatch Settings. The `TenantSettings.LlmModel` field accepts any model ID from the configured providers. Extended thinking can also be toggled per tenant.
 
 ### Feature Gating
 
@@ -98,17 +140,37 @@ The feature is gated behind `TenantFeature.AgenticDispatch`, available on the En
 
 ```text
 src/Infrastructure/Logistics.Infrastructure.AI/
-├── Registrar.cs                    # DI registration
-├── Options/LlmOptions.cs           # Configuration
+├── Registrar.cs                         # DI registration
+├── Options/
+│   └── LlmOptions.cs                   # Multi-provider configuration
+├── Providers/
+│   ├── ILlmProvider.cs                  # Provider-agnostic interface
+│   ├── LlmTypes.cs                      # Request/response/message types
+│   ├── AnthropicLlmProvider.cs          # Anthropic SDK adapter
+│   ├── OpenAiLlmProvider.cs             # OpenAI-compatible adapter
+│   └── LlmProviderFactory.cs            # Resolves provider from config
 ├── Services/
-│   ├── ClaudeDispatchAgentService  # Agent loop orchestration
-│   ├── DispatchToolExecutor        # Maps tool calls to MediatR
-│   └── DispatchToolRegistry        # Tool definitions (MCP-ready)
+│   ├── DispatchAgentService.cs          # Agent loop orchestration
+│   ├── DispatchConversationBuilder.cs   # Builds provider-agnostic conversation
+│   ├── DispatchDecisionProcessor.cs     # Tool call → decision entity processing
+│   ├── DispatchToolExecutor.cs          # Maps tool calls to MediatR
+│   ├── DispatchToolRegistry.cs          # Tool definitions (JSON Schema)
+│   └── LlmPricing.cs                   # Token → USD cost calculator
+├── Tools/                               # Individual IDispatchTool implementations
 └── Prompts/
-    └── DispatchSystemPrompt        # Dynamic system prompt builder
+    └── DispatchSystemPrompt.cs          # Dynamic system prompt builder
 ```
 
-The `IDispatchToolRegistry` defines tools once in a format compatible with both the Claude API and future MCP server expansion. Tool definitions include name, description, and JSON Schema — the same schema format used by MCP.
+The provider abstraction (`ILlmProvider`) keeps all SDK-specific code isolated. The agent loop, tools, and decision processor work exclusively with `LlmTypes` — provider-agnostic records for requests, responses, messages, and tool calls.
+
+Tool definitions use JSON Schema, compatible with both Claude API tool schemas and OpenAI function calling.
+
+## Adding a New Provider
+
+1. **OpenAI-compatible** (most providers): Add a new `LlmProviderType` enum value and configure with `BaseUrl` in appsettings
+2. **Custom SDK**: Create a new `ILlmProvider` implementation, add a case in `LlmProviderFactory`
+3. Add model pricing to `LlmPricing.cs`
+4. Add model options to admin portal `tenant-edit.ts` → `llmModelOptions`
 
 ## Future Roadmap
 

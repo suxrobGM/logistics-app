@@ -1,5 +1,6 @@
 using Logistics.Application.Services;
 using Logistics.Infrastructure.AI.Options;
+using Logistics.Infrastructure.AI.Providers;
 using Logistics.Infrastructure.AI.Services;
 using Logistics.Infrastructure.AI.Tools;
 using Microsoft.Extensions.Configuration;
@@ -18,9 +19,12 @@ public static class Registrar
     {
         services.Configure<LlmOptions>(configuration.GetSection(LlmOptions.SectionName));
 
+        // Provider factory
+        services.AddSingleton<LlmProviderFactory>();
+
         // Agent services
         services.AddSingleton<DispatchSessionCancellationRegistry>();
-        services.AddScoped<IDispatchAgentService, ClaudeDispatchAgentService>();
+        services.AddScoped<IDispatchAgentService, DispatchAgentService>();
         services.AddScoped<DispatchConversationBuilder>();
         services.AddScoped<DispatchDecisionProcessor>();
         services.AddScoped<IDispatchToolExecutor, DispatchToolExecutor>();

@@ -1,96 +1,69 @@
-using System.Text.Json.Nodes;
-using Anthropic.SDK;
-using Anthropic.SDK.Messaging;
-using Tool = Anthropic.SDK.Common.Tool;
-using Function = Anthropic.SDK.Common.Function;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Options;
 using Logistics.Infrastructure.AI.Prompts;
+using Logistics.Infrastructure.AI.Providers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.AI.Services;
 
 /// <summary>
-/// Builds the Claude API conversation: client, system prompt, tools, and initial message.
+/// Builds the LLM conversation: provider, system prompt, tools, and initial message.
+/// Provider-agnostic — delegates SDK-specific work to <see cref="ILlmProvider"/>.
 /// </summary>
 internal sealed class DispatchConversationBuilder(
     IDispatchToolRegistry toolRegistry,
     IFeatureService featureService,
+    LlmProviderFactory providerFactory,
     ITenantUnitOfWork tenantUow,
     ILogger<DispatchConversationBuilder> logger)
 {
-    public async Task<(AnthropicClient Client, MessageParameters Parameters, List<Message> Messages)>
-        BuildAsync(DispatchSession session, DispatchAgentRequest request, LlmOptions config)
+    public async Task<LlmConversation> BuildAsync(
+        DispatchSession session,
+        DispatchAgentRequest request,
+        LlmOptions config)
     {
-        if (string.IsNullOrWhiteSpace(config.ApiKey))
-            throw new InvalidOperationException("Claude API key is not configured.");
-
         var tenant = tenantUow.GetCurrentTenant();
         var companyName = tenant.Name ?? "Fleet";
+
+        // Resolve provider: system default (no tenant override yet — extend TenantSettings if needed)
+        var provider = providerFactory.Create();
+        var providerConfig = config.GetProviderConfig(config.DefaultProvider);
+
+        if (string.IsNullOrWhiteSpace(providerConfig.ApiKey))
+            throw new InvalidOperationException("LLM API key is not configured.");
 
         // Check load board feature for this tenant
         var hasLoadBoard = await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.LoadBoard);
         var systemPrompt = DispatchSystemPrompt.Build(companyName, request.Mode, hasLoadBoard);
+        var tools = toolRegistry.GetToolDefinitions(includeLoadBoardTools: hasLoadBoard);
 
-        var tools = toolRegistry.GetToolDefinitions(includeLoadBoardTools: hasLoadBoard)
-            .Select<DispatchToolDefinition, Tool>(t => new Function(t.Name, t.Description, (JsonNode)t.InputSchema))
-            .ToList();
-
-        // Resolve model: per-tenant override → system default
-        var model = tenant.Settings.LlmModel ?? config.Model;
-        if (!LlmOptions.AllowedModels.Contains(model))
-            model = config.Model;
-
+        // Resolve model: per-tenant override → provider default
+        var model = tenant.Settings.LlmModel ?? providerConfig.Model;
         session.ModelUsed = model;
 
         logger.LogInformation(
-            "Agent session {SessionId} initialized with {ToolCount} tools, model {Model}",
-            session.Id, tools.Count, model);
+            "Agent session {SessionId} initialized with {ToolCount} tools, model {Model}, provider {Provider}",
+            session.Id, tools.Count, model, config.DefaultProvider);
 
         // Build user message with optional context
         var userMessage = BuildUserMessage(request);
-
-        // Inject previous session context for conversation memory
         var previousContext = await GetPreviousSessionContextAsync();
         if (previousContext is not null)
             userMessage = $"{previousContext}\n\n{userMessage}";
 
-        var messages = new List<Message>
-        {
-            new(RoleType.User, userMessage)
-        };
+        var messages = new List<LlmMessage> { LlmMessage.FromUser(userMessage) };
 
-        var client = new AnthropicClient(config.ApiKey);
-
-        var parameters = new MessageParameters
-        {
-            Messages = messages,
-            MaxTokens = config.MaxTokens,
-            Model = model,
-            Stream = false,
-            Temperature = 0m,
-            System = [new SystemMessage(systemPrompt) { CacheControl = new CacheControl { Type = CacheControlType.ephemeral } }],
-            Tools = tools
-        };
-
-        // Extended thinking: mutually exclusive with Temperature
+        // Build thinking options
+        LlmThinkingOptions? thinking = null;
         var enableThinking = tenant.Settings.LlmExtendedThinking ?? config.EnableExtendedThinking;
         if (enableThinking)
-        {
-            parameters.Temperature = null;
-            parameters.Thinking = new ThinkingParameters
-            {
-                Type = ThinkingType.enabled,
-                BudgetTokens = config.ThinkingBudgetTokens
-            };
-            parameters.MaxTokens = Math.Max(config.MaxTokens, config.ThinkingBudgetTokens + 4096);
-        }
+            thinking = new LlmThinkingOptions(config.ThinkingBudgetTokens);
 
-        return (client, parameters, messages);
+        return new LlmConversation(provider, systemPrompt, messages, tools, model, config.MaxTokens, thinking);
     }
 
     private static string BuildUserMessage(DispatchAgentRequest request)
@@ -142,3 +115,15 @@ internal sealed class DispatchConversationBuilder(
         return sanitized.Length > 500 ? sanitized[..500] : sanitized;
     }
 }
+
+/// <summary>
+/// Provider-agnostic conversation state returned by <see cref="DispatchConversationBuilder"/>.
+/// </summary>
+internal record LlmConversation(
+    ILlmProvider Provider,
+    string SystemPrompt,
+    List<LlmMessage> Messages,
+    IReadOnlyList<DispatchToolDefinition> Tools,
+    string Model,
+    int MaxTokens,
+    LlmThinkingOptions? Thinking);

@@ -53,7 +53,7 @@ cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 | **Logistics.Infrastructure.Documents** | PDF generation, document storage, VIN decoder |
 | **Logistics.Infrastructure.Routing** | Trip optimization, route planning, geocoding |
 | **Logistics.Infrastructure.Storage** | Azure Blob Storage and file-based storage |
-| **Logistics.Infrastructure.AI** | Claude API dispatch agent, tool registry, agent loop |
+| **Logistics.Infrastructure.AI** | Multi-provider LLM dispatch agent (Anthropic, OpenAI, DeepSeek), tool registry, agent loop |
 
 ### Test Projects
 
@@ -142,4 +142,4 @@ Payments flow directly to trucking company bank accounts via Stripe Connect:
 - **Load Boards**: DAT, Truckstop, 123Loadboard
 - **Mapbox**: Geocoding, route optimization
 - **NHTSA**: VIN decoder
-- **Claude API**: AI dispatch agent (tool use for autonomous dispatching)
+- **LLM Providers**: AI dispatch agent with pluggable providers (Anthropic Claude, OpenAI GPT, DeepSeek)

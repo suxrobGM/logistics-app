@@ -20,5 +20,8 @@ export class Integrations {
     { name: "Stripe", logo: "images/stripe-logo.svg" },
     { name: "Mapbox", logo: "images/mapbox-logo.svg" },
     { name: "Firebase", logo: "images/firebase-logo.svg" },
+    { name: "Anthropic", logo: "images/anthropic-logo.svg" },
+    { name: "OpenAI", logo: "images/openai-logo.svg" },
+    { name: "DeepSeek", logo: "images/deepseek-logo.png" },
   ];
 }
