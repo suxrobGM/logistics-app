@@ -223,8 +223,7 @@ internal static class Setup
         LoadBoardSyncJob.ScheduleJobs();
         MaintenanceReminderJob.ScheduleJobs();
 
-        // AI dispatch agent job disabled - explicitly remove from Hangfire storage
-        // DispatchAgentJob.ScheduleJobs();
+        // Remove old stale dispatch agent job if it exists
         RecurringJob.RemoveIfExists("dispatch-agent");
         return app;
     }

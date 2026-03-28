@@ -94,15 +94,6 @@ Each decision within a session is a **DispatchDecision** with:
 
 The feature is gated behind `TenantFeature.AgenticDispatch`, available on the Enterprise plan only. Enable via the admin portal's feature management or by adding a `PlanFeature` entry.
 
-## Background Job
-
-`DispatchAgentJob` runs every 15 minutes via Hangfire. For each tenant it:
-
-1. Checks if `AgenticDispatch` feature is enabled
-2. Skips if a session is already running
-3. Skips if no unassigned loads exist
-4. Runs the agent in Autonomous mode
-
 ## Architecture
 
 ```text

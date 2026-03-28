@@ -64,6 +64,19 @@
           <div class="flex items-center gap-3">
             <input
               type="checkbox"
+              id="llmEnabled"
+              [formField]="llmSettingsForm.llmEnabled"
+              class="h-4 w-4"
+            />
+            <label for="llmEnabled">LLM Enabled</label>
+            <span class="text-muted-color text-xs">
+              (uncheck to block LLM usage for demo/test tenants)
+            </span>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <input
+              type="checkbox"
               id="extendedThinking"
               [formField]="llmSettingsForm.enableExtendedThinking"
               class="h-4 w-4"

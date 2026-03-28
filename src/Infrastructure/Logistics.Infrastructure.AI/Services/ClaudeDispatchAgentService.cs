@@ -27,6 +27,10 @@ internal sealed class ClaudeDispatchAgentService(
 
     public async Task<DispatchSession> RunAsync(DispatchAgentRequest request, CancellationToken ct = default)
     {
+        var blocked = await CheckLlmDisabledAsync(request, ct);
+        if (blocked is not null)
+            return blocked;
+
         var session = new DispatchSession
         {
             Mode = request.Mode,
@@ -147,6 +151,30 @@ internal sealed class ClaudeDispatchAgentService(
             session.ModelUsed ?? config.Model,
             totalInputTokens, totalOutputTokens,
             totalCacheReadTokens, totalCacheCreationTokens);
+    }
+
+    private async Task<DispatchSession?> CheckLlmDisabledAsync(
+        DispatchAgentRequest request, CancellationToken ct)
+    {
+        if (options.Value.BypassLlmGate)
+            return null;
+
+        var tenant = tenantUow.GetCurrentTenant();
+        if (tenant.Settings.LlmEnabled != false)
+            return null;
+
+        logger.LogInformation("LLM is disabled for tenant {TenantId}, skipping session", request.TenantId);
+
+        var session = new DispatchSession
+        {
+            Mode = request.Mode,
+            TriggeredByUserId = request.TriggeredByUserId,
+            StartedAt = DateTime.UtcNow
+        };
+        session.Fail("LLM is disabled for this tenant. Contact your administrator to enable it.");
+        await tenantUow.Repository<DispatchSession>().AddAsync(session, ct);
+        await tenantUow.SaveChangesAsync(ct);
+        return session;
     }
 
     private async Task<IterationResult> SendWithRetryAsync(

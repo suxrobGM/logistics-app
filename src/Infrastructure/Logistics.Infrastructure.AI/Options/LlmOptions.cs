@@ -12,4 +12,9 @@ public class LlmOptions
     public int MaxTokens { get; set; } = 8192;
     public bool EnableExtendedThinking { get; set; }
     public int ThinkingBudgetTokens { get; set; } = 10000;
+
+    /// <summary>
+    /// When true, skips the per-tenant LlmEnabled check. Set to true in development environments.
+    /// </summary>
+    public bool BypassLlmGate { get; set; }
 }
