@@ -45,7 +45,7 @@ internal static class DispatchSystemPrompt
         var sanitizedName = SanitizeCompanyName(companyName);
 
         var loadBoardStep = hasLoadBoardIntegration
-            ? "\n9. If trucks have no loads after assignments, search load boards with `search_load_board`"
+            ? "\n9. If trucks have no loads after assignments, search load boards with `search_loadboard`"
             : "";
 
         return $$"""

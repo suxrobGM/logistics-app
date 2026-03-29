@@ -31,6 +31,7 @@
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Routing\Logistics.Infrastructure.Routing.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Storage\Logistics.Infrastructure.Storage.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.AI\Logistics.Infrastructure.AI.csproj" />
+    <ProjectReference Include="..\Logistics.McpServer\Logistics.McpServer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

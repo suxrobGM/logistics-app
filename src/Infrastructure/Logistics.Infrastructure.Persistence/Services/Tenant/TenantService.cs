@@ -73,8 +73,15 @@ internal class TenantService(
 
     private string ResolveTenantIdFromHttpContext()
     {
+        // 0) MCP API key context (set by ApiKeyAuthenticationHandler)
+        if (httpContext!.Items.TryGetValue("McpTenantId", out var mcpTenantId)
+            && mcpTenantId is Guid tenantGuid)
+        {
+            return tenantGuid.ToString();
+        }
+
         // 1) Header
-        var headerValue = httpContext!.Request.Headers[TenantHeader].FirstOrDefault();
+        var headerValue = httpContext.Request.Headers[TenantHeader].FirstOrDefault();
         if (!string.IsNullOrWhiteSpace(headerValue))
         {
             return headerValue;

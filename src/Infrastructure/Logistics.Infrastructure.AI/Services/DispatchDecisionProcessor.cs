@@ -25,7 +25,7 @@ internal sealed class DispatchDecisionProcessor(
         "assign_load_to_truck",
         "create_trip",
         "dispatch_trip",
-        "book_load_board_load"
+        "book_loadboard_load"
     ];
 
     public async Task<List<LlmToolResultBlock>> ProcessToolCallsAsync(
@@ -132,7 +132,7 @@ internal sealed class DispatchDecisionProcessor(
         "assign_load_to_truck" => DispatchDecisionType.AssignLoad,
         "create_trip" => DispatchDecisionType.CreateTrip,
         "dispatch_trip" => DispatchDecisionType.DispatchTrip,
-        "book_load_board_load" => DispatchDecisionType.BookLoadBoardLoad,
+        "book_loadboard_load" => DispatchDecisionType.BookLoadBoardLoad,
         _ => DispatchDecisionType.Query
     };
 

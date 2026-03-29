@@ -33,8 +33,8 @@ public class DispatchToolRegistryTests
     {
         var tools = sut.GetToolDefinitions();
 
-        Assert.DoesNotContain(tools, t => t.Name == "search_load_board");
-        Assert.DoesNotContain(tools, t => t.Name == "book_load_board_load");
+        Assert.DoesNotContain(tools, t => t.Name == "search_loadboard");
+        Assert.DoesNotContain(tools, t => t.Name == "book_loadboard_load");
     }
 
     [Fact]
@@ -42,8 +42,8 @@ public class DispatchToolRegistryTests
     {
         var tools = sut.GetToolDefinitions(true);
 
-        Assert.Contains(tools, t => t.Name == "search_load_board");
-        Assert.Contains(tools, t => t.Name == "book_load_board_load");
+        Assert.Contains(tools, t => t.Name == "search_loadboard");
+        Assert.Contains(tools, t => t.Name == "book_loadboard_load");
     }
 
     [Fact]

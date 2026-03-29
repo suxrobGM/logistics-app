@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "logisticsx": {
+      "type": "http",
+      "url": "http://localhost:7000/mcp",
+      "headers": {
+        "Authorization": "Bearer <your-api-key>"
+      },
+      "note": "Replace <your-api-key> with an API key from TMS Portal > Settings > API Keys"
+    }
+  }
+}

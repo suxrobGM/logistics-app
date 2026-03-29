@@ -56,7 +56,7 @@ public class DispatchSystemPromptTests
     {
         var prompt = DispatchSystemPrompt.Build("Fleet", DispatchAgentMode.Autonomous, false);
 
-        Assert.DoesNotContain("search_load_board", prompt);
+        Assert.DoesNotContain("search_loadboard", prompt);
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class DispatchSystemPromptTests
     {
         var prompt = DispatchSystemPrompt.Build("Fleet", DispatchAgentMode.Autonomous, true);
 
-        Assert.Contains("search_load_board", prompt);
+        Assert.Contains("search_loadboard", prompt);
     }
 
     #region Company name sanitization

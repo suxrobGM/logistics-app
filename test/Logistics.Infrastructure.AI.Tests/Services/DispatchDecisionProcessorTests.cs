@@ -84,7 +84,7 @@ public class DispatchDecisionProcessorTests
     [InlineData("assign_load_to_truck", DispatchDecisionType.AssignLoad)]
     [InlineData("create_trip", DispatchDecisionType.CreateTrip)]
     [InlineData("dispatch_trip", DispatchDecisionType.DispatchTrip)]
-    [InlineData("book_load_board_load", DispatchDecisionType.BookLoadBoardLoad)]
+    [InlineData("book_loadboard_load", DispatchDecisionType.BookLoadBoardLoad)]
     [InlineData("get_available_trucks", DispatchDecisionType.Query)]
     [InlineData("check_hos_feasibility", DispatchDecisionType.Query)]
     [InlineData("unknown_tool", DispatchDecisionType.Query)]
@@ -112,7 +112,7 @@ public class DispatchDecisionProcessorTests
     [InlineData("assign_load_to_truck", true)]
     [InlineData("create_trip", true)]
     [InlineData("dispatch_trip", true)]
-    [InlineData("book_load_board_load", true)]
+    [InlineData("book_loadboard_load", true)]
     [InlineData("get_available_trucks", false)]
     [InlineData("calculate_distance", false)]
     public void IsWriteTool_ClassifiesCorrectly(string toolName, bool expected)

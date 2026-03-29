@@ -33,9 +33,10 @@ The platform is built around its **AI dispatch agent** — an agentic system tha
 | Operations | Financial | Compliance | Communication |
 |:-----------|:----------|:-----------|:--------------|
 | AI-powered dispatching | Invoicing & Stripe payments | ELD / HOS (Samsara, Motive) | Real-time messaging |
-| Load management & dispatching | Payroll & timesheets | Safety & DVIR inspections | Push notifications |
-| Trip planning & route optimization | Expense tracking | Document management (POD, BOL) | Customer self-service portal |
-| Fleet & maintenance tracking | Reports & analytics | Role-based access control | Driver mobile app |
+| MCP server for AI tools | Stripe Connect direct payouts | Safety & DVIR inspections | Push notifications |
+| Load management & dispatching | Payroll & timesheets | Document management (POD, BOL) | Customer self-service portal |
+| Trip planning & route optimization | Expense tracking | Role-based access control | Driver mobile app |
+| Fleet & maintenance tracking | Reports & analytics | | |
 | Load board integration (DAT, Truckstop) | | | |
 
 [Complete feature list](docs/features.md)
@@ -151,6 +152,7 @@ src/
 | [API Reference](docs/api/overview.md) | Authentication, endpoints, webhooks |
 | [Deployment](docs/deployment/overview.md) | VPS setup, Docker Compose, Nginx, SSL |
 | [AI Dispatch](docs/ai-dispatch.md) | Agentic dispatcher architecture & API |
+| [MCP Server](docs/mcp-server.md) | Connect Claude Desktop, Cursor & other AI tools to your fleet |
 | [Development](docs/development/backend-guide.md) | Backend, Angular, mobile guides |
 
 ## Contributing

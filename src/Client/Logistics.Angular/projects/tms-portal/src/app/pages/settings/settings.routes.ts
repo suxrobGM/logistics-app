@@ -34,4 +34,11 @@ export const settingsRoutes: Routes = [
     canActivate: [authGuard],
     data: { breadcrumb: "AI" },
   },
+  {
+    path: "api-keys",
+    loadComponent: () =>
+      import("./api-keys-settings/api-keys-settings").then((m) => m.ApiKeysSettingsComponent),
+    canActivate: [authGuard],
+    data: { breadcrumb: "API Keys" },
+  },
 ];

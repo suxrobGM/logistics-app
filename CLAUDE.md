@@ -55,6 +55,15 @@ cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 | **Logistics.Infrastructure.Storage** | Azure Blob Storage and file-based storage |
 | **Logistics.Infrastructure.AI** | Multi-provider LLM dispatch agent (Anthropic, OpenAI, DeepSeek), tool registry, agent loop |
 
+### Presentation Projects
+
+| Project | Purpose |
+|---------|---------|
+| **Logistics.API** | REST API, controllers, middleware, Hangfire jobs |
+| **Logistics.IdentityServer** | Duende IdentityServer, JWT auth, user management |
+| **Logistics.DbMigrator** | EF Core migrations runner for master and tenant DBs |
+| **Logistics.McpServer** | MCP server exposing dispatch tools to external AI clients (Claude Desktop, Cursor, etc.) |
+
 ### Test Projects
 
 | Project                              | Tests For                        | Key Packages                      |
@@ -102,7 +111,7 @@ OrderBy: "Name asc"
 
 ## Key Entities
 
-`Tenant`, `User`, `Customer`, `Load`, `Trip`, `Employee/Driver`, `Invoice`, `Payment`, `Truck`, `Document`, `DispatchSession`, `DispatchDecision`
+`Tenant`, `User`, `Customer`, `Load`, `Trip`, `Employee/Driver`, `Invoice`, `Payment`, `Truck`, `Document`, `DispatchSession`, `DispatchDecision`, `ApiKey`
 
 ### Invoice System
 
@@ -143,3 +152,4 @@ Payments flow directly to trucking company bank accounts via Stripe Connect:
 - **Mapbox**: Geocoding, route optimization
 - **NHTSA**: VIN decoder
 - **LLM Providers**: AI dispatch agent with pluggable providers (Anthropic Claude, OpenAI GPT, DeepSeek). Tiered model access by plan (Base/Premium/Ultra), multiplier-based request quotas (1x/5x/10x)
+- **MCP Server**: Streamable HTTP endpoint at `/mcp` exposing dispatch tools to external AI clients (Claude Desktop, Cursor, Windsurf). Authenticated via tenant-specific API keys (`logsx_{tenantId}_{random}`), rate-limited at 100 req/min per key. Tools are generated dynamically from `DispatchToolRegistry` — single source of truth shared with the AI dispatch agent. Project: `src/Presentation/Logistics.McpServer/`

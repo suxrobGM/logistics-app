@@ -53,6 +53,8 @@ onKeydown(event: KeyboardEvent) {}
 
 ## Styling
 - Tailwind CSS utilities preferred, avoid custom CSS unless necessary
+- **Never use hardcoded color values** (e.g., `bg-yellow-50`, `text-yellow-700`, `border-yellow-200`) — use theme-aware utilities (`bg-subtle`, `bg-elevated`, `border-default`, `text-muted`) or PrimeNG components instead
+- **Prefer PrimeNG or custom components over manual Tailwind** for UI patterns that PrimeNG already provides: use `p-message` for alerts/warnings, `p-tag` for badges, `p-table` for data tables, `p-dialog` for modals, etc. Only use custom Tailwind when no suitable PrimeNG or custom component exists
 
 ## HTTP Caching
 - In-memory cache interceptor (`cacheInterceptor`) caches GET requests based on rules in `projects/shared/src/lib/api/cache.config.ts`

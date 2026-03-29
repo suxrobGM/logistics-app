@@ -49,11 +49,11 @@ The agent executes assignments immediately without human approval. Recommended o
 | `calculate_distance` | Read | Driving distance between two points |
 | `calculate_assignment_metrics` | Read | Revenue/deadhead analysis for a potential assignment |
 | `optimize_trip_stops` | Read | Optimize stop ordering for multi-load trips |
-| `search_load_board` | Read | Search DAT/Truckstop/123Loadboard for opportunities |
+| `search_loadboard` | Read | Search DAT/Truckstop/123Loadboard for opportunities |
 | `assign_load_to_truck` | Write | Assign a load to a truck |
 | `create_trip` | Write | Create a trip from assigned loads |
 | `dispatch_trip` | Write | Transition trip to Dispatched status |
-| `book_load_board_load` | Write | Book a load from a load board |
+| `book_loadboard_load` | Write | Book a load from a load board |
 
 Write tools create suggestions in Human-in-the-Loop mode and execute immediately in Autonomous mode.
 
@@ -174,6 +174,9 @@ Tool definitions use JSON Schema, compatible with both Claude API tool schemas a
 
 ## Future Roadmap
 
-- **MCP Server**: Expose dispatch tools via Model Context Protocol for use from Claude Desktop/Code
 - **Telegram Bot**: Driver and dispatcher interaction via Telegram (accept/reject loads, status updates, fleet summaries)
 - **Learning from overrides**: Track dispatcher corrections to improve future suggestions
+
+## Related
+
+- [MCP Server](mcp-server.md) — connect Claude Desktop, Cursor, and other AI tools to your fleet using the same dispatch tools

@@ -5,7 +5,7 @@ namespace Logistics.Infrastructure.AI.Tools;
 
 internal sealed class SearchLoadBoardTool : IDispatchTool
 {
-    public string Name => "search_load_board";
+    public string Name => "search_loadboard";
 
     public Task<string> ExecuteAsync(JsonNode input, CancellationToken ct)
     {

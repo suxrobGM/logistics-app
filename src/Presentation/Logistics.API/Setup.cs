@@ -24,6 +24,7 @@ using Logistics.Infrastructure.Persistence.Builder;
 using Logistics.Infrastructure.Routing;
 using Logistics.Infrastructure.AI;
 using Logistics.Infrastructure.Storage;
+using Logistics.McpServer;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -57,6 +58,7 @@ internal static class Setup
         services.AddPaymentsInfrastructure(configuration);
         services.AddRoutingInfrastructure(configuration);
         services.AddAIInfrastructure(configuration);
+        services.AddMcpServerInfrastructure();
         services.AddStorageInfrastructure(configuration);
         services.AddPersistenceInfrastructure(configuration)
             .UseLogger(serilogLogger)
@@ -207,6 +209,9 @@ internal static class Setup
         app.UseHangfireDashboard();
 
         app.MapControllers();
+
+        // MCP Server
+        app.MapMcpEndpoint();
 
         // SignalR Hubs
         app.MapHub<TrackingHub>("/hubs/tracking");

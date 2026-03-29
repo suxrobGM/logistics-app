@@ -6,7 +6,7 @@ namespace Logistics.Infrastructure.AI.Services;
 internal sealed class DispatchToolRegistry : IDispatchToolRegistry
 {
     private static readonly HashSet<string> LoadBoardTools =
-        ["search_load_board", "book_load_board_load"];
+        ["search_loadboard", "book_loadboard_load"];
 
     private static readonly List<DispatchToolDefinition> Tools =
     [
@@ -122,7 +122,7 @@ internal sealed class DispatchToolRegistry : IDispatchToolRegistry
                 ["required"] = new JsonArray("candidates")
             })),
 
-        new("search_load_board",
+        new("search_loadboard",
             "Search load boards (DAT, Truckstop, 123Loadboard) for available loads matching criteria. Use this when trucks have capacity gaps to find revenue opportunities.",
             BuildSchema(new JsonObject
             {
@@ -185,7 +185,7 @@ internal sealed class DispatchToolRegistry : IDispatchToolRegistry
                 ["required"] = new JsonArray("trip_id")
             })),
 
-        new("book_load_board_load",
+        new("book_loadboard_load",
             "Book a load from a load board. This claims the load and creates it in the system. In human-in-the-loop mode, creates a suggestion for approval.",
             BuildSchema(new JsonObject
             {

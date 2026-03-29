@@ -18,6 +18,7 @@ The dispatcher and manager web interface for managing all fleet operations.
 | **Session Audit Trail** | Full transparency — every tool call, reasoning step, and decision is logged in a visual timeline with timestamps. |
 | **Re-Planning** | Reject suggestions and re-run the agent with rejection context so it can find alternative assignments. |
 | **Quota Management** | Multiplier-based weekly quotas with tiered model access by subscription plan. Overage billing via Stripe. |
+| **MCP Server** | Connect Claude Desktop, Cursor, Windsurf, and other AI tools directly to fleet data via the Model Context Protocol. Tenant-managed API keys with one-time display, SHA-256 hashing, and per-key rate limiting. |
 
 ### Operations
 
