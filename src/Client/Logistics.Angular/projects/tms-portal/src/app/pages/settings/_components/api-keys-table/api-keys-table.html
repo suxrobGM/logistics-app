@@ -1,0 +1,134 @@
+@if (isLoading()) {
+  <div class="flex justify-center py-8">
+    <p-progress-spinner />
+  </div>
+} @else {
+  <div class="mb-4 flex justify-end">
+    <p-button label="Create API Key" icon="pi pi-plus" (onClick)="openCreateDialog()" />
+  </div>
+
+  @if (apiKeys().length > 0) {
+    <p-table [value]="apiKeys()" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template #header>
+        <tr>
+          <th>Name</th>
+          <th>Key</th>
+          <th>Created</th>
+          <th>Last Used</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-key>
+        <tr>
+          <td>{{ key.name }}</td>
+          <td>
+            <code class="text-sm">{{ key.keyPrefix }}</code>
+          </td>
+          <td>{{ key.createdAt | date: "mediumDate" }}</td>
+          <td>
+            @if (key.lastUsedAt) {
+              {{ key.lastUsedAt | date: "medium" }}
+            } @else {
+              <span class="text-muted">Never</span>
+            }
+          </td>
+          <td>
+            @if (key.isActive) {
+              <p-tag value="Active" severity="success" />
+            } @else {
+              <p-tag value="Revoked" severity="danger" />
+            }
+          </td>
+          <td>
+            @if (key.isActive) {
+              <p-button
+                icon="pi pi-trash"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                pTooltip="Revoke key"
+                (onClick)="confirmRevoke(key)"
+              />
+            }
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="6" class="text-muted text-center">No API keys yet.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  } @else {
+    <div class="text-muted py-8 text-center">
+      <i class="pi pi-key mb-2 text-4xl"></i>
+      <p>No API keys yet. Create one to get started.</p>
+    </div>
+  }
+}
+
+<!-- Create API Key Dialog -->
+<p-dialog
+  header="Create API Key"
+  [(visible)]="showCreateDialog"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+>
+  <ui-labeled-field label="Key Name" for="keyName" [required]="true">
+    <input
+      pInputText
+      id="keyName"
+      [(ngModel)]="newKeyName"
+      placeholder="e.g., Claude Desktop, Cursor"
+      [fluid]="true"
+    />
+  </ui-labeled-field>
+
+  <ng-template #footer>
+    <p-button label="Cancel" [text]="true" (onClick)="showCreateDialog.set(false)" />
+    <p-button
+      label="Create"
+      icon="pi pi-check"
+      [loading]="isCreating()"
+      [disabled]="!newKeyName().trim()"
+      (onClick)="createKey()"
+    />
+  </ng-template>
+</p-dialog>
+
+<!-- One-Time Key Display Dialog -->
+<p-dialog
+  header="API Key Created"
+  [(visible)]="showKeyDialog"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '550px' }"
+  (onHide)="onKeyDialogHide()"
+>
+  @let key = createdKey();
+  @if (key) {
+    <p-message severity="warn" styleClass="mb-4 w-full">
+      Copy your API key now. You won't be able to see it again.
+    </p-message>
+
+    <div class="bg-subtle border-default mb-4 flex items-center gap-2 rounded-lg border p-3">
+      <code class="flex-1 text-sm break-all">{{ key.plaintextKey }}</code>
+      <p-button
+        icon="pi pi-copy"
+        [text]="true"
+        [rounded]="true"
+        pTooltip="Copy to clipboard"
+        (onClick)="copyToClipboard(key.plaintextKey)"
+      />
+    </div>
+
+    <p class="text-muted text-sm">
+      Use this key as a Bearer token for MCP clients or REST API requests.
+    </p>
+  }
+
+  <ng-template #footer>
+    <p-button label="Done" (onClick)="showKeyDialog.set(false)" />
+  </ng-template>
+</p-dialog>

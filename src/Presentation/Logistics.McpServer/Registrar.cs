@@ -19,10 +19,13 @@ public static class Registrar
             .Select(def => (McpServerTool)new DispatchMcpTool(def))
             .ToList();
 
-        // MCP server with Streamable HTTP transport
+        // MCP server with Streamable HTTP transport and server instructions
         services.AddMcpServer()
             .WithHttpTransport()
             .WithTools(mcpTools);
+
+        services.Configure<McpServerOptions>(options =>
+            options.ServerInstructions = McpServerInstructions.Text);
 
         // API key authentication scheme
         services.AddAuthentication()

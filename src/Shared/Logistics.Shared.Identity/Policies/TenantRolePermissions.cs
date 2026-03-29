@@ -72,6 +72,7 @@ public static class TenantRolePermissions
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Safety)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Maintenance)));
         list.AddRange(Permission.GeneratePermissions(nameof(Permission.Dispatch)));
+        list.AddRange(Permission.GeneratePermissions(nameof(Permission.ApiKey)));
         return list;
     }
 

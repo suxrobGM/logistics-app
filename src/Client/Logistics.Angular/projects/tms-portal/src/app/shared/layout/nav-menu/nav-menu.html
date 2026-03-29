@@ -1,9 +1,11 @@
 <!-- Main sections -->
-<div class="flex-1 overflow-y-auto overflow-x-hidden py-2 scrollbar-thin">
+<div class="scrollbar-thin flex-1 overflow-x-hidden overflow-y-auto py-2">
   @for (section of mainSections(); track section.id) {
     <div class="mb-1">
       @if (!collapsed()) {
-        <div class="px-5 pt-3 pb-1.5 text-[0.625rem] font-bold uppercase tracking-widest text-muted select-none first:pt-1.5">
+        <div
+          class="text-muted px-5 pt-3 pb-1.5 text-[0.625rem] font-bold tracking-widest uppercase select-none first:pt-1.5"
+        >
           {{ section.label }}
         </div>
       }
@@ -21,11 +23,9 @@
             (mouseleave)="onItemMouseLeave()"
             (focus)="onItemFocus($event, item)"
             (blur)="onItemBlur()"
-            [pTooltip]="collapsed() ? item.label : ''"
-            tooltipPosition="right"
             type="button"
           >
-            <div class="flex items-center gap-3 min-w-0">
+            <div class="flex min-w-0 items-center gap-3">
               @if (item.icon) {
                 <i [class]="item.icon" class="nav-icon"></i>
               }
@@ -35,30 +35,32 @@
             </div>
             @if (!collapsed()) {
               <i
-                class="pi pi-chevron-down text-[0.6875rem] text-muted shrink-0 transition-transform duration-200"
+                class="pi pi-chevron-down text-muted shrink-0 text-[0.6875rem] transition-transform duration-200"
                 [class.rotate-180]="isGroupExpanded(item)"
                 [class.text-accent]="isGroupExpanded(item)"
               ></i>
             }
           </button>
 
-          <!-- Children -->
-          @if (isGroupExpanded(item) && !collapsed()) {
-            <div class="ml-7 border-l border-subtle py-1">
-              @for (child of item.children; track child.id) {
-                <a
-                  class="nav-child"
-                  [routerLink]="child.route"
-                  routerLinkActive="nav-child-active"
-                  (click)="navigateTo(child)"
-                  (contextmenu)="onChildContextMenu($event, child)"
-                >
-                  <span>{{ child.label }}</span>
-                  @if (child.badge && child.badge()! > 0) {
-                    <p-badge [value]="child.badge()!.toString()" severity="danger" />
-                  }
-                </a>
-              }
+          <!-- Children (animated expand/collapse) -->
+          @if (!collapsed()) {
+            <div class="nav-children-wrapper" [class.expanded]="isGroupExpanded(item)">
+              <div class="nav-children-inner border-subtle ml-7 border-l py-1">
+                @for (child of item.children; track child.id) {
+                  <a
+                    class="nav-child"
+                    [routerLink]="child.route"
+                    routerLinkActive="nav-child-active"
+                    (click)="navigateTo(child)"
+                    (contextmenu)="onChildContextMenu($event, child)"
+                  >
+                    <span>{{ child.label }}</span>
+                    @if (child.badge && child.badge()! > 0) {
+                      <p-badge [value]="child.badge()!.toString()" severity="danger" />
+                    }
+                  </a>
+                }
+              </div>
             </div>
           }
         } @else {
@@ -73,7 +75,7 @@
             [pTooltip]="collapsed() ? item.label : ''"
             tooltipPosition="right"
           >
-            <div class="flex items-center gap-3 min-w-0">
+            <div class="flex min-w-0 items-center gap-3">
               @if (item.icon) {
                 <i [class]="item.icon" class="nav-icon"></i>
               }
@@ -85,7 +87,7 @@
               <p-badge [value]="item.badge()!.toString()" severity="danger" />
             }
             @if (collapsed() && item.badge && item.badge()! > 0) {
-              <span class="absolute top-1 right-1 size-2 rounded-full bg-danger"></span>
+              <span class="bg-danger absolute top-1 right-1 size-2 rounded-full"></span>
             }
           </a>
         }
@@ -96,7 +98,7 @@
 
 <!-- Bottom sections (Settings) -->
 @if (bottomSections().length > 0) {
-  <div class="border-t border-subtle py-2">
+  <div class="border-subtle border-t py-2">
     @for (section of bottomSections(); track section.id) {
       @for (item of section.items; track item.id) {
         @if (item.children) {
@@ -109,11 +111,9 @@
             (mouseleave)="onItemMouseLeave()"
             (focus)="onItemFocus($event, item)"
             (blur)="onItemBlur()"
-            [pTooltip]="collapsed() ? item.label : ''"
-            tooltipPosition="right"
             type="button"
           >
-            <div class="flex items-center gap-3 min-w-0">
+            <div class="flex min-w-0 items-center gap-3">
               @if (item.icon) {
                 <i [class]="item.icon" class="nav-icon"></i>
               }
@@ -123,25 +123,27 @@
             </div>
             @if (!collapsed()) {
               <i
-                class="pi pi-chevron-down text-[0.6875rem] text-muted shrink-0 transition-transform duration-200"
+                class="pi pi-chevron-down text-muted shrink-0 text-[0.6875rem] transition-transform duration-200"
                 [class.rotate-180]="isGroupExpanded(item)"
                 [class.text-accent]="isGroupExpanded(item)"
               ></i>
             }
           </button>
 
-          @if (isGroupExpanded(item) && !collapsed()) {
-            <div class="ml-7 border-l border-subtle py-1">
-              @for (child of item.children; track child.id) {
-                <a
-                  class="nav-child"
-                  [routerLink]="child.route"
-                  routerLinkActive="nav-child-active"
-                  (click)="navigateTo(child)"
-                >
-                  <span>{{ child.label }}</span>
-                </a>
-              }
+          @if (!collapsed()) {
+            <div class="nav-children-wrapper" [class.expanded]="isGroupExpanded(item)">
+              <div class="nav-children-inner border-subtle ml-7 border-l py-1">
+                @for (child of item.children; track child.id) {
+                  <a
+                    class="nav-child"
+                    [routerLink]="child.route"
+                    routerLinkActive="nav-child-active"
+                    (click)="navigateTo(child)"
+                  >
+                    <span>{{ child.label }}</span>
+                  </a>
+                }
+              </div>
             </div>
           }
         } @else {
@@ -151,10 +153,8 @@
             [routerLink]="item.route"
             routerLinkActive="nav-item-active"
             (click)="navigateTo(item)"
-            [pTooltip]="collapsed() ? item.label : ''"
-            tooltipPosition="right"
           >
-            <div class="flex items-center gap-3 min-w-0">
+            <div class="flex min-w-0 items-center gap-3">
               @if (item.icon) {
                 <i [class]="item.icon" class="nav-icon"></i>
               }
@@ -178,7 +178,9 @@
     (mouseenter)="onFlyoutMouseEnter()"
     (mouseleave)="onFlyoutMouseLeave()"
   >
-    <div class="px-3 pt-2 pb-1.5 text-[0.6875rem] font-bold uppercase tracking-wider text-muted border-b border-subtle mb-1">
+    <div
+      class="text-muted border-subtle mb-1 border-b px-3 pt-2 pb-1.5 text-[0.6875rem] font-bold tracking-wider uppercase"
+    >
       {{ hoveredItem()!.label }}
     </div>
     @for (child of hoveredItem()!.children; track child.id) {

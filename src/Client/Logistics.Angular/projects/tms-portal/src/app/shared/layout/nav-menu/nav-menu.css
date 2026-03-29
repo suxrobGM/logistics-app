@@ -71,6 +71,19 @@
   transition: all 150ms ease;
 }
 
+/* Expandable children container — CSS grid animation */
+.nav-children-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 200ms ease;
+}
+.nav-children-wrapper.expanded {
+  grid-template-rows: 1fr;
+}
+.nav-children-inner {
+  overflow: hidden;
+}
+
 /* Children (submenu items) */
 .nav-child {
   display: flex;

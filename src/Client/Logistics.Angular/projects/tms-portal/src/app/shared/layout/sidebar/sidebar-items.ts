@@ -310,8 +310,13 @@ export const sidebarSections: NavSection[] = [
           {
             id: "settings-ai",
             label: "AI Settings",
-            icon: "pi pi-cog",
             route: "/settings/ai",
+          },
+          {
+            id: "settings-api-keys",
+            label: "API Keys",
+            route: "/settings/api-keys",
+            feature: "mcp_server",
           },
           {
             id: "settings-subscription",

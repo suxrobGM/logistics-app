@@ -1,0 +1,118 @@
+<div class="mb-4 flex items-center gap-2">
+  <i class="pi pi-link text-xl"></i>
+  <h2 class="m-0 text-lg font-semibold">MCP Server Integration</h2>
+</div>
+<p class="text-muted mb-4">
+  Connect AI assistants like Claude, GitHub Copilot, Cursor, or Windsurf to your fleet data using
+  the Model Context Protocol. Create an API key above, then use the snippets below.
+</p>
+
+<div class="bg-subtle border-default mb-4 flex items-center gap-2 rounded-lg border p-3">
+  <span class="text-muted text-sm">MCP Endpoint:</span>
+  <code class="flex-1 text-sm font-semibold">{{ mcpEndpoint }}</code>
+  <p-button
+    icon="pi pi-copy"
+    [text]="true"
+    [rounded]="true"
+    pTooltip="Copy endpoint URL"
+    (onClick)="copyToClipboard(mcpEndpoint)"
+  />
+</div>
+
+<p-tabs value="claude-desktop">
+  <p-tablist>
+    <p-tab value="claude-desktop">Claude Desktop</p-tab>
+    <p-tab value="claude-code">Claude Code</p-tab>
+    <p-tab value="cursor">Cursor</p-tab>
+    <p-tab value="copilot">GitHub Copilot</p-tab>
+    <p-tab value="api">REST API</p-tab>
+  </p-tablist>
+
+  <p-tabpanels>
+    <p-tabpanel value="claude-desktop">
+      <p class="text-muted mb-2 text-sm">
+        Add to your <code>claude_desktop_config.json</code>:
+      </p>
+      <div class="bg-subtle border-default relative rounded-lg border p-4">
+        <pre class="text-sm overflow-x-auto">{{ claudeDesktopSnippet }}</pre>
+        <p-button
+          class="absolute top-2 right-2"
+          icon="pi pi-copy"
+          [text]="true"
+          [rounded]="true"
+          size="small"
+          pTooltip="Copy"
+          (onClick)="copyToClipboard(claudeDesktopSnippet)"
+        />
+      </div>
+    </p-tabpanel>
+
+    <p-tabpanel value="claude-code">
+      <p class="text-muted mb-2 text-sm">Run in your terminal:</p>
+      <div class="bg-subtle border-default relative rounded-lg border p-4">
+        <pre class="text-sm overflow-x-auto">{{ claudeCodeSnippet }}</pre>
+        <p-button
+          class="absolute top-2 right-2"
+          icon="pi pi-copy"
+          [text]="true"
+          [rounded]="true"
+          size="small"
+          pTooltip="Copy"
+          (onClick)="copyToClipboard(claudeCodeSnippet)"
+        />
+      </div>
+    </p-tabpanel>
+
+    <p-tabpanel value="cursor">
+      <p class="text-muted mb-2 text-sm">Add to your Cursor MCP settings:</p>
+      <div class="bg-subtle border-default relative rounded-lg border p-4">
+        <pre class="text-sm overflow-x-auto">{{ cursorSnippet }}</pre>
+        <p-button
+          class="absolute top-2 right-2"
+          icon="pi pi-copy"
+          [text]="true"
+          [rounded]="true"
+          size="small"
+          pTooltip="Copy"
+          (onClick)="copyToClipboard(cursorSnippet)"
+        />
+      </div>
+    </p-tabpanel>
+
+    <p-tabpanel value="copilot">
+      <p class="text-muted mb-2 text-sm">
+        Add to your VS Code <code>.vscode/mcp.json</code> or user settings:
+      </p>
+      <div class="bg-subtle border-default relative rounded-lg border p-4">
+        <pre class="text-sm overflow-x-auto">{{ copilotSnippet }}</pre>
+        <p-button
+          class="absolute top-2 right-2"
+          icon="pi pi-copy"
+          [text]="true"
+          [rounded]="true"
+          size="small"
+          pTooltip="Copy"
+          (onClick)="copyToClipboard(copilotSnippet)"
+        />
+      </div>
+    </p-tabpanel>
+
+    <p-tabpanel value="api">
+      <p class="text-muted mb-2 text-sm">
+        Use the API key as a Bearer token for REST API requests:
+      </p>
+      <div class="bg-subtle border-default relative rounded-lg border p-4">
+        <pre class="text-sm overflow-x-auto">{{ apiSnippet }}</pre>
+        <p-button
+          class="absolute top-2 right-2"
+          icon="pi pi-copy"
+          [text]="true"
+          [rounded]="true"
+          size="small"
+          pTooltip="Copy"
+          (onClick)="copyToClipboard(apiSnippet)"
+        />
+      </div>
+    </p-tabpanel>
+  </p-tabpanels>
+</p-tabs>
