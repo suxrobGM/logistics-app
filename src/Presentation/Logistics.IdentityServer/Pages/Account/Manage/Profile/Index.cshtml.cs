@@ -59,7 +59,8 @@ public class ProfileModel : PageModel
         {
             FirstName = Input.FirstName,
             LastName = Input.LastName,
-            PhoneNumber = Input.PhoneNumber
+            PhoneNumber = Input.PhoneNumber,
+            TenantId = user.TenantId
         });
 
         //_signInManage
