@@ -1,7 +1,8 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
-using Logistics.Mappings;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Specifications;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,12 +39,18 @@ internal sealed class GetAllDriversHosStatusHandler(ITenantUnitOfWork tenantUow)
             })
             .ToListAsync(ct);
 
+        // GetDescription() can't run in SQL — apply display names after materialization
+        foreach (var status in hosStatuses)
+        {
+            status.CurrentDutyStatusDisplay = status.CurrentDutyStatus.GetDescription();
+        }
+
         return Result<List<DriverHosStatusDto>>.Ok(hosStatuses);
     }
 }
 
 // Simple specification to include Employee navigation
-internal class AllDriverHosStatusesSpec : Logistics.Domain.Specifications.BaseSpecification<DriverHosStatus>
+internal class AllDriverHosStatusesSpec : BaseSpecification<DriverHosStatus>
 {
     public AllDriverHosStatusesSpec()
     {

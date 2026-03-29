@@ -18,26 +18,26 @@ internal static partial class TelegramMessageFormatter
 
         if (loads.Count == 0)
         {
-            sb.AppendLine("No loads found.");
+            sb.AppendLine(Escape("No loads found."));
             return sb.ToString();
         }
 
         foreach (var load in loads)
         {
-            sb.AppendLine($"{Bold($"#{load.Number}")} {Escape(load.Name ?? "")}");
-            sb.AppendLine($"  Status: {Escape(load.Status.GetDescription())}");
-            sb.AppendLine($"  From: {FormatCity(load.OriginAddress)}");
-            sb.AppendLine($"  To: {FormatCity(load.DestinationAddress)}");
+            sb.AppendLine($"{Bold(Escape($"#{load.Number}"))} {Escape(load.Name ?? "")}");
+            sb.AppendLine(Escape($"  Status: {load.Status.GetDescription()}"));
+            sb.AppendLine(Escape($"  From: {FormatCity(load.OriginAddress)}"));
+            sb.AppendLine(Escape($"  To: {FormatCity(load.DestinationAddress)}"));
 
             if (load.AssignedTruckNumber is not null)
-                sb.AppendLine($"  Truck: {Escape(load.AssignedTruckNumber)}");
+                sb.AppendLine(Escape($"  Truck: {load.AssignedTruckNumber}"));
 
-            sb.AppendLine($"  Cost: ${load.DeliveryCost:N2}");
+            sb.AppendLine(Escape($"  Cost: ${load.DeliveryCost:N2}"));
             sb.AppendLine();
         }
 
         if (totalPages > 1)
-            sb.AppendLine($"Page {page}/{totalPages}");
+            sb.AppendLine(Escape($"Page {page}/{totalPages}"));
 
         return Truncate(sb.ToString());
     }
@@ -50,26 +50,26 @@ internal static partial class TelegramMessageFormatter
 
         if (trucks.Count == 0)
         {
-            sb.AppendLine("No trucks found.");
+            sb.AppendLine(Escape("No trucks found."));
             return sb.ToString();
         }
 
         foreach (var truck in trucks)
         {
             sb.AppendLine($"{Bold(Escape(truck.Number ?? "N/A"))} \\- {Escape(truck.Status.GetDescription())}");
-            sb.AppendLine($"  Type: {Escape(truck.Type.GetDescription())}");
+            sb.AppendLine(Escape($"  Type: {truck.Type.GetDescription()}"));
 
             if (truck.MainDriver is not null)
-                sb.AppendLine($"  Driver: {Escape(truck.MainDriver.FullName ?? "N/A")}");
+                sb.AppendLine(Escape($"  Driver: {truck.MainDriver.FullName ?? "N/A"}"));
 
             if (truck.CurrentAddress is not null)
-                sb.AppendLine($"  Location: {FormatCity(truck.CurrentAddress)}");
+                sb.AppendLine(Escape($"  Location: {FormatCity(truck.CurrentAddress)}"));
 
             sb.AppendLine();
         }
 
         if (totalPages > 1)
-            sb.AppendLine($"Page {page}/{totalPages}");
+            sb.AppendLine(Escape($"Page {page}/{totalPages}"));
 
         return Truncate(sb.ToString());
     }
@@ -82,26 +82,26 @@ internal static partial class TelegramMessageFormatter
 
         if (trips.Count == 0)
         {
-            sb.AppendLine("No active trips found.");
+            sb.AppendLine(Escape("No active trips found."));
             return sb.ToString();
         }
 
         foreach (var trip in trips)
         {
-            sb.AppendLine($"{Bold($"#{trip.Number}")} {Escape(trip.Name)}");
-            sb.AppendLine($"  Status: {Escape(trip.Status.GetDescription())}");
-            sb.AppendLine($"  From: {FormatCity(trip.OriginAddress)}");
-            sb.AppendLine($"  To: {FormatCity(trip.DestinationAddress)}");
-            sb.AppendLine($"  Loads: {trip.LoadsCount}");
+            sb.AppendLine($"{Bold(Escape($"#{trip.Number}"))} {Escape(trip.Name)}");
+            sb.AppendLine(Escape($"  Status: {trip.Status.GetDescription()}"));
+            sb.AppendLine(Escape($"  From: {FormatCity(trip.OriginAddress)}"));
+            sb.AppendLine(Escape($"  To: {FormatCity(trip.DestinationAddress)}"));
+            sb.AppendLine(Escape($"  Loads: {trip.LoadsCount}"));
 
             if (trip.TruckNumber is not null)
-                sb.AppendLine($"  Truck: {Escape(trip.TruckNumber)}");
+                sb.AppendLine(Escape($"  Truck: {trip.TruckNumber}"));
 
             sb.AppendLine();
         }
 
         if (totalPages > 1)
-            sb.AppendLine($"Page {page}/{totalPages}");
+            sb.AppendLine(Escape($"Page {page}/{totalPages}"));
 
         return Truncate(sb.ToString());
     }
@@ -114,20 +114,20 @@ internal static partial class TelegramMessageFormatter
 
         if (statuses.Count == 0)
         {
-            sb.AppendLine("No drivers with HOS data found.");
+            sb.AppendLine(Escape("No drivers with HOS data found."));
             return sb.ToString();
         }
 
         foreach (var status in statuses)
         {
-            var violationMark = status.IsInViolation ? " [!]" : "";
+            var violationMark = status.IsInViolation ? " \\[\\!\\]" : "";
             sb.AppendLine($"{Bold(Escape(status.EmployeeName ?? "Unknown"))}{violationMark}");
-            sb.AppendLine($"  Status: {Escape(status.CurrentDutyStatusDisplay ?? "Unknown")}");
-            sb.AppendLine($"  Driving: {Escape(status.DrivingTimeRemainingDisplay ?? "N/A")}");
-            sb.AppendLine($"  On Duty: {Escape(status.OnDutyTimeRemainingDisplay ?? "N/A")}");
+            sb.AppendLine(Escape($"  Status: {status.CurrentDutyStatusDisplay ?? "Unknown"}"));
+            sb.AppendLine(Escape($"  Driving: {status.DrivingTimeRemainingDisplay ?? "N/A"}"));
+            sb.AppendLine(Escape($"  On Duty: {status.OnDutyTimeRemainingDisplay ?? "N/A"}"));
 
             if (status.IsAvailableForDispatch)
-                sb.AppendLine("  Available for dispatch");
+                sb.AppendLine(Escape("  Available for dispatch"));
 
             sb.AppendLine();
         }
@@ -153,7 +153,7 @@ internal static partial class TelegramMessageFormatter
 
     private static string FormatCity(Address address)
     {
-        return Escape($"{address.City}, {address.State}");
+        return $"{address.City}, {address.State}";
     }
 
     private static string Bold(string text)

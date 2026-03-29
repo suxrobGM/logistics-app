@@ -16,9 +16,15 @@ namespace Logistics.TelegramBot;
 
 public static class Registrar
 {
+    /// <summary>
+    ///   Add Telegram Bot services and handlers
+    /// </summary>
+    /// <param name="services">The service collection</param>
+    /// <param name="configuration">The configuration</param>
+    /// <param name="isDevelopment">If true, uses long polling instead of webhook (for local development)</param>
     public static IServiceCollection AddTelegramBotInfrastructure(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration, bool isDevelopment = false)
     {
         var section = configuration.GetSection(TelegramBotOptions.SectionName);
         services.Configure<TelegramBotOptions>(section);
@@ -54,9 +60,9 @@ public static class Registrar
         // Background services
         services.AddHostedService<TelegramChatCacheWarmer>();
 
-        if (string.IsNullOrEmpty(botOptions?.WebhookUrl))
+        // Development mode: use long polling
+        if (isDevelopment)
         {
-            // Development mode: use long polling
             services.AddHostedService<TelegramPollingService>();
         }
 
@@ -70,9 +76,9 @@ public static class Registrar
         if (string.IsNullOrEmpty(options.BotToken))
             return app;
 
-        if (!string.IsNullOrEmpty(options.WebhookUrl))
+        // Production mode: register webhook with Telegram
+        if (app.Environment.IsProduction() && !string.IsNullOrEmpty(options.WebhookUrl))
         {
-            // Production mode: register webhook with Telegram
             var capturedOptions = options;
             app.MapPost("/webhooks/telegram",
                 (HttpContext context, IServiceScopeFactory scopeFactory) =>

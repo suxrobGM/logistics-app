@@ -60,7 +60,7 @@ internal static class Setup
         services.AddRoutingInfrastructure(configuration);
         services.AddAIInfrastructure(configuration);
         services.AddMcpServerInfrastructure();
-        services.AddTelegramBotInfrastructure(configuration);
+        services.AddTelegramBotInfrastructure(configuration, builder.Environment.IsDevelopment());
         services.AddStorageInfrastructure(configuration);
         services.AddPersistenceInfrastructure(configuration)
             .UseLogger(serilogLogger)

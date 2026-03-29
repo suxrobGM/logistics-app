@@ -17,14 +17,14 @@ internal sealed class HelpCommand : ITelegramCommand
         const string text = """
             *Available Commands*
 
-            /start \\- Connect to your company
-            /disconnect \\- Disconnect from your company
-            /loads \\- View active loads
-            /trucks \\- View available trucks
-            /trips \\- View active trips
-            /hos \\- View driver HOS status
-            /notify `on|off` \\- Toggle notifications
-            /help \\- Show this help message
+            /start \- Connect to your company
+            /disconnect \- Disconnect from your company
+            /loads \- View active loads
+            /trucks \- View available trucks
+            /trips \- View active trips
+            /hos \- View driver HOS status
+            /notify `on\|off` \- Toggle notifications
+            /help \- Show this help message
             """;
 
         await bot.SendMessage(
