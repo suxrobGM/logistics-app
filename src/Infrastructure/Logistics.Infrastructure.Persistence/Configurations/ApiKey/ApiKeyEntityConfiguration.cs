@@ -25,6 +25,5 @@ internal sealed class ApiKeyEntityConfiguration : IEntityTypeConfiguration<ApiKe
             .HasMaxLength(64);
 
         builder.HasIndex(k => k.KeyHash).IsUnique();
-        builder.HasIndex(k => k.IsActive);
     }
 }

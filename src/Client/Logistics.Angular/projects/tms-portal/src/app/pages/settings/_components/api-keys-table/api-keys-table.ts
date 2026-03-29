@@ -15,7 +15,6 @@ import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { LabeledField } from "@/shared/components";
@@ -30,7 +29,6 @@ import { LabeledField } from "@/shared/components";
     InputTextModule,
     MessageModule,
     TableModule,
-    TagModule,
     TooltipModule,
     LabeledField,
     DatePipe,

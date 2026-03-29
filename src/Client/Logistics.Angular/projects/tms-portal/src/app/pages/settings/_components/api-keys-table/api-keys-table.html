@@ -15,7 +15,6 @@
           <th>Key</th>
           <th>Created</th>
           <th>Last Used</th>
-          <th>Status</th>
           <th></th>
         </tr>
       </ng-template>
@@ -34,23 +33,14 @@
             }
           </td>
           <td>
-            @if (key.isActive) {
-              <p-tag value="Active" severity="success" />
-            } @else {
-              <p-tag value="Revoked" severity="danger" />
-            }
-          </td>
-          <td>
-            @if (key.isActive) {
-              <p-button
-                icon="pi pi-trash"
-                severity="danger"
-                [text]="true"
-                [rounded]="true"
-                pTooltip="Revoke key"
-                (onClick)="confirmRevoke(key)"
-              />
-            }
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              [text]="true"
+              [rounded]="true"
+              pTooltip="Revoke key"
+              (onClick)="confirmRevoke(key)"
+            />
           </td>
         </tr>
       </ng-template>

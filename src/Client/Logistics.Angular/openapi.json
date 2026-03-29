@@ -13720,9 +13720,6 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
-          },
-          "isActive": {
-            "type": "boolean"
           }
         },
         "additionalProperties": false

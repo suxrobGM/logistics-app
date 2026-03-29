@@ -5,5 +5,4 @@ public record ApiKeyDto(
     string Name,
     string KeyPrefix,
     DateTime CreatedAt,
-    DateTime? LastUsedAt,
-    bool IsActive);
+    DateTime? LastUsedAt);

@@ -55,7 +55,7 @@ internal sealed class ApiKeyAuthenticationHandler(
 
         var keyHash = ApiKeyHasher.Hash(rawKey);
         var apiKey = await tenantUow.Repository<ApiKey>()
-            .GetAsync(k => k.KeyHash == keyHash && k.IsActive);
+            .GetAsync(k => k.KeyHash == keyHash);
 
         if (apiKey is null)
         {

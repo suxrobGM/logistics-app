@@ -20,8 +20,7 @@ internal sealed class GetApiKeysHandler(
                 k.Name,
                 k.KeyPrefix,
                 k.CreatedAt,
-                k.LastUsedAt,
-                k.IsActive))
+                k.LastUsedAt))
             .ToList();
 
         return Result<List<ApiKeyDto>>.Ok(dtos);

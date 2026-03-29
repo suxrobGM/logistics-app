@@ -13,5 +13,4 @@ public class ApiKey : Entity, ITenantEntity
     public required string KeyPrefix { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? LastUsedAt { get; set; }
-    public bool IsActive { get; set; } = true;
 }
