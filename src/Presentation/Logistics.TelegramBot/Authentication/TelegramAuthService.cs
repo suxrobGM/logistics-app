@@ -34,7 +34,6 @@ internal sealed class TelegramAuthService(
 
         await masterUow.Repository<TelegramLoginState>().AddAsync(loginState, ct);
         await masterUow.SaveChangesAsync(ct);
-
         return state;
     }
 
@@ -71,7 +70,7 @@ internal sealed class TelegramAuthService(
         return context;
     }
 
-    public TelegramChatContext? ResolveChatContext(long chatId)
+    public static TelegramChatContext? ResolveChatContext(long chatId)
     {
         return Cache.TryGetValue(chatId, out var context) ? context : null;
     }

@@ -40,7 +40,6 @@ internal sealed class TelegramChatCacheWarmer(
         var masterUow = scope.ServiceProvider.GetRequiredService<IMasterUnitOfWork>();
         var tenantUow = scope.ServiceProvider.GetRequiredService<ITenantUnitOfWork>();
         var featureService = scope.ServiceProvider.GetRequiredService<IFeatureService>();
-        var authService = scope.ServiceProvider.GetRequiredService<TelegramAuthService>();
 
         var tenants = await masterUow.Repository<Tenant>().GetListAsync(ct: ct);
         var totalChats = 0;
