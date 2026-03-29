@@ -22,6 +22,15 @@ internal sealed class TelegramAuthService(
         TelegramChatType chatType,
         CancellationToken ct = default)
     {
+        // Remove any existing pending states for this chat
+        var staleStates = await masterUow.Repository<TelegramLoginState>()
+            .GetListAsync(s => s.ChatId == chatId && !s.IsConsumed, ct: ct);
+
+        foreach (var stale in staleStates)
+        {
+            masterUow.Repository<TelegramLoginState>().Delete(stale);
+        }
+
         var state = GenerateState();
 
         var loginState = new TelegramLoginState
@@ -35,6 +44,27 @@ internal sealed class TelegramAuthService(
         await masterUow.Repository<TelegramLoginState>().AddAsync(loginState, ct);
         await masterUow.SaveChangesAsync(ct);
         return state;
+    }
+
+    /// <summary>
+    /// Removes expired and consumed login states older than the specified age.
+    /// </summary>
+    public async Task CleanupStaleStatesAsync(CancellationToken ct = default)
+    {
+        var cutoff = DateTime.UtcNow.AddHours(-1);
+        var staleStates = await masterUow.Repository<TelegramLoginState>()
+            .GetListAsync(s => s.ExpiresAt < cutoff, ct: ct);
+
+        if (staleStates.Count == 0)
+            return;
+
+        foreach (var state in staleStates)
+        {
+            masterUow.Repository<TelegramLoginState>().Delete(state);
+        }
+
+        await masterUow.SaveChangesAsync(ct);
+        logger.LogInformation("Cleaned up {Count} stale Telegram login states", staleStates.Count);
     }
 
     /// <summary>

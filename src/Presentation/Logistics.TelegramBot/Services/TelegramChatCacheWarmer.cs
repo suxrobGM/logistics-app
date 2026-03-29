@@ -27,6 +27,11 @@ internal sealed class TelegramChatCacheWarmer(
         try
         {
             await WarmCacheAsync(stoppingToken);
+
+            // Clean up expired login states on startup
+            using var cleanupScope = scopeFactory.CreateScope();
+            var authService = cleanupScope.ServiceProvider.GetRequiredService<TelegramAuthService>();
+            await authService.CleanupStaleStatesAsync(stoppingToken);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
