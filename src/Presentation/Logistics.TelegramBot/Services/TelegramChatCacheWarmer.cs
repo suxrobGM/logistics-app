@@ -59,12 +59,12 @@ internal sealed class TelegramChatCacheWarmer(
             {
                 var context = new TelegramChatContext(
                     tenant.Id,
-                    chat.ApiKeyId,
+                    chat.UserId,
                     chat.ChatType,
                     chat.Role,
                     tenant.Name);
 
-                authService.WarmCache(chat.ChatId, context);
+                TelegramAuthService.WarmCache(chat.ChatId, context);
                 totalChats++;
             }
         }

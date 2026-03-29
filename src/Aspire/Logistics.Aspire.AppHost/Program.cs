@@ -66,6 +66,7 @@ var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithEnvironment("TelegramBot__BotToken", builder.GetConfigValue("TelegramBot:BotToken"))
     .WithEnvironment("TelegramBot__WebhookUrl", builder.GetConfigValue("TelegramBot:WebhookUrl"))
     .WithEnvironment("TelegramBot__SecretToken", builder.GetConfigValue("TelegramBot:SecretToken"))
+    .WithEnvironment("TelegramBot__IdentityServerUrl", builder.GetConfigValue("TelegramBot:IdentityServerUrl"))
     .WithEnvironment("CustomerPortal__BaseUrl", builder.GetConfigValue("CustomerPortal:BaseUrl"))
     .WithEnvironment("FileBlobStorage__BaseUrl", builder.GetConfigValue("FileBlobStorage:BaseUrl"))
     .WithEnvironment("TenantsDatabaseConfig__DatabaseNameTemplate",

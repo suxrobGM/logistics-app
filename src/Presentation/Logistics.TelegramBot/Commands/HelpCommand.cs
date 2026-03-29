@@ -17,7 +17,7 @@ internal sealed class HelpCommand : ITelegramCommand
         const string text = """
             *Available Commands*
 
-            /connect `api_key` \\- Connect to your company
+            /start \\- Connect to your company
             /disconnect \\- Disconnect from your company
             /loads \\- View active loads
             /trucks \\- View available trucks

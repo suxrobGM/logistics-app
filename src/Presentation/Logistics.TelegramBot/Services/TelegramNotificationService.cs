@@ -5,6 +5,7 @@ using Logistics.Domain.Primitives.Enums;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types.Enums;
 
 namespace Logistics.TelegramBot.Services;
@@ -54,6 +55,14 @@ internal sealed class TelegramNotificationService(
                         formattedMessage,
                         parseMode: ParseMode.MarkdownV2,
                         cancellationToken: ct);
+                }
+                catch (ApiRequestException ex) when (ex.ErrorCode == 403)
+                {
+                    // Bot was blocked by user or kicked from group — remove the chat
+                    logger.LogInformation(
+                        "Bot blocked/kicked from chat {ChatId}, removing", chat.ChatId);
+                    tenantUow.Repository<TelegramChat>().Delete(chat);
+                    await tenantUow.SaveChangesAsync(ct);
                 }
                 catch (Exception ex)
                 {

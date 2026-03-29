@@ -4,7 +4,7 @@ namespace Logistics.TelegramBot.Authentication;
 
 internal sealed record TelegramChatContext(
     Guid TenantId,
-    Guid ApiKeyId,
+    Guid? UserId,
     TelegramChatType ChatType,
     TelegramChatRole? Role,
     string TenantName);

@@ -1,0 +1,43 @@
+@page
+@model Logistics.IdentityServer.Pages.Telegram.Login
+
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="card shadow-sm">
+            <div class="card-body text-center py-5">
+                @if (Model.Success)
+                {
+                    <div class="mb-4">
+                        <i class="bi bi-telegram text-primary" style="font-size: 4rem;"></i>
+                    </div>
+                    <h3 class="text-success mb-3">Connected!</h3>
+                    <p class="text-muted mb-2">
+                        <strong>@Model.UserName</strong> is now connected to
+                        <strong>@Model.TenantName</strong> via Telegram.
+                    </p>
+                    @if (!string.IsNullOrEmpty(Model.RoleDisplay))
+                    {
+                        <p class="text-muted mb-4">
+                            Role: <span class="badge bg-primary">@Model.RoleDisplay</span>
+                        </p>
+                    }
+                    <hr class="my-4" />
+                    <p class="small text-muted mb-0">
+                        You can close this window and return to Telegram.
+                    </p>
+                }
+                else
+                {
+                    <div class="mb-4">
+                        <i class="bi bi-exclamation-triangle text-warning" style="font-size: 4rem;"></i>
+                    </div>
+                    <h3 class="text-danger mb-3">Connection Failed</h3>
+                    <p class="text-muted mb-4">@Model.ErrorMessage</p>
+                    <p class="small text-muted mb-0">
+                        Please return to Telegram and try again.
+                    </p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
-using Logistics.Application.Services;
-using Logistics.Application.Utilities;
+using System.Security.Cryptography;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -11,86 +10,65 @@ namespace Logistics.TelegramBot.Authentication;
 internal sealed class TelegramAuthService(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
-    IFeatureService featureService,
     ILogger<TelegramAuthService> logger)
 {
-    private const string KeyPrefix = "logsx_";
-
     private static readonly ConcurrentDictionary<long, TelegramChatContext> Cache = new();
 
-    public async Task<AuthResult> AuthenticateAsync(
+    /// <summary>
+    /// Creates a login state and returns the state token for the login URL.
+    /// </summary>
+    public async Task<string> CreateLoginStateAsync(
         long chatId,
-        string rawApiKey,
         TelegramChatType chatType,
-        TelegramChatRole? role,
-        string? username,
-        string? firstName,
-        string? groupTitle,
         CancellationToken ct = default)
     {
-        if (!rawApiKey.StartsWith(KeyPrefix))
-            return AuthResult.Fail("Invalid API key format.");
+        var state = GenerateState();
 
-        if (!TryParseTenantId(rawApiKey, out var tenantId))
-            return AuthResult.Fail("Invalid API key format.");
-
-        var tenant = await masterUow.Repository<Tenant>()
-            .GetAsync(t => t.Id == tenantId, ct);
-
-        if (tenant is null)
-            return AuthResult.Fail("Invalid API key.");
-
-        tenantUow.SetCurrentTenant(tenant);
-
-        var keyHash = ApiKeyHasher.Hash(rawApiKey);
-        var apiKey = await tenantUow.Repository<ApiKey>()
-            .GetAsync(k => k.KeyHash == keyHash, ct);
-
-        if (apiKey is null)
-            return AuthResult.Fail("Invalid API key.");
-
-        if (!await featureService.IsFeatureEnabledAsync(tenantId, TenantFeature.TelegramBot))
-            return AuthResult.Fail("Telegram Bot feature is not enabled for this tenant. Please upgrade your subscription plan.");
-
-        // Upsert TelegramChat entity
-        var existingChat = await tenantUow.Repository<TelegramChat>()
-            .GetAsync(c => c.ChatId == chatId, ct);
-
-        if (existingChat is not null)
+        var loginState = new TelegramLoginState
         {
-            existingChat.ApiKeyId = apiKey.Id;
-            existingChat.ChatType = chatType;
-            existingChat.Role = role;
-            existingChat.Username = username;
-            existingChat.FirstName = firstName;
-            existingChat.GroupTitle = groupTitle;
-            existingChat.ConnectedAt = DateTime.UtcNow;
-        }
-        else
-        {
-            existingChat = new TelegramChat
-            {
-                ChatId = chatId,
-                ChatType = chatType,
-                Role = role,
-                Username = username,
-                FirstName = firstName,
-                GroupTitle = groupTitle,
-                ApiKeyId = apiKey.Id
-            };
-            await tenantUow.Repository<TelegramChat>().AddAsync(existingChat, ct);
-        }
+            State = state,
+            ChatId = chatId,
+            ChatType = chatType,
+            ExpiresAt = DateTime.UtcNow.AddMinutes(5)
+        };
 
-        await tenantUow.SaveChangesAsync(ct);
+        await masterUow.Repository<TelegramLoginState>().AddAsync(loginState, ct);
+        await masterUow.SaveChangesAsync(ct);
 
-        var context = new TelegramChatContext(tenantId, apiKey.Id, chatType, role, tenant.Name);
-        Cache[chatId] = context;
+        return state;
+    }
+
+    /// <summary>
+    /// Polls for a consumed login state. Returns the context if login is complete, null if still pending.
+    /// </summary>
+    public async Task<TelegramChatContext?> CheckLoginStateAsync(
+        string state,
+        CancellationToken ct = default)
+    {
+        var loginState = await masterUow.Repository<TelegramLoginState>()
+            .GetAsync(s => s.State == state, ct);
+
+        if (loginState is null || !loginState.IsConsumed)
+            return null;
+
+        if (loginState.TenantId is null || loginState.TenantName is null)
+            return null;
+
+        var context = new TelegramChatContext(
+            loginState.TenantId.Value,
+            loginState.UserId,
+            loginState.ChatType,
+            loginState.ResolvedRole,
+            loginState.TenantName);
+
+        // Cache the context
+        Cache[loginState.ChatId] = context;
 
         logger.LogInformation(
-            "Telegram chat {ChatId} ({ChatType}) connected to tenant {TenantName}",
-            chatId, chatType, tenant.Name);
+            "Telegram chat {ChatId} authenticated via Identity Server for tenant {TenantName}",
+            loginState.ChatId, loginState.TenantName);
 
-        return AuthResult.Ok(context);
+        return context;
     }
 
     public TelegramChatContext? ResolveChatContext(long chatId)
@@ -123,49 +101,16 @@ internal sealed class TelegramAuthService(
         return true;
     }
 
-    public async Task UpdateRoleAsync(long chatId, TelegramChatRole role, CancellationToken ct = default)
-    {
-        var context = ResolveChatContext(chatId);
-        if (context is null)
-            return;
-
-        await tenantUow.SetCurrentTenantByIdAsync(context.TenantId);
-        var chat = await tenantUow.Repository<TelegramChat>()
-            .GetAsync(c => c.ChatId == chatId, ct);
-
-        if (chat is not null)
-        {
-            chat.Role = role;
-            await tenantUow.SaveChangesAsync(ct);
-        }
-
-        Cache[chatId] = context with { Role = role };
-    }
-
-    public void WarmCache(long chatId, TelegramChatContext context)
+    public static void WarmCache(long chatId, TelegramChatContext context)
     {
         Cache[chatId] = context;
     }
 
-    public static void InvalidateCache(long chatId)
+    private static string GenerateState()
     {
-        Cache.TryRemove(chatId, out _);
+        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(24))
+            .Replace("+", "-")
+            .Replace("/", "_")
+            .TrimEnd('=');
     }
-
-    private static bool TryParseTenantId(string rawKey, out Guid tenantId)
-    {
-        tenantId = Guid.Empty;
-        var afterPrefix = rawKey[KeyPrefix.Length..];
-        var underscoreIndex = afterPrefix.IndexOf('_');
-        if (underscoreIndex <= 0)
-            return false;
-
-        return Guid.TryParse(afterPrefix[..underscoreIndex], out tenantId);
-    }
-}
-
-internal sealed record AuthResult(bool IsSuccess, string? Error, TelegramChatContext? Context)
-{
-    public static AuthResult Ok(TelegramChatContext context) => new(true, null, context);
-    public static AuthResult Fail(string error) => new(false, error, null);
 }

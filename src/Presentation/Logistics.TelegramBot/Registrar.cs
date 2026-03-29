@@ -20,8 +20,10 @@ public static class Registrar
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var botOptions = configuration.GetSection(TelegramBotOptions.SectionName).Get<TelegramBotOptions>();
+        var section = configuration.GetSection(TelegramBotOptions.SectionName);
+        services.Configure<TelegramBotOptions>(section);
 
+        var botOptions = section.Get<TelegramBotOptions>();
         if (string.IsNullOrEmpty(botOptions?.BotToken))
             return services;
 
@@ -38,7 +40,6 @@ public static class Registrar
 
         // Commands
         services.AddScoped<ITelegramCommand, StartCommand>();
-        services.AddScoped<ITelegramCommand, ConnectCommand>();
         services.AddScoped<ITelegramCommand, DisconnectCommand>();
         services.AddScoped<ITelegramCommand, LoadsCommand>();
         services.AddScoped<ITelegramCommand, TrucksCommand>();

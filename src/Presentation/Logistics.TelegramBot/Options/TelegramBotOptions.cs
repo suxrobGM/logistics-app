@@ -6,4 +6,5 @@ internal sealed class TelegramBotOptions
     public string BotToken { get; set; } = "";
     public string? WebhookUrl { get; set; }
     public string? SecretToken { get; set; }
+    public string? IdentityServerUrl { get; set; }
 }

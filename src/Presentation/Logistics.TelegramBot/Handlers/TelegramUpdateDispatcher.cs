@@ -70,6 +70,11 @@ internal sealed class TelegramUpdateDispatcher(
                 case UpdateType.CallbackQuery when update.CallbackQuery is not null:
                     await callbackQueryHandler.HandleAsync(bot, update.CallbackQuery, context, ct);
                     break;
+
+                // Handle bot blocked by user or kicked from group
+                case UpdateType.MyChatMember when update.MyChatMember is not null:
+                    await HandleBotMembershipChangeAsync(update.MyChatMember, ct);
+                    break;
             }
 
             // Fire-and-forget LastInteractionAt update
@@ -90,6 +95,7 @@ internal sealed class TelegramUpdateDispatcher(
         {
             UpdateType.Message => update.Message?.Chat.Id,
             UpdateType.CallbackQuery => update.CallbackQuery?.Message?.Chat.Id,
+            UpdateType.MyChatMember => update.MyChatMember?.Chat.Id,
             _ => null
         };
     }
@@ -113,6 +119,24 @@ internal sealed class TelegramUpdateDispatcher(
         LastCommandTime[chatId] = now;
         CommandCounts[chatId] = 1;
         return false;
+    }
+
+    private async Task HandleBotMembershipChangeAsync(
+        ChatMemberUpdated memberUpdate,
+        CancellationToken ct)
+    {
+        var newStatus = memberUpdate.NewChatMember.Status;
+
+        // Bot was blocked by user or kicked from group
+        if (newStatus is ChatMemberStatus.Kicked or ChatMemberStatus.Left)
+        {
+            var chatId = memberUpdate.Chat.Id;
+            logger.LogInformation(
+                "Bot removed from chat {ChatId} (status: {Status}), cleaning up",
+                chatId, newStatus);
+
+            await authService.DisconnectAsync(chatId, ct);
+        }
     }
 
     private async Task UpdateLastInteractionAsync(long chatId, TelegramChatContext context)
