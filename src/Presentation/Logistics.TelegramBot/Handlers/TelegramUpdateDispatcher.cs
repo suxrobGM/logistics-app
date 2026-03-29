@@ -58,13 +58,7 @@ internal sealed class TelegramUpdateDispatcher(
                     {
                         await commandRouter.RouteAsync(bot, update.Message, context, ct);
                     }
-                    else if (context is not null)
-                    {
-                        await bot.SendMessage(
-                            chatId.Value,
-                            "Use /help to see available commands.",
-                            cancellationToken: ct);
-                    }
+                    // Ignore replies and non-command messages silently
                     break;
 
                 case UpdateType.CallbackQuery when update.CallbackQuery is not null:
