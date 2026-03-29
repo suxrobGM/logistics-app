@@ -35,7 +35,7 @@ internal sealed class NotifyCommand(ITenantUnitOfWork tenantUow) : ITelegramComm
         {
             await bot.SendMessage(
                 message.Chat.Id,
-                "Chat not found. Please reconnect with /connect.",
+                "Chat not found. Please reconnect with /start.",
                 cancellationToken: ct);
             return;
         }

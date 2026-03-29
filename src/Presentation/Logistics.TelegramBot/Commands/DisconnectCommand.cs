@@ -16,7 +16,7 @@ internal sealed class DisconnectCommand(TelegramAuthService authService) : ITele
         var success = await authService.DisconnectAsync(message.Chat.Id, ct);
 
         var text = success
-            ? "Disconnected successfully. Use /connect to reconnect."
+            ? "Disconnected successfully. Use /start to reconnect."
             : "You are not connected.";
 
         await bot.SendMessage(message.Chat.Id, text, cancellationToken: ct);

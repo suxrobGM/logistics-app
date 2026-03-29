@@ -41,7 +41,7 @@ internal sealed class CommandRouter(IEnumerable<ITelegramCommand> telegramComman
         {
             await bot.SendMessage(
                 message.Chat.Id,
-                "You need to connect first. Use /connect <api_key> to authenticate.",
+                "You need to connect first. Use /start to authenticate.",
                 cancellationToken: ct);
             return;
         }
