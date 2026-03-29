@@ -43,7 +43,7 @@ internal sealed class TelegramUpdateDispatcher(
                 return;
             }
 
-            var context = TelegramAuthService.ResolveChatContext(chatId.Value);
+            var context = await authService.ResolveChatContextAsync(chatId.Value, ct);
 
             // Set tenant context if authenticated
             if (context is not null)

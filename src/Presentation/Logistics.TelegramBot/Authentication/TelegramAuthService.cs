@@ -70,14 +70,37 @@ internal sealed class TelegramAuthService(
         return context;
     }
 
-    public static TelegramChatContext? ResolveChatContext(long chatId)
+    /// <summary>
+    /// Resolves chat context from cache, falling back to the master DB if not cached.
+    /// Handles the case where Identity Server created the TelegramChat but the
+    /// bot's in-memory cache hasn't been updated yet (e.g., after login completes).
+    /// </summary>
+    public async Task<TelegramChatContext?> ResolveChatContextAsync(long chatId, CancellationToken ct = default)
     {
-        return Cache.TryGetValue(chatId, out var context) ? context : null;
+        if (Cache.TryGetValue(chatId, out var cached))
+            return cached;
+
+        // DB fallback: find the most recent consumed login state for this chatId
+        var loginState = await masterUow.Repository<TelegramLoginState>()
+            .GetAsync(s => s.ChatId == chatId && s.IsConsumed && s.TenantId != null, ct);
+
+        if (loginState?.TenantId is null || loginState.TenantName is null)
+            return null;
+
+        var context = new TelegramChatContext(
+            loginState.TenantId.Value,
+            loginState.UserId,
+            loginState.ChatType,
+            loginState.ResolvedRole,
+            loginState.TenantName);
+
+        Cache[chatId] = context;
+        return context;
     }
 
     public async Task<bool> DisconnectAsync(long chatId, CancellationToken ct = default)
     {
-        var context = ResolveChatContext(chatId);
+        var context = await ResolveChatContextAsync(chatId, ct);
         if (context is null)
             return false;
 
