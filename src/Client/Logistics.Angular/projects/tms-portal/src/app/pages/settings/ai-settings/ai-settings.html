@@ -17,9 +17,14 @@
       }
 
       <p-card>
-        <p class="text-muted mb-6">
+        <p class="text-muted mb-4">
           Configure your preferred AI provider and model for the dispatch agent.
         </p>
+
+        <p-message severity="secondary" class="mb-6">
+          Using the MCP server with external AI tools (Claude Desktop, Cursor, etc.) does not count
+          against your weekly quota.
+        </p-message>
 
         <!-- Model -->
         <ui-labeled-field label="Model" for="model" class="mb-4">

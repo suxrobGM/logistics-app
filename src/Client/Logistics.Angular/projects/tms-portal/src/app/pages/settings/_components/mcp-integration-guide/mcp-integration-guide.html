@@ -6,6 +6,9 @@
   Connect AI assistants like Claude, GitHub Copilot, Cursor, or Windsurf to your fleet data using
   the Model Context Protocol. Create an API key above, then use the snippets below.
 </p>
+<p-message severity="secondary" class="mb-4">
+  MCP server usage does not count against your weekly AI dispatch quota.
+</p-message>
 
 <div class="bg-subtle border-default mb-4 flex items-center gap-2 rounded-lg border p-3">
   <span class="text-muted text-sm">MCP Endpoint:</span>
@@ -30,11 +33,9 @@
 
   <p-tabpanels>
     <p-tabpanel value="claude-desktop">
-      <p class="text-muted mb-2 text-sm">
-        Add to your <code>claude_desktop_config.json</code>:
-      </p>
+      <p class="text-muted mb-2 text-sm">Add to your <code>claude_desktop_config.json</code>:</p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
-        <pre class="text-sm overflow-x-auto">{{ claudeDesktopSnippet }}</pre>
+        <pre class="overflow-x-auto text-sm">{{ claudeDesktopSnippet }}</pre>
         <p-button
           class="absolute top-2 right-2"
           icon="pi pi-copy"
@@ -50,7 +51,7 @@
     <p-tabpanel value="claude-code">
       <p class="text-muted mb-2 text-sm">Run in your terminal:</p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
-        <pre class="text-sm overflow-x-auto">{{ claudeCodeSnippet }}</pre>
+        <pre class="overflow-x-auto text-sm">{{ claudeCodeSnippet }}</pre>
         <p-button
           class="absolute top-2 right-2"
           icon="pi pi-copy"
@@ -66,7 +67,7 @@
     <p-tabpanel value="cursor">
       <p class="text-muted mb-2 text-sm">Add to your Cursor MCP settings:</p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
-        <pre class="text-sm overflow-x-auto">{{ cursorSnippet }}</pre>
+        <pre class="overflow-x-auto text-sm">{{ cursorSnippet }}</pre>
         <p-button
           class="absolute top-2 right-2"
           icon="pi pi-copy"
@@ -84,7 +85,7 @@
         Add to your VS Code <code>.vscode/mcp.json</code> or user settings:
       </p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
-        <pre class="text-sm overflow-x-auto">{{ copilotSnippet }}</pre>
+        <pre class="overflow-x-auto text-sm">{{ copilotSnippet }}</pre>
         <p-button
           class="absolute top-2 right-2"
           icon="pi pi-copy"
@@ -102,7 +103,7 @@
         Use the API key as a Bearer token for REST API requests:
       </p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
-        <pre class="text-sm overflow-x-auto">{{ apiSnippet }}</pre>
+        <pre class="overflow-x-auto text-sm">{{ apiSnippet }}</pre>
         <p-button
           class="absolute top-2 right-2"
           icon="pi pi-copy"
