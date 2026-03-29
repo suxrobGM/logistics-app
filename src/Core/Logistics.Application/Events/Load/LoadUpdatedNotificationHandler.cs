@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Events;
+using Logistics.Domain.Persistence;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Events;
@@ -11,6 +12,8 @@ namespace Logistics.Application.Events;
 /// </summary>
 internal sealed class LoadUpdatedNotificationHandler(
     IPushNotificationService pushNotificationService,
+    ITelegramNotificationService telegramNotificationService,
+    ITenantUnitOfWork tenantUow,
     ILogger<LoadUpdatedNotificationHandler> logger)
     : IDomainEventHandler<LoadUpdatedEvent>
 {
@@ -40,6 +43,21 @@ internal sealed class LoadUpdatedNotificationHandler(
                 $"Load #{@event.LoadNumber} details have been updated. Check details.",
                 @event.SecondaryDriverDeviceToken,
                 data);
+        }
+
+        // Send Telegram notification to all users (both dispatchers and drivers)
+        try
+        {
+            await telegramNotificationService.SendNotificationAsync(
+                tenantUow.GetCurrentTenant().Id,
+                "Load Updated",
+                $"Load #{@event.LoadNumber} details have been updated",
+                targetRole: null,
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Failed to send Telegram notification for load update");
         }
     }
 }

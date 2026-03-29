@@ -35,6 +35,7 @@
     <Project Path="src/Presentation/Logistics.IdentityServer/Logistics.IdentityServer.csproj" />
     <Project Path="src/Presentation/Logistics.DbMigrator/Logistics.DbMigrator.csproj" />
     <Project Path="src/Presentation/Logistics.McpServer/Logistics.McpServer.csproj" />
+    <Project Path="src/Presentation/Logistics.TelegramBot/Logistics.TelegramBot.csproj" />
   </Folder>
   <Folder Name="/Aspire/">
     <Project Path="src/Aspire/Logistics.Aspire.AppHost/Logistics.Aspire.AppHost.csproj" />

@@ -1,6 +1,8 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Events;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Events;
@@ -12,6 +14,8 @@ namespace Logistics.Application.Events;
 internal sealed class LoadAssignedToTruckNotificationHandler(
     IPushNotificationService pushNotificationService,
     INotificationService notificationService,
+    ITelegramNotificationService telegramNotificationService,
+    ITenantUnitOfWork tenantUow,
     ILogger<LoadAssignedToTruckNotificationHandler> logger)
     : IDomainEventHandler<LoadAssignedToTruckEvent>
 {
@@ -47,5 +51,20 @@ internal sealed class LoadAssignedToTruckNotificationHandler(
         await notificationService.SendNotificationAsync(
             "Load assigned",
             $"Load #{@event.LoadNumber} has been assigned to {@event.DriverDisplayName}");
+
+        // Send Telegram notification to drivers
+        try
+        {
+            await telegramNotificationService.SendNotificationAsync(
+                tenantUow.GetCurrentTenant().Id,
+                "Load Assigned",
+                $"Load #{@event.LoadNumber} has been assigned to {@event.DriverDisplayName}",
+                TelegramChatRole.Driver,
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Failed to send Telegram notification for load assignment");
+        }
     }
 }

@@ -3,6 +3,8 @@ using Logistics.Application.Contracts.Models.Email;
 using Logistics.Application.Contracts.Services.Email;
 using Logistics.Application.Services;
 using Logistics.Domain.Events;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Events;
@@ -14,6 +16,8 @@ namespace Logistics.Application.Events;
 internal sealed class PayrollRejectedNotificationHandler(
     IPushNotificationService pushNotificationService,
     INotificationService notificationService,
+    ITelegramNotificationService telegramNotificationService,
+    ITenantUnitOfWork tenantUow,
     IEmailSender emailSender,
     IEmailTemplateService emailTemplateService,
     ILogger<PayrollRejectedNotificationHandler> logger)
@@ -66,6 +70,21 @@ internal sealed class PayrollRejectedNotificationHandler(
             {
                 logger.LogWarning(ex, "Failed to send payroll rejection email to {Email}", @event.EmployeeEmail);
             }
+        }
+
+        // Send Telegram notification to drivers
+        try
+        {
+            await telegramNotificationService.SendNotificationAsync(
+                tenantUow.GetCurrentTenant().Id,
+                "Payroll Rejected",
+                $"Payroll #{@event.PayrollNumber} has been rejected: {@event.RejectionReason}",
+                TelegramChatRole.Driver,
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Failed to send Telegram notification for payroll rejection");
         }
     }
 }

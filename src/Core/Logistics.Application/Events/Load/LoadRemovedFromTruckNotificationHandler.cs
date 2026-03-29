@@ -1,6 +1,8 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
 using Logistics.Domain.Events;
+using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Events;
@@ -11,6 +13,8 @@ namespace Logistics.Application.Events;
 /// </summary>
 internal sealed class LoadRemovedFromTruckNotificationHandler(
     IPushNotificationService pushNotificationService,
+    ITelegramNotificationService telegramNotificationService,
+    ITenantUnitOfWork tenantUow,
     ILogger<LoadRemovedFromTruckNotificationHandler> logger)
     : IDomainEventHandler<LoadRemovedFromTruckEvent>
 {
@@ -40,6 +44,21 @@ internal sealed class LoadRemovedFromTruckNotificationHandler(
                 $"Load #{@event.LoadNumber} has been removed from you",
                 @event.SecondaryDriverDeviceToken,
                 data);
+        }
+
+        // Send Telegram notification to drivers
+        try
+        {
+            await telegramNotificationService.SendNotificationAsync(
+                tenantUow.GetCurrentTenant().Id,
+                "Load Removed",
+                $"Load #{@event.LoadNumber} has been removed from truck",
+                TelegramChatRole.Driver,
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Failed to send Telegram notification for load removal");
         }
     }
 }

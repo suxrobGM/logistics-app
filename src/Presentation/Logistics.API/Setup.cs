@@ -25,6 +25,7 @@ using Logistics.Infrastructure.Routing;
 using Logistics.Infrastructure.AI;
 using Logistics.Infrastructure.Storage;
 using Logistics.McpServer;
+using Logistics.TelegramBot;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -59,6 +60,7 @@ internal static class Setup
         services.AddRoutingInfrastructure(configuration);
         services.AddAIInfrastructure(configuration);
         services.AddMcpServerInfrastructure();
+        services.AddTelegramBotInfrastructure(configuration);
         services.AddStorageInfrastructure(configuration);
         services.AddPersistenceInfrastructure(configuration)
             .UseLogger(serilogLogger)
@@ -212,6 +214,9 @@ internal static class Setup
 
         // MCP Server
         app.MapMcpEndpoint();
+
+        // Telegram Bot
+        app.MapTelegramWebhook();
 
         // SignalR Hubs
         app.MapHub<TrackingHub>("/hubs/tracking");
