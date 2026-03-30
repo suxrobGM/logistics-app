@@ -14,8 +14,13 @@ dotnet test                                               # Run all tests
 dotnet test --filter "ClassName"                          # Filter by class
 dotnet run --project src/Presentation/Logistics.API      # API: https://localhost:7000
 
-# Frontend (Angular) - see /angular-workspace skill
-cd src/Client/Logistics.Angular && bun install && bun run start:tms
+# Frontend (Angular + Demo Video) - uses bun workspaces
+bun install                                               # Install all workspaces
+bun start:tms                                             # TMS Portal dev server
+
+# Demo Video (Remotion) - see /remotion-best-practices skill
+bun dev:video                                             # Remotion Studio
+bun build:video                                           # Render MP4
 
 # Mobile (Kotlin Multiplatform)
 cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
@@ -23,15 +28,15 @@ cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 
 ## Service Ports
 
-| Service              | Port |
-| -------------------- | ---- |
-| API                  | 7000 |
-| Admin Portal         | 7002 |
-| Identity Server      | 7001 |
-| TMS Portal           | 7003 |
-| Customer Portal      | 7004 |
-| Website              | 7005 |
-| Aspire Dashboard     | 7100 |
+| Service          | Port |
+| ---------------- | ---- |
+| API              | 7000 |
+| Admin Portal     | 7002 |
+| Identity Server  | 7001 |
+| TMS Portal       | 7003 |
+| Customer Portal  | 7004 |
+| Website          | 7005 |
+| Aspire Dashboard | 7100 |
 
 ## Architecture
 
@@ -43,33 +48,33 @@ cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 
 ### Infrastructure Projects
 
-| Project | Purpose |
-|---------|---------|
-| **Logistics.Infrastructure.Persistence** | EF Core DbContexts, repositories, migrations, multi-tenancy |
-| **Logistics.Infrastructure.Communications** | SignalR hubs, real-time services, email, push notifications |
-| **Logistics.Infrastructure.Integrations.Eld** | ELD provider integrations (Samsara, Motive) |
-| **Logistics.Infrastructure.Integrations.LoadBoard** | Load board integrations (DAT, Truckstop, 123Loadboard) |
-| **Logistics.Infrastructure.Payments** | Stripe payment processing and Stripe Connect |
-| **Logistics.Infrastructure.Documents** | PDF generation, document storage, VIN decoder |
-| **Logistics.Infrastructure.Routing** | Trip optimization, route planning, geocoding |
-| **Logistics.Infrastructure.Storage** | Azure Blob Storage and file-based storage |
-| **Logistics.Infrastructure.AI** | Multi-provider LLM dispatch agent (Anthropic, OpenAI, DeepSeek), tool registry, agent loop |
+| Project                                             | Purpose                                                                                    |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Logistics.Infrastructure.Persistence**            | EF Core DbContexts, repositories, migrations, multi-tenancy                                |
+| **Logistics.Infrastructure.Communications**         | SignalR hubs, real-time services, email, push notifications                                |
+| **Logistics.Infrastructure.Integrations.Eld**       | ELD provider integrations (Samsara, Motive)                                                |
+| **Logistics.Infrastructure.Integrations.LoadBoard** | Load board integrations (DAT, Truckstop, 123Loadboard)                                     |
+| **Logistics.Infrastructure.Payments**               | Stripe payment processing and Stripe Connect                                               |
+| **Logistics.Infrastructure.Documents**              | PDF generation, document storage, VIN decoder                                              |
+| **Logistics.Infrastructure.Routing**                | Trip optimization, route planning, geocoding                                               |
+| **Logistics.Infrastructure.Storage**                | Azure Blob Storage and file-based storage                                                  |
+| **Logistics.Infrastructure.AI**                     | Multi-provider LLM dispatch agent (Anthropic, OpenAI, DeepSeek), tool registry, agent loop |
 
 ### Presentation Projects
 
-| Project | Purpose |
-|---------|---------|
-| **Logistics.API** | REST API, controllers, middleware, Hangfire jobs |
-| **Logistics.IdentityServer** | Duende IdentityServer, JWT auth, user management |
-| **Logistics.DbMigrator** | EF Core migrations runner for master and tenant DBs |
-| **Logistics.McpServer** | MCP server exposing dispatch tools to external AI clients (Claude Desktop, Cursor, etc.) |
+| Project                      | Purpose                                                                                  |
+| ---------------------------- | ---------------------------------------------------------------------------------------- |
+| **Logistics.API**            | REST API, controllers, middleware, Hangfire jobs                                         |
+| **Logistics.IdentityServer** | Duende IdentityServer, JWT auth, user management                                         |
+| **Logistics.DbMigrator**     | EF Core migrations runner for master and tenant DBs                                      |
+| **Logistics.McpServer**      | MCP server exposing dispatch tools to external AI clients (Claude Desktop, Cursor, etc.) |
 
 ### Test Projects
 
-| Project                              | Tests For                        | Key Packages                      |
-| ------------------------------------ | -------------------------------- | --------------------------------- |
-| `Logistics.Application.Tests`        | Application layer (handlers)     | xUnit, NSubstitute                |
-| `Logistics.Infrastructure.AI.Tests`  | AI agent, quota, tools, prompts  | xUnit, NSubstitute, MockQueryable |
+| Project                             | Tests For                       | Key Packages                      |
+| ----------------------------------- | ------------------------------- | --------------------------------- |
+| `Logistics.Application.Tests`       | Application layer (handlers)    | xUnit, NSubstitute                |
+| `Logistics.Infrastructure.AI.Tests` | AI agent, quota, tools, prompts | xUnit, NSubstitute, MockQueryable |
 
 ## Coding Patterns
 
@@ -101,12 +106,12 @@ Use `-FieldName` prefix for descending order, plain `FieldName` for ascending. D
 
 ```typescript
 // Good
-OrderBy: "-CreatedAt"      // Descending
-OrderBy: "Name"            // Ascending
+OrderBy: "-CreatedAt"; // Descending
+OrderBy: "Name"; // Ascending
 
 // Bad
-OrderBy: "CreatedAt desc"
-OrderBy: "Name asc"
+OrderBy: "CreatedAt desc";
+OrderBy: "Name asc";
 ```
 
 ## Key Entities

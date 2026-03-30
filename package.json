@@ -15,7 +15,9 @@
     "start:website": "bun run --cwd src/Client/Logistics.Angular start:website",
     "build:angular": "bun run --cwd src/Client/Logistics.Angular build:all",
     "gen:api": "bun run --cwd src/Client/Logistics.Angular gen:api",
-    "gen:api:live": "bun run --cwd src/Client/Logistics.Angular gen:api:live"
+    "gen:api:live": "bun run --cwd src/Client/Logistics.Angular gen:api:live",
+    "dev:video": "bun run --cwd src/Client/Logistics.DemoVideo dev",
+    "build:video": "bun run --cwd src/Client/Logistics.DemoVideo build"
   },
   "lint-staged": {
     "*.{js,ts,tsx,css,json,md}": [
