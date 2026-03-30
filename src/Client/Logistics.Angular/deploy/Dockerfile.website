@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM node:24-alpine AS builder
+FROM node:25-alpine AS builder
 WORKDIR /app
 
 # Install bun for fast dependency installation
@@ -19,7 +19,7 @@ RUN npm run build:shared
 RUN npm run build:website
 
 # Stage 2: Runtime (Node.js for SSR)
-FROM node:24-alpine
+FROM node:25-alpine
 
 WORKDIR /app
 

@@ -12,16 +12,16 @@ COPY . .
 # Generate API client and build
 RUN bun run gen:api
 RUN bun run build:shared
-RUN bun run build:admin
+RUN bun run build:customer
 
 # Stage 2: Runtime
 FROM nginx:alpine
 
 # Copy nginx config
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY deploy/nginx.conf /etc/nginx/nginx.conf
 
 # Copy built app
-COPY --from=builder /app/dist/admin-portal/browser /usr/share/nginx/html
+COPY --from=builder /app/dist/customer-portal/browser /usr/share/nginx/html
 
 EXPOSE 80
 

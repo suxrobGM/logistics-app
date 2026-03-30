@@ -47,16 +47,16 @@ jobs:
             file: ./src/Presentation/Logistics.IdentityServer/Dockerfile
           - image: admin-portal
             context: ./src/Client/Logistics.Angular
-            file: ./src/Client/Logistics.Angular/Dockerfile.admin
+            file: ./src/Client/Logistics.Angular/deploy/Dockerfile.admin
           - image: tms-portal
             context: ./src/Client/Logistics.Angular
-            file: ./src/Client/Logistics.Angular/Dockerfile.tms
+            file: ./src/Client/Logistics.Angular/deploy/Dockerfile.tms
           - image: customer-portal
             context: ./src/Client/Logistics.Angular
-            file: ./src/Client/Logistics.Angular/Dockerfile.customer
+            file: ./src/Client/Logistics.Angular/deploy/Dockerfile.customer
           - image: website
             context: ./src/Client/Logistics.Angular
-            file: ./src/Client/Logistics.Angular/Dockerfile.website
+            file: ./src/Client/Logistics.Angular/deploy/Dockerfile.website
 
     steps:
       - name: Checkout code
