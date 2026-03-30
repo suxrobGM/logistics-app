@@ -1,3 +1,5 @@
+bun.lock
+openapi.json
 **/.VSCodeCounter
 **/node_modules
 **/dist

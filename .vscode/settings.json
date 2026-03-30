@@ -1,7 +1,7 @@
 {
   "editor.tabSize": 2,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "prettier.configPath": "./src/Client/Logistics.Angular/prettier.config.js",
+  "prettier.configPath": "./prettier.config.js",
   "editor.formatOnSave": true,
   "files.exclude": {
     "**/node_modules": true,
@@ -12,11 +12,10 @@
     "**/.idea": true,
     "**/.kotlin": true,
     "**/.vs": true,
+    "**/dist": true,
+    "**/out-tsc": true
   },
-  "VSCodeCounter.exclude": [
-    "bun.lock",
-    "openapi.json",
-  ],
+  "VSCodeCounter.exclude": ["bun.lock", "openapi.json"],
   "VSCodeCounter.languages": {
     "kotlin": {
       "aliases": ["Kotlin"],

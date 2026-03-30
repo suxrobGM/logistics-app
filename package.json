@@ -1,0 +1,32 @@
+{
+  "name": "logisticsx",
+  "author": "Sukhrob Ilyosbekov <suxrobgm@gmail.com>",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "src/Client/*"
+  ],
+  "scripts": {
+    "prepare": "husky",
+    "format": "prettier --write .",
+    "start:tms": "bun run --cwd src/Client/Logistics.Angular start:tms",
+    "start:customer": "bun run --cwd src/Client/Logistics.Angular start:customer",
+    "start:admin": "bun run --cwd src/Client/Logistics.Angular start:admin",
+    "start:website": "bun run --cwd src/Client/Logistics.Angular start:website",
+    "build:angular": "bun run --cwd src/Client/Logistics.Angular build:all",
+    "gen:api": "bun run --cwd src/Client/Logistics.Angular gen:api",
+    "gen:api:live": "bun run --cwd src/Client/Logistics.Angular gen:api:live"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx,css,json,md}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2"
+  }
+}

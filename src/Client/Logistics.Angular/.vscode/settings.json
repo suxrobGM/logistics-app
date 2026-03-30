@@ -1,29 +1,4 @@
 {
-  "editor.tabSize": 2,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "prettier.configPath": "./prettier.config.js",
-  "editor.formatOnSave": true,
-  "typescript.preferences.importModuleSpecifier": "non-relative",
-  "typescript.suggest.paths": true,
-  "files.exclude": {
-    "**/node_modules": true,
-    "**/.angular": true,
-    "**/dist": true,
-    "**/out-tsc": true
-  },
-  "search.exclude": {
-    "**/node_modules": true,
-    "**/dist": true,
-    "**/out-tsc": true,
-    "**/.angular": true
-  },
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  "ts.preferences.importModuleSpecifier": "non-relative",
+  "ts.suggest.paths": true
 }
