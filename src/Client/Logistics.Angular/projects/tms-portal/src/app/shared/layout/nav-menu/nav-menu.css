@@ -10,8 +10,8 @@
   align-items: center;
   justify-content: space-between;
   width: calc(100% - 1.25rem);
-  margin: 1px 0.625rem;
-  padding: 0.625rem 0.75rem;
+  margin: 0.5px 0.625rem;
+  padding: 0.5rem 0.75rem;
   background: transparent;
   border: none;
   border-left: 3px solid transparent;

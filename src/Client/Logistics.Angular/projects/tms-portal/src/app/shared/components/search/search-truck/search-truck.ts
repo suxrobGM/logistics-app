@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Component, forwardRef, inject, model, output, signal } from "@angular/core";
-import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
 import { isEmptyGuid } from "@logistics/shared";
-import { Api, type TruckDto, getTruckById, getTrucks } from "@logistics/shared/api";
+import { Api, getTruckById, getTrucks, type TruckDto } from "@logistics/shared/api";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 
 /**
@@ -33,12 +33,7 @@ export class SearchTruck implements ControlValueAccessor {
 
   protected async searchTruck(event: { query: string }): Promise<void> {
     const result = await this.api.invoke(getTrucks, { Search: event.query });
-
-    if (!result.items) {
-      return;
-    }
-
-    this.suggestedTrucks.set(result.items);
+    this.suggestedTrucks.set(result.items ?? []);
   }
 
   protected changeSelectedTruck(event: AutoCompleteSelectEvent): void {

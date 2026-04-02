@@ -4,7 +4,7 @@
     <div class="mb-1">
       @if (!collapsed()) {
         <div
-          class="text-muted px-5 pt-3 pb-1.5 text-[0.625rem] font-bold tracking-widest uppercase select-none first:pt-1.5"
+          class="text-muted px-5 pt-2 pb-1 text-[0.625rem] font-bold tracking-widest uppercase select-none first:pt-1"
         >
           {{ section.label }}
         </div>
@@ -51,6 +51,7 @@
                     class="nav-child"
                     [routerLink]="child.route"
                     routerLinkActive="nav-child-active"
+                    [routerLinkActiveOptions]="{ exact: true }"
                     (click)="navigateTo(child)"
                     (contextmenu)="onChildContextMenu($event, child)"
                   >
@@ -138,6 +139,7 @@
                     class="nav-child"
                     [routerLink]="child.route"
                     routerLinkActive="nav-child-active"
+                    [routerLinkActiveOptions]="{ exact: true }"
                     (click)="navigateTo(child)"
                   >
                     <span>{{ child.label }}</span>
