@@ -2,6 +2,8 @@ import path from "path";
 import { Config } from "@remotion/cli/config";
 import { enableTailwind } from "@remotion/tailwind-v4";
 
+Config.setColorSpace("bt709");
+
 Config.overrideWebpackConfig((currentConfiguration) => {
   const withTailwind = enableTailwind(currentConfiguration);
   return {
