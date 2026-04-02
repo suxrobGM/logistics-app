@@ -1,32 +1,22 @@
 # Stage 1: Build
 FROM node:25-alpine AS builder
+ARG PROJECT_DIR=src/Client/Logistics.Angular
 WORKDIR /app
 
-# Install bun for fast dependency installation
 RUN npm install -g bun
 
-# Copy package files (lockfile is at repo root, package.json in Angular project)
-COPY bun.lock ./
-COPY src/Client/Logistics.Angular/package.json ./
+COPY package.json bun.lock ./
+COPY ${PROJECT_DIR}/package.json ${PROJECT_DIR}/
 RUN bun install --frozen-lockfile
 
-# Copy source
-COPY src/Client/Logistics.Angular/ .
-
-# Generate API client and build
-# Note: Angular SSR prerendering requires Node.js (not bun) for module resolution
-RUN bun run gen:api
-RUN npm run build:shared
-RUN npm run build:website
+COPY ${PROJECT_DIR}/ ${PROJECT_DIR}/
+WORKDIR /app/${PROJECT_DIR}
+RUN bun run gen:api && npm run build:shared && npm run build:website
 
 # Stage 2: Runtime (Node.js for SSR)
 FROM node:25-alpine
-
+ARG PROJECT_DIR=src/Client/Logistics.Angular
 WORKDIR /app
-
-# Copy built SSR app
-COPY --from=builder /app/dist/website .
-
+COPY --from=builder /app/${PROJECT_DIR}/dist/website .
 EXPOSE 7005
-
 CMD ["node", "server/server.mjs"]

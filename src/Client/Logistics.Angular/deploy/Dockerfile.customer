@@ -1,29 +1,20 @@
 # Stage 1: Build
 FROM oven/bun:latest AS builder
+ARG PROJECT_DIR=src/Client/Logistics.Angular
 WORKDIR /app
 
-# Copy package files (lockfile is at repo root, package.json in Angular project)
-COPY bun.lock ./
-COPY src/Client/Logistics.Angular/package.json ./
+COPY package.json bun.lock ./
+COPY ${PROJECT_DIR}/package.json ${PROJECT_DIR}/
 RUN bun install --frozen-lockfile
 
-# Copy source
-COPY src/Client/Logistics.Angular/ .
-
-# Generate API client and build
-RUN bun run gen:api
-RUN bun run build:shared
-RUN bun run build:customer
+COPY ${PROJECT_DIR}/ ${PROJECT_DIR}/
+WORKDIR /app/${PROJECT_DIR}
+RUN bun run gen:api && bun run build:shared && bun run build:customer
 
 # Stage 2: Runtime
 FROM nginx:alpine
-
-# Copy nginx config
-COPY src/Client/Logistics.Angular/deploy/nginx.conf /etc/nginx/nginx.conf
-
-# Copy built app
-COPY --from=builder /app/dist/customer-portal/browser /usr/share/nginx/html
-
+ARG PROJECT_DIR=src/Client/Logistics.Angular
+COPY ${PROJECT_DIR}/deploy/nginx.conf /etc/nginx/nginx.conf
+COPY --from=builder /app/${PROJECT_DIR}/dist/customer-portal/browser /usr/share/nginx/html
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]
