@@ -1,7 +1,3 @@
-// =============================================================================
-// SHARED LIBRARY RE-EXPORTS
-// =============================================================================
-
 // UI Components (layout, display, cards)
 export { PageHeader, StatCard, DashboardCard } from "@logistics/shared/components";
 
@@ -21,10 +17,6 @@ export {
   EmptyState,
   ErrorState,
 } from "@logistics/shared/components";
-
-// =============================================================================
-// TMS-SPECIFIC COMPONENTS
-// =============================================================================
 
 export * from "./tags";
 export * from "./maps";
