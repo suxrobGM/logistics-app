@@ -4,7 +4,8 @@ ARG PROJECT_DIR=src/Client/Logistics.Angular
 WORKDIR /app
 
 COPY package.json bun.lock ./
-COPY ${PROJECT_DIR}/package.json ${PROJECT_DIR}/
+COPY src/Client/Logistics.Angular/package.json src/Client/Logistics.Angular/
+COPY src/Client/Logistics.DemoVideo/package.json src/Client/Logistics.DemoVideo/
 RUN bun install --frozen-lockfile
 
 COPY ${PROJECT_DIR}/ ${PROJECT_DIR}/
