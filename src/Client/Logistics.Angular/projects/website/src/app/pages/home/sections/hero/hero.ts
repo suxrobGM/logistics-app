@@ -1,8 +1,8 @@
 import { Component, inject } from "@angular/core";
-import { BrowserFrame, HeroBackground } from "@/shared/components";
-import { DemoDialogService } from "@/shared/services";
 import { ButtonModule } from "primeng/button";
 import { TooltipModule } from "primeng/tooltip";
+import { HeroBackground } from "@/shared/components";
+import { DemoDialogService } from "@/shared/services";
 
 interface StatItem {
   value: string;
@@ -12,7 +12,7 @@ interface StatItem {
 @Component({
   selector: "web-hero",
   templateUrl: "./hero.html",
-  imports: [ButtonModule, TooltipModule, HeroBackground, BrowserFrame],
+  imports: [ButtonModule, TooltipModule, HeroBackground],
 })
 export class Hero {
   private readonly demoDialogService = inject(DemoDialogService);
@@ -28,4 +28,3 @@ export class Hero {
     this.demoDialogService.open();
   }
 }
-

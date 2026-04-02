@@ -68,12 +68,31 @@
         </div>
       </div>
 
-      <!-- Right: Product screenshot -->
+      <!-- Right: Demo video -->
       <div class="hidden lg:block" style="transform: perspective(1200px) rotateY(-8deg)">
-        <web-browser-frame
-          src="images/screenshots/ai-dispatch-sessions.png"
-          alt="AI Dispatch dashboard with fleet map, pending decisions, and session history"
-        />
+        <div class="overflow-hidden rounded-xl shadow-2xl ring-1 ring-white/10">
+          <!-- Browser chrome -->
+          <div class="flex items-center gap-2 bg-gray-800 px-4 py-3">
+            <div class="flex gap-1.5">
+              <div class="h-3 w-3 rounded-full bg-red-400"></div>
+              <div class="h-3 w-3 rounded-full bg-yellow-400"></div>
+              <div class="h-3 w-3 rounded-full bg-green-400"></div>
+            </div>
+            <div class="mx-auto rounded-md bg-white/10 px-4 py-1 text-xs text-white/50">
+              logisticsx.app
+            </div>
+            <div class="w-13.5"></div>
+          </div>
+          <!-- Demo video -->
+          <video
+            src="demo-video.mp4"
+            autoplay
+            muted
+            loop
+            playsinline
+            class="block w-full"
+          ></video>
+        </div>
       </div>
     </div>
 
