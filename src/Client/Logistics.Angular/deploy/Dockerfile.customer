@@ -2,12 +2,13 @@
 FROM oven/bun:latest AS builder
 WORKDIR /app
 
-# Copy package files
-COPY package.json bun.lock ./
+# Copy package files (lockfile is at repo root, package.json in Angular project)
+COPY bun.lock ./
+COPY src/Client/Logistics.Angular/package.json ./
 RUN bun install --frozen-lockfile
 
 # Copy source
-COPY . .
+COPY src/Client/Logistics.Angular/ .
 
 # Generate API client and build
 RUN bun run gen:api
@@ -18,7 +19,7 @@ RUN bun run build:customer
 FROM nginx:alpine
 
 # Copy nginx config
-COPY deploy/nginx.conf /etc/nginx/nginx.conf
+COPY src/Client/Logistics.Angular/deploy/nginx.conf /etc/nginx/nginx.conf
 
 # Copy built app
 COPY --from=builder /app/dist/customer-portal/browser /usr/share/nginx/html

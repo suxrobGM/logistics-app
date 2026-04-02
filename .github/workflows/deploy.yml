@@ -46,16 +46,16 @@ jobs:
             context: .
             file: ./src/Presentation/Logistics.IdentityServer/Dockerfile
           - image: admin-portal
-            context: ./src/Client/Logistics.Angular
+            context: .
             file: ./src/Client/Logistics.Angular/deploy/Dockerfile.admin
           - image: tms-portal
-            context: ./src/Client/Logistics.Angular
+            context: .
             file: ./src/Client/Logistics.Angular/deploy/Dockerfile.tms
           - image: customer-portal
-            context: ./src/Client/Logistics.Angular
+            context: .
             file: ./src/Client/Logistics.Angular/deploy/Dockerfile.customer
           - image: website
-            context: ./src/Client/Logistics.Angular
+            context: .
             file: ./src/Client/Logistics.Angular/deploy/Dockerfile.website
 
     steps:
