@@ -13,7 +13,9 @@
   },
   "dependencies": {
     "@remotion/cli": "^4.0.441",
+    "@remotion/google-fonts": "^4.0.441",
     "@remotion/tailwind-v4": "^4.0.441",
+    "@remotion/transitions": "^4.0.441",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "remotion": "^4.0.441",

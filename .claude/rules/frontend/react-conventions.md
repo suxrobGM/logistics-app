@@ -14,10 +14,15 @@ description: Frontend code conventions when working with React files.
 
 ## Component Props
 
-Destructure props inside the function body, not in parameters:
+- Always declare props as a named `interface {ComponentName}Props` — never inline object types
+- Destructure props inside the function body, not in parameters
 
 ```typescript
-// CORRECT
+interface SidebarProps {
+  open: boolean;
+  onToggle: () => void;
+}
+
 function Sidebar(props: SidebarProps): ReactElement {
   const { open, onToggle } = props;
 }
