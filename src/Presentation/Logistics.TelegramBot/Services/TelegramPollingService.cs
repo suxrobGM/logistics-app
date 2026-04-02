@@ -15,6 +15,7 @@ internal sealed class TelegramPollingService(
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         logger.LogInformation("Telegram bot polling service started");
+        await bot.DeleteWebhook(cancellationToken: stoppingToken);
         var offset = 0;
 
         while (!stoppingToken.IsCancellationRequested)
