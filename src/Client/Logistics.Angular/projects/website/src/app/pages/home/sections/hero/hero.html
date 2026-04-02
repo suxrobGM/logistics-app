@@ -68,32 +68,60 @@
         </div>
       </div>
 
-      <!-- Right: Demo video -->
-      <div class="hidden lg:block" style="transform: perspective(1200px) rotateY(-8deg)">
-        <div class="overflow-hidden rounded-xl shadow-2xl ring-1 ring-white/10">
-          <!-- Browser chrome -->
-          <div class="flex items-center gap-2 bg-gray-800 px-4 py-3">
-            <div class="flex gap-1.5">
-              <div class="h-3 w-3 rounded-full bg-red-400"></div>
-              <div class="h-3 w-3 rounded-full bg-yellow-400"></div>
-              <div class="h-3 w-3 rounded-full bg-green-400"></div>
+      <!-- Right: Screenshot with play button -->
+      <div class="hidden lg:block" style="perspective: 1200px">
+        <div class="group relative" style="transform: rotateY(-8deg)">
+          <web-browser-frame
+            src="images/screenshots/ai-dispatch-sessions.png"
+            alt="AI Dispatch dashboard with fleet map, pending decisions, and session history"
+          />
+          <!-- Play button overlay -->
+          <button
+            type="button"
+            class="absolute inset-0 flex cursor-pointer items-center justify-center rounded-xl bg-black/20 transition-colors group-hover:bg-black/30"
+            aria-label="Play demo video"
+            (click)="showVideo.set(true)"
+          >
+            <div
+              class="bg-accent flex h-16 w-16 items-center justify-center rounded-full shadow-lg transition-transform group-hover:scale-110"
+            >
+              <i class="pi pi-play ml-1 text-2xl text-white"></i>
             </div>
-            <div class="mx-auto rounded-md bg-white/10 px-4 py-1 text-xs text-white/50">
-              logisticsx.app
-            </div>
-            <div class="w-13.5"></div>
-          </div>
-          <!-- Demo video -->
-          <video
-            src="demo-video.mp4"
-            autoplay
-            muted
-            loop
-            playsinline
-            class="block w-full"
-          ></video>
+          </button>
         </div>
       </div>
+
+      <!-- Video modal -->
+      @if (showVideo()) {
+        <div
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+          role="dialog"
+          tabindex="-1"
+          aria-modal="true"
+          aria-label="Demo video"
+          (click)="showVideo.set(false)"
+          (keydown.escape)="showVideo.set(false)"
+        >
+          <div
+            class="relative w-full max-w-5xl px-6"
+            role="document"
+            (click)="$event.stopPropagation()"
+            (keydown)="$event.stopPropagation()"
+          >
+            <button
+              type="button"
+              class="absolute -top-10 right-6 text-white/70 hover:text-white"
+              aria-label="Close video"
+              (click)="showVideo.set(false)"
+            >
+              <i class="pi pi-times text-2xl"></i>
+            </button>
+            <video class="w-full rounded-xl shadow-2xl" autoplay controls playsinline>
+              <source src="demo-video.mp4" type="video/mp4" />
+            </video>
+          </div>
+        </div>
+      }
     </div>
 
     <!-- Scroll indicator -->

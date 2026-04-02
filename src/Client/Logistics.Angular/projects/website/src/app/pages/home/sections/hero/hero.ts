@@ -1,7 +1,7 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, signal } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 import { TooltipModule } from "primeng/tooltip";
-import { HeroBackground } from "@/shared/components";
+import { BrowserFrame, HeroBackground } from "@/shared/components";
 import { DemoDialogService } from "@/shared/services";
 
 interface StatItem {
@@ -12,10 +12,12 @@ interface StatItem {
 @Component({
   selector: "web-hero",
   templateUrl: "./hero.html",
-  imports: [ButtonModule, TooltipModule, HeroBackground],
+  imports: [ButtonModule, TooltipModule, HeroBackground, BrowserFrame],
 })
 export class Hero {
   private readonly demoDialogService = inject(DemoDialogService);
+
+  protected readonly showVideo = signal(false);
 
   protected readonly stats: StatItem[] = [
     { value: "2 Modes", label: "Suggestions & Autonomous" },
