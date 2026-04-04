@@ -69,6 +69,14 @@ cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 | **Logistics.DbMigrator**     | EF Core migrations runner for master and tenant DBs                                      |
 | **Logistics.McpServer**      | MCP server exposing dispatch tools to external AI clients (Claude Desktop, Cursor, etc.) |
 
+### Client Projects
+
+| Project                 | Purpose                                                                  |
+| ----------------------- | ------------------------------------------------------------------------ |
+| **Logistics.Angular**   | Angular monorepo (TMS, Admin, Customer Portal, Website) + shared library |
+| **Logistics.DemoVideo** | Remotion project — screenshot-based marketing demo video with Ken Burns  |
+| **Logistics.DriverApp** | Kotlin Multiplatform mobile app for drivers                              |
+
 ### Test Projects
 
 | Project                             | Tests For                       | Key Packages                      |
