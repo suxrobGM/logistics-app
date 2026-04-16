@@ -1,9 +1,9 @@
 # Docker-based deployment to VPS
 #
 # Required GitHub Secrets:
-# - VPS_HOST: VPS IP address or hostname
-# - VPS_USER: SSH username
-# - SSH_PRIVATE_KEY: SSH private key for VPS access
+# - SSH_HOST: VPS IP address or hostname
+# - SSH_USER: SSH username
+# - SSH_KEY: SSH private key for VPS access
 # - GHCR_PAT: Personal Access Token with read:packages, write:packages scope
 # - DOCKER_ENV: Full .env file content for docker-compose (includes all config)
 # - FIREBASE_CREDENTIALS_JSON: Firebase Admin SDK service account JSON (for push notifications)
@@ -105,9 +105,9 @@ jobs:
       - name: Copy docker-compose to VPS
         uses: appleboy/scp-action@v1
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
           source: "src/Aspire/Logistics.Aspire.AppHost/aspire-output/docker-compose.yaml"
           target: ${{ env.APP_DIR }}
           strip_components: 4
@@ -120,9 +120,9 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           IMAGE_TAG: latest
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
           envs: DOCKER_ENV,GHCR_PAT,GITHUB_REPOSITORY,IMAGE_TAG
           script: |
             # Navigate to app directory
@@ -162,9 +162,9 @@ jobs:
       - name: Health check
         uses: appleboy/ssh-action@v1.2.4
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
             echo "Waiting for services to start..."
             sleep 30
