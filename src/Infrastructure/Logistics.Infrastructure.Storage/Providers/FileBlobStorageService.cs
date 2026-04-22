@@ -146,7 +146,9 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
         var metadataPath = GetMetadataPath(filePath);
         var metadata = new FileMetadata
         {
-            ContentType = contentType, ContentLength = contentLength, CreatedAt = DateTime.UtcNow
+            ContentType = contentType,
+            ContentLength = contentLength,
+            CreatedAt = DateTime.UtcNow
         };
 
         var json = JsonSerializer.Serialize(metadata);
@@ -172,7 +174,9 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
         var json = await File.ReadAllTextAsync(metadataPath);
         return JsonSerializer.Deserialize<FileMetadata>(json) ?? new FileMetadata
         {
-            ContentType = "application/octet-stream", ContentLength = 0, CreatedAt = DateTime.UtcNow
+            ContentType = "application/octet-stream",
+            ContentLength = 0,
+            CreatedAt = DateTime.UtcNow
         };
     }
 }

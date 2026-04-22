@@ -68,7 +68,17 @@ var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithEnvironment("TelegramBot__SecretToken", builder.GetConfigValue("TelegramBot:SecretToken"))
     .WithEnvironment("TelegramBot__IdentityServerUrl", builder.GetConfigValue("TelegramBot:IdentityServerUrl"))
     .WithEnvironment("CustomerPortal__BaseUrl", builder.GetConfigValue("CustomerPortal:BaseUrl"))
+    .WithEnvironment("BlobStorage__Type", builder.GetConfigValue("BlobStorage:Type"))
     .WithEnvironment("FileBlobStorage__BaseUrl", builder.GetConfigValue("FileBlobStorage:BaseUrl"))
+    .WithEnvironment("ConnectionStrings__AzureBlobStorage",
+        builder.GetConfigValue("ConnectionStrings:AzureBlobStorage"))
+    .WithEnvironment("AzureBlobStorage__DefaultContainer",
+        builder.GetConfigValue("AzureBlobStorage:DefaultContainer"))
+    .WithEnvironment("R2BlobStorage__AccountId", builder.GetConfigValue("R2BlobStorage:AccountId"))
+    .WithEnvironment("R2BlobStorage__AccessKeyId", builder.GetConfigValue("R2BlobStorage:AccessKeyId"))
+    .WithEnvironment("R2BlobStorage__SecretAccessKey", builder.GetConfigValue("R2BlobStorage:SecretAccessKey"))
+    .WithEnvironment("R2BlobStorage__BucketName", builder.GetConfigValue("R2BlobStorage:BucketName"))
+    .WithEnvironment("R2BlobStorage__PublicBaseUrl", builder.GetConfigValue("R2BlobStorage:PublicBaseUrl"))
     .WithEnvironment("TenantsDatabaseConfig__DatabaseNameTemplate",
         builder.GetConfigValue("TenantsDatabaseConfig:DatabaseNameTemplate"))
     .WithEnvironment("TenantsDatabaseConfig__DatabaseHost",

@@ -1,8 +1,11 @@
-﻿using Azure.Storage.Blobs;
+﻿using Amazon.Runtime;
+using Amazon.S3;
+using Azure.Storage.Blobs;
 using Logistics.Application.Services;
 using Logistics.Infrastructure.Storage.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.Storage;
 
@@ -31,6 +34,12 @@ public static class Registrar
             case "azure":
             {
                 AddAzureBlobStorage(services, configuration);
+                break;
+            }
+            case "r2":
+            case "cloudflare":
+            {
+                AddR2BlobStorage(services, configuration);
                 break;
             }
             default:
@@ -64,5 +73,28 @@ public static class Registrar
     {
         services.Configure<FileBlobStorageOptions>(configuration.GetSection(FileBlobStorageOptions.SectionName));
         services.AddScoped<IBlobStorageService, FileBlobStorageService>();
+    }
+
+    /// <summary>
+    ///     Add Cloudflare R2 (S3-compatible) Blob Storage service
+    /// </summary>
+    private static void AddR2BlobStorage(IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<R2BlobStorageOptions>(configuration.GetSection(R2BlobStorageOptions.SectionName));
+
+        services.AddSingleton<IAmazonS3>(sp =>
+        {
+            var opts = sp.GetRequiredService<IOptions<R2BlobStorageOptions>>().Value;
+            var credentials = new BasicAWSCredentials(opts.AccessKeyId, opts.SecretAccessKey);
+            var s3Config = new AmazonS3Config
+            {
+                ServiceURL = $"https://{opts.AccountId}.r2.cloudflarestorage.com",
+                ForcePathStyle = true,
+                AuthenticationRegion = "auto"
+            };
+            return new AmazonS3Client(credentials, s3Config);
+        });
+
+        services.AddScoped<IBlobStorageService, R2BlobStorageService>();
     }
 }

@@ -52,13 +52,14 @@ public static class BlobPathHelper
     public static string GetLoadBlobPath(Guid loadId, string folder, string fileName) => $"loads/{loadId}/{folder}/{fileName}";
 
     /// <summary>
-    /// Generates a blob path for owner-specific documents.
+    /// Generates a blob path for owner-specific documents. The blob is stored inside the
+    /// "documents" container, so the path does not repeat the "documents/" segment.
     /// </summary>
     /// <param name="ownerSegment">The owner type segment (e.g., "loads", "employees", "trucks").</param>
     /// <param name="ownerId">The owner ID.</param>
     /// <param name="fileName">The filename.</param>
-    /// <returns>A blob path in the format: {ownerSegment}/{ownerId}/documents/{fileName}</returns>
-    public static string GetOwnerDocumentBlobPath(string ownerSegment, Guid ownerId, string fileName) => $"{ownerSegment}/{ownerId}/documents/{fileName}";
+    /// <returns>A blob path in the format: {ownerSegment}/{ownerId}/{fileName}</returns>
+    public static string GetOwnerDocumentBlobPath(string ownerSegment, Guid ownerId, string fileName) => $"{ownerSegment}/{ownerId}/{fileName}";
 
     /// <summary>
     /// Generates a blob path for expense receipts organized by date.
