@@ -183,6 +183,18 @@ public static class Permission
         public const string Manage = $"{nameof(Permission)}.{nameof(ApiKey)}.Manage";
     }
 
+    public static class Container
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(Container)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Container)}.Manage";
+    }
+
+    public static class Terminal
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(Terminal)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Terminal)}.Manage";
+    }
+
     public static IEnumerable<string> GetAll()
     {
         var list = new List<string>();

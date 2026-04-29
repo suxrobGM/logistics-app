@@ -25,5 +25,25 @@ public enum LoadType
     [Description("Vehicle / Car")]
     Vehicle,
 
-    Livestock
+    Livestock,
+
+    [Description("Intermodal Container")]
+    IntermodalContainer,
+
+    [Description("Tank Container")]
+    TankContainer,
+
+    [Description("Reefer Container")]
+    ReeferContainer,
+
+    [Description("Break Bulk")]
+    BreakBulk,
+
+    [Description("High Value")]
+    HighValue,
+
+    Pharmaceutical,
+
+    [Description("Project Cargo")]
+    ProjectCargo
 }

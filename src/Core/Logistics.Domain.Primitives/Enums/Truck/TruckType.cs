@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace Logistics.Domain.Primitives.Enums;
 
 public enum TruckType
@@ -9,5 +11,18 @@ public enum TruckType
     BoxTruck,
     DumpTruck,
     TowTruck,
-    CarHauler
+    CarHauler,
+    ContainerTruck,
+    Tautliner,
+
+    [Description("Low Loader")]
+    LowLoader,
+
+    [Description("Car Transporter")]
+    CarTransporter,
+
+    [Description("Swap Body")]
+    SwapBody,
+
+    Curtainsider
 }

@@ -16,12 +16,12 @@ public partial class Load
     }
 
     /// <summary>
-    /// Enforces valid status transitions and sets timestamps/flags accordingly.
+    /// Enforces valid status transitions and sets timestamps accordingly.
     /// </summary>
     /// <param name="newStatus">Target status.</param>
     /// <param name="force">
     /// If true, bypass transition validation (useful for data import/seeding).
-    /// Still applies timestamp/flag logic.
+    /// Still applies timestamp logic.
     /// </param>
     /// <exception cref="InvalidOperationException">
     /// Thrown for invalid transitions when <paramref name="force"/> is false.
@@ -32,15 +32,11 @@ public partial class Load
             DispatchedAt,
             PickedUpAt,
             DeliveredAt,
-            CancelledAt,
-            CanConfirmPickUp,
-            CanConfirmDelivery);
+            CancelledAt);
 
         var result = LoadStatusMachine.Apply(Status, newStatus, force, timestamps);
 
         Status = result.Status;
-        CanConfirmPickUp = result.CanConfirmPickUp;
-        CanConfirmDelivery = result.CanConfirmDelivery;
         DispatchedAt = result.Timestamps.DispatchedAt;
         PickedUpAt = result.Timestamps.PickedUpAt;
         DeliveredAt = result.Timestamps.DeliveredAt;
@@ -102,29 +98,32 @@ public partial class Load
     }
 
     /// <summary>
-    /// Updates the proximity status and raises the LoadProximityChangedEvent for notifications.
+    /// Updates the proximity flag based on whether the truck is inside the next
+    /// confirmation checkpoint's geofence. Raises <see cref="LoadProximityChangedEvent"/>
+    /// when proximity becomes true and a confirmation action is now possible.
+    /// The "next confirmation" is implied by the current <see cref="Status"/>
+    /// (pickup if Dispatched, delivery if PickedUp).
     /// </summary>
-    public void UpdateProximity(bool? canConfirmPickUp, bool? canConfirmDelivery)
+    public void UpdateProximity(bool isInProximity)
     {
-        LoadStatus? statusToConfirm = null;
-
-        if (canConfirmPickUp.HasValue && canConfirmPickUp != CanConfirmPickUp)
+        if (isInProximity == IsInProximity)
         {
-            CanConfirmPickUp = canConfirmPickUp.Value;
-            if (canConfirmPickUp.Value)
-            {
-                statusToConfirm = LoadStatus.PickedUp;
-            }
+            return;
         }
 
-        if (canConfirmDelivery.HasValue && canConfirmDelivery != CanConfirmDelivery)
+        IsInProximity = isInProximity;
+
+        if (!isInProximity)
         {
-            CanConfirmDelivery = canConfirmDelivery.Value;
-            if (canConfirmDelivery.Value)
-            {
-                statusToConfirm = LoadStatus.Delivered;
-            }
+            return;
         }
+
+        var statusToConfirm = Status switch
+        {
+            LoadStatus.Dispatched => (LoadStatus?)LoadStatus.PickedUp,
+            LoadStatus.PickedUp => LoadStatus.Delivered,
+            _ => null
+        };
 
         if (statusToConfirm.HasValue)
         {

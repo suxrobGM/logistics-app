@@ -36,5 +36,28 @@ internal sealed class LoadEntityConfiguration : IEntityTypeConfiguration<Load>
 
         builder.Property(i => i.ExternalBrokerReference)
             .HasMaxLength(100);
+
+        // Order-intake & intermodal fields
+        builder.Property(i => i.Notes)
+            .HasMaxLength(2000);
+
+        builder.HasOne(i => i.Container)
+            .WithMany()
+            .HasForeignKey(i => i.ContainerId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasOne(i => i.OriginTerminal)
+            .WithMany()
+            .HasForeignKey(i => i.OriginTerminalId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasOne(i => i.DestinationTerminal)
+            .WithMany()
+            .HasForeignKey(i => i.DestinationTerminalId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        // Computed properties — keep out of EF mapping
+        builder.Ignore(i => i.CanConfirmPickUp);
+        builder.Ignore(i => i.CanConfirmDelivery);
     }
 }

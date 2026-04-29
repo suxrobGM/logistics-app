@@ -9,6 +9,7 @@ namespace Logistics.Domain.Primitives.ValueObjects;
 [ComplexType]
 public record TenantSettings
 {
+    public Region Region { get; set; } = Region.Us;
     public DistanceUnit DistanceUnit { get; set; } = DistanceUnit.Miles;
     public CurrencyCode Currency { get; set; } = CurrencyCode.USD;
     public DateFormatType DateFormat { get; set; } = DateFormatType.US;
