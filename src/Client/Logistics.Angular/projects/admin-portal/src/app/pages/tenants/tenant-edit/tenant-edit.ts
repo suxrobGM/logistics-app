@@ -1,9 +1,15 @@
-import { Component, type OnInit, computed, inject, signal } from "@angular/core";
-import { FormField, form } from "@angular/forms/signals";
+import { Component, computed, inject, signal, type OnInit } from "@angular/core";
+import { form, FormField } from "@angular/forms/signals";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { ToastService } from "@logistics/shared";
-import { Api, deleteTenant, getTenantById, updateTenant } from "@logistics/shared/api";
-import type { TenantDto, UpdateTenantCommand } from "@logistics/shared/api";
+import {
+  Api,
+  deleteTenant,
+  getTenantById,
+  updateTenant,
+  type TenantDto,
+  type UpdateTenantCommand,
+} from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -79,6 +85,7 @@ export class TenantEdit implements OnInit {
       billingEmail: tenant.billingEmail ?? "",
       dotNumber: tenant.dotNumber ?? "",
       companyAddress: tenant.companyAddress,
+      region: tenant.settings?.region ?? "us",
     };
   });
 
@@ -95,6 +102,10 @@ export class TenantEdit implements OnInit {
       billingEmail: formValue.billingEmail,
       dotNumber: formValue.dotNumber || undefined,
       companyAddress: formValue.companyAddress,
+      settings: {
+        ...tenant.settings,
+        region: formValue.region,
+      },
     };
 
     await this.api.invoke(updateTenant, { id: tenant.id!, body: command });

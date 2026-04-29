@@ -9,16 +9,27 @@
 
       <!-- Load Information Section -->
       <div class="mb-6">
-        <h3 class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide">
+        <h3
+          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
+        >
           <i class="pi pi-box"></i>
           Load Information
         </h3>
-        <div class="rounded-lg border border-default bg-elevated p-4">
+        <div class="border-default bg-elevated rounded-lg border p-4">
           <ui-labeled-field label="Name" for="name" [required]="true">
-            <input pInputText id="name" formControlName="name" type="text" placeholder="Load name" />
+            <input
+              pInputText
+              id="name"
+              formControlName="name"
+              type="text"
+              placeholder="Load name"
+            />
           </ui-labeled-field>
-          <ui-labeled-field label="Load Type" for="type" [required]="true" class="mb-0">
+          <ui-labeled-field label="Load Type" for="type" [required]="true">
             <p-select formControlName="type" [options]="loadTypes" />
+          </ui-labeled-field>
+          <ui-labeled-field label="Source" for="source" [required]="true" class="mb-0">
+            <p-select formControlName="source" [options]="loadSources" />
           </ui-labeled-field>
         </div>
       </div>
@@ -26,11 +37,13 @@
       @if (initial()?.tripNumber && initial()?.tripId) {
         <!-- Trip Section (only shown when associated with a trip) -->
         <div class="mb-6">
-          <h3 class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide">
+          <h3
+            class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
+          >
             <i class="pi pi-directions"></i>
             Trip Association
           </h3>
-          <div class="rounded-lg border border-default bg-elevated p-4">
+          <div class="border-default bg-elevated rounded-lg border p-4">
             <ui-labeled-field label="Trip" for="tripNumber" class="mb-0">
               <input
                 pInputText
@@ -46,11 +59,13 @@
 
       <!-- Customer Section -->
       <div class="mb-6">
-        <h3 class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide">
+        <h3
+          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
+        >
           <i class="pi pi-building"></i>
           Customer
         </h3>
-        <div class="rounded-lg border border-default bg-elevated p-4">
+        <div class="border-default bg-elevated rounded-lg border p-4">
           <ui-labeled-field label="Customer" for="customer" [required]="true" class="mb-0">
             <app-search-customer formControlName="customer" />
           </ui-labeled-field>
@@ -59,11 +74,13 @@
 
       <!-- Route Section -->
       <div class="mb-6">
-        <h3 class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide">
+        <h3
+          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
+        >
           <i class="pi pi-map-marker"></i>
           Route
         </h3>
-        <div class="rounded-lg border border-default bg-elevated p-4">
+        <div class="border-default bg-elevated rounded-lg border p-4">
           <ui-labeled-field label="Origin Address" for="originAddress" [required]="true">
             <app-address-autocomplete
               field="originAddress"
@@ -73,7 +90,12 @@
             />
           </ui-labeled-field>
 
-          <ui-labeled-field label="Destination Address" for="destinationAddress" [required]="true" class="mb-0">
+          <ui-labeled-field
+            label="Destination Address"
+            for="destinationAddress"
+            [required]="true"
+            class="mb-0"
+          >
             <app-address-autocomplete
               field="destinationAddress"
               formControlName="destinationAddress"
@@ -84,13 +106,72 @@
         </div>
       </div>
 
+      <!-- Schedule Section (collapsable) -->
+      <p-fieldset legend="Schedule" [toggleable]="true" [collapsed]="true" styleClass="mb-6">
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <ui-labeled-field label="Requested Pickup Date" for="requestedPickupDate">
+            <p-datepicker
+              formControlName="requestedPickupDate"
+              [showIcon]="true"
+              [showTime]="true"
+              inputId="requestedPickupDate"
+            />
+          </ui-labeled-field>
+          <ui-labeled-field
+            label="Requested Delivery Date"
+            for="requestedDeliveryDate"
+            class="mb-0"
+          >
+            <p-datepicker
+              formControlName="requestedDeliveryDate"
+              [showIcon]="true"
+              [showTime]="true"
+              inputId="requestedDeliveryDate"
+            />
+          </ui-labeled-field>
+        </div>
+      </p-fieldset>
+
+      <!-- Intermodal Section (collapsable) -->
+      <p-fieldset
+        legend="Intermodal (optional)"
+        [toggleable]="true"
+        [collapsed]="true"
+        styleClass="mb-6"
+      >
+        <ui-labeled-field label="Container" for="container">
+          <app-search-container formControlName="container" />
+        </ui-labeled-field>
+        <ui-labeled-field label="Origin Terminal" for="originTerminal">
+          <app-search-terminal formControlName="originTerminal" />
+        </ui-labeled-field>
+        <ui-labeled-field label="Destination Terminal" for="destinationTerminal" class="mb-0">
+          <app-search-terminal formControlName="destinationTerminal" />
+        </ui-labeled-field>
+      </p-fieldset>
+
+      <!-- Notes Section (collapsable) -->
+      <p-fieldset legend="Notes" [toggleable]="true" [collapsed]="true" styleClass="mb-6">
+        <ui-labeled-field label="Notes" for="notes" hint="Max 2000 characters" class="mb-0">
+          <textarea
+            pTextarea
+            id="notes"
+            formControlName="notes"
+            rows="3"
+            maxlength="2000"
+          ></textarea>
+        </ui-labeled-field>
+      </p-fieldset>
+
       <!-- Pricing Section -->
       <div class="mb-6">
-        <h3 class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide">
+        <h3
+          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
+        >
           <i class="pi pi-dollar"></i>
           Pricing & Distance
         </h3>
-        <div class="rounded-lg border border-default bg-elevated p-4">
+        <div class="border-default bg-elevated rounded-lg border p-4">
           <ui-labeled-field label="Delivery Cost" for="deliveryCost" [required]="true">
             <p-inputgroup>
               <p-inputgroup-addon>$$</p-inputgroup-addon>
@@ -109,11 +190,13 @@
 
       <!-- Assignment Section -->
       <div class="mb-6">
-        <h3 class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide">
+        <h3
+          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
+        >
           <i class="pi pi-users"></i>
           Assignment
         </h3>
-        <div class="rounded-lg border border-default bg-elevated p-4">
+        <div class="border-default bg-elevated rounded-lg border p-4">
           <ui-labeled-field label="Assigned Dispatcher" for="dispatcherName">
             <input
               pInputText

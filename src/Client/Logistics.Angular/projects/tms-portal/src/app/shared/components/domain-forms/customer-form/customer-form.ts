@@ -1,13 +1,15 @@
-import { Component, effect, inject, input, output, signal } from "@angular/core";
+import { Component, computed, effect, inject, input, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import { Api, createCustomer, updateCustomer } from "@logistics/shared/api";
-import type {
-  Address,
-  CreateCustomerCommand,
-  CustomerDto,
-  CustomerStatus,
-  UpdateCustomerCommand,
+import {
+  Api,
+  createCustomer,
+  updateCustomer,
+  type Address,
+  type CreateCustomerCommand,
+  type CustomerDto,
+  type CustomerStatus,
+  type UpdateCustomerCommand,
 } from "@logistics/shared/api";
 import { customerStatusOptions } from "@logistics/shared/api/enums";
 import { AddressForm, LabeledField, ValidationSummary } from "@logistics/shared/components";
@@ -17,6 +19,8 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
+import { TenantService } from "@/core/services/tenant.service";
+import { regionAllowedCountries } from "@/shared/utils";
 
 export interface CustomerFormValue {
   name: string;
@@ -46,9 +50,13 @@ export interface CustomerFormValue {
 export class CustomerForm {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
+  private readonly tenantService = inject(TenantService);
 
   protected readonly isLoading = signal(false);
   protected readonly statusOptions = customerStatusOptions;
+  protected readonly allowedCountries = computed(() =>
+    regionAllowedCountries(this.tenantService.tenantData()?.settings?.region),
+  );
 
   public readonly mode = input.required<"create" | "edit">();
   public readonly id = input<string>(); // Required for edit mode

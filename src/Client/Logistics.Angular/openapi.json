@@ -1135,6 +1135,325 @@
         }
       }
     },
+    "/containers/{id}": {
+      "get": {
+        "tags": [
+          "Container"
+        ],
+        "operationId": "GetContainerById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContainerDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Container"
+        ],
+        "operationId": "UpdateContainer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContainerCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContainerCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContainerCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/containers": {
+      "get": {
+        "tags": [
+          "Container"
+        ],
+        "operationId": "GetContainers",
+        "parameters": [
+          {
+            "name": "Status",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ContainerStatus"
+            }
+          },
+          {
+            "name": "IsoType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ContainerIsoType"
+            }
+          },
+          {
+            "name": "CurrentTerminalId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContainerDtoPagedResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Container"
+        ],
+        "operationId": "CreateContainer",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContainerCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContainerCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContainerCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContainerDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/containers/{id}/status": {
+      "put": {
+        "tags": [
+          "Container"
+        ],
+        "operationId": "UpdateContainerStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContainerStatusCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContainerStatusCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContainerStatusCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/containers/{id}/terminal": {
+      "put": {
+        "tags": [
+          "Container"
+        ],
+        "operationId": "SetContainerTerminal",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveContainerToTerminalCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveContainerToTerminalCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveContainerToTerminalCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/customers/{id}": {
       "get": {
         "tags": [
@@ -7177,6 +7496,59 @@
         }
       }
     },
+    "/loads/{id}/container": {
+      "put": {
+        "tags": [
+          "Load"
+        ],
+        "operationId": "SetLoadContainer",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkContainerToLoadCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkContainerToLoadCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkContainerToLoadCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/loads/{id}/dispatch": {
       "post": {
         "tags": [
@@ -11501,6 +11873,211 @@
         }
       }
     },
+    "/terminals/{id}": {
+      "get": {
+        "tags": [
+          "Terminal"
+        ],
+        "operationId": "GetTerminalById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TerminalDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Terminal"
+        ],
+        "operationId": "UpdateTerminal",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTerminalCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTerminalCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTerminalCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/terminals": {
+      "get": {
+        "tags": [
+          "Terminal"
+        ],
+        "operationId": "GetTerminals",
+        "parameters": [
+          {
+            "name": "Type",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/TerminalType"
+            }
+          },
+          {
+            "name": "CountryCode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "OrderBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TerminalDtoPagedResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Terminal"
+        ],
+        "operationId": "CreateTerminal",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTerminalCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTerminalCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTerminalCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TerminalDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/timeentries/{id}": {
       "get": {
         "tags": [
@@ -14339,6 +14916,127 @@
         ],
         "type": "string"
       },
+      "ContainerDto": {
+        "required": [
+          "number"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string",
+            "nullable": true
+          },
+          "isoType": {
+            "$ref": "#/components/schemas/ContainerIsoType"
+          },
+          "sealNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "bookingReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "billOfLadingNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "isLaden": {
+            "type": "boolean"
+          },
+          "grossWeight": {
+            "type": "number",
+            "format": "double"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ContainerStatus"
+          },
+          "currentTerminalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "currentTerminalName": {
+            "type": "string",
+            "nullable": true
+          },
+          "currentTerminalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "loadedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "deliveredAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "returnedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContainerDtoPagedResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContainerDto"
+            },
+            "nullable": true
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContainerIsoType": {
+        "enum": [
+          "gp20",
+          "gp40",
+          "hc40",
+          "rf20",
+          "rf40",
+          "ot20",
+          "ot40",
+          "fr20",
+          "fr40",
+          "hc45",
+          "tk20"
+        ],
+        "type": "string"
+      },
+      "ContainerStatus": {
+        "enum": [
+          "empty",
+          "loaded",
+          "at_port",
+          "in_transit",
+          "delivered",
+          "returned"
+        ],
+        "type": "string"
+      },
       "ConversationDto": {
         "type": "object",
         "properties": {
@@ -14695,6 +15393,50 @@
         },
         "additionalProperties": false
       },
+      "CreateContainerCommand": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string",
+            "nullable": true
+          },
+          "isoType": {
+            "$ref": "#/components/schemas/ContainerIsoType"
+          },
+          "sealNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "bookingReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "billOfLadingNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "isLaden": {
+            "type": "boolean"
+          },
+          "grossWeight": {
+            "type": "number",
+            "format": "double"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ContainerStatus"
+          },
+          "currentTerminalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CreateConversationRequest": {
         "required": [
           "participantIds"
@@ -15042,6 +15784,38 @@
           "customerId": {
             "type": "string",
             "format": "uuid"
+          },
+          "source": {
+            "$ref": "#/components/schemas/LoadSource"
+          },
+          "requestedPickupDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "requestedDeliveryDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "containerId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "originTerminalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "destinationTerminalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -15321,6 +16095,34 @@
             "nullable": true
           },
           "ownerLastName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateTerminalCommand": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/TerminalType"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "notes": {
             "type": "string",
             "nullable": true
           }
@@ -18333,6 +19135,20 @@
         ],
         "type": "string"
       },
+      "LinkContainerToLoadCommand": {
+        "type": "object",
+        "properties": {
+          "containerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "loadId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
       "LlmModelTier": {
         "enum": [
           "base",
@@ -18736,11 +19552,69 @@
           "canConfirmDelivery": {
             "type": "boolean"
           },
+          "isInProximity": {
+            "type": "boolean"
+          },
           "status": {
             "$ref": "#/components/schemas/LoadStatus"
           },
           "type": {
             "$ref": "#/components/schemas/LoadType"
+          },
+          "source": {
+            "$ref": "#/components/schemas/LoadSource"
+          },
+          "requestedPickupDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "requestedDeliveryDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "containerId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "containerNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "containerIsoType": {
+            "$ref": "#/components/schemas/ContainerIsoType"
+          },
+          "originTerminalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "originTerminalName": {
+            "type": "string",
+            "nullable": true
+          },
+          "originTerminalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinationTerminalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "destinationTerminalName": {
+            "type": "string",
+            "nullable": true
+          },
+          "destinationTerminalCode": {
+            "type": "string",
+            "nullable": true
           },
           "assignedDispatcherId": {
             "type": "string",
@@ -18884,6 +19758,16 @@
         },
         "additionalProperties": false
       },
+      "LoadSource": {
+        "enum": [
+          "manual",
+          "email",
+          "pdf",
+          "api",
+          "load_board"
+        ],
+        "type": "string"
+      },
       "LoadStatus": {
         "enum": [
           "draft",
@@ -18925,7 +19809,14 @@
           "liquid",
           "bulk",
           "vehicle",
-          "livestock"
+          "livestock",
+          "intermodal_container",
+          "tank_container",
+          "reefer_container",
+          "break_bulk",
+          "high_value",
+          "pharmaceutical",
+          "project_cargo"
         ],
         "type": "string"
       },
@@ -19578,6 +20469,20 @@
             "type": "number",
             "format": "double",
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MoveContainerToTerminalCommand": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "terminalId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false
@@ -20545,6 +21450,13 @@
           }
         },
         "additionalProperties": false
+      },
+      "Region": {
+        "enum": [
+          "us",
+          "eu"
+        ],
+        "type": "string"
       },
       "RejectDispatchDecisionCommand": {
         "type": "object",
@@ -21637,6 +22549,9 @@
       "TenantSettings": {
         "type": "object",
         "properties": {
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          },
           "distanceUnit": {
             "$ref": "#/components/schemas/DistanceUnit"
           },
@@ -21670,6 +22585,74 @@
           }
         },
         "additionalProperties": false
+      },
+      "TerminalDto": {
+        "required": [
+          "address",
+          "code",
+          "countryCode",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/TerminalType"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TerminalDtoPagedResponse": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TerminalDto"
+            },
+            "nullable": true
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TerminalType": {
+        "enum": [
+          "sea_port",
+          "rail_terminal",
+          "inland_depot",
+          "air_cargo",
+          "border_crossing"
+        ],
+        "type": "string"
       },
       "TimeEntryDto": {
         "type": "object",
@@ -22361,7 +23344,13 @@
           "box_truck",
           "dump_truck",
           "tow_truck",
-          "car_hauler"
+          "car_hauler",
+          "container_truck",
+          "tautliner",
+          "low_loader",
+          "car_transporter",
+          "swap_body",
+          "curtainsider"
         ],
         "type": "string"
       },
@@ -22543,6 +23532,62 @@
           },
           "notes": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateContainerCommand": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string",
+            "nullable": true
+          },
+          "isoType": {
+            "$ref": "#/components/schemas/ContainerIsoType"
+          },
+          "sealNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "bookingReference": {
+            "type": "string",
+            "nullable": true
+          },
+          "billOfLadingNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "grossWeight": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateContainerStatusCommand": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "targetStatus": {
+            "$ref": "#/components/schemas/ContainerStatus"
+          },
+          "terminalId": {
+            "type": "string",
+            "format": "uuid",
             "nullable": true
           }
         },
@@ -22834,6 +23879,38 @@
           },
           "status": {
             "$ref": "#/components/schemas/LoadStatus"
+          },
+          "source": {
+            "$ref": "#/components/schemas/LoadSource"
+          },
+          "requestedPickupDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "requestedDeliveryDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "containerId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "originTerminalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "destinationTerminalId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -22845,13 +23922,8 @@
             "type": "string",
             "format": "uuid"
           },
-          "canConfirmPickUp": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "canConfirmDelivery": {
-            "type": "boolean",
-            "nullable": true
+          "isInProximity": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -23117,6 +24189,38 @@
             "items": {
               "$ref": "#/components/schemas/FeatureUpdate"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateTerminalCommand": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/TerminalType"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
+          },
+          "notes": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -23472,6 +24576,9 @@
       "name": "Contact"
     },
     {
+      "name": "Container"
+    },
+    {
       "name": "Customer"
     },
     {
@@ -23566,6 +24673,9 @@
     },
     {
       "name": "TenantFeatures"
+    },
+    {
+      "name": "Terminal"
     },
     {
       "name": "TimeEntry"

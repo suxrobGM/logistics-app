@@ -1,11 +1,12 @@
-import { Component, effect, inject, input, model, output, signal } from "@angular/core";
+import { Component, computed, effect, inject, input, model, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { Api, updateCustomer } from "@logistics/shared/api";
-import type {
-  Address,
-  CustomerDto,
-  CustomerStatus,
-  UpdateCustomerCommand,
+import {
+  Api,
+  updateCustomer,
+  type Address,
+  type CustomerDto,
+  type CustomerStatus,
+  type UpdateCustomerCommand,
 } from "@logistics/shared/api";
 import { customerStatusOptions } from "@logistics/shared/api/enums";
 import { AddressForm, LabeledField, ValidationSummary } from "@logistics/shared/components";
@@ -15,6 +16,8 @@ import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
+import { TenantService } from "@/core/services/tenant.service";
+import { regionAllowedCountries } from "@/shared/utils";
 
 @Component({
   selector: "app-customer-edit-dialog",
@@ -34,6 +37,11 @@ import { TextareaModule } from "primeng/textarea";
 })
 export class CustomerEditDialog {
   private readonly api = inject(Api);
+  private readonly tenantService = inject(TenantService);
+
+  protected readonly allowedCountries = computed(() =>
+    regionAllowedCountries(this.tenantService.tenantData()?.settings?.region),
+  );
 
   readonly visible = model<boolean>(false);
   readonly customer = input<CustomerDto | null>(null);

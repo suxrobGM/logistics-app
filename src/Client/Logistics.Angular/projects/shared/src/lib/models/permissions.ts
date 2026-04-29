@@ -106,6 +106,14 @@ export const Permission = {
     Manage: "Permission.Accident.Manage",
     Review: "Permission.Accident.Review",
   },
+  Container: {
+    View: "Permission.Container.View",
+    Manage: "Permission.Container.Manage",
+  },
+  Terminal: {
+    View: "Permission.Terminal.View",
+    Manage: "Permission.Terminal.Manage",
+  },
 } as const;
 
 /**

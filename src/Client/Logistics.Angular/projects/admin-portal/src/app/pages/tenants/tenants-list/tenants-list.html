@@ -38,6 +38,7 @@
             Company
             <p-sortIcon field="CompanyName" />
           </th>
+          <th>Region</th>
           <th>Subscription</th>
           <th>Trucks</th>
           <th class="text-center">Actions</th>
@@ -47,6 +48,12 @@
         <tr>
           <td>{{ tenant.name }}</td>
           <td>{{ tenant.companyName }}</td>
+          <td>
+            <p-tag
+              [value]="tenant.settings?.region === 'eu' ? 'EU' : 'US'"
+              [severity]="tenant.settings?.region === 'eu' ? 'info' : 'secondary'"
+            />
+          </td>
           <td>
             <p-tag
               [value]="getSubscriptionStatus(tenant)"

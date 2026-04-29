@@ -76,6 +76,23 @@ export const sidebarSections: NavSection[] = [
           },
         ],
       },
+      {
+        id: "intermodal",
+        label: "Intermodal",
+        icon: "pi pi-warehouse",
+        children: [
+          {
+            id: "intermodal-containers",
+            label: "Containers",
+            route: "/containers",
+          },
+          {
+            id: "intermodal-terminals",
+            label: "Terminals",
+            route: "/terminals",
+          },
+        ],
+      },
     ],
   },
   {

@@ -1,0 +1,31 @@
+<p-autocomplete
+  class="w-full"
+  inputStyleClass="w-full"
+  placeholder="Type a container number"
+  [minLength]="2"
+  [delay]="300"
+  optionLabel="number"
+  [suggestions]="suggestedContainers()"
+  [(ngModel)]="selectedContainer"
+  (completeMethod)="searchContainer($event)"
+  (onSelect)="changeSelectedContainer($event)"
+>
+  <ng-template #empty>
+    <div class="p-2">
+      <span class="text-muted text-sm">
+        No containers matching <b>"{{ lastQuery() }}"</b>
+      </span>
+    </div>
+  </ng-template>
+  <ng-template let-container #item>
+    <div class="flex flex-col">
+      <div class="font-medium">{{ container.number }}</div>
+      <div class="text-muted text-xs">
+        {{ container.isoType }}
+        @if (container.currentTerminalCode) {
+          · {{ container.currentTerminalCode }}
+        }
+      </div>
+    </div>
+  </ng-template>
+</p-autocomplete>

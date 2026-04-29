@@ -72,7 +72,7 @@ fun LoadCard(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Chip(
                         text = load.deliveryCost?.formatCurrency() ?: "",
@@ -82,6 +82,12 @@ fun LoadCard(
                         text = load.distance?.formatDistance(userSettings.distanceUnit) ?: "",
                         color = MaterialTheme.colorScheme.secondary
                     )
+                    load.containerNumber?.let {
+                        Chip(
+                            text = it,
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
                 }
             }
         }

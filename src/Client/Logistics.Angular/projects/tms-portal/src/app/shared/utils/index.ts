@@ -7,6 +7,7 @@ export * from "./predefined-date-ranges";
 export * from "./labels";
 export * from "./select-utils";
 export * from "./performance-utils";
+export * from "./region-countries";
 
 // Re-export converters types from shared library
 export type { DistanceUnitTypes, WeightUnitTypes } from "@logistics/shared/utils";

@@ -1,7 +1,12 @@
-import { Component, type OnInit, inject, input, signal } from "@angular/core";
+import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { Api, deleteLoad, getLoadById, updateLoad } from "@logistics/shared/api";
-import type { UpdateLoadCommand } from "@logistics/shared/api";
+import {
+  Api,
+  deleteLoad,
+  getLoadById,
+  updateLoad,
+  type UpdateLoadCommand,
+} from "@logistics/shared/api";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -39,6 +44,7 @@ export class LoadEditComponent implements OnInit {
       id: this.id()!,
       name: formValue.name!,
       type: formValue.type!,
+      source: formValue.source!,
       originAddress: formValue.originAddress!,
       originLocation: formValue.originLocation,
       destinationAddress: formValue.destinationAddress!,
@@ -49,6 +55,12 @@ export class LoadEditComponent implements OnInit {
       assignedTruckId: formValue.assignedTruckId ?? undefined,
       customerId: formValue.customer?.id,
       status: formValue.status!,
+      requestedPickupDate: formValue.requestedPickupDate ?? null,
+      requestedDeliveryDate: formValue.requestedDeliveryDate ?? null,
+      containerId: formValue.containerId ?? null,
+      originTerminalId: formValue.originTerminalId ?? null,
+      destinationTerminalId: formValue.destinationTerminalId ?? null,
+      notes: formValue.notes ?? null,
     };
 
     await this.api.invoke(updateLoad, { id: this.id()!, body: command });
@@ -75,6 +87,7 @@ export class LoadEditComponent implements OnInit {
     this.initialData.set({
       name: load.name ?? undefined,
       type: load.type,
+      source: load.source ?? "manual",
       customer: load.customer,
       originAddress: load.originAddress,
       originLocation: load.originLocation,
@@ -86,6 +99,35 @@ export class LoadEditComponent implements OnInit {
       assignedDispatcherId: load.assignedDispatcherId ?? undefined,
       assignedDispatcherName: load.assignedDispatcherName ?? undefined,
       assignedTruckId: load.assignedTruckId ?? undefined,
+      requestedPickupDate: load.requestedPickupDate ?? null,
+      requestedDeliveryDate: load.requestedDeliveryDate ?? null,
+      notes: load.notes ?? null,
+      // Pass minimal DTOs for the autocompletes; the form picks up the IDs at submit
+      container: load.containerId
+        ? {
+            id: load.containerId,
+            number: load.containerNumber ?? null,
+            isoType: load.containerIsoType,
+          }
+        : null,
+      originTerminal: load.originTerminalId
+        ? {
+            id: load.originTerminalId,
+            name: load.originTerminalName ?? null,
+            code: load.originTerminalCode ?? null,
+            countryCode: null,
+            address: { line1: null, city: null, state: null, zipCode: null, country: null },
+          }
+        : null,
+      destinationTerminal: load.destinationTerminalId
+        ? {
+            id: load.destinationTerminalId,
+            name: load.destinationTerminalName ?? null,
+            code: load.destinationTerminalCode ?? null,
+            countryCode: null,
+            address: { line1: null, city: null, state: null, zipCode: null, country: null },
+          }
+        : null,
     });
 
     this.loadNumber.set(load.number ?? 0);

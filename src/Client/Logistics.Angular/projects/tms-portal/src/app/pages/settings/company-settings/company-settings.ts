@@ -1,12 +1,14 @@
-import { Component, type OnInit, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AddressForm, PhoneInput } from "@logistics/shared";
-import { Api, getTenantById, updateTenant } from "@logistics/shared/api";
-import type {
-  Address,
-  TenantDto,
-  TenantSettings,
-  UpdateTenantCommand,
+import {
+  Api,
+  getTenantById,
+  updateTenant,
+  type Address,
+  type TenantDto,
+  type TenantSettings,
+  type UpdateTenantCommand,
 } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -16,6 +18,7 @@ import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { TenantService, ToastService } from "@/core/services";
 import { LabeledField, ValidationSummary } from "@/shared/components";
+import { regionAllowedCountries } from "@/shared/utils";
 
 @Component({
   selector: "app-company-settings",
@@ -46,6 +49,9 @@ export class CompanySettingsComponent implements OnInit {
   protected readonly isUploadingLogo = signal(false);
   protected readonly logoPreviewUrl = signal<string | null>(null);
   protected readonly tenant = signal<TenantDto | null>(null);
+  protected readonly allowedCountries = computed(() =>
+    regionAllowedCountries(this.tenantService.tenantData()?.settings?.region),
+  );
 
   // Regional settings options
   protected readonly distanceUnitOptions = [

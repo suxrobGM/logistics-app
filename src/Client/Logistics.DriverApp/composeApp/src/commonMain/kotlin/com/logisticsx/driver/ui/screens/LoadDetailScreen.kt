@@ -111,8 +111,22 @@ fun LoadDetailScreen(
                     CardContainer {
                         Column(modifier = Modifier.padding(16.dp)) {
                             DetailRow("Origin", load.originAddress.toDisplayString())
+                            load.originTerminalCode?.let {
+                                Spacer(modifier = Modifier.height(4.dp))
+                                DetailRow(
+                                    "Origin Terminal",
+                                    "$it — ${load.originTerminalName ?: ""}"
+                                )
+                            }
                             Spacer(modifier = Modifier.height(8.dp))
                             DetailRow("Destination", load.destinationAddress.toDisplayString())
+                            load.destinationTerminalCode?.let {
+                                Spacer(modifier = Modifier.height(4.dp))
+                                DetailRow(
+                                    "Destination Terminal",
+                                    "$it — ${load.destinationTerminalName ?: ""}"
+                                )
+                            }
                             Spacer(modifier = Modifier.height(12.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -120,6 +134,46 @@ fun LoadDetailScreen(
                             ) {
                                 DetailRow("Cost", load.deliveryCost?.formatCurrency() ?: "")
                                 DetailRow("Distance", load.distance?.formatDistance(userSettings.distanceUnit) ?: "")
+                            }
+                        }
+                    }
+
+                    // Container (intermodal loads)
+                    if (load.containerNumber != null) {
+                        CardContainer {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = "Container",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                DetailRow("Number", load.containerNumber ?: "")
+                                load.containerIsoType?.let {
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    DetailRow("ISO Type", it.name.replace("_", " "))
+                                }
+                            }
+                        }
+                    }
+
+                    // Schedule
+                    if (load.requestedPickupDate != null || load.requestedDeliveryDate != null) {
+                        CardContainer {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = "Schedule",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                load.requestedPickupDate?.let {
+                                    DetailRow("Requested Pickup", it.formatShort())
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                }
+                                load.requestedDeliveryDate?.let {
+                                    DetailRow("Requested Delivery", it.formatShort())
+                                }
                             }
                         }
                     }

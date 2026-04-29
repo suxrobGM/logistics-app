@@ -1,11 +1,11 @@
-import { Component, input, output } from "@angular/core";
+import { Component, computed, input, output } from "@angular/core";
 import {
-  type ControlValueAccessor,
   FormControl,
   FormGroup,
   NG_VALUE_ACCESSOR,
   ReactiveFormsModule,
   Validators,
+  type ControlValueAccessor,
 } from "@angular/forms";
 import { InputTextModule } from "primeng/inputtext";
 import { KeyFilterModule } from "primeng/keyfilter";
@@ -30,12 +30,25 @@ import { ValidationSummary } from "../../form/validation-summary/validation-summ
 export class AddressForm implements ControlValueAccessor {
   readonly form: FormGroup<AddressFormType>;
   readonly usStates = US_STATES_OPTIONS;
-  readonly countries = COUNTRIES_OPTIONS;
   private onTouched?: () => void;
   private onChanged?: (value: Address | null) => void;
 
   readonly address = input<Address>();
   readonly addressChange = output<Address | null>();
+  /**
+   * Optional list of ISO-3166-1 alpha-2 country codes to allow.
+   * When omitted, all countries are shown.
+   */
+  readonly allowedCountries = input<readonly string[] | null>(null);
+
+  readonly countries = computed(() => {
+    const allowed = this.allowedCountries();
+    if (!allowed || allowed.length === 0) {
+      return COUNTRIES_OPTIONS;
+    }
+    const set = new Set(allowed);
+    return COUNTRIES_OPTIONS.filter((opt) => set.has(opt.value));
+  });
 
   constructor() {
     this.form = new FormGroup<AddressFormType>({

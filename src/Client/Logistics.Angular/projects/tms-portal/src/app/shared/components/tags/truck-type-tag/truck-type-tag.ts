@@ -18,6 +18,12 @@ const TYPE_INFO: Record<TruckType, TypeInfo> = {
   dump_truck: { label: "Dump Truck", severity: "warn", icon: "pi pi-sort-up" },
   tow_truck: { label: "Tow Truck", severity: "secondary", icon: "pi pi-link" },
   car_hauler: { label: "Car Hauler", severity: "success", icon: "pi pi-car" },
+  container_truck: { label: "Container Truck", severity: "info", icon: "pi pi-warehouse" },
+  tautliner: { label: "Tautliner", severity: "secondary", icon: "pi pi-truck" },
+  low_loader: { label: "Low Loader", severity: "warn", icon: "pi pi-sort-down" },
+  car_transporter: { label: "Car Transporter", severity: "success", icon: "pi pi-car" },
+  swap_body: { label: "Swap Body", severity: "info", icon: "pi pi-sync" },
+  curtainsider: { label: "Curtainsider", severity: "info", icon: "pi pi-truck" },
 };
 
 @Component({

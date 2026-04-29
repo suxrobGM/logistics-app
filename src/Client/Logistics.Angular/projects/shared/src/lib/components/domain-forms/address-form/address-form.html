@@ -29,9 +29,10 @@
     <label for="country" class="mb-1 block">Country:</label>
     <p-select
       formControlName="country"
-      [options]="countries"
+      [options]="countries()"
       placeholder="Select a country"
       class="w-full"
+      [filter]="true"
     />
   </div>
 </form>

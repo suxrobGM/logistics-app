@@ -5,18 +5,23 @@
  */
 import type { SelectOption } from "../models/select-option";
 import type {
+  ContainerIsoType,
+  ContainerStatus,
   CustomerStatus,
   DocumentType,
   EmployeeStatus,
   InvoiceLineItemType,
   InvoiceStatus,
   LoadExceptionType,
+  LoadSource,
   LoadStatus,
   LoadType,
   PaymentMethodType,
   PaymentStatus,
+  Region,
   SalaryType,
   SubscriptionStatus,
+  TerminalType,
   TimeEntryType,
   TripStatus,
   TruckStatus,
@@ -75,6 +80,13 @@ export const loadTypeOptions: SelectOption<LoadType>[] = [
   { label: "Bulk", value: "bulk" },
   { label: "Vehicle", value: "vehicle" },
   { label: "Livestock", value: "livestock" },
+  { label: "Intermodal Container", value: "intermodal_container" },
+  { label: "Tank Container", value: "tank_container" },
+  { label: "Reefer Container", value: "reefer_container" },
+  { label: "Break Bulk", value: "break_bulk" },
+  { label: "High Value", value: "high_value" },
+  { label: "Pharmaceutical", value: "pharmaceutical" },
+  { label: "Project Cargo", value: "project_cargo" },
 ];
 
 export const truckTypeOptions: SelectOption<TruckType>[] = [
@@ -86,6 +98,12 @@ export const truckTypeOptions: SelectOption<TruckType>[] = [
   { label: "Dump Truck", value: "dump_truck" },
   { label: "Tow Truck", value: "tow_truck" },
   { label: "Car Hauler", value: "car_hauler" },
+  { label: "Container Truck", value: "container_truck" },
+  { label: "Tautliner", value: "tautliner" },
+  { label: "Low Loader", value: "low_loader" },
+  { label: "Car Transporter", value: "car_transporter" },
+  { label: "Swap Body", value: "swap_body" },
+  { label: "Curtainsider", value: "curtainsider" },
 ];
 
 export const truckStatusOptions: SelectOption<TruckStatus>[] = [
@@ -181,4 +199,48 @@ export const loadExceptionTypeOptions: SelectOption<LoadExceptionType>[] = [
   { label: "Route Change", value: "route_change" },
   { label: "Customer Request", value: "customer_request" },
   { label: "Other", value: "other" },
+];
+
+export const loadSourceOptions: SelectOption<LoadSource>[] = [
+  { label: "Manual", value: "manual" },
+  { label: "Email", value: "email" },
+  { label: "PDF", value: "pdf" },
+  { label: "API", value: "api" },
+  { label: "Load Board", value: "load_board" },
+];
+
+export const containerStatusOptions: SelectOption<ContainerStatus>[] = [
+  { label: "Empty", value: "empty" },
+  { label: "Loaded", value: "loaded" },
+  { label: "At Port", value: "at_port" },
+  { label: "In Transit", value: "in_transit" },
+  { label: "Delivered", value: "delivered" },
+  { label: "Returned", value: "returned" },
+];
+
+export const containerIsoTypeOptions: SelectOption<ContainerIsoType>[] = [
+  { label: "20' Standard (GP20)", value: "gp20" },
+  { label: "40' Standard (GP40)", value: "gp40" },
+  { label: "40' High Cube (HC40)", value: "hc40" },
+  { label: "45' High Cube (HC45)", value: "hc45" },
+  { label: "20' Refrigerated (RF20)", value: "rf20" },
+  { label: "40' Refrigerated (RF40)", value: "rf40" },
+  { label: "20' Open Top (OT20)", value: "ot20" },
+  { label: "40' Open Top (OT40)", value: "ot40" },
+  { label: "20' Flat Rack (FR20)", value: "fr20" },
+  { label: "40' Flat Rack (FR40)", value: "fr40" },
+  { label: "20' Tank (TK20)", value: "tk20" },
+];
+
+export const terminalTypeOptions: SelectOption<TerminalType>[] = [
+  { label: "Sea Port", value: "sea_port" },
+  { label: "Rail Terminal", value: "rail_terminal" },
+  { label: "Inland Depot", value: "inland_depot" },
+  { label: "Air Cargo", value: "air_cargo" },
+  { label: "Border Crossing", value: "border_crossing" },
+];
+
+export const regionOptions: SelectOption<Region>[] = [
+  { label: "United States", value: "us" },
+  { label: "Europe", value: "eu" },
 ];

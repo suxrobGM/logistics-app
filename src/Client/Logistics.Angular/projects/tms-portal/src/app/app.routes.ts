@@ -42,6 +42,21 @@ export const appRoutes: Routes = [
     },
   },
   {
+    path: "containers",
+    loadChildren: () =>
+      import("./pages/containers/container.routes").then((m) => m.containerRoutes),
+    data: {
+      breadcrumb: "Containers",
+    },
+  },
+  {
+    path: "terminals",
+    loadChildren: () => import("./pages/terminals/terminal.routes").then((m) => m.terminalRoutes),
+    data: {
+      breadcrumb: "Terminals",
+    },
+  },
+  {
     path: "trucks",
     loadChildren: () => import("./pages/trucks/truck.routes").then((m) => m.truckRoutes),
     canActivate: [featureGuardFromData],

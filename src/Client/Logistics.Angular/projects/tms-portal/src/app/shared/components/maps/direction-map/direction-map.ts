@@ -12,6 +12,7 @@ import {
 } from "ngx-mapbox-gl";
 import { firstValueFrom } from "rxjs";
 import { MapStyleService } from "@/core/services";
+import { TenantService } from "@/core/services/tenant.service";
 import { environment } from "@/env";
 import { MapResizeDirective } from "@/shared/directives";
 import type { MapboxDirectionsResponse } from "@/shared/types/mapbox";
@@ -45,10 +46,17 @@ import type {
 export class DirectionMap {
   private readonly http = inject(HttpClient);
   private readonly mapStyleService = inject(MapStyleService);
+  private readonly tenantService = inject(TenantService);
 
   protected readonly accessToken = environment.mapboxToken;
-  private readonly defaultCenter: LngLatLike = [-95, 35];
-  private readonly defaultZoom = 3;
+
+  /** Region-aware default center: US → continental US; EU → central Europe. */
+  private readonly defaultCenter = computed<LngLatLike>(() =>
+    this.tenantService.tenantData()?.settings?.region === "eu" ? [10, 50] : [-95, 35],
+  );
+  private readonly defaultZoom = computed<number>(() =>
+    this.tenantService.tenantData()?.settings?.region === "eu" ? 4 : 3,
+  );
   protected readonly segmentColors = [
     "#28a745", // green
     "#0074D9", // blue
@@ -77,11 +85,11 @@ export class DirectionMap {
     return !pts || pts.length < 2 || !this.coordsAreValid(pts);
   });
 
-  /** The center coordinates of the map. Default is [-95, 35]. */
-  public readonly center = model<LngLatLike>(this.defaultCenter);
+  /** The center coordinates of the map. Region-aware default ([-95, 35] for US, [10, 50] for EU). */
+  public readonly center = model<LngLatLike>(this.defaultCenter());
 
-  /** The zoom level of the map. Default is 3. */
-  public readonly zoom = model<number>(this.defaultZoom);
+  /** The zoom level of the map. Region-aware default (3 for US, 4 for EU). */
+  public readonly zoom = model<number>(this.defaultZoom());
 
   /** Array of stop coordinates in order. */
   public readonly waypoints = input<Waypoint[]>([]);
@@ -341,8 +349,8 @@ export class DirectionMap {
     this.waypointHighlight.set(null);
     this.segmentHighlight.set(null);
     this.bounds.set(null);
-    this.center.set(this.defaultCenter);
-    this.zoom.set(this.defaultZoom);
+    this.center.set(this.defaultCenter());
+    this.zoom.set(this.defaultZoom());
   }
 
   /**

@@ -1,0 +1,182 @@
+<ui-page-header
+  [title]="'Container ' + (container()?.number ?? '')"
+  backLink="/containers"
+  [showAddButton]="false"
+/>
+
+<div class="mx-auto max-w-5xl">
+  <p-card>
+    <div class="border-default mb-4 flex flex-wrap items-center gap-3 border-b pb-4">
+      <span class="text-secondary text-sm">Status:</span>
+      <p-tag
+        [severity]="statusSeverity(container()?.status)"
+        [value]="statusLabel(container()?.status)"
+      />
+      @if (container()?.currentTerminalCode) {
+        <span class="text-secondary text-sm">Terminal:</span>
+        <span class="font-medium">
+          {{ container()?.currentTerminalCode }} — {{ container()?.currentTerminalName }}
+        </span>
+      }
+      <div class="ml-auto flex gap-2">
+        <p-button
+          type="button"
+          icon="pi pi-sync"
+          label="Change Status"
+          [outlined]="true"
+          (click)="openStatusDialog()"
+        />
+        <p-button
+          type="button"
+          icon="pi pi-map-marker"
+          label="Move to Terminal"
+          [outlined]="true"
+          (click)="openTerminalDialog()"
+        />
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+      <ui-validation-summary [form]="form" />
+
+      <div>
+        <h3
+          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
+        >
+          <i class="pi pi-tag"></i>
+          Identification
+        </h3>
+        <div class="border-default bg-elevated rounded-lg border p-4">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <ui-labeled-field
+              label="Container Number"
+              for="number"
+              [required]="true"
+              hint="11 characters: 4 letters + 7 digits"
+              [control]="form.controls.number"
+            >
+              <input pInputText id="number" formControlName="number" />
+            </ui-labeled-field>
+
+            <ui-labeled-field label="ISO Type" for="isoType" [required]="true">
+              <p-select formControlName="isoType" [options]="isoTypeOptions" />
+            </ui-labeled-field>
+
+            <ui-labeled-field label="Seal Number" for="sealNumber">
+              <input pInputText id="sealNumber" formControlName="sealNumber" />
+            </ui-labeled-field>
+
+            <ui-labeled-field label="Booking Reference" for="bookingReference">
+              <input pInputText id="bookingReference" formControlName="bookingReference" />
+            </ui-labeled-field>
+
+            <ui-labeled-field
+              label="Bill of Lading Number"
+              for="billOfLadingNumber"
+              class="md:col-span-2"
+            >
+              <input pInputText id="billOfLadingNumber" formControlName="billOfLadingNumber" />
+            </ui-labeled-field>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3
+          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
+        >
+          <i class="pi pi-box"></i>
+          Cargo
+        </h3>
+        <div class="border-default bg-elevated rounded-lg border p-4">
+          <ui-labeled-field label="Gross Weight (kg)" for="grossWeight" class="mb-0">
+            <p-input-number id="grossWeight" formControlName="grossWeight" [min]="0" />
+          </ui-labeled-field>
+        </div>
+      </div>
+
+      <div>
+        <h3
+          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
+        >
+          <i class="pi pi-comment"></i>
+          Notes
+        </h3>
+        <div class="border-default bg-elevated rounded-lg border p-4">
+          <ui-labeled-field label="Notes" for="notes" class="mb-0">
+            <textarea pTextarea id="notes" formControlName="notes" rows="3"></textarea>
+          </ui-labeled-field>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <p-button type="submit" icon="pi pi-check" label="Update" [disabled]="isLoading()" />
+        <p-button
+          type="button"
+          icon="pi pi-arrow-left"
+          label="Back to list"
+          [routerLink]="['/containers']"
+          [outlined]="true"
+        />
+      </div>
+    </form>
+  </p-card>
+</div>
+
+<!-- Status change dialog -->
+<p-dialog
+  header="Change Container Status"
+  [modal]="true"
+  [(visible)]="statusDialogVisible"
+  [style]="{ width: '32rem' }"
+>
+  <form [formGroup]="statusForm" (ngSubmit)="submitStatus()" class="flex flex-col gap-3">
+    <ui-labeled-field label="New Status" for="targetStatus" [required]="true">
+      <p-select
+        formControlName="targetStatus"
+        [options]="statusOptions"
+        placeholder="Select target status"
+      />
+    </ui-labeled-field>
+
+    @if (statusRequiresTerminal) {
+      <ui-labeled-field label="Terminal" for="statusTerminal" [required]="true" class="mb-0">
+        <app-search-terminal formControlName="terminal" />
+      </ui-labeled-field>
+    }
+
+    <div class="flex justify-end gap-2 pt-2">
+      <p-button
+        type="button"
+        label="Cancel"
+        [outlined]="true"
+        (click)="statusDialogVisible.set(false)"
+      />
+      <p-button type="submit" label="Update Status" icon="pi pi-check" />
+    </div>
+  </form>
+</p-dialog>
+
+<!-- Move to terminal dialog -->
+<p-dialog
+  header="Move Container to Terminal"
+  [modal]="true"
+  [(visible)]="terminalDialogVisible"
+  [style]="{ width: '32rem' }"
+>
+  <form [formGroup]="terminalForm" (ngSubmit)="submitTerminal()" class="flex flex-col gap-3">
+    <ui-labeled-field label="Terminal" for="moveTerminal" [required]="true" class="mb-0">
+      <app-search-terminal formControlName="terminal" />
+    </ui-labeled-field>
+
+    <div class="flex justify-end gap-2 pt-2">
+      <p-button
+        type="button"
+        label="Cancel"
+        [outlined]="true"
+        (click)="terminalDialogVisible.set(false)"
+      />
+      <p-button type="submit" label="Move" icon="pi pi-arrow-right" />
+    </div>
+  </form>
+</p-dialog>

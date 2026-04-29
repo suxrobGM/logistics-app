@@ -1,0 +1,94 @@
+<ui-page-header title="Containers" addRoute="/containers/add" addTooltip="Add a new container" />
+
+<p-card>
+  <div class="mb-4 flex flex-wrap items-end gap-3">
+    <div class="min-w-72 flex-1">
+      <ui-search-input (searchChange)="search($event)" />
+    </div>
+    <p-select
+      [options]="statusOptions"
+      [showClear]="true"
+      placeholder="All statuses"
+      (onChange)="onStatusChange($event.value)"
+    />
+    <p-select
+      [options]="isoTypeOptions"
+      [showClear]="true"
+      placeholder="All ISO types"
+      (onChange)="onIsoTypeChange($event.value)"
+    />
+  </div>
+
+  <ui-data-container
+    [loading]="store.isLoading()"
+    [error]="store.error()"
+    [isEmpty]="store.isEmpty()"
+    skeletonVariant="table"
+    [skeletonRows]="10"
+    emptyTitle="No containers yet"
+    emptyMessage="Add your first container to get started."
+    emptyActionLabel="Add Container"
+    (retry)="store.retry()"
+    (emptyAction)="addContainer()"
+  >
+    <p-table
+      [value]="store.data()"
+      [lazy]="true"
+      [paginator]="true"
+      [showCurrentPageReport]="true"
+      (onLazyLoad)="store.onLazyLoad($event)"
+      [rows]="store.pageSize()"
+      [first]="store.first()"
+      [totalRecords]="store.totalRecords()"
+      [loading]="store.isLoading()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="Number">
+            Number
+            <p-sortIcon field="Number" />
+          </th>
+          <th>ISO Type</th>
+          <th>Status</th>
+          <th>Current Terminal</th>
+          <th>Laden</th>
+          <th pSortableColumn="CreatedAt">
+            Created
+            <p-sortIcon field="CreatedAt" />
+          </th>
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-container>
+        <tr class="cursor-pointer" (click)="editContainer(container)">
+          <td class="font-medium">{{ container.number || "-" }}</td>
+          <td>{{ isoTypeLabel(container.isoType) }}</td>
+          <td>
+            <p-tag
+              [severity]="statusSeverity(container.status)"
+              [value]="statusLabel(container.status)"
+            />
+          </td>
+          <td>{{ container.currentTerminalCode || "-" }}</td>
+          <td>
+            @if (container.isLaden) {
+              <i class="pi pi-check text-green-600"></i>
+            } @else {
+              <i class="pi pi-minus text-muted"></i>
+            }
+          </td>
+          <td>{{ container.createdAt | date: "mediumDate" }}</td>
+          <td>
+            <p-button
+              icon="pi pi-pencil"
+              [text]="true"
+              aria-label="Edit container"
+              (click)="$event.stopPropagation(); editContainer(container)"
+            />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ui-data-container>
+</p-card>

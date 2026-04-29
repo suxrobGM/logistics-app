@@ -26,6 +26,17 @@ const TYPE_INFO: Record<LoadType, TypeInfo> = {
   bulk: { label: "Bulk", severity: "info", icon: "pi pi-inbox" },
   vehicle: { label: "Vehicle / Car", severity: "success", icon: "pi pi-car" },
   livestock: { label: "Livestock", severity: "success", icon: "pi pi-paw" },
+  intermodal_container: {
+    label: "Intermodal Container",
+    severity: "info",
+    icon: "pi pi-warehouse",
+  },
+  tank_container: { label: "Tank Container", severity: "info", icon: "pi pi-sliders-h" },
+  reefer_container: { label: "Reefer Container", severity: "info", icon: "pi pi-snowflake" },
+  break_bulk: { label: "Break Bulk", severity: "info", icon: "pi pi-inbox" },
+  high_value: { label: "High Value", severity: "warn", icon: "pi pi-star" },
+  pharmaceutical: { label: "Pharmaceutical", severity: "info", icon: "pi pi-heart" },
+  project_cargo: { label: "Project Cargo", severity: "warn", icon: "pi pi-briefcase" },
 };
 
 @Component({

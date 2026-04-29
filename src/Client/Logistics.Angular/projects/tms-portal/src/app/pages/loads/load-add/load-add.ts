@@ -1,7 +1,6 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { Api, createLoad } from "@logistics/shared/api";
-import type { CreateLoadCommand } from "@logistics/shared/api";
+import { Api, createLoad, type CreateLoadCommand } from "@logistics/shared/api";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
@@ -26,6 +25,7 @@ export class LoadAddComponent {
     const command: CreateLoadCommand = {
       name: formValue.name,
       type: formValue.type,
+      source: formValue.source,
       originAddress: formValue.originAddress,
       originLocation: formValue.originLocation,
       destinationAddress: formValue.destinationAddress,
@@ -35,6 +35,12 @@ export class LoadAddComponent {
       assignedDispatcherId: formValue.assignedDispatcherId,
       assignedTruckId: formValue.assignedTruckId ?? undefined,
       customerId: formValue.customer?.id,
+      requestedPickupDate: formValue.requestedPickupDate ?? null,
+      requestedDeliveryDate: formValue.requestedDeliveryDate ?? null,
+      containerId: formValue.containerId ?? null,
+      originTerminalId: formValue.originTerminalId ?? null,
+      destinationTerminalId: formValue.destinationTerminalId ?? null,
+      notes: formValue.notes ?? null,
     };
 
     await this.api.invoke(createLoad, { body: command });

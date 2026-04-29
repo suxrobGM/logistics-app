@@ -52,7 +52,7 @@
     </ui-labeled-field>
 
     <ui-labeled-field label="Address" class="mt-4">
-      <ui-address-form formControlName="address" />
+      <ui-address-form formControlName="address" [allowedCountries]="allowedCountries()" />
     </ui-labeled-field>
 
     <ui-labeled-field label="Notes" for="notes" class="mt-4">

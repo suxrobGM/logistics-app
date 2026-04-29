@@ -2,11 +2,13 @@ import { Component, effect, inject, input, output } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
-import type { Address } from "@logistics/shared/api";
+import type { Address, Region } from "@logistics/shared/api";
+import { regionOptions } from "@logistics/shared/api/enums";
 import { AddressForm, LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { Select } from "primeng/select";
 
 export interface TenantFormValue {
   name: string;
@@ -17,6 +19,7 @@ export interface TenantFormValue {
   ownerEmail: string;
   ownerFirstName: string;
   ownerLastName: string;
+  region: Region;
 }
 
 @Component({
@@ -30,11 +33,13 @@ export interface TenantFormValue {
     ProgressSpinnerModule,
     LabeledField,
     InputTextModule,
+    Select,
     AddressForm,
   ],
 })
 export class TenantForm {
   private readonly toastService = inject(ToastService);
+  protected readonly regionOptions = regionOptions;
 
   public readonly mode = input.required<"create" | "edit">();
   public readonly initial = input<Partial<TenantFormValue> | null>(null);
@@ -51,6 +56,10 @@ export class TenantForm {
       nonNullable: true,
     }),
     dotNumber: new FormControl("", { nonNullable: true }),
+    region: new FormControl<Region>("us", {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
     companyAddress: new FormControl<Address | null>(null, { validators: Validators.required }),
     ownerFirstName: new FormControl("", { nonNullable: true }),
     ownerLastName: new FormControl("", { nonNullable: true }),
