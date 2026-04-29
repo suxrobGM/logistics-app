@@ -17,4 +17,12 @@ public class CreateLoadCommand : IAppRequest
     public Guid AssignedDispatcherId { get; set; }
     public Guid? AssignedTruckId { get; set; }
     public Guid CustomerId { get; set; }
+
+    public LoadSource Source { get; set; } = LoadSource.Manual;
+    public DateTime? RequestedPickupDate { get; set; }
+    public DateTime? RequestedDeliveryDate { get; set; }
+    public string? Notes { get; set; }
+    public Guid? ContainerId { get; set; }
+    public Guid? OriginTerminalId { get; set; }
+    public Guid? DestinationTerminalId { get; set; }
 }

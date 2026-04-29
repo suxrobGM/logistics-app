@@ -34,6 +34,14 @@ internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow)
             load.DeliveryCost = PropertyUpdater.UpdateIfChanged(req.DeliveryCost, load.DeliveryCost.Amount);
             load.Distance = PropertyUpdater.UpdateIfChanged(req.Distance, load.Distance);
             load.Type = PropertyUpdater.UpdateIfChanged(req.Type, load.Type);
+            load.Source = PropertyUpdater.UpdateIfChanged(req.Source, load.Source);
+            load.Notes = PropertyUpdater.UpdateIfChanged(req.Notes, load.Notes);
+            // Nullable<T>-to-Nullable<T> assignments — PropertyUpdater's T : struct constraint can't take Nullable<T> as T.
+            if (req.RequestedPickupDate.HasValue) load.RequestedPickupDate = req.RequestedPickupDate;
+            if (req.RequestedDeliveryDate.HasValue) load.RequestedDeliveryDate = req.RequestedDeliveryDate;
+            if (req.ContainerId.HasValue) load.ContainerId = req.ContainerId;
+            if (req.OriginTerminalId.HasValue) load.OriginTerminalId = req.OriginTerminalId;
+            if (req.DestinationTerminalId.HasValue) load.DestinationTerminalId = req.DestinationTerminalId;
 
             if (req.Status.HasValue)
             {

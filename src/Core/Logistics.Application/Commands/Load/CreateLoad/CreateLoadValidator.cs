@@ -19,5 +19,12 @@ internal sealed class CreateLoadValidator : AbstractValidator<CreateLoadCommand>
         RuleFor(i => i.DeliveryCost)
             .GreaterThan(LoadConstants.MinDeliveryCost)
             .LessThan(LoadConstants.MaxDeliveryCost);
+
+        When(i => i.RequestedPickupDate.HasValue && i.RequestedDeliveryDate.HasValue, () =>
+        {
+            RuleFor(i => i.RequestedDeliveryDate!.Value)
+                .GreaterThanOrEqualTo(i => i.RequestedPickupDate!.Value)
+                .WithMessage("Requested delivery date must be on or after requested pickup date.");
+        });
     }
 }

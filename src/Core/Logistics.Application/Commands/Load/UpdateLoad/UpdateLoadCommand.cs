@@ -19,4 +19,12 @@ public class UpdateLoadCommand : IAppRequest
     public Guid? AssignedTruckId { get; set; }
     public Guid? CustomerId { get; set; }
     public LoadStatus? Status { get; set; }
+
+    public LoadSource? Source { get; set; }
+    public DateTime? RequestedPickupDate { get; set; }
+    public DateTime? RequestedDeliveryDate { get; set; }
+    public string? Notes { get; set; }
+    public Guid? ContainerId { get; set; }
+    public Guid? OriginTerminalId { get; set; }
+    public Guid? DestinationTerminalId { get; set; }
 }

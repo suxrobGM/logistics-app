@@ -21,7 +21,14 @@ internal sealed class CreateLoadHandler(ILoadService loadService)
                 req.Distance,
                 req.CustomerId,
                 req.AssignedTruckId,
-                req.AssignedDispatcherId);
+                req.AssignedDispatcherId,
+                Source: req.Source,
+                RequestedPickupDate: req.RequestedPickupDate,
+                RequestedDeliveryDate: req.RequestedDeliveryDate,
+                Notes: req.Notes,
+                ContainerId: req.ContainerId,
+                OriginTerminalId: req.OriginTerminalId,
+                DestinationTerminalId: req.DestinationTerminalId);
 
             // Load.Create() raises domain events for notifications:
             // - NewLoadCreatedEvent (always)

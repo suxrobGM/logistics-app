@@ -21,8 +21,22 @@ public class LoadDto
     public DateTime? CancelledAt { get; set; }
     public bool CanConfirmPickUp { get; set; }
     public bool CanConfirmDelivery { get; set; }
+    public bool IsInProximity { get; set; }
     public LoadStatus Status { get; set; }
     public LoadType Type { get; set; }
+    public LoadSource Source { get; set; }
+    public DateTime? RequestedPickupDate { get; set; }
+    public DateTime? RequestedDeliveryDate { get; set; }
+    public string? Notes { get; set; }
+    public Guid? ContainerId { get; set; }
+    public string? ContainerNumber { get; set; }
+    public ContainerIsoType? ContainerIsoType { get; set; }
+    public Guid? OriginTerminalId { get; set; }
+    public string? OriginTerminalName { get; set; }
+    public string? OriginTerminalCode { get; set; }
+    public Guid? DestinationTerminalId { get; set; }
+    public string? DestinationTerminalName { get; set; }
+    public string? DestinationTerminalCode { get; set; }
     public Guid? AssignedDispatcherId { get; set; }
     public string? AssignedDispatcherName { get; set; }
     public Guid? AssignedTruckId { get; set; }

@@ -16,6 +16,13 @@ namespace Logistics.Application.Services;
 /// <param name="TruckId">Optional Truck ID - load can be created without truck assignment</param>
 /// <param name="DispatcherId">Dispatcher ID</param>
 /// <param name="TripId">Optionally specify trip ID</param>
+/// <param name="Source">How this load entered the system. Defaults to Manual.</param>
+/// <param name="RequestedPickupDate">Customer-requested pickup window date.</param>
+/// <param name="RequestedDeliveryDate">Customer-requested delivery window date.</param>
+/// <param name="Notes">Free-form notes for dispatcher / driver.</param>
+/// <param name="ContainerId">Optional intermodal container being moved by this load.</param>
+/// <param name="OriginTerminalId">Optional origin terminal (port / rail / depot).</param>
+/// <param name="DestinationTerminalId">Optional destination terminal.</param>
 public record CreateLoadParameters(
     string Name,
     LoadType Type,
@@ -26,5 +33,12 @@ public record CreateLoadParameters(
     Guid CustomerId,
     Guid? TruckId,
     Guid DispatcherId,
-    Guid? TripId = null
+    Guid? TripId = null,
+    LoadSource Source = LoadSource.Manual,
+    DateTime? RequestedPickupDate = null,
+    DateTime? RequestedDeliveryDate = null,
+    string? Notes = null,
+    Guid? ContainerId = null,
+    Guid? OriginTerminalId = null,
+    Guid? DestinationTerminalId = null
 );

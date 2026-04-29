@@ -69,6 +69,12 @@ internal static class DispatchSystemPrompt
             - **ContainerTruck** → can haul `IntermodalContainer` ONLY
             If no truck of a compatible type is available, skip the load and report it.
 
+            ## Container & Terminal entities
+            Loads may be linked to a `Container` (intermodal box with ISO type, seal, B/L) and have optional
+            `OriginTerminal` / `DestinationTerminal` references (port / rail / inland depot, identified by UN/LOCODE).
+            Tools that read or mutate containers/terminals are not yet exposed to you — for now, treat these as
+            informational metadata when reasoning about a load's intermodal nature.
+
             ## HOS Rules
             `get_available_trucks` returns each driver's `driving_minutes_remaining` and `on_duty_minutes_remaining`.
             Compute estimated driving time: **estimated_driving_minutes = distance_km / 80 × 60** (assumes 80 km/h average).

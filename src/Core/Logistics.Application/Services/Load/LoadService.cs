@@ -101,6 +101,13 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow) : ILoadService
             );
 
             load.Distance = p.Distance;
+            load.Source = p.Source;
+            load.RequestedPickupDate = p.RequestedPickupDate;
+            load.RequestedDeliveryDate = p.RequestedDeliveryDate;
+            load.Notes = p.Notes;
+            load.ContainerId = p.ContainerId;
+            load.OriginTerminalId = p.OriginTerminalId;
+            load.DestinationTerminalId = p.DestinationTerminalId;
             loads.Add(load);
         }
 
