@@ -53,7 +53,7 @@ public class ContainerController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    [HttpPost("{id:guid}/status", Name = "UpdateContainerStatus")]
+    [HttpPut("{id:guid}/status", Name = "UpdateContainerStatus")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Container.Manage)]
@@ -64,24 +64,13 @@ public class ContainerController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    [HttpPost("{id:guid}/move-to-terminal", Name = "MoveContainerToTerminal")]
+    [HttpPut("{id:guid}/terminal", Name = "SetContainerTerminal")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Container.Manage)]
-    public async Task<IActionResult> MoveToTerminal(Guid id, [FromBody] MoveContainerToTerminalCommand request)
+    public async Task<IActionResult> SetTerminal(Guid id, [FromBody] MoveContainerToTerminalCommand request)
     {
         request.Id = id;
-        var result = await mediator.Send(request);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
-    }
-
-    [HttpPost("{id:guid}/link-to-load", Name = "LinkContainerToLoad")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Container.Manage)]
-    public async Task<IActionResult> LinkToLoad(Guid id, [FromBody] LinkContainerToLoadCommand request)
-    {
-        request.ContainerId = id;
         var result = await mediator.Send(request);
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }

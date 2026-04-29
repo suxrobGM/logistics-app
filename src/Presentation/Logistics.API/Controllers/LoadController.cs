@@ -107,6 +107,17 @@ public class LoadController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    [HttpPut("{id:guid}/container", Name = "SetLoadContainer")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Load.Manage)]
+    public async Task<IActionResult> SetContainer(Guid id, [FromBody] LinkContainerToLoadCommand request)
+    {
+        request.LoadId = id;
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     [HttpPost("{id:guid}/dispatch", Name = "DispatchLoad")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
