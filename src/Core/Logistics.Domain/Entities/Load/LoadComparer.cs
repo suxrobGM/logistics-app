@@ -9,12 +9,12 @@ internal class LoadComparer : IEqualityComparer<Load>
             return true;
         }
 
-        if (ReferenceEquals(x, null))
+        if (x is null)
         {
             return false;
         }
 
-        if (ReferenceEquals(y, null))
+        if (y is null)
         {
             return false;
         }
