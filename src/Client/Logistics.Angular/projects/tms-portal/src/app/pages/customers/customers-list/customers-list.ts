@@ -1,9 +1,9 @@
 import { DatePipe } from "@angular/common";
 import { Component, effect, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { Api, PermissionGuard, deleteCustomer } from "@logistics/shared";
-import { Permission } from "@logistics/shared";
+import { Api, deleteCustomer, Permission, PermissionGuard } from "@logistics/shared";
 import type { CustomerDto } from "@logistics/shared/api";
+import { Stack } from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -36,6 +36,7 @@ import { CustomersListStore } from "../store";
     CustomerStatusTag,
     InviteCustomerDialogComponent,
     PermissionGuard,
+    Stack,
   ],
 })
 export class CustomersList {

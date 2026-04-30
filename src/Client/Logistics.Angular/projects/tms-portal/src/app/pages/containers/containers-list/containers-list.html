@@ -1,7 +1,7 @@
 <ui-page-header title="Containers" addRoute="/containers/add" addTooltip="Add a new container" />
 
 <p-card>
-  <div class="mb-4 flex flex-wrap items-end gap-3">
+  <ui-stack direction="row" align="end" gap="3" wrap class="mb-4">
     <div class="min-w-72 flex-1">
       <ui-search-input (searchChange)="search($event)" />
     </div>
@@ -17,7 +17,7 @@
       placeholder="All ISO types"
       (onChange)="onIsoTypeChange($event.value)"
     />
-  </div>
+  </ui-stack>
 
   <ui-data-container
     [loading]="store.isLoading()"
@@ -65,17 +65,14 @@
           <td class="font-medium">{{ container.number || "-" }}</td>
           <td>{{ isoTypeLabel(container.isoType) }}</td>
           <td>
-            <p-tag
-              [severity]="statusSeverity(container.status)"
-              [value]="statusLabel(container.status)"
-            />
+            <ui-status-badge [status]="container.status" kind="container" />
           </td>
           <td>{{ container.currentTerminalCode || "-" }}</td>
           <td>
             @if (container.isLaden) {
-              <i class="pi pi-check text-green-600"></i>
+              <ui-icon name="check" color="success" />
             } @else {
-              <i class="pi pi-minus text-muted"></i>
+              <ui-icon name="minus" color="muted" />
             }
           </td>
           <td>{{ container.createdAt | date: "mediumDate" }}</td>

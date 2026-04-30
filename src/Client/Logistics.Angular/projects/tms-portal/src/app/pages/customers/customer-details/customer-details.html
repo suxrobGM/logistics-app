@@ -1,7 +1,7 @@
 <!-- Header with actions -->
-<div class="mb-6 flex items-start justify-between">
+<ui-stack direction="row" align="start" justify="between" class="mb-6">
   <ui-page-header title="Customer Details" [showAddButton]="false" />
-  <div class="flex gap-2">
+  <ui-stack direction="row" gap="2">
     <p-button icon="pi pi-pencil" label="Edit" [outlined]="true" (click)="openEditDialog()" />
     <p-button
       icon="pi pi-arrow-left"
@@ -9,46 +9,46 @@
       [routerLink]="['/customers']"
       [outlined]="true"
     />
-  </div>
-</div>
+  </ui-stack>
+</ui-stack>
 
 @if (store.isLoading()) {
-  <div class="flex justify-center py-16">
+  <ui-stack align="center" justify="center" class="py-16">
     <p-progress-spinner />
-  </div>
+  </ui-stack>
 } @else if (store.customer(); as customer) {
   <!-- Enhanced Header with Customer Info -->
-  <div class="mb-6">
-    <div class="border-default bg-elevated rounded-lg border p-4">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <app-customer-avatar [customer]="customer" size="xlarge" />
-          <div>
-            <h2 class="m-0 text-2xl font-bold">{{ customer.name }}</h2>
-            <div class="mt-2 flex items-center gap-2">
-              @if (customer.status) {
-                <app-customer-status-tag [status]="customer.status" />
-              }
-            </div>
-          </div>
+  <ui-surface variant="elevated" [border]="true" class="mb-6">
+    <ui-stack direction="row" align="center" justify="between">
+      <ui-stack direction="row" align="center" gap="4">
+        <app-customer-avatar [customer]="customer" size="xlarge" />
+        <div>
+          <ui-typography variant="h3" tag="h2" weight="bold">{{ customer.name }}</ui-typography>
+          <ui-stack direction="row" align="center" gap="2" class="mt-2">
+            @if (customer.status) {
+              <app-customer-status-tag [status]="customer.status" />
+            }
+          </ui-stack>
         </div>
-        <div class="text-right">
-          <div class="text-muted text-sm">Created</div>
-          <div class="font-medium">{{ customer.createdAt | date: "mediumDate" }}</div>
-        </div>
+      </ui-stack>
+      <div class="text-right">
+        <ui-typography variant="caption" color="muted">Created</ui-typography>
+        <ui-typography variant="body" weight="medium">
+          {{ customer.createdAt | date: "mediumDate" }}
+        </ui-typography>
       </div>
-    </div>
-  </div>
+    </ui-stack>
+  </ui-surface>
 
   <p-card>
     <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
       <p-tablist>
         <p-tab [value]="0">
-          <i class="pi pi-user mr-2"></i>
+          <ui-icon name="user" class="mr-2" />
           Overview
         </p-tab>
         <p-tab [value]="1">
-          <i class="pi pi-file-invoice mr-2"></i>
+          <ui-icon name="file-invoice" class="mr-2" />
           Invoices
           @if (store.invoicesCount()) {
             <span class="bg-info/15 text-info ml-1 rounded-full px-2 py-0.5 text-xs">
@@ -57,7 +57,7 @@
           }
         </p-tab>
         <p-tab [value]="2">
-          <i class="pi pi-box mr-2"></i>
+          <ui-icon name="box" class="mr-2" />
           Loads
           @if (store.loadsCount()) {
             <span class="bg-info/15 text-info ml-1 rounded-full px-2 py-0.5 text-xs">
@@ -66,7 +66,7 @@
           }
         </p-tab>
         <p-tab [value]="3">
-          <i class="pi pi-users mr-2"></i>
+          <ui-icon name="users" class="mr-2" />
           Portal Users
           @if (store.portalUsersCount()) {
             <span class="bg-info/15 text-info ml-1 rounded-full px-2 py-0.5 text-xs">
@@ -79,101 +79,109 @@
       <p-tabpanels>
         <!-- Overview Tab -->
         <p-tabpanel [value]="0">
-          <div class="grid grid-cols-1 gap-6 pt-4 lg:grid-cols-2">
+          <ui-grid container spacing="6" class="pt-4">
             <!-- Contact Info Card -->
-            <p-card class="border-default border">
-              <ng-template #header>
-                <div class="p-4 pb-0">
-                  <h3 class="m-0 text-lg font-semibold">Contact Information</h3>
-                </div>
-              </ng-template>
+            <ui-grid [size]="{ xs: 12, lg: 6 }">
+              <p-card class="border-default border">
+                <ng-template #header>
+                  <div class="p-4 pb-0">
+                    <ui-typography variant="h5" tag="h3" weight="semibold">
+                      Contact Information
+                    </ui-typography>
+                  </div>
+                </ng-template>
 
-              <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                  <span class="text-muted">Email</span>
-                  @if (customer.email) {
-                    <a
-                      [href]="'mailto:' + customer.email"
-                      class="text-accent font-medium hover:underline"
-                    >
-                      {{ customer.email }}
-                    </a>
-                  } @else {
-                    <span class="text-muted">Not provided</span>
-                  }
-                </div>
+                <ui-stack gap="4">
+                  <ui-stack direction="row" align="center" justify="between">
+                    <ui-typography variant="body" color="muted">Email</ui-typography>
+                    @if (customer.email) {
+                      <a
+                        [href]="'mailto:' + customer.email"
+                        class="text-accent font-medium hover:underline"
+                      >
+                        {{ customer.email }}
+                      </a>
+                    } @else {
+                      <ui-typography variant="body" color="muted">Not provided</ui-typography>
+                    }
+                  </ui-stack>
 
-                <p-divider />
+                  <p-divider />
 
-                <div class="flex items-center justify-between">
-                  <span class="text-muted">Phone</span>
-                  @if (customer.phone) {
-                    <a
-                      [href]="'tel:' + customer.phone"
-                      class="text-accent font-medium hover:underline"
-                    >
-                      {{ customer.phone }}
-                    </a>
-                  } @else {
-                    <span class="text-muted">Not provided</span>
-                  }
-                </div>
+                  <ui-stack direction="row" align="center" justify="between">
+                    <ui-typography variant="body" color="muted">Phone</ui-typography>
+                    @if (customer.phone) {
+                      <a
+                        [href]="'tel:' + customer.phone"
+                        class="text-accent font-medium hover:underline"
+                      >
+                        {{ customer.phone }}
+                      </a>
+                    } @else {
+                      <ui-typography variant="body" color="muted">Not provided</ui-typography>
+                    }
+                  </ui-stack>
 
-                <p-divider />
+                  <p-divider />
 
-                <div class="flex items-center justify-between">
-                  <span class="text-muted">Created Date</span>
-                  <span class="font-medium">{{ customer.createdAt | date: "mediumDate" }}</span>
-                </div>
-              </div>
-            </p-card>
+                  <ui-stack direction="row" align="center" justify="between">
+                    <ui-typography variant="body" color="muted">Created Date</ui-typography>
+                    <ui-typography variant="body" weight="medium">
+                      {{ customer.createdAt | date: "mediumDate" }}
+                    </ui-typography>
+                  </ui-stack>
+                </ui-stack>
+              </p-card>
+            </ui-grid>
 
             <!-- Address Card -->
-            <p-card class="border-default border">
-              <ng-template #header>
-                <div class="p-4 pb-0">
-                  <h3 class="m-0 text-lg font-semibold">Address</h3>
-                </div>
-              </ng-template>
-
-              @if (customer.address) {
-                <div class="space-y-2">
-                  @if (customer.address.line1) {
-                    <div>{{ customer.address.line1 }}</div>
-                  }
-                  @if (customer.address.line2) {
-                    <div>{{ customer.address.line2 }}</div>
-                  }
-                  <div>
-                    @if (customer.address.city) {
-                      {{ customer.address.city }}
-                      @if (customer.address.state) {
-                        ,
-                      }
-                    }
-                    @if (customer.address.state) {
-                      {{ customer.address.state }}
-                    }
-                    @if (customer.address.zipCode) {
-                      {{ customer.address.zipCode }}
-                    }
+            <ui-grid [size]="{ xs: 12, lg: 6 }">
+              <p-card class="border-default border">
+                <ng-template #header>
+                  <div class="p-4 pb-0">
+                    <ui-typography variant="h5" tag="h3" weight="semibold">Address</ui-typography>
                   </div>
-                  @if (customer.address.country) {
-                    <div>{{ customer.address.country }}</div>
-                  }
-                </div>
-              } @else {
-                <span class="text-muted">No address provided</span>
-              }
-            </p-card>
-          </div>
+                </ng-template>
+
+                @if (customer.address) {
+                  <ui-stack gap="2">
+                    @if (customer.address.line1) {
+                      <div>{{ customer.address.line1 }}</div>
+                    }
+                    @if (customer.address.line2) {
+                      <div>{{ customer.address.line2 }}</div>
+                    }
+                    <div>
+                      @if (customer.address.city) {
+                        {{ customer.address.city }}
+                        @if (customer.address.state) {
+                          ,
+                        }
+                      }
+                      @if (customer.address.state) {
+                        {{ customer.address.state }}
+                      }
+                      @if (customer.address.zipCode) {
+                        {{ customer.address.zipCode }}
+                      }
+                    </div>
+                    @if (customer.address.country) {
+                      <div>{{ customer.address.country }}</div>
+                    }
+                  </ui-stack>
+                } @else {
+                  <ui-typography variant="body" color="muted">No address provided</ui-typography>
+                }
+              </p-card>
+            </ui-grid>
+          </ui-grid>
 
           <!-- Notes Card -->
           @if (customer.notes) {
             <p-card class="border-default mt-6 border">
               <ng-template #header>
                 <div class="p-4 pb-0">
-                  <h3 class="m-0 text-lg font-semibold">Notes</h3>
+                  <ui-typography variant="h5" tag="h3" weight="semibold">Notes</ui-typography>
                 </div>
               </ng-template>
 
@@ -185,11 +193,11 @@
           <p-card class="border-default mt-6 border">
             <ng-template #header>
               <div class="p-4 pb-0">
-                <h3 class="m-0 text-lg font-semibold">Quick Actions</h3>
+                <ui-typography variant="h5" tag="h3" weight="semibold">Quick Actions</ui-typography>
               </div>
             </ng-template>
 
-            <div class="flex flex-wrap gap-2">
+            <ui-stack direction="row" gap="2" wrap>
               <p-button
                 icon="pi pi-plus"
                 label="New Load"
@@ -204,7 +212,7 @@
                 [routerLink]="['/invoices']"
                 [queryParams]="{ customerId: id() }"
               />
-            </div>
+            </ui-stack>
           </p-card>
         </p-tabpanel>
 
@@ -225,15 +233,18 @@
         <!-- Portal Users Tab -->
         <p-tabpanel [value]="3">
           <div class="pt-4">
-            <div class="mb-4 flex items-center justify-between">
-              <h3 class="m-0">Portal Users</h3>
+            <ui-stack direction="row" align="center" justify="between" class="mb-4">
+              <ui-typography variant="h5" tag="h3" class="m-0">Portal Users</ui-typography>
               <p-button icon="pi pi-plus" label="Invite User" [outlined]="true" />
-            </div>
+            </ui-stack>
             @if (store.portalUsers().length) {
-              <div class="space-y-2">
+              <ui-stack gap="2">
                 @for (user of store.portalUsers(); track user.id) {
-                  <div
-                    class="border-default flex items-center justify-between rounded-lg border p-3"
+                  <ui-stack
+                    direction="row"
+                    align="center"
+                    justify="between"
+                    class="border-default rounded-lg border p-3"
                   >
                     <div>
                       <div class="font-medium">{{ user.displayName || user.email }}</div>
@@ -241,13 +252,13 @@
                     </div>
                     <!-- TODO: Add action menu for portal customers -->
                     <!-- <p-button icon="pi pi-ellipsis-v" [text]="true" [rounded]="true" /> -->
-                  </div>
+                  </ui-stack>
                 }
-              </div>
+              </ui-stack>
             } @else {
-              <p class="text-muted">
+              <ui-typography variant="body" color="muted">
                 No portal users have been invited to this customer account yet.
-              </p>
+              </ui-typography>
             }
           </div>
         </p-tabpanel>
@@ -256,11 +267,11 @@
   </p-card>
 } @else {
   <p-card>
-    <div class="py-16 text-center">
-      <i class="pi pi-exclamation-circle text-muted mb-4 text-4xl"></i>
-      <p class="text-muted">Customer not found</p>
-      <p-button label="Back to Customers" [routerLink]="['/customers']" class="mt-4" />
-    </div>
+    <ui-stack align="center" gap="4" class="py-16">
+      <ui-icon name="exclamation-circle" size="xl" color="muted" />
+      <ui-typography variant="body" color="muted">Customer not found</ui-typography>
+      <p-button label="Back to Customers" [routerLink]="['/customers']" />
+    </ui-stack>
   </p-card>
 }
 

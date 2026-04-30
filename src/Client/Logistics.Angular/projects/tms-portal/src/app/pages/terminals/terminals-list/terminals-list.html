@@ -1,7 +1,7 @@
 <ui-page-header title="Terminals" addRoute="/terminals/add" addTooltip="Add a new terminal" />
 
 <p-card>
-  <div class="mb-4 flex flex-wrap items-end gap-3">
+  <ui-stack direction="row" align="end" gap="3" wrap class="mb-4">
     <div class="min-w-72 flex-1">
       <ui-search-input (searchChange)="search($event)" />
     </div>
@@ -18,7 +18,7 @@
       maxlength="2"
       (input)="onCountryChange($any($event.target).value)"
     />
-  </div>
+  </ui-stack>
 
   <ui-data-container
     [loading]="store.isLoading()"

@@ -4,11 +4,11 @@ import { Router } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import type { ContainerDto, ContainerIsoType, ContainerStatus } from "@logistics/shared/api";
 import { containerIsoTypeOptions, containerStatusOptions } from "@logistics/shared/api/enums";
+import { Icon, Stack, StatusBadge } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { SelectModule } from "primeng/select";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
 import { ContainersListStore } from "../store";
@@ -21,13 +21,15 @@ import { ContainersListStore } from "../store";
     ButtonModule,
     CardModule,
     TableModule,
-    TagModule,
     SelectModule,
     TooltipModule,
     DatePipe,
     DataContainer,
     PageHeader,
     SearchInput,
+    Icon,
+    Stack,
+    StatusBadge,
   ],
 })
 export class ContainersList {
@@ -63,25 +65,6 @@ export class ContainersList {
     if (container.id) {
       this.router.navigate(["/containers", container.id]);
     }
-  }
-
-  protected statusSeverity(status?: ContainerStatus): "info" | "success" | "warn" | "secondary" {
-    switch (status) {
-      case "loaded":
-      case "in_transit":
-        return "info";
-      case "delivered":
-        return "success";
-      case "at_port":
-      case "returned":
-        return "warn";
-      default:
-        return "secondary";
-    }
-  }
-
-  protected statusLabel(status?: ContainerStatus): string {
-    return containerStatusOptions.find((opt) => opt.value === status)?.label ?? "";
   }
 
   protected isoTypeLabel(isoType?: ContainerIsoType): string {

@@ -1,8 +1,8 @@
 <div class="animate-fadein">
   <!-- Header -->
-  <div class="mb-4 flex items-center justify-between">
-    <div class="flex items-center">
-      <h1 class="text-primary mb-0">List Trucks</h1>
+  <ui-stack direction="row" align="center" justify="between" class="mb-4">
+    <ui-stack direction="row" align="center">
+      <ui-typography variant="h2" tag="h1" color="primary" class="mb-0">List Trucks</ui-typography>
       <p-button
         styleClass="ml-2"
         icon="pi pi-plus-circle"
@@ -13,10 +13,10 @@
         aria-label="Add a new truck"
         [routerLink]="['/trucks/add']"
       />
-    </div>
+    </ui-stack>
 
     <!-- View Toggle -->
-    <div class="flex gap-1 rounded-lg border border-default bg-elevated p-1">
+    <ui-stack direction="row" gap="1" class="border-default bg-elevated rounded-lg border p-1">
       <p-button
         icon="pi pi-table"
         [text]="viewMode() !== 'table'"
@@ -33,8 +33,8 @@
         pTooltip="Map view"
         (click)="viewMode.set('map')"
       />
-    </div>
-  </div>
+    </ui-stack>
+  </ui-stack>
 
   <!-- Summary Stats -->
   <app-trucks-summary-stats

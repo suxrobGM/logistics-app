@@ -1,6 +1,6 @@
 <ui-page-header title="Customers" addRoute="/customers/add" addTooltip="Add a new customer" />
 
-<div class="mb-4 flex gap-2">
+<ui-stack direction="row" gap="2" class="mb-4">
   <ui-permission-guard [permissions]="Permission.Invitation.Manage">
     <p-button
       icon="pi pi-send"
@@ -9,7 +9,7 @@
       (click)="openInviteDialog()"
     />
   </ui-permission-guard>
-</div>
+</ui-stack>
 
 <p-card>
   <div class="mb-4">
@@ -64,12 +64,12 @@
       <ng-template #body let-customer>
         <tr>
           <td>
-            <div class="flex items-center gap-3">
+            <ui-stack direction="row" align="center" gap="3">
               <app-customer-avatar [customer]="customer" size="normal" />
               <div>
                 <div class="font-medium">{{ customer.name }}</div>
               </div>
-            </div>
+            </ui-stack>
           </td>
           <td>
             @if (customer.status) {

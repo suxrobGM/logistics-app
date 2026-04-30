@@ -1,6 +1,7 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import type { Address, TruckDto } from "@logistics/shared/api";
+import { Stack, Typography } from "@logistics/shared/components";
 import { AddressPipe } from "@logistics/shared/pipes";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
@@ -35,6 +36,8 @@ import { TrucksListStore } from "../store/trucks-list.store";
     TrucksSummaryStats,
     TrucksFilterPanel,
     TrucksMapView,
+    Stack,
+    Typography,
   ],
 })
 export class TrucksList {

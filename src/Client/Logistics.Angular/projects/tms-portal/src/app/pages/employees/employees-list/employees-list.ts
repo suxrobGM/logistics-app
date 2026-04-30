@@ -4,6 +4,7 @@ import { Router, RouterLink } from "@angular/router";
 import { Permission, PermissionGuard } from "@logistics/shared";
 import type { EmployeeDto, SalaryType } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
+import { Stack } from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -40,6 +41,7 @@ type SeverityType = "success" | "secondary" | "info" | "warn" | "danger" | "cont
     PermissionGuard,
     EmployeeAvatar,
     EmployeeStatusTag,
+    Stack,
   ],
 })
 export class EmployeeList {

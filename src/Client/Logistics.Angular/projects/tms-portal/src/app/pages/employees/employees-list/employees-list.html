@@ -1,6 +1,6 @@
 <ui-page-header title="List Employees" addRoute="/employees/add" addTooltip="Add a new employee" />
 
-<div class="mb-4 flex gap-2">
+<ui-stack direction="row" gap="2" class="mb-4">
   <ui-permission-guard [permissions]="Permission.Invitation.Manage">
     <p-button
       icon="pi pi-send"
@@ -17,7 +17,7 @@
       routerLink="/employees/invitations"
     />
   </ui-permission-guard>
-</div>
+</ui-stack>
 
 <p-card>
   <div class="mb-4">
@@ -77,12 +77,12 @@
       <ng-template #body let-employee>
         <tr>
           <td>
-            <div class="flex items-center gap-3">
+            <ui-stack direction="row" align="center" gap="3">
               <app-employee-avatar [employee]="employee" size="normal" />
               <div>
                 <div class="font-medium">{{ employee.fullName }}</div>
               </div>
-            </div>
+            </ui-stack>
           </td>
           <td>
             @if (employee.status) {
