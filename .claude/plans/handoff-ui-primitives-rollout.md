@@ -1,6 +1,6 @@
 # Handoff: UI Primitives Rollout — Resume Refactor (TMS leftovers + Admin + Customer)
 
-> **Last updated 2026-04-30 after 15 commits.** Jobs 1 + 2 are complete. Job 3 (mass page refactor): **TMS portal and customer portal are fully converted**. Only TMS lower-priority folders (`notifications/`, `messages/`, `ai-dispatch/`) and the **admin portal** remain. Resume from the **Resume here** section below.
+> **Last updated 2026-04-30 after 16 commits.** Jobs 1 + 2 are complete. Job 3 (mass page refactor): **TMS portal and customer portal are fully converted**. Only the **admin portal** remains. Resume from the **Resume here** section below.
 
 ## Context
 
@@ -38,20 +38,16 @@ A MUI-inspired primitive layer was added to `@logistics/shared` in [the parent p
 
 ## Resume here
 
-### TMS portal — remaining
+### TMS portal — DONE ✅
 
-Working dir: `src/Client/Logistics.Angular/projects/tms-portal/src/app/pages/`
-
-All major pages are now converted across two recent commits (`3032d2bf` + `4afdfa21`). Only lower-priority folders remain:
-
-| Folder                                        | Page(s)                  |
-| --------------------------------------------- | ------------------------ |
-| `notifications/`, `messages/`, `ai-dispatch/` | various — lower priority |
+All TMS portal pages and components are now converted across commits `3032d2bf`, `4afdfa21`, and `8aa2869f`.
 
 Notes from the rollout:
 
 - `loads/components/loads-table` was skipped — it's a subcomponent of the already-done `loads-list`.
 - `customers/customer-edit`, `employees/employee-edit`, `terminals/terminal-add`, `terminals/terminal-edit`, `settings/_components/api-keys-table`, `maintenance/service-records`, `maintenance/service-record-add` — these files either don't exist or had no convertible patterns (their wrappers delegate to a shared form component that **was** converted).
+- `messages/components/message-bubble` left as-is to preserve the chat-bubble flex chain integrity.
+- `ai-dispatch` `mode-badge`, `approve-reject-actions`, `run-agent-dialog`, `tool-output-summary` skipped (minimal convertible patterns).
 - Specialized severity tags that don't fit `StatusKind` (accident severity, dvir-type, ELD duty status) were intentionally left as `<p-tag [severity]>` per the plan's pitfall guidance.
 
 ### Admin portal — remaining
@@ -214,10 +210,9 @@ One commit per logical batch of ~4–8 files keeps each diff reviewable.
 
 ## Estimated Remaining Effort
 
-| Scope                                                               | Files | Effort     |
-| ------------------------------------------------------------------- | ----- | ---------- |
-| TMS leftovers (notifications, messages, ai-dispatch — low-priority) | ~10   | ~2-3 hours |
-| Admin portal                                                        | ~20   | ~half day  |
+| Scope        | Files | Effort    |
+| ------------ | ----- | --------- |
+| Admin portal | ~20   | ~half day |
 
 Total: ~1 focused day across 2–4 PRs.
 
