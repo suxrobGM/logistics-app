@@ -1,19 +1,28 @@
-<div class="flex h-full flex-col items-center justify-center">
-  <div class="w-full max-w-md space-y-6">
-    <div class="text-center">
+<ui-stack align="center" justify="center" class="h-full">
+  <ui-stack gap="6" class="w-full max-w-md">
+    <ui-stack align="center" gap="2" class="text-center">
       <div
         class="bg-primary/10 mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full"
       >
-        <i class="pi pi-user-plus text-primary text-4xl"></i>
+        <ui-icon name="user-plus" size="xl" color="primary" />
       </div>
-      <h3 class="text-secondary mb-2 font-semibold">Start a New Conversation</h3>
-      <p class="text-muted text-sm">Search for an employee to message</p>
-    </div>
+      <ui-typography variant="h5" tag="h3" weight="semibold" color="secondary">
+        Start a New Conversation
+      </ui-typography>
+      <ui-typography variant="body-sm" color="muted">
+        Search for an employee to message
+      </ui-typography>
+    </ui-stack>
 
-    <div class="space-y-2">
-      <span class="text-secondary text-sm font-medium">To:</span>
+    <ui-stack gap="2">
+      <ui-typography variant="body-sm" weight="medium" color="secondary">To:</ui-typography>
       @if (selected(); as recipient) {
-        <div class="border-subtle bg-surface flex items-center gap-3 rounded-lg border p-3">
+        <ui-stack
+          direction="row"
+          align="center"
+          gap="3"
+          class="border-subtle bg-surface rounded-lg border p-3"
+        >
           <app-user-avatar [initials]="getInitials(recipient.fullName)" />
           <div class="flex-1">
             <p class="text-primary font-medium">{{ recipient.fullName }}</p>
@@ -26,7 +35,7 @@
             (onClick)="clearRecipient()"
             pTooltip="Remove"
           />
-        </div>
+        </ui-stack>
       } @else {
         <p-autocomplete
           [suggestions]="employeeSuggestions()"
@@ -54,10 +63,12 @@
           </ng-template>
         </p-autocomplete>
       }
-    </div>
+    </ui-stack>
 
     @if (selected()) {
-      <p class="text-muted text-center text-sm">Type a message below to start your conversation</p>
+      <ui-typography variant="body-sm" color="muted" align="center">
+        Type a message below to start your conversation
+      </ui-typography>
     }
-  </div>
-</div>
+  </ui-stack>
+</ui-stack>

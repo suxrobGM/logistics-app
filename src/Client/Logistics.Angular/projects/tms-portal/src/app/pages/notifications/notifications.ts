@@ -1,13 +1,14 @@
 import { DatePipe } from "@angular/common";
-import { Component, type OnDestroy, type OnInit, computed, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal, type OnDestroy, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { SearchInput } from "@logistics/shared";
 import {
   Api,
-  type NotificationDto,
   getNotifications,
   updateNotification,
+  type NotificationDto,
 } from "@logistics/shared/api";
+import { Icon, Stack, Typography } from "@logistics/shared/components";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -43,6 +44,9 @@ interface FilterOption {
     FormsModule,
     TooltipModule,
     SearchInput,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class NotificationsComponent implements OnInit, OnDestroy {

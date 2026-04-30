@@ -6,7 +6,7 @@
       backLink="/ai-dispatch"
       [showAddButton]="false"
     >
-      <div class="flex items-center gap-2">
+      <ui-stack direction="row" align="center" gap="2">
         <p-tag
           [value]="session.status ?? ''"
           [severity]="Labels.dispatchStatusSeverity(session.status ?? '')"
@@ -33,71 +33,74 @@
             (onClick)="replanSession()"
           />
         }
-      </div>
+      </ui-stack>
     </ui-page-header>
 
     <!-- Stats -->
-    <div class="border-default bg-elevated mb-6 rounded-lg border p-4 transition-all duration-300">
+    <ui-surface variant="elevated" [border]="true" class="mb-6 transition-all duration-300">
       @if (session.status === "running") {
         <div class="bg-primary/10 -mx-4 -mt-4 mb-4 flex items-center gap-2 rounded-t-lg px-4 py-2">
           <i class="pi pi-spin pi-spinner text-primary text-sm"></i>
           <span class="text-primary text-sm font-medium">Agent is running...</span>
         </div>
       }
-      <div class="grid grid-cols-2 gap-4 md:grid-cols-6">
+      <ui-grid container spacing="4">
         @for (stat of statsItems(); track stat.label) {
-          <div>
+          <ui-grid [size]="{ xs: 6, md: 2 }">
             <span class="text-muted text-sm">{{ stat.label }}</span>
             <p class="font-medium" [class.font-mono]="stat.mono">{{ stat.value }}</p>
-          </div>
+          </ui-grid>
         }
-      </div>
-    </div>
+      </ui-grid>
+    </ui-surface>
 
     <!-- Instructions -->
     @if (session.instructions) {
-      <div class="border-default bg-subtle mb-6 rounded-lg border p-4">
-        <div class="mb-2 flex items-center gap-2">
-          <i class="pi pi-comment text-primary"></i>
+      <ui-surface variant="subtle" [border]="true" class="mb-6">
+        <ui-stack direction="row" align="center" gap="2" class="mb-2">
+          <ui-icon name="comment" color="primary" />
           <span class="text-sm font-semibold">Dispatcher Instructions</span>
-        </div>
+        </ui-stack>
         <p class="text-secondary m-0 text-sm">{{ session.instructions }}</p>
-      </div>
+      </ui-surface>
     }
 
     <!-- Agent Summary (markdown) -->
     @if (session.summary) {
-      <div
-        class="animate-fadein border-default bg-elevated mb-6 rounded-lg border p-5 transition-all duration-300"
+      <ui-surface
+        variant="elevated"
+        [border]="true"
+        padding="lg"
+        class="animate-fadein mb-6 transition-all duration-300"
       >
-        <div class="mb-3 flex items-center gap-2">
-          <i class="pi pi-sparkles text-primary"></i>
+        <ui-stack direction="row" align="center" gap="2" class="mb-3">
+          <ui-icon name="sparkles" color="primary" />
           <span class="font-semibold">Agent Summary</span>
           @if (session.status === "running") {
             <i class="pi pi-spin pi-spinner text-muted text-xs"></i>
           }
-        </div>
+        </ui-stack>
         <div
           class="prose prose-sm dark:prose-invert max-w-none transition-opacity duration-500"
           [innerHTML]="session.summary | markdown"
         ></div>
-      </div>
+      </ui-surface>
     }
 
     <!-- Error -->
     @if (session.errorMessage) {
       <div class="bg-danger/10 border-danger/20 mb-6 rounded-lg border p-4">
-        <div class="flex items-center gap-2">
-          <i class="pi pi-exclamation-triangle text-danger"></i>
+        <ui-stack direction="row" align="center" gap="2">
+          <ui-icon name="exclamation-triangle" color="danger" />
           <span class="text-danger font-semibold">Error</span>
-        </div>
+        </ui-stack>
         <p class="text-danger mt-1 text-sm">{{ session.errorMessage }}</p>
       </div>
     }
 
     <!-- Agent Timeline -->
     @if (session.decisions?.length) {
-      <h2 class="text-primary mb-4 text-lg font-semibold">Agent Timeline</h2>
+      <ui-typography variant="h5" tag="h2" class="mb-4">Agent Timeline</ui-typography>
 
       <p-timeline [value]="session.decisions ?? []">
         <ng-template #content let-decision>
@@ -166,7 +169,7 @@
     }
   </div>
 } @else if (isLoading()) {
-  <div class="flex items-center justify-center py-20">
+  <ui-stack align="center" justify="center" class="py-20">
     <i class="pi pi-spin pi-spinner text-4xl"></i>
-  </div>
+  </ui-stack>
 }

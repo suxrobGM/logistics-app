@@ -1,7 +1,7 @@
 <div class="animate-fadein">
   <!-- Header -->
   <ui-page-header title="AI Dispatch" [showAddButton]="false">
-    <div class="flex flex-col gap-2 whitespace-nowrap md:flex-row">
+    <ui-stack gap="2" class="whitespace-nowrap md:flex-row">
       <p-button
         label="Run (Suggestions)"
         icon="pi pi-play"
@@ -27,7 +27,7 @@
         "
         (onClick)="openRunDialog('autonomous')"
       />
-    </div>
+    </ui-stack>
   </ui-page-header>
 
   <!-- Run Agent Dialog -->
@@ -39,12 +39,12 @@
   />
 
   <!-- How it works -->
-  <div class="bg-subtle border-default mb-6 rounded-lg border p-4">
-    <div class="mb-3 flex items-center gap-2">
-      <i class="pi pi-info-circle text-primary"></i>
+  <ui-surface variant="subtle" [border]="true" class="mb-6">
+    <ui-stack direction="row" align="center" gap="2" class="mb-3">
+      <ui-icon name="info-circle" color="primary" />
       <span class="font-semibold">How it works</span>
-    </div>
-    <div class="text-secondary flex flex-col gap-2 text-sm leading-relaxed">
+    </ui-stack>
+    <ui-stack gap="2" class="text-secondary text-sm leading-relaxed">
       <p class="m-0">
         The AI agent analyzes unassigned loads, truck locations, HOS hours, truck type
         compatibility, and revenue per mile to find optimal assignments.
@@ -62,8 +62,8 @@
         Add custom instructions when running to guide priorities (e.g., "Prioritize Customer X" or
         "Skip Truck 42").
       </p>
-    </div>
-  </div>
+    </ui-stack>
+  </ui-surface>
 
   <!-- AI Quota Usage -->
   @let quota = quotaStatus();
@@ -76,28 +76,33 @@
 
   <!-- Pending Decisions with Map -->
   <div class="mb-6">
-    <h2 class="text-primary mb-3 text-lg font-semibold">
+    <ui-typography variant="h5" tag="h2" class="mb-3">
       Pending Decisions
       <p-tag [value]="writeDecisions().length.toString()" severity="warn" [rounded]="true" />
-    </h2>
+    </ui-typography>
 
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-5">
       <!-- Map -->
-      <div class="border-default bg-elevated overflow-hidden rounded-lg border lg:col-span-3">
-        <div class="border-default flex items-center gap-2 border-b p-3">
-          <i class="pi pi-map text-primary"></i>
+      <ui-surface
+        variant="elevated"
+        [border]="true"
+        padding="none"
+        class="overflow-hidden lg:col-span-3"
+      >
+        <ui-stack direction="row" align="center" gap="2" class="border-default border-b p-3">
+          <ui-icon name="map" color="primary" />
           <span class="font-medium">Fleet Map</span>
           <span class="text-muted text-sm">{{ truckLocations().length }} trucks tracked</span>
-        </div>
+        </ui-stack>
         <div class="h-125">
           <app-geolocation-map [geolocationData]="truckLocations()" [zoom]="4" height="100%" />
         </div>
-      </div>
+      </ui-surface>
 
       <!-- Decision Cards -->
       <div class="max-h-135 overflow-y-auto lg:col-span-2">
         @if (writeDecisions().length) {
-          <div class="flex flex-col gap-3">
+          <ui-stack gap="3">
             @for (decision of writeDecisions(); track decision.id) {
               <app-decision-card
                 [decision]="decision"
@@ -106,24 +111,26 @@
                 (reject)="rejectDecision($event)"
               />
             }
-          </div>
+          </ui-stack>
         } @else {
-          <div
-            class="border-default bg-elevated flex h-full flex-col items-center justify-center rounded-lg border p-8 text-center"
+          <ui-surface
+            variant="elevated"
+            [border]="true"
+            class="flex h-full flex-col items-center justify-center p-8 text-center"
           >
-            <i class="pi pi-check-circle text-muted mb-3 text-4xl"></i>
+            <ui-icon name="check-circle" size="xl" color="muted" class="mb-3" />
             <p class="text-secondary mb-1 font-medium">No pending decisions</p>
             <p class="text-muted text-sm">
               Run the AI dispatcher to generate load-to-truck assignment suggestions for review.
             </p>
-          </div>
+          </ui-surface>
         }
       </div>
     </div>
   </div>
 
   <!-- Session History -->
-  <h2 class="text-primary mb-3 text-lg font-semibold">Session History</h2>
+  <ui-typography variant="h5" tag="h2" class="mb-3">Session History</ui-typography>
 
   <p-table
     [value]="sessions()"

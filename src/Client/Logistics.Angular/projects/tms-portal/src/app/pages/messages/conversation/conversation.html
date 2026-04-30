@@ -40,7 +40,7 @@
       />
     } @else {
       @if (store.hasMore()) {
-        <div class="flex justify-center">
+        <ui-stack align="center" justify="center">
           <p-button
             label="Load earlier messages"
             icon="pi pi-history"
@@ -49,7 +49,7 @@
             size="small"
             (onClick)="loadMore()"
           />
-        </div>
+        </ui-stack>
       }
       <div class="flex flex-col gap-2">
         @for (message of store.messages(); track message.id) {

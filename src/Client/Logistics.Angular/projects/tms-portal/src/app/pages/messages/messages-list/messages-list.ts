@@ -1,7 +1,8 @@
 import { DatePipe } from "@angular/common";
-import { Component, type OnDestroy, type OnInit, inject } from "@angular/core";
+import { Component, inject, type OnDestroy, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import type { ConversationDto } from "@logistics/shared/api";
+import { Icon, Stack, Typography } from "@logistics/shared/components";
 import { AvatarModule } from "primeng/avatar";
 import { BadgeModule } from "primeng/badge";
 import { ButtonModule } from "primeng/button";
@@ -27,6 +28,9 @@ import { MessagesStore } from "../store/messages.store";
     SkeletonModule,
     DatePipe,
     UserAvatar,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class MessagesListComponent implements OnInit, OnDestroy {

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { ConversationDto } from "@logistics/shared/api";
+import { Icon, Stack, Typography } from "@logistics/shared/components";
 import { AvatarModule } from "primeng/avatar";
 import { ButtonModule } from "primeng/button";
 import { TooltipModule } from "primeng/tooltip";
@@ -11,7 +12,16 @@ import { Converters } from "@/shared/utils";
   selector: "app-conversation-header",
   templateUrl: "./conversation-header.html",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AvatarModule, ButtonModule, RouterLink, TooltipModule, UserAvatar],
+  imports: [
+    AvatarModule,
+    ButtonModule,
+    RouterLink,
+    TooltipModule,
+    UserAvatar,
+    Icon,
+    Stack,
+    Typography,
+  ],
 })
 export class ConversationHeader {
   readonly conversation = input<ConversationDto | null>(null);

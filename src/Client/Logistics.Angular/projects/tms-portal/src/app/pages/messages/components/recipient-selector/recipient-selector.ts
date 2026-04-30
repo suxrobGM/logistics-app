@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, input, output, signal } from "@angular/core";
-import { Api, type EmployeeDto, getEmployees } from "@logistics/shared/api";
+import { Api, getEmployees, type EmployeeDto } from "@logistics/shared/api";
+import { Icon, Stack, Typography } from "@logistics/shared/components";
 import {
-  type AutoCompleteCompleteEvent,
   AutoCompleteModule,
+  type AutoCompleteCompleteEvent,
   type AutoCompleteSelectEvent,
 } from "primeng/autocomplete";
 import { AvatarModule } from "primeng/avatar";
@@ -15,7 +16,16 @@ import { Converters } from "@/shared/utils";
   selector: "app-recipient-selector",
   templateUrl: "./recipient-selector.html",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AvatarModule, AutoCompleteModule, ButtonModule, TooltipModule, UserAvatar],
+  imports: [
+    AvatarModule,
+    AutoCompleteModule,
+    ButtonModule,
+    TooltipModule,
+    UserAvatar,
+    Icon,
+    Stack,
+    Typography,
+  ],
 })
 export class RecipientSelector {
   private readonly api = inject(Api);

@@ -1,15 +1,15 @@
-<div class="border-default bg-elevated rounded-lg border p-4">
+<ui-surface variant="elevated" [border]="true">
   <!-- Header -->
-  <div class="mb-3 flex items-center justify-between">
-    <div class="flex items-center gap-2">
+  <ui-stack direction="row" align="center" justify="between" class="mb-3">
+    <ui-stack direction="row" align="center" gap="2">
       <p-tag [value]="Labels.decisionTypeLabel(decision().type ?? '')" severity="info" />
       <p-tag
         [value]="decision().status ?? ''"
         [severity]="Labels.dispatchStatusSeverity(decision().status ?? '')"
       />
-    </div>
+    </ui-stack>
     <span class="text-muted text-xs">{{ toolLabel() }}</span>
-  </div>
+  </ui-stack>
 
   <!-- Reasoning -->
   @if (decision().reasoning) {
@@ -21,17 +21,17 @@
   <!-- Tool input details -->
   @if (decision().loadId || parsedInput().loadId) {
     <div class="bg-subtle mb-3 rounded-md p-3 text-sm">
-      <div class="flex items-center gap-2">
-        <i class="pi pi-box text-muted text-xs"></i>
+      <ui-stack direction="row" align="center" gap="2">
+        <ui-icon name="box" size="xs" color="muted" />
         <span class="text-muted">Load:</span>
         <span class="font-semibold">{{ decision().loadName ?? parsedInput().loadId }}</span>
-      </div>
+      </ui-stack>
       @if (decision().truckId || parsedInput().truckId) {
-        <div class="mt-1 flex items-center gap-2">
-          <i class="pi pi-truck text-muted text-xs"></i>
+        <ui-stack direction="row" align="center" gap="2" class="mt-1">
+          <ui-icon name="truck" size="xs" color="muted" />
           <span class="text-muted">Truck:</span>
           <span class="font-semibold">{{ decision().truckNumber ?? parsedInput().truckId }}</span>
-        </div>
+        </ui-stack>
       }
       @if (parsedInput().reasoning) {
         <div class="text-secondary mt-2 text-xs italic">"{{ parsedInput().reasoning }}"</div>
@@ -52,7 +52,7 @@
 
   <!-- Actions -->
   @if (decision().status === "suggested") {
-    <div class="flex gap-2">
+    <ui-stack direction="row" gap="2">
       <p-button
         label="Approve"
         icon="pi pi-check"
@@ -69,6 +69,6 @@
         [outlined]="true"
         (onClick)="onReject()"
       />
-    </div>
+    </ui-stack>
   }
-</div>
+</ui-surface>

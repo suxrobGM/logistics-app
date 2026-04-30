@@ -1,6 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, input, model } from "@angular/core";
 import type { ConversationDto } from "@logistics/shared/api";
+import { Icon, Stack, Typography } from "@logistics/shared/components";
 import { AvatarModule } from "primeng/avatar";
 import { DrawerModule } from "primeng/drawer";
 import { UserAvatar } from "@/shared/components";
@@ -10,7 +11,7 @@ import { Converters } from "@/shared/utils";
   selector: "app-conversation-details",
   templateUrl: "./conversation-details.html",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AvatarModule, DatePipe, DrawerModule, UserAvatar],
+  imports: [AvatarModule, DatePipe, DrawerModule, UserAvatar, Icon, Stack, Typography],
 })
 export class ConversationDetails {
   readonly conversation = input<ConversationDto | null>(null);

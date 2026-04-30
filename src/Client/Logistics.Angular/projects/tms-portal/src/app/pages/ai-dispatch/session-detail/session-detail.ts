@@ -1,24 +1,25 @@
 import { DatePipe } from "@angular/common";
 import {
   Component,
-  type OnDestroy,
-  type OnInit,
   computed,
   inject,
   input,
   signal,
+  type OnDestroy,
+  type OnInit,
 } from "@angular/core";
 import { PageHeader } from "@logistics/shared";
 import {
   Api,
-  type DispatchDecisionDto,
-  type DispatchSessionDto,
   approveDispatchDecision,
   cancelDispatchSession,
   getDispatchSessionById,
   rejectDispatchDecision,
   replanDispatchSession,
+  type DispatchDecisionDto,
+  type DispatchSessionDto,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TagModule } from "primeng/tag";
@@ -52,6 +53,11 @@ import { MarkdownPipe } from "../utils/markdown";
     ModeBadge,
     ToolOutputSummary,
     ApproveRejectActions,
+    Grid,
+    Icon,
+    Stack,
+    Surface,
+    Typography,
   ],
 })
 export class SessionDetailPage implements OnInit, OnDestroy {

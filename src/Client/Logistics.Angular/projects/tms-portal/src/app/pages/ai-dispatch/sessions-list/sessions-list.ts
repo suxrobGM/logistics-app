@@ -1,14 +1,9 @@
 import { DatePipe } from "@angular/common";
-import { Component, type OnDestroy, type OnInit, computed, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal, type OnDestroy, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { PageHeader } from "@logistics/shared";
 import {
-  type AiQuotaStatusDto,
   Api,
-  type DispatchAgentMode,
-  type DispatchDecisionDto,
-  type DispatchSessionDto,
-  type TruckDto,
   approveDispatchDecision,
   getAiQuotaStatus,
   getDispatchSessions,
@@ -16,12 +11,17 @@ import {
   getTrucks,
   rejectDispatchDecision,
   runDispatchAgent,
+  type AiQuotaStatusDto,
+  type DispatchAgentMode,
+  type DispatchDecisionDto,
+  type DispatchSessionDto,
+  type TruckDto,
 } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
+import { Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { TableModule } from "primeng/table";
-import type { TableLazyLoadEvent } from "primeng/table";
+import { TableModule, type TableLazyLoadEvent } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import {
@@ -57,6 +57,10 @@ import { stripMarkdown } from "../utils/markdown";
     DecisionCard,
     ModeBadge,
     RunAgentDialog,
+    Icon,
+    Stack,
+    Surface,
+    Typography,
   ],
 })
 export class SessionsListPage implements OnInit, OnDestroy {

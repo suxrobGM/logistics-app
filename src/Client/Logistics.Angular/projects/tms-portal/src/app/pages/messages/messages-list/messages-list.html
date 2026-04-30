@@ -1,14 +1,17 @@
 <div class="mx-auto max-w-4xl">
   <p-card class="shadow-lg">
     <ng-template #header>
-      <div
-        class="from-primary/5 flex items-center justify-between border-b bg-linear-to-r to-transparent p-5"
+      <ui-stack
+        direction="row"
+        align="center"
+        justify="between"
+        class="from-primary/5 border-b bg-linear-to-r to-transparent p-5"
       >
-        <div class="flex items-center gap-3">
-          <i class="pi pi-comments text-primary text-2xl"></i>
-          <h2 class="text-primary">Messages</h2>
-        </div>
-        <div class="flex gap-2">
+        <ui-stack direction="row" align="center" gap="3">
+          <ui-icon name="comments" size="lg" color="primary" />
+          <ui-typography variant="h4" tag="h2">Messages</ui-typography>
+        </ui-stack>
+        <ui-stack direction="row" gap="2">
           <p-button
             icon="pi pi-users"
             label="Team Chat"
@@ -22,8 +25,8 @@
             severity="success"
             (onClick)="createNewConversation()"
           />
-        </div>
-      </div>
+        </ui-stack>
+      </ui-stack>
     </ng-template>
 
     @if (store.loading()) {
@@ -39,14 +42,14 @@
         }
       </div>
     } @else if (store.conversations().length === 0) {
-      <div class="flex flex-col items-center justify-center py-16 text-center">
-        <div class="bg-primary/10 mb-6 flex h-24 w-24 items-center justify-center rounded-full">
-          <i class="pi pi-comments text-primary text-5xl"></i>
+      <ui-stack align="center" justify="center" gap="4" class="py-16 text-center">
+        <div class="bg-primary/10 mb-2 flex h-24 w-24 items-center justify-center rounded-full">
+          <ui-icon name="comments" size="xl" color="primary" />
         </div>
-        <h3 class="text-secondary mb-2">No conversations yet</h3>
-        <p class="text-muted mb-6 max-w-sm">
+        <ui-typography variant="h5" tag="h3" color="secondary">No conversations yet</ui-typography>
+        <ui-typography variant="body" color="muted" class="max-w-sm">
           Start a conversation with your team members to collaborate and stay connected
-        </p>
+        </ui-typography>
         <p-button
           icon="pi pi-plus"
           label="Start Conversation"
@@ -54,7 +57,7 @@
           size="large"
           (onClick)="createNewConversation()"
         />
-      </div>
+      </ui-stack>
     } @else {
       <div class="space-y-2 p-2">
         @for (conversation of store.conversations(); track conversation.id) {
@@ -98,7 +101,7 @@
               </div>
             </div>
 
-            <i class="pi pi-angle-right text-muted"></i>
+            <ui-icon name="angle-right" color="muted" />
           </div>
         }
       </div>

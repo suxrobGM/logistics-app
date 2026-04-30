@@ -1,15 +1,20 @@
 <div class="mx-auto max-w-225">
   <!-- Page Header -->
-  <div
-    class="mb-6 flex flex-wrap items-center justify-between gap-4 max-sm:flex-col max-sm:items-start"
+  <ui-stack
+    direction="row"
+    align="center"
+    justify="between"
+    gap="4"
+    wrap
+    class="mb-6 max-sm:flex-col max-sm:items-start"
   >
-    <div class="flex items-center gap-3">
-      <h1 class="text-primary m-0 text-2xl font-semibold">Notifications</h1>
+    <ui-stack direction="row" align="center" gap="3">
+      <ui-typography variant="h2" tag="h1">Notifications</ui-typography>
       @if (unreadCount() > 0) {
         <p-tag [value]="unreadCount() + ' unread'" severity="info" [rounded]="true" />
       }
-    </div>
-    <div class="flex items-center gap-2">
+    </ui-stack>
+    <ui-stack direction="row" align="center" gap="2">
       @if (unreadCount() > 0) {
         <p-button
           label="Mark all as read"
@@ -26,8 +31,8 @@
         pTooltip="Refresh"
         tooltipPosition="bottom"
       />
-    </div>
-  </div>
+    </ui-stack>
+  </ui-stack>
 
   <!-- Filters & Search -->
   <div
@@ -73,14 +78,14 @@
   <!-- Notifications List -->
   <p-card>
     @if (isLoading()) {
-      <div class="flex items-center justify-center p-16">
+      <ui-stack align="center" justify="center" class="p-16">
         <p-progress-spinner strokeWidth="4" [style]="{ width: '50px', height: '50px' }" />
-      </div>
+      </ui-stack>
     } @else if (filteredNotifications().length === 0) {
-      <div class="flex flex-col items-center justify-center px-8 py-16 text-center">
-        <i class="pi pi-bell-slash text-muted mb-4 text-5xl"></i>
-        <h3 class="text-primary m-0 mb-2 text-lg font-semibold">No notifications</h3>
-        <p class="text-muted m-0 text-sm">
+      <ui-stack align="center" justify="center" gap="2" class="px-8 py-16 text-center">
+        <ui-icon name="bell-slash" size="xl" color="muted" class="mb-2" />
+        <ui-typography variant="h6" tag="h3">No notifications</ui-typography>
+        <ui-typography variant="body-sm" color="muted">
           @if (searchQuery()) {
             No notifications match your search.
           } @else if (filterType() === "unread") {
@@ -90,11 +95,11 @@
           } @else {
             You don't have any notifications yet.
           }
-        </p>
-      </div>
+        </ui-typography>
+      </ui-stack>
     } @else {
       <!-- Select All Header -->
-      <div class="flex items-center justify-between px-4 py-3">
+      <ui-stack direction="row" align="center" justify="between" class="px-4 py-3">
         <span
           class="text-secondary flex cursor-pointer items-center gap-2 text-sm"
           tabindex="0"
@@ -107,7 +112,7 @@
           <span>Select all</span>
         </span>
         <span class="text-muted text-xs">{{ filteredNotifications().length }} notifications</span>
-      </div>
+      </ui-stack>
 
       <p-divider class="m-0" />
 

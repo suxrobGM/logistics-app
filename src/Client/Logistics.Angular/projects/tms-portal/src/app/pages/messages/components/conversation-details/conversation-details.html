@@ -5,28 +5,33 @@
   header="Conversation Details"
 >
   @if (conversation(); as conv) {
-    <div class="space-y-6">
+    <ui-stack gap="6">
       <!-- Conversation Info -->
-      <div class="text-center">
+      <ui-stack align="center" gap="2" class="text-center">
         <app-user-avatar [initials]="getInitials(getConversationTitle(conv))" size="large" />
-        <h3 class="text-primary mt-3 font-semibold">
+        <ui-typography variant="h5" tag="h3" weight="semibold" class="mt-3">
           {{ getConversationTitle(conv) }}
-        </h3>
+        </ui-typography>
         @if (conv.isTenantChat) {
-          <p class="text-muted text-sm">Team Chat</p>
+          <ui-typography variant="body-sm" color="muted">Team Chat</ui-typography>
         }
-      </div>
+      </ui-stack>
 
       <!-- Participants -->
       <div>
-        <h4 class="text-secondary mb-3 flex items-center gap-2 font-medium">
-          <i class="pi pi-users"></i>
-          Participants ({{ conv.participants?.length || 0 }})
-        </h4>
-        <div class="space-y-2">
+        <ui-stack direction="row" align="center" gap="2" class="mb-3">
+          <ui-icon name="users" />
+          <ui-typography variant="label" color="secondary">
+            Participants ({{ conv.participants?.length || 0 }})
+          </ui-typography>
+        </ui-stack>
+        <ui-stack gap="2">
           @for (participant of conv.participants; track participant.employeeId) {
-            <div
-              class="bg-hover hover:bg-hover flex items-center gap-3 rounded-lg p-3 transition-colors"
+            <ui-stack
+              direction="row"
+              align="center"
+              gap="3"
+              class="bg-hover hover:bg-hover rounded-lg p-3 transition-colors"
             >
               <app-user-avatar [initials]="getInitials(participant.employeeName)" />
               <div class="min-w-0 flex-1">
@@ -37,20 +42,22 @@
                   <p class="text-muted text-xs">You</p>
                 }
               </div>
-            </div>
+            </ui-stack>
           }
-        </div>
+        </ui-stack>
       </div>
 
       <!-- Created Date -->
       @if (conv.createdAt) {
         <div class="border-t pt-4">
-          <p class="text-muted text-sm">
-            <i class="pi pi-calendar mr-2"></i>
-            Created {{ conv.createdAt | date: "medium" }}
-          </p>
+          <ui-stack direction="row" align="center" gap="2">
+            <ui-icon name="calendar" color="muted" />
+            <ui-typography variant="body-sm" color="muted">
+              Created {{ conv.createdAt | date: "medium" }}
+            </ui-typography>
+          </ui-stack>
         </div>
       }
-    </div>
+    </ui-stack>
   }
 </p-drawer>

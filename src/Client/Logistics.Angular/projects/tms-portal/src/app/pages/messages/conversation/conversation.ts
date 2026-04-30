@@ -1,18 +1,18 @@
 import {
   Component,
-  ElementRef,
-  type OnDestroy,
-  type OnInit,
   effect,
+  ElementRef,
   inject,
   input,
   signal,
   viewChild,
+  type OnDestroy,
+  type OnInit,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import type { ConversationDto, EmployeeDto, MessageDto } from "@logistics/shared/api";
-import { EmptyState } from "@logistics/shared/components";
+import { EmptyState, Stack } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { SkeletonModule } from "primeng/skeleton";
@@ -36,6 +36,7 @@ import { MessagesStore } from "../store/messages.store";
     FormsModule,
     SkeletonModule,
     EmptyState,
+    Stack,
     ConversationHeader,
     ConversationDetails,
     MessageBubble,
