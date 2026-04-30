@@ -1,6 +1,7 @@
 import { Component, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { Api, type PortalInvoiceDto, getPortalInvoices } from "@logistics/shared/api";
+import { Api, getPortalInvoices, type PortalInvoiceDto } from "@logistics/shared/api";
+import { Icon, Stack, StatusBadge, Surface, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import { MessageService } from "primeng/api";
 import { ButtonModule } from "primeng/button";
@@ -8,8 +9,7 @@ import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { type TableLazyLoadEvent, TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
+import { TableModule, type TableLazyLoadEvent } from "primeng/table";
 import { ToastModule } from "primeng/toast";
 
 @Component({
@@ -21,12 +21,16 @@ import { ToastModule } from "primeng/toast";
     RouterLink,
     TableModule,
     ButtonModule,
-    TagModule,
     IconFieldModule,
     InputIconModule,
     InputTextModule,
     ProgressSpinnerModule,
     ToastModule,
+    Icon,
+    Stack,
+    StatusBadge,
+    Surface,
+    Typography,
   ],
 })
 export class InvoicesList {
@@ -71,21 +75,6 @@ export class InvoicesList {
     this.currentPage = 1;
     this.tableFirst.set(0);
     this.loadData();
-  }
-
-  protected getStatusSeverity(status: string | undefined): "success" | "info" | "warn" | "danger" {
-    switch (status) {
-      case "paid":
-        return "success";
-      case "partially_paid":
-        return "info";
-      case "issued":
-        return "warn";
-      case "cancelled":
-        return "danger";
-      default:
-        return "info";
-    }
   }
 
   protected downloadInvoice(invoice: PortalInvoiceDto): void {

@@ -2,18 +2,18 @@ import { Component, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import {
   Api,
-  type CustomerUserDto,
-  type PortalLoadDto,
   getPortalInvoices,
   getPortalLoads,
   getPortalProfile,
+  type CustomerUserDto,
+  type PortalLoadDto,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack, StatusBadge, Surface, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
 import { TenantContextService } from "@/core/services";
 
 @Component({
@@ -26,7 +26,12 @@ import { TenantContextService } from "@/core/services";
     ProgressSpinnerModule,
     SkeletonModule,
     TableModule,
-    TagModule,
+    Grid,
+    Icon,
+    Stack,
+    StatusBadge,
+    Surface,
+    Typography,
   ],
 })
 export class Dashboard {
@@ -68,19 +73,6 @@ export class Dashboard {
       console.error("Failed to load dashboard data:", error);
     } finally {
       this.isLoading.set(false);
-    }
-  }
-
-  protected getStatusSeverity(status: string | undefined): "success" | "info" | "warn" | "danger" {
-    switch (status) {
-      case "Delivered":
-        return "success";
-      case "PickedUp":
-        return "info";
-      case "Dispatched":
-        return "warn";
-      default:
-        return "info";
     }
   }
 }

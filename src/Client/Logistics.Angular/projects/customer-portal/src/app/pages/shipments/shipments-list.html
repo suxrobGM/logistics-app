@@ -1,6 +1,6 @@
 <div>
-  <div class="mb-6 flex items-center justify-between">
-    <h1 class="text-2xl font-bold text-gray-900">My Shipments</h1>
+  <ui-stack direction="row" align="center" justify="between" class="mb-6">
+    <ui-typography variant="h2" tag="h1">My Shipments</ui-typography>
     <p-iconfield>
       <p-inputicon class="pi pi-search" />
       <input
@@ -11,9 +11,9 @@
         (input)="onSearch($any($event.target).value)"
       />
     </p-iconfield>
-  </div>
+  </ui-stack>
 
-  <div class="rounded-lg bg-white shadow">
+  <ui-surface variant="elevated" padding="none">
     <p-table
       [value]="loads()"
       [lazy]="true"
@@ -44,7 +44,7 @@
           <td>{{ formatAddress(load.originAddress) }}</td>
           <td>{{ formatAddress(load.destinationAddress) }}</td>
           <td>
-            <p-tag [value]="load.status" [severity]="getStatusSeverity(load.status)" />
+            <ui-status-badge [status]="load.status" kind="load" />
           </td>
           <td>{{ load.driverName || "-" }}</td>
           <td class="text-right">
@@ -60,11 +60,13 @@
       <ng-template #emptymessage>
         <tr>
           <td colspan="7" class="py-12 text-center">
-            <i class="pi pi-inbox mb-2 text-4xl text-gray-300"></i>
-            <p class="text-gray-500">No shipments found</p>
+            <ui-stack align="center" gap="2">
+              <ui-icon name="inbox" size="xl" color="muted" />
+              <ui-typography variant="body" color="muted">No shipments found</ui-typography>
+            </ui-stack>
           </td>
         </tr>
       </ng-template>
     </p-table>
-  </div>
+  </ui-surface>
 </div>

@@ -1,81 +1,92 @@
 <!-- Welcome Header -->
-<div class="mb-8">
-  <h1 class="text-gray-900">
+<ui-stack gap="1" class="mb-8">
+  <ui-typography variant="h2" tag="h1">
     Welcome back{{ profile()?.displayName ? ", " + profile()?.displayName : "" }}
-  </h1>
+  </ui-typography>
   @if (companyName()) {
-    <p class="mt-1 text-gray-600">{{ companyName() }}</p>
+    <ui-typography variant="body" color="muted">{{ companyName() }}</ui-typography>
   }
-</div>
+</ui-stack>
 
 @if (isLoading()) {
-  <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+  <ui-grid container spacing="6">
     @for (_ of [1, 2, 3]; track $index) {
-      <div class="rounded-lg bg-white p-6 shadow">
-        <p-skeleton height="1.5rem" width="60%" styleClass="mb-2" />
-        <p-skeleton height="2.5rem" width="40%" />
-      </div>
+      <ui-grid [size]="{ xs: 12, md: 4 }">
+        <ui-surface variant="elevated">
+          <p-skeleton height="1.5rem" width="60%" styleClass="mb-2" />
+          <p-skeleton height="2.5rem" width="40%" />
+        </ui-surface>
+      </ui-grid>
     }
-  </div>
+  </ui-grid>
 } @else {
   <!-- Stats Cards -->
-  <div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-    <a
-      routerLink="/shipments"
-      class="rounded-lg bg-white p-6 shadow transition-shadow hover:shadow-md"
-    >
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-gray-500">Active Shipments</p>
-          <p class="mt-1 text-3xl font-bold text-gray-900">{{ activeLoadCount() }}</p>
-        </div>
-        <div class="rounded-full bg-blue-100 p-3">
-          <i class="pi pi-truck text-2xl text-blue-600"></i>
-        </div>
-      </div>
-    </a>
+  <ui-grid container spacing="6" class="mb-8">
+    <ui-grid [size]="{ xs: 12, md: 4 }">
+      <a routerLink="/shipments" class="block">
+        <ui-surface variant="elevated" class="block transition-shadow hover:shadow-md">
+          <ui-stack direction="row" align="center" justify="between">
+            <div>
+              <ui-typography variant="caption" color="muted" weight="medium">
+                Active Shipments
+              </ui-typography>
+              <ui-typography variant="stat" class="mt-1">{{ activeLoadCount() }}</ui-typography>
+            </div>
+            <div class="rounded-full bg-blue-100 p-3">
+              <ui-icon name="truck" size="lg" class="text-blue-600" />
+            </div>
+          </ui-stack>
+        </ui-surface>
+      </a>
+    </ui-grid>
 
-    <a
-      routerLink="/invoices"
-      class="rounded-lg bg-white p-6 shadow transition-shadow hover:shadow-md"
-    >
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-gray-500">Pending Invoices</p>
-          <p class="mt-1 text-3xl font-bold text-gray-900">{{ pendingInvoiceCount() }}</p>
-        </div>
-        <div class="rounded-full bg-orange-100 p-3">
-          <i class="pi pi-receipt text-2xl text-orange-600"></i>
-        </div>
-      </div>
-    </a>
+    <ui-grid [size]="{ xs: 12, md: 4 }">
+      <a routerLink="/invoices" class="block">
+        <ui-surface variant="elevated" class="block transition-shadow hover:shadow-md">
+          <ui-stack direction="row" align="center" justify="between">
+            <div>
+              <ui-typography variant="caption" color="muted" weight="medium">
+                Pending Invoices
+              </ui-typography>
+              <ui-typography variant="stat" class="mt-1">{{ pendingInvoiceCount() }}</ui-typography>
+            </div>
+            <div class="rounded-full bg-orange-100 p-3">
+              <ui-icon name="receipt" size="lg" class="text-orange-600" />
+            </div>
+          </ui-stack>
+        </ui-surface>
+      </a>
+    </ui-grid>
 
-    <a
-      routerLink="/documents"
-      class="rounded-lg bg-white p-6 shadow transition-shadow hover:shadow-md"
-    >
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-gray-500">Documents</p>
-          <p class="mt-1 text-3xl font-bold text-gray-900">
-            <i class="pi pi-folder-open"></i>
-          </p>
-        </div>
-        <div class="rounded-full bg-green-100 p-3">
-          <i class="pi pi-file text-2xl text-green-600"></i>
-        </div>
-      </div>
-    </a>
-  </div>
+    <ui-grid [size]="{ xs: 12, md: 4 }">
+      <a routerLink="/documents" class="block">
+        <ui-surface variant="elevated" class="block transition-shadow hover:shadow-md">
+          <ui-stack direction="row" align="center" justify="between">
+            <div>
+              <ui-typography variant="caption" color="muted" weight="medium">
+                Documents
+              </ui-typography>
+              <ui-typography variant="stat" class="mt-1">
+                <ui-icon name="folder-open" />
+              </ui-typography>
+            </div>
+            <div class="rounded-full bg-green-100 p-3">
+              <ui-icon name="file" size="lg" class="text-green-600" />
+            </div>
+          </ui-stack>
+        </ui-surface>
+      </a>
+    </ui-grid>
+  </ui-grid>
 
   <!-- Recent Shipments -->
-  <div class="rounded-lg bg-white p-6 shadow">
-    <div class="mb-4 flex items-center justify-between">
-      <h2 class="text-gray-900">Recent Shipments</h2>
+  <ui-surface variant="elevated">
+    <ui-stack direction="row" align="center" justify="between" class="mb-4">
+      <ui-typography variant="h5" tag="h2">Recent Shipments</ui-typography>
       <a routerLink="/shipments" class="text-primary text-sm font-medium hover:underline">
         View All
       </a>
-    </div>
+    </ui-stack>
 
     @if (recentLoads().length > 0) {
       <p-table [value]="recentLoads()">
@@ -93,7 +104,7 @@
             <td class="font-medium">{{ load.number }}</td>
             <td>{{ load.name || "-" }}</td>
             <td>
-              <p-tag [value]="load.status" [severity]="getStatusSeverity(load.status)" />
+              <ui-status-badge [status]="load.status" kind="load" />
             </td>
             <td>{{ load.driverName || "-" }}</td>
             <td class="text-right">
@@ -108,10 +119,10 @@
         </ng-template>
       </p-table>
     } @else {
-      <div class="py-8 text-center">
-        <i class="pi pi-inbox mb-2 text-4xl text-gray-300"></i>
-        <p class="text-gray-500">No active shipments</p>
-      </div>
+      <ui-stack align="center" gap="2" class="py-8">
+        <ui-icon name="inbox" size="xl" color="muted" />
+        <ui-typography variant="body" color="muted">No active shipments</ui-typography>
+      </ui-stack>
     }
-  </div>
+  </ui-surface>
 }

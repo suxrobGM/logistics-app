@@ -1,13 +1,13 @@
 import { Component, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { Api, type PortalLoadDto, getPortalLoads } from "@logistics/shared/api";
+import { Api, getPortalLoads, type PortalLoadDto } from "@logistics/shared/api";
+import { Icon, Stack, StatusBadge, Surface, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { type TableLazyLoadEvent, TableModule } from "primeng/table";
-import { TagModule } from "primeng/tag";
+import { TableModule, type TableLazyLoadEvent } from "primeng/table";
 
 @Component({
   selector: "cp-shipments-list",
@@ -16,11 +16,15 @@ import { TagModule } from "primeng/tag";
     RouterLink,
     TableModule,
     ButtonModule,
-    TagModule,
     IconFieldModule,
     InputIconModule,
     InputTextModule,
     ProgressSpinnerModule,
+    Icon,
+    Stack,
+    StatusBadge,
+    Surface,
+    Typography,
   ],
 })
 export class ShipmentsList {
@@ -64,19 +68,6 @@ export class ShipmentsList {
     this.currentPage = 1;
     this.tableFirst.set(0);
     this.loadData();
-  }
-
-  protected getStatusSeverity(status: string | undefined): "success" | "info" | "warn" | "danger" {
-    switch (status) {
-      case "Delivered":
-        return "success";
-      case "PickedUp":
-        return "info";
-      case "Dispatched":
-        return "warn";
-      default:
-        return "info";
-    }
   }
 
   protected formatAddress(
