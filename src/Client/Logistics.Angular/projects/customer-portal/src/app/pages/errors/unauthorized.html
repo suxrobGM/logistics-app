@@ -24,7 +24,7 @@
 
           <!-- Warning icon overlay -->
           <div class="absolute inset-0 flex items-center justify-center">
-            <i class="pi pi-exclamation-triangle text-3xl text-amber-500"></i>
+            <ui-icon name="exclamation-triangle" size="lg" class="text-amber-500" />
           </div>
         </div>
       </div>
@@ -39,16 +39,16 @@
     <p class="mb-2 text-7xl font-extralight tracking-tight text-slate-200">401</p>
 
     <!-- Title -->
-    <h1 class="mb-3 text-2xl font-semibold text-slate-800">Access Denied</h1>
+    <ui-typography variant="h3" tag="h1" align="center" class="mb-3">Access Denied</ui-typography>
 
     <!-- Description -->
-    <p class="mx-auto mb-8 max-w-sm text-slate-500">
+    <ui-typography variant="body" color="muted" align="center" class="mx-auto mb-8 max-w-sm block">
       You don't have permission to access this page. This might be because your session has expired
       or you don't have the required permissions.
-    </p>
+    </ui-typography>
 
     <!-- Actions -->
-    <div class="flex flex-col gap-3 sm:flex-row sm:justify-center">
+    <ui-stack direction="row" justify="center" gap="3" class="flex-col sm:flex-row">
       <p-button label="Sign In Again" icon="pi pi-sign-in" severity="success" (click)="login()" />
       <p-button
         label="Sign Out"
@@ -57,30 +57,30 @@
         [outlined]="true"
         (click)="logout()"
       />
-    </div>
+    </ui-stack>
 
     <!-- Additional info card -->
-    <div class="mt-10 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p class="mb-3 text-sm font-medium text-slate-700">Why am I seeing this?</p>
+    <ui-surface variant="elevated" [border]="true" padding="md" class="mt-10 block">
+      <ui-typography variant="body-sm" weight="medium" class="mb-3 block">Why am I seeing this?</ui-typography>
       <ul class="space-y-2.5 text-left text-sm text-slate-500">
         <li class="flex items-center gap-3">
-          <i class="pi pi-clock text-slate-400"></i>
+          <ui-icon name="clock" color="muted" />
           <span>Your session may have expired</span>
         </li>
         <li class="flex items-center gap-3">
-          <i class="pi pi-user text-slate-400"></i>
+          <ui-icon name="user" color="muted" />
           <span>Your account may not have portal access</span>
         </li>
         <li class="flex items-center gap-3">
-          <i class="pi pi-lock text-slate-400"></i>
+          <ui-icon name="lock" color="muted" />
           <span>The resource may require special permissions</span>
         </li>
       </ul>
-    </div>
+    </ui-surface>
 
     <!-- Help text -->
-    <p class="mt-6 text-sm text-slate-400">
+    <ui-typography variant="body-sm" color="muted" align="center" class="mt-6 block">
       If you believe this is an error, please contact your company administrator.
-    </p>
+    </ui-typography>
   </div>
 </div>

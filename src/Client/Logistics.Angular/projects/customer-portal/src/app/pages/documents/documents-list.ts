@@ -3,10 +3,11 @@ import { Component, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import {
   Api,
-  type DocumentDto,
   getPortalLoadDocuments,
   getPortalLoads,
+  type DocumentDto,
 } from "@logistics/shared/api";
+import { Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
@@ -21,7 +22,18 @@ interface DocumentWithLoad extends DocumentDto {
 @Component({
   selector: "cp-documents-list",
   templateUrl: "./documents-list.html",
-  imports: [DatePipe, RouterLink, TableModule, ButtonModule, TagModule, ProgressSpinnerModule],
+  imports: [
+    DatePipe,
+    RouterLink,
+    TableModule,
+    ButtonModule,
+    TagModule,
+    ProgressSpinnerModule,
+    Icon,
+    Stack,
+    Surface,
+    Typography,
+  ],
 })
 export class DocumentsList {
   private readonly api = inject(Api);

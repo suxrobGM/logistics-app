@@ -4,10 +4,11 @@ import { FormsModule } from "@angular/forms";
 import { ErrorState, LoadingSkeleton, ToastService } from "@logistics/shared";
 import {
   Api,
-  type PublicInvoiceDto,
   getPublicInvoice,
   processPublicPayment,
+  type PublicInvoiceDto,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -32,6 +33,11 @@ import { PublicLayout } from "@/shared/layout";
     ErrorState,
     LoadingSkeleton,
     PublicLayout,
+    Grid,
+    Icon,
+    Stack,
+    Surface,
+    Typography,
   ],
 })
 export class PublicPayment {

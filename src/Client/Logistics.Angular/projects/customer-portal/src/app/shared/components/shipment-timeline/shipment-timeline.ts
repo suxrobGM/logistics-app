@@ -1,5 +1,6 @@
 import { DatePipe } from "@angular/common";
 import { ChangeDetectionStrategy, Component, computed, input } from "@angular/core";
+import { Stack, Typography } from "@logistics/shared/components";
 
 interface TimelineStep {
   label: string;
@@ -14,7 +15,7 @@ interface TimelineStep {
   selector: "cp-shipment-timeline",
   templateUrl: "./shipment-timeline.html",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe],
+  imports: [DatePipe, Stack, Typography],
 })
 export class ShipmentTimeline {
   public readonly dispatchedAt = input<string | null | undefined>(null);

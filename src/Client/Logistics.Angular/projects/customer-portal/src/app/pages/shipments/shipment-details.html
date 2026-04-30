@@ -1,52 +1,52 @@
-<div class="mb-6 flex items-center gap-4">
+<ui-stack direction="row" align="center" gap="4" class="mb-6">
   <p-button routerLink="/shipments" icon="pi pi-arrow-left" [text]="true" label="Back" />
-  <h1 class="text-2xl font-bold text-gray-900">Shipment Details</h1>
-</div>
+  <ui-typography variant="h2" tag="h1">Shipment Details</ui-typography>
+</ui-stack>
 
 @if (isLoading()) {
-  <div class="flex items-center justify-center py-12">
+  <ui-stack direction="row" align="center" justify="center" class="py-12">
     <p-progress-spinner strokeWidth="4" />
-  </div>
+  </ui-stack>
 } @else if (load()) {
-  <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+  <ui-grid container spacing="6">
     <!-- Main Info -->
-    <div class="lg:col-span-2">
-      <div class="rounded-lg bg-white p-6 shadow">
-        <div class="mb-4 flex items-center justify-between">
-          <h2 class="text-lg font-semibold">Load #{{ load()?.number }}</h2>
+    <ui-grid [size]="{ xs: 12, lg: 8 }">
+      <ui-surface variant="elevated" padding="md">
+        <ui-stack direction="row" align="center" justify="between" class="mb-4">
+          <ui-typography variant="h5" tag="h2">Load #{{ load()?.number }}</ui-typography>
           <p-tag [value]="load()?.status" [severity]="getStatusSeverity(load()?.status)" />
-        </div>
+        </ui-stack>
 
         @if (load()?.name) {
-          <p class="mb-4 text-gray-600">{{ load()?.name }}</p>
+          <ui-typography variant="body" color="muted" class="mb-4">{{ load()?.name }}</ui-typography>
         }
 
-        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div>
-            <h3 class="mb-2 text-sm font-medium text-gray-500">Origin</h3>
-            <p class="font-medium">{{ formatAddress(load()?.originAddress) }}</p>
+        <ui-grid container spacing="6">
+          <ui-grid [size]="{ xs: 12, md: 6 }">
+            <ui-typography variant="caption" color="muted" weight="medium" class="mb-2 block">Origin</ui-typography>
+            <ui-typography variant="body" weight="medium">{{ formatAddress(load()?.originAddress) }}</ui-typography>
             @if (load()?.dispatchedAt) {
-              <p class="mt-1 text-sm text-gray-500">
+              <ui-typography variant="body-sm" color="muted" class="mt-1">
                 Dispatched: {{ load()?.dispatchedAt | dateFormat: "medium" }}
-              </p>
+              </ui-typography>
             }
-          </div>
+          </ui-grid>
 
-          <div>
-            <h3 class="mb-2 text-sm font-medium text-gray-500">Destination</h3>
-            <p class="font-medium">{{ formatAddress(load()?.destinationAddress) }}</p>
+          <ui-grid [size]="{ xs: 12, md: 6 }">
+            <ui-typography variant="caption" color="muted" weight="medium" class="mb-2 block">Destination</ui-typography>
+            <ui-typography variant="body" weight="medium">{{ formatAddress(load()?.destinationAddress) }}</ui-typography>
             @if (load()?.deliveredAt) {
-              <p class="mt-1 text-sm text-gray-500">
+              <ui-typography variant="body-sm" color="muted" class="mt-1">
                 Delivered: {{ load()?.deliveredAt | dateFormat: "medium" }}
-              </p>
+              </ui-typography>
             }
-          </div>
-        </div>
-      </div>
+          </ui-grid>
+        </ui-grid>
+      </ui-surface>
 
       <!-- Documents -->
-      <div class="mt-6 rounded-lg bg-white p-6 shadow">
-        <h2 class="mb-4 text-lg font-semibold">Documents</h2>
+      <ui-surface variant="elevated" padding="md" class="mt-6 block">
+        <ui-typography variant="h5" tag="h2" class="mb-4">Documents</ui-typography>
 
         @if (documents().length > 0) {
           <p-table [value]="documents()">
@@ -70,81 +70,81 @@
             </ng-template>
           </p-table>
         } @else {
-          <div class="py-8 text-center">
-            <i class="pi pi-file mb-2 text-3xl text-gray-300"></i>
-            <p class="text-gray-500">No documents available</p>
-          </div>
+          <ui-stack align="center" gap="2" class="py-8">
+            <ui-icon name="file" size="xl" color="muted" />
+            <ui-typography variant="body" color="muted">No documents available</ui-typography>
+          </ui-stack>
         }
-      </div>
-    </div>
+      </ui-surface>
+    </ui-grid>
 
     <!-- Sidebar -->
-    <div>
-      <div class="rounded-lg bg-white p-6 shadow">
-        <h2 class="mb-4 text-lg font-semibold">Driver Information</h2>
+    <ui-grid [size]="{ xs: 12, lg: 4 }">
+      <ui-surface variant="elevated" padding="md">
+        <ui-typography variant="h5" tag="h2" class="mb-4">Driver Information</ui-typography>
         @if (load()?.driverName) {
-          <div class="flex items-center gap-3">
+          <ui-stack direction="row" align="center" gap="3">
             <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
-              <i class="pi pi-user text-gray-600"></i>
+              <ui-icon name="user" class="text-gray-600" />
             </div>
             <div>
-              <p class="font-medium">{{ load()?.driverName }}</p>
+              <ui-typography variant="body" weight="medium">{{ load()?.driverName }}</ui-typography>
               @if (load()?.truckNumber) {
-                <p class="text-sm text-gray-500">Truck: {{ load()?.truckNumber }}</p>
+                <ui-typography variant="body-sm" color="muted">Truck: {{ load()?.truckNumber }}</ui-typography>
               }
             </div>
-          </div>
+          </ui-stack>
         } @else {
-          <p class="text-gray-500">No driver assigned</p>
+          <ui-typography variant="body" color="muted">No driver assigned</ui-typography>
         }
-      </div>
+      </ui-surface>
 
-      <div class="mt-6 rounded-lg bg-white p-6 shadow">
-        <h2 class="mb-4 text-lg font-semibold">Shipment Details</h2>
-        <div class="space-y-3">
+      <ui-surface variant="elevated" padding="md" class="mt-6 block">
+        <ui-typography variant="h5" tag="h2" class="mb-4">Shipment Details</ui-typography>
+        <ui-stack gap="3">
           @if (load()?.distance) {
-            <div class="flex justify-between">
-              <span class="text-gray-500">Distance</span>
-              <span class="font-medium">{{ load()?.distance | distanceUnit }}</span>
-            </div>
+            <ui-stack direction="row" justify="between">
+              <ui-typography variant="body" color="muted">Distance</ui-typography>
+              <ui-typography variant="body" weight="medium">{{ load()?.distance | distanceUnit }}</ui-typography>
+            </ui-stack>
           }
           @if (load()?.deliveryCost) {
-            <div class="flex justify-between">
-              <span class="text-gray-500">Delivery Cost</span>
-              <span class="font-medium">{{ load()?.deliveryCost | currencyFormat }}</span>
-            </div>
+            <ui-stack direction="row" justify="between">
+              <ui-typography variant="body" color="muted">Delivery Cost</ui-typography>
+              <ui-typography variant="body" weight="medium">{{ load()?.deliveryCost | currencyFormat }}</ui-typography>
+            </ui-stack>
           }
-          <div class="flex justify-between">
-            <span class="text-gray-500">Documents</span>
-            <span class="font-medium">{{ load()?.documentCount || 0 }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-gray-500">Bill of Lading</span>
+          <ui-stack direction="row" justify="between">
+            <ui-typography variant="body" color="muted">Documents</ui-typography>
+            <ui-typography variant="body" weight="medium">{{ load()?.documentCount || 0 }}</ui-typography>
+          </ui-stack>
+          <ui-stack direction="row" justify="between">
+            <ui-typography variant="body" color="muted">Bill of Lading</ui-typography>
             <span class="font-medium">
               @if (load()?.hasBillOfLading) {
-                <i class="pi pi-check text-green-600"></i>
+                <ui-icon name="check" class="text-green-600" />
               } @else {
-                <i class="pi pi-times text-gray-400"></i>
+                <ui-icon name="times" color="muted" />
               }
             </span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-gray-500">Proof of Delivery</span>
+          </ui-stack>
+          <ui-stack direction="row" justify="between">
+            <ui-typography variant="body" color="muted">Proof of Delivery</ui-typography>
             <span class="font-medium">
               @if (load()?.hasProofOfDelivery) {
-                <i class="pi pi-check text-green-600"></i>
+                <ui-icon name="check" class="text-green-600" />
               } @else {
-                <i class="pi pi-times text-gray-400"></i>
+                <ui-icon name="times" color="muted" />
               }
             </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+          </ui-stack>
+        </ui-stack>
+      </ui-surface>
+    </ui-grid>
+  </ui-grid>
 } @else {
-  <div class="py-12 text-center">
-    <i class="pi pi-exclamation-triangle mb-2 text-4xl text-yellow-500"></i>
-    <p class="text-gray-500">Shipment not found</p>
-  </div>
+  <ui-stack align="center" gap="2" class="py-12">
+    <ui-icon name="exclamation-triangle" size="xl" class="text-yellow-500" />
+    <ui-typography variant="body" color="muted">Shipment not found</ui-typography>
+  </ui-stack>
 }

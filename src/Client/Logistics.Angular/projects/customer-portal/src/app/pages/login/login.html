@@ -1,26 +1,26 @@
 <div class="h-screen w-screen bg-gray-50">
-  <div class="flex h-full items-center justify-center">
+  <ui-stack direction="row" align="center" justify="center" class="h-full">
     @if (!isAuthenticated() && !isLoading()) {
       <div class="w-full max-w-md px-6">
-        <div class="rounded-lg bg-white p-8 shadow-lg">
-          <h1 class="mb-2 text-center text-2xl font-bold text-gray-900">Customer Portal</h1>
-          <p class="mb-6 text-center text-gray-600">
+        <ui-surface variant="elevated" padding="lg">
+          <ui-typography variant="h3" tag="h1" align="center" class="mb-2">Customer Portal</ui-typography>
+          <ui-typography variant="body" color="muted" align="center" class="mb-6">
             Sign in to view your shipments, invoices, and documents
-          </p>
+          </ui-typography>
           <p-button
             icon="pi pi-sign-in"
             label="Sign In"
             styleClass="w-full"
             (click)="login()"
           />
-        </div>
+        </ui-surface>
       </div>
     }
     @if (isLoading()) {
-      <div class="flex flex-col items-center justify-center">
+      <ui-stack align="center" justify="center">
         <p-progress-spinner strokeWidth="4" />
-        <div class="mt-4 text-lg font-medium text-gray-700">Authenticating...</div>
-      </div>
+        <ui-typography variant="body" weight="medium" class="mt-4">Authenticating...</ui-typography>
+      </ui-stack>
     }
-  </div>
+  </ui-stack>
 </div>

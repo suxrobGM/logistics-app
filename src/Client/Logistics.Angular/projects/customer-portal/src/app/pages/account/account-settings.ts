@@ -1,6 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
-import { Api, type CustomerUserDto, getPortalProfile } from "@logistics/shared/api";
+import { Api, getPortalProfile, type CustomerUserDto } from "@logistics/shared/api";
+import { Grid, Stack, Surface, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -10,7 +11,16 @@ import { environment } from "@/env";
 @Component({
   selector: "cp-account-settings",
   templateUrl: "./account-settings.html",
-  imports: [DatePipe, CardModule, ButtonModule, ProgressSpinnerModule],
+  imports: [
+    DatePipe,
+    CardModule,
+    ButtonModule,
+    ProgressSpinnerModule,
+    Grid,
+    Stack,
+    Surface,
+    Typography,
+  ],
 })
 export class AccountSettings {
   private readonly api = inject(Api);

@@ -1,62 +1,64 @@
 <div class="flex min-h-screen items-center justify-center bg-gray-50 p-4">
   <div class="w-full max-w-2xl">
-    <div class="mb-8 text-center">
-      <i class="pi pi-box mb-4 text-5xl text-primary"></i>
-      <h1 class="mb-2 text-2xl font-bold text-gray-900">Select Company</h1>
-      <p class="text-gray-600">Choose which company you'd like to access</p>
-    </div>
+    <ui-stack align="center" gap="2" class="mb-8 text-center">
+      <ui-icon name="box" size="xl" class="text-primary mb-4" />
+      <ui-typography variant="h2" tag="h1" align="center">Select Company</ui-typography>
+      <ui-typography variant="body" color="muted" align="center">Choose which company you'd like to access</ui-typography>
+    </ui-stack>
 
     @if (isLoading()) {
-      <div class="flex justify-center py-12">
+      <ui-stack direction="row" justify="center" class="py-12">
         <p-progress-spinner strokeWidth="4" />
-      </div>
+      </ui-stack>
     } @else {
-      <div class="grid gap-4 md:grid-cols-2">
+      <ui-grid container spacing="4">
         @for (tenant of tenants(); track tenant.id) {
-          <button
-            type="button"
-            class="group rounded-lg border border-gray-200 bg-white p-6 text-left transition-all hover:border-primary hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-            (click)="selectTenant(tenant)"
-          >
-            <div class="flex items-start gap-4">
-              <div
-                class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary-50 text-primary group-hover:bg-primary group-hover:text-white"
-              >
-                <i class="pi pi-building text-xl"></i>
-              </div>
-              <div class="flex-1">
-                <h3 class="font-semibold text-gray-900">
-                  {{ tenant.companyName || tenant.tenantName }}
-                </h3>
-                @if (tenant.customerName) {
-                  <p class="mt-1 text-sm text-gray-500">Customer: {{ tenant.customerName }}</p>
-                }
-                @if (tenant.lastAccessedAt) {
-                  <p class="mt-1 text-xs text-gray-400">
-                    Last accessed: {{ tenant.lastAccessedAt | date: "short" }}
-                  </p>
-                }
-              </div>
-              <i class="pi pi-chevron-right text-gray-400 group-hover:text-primary"></i>
-            </div>
-          </button>
+          <ui-grid [size]="{ xs: 12, md: 6 }">
+            <button
+              type="button"
+              class="group hover:border-primary focus:ring-primary block w-full rounded-lg border border-gray-200 bg-white p-6 text-left transition-all hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+              (click)="selectTenant(tenant)"
+            >
+              <ui-stack direction="row" align="start" gap="4">
+                <div
+                  class="bg-primary-50 text-primary group-hover:bg-primary flex h-12 w-12 items-center justify-center rounded-lg group-hover:text-white"
+                >
+                  <ui-icon name="building" size="lg" />
+                </div>
+                <div class="flex-1">
+                  <ui-typography variant="body" weight="semibold">
+                    {{ tenant.companyName || tenant.tenantName }}
+                  </ui-typography>
+                  @if (tenant.customerName) {
+                    <ui-typography variant="body-sm" color="muted" class="mt-1">Customer: {{ tenant.customerName }}</ui-typography>
+                  }
+                  @if (tenant.lastAccessedAt) {
+                    <ui-typography variant="caption" color="muted" class="mt-1 block">
+                      Last accessed: {{ tenant.lastAccessedAt | date: "short" }}
+                    </ui-typography>
+                  }
+                </div>
+                <ui-icon name="chevron-right" color="muted" />
+              </ui-stack>
+            </button>
+          </ui-grid>
         }
-      </div>
+      </ui-grid>
 
       @if (tenants().length === 0) {
-        <div class="rounded-lg bg-white p-8 text-center shadow">
-          <i class="pi pi-exclamation-triangle mb-4 text-4xl text-yellow-500"></i>
-          <h3 class="mb-2 font-semibold text-gray-900">No Access</h3>
-          <p class="mb-6 text-gray-600">
+        <ui-surface variant="elevated" padding="lg" class="block text-center">
+          <ui-icon name="exclamation-triangle" size="xl" class="text-yellow-500 mb-4" />
+          <ui-typography variant="h5" tag="h3" class="mb-2">No Access</ui-typography>
+          <ui-typography variant="body" color="muted" class="mb-6">
             You don't have access to any companies. Please contact your administrator.
-          </p>
+          </ui-typography>
           <p-button
             label="Sign Out"
             icon="pi pi-sign-out"
             [outlined]="true"
             (click)="logout()"
           />
-        </div>
+        </ui-surface>
       }
     }
   </div>

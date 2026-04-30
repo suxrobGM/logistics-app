@@ -2,19 +2,20 @@ import { DatePipe } from "@angular/common";
 import { Component, effect, inject, input, signal } from "@angular/core";
 import {
   AddressPipe,
+  downloadBlobFile,
   ErrorState,
   LoadingSkeleton,
   ToastService,
-  downloadBlobFile,
 } from "@logistics/shared";
 import {
   Api,
-  type DocumentDto,
-  type PublicTrackingDto,
   downloadPublicTrackingDocument,
   getPublicTracking,
   getPublicTrackingDocuments,
+  type DocumentDto,
+  type PublicTrackingDto,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
@@ -34,6 +35,11 @@ import { PublicLayout } from "@/shared/layout";
     LoadingSkeleton,
     PublicLayout,
     ShipmentTimeline,
+    Grid,
+    Icon,
+    Stack,
+    Surface,
+    Typography,
   ],
 })
 export class PublicTracking {

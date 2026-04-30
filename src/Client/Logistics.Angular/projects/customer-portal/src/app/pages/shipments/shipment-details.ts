@@ -2,11 +2,12 @@ import { Component, effect, inject, input, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import {
   Api,
-  type DocumentDto,
-  type PortalLoadDto,
   getPortalLoad,
   getPortalLoadDocuments,
+  type DocumentDto,
+  type PortalLoadDto,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -27,6 +28,11 @@ import { TagModule } from "primeng/tag";
     TagModule,
     TableModule,
     ProgressSpinnerModule,
+    Grid,
+    Icon,
+    Stack,
+    Surface,
+    Typography,
   ],
 })
 export class ShipmentDetails {

@@ -9,13 +9,13 @@
     <ui-error-state title="Tracking Unavailable" [message]="error()!" [retryable]="false" />
   } @else if (tracking(); as data) {
     <!-- Shipment Status -->
-    <div class="mb-6 rounded-lg bg-white p-6 shadow">
-      <div class="flex flex-wrap items-center justify-between gap-4">
+    <ui-surface variant="elevated" padding="md" class="mb-6 block">
+      <ui-stack direction="row" align="center" justify="between" gap="4" class="flex-wrap">
         <div>
-          <p class="text-sm text-gray-500">Shipment</p>
-          <h2 class="text-2xl font-bold text-gray-900">Load #{{ data.loadNumber }}</h2>
+          <ui-typography variant="body-sm" color="muted">Shipment</ui-typography>
+          <ui-typography variant="h3" tag="h2">Load #{{ data.loadNumber }}</ui-typography>
           @if (data.loadName) {
-            <p class="text-gray-600">{{ data.loadName }}</p>
+            <ui-typography variant="body" color="muted">{{ data.loadName }}</ui-typography>
           }
         </div>
         <p-tag
@@ -23,107 +23,107 @@
           [severity]="getStatusSeverity(data.status)"
           class="px-4 py-2 text-lg"
         />
-      </div>
-    </div>
+      </ui-stack>
+    </ui-surface>
 
     <!-- Timeline -->
-    <div class="mb-6 rounded-lg bg-white p-6 shadow">
-      <h3 class="mb-4 text-lg font-semibold text-gray-900">Shipment Progress</h3>
+    <ui-surface variant="elevated" padding="md" class="mb-6 block">
+      <ui-typography variant="h5" tag="h3" class="mb-4">Shipment Progress</ui-typography>
       <cp-shipment-timeline
         [dispatchedAt]="data.dispatchedAt"
         [pickedUpAt]="data.pickedUpAt"
         [deliveredAt]="data.deliveredAt"
       />
-    </div>
+    </ui-surface>
 
     <!-- Route & Driver Info -->
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <div class="rounded-lg bg-white p-6 shadow">
-        <h3 class="mb-4 text-lg font-semibold text-gray-900">Route Information</h3>
-        <div class="space-y-4">
-          <div>
-            <div class="mb-1 flex items-center gap-2">
-              <i class="pi pi-map-marker text-blue-500"></i>
-              <span class="text-sm font-medium text-gray-500">Origin</span>
-            </div>
-            <p class="font-medium text-gray-900">{{ data.originAddress | address }}</p>
-          </div>
-
-          @if (data.currentAddress) {
+    <ui-grid container spacing="6">
+      <ui-grid [size]="{ xs: 12, lg: 6 }">
+        <ui-surface variant="elevated" padding="md">
+          <ui-typography variant="h5" tag="h3" class="mb-4">Route Information</ui-typography>
+          <ui-stack gap="4">
             <div>
-              <div class="mb-1 flex items-center gap-2">
-                <i class="pi pi-truck text-orange-500"></i>
-                <span class="text-sm font-medium text-gray-500">Current Location</span>
-              </div>
-              <p class="font-medium text-gray-900">{{ data.currentAddress | address }}</p>
+              <ui-stack direction="row" align="center" gap="2" class="mb-1">
+                <ui-icon name="map-marker" class="text-blue-500" />
+                <ui-typography variant="caption" color="muted" weight="medium">Origin</ui-typography>
+              </ui-stack>
+              <ui-typography variant="body" weight="medium">{{ data.originAddress | address }}</ui-typography>
             </div>
+
+            @if (data.currentAddress) {
+              <div>
+                <ui-stack direction="row" align="center" gap="2" class="mb-1">
+                  <ui-icon name="truck" class="text-orange-500" />
+                  <ui-typography variant="caption" color="muted" weight="medium">Current Location</ui-typography>
+                </ui-stack>
+                <ui-typography variant="body" weight="medium">{{ data.currentAddress | address }}</ui-typography>
+              </div>
+            }
+
+            <div>
+              <ui-stack direction="row" align="center" gap="2" class="mb-1">
+                <ui-icon name="flag" class="text-green-500" />
+                <ui-typography variant="caption" color="muted" weight="medium">Destination</ui-typography>
+              </ui-stack>
+              <ui-typography variant="body" weight="medium">{{ data.destinationAddress | address }}</ui-typography>
+            </div>
+          </ui-stack>
+        </ui-surface>
+      </ui-grid>
+
+      <ui-grid [size]="{ xs: 12, lg: 6 }">
+        <ui-surface variant="elevated" padding="md">
+          <ui-typography variant="h5" tag="h3" class="mb-4">Driver Information</ui-typography>
+          @if (data.driverName || data.truckNumber) {
+            <ui-stack direction="row" align="center" gap="4">
+              <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
+                <ui-icon name="user" size="lg" class="text-gray-600" />
+              </div>
+              <div>
+                @if (data.driverName) {
+                  <ui-typography variant="body" weight="medium">{{ data.driverName }}</ui-typography>
+                }
+                @if (data.truckNumber) {
+                  <ui-typography variant="body-sm" color="muted">Truck: {{ data.truckNumber }}</ui-typography>
+                }
+              </div>
+            </ui-stack>
+          } @else {
+            <ui-stack align="center" gap="2" class="py-4">
+              <ui-icon name="user" size="xl" color="muted" />
+              <ui-typography variant="body" color="muted">No driver assigned yet</ui-typography>
+            </ui-stack>
           }
 
-          <div>
-            <div class="mb-1 flex items-center gap-2">
-              <i class="pi pi-flag text-green-500"></i>
-              <span class="text-sm font-medium text-gray-500">Destination</span>
-            </div>
-            <p class="font-medium text-gray-900">{{ data.destinationAddress | address }}</p>
+          <div class="mt-6 border-t pt-4">
+            <ui-typography variant="caption" color="muted" weight="medium" class="mb-3 block">Document Status</ui-typography>
+            <ui-stack direction="row" gap="4">
+              <ui-stack direction="row" align="center" gap="2">
+                @if (data.hasBillOfLading) {
+                  <ui-icon name="check-circle" class="text-green-500" />
+                } @else {
+                  <ui-icon name="circle" color="muted" />
+                }
+                <ui-typography variant="body-sm">Bill of Lading</ui-typography>
+              </ui-stack>
+              <ui-stack direction="row" align="center" gap="2">
+                @if (data.hasProofOfDelivery) {
+                  <ui-icon name="check-circle" class="text-green-500" />
+                } @else {
+                  <ui-icon name="circle" color="muted" />
+                }
+                <ui-typography variant="body-sm">Proof of Delivery</ui-typography>
+              </ui-stack>
+            </ui-stack>
           </div>
-        </div>
-      </div>
-
-      <div class="rounded-lg bg-white p-6 shadow">
-        <h3 class="mb-4 text-lg font-semibold text-gray-900">Driver Information</h3>
-        @if (data.driverName || data.truckNumber) {
-          <div class="flex items-center gap-4">
-            <div class="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
-              <i class="pi pi-user text-2xl text-gray-600"></i>
-            </div>
-            <div>
-              @if (data.driverName) {
-                <p class="font-medium text-gray-900">{{ data.driverName }}</p>
-              }
-              @if (data.truckNumber) {
-                <p class="text-sm text-gray-500">Truck: {{ data.truckNumber }}</p>
-              }
-            </div>
-          </div>
-        } @else {
-          <div class="py-4 text-center">
-            <i class="pi pi-user mb-2 text-3xl text-gray-300"></i>
-            <p class="text-gray-500">No driver assigned yet</p>
-          </div>
-        }
-
-        <div class="mt-6 border-t pt-4">
-          <h4 class="mb-3 text-sm font-medium text-gray-500">Document Status</h4>
-          <div class="flex gap-4">
-            <div class="flex items-center gap-2">
-              <i
-                class="pi"
-                [class.pi-check-circle]="data.hasBillOfLading"
-                [class.text-green-500]="data.hasBillOfLading"
-                [class.pi-circle]="!data.hasBillOfLading"
-                [class.text-gray-300]="!data.hasBillOfLading"
-              ></i>
-              <span class="text-sm">Bill of Lading</span>
-            </div>
-            <div class="flex items-center gap-2">
-              <i
-                class="pi"
-                [class.pi-check-circle]="data.hasProofOfDelivery"
-                [class.text-green-500]="data.hasProofOfDelivery"
-                [class.pi-circle]="!data.hasProofOfDelivery"
-                [class.text-gray-300]="!data.hasProofOfDelivery"
-              ></i>
-              <span class="text-sm">Proof of Delivery</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        </ui-surface>
+      </ui-grid>
+    </ui-grid>
 
     <!-- Documents -->
     @if (documents().length > 0) {
-      <div class="mt-6 rounded-lg bg-white p-6 shadow">
-        <h3 class="mb-4 text-lg font-semibold text-gray-900">Documents</h3>
+      <ui-surface variant="elevated" padding="md" class="mt-6 block">
+        <ui-typography variant="h5" tag="h3" class="mb-4">Documents</ui-typography>
         <p-table [value]="documents()" styleClass="p-datatable-sm">
           <ng-template #header>
             <tr>
@@ -136,10 +136,10 @@
           <ng-template #body let-doc>
             <tr>
               <td>
-                <div class="flex items-center gap-2">
-                  <i class="pi pi-file text-gray-400"></i>
+                <ui-stack direction="row" align="center" gap="2">
+                  <ui-icon name="file" color="muted" />
                   <span class="font-medium">{{ doc.originalFileName || doc.fileName }}</span>
-                </div>
+                </ui-stack>
               </td>
               <td>{{ doc.documentType }}</td>
               <td>{{ doc.createdAt | date: "short" }}</td>
@@ -154,12 +154,12 @@
             </tr>
           </ng-template>
         </p-table>
-      </div>
+      </ui-surface>
     }
 
     <!-- Footer -->
-    <div class="mt-8 text-center text-sm text-gray-500">
-      <p>Tracking provided by {{ data.tenantName }}</p>
+    <div class="mt-8 text-center">
+      <ui-typography variant="body-sm" color="muted">Tracking provided by {{ data.tenantName }}</ui-typography>
     </div>
   }
 </cp-public-layout>

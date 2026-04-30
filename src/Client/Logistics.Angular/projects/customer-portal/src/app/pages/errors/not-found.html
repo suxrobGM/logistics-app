@@ -4,11 +4,11 @@
     <div class="relative mb-8">
       <div class="bg-primary-50 mx-auto flex h-40 w-40 items-center justify-center rounded-full">
         <div class="relative">
-          <i class="pi pi-map text-primary-200 text-8xl"></i>
+          <ui-icon name="map" size="xl" class="text-primary-200" />
           <div
             class="absolute -right-2 -bottom-2 flex h-12 w-12 items-center justify-center rounded-full bg-orange-100"
           >
-            <i class="pi pi-question text-2xl text-orange-500"></i>
+            <ui-icon name="question" size="lg" class="text-orange-500" />
           </div>
         </div>
       </div>
@@ -22,16 +22,16 @@
     <h1 class="mb-2 text-8xl text-gray-200">404</h1>
 
     <!-- Title -->
-    <h2 class="mb-4 text-gray-900">Page Not Found</h2>
+    <ui-typography variant="h3" tag="h2" align="center" class="mb-4">Page Not Found</ui-typography>
 
     <!-- Description -->
-    <p class="mb-8 text-gray-600">
+    <ui-typography variant="body" color="muted" align="center" class="mb-8 block">
       Oops! The page you're looking for seems to have wandered off. It might have been moved,
       deleted, or perhaps never existed.
-    </p>
+    </ui-typography>
 
     <!-- Actions -->
-    <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+    <ui-stack direction="row" justify="center" gap="3" class="flex-col items-center sm:flex-row">
       <p-button routerLink="/" label="Go to Dashboard" icon="pi pi-home" />
       <p-button
         routerLink="/shipments"
@@ -39,11 +39,11 @@
         icon="pi pi-truck"
         [outlined]="true"
       />
-    </div>
+    </ui-stack>
 
     <!-- Help text -->
-    <p class="mt-8 text-sm text-gray-400">
+    <ui-typography variant="body-sm" color="muted" align="center" class="mt-8 block">
       Need help? Contact your company administrator or check your URL.
-    </p>
+    </ui-typography>
   </div>
 </div>

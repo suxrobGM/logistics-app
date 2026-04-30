@@ -1,81 +1,85 @@
-<div class="mb-6">
-  <h1 class="text-2xl font-bold text-gray-900">Account Settings</h1>
-  <p class="mt-1 text-gray-500">View your profile and manage your account</p>
-</div>
+<ui-stack gap="1" class="mb-6">
+  <ui-typography variant="h2" tag="h1">Account Settings</ui-typography>
+  <ui-typography variant="body" color="muted">View your profile and manage your account</ui-typography>
+</ui-stack>
 
 @if (isLoading()) {
-  <div class="flex items-center justify-center py-12">
+  <ui-stack direction="row" align="center" justify="center" class="py-12">
     <p-progress-spinner strokeWidth="4" />
-  </div>
+  </ui-stack>
 } @else {
-  <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+  <ui-grid container spacing="6">
     <!-- Profile Information -->
-    <div class="rounded-lg bg-white p-6 shadow">
-      <h2 class="mb-4 text-lg font-semibold">Profile Information</h2>
-      <div class="space-y-4">
-        <div>
-          <label class="text-sm font-medium text-gray-500">Name</label>
-          <p class="mt-1 font-medium text-gray-900">{{ profile()?.displayName || "-" }}</p>
-        </div>
-        <div>
-          <label class="text-sm font-medium text-gray-500">Email</label>
-          <p class="mt-1 font-medium text-gray-900">{{ profile()?.email || "-" }}</p>
-        </div>
-        <div>
-          <label class="text-sm font-medium text-gray-500">Company</label>
-          <p class="mt-1 font-medium text-gray-900">{{ companyName() || "-" }}</p>
-        </div>
-        <div>
-          <label class="text-sm font-medium text-gray-500">Customer Account</label>
-          <p class="mt-1 font-medium text-gray-900">{{ profile()?.customerName || "-" }}</p>
-        </div>
-        <div>
-          <label class="text-sm font-medium text-gray-500">Last Login</label>
-          <p class="mt-1 font-medium text-gray-900">
-            {{ profile()?.lastLoginAt ? (profile()?.lastLoginAt | date: "medium") : "Never" }}
-          </p>
-        </div>
-      </div>
-    </div>
+    <ui-grid [size]="{ xs: 12, lg: 6 }">
+      <ui-surface variant="elevated" padding="md">
+        <ui-typography variant="h5" tag="h2" class="mb-4">Profile Information</ui-typography>
+        <ui-stack gap="4">
+          <div>
+            <ui-typography variant="caption" color="muted" weight="medium">Name</ui-typography>
+            <ui-typography variant="body" weight="medium" class="mt-1">{{ profile()?.displayName || "-" }}</ui-typography>
+          </div>
+          <div>
+            <ui-typography variant="caption" color="muted" weight="medium">Email</ui-typography>
+            <ui-typography variant="body" weight="medium" class="mt-1">{{ profile()?.email || "-" }}</ui-typography>
+          </div>
+          <div>
+            <ui-typography variant="caption" color="muted" weight="medium">Company</ui-typography>
+            <ui-typography variant="body" weight="medium" class="mt-1">{{ companyName() || "-" }}</ui-typography>
+          </div>
+          <div>
+            <ui-typography variant="caption" color="muted" weight="medium">Customer Account</ui-typography>
+            <ui-typography variant="body" weight="medium" class="mt-1">{{ profile()?.customerName || "-" }}</ui-typography>
+          </div>
+          <div>
+            <ui-typography variant="caption" color="muted" weight="medium">Last Login</ui-typography>
+            <ui-typography variant="body" weight="medium" class="mt-1">
+              {{ profile()?.lastLoginAt ? (profile()?.lastLoginAt | date: "medium") : "Never" }}
+            </ui-typography>
+          </div>
+        </ui-stack>
+      </ui-surface>
+    </ui-grid>
 
     <!-- Account Actions -->
-    <div class="space-y-6">
-      <div class="rounded-lg bg-white p-6 shadow">
-        <h2 class="mb-4 text-lg font-semibold">Manage Account</h2>
-        <p class="mb-4 text-sm text-gray-500">
-          Update your profile information, change your password, and manage security settings.
-        </p>
-        <div class="flex flex-col gap-3">
-          <p-button
-            label="Edit Profile"
-            icon="pi pi-user-edit"
-            [outlined]="true"
-            (click)="openManageProfile()"
-          />
-          <p-button
-            label="Change Password"
-            icon="pi pi-lock"
-            [outlined]="true"
-            (click)="openChangePassword()"
-          />
-        </div>
-      </div>
+    <ui-grid [size]="{ xs: 12, lg: 6 }">
+      <ui-stack gap="6">
+        <ui-surface variant="elevated" padding="md">
+          <ui-typography variant="h5" tag="h2" class="mb-4">Manage Account</ui-typography>
+          <ui-typography variant="body-sm" color="muted" class="mb-4">
+            Update your profile information, change your password, and manage security settings.
+          </ui-typography>
+          <ui-stack gap="3">
+            <p-button
+              label="Edit Profile"
+              icon="pi pi-user-edit"
+              [outlined]="true"
+              (click)="openManageProfile()"
+            />
+            <p-button
+              label="Change Password"
+              icon="pi pi-lock"
+              [outlined]="true"
+              (click)="openChangePassword()"
+            />
+          </ui-stack>
+        </ui-surface>
 
-      <div class="rounded-lg bg-white p-6 shadow">
-        <h2 class="mb-4 text-lg font-semibold">Account Status</h2>
-        <div class="flex items-center gap-2">
-          @if (profile()?.isActive) {
-            <span class="flex h-3 w-3 rounded-full bg-green-500"></span>
-            <span class="text-green-700">Active</span>
-          } @else {
-            <span class="flex h-3 w-3 rounded-full bg-red-500"></span>
-            <span class="text-red-700">Inactive</span>
-          }
-        </div>
-        <p class="mt-2 text-sm text-gray-500">
-          Account created: {{ profile()?.createdAt | date: "mediumDate" }}
-        </p>
-      </div>
-    </div>
-  </div>
+        <ui-surface variant="elevated" padding="md">
+          <ui-typography variant="h5" tag="h2" class="mb-4">Account Status</ui-typography>
+          <ui-stack direction="row" align="center" gap="2">
+            @if (profile()?.isActive) {
+              <span class="flex h-3 w-3 rounded-full bg-green-500"></span>
+              <span class="text-green-700">Active</span>
+            } @else {
+              <span class="flex h-3 w-3 rounded-full bg-red-500"></span>
+              <span class="text-red-700">Inactive</span>
+            }
+          </ui-stack>
+          <ui-typography variant="body-sm" color="muted" class="mt-2">
+            Account created: {{ profile()?.createdAt | date: "mediumDate" }}
+          </ui-typography>
+        </ui-surface>
+      </ui-stack>
+    </ui-grid>
+  </ui-grid>
 }
