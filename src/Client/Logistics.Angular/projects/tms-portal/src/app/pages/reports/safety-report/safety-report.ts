@@ -1,14 +1,15 @@
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
-import { Component, type OnInit, computed, signal } from "@angular/core";
+import { Component, computed, signal, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { getSafetyReport } from "@logistics/shared/api";
-import type {
-  SafetyReportDto,
-  SafetyTrendDto,
-  SafetyStatusBreakdownDto,
-  SafetySeverityBreakdownDto,
-  SafetyEventTypeBreakdownDto,
+import {
+  getSafetyReport,
+  type SafetyEventTypeBreakdownDto,
+  type SafetyReportDto,
+  type SafetySeverityBreakdownDto,
+  type SafetyStatusBreakdownDto,
+  type SafetyTrendDto,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
@@ -18,8 +19,8 @@ import {
   DashboardCard,
   DateRangePicker,
   PageHeader,
-  type ReportQueryParams,
   StatCard,
+  type ReportQueryParams,
 } from "@/shared/components";
 import { Converters } from "@/shared/utils";
 
@@ -62,6 +63,10 @@ const EVENT_TYPE_COLORS = [
     StatCard,
     DashboardCard,
     RouterModule,
+    Grid,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class SafetyReportComponent extends BaseReportComponent<SafetyReportDto> implements OnInit {
@@ -71,15 +76,21 @@ export class SafetyReportComponent extends BaseReportComponent<SafetyReportDto> 
   protected readonly trendChartData = signal<Record<string, unknown>>({});
   protected readonly trendDataPointCount = signal(0);
 
-  protected readonly hasDvirStatusData = computed(() => Object.keys(this.dvirStatusChartData()).length > 0);
+  protected readonly hasDvirStatusData = computed(
+    () => Object.keys(this.dvirStatusChartData()).length > 0,
+  );
   protected readonly hasAccidentSeverityData = computed(
     () => Object.keys(this.accidentSeverityChartData()).length > 0,
   );
-  protected readonly hasBehaviorEventData = computed(() => Object.keys(this.behaviorEventChartData()).length > 0);
+  protected readonly hasBehaviorEventData = computed(
+    () => Object.keys(this.behaviorEventChartData()).length > 0,
+  );
   protected readonly hasTrendData = computed(() => Object.keys(this.trendChartData()).length > 0);
 
   // Use bar chart for small datasets (3 or fewer points)
-  protected readonly trendChartType = computed(() => (this.trendDataPointCount() <= 3 ? "bar" : "line"));
+  protected readonly trendChartType = computed(() =>
+    this.trendDataPointCount() <= 3 ? "bar" : "line",
+  );
 
   protected readonly pieChartOptions = {
     plugins: {
@@ -170,7 +181,9 @@ export class SafetyReportComponent extends BaseReportComponent<SafetyReportDto> 
     const accidentSeverity = result.accidentSeverityBreakdown ?? [];
     if (accidentSeverity.length > 0) {
       this.accidentSeverityChartData.set({
-        labels: accidentSeverity.map((s: SafetySeverityBreakdownDto) => s.severityDisplay || s.severity),
+        labels: accidentSeverity.map(
+          (s: SafetySeverityBreakdownDto) => s.severityDisplay || s.severity,
+        ),
         datasets: [
           {
             data: accidentSeverity.map((s: SafetySeverityBreakdownDto) => s.count),
@@ -185,7 +198,9 @@ export class SafetyReportComponent extends BaseReportComponent<SafetyReportDto> 
     const behaviorEvents = result.behaviorEventBreakdown ?? [];
     if (behaviorEvents.length > 0) {
       this.behaviorEventChartData.set({
-        labels: behaviorEvents.map((e: SafetyEventTypeBreakdownDto) => e.eventTypeDisplay || e.eventType),
+        labels: behaviorEvents.map(
+          (e: SafetyEventTypeBreakdownDto) => e.eventTypeDisplay || e.eventType,
+        ),
         datasets: [
           {
             label: "Events",

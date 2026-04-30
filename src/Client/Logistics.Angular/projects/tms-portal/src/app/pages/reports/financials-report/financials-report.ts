@@ -1,11 +1,12 @@
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
-import { Component, type OnInit, signal } from "@angular/core";
-import { getFinancialsReport } from "@logistics/shared/api";
-import type {
-  FinancialMetricDto,
-  FinancialsReportDto,
-  RevenueTrendDto,
+import { Component, signal, type OnInit } from "@angular/core";
+import {
+  getFinancialsReport,
+  type FinancialMetricDto,
+  type FinancialsReportDto,
+  type RevenueTrendDto,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
@@ -15,8 +16,8 @@ import {
   DashboardCard,
   DateRangePicker,
   PageHeader,
-  type ReportQueryParams,
   StatCard,
+  type ReportQueryParams,
 } from "@/shared/components";
 import {
   FINANCIALS_CHART_BACKGROUND_COLORS,
@@ -41,6 +42,10 @@ import {
     PageHeader,
     StatCard,
     DashboardCard,
+    Grid,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class FinancialsReportComponent

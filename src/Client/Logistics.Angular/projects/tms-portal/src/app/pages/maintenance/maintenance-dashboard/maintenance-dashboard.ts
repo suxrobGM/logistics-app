@@ -1,13 +1,14 @@
 import { CurrencyPipe, DatePipe, DecimalPipe } from "@angular/common";
-import { Component, type OnInit, computed, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import {
   Api,
-  type MaintenanceScheduleDto,
-  type MaintenanceRecordDto,
-  getUpcomingMaintenance,
   getMaintenanceRecords,
+  getUpcomingMaintenance,
+  type MaintenanceRecordDto,
+  type MaintenanceScheduleDto,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
@@ -30,6 +31,10 @@ import { DashboardCard, PageHeader, StatCard } from "@/shared/components";
     PageHeader,
     StatCard,
     DashboardCard,
+    Grid,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class MaintenanceDashboardPage implements OnInit {
@@ -41,12 +46,13 @@ export class MaintenanceDashboardPage implements OnInit {
   protected readonly upcomingMaintenance = signal<MaintenanceScheduleDto[]>([]);
   protected readonly recentRecords = signal<MaintenanceRecordDto[]>([]);
 
-  protected readonly overdueCount = computed(() =>
-    this.upcomingMaintenance().filter((m) => m.isOverdue).length,
+  protected readonly overdueCount = computed(
+    () => this.upcomingMaintenance().filter((m) => m.isOverdue).length,
   );
 
-  protected readonly dueSoonCount = computed(() =>
-    this.upcomingMaintenance().filter((m) => !m.isOverdue && (m.daysUntilDue ?? 0) <= 30).length,
+  protected readonly dueSoonCount = computed(
+    () =>
+      this.upcomingMaintenance().filter((m) => !m.isOverdue && (m.daysUntilDue ?? 0) <= 30).length,
   );
 
   protected readonly totalCostThisMonth = computed(() =>

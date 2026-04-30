@@ -1,13 +1,14 @@
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
-import { Component, inject, type OnInit, signal } from "@angular/core";
+import { Component, inject, signal, type OnInit } from "@angular/core";
 import { LocalizationService } from "@logistics/shared";
-import { getDriverDashboard } from "@logistics/shared/api";
-import type {
-  DriverDashboardDto,
-  DriverEfficiencyDto,
-  DriverPerformanceDto,
-  DriverTrendDto,
+import {
+  getDriverDashboard,
+  type DriverDashboardDto,
+  type DriverEfficiencyDto,
+  type DriverPerformanceDto,
+  type DriverTrendDto,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
@@ -17,8 +18,8 @@ import {
   DashboardCard,
   DateRangePicker,
   PageHeader,
-  type ReportQueryParams,
   StatCard,
+  type ReportQueryParams,
 } from "@/shared/components";
 import {
   DRIVERS_CHART_PALETTE,
@@ -42,6 +43,10 @@ import { getPerformanceLevel, getPerformanceSeverity } from "@/shared/utils";
     PageHeader,
     StatCard,
     DashboardCard,
+    Grid,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class DriversReportComponent

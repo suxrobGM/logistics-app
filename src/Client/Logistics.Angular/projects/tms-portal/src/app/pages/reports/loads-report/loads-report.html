@@ -1,97 +1,97 @@
 <!-- Header -->
-<div class="flex items-center justify-between">
+<ui-stack direction="row" align="center" justify="between">
   <ui-page-header
     title="Loads Dashboard"
     subtitle="Comprehensive overview of load performance and trends"
     [showAddButton]="false"
   />
   <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
-</div>
+</ui-stack>
 
 @if (isLoading()) {
   <!-- Loading State -->
-  <div class="grid grid-cols-12">
+  <ui-grid container>
     @for (item of [1, 2, 3, 4]; track item) {
-      <div class="col-span-12 mb-6 md:col-span-6 lg:col-span-3">
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-6">
         <p-skeleton height="120px"></p-skeleton>
-      </div>
+      </ui-grid>
     }
-  </div>
+  </ui-grid>
 } @else {
   <!-- Key Metrics Cards -->
-  <div class="mb-6 grid grid-cols-12 gap-2">
-    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+  <ui-grid container spacing="2" class="mb-6">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <ui-stat-card
         icon="pi-server"
         label="Total Loads"
         [value]="(data()?.totalLoads || 0 | number) ?? '0'"
         color="blue"
       />
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <ui-stat-card
         icon="pi-dollar"
         label="Total Revenue"
         [value]="(data()?.totalRevenue || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
         color="green"
       />
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <ui-stat-card
         icon="pi-map"
         label="Total Distance"
         [value]="(data()?.totalDistance || 0 | number: '1.0-0') + ' ' + distanceUnitLabel"
         color="blue"
       />
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <ui-stat-card
         icon="pi-times-circle"
         label="Cancellation Rate"
         [value]="(data()?.cancellationRate || 0 | number: '1.1-1') + '%'"
         color="orange"
       />
-    </div>
-  </div>
+    </ui-grid>
+  </ui-grid>
 
   <!-- Performance Metrics -->
-  <div class="mb-6 grid grid-cols-12 gap-2">
-    <div class="col-span-12">
-      <ui-dashboard-card title="Performance Metrics" icon="pi-chart-line" iconColor="blue">
-        <div class="grid grid-cols-12 gap-1">
-          @for (metric of data()?.performanceMetrics || []; track metric.metric) {
-            <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
-              <div class="bg-hover flex items-center rounded p-4">
-                <div class="grow">
-                  <h6 class="mb-1">{{ metric.metric }}</h6>
-                  <h4 class="mb-0">{{ metric.value | number: "1.1-1" }} {{ metric.unit }}</h4>
-                </div>
-                <div class="shrink-0">
-                  <p-tag
-                    [value]="((metric.trend ?? 0) >= 0 ? '+' : '') + (metric.trend ?? 0) + '%'"
-                    [severity]="(metric.trend ?? 0) >= 0 ? 'success' : 'danger'"
-                  />
-                </div>
+  <div class="mb-6">
+    <ui-dashboard-card title="Performance Metrics" icon="pi-chart-line" iconColor="blue">
+      <ui-grid container spacing="1">
+        @for (metric of data()?.performanceMetrics || []; track metric.metric) {
+          <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
+            <ui-stack direction="row" align="center" class="bg-hover rounded p-4">
+              <div class="grow">
+                <ui-typography variant="h6" class="mb-1">{{ metric.metric }}</ui-typography>
+                <ui-typography variant="h5" class="mb-0">
+                  {{ metric.value | number: "1.1-1" }} {{ metric.unit }}
+                </ui-typography>
               </div>
-            </div>
-          }
-        </div>
-      </ui-dashboard-card>
-    </div>
+              <div class="shrink-0">
+                <p-tag
+                  [value]="((metric.trend ?? 0) >= 0 ? '+' : '') + (metric.trend ?? 0) + '%'"
+                  [severity]="(metric.trend ?? 0) >= 0 ? 'success' : 'danger'"
+                />
+              </div>
+            </ui-stack>
+          </ui-grid>
+        }
+      </ui-grid>
+    </ui-dashboard-card>
   </div>
 
   <!-- Charts Row 1 -->
-  <div class="mb-6 grid grid-cols-12 gap-2">
-    <div class="col-span-12 mb-6 lg:col-span-6">
+  <ui-grid container spacing="2" class="mb-6">
+    <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Loads by Status" icon="pi-chart-pie" iconColor="blue">
         <p-chart type="pie" [data]="chartData()" [options]="pieOptions" style="height: 300px" />
       </ui-dashboard-card>
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 mb-6 lg:col-span-6">
+    <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Revenue by Load Type" icon="pi-chart-bar" iconColor="blue">
         <p-chart
           type="bar"
@@ -100,40 +100,36 @@
           style="height: 300px"
         />
       </ui-dashboard-card>
-    </div>
-  </div>
+    </ui-grid>
+  </ui-grid>
 
   <!-- Trends Chart -->
-  <div class="mb-6 grid grid-cols-12 gap-2">
-    <div class="col-span-12">
-      <ui-dashboard-card title="Load Trends Over Time" icon="pi-chart-line" iconColor="blue">
-        <p-chart
-          type="line"
-          [data]="trendChartData()"
-          [options]="trendChartOptions"
-          style="height: 400px"
-        />
-      </ui-dashboard-card>
-    </div>
+  <div class="mb-6">
+    <ui-dashboard-card title="Load Trends Over Time" icon="pi-chart-line" iconColor="blue">
+      <p-chart
+        type="line"
+        [data]="trendChartData()"
+        [options]="trendChartOptions"
+        style="height: 400px"
+      />
+    </ui-dashboard-card>
   </div>
 
   <!-- Performance Chart -->
-  <div class="mb-6 grid grid-cols-12 gap-2">
-    <div class="col-span-12">
-      <ui-dashboard-card title="Performance Metrics" icon="pi-chart-bar" iconColor="blue">
-        <p-chart
-          type="bar"
-          [data]="performanceChartData()"
-          [options]="performanceChartOptions"
-          style="height: 300px"
-        />
-      </ui-dashboard-card>
-    </div>
+  <div class="mb-6">
+    <ui-dashboard-card title="Performance Metrics" icon="pi-chart-bar" iconColor="blue">
+      <p-chart
+        type="bar"
+        [data]="performanceChartData()"
+        [options]="performanceChartOptions"
+        style="height: 300px"
+      />
+    </ui-dashboard-card>
   </div>
 
   <!-- Data Tables -->
-  <div class="grid grid-cols-12 gap-2">
-    <div class="col-span-12 mb-6 lg:col-span-6">
+  <ui-grid container spacing="2">
+    <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Status Breakdown" icon="pi-table" iconColor="blue">
         <p-table [value]="data()?.statusBreakdown || []" [paginator]="true" [rows]="5">
           <ng-template #header>
@@ -147,7 +143,7 @@
           <ng-template #body let-item>
             <tr>
               <td>
-                <p-tag [value]="item.status" [severity]="getStatusSeverity(item.status)" />
+                <ui-status-badge [status]="item.status" kind="load" />
               </td>
               <td>{{ item.count | number }}</td>
               <td>{{ item.totalRevenue | currency: "USD" : "symbol" : "1.0-0" }}</td>
@@ -156,9 +152,9 @@
           </ng-template>
         </p-table>
       </ui-dashboard-card>
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 mb-6 lg:col-span-6">
+    <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Top Customers" icon="pi-users" iconColor="blue">
         <p-table [value]="data()?.topCustomers || []" [paginator]="true" [rows]="5">
           <ng-template #header>
@@ -179,6 +175,6 @@
           </ng-template>
         </p-table>
       </ui-dashboard-card>
-    </div>
-  </div>
+    </ui-grid>
+  </ui-grid>
 }

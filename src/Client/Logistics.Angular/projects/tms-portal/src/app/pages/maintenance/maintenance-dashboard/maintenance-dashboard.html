@@ -1,27 +1,34 @@
 <ui-page-header title="Maintenance Dashboard" />
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-  <ui-stat-card
-    label="Overdue"
-    [value]="overdueCount()"
-    icon="pi pi-exclamation-triangle"
-    [color]="overdueCount() > 0 ? 'red' : 'green'"
-  />
-  <ui-stat-card
-    label="Due Soon"
-    [value]="dueSoonCount()"
-    icon="pi pi-clock"
-    [color]="dueSoonCount() > 5 ? 'orange' : 'blue'"
-  />
-  <ui-stat-card
-    label="This Month"
-    [value]="totalCostThisMonth()"
-    icon="pi pi-dollar"
-    color="gray"
-  />
-</div>
+<ui-grid container spacing="4" class="mb-4">
+  <ui-grid [size]="{ xs: 12, md: 4 }">
+    <ui-stat-card
+      label="Overdue"
+      [value]="overdueCount()"
+      icon="pi pi-exclamation-triangle"
+      [color]="overdueCount() > 0 ? 'red' : 'green'"
+    />
+  </ui-grid>
+  <ui-grid [size]="{ xs: 12, md: 4 }">
+    <ui-stat-card
+      label="Due Soon"
+      [value]="dueSoonCount()"
+      icon="pi pi-clock"
+      [color]="dueSoonCount() > 5 ? 'orange' : 'blue'"
+    />
+  </ui-grid>
+  <ui-grid [size]="{ xs: 12, md: 4 }">
+    <ui-stat-card
+      label="This Month"
+      [value]="totalCostThisMonth()"
+      icon="pi pi-dollar"
+      color="gray"
+    />
+  </ui-grid>
+</ui-grid>
 
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+<ui-grid container spacing="4">
+  <ui-grid [size]="{ xs: 12, lg: 6 }">
   <!-- Upcoming Maintenance -->
   <ui-dashboard-card title="Upcoming Maintenance" icon="pi-calendar">
     @if (loading()) {
@@ -67,13 +74,15 @@
         <p-button label="View All" [text]="true" (click)="viewAllUpcoming()" />
       </div>
     } @else {
-      <div class="text-center py-4 text-muted">
-        <i class="pi pi-check-circle text-4xl mb-2"></i>
-        <p>No upcoming maintenance scheduled</p>
-      </div>
+      <ui-stack align="center" gap="2" class="py-4">
+        <ui-icon name="check-circle" size="xl" color="muted" />
+        <ui-typography variant="body" color="muted">No upcoming maintenance scheduled</ui-typography>
+      </ui-stack>
     }
   </ui-dashboard-card>
+  </ui-grid>
 
+  <ui-grid [size]="{ xs: 12, lg: 6 }">
   <!-- Recent Service Records -->
   <ui-dashboard-card title="Recent Service Records" icon="pi-wrench">
     @if (loading()) {
@@ -103,15 +112,16 @@
         <p-button label="View All" [text]="true" (click)="viewAllRecords()" />
       </div>
     } @else {
-      <div class="text-center py-4 text-muted">
-        <i class="pi pi-inbox text-4xl mb-2"></i>
-        <p>No recent service records</p>
-      </div>
+      <ui-stack align="center" gap="2" class="py-4">
+        <ui-icon name="inbox" size="xl" color="muted" />
+        <ui-typography variant="body" color="muted">No recent service records</ui-typography>
+      </ui-stack>
     }
   </ui-dashboard-card>
-</div>
+  </ui-grid>
+</ui-grid>
 
-<div class="mt-4 flex gap-2">
+<ui-stack direction="row" gap="2" class="mt-4">
   <p-button
     icon="pi pi-plus"
     label="Log Service"
@@ -124,4 +134,4 @@
     (click)="loadData()"
     [loading]="loading()"
   />
-</div>
+</ui-stack>

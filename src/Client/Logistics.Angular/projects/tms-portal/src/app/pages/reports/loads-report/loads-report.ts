@@ -1,32 +1,33 @@
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
-import { Component, inject, type OnInit, signal } from "@angular/core";
+import { Component, inject, signal, type OnInit } from "@angular/core";
 import { LocalizationService } from "@logistics/shared";
-import { getLoadsReport } from "@logistics/shared/api";
-import type {
-  LoadPerformanceDto,
-  LoadTrendDto,
-  LoadsReportDto,
-  StatusDto,
-  TypeDto,
+import {
+  getLoadsReport,
+  type LoadPerformanceDto,
+  type LoadsReportDto,
+  type LoadTrendDto,
+  type StatusDto,
+  type TypeDto,
 } from "@logistics/shared/api";
+import { Grid, Stack, StatusBadge, Typography } from "@logistics/shared/components";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
-import { Tag, TagModule } from "primeng/tag";
+import { TagModule } from "primeng/tag";
 import {
   BaseReportComponent,
   DashboardCard,
   DateRangePicker,
   PageHeader,
-  type ReportQueryParams,
   StatCard,
+  type ReportQueryParams,
 } from "@/shared/components";
 import {
-  LOADS_CHART_PALETTE,
   getLoadsPerformanceChartOptions,
   getLoadsPieOptions,
   getLoadsTrendChartOptions,
   getLoadsTypeChartOptions,
+  LOADS_CHART_PALETTE,
 } from "@/shared/constants";
 
 @Component({
@@ -43,6 +44,10 @@ import {
     PageHeader,
     StatCard,
     DashboardCard,
+    Grid,
+    Stack,
+    StatusBadge,
+    Typography,
   ],
 })
 export class LoadsReportComponent extends BaseReportComponent<LoadsReportDto> implements OnInit {
@@ -151,21 +156,6 @@ export class LoadsReportComponent extends BaseReportComponent<LoadsReportDto> im
           },
         ],
       });
-    }
-  }
-
-  protected getStatusSeverity(status: string): Tag["severity"] {
-    switch (status.toLowerCase()) {
-      case "delivered":
-        return "success";
-      case "in_transit":
-        return "info";
-      case "picked_up":
-        return "warn";
-      case "cancelled":
-        return "danger";
-      default:
-        return "secondary";
     }
   }
 }

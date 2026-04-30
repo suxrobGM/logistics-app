@@ -1,13 +1,14 @@
 import { CurrencyPipe, PercentPipe } from "@angular/common";
-import { Component, type OnInit, computed, signal } from "@angular/core";
+import { Component, computed, signal, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { getPayrollReport } from "@logistics/shared/api";
-import type {
-  PayrollReportDto,
-  PayrollTrendDto,
-  SalaryTypeBreakdownDto,
+import {
+  getPayrollReport,
+  type PayrollReportDto,
+  type PayrollTrendDto,
+  type SalaryTypeBreakdownDto,
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
+import { Grid, Stack, Typography } from "@logistics/shared/components";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
@@ -17,16 +18,17 @@ import {
   DashboardCard,
   DateRangePicker,
   PageHeader,
-  type ReportQueryParams,
   StatCard,
+  type ReportQueryParams,
 } from "@/shared/components";
 import {
-  PAYROLL_STATUS_LABELS,
-  SALARY_TYPE_COLORS,
   getPayrollStatusChartOptions,
   getPayrollTrendChartOptions,
   getSalaryTypeChartOptions,
+  PAYROLL_STATUS_LABELS,
+  SALARY_TYPE_COLORS,
 } from "@/shared/constants";
+import { Converters } from "@/shared/utils";
 
 // Status chart colors - aligned with PAYROLL_STATUS_LABELS order
 const STATUS_COLORS = {
@@ -40,7 +42,6 @@ const STATUS_COLORS = {
   ],
   hover: ["#475569", "#d97706", "#16a34a", "#dc2626", "#2563eb", "#059669"],
 };
-import { Converters } from "@/shared/utils";
 
 @Component({
   selector: "app-payroll-report",
@@ -57,6 +58,9 @@ import { Converters } from "@/shared/utils";
     StatCard,
     DashboardCard,
     RouterModule,
+    Grid,
+    Stack,
+    Typography,
   ],
 })
 export class PayrollReportComponent

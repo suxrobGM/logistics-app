@@ -1,26 +1,25 @@
 <!-- Header -->
-<div class="flex items-center justify-between">
+<ui-stack direction="row" align="center" justify="between">
   <ui-page-header
     title="Financial Dashboard"
     subtitle="Comprehensive financial overview and performance metrics"
     [showAddButton]="false"
   />
   <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
-</div>
+</ui-stack>
 
 @if (isLoading()) {
-  <!-- Loading State -->
-  <div class="grid grid-cols-12">
+  <ui-grid container>
     @for (item of [1, 2, 3, 4]; track item) {
-      <div class="col-span-12 mb-6 md:col-span-6 lg:col-span-3">
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-6">
         <p-skeleton height="120px"></p-skeleton>
-      </div>
+      </ui-grid>
     }
-  </div>
+  </ui-grid>
 } @else {
   <!-- Key Financial Metrics Cards -->
-  <div class="mb-6 grid grid-cols-12 gap-2">
-    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+  <ui-grid container spacing="2" class="mb-6">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <ui-stat-card
         icon="pi-file-export"
         label="Total Invoiced"
@@ -29,9 +28,9 @@
         trend="+15.3% vs last period"
         trendDirection="up"
       />
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <ui-stat-card
         icon="pi-check-circle"
         label="Total Paid"
@@ -40,9 +39,9 @@
         trend="+12.7% vs last period"
         trendDirection="up"
       />
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <ui-stat-card
         icon="pi-clock"
         label="Outstanding"
@@ -50,9 +49,9 @@
         color="orange"
         [trend]="(data()?.overdueInvoices || 0) + ' overdue'"
       />
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <ui-stat-card
         icon="pi-percentage"
         label="Collection Rate"
@@ -61,45 +60,45 @@
         trend="+2.1% vs last period"
         trendDirection="up"
       />
-    </div>
-  </div>
+    </ui-grid>
+  </ui-grid>
 
   <!-- Financial Metrics -->
-  <div class="mb-6 grid grid-cols-12 gap-2">
-    <div class="col-span-12">
-      <ui-dashboard-card title="Financial Metrics" icon="pi-chart-line" iconColor="blue">
-        <div class="grid grid-cols-12 gap-1">
-          @for (metric of data()?.financialMetrics || []; track metric.metric) {
-            <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
-              <div class="bg-hover flex items-start rounded p-4">
-                <div class="grow">
-                  <div class="mb-1 flex items-center gap-2">
-                    <h6 class="mb-0">{{ metric.metric }}</h6>
-                    <p-tag
-                      [value]="metric.category ?? ''"
-                      [severity]="getCategorySeverity(metric.category)"
-                      class="p-tag-sm"
-                    />
-                  </div>
-                  <h4 class="mb-0">{{ metric.value | currency: "USD" : "symbol" : "1.0-0" }}</h4>
-                </div>
-                <div class="shrink-0">
+  <div class="mb-6">
+    <ui-dashboard-card title="Financial Metrics" icon="pi-chart-line" iconColor="blue">
+      <ui-grid container spacing="1">
+        @for (metric of data()?.financialMetrics || []; track metric.metric) {
+          <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
+            <ui-stack direction="row" align="start" class="bg-hover rounded p-4">
+              <div class="grow">
+                <ui-stack direction="row" align="center" gap="2" class="mb-1">
+                  <ui-typography variant="h6" class="mb-0">{{ metric.metric }}</ui-typography>
                   <p-tag
-                    [value]="((metric.trend ?? 0) >= 0 ? '+' : '') + (metric.trend ?? 0) + '%'"
-                    [severity]="getMetricSeverity(metric.trend)"
+                    [value]="metric.category ?? ''"
+                    [severity]="getCategorySeverity(metric.category)"
+                    class="p-tag-sm"
                   />
-                </div>
+                </ui-stack>
+                <ui-typography variant="h5" class="mb-0">
+                  {{ metric.value | currency: "USD" : "symbol" : "1.0-0" }}
+                </ui-typography>
               </div>
-            </div>
-          }
-        </div>
-      </ui-dashboard-card>
-    </div>
+              <div class="shrink-0">
+                <p-tag
+                  [value]="((metric.trend ?? 0) >= 0 ? '+' : '') + (metric.trend ?? 0) + '%'"
+                  [severity]="getMetricSeverity(metric.trend)"
+                />
+              </div>
+            </ui-stack>
+          </ui-grid>
+        }
+      </ui-grid>
+    </ui-dashboard-card>
   </div>
 
   <!-- Charts Row 1 -->
-  <div class="mb-6 grid grid-cols-12 gap-2">
-    <div class="col-span-12 mb-6 lg:col-span-6">
+  <ui-grid container spacing="2" class="mb-6">
+    <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Invoice Status Distribution" icon="pi-chart-pie" iconColor="blue">
         <p-chart
           type="pie"
@@ -108,9 +107,9 @@
           style="height: 300px"
         />
       </ui-dashboard-card>
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 mb-6 lg:col-span-6">
+    <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Financial Metrics" icon="pi-chart-bar" iconColor="blue">
         <p-chart
           type="bar"
@@ -119,26 +118,24 @@
           style="height: 300px"
         />
       </ui-dashboard-card>
-    </div>
-  </div>
+    </ui-grid>
+  </ui-grid>
 
   <!-- Revenue Trends Chart -->
-  <div class="mb-6 grid grid-cols-12 gap-2">
-    <div class="col-span-12">
-      <ui-dashboard-card title="Revenue & Profit Trends" icon="pi-chart-line" iconColor="blue">
-        <p-chart
-          type="line"
-          [data]="revenueTrendChartData()"
-          [options]="revenueTrendChartOptions"
-          style="height: 400px"
-        />
-      </ui-dashboard-card>
-    </div>
+  <div class="mb-6">
+    <ui-dashboard-card title="Revenue & Profit Trends" icon="pi-chart-line" iconColor="blue">
+      <p-chart
+        type="line"
+        [data]="revenueTrendChartData()"
+        [options]="revenueTrendChartOptions"
+        style="height: 400px"
+      />
+    </ui-dashboard-card>
   </div>
 
   <!-- Data Tables -->
-  <div class="grid grid-cols-12 gap-2">
-    <div class="col-span-12 mb-6 lg:col-span-6">
+  <ui-grid container spacing="2">
+    <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Payment Trends" icon="pi-table" iconColor="blue">
         <p-table [value]="data()?.paymentTrends || []" [paginator]="true" [rows]="5">
           <ng-template #header>
@@ -163,9 +160,9 @@
           </ng-template>
         </p-table>
       </ui-dashboard-card>
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 mb-6 lg:col-span-6">
+    <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Top Customers" icon="pi-users" iconColor="blue">
         <p-table [value]="data()?.topCustomers || []" [paginator]="true" [rows]="5">
           <ng-template #header>
@@ -179,12 +176,12 @@
           <ng-template #body let-customer>
             <tr>
               <td>
-                <div class="flex items-center">
-                  <div class="mr-2 rounded-full bg-blue-600/10 p-2">
-                    <i class="pi pi-user text-blue-600"></i>
+                <ui-stack direction="row" align="center" gap="2">
+                  <div class="rounded-full bg-blue-600/10 p-2">
+                    <ui-icon name="user" class="text-blue-600" />
                   </div>
                   <span class="font-medium">{{ customer.customerName }}</span>
-                </div>
+                </ui-stack>
               </td>
               <td>{{ customer.totalInvoiced | currency: "USD" : "symbol" : "1.0-0" }}</td>
               <td>{{ customer.totalPaid | currency: "USD" : "symbol" : "1.0-0" }}</td>
@@ -197,6 +194,6 @@
           </ng-template>
         </p-table>
       </ui-dashboard-card>
-    </div>
-  </div>
+    </ui-grid>
+  </ui-grid>
 }

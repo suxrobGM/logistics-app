@@ -1,26 +1,25 @@
 <!-- Header -->
-<div class="flex items-center justify-between">
+<ui-stack direction="row" align="center" justify="between">
   <ui-page-header
     title="Safety Report"
     subtitle="DVIR, accidents, and driver behavior metrics"
     [showAddButton]="false"
   />
   <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
-</div>
+</ui-stack>
 
 @if (isLoading()) {
-  <!-- Loading State -->
-  <div class="grid grid-cols-12">
+  <ui-grid container>
     @for (item of [1, 2, 3, 4]; track item) {
-      <div class="col-span-12 mb-6 md:col-span-6 lg:col-span-3">
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-6">
         <p-skeleton height="120px"></p-skeleton>
-      </div>
+      </ui-grid>
     }
-  </div>
+  </ui-grid>
 } @else {
   <!-- Key Safety Metrics Cards -->
-  <div class="mb-6 grid grid-cols-12 gap-2">
-    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+  <ui-grid container spacing="2" class="mb-6">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <ui-stat-card
         icon="pi-file-edit"
         label="Total DVIRs"
@@ -28,9 +27,9 @@
         color="blue"
         [trend]="(data()?.pendingDvirReviews || 0) + ' pending review'"
       />
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <ui-stat-card
         icon="pi-car"
         label="Accidents"
@@ -38,9 +37,9 @@
         color="red"
         [trend]="(data()?.unresolvedAccidents || 0) + ' unresolved'"
       />
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <ui-stat-card
         icon="pi-dollar"
         label="Estimated Damage"
@@ -48,9 +47,9 @@
         color="orange"
         [trend]="(data()?.injuriesReported || 0) + ' injuries'"
       />
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 mb-4 md:col-span-6 lg:col-span-3">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
       <ui-stat-card
         icon="pi-exclamation-triangle"
         label="Behavior Events"
@@ -58,12 +57,12 @@
         color="orange"
         [trend]="(data()?.unreviewedBehaviorEvents || 0) + ' unreviewed'"
       />
-    </div>
-  </div>
+    </ui-grid>
+  </ui-grid>
 
   <!-- Charts Row 1 -->
-  <div class="mb-6 grid grid-cols-12 gap-2">
-    <div class="col-span-12 mb-6 lg:col-span-4">
+  <ui-grid container spacing="2" class="mb-6">
+    <ui-grid [size]="{ xs: 12, lg: 4 }" class="mb-6">
       <ui-dashboard-card title="DVIR Status" icon="pi-chart-pie" iconColor="blue">
         @if (hasDvirStatusData()) {
           <p-chart
@@ -73,14 +72,14 @@
             style="height: 280px"
           />
         } @else {
-          <div class="text-muted flex h-70 items-center justify-center">
-            <span>No DVIR data available</span>
-          </div>
+          <ui-stack align="center" justify="center" class="text-muted h-70">
+            <ui-typography variant="body" color="muted">No DVIR data available</ui-typography>
+          </ui-stack>
         }
       </ui-dashboard-card>
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 mb-6 lg:col-span-4">
+    <ui-grid [size]="{ xs: 12, lg: 4 }" class="mb-6">
       <ui-dashboard-card title="Accident Severity" icon="pi-chart-pie" iconColor="red">
         @if (hasAccidentSeverityData()) {
           <p-chart
@@ -90,14 +89,14 @@
             style="height: 280px"
           />
         } @else {
-          <div class="text-muted flex h-70 items-center justify-center">
-            <span>No accident data available</span>
-          </div>
+          <ui-stack align="center" justify="center" class="text-muted h-70">
+            <ui-typography variant="body" color="muted">No accident data available</ui-typography>
+          </ui-stack>
         }
       </ui-dashboard-card>
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 mb-6 lg:col-span-4">
+    <ui-grid [size]="{ xs: 12, lg: 4 }" class="mb-6">
       <ui-dashboard-card title="Behavior Events by Type" icon="pi-chart-bar" iconColor="orange">
         @if (hasBehaviorEventData()) {
           <p-chart
@@ -107,37 +106,35 @@
             style="height: 280px"
           />
         } @else {
-          <div class="text-muted flex h-70 items-center justify-center">
-            <span>No behavior event data available</span>
-          </div>
+          <ui-stack align="center" justify="center" class="text-muted h-70">
+            <ui-typography variant="body" color="muted">No behavior event data available</ui-typography>
+          </ui-stack>
         }
       </ui-dashboard-card>
-    </div>
-  </div>
+    </ui-grid>
+  </ui-grid>
 
   <!-- Safety Trends Chart -->
-  <div class="mb-6 grid grid-cols-12 gap-2">
-    <div class="col-span-12">
-      <ui-dashboard-card title="Safety Trends" icon="pi-chart-line" iconColor="blue">
-        @if (hasTrendData()) {
-          <p-chart
-            [type]="trendChartType()"
-            [data]="trendChartData()"
-            [options]="trendChartOptions()"
-            style="height: 350px"
-          />
-        } @else {
-          <div class="text-muted flex h-88 items-center justify-center">
-            <span>No trend data available</span>
-          </div>
-        }
-      </ui-dashboard-card>
-    </div>
+  <div class="mb-6">
+    <ui-dashboard-card title="Safety Trends" icon="pi-chart-line" iconColor="blue">
+      @if (hasTrendData()) {
+        <p-chart
+          [type]="trendChartType()"
+          [data]="trendChartData()"
+          [options]="trendChartOptions()"
+          style="height: 350px"
+        />
+      } @else {
+        <ui-stack align="center" justify="center" class="text-muted h-88">
+          <ui-typography variant="body" color="muted">No trend data available</ui-typography>
+        </ui-stack>
+      }
+    </ui-dashboard-card>
   </div>
 
   <!-- Data Tables -->
-  <div class="grid grid-cols-12 gap-2">
-    <div class="col-span-12 mb-6 lg:col-span-6">
+  <ui-grid container spacing="2">
+    <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Top Drivers by Events" icon="pi-users" iconColor="orange">
         <p-table [value]="data()?.topDriversByEvents || []" [paginator]="true" [rows]="5">
           <ng-template #header>
@@ -152,16 +149,18 @@
               <td>
                 <a
                   [routerLink]="['/employees', driver.driverId]"
-                  class="flex items-center no-underline hover:underline"
+                  class="no-underline hover:underline"
                 >
-                  <div
-                    class="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-amber-600/10"
-                  >
-                    <span class="text-xs font-medium text-amber-600">{{
-                      getDriverInitials(driver.driverName)
-                    }}</span>
-                  </div>
-                  <span class="font-medium">{{ driver.driverName }}</span>
+                  <ui-stack direction="row" align="center" gap="2">
+                    <div
+                      class="flex h-8 w-8 items-center justify-center rounded-full bg-amber-600/10"
+                    >
+                      <span class="text-xs font-medium text-amber-600">{{
+                        getDriverInitials(driver.driverName)
+                      }}</span>
+                    </div>
+                    <span class="font-medium">{{ driver.driverName }}</span>
+                  </ui-stack>
                 </a>
               </td>
               <td class="text-right">
@@ -183,9 +182,9 @@
           </ng-template>
         </p-table>
       </ui-dashboard-card>
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 mb-6 lg:col-span-6">
+    <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Top Trucks by Defects" icon="pi-truck" iconColor="blue">
         <p-table [value]="data()?.topTrucksByDefects || []" [paginator]="true" [rows]="5">
           <ng-template #header>
@@ -200,14 +199,16 @@
               <td>
                 <a
                   [routerLink]="['/fleet/trucks', truck.truckId]"
-                  class="flex items-center no-underline hover:underline"
+                  class="no-underline hover:underline"
                 >
-                  <div
-                    class="mr-2 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600/10"
-                  >
-                    <i class="pi pi-truck text-sm text-blue-600"></i>
-                  </div>
-                  <span class="font-medium">{{ truck.truckNumber }}</span>
+                  <ui-stack direction="row" align="center" gap="2">
+                    <div
+                      class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600/10"
+                    >
+                      <ui-icon name="truck" class="text-sm text-blue-600" />
+                    </div>
+                    <span class="font-medium">{{ truck.truckNumber }}</span>
+                  </ui-stack>
                 </a>
               </td>
               <td class="text-right">
@@ -229,30 +230,30 @@
           </ng-template>
         </p-table>
       </ui-dashboard-card>
-    </div>
-  </div>
+    </ui-grid>
+  </ui-grid>
 
   <!-- DVIR Defect Rate Card -->
-  <div class="grid grid-cols-12 gap-2">
-    <div class="col-span-12 mb-6">
-      <ui-dashboard-card title="DVIR Summary" icon="pi-clipboard" iconColor="blue">
-        <div class="grid grid-cols-12 gap-4 p-4">
-          <div class="col-span-12 md:col-span-4">
-            <div class="text-muted text-sm">DVIRs with Defects</div>
-            <div class="text-2xl font-semibold">{{ data()?.dvirsWithDefects || 0 }}</div>
-          </div>
-          <div class="col-span-12 md:col-span-4">
-            <div class="text-muted text-sm">Defect Rate</div>
-            <div class="text-2xl font-semibold" [class]="getDefectRateClass(data()?.dvirDefectRate)">
-              {{ (data()?.dvirDefectRate || 0 | number: '1.1-1') }}%
-            </div>
-          </div>
-          <div class="col-span-12 md:col-span-4">
-            <div class="text-muted text-sm">Pending Reviews</div>
-            <div class="text-2xl font-semibold text-amber-600">{{ data()?.pendingDvirReviews || 0 }}</div>
-          </div>
-        </div>
-      </ui-dashboard-card>
-    </div>
+  <div class="mb-6">
+    <ui-dashboard-card title="DVIR Summary" icon="pi-clipboard" iconColor="blue">
+      <ui-grid container spacing="4" class="p-4">
+        <ui-grid [size]="{ xs: 12, md: 4 }">
+          <ui-typography variant="caption" color="muted">DVIRs with Defects</ui-typography>
+          <ui-typography variant="h4" weight="semibold">{{ data()?.dvirsWithDefects || 0 }}</ui-typography>
+        </ui-grid>
+        <ui-grid [size]="{ xs: 12, md: 4 }">
+          <ui-typography variant="caption" color="muted">Defect Rate</ui-typography>
+          <ui-typography variant="h4" weight="semibold" [class]="getDefectRateClass(data()?.dvirDefectRate)">
+            {{ (data()?.dvirDefectRate || 0 | number: '1.1-1') }}%
+          </ui-typography>
+        </ui-grid>
+        <ui-grid [size]="{ xs: 12, md: 4 }">
+          <ui-typography variant="caption" color="muted">Pending Reviews</ui-typography>
+          <ui-typography variant="h4" weight="semibold" class="text-amber-600">
+            {{ data()?.pendingDvirReviews || 0 }}
+          </ui-typography>
+        </ui-grid>
+      </ui-grid>
+    </ui-dashboard-card>
   </div>
 }

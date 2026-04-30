@@ -1,13 +1,14 @@
 import { CurrencyPipe, DatePipe } from "@angular/common";
-import { Component, type OnInit, computed, signal } from "@angular/core";
+import { Component, computed, signal, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { getMaintenanceReport } from "@logistics/shared/api";
-import type {
-  MaintenanceReportDto,
-  MaintenanceTrendDto,
-  MaintenanceTypeBreakdownDto,
-  MaintenanceVendorBreakdownDto,
+import {
+  getMaintenanceReport,
+  type MaintenanceReportDto,
+  type MaintenanceTrendDto,
+  type MaintenanceTypeBreakdownDto,
+  type MaintenanceVendorBreakdownDto,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
@@ -17,8 +18,8 @@ import {
   DashboardCard,
   DateRangePicker,
   PageHeader,
-  type ReportQueryParams,
   StatCard,
+  type ReportQueryParams,
 } from "@/shared/components";
 
 // Maintenance type colors
@@ -50,20 +51,33 @@ const TYPE_COLORS = [
     StatCard,
     DashboardCard,
     RouterModule,
+    Grid,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
-export class MaintenanceReportComponent extends BaseReportComponent<MaintenanceReportDto> implements OnInit {
+export class MaintenanceReportComponent
+  extends BaseReportComponent<MaintenanceReportDto>
+  implements OnInit
+{
   protected readonly costTrendChartData = signal<Record<string, unknown>>({});
   protected readonly serviceTypeChartData = signal<Record<string, unknown>>({});
   protected readonly vendorChartData = signal<Record<string, unknown>>({});
   protected readonly trendDataPointCount = signal(0);
 
-  protected readonly hasCostTrendData = computed(() => Object.keys(this.costTrendChartData()).length > 0);
-  protected readonly hasServiceTypeData = computed(() => Object.keys(this.serviceTypeChartData()).length > 0);
+  protected readonly hasCostTrendData = computed(
+    () => Object.keys(this.costTrendChartData()).length > 0,
+  );
+  protected readonly hasServiceTypeData = computed(
+    () => Object.keys(this.serviceTypeChartData()).length > 0,
+  );
   protected readonly hasVendorData = computed(() => Object.keys(this.vendorChartData()).length > 0);
 
   // Use bar chart for small datasets (3 or fewer points)
-  protected readonly trendChartType = computed(() => (this.trendDataPointCount() <= 3 ? "bar" : "line"));
+  protected readonly trendChartType = computed(() =>
+    this.trendDataPointCount() <= 3 ? "bar" : "line",
+  );
 
   protected readonly pieChartOptions = {
     plugins: {
