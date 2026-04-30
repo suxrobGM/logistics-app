@@ -1,121 +1,130 @@
 <ui-page-header title="Add Container" backLink="/containers" [showAddButton]="false" />
 
-<div class="mx-auto max-w-5xl">
+<ui-container maxWidth="md" [gutters]="false">
   <p-card>
-    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
-      <ui-validation-summary [form]="form" />
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <ui-stack gap="4">
+        <ui-validation-summary [form]="form" />
 
-      <!-- Identification -->
-      <div>
-        <h3
-          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
-        >
-          <i class="pi pi-tag"></i>
-          Identification
-        </h3>
-        <div class="border-default bg-elevated rounded-lg border p-4">
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <ui-labeled-field
-              label="Container Number"
-              for="number"
-              [required]="true"
-              hint="11 characters: 4 letters + 7 digits (e.g., MSCU1234567)"
-              [control]="form.controls.number"
-            >
-              <input pInputText id="number" formControlName="number" placeholder="MSCU1234567" />
+        <!-- Identification -->
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="tag" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Identification</ui-typography>
+          </ui-stack>
+          <ui-surface>
+            <ui-grid container spacing="4">
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-labeled-field
+                  label="Container Number"
+                  for="number"
+                  [required]="true"
+                  hint="11 characters: 4 letters + 7 digits (e.g., MSCU1234567)"
+                  [control]="form.controls.number"
+                >
+                  <input
+                    pInputText
+                    id="number"
+                    formControlName="number"
+                    placeholder="MSCU1234567"
+                  />
+                </ui-labeled-field>
+              </ui-grid>
+
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-labeled-field label="ISO Type" for="isoType" [required]="true">
+                  <p-select
+                    formControlName="isoType"
+                    [options]="isoTypeOptions"
+                    placeholder="Select ISO type"
+                  />
+                </ui-labeled-field>
+              </ui-grid>
+
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-labeled-field label="Seal Number" for="sealNumber">
+                  <input pInputText id="sealNumber" formControlName="sealNumber" />
+                </ui-labeled-field>
+              </ui-grid>
+
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-labeled-field label="Booking Reference" for="bookingReference">
+                  <input pInputText id="bookingReference" formControlName="bookingReference" />
+                </ui-labeled-field>
+              </ui-grid>
+
+              <ui-grid [size]="12">
+                <ui-labeled-field label="Bill of Lading Number" for="billOfLadingNumber">
+                  <input pInputText id="billOfLadingNumber" formControlName="billOfLadingNumber" />
+                </ui-labeled-field>
+              </ui-grid>
+            </ui-grid>
+          </ui-surface>
+        </ui-stack>
+
+        <!-- Cargo -->
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="box" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Cargo</ui-typography>
+          </ui-stack>
+          <ui-surface>
+            <ui-grid container spacing="4">
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-labeled-field label="Gross Weight (kg)" for="grossWeight">
+                  <p-input-number id="grossWeight" formControlName="grossWeight" [min]="0" />
+                </ui-labeled-field>
+              </ui-grid>
+
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-labeled-field label="Status" for="isLaden">
+                  <ui-stack direction="row" gap="2" align="center">
+                    <p-checkbox formControlName="isLaden" [binary]="true" inputId="isLaden" />
+                    <label for="isLaden" class="cursor-pointer">Laden (loaded with cargo)</label>
+                  </ui-stack>
+                </ui-labeled-field>
+              </ui-grid>
+            </ui-grid>
+          </ui-surface>
+        </ui-stack>
+
+        <!-- Location -->
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="map-marker" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Current Location</ui-typography>
+          </ui-stack>
+          <ui-surface>
+            <ui-labeled-field label="Current Terminal" for="currentTerminal" class="mb-0">
+              <app-search-terminal formControlName="currentTerminal" />
             </ui-labeled-field>
+          </ui-surface>
+        </ui-stack>
 
-            <ui-labeled-field label="ISO Type" for="isoType" [required]="true">
-              <p-select
-                formControlName="isoType"
-                [options]="isoTypeOptions"
-                placeholder="Select ISO type"
-              />
+        <!-- Notes -->
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="comment" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Notes</ui-typography>
+          </ui-stack>
+          <ui-surface>
+            <ui-labeled-field label="Notes" for="notes" class="mb-0">
+              <textarea pTextarea id="notes" formControlName="notes" rows="3"></textarea>
             </ui-labeled-field>
+          </ui-surface>
+        </ui-stack>
 
-            <ui-labeled-field label="Seal Number" for="sealNumber">
-              <input pInputText id="sealNumber" formControlName="sealNumber" />
-            </ui-labeled-field>
-
-            <ui-labeled-field label="Booking Reference" for="bookingReference">
-              <input pInputText id="bookingReference" formControlName="bookingReference" />
-            </ui-labeled-field>
-
-            <ui-labeled-field
-              label="Bill of Lading Number"
-              for="billOfLadingNumber"
-              class="md:col-span-2"
-            >
-              <input pInputText id="billOfLadingNumber" formControlName="billOfLadingNumber" />
-            </ui-labeled-field>
-          </div>
-        </div>
-      </div>
-
-      <!-- Cargo -->
-      <div>
-        <h3
-          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
-        >
-          <i class="pi pi-box"></i>
-          Cargo
-        </h3>
-        <div class="border-default bg-elevated rounded-lg border p-4">
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <ui-labeled-field label="Gross Weight (kg)" for="grossWeight">
-              <p-input-number id="grossWeight" formControlName="grossWeight" [min]="0" />
-            </ui-labeled-field>
-
-            <ui-labeled-field label="Status" for="isLaden">
-              <div class="flex items-center gap-2">
-                <p-checkbox formControlName="isLaden" [binary]="true" inputId="isLaden" />
-                <label for="isLaden" class="cursor-pointer">Laden (loaded with cargo)</label>
-              </div>
-            </ui-labeled-field>
-          </div>
-        </div>
-      </div>
-
-      <!-- Location -->
-      <div>
-        <h3
-          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
-        >
-          <i class="pi pi-map-marker"></i>
-          Current Location
-        </h3>
-        <div class="border-default bg-elevated rounded-lg border p-4">
-          <ui-labeled-field label="Current Terminal" for="currentTerminal" class="mb-0">
-            <app-search-terminal formControlName="currentTerminal" />
-          </ui-labeled-field>
-        </div>
-      </div>
-
-      <!-- Notes -->
-      <div>
-        <h3
-          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
-        >
-          <i class="pi pi-comment"></i>
-          Notes
-        </h3>
-        <div class="border-default bg-elevated rounded-lg border p-4">
-          <ui-labeled-field label="Notes" for="notes" class="mb-0">
-            <textarea pTextarea id="notes" formControlName="notes" rows="3"></textarea>
-          </ui-labeled-field>
-        </div>
-      </div>
-
-      <div class="flex gap-2">
-        <p-button type="submit" icon="pi pi-check" label="Create" [disabled]="isLoading()" />
-        <p-button
-          type="button"
-          icon="pi pi-arrow-left"
-          label="Cancel"
-          [routerLink]="['/containers']"
-          [outlined]="true"
-        />
-      </div>
+        <ui-stack direction="row" gap="2">
+          <p-button type="submit" icon="pi pi-check" label="Create" [disabled]="isLoading()" />
+          <p-button
+            type="button"
+            icon="pi pi-arrow-left"
+            label="Cancel"
+            [routerLink]="['/containers']"
+            [outlined]="true"
+          />
+        </ui-stack>
+      </ui-stack>
     </form>
   </p-card>
-</div>
+</ui-container>

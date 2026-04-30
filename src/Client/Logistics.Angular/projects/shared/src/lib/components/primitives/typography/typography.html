@@ -1,0 +1,21 @@
+@if (resolvedTag() === "h1") {
+  <h1 [class]="classes()"><ng-content /></h1>
+} @else if (resolvedTag() === "h2") {
+  <h2 [class]="classes()"><ng-content /></h2>
+} @else if (resolvedTag() === "h3") {
+  <h3 [class]="classes()"><ng-content /></h3>
+} @else if (resolvedTag() === "h4") {
+  <h4 [class]="classes()"><ng-content /></h4>
+} @else if (resolvedTag() === "h5") {
+  <h5 [class]="classes()"><ng-content /></h5>
+} @else if (resolvedTag() === "h6") {
+  <h6 [class]="classes()"><ng-content /></h6>
+} @else if (resolvedTag() === "p") {
+  <p [class]="classes()"><ng-content /></p>
+} @else if (resolvedTag() === "label") {
+  <label [class]="classes()"><ng-content /></label>
+} @else if (resolvedTag() === "div") {
+  <div [class]="classes()"><ng-content /></div>
+} @else {
+  <span [class]="classes()"><ng-content /></span>
+}

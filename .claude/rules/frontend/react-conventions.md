@@ -1,5 +1,7 @@
 ---
 description: Frontend code conventions when working with React files.
+paths:
+  - src/Client/Logistics.DemoVideo/*
 ---
 
 ## File Naming

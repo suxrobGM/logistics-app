@@ -1,0 +1,23 @@
+<div [class]="wrapperClasses()" role="status">
+  <div class="pt-0.5">
+    <ui-icon [name]="resolvedIcon()" [color]="iconColor()" size="md" />
+  </div>
+  <div class="flex-1">
+    @if (title()) {
+      <div class="text-primary mb-1 text-sm font-semibold">{{ title() }}</div>
+    }
+    <div class="text-secondary text-sm">
+      <ng-content />
+    </div>
+  </div>
+  @if (dismissible()) {
+    <button
+      type="button"
+      class="text-muted hover:text-primary self-start"
+      aria-label="Dismiss"
+      (click)="handleDismiss()"
+    >
+      <ui-icon name="times" size="sm" />
+    </button>
+  }
+</div>

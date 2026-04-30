@@ -1,0 +1,19 @@
+@if (trigger() === "icon") {
+  <p-button
+    [icon]="buttonIcon()"
+    [text]="true"
+    [rounded]="true"
+    severity="secondary"
+    [ariaLabel]="buttonLabel()"
+    (onClick)="toggle($event)"
+  />
+} @else {
+  <p-button
+    [label]="buttonLabel()"
+    [icon]="buttonIcon()"
+    severity="secondary"
+    [outlined]="true"
+    (onClick)="toggle($event)"
+  />
+}
+<p-menu #menu [model]="menuItems()" [popup]="true" [appendTo]="appendToTarget()" />

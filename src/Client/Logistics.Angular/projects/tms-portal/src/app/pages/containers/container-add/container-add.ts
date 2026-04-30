@@ -9,7 +9,16 @@ import {
   type TerminalDto,
 } from "@logistics/shared/api";
 import { containerIsoTypeOptions } from "@logistics/shared/api/enums";
-import { LabeledField, ValidationSummary } from "@logistics/shared/components";
+import {
+  Container,
+  Grid,
+  Icon,
+  LabeledField,
+  Stack,
+  Surface,
+  Typography,
+  ValidationSummary,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
@@ -38,6 +47,12 @@ import { SearchTerminal } from "@/shared/components/search";
     ValidationSummary,
     PageHeader,
     SearchTerminal,
+    Container,
+    Grid,
+    Icon,
+    Stack,
+    Surface,
+    Typography,
   ],
 })
 export class ContainerAdd {

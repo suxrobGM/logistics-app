@@ -1,5 +1,6 @@
 export * from "./permission/permission-guard";
 export * from "./permission/permission-checker";
+export * from "./primitives";
 export * from "./ui";
 export * from "./state";
 export * from "./form";

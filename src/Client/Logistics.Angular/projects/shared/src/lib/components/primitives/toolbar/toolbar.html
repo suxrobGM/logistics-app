@@ -1,0 +1,12 @@
+<div [class]="classes()">
+  <div class="flex flex-1 flex-wrap items-center gap-2">
+    <ng-content select="[slot=start]" />
+  </div>
+  <div class="flex items-center gap-2">
+    <ng-content select="[slot=center]" />
+  </div>
+  <div class="flex items-center gap-2">
+    <ng-content select="[slot=end]" />
+  </div>
+  <ng-content />
+</div>
