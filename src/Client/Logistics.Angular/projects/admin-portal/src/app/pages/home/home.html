@@ -1,25 +1,25 @@
-<h1>Dashboard</h1>
+<ui-typography variant="h2" tag="h1">Dashboard</ui-typography>
 <p-divider />
 
-<div class="mt-4 grid grid-cols-12 gap-4">
+<ui-grid container spacing="4" class="mt-4">
   @if (isLoading()) {
     @for (_ of [1, 2, 3, 4]; track $index) {
-      <div class="col-span-12 md:col-span-6 lg:col-span-3">
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
         <p-skeleton height="8rem" styleClass="w-full" />
-      </div>
+      </ui-grid>
     }
   } @else {
-    <div class="col-span-12 md:col-span-6 lg:col-span-3">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
       <p-card styleClass="h-full">
-        <div class="flex items-center gap-4">
+        <ui-stack direction="row" align="center" gap="4">
           <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-            <i class="pi pi-building text-2xl text-blue-600"></i>
+            <ui-icon name="building" size="lg" class="text-blue-600" />
           </div>
           <div>
-            <p class="text-sm text-gray-500">Total Tenants</p>
-            <p class="text-2xl font-bold">{{ tenantCount() }}</p>
+            <ui-typography variant="caption" color="muted">Total Tenants</ui-typography>
+            <ui-typography variant="stat">{{ tenantCount() }}</ui-typography>
           </div>
-        </div>
+        </ui-stack>
         <div class="mt-4">
           <p-button
             label="View All"
@@ -30,19 +30,19 @@
           />
         </div>
       </p-card>
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 md:col-span-6 lg:col-span-3">
-      <p-card styleClass="h-full">
-        <div class="flex items-center gap-4">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+      <p-card class="h-full">
+        <ui-stack direction="row" align="center" gap="4">
           <div class="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-            <i class="pi pi-credit-card text-2xl text-green-600"></i>
+            <ui-icon name="credit-card" size="lg" class="text-green-600" />
           </div>
           <div>
-            <p class="text-sm text-gray-500">Active Subscriptions</p>
-            <p class="text-2xl font-bold">{{ subscriptionCount() }}</p>
+            <ui-typography variant="caption" color="muted">Active Subscriptions</ui-typography>
+            <ui-typography variant="stat">{{ subscriptionCount() }}</ui-typography>
           </div>
-        </div>
+        </ui-stack>
         <div class="mt-4">
           <p-button
             label="View All"
@@ -53,19 +53,19 @@
           />
         </div>
       </p-card>
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 md:col-span-6 lg:col-span-3">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
       <p-card styleClass="h-full">
-        <div class="flex items-center gap-4">
+        <ui-stack direction="row" align="center" gap="4">
           <div class="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100">
-            <i class="pi pi-box text-2xl text-purple-600"></i>
+            <ui-icon name="box" size="lg" class="text-purple-600" />
           </div>
           <div>
-            <p class="text-sm text-gray-500">Subscription Plans</p>
-            <p class="text-2xl font-bold">{{ planCount() }}</p>
+            <ui-typography variant="caption" color="muted">Subscription Plans</ui-typography>
+            <ui-typography variant="stat">{{ planCount() }}</ui-typography>
           </div>
-        </div>
+        </ui-stack>
         <div class="mt-4">
           <p-button
             label="View All"
@@ -76,19 +76,19 @@
           />
         </div>
       </p-card>
-    </div>
+    </ui-grid>
 
-    <div class="col-span-12 md:col-span-6 lg:col-span-3">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
       <p-card styleClass="h-full">
-        <div class="flex items-center gap-4">
+        <ui-stack direction="row" align="center" gap="4">
           <div class="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
-            <i class="pi pi-users text-2xl text-orange-600"></i>
+            <ui-icon name="users" size="lg" class="text-orange-600" />
           </div>
           <div>
-            <p class="text-sm text-gray-500">Admin Users</p>
-            <p class="text-2xl font-bold">{{ userCount() }}</p>
+            <ui-typography variant="caption" color="muted">Admin Users</ui-typography>
+            <ui-typography variant="stat">{{ userCount() }}</ui-typography>
           </div>
-        </div>
+        </ui-stack>
         <div class="mt-4">
           <p-button
             label="View All"
@@ -99,22 +99,32 @@
           />
         </div>
       </p-card>
-    </div>
+    </ui-grid>
   }
-</div>
+</ui-grid>
 
-<div class="mt-8 grid grid-cols-12 gap-4">
-  <div class="col-span-12 lg:col-span-6">
+<ui-grid container spacing="4" class="mt-8">
+  <ui-grid [size]="{ xs: 12, lg: 6 }">
     <p-card>
       <ng-template #header>
-        <h4 class="py-2 pl-4">Quick Actions</h4>
+        <ui-typography variant="h6" tag="h4" class="py-2 pl-4">Quick Actions</ui-typography>
         <p-divider class="m-0" />
       </ng-template>
-      <div class="flex flex-wrap gap-3">
+      <ui-stack direction="row" gap="3" wrap>
         <p-button label="Add Tenant" icon="pi pi-plus" routerLink="/tenants/add" />
-        <p-button label="Add Plan" icon="pi pi-plus" severity="secondary" routerLink="/subscription-plans/add" />
-        <p-button label="Add Subscription" icon="pi pi-plus" severity="secondary" routerLink="/subscriptions/add" />
-      </div>
+        <p-button
+          label="Add Plan"
+          icon="pi pi-plus"
+          severity="secondary"
+          routerLink="/subscription-plans/add"
+        />
+        <p-button
+          label="Add Subscription"
+          icon="pi pi-plus"
+          severity="secondary"
+          routerLink="/subscriptions/add"
+        />
+      </ui-stack>
     </p-card>
-  </div>
-</div>
+  </ui-grid>
+</ui-grid>

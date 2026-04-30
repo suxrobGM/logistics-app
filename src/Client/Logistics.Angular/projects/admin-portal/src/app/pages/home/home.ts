@@ -1,6 +1,13 @@
-import { Component, inject, type OnInit, signal } from "@angular/core";
+import { Component, inject, signal, type OnInit } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { Api, getTenants, getSubscriptions, getSubscriptionPlans, getUsers } from "@logistics/shared/api";
+import {
+  Api,
+  getSubscriptionPlans,
+  getSubscriptions,
+  getTenants,
+  getUsers,
+} from "@logistics/shared/api";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -9,7 +16,17 @@ import { SkeletonModule } from "primeng/skeleton";
 @Component({
   selector: "adm-home",
   templateUrl: "./home.html",
-  imports: [CardModule, ButtonModule, RouterLink, DividerModule, SkeletonModule],
+  imports: [
+    CardModule,
+    ButtonModule,
+    RouterLink,
+    DividerModule,
+    SkeletonModule,
+    Grid,
+    Icon,
+    Stack,
+    Typography,
+  ],
 })
 export class Home implements OnInit {
   private readonly api = inject(Api);
