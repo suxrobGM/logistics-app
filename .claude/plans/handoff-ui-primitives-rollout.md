@@ -1,6 +1,6 @@
 # Handoff: UI Primitives Rollout — Resume Refactor (TMS leftovers + Admin + Customer)
 
-> **Last updated 2026-04-30 after 12 commits.** Jobs 1 + 2 are complete and committed. Job 3 (mass page refactor) is partially done — most TMS dashboards/lists/details are converted; admin home + 3 customer-portal pages are converted; the rest remains. Resume from the **Resume here** section below.
+> **Last updated 2026-04-30 after 14 commits.** Jobs 1 + 2 are complete. Job 3 (mass page refactor): **TMS portal is fully converted** through 14 commits — only `notifications/`, `messages/`, `ai-dispatch/` (lower priority) remain. Admin portal and customer portal are still pending. Resume from the **Resume here** section below.
 
 ## Context
 
@@ -42,28 +42,17 @@ A MUI-inspired primitive layer was added to `@logistics/shared` in [the parent p
 
 Working dir: `src/Client/Logistics.Angular/projects/tms-portal/src/app/pages/`
 
-Confirmed pages still using `grid grid-cols-12` / `grid-cols-1 md:grid-cols-2` / `<p-tag [severity]>` / hardcoded card divs (run a fresh `Grep` to verify before each pass):
+All major pages are now converted across two recent commits (`3032d2bf` + `4afdfa21`). Only lower-priority folders remain:
 
-| Folder                                        | Page(s)                                                                                                                                                                                                                                      |
-| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `trips/`                                      | `trips-list`, `trip-add`, `trip-edit`, `trip-detail`, `components/trip-wizard-*`                                                                                                                                                             |
-| `expenses/`                                   | `expenses-list`, `expense-add`, `expense-edit`                                                                                                                                                                                               |
-| `maintenance/`                                | `service-records`, `service-record-detail`, `service-record-add`, `service-record-edit`, `upcoming-service`                                                                                                                                  |
-| `payroll/`                                    | `invoices/list`, `invoices/add`, `invoices/edit`, `employee/employee-payroll-invoices`                                                                                                                                                       |
-| `invoices/`                                   | `employee-payroll-invoices-list`, `load-invoices-list`, components/`payment-link-dialog`, components/`send-invoice-dialog`, components/`record-payment-dialog` (dialogs already use `<ui-form-field>`; mostly `<ui-stack>` for inner layout) |
-| `safety/`                                     | `dvir-detail`, `condition-reports-list`, `condition-report-detail`, `accident-detail`, `driver-behavior-list`, `components/dvir-defects-list`, `components/accident-review-summary`                                                          |
-| `eld/`                                        | `eld-providers`                                                                                                                                                                                                                              |
-| `settings/`                                   | `api-keys-settings`, `feature-settings`, `payment-settings`, `_components/api-keys-table`                                                                                                                                                    |
-| `subscription/`                               | `view-plans`, `manage-subscription`                                                                                                                                                                                                          |
-| `load-board/`                                 | `posted-trucks`, `load-board-search`, `load-board-providers`                                                                                                                                                                                 |
-| `loads/`                                      | `load-add`, `load-edit`, `load-import`, `components/loads-filter-panel`, `components/loads-table` (subcomponents — main `loads-list` + `load-detail` are already done)                                                                       |
-| `trucks/`                                     | `truck-edit`, `truck-documents`, `components/trucks-filter-panel`                                                                                                                                                                            |
-| `customers/`                                  | `customer-add`, `customer-edit`, `components/invite-customer-dialog`, `components/customer-edit-dialog`                                                                                                                                      |
-| `employees/`                                  | `employee-add`, `employee-edit`, `employee-invitations-list`, `components/invite-employee-dialog`, `components/employee-edit-dialog`                                                                                                         |
-| `containers/`                                 | `container-edit` (form is already done — only minor consistency tweaks)                                                                                                                                                                      |
-| `terminals/`                                  | `terminal-add`, `terminal-edit`, `terminal-form`                                                                                                                                                                                             |
-| `timesheets/`                                 | `list/timesheets-list`, `components/form-dialog`                                                                                                                                                                                             |
-| `notifications/`, `messages/`, `ai-dispatch/` | various — lower priority                                                                                                                                                                                                                     |
+| Folder                                        | Page(s)                  |
+| --------------------------------------------- | ------------------------ |
+| `notifications/`, `messages/`, `ai-dispatch/` | various — lower priority |
+
+Notes from the rollout:
+
+- `loads/components/loads-table` was skipped — it's a subcomponent of the already-done `loads-list`.
+- `customers/customer-edit`, `employees/employee-edit`, `terminals/terminal-add`, `terminals/terminal-edit`, `settings/_components/api-keys-table`, `maintenance/service-records`, `maintenance/service-record-add` — these files either don't exist or had no convertible patterns (their wrappers delegate to a shared form component that **was** converted).
+- Specialized severity tags that don't fit `StatusKind` (accident severity, dvir-type, ELD duty status) were intentionally left as `<p-tag [severity]>` per the plan's pitfall guidance.
 
 ### Admin portal — remaining
 
@@ -227,13 +216,13 @@ One commit per logical batch of ~4–8 files keeps each diff reviewable.
 
 ## Estimated Remaining Effort
 
-| Scope                                                                                                                          | Files | Effort    |
-| ------------------------------------------------------------------------------------------------------------------------------ | ----- | --------- |
-| TMS leftovers (trips, expenses, maintenance, payroll list/edit, settings 3, safety details, load-board, subscription, dialogs) | ~50   | ~1 day    |
-| Admin portal                                                                                                                   | ~20   | ~half day |
-| Customer portal                                                                                                                | ~7    | ~2 hours  |
+| Scope                                                               | Files | Effort     |
+| ------------------------------------------------------------------- | ----- | ---------- |
+| TMS leftovers (notifications, messages, ai-dispatch — low-priority) | ~10   | ~2-3 hours |
+| Admin portal                                                        | ~20   | ~half day  |
+| Customer portal                                                     | ~7    | ~2 hours   |
 
-Total: ~2 focused days across 3–6 PRs, similar cadence to what's already shipped.
+Total: ~1 focused day across 2–4 PRs.
 
 ## Reference Pages (good examples)
 
