@@ -1,7 +1,8 @@
 import { DatePipe } from "@angular/common";
-import { Component, type OnInit, inject, signal } from "@angular/core";
+import { Component, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import type { ConditionReportDto } from "@logistics/shared/api";
+import { Icon } from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -27,6 +28,7 @@ import { ConditionReportsListStore } from "../store/condition-reports-list.store
     PageHeader,
     SearchInput,
     TagModule,
+    Icon,
   ],
 })
 export class ConditionReportsListPage implements OnInit {

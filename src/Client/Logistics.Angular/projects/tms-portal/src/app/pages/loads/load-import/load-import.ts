@@ -9,7 +9,7 @@ import {
   type ImportLoadFromPdfResponse,
   type TruckDto,
 } from "@logistics/shared/api";
-import { PdfViewer } from "@logistics/shared/components";
+import { Grid, Icon, PdfViewer, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -36,6 +36,10 @@ import { FormField, SearchTruck } from "@/shared/components";
     FormField,
     DividerModule,
     PdfViewer,
+    Typography,
+    Stack,
+    Icon,
+    Grid,
   ],
 })
 export class LoadImportComponent {

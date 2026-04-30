@@ -3,9 +3,16 @@ import { Component, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { Permission, PermissionGuard } from "@logistics/shared";
-import { Api, deleteTimeEntry, getEmployeeById } from "@logistics/shared/api";
-import type { EmployeeDto, TimeEntryDto, TimeEntryType } from "@logistics/shared/api";
+import {
+  Api,
+  deleteTimeEntry,
+  getEmployeeById,
+  type EmployeeDto,
+  type TimeEntryDto,
+  type TimeEntryType,
+} from "@logistics/shared/api";
 import { timeEntryTypeOptions } from "@logistics/shared/api/enums";
+import { Stack } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePickerModule } from "primeng/datepicker";
@@ -38,6 +45,7 @@ import { TimesheetsListStore } from "../store/list.store";
     PageHeader,
     TimesheetFormDialog,
     PermissionGuard,
+    Stack,
   ],
 })
 export class TimesheetsList {

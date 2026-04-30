@@ -10,6 +10,7 @@ import {
   type LoadBoardConfigurationDto,
   type LoadBoardProviderType,
 } from "@logistics/shared/api";
+import { Icon, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -37,11 +38,14 @@ interface ProviderOption {
     CardModule,
     DatePipe,
     DialogModule,
+    Icon,
     InputTextModule,
     FormField,
     PageHeader,
     PasswordModule,
     ProgressSpinnerModule,
+    Stack,
+    Typography,
     ReactiveFormsModule,
     SelectModule,
     TableModule,

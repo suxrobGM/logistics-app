@@ -1,8 +1,13 @@
 import { CommonModule } from "@angular/common";
 import { Component, computed, effect, inject, signal } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Api, cancelSubscription, getBillingPortalUrl } from "@logistics/shared/api";
-import type { SubscriptionDto } from "@logistics/shared/api";
+import {
+  Api,
+  cancelSubscription,
+  getBillingPortalUrl,
+  type SubscriptionDto,
+} from "@logistics/shared/api";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
@@ -13,7 +18,19 @@ import { Labels, type SeverityLevel } from "@/shared/utils";
 @Component({
   selector: "app-manage-subscription",
   templateUrl: "./manage-subscription.html",
-  imports: [CommonModule, CardModule, ButtonModule, TagModule, ConfirmDialogModule, RouterModule],
+  imports: [
+    CommonModule,
+    CardModule,
+    ButtonModule,
+    ConfirmDialogModule,
+    Grid,
+    Icon,
+    RouterModule,
+    Stack,
+    Surface,
+    TagModule,
+    Typography,
+  ],
 })
 export class ManageSubscriptionComponent {
   private readonly tenantService = inject(TenantService);

@@ -1,7 +1,16 @@
-import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
+import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { Api, createTruck, deleteTruck, getTruckById, updateTruck } from "@logistics/shared/api";
-import type { CreateTruckCommand, TruckDto, UpdateTruckCommand } from "@logistics/shared/api";
+import {
+  Api,
+  createTruck,
+  deleteTruck,
+  getTruckById,
+  updateTruck,
+  type CreateTruckCommand,
+  type TruckDto,
+  type UpdateTruckCommand,
+} from "@logistics/shared/api";
+import { Stack } from "@logistics/shared/components";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
@@ -12,7 +21,7 @@ import { TruckForm, type TruckFormData } from "../components";
 @Component({
   selector: "app-truck-edit",
   templateUrl: "./truck-edit.html",
-  imports: [ToastModule, ConfirmDialogModule, ProgressSpinnerModule, PageHeader, TruckForm],
+  imports: [ToastModule, ConfirmDialogModule, ProgressSpinnerModule, PageHeader, TruckForm, Stack],
 })
 export class TruckEdit implements OnInit {
   private readonly api = inject(Api);

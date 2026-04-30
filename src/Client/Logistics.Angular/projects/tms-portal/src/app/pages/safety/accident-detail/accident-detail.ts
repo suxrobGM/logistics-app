@@ -1,27 +1,26 @@
 import { CurrencyPipe, DatePipe } from "@angular/common";
-import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
+import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import {
   Api,
   getAccidentReportById,
-  submitAccidentReport,
-  reviewAccidentReport,
   resolveAccidentReport,
+  reviewAccidentReport,
+  submitAccidentReport,
+  type AccidentReportDto,
+  type AccidentReportStatus,
+  type AccidentSeverity,
 } from "@logistics/shared/api";
-import type {
-  AccidentReportDto,
-  AccidentReportStatus,
-  AccidentSeverity,
-} from "@logistics/shared/api";
-import { AuthService } from "@/core/auth";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
-import { TextareaModule } from "primeng/textarea";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TabsModule } from "primeng/tabs";
 import { TagModule } from "primeng/tag";
+import { TextareaModule } from "primeng/textarea";
+import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import type { TagSeverity } from "@/shared/types";
@@ -44,6 +43,10 @@ import { AccidentQuickInfo } from "../components";
     TagModule,
     PageHeader,
     AccidentQuickInfo,
+    Grid,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class AccidentDetailPage implements OnInit {
@@ -140,7 +143,8 @@ export class AccidentDetailPage implements OnInit {
 
   protected submitReport(): void {
     this.toastService.confirm({
-      message: "Are you sure you want to submit this accident report? Once submitted, it cannot be edited.",
+      message:
+        "Are you sure you want to submit this accident report? Once submitted, it cannot be edited.",
       header: "Confirm Submission",
       icon: "pi pi-exclamation-triangle",
       accept: () => this.doSubmitReport(),

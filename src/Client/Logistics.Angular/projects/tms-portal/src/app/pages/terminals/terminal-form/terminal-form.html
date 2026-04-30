@@ -1,84 +1,88 @@
-<form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
-  <ui-validation-summary [form]="form" />
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <ui-stack gap="4">
+    <ui-validation-summary [form]="form" />
 
-  <div>
-    <h3
-      class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
-    >
-      <i class="pi pi-tag"></i>
-      Identification
-    </h3>
-    <div class="border-default bg-elevated rounded-lg border p-4">
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <ui-form-field
-          label="Code"
-          for="code"
-          [required]="true"
-          hint="5-character UN/LOCODE (e.g., USNYC, BEANR)"
-          [control]="form.controls.code"
-        >
-          <input pInputText id="code" formControlName="code" maxlength="5" />
+    <ui-stack tag="section" gap="3">
+      <ui-stack direction="row" gap="2" align="center">
+        <ui-icon name="tag" color="secondary" />
+        <ui-typography variant="overline" color="secondary">Identification</ui-typography>
+      </ui-stack>
+      <ui-surface variant="elevated" [border]="true">
+        <ui-grid container spacing="4">
+          <ui-grid [size]="{ xs: 12, md: 6 }">
+            <ui-form-field
+              label="Code"
+              for="code"
+              [required]="true"
+              hint="5-character UN/LOCODE (e.g., USNYC, BEANR)"
+              [control]="form.controls.code"
+            >
+              <input pInputText id="code" formControlName="code" maxlength="5" />
+            </ui-form-field>
+          </ui-grid>
+
+          <ui-grid [size]="{ xs: 12, md: 6 }">
+            <ui-form-field label="Name" for="name" [required]="true">
+              <input pInputText id="name" formControlName="name" />
+            </ui-form-field>
+          </ui-grid>
+
+          <ui-grid [size]="{ xs: 12, md: 6 }">
+            <ui-form-field label="Type" for="type" [required]="true">
+              <p-select formControlName="type" [options]="typeOptions" />
+            </ui-form-field>
+          </ui-grid>
+
+          <ui-grid [size]="{ xs: 12, md: 6 }">
+            <ui-form-field label="Country" for="countryCode" [required]="true">
+              <p-select
+                formControlName="countryCode"
+                [options]="countryOptions()"
+                [filter]="true"
+                placeholder="Select country"
+              />
+            </ui-form-field>
+          </ui-grid>
+        </ui-grid>
+      </ui-surface>
+    </ui-stack>
+
+    <ui-stack tag="section" gap="3">
+      <ui-stack direction="row" gap="2" align="center">
+        <ui-icon name="map-marker" color="secondary" />
+        <ui-typography variant="overline" color="secondary">Address</ui-typography>
+      </ui-stack>
+      <ui-surface variant="elevated" [border]="true">
+        <ui-address-form formControlName="address" [allowedCountries]="allowedCountries()" />
+      </ui-surface>
+    </ui-stack>
+
+    <ui-stack tag="section" gap="3">
+      <ui-stack direction="row" gap="2" align="center">
+        <ui-icon name="comment" color="secondary" />
+        <ui-typography variant="overline" color="secondary">Notes</ui-typography>
+      </ui-stack>
+      <ui-surface variant="elevated" [border]="true">
+        <ui-form-field label="Notes" for="notes" class="mb-0">
+          <textarea pTextarea id="notes" formControlName="notes" rows="3"></textarea>
         </ui-form-field>
+      </ui-surface>
+    </ui-stack>
 
-        <ui-form-field label="Name" for="name" [required]="true">
-          <input pInputText id="name" formControlName="name" />
-        </ui-form-field>
-
-        <ui-form-field label="Type" for="type" [required]="true">
-          <p-select formControlName="type" [options]="typeOptions" />
-        </ui-form-field>
-
-        <ui-form-field label="Country" for="countryCode" [required]="true">
-          <p-select
-            formControlName="countryCode"
-            [options]="countryOptions()"
-            [filter]="true"
-            placeholder="Select country"
-          />
-        </ui-form-field>
-      </div>
-    </div>
-  </div>
-
-  <div>
-    <h3
-      class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
-    >
-      <i class="pi pi-map-marker"></i>
-      Address
-    </h3>
-    <div class="border-default bg-elevated rounded-lg border p-4">
-      <ui-address-form formControlName="address" [allowedCountries]="allowedCountries()" />
-    </div>
-  </div>
-
-  <div>
-    <h3
-      class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
-    >
-      <i class="pi pi-comment"></i>
-      Notes
-    </h3>
-    <div class="border-default bg-elevated rounded-lg border p-4">
-      <ui-form-field label="Notes" for="notes" class="mb-0">
-        <textarea pTextarea id="notes" formControlName="notes" rows="3"></textarea>
-      </ui-form-field>
-    </div>
-  </div>
-
-  <div class="flex gap-2">
-    <p-button
-      type="submit"
-      icon="pi pi-check"
-      [label]="mode() === 'create' ? 'Create' : 'Update'"
-      [disabled]="isLoading()"
-    />
-    <p-button
-      type="button"
-      icon="pi pi-arrow-left"
-      label="Back to list"
-      [routerLink]="['/terminals']"
-      [outlined]="true"
-    />
-  </div>
+    <ui-stack direction="row" gap="2">
+      <p-button
+        type="submit"
+        icon="pi pi-check"
+        [label]="mode() === 'create' ? 'Create' : 'Update'"
+        [disabled]="isLoading()"
+      />
+      <p-button
+        type="button"
+        icon="pi pi-arrow-left"
+        label="Back to list"
+        [routerLink]="['/terminals']"
+        [outlined]="true"
+      />
+    </ui-stack>
+  </ui-stack>
 </form>

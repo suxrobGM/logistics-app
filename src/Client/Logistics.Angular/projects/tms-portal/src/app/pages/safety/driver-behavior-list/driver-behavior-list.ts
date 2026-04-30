@@ -3,10 +3,11 @@ import { Component, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import {
   Api,
+  reviewDriverBehaviorEvent,
   type DriverBehaviorEventDto,
   type DriverBehaviorEventType,
-  reviewDriverBehaviorEvent,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -67,6 +68,10 @@ const reviewStatusOptions = [
     DataContainer,
     PageHeader,
     SearchInput,
+    Grid,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class DriverBehaviorListPage {

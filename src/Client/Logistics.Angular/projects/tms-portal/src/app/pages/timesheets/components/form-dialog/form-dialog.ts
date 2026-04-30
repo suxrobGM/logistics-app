@@ -18,6 +18,7 @@ import {
   type UpdateTimeEntryCommand,
 } from "@logistics/shared/api";
 import { timeEntryTypeOptions } from "@logistics/shared/api/enums";
+import { Grid, Icon, Stack } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DatePickerModule } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
@@ -42,6 +43,9 @@ import { FormField } from "@/shared/components";
     InputNumberModule,
     TextareaModule,
     FormField,
+    Grid,
+    Icon,
+    Stack,
   ],
 })
 export class TimesheetFormDialog {

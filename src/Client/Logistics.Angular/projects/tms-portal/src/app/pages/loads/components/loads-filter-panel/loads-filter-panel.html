@@ -1,9 +1,11 @@
 <p-card class="mb-4">
-  <div class="mb-4 flex items-center justify-between">
-    <span class="text-primary text-lg font-semibold">Filters</span>
-    <div class="flex items-center gap-2">
+  <ui-stack direction="row" align="center" justify="between" class="mb-4">
+    <ui-typography variant="h6" color="primary" weight="bold">Filters</ui-typography>
+    <ui-stack direction="row" align="center" gap="2">
       @if (activeFilterCount() > 0) {
-        <span class="text-muted text-sm">{{ activeFilterCount() }} active</span>
+        <ui-typography variant="body-sm" color="muted">
+          {{ activeFilterCount() }} active
+        </ui-typography>
       }
       <p-button
         label="Clear All"
@@ -13,8 +15,8 @@
         (click)="clearFilters()"
         [disabled]="activeFilterCount() === 0"
       />
-    </div>
-  </div>
+    </ui-stack>
+  </ui-stack>
 
   <div class="grid grid-cols-1 gap-x-4 md:grid-cols-2 lg:grid-cols-5">
     <ui-form-field label="Search">
@@ -55,12 +57,12 @@
     </ui-form-field>
   </div>
 
-  <div class="flex items-center gap-4">
+  <ui-stack direction="row" align="center" gap="4">
     <ui-form-field label="Date Range">
       <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
     </ui-form-field>
 
-    <div class="mt-2 flex items-center gap-2">
+    <ui-stack direction="row" align="center" gap="2" class="mt-2">
       <p-checkbox
         [(ngModel)]="onlyActiveLoads"
         [binary]="true"
@@ -70,6 +72,6 @@
       <label for="activeOnly" class="text-secondary mb-0 cursor-pointer text-sm">
         Active loads only
       </label>
-    </div>
-  </div>
+    </ui-stack>
+  </ui-stack>
 </p-card>

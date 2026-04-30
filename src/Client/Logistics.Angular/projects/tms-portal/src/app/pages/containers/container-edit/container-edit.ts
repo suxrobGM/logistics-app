@@ -15,7 +15,15 @@ import {
   type UpdateContainerStatusCommand,
 } from "@logistics/shared/api";
 import { containerIsoTypeOptions, containerStatusOptions } from "@logistics/shared/api/enums";
-import { FormField, ValidationSummary } from "@logistics/shared/components";
+import {
+  FormField,
+  Grid,
+  Icon,
+  Stack,
+  Surface,
+  Typography,
+  ValidationSummary,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
@@ -48,6 +56,11 @@ import { SearchTerminal } from "@/shared/components/search";
     ValidationSummary,
     PageHeader,
     SearchTerminal,
+    Grid,
+    Icon,
+    Stack,
+    Surface,
+    Typography,
   ],
 })
 export class ContainerEdit implements OnInit {

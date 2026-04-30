@@ -2,6 +2,7 @@ import { Component, computed, input, output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { TruckStatus, TruckType } from "@logistics/shared/api";
 import { truckStatusOptions, truckTypeOptions } from "@logistics/shared/api/enums";
+import { Stack, Typography } from "@logistics/shared/components";
 import type { SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -16,7 +17,16 @@ export interface TrucksFilterState {
 @Component({
   selector: "app-trucks-filter-panel",
   templateUrl: "./trucks-filter-panel.html",
-  imports: [CardModule, ButtonModule, FormsModule, MultiSelectModule, SearchInput, FormField],
+  imports: [
+    CardModule,
+    ButtonModule,
+    FormsModule,
+    MultiSelectModule,
+    SearchInput,
+    FormField,
+    Stack,
+    Typography,
+  ],
 })
 export class TrucksFilterPanel {
   public readonly isLoading = input(false);

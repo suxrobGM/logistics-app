@@ -13,6 +13,7 @@ import {
   type CreateInvitationCommand,
   type CustomerDto,
 } from "@logistics/shared/api";
+import { Stack } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -35,6 +36,7 @@ import { FormField } from "@/shared/components";
     InputTextModule,
     TextareaModule,
     FormField,
+    Stack,
   ],
 })
 export class InviteCustomerDialogComponent {

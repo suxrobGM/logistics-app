@@ -1,6 +1,6 @@
 <!-- Header -->
-<div class="mb-3 flex items-center justify-between">
-  <div class="flex items-center gap-3">
+<ui-stack direction="row" align="center" justify="between" class="mb-3">
+  <ui-stack direction="row" align="center" gap="3">
     <p-button
       icon="pi pi-arrow-left"
       [rounded]="true"
@@ -13,55 +13,55 @@
       subtitle="Connect to load boards to search for available freight and post trucks"
       [showAddButton]="false"
     />
-  </div>
+  </ui-stack>
   <p-button label="Add Provider" icon="pi pi-plus" (onClick)="openAddDialog()" />
-</div>
+</ui-stack>
 
 <!-- Info Card -->
 <div class="mb-6">
   <p-card class="border-0 bg-blue-500/10 shadow-sm">
-    <div class="flex items-start gap-3">
-      <i class="pi pi-info-circle text-2xl text-blue-600"></i>
+    <ui-stack direction="row" align="start" gap="3">
+      <ui-icon name="info-circle" size="lg" class="text-blue-600" />
       <div>
-        <h6>How Load Board Integration Works</h6>
-        <p class="text-secondary mb-0 text-sm">
+        <ui-typography variant="h6">How Load Board Integration Works</ui-typography>
+        <ui-typography variant="body-sm" color="secondary" class="mb-0">
           Connect your load board accounts to search for available loads, get rate information, and
           post your available trucks to attract freight. Each provider requires API credentials
           which you can obtain from their respective developer portals.
-        </p>
+        </ui-typography>
       </div>
-    </div>
+    </ui-stack>
   </p-card>
 </div>
 
 <!-- Providers List -->
 <p-card class="border-0 shadow-sm">
   <ng-template #header>
-    <div class="flex items-center p-3">
-      <i class="pi pi-link mr-2 text-blue-600"></i>
-      <h5 class="mb-0">Configured Providers</h5>
-    </div>
+    <ui-stack direction="row" align="center" gap="2" class="p-3">
+      <ui-icon name="link" class="text-blue-600" />
+      <ui-typography variant="h5" class="mb-0">Configured Providers</ui-typography>
+    </ui-stack>
   </ng-template>
 
   @if (loading()) {
-    <div class="flex justify-center p-5">
+    <ui-stack align="center" justify="center" class="p-5">
       <p-progressSpinner />
-    </div>
+    </ui-stack>
   } @else if (error()) {
-    <div class="p-4 text-center">
-      <i class="pi pi-exclamation-circle mb-3 text-4xl text-red-500"></i>
-      <p class="text-red-500">{{ error() }}</p>
+    <ui-stack align="center" gap="3" class="p-4">
+      <ui-icon name="exclamation-circle" size="xl" class="text-red-500" />
+      <ui-typography class="text-red-500">{{ error() }}</ui-typography>
       <p-button label="Retry" icon="pi pi-refresh" (onClick)="loadProviders()" />
-    </div>
+    </ui-stack>
   } @else if (providers().length === 0) {
-    <div class="p-5 text-center">
-      <i class="pi pi-link text-muted mb-3 text-4xl"></i>
-      <p class="text-secondary">No load board providers configured yet.</p>
-      <p class="text-muted mb-4 text-sm">
+    <ui-stack align="center" gap="3" class="p-5">
+      <ui-icon name="link" size="xl" color="muted" />
+      <ui-typography color="secondary">No load board providers configured yet.</ui-typography>
+      <ui-typography variant="body-sm" color="muted" class="mb-4">
         Add your first load board provider to start searching for freight.
-      </p>
+      </ui-typography>
       <p-button label="Add Provider" icon="pi pi-plus" (onClick)="openAddDialog()" />
-    </div>
+    </ui-stack>
   } @else {
     <p-table [value]="providers()">
       <ng-template #header>
@@ -77,15 +77,15 @@
       <ng-template #body let-provider>
         <tr>
           <td>
-            <div class="flex items-center gap-3">
+            <ui-stack direction="row" align="center" gap="3">
               <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600/10">
-                <i class="pi pi-link text-blue-600"></i>
+                <ui-icon name="link" class="text-blue-600" />
               </div>
               <div>
                 <div class="font-medium">{{ getProviderLabel(provider.providerType) }}</div>
                 <small class="text-muted">{{ provider.providerType }}</small>
               </div>
-            </div>
+            </ui-stack>
           </td>
           <td>
             @if (provider.isActive) {
@@ -220,8 +220,8 @@
     </ui-form-field>
 
     <div class="rounded bg-yellow-500/10 p-3">
-      <div class="flex items-start gap-2">
-        <i class="pi pi-exclamation-triangle text-yellow-600"></i>
+      <ui-stack direction="row" align="start" gap="2">
+        <ui-icon name="exclamation-triangle" class="text-yellow-600" />
         <div class="text-sm">
           <strong>Where to get credentials:</strong>
           <ul class="text-secondary mt-1 mb-0 list-inside list-disc">
@@ -231,7 +231,7 @@
             <li>123Loadboard: 123loadboard.com/developers</li>
           </ul>
         </div>
-      </div>
+      </ui-stack>
     </div>
   </form>
 

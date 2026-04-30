@@ -2,7 +2,7 @@
 
 <p-card>
   <!-- Filters -->
-  <div class="mb-4 flex flex-wrap items-center gap-4">
+  <ui-stack direction="row" align="center" gap="4" class="mb-4 flex-wrap">
     <div class="flex-1">
       <ui-search-input (searchChange)="onSearch($event)" placeholder="Search by driver name..." />
     </div>
@@ -27,7 +27,7 @@
       class="w-40"
       (onChange)="onFilterChange()"
     />
-  </div>
+  </ui-stack>
 
   <ui-data-container
     [loading]="store.isLoading()"
@@ -119,11 +119,11 @@
   (onHide)="closeReviewDialog()"
 >
   @if (selectedEvent()) {
-    <div class="flex flex-col gap-4">
+    <ui-stack gap="4">
       <!-- Event Details -->
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <div class="text-muted mb-1 text-sm">Event Type</div>
+      <ui-grid container spacing="4">
+        <ui-grid [size]="{ xs: 6 }">
+          <ui-typography variant="body-sm" color="muted" class="mb-1 block">Event Type</ui-typography>
           <p-tag
             [value]="selectedEvent()!.eventTypeDisplay ?? ''"
             [severity]="
@@ -132,99 +132,99 @@
                 : 'secondary'
             "
           />
-        </div>
-        <div>
-          <div class="text-muted mb-1 text-sm">Date/Time</div>
-          <div class="font-medium">{{ selectedEvent()!.occurredAt | date: "medium" }}</div>
-        </div>
-      </div>
+        </ui-grid>
+        <ui-grid [size]="{ xs: 6 }">
+          <ui-typography variant="body-sm" color="muted" class="mb-1 block">Date/Time</ui-typography>
+          <ui-typography variant="body" weight="medium">{{ selectedEvent()!.occurredAt | date: "medium" }}</ui-typography>
+        </ui-grid>
+      </ui-grid>
 
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <div class="text-muted mb-1 text-sm">Driver</div>
-          <div class="font-medium">{{ selectedEvent()!.driverName }}</div>
-        </div>
-        <div>
-          <div class="text-muted mb-1 text-sm">Truck</div>
-          <div class="font-medium">{{ selectedEvent()!.truckNumber ?? "N/A" }}</div>
-        </div>
-      </div>
+      <ui-grid container spacing="4">
+        <ui-grid [size]="{ xs: 6 }">
+          <ui-typography variant="body-sm" color="muted" class="mb-1 block">Driver</ui-typography>
+          <ui-typography variant="body" weight="medium">{{ selectedEvent()!.driverName }}</ui-typography>
+        </ui-grid>
+        <ui-grid [size]="{ xs: 6 }">
+          <ui-typography variant="body-sm" color="muted" class="mb-1 block">Truck</ui-typography>
+          <ui-typography variant="body" weight="medium">{{ selectedEvent()!.truckNumber ?? "N/A" }}</ui-typography>
+        </ui-grid>
+      </ui-grid>
 
       @if (selectedEvent()!.location) {
         <div>
-          <div class="text-muted mb-1 text-sm">Location</div>
-          <div class="flex items-center gap-2">
-            <i class="pi pi-map-marker text-muted"></i>
+          <ui-typography variant="body-sm" color="muted" class="mb-1 block">Location</ui-typography>
+          <ui-stack direction="row" align="center" gap="2">
+            <ui-icon name="map-marker" color="muted" />
             <span>{{ selectedEvent()!.location }}</span>
-          </div>
+          </ui-stack>
         </div>
       }
 
       @if (selectedEvent()!.speedMph) {
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <div class="text-muted mb-1 text-sm">Speed</div>
-            <div class="font-medium">{{ selectedEvent()!.speedMph | number: "1.0-0" }} mph</div>
-          </div>
+        <ui-grid container spacing="4">
+          <ui-grid [size]="{ xs: 6 }">
+            <ui-typography variant="body-sm" color="muted" class="mb-1 block">Speed</ui-typography>
+            <ui-typography variant="body" weight="medium">{{ selectedEvent()!.speedMph | number: "1.0-0" }} mph</ui-typography>
+          </ui-grid>
           @if (selectedEvent()!.speedLimitMph) {
-            <div>
-              <div class="text-muted mb-1 text-sm">Speed Limit</div>
-              <div class="font-medium">
+            <ui-grid [size]="{ xs: 6 }">
+              <ui-typography variant="body-sm" color="muted" class="mb-1 block">Speed Limit</ui-typography>
+              <ui-typography variant="body" weight="medium">
                 {{ selectedEvent()!.speedLimitMph | number: "1.0-0" }} mph
-              </div>
-            </div>
+              </ui-typography>
+            </ui-grid>
           }
-        </div>
+        </ui-grid>
       }
 
       @if (selectedEvent()!.gForce) {
         <div>
-          <div class="text-muted mb-1 text-sm">G-Force</div>
-          <div class="font-medium">{{ selectedEvent()!.gForce | number: "1.2-2" }} G</div>
+          <ui-typography variant="body-sm" color="muted" class="mb-1 block">G-Force</ui-typography>
+          <ui-typography variant="body" weight="medium">{{ selectedEvent()!.gForce | number: "1.2-2" }} G</ui-typography>
         </div>
       }
 
       @if (selectedEvent()!.durationSeconds) {
         <div>
-          <div class="text-muted mb-1 text-sm">Duration</div>
-          <div class="font-medium">{{ selectedEvent()!.durationSeconds }} seconds</div>
+          <ui-typography variant="body-sm" color="muted" class="mb-1 block">Duration</ui-typography>
+          <ui-typography variant="body" weight="medium">{{ selectedEvent()!.durationSeconds }} seconds</ui-typography>
         </div>
       }
 
       <div>
-        <div class="text-muted mb-1 text-sm">Source</div>
+        <ui-typography variant="body-sm" color="muted" class="mb-1 block">Source</ui-typography>
         <div>{{ selectedEvent()!.providerTypeDisplay }}</div>
       </div>
 
       <!-- Review Section -->
       @if (selectedEvent()!.isReviewed) {
         <div class="border-t pt-4">
-          <h4 class="mb-2 font-semibold">Previous Review</h4>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <div class="text-muted mb-1 text-sm">Reviewed By</div>
+          <ui-typography variant="h6" tag="h4" weight="semibold" class="mb-2 block">Previous Review</ui-typography>
+          <ui-grid container spacing="4">
+            <ui-grid [size]="{ xs: 6 }">
+              <ui-typography variant="body-sm" color="muted" class="mb-1 block">Reviewed By</ui-typography>
               <div>{{ selectedEvent()!.reviewedByName }}</div>
-            </div>
-            <div>
-              <div class="text-muted mb-1 text-sm">Reviewed At</div>
+            </ui-grid>
+            <ui-grid [size]="{ xs: 6 }">
+              <ui-typography variant="body-sm" color="muted" class="mb-1 block">Reviewed At</ui-typography>
               <div>{{ selectedEvent()!.reviewedAt | date: "medium" }}</div>
-            </div>
-          </div>
+            </ui-grid>
+          </ui-grid>
           @if (selectedEvent()!.reviewNotes) {
             <div class="mt-2">
-              <div class="text-muted mb-1 text-sm">Notes</div>
+              <ui-typography variant="body-sm" color="muted" class="mb-1 block">Notes</ui-typography>
               <p>{{ selectedEvent()!.reviewNotes }}</p>
             </div>
           }
         </div>
       } @else {
         <div class="border-t pt-4">
-          <h4 class="mb-2 font-semibold">Review This Event</h4>
+          <ui-typography variant="h6" tag="h4" weight="semibold" class="mb-2 block">Review This Event</ui-typography>
 
-          <div class="mb-4 flex items-center justify-between">
+          <ui-stack direction="row" align="center" justify="between" class="mb-4">
             <span>Dismiss this event (false positive)?</span>
             <p-toggleswitch [(ngModel)]="isDismissed" />
-          </div>
+          </ui-stack>
 
           <div>
             <label for="reviewNotes" class="text-muted mb-1 block text-sm">Review Notes</label>
@@ -239,7 +239,7 @@
           </div>
         </div>
       }
-    </div>
+    </ui-stack>
 
     <ng-template #footer>
       <p-button label="Close" [outlined]="true" (click)="closeReviewDialog()" />

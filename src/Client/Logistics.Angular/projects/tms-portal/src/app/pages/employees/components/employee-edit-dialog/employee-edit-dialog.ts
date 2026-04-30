@@ -11,6 +11,7 @@ import {
   type UpdateEmployeeCommand,
 } from "@logistics/shared/api";
 import { employeeStatusOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
+import { Stack } from "@logistics/shared/components";
 import { AccordionModule } from "primeng/accordion";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
@@ -38,6 +39,7 @@ import { ChangeRoleDialog } from "../change-role-dialog/change-role-dialog";
     CurrencyInput,
     ValidationSummary,
     ChangeRoleDialog,
+    Stack,
   ],
 })
 export class EmployeeEditDialog {

@@ -1,15 +1,20 @@
-<h1>Import Load from PDF</h1>
+<ui-typography variant="h2" tag="h1">Import Load from PDF</ui-typography>
 
-<div class="flex gap-4" [class.flex-col]="!selectedFile()" [class.lg:flex-row]="selectedFile()">
+<ui-stack
+  direction="row"
+  gap="4"
+  [class.flex-col]="!selectedFile()"
+  [class.lg:flex-row]="selectedFile()"
+>
   <!-- Left Pane: Upload, Extracted Data, Results -->
   <div [class.w-full]="!selectedFile()" [class.lg:w-1/2]="selectedFile()">
     <!-- File Upload Section -->
     <p-card class="mb-4">
       <ng-template #header>
-        <div class="flex items-center gap-2 p-4">
-          <i class="pi pi-upload text-primary"></i>
-          <h3 class="m-0 text-lg font-semibold">Upload Dispatch Sheet</h3>
-        </div>
+        <ui-stack direction="row" align="center" gap="2" class="p-4">
+          <ui-icon name="upload" color="primary" />
+          <ui-typography variant="h6" tag="h3">Upload Dispatch Sheet</ui-typography>
+        </ui-stack>
       </ng-template>
 
       @if (!importResult()) {
@@ -36,19 +41,23 @@
           [disabled]="!canUpload()"
         >
           <ng-template #content>
-            <div class="flex flex-col items-center p-8">
-              <i class="pi pi-file-pdf text-muted mb-4 text-6xl"></i>
-              <p class="text-secondary">Drag and drop dispatch sheet PDF here</p>
-              <p class="text-muted text-sm">Supports: Super Dispatch, Ship.Cars, CentralDispatch</p>
-            </div>
+            <ui-stack align="center" gap="4" class="p-8">
+              <ui-icon name="file-pdf" color="muted" size="xl" />
+              <ui-typography color="secondary">
+                Drag and drop dispatch sheet PDF here
+              </ui-typography>
+              <ui-typography variant="body-sm" color="muted">
+                Supports: Super Dispatch, Ship.Cars, CentralDispatch
+              </ui-typography>
+            </ui-stack>
           </ng-template>
         </p-fileUpload>
 
         @if (isUploading()) {
-          <div class="mt-4 flex items-center justify-center gap-2">
+          <ui-stack direction="row" align="center" justify="center" gap="2" class="mt-4">
             <p-progressSpinner [style]="{ width: '24px', height: '24px' }" />
             <span>Processing PDF...</span>
-          </div>
+          </ui-stack>
         }
       }
     </p-card>
@@ -64,21 +73,21 @@
     @if (extractedData(); as data) {
       <p-card class="mb-4">
         <ng-template #header>
-          <div class="flex items-center gap-2 p-4">
-            <i class="pi pi-check-circle text-green-500"></i>
-            <h3 class="m-0 text-lg font-semibold">Extracted Data</h3>
+          <ui-stack direction="row" align="center" gap="2" class="p-4">
+            <ui-icon name="check-circle" color="success" />
+            <ui-typography variant="h6" tag="h3">Extracted Data</ui-typography>
             @if (data.sourceTemplate) {
               <span class="bg-primary/10 text-primary rounded px-2 py-1 text-xs">
                 {{ data.sourceTemplate }}
               </span>
             }
-          </div>
+          </ui-stack>
         </ng-template>
 
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <ui-grid container spacing="4">
           <!-- Vehicle Info -->
-          <div>
-            <h4 class="mb-2 font-semibold">Vehicle</h4>
+          <ui-grid [size]="{ xs: 12, md: 6 }">
+            <ui-typography variant="h6" tag="h4" weight="bold" class="mb-2">Vehicle</ui-typography>
             @if (data.vehicleYear || data.vehicleMake || data.vehicleModel) {
               <p class="text-lg">
                 {{ data.vehicleYear }} {{ data.vehicleMake }} {{ data.vehicleModel }}
@@ -90,21 +99,21 @@
             @if (data.vehicleType) {
               <p class="text-muted text-sm">Type: {{ data.vehicleType }}</p>
             }
-          </div>
+          </ui-grid>
 
           <!-- Payment -->
-          <div>
-            <h4 class="mb-2 font-semibold">Payment</h4>
+          <ui-grid [size]="{ xs: 12, md: 6 }">
+            <ui-typography variant="h6" tag="h4" weight="bold" class="mb-2">Payment</ui-typography>
             @if (data.paymentAmount) {
               <p class="text-xl font-bold text-green-600">{{ data.paymentAmount | currency }}</p>
             } @else {
               <p class="text-muted">Not extracted</p>
             }
-          </div>
+          </ui-grid>
 
           <!-- Origin -->
-          <div>
-            <h4 class="mb-2 font-semibold">Origin</h4>
+          <ui-grid [size]="{ xs: 12, md: 6 }">
+            <ui-typography variant="h6" tag="h4" weight="bold" class="mb-2">Origin</ui-typography>
             @if (data.originAddress) {
               <p>{{ data.originAddress.line1 }}</p>
               <p>
@@ -114,11 +123,13 @@
             } @else {
               <p class="text-muted">Not extracted</p>
             }
-          </div>
+          </ui-grid>
 
           <!-- Destination -->
-          <div>
-            <h4 class="mb-2 font-semibold">Destination</h4>
+          <ui-grid [size]="{ xs: 12, md: 6 }">
+            <ui-typography variant="h6" tag="h4" weight="bold" class="mb-2">
+              Destination
+            </ui-typography>
             @if (data.destinationAddress) {
               <p>{{ data.destinationAddress.line1 }}</p>
               <p>
@@ -128,21 +139,23 @@
             } @else {
               <p class="text-muted">Not extracted</p>
             }
-          </div>
+          </ui-grid>
 
           <!-- Shipper -->
-          <div>
-            <h4 class="mb-2 font-semibold">Shipper/Customer</h4>
+          <ui-grid [size]="{ xs: 12, md: 6 }">
+            <ui-typography variant="h6" tag="h4" weight="bold" class="mb-2">
+              Shipper/Customer
+            </ui-typography>
             @if (data.shipperName) {
               <p>{{ data.shipperName }}</p>
             } @else {
               <p class="text-muted">Not extracted</p>
             }
-          </div>
+          </ui-grid>
 
           <!-- Dates -->
-          <div>
-            <h4 class="mb-2 font-semibold">Dates</h4>
+          <ui-grid [size]="{ xs: 12, md: 6 }">
+            <ui-typography variant="h6" tag="h4" weight="bold" class="mb-2">Dates</ui-typography>
             @if (data.pickupDate) {
               <p>Pickup: {{ data.pickupDate | date }}</p>
             }
@@ -152,8 +165,8 @@
             @if (!data.pickupDate && !data.deliveryDate) {
               <p class="text-muted">Not extracted</p>
             }
-          </div>
-        </div>
+          </ui-grid>
+        </ui-grid>
       </p-card>
     }
 
@@ -161,13 +174,13 @@
     @if (importResult(); as result) {
       <p-card>
         <ng-template #header>
-          <div class="flex items-center gap-2 p-4">
-            <i class="pi pi-check-circle text-green-500"></i>
-            <h3 class="m-0 text-lg font-semibold">Load Created Successfully</h3>
-          </div>
+          <ui-stack direction="row" align="center" gap="2" class="p-4">
+            <ui-icon name="check-circle" color="success" />
+            <ui-typography variant="h6" tag="h3">Load Created Successfully</ui-typography>
+          </ui-stack>
         </ng-template>
 
-        <div class="flex flex-col gap-4">
+        <ui-stack gap="4">
           <p>
             Load <strong>"{{ result.loadName }}"</strong> (# {{ result.loadNumber }}) has been
             created.
@@ -187,7 +200,7 @@
             }
           }
 
-          <div class="flex gap-2">
+          <ui-stack direction="row" gap="2">
             <p-button label="View Load" icon="pi pi-eye" (onClick)="viewLoad()" />
             <p-button label="Import Another" icon="pi pi-plus" (onClick)="reset()" />
             <p-button
@@ -196,8 +209,8 @@
               [text]="true"
               routerLink="/loads"
             />
-          </div>
-        </div>
+          </ui-stack>
+        </ui-stack>
       </p-card>
     }
   </div>
@@ -213,4 +226,4 @@
       />
     </div>
   }
-</div>
+</ui-stack>

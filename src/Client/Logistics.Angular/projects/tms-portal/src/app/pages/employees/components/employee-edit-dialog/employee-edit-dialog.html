@@ -60,7 +60,7 @@
 
     <ui-validation-summary [form]="form" class="mt-4" />
 
-    <div class="mt-6 flex justify-end gap-2">
+    <ui-stack direction="row" justify="end" gap="2" class="mt-6">
       <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />
       <p-button
         type="submit"
@@ -69,7 +69,7 @@
         [loading]="isLoading()"
         [disabled]="!form.valid"
       />
-    </div>
+    </ui-stack>
   </form>
 
   <p-accordion class="mt-6">

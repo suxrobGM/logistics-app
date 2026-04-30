@@ -1,13 +1,14 @@
 import { DatePipe } from "@angular/common";
 import { Component, input } from "@angular/core";
 import type { DefectSeverity, DvirDefectDto } from "@logistics/shared/api";
+import { Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { TagModule } from "primeng/tag";
 import type { TagSeverity } from "@/shared/types";
 
 @Component({
   selector: "app-dvir-defects-list",
   templateUrl: "./dvir-defects-list.html",
-  imports: [DatePipe, TagModule],
+  imports: [DatePipe, TagModule, Icon, Stack, Surface, Typography],
 })
 export class DvirDefectsList {
   public readonly defects = input.required<DvirDefectDto[]>();

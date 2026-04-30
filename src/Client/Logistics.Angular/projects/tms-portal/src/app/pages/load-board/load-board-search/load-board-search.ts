@@ -11,6 +11,7 @@ import {
   type LoadBoardProviderType,
   type TruckDto,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
@@ -44,12 +45,16 @@ interface EquipmentOption {
     DecimalPipe,
     DialogModule,
     DistanceUnitPipe,
+    Grid,
+    Icon,
     InputNumberModule,
     InputTextModule,
     FormField,
     MultiSelectModule,
     PageHeader,
     ProgressSpinnerModule,
+    Stack,
+    Typography,
     ReactiveFormsModule,
     SelectModule,
     TableModule,

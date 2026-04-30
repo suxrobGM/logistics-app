@@ -17,29 +17,33 @@
       />
     </ui-form-field>
 
-    <div class="mt-4 grid grid-cols-2 gap-4">
-      <ui-form-field label="Email" for="email">
-        <input
-          pInputText
-          formControlName="email"
-          id="email"
-          type="email"
-          class="w-full"
-          placeholder="email@example.com"
-        />
-      </ui-form-field>
+    <ui-grid container spacing="4" class="mt-4">
+      <ui-grid [size]="{ xs: 12, md: 6 }">
+        <ui-form-field label="Email" for="email">
+          <input
+            pInputText
+            formControlName="email"
+            id="email"
+            type="email"
+            class="w-full"
+            placeholder="email@example.com"
+          />
+        </ui-form-field>
+      </ui-grid>
 
-      <ui-form-field label="Phone" for="phone">
-        <input
-          pInputText
-          formControlName="phone"
-          id="phone"
-          type="tel"
-          class="w-full"
-          placeholder="(555) 555-5555"
-        />
-      </ui-form-field>
-    </div>
+      <ui-grid [size]="{ xs: 12, md: 6 }">
+        <ui-form-field label="Phone" for="phone">
+          <input
+            pInputText
+            formControlName="phone"
+            id="phone"
+            type="tel"
+            class="w-full"
+            placeholder="(555) 555-5555"
+          />
+        </ui-form-field>
+      </ui-grid>
+    </ui-grid>
 
     <ui-form-field label="Status" for="status" class="mt-4">
       <p-select
@@ -69,7 +73,7 @@
 
     <ui-validation-summary [form]="form" class="mt-4" />
 
-    <div class="mt-6 flex justify-end gap-2">
+    <ui-stack direction="row" justify="end" gap="2" class="mt-6">
       <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />
       <p-button
         type="submit"
@@ -78,7 +82,7 @@
         [loading]="isLoading()"
         [disabled]="!form.valid"
       />
-    </div>
+    </ui-stack>
   </form>
 
   <p-accordion class="mt-6">

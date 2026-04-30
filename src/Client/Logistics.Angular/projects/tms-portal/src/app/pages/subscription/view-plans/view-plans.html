@@ -5,68 +5,72 @@
   [showAddButton]="false"
 />
 
-<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+<ui-grid container spacing="4">
   @for (plan of subscriptionPlans(); track plan.id) {
-    <p-card>
-      <ng-template #header>
-        <div class="flex flex-col items-center gap-2 p-4 pb-0">
-          <p-tag [severity]="getTierSeverity(plan)" [value]="Labels.planTierLabel(plan.tier!)" />
-          <h2 class="m-0">{{ plan.name }}</h2>
-          <p class="text-secondary m-0 text-center">{{ plan.description }}</p>
-        </div>
-      </ng-template>
+    <ui-grid [size]="{ xs: 12, md: 4 }">
+      <p-card>
+        <ng-template #header>
+          <ui-stack align="center" gap="2" class="p-4 pb-0">
+            <p-tag [severity]="getTierSeverity(plan)" [value]="Labels.planTierLabel(plan.tier!)" />
+            <ui-typography variant="h2" tag="h2" class="m-0">{{ plan.name }}</ui-typography>
+            <ui-typography color="secondary" align="center" class="m-0">{{ plan.description }}</ui-typography>
+          </ui-stack>
+        </ng-template>
 
-      <!-- Pricing -->
-      <div class="mb-4 flex flex-col items-center gap-1">
-        <div class="text-3xl font-bold">
-          {{ plan.price | currency }}<span class="text-secondary font-normal">/mo</span>
-        </div>
-        <div class="text-secondary">+ {{ plan.perTruckPrice | currency }} per truck / mo</div>
-        <div class="text-secondary text-sm">{{ getMaxTrucksLabel(plan) }}</div>
-      </div>
-
-      <!-- AI Dispatch model access -->
-      @if (plan.allowedModelTier) {
-        <div class="bg-subtle mb-3 flex items-center gap-2 rounded-lg p-3">
-          <i class="pi pi-bolt text-primary"></i>
-          <div>
-            <div class="font-medium">AI Dispatch — {{ getModelTierLabel(plan.allowedModelTier) }}</div>
-            <div class="text-secondary text-xs">Overage charges apply beyond weekly limit</div>
+        <!-- Pricing -->
+        <ui-stack align="center" gap="1" class="mb-4">
+          <div class="text-3xl font-bold">
+            {{ plan.price | currency }}<span class="text-secondary font-normal">/mo</span>
           </div>
-        </div>
-      }
+          <div class="text-secondary">+ {{ plan.perTruckPrice | currency }} per truck / mo</div>
+          <ui-typography variant="body-sm" color="secondary">{{ getMaxTrucksLabel(plan) }}</ui-typography>
+        </ui-stack>
 
-      <!-- Feature list -->
-      <div class="flex flex-col gap-1">
-        <div class="mb-1 font-bold">Features:</div>
-        @for (feature of allFeatures; track feature) {
-          <div class="flex items-center gap-2">
-            @if (planHasFeature(plan, feature)) {
-              <i class="pi pi-check-circle text-green-500"></i>
-              <span>{{ getFeatureLabel(feature) }}</span>
-            } @else {
-              <i class="pi pi-minus-circle text-gray-300"></i>
-              <span class="text-gray-400">{{ getFeatureLabel(feature) }}</span>
-            }
-          </div>
+        <!-- AI Dispatch model access -->
+        @if (plan.allowedModelTier) {
+          <ui-surface variant="subtle" padding="sm" radius="lg" class="mb-3">
+            <ui-stack direction="row" align="center" gap="2">
+              <ui-icon name="bolt" class="text-primary" />
+              <div>
+                <div class="font-medium">AI Dispatch — {{ getModelTierLabel(plan.allowedModelTier) }}</div>
+                <div class="text-secondary text-xs">Overage charges apply beyond weekly limit</div>
+              </div>
+            </ui-stack>
+          </ui-surface>
         }
-      </div>
 
-      <ng-template #footer>
-        <div class="flex justify-center">
-          @if (isCurrentPlan(plan)) {
-            <p-button label="Current Plan" icon="pi pi-check" disabled class="w-full" />
-          } @else {
-            <p-button
-              label="Select Plan"
-              icon="pi pi-credit-card"
-              class="w-full"
-              [loading]="isLoading()"
-              (click)="selectPlan(plan)"
-            />
+        <!-- Feature list -->
+        <ui-stack gap="1">
+          <div class="mb-1 font-bold">Features:</div>
+          @for (feature of allFeatures; track feature) {
+            <ui-stack direction="row" align="center" gap="2">
+              @if (planHasFeature(plan, feature)) {
+                <ui-icon name="check-circle" class="text-green-500" />
+                <span>{{ getFeatureLabel(feature) }}</span>
+              } @else {
+                <ui-icon name="minus-circle" class="text-gray-300" />
+                <span class="text-gray-400">{{ getFeatureLabel(feature) }}</span>
+              }
+            </ui-stack>
           }
-        </div>
-      </ng-template>
-    </p-card>
+        </ui-stack>
+
+        <ng-template #footer>
+          <ui-stack direction="row" justify="center">
+            @if (isCurrentPlan(plan)) {
+              <p-button label="Current Plan" icon="pi pi-check" disabled class="w-full" />
+            } @else {
+              <p-button
+                label="Select Plan"
+                icon="pi pi-credit-card"
+                class="w-full"
+                [loading]="isLoading()"
+                (click)="selectPlan(plan)"
+              />
+            }
+          </ui-stack>
+        </ng-template>
+      </p-card>
+    </ui-grid>
   }
-</div>
+</ui-grid>

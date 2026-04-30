@@ -10,6 +10,7 @@ import {
   type EldProviderConfigurationDto,
   type EldProviderType,
 } from "@logistics/shared/api";
+import { Icon, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -38,14 +39,17 @@ interface ProviderOption {
     DatePipe,
     DialogModule,
     FormField,
+    Icon,
     InputTextModule,
     PasswordModule,
     ProgressSpinnerModule,
     ReactiveFormsModule,
     SelectModule,
+    Stack,
     TableModule,
     TagModule,
     TooltipModule,
+    Typography,
   ],
 })
 export class EldProvidersComponent implements OnInit {

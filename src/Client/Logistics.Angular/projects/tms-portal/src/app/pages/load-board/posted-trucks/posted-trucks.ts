@@ -14,6 +14,7 @@ import {
   type PostedTruckDto,
   type TruckDto,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePickerModule } from "primeng/datepicker";
@@ -42,11 +43,15 @@ interface EquipmentOption {
     DatePipe,
     DatePickerModule,
     DialogModule,
+    Grid,
+    Icon,
     InputNumberModule,
     InputTextModule,
     FormField,
     PageHeader,
     ProgressSpinnerModule,
+    Stack,
+    Typography,
     ReactiveFormsModule,
     SelectModule,
     TableModule,

@@ -1,8 +1,13 @@
 import { CommonModule } from "@angular/common";
-import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
+import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Api, getConditionReportById } from "@logistics/shared/api";
-import type { ConditionReportDto, DamageMarkerDto } from "@logistics/shared/api";
+import {
+  Api,
+  getConditionReportById,
+  type ConditionReportDto,
+  type DamageMarkerDto,
+} from "@logistics/shared/api";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -10,7 +15,7 @@ import { GalleriaModule } from "primeng/galleria";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
-import { type DamageMarker, VehicleDiagram } from "@/shared/components/inspections";
+import { VehicleDiagram, type DamageMarker } from "@/shared/components/inspections";
 
 @Component({
   selector: "app-condition-report-detail",
@@ -26,6 +31,10 @@ import { type DamageMarker, VehicleDiagram } from "@/shared/components/inspectio
     TagModule,
     GalleriaModule,
     VehicleDiagram,
+    Grid,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class ConditionReportDetailPage implements OnInit {

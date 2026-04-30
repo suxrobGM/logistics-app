@@ -1,6 +1,6 @@
 <!-- Header -->
-<div class="mb-3 flex items-center justify-between">
-  <div class="flex items-center gap-3">
+<ui-stack direction="row" align="center" justify="between" class="mb-3">
+  <ui-stack direction="row" align="center" gap="3">
     <p-button
       icon="pi pi-arrow-left"
       [rounded]="true"
@@ -13,26 +13,26 @@
       subtitle="Manage trucks posted to load boards to advertise available capacity"
       [showAddButton]="false"
     />
-  </div>
+  </ui-stack>
   <p-button
     label="Post Truck"
     icon="pi pi-plus"
     (onClick)="openPostDialog()"
     [disabled]="providers().length === 0"
   />
-</div>
+</ui-stack>
 
 <!-- Info Card -->
 @if (providers().length === 0) {
   <div class="mb-6">
     <p-card class="bg-warning/10 border-0 shadow-sm">
-      <div class="flex items-start gap-3">
-        <i class="pi pi-exclamation-triangle text-warning text-2xl"></i>
+      <ui-stack direction="row" align="start" gap="3">
+        <ui-icon name="exclamation-triangle" size="lg" class="text-warning" />
         <div>
-          <h6>No Load Board Providers Configured</h6>
-          <p class="text-secondary mb-2 text-sm">
+          <ui-typography variant="h6">No Load Board Providers Configured</ui-typography>
+          <ui-typography variant="body-sm" color="secondary" class="mb-2">
             You need to configure at least one load board provider before you can post trucks.
-          </p>
+          </ui-typography>
           <p-button
             label="Configure Providers"
             icon="pi pi-cog"
@@ -40,23 +40,23 @@
             routerLink="/loadboard/providers"
           />
         </div>
-      </div>
+      </ui-stack>
     </p-card>
   </div>
 } @else {
   <div class="mb-6">
     <p-card class="bg-info/10 border-0 shadow-sm">
-      <div class="flex items-start gap-3">
-        <i class="pi pi-info-circle text-2xl text-blue-600"></i>
+      <ui-stack direction="row" align="start" gap="3">
+        <ui-icon name="info-circle" size="lg" class="text-blue-600" />
         <div>
-          <h6>How Truck Posting Works</h6>
-          <p class="text-secondary mb-0 text-sm">
+          <ui-typography variant="h6">How Truck Posting Works</ui-typography>
+          <ui-typography variant="body-sm" color="secondary" class="mb-0">
             Post your available trucks to load boards so brokers can find you. Specify where the
             truck is available, where it can go, and when. Posts are automatically refreshed and
             expire after a set period. Remove posts when the truck is no longer available.
-          </p>
+          </ui-typography>
         </div>
-      </div>
+      </ui-stack>
     </p-card>
   </div>
 }
@@ -64,38 +64,38 @@
 <!-- Posted Trucks List -->
 <p-card class="border-0 shadow-sm">
   <ng-template #header>
-    <div class="flex items-center justify-between p-3">
-      <div class="flex items-center">
-        <i class="pi pi-truck mr-2 text-blue-600"></i>
-        <h5 class="mb-0">Your Posted Trucks</h5>
-      </div>
+    <ui-stack direction="row" align="center" justify="between" class="p-3">
+      <ui-stack direction="row" align="center" gap="2">
+        <ui-icon name="truck" class="text-blue-600" />
+        <ui-typography variant="h5" class="mb-0">Your Posted Trucks</ui-typography>
+      </ui-stack>
       @if (postedTrucks().length > 0) {
-        <span class="text-muted text-sm">{{ postedTrucks().length }} trucks posted</span>
+        <ui-typography variant="body-sm" color="muted">{{ postedTrucks().length }} trucks posted</ui-typography>
       }
-    </div>
+    </ui-stack>
   </ng-template>
 
   @if (loading()) {
-    <div class="flex justify-center p-5">
+    <ui-stack align="center" justify="center" class="p-5">
       <p-progressSpinner />
-    </div>
+    </ui-stack>
   } @else if (error()) {
-    <div class="p-4 text-center">
-      <i class="pi pi-exclamation-circle text-danger mb-3 text-4xl"></i>
-      <p class="text-danger">{{ error() }}</p>
+    <ui-stack align="center" gap="3" class="p-4">
+      <ui-icon name="exclamation-circle" size="xl" class="text-danger" />
+      <ui-typography color="inherit" class="text-danger">{{ error() }}</ui-typography>
       <p-button label="Retry" icon="pi pi-refresh" (onClick)="loadData()" />
-    </div>
+    </ui-stack>
   } @else if (postedTrucks().length === 0) {
-    <div class="p-5 text-center">
-      <i class="pi pi-truck text-muted mb-3 text-4xl"></i>
-      <p class="text-secondary">No trucks posted to load boards yet.</p>
-      <p class="text-muted mb-4 text-sm">
+    <ui-stack align="center" gap="3" class="p-5">
+      <ui-icon name="truck" size="xl" color="muted" />
+      <ui-typography color="secondary">No trucks posted to load boards yet.</ui-typography>
+      <ui-typography variant="body-sm" color="muted" class="mb-4">
         Post your available trucks to let brokers know you're looking for freight.
-      </p>
+      </ui-typography>
       @if (providers().length > 0) {
         <p-button label="Post a Truck" icon="pi pi-plus" (onClick)="openPostDialog()" />
       }
-    </div>
+    </ui-stack>
   } @else {
     <p-table [value]="postedTrucks()" [paginator]="true" [rows]="10">
       <ng-template #header>
@@ -114,10 +114,10 @@
       <ng-template #body let-truck>
         <tr>
           <td>
-            <div class="flex items-center gap-2">
-              <i class="pi pi-truck text-blue-600"></i>
+            <ui-stack direction="row" align="center" gap="2">
+              <ui-icon name="truck" class="text-blue-600" />
               <span class="font-medium">{{ truck.truckNumber || "N/A" }}</span>
-            </div>
+            </ui-stack>
           </td>
           <td>
             <p-tag [value]="truck.providerName" severity="info" />
@@ -183,195 +183,221 @@
   [draggable]="false"
 >
   <form [formGroup]="postForm" (ngSubmit)="postTruck()">
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <ui-form-field
-        label="Truck"
-        for="truckId"
-        [required]="true"
-        [control]="postForm.controls.truckId"
-      >
-        <p-select
-          id="truckId"
-          formControlName="truckId"
-          [options]="trucks()"
-          optionLabel="number"
-          optionValue="id"
-          placeholder="Select truck"
-          class="w-full"
-          [style]="{ width: '100%' }"
+    <ui-grid container spacing="4">
+      <ui-grid [size]="{ xs: 12, md: 6 }">
+        <ui-form-field
+          label="Truck"
+          for="truckId"
+          [required]="true"
+          [control]="postForm.controls.truckId"
         >
-          <ng-template #item let-truck>
-            <div>
-              <div class="font-medium">{{ truck.number }}</div>
-              <small class="text-muted">{{ truck.type }}</small>
-            </div>
-          </ng-template>
-        </p-select>
-      </ui-form-field>
+          <p-select
+            id="truckId"
+            formControlName="truckId"
+            [options]="trucks()"
+            optionLabel="number"
+            optionValue="id"
+            placeholder="Select truck"
+            class="w-full"
+            [style]="{ width: '100%' }"
+          >
+            <ng-template #item let-truck>
+              <div>
+                <div class="font-medium">{{ truck.number }}</div>
+                <small class="text-muted">{{ truck.type }}</small>
+              </div>
+            </ng-template>
+          </p-select>
+        </ui-form-field>
+      </ui-grid>
 
-      <ui-form-field
-        label="Load Board"
-        for="providerType"
-        [required]="true"
-        [control]="postForm.controls.providerType"
-      >
-        <p-select
-          id="providerType"
-          formControlName="providerType"
-          [options]="getProviderOptions()"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select provider"
-          class="w-full"
-          [style]="{ width: '100%' }"
-        />
-      </ui-form-field>
-    </div>
+      <ui-grid [size]="{ xs: 12, md: 6 }">
+        <ui-form-field
+          label="Load Board"
+          for="providerType"
+          [required]="true"
+          [control]="postForm.controls.providerType"
+        >
+          <p-select
+            id="providerType"
+            formControlName="providerType"
+            [options]="getProviderOptions()"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select provider"
+            class="w-full"
+            [style]="{ width: '100%' }"
+          />
+        </ui-form-field>
+      </ui-grid>
+    </ui-grid>
 
-    <h6 class="mt-4 mb-3">Available Location</h6>
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-      <ui-form-field
-        label="City"
-        for="availableAtCity"
-        [required]="true"
-        [control]="postForm.controls.availableAtCity"
-      >
-        <input
-          pInputText
-          id="availableAtCity"
-          formControlName="availableAtCity"
-          class="w-full"
-          placeholder="e.g., Los Angeles"
-        />
-      </ui-form-field>
+    <ui-typography variant="h6" class="mt-4 mb-3">Available Location</ui-typography>
+    <ui-grid container spacing="4">
+      <ui-grid [size]="{ xs: 12, md: 4 }">
+        <ui-form-field
+          label="City"
+          for="availableAtCity"
+          [required]="true"
+          [control]="postForm.controls.availableAtCity"
+        >
+          <input
+            pInputText
+            id="availableAtCity"
+            formControlName="availableAtCity"
+            class="w-full"
+            placeholder="e.g., Los Angeles"
+          />
+        </ui-form-field>
+      </ui-grid>
 
-      <ui-form-field
-        label="State"
-        for="availableAtState"
-        [required]="true"
-        [control]="postForm.controls.availableAtState"
-      >
-        <input
-          pInputText
-          id="availableAtState"
-          formControlName="availableAtState"
-          class="w-full"
-          placeholder="e.g., CA"
-        />
-      </ui-form-field>
+      <ui-grid [size]="{ xs: 12, md: 4 }">
+        <ui-form-field
+          label="State"
+          for="availableAtState"
+          [required]="true"
+          [control]="postForm.controls.availableAtState"
+        >
+          <input
+            pInputText
+            id="availableAtState"
+            formControlName="availableAtState"
+            class="w-full"
+            placeholder="e.g., CA"
+          />
+        </ui-form-field>
+      </ui-grid>
 
-      <ui-form-field label="ZIP Code" for="availableAtZipCode">
-        <input
-          pInputText
-          id="availableAtZipCode"
-          formControlName="availableAtZipCode"
-          class="w-full"
-          placeholder="e.g., 90001"
-        />
-      </ui-form-field>
-    </div>
+      <ui-grid [size]="{ xs: 12, md: 4 }">
+        <ui-form-field label="ZIP Code" for="availableAtZipCode">
+          <input
+            pInputText
+            id="availableAtZipCode"
+            formControlName="availableAtZipCode"
+            class="w-full"
+            placeholder="e.g., 90001"
+          />
+        </ui-form-field>
+      </ui-grid>
+    </ui-grid>
 
-    <h6 class="mt-4 mb-3">Destination Preference (Optional)</h6>
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-      <ui-form-field label="City" for="destinationCity">
-        <input
-          pInputText
-          id="destinationCity"
-          formControlName="destinationCity"
-          class="w-full"
-          placeholder="e.g., Dallas"
-        />
-      </ui-form-field>
+    <ui-typography variant="h6" class="mt-4 mb-3">Destination Preference (Optional)</ui-typography>
+    <ui-grid container spacing="4">
+      <ui-grid [size]="{ xs: 12, md: 4 }">
+        <ui-form-field label="City" for="destinationCity">
+          <input
+            pInputText
+            id="destinationCity"
+            formControlName="destinationCity"
+            class="w-full"
+            placeholder="e.g., Dallas"
+          />
+        </ui-form-field>
+      </ui-grid>
 
-      <ui-form-field label="State" for="destinationState">
-        <input
-          pInputText
-          id="destinationState"
-          formControlName="destinationState"
-          class="w-full"
-          placeholder="e.g., TX"
-        />
-      </ui-form-field>
+      <ui-grid [size]="{ xs: 12, md: 4 }">
+        <ui-form-field label="State" for="destinationState">
+          <input
+            pInputText
+            id="destinationState"
+            formControlName="destinationState"
+            class="w-full"
+            placeholder="e.g., TX"
+          />
+        </ui-form-field>
+      </ui-grid>
 
-      <ui-form-field label="Radius (mi)" for="destinationRadius">
-        <p-inputNumber
-          id="destinationRadius"
-          formControlName="destinationRadius"
-          [min]="0"
-          [max]="500"
-          class="w-full"
-          inputStyleClass="w-full"
-        />
-      </ui-form-field>
-    </div>
+      <ui-grid [size]="{ xs: 12, md: 4 }">
+        <ui-form-field label="Radius (mi)" for="destinationRadius">
+          <p-inputNumber
+            id="destinationRadius"
+            formControlName="destinationRadius"
+            [min]="0"
+            [max]="500"
+            class="w-full"
+            inputStyleClass="w-full"
+          />
+        </ui-form-field>
+      </ui-grid>
+    </ui-grid>
 
-    <h6 class="mt-4 mb-3">Availability</h6>
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <ui-form-field
-        label="Available From"
-        for="availableFrom"
-        [required]="true"
-        [control]="postForm.controls.availableFrom"
-      >
-        <p-datePicker
-          id="availableFrom"
-          formControlName="availableFrom"
-          [showIcon]="true"
-          dateFormat="mm/dd/yy"
-          class="w-full"
-          inputStyleClass="w-full"
-        />
-      </ui-form-field>
+    <ui-typography variant="h6" class="mt-4 mb-3">Availability</ui-typography>
+    <ui-grid container spacing="4">
+      <ui-grid [size]="{ xs: 12, md: 6 }">
+        <ui-form-field
+          label="Available From"
+          for="availableFrom"
+          [required]="true"
+          [control]="postForm.controls.availableFrom"
+        >
+          <p-datePicker
+            id="availableFrom"
+            formControlName="availableFrom"
+            [showIcon]="true"
+            dateFormat="mm/dd/yy"
+            class="w-full"
+            inputStyleClass="w-full"
+          />
+        </ui-form-field>
+      </ui-grid>
 
-      <ui-form-field label="Available To" for="availableTo">
-        <p-datePicker
-          id="availableTo"
-          formControlName="availableTo"
-          [showIcon]="true"
-          dateFormat="mm/dd/yy"
-          class="w-full"
-          inputStyleClass="w-full"
-        />
-      </ui-form-field>
-    </div>
+      <ui-grid [size]="{ xs: 12, md: 6 }">
+        <ui-form-field label="Available To" for="availableTo">
+          <p-datePicker
+            id="availableTo"
+            formControlName="availableTo"
+            [showIcon]="true"
+            dateFormat="mm/dd/yy"
+            class="w-full"
+            inputStyleClass="w-full"
+          />
+        </ui-form-field>
+      </ui-grid>
+    </ui-grid>
 
-    <h6 class="mt-4 mb-3">Equipment Details (Optional)</h6>
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-      <ui-form-field label="Equipment Type" for="equipmentType">
-        <p-select
-          id="equipmentType"
-          formControlName="equipmentType"
-          [options]="equipmentOptions"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select type"
-          class="w-full"
-          [style]="{ width: '100%' }"
-        />
-      </ui-form-field>
+    <ui-typography variant="h6" class="mt-4 mb-3">Equipment Details (Optional)</ui-typography>
+    <ui-grid container spacing="4">
+      <ui-grid [size]="{ xs: 12, md: 4 }">
+        <ui-form-field label="Equipment Type" for="equipmentType">
+          <p-select
+            id="equipmentType"
+            formControlName="equipmentType"
+            [options]="equipmentOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select type"
+            class="w-full"
+            [style]="{ width: '100%' }"
+          />
+        </ui-form-field>
+      </ui-grid>
 
-      <ui-form-field label="Max Weight (lbs)" for="maxWeight">
-        <p-inputNumber
-          id="maxWeight"
-          formControlName="maxWeight"
-          [min]="0"
-          [max]="100000"
-          class="w-full"
-          inputStyleClass="w-full"
-        />
-      </ui-form-field>
+      <ui-grid [size]="{ xs: 12, md: 4 }">
+        <ui-form-field label="Max Weight (lbs)" for="maxWeight">
+          <p-inputNumber
+            id="maxWeight"
+            formControlName="maxWeight"
+            [min]="0"
+            [max]="100000"
+            class="w-full"
+            inputStyleClass="w-full"
+          />
+        </ui-form-field>
+      </ui-grid>
 
-      <ui-form-field label="Max Length (ft)" for="maxLength">
-        <p-inputNumber
-          id="maxLength"
-          formControlName="maxLength"
-          [min]="0"
-          [max]="100"
-          class="w-full"
-          inputStyleClass="w-full"
-        />
-      </ui-form-field>
-    </div>
+      <ui-grid [size]="{ xs: 12, md: 4 }">
+        <ui-form-field label="Max Length (ft)" for="maxLength">
+          <p-inputNumber
+            id="maxLength"
+            formControlName="maxLength"
+            [min]="0"
+            [max]="100"
+            class="w-full"
+            inputStyleClass="w-full"
+          />
+        </ui-form-field>
+      </ui-grid>
+    </ui-grid>
   </form>
 
   <ng-template #footer>

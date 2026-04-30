@@ -17,6 +17,7 @@ import {
   type UserDto,
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
+import { Stack } from "@logistics/shared/components";
 import { AutoCompleteModule } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -59,6 +60,7 @@ import { UserService } from "../services";
     InputTextModule,
     UnitInput,
     CurrencyInput,
+    Stack,
   ],
 })
 export class EmployeeAdd {

@@ -1,6 +1,7 @@
 import { Component, inject } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import type { CustomerDto } from "@logistics/shared/api";
+import { Stack } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CustomerForm, PageHeader } from "@/shared/components";
@@ -8,7 +9,7 @@ import { CustomerForm, PageHeader } from "@/shared/components";
 @Component({
   selector: "app-customer-add",
   templateUrl: "./customer-add.html",
-  imports: [CardModule, ButtonModule, RouterModule, CustomerForm, PageHeader],
+  imports: [CardModule, ButtonModule, RouterModule, CustomerForm, PageHeader, Stack],
 })
 export class CustomerAddComponent {
   private readonly router = inject(Router);

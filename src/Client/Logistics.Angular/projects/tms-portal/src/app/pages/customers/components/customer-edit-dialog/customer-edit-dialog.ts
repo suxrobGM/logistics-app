@@ -9,7 +9,13 @@ import {
   type UpdateCustomerCommand,
 } from "@logistics/shared/api";
 import { customerStatusOptions } from "@logistics/shared/api/enums";
-import { AddressForm, FormField, ValidationSummary } from "@logistics/shared/components";
+import {
+  AddressForm,
+  FormField,
+  Grid,
+  Stack,
+  ValidationSummary,
+} from "@logistics/shared/components";
 import { AccordionModule } from "primeng/accordion";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
@@ -33,6 +39,8 @@ import { regionAllowedCountries } from "@/shared/utils";
     FormField,
     ValidationSummary,
     AddressForm,
+    Grid,
+    Stack,
   ],
 })
 export class CustomerEditDialog {

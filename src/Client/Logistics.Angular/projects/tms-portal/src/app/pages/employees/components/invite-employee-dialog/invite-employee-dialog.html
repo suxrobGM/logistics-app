@@ -6,9 +6,9 @@
   (onHide)="close()"
 >
   @if (isLoading()) {
-    <div class="flex justify-center py-4">
+    <ui-stack align="center" justify="center" class="py-4">
       <p-progress-spinner />
-    </div>
+    </ui-stack>
   } @else {
     <p class="text-muted-color mb-4">
       Send an email invitation to join your company as an employee.
@@ -59,7 +59,7 @@
         ></textarea>
       </ui-form-field>
 
-      <div class="flex justify-end gap-2">
+      <ui-stack direction="row" justify="end" gap="2">
         <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />
         <p-button
           type="submit"
@@ -67,7 +67,7 @@
           label="Send Invitation"
           [disabled]="isLoading() || form.invalid"
         />
-      </div>
+      </ui-stack>
     </form>
   }
 </p-dialog>

@@ -1,6 +1,6 @@
 <ui-page-header [title]="pageTitle" />
 
-<div class="mb-4 flex flex-wrap items-center gap-2">
+<ui-stack direction="row" align="center" gap="2" wrap class="mb-4">
   <ui-permission-guard [permissions]="Permission.Payroll.Manage">
     <p-button icon="pi pi-plus" label="Add Entry" (click)="openAddDialog()" />
   </ui-permission-guard>
@@ -46,7 +46,7 @@
       (click)="clearFilters()"
     />
   }
-</div>
+</ui-stack>
 
 <p-card>
   <ui-data-container
@@ -129,7 +129,7 @@
             }
           </td>
           <td>
-            <div class="flex gap-1">
+            <ui-stack direction="row" gap="1">
               <ui-permission-guard [permissions]="Permission.Payroll.Manage">
                 <p-button
                   icon="pi pi-pencil"
@@ -149,7 +149,7 @@
                   (click)="confirmDelete(entry)"
                 />
               </ui-permission-guard>
-            </div>
+            </ui-stack>
           </td>
         </tr>
       </ng-template>

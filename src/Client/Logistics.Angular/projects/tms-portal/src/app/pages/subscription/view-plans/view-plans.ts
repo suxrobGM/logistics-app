@@ -1,13 +1,15 @@
 import { CurrencyPipe } from "@angular/common";
-import { Component, type OnInit, inject, signal } from "@angular/core";
+import { Component, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import {
   Api,
   changeSubscriptionPlan,
   createSubscription,
   getSubscriptionPlans,
+  type SubscriptionPlanDto,
+  type TenantFeature,
 } from "@logistics/shared/api";
-import type { SubscriptionPlanDto, TenantFeature } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
@@ -72,7 +74,18 @@ const allFeatures: TenantFeature[] = [
 @Component({
   selector: "app-view-plans",
   templateUrl: "./view-plans.html",
-  imports: [CardModule, CurrencyPipe, ButtonModule, TagModule, PageHeader],
+  imports: [
+    CardModule,
+    CurrencyPipe,
+    ButtonModule,
+    Grid,
+    Icon,
+    Stack,
+    Surface,
+    TagModule,
+    Typography,
+    PageHeader,
+  ],
 })
 export class ViewPlansComponent implements OnInit {
   private readonly api = inject(Api);
