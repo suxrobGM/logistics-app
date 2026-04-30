@@ -56,15 +56,15 @@
           <td>{{ dvir.driverName || "-" }}</td>
           <td>
             @if (dvir.hasDefects) {
-              <span class="text-danger font-medium">
-                <i class="pi pi-exclamation-triangle mr-1"></i>
+              <ui-stack direction="row" align="center" gap="1" class="text-danger font-medium">
+                <ui-icon name="exclamation-triangle" />
                 {{ dvir.defects?.length || 0 }}
-              </span>
+              </ui-stack>
             } @else {
-              <span class="text-success">
-                <i class="pi pi-check mr-1"></i>
+              <ui-stack direction="row" align="center" gap="1" class="text-success">
+                <ui-icon name="check" />
                 None
-              </span>
+              </ui-stack>
             }
           </td>
           <td>

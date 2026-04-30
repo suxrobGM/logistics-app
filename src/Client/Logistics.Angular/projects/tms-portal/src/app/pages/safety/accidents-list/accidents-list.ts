@@ -2,12 +2,13 @@ import { DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import {
+  Api,
+  submitAccidentReport,
   type AccidentReportDto,
   type AccidentReportStatus,
   type AccidentSeverity,
-  Api,
-  submitAccidentReport,
 } from "@logistics/shared/api";
+import { Icon, Stack } from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -35,6 +36,8 @@ import { AccidentsListStore } from "../store";
     DataContainer,
     PageHeader,
     SearchInput,
+    Icon,
+    Stack,
   ],
 })
 export class AccidentsListPage {

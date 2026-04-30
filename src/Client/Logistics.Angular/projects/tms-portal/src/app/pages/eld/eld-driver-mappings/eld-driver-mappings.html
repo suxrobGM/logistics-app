@@ -1,7 +1,7 @@
 <div class="w-full p-6">
   <!-- Header -->
-  <div class="mb-6 flex items-center justify-between">
-    <div class="flex items-center gap-4">
+  <ui-stack direction="row" align="center" justify="between" class="mb-6">
+    <ui-stack direction="row" align="center" gap="4">
       <p-button
         icon="pi pi-arrow-left"
         [rounded]="true"
@@ -11,44 +11,50 @@
         aria-label="Go back to providers"
       />
       <div>
-        <h1 class="mb-1">Driver Mappings</h1>
-        <p class="text-muted mb-0">Map your TMS drivers to {{ providerName() }} ELD drivers</p>
+        <ui-typography variant="h2" tag="h1" class="mb-1">Driver Mappings</ui-typography>
+        <ui-typography variant="body" color="muted" class="mb-0">
+          Map your TMS drivers to {{ providerName() }} ELD drivers
+        </ui-typography>
       </div>
-    </div>
-  </div>
+    </ui-stack>
+  </ui-stack>
 
   @if (loading()) {
-    <div class="flex justify-center p-10">
+    <ui-stack align="center" justify="center" class="p-10">
       <p-progressSpinner />
-    </div>
+    </ui-stack>
   } @else if (error()) {
-    <div class="p-4 text-center">
-      <i class="pi pi-exclamation-circle text-danger mb-3 text-4xl"></i>
+    <ui-stack align="center" gap="3" class="p-4">
+      <ui-icon name="exclamation-circle" size="xl" class="text-danger" />
       <p class="text-danger">{{ error() }}</p>
       <p-button label="Retry" icon="pi pi-refresh" (onClick)="loadData()" />
-    </div>
+    </ui-stack>
   } @else {
-    <div class="grid grid-cols-12 gap-6">
+    <ui-grid container spacing="6">
       <!-- Current Mappings -->
-      <div class="col-span-12">
+      <ui-grid [size]="12">
         <p-card class="border-0 shadow-sm">
           <ng-template #header>
-            <div class="flex items-center justify-between p-3">
-              <div class="flex items-center">
-                <i class="pi pi-link mr-2 text-blue-600"></i>
-                <h5 class="mb-0">Current Mappings ({{ mappings().length }})</h5>
-              </div>
-            </div>
+            <ui-stack direction="row" align="center" justify="between" class="p-3">
+              <ui-stack direction="row" align="center">
+                <ui-icon name="link" class="mr-2 text-blue-600" />
+                <ui-typography variant="h6" tag="h5" class="mb-0">
+                  Current Mappings ({{ mappings().length }})
+                </ui-typography>
+              </ui-stack>
+            </ui-stack>
           </ng-template>
 
           @if (mappings().length === 0) {
-            <div class="p-5 text-center">
-              <i class="pi pi-users text-muted mb-3 text-4xl"></i>
-              <p class="text-secondary">No driver mappings configured yet.</p>
-              <p class="text-muted mb-0 text-sm">
+            <ui-stack align="center" gap="3" class="p-5">
+              <ui-icon name="users" size="xl" color="muted" />
+              <ui-typography variant="body" class="text-secondary">
+                No driver mappings configured yet.
+              </ui-typography>
+              <ui-typography variant="caption" color="muted" class="mb-0">
                 Select an ELD driver and TMS employee below to create a mapping.
-              </p>
-            </div>
+              </ui-typography>
+            </ui-stack>
           } @else {
             <p-table [value]="mappings()" [size]="'small'">
               <ng-template #header>
@@ -63,27 +69,27 @@
               <ng-template #body let-mapping>
                 <tr>
                   <td>
-                    <div class="flex items-center gap-2">
+                    <ui-stack direction="row" align="center" gap="2">
                       <div
                         class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600/10"
                       >
-                        <i class="pi pi-user text-blue-600"></i>
+                        <ui-icon name="user" class="text-blue-600" />
                       </div>
                       <span class="font-medium">{{ mapping.employeeName }}</span>
-                    </div>
+                    </ui-stack>
                   </td>
                   <td>
-                    <div class="flex items-center gap-2">
+                    <ui-stack direction="row" align="center" gap="2">
                       <div
                         class="flex h-8 w-8 items-center justify-center rounded-full bg-green-600/10"
                       >
-                        <i class="pi pi-id-card text-green-600"></i>
+                        <ui-icon name="id-card" class="text-green-600" />
                       </div>
                       <div>
                         <div>{{ mapping.externalDriverName || mapping.externalDriverId }}</div>
                         <small class="text-muted">{{ mapping.externalDriverId }}</small>
                       </div>
-                    </div>
+                    </ui-stack>
                   </td>
                   <td>
                     @if (mapping.isSyncEnabled) {
@@ -117,20 +123,20 @@
             </p-table>
           }
         </p-card>
-      </div>
+      </ui-grid>
 
       <!-- Create New Mapping -->
-      <div class="col-span-12">
+      <ui-grid [size]="12">
         <p-card class="border-0 shadow-sm">
           <ng-template #header>
-            <div class="flex items-center p-3">
-              <i class="pi pi-plus-circle mr-2 text-green-600"></i>
-              <h5 class="mb-0">Create New Mapping</h5>
-            </div>
+            <ui-stack direction="row" align="center" class="p-3">
+              <ui-icon name="plus-circle" class="mr-2 text-green-600" />
+              <ui-typography variant="h6" tag="h5" class="mb-0">Create New Mapping</ui-typography>
+            </ui-stack>
           </ng-template>
 
-          <div class="grid grid-cols-12 gap-4">
-            <div class="col-span-12 md:col-span-5">
+          <ui-grid container spacing="4">
+            <ui-grid [size]="{ xs: 12, md: 5 }">
               <ui-form-field label="ELD Driver" for="eldDriver">
                 <p-select
                   id="eldDriver"
@@ -143,10 +149,10 @@
                   [showClear]="true"
                 >
                   <ng-template #selectedItem let-item>
-                    <div class="flex items-center gap-2">
-                      <i class="pi pi-id-card text-green-600"></i>
+                    <ui-stack direction="row" align="center" gap="2">
+                      <ui-icon name="id-card" class="text-green-600" />
                       <span>{{ item.name }} ({{ item.externalDriverId }})</span>
-                    </div>
+                    </ui-stack>
                   </ng-template>
                   <ng-template #item let-item>
                     <div>
@@ -156,13 +162,13 @@
                   </ng-template>
                 </p-select>
               </ui-form-field>
-            </div>
+            </ui-grid>
 
-            <div class="col-span-12 flex items-end justify-center md:col-span-2">
-              <i class="pi pi-arrows-h text-muted text-2xl"></i>
-            </div>
+            <ui-grid [size]="{ xs: 12, md: 2 }" class="flex items-end justify-center">
+              <ui-icon name="arrows-h" size="xl" color="muted" />
+            </ui-grid>
 
-            <div class="col-span-12 md:col-span-5">
+            <ui-grid [size]="{ xs: 12, md: 5 }">
               <ui-form-field label="TMS Employee" for="employee">
                 <p-select
                   id="employee"
@@ -175,10 +181,10 @@
                   [showClear]="true"
                 >
                   <ng-template #selectedItem let-item>
-                    <div class="flex items-center gap-2">
-                      <i class="pi pi-user text-blue-600"></i>
+                    <ui-stack direction="row" align="center" gap="2">
+                      <ui-icon name="user" class="text-blue-600" />
                       <span>{{ item.fullName }}</span>
-                    </div>
+                    </ui-stack>
                   </ng-template>
                   <ng-template #item let-item>
                     <div>
@@ -188,10 +194,10 @@
                   </ng-template>
                 </p-select>
               </ui-form-field>
-            </div>
-          </div>
+            </ui-grid>
+          </ui-grid>
 
-          <div class="mt-4 flex justify-end">
+          <ui-stack direction="row" justify="end" class="mt-4">
             <p-button
               label="Create Mapping"
               icon="pi pi-link"
@@ -199,9 +205,9 @@
               [loading]="saving()"
               [disabled]="!selectedEldDriver || !selectedEmployee"
             />
-          </div>
+          </ui-stack>
         </p-card>
-      </div>
-    </div>
+      </ui-grid>
+    </ui-grid>
   }
 </div>

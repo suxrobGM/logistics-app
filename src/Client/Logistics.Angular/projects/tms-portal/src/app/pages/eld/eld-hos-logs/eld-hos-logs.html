@@ -1,7 +1,7 @@
 <div class="w-full p-6">
   <!-- Header -->
-  <div class="mb-6 flex items-center justify-between">
-    <div class="flex items-center gap-4">
+  <ui-stack direction="row" align="center" justify="between" class="mb-6">
+    <ui-stack direction="row" align="center" gap="4">
       <p-button
         icon="pi pi-arrow-left"
         [rounded]="true"
@@ -10,16 +10,20 @@
         pTooltip="Back to Dashboard"
       />
       <div>
-        <h1 class="mb-1">HOS Logs - {{ employeeName() }}</h1>
-        <p class="text-muted mb-0">View driver duty status history</p>
+        <ui-typography variant="h2" tag="h1" class="mb-1">
+          HOS Logs - {{ employeeName() }}
+        </ui-typography>
+        <ui-typography variant="body" color="muted" class="mb-0">
+          View driver duty status history
+        </ui-typography>
       </div>
-    </div>
-  </div>
+    </ui-stack>
+  </ui-stack>
 
   <!-- Date Range Filter -->
   <div class="mb-6">
     <p-card class="border-0 shadow-sm">
-      <div class="flex flex-wrap items-end gap-4">
+      <ui-stack direction="row" align="end" gap="4" wrap>
         <ui-form-field label="Start Date" for="startDate">
           <p-datepicker
             id="startDate"
@@ -41,70 +45,82 @@
             (onSelect)="onDateRangeChange()"
           />
         </ui-form-field>
-      </div>
+      </ui-stack>
       <p-button label="Refresh" icon="pi pi-refresh" (onClick)="loadData()" [loading]="loading()" />
     </p-card>
   </div>
 
   <!-- Summary Cards -->
-  <div class="mb-6 grid grid-cols-12 gap-4">
-    <div class="col-span-12 md:col-span-6">
+  <ui-grid container spacing="4" class="mb-6">
+    <ui-grid [size]="{ xs: 12, md: 6 }">
       <p-card class="h-full border-0 shadow-sm">
-        <div class="flex items-center">
+        <ui-stack direction="row" align="center">
           <div
             class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-600/10"
           >
-            <i class="pi pi-car text-xl text-green-600"></i>
+            <ui-icon name="car" class="text-green-600" />
           </div>
           <div class="ml-4">
-            <h6 class="text-muted mb-1">Total Driving Time</h6>
-            <h4 class="mb-0 text-xl font-bold">{{ formatMinutes(totalDrivingMinutes()) }}</h4>
+            <ui-typography variant="caption" color="muted" class="mb-1">
+              Total Driving Time
+            </ui-typography>
+            <ui-typography variant="h6" weight="bold" class="mb-0">
+              {{ formatMinutes(totalDrivingMinutes()) }}
+            </ui-typography>
           </div>
-        </div>
+        </ui-stack>
       </p-card>
-    </div>
-    <div class="col-span-12 md:col-span-6">
+    </ui-grid>
+    <ui-grid [size]="{ xs: 12, md: 6 }">
       <p-card class="h-full border-0 shadow-sm">
-        <div class="flex items-center">
+        <ui-stack direction="row" align="center">
           <div
             class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-600/10"
           >
-            <i class="pi pi-clock text-xl text-blue-600"></i>
+            <ui-icon name="clock" class="text-blue-600" />
           </div>
           <div class="ml-4">
-            <h6 class="text-muted mb-1">Total On-Duty Time</h6>
-            <h4 class="mb-0 text-xl font-bold">{{ formatMinutes(totalOnDutyMinutes()) }}</h4>
+            <ui-typography variant="caption" color="muted" class="mb-1">
+              Total On-Duty Time
+            </ui-typography>
+            <ui-typography variant="h6" weight="bold" class="mb-0">
+              {{ formatMinutes(totalOnDutyMinutes()) }}
+            </ui-typography>
           </div>
-        </div>
+        </ui-stack>
       </p-card>
-    </div>
-  </div>
+    </ui-grid>
+  </ui-grid>
 
   <!-- Logs Table -->
   <p-card class="border-0 shadow-sm">
     <ng-template #header>
-      <div class="flex items-center p-3">
-        <i class="pi pi-history mr-2 text-blue-600"></i>
-        <h5 class="mb-0">Duty Status Logs</h5>
-      </div>
+      <ui-stack direction="row" align="center" class="p-3">
+        <ui-icon name="history" class="mr-2 text-blue-600" />
+        <ui-typography variant="h6" tag="h5" class="mb-0">Duty Status Logs</ui-typography>
+      </ui-stack>
     </ng-template>
 
     @if (loading()) {
-      <div class="flex justify-center p-5">
+      <ui-stack align="center" justify="center" class="p-5">
         <p-progressSpinner />
-      </div>
+      </ui-stack>
     } @else if (error()) {
-      <div class="p-4 text-center">
-        <i class="pi pi-exclamation-circle mb-3 text-4xl text-red-500"></i>
+      <ui-stack align="center" gap="3" class="p-4">
+        <ui-icon name="exclamation-circle" size="xl" class="text-red-500" />
         <p class="text-red-500">{{ error() }}</p>
         <p-button label="Retry" icon="pi pi-refresh" (onClick)="loadData()" />
-      </div>
+      </ui-stack>
     } @else if (logs().length === 0) {
-      <div class="p-5 text-center">
-        <i class="pi pi-inbox text-muted mb-3 text-4xl"></i>
-        <p class="text-secondary">No HOS logs found for the selected date range.</p>
-        <p class="text-muted mb-0 text-sm">Try adjusting the date filter above.</p>
-      </div>
+      <ui-stack align="center" gap="3" class="p-5">
+        <ui-icon name="inbox" size="xl" color="muted" />
+        <ui-typography variant="body" class="text-secondary">
+          No HOS logs found for the selected date range.
+        </ui-typography>
+        <ui-typography variant="caption" color="muted" class="mb-0">
+          Try adjusting the date filter above.
+        </ui-typography>
+      </ui-stack>
     } @else {
       <p-table
         [value]="logs()"

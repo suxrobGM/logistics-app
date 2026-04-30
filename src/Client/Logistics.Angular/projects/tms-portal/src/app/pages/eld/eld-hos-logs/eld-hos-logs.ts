@@ -9,6 +9,7 @@ import {
   type DutyStatus,
   type HosLogDto,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
@@ -33,6 +34,10 @@ import { FormField } from "@/shared/components";
     TableModule,
     TagModule,
     TooltipModule,
+    Grid,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class EldHosLogsComponent implements OnInit {

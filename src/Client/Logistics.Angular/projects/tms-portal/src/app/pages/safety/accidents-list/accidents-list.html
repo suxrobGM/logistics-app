@@ -67,10 +67,10 @@
           </td>
           <td>
             @if (accident.injuriesReported) {
-              <span class="text-danger font-medium">
-                <i class="pi pi-exclamation-triangle mr-1"></i>
+              <ui-stack direction="row" align="center" gap="1" class="text-danger font-medium">
+                <ui-icon name="exclamation-triangle" />
                 Yes
-              </span>
+              </ui-stack>
             } @else {
               <span class="text-success">No</span>
             }

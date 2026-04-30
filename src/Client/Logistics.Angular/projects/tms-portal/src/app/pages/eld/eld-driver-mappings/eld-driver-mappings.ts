@@ -15,6 +15,7 @@ import {
   type EldProviderType,
   type EmployeeDto,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -39,6 +40,10 @@ import { FormField } from "@/shared/components";
     TableModule,
     TagModule,
     TooltipModule,
+    Grid,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class EldDriverMappingsComponent implements OnInit {
