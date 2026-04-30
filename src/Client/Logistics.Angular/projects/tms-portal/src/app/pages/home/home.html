@@ -125,10 +125,7 @@
                         </a>
                       </td>
                       <td>
-                        <p-badge
-                          [value]="getStatusLabel(load.status)"
-                          [severity]="getStatusSeverity(load.status)"
-                        />
+                        <ui-status-badge [status]="load.status" kind="load" />
                       </td>
                       <td>
                         <div class="flex items-center gap-1 text-sm">

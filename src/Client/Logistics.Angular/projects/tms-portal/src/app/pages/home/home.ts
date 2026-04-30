@@ -1,12 +1,15 @@
-import { Component, type OnInit, computed, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { Api, getLoads } from "@logistics/shared/api";
-import type { Address, LoadDto } from "@logistics/shared/api";
-import { StatCard } from "@logistics/shared/components";
-import { AddressPipe, CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
-import { Gridster, type GridsterConfig, GridsterItem } from "angular-gridster2";
-import { SharedModule } from "primeng/api";
-import type { MenuItem } from "primeng/api";
+import { Api, getLoads, type Address, type LoadDto } from "@logistics/shared/api";
+import { StatCard, StatusBadge } from "@logistics/shared/components";
+import {
+  AddressPipe,
+  CurrencyFormatPipe,
+  DateFormatPipe,
+  DistanceUnitPipe,
+} from "@logistics/shared/pipes";
+import { Gridster, GridsterItem, type GridsterConfig } from "angular-gridster2";
+import { SharedModule, type MenuItem } from "primeng/api";
 import { BadgeModule } from "primeng/badge";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -16,13 +19,13 @@ import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "@/core/auth";
-import { type DashboardPanelConfig, DashboardSettingsService } from "@/core/services";
+import { DashboardSettingsService, type DashboardPanelConfig } from "@/core/services";
 import { TrucksMap } from "@/shared/components";
 import {
   DailyGrossChartComponent,
-  type DailyGrossChartData,
   LoadProgressBarComponent,
   RecentActivityComponent,
+  type DailyGrossChartData,
 } from "./components";
 
 @Component({
@@ -48,6 +51,7 @@ import {
     BadgeModule,
     MenuModule,
     StatCard,
+    StatusBadge,
     Gridster,
     GridsterItem,
   ],
@@ -123,40 +127,6 @@ export class Home implements OnInit {
 
   protected formatAddress(addressObj: Address): string {
     return this.addressPipe.transform(addressObj) || "No address provided";
-  }
-
-  protected getStatusSeverity(
-    status: LoadDto["status"],
-  ): "info" | "warn" | "success" | "danger" | "secondary" {
-    switch (status) {
-      case "dispatched":
-        return "info";
-      case "picked_up":
-        return "warn";
-      case "delivered":
-        return "success";
-      case "cancelled":
-        return "danger";
-      default:
-        return "secondary";
-    }
-  }
-
-  protected getStatusLabel(status: LoadDto["status"]): string {
-    switch (status) {
-      case "draft":
-        return "Draft";
-      case "dispatched":
-        return "Dispatched";
-      case "picked_up":
-        return "In Transit";
-      case "delivered":
-        return "Delivered";
-      case "cancelled":
-        return "Cancelled";
-      default:
-        return "Unknown";
-    }
   }
 
   protected refreshData(): void {
