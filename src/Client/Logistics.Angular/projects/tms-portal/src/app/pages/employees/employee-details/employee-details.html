@@ -1,82 +1,82 @@
 <!-- Header with actions -->
-<div class="mb-6 flex items-start justify-between">
+<ui-stack direction="row" align="start" justify="between" class="mb-6">
   <ui-page-header title="Employee Details" [showAddButton]="false" />
-  <div class="flex gap-2">
-    <p-button
-      icon="pi pi-pencil"
-      label="Edit"
-      [outlined]="true"
-      (click)="openEditDialog()"
-    />
+  <ui-stack direction="row" gap="2">
+    <p-button icon="pi pi-pencil" label="Edit" [outlined]="true" (click)="openEditDialog()" />
     <p-button
       icon="pi pi-chart-line"
       label="View Report"
       [outlined]="true"
       [routerLink]="['/reports/drivers/detailed']"
-      [queryParams]="{driverId: id()}"
+      [queryParams]="{ driverId: id() }"
     />
-    <p-button icon="pi pi-arrow-left" label="Back" [routerLink]="['/employees']" [outlined]="true" />
-  </div>
-</div>
+    <p-button
+      icon="pi pi-arrow-left"
+      label="Back"
+      [routerLink]="['/employees']"
+      [outlined]="true"
+    />
+  </ui-stack>
+</ui-stack>
 
 @if (store.isLoading()) {
-  <div class="flex justify-center py-16">
+  <ui-stack align="center" justify="center" class="py-16">
     <p-progress-spinner />
-  </div>
+  </ui-stack>
 } @else if (store.employee(); as employee) {
   <!-- Enhanced Header with Employee Info -->
-  <div class="mb-6">
-    <div class="border-default bg-elevated rounded-lg border p-4">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <app-employee-avatar [employee]="employee" size="xlarge" />
-          <div>
-            <h2 class="m-0 text-2xl font-bold">{{ employee.fullName }}</h2>
-            <div class="mt-2 flex items-center gap-2">
-              @if (employee.status) {
-                <app-employee-status-tag [status]="employee.status" />
-              }
-              @if (employee.role?.displayName) {
-                <p-tag [value]="employee.role!.displayName!" severity="info" />
-              }
-            </div>
-          </div>
+  <ui-surface variant="elevated" [border]="true" class="mb-6">
+    <ui-stack direction="row" align="center" justify="between">
+      <ui-stack direction="row" align="center" gap="4">
+        <app-employee-avatar [employee]="employee" size="xlarge" />
+        <div>
+          <ui-typography variant="h3" tag="h2" weight="bold">{{ employee.fullName }}</ui-typography>
+          <ui-stack direction="row" align="center" gap="2" class="mt-2">
+            @if (employee.status) {
+              <app-employee-status-tag [status]="employee.status" />
+            }
+            @if (employee.role?.displayName) {
+              <p-tag [value]="employee.role!.displayName!" severity="info" />
+            }
+          </ui-stack>
         </div>
-        <div class="text-right">
-          <div class="text-muted text-sm">Joined</div>
-          <div class="font-medium">{{ employee.joinedDate | date: 'mediumDate' }}</div>
-        </div>
+      </ui-stack>
+      <div class="text-right">
+        <ui-typography variant="caption" color="muted">Joined</ui-typography>
+        <ui-typography variant="body" weight="medium">
+          {{ employee.joinedDate | date: "mediumDate" }}
+        </ui-typography>
       </div>
-    </div>
-  </div>
+    </ui-stack>
+  </ui-surface>
 
   <p-card>
     <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
       <p-tablist>
         <p-tab [value]="0">
-          <i class="pi pi-user mr-2"></i>
+          <ui-icon name="user" class="mr-2" />
           Overview
         </p-tab>
         <p-tab [value]="1">
-          <i class="pi pi-folder mr-2"></i>
+          <ui-icon name="folder" class="mr-2" />
           Documents
           @if (store.documentsCount()) {
-            <span class="ml-1 rounded-full bg-info/15 px-2 py-0.5 text-xs text-info">
+            <span class="bg-info/15 text-info ml-1 rounded-full px-2 py-0.5 text-xs">
               {{ store.documentsCount() }}
             </span>
           }
         </p-tab>
         <p-tab [value]="2">
-          <i class="pi pi-box mr-2"></i>
+          <ui-icon name="box" class="mr-2" />
           Loads
           @if (store.recentLoadsCount()) {
-            <span class="ml-1 rounded-full bg-info/15 px-2 py-0.5 text-xs text-info">
+            <span class="bg-info/15 text-info ml-1 rounded-full px-2 py-0.5 text-xs">
               {{ store.recentLoadsCount() }}
             </span>
           }
         </p-tab>
         <p-tab [value]="3">
-          <i class="pi pi-dollar mr-2"></i>
+          <ui-icon name="dollar" class="mr-2" />
           Payroll
         </p-tab>
       </p-tablist>
@@ -84,95 +84,113 @@
       <p-tabpanels>
         <!-- Overview Tab -->
         <p-tabpanel [value]="0">
-          <div class="grid grid-cols-1 gap-6 pt-4 lg:grid-cols-2">
+          <ui-grid container spacing="6" class="pt-4">
             <!-- Contact Info Card -->
-            <p-card class="border-default border">
-              <ng-template #header>
-                <div class="p-4 pb-0">
-                  <h3 class="m-0 text-lg font-semibold">Contact Information</h3>
-                </div>
-              </ng-template>
+            <ui-grid [size]="{ xs: 12, lg: 6 }">
+              <p-card class="border-default border">
+                <ng-template #header>
+                  <div class="p-4 pb-0">
+                    <ui-typography variant="h5" tag="h3" weight="semibold">
+                      Contact Information
+                    </ui-typography>
+                  </div>
+                </ng-template>
 
-              <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                  <span class="text-muted">Email</span>
-                  <a [href]="'mailto:' + employee.email" class="text-accent font-medium hover:underline">
-                    {{ employee.email }}
-                  </a>
-                </div>
-
-                <p-divider />
-
-                <div class="flex items-center justify-between">
-                  <span class="text-muted">Phone</span>
-                  @if (employee.phoneNumber) {
-                    <a [href]="'tel:' + employee.phoneNumber" class="text-accent font-medium hover:underline">
-                      {{ employee.phoneNumber }}
+                <ui-stack gap="4">
+                  <ui-stack direction="row" align="center" justify="between">
+                    <ui-typography variant="body" color="muted">Email</ui-typography>
+                    <a
+                      [href]="'mailto:' + employee.email"
+                      class="text-accent font-medium hover:underline"
+                    >
+                      {{ employee.email }}
                     </a>
-                  } @else {
-                    <span class="text-muted">Not provided</span>
-                  }
-                </div>
+                  </ui-stack>
 
-                <p-divider />
+                  <p-divider />
 
-                <div class="flex items-center justify-between">
-                  <span class="text-muted">Joined Date</span>
-                  <span class="font-medium">{{ employee.joinedDate | date: 'mediumDate' }}</span>
-                </div>
-              </div>
-            </p-card>
+                  <ui-stack direction="row" align="center" justify="between">
+                    <ui-typography variant="body" color="muted">Phone</ui-typography>
+                    @if (employee.phoneNumber) {
+                      <a
+                        [href]="'tel:' + employee.phoneNumber"
+                        class="text-accent font-medium hover:underline"
+                      >
+                        {{ employee.phoneNumber }}
+                      </a>
+                    } @else {
+                      <ui-typography variant="body" color="muted">Not provided</ui-typography>
+                    }
+                  </ui-stack>
+
+                  <p-divider />
+
+                  <ui-stack direction="row" align="center" justify="between">
+                    <ui-typography variant="body" color="muted">Joined Date</ui-typography>
+                    <ui-typography variant="body" weight="medium">
+                      {{ employee.joinedDate | date: "mediumDate" }}
+                    </ui-typography>
+                  </ui-stack>
+                </ui-stack>
+              </p-card>
+            </ui-grid>
 
             <!-- Salary Info Card -->
-            <p-card class="border-default border">
-              <ng-template #header>
-                <div class="p-4 pb-0">
-                  <h3 class="m-0 text-lg font-semibold">Salary Information</h3>
-                </div>
-              </ng-template>
+            <ui-grid [size]="{ xs: 12, lg: 6 }">
+              <p-card class="border-default border">
+                <ng-template #header>
+                  <div class="p-4 pb-0">
+                    <ui-typography variant="h5" tag="h3" weight="semibold">
+                      Salary Information
+                    </ui-typography>
+                  </div>
+                </ng-template>
 
-              <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                  <span class="text-muted">Salary Type</span>
-                  <span class="font-medium capitalize">
-                    {{ employee.salaryType?.replace('_', ' ') || 'None' }}
-                  </span>
-                </div>
+                <ui-stack gap="4">
+                  <ui-stack direction="row" align="center" justify="between">
+                    <ui-typography variant="body" color="muted">Salary Type</ui-typography>
+                    <span class="font-medium capitalize">
+                      {{ employee.salaryType?.replace("_", " ") || "None" }}
+                    </span>
+                  </ui-stack>
 
-                <p-divider />
+                  <p-divider />
 
-                <div class="flex items-center justify-between">
-                  <span class="text-muted">Salary</span>
-                  <span class="text-lg font-bold">{{ salaryDisplay() }}</span>
-                </div>
+                  <ui-stack direction="row" align="center" justify="between">
+                    <ui-typography variant="body" color="muted">Salary</ui-typography>
+                    <ui-typography variant="h6" weight="bold">{{ salaryDisplay() }}</ui-typography>
+                  </ui-stack>
 
-                <p-divider />
+                  <p-divider />
 
-                <div class="flex items-center justify-between">
-                  <span class="text-muted">Role</span>
-                  @if (employee.role?.displayName) {
-                    <p-tag [value]="employee.role!.displayName!" severity="info" />
-                  } @else {
-                    <span class="text-muted">No role assigned</span>
-                  }
-                </div>
-              </div>
-            </p-card>
-          </div>
+                  <ui-stack direction="row" align="center" justify="between">
+                    <ui-typography variant="body" color="muted">Role</ui-typography>
+                    @if (employee.role?.displayName) {
+                      <p-tag [value]="employee.role!.displayName!" severity="info" />
+                    } @else {
+                      <ui-typography variant="body" color="muted">No role assigned</ui-typography>
+                    }
+                  </ui-stack>
+                </ui-stack>
+              </p-card>
+            </ui-grid>
+          </ui-grid>
 
           <!-- Location Card (if available) -->
           @if (employee.lastKnownLocation) {
             <p-card class="border-default mt-6 border">
               <ng-template #header>
                 <div class="p-4 pb-0">
-                  <h3 class="m-0 text-lg font-semibold">Last Known Location</h3>
+                  <ui-typography variant="h5" tag="h3" weight="semibold">
+                    Last Known Location
+                  </ui-typography>
                 </div>
               </ng-template>
 
-              <div class="flex items-center gap-2">
-                <i class="pi pi-map-marker text-accent"></i>
+              <ui-stack direction="row" align="center" gap="2">
+                <ui-icon name="map-marker" class="text-accent" />
                 <span>{{ employee.lastKnownLocation }}</span>
-              </div>
+              </ui-stack>
             </p-card>
           }
 
@@ -180,11 +198,11 @@
           <p-card class="border-default mt-6 border">
             <ng-template #header>
               <div class="p-4 pb-0">
-                <h3 class="m-0 text-lg font-semibold">Quick Actions</h3>
+                <ui-typography variant="h5" tag="h3" weight="semibold">Quick Actions</ui-typography>
               </div>
             </ng-template>
 
-            <div class="flex flex-wrap gap-2">
+            <ui-stack direction="row" gap="2" wrap>
               <p-button
                 icon="pi pi-dollar"
                 label="View Payroll"
@@ -202,9 +220,9 @@
                 label="View Report"
                 [outlined]="true"
                 [routerLink]="['/reports/drivers/detailed']"
-                [queryParams]="{driverId: id()}"
+                [queryParams]="{ driverId: id() }"
               />
-            </div>
+            </ui-stack>
           </p-card>
         </p-tabpanel>
 
@@ -225,28 +243,30 @@
         <!-- Payroll Tab -->
         <p-tabpanel [value]="3">
           <div class="pt-4">
-            <div class="mb-4 flex items-center justify-between">
-              <h3 class="m-0">Payroll</h3>
+            <ui-stack direction="row" align="center" justify="between" class="mb-4">
+              <ui-typography variant="h5" tag="h3" class="m-0">Payroll</ui-typography>
               <p-button
                 label="View All Payroll"
                 [outlined]="true"
                 [routerLink]="['/payroll/employee', id()]"
               />
-            </div>
+            </ui-stack>
 
             <!-- Payout Setup Card -->
             <p-card class="border-default mb-4 border">
               <ng-template #header>
                 <div class="p-4 pb-0">
-                  <h3 class="m-0 text-lg font-semibold">Bank Payout Setup</h3>
+                  <ui-typography variant="h5" tag="h3" weight="semibold">
+                    Bank Payout Setup
+                  </ui-typography>
                 </div>
               </ng-template>
 
               @if (employee.stripeConnectedAccountId) {
-                <div class="flex items-center gap-2">
-                  <i class="pi pi-check-circle text-green-500"></i>
+                <ui-stack direction="row" align="center" gap="2">
+                  <ui-icon name="check-circle" class="text-green-500" />
                   <span>Payout account connected</span>
-                </div>
+                </ui-stack>
                 <p-button
                   label="Update Bank Details"
                   icon="pi pi-external-link"
@@ -257,10 +277,13 @@
                   (click)="openPayoutOnboarding()"
                 />
               } @else {
-                <div class="flex items-center gap-2">
-                  <i class="pi pi-info-circle text-orange-500"></i>
-                  <span>No payout account set up. Set up Stripe Connect to pay this employee via bank transfer.</span>
-                </div>
+                <ui-stack direction="row" align="center" gap="2">
+                  <ui-icon name="info-circle" class="text-orange-500" />
+                  <span>
+                    No payout account set up. Set up Stripe Connect to pay this employee via bank
+                    transfer.
+                  </span>
+                </ui-stack>
                 <p-button
                   label="Set Up Payout Account"
                   icon="pi pi-credit-card"
@@ -278,11 +301,11 @@
   </p-card>
 } @else {
   <p-card>
-    <div class="py-16 text-center">
-      <i class="pi pi-exclamation-circle text-muted mb-4 text-4xl"></i>
-      <p class="text-muted">Employee not found</p>
-      <p-button label="Back to Employees" [routerLink]="['/employees']" class="mt-4" />
-    </div>
+    <ui-stack align="center" gap="4" class="py-16">
+      <ui-icon name="exclamation-circle" size="xl" color="muted" />
+      <ui-typography variant="body" color="muted">Employee not found</ui-typography>
+      <p-button label="Back to Employees" [routerLink]="['/employees']" />
+    </ui-stack>
   </p-card>
 }
 

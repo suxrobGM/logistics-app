@@ -1,15 +1,18 @@
 import { CommonModule } from "@angular/common";
-import { Component, computed, type OnInit, inject, input, signal } from "@angular/core";
+import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { Api, getDocuments, getTruckById } from "@logistics/shared/api";
-import type {
-  DailyGrossesDto,
-  DocumentDto,
-  DocumentType,
-  MonthlyGrossesDto,
-  TruckDto,
+import {
+  Api,
+  getDocuments,
+  getTruckById,
+  type DailyGrossesDto,
+  type DocumentDto,
+  type DocumentType,
+  type MonthlyGrossesDto,
+  type TruckDto,
 } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { AddressPipe, CurrencyFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
@@ -19,19 +22,19 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TabsModule } from "primeng/tabs";
 import { TooltipModule } from "primeng/tooltip";
 import {
-  type BarChartDrawnEvent,
   DocumentManager,
   GeolocationMap,
   GrossBarchart,
   PageHeader,
   TruckStatusTag,
   TruckTypeTag,
+  type BarChartDrawnEvent,
 } from "@/shared/components";
 import {
   DocumentStatusOverview,
-  type LineChartDrawnEvent,
   TruckGrossLinechart,
   TruckLoadsList,
+  type LineChartDrawnEvent,
 } from "../components";
 
 @Component({
@@ -59,6 +62,11 @@ import {
     DocumentManager,
     TruckLoadsList,
     DocumentStatusOverview,
+    Grid,
+    Icon,
+    Stack,
+    Surface,
+    Typography,
   ],
 })
 export class TruckDetailsComponent implements OnInit {

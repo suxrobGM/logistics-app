@@ -1,8 +1,13 @@
 import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
-import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
+import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { Api, getEmployeePayoutOnboardingLink, setupEmployeePayout } from "@logistics/shared/api";
-import type { DocumentType } from "@logistics/shared/api";
+import {
+  Api,
+  getEmployeePayoutOnboardingLink,
+  setupEmployeePayout,
+  type DocumentType,
+} from "@logistics/shared/api";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { ToastService } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -39,6 +44,11 @@ import { EmployeeDetailsStore } from "../store";
     DocumentManager,
     EmployeeEditDialog,
     EmployeeLoadsList,
+    Grid,
+    Icon,
+    Stack,
+    Surface,
+    Typography,
   ],
 })
 export class EmployeeDetails implements OnInit {
