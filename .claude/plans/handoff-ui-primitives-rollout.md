@@ -1,6 +1,6 @@
 # Handoff: UI Primitives Rollout — Resume Refactor (TMS leftovers + Admin + Customer)
 
-> **Last updated 2026-04-30 after 14 commits.** Jobs 1 + 2 are complete. Job 3 (mass page refactor): **TMS portal is fully converted** through 14 commits — only `notifications/`, `messages/`, `ai-dispatch/` (lower priority) remain. Admin portal and customer portal are still pending. Resume from the **Resume here** section below.
+> **Last updated 2026-04-30 after 15 commits.** Jobs 1 + 2 are complete. Job 3 (mass page refactor): **TMS portal and customer portal are fully converted**. Only TMS lower-priority folders (`notifications/`, `messages/`, `ai-dispatch/`) and the **admin portal** remain. Resume from the **Resume here** section below.
 
 ## Context
 
@@ -70,18 +70,16 @@ Working dir: `src/Client/Logistics.Angular/projects/admin-portal/src/app/pages/`
 
 Many of these wrap content directly in `<p-card>` — replace ad-hoc styled boxes with `<ui-surface>`, but keep `<p-card>` where header/sub-header slots are in use.
 
-### Customer portal — remaining
+### Customer portal — DONE ✅
 
-Working dir: `src/Client/Logistics.Angular/projects/customer-portal/src/app/pages/`
+All customer portal pages and components are now converted (commit `d8044c63`). Pages covered:
 
-| Folder                                            | Page(s)                                                             |
-| ------------------------------------------------- | ------------------------------------------------------------------- |
-| `account/`                                        | `account-settings`                                                  |
-| `documents/`                                      | `documents-list`                                                    |
-| `tracking/`                                       | `public-tracking` (heavy hardcoded `bg-white` — high dark-mode-win) |
-| `shipments/`                                      | `shipment-details`                                                  |
-| `payment/`                                        | `public-payment`                                                    |
-| `login/`, `select-tenant/`, `errors/unauthorized` | small pages                                                         |
+- `account/account-settings`, `documents/documents-list`, `tracking/public-tracking`, `shipments/shipment-details`, `payment/public-payment`, `login/login`, `select-tenant/select-tenant`, `errors/not-found`, `errors/unauthorized`
+- Shared component: `shared/components/shipment-timeline`
+
+The big dark-mode wins were `tracking/public-tracking`, `shipments/shipment-details`, and `payment/public-payment` — hardcoded `bg-white` / `bg-gray-50` cards swapped to `<ui-surface>` variants.
+
+Bespoke status helpers (`getStatusSeverity` / `getStatusLabel` with custom mappings) were left as `<p-tag>` where the mapping doesn't fit `StatusKind`.
 
 ## Primitive API Quick Reference
 
@@ -220,7 +218,6 @@ One commit per logical batch of ~4–8 files keeps each diff reviewable.
 | ------------------------------------------------------------------- | ----- | ---------- |
 | TMS leftovers (notifications, messages, ai-dispatch — low-priority) | ~10   | ~2-3 hours |
 | Admin portal                                                        | ~20   | ~half day  |
-| Customer portal                                                     | ~7    | ~2 hours   |
 
 Total: ~1 focused day across 2–4 PRs.
 
