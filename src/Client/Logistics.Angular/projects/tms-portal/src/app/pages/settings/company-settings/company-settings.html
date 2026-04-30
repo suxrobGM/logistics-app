@@ -1,12 +1,12 @@
-<h1 class="text-center">Company Settings</h1>
+<ui-typography variant="h2" tag="h1" align="center" class="mb-6">Company Settings</ui-typography>
 
-<div class="flex justify-center">
+<ui-stack align="center">
   <div class="w-full md:w-2/3 lg:w-1/2">
     <p-card>
       @if (isLoading()) {
-        <div class="flex justify-center py-8">
+        <ui-stack align="center" justify="center" class="py-8">
           <p-progress-spinner />
-        </div>
+        </ui-stack>
       } @else {
         <form [formGroup]="form" (ngSubmit)="save()">
           <ui-validation-summary [form]="form" />
@@ -14,7 +14,7 @@
           <!-- Logo Upload Section -->
           <div class="mb-6">
             <ui-form-field label="Company Logo">
-              <div class="flex items-center gap-4">
+              <ui-stack direction="row" align="center" gap="4">
                 <!-- Logo Preview -->
                 <div
                   class="border-default flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border-2 border-dashed"
@@ -26,7 +26,7 @@
                       class="h-full w-full object-contain"
                     />
                   } @else {
-                    <i class="pi pi-image text-muted text-3xl"></i>
+                    <ui-icon name="image" size="xl" color="muted" />
                   }
                 </div>
                 <!-- Upload Button -->
@@ -45,9 +45,11 @@
                     (click)="logoInput.click()"
                     [loading]="isUploadingLogo()"
                   />
-                  <p class="text-muted mt-1 text-xs">PNG, JPG or GIF. Max 5MB.</p>
+                  <ui-typography variant="caption" color="muted" class="mt-1">
+                    PNG, JPG or GIF. Max 5MB.
+                  </ui-typography>
                 </div>
-              </div>
+              </ui-stack>
             </ui-form-field>
           </div>
 
@@ -156,4 +158,4 @@
       }
     </p-card>
   </div>
-</div>
+</ui-stack>

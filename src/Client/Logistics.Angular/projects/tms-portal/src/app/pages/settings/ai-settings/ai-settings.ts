@@ -6,6 +6,7 @@ import {
   updateTenantAiSettings,
   type AiQuotaStatusDto,
 } from "@logistics/shared/api";
+import { Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MessageModule } from "primeng/message";
@@ -46,6 +47,8 @@ const allModels: ModelOption[] = [
     MessageModule,
     FormField,
     AiQuotaUsage,
+    Stack,
+    Typography,
   ],
 })
 export class AiSettingsComponent implements OnInit {

@@ -10,6 +10,7 @@ import {
   type TenantSettings,
   type UpdateTenantCommand,
 } from "@logistics/shared/api";
+import { Icon, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { InputTextModule } from "primeng/inputtext";
@@ -35,6 +36,9 @@ import { regionAllowedCountries } from "@/shared/utils";
     AddressForm,
     PhoneInput,
     SelectModule,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class CompanySettingsComponent implements OnInit {

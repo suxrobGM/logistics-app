@@ -1,11 +1,11 @@
-<h1 class="text-center">AI Settings</h1>
+<ui-typography variant="h2" tag="h1" align="center" class="mb-6">AI Settings</ui-typography>
 
-<div class="flex justify-center">
+<ui-stack align="center">
   <div class="w-full md:w-2/3 lg:w-1/2">
     @if (isLoading()) {
-      <div class="flex justify-center py-8">
+      <ui-stack align="center" justify="center" class="py-8">
         <p-progress-spinner />
-      </div>
+      </ui-stack>
     } @else {
       @let quota = quotaStatus();
 
@@ -17,9 +17,9 @@
       }
 
       <p-card>
-        <p class="text-muted mb-4">
+        <ui-typography variant="body" color="muted" class="mb-4">
           Configure your preferred AI provider and model for the dispatch agent.
-        </p>
+        </ui-typography>
 
         <p-message severity="secondary" class="mb-6">
           Using the MCP server with external AI tools (Claude Desktop, Cursor, etc.) does not count
@@ -37,7 +37,7 @@
             [fluid]="true"
           >
             <ng-template #selectedItem let-item>
-              <div class="flex items-center gap-2">
+              <ui-stack direction="row" align="center" gap="2">
                 <span>{{ item.label }}</span>
                 @if (item.multiplier > 1) {
                   <p-tag
@@ -48,7 +48,7 @@
                 } @else {
                   <p-tag value="1x" severity="success" [style]="{ fontSize: '0.65rem' }" />
                 }
-              </div>
+              </ui-stack>
             </ng-template>
             <ng-template #item let-item>
               <div class="flex w-full items-center justify-between">
@@ -87,4 +87,4 @@
       </p-card>
     }
   </div>
-</div>
+</ui-stack>

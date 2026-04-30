@@ -1,9 +1,20 @@
 import { CommonModule } from "@angular/common";
-import { Component, type OnInit, inject, input, signal, viewChild } from "@angular/core";
+import { Component, inject, input, signal, viewChild, type OnInit } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { Api, getLoadById } from "@logistics/shared/api";
-import type { DocumentType, LoadDto, LoadExceptionDto } from "@logistics/shared/api";
-import { AddressPipe, CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
+import {
+  Api,
+  getLoadById,
+  type DocumentType,
+  type LoadDto,
+  type LoadExceptionDto,
+} from "@logistics/shared/api";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import {
+  AddressPipe,
+  CurrencyFormatPipe,
+  DateFormatPipe,
+  DistanceUnitPipe,
+} from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -45,6 +56,11 @@ import {
     TrackingLinkDialog,
     ReportExceptionDialog,
     ResolveExceptionDialog,
+    Grid,
+    Icon,
+    Stack,
+    Surface,
+    Typography,
   ],
 })
 export class LoadDetailPage implements OnInit {

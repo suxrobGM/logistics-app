@@ -1,7 +1,7 @@
 <div class="animate-fadein">
   <!-- Header -->
-  <div class="flex items-center">
-    <h1 class="text-primary mb-0">List Loads</h1>
+  <ui-stack direction="row" align="center">
+    <ui-typography variant="h2" tag="h1" color="primary" class="mb-0">List Loads</ui-typography>
     <p-button
       styleClass="ml-2"
       icon="pi pi-plus-circle"
@@ -33,7 +33,7 @@
       (click)="exportToCsv()"
       [disabled]="store.isEmpty()"
     />
-  </div>
+  </ui-stack>
 
   <!-- Summary Stats -->
   <app-loads-summary-stats

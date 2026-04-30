@@ -1,6 +1,7 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { Api, type LoadDto, dispatchLoad } from "@logistics/shared/api";
+import { Api, dispatchLoad, type LoadDto } from "@logistics/shared/api";
+import { Stack, Typography } from "@logistics/shared/components";
 import { AddressPipe } from "@logistics/shared/pipes";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
@@ -9,10 +10,10 @@ import { ToastService } from "@/core/services";
 import {
   BulkAssignDialog,
   LoadsBulkToolbar,
-  type LoadsFilterState,
   LoadsFilterPanel,
   LoadsSummaryStats,
   LoadsTable,
+  type LoadsFilterState,
 } from "../components";
 import { LoadsListStore } from "../store/loads-list.store";
 
@@ -29,6 +30,8 @@ import { LoadsListStore } from "../store/loads-list.store";
     LoadsBulkToolbar,
     LoadsTable,
     BulkAssignDialog,
+    Stack,
+    Typography,
   ],
 })
 export class LoadsListComponent {
