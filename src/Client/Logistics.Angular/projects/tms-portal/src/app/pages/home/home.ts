@@ -10,7 +10,6 @@ import {
 } from "@logistics/shared/pipes";
 import { Gridster, GridsterItem, type GridsterConfig } from "angular-gridster2";
 import { SharedModule, type MenuItem } from "primeng/api";
-import { BadgeModule } from "primeng/badge";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -48,7 +47,6 @@ import {
     RecentActivityComponent,
     DailyGrossChartComponent,
     DividerModule,
-    BadgeModule,
     MenuModule,
     StatCard,
     StatusBadge,
