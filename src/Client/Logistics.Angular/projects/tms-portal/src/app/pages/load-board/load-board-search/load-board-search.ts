@@ -1,15 +1,15 @@
 import { DecimalPipe } from "@angular/common";
-import { Component, computed, type OnInit, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import {
   Api,
-  type LoadBoardListingDto,
-  type LoadBoardProviderType,
-  type TruckDto,
   bookLoadBoardListing,
   getTrucks,
   searchLoadBoard,
+  type LoadBoardListingDto,
+  type LoadBoardProviderType,
+  type TruckDto,
 } from "@logistics/shared/api";
 import { DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
@@ -26,7 +26,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { LabeledField, PageHeader } from "@/shared/components";
+import { FormField, PageHeader } from "@/shared/components";
 
 interface EquipmentOption {
   label: string;
@@ -46,7 +46,7 @@ interface EquipmentOption {
     DistanceUnitPipe,
     InputNumberModule,
     InputTextModule,
-    LabeledField,
+    FormField,
     MultiSelectModule,
     PageHeader,
     ProgressSpinnerModule,

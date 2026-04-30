@@ -1,23 +1,22 @@
 import { DatePipe, DecimalPipe } from "@angular/common";
-import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
+import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import {
   Api,
-  type DutyStatus,
-  type HosLogDto,
   getDriverHosLogs,
   getEmployeeById,
+  type DutyStatus,
+  type HosLogDto,
 } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import type { TableLazyLoadEvent } from "primeng/table";
-import { TableModule } from "primeng/table";
+import { TableModule, type TableLazyLoadEvent } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { LabeledField } from "@/shared/components";
+import { FormField } from "@/shared/components";
 
 @Component({
   selector: "app-eld-hos-logs",
@@ -29,7 +28,7 @@ import { LabeledField } from "@/shared/components";
     DatePipe,
     DecimalPipe,
     FormsModule,
-    LabeledField,
+    FormField,
     ProgressSpinnerModule,
     TableModule,
     TagModule,

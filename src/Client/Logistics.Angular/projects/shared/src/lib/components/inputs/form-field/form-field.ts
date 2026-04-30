@@ -2,10 +2,10 @@ import { Component, computed, input } from "@angular/core";
 import { AbstractControl } from "@angular/forms";
 
 @Component({
-  selector: "ui-labeled-field",
-  templateUrl: "./labeled-field.html",
+  selector: "ui-form-field",
+  templateUrl: "./form-field.html",
 })
-export class LabeledField {
+export class FormField {
   public readonly label = input<string | null>(null);
   public readonly for = input<string | null>(null);
   public readonly required = input(false);

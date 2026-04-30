@@ -7,7 +7,7 @@
   [draggable]="false"
 >
   <form [formGroup]="form" (ngSubmit)="save()">
-    <ui-labeled-field label="Status" for="status">
+    <ui-form-field label="Status" for="status">
       <p-select
         formControlName="status"
         id="status"
@@ -16,9 +16,9 @@
         optionLabel="label"
         optionValue="value"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Salary Type" for="salaryType" class="mt-4">
+    <ui-form-field label="Salary Type" for="salaryType" class="mt-4">
       <p-select
         formControlName="salaryType"
         id="salaryType"
@@ -27,9 +27,9 @@
         optionLabel="label"
         optionValue="value"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Salary" for="salary" class="mt-4">
+    <ui-form-field label="Salary" for="salary" class="mt-4">
       @if (isShareOfGrossSalary()) {
         <ui-unit-input [control]="form.controls.salary" unit="%" [min]="0" [max]="100" />
       } @else if (isNoneSalary()) {
@@ -37,9 +37,9 @@
       } @else {
         <ui-currency-input [control]="form.controls.salary" [min]="0" />
       }
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Role" for="role" class="mt-4">
+    <ui-form-field label="Role" for="role" class="mt-4">
       <p-inputgroup>
         <input
           pInputText
@@ -56,7 +56,7 @@
           (click)="openChangeRoleDialog()"
         />
       </p-inputgroup>
-    </ui-labeled-field>
+    </ui-form-field>
 
     <ui-validation-summary [form]="form" class="mt-4" />
 

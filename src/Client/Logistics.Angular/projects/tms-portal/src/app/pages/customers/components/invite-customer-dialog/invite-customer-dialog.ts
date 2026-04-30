@@ -6,8 +6,13 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { Api, createInvitation, getCustomers } from "@logistics/shared/api";
-import type { CreateInvitationCommand, CustomerDto } from "@logistics/shared/api";
+import {
+  Api,
+  createInvitation,
+  getCustomers,
+  type CreateInvitationCommand,
+  type CustomerDto,
+} from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -15,7 +20,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
-import { LabeledField } from "@/shared/components";
+import { FormField } from "@/shared/components";
 
 @Component({
   selector: "app-invite-customer-dialog",
@@ -29,7 +34,7 @@ import { LabeledField } from "@/shared/components";
     SelectModule,
     InputTextModule,
     TextareaModule,
-    LabeledField,
+    FormField,
   ],
 })
 export class InviteCustomerDialogComponent {

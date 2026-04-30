@@ -7,8 +7,13 @@ import {
   Validators,
 } from "@angular/forms";
 import { UserRole } from "@logistics/shared";
-import { Api, createInvitation, getTenantRoles } from "@logistics/shared/api";
-import type { CreateInvitationCommand, RoleDto } from "@logistics/shared/api";
+import {
+  Api,
+  createInvitation,
+  getTenantRoles,
+  type CreateInvitationCommand,
+  type RoleDto,
+} from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -17,7 +22,7 @@ import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
-import { LabeledField } from "@/shared/components";
+import { FormField } from "@/shared/components";
 
 @Component({
   selector: "app-invite-employee-dialog",
@@ -31,7 +36,7 @@ import { LabeledField } from "@/shared/components";
     SelectModule,
     InputTextModule,
     TextareaModule,
-    LabeledField,
+    FormField,
   ],
 })
 export class InviteEmployeeDialog {

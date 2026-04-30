@@ -1,37 +1,37 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
   <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-    <ui-labeled-field label="Tenant Name" [required]="true">
+    <ui-form-field label="Tenant Name" [required]="true">
       <input pInputText formControlName="name" placeholder="Enter tenant identifier" />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Company Name" [required]="true">
+    <ui-form-field label="Company Name" [required]="true">
       <input pInputText formControlName="companyName" placeholder="Enter company name" />
-    </ui-labeled-field>
+    </ui-form-field>
   </div>
 
   <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-    <ui-labeled-field label="Billing Email" [required]="true">
+    <ui-form-field label="Billing Email" [required]="true">
       <input
         pInputText
         formControlName="billingEmail"
         placeholder="Enter billing email"
         type="email"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="DOT Number">
+    <ui-form-field label="DOT Number">
       <input pInputText formControlName="dotNumber" placeholder="Enter DOT number" />
-    </ui-labeled-field>
+    </ui-form-field>
   </div>
 
   <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-    <ui-labeled-field
+    <ui-form-field
       label="Region"
       [required]="true"
       hint="Determines available countries for addresses"
     >
       <p-select formControlName="region" [options]="regionOptions" placeholder="Select region" />
-    </ui-labeled-field>
+    </ui-form-field>
   </div>
 
   <div class="mb-4">
@@ -47,24 +47,24 @@
       </p>
 
       <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-        <ui-labeled-field label="First Name" [required]="true">
+        <ui-form-field label="First Name" [required]="true">
           <input pInputText formControlName="ownerFirstName" placeholder="Enter first name" />
-        </ui-labeled-field>
+        </ui-form-field>
 
-        <ui-labeled-field label="Last Name" [required]="true">
+        <ui-form-field label="Last Name" [required]="true">
           <input pInputText formControlName="ownerLastName" placeholder="Enter last name" />
-        </ui-labeled-field>
+        </ui-form-field>
       </div>
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <ui-labeled-field label="Email" [required]="true">
+        <ui-form-field label="Email" [required]="true">
           <input
             pInputText
             formControlName="ownerEmail"
             placeholder="Enter owner email"
             type="email"
           />
-        </ui-labeled-field>
+        </ui-form-field>
       </div>
     </div>
   }

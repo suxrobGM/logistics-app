@@ -9,7 +9,7 @@ import {
   type UpdateCustomerCommand,
 } from "@logistics/shared/api";
 import { customerStatusOptions } from "@logistics/shared/api/enums";
-import { AddressForm, LabeledField, ValidationSummary } from "@logistics/shared/components";
+import { AddressForm, FormField, ValidationSummary } from "@logistics/shared/components";
 import { AccordionModule } from "primeng/accordion";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
@@ -30,7 +30,7 @@ import { regionAllowedCountries } from "@/shared/utils";
     InputTextModule,
     TextareaModule,
     AccordionModule,
-    LabeledField,
+    FormField,
     ValidationSummary,
     AddressForm,
   ],

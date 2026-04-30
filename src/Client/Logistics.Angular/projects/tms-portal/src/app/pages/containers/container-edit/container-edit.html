@@ -48,7 +48,7 @@
         </h3>
         <div class="border-default bg-elevated rounded-lg border p-4">
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <ui-labeled-field
+            <ui-form-field
               label="Container Number"
               for="number"
               [required]="true"
@@ -56,27 +56,27 @@
               [control]="form.controls.number"
             >
               <input pInputText id="number" formControlName="number" />
-            </ui-labeled-field>
+            </ui-form-field>
 
-            <ui-labeled-field label="ISO Type" for="isoType" [required]="true">
+            <ui-form-field label="ISO Type" for="isoType" [required]="true">
               <p-select formControlName="isoType" [options]="isoTypeOptions" />
-            </ui-labeled-field>
+            </ui-form-field>
 
-            <ui-labeled-field label="Seal Number" for="sealNumber">
+            <ui-form-field label="Seal Number" for="sealNumber">
               <input pInputText id="sealNumber" formControlName="sealNumber" />
-            </ui-labeled-field>
+            </ui-form-field>
 
-            <ui-labeled-field label="Booking Reference" for="bookingReference">
+            <ui-form-field label="Booking Reference" for="bookingReference">
               <input pInputText id="bookingReference" formControlName="bookingReference" />
-            </ui-labeled-field>
+            </ui-form-field>
 
-            <ui-labeled-field
+            <ui-form-field
               label="Bill of Lading Number"
               for="billOfLadingNumber"
               class="md:col-span-2"
             >
               <input pInputText id="billOfLadingNumber" formControlName="billOfLadingNumber" />
-            </ui-labeled-field>
+            </ui-form-field>
           </div>
         </div>
       </div>
@@ -89,9 +89,9 @@
           Cargo
         </h3>
         <div class="border-default bg-elevated rounded-lg border p-4">
-          <ui-labeled-field label="Gross Weight (kg)" for="grossWeight" class="mb-0">
+          <ui-form-field label="Gross Weight (kg)" for="grossWeight" class="mb-0">
             <p-input-number id="grossWeight" formControlName="grossWeight" [min]="0" />
-          </ui-labeled-field>
+          </ui-form-field>
         </div>
       </div>
 
@@ -103,9 +103,9 @@
           Notes
         </h3>
         <div class="border-default bg-elevated rounded-lg border p-4">
-          <ui-labeled-field label="Notes" for="notes" class="mb-0">
+          <ui-form-field label="Notes" for="notes" class="mb-0">
             <textarea pTextarea id="notes" formControlName="notes" rows="3"></textarea>
-          </ui-labeled-field>
+          </ui-form-field>
         </div>
       </div>
 
@@ -131,18 +131,18 @@
   [style]="{ width: '32rem' }"
 >
   <form [formGroup]="statusForm" (ngSubmit)="submitStatus()" class="flex flex-col gap-3">
-    <ui-labeled-field label="New Status" for="targetStatus" [required]="true">
+    <ui-form-field label="New Status" for="targetStatus" [required]="true">
       <p-select
         formControlName="targetStatus"
         [options]="statusOptions"
         placeholder="Select target status"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
     @if (statusRequiresTerminal) {
-      <ui-labeled-field label="Terminal" for="statusTerminal" [required]="true" class="mb-0">
+      <ui-form-field label="Terminal" for="statusTerminal" [required]="true" class="mb-0">
         <app-search-terminal formControlName="terminal" />
-      </ui-labeled-field>
+      </ui-form-field>
     }
 
     <div class="flex justify-end gap-2 pt-2">
@@ -165,9 +165,9 @@
   [style]="{ width: '32rem' }"
 >
   <form [formGroup]="terminalForm" (ngSubmit)="submitTerminal()" class="flex flex-col gap-3">
-    <ui-labeled-field label="Terminal" for="moveTerminal" [required]="true" class="mb-0">
+    <ui-form-field label="Terminal" for="moveTerminal" [required]="true" class="mb-0">
       <app-search-terminal formControlName="terminal" />
-    </ui-labeled-field>
+    </ui-form-field>
 
     <div class="flex justify-end gap-2 pt-2">
       <p-button

@@ -26,15 +26,15 @@
     </div>
 
     <div class="grid grid-cols-1 gap-x-4 md:grid-cols-2 lg:grid-cols-3">
-      <ui-labeled-field label="Search">
+      <ui-form-field label="Search">
         <ui-search-input
           class="w-full"
           placeholder="Search by customer or invoice #"
           (searchChange)="onSearch($event)"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Status">
+      <ui-form-field label="Status">
         <p-multiselect
           [options]="statusOptions"
           [(ngModel)]="selectedStatuses"
@@ -43,11 +43,11 @@
           (onChange)="applyFilters()"
           class="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Date Range">
+      <ui-form-field label="Date Range">
         <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
   </p-card>
 

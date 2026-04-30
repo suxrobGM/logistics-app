@@ -2,8 +2,14 @@ import { Component, effect, inject, input, model, output, signal } from "@angula
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { UserRole } from "@logistics/shared";
-import { Api, updateEmployee } from "@logistics/shared/api";
-import type { EmployeeDto, EmployeeStatus, SalaryType, UpdateEmployeeCommand } from "@logistics/shared/api";
+import {
+  Api,
+  updateEmployee,
+  type EmployeeDto,
+  type EmployeeStatus,
+  type SalaryType,
+  type UpdateEmployeeCommand,
+} from "@logistics/shared/api";
 import { employeeStatusOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
 import { AccordionModule } from "primeng/accordion";
 import { ButtonModule } from "primeng/button";
@@ -12,7 +18,7 @@ import { InputGroupModule } from "primeng/inputgroup";
 import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
 import { AuthService } from "@/core/auth";
-import { CurrencyInput, LabeledField, UnitInput, ValidationSummary } from "@/shared/components";
+import { CurrencyInput, FormField, UnitInput, ValidationSummary } from "@/shared/components";
 import { NumberUtils } from "@/shared/utils";
 import { ChangeRoleDialog } from "../change-role-dialog/change-role-dialog";
 
@@ -27,7 +33,7 @@ import { ChangeRoleDialog } from "../change-role-dialog/change-role-dialog";
     InputGroupModule,
     InputTextModule,
     AccordionModule,
-    LabeledField,
+    FormField,
     UnitInput,
     CurrencyInput,
     ValidationSummary,

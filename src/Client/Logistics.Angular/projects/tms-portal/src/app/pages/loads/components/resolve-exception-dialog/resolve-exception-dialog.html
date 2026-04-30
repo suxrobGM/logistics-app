@@ -18,7 +18,7 @@
         <p class="text-muted m-0 mt-2 text-xs">Reported by {{ exc.reportedByName }}</p>
       </div>
 
-      <ui-labeled-field label="Resolution Notes" [required]="true">
+      <ui-form-field label="Resolution Notes" [required]="true">
         <textarea
           pTextarea
           [(ngModel)]="resolution"
@@ -26,7 +26,7 @@
           placeholder="Describe how the exception was resolved..."
           class="w-full"
         ></textarea>
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
   }
 

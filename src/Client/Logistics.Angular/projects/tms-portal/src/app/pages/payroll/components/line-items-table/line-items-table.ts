@@ -1,11 +1,14 @@
 import { CommonModule, CurrencyPipe } from "@angular/common";
 import { Component, inject, input, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { Api, addLineItem, deleteLineItem, updateLineItem } from "@logistics/shared/api";
-import type {
-  AddLineItemRequest,
-  InvoiceLineItemDto,
-  InvoiceLineItemType,
+import {
+  addLineItem,
+  Api,
+  deleteLineItem,
+  updateLineItem,
+  type AddLineItemRequest,
+  type InvoiceLineItemDto,
+  type InvoiceLineItemType,
 } from "@logistics/shared/api";
 import { payrollLineItemTypeOptions } from "@logistics/shared/api/enums";
 import { ButtonModule } from "primeng/button";
@@ -17,7 +20,7 @@ import { TableModule } from "primeng/table";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { LabeledField } from "@/shared/components";
+import { FormField } from "@/shared/components";
 
 interface LineItemForm {
   description: FormControl<string>;
@@ -41,7 +44,7 @@ interface LineItemForm {
     SelectModule,
     TextareaModule,
     TooltipModule,
-    LabeledField,
+    FormField,
     CurrencyPipe,
   ],
 })

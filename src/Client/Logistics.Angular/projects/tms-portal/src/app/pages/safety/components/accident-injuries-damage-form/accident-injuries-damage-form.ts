@@ -1,6 +1,6 @@
 import { Component, input } from "@angular/core";
-import { type FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { LabeledField, ValidationSummary } from "@logistics/shared/components";
+import { ReactiveFormsModule, type FormGroup } from "@angular/forms";
+import { FormField, ValidationSummary } from "@logistics/shared/components";
 import { CardModule } from "primeng/card";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
@@ -17,7 +17,7 @@ import { ToggleSwitchModule } from "primeng/toggleswitch";
     InputTextModule,
     TextareaModule,
     ToggleSwitchModule,
-    LabeledField,
+    FormField,
     ValidationSummary,
   ],
 })

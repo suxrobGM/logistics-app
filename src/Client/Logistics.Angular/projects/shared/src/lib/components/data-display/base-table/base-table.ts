@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import type { TableLazyLoadEvent } from "primeng/table";
-import { Observable, finalize, from } from "rxjs";
+import { finalize, from, Observable } from "rxjs";
 import type { PagedResponse } from "../../../api/models";
 
 /**
@@ -38,7 +38,7 @@ export interface TableQueryParams {
 @Component({
   template: "",
 })
-export abstract class BaseTableComponent<T> {
+export abstract class BaseTable<T> {
   private readonly destroyRef = inject(DestroyRef);
 
   /**

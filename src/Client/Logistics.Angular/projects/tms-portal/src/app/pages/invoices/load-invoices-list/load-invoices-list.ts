@@ -14,8 +14,8 @@ import { TooltipModule } from "primeng/tooltip";
 import {
   DataContainer,
   DateRangePicker,
+  FormField,
   InvoiceStatusTag,
-  LabeledField,
   SearchInput,
 } from "@/shared/components";
 import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
@@ -37,7 +37,7 @@ import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
     DataContainer,
     DateRangePicker,
     SearchInput,
-    LabeledField,
+    FormField,
     CurrencyFormatPipe,
     DateFormatPipe,
   ],

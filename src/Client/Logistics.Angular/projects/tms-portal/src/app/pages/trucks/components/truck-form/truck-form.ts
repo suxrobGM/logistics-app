@@ -1,4 +1,4 @@
-import { Component, type OnInit, computed, inject, input, output, signal } from "@angular/core";
+import { Component, computed, inject, input, output, signal, type OnInit } from "@angular/core";
 import {
   FormControl,
   FormGroup,
@@ -7,8 +7,14 @@ import {
   Validators,
 } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import { Api, getEmployees } from "@logistics/shared/api";
-import type { EmployeeDto, TruckDto, TruckStatus, TruckType } from "@logistics/shared/api";
+import {
+  Api,
+  getEmployees,
+  type EmployeeDto,
+  type TruckDto,
+  type TruckStatus,
+  type TruckType,
+} from "@logistics/shared/api";
 import { truckStatusOptions, truckTypeOptions } from "@logistics/shared/api/enums";
 import { AutoCompleteModule } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
@@ -16,7 +22,7 @@ import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
 import { ToastService } from "@/core/services";
-import { LabeledField, ValidationSummary } from "@/shared/components";
+import { FormField, ValidationSummary } from "@/shared/components";
 
 export interface TruckFormData {
   truckNumber: string;
@@ -45,7 +51,7 @@ export interface TruckFormData {
     InputNumberModule,
     SelectModule,
     AutoCompleteModule,
-    LabeledField,
+    FormField,
     ValidationSummary,
   ],
 })

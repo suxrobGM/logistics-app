@@ -1,8 +1,13 @@
 import { Component, inject, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { Api, deleteDemoRequest, updateDemoRequest } from "@logistics/shared/api";
-import type { DemoRequestDto, DemoRequestStatus } from "@logistics/shared/api";
-import { DataContainer, LabeledField, PageHeader, SearchInput } from "@logistics/shared/components";
+import {
+  Api,
+  deleteDemoRequest,
+  updateDemoRequest,
+  type DemoRequestDto,
+  type DemoRequestStatus,
+} from "@logistics/shared/api";
+import { DataContainer, FormField, PageHeader, SearchInput } from "@logistics/shared/components";
 import { DateUtils } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -37,7 +42,7 @@ interface StatusOption {
     SelectModule,
     TextareaModule,
     ReactiveFormsModule,
-    LabeledField,
+    FormField,
   ],
 })
 export class DemoRequestsList {

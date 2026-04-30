@@ -123,7 +123,7 @@
       <form [formGroup]="form" class="mt-2 border-t pt-4">
         <div class="grid grid-cols-12 gap-4">
           <div class="col-span-12 md:col-span-6">
-            <ui-labeled-field label="Status">
+            <ui-form-field label="Status">
               <p-select
                 formControlName="status"
                 [options]="statusOptions"
@@ -131,11 +131,11 @@
                 optionValue="value"
                 class="w-full"
               />
-            </ui-labeled-field>
+            </ui-form-field>
           </div>
 
           <div class="col-span-12">
-            <ui-labeled-field label="Internal Notes">
+            <ui-form-field label="Internal Notes">
               <textarea
                 pInputTextarea
                 formControlName="notes"
@@ -143,7 +143,7 @@
                 class="w-full"
                 placeholder="Add notes about this submission..."
               ></textarea>
-            </ui-labeled-field>
+            </ui-form-field>
           </div>
         </div>
       </form>

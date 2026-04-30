@@ -14,8 +14,6 @@ import {
   createPayrollInvoice,
   getEmployees,
   previewPayrollInvoice,
-} from "@logistics/shared/api";
-import {
   type BatchCreatePayrollInvoicesResult,
   type CreatePayrollInvoiceCommand,
   type EmployeeDto,
@@ -36,7 +34,7 @@ import { SelectButtonModule } from "primeng/selectbutton";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { LabeledField, PageHeader, ValidationSummary } from "@/shared/components";
+import { FormField, PageHeader, ValidationSummary } from "@/shared/components";
 import { DateUtils } from "@/shared/utils";
 
 type PayrollMode = "single" | "bulk";
@@ -55,7 +53,7 @@ interface BulkPreview {
     CommonModule,
     CardModule,
     ValidationSummary,
-    LabeledField,
+    FormField,
     RouterModule,
     AutoCompleteModule,
     ProgressSpinnerModule,

@@ -1,14 +1,17 @@
-import { Component, type OnInit, inject, signal } from "@angular/core";
+import { Component, inject, signal, type OnInit } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { ToastService } from "@logistics/shared";
-import { Api, createSubscription, getSubscriptionPlans, getTenants } from "@logistics/shared/api";
-import type {
-  CreateSubscriptionCommand,
-  SubscriptionPlanDto,
-  TenantDto,
+import {
+  Api,
+  createSubscription,
+  getSubscriptionPlans,
+  getTenants,
+  type CreateSubscriptionCommand,
+  type SubscriptionPlanDto,
+  type TenantDto,
 } from "@logistics/shared/api";
-import { LabeledField, ValidationSummary } from "@logistics/shared/components";
+import { FormField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -31,7 +34,7 @@ interface SelectOption {
     SkeletonModule,
     SelectModule,
     ReactiveFormsModule,
-    LabeledField,
+    FormField,
     ValidationSummary,
   ],
 })

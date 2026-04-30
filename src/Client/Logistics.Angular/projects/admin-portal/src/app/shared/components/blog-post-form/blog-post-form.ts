@@ -1,14 +1,14 @@
 import { Component, effect, inject, input, output } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import { LabeledField, ValidationSummary } from "@logistics/shared/components";
 import { ToastService } from "@logistics/shared";
+import { FormField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { InputTextModule } from "primeng/inputtext";
-import { TextareaModule } from "primeng/textarea";
-import { EditorModule } from "primeng/editor";
 import { CheckboxModule } from "primeng/checkbox";
+import { EditorModule } from "primeng/editor";
+import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { TextareaModule } from "primeng/textarea";
 
 export interface BlogPostFormValue {
   title: string;
@@ -29,7 +29,7 @@ export interface BlogPostFormValue {
     ReactiveFormsModule,
     RouterLink,
     ProgressSpinnerModule,
-    LabeledField,
+    FormField,
     InputTextModule,
     TextareaModule,
     EditorModule,
@@ -95,7 +95,8 @@ export class BlogPostForm {
 
   protected askUnpublish(): void {
     this.toastService.confirm({
-      message: "Are you sure you want to unpublish this blog post? It will no longer be visible to the public.",
+      message:
+        "Are you sure you want to unpublish this blog post? It will no longer be visible to the public.",
       header: "Confirm Unpublish",
       icon: "pi pi-eye-slash",
       acceptButtonStyleClass: "p-button-warning",

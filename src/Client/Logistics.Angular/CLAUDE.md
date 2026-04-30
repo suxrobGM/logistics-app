@@ -33,34 +33,29 @@ bun run lint               # Lint code
 
 ## Form Fields
 
-**IMPORTANT:** Always use the `<ui-labeled-field>` component for form fields instead of manually creating labels, hints, and error messages.
+**IMPORTANT:** Always use the `<ui-form-field>` component for form fields instead of manually creating labels, hints, and error messages.
 
 ```typescript
-import { LabeledField } from "@logistics/shared";
+import { FormField } from "@logistics/shared";
 ```
 
 ### Usage
 
 ```html
 <!-- Basic usage -->
-<ui-labeled-field label="Name" for="name" [required]="true">
+<ui-form-field label="Name" for="name" [required]="true">
   <input pInputText id="name" formControlName="name" />
-</ui-labeled-field>
+</ui-form-field>
 
 <!-- With hint text -->
-<ui-labeled-field label="Email" for="email" hint="We'll never share your email">
+<ui-form-field label="Email" for="email" hint="We'll never share your email">
   <input pInputText id="email" formControlName="email" type="email" />
-</ui-labeled-field>
+</ui-form-field>
 
 <!-- With validation (shows errors automatically) -->
-<ui-labeled-field
-  label="Password"
-  for="password"
-  [required]="true"
-  [control]="form.controls.password"
->
+<ui-form-field label="Password" for="password" [required]="true" [control]="form.controls.password">
   <input pInputText id="password" formControlName="password" type="password" />
-</ui-labeled-field>
+</ui-form-field>
 ```
 
 ## Theme System (TMS Portal)

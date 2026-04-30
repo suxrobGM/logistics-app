@@ -11,16 +11,16 @@
         </div>
 
         @if (form().get("injuriesReported")?.value) {
-          <ui-labeled-field label="Number of Injuries" for="numberOfInjuries">
+          <ui-form-field label="Number of Injuries" for="numberOfInjuries">
             <p-inputnumber
               formControlName="numberOfInjuries"
               id="numberOfInjuries"
               class="w-full"
               [min]="0"
             />
-          </ui-labeled-field>
+          </ui-form-field>
 
-          <ui-labeled-field label="Injury Description" for="injuryDescription">
+          <ui-form-field label="Injury Description" for="injuryDescription">
             <textarea
               pInputTextarea
               formControlName="injuryDescription"
@@ -29,7 +29,7 @@
               rows="2"
               placeholder="Describe the injuries..."
             ></textarea>
-          </ui-labeled-field>
+          </ui-form-field>
         }
 
         <div class="flex items-center justify-between border-t pt-4">
@@ -38,14 +38,14 @@
         </div>
 
         @if (form().get("fatalitiesReported")?.value) {
-          <ui-labeled-field label="Number of Fatalities" for="numberOfFatalities">
+          <ui-form-field label="Number of Fatalities" for="numberOfFatalities">
             <p-inputnumber
               formControlName="numberOfFatalities"
               id="numberOfFatalities"
               class="w-full"
               [min]="0"
             />
-          </ui-labeled-field>
+          </ui-form-field>
         }
       </div>
     </p-card>
@@ -53,7 +53,7 @@
     <!-- Damage Section -->
     <p-card header="Damage">
       <div class="flex flex-col gap-4">
-        <ui-labeled-field label="Estimated Damage" for="estimatedDamage">
+        <ui-form-field label="Estimated Damage" for="estimatedDamage">
           <p-inputnumber
             formControlName="estimatedDamage"
             id="estimatedDamage"
@@ -62,9 +62,9 @@
             currency="USD"
             locale="en-US"
           />
-        </ui-labeled-field>
+        </ui-form-field>
 
-        <ui-labeled-field label="Damage Description" for="damageDescription">
+        <ui-form-field label="Damage Description" for="damageDescription">
           <textarea
             pInputTextarea
             formControlName="damageDescription"
@@ -73,7 +73,7 @@
             rows="2"
             placeholder="Describe the damage..."
           ></textarea>
-        </ui-labeled-field>
+        </ui-form-field>
 
         <div class="flex items-center justify-between border-t pt-4">
           <span>Was the vehicle towed?</span>
@@ -81,7 +81,7 @@
         </div>
 
         @if (form().get("vehicleTowed")?.value) {
-          <ui-labeled-field label="Tow Company" for="towCompany">
+          <ui-form-field label="Tow Company" for="towCompany">
             <input
               pInputText
               formControlName="towCompany"
@@ -89,7 +89,7 @@
               class="w-full"
               placeholder="Name of tow company"
             />
-          </ui-labeled-field>
+          </ui-form-field>
         }
       </div>
     </p-card>
@@ -104,7 +104,7 @@
       </div>
 
       @if (form().get("hazmatInvolved")?.value) {
-        <ui-labeled-field label="Hazmat Description" for="hazmatDescription">
+        <ui-form-field label="Hazmat Description" for="hazmatDescription">
           <textarea
             pInputTextarea
             formControlName="hazmatDescription"
@@ -113,7 +113,7 @@
             rows="2"
             placeholder="Describe the hazardous materials involved..."
           ></textarea>
-        </ui-labeled-field>
+        </ui-form-field>
       }
     </div>
   </p-card>

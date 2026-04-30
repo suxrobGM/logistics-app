@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, type OnInit, inject, signal } from "@angular/core";
+import { Component, inject, signal, type OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import {
@@ -9,8 +9,8 @@ import {
   createTruckExpense,
   getTrucks,
   uploadExpenseReceipt,
+  type TruckDto,
 } from "@logistics/shared/api";
-import type { TruckDto } from "@logistics/shared/api";
 import { MessageService } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -22,7 +22,7 @@ import { SelectModule } from "primeng/select";
 import { TabsModule } from "primeng/tabs";
 import { TextareaModule } from "primeng/textarea";
 import { ToastModule } from "primeng/toast";
-import { LabeledField, PageHeader } from "@/shared/components";
+import { FormField, PageHeader } from "@/shared/components";
 
 interface CategoryOption {
   label: string;
@@ -47,7 +47,7 @@ interface CategoryOption {
     SelectModule,
     FileUploadModule,
     ToastModule,
-    LabeledField,
+    FormField,
     PageHeader,
   ],
 })

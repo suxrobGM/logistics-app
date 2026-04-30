@@ -6,7 +6,7 @@ export {
   SearchInput,
   CurrencyInput,
   UnitInput,
-  LabeledField,
+  FormField,
   ValidationSummary,
 } from "@logistics/shared/components";
 

@@ -2,7 +2,7 @@
   <form [formGroup]="form" (ngSubmit)="goToNextStep()">
     <ui-validation-summary [form]="form" />
 
-    <ui-labeled-field label="Trip Name" for="tripName" [required]="true">
+    <ui-form-field label="Trip Name" for="tripName" [required]="true">
       <input
         pInputText
         id="tripName"
@@ -10,11 +10,11 @@
         type="text"
         placeholder="Trip name"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Assigned Truck" for="truck">
+    <ui-form-field label="Assigned Truck" for="truck">
       <app-search-truck formControlName="truck" />
-    </ui-labeled-field>
+    </ui-form-field>
 
     <div class="flex justify-between pt-6">
       <p-button

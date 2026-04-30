@@ -17,11 +17,11 @@
   </div>
 
   <div class="grid grid-cols-1 gap-x-4 md:grid-cols-2 lg:grid-cols-5">
-    <ui-labeled-field label="Search">
+    <ui-form-field label="Search">
       <ui-search-input class="w-full" (searchChange)="onSearch($event)" />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Status">
+    <ui-form-field label="Status">
       <p-multiselect
         [options]="statusOptions"
         [(ngModel)]="selectedStatuses"
@@ -30,9 +30,9 @@
         (onChange)="applyFilters()"
         class="w-full"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Type">
+    <ui-form-field label="Type">
       <p-multiselect
         [options]="typeOptions"
         [(ngModel)]="selectedTypes"
@@ -41,24 +41,24 @@
         (onChange)="applyFilters()"
         class="w-full"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Truck">
+    <ui-form-field label="Truck">
       <app-search-truck [(selectedTruck)]="selectedTruck" (selectedTruckChange)="applyFilters()" />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Customer">
+    <ui-form-field label="Customer">
       <app-search-customer
         [(selectedCustomer)]="selectedCustomer"
         (selectedCustomerChange)="applyFilters()"
       />
-    </ui-labeled-field>
+    </ui-form-field>
   </div>
 
   <div class="flex items-center gap-4">
-    <ui-labeled-field label="Date Range">
+    <ui-form-field label="Date Range">
       <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
-    </ui-labeled-field>
+    </ui-form-field>
 
     <div class="mt-2 flex items-center gap-2">
       <p-checkbox

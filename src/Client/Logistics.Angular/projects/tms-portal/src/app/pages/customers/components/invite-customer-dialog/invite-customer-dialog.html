@@ -16,7 +16,7 @@
     </p>
 
     <form [formGroup]="form" (ngSubmit)="submit()">
-      <ui-labeled-field
+      <ui-form-field
         label="Email Address"
         for="email"
         [required]="true"
@@ -30,9 +30,9 @@
           placeholder="customer@example.com"
           class="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field
+      <ui-form-field
         label="Customer"
         for="customerId"
         [required]="true"
@@ -55,9 +55,9 @@
             filterPlaceholder="Search customers..."
           />
         }
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field
+      <ui-form-field
         label="Personal Message"
         for="personalMessage"
         hint="Optional note to include in the invitation email"
@@ -70,7 +70,7 @@
           placeholder="Add a personal note to the invitation email..."
           class="w-full"
         ></textarea>
-      </ui-labeled-field>
+      </ui-form-field>
 
       <div class="flex justify-end gap-2">
         <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />

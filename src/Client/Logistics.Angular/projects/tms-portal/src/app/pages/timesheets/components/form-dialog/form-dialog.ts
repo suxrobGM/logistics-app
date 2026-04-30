@@ -6,13 +6,16 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { Api, createTimeEntry, getEmployees, updateTimeEntry } from "@logistics/shared/api";
-import type {
-  CreateTimeEntryCommand,
-  EmployeeDto,
-  TimeEntryDto,
-  TimeEntryType,
-  UpdateTimeEntryCommand,
+import {
+  Api,
+  createTimeEntry,
+  getEmployees,
+  updateTimeEntry,
+  type CreateTimeEntryCommand,
+  type EmployeeDto,
+  type TimeEntryDto,
+  type TimeEntryType,
+  type UpdateTimeEntryCommand,
 } from "@logistics/shared/api";
 import { timeEntryTypeOptions } from "@logistics/shared/api/enums";
 import { ButtonModule } from "primeng/button";
@@ -23,7 +26,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
-import { LabeledField } from "@/shared/components";
+import { FormField } from "@/shared/components";
 
 @Component({
   selector: "app-timesheet-form-dialog",
@@ -38,7 +41,7 @@ import { LabeledField } from "@/shared/components";
     DatePickerModule,
     InputNumberModule,
     TextareaModule,
-    LabeledField,
+    FormField,
   ],
 })
 export class TimesheetFormDialog {

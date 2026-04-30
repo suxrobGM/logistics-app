@@ -51,11 +51,11 @@
     </div>
 
     <div class="grid grid-cols-1 gap-x-4 md:grid-cols-2 lg:grid-cols-4">
-      <ui-labeled-field label="Search">
+      <ui-form-field label="Search">
         <ui-search-input class="w-full" (searchChange)="onSearch($event)" />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Status">
+      <ui-form-field label="Status">
         <p-multiselect
           [options]="statusOptions"
           [ngModel]="selectedStatuses()"
@@ -64,18 +64,18 @@
           [showClear]="true"
           class="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Truck">
+      <ui-form-field label="Truck">
         <app-search-truck
           [selectedTruck]="selectedTruck()"
           (selectedTruckChange)="selectedTruck.set($event); applyFilters()"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Date Range">
+      <ui-form-field label="Date Range">
         <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
 
     <div class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">

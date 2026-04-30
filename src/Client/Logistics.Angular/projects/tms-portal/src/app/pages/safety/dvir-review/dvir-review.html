@@ -51,15 +51,15 @@
           <ui-validation-summary [form]="form" />
 
           @if (report()!.hasDefects) {
-            <ui-labeled-field label="All Defects Corrected?" class="mb-4">
+            <ui-form-field label="All Defects Corrected?" class="mb-4">
               <div class="flex items-center gap-2">
                 <p-toggleswitch formControlName="defectsCorrected" />
                 <span class="text-sm">{{ form.value.defectsCorrected ? "Yes" : "No" }}</span>
               </div>
-            </ui-labeled-field>
+            </ui-form-field>
           }
 
-          <ui-labeled-field label="Mechanic Notes" for="mechanicNotes">
+          <ui-form-field label="Mechanic Notes" for="mechanicNotes">
             <textarea
               pInputTextarea
               formControlName="mechanicNotes"
@@ -68,7 +68,7 @@
               rows="4"
               placeholder="Enter any notes about repairs or observations..."
             ></textarea>
-          </ui-labeled-field>
+          </ui-form-field>
 
           <div class="mt-6 flex flex-col gap-2">
             <p-button

@@ -1,12 +1,14 @@
 import { Component, inject, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { Api, deleteContactSubmission, updateContactSubmission } from "@logistics/shared/api";
-import type {
-  ContactSubject,
-  ContactSubmissionDto,
-  ContactSubmissionStatus,
+import {
+  Api,
+  deleteContactSubmission,
+  updateContactSubmission,
+  type ContactSubject,
+  type ContactSubmissionDto,
+  type ContactSubmissionStatus,
 } from "@logistics/shared/api";
-import { DataContainer, LabeledField, PageHeader, SearchInput } from "@logistics/shared/components";
+import { DataContainer, FormField, PageHeader, SearchInput } from "@logistics/shared/components";
 import type { SelectOption } from "@logistics/shared/models";
 import { DateUtils } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
@@ -37,7 +39,7 @@ import { ContactSubmissionsListStore } from "../store/contact-submissions-list.s
     SelectModule,
     TextareaModule,
     ReactiveFormsModule,
-    LabeledField,
+    FormField,
   ],
 })
 export class ContactSubmissionsList {

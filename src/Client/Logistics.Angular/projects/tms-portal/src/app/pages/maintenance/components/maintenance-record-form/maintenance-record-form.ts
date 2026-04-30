@@ -1,15 +1,17 @@
 import { Component, effect, inject, input, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import { Api, createMaintenanceRecord, updateMaintenanceRecord } from "@logistics/shared/api";
-import type {
-  CreateMaintenanceRecordCommand,
-  MaintenanceRecordDto,
-  MaintenanceType,
-  TruckDto,
-  UpdateMaintenanceRecordCommand,
+import {
+  Api,
+  createMaintenanceRecord,
+  updateMaintenanceRecord,
+  type CreateMaintenanceRecordCommand,
+  type MaintenanceRecordDto,
+  type MaintenanceType,
+  type TruckDto,
+  type UpdateMaintenanceRecordCommand,
 } from "@logistics/shared/api";
-import { LabeledField, ValidationSummary } from "@logistics/shared/components";
+import { FormField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DatePickerModule } from "primeng/datepicker";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -67,7 +69,7 @@ const maintenanceTypeOptions = [
     ReactiveFormsModule,
     RouterLink,
     ProgressSpinnerModule,
-    LabeledField,
+    FormField,
     InputTextModule,
     InputNumberModule,
     SelectModule,

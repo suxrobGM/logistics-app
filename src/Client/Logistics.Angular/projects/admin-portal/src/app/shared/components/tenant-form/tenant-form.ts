@@ -4,7 +4,7 @@ import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import type { Address, Region } from "@logistics/shared/api";
 import { regionOptions } from "@logistics/shared/api/enums";
-import { AddressForm, LabeledField, ValidationSummary } from "@logistics/shared/components";
+import { AddressForm, FormField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -31,7 +31,7 @@ export interface TenantFormValue {
     ReactiveFormsModule,
     RouterLink,
     ProgressSpinnerModule,
-    LabeledField,
+    FormField,
     InputTextModule,
     Select,
     AddressForm,

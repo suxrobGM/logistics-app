@@ -1,36 +1,36 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
   <div class="mb-4 grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-8">
-      <ui-labeled-field label="Title" [required]="true">
+      <ui-form-field label="Title" [required]="true">
         <input
           pInputText
           formControlName="title"
           placeholder="Enter blog post title"
           class="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
 
     <div class="col-span-12 md:col-span-4">
-      <ui-labeled-field label="Category">
+      <ui-form-field label="Category">
         <input
           pInputText
           formControlName="category"
           placeholder="e.g., Industry News, Tips"
           class="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
   </div>
 
   <div class="mb-4">
-    <ui-labeled-field label="Content" [required]="true">
+    <ui-form-field label="Content" [required]="true">
       <p-editor formControlName="content" [style]="{ height: '320px' }" />
-    </ui-labeled-field>
+    </ui-form-field>
   </div>
 
   <div class="mb-4">
-    <ui-labeled-field label="Excerpt">
+    <ui-form-field label="Excerpt">
       <textarea
         pTextarea
         formControlName="excerpt"
@@ -38,30 +38,30 @@
         class="w-full"
         rows="3"
       ></textarea>
-    </ui-labeled-field>
+    </ui-form-field>
   </div>
 
   <div class="mb-4 grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-6">
-      <ui-labeled-field label="Author Name" [required]="true">
+      <ui-form-field label="Author Name" [required]="true">
         <input
           pInputText
           formControlName="authorName"
           placeholder="Enter author name"
           class="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
 
     <div class="col-span-12 md:col-span-6">
-      <ui-labeled-field label="Featured Image URL">
+      <ui-form-field label="Featured Image URL">
         <input
           pInputText
           formControlName="featuredImage"
           placeholder="https://example.com/image.jpg"
           class="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
   </div>
 

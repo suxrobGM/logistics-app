@@ -16,7 +16,7 @@
           Load Information
         </h3>
         <div class="border-default bg-elevated rounded-lg border p-4">
-          <ui-labeled-field label="Name" for="name" [required]="true">
+          <ui-form-field label="Name" for="name" [required]="true">
             <input
               pInputText
               id="name"
@@ -24,13 +24,13 @@
               type="text"
               placeholder="Load name"
             />
-          </ui-labeled-field>
-          <ui-labeled-field label="Load Type" for="type" [required]="true">
+          </ui-form-field>
+          <ui-form-field label="Load Type" for="type" [required]="true">
             <p-select formControlName="type" [options]="loadTypes" />
-          </ui-labeled-field>
-          <ui-labeled-field label="Source" for="source" [required]="true" class="mb-0">
+          </ui-form-field>
+          <ui-form-field label="Source" for="source" [required]="true" class="mb-0">
             <p-select formControlName="source" [options]="loadSources" />
-          </ui-labeled-field>
+          </ui-form-field>
         </div>
       </div>
 
@@ -44,7 +44,7 @@
             Trip Association
           </h3>
           <div class="border-default bg-elevated rounded-lg border p-4">
-            <ui-labeled-field label="Trip" for="tripNumber" class="mb-0">
+            <ui-form-field label="Trip" for="tripNumber" class="mb-0">
               <input
                 pInputText
                 id="tripNumber"
@@ -52,7 +52,7 @@
                 type="text"
                 placeholder="Trip"
               />
-            </ui-labeled-field>
+            </ui-form-field>
           </div>
         </div>
       }
@@ -66,9 +66,9 @@
           Customer
         </h3>
         <div class="border-default bg-elevated rounded-lg border p-4">
-          <ui-labeled-field label="Customer" for="customer" [required]="true" class="mb-0">
+          <ui-form-field label="Customer" for="customer" [required]="true" class="mb-0">
             <app-search-customer formControlName="customer" />
-          </ui-labeled-field>
+          </ui-form-field>
         </div>
       </div>
 
@@ -81,16 +81,16 @@
           Route
         </h3>
         <div class="border-default bg-elevated rounded-lg border p-4">
-          <ui-labeled-field label="Origin Address" for="originAddress" [required]="true">
+          <ui-form-field label="Origin Address" for="originAddress" [required]="true">
             <app-address-autocomplete
               field="originAddress"
               formControlName="originAddress"
               [forceSelection]="true"
               (selectedAddress)="updateOrigin($event)"
             />
-          </ui-labeled-field>
+          </ui-form-field>
 
-          <ui-labeled-field
+          <ui-form-field
             label="Destination Address"
             for="destinationAddress"
             [required]="true"
@@ -102,22 +102,22 @@
               [forceSelection]="true"
               (selectedAddress)="updateDestination($event)"
             />
-          </ui-labeled-field>
+          </ui-form-field>
         </div>
       </div>
 
       <!-- Schedule Section (collapsable) -->
       <p-fieldset legend="Schedule" [toggleable]="true" [collapsed]="true" styleClass="mb-6">
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <ui-labeled-field label="Requested Pickup Date" for="requestedPickupDate">
+          <ui-form-field label="Requested Pickup Date" for="requestedPickupDate">
             <p-datepicker
               formControlName="requestedPickupDate"
               [showIcon]="true"
               [showTime]="true"
               inputId="requestedPickupDate"
             />
-          </ui-labeled-field>
-          <ui-labeled-field
+          </ui-form-field>
+          <ui-form-field
             label="Requested Delivery Date"
             for="requestedDeliveryDate"
             class="mb-0"
@@ -128,7 +128,7 @@
               [showTime]="true"
               inputId="requestedDeliveryDate"
             />
-          </ui-labeled-field>
+          </ui-form-field>
         </div>
       </p-fieldset>
 
@@ -139,20 +139,20 @@
         [collapsed]="true"
         styleClass="mb-6"
       >
-        <ui-labeled-field label="Container" for="container">
+        <ui-form-field label="Container" for="container">
           <app-search-container formControlName="container" />
-        </ui-labeled-field>
-        <ui-labeled-field label="Origin Terminal" for="originTerminal">
+        </ui-form-field>
+        <ui-form-field label="Origin Terminal" for="originTerminal">
           <app-search-terminal formControlName="originTerminal" />
-        </ui-labeled-field>
-        <ui-labeled-field label="Destination Terminal" for="destinationTerminal" class="mb-0">
+        </ui-form-field>
+        <ui-form-field label="Destination Terminal" for="destinationTerminal" class="mb-0">
           <app-search-terminal formControlName="destinationTerminal" />
-        </ui-labeled-field>
+        </ui-form-field>
       </p-fieldset>
 
       <!-- Notes Section (collapsable) -->
       <p-fieldset legend="Notes" [toggleable]="true" [collapsed]="true" styleClass="mb-6">
-        <ui-labeled-field label="Notes" for="notes" hint="Max 2000 characters" class="mb-0">
+        <ui-form-field label="Notes" for="notes" hint="Max 2000 characters" class="mb-0">
           <textarea
             pTextarea
             id="notes"
@@ -160,7 +160,7 @@
             rows="3"
             maxlength="2000"
           ></textarea>
-        </ui-labeled-field>
+        </ui-form-field>
       </p-fieldset>
 
       <!-- Pricing Section -->
@@ -172,19 +172,19 @@
           Pricing & Distance
         </h3>
         <div class="border-default bg-elevated rounded-lg border p-4">
-          <ui-labeled-field label="Delivery Cost" for="deliveryCost" [required]="true">
+          <ui-form-field label="Delivery Cost" for="deliveryCost" [required]="true">
             <p-inputgroup>
               <p-inputgroup-addon>$$</p-inputgroup-addon>
               <p-input-number id="deliveryCost" formControlName="deliveryCost" [min]="0" />
             </p-inputgroup>
-          </ui-labeled-field>
+          </ui-form-field>
 
-          <ui-labeled-field label="Estimated Distance" for="distance" class="mb-0">
+          <ui-form-field label="Estimated Distance" for="distance" class="mb-0">
             <p-inputgroup>
               <p-inputgroup-addon>mi</p-inputgroup-addon>
               <p-input-number id="distance" formControlName="distance" [min]="0" />
             </p-inputgroup>
-          </ui-labeled-field>
+          </ui-form-field>
         </div>
       </div>
 
@@ -197,25 +197,25 @@
           Assignment
         </h3>
         <div class="border-default bg-elevated rounded-lg border p-4">
-          <ui-labeled-field label="Assigned Dispatcher" for="dispatcherName">
+          <ui-form-field label="Assigned Dispatcher" for="dispatcherName">
             <input
               pInputText
               id="dispatcherName"
               formControlName="assignedDispatcherName"
               type="text"
             />
-          </ui-labeled-field>
+          </ui-form-field>
 
           @if (canChangeAssignedTruck()) {
-            <ui-labeled-field label="Assigned Truck" for="assignedTruck">
+            <ui-form-field label="Assigned Truck" for="assignedTruck">
               <app-search-truck formControlName="assignedTruck" />
-            </ui-labeled-field>
+            </ui-form-field>
           }
 
           @if (mode() === "edit") {
-            <ui-labeled-field label="Status" for="status" class="mb-0">
+            <ui-form-field label="Status" for="status" class="mb-0">
               <p-select formControlName="status" [options]="loadStatuses" />
-            </ui-labeled-field>
+            </ui-form-field>
           }
         </div>
       </div>

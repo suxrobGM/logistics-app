@@ -13,7 +13,7 @@ import {
   type TruckDto,
 } from "@logistics/shared/api";
 import { loadSourceOptions, loadStatusOptions, loadTypeOptions } from "@logistics/shared/api/enums";
-import { LabeledField, ValidationSummary } from "@logistics/shared/components";
+import { FormField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DatePicker } from "primeng/datepicker";
 import { DividerModule } from "primeng/divider";
@@ -98,7 +98,7 @@ export interface LoadFormValue {
     AddressAutocomplete,
     DirectionMap,
     ValidationSummary,
-    LabeledField,
+    FormField,
     SearchContainer,
     SearchCustomer,
     SearchTerminal,

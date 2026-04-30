@@ -4,7 +4,7 @@ import { RouterLink } from "@angular/router";
 import { COUNTRIES_OPTIONS } from "@logistics/shared";
 import type { Address, TerminalType } from "@logistics/shared/api";
 import { regionOptions, terminalTypeOptions } from "@logistics/shared/api/enums";
-import { AddressForm, LabeledField, ValidationSummary } from "@logistics/shared/components";
+import { AddressForm, FormField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
@@ -32,7 +32,7 @@ export interface TerminalFormValue {
     Select,
     TextareaModule,
     AddressForm,
-    LabeledField,
+    FormField,
     ValidationSummary,
   ],
 })

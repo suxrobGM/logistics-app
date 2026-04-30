@@ -184,7 +184,7 @@
 >
   <form [formGroup]="postForm" (ngSubmit)="postTruck()">
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <ui-labeled-field
+      <ui-form-field
         label="Truck"
         for="truckId"
         [required]="true"
@@ -207,9 +207,9 @@
             </div>
           </ng-template>
         </p-select>
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field
+      <ui-form-field
         label="Load Board"
         for="providerType"
         [required]="true"
@@ -225,12 +225,12 @@
           class="w-full"
           [style]="{ width: '100%' }"
         />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
 
     <h6 class="mt-4 mb-3">Available Location</h6>
     <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-      <ui-labeled-field
+      <ui-form-field
         label="City"
         for="availableAtCity"
         [required]="true"
@@ -243,9 +243,9 @@
           class="w-full"
           placeholder="e.g., Los Angeles"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field
+      <ui-form-field
         label="State"
         for="availableAtState"
         [required]="true"
@@ -258,9 +258,9 @@
           class="w-full"
           placeholder="e.g., CA"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="ZIP Code" for="availableAtZipCode">
+      <ui-form-field label="ZIP Code" for="availableAtZipCode">
         <input
           pInputText
           id="availableAtZipCode"
@@ -268,12 +268,12 @@
           class="w-full"
           placeholder="e.g., 90001"
         />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
 
     <h6 class="mt-4 mb-3">Destination Preference (Optional)</h6>
     <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-      <ui-labeled-field label="City" for="destinationCity">
+      <ui-form-field label="City" for="destinationCity">
         <input
           pInputText
           id="destinationCity"
@@ -281,9 +281,9 @@
           class="w-full"
           placeholder="e.g., Dallas"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="State" for="destinationState">
+      <ui-form-field label="State" for="destinationState">
         <input
           pInputText
           id="destinationState"
@@ -291,9 +291,9 @@
           class="w-full"
           placeholder="e.g., TX"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Radius (mi)" for="destinationRadius">
+      <ui-form-field label="Radius (mi)" for="destinationRadius">
         <p-inputNumber
           id="destinationRadius"
           formControlName="destinationRadius"
@@ -302,12 +302,12 @@
           class="w-full"
           inputStyleClass="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
 
     <h6 class="mt-4 mb-3">Availability</h6>
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <ui-labeled-field
+      <ui-form-field
         label="Available From"
         for="availableFrom"
         [required]="true"
@@ -321,9 +321,9 @@
           class="w-full"
           inputStyleClass="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Available To" for="availableTo">
+      <ui-form-field label="Available To" for="availableTo">
         <p-datePicker
           id="availableTo"
           formControlName="availableTo"
@@ -332,12 +332,12 @@
           class="w-full"
           inputStyleClass="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
 
     <h6 class="mt-4 mb-3">Equipment Details (Optional)</h6>
     <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-      <ui-labeled-field label="Equipment Type" for="equipmentType">
+      <ui-form-field label="Equipment Type" for="equipmentType">
         <p-select
           id="equipmentType"
           formControlName="equipmentType"
@@ -348,9 +348,9 @@
           class="w-full"
           [style]="{ width: '100%' }"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Max Weight (lbs)" for="maxWeight">
+      <ui-form-field label="Max Weight (lbs)" for="maxWeight">
         <p-inputNumber
           id="maxWeight"
           formControlName="maxWeight"
@@ -359,9 +359,9 @@
           class="w-full"
           inputStyleClass="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Max Length (ft)" for="maxLength">
+      <ui-form-field label="Max Length (ft)" for="maxLength">
         <p-inputNumber
           id="maxLength"
           formControlName="maxLength"
@@ -370,7 +370,7 @@
           class="w-full"
           inputStyleClass="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
   </form>
 

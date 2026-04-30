@@ -1,9 +1,9 @@
-import { Component, DestroyRef, type OnInit, inject, input, output } from "@angular/core";
+import { Component, DestroyRef, inject, input, output, type OnInit } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
-import { Subject, debounceTime, distinctUntilChanged } from "rxjs";
+import { debounceTime, distinctUntilChanged, Subject } from "rxjs";
 
 @Component({
   selector: "ui-search-input",

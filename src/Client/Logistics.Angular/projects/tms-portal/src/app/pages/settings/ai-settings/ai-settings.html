@@ -27,7 +27,7 @@
         </p-message>
 
         <!-- Model -->
-        <ui-labeled-field label="Model" for="model" class="mb-4">
+        <ui-form-field label="Model" for="model" class="mb-4">
           <p-select
             id="model"
             [(ngModel)]="selectedModel"
@@ -69,7 +69,7 @@
               </div>
             </ng-template>
           </p-select>
-        </ui-labeled-field>
+        </ui-form-field>
 
         <!-- Multiplier Warning -->
         @if (showMultiplierWarning()) {

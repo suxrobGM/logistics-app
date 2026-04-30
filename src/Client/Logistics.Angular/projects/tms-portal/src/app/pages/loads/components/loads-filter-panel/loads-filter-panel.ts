@@ -7,7 +7,13 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
 import { MultiSelectModule } from "primeng/multiselect";
-import { DateRangePicker, LabeledField, SearchCustomer, SearchInput, SearchTruck } from "@/shared/components";
+import {
+  DateRangePicker,
+  FormField,
+  SearchCustomer,
+  SearchInput,
+  SearchTruck,
+} from "@/shared/components";
 
 export interface LoadsFilterState {
   statuses: LoadStatus[];
@@ -31,7 +37,7 @@ export interface LoadsFilterState {
     SearchTruck,
     SearchCustomer,
     DateRangePicker,
-    LabeledField,
+    FormField,
   ],
 })
 export class LoadsFilterPanel {

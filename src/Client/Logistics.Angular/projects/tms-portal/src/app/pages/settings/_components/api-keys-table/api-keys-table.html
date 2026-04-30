@@ -65,7 +65,7 @@
   [modal]="true"
   [style]="{ width: '450px' }"
 >
-  <ui-labeled-field label="Key Name" for="keyName" [required]="true">
+  <ui-form-field label="Key Name" for="keyName" [required]="true">
     <input
       pInputText
       id="keyName"
@@ -73,7 +73,7 @@
       placeholder="e.g., Claude Desktop, Cursor"
       [fluid]="true"
     />
-  </ui-labeled-field>
+  </ui-form-field>
 
   <ng-template #footer>
     <p-button label="Cancel" [text]="true" (onClick)="showCreateDialog.set(false)" />

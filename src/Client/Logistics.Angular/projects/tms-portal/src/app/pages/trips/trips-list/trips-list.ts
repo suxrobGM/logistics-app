@@ -1,8 +1,15 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
-import { Api, cancelTrip, deleteTrip, dispatchTrip } from "@logistics/shared/api";
-import type { TripDto, TripStatus, TruckDto } from "@logistics/shared/api";
+import {
+  Api,
+  cancelTrip,
+  deleteTrip,
+  dispatchTrip,
+  type TripDto,
+  type TripStatus,
+  type TruckDto,
+} from "@logistics/shared/api";
 import { tripStatusOptions } from "@logistics/shared/api/enums";
 import {
   AddressPipe,
@@ -25,7 +32,7 @@ import { ToastService } from "@/core/services";
 import {
   DataContainer,
   DateRangePicker,
-  LabeledField,
+  FormField,
   LoadStatusTag,
   LoadTypeTag,
   RouteBadge,
@@ -60,7 +67,7 @@ import { TripsListStore } from "../store/trips-list.store";
     DateRangePicker,
     SearchTruck,
     SearchInput,
-    LabeledField,
+    FormField,
     ProgressBarModule,
     RouteBadge,
     TripsSummaryStats,

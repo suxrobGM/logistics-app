@@ -1,10 +1,10 @@
-import { Component, type OnInit, computed, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import {
   Api,
-  type AiQuotaStatusDto,
   getAiQuotaStatus,
   updateTenantAiSettings,
+  type AiQuotaStatusDto,
 } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -13,7 +13,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { TagModule } from "primeng/tag";
 import { ToastService } from "@/core/services";
-import { AiQuotaUsage, LabeledField } from "@/shared/components";
+import { AiQuotaUsage, FormField } from "@/shared/components";
 
 interface ModelOption {
   label: string;
@@ -44,7 +44,7 @@ const allModels: ModelOption[] = [
     SelectModule,
     TagModule,
     MessageModule,
-    LabeledField,
+    FormField,
     AiQuotaUsage,
   ],
 })

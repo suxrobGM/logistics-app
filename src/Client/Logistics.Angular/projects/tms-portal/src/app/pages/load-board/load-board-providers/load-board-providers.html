@@ -134,7 +134,7 @@
   [draggable]="false"
 >
   <form [formGroup]="addForm" (ngSubmit)="saveProvider()">
-    <ui-labeled-field
+    <ui-form-field
       label="Provider"
       for="providerType"
       [required]="true"
@@ -157,9 +157,9 @@
           </div>
         </ng-template>
       </p-select>
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field
+    <ui-form-field
       label="API Key"
       for="apiKey"
       [required]="true"
@@ -173,9 +173,9 @@
         class="w-full"
         placeholder="Enter API key"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field
+    <ui-form-field
       label="API Secret (Optional)"
       for="apiSecret"
       hint="Required for some providers (e.g., DAT)"
@@ -189,9 +189,9 @@
         inputStyleClass="w-full"
         placeholder="Enter API secret"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field
+    <ui-form-field
       label="DOT Number (Optional)"
       for="companyDotNumber"
       hint="Your company's USDOT number"
@@ -203,9 +203,9 @@
         class="w-full"
         placeholder="e.g., 1234567"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field
+    <ui-form-field
       label="MC Number (Optional)"
       for="companyMcNumber"
       hint="Your company's Motor Carrier number"
@@ -217,7 +217,7 @@
         class="w-full"
         placeholder="e.g., MC123456"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
     <div class="rounded bg-yellow-500/10 p-3">
       <div class="flex items-start gap-2">

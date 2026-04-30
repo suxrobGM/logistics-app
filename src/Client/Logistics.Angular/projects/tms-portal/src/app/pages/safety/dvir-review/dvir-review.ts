@@ -1,17 +1,22 @@
-import { Component, inject, input, type OnInit, signal } from "@angular/core";
+import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { Api, getDvirReportById, reviewDvirReport } from "@logistics/shared/api";
-import type { DvirReportDto, ReviewDvirReportCommand } from "@logistics/shared/api";
-import { LabeledField, ValidationSummary } from "@logistics/shared/components";
+import {
+  Api,
+  getDvirReportById,
+  reviewDvirReport,
+  type DvirReportDto,
+  type ReviewDvirReportCommand,
+} from "@logistics/shared/api";
+import { FormField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TextareaModule } from "primeng/textarea";
 import { ToggleSwitchModule } from "primeng/toggleswitch";
-import { PageHeader } from "@/shared/components";
-import { ToastService } from "@/core/services";
 import { AuthService } from "@/core/auth";
+import { ToastService } from "@/core/services";
+import { PageHeader } from "@/shared/components";
 import { DvirDefectsList } from "../components/dvir-defects-list/dvir-defects-list";
 
 @Component({
@@ -25,7 +30,7 @@ import { DvirDefectsList } from "../components/dvir-defects-list/dvir-defects-li
     TextareaModule,
     ToggleSwitchModule,
     PageHeader,
-    LabeledField,
+    FormField,
     ValidationSummary,
     DvirDefectsList,
   ],

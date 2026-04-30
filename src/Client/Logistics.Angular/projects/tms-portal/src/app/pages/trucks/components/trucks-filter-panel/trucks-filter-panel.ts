@@ -6,7 +6,7 @@ import type { SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MultiSelectModule } from "primeng/multiselect";
-import { LabeledField, SearchInput } from "@/shared/components";
+import { FormField, SearchInput } from "@/shared/components";
 
 export interface TrucksFilterState {
   statuses: TruckStatus[];
@@ -16,7 +16,7 @@ export interface TrucksFilterState {
 @Component({
   selector: "app-trucks-filter-panel",
   templateUrl: "./trucks-filter-panel.html",
-  imports: [CardModule, ButtonModule, FormsModule, MultiSelectModule, SearchInput, LabeledField],
+  imports: [CardModule, ButtonModule, FormsModule, MultiSelectModule, SearchInput, FormField],
 })
 export class TrucksFilterPanel {
   public readonly isLoading = input(false);

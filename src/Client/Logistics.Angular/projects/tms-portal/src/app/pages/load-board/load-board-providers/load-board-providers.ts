@@ -1,14 +1,14 @@
 import { DatePipe } from "@angular/common";
-import { Component, type OnInit, inject, signal } from "@angular/core";
+import { Component, inject, signal, type OnInit } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import {
   Api,
-  type LoadBoardConfigurationDto,
-  type LoadBoardProviderType,
   createLoadBoardProvider,
   deleteLoadBoardProvider,
   getLoadBoardProviders,
+  type LoadBoardConfigurationDto,
+  type LoadBoardProviderType,
 } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -21,7 +21,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { LabeledField, PageHeader } from "@/shared/components";
+import { FormField, PageHeader } from "@/shared/components";
 
 interface ProviderOption {
   label: string;
@@ -38,7 +38,7 @@ interface ProviderOption {
     DatePipe,
     DialogModule,
     InputTextModule,
-    LabeledField,
+    FormField,
     PageHeader,
     PasswordModule,
     ProgressSpinnerModule,

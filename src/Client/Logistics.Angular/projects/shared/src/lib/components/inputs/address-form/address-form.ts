@@ -13,7 +13,7 @@ import { SelectModule } from "primeng/select";
 import type { Address } from "../../../api/generated/models";
 import { COUNTRIES_OPTIONS, DEFAULT_COUNTRY_OPTION, US_STATES_OPTIONS } from "../../../constants";
 import { findOption } from "../../../utils/select-utils";
-import { ValidationSummary } from "../../form/validation-summary/validation-summary";
+import { ValidationSummary } from "../validation-summary/validation-summary";
 
 @Component({
   selector: "ui-address-form",

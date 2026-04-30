@@ -1,13 +1,13 @@
 import { DatePipe } from "@angular/common";
-import { Component, type OnInit, inject, signal } from "@angular/core";
+import { Component, inject, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import {
   Api,
-  type ApiKeyCreatedDto,
-  type ApiKeyDto,
   createApiKey,
   getApiKeys,
   revokeApiKey,
+  type ApiKeyCreatedDto,
+  type ApiKeyDto,
 } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
@@ -17,7 +17,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { LabeledField } from "@/shared/components";
+import { FormField } from "@/shared/components";
 
 @Component({
   selector: "app-api-keys-table",
@@ -30,7 +30,7 @@ import { LabeledField } from "@/shared/components";
     MessageModule,
     TableModule,
     TooltipModule,
-    LabeledField,
+    FormField,
     DatePipe,
     ProgressSpinnerModule,
   ],

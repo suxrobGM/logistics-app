@@ -15,7 +15,7 @@
           <ui-surface>
             <ui-grid container spacing="4">
               <ui-grid [size]="{ xs: 12, md: 6 }">
-                <ui-labeled-field
+                <ui-form-field
                   label="Container Number"
                   for="number"
                   [required]="true"
@@ -28,35 +28,35 @@
                     formControlName="number"
                     placeholder="MSCU1234567"
                   />
-                </ui-labeled-field>
+                </ui-form-field>
               </ui-grid>
 
               <ui-grid [size]="{ xs: 12, md: 6 }">
-                <ui-labeled-field label="ISO Type" for="isoType" [required]="true">
+                <ui-form-field label="ISO Type" for="isoType" [required]="true">
                   <p-select
                     formControlName="isoType"
                     [options]="isoTypeOptions"
                     placeholder="Select ISO type"
                   />
-                </ui-labeled-field>
+                </ui-form-field>
               </ui-grid>
 
               <ui-grid [size]="{ xs: 12, md: 6 }">
-                <ui-labeled-field label="Seal Number" for="sealNumber">
+                <ui-form-field label="Seal Number" for="sealNumber">
                   <input pInputText id="sealNumber" formControlName="sealNumber" />
-                </ui-labeled-field>
+                </ui-form-field>
               </ui-grid>
 
               <ui-grid [size]="{ xs: 12, md: 6 }">
-                <ui-labeled-field label="Booking Reference" for="bookingReference">
+                <ui-form-field label="Booking Reference" for="bookingReference">
                   <input pInputText id="bookingReference" formControlName="bookingReference" />
-                </ui-labeled-field>
+                </ui-form-field>
               </ui-grid>
 
               <ui-grid [size]="12">
-                <ui-labeled-field label="Bill of Lading Number" for="billOfLadingNumber">
+                <ui-form-field label="Bill of Lading Number" for="billOfLadingNumber">
                   <input pInputText id="billOfLadingNumber" formControlName="billOfLadingNumber" />
-                </ui-labeled-field>
+                </ui-form-field>
               </ui-grid>
             </ui-grid>
           </ui-surface>
@@ -71,18 +71,18 @@
           <ui-surface>
             <ui-grid container spacing="4">
               <ui-grid [size]="{ xs: 12, md: 6 }">
-                <ui-labeled-field label="Gross Weight (kg)" for="grossWeight">
+                <ui-form-field label="Gross Weight (kg)" for="grossWeight">
                   <p-input-number id="grossWeight" formControlName="grossWeight" [min]="0" />
-                </ui-labeled-field>
+                </ui-form-field>
               </ui-grid>
 
               <ui-grid [size]="{ xs: 12, md: 6 }">
-                <ui-labeled-field label="Status" for="isLaden">
+                <ui-form-field label="Status" for="isLaden">
                   <ui-stack direction="row" gap="2" align="center">
                     <p-checkbox formControlName="isLaden" [binary]="true" inputId="isLaden" />
                     <label for="isLaden" class="cursor-pointer">Laden (loaded with cargo)</label>
                   </ui-stack>
-                </ui-labeled-field>
+                </ui-form-field>
               </ui-grid>
             </ui-grid>
           </ui-surface>
@@ -95,9 +95,9 @@
             <ui-typography variant="overline" color="secondary">Current Location</ui-typography>
           </ui-stack>
           <ui-surface>
-            <ui-labeled-field label="Current Terminal" for="currentTerminal" class="mb-0">
+            <ui-form-field label="Current Terminal" for="currentTerminal" class="mb-0">
               <app-search-terminal formControlName="currentTerminal" />
-            </ui-labeled-field>
+            </ui-form-field>
           </ui-surface>
         </ui-stack>
 
@@ -108,9 +108,9 @@
             <ui-typography variant="overline" color="secondary">Notes</ui-typography>
           </ui-stack>
           <ui-surface>
-            <ui-labeled-field label="Notes" for="notes" class="mb-0">
+            <ui-form-field label="Notes" for="notes" class="mb-0">
               <textarea pTextarea id="notes" formControlName="notes" rows="3"></textarea>
-            </ui-labeled-field>
+            </ui-form-field>
           </ui-surface>
         </ui-stack>
 

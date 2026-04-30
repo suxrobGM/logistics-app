@@ -12,7 +12,7 @@
   } @else {
     <form [formGroup]="form" (ngSubmit)="submit()">
       @if (!isEditMode) {
-        <ui-labeled-field
+        <ui-form-field
           label="Employee"
           for="employeeId"
           [required]="true"
@@ -30,10 +30,10 @@
             [filter]="true"
             filterBy="fullName"
           />
-        </ui-labeled-field>
+        </ui-form-field>
       }
 
-      <ui-labeled-field label="Date" for="date" [required]="true" [control]="form.controls.date">
+      <ui-form-field label="Date" for="date" [required]="true" [control]="form.controls.date">
         <p-datepicker
           formControlName="date"
           id="date"
@@ -42,10 +42,10 @@
           appendTo="body"
           styleClass="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
       <div class="grid grid-cols-2 gap-4">
-        <ui-labeled-field
+        <ui-form-field
           label="Start Time"
           for="startTime"
           [required]="true"
@@ -60,9 +60,9 @@
             styleClass="w-full"
             (onSelect)="calculateHours()"
           />
-        </ui-labeled-field>
+        </ui-form-field>
 
-        <ui-labeled-field
+        <ui-form-field
           label="End Time"
           for="endTime"
           [required]="true"
@@ -77,7 +77,7 @@
             styleClass="w-full"
             (onSelect)="calculateHours()"
           />
-        </ui-labeled-field>
+        </ui-form-field>
       </div>
 
       @if (timeError()) {
@@ -88,7 +88,7 @@
       }
 
       <div class="grid grid-cols-2 gap-4">
-        <ui-labeled-field
+        <ui-form-field
           label="Total Hours"
           for="totalHours"
           hint="Calculated from start and end time"
@@ -103,9 +103,9 @@
             [max]="24"
             styleClass="w-full"
           />
-        </ui-labeled-field>
+        </ui-form-field>
 
-        <ui-labeled-field label="Type" for="type" [required]="true" [control]="form.controls.type">
+        <ui-form-field label="Type" for="type" [required]="true" [control]="form.controls.type">
           <p-select
             formControlName="type"
             id="type"
@@ -115,10 +115,10 @@
             optionValue="value"
             optionLabel="label"
           />
-        </ui-labeled-field>
+        </ui-form-field>
       </div>
 
-      <ui-labeled-field label="Notes" for="notes" hint="Optional notes about this entry">
+      <ui-form-field label="Notes" for="notes" hint="Optional notes about this entry">
         <textarea
           pTextarea
           id="notes"
@@ -127,7 +127,7 @@
           placeholder="Add notes..."
           class="w-full"
         ></textarea>
-      </ui-labeled-field>
+      </ui-form-field>
 
       <div class="flex justify-end gap-2 mt-4">
         <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />

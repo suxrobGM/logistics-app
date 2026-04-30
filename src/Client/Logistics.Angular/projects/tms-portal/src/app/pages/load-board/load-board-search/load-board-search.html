@@ -26,7 +26,7 @@
   <form [formGroup]="searchForm" (ngSubmit)="searchLoads()">
     <div class="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
       <!-- Origin -->
-      <ui-labeled-field label="Origin City" for="originCity">
+      <ui-form-field label="Origin City" for="originCity">
         <input
           pInputText
           id="originCity"
@@ -34,9 +34,9 @@
           class="w-full"
           placeholder="e.g., Los Angeles"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Origin State" for="originState">
+      <ui-form-field label="Origin State" for="originState">
         <input
           pInputText
           id="originState"
@@ -44,9 +44,9 @@
           class="w-full"
           placeholder="e.g., CA"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Origin Radius ({{ distanceUnitLabel() }})" for="originRadius">
+      <ui-form-field label="Origin Radius ({{ distanceUnitLabel() }})" for="originRadius">
         <p-inputNumber
           id="originRadius"
           formControlName="originRadius"
@@ -55,10 +55,10 @@
           class="w-full"
           inputStyleClass="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
       <!-- Destination -->
-      <ui-labeled-field label="Destination City" for="destinationCity">
+      <ui-form-field label="Destination City" for="destinationCity">
         <input
           pInputText
           id="destinationCity"
@@ -66,9 +66,9 @@
           class="w-full"
           placeholder="e.g., Dallas"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Destination State" for="destinationState">
+      <ui-form-field label="Destination State" for="destinationState">
         <input
           pInputText
           id="destinationState"
@@ -76,9 +76,9 @@
           class="w-full"
           placeholder="e.g., TX"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Dest. Radius ({{ distanceUnitLabel() }})" for="destinationRadius">
+      <ui-form-field label="Dest. Radius ({{ distanceUnitLabel() }})" for="destinationRadius">
         <p-inputNumber
           id="destinationRadius"
           formControlName="destinationRadius"
@@ -87,10 +87,10 @@
           class="w-full"
           inputStyleClass="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
       <!-- Dates -->
-      <ui-labeled-field label="Pickup From" for="pickupDateStart">
+      <ui-form-field label="Pickup From" for="pickupDateStart">
         <p-datePicker
           id="pickupDateStart"
           formControlName="pickupDateStart"
@@ -99,9 +99,9 @@
           class="w-full"
           inputStyleClass="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Pickup To" for="pickupDateEnd">
+      <ui-form-field label="Pickup To" for="pickupDateEnd">
         <p-datePicker
           id="pickupDateEnd"
           formControlName="pickupDateEnd"
@@ -110,10 +110,10 @@
           class="w-full"
           inputStyleClass="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
       <!-- Equipment -->
-      <ui-labeled-field label="Equipment Types" for="equipmentTypes">
+      <ui-form-field label="Equipment Types" for="equipmentTypes">
         <p-multiSelect
           id="equipmentTypes"
           formControlName="equipmentTypes"
@@ -124,9 +124,9 @@
           class="w-full"
           [style]="{ width: '100%' }"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Max Results" for="maxResults">
+      <ui-form-field label="Max Results" for="maxResults">
         <p-inputNumber
           id="maxResults"
           formControlName="maxResults"
@@ -135,7 +135,7 @@
           class="w-full"
           inputStyleClass="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
 
     <div class="mt-4 flex justify-end">
@@ -277,7 +277,7 @@
     </div>
 
     <form [formGroup]="bookForm">
-      <ui-labeled-field label="Assign Truck" for="truckId">
+      <ui-form-field label="Assign Truck" for="truckId">
         <p-select
           id="truckId"
           formControlName="truckId"
@@ -295,9 +295,9 @@
             </div>
           </ng-template>
         </p-select>
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Contact Name" for="contactName">
+      <ui-form-field label="Contact Name" for="contactName">
         <input
           pInputText
           id="contactName"
@@ -305,9 +305,9 @@
           class="w-full"
           placeholder="Your name"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Contact Phone" for="contactPhone">
+      <ui-form-field label="Contact Phone" for="contactPhone">
         <input
           pInputText
           id="contactPhone"
@@ -315,9 +315,9 @@
           class="w-full"
           placeholder="Your phone number"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Contact Email" for="contactEmail">
+      <ui-form-field label="Contact Email" for="contactEmail">
         <input
           pInputText
           id="contactEmail"
@@ -325,9 +325,9 @@
           class="w-full"
           placeholder="Your email"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Notes" for="notes">
+      <ui-form-field label="Notes" for="notes">
         <input
           pInputText
           id="notes"
@@ -335,7 +335,7 @@
           class="w-full"
           placeholder="Additional notes for the broker"
         />
-      </ui-labeled-field>
+      </ui-form-field>
     </form>
 
     <div class="bg-info/10 mt-3 rounded p-3 text-sm">

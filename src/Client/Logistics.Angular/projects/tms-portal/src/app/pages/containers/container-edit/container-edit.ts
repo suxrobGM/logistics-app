@@ -15,7 +15,7 @@ import {
   type UpdateContainerStatusCommand,
 } from "@logistics/shared/api";
 import { containerIsoTypeOptions, containerStatusOptions } from "@logistics/shared/api/enums";
-import { LabeledField, ValidationSummary } from "@logistics/shared/components";
+import { FormField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
@@ -44,7 +44,7 @@ import { SearchTerminal } from "@/shared/components/search";
     Select,
     TagModule,
     TextareaModule,
-    LabeledField,
+    FormField,
     ValidationSummary,
     PageHeader,
     SearchTerminal,

@@ -83,11 +83,11 @@
   [style]="{ width: '500px' }"
 >
   <form [formGroup]="form" class="space-y-4">
-    <ui-labeled-field label="Description" [required]="true">
+    <ui-form-field label="Description" [required]="true">
       <input pInputText formControlName="description" class="w-full" />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Type" [required]="true">
+    <ui-form-field label="Type" [required]="true">
       <p-select
         formControlName="type"
         [options]="typeOptions"
@@ -95,26 +95,26 @@
         optionValue="value"
         styleClass="w-full"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
     <div class="grid grid-cols-2 gap-4">
-      <ui-labeled-field label="Amount" [required]="true">
+      <ui-form-field label="Amount" [required]="true">
         <p-inputnumber
           formControlName="amount"
           mode="currency"
           currency="USD"
           styleClass="w-full"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Quantity" [required]="true">
+      <ui-form-field label="Quantity" [required]="true">
         <p-inputnumber formControlName="quantity" [min]="1" styleClass="w-full" />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
 
-    <ui-labeled-field label="Notes">
+    <ui-form-field label="Notes">
       <textarea pTextarea formControlName="notes" rows="2" class="w-full"></textarea>
-    </ui-labeled-field>
+    </ui-form-field>
   </form>
 
   <ng-template #footer>

@@ -14,7 +14,7 @@
 
       @if (!importResult()) {
         <!-- Truck Selection (Optional) -->
-        <ui-labeled-field
+        <ui-form-field
           label="Assign Truck"
           [required]="false"
           hint="Optionally select a truck to assign to the imported load"
@@ -23,7 +23,7 @@
             [selectedTruck]="selectedTruck()"
             (selectedTruckChange)="selectedTruck.set($event)"
           />
-        </ui-labeled-field>
+        </ui-form-field>
 
         <p-fileUpload
           mode="advanced"

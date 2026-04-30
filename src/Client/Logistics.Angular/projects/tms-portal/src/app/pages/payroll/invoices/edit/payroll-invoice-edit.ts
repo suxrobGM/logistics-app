@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, type OnInit, inject, input, signal } from "@angular/core";
+import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import {
@@ -8,13 +8,11 @@ import {
   getInvoiceById,
   previewPayrollInvoice,
   updatePayrollInvoice,
-} from "@logistics/shared/api";
-import type {
-  EmployeeDto,
-  InvoiceDto,
-  InvoiceLineItemDto,
-  SalaryType,
-  UpdatePayrollInvoiceCommand,
+  type EmployeeDto,
+  type InvoiceDto,
+  type InvoiceLineItemDto,
+  type SalaryType,
+  type UpdatePayrollInvoiceCommand,
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
@@ -24,7 +22,7 @@ import { DatePicker } from "primeng/datepicker";
 import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
-import { LabeledField, PageHeader } from "@/shared/components";
+import { FormField, PageHeader } from "@/shared/components";
 import { DateUtils, PredefinedDateRanges } from "@/shared/utils";
 import { PayrollLineItemsTable, PayrollPaySummary } from "../../components";
 
@@ -34,7 +32,7 @@ import { PayrollLineItemsTable, PayrollPaySummary } from "../../components";
   imports: [
     CommonModule,
     CardModule,
-    LabeledField,
+    FormField,
     RouterModule,
     AutoCompleteModule,
     ProgressSpinnerModule,

@@ -12,7 +12,7 @@
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="mb-4 grid grid-cols-12 gap-4">
           <div class="col-span-12">
-            <ui-labeled-field label="Tenant" [required]="true">
+            <ui-form-field label="Tenant" [required]="true">
               <p-select
                 formControlName="tenantId"
                 [options]="tenantOptions()"
@@ -23,7 +23,7 @@
                 filterPlaceholder="Search tenants..."
                 styleClass="w-full"
               />
-            </ui-labeled-field>
+            </ui-form-field>
             @if (tenantOptions().length === 0) {
               <p class="mt-1 text-sm text-orange-500">
                 <i class="pi pi-info-circle mr-1"></i>
@@ -35,7 +35,7 @@
 
         <div class="mb-4 grid grid-cols-12 gap-4">
           <div class="col-span-12">
-            <ui-labeled-field label="Subscription Plan" [required]="true">
+            <ui-form-field label="Subscription Plan" [required]="true">
               <p-select
                 formControlName="planId"
                 [options]="planOptions()"
@@ -44,7 +44,7 @@
                 placeholder="Select a plan"
                 styleClass="w-full"
               />
-            </ui-labeled-field>
+            </ui-form-field>
             @if (planOptions().length === 0) {
               <p class="mt-1 text-sm text-orange-500">
                 <i class="pi pi-info-circle mr-1"></i>

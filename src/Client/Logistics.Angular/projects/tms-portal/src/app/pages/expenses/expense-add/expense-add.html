@@ -23,7 +23,7 @@
             class="space-y-4 pt-4"
           >
             <div class="grid grid-cols-2 gap-4">
-              <ui-labeled-field label="Amount" for="company-amount" [required]="true">
+              <ui-form-field label="Amount" for="company-amount" [required]="true">
                 <p-inputNumber
                   id="company-amount"
                   formControlName="amount"
@@ -32,9 +32,9 @@
                   [min]="0"
                   styleClass="w-full"
                 />
-              </ui-labeled-field>
+              </ui-form-field>
 
-              <ui-labeled-field label="Category" for="company-category" [required]="true">
+              <ui-form-field label="Category" for="company-category" [required]="true">
                 <p-select
                   id="company-category"
                   formControlName="category"
@@ -43,25 +43,25 @@
                   optionValue="value"
                   styleClass="w-full"
                 />
-              </ui-labeled-field>
+              </ui-form-field>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-              <ui-labeled-field label="Vendor Name" for="company-vendor">
+              <ui-form-field label="Vendor Name" for="company-vendor">
                 <input pInputText id="company-vendor" formControlName="vendorName" class="w-full" />
-              </ui-labeled-field>
+              </ui-form-field>
 
-              <ui-labeled-field label="Expense Date" for="company-date" [required]="true">
+              <ui-form-field label="Expense Date" for="company-date" [required]="true">
                 <p-datepicker
                   id="company-date"
                   formControlName="expenseDate"
                   [showIcon]="true"
                   styleClass="w-full"
                 />
-              </ui-labeled-field>
+              </ui-form-field>
             </div>
 
-            <ui-labeled-field label="Notes" for="company-notes">
+            <ui-form-field label="Notes" for="company-notes">
               <textarea
                 pInputTextarea
                 id="company-notes"
@@ -69,9 +69,9 @@
                 rows="3"
                 class="w-full"
               ></textarea>
-            </ui-labeled-field>
+            </ui-form-field>
 
-            <ui-labeled-field label="Receipt (Optional)">
+            <ui-form-field label="Receipt (Optional)">
               <p-fileUpload
                 mode="basic"
                 [auto]="true"
@@ -85,7 +85,7 @@
                   Receipt attached
                 </span>
               }
-            </ui-labeled-field>
+            </ui-form-field>
 
             <div class="flex justify-end gap-2 pt-4">
               <p-button label="Cancel" [routerLink]="['/expenses']" [outlined]="true" />
@@ -103,7 +103,7 @@
         <p-tabpanel [value]="1">
           <form [formGroup]="truckForm" (ngSubmit)="submitTruckExpense()" class="space-y-4 pt-4">
             <div class="grid grid-cols-2 gap-4">
-              <ui-labeled-field label="Amount" for="truck-amount" [required]="true">
+              <ui-form-field label="Amount" for="truck-amount" [required]="true">
                 <p-inputNumber
                   id="truck-amount"
                   formControlName="amount"
@@ -112,9 +112,9 @@
                   [min]="0"
                   styleClass="w-full"
                 />
-              </ui-labeled-field>
+              </ui-form-field>
 
-              <ui-labeled-field label="Category" for="truck-category" [required]="true">
+              <ui-form-field label="Category" for="truck-category" [required]="true">
                 <p-select
                   id="truck-category"
                   formControlName="category"
@@ -123,11 +123,11 @@
                   optionValue="value"
                   styleClass="w-full"
                 />
-              </ui-labeled-field>
+              </ui-form-field>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-              <ui-labeled-field label="Truck" for="truck-select" [required]="true">
+              <ui-form-field label="Truck" for="truck-select" [required]="true">
                 <p-select
                   id="truck-select"
                   formControlName="truckId"
@@ -137,24 +137,24 @@
                   placeholder="Select a truck"
                   styleClass="w-full"
                 />
-              </ui-labeled-field>
+              </ui-form-field>
 
-              <ui-labeled-field label="Expense Date" for="truck-date" [required]="true">
+              <ui-form-field label="Expense Date" for="truck-date" [required]="true">
                 <p-datepicker
                   id="truck-date"
                   formControlName="expenseDate"
                   [showIcon]="true"
                   styleClass="w-full"
                 />
-              </ui-labeled-field>
+              </ui-form-field>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-              <ui-labeled-field label="Vendor Name" for="truck-vendor">
+              <ui-form-field label="Vendor Name" for="truck-vendor">
                 <input pInputText id="truck-vendor" formControlName="vendorName" class="w-full" />
-              </ui-labeled-field>
+              </ui-form-field>
 
-              <ui-labeled-field label="Odometer Reading" for="truck-odometer">
+              <ui-form-field label="Odometer Reading" for="truck-odometer">
                 <p-inputNumber
                   id="truck-odometer"
                   formControlName="odometerReading"
@@ -162,10 +162,10 @@
                   suffix=" mi"
                   styleClass="w-full"
                 />
-              </ui-labeled-field>
+              </ui-form-field>
             </div>
 
-            <ui-labeled-field label="Notes" for="truck-notes">
+            <ui-form-field label="Notes" for="truck-notes">
               <textarea
                 pInputTextarea
                 id="truck-notes"
@@ -173,9 +173,9 @@
                 rows="3"
                 class="w-full"
               ></textarea>
-            </ui-labeled-field>
+            </ui-form-field>
 
-            <ui-labeled-field label="Receipt (Optional)">
+            <ui-form-field label="Receipt (Optional)">
               <p-fileUpload
                 mode="basic"
                 [auto]="true"
@@ -189,7 +189,7 @@
                   Receipt attached
                 </span>
               }
-            </ui-labeled-field>
+            </ui-form-field>
 
             <div class="flex justify-end gap-2 pt-4">
               <p-button label="Cancel" [routerLink]="['/expenses']" [outlined]="true" />
@@ -211,7 +211,7 @@
             class="space-y-4 pt-4"
           >
             <div class="grid grid-cols-2 gap-4">
-              <ui-labeled-field label="Amount" for="bodyshop-amount" [required]="true">
+              <ui-form-field label="Amount" for="bodyshop-amount" [required]="true">
                 <p-inputNumber
                   id="bodyshop-amount"
                   formControlName="amount"
@@ -220,9 +220,9 @@
                   [min]="0"
                   styleClass="w-full"
                 />
-              </ui-labeled-field>
+              </ui-form-field>
 
-              <ui-labeled-field label="Truck" for="bodyshop-truck" [required]="true">
+              <ui-form-field label="Truck" for="bodyshop-truck" [required]="true">
                 <p-select
                   id="bodyshop-truck"
                   formControlName="truckId"
@@ -232,50 +232,50 @@
                   placeholder="Select a truck"
                   styleClass="w-full"
                 />
-              </ui-labeled-field>
+              </ui-form-field>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-              <ui-labeled-field label="Body Shop Name" for="bodyshop-vendor">
+              <ui-form-field label="Body Shop Name" for="bodyshop-vendor">
                 <input
                   pInputText
                   id="bodyshop-vendor"
                   formControlName="vendorName"
                   class="w-full"
                 />
-              </ui-labeled-field>
+              </ui-form-field>
 
-              <ui-labeled-field label="Expense Date" for="bodyshop-date" [required]="true">
+              <ui-form-field label="Expense Date" for="bodyshop-date" [required]="true">
                 <p-datepicker
                   id="bodyshop-date"
                   formControlName="expenseDate"
                   [showIcon]="true"
                   styleClass="w-full"
                 />
-              </ui-labeled-field>
+              </ui-form-field>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-              <ui-labeled-field label="Shop Address" for="bodyshop-address">
+              <ui-form-field label="Shop Address" for="bodyshop-address">
                 <input
                   pInputText
                   id="bodyshop-address"
                   formControlName="vendorAddress"
                   class="w-full"
                 />
-              </ui-labeled-field>
+              </ui-form-field>
 
-              <ui-labeled-field label="Shop Phone" for="bodyshop-phone">
+              <ui-form-field label="Shop Phone" for="bodyshop-phone">
                 <input
                   pInputText
                   id="bodyshop-phone"
                   formControlName="vendorPhone"
                   class="w-full"
                 />
-              </ui-labeled-field>
+              </ui-form-field>
             </div>
 
-            <ui-labeled-field label="Repair Description" for="bodyshop-description">
+            <ui-form-field label="Repair Description" for="bodyshop-description">
               <textarea
                 pInputTextarea
                 id="bodyshop-description"
@@ -283,29 +283,29 @@
                 rows="3"
                 class="w-full"
               ></textarea>
-            </ui-labeled-field>
+            </ui-form-field>
 
             <div class="grid grid-cols-2 gap-4">
-              <ui-labeled-field label="Estimated Completion" for="bodyshop-est-date">
+              <ui-form-field label="Estimated Completion" for="bodyshop-est-date">
                 <p-datepicker
                   id="bodyshop-est-date"
                   formControlName="estimatedCompletionDate"
                   [showIcon]="true"
                   styleClass="w-full"
                 />
-              </ui-labeled-field>
+              </ui-form-field>
 
-              <ui-labeled-field label="Actual Completion" for="bodyshop-actual-date">
+              <ui-form-field label="Actual Completion" for="bodyshop-actual-date">
                 <p-datepicker
                   id="bodyshop-actual-date"
                   formControlName="actualCompletionDate"
                   [showIcon]="true"
                   styleClass="w-full"
                 />
-              </ui-labeled-field>
+              </ui-form-field>
             </div>
 
-            <ui-labeled-field label="Notes" for="bodyshop-notes">
+            <ui-form-field label="Notes" for="bodyshop-notes">
               <textarea
                 pInputTextarea
                 id="bodyshop-notes"
@@ -313,9 +313,9 @@
                 rows="3"
                 class="w-full"
               ></textarea>
-            </ui-labeled-field>
+            </ui-form-field>
 
-            <ui-labeled-field label="Receipt (Optional)">
+            <ui-form-field label="Receipt (Optional)">
               <p-fileUpload
                 mode="basic"
                 [auto]="true"
@@ -329,7 +329,7 @@
                   Receipt attached
                 </span>
               }
-            </ui-labeled-field>
+            </ui-form-field>
 
             <div class="flex justify-end gap-2 pt-4">
               <p-button label="Cancel" [routerLink]="['/expenses']" [outlined]="true" />

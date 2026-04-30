@@ -11,9 +11,9 @@ import {
 import { containerIsoTypeOptions } from "@logistics/shared/api/enums";
 import {
   Container,
+  FormField,
   Grid,
   Icon,
-  LabeledField,
   Stack,
   Surface,
   Typography,
@@ -43,7 +43,7 @@ import { SearchTerminal } from "@/shared/components/search";
     InputNumberModule,
     Select,
     TextareaModule,
-    LabeledField,
+    FormField,
     ValidationSummary,
     PageHeader,
     SearchTerminal,

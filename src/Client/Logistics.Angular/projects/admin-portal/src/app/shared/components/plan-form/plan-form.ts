@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angula
 import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import type { BillingInterval, LlmModelTier, PlanTier } from "@logistics/shared/api";
-import { CurrencyInput, LabeledField, ValidationSummary } from "@logistics/shared/components";
+import { CurrencyInput, FormField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
@@ -52,7 +52,7 @@ const INTERVAL_OPTIONS = [
     ReactiveFormsModule,
     RouterLink,
     ProgressSpinnerModule,
-    LabeledField,
+    FormField,
     InputTextModule,
     TextareaModule,
     InputNumberModule,

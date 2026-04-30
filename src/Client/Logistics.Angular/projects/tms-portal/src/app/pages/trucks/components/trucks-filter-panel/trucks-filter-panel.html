@@ -17,11 +17,11 @@
   </div>
 
   <div class="grid grid-cols-1 gap-x-4 md:grid-cols-3">
-    <ui-labeled-field label="Search">
+    <ui-form-field label="Search">
       <ui-search-input class="w-full" (searchChange)="onSearch($event)" />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Status">
+    <ui-form-field label="Status">
       <p-multiselect
         [options]="statusOptions"
         [(ngModel)]="selectedStatuses"
@@ -30,9 +30,9 @@
         (onChange)="applyFilters()"
         class="w-full"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Type">
+    <ui-form-field label="Type">
       <p-multiselect
         [options]="typeOptions"
         [(ngModel)]="selectedTypes"
@@ -41,6 +41,6 @@
         (onChange)="applyFilters()"
         class="w-full"
       />
-    </ui-labeled-field>
+    </ui-form-field>
   </div>
 </p-card>

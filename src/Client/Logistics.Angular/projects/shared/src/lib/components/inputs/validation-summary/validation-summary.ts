@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, DestroyRef, type OnInit, inject, input, signal } from "@angular/core";
+import { Component, DestroyRef, inject, input, signal, type OnInit } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormGroup } from "@angular/forms";
 

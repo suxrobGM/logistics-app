@@ -1,7 +1,7 @@
 import { Component, inject, model, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Api, createDemoRequest } from "@logistics/shared/api";
-import { LabeledField, PhoneInput } from "@logistics/shared/components";
+import { FormField, PhoneInput } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -19,7 +19,7 @@ import { TextareaModule } from "primeng/textarea";
     SelectModule,
     TextareaModule,
     PhoneInput,
-    LabeledField,
+    FormField,
   ],
 })
 export class DemoDialog {

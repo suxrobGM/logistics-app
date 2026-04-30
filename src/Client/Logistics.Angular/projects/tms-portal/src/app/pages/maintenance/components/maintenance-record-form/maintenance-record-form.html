@@ -9,11 +9,11 @@
     <ui-validation-summary [form]="form" />
 
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <ui-labeled-field label="Truck" for="truck" [required]="true">
+      <ui-form-field label="Truck" for="truck" [required]="true">
         <app-search-truck formControlName="truck" />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Service Type" for="type" [required]="true">
+      <ui-form-field label="Service Type" for="type" [required]="true">
         <p-select
           formControlName="type"
           id="type"
@@ -23,10 +23,10 @@
           optionValue="value"
           placeholder="Select service type"
         />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
 
-    <ui-labeled-field label="Description" for="description" [required]="true" class="mt-4">
+    <ui-form-field label="Description" for="description" [required]="true" class="mt-4">
       <textarea
         pInputTextarea
         formControlName="description"
@@ -35,10 +35,10 @@
         rows="2"
         placeholder="Describe the maintenance performed..."
       ></textarea>
-    </ui-labeled-field>
+    </ui-form-field>
 
     <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
-      <ui-labeled-field label="Service Date" for="serviceDate" [required]="true">
+      <ui-form-field label="Service Date" for="serviceDate" [required]="true">
         <p-datepicker
           formControlName="serviceDate"
           id="serviceDate"
@@ -47,9 +47,9 @@
           [fluid]="true"
           dateFormat="mm/dd/yy"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Odometer Reading" for="odometerReading">
+      <ui-form-field label="Odometer Reading" for="odometerReading">
         <p-inputnumber
           formControlName="odometerReading"
           id="odometerReading"
@@ -57,9 +57,9 @@
           [useGrouping]="true"
           suffix=" mi"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Engine Hours" for="engineHours">
+      <ui-form-field label="Engine Hours" for="engineHours">
         <p-inputnumber
           formControlName="engineHours"
           id="engineHours"
@@ -67,11 +67,11 @@
           [useGrouping]="true"
           suffix=" hrs"
         />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
 
     <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-      <ui-labeled-field label="Vendor Name" for="vendorName">
+      <ui-form-field label="Vendor Name" for="vendorName">
         <input
           pInputText
           id="vendorName"
@@ -79,9 +79,9 @@
           class="w-full"
           placeholder="Service provider name"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Invoice Number" for="invoiceNumber">
+      <ui-form-field label="Invoice Number" for="invoiceNumber">
         <input
           pInputText
           id="invoiceNumber"
@@ -89,11 +89,11 @@
           class="w-full"
           placeholder="INV-12345"
         />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
 
     <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-      <ui-labeled-field label="Labor Cost" for="laborCost">
+      <ui-form-field label="Labor Cost" for="laborCost">
         <p-inputnumber
           formControlName="laborCost"
           id="laborCost"
@@ -102,9 +102,9 @@
           currency="USD"
           locale="en-US"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Parts Cost" for="partsCost">
+      <ui-form-field label="Parts Cost" for="partsCost">
         <p-inputnumber
           formControlName="partsCost"
           id="partsCost"
@@ -113,10 +113,10 @@
           currency="USD"
           locale="en-US"
         />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
 
-    <ui-labeled-field label="Notes" for="notes" class="mt-4">
+    <ui-form-field label="Notes" for="notes" class="mt-4">
       <textarea
         pInputTextarea
         formControlName="notes"
@@ -125,7 +125,7 @@
         rows="3"
         placeholder="Additional notes about this service..."
       ></textarea>
-    </ui-labeled-field>
+    </ui-form-field>
 
     <div class="mt-6 flex gap-2">
       <p-button type="submit" icon="pi pi-check" label="Save" [disabled]="isLoading()" />

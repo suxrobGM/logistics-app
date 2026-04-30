@@ -2,17 +2,13 @@ import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
 import {
   Api,
-  type TenantQuotaUsageDto,
   formatSortField,
   getTenantQuotaUsages,
   resetTenantQuotas,
+  type TenantQuotaUsageDto,
 } from "@logistics/shared/api";
 import type { PagedResponse } from "@logistics/shared/api/models";
-import {
-  BaseTableComponent,
-  PageHeader,
-  type TableQueryParams,
-} from "@logistics/shared/components";
+import { BaseTable, PageHeader, type TableQueryParams } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressBar } from "primeng/progressbar";
@@ -36,7 +32,7 @@ import { ToastService } from "@/core/services";
     CurrencyPipe,
   ],
 })
-export class TenantQuotas extends BaseTableComponent<TenantQuotaUsageDto> {
+export class TenantQuotas extends BaseTable<TenantQuotaUsageDto> {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
 

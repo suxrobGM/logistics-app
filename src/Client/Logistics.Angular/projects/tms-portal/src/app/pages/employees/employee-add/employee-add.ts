@@ -8,8 +8,9 @@ import {
   Validators,
 } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import { Api, createEmployee } from "@logistics/shared/api";
 import {
+  Api,
+  createEmployee,
   type CreateEmployeeCommand,
   type RoleDto,
   type SalaryType,
@@ -27,7 +28,13 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
-import { CurrencyInput, LabeledField, PageHeader, UnitInput, ValidationSummary } from "@/shared/components";
+import {
+  CurrencyInput,
+  FormField,
+  PageHeader,
+  UnitInput,
+  ValidationSummary,
+} from "@/shared/components";
 import { UserService } from "../services";
 
 @Component({
@@ -46,7 +53,7 @@ import { UserService } from "../services";
     RouterLink,
     PageHeader,
     ValidationSummary,
-    LabeledField,
+    FormField,
     InputGroupModule,
     InputGroupAddonModule,
     InputTextModule,

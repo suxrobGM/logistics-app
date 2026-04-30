@@ -1,5 +1,5 @@
 import { Component, input } from "@angular/core";
-import { type FormControl, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule, type FormControl } from "@angular/forms";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputGroupAddonModule } from "primeng/inputgroupaddon";
 import { InputTextModule } from "primeng/inputtext";

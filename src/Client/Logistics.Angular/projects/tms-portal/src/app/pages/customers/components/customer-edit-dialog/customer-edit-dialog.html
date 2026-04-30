@@ -7,7 +7,7 @@
   [draggable]="false"
 >
   <form [formGroup]="form" (ngSubmit)="save()">
-    <ui-labeled-field label="Name" for="name" [required]="true">
+    <ui-form-field label="Name" for="name" [required]="true">
       <input
         pInputText
         formControlName="name"
@@ -15,10 +15,10 @@
         class="w-full"
         placeholder="Customer name"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
     <div class="mt-4 grid grid-cols-2 gap-4">
-      <ui-labeled-field label="Email" for="email">
+      <ui-form-field label="Email" for="email">
         <input
           pInputText
           formControlName="email"
@@ -27,9 +27,9 @@
           class="w-full"
           placeholder="email@example.com"
         />
-      </ui-labeled-field>
+      </ui-form-field>
 
-      <ui-labeled-field label="Phone" for="phone">
+      <ui-form-field label="Phone" for="phone">
         <input
           pInputText
           formControlName="phone"
@@ -38,10 +38,10 @@
           class="w-full"
           placeholder="(555) 555-5555"
         />
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
 
-    <ui-labeled-field label="Status" for="status" class="mt-4">
+    <ui-form-field label="Status" for="status" class="mt-4">
       <p-select
         formControlName="status"
         id="status"
@@ -50,13 +50,13 @@
         optionLabel="label"
         optionValue="value"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Address" class="mt-4">
+    <ui-form-field label="Address" class="mt-4">
       <ui-address-form formControlName="address" [allowedCountries]="allowedCountries()" />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Notes" for="notes" class="mt-4">
+    <ui-form-field label="Notes" for="notes" class="mt-4">
       <textarea
         pInputTextarea
         formControlName="notes"
@@ -65,7 +65,7 @@
         rows="3"
         placeholder="Additional notes about this customer..."
       ></textarea>
-    </ui-labeled-field>
+    </ui-form-field>
 
     <ui-validation-summary [form]="form" class="mt-4" />
 

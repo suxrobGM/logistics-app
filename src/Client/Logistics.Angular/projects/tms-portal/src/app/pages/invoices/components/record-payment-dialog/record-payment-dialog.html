@@ -9,7 +9,7 @@
   <p class="text-muted-color mb-4">Record a cash or check payment received from the customer.</p>
 
   <form [formGroup]="form" (ngSubmit)="save()">
-    <ui-labeled-field label="Amount" for="amount" [required]="true" [control]="form.controls.amount">
+    <ui-form-field label="Amount" for="amount" [required]="true" [control]="form.controls.amount">
       <p-inputNumber
         id="amount"
         formControlName="amount"
@@ -19,9 +19,9 @@
         [min]="0.01"
         class="w-full"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Payment Type" for="type" [required]="true" [control]="form.controls.type">
+    <ui-form-field label="Payment Type" for="type" [required]="true" [control]="form.controls.type">
       <p-select
         id="type"
         formControlName="type"
@@ -30,13 +30,13 @@
         optionValue="value"
         class="w-full"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Reference Number" for="referenceNumber" hint="Check number, receipt ID, etc.">
+    <ui-form-field label="Reference Number" for="referenceNumber" hint="Check number, receipt ID, etc.">
       <input pInputText id="referenceNumber" formControlName="referenceNumber" class="w-full" />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Received Date" for="receivedDate">
+    <ui-form-field label="Received Date" for="receivedDate">
       <p-datepicker
         id="receivedDate"
         formControlName="receivedDate"
@@ -44,9 +44,9 @@
         dateFormat="mm/dd/yy"
         class="w-full"
       />
-    </ui-labeled-field>
+    </ui-form-field>
 
-    <ui-labeled-field label="Notes" for="notes">
+    <ui-form-field label="Notes" for="notes">
       <textarea
         pTextarea
         id="notes"
@@ -55,7 +55,7 @@
         placeholder="Add any additional notes about this payment..."
         class="w-full"
       ></textarea>
-    </ui-labeled-field>
+    </ui-form-field>
 
     <div class="flex justify-end gap-2">
       <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />

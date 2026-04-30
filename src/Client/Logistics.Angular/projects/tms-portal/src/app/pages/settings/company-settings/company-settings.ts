@@ -17,7 +17,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { TenantService, ToastService } from "@/core/services";
-import { LabeledField, ValidationSummary } from "@/shared/components";
+import { FormField, ValidationSummary } from "@/shared/components";
 import { regionAllowedCountries } from "@/shared/utils";
 
 @Component({
@@ -30,7 +30,7 @@ import { regionAllowedCountries } from "@/shared/utils";
     ButtonModule,
     ReactiveFormsModule,
     ValidationSummary,
-    LabeledField,
+    FormField,
     InputTextModule,
     AddressForm,
     PhoneInput,

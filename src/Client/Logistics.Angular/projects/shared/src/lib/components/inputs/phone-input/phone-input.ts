@@ -1,5 +1,5 @@
 import { Component, computed, input, signal } from "@angular/core";
-import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputMaskModule } from "primeng/inputmask";
 import { SelectModule } from "primeng/select";

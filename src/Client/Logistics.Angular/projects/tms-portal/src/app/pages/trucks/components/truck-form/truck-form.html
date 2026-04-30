@@ -19,7 +19,7 @@
           Truck Information
         </h3>
         <div class="border-default bg-elevated rounded-lg border p-4">
-          <ui-labeled-field label="Truck Number" for="truckNumber" [required]="true">
+          <ui-form-field label="Truck Number" for="truckNumber" [required]="true">
             <input
               pInputText
               id="truckNumber"
@@ -27,30 +27,30 @@
               type="text"
               placeholder="e.g., T-001"
             />
-          </ui-labeled-field>
+          </ui-form-field>
 
-          <ui-labeled-field label="Truck Type" for="truckType" [required]="true">
+          <ui-form-field label="Truck Type" for="truckType" [required]="true">
             <p-select
               formControlName="truckType"
               [options]="truckTypes"
               placeholder="Select truck type"
               class="w-full"
             />
-          </ui-labeled-field>
+          </ui-form-field>
 
           @if (mode() === "edit") {
-            <ui-labeled-field label="Status" for="truckStatus" [required]="true">
+            <ui-form-field label="Status" for="truckStatus" [required]="true">
               <p-select
                 formControlName="truckStatus"
                 [options]="truckStatuses"
                 placeholder="Select status"
                 class="w-full"
               />
-            </ui-labeled-field>
+            </ui-form-field>
           }
 
           @if (isCarHauler()) {
-            <ui-labeled-field
+            <ui-form-field
               label="Vehicle Capacity"
               for="vehicleCapacity"
               hint="Maximum number of vehicles this hauler can carry"
@@ -63,7 +63,7 @@
                 [max]="12"
                 placeholder="e.g., 8"
               />
-            </ui-labeled-field>
+            </ui-form-field>
           }
         </div>
       </div>
@@ -78,7 +78,7 @@
         </h3>
         <div class="border-default bg-elevated rounded-lg border p-4">
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <ui-labeled-field label="Make" for="make">
+            <ui-form-field label="Make" for="make">
               <input
                 pInputText
                 id="make"
@@ -86,9 +86,9 @@
                 type="text"
                 placeholder="e.g., Freightliner"
               />
-            </ui-labeled-field>
+            </ui-form-field>
 
-            <ui-labeled-field label="Model" for="model">
+            <ui-form-field label="Model" for="model">
               <input
                 pInputText
                 id="model"
@@ -96,11 +96,11 @@
                 type="text"
                 placeholder="e.g., Cascadia"
               />
-            </ui-labeled-field>
+            </ui-form-field>
           </div>
 
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <ui-labeled-field label="Year" for="year">
+            <ui-form-field label="Year" for="year">
               <p-inputNumber
                 formControlName="year"
                 inputId="year"
@@ -109,9 +109,9 @@
                 [useGrouping]="false"
                 placeholder="e.g., 2023"
               />
-            </ui-labeled-field>
+            </ui-form-field>
 
-            <ui-labeled-field label="VIN" for="vin" hint="17-character Vehicle Identification Number">
+            <ui-form-field label="VIN" for="vin" hint="17-character Vehicle Identification Number">
               <input
                 pInputText
                 id="vin"
@@ -120,7 +120,7 @@
                 placeholder="e.g., 1FUJGLDR5BSAV1234"
                 maxlength="17"
               />
-            </ui-labeled-field>
+            </ui-form-field>
           </div>
         </div>
       </div>
@@ -135,7 +135,7 @@
         </h3>
         <div class="border-default bg-elevated rounded-lg border p-4">
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <ui-labeled-field label="License Plate" for="licensePlate">
+            <ui-form-field label="License Plate" for="licensePlate">
               <input
                 pInputText
                 id="licensePlate"
@@ -143,9 +143,9 @@
                 type="text"
                 placeholder="e.g., ABC-1234"
               />
-            </ui-labeled-field>
+            </ui-form-field>
 
-            <ui-labeled-field label="License Plate State" for="licensePlateState" class="mb-0">
+            <ui-form-field label="License Plate State" for="licensePlateState" class="mb-0">
               <input
                 pInputText
                 id="licensePlateState"
@@ -154,7 +154,7 @@
                 placeholder="e.g., TX"
                 maxlength="2"
               />
-            </ui-labeled-field>
+            </ui-form-field>
           </div>
         </div>
       </div>
@@ -168,7 +168,7 @@
           Driver Assignment
         </h3>
         <div class="border-default bg-elevated rounded-lg border p-4">
-          <ui-labeled-field label="Main Driver" for="mainDriver">
+          <ui-form-field label="Main Driver" for="mainDriver">
             <p-autocomplete
               formControlName="mainDriver"
               class="w-full"
@@ -179,9 +179,9 @@
               [suggestions]="suggestedDrivers()"
               (completeMethod)="searchDriver($event)"
             />
-          </ui-labeled-field>
+          </ui-form-field>
 
-          <ui-labeled-field label="Secondary Driver" for="secondaryDriver" class="mb-0">
+          <ui-form-field label="Secondary Driver" for="secondaryDriver" class="mb-0">
             <p-autocomplete
               formControlName="secondaryDriver"
               class="w-full"
@@ -192,7 +192,7 @@
               [suggestions]="suggestedDrivers()"
               (completeMethod)="searchDriver($event)"
             />
-          </ui-labeled-field>
+          </ui-form-field>
         </div>
       </div>
 

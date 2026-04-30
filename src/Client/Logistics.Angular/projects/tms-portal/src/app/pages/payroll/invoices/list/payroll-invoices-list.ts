@@ -8,8 +8,10 @@ import {
   approvePayrollInvoice,
   batchApprovePayroll,
   rejectPayrollInvoice,
+  type InvoiceDto,
+  type InvoiceStatus,
+  type SalaryType,
 } from "@logistics/shared/api";
-import { type InvoiceDto, type InvoiceStatus, type SalaryType } from "@logistics/shared/api";
 import { invoiceStatusOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
 import type { SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
@@ -23,8 +25,8 @@ import { ToastService } from "@/core/services";
 import {
   DataContainer,
   DateRangePicker,
+  FormField,
   InvoiceStatusTag,
-  LabeledField,
   SearchInput,
 } from "@/shared/components";
 import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
@@ -46,7 +48,7 @@ import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
     MultiSelectModule,
     DateRangePicker,
     SearchInput,
-    LabeledField,
+    FormField,
     DialogModule,
     TextareaModule,
   ],

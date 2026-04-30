@@ -17,7 +17,7 @@
         <ng-template #title>Pay Period Details</ng-template>
 
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <ui-labeled-field label="Employee">
+          <ui-form-field label="Employee">
             <p-autocomplete
               formControlName="employee"
               class="w-full"
@@ -29,9 +29,9 @@
               (completeMethod)="searchEmployee($event)"
               (onSelect)="handleAutoCompleteSelectEvent($event)"
             />
-          </ui-labeled-field>
+          </ui-form-field>
 
-          <ui-labeled-field label="Date Range">
+          <ui-form-field label="Date Range">
             <p-date-picker
               formControlName="dateRange"
               selectionMode="range"
@@ -40,7 +40,7 @@
               class="w-full"
               (onSelect)="tryCalculatePayroll()"
             />
-          </ui-labeled-field>
+          </ui-form-field>
         </div>
 
         @if (selectedEmployee()) {

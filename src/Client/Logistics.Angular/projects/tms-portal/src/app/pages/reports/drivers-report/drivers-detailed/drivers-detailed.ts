@@ -2,8 +2,12 @@ import { CurrencyPipe, DecimalPipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { LocalizationService } from "@logistics/shared";
-import { Api, formatSortField, getDriversReport } from "@logistics/shared/api";
-import type { DriverReportDto } from "@logistics/shared/api";
+import {
+  Api,
+  formatSortField,
+  getDriversReport,
+  type DriverReportDto,
+} from "@logistics/shared/api";
 import type { PagedResponse } from "@logistics/shared/api/models";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -11,8 +15,8 @@ import { DatePickerModule } from "primeng/datepicker";
 import { InputTextModule } from "primeng/inputtext";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
-import { Observable, from } from "rxjs";
-import { BaseTableComponent, DateRangePicker, type TableQueryParams } from "@/shared/components";
+import { from, Observable } from "rxjs";
+import { BaseTable, DateRangePicker, type TableQueryParams } from "@/shared/components";
 import { DateUtils, getPerformanceLevel, getPerformanceSeverity } from "@/shared/utils";
 
 @Component({
@@ -31,7 +35,7 @@ import { DateUtils, getPerformanceLevel, getPerformanceSeverity } from "@/shared
     TagModule,
   ],
 })
-export class DriversDetailedComponent extends BaseTableComponent<DriverReportDto> {
+export class DriversDetailedComponent extends BaseTable<DriverReportDto> {
   private readonly api = inject(Api);
   private readonly localization = inject(LocalizationService);
   protected readonly distanceUnitLabel = this.localization.getDistanceUnitLabel();

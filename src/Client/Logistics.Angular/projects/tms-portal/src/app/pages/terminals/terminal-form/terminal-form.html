@@ -10,7 +10,7 @@
     </h3>
     <div class="border-default bg-elevated rounded-lg border p-4">
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <ui-labeled-field
+        <ui-form-field
           label="Code"
           for="code"
           [required]="true"
@@ -18,24 +18,24 @@
           [control]="form.controls.code"
         >
           <input pInputText id="code" formControlName="code" maxlength="5" />
-        </ui-labeled-field>
+        </ui-form-field>
 
-        <ui-labeled-field label="Name" for="name" [required]="true">
+        <ui-form-field label="Name" for="name" [required]="true">
           <input pInputText id="name" formControlName="name" />
-        </ui-labeled-field>
+        </ui-form-field>
 
-        <ui-labeled-field label="Type" for="type" [required]="true">
+        <ui-form-field label="Type" for="type" [required]="true">
           <p-select formControlName="type" [options]="typeOptions" />
-        </ui-labeled-field>
+        </ui-form-field>
 
-        <ui-labeled-field label="Country" for="countryCode" [required]="true">
+        <ui-form-field label="Country" for="countryCode" [required]="true">
           <p-select
             formControlName="countryCode"
             [options]="countryOptions()"
             [filter]="true"
             placeholder="Select country"
           />
-        </ui-labeled-field>
+        </ui-form-field>
       </div>
     </div>
   </div>
@@ -60,9 +60,9 @@
       Notes
     </h3>
     <div class="border-default bg-elevated rounded-lg border p-4">
-      <ui-labeled-field label="Notes" for="notes" class="mb-0">
+      <ui-form-field label="Notes" for="notes" class="mb-0">
         <textarea pTextarea id="notes" formControlName="notes" rows="3"></textarea>
-      </ui-labeled-field>
+      </ui-form-field>
     </div>
   </div>
 

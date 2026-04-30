@@ -1,19 +1,19 @@
 import { DatePipe } from "@angular/common";
-import { Component, type OnInit, computed, inject, input, signal } from "@angular/core";
+import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import {
   Api,
-  type EldDriverDto,
-  type EldDriverMappingDto,
-  type EldProviderType,
-  type EmployeeDto,
   deleteEldDriverMapping,
   getEldDriverMappings,
   getEldProviderDrivers,
   getEldProviders,
   getEmployees,
   mapEldDriver,
+  type EldDriverDto,
+  type EldDriverMappingDto,
+  type EldProviderType,
+  type EmployeeDto,
 } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -23,7 +23,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { LabeledField } from "@/shared/components";
+import { FormField } from "@/shared/components";
 
 @Component({
   selector: "app-eld-driver-mappings",
@@ -33,7 +33,7 @@ import { LabeledField } from "@/shared/components";
     CardModule,
     DatePipe,
     FormsModule,
-    LabeledField,
+    FormField,
     ProgressSpinnerModule,
     SelectModule,
     TableModule,

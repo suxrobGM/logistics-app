@@ -31,26 +31,26 @@
         <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-8">
           <!-- Name Fields -->
           <div class="grid gap-4 sm:grid-cols-2">
-            <ui-labeled-field label="First Name" for="firstName" [required]="true" [control]="form.controls.firstName">
+            <ui-form-field label="First Name" for="firstName" [required]="true" [control]="form.controls.firstName">
               <input pInputText id="firstName" formControlName="firstName" placeholder="John" class="w-full" />
-            </ui-labeled-field>
-            <ui-labeled-field label="Last Name" for="lastName" [required]="true" [control]="form.controls.lastName">
+            </ui-form-field>
+            <ui-form-field label="Last Name" for="lastName" [required]="true" [control]="form.controls.lastName">
               <input pInputText id="lastName" formControlName="lastName" placeholder="Doe" class="w-full" />
-            </ui-labeled-field>
+            </ui-form-field>
           </div>
 
           <!-- Email & Phone -->
           <div class="grid gap-4 sm:grid-cols-2">
-            <ui-labeled-field label="Email" for="email" [required]="true" [control]="form.controls.email">
+            <ui-form-field label="Email" for="email" [required]="true" [control]="form.controls.email">
               <input pInputText id="email" type="email" formControlName="email" placeholder="john@company.com" class="w-full" />
-            </ui-labeled-field>
-            <ui-labeled-field label="Phone" for="phone" hint="Optional">
+            </ui-form-field>
+            <ui-form-field label="Phone" for="phone" hint="Optional">
               <input pInputText id="phone" type="tel" formControlName="phone" placeholder="(555) 123-4567" class="w-full" />
-            </ui-labeled-field>
+            </ui-form-field>
           </div>
 
           <!-- Subject -->
-          <ui-labeled-field label="Subject" for="subject" [required]="true" [control]="form.controls.subject">
+          <ui-form-field label="Subject" for="subject" [required]="true" [control]="form.controls.subject">
             <p-select
               id="subject"
               formControlName="subject"
@@ -60,10 +60,10 @@
               placeholder="Select a subject"
               styleClass="w-full"
             />
-          </ui-labeled-field>
+          </ui-form-field>
 
           <!-- Message -->
-          <ui-labeled-field label="Message" for="message" [required]="true" [control]="form.controls.message">
+          <ui-form-field label="Message" for="message" [required]="true" [control]="form.controls.message">
             <textarea
               pTextarea
               id="message"
@@ -72,7 +72,7 @@
               placeholder="How can we help you?"
               class="w-full"
             ></textarea>
-          </ui-labeled-field>
+          </ui-form-field>
 
           <!-- Error Message -->
           @if (errorMessage()) {
