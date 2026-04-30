@@ -21,10 +21,10 @@
           optionValue="value"
         >
           <ng-template #item let-item>
-            <div class="flex items-center gap-2">
+            <ui-stack direction="row" align="center" gap="2">
               <i [class]="item.icon"></i>
               <span>{{ item.label }}</span>
-            </div>
+            </ui-stack>
           </ng-template>
         </p-select-button>
       </ui-form-field>
@@ -56,45 +56,47 @@
         <!-- Single Mode Preview -->
         @if (selectedEmployee() && previewPayrollInvoice()) {
           <p-divider />
-          <h4 class="text-primary mb-4 font-semibold">Preview Payroll Invoice</h4>
+          <ui-typography variant="h4" tag="h4" color="primary" weight="semibold" class="mb-4">Preview Payroll Invoice</ui-typography>
 
-          <div class="bg-surface-50 dark:bg-surface-800 mb-6 grid grid-cols-2 gap-4 rounded-lg p-4">
-            <div>
-              <span class="text-muted text-sm">Employee</span>
-              <p class="text-primary font-medium">{{ selectedEmployee()!.fullName }}</p>
-            </div>
-            <div>
-              <span class="text-muted text-sm">Role</span>
-              <p class="text-primary font-medium">
-                {{ selectedEmployee()!.role?.displayName ?? "N/A" }}
-              </p>
-            </div>
-            <div>
-              <span class="text-muted text-sm">Salary Type</span>
-              <p class="text-primary font-medium">
-                {{ getSalaryTypeDesc(selectedEmployee()!.salaryType) }}
-              </p>
-            </div>
-            <div>
-              <span class="text-muted text-sm">Rate</span>
-              <p class="text-primary font-medium">
-                @if (selectedEmployee()!.salaryType === "share_of_gross") {
-                  {{ selectedEmployee()!.salary | percent }}
-                } @else {
-                  {{ selectedEmployee()!.salary | currency }}
-                }
-              </p>
-            </div>
-            <div class="col-span-2">
-              <span class="text-muted text-sm">Expected Invoice Total</span>
-              <p class="text-success text-xl font-bold">
-                {{ previewPayrollInvoice()!.total?.amount | currency }}
-              </p>
-            </div>
-          </div>
+          <ui-surface variant="subtle" padding="md" radius="lg" class="mb-6 block">
+            <ui-grid container spacing="4">
+              <ui-grid [size]="6">
+                <ui-typography variant="caption" color="muted">Employee</ui-typography>
+                <p class="text-primary font-medium">{{ selectedEmployee()!.fullName }}</p>
+              </ui-grid>
+              <ui-grid [size]="6">
+                <ui-typography variant="caption" color="muted">Role</ui-typography>
+                <p class="text-primary font-medium">
+                  {{ selectedEmployee()!.role?.displayName ?? "N/A" }}
+                </p>
+              </ui-grid>
+              <ui-grid [size]="6">
+                <ui-typography variant="caption" color="muted">Salary Type</ui-typography>
+                <p class="text-primary font-medium">
+                  {{ getSalaryTypeDesc(selectedEmployee()!.salaryType) }}
+                </p>
+              </ui-grid>
+              <ui-grid [size]="6">
+                <ui-typography variant="caption" color="muted">Rate</ui-typography>
+                <p class="text-primary font-medium">
+                  @if (selectedEmployee()!.salaryType === "share_of_gross") {
+                    {{ selectedEmployee()!.salary | percent }}
+                  } @else {
+                    {{ selectedEmployee()!.salary | currency }}
+                  }
+                </p>
+              </ui-grid>
+              <ui-grid [size]="12">
+                <ui-typography variant="caption" color="muted">Expected Invoice Total</ui-typography>
+                <p class="text-success text-xl font-bold">
+                  {{ previewPayrollInvoice()!.total?.amount | currency }}
+                </p>
+              </ui-grid>
+            </ui-grid>
+          </ui-surface>
         }
 
-        <div class="flex gap-2">
+        <ui-stack direction="row" gap="2">
           <p-button
             type="submit"
             icon="pi pi-plus"
@@ -108,7 +110,7 @@
             label="Back to list"
             [routerLink]="['/payroll/invoices']"
           />
-        </div>
+        </ui-stack>
       }
 
       <!-- Bulk Mode: Multiple Employees -->
@@ -132,15 +134,15 @@
         <!-- Bulk Preview Table -->
         @if (bulkPreviews().length > 0) {
           <p-divider />
-          <div class="mb-4 flex items-center justify-between">
-            <h4 class="text-primary font-semibold">
+          <ui-stack direction="row" align="center" justify="between" class="mb-4">
+            <ui-typography variant="h4" tag="h4" color="primary" weight="semibold">
               Preview ({{ bulkPreviews().length }} employees)
-            </h4>
+            </ui-typography>
             <div class="text-right">
-              <span class="text-muted text-sm">Total Amount</span>
+              <ui-typography variant="caption" color="muted">Total Amount</ui-typography>
               <p class="text-success text-xl font-bold">{{ getBulkTotalAmount() | currency }}</p>
             </div>
-          </div>
+          </ui-stack>
 
           <p-table
             [value]="bulkPreviews()"
@@ -189,7 +191,7 @@
           </p-table>
         }
 
-        <div class="mt-6 flex gap-2">
+        <ui-stack direction="row" gap="2" class="mt-6">
           <p-button
             type="submit"
             icon="pi pi-plus"
@@ -203,7 +205,7 @@
             label="Back to list"
             [routerLink]="['/payroll/invoices']"
           />
-        </div>
+        </ui-stack>
       }
     </form>
   </p-card>

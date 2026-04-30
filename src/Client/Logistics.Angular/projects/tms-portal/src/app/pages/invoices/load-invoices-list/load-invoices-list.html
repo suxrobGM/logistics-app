@@ -1,18 +1,18 @@
 <div class="animate-fadein">
-  <div class="mb-4 flex items-center justify-between">
-    <h1 class="text-primary mb-0">Load Invoices</h1>
+  <ui-stack direction="row" align="center" justify="between" class="mb-4">
+    <ui-typography variant="h2" tag="h1" color="primary" class="mb-0">Load Invoices</ui-typography>
     <a routerLink="/invoices" class="no-underline">
       <p-button icon="pi pi-chart-bar" label="Dashboard" [outlined]="true" />
     </a>
-  </div>
+  </ui-stack>
 
   <!-- Filter Panel -->
   <p-card class="mb-4">
-    <div class="mb-4 flex items-center justify-between">
-      <span class="text-primary text-lg font-semibold">Filters</span>
-      <div class="flex items-center gap-2">
+    <ui-stack direction="row" align="center" justify="between" class="mb-4">
+      <ui-typography variant="body" color="primary" weight="semibold" class="text-lg">Filters</ui-typography>
+      <ui-stack direction="row" align="center" gap="2">
         @if (activeFilterCount() > 0) {
-          <span class="text-muted text-sm">{{ activeFilterCount() }} active</span>
+          <ui-typography variant="body-sm" color="muted">{{ activeFilterCount() }} active</ui-typography>
         }
         <p-button
           label="Clear All"
@@ -22,33 +22,39 @@
           (click)="clearFilters()"
           [disabled]="activeFilterCount() === 0"
         />
-      </div>
-    </div>
+      </ui-stack>
+    </ui-stack>
 
-    <div class="grid grid-cols-1 gap-x-4 md:grid-cols-2 lg:grid-cols-3">
-      <ui-form-field label="Search">
-        <ui-search-input
-          class="w-full"
-          placeholder="Search by customer or invoice #"
-          (searchChange)="onSearch($event)"
-        />
-      </ui-form-field>
+    <ui-grid container spacing="4">
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 4 }">
+        <ui-form-field label="Search">
+          <ui-search-input
+            class="w-full"
+            placeholder="Search by customer or invoice #"
+            (searchChange)="onSearch($event)"
+          />
+        </ui-form-field>
+      </ui-grid>
 
-      <ui-form-field label="Status">
-        <p-multiselect
-          [options]="statusOptions"
-          [(ngModel)]="selectedStatuses"
-          placeholder="Select status"
-          [showClear]="true"
-          (onChange)="applyFilters()"
-          class="w-full"
-        />
-      </ui-form-field>
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 4 }">
+        <ui-form-field label="Status">
+          <p-multiselect
+            [options]="statusOptions"
+            [(ngModel)]="selectedStatuses"
+            placeholder="Select status"
+            [showClear]="true"
+            (onChange)="applyFilters()"
+            class="w-full"
+          />
+        </ui-form-field>
+      </ui-grid>
 
-      <ui-form-field label="Date Range">
-        <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
-      </ui-form-field>
-    </div>
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 4 }">
+        <ui-form-field label="Date Range">
+          <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
+        </ui-form-field>
+      </ui-grid>
+    </ui-grid>
   </p-card>
 
   <p-card>

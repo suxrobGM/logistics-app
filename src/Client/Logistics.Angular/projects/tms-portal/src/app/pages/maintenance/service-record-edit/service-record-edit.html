@@ -2,9 +2,9 @@
 
 <div class="mx-auto max-w-4xl">
   @if (isLoading()) {
-    <div class="flex justify-center py-16">
+    <ui-stack align="center" justify="center" class="py-16">
       <p-progress-spinner />
-    </div>
+    </ui-stack>
   } @else if (record()) {
     <p-card>
       <app-maintenance-record-form mode="edit" [id]="id()" [initial]="initialFormValue()" (save)="onSave($event)" />

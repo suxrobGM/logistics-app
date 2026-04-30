@@ -1,12 +1,14 @@
-import { Component, type OnInit, computed, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import {
   Api,
   createConnectAccount,
   getConnectStatus,
   getDashboardLink,
   getOnboardingLink,
+  type StripeConnectStatus,
+  type StripeConnectStatusDto,
 } from "@logistics/shared/api";
-import type { StripeConnectStatus, StripeConnectStatusDto } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
@@ -17,7 +19,19 @@ import { EmptyState, LoadingSkeleton } from "@/shared/components";
 @Component({
   selector: "app-payment-settings",
   templateUrl: "./payment-settings.html",
-  imports: [ToastModule, CardModule, ButtonModule, TagModule, EmptyState, LoadingSkeleton],
+  imports: [
+    ToastModule,
+    CardModule,
+    ButtonModule,
+    TagModule,
+    EmptyState,
+    LoadingSkeleton,
+    Grid,
+    Icon,
+    Stack,
+    Surface,
+    Typography,
+  ],
 })
 export class PaymentSettingsComponent implements OnInit {
   private readonly api = inject(Api);

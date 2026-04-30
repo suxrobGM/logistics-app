@@ -3,6 +3,7 @@ import { Component, computed, inject, input, model, viewChild } from "@angular/c
 import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import type { LoadDto } from "@logistics/shared/api";
+import { Icon, Stack, Typography } from "@logistics/shared/components";
 import { AddressPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { Dialog } from "primeng/dialog";
@@ -12,9 +13,9 @@ import { InputTextModule } from "primeng/inputtext";
 import { Table, TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { LoadForm, type LoadFormValue, LoadStatusTag } from "@/shared/components";
+import { LoadForm, LoadStatusTag, type LoadFormValue } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
-import { type TableRow, TripWizardStore } from "../../store/trip-wizard-store";
+import { TripWizardStore, type TableRow } from "../../store/trip-wizard-store";
 import { AttachLoadDialog } from "../attach-load-dialog/attach-load-dialog";
 
 @Component({
@@ -37,6 +38,9 @@ import { AttachLoadDialog } from "../attach-load-dialog/attach-load-dialog";
     Dialog,
     LoadForm,
     AttachLoadDialog,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class TripFormStepLoads {

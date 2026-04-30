@@ -1,83 +1,85 @@
-<h1 class="text-center">Payment Settings</h1>
+<ui-typography variant="h2" tag="h1" align="center">Payment Settings</ui-typography>
 
-<div class="flex justify-center">
+<ui-stack direction="row" justify="center">
   <div class="w-full md:w-2/3 lg:w-1/2">
     <p-card>
       @if (isLoading()) {
         <ui-loading-skeleton variant="card" height="16rem" loadingText="Loading payment settings..." />
       } @else {
         <div class="mb-6">
-          <h2 class="text-primary mb-2">Stripe Connect</h2>
-          <p class="text-muted text-sm">
+          <ui-typography variant="h4" tag="h2" color="primary" class="mb-2">Stripe Connect</ui-typography>
+          <ui-typography variant="body-sm" color="muted">
             Connect your Stripe account to receive payments directly from customer invoices.
-          </p>
+          </ui-typography>
         </div>
 
         <!-- Status Display -->
-        <div class="bg-surface-ground mb-6 rounded-lg p-4">
-          <div class="flex items-center justify-between">
+        <ui-surface variant="subtle" padding="md" radius="lg" class="mb-6">
+          <ui-stack direction="row" align="center" justify="between">
             <div>
               <span class="text-muted text-sm">Connection Status</span>
-              <div class="mt-1 flex items-center gap-2">
+              <ui-stack direction="row" align="center" gap="2" class="mt-1">
                 <p-tag [value]="statusLabel()" [severity]="statusSeverity()" />
                 @if (connectStatus()?.accountId) {
                   <span class="text-muted text-xs">
                     Account: {{ connectStatus()?.accountId }}
                   </span>
                 }
-              </div>
+              </ui-stack>
             </div>
-          </div>
-        </div>
+          </ui-stack>
+        </ui-surface>
 
         @switch (connectStatus()?.status) {
           @case ('active') {
             <!-- Active State with Capabilities -->
-            <div class="mb-4 text-center">
-              <div class="mb-4">
-                <i class="pi pi-check-circle text-6xl text-green-500"></i>
-              </div>
-              <h3 class="mb-2">Ready to Accept Payments</h3>
-              <p class="text-muted text-sm">
+            <ui-stack align="center" gap="2" class="mb-4 text-center">
+              <ui-icon name="check-circle" size="xl" color="success" class="text-6xl" />
+              <ui-typography variant="h5" tag="h3" class="mb-2">Ready to Accept Payments</ui-typography>
+              <ui-typography variant="body-sm" color="muted">
                 Your Stripe Connect account is fully set up and ready to receive customer payments.
-              </p>
-            </div>
+              </ui-typography>
+            </ui-stack>
 
             <!-- Capabilities Grid -->
-            <div class="mt-6 grid grid-cols-2 gap-4">
-              <div class="bg-surface-ground rounded-lg p-4">
-                <div class="flex items-center gap-2">
-                  <i
-                    class="pi"
-                    [class.pi-check-circle]="connectStatus()?.chargesEnabled"
-                    [class.text-green-500]="connectStatus()?.chargesEnabled"
-                    [class.pi-times-circle]="!connectStatus()?.chargesEnabled"
-                    [class.text-red-500]="!connectStatus()?.chargesEnabled"
-                  ></i>
-                  <span class="font-medium">Charges</span>
-                </div>
-                <p class="text-muted mt-1 text-xs">
-                  {{ connectStatus()?.chargesEnabled ? 'Enabled' : 'Not enabled' }}
-                </p>
-              </div>
-              <div class="bg-surface-ground rounded-lg p-4">
-                <div class="flex items-center gap-2">
-                  <i
-                    class="pi"
-                    [class.pi-check-circle]="connectStatus()?.payoutsEnabled"
-                    [class.text-green-500]="connectStatus()?.payoutsEnabled"
-                    [class.pi-times-circle]="!connectStatus()?.payoutsEnabled"
-                    [class.text-red-500]="!connectStatus()?.payoutsEnabled"
-                  ></i>
-                  <span class="font-medium">Payouts</span>
-                </div>
-                <p class="text-muted mt-1 text-xs">
-                  {{ connectStatus()?.payoutsEnabled ? 'Enabled' : 'Not enabled' }}
-                </p>
-              </div>
-            </div>
+            <ui-grid container spacing="4" class="mt-6">
+              <ui-grid [size]="6">
+                <ui-surface variant="subtle" padding="md" radius="lg">
+                  <ui-stack direction="row" align="center" gap="2">
+                    <i
+                      class="pi"
+                      [class.pi-check-circle]="connectStatus()?.chargesEnabled"
+                      [class.text-green-500]="connectStatus()?.chargesEnabled"
+                      [class.pi-times-circle]="!connectStatus()?.chargesEnabled"
+                      [class.text-red-500]="!connectStatus()?.chargesEnabled"
+                    ></i>
+                    <span class="font-medium">Charges</span>
+                  </ui-stack>
+                  <p class="text-muted mt-1 text-xs">
+                    {{ connectStatus()?.chargesEnabled ? 'Enabled' : 'Not enabled' }}
+                  </p>
+                </ui-surface>
+              </ui-grid>
+              <ui-grid [size]="6">
+                <ui-surface variant="subtle" padding="md" radius="lg">
+                  <ui-stack direction="row" align="center" gap="2">
+                    <i
+                      class="pi"
+                      [class.pi-check-circle]="connectStatus()?.payoutsEnabled"
+                      [class.text-green-500]="connectStatus()?.payoutsEnabled"
+                      [class.pi-times-circle]="!connectStatus()?.payoutsEnabled"
+                      [class.text-red-500]="!connectStatus()?.payoutsEnabled"
+                    ></i>
+                    <span class="font-medium">Payouts</span>
+                  </ui-stack>
+                  <p class="text-muted mt-1 text-xs">
+                    {{ connectStatus()?.payoutsEnabled ? 'Enabled' : 'Not enabled' }}
+                  </p>
+                </ui-surface>
+              </ui-grid>
+            </ui-grid>
 
-            <div class="mt-6 flex justify-center gap-3">
+            <ui-stack direction="row" justify="center" gap="3" class="mt-6">
               <p-button
                 icon="pi pi-chart-bar"
                 label="Open Dashboard"
@@ -91,7 +93,7 @@
                 (click)="continueOnboarding()"
                 [loading]="isGettingLink()"
               />
-            </div>
+            </ui-stack>
           }
 
           @case ('pending') {
@@ -129,23 +131,23 @@
 
           @default {
             <!-- Not Connected State -->
-            <div class="flex flex-col items-center justify-center py-12 text-center">
-              <i class="pi pi-credit-card text-muted mb-4 text-6xl"></i>
-              <h3 class="mb-2">Connect Your Bank Account</h3>
-              <p class="text-muted mb-6 max-w-md text-sm">
+            <ui-stack align="center" justify="center" gap="2" class="py-12 text-center">
+              <ui-icon name="credit-card" size="xl" color="muted" class="text-6xl mb-4" />
+              <ui-typography variant="h5" tag="h3" class="mb-2">Connect Your Bank Account</ui-typography>
+              <ui-typography variant="body-sm" color="muted" class="mb-6 max-w-md">
                 Set up Stripe Connect to receive payments from your customers directly into your bank
                 account. You'll be redirected to Stripe to complete the secure onboarding process.
-              </p>
+              </ui-typography>
               <p-button
                 icon="pi pi-external-link"
                 label="Connect with Stripe"
                 (click)="startOnboarding()"
                 [loading]="isCreatingAccount() || isGettingLink()"
               />
-            </div>
+            </ui-stack>
           }
         }
       }
     </p-card>
   </div>
-</div>
+</ui-stack>

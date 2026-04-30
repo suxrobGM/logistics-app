@@ -1,4 +1,4 @@
-<div class="flex flex-col">
+<ui-stack>
   <form [formGroup]="form" (ngSubmit)="goToNextStep()">
     <ui-validation-summary [form]="form" />
 
@@ -16,7 +16,7 @@
       <app-search-truck formControlName="truck" />
     </ui-form-field>
 
-    <div class="flex justify-between pt-6">
+    <ui-stack direction="row" justify="between" class="pt-6">
       <p-button
         type="button"
         icon="pi pi-arrow-left"
@@ -24,6 +24,6 @@
         [routerLink]="['/trips']"
       />
       <p-button type="submit" icon="pi pi-arrow-right" iconPos="right" label="Next" />
-    </div>
+    </ui-stack>
   </form>
-</div>
+</ui-stack>

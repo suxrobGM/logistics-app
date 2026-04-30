@@ -1,9 +1,15 @@
 import { CommonModule } from "@angular/common";
 import { Component, effect, inject, input, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { Api, getEmployeeById } from "@logistics/shared/api";
-import { type EmployeeDto, type PaymentMethodType, type SalaryType } from "@logistics/shared/api";
+import {
+  Api,
+  getEmployeeById,
+  type EmployeeDto,
+  type PaymentMethodType,
+  type SalaryType,
+} from "@logistics/shared/api";
 import { paymentMethodTypeOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
+import { Grid, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -28,6 +34,9 @@ import { EmployeePayrollListStore } from "../store/employee-list.store";
     ProgressSpinnerModule,
     DataContainer,
     DividerModule,
+    Grid,
+    Stack,
+    Typography,
   ],
 })
 export class EmployeePayrollInvoices {

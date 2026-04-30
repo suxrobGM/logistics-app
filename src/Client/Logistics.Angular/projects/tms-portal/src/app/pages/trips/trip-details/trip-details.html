@@ -1,4 +1,6 @@
-<h1>Trip #{{ store.trip()?.number }} — {{ store.trip()?.name }}</h1>
+<ui-typography variant="h2" tag="h1">
+  Trip #{{ store.trip()?.number }} — {{ store.trip()?.name }}
+</ui-typography>
 
 <!-- Action Buttons -->
 @if (store.trip()) {
@@ -14,112 +16,132 @@
   </div>
 }
 
-<div class="flex flex-col gap-4">
+<ui-stack gap="4">
   <p-card>
-    <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
+    <ui-grid container spacing="8">
       @if (store.isLoading() || !store.trip()) {
-        <p-skeleton class="h-96!" />
-        <p-skeleton class="h-96!" />
+        <ui-grid [size]="{ xs: 12, lg: 6 }">
+          <p-skeleton class="h-96!" />
+        </ui-grid>
+        <ui-grid [size]="{ xs: 12, lg: 6 }">
+          <p-skeleton class="h-96!" />
+        </ui-grid>
       } @else {
         @let tripDetails = store.trip()!;
 
-        <app-direction-map
-          [waypoints]="waypoints()"
-          height="500px"
-          [selectedWaypoint]="selectedWaypoint()"
-          (routeSegmentClick)="onRouteSegmentClick($event)"
-          (waypointClick)="onWaypointClick($event)"
-        />
+        <ui-grid [size]="{ xs: 12, lg: 6 }">
+          <app-direction-map
+            [waypoints]="waypoints()"
+            height="500px"
+            [selectedWaypoint]="selectedWaypoint()"
+            (routeSegmentClick)="onRouteSegmentClick($event)"
+            (waypointClick)="onWaypointClick($event)"
+          />
+        </ui-grid>
 
         <!-- Summary card - improved layout -->
-        <div class="flex flex-col gap-4">
-          <!-- Status and Progress Header -->
-          <div class="flex items-center justify-between">
-            <app-trip-status-tag [status]="tripDetails.status ?? 'draft'" />
-            <span class="text-muted-color text-sm">
-              Created {{ tripDetails.createdAt | dateFormat: "mediumDate" }}
-            </span>
-          </div>
+        <ui-grid [size]="{ xs: 12, lg: 6 }">
+          <ui-stack gap="4">
+            <!-- Status and Progress Header -->
+            <ui-stack direction="row" align="center" justify="between">
+              <app-trip-status-tag [status]="tripDetails.status ?? 'draft'" />
+              <ui-typography variant="body-sm" color="muted">
+                Created {{ tripDetails.createdAt | dateFormat: "mediumDate" }}
+              </ui-typography>
+            </ui-stack>
 
-          <!-- Progress indicator -->
-          <div class="bg-subtle border-default rounded-lg border p-4">
-            <div class="mb-2 flex items-center justify-between">
-              <span class="font-medium">Trip Progress</span>
-              <span class="text-primary font-semibold">{{ store.progressPercentage() }}%</span>
-            </div>
-            <p-progressBar [value]="store.progressPercentage()" [showValue]="false" class="h-2!" />
-            <div class="text-muted-color mt-2 flex items-center gap-1 text-sm">
-              <i class="pi pi-map-marker"></i>
-              <span>
-                {{ store.completedStops().length }} of {{ store.sortedStops().length }} stops
-                completed
-              </span>
-            </div>
-          </div>
+            <!-- Progress indicator -->
+            <ui-surface variant="subtle" [border]="true" padding="md">
+              <ui-stack direction="row" align="center" justify="between" class="mb-2">
+                <span class="font-medium">Trip Progress</span>
+                <span class="text-primary font-semibold">{{ store.progressPercentage() }}%</span>
+              </ui-stack>
+              <p-progressBar
+                [value]="store.progressPercentage()"
+                [showValue]="false"
+                class="h-2!"
+              />
+              <ui-stack direction="row" align="center" gap="1" class="text-muted-color mt-2 text-sm">
+                <ui-icon name="map-marker" />
+                <span>
+                  {{ store.completedStops().length }} of {{ store.sortedStops().length }} stops
+                  completed
+                </span>
+              </ui-stack>
+            </ui-surface>
 
-          <!-- Key Metrics Grid -->
-          <div class="grid grid-cols-2 gap-3">
-            <!-- Distance -->
-            <div class="bg-subtle border-default rounded-lg border p-3">
-              <div class="text-muted-color mb-1 flex items-center gap-2 text-sm">
-                <i class="pi pi-map"></i>
-                <span>Total Distance</span>
-              </div>
-              <span class="text-xl font-semibold">
-                {{ tripDetails.totalDistance | distanceUnit }}
-              </span>
-            </div>
+            <!-- Key Metrics Grid -->
+            <ui-grid container spacing="3">
+              <!-- Distance -->
+              <ui-grid [size]="6">
+                <ui-surface variant="subtle" [border]="true" padding="sm">
+                  <ui-stack direction="row" align="center" gap="2" class="text-muted-color mb-1 text-sm">
+                    <ui-icon name="map" />
+                    <span>Total Distance</span>
+                  </ui-stack>
+                  <span class="text-xl font-semibold">
+                    {{ tripDetails.totalDistance | distanceUnit }}
+                  </span>
+                </ui-surface>
+              </ui-grid>
 
-            <!-- Loads -->
-            <div class="bg-subtle border-default rounded-lg border p-3">
-              <div class="text-muted-color mb-1 flex items-center gap-2 text-sm">
-                <i class="pi pi-box"></i>
-                <span>Loads</span>
-              </div>
-              <span class="text-xl font-semibold">{{ tripDetails.loads?.length ?? 0 }}</span>
-            </div>
+              <!-- Loads -->
+              <ui-grid [size]="6">
+                <ui-surface variant="subtle" [border]="true" padding="sm">
+                  <ui-stack direction="row" align="center" gap="2" class="text-muted-color mb-1 text-sm">
+                    <ui-icon name="box" />
+                    <span>Loads</span>
+                  </ui-stack>
+                  <span class="text-xl font-semibold">{{ tripDetails.loads?.length ?? 0 }}</span>
+                </ui-surface>
+              </ui-grid>
 
-            <!-- Truck -->
-            <div class="bg-subtle border-default rounded-lg border p-3">
-              <div class="text-muted-color mb-1 flex items-center gap-2 text-sm">
-                <i class="pi pi-truck"></i>
-                <span>Truck</span>
-              </div>
-              <span class="font-semibold">
-                {{ tripDetails.truckNumber ?? "Not assigned" }}
-              </span>
-            </div>
+              <!-- Truck -->
+              <ui-grid [size]="6">
+                <ui-surface variant="subtle" [border]="true" padding="sm">
+                  <ui-stack direction="row" align="center" gap="2" class="text-muted-color mb-1 text-sm">
+                    <ui-icon name="truck" />
+                    <span>Truck</span>
+                  </ui-stack>
+                  <span class="font-semibold">
+                    {{ tripDetails.truckNumber ?? "Not assigned" }}
+                  </span>
+                </ui-surface>
+              </ui-grid>
 
-            <!-- Stops -->
-            <div class="bg-subtle border-default rounded-lg border p-3">
-              <div class="text-muted-color mb-1 flex items-center gap-2 text-sm">
-                <i class="pi pi-flag"></i>
-                <span>Stops</span>
-              </div>
-              <span class="text-xl font-semibold">{{ store.sortedStops().length }}</span>
-            </div>
-          </div>
+              <!-- Stops -->
+              <ui-grid [size]="6">
+                <ui-surface variant="subtle" [border]="true" padding="sm">
+                  <ui-stack direction="row" align="center" gap="2" class="text-muted-color mb-1 text-sm">
+                    <ui-icon name="flag" />
+                    <span>Stops</span>
+                  </ui-stack>
+                  <span class="text-xl font-semibold">{{ store.sortedStops().length }}</span>
+                </ui-surface>
+              </ui-grid>
+            </ui-grid>
 
-          <!-- Timestamps -->
-          <div class="border-default space-y-2 border-t pt-3">
-            @if (tripDetails.dispatchedAt) {
-              <div class="flex items-center gap-2 text-sm">
-                <i class="pi pi-send text-blue-500"></i>
-                <span class="text-muted-color">Dispatched:</span>
-                <span>{{ tripDetails.dispatchedAt | dateFormat: "medium" }}</span>
-              </div>
-            }
-            @if (tripDetails.completedAt) {
-              <div class="flex items-center gap-2 text-sm">
-                <i class="pi pi-check-circle text-green-500"></i>
-                <span class="text-muted-color">Completed:</span>
-                <span>{{ tripDetails.completedAt | dateFormat: "medium" }}</span>
-              </div>
-            }
-          </div>
-        </div>
+            <!-- Timestamps -->
+            <ui-stack gap="2" class="border-default border-t pt-3">
+              @if (tripDetails.dispatchedAt) {
+                <ui-stack direction="row" align="center" gap="2" class="text-sm">
+                  <ui-icon name="send" color="info" />
+                  <span class="text-muted-color">Dispatched:</span>
+                  <span>{{ tripDetails.dispatchedAt | dateFormat: "medium" }}</span>
+                </ui-stack>
+              }
+              @if (tripDetails.completedAt) {
+                <ui-stack direction="row" align="center" gap="2" class="text-sm">
+                  <ui-icon name="check-circle" color="success" />
+                  <span class="text-muted-color">Completed:</span>
+                  <span>{{ tripDetails.completedAt | dateFormat: "medium" }}</span>
+                </ui-stack>
+              }
+            </ui-stack>
+          </ui-stack>
+        </ui-grid>
       }
-    </div>
+    </ui-grid>
 
     <ng-template #footer>
       <div class="flex flex-row gap-2">
@@ -134,16 +156,17 @@
   </p-card>
 
   @if (store.trip()) {
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+    <ui-grid container spacing="4">
       <!-- Left side: Stops and Loads tables stacked -->
-      <div class="flex flex-col gap-4 lg:col-span-2">
+      <ui-grid [size]="{ xs: 12, lg: 8 }">
+        <ui-stack gap="4">
         <!-- Trip Stops table -->
         <p-card>
           <ng-template #header>
-            <div class="flex items-center gap-2 p-3 pb-0">
-              <i class="pi pi-map-marker text-primary"></i>
-              <h5 class="m-0">Stops</h5>
-            </div>
+            <ui-stack direction="row" align="center" gap="2" class="p-3 pb-0">
+              <ui-icon name="map-marker" color="primary" />
+              <ui-typography variant="h6" tag="h5">Stops</ui-typography>
+            </ui-stack>
           </ng-template>
 
           <p-table
@@ -202,10 +225,10 @@
         <!-- Loads table -->
         <p-card>
           <ng-template #header>
-            <div class="flex items-center gap-2 p-3 pb-0">
-              <i class="pi pi-box text-primary"></i>
-              <h5 class="m-0">Loads</h5>
-            </div>
+            <ui-stack direction="row" align="center" gap="2" class="p-3 pb-0">
+              <ui-icon name="box" color="primary" />
+              <ui-typography variant="h6" tag="h5">Loads</ui-typography>
+            </ui-stack>
           </ng-template>
 
           <p-table [value]="store.trip()!.loads ?? []" [dataKey]="'id'">
@@ -239,28 +262,29 @@
             </ng-template>
           </p-table>
         </p-card>
-      </div>
+        </ui-stack>
+      </ui-grid>
 
       <!-- Right side: Timeline -->
-      <div>
+      <ui-grid [size]="{ xs: 12, lg: 4 }">
         <p-card class="h-full">
           <ng-template #header>
-            <div class="flex items-center gap-2 p-3 pb-0">
-              <i class="pi pi-history text-primary"></i>
-              <h5 class="m-0">Timeline</h5>
-            </div>
+            <ui-stack direction="row" align="center" gap="2" class="p-3 pb-0">
+              <ui-icon name="history" color="primary" />
+              <ui-typography variant="h6" tag="h5">Timeline</ui-typography>
+            </ui-stack>
           </ng-template>
 
           @if (store.timelineEvents().length > 0) {
             <app-trip-timeline [events]="store.timelineEvents()" />
           } @else {
-            <div class="text-muted-color flex flex-col items-center gap-2 py-8">
-              <i class="pi pi-clock text-4xl opacity-50"></i>
+            <ui-stack align="center" gap="2" class="text-muted-color py-8">
+              <ui-icon name="clock" size="xl" color="muted" class="opacity-50" />
               <p class="m-0">No timeline events yet.</p>
-            </div>
+            </ui-stack>
           }
         </p-card>
-      </div>
-    </div>
+      </ui-grid>
+    </ui-grid>
   }
-</div>
+</ui-stack>

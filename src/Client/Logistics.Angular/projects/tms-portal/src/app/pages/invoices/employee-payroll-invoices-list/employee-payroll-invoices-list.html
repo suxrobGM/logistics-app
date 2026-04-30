@@ -1,5 +1,5 @@
-<div class="flex items-center">
-  <h1 class="mb-0">Employee Payroll Invoices</h1>
+<ui-stack direction="row" align="center">
+  <ui-typography variant="h2" tag="h1" class="mb-0">Employee Payroll Invoices</ui-typography>
   <p-button
     styleClass="text-black ml-2"
     icon="pi pi-plus-circle"
@@ -9,13 +9,13 @@
     pTooltip="Add a new payroll invoice"
     [routerLink]="['/invoices/payroll/add']"
   />
-</div>
+</ui-stack>
 
 @if (isLoadingEmployee() || !employee()) {
-  <div class="flex items-center">
+  <ui-stack direction="row" align="center">
     <p-progress-spinner />
     <div class="ml-2">Loading employee data</div>
-  </div>
+  </ui-stack>
 } @else {
   <p-card class="mb-4">
     <ng-template #header>
@@ -23,46 +23,46 @@
       <p-divider />
     </ng-template>
 
-    <div class="grid grid-cols-12">
-      <div class="col-span-12 md:col-span-5">
-        <div class="mb-4 grid grid-cols-12">
-          <div class="col-span-4">
+    <ui-grid container spacing="4">
+      <ui-grid [size]="{ xs: 12, md: 5 }">
+        <ui-grid container spacing="4" class="mb-4">
+          <ui-grid [size]="4">
             <h6>Employee:</h6>
-          </div>
-          <div class="col-span-8">
+          </ui-grid>
+          <ui-grid [size]="8">
             {{ employee()!.fullName }}
-          </div>
-        </div>
-        <div class="mb-4 grid grid-cols-12">
-          <div class="col-span-4">
+          </ui-grid>
+        </ui-grid>
+        <ui-grid container spacing="4" class="mb-4">
+          <ui-grid [size]="4">
             <h6>Position:</h6>
-          </div>
-          <div class="col-span-8">
+          </ui-grid>
+          <ui-grid [size]="8">
             {{ employee()!.role?.displayName ?? "N/A" }}
-          </div>
-        </div>
-        <div class="mb-4 grid grid-cols-12">
-          <div class="col-span-4">
+          </ui-grid>
+        </ui-grid>
+        <ui-grid container spacing="4" class="mb-4">
+          <ui-grid [size]="4">
             <h6>Salary type:</h6>
-          </div>
-          <div class="col-span-8">
+          </ui-grid>
+          <ui-grid [size]="8">
             {{ getSalaryTypeDesc(employee()!.salaryType) }}
-          </div>
-        </div>
-        <div class="mb-4 grid grid-cols-12">
-          <div class="col-span-4">
+          </ui-grid>
+        </ui-grid>
+        <ui-grid container spacing="4" class="mb-4">
+          <ui-grid [size]="4">
             <h6>Salary:</h6>
-          </div>
-          <div class="col-span-8">
+          </ui-grid>
+          <ui-grid [size]="8">
             @if (employee()!.salaryType === "share_of_gross") {
               {{ employee()!.salary | percent }}
             } @else {
               {{ employee()!.salary | currency }}
             }
-          </div>
-        </div>
-      </div>
-    </div>
+          </ui-grid>
+        </ui-grid>
+      </ui-grid>
+    </ui-grid>
   </p-card>
 }
 

@@ -2,6 +2,7 @@ import { Component, effect, inject, input } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import type { TruckDto } from "@logistics/shared/api";
+import { Stack } from "@logistics/shared/components";
 import { Button } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { ToastService } from "@/core/services";
@@ -19,6 +20,7 @@ import { TripWizardStore } from "../../store/trip-wizard-store";
     RouterLink,
     ReactiveFormsModule,
     InputTextModule,
+    Stack,
   ],
 })
 export class TripWizardBasic {

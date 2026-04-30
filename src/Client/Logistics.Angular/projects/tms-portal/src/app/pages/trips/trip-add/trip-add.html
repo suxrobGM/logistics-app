@@ -1,7 +1,7 @@
-<h1 class="text-center">Add a new trip</h1>
+<ui-typography variant="h2" tag="h1" align="center">Add a new trip</ui-typography>
 
-<div class="flex flex-col justify-center gap-4 md:flex-row">
+<ui-stack direction="row" justify="center" gap="4" class="md:flex-row" wrap>
   <p-card class="w-full md:w-3/4">
     <app-trip-wizard [mode]="'create'" (save)="createTrip($event)" />
   </p-card>
-</div>
+</ui-stack>

@@ -4,6 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import type { InvoiceDto, InvoiceStatus } from "@logistics/shared/api";
 import { invoiceStatusOptions } from "@logistics/shared/api/enums";
+import { Grid, Stack, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import type { SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
@@ -40,6 +41,9 @@ import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
     FormField,
     CurrencyFormatPipe,
     DateFormatPipe,
+    Grid,
+    Stack,
+    Typography,
   ],
 })
 export class LoadInvoicesList {

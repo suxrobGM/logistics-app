@@ -21,7 +21,7 @@ import {
   type SalaryType,
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
-import { DateRangePicker } from "@logistics/shared/components";
+import { DateRangePicker, Grid, Stack, Surface, Typography } from "@logistics/shared/components";
 import { PredefinedDateRanges } from "@logistics/shared/utils";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
@@ -68,6 +68,10 @@ interface BulkPreview {
     TableModule,
     TooltipModule,
     PageHeader,
+    Grid,
+    Stack,
+    Surface,
+    Typography,
   ],
 })
 export class PayrollInvoiceAdd {

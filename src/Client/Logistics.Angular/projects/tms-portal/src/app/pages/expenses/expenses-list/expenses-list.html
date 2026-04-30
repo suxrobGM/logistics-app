@@ -1,4 +1,4 @@
-<div class="flex items-start justify-between">
+<ui-stack direction="row" align="start" justify="between">
   <ui-page-header title="Expenses" addRoute="/expenses/add" addTooltip="Add a new expense" />
   <p-button
     icon="pi pi-chart-bar"
@@ -6,7 +6,7 @@
     [routerLink]="['/expenses/analytics']"
     [outlined]="true"
   />
-</div>
+</ui-stack>
 
 <p-card>
   <div class="mb-4">
@@ -100,7 +100,7 @@
                 (click)="viewReceipt(expense, $event)"
               />
             } @else {
-              <i class="pi pi-file text-muted" pTooltip="No receipt"></i>
+              <ui-icon name="file" color="muted" pTooltip="No receipt" />
             }
           </td>
           <td>

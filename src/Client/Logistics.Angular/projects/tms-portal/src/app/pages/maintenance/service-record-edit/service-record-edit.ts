@@ -1,7 +1,12 @@
-import { Component, type OnInit, inject, input, signal } from "@angular/core";
+import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { Api, getMaintenanceRecords } from "@logistics/shared/api";
-import type { MaintenanceRecordDto, TruckDto } from "@logistics/shared/api";
+import {
+  Api,
+  getMaintenanceRecords,
+  type MaintenanceRecordDto,
+  type TruckDto,
+} from "@logistics/shared/api";
+import { Stack } from "@logistics/shared/components";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
@@ -14,7 +19,7 @@ import {
 @Component({
   selector: "app-service-record-edit",
   templateUrl: "./service-record-edit.html",
-  imports: [CardModule, ProgressSpinnerModule, PageHeader, MaintenanceRecordForm],
+  imports: [CardModule, ProgressSpinnerModule, PageHeader, MaintenanceRecordForm, Stack],
 })
 export class ServiceRecordEditPage implements OnInit {
   private readonly router = inject(Router);

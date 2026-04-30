@@ -1,7 +1,13 @@
-import { Component, type OnInit, inject, input, signal } from "@angular/core";
+import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { Api, deleteTrip, getTripById, updateTrip } from "@logistics/shared/api";
-import type { UpdateTripCommand } from "@logistics/shared/api";
+import {
+  Api,
+  deleteTrip,
+  getTripById,
+  updateTrip,
+  type UpdateTripCommand,
+} from "@logistics/shared/api";
+import { Stack, Typography } from "@logistics/shared/components";
 import { CardModule } from "primeng/card";
 import { ToastService } from "@/core/services";
 import { TripWizard, type TripWizardValue } from "../components";
@@ -9,7 +15,7 @@ import { TripWizard, type TripWizardValue } from "../components";
 @Component({
   selector: "app-trip-edit",
   templateUrl: "./trip-edit.html",
-  imports: [CardModule, TripWizard],
+  imports: [CardModule, TripWizard, Stack, Typography],
 })
 export class TripEditPage implements OnInit {
   private readonly toastService = inject(ToastService);

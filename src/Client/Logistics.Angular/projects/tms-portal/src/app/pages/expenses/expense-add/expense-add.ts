@@ -11,6 +11,7 @@ import {
   uploadExpenseReceipt,
   type TruckDto,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack } from "@logistics/shared/components";
 import { MessageService } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -49,6 +50,9 @@ interface CategoryOption {
     ToastModule,
     FormField,
     PageHeader,
+    Grid,
+    Icon,
+    Stack,
   ],
 })
 export class ExpenseAddPage implements OnInit {

@@ -1,23 +1,26 @@
 import { DatePipe, DecimalPipe } from "@angular/common";
-import { Component, computed, inject, input, type OnInit, signal } from "@angular/core";
+import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import {
   Api,
-  getDvirReportById,
   dismissDvirReport,
+  getDvirReportById,
   rejectDvirReport,
+  type DvirReportDto,
+  type DvirStatus,
+  type DvirType,
 } from "@logistics/shared/api";
-import type { DvirReportDto, DvirStatus, DvirType } from "@logistics/shared/api";
-import { AuthService } from "@/core/auth";
+import { Grid, Icon, Stack } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
-import { TextareaModule } from "primeng/textarea";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TagModule } from "primeng/tag";
-import { PageHeader } from "@/shared/components";
+import { TextareaModule } from "primeng/textarea";
+import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
+import { PageHeader } from "@/shared/components";
 import type { TagSeverity } from "@/shared/types";
 import { DvirDefectsList } from "../components/dvir-defects-list/dvir-defects-list";
 
@@ -37,6 +40,9 @@ import { DvirDefectsList } from "../components/dvir-defects-list/dvir-defects-li
     RouterLink,
     PageHeader,
     DvirDefectsList,
+    Grid,
+    Icon,
+    Stack,
   ],
 })
 export class DvirDetailPage implements OnInit {

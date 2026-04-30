@@ -11,6 +11,7 @@ import {
   type ExpenseDto,
   type TruckDto,
 } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { MessageService } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -49,6 +50,10 @@ interface CategoryOption {
     ProgressSpinnerModule,
     FormField,
     PageHeader,
+    Grid,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class ExpenseEditPage implements OnInit {

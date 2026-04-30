@@ -10,14 +10,14 @@
     Generate payment links to share with customers so they can pay this invoice online.
   </p>
 
-  <div class="mb-4 flex justify-end">
+  <ui-stack direction="row" justify="end" class="mb-4">
     <p-button
       icon="pi pi-plus"
       label="Generate New Link"
       (click)="generateLink()"
       [loading]="isGenerating()"
     />
-  </div>
+  </ui-stack>
 
   @if (links().length > 0) {
     <p-table [value]="links()">
@@ -68,10 +68,10 @@
       </ng-template>
     </p-table>
   } @else {
-    <div class="text-muted-color py-4 text-center">
-      <i class="pi pi-link mb-2 text-4xl"></i>
+    <ui-stack align="center" gap="2" class="text-muted-color py-4">
+      <ui-icon name="link" size="xl" class="mb-2" />
       <p>No payment links generated yet</p>
       <p class="text-sm">Click "Generate New Link" to create a shareable payment link</p>
-    </div>
+    </ui-stack>
   }
 </p-dialog>

@@ -56,9 +56,9 @@
           </td>
           <td>
             @if (schedule.isOverdue) {
-              <span class="text-danger font-medium">
-                <i class="pi pi-exclamation-triangle mr-1"></i>
-                Overdue
+              <span class="text-danger inline-flex items-center gap-1 font-medium">
+                <ui-icon name="exclamation-triangle" size="sm" color="danger" />
+                <span>Overdue</span>
               </span>
             } @else if (schedule.daysUntilDue) {
               <span [class]="(schedule.daysUntilDue ?? 0) <= 7 ? 'text-warn font-medium' : ''">

@@ -1,10 +1,10 @@
 @if (disabled()) {
-  <div class="mb-4 flex">
+  <ui-stack direction="row" class="mb-4">
     <p-message severity="info">
       You cannot edit this trip because it is not in the 'Draft' status. Only the trip name can be
       edited.
     </p-message>
-  </div>
+  </ui-stack>
 }
 
 <p-stepper [linear]="true" [value]="activeStep()" (valueChange)="store['goToStep']($event ?? 1)">

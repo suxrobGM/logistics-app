@@ -15,6 +15,7 @@ import {
   type UpdatePayrollInvoiceCommand,
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
+import { Grid, Stack, Typography } from "@logistics/shared/components";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -43,6 +44,9 @@ import { PayrollLineItemsTable, PayrollPaySummary } from "../../components";
     PageHeader,
     PayrollLineItemsTable,
     PayrollPaySummary,
+    Grid,
+    Stack,
+    Typography,
   ],
 })
 export class PayrollInvoiceEdit implements OnInit {

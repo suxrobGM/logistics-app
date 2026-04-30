@@ -31,7 +31,7 @@
       ></textarea>
     </ui-form-field>
 
-    <div class="flex justify-end gap-2">
+    <ui-stack direction="row" justify="end" gap="2">
       <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />
       <p-button
         type="submit"
@@ -40,6 +40,6 @@
         [loading]="isSending()"
         [disabled]="form.invalid"
       />
-    </div>
+    </ui-stack>
   </form>
 </p-dialog>

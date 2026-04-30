@@ -1,8 +1,7 @@
 <div class="animate-fadein">
-  <div class="flex items-center">
-    <h1 class="text-primary mb-0">Trips</h1>
+  <ui-stack direction="row" align="center" gap="2">
+    <ui-typography variant="h2" tag="h1">Trips</ui-typography>
     <p-button
-      styleClass="ml-2"
       icon="pi pi-plus-circle"
       size="large"
       [rounded]="true"
@@ -12,7 +11,6 @@
       [routerLink]="['/trips/add']"
     />
     <p-button
-      styleClass="ml-2"
       icon="pi pi-download"
       size="large"
       [rounded]="true"
@@ -22,7 +20,7 @@
       (click)="exportToCsv()"
       [disabled]="store.isEmpty()"
     />
-  </div>
+  </ui-stack>
 
   <!-- Summary Stats -->
   <app-trips-summary-stats
@@ -33,11 +31,13 @@
 
   <!-- Filter Panel -->
   <p-card class="mb-4">
-    <div class="mb-4 flex items-center justify-between">
-      <span class="text-primary text-lg font-semibold">Filters</span>
-      <div class="flex items-center gap-2">
+    <ui-stack direction="row" align="center" justify="between" class="mb-4">
+      <ui-typography variant="h6" color="primary" weight="semibold">Filters</ui-typography>
+      <ui-stack direction="row" align="center" gap="2">
         @if (activeFilterCount() > 0) {
-          <span class="text-muted text-sm">{{ activeFilterCount() }} active</span>
+          <ui-typography variant="body-sm" color="muted">
+            {{ activeFilterCount() }} active
+          </ui-typography>
         }
         <p-button
           label="Clear All"
@@ -47,50 +47,56 @@
           (click)="clearFilters()"
           [disabled]="activeFilterCount() === 0"
         />
-      </div>
-    </div>
+      </ui-stack>
+    </ui-stack>
 
-    <div class="grid grid-cols-1 gap-x-4 md:grid-cols-2 lg:grid-cols-4">
-      <ui-form-field label="Search">
-        <ui-search-input class="w-full" (searchChange)="onSearch($event)" />
-      </ui-form-field>
+    <ui-grid container spacing="4">
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+        <ui-form-field label="Search">
+          <ui-search-input class="w-full" (searchChange)="onSearch($event)" />
+        </ui-form-field>
+      </ui-grid>
 
-      <ui-form-field label="Status">
-        <p-multiselect
-          [options]="statusOptions"
-          [ngModel]="selectedStatuses()"
-          (ngModelChange)="selectedStatuses.set($event); applyFilters()"
-          placeholder="Select status"
-          [showClear]="true"
-          class="w-full"
-        />
-      </ui-form-field>
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+        <ui-form-field label="Status">
+          <p-multiselect
+            [options]="statusOptions"
+            [ngModel]="selectedStatuses()"
+            (ngModelChange)="selectedStatuses.set($event); applyFilters()"
+            placeholder="Select status"
+            [showClear]="true"
+            class="w-full"
+          />
+        </ui-form-field>
+      </ui-grid>
 
-      <ui-form-field label="Truck">
-        <app-search-truck
-          [selectedTruck]="selectedTruck()"
-          (selectedTruckChange)="selectedTruck.set($event); applyFilters()"
-        />
-      </ui-form-field>
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+        <ui-form-field label="Truck">
+          <app-search-truck
+            [selectedTruck]="selectedTruck()"
+            (selectedTruckChange)="selectedTruck.set($event); applyFilters()"
+          />
+        </ui-form-field>
+      </ui-grid>
 
-      <ui-form-field label="Date Range">
-        <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
-      </ui-form-field>
-    </div>
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+        <ui-form-field label="Date Range">
+          <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
+        </ui-form-field>
+      </ui-grid>
+    </ui-grid>
 
-    <div class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
-      <div class="flex items-center gap-2">
-        <p-checkbox
-          [ngModel]="onlyActiveTrips()"
-          (ngModelChange)="onlyActiveTrips.set($event); applyFilters()"
-          [binary]="true"
-          inputId="activeTripsOnly"
-        />
-        <label for="activeTripsOnly" class="text-secondary cursor-pointer text-sm"
-          >Active trips only</label
-        >
-      </div>
-    </div>
+    <ui-stack direction="row" align="center" gap="2" wrap class="mt-4">
+      <p-checkbox
+        [ngModel]="onlyActiveTrips()"
+        (ngModelChange)="onlyActiveTrips.set($event); applyFilters()"
+        [binary]="true"
+        inputId="activeTripsOnly"
+      />
+      <label for="activeTripsOnly" class="text-secondary cursor-pointer text-sm"
+        >Active trips only</label
+      >
+    </ui-stack>
   </p-card>
 
   <p-card>

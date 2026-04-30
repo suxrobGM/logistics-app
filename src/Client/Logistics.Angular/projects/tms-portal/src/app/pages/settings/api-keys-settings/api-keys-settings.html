@@ -1,12 +1,12 @@
-<h1 class="text-center">API Keys</h1>
+<ui-typography variant="h2" tag="h1" align="center">API Keys</ui-typography>
 
-<div class="flex justify-center">
+<ui-stack direction="row" justify="center">
   <div class="w-full md:w-2/3">
     <p-card>
-      <p class="text-muted mb-4">
+      <ui-typography variant="body" color="muted" class="mb-4">
         API keys authenticate external integrations with your fleet data. Use them to connect AI
         tools via the MCP server or to access the REST API programmatically.
-      </p>
+      </ui-typography>
       <app-api-keys-table />
     </p-card>
 
@@ -14,4 +14,4 @@
       <app-mcp-integration-guide />
     </p-card>
   </div>
-</div>
+</ui-stack>

@@ -1,7 +1,13 @@
-import { Component, type OnInit, inject, signal } from "@angular/core";
+import { Component, inject, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Api, getCurrentTenantFeatures, updateCurrentTenantFeature } from "@logistics/shared/api";
-import type { FeatureStatusDto, TenantFeature } from "@logistics/shared/api";
+import {
+  Api,
+  getCurrentTenantFeatures,
+  updateCurrentTenantFeature,
+  type FeatureStatusDto,
+  type TenantFeature,
+} from "@logistics/shared/api";
+import { Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { FEATURE_DESCRIPTIONS } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -20,6 +26,10 @@ import { ToastService } from "@/core/services";
     ButtonModule,
     ToggleSwitchModule,
     TooltipModule,
+    Icon,
+    Stack,
+    Surface,
+    Typography,
   ],
 })
 export class FeatureSettingsComponent implements OnInit {

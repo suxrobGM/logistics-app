@@ -5,67 +5,67 @@
 </ui-page-header>
 
 @if (isLoading()) {
-  <div class="flex justify-center py-16">
+  <ui-stack align="center" justify="center" class="py-16">
     <p-progress-spinner />
-  </div>
+  </ui-stack>
 } @else if (record()) {
-  <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+  <ui-grid container spacing="4">
     <!-- Main Info -->
-    <div class="lg:col-span-2">
+    <ui-grid [size]="{ xs: 12, lg: 8 }">
       <p-card header="Service Details">
-        <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-          <div>
-            <div class="text-muted mb-1 text-sm">Service Type</div>
+        <ui-grid container spacing="4">
+          <ui-grid [size]="{ xs: 6, md: 3 }">
+            <ui-typography variant="caption" color="muted" class="mb-1 block">Service Type</ui-typography>
             <p-tag [value]="record()!.typeDisplay ?? 'Unknown'" severity="info" />
-          </div>
-          <div>
-            <div class="text-muted mb-1 text-sm">Service Date</div>
+          </ui-grid>
+          <ui-grid [size]="{ xs: 6, md: 3 }">
+            <ui-typography variant="caption" color="muted" class="mb-1 block">Service Date</ui-typography>
             <div class="font-medium">{{ record()!.serviceDate | date: "mediumDate" }}</div>
-          </div>
-          <div>
-            <div class="text-muted mb-1 text-sm">Odometer</div>
+          </ui-grid>
+          <ui-grid [size]="{ xs: 6, md: 3 }">
+            <ui-typography variant="caption" color="muted" class="mb-1 block">Odometer</ui-typography>
             <div class="font-medium">
               @if (record()!.odometerReading) {
                 {{ record()!.odometerReading | number }} mi
               } @else {
-                <span class="text-muted">Not recorded</span>
+                <ui-typography color="muted" tag="span">Not recorded</ui-typography>
               }
             </div>
-          </div>
-          <div>
-            <div class="text-muted mb-1 text-sm">Engine Hours</div>
+          </ui-grid>
+          <ui-grid [size]="{ xs: 6, md: 3 }">
+            <ui-typography variant="caption" color="muted" class="mb-1 block">Engine Hours</ui-typography>
             <div class="font-medium">
               @if (record()!.engineHours) {
                 {{ record()!.engineHours | number }} hrs
               } @else {
-                <span class="text-muted">Not recorded</span>
+                <ui-typography color="muted" tag="span">Not recorded</ui-typography>
               }
             </div>
-          </div>
-        </div>
+          </ui-grid>
+        </ui-grid>
 
-        <div class="mt-4 grid grid-cols-2 gap-4">
-          <div>
-            <div class="text-muted mb-1 text-sm">Truck</div>
+        <ui-grid container spacing="4" class="mt-4">
+          <ui-grid [size]="{ xs: 12, md: 6 }">
+            <ui-typography variant="caption" color="muted" class="mb-1 block">Truck</ui-typography>
             <a [routerLink]="['/trucks', record()!.truckId]" class="text-primary font-medium">
               {{ record()!.truckNumber }}
             </a>
-          </div>
-          <div>
-            <div class="text-muted mb-1 text-sm">Performed By</div>
+          </ui-grid>
+          <ui-grid [size]="{ xs: 12, md: 6 }">
+            <ui-typography variant="caption" color="muted" class="mb-1 block">Performed By</ui-typography>
             <div class="font-medium">{{ record()!.performedByName ?? "Not specified" }}</div>
-          </div>
-        </div>
+          </ui-grid>
+        </ui-grid>
 
         <div class="mt-4">
-          <div class="text-muted mb-1 text-sm">Description</div>
+          <ui-typography variant="caption" color="muted" class="mb-1 block">Description</ui-typography>
           <p>{{ record()!.description ?? "No description provided" }}</p>
         </div>
 
         @if (record()!.notes) {
           <div class="mt-4">
-            <div class="text-muted mb-1 text-sm">Notes</div>
-            <p class="text-muted">{{ record()!.notes }}</p>
+            <ui-typography variant="caption" color="muted" class="mb-1 block">Notes</ui-typography>
+            <ui-typography color="muted">{{ record()!.notes }}</ui-typography>
           </div>
         }
       </p-card>
@@ -103,68 +103,70 @@
       <!-- Documents -->
       @if (record()!.documents && record()!.documents!.length > 0) {
         <p-card header="Documents" class="mt-4">
-          <div class="flex flex-wrap gap-2">
+          <ui-stack direction="row" wrap gap="2">
             @for (doc of record()!.documents; track doc.id) {
-              <span class="flex items-center gap-1">
-                <i class="pi pi-file"></i>
-                {{ doc.fileName ?? doc.originalFileName ?? "Document" }}
+              <span class="inline-flex items-center gap-1">
+                <ui-icon name="file" size="sm" />
+                <span>{{ doc.fileName ?? doc.originalFileName ?? "Document" }}</span>
               </span>
             }
-          </div>
+          </ui-stack>
         </p-card>
       }
-    </div>
+    </ui-grid>
 
     <!-- Sidebar - Costs -->
-    <div class="flex flex-col gap-4">
-      <p-card header="Cost Summary">
-        <div class="flex flex-col gap-3">
-          <div class="flex justify-between">
-            <span class="text-muted">Labor Cost</span>
-            <span class="font-medium">{{ record()!.laborCost | currency }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-muted">Parts Cost</span>
-            <span class="font-medium">{{ record()!.partsCost | currency }}</span>
-          </div>
-          <div class="border-t pt-3">
-            <div class="flex justify-between">
-              <span class="font-semibold">Total Cost</span>
-              <span class="text-primary text-lg font-bold">{{ record()!.totalCost | currency }}</span>
+    <ui-grid [size]="{ xs: 12, lg: 4 }">
+      <ui-stack gap="4">
+        <p-card header="Cost Summary">
+          <ui-stack gap="3">
+            <ui-stack direction="row" justify="between">
+              <ui-typography color="muted">Labor Cost</ui-typography>
+              <span class="font-medium">{{ record()!.laborCost | currency }}</span>
+            </ui-stack>
+            <ui-stack direction="row" justify="between">
+              <ui-typography color="muted">Parts Cost</ui-typography>
+              <span class="font-medium">{{ record()!.partsCost | currency }}</span>
+            </ui-stack>
+            <div class="border-t pt-3">
+              <ui-stack direction="row" justify="between">
+                <span class="font-semibold">Total Cost</span>
+                <span class="text-primary text-lg font-bold">{{ record()!.totalCost | currency }}</span>
+              </ui-stack>
             </div>
-          </div>
-        </div>
-      </p-card>
-
-      <!-- Vendor Info -->
-      @if (record()!.vendorName || record()!.invoiceNumber) {
-        <p-card header="Vendor Information">
-          <div class="flex flex-col gap-3">
-            @if (record()!.vendorName) {
-              <div>
-                <div class="text-muted mb-1 text-sm">Vendor Name</div>
-                <div class="font-medium">{{ record()!.vendorName }}</div>
-              </div>
-            }
-            @if (record()!.invoiceNumber) {
-              <div>
-                <div class="text-muted mb-1 text-sm">Invoice Number</div>
-                <div class="font-medium">{{ record()!.invoiceNumber }}</div>
-              </div>
-            }
-          </div>
+          </ui-stack>
         </p-card>
-      }
 
-      <!-- Meta Info -->
-      <p-card header="Record Information">
-        <div class="flex flex-col gap-3">
-          <div>
-            <div class="text-muted mb-1 text-sm">Created</div>
-            <div class="text-sm">{{ record()!.createdAt | date: "medium" }}</div>
-          </div>
-        </div>
-      </p-card>
-    </div>
-  </div>
+        <!-- Vendor Info -->
+        @if (record()!.vendorName || record()!.invoiceNumber) {
+          <p-card header="Vendor Information">
+            <ui-stack gap="3">
+              @if (record()!.vendorName) {
+                <div>
+                  <ui-typography variant="caption" color="muted" class="mb-1 block">Vendor Name</ui-typography>
+                  <div class="font-medium">{{ record()!.vendorName }}</div>
+                </div>
+              }
+              @if (record()!.invoiceNumber) {
+                <div>
+                  <ui-typography variant="caption" color="muted" class="mb-1 block">Invoice Number</ui-typography>
+                  <div class="font-medium">{{ record()!.invoiceNumber }}</div>
+                </div>
+              }
+            </ui-stack>
+          </p-card>
+        }
+
+        <!-- Meta Info -->
+        <p-card header="Record Information">
+          <ui-stack gap="3">
+            <div>
+              <ui-typography variant="caption" color="muted" class="mb-1 block">Created</ui-typography>
+              <div class="text-sm">{{ record()!.createdAt | date: "medium" }}</div>
+            </div>
+          </ui-stack>
+        </p-card>
+      </ui-stack>
+    </ui-grid>
+  </ui-grid>
 }

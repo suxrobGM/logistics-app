@@ -1,59 +1,65 @@
-<div class="flex flex-col gap-4 px-1">
-  <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-    <p-card>
-      <div class="flex items-center justify-between">
-        <div>
-          <div class="text-sm opacity-70">Trip</div>
-          <div class="text-lg font-semibold">{{ reviewData().tripName || "—" }}</div>
-        </div>
-        <i class="pi pi-flag text-2xl opacity-60"></i>
-      </div>
-      <div class="mt-2 text-sm">
-        Truck:
-        <span class="font-medium">{{ reviewData().truckNumber || "Not assigned" }}</span>
-      </div>
-    </p-card>
-
-    <p-card>
-      <div class="flex items-center justify-between">
-        <div>
-          <div class="text-sm opacity-70">Loads</div>
-          <div class="text-lg font-semibold">
-            {{ reviewData().totalLoads }}
-            <span class="text-xs font-normal opacity-70">
-              (+{{ reviewData().newLoadsCount }} new, -{{ reviewData().pendingDetachLoadsCount }}
-              pending)
-            </span>
-          </div>
-        </div>
-        <i class="pi pi-box text-2xl opacity-60"></i>
-      </div>
-    </p-card>
-
-    <p-card>
-      <div class="flex items-center justify-between">
-        <div>
-          <div class="text-sm opacity-70">Totals</div>
+<ui-stack gap="4" class="px-1">
+  <ui-grid container spacing="4">
+    <ui-grid [size]="{ xs: 12, md: 4 }">
+      <p-card>
+        <ui-stack direction="row" align="center" justify="between">
           <div>
-            Distance:
-            <span class="font-semibold"
-              >{{ reviewData().totalDistance | distanceUnit: "mi" }} mi</span
-            >
+            <div class="text-sm opacity-70">Trip</div>
+            <div class="text-lg font-semibold">{{ reviewData().tripName || "—" }}</div>
           </div>
-          <div>
-            Cost: <span class="font-semibold">{{ reviewData().totalCost | currency }}</span>
-          </div>
+          <ui-icon name="flag" size="xl" color="muted" class="opacity-60" />
+        </ui-stack>
+        <div class="mt-2 text-sm">
+          Truck:
+          <span class="font-medium">{{ reviewData().truckNumber || "Not assigned" }}</span>
         </div>
-        <i class="pi pi-chart-line text-2xl opacity-60"></i>
-      </div>
-    </p-card>
-  </div>
+      </p-card>
+    </ui-grid>
+
+    <ui-grid [size]="{ xs: 12, md: 4 }">
+      <p-card>
+        <ui-stack direction="row" align="center" justify="between">
+          <div>
+            <div class="text-sm opacity-70">Loads</div>
+            <div class="text-lg font-semibold">
+              {{ reviewData().totalLoads }}
+              <span class="text-xs font-normal opacity-70">
+                (+{{ reviewData().newLoadsCount }} new, -{{ reviewData().pendingDetachLoadsCount }}
+                pending)
+              </span>
+            </div>
+          </div>
+          <ui-icon name="box" size="xl" color="muted" class="opacity-60" />
+        </ui-stack>
+      </p-card>
+    </ui-grid>
+
+    <ui-grid [size]="{ xs: 12, md: 4 }">
+      <p-card>
+        <ui-stack direction="row" align="center" justify="between">
+          <div>
+            <div class="text-sm opacity-70">Totals</div>
+            <div>
+              Distance:
+              <span class="font-semibold"
+                >{{ reviewData().totalDistance | distanceUnit: "mi" }} mi</span
+              >
+            </div>
+            <div>
+              Cost: <span class="font-semibold">{{ reviewData().totalCost | currency }}</span>
+            </div>
+          </div>
+          <ui-icon name="chart-line" size="xl" color="muted" class="opacity-60" />
+        </ui-stack>
+      </p-card>
+    </ui-grid>
+  </ui-grid>
 
   <!-- Trip Stops table -->
   <p-card>
     <ng-template #header>
-      <div class="flex items-center gap-2 p-3 pb-0">
-        <h5>Stops</h5>
+      <ui-stack direction="row" align="center" gap="2" class="p-3 pb-0">
+        <ui-typography variant="h6" tag="h5">Stops</ui-typography>
         <p-button
           type="button"
           icon="pi pi-route"
@@ -63,7 +69,7 @@
           [disabled]="isOptimizing()"
           (click)="reOptimizeRoute()"
         />
-      </div>
+      </ui-stack>
     </ng-template>
 
     <p-table
@@ -103,7 +109,7 @@
     (waypointClick)="onWaypointClick($event)"
   />
 
-  <div class="flex justify-between pt-6">
+  <ui-stack direction="row" justify="between" class="pt-6">
     <p-button type="button" label="Back" icon="pi pi-arrow-left" (click)="goToPreviousStep()" />
     <p-button
       type="button"
@@ -111,5 +117,5 @@
       [label]="saveButtonLabel()"
       (click)="save.emit()"
     />
-  </div>
-</div>
+  </ui-stack>
+</ui-stack>

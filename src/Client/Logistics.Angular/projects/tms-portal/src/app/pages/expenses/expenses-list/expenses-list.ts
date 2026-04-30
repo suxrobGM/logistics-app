@@ -1,8 +1,8 @@
 import { CommonModule } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { Api, downloadExpenseReceipt } from "@logistics/shared/api";
-import type { ExpenseDto } from "@logistics/shared/api";
+import { Api, downloadExpenseReceipt, type ExpenseDto } from "@logistics/shared/api";
+import { Icon, Stack } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import type { MenuItem } from "primeng/api";
@@ -34,6 +34,8 @@ import { ExpensesListStore } from "../store/expenses-list.store";
     DataContainer,
     PageHeader,
     SearchInput,
+    Icon,
+    Stack,
     ExpenseStatusTag,
     ExpenseTypeTag,
     RejectExpenseDialog,

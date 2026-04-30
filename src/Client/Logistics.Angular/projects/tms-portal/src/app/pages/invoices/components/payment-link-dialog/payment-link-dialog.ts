@@ -1,7 +1,12 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject, input, model, signal } from "@angular/core";
-import { Api, createPaymentLink, revokePaymentLink } from "@logistics/shared/api";
-import type { PaymentLinkDto } from "@logistics/shared/api";
+import {
+  Api,
+  createPaymentLink,
+  revokePaymentLink,
+  type PaymentLinkDto,
+} from "@logistics/shared/api";
+import { Icon, Stack } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -21,6 +26,8 @@ import { ToastService } from "@/core/services";
     TooltipModule,
     TagModule,
     DatePipe,
+    Icon,
+    Stack,
   ],
 })
 export class PaymentLinkDialog {

@@ -1,10 +1,10 @@
 <p-toast />
 
 <div class="mx-auto max-w-4xl">
-  <div class="flex items-start justify-between">
+  <ui-stack direction="row" align="start" justify="between">
     <ui-page-header title="Add Expense" [showAddButton]="false" />
     <p-button icon="pi pi-arrow-left" label="Back" [routerLink]="['/expenses']" [outlined]="true" />
-  </div>
+  </ui-stack>
 
   <p-card>
     <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)">
@@ -22,44 +22,50 @@
             (ngSubmit)="submitCompanyExpense()"
             class="space-y-4 pt-4"
           >
-            <div class="grid grid-cols-2 gap-4">
-              <ui-form-field label="Amount" for="company-amount" [required]="true">
-                <p-inputNumber
-                  id="company-amount"
-                  formControlName="amount"
-                  mode="currency"
-                  currency="USD"
-                  [min]="0"
-                  styleClass="w-full"
-                />
-              </ui-form-field>
+            <ui-grid container spacing="4">
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Amount" for="company-amount" [required]="true">
+                  <p-inputNumber
+                    id="company-amount"
+                    formControlName="amount"
+                    mode="currency"
+                    currency="USD"
+                    [min]="0"
+                    styleClass="w-full"
+                  />
+                </ui-form-field>
+              </ui-grid>
 
-              <ui-form-field label="Category" for="company-category" [required]="true">
-                <p-select
-                  id="company-category"
-                  formControlName="category"
-                  [options]="companyCategories"
-                  optionLabel="label"
-                  optionValue="value"
-                  styleClass="w-full"
-                />
-              </ui-form-field>
-            </div>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Category" for="company-category" [required]="true">
+                  <p-select
+                    id="company-category"
+                    formControlName="category"
+                    [options]="companyCategories"
+                    optionLabel="label"
+                    optionValue="value"
+                    styleClass="w-full"
+                  />
+                </ui-form-field>
+              </ui-grid>
 
-            <div class="grid grid-cols-2 gap-4">
-              <ui-form-field label="Vendor Name" for="company-vendor">
-                <input pInputText id="company-vendor" formControlName="vendorName" class="w-full" />
-              </ui-form-field>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Vendor Name" for="company-vendor">
+                  <input pInputText id="company-vendor" formControlName="vendorName" class="w-full" />
+                </ui-form-field>
+              </ui-grid>
 
-              <ui-form-field label="Expense Date" for="company-date" [required]="true">
-                <p-datepicker
-                  id="company-date"
-                  formControlName="expenseDate"
-                  [showIcon]="true"
-                  styleClass="w-full"
-                />
-              </ui-form-field>
-            </div>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Expense Date" for="company-date" [required]="true">
+                  <p-datepicker
+                    id="company-date"
+                    formControlName="expenseDate"
+                    [showIcon]="true"
+                    styleClass="w-full"
+                  />
+                </ui-form-field>
+              </ui-grid>
+            </ui-grid>
 
             <ui-form-field label="Notes" for="company-notes">
               <textarea
@@ -80,14 +86,14 @@
                 (onSelect)="onReceiptUpload($event)"
               />
               @if (receiptPath()) {
-                <span class="mt-2 block text-sm text-green-600">
-                  <i class="pi pi-check mr-1"></i>
-                  Receipt attached
-                </span>
+                <ui-stack direction="row" align="center" gap="1" class="mt-2 text-sm text-success">
+                  <ui-icon name="check" size="sm" />
+                  <span>Receipt attached</span>
+                </ui-stack>
               }
             </ui-form-field>
 
-            <div class="flex justify-end gap-2 pt-4">
+            <ui-stack direction="row" justify="end" gap="2" class="pt-4">
               <p-button label="Cancel" [routerLink]="['/expenses']" [outlined]="true" />
               <p-button
                 type="submit"
@@ -95,75 +101,83 @@
                 icon="pi pi-save"
                 [loading]="isLoading()"
               />
-            </div>
+            </ui-stack>
           </form>
         </p-tabpanel>
 
         <!-- Truck Expense Form -->
         <p-tabpanel [value]="1">
           <form [formGroup]="truckForm" (ngSubmit)="submitTruckExpense()" class="space-y-4 pt-4">
-            <div class="grid grid-cols-2 gap-4">
-              <ui-form-field label="Amount" for="truck-amount" [required]="true">
-                <p-inputNumber
-                  id="truck-amount"
-                  formControlName="amount"
-                  mode="currency"
-                  currency="USD"
-                  [min]="0"
-                  styleClass="w-full"
-                />
-              </ui-form-field>
+            <ui-grid container spacing="4">
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Amount" for="truck-amount" [required]="true">
+                  <p-inputNumber
+                    id="truck-amount"
+                    formControlName="amount"
+                    mode="currency"
+                    currency="USD"
+                    [min]="0"
+                    styleClass="w-full"
+                  />
+                </ui-form-field>
+              </ui-grid>
 
-              <ui-form-field label="Category" for="truck-category" [required]="true">
-                <p-select
-                  id="truck-category"
-                  formControlName="category"
-                  [options]="truckCategories"
-                  optionLabel="label"
-                  optionValue="value"
-                  styleClass="w-full"
-                />
-              </ui-form-field>
-            </div>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Category" for="truck-category" [required]="true">
+                  <p-select
+                    id="truck-category"
+                    formControlName="category"
+                    [options]="truckCategories"
+                    optionLabel="label"
+                    optionValue="value"
+                    styleClass="w-full"
+                  />
+                </ui-form-field>
+              </ui-grid>
 
-            <div class="grid grid-cols-2 gap-4">
-              <ui-form-field label="Truck" for="truck-select" [required]="true">
-                <p-select
-                  id="truck-select"
-                  formControlName="truckId"
-                  [options]="trucks()"
-                  optionLabel="number"
-                  optionValue="id"
-                  placeholder="Select a truck"
-                  styleClass="w-full"
-                />
-              </ui-form-field>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Truck" for="truck-select" [required]="true">
+                  <p-select
+                    id="truck-select"
+                    formControlName="truckId"
+                    [options]="trucks()"
+                    optionLabel="number"
+                    optionValue="id"
+                    placeholder="Select a truck"
+                    styleClass="w-full"
+                  />
+                </ui-form-field>
+              </ui-grid>
 
-              <ui-form-field label="Expense Date" for="truck-date" [required]="true">
-                <p-datepicker
-                  id="truck-date"
-                  formControlName="expenseDate"
-                  [showIcon]="true"
-                  styleClass="w-full"
-                />
-              </ui-form-field>
-            </div>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Expense Date" for="truck-date" [required]="true">
+                  <p-datepicker
+                    id="truck-date"
+                    formControlName="expenseDate"
+                    [showIcon]="true"
+                    styleClass="w-full"
+                  />
+                </ui-form-field>
+              </ui-grid>
 
-            <div class="grid grid-cols-2 gap-4">
-              <ui-form-field label="Vendor Name" for="truck-vendor">
-                <input pInputText id="truck-vendor" formControlName="vendorName" class="w-full" />
-              </ui-form-field>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Vendor Name" for="truck-vendor">
+                  <input pInputText id="truck-vendor" formControlName="vendorName" class="w-full" />
+                </ui-form-field>
+              </ui-grid>
 
-              <ui-form-field label="Odometer Reading" for="truck-odometer">
-                <p-inputNumber
-                  id="truck-odometer"
-                  formControlName="odometerReading"
-                  [min]="0"
-                  suffix=" mi"
-                  styleClass="w-full"
-                />
-              </ui-form-field>
-            </div>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Odometer Reading" for="truck-odometer">
+                  <p-inputNumber
+                    id="truck-odometer"
+                    formControlName="odometerReading"
+                    [min]="0"
+                    suffix=" mi"
+                    styleClass="w-full"
+                  />
+                </ui-form-field>
+              </ui-grid>
+            </ui-grid>
 
             <ui-form-field label="Notes" for="truck-notes">
               <textarea
@@ -184,14 +198,14 @@
                 (onSelect)="onReceiptUpload($event)"
               />
               @if (receiptPath()) {
-                <span class="mt-2 block text-sm text-green-600">
-                  <i class="pi pi-check mr-1"></i>
-                  Receipt attached
-                </span>
+                <ui-stack direction="row" align="center" gap="1" class="mt-2 text-sm text-success">
+                  <ui-icon name="check" size="sm" />
+                  <span>Receipt attached</span>
+                </ui-stack>
               }
             </ui-form-field>
 
-            <div class="flex justify-end gap-2 pt-4">
+            <ui-stack direction="row" justify="end" gap="2" class="pt-4">
               <p-button label="Cancel" [routerLink]="['/expenses']" [outlined]="true" />
               <p-button
                 type="submit"
@@ -199,7 +213,7 @@
                 icon="pi pi-save"
                 [loading]="isLoading()"
               />
-            </div>
+            </ui-stack>
           </form>
         </p-tabpanel>
 
@@ -210,70 +224,78 @@
             (ngSubmit)="submitBodyShopExpense()"
             class="space-y-4 pt-4"
           >
-            <div class="grid grid-cols-2 gap-4">
-              <ui-form-field label="Amount" for="bodyshop-amount" [required]="true">
-                <p-inputNumber
-                  id="bodyshop-amount"
-                  formControlName="amount"
-                  mode="currency"
-                  currency="USD"
-                  [min]="0"
-                  styleClass="w-full"
-                />
-              </ui-form-field>
+            <ui-grid container spacing="4">
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Amount" for="bodyshop-amount" [required]="true">
+                  <p-inputNumber
+                    id="bodyshop-amount"
+                    formControlName="amount"
+                    mode="currency"
+                    currency="USD"
+                    [min]="0"
+                    styleClass="w-full"
+                  />
+                </ui-form-field>
+              </ui-grid>
 
-              <ui-form-field label="Truck" for="bodyshop-truck" [required]="true">
-                <p-select
-                  id="bodyshop-truck"
-                  formControlName="truckId"
-                  [options]="trucks()"
-                  optionLabel="number"
-                  optionValue="id"
-                  placeholder="Select a truck"
-                  styleClass="w-full"
-                />
-              </ui-form-field>
-            </div>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Truck" for="bodyshop-truck" [required]="true">
+                  <p-select
+                    id="bodyshop-truck"
+                    formControlName="truckId"
+                    [options]="trucks()"
+                    optionLabel="number"
+                    optionValue="id"
+                    placeholder="Select a truck"
+                    styleClass="w-full"
+                  />
+                </ui-form-field>
+              </ui-grid>
 
-            <div class="grid grid-cols-2 gap-4">
-              <ui-form-field label="Body Shop Name" for="bodyshop-vendor">
-                <input
-                  pInputText
-                  id="bodyshop-vendor"
-                  formControlName="vendorName"
-                  class="w-full"
-                />
-              </ui-form-field>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Body Shop Name" for="bodyshop-vendor">
+                  <input
+                    pInputText
+                    id="bodyshop-vendor"
+                    formControlName="vendorName"
+                    class="w-full"
+                  />
+                </ui-form-field>
+              </ui-grid>
 
-              <ui-form-field label="Expense Date" for="bodyshop-date" [required]="true">
-                <p-datepicker
-                  id="bodyshop-date"
-                  formControlName="expenseDate"
-                  [showIcon]="true"
-                  styleClass="w-full"
-                />
-              </ui-form-field>
-            </div>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Expense Date" for="bodyshop-date" [required]="true">
+                  <p-datepicker
+                    id="bodyshop-date"
+                    formControlName="expenseDate"
+                    [showIcon]="true"
+                    styleClass="w-full"
+                  />
+                </ui-form-field>
+              </ui-grid>
 
-            <div class="grid grid-cols-2 gap-4">
-              <ui-form-field label="Shop Address" for="bodyshop-address">
-                <input
-                  pInputText
-                  id="bodyshop-address"
-                  formControlName="vendorAddress"
-                  class="w-full"
-                />
-              </ui-form-field>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Shop Address" for="bodyshop-address">
+                  <input
+                    pInputText
+                    id="bodyshop-address"
+                    formControlName="vendorAddress"
+                    class="w-full"
+                  />
+                </ui-form-field>
+              </ui-grid>
 
-              <ui-form-field label="Shop Phone" for="bodyshop-phone">
-                <input
-                  pInputText
-                  id="bodyshop-phone"
-                  formControlName="vendorPhone"
-                  class="w-full"
-                />
-              </ui-form-field>
-            </div>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Shop Phone" for="bodyshop-phone">
+                  <input
+                    pInputText
+                    id="bodyshop-phone"
+                    formControlName="vendorPhone"
+                    class="w-full"
+                  />
+                </ui-form-field>
+              </ui-grid>
+            </ui-grid>
 
             <ui-form-field label="Repair Description" for="bodyshop-description">
               <textarea
@@ -285,25 +307,29 @@
               ></textarea>
             </ui-form-field>
 
-            <div class="grid grid-cols-2 gap-4">
-              <ui-form-field label="Estimated Completion" for="bodyshop-est-date">
-                <p-datepicker
-                  id="bodyshop-est-date"
-                  formControlName="estimatedCompletionDate"
-                  [showIcon]="true"
-                  styleClass="w-full"
-                />
-              </ui-form-field>
+            <ui-grid container spacing="4">
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Estimated Completion" for="bodyshop-est-date">
+                  <p-datepicker
+                    id="bodyshop-est-date"
+                    formControlName="estimatedCompletionDate"
+                    [showIcon]="true"
+                    styleClass="w-full"
+                  />
+                </ui-form-field>
+              </ui-grid>
 
-              <ui-form-field label="Actual Completion" for="bodyshop-actual-date">
-                <p-datepicker
-                  id="bodyshop-actual-date"
-                  formControlName="actualCompletionDate"
-                  [showIcon]="true"
-                  styleClass="w-full"
-                />
-              </ui-form-field>
-            </div>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Actual Completion" for="bodyshop-actual-date">
+                  <p-datepicker
+                    id="bodyshop-actual-date"
+                    formControlName="actualCompletionDate"
+                    [showIcon]="true"
+                    styleClass="w-full"
+                  />
+                </ui-form-field>
+              </ui-grid>
+            </ui-grid>
 
             <ui-form-field label="Notes" for="bodyshop-notes">
               <textarea
@@ -324,14 +350,14 @@
                 (onSelect)="onReceiptUpload($event)"
               />
               @if (receiptPath()) {
-                <span class="mt-2 block text-sm text-green-600">
-                  <i class="pi pi-check mr-1"></i>
-                  Receipt attached
-                </span>
+                <ui-stack direction="row" align="center" gap="1" class="mt-2 text-sm text-success">
+                  <ui-icon name="check" size="sm" />
+                  <span>Receipt attached</span>
+                </ui-stack>
               }
             </ui-form-field>
 
-            <div class="flex justify-end gap-2 pt-4">
+            <ui-stack direction="row" justify="end" gap="2" class="pt-4">
               <p-button label="Cancel" [routerLink]="['/expenses']" [outlined]="true" />
               <p-button
                 type="submit"
@@ -339,7 +365,7 @@
                 icon="pi pi-save"
                 [loading]="isLoading()"
               />
-            </div>
+            </ui-stack>
           </form>
         </p-tabpanel>
       </p-tabpanels>

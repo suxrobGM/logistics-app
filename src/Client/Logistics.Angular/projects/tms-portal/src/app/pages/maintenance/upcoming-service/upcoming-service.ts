@@ -1,7 +1,8 @@
 import { DatePipe, DecimalPipe } from "@angular/common";
-import { Component, type OnInit, inject, signal } from "@angular/core";
+import { Component, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import type { MaintenanceIntervalType, MaintenanceScheduleDto } from "@logistics/shared/api";
+import { Icon } from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -28,6 +29,7 @@ import { UpcomingServiceStore } from "../store";
     DecimalPipe,
     DataContainer,
     PageHeader,
+    Icon,
   ],
 })
 export class UpcomingServicePage implements OnInit {

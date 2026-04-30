@@ -1,8 +1,8 @@
-<div class="flex flex-col gap-4">
-  <div class="flex items-center gap-2">
-    <h4 class="m-0 font-semibold">Assigned Loads</h4>
+<ui-stack gap="4">
+  <ui-stack direction="row" align="center" gap="2">
+    <ui-typography variant="h6" tag="h4" weight="semibold">Assigned Loads</ui-typography>
     <p-tag [value]="getAssignedLoadsCount()" severity="info" />
-  </div>
+  </ui-stack>
 
   <p-table
     #dataTable
@@ -12,15 +12,15 @@
     [globalFilterFields]="['number', 'name', 'customerName', 'origin', 'destination', 'status']"
   >
     <ng-template #empty>
-      <div class="flex flex-col items-center p-6 text-center">
-        <i class="pi pi-truck mb-2 text-3xl opacity-60"></i>
+      <ui-stack align="center" gap="2" class="p-6 text-center">
+        <ui-icon name="truck" size="xl" color="muted" class="opacity-60" />
         <div class="font-medium">No loads yet</div>
         <small class="opacity-70">Attach an existing load or create a new one.</small>
-      </div>
+      </ui-stack>
     </ng-template>
 
     <ng-template #caption>
-      <div class="flex items-center gap-2">
+      <ui-stack direction="row" align="center" gap="2">
         <!-- Display search bar when there are loads -->
         @if (rows().length) {
           <p-icon-field>
@@ -48,7 +48,7 @@
           [disabled]="disabled()"
           (click)="tripLoadDialogVisible.set(true)"
         />
-      </div>
+      </ui-stack>
     </ng-template>
 
     <ng-template #header>
@@ -71,14 +71,14 @@
     <ng-template #body let-row>
       <tr [class.opacity-70]="row.pendingDetach">
         <td>
-          <div class="flex items-center gap-2">
+          <ui-stack direction="row" align="center" gap="2">
             <span class="font-medium">{{ row.name }}</span>
             @if (row.kind === "new") {
               <p-tag value="New" severity="success" [rounded]="true" />
             } @else if (row.pendingDetach) {
               <p-tag value="Detach" severity="danger" [rounded]="true" />
             }
-          </div>
+          </ui-stack>
         </td>
         <td>
           <span class="truncate" [title]="row.customer?.name">{{ row.customer?.name ?? "—" }}</span>
@@ -103,7 +103,7 @@
         <td class="text-right font-medium">{{ row.distance | distanceUnit: "mi" }}</td>
         <td class="text-right font-medium">{{ row.deliveryCost | currency }}</td>
         <td>
-          <div class="flex justify-end gap-1">
+          <ui-stack direction="row" justify="end" gap="1">
             @if (row.kind === "existing") {
               <p-button
                 icon="pi pi-pencil"
@@ -147,7 +147,7 @@
                 [disabled]="disabled()"
               />
             }
-          </div>
+          </ui-stack>
         </td>
       </tr>
     </ng-template>
@@ -164,7 +164,7 @@
     </ng-template>
   </p-table>
 
-  <div class="flex justify-between pt-6">
+  <ui-stack direction="row" justify="between" class="pt-6">
     <p-button type="button" label="Back" icon="pi pi-arrow-left" (click)="goToPreviousStep()" />
     <p-button
       type="button"
@@ -173,8 +173,8 @@
       label="Next"
       (click)="goToNextStep()"
     />
-  </div>
-</div>
+  </ui-stack>
+</ui-stack>
 
 <!-- Attach existing load dialog -->
 <app-attach-load-dialog

@@ -11,6 +11,7 @@ import {
   type TruckDto,
 } from "@logistics/shared/api";
 import { tripStatusOptions } from "@logistics/shared/api/enums";
+import { Grid, Stack, Typography } from "@logistics/shared/components";
 import {
   AddressPipe,
   CurrencyFormatPipe,
@@ -71,6 +72,9 @@ import { TripsListStore } from "../store/trips-list.store";
     ProgressBarModule,
     RouteBadge,
     TripsSummaryStats,
+    Grid,
+    Stack,
+    Typography,
   ],
 })
 export class TripsList {

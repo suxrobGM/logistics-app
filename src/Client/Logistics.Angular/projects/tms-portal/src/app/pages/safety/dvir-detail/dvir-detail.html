@@ -1,5 +1,5 @@
 <ui-page-header [title]="pageTitle()" [showAddButton]="false" backLink="/safety/dvir">
-  <div class="flex gap-2">
+  <ui-stack direction="row" gap="2">
     @if (canDismiss()) {
       <p-button
         icon="pi pi-check"
@@ -21,48 +21,48 @@
     @if (canReview()) {
       <p-button icon="pi pi-check-square" label="Review" (click)="reviewReport()" />
     }
-  </div>
+  </ui-stack>
 </ui-page-header>
 
 @if (isLoading()) {
-  <div class="flex justify-center py-16">
+  <ui-stack align="center" justify="center" class="py-16">
     <p-progress-spinner />
-  </div>
+  </ui-stack>
 } @else if (report()) {
-  <div class="mx-auto flex max-w-4xl flex-col gap-4">
+  <ui-stack gap="4" class="mx-auto max-w-4xl">
     <!-- Inspection Details -->
     <p-card header="Inspection Details" class="w-full">
-      <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-        <div>
+      <ui-grid container spacing="4">
+        <ui-grid [size]="{ xs: 6, md: 3 }">
           <div class="text-muted mb-1 text-sm">Status</div>
           <p-tag [value]="getStatusLabel(report()!.status)" [severity]="getStatusSeverity(report()!.status)" />
-        </div>
-        <div>
+        </ui-grid>
+        <ui-grid [size]="{ xs: 6, md: 3 }">
           <div class="text-muted mb-1 text-sm">Type</div>
           <p-tag [value]="getTypeLabel(report()!.type)" [severity]="getTypeSeverity(report()!.type)" />
-        </div>
-        <div>
+        </ui-grid>
+        <ui-grid [size]="{ xs: 6, md: 3 }">
           <div class="text-muted mb-1 text-sm">Date</div>
           <div class="font-medium">{{ report()!.inspectionDate | date: "medium" }}</div>
-        </div>
-        <div>
+        </ui-grid>
+        <ui-grid [size]="{ xs: 6, md: 3 }">
           <div class="text-muted mb-1 text-sm">Odometer</div>
           <div class="font-medium">{{ report()!.odometerReading | number }} mi</div>
-        </div>
-      </div>
+        </ui-grid>
+      </ui-grid>
 
-      <div class="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <div>
+      <ui-grid container spacing="4" class="mt-4">
+        <ui-grid [size]="{ xs: 6, md: 3 }">
           <div class="text-muted mb-1 text-sm">Truck</div>
           <a [routerLink]="['/trucks', report()!.truckId]" class="text-primary font-medium">
             {{ report()!.truckNumber }}
           </a>
-        </div>
-        <div>
+        </ui-grid>
+        <ui-grid [size]="{ xs: 6, md: 3 }">
           <div class="text-muted mb-1 text-sm">Driver</div>
           <div class="font-medium">{{ report()!.driverName }}</div>
-        </div>
-      </div>
+        </ui-grid>
+      </ui-grid>
 
       @if (report()!.driverNotes) {
         <div class="mt-4">
@@ -71,59 +71,59 @@
         </div>
       }
 
-      <div class="mt-4 flex items-center gap-4">
+      <ui-stack direction="row" align="center" gap="4" class="mt-4">
         @if (report()!.hasDriverSignature) {
-          <div class="text-success flex items-center gap-1">
-            <i class="pi pi-check-circle"></i>
+          <ui-stack direction="row" align="center" gap="1" class="text-success">
+            <ui-icon name="check-circle" />
             <span class="text-sm">Driver signed</span>
-          </div>
+          </ui-stack>
         }
         @if (report()!.hasDefects) {
-          <div class="text-danger flex items-center gap-1">
-            <i class="pi pi-exclamation-triangle"></i>
+          <ui-stack direction="row" align="center" gap="1" class="text-danger">
+            <ui-icon name="exclamation-triangle" />
             <span class="text-sm">{{ report()!.defects?.length ?? 0 }} defect(s) found</span>
-          </div>
+          </ui-stack>
         } @else {
-          <div class="text-success flex items-center gap-1">
-            <i class="pi pi-check-circle"></i>
+          <ui-stack direction="row" align="center" gap="1" class="text-success">
+            <ui-icon name="check-circle" />
             <span class="text-sm">No defects</span>
-          </div>
+          </ui-stack>
         }
-      </div>
+      </ui-stack>
     </p-card>
 
     <!-- Mechanic Review - below Inspection Details -->
     @if (report()!.reviewedAt) {
       <p-card header="Mechanic Review" class="w-full">
-        <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
-          <div>
+        <ui-grid container spacing="4">
+          <ui-grid [size]="{ xs: 6, md: 3 }">
             <div class="text-muted mb-1 text-sm">Reviewed By</div>
             <div class="font-medium">{{ report()!.reviewedByName }}</div>
-          </div>
-          <div>
+          </ui-grid>
+          <ui-grid [size]="{ xs: 6, md: 3 }">
             <div class="text-muted mb-1 text-sm">Reviewed At</div>
             <div>{{ report()!.reviewedAt | date: "medium" }}</div>
-          </div>
+          </ui-grid>
           @if (report()!.defectsCorrected !== null) {
-            <div>
+            <ui-grid [size]="{ xs: 6, md: 3 }">
               <div class="text-muted mb-1 text-sm">Defects Corrected</div>
               @if (report()!.defectsCorrected) {
                 <span class="text-success font-medium">Yes</span>
               } @else {
                 <span class="text-danger font-medium">No</span>
               }
-            </div>
+            </ui-grid>
           }
           @if (report()!.hasMechanicSignature) {
-            <div>
+            <ui-grid [size]="{ xs: 6, md: 3 }">
               <div class="text-muted mb-1 text-sm">Signature</div>
-              <div class="text-success flex items-center gap-1">
-                <i class="pi pi-check-circle"></i>
+              <ui-stack direction="row" align="center" gap="1" class="text-success">
+                <ui-icon name="check-circle" />
                 <span class="text-sm">Mechanic signed</span>
-              </div>
-            </div>
+              </ui-stack>
+            </ui-grid>
           }
-        </div>
+        </ui-grid>
         @if (report()!.mechanicNotes) {
           <div class="mt-4">
             <div class="text-muted mb-1 text-sm">Mechanic Notes</div>
@@ -143,16 +143,18 @@
     <!-- Photos -->
     @if (report()!.photos && report()!.photos!.length > 0) {
       <p-card header="Photos" class="w-full">
-        <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+        <ui-grid container spacing="2">
           @for (photo of report()!.photos; track photo.id) {
-            <div class="bg-subtle aspect-video overflow-hidden rounded-lg">
-              <img [src]="photo.blobPath" [alt]="photo.fileName" class="h-full w-full object-cover" />
-            </div>
+            <ui-grid [size]="{ xs: 6, sm: 4, md: 3 }">
+              <div class="bg-subtle aspect-video overflow-hidden rounded-lg">
+                <img [src]="photo.blobPath" [alt]="photo.fileName" class="h-full w-full object-cover" />
+              </div>
+            </ui-grid>
           }
-        </div>
+        </ui-grid>
       </p-card>
     }
-  </div>
+  </ui-stack>
 }
 
 <!-- Dismiss Dialog -->
@@ -180,7 +182,7 @@
     </div>
   </div>
   <ng-template #footer>
-    <div class="flex justify-end gap-2">
+    <ui-stack direction="row" justify="end" gap="2">
       <p-button label="Cancel" [text]="true" (click)="showDismissDialog.set(false)" />
       <p-button
         label="Dismiss"
@@ -189,7 +191,7 @@
         (click)="confirmDismiss()"
         [loading]="isSubmitting()"
       />
-    </div>
+    </ui-stack>
   </ng-template>
 </p-dialog>
 
@@ -218,7 +220,7 @@
     </div>
   </div>
   <ng-template #footer>
-    <div class="flex justify-end gap-2">
+    <ui-stack direction="row" justify="end" gap="2">
       <p-button label="Cancel" [text]="true" (click)="showRejectDialog.set(false)" />
       <p-button
         label="Reject"
@@ -228,6 +230,6 @@
         [loading]="isSubmitting()"
         [disabled]="!rejectionReason.trim()"
       />
-    </div>
+    </ui-stack>
   </ng-template>
 </p-dialog>

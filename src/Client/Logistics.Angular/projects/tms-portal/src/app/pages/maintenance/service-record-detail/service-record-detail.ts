@@ -1,14 +1,14 @@
-import { Component, computed, inject, input, type OnInit, signal } from "@angular/core";
-import { Router, RouterLink } from "@angular/router";
 import { CurrencyPipe, DatePipe, DecimalPipe } from "@angular/common";
-import { Api, getMaintenanceRecords } from "@logistics/shared/api";
-import type { MaintenanceRecordDto } from "@logistics/shared/api";
+import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
+import { Router, RouterLink } from "@angular/router";
+import { Api, getMaintenanceRecords, type MaintenanceRecordDto } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TagModule } from "primeng/tag";
-import { PageHeader } from "@/shared/components";
 import { ToastService } from "@/core/services";
+import { PageHeader } from "@/shared/components";
 
 @Component({
   selector: "app-service-record-detail",
@@ -23,6 +23,10 @@ import { ToastService } from "@/core/services";
     ProgressSpinnerModule,
     TagModule,
     PageHeader,
+    Grid,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class ServiceRecordDetailPage implements OnInit {
