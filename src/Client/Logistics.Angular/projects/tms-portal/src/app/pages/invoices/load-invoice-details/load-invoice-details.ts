@@ -1,8 +1,8 @@
 import { CommonModule } from "@angular/common";
-import { Component, type OnInit, inject, input, signal } from "@angular/core";
+import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Api, getInvoiceById } from "@logistics/shared/api";
-import type { Address, InvoiceDto } from "@logistics/shared/api";
+import { Api, getInvoiceById, type Address, type InvoiceDto } from "@logistics/shared/api";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { AddressPipe, CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -36,6 +36,10 @@ import { PaymentLinkDialog, RecordPaymentDialog, SendInvoiceDialog } from "../co
     SendInvoiceDialog,
     RecordPaymentDialog,
     PaymentLinkDialog,
+    Grid,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class LoadInvoiceDetails implements OnInit {

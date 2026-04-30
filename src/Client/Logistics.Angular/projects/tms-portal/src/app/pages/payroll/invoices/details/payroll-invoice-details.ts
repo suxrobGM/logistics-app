@@ -1,5 +1,5 @@
 import { CommonModule, CurrencyPipe, DatePipe, PercentPipe } from "@angular/common";
-import { Component, type OnInit, inject, input, signal } from "@angular/core";
+import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import {
@@ -9,9 +9,10 @@ import {
   payPayrollInvoice,
   rejectPayrollInvoice,
   submitPayrollForApproval,
+  type InvoiceDto,
 } from "@logistics/shared/api";
-import type { InvoiceDto } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -47,6 +48,10 @@ import { InvoiceStatusTag, PaymentStatusTag } from "@/shared/components";
     RecordPaymentDialog,
     DialogModule,
     TextareaModule,
+    Grid,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class PayrollInvoiceDetails implements OnInit {

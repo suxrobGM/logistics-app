@@ -1,41 +1,45 @@
 <div class="animate-fadein">
-  <h1 class="text-center">Payroll Invoice Details</h1>
+  <ui-typography variant="h2" tag="h1" align="center" class="mb-6">
+    Payroll Invoice Details
+  </ui-typography>
 
   @if (isLoading()) {
-    <div class="flex justify-center py-8">
+    <ui-stack align="center" justify="center" class="py-8">
       <p-progress-spinner />
-    </div>
+    </ui-stack>
   } @else if (invoice()) {
-    <div class="grid grid-cols-12 gap-4">
+    <ui-grid container spacing="4">
       <!-- Invoice Header -->
-      <div class="col-span-12 lg:col-span-8">
+      <ui-grid [size]="{ xs: 12, lg: 8 }">
         <p-card>
-          <div class="mb-4 flex items-start justify-between">
+          <ui-stack direction="row" align="start" justify="between" class="mb-4">
             <div>
-              <h2 class="mb-1">Payroll Invoice</h2>
-              <p class="text-muted-color">
+              <ui-typography variant="h4" tag="h2" class="mb-1">Payroll Invoice</ui-typography>
+              <ui-typography variant="body" color="muted">
                 Period: {{ invoice()!.periodStart | date: "mediumDate" }} -
                 {{ invoice()!.periodEnd | date: "mediumDate" }}
-              </p>
+              </ui-typography>
             </div>
             <div class="text-right">
-              <h3>Invoice #{{ invoice()!.number }}</h3>
+              <ui-typography variant="h5" tag="h3">Invoice #{{ invoice()!.number }}</ui-typography>
               @if (invoice()!.status) {
                 <app-invoice-status-tag [status]="invoice()!.status!" />
               }
             </div>
-          </div>
+          </ui-stack>
 
           <p-divider />
 
           <!-- Employee Info -->
-          <div class="mb-4 grid grid-cols-2 gap-4">
-            <div>
-              <p class="text-muted-color mb-1 text-sm">Employee</p>
+          <ui-grid container spacing="4" class="mb-4">
+            <ui-grid [size]="6">
+              <ui-typography variant="caption" color="muted" class="mb-1">Employee</ui-typography>
               <p class="font-semibold">{{ invoice()!.employee?.fullName ?? "N/A" }}</p>
-              <p class="text-muted-color text-sm">{{ invoice()!.employee?.email }}</p>
-            </div>
-            <div class="text-right">
+              <ui-typography variant="caption" color="muted">
+                {{ invoice()!.employee?.email }}
+              </ui-typography>
+            </ui-grid>
+            <ui-grid [size]="6" class="text-right">
               <p>
                 <strong>Salary Type:</strong>
                 {{ getSalaryTypeLabel(invoice()!.employee?.salaryType) }}
@@ -49,8 +53,8 @@
                 }
               </p>
               <p><strong>Issue Date:</strong> {{ invoice()!.createdDate | date: "mediumDate" }}</p>
-            </div>
-          </div>
+            </ui-grid>
+          </ui-grid>
 
           <!-- Earnings Breakdown -->
           @if (invoice()!.lineItems && invoice()!.lineItems!.length > 0) {
@@ -132,12 +136,12 @@
             </div>
           }
         </p-card>
-      </div>
+      </ui-grid>
 
       <!-- Actions Sidebar -->
-      <div class="col-span-12 lg:col-span-4">
+      <ui-grid [size]="{ xs: 12, lg: 4 }">
         <p-card header="Actions">
-          <div class="flex flex-col gap-2">
+          <ui-stack gap="2">
             @if (canSubmitForApproval()) {
               <p-button
                 icon="pi pi-send"
@@ -217,15 +221,20 @@
                 [outlined]="true"
               />
             </a>
-          </div>
+          </ui-stack>
         </p-card>
 
         <!-- Payment History -->
         @if (invoice()!.payments && invoice()!.payments!.length > 0) {
           <p-card header="Payment History" styleClass="mt-4">
-            <div class="flex flex-col gap-3">
+            <ui-stack gap="3">
               @for (payment of invoice()!.payments; track payment.id) {
-                <div class="flex items-center justify-between rounded bg-gray-50 p-2">
+                <ui-stack
+                  direction="row"
+                  align="center"
+                  justify="between"
+                  class="rounded bg-gray-50 p-2"
+                >
                   <div>
                     <p class="font-semibold">{{ payment.amount?.amount | currency }}</p>
                     <p class="text-muted-color text-sm">
@@ -235,13 +244,13 @@
                   @if (payment.status) {
                     <app-payment-status-tag [paymentStatus]="payment.status" />
                   }
-                </div>
+                </ui-stack>
               }
-            </div>
+            </ui-stack>
           </p-card>
         }
-      </div>
-    </div>
+      </ui-grid>
+    </ui-grid>
 
     <!-- Dialogs -->
     <app-record-payment-dialog
@@ -278,10 +287,10 @@
     </p-dialog>
   } @else {
     <p-card>
-      <div class="text-muted-color py-8 text-center">
-        <i class="pi pi-exclamation-circle mb-4 text-4xl"></i>
+      <ui-stack align="center" gap="4" class="text-muted-color py-8">
+        <ui-icon name="exclamation-circle" size="xl" />
         <p>Payroll invoice not found</p>
-      </div>
+      </ui-stack>
     </p-card>
   }
 </div>
