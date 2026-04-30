@@ -1,12 +1,13 @@
 import { DatePipe } from "@angular/common";
-import { Component, type OnInit, computed, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import {
   Api,
-  type DriverHosStatusDto,
   getAllDriversHos,
   syncAllDriversHos,
+  type DriverHosStatusDto,
 } from "@logistics/shared/api";
+import { Grid } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -29,6 +30,7 @@ import { DashboardCard, PageHeader, StatCard } from "@/shared/components";
     PageHeader,
     StatCard,
     DashboardCard,
+    Grid,
   ],
 })
 export class EldDashboardComponent implements OnInit {

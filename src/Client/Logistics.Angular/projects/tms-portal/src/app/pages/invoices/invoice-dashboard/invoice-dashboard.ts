@@ -1,8 +1,13 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Api, getInvoiceDashboard } from "@logistics/shared/api";
-import type { InvoiceDashboardDto, InvoiceDto } from "@logistics/shared/api";
+import {
+  Api,
+  getInvoiceDashboard,
+  type InvoiceDashboardDto,
+  type InvoiceDto,
+} from "@logistics/shared/api";
+import { Grid, Stack, Surface, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -25,6 +30,10 @@ import { InvoiceStatusTag } from "@/shared/components";
     CurrencyFormatPipe,
     DateFormatPipe,
     InvoiceStatusTag,
+    Grid,
+    Stack,
+    Surface,
+    Typography,
   ],
 })
 export class InvoiceDashboard {

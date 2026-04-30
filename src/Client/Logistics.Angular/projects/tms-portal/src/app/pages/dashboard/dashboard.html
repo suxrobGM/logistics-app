@@ -1,14 +1,17 @@
 <div class="animate-fadein">
   <!-- Page Header -->
-  <div class="mb-6 flex items-center justify-between">
+  <ui-stack direction="row" align="center" justify="between" class="mb-6">
     <div>
-      <h1 class="mb-1 text-2xl font-semibold">{{ greeting() }}</h1>
-      <p class="text-muted">{{ currentDate | dateFormat: 'EEEE, MMMM d, yyyy' }}</p>
+      <ui-typography variant="h2" tag="h1">{{ greeting() }}</ui-typography>
+      <ui-typography variant="body" color="muted">
+        {{ currentDate | dateFormat: 'EEEE, MMMM d, yyyy' }}
+      </ui-typography>
     </div>
-    <div class="flex items-center gap-3">
-      <!-- Data Freshness Indicator -->
-      <div class="flex items-center gap-2 text-sm text-muted">
-        <span>Updated {{ lastUpdated() | dateFormat: 'shortTime' }}</span>
+    <ui-stack direction="row" align="center" gap="3">
+      <ui-stack direction="row" align="center" gap="2">
+        <ui-typography variant="body-sm" color="muted">
+          Updated {{ lastUpdated() | dateFormat: 'shortTime' }}
+        </ui-typography>
         <p-button
           icon="pi pi-refresh"
           [rounded]="true"
@@ -18,7 +21,7 @@
           pTooltip="Refresh data"
           tooltipPosition="bottom"
         />
-      </div>
+      </ui-stack>
       <p-button
         label="Quick Actions"
         icon="pi pi-plus"
@@ -26,99 +29,106 @@
         (click)="menu.toggle($event)"
       />
       <p-menu #menu [model]="quickActions" [popup]="true" />
-    </div>
-  </div>
+    </ui-stack>
+  </ui-stack>
 
   <!-- KPI Cards Row -->
-  <div class="mb-6 grid grid-cols-12 gap-4 animate-stagger">
-    <ui-stat-card
-      class="col-span-12 sm:col-span-6 lg:col-span-3"
-      icon="pi-box"
-      label="Active Loads"
-      [value]="companyStats()?.activeLoadsCount ?? 0"
-      color="blue"
-    />
-    <ui-stat-card
-      class="col-span-12 sm:col-span-6 lg:col-span-3"
-      icon="pi-truck"
-      label="Fleet Size"
-      [value]="companyStats()?.trucksCount ?? 0"
-      color="green"
-    />
-    <ui-stat-card
-      class="col-span-12 sm:col-span-6 lg:col-span-3"
-      icon="pi-dollar"
-      label="This Week Gross"
-      [value]="(companyStats()?.thisWeekGross ?? 0 | currencyFormat) ?? '$0'"
-      color="green"
-      [trend]="thisWeekGrossTrend()?.value ?? null"
-      [trendDirection]="thisWeekGrossTrend()?.direction ?? null"
-    />
-    <ui-stat-card
-      class="col-span-12 sm:col-span-6 lg:col-span-3"
-      icon="pi-chart-line"
-      label="Rate Per Mile"
-      [value]="(thisWeekRpm() | currencyFormat) ?? '$0'"
-      color="purple"
-      [trend]="rpmTrend()?.value ?? null"
-      [trendDirection]="rpmTrend()?.direction ?? null"
-    />
-  </div>
+  <ui-grid container spacing="4" class="animate-stagger mb-6">
+    <ui-grid [size]="{ xs: 12, sm: 6, lg: 3 }">
+      <ui-stat-card
+        icon="pi-box"
+        label="Active Loads"
+        [value]="companyStats()?.activeLoadsCount ?? 0"
+        color="blue"
+      />
+    </ui-grid>
+    <ui-grid [size]="{ xs: 12, sm: 6, lg: 3 }">
+      <ui-stat-card
+        icon="pi-truck"
+        label="Fleet Size"
+        [value]="companyStats()?.trucksCount ?? 0"
+        color="green"
+      />
+    </ui-grid>
+    <ui-grid [size]="{ xs: 12, sm: 6, lg: 3 }">
+      <ui-stat-card
+        icon="pi-dollar"
+        label="This Week Gross"
+        [value]="(companyStats()?.thisWeekGross ?? 0 | currencyFormat) ?? '$0'"
+        color="green"
+        [trend]="thisWeekGrossTrend()?.value ?? null"
+        [trendDirection]="thisWeekGrossTrend()?.direction ?? null"
+      />
+    </ui-grid>
+    <ui-grid [size]="{ xs: 12, sm: 6, lg: 3 }">
+      <ui-stat-card
+        icon="pi-chart-line"
+        label="Rate Per Mile"
+        [value]="(thisWeekRpm() | currencyFormat) ?? '$0'"
+        color="purple"
+        [trend]="rpmTrend()?.value ?? null"
+        [trendDirection]="rpmTrend()?.direction ?? null"
+      />
+    </ui-grid>
+  </ui-grid>
 
   <!-- Widgets Row 1: Alerts & Financial -->
-  <div class="mb-6 grid grid-cols-12 gap-4">
-    <app-attention-panel
-      class="col-span-12 lg:col-span-4"
-      [unassignedLoadsCount]="companyStats()?.unassignedLoadsCount ?? 0"
-      [idleTrucksCount]="companyStats()?.idleTrucksCount ?? 0"
-      [isLoading]="isLoading()"
-    />
-    <app-financial-health-widget
-      class="col-span-12 lg:col-span-4"
-      [outstandingInvoiceTotal]="companyStats()?.outstandingInvoiceTotal ?? 0"
-      [paymentsReceivedThisWeek]="companyStats()?.paymentsReceivedThisWeek ?? 0"
-      [overdueInvoiceCount]="companyStats()?.overdueInvoiceCount ?? 0"
-      [isLoading]="isLoading()"
-    />
-    <app-top-performers-widget
-      class="col-span-12 lg:col-span-4"
-      [topTrucks]="companyStats()?.topTrucks ?? []"
-      [isLoading]="isLoading()"
-    />
-  </div>
+  <ui-grid container spacing="4" class="mb-6">
+    <ui-grid [size]="{ xs: 12, lg: 4 }">
+      <app-attention-panel
+        [unassignedLoadsCount]="companyStats()?.unassignedLoadsCount ?? 0"
+        [idleTrucksCount]="companyStats()?.idleTrucksCount ?? 0"
+        [isLoading]="isLoading()"
+      />
+    </ui-grid>
+    <ui-grid [size]="{ xs: 12, lg: 4 }">
+      <app-financial-health-widget
+        [outstandingInvoiceTotal]="companyStats()?.outstandingInvoiceTotal ?? 0"
+        [paymentsReceivedThisWeek]="companyStats()?.paymentsReceivedThisWeek ?? 0"
+        [overdueInvoiceCount]="companyStats()?.overdueInvoiceCount ?? 0"
+        [isLoading]="isLoading()"
+      />
+    </ui-grid>
+    <ui-grid [size]="{ xs: 12, lg: 4 }">
+      <app-top-performers-widget
+        [topTrucks]="companyStats()?.topTrucks ?? []"
+        [isLoading]="isLoading()"
+      />
+    </ui-grid>
+  </ui-grid>
 
   <!-- Widgets Row 2: Revenue & Team -->
-  <div class="mb-6 grid grid-cols-12 gap-4">
-    <app-gross-summary-widget
-      class="col-span-12 lg:col-span-6"
-      [thisWeekGross]="companyStats()?.thisWeekGross ?? 0"
-      [lastWeekGross]="companyStats()?.lastWeekGross ?? 0"
-      [thisMonthGross]="companyStats()?.thisMonthGross ?? 0"
-      [lastMonthGross]="companyStats()?.lastMonthGross ?? 0"
-      [lastThreeMonthsGross]="companyStats()?.lastThreeMonthsGross ?? 0"
-      [lastYearGross]="companyStats()?.lastYearGross ?? 0"
-      [totalGross]="companyStats()?.totalGross ?? 0"
-      [isLoading]="isLoading()"
-    />
-    <app-team-overview-widget
-      class="col-span-12 lg:col-span-6"
-      [employeesCount]="companyStats()?.employeesCount ?? 0"
-      [driversCount]="companyStats()?.driversCount ?? 0"
-      [dispatchersCount]="companyStats()?.dispatchersCount ?? 0"
-      [managersCount]="companyStats()?.managersCount ?? 0"
-      [trucksCount]="companyStats()?.trucksCount ?? 0"
-      [idleTrucksCount]="companyStats()?.idleTrucksCount ?? 0"
-      [isLoading]="isLoading()"
-    />
-  </div>
+  <ui-grid container spacing="4" class="mb-6">
+    <ui-grid [size]="{ xs: 12, lg: 6 }">
+      <app-gross-summary-widget
+        [thisWeekGross]="companyStats()?.thisWeekGross ?? 0"
+        [lastWeekGross]="companyStats()?.lastWeekGross ?? 0"
+        [thisMonthGross]="companyStats()?.thisMonthGross ?? 0"
+        [lastMonthGross]="companyStats()?.lastMonthGross ?? 0"
+        [lastThreeMonthsGross]="companyStats()?.lastThreeMonthsGross ?? 0"
+        [lastYearGross]="companyStats()?.lastYearGross ?? 0"
+        [totalGross]="companyStats()?.totalGross ?? 0"
+        [isLoading]="isLoading()"
+      />
+    </ui-grid>
+    <ui-grid [size]="{ xs: 12, lg: 6 }">
+      <app-team-overview-widget
+        [employeesCount]="companyStats()?.employeesCount ?? 0"
+        [driversCount]="companyStats()?.driversCount ?? 0"
+        [dispatchersCount]="companyStats()?.dispatchersCount ?? 0"
+        [managersCount]="companyStats()?.managersCount ?? 0"
+        [trucksCount]="companyStats()?.trucksCount ?? 0"
+        [idleTrucksCount]="companyStats()?.idleTrucksCount ?? 0"
+        [isLoading]="isLoading()"
+      />
+    </ui-grid>
+  </ui-grid>
 
   <!-- Map -->
-  <div class="mb-6 grid grid-cols-12 gap-4">
-    <app-trucks-map class="col-span-12" height="500px" />
+  <div class="mb-6">
+    <app-trucks-map height="500px" />
   </div>
 
   <!-- Monthly Grosses Chart -->
-  <div class="grid grid-cols-12 gap-4">
-    <app-gross-barchart class="col-span-12" chartColor="#06b6d4" />
-  </div>
+  <app-gross-barchart chartColor="#06b6d4" />
 </div>

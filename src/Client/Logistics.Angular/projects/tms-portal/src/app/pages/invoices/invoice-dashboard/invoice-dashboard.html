@@ -1,112 +1,124 @@
 <div class="animate-fadein">
-  <h1 class="text-center">Load Invoice Dashboard</h1>
+  <ui-typography variant="h2" tag="h1" align="center" class="mb-6">
+    Load Invoice Dashboard
+  </ui-typography>
 
-  <div class="animate-stagger grid grid-cols-12 gap-4">
+  <ui-grid container spacing="4" class="animate-stagger">
     <!-- Stats Cards -->
     @if (isLoading()) {
       @for (_ of [1, 2, 3, 4, 5]; track $index) {
-        <div class="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-2">
-          <p-card>
+        <ui-grid [size]="{ xs: 12, md: 6, lg: 4, xl: 2 }">
+          <ui-surface class="block h-full">
             <p-skeleton height="4rem" />
-          </p-card>
-        </div>
+          </ui-surface>
+        </ui-grid>
       }
     } @else {
       <!-- Draft -->
-      <div class="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-2">
-        <p-card class="h-full">
-          <div class="flex flex-col items-center gap-2">
-            <span class="text-sm text-gray-500">Draft</span>
-            <span class="text-2xl font-bold">{{ dashboard()?.draftCount ?? 0 }}</span>
-            <span class="text-lg text-gray-600">{{ dashboard()?.draftAmount | currencyFormat }}</span>
-          </div>
-        </p-card>
-      </div>
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 4, xl: 2 }">
+        <ui-surface class="block h-full">
+          <ui-stack align="center" gap="2">
+            <ui-typography variant="caption" color="muted">Draft</ui-typography>
+            <ui-typography variant="stat">{{ dashboard()?.draftCount ?? 0 }}</ui-typography>
+            <ui-typography variant="body" color="muted">
+              {{ dashboard()?.draftAmount | currencyFormat }}
+            </ui-typography>
+          </ui-stack>
+        </ui-surface>
+      </ui-grid>
 
       <!-- Pending -->
-      <div class="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-2">
-        <p-card class="h-full">
-          <div class="flex flex-col items-center gap-2">
-            <span class="text-sm text-gray-500">Pending</span>
-            <span class="text-2xl font-bold text-yellow-600">{{
-              dashboard()?.pendingCount ?? 0
-            }}</span>
-            <span class="text-lg text-gray-600">{{ dashboard()?.pendingAmount | currencyFormat }}</span>
-          </div>
-        </p-card>
-      </div>
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 4, xl: 2 }">
+        <ui-surface class="block h-full">
+          <ui-stack align="center" gap="2">
+            <ui-typography variant="caption" color="muted">Pending</ui-typography>
+            <ui-typography variant="stat" class="text-yellow-600">
+              {{ dashboard()?.pendingCount ?? 0 }}
+            </ui-typography>
+            <ui-typography variant="body" color="muted">
+              {{ dashboard()?.pendingAmount | currencyFormat }}
+            </ui-typography>
+          </ui-stack>
+        </ui-surface>
+      </ui-grid>
 
       <!-- Overdue -->
-      <div class="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-2">
-        <p-card class="h-full border-red-200">
-          <div class="flex flex-col items-center gap-2">
-            <span class="text-sm text-gray-500">Overdue</span>
-            <span class="text-2xl font-bold text-red-600">{{
-              dashboard()?.overdueCount ?? 0
-            }}</span>
-            <span class="text-lg text-red-600">{{ dashboard()?.overdueAmount | currencyFormat }}</span>
-          </div>
-        </p-card>
-      </div>
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 4, xl: 2 }">
+        <ui-surface class="block h-full">
+          <ui-stack align="center" gap="2">
+            <ui-typography variant="caption" color="muted">Overdue</ui-typography>
+            <ui-typography variant="stat" class="text-red-600">
+              {{ dashboard()?.overdueCount ?? 0 }}
+            </ui-typography>
+            <ui-typography variant="body" class="text-red-600">
+              {{ dashboard()?.overdueAmount | currencyFormat }}
+            </ui-typography>
+          </ui-stack>
+        </ui-surface>
+      </ui-grid>
 
       <!-- Partially Paid -->
-      <div class="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-2">
-        <p-card class="h-full">
-          <div class="flex flex-col items-center gap-2">
-            <span class="text-sm text-gray-500">Partially Paid</span>
-            <span class="text-2xl font-bold text-orange-600">{{
-              dashboard()?.partiallyPaidCount ?? 0
-            }}</span>
-            <span class="text-lg text-gray-600">{{
-              dashboard()?.partiallyPaidAmount | currencyFormat
-            }}</span>
-          </div>
-        </p-card>
-      </div>
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 4, xl: 2 }">
+        <ui-surface class="block h-full">
+          <ui-stack align="center" gap="2">
+            <ui-typography variant="caption" color="muted">Partially Paid</ui-typography>
+            <ui-typography variant="stat" class="text-orange-600">
+              {{ dashboard()?.partiallyPaidCount ?? 0 }}
+            </ui-typography>
+            <ui-typography variant="body" color="muted">
+              {{ dashboard()?.partiallyPaidAmount | currencyFormat }}
+            </ui-typography>
+          </ui-stack>
+        </ui-surface>
+      </ui-grid>
 
       <!-- Paid -->
-      <div class="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-2">
-        <p-card class="h-full">
-          <div class="flex flex-col items-center gap-2">
-            <span class="text-sm text-gray-500">Paid</span>
-            <span class="text-2xl font-bold text-green-600">{{ dashboard()?.paidCount ?? 0 }}</span>
-            <span class="text-lg text-gray-600">{{ dashboard()?.paidAmount | currencyFormat }}</span>
-          </div>
-        </p-card>
-      </div>
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 4, xl: 2 }">
+        <ui-surface class="block h-full">
+          <ui-stack align="center" gap="2">
+            <ui-typography variant="caption" color="muted">Paid</ui-typography>
+            <ui-typography variant="stat" class="text-green-600">
+              {{ dashboard()?.paidCount ?? 0 }}
+            </ui-typography>
+            <ui-typography variant="body" color="muted">
+              {{ dashboard()?.paidAmount | currencyFormat }}
+            </ui-typography>
+          </ui-stack>
+        </ui-surface>
+      </ui-grid>
 
       <!-- Total Outstanding -->
-      <div class="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-2">
-        <p-card class="h-full bg-blue-50 dark:bg-gray-800">
-          <div class="flex flex-col items-center gap-2">
-            <span class="text-sm text-gray-500">Outstanding</span>
-            <span class="text-2xl font-bold text-blue-600">{{
-              dashboard()?.totalOutstanding | currencyFormat
-            }}</span>
-            <span class="text-sm text-gray-500"
-              >This Month: {{ dashboard()?.collectedThisMonth | currencyFormat }}</span
-            >
-          </div>
-        </p-card>
-      </div>
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 4, xl: 2 }">
+        <ui-surface variant="subtle" class="block h-full">
+          <ui-stack align="center" gap="2">
+            <ui-typography variant="caption" color="muted">Outstanding</ui-typography>
+            <ui-typography variant="stat" class="text-blue-600">
+              {{ dashboard()?.totalOutstanding | currencyFormat }}
+            </ui-typography>
+            <ui-typography variant="caption" color="muted">
+              This Month: {{ dashboard()?.collectedThisMonth | currencyFormat }}
+            </ui-typography>
+          </ui-stack>
+        </ui-surface>
+      </ui-grid>
     }
 
     <!-- Quick Actions -->
-    <div class="col-span-12">
+    <ui-grid [size]="12">
       <p-card header="Quick Actions">
-        <div class="flex flex-wrap gap-2">
+        <ui-stack direction="row" gap="2" wrap>
           <a routerLink="/invoices/loads" class="no-underline">
             <p-button label="View All Load Invoices" icon="pi pi-list" [outlined]="true" />
           </a>
           <a routerLink="/settings/payments" class="no-underline">
             <p-button label="Setup Payments" icon="pi pi-credit-card" [outlined]="true" />
           </a>
-        </div>
+        </ui-stack>
       </p-card>
-    </div>
+    </ui-grid>
 
     <!-- Recent Invoices -->
-    <div class="col-span-12">
+    <ui-grid [size]="12">
       <p-card header="Recent Invoices">
         @if (isLoading()) {
           <p-skeleton height="12rem" />
@@ -154,12 +166,12 @@
             </ng-template>
             <ng-template #emptymessage>
               <tr>
-                <td colspan="7" class="p-4 text-center text-gray-500">No recent invoices</td>
+                <td colspan="7" class="text-muted p-4 text-center">No recent invoices</td>
               </tr>
             </ng-template>
           </p-table>
         }
       </p-card>
-    </div>
-  </div>
+    </ui-grid>
+  </ui-grid>
 </div>

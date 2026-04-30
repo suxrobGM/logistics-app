@@ -1,72 +1,80 @@
 <div class="animate-fadein">
-  <h1 class="text-center">Payroll Dashboard</h1>
+  <ui-typography variant="h2" tag="h1" align="center" class="mb-6">Payroll Dashboard</ui-typography>
 
-  <div class="animate-stagger grid grid-cols-12 gap-4">
+  <ui-grid container spacing="4" class="animate-stagger">
     <!-- Stats Cards -->
     @if (isLoading()) {
       @for (_ of [1, 2, 3, 4]; track $index) {
-        <div class="col-span-12 md:col-span-6 lg:col-span-3">
-          <p-card>
+        <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+          <ui-surface class="block h-full">
             <p-skeleton height="4rem" />
-          </p-card>
-        </div>
+          </ui-surface>
+        </ui-grid>
       }
     } @else {
       <!-- Draft -->
-      <div class="col-span-12 md:col-span-6 lg:col-span-3">
-        <p-card class="h-full">
-          <div class="flex flex-col items-center gap-2">
-            <span class="text-sm text-gray-500">Draft</span>
-            <span class="text-2xl font-bold">{{ dashboard()?.draftCount ?? 0 }}</span>
-            <span class="text-lg text-gray-600">{{ dashboard()?.draftAmount | currency }}</span>
-          </div>
-        </p-card>
-      </div>
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+        <ui-surface class="block h-full">
+          <ui-stack align="center" gap="2">
+            <ui-typography variant="caption" color="muted">Draft</ui-typography>
+            <ui-typography variant="stat">{{ dashboard()?.draftCount ?? 0 }}</ui-typography>
+            <ui-typography variant="body" color="muted">
+              {{ dashboard()?.draftAmount | currency }}
+            </ui-typography>
+          </ui-stack>
+        </ui-surface>
+      </ui-grid>
 
       <!-- Pending Approval -->
-      <div class="col-span-12 md:col-span-6 lg:col-span-3">
-        <p-card class="h-full border-yellow-200">
-          <div class="flex flex-col items-center gap-2">
-            <span class="text-sm text-gray-500">Pending Approval</span>
-            <span class="text-2xl font-bold text-yellow-600">{{
-              dashboard()?.pendingApprovalCount ?? 0
-            }}</span>
-            <span class="text-lg text-yellow-600">{{
-              dashboard()?.pendingApprovalAmount | currency
-            }}</span>
-          </div>
-        </p-card>
-      </div>
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+        <ui-surface class="block h-full">
+          <ui-stack align="center" gap="2">
+            <ui-typography variant="caption" color="muted">Pending Approval</ui-typography>
+            <ui-typography variant="stat" class="text-yellow-600">
+              {{ dashboard()?.pendingApprovalCount ?? 0 }}
+            </ui-typography>
+            <ui-typography variant="body" class="text-yellow-600">
+              {{ dashboard()?.pendingApprovalAmount | currency }}
+            </ui-typography>
+          </ui-stack>
+        </ui-surface>
+      </ui-grid>
 
       <!-- Approved -->
-      <div class="col-span-12 md:col-span-6 lg:col-span-3">
-        <p-card class="h-full border-blue-200">
-          <div class="flex flex-col items-center gap-2">
-            <span class="text-sm text-gray-500">Approved</span>
-            <span class="text-2xl font-bold text-blue-600">{{
-              dashboard()?.approvedCount ?? 0
-            }}</span>
-            <span class="text-lg text-blue-600">{{ dashboard()?.approvedAmount | currency }}</span>
-          </div>
-        </p-card>
-      </div>
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+        <ui-surface class="block h-full">
+          <ui-stack align="center" gap="2">
+            <ui-typography variant="caption" color="muted">Approved</ui-typography>
+            <ui-typography variant="stat" class="text-blue-600">
+              {{ dashboard()?.approvedCount ?? 0 }}
+            </ui-typography>
+            <ui-typography variant="body" class="text-blue-600">
+              {{ dashboard()?.approvedAmount | currency }}
+            </ui-typography>
+          </ui-stack>
+        </ui-surface>
+      </ui-grid>
 
       <!-- Paid -->
-      <div class="col-span-12 md:col-span-6 lg:col-span-3">
-        <p-card class="h-full border-green-200">
-          <div class="flex flex-col items-center gap-2">
-            <span class="text-sm text-gray-500">Paid</span>
-            <span class="text-2xl font-bold text-green-600">{{ dashboard()?.paidCount ?? 0 }}</span>
-            <span class="text-lg text-green-600">{{ dashboard()?.paidAmount | currency }}</span>
-          </div>
-        </p-card>
-      </div>
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+        <ui-surface class="block h-full">
+          <ui-stack align="center" gap="2">
+            <ui-typography variant="caption" color="muted">Paid</ui-typography>
+            <ui-typography variant="stat" class="text-green-600">
+              {{ dashboard()?.paidCount ?? 0 }}
+            </ui-typography>
+            <ui-typography variant="body" class="text-green-600">
+              {{ dashboard()?.paidAmount | currency }}
+            </ui-typography>
+          </ui-stack>
+        </ui-surface>
+      </ui-grid>
     }
 
     <!-- Quick Actions -->
-    <div class="col-span-12">
+    <ui-grid [size]="12">
       <p-card header="Quick Actions">
-        <div class="flex flex-wrap gap-2">
+        <ui-stack direction="row" gap="2" wrap>
           <a routerLink="/payroll/invoices/add" class="no-underline">
             <p-button label="Create Payroll" icon="pi pi-plus" />
           </a>
@@ -79,17 +87,17 @@
           <a routerLink="/employees" class="no-underline">
             <p-button label="Manage Employees" icon="pi pi-users" [outlined]="true" />
           </a>
-        </div>
+        </ui-stack>
       </p-card>
-    </div>
+    </ui-grid>
 
     <!-- Pending Approval List -->
     @if ((dashboard()?.pendingApprovalCount ?? 0) > 0) {
-      <div class="col-span-12">
+      <ui-grid [size]="12">
         <p-card header="Pending Approval">
-          <p class="mb-4 text-gray-600">
+          <ui-typography variant="body" color="muted" class="mb-4">
             These payroll invoices are waiting for your approval before payment can be processed.
-          </p>
+          </ui-typography>
           <a routerLink="/payroll/invoices" [queryParams]="{ status: 'pending_approval' }">
             <p-button
               label="Review {{ dashboard()?.pendingApprovalCount }} Pending Payroll(s)"
@@ -98,11 +106,11 @@
             />
           </a>
         </p-card>
-      </div>
+      </ui-grid>
     }
 
     <!-- Recent Payrolls -->
-    <div class="col-span-12">
+    <ui-grid [size]="12">
       <p-card header="Recent Payrolls">
         @if (isLoading()) {
           <p-skeleton height="12rem" />
@@ -153,7 +161,7 @@
             </ng-template>
             <ng-template #emptymessage>
               <tr>
-                <td colspan="7" class="p-4 text-center text-gray-500">
+                <td colspan="7" class="text-muted p-4 text-center">
                   No payroll invoices yet.
                   <a routerLink="/payroll/invoices/add" class="text-primary ml-2">Create one now</a>
                 </td>
@@ -162,6 +170,6 @@
           </p-table>
         }
       </p-card>
-    </div>
-  </div>
+    </ui-grid>
+  </ui-grid>
 </div>

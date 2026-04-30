@@ -1,7 +1,6 @@
 import { Component, computed, inject, signal } from "@angular/core";
-import { Api, getCompanyStats } from "@logistics/shared/api";
-import type { CompanyStatsDto } from "@logistics/shared/api";
-import { StatCard } from "@logistics/shared/components";
+import { Api, getCompanyStats, type CompanyStatsDto } from "@logistics/shared/api";
+import { Grid, Stack, StatCard, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
@@ -30,6 +29,9 @@ import {
     GrossSummaryWidgetComponent,
     TeamOverviewWidgetComponent,
     StatCard,
+    Stack,
+    Typography,
+    Grid,
     CurrencyFormatPipe,
     DateFormatPipe,
     ButtonModule,

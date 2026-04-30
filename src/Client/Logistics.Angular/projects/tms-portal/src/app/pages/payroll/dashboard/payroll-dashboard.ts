@@ -1,9 +1,9 @@
 import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Api, getInvoices } from "@logistics/shared/api";
-import type { InvoiceDto } from "@logistics/shared/api";
+import { Api, getInvoices, type InvoiceDto } from "@logistics/shared/api";
 import { invoiceStatusOptions } from "@logistics/shared/api/enums";
+import { Grid, Stack, Surface, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";
@@ -37,6 +37,10 @@ interface PayrollDashboardData {
     CurrencyPipe,
     DatePipe,
     InvoiceStatusTag,
+    Grid,
+    Stack,
+    Surface,
+    Typography,
   ],
 })
 export class PayrollDashboard {
