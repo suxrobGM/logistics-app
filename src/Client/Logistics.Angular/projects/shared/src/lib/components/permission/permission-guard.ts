@@ -7,13 +7,13 @@ import { PERMISSION_CHECKER } from "./permission-checker";
  *
  * Usage:
  * ```html
- * <lib-permission-guard [permissions]="'Permission.Employee.Manage'">
+ * <ui-permission-guard [permissions]="'Permission.Employee.Manage'">
  *   <button>Invite Employee</button>
- * </lib-permission-guard>
+ * </ui-permission-guard>
  *
- * <lib-permission-guard [permissions]="['Permission.Employee.View', 'Permission.Employee.Manage']" mode="any">
+ * <ui-permission-guard [permissions]="['Permission.Employee.View', 'Permission.Employee.Manage']" mode="any">
  *   <button>View or Manage</button>
- * </lib-permission-guard>
+ * </ui-permission-guard>
  * ```
  *
  * The consuming application must provide the PERMISSION_CHECKER token:
@@ -24,7 +24,7 @@ import { PERMISSION_CHECKER } from "./permission-checker";
  * ```
  */
 @Component({
-  selector: "lib-permission-guard",
+  selector: "ui-permission-guard",
   template: `
     @if (hasAccess()) {
       <ng-content />

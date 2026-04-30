@@ -1,9 +1,9 @@
 <ui-page-header [title]="pageTitle" />
 
 <div class="mb-4 flex flex-wrap items-center gap-2">
-  <lib-permission-guard [permissions]="Permission.Payroll.Manage">
+  <ui-permission-guard [permissions]="Permission.Payroll.Manage">
     <p-button icon="pi pi-plus" label="Add Entry" (click)="openAddDialog()" />
-  </lib-permission-guard>
+  </ui-permission-guard>
 
   <div class="flex-1"></div>
 
@@ -130,7 +130,7 @@
           </td>
           <td>
             <div class="flex gap-1">
-              <lib-permission-guard [permissions]="Permission.Payroll.Manage">
+              <ui-permission-guard [permissions]="Permission.Payroll.Manage">
                 <p-button
                   icon="pi pi-pencil"
                   [text]="true"
@@ -148,7 +148,7 @@
                   [disabled]="!!entry.payrollInvoiceId"
                   (click)="confirmDelete(entry)"
                 />
-              </lib-permission-guard>
+              </ui-permission-guard>
             </div>
           </td>
         </tr>
