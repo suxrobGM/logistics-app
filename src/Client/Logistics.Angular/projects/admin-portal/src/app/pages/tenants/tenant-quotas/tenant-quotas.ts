@@ -8,7 +8,14 @@ import {
   type TenantQuotaUsageDto,
 } from "@logistics/shared/api";
 import type { PagedResponse } from "@logistics/shared/api/models";
-import { BaseTable, PageHeader, type TableQueryParams } from "@logistics/shared/components";
+import {
+  BaseTable,
+  Icon,
+  PageHeader,
+  Stack,
+  Typography,
+  type TableQueryParams,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressBar } from "primeng/progressbar";
@@ -30,6 +37,9 @@ import { ToastService } from "@/core/services";
     DatePipe,
     PageHeader,
     CurrencyPipe,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class TenantQuotas extends BaseTable<TenantQuotaUsageDto> {

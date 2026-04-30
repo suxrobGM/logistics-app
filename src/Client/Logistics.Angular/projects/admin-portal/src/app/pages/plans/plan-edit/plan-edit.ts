@@ -1,4 +1,4 @@
-import { Component, type OnInit, computed, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import {
@@ -6,9 +6,10 @@ import {
   deleteSubscriptionPlan,
   getSubscriptionPlanById,
   updateSubscriptionPlan,
+  type SubscriptionPlanDto,
+  type UpdateSubscriptionPlanCommand,
 } from "@logistics/shared/api";
-import type { SubscriptionPlanDto, UpdateSubscriptionPlanCommand } from "@logistics/shared/api";
-import { PageHeader } from "@logistics/shared/components";
+import { PageHeader, Stack } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";
@@ -17,7 +18,7 @@ import { PlanForm, type PlanFormValue } from "@/shared/components";
 @Component({
   selector: "adm-plan-edit",
   templateUrl: "./plan-edit.html",
-  imports: [CardModule, ButtonModule, RouterModule, PlanForm, SkeletonModule, PageHeader],
+  imports: [CardModule, ButtonModule, RouterModule, PlanForm, SkeletonModule, PageHeader, Stack],
 })
 export class PlanEdit implements OnInit {
   private readonly api = inject(Api);

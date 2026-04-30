@@ -53,12 +53,12 @@
       <ng-template #body let-post>
         <tr>
           <td>
-            <div class="flex items-center gap-2">
+            <ui-stack direction="row" align="center" gap="2">
               @if (post.isFeatured) {
-                <i class="pi pi-star-fill text-yellow-500" pTooltip="Featured"></i>
+                <ui-icon name="star-fill" color="warning" pTooltip="Featured" />
               }
               {{ post.title }}
-            </div>
+            </ui-stack>
           </td>
           <td>{{ post.category || "-" }}</td>
           <td>{{ post.authorName }}</td>

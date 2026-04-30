@@ -7,7 +7,16 @@ import {
   type DemoRequestDto,
   type DemoRequestStatus,
 } from "@logistics/shared/api";
-import { DataContainer, FormField, PageHeader, SearchInput } from "@logistics/shared/components";
+import {
+  DataContainer,
+  FormField,
+  Grid,
+  PageHeader,
+  SearchInput,
+  Stack,
+  Surface,
+  Typography,
+} from "@logistics/shared/components";
 import { DateUtils } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -43,6 +52,10 @@ interface StatusOption {
     TextareaModule,
     ReactiveFormsModule,
     FormField,
+    Grid,
+    Stack,
+    Surface,
+    Typography,
   ],
 })
 export class DemoRequestsList {

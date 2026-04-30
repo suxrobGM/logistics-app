@@ -1,17 +1,17 @@
-<h1>Add Subscription</h1>
+<ui-typography variant="h2" tag="h1">Add Subscription</ui-typography>
 <p-divider />
 
 <div class="flex flex-col justify-center gap-6 md:flex-row">
   <p-card class="w-full lg:w-2/3">
     @if (isFetching()) {
-      <div class="space-y-4">
+      <ui-stack gap="4">
         <p-skeleton height="3rem" />
         <p-skeleton height="3rem" />
-      </div>
+      </ui-stack>
     } @else {
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="mb-4 grid grid-cols-12 gap-4">
-          <div class="col-span-12">
+        <ui-grid container spacing="4" class="mb-4">
+          <ui-grid [size]="12">
             <ui-form-field label="Tenant" [required]="true">
               <p-select
                 formControlName="tenantId"
@@ -25,16 +25,18 @@
               />
             </ui-form-field>
             @if (tenantOptions().length === 0) {
-              <p class="mt-1 text-sm text-orange-500">
-                <i class="pi pi-info-circle mr-1"></i>
-                All tenants already have active subscriptions.
-              </p>
+              <ui-stack direction="row" align="center" gap="2" class="mt-1 text-sm text-orange-500">
+                <ui-icon name="info" size="sm" />
+                <ui-typography variant="body-sm">
+                  All tenants already have active subscriptions.
+                </ui-typography>
+              </ui-stack>
             }
-          </div>
-        </div>
+          </ui-grid>
+        </ui-grid>
 
-        <div class="mb-4 grid grid-cols-12 gap-4">
-          <div class="col-span-12">
+        <ui-grid container spacing="4" class="mb-4">
+          <ui-grid [size]="12">
             <ui-form-field label="Subscription Plan" [required]="true">
               <p-select
                 formControlName="planId"
@@ -46,18 +48,20 @@
               />
             </ui-form-field>
             @if (planOptions().length === 0) {
-              <p class="mt-1 text-sm text-orange-500">
-                <i class="pi pi-info-circle mr-1"></i>
-                No subscription plans available.
-                <a routerLink="/subscription-plans/add" class="underline">Create one first.</a>
-              </p>
+              <ui-stack direction="row" align="center" gap="2" class="mt-1 text-sm text-orange-500">
+                <ui-icon name="info" size="sm" />
+                <ui-typography variant="body-sm">
+                  No subscription plans available.
+                  <a routerLink="/subscription-plans/add" class="underline">Create one first.</a>
+                </ui-typography>
+              </ui-stack>
             }
-          </div>
-        </div>
+          </ui-grid>
+        </ui-grid>
 
         <ui-validation-summary [form]="form" />
 
-        <div class="mt-6 flex gap-2">
+        <ui-stack direction="row" gap="2" class="mt-6">
           <p-button
             label="Create Subscription"
             icon="pi pi-check"
@@ -76,7 +80,7 @@
             severity="secondary"
             routerLink="/subscriptions"
           />
-        </div>
+        </ui-stack>
       </form>
     }
   </p-card>

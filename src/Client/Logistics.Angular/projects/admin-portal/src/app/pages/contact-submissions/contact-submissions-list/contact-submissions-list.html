@@ -85,44 +85,46 @@
   [style]="{ width: '600px' }"
 >
   @if (selectedSubmission(); as submission) {
-    <div class="flex flex-col gap-4">
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <span class="mb-1 block text-sm font-medium text-gray-500">Name</span>
-          <p class="text-base">{{ submission.firstName }} {{ submission.lastName }}</p>
-        </div>
-        <div>
-          <span class="mb-1 block text-sm font-medium text-gray-500">Email</span>
-          <p class="text-base">{{ submission.email }}</p>
-        </div>
-        <div>
-          <span class="mb-1 block text-sm font-medium text-gray-500">Phone</span>
-          <p class="text-base">{{ submission.phone ?? "-" }}</p>
-        </div>
-        <div>
-          <span class="mb-1 block text-sm font-medium text-gray-500">Subject</span>
-          <p class="text-base">{{ getSubjectLabel(submission.subject) }}</p>
-        </div>
-        <div>
-          <span class="mb-1 block text-sm font-medium text-gray-500">Submitted</span>
-          <p class="text-base">{{ formatDate(submission.createdAt) }}</p>
-        </div>
+    <ui-stack gap="4">
+      <ui-grid container spacing="4">
+        <ui-grid [size]="6">
+          <ui-typography variant="caption" color="muted" class="mb-1 block">Name</ui-typography>
+          <ui-typography variant="body">{{ submission.firstName }} {{ submission.lastName }}</ui-typography>
+        </ui-grid>
+        <ui-grid [size]="6">
+          <ui-typography variant="caption" color="muted" class="mb-1 block">Email</ui-typography>
+          <ui-typography variant="body">{{ submission.email }}</ui-typography>
+        </ui-grid>
+        <ui-grid [size]="6">
+          <ui-typography variant="caption" color="muted" class="mb-1 block">Phone</ui-typography>
+          <ui-typography variant="body">{{ submission.phone ?? "-" }}</ui-typography>
+        </ui-grid>
+        <ui-grid [size]="6">
+          <ui-typography variant="caption" color="muted" class="mb-1 block">Subject</ui-typography>
+          <ui-typography variant="body">{{ getSubjectLabel(submission.subject) }}</ui-typography>
+        </ui-grid>
+        <ui-grid [size]="6">
+          <ui-typography variant="caption" color="muted" class="mb-1 block">Submitted</ui-typography>
+          <ui-typography variant="body">{{ formatDate(submission.createdAt) }}</ui-typography>
+        </ui-grid>
         @if (submission.updatedAt) {
-          <div>
-            <span class="mb-1 block text-sm font-medium text-gray-500">Last Updated</span>
-            <p class="text-base">{{ formatDate(submission.updatedAt) }}</p>
-          </div>
+          <ui-grid [size]="6">
+            <ui-typography variant="caption" color="muted" class="mb-1 block">Last Updated</ui-typography>
+            <ui-typography variant="body">{{ formatDate(submission.updatedAt) }}</ui-typography>
+          </ui-grid>
         }
-      </div>
+      </ui-grid>
 
       <div>
-        <span class="mb-1 block text-sm font-medium text-gray-500">Message</span>
-        <p class="rounded bg-gray-50 p-3 text-base">{{ submission.message }}</p>
+        <ui-typography variant="caption" color="muted" class="mb-1 block">Message</ui-typography>
+        <ui-surface variant="subtle" padding="md" radius="md">
+          <ui-typography variant="body">{{ submission.message }}</ui-typography>
+        </ui-surface>
       </div>
 
       <form [formGroup]="form" class="mt-2 border-t pt-4">
-        <div class="grid grid-cols-12 gap-4">
-          <div class="col-span-12 md:col-span-6">
+        <ui-grid container spacing="4">
+          <ui-grid [size]="{ xs: 12, md: 6 }">
             <ui-form-field label="Status">
               <p-select
                 formControlName="status"
@@ -132,9 +134,9 @@
                 class="w-full"
               />
             </ui-form-field>
-          </div>
+          </ui-grid>
 
-          <div class="col-span-12">
+          <ui-grid [size]="12">
             <ui-form-field label="Internal Notes">
               <textarea
                 pInputTextarea
@@ -144,10 +146,10 @@
                 placeholder="Add notes about this submission..."
               ></textarea>
             </ui-form-field>
-          </div>
-        </div>
+          </ui-grid>
+        </ui-grid>
       </form>
-    </div>
+    </ui-stack>
   }
 
   <ng-template #footer>

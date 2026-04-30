@@ -1,6 +1,6 @@
 # Handoff: UI Primitives Rollout — Resume Refactor (TMS leftovers + Admin + Customer)
 
-> **Last updated 2026-04-30 after 16 commits.** Jobs 1 + 2 are complete. Job 3 (mass page refactor): **TMS portal and customer portal are fully converted**. Only the **admin portal** remains. Resume from the **Resume here** section below.
+> **Last updated 2026-04-30.** Jobs 1 + 2 are complete. Job 3 (mass page refactor): **TMS portal, customer portal, and admin portal are all fully converted**. Rollout complete.
 
 ## Context
 
@@ -27,6 +27,12 @@ A MUI-inspired primitive layer was added to `@logistics/shared` in [the parent p
 #### Admin portal — converted
 
 - `home/home` (dashboard)
+- `tenants/tenant-add`, `tenants/tenant-edit`, `tenants/tenant-quotas`
+- `plans/plan-edit`
+- `subscriptions/subscription-add`
+- `blog-posts/blog-post-add`, `blog-posts/blog-post-edit`, `blog-posts/blog-posts-list`
+- `demo-requests/demo-requests-list` (details dialog)
+- `contact-submissions/contact-submissions-list` (details dialog)
 
 #### Customer portal — converted
 
@@ -50,21 +56,15 @@ Notes from the rollout:
 - `ai-dispatch` `mode-badge`, `approve-reject-actions`, `run-agent-dialog`, `tool-output-summary` skipped (minimal convertible patterns).
 - Specialized severity tags that don't fit `StatusKind` (accident severity, dvir-type, ELD duty status) were intentionally left as `<p-tag [severity]>` per the plan's pitfall guidance.
 
-### Admin portal — remaining
+### Admin portal — DONE ✅
 
-Working dir: `src/Client/Logistics.Angular/projects/admin-portal/src/app/pages/`
+All convertible admin portal pages and components are now converted.
 
-| Folder                 | Page(s)                                                         |
-| ---------------------- | --------------------------------------------------------------- |
-| `tenants/`             | `tenants-list`, `tenant-edit`, `tenant-add`, `tenant-quotas`    |
-| `plans/`               | `plans-list`, `plan-edit`, `plan-add`                           |
-| `subscriptions/`       | `subscriptions-list`, `subscription-detail`, `subscription-add` |
-| `users/`               | `users-list`, `user-detail`                                     |
-| `blog-posts/`          | `blog-posts-list`, `blog-post-add`, `blog-post-edit`            |
-| `demo-requests/`       | `demo-requests-list`                                            |
-| `contact-submissions/` | `contact-submissions-list`                                      |
+Notes from the rollout:
 
-Many of these wrap content directly in `<p-card>` — replace ad-hoc styled boxes with `<ui-surface>`, but keep `<p-card>` where header/sub-header slots are in use.
+- `tenants-list`, `plans-list`, `subscriptions-list`, `users-list` — list pages already use `<ui-page-header>` + `<p-card>` + `<ui-data-container>`. Their per-row `<p-tag>` status badges use bespoke severity helpers (subscription `past_due`, blog post status, user role, etc.) that don't fit the `StatusKind` enum, so they were left as `<p-tag [severity]>` per the plan's pitfall guidance.
+- `plans/plan-add` — already uses `<ui-page-header>`; the `<p-card>` wrapper has no convertible patterns.
+- `subscriptions/subscription-detail`, `users/user-detail` — these files do not exist.
 
 ### Customer portal — DONE ✅
 
@@ -210,11 +210,7 @@ One commit per logical batch of ~4–8 files keeps each diff reviewable.
 
 ## Estimated Remaining Effort
 
-| Scope        | Files | Effort    |
-| ------------ | ----- | --------- |
-| Admin portal | ~20   | ~half day |
-
-Total: ~1 focused day across 2–4 PRs.
+None — rollout complete across all three portals.
 
 ## Reference Pages (good examples)
 

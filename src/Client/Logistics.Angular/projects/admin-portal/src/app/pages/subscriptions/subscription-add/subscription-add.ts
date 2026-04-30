@@ -11,7 +11,14 @@ import {
   type SubscriptionPlanDto,
   type TenantDto,
 } from "@logistics/shared/api";
-import { FormField, ValidationSummary } from "@logistics/shared/components";
+import {
+  FormField,
+  Grid,
+  Icon,
+  Stack,
+  Typography,
+  ValidationSummary,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -36,6 +43,10 @@ interface SelectOption {
     ReactiveFormsModule,
     FormField,
     ValidationSummary,
+    Grid,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class SubscriptionAdd implements OnInit {

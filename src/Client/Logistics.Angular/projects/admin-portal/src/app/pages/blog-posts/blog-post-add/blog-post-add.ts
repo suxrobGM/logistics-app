@@ -1,8 +1,8 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { ToastService } from "@logistics/shared";
-import { Api, createBlogPost } from "@logistics/shared/api";
-import type { CreateBlogPostCommand } from "@logistics/shared/api";
+import { Api, createBlogPost, type CreateBlogPostCommand } from "@logistics/shared/api";
+import { Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -11,7 +11,7 @@ import { BlogPostForm, type BlogPostFormValue } from "@/shared/components";
 @Component({
   selector: "adm-blog-post-add",
   templateUrl: "./blog-post-add.html",
-  imports: [CardModule, ButtonModule, RouterModule, BlogPostForm, DividerModule],
+  imports: [CardModule, ButtonModule, RouterModule, BlogPostForm, DividerModule, Typography],
 })
 export class BlogPostAdd {
   private readonly api = inject(Api);

@@ -1,9 +1,14 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { Api, deleteBlogPost, publishBlogPost, unpublishBlogPost } from "@logistics/shared/api";
-import type { BlogPostDto } from "@logistics/shared/api";
-import { DataContainer, PageHeader, SearchInput } from "@logistics/shared/components";
+import {
+  Api,
+  deleteBlogPost,
+  publishBlogPost,
+  unpublishBlogPost,
+  type BlogPostDto,
+} from "@logistics/shared/api";
+import { DataContainer, Icon, PageHeader, SearchInput, Stack } from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -29,6 +34,8 @@ import { BlogPostsListStore } from "../store/blog-posts-list.store";
     SearchInput,
     TagModule,
     DatePipe,
+    Icon,
+    Stack,
   ],
 })
 export class BlogPostsList {

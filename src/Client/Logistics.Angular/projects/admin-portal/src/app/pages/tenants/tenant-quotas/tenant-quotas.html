@@ -2,12 +2,12 @@
 
 <p-card>
   <!-- Actions bar -->
-  <div class="mb-4 flex items-center justify-between">
-    <p class="text-secondary m-0 text-sm">
+  <ui-stack direction="row" align="center" justify="between" class="mb-4">
+    <ui-typography variant="body-sm" color="secondary">
       Manage weekly AI dispatch request unit quotas. Resetting a tenant's quota zeroes their usage
       count for the current week.
-    </p>
-    <div class="flex gap-2">
+    </ui-typography>
+    <ui-stack direction="row" gap="2">
       <p-button
         label="Reset Selected"
         icon="pi pi-refresh"
@@ -27,8 +27,8 @@
         [loading]="isResetting()"
         (onClick)="resetAll()"
       />
-    </div>
-  </div>
+    </ui-stack>
+  </ui-stack>
 
   <p-table
     [value]="data()"
@@ -145,10 +145,10 @@
     <ng-template #emptymessage>
       <tr>
         <td colspan="11" class="py-8 text-center">
-          <div class="text-muted">
-            <i class="pi pi-chart-bar mb-2 text-4xl"></i>
-            <p>No tenants with AI quota configured.</p>
-          </div>
+          <ui-stack align="center" gap="2" class="text-muted">
+            <ui-icon name="chart-bar" size="xl" />
+            <ui-typography variant="body">No tenants with AI quota configured.</ui-typography>
+          </ui-stack>
         </td>
       </tr>
     </ng-template>

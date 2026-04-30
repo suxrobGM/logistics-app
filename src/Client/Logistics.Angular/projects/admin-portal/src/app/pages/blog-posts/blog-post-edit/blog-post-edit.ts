@@ -1,4 +1,4 @@
-import { Component, type OnInit, computed, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import {
@@ -8,8 +8,10 @@ import {
   publishBlogPost,
   unpublishBlogPost,
   updateBlogPost,
+  type BlogPostDto,
+  type UpdateBlogPostCommand,
 } from "@logistics/shared/api";
-import type { BlogPostDto, UpdateBlogPostCommand } from "@logistics/shared/api";
+import { Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -19,7 +21,16 @@ import { BlogPostForm, type BlogPostFormValue } from "@/shared/components";
 @Component({
   selector: "adm-blog-post-edit",
   templateUrl: "./blog-post-edit.html",
-  imports: [CardModule, ButtonModule, RouterModule, BlogPostForm, DividerModule, SkeletonModule],
+  imports: [
+    CardModule,
+    ButtonModule,
+    RouterModule,
+    BlogPostForm,
+    DividerModule,
+    SkeletonModule,
+    Stack,
+    Typography,
+  ],
 })
 export class BlogPostEdit implements OnInit {
   private readonly api = inject(Api);
