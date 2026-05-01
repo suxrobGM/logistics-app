@@ -1,6 +1,5 @@
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Models;
-using Logistics.DbMigrator.Seeders.Infrastructure;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Roles;
@@ -15,7 +14,7 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
     public override string Name => nameof(EmployeeSeeder);
     public override SeederType Type => SeederType.FakeData;
     public override int Order => 110;
-    public override IReadOnlyList<string> DependsOn => [nameof(UserSeeder), nameof(DefaultTenantSeeder)];
+    public override IReadOnlyList<string> DependsOn => [nameof(UserSeeder)];
 
     protected override async Task<bool> HasExistingDataAsync(SeederContext context, CancellationToken cancellationToken)
     {
@@ -26,7 +25,7 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
     {
         LogStarting();
 
-        var tenant = context.DefaultTenant ?? throw new InvalidOperationException("Default tenant not seeded");
+        var tenant = context.CurrentTenant ?? throw new InvalidOperationException("Current tenant not set");
 
         // Load users from shared context or from database in config order (if UserSeeder was skipped)
         var users = context.CreatedUsers;
@@ -95,7 +94,10 @@ internal class EmployeeSeeder(ILogger<EmployeeSeeder> logger) : SeederBase(logge
     private static async Task<IList<User>> LoadUsersInConfigOrderAsync(
         SeederContext context, CancellationToken ct)
     {
-        var testUsers = context.Configuration.GetSection("Users").Get<UserData[]>();
+        var region = context.Region?.Region.ToString();
+        if (string.IsNullOrEmpty(region)) return [];
+
+        var testUsers = context.Configuration.GetSection($"{region}:Users").Get<UserData[]>();
         if (testUsers is null || testUsers.Length == 0)
             return [];
 

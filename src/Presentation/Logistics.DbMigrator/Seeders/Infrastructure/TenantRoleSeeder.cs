@@ -10,35 +10,30 @@ using CustomClaimTypes = Logistics.Shared.Identity.Claims.CustomClaimTypes;
 namespace Logistics.DbMigrator.Seeders.Infrastructure;
 
 /// <summary>
-/// Syncs tenant role permissions for all existing tenant databases.
-/// Runs on every migrator execution to ensure new permissions are applied to existing roles.
+/// Syncs tenant role permissions for the current tenant DB.
+/// Runs per tenant via the orchestrator's per-tenant loop, ensuring new permissions
+/// are applied to existing roles on every migrator execution.
 /// </summary>
 internal class TenantRoleSeeder(ILogger<TenantRoleSeeder> logger) : SeederBase(logger)
 {
     public override string Name => nameof(TenantRoleSeeder);
     public override SeederType Type => SeederType.Infrastructure;
-    public override int Order => 50; // After DefaultTenantSeeder (40)
+    public override int Order => 60; // After DemoTenantsSeeder (40) + RenameLegacyDemoDataSeeder (50)
+    public override bool IsTenantScoped => true;
 
     public override async Task SeedAsync(SeederContext context, CancellationToken cancellationToken = default)
     {
-        LogStarting();
-        var masterUow = context.MasterUnitOfWork;
-
-        var tenants = await masterUow.Repository<Tenant>()
-            .GetListAsync(t => t.ConnectionString != null, cancellationToken);
-
-        var count = 0;
-        foreach (var tenant in tenants)
+        if (context.CurrentTenant is null)
         {
-            // Use a fresh scope per tenant to get a clean DbContext
-            using var scope = context.ServiceProvider.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<TenantDbContext>();
-            dbContext.Database.SetConnectionString(tenant.ConnectionString);
-            await SyncTenantRolesAsync(dbContext, cancellationToken);
-            count++;
+            return;
         }
 
-        LogCompleted(count);
+        LogStarting();
+
+        var dbContext = context.ServiceProvider.GetRequiredService<TenantDbContext>();
+        await SyncTenantRolesAsync(dbContext, cancellationToken);
+
+        LogCompleted();
     }
 
     private async Task SyncTenantRolesAsync(TenantDbContext dbContext, CancellationToken ct)
@@ -69,7 +64,6 @@ internal class TenantRoleSeeder(ILogger<TenantRoleSeeder> logger) : SeederBase(l
                 continue;
             }
 
-            // Load existing claims directly from the claims table (not via navigation)
             var existingClaims = await dbContext.Set<TenantRoleClaim>()
                 .Where(c => c.RoleId == existingRole.Id)
                 .ToListAsync(ct);
@@ -82,7 +76,6 @@ internal class TenantRoleSeeder(ILogger<TenantRoleSeeder> logger) : SeederBase(l
             var added = 0;
             var removed = 0;
 
-            // Add missing permissions directly to the claims DbSet
             foreach (var permission in requiredPermissions)
             {
                 if (!existingClaims.Any(c =>
@@ -97,7 +90,6 @@ internal class TenantRoleSeeder(ILogger<TenantRoleSeeder> logger) : SeederBase(l
                 }
             }
 
-            // Remove stale permissions
             var claimsToRemove = existingClaims
                 .Where(c => c.ClaimType == CustomClaimTypes.Permission
                     && !requiredPermissions.Contains(c.ClaimValue))

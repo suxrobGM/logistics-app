@@ -1,13 +1,15 @@
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Models;
+using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.DbMigrator.Seeders.FakeData;
 
 /// <summary>
-/// Seeds trucks assigned to drivers.
+/// Seeds trucks assigned to drivers using region-specific makes, models, VIN WMIs and license plates.
+/// Mixes FreightTruck / CarHauler / ContainerTruck types so the demo exercises all dispatch paths.
 /// </summary>
 internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
 {
@@ -15,32 +17,6 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
     public override SeederType Type => SeederType.FakeData;
     public override int Order => 130;
     public override IReadOnlyList<string> DependsOn => [nameof(EmployeeSeeder)];
-
-    private static readonly (string Make, string Model)[] FreightTruckModels =
-    [
-        ("Freightliner", "Cascadia"),
-        ("Peterbilt", "579"),
-        ("Kenworth", "T680"),
-        ("Volvo", "VNL 860"),
-        ("International", "LT"),
-        ("Mack", "Anthem"),
-        ("Western Star", "5700XE"),
-    ];
-
-    private static readonly (string Make, string Model)[] CarHaulerModels =
-    [
-        ("Peterbilt", "389"),
-        ("Kenworth", "W900"),
-        ("Freightliner", "Coronado"),
-        ("Volvo", "VNL 760"),
-        ("International", "HX"),
-    ];
-
-    private static readonly string[] UsStates =
-    [
-        "TX", "CA", "FL", "GA", "IL", "OH", "PA", "NC", "MI", "NJ",
-        "VA", "AZ", "TN", "IN", "MO", "WI", "CO", "AL", "SC", "LA"
-    ];
 
     protected override async Task<bool> HasExistingDataAsync(SeederContext context, CancellationToken cancellationToken)
     {
@@ -52,6 +28,7 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
         LogStarting();
 
         var employees = context.CreatedEmployees ?? throw new InvalidOperationException("Employees not seeded");
+        var region = context.Region ?? throw new InvalidOperationException("Region profile not set");
         var drivers = employees.Drivers;
 
         if (drivers.Count == 0)
@@ -64,35 +41,36 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
 
         var trucksList = new List<Truck>();
         var truckNumber = 101;
-        var truckRepository = context.TenantUnitOfWork.Repository<Truck>();
+        var truckRepo = context.TenantUnitOfWork.Repository<Truck>();
 
-        foreach (var driver in drivers)
+        for (var idx = 0; idx < drivers.Count; idx++)
         {
-            var truckType = random.Pick([TruckType.CarHauler, TruckType.FreightTruck]);
+            var driver = drivers[idx];
+            var truckType = PickTruckType(idx, drivers.Count);
             var truck = Truck.Create(truckNumber.ToString(), truckType, driver);
+
             truck.VehicleCapacity = truckType == TruckType.CarHauler ? 7 : 0;
 
-            // Set make and model based on truck type
-            var (make, model) = truckType == TruckType.CarHauler
-                ? random.Pick(CarHaulerModels)
-                : random.Pick(FreightTruckModels);
-            truck.Make = make;
-            truck.Model = model;
-
-            // Set year (2018-2024)
+            var makeModel = truckType switch
+            {
+                TruckType.CarHauler => random.Pick((IList<TruckMakeModel>)region.CarHaulerModels),
+                TruckType.ContainerTruck => random.Pick((IList<TruckMakeModel>)region.ContainerTruckModels),
+                _ => random.Pick((IList<TruckMakeModel>)region.FreightTruckModels)
+            };
+            truck.Make = makeModel.Make;
+            truck.Model = makeModel.Model;
             truck.Year = random.Next(2018, 2025);
+            truck.Vin = region.GenerateVin(makeModel.Make);
 
-            // Generate a realistic VIN (17 characters)
-            truck.Vin = GenerateVin(make);
-
-            // Generate license plate and state
-            truck.LicensePlate = GenerateLicensePlate();
-            truck.LicensePlateState = random.Pick(UsStates);
+            var plate = region.GeneratePlate();
+            truck.LicensePlate = plate.Number;
+            truck.LicensePlateState = plate.RegionCode;
 
             truckNumber++;
             trucksList.Add(truck);
-            await truckRepository.AddAsync(truck, cancellationToken);
-            logger.LogInformation("Created truck {Number} ({Year} {Make} {Model})", truck.Number, truck.Year, truck.Make, truck.Model);
+            await truckRepo.AddAsync(truck, cancellationToken);
+            logger.LogInformation("Created truck {Number} ({Year} {Make} {Model})",
+                truck.Number, truck.Year, truck.Make, truck.Model);
         }
 
         await context.TenantUnitOfWork.SaveChangesAsync(cancellationToken);
@@ -100,45 +78,16 @@ internal class TruckSeeder(ILogger<TruckSeeder> logger) : SeederBase(logger)
         LogCompleted(trucksList.Count);
     }
 
-    private string GenerateVin(string make)
+    /// <summary>
+    /// Distributes truck types so the demo has a meaningful mix:
+    /// the first driver gets a CarHauler (anchors the trip seeder),
+    /// the second gets a ContainerTruck (anchors intermodal loads),
+    /// the rest are FreightTrucks. With 5 drivers: 1 CarHauler + 1 ContainerTruck + 3 Freight.
+    /// </summary>
+    private static TruckType PickTruckType(int driverIdx, int driverCount)
     {
-        // VIN format: WMI (3) + VDS (6) + VIS (8) = 17 characters
-        // Using simplified realistic patterns based on manufacturer
-        var wmi = make switch
-        {
-            "Freightliner" => "1FU",
-            "Peterbilt" => "1XP",
-            "Kenworth" => "1XK",
-            "Volvo" => "4V4",
-            "International" => "3HS",
-            "Mack" => "1M1",
-            "Western Star" => "5KK",
-            _ => "1XX"
-        };
-
-        var vds = GenerateAlphanumeric(6);
-        var vis = GenerateAlphanumeric(8);
-
-        return $"{wmi}{vds}{vis}";
-    }
-
-    private string GenerateLicensePlate()
-    {
-        // Common US format: ABC-1234 or AB-12345
-        var letters = GenerateLetters(3);
-        var numbers = random.Next(1000, 9999);
-        return $"{letters}-{numbers}";
-    }
-
-    private string GenerateAlphanumeric(int length)
-    {
-        const string chars = "ABCDEFGHJKLMNPRSTUVWXYZ0123456789"; // Excluding I, O, Q which aren't used in VINs
-        return new string(Enumerable.Range(0, length).Select(_ => chars[random.Next(chars.Length)]).ToArray());
-    }
-
-    private string GenerateLetters(int length)
-    {
-        const string letters = "ABCDEFGHJKLMNPRSTUVWXYZ";
-        return new string(Enumerable.Range(0, length).Select(_ => letters[random.Next(letters.Length)]).ToArray());
+        if (driverIdx == 0) return TruckType.CarHauler;
+        if (driverIdx == 1 && driverCount > 1) return TruckType.ContainerTruck;
+        return TruckType.FreightTruck;
     }
 }

@@ -2,7 +2,7 @@ using System.Text.Json;
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Models;
-using Logistics.DbMigrator.Utils;
+using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Roles;
@@ -90,7 +90,7 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
         {
             var driver = random.Pick(drivers);
             var vehicle = random.Pick(SampleVehicles);
-            var captureLocation = random.Pick(RoutePoints.Points);
+            var captureLocation = random.Pick((IList<RoutePoint>)(context.Region?.RoutePoints ?? []));
 
             // Create pickup inspection
             var pickupReport = CreateConditionReport(
@@ -106,7 +106,7 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
             // Create delivery inspection (50% chance to have delivery inspection)
             if (random.NextDouble() > 0.5)
             {
-                var deliveryLocation = random.Pick(RoutePoints.Points.Where(p => p != captureLocation).ToArray());
+                var deliveryLocation = random.Pick((context.Region?.RoutePoints ?? []).Where(p => p != captureLocation).ToList());
                 var deliveryReport = CreateConditionReport(
                     load,
                     driver,
@@ -128,7 +128,7 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
         Employee driver,
         (string Vin, int Year, string Make, string Model, string BodyClass) vehicle,
         InspectionType type,
-        (Domain.Primitives.ValueObjects.Address Address, double Longitude, double Latitude) location,
+        RoutePoint location,
         DateTime inspectedAt)
     {
         var damageMarkers = GenerateDamageMarkers();

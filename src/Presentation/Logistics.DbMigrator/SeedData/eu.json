@@ -1,0 +1,89 @@
+{
+  "Eu": {
+    "CustomerPortalUsers": [
+      {
+        "Email": "eu-customer1@test.com",
+        "FirstName": "Sven",
+        "LastName": "Holm",
+        "Password": "Test12345#",
+        "CustomerNames": ["Maersk"]
+      },
+      {
+        "Email": "eu-customer2@test.com",
+        "FirstName": "Camille",
+        "LastName": "Bernard",
+        "Password": "Test12345#",
+        "CustomerNames": ["CMA CGM", "Hapag-Lloyd"]
+      }
+    ],
+    "Customers": [
+      { "Name": "Maersk" },
+      { "Name": "CMA CGM" },
+      { "Name": "Hapag-Lloyd" },
+      { "Name": "MSC" },
+      { "Name": "DHL Freight" }
+    ],
+    "Users": [
+      {
+        "Email": "eu-owner@test.com",
+        "FirstName": "Lukas",
+        "LastName": "Müller",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "eu-manager@test.com",
+        "FirstName": "Sophie",
+        "LastName": "Dubois",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "eu-dispatcher1@test.com",
+        "FirstName": "Marco",
+        "LastName": "Rossi",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "eu-dispatcher2@test.com",
+        "FirstName": "Anna",
+        "LastName": "Kowalski",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "eu-dispatcher3@test.com",
+        "FirstName": "Pieter",
+        "LastName": "de Vries",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "eu-driver1@test.com",
+        "FirstName": "Erik",
+        "LastName": "Andersen",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "eu-driver2@test.com",
+        "FirstName": "Mateo",
+        "LastName": "García",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "eu-driver3@test.com",
+        "FirstName": "Jürgen",
+        "LastName": "Schmidt",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "eu-driver4@test.com",
+        "FirstName": "Henri",
+        "LastName": "Laurent",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "eu-driver5@test.com",
+        "FirstName": "Klara",
+        "LastName": "Novák",
+        "Password": "Test12345#"
+      }
+    ]
+  }
+}

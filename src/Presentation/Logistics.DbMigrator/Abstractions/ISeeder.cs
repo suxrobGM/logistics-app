@@ -28,6 +28,13 @@ public interface ISeeder
     IReadOnlyList<string> DependsOn { get; }
 
     /// <summary>
+    /// True when this seeder must execute once per tenant (with <c>SeederContext.CurrentTenant</c>
+    /// and <c>SeederContext.Region</c> bound). FakeData seeders are always tenant-scoped.
+    /// Infrastructure seeders default to global (master-DB only) but may opt-in.
+    /// </summary>
+    bool IsTenantScoped { get; }
+
+    /// <summary>
     /// Executes the seeding logic.
     /// </summary>
     /// <param name="context">Shared context containing services and inter-seeder state.</param>

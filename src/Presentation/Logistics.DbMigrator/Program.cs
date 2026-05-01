@@ -15,7 +15,8 @@ Log.Information("Starting up");
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.AddServiceDefaults();
-builder.Configuration.AddJsonFile("fake-dataset.json", true);
+builder.Configuration.AddJsonFile("SeedData/us.json", optional: true);
+builder.Configuration.AddJsonFile("SeedData/eu.json", optional: true);
 
 builder.Services.AddPersistenceInfrastructure(builder.Configuration)
     .AddMasterDatabase()

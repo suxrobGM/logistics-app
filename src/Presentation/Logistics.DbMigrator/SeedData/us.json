@@ -1,0 +1,89 @@
+{
+  "Us": {
+    "CustomerPortalUsers": [
+      {
+        "Email": "customer1@test.com",
+        "FirstName": "Linda",
+        "LastName": "Murphy",
+        "Password": "Test12345#",
+        "CustomerNames": ["Walmart Inc."]
+      },
+      {
+        "Email": "customer2@test.com",
+        "FirstName": "Greg",
+        "LastName": "Patterson",
+        "Password": "Test12345#",
+        "CustomerNames": ["Amazon Logistics", "Target Corporation"]
+      }
+    ],
+    "Customers": [
+      { "Name": "Walmart Inc." },
+      { "Name": "Home Depot" },
+      { "Name": "Amazon Logistics" },
+      { "Name": "Target Corporation" },
+      { "Name": "Kroger Co." }
+    ],
+    "Users": [
+      {
+        "Email": "owner@test.com",
+        "FirstName": "Sarah",
+        "LastName": "Thompson",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "manager1@test.com",
+        "FirstName": "Michael",
+        "LastName": "Carter",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "dispatcher1@test.com",
+        "FirstName": "Jessica",
+        "LastName": "Reynolds",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "dispatcher2@test.com",
+        "FirstName": "David",
+        "LastName": "Chen",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "dispatcher3@test.com",
+        "FirstName": "Brandon",
+        "LastName": "Mitchell",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "driver1@test.com",
+        "FirstName": "Robert",
+        "LastName": "Hayes",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "driver2@test.com",
+        "FirstName": "James",
+        "LastName": "Wilson",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "driver3@test.com",
+        "FirstName": "Carlos",
+        "LastName": "Ramirez",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "driver4@test.com",
+        "FirstName": "Tyler",
+        "LastName": "Brooks",
+        "Password": "Test12345#"
+      },
+      {
+        "Email": "driver5@test.com",
+        "FirstName": "Marcus",
+        "LastName": "Johnson",
+        "Password": "Test12345#"
+      }
+    ]
+  }
+}

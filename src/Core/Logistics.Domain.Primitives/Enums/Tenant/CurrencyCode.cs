@@ -8,10 +8,12 @@ namespace Logistics.Domain.Primitives.Enums;
 public enum CurrencyCode
 {
     [Description("US Dollar")]
-    USD
+    USD,
+
+    [Description("Euro")]
+    EUR
 
     // Future currencies:
-    // [Description("Euro")] EUR,
     // [Description("British Pound")] GBP,
     // [Description("Canadian Dollar")] CAD,
     // [Description("Mexican Peso")] MXN,

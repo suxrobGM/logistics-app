@@ -1,7 +1,7 @@
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Models;
-using Logistics.DbMigrator.Utils;
+using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 
@@ -63,7 +63,7 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
         foreach (var load in loads.Take((int)(loads.Count * 0.6)))
         {
             var driver = random.Pick(drivers);
-            var captureLocation = random.Pick(RoutePoints.Points);
+            var captureLocation = random.Pick((IList<RoutePoint>)(context.Region?.RoutePoints ?? []));
 
             // Create Bill of Lading (pickup)
             var bol = CreateBillOfLading(load, driver, captureLocation);
@@ -83,7 +83,7 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
     private DeliveryDocument CreateBillOfLading(
         Load load,
         Employee driver,
-        (Domain.Primitives.ValueObjects.Address Address, double Longitude, double Latitude) location)
+        RoutePoint location)
     {
         var capturedAt = load.PickedUpAt ?? load.DispatchedAt ?? DateTime.UtcNow.AddDays(-random.Next(1, 30));
 
@@ -110,7 +110,7 @@ internal class DocumentSeeder(ILogger<DocumentSeeder> logger) : SeederBase(logge
     private DeliveryDocument CreateProofOfDelivery(
         Load load,
         Employee driver,
-        (Domain.Primitives.ValueObjects.Address Address, double Longitude, double Latitude) location)
+        RoutePoint location)
     {
         var capturedAt = load.DeliveredAt ?? load.PickedUpAt?.AddHours(random.Next(4, 48)) ?? DateTime.UtcNow.AddDays(-random.Next(1, 15));
 

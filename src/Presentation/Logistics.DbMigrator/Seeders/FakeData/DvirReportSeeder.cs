@@ -1,7 +1,7 @@
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Models;
-using Logistics.DbMigrator.Utils;
+using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Primitives.Enums.Safety;
@@ -172,7 +172,7 @@ internal class DvirReportSeeder(ILogger<DvirReportSeeder> logger) : SeederBase(l
 
                 if (inspectionDate > endDate) break;
 
-                var location = random.Pick(RoutePoints.Points);
+                var location = random.Pick((IList<RoutePoint>)(context.Region?.RoutePoints ?? []));
                 var dvirType = random.NextDouble() < 0.6 ? DvirType.PreTrip : DvirType.PostTrip;
 
                 var report = CreateDvirReport(driver, truck, location, inspectionDate, dvirType);
@@ -190,7 +190,7 @@ internal class DvirReportSeeder(ILogger<DvirReportSeeder> logger) : SeederBase(l
     private DvirReport CreateDvirReport(
         Employee driver,
         Truck truck,
-        (Domain.Primitives.ValueObjects.Address Address, double Longitude, double Latitude) location,
+        RoutePoint location,
         DateTime inspectionDate,
         DvirType dvirType)
     {

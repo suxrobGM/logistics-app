@@ -1,6 +1,5 @@
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Models;
-using Logistics.DbMigrator.Seeders.Infrastructure;
 using Logistics.Domain.Entities;
 
 namespace Logistics.DbMigrator.Seeders.FakeData;
@@ -15,7 +14,7 @@ internal class CustomerUserSeeder(ILogger<CustomerUserSeeder> logger) : SeederBa
     public override SeederType Type => SeederType.FakeData;
     public override int Order => 125;
     public override IReadOnlyList<string> DependsOn =>
-        [nameof(CustomerSeeder), nameof(UserSeeder), nameof(DefaultTenantSeeder)];
+        [nameof(CustomerSeeder), nameof(UserSeeder)];
 
     protected override async Task<bool> HasExistingDataAsync(SeederContext context, CancellationToken cancellationToken)
     {
@@ -26,16 +25,18 @@ internal class CustomerUserSeeder(ILogger<CustomerUserSeeder> logger) : SeederBa
     {
         LogStarting();
 
-        var portalUsers = context.Configuration.GetSection("CustomerPortalUsers").Get<CustomerPortalUserData[]>();
+        var region = context.Region?.Region.ToString() ?? throw new InvalidOperationException("Region not set");
+        var portalUsers = context.Configuration.GetSection($"{region}:CustomerPortalUsers").Get<CustomerPortalUserData[]>();
+
         if (portalUsers is null || portalUsers.Length == 0)
         {
-            logger.LogWarning("No customer portal users found in configuration");
+            logger.LogWarning("No customer portal users found in configuration for {Region}", region);
             LogCompleted(0);
             return;
         }
 
         var customers = context.CreatedCustomers ?? throw new InvalidOperationException("Customers not seeded");
-        var tenant = context.DefaultTenant ?? throw new InvalidOperationException("Default tenant not seeded");
+        var tenant = context.CurrentTenant ?? throw new InvalidOperationException("Current tenant not set");
 
         var customerUserRepository = context.TenantUnitOfWork.Repository<CustomerUser>();
         var tenantAccessRepository = context.MasterUnitOfWork.Repository<UserTenantAccess>();

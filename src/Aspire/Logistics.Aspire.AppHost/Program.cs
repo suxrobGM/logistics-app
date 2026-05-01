@@ -9,14 +9,16 @@ builder.AddDockerComposeEnvironment("compose")
     .WithDashboard(dashboard => dashboard.WithHostPort(7100));
 
 IResourceBuilder<IResourceWithConnectionString> masterDb;
-IResourceBuilder<IResourceWithConnectionString> defaultTenantDb;
+IResourceBuilder<IResourceWithConnectionString> usTenantDb;
+IResourceBuilder<IResourceWithConnectionString> euTenantDb;
 
 // Development: use containerized PostgreSQL
 // Production: use external (installed) PostgreSQL via connection strings from appsettings
 if (isProdEnv)
 {
     masterDb = builder.AddConnectionString("MasterDatabase");
-    defaultTenantDb = builder.AddConnectionString("DefaultTenantDatabase");
+    usTenantDb = builder.AddConnectionString("UsTenantDatabase");
+    euTenantDb = builder.AddConnectionString("EuTenantDatabase");
 }
 else
 {
@@ -28,13 +30,14 @@ else
         .WithEndpoint("tcp", endpoint => endpoint.IsExternal = true);
 
     masterDb = postgres.AddDatabase("master", "master_logisticsx");
-    defaultTenantDb = postgres.AddDatabase("default-tenant", "default_logisticsx");
+    usTenantDb = postgres.AddDatabase("us-tenant", "us_logisticsx");
+    euTenantDb = postgres.AddDatabase("eu-tenant", "eu_logisticsx");
 }
 
 var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-server")
     .WithExternalHttpEndpoints()
     .WithReference(masterDb, "MasterDatabase")
-    .WithReference(defaultTenantDb, "DefaultTenantDatabase")
+    .WithReference(usTenantDb, "DefaultTenantDatabase")
     .WithEnvironment("GoogleRecaptcha__SecretKey", builder.GetConfigValue("GoogleRecaptcha:SecretKey"))
     .WithEnvironment("GoogleRecaptcha__SiteKey", builder.GetConfigValue("GoogleRecaptcha:SiteKey"))
     .WithEnvironment("Impersonation__TmsPortalUrl", builder.GetConfigValue("Impersonation:TmsPortalUrl"))
@@ -47,7 +50,7 @@ var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-serv
 var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithExternalHttpEndpoints()
     .WithReference(masterDb, "MasterDatabase")
-    .WithReference(defaultTenantDb, "DefaultTenantDatabase")
+    .WithReference(usTenantDb, "DefaultTenantDatabase")
     .WithEnvironment("IdentityServer__Authority",
         isProdEnv ? "http://identity-server:7001" : "http://localhost:7001")
     .WithEnvironment("IdentityServer__ExternalAuthority",
@@ -96,9 +99,22 @@ if (isDevEnv)
 {
     var migrator = builder.AddProject<Logistics_DbMigrator>("migrator")
         .WithReference(masterDb, "MasterDatabase")
-        .WithReference(defaultTenantDb, "DefaultTenantDatabase")
+        .WithReference(usTenantDb, "UsTenantDatabase")
+        .WithReference(euTenantDb, "EuTenantDatabase")
         .WithEnvironment("SuperAdmin__Email", builder.GetConfigValue("SuperAdmin:Email"))
         .WithEnvironment("SuperAdmin__Password", builder.GetConfigValue("SuperAdmin:Password"))
+        // Demo tenants — connection strings flow from the postgres resource (dev) or
+        // appsettings ConnectionStrings (prod) via WithReference above. The migrator's
+        // DemoTenantsSeeder falls back to ConnectionStrings:{Name}TenantDatabase when
+        // Tenants[N].ConnectionString is empty, so the WithReference wiring is enough.
+        .WithEnvironment("Tenants__0__Name", "us")
+        .WithEnvironment("Tenants__0__CompanyName", "Heartland Logistics LLC")
+        .WithEnvironment("Tenants__0__BillingEmail", "billing@heartlandlogistics.com")
+        .WithEnvironment("Tenants__0__Region", "Us")
+        .WithEnvironment("Tenants__1__Name", "eu")
+        .WithEnvironment("Tenants__1__CompanyName", "EuroFreight GmbH")
+        .WithEnvironment("Tenants__1__BillingEmail", "billing@eurofreight.de")
+        .WithEnvironment("Tenants__1__Region", "Eu")
         .WithEnvironment("TenantsDatabaseConfig__DatabaseNameTemplate",
             builder.GetConfigValue("TenantsDatabaseConfig:DatabaseNameTemplate"))
         .WithEnvironment("TenantsDatabaseConfig__DatabaseHost",

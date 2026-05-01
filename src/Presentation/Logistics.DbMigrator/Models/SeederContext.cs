@@ -1,3 +1,4 @@
+using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Microsoft.AspNetCore.Identity;
@@ -12,16 +13,35 @@ public class SeederContext
     public required IServiceProvider ServiceProvider { get; init; }
     public required IConfiguration Configuration { get; init; }
     public required IMasterUnitOfWork MasterUnitOfWork { get; init; }
-    public required ITenantUnitOfWork TenantUnitOfWork { get; init; }
+    public required ITenantUnitOfWork TenantUnitOfWork { get; set; }
     public required UserManager<User> UserManager { get; init; }
     public required RoleManager<AppRole> RoleManager { get; init; }
+
+    /// <summary>
+    /// The tenant currently being seeded by the per-tenant orchestration loop.
+    /// Set to null during the master-only Infrastructure pass.
+    /// </summary>
+    public Tenant? CurrentTenant
+    {
+        get => SharedState.TryGetValue(nameof(CurrentTenant), out var val) ? (Tenant)val : null;
+        set => SharedState[nameof(CurrentTenant)] = value!;
+    }
+
+    /// <summary>
+    /// Region profile bound to <see cref="CurrentTenant"/>. Drives all region-specific
+    /// fake-data choices (route points, truck makes, plate formats, etc.).
+    /// </summary>
+    public IRegionProfile? Region
+    {
+        get => SharedState.TryGetValue(nameof(Region), out var val) ? (IRegionProfile)val : null;
+        set => SharedState[nameof(Region)] = value!;
+    }
 
     /// <summary>
     /// Shared state dictionary for passing data between seeders.
     /// </summary>
     private Dictionary<string, object> SharedState { get; } = [];
 
-    // Strongly-typed accessors for common shared state
     public IList<User>? CreatedUsers
     {
         get => SharedState.TryGetValue(nameof(CreatedUsers), out var val) ? (IList<User>)val : null;
@@ -46,15 +66,35 @@ public class SeederContext
         set => SharedState[nameof(CreatedTrucks)] = value!;
     }
 
-    public Tenant? DefaultTenant
+    public IList<Terminal>? CreatedTerminals
     {
-        get => SharedState.TryGetValue(nameof(DefaultTenant), out var val) ? (Tenant)val : null;
-        set => SharedState[nameof(DefaultTenant)] = value!;
+        get => SharedState.TryGetValue(nameof(CreatedTerminals), out var val) ? (IList<Terminal>)val : null;
+        set => SharedState[nameof(CreatedTerminals)] = value!;
+    }
+
+    public IList<Container>? CreatedContainers
+    {
+        get => SharedState.TryGetValue(nameof(CreatedContainers), out var val) ? (IList<Container>)val : null;
+        set => SharedState[nameof(CreatedContainers)] = value!;
     }
 
     public IList<CustomerUser>? CreatedCustomerUsers
     {
         get => SharedState.TryGetValue(nameof(CreatedCustomerUsers), out var val) ? (IList<CustomerUser>)val : null;
         set => SharedState[nameof(CreatedCustomerUsers)] = value!;
+    }
+
+    /// <summary>
+    /// Resets per-tenant shared state between tenant iterations.
+    /// </summary>
+    public void ResetPerTenantState()
+    {
+        SharedState.Remove(nameof(CreatedUsers));
+        SharedState.Remove(nameof(CreatedEmployees));
+        SharedState.Remove(nameof(CreatedCustomers));
+        SharedState.Remove(nameof(CreatedTrucks));
+        SharedState.Remove(nameof(CreatedTerminals));
+        SharedState.Remove(nameof(CreatedContainers));
+        SharedState.Remove(nameof(CreatedCustomerUsers));
     }
 }

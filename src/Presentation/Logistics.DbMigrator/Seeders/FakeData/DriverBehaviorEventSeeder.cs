@@ -1,7 +1,7 @@
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Models;
-using Logistics.DbMigrator.Utils;
+using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Primitives.Enums;
@@ -90,7 +90,7 @@ internal class DriverBehaviorEventSeeder(ILogger<DriverBehaviorEventSeeder> logg
             for (var i = 0; i < eventCount; i++)
             {
                 var eventDate = random.UtcDate(startDate, endDate);
-                var location = random.Pick(RoutePoints.Points);
+                var location = random.Pick((IList<RoutePoint>)(context.Region?.RoutePoints ?? []));
                 var eventType = PickEventType();
 
                 var behaviorEvent = CreateBehaviorEvent(driver, truck, location, eventDate, eventType);
@@ -106,7 +106,7 @@ internal class DriverBehaviorEventSeeder(ILogger<DriverBehaviorEventSeeder> logg
     private DriverBehaviorEvent CreateBehaviorEvent(
         Employee driver,
         Truck? truck,
-        (Domain.Primitives.ValueObjects.Address Address, double Longitude, double Latitude) location,
+        RoutePoint location,
         DateTime eventDate,
         DriverBehaviorEventType eventType)
     {

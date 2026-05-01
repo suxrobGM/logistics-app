@@ -1,7 +1,7 @@
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Models;
-using Logistics.DbMigrator.Utils;
+using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Primitives.Enums.Safety;
@@ -106,7 +106,7 @@ internal class AccidentReportSeeder(ILogger<AccidentReportSeeder> logger) : Seed
         {
             var driver = random.Pick(drivers);
             var truck = random.Pick(trucks);
-            var location = random.Pick(RoutePoints.Points);
+            var location = random.Pick((IList<RoutePoint>)(context.Region?.RoutePoints ?? []));
             var accidentDate = random.UtcDate(DateTime.UtcNow.AddMonths(-6), DateTime.UtcNow.AddDays(-1));
 
             var report = CreateAccidentReport(driver, truck, location, accidentDate);
@@ -121,7 +121,7 @@ internal class AccidentReportSeeder(ILogger<AccidentReportSeeder> logger) : Seed
     private AccidentReport CreateAccidentReport(
         Employee driver,
         Truck truck,
-        (Domain.Primitives.ValueObjects.Address Address, double Longitude, double Latitude) location,
+        RoutePoint location,
         DateTime accidentDate)
     {
         var hasInjuries = random.NextDouble() < 0.15; // 15% chance of injuries

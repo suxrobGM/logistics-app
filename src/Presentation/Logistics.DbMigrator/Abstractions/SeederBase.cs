@@ -15,6 +15,12 @@ public abstract class SeederBase(ILogger logger) : ISeeder
     public virtual int Order => 100;
     public virtual IReadOnlyList<string> DependsOn => [];
 
+    /// <summary>
+    /// FakeData seeders are always tenant-scoped. Infrastructure seeders default to global
+    /// (master-DB only) — override to true if the seeder needs <c>CurrentTenant</c>.
+    /// </summary>
+    public virtual bool IsTenantScoped => Type == SeederType.FakeData;
+
     public abstract Task SeedAsync(SeederContext context, CancellationToken cancellationToken = default);
 
     /// <summary>

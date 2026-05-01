@@ -103,17 +103,19 @@ internal class TenantService(
     private Tenant CreateDefaultTenant()
     {
         // Safe defaults for non-HTTP scenarios (jobs, migrations, etc.)
+        // Note: "us" matches the demo seed tenant slug; the runtime fallback resolves
+        // to that DB via TenantDbContextOptions.ConnectionString.
         return new Tenant
         {
-            Name = "default",
+            Name = "us",
             BillingEmail = "test@test.com",
             CompanyAddress = new Address
             {
-                Line1 = "123 Main St",
-                City = "Anytown",
-                State = "CA",
-                ZipCode = "12345",
-                Country = "United States"
+                Line1 = "7 Allstate Rd",
+                City = "Dorchester",
+                State = "MA",
+                ZipCode = "02125",
+                Country = "US"
             },
             ConnectionString = dbContextContextOptions?.ConnectionString
                                ?? ConnectionStrings.LocalDefaultTenant
