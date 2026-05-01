@@ -3,6 +3,11 @@
  * App-specific components only - PrimeNG handled by definePreset
  */
 
+/* === PrimeNG Select: left-align selected value and placeholder === */
+.p-select-label {
+  text-align: start;
+}
+
 /* === PrimeNG Dark Mode Overrides === */
 /* Override PrimeNG component backgrounds for dark theme */
 .dark-theme {

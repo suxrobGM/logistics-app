@@ -1,4 +1,4 @@
-import { Component, computed, input, output } from "@angular/core";
+import { Component, computed, input, output, signal } from "@angular/core";
 import {
   FormControl,
   FormGroup,
@@ -12,13 +12,27 @@ import { KeyFilterModule } from "primeng/keyfilter";
 import { SelectModule } from "primeng/select";
 import type { Address } from "../../../api/generated/models";
 import { COUNTRIES_OPTIONS, DEFAULT_COUNTRY_OPTION, US_STATES_OPTIONS } from "../../../constants";
+import type { SelectOption } from "../../../models/select-option";
 import { findOption } from "../../../utils/select-utils";
+import { FormField } from "../form-field/form-field";
 import { ValidationSummary } from "../validation-summary/validation-summary";
+
+/** Country-specific state/province option lists. Countries not listed get a free-text input. */
+const COUNTRY_STATE_OPTIONS: Record<string, SelectOption[]> = {
+  US: US_STATES_OPTIONS,
+};
 
 @Component({
   selector: "ui-address-form",
   templateUrl: "./address-form.html",
-  imports: [ReactiveFormsModule, ValidationSummary, SelectModule, InputTextModule, KeyFilterModule],
+  imports: [
+    ReactiveFormsModule,
+    ValidationSummary,
+    FormField,
+    SelectModule,
+    InputTextModule,
+    KeyFilterModule,
+  ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -28,20 +42,30 @@ import { ValidationSummary } from "../validation-summary/validation-summary";
   ],
 })
 export class AddressForm implements ControlValueAccessor {
-  readonly form: FormGroup<AddressFormType>;
-  readonly usStates = US_STATES_OPTIONS;
+  public readonly form: FormGroup<AddressFormType> = new FormGroup<AddressFormType>({
+    addressLine1: new FormControl("", { validators: Validators.required, nonNullable: true }),
+    addressLine2: new FormControl(null),
+    city: new FormControl("", { validators: Validators.required, nonNullable: true }),
+    state: new FormControl("", { validators: Validators.required, nonNullable: true }),
+    zipCode: new FormControl("", { validators: Validators.required, nonNullable: true }),
+    country: new FormControl(DEFAULT_COUNTRY_OPTION.value, {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
+  });
+
   private onTouched?: () => void;
   private onChanged?: (value: Address | null) => void;
 
-  readonly address = input<Address>();
-  readonly addressChange = output<Address | null>();
+  public readonly address = input<Address>();
+  public readonly addressChange = output<Address | null>();
   /**
    * Optional list of ISO-3166-1 alpha-2 country codes to allow.
    * When omitted, all countries are shown.
    */
-  readonly allowedCountries = input<readonly string[] | null>(null);
+  public readonly allowedCountries = input<readonly string[] | null>(null);
 
-  readonly countries = computed(() => {
+  protected readonly countries = computed(() => {
     const allowed = this.allowedCountries();
     if (!allowed || allowed.length === 0) {
       return COUNTRIES_OPTIONS;
@@ -50,19 +74,28 @@ export class AddressForm implements ControlValueAccessor {
     return COUNTRIES_OPTIONS.filter((opt) => set.has(opt.value));
   });
 
-  constructor() {
-    this.form = new FormGroup<AddressFormType>({
-      addressLine1: new FormControl("", { validators: Validators.required, nonNullable: true }),
-      addressLine2: new FormControl(null),
-      city: new FormControl("", { validators: Validators.required, nonNullable: true }),
-      state: new FormControl("", { validators: Validators.required, nonNullable: true }),
-      zipCode: new FormControl("", { validators: Validators.required, nonNullable: true }),
-      country: new FormControl(DEFAULT_COUNTRY_OPTION.value, {
-        validators: Validators.required,
-        nonNullable: true,
-      }),
-    });
+  /** Currently selected country code. Updated from valueChanges and writeValue. */
+  private readonly country = signal(this.form.controls.country.value);
 
+  /** State/province options for the selected country, or null when free-text. */
+  protected readonly stateOptions = computed<SelectOption[] | null>(
+    () => COUNTRY_STATE_OPTIONS[this.country()] ?? null,
+  );
+
+  protected readonly hasStateOptions = computed(() => this.stateOptions() !== null);
+
+  constructor() {
+    // valueChanges only fires for user-driven changes (writeValue uses
+    // emitEvent: false), so clearing here won't wipe a hydrated state value.
+    this.form.controls.country.valueChanges.subscribe((newCountry) => {
+      const prevHadOptions = !!COUNTRY_STATE_OPTIONS[this.country()];
+      const newHasOptions = !!COUNTRY_STATE_OPTIONS[newCountry];
+      this.country.set(newCountry);
+
+      if (prevHadOptions !== newHasOptions) {
+        this.form.controls.state.setValue("");
+      }
+    });
     this.form.valueChanges.subscribe(() => this.handleFormValueChange());
   }
 
@@ -71,17 +104,26 @@ export class AddressForm implements ControlValueAccessor {
       return;
     }
 
-    const usStateOption = findOption(US_STATES_OPTIONS, value.state ?? "");
     const countryOption = findOption(COUNTRIES_OPTIONS, value.country ?? "");
+    const countryCode = countryOption?.value ?? DEFAULT_COUNTRY_OPTION.value;
+    const stateOptions = COUNTRY_STATE_OPTIONS[countryCode];
+    const stateValue = stateOptions
+      ? (findOption(stateOptions, value.state ?? "")?.value ?? "")
+      : (value.state ?? "");
+
+    // Sync the country signal so the state field renders the right input mode
+    // (dropdown vs free-text) immediately. setValue with emitEvent: false skips
+    // the valueChanges subscription that would otherwise drive this update.
+    this.country.set(countryCode);
 
     this.form.setValue(
       {
         addressLine1: value.line1 ?? "",
         addressLine2: value.line2 ?? null,
         city: value.city ?? "",
-        state: usStateOption?.value ?? "",
+        state: stateValue,
         zipCode: value.zipCode ?? "",
-        country: countryOption?.value ?? DEFAULT_COUNTRY_OPTION.value,
+        country: countryCode,
       },
       { emitEvent: false },
     );
