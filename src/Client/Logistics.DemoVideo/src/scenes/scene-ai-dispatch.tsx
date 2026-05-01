@@ -2,10 +2,10 @@ import type { ReactElement } from "react";
 import { AbsoluteFill, interpolate, Sequence, useCurrentFrame } from "remotion";
 import { AnimatedText, ScreenshotFrame } from "@/components";
 
-// AI Dispatch hero scene — 510 frames (17s), split into 3 parts:
+// AI Dispatch hero scene - 510 frames (17s), split into 3 parts:
 //   Part 1 (0-169):     Sessions list with map + pending decisions
-//   Part 2 (170-339):   Session #4 detail — summary, assignments, issues
-//   Part 3 (340-509):   Agent timeline — tool calls, reasoning, approvals
+//   Part 2 (170-339):   Session #4 detail - summary, assignments, issues
+//   Part 3 (340-509):   Agent timeline - tool calls, reasoning, approvals
 const PART2_START = 170;
 const PART3_START = 340;
 
@@ -27,7 +27,7 @@ export function SceneAiDispatch(): ReactElement {
       <Part
         screenshotSrc="screenshots/tms-ai-session-top.png"
         headline="Full Dispatch Summary with HOS Compliance"
-        subline="Assignments, issues, and recommendations — all in one view"
+        subline="Assignments, issues, and recommendations - all in one view"
         startFrame={PART2_START}
         endFrame={PART3_START}
         kenBurns={{ startScale: 1.04, endScale: 1.0, panY: -3 }}
@@ -36,7 +36,7 @@ export function SceneAiDispatch(): ReactElement {
 
       <Part
         screenshotSrc="screenshots/tms-ai-session-timeline.png"
-        headline="Every Decision Traced — Full Agent Timeline"
+        headline="Every Decision Traced - Full Agent Timeline"
         subline="Tool calls, feasibility checks, and load assignments step by step"
         startFrame={PART3_START}
         endFrame={510}

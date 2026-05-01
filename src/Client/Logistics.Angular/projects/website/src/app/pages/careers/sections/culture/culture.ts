@@ -17,21 +17,20 @@ export class Culture {
   protected readonly highlights: CultureHighlight[] = [
     {
       icon: "pi-bolt",
-      title: "Move Fast",
+      title: "Ship",
       description:
-        "We ship quickly, iterate often, and aren't afraid to take calculated risks to deliver value.",
+        "We push code often, iterate, and take the kind of risks where the downside is fixable.",
     },
     {
       icon: "pi-heart",
-      title: "Care Deeply",
-      description:
-        "We care about our customers, our teammates, and the quality of everything we create.",
+      title: "Care",
+      description: "About the customers, the team, and the quality of what we ship.",
     },
     {
       icon: "pi-comments",
-      title: "Communicate Openly",
+      title: "Talk straight",
       description:
-        "We believe in transparency, honest feedback, and keeping everyone informed and aligned.",
+        "Transparency, honest feedback, and keeping each other in the loop. No politicking.",
     },
   ];
 }

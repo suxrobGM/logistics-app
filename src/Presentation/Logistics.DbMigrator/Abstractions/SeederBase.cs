@@ -17,7 +17,7 @@ public abstract class SeederBase(ILogger logger) : ISeeder
 
     /// <summary>
     /// FakeData seeders are always tenant-scoped. Infrastructure seeders default to global
-    /// (master-DB only) — override to true if the seeder needs <c>CurrentTenant</c>.
+    /// (master-DB only) - override to true if the seeder needs <c>CurrentTenant</c>.
     /// </summary>
     public virtual bool IsTenantScoped => Type == SeederType.FakeData;
 

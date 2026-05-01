@@ -12,7 +12,7 @@ namespace Logistics.Infrastructure.AI.Services;
 
 /// <summary>
 /// Builds the LLM conversation: provider, system prompt, tools, and initial message.
-/// Provider-agnostic — delegates SDK-specific work to <see cref="ILlmProvider"/>.
+/// Provider-agnostic - delegates SDK-specific work to <see cref="ILlmProvider"/>.
 /// </summary>
 internal sealed class DispatchConversationBuilder(
     IDispatchToolRegistry toolRegistry,

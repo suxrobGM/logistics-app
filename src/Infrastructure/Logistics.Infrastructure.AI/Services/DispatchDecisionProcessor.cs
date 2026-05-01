@@ -51,7 +51,7 @@ internal sealed class DispatchDecisionProcessor(
             toolResults.Add(new LlmToolResultBlock(toolCall.Id, toolResult));
         }
 
-        // Save all decisions first, then broadcast — ensures clients see committed data
+        // Save all decisions first, then broadcast - ensures clients see committed data
         await tenantUow.SaveChangesAsync(ct);
 
         foreach (var decision in decisions)

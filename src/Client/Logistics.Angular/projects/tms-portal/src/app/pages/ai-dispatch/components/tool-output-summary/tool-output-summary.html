@@ -28,7 +28,7 @@
     <div class="text-danger mb-1 flex items-center gap-1">
       <i class="pi pi-times-circle text-xs"></i>
       <span>
-        All {{ o.batchResults.length }} checks failed — no driver has sufficient HOS hours
+        All {{ o.batchResults.length }} checks failed - no driver has sufficient HOS hours
       </span>
     </div>
     <div class="text-muted mt-1 flex flex-wrap gap-x-4 gap-y-0.5">
@@ -50,7 +50,7 @@
           ></i>
           @if (r.feasible) {
             <span class="text-success">Feasible</span>
-            <span class="text-muted">— {{ r.driving_minutes_remaining }}min remaining</span>
+            <span class="text-muted">- {{ r.driving_minutes_remaining }}min remaining</span>
           } @else {
             <span class="text-muted">
               {{ r.driving_minutes_remaining }}min avail / {{ r.estimated_driving_minutes }}min
@@ -71,7 +71,7 @@
       <span class="text-danger">Not feasible</span>
     }
     @if (o.reason) {
-      <span class="text-muted">— {{ o.reason }}</span>
+      <span class="text-muted">- {{ o.reason }}</span>
     }
   </div>
   @if (o.estimatedDrivingMinutes) {

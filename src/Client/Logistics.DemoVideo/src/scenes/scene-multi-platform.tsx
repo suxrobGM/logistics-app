@@ -14,7 +14,7 @@ export function SceneMultiPlatform(): ReactElement {
         <AnimatedText text="One Platform. Every Device." delay={0} fontSize={40} fontWeight={700} />
 
         <div className="mt-12 flex items-end gap-10">
-          {/* Desktop — TMS Portal in browser frame */}
+          {/* Desktop - TMS Portal in browser frame */}
           <DeviceFrame type="desktop" label="TMS Portal" delay={15} frame={frame} fps={fps}>
             <Img
               src={staticFile("screenshots/tms-dashboard.png")}
@@ -22,7 +22,7 @@ export function SceneMultiPlatform(): ReactElement {
             />
           </DeviceFrame>
 
-          {/* Tablet — Customer Portal (landscape screenshot, shown in wider frame) */}
+          {/* Tablet - Customer Portal (landscape screenshot, shown in wider frame) */}
           <DeviceFrame type="tablet" label="Customer Portal" delay={25} frame={frame} fps={fps}>
             <Img
               src={staticFile("screenshots/customer-portal.png")}
@@ -30,7 +30,7 @@ export function SceneMultiPlatform(): ReactElement {
             />
           </DeviceFrame>
 
-          {/* Phone — Driver App (screenshot already includes phone bezel) */}
+          {/* Phone - Driver App (screenshot already includes phone bezel) */}
           <PhoneScreenshot delay={35} frame={frame} fps={fps} />
         </div>
       </AbsoluteFill>

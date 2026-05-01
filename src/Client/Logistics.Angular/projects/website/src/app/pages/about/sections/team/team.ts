@@ -20,7 +20,7 @@ export class Team {
     {
       name: "Sukhrob Ilyosbekov",
       role: "CEO & Founder",
-      bio: "Software engineer and entrepreneur passionate about building modern tools for the logistics industry.",
+      bio: "Software engineer and founder. Spends his time building tools for the logistics industry.",
       initials: "SI",
       linkedIn: "https://www.linkedin.com/in/suxrobgm",
     },

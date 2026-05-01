@@ -2,25 +2,25 @@
   <div webScrollAnimate="fade-up">
     <web-section-header
       label="Features"
-      title="Everything you need to manage your fleet"
-      subtitle="Powerful tools designed specifically for trucking companies to streamline operations and boost efficiency."
+      title="What you get"
+      subtitle="Tools built for trucking companies - the daily operations stuff, not generic SaaS."
     />
   </div>
 
-  <!-- Highlighted Features — 2x2 Grid -->
+  <!-- Highlighted Features - 2x2 Grid -->
   <div class="mt-16 grid grid-cols-1 gap-6 md:grid-cols-2">
     @for (feature of highlightedFeatures; track feature.title; let i = $index) {
       <div
         webScrollAnimate="fade-up"
         [delay]="i * 100"
-        class="group rounded-2xl bg-paper-dark p-8 transition-all duration-300 hover:shadow-lg"
+        class="group bg-paper-dark rounded-2xl p-8 transition-all duration-300 hover:shadow-lg"
       >
-        <div class="mb-6 h-1 w-12 rounded-full bg-accent"></div>
+        <div class="bg-accent mb-6 h-1 w-12 rounded-full"></div>
         <web-icon-circle [icon]="feature.icon" size="md" variant="accent" />
-        <h3 class="font-display mt-5 text-xl font-bold text-ink">
+        <h3 class="font-display text-ink mt-5 text-xl font-bold">
           {{ feature.title }}
         </h3>
-        <p class="mt-3 leading-relaxed text-steel">
+        <p class="text-steel mt-3 leading-relaxed">
           {{ feature.description }}
         </p>
       </div>
@@ -29,11 +29,11 @@
 
   <!-- Divider -->
   <div class="my-12 flex items-center gap-4" webScrollAnimate="fade-in">
-    <div class="h-px flex-1 bg-ink/10"></div>
-    <span class="font-display text-sm font-semibold uppercase tracking-widest text-steel">
+    <div class="bg-ink/10 h-px flex-1"></div>
+    <span class="font-display text-steel text-sm font-semibold tracking-widest uppercase">
       And more
     </span>
-    <div class="h-px flex-1 bg-ink/10"></div>
+    <div class="bg-ink/10 h-px flex-1"></div>
   </div>
 
   <!-- Compact Features Grid -->
@@ -42,20 +42,20 @@
       <div
         webScrollAnimate="fade-up"
         [delay]="j * 50"
-        class="group relative rounded-xl p-4 transition-colors duration-300 hover:bg-paper-dark"
+        class="group hover:bg-paper-dark relative rounded-xl p-4 transition-colors duration-300"
       >
         <div class="flex items-start gap-3">
           <web-icon-circle [icon]="feature.icon" size="sm" variant="outlined" />
           <div class="min-w-0">
-            <h4 class="font-display text-base font-semibold text-ink">
+            <h4 class="font-display text-ink text-base font-semibold">
               {{ feature.title }}
             </h4>
           </div>
         </div>
         <div
-          class="pointer-events-none absolute left-0 top-full z-10 w-full rounded-b-xl bg-paper-dark px-4 pb-4 opacity-0 shadow-lg transition-opacity duration-300 group-hover:opacity-100"
+          class="bg-paper-dark pointer-events-none absolute top-full left-0 z-10 w-full rounded-b-xl px-4 pb-4 opacity-0 shadow-lg transition-opacity duration-300 group-hover:opacity-100"
         >
-          <p class="text-sm leading-relaxed text-steel">
+          <p class="text-steel text-sm leading-relaxed">
             {{ feature.description }}
           </p>
         </div>

@@ -3,8 +3,8 @@
   <div webScrollAnimate="fade-up" class="text-center">
     <web-section-header
       label="Compare"
-      title="How We Compare"
-      subtitle="Choosing the right TMS matters. See how our platform stacks up against the competition."
+      title="How we compare"
+      subtitle="Picking a TMS is a real decision. Here's how we stack up against the alternatives."
       [dark]="true"
     />
   </div>
@@ -15,8 +15,8 @@
   <div webScrollAnimate="fade-up">
     <web-section-header
       label="Features"
-      title="Feature-by-feature comparison"
-      subtitle="A detailed look at what each platform offers across the categories that matter most."
+      title="Feature-by-feature"
+      subtitle="What each platform actually does, across the categories that matter."
     />
   </div>
 
@@ -71,8 +71,8 @@
               <td class="px-3 py-2.5 text-center">
                 @if (row.dataTruck === "✓") {
                   <i class="pi pi-check text-sm text-gray-400"></i>
-                } @else if (row.dataTruck === "—") {
-                  <span class="text-gray-200">—</span>
+                } @else if (row.dataTruck === "-") {
+                  <span class="text-gray-200">-</span>
                 } @else {
                   <span class="text-steel text-xs">{{ row.dataTruck }}</span>
                 }
@@ -80,8 +80,8 @@
               <td class="px-3 py-2.5 text-center">
                 @if (row.alvys === "✓") {
                   <i class="pi pi-check text-sm text-gray-400"></i>
-                } @else if (row.alvys === "—") {
-                  <span class="text-gray-200">—</span>
+                } @else if (row.alvys === "-") {
+                  <span class="text-gray-200">-</span>
                 } @else {
                   <span class="text-steel text-xs">{{ row.alvys }}</span>
                 }
@@ -89,8 +89,8 @@
               <td class="px-3 py-2.5 text-center">
                 @if (row.roseRocket === "✓") {
                   <i class="pi pi-check text-sm text-gray-400"></i>
-                } @else if (row.roseRocket === "—") {
-                  <span class="text-gray-200">—</span>
+                } @else if (row.roseRocket === "-") {
+                  <span class="text-gray-200">-</span>
                 } @else {
                   <span class="text-steel text-xs">{{ row.roseRocket }}</span>
                 }
@@ -108,8 +108,8 @@
   <div webScrollAnimate="fade-up">
     <web-section-header
       label="Pricing"
-      title="Cost comparison at scale"
-      subtitle="Monthly cost on our Professional plan vs. competitors. Transparent pricing with no hidden fees."
+      title="Cost at scale"
+      subtitle="Monthly cost on our Professional plan against the competition. No hidden fees."
     />
   </div>
 
@@ -152,8 +152,7 @@
   <div webScrollAnimate="fade-up" class="text-center">
     <h2 class="font-display text-ink text-3xl font-bold sm:text-4xl">Ready to switch?</h2>
     <p class="text-steel mx-auto mt-4 max-w-xl text-lg">
-      See why growing fleets choose our platform. Request a personalized demo and we'll show you how
-      it fits your operation.
+      Book a demo and we'll walk through the platform with your operation in mind.
     </p>
     <div class="mt-8">
       <p-button

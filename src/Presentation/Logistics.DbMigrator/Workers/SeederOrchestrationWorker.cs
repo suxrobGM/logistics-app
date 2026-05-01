@@ -12,9 +12,9 @@ namespace Logistics.DbMigrator.Workers;
 /// <summary>
 /// Orchestrates seeders across one or more demo tenants.
 ///
-/// Pass 1 — global Infrastructure seeders run once against master DB
+/// Pass 1 - global Infrastructure seeders run once against master DB
 ///          (roles, super admin, plans, Stripe, DemoTenantsSeeder which provisions tenants).
-/// Pass 2 — for each demo tenant, mutate the singleton TenantDbContextOptions.ConnectionString,
+/// Pass 2 - for each demo tenant, mutate the singleton TenantDbContextOptions.ConnectionString,
 ///          open a fresh DI scope (which produces a TenantDbContext bound to that tenant's DB),
 ///          and run the tenant-scoped seeders (Infrastructure-tenant-scoped + all FakeData).
 /// </summary>

@@ -39,7 +39,7 @@ internal sealed class GetAllDriversHosStatusHandler(ITenantUnitOfWork tenantUow)
             })
             .ToListAsync(ct);
 
-        // GetDescription() can't run in SQL — apply display names after materialization
+        // GetDescription() can't run in SQL - apply display names after materialization
         foreach (var status in hosStatuses)
         {
             status.CurrentDutyStatusDisplay = status.CurrentDutyStatus.GetDescription();

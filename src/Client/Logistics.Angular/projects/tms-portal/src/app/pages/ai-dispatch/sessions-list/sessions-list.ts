@@ -186,7 +186,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
       await this.api.invoke(runDispatchAgent, {
         body: { mode: event.mode, instructions: event.instructions },
       });
-      this.toastService.showSuccess("Agent session started — updates will appear in real-time");
+      this.toastService.showSuccess("Agent session started - updates will appear in real-time");
       await this.loadData();
     } catch {
       this.toastService.showError("Failed to start agent session");

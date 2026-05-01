@@ -94,7 +94,7 @@ public class DispatchAgentServiceTests
         }
         catch
         {
-            // Expected — no real API
+            // Expected - no real API
         }
 
         Assert.NotNull(capturedSession);
@@ -128,7 +128,7 @@ public class DispatchAgentServiceTests
     [Fact]
     public async Task RunAsync_ReportsOverage_WhenSessionIsOverageAndCompleted()
     {
-        // Create a session that will "complete" — we simulate by catching the API error
+        // Create a session that will "complete" - we simulate by catching the API error
         // and checking that the overage was NOT reported (because session failed, not completed)
         var request = CreateRequest(true);
 
@@ -141,7 +141,7 @@ public class DispatchAgentServiceTests
             // Expected
         }
 
-        // Session failed (API error), not completed — overage should NOT be reported
+        // Session failed (API error), not completed - overage should NOT be reported
         await stripeUsageService.DidNotReceive()
             .ReportAiSessionOverageAsync(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<CancellationToken>());
     }
@@ -179,7 +179,7 @@ public class DispatchAgentServiceTests
         }
         catch (Exception ex) when (ex.Message != "Stripe API error")
         {
-            // Expected — API error from LLM, not from Stripe
+            // Expected - API error from LLM, not from Stripe
         }
 
         // The important thing: the Stripe error doesn't propagate

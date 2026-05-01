@@ -14,7 +14,7 @@ internal sealed class SearchLoadBoardTool : IDispatchTool
 
         return Task.FromResult(JsonSerializer.Serialize(new
         {
-            message = $"Load board search for {originCity}, {originState} — requires active load board integration. Check tenant's load board configuration.",
+            message = $"Load board search for {originCity}, {originState} - requires active load board integration. Check tenant's load board configuration.",
             loads = Array.Empty<object>()
         }));
     }

@@ -5,7 +5,7 @@ namespace Logistics.Domain.Entities;
 
 /// <summary>
 /// Maps a Telegram chat (private or group) to a tenant via Identity Server authentication.
-/// Stored in the tenant database — each tenant manages their own connected chats.
+/// Stored in the tenant database - each tenant manages their own connected chats.
 /// </summary>
 public class TelegramChat : Entity, ITenantEntity
 {

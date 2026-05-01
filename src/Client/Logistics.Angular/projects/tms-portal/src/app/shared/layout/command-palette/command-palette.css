@@ -1,4 +1,4 @@
-/* Backdrop — needs fixed positioning + backdrop-filter */
+/* Backdrop - needs fixed positioning + backdrop-filter */
 .palette-backdrop {
   position: fixed;
   inset: 0;

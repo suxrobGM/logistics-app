@@ -95,7 +95,7 @@ public partial class Container
     }
 
     /// <summary>
-    /// Pure location update — moves the container to a terminal without
+    /// Pure location update - moves the container to a terminal without
     /// changing its lifecycle status.
     /// </summary>
     public void MoveToTerminal(Terminal terminal)

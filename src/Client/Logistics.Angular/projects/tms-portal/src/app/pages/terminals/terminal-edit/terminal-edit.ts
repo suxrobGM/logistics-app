@@ -57,7 +57,7 @@ export class TerminalEdit implements OnInit {
     try {
       const terminal = await this.api.invoke(getTerminalById, { id: this.id() });
       if (!terminal) return;
-      this.title.set(`${terminal.code ?? ""} — ${terminal.name ?? ""}`);
+      this.title.set(`${terminal.code ?? ""} - ${terminal.name ?? ""}`);
       this.initial.set({
         name: terminal.name ?? "",
         code: terminal.code ?? "",

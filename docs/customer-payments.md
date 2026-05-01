@@ -39,9 +39,9 @@ Authenticated access for registered customers:
 
 When viewing a shipment tracking page:
 
-- If invoice exists and unpaid, show "Pay Invoice" button
-- Links to public payment page
-- Seamless experience from tracking to payment
+- If an invoice exists and is unpaid, show a "Pay Invoice" button
+- Button links to the public payment page
+- Customer goes from tracking to payment without having to log in
 
 ## Public Payment API
 
@@ -183,23 +183,23 @@ Consider implementing rate limiting on public endpoints to prevent abuse.
 ```typescript
 // Initialize Stripe with connected account
 const stripe = await loadStripe(publishableKey, {
-  stripeAccount: connectedAccountId
+  stripeAccount: connectedAccountId,
 });
 
 // Create payment element
 const elements = stripe.elements({
-  clientSecret: setupIntent.clientSecret
+  clientSecret: setupIntent.clientSecret,
 });
 
-const paymentElement = elements.create('payment');
-paymentElement.mount('#payment-element');
+const paymentElement = elements.create("payment");
+paymentElement.mount("#payment-element");
 
 // Handle submission
 const { error, paymentIntent } = await stripe.confirmPayment({
   elements,
   confirmParams: {
-    return_url: `${window.location.origin}/payment-complete`
-  }
+    return_url: `${window.location.origin}/payment-complete`,
+  },
 });
 ```
 

@@ -52,7 +52,7 @@ internal static class TtEldMapper
             ExternalLogId = null,
             ExternalDriverId = data.DriverId ?? vehicleId,
             LogDate = timestamp.Date,
-            DutyStatus = DutyStatus.Driving, // GPS tracking point — no HOS data available from TT ELD
+            DutyStatus = DutyStatus.Driving, // GPS tracking point - no HOS data available from TT ELD
             StartTime = timestamp,
             EndTime = null,
             DurationMinutes = 0,

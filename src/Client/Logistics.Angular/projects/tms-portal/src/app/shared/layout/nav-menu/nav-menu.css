@@ -4,7 +4,7 @@
   scrollbar-color: var(--border-subtle) transparent;
 }
 
-/* Nav items — base styles that apply to both buttons and links */
+/* Nav items - base styles that apply to both buttons and links */
 .nav-item {
   display: flex;
   align-items: center;
@@ -71,7 +71,7 @@
   transition: all 150ms ease;
 }
 
-/* Expandable children container — CSS grid animation */
+/* Expandable children container - CSS grid animation */
 .nav-children-wrapper {
   display: grid;
   grid-template-rows: 0fr;
@@ -112,7 +112,7 @@
   box-shadow: inset 0 0 0 2px var(--primary-500);
 }
 
-/* Flyout (collapsed mode hover panel) — requires fixed positioning */
+/* Flyout (collapsed mode hover panel) - requires fixed positioning */
 .nav-flyout {
   position: fixed;
   left: 72px;

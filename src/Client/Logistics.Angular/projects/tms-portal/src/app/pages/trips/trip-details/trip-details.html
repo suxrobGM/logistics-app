@@ -1,5 +1,5 @@
 <ui-typography variant="h2" tag="h1">
-  Trip #{{ store.trip()?.number }} — {{ store.trip()?.name }}
+  Trip #{{ store.trip()?.number }} - {{ store.trip()?.name }}
 </ui-typography>
 
 <!-- Action Buttons -->
@@ -61,7 +61,12 @@
                 [showValue]="false"
                 class="h-2!"
               />
-              <ui-stack direction="row" align="center" gap="1" class="text-muted-color mt-2 text-sm">
+              <ui-stack
+                direction="row"
+                align="center"
+                gap="1"
+                class="text-muted-color mt-2 text-sm"
+              >
                 <ui-icon name="map-marker" />
                 <span>
                   {{ store.completedStops().length }} of {{ store.sortedStops().length }} stops
@@ -75,7 +80,12 @@
               <!-- Distance -->
               <ui-grid [size]="6">
                 <ui-surface variant="subtle" [border]="true" padding="sm">
-                  <ui-stack direction="row" align="center" gap="2" class="text-muted-color mb-1 text-sm">
+                  <ui-stack
+                    direction="row"
+                    align="center"
+                    gap="2"
+                    class="text-muted-color mb-1 text-sm"
+                  >
                     <ui-icon name="map" />
                     <span>Total Distance</span>
                   </ui-stack>
@@ -88,7 +98,12 @@
               <!-- Loads -->
               <ui-grid [size]="6">
                 <ui-surface variant="subtle" [border]="true" padding="sm">
-                  <ui-stack direction="row" align="center" gap="2" class="text-muted-color mb-1 text-sm">
+                  <ui-stack
+                    direction="row"
+                    align="center"
+                    gap="2"
+                    class="text-muted-color mb-1 text-sm"
+                  >
                     <ui-icon name="box" />
                     <span>Loads</span>
                   </ui-stack>
@@ -99,7 +114,12 @@
               <!-- Truck -->
               <ui-grid [size]="6">
                 <ui-surface variant="subtle" [border]="true" padding="sm">
-                  <ui-stack direction="row" align="center" gap="2" class="text-muted-color mb-1 text-sm">
+                  <ui-stack
+                    direction="row"
+                    align="center"
+                    gap="2"
+                    class="text-muted-color mb-1 text-sm"
+                  >
                     <ui-icon name="truck" />
                     <span>Truck</span>
                   </ui-stack>
@@ -112,7 +132,12 @@
               <!-- Stops -->
               <ui-grid [size]="6">
                 <ui-surface variant="subtle" [border]="true" padding="sm">
-                  <ui-stack direction="row" align="center" gap="2" class="text-muted-color mb-1 text-sm">
+                  <ui-stack
+                    direction="row"
+                    align="center"
+                    gap="2"
+                    class="text-muted-color mb-1 text-sm"
+                  >
                     <ui-icon name="flag" />
                     <span>Stops</span>
                   </ui-stack>
@@ -160,108 +185,108 @@
       <!-- Left side: Stops and Loads tables stacked -->
       <ui-grid [size]="{ xs: 12, lg: 8 }">
         <ui-stack gap="4">
-        <!-- Trip Stops table -->
-        <p-card>
-          <ng-template #header>
-            <ui-stack direction="row" align="center" gap="2" class="p-3 pb-0">
-              <ui-icon name="map-marker" color="primary" />
-              <ui-typography variant="h6" tag="h5">Stops</ui-typography>
-            </ui-stack>
-          </ng-template>
-
-          <p-table
-            [value]="store.sortedStops()"
-            dataKey="id"
-            sortField="order"
-            sortMode="single"
-            selectionMode="single"
-            [paginator]="false"
-          >
+          <!-- Trip Stops table -->
+          <p-card>
             <ng-template #header>
-              <tr>
-                <th pSortableColumn="order">#<p-sortIcon field="order" /></th>
-                <th>Type</th>
-                <th>Address</th>
-                <th>Arrived</th>
-                @if (store.isActive()) {
-                  <th>Actions</th>
-                }
-              </tr>
+              <ui-stack direction="row" align="center" gap="2" class="p-3 pb-0">
+                <ui-icon name="map-marker" color="primary" />
+                <ui-typography variant="h6" tag="h5">Stops</ui-typography>
+              </ui-stack>
             </ng-template>
-            <ng-template #body let-tripStop>
-              <tr [pSelectableRow]="tripStop">
-                <td>{{ tripStop.order }}</td>
-                <td>{{ stopLabel(tripStop.type) }}</td>
-                <td>{{ tripStop.address | address }}</td>
-                <td>
-                  @if (tripStop.arrivedAt) {
-                    {{ tripStop.arrivedAt | dateFormat: "short" }}
-                  } @else {
-                    <span class="text-muted-color">Pending</span>
+
+            <p-table
+              [value]="store.sortedStops()"
+              dataKey="id"
+              sortField="order"
+              sortMode="single"
+              selectionMode="single"
+              [paginator]="false"
+            >
+              <ng-template #header>
+                <tr>
+                  <th pSortableColumn="order">#<p-sortIcon field="order" /></th>
+                  <th>Type</th>
+                  <th>Address</th>
+                  <th>Arrived</th>
+                  @if (store.isActive()) {
+                    <th>Actions</th>
                   }
-                </td>
-                @if (store.isActive()) {
+                </tr>
+              </ng-template>
+              <ng-template #body let-tripStop>
+                <tr [pSelectableRow]="tripStop">
+                  <td>{{ tripStop.order }}</td>
+                  <td>{{ stopLabel(tripStop.type) }}</td>
+                  <td>{{ tripStop.address | address }}</td>
                   <td>
-                    @if (!tripStop.arrivedAt) {
-                      <p-button
-                        icon="pi pi-check"
-                        label="Mark Arrived"
-                        severity="success"
-                        [text]="true"
-                        size="small"
-                        [loading]="store.isProcessing()"
-                        (onClick)="onMarkStopArrived(tripStop)"
-                      />
+                    @if (tripStop.arrivedAt) {
+                      {{ tripStop.arrivedAt | dateFormat: "short" }}
                     } @else {
-                      <i class="pi pi-check-circle text-green-500"></i>
+                      <span class="text-muted-color">Pending</span>
                     }
                   </td>
-                }
-              </tr>
-            </ng-template>
-          </p-table>
-        </p-card>
+                  @if (store.isActive()) {
+                    <td>
+                      @if (!tripStop.arrivedAt) {
+                        <p-button
+                          icon="pi pi-check"
+                          label="Mark Arrived"
+                          severity="success"
+                          [text]="true"
+                          size="small"
+                          [loading]="store.isProcessing()"
+                          (onClick)="onMarkStopArrived(tripStop)"
+                        />
+                      } @else {
+                        <i class="pi pi-check-circle text-green-500"></i>
+                      }
+                    </td>
+                  }
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-card>
 
-        <!-- Loads table -->
-        <p-card>
-          <ng-template #header>
-            <ui-stack direction="row" align="center" gap="2" class="p-3 pb-0">
-              <ui-icon name="box" color="primary" />
-              <ui-typography variant="h6" tag="h5">Loads</ui-typography>
-            </ui-stack>
-          </ng-template>
-
-          <p-table [value]="store.trip()!.loads ?? []" [dataKey]="'id'">
+          <!-- Loads table -->
+          <p-card>
             <ng-template #header>
-              <tr>
-                <th pSortableColumn="number">Load # <p-sortIcon field="number" /></th>
-                <th pSortableColumn="name">Name <p-sortIcon field="name" /></th>
-                <th pSortableColumn="customer.name">
-                  Customer <p-sortIcon field="customer.name" />
-                </th>
-                <th pSortableColumn="originAddress.line1">
-                  Origin <p-sortIcon field="originAddress.line1" />
-                </th>
-                <th pSortableColumn="destinationAddress.line1">
-                  Dest <p-sortIcon field="destinationAddress.line1" />
-                </th>
-                <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
-                <th pSortableColumn="deliveryCost">Cost <p-sortIcon field="deliveryCost" /></th>
-              </tr>
+              <ui-stack direction="row" align="center" gap="2" class="p-3 pb-0">
+                <ui-icon name="box" color="primary" />
+                <ui-typography variant="h6" tag="h5">Loads</ui-typography>
+              </ui-stack>
             </ng-template>
-            <ng-template #body let-load>
-              <tr>
-                <td>{{ load.number }}</td>
-                <td>{{ load.name }}</td>
-                <td>{{ load.customer.name }}</td>
-                <td>{{ load.originAddress | address }}</td>
-                <td>{{ load.destinationAddress | address }}</td>
-                <td><app-load-status-tag [status]="load.status" /></td>
-                <td>{{ load.deliveryCost | currencyFormat }}</td>
-              </tr>
-            </ng-template>
-          </p-table>
-        </p-card>
+
+            <p-table [value]="store.trip()!.loads ?? []" [dataKey]="'id'">
+              <ng-template #header>
+                <tr>
+                  <th pSortableColumn="number">Load # <p-sortIcon field="number" /></th>
+                  <th pSortableColumn="name">Name <p-sortIcon field="name" /></th>
+                  <th pSortableColumn="customer.name">
+                    Customer <p-sortIcon field="customer.name" />
+                  </th>
+                  <th pSortableColumn="originAddress.line1">
+                    Origin <p-sortIcon field="originAddress.line1" />
+                  </th>
+                  <th pSortableColumn="destinationAddress.line1">
+                    Dest <p-sortIcon field="destinationAddress.line1" />
+                  </th>
+                  <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
+                  <th pSortableColumn="deliveryCost">Cost <p-sortIcon field="deliveryCost" /></th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-load>
+                <tr>
+                  <td>{{ load.number }}</td>
+                  <td>{{ load.name }}</td>
+                  <td>{{ load.customer.name }}</td>
+                  <td>{{ load.originAddress | address }}</td>
+                  <td>{{ load.destinationAddress | address }}</td>
+                  <td><app-load-status-tag [status]="load.status" /></td>
+                  <td>{{ load.deliveryCost | currencyFormat }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-card>
         </ui-stack>
       </ui-grid>
 

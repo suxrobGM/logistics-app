@@ -13,7 +13,9 @@
           <ui-stack align="center" gap="2" class="p-4 pb-0">
             <p-tag [severity]="getTierSeverity(plan)" [value]="Labels.planTierLabel(plan.tier!)" />
             <ui-typography variant="h2" tag="h2" class="m-0">{{ plan.name }}</ui-typography>
-            <ui-typography color="secondary" align="center" class="m-0">{{ plan.description }}</ui-typography>
+            <ui-typography color="secondary" align="center" class="m-0">{{
+              plan.description
+            }}</ui-typography>
           </ui-stack>
         </ng-template>
 
@@ -23,7 +25,9 @@
             {{ plan.price | currency }}<span class="text-secondary font-normal">/mo</span>
           </div>
           <div class="text-secondary">+ {{ plan.perTruckPrice | currency }} per truck / mo</div>
-          <ui-typography variant="body-sm" color="secondary">{{ getMaxTrucksLabel(plan) }}</ui-typography>
+          <ui-typography variant="body-sm" color="secondary">{{
+            getMaxTrucksLabel(plan)
+          }}</ui-typography>
         </ui-stack>
 
         <!-- AI Dispatch model access -->
@@ -32,7 +36,9 @@
             <ui-stack direction="row" align="center" gap="2">
               <ui-icon name="bolt" class="text-primary" />
               <div>
-                <div class="font-medium">AI Dispatch — {{ getModelTierLabel(plan.allowedModelTier) }}</div>
+                <div class="font-medium">
+                  AI Dispatch - {{ getModelTierLabel(plan.allowedModelTier) }}
+                </div>
                 <div class="text-secondary text-xs">Overage charges apply beyond weekly limit</div>
               </div>
             </ui-stack>

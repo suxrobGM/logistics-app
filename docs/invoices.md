@@ -1,6 +1,6 @@
 # Invoice System
 
-The logistics platform includes a comprehensive invoice system supporting automatic creation, line items, partial payments, and public payment links.
+The platform's invoice system handles automatic invoice creation, line items, partial payments, and public payment links.
 
 ## Invoice Types
 
@@ -46,17 +46,17 @@ Draft → Issued → PartiallyPaid → Paid
 
 Each invoice can have multiple line items with types:
 
-| Type | Description |
-| ---- | ----------- |
-| BaseRate | Primary freight charge |
-| FuelSurcharge | Fuel cost adjustment |
-| Detention | Waiting time charges |
-| Layover | Overnight delay charges |
-| Lumper | Loading/unloading labor |
-| Accessorial | Additional services |
-| Discount | Price reductions |
-| Tax | Tax charges |
-| Other | Miscellaneous |
+| Type          | Description             |
+| ------------- | ----------------------- |
+| BaseRate      | Primary freight charge  |
+| FuelSurcharge | Fuel cost adjustment    |
+| Detention     | Waiting time charges    |
+| Layover       | Overnight delay charges |
+| Lumper        | Loading/unloading labor |
+| Accessorial   | Additional services     |
+| Discount      | Price reductions        |
+| Tax           | Tax charges             |
+| Other         | Miscellaneous           |
 
 ### Managing Line Items
 

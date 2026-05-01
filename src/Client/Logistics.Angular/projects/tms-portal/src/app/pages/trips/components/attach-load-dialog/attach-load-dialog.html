@@ -80,7 +80,7 @@
                 <app-load-type-tag [type]="load.type" />
               }
             </td>
-            <td>{{ load.customer?.name ?? "—" }}</td>
+            <td>{{ load.customer?.name ?? "-" }}</td>
             <td>{{ load.originAddress | address }}</td>
             <td>{{ load.destinationAddress | address }}</td>
             <td class="text-right">{{ load.distance | distanceUnit: "mi" }}</td>

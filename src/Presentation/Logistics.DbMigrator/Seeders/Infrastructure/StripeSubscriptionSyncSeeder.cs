@@ -126,7 +126,7 @@ internal class StripeSubscriptionSyncSeeder(ILogger<StripeSubscriptionSyncSeeder
             return true;
         }
 
-        // Tenant already has a subscription with a different Stripe ID — relink it
+        // Tenant already has a subscription with a different Stripe ID - relink it
         if (tenant.Subscription is not null)
         {
             tenant.Subscription.Status = status;

@@ -58,7 +58,7 @@ internal sealed class TelegramNotificationService(
                 }
                 catch (ApiRequestException ex) when (ex.ErrorCode == 403)
                 {
-                    // Bot was blocked by user or kicked from group — remove the chat
+                    // Bot was blocked by user or kicked from group - remove the chat
                     logger.LogInformation(
                         "Bot blocked/kicked from chat {ChatId}, removing", chat.ChatId);
                     tenantUow.Repository<TelegramChat>().Delete(chat);

@@ -103,10 +103,6 @@ if (isDevEnv)
         .WithReference(euTenantDb, "EuTenantDatabase")
         .WithEnvironment("SuperAdmin__Email", builder.GetConfigValue("SuperAdmin:Email"))
         .WithEnvironment("SuperAdmin__Password", builder.GetConfigValue("SuperAdmin:Password"))
-        // Demo tenants — connection strings flow from the postgres resource (dev) or
-        // appsettings ConnectionStrings (prod) via WithReference above. The migrator's
-        // DemoTenantsSeeder falls back to ConnectionStrings:{Name}TenantDatabase when
-        // Tenants[N].ConnectionString is empty, so the WithReference wiring is enough.
         .WithEnvironment("Tenants__0__Name", "us")
         .WithEnvironment("Tenants__0__CompanyName", "Heartland Logistics LLC")
         .WithEnvironment("Tenants__0__BillingEmail", "billing@heartlandlogistics.com")

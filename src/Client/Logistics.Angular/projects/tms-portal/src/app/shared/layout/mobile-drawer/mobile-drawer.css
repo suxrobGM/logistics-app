@@ -1,4 +1,4 @@
-/* PrimeNG drawer overrides — can't be done with Tailwind */
+/* PrimeNG drawer overrides - can't be done with Tailwind */
 :host ::ng-deep {
   .mobile-nav-drawer {
     width: 300px !important;

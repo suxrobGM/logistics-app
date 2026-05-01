@@ -83,7 +83,7 @@ Resend__SenderName="LogisticsX"
 Mapbox__AccessToken="pk.xxx"
 ```
 
-### LLM API (Optional — AI Dispatch)
+### LLM API (Optional - AI Dispatch)
 
 ```bash
 Llm__Providers__Anthropic__ApiKey="sk-ant-xxx"

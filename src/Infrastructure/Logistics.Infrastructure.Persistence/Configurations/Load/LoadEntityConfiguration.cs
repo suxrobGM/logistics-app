@@ -56,7 +56,7 @@ internal sealed class LoadEntityConfiguration : IEntityTypeConfiguration<Load>
             .HasForeignKey(i => i.DestinationTerminalId)
             .OnDelete(DeleteBehavior.SetNull);
 
-        // Computed properties — keep out of EF mapping
+        // Computed properties - keep out of EF mapping
         builder.Ignore(i => i.CanConfirmPickUp);
         builder.Ignore(i => i.CanConfirmDelivery);
     }

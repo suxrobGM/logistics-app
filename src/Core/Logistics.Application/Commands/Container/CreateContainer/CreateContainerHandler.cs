@@ -43,7 +43,7 @@ internal sealed class CreateContainerHandler(ITenantUnitOfWork tenantUow)
             Notes = req.Notes
         };
 
-        // Initial status — bypass state machine via force, since the container starts at the requested status.
+        // Initial status - bypass state machine via force, since the container starts at the requested status.
         if (req.Status != ContainerStatus.Empty)
         {
             container.UpdateStatus(req.Status, force: true);

@@ -148,7 +148,7 @@ internal sealed class TelegramUpdateDispatcher(
         }
         catch
         {
-            // Best-effort — don't fail request for tracking
+            // Best-effort - don't fail request for tracking
         }
     }
 }

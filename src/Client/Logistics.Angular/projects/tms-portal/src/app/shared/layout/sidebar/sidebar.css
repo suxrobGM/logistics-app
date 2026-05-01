@@ -1,4 +1,4 @@
-/* Sidebar shell — width transition, gradient background, pseudo-elements */
+/* Sidebar shell - width transition, gradient background, pseudo-elements */
 .sidebar {
   position: sticky;
   top: 0;
@@ -18,7 +18,7 @@
   width: 72px;
 }
 
-/* Header — gradient background + accent line pseudo-element */
+/* Header - gradient background + accent line pseudo-element */
 .sidebar-header {
   display: flex;
   flex-direction: column;
@@ -125,7 +125,7 @@
   display: none;
 }
 
-/* Footer — gradient background + pseudo-element */
+/* Footer - gradient background + pseudo-element */
 .sidebar-footer {
   display: flex;
   flex-direction: column;
@@ -155,6 +155,12 @@
 }
 
 @keyframes fade-slide-in {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

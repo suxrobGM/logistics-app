@@ -30,7 +30,7 @@ internal sealed class ReplanDispatchSessionHandler(
         var rejectionContext = string.Join("; ", rejectedDecisions.Select(d =>
         {
             var reason = d.RejectionReason ?? "no reason given";
-            return $"{d.ToolName} (load: {d.LoadId}, truck: {d.TruckId}) — rejected: {reason}";
+            return $"{d.ToolName} (load: {d.LoadId}, truck: {d.TruckId}) - rejected: {reason}";
         }));
 
         var tenant = tenantUow.GetCurrentTenant();

@@ -17,16 +17,16 @@ internal static class LlmPricing
     // Prices as of April 2026
     private static readonly Dictionary<string, ModelPricing> Pricing = new()
     {
-        // Anthropic — https://platform.claude.com/docs/en/about-claude/pricing
+        // Anthropic - https://platform.claude.com/docs/en/about-claude/pricing
         ["claude-opus-4-6"] = new(5m, 25m, 0.50m, 6.25m),
         ["claude-sonnet-4-6"] = new(3m, 15m, 0.30m, 3.75m),
         ["claude-haiku-4-5"] = new(1m, 5m, 0.10m, 1.25m),
 
-        // OpenAI GPT-5.x — https://openai.com/api/pricing/
+        // OpenAI GPT-5.x - https://openai.com/api/pricing/
         ["gpt-5.4"] = new(2.50m, 15m, 0.25m),
         ["gpt-5.4-mini"] = new(0.75m, 4.50m, 0.075m),
 
-        // DeepSeek — https://api-docs.deepseek.com/quick_start/pricing/
+        // DeepSeek - https://api-docs.deepseek.com/quick_start/pricing/
         ["deepseek-v4-flash"] = new(0.14m, 0.28m, 0.0028m),
         ["deepseek-v4-pro"] = new(1.74m, 3.48m, 0.0145m),
     };

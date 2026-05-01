@@ -42,14 +42,14 @@
           @if (invoice.dueDate) {
             <span class="text-sm">{{ invoice.dueDate | date: "mediumDate" }}</span>
           } @else {
-            <span class="text-muted">—</span>
+            <span class="text-muted">-</span>
           }
         </td>
         <td>
           @if (invoice.createdDate) {
             <span class="text-sm">{{ invoice.createdDate | date: "mediumDate" }}</span>
           } @else {
-            <span class="text-muted">—</span>
+            <span class="text-muted">-</span>
           }
         </td>
         <td>

@@ -3,7 +3,7 @@ namespace Logistics.DbMigrator.Utils;
 /// <summary>
 /// Generates valid ISO 6346 container numbers with mod-11 checksum.
 /// Format: 4 letters (3-letter owner code + category letter U/J/Z) + 6-digit serial + check digit.
-/// Example: MSCU1234565 — owner MSC, category U (freight container), serial 123456, check 5.
+/// Example: MSCU1234565 - owner MSC, category U (freight container), serial 123456, check 5.
 /// </summary>
 internal static class IsoContainerNumber
 {

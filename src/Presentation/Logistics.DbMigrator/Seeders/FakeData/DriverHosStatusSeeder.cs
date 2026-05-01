@@ -59,15 +59,15 @@ internal class DriverHosStatusSeeder(ILogger<DriverHosStatusSeeder> logger) : Se
 
         return scenario switch
         {
-            // 50% — Fresh driver, plenty of hours (just started shift or after reset)
+            // 50% - Fresh driver, plenty of hours (just started shift or after reset)
             < 0.50 => CreateFreshDriver(driver),
-            // 25% — Mid-shift driver, moderate hours remaining
+            // 25% - Mid-shift driver, moderate hours remaining
             < 0.75 => CreateMidShiftDriver(driver),
-            // 15% — Low hours, approaching limits
+            // 15% - Low hours, approaching limits
             < 0.90 => CreateLowHoursDriver(driver),
-            // 5% — Off duty / sleeper
+            // 5% - Off duty / sleeper
             < 0.95 => CreateOffDutyDriver(driver),
-            // 5% — In violation
+            // 5% - In violation
             _ => CreateViolationDriver(driver)
         };
     }

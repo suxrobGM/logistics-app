@@ -1,8 +1,8 @@
-# LogisticsX Driver — App Store & Play Store Listing
+# LogisticsX Driver - App Store & Play Store Listing
 
 ---
 
-## Promotional Text (170 chars max — iOS only, shown above description)
+## Promotional Text (170 chars max - iOS only, shown above description)
 
 ```text
 Stay on the road. Stay connected. LogisticsX Driver puts your loads, routes, and dispatcher in the palm of your hand.
@@ -10,7 +10,7 @@ Stay on the road. Stay connected. LogisticsX Driver puts your loads, routes, and
 
 ---
 
-## Short Description (80 chars max — Android only, shown in search results)
+## Short Description (80 chars max - Android only, shown in search results)
 
 ```text
 Manage loads, track routes, and stay connected with your dispatcher.
@@ -18,26 +18,26 @@ Manage loads, track routes, and stay connected with your dispatcher.
 
 ---
 
-## Description (4000 chars max — iOS & Android)
+## Description (4000 chars max - iOS & Android)
 
 ```text
-LogisticsX Driver is the professional companion app for truck drivers working with the LogisticsX fleet management platform. Built for speed and reliability on the road, it gives drivers instant access to everything they need — without the paperwork.
+LogisticsX Driver is the professional companion app for truck drivers working with the LogisticsX fleet management platform. Built for speed and reliability on the road, it gives drivers instant access to everything they need - without the paperwork.
 
 KNOW YOUR LOADS BEFORE YOU ROLL
-View all assigned loads and trips at a glance. See pickup and delivery details, stop-by-stop instructions, customer information, and status updates — all in one place.
+View all assigned loads and trips at a glance. See pickup and delivery details, stop-by-stop instructions, customer information, and status updates - all in one place.
 
 NAVIGATE WITH ONE TAP
 Open turn-by-turn directions to any pickup, delivery, or stop directly in Apple Maps (iOS) or Google Maps (Android). No copy-pasting addresses. No switching apps.
 
 REAL-TIME STATUS UPDATES
-Mark loads as picked up, in transit, or delivered as you go. Keep your dispatcher and customers informed automatically — no phone calls needed.
+Mark loads as picked up, in transit, or delivered as you go. Keep your dispatcher and customers informed automatically - no phone calls needed.
 
 STAY IN SYNC WITH YOUR TEAM
 Receive instant notifications from dispatchers. Chat directly within the app. Never miss an assignment or an update, even when you're on the road.
 
 BUILT FOR PROFESSIONAL DRIVERS
 - Clean, distraction-free interface designed for use on the go
-- Works with your company's LogisticsX account — no separate signup
+- Works with your company's LogisticsX account - no separate signup
 - Secure login and role-based access
 - Background location tracking for real-time delivery visibility
 - Supports intermodal container and vehicle transport operations
@@ -50,7 +50,7 @@ LogisticsX Driver is available to drivers whose trucking company uses the Logist
 
 ---
 
-## Keywords (100 chars max — iOS only, comma-separated, no spaces after commas)
+## Keywords (100 chars max - iOS only, comma-separated, no spaces after commas)
 
 ```text
 truck driver,load tracking,fleet management,dispatch,delivery,logistics,freight,trucking,TMS,route
@@ -94,5 +94,5 @@ truck driver,load tracking,fleet management,dispatch,delivery,logistics,freight,
 ## Notes
 
 - Screenshots should show: Login screen, Loads list, Load detail, Trip detail with stops, Map navigation
-- App is invite-only (requires company account) — mention this clearly to avoid bad reviews from random users
+- App is invite-only (requires company account) - mention this clearly to avoid bad reviews from random users
 - Consider adding "For LogisticsX platform users only" to the first line of description if getting irrelevant installs

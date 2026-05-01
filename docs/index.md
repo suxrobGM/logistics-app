@@ -1,8 +1,8 @@
 # LogisticsX Documentation
 
-Welcome to the LogisticsX documentation.
+Welcome to the LogisticsX docs.
 
-LogisticsX is a fleet management platform for trucking companies of any specialization — dry van, reefer, flatbed, tanker, box truck, dump truck, tow truck, car hauler, container/intermodal, low loader, tautliner, swap body, and curtainsider. It runs across **US** and **European** operations with region-aware address validation, multi-currency billing (USD / EUR), and locale-aware map defaults.
+LogisticsX is a fleet management platform for trucking companies. The same system runs whether you're dry van, reefer, flatbed, tanker, box truck, dump truck, tow truck, car hauler, container/intermodal, low loader, tautliner, swap body, or curtainsider. It works in the US and Europe, with address validation, currency (USD or EUR), and map defaults that match the region a tenant is provisioned in.
 
 ## Quick Links
 
@@ -31,25 +31,25 @@ LogisticsX is a fleet management platform for trucking companies of any speciali
 
 ## Features
 
-- **AI Dispatch Agent**: Autonomous load-to-truck matching with HOS-aware feasibility checks, multi-LLM support, and full reasoning transparency
-- **Load Management & Dispatching**: Create, assign, and track shipments end-to-end
-- **Intermodal Containers**: ISO 6346 container tracking with full lifecycle state machine (Empty → Loaded → At Port → In Transit → Delivered → Returned)
-- **Terminals & Depots**: UN/LOCODE-keyed directory for sea ports, rail terminals, inland depots, air cargo facilities, and border crossings
-- **Trip Planning & Route Optimization**: Multi-stop routing with Mapbox integration
-- **Real-Time GPS Tracking**: Live fleet map via SignalR WebSockets
-- **Fleet & Maintenance Tracking**: Trucks, trailers, schedules, and VIN decoding
-- **Load Board Integration**: Search DAT, Truckstop, 123Loadboard; book loads and post trucks
-- **Invoicing & Payments**: Stripe + Stripe Connect with payment links and partial payments
-- **Payroll & Timesheets**: Driver pay calculation and payroll invoice generation
-- **Expense Tracking**: Categorized fleet expenses with reporting
-- **ELD / HOS Compliance**: Samsara and Motive integrations
-- **Safety & DVIR**: Digital inspections, incident tracking, compliance records
-- **Reports & Analytics**: 7 report types — driver, truck, revenue, customer, payroll, expense, operations
-- **Real-Time Messaging**: In-app chat with read receipts and typing indicators
-- **Customer Self-Service Portal**: Shipment tracking, invoices, documents, online payments
-- **Driver Mobile App**: Kotlin Multiplatform for Android & iOS
-- **Multi-Region Support**: First-class US and European operations with region-aware address validation, multi-currency billing (USD / EUR), and locale-aware map defaults
-- **Multi-Tenant Architecture**: Isolated PostgreSQL databases per company, region-aware demo seeders (US + EU)
+- **AI Dispatch Agent** - Picks a truck for a load, runs HOS feasibility checks, supports multiple LLMs, and shows the reasoning behind every decision.
+- **Load Management & Dispatching** - Create, assign, and track shipments.
+- **Intermodal Containers** - ISO 6346 tracking with a lifecycle state machine (Empty → Loaded → At Port → In Transit → Delivered → Returned).
+- **Terminals & Depots** - UN/LOCODE directory for sea ports, rail terminals, inland depots, air cargo facilities, and border crossings.
+- **Trip Planning & Route Optimization** - Multi-stop routing through Mapbox.
+- **GPS Tracking** - Live fleet map over SignalR WebSockets.
+- **Fleet & Maintenance Tracking** - Trucks, trailers, schedules, VIN decoding.
+- **Load Board Integration** - Search DAT, Truckstop, and 123Loadboard. Book loads. Post trucks.
+- **Invoicing & Payments** - Stripe and Stripe Connect, with payment links and partial payments.
+- **Payroll & Timesheets** - Driver pay calculation and payroll invoices.
+- **Expense Tracking** - Categorized fleet expenses with reports.
+- **ELD / HOS Compliance** - Samsara and Motive.
+- **Safety & DVIR** - Digital inspections, incident tracking, compliance records.
+- **Reports & Analytics** - 7 report types: driver, truck, revenue, customer, payroll, expense, operations.
+- **Messaging** - In-app chat with read receipts and typing indicators.
+- **Customer Portal** - Shipment tracking, invoices, documents, online payments.
+- **Driver Mobile App** - Kotlin Multiplatform, Android and iOS.
+- **Multi-Region** - US and European operations, with address validation, currency (USD or EUR), and map defaults that match the region.
+- **Multi-Tenant** - One PostgreSQL database per company. Demo seeders for both US and EU regions.
 
 [Complete feature list](features.md)
 

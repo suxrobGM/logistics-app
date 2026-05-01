@@ -94,14 +94,14 @@ export class SessionDetailPage implements OnInit, OnDestroy {
     if (!s) return [];
     const datePipe = new DatePipe("en-US");
     const items = [
-      { label: "Started", value: datePipe.transform(s.startedAt, "medium") ?? "—" },
+      { label: "Started", value: datePipe.transform(s.startedAt, "medium") ?? "-" },
       {
         label: "Completed",
-        value: s.completedAt ? datePipe.transform(s.completedAt, "medium") : "—",
+        value: s.completedAt ? datePipe.transform(s.completedAt, "medium") : "-",
       },
-      { label: "Duration", value: this.duration() ?? "—" },
+      { label: "Duration", value: this.duration() ?? "-" },
       { label: "Decisions", value: String(s.decisionCount ?? 0) },
-      { label: "Model", value: s.modelUsed ?? "—", mono: true },
+      { label: "Model", value: s.modelUsed ?? "-", mono: true },
       { label: "Tokens Used", value: (s.totalTokensUsed ?? 0).toLocaleString(), mono: true },
     ];
     return items;

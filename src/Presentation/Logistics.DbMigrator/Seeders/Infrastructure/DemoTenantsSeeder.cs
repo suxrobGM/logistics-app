@@ -92,7 +92,7 @@ internal sealed class DemoTenantsSeeder(
                     logger.LogInformation("Updated tenant '{Name}'", existing.Name);
                 }
 
-                // Ensure DB exists even for existing tenants (idempotent — no-op if present).
+                // Ensure DB exists even for existing tenants (idempotent - no-op if present).
                 await databaseProvider.CreateDatabaseAsync(existing.ConnectionString);
             }
         }
@@ -106,7 +106,7 @@ internal sealed class DemoTenantsSeeder(
         {
             return config.ConnectionString;
         }
-        // Fallback: ConnectionStrings:{Name}TenantDatabase — populated by Aspire's WithReference()
+        // Fallback: ConnectionStrings:{Name}TenantDatabase - populated by Aspire's WithReference()
         // (e.g. "us" → "ConnectionStrings:UsTenantDatabase").
         var key = char.ToUpperInvariant(config.Name[0]) + config.Name[1..] + "TenantDatabase";
         return configuration.GetConnectionString(key);

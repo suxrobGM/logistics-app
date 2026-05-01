@@ -15,7 +15,7 @@ public sealed record DemoTenantConfig
 
     /// <summary>
     /// Optional explicit connection string. When omitted, DemoTenantsSeeder falls back
-    /// to <c>ConnectionStrings:{Name}TenantDatabase</c> — the slot Aspire's
+    /// to <c>ConnectionStrings:{Name}TenantDatabase</c> - the slot Aspire's
     /// WithReference() populates at runtime.
     /// </summary>
     public string? ConnectionString { get; init; }

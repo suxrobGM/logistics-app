@@ -18,57 +18,57 @@ export class Faq {
     {
       question: "What is a TMS?",
       answer:
-        "A Transportation Management System (TMS) is software that helps trucking companies manage their fleet operations, including dispatching, tracking, invoicing, and compliance. It streamlines workflows and improves efficiency.",
+        "A Transportation Management System is software for running a trucking company - dispatching, tracking, invoicing, and compliance, in one place instead of five spreadsheets.",
     },
     {
       question: "How long does setup take?",
       answer:
-        "Most companies are up and running within 1-2 days. Our onboarding team will help you import your data, set up your account, and train your staff. We also provide 24/7 support during the transition.",
+        "Usually 1-2 days. Our onboarding team helps you import data, set up the account, and train your staff. Support is on hand during the transition.",
     },
     {
       question: "Do you integrate with ELD providers?",
       answer:
-        "Yes! We integrate with major ELD providers including Samsara and Motive (KeepTruckin). This allows automatic hours of service tracking and ensures FMCSA compliance.",
+        "Yes - Samsara and Motive (KeepTruckin). Hours of service tracking and FMCSA compliance pull through automatically.",
     },
     {
       question: "Is there a mobile app for drivers?",
       answer:
-        "Yes, we offer native mobile apps for both iOS and Android. Drivers can capture proof of delivery, scan documents, navigate to destinations, and communicate with dispatchers all from their phone.",
+        "Yes, native apps for iOS and Android. Drivers can capture proof of delivery, scan documents, navigate, and chat with dispatch from their phone.",
     },
     {
       question: "How is pricing calculated?",
       answer:
-        "We offer three plans: Starter ($29/mo + $12/truck), Professional ($79/mo + $9/truck), and Enterprise ($169/mo + $6/truck). Each plan includes a base fee plus a per-truck charge. The more trucks you add, the lower your per-truck cost.",
+        "Three plans: Starter ($29/mo + $12/truck), Professional ($79/mo + $9/truck), and Enterprise ($169/mo + $6/truck). It's a base fee plus a per-truck charge. The more trucks you add, the lower the per-truck price.",
     },
     {
       question: "Do you offer a free trial?",
       answer:
-        "We offer personalized demos where you can see the platform in action with your own data. After the demo, we can set up a trial period to ensure the platform meets your needs before committing.",
+        "We start with a demo using your own data. If it looks like a fit, we'll set up a trial so you can see how it works before committing.",
     },
     {
       question: "What kind of support do you offer?",
       answer:
-        "We provide 24/7 customer support via phone, email, and chat. Our team includes logistics industry experts who understand the unique challenges of trucking companies.",
+        "Support is available by phone, email, and chat. The team has people who've worked in trucking, not just generic SaaS support.",
     },
     {
       question: "Is my data secure?",
       answer:
-        "Absolutely. We use enterprise-grade security including encryption at rest and in transit, regular security audits, and compliance with industry standards. Your data is backed up daily and stored in secure data centers.",
+        "Yes. Encryption at rest and in transit, regular security audits, daily backups, and data stored in secure data centers.",
     },
     {
       question: "How does AI Dispatch work?",
       answer:
-        "The AI agent analyzes unassigned loads, available trucks, HOS compliance, truck type compatibility, and revenue per mile to find optimal assignments. In human-in-the-loop mode it suggests assignments for your approval; in autonomous mode it executes immediately. Every decision is logged with full reasoning.",
+        "The agent looks at unassigned loads, available trucks, HOS compliance, truck-type compatibility, and revenue per mile, and proposes assignments. In human-in-the-loop mode it suggests; in autonomous mode it acts. Either way, every decision is logged with the reasoning.",
     },
     {
       question: "Which AI models does it support?",
       answer:
-        "We support multiple providers: Anthropic (Claude Sonnet, Haiku, Opus), OpenAI (GPT-5.4 series), and DeepSeek. You choose the model per session. Model access is tiered by plan — Starter gets base models, Professional unlocks premium, and Enterprise gets all models including Opus.",
+        "Anthropic (Claude Sonnet, Haiku, Opus), OpenAI (GPT-5.4 series), and DeepSeek. You pick the model per session. Access is tiered: Starter is base models, Professional unlocks premium, Enterprise gets everything including Opus.",
     },
     {
       question: "Is AI Dispatch safe to use?",
       answer:
-        "Yes. Human-in-the-loop mode lets you review every decision before execution. Every action has a full audit trail with the agent's reasoning. Autonomous mode is opt-in only, and there's a maximum iteration limit per session to prevent runaway usage.",
+        "Yes. Human-in-the-loop is the default - you review every decision before it runs. Each action is in the audit trail with the agent's reasoning. Autonomous mode is opt-in, and a per-session iteration cap keeps it from running away.",
     },
   ];
 }

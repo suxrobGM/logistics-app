@@ -103,7 +103,7 @@ internal sealed class ApiKeyAuthenticationHandler(
             }
             catch
             {
-                // Best-effort — don't fail auth for LastUsedAt tracking
+                // Best-effort - don't fail auth for LastUsedAt tracking
             }
         });
     }

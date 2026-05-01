@@ -13,7 +13,7 @@ public static class RegionCountries
         "US"
     };
 
-    // Geographic Europe — broader than EU-27. Includes EEA/EFTA, UK, Western Balkans,
+    // Geographic Europe - broader than EU-27. Includes EEA/EFTA, UK, Western Balkans,
     // Eastern Europe (Moldova, Ukraine), and the microstates. Russia, Belarus, Turkey
     // intentionally omitted in v1; widen the set if a customer needs them.
     private static readonly HashSet<string> EuropeanCountries = new(StringComparer.OrdinalIgnoreCase)

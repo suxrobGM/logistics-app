@@ -29,7 +29,7 @@ export class ProductShowcase {
     {
       title: "AI Dispatch",
       description:
-        "Watch the AI agent analyze your fleet, match loads to trucks, verify compliance, and optimize routes — all in real-time with full transparency into every decision.",
+        "Watch the agent read your fleet, match loads to trucks, run compliance checks, and plan routes - live, with the reasoning behind every decision visible.",
       screenshots: [
         {
           src: "images/screenshots/ai-dispatch-sessions.png",
@@ -48,8 +48,8 @@ export class ProductShowcase {
         },
       ],
       features: [
-        "Autonomous or human-in-the-loop modes",
-        "Full agent reasoning timeline",
+        "Autonomous or human-in-the-loop",
+        "Agent reasoning timeline",
         "Approve or reject each suggestion",
       ],
       icon: "pi-sparkles",
@@ -57,7 +57,7 @@ export class ProductShowcase {
     {
       title: "TMS Dashboard",
       description:
-        "Get a bird's-eye view of your entire operation with real-time metrics, fleet maps, active loads, and financial health — all on one screen.",
+        "One screen for the whole operation - live metrics, fleet map, active loads, and the financial state of the business.",
       screenshots: [
         {
           src: "images/screenshots/tms-dashboard.png",
@@ -70,13 +70,17 @@ export class ProductShowcase {
           label: "Drivers Report",
         },
       ],
-      features: ["Live fleet map with GPS tracking", "Revenue & performance metrics", "Driver stats & top performers"],
+      features: [
+        "Live fleet map with GPS",
+        "Revenue and performance metrics",
+        "Driver stats and top performers",
+      ],
       icon: "pi-chart-bar",
     },
     {
       title: "Load Management",
       description:
-        "Create, assign, and track loads from pickup to delivery. Filter by status, customer, truck, or date range with full visibility at every step.",
+        "Create, assign, and track loads from pickup to delivery. Filter by status, customer, truck, or date range - you can see where each load is at any point.",
       screenshots: [
         {
           src: "images/screenshots/tms-loads.png",
@@ -89,13 +93,17 @@ export class ProductShowcase {
           label: "Load Details",
         },
       ],
-      features: ["Advanced filtering & search", "Status tracking with delivery workflow", "Detailed load view with assignment"],
+      features: [
+        "Filtering and search",
+        "Status tracking with delivery workflow",
+        "Load detail view with assignment",
+      ],
       icon: "pi-box",
     },
     {
       title: "Trips & Route Optimization",
       description:
-        "Plan efficient trips with multi-stop routing, assign trucks and drivers, and visualize routes on an interactive map — maximizing your fleet's productivity.",
+        "Plan trips with multi-stop routing, assign trucks and drivers, and see the route on an interactive map.",
       screenshots: [
         {
           src: "images/screenshots/tms-trips.png",
@@ -108,13 +116,17 @@ export class ProductShowcase {
           label: "Trip Details",
         },
       ],
-      features: ["Multi-stop route planning", "Interactive map with stop visualization", "Truck & driver assignment per trip"],
+      features: [
+        "Multi-stop route planning",
+        "Interactive map with stop visualization",
+        "Truck & driver assignment per trip",
+      ],
       icon: "pi-map",
     },
     {
       title: "Fleet Overview",
       description:
-        "Monitor your trucks, drivers, license plates, and availability in one place. Quickly see which trucks are available and who's assigned to them.",
+        "Trucks, drivers, license plates, and availability in one place. See which trucks are free and who's driving them.",
       screenshots: [
         {
           src: "images/screenshots/tms-fleet.png",
@@ -127,13 +139,17 @@ export class ProductShowcase {
           label: "Reports & Analytics",
         },
       ],
-      features: ["Vehicle & driver assignments", "Availability tracking", "Comprehensive reports & analytics"],
+      features: [
+        "Vehicle and driver assignments",
+        "Availability tracking",
+        "Reports and analytics",
+      ],
       icon: "pi-truck",
     },
     {
       title: "Accounting",
       description:
-        "Manage load invoices, payroll, and payments in one place. Track outstanding balances, approve payroll, and keep your finances organized.",
+        "Load invoices, payroll, and payments in one place. Track what's outstanding, approve payroll, and keep the books in order.",
       screenshots: [
         {
           src: "images/screenshots/tms-invoice-dashboard.png",
@@ -146,13 +162,17 @@ export class ProductShowcase {
           label: "Payroll",
         },
       ],
-      features: ["Load invoice management & tracking", "Payroll processing & approval", "Payment recording & history"],
+      features: [
+        "Load invoice tracking",
+        "Payroll processing and approval",
+        "Payment recording and history",
+      ],
       icon: "pi-wallet",
     },
     {
       title: "Customer Portal",
       description:
-        "Give your customers 24/7 self-service access to track shipments, view invoices, and download delivery documents — no phone calls needed.",
+        "Customers can log in any time to track shipments, see invoices, and download delivery docs. No phone calls.",
       screenshots: [
         {
           src: "images/screenshots/customer-dashboard.png",
@@ -165,7 +185,7 @@ export class ProductShowcase {
           label: "Shipment Tracking",
         },
       ],
-      features: ["Real-time shipment tracking", "Invoice & document access", "Clean self-service experience"],
+      features: ["Live shipment tracking", "Invoice and document access", "Self-service login"],
       icon: "pi-users",
     },
   ];

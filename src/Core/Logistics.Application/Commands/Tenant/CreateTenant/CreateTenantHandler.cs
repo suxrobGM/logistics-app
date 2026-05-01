@@ -156,7 +156,7 @@ internal sealed class CreateTenantHandler(
             LoginUrl = loginUrl
         };
 
-        var subject = $"Welcome to LogisticsX — {companyName}";
+        var subject = $"Welcome to LogisticsX - {companyName}";
         var body = await emailTemplateService.RenderAsync("TenantWelcome", model);
 
         await emailSender.SendEmailAsync(owner.Email!, subject, body);

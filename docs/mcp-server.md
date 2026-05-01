@@ -1,37 +1,37 @@
 # MCP Server
 
-Expose your fleet dispatch tools to AI assistants like Claude Desktop, Cursor, Windsurf, and other MCP-compatible clients via the [Model Context Protocol](https://modelcontextprotocol.io). Available on plans with the **MCP Server** feature enabled.
+Expose your fleet dispatch tools to AI assistants like Claude Desktop, Cursor, Windsurf, and any other [Model Context Protocol](https://modelcontextprotocol.io) client. Available on plans where the MCP Server feature is enabled.
 
 ## Overview
 
-The MCP server lets your team connect AI tools directly to fleet data. Ask Claude to check available trucks, analyze load assignments, or dispatch trips — all through natural conversation, with your live fleet data.
+The MCP server connects an AI tool to live fleet data. Ask Claude what trucks are available, look at load assignments, or kick off a dispatch - all in chat, against your real database.
 
-The server exposes the same dispatch tools used by the built-in AI agent, so any tool available to the autonomous dispatcher is also available via MCP.
+The server exposes the same tools used by the built-in AI dispatch agent. If the agent can do it, an MCP client can do it too.
 
 ## Available Tools
 
-| Tool | Type | Description |
-|------|------|-------------|
-| `get_unassigned_loads` | Read | All Draft loads not assigned to any trip |
-| `get_available_trucks` | Read | Available trucks with driver HOS data and fleet summary |
-| `get_driver_hos_status` | Read | Detailed HOS status for a specific driver |
-| `check_hos_feasibility` | Read | Can a driver complete a trip given HOS remaining? |
-| `batch_check_hos_feasibility` | Read | Batch HOS feasibility for multiple driver-load pairs |
-| `calculate_distance` | Read | Driving distance between two geographic points |
-| `calculate_assignment_metrics` | Read | Revenue/mile and deadhead analysis for truck-load pairs |
-| `search_loadboard` | Read | Search DAT/Truckstop/123Loadboard for available loads |
-| `assign_load_to_truck` | Write | Assign a load to a truck |
-| `create_trip` | Write | Create a trip from assigned loads |
-| `dispatch_trip` | Write | Transition trip to Dispatched status |
-| `book_loadboard_load` | Write | Book a load from a load board |
+| Tool                           | Type  | Description                                             |
+| ------------------------------ | ----- | ------------------------------------------------------- |
+| `get_unassigned_loads`         | Read  | All Draft loads not assigned to any trip                |
+| `get_available_trucks`         | Read  | Available trucks with driver HOS data and fleet summary |
+| `get_driver_hos_status`        | Read  | Detailed HOS status for a specific driver               |
+| `check_hos_feasibility`        | Read  | Can a driver complete a trip given HOS remaining?       |
+| `batch_check_hos_feasibility`  | Read  | Batch HOS feasibility for multiple driver-load pairs    |
+| `calculate_distance`           | Read  | Driving distance between two geographic points          |
+| `calculate_assignment_metrics` | Read  | Revenue/mile and deadhead analysis for truck-load pairs |
+| `search_loadboard`             | Read  | Search DAT/Truckstop/123Loadboard for available loads   |
+| `assign_load_to_truck`         | Write | Assign a load to a truck                                |
+| `create_trip`                  | Write | Create a trip from assigned loads                       |
+| `dispatch_trip`                | Write | Transition trip to Dispatched status                    |
+| `book_loadboard_load`          | Write | Book a load from a load board                           |
 
-Write tools include a confirmation prompt — the AI assistant will explain what it's about to do and ask for your approval before executing.
+Write tools come with a confirmation prompt. The AI explains what it's about to do and waits for you to approve before it runs.
 
 ## Setup
 
 ### 1. Create an API Key
 
-In the TMS Portal, go to **Settings > API Keys** and click **Create API Key**. Give it a descriptive name (e.g., "Claude Desktop"). The key is shown once — copy it immediately.
+In the TMS Portal, go to **Settings > API Keys** and click **Create API Key**. Give it a descriptive name (e.g., "Claude Desktop"). The key is shown once - copy it immediately.
 
 ### 2. Connect Your AI Tool
 
@@ -107,7 +107,7 @@ POST https://api.logisticsx.app/mcp
 Authorization: Bearer <your-api-key>
 ```
 
-Any MCP client that supports Streamable HTTP can connect. The endpoint also supports legacy SSE connections automatically.
+Any MCP client that speaks Streamable HTTP can connect. Legacy SSE clients are handled automatically.
 
 ### 3. Local Development
 
@@ -132,13 +132,13 @@ Once connected, you can ask your AI assistant questions like:
 
 API keys are managed per tenant in the TMS Portal under **Settings > API Keys**.
 
-| Action | Description |
-|--------|-------------|
-| **Create** | Generate a new key. The plaintext key is shown once — store it securely. |
-| **List** | View all keys with name, prefix, creation date, last used date, and status. |
-| **Revoke** | Permanently deactivate a key. Revoked keys cannot be reactivated. |
+| Action     | Description                                                                 |
+| ---------- | --------------------------------------------------------------------------- |
+| **Create** | Generate a new key. The plaintext key is shown once - store it securely.    |
+| **List**   | View all keys with name, prefix, creation date, last used date, and status. |
+| **Revoke** | Permanently deactivate a key. Revoked keys cannot be reactivated.           |
 
-Key format: `logsx_{tenantId}_{random}` — the tenant ID is embedded so the server can route to the correct database without additional headers.
+Key format: `logsx_{tenantId}_{random}` - the tenant ID is embedded so the server can route to the correct database without additional headers.
 
 ## Security
 
@@ -150,7 +150,7 @@ Key format: `logsx_{tenantId}_{random}` — the tenant ID is embedded so the ser
 
 ## Architecture
 
-The MCP server reuses the same tool infrastructure as the built-in AI dispatch agent:
+The MCP server reuses the tool infrastructure of the built-in AI dispatch agent:
 
 ```text
 MCP Client (Claude Desktop, Cursor, etc.)
@@ -166,7 +166,7 @@ MCP Client (Claude Desktop, Cursor, etc.)
               └── IDispatchTool implementation (same as AI agent)
 ```
 
-Tool definitions (names, descriptions, schemas) are maintained in a single registry (`DispatchToolRegistry`) shared by both the AI dispatch agent and the MCP server. Adding a new tool to the registry automatically makes it available in both systems.
+Tool definitions - names, descriptions, schemas - live in one registry (`DispatchToolRegistry`) shared by the AI dispatch agent and the MCP server. Add a tool to the registry and it shows up in both.
 
 ### Project Structure
 

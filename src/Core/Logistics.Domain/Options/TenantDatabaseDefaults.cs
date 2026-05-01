@@ -9,7 +9,7 @@ public record TenantDatabaseDefaults
     public const string SectionName = "TenantDatabaseDefaults";
 
     /// <summary>
-    /// Template like <c>"{tenant}_logisticsx"</c> — <c>{tenant}</c> is replaced with the tenant slug.
+    /// Template like <c>"{tenant}_logisticsx"</c> - <c>{tenant}</c> is replaced with the tenant slug.
     /// </summary>
     public string? NameTemplate { get; set; }
     public string? Host { get; set; }

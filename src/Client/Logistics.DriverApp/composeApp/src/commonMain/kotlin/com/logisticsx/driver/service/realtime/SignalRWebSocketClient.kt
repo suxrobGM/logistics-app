@@ -241,7 +241,7 @@ class SignalRWebSocketClient(
                         Logger.d("SignalR WS: No handler for method '$target'")
                     }
                 }
-                6 -> { // Ping — respond with pong
+                6 -> { // Ping - respond with pong
                     scope?.launch {
                         val pong = """{"type":6}"""
                         webSocketSession?.send(Frame.Text("$pong$RECORD_SEPARATOR"))

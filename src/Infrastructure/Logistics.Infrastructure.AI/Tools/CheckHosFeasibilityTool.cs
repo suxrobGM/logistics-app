@@ -32,7 +32,7 @@ internal sealed class CheckHosFeasibilityTool(ITenantUnitOfWork tenantUow) : IDi
         var multiDay = !singleWindowFeasible && !hos.IsInViolation
             && hos.DrivingMinutesRemaining >= 120; // at least 2h remaining to make progress
 
-        var reason = $"Insufficient hours: need {estimatedDrivingMinutes}min, have {hos.DrivingMinutesRemaining}min driving — too low to make meaningful progress";
+        var reason = $"Insufficient hours: need {estimatedDrivingMinutes}min, have {hos.DrivingMinutesRemaining}min driving - too low to make meaningful progress";
         if (singleWindowFeasible)
         {
             reason = "Driver has sufficient hours to complete in one stretch";

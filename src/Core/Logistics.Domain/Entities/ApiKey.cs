@@ -4,7 +4,7 @@ namespace Logistics.Domain.Entities;
 
 /// <summary>
 /// API key for external integrations (MCP, API access).
-/// Stored in the tenant database — each tenant manages their own keys.
+/// Stored in the tenant database - each tenant manages their own keys.
 /// </summary>
 public class ApiKey : Entity, ITenantEntity
 {

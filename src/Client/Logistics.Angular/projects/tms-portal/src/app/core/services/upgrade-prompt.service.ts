@@ -1,7 +1,11 @@
-import { Injectable, inject, signal } from "@angular/core";
+import { inject, Injectable, signal } from "@angular/core";
 import type { IUpgradePromptHandler } from "@logistics/shared";
-import { Api, getSubscriptionPlans } from "@logistics/shared/api";
-import type { PlanTier, SubscriptionPlanDto } from "@logistics/shared/api";
+import {
+  Api,
+  getSubscriptionPlans,
+  type PlanTier,
+  type SubscriptionPlanDto,
+} from "@logistics/shared/api";
 import { TenantService } from "./tenant.service";
 
 export type UpgradeReason = "feature_not_in_plan" | "resource_limit";
@@ -93,7 +97,7 @@ export class UpgradePromptService implements IUpgradePromptHandler {
     currentTier?: PlanTier,
   ): SubscriptionPlanDto | null {
     if (!currentTier) {
-      // No current plan — recommend the lowest tier
+      // No current plan - recommend the lowest tier
       return plans.find((p) => p.tier === "starter") ?? null;
     }
 

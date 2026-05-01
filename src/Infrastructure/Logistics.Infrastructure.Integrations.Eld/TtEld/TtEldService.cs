@@ -11,7 +11,7 @@ namespace Logistics.Infrastructure.Integrations.Eld.TtEld;
 /// <summary>
 ///     TT ELD provider implementation.
 ///     API Documentation: https://developer.tteld.com/
-///     GPS tracking-focused provider — does not support HOS or violations.
+///     GPS tracking-focused provider - does not support HOS or violations.
 /// </summary>
 internal class TtEldService(
     HttpClient httpClient,

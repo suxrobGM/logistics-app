@@ -83,50 +83,50 @@ src/
 
 ### Backend
 
-| Technology | Purpose |
-|------------|---------|
-| .NET 10 | Runtime |
-| ASP.NET Core | Web framework |
-| Entity Framework Core | ORM |
-| Duende IdentityServer | OAuth2/OIDC |
-| MediatR | CQRS mediator |
-| FluentValidation | Request validation |
-| Serilog | Structured logging |
-| SignalR | Real-time communication |
-| Hangfire | Background jobs |
+| Technology            | Purpose                 |
+| --------------------- | ----------------------- |
+| .NET 10               | Runtime                 |
+| ASP.NET Core          | Web framework           |
+| Entity Framework Core | ORM                     |
+| Duende IdentityServer | OAuth2/OIDC             |
+| MediatR               | CQRS mediator           |
+| FluentValidation      | Request validation      |
+| Serilog               | Structured logging      |
+| SignalR               | Real-time communication |
+| Hangfire              | Background jobs         |
 
 ### Frontend
 
-| Technology | Purpose |
-|------------|---------|
-| Angular 21 | TMS Portal & Customer Portal |
-| PrimeNG | UI components |
-| Angular 21 | Admin App |
-| Kotlin Multiplatform | Driver Mobile App |
-| Compose Multiplatform | Mobile UI |
+| Technology            | Purpose                      |
+| --------------------- | ---------------------------- |
+| Angular 21            | TMS Portal & Customer Portal |
+| PrimeNG               | UI components                |
+| Angular 21            | Admin App                    |
+| Kotlin Multiplatform  | Driver Mobile App            |
+| Compose Multiplatform | Mobile UI                    |
 
 ### Infrastructure
 
-| Technology | Purpose |
-|------------|---------|
-| PostgreSQL 18 | Database |
-| Docker | Containerization |
-| .NET Aspire | Orchestration |
-| Nginx | Reverse proxy |
-| GitHub Actions | CI/CD |
+| Technology     | Purpose          |
+| -------------- | ---------------- |
+| PostgreSQL 18  | Database         |
+| Docker         | Containerization |
+| .NET Aspire    | Orchestration    |
+| Nginx          | Reverse proxy    |
+| GitHub Actions | CI/CD            |
 
 ### External Services
 
-| Service | Purpose |
-|---------|---------|
-| Stripe | Payment processing and subscriptions |
-| Stripe Connect | Direct bank deposits for trucking companies |
-| Firebase | Push notifications |
-| Mapbox | Maps, geocoding, and route optimization |
-| Azure Blob Storage | Document/photo storage |
-| NHTSA API | VIN decoding (vehicle info) |
-| Samsara / Motive | ELD provider integrations |
-| DAT / Truckstop / 123Loadboard | Load board integrations |
+| Service                        | Purpose                                     |
+| ------------------------------ | ------------------------------------------- |
+| Stripe                         | Payment processing and subscriptions        |
+| Stripe Connect                 | Direct bank deposits for trucking companies |
+| Firebase                       | Push notifications                          |
+| Mapbox                         | Maps, geocoding, and route optimization     |
+| Azure Blob Storage             | Document/photo storage                      |
+| NHTSA API                      | VIN decoding (vehicle info)                 |
+| Samsara / Motive               | ELD provider integrations                   |
+| DAT / Truckstop / 123Loadboard | Load board integrations                     |
 
 ## Design Patterns
 
@@ -210,7 +210,7 @@ public interface IUnitOfWork
 
 ## Infrastructure Projects
 
-The infrastructure layer is split into 8 focused projects for better maintainability:
+The infrastructure layer is split into 8 projects, each with a narrow scope:
 
 ### Logistics.Infrastructure.Persistence
 

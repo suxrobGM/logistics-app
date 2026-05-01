@@ -32,7 +32,7 @@ internal sealed class CreateSubscriptionHandler(
             return Result.Fail($"Could not find a subscription plan with ID '{req.PlanId}'");
         }
 
-        // Create subscription in Stripe — the webhook will create the local record
+        // Create subscription in Stripe - the webhook will create the local record
         await stripeSubscriptionService.CreateSubscriptionAsync(
             subscriptionPlan, tenant, truckCount, req.TrialDays);
 

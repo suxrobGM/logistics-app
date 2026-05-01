@@ -7,7 +7,7 @@
 [cc-by-nc]: https://creativecommons.org/licenses/by-nc/4.0/
 [cc-by-nc-shield]: https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg
 
-> AI-first fleet management platform with an autonomous dispatch agent that matches loads to trucks, verifies HOS compliance, optimizes routes, and searches load boards — all with full reasoning transparency. Built for trucking companies of all kinds — dry van, reefer, flatbed, tanker, intermodal, vehicle transport, and more — running across the **United States and Europe** on a modern multi-tenant cloud-native architecture with real-time GPS tracking, invoicing, and payroll.
+> Fleet management platform for trucking companies. An LLM-driven dispatch agent matches loads to trucks, checks HOS compliance, plans routes, and pulls leads from load boards. Every decision it makes is logged so a human can review or override it. Works for dry van, reefer, flatbed, tanker, intermodal, and vehicle transport fleets in the US and Europe, with GPS tracking, invoicing, and payroll built in. Multi-tenant - each company gets its own database.
 
 ![AI Dispatch - Sessions & Decisions](docs/images/tms-portal/ai-dispatch-sessions.png)
 
@@ -19,18 +19,20 @@
 
 ## Overview
 
-LogisticsX is an AI-first fleet management platform for trucking companies of any size or specialization. The platform supports a broad range of equipment — flatbeds, freight trucks, reefers, tankers, box trucks, dump trucks, tow trucks, car haulers and car transporters, container trucks, low loaders, tautliners, swap bodies, and curtainsiders — so the same system can run a dry-van long haul fleet, a refrigerated grocery distributor, a heavy-haul flatbed operator, an intermodal drayage company, or a vehicle-transport carrier.
+LogisticsX is a fleet management platform built for trucking companies. The same system is meant to run whether you are a dry-van long haul fleet, a refrigerated grocery distributor, a heavy-haul flatbed operator, an intermodal drayage company, or a vehicle-transport carrier. Equipment supported includes flatbeds, freight trucks, reefers, tankers, box trucks, dump trucks, tow trucks, car haulers and car transporters, container trucks, low loaders, tautliners, swap bodies, and curtainsiders.
 
-It ships with first-class support for both **US** and **European** operations — region-aware tenant provisioning, multi-currency billing (USD / EUR), country and address validation per region, and locale-aware map defaults. It replaces spreadsheet-based workflows with an end-to-end digital system connecting dispatchers, drivers, and customers through web and mobile applications with real-time synchronization.
+Both **US** and **European** operations are supported out of the box. Each tenant is provisioned with the right region - currency in USD or EUR, country and address validation that matches the region, and map defaults that aren't pinned to one continent. The goal is to take companies off spreadsheets and connect dispatchers, drivers, and customers through a web app, mobile app, and customer portal that stay in sync.
 
-For intermodal operators, the platform includes dedicated entities and workflows for the container lifecycle: ISO 6346 container tracking (20'/40'/45' GP, High Cube, Reefer, Open Top, Flat Rack, Tank), state machine-driven status transitions (Empty → Loaded → At Port → In Transit → Delivered → Returned), and a Terminal directory keyed by UN/LOCODE covering sea ports, rail terminals, inland depots, air cargo facilities, and border crossings.
+For intermodal operators there's a dedicated container lifecycle: ISO 6346 container tracking (20'/40'/45' GP, High Cube, Reefer, Open Top, Flat Rack, Tank), a state machine for status transitions (Empty → Loaded → At Port → In Transit → Delivered → Returned), and a Terminal directory keyed by UN/LOCODE covering sea ports, rail terminals, inland depots, air cargo facilities, and border crossings.
 
-The platform is built around its **AI dispatch agent** — an agentic system that autonomously analyzes fleet state, matches loads to trucks, verifies HOS compliance, optimizes trip routes, and proactively searches load boards for revenue opportunities. It operates in two modes: **human-in-the-loop** (suggests assignments for dispatcher approval) and **fully autonomous** (executes decisions in real-time). Every decision is logged with full reasoning transparency, and dispatchers can approve, reject, or re-plan with context.
+The piece I'm most invested in is the **AI dispatch agent**. It looks at fleet state, picks a truck for a load, checks HOS compliance, plans a trip, and watches load boards for revenue. There are two modes: **human-in-the-loop**, where the agent only suggests assignments and a dispatcher approves them, and **autonomous**, where it acts on its own. Every decision is logged with the reasoning that produced it, so dispatchers can approve, reject, or re-plan instead of staring at a black box.
 
-**Dispatchers** create loads, assign drivers, search load boards, monitor deliveries in real-time - or let the AI agent handle it.
-**Drivers** receive assignments, navigate routes, capture proof of delivery, and communicate with dispatch via the mobile app.
-**Customers** track shipments, download documents, and pay invoices through the self-service portal.
-**Owners** access financial reports, driver performance metrics, payroll, and operational analytics.
+Roles in practice:
+
+- **Dispatchers** create loads, assign drivers, search load boards, and watch deliveries - or hand it off to the agent.
+- **Drivers** get assignments, navigate routes, capture proof of delivery, and message dispatch from the mobile app.
+- **Customers** track shipments, download documents, and pay invoices through the customer portal.
+- **Owners** see the financials, driver metrics, payroll, and operational reports.
 
 ## Features
 
@@ -103,11 +105,11 @@ See [Local Development Guide](docs/getting-started/local-development.md)
 | TMS Portal      | Angular               | 7003 |
 | Customer Portal | Angular               | 7004 |
 | Website         | Angular (SSR)         | 7005 |
-| Driver App      | Kotlin Multiplatform  | —    |
+| Driver App      | Kotlin Multiplatform  | -    |
 
 ## Architecture
 
-DDD + CQRS with MediatR, multi-tenant with isolated databases per company.
+DDD + CQRS with MediatR. Multi-tenant with one database per company.
 
 ```
 src/
@@ -164,7 +166,7 @@ src/
 
 ## Contributing
 
-Pull requests welcome! Fork, create a feature branch, and submit a PR.
+Pull requests are welcome. Fork it, branch off main, and open a PR.
 
 See [development guides](docs/development/backend-guide.md) for coding conventions.
 

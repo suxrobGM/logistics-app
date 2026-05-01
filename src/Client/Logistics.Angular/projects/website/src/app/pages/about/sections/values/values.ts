@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
-import { IconCard, SectionContainer, SectionHeader } from "@/shared/components";
-import type { IconCardItem } from "@/shared/components";
+import { IconCard, SectionContainer, SectionHeader, type IconCardItem } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
 
 @Component({
@@ -14,25 +13,25 @@ export class Values {
       icon: "pi-lightbulb",
       title: "Innovation",
       description:
-        "We continuously push boundaries to deliver cutting-edge solutions that keep our customers ahead of the curve.",
+        "We try new things and ship them. AI dispatch, the MCP server — we'd rather build it and see what works than wait until someone else does.",
     },
     {
       icon: "pi-shield",
       title: "Reliability",
       description:
-        "Our platform is built for 99.9% uptime because we know your business depends on it every minute of every day.",
+        "We aim for 99.9% uptime because dispatch can't take the morning off when our database is having a moment.",
     },
     {
       icon: "pi-users",
-      title: "Customer Focus",
+      title: "Customer focus",
       description:
-        "Every feature we build and every decision we make starts with understanding our customers' needs.",
+        "We build with the dispatcher and the driver in mind. The road test is whether they'd actually use it, not whether it demos well.",
     },
     {
       icon: "pi-check-circle",
       title: "Integrity",
       description:
-        "We operate with transparency and honesty, building trust through our actions and commitments.",
+        "We say what we ship, ship what we say, and tell you when we got something wrong.",
     },
   ];
 }

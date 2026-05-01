@@ -170,7 +170,7 @@
   --color-accent-hover: var(--primary-600);
 
   /* Background Colors - use as: bg-canvas (page bg), bg-surface, bg-elevated.
-   * NOTE: do NOT name this `--color-base` — it would generate a `.text-base`
+   * NOTE: do NOT name this `--color-base` - it would generate a `.text-base`
    * color utility that collides with Tailwind's built-in `text-base` font-size
    * utility (resulting in invisible light-gray h1–h6/text in cards). */
   --color-canvas: var(--bg-base);

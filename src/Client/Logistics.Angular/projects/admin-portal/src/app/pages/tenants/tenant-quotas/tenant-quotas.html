@@ -110,7 +110,7 @@
           @if (usage.overageCount > 0) {
             <p-tag [value]="'+' + usage.overageCount" severity="warn" />
           } @else {
-            <span class="text-muted">—</span>
+            <span class="text-muted">-</span>
           }
         </td>
         <td class="w-40">
@@ -130,14 +130,14 @@
           @if (usage.lastModelUsed) {
             <span class="text-muted text-sm">{{ usage.lastModelUsed }}</span>
           } @else {
-            <span class="text-muted text-sm">—</span>
+            <span class="text-muted text-sm">-</span>
           }
         </td>
         <td>
           @if (usage.quotaResetAt) {
             <span class="text-muted text-sm">{{ usage.quotaResetAt | date: "short" }}</span>
           } @else {
-            <span class="text-muted text-sm">—</span>
+            <span class="text-muted text-sm">-</span>
           }
         </td>
       </tr>

@@ -1,4 +1,4 @@
-import { Component, type OnInit, inject } from "@angular/core";
+import { Component, inject, type OnInit } from "@angular/core";
 import { MetaService, SchemaService } from "@/shared/services";
 import {
   AiShowcase,
@@ -67,7 +67,7 @@ export class Home implements OnInit {
       {
         question: "Which AI models does it support?",
         answer:
-          "We support Anthropic (Claude Sonnet, Haiku, Opus), OpenAI (GPT-5.4 series), and DeepSeek. Model access is tiered by plan — Starter gets base models, Professional unlocks premium, and Enterprise gets all models.",
+          "We support Anthropic (Claude Sonnet, Haiku, Opus), OpenAI (GPT-5.4 series), and DeepSeek. Model access is tiered by plan - Starter gets base models, Professional unlocks premium, and Enterprise gets all models.",
       },
       {
         question: "Is AI Dispatch safe to use?",

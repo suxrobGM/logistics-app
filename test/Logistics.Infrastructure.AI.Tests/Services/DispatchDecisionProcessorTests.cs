@@ -139,7 +139,7 @@ public class DispatchDecisionProcessorTests
 
         Assert.Single(results);
 
-        // Tool executor should NOT be called — suggestion only
+        // Tool executor should NOT be called - suggestion only
         await toolExecutor.DidNotReceive().ExecuteToolAsync(
             Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
 

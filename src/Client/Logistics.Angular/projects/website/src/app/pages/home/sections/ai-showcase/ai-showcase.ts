@@ -22,49 +22,49 @@ interface CapabilityCard {
 export class AiShowcase {
   protected readonly workflowSteps: WorkflowStep[] = [
     {
-      title: "Gather Fleet State",
-      description: "Scans unassigned loads, truck locations, and driver availability",
+      title: "Pull fleet state",
+      description: "Reads unassigned loads, truck locations, and who's available",
       icon: "pi-search",
     },
     {
-      title: "Analyze Loads & Trucks",
-      description: "Evaluates truck type compatibility and revenue per mile",
+      title: "Compare loads to trucks",
+      description: "Looks at truck-type compatibility and revenue per mile",
       icon: "pi-chart-bar",
     },
     {
-      title: "Check HOS Compliance",
-      description: "Verifies each driver has sufficient hours of service remaining",
+      title: "Run HOS checks",
+      description: "Confirms each driver has the hours to take the trip",
       icon: "pi-shield",
     },
     {
-      title: "Calculate Optimal Matches",
-      description: "Scores every feasible load-to-truck combination",
+      title: "Score matches",
+      description: "Ranks every feasible load-to-truck pairing",
       icon: "pi-calculator",
     },
     {
-      title: "Assign & Dispatch",
-      description: "Submits assignments for approval or executes autonomously",
+      title: "Assign and dispatch",
+      description: "Sends suggestions for approval, or runs them itself",
       icon: "pi-check-circle",
     },
   ];
 
   protected readonly capabilities: CapabilityCard[] = [
     {
-      title: "Human-in-the-Loop",
+      title: "Human-in-the-loop",
       description:
-        "Agent suggests assignments for your review. Approve, reject, or re-plan with context — you stay in control.",
+        "The agent suggests assignments. You approve, reject, or hand back context to re-plan. You stay in control.",
       icon: "pi-user-edit",
     },
     {
-      title: "Fully Autonomous",
+      title: "Autonomous",
       description:
-        "Agent executes decisions in real-time — assigns loads, creates trips, and dispatches without manual intervention.",
+        "The agent runs on its own - assigns loads, creates trips, and dispatches without a human in the loop.",
       icon: "pi-bolt",
     },
     {
-      title: "Multi-Provider AI",
+      title: "Pick your model",
       description:
-        "Choose from Claude, GPT, or DeepSeek models. Tiered access by plan with transparent per-session quota tracking.",
+        "Use Claude, GPT, or DeepSeek. Tiered access by plan, and you can see how much quota each session burned.",
       icon: "pi-sparkles",
     },
   ];

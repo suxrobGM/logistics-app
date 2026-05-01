@@ -1,12 +1,12 @@
-# AI-Powered Dispatch
+# AI Dispatch
 
-Autonomous and semi-autonomous load-to-truck dispatch with pluggable LLM providers. Available on the **Enterprise** plan.
+Load-to-truck dispatch driven by an LLM agent. Runs in two modes: human-in-the-loop or autonomous. Available on the Enterprise plan.
 
 ## Overview
 
-The agentic dispatcher analyzes your fleet state — unassigned loads, available trucks, driver HOS status, and load board opportunities — then optimizes assignments to maximize fleet utilization while ensuring compliance.
+The dispatcher looks at fleet state - unassigned loads, available trucks, driver HOS status, and what's on the load boards - and proposes assignments that try to keep trucks busy without breaking compliance.
 
-Supports multiple LLM providers out of the box:
+You can switch LLM providers without code changes:
 
 | Provider      | Models                                 | Notes                                                  |
 | ------------- | -------------------------------------- | ------------------------------------------------------ |
@@ -16,13 +16,13 @@ Supports multiple LLM providers out of the box:
 
 ## Operating Modes
 
-### Human-in-the-Loop (Default)
+### Human-in-the-Loop (default)
 
-The agent analyzes the fleet and creates **suggestions** that dispatchers review in the TMS portal. Each suggestion includes the agent's reasoning. Dispatchers approve or reject individually or in bulk.
+The agent looks at the fleet and produces suggestions a dispatcher reviews in the TMS portal. Each suggestion comes with the agent's reasoning. Dispatchers approve or reject one at a time, or in bulk.
 
-### Autonomous (Experimental)
+### Autonomous (experimental)
 
-The agent executes assignments immediately without human approval. Recommended only after validating the agent's suggestions in human-in-the-loop mode. Marked with an experimental badge in the UI.
+The agent assigns loads on its own, no human approval. I'd only flip this on after running in human-in-the-loop for a while and trusting what the agent picks. The UI flags it as experimental.
 
 ## How It Works
 
@@ -161,9 +161,9 @@ src/Infrastructure/Logistics.Infrastructure.AI/
     └── DispatchSystemPrompt.cs          # Dynamic system prompt builder
 ```
 
-The provider abstraction (`ILlmProvider`) keeps all SDK-specific code isolated. The agent loop, tools, and decision processor work exclusively with `LlmTypes` — provider-agnostic records for requests, responses, messages, and tool calls.
+`ILlmProvider` keeps SDK-specific code isolated to one file per provider. The agent loop, tools, and decision processor only deal with `LlmTypes`, the provider-agnostic records for requests, responses, messages, and tool calls.
 
-Tool definitions use JSON Schema, compatible with both Claude API tool schemas and OpenAI function calling.
+Tool definitions are JSON Schema, which works with both Claude API tool schemas and OpenAI function calling.
 
 ## Adding a New Provider
 
@@ -172,11 +172,11 @@ Tool definitions use JSON Schema, compatible with both Claude API tool schemas a
 3. Add model pricing to `LlmPricing.cs`
 4. Add model options to admin portal `tenant-edit.ts` → `llmModelOptions`
 
-## Future Roadmap
+## Roadmap
 
-- **Telegram Bot**: Driver and dispatcher interaction via Telegram (accept/reject loads, status updates, fleet summaries)
-- **Learning from overrides**: Track dispatcher corrections to improve future suggestions
+- Telegram bot for drivers and dispatchers - accept/reject loads, status updates, fleet summaries.
+- Learning from overrides - track dispatcher corrections so future suggestions get better.
 
 ## Related
 
-- [MCP Server](mcp-server.md) — connect Claude Desktop, Cursor, and other AI tools to your fleet using the same dispatch tools
+- [MCP Server](mcp-server.md) - connect Claude Desktop, Cursor, and other MCP clients to your fleet using the same dispatch tools.

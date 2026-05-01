@@ -4,11 +4,11 @@ Complete feature list for LogisticsX.
 
 ## Supported Equipment
 
-LogisticsX is equipment-agnostic and ships with built-in support for the following truck and trailer types: **Flatbed**, **Freight Truck** (dry van), **Reefer**, **Tanker**, **Box Truck**, **Dump Truck**, **Tow Truck**, **Car Hauler**, **Car Transporter**, **Container Truck**, **Low Loader**, **Tautliner**, **Swap Body**, and **Curtainsider**. The same platform serves general freight, refrigerated, bulk/liquid, heavy haul, intermodal drayage, and vehicle transport operators.
+The platform is not tied to one type of equipment. The following truck and trailer types are supported out of the box: Flatbed, Freight Truck (dry van), Reefer, Tanker, Box Truck, Dump Truck, Tow Truck, Car Hauler, Car Transporter, Container Truck, Low Loader, Tautliner, Swap Body, and Curtainsider. So the same install can run a general freight company, a reefer fleet, a bulk/liquid hauler, a heavy haul outfit, an intermodal drayage operator, or a vehicle transport carrier.
 
 ## Supported Regions
 
-The platform supports tenants operating in the **United States** (USD) and **Europe** (EUR), with region-aware address and country validation, locale-aware Mapbox defaults, and region-specific demo seeders. The European region covers EU-27, EEA/EFTA, the United Kingdom, the Western Balkans, selected Eastern Europe (Moldova, Ukraine), and the European microstates.
+Tenants can operate in the United States (USD) or Europe (EUR). Address validation, country lists, Mapbox defaults, and demo seeders all switch based on the region the tenant was created in. Europe here means the EU-27, EEA/EFTA, the United Kingdom, the Western Balkans, parts of Eastern Europe (Moldova, Ukraine), and the European microstates.
 
 ---
 
@@ -18,17 +18,17 @@ The dispatcher and manager web interface for managing all fleet operations.
 
 ### AI Dispatch
 
-| Feature                    | Description                                                                                                                                                                                                    |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Autonomous Dispatch**    | AI agent analyzes unassigned loads, truck locations, HOS hours, truck type compatibility, and revenue per mile to find optimal load-to-truck assignments.                                                      |
-| **Human-in-the-Loop Mode** | Agent suggests assignments for dispatcher approval. Approve, reject, or re-plan with rejection context for refined suggestions.                                                                                |
-| **Fully Autonomous Mode**  | Agent executes decisions in real-time — assigns loads, creates trips, and dispatches without manual intervention.                                                                                              |
-| **Multi-Provider LLM**     | Pluggable AI providers: Anthropic (Claude Sonnet, Haiku, Opus), OpenAI (GPT-5.4 series), and DeepSeek. Model selection per session.                                                                            |
-| **Agent Tool Registry**    | 7+ tools including fleet search, HOS feasibility checks, assignment scoring, load board search, trip creation, and dispatch execution.                                                                         |
-| **Session Audit Trail**    | Full transparency — every tool call, reasoning step, and decision is logged in a visual timeline with timestamps.                                                                                              |
-| **Re-Planning**            | Reject suggestions and re-run the agent with rejection context so it can find alternative assignments.                                                                                                         |
-| **Quota Management**       | Multiplier-based weekly quotas with tiered model access by subscription plan. Overage billing via Stripe.                                                                                                      |
-| **MCP Server**             | Connect Claude Desktop, Cursor, Windsurf, and other AI tools directly to fleet data via the Model Context Protocol. Tenant-managed API keys with one-time display, SHA-256 hashing, and per-key rate limiting. |
+| Feature                    | Description                                                                                                                                                                 |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Autonomous Dispatch**    | The agent looks at unassigned loads, truck locations, HOS hours, truck-type compatibility, and revenue per mile, then proposes load-to-truck assignments.                   |
+| **Human-in-the-Loop Mode** | The agent suggests assignments and a dispatcher approves, rejects, or asks for a re-plan. Rejection context is fed back so the next round of suggestions is more refined.   |
+| **Autonomous Mode**        | The agent runs without a human in the loop - it assigns loads, creates trips, and dispatches.                                                                               |
+| **Multi-Provider LLM**     | Anthropic (Claude Sonnet, Haiku, Opus), OpenAI (GPT-5.4 series), and DeepSeek. The model can be picked per session.                                                         |
+| **Agent Tool Registry**    | 7+ tools: fleet search, HOS feasibility checks, assignment scoring, load board search, trip creation, dispatch execution.                                                   |
+| **Session Audit Trail**    | Every tool call, reasoning step, and decision is written to a visual timeline with timestamps. No black box.                                                                |
+| **Re-Planning**            | Reject a suggestion and the agent runs again with the rejection context, looking for an alternative.                                                                        |
+| **Quota Management**       | Weekly quotas use a multiplier per request, and tier-gated model access is set by subscription plan. Overages bill through Stripe.                                          |
+| **MCP Server**             | Connect Claude Desktop, Cursor, Windsurf, and other MCP clients to fleet data. API keys are tenant-managed, shown once, stored as SHA-256 hashes, and rate-limited per key. |
 
 ### Operations
 
@@ -69,7 +69,7 @@ The dispatcher and manager web interface for managing all fleet operations.
 | **Stripe Connect**     | Direct bank deposits for trucking companies via Stripe Connect destination charges. Express account onboarding for simplified setup.                                                            |
 | **Payroll Management** | Calculate driver pay by miles, percentage, or flat rate. Generate payroll invoices with PDF stubs. Track payment history per employee.                                                          |
 | **Timesheets**         | Track employee work hours and overtime. Link timesheets to payroll calculations for accurate compensation.                                                                                      |
-| **Expense Tracking**   | Record and categorize fleet expenses — fuel, tolls, repairs, insurance, and more. Monitor spending with breakdowns by category, truck, or time period.                                          |
+| **Expense Tracking**   | Record and categorize fleet expenses - fuel, tolls, repairs, insurance, and more. Monitor spending with breakdowns by category, truck, or time period.                                          |
 
 ### Compliance & Safety
 
@@ -130,7 +130,7 @@ Native Kotlin Multiplatform app for Android and iOS.
 
 | Feature                 | Description                                                                                          |
 | ----------------------- | ---------------------------------------------------------------------------------------------------- |
-| **Load Assignments**    | Receive and accept load assignments with full details — stops, cargo info, and special instructions. |
+| **Load Assignments**    | Receive and accept load assignments with full details - stops, cargo info, and special instructions. |
 | **Navigation**          | Turn-by-turn navigation integrated with maps for each stop.                                          |
 | **Proof of Delivery**   | Capture photos, digital signatures, recipient name, and GPS coordinates at delivery.                 |
 | **Vehicle Inspections** | Complete pre-trip and post-trip DVIR reports with the device camera.                                 |
@@ -156,10 +156,10 @@ Super admin management interface for platform operators.
 
 ## Platform & Architecture
 
-| Feature                       | Description                                                                                                                                   |
-| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Multi-Tenant Architecture** | Complete data isolation with separate PostgreSQL databases per company. Master database for tenants, subscriptions, and shared configuration. |
-| **Cloud-Native**              | .NET Aspire orchestration, Docker containerization, and GitHub Actions CI/CD.                                                                 |
-| **Real-Time Updates**         | SignalR WebSocket connections for GPS tracking, messaging, and notifications across all clients.                                              |
-| **API-First**                 | RESTful API with OpenAPI documentation. Auto-generated TypeScript clients for Angular apps.                                                   |
-| **OAuth2/OIDC**               | Duende IdentityServer for secure authentication with JWT tokens and refresh token rotation.                                                   |
+| Feature                       | Description                                                                                             |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Multi-Tenant Architecture** | One PostgreSQL database per company. A master database holds tenants, subscriptions, and shared config. |
+| **Cloud-Native**              | .NET Aspire orchestration, Docker containers, GitHub Actions CI/CD.                                     |
+| **Live Updates**              | SignalR WebSocket connections for GPS tracking, messaging, and notifications.                           |
+| **API-First**                 | REST API with OpenAPI docs. TypeScript clients for the Angular apps are generated from the spec.        |
+| **OAuth2/OIDC**               | Authentication runs through Duende IdentityServer. JWT access tokens with refresh token rotation.       |

@@ -96,7 +96,7 @@ public partial class Load : AuditableEntity, ITenantEntity
     public virtual Container? Container { get; set; }
 
     /// <summary>
-    /// Optional origin terminal (port / rail / depot) — when set, the truck picks up here.
+    /// Optional origin terminal (port / rail / depot) - when set, the truck picks up here.
     /// <see cref="OriginAddress"/> is still populated as a denormalized snapshot.
     /// </summary>
     public Guid? OriginTerminalId { get; set; }
@@ -104,7 +104,7 @@ public partial class Load : AuditableEntity, ITenantEntity
     public virtual Terminal? OriginTerminal { get; set; }
 
     /// <summary>
-    /// Optional destination terminal — when set, the truck drops off here.
+    /// Optional destination terminal - when set, the truck drops off here.
     /// </summary>
     public Guid? DestinationTerminalId { get; set; }
 

@@ -17,6 +17,6 @@ public enum TruckStatus
 
     // ───── Non-operational / admin states ──────────────────
     Maintenance, // scheduled or unscheduled repairs/inspection
-    OutOfService, // breakdown or legal hold — not dispatchable
+    OutOfService, // breakdown or legal hold - not dispatchable
     Offline // tracker not reporting / unknown location
 }

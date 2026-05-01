@@ -1,7 +1,7 @@
 import { inject } from "@angular/core";
-import { type CanActivateFn, Router, UrlTree } from "@angular/router";
+import { Router, UrlTree, type CanActivateFn } from "@angular/router";
 import type { TenantFeature } from "../api/generated/models/tenant-feature";
-import { type IUpgradePromptHandler, UPGRADE_HANDLER } from "../errors/upgrade-handler";
+import { UPGRADE_HANDLER, type IUpgradePromptHandler } from "../errors/upgrade-handler";
 import { FeatureService } from "../services/feature.service";
 
 /**
@@ -91,10 +91,10 @@ function handleDisabledFeature(
       "FEATURE_NOT_IN_PLAN",
       `The '${featureName}' feature is not included in your current subscription plan. Please upgrade to access this feature.`,
     );
-    // Block navigation — the dialog will show as an overlay on the current page
+    // Block navigation - the dialog will show as an overlay on the current page
     return false;
   }
 
-  // Admin locked or no upgrade handler — redirect to unauthorized
+  // Admin locked or no upgrade handler - redirect to unauthorized
   return router.parseUrl("/unauthorized?reason=feature");
 }

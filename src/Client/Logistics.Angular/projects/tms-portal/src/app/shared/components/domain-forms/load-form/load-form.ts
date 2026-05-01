@@ -168,7 +168,7 @@ export class LoadForm implements OnInit {
     // Schedule
     requestedPickupDate: new FormControl<Date | null>(null),
     requestedDeliveryDate: new FormControl<Date | null>(null),
-    // Intermodal — controls hold the full DTO objects (autocompletes return DTOs);
+    // Intermodal - controls hold the full DTO objects (autocompletes return DTOs);
     // submit() extracts the IDs and emits them on LoadFormValue.
     container: new FormControl<ContainerDto | null>(null),
     originTerminal: new FormControl<TerminalDto | null>(null),

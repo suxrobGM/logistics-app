@@ -115,7 +115,7 @@ fun LoadDetailScreen(
                                 Spacer(modifier = Modifier.height(4.dp))
                                 DetailRow(
                                     "Origin Terminal",
-                                    "$it — ${load.originTerminalName ?: ""}"
+                                    "$it - ${load.originTerminalName ?: ""}"
                                 )
                             }
                             Spacer(modifier = Modifier.height(8.dp))
@@ -124,7 +124,7 @@ fun LoadDetailScreen(
                                 Spacer(modifier = Modifier.height(4.dp))
                                 DetailRow(
                                     "Destination Terminal",
-                                    "$it — ${load.destinationTerminalName ?: ""}"
+                                    "$it - ${load.destinationTerminalName ?: ""}"
                                 )
                             }
                             Spacer(modifier = Modifier.height(12.dp))

@@ -29,7 +29,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISeeder, DemoTenantsSeeder>();
         services.AddScoped<ISeeder, TenantRoleSeeder>();
 
-        // FakeData seeders (always tenant-scoped — run once per demo tenant)
+        // FakeData seeders (always tenant-scoped - run once per demo tenant)
         services.AddScoped<ISeeder, UserSeeder>();
         services.AddScoped<ISeeder, EmployeeSeeder>();
         services.AddScoped<ISeeder, CustomerSeeder>();

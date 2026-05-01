@@ -17,7 +17,7 @@ public class TelegramLoginState : Entity, IMasterEntity
     public bool IsConsumed { get; set; }
 
     /// <summary>
-    /// Set after the user authenticates — the bot polls for this.
+    /// Set after the user authenticates - the bot polls for this.
     /// </summary>
     public Guid? UserId { get; set; }
     public Guid? TenantId { get; set; }

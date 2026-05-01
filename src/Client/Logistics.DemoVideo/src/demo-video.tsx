@@ -47,7 +47,7 @@ export function DemoVideo(): ReactElement {
 
       <TransitionSeries.Transition presentation={slide({ direction: "from-bottom" })} timing={T} />
 
-      {/* Scene 5: AI Dispatch — Hero (12s) */}
+      {/* Scene 5: AI Dispatch - Hero (12s) */}
       <TransitionSeries.Sequence durationInFrames={SCENE_DURATIONS.aiDispatch}>
         <SceneAiDispatch />
       </TransitionSeries.Sequence>

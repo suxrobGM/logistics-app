@@ -8,7 +8,7 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.DbMigrator.Seeders.FakeData;
 
 /// <summary>
-/// Seeds intermodal containers — mixed ISO types and statuses, ~70% sitting at a terminal.
+/// Seeds intermodal containers - mixed ISO types and statuses, ~70% sitting at a terminal.
 /// </summary>
 internal class ContainerSeeder(ILogger<ContainerSeeder> logger) : SeederBase(logger)
 {
@@ -37,7 +37,7 @@ internal class ContainerSeeder(ILogger<ContainerSeeder> logger) : SeederBase(log
         var terminals = context.CreatedTerminals ?? throw new InvalidOperationException("Terminals not seeded");
         if (terminals.Count == 0)
         {
-            logger.LogWarning("No terminals available — skipping containers");
+            logger.LogWarning("No terminals available - skipping containers");
             context.CreatedContainers = [];
             LogCompleted(0);
             return;

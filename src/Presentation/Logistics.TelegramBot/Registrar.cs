@@ -33,7 +33,7 @@ public static class Registrar
         if (string.IsNullOrEmpty(botOptions?.BotToken))
             return services;
 
-        // Telegram bot client (singleton — thread-safe)
+        // Telegram bot client (singleton - thread-safe)
         services.AddSingleton<ITelegramBotClient>(new TelegramBotClient(botOptions.BotToken));
 
         // Authentication
