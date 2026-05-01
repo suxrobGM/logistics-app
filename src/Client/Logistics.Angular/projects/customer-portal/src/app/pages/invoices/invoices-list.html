@@ -50,7 +50,7 @@
         </td>
         <td>{{ invoice.createdAt | dateFormat: "mediumDate" }}</td>
         <td>{{ invoice.dueDate | dateFormat: "mediumDate" }}</td>
-        <td class="font-medium">{{ invoice.total | currencyFormatFormat }}</td>
+        <td class="font-medium">{{ invoice.total | currencyFormat }}</td>
         <td>
           <ui-status-badge [status]="invoice.status" kind="invoice" />
         </td>

@@ -18,13 +18,19 @@
         </ui-stack>
 
         @if (load()?.name) {
-          <ui-typography variant="body" color="muted" class="mb-4">{{ load()?.name }}</ui-typography>
+          <ui-typography variant="body" color="muted" class="mb-4">
+            {{ load()?.name }}
+          </ui-typography>
         }
 
         <ui-grid container spacing="6">
           <ui-grid [size]="{ xs: 12, md: 6 }">
-            <ui-typography variant="caption" color="muted" weight="medium" class="mb-2 block">Origin</ui-typography>
-            <ui-typography variant="body" weight="medium">{{ formatAddress(load()?.originAddress) }}</ui-typography>
+            <ui-typography variant="caption" color="muted" weight="medium" class="mb-2 block"
+              >Origin</ui-typography
+            >
+            <ui-typography variant="body" weight="medium">
+              {{ formatAddress(load()?.originAddress) }}
+            </ui-typography>
             @if (load()?.dispatchedAt) {
               <ui-typography variant="body-sm" color="muted" class="mt-1">
                 Dispatched: {{ load()?.dispatchedAt | dateFormat: "medium" }}
@@ -33,8 +39,12 @@
           </ui-grid>
 
           <ui-grid [size]="{ xs: 12, md: 6 }">
-            <ui-typography variant="caption" color="muted" weight="medium" class="mb-2 block">Destination</ui-typography>
-            <ui-typography variant="body" weight="medium">{{ formatAddress(load()?.destinationAddress) }}</ui-typography>
+            <ui-typography variant="caption" color="muted" weight="medium" class="mb-2 block">
+              Destination
+            </ui-typography>
+            <ui-typography variant="body" weight="medium">
+              {{ formatAddress(load()?.destinationAddress) }}
+            </ui-typography>
             @if (load()?.deliveredAt) {
               <ui-typography variant="body-sm" color="muted" class="mt-1">
                 Delivered: {{ load()?.deliveredAt | dateFormat: "medium" }}
@@ -90,7 +100,9 @@
             <div>
               <ui-typography variant="body" weight="medium">{{ load()?.driverName }}</ui-typography>
               @if (load()?.truckNumber) {
-                <ui-typography variant="body-sm" color="muted">Truck: {{ load()?.truckNumber }}</ui-typography>
+                <ui-typography variant="body-sm" color="muted">
+                  Truck: {{ load()?.truckNumber }}
+                </ui-typography>
               }
             </div>
           </ui-stack>
@@ -105,18 +117,24 @@
           @if (load()?.distance) {
             <ui-stack direction="row" justify="between">
               <ui-typography variant="body" color="muted">Distance</ui-typography>
-              <ui-typography variant="body" weight="medium">{{ load()?.distance | distanceUnit }}</ui-typography>
+              <ui-typography variant="body" weight="medium">
+                {{ load()?.distance | distanceUnit }}
+              </ui-typography>
             </ui-stack>
           }
           @if (load()?.deliveryCost) {
             <ui-stack direction="row" justify="between">
               <ui-typography variant="body" color="muted">Delivery Cost</ui-typography>
-              <ui-typography variant="body" weight="medium">{{ load()?.deliveryCost | currencyFormatFormat }}</ui-typography>
+              <ui-typography variant="body" weight="medium">
+                {{ load()?.deliveryCost | currencyFormat }}
+              </ui-typography>
             </ui-stack>
           }
           <ui-stack direction="row" justify="between">
             <ui-typography variant="body" color="muted">Documents</ui-typography>
-            <ui-typography variant="body" weight="medium">{{ load()?.documentCount || 0 }}</ui-typography>
+            <ui-typography variant="body" weight="medium">{{
+              load()?.documentCount || 0
+            }}</ui-typography>
           </ui-stack>
           <ui-stack direction="row" justify="between">
             <ui-typography variant="body" color="muted">Bill of Lading</ui-typography>
