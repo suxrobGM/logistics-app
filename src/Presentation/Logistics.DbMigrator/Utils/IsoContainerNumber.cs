@@ -17,19 +17,25 @@ internal static class IsoContainerNumber
     };
 
     /// <summary>
-    /// Generates a valid ISO 6346 container number for the given 3-letter owner code.
-    /// Category is fixed to U (freight container), which is the standard for cargo containers.
+    /// Generates a valid ISO 6346 container number for the given owner code.
+    /// Accepts either the 3-letter owner alone (category U is appended) or the
+    /// full 4-letter owner+category prefix (e.g. MSCU, MAEU) as commonly displayed.
     /// </summary>
     public static string Generate(string ownerCode, Random random)
     {
         ArgumentNullException.ThrowIfNull(ownerCode);
-        if (ownerCode.Length != 3)
+
+        var ownerCategory = ownerCode.Length switch
         {
-            throw new ArgumentException("Owner code must be 3 letters.", nameof(ownerCode));
-        }
+            3 => ownerCode.ToUpperInvariant() + "U",
+            4 => ownerCode.ToUpperInvariant(),
+            _ => throw new ArgumentException(
+                "Owner code must be 3 letters (e.g. MSC) or 4 letters with category (e.g. MSCU).",
+                nameof(ownerCode))
+        };
 
         var serial = random.Next(0, 1_000_000).ToString("D6");
-        var prefix = ownerCode.ToUpperInvariant() + "U" + serial;
+        var prefix = ownerCategory + serial;
         var checkDigit = ComputeCheckDigit(prefix);
         return prefix + checkDigit;
     }

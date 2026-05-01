@@ -27,7 +27,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISeeder, StripeSeeder>();
         services.AddScoped<ISeeder, StripeSubscriptionSyncSeeder>();
         services.AddScoped<ISeeder, DemoTenantsSeeder>();
-        services.AddScoped<ISeeder, RenameLegacyDemoDataSeeder>();
         services.AddScoped<ISeeder, TenantRoleSeeder>();
 
         // FakeData seeders (always tenant-scoped — run once per demo tenant)
