@@ -24,8 +24,7 @@ interface ModelOption {
 }
 
 const allModels: ModelOption[] = [
-  { label: "Claude Haiku 4.5 (default)", value: "", multiplier: 1, tier: "base" },
-  { label: "DeepSeek V4 Flash", value: "deepseek-v4-flash", multiplier: 1, tier: "base" },
+  { label: "DeepSeek V4 Flash (default)", value: "", multiplier: 1, tier: "base" },
   { label: "DeepSeek V4 Pro", value: "deepseek-v4-pro", multiplier: 1, tier: "base" },
   { label: "GPT-5.4 Mini", value: "gpt-5.4-mini", multiplier: 1, tier: "base" },
   { label: "Claude Haiku 4.5", value: "claude-haiku-4-5", multiplier: 1, tier: "base" },

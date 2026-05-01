@@ -6,7 +6,11 @@
   aria-label="Open notifications"
   type="button"
 >
-  <p-overlaybadge [value]="unreadCount() > 0 ? unreadCount().toString() : null" severity="danger">
+  <p-overlaybadge
+    [value]="unreadCount() > 0 ? (unreadCount() > 9 ? '9+' : unreadCount().toString()) : null"
+    severity="danger"
+    badgeSize="small"
+  >
     <i class="pi pi-bell"></i>
   </p-overlaybadge>
   @if (expanded()) {
