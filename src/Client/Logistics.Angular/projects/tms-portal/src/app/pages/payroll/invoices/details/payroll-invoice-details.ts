@@ -22,7 +22,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
-import { PdfService, ToastService } from "@/core/services";
+import { PdfService, TenantService, ToastService } from "@/core/services";
 import { RecordPaymentDialog } from "@/pages/invoices/components";
 import { InvoiceStatusTag, PaymentStatusTag } from "@/shared/components";
 
@@ -58,6 +58,7 @@ export class PayrollInvoiceDetails implements OnInit {
   private readonly api = inject(Api);
   private readonly pdfService = inject(PdfService);
   private readonly toastService = inject(ToastService);
+  private readonly tenantService = inject(TenantService);
 
   protected readonly invoiceId = input.required<string>();
   protected readonly isLoading = signal(false);
@@ -190,7 +191,7 @@ export class PayrollInvoiceDetails implements OnInit {
     if (!invoice?.id) return;
 
     this.toastService.confirm({
-      message: `Pay ${this.getOutstandingAmount().toLocaleString("en-US", { style: "currency", currency: "USD" })} to ${invoice.employee?.fullName ?? "employee"} via bank transfer?`,
+      message: `Pay ${this.getOutstandingAmount().toLocaleString("en-US", { style: "currency", currency: this.tenantService.tenantCurrency() })} to ${invoice.employee?.fullName ?? "employee"} via bank transfer?`,
       header: "Confirm Payout",
       icon: "pi pi-credit-card",
       acceptLabel: "Yes, Pay Now",

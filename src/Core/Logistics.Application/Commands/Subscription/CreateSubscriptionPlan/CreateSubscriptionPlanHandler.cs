@@ -19,11 +19,11 @@ internal sealed class CreateSubscriptionPlanHandler(
         {
             Name = req.Name,
             Description = req.Description,
-            Price = req.Price,
+            Price = new() { Amount = req.Price, Currency = "USD" },
             Interval = req.Interval,
             IntervalCount = req.IntervalCount,
             Tier = req.Tier,
-            PerTruckPrice = req.PerTruckPrice,
+            PerTruckPrice = new() { Amount = req.PerTruckPrice, Currency = "USD" },
             MaxTrucks = req.MaxTrucks,
             WeeklyAiRequestQuota = req.WeeklyAiRequestQuota,
             AllowedModelTier = req.AllowedModelTier

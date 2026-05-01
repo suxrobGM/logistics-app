@@ -1,7 +1,7 @@
 import { HttpHeaders } from "@angular/common/http";
-import { Injectable, inject, signal } from "@angular/core";
+import { computed, inject, Injectable, signal } from "@angular/core";
 import { CookieService } from "@logistics/shared";
-import { Api, type TenantDto, getTenantById } from "@logistics/shared/api";
+import { Api, getTenantById, type TenantDto } from "@logistics/shared/api";
 
 @Injectable({ providedIn: "root" })
 export class TenantService {
@@ -16,6 +16,12 @@ export class TenantService {
    * Use effect() to react to changes.
    */
   public readonly tenantData = this._tenantData.asReadonly();
+
+  /**
+   * Signal that exposes the current tenant's currency setting.
+   * Defaults to 'USD' if not set.
+   */
+  public readonly tenantCurrency = computed(() => this._tenantData()?.settings?.currency ?? "USD");
 
   getTenantData(): TenantDto | null {
     return this._tenantData();

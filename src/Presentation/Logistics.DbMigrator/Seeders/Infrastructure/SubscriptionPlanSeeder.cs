@@ -103,8 +103,8 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 {
                     Name = planDef.Name,
                     Description = planDef.Description,
-                    Price = planDef.Price,
-                    PerTruckPrice = planDef.PerTruckPrice,
+                    Price = new() { Amount = planDef.Price, Currency = "USD" },
+                    PerTruckPrice = new() { Amount = planDef.PerTruckPrice, Currency = "USD" },
                     MaxTrucks = planDef.MaxTrucks,
                     Tier = planDef.Tier,
                     WeeklyAiRequestQuota = planDef.WeeklyAiRequestQuota,
@@ -138,15 +138,15 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                     updated = true;
                 }
 
-                if (existingPlan.Price != planDef.Price)
+                if (existingPlan.Price.Amount != planDef.Price)
                 {
-                    existingPlan.Price = planDef.Price;
+                    existingPlan.Price = new() { Amount = planDef.Price, Currency = existingPlan.Price.Currency };
                     updated = true;
                 }
 
-                if (existingPlan.PerTruckPrice != planDef.PerTruckPrice)
+                if (existingPlan.PerTruckPrice.Amount != planDef.PerTruckPrice)
                 {
-                    existingPlan.PerTruckPrice = planDef.PerTruckPrice;
+                    existingPlan.PerTruckPrice = new() { Amount = planDef.PerTruckPrice, Currency = existingPlan.PerTruckPrice.Currency };
                     updated = true;
                 }
 

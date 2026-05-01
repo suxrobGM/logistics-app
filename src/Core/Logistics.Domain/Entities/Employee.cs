@@ -11,7 +11,7 @@ public class Employee : Entity, ITenantEntity
     public required string LastName { get; set; }
     public string? PhoneNumber { get; set; }
 
-    public Money Salary { get; set; } = Money.Zero();
+    public Money Salary { get; set; } = Money.Zero("USD");
     public SalaryType SalaryType { get; set; } = SalaryType.None;
     public EmployeeStatus Status { get; set; } = EmployeeStatus.Active;
 
@@ -67,7 +67,7 @@ public class Employee : Entity, ITenantEntity
             FirstName = user.FirstName,
             LastName = user.LastName,
             PhoneNumber = user.PhoneNumber,
-            Salary = salary,
+            Salary = new() { Amount = salary, Currency = "USD" },
             SalaryType = salaryType
         };
 

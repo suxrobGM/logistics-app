@@ -80,10 +80,12 @@ internal class PayrollService(
     public PayrollInvoice CreatePayrollInvoice(Employee employee, DateTime startDate, DateTime endDate)
     {
         var (invoiceAmount, totalDistance, totalHours) = CalculateSalaryWithDetails(employee, startDate, endDate);
+        var tenant = tenantUow.GetCurrentTenant();
+        var currency = (tenant.Settings?.Currency ?? CurrencyCode.USD).ToString();
 
         var payrollInvoice = new PayrollInvoice
         {
-            Total = invoiceAmount,
+            Total = new() { Amount = invoiceAmount, Currency = currency },
             Status = InvoiceStatus.Draft,
             PeriodStart = startDate,
             PeriodEnd = endDate,
@@ -102,7 +104,7 @@ internal class PayrollService(
             payroll.PeriodStart,
             payroll.PeriodEnd);
 
-        payroll.Total = invoiceAmount;
+        payroll.Total = new() { Amount = invoiceAmount, Currency = payroll.Total.Currency };
         payroll.TotalDistanceDriven = totalDistance;
         payroll.TotalHoursWorked = totalHours;
 

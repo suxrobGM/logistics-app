@@ -32,7 +32,8 @@ internal sealed class UpdateEmployeeHandler(ITenantUnitOfWork tenantUow)
 
         if (req.Salary.HasValue && employeeEntity.Salary != req.Salary)
         {
-            employeeEntity.Salary = req.SalaryType == SalaryType.None ? 0 : req.Salary.Value;
+            var salaryAmount = req.SalaryType == SalaryType.None ? 0 : req.Salary.Value;
+            employeeEntity.Salary = new() { Amount = salaryAmount, Currency = employeeEntity.Salary.Currency };
         }
 
         if (req.Status.HasValue && employeeEntity.Status != req.Status)

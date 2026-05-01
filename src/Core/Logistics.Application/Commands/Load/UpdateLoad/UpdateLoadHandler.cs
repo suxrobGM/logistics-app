@@ -29,9 +29,11 @@ internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow)
             load.OriginAddress = PropertyUpdater.UpdateIfChanged(req.OriginAddress, load.OriginAddress);
             load.OriginLocation = PropertyUpdater.UpdateIfChanged(req.OriginLocation, load.OriginLocation);
             load.DestinationAddress = PropertyUpdater.UpdateIfChanged(req.DestinationAddress, load.DestinationAddress);
-            load.DestinationLocation =
-                PropertyUpdater.UpdateIfChanged(req.DestinationLocation, load.DestinationLocation);
-            load.DeliveryCost = PropertyUpdater.UpdateIfChanged(req.DeliveryCost, load.DeliveryCost.Amount);
+            load.DestinationLocation = PropertyUpdater.UpdateIfChanged(req.DestinationLocation, load.DestinationLocation);
+            if (req.DeliveryCost is not null && req.DeliveryCost != load.DeliveryCost.Amount)
+            {
+                load.DeliveryCost = new() { Amount = req.DeliveryCost.Value, Currency = load.DeliveryCost.Currency };
+            }
             load.Distance = PropertyUpdater.UpdateIfChanged(req.Distance, load.Distance);
             load.Type = PropertyUpdater.UpdateIfChanged(req.Type, load.Type);
             load.Source = PropertyUpdater.UpdateIfChanged(req.Source, load.Source);

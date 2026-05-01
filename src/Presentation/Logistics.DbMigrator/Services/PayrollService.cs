@@ -68,7 +68,7 @@ public class PayrollService(
 
         var payroll = new PayrollInvoice
         {
-            Total = amount,
+            Total = new() { Amount = amount, Currency = "USD" },
             Status = InvoiceStatus.Paid,
             PeriodStart = startDate,
             PeriodEnd = endDate,

@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
@@ -26,18 +27,19 @@ internal sealed class CreateLoadInvoiceHandler(ITenantUnitOfWork tenantUow)
         }
 
         var tenant = tenantUow.GetCurrentTenant();
+        var currency = (tenant.Settings?.Currency ?? CurrencyCode.USD).ToString();
 
         var payment = new Payment
         {
             StripePaymentMethodId = req.StripePaymentMethodId,
             TenantId = tenant.Id,
-            Amount = req.PaymentAmount,
+            Amount = new() { Amount = req.PaymentAmount, Currency = currency },
             BillingAddress = tenant.CompanyAddress
         };
 
         var invoice = new LoadInvoice
         {
-            Total = req.PaymentAmount,
+            Total = new() { Amount = req.PaymentAmount, Currency = currency },
             CustomerId = req.CustomerId,
             LoadId = req.LoadId
         };

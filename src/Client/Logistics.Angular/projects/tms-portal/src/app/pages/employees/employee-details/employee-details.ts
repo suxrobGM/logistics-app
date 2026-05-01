@@ -1,4 +1,4 @@
-import { CommonModule, CurrencyPipe, DatePipe } from "@angular/common";
+import { CommonModule, DatePipe } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import {
@@ -8,6 +8,7 @@ import {
   type DocumentType,
 } from "@logistics/shared/api";
 import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ToastService } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -26,7 +27,7 @@ import { EmployeeDetailsStore } from "../store";
 @Component({
   selector: "app-employee-details",
   templateUrl: "./employee-details.html",
-  providers: [EmployeeDetailsStore, CurrencyPipe],
+  providers: [EmployeeDetailsStore, CurrencyFormatPipe],
   imports: [
     CommonModule,
     ButtonModule,
@@ -55,7 +56,7 @@ export class EmployeeDetails implements OnInit {
   protected readonly store = inject(EmployeeDetailsStore);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
-  private readonly currencyPipe = inject(CurrencyPipe);
+  private readonly currencyFormatPipe = inject(CurrencyFormatPipe);
   private readonly api = inject(Api);
 
   protected readonly isPayoutLoading = signal(false);
@@ -77,8 +78,7 @@ export class EmployeeDetails implements OnInit {
     const salary = emp.salary ?? 0;
     const type = emp.salaryType;
 
-    const formatCurrency = (value: number) =>
-      this.currencyPipe.transform(value, "USD", "symbol", "1.2-2") ?? "";
+    const formatCurrency = (value: number) => this.currencyFormatPipe.transform(value) ?? "";
 
     switch (type) {
       case "share_of_gross":

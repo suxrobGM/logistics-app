@@ -23,6 +23,7 @@ import { SelectModule } from "primeng/select";
 import { TabsModule } from "primeng/tabs";
 import { TextareaModule } from "primeng/textarea";
 import { ToastModule } from "primeng/toast";
+import { TenantService } from "@/core/services";
 import { FormField, PageHeader } from "@/shared/components";
 
 interface CategoryOption {
@@ -60,6 +61,7 @@ export class ExpenseAddPage implements OnInit {
   private readonly api = inject(Api);
   private readonly router = inject(Router);
   private readonly messageService = inject(MessageService);
+  private readonly tenantService = inject(TenantService);
 
   protected readonly isLoading = signal(false);
   protected readonly activeTab = signal(0);
@@ -173,7 +175,7 @@ export class ExpenseAddPage implements OnInit {
     const result = await this.api.invoke(createCompanyExpense, {
       body: {
         amount: formValue.amount,
-        currency: "USD",
+        currency: this.tenantService.tenantCurrency(),
         vendorName: formValue.vendorName,
         expenseDate: formValue.expenseDate.toISOString(),
         receiptBlobPath: this.receiptPath() || null,
@@ -210,7 +212,7 @@ export class ExpenseAddPage implements OnInit {
     const result = await this.api.invoke(createTruckExpense, {
       body: {
         amount: formValue.amount,
-        currency: "USD",
+        currency: this.tenantService.tenantCurrency(),
         vendorName: formValue.vendorName,
         expenseDate: formValue.expenseDate.toISOString(),
         receiptBlobPath: this.receiptPath() || null,
@@ -249,7 +251,7 @@ export class ExpenseAddPage implements OnInit {
     const result = await this.api.invoke(createBodyShopExpense, {
       body: {
         amount: formValue.amount,
-        currency: "USD",
+        currency: this.tenantService.tenantCurrency(),
         vendorName: formValue.vendorName,
         expenseDate: formValue.expenseDate.toISOString(),
         receiptBlobPath: this.receiptPath() || null,

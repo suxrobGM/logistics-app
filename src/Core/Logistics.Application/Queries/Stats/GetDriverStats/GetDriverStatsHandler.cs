@@ -35,7 +35,7 @@ internal sealed class GetDriverStatsHandler : IAppRequestHandler<GetDriverStatsQ
             return Result<DriverStatsDto>.Fail("Driver does not have an assigned truck");
         }
 
-        var driverIncomePercentage = driver.SalaryType == SalaryType.ShareOfGross ? driver.Salary : 0;
+        var driverIncomePercentage = driver.SalaryType == SalaryType.ShareOfGross ? driver.Salary.Amount : 0;
         var now = DateTime.UtcNow;
         var startOfWeek = now.AddDays(-(int)now.DayOfWeek + (int)DayOfWeek.Monday);
         var lastWeekStart = startOfWeek.AddDays(-7);

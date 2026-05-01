@@ -24,13 +24,14 @@ public static class LoadFactory
         Customer customer,
         Truck? assignedTruck,
         Employee assignedDispatcher,
-        Trip? trip = null)
+        Trip? trip = null,
+        string currency = "USD")
     {
         var load = new Load
         {
             Name = name,
             Type = type,
-            DeliveryCost = deliveryCost,
+            DeliveryCost = new() { Amount = deliveryCost, Currency = currency },
             OriginAddress = originAddress,
             OriginLocation = originLocation,
             DestinationAddress = destinationAddress,

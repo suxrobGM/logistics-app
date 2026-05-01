@@ -248,10 +248,10 @@
             }
           </td>
           <td>
-            <span class="text-success font-medium">{{ formatCurrency(listing.totalRate) }}</span>
+            <span class="text-success font-medium">{{ (listing.totalRate | currencyFormat) ?? "-" }}</span>
           </td>
           <td>
-            <span class="text-sm">{{ formatCurrency(listing.ratePerMile) }}/mi</span>
+            <span class="text-sm">{{ (listing.ratePerMile | currencyFormat) ?? "-" }}/mi</span>
           </td>
           <td>
             <div class="flex gap-1">
@@ -292,7 +292,7 @@
       </ui-stack>
       <ui-stack direction="row" align="center" justify="between" class="text-secondary text-sm">
         <span>{{ listing.equipmentType }}</span>
-        <span class="text-success font-medium">{{ formatCurrency(listing.totalRate) }}</span>
+        <span class="text-success font-medium">{{ (listing.totalRate | currencyFormat) ?? "-" }}</span>
       </ui-stack>
     </div>
 

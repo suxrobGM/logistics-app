@@ -12,7 +12,7 @@ import {
   type TruckDto,
 } from "@logistics/shared/api";
 import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
-import { DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
+import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -40,6 +40,7 @@ interface EquipmentOption {
   imports: [
     ButtonModule,
     CardModule,
+    CurrencyFormatPipe,
     DateFormatPipe,
     DatePickerModule,
     DecimalPipe,
@@ -200,14 +201,6 @@ export class LoadBoardSearchComponent implements OnInit {
 
   protected goBack(): void {
     this.router.navigate(["/loadboard"]);
-  }
-
-  protected formatCurrency(value?: number | null): string {
-    if (value == null) return "-";
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(value);
   }
 
   protected formatDistance(listing: LoadBoardListingDto): string {

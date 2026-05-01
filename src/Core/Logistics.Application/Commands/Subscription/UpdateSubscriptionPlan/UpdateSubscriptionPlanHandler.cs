@@ -26,8 +26,14 @@ internal sealed class UpdateSubscriptionPlanHandler(
 
         subscriptionPlan.Name = PropertyUpdater.UpdateIfChanged(req.Name, subscriptionPlan.Name);
         subscriptionPlan.Description = PropertyUpdater.UpdateIfChanged(req.Description, subscriptionPlan.Description);
-        subscriptionPlan.Price = PropertyUpdater.UpdateIfChanged(req.Price, subscriptionPlan.Price.Amount);
-        subscriptionPlan.PerTruckPrice = PropertyUpdater.UpdateIfChanged(req.PerTruckPrice, subscriptionPlan.PerTruckPrice.Amount);
+        if (req.Price is not null && req.Price != subscriptionPlan.Price.Amount)
+        {
+            subscriptionPlan.Price = new() { Amount = req.Price.Value, Currency = subscriptionPlan.Price.Currency };
+        }
+        if (req.PerTruckPrice is not null && req.PerTruckPrice != subscriptionPlan.PerTruckPrice.Amount)
+        {
+            subscriptionPlan.PerTruckPrice = new() { Amount = req.PerTruckPrice.Value, Currency = subscriptionPlan.PerTruckPrice.Currency };
+        }
         subscriptionPlan.Interval = PropertyUpdater.UpdateIfChanged(req.Interval, subscriptionPlan.Interval);
         subscriptionPlan.IntervalCount =
             PropertyUpdater.UpdateIfChanged(req.IntervalCount, subscriptionPlan.IntervalCount);

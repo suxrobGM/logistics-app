@@ -49,8 +49,8 @@ public class AiQuotaServiceTests
             {
                 Id = planId,
                 Name = "Test Plan",
-                Price = 29m,
-                PerTruckPrice = 12m,
+                Price = new() { Amount = 29m, Currency = "USD" },
+                PerTruckPrice = new() { Amount = 12m, Currency = "USD" },
                 WeeklyAiRequestQuota = weeklyQuota
             });
     }
