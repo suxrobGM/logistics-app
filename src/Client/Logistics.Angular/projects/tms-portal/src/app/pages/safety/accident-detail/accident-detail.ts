@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
@@ -13,6 +13,7 @@ import {
   type AccidentSeverity,
 } from "@logistics/shared/api";
 import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -30,9 +31,9 @@ import { AccidentQuickInfo } from "../components";
   selector: "app-accident-detail",
   templateUrl: "./accident-detail.html",
   imports: [
+    CurrencyFormatPipe,
     RouterLink,
     FormsModule,
-    CurrencyPipe,
     DatePipe,
     ButtonModule,
     CardModule,

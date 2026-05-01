@@ -1,8 +1,9 @@
-import { CurrencyPipe, DatePipe, DecimalPipe } from "@angular/common";
+import { DatePipe, DecimalPipe } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { Api, getMaintenanceRecords, type MaintenanceRecordDto } from "@logistics/shared/api";
 import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -15,7 +16,7 @@ import { PageHeader } from "@/shared/components";
   templateUrl: "./service-record-detail.html",
   imports: [
     RouterLink,
-    CurrencyPipe,
+    CurrencyFormatPipe,
     DatePipe,
     DecimalPipe,
     ButtonModule,

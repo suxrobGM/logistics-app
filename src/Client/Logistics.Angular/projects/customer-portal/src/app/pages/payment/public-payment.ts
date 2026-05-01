@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { Component, effect, inject, input, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ErrorState, LoadingSkeleton, ToastService } from "@logistics/shared";
@@ -9,6 +9,7 @@ import {
   type PublicInvoiceDto,
 } from "@logistics/shared/api";
 import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -21,7 +22,7 @@ import { PublicLayout } from "@/shared/layout";
   selector: "cp-public-payment",
   templateUrl: "./public-payment.html",
   imports: [
-    CurrencyPipe,
+    CurrencyFormatPipe,
     DatePipe,
     FormsModule,
     ButtonModule,

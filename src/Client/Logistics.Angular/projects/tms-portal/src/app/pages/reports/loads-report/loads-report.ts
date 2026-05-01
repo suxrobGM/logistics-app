@@ -1,4 +1,4 @@
-import { CurrencyPipe, DecimalPipe } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { LocalizationService } from "@logistics/shared";
 import {
@@ -10,6 +10,7 @@ import {
   type TypeDto,
 } from "@logistics/shared/api";
 import { Grid, Stack, StatusBadge, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
@@ -34,9 +35,9 @@ import {
   selector: "app-loads-report",
   templateUrl: "./loads-report.html",
   imports: [
+    CurrencyFormatPipe,
     ChartModule,
     TableModule,
-    CurrencyPipe,
     DateRangePicker,
     DecimalPipe,
     SkeletonModule,

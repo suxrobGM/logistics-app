@@ -1,7 +1,7 @@
-import { CurrencyPipe } from "@angular/common";
-import { Component, type OnInit, computed, inject, input, output, signal } from "@angular/core";
-import { Api, getDailyGrosses } from "@logistics/shared/api";
-import type { DailyGrossesDto } from "@logistics/shared/api";
+import { Component, computed, inject, input, output, signal, type OnInit } from "@angular/core";
+import { Api, getDailyGrosses, type DailyGrossesDto } from "@logistics/shared/api";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
+import { LocalizationService } from "@logistics/shared/services";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { DividerModule } from "primeng/divider";
@@ -18,10 +18,11 @@ export interface DailyGrossChartData {
 @Component({
   selector: "app-daily-gross-chart",
   templateUrl: "./daily-gross-chart.html",
-  imports: [CardModule, ChartModule, DividerModule, SkeletonModule, CurrencyPipe],
+  imports: [CardModule, ChartModule, CurrencyFormatPipe, DividerModule, SkeletonModule],
 })
 export class DailyGrossChartComponent implements OnInit {
   private readonly api = inject(Api);
+  private readonly localizationService = inject(LocalizationService, { optional: true });
 
   public readonly chartClass = input<string>("");
 
@@ -49,61 +50,64 @@ export class DailyGrossChartComponent implements OnInit {
     return total;
   });
 
-  protected readonly chartOptions = computed(() => ({
-    maintainAspectRatio: false,
-    responsive: true,
-    interaction: {
-      intersect: false,
-      mode: "index",
-    },
-    plugins: {
-      legend: {
-        display: false,
+  protected readonly chartOptions = computed(() => {
+    const currencySymbol = this.localizationService?.getCurrencySymbol() ?? "$";
+    return {
+      maintainAspectRatio: false,
+      responsive: true,
+      interaction: {
+        intersect: false,
+        mode: "index",
       },
-      tooltip: {
-        backgroundColor: "rgba(15, 23, 42, 0.9)",
-        titleFont: { size: 13, weight: "600" },
-        bodyFont: { size: 12 },
-        padding: 12,
-        cornerRadius: 8,
-        displayColors: false,
-        callbacks: {
-          label: (context: { parsed: { y: number } }) => {
-            const value = context.parsed.y;
-            return ` $${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      plugins: {
+        legend: {
+          display: false,
+        },
+        tooltip: {
+          backgroundColor: "rgba(15, 23, 42, 0.9)",
+          titleFont: { size: 13, weight: "600" },
+          bodyFont: { size: 12 },
+          padding: 12,
+          cornerRadius: 8,
+          displayColors: false,
+          callbacks: {
+            label: (context: { parsed: { y: number } }) => {
+              const value = context.parsed.y;
+              return ` ${currencySymbol}${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            },
           },
         },
       },
-    },
-    scales: {
-      x: {
-        grid: {
-          display: false,
+      scales: {
+        x: {
+          grid: {
+            display: false,
+          },
+          ticks: {
+            font: { size: 11 },
+            color: "#64748b",
+          },
+          border: {
+            display: false,
+          },
         },
-        ticks: {
-          font: { size: 11 },
-          color: "#64748b",
-        },
-        border: {
-          display: false,
+        y: {
+          beginAtZero: true,
+          grid: {
+            color: "rgba(148, 163, 184, 0.1)",
+          },
+          ticks: {
+            font: { size: 11 },
+            color: "#64748b",
+            callback: (value: number) => `${currencySymbol}${value.toLocaleString()}`,
+          },
+          border: {
+            display: false,
+          },
         },
       },
-      y: {
-        beginAtZero: true,
-        grid: {
-          color: "rgba(148, 163, 184, 0.1)",
-        },
-        ticks: {
-          font: { size: 11 },
-          color: "#64748b",
-          callback: (value: number) => `$${value.toLocaleString()}`,
-        },
-        border: {
-          display: false,
-        },
-      },
-    },
-  }));
+    };
+  });
 
   ngOnInit(): void {
     this.fetchDailyGrosses();

@@ -10,6 +10,7 @@ import {
   type TruckDto,
 } from "@logistics/shared/api";
 import { Grid, Icon, PdfViewer, Stack, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -24,6 +25,7 @@ import { FormField, SearchTruck } from "@/shared/components";
   selector: "app-load-import",
   templateUrl: "./load-import.html",
   imports: [
+    CurrencyFormatPipe,
     CommonModule,
     CardModule,
     FileUploadModule,

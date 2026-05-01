@@ -105,7 +105,7 @@
           <ui-grid [size]="{ xs: 12, md: 6 }">
             <ui-typography variant="h6" tag="h4" weight="bold" class="mb-2">Payment</ui-typography>
             @if (data.paymentAmount) {
-              <p class="text-xl font-bold text-green-600">{{ data.paymentAmount | currency }}</p>
+              <p class="text-xl font-bold text-green-600">{{ data.paymentAmount | currencyFormat }}</p>
             } @else {
               <p class="text-muted">Not extracted</p>
             }

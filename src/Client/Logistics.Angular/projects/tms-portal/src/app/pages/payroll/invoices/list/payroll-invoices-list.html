@@ -180,10 +180,10 @@
               @if (invoice.employee?.salaryType === "share_of_gross") {
                 {{ invoice.employee?.salary | percent }}
               } @else {
-                {{ invoice.employee?.salary | currency }}
+                {{ invoice.employee?.salary | currencyFormat }}
               }
             </td>
-            <td class="text-right">{{ invoice.total?.amount | currency }}</td>
+            <td class="text-right">{{ invoice.total?.amount | currencyFormat }}</td>
             <td>
               <app-invoice-status-tag [status]="invoice.status" />
             </td>

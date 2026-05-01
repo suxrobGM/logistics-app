@@ -1,6 +1,6 @@
-import { CurrencyPipe } from "@angular/common";
 import { Component, computed, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import { CurrencyFormatPipe } from "@logistics/shared";
 import type { TopTruckDto } from "@logistics/shared/api";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -10,7 +10,14 @@ import { SkeletonModule } from "primeng/skeleton";
 @Component({
   selector: "app-top-performers-widget",
   templateUrl: "./top-performers-widget.html",
-  imports: [CardModule, DividerModule, RouterLink, CurrencyPipe, SkeletonModule, ProgressBarModule],
+  imports: [
+    CardModule,
+    DividerModule,
+    RouterLink,
+    SkeletonModule,
+    ProgressBarModule,
+    CurrencyFormatPipe,
+  ],
 })
 export class TopPerformersWidgetComponent {
   public readonly topTrucks = input<TopTruckDto[] | null>([]);

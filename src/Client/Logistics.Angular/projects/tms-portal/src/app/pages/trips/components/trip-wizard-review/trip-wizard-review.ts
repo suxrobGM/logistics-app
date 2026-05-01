@@ -1,8 +1,8 @@
-import { CurrencyPipe, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { Component, computed, inject, input, output } from "@angular/core";
 import type { TripStopDto, TripStopType } from "@logistics/shared/api";
 import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
-import { AddressPipe } from "@logistics/shared/pipes";
+import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
@@ -23,7 +23,7 @@ import { TripWizardStore } from "../../store/trip-wizard-store";
     DirectionMap,
     ButtonModule,
     DistanceUnitPipe,
-    CurrencyPipe,
+    CurrencyFormatPipe,
     TableModule,
     AddressPipe,
     DatePipe,

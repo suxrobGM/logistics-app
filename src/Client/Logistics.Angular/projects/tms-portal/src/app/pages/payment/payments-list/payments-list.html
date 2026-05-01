@@ -67,7 +67,7 @@
         <tr>
           <td>{{ payment.createdDate | date: "mediumDate" }}</td>
           <td>{{ getPaymentMethodDesc(payment.method) }}</td>
-          <td>{{ payment.amount.amount | currency }}</td>
+          <td>{{ payment.amount.amount | currencyFormat }}</td>
           <td>
             <app-payment-status-tag [paymentStatus]="payment.status"></app-payment-status-tag>
           </td>

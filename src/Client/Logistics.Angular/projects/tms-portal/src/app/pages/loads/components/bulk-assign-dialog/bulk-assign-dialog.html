@@ -10,7 +10,7 @@
     <div class="bg-surface-100 dark:bg-surface-800 rounded-lg p-4">
       <div class="text-muted mb-1 text-sm">Selected Loads</div>
       <div class="text-primary text-xl font-semibold">{{ loads().length }} load(s)</div>
-      <div class="text-muted text-sm">Total value: {{ totalCost() | currency }}</div>
+      <div class="text-muted text-sm">Total value: {{ totalCost() | currencyFormat }}</div>
     </div>
 
     <div>

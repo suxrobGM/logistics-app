@@ -1,4 +1,4 @@
-import { CurrencyPipe, DecimalPipe } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { LocalizationService } from "@logistics/shared";
@@ -9,6 +9,7 @@ import {
   type DriverReportDto,
 } from "@logistics/shared/api";
 import type { PagedResponse } from "@logistics/shared/api/models";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePickerModule } from "primeng/datepicker";
@@ -30,7 +31,7 @@ import { DateUtils, getPerformanceLevel, getPerformanceSeverity } from "@/shared
     TableModule,
     DatePickerModule,
     DateRangePicker,
-    CurrencyPipe,
+    CurrencyFormatPipe,
     DecimalPipe,
     TagModule,
   ],

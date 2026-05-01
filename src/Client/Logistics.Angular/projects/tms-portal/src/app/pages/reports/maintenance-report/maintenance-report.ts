@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { Component, computed, signal, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import {
@@ -9,6 +9,7 @@ import {
   type MaintenanceVendorBreakdownDto,
 } from "@logistics/shared/api";
 import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
@@ -40,10 +41,10 @@ const TYPE_COLORS = [
   selector: "app-maintenance-report",
   templateUrl: "./maintenance-report.html",
   imports: [
+    CurrencyFormatPipe,
     TableModule,
     ChartModule,
     DateRangePicker,
-    CurrencyPipe,
     DatePipe,
     SkeletonModule,
     TagModule,

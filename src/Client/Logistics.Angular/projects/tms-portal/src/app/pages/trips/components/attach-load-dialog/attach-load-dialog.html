@@ -84,7 +84,7 @@
             <td>{{ load.originAddress | address }}</td>
             <td>{{ load.destinationAddress | address }}</td>
             <td class="text-right">{{ load.distance | distanceUnit: "mi" }}</td>
-            <td class="text-right">{{ load.deliveryCost | currency }}</td>
+            <td class="text-right">{{ load.deliveryCost | currencyFormat }}</td>
           </tr>
         </ng-template>
       </p-table>
@@ -100,7 +100,7 @@
             </span>
             <span>
               Total Cost:
-              <strong class="text-green-600">{{ totalSelectedCost() | currency }}</strong>
+              <strong class="text-green-600">{{ totalSelectedCost() | currencyFormat }}</strong>
             </span>
           </div>
         </div>

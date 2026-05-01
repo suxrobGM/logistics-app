@@ -1,4 +1,4 @@
-import { CurrencyPipe, DecimalPipe } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 import { Component, computed, signal, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import {
@@ -10,6 +10,7 @@ import {
   type SafetyTrendDto,
 } from "@logistics/shared/api";
 import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
@@ -55,7 +56,7 @@ const EVENT_TYPE_COLORS = [
     TableModule,
     ChartModule,
     DateRangePicker,
-    CurrencyPipe,
+    CurrencyFormatPipe,
     DecimalPipe,
     SkeletonModule,
     TagModule,

@@ -23,7 +23,7 @@
       <ui-stat-card
         icon="pi-dollar"
         label="Total Cost"
-        [value]="(data()?.totalCost || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        [value]="(data()?.totalCost || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
         color="blue"
         [trend]="(data()?.totalServices || 0) + ' services'"
       />
@@ -33,7 +33,7 @@
       <ui-stat-card
         icon="pi-wrench"
         label="Labor Cost"
-        [value]="(data()?.laborCost || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        [value]="(data()?.laborCost || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
         color="green"
         [trend]="(data()?.scheduledServices || 0) + ' scheduled'"
       />
@@ -43,7 +43,7 @@
       <ui-stat-card
         icon="pi-box"
         label="Parts Cost"
-        [value]="(data()?.partsCost || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        [value]="(data()?.partsCost || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
         color="orange"
         [trend]="(data()?.unscheduledServices || 0) + ' unscheduled'"
       />
@@ -137,10 +137,10 @@
                 <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{ item.count }}</span>
               </td>
               <td class="text-right">
-                {{ item.totalCost | currency: "USD" : "symbol" : "1.0-0" }}
+                {{ item.totalCost | currencyFormat: "USD" : "symbol" : "1.0-0" }}
               </td>
               <td class="text-right">
-                {{ item.averageCost | currency: "USD" : "symbol" : "1.0-0" }}
+                {{ item.averageCost | currencyFormat: "USD" : "symbol" : "1.0-0" }}
               </td>
             </tr>
           </ng-template>
@@ -187,7 +187,7 @@
                 }}</span>
               </td>
               <td class="text-right">
-                {{ truck.totalCost | currency: "USD" : "symbol" : "1.0-0" }}
+                {{ truck.totalCost | currencyFormat: "USD" : "symbol" : "1.0-0" }}
               </td>
               <td class="text-right">
                 @if (truck.lastServiceDate) {
@@ -230,7 +230,7 @@
               }}</span>
             </td>
             <td class="text-right">
-              {{ vendor.totalCost | currency: "USD" : "symbol" : "1.0-0" }}
+              {{ vendor.totalCost | currencyFormat: "USD" : "symbol" : "1.0-0" }}
             </td>
           </tr>
         </ng-template>

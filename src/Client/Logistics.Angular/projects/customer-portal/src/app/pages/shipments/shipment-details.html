@@ -111,7 +111,7 @@
           @if (load()?.deliveryCost) {
             <ui-stack direction="row" justify="between">
               <ui-typography variant="body" color="muted">Delivery Cost</ui-typography>
-              <ui-typography variant="body" weight="medium">{{ load()?.deliveryCost | currencyFormat }}</ui-typography>
+              <ui-typography variant="body" weight="medium">{{ load()?.deliveryCost | currencyFormatFormat }}</ui-typography>
             </ui-stack>
           }
           <ui-stack direction="row" justify="between">

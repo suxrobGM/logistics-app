@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, effect, inject, input, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
+import { CurrencyFormatPipe } from "@logistics/shared";
 import {
   Api,
   getEmployeeById,
@@ -32,6 +33,7 @@ import { EmployeePayrollInvoicesListStore } from "../store/employee-payroll-invo
     RouterModule,
     InvoiceStatusTag,
     ProgressSpinnerModule,
+    CurrencyFormatPipe,
     DataContainer,
     DividerModule,
     Grid,

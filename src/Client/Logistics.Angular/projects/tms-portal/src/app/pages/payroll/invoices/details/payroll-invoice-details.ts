@@ -1,4 +1,4 @@
-import { CommonModule, CurrencyPipe, DatePipe, PercentPipe } from "@angular/common";
+import { CommonModule, DatePipe, PercentPipe } from "@angular/common";
 import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -13,6 +13,7 @@ import {
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -42,7 +43,7 @@ import { InvoiceStatusTag, PaymentStatusTag } from "@/shared/components";
     TableModule,
     TagModule,
     TooltipModule,
-    CurrencyPipe,
+    CurrencyFormatPipe,
     DatePipe,
     PercentPipe,
     RecordPaymentDialog,

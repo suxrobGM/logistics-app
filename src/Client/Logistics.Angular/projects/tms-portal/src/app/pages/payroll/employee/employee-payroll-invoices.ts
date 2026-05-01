@@ -10,6 +10,7 @@ import {
 } from "@logistics/shared/api";
 import { paymentMethodTypeOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
 import { Grid, Stack, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -24,6 +25,7 @@ import { EmployeePayrollListStore } from "../store/employee-list.store";
   templateUrl: "./employee-payroll-invoices.html",
   providers: [EmployeePayrollListStore],
   imports: [
+    CurrencyFormatPipe,
     CommonModule,
     CardModule,
     TooltipModule,

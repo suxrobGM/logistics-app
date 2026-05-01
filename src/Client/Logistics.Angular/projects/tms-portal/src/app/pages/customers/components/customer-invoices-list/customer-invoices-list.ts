@@ -1,7 +1,8 @@
-import { CurrencyPipe, DatePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import { Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { InvoiceDto } from "@logistics/shared/api";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
@@ -15,7 +16,7 @@ import { InvoiceStatusTag } from "@/shared/components";
     ButtonModule,
     TooltipModule,
     RouterLink,
-    CurrencyPipe,
+    CurrencyFormatPipe,
     DatePipe,
     InvoiceStatusTag,
   ],

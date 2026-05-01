@@ -78,8 +78,8 @@
                 <tr>
                   <td>{{ item.description }}</td>
                   <td class="text-right">{{ item.quantity ?? 1 }}</td>
-                  <td class="text-right">{{ item.amount?.amount | currency }}</td>
-                  <td class="text-right">{{ item.total | currency }}</td>
+                  <td class="text-right">{{ item.amount?.amount | currencyFormat }}</td>
+                  <td class="text-right">{{ item.total | currencyFormat }}</td>
                 </tr>
               </ng-template>
             </p-table>
@@ -91,17 +91,17 @@
             <div class="w-64">
               <ui-stack direction="row" justify="between" class="py-1">
                 <span>Total:</span>
-                <span class="font-semibold">{{ inv.total?.amount | currency }}</span>
+                <span class="font-semibold">{{ inv.total?.amount | currencyFormat }}</span>
               </ui-stack>
               @if ((inv.total?.amount ?? 0) > (inv.amountDue ?? 0)) {
                 <ui-stack direction="row" justify="between" class="py-1 text-green-600">
                   <span>Paid:</span>
-                  <span>{{ (inv.total?.amount ?? 0) - (inv.amountDue ?? 0) | currency }}</span>
+                  <span>{{ (inv.total?.amount ?? 0) - (inv.amountDue ?? 0) | currencyFormat }}</span>
                 </ui-stack>
               }
               <ui-stack direction="row" justify="between" class="mt-2 border-t py-1 pt-2 text-lg font-bold">
                 <span>Amount Due:</span>
-                <span>{{ inv.amountDue | currency }}</span>
+                <span>{{ inv.amountDue | currencyFormat }}</span>
               </ui-stack>
             </div>
           </div>
@@ -125,7 +125,7 @@
                 [max]="inv.amountDue ?? 0"
                 class="w-full"
               />
-              <ui-typography variant="body-sm" color="muted" class="mt-1">Maximum: {{ inv.amountDue | currency }}</ui-typography>
+              <ui-typography variant="body-sm" color="muted" class="mt-1">Maximum: {{ inv.amountDue | currencyFormat }}</ui-typography>
             </div>
 
             <p-divider />

@@ -23,7 +23,7 @@
       <ui-stat-card
         icon="pi-file-export"
         label="Total Invoiced"
-        [value]="(data()?.totalInvoiced || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        [value]="(data()?.totalInvoiced || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
         color="blue"
         trend="+15.3% vs last period"
         trendDirection="up"
@@ -34,7 +34,7 @@
       <ui-stat-card
         icon="pi-check-circle"
         label="Total Paid"
-        [value]="(data()?.totalPaid || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        [value]="(data()?.totalPaid || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
         color="green"
         trend="+12.7% vs last period"
         trendDirection="up"
@@ -45,7 +45,7 @@
       <ui-stat-card
         icon="pi-clock"
         label="Outstanding"
-        [value]="(data()?.totalDue || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        [value]="(data()?.totalDue || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
         color="orange"
         [trend]="(data()?.overdueInvoices || 0) + ' overdue'"
       />
@@ -80,7 +80,7 @@
                   />
                 </ui-stack>
                 <ui-typography variant="h5" class="mb-0">
-                  {{ metric.value | currency: "USD" : "symbol" : "1.0-0" }}
+                  {{ metric.value | currencyFormat: "USD" : "symbol" : "1.0-0" }}
                 </ui-typography>
               </div>
               <div class="shrink-0">
@@ -149,8 +149,8 @@
           <ng-template #body let-trend>
             <tr>
               <td>{{ trend.period }}</td>
-              <td>{{ trend.invoiced | currency: "USD" : "symbol" : "1.0-0" }}</td>
-              <td>{{ trend.paid | currency: "USD" : "symbol" : "1.0-0" }}</td>
+              <td>{{ trend.invoiced | currencyFormat: "USD" : "symbol" : "1.0-0" }}</td>
+              <td>{{ trend.paid | currencyFormat: "USD" : "symbol" : "1.0-0" }}</td>
               <td>
                 <span class="font-medium" [class]="getCollectionRateClass(trend.collectionRate)">
                   {{ trend.collectionRate | number: "1.1-1" }}%
@@ -183,8 +183,8 @@
                   <span class="font-medium">{{ customer.customerName }}</span>
                 </ui-stack>
               </td>
-              <td>{{ customer.totalInvoiced | currency: "USD" : "symbol" : "1.0-0" }}</td>
-              <td>{{ customer.totalPaid | currency: "USD" : "symbol" : "1.0-0" }}</td>
+              <td>{{ customer.totalInvoiced | currencyFormat: "USD" : "symbol" : "1.0-0" }}</td>
+              <td>{{ customer.totalPaid | currencyFormat: "USD" : "symbol" : "1.0-0" }}</td>
               <td>
                 <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{
                   customer.invoiceCount

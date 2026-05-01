@@ -35,7 +35,7 @@
         </td>
         <td>
           <span class="font-medium">{{
-            invoice.total?.amount | currency: invoice.total?.currency || "USD"
+            invoice.total?.amount | currencyFormat: invoice.total?.currency || "USD"
           }}</span>
         </td>
         <td>

@@ -82,14 +82,14 @@
                   @if (selectedEmployee()!.salaryType === "share_of_gross") {
                     {{ selectedEmployee()!.salary | percent }}
                   } @else {
-                    {{ selectedEmployee()!.salary | currency }}
+                    {{ selectedEmployee()!.salary | currencyFormat }}
                   }
                 </p>
               </ui-grid>
               <ui-grid [size]="12">
                 <ui-typography variant="caption" color="muted">Expected Invoice Total</ui-typography>
                 <p class="text-success text-xl font-bold">
-                  {{ previewPayrollInvoice()!.total?.amount | currency }}
+                  {{ previewPayrollInvoice()!.total?.amount | currencyFormat }}
                 </p>
               </ui-grid>
             </ui-grid>
@@ -140,7 +140,7 @@
             </ui-typography>
             <div class="text-right">
               <ui-typography variant="caption" color="muted">Total Amount</ui-typography>
-              <p class="text-success text-xl font-bold">{{ getBulkTotalAmount() | currency }}</p>
+              <p class="text-success text-xl font-bold">{{ getBulkTotalAmount() | currencyFormat }}</p>
             </div>
           </ui-stack>
 
@@ -169,7 +169,7 @@
                   } @else if (item.error) {
                     <span class="text-danger">Error</span>
                   } @else {
-                    {{ item.preview?.total?.amount | currency }}
+                    {{ item.preview?.total?.amount | currencyFormat }}
                   }
                 </td>
                 <td class="text-center">

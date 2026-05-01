@@ -1,8 +1,13 @@
 import { CommonModule } from "@angular/common";
-import { Component, type OnInit, inject, input, signal } from "@angular/core";
+import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { Api, downloadExpenseReceipt, getExpenseById } from "@logistics/shared/api";
-import type { ExpenseDto } from "@logistics/shared/api";
+import { CurrencyFormatPipe } from "@logistics/shared";
+import {
+  Api,
+  downloadExpenseReceipt,
+  getExpenseById,
+  type ExpenseDto,
+} from "@logistics/shared/api";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -28,6 +33,7 @@ import { ExpenseActionsService } from "../services/expense-actions.service";
     ExpenseStatusTag,
     ExpenseTypeTag,
     RejectExpenseDialog,
+    CurrencyFormatPipe,
   ],
 })
 export class ExpenseDetailPage implements OnInit {

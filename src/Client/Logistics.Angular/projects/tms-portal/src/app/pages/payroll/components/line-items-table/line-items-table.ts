@@ -1,4 +1,4 @@
-import { CommonModule, CurrencyPipe } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { Component, inject, input, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import {
@@ -11,6 +11,7 @@ import {
   type InvoiceLineItemType,
 } from "@logistics/shared/api";
 import { payrollLineItemTypeOptions } from "@logistics/shared/api/enums";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -45,7 +46,7 @@ interface LineItemForm {
     TextareaModule,
     TooltipModule,
     FormField,
-    CurrencyPipe,
+    CurrencyFormatPipe,
   ],
 })
 export class PayrollLineItemsTable {

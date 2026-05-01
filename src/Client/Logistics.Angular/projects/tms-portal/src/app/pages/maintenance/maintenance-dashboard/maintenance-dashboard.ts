@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe, DecimalPipe } from "@angular/common";
+import { DatePipe, DecimalPipe } from "@angular/common";
 import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import {
@@ -9,6 +9,7 @@ import {
   type MaintenanceScheduleDto,
 } from "@logistics/shared/api";
 import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
@@ -26,7 +27,7 @@ import { DashboardCard, PageHeader, StatCard } from "@/shared/components";
     TableModule,
     TagModule,
     DatePipe,
-    CurrencyPipe,
+    CurrencyFormatPipe,
     DecimalPipe,
     PageHeader,
     StatCard,

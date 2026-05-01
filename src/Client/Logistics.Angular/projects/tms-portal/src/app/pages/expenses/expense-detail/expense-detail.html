@@ -64,7 +64,7 @@
           <div class="flex items-center justify-between">
             <span class="text-muted">Amount</span>
             <span class="text-success text-xl font-bold">
-              {{ expense()!.amount?.amount ?? 0 | currency: expense()!.amount?.currency ?? "USD" }}
+              {{ expense()!.amount?.amount ?? 0 | currencyFormat: expense()!.amount?.currency ?? "USD" }}
             </span>
           </div>
 

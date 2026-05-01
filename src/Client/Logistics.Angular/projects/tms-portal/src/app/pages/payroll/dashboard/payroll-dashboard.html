@@ -19,7 +19,7 @@
             <ui-typography variant="caption" color="muted">Draft</ui-typography>
             <ui-typography variant="stat">{{ dashboard()?.draftCount ?? 0 }}</ui-typography>
             <ui-typography variant="body" color="muted">
-              {{ dashboard()?.draftAmount | currency }}
+              {{ dashboard()?.draftAmount | currencyFormat }}
             </ui-typography>
           </ui-stack>
         </ui-surface>
@@ -34,7 +34,7 @@
               {{ dashboard()?.pendingApprovalCount ?? 0 }}
             </ui-typography>
             <ui-typography variant="body" class="text-yellow-600">
-              {{ dashboard()?.pendingApprovalAmount | currency }}
+              {{ dashboard()?.pendingApprovalAmount | currencyFormat }}
             </ui-typography>
           </ui-stack>
         </ui-surface>
@@ -49,7 +49,7 @@
               {{ dashboard()?.approvedCount ?? 0 }}
             </ui-typography>
             <ui-typography variant="body" class="text-blue-600">
-              {{ dashboard()?.approvedAmount | currency }}
+              {{ dashboard()?.approvedAmount | currencyFormat }}
             </ui-typography>
           </ui-stack>
         </ui-surface>
@@ -64,7 +64,7 @@
               {{ dashboard()?.paidCount ?? 0 }}
             </ui-typography>
             <ui-typography variant="body" class="text-green-600">
-              {{ dashboard()?.paidAmount | currency }}
+              {{ dashboard()?.paidAmount | currencyFormat }}
             </ui-typography>
           </ui-stack>
         </ui-surface>
@@ -143,7 +143,7 @@
                   {{ invoice.periodStart | date: "shortDate" }} -
                   {{ invoice.periodEnd | date: "shortDate" }}
                 </td>
-                <td>{{ invoice.total?.amount | currency }}</td>
+                <td>{{ invoice.total?.amount | currencyFormat }}</td>
                 <td><app-invoice-status-tag [status]="invoice.status" /></td>
                 <td>{{ invoice.createdDate | date: "shortDate" }}</td>
                 <td>

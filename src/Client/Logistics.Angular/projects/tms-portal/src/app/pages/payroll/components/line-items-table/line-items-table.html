@@ -35,13 +35,13 @@
             {{ getTypeLabel(item.type) }}
           </span>
         </td>
-        <td class="text-right">{{ item.amount?.amount | currency }}</td>
+        <td class="text-right">{{ item.amount?.amount | currencyFormat }}</td>
         <td class="text-right">{{ item.quantity }}</td>
         <td class="text-right font-medium">
           @if (item.type === "deduction") {
-            <span class="text-red-600">-{{ item.total | currency }}</span>
+            <span class="text-red-600">-{{ item.total | currencyFormat }}</span>
           } @else {
-            {{ item.total | currency }}
+            {{ item.total | currencyFormat }}
           }
         </td>
         <td class="text-right">

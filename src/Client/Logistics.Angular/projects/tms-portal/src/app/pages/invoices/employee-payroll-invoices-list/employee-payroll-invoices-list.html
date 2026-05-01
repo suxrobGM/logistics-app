@@ -57,7 +57,7 @@
             @if (employee()!.salaryType === "share_of_gross") {
               {{ employee()!.salary | percent }}
             } @else {
-              {{ employee()!.salary | currency }}
+              {{ employee()!.salary | currencyFormat }}
             }
           </ui-grid>
         </ui-grid>
@@ -111,7 +111,7 @@
           <td>
             {{ invoice.periodStart | date: "MMM d" }} - {{ invoice.periodEnd | date: "mediumDate" }}
           </td>
-          <td>{{ invoice.total?.amount | currency }}</td>
+          <td>{{ invoice.total?.amount | currencyFormat }}</td>
           <td>
             @if (invoice.status) {
               <app-invoice-status-tag [status]="invoice.status" />

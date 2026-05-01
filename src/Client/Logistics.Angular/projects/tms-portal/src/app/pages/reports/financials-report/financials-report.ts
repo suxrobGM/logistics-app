@@ -1,4 +1,4 @@
-import { CurrencyPipe, DecimalPipe } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 import { Component, signal, type OnInit } from "@angular/core";
 import {
   getFinancialsReport,
@@ -7,6 +7,7 @@ import {
   type RevenueTrendDto,
 } from "@logistics/shared/api";
 import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
@@ -35,7 +36,7 @@ import {
     TableModule,
     ChartModule,
     DateRangePicker,
-    CurrencyPipe,
+    CurrencyFormatPipe,
     DecimalPipe,
     SkeletonModule,
     TagModule,

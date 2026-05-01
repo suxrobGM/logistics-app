@@ -90,8 +90,8 @@
                     <td class="py-2">{{ part.partName }}</td>
                     <td class="py-2">{{ part.partNumber ?? "-" }}</td>
                     <td class="py-2 text-right">{{ part.quantity }}</td>
-                    <td class="py-2 text-right">{{ part.unitCost | currency }}</td>
-                    <td class="py-2 text-right">{{ part.totalCost | currency }}</td>
+                    <td class="py-2 text-right">{{ part.unitCost | currencyFormat }}</td>
+                    <td class="py-2 text-right">{{ part.totalCost | currencyFormat }}</td>
                   </tr>
                 }
               </tbody>
@@ -122,16 +122,16 @@
           <ui-stack gap="3">
             <ui-stack direction="row" justify="between">
               <ui-typography color="muted">Labor Cost</ui-typography>
-              <span class="font-medium">{{ record()!.laborCost | currency }}</span>
+              <span class="font-medium">{{ record()!.laborCost | currencyFormat }}</span>
             </ui-stack>
             <ui-stack direction="row" justify="between">
               <ui-typography color="muted">Parts Cost</ui-typography>
-              <span class="font-medium">{{ record()!.partsCost | currency }}</span>
+              <span class="font-medium">{{ record()!.partsCost | currencyFormat }}</span>
             </ui-stack>
             <div class="border-t pt-3">
               <ui-stack direction="row" justify="between">
                 <span class="font-semibold">Total Cost</span>
-                <span class="text-primary text-lg font-bold">{{ record()!.totalCost | currency }}</span>
+                <span class="text-primary text-lg font-bold">{{ record()!.totalCost | currencyFormat }}</span>
               </ui-stack>
             </div>
           </ui-stack>

@@ -33,7 +33,7 @@
       <ui-stat-card
         icon="pi-dollar"
         label="Total Revenue"
-        [value]="(data()?.totalRevenue || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        [value]="(data()?.totalRevenue || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
         color="green"
       />
     </ui-grid>
@@ -146,7 +146,7 @@
                 <ui-status-badge [status]="item.status" kind="load" />
               </td>
               <td>{{ item.count | number }}</td>
-              <td>{{ item.totalRevenue | currency: "USD" : "symbol" : "1.0-0" }}</td>
+              <td>{{ item.totalRevenue | currencyFormat: "USD" : "symbol" : "1.0-0" }}</td>
               <td>{{ (item.count / (data()?.totalLoads ?? 1)) * 100 | number: "1.1-1" }}%</td>
             </tr>
           </ng-template>
@@ -169,7 +169,7 @@
             <tr>
               <td>{{ customer.customerName }}</td>
               <td>{{ customer.loadCount | number }}</td>
-              <td>{{ customer.totalRevenue | currency: "USD" : "symbol" : "1.0-0" }}</td>
+              <td>{{ customer.totalRevenue | currencyFormat: "USD" : "symbol" : "1.0-0" }}</td>
               <td>{{ customer.averageDistance | number: "1.0-0" }} {{ distanceUnitLabel }}</td>
             </tr>
           </ng-template>

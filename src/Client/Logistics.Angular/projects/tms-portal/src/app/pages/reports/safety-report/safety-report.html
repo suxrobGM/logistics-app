@@ -43,7 +43,7 @@
       <ui-stat-card
         icon="pi-dollar"
         label="Estimated Damage"
-        [value]="(data()?.estimatedDamageCost || 0 | currency: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        [value]="(data()?.estimatedDamageCost || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
         color="orange"
         [trend]="(data()?.injuriesReported || 0) + ' injuries'"
       />

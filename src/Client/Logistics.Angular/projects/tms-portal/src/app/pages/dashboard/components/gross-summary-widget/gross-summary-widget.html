@@ -24,7 +24,7 @@
         <div>
           <div class="text-xs font-medium uppercase tracking-wide text-muted">This Week</div>
           <div class="mt-1 font-mono text-xl font-bold text-primary">
-            {{ thisWeekGross() | currency }}
+            {{ thisWeekGross() | currencyFormat }}
           </div>
         </div>
         @if (weekOverWeekChange(); as change) {
@@ -41,7 +41,7 @@
       <!-- Last Week -->
       <div class="flex items-center justify-between rounded-lg bg-slate-50 p-3 dark:bg-slate-800/50">
         <div class="text-sm text-muted">Last Week</div>
-        <div class="font-mono font-semibold text-primary">{{ lastWeekGross() | currency }}</div>
+        <div class="font-mono font-semibold text-primary">{{ lastWeekGross() | currencyFormat }}</div>
       </div>
 
       <!-- This Month -->
@@ -49,7 +49,7 @@
         <div>
           <div class="text-xs font-medium uppercase tracking-wide text-muted">This Month</div>
           <div class="mt-1 font-mono text-xl font-bold text-primary">
-            {{ thisMonthGross() | currency }}
+            {{ thisMonthGross() | currencyFormat }}
           </div>
         </div>
         @if (monthOverMonthChange(); as change) {
@@ -66,7 +66,7 @@
       <!-- Last Month -->
       <div class="flex items-center justify-between rounded-lg bg-slate-50 p-3 dark:bg-slate-800/50">
         <div class="text-sm text-muted">Last Month</div>
-        <div class="font-mono font-semibold text-primary">{{ lastMonthGross() | currency }}</div>
+        <div class="font-mono font-semibold text-primary">{{ lastMonthGross() | currencyFormat }}</div>
       </div>
 
       <!-- Last 3 Months -->
@@ -74,7 +74,7 @@
         <div>
           <div class="text-xs font-medium uppercase tracking-wide text-muted">Last 3 Months</div>
           <div class="mt-1 font-mono text-lg font-semibold text-primary">
-            {{ lastThreeMonthsGross() | currency }}
+            {{ lastThreeMonthsGross() | currencyFormat }}
           </div>
         </div>
       </div>
@@ -82,14 +82,14 @@
       <!-- Last Year -->
       <div class="flex items-center justify-between rounded-lg bg-slate-50 p-3 dark:bg-slate-800/50">
         <div class="text-sm text-muted">Last 12 Months</div>
-        <div class="font-mono font-semibold text-primary">{{ lastYearGross() | currency }}</div>
+        <div class="font-mono font-semibold text-primary">{{ lastYearGross() | currencyFormat }}</div>
       </div>
 
       <!-- Total / YTD -->
       <div class="mt-2 border-t border-subtle pt-4">
         <div class="flex items-center justify-between">
           <div class="text-sm font-medium text-muted">All Time Total</div>
-          <div class="font-mono text-lg font-bold text-emerald-600">{{ totalGross() | currency }}</div>
+          <div class="font-mono text-lg font-bold text-emerald-600">{{ totalGross() | currencyFormat }}</div>
         </div>
       </div>
     </div>

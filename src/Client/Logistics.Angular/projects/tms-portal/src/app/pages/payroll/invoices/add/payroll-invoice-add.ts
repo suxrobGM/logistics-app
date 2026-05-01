@@ -22,6 +22,7 @@ import {
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { DateRangePicker, Grid, Stack, Surface, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { PredefinedDateRanges } from "@logistics/shared/utils";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
@@ -72,6 +73,7 @@ interface BulkPreview {
     Stack,
     Surface,
     Typography,
+    CurrencyFormatPipe,
   ],
 })
 export class PayrollInvoiceAdd {

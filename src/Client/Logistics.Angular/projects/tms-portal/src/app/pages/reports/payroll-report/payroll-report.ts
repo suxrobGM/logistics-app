@@ -1,4 +1,4 @@
-import { CurrencyPipe, PercentPipe } from "@angular/common";
+import { PercentPipe } from "@angular/common";
 import { Component, computed, signal, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import {
@@ -9,6 +9,7 @@ import {
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { Grid, Stack, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
@@ -50,7 +51,7 @@ const STATUS_COLORS = {
     TableModule,
     ChartModule,
     DateRangePicker,
-    CurrencyPipe,
+    CurrencyFormatPipe,
     PercentPipe,
     SkeletonModule,
     TagModule,

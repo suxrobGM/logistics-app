@@ -101,7 +101,7 @@
           }
         </td>
         <td class="text-right font-medium">{{ row.distance | distanceUnit: "mi" }}</td>
-        <td class="text-right font-medium">{{ row.deliveryCost | currency }}</td>
+        <td class="text-right font-medium">{{ row.deliveryCost | currencyFormat }}</td>
         <td>
           <ui-stack direction="row" justify="end" gap="1">
             @if (row.kind === "existing") {
@@ -158,7 +158,7 @@
         <td class="text-right font-bold">
           {{ store["totalDistanceFromLoads"]() | distanceUnit: "mi" }}
         </td>
-        <td class="text-right font-bold">{{ store["totalCostFromLoads"]() | currency }}</td>
+        <td class="text-right font-bold">{{ store["totalCostFromLoads"]() | currencyFormat }}</td>
         <td></td>
       </tr>
     </ng-template>

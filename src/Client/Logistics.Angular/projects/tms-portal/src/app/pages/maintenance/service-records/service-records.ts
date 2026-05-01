@@ -1,7 +1,8 @@
-import { CurrencyPipe, DatePipe, DecimalPipe } from "@angular/common";
+import { DatePipe, DecimalPipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import type { MaintenanceRecordDto, MaintenanceType } from "@logistics/shared/api";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -25,7 +26,7 @@ import { ServiceRecordsStore } from "../store";
     MenuModule,
     TagModule,
     DatePipe,
-    CurrencyPipe,
+    CurrencyFormatPipe,
     DecimalPipe,
     DataContainer,
     PageHeader,

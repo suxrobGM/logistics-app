@@ -114,7 +114,7 @@
           <ui-stack direction="row" align="center" justify="between" class="border-t pt-3">
             <ui-typography variant="body" color="muted">Estimated Damage</ui-typography>
             <span class="text-primary font-bold">{{
-              injuriesDamageForm().get("estimatedDamage")?.value | currency
+              injuriesDamageForm().get("estimatedDamage")?.value | currencyFormat
             }}</span>
           </ui-stack>
         }

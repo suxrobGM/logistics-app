@@ -16,6 +16,7 @@ import {
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { Grid, Stack, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -31,6 +32,7 @@ import { PayrollLineItemsTable, PayrollPaySummary } from "../../components";
   selector: "app-payroll-invoice-edit",
   templateUrl: "./payroll-invoice-edit.html",
   imports: [
+    CurrencyFormatPipe,
     CommonModule,
     CardModule,
     FormField,

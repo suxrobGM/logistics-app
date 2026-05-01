@@ -49,7 +49,7 @@
                 @if (invoice()!.employee?.salaryType === "share_of_gross") {
                   {{ invoice()!.employee?.salary | percent }}
                 } @else {
-                  {{ invoice()!.employee?.salary | currency }}
+                  {{ invoice()!.employee?.salary | currencyFormat }}
                 }
               </p>
               <p><strong>Issue Date:</strong> {{ invoice()!.createdDate | date: "mediumDate" }}</p>
@@ -78,8 +78,8 @@
                     }
                   </td>
                   <td class="text-right">{{ item.quantity ?? 1 }}</td>
-                  <td class="text-right">{{ item.amount?.amount | currency }}</td>
-                  <td class="text-right">{{ item.total | currency }}</td>
+                  <td class="text-right">{{ item.amount?.amount | currencyFormat }}</td>
+                  <td class="text-right">{{ item.total | currencyFormat }}</td>
                 </tr>
               </ng-template>
             </p-table>
@@ -92,7 +92,7 @@
             <div class="w-64">
               <div class="mt-2 flex justify-between border-t py-1 pt-2 text-lg font-bold">
                 <span>Total Earnings:</span>
-                <span>{{ invoice()!.total?.amount | currency }}</span>
+                <span>{{ invoice()!.total?.amount | currencyFormat }}</span>
               </div>
               @if (
                 getOutstandingAmount() > 0 &&
@@ -101,12 +101,12 @@
                 <div class="flex justify-between py-1 text-green-600">
                   <span>Paid:</span>
                   <span>{{
-                    (invoice()!.total?.amount ?? 0) - getOutstandingAmount() | currency
+                    (invoice()!.total?.amount ?? 0) - getOutstandingAmount() | currencyFormat
                   }}</span>
                 </div>
                 <div class="flex justify-between py-1 font-semibold text-red-600">
                   <span>Outstanding:</span>
-                  <span>{{ getOutstandingAmount() | currency }}</span>
+                  <span>{{ getOutstandingAmount() | currencyFormat }}</span>
                 </div>
               }
             </div>
@@ -236,7 +236,7 @@
                   class="rounded bg-gray-50 p-2"
                 >
                   <div>
-                    <p class="font-semibold">{{ payment.amount?.amount | currency }}</p>
+                    <p class="font-semibold">{{ payment.amount?.amount | currencyFormat }}</p>
                     <p class="text-muted-color text-sm">
                       {{ payment.createdDate | date: "short" }}
                     </p>

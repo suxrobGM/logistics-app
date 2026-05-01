@@ -14,6 +14,7 @@ import {
 } from "@logistics/shared/api";
 import { invoiceStatusOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
 import { Grid, Stack, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import type { SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -55,6 +56,7 @@ import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
     Grid,
     Stack,
     Typography,
+    CurrencyFormatPipe,
   ],
 })
 export class PayrollInvoicesList {

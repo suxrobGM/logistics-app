@@ -1,8 +1,7 @@
-import { CurrencyPipe } from "@angular/common";
 import { Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { LoadDto } from "@logistics/shared/api";
-import { AddressPipe } from "@logistics/shared/pipes";
+import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
@@ -16,7 +15,7 @@ import { LoadStatusTag, LoadTypeTag } from "@/shared/components";
     ButtonModule,
     TooltipModule,
     RouterLink,
-    CurrencyPipe,
+    CurrencyFormatPipe,
     AddressPipe,
     LoadStatusTag,
     LoadTypeTag,

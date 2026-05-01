@@ -1,11 +1,11 @@
-import { CurrencyPipe } from "@angular/common";
 import { Component, computed, input } from "@angular/core";
 import type { TripDto, TripStatus } from "@logistics/shared/api";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 
 @Component({
   selector: "app-trips-summary-stats",
   templateUrl: "./trips-summary-stats.html",
-  imports: [CurrencyPipe],
+  imports: [CurrencyFormatPipe],
 })
 export class TripsSummaryStats {
   readonly trips = input.required<TripDto[]>();

@@ -20,7 +20,7 @@
         <div>
           <div class="text-muted text-xs font-medium tracking-wide uppercase">Outstanding</div>
           <div class="text-primary mt-1 font-mono text-xl font-bold">
-            {{ outstandingInvoiceTotal() | currency }}
+            {{ outstandingInvoiceTotal() | currencyFormat }}
           </div>
         </div>
         <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/40">
@@ -35,7 +35,7 @@
             Received This Week
           </div>
           <div class="mt-1 font-mono text-xl font-bold text-emerald-600">
-            {{ paymentsReceivedThisWeek() | currency }}
+            {{ paymentsReceivedThisWeek() | currencyFormat }}
           </div>
         </div>
         <div class="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/40">

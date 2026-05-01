@@ -1,19 +1,25 @@
-import { CurrencyPipe } from "@angular/common";
 import { Component, computed, input } from "@angular/core";
 import type { LoadDto, LoadStatus } from "@logistics/shared/api";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { CardModule } from "primeng/card";
 
 @Component({
   selector: "app-loads-summary-stats",
   templateUrl: "./loads-summary-stats.html",
-  imports: [CardModule, CurrencyPipe],
+  imports: [CardModule, CurrencyFormatPipe],
 })
 export class LoadsSummaryStats {
   readonly loads = input.required<LoadDto[]>();
   readonly totalRecords = input.required<number>();
   readonly isLoading = input<boolean>(false);
 
-  protected readonly statuses: LoadStatus[] = ["draft", "dispatched", "picked_up", "delivered", "cancelled"];
+  protected readonly statuses: LoadStatus[] = [
+    "draft",
+    "dispatched",
+    "picked_up",
+    "delivered",
+    "cancelled",
+  ];
 
   protected readonly totalValue = computed(() => {
     return this.loads().reduce((sum, load) => sum + (load.deliveryCost ?? 0), 0);

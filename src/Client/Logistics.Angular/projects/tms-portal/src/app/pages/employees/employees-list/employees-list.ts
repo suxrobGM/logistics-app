@@ -1,10 +1,11 @@
-import { CurrencyPipe, DatePipe, PercentPipe } from "@angular/common";
+import { DatePipe, PercentPipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { Permission, PermissionGuard } from "@logistics/shared";
 import type { EmployeeDto, SalaryType } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { Stack } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -24,6 +25,7 @@ type SeverityType = "success" | "secondary" | "info" | "warn" | "danger" | "cont
   templateUrl: "./employees-list.html",
   providers: [EmployeesListStore],
   imports: [
+    CurrencyFormatPipe,
     ButtonModule,
     TooltipModule,
     RouterLink,
@@ -33,7 +35,6 @@ type SeverityType = "success" | "secondary" | "info" | "warn" | "danger" | "cont
     TagModule,
     DatePipe,
     PercentPipe,
-    CurrencyPipe,
     DataContainer,
     PageHeader,
     SearchInput,

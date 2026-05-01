@@ -37,7 +37,7 @@
     <p-card class="text-center">
       <div class="text-muted">Total Expenses</div>
       <div class="text-primary text-2xl font-bold">
-        {{ stats()!.totalAmount | currency }}
+        {{ stats()!.totalAmount | currencyFormat }}
       </div>
       <div class="text-muted text-sm">{{ stats()!.totalCount }} expenses</div>
     </p-card>
@@ -45,7 +45,7 @@
     <p-card class="text-center">
       <div class="text-muted">Pending</div>
       <div class="text-warning text-2xl font-bold">
-        {{ stats()!.pendingAmount | currency }}
+        {{ stats()!.pendingAmount | currencyFormat }}
       </div>
       <div class="text-muted text-sm">{{ stats()!.pendingCount }} pending</div>
     </p-card>
@@ -53,7 +53,7 @@
     <p-card class="text-center">
       <div class="text-muted">Approved</div>
       <div class="text-success text-2xl font-bold">
-        {{ stats()!.approvedAmount | currency }}
+        {{ stats()!.approvedAmount | currencyFormat }}
       </div>
       <div class="text-muted text-sm">{{ stats()!.approvedCount }} approved</div>
     </p-card>
@@ -61,7 +61,7 @@
     <p-card class="text-center">
       <div class="text-muted">Paid</div>
       <div class="text-info text-2xl font-bold">
-        {{ stats()!.paidAmount | currency }}
+        {{ stats()!.paidAmount | currencyFormat }}
       </div>
       <div class="text-muted text-sm">{{ stats()!.paidCount }} paid</div>
     </p-card>
@@ -172,7 +172,7 @@
                 {{ truck.truckNumber }}
               </a>
             </td>
-            <td class="text-right font-medium">{{ truck.totalAmount | currency }}</td>
+            <td class="text-right font-medium">{{ truck.totalAmount | currencyFormat }}</td>
             <td class="text-right">{{ truck.expenseCount }}</td>
           </tr>
         </ng-template>

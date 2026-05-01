@@ -1,4 +1,4 @@
-import { CurrencyPipe, DecimalPipe } from "@angular/common";
+import { DecimalPipe } from "@angular/common";
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { LocalizationService } from "@logistics/shared";
 import {
@@ -9,6 +9,7 @@ import {
   type DriverTrendDto,
 } from "@logistics/shared/api";
 import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
@@ -35,7 +36,7 @@ import { getPerformanceLevel, getPerformanceSeverity } from "@/shared/utils";
   imports: [
     ChartModule,
     TableModule,
-    CurrencyPipe,
+    CurrencyFormatPipe,
     DateRangePicker,
     DecimalPipe,
     SkeletonModule,

@@ -41,7 +41,7 @@
           <span class="text-sm">{{ load.destinationAddress | address }}</span>
         </td>
         <td>
-          <span class="font-medium">{{ load.deliveryCost | currency }}</span>
+          <span class="font-medium">{{ load.deliveryCost | currencyFormat }}</span>
         </td>
         <td>
           @if (load.tripNumber) {

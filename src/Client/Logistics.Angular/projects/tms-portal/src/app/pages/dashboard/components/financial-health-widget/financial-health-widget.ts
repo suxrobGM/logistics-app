@@ -1,6 +1,6 @@
-import { CurrencyPipe } from "@angular/common";
 import { Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import { CurrencyFormatPipe } from "@logistics/shared";
 import { BadgeModule } from "primeng/badge";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -9,7 +9,7 @@ import { SkeletonModule } from "primeng/skeleton";
 @Component({
   selector: "app-financial-health-widget",
   templateUrl: "./financial-health-widget.html",
-  imports: [CardModule, BadgeModule, DividerModule, RouterLink, CurrencyPipe, SkeletonModule],
+  imports: [CardModule, BadgeModule, DividerModule, RouterLink, SkeletonModule, CurrencyFormatPipe],
 })
 export class FinancialHealthWidgetComponent {
   public readonly outstandingInvoiceTotal = input<number>(0);

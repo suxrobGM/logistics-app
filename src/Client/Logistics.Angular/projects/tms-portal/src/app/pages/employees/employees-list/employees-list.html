@@ -105,13 +105,13 @@
             @if (employee.salaryType === "share_of_gross") {
               {{ employee.salary | percent }}
             } @else if (employee.salaryType === "hourly") {
-              {{ employee.salary | currency }}/hr
+              {{ employee.salary | currencyFormat }}/hr
             } @else if (employee.salaryType === "rate_per_mile") {
-              {{ employee.salary | currency }}/mi
+              {{ employee.salary | currencyFormat }}/mi
             } @else if (employee.salaryType === "rate_per_kilometer") {
-              {{ employee.salary | currency }}/km
+              {{ employee.salary | currencyFormat }}/km
             } @else {
-              {{ employee.salary | currency }}
+              {{ employee.salary | currencyFormat }}
             }
           </td>
           <td>{{ employee.joinedDate | date: "mediumDate" }}</td>

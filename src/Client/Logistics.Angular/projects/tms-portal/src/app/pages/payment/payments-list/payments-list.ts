@@ -3,7 +3,7 @@ import { Component, inject } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { type PaymentMethodType } from "@logistics/shared/api";
 import { paymentMethodTypeOptions } from "@logistics/shared/api/enums";
-import { AddressPipe } from "@logistics/shared/pipes";
+import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
@@ -16,6 +16,7 @@ import { PaymentsListStore } from "../store/payments-list.store";
   templateUrl: "./payments-list.html",
   providers: [PaymentsListStore],
   imports: [
+    CurrencyFormatPipe,
     CommonModule,
     CardModule,
     TableModule,

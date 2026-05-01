@@ -64,7 +64,7 @@
                 @if (selectedEmployee()!.salaryType === "share_of_gross") {
                   {{ selectedEmployee()!.salary | percent }}
                 } @else {
-                  {{ selectedEmployee()!.salary | currency }}
+                  {{ selectedEmployee()!.salary | currencyFormat }}
                 }
               </p>
             </ui-grid>

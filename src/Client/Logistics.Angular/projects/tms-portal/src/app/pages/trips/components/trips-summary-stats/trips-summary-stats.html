@@ -19,7 +19,7 @@
       @if (isLoading()) {
         <span class="text-muted">...</span>
       } @else {
-        {{ totalRevenue() | currency }}
+        {{ totalRevenue() | currencyFormat }}
       }
     </div>
     <div class="text-muted text-xs">Sum of revenue on current page</div>
