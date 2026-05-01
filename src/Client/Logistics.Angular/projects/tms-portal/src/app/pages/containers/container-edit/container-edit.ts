@@ -163,7 +163,7 @@ export class ContainerEdit implements OnInit {
     try {
       await this.api.invoke(updateContainer, { id: this.id(), body: command });
       this.toastService.showSuccess("Container has been updated successfully");
-      this.router.navigateByUrl("/containers");
+      this.router.navigate(["/containers", this.id()]);
     } finally {
       this.isLoading.set(false);
     }

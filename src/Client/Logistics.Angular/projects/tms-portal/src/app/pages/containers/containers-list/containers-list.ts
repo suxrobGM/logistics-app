@@ -61,9 +61,15 @@ export class ContainersList {
     this.router.navigate(["/containers/add"]);
   }
 
-  protected editContainer(container: ContainerDto): void {
+  protected viewContainer(container: ContainerDto): void {
     if (container.id) {
       this.router.navigate(["/containers", container.id]);
+    }
+  }
+
+  protected editContainer(container: ContainerDto): void {
+    if (container.id) {
+      this.router.navigate(["/containers", container.id, "edit"]);
     }
   }
 

@@ -35,8 +35,8 @@ interface EquipmentOption {
 }
 
 @Component({
-  selector: "app-load-board-search",
-  templateUrl: "./load-board-search.html",
+  selector: "app-loadboard-search",
+  templateUrl: "./loadboard-search.html",
   imports: [
     ButtonModule,
     CardModule,

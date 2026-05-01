@@ -56,9 +56,15 @@ export class TerminalsList {
     this.router.navigate(["/terminals/add"]);
   }
 
-  protected editTerminal(terminal: TerminalDto): void {
+  protected viewTerminal(terminal: TerminalDto): void {
     if (terminal.id) {
       this.router.navigate(["/terminals", terminal.id]);
+    }
+  }
+
+  protected editTerminal(terminal: TerminalDto): void {
+    if (terminal.id) {
+      this.router.navigate(["/terminals", terminal.id, "edit"]);
     }
   }
 

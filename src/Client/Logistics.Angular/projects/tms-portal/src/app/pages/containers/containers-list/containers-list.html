@@ -61,7 +61,7 @@
         </tr>
       </ng-template>
       <ng-template #body let-container>
-        <tr class="cursor-pointer" (click)="editContainer(container)">
+        <tr class="cursor-pointer" (click)="viewContainer(container)">
           <td class="font-medium">{{ container.number || "-" }}</td>
           <td>{{ isoTypeLabel(container.isoType) }}</td>
           <td>

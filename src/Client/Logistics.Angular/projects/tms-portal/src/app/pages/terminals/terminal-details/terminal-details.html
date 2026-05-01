@@ -1,0 +1,140 @@
+@let t = terminal();
+
+<ui-page-header [title]="title()" backLink="/terminals" [showAddButton]="false">
+  @if (t) {
+    <ui-stack direction="row" gap="2">
+      <p-button
+        type="button"
+        icon="pi pi-pencil"
+        label="Edit"
+        [outlined]="true"
+        [routerLink]="['/terminals', id(), 'edit']"
+      />
+      <p-button
+        type="button"
+        icon="pi pi-trash"
+        label="Delete"
+        severity="danger"
+        [outlined]="true"
+        [loading]="isDeleting()"
+        (click)="onDelete()"
+      />
+    </ui-stack>
+  }
+</ui-page-header>
+
+<div class="mx-auto max-w-5xl">
+  @if (isLoading() && !t) {
+    <p-card>
+      <ui-stack align="center" justify="center" class="py-10">
+        <p-progress-spinner ariaLabel="Loading terminal" />
+      </ui-stack>
+    </p-card>
+  } @else if (!t) {
+    <p-card>
+      <ui-stack align="center" gap="3" class="py-10">
+        <ui-icon name="alert-circle" color="muted" />
+        <ui-typography variant="body" color="secondary">Terminal not found.</ui-typography>
+      </ui-stack>
+    </p-card>
+  } @else {
+    <p-card>
+      <ui-stack gap="4">
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="tag" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Identification</ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
+            <ui-grid container spacing="4">
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-typography variant="body-sm" color="secondary">Code</ui-typography>
+                <div class="font-mono font-medium">{{ t.code || "-" }}</div>
+              </ui-grid>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-typography variant="body-sm" color="secondary">Name</ui-typography>
+                <div class="font-medium">{{ t.name || "-" }}</div>
+              </ui-grid>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-typography variant="body-sm" color="secondary">Type</ui-typography>
+                <div>{{ typeLabel(t.type) || "-" }}</div>
+              </ui-grid>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-typography variant="body-sm" color="secondary">Country Code</ui-typography>
+                <div>{{ t.countryCode || "-" }}</div>
+              </ui-grid>
+            </ui-grid>
+          </ui-surface>
+        </ui-stack>
+
+        @if (t.address) {
+          <ui-stack tag="section" gap="3">
+            <ui-stack direction="row" gap="2" align="center">
+              <ui-icon name="map-pin" color="secondary" />
+              <ui-typography variant="overline" color="secondary">Address</ui-typography>
+            </ui-stack>
+            <ui-surface variant="elevated" [border]="true">
+              <ui-grid container spacing="4">
+                <ui-grid [size]="12">
+                  <ui-typography variant="body-sm" color="secondary">Address Line 1</ui-typography>
+                  <div>{{ t.address.line1 || "-" }}</div>
+                </ui-grid>
+                @if (t.address.line2) {
+                  <ui-grid [size]="12">
+                    <ui-typography variant="body-sm" color="secondary">
+                      Address Line 2
+                    </ui-typography>
+                    <div>{{ t.address.line2 }}</div>
+                  </ui-grid>
+                }
+                <ui-grid [size]="{ xs: 12, md: 4 }">
+                  <ui-typography variant="body-sm" color="secondary">City</ui-typography>
+                  <div>{{ t.address.city || "-" }}</div>
+                </ui-grid>
+                <ui-grid [size]="{ xs: 12, md: 4 }">
+                  <ui-typography variant="body-sm" color="secondary">State / Region</ui-typography>
+                  <div>{{ t.address.state || "-" }}</div>
+                </ui-grid>
+                <ui-grid [size]="{ xs: 12, md: 4 }">
+                  <ui-typography variant="body-sm" color="secondary">Postal Code</ui-typography>
+                  <div>{{ t.address.zipCode || "-" }}</div>
+                </ui-grid>
+                <ui-grid [size]="12">
+                  <ui-typography variant="body-sm" color="secondary">Country</ui-typography>
+                  <div>{{ t.address.country || "-" }}</div>
+                </ui-grid>
+              </ui-grid>
+            </ui-surface>
+          </ui-stack>
+        }
+
+        @if (t.notes) {
+          <ui-stack tag="section" gap="3">
+            <ui-stack direction="row" gap="2" align="center">
+              <ui-icon name="comment" color="secondary" />
+              <ui-typography variant="overline" color="secondary">Notes</ui-typography>
+            </ui-stack>
+            <ui-surface variant="elevated" [border]="true">
+              <p class="m-0 whitespace-pre-wrap">{{ t.notes }}</p>
+            </ui-surface>
+          </ui-stack>
+        }
+
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="clock" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Metadata</ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
+            <ui-grid container spacing="4">
+              <ui-grid [size]="12">
+                <ui-typography variant="body-sm" color="secondary">Created</ui-typography>
+                <div>{{ t.createdAt ? (t.createdAt | date: "medium") : "-" }}</div>
+              </ui-grid>
+            </ui-grid>
+          </ui-surface>
+        </ui-stack>
+      </ui-stack>
+    </p-card>
+  }
+</div>

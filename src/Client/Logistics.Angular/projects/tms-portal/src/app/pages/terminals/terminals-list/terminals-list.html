@@ -61,7 +61,7 @@
         </tr>
       </ng-template>
       <ng-template #body let-terminal>
-        <tr class="cursor-pointer" (click)="editTerminal(terminal)">
+        <tr class="cursor-pointer" (click)="viewTerminal(terminal)">
           <td class="font-mono font-medium">{{ terminal.code || "-" }}</td>
           <td>{{ terminal.name || "-" }}</td>
           <td>{{ terminal.countryCode || "-" }}</td>

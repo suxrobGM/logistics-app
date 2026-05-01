@@ -19,8 +19,8 @@ import { TooltipModule } from "primeng/tooltip";
 import { DashboardCard, PageHeader, StatCard } from "@/shared/components";
 
 @Component({
-  selector: "app-load-board-dashboard",
-  templateUrl: "./load-board-dashboard.html",
+  selector: "app-loadboard-dashboard",
+  templateUrl: "./loadboard-dashboard.html",
   imports: [
     ButtonModule,
     TooltipModule,

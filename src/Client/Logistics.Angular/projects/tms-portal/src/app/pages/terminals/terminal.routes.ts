@@ -2,6 +2,7 @@ import type { Routes } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
 import { TerminalAdd } from "./terminal-add/terminal-add";
+import { TerminalDetails } from "./terminal-details/terminal-details";
 import { TerminalEdit } from "./terminal-edit/terminal-edit";
 import { TerminalsList } from "./terminals-list/terminals-list";
 
@@ -25,8 +26,17 @@ export const terminalRoutes: Routes = [
     },
   },
   {
-    path: ":id",
+    path: ":id/edit",
     component: TerminalEdit,
+    canActivate: [authGuard],
+    data: {
+      breadcrumb: "Edit",
+      permission: Permission.Terminal.Manage,
+    },
+  },
+  {
+    path: ":id",
+    component: TerminalDetails,
     canActivate: [authGuard],
     data: {
       breadcrumb: "Details",

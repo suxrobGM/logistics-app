@@ -46,7 +46,7 @@ export class TerminalEdit implements OnInit {
     try {
       await this.api.invoke(updateTerminal, { id: this.id(), body: command });
       this.toastService.showSuccess("Terminal has been updated successfully");
-      this.router.navigateByUrl("/terminals");
+      this.router.navigate(["/terminals", this.id()]);
     } finally {
       this.isLoading.set(false);
     }

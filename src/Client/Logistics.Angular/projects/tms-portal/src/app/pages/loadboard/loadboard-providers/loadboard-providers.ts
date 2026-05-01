@@ -31,8 +31,8 @@ interface ProviderOption {
 }
 
 @Component({
-  selector: "app-load-board-providers",
-  templateUrl: "./load-board-providers.html",
+  selector: "app-loadboard-providers",
+  templateUrl: "./loadboard-providers.html",
   imports: [
     ButtonModule,
     CardModule,

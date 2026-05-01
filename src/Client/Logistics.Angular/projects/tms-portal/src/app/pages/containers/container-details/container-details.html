@@ -1,0 +1,165 @@
+@let c = container();
+
+<ui-page-header [title]="title()" backLink="/containers" [showAddButton]="false">
+  @if (c) {
+    <ui-stack direction="row" gap="2">
+      <p-button
+        type="button"
+        icon="pi pi-pencil"
+        label="Edit"
+        [outlined]="true"
+        [routerLink]="['/containers', id(), 'edit']"
+      />
+      <p-button
+        type="button"
+        icon="pi pi-trash"
+        label="Delete"
+        severity="danger"
+        [outlined]="true"
+        [loading]="isDeleting()"
+        (click)="onDelete()"
+      />
+    </ui-stack>
+  }
+</ui-page-header>
+
+<div class="mx-auto max-w-5xl">
+  @if (isLoading() && !c) {
+    <p-card>
+      <ui-stack align="center" justify="center" class="py-10">
+        <p-progress-spinner ariaLabel="Loading container" />
+      </ui-stack>
+    </p-card>
+  } @else if (!c) {
+    <p-card>
+      <ui-stack align="center" gap="3" class="py-10">
+        <ui-icon name="alert-circle" color="muted" />
+        <ui-typography variant="body" color="secondary">Container not found.</ui-typography>
+      </ui-stack>
+    </p-card>
+  } @else {
+    <p-card>
+      <ui-stack
+        direction="row"
+        align="center"
+        gap="3"
+        wrap
+        class="border-default mb-4 border-b pb-4"
+      >
+        <ui-typography variant="body-sm" color="secondary">Status:</ui-typography>
+        <ui-status-badge [status]="c.status" kind="container" />
+        @if (c.currentTerminalCode) {
+          <ui-typography variant="body-sm" color="secondary">Terminal:</ui-typography>
+          <span class="font-medium">
+            {{ c.currentTerminalCode }} - {{ c.currentTerminalName }}
+          </span>
+        }
+        <ui-typography variant="body-sm" color="secondary" class="ml-auto">Laden:</ui-typography>
+        @if (c.isLaden) {
+          <ui-icon name="check" color="success" />
+        } @else {
+          <ui-icon name="minus" color="muted" />
+        }
+      </ui-stack>
+
+      <ui-stack gap="4">
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="tag" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Identification</ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
+            <ui-grid container spacing="4">
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-typography variant="body-sm" color="secondary">Container Number</ui-typography>
+                <div class="font-mono font-medium">{{ c.number || "-" }}</div>
+              </ui-grid>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-typography variant="body-sm" color="secondary">ISO Type</ui-typography>
+                <div class="font-medium">{{ isoTypeLabel(c.isoType) || "-" }}</div>
+              </ui-grid>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-typography variant="body-sm" color="secondary">Seal Number</ui-typography>
+                <div>{{ c.sealNumber || "-" }}</div>
+              </ui-grid>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-typography variant="body-sm" color="secondary">Booking Reference</ui-typography>
+                <div>{{ c.bookingReference || "-" }}</div>
+              </ui-grid>
+              <ui-grid [size]="12">
+                <ui-typography variant="body-sm" color="secondary">
+                  Bill of Lading Number
+                </ui-typography>
+                <div>{{ c.billOfLadingNumber || "-" }}</div>
+              </ui-grid>
+            </ui-grid>
+          </ui-surface>
+        </ui-stack>
+
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="box" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Cargo</ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
+            <ui-grid container spacing="4">
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-typography variant="body-sm" color="secondary">Gross Weight</ui-typography>
+                <div>{{ c.grossWeight ? c.grossWeight + " kg" : "-" }}</div>
+              </ui-grid>
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-typography variant="body-sm" color="secondary">Status Label</ui-typography>
+                <div>{{ statusLabel(c.status) || "-" }}</div>
+              </ui-grid>
+            </ui-grid>
+          </ui-surface>
+        </ui-stack>
+
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="clock" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Lifecycle</ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
+            <ui-grid container spacing="4">
+              <ui-grid [size]="{ xs: 12, md: 4 }">
+                <ui-typography variant="body-sm" color="secondary">Loaded At</ui-typography>
+                <div>
+                  {{ c.loadedAt ? (c.loadedAt | date: "medium") : "-" }}
+                </div>
+              </ui-grid>
+              <ui-grid [size]="{ xs: 12, md: 4 }">
+                <ui-typography variant="body-sm" color="secondary">Delivered At</ui-typography>
+                <div>
+                  {{ c.deliveredAt ? (c.deliveredAt | date: "medium") : "-" }}
+                </div>
+              </ui-grid>
+              <ui-grid [size]="{ xs: 12, md: 4 }">
+                <ui-typography variant="body-sm" color="secondary">Returned At</ui-typography>
+                <div>
+                  {{ c.returnedAt ? (c.returnedAt | date: "medium") : "-" }}
+                </div>
+              </ui-grid>
+              <ui-grid [size]="12">
+                <ui-typography variant="body-sm" color="secondary">Created</ui-typography>
+                <div>{{ c.createdAt ? (c.createdAt | date: "medium") : "-" }}</div>
+              </ui-grid>
+            </ui-grid>
+          </ui-surface>
+        </ui-stack>
+
+        @if (c.notes) {
+          <ui-stack tag="section" gap="3">
+            <ui-stack direction="row" gap="2" align="center">
+              <ui-icon name="comment" color="secondary" />
+              <ui-typography variant="overline" color="secondary">Notes</ui-typography>
+            </ui-stack>
+            <ui-surface variant="elevated" [border]="true">
+              <p class="m-0 whitespace-pre-wrap">{{ c.notes }}</p>
+            </ui-surface>
+          </ui-stack>
+        }
+      </ui-stack>
+    </p-card>
+  }
+</div>
