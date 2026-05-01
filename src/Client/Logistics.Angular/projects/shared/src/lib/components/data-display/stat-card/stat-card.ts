@@ -1,12 +1,29 @@
 import { Component, computed, input } from "@angular/core";
 import { CardModule } from "primeng/card";
+import { TooltipModule } from "primeng/tooltip";
+import { Icon } from "../../primitives/icon/icon";
+import { Stack } from "../../primitives/stack/stack";
+import { Typography } from "../../primitives/typography/typography";
 
 type ColorVariant = "blue" | "green" | "orange" | "red" | "purple" | "gray";
+
+const COLOR_VAR_MAP: Record<ColorVariant, string> = {
+  blue: "var(--info)",
+  green: "var(--success)",
+  orange: "var(--warning)",
+  red: "var(--danger)",
+  purple: "var(--status-pickedup)",
+  gray: "var(--text-muted)",
+};
 
 @Component({
   selector: "ui-stat-card",
   templateUrl: "./stat-card.html",
-  imports: [CardModule],
+  styleUrl: "./stat-card.css",
+  imports: [CardModule, TooltipModule, Icon, Stack, Typography],
+  host: {
+    "[style.--stat-card-icon-color]": "iconColorVar()",
+  },
 })
 export class StatCard {
   public readonly icon = input.required<string>();
@@ -15,48 +32,19 @@ export class StatCard {
   public readonly color = input<ColorVariant>("blue");
   public readonly trend = input<string | null>(null);
   public readonly trendDirection = input<"up" | "down" | null>(null);
+  public readonly tooltip = input<string | null>(null);
 
-  protected readonly iconClasses = computed(() => {
-    const colorMap: Record<ColorVariant, string> = {
-      blue: "text-blue-600 dark:text-blue-400",
-      green: "text-green-600 dark:text-green-400",
-      orange: "text-orange-600 dark:text-orange-400",
-      red: "text-red-600 dark:text-red-400",
-      purple: "text-purple-600 dark:text-purple-400",
-      gray: "text-gray-600 dark:text-gray-400",
-    };
-    return `pi ${this.icon()} text-2xl ${colorMap[this.color()]}`;
-  });
-
-  protected readonly bgClasses = computed(() => {
-    const colorMap: Record<ColorVariant, string> = {
-      blue: "bg-blue-600/10 dark:bg-blue-400/15",
-      green: "bg-green-600/10 dark:bg-green-400/15",
-      orange: "bg-orange-600/10 dark:bg-orange-400/15",
-      red: "bg-red-600/10 dark:bg-red-400/15",
-      purple: "bg-purple-600/10 dark:bg-purple-400/15",
-      gray: "bg-gray-600/10 dark:bg-gray-400/15",
-    };
-    return `flex h-14 w-14 shrink-0 items-center justify-center rounded-full ${colorMap[this.color()]}`;
-  });
+  protected readonly iconColorVar = computed(() => COLOR_VAR_MAP[this.color()]);
 
   protected readonly trendClasses = computed(() => {
-    if (this.trendDirection() === "up") {
-      return "text-green-600 dark:text-green-400";
-    }
-    if (this.trendDirection() === "down") {
-      return "text-red-600 dark:text-red-400";
-    }
-    return "text-gray-500 dark:text-gray-400";
+    if (this.trendDirection() === "up") return "text-success";
+    if (this.trendDirection() === "down") return "text-danger";
+    return "text-muted";
   });
 
   protected readonly trendIcon = computed(() => {
-    if (this.trendDirection() === "up") {
-      return "pi pi-arrow-up";
-    }
-    if (this.trendDirection() === "down") {
-      return "pi pi-arrow-down";
-    }
-    return "";
+    if (this.trendDirection() === "up") return "arrow-up";
+    if (this.trendDirection() === "down") return "arrow-down";
+    return null;
   });
 }

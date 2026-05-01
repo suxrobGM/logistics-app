@@ -1,7 +1,14 @@
-import { Component, computed, inject, signal, type OnInit } from "@angular/core";
+import { Component, computed, effect, inject, signal, type OnInit } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { Api, getLoads, type Address, type LoadDto } from "@logistics/shared/api";
-import { StatCard, StatusBadge } from "@logistics/shared/components";
+import {
+  Api,
+  getCompanyStats,
+  getLoads,
+  type Address,
+  type CompanyStatsDto,
+  type LoadDto,
+} from "@logistics/shared/api";
+import { Icon, Stack, StatCard, StatusBadge, Typography } from "@logistics/shared/components";
 import {
   AddressPipe,
   CurrencyFormatPipe,
@@ -20,12 +27,17 @@ import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "@/core/auth";
 import { DashboardSettingsService, type DashboardPanelConfig } from "@/core/services";
 import { TrucksMap } from "@/shared/components";
+import { Converters } from "@/shared/utils";
 import {
+  AttentionPanelComponent,
   DailyGrossChartComponent,
+  FinancialHealthWidgetComponent,
   LoadProgressBarComponent,
   RecentActivityComponent,
+  TopPerformersWidgetComponent,
   type DailyGrossChartData,
 } from "./components";
+import { HomeSkeleton } from "./home-skeleton/home-skeleton";
 
 @Component({
   selector: "app-home",
@@ -46,12 +58,19 @@ import {
     LoadProgressBarComponent,
     RecentActivityComponent,
     DailyGrossChartComponent,
+    AttentionPanelComponent,
+    FinancialHealthWidgetComponent,
+    TopPerformersWidgetComponent,
     DividerModule,
     MenuModule,
     StatCard,
     StatusBadge,
+    Icon,
+    Stack,
+    Typography,
     Gridster,
     GridsterItem,
+    HomeSkeleton,
   ],
   providers: [AddressPipe],
 })
@@ -59,20 +78,53 @@ export class Home implements OnInit {
   private readonly api = inject(Api);
   private readonly addressPipe = inject(AddressPipe);
   private readonly authService = inject(AuthService);
-  private readonly dashboardSettings = inject(DashboardSettingsService);
+  protected readonly dashboardSettings = inject(DashboardSettingsService);
 
   protected readonly todayGross = signal(0);
   protected readonly weeklyGross = signal(0);
   protected readonly weeklyDistance = signal(0);
   protected readonly weeklyRpm = signal(0);
   protected readonly isLoadingLoadsData = signal(false);
+  protected readonly isLoadingCompanyStats = signal(false);
+  protected readonly initialLoadComplete = signal(false);
+  protected readonly companyStats = signal<CompanyStatsDto | null>(null);
   protected readonly loads = signal<LoadDto[]>([]);
   protected readonly recentLoads = signal<LoadDto[]>([]);
   protected readonly lastUpdated = signal<Date>(new Date());
   protected readonly currentDate = new Date();
 
-  /** Dashboard panels from settings service */
-  protected readonly dashboardPanels = this.dashboardSettings.panels;
+  /** Visible panels filtered by role + feature. Template consumes this. */
+  protected readonly dashboardPanels = this.dashboardSettings.visiblePanels;
+
+  /** Owner-derived KPI computeds (only relevant when owner panels visible). */
+  protected readonly thisWeekGrossTrend = computed(() => {
+    const stats = this.companyStats();
+    if (!stats?.thisWeekGross || !stats?.lastWeekGross || stats.lastWeekGross === 0) return null;
+    const change = ((stats.thisWeekGross - stats.lastWeekGross) / stats.lastWeekGross) * 100;
+    return {
+      value: `${change >= 0 ? "+" : ""}${change.toFixed(1)}%`,
+      direction: change >= 0 ? ("up" as const) : ("down" as const),
+    };
+  });
+
+  protected readonly rpmTrend = computed(() => {
+    const stats = this.companyStats();
+    if (!stats) return null;
+    const thisWeekRpm = this.calcRpm(stats.thisWeekGross, stats.thisWeekDistance);
+    const lastWeekRpm = this.calcRpm(stats.lastWeekGross, stats.lastWeekDistance);
+    if (lastWeekRpm === 0) return null;
+    const change = ((thisWeekRpm - lastWeekRpm) / lastWeekRpm) * 100;
+    return {
+      value: `${change >= 0 ? "+" : ""}${change.toFixed(1)}%`,
+      direction: change >= 0 ? ("up" as const) : ("down" as const),
+    };
+  });
+
+  protected readonly thisWeekRpm = computed(() => {
+    const stats = this.companyStats();
+    if (!stats) return 0;
+    return this.calcRpm(stats.thisWeekGross, stats.thisWeekDistance);
+  });
 
   /** Gridster configuration */
   protected readonly gridsterOptions: GridsterConfig = {
@@ -119,6 +171,16 @@ export class Home implements OnInit {
     { label: "Messages", icon: "pi pi-envelope", routerLink: "/messages" },
   ];
 
+  constructor() {
+    // Re-fetch company stats whenever the visible panels start including an owner panel
+    // (e.g. once auth resolves and the user is detected as Owner).
+    effect(() => {
+      if (this.dashboardSettings.hasOwnerPanels()) {
+        this.fetchCompanyStats();
+      }
+    });
+  }
+
   ngOnInit(): void {
     this.refreshData();
   }
@@ -131,6 +193,9 @@ export class Home implements OnInit {
     this.lastUpdated.set(new Date());
     this.fetchActiveLoads();
     this.fetchRecentLoads();
+    if (this.dashboardSettings.hasOwnerPanels()) {
+      this.fetchCompanyStats();
+    }
   }
 
   protected resetLayout(): void {
@@ -144,9 +209,13 @@ export class Home implements OnInit {
     this.todayGross.set(data.todayGross);
   }
 
+  private calcRpm(gross?: number, distance?: number): number {
+    if (gross == null || distance == null || distance === 0) return 0;
+    return gross / Converters.metersTo(distance, "mi");
+  }
+
   private async fetchActiveLoads(): Promise<void> {
     this.isLoadingLoadsData.set(true);
-
     const result = await this.api.invoke(getLoads, {
       OrderBy: "-DispatchedAt",
       OnlyActiveLoads: true,
@@ -154,8 +223,8 @@ export class Home implements OnInit {
     if (result) {
       this.loads.set(result.items ?? []);
     }
-
     this.isLoadingLoadsData.set(false);
+    this.initialLoadComplete.set(true);
   }
 
   private async fetchRecentLoads(): Promise<void> {
@@ -166,5 +235,15 @@ export class Home implements OnInit {
     if (result) {
       this.recentLoads.set(result.items ?? []);
     }
+  }
+
+  private async fetchCompanyStats(): Promise<void> {
+    if (this.companyStats() !== null) return; // already fetched this session
+    this.isLoadingCompanyStats.set(true);
+    const result = await this.api.invoke(getCompanyStats, {});
+    if (result) {
+      this.companyStats.set(result);
+    }
+    this.isLoadingCompanyStats.set(false);
   }
 }

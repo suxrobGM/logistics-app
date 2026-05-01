@@ -43,7 +43,7 @@
       <ui-stat-card
         icon="pi-dollar"
         label="Estimated Damage"
-        [value]="(data()?.estimatedDamageCost || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        [value]="(data()?.estimatedDamageCost || 0 | currencyFormat) ?? '$0'"
         color="orange"
         [trend]="(data()?.injuriesReported || 0) + ' injuries'"
       />
@@ -107,7 +107,9 @@
           />
         } @else {
           <ui-stack align="center" justify="center" class="text-muted h-70">
-            <ui-typography variant="body" color="muted">No behavior event data available</ui-typography>
+            <ui-typography variant="body" color="muted"
+              >No behavior event data available</ui-typography
+            >
           </ui-stack>
         }
       </ui-dashboard-card>
@@ -164,12 +166,12 @@
                 </a>
               </td>
               <td class="text-right">
-                <span class="bg-amber-600/10 rounded px-2 py-1 text-sm text-amber-600">{{
+                <span class="rounded bg-amber-600/10 px-2 py-1 text-sm text-amber-600">{{
                   driver.behaviorEventCount
                 }}</span>
               </td>
               <td class="text-right">
-                <span class="bg-red-600/10 rounded px-2 py-1 text-sm text-red-600">{{
+                <span class="rounded bg-red-600/10 px-2 py-1 text-sm text-red-600">{{
                   driver.accidentCount
                 }}</span>
               </td>
@@ -212,12 +214,12 @@
                 </a>
               </td>
               <td class="text-right">
-                <span class="bg-blue-600/10 rounded px-2 py-1 text-sm text-blue-600">{{
+                <span class="rounded bg-blue-600/10 px-2 py-1 text-sm text-blue-600">{{
                   truck.defectCount
                 }}</span>
               </td>
               <td class="text-right">
-                <span class="bg-red-600/10 rounded px-2 py-1 text-sm text-red-600">{{
+                <span class="rounded bg-red-600/10 px-2 py-1 text-sm text-red-600">{{
                   truck.accidentCount
                 }}</span>
               </td>
@@ -239,12 +241,18 @@
       <ui-grid container spacing="4" class="p-4">
         <ui-grid [size]="{ xs: 12, md: 4 }">
           <ui-typography variant="caption" color="muted">DVIRs with Defects</ui-typography>
-          <ui-typography variant="h4" weight="semibold">{{ data()?.dvirsWithDefects || 0 }}</ui-typography>
+          <ui-typography variant="h4" weight="semibold">{{
+            data()?.dvirsWithDefects || 0
+          }}</ui-typography>
         </ui-grid>
         <ui-grid [size]="{ xs: 12, md: 4 }">
           <ui-typography variant="caption" color="muted">Defect Rate</ui-typography>
-          <ui-typography variant="h4" weight="semibold" [class]="getDefectRateClass(data()?.dvirDefectRate)">
-            {{ (data()?.dvirDefectRate || 0 | number: '1.1-1') }}%
+          <ui-typography
+            variant="h4"
+            weight="semibold"
+            [class]="getDefectRateClass(data()?.dvirDefectRate)"
+          >
+            {{ data()?.dvirDefectRate || 0 | number: "1.1-1" }}%
           </ui-typography>
         </ui-grid>
         <ui-grid [size]="{ xs: 12, md: 4 }">

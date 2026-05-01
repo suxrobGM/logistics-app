@@ -1,6 +1,5 @@
-import { Component, type OnInit, computed, inject, input, output, signal } from "@angular/core";
-import { Api, getMonthlyGrosses } from "@logistics/shared/api";
-import type { MonthlyGrossesDto } from "@logistics/shared/api";
+import { Component, computed, inject, input, output, signal, type OnInit } from "@angular/core";
+import { Api, getMonthlyGrosses, type MonthlyGrossesDto } from "@logistics/shared/api";
 import { CurrencyFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
 import { adjustColorBrightness } from "@logistics/shared/utils";
@@ -8,7 +7,9 @@ import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
+import { ThemeService } from "@/core/services";
 import { DateRangePicker } from "@/shared/components/other";
+import { getChartPalette } from "@/shared/constants/chart-palette";
 import { Converters, DateUtils } from "@/shared/utils";
 
 @Component({
@@ -27,6 +28,7 @@ import { Converters, DateUtils } from "@/shared/utils";
 export class GrossBarchart implements OnInit {
   private readonly api = inject(Api);
   private readonly localizationService = inject(LocalizationService, { optional: true });
+  private readonly themeService = inject(ThemeService);
 
   protected readonly isLoading = signal(false);
   protected readonly monthlyGrosses = signal<MonthlyGrossesDto | null>(null);
@@ -35,7 +37,7 @@ export class GrossBarchart implements OnInit {
   protected readonly chartData = signal<Record<string, unknown>>({ labels: [], datasets: [] });
 
   public readonly truckId = input<string>();
-  public readonly chartColor = input<string>("#06b6d4");
+  public readonly chartColor = input<string | null>(null);
   public readonly chartDrawn = output<BarChartDrawnEvent>();
 
   protected readonly totalGross = computed(() => this.monthlyGrosses()?.totalGross ?? 0);
@@ -50,6 +52,7 @@ export class GrossBarchart implements OnInit {
 
   protected readonly chartOptions = computed(() => {
     const currencySymbol = this.localizationService?.getCurrencySymbol() ?? "$";
+    const palette = getChartPalette(this.themeService.isDark());
     return {
       maintainAspectRatio: false,
       responsive: true,
@@ -58,7 +61,11 @@ export class GrossBarchart implements OnInit {
           display: false,
         },
         tooltip: {
-          backgroundColor: "rgba(15, 23, 42, 0.9)",
+          backgroundColor: palette.tooltipBg,
+          titleColor: palette.titleColor,
+          bodyColor: palette.textColor,
+          borderColor: palette.tooltipBorder,
+          borderWidth: 1,
           titleFont: { size: 13, weight: "600" },
           bodyFont: { size: 12 },
           padding: 12,
@@ -79,7 +86,7 @@ export class GrossBarchart implements OnInit {
           },
           ticks: {
             font: { size: 11 },
-            color: "#64748b",
+            color: palette.textColor,
           },
           border: {
             display: false,
@@ -88,11 +95,11 @@ export class GrossBarchart implements OnInit {
         y: {
           beginAtZero: true,
           grid: {
-            color: "rgba(148, 163, 184, 0.1)",
+            color: palette.gridColor,
           },
           ticks: {
             font: { size: 11 },
-            color: "#64748b",
+            color: palette.textColor,
             callback: (value: number) => `${currencySymbol}${(value / 1000).toFixed(0)}k`,
           },
           border: {
@@ -142,7 +149,10 @@ export class GrossBarchart implements OnInit {
       data.push(i.gross ?? 0);
     });
 
-    const color = this.chartColor();
+    const isDark = this.themeService.isDark();
+    const palette = getChartPalette(isDark);
+    const color = this.chartColor() ?? palette.primaryColor;
+
     this.chartData.set({
       labels,
       datasets: [

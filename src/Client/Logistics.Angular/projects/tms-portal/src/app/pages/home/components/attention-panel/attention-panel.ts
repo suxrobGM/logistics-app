@@ -1,5 +1,6 @@
 import { Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import { Icon, Stack, Typography } from "@logistics/shared/components";
 import { BadgeModule } from "primeng/badge";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -9,7 +10,17 @@ import { SkeletonModule } from "primeng/skeleton";
 @Component({
   selector: "app-attention-panel",
   templateUrl: "./attention-panel.html",
-  imports: [CardModule, BadgeModule, DividerModule, ButtonModule, RouterLink, SkeletonModule],
+  imports: [
+    CardModule,
+    BadgeModule,
+    DividerModule,
+    ButtonModule,
+    RouterLink,
+    SkeletonModule,
+    Icon,
+    Stack,
+    Typography,
+  ],
 })
 export class AttentionPanelComponent {
   public readonly unassignedLoadsCount = input<number>(0);

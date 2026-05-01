@@ -1,0 +1,7 @@
+<div class="home-skeleton-grid" [style.grid-auto-rows]="rowHeightPx()">
+  @for (panel of panels(); track panel.id) {
+    <div class="home-skeleton-cell" [style.grid-column]="panel.gridColumn" [style.grid-row]="panel.gridRow">
+      <p-skeleton width="100%" height="100%" styleClass="rounded-lg" />
+    </div>
+  }
+</div>

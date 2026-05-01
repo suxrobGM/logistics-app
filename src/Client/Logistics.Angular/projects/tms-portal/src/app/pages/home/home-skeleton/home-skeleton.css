@@ -1,0 +1,11 @@
+.home-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.home-skeleton-cell {
+  min-height: 0;
+  min-width: 0;
+}

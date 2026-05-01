@@ -1,16 +1,7 @@
 import type { Routes } from "@angular/router";
-import { Permission } from "@logistics/shared";
-import { authGuard } from "@/core/auth";
-import { DashboardComponent } from "./dashboard";
 
-export const dashboardRoutes: Routes = [
-  {
-    path: "",
-    component: DashboardComponent,
-    canActivate: [authGuard],
-    data: {
-      breadcrumb: "Main",
-      permission: Permission.Stat.View,
-    },
-  },
-];
+/**
+ * The /dashboard page was merged into /home (role-aware panel registry).
+ * This route preserves bookmarks/deep-links by redirecting to /home.
+ */
+export const dashboardRoutes: Routes = [{ path: "", redirectTo: "/home", pathMatch: "full" }];

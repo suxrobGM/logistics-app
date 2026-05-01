@@ -8,45 +8,6 @@
   text-align: start;
 }
 
-/* === PrimeNG Dark Mode Overrides === */
-/* Override PrimeNG component backgrounds for dark theme */
-.dark-theme {
-  /* Card */
-  --p-card-background: var(--bg-surface);
-  --p-card-color: var(--text-primary);
-
-  /* DataTable */
-  --p-datatable-header-cell-background: var(--bg-surface);
-  --p-datatable-header-cell-color: var(--text-primary);
-  --p-datatable-row-background: var(--bg-surface);
-  --p-datatable-row-color: var(--text-primary);
-  --p-datatable-body-cell-border-color: var(--border-subtle);
-
-  /* Form fields */
-  --p-inputtext-background: var(--bg-surface);
-  --p-inputtext-color: var(--text-primary);
-  --p-inputtext-border-color: var(--border-default);
-
-  /* Select/Dropdown */
-  --p-select-background: var(--bg-surface);
-  --p-select-color: var(--text-primary);
-  --p-select-border-color: var(--border-default);
-  --p-select-overlay-background: var(--bg-surface);
-
-  /* MultiSelect */
-  --p-multiselect-background: var(--bg-surface);
-  --p-multiselect-color: var(--text-primary);
-  --p-multiselect-border-color: var(--border-default);
-  --p-multiselect-overlay-background: var(--bg-surface);
-
-  /* Paginator */
-  --p-paginator-background: var(--bg-surface);
-
-  /* Panel/Accordion */
-  --p-panel-background: var(--bg-surface);
-  --p-accordion-header-background: var(--bg-surface);
-}
-
 /* === Custom Animations === */
 /* Staggered children animation (not provided by PrimeNG) */
 @keyframes stagger-fade-in {

@@ -15,13 +15,9 @@ export const appRoutes: Routes = [
     data: { breadcrumb: "Reports", feature: "reports" },
   },
   {
+    // /dashboard merged into /home (role-aware panel registry); kept as redirect for bookmarks.
     path: "dashboard",
     loadChildren: () => import("./pages/dashboard/dashboard.routes").then((m) => m.dashboardRoutes),
-    canActivate: [featureGuardFromData],
-    data: {
-      breadcrumb: "Dashboard",
-      feature: "dashboard",
-    },
   },
   {
     path: "employees",

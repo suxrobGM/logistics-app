@@ -1,0 +1,25 @@
+<div class="animate-fadein">
+  <ui-page-header
+    title="Revenue Overview"
+    subtitle="Period revenue summary and monthly trend"
+    [showAddButton]="false"
+  />
+
+  <ui-grid container spacing="4" class="mt-6">
+    <ui-grid [size]="{ xs: 12, lg: 6 }">
+      <app-gross-summary-widget
+        [thisWeekGross]="companyStats()?.thisWeekGross ?? 0"
+        [lastWeekGross]="companyStats()?.lastWeekGross ?? 0"
+        [thisMonthGross]="companyStats()?.thisMonthGross ?? 0"
+        [lastMonthGross]="companyStats()?.lastMonthGross ?? 0"
+        [lastThreeMonthsGross]="companyStats()?.lastThreeMonthsGross ?? 0"
+        [lastYearGross]="companyStats()?.lastYearGross ?? 0"
+        [totalGross]="companyStats()?.totalGross ?? 0"
+        [isLoading]="isLoading()"
+      />
+    </ui-grid>
+    <ui-grid [size]="{ xs: 12, lg: 6 }">
+      <app-gross-barchart />
+    </ui-grid>
+  </ui-grid>
+</div>

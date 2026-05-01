@@ -1,0 +1,66 @@
+<p-card class="h-full">
+  <ng-template #header>
+    <ui-stack direction="row" align="center" gap="2" class="py-3 pl-4">
+      <ui-icon name="exclamation-circle" size="xl" color="warning" />
+      <ui-typography variant="h4" tag="h4" color="primary">Needs Attention</ui-typography>
+    </ui-stack>
+    <p-divider class="m-0" />
+  </ng-template>
+
+  @if (isLoading()) {
+    <ui-stack gap="3">
+      <p-skeleton height="3rem" />
+      <p-skeleton height="3rem" />
+    </ui-stack>
+  } @else {
+    <ui-stack gap="3">
+      <!-- Unassigned Loads -->
+      <a
+        [routerLink]="['/loads']"
+        [queryParams]="{ status: 'draft', unassigned: true }"
+        class="bg-canvas hover:bg-hover flex items-center justify-between rounded-lg p-3 transition-colors"
+      >
+        <ui-stack direction="row" align="center" gap="3">
+          <div class="bg-warning/10 flex h-10 w-10 items-center justify-center rounded-full">
+            <ui-icon name="box" color="warning" />
+          </div>
+          <div>
+            <ui-typography variant="body" weight="medium" color="primary" tag="div">
+              Unassigned Loads
+            </ui-typography>
+            <ui-typography variant="body-sm" color="muted">Loads without a truck</ui-typography>
+          </div>
+        </ui-stack>
+        <p-badge
+          [value]="unassignedLoadsCount().toString()"
+          [severity]="unassignedLoadsCount() > 0 ? 'warn' : 'secondary'"
+        />
+      </a>
+
+      <!-- Idle Trucks -->
+      <a
+        [routerLink]="['/trucks']"
+        [queryParams]="{ status: 'idle' }"
+        class="bg-canvas hover:bg-hover flex items-center justify-between rounded-lg p-3 transition-colors"
+      >
+        <ui-stack direction="row" align="center" gap="3">
+          <div class="bg-info/10 flex h-10 w-10 items-center justify-center rounded-full">
+            <ui-icon name="truck" color="info" />
+          </div>
+          <div>
+            <ui-typography variant="body" weight="medium" color="primary" tag="div">
+              Idle Trucks
+            </ui-typography>
+            <ui-typography variant="body-sm" color="muted">
+              Trucks without active loads
+            </ui-typography>
+          </div>
+        </ui-stack>
+        <p-badge
+          [value]="idleTrucksCount().toString()"
+          [severity]="idleTrucksCount() > 5 ? 'warn' : 'secondary'"
+        />
+      </a>
+    </ui-stack>
+  }
+</p-card>

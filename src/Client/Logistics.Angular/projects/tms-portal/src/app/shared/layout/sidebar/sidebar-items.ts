@@ -12,13 +12,6 @@ export const sidebarSections: NavSection[] = [
         route: "/home",
       },
       {
-        id: "dashboard",
-        label: "Dashboard",
-        icon: "pi pi-chart-bar",
-        route: "/dashboard",
-        feature: "dashboard",
-      },
-      {
         id: "messages",
         label: "Messages",
         icon: "pi pi-comments",
@@ -294,6 +287,16 @@ export const sidebarSections: NavSection[] = [
             id: "reports-maintenance",
             label: "Maintenance Report",
             route: "/reports/maintenance",
+          },
+          {
+            id: "reports-revenue",
+            label: "Revenue Overview",
+            route: "/reports/revenue",
+          },
+          {
+            id: "reports-team",
+            label: "Team Overview",
+            route: "/reports/team",
           },
         ],
       },

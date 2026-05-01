@@ -1,4 +1,5 @@
-// Payroll chart configs
+// Payroll chart configs — sourced from `chart-palette.ts`
+import { getChartPalette } from "./chart-palette";
 
 export const PAYROLL_STATUS_LABELS = [
   "Draft",
@@ -8,6 +9,7 @@ export const PAYROLL_STATUS_LABELS = [
   "Partially Paid",
   "Paid",
 ];
+
 export const SALARY_TYPE_COLORS: Record<string, string> = {
   monthly: "#3b82f6", // blue
   weekly: "#8b5cf6", // violet
@@ -17,18 +19,8 @@ export const SALARY_TYPE_COLORS: Record<string, string> = {
   none: "#64748b", // slate
 };
 
-// Theme-aware chart colors helper
-export function getPayrollChartColors(isDark: boolean) {
-  return {
-    textColor: isDark ? "#94a3b8" : "#475569",
-    gridColor: isDark ? "rgba(45, 53, 72, 0.5)" : "rgba(203, 213, 225, 0.5)",
-    tooltipBg: isDark ? "#1a1f2e" : "#ffffff",
-    tooltipBorder: isDark ? "#3d4760" : "#e2e8f0",
-  };
-}
-
 export function getPayrollStatusChartOptions(isDark = true) {
-  const colors = getPayrollChartColors(isDark);
+  const p = getChartPalette(isDark);
   return {
     responsive: true,
     maintainAspectRatio: false,
@@ -38,14 +30,14 @@ export function getPayrollStatusChartOptions(isDark = true) {
         labels: {
           usePointStyle: true,
           boxWidth: 8,
-          color: colors.textColor,
+          color: p.textColor,
         },
       },
       tooltip: {
-        backgroundColor: colors.tooltipBg,
-        titleColor: isDark ? "#f1f5f9" : "#0f172a",
-        bodyColor: colors.textColor,
-        borderColor: colors.tooltipBorder,
+        backgroundColor: p.tooltipBg,
+        titleColor: p.titleColor,
+        bodyColor: p.textColor,
+        borderColor: p.tooltipBorder,
         borderWidth: 1,
         cornerRadius: 8,
         padding: 12,
@@ -59,20 +51,20 @@ export function getPayrollStatusChartOptions(isDark = true) {
 }
 
 export function getPayrollTrendChartOptions(isDark = true) {
-  const colors = getPayrollChartColors(isDark);
+  const p = getChartPalette(isDark);
   return {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "top" as const,
-        labels: { color: colors.textColor },
+        labels: { color: p.textColor },
       },
       tooltip: {
-        backgroundColor: colors.tooltipBg,
-        titleColor: isDark ? "#f1f5f9" : "#0f172a",
-        bodyColor: colors.textColor,
-        borderColor: colors.tooltipBorder,
+        backgroundColor: p.tooltipBg,
+        titleColor: p.titleColor,
+        bodyColor: p.textColor,
+        borderColor: p.tooltipBorder,
         borderWidth: 1,
         cornerRadius: 8,
         padding: 12,
@@ -86,21 +78,21 @@ export function getPayrollTrendChartOptions(isDark = true) {
         title: {
           display: true,
           text: "Amount ($)",
-          color: colors.textColor,
+          color: p.textColor,
         },
-        grid: { color: colors.gridColor },
-        ticks: { color: colors.textColor },
+        grid: { color: p.gridColor },
+        ticks: { color: p.textColor },
       },
       x: {
-        grid: { color: colors.gridColor },
-        ticks: { color: colors.textColor },
+        grid: { color: p.gridColor },
+        ticks: { color: p.textColor },
       },
     },
   };
 }
 
 export function getSalaryTypeChartOptions(isDark = true) {
-  const colors = getPayrollChartColors(isDark);
+  const p = getChartPalette(isDark);
   return {
     responsive: true,
     maintainAspectRatio: false,
@@ -108,10 +100,10 @@ export function getSalaryTypeChartOptions(isDark = true) {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: colors.tooltipBg,
-        titleColor: isDark ? "#f1f5f9" : "#0f172a",
-        bodyColor: colors.textColor,
-        borderColor: colors.tooltipBorder,
+        backgroundColor: p.tooltipBg,
+        titleColor: p.titleColor,
+        bodyColor: p.textColor,
+        borderColor: p.tooltipBorder,
         borderWidth: 1,
         cornerRadius: 8,
         padding: 12,
@@ -120,15 +112,15 @@ export function getSalaryTypeChartOptions(isDark = true) {
     scales: {
       y: {
         grid: { display: false },
-        ticks: { color: colors.textColor },
+        ticks: { color: p.textColor },
       },
       x: {
-        grid: { color: colors.gridColor },
-        ticks: { color: colors.textColor },
+        grid: { color: p.gridColor },
+        ticks: { color: p.textColor },
         title: {
           display: true,
           text: "Amount ($)",
-          color: colors.textColor,
+          color: p.textColor,
         },
       },
     },

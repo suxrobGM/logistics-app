@@ -1,8 +1,20 @@
-<div class="flex flex-col items-center justify-center py-12 text-center">
-  <i [class]="iconClass()" class="text-gray-400 mb-4 text-6xl"></i>
-  <h3 class="text-gray-900 dark:text-white mb-2">{{ title() }}</h3>
-  <p class="text-gray-600 dark:text-gray-400 mb-6 max-w-md">{{ message() }}</p>
+<ui-stack align="center" justify="center" gap="0" class="py-12 text-center">
+  @if (severity()) {
+    <div
+      class="mb-4 flex h-20 w-20 items-center justify-center rounded-full"
+      [class]="severityRingClass()"
+      [style]="severityIconStyle()"
+    >
+      <i [class]="piIconClass()" class="text-3xl" aria-hidden="true"></i>
+    </div>
+  } @else {
+    <i [class]="piIconClass()" class="text-muted mb-4 text-6xl" aria-hidden="true"></i>
+  }
+  <ui-typography variant="h3" color="primary" class="mb-2">{{ title() }}</ui-typography>
+  <ui-typography variant="body" color="secondary" class="mb-6 max-w-md">
+    {{ message() }}
+  </ui-typography>
   @if (actionLabel()) {
     <p-button [label]="actionLabel()!" [icon]="actionIcon()" (onClick)="onAction()" />
   }
-</div>
+</ui-stack>

@@ -33,7 +33,7 @@
       <ui-stat-card
         icon="pi-dollar"
         label="Total Earnings"
-        [value]="(data()?.totalEarnings || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        [value]="(data()?.totalEarnings || 0 | currencyFormat) ?? '$0'"
         color="green"
         trend="+12.5% vs last period"
         trendDirection="up"
@@ -151,7 +151,7 @@
               </ui-stack>
             </td>
             <td>{{ driver.loadsDelivered | number }}</td>
-            <td>{{ driver.earnings | currencyFormat: "USD" : "symbol" : "1.0-0" }}</td>
+            <td>{{ driver.earnings | currencyFormat }}</td>
             <td>{{ driver.distance | number: "1.0-0" }} {{ distanceUnitLabel }}</td>
             <td>{{ driver.efficiency | number: "1.1-1" }} loads/day</td>
             <td>

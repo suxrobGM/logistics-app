@@ -17,7 +17,9 @@ import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
+import { ThemeService } from "@/core/services";
 import { DateRangePicker } from "@/shared/components";
+import { getChartPalette } from "@/shared/constants/chart-palette";
 import { Converters, DateUtils } from "@/shared/utils";
 
 @Component({
@@ -36,6 +38,7 @@ import { Converters, DateUtils } from "@/shared/utils";
 export class TruckGrossLinechart implements OnInit {
   private readonly api = inject(Api);
   private readonly localizationService = inject(LocalizationService, { optional: true });
+  private readonly themeService = inject(ThemeService);
 
   protected readonly isLoading = signal(false);
   protected readonly dailyGrosses = signal<DailyGrossesDto | null>(null);
@@ -62,6 +65,7 @@ export class TruckGrossLinechart implements OnInit {
 
   protected readonly chartOptions = computed(() => {
     const currencySymbol = this.localizationService?.getCurrencySymbol() ?? "$";
+    const palette = getChartPalette(this.themeService.isDark());
     return {
       maintainAspectRatio: false,
       responsive: true,
@@ -74,7 +78,11 @@ export class TruckGrossLinechart implements OnInit {
           display: false,
         },
         tooltip: {
-          backgroundColor: "rgba(15, 23, 42, 0.9)",
+          backgroundColor: palette.tooltipBg,
+          titleColor: palette.titleColor,
+          bodyColor: palette.textColor,
+          borderColor: palette.tooltipBorder,
+          borderWidth: 1,
           titleFont: { size: 13, weight: "600" },
           bodyFont: { size: 12 },
           padding: 12,
@@ -95,7 +103,7 @@ export class TruckGrossLinechart implements OnInit {
           },
           ticks: {
             font: { size: 11 },
-            color: "#64748b",
+            color: palette.textColor,
             maxRotation: 45,
             minRotation: 0,
           },
@@ -106,11 +114,11 @@ export class TruckGrossLinechart implements OnInit {
         y: {
           beginAtZero: true,
           grid: {
-            color: "rgba(148, 163, 184, 0.1)",
+            color: palette.gridColor,
           },
           ticks: {
             font: { size: 11 },
-            color: "#64748b",
+            color: palette.textColor,
             callback: (value: number) => `${currencySymbol}${value.toLocaleString()}`,
           },
           border: {

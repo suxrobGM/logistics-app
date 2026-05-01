@@ -23,7 +23,7 @@
       <ui-stat-card
         icon="pi-money-bill"
         label="Total Payroll"
-        [value]="(data()?.totalPayroll || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        [value]="(data()?.totalPayroll || 0 | currencyFormat) ?? '$0'"
         color="blue"
       />
     </ui-grid>
@@ -32,7 +32,7 @@
       <ui-stat-card
         icon="pi-check-circle"
         label="Total Paid"
-        [value]="(data()?.totalPaid || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        [value]="(data()?.totalPaid || 0 | currencyFormat) ?? '$0'"
         color="green"
       />
     </ui-grid>
@@ -41,7 +41,7 @@
       <ui-stat-card
         icon="pi-clock"
         label="Outstanding"
-        [value]="(data()?.totalOutstanding || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        [value]="(data()?.totalOutstanding || 0 | currencyFormat) ?? '$0'"
         color="orange"
         [trend]="(data()?.totalPayrolls || 0) + ' payrolls'"
       />
@@ -53,10 +53,7 @@
         label="Employees"
         [value]="(data()?.uniqueEmployees || 0).toString()"
         color="blue"
-        [trend]="
-          'Avg: ' +
-          ((data()?.averagePayrollAmount || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0')
-        "
+        [trend]="'Avg: ' + ((data()?.averagePayrollAmount || 0 | currencyFormat) ?? '$0')"
       />
     </ui-grid>
   </ui-grid>
@@ -133,10 +130,10 @@
             <tr>
               <td>{{ trend.period }}</td>
               <td class="text-right">
-                {{ trend.totalAmount | currencyFormat: "USD" : "symbol" : "1.0-0" }}
+                {{ trend.totalAmount | currencyFormat }}
               </td>
               <td class="text-right">
-                {{ trend.paidAmount | currencyFormat: "USD" : "symbol" : "1.0-0" }}
+                {{ trend.paidAmount | currencyFormat }}
               </td>
               <td class="text-right">
                 <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{
@@ -185,10 +182,10 @@
                 </a>
               </td>
               <td class="text-right">
-                {{ employee.totalEarnings | currencyFormat: "USD" : "symbol" : "1.0-0" }}
+                {{ employee.totalEarnings | currencyFormat }}
               </td>
               <td class="text-right">
-                {{ employee.averageEarnings | currencyFormat: "USD" : "symbol" : "1.0-0" }}
+                {{ employee.averageEarnings | currencyFormat }}
               </td>
               <td class="text-right">
                 <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{
@@ -232,7 +229,7 @@
             </td>
             <td class="text-right">{{ item.employeeCount }}</td>
             <td class="text-right">
-              {{ item.totalAmount | currencyFormat: "USD" : "symbol" : "1.0-0" }}
+              {{ item.totalAmount | currencyFormat }}
             </td>
             <td class="text-right">
               <span class="rounded px-2 py-1 text-sm" [class]="getPercentageClass(item.percentage)">

@@ -1,0 +1,19 @@
+<div class="animate-fadein">
+  <ui-page-header
+    title="Team Overview"
+    subtitle="Headcount and fleet utilization at a glance"
+    [showAddButton]="false"
+  />
+
+  <div class="mt-6">
+    <app-team-overview-widget
+      [employeesCount]="companyStats()?.employeesCount ?? 0"
+      [driversCount]="companyStats()?.driversCount ?? 0"
+      [dispatchersCount]="companyStats()?.dispatchersCount ?? 0"
+      [managersCount]="companyStats()?.managersCount ?? 0"
+      [trucksCount]="companyStats()?.trucksCount ?? 0"
+      [idleTrucksCount]="companyStats()?.idleTrucksCount ?? 0"
+      [isLoading]="isLoading()"
+    />
+  </div>
+</div>

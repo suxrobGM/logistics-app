@@ -75,11 +75,32 @@ export const reportsRoutes: Routes = [
       {
         path: "maintenance",
         loadComponent: () =>
-          import("./maintenance-report/maintenance-report").then((m) => m.MaintenanceReportComponent),
+          import("./maintenance-report/maintenance-report").then(
+            (m) => m.MaintenanceReportComponent,
+          ),
         canActivate: [authGuard],
         data: {
           breadcrumb: "",
           permission: Permission.Truck.View,
+        },
+      },
+      {
+        path: "revenue",
+        loadComponent: () =>
+          import("./revenue-report/revenue-report").then((m) => m.RevenueReportComponent),
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: "Revenue",
+          permission: Permission.Stat.View,
+        },
+      },
+      {
+        path: "team",
+        loadComponent: () => import("./team-report/team-report").then((m) => m.TeamReportComponent),
+        canActivate: [authGuard],
+        data: {
+          breadcrumb: "Team",
+          permission: Permission.Stat.View,
         },
       },
       { path: "", redirectTo: "loads", pathMatch: "full" },

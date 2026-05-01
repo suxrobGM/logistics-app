@@ -1,5 +1,6 @@
 import { Component, computed, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import { Divider, Icon, Stack, Typography } from "@logistics/shared/components";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
@@ -7,7 +8,16 @@ import { SkeletonModule } from "primeng/skeleton";
 @Component({
   selector: "app-team-overview-widget",
   templateUrl: "./team-overview-widget.html",
-  imports: [CardModule, DividerModule, SkeletonModule, RouterLink],
+  imports: [
+    CardModule,
+    DividerModule,
+    SkeletonModule,
+    RouterLink,
+    Stack,
+    Typography,
+    Icon,
+    Divider,
+  ],
 })
 export class TeamOverviewWidgetComponent {
   public readonly employeesCount = input(0);

@@ -10,7 +10,32 @@ import Nora from "@primeuix/themes/nora";
  */
 export const TmsPreset = definePreset(Nora, {
   components: {
+    card: {
+      colorScheme: {
+        dark: {
+          root: {
+            background: "{surface.50}",
+            color: "{surface.950}",
+          },
+        },
+      },
+    },
     datatable: {
+      colorScheme: {
+        dark: {
+          headerCell: {
+            background: "{surface.50}",
+            color: "{surface.950}",
+          },
+          row: {
+            background: "{surface.50}",
+            color: "{surface.950}",
+          },
+          bodyCell: {
+            borderColor: "{surface.200}",
+          },
+        },
+      },
       css: () => `
         .p-datatable .p-datatable-thead > tr > th {
           text-transform: uppercase;
@@ -18,6 +43,72 @@ export const TmsPreset = definePreset(Nora, {
           letter-spacing: 0.05em;
         }
       `,
+    },
+    inputtext: {
+      colorScheme: {
+        dark: {
+          root: {
+            background: "{surface.50}",
+            color: "{surface.950}",
+            borderColor: "{surface.400}",
+          },
+        },
+      },
+    },
+    select: {
+      colorScheme: {
+        dark: {
+          root: {
+            background: "{surface.50}",
+            color: "{surface.950}",
+            borderColor: "{surface.400}",
+          },
+          overlay: {
+            background: "{surface.50}",
+          },
+        },
+      },
+    },
+    multiselect: {
+      colorScheme: {
+        dark: {
+          root: {
+            background: "{surface.50}",
+            color: "{surface.950}",
+            borderColor: "{surface.400}",
+          },
+          overlay: {
+            background: "{surface.50}",
+          },
+        },
+      },
+    },
+    paginator: {
+      colorScheme: {
+        dark: {
+          root: {
+            background: "{surface.50}",
+          },
+        },
+      },
+    },
+    panel: {
+      colorScheme: {
+        dark: {
+          root: {
+            background: "{surface.50}",
+          },
+        },
+      },
+    },
+    accordion: {
+      colorScheme: {
+        dark: {
+          header: {
+            background: "{surface.50}",
+          },
+        },
+      },
     },
     tag: {
       root: {

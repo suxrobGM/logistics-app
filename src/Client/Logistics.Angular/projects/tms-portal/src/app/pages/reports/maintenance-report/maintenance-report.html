@@ -23,7 +23,7 @@
       <ui-stat-card
         icon="pi-dollar"
         label="Total Cost"
-        [value]="(data()?.totalCost || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        [value]="(data()?.totalCost || 0 | currencyFormat) ?? '$0'"
         color="blue"
         [trend]="(data()?.totalServices || 0) + ' services'"
       />
@@ -33,7 +33,7 @@
       <ui-stat-card
         icon="pi-wrench"
         label="Labor Cost"
-        [value]="(data()?.laborCost || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        [value]="(data()?.laborCost || 0 | currencyFormat) ?? '$0'"
         color="green"
         [trend]="(data()?.scheduledServices || 0) + ' scheduled'"
       />
@@ -43,7 +43,7 @@
       <ui-stat-card
         icon="pi-box"
         label="Parts Cost"
-        [value]="(data()?.partsCost || 0 | currencyFormat: 'USD' : 'symbol' : '1.0-0') ?? '$0'"
+        [value]="(data()?.partsCost || 0 | currencyFormat) ?? '$0'"
         color="orange"
         [trend]="(data()?.unscheduledServices || 0) + ' unscheduled'"
       />
@@ -73,7 +73,9 @@
           />
         } @else {
           <ui-stack align="center" justify="center" class="text-muted h-75">
-            <ui-typography variant="body" color="muted">No service type data available</ui-typography>
+            <ui-typography variant="body" color="muted"
+              >No service type data available</ui-typography
+            >
           </ui-stack>
         }
       </ui-dashboard-card>
@@ -131,16 +133,20 @@
           <ng-template #body let-item>
             <tr>
               <td>
-                <span class="font-medium">{{ item.maintenanceTypeDisplay || item.maintenanceType }}</span>
+                <span class="font-medium">{{
+                  item.maintenanceTypeDisplay || item.maintenanceType
+                }}</span>
               </td>
               <td class="text-right">
-                <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{ item.count }}</span>
+                <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{
+                  item.count
+                }}</span>
               </td>
               <td class="text-right">
-                {{ item.totalCost | currencyFormat: "USD" : "symbol" : "1.0-0" }}
+                {{ item.totalCost | currencyFormat }}
               </td>
               <td class="text-right">
-                {{ item.averageCost | currencyFormat: "USD" : "symbol" : "1.0-0" }}
+                {{ item.averageCost | currencyFormat }}
               </td>
             </tr>
           </ng-template>
@@ -187,7 +193,7 @@
                 }}</span>
               </td>
               <td class="text-right">
-                {{ truck.totalCost | currencyFormat: "USD" : "symbol" : "1.0-0" }}
+                {{ truck.totalCost | currencyFormat }}
               </td>
               <td class="text-right">
                 @if (truck.lastServiceDate) {
@@ -230,7 +236,7 @@
               }}</span>
             </td>
             <td class="text-right">
-              {{ vendor.totalCost | currencyFormat: "USD" : "symbol" : "1.0-0" }}
+              {{ vendor.totalCost | currencyFormat }}
             </td>
           </tr>
         </ng-template>
@@ -249,11 +255,17 @@
       <ui-grid container spacing="4" class="p-4">
         <ui-grid [size]="{ xs: 12, md: 4 }">
           <ui-typography variant="caption" color="muted">Total Schedules</ui-typography>
-          <ui-typography variant="h4" weight="semibold">{{ data()?.totalSchedules || 0 }}</ui-typography>
+          <ui-typography variant="h4" weight="semibold">{{
+            data()?.totalSchedules || 0
+          }}</ui-typography>
         </ui-grid>
         <ui-grid [size]="{ xs: 12, md: 4 }">
           <ui-typography variant="caption" color="muted">Overdue</ui-typography>
-          <ui-typography variant="h4" weight="semibold" [class]="getOverdueClass(data()?.overdueCount)">
+          <ui-typography
+            variant="h4"
+            weight="semibold"
+            [class]="getOverdueClass(data()?.overdueCount)"
+          >
             {{ data()?.overdueCount || 0 }}
           </ui-typography>
         </ui-grid>

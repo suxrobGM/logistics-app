@@ -1,0 +1,104 @@
+<p-card class="h-full">
+  <ng-template #header>
+    <ui-stack direction="row" align="center" gap="2" class="py-3 pl-4">
+      <span class="text-accent">
+        <ui-icon name="dollar" size="lg" color="inherit" />
+      </span>
+      <ui-typography variant="h4" tag="h4" color="primary">Revenue Summary</ui-typography>
+    </ui-stack>
+    <p-divider class="m-0" />
+  </ng-template>
+
+  @if (isLoading()) {
+    <ui-stack gap="4">
+      <p-skeleton height="3rem" />
+      <p-skeleton height="3rem" />
+      <p-skeleton height="3rem" />
+      <p-skeleton height="3rem" />
+      <p-skeleton height="3rem" />
+      <p-skeleton height="3rem" />
+      <p-skeleton height="3rem" />
+    </ui-stack>
+  } @else {
+    <ui-stack gap="4">
+      <!-- This Week -->
+      <ui-stack direction="row" align="center" justify="between">
+        <div>
+          <ui-typography variant="overline" color="muted">This Week</ui-typography>
+          <ui-typography variant="h3" color="primary" tag="div" class="mt-1 font-mono">
+            {{ thisWeekGross() | currencyFormat }}
+          </ui-typography>
+        </div>
+        @if (weekOverWeekChange(); as change) {
+          <ui-badge
+            [value]="change.formatted"
+            [severity]="change.isPositive ? 'success' : 'danger'"
+            [icon]="change.isPositive ? 'arrow-up' : 'arrow-down'"
+          />
+        }
+      </ui-stack>
+
+      <!-- Last Week -->
+      <ui-stack direction="row" align="center" justify="between" class="bg-canvas rounded-lg p-3">
+        <ui-typography variant="body-sm" color="muted">Last Week</ui-typography>
+        <ui-typography variant="body-sm" color="primary" weight="semibold" class="font-mono">
+          {{ lastWeekGross() | currencyFormat }}
+        </ui-typography>
+      </ui-stack>
+
+      <!-- This Month -->
+      <ui-stack direction="row" align="center" justify="between">
+        <div>
+          <ui-typography variant="overline" color="muted">This Month</ui-typography>
+          <ui-typography variant="h3" color="primary" tag="div" class="mt-1 font-mono">
+            {{ thisMonthGross() | currencyFormat }}
+          </ui-typography>
+        </div>
+        @if (monthOverMonthChange(); as change) {
+          <ui-badge
+            [value]="change.formatted"
+            [severity]="change.isPositive ? 'success' : 'danger'"
+            [icon]="change.isPositive ? 'arrow-up' : 'arrow-down'"
+          />
+        }
+      </ui-stack>
+
+      <!-- Last Month -->
+      <ui-stack direction="row" align="center" justify="between" class="bg-canvas rounded-lg p-3">
+        <ui-typography variant="body-sm" color="muted">Last Month</ui-typography>
+        <ui-typography variant="body-sm" color="primary" weight="semibold" class="font-mono">
+          {{ lastMonthGross() | currencyFormat }}
+        </ui-typography>
+      </ui-stack>
+
+      <!-- Last 3 Months -->
+      <ui-stack direction="row" align="center" justify="between">
+        <div>
+          <ui-typography variant="overline" color="muted">Last 3 Months</ui-typography>
+          <ui-typography variant="h4" color="primary" tag="div" class="mt-1 font-mono">
+            {{ lastThreeMonthsGross() | currencyFormat }}
+          </ui-typography>
+        </div>
+      </ui-stack>
+
+      <!-- Last Year -->
+      <ui-stack direction="row" align="center" justify="between" class="bg-canvas rounded-lg p-3">
+        <ui-typography variant="body-sm" color="muted">Last 12 Months</ui-typography>
+        <ui-typography variant="body-sm" color="primary" weight="semibold" class="font-mono">
+          {{ lastYearGross() | currencyFormat }}
+        </ui-typography>
+      </ui-stack>
+
+      <!-- Total / YTD -->
+      <ui-divider />
+      <ui-stack direction="row" align="center" justify="between">
+        <ui-typography variant="body-sm" color="muted" weight="medium">
+          All Time Total
+        </ui-typography>
+        <span class="text-success font-mono text-lg font-bold">
+          {{ totalGross() | currencyFormat }}
+        </span>
+      </ui-stack>
+    </ui-stack>
+  }
+</p-card>

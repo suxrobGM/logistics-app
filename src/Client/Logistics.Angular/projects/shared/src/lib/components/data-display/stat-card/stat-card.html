@@ -1,19 +1,32 @@
 <p-card class="h-full border-0 shadow-sm">
-  <div class="flex items-center">
-    <div [class]="bgClasses()">
-      <i [class]="iconClasses()"></i>
+  <ui-stack direction="row" align="center" gap="4">
+    <div class="stat-icon-ring flex h-14 w-14 shrink-0 items-center justify-center rounded-full">
+      <ui-icon [name]="icon()" size="xl" color="inherit" />
     </div>
-    <div class="ml-4 grow">
-      <h6 class="mb-1 text-gray-500 dark:text-gray-400">{{ label() }}</h6>
-      <h4 class="mb-0 text-2xl">{{ value() }}</h4>
+    <div class="grow">
+      <ui-stack direction="row" align="center" gap="1" class="mb-1">
+        <ui-typography variant="h6" color="muted" tag="h6" class="m-0">{{ label() }}</ui-typography>
+        @if (tooltip()) {
+          <ui-icon
+            name="info-circle"
+            size="xs"
+            color="muted"
+            [pTooltip]="tooltip()!"
+            tooltipPosition="top"
+          />
+        }
+      </ui-stack>
+      <ui-typography variant="h3" color="primary" tag="div" class="m-0 font-mono">
+        {{ value() }}
+      </ui-typography>
       @if (trend()) {
         <small [class]="trendClasses()">
-          @if (trendIcon()) {
-            <i [class]="trendIcon()"></i>
+          @if (trendIcon(); as iconName) {
+            <ui-icon [name]="iconName" size="sm" color="inherit" />
           }
           {{ trend() }}
         </small>
       }
     </div>
-  </div>
+  </ui-stack>
 </p-card>

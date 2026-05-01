@@ -1,0 +1,25 @@
+:host {
+  display: block;
+  --stat-card-icon-color: var(--info);
+}
+
+:host ::ng-deep .p-card {
+  transition:
+    box-shadow var(--transition-base, 200ms ease),
+    transform var(--transition-base, 200ms ease);
+}
+
+:host:hover ::ng-deep .p-card {
+  box-shadow:
+    var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1)),
+    0 0 24px color-mix(in srgb, var(--stat-card-icon-color) 14%, transparent);
+}
+
+.stat-icon-ring {
+  background: radial-gradient(
+    circle at 30% 30%,
+    color-mix(in srgb, var(--stat-card-icon-color) 18%, transparent) 0%,
+    color-mix(in srgb, var(--stat-card-icon-color) 6%, transparent) 100%
+  );
+  color: var(--stat-card-icon-color);
+}

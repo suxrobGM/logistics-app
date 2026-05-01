@@ -1,4 +1,5 @@
 import { Component, computed, input } from "@angular/core";
+import { Badge, Divider, Icon, Stack, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -7,7 +8,17 @@ import { SkeletonModule } from "primeng/skeleton";
 @Component({
   selector: "app-gross-summary-widget",
   templateUrl: "./gross-summary-widget.html",
-  imports: [CardModule, DividerModule, SkeletonModule, CurrencyFormatPipe],
+  imports: [
+    CardModule,
+    DividerModule,
+    SkeletonModule,
+    CurrencyFormatPipe,
+    Stack,
+    Typography,
+    Badge,
+    Icon,
+    Divider,
+  ],
 })
 export class GrossSummaryWidgetComponent {
   public readonly thisWeekGross = input(0);

@@ -1,0 +1,130 @@
+<p-card class="h-full">
+  <ng-template #header>
+    <ui-stack direction="row" align="center" gap="2" class="py-3 pl-4">
+      <ui-icon name="users" size="xl" color="info" />
+      <ui-typography variant="h4" tag="h4" color="primary">Team & Fleet</ui-typography>
+    </ui-stack>
+    <p-divider class="m-0" />
+  </ng-template>
+
+  @if (isLoading()) {
+    <ui-stack gap="4">
+      <p-skeleton height="3rem" />
+      <p-skeleton height="3rem" />
+      <p-skeleton height="3rem" />
+    </ui-stack>
+  } @else {
+    <ui-stack gap="4">
+      <!-- Team Section -->
+      <div>
+        <ui-typography variant="overline" color="muted" class="mb-3">Team Members</ui-typography>
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Total Employees -->
+          <a
+            [routerLink]="['/employees']"
+            class="bg-canvas hover:bg-hover flex items-center gap-3 rounded-lg p-3 transition-colors"
+          >
+            <div class="bg-info/10 flex h-10 w-10 items-center justify-center rounded-full">
+              <ui-icon name="users" color="info" />
+            </div>
+            <div>
+              <ui-typography variant="h4" color="primary" tag="div" class="font-mono">
+                {{ employeesCount() }}
+              </ui-typography>
+              <ui-typography variant="caption" color="muted">Total</ui-typography>
+            </div>
+          </a>
+
+          <!-- Drivers -->
+          <a
+            [routerLink]="['/employees']"
+            [queryParams]="{ role: 'driver' }"
+            class="bg-canvas hover:bg-hover flex items-center gap-3 rounded-lg p-3 transition-colors"
+          >
+            <div class="bg-info/10 flex h-10 w-10 items-center justify-center rounded-full">
+              <ui-icon name="id-card" color="info" />
+            </div>
+            <div>
+              <ui-typography variant="h4" color="primary" tag="div" class="font-mono">
+                {{ driversCount() }}
+              </ui-typography>
+              <ui-typography variant="caption" color="muted">Drivers</ui-typography>
+            </div>
+          </a>
+
+          <!-- Dispatchers -->
+          <a
+            [routerLink]="['/employees']"
+            [queryParams]="{ role: 'dispatcher' }"
+            class="bg-canvas hover:bg-hover flex items-center gap-3 rounded-lg p-3 transition-colors"
+          >
+            <div class="bg-warning/10 flex h-10 w-10 items-center justify-center rounded-full">
+              <ui-icon name="phone" color="warning" />
+            </div>
+            <div>
+              <ui-typography variant="h4" color="primary" tag="div" class="font-mono">
+                {{ dispatchersCount() }}
+              </ui-typography>
+              <ui-typography variant="caption" color="muted">Dispatchers</ui-typography>
+            </div>
+          </a>
+
+          <!-- Managers -->
+          <a
+            [routerLink]="['/employees']"
+            [queryParams]="{ role: 'manager' }"
+            class="bg-canvas hover:bg-hover flex items-center gap-3 rounded-lg p-3 transition-colors"
+          >
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-full"
+              style="
+                background: color-mix(in srgb, var(--status-pickedup) 12%, transparent);
+                color: var(--status-pickedup);
+              "
+            >
+              <ui-icon name="briefcase" color="inherit" />
+            </div>
+            <div>
+              <ui-typography variant="h4" color="primary" tag="div" class="font-mono">
+                {{ managersCount() }}
+              </ui-typography>
+              <ui-typography variant="caption" color="muted">Managers</ui-typography>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <ui-divider />
+
+      <!-- Fleet Section -->
+      <div>
+        <ui-typography variant="overline" color="muted" class="mb-3">Fleet Status</ui-typography>
+        <a
+          [routerLink]="['/trucks']"
+          class="bg-canvas hover:bg-hover flex items-center justify-between rounded-lg p-3 transition-colors"
+        >
+          <ui-stack direction="row" align="center" gap="3">
+            <div class="bg-success/10 flex h-10 w-10 items-center justify-center rounded-full">
+              <ui-icon name="truck" color="success" />
+            </div>
+            <div>
+              <ui-typography variant="h4" color="primary" tag="div" class="font-mono">
+                {{ trucksCount() }}
+              </ui-typography>
+              <ui-typography variant="caption" color="muted">Total Trucks</ui-typography>
+            </div>
+          </ui-stack>
+          <div class="text-right">
+            <div class="text-sm">
+              <span class="text-success font-semibold">{{ activeTrucks() }}</span>
+              <ui-typography variant="caption" color="muted" tag="span"> active</ui-typography>
+            </div>
+            <ui-typography variant="caption" color="muted">
+              {{ truckUtilization() }}% utilization
+            </ui-typography>
+          </div>
+        </a>
+      </div>
+    </ui-stack>
+  }
+</p-card>

@@ -6,6 +6,8 @@ import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
+import { ThemeService } from "@/core/services";
+import { getChartPalette, getLineGradient } from "@/shared/constants/chart-palette";
 import { Converters, DateUtils } from "@/shared/utils";
 
 export interface DailyGrossChartData {
@@ -23,6 +25,7 @@ export interface DailyGrossChartData {
 export class DailyGrossChartComponent implements OnInit {
   private readonly api = inject(Api);
   private readonly localizationService = inject(LocalizationService, { optional: true });
+  private readonly themeService = inject(ThemeService);
 
   public readonly chartClass = input<string>("");
 
@@ -52,6 +55,7 @@ export class DailyGrossChartComponent implements OnInit {
 
   protected readonly chartOptions = computed(() => {
     const currencySymbol = this.localizationService?.getCurrencySymbol() ?? "$";
+    const palette = getChartPalette(this.themeService.isDark());
     return {
       maintainAspectRatio: false,
       responsive: true,
@@ -64,7 +68,11 @@ export class DailyGrossChartComponent implements OnInit {
           display: false,
         },
         tooltip: {
-          backgroundColor: "rgba(15, 23, 42, 0.9)",
+          backgroundColor: palette.tooltipBg,
+          titleColor: palette.titleColor,
+          bodyColor: palette.textColor,
+          borderColor: palette.tooltipBorder,
+          borderWidth: 1,
           titleFont: { size: 13, weight: "600" },
           bodyFont: { size: 12 },
           padding: 12,
@@ -85,7 +93,7 @@ export class DailyGrossChartComponent implements OnInit {
           },
           ticks: {
             font: { size: 11 },
-            color: "#64748b",
+            color: palette.textColor,
           },
           border: {
             display: false,
@@ -94,11 +102,11 @@ export class DailyGrossChartComponent implements OnInit {
         y: {
           beginAtZero: true,
           grid: {
-            color: "rgba(148, 163, 184, 0.1)",
+            color: palette.gridColor,
           },
           ticks: {
             font: { size: 11 },
-            color: "#64748b",
+            color: palette.textColor,
             callback: (value: number) => `${currencySymbol}${value.toLocaleString()}`,
           },
           border: {
@@ -149,7 +157,9 @@ export class DailyGrossChartComponent implements OnInit {
       }
     });
 
-    // Create gradient effect
+    const isDark = this.themeService.isDark();
+    const palette = getChartPalette(isDark);
+
     this.chartData.set({
       labels,
       datasets: [
@@ -158,26 +168,16 @@ export class DailyGrossChartComponent implements OnInit {
           data,
           fill: true,
           tension: 0.4,
-          borderColor: "#06b6d4",
+          borderColor: palette.primaryColor,
           borderWidth: 2,
-          backgroundColor: (context: {
-            chart: { ctx: CanvasRenderingContext2D; chartArea: { top: number; bottom: number } };
-          }) => {
-            const ctx = context.chart.ctx;
-            const chartArea = context.chart.chartArea;
-            if (!chartArea) return "rgba(6, 182, 212, 0.1)";
-
-            const gradient = ctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
-            gradient.addColorStop(0, "rgba(6, 182, 212, 0.3)");
-            gradient.addColorStop(1, "rgba(6, 182, 212, 0.02)");
-            return gradient;
-          },
-          pointBackgroundColor: "#06b6d4",
+          backgroundColor: (context: Parameters<typeof getLineGradient>[0]) =>
+            getLineGradient(context, isDark),
+          pointBackgroundColor: palette.primaryColor,
           pointBorderColor: "#fff",
           pointBorderWidth: 2,
           pointRadius: 4,
           pointHoverRadius: 6,
-          pointHoverBackgroundColor: "#06b6d4",
+          pointHoverBackgroundColor: palette.primaryColor,
           pointHoverBorderColor: "#fff",
           pointHoverBorderWidth: 2,
         },

@@ -1,0 +1,76 @@
+<p-card class="h-full">
+  <ng-template #header>
+    <ui-stack direction="row" align="center" gap="2" class="py-3 pl-4">
+      <ui-icon name="wallet" size="xl" color="success" />
+      <ui-typography variant="h4" tag="h4" color="primary">Financial Health</ui-typography>
+    </ui-stack>
+    <p-divider class="m-0" />
+  </ng-template>
+
+  @if (isLoading()) {
+    <ui-stack gap="4">
+      <p-skeleton height="4rem" />
+      <p-skeleton height="4rem" />
+      <p-skeleton height="4rem" />
+    </ui-stack>
+  } @else {
+    <ui-stack gap="4">
+      <!-- Outstanding Invoices -->
+      <ui-stack direction="row" align="center" justify="between">
+        <div>
+          <ui-typography variant="overline" color="muted">Outstanding</ui-typography>
+          <ui-typography variant="h3" color="primary" tag="div" class="mt-1 font-mono">
+            {{ outstandingInvoiceTotal() | currencyFormat }}
+          </ui-typography>
+        </div>
+        <div class="bg-info/10 flex h-10 w-10 items-center justify-center rounded-full">
+          <ui-icon name="file-edit" color="info" />
+        </div>
+      </ui-stack>
+
+      <!-- Payments This Week -->
+      <ui-stack direction="row" align="center" justify="between">
+        <div>
+          <ui-typography variant="overline" color="muted">Received This Week</ui-typography>
+          <div class="text-success mt-1 font-mono text-xl font-bold">
+            {{ paymentsReceivedThisWeek() | currencyFormat }}
+          </div>
+        </div>
+        <div class="bg-success/10 flex h-10 w-10 items-center justify-center rounded-full">
+          <ui-icon name="check-circle" color="success" />
+        </div>
+      </ui-stack>
+
+      <!-- Overdue Invoices -->
+      <a
+        [routerLink]="['/invoices']"
+        [queryParams]="{ status: 'overdue' }"
+        class="hover:bg-hover -mx-3 flex items-center justify-between rounded-lg px-3 py-2 transition-colors"
+      >
+        <div>
+          <ui-typography variant="overline" color="muted">Overdue Invoices</ui-typography>
+          <ui-stack direction="row" align="center" gap="2" class="mt-1">
+            <span
+              class="font-mono text-xl font-bold"
+              [class]="overdueInvoiceCount() > 0 ? 'text-danger' : 'text-primary'"
+            >
+              {{ overdueInvoiceCount() }}
+            </span>
+            @if (overdueInvoiceCount() > 0) {
+              <p-badge value="Action Required" severity="danger" />
+            }
+          </ui-stack>
+        </div>
+        <div
+          class="flex h-10 w-10 items-center justify-center rounded-full"
+          [class]="overdueInvoiceCount() > 0 ? 'bg-danger/10' : 'bg-subtle'"
+        >
+          <ui-icon
+            name="exclamation-triangle"
+            [color]="overdueInvoiceCount() > 0 ? 'danger' : 'muted'"
+          />
+        </div>
+      </a>
+    </ui-stack>
+  }
+</p-card>

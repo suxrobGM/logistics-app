@@ -9,6 +9,7 @@ import {
   type DriverReportDto,
 } from "@logistics/shared/api";
 import type { PagedResponse } from "@logistics/shared/api/models";
+import { Icon, Stack, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -34,6 +35,9 @@ import { DateUtils, getPerformanceLevel, getPerformanceSeverity } from "@/shared
     CurrencyFormatPipe,
     DecimalPipe,
     TagModule,
+    Icon,
+    Stack,
+    Typography,
   ],
 })
 export class DriversDetailedComponent extends BaseTable<DriverReportDto> {

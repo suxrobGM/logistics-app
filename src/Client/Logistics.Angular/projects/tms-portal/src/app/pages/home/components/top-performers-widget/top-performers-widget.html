@@ -1,0 +1,58 @@
+<p-card class="h-full">
+  <ng-template #header>
+    <ui-stack direction="row" align="center" gap="2" class="py-3 pl-4">
+      <span style="color: #eab308">
+        <ui-icon name="trophy" size="xl" color="inherit" />
+      </span>
+      <ui-typography variant="h4" tag="h4" color="primary">Top Performers</ui-typography>
+      <ui-typography variant="caption" color="muted">(This Month)</ui-typography>
+    </ui-stack>
+    <p-divider class="m-0" />
+  </ng-template>
+
+  @if (isLoading()) {
+    <ui-stack gap="4">
+      <p-skeleton height="4rem" />
+      <p-skeleton height="4rem" />
+      <p-skeleton height="4rem" />
+    </ui-stack>
+  } @else if (!topTrucks() || topTrucks()!.length === 0) {
+    <ui-stack align="center" justify="center" gap="2" class="py-8 text-center">
+      <i class="pi pi-chart-bar text-muted text-4xl" aria-hidden="true"></i>
+      <ui-typography variant="body" color="muted">No data available yet</ui-typography>
+    </ui-stack>
+  } @else {
+    <ui-stack gap="4">
+      @for (truck of topTrucks(); track truck.truckId; let i = $index) {
+        <a
+          [routerLink]="['/trucks', truck.truckId]"
+          class="hover:bg-hover flex flex-col gap-2 rounded-lg p-3 transition-colors"
+        >
+          <ui-stack direction="row" align="center" justify="between">
+            <ui-stack direction="row" align="center" gap="3">
+              <span [style.color]="getRankIcon(i).color">
+                <ui-icon [name]="getRankIcon(i).name" color="inherit" />
+              </span>
+              <div>
+                <ui-typography variant="body" weight="medium" color="primary" tag="div">
+                  {{ truck.truckNumber || "Unknown" }}
+                </ui-typography>
+                <ui-typography variant="caption" color="muted">
+                  {{ truck.driverName || "No driver assigned" }}
+                </ui-typography>
+              </div>
+            </ui-stack>
+            <div class="text-success font-mono font-bold">
+              {{ truck.revenue | currencyFormat }}
+            </div>
+          </ui-stack>
+          <p-progressBar
+            [value]="getProgressValue(truck.revenue)"
+            [showValue]="false"
+            class="h-1"
+          />
+        </a>
+      }
+    </ui-stack>
+  }
+</p-card>

@@ -1,14 +1,20 @@
 <div class="animate-fadein">
   <!-- Page Header -->
-  <div class="mb-6 flex items-center justify-between">
+  <ui-stack direction="row" align="center" justify="between" class="mb-6">
     <div>
-      <h1 class="mb-1 text-2xl font-semibold">{{ greeting() }}</h1>
-      <p class="text-muted">{{ currentDate | dateFormat: "EEEE, MMMM d, yyyy" }}</p>
+      <ui-typography variant="h2" tag="h1" color="primary" class="mb-1">
+        {{ greeting() }}
+      </ui-typography>
+      <ui-typography variant="body" color="muted">
+        {{ currentDate | dateFormat: "EEEE, MMMM d, yyyy" }}
+      </ui-typography>
     </div>
-    <div class="flex items-center gap-3">
+    <ui-stack direction="row" align="center" gap="3">
       <!-- Data Freshness Indicator -->
-      <div class="text-muted flex items-center gap-2 text-sm">
-        <span>Updated {{ lastUpdated() | dateFormat: "shortTime" }}</span>
+      <ui-stack direction="row" align="center" gap="2">
+        <ui-typography variant="body-sm" color="muted">
+          Updated {{ lastUpdated() | dateFormat: "shortTime" }}
+        </ui-typography>
         <p-button
           icon="pi pi-refresh"
           [rounded]="true"
@@ -18,7 +24,7 @@
           pTooltip="Refresh data"
           tooltipPosition="bottom"
         />
-      </div>
+      </ui-stack>
       <p-button
         icon="pi pi-th-large"
         [rounded]="true"
@@ -35,11 +41,16 @@
         (click)="menu.toggle($event)"
       />
       <p-menu #menu [model]="quickActions" [popup]="true" />
-    </div>
-  </div>
+    </ui-stack>
+  </ui-stack>
+
+  <!-- Skeleton during initial load (mirrors panel grid coordinates) -->
+  @if (!initialLoadComplete()) {
+    <app-home-skeleton />
+  }
 
   <!-- Gridster Dashboard -->
-  @if (gridsterOptions) {
+  @if (gridsterOptions && initialLoadComplete()) {
     <gridster [options]="gridsterOptions" class="dashboard-grid">
       @for (panel of dashboardPanels(); track panel.id) {
         <gridster-item [item]="panel" class="dashboard-panel">
@@ -51,6 +62,7 @@
                 label="Weekly Gross"
                 [value]="(weeklyGross() | currencyFormat) ?? '$0'"
                 color="green"
+                tooltip="Total gross for the past 7 days"
               />
             }
             @case ("kpi-billed-miles") {
@@ -60,6 +72,7 @@
                 label="Billed Miles"
                 [value]="(weeklyDistance() | distanceUnit) ?? '0 mi'"
                 color="blue"
+                tooltip="Billable miles driven in the past 7 days"
               />
             }
             @case ("kpi-rate-per-mile") {
@@ -69,6 +82,7 @@
                 label="Rate Per Mile"
                 [value]="(weeklyRpm() | currencyFormat) ?? '$0'"
                 color="purple"
+                tooltip="Weekly gross divided by billed miles"
               />
             }
             @case ("kpi-today-gross") {
@@ -78,23 +92,52 @@
                 label="Today's Gross"
                 [value]="(todayGross() | currencyFormat) ?? '$0'"
                 color="orange"
+                tooltip="Gross earned today"
+              />
+            }
+            @case ("attention-panel") {
+              <app-attention-panel
+                class="h-full"
+                [unassignedLoadsCount]="companyStats()?.unassignedLoadsCount ?? 0"
+                [idleTrucksCount]="companyStats()?.idleTrucksCount ?? 0"
+                [isLoading]="isLoadingCompanyStats()"
+              />
+            }
+            @case ("financial-health") {
+              <app-financial-health-widget
+                class="h-full"
+                [outstandingInvoiceTotal]="companyStats()?.outstandingInvoiceTotal ?? 0"
+                [paymentsReceivedThisWeek]="companyStats()?.paymentsReceivedThisWeek ?? 0"
+                [overdueInvoiceCount]="companyStats()?.overdueInvoiceCount ?? 0"
+                [isLoading]="isLoadingCompanyStats()"
+              />
+            }
+            @case ("top-performers") {
+              <app-top-performers-widget
+                class="h-full"
+                [topTrucks]="companyStats()?.topTrucks ?? []"
+                [isLoading]="isLoadingCompanyStats()"
               />
             }
             @case ("active-loads") {
               <p-card class="h-full">
                 <ng-template #header>
-                  <div class="flex items-center justify-between py-3 pr-2 pl-4">
-                    <div class="flex items-center gap-2">
-                      <i class="pi pi-box text-accent"></i>
-                      <h4 class="mb-0">Active Loads</h4>
-                    </div>
+                  <ui-stack direction="row" align="center" justify="between" class="py-3 pr-2 pl-4">
+                    <ui-stack direction="row" align="center" gap="2">
+                      <span class="text-accent">
+                        <ui-icon name="box" color="inherit" />
+                      </span>
+                      <ui-typography variant="h4" tag="h4" color="primary">
+                        Active Loads
+                      </ui-typography>
+                    </ui-stack>
                     <p-button
                       label="View All"
                       [text]="true"
                       [routerLink]="['/loads']"
                       class="no-drag"
                     />
-                  </div>
+                  </ui-stack>
                   <p-divider class="m-0" />
                 </ng-template>
 
@@ -128,18 +171,18 @@
                         <ui-status-badge [status]="load.status" kind="load" />
                       </td>
                       <td>
-                        <div class="flex items-center gap-1 text-sm">
+                        <ui-stack direction="row" align="center" gap="1" class="text-sm">
                           <span class="max-w-20 truncate" [pTooltip]="load.originAddress?.city">
                             {{ load.originAddress?.city || "N/A" }}
                           </span>
-                          <i class="pi pi-arrow-right text-muted text-xs"></i>
+                          <ui-icon name="arrow-right" size="xs" color="muted" />
                           <span
                             class="max-w-20 truncate"
                             [pTooltip]="load.destinationAddress?.city"
                           >
                             {{ load.destinationAddress?.city || "N/A" }}
                           </span>
-                        </div>
+                        </ui-stack>
                       </td>
                       <td class="min-w-32">
                         <app-load-progress-bar [status]="load.status" [compact]="true" />
@@ -158,10 +201,12 @@
                   <ng-template #emptymessage>
                     <tr>
                       <td colspan="5" class="text-center">
-                        <div class="text-muted py-8">
-                          <i class="pi pi-inbox mb-2 text-4xl"></i>
-                          <p>No active loads</p>
-                        </div>
+                        <ui-stack align="center" gap="2" class="text-muted py-8">
+                          <i class="pi pi-inbox text-4xl" aria-hidden="true"></i>
+                          <ui-typography variant="body" color="muted"
+                            >No active loads</ui-typography
+                          >
+                        </ui-stack>
                       </td>
                     </tr>
                   </ng-template>
@@ -178,11 +223,14 @@
             @case ("fleet-map") {
               <p-card class="h-full">
                 <ng-template #header>
-                  <div class="flex items-center gap-2 py-3 pr-2 pl-4">
-                    <i class="pi pi-map-marker text-accent"></i>
-                    <h4 class="mb-0">Fleet Overview</h4>
-                  </div>
-
+                  <ui-stack direction="row" align="center" gap="2" class="py-3 pr-2 pl-4">
+                    <span class="text-accent">
+                      <ui-icon name="map-marker" color="inherit" />
+                    </span>
+                    <ui-typography variant="h4" tag="h4" color="primary">
+                      Fleet Overview
+                    </ui-typography>
+                  </ui-stack>
                   <p-divider class="m-0" />
                 </ng-template>
                 <div class="no-drag h-full">

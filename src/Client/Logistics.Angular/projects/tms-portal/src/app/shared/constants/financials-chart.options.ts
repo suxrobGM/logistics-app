@@ -1,31 +1,26 @@
-// Financials chart configs
+// Financials chart configs — sourced from `chart-palette.ts`
+import {
+  getChartPalette,
+  INVOICE_STATUS_COLORS,
+  INVOICE_STATUS_HOVER_COLORS,
+} from "./chart-palette";
 
 export const FINANCIALS_CHART_LABELS = ["Fully Paid", "Partially Paid", "Unpaid"];
-export const FINANCIALS_CHART_BACKGROUND_COLORS = ["#22c55e", "#f59e0b", "#ef4444"];
-export const FINANCIALS_CHART_HOVER_BACKGROUND_COLORS = ["#16a34a", "#d97706", "#dc2626"];
-
-// Theme-aware chart colors helper
-export function getChartColors(isDark: boolean) {
-  return {
-    textColor: isDark ? "#94a3b8" : "#475569",
-    gridColor: isDark ? "rgba(45, 53, 72, 0.5)" : "rgba(203, 213, 225, 0.5)",
-    tooltipBg: isDark ? "#1a1f2e" : "#ffffff",
-    tooltipBorder: isDark ? "#3d4760" : "#e2e8f0",
-  };
-}
+export const FINANCIALS_CHART_BACKGROUND_COLORS = INVOICE_STATUS_COLORS;
+export const FINANCIALS_CHART_HOVER_BACKGROUND_COLORS = INVOICE_STATUS_HOVER_COLORS;
 
 export function getFinancialMetricsChartOptions(isDark = true) {
-  const colors = getChartColors(isDark);
+  const p = getChartPalette(isDark);
   return {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: colors.tooltipBg,
-        titleColor: isDark ? "#f1f5f9" : "#0f172a",
-        bodyColor: colors.textColor,
-        borderColor: colors.tooltipBorder,
+        backgroundColor: p.tooltipBg,
+        titleColor: p.titleColor,
+        bodyColor: p.textColor,
+        borderColor: p.tooltipBorder,
         borderWidth: 1,
         cornerRadius: 8,
         padding: 12,
@@ -34,32 +29,32 @@ export function getFinancialMetricsChartOptions(isDark = true) {
     scales: {
       y: {
         beginAtZero: true,
-        grid: { color: colors.gridColor },
-        ticks: { color: colors.textColor },
+        grid: { color: p.gridColor },
+        ticks: { color: p.textColor },
       },
       x: {
-        grid: { color: colors.gridColor },
-        ticks: { color: colors.textColor },
+        grid: { color: p.gridColor },
+        ticks: { color: p.textColor },
       },
     },
   };
 }
 
 export function getRevenueTrendChartOptions(isDark = true) {
-  const colors = getChartColors(isDark);
+  const p = getChartPalette(isDark);
   return {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "top" as const,
-        labels: { color: colors.textColor },
+        labels: { color: p.textColor },
       },
       tooltip: {
-        backgroundColor: colors.tooltipBg,
-        titleColor: isDark ? "#f1f5f9" : "#0f172a",
-        bodyColor: colors.textColor,
-        borderColor: colors.tooltipBorder,
+        backgroundColor: p.tooltipBg,
+        titleColor: p.titleColor,
+        bodyColor: p.textColor,
+        borderColor: p.tooltipBorder,
         borderWidth: 1,
         cornerRadius: 8,
         padding: 12,
@@ -73,21 +68,21 @@ export function getRevenueTrendChartOptions(isDark = true) {
         title: {
           display: true,
           text: "Amount ($)",
-          color: colors.textColor,
+          color: p.textColor,
         },
-        grid: { color: colors.gridColor },
-        ticks: { color: colors.textColor },
+        grid: { color: p.gridColor },
+        ticks: { color: p.textColor },
       },
       x: {
-        grid: { color: colors.gridColor },
-        ticks: { color: colors.textColor },
+        grid: { color: p.gridColor },
+        ticks: { color: p.textColor },
       },
     },
   };
 }
 
 export function getInvoiceStatusChartOptions(isDark = true) {
-  const colors = getChartColors(isDark);
+  const p = getChartPalette(isDark);
   return {
     responsive: true,
     maintainAspectRatio: false,
@@ -98,14 +93,14 @@ export function getInvoiceStatusChartOptions(isDark = true) {
         labels: {
           usePointStyle: true,
           boxWidth: 8,
-          color: colors.textColor,
+          color: p.textColor,
         },
       },
       tooltip: {
-        backgroundColor: colors.tooltipBg,
-        titleColor: isDark ? "#f1f5f9" : "#0f172a",
-        bodyColor: colors.textColor,
-        borderColor: colors.tooltipBorder,
+        backgroundColor: p.tooltipBg,
+        titleColor: p.titleColor,
+        bodyColor: p.textColor,
+        borderColor: p.tooltipBorder,
         borderWidth: 1,
         cornerRadius: 8,
         padding: 12,
@@ -117,4 +112,3 @@ export function getInvoiceStatusChartOptions(isDark = true) {
     layout: { padding: 0 },
   };
 }
-
