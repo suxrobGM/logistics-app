@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from "@angular/common";
 import { Component, computed, input } from "@angular/core";
 
 export type TypographyVariant =
@@ -87,6 +88,7 @@ const alignClasses: Record<TypographyAlign, string> = {
 @Component({
   selector: "ui-typography",
   templateUrl: "./typography.html",
+  imports: [NgTemplateOutlet],
   host: { class: "block" },
 })
 export class Typography {

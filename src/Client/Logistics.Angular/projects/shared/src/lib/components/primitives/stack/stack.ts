@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from "@angular/common";
 import { booleanAttribute, Component, computed, input } from "@angular/core";
 
 export type StackDirection = "row" | "col";
@@ -43,6 +44,7 @@ const justifyClasses: Record<StackJustify, string> = {
 @Component({
   selector: "ui-stack",
   templateUrl: "./stack.html",
+  imports: [NgTemplateOutlet],
   host: { class: "block" },
 })
 export class Stack {

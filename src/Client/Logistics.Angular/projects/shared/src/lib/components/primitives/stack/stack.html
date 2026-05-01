@@ -1,9 +1,15 @@
-@if (tag() === "section") {
-  <section [class]="classes()"><ng-content /></section>
-} @else if (tag() === "header") {
-  <header [class]="classes()"><ng-content /></header>
-} @else if (tag() === "footer") {
-  <footer [class]="classes()"><ng-content /></footer>
-} @else {
-  <div [class]="classes()"><ng-content /></div>
+<ng-template #content><ng-content /></ng-template>
+@switch (tag()) {
+  @case ("section") {
+    <section [class]="classes()"><ng-container *ngTemplateOutlet="content" /></section>
+  }
+  @case ("header") {
+    <header [class]="classes()"><ng-container *ngTemplateOutlet="content" /></header>
+  }
+  @case ("footer") {
+    <footer [class]="classes()"><ng-container *ngTemplateOutlet="content" /></footer>
+  }
+  @default {
+    <div [class]="classes()"><ng-container *ngTemplateOutlet="content" /></div>
+  }
 }
