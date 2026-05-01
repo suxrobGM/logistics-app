@@ -7,94 +7,57 @@ LogisticsX is a Domain-Driven Design (DDD) monolith with CQRS, organized into cl
 ```mermaid
 flowchart TB
     subgraph Clients["Clients"]
-        TMS["TMS Portal<br/>(Angular)"]
-        Customer["Customer Portal<br/>(Angular)"]
-        Admin["Admin Portal<br/>(Angular)"]
-        Website["Website<br/>(Angular SSR)"]
+        direction LR
+        Portals["Angular Portals<br/>TMS · Customer · Admin · Website"]
         Driver["Driver App<br/>(Kotlin Multiplatform)"]
-        ExternalAI["External AI Tools<br/>(Claude Desktop, Cursor)"]
+        AIClients["External AI<br/>Claude Desktop · Cursor"]
         Telegram["Telegram"]
     end
 
-    subgraph Presentation["Presentation Layer"]
-        API["Logistics.API<br/>REST + SignalR + Hangfire"]
-        Identity["Logistics.IdentityServer<br/>OAuth2 / OIDC"]
-        Mcp["Logistics.McpServer<br/>MCP over HTTP"]
-        TelegramBot["Logistics.TelegramBot<br/>Bot worker"]
-        Migrator["Logistics.DbMigrator<br/>EF Core migrations"]
+    subgraph Presentation["Presentation"]
+        direction LR
+        API["Logistics.API<br/>REST · SignalR · Hangfire"]
+        Identity["IdentityServer<br/>OAuth2 / OIDC"]
+        Mcp["McpServer<br/>MCP / API key"]
+        TelegramBot["TelegramBot"]
+        Migrator["DbMigrator"]
     end
 
-    subgraph Core["Core (Domain + Application)"]
-        Application["Logistics.Application<br/>Commands, Queries, Behaviors"]
-        Contracts["Logistics.Application.Contracts<br/>Service interfaces, DTOs"]
-        Domain["Logistics.Domain<br/>Entities, aggregates, events"]
-        Primitives["Logistics.Domain.Primitives<br/>Value objects, enums"]
-        Mappings["Logistics.Mappings<br/>Entity ↔ DTO"]
+    subgraph Core["Core"]
+        direction LR
+        Application["Application<br/>Commands · Queries · Behaviors"]
+        Contracts["Application.Contracts<br/>Service interfaces"]
+        Domain["Domain<br/>Entities · Aggregates · Events"]
     end
 
-    subgraph Infra["Infrastructure"]
-        Persistence["Persistence<br/>EF Core, multi-tenancy"]
-        Comms["Communications<br/>SignalR, email, push"]
-        AI["AI<br/>LLM dispatch agent"]
-        Eld["Integrations.Eld<br/>Samsara, Motive"]
-        LoadBoard["Integrations.LoadBoard<br/>DAT, Truckstop, 123LB"]
-        Payments["Payments<br/>Stripe, Stripe Connect"]
-        Documents["Documents<br/>QuestPDF, VIN decoder"]
-        Routing["Routing<br/>Trip optimizer, Mapbox"]
-        Storage["Storage<br/>Azure Blob, file system"]
+    subgraph Infra["Infrastructure (9 projects)"]
+        direction LR
+        Persistence["Persistence"]
+        AI["AI"]
+        Comms["Communications"]
+        Payments["Payments"]
+        Routing["Routing"]
+        Documents["Documents"]
+        Storage["Storage"]
+        Eld["Integrations.Eld"]
+        LoadBoard["Integrations.LoadBoard"]
     end
 
     subgraph External["External Services"]
+        direction LR
         Postgres[("PostgreSQL 18<br/>Master + Tenant DBs")]
-        StripeAPI["Stripe"]
-        Mapbox["Mapbox"]
-        Firebase["Firebase"]
-        Azure["Azure Blob"]
-        EldProviders["Samsara / Motive"]
-        LbProviders["DAT / Truckstop"]
-        Llm["Anthropic / OpenAI / DeepSeek"]
+        SaaS["Stripe · Mapbox · Firebase<br/>Azure Blob · Resend"]
+        Llm["Anthropic · OpenAI · DeepSeek"]
+        Providers["Samsara · Motive<br/>DAT · Truckstop · 123LB"]
     end
 
-    TMS -->|REST + SignalR| API
-    Customer --> API
-    Admin --> API
-    Driver --> API
-    Website --> API
-    TMS --> Identity
-    Customer --> Identity
-    Admin --> Identity
-    ExternalAI -->|MCP / API key| Mcp
-    Telegram --> TelegramBot
-
-    API --> Application
-    Mcp --> Application
-    TelegramBot --> Application
+    Clients --> Presentation
+    Presentation --> Application
     Migrator --> Persistence
-
     Application --> Contracts
     Application --> Domain
-    Domain --> Primitives
-    Application --> Mappings
-
-    Contracts -.implements.-> Persistence
-    Contracts -.implements.-> Comms
-    Contracts -.implements.-> AI
-    Contracts -.implements.-> Eld
-    Contracts -.implements.-> LoadBoard
-    Contracts -.implements.-> Payments
-    Contracts -.implements.-> Documents
-    Contracts -.implements.-> Routing
-    Contracts -.implements.-> Storage
-
-    Persistence --> Postgres
-    Payments --> StripeAPI
-    Routing --> Mapbox
-    Comms --> Firebase
-    Storage --> Azure
-    Documents --> Azure
-    Eld --> EldProviders
-    LoadBoard --> LbProviders
-    AI --> Llm
+    Contracts -. implemented by .-> Infra
+    Infra --> External
 ```
 
 ## Layered Design
