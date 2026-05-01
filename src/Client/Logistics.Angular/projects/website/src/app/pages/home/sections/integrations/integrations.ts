@@ -14,14 +14,15 @@ interface Integration {
 })
 export class Integrations {
   protected readonly integrations: Integration[] = [
-    { name: "Anthropic", logo: "images/anthropic-logo.svg" },
-    { name: "OpenAI", logo: "images/openai-logo.svg" },
-    { name: "DeepSeek", logo: "images/deepseek-logo.png" },
-    { name: "Samsara", logo: "images/samsara-logo.png" },
-    { name: "Motive", logo: "images/motive-logo.jpg" },
-    { name: "TT ELD", logo: "images/tteld-logo.png" },
-    { name: "Stripe", logo: "images/stripe-logo.svg" },
-    { name: "Mapbox", logo: "images/mapbox-logo.svg" },
-    { name: "Firebase", logo: "images/firebase-logo.svg" },
+    { name: "Anthropic", logo: "images/icons/anthropic.svg" },
+    { name: "OpenAI", logo: "images/icons/openai.svg" },
+    { name: "DeepSeek", logo: "images/icons/deepseek.png" },
+    { name: "Samsara", logo: "images/icons/samsara.png" },
+    { name: "Motive", logo: "images/icons/motive.jpg" },
+    { name: "TT ELD", logo: "images/icons/tteld.png" },
+    { name: "Stripe", logo: "images/icons/stripe.svg" },
+    { name: "Mapbox", logo: "images/icons/mapbox.svg" },
+    { name: "Firebase", logo: "images/icons/firebase.svg" },
+    { name: "Cloudflare", logo: "images/icons/cloudflare.svg" },
   ];
 }
