@@ -14,7 +14,7 @@ internal static class LlmPricing
         decimal CacheReadPerMToken = 0m,
         decimal CacheWritePerMToken = 0m);
 
-    // Prices as of March 2026
+    // Prices as of April 2026
     private static readonly Dictionary<string, ModelPricing> Pricing = new()
     {
         // Anthropic — https://platform.claude.com/docs/en/about-claude/pricing
@@ -27,8 +27,8 @@ internal static class LlmPricing
         ["gpt-5.4-mini"] = new(0.75m, 4.50m, 0.075m),
 
         // DeepSeek — https://api-docs.deepseek.com/quick_start/pricing/
-        ["deepseek-reasoner"] = new(0.28m, 0.42m, 0.028m),
-        ["deepseek-chat"] = new(0.28m, 0.42m, 0.028m),
+        ["deepseek-v4-flash"] = new(0.14m, 0.28m, 0.0028m),
+        ["deepseek-v4-pro"] = new(1.74m, 3.48m, 0.0145m),
     };
 
     private static readonly ModelPricing DefaultPricing = Pricing["claude-sonnet-4-6"];
@@ -39,7 +39,7 @@ internal static class LlmPricing
     /// </summary>
     public static int GetMultiplier(string model) => model switch
     {
-        "deepseek-chat" or "deepseek-reasoner" or "gpt-5.4-mini" or "claude-haiku-4-5" => 1,
+        "deepseek-v4-flash" or "deepseek-v4-pro" or "gpt-5.4-mini" or "claude-haiku-4-5" => 1,
         "gpt-5.4" or "claude-sonnet-4-6" => 5,
         "claude-opus-4-6" => 10,
         _ => 1

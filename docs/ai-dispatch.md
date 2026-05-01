@@ -8,11 +8,11 @@ The agentic dispatcher analyzes your fleet state — unassigned loads, available
 
 Supports multiple LLM providers out of the box:
 
-| Provider | Models | Notes |
-|----------|--------|-------|
+| Provider      | Models                                 | Notes                                                  |
+| ------------- | -------------------------------------- | ------------------------------------------------------ |
 | **Anthropic** | Claude Sonnet 4.6, Haiku 4.5, Opus 4.6 | Default. Supports prompt caching and extended thinking |
-| **OpenAI** | GPT-5.4 Mini, GPT-5.4, GPT-5.4 Nano | Via official OpenAI SDK |
-| **DeepSeek** | DeepSeek Chat, DeepSeek Reasoner (V3.2) | OpenAI-compatible API |
+| **OpenAI**    | GPT-5.4 Mini, GPT-5.4, GPT-5.4 Nano    | Via official OpenAI SDK                                |
+| **DeepSeek**  | DeepSeek V4 Flash, DeepSeek V4 Pro     | OpenAI-compatible API                                  |
 
 ## Operating Modes
 
@@ -39,21 +39,21 @@ The agent executes assignments immediately without human approval. Recommended o
 
 ## Agent Tools
 
-| Tool | Type | Description |
-|------|------|-------------|
-| `get_unassigned_loads` | Read | All Draft loads not in any trip |
-| `get_available_trucks` | Read | Available trucks with driver HOS data |
-| `get_driver_hos_status` | Read | Detailed HOS for a specific driver |
-| `check_hos_feasibility` | Read | Can a driver complete a trip given HOS remaining? |
-| `batch_check_hos_feasibility` | Read | Batch HOS feasibility for multiple driver-load pairs |
-| `calculate_distance` | Read | Driving distance between two points |
-| `calculate_assignment_metrics` | Read | Revenue/deadhead analysis for a potential assignment |
-| `optimize_trip_stops` | Read | Optimize stop ordering for multi-load trips |
-| `search_loadboard` | Read | Search DAT/Truckstop/123Loadboard for opportunities |
-| `assign_load_to_truck` | Write | Assign a load to a truck |
-| `create_trip` | Write | Create a trip from assigned loads |
-| `dispatch_trip` | Write | Transition trip to Dispatched status |
-| `book_loadboard_load` | Write | Book a load from a load board |
+| Tool                           | Type  | Description                                          |
+| ------------------------------ | ----- | ---------------------------------------------------- |
+| `get_unassigned_loads`         | Read  | All Draft loads not in any trip                      |
+| `get_available_trucks`         | Read  | Available trucks with driver HOS data                |
+| `get_driver_hos_status`        | Read  | Detailed HOS for a specific driver                   |
+| `check_hos_feasibility`        | Read  | Can a driver complete a trip given HOS remaining?    |
+| `batch_check_hos_feasibility`  | Read  | Batch HOS feasibility for multiple driver-load pairs |
+| `calculate_distance`           | Read  | Driving distance between two points                  |
+| `calculate_assignment_metrics` | Read  | Revenue/deadhead analysis for a potential assignment |
+| `optimize_trip_stops`          | Read  | Optimize stop ordering for multi-load trips          |
+| `search_loadboard`             | Read  | Search DAT/Truckstop/123Loadboard for opportunities  |
+| `assign_load_to_truck`         | Write | Assign a load to a truck                             |
+| `create_trip`                  | Write | Create a trip from assigned loads                    |
+| `dispatch_trip`                | Write | Transition trip to Dispatched status                 |
+| `book_loadboard_load`          | Write | Book a load from a load board                        |
 
 Write tools create suggestions in Human-in-the-Loop mode and execute immediately in Autonomous mode.
 
@@ -94,13 +94,13 @@ Each decision within a session is a **DispatchDecision** with:
 
 ### Environment Variables
 
-| Variable | Description |
-|----------|-------------|
-| `Llm__DefaultProvider` | LLM provider: `Anthropic`, `OpenAi`, `DeepSeek`, `Glm` (default: `Anthropic`) |
-| `Llm__Providers__Anthropic__ApiKey` | Anthropic API key |
-| `Llm__Providers__OpenAi__ApiKey` | OpenAI API key |
-| `Llm__Providers__DeepSeek__ApiKey` | DeepSeek API key |
-| `Llm__MaxTokens` | Max tokens per response (default: 8192) |
+| Variable                            | Description                                                                   |
+| ----------------------------------- | ----------------------------------------------------------------------------- |
+| `Llm__DefaultProvider`              | LLM provider: `Anthropic`, `OpenAi`, `DeepSeek`, `Glm` (default: `Anthropic`) |
+| `Llm__Providers__Anthropic__ApiKey` | Anthropic API key                                                             |
+| `Llm__Providers__OpenAi__ApiKey`    | OpenAI API key                                                                |
+| `Llm__Providers__DeepSeek__ApiKey`  | DeepSeek API key                                                              |
+| `Llm__MaxTokens`                    | Max tokens per response (default: 8192)                                       |
 
 ### appsettings.json
 

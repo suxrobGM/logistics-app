@@ -1,9 +1,10 @@
 import { Component, computed, inject, input, output, signal } from "@angular/core";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { AddressPipe } from "@logistics/shared/pipes";
-import type { LngLatBoundsLike, Map } from "mapbox-gl";
+import type { LngLatBoundsLike, LngLatLike, Map } from "mapbox-gl";
 import { MapComponent, MarkerComponent, PopupComponent } from "ngx-mapbox-gl";
 import { MapStyleService } from "@/core/services";
+import { TenantService } from "@/core/services/tenant.service";
 import { MapResizeDirective } from "@/shared/directives";
 import { MapContainer } from "../map-container/map-container";
 import { MapControls } from "../map-controls/map-controls";
@@ -11,10 +12,27 @@ import { MapControls } from "../map-controls/map-controls";
 @Component({
   selector: "app-geolocation-map",
   templateUrl: "./geolocation-map.html",
-  imports: [AddressPipe, MapComponent, MarkerComponent, PopupComponent, MapContainer, MapControls, MapResizeDirective],
+  imports: [
+    AddressPipe,
+    MapComponent,
+    MarkerComponent,
+    PopupComponent,
+    MapContainer,
+    MapControls,
+    MapResizeDirective,
+  ],
 })
 export class GeolocationMap {
   private readonly mapStyleService = inject(MapStyleService);
+  private readonly tenantService = inject(TenantService);
+
+  /** Region-aware default center: US → continental US; EU → central Europe. */
+  private readonly defaultCenter = computed<LngLatLike>(() =>
+    this.tenantService.tenantData()?.settings?.region === "eu" ? [10, 50] : [-95, 35],
+  );
+  private readonly defaultZoom = computed<number>(() =>
+    this.tenantService.tenantData()?.settings?.region === "eu" ? 4 : 3,
+  );
 
   protected readonly selectedMarker = signal<Marker | null>(null);
   protected readonly mapInstance = signal<Map | null>(null);
@@ -43,8 +61,10 @@ export class GeolocationMap {
   });
 
   public readonly geolocationData = input<TruckGeolocationDto[]>([]);
-  public readonly zoom = input<number>(3);
-  public readonly center = input<[number, number]>([-95, 35]);
+  /** The zoom level. Region-aware default (3 for US, 4 for EU). */
+  public readonly zoom = input<number>(this.defaultZoom());
+  /** The center coordinates. Region-aware default ([-95, 35] for US, [10, 50] for EU). */
+  public readonly center = input<LngLatLike>(this.defaultCenter());
   public readonly width = input("100%");
   public readonly height = input("100%");
 
