@@ -1,10 +1,15 @@
+---
+paths:
+  - "test/*"
+---
+
 # Testing Conventions
 
 ## Test Projects
 
-| Project | Tests For | Extra Dependencies |
-|---------|-----------|-------------------|
-| `Logistics.Application.Tests` | Application layer (handlers, services) | — |
+| Project                             | Tests For                                    | Extra Dependencies          |
+| ----------------------------------- | -------------------------------------------- | --------------------------- |
+| `Logistics.Application.Tests`       | Application layer (handlers, services)       | —                           |
 | `Logistics.Infrastructure.AI.Tests` | AI agent, quota, tools, prompts, LLM pricing | `MockQueryable.NSubstitute` |
 
 ## Stack
