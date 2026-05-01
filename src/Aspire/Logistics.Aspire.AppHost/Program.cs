@@ -37,7 +37,7 @@ else
 var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-server")
     .WithExternalHttpEndpoints()
     .WithReference(masterDb, "MasterDatabase")
-    .WithReference(usTenantDb, "DefaultTenantDatabase")
+    .WithReference(usTenantDb, "UsTenantDatabase")
     .WithEnvironment("GoogleRecaptcha__SecretKey", builder.GetConfigValue("GoogleRecaptcha:SecretKey"))
     .WithEnvironment("GoogleRecaptcha__SiteKey", builder.GetConfigValue("GoogleRecaptcha:SiteKey"))
     .WithEnvironment("Impersonation__TmsPortalUrl", builder.GetConfigValue("Impersonation:TmsPortalUrl"))
@@ -50,7 +50,7 @@ var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-serv
 var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithExternalHttpEndpoints()
     .WithReference(masterDb, "MasterDatabase")
-    .WithReference(usTenantDb, "DefaultTenantDatabase")
+    .WithReference(usTenantDb, "UsTenantDatabase")
     .WithEnvironment("IdentityServer__Authority",
         isProdEnv ? "http://identity-server:7001" : "http://localhost:7001")
     .WithEnvironment("IdentityServer__ExternalAuthority",
@@ -82,16 +82,16 @@ var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithEnvironment("R2BlobStorage__SecretAccessKey", builder.GetConfigValue("R2BlobStorage:SecretAccessKey"))
     .WithEnvironment("R2BlobStorage__BucketName", builder.GetConfigValue("R2BlobStorage:BucketName"))
     .WithEnvironment("R2BlobStorage__PublicBaseUrl", builder.GetConfigValue("R2BlobStorage:PublicBaseUrl"))
-    .WithEnvironment("TenantsDatabaseConfig__DatabaseNameTemplate",
-        builder.GetConfigValue("TenantsDatabaseConfig:DatabaseNameTemplate"))
-    .WithEnvironment("TenantsDatabaseConfig__DatabaseHost",
-        builder.GetConfigValue("TenantsDatabaseConfig:DatabaseHost"))
-    .WithEnvironment("TenantsDatabaseConfig__DatabasePort",
-        builder.GetConfigValue("TenantsDatabaseConfig:DatabasePort"))
-    .WithEnvironment("TenantsDatabaseConfig__DatabaseUserId",
-        builder.GetConfigValue("TenantsDatabaseConfig:DatabaseUserId"))
-    .WithEnvironment("TenantsDatabaseConfig__DatabasePassword",
-        builder.GetConfigValue("TenantsDatabaseConfig:DatabasePassword"))
+    .WithEnvironment("TenantDatabaseDefaults__NameTemplate",
+        builder.GetConfigValue("TenantDatabaseDefaults:NameTemplate"))
+    .WithEnvironment("TenantDatabaseDefaults__Host",
+        builder.GetConfigValue("TenantDatabaseDefaults:Host"))
+    .WithEnvironment("TenantDatabaseDefaults__Port",
+        builder.GetConfigValue("TenantDatabaseDefaults:Port"))
+    .WithEnvironment("TenantDatabaseDefaults__UserId",
+        builder.GetConfigValue("TenantDatabaseDefaults:UserId"))
+    .WithEnvironment("TenantDatabaseDefaults__Password",
+        builder.GetConfigValue("TenantDatabaseDefaults:Password"))
     .WaitFor(identityServer);
 
 // Development only: run the migrator before starting services
@@ -115,16 +115,16 @@ if (isDevEnv)
         .WithEnvironment("Tenants__1__CompanyName", "EuroFreight GmbH")
         .WithEnvironment("Tenants__1__BillingEmail", "billing@eurofreight.de")
         .WithEnvironment("Tenants__1__Region", "Eu")
-        .WithEnvironment("TenantsDatabaseConfig__DatabaseNameTemplate",
-            builder.GetConfigValue("TenantsDatabaseConfig:DatabaseNameTemplate"))
-        .WithEnvironment("TenantsDatabaseConfig__DatabaseHost",
-            builder.GetConfigValue("TenantsDatabaseConfig:DatabaseHost"))
-        .WithEnvironment("TenantsDatabaseConfig__DatabasePort",
-            builder.GetConfigValue("TenantsDatabaseConfig:DatabasePort"))
-        .WithEnvironment("TenantsDatabaseConfig__DatabaseUserId",
-            builder.GetConfigValue("TenantsDatabaseConfig:DatabaseUserId"))
-        .WithEnvironment("TenantsDatabaseConfig__DatabasePassword",
-            builder.GetConfigValue("TenantsDatabaseConfig:DatabasePassword"));
+        .WithEnvironment("TenantDatabaseDefaults__NameTemplate",
+            builder.GetConfigValue("TenantDatabaseDefaults:NameTemplate"))
+        .WithEnvironment("TenantDatabaseDefaults__Host",
+            builder.GetConfigValue("TenantDatabaseDefaults:Host"))
+        .WithEnvironment("TenantDatabaseDefaults__Port",
+            builder.GetConfigValue("TenantDatabaseDefaults:Port"))
+        .WithEnvironment("TenantDatabaseDefaults__UserId",
+            builder.GetConfigValue("TenantDatabaseDefaults:UserId"))
+        .WithEnvironment("TenantDatabaseDefaults__Password",
+            builder.GetConfigValue("TenantDatabaseDefaults:Password"));
 
     identityServer.WaitForCompletion(migrator);
     logisticsApi.WaitForCompletion(migrator);

@@ -77,7 +77,7 @@ internal sealed class PersistenceInfrastructureBuilder : IPersistenceInfrastruct
         configure?.Invoke(options);
 
         var tenantsSettings =
-            configuration.GetSection(TenantsDatabaseOptions.SectionName).Get<TenantsDatabaseOptions>();
+            configuration.GetSection(TenantDatabaseDefaults.SectionName).Get<TenantDatabaseDefaults>();
         var connectionString = configuration.GetConnectionString(options.DefaultTenantDbConnectionSection);
 
         if (tenantsSettings is not null)

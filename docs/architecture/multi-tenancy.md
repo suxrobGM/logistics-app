@@ -57,13 +57,13 @@ In `appsettings.json`:
 {
   "ConnectionStrings": {
     "MasterDatabase": "Host=localhost;Database=master_logisticsx;...",
-    "DefaultTenantDatabase": "Host=localhost;Database=default_logisticsx;..."
+    "UsTenantDatabase": "Host=localhost;Database=us_logisticsx;..."
   },
-  "TenantsDatabaseConfig": {
-    "DatabaseNameTemplate": "{tenant}_logisticsx",
-    "DatabaseHost": "localhost",
-    "DatabaseUserId": "postgres",
-    "DatabasePassword": "password"
+  "TenantDatabaseDefaults": {
+    "NameTemplate": "{tenant}_logisticsx",
+    "Host": "localhost",
+    "UserId": "postgres",
+    "Password": "password"
   }
 }
 ```
@@ -73,6 +73,7 @@ In `appsettings.json`:
 Tenant databases follow the pattern: `{tenant_id}_logisticsx`
 
 Examples:
+
 - `default_logisticsx`
 - `acme_trucking_logisticsx`
 - `swift_transport_logisticsx`

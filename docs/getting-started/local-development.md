@@ -32,7 +32,8 @@ Or via command line:
 
 ```bash
 psql -U postgres -c "CREATE DATABASE master_logisticsx;"
-psql -U postgres -c "CREATE DATABASE default_logisticsx;"
+psql -U postgres -c "CREATE DATABASE us_logisticsx;"
+psql -U postgres -c "CREATE DATABASE eu_logisticsx;"
 ```
 
 ### Update Connection Strings
@@ -43,13 +44,13 @@ Edit `src/Presentation/Logistics.API/appsettings.json`:
 {
   "ConnectionStrings": {
     "MasterDatabase": "Host=localhost;Port=5432;Database=master_logisticsx;Username=postgres;Password=YOUR_PASSWORD",
-    "DefaultTenantDatabase": "Host=localhost;Port=5432;Database=default_logisticsx;Username=postgres;Password=YOUR_PASSWORD"
+    "UsTenantDatabase": "Host=localhost;Port=5432;Database=us_logisticsx;Username=postgres;Password=YOUR_PASSWORD"
   },
-  "TenantsDatabaseConfig": {
-    "DatabaseNameTemplate": "{tenant}_logisticsx",
-    "DatabaseHost": "localhost",
-    "DatabaseUserId": "postgres",
-    "DatabasePassword": "YOUR_PASSWORD"
+  "TenantDatabaseDefaults": {
+    "NameTemplate": "{tenant}_logisticsx",
+    "Host": "localhost",
+    "UserId": "postgres",
+    "Password": "YOUR_PASSWORD"
   }
 }
 ```
@@ -146,22 +147,22 @@ For payment testing:
 
 ## Step 7: Access Applications
 
-| Application | URL | Credentials |
-|-------------|-----|-------------|
-| API (Swagger) | <https://localhost:7000/swagger> | - |
-| Identity Server | <https://localhost:7001> | - |
-| Admin App | <https://localhost:7002> | <admin@test.com> / Test12345# |
-| Office App | <https://localhost:7003> | <owner@test.com> / Test12345# |
+| Application     | URL                              | Credentials                   |
+| --------------- | -------------------------------- | ----------------------------- |
+| API (Swagger)   | <https://localhost:7000/swagger> | -                             |
+| Identity Server | <https://localhost:7001>         | -                             |
+| Admin App       | <https://localhost:7002>         | <admin@test.com> / Test12345# |
+| Office App      | <https://localhost:7003>         | <owner@test.com> / Test12345# |
 
 ## Test Credentials
 
-| Role | Email | Password | App Access |
-|------|-------|----------|------------|
-| Super Admin | <admin@test.com> | Test12345# | Admin App |
-| Owner | <owner@test.com> | Test12345# | Office App |
-| Manager | <manager1@test.com> | Test12345# | Office App |
-| Dispatcher | <dispatcher1@test.com> | Test12345# | Office App |
-| Driver | <driver1@test.com> | Test12345# | Driver Mobile App |
+| Role        | Email                  | Password   | App Access        |
+| ----------- | ---------------------- | ---------- | ----------------- |
+| Super Admin | <admin@test.com>       | Test12345# | Admin App         |
+| Owner       | <owner@test.com>       | Test12345# | Office App        |
+| Manager     | <manager1@test.com>    | Test12345# | Office App        |
+| Dispatcher  | <dispatcher1@test.com> | Test12345# | Office App        |
+| Driver      | <driver1@test.com>     | Test12345# | Driver Mobile App |
 
 ## Common Issues
 

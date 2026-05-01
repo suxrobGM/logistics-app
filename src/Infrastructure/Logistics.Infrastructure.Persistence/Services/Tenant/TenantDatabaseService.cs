@@ -15,21 +15,21 @@ namespace Logistics.Infrastructure.Persistence.Services;
 
 internal partial class TenantDatabaseService(
     TenantDbContext context,
-    TenantsDatabaseOptions databaseOptions,
+    TenantDatabaseDefaults databaseOptions,
     ILogger<TenantDatabaseService> logger)
     : ITenantDatabaseService
 {
     public string GenerateConnectionString(string tenantName)
     {
-        if (string.IsNullOrEmpty(databaseOptions.DatabaseNameTemplate))
+        if (string.IsNullOrEmpty(databaseOptions.NameTemplate))
         {
             throw new InvalidOperationException(
-                "The database name template is not defined in the TenantsDatabaseOptions appsettings.json file");
+                "The NameTemplate is not defined in the TenantDatabaseDefaults appsettings.json section");
         }
 
-        var databaseName = TenantDatabaseNameRegex().Replace(databaseOptions.DatabaseNameTemplate, tenantName);
+        var databaseName = TenantDatabaseNameRegex().Replace(databaseOptions.NameTemplate, tenantName);
         var connectionString =
-            $"Host={databaseOptions.DatabaseHost}; Database={databaseName}; Port={databaseOptions.DatabasePort}; Username={databaseOptions.DatabaseUserId}; Password={databaseOptions.DatabasePassword}";
+            $"Host={databaseOptions.Host}; Database={databaseName}; Port={databaseOptions.Port}; Username={databaseOptions.UserId}; Password={databaseOptions.Password}";
         return connectionString;
     }
 

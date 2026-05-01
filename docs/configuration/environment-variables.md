@@ -19,12 +19,12 @@ IDENTITY_SERVER_PORT=7001
 ADMIN_APP_PORT=7002
 ```
 
-| Variable | Description |
-|----------|-------------|
-| `*_IMAGE` | Docker image references for each service |
-| `API_PORT` | Port for the API service (default: 7000) |
+| Variable               | Description                                  |
+| ---------------------- | -------------------------------------------- |
+| `*_IMAGE`              | Docker image references for each service     |
+| `API_PORT`             | Port for the API service (default: 7000)     |
 | `IDENTITY_SERVER_PORT` | Port for the Identity Server (default: 7001) |
-| `ADMIN_APP_PORT` | Port for the Admin App (default: 7002) |
+| `ADMIN_APP_PORT`       | Port for the Admin App (default: 7002)       |
 
 ### Database (External PostgreSQL)
 
@@ -32,13 +32,15 @@ Production uses an external (installed) PostgreSQL instance instead of a contain
 
 ```bash
 ConnectionStrings__MasterDatabase="Host=localhost;Port=5432;Database=master_logisticsx;Username=postgres;Password=your-secure-password"
-ConnectionStrings__DefaultTenantDatabase="Host=localhost;Port=5432;Database=default_logisticsx;Username=postgres;Password=your-secure-password"
+ConnectionStrings__UsTenantDatabase="Host=localhost;Port=5432;Database=us_logisticsx;Username=postgres;Password=your-secure-password"
+ConnectionStrings__EuTenantDatabase="Host=localhost;Port=5432;Database=eu_logisticsx;Username=postgres;Password=your-secure-password"
 ```
 
-| Variable | Description |
-|----------|-------------|
-| `ConnectionStrings__MasterDatabase` | Full connection string for the master database |
-| `ConnectionStrings__DefaultTenantDatabase` | Full connection string for the default tenant database |
+| Variable                              | Description                                            |
+| ------------------------------------- | ------------------------------------------------------ |
+| `ConnectionStrings__MasterDatabase`   | Full connection string for the master database         |
+| `ConnectionStrings__UsTenantDatabase` | Full connection string for the US demo tenant database |
+| `ConnectionStrings__EuTenantDatabase` | Full connection string for the EU demo tenant database |
 
 ### Stripe Integration
 
@@ -48,11 +50,11 @@ Stripe__WebhookSecret="whsec_xxx"
 STRIPE_API_KEY="sk_live_xxx"
 ```
 
-| Variable | Description |
-|----------|-------------|
-| `Stripe__SecretKey` | Stripe API secret key |
-| `Stripe__WebhookSecret` | Webhook signature verification secret |
-| `STRIPE_API_KEY` | Used by Stripe CLI for webhook forwarding |
+| Variable                | Description                               |
+| ----------------------- | ----------------------------------------- |
+| `Stripe__SecretKey`     | Stripe API secret key                     |
+| `Stripe__WebhookSecret` | Webhook signature verification secret     |
+| `STRIPE_API_KEY`        | Used by Stripe CLI for webhook forwarding |
 
 ### Google reCAPTCHA (Optional)
 
@@ -69,11 +71,11 @@ Resend__SenderEmail="noreply@logisticsx.app"
 Resend__SenderName="LogisticsX"
 ```
 
-| Variable | Description |
-|----------|-------------|
-| `Resend__ApiKey` | Resend API key from resend.com dashboard |
+| Variable              | Description                                           |
+| --------------------- | ----------------------------------------------------- |
+| `Resend__ApiKey`      | Resend API key from resend.com dashboard              |
 | `Resend__SenderEmail` | Sender email address (must be from a verified domain) |
-| `Resend__SenderName` | Display name for the sender |
+| `Resend__SenderName`  | Display name for the sender                           |
 
 ### Mapbox (Optional)
 
@@ -87,12 +89,12 @@ Mapbox__AccessToken="pk.xxx"
 Llm__Providers__Anthropic__ApiKey="sk-ant-xxx"
 ```
 
-| Variable | Description |
-|----------|-------------|
-| `Llm__Providers__Anthropic__ApiKey` | Anthropic API key for AI dispatch agent |
-| `Llm__Providers__OpenAi__ApiKey` | OpenAI API key (alternative provider) |
-| `Llm__Providers__DeepSeek__ApiKey` | DeepSeek API key (alternative provider) |
-| `Llm__DefaultProvider` | Default LLM provider: `Anthropic`, `OpenAi`, `DeepSeek`, `Glm` (default: `Anthropic`) |
+| Variable                            | Description                                                                           |
+| ----------------------------------- | ------------------------------------------------------------------------------------- |
+| `Llm__Providers__Anthropic__ApiKey` | Anthropic API key for AI dispatch agent                                               |
+| `Llm__Providers__OpenAi__ApiKey`    | OpenAI API key (alternative provider)                                                 |
+| `Llm__Providers__DeepSeek__ApiKey`  | DeepSeek API key (alternative provider)                                               |
+| `Llm__DefaultProvider`              | Default LLM provider: `Anthropic`, `OpenAi`, `DeepSeek`, `Glm` (default: `Anthropic`) |
 
 ### TMS Portal (Runtime)
 
@@ -103,8 +105,8 @@ The TMS portal Docker image uses runtime environment variable substitution for s
 MAPBOX_TOKEN="pk.xxx"
 ```
 
-| Variable | Description |
-|----------|-------------|
+| Variable       | Description                         |
+| -------------- | ----------------------------------- |
 | `MAPBOX_TOKEN` | Mapbox public access token for maps |
 
 ### Database Migrator
@@ -114,13 +116,13 @@ SuperAdmin__Email="admin@example.com"
 SuperAdmin__Password="YourSecurePassword123#"
 SuperAdmin__FirstName="Admin"
 SuperAdmin__LastName="Admin"
-TenantsDatabaseConfig__DatabasePassword="your-secure-tenant-db-password"
+TenantDatabaseDefaults__Password="your-secure-tenant-db-password"
 ```
 
-| Variable | Description |
-|----------|-------------|
-| `SuperAdmin__*` | Initial super admin account credentials (synced on each run) |
-| `TenantsDatabaseConfig__DatabasePassword` | Password used when creating new tenant databases |
+| Variable                           | Description                                                  |
+| ---------------------------------- | ------------------------------------------------------------ |
+| `SuperAdmin__*`                    | Initial super admin account credentials (synced on each run) |
+| `TenantDatabaseDefaults__Password` | Password used when provisioning new tenant databases         |
 
 ### ASP.NET Core
 
@@ -143,7 +145,8 @@ ADMIN_APP_PORT=7002
 
 # Database (external PostgreSQL)
 ConnectionStrings__MasterDatabase="Host=localhost;Port=5432;Database=master_logisticsx;Username=postgres;Password=your-secure-password"
-ConnectionStrings__DefaultTenantDatabase="Host=localhost;Port=5432;Database=default_logisticsx;Username=postgres;Password=your-secure-password"
+ConnectionStrings__UsTenantDatabase="Host=localhost;Port=5432;Database=us_logisticsx;Username=postgres;Password=your-secure-password"
+ConnectionStrings__EuTenantDatabase="Host=localhost;Port=5432;Database=eu_logisticsx;Username=postgres;Password=your-secure-password"
 
 # Stripe
 Stripe__SecretKey="sk_live_xxx"
@@ -154,7 +157,7 @@ SuperAdmin__Email="admin@yourdomain.com"
 SuperAdmin__Password="YourSecurePassword123#"
 SuperAdmin__FirstName="Admin"
 SuperAdmin__LastName="Admin"
-TenantsDatabaseConfig__DatabasePassword="your-secure-tenant-db-password"
+TenantDatabaseDefaults__Password="your-secure-tenant-db-password"
 
 # Resend (Email)
 Resend__ApiKey="re_your_api_key_here"
@@ -178,13 +181,13 @@ For local development, configure `src/Presentation/Logistics.API/appsettings.jso
 {
   "ConnectionStrings": {
     "MasterDatabase": "Host=localhost;Port=5432;Database=master_logisticsx;Username=postgres;Password=password",
-    "DefaultTenantDatabase": "Host=localhost;Port=5432;Database=default_logisticsx;Username=postgres;Password=password"
+    "UsTenantDatabase": "Host=localhost;Port=5432;Database=us_logisticsx;Username=postgres;Password=password"
   },
-  "TenantsDatabaseConfig": {
-    "DatabaseNameTemplate": "{tenant}_logisticsx",
-    "DatabaseHost": "localhost",
-    "DatabaseUserId": "postgres",
-    "DatabasePassword": "password"
+  "TenantDatabaseDefaults": {
+    "NameTemplate": "{tenant}_logisticsx",
+    "Host": "localhost",
+    "UserId": "postgres",
+    "Password": "password"
   }
 }
 ```
