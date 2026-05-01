@@ -1,45 +1,72 @@
+---
+paths:
+  - "src/Infrastructure/Logistics.Infrastructure.AI/**/*.cs"
+  - "src/Core/Logistics.Application/Commands/Dispatch/**/*.cs"
+  - "src/Core/Logistics.Application/Queries/Dispatch/**/*.cs"
+  - "src/Presentation/Logistics.McpServer/**/*.cs"
+---
+
 # AI Dispatch Agent Conventions
 
-## Project Structure
+For step-by-step recipes, use the skills:
+
+- `add-dispatch-tool` — add a new tool the agent can call
+- `add-llm-provider` — add a new model or LLM provider
+
+This file is conventions only.
+
+## Project structure
 
 All AI agent code lives in `src/Infrastructure/Logistics.Infrastructure.AI/`:
+
 - `Providers/` — `ILlmProvider` interface, `LlmTypes`, `AnthropicLlmProvider`, `OpenAiLlmProvider`, `LlmProviderFactory`
-- `Services/` — Agent loop (`DispatchAgentService`), tool executor, tool registry, conversation builder, pricing
-- `Tools/` — Individual tool implementations
+- `Services/` — Agent loop (`DispatchAgentService`), `DispatchToolExecutor`, `DispatchToolRegistry`, `DispatchDecisionProcessor`, `DispatchConversationBuilder`, `LlmPricing`
+- `Tools/` — Individual tool implementations (one per file, each implementing `IDispatchTool`)
 - `Prompts/` — System prompt builders
 - `Options/` — Configuration (`LlmOptions`, `LlmProviderOptions`)
 
-## Multi-Provider Architecture
+## Multi-provider architecture
 
-The agent is provider-agnostic via the `ILlmProvider` adapter pattern:
-- `AnthropicLlmProvider` — Claude API via `Anthropic.SDK` (supports prompt caching, extended thinking)
-- `OpenAiLlmProvider` — OpenAI-compatible APIs via `OpenAI` SDK (supports OpenAI, DeepSeek, GLM via configurable `BaseUrl`)
-- `LlmProviderFactory` — Resolves provider from `LlmOptions.DefaultProvider`
+Provider-agnostic via the `ILlmProvider` adapter pattern:
 
-Provider-specific SDK types never leak outside the provider classes. The agent loop, tools, and decision processor all use `LlmTypes` (`LlmRequest`, `LlmResponse`, `LlmToolUseBlock`, etc.).
+- `AnthropicLlmProvider` — Claude API via `Anthropic.SDK` (prompt caching, extended thinking)
+- `OpenAiLlmProvider` — OpenAI-compatible APIs via `OpenAI` SDK (OpenAI, DeepSeek, GLM via configurable `BaseUrl`)
+- `LlmProviderFactory` — resolves provider from `LlmOptions.DefaultProvider`
 
-## Adding a New Agent Tool
+**Provider-specific SDK types must not leak outside the provider classes.** The agent loop, tools, and decision processor use `LlmTypes` (`LlmRequest`, `LlmResponse`, `LlmToolUseBlock`) only.
 
-1. Add the tool definition in `DispatchToolRegistry.cs` with name, description, and JSON schema
-2. Add the handler case in `DispatchToolExecutor.ExecuteToolAsync()` switch
-3. If it's a write tool, add its name to `DispatchDecisionProcessor.WriteTools` HashSet
-4. Tool names use `snake_case` (standard across all LLM providers)
-5. Tool schemas follow JSON Schema format (compatible with both Claude and OpenAI function calling)
+## Tools
 
-## Tool Classification
+Each tool is its own class implementing `IDispatchTool`:
 
-- **Read tools**: Always execute immediately in both modes. Used for querying fleet state.
-- **Write tools**: In HumanInTheLoop mode → create `Suggested` decisions. In Autonomous mode → execute immediately.
+```csharp
+internal sealed class GetSomethingTool(ITenantUnitOfWork tenantUow) : IDispatchTool
+{
+    public string Name => "get_something";
+    public Task<string> ExecuteAsync(JsonNode input, CancellationToken ct) { /* ... */ }
+}
+```
 
-## Agent Loop Pattern
+`DispatchToolExecutor` builds a name → tool dictionary from DI-injected `IEnumerable<IDispatchTool>`. Tools must be registered in `Registrar.cs` with `services.AddScoped<IDispatchTool, MyTool>()`. Their schemas live in `DispatchToolRegistry.Tools`.
 
-The agent loop in `DispatchAgentService` follows: send message → receive tool calls → record decision → execute or suggest → send tool results → repeat until end_turn.
+Tool names use **snake_case**. Schemas follow JSON Schema (compatible with both Claude and OpenAI function calling).
 
-Max 25 iterations per session to prevent runaway token usage.
+## Tool classification
+
+- **Read tools** — pure queries. Always execute immediately in both modes.
+- **Write tools** — mutate state. In `HumanInTheLoop` → create `Suggested` decisions for approval. In `Autonomous` → execute immediately.
+
+A write tool's name **must** be added to `DispatchDecisionProcessor.WriteTools` HashSet. Missing this entry silently breaks HumanInTheLoop approvals.
+
+## Agent loop pattern
+
+`DispatchAgentService` loop: send message → receive tool calls → record decision → execute or suggest → send tool results → repeat until `end_turn`.
+
+Max **25 iterations per session** to prevent runaway token usage.
 
 ## Configuration
 
-LLM config is in `appsettings.json` under `"Llm"` section with nested provider configs:
+`appsettings.json` `"Llm"` section with nested provider configs:
 
 ```json
 {
@@ -48,49 +75,48 @@ LLM config is in `appsettings.json` under `"Llm"` section with nested provider c
     "Providers": {
       "Anthropic": { "ApiKey": "...", "Model": "claude-haiku-4-5" },
       "OpenAi": { "ApiKey": "...", "Model": "gpt-5.4-mini" },
-      "DeepSeek": { "ApiKey": "...", "Model": "deepseek-chat", "BaseUrl": "https://api.deepseek.com/v1" }
+      "DeepSeek": {
+        "ApiKey": "...",
+        "Model": "deepseek-v4-flash",
+        "BaseUrl": "https://api.deepseek.com/v1"
+      }
     }
   }
 }
 ```
 
-API keys are passed via environment variables: `Llm__Providers__Anthropic__ApiKey`, `Llm__Providers__OpenAi__ApiKey`, `Llm__Providers__DeepSeek__ApiKey`.
+API keys via env vars: `Llm__Providers__{Provider}__ApiKey`.
 
-## Model Tier Access
+## Model tier access
 
-Models are classified into tiers via `LlmModelTier` enum. Each subscription plan has `AllowedModelTier`:
+Models are classified into tiers via `LlmModelTier` enum. Each plan has `AllowedModelTier`:
 
-| Model | Tier | Quota Cost (multiplier) | Overage Billing Units |
-|-------|------|------------------------|----------------------|
-| deepseek-chat, deepseek-reasoner | Base | 1x | 1 ($0.20) |
-| gpt-5.4-mini, claude-haiku-4-5 | Base | 1x | 1 ($0.20) |
-| gpt-5.4, claude-sonnet-4-6 | Premium | 5x | 2 ($0.40) |
-| claude-opus-4-6 | Ultra | 10x | 4 ($0.80) |
+| Model                              | Tier    | Quota multiplier | Overage units (at $0.20) |
+| ---------------------------------- | ------- | ---------------- | ------------------------ |
+| deepseek-v4-flash, deepseek-v4-pro | Base    | 1×               | 1 ($0.20)                |
+| gpt-5.4-mini, claude-haiku-4-5     | Base    | 1×               | 1 ($0.20)                |
+| gpt-5.4, claude-sonnet-4-6         | Premium | 5×               | 2 ($0.40)                |
+| claude-opus-4-6                    | Ultra   | 10×              | 4 ($0.80)                |
 
-Plans: Starter=Base, Professional=Premium, Enterprise=Ultra.
+Plans: Starter = Base, Professional = Premium, Enterprise = Ultra.
 
-## Quota System
+## Quota system
 
 Weekly AI request quotas use multiplier-based counting (not flat session counts):
+
 - `SubscriptionPlan.WeeklyAiRequestQuota` — weekly limit in request units
-- `DispatchSession.RequestCost` — multiplier used (1, 5, or 10), set from `LlmPricing.GetMultiplier()`
+- `DispatchSession.RequestCost` — multiplier (1, 5, or 10) set from `LlmPricing.GetMultiplier()`
 - `AiQuotaService` sums `RequestCost` across completed sessions for the week
 - Tenant-facing API returns usage as a percentage (no raw numbers)
-- Overage billing via Stripe: `LlmPricing.GetOverageBillingUnits()` returns 1/2/4 at $0.20/unit
+- Overage billing via Stripe: `LlmPricing.GetOverageBillingUnits()` returns 1 / 2 / 4 at $0.20/unit
 
-## Model Selection Priority
+`GetMultiplier`, `GetModelTier`, and `GetOverageBillingUnits` must agree on which tier each model belongs to. The `add-llm-provider` skill enforces this.
+
+## Model selection priority
 
 Resolution order in `DispatchConversationBuilder`:
+
 1. **Tenant selection** — `TenantSettings.LlmModel` (set by tenant in AI Settings, or by admin in tenant-edit)
 2. **System default** — `LlmProviderOptions.Model` from appsettings
 
-Provider resolution: `TenantSettings.LlmProvider` → `LlmOptions.DefaultProvider`
-
-## Adding a New LLM Provider
-
-1. If OpenAI-compatible: just add a new entry to `LlmProvider` enum and configure with `BaseUrl`
-2. If custom SDK: create a new `ILlmProvider` implementation and add a case in `LlmProviderFactory`
-3. Add pricing to `LlmPricing.cs` — include in `Pricing` dict, `GetMultiplier()`, `GetModelTier()`, `GetOverageBillingUnits()`
-4. Add model to `UpdateTenantAiSettingsHandler.ModelTiers` dictionary
-5. Add model options to admin portal `tenant-edit.ts` → `llmModelOptions`
-6. Add model options to TMS portal AI Settings page filtered by tier
+Provider resolution: `TenantSettings.LlmProvider` → `LlmOptions.DefaultProvider`.
