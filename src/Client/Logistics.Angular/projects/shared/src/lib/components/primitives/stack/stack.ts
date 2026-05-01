@@ -43,7 +43,6 @@ const justifyClasses: Record<StackJustify, string> = {
 @Component({
   selector: "ui-stack",
   templateUrl: "./stack.html",
-  host: { class: "contents" },
 })
 export class Stack {
   public readonly direction = input<StackDirection>("col");

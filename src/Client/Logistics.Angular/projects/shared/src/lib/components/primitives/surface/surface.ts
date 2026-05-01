@@ -30,7 +30,6 @@ const radiusClasses: Record<SurfaceRadius, string> = {
 @Component({
   selector: "ui-surface",
   templateUrl: "./surface.html",
-  host: { class: "contents" },
 })
 export class Surface {
   public readonly variant = input<SurfaceVariant>("elevated");

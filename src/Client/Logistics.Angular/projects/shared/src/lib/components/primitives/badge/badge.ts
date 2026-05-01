@@ -12,7 +12,6 @@ export type BadgeVariant = "solid" | "outlined";
   selector: "ui-badge",
   templateUrl: "./badge.html",
   imports: [TagModule],
-  host: { class: "contents" },
 })
 export class Badge {
   public readonly value = input<string | number | null>(null);

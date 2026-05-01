@@ -239,6 +239,7 @@ function startClassFor(bp: GridBreakpoint, offset: number): string {
 @Component({
   selector: "ui-grid",
   templateUrl: "./grid.html",
+  host: { "[class]": "classes()" },
 })
 export class Grid {
   public readonly container = input<boolean, unknown>(false, { transform: booleanAttribute });

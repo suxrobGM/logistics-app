@@ -87,7 +87,6 @@ const alignClasses: Record<TypographyAlign, string> = {
 @Component({
   selector: "ui-typography",
   templateUrl: "./typography.html",
-  host: { class: "contents" },
 })
 export class Typography {
   public readonly variant = input<TypographyVariant>("body");

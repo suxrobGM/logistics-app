@@ -11,7 +11,6 @@ import { resolveStatusSeverity, type StatusKind } from "./severity-maps";
   selector: "ui-status-badge",
   templateUrl: "./status-badge.html",
   imports: [Badge],
-  host: { class: "contents" },
 })
 export class StatusBadge {
   public readonly status = input.required<string | null | undefined>();

@@ -36,7 +36,6 @@ const colorClasses: Record<IconColor, string> = {
 @Component({
   selector: "ui-icon",
   templateUrl: "./icon.html",
-  host: { class: "contents" },
 })
 export class Icon {
   public readonly name = input.required<string>();
