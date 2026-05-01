@@ -100,7 +100,7 @@ erDiagram
         string Email
         string FirstName
         string LastName
-        guid? TenantId
+        guid TenantId "nullable"
     }
 ```
 
@@ -166,22 +166,22 @@ erDiagram
         Money DeliveryCost
         double Distance
         LoadSource Source
-        DateTime? RequestedPickupDate
-        DateTime? RequestedDeliveryDate
+        DateTime RequestedPickupDate "nullable"
+        DateTime RequestedDeliveryDate "nullable"
     }
     TRIP {
         long Number
         string Name
         TripStatus Status
         double TotalDistance
-        DateTime? DispatchedAt
-        DateTime? CompletedAt
+        DateTime DispatchedAt "nullable"
+        DateTime CompletedAt "nullable"
     }
     TRIP_STOP {
         TripStopType Type
         int Order "1-based"
         Address Address
-        DateTime? ArrivedAt
+        DateTime ArrivedAt "nullable"
     }
     TRUCK {
         string Number
