@@ -1,14 +1,14 @@
 import { DatePipe } from "@angular/common";
-import { Component, type OnInit, computed, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import {
   Api,
-  type LoadBoardConfigurationDto,
-  type LoadBoardListingDto,
-  type PostedTruckDto,
   getLoadBoardProviders,
   getPostedTrucks,
   searchLoadBoard,
+  type LoadBoardConfigurationDto,
+  type LoadBoardListingDto,
+  type PostedTruckDto,
 } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

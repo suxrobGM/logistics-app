@@ -1,9 +1,9 @@
 import type { Routes } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import { authGuard } from "@/core/auth";
-import { LoadBoardDashboardComponent } from "./load-board-dashboard/load-board-dashboard";
-import { LoadBoardProvidersComponent } from "./load-board-providers/load-board-providers";
-import { LoadBoardSearchComponent } from "./load-board-search/load-board-search";
+import { LoadBoardDashboardComponent } from "./loadboard-dashboard/loadboard-dashboard";
+import { LoadBoardProvidersComponent } from "./loadboard-providers/loadboard-providers";
+import { LoadBoardSearchComponent } from "./loadboard-search/loadboard-search";
 import { PostedTrucksComponent } from "./posted-trucks/posted-trucks";
 
 export const loadBoardRoutes: Routes = [

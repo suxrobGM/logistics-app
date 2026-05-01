@@ -131,8 +131,7 @@ export const appRoutes: Routes = [
   },
   {
     path: "loadboard",
-    loadChildren: () =>
-      import("./pages/load-board/load-board.routes").then((m) => m.loadBoardRoutes),
+    loadChildren: () => import("./pages/loadboard/loadboard.routes").then((m) => m.loadBoardRoutes),
     canActivate: [featureGuardFromData],
     data: {
       breadcrumb: "Load Board",
