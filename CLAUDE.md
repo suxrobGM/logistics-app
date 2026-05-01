@@ -57,7 +57,7 @@ cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 | **Logistics.Infrastructure.Payments**               | Stripe payment processing and Stripe Connect                                               |
 | **Logistics.Infrastructure.Documents**              | PDF generation, document storage, VIN decoder                                              |
 | **Logistics.Infrastructure.Routing**                | Trip optimization, route planning, geocoding                                               |
-| **Logistics.Infrastructure.Storage**                | Azure Blob Storage and file-based storage                                                  |
+| **Logistics.Infrastructure.Storage**                | Pluggable blob storage: Azure Blob, Cloudflare R2 (S3-compatible), file system             |
 | **Logistics.Infrastructure.AI**                     | Multi-provider LLM dispatch agent (Anthropic, OpenAI, DeepSeek), tool registry, agent loop |
 
 ### Presentation Projects
@@ -159,7 +159,7 @@ Payments flow directly to trucking company bank accounts via Stripe Connect:
 - **Stripe Connect**: Direct company payments (destination charges)
 - **Firebase**: Push notifications
 - **SignalR**: Real-time communication (`/hubs/tracking`, `/hubs/chat`, `/hubs/notification`)
-- **Azure Blob**: Document storage
+- **Blob Storage**: Document storage with pluggable provider — Azure Blob, Cloudflare R2 (S3-compatible), or local file system. Selected via `BlobStorage:Type` config (`azure` / `r2` / `cloudflare` / default file)
 - **ELD Providers**: Samsara, Motive (`/webhooks/eld/*`)
 - **Load Boards**: DAT, Truckstop, 123Loadboard
 - **Mapbox**: Geocoding, route optimization

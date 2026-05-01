@@ -27,7 +27,16 @@ flowchart TB
         direction LR
         Application["Application<br/>Commands · Queries · Behaviors"]
         Contracts["Application.Contracts<br/>Service interfaces"]
+        Mappings["Mappings<br/>Entity ↔ DTO"]
         Domain["Domain<br/>Entities · Aggregates · Events"]
+        Primitives["Domain.Primitives<br/>Value objects · Enums"]
+    end
+
+    subgraph Shared["Shared"]
+        direction LR
+        SharedModels["Shared.Models<br/>DTO contracts"]
+        SharedIdentity["Shared.Identity<br/>Claims · Roles · Policies"]
+        SharedGeo["Shared.Geo<br/>Geolocation utilities"]
     end
 
     subgraph Infra["Infrastructure (9 projects)"]
@@ -46,7 +55,7 @@ flowchart TB
     subgraph External["External Services"]
         direction LR
         Postgres[("PostgreSQL 18<br/>Master + Tenant DBs")]
-        SaaS["Stripe · Mapbox · Firebase<br/>Azure Blob · Resend"]
+        SaaS["Stripe · Mapbox · Firebase<br/>Azure Blob · Cloudflare R2 · Resend"]
         Llm["Anthropic · OpenAI · DeepSeek"]
         Providers["Samsara · Motive<br/>DAT · Truckstop · 123LB"]
     end
@@ -56,6 +65,10 @@ flowchart TB
     Migrator --> Persistence
     Application --> Contracts
     Application --> Domain
+    Application --> Mappings
+    Domain --> Primitives
+    Application -.uses.-> Shared
+    Infra -.uses.-> Shared
     Contracts -. implemented by .-> Infra
     Infra --> External
 ```
@@ -145,7 +158,7 @@ The repository follows the layer split above. Each project name is `Logistics.{L
 | Anthropic / OpenAI / DeepSeek  | LLM providers for the AI dispatch agent |
 | Firebase                       | Push notifications                      |
 | Mapbox                         | Maps, geocoding, route optimization     |
-| Azure Blob Storage             | Document & photo storage                |
+| Azure Blob / Cloudflare R2     | Document & photo storage (pluggable)    |
 | NHTSA API                      | VIN decoding                            |
 | Samsara / Motive               | ELD / HOS providers                     |
 | DAT / Truckstop / 123Loadboard | Load board providers                    |
@@ -283,9 +296,23 @@ Load board providers: DAT, Truckstop, 123Loadboard, and a Demo provider. Search 
 
 ### Logistics.Infrastructure.Storage
 
-- Azure Blob Storage implementation
-- Local file-system implementation
+- `IBlobStorageService` abstraction with three pluggable providers, selected via the `BlobStorage:Type` configuration value:
+  - **Azure Blob Storage** (`azure`) - production default for Azure-hosted deployments
+  - **Cloudflare R2** (`r2` / `cloudflare`) - S3-compatible storage via the AWS SDK; cost-efficient zero-egress option
+  - **Local file system** (default) - used for development and on-prem
 - Storage abstraction shared by Documents and Communications
+
+```json
+{
+  "BlobStorage": { "Type": "r2" },
+  "R2BlobStorage": {
+    "AccountId": "...",
+    "AccessKeyId": "...",
+    "SecretAccessKey": "...",
+    "BucketName": "logisticsx"
+  }
+}
+```
 
 ## Presentation Projects
 
