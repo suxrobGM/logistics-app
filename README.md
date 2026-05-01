@@ -7,7 +7,7 @@
 [cc-by-nc]: https://creativecommons.org/licenses/by-nc/4.0/
 [cc-by-nc-shield]: https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg
 
-> AI-first fleet management platform with an autonomous dispatch agent that matches loads to trucks, verifies HOS compliance, optimizes routes, and searches load boards — all with full reasoning transparency. Built for trucking companies on a modern multi-tenant cloud-native architecture with real-time GPS tracking, invoicing, and payroll.
+> AI-first fleet management platform with an autonomous dispatch agent that matches loads to trucks, verifies HOS compliance, optimizes routes, and searches load boards — all with full reasoning transparency. Built for trucking companies of all kinds — dry van, reefer, flatbed, tanker, intermodal, vehicle transport, and more — running across the **United States and Europe** on a modern multi-tenant cloud-native architecture with real-time GPS tracking, invoicing, and payroll.
 
 ![AI Dispatch - Sessions & Decisions](docs/images/tms-portal/ai-dispatch-sessions.png)
 
@@ -19,7 +19,11 @@
 
 ## Overview
 
-LogisticsX is an AI-first fleet management platform purpose-built for trucking fleets specializing in intermodal containers and vehicle transport. It replaces spreadsheet-based workflows with an end-to-end digital system connecting dispatchers, drivers, and customers through web and mobile applications with real-time synchronization.
+LogisticsX is an AI-first fleet management platform for trucking companies of any size or specialization. The platform supports a broad range of equipment — flatbeds, freight trucks, reefers, tankers, box trucks, dump trucks, tow trucks, car haulers and car transporters, container trucks, low loaders, tautliners, swap bodies, and curtainsiders — so the same system can run a dry-van long haul fleet, a refrigerated grocery distributor, a heavy-haul flatbed operator, an intermodal drayage company, or a vehicle-transport carrier.
+
+It ships with first-class support for both **US** and **European** operations — region-aware tenant provisioning, multi-currency billing (USD / EUR), country and address validation per region, and locale-aware map defaults. It replaces spreadsheet-based workflows with an end-to-end digital system connecting dispatchers, drivers, and customers through web and mobile applications with real-time synchronization.
+
+For intermodal operators, the platform includes dedicated entities and workflows for the container lifecycle: ISO 6346 container tracking (20'/40'/45' GP, High Cube, Reefer, Open Top, Flat Rack, Tank), state machine-driven status transitions (Empty → Loaded → At Port → In Transit → Delivered → Returned), and a Terminal directory keyed by UN/LOCODE covering sea ports, rail terminals, inland depots, air cargo facilities, and border crossings.
 
 The platform is built around its **AI dispatch agent** — an agentic system that autonomously analyzes fleet state, matches loads to trucks, verifies HOS compliance, optimizes trip routes, and proactively searches load boards for revenue opportunities. It operates in two modes: **human-in-the-loop** (suggests assignments for dispatcher approval) and **fully autonomous** (executes decisions in real-time). Every decision is logged with full reasoning transparency, and dispatchers can approve, reject, or re-plan with context.
 
@@ -30,14 +34,17 @@ The platform is built around its **AI dispatch agent** — an agentic system tha
 
 ## Features
 
-| Operations | Financial | Compliance | Communication |
-|:-----------|:----------|:-----------|:--------------|
-| AI-powered dispatching | Invoicing & Stripe payments | ELD / HOS (Samsara, Motive) | Real-time messaging |
-| MCP server for AI tools | Stripe Connect direct payouts | Safety & DVIR inspections | Push notifications |
-| Load management & dispatching | Payroll & timesheets | Document management (POD, BOL) | Customer self-service portal |
-| Trip planning & route optimization | Expense tracking | Role-based access control | Driver mobile app |
-| Fleet & maintenance tracking | Reports & analytics | | |
-| Load board integration (DAT, Truckstop) | | | |
+| Operations                               | Financial                          | Compliance                      | Communication                |
+| :--------------------------------------- | :--------------------------------- | :------------------------------ | :--------------------------- |
+| AI-powered dispatching                   | Invoicing & Stripe payments        | ELD / HOS (Samsara, Motive)     | Real-time messaging          |
+| MCP server for AI tools                  | Stripe Connect direct payouts      | Safety & DVIR inspections       | Push notifications           |
+| Load management & dispatching            | Multi-currency billing (USD / EUR) | Document management (POD, BOL)  | Customer self-service portal |
+| Intermodal container tracking (ISO 6346) | Payroll & timesheets               | Region-aware address validation | Driver mobile app            |
+| Terminals & depots (UN/LOCODE)           | Expense tracking                   | Role-based access control       |                              |
+| Trip planning & route optimization       | Reports & analytics                |                                 |                              |
+| Fleet & maintenance tracking             |                                    |                                 |                              |
+| Load board integration (DAT, Truckstop)  |                                    |                                 |                              |
+| Multi-region support (US + EU)           |                                    |                                 |                              |
 
 [Complete feature list](docs/features.md)
 
@@ -57,46 +64,46 @@ See [Local Development Guide](docs/getting-started/local-development.md)
 
 ## Live Demo
 
-| Portal | URL |
-|--------|-----|
-| TMS Portal | [tms.logisticsx.app](https://tms.logisticsx.app) |
+| Portal          | URL                                                        |
+| --------------- | ---------------------------------------------------------- |
+| TMS Portal      | [tms.logisticsx.app](https://tms.logisticsx.app)           |
 | Customer Portal | [customer.logisticsx.app](https://customer.logisticsx.app) |
 
 **Test Credentials:**
 
-| Role | Email | Password |
-|------|-------|----------|
-| Owner | owner@test.com | Test12345# |
-| Manager | manager1@test.com | Test12345# |
+| Role       | Email                | Password   |
+| ---------- | -------------------- | ---------- |
+| Owner      | owner@test.com       | Test12345# |
+| Manager    | manager1@test.com    | Test12345# |
 | Dispatcher | dispatcher1@test.com | Test12345# |
-| Driver | driver1@test.com | Test12345# |
-| Customer | customer1@test.com | Test12345# |
+| Driver     | driver1@test.com     | Test12345# |
+| Customer   | customer1@test.com   | Test12345# |
 
 [All test credentials](docs/getting-started/test-credentials.md)
 
 ## Tech Stack
 
-| Layer | Technologies |
-|-------|-------------|
-| **Backend** | .NET 10, ASP.NET Core, EF Core, MediatR, SignalR, Duende IdentityServer |
-| **Frontend** | Angular 21, PrimeNG, Tailwind CSS |
-| **Mobile** | Kotlin Multiplatform, Compose Multiplatform |
-| **Database** | PostgreSQL 18 |
-| **Payments** | Stripe, Stripe Connect |
-| **Infrastructure** | Docker, .NET Aspire, Nginx, GitHub Actions |
-| **Integrations** | Mapbox, Firebase, Samsara, Motive, DAT, Truckstop, 123Loadboard, Claude API |
+| Layer              | Technologies                                                                |
+| ------------------ | --------------------------------------------------------------------------- |
+| **Backend**        | .NET 10, ASP.NET Core, EF Core, MediatR, SignalR, Duende IdentityServer     |
+| **Frontend**       | Angular 21, PrimeNG, Tailwind CSS                                           |
+| **Mobile**         | Kotlin Multiplatform, Compose Multiplatform                                 |
+| **Database**       | PostgreSQL 18                                                               |
+| **Payments**       | Stripe, Stripe Connect                                                      |
+| **Infrastructure** | Docker, .NET Aspire, Nginx, GitHub Actions                                  |
+| **Integrations**   | Mapbox, Firebase, Samsara, Motive, DAT, Truckstop, 123Loadboard, Claude API |
 
 ## Applications
 
-| App | Technology | Port |
-|-----|------------|------|
-| API | ASP.NET Core | 7000 |
+| App             | Technology            | Port |
+| --------------- | --------------------- | ---- |
+| API             | ASP.NET Core          | 7000 |
 | Identity Server | Duende IdentityServer | 7001 |
-| Admin Portal | Angular | 7002 |
-| TMS Portal | Angular | 7003 |
-| Customer Portal | Angular | 7004 |
-| Website | Angular (SSR) | 7005 |
-| Driver App | Kotlin Multiplatform | — |
+| Admin Portal    | Angular               | 7002 |
+| TMS Portal      | Angular               | 7003 |
+| Customer Portal | Angular               | 7004 |
+| Website         | Angular (SSR)         | 7005 |
+| Driver App      | Kotlin Multiplatform  | —    |
 
 ## Architecture
 
@@ -120,40 +127,40 @@ src/
 
 ### AI Dispatch
 
-| Sessions & Decisions | Agent Timeline |
-|:--------------------:|:--------------:|
+|                     Sessions & Decisions                     |                           Agent Timeline                           |
+| :----------------------------------------------------------: | :----------------------------------------------------------------: |
 | ![Sessions](docs/images/tms-portal/ai-dispatch-sessions.png) | ![Timeline](docs/images/tms-portal/ai-dispatch-agent-timeline.png) |
 
 ### TMS Portal
 
-| Dashboard | Loads | Trips |
-|:---------:|:-----:|:-----:|
+|                     Dashboard                     |                     Loads                      |                     Trips                      |
+| :-----------------------------------------------: | :--------------------------------------------: | :--------------------------------------------: |
 | ![Dashboard](docs/images/tms-portal/tms-home.png) | ![Loads](docs/images/tms-portal/tms-loads.png) | ![Trips](docs/images/tms-portal/tms-trips.png) |
 
-| Fleet | Reports | Invoicing |
-|:-----:|:-------:|:---------:|
+|                     Fleet                      |                      Reports                       |                           Invoicing                           |
+| :--------------------------------------------: | :------------------------------------------------: | :-----------------------------------------------------------: |
 | ![Fleet](docs/images/tms-portal/tms-fleet.png) | ![Reports](docs/images/tms-portal/tms-reports.png) | ![Invoices](docs/images/tms-portal/tms-invoice-dashboard.png) |
 
 ### Customer Portal
 
-| Dashboard | Shipment Details |
-|:---------:|:----------------:|
+|                            Dashboard                             |                        Shipment Details                        |
+| :--------------------------------------------------------------: | :------------------------------------------------------------: |
 | ![Dashboard](docs/images/customer-portal/customer-dashboard.png) | ![Shipment](docs/images/customer-portal/customer-shipment.png) |
 
 [All screenshots](docs/screenshots.md)
 
 ## Documentation
 
-| Guide | Description |
-|-------|-------------|
-| [Features](docs/features.md) | Complete feature list |
-| [Getting Started](docs/getting-started/prerequisites.md) | Prerequisites, local setup, Docker |
-| [Architecture](docs/architecture/overview.md) | System design, patterns, domain model |
-| [API Reference](docs/api/overview.md) | Authentication, endpoints, webhooks |
-| [Deployment](docs/deployment/overview.md) | VPS setup, Docker Compose, Nginx, SSL |
-| [AI Dispatch](docs/ai-dispatch.md) | Agentic dispatcher architecture & API |
-| [MCP Server](docs/mcp-server.md) | Connect Claude Desktop, Cursor & other AI tools to your fleet |
-| [Development](docs/development/backend-guide.md) | Backend, Angular, mobile guides |
+| Guide                                                    | Description                                                   |
+| -------------------------------------------------------- | ------------------------------------------------------------- |
+| [Features](docs/features.md)                             | Complete feature list                                         |
+| [Getting Started](docs/getting-started/prerequisites.md) | Prerequisites, local setup, Docker                            |
+| [Architecture](docs/architecture/overview.md)            | System design, patterns, domain model                         |
+| [API Reference](docs/api/overview.md)                    | Authentication, endpoints, webhooks                           |
+| [Deployment](docs/deployment/overview.md)                | VPS setup, Docker Compose, Nginx, SSL                         |
+| [AI Dispatch](docs/ai-dispatch.md)                       | Agentic dispatcher architecture & API                         |
+| [MCP Server](docs/mcp-server.md)                         | Connect Claude Desktop, Cursor & other AI tools to your fleet |
+| [Development](docs/development/backend-guide.md)         | Backend, Angular, mobile guides                               |
 
 ## Contributing
 

@@ -45,6 +45,12 @@ export class Features {
       description:
         "Search freight across DAT, Truckstop, and 123Loadboard from one interface. Book loads and post available trucks.",
     },
+    {
+      icon: "pi-globe",
+      title: "Built for US & Europe",
+      description:
+        "Run tenants across the United States or Europe with region-aware address validation, multi-currency billing (USD / EUR), and locale-aware map defaults.",
+    },
   ];
 
   protected readonly moreFeatures: Feature[] = [
@@ -101,6 +107,24 @@ export class Features {
       title: "Real-Time Messaging",
       description:
         "Built-in chat between dispatchers and drivers with read receipts, typing indicators, and push notifications.",
+    },
+    {
+      icon: "pi-inbox",
+      title: "Intermodal Containers",
+      description:
+        "ISO 6346 container tracking across multiple loads, with state machine-driven lifecycle (Empty → Loaded → At Port → In Transit → Delivered → Returned).",
+    },
+    {
+      icon: "pi-building",
+      title: "Terminals & Depots",
+      description:
+        "UN/LOCODE-keyed directory of sea ports, rail terminals, inland depots, air cargo, and border crossings as pickup and drop-off points.",
+    },
+    {
+      icon: "pi-car",
+      title: "Any Equipment Type",
+      description:
+        "Flatbed, reefer, tanker, box truck, car hauler, container truck, low loader, tautliner, swap body, curtainsider — one platform for every kind of fleet.",
     },
   ];
 }
