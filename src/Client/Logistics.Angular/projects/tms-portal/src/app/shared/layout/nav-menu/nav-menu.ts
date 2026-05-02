@@ -1,5 +1,6 @@
 import { Component, computed, effect, inject, input, output, signal } from "@angular/core";
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
+import { LucideDynamicIcon } from "@lucide/angular";
 import { BadgeModule } from "primeng/badge";
 import { TooltipModule } from "primeng/tooltip";
 import type { NavItem, NavSection } from "./nav-menu.types";
@@ -8,7 +9,7 @@ import type { NavItem, NavSection } from "./nav-menu.types";
   selector: "app-nav-menu",
   templateUrl: "./nav-menu.html",
   styleUrl: "./nav-menu.css",
-  imports: [RouterLink, RouterLinkActive, BadgeModule, TooltipModule],
+  imports: [RouterLink, RouterLinkActive, BadgeModule, TooltipModule, LucideDynamicIcon],
   host: { class: "flex flex-col flex-1 min-h-0" },
 })
 export class NavMenu {

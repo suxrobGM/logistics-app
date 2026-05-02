@@ -1,5 +1,6 @@
 import { Component, computed, inject, input, output } from "@angular/core";
 import { Router } from "@angular/router";
+import { LucideDynamicIcon } from "@lucide/angular";
 import { PopoverModule } from "primeng/popover";
 import { TooltipModule } from "primeng/tooltip";
 import { SidebarFavoritesService } from "@/core/services";
@@ -8,7 +9,7 @@ import type { NavItem, NavSection } from "../../nav-menu";
 @Component({
   selector: "app-favorites-bar",
   templateUrl: "./favorites-bar.html",
-  imports: [TooltipModule, PopoverModule],
+  imports: [TooltipModule, PopoverModule, LucideDynamicIcon],
 })
 export class FavoritesBar {
   private readonly router = inject(Router);

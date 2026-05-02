@@ -1,23 +1,32 @@
-import type { ApplicationConfig } from "@angular/core";
-import { importProvidersFrom, provideBrowserGlobalErrorListeners } from "@angular/core";
+import {
+  importProvidersFrom,
+  provideBrowserGlobalErrorListeners,
+  type ApplicationConfig,
+} from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { provideRouter, withComponentInputBinding } from "@angular/router";
-import { getAccessToken, PERMISSION_CHECKER, UPGRADE_HANDLER } from "@logistics/shared";
-import { FEATURE_PROVIDER, TENANT_SETTINGS_PROVIDER } from "@logistics/shared/services";
+import {
+  BASE_LUCIDE_ICONS,
+  getAccessToken,
+  PERMISSION_CHECKER,
+  UPGRADE_HANDLER,
+} from "@logistics/shared";
 import { provideApi } from "@logistics/shared/api";
-import { PermissionService } from "@/core/auth";
+import { FEATURE_PROVIDER, TENANT_SETTINGS_PROVIDER } from "@logistics/shared/services";
+import { provideLucideIcons } from "@lucide/angular";
 import { provideAuth } from "angular-auth-oidc-client";
 import { provideMapboxGL } from "ngx-mapbox-gl";
 import { ConfirmationService, MessageService } from "primeng/api";
 import { providePrimeNG } from "primeng/config";
-import { authConfig } from "@/core/auth";
+import { authConfig, PermissionService } from "@/core/auth";
 import { tenantInterceptor } from "@/core/interceptors";
-import { TmsTenantSettingsProvider } from "@/core/services/tenant-settings.provider";
 import { TmsFeatureProvider } from "@/core/services/feature.provider";
+import { TmsTenantSettingsProvider } from "@/core/services/tenant-settings.provider";
 import { UpgradePromptService } from "@/core/services/upgrade-prompt.service";
-import { environment } from "@/env";
-import { appRoutes } from "./app.routes";
 import { TmsPreset, TmsThemeOptions } from "@/core/theme/primeng-preset";
+import { environment } from "@/env";
+import { TMS_LUCIDE_ICONS } from "@/shared/icons/lucide-icons";
+import { appRoutes } from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -37,6 +46,7 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideMapboxGL({ accessToken: environment.mapboxToken }),
+    provideLucideIcons(...BASE_LUCIDE_ICONS, ...TMS_LUCIDE_ICONS),
 
     MessageService,
     ConfirmationService,

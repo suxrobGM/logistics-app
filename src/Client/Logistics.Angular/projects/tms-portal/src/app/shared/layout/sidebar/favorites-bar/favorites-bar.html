@@ -18,7 +18,7 @@
             tooltipPosition="top"
             type="button"
           >
-            <i class="pi pi-plus text-[0.625rem]"></i>
+            <svg lucideIcon="plus" class="size-2.5"></svg>
           </button>
         }
       </div>
@@ -32,15 +32,17 @@
             type="button"
           >
             @if (item.icon) {
-              <i [class]="item.icon" class="text-accent text-xs"></i>
+              <svg [lucideIcon]="item.icon" class="text-accent size-3"></svg>
             }
             <span class="max-w-24 truncate">{{ item.label }}</span>
             <button
-              class="pi pi-times text-muted hover:text-danger ml-0.5 cursor-pointer border-none bg-transparent p-0 text-[0.5rem] opacity-0 transition-opacity group-hover:opacity-100"
+              class="text-muted hover:text-danger ml-0.5 flex cursor-pointer items-center justify-center border-none bg-transparent p-0 opacity-0 transition-opacity group-hover:opacity-100"
               (click)="removeFavorite($event, item.id)"
               type="button"
               aria-label="Remove from favorites"
-            ></button>
+            >
+              <svg lucideIcon="x" class="size-2.5"></svg>
+            </button>
           </button>
         }
       </div>
@@ -55,7 +57,7 @@
             tooltipPosition="right"
             type="button"
           >
-            <i [class]="item.icon ?? 'pi pi-star'" class="text-[1rem]"></i>
+            <svg [lucideIcon]="item.icon ?? 'star'" class="size-4"></svg>
           </button>
         }
       </div>
@@ -79,7 +81,7 @@
           type="button"
         >
           @if (item.icon) {
-            <i [class]="item.icon" class="text-muted w-5 text-center"></i>
+            <svg [lucideIcon]="item.icon" class="text-muted size-4 shrink-0"></svg>
           }
           <span>{{ item.label }}</span>
         </button>

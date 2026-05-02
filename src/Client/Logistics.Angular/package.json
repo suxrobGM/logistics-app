@@ -31,6 +31,7 @@
     "@angular/platform-server": "^21.2.11",
     "@angular/router": "^21.2.11",
     "@angular/ssr": "^21.2.9",
+    "@lucide/angular": "^1.14.0",
     "@microsoft/signalr": "^10.0.0",
     "@ngrx/signals": "^21.1.0",
     "@primeuix/themes": "^2.0.3",

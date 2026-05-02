@@ -27,18 +27,19 @@
           >
             <div class="flex min-w-0 items-center gap-3">
               @if (item.icon) {
-                <i [class]="item.icon" class="nav-icon"></i>
+                <svg [lucideIcon]="item.icon" class="nav-icon"></svg>
               }
               @if (!collapsed()) {
                 <span class="truncate">{{ item.label }}</span>
               }
             </div>
             @if (!collapsed()) {
-              <i
-                class="pi pi-chevron-down text-muted shrink-0 text-[0.6875rem] transition-transform duration-200"
+              <svg
+                lucideIcon="chevron-down"
+                class="text-muted shrink-0 size-3 transition-transform duration-200"
                 [class.rotate-180]="isGroupExpanded(item)"
                 [class.text-accent]="isGroupExpanded(item)"
-              ></i>
+              ></svg>
             }
           </button>
 
@@ -78,7 +79,7 @@
           >
             <div class="flex min-w-0 items-center gap-3">
               @if (item.icon) {
-                <i [class]="item.icon" class="nav-icon"></i>
+                <svg [lucideIcon]="item.icon" class="nav-icon"></svg>
               }
               @if (!collapsed()) {
                 <span class="truncate">{{ item.label }}</span>
@@ -116,18 +117,19 @@
           >
             <div class="flex min-w-0 items-center gap-3">
               @if (item.icon) {
-                <i [class]="item.icon" class="nav-icon"></i>
+                <svg [lucideIcon]="item.icon" class="nav-icon"></svg>
               }
               @if (!collapsed()) {
                 <span class="truncate">{{ item.label }}</span>
               }
             </div>
             @if (!collapsed()) {
-              <i
-                class="pi pi-chevron-down text-muted shrink-0 text-[0.6875rem] transition-transform duration-200"
+              <svg
+                lucideIcon="chevron-down"
+                class="text-muted shrink-0 size-3 transition-transform duration-200"
                 [class.rotate-180]="isGroupExpanded(item)"
                 [class.text-accent]="isGroupExpanded(item)"
-              ></i>
+              ></svg>
             }
           </button>
 
@@ -158,7 +160,7 @@
           >
             <div class="flex min-w-0 items-center gap-3">
               @if (item.icon) {
-                <i [class]="item.icon" class="nav-icon"></i>
+                <svg [lucideIcon]="item.icon" class="nav-icon"></svg>
               }
               @if (!collapsed()) {
                 <span class="truncate">{{ item.label }}</span>

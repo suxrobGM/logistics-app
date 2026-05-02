@@ -8,13 +8,13 @@ export const sidebarSections: NavSection[] = [
       {
         id: "home",
         label: "Home",
-        icon: "pi pi-home",
+        icon: "house",
         route: "/home",
       },
       {
         id: "messages",
         label: "Messages",
-        icon: "pi pi-comments",
+        icon: "messages-square",
         route: "/messages",
         feature: "messages",
         // badge wired in sidebar.ts via ChatService
@@ -28,28 +28,28 @@ export const sidebarSections: NavSection[] = [
       {
         id: "loads",
         label: "Loads",
-        icon: "pi pi-box",
+        icon: "package",
         route: "/loads",
         feature: "loads",
       },
       {
         id: "trips",
         label: "Trips",
-        icon: "pi pi-map",
+        icon: "map",
         route: "/trips",
         feature: "trips",
       },
       {
         id: "ai-dispatch",
         label: "AI Dispatch",
-        icon: "pi pi-sparkles",
+        icon: "sparkles",
         route: "/ai-dispatch",
         feature: "agentic_dispatch",
       },
       {
         id: "loadboard",
         label: "Load Board",
-        icon: "pi pi-search",
+        icon: "search",
         feature: "load_board",
         children: [
           {
@@ -72,7 +72,7 @@ export const sidebarSections: NavSection[] = [
       {
         id: "intermodal",
         label: "Intermodal",
-        icon: "pi pi-warehouse",
+        icon: "warehouse",
         children: [
           {
             id: "intermodal-containers",
@@ -95,21 +95,21 @@ export const sidebarSections: NavSection[] = [
       {
         id: "trucks",
         label: "Trucks",
-        icon: "pi pi-truck",
+        icon: "truck",
         route: "/trucks",
         feature: "trucks",
       },
       {
         id: "eld",
         label: "ELD / HOS",
-        icon: "pi pi-clock",
+        icon: "clock",
         route: "/eld",
         feature: "eld",
       },
       {
         id: "maintenance",
         label: "Maintenance",
-        icon: "pi pi-wrench",
+        icon: "wrench",
         feature: "maintenance",
         children: [
           {
@@ -132,7 +132,7 @@ export const sidebarSections: NavSection[] = [
       {
         id: "safety",
         label: "Safety",
-        icon: "pi pi-shield",
+        icon: "shield",
         feature: "safety",
         children: [
           {
@@ -171,21 +171,21 @@ export const sidebarSections: NavSection[] = [
       {
         id: "employees",
         label: "Employees",
-        icon: "pi pi-users",
+        icon: "users",
         route: "/employees",
         feature: "employees",
       },
       {
         id: "customers",
         label: "Customers",
-        icon: "pi pi-building",
+        icon: "building",
         route: "/customers",
         feature: "customers",
       },
       {
         id: "payroll",
         label: "Payroll",
-        icon: "pi pi-wallet",
+        icon: "wallet",
         feature: "payroll",
         children: [
           {
@@ -209,7 +209,7 @@ export const sidebarSections: NavSection[] = [
       {
         id: "invoicing",
         label: "Invoicing",
-        icon: "pi pi-file-edit",
+        icon: "file-pen-line",
         feature: "invoices",
         children: [
           {
@@ -227,7 +227,7 @@ export const sidebarSections: NavSection[] = [
       {
         id: "expenses",
         label: "Expenses",
-        icon: "pi pi-money-bill",
+        icon: "banknote",
         feature: "expenses",
         children: [
           {
@@ -250,7 +250,7 @@ export const sidebarSections: NavSection[] = [
       {
         id: "reports",
         label: "Reports",
-        icon: "pi pi-chart-line",
+        icon: "trending-up",
         feature: "reports",
         children: [
           {
@@ -310,7 +310,7 @@ export const sidebarSections: NavSection[] = [
       {
         id: "settings",
         label: "Settings",
-        icon: "pi pi-cog",
+        icon: "settings",
         children: [
           {
             id: "settings-company",
