@@ -36,6 +36,7 @@ const config = {
       files: "*.html",
       options: {
         parser: "angular",
+        htmlWhitespaceSensitivity: "ignore",
       },
     },
   ],

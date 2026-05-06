@@ -1,5 +1,5 @@
 import { DatePipe } from "@angular/common";
-import { Component, effect, inject, input, signal } from "@angular/core";
+import { Component, computed, effect, inject, input, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ErrorState, LoadingSkeleton, ToastService } from "@logistics/shared";
 import {
@@ -8,7 +8,7 @@ import {
   processPublicPayment,
   type PublicInvoiceDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Callout, Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -34,6 +34,7 @@ import { PublicLayout } from "@/shared/layout";
     ErrorState,
     LoadingSkeleton,
     PublicLayout,
+    Callout,
     Grid,
     Icon,
     Stack,
@@ -54,6 +55,28 @@ export class PublicPayment {
   protected readonly error = signal<string | null>(null);
   protected readonly paymentSuccess = signal(false);
   protected readonly paymentAmount = signal<number | null>(null);
+
+  /** True when the invoice carries any tax — drives the Rate% / Tax columns + breakdown row. */
+  protected readonly hasTax = computed(() => {
+    const inv = this.invoice();
+    if (!inv) return false;
+    if (inv.taxBehavior && inv.taxBehavior !== "exclusive") return true;
+    if ((inv.taxTotal?.amount ?? 0) > 0) return true;
+    return (
+      inv.lineItems?.some((li) => (li.taxAmount ?? 0) > 0 || (li.taxRatePercent ?? 0) > 0) ?? false
+    );
+  });
+
+  protected readonly isReverseCharge = computed(
+    () => this.invoice()?.taxBehavior === "reverse_charge",
+  );
+
+  /**
+   * Region-aware label for the tax column / row. The public DTO doesn't carry the
+   * tenant's region, so default to "Tax"; if the breakdown carries a recognizable
+   * tax_type it could be made smarter later.
+   */
+  protected readonly taxLabel = computed(() => "Tax");
 
   constructor() {
     effect(() => {

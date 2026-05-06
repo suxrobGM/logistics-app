@@ -11,7 +11,11 @@ public record PublicInvoiceDto
     public Guid Id { get; set; }
     public long Number { get; set; }
     public InvoiceStatus Status { get; set; }
+    public Money Subtotal { get; set; } = null!;
+    public Money TaxTotal { get; set; } = null!;
     public Money Total { get; set; } = null!;
+    public TaxBehavior TaxBehavior { get; set; }
+    public IEnumerable<InvoiceTaxLineDto> TaxBreakdown { get; set; } = [];
     public DateTime? DueDate { get; set; }
 
     /// <summary>

@@ -50,13 +50,17 @@
           <ui-grid container spacing="4" class="mb-4">
             <ui-grid [size]="{ xs: 6 }">
               <ui-typography variant="body-sm" color="muted">Bill To</ui-typography>
-              <ui-typography variant="body" weight="medium">{{ inv.customerName ?? "Customer" }}</ui-typography>
+              <ui-typography variant="body" weight="medium">
+                {{ inv.customerName ?? "Customer" }}
+              </ui-typography>
             </ui-grid>
             <ui-grid [size]="{ xs: 6 }">
               <div class="text-right">
                 @if (inv.dueDate) {
                   <ui-typography variant="body-sm" color="muted">Due Date</ui-typography>
-                  <ui-typography variant="body" weight="medium">{{ inv.dueDate | date: "mediumDate" }}</ui-typography>
+                  <ui-typography variant="body" weight="medium">
+                    {{ inv.dueDate | date: "mediumDate" }}
+                  </ui-typography>
                 }
               </div>
             </ui-grid>
@@ -71,7 +75,11 @@
                   <th>Description</th>
                   <th class="text-right" style="width: 80px">Qty</th>
                   <th class="text-right" style="width: 100px">Rate</th>
-                  <th class="text-right" style="width: 100px">Amount</th>
+                  <th class="text-right" style="width: 100px">Net</th>
+                  @if (hasTax()) {
+                    <th class="text-right" style="width: 60px">{{ taxLabel() }} %</th>
+                    <th class="text-right" style="width: 100px">{{ taxLabel() }}</th>
+                  }
                 </tr>
               </ng-template>
               <ng-template #body let-item>
@@ -80,15 +88,41 @@
                   <td class="text-right">{{ item.quantity ?? 1 }}</td>
                   <td class="text-right">{{ item.amount?.amount | currencyFormat }}</td>
                   <td class="text-right">{{ item.total | currencyFormat }}</td>
+                  @if (hasTax()) {
+                    <td class="text-right">
+                      {{ (item.taxRatePercent ?? 0) > 0 ? item.taxRatePercent + "%" : "—" }}
+                    </td>
+                    <td class="text-right">{{ item.taxAmount ?? 0 | currencyFormat }}</td>
+                  }
                 </tr>
               </ng-template>
             </p-table>
           }
 
+          @if (isReverseCharge()) {
+            <ui-callout intent="warning" title="Reverse charge" class="mt-4">
+              VAT to be accounted for by the recipient (Article 196, Council Directive 2006/112/EC).
+            </ui-callout>
+          }
+
           <p-divider />
 
           <div class="flex justify-end">
-            <div class="w-64">
+            <div class="w-72">
+              <ui-stack direction="row" justify="between" class="py-1">
+                <span>Subtotal:</span>
+                <span>{{ inv.subtotal?.amount ?? 0 | currencyFormat }}</span>
+              </ui-stack>
+              @if (hasTax()) {
+                <ui-stack direction="row" justify="between" class="py-1">
+                  <span>{{ taxLabel() }}:</span>
+                  @if (isReverseCharge()) {
+                    <span class="text-muted">0.00 (reverse charge)</span>
+                  } @else {
+                    <span>{{ inv.taxTotal?.amount ?? 0 | currencyFormat }}</span>
+                  }
+                </ui-stack>
+              }
               <ui-stack direction="row" justify="between" class="py-1">
                 <span>Total:</span>
                 <span class="font-semibold">{{ inv.total?.amount | currencyFormat }}</span>
@@ -96,10 +130,16 @@
               @if ((inv.total?.amount ?? 0) > (inv.amountDue ?? 0)) {
                 <ui-stack direction="row" justify="between" class="py-1 text-green-600">
                   <span>Paid:</span>
-                  <span>{{ (inv.total?.amount ?? 0) - (inv.amountDue ?? 0) | currencyFormat }}</span>
+                  <span>
+                    {{ (inv.total?.amount ?? 0) - (inv.amountDue ?? 0) | currencyFormat }}
+                  </span>
                 </ui-stack>
               }
-              <ui-stack direction="row" justify="between" class="mt-2 border-t py-1 pt-2 text-lg font-bold">
+              <ui-stack
+                direction="row"
+                justify="between"
+                class="mt-2 border-t py-1 pt-2 text-lg font-bold"
+              >
                 <span>Amount Due:</span>
                 <span>{{ inv.amountDue | currencyFormat }}</span>
               </ui-stack>
@@ -125,7 +165,9 @@
                 [max]="inv.amountDue ?? 0"
                 class="w-full"
               />
-              <ui-typography variant="body-sm" color="muted" class="mt-1">Maximum: {{ inv.amountDue | currencyFormat }}</ui-typography>
+              <ui-typography variant="body-sm" color="muted" class="mt-1">
+                Maximum: {{ inv.amountDue | currencyFormat }}
+              </ui-typography>
             </div>
 
             <p-divider />
@@ -150,17 +192,25 @@
             />
           } @else if (inv.status === "paid") {
             <ui-stack align="center" gap="2" class="py-4">
-              <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+              <div
+                class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100"
+              >
                 <ui-icon name="check" size="lg" class="text-green-600" />
               </div>
-              <ui-typography variant="body" weight="medium" class="text-green-600">This invoice has been paid in full.</ui-typography>
+              <ui-typography variant="body" weight="medium" class="text-green-600">
+                This invoice has been paid in full.
+              </ui-typography>
             </ui-stack>
           } @else {
             <ui-stack align="center" gap="2" class="py-4">
-              <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+              <div
+                class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100"
+              >
                 <ui-icon name="info-circle" size="lg" color="muted" />
               </div>
-              <ui-typography variant="body" color="muted">Online payment is not available for this invoice.</ui-typography>
+              <ui-typography variant="body" color="muted">
+                Online payment is not available for this invoice.
+              </ui-typography>
               <ui-typography variant="body-sm" color="muted" class="mt-2">
                 Please contact the company for payment options.
               </ui-typography>
@@ -170,15 +220,21 @@
 
         <!-- Contact Info -->
         <ui-surface variant="subtle" padding="sm" class="mt-4 block text-center">
-          <ui-typography variant="body-sm" color="muted">Questions about this invoice?</ui-typography>
-          <ui-typography variant="body-sm" weight="medium">Contact {{ inv.companyName }}</ui-typography>
+          <ui-typography variant="body-sm" color="muted">
+            Questions about this invoice?
+          </ui-typography>
+          <ui-typography variant="body-sm" weight="medium">
+            Contact {{ inv.companyName }}
+          </ui-typography>
         </ui-surface>
       </ui-grid>
     </ui-grid>
 
     <!-- Footer -->
     <div class="mt-8 text-center">
-      <ui-typography variant="body-sm" color="muted">Invoice provided by {{ inv.companyName }}</ui-typography>
+      <ui-typography variant="body-sm" color="muted">
+        Invoice provided by {{ inv.companyName }}
+      </ui-typography>
     </div>
   }
 </cp-public-layout>
