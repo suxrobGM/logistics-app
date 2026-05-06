@@ -39,13 +39,7 @@ internal sealed class InvoiceTaxApplier(
             CustomerAddress = loadInvoice.Customer.Address,
             CustomerTaxId = loadInvoice.Customer.TaxId,
             IsCustomerVatExempt = loadInvoice.Customer.IsVatExempt,
-            LineItems = invoice.LineItems.Select(li => new TaxCalculationLineItem
-            {
-                LineItemId = li.Id,
-                NetAmount = li.Amount.Amount * li.Quantity,
-                TaxCode = li.TaxCode,
-                Description = li.Description
-            }).ToList()
+            LineItems = invoice.LineItems.ToCalculationLines()
         };
 
         var result = await calculator.CalculateAsync(request, ct);

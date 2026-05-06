@@ -17,7 +17,10 @@ public static class InvoiceLineItemMapper
             Quantity = entity.Quantity,
             Order = entity.Order,
             Notes = entity.Notes,
-            Total = entity.Total
+            Total = entity.Total,
+            TaxRatePercent = entity.TaxRatePercent,
+            TaxAmount = entity.TaxAmount,
+            TaxCode = entity.TaxCode
         };
     }
 
