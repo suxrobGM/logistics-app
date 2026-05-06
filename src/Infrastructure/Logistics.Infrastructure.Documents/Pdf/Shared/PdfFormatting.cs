@@ -27,8 +27,8 @@ internal static class PdfFormatting
     /// <summary>Region-aware tax label: "VAT" / "Sales tax" / "Tax".</summary>
     public static string TaxLabel(Region? region) => region switch
     {
-        Region.Eu => "VAT",
-        Region.Us => "Sales tax",
+        Region.EU => "VAT",
+        Region.US => "Sales tax",
         _ => "Tax"
     };
 

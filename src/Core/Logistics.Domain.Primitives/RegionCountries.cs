@@ -39,8 +39,8 @@ public static class RegionCountries
     public static bool IsAllowed(Region region, string? countryCode) =>
         region switch
         {
-            Region.Us => UsCountries.Contains(countryCode ?? string.Empty),
-            Region.Eu => EuropeanCountries.Contains(countryCode ?? string.Empty),
+            Region.US => UsCountries.Contains(countryCode ?? string.Empty),
+            Region.EU => EuropeanCountries.Contains(countryCode ?? string.Empty),
             _ => false
         };
 
@@ -48,5 +48,5 @@ public static class RegionCountries
     /// Returns the set of allowed ISO 3166-1 alpha-2 country codes for the region.
     /// </summary>
     public static IReadOnlyCollection<string> GetAllowed(Region region) =>
-        region == Region.Us ? UsCountries : EuropeanCountries;
+        region == Region.US ? UsCountries : EuropeanCountries;
 }

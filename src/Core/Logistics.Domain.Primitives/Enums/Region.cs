@@ -6,6 +6,6 @@ namespace Logistics.Domain.Primitives.Enums;
 /// </summary>
 public enum Region
 {
-    Us,
-    Eu
+    US,
+    EU
 }

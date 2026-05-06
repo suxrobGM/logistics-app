@@ -7,7 +7,7 @@ internal sealed class UsRegionProfile : IRegionProfile
 {
     private readonly Random random = new();
 
-    public Region Region => Region.Us;
+    public Region Region => Region.US;
     public string DisplayName => "US Demo";
     public CurrencyCode Currency => CurrencyCode.USD;
     public DistanceUnit DistanceUnit => DistanceUnit.Miles;

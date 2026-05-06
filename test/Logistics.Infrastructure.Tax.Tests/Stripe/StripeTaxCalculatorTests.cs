@@ -26,7 +26,7 @@ public class StripeTaxCalculatorTests
     [Fact]
     public async Task Calculate_VatExempt_ShortCircuits_WithoutCallingStripe()
     {
-        var request = Request(country: "DE", tenantRegion: Region.Eu, exempt: true);
+        var request = Request(country: "DE", tenantRegion: Region.EU, exempt: true);
 
         var result = await sut.CalculateAsync(request);
 
@@ -39,7 +39,7 @@ public class StripeTaxCalculatorTests
     [Fact]
     public async Task Calculate_NoLineItems_ShortCircuits_WithoutCallingStripe()
     {
-        var request = Request(country: "DE", tenantRegion: Region.Eu, lineAmounts: []);
+        var request = Request(country: "DE", tenantRegion: Region.EU, lineAmounts: []);
 
         var result = await sut.CalculateAsync(request);
 
@@ -54,7 +54,7 @@ public class StripeTaxCalculatorTests
     [Fact]
     public async Task Calculate_BuildsExpectedStripeRequest()
     {
-        var request = Request(country: "DE", tenantRegion: Region.Eu, lineAmounts: [100m, 50.50m],
+        var request = Request(country: "DE", tenantRegion: Region.EU, lineAmounts: [100m, 50.50m],
             customerTaxId: "DE123456789");
 
         api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>())
@@ -81,7 +81,7 @@ public class StripeTaxCalculatorTests
     [Fact]
     public async Task Calculate_NoCustomerTaxId_OmitsTaxIdsArray()
     {
-        var request = Request(country: "DE", tenantRegion: Region.Eu, customerTaxId: null);
+        var request = Request(country: "DE", tenantRegion: Region.EU, customerTaxId: null);
         api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>())
             .Returns(BuildCalculation(request));
 
@@ -99,7 +99,7 @@ public class StripeTaxCalculatorTests
         {
             Currency = "USD",
             TenantId = Guid.NewGuid(),
-            TenantRegion = Region.Us,
+            TenantRegion = Region.US,
             TenantAddress = Address(country: "US", state: "TX"),
             CustomerAddress = Address(country: "US", state: "CA"),
             LineItems = [new TaxCalculationLineItem
@@ -120,7 +120,7 @@ public class StripeTaxCalculatorTests
     [Fact]
     public async Task Calculate_JpyZeroDecimal_DoesNotMultiplyBy100()
     {
-        var request = Request(country: "JP", tenantRegion: Region.Us, currency: "JPY", lineAmounts: [1000m]);
+        var request = Request(country: "JP", tenantRegion: Region.US, currency: "JPY", lineAmounts: [1000m]);
         api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>())
             .Returns(BuildCalculation(request));
 
@@ -137,7 +137,7 @@ public class StripeTaxCalculatorTests
     [Fact]
     public async Task Calculate_MapsPerLineTaxByReference()
     {
-        var request = Request(country: "DE", tenantRegion: Region.Eu, lineAmounts: [100m, 50m]);
+        var request = Request(country: "DE", tenantRegion: Region.EU, lineAmounts: [100m, 50m]);
         var lineIds = request.LineItems.Select(l => l.LineItemId).ToArray();
 
         var calc = new Calculation
@@ -166,7 +166,7 @@ public class StripeTaxCalculatorTests
     [Fact]
     public async Task Calculate_ReverseChargeReason_SetsBehavior()
     {
-        var request = Request(country: "FR", tenantRegion: Region.Eu, customerTaxId: "FR12345678901");
+        var request = Request(country: "FR", tenantRegion: Region.EU, customerTaxId: "FR12345678901");
         var lineId = request.LineItems.Single().LineItemId;
 
         var calc = new Calculation
@@ -189,7 +189,7 @@ public class StripeTaxCalculatorTests
     [Fact]
     public async Task Calculate_NotCollectingReason_SurfacesWarning()
     {
-        var request = Request(country: "TX", state: "TX", tenantRegion: Region.Us);
+        var request = Request(country: "TX", state: "TX", tenantRegion: Region.US);
         var lineId = request.LineItems.Single().LineItemId;
 
         var calc = new Calculation
@@ -210,7 +210,7 @@ public class StripeTaxCalculatorTests
     [Fact]
     public async Task Calculate_LineMissingFromResponse_DefensivelyZeroFilled()
     {
-        var request = Request(country: "DE", tenantRegion: Region.Eu, lineAmounts: [100m, 50m]);
+        var request = Request(country: "DE", tenantRegion: Region.EU, lineAmounts: [100m, 50m]);
         var lineIds = request.LineItems.Select(l => l.LineItemId).ToArray();
 
         // Stripe only echoes back the first line.
@@ -234,7 +234,7 @@ public class StripeTaxCalculatorTests
     [Fact]
     public async Task Calculate_TopLevelBreakdown_MappedToInvoiceTaxLines()
     {
-        var request = Request(country: "DE", tenantRegion: Region.Eu);
+        var request = Request(country: "DE", tenantRegion: Region.EU);
 
         var calc = new Calculation
         {
@@ -274,7 +274,7 @@ public class StripeTaxCalculatorTests
     [Fact]
     public async Task Calculate_LayeredUsBreakdown_PreservesEachJurisdiction()
     {
-        var request = Request(country: "US", state: "CA", tenantRegion: Region.Us);
+        var request = Request(country: "US", state: "CA", tenantRegion: Region.US);
 
         var calc = new Calculation
         {
@@ -309,7 +309,7 @@ public class StripeTaxCalculatorTests
     [Fact]
     public async Task Calculate_StripeExceptionWithCode_ReturnsEmptyWithWarning()
     {
-        var request = Request(country: "DE", tenantRegion: Region.Eu);
+        var request = Request(country: "DE", tenantRegion: Region.EU);
 
         var stripeError = new StripeError { Code = "tax_calculation_error" };
         var ex = new StripeException("boom") { StripeError = stripeError };
@@ -326,7 +326,7 @@ public class StripeTaxCalculatorTests
     [Fact]
     public async Task Calculate_StripeExceptionWithoutCode_FallsBackToMessage()
     {
-        var request = Request(country: "DE", tenantRegion: Region.Eu);
+        var request = Request(country: "DE", tenantRegion: Region.EU);
         var ex = new StripeException("network down");
         api.CreateAsync(Arg.Any<CalculationCreateOptions>(), Arg.Any<CancellationToken>())
             .Returns<Task<Calculation>>(_ => throw ex);

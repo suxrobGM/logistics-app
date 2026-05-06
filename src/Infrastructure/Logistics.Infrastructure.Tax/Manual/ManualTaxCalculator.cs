@@ -43,7 +43,7 @@ internal sealed class ManualTaxCalculator(
 
     private static bool IsEuReverseCharge(TaxCalculationRequest request)
     {
-        if (request.TenantRegion != Region.Eu)
+        if (request.TenantRegion != Region.EU)
         {
             return false;
         }
@@ -62,7 +62,7 @@ internal sealed class ManualTaxCalculator(
                 tenantRate.Description ?? $"Tenant rate ({tenantRate.Jurisdiction})");
         }
 
-        if (request.TenantRegion == Region.Eu &&
+        if (request.TenantRegion == Region.EU &&
             EuVatRules.IsEuMember(request.CustomerAddress.Country) &&
             EuVatRates.GetStandardRate(request.CustomerAddress.Country) is { } euRate)
         {
@@ -70,7 +70,7 @@ internal sealed class ManualTaxCalculator(
                 $"VAT {euRate:0.##}% — {request.CustomerAddress.Country} (default)");
         }
 
-        if (request.TenantRegion == Region.Us &&
+        if (request.TenantRegion == Region.US &&
             string.Equals(request.CustomerAddress.Country, "US", StringComparison.OrdinalIgnoreCase) &&
             UsSalesTaxRates.GetStateBaseRate(request.CustomerAddress.State) is { } usRate)
         {

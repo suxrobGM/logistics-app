@@ -32,7 +32,7 @@ internal sealed class InvoiceTaxApplier(
         {
             Currency = invoice.Total.Currency,
             TenantId = tenant.Id,
-            TenantRegion = tenant.Settings?.Region ?? Region.Us,
+            TenantRegion = tenant.Settings?.Region ?? Region.US,
             TenantAddress = tenant.CompanyAddress,
             TenantTaxId = tenant.VatNumber,
             TenantTaxResidencyCountry = tenant.TaxResidencyCountry,

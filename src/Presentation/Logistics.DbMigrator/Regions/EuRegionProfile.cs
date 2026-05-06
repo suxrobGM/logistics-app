@@ -7,7 +7,7 @@ internal sealed class EuRegionProfile : IRegionProfile
 {
     private readonly Random random = new();
 
-    public Region Region => Region.Eu;
+    public Region Region => Region.EU;
     public string DisplayName => "EU Demo";
     public CurrencyCode Currency => CurrencyCode.EUR;
     public DistanceUnit DistanceUnit => DistanceUnit.Kilometers;

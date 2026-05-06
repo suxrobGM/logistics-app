@@ -23,7 +23,7 @@ public class ManualTaxCalculatorTests
     [Fact]
     public async Task Calculate_VatExemptCustomer_ReturnsZeroExclusive()
     {
-        var request = Request(country: "DE", tenantRegion: Region.Eu, exempt: true);
+        var request = Request(country: "DE", tenantRegion: Region.EU, exempt: true);
 
         var result = await sut.CalculateAsync(request);
 
@@ -36,7 +36,7 @@ public class ManualTaxCalculatorTests
     [Fact]
     public async Task Calculate_EmptyLineItems_ReturnsEmptyBreakdownLines()
     {
-        var request = Request(country: "DE", tenantRegion: Region.Eu, lineAmounts: []);
+        var request = Request(country: "DE", tenantRegion: Region.EU, lineAmounts: []);
 
         var result = await sut.CalculateAsync(request);
 
@@ -55,7 +55,7 @@ public class ManualTaxCalculatorTests
     {
         var request = Request(
             country: "FR",
-            tenantRegion: Region.Eu,
+            tenantRegion: Region.EU,
             customerTaxId: "FR12345678901",
             lineAmounts: [100m, 50m]);
 
@@ -75,7 +75,7 @@ public class ManualTaxCalculatorTests
     {
         var request = Request(
             country: "DE",
-            tenantRegion: Region.Eu,
+            tenantRegion: Region.EU,
             customerTaxId: "DE111111111",
             lineAmounts: [100m]);
 
@@ -91,7 +91,7 @@ public class ManualTaxCalculatorTests
     {
         var request = Request(
             country: "FR",
-            tenantRegion: Region.Eu,
+            tenantRegion: Region.EU,
             customerTaxId: null,
             lineAmounts: [100m]);
 
@@ -108,7 +108,7 @@ public class ManualTaxCalculatorTests
         var request = Request(
             country: "US",
             state: "CA",
-            tenantRegion: Region.Us,
+            tenantRegion: Region.US,
             customerTaxId: "12-3456789");
 
         var result = await sut.CalculateAsync(request);
@@ -122,7 +122,7 @@ public class ManualTaxCalculatorTests
         // Tenant address says DE but tax residency is FR.
         var request = Request(
             country: "DE",                    // customer
-            tenantRegion: Region.Eu,
+            tenantRegion: Region.EU,
             customerTaxId: "DE123",
             tenantCountry: "FR",              // residency
             lineAmounts: [100m]);
@@ -139,7 +139,7 @@ public class ManualTaxCalculatorTests
     [Fact]
     public async Task Calculate_UsTenantToUsState_AppliesStateBaseRate_WithLocalTaxWarning()
     {
-        var request = Request(country: "US", state: "CA", tenantRegion: Region.Us, lineAmounts: [100m]);
+        var request = Request(country: "US", state: "CA", tenantRegion: Region.US, lineAmounts: [100m]);
 
         var result = await sut.CalculateAsync(request);
 
@@ -152,7 +152,7 @@ public class ManualTaxCalculatorTests
     [Fact]
     public async Task Calculate_UsTenantToUnknownState_FallsThroughToZero()
     {
-        var request = Request(country: "US", state: "ZZ", tenantRegion: Region.Us, lineAmounts: [100m]);
+        var request = Request(country: "US", state: "ZZ", tenantRegion: Region.US, lineAmounts: [100m]);
 
         var result = await sut.CalculateAsync(request);
 
@@ -166,7 +166,7 @@ public class ManualTaxCalculatorTests
     [InlineData("CA", 5.00)]
     public async Task Calculate_OtherCountry_AppliesCountryDefault(string country, decimal expectedRate)
     {
-        var request = Request(country: country, state: "", tenantRegion: Region.Us, lineAmounts: [100m]);
+        var request = Request(country: country, state: "", tenantRegion: Region.US, lineAmounts: [100m]);
 
         var result = await sut.CalculateAsync(request);
 
@@ -177,7 +177,7 @@ public class ManualTaxCalculatorTests
     public async Task Calculate_NoApplicableRate_ReturnsZeroWithWarning()
     {
         // Antarctica isn't in any table.
-        var request = Request(country: "AQ", state: "", tenantRegion: Region.Us, lineAmounts: [100m]);
+        var request = Request(country: "AQ", state: "", tenantRegion: Region.US, lineAmounts: [100m]);
 
         var result = await sut.CalculateAsync(request);
 
@@ -196,7 +196,7 @@ public class ManualTaxCalculatorTests
         var tenantId = Guid.NewGuid();
         var sutWithRate = WithRates(TenantRate(tenantId, country: "DE", ratePercent: 7.00m, taxCode: "txcd_custom"));
 
-        var request = Request(country: "DE", tenantRegion: Region.Eu, tenantId: tenantId, lineAmounts: [100m]);
+        var request = Request(country: "DE", tenantRegion: Region.EU, tenantId: tenantId, lineAmounts: [100m]);
 
         var result = await sutWithRate.CalculateAsync(request);
 
@@ -212,7 +212,7 @@ public class ManualTaxCalculatorTests
             TenantRate(tenantId, country: "US", region: null,    ratePercent: 5.00m, description: "country"),
             TenantRate(tenantId, country: "US", region: "CA",   ratePercent: 9.50m, description: "state"));
 
-        var request = Request(country: "US", state: "CA", tenantRegion: Region.Us, tenantId: tenantId, lineAmounts: [100m]);
+        var request = Request(country: "US", state: "CA", tenantRegion: Region.US, tenantId: tenantId, lineAmounts: [100m]);
 
         var result = await sutWithRate.CalculateAsync(request);
 
@@ -230,7 +230,7 @@ public class ManualTaxCalculatorTests
                 from: DateTime.UtcNow.AddDays(-30),
                 to: DateTime.UtcNow.AddDays(-1)));
 
-        var request = Request(country: "DE", tenantRegion: Region.Eu, tenantId: tenantId, lineAmounts: [100m]);
+        var request = Request(country: "DE", tenantRegion: Region.EU, tenantId: tenantId, lineAmounts: [100m]);
 
         var result = await sutWithRate.CalculateAsync(request);
 
@@ -247,7 +247,7 @@ public class ManualTaxCalculatorTests
                 ratePercent: 7.00m,
                 from: DateTime.UtcNow.AddDays(10)));
 
-        var request = Request(country: "DE", tenantRegion: Region.Eu, tenantId: tenantId, lineAmounts: [100m]);
+        var request = Request(country: "DE", tenantRegion: Region.EU, tenantId: tenantId, lineAmounts: [100m]);
 
         var result = await sutWithRate.CalculateAsync(request);
 
@@ -261,7 +261,7 @@ public class ManualTaxCalculatorTests
         var otherTenant = Guid.NewGuid();
         var sutWithRate = WithRates(TenantRate(otherTenant, "DE", ratePercent: 7.00m));
 
-        var request = Request(country: "DE", tenantRegion: Region.Eu, tenantId: thisTenant, lineAmounts: [100m]);
+        var request = Request(country: "DE", tenantRegion: Region.EU, tenantId: thisTenant, lineAmounts: [100m]);
 
         var result = await sutWithRate.CalculateAsync(request);
 
@@ -276,7 +276,7 @@ public class ManualTaxCalculatorTests
             TenantRate(tenantId, "DE", ratePercent: 16.00m, from: DateTime.UtcNow.AddYears(-1), description: "old"),
             TenantRate(tenantId, "DE", ratePercent: 19.00m, from: DateTime.UtcNow.AddDays(-30), description: "current"));
 
-        var request = Request(country: "DE", tenantRegion: Region.Eu, tenantId: tenantId, lineAmounts: [100m]);
+        var request = Request(country: "DE", tenantRegion: Region.EU, tenantId: tenantId, lineAmounts: [100m]);
 
         var result = await sutWithRate.CalculateAsync(request);
 
@@ -291,7 +291,7 @@ public class ManualTaxCalculatorTests
     public async Task Calculate_MultipleLines_SumsTaxAcrossLines()
     {
         var request = Request(
-            country: "DE", tenantRegion: Region.Eu,
+            country: "DE", tenantRegion: Region.EU,
             lineAmounts: [100m, 50m, 25m]);
 
         var result = await sut.CalculateAsync(request);
@@ -308,7 +308,7 @@ public class ManualTaxCalculatorTests
     public async Task Calculate_PerLineTaxRoundedToTwoDecimals()
     {
         // 33.33 * 9% = 2.9997 → 3.00
-        var request = Request(country: "AU", tenantRegion: Region.Us, lineAmounts: [33.33m]);
+        var request = Request(country: "AU", tenantRegion: Region.US, lineAmounts: [33.33m]);
 
         var result = await sut.CalculateAsync(request);
 

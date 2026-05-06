@@ -42,7 +42,7 @@ internal sealed class SendInvoiceHandler(
         var tenant = tenantUow.GetCurrentTenant();
 
         // EU tenants legally cannot send VAT-bearing invoices without their own VAT number.
-        if (tenant.Settings?.Region == Region.Eu && string.IsNullOrWhiteSpace(tenant.VatNumber))
+        if (tenant.Settings?.Region == Region.EU && string.IsNullOrWhiteSpace(tenant.VatNumber))
         {
             return Result.Fail(
                 "Tenant VAT number is required to send invoices for EU tenants. " +
