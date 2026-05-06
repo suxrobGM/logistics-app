@@ -1,13 +1,11 @@
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Stripe;
 
 namespace Logistics.Infrastructure.Payments.Stripe;
 
-internal class StripePaymentService(IOptions<StripeOptions> options, ILogger<StripePaymentService> logger)
-    : StripeServiceBase(options, logger), IStripePaymentService
+internal sealed class StripePaymentService(ILogger<StripePaymentService> logger) : IStripePaymentService
 {
     public async Task<SetupIntent> CreateSetupIntentAsync(Tenant tenant)
     {
@@ -32,7 +30,7 @@ internal class StripePaymentService(IOptions<StripeOptions> options, ILogger<Str
 
         var setupIntentService = new SetupIntentService();
         var setupIntent = await setupIntentService.CreateAsync(createOptions);
-        Logger.LogInformation("Created SetupIntent for tenant {TenantId}", tenant.Id);
+        logger.LogInformation("Created SetupIntent for tenant {TenantId}", tenant.Id);
         return setupIntent;
     }
 
@@ -65,7 +63,7 @@ internal class StripePaymentService(IOptions<StripeOptions> options, ILogger<Str
         };
 
         var paymentIntent = await new PaymentIntentService().CreateAsync(createOptions);
-        Logger.LogInformation("Created PaymentIntent {PaymentIntentId} for tenant {TenantId}",
+        logger.LogInformation("Created PaymentIntent {PaymentIntentId} for tenant {TenantId}",
             paymentIntent.Id, tenant.Id);
         return paymentIntent;
     }

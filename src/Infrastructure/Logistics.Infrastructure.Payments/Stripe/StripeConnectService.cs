@@ -3,7 +3,6 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Geo;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Stripe;
 using Address = Logistics.Domain.Primitives.ValueObjects.Address;
 
@@ -12,15 +11,8 @@ namespace Logistics.Infrastructure.Payments.Stripe;
 /// <summary>
 ///     Stripe Connect service implementation for handling connected accounts and destination charges.
 /// </summary>
-internal class StripeConnectService : IStripeConnectService
+internal sealed class StripeConnectService(ILogger<StripeConnectService> logger) : IStripeConnectService
 {
-    private readonly ILogger<StripeConnectService> logger;
-
-    public StripeConnectService(IOptions<StripeOptions> options, ILogger<StripeConnectService> logger)
-    {
-        this.logger = logger;
-        StripeConfiguration.ApiKey = options.Value.SecretKey;
-    }
 
     public async Task<Account> CreateConnectedAccountAsync(Tenant tenant)
     {

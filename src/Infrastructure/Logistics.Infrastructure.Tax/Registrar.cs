@@ -21,6 +21,7 @@ public static class Registrar
         services.Configure<TaxOptions>(configuration.GetSection(TaxOptions.SectionName));
         services.AddMemoryCache();
 
+        services.AddSingleton<IStripeTaxCalculationApi, StripeTaxCalculationApi>();
         services.AddScoped<IStripeTaxConfigService, StripeTaxConfigService>();
         services.AddScoped<ManualTaxCalculator>();
         services.AddScoped<StripeTaxCalculator>();

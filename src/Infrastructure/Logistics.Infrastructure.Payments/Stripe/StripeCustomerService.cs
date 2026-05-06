@@ -1,14 +1,12 @@
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Stripe;
 using StripeCustomer = Stripe.Customer;
 
 namespace Logistics.Infrastructure.Payments.Stripe;
 
-internal class StripeCustomerService(IOptions<StripeOptions> options, ILogger<StripeCustomerService> logger)
-    : StripeServiceBase(options, logger), IStripeCustomerService
+internal sealed class StripeCustomerService(ILogger<StripeCustomerService> logger) : IStripeCustomerService
 {
     public Task<StripeCustomer> GetCustomerAsync(string stripeCustomerId)
     {
@@ -31,7 +29,7 @@ internal class StripeCustomerService(IOptions<StripeOptions> options, ILogger<St
         };
 
         var customer = await new CustomerService().CreateAsync(options);
-        Logger.LogInformation("Created Stripe customer for tenant {TenantId}", tenant.Id);
+        logger.LogInformation("Created Stripe customer for tenant {TenantId}", tenant.Id);
         return customer;
     }
 

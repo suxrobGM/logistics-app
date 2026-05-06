@@ -1,7 +1,6 @@
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Stripe;
 using StripeSubscription = Stripe.Subscription;
 using Subscription = Logistics.Domain.Entities.Subscription;
@@ -11,10 +10,7 @@ namespace Logistics.Infrastructure.Payments.Stripe;
 /// <summary>
 /// Manages customer subscriptions in Stripe (create, cancel, renew, change plan).
 /// </summary>
-internal sealed class StripeSubscriptionService(
-    IOptions<StripeOptions> options,
-    ILogger<StripeSubscriptionService> logger)
-    : StripeServiceBase(options, logger), IStripeSubscriptionService
+internal sealed class StripeSubscriptionService(ILogger<StripeSubscriptionService> logger) : IStripeSubscriptionService
 {
     public async Task<StripeSubscription> CreateSubscriptionAsync(
         SubscriptionPlan plan, Tenant tenant, int truckCount, int? trialDays = null)
@@ -40,7 +36,7 @@ internal sealed class StripeSubscriptionService(
         }
 
         var subscription = await new SubscriptionService().CreateAsync(createOptions);
-        Logger.LogInformation("Created Stripe subscription for tenant {TenantId}", tenant.Id);
+        logger.LogInformation("Created Stripe subscription for tenant {TenantId}", tenant.Id);
         return subscription;
     }
 
@@ -56,7 +52,7 @@ internal sealed class StripeSubscriptionService(
                 InvoiceNow = true,
                 Prorate = true
             });
-            Logger.LogInformation("Canceled immediately Stripe subscription {SubscriptionId}", stripeSubscriptionId);
+            logger.LogInformation("Canceled immediately Stripe subscription {SubscriptionId}", stripeSubscriptionId);
             return cancelled;
         }
 
@@ -64,7 +60,7 @@ internal sealed class StripeSubscriptionService(
         {
             CancelAtPeriodEnd = true
         });
-        Logger.LogInformation("Canceled at period end Stripe subscription {SubscriptionId}", stripeSubscriptionId);
+        logger.LogInformation("Canceled at period end Stripe subscription {SubscriptionId}", stripeSubscriptionId);
         return updated;
     }
 
@@ -77,7 +73,7 @@ internal sealed class StripeSubscriptionService(
 
         var result = await new SubscriptionItemService().UpdateAsync(item.Id,
             new SubscriptionItemUpdateOptions { Quantity = truckCount });
-        Logger.LogInformation("Updated Stripe subscription {SubscriptionId} truck count to {TruckCount}",
+        logger.LogInformation("Updated Stripe subscription {SubscriptionId} truck count to {TruckCount}",
             stripeSubscriptionId, truckCount);
         return result;
     }
@@ -91,7 +87,7 @@ internal sealed class StripeSubscriptionService(
         // Never had a Stripe subscription → create new
         if (subEntity is null || string.IsNullOrEmpty(subEntity.StripeSubscriptionId))
         {
-            Logger.LogInformation("Tenant {TenantId} creating first subscription", tenant.Id);
+            logger.LogInformation("Tenant {TenantId} creating first subscription", tenant.Id);
             return await CreateSubscriptionAsync(plan, tenant, truckCount);
         }
 
@@ -113,14 +109,14 @@ internal sealed class StripeSubscriptionService(
             }
 
             var reactivated = await subSvc.UpdateAsync(stripeSub.Id, updateOptions);
-            Logger.LogInformation("Tenant {TenantId} reactivated subscription", tenant.Id);
+            logger.LogInformation("Tenant {TenantId} reactivated subscription", tenant.Id);
             return reactivated;
         }
 
         // Already canceled → start fresh
         if (stripeSub.Status is "canceled" or "incomplete_expired")
         {
-            Logger.LogInformation("Subscription {SubId} is canceled, creating new", stripeSub.Id);
+            logger.LogInformation("Subscription {SubId} is canceled, creating new", stripeSub.Id);
             return await CreateSubscriptionAsync(plan, tenant, truckCount);
         }
 
@@ -162,7 +158,7 @@ internal sealed class StripeSubscriptionService(
             }
         });
 
-        Logger.LogInformation("Changed subscription {SubscriptionId} to plan {PlanId} with {TruckCount} trucks",
+        logger.LogInformation("Changed subscription {SubscriptionId} to plan {PlanId} with {TruckCount} trucks",
             stripeSubscriptionId, newPlan.Id, truckCount);
         return updated;
     }

@@ -1,38 +1,27 @@
+using System.Globalization;
 using Logistics.Application.Services.Tax;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Infrastructure.Payments.Stripe;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Stripe;
 using Stripe.Tax;
+using DomainAddress = Logistics.Domain.Primitives.ValueObjects.Address;
+using DomainTaxJurisdiction = Logistics.Domain.Primitives.ValueObjects.TaxJurisdiction;
 
 namespace Logistics.Infrastructure.Tax.Stripe;
 
 /// <summary>
-/// Region-agnostic tax calculator backed by <c>Stripe.Tax.CalculationService</c>.
-/// One API call handles EU VAT, US destination-based sales tax (with state/county/city layering),
-/// UK VAT, AU GST, CA GST/PST/HST. Reverse charge and "not collecting" warnings are detected
-/// from the response shape.
+/// Region-agnostic tax calculator backed by <see cref="IStripeTaxCalculationApi"/>.
+/// One API call covers EU VAT, US destination-based sales tax, UK VAT, AU/NZ GST,
+/// CA GST/PST/HST. Reverse charge and "not collecting" warnings are detected from the response.
 /// </summary>
-internal sealed class StripeTaxCalculator : ITaxCalculator
+internal sealed class StripeTaxCalculator(
+    IStripeTaxCalculationApi api,
+    IStripeTaxConfigService configService,
+    ILogger<StripeTaxCalculator> logger) : ITaxCalculator
 {
-    private readonly ILogger<StripeTaxCalculator> logger;
-    private readonly IStripeTaxConfigService configService;
-
-    public StripeTaxCalculator(
-        IOptions<StripeOptions> stripeOptions,
-        IStripeTaxConfigService configService,
-        ILogger<StripeTaxCalculator> logger)
-    {
-        this.logger = logger;
-        this.configService = configService;
-        if (string.IsNullOrEmpty(StripeConfiguration.ApiKey))
-        {
-            StripeConfiguration.ApiKey = stripeOptions.Value.SecretKey;
-        }
-    }
+    private const string NotCollectingWarning =
+        "Stripe Tax: tenant not registered in customer jurisdiction; tax not collected.";
 
     public async Task<TaxCalculationResult> CalculateAsync(TaxCalculationRequest request, CancellationToken ct = default)
     {
@@ -42,38 +31,17 @@ internal sealed class StripeTaxCalculator : ITaxCalculator
         }
 
         var defaultCode = await configService.GetDefaultTaxCodeAsync(ct);
-        var amounts = ToStripeAmounts(request, defaultCode);
-        var options = new CalculationCreateOptions
-        {
-            Currency = request.Currency.ToLowerInvariant(),
-            LineItems = amounts,
-            CustomerDetails = new CalculationCustomerDetailsOptions
-            {
-                Address = ToAddressOptions(request.CustomerAddress),
-                AddressSource = "shipping",
-                TaxIds = string.IsNullOrWhiteSpace(request.CustomerTaxId)
-                    ? null
-                    :
-                    [
-                        new CalculationCustomerDetailsTaxIdOptions
-                        {
-                            Type = InferTaxIdType(request.CustomerAddress.Country, request.CustomerTaxId),
-                            Value = request.CustomerTaxId
-                        }
-                    ]
-            },
-            Expand = ["line_items.data.tax_breakdown"]
-        };
+        var options = BuildOptions(request, defaultCode);
 
         try
         {
-            var calc = await new CalculationService().CreateAsync(options, cancellationToken: ct);
+            var calc = await api.CreateAsync(options, ct);
             return MapResult(request, calc);
         }
         catch (StripeException ex)
         {
             logger.LogWarning(ex,
-                "Stripe Tax calculation failed for tenant {TenantId}; returning zero result. Code={Code}",
+                "Stripe Tax calculation failed for tenant {TenantId}. Code={Code}",
                 request.TenantId, ex.StripeError?.Code);
 
             return TaxCalculationResult.Empty() with
@@ -83,22 +51,36 @@ internal sealed class StripeTaxCalculator : ITaxCalculator
         }
     }
 
-    private static List<CalculationLineItemOptions> ToStripeAmounts(TaxCalculationRequest request, string defaultCode)
+    private static CalculationCreateOptions BuildOptions(TaxCalculationRequest request, string defaultCode) => new()
     {
-        var list = new List<CalculationLineItemOptions>(request.LineItems.Count);
-        foreach (var li in request.LineItems)
-        {
-            list.Add(new CalculationLineItemOptions
+        Currency = request.Currency.ToLowerInvariant(),
+        LineItems = request.LineItems
+            .Select(li => new CalculationLineItemOptions
             {
-                Amount = ToMinorUnits(li.NetAmount, request.Currency),
+                Amount = StripeMoneyConversion.ToMinorUnits(li.NetAmount, request.Currency),
                 Reference = li.LineItemId.ToString(),
                 TaxCode = li.TaxCode ?? defaultCode
-            });
-        }
-        return list;
-    }
+            })
+            .ToList(),
+        CustomerDetails = new CalculationCustomerDetailsOptions
+        {
+            Address = ToStripeAddress(request.CustomerAddress),
+            AddressSource = "shipping",
+            TaxIds = string.IsNullOrWhiteSpace(request.CustomerTaxId)
+                ? null
+                :
+                [
+                    new CalculationCustomerDetailsTaxIdOptions
+                    {
+                        Type = StripeTaxIdTypes.Infer(request.CustomerAddress.Country, request.CustomerTaxId),
+                        Value = request.CustomerTaxId
+                    }
+                ]
+        },
+        Expand = ["line_items.data.tax_breakdown"]
+    };
 
-    private static AddressOptions ToAddressOptions(Logistics.Domain.Primitives.ValueObjects.Address a) => new()
+    private static AddressOptions ToStripeAddress(DomainAddress a) => new()
     {
         Line1 = a.Line1,
         Line2 = a.Line2,
@@ -108,170 +90,151 @@ internal sealed class StripeTaxCalculator : ITaxCalculator
         Country = a.Country
     };
 
-    private static long ToMinorUnits(decimal amount, string currency)
+    private static TaxCalculationResult MapResult(TaxCalculationRequest request, Calculation calc)
     {
-        // Most ISO-4217 currencies use 2 fractional digits. JPY/KRW are zero-decimal.
-        var zeroDecimal = currency.Equals("JPY", StringComparison.OrdinalIgnoreCase)
-                       || currency.Equals("KRW", StringComparison.OrdinalIgnoreCase);
-        return zeroDecimal
-            ? (long)decimal.Round(amount, 0, MidpointRounding.AwayFromZero)
-            : (long)decimal.Round(amount * 100m, 0, MidpointRounding.AwayFromZero);
-    }
-
-    private static decimal FromMinorUnits(long minor, string currency)
-    {
-        var zeroDecimal = currency.Equals("JPY", StringComparison.OrdinalIgnoreCase)
-                       || currency.Equals("KRW", StringComparison.OrdinalIgnoreCase);
-        return zeroDecimal ? minor : minor / 100m;
-    }
-
-    private static string InferTaxIdType(string country, string taxId)
-    {
-        // Stripe uses a per-country tax ID type code (eu_vat, us_ein, gb_vat, etc.).
-        // Best-effort mapping; full table at https://stripe.com/docs/billing/customer/tax-ids
-        return country.ToUpperInvariant() switch
-        {
-            "GB" => "gb_vat",
-            "US" => "us_ein",
-            "AU" => "au_abn",
-            "CA" => "ca_gst_hst",
-            "JP" => "jp_cn",
-            "IN" => "in_gst",
-            "MX" => "mx_rfc",
-            "BR" => "br_cnpj",
-            "ZA" => "za_vat",
-            _ when taxId.StartsWith("CH") => "ch_vat",
-            _ when taxId.StartsWith("NO") => "no_vat",
-            _ => "eu_vat"
-        };
-    }
-
-    private TaxCalculationResult MapResult(TaxCalculationRequest request, Calculation calc)
-    {
-        var currency = request.Currency;
-        TaxBehavior behavior = TaxBehavior.Exclusive;
-        string? warning = null;
-        var perLine = new Dictionary<Guid, TaxCalculationLineResult>();
-
-        if (calc.LineItems?.Data is { Count: > 0 } items)
-        {
-            foreach (var item in items)
-            {
-                if (!Guid.TryParse(item.Reference, out var lineId)) continue;
-
-                var taxAmount = FromMinorUnits(item.AmountTax, currency);
-                decimal? rate = null;
-                string? taxCode = item.TaxCode;
-
-                if (item.TaxBreakdown is { Count: > 0 })
-                {
-                    var firstWithRate = item.TaxBreakdown.FirstOrDefault(b =>
-                        b.TaxRateDetails?.PercentageDecimal is not null);
-                    if (firstWithRate is not null && decimal.TryParse(
-                            firstWithRate.TaxRateDetails.PercentageDecimal,
-                            System.Globalization.CultureInfo.InvariantCulture,
-                            out var pct))
-                    {
-                        rate = pct;
-                    }
-
-                    foreach (var b in item.TaxBreakdown)
-                    {
-                        var reason = b.TaxabilityReason;
-                        if (string.Equals(reason, "reverse_charge", StringComparison.OrdinalIgnoreCase))
-                        {
-                            behavior = TaxBehavior.ReverseCharge;
-                        }
-                        if (string.Equals(reason, "not_collecting", StringComparison.OrdinalIgnoreCase))
-                        {
-                            warning ??= "Stripe Tax: tenant not registered in customer jurisdiction; tax not collected.";
-                        }
-                    }
-                }
-
-                perLine[lineId] = new TaxCalculationLineResult
-                {
-                    LineItemId = lineId,
-                    RatePercent = rate ?? 0m,
-                    TaxAmount = decimal.Round(taxAmount, 2),
-                    TaxCode = taxCode
-                };
-            }
-        }
-
-        // Fill in zeros for any line Stripe didn't report (defensive).
-        foreach (var li in request.LineItems)
-        {
-            if (!perLine.ContainsKey(li.LineItemId))
-            {
-                perLine[li.LineItemId] = new TaxCalculationLineResult
-                {
-                    LineItemId = li.LineItemId,
-                    RatePercent = 0m,
-                    TaxAmount = 0m,
-                    TaxCode = li.TaxCode
-                };
-            }
-        }
-
-        var breakdown = BuildBreakdown(calc, currency);
-        if (breakdown.Count == 0 && behavior == TaxBehavior.ReverseCharge)
-        {
-            breakdown =
-            [
-                new InvoiceTaxLine
-                {
-                    RatePercent = 0m,
-                    BaseAmount = decimal.Round(request.LineItems.Sum(l => l.NetAmount), 2),
-                    TaxAmount = 0m,
-                    Jurisdiction = new TaxJurisdiction { CountryCode = request.CustomerAddress.Country },
-                    Description = "Reverse charge — VAT to be accounted by recipient"
-                }
-            ];
-        }
+        var (lineResults, behavior, warning) = MapLines(request, calc);
+        var breakdown = MapBreakdown(calc, request);
 
         return new TaxCalculationResult
         {
             TaxBehavior = behavior,
-            Lines = perLine.Values.ToList(),
+            Lines = lineResults,
             Breakdown = breakdown,
             Warning = warning
         };
     }
 
-    private static List<InvoiceTaxLine> BuildBreakdown(Calculation calc, string currency)
+    private static (List<TaxCalculationLineResult> Lines, TaxBehavior Behavior, string? Warning) MapLines(
+        TaxCalculationRequest request, Calculation calc)
     {
-        if (calc.TaxBreakdown is null) return [];
+        var currency = request.Currency;
+        var perLine = new Dictionary<Guid, TaxCalculationLineResult>();
+        var behavior = TaxBehavior.Exclusive;
+        string? warning = null;
 
-        var output = new List<InvoiceTaxLine>(calc.TaxBreakdown.Count);
-        foreach (var b in calc.TaxBreakdown)
+        foreach (var item in calc.LineItems?.Data ?? [])
         {
-            var details = b.TaxRateDetails;
-            decimal rate = 0m;
-            if (details?.PercentageDecimal is { } pctText &&
-                decimal.TryParse(pctText, System.Globalization.CultureInfo.InvariantCulture, out var pct))
+            if (!Guid.TryParse(item.Reference, out var lineId)) continue;
+
+            (var rate, var lineBehavior, warning) = InspectBreakdown(item.TaxBreakdown, warning);
+            if (lineBehavior == TaxBehavior.ReverseCharge) behavior = TaxBehavior.ReverseCharge;
+
+            perLine[lineId] = new TaxCalculationLineResult
             {
-                rate = pct;
-            }
-
-            var country = details?.Country ?? string.Empty;
-            var state = details?.State;
-            var taxType = details?.TaxType ?? "tax";
-
-            var description = string.IsNullOrEmpty(state)
-                ? $"{taxType.ToUpperInvariant()} {rate:0.##}% — {country}"
-                : $"{taxType.ToUpperInvariant()} {rate:0.##}% — {country}-{state}";
-
-            output.Add(new InvoiceTaxLine
-            {
+                LineItemId = lineId,
                 RatePercent = rate,
-                BaseAmount = decimal.Round(FromMinorUnits(b.TaxableAmount, currency), 2),
-                TaxAmount = decimal.Round(FromMinorUnits(b.Amount, currency), 2),
-                Jurisdiction = new TaxJurisdiction { CountryCode = country, Region = state },
-                TaxCode = null,
-                Description = description
+                TaxAmount = decimal.Round(StripeMoneyConversion.FromMinorUnits(item.AmountTax, currency), 2),
+                TaxCode = item.TaxCode
+            };
+        }
+
+        // Defensively zero-fill any line Stripe didn't echo back.
+        foreach (var li in request.LineItems)
+        {
+            perLine.TryAdd(li.LineItemId, new TaxCalculationLineResult
+            {
+                LineItemId = li.LineItemId,
+                RatePercent = 0m,
+                TaxAmount = 0m,
+                TaxCode = li.TaxCode
             });
         }
-        return output;
+
+        return (perLine.Values.ToList(), behavior, warning);
+    }
+
+    private static (decimal Rate, TaxBehavior Behavior, string? Warning) InspectBreakdown(
+        IList<CalculationLineItemTaxBreakdown>? breakdown, string? existingWarning)
+    {
+        if (breakdown is null || breakdown.Count == 0)
+        {
+            return (0m, TaxBehavior.Exclusive, existingWarning);
+        }
+
+        decimal rate = 0m;
+        var behavior = TaxBehavior.Exclusive;
+        var warning = existingWarning;
+
+        foreach (var b in breakdown)
+        {
+            if (rate == 0m && TryParseRate(b.TaxRateDetails?.PercentageDecimal, out var parsed))
+            {
+                rate = parsed;
+            }
+
+            if (Equals(b.TaxabilityReason, "reverse_charge"))
+            {
+                behavior = TaxBehavior.ReverseCharge;
+            }
+            else if (Equals(b.TaxabilityReason, "not_collecting"))
+            {
+                warning ??= NotCollectingWarning;
+            }
+        }
+
+        return (rate, behavior, warning);
+    }
+
+    private static List<InvoiceTaxLine> MapBreakdown(Calculation calc, TaxCalculationRequest request)
+    {
+        var lines = (calc.TaxBreakdown ?? [])
+            .Select(b => MapBreakdownLine(b, request.Currency))
+            .ToList();
+
+        // Reverse-charge responses can have an empty top-level breakdown; surface a synthetic
+        // explanatory line so the PDF/UI can still render the legally-required notice.
+        if (lines.Count == 0 && calc.LineItems?.Data?.Any(IsReverseCharge) == true)
+        {
+            lines.Add(new InvoiceTaxLine
+            {
+                RatePercent = 0m,
+                BaseAmount = decimal.Round(request.LineItems.Sum(l => l.NetAmount), 2),
+                TaxAmount = 0m,
+                Jurisdiction = new DomainTaxJurisdiction { CountryCode = request.CustomerAddress.Country },
+                Description = "Reverse charge — VAT to be accounted by recipient"
+            });
+        }
+
+        return lines;
+    }
+
+    private static InvoiceTaxLine MapBreakdownLine(CalculationTaxBreakdown b, string currency)
+    {
+        var details = b.TaxRateDetails;
+        var rate = TryParseRate(details?.PercentageDecimal, out var parsed) ? parsed : 0m;
+        var country = details?.Country ?? string.Empty;
+        var state = details?.State;
+        var taxType = details?.TaxType ?? "tax";
+
+        var description = string.IsNullOrEmpty(state)
+            ? $"{taxType.ToUpperInvariant()} {rate:0.##}% — {country}"
+            : $"{taxType.ToUpperInvariant()} {rate:0.##}% — {country}-{state}";
+
+        return new InvoiceTaxLine
+        {
+            RatePercent = rate,
+            BaseAmount = decimal.Round(StripeMoneyConversion.FromMinorUnits(b.TaxableAmount, currency), 2),
+            TaxAmount = decimal.Round(StripeMoneyConversion.FromMinorUnits(b.Amount, currency), 2),
+            Jurisdiction = new DomainTaxJurisdiction { CountryCode = country, Region = state },
+            Description = description
+        };
+    }
+
+    private static bool IsReverseCharge(CalculationLineItem item) =>
+        item.TaxBreakdown?.Any(b => Equals(b.TaxabilityReason, "reverse_charge")) == true;
+
+    private static bool Equals(string? a, string b) =>
+        string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
+
+    private static bool TryParseRate(string? percent, out decimal rate)
+    {
+        if (percent is not null && decimal.TryParse(percent, NumberStyles.Number, CultureInfo.InvariantCulture, out var v))
+        {
+            rate = v;
+            return true;
+        }
+
+        rate = 0m;
+        return false;
     }
 }

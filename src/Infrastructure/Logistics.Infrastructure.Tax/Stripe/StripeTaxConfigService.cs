@@ -1,4 +1,3 @@
-using Logistics.Infrastructure.Payments.Stripe;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -8,7 +7,6 @@ using Stripe.Tax;
 namespace Logistics.Infrastructure.Tax.Stripe;
 
 internal sealed class StripeTaxConfigService(
-    IOptions<StripeOptions> stripeOptions,
     IOptions<TaxOptions> taxOptions,
     IMemoryCache cache,
     ILogger<StripeTaxConfigService> logger) : IStripeTaxConfigService
@@ -21,19 +19,6 @@ internal sealed class StripeTaxConfigService(
     private readonly TimeSpan codesTtl = TimeSpan.FromHours(24);
     private readonly TimeSpan registrationsTtl = TimeSpan.FromMinutes(taxOptions.Value.StripeConfigCacheMinutes);
 
-    static StripeTaxConfigService()
-    {
-        // No-op static — StripeServiceBase pattern sets the API key on construction; we do the same here.
-    }
-
-    private void EnsureApiKey()
-    {
-        if (string.IsNullOrEmpty(StripeConfiguration.ApiKey))
-        {
-            StripeConfiguration.ApiKey = stripeOptions.Value.SecretKey;
-        }
-    }
-
     public async Task<string> GetDefaultTaxCodeAsync(CancellationToken ct = default)
     {
         if (cache.TryGetValue(DefaultTaxCodeKey, out string? cached) && !string.IsNullOrEmpty(cached))
@@ -45,7 +30,6 @@ internal sealed class StripeTaxConfigService(
 
         try
         {
-            EnsureApiKey();
             var settings = await new SettingsService().GetAsync(cancellationToken: ct);
             var code = settings?.Defaults?.TaxCode ?? fallback;
             cache.Set(DefaultTaxCodeKey, code, configTtl);
@@ -68,7 +52,6 @@ internal sealed class StripeTaxConfigService(
 
         try
         {
-            EnsureApiKey();
             var service = new TaxCodeService();
             var listOptions = new TaxCodeListOptions { Limit = 100 };
             var result = new List<StripeTaxCodeInfo>();
@@ -97,7 +80,6 @@ internal sealed class StripeTaxConfigService(
 
         try
         {
-            EnsureApiKey();
             var service = new RegistrationService();
             var listOptions = new RegistrationListOptions { Status = "active", Limit = 100 };
             var result = new List<StripeTaxRegistrationInfo>();

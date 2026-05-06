@@ -18,6 +18,11 @@ public static class Registrar
         services.Configure<StripeOptions>(
             configuration.GetSection(StripeOptions.SectionName));
 
+        // Bootstraps Stripe.NET's static StripeConfiguration.ApiKey once at host startup so
+        // every Stripe-using service (here and in Logistics.Infrastructure.Tax) can rely on it
+        // without repeating the init.
+        services.AddHostedService<StripeApiKeyInitializer>();
+
         // Stripe services
         services.AddSingleton<IStripeService, StripeService>();
         services.AddSingleton<IStripeCustomerService, StripeCustomerService>();

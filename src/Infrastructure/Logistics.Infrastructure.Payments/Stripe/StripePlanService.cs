@@ -1,7 +1,6 @@
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Stripe;
 
 namespace Logistics.Infrastructure.Payments.Stripe;
@@ -10,9 +9,8 @@ namespace Logistics.Infrastructure.Payments.Stripe;
 /// Manages subscription plan products and prices in Stripe.
 /// </summary>
 internal sealed class StripePlanService(
-    IOptions<StripeOptions> options,
     ISystemSettingService settingService,
-    ILogger<StripePlanService> logger) : StripeServiceBase(options, logger), IStripePlanService
+    ILogger<StripePlanService> logger) : IStripePlanService
 {
     private const string MeterSettingKey = "Stripe:AiOverageMeterId";
 
@@ -32,7 +30,7 @@ internal sealed class StripePlanService(
             }
         });
 
-        Logger.LogInformation("Created Stripe product for plan {PlanId}", plan.Id);
+        logger.LogInformation("Created Stripe product for plan {PlanId}", plan.Id);
 
         // 2. Create base price
         var basePrice = await CreateLicensedPriceAsync(priceService, product.Id, plan,
@@ -49,7 +47,7 @@ internal sealed class StripePlanService(
             aiOveragePrice = await CreateMeteredOveragePriceAsync(priceService, product.Id, plan);
         }
 
-        Logger.LogInformation("Created Stripe prices for plan {PlanId}", plan.Id);
+        logger.LogInformation("Created Stripe prices for plan {PlanId}", plan.Id);
         return new StripePlanResult(product, basePrice, perTruckPrice, aiOveragePrice);
     }
 
@@ -128,7 +126,7 @@ internal sealed class StripePlanService(
         var meterId = await settingService.GetAsync(MeterSettingKey);
         if (string.IsNullOrEmpty(meterId))
         {
-            Logger.LogWarning("Cannot create AI overage price: billing meter not configured");
+            logger.LogWarning("Cannot create AI overage price: billing meter not configured");
             return null;
         }
 
@@ -151,7 +149,7 @@ internal sealed class StripePlanService(
             }
         });
 
-        Logger.LogInformation("Created Stripe AI overage metered price for plan {PlanId}", plan.Id);
+        logger.LogInformation("Created Stripe AI overage metered price for plan {PlanId}", plan.Id);
         return price;
     }
 
@@ -172,7 +170,7 @@ internal sealed class StripePlanService(
 
         var newPrice = await CreateLicensedPriceAsync(
             priceService, plan.StripeProductId!, plan, expectedAmountCents, expectedCurrency, priceType);
-        Logger.LogInformation("Recreated Stripe {PriceType} price for plan {PlanId}", priceType, plan.Id);
+        logger.LogInformation("Recreated Stripe {PriceType} price for plan {PlanId}", priceType, plan.Id);
         return newPrice;
     }
 
