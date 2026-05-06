@@ -12,5 +12,7 @@ public class CustomerDto
     public Address? Address { get; set; }
     public CustomerStatus Status { get; set; }
     public string? Notes { get; set; }
+    public string? TaxId { get; set; }
+    public bool IsVatExempt { get; set; }
     public DateTime CreatedAt { get; set; }
 }

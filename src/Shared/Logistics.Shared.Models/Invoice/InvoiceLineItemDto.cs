@@ -18,4 +18,8 @@ public record InvoiceLineItemDto
     /// Calculated total (Amount * Quantity).
     /// </summary>
     public decimal Total { get; set; }
+
+    public decimal TaxRatePercent { get; set; }
+    public decimal TaxAmount { get; set; }
+    public string? TaxCode { get; set; }
 }

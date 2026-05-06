@@ -2,6 +2,7 @@ using System.Reflection;
 using FluentValidation;
 using Logistics.Application.Behaviours;
 using Logistics.Application.Services;
+using Logistics.Application.Services.Tax;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Logistics.Application;
@@ -23,6 +24,7 @@ public static class Registrar
         services.AddScoped<IPayrollService, PayrollService>();
         services.AddScoped<ILoadService, LoadService>();
         services.AddScoped<IMaintenanceReminderService, MaintenanceReminderService>();
+        services.AddScoped<IInvoiceTaxApplier, InvoiceTaxApplier>();
         return services;
     }
 }

@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Services.Tax;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -7,7 +8,9 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class AddLineItemHandler(ITenantUnitOfWork tenantUow)
+internal sealed class AddLineItemHandler(
+    ITenantUnitOfWork tenantUow,
+    IInvoiceTaxApplier taxApplier)
     : IAppRequestHandler<AddLineItemCommand, Result<InvoiceLineItemDto>>
 {
     public async Task<Result<InvoiceLineItemDto>> Handle(AddLineItemCommand req, CancellationToken ct)
@@ -42,10 +45,9 @@ internal sealed class AddLineItemHandler(ITenantUnitOfWork tenantUow)
         };
 
         await tenantUow.Repository<InvoiceLineItem>().AddAsync(lineItem, ct);
+        invoice.LineItems.Add(lineItem);
 
-        // Recalculate invoice total
-        var newTotal = invoice.LineItems.Sum(li => li.Amount.Amount * li.Quantity) + (req.Amount * req.Quantity);
-        invoice.Total = invoice.Total with { Amount = newTotal };
+        await taxApplier.ApplyAsync(invoice, ct);
         tenantUow.Repository<Invoice>().Update(invoice);
 
         await tenantUow.SaveChangesAsync(ct);

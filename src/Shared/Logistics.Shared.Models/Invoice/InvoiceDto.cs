@@ -13,9 +13,22 @@ public record InvoiceDto
     public DateTime CreatedDate { get; set; }
 
     /// <summary>
+    /// Sum of line item nets (pre-tax) in the invoice currency.
+    /// </summary>
+    public Money Subtotal { get; set; } = null!;
+
+    /// <summary>
+    /// Sum of line item TaxAmounts. Always 0 for ReverseCharge.
+    /// </summary>
+    public Money TaxTotal { get; set; } = null!;
+
+    /// <summary>
     /// Total inclusive of tax & discounts.
     /// </summary>
     public Money Total { get; set; } = null!;
+
+    public TaxBehavior TaxBehavior { get; set; }
+    public IEnumerable<InvoiceTaxLineDto> TaxBreakdown { get; set; } = [];
 
     public string? Notes { get; set; }
     public DateTime? DueDate { get; set; }

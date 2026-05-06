@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Services.Tax;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -7,7 +8,9 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreateLoadInvoiceHandler(ITenantUnitOfWork tenantUow)
+internal sealed class CreateLoadInvoiceHandler(
+    ITenantUnitOfWork tenantUow,
+    IInvoiceTaxApplier taxApplier)
     : IAppRequestHandler<CreateLoadInvoiceCommand, Result>
 {
     public async Task<Result> Handle(
@@ -45,10 +48,14 @@ internal sealed class CreateLoadInvoiceHandler(ITenantUnitOfWork tenantUow)
             TaxTotal = Money.Zero(currency),
             Total = amount,
             CustomerId = req.CustomerId,
+            Customer = customer,
             LoadId = req.LoadId
         };
 
         invoice.ApplyPayment(payment);
+
+        await taxApplier.ApplyAsync(invoice, ct);
+
         await tenantUow.Repository<Invoice>().AddAsync(invoice);
         await tenantUow.SaveChangesAsync();
         return Result.Ok();

@@ -11,6 +11,11 @@ public record TenantDto
     public string? CompanyName { get; set; }
     public string? BillingEmail { get; set; }
     public string? DotNumber { get; set; }
+    public string? McNumber { get; set; }
+    public string? VatNumber { get; set; }
+    public string? EoriNumber { get; set; }
+    public string? CompanyRegistrationNumber { get; set; }
+    public string? TaxResidencyCountry { get; set; }
     public required Address CompanyAddress { get; set; }
     public string? StripeCustomerId { get; set; }
     public string? LogoUrl { get; set; }

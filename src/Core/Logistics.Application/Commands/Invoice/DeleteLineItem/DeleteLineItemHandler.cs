@@ -1,13 +1,15 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Services.Tax;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class DeleteLineItemHandler(ITenantUnitOfWork tenantUow)
+internal sealed class DeleteLineItemHandler(
+    ITenantUnitOfWork tenantUow,
+    IInvoiceTaxApplier taxApplier)
     : IAppRequestHandler<DeleteLineItemCommand, Result>
 {
     public async Task<Result> Handle(DeleteLineItemCommand req, CancellationToken ct)
@@ -35,12 +37,9 @@ internal sealed class DeleteLineItemHandler(ITenantUnitOfWork tenantUow)
         }
 
         tenantUow.Repository<InvoiceLineItem>().Delete(lineItem);
+        invoice.LineItems.Remove(lineItem);
 
-        // Recalculate invoice total
-        var newTotal = invoice.LineItems
-            .Where(li => li.Id != req.LineItemId)
-            .Sum(li => li.Amount.Amount * li.Quantity);
-        invoice.Total = new Money { Amount = newTotal, Currency = invoice.Total.Currency };
+        await taxApplier.ApplyAsync(invoice, ct);
         tenantUow.Repository<Invoice>().Update(invoice);
 
         await tenantUow.SaveChangesAsync(ct);
