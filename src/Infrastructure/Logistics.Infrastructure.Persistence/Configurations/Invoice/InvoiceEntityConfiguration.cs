@@ -26,11 +26,29 @@ internal sealed class InvoiceEntityConfiguration : IEntityTypeConfiguration<Invo
         builder.HasIndex(i => i.Number)
             .IsUnique();
 
+        builder.ComplexProperty(i => i.Subtotal, money =>
+        {
+            money.Property(m => m.Amount).HasPrecision(18, 2);
+            money.Property(m => m.Currency).HasMaxLength(3);
+        });
+
+        builder.ComplexProperty(i => i.TaxTotal, money =>
+        {
+            money.Property(m => m.Amount).HasPrecision(18, 2);
+            money.Property(m => m.Currency).HasMaxLength(3);
+        });
+
         builder.ComplexProperty(i => i.Total, money =>
         {
             money.Property(m => m.Amount).HasPrecision(18, 2);
             money.Property(m => m.Currency).HasMaxLength(3);
         });
+
+        builder.Property(i => i.TaxBehavior)
+            .HasDefaultValue(TaxBehavior.Exclusive);
+
+        builder.Property(i => i.TaxBreakdownJson)
+            .HasColumnType("text");
     }
 
     #region Derived Types Configuration

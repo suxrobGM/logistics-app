@@ -23,6 +23,15 @@ internal sealed class InvoiceLineItemEntityConfiguration : IEntityTypeConfigurat
             money.Property(m => m.Currency).HasMaxLength(3);
         });
 
+        builder.Property(i => i.TaxRatePercent)
+            .HasPrecision(5, 2);
+
+        builder.Property(i => i.TaxAmount)
+            .HasPrecision(18, 2);
+
+        builder.Property(i => i.TaxCode)
+            .HasMaxLength(50);
+
         builder.HasIndex(i => i.InvoiceId);
 
         builder.HasOne(i => i.Invoice)
