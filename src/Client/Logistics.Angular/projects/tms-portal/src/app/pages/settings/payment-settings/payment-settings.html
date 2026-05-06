@@ -4,10 +4,16 @@
   <div class="w-full md:w-2/3 lg:w-1/2">
     <p-card>
       @if (isLoading()) {
-        <ui-loading-skeleton variant="card" height="16rem" loadingText="Loading payment settings..." />
+        <ui-loading-skeleton
+          variant="card"
+          height="16rem"
+          loadingText="Loading payment settings..."
+        />
       } @else {
         <div class="mb-6">
-          <ui-typography variant="h4" tag="h2" color="primary" class="mb-2">Stripe Connect</ui-typography>
+          <ui-typography variant="h4" tag="h2" color="primary" class="mb-2"
+            >Stripe Connect</ui-typography
+          >
           <ui-typography variant="body-sm" color="muted">
             Connect your Stripe account to receive payments directly from customer invoices.
           </ui-typography>
@@ -31,11 +37,13 @@
         </ui-surface>
 
         @switch (connectStatus()?.status) {
-          @case ('active') {
+          @case ("active") {
             <!-- Active State with Capabilities -->
             <ui-stack align="center" gap="2" class="mb-4 text-center">
               <ui-icon name="check-circle" size="xl" color="success" class="text-6xl" />
-              <ui-typography variant="h5" tag="h3" class="mb-2">Ready to Accept Payments</ui-typography>
+              <ui-typography variant="h5" tag="h3" class="mb-2"
+                >Ready to Accept Payments</ui-typography
+              >
               <ui-typography variant="body-sm" color="muted">
                 Your Stripe Connect account is fully set up and ready to receive customer payments.
               </ui-typography>
@@ -56,7 +64,7 @@
                     <span class="font-medium">Charges</span>
                   </ui-stack>
                   <p class="text-muted mt-1 text-xs">
-                    {{ connectStatus()?.chargesEnabled ? 'Enabled' : 'Not enabled' }}
+                    {{ connectStatus()?.chargesEnabled ? "Enabled" : "Not enabled" }}
                   </p>
                 </ui-surface>
               </ui-grid>
@@ -73,7 +81,7 @@
                     <span class="font-medium">Payouts</span>
                   </ui-stack>
                   <p class="text-muted mt-1 text-xs">
-                    {{ connectStatus()?.payoutsEnabled ? 'Enabled' : 'Not enabled' }}
+                    {{ connectStatus()?.payoutsEnabled ? "Enabled" : "Not enabled" }}
                   </p>
                 </ui-surface>
               </ui-grid>
@@ -96,7 +104,7 @@
             </ui-stack>
           }
 
-          @case ('pending') {
+          @case ("pending") {
             <ui-empty-state
               icon="clock"
               title="Complete Your Setup"
@@ -107,7 +115,7 @@
             />
           }
 
-          @case ('restricted') {
+          @case ("restricted") {
             <ui-empty-state
               icon="exclamation-triangle"
               title="Account Restricted"
@@ -118,7 +126,7 @@
             />
           }
 
-          @case ('disabled') {
+          @case ("disabled") {
             <ui-empty-state
               icon="ban"
               title="Account Disabled"
@@ -132,11 +140,14 @@
           @default {
             <!-- Not Connected State -->
             <ui-stack align="center" justify="center" gap="2" class="py-12 text-center">
-              <ui-icon name="credit-card" size="xl" color="muted" class="text-6xl mb-4" />
-              <ui-typography variant="h5" tag="h3" class="mb-2">Connect Your Bank Account</ui-typography>
+              <ui-icon name="credit-card" size="xl" color="muted" class="mb-4 text-6xl" />
+              <ui-typography variant="h5" tag="h3" class="mb-2"
+                >Connect Your Bank Account</ui-typography
+              >
               <ui-typography variant="body-sm" color="muted" class="mb-6 max-w-md">
-                Set up Stripe Connect to receive payments from your customers directly into your bank
-                account. You'll be redirected to Stripe to complete the secure onboarding process.
+                Set up Stripe Connect to receive payments from your customers directly into your
+                bank account. You'll be redirected to Stripe to complete the secure onboarding
+                process.
               </ui-typography>
               <p-button
                 icon="pi pi-external-link"
@@ -148,6 +159,44 @@
           }
         }
       }
+    </p-card>
+
+    <!-- Stripe Tax onboarding -->
+    <p-card class="mt-6">
+      <div class="mb-4">
+        <ui-typography variant="h4" tag="h2" color="primary" class="mb-2">
+          Stripe Tax (VAT / Sales Tax)
+        </ui-typography>
+        <ui-typography variant="body-sm" color="muted">
+          Stripe Tax computes EU VAT, US destination-based sales tax, UK VAT, and AU/CA GST
+          automatically when you create invoices. Setup is per-Stripe-account and completed in the
+          Stripe dashboard — once enabled, the
+          <span class="font-mono">Tax:Provider = stripe</span>
+          calculator on this server picks it up on the next invoice.
+        </ui-typography>
+      </div>
+
+      <ui-callout intent="info" title="Set up in the Stripe dashboard" class="mb-4">
+        Configure a default tax code for your products, register the jurisdictions you collect tax
+        in, and Stripe will start computing tax for every invoice we send.
+      </ui-callout>
+
+      <ui-stack direction="row" gap="3">
+        <a
+          href="https://dashboard.stripe.com/tax/settings"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <p-button icon="pi pi-external-link" label="Open Stripe Tax settings" />
+        </a>
+        <a
+          href="https://dashboard.stripe.com/tax/registrations"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <p-button icon="pi pi-globe" label="Manage tax registrations" [outlined]="true" />
+        </a>
+      </ui-stack>
     </p-card>
   </div>
 </ui-stack>
