@@ -10,6 +10,11 @@ public class UpdateTenantCommand : IAppRequest
     public string? CompanyName { get; set; }
     public string? BillingEmail { get; set; }
     public string? DotNumber { get; set; }
+    public string? McNumber { get; set; }
+    public string? VatNumber { get; set; }
+    public string? EoriNumber { get; set; }
+    public string? CompanyRegistrationNumber { get; set; }
+    public string? TaxResidencyCountry { get; set; }
     public string? PhoneNumber { get; set; }
     public Address? CompanyAddress { get; set; }
     public string? ConnectionString { get; set; }

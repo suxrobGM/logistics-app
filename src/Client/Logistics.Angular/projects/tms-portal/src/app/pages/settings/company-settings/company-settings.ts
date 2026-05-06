@@ -102,6 +102,11 @@ export class CompanySettingsComponent implements OnInit {
         nonNullable: true,
       }),
       dotNumber: new FormControl("", { nonNullable: true }),
+      mcNumber: new FormControl("", { nonNullable: true }),
+      vatNumber: new FormControl("", { nonNullable: true }),
+      eoriNumber: new FormControl("", { nonNullable: true }),
+      companyRegistrationNumber: new FormControl("", { nonNullable: true }),
+      taxResidencyCountry: new FormControl<string | null>(null),
       companyAddress: new FormControl<Address | null>(null, {
         validators: Validators.required,
       }),
@@ -133,6 +138,11 @@ export class CompanySettingsComponent implements OnInit {
       phoneNumber: this.form.value.phoneNumber,
       billingEmail: this.form.value.billingEmail,
       dotNumber: this.form.value.dotNumber,
+      mcNumber: this.form.value.mcNumber || null,
+      vatNumber: this.form.value.vatNumber || null,
+      eoriNumber: this.form.value.eoriNumber || null,
+      companyRegistrationNumber: this.form.value.companyRegistrationNumber || null,
+      taxResidencyCountry: this.form.value.taxResidencyCountry || null,
       companyAddress: this.form.value.companyAddress ?? undefined,
       settings: {
         distanceUnit: this.form.value.distanceUnit,
@@ -231,6 +241,11 @@ export class CompanySettingsComponent implements OnInit {
           phoneNumber: tenant.phoneNumber ?? null,
           billingEmail: tenant.billingEmail ?? "",
           dotNumber: tenant.dotNumber ?? "",
+          mcNumber: tenant.mcNumber ?? "",
+          vatNumber: tenant.vatNumber ?? "",
+          eoriNumber: tenant.eoriNumber ?? "",
+          companyRegistrationNumber: tenant.companyRegistrationNumber ?? "",
+          taxResidencyCountry: tenant.taxResidencyCountry ?? null,
           companyAddress: tenant.companyAddress,
           // Regional settings
           distanceUnit: tenant.settings?.distanceUnit ?? "miles",
@@ -266,6 +281,11 @@ interface CompanySettingsForm {
   phoneNumber: FormControl<string | null>;
   billingEmail: FormControl<string>;
   dotNumber: FormControl<string>;
+  mcNumber: FormControl<string>;
+  vatNumber: FormControl<string>;
+  eoriNumber: FormControl<string>;
+  companyRegistrationNumber: FormControl<string>;
+  taxResidencyCountry: FormControl<string | null>;
   companyAddress: FormControl<Address | null>;
   // Regional settings
   distanceUnit: FormControl<string>;

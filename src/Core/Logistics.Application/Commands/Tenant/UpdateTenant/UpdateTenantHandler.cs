@@ -26,6 +26,13 @@ internal sealed class UpdateTenantHandler(
         tenant.ConnectionString = PropertyUpdater.UpdateIfChanged(req.ConnectionString, tenant.ConnectionString);
         tenant.BillingEmail = PropertyUpdater.UpdateIfChanged(req.BillingEmail, tenant.BillingEmail);
         tenant.DotNumber = PropertyUpdater.UpdateIfChanged(req.DotNumber, tenant.DotNumber);
+        tenant.McNumber = PropertyUpdater.UpdateIfChanged(req.McNumber, tenant.McNumber);
+        tenant.VatNumber = PropertyUpdater.UpdateIfChanged(req.VatNumber, tenant.VatNumber);
+        tenant.EoriNumber = PropertyUpdater.UpdateIfChanged(req.EoriNumber, tenant.EoriNumber);
+        tenant.CompanyRegistrationNumber = PropertyUpdater.UpdateIfChanged(
+            req.CompanyRegistrationNumber, tenant.CompanyRegistrationNumber);
+        tenant.TaxResidencyCountry = PropertyUpdater.UpdateIfChanged(
+            req.TaxResidencyCountry, tenant.TaxResidencyCountry);
         tenant.PhoneNumber = PropertyUpdater.UpdateIfChanged(req.PhoneNumber, tenant.PhoneNumber);
         tenant.Settings = PropertyUpdater.UpdateIfChanged(req.Settings, tenant.Settings);
 

@@ -74,10 +74,66 @@
             />
           </ui-form-field>
 
-          <!-- DOT Number -->
-          <ui-form-field label="US DOT Number" for="dotNumber">
-            <input pInputText formControlName="dotNumber" id="dotNumber" class="w-full" />
-          </ui-form-field>
+          <!-- Regulatory & tax IDs -->
+          <div class="border-default mt-6 border-t pt-6">
+            <h2 class="mb-4 text-lg font-semibold">Regulatory &amp; Tax IDs</h2>
+
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <ui-form-field label="US DOT Number" for="dotNumber">
+                <input pInputText formControlName="dotNumber" id="dotNumber" class="w-full" />
+              </ui-form-field>
+
+              <ui-form-field label="MC Number" for="mcNumber" hint="US Motor Carrier number">
+                <input pInputText formControlName="mcNumber" id="mcNumber" class="w-full" />
+              </ui-form-field>
+
+              <ui-form-field
+                label="VAT Number"
+                for="vatNumber"
+                hint="Required to send invoices for EU tenants"
+              >
+                <input
+                  pInputText
+                  formControlName="vatNumber"
+                  id="vatNumber"
+                  class="w-full"
+                  placeholder="e.g. DE123456789"
+                />
+              </ui-form-field>
+
+              <ui-form-field label="EORI Number" for="eoriNumber" hint="EU/UK customs ID">
+                <input pInputText formControlName="eoriNumber" id="eoriNumber" class="w-full" />
+              </ui-form-field>
+
+              <ui-form-field
+                label="Company Registration Number"
+                for="companyRegistrationNumber"
+                hint="Companies House, Handelsregister, RCS, etc."
+              >
+                <input
+                  pInputText
+                  formControlName="companyRegistrationNumber"
+                  id="companyRegistrationNumber"
+                  class="w-full"
+                />
+              </ui-form-field>
+
+              <ui-form-field
+                label="Tax Residency Country"
+                for="taxResidencyCountry"
+                hint="ISO-2 code, defaults to billing-address country"
+              >
+                <input
+                  pInputText
+                  formControlName="taxResidencyCountry"
+                  id="taxResidencyCountry"
+                  class="w-full"
+                  maxlength="2"
+                  placeholder="e.g. DE"
+                />
+              </ui-form-field>
+            </div>
+          </div>
 
           <!-- Company Address -->
           <ui-form-field label="Company Address" [required]="true">
