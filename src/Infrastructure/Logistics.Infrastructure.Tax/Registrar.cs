@@ -1,4 +1,5 @@
 using Logistics.Application.Services.Tax;
+using Logistics.Infrastructure.Tax.Data;
 using Logistics.Infrastructure.Tax.Manual;
 using Logistics.Infrastructure.Tax.Stripe;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +24,7 @@ public static class Registrar
 
         services.AddSingleton<IStripeTaxCalculationApi, StripeTaxCalculationApi>();
         services.AddScoped<IStripeTaxConfigService, StripeTaxConfigService>();
+        services.AddSingleton<ITaxJurisdictionsProvider, TaxJurisdictionsProvider>();
         services.AddScoped<ManualTaxCalculator>();
         services.AddScoped<StripeTaxCalculator>();
 

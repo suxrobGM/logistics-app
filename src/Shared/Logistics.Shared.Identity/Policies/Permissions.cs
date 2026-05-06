@@ -96,6 +96,12 @@ public static class Permission
         public const string Manage = $"{nameof(Permission)}.{nameof(Invoice)}.Manage";
     }
 
+    public static class Tax
+    {
+        public const string View = $"{nameof(Permission)}.{nameof(Tax)}.View";
+        public const string Manage = $"{nameof(Permission)}.{nameof(Tax)}.Manage";
+    }
+
     public static class Payroll
     {
         public const string View = $"{nameof(Permission)}.{nameof(Payroll)}.View";

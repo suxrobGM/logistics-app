@@ -144,6 +144,24 @@ public class InvoicesController(IMediator mediator) : ControllerBase
 
     #endregion
 
+    #region Tax preview
+
+    /// <summary>
+    ///     Compute tax for a hypothetical set of line items without persisting an invoice.
+    ///     Backs the create/edit-invoice form's live recalc.
+    /// </summary>
+    [HttpPost("preview-tax", Name = "PreviewInvoiceTax")]
+    [ProducesResponseType(typeof(PreviewInvoiceTaxResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Invoice.View)]
+    public async Task<IActionResult> PreviewTax([FromBody] PreviewInvoiceTaxRequest request)
+    {
+        var result = await mediator.Send(new PreviewInvoiceTaxQuery { Request = request });
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    #endregion
+
     #region Line Items
 
     /// <summary>

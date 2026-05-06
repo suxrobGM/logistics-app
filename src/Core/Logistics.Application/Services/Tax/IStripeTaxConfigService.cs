@@ -1,8 +1,9 @@
-namespace Logistics.Infrastructure.Tax.Stripe;
+namespace Logistics.Application.Services.Tax;
 
 /// <summary>
 /// Reads tenant-level tax configuration from Stripe (cached): default tax code,
 /// available tax codes, and the jurisdictions where the tenant is registered to collect tax.
+/// Implementation lives in <c>Logistics.Infrastructure.Tax</c>.
 /// </summary>
 public interface IStripeTaxConfigService
 {
