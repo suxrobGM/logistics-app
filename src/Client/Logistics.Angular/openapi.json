@@ -15835,6 +15835,13 @@
           "notes": {
             "type": "string",
             "nullable": true
+          },
+          "taxId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isVatExempt": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -24385,6 +24392,13 @@
           "notes": {
             "type": "string",
             "nullable": true
+          },
+          "taxId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isVatExempt": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -24912,6 +24926,26 @@
             "nullable": true
           },
           "dotNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "mcNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "vatNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "eoriNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyRegistrationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "taxResidencyCountry": {
             "type": "string",
             "nullable": true
           },
