@@ -122,6 +122,37 @@ internal sealed class DispatchToolRegistry : IDispatchToolRegistry
                 ["required"] = new JsonArray("candidates")
             })),
 
+        new("preview_tax_calculation",
+            "Compute VAT / sales tax / GST for a hypothetical set of line items without persisting an invoice. Returns per-line tax amount, aggregate breakdown by jurisdiction, and reverse-charge / not-collecting flags. Use when quoting a customer or sanity-checking that tax setup will work before creating the invoice. Read-only.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["customer_id"] = Prop("string", "The customer ID (GUID) — drives jurisdiction + reverse-charge"),
+                    ["currency"] = Prop("string", "ISO-4217 currency code, e.g. 'USD' or 'EUR'"),
+                    ["line_items"] = new JsonObject
+                    {
+                        ["type"] = "array",
+                        ["description"] = "Line items to score",
+                        ["items"] = new JsonObject
+                        {
+                            ["type"] = "object",
+                            ["properties"] = new JsonObject
+                            {
+                                ["description"] = Prop("string", "Human-readable label for the line"),
+                                ["type"] = Prop("string", "InvoiceLineItemType (BaseRate, FuelSurcharge, Detention, Lumper, Other, ...)"),
+                                ["amount"] = Prop("number", "Per-unit net amount in the invoice currency"),
+                                ["quantity"] = Prop("integer", "Quantity (defaults to 1)"),
+                                ["tax_code"] = Prop("string", "Optional Stripe Tax product code (txcd_*); leave blank to use the tenant default")
+                            },
+                            ["required"] = new JsonArray("description", "amount")
+                        }
+                    }
+                },
+                ["required"] = new JsonArray("customer_id", "currency", "line_items")
+            })),
+
         new("search_loadboard",
             "Search load boards (DAT, Truckstop, 123Loadboard) for available loads matching criteria. Use this when trucks have capacity gaps to find revenue opportunities.",
             BuildSchema(new JsonObject

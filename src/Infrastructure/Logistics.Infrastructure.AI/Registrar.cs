@@ -42,6 +42,7 @@ public static class Registrar
         services.AddScoped<IDispatchTool, CreateTripTool>();
         services.AddScoped<IDispatchTool, DispatchTripTool>();
         services.AddScoped<IDispatchTool, CalculateAssignmentMetricsTool>();
+        services.AddScoped<IDispatchTool, PreviewTaxCalculationTool>();
 
         // Load board tools (conditionally included in tool definitions based on tenant feature flag)
         services.AddScoped<IDispatchTool, SearchLoadBoardTool>();
