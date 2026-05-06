@@ -35,92 +35,94 @@ Map each element to its signal forms equivalent:
 
 #### Imports
 
-| Before | After |
-|--------|-------|
+| Before                                                                                                | After                                                                                                                |
+| ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | `import { ReactiveFormsModule, FormGroup, FormControl, FormArray, Validators } from '@angular/forms'` | `import { form, FormField, required, email, minLength, maxLength, pattern, min, max } from '@angular/forms/signals'` |
-| `import { FormsModule } from '@angular/forms'` | `import { form, FormField } from '@angular/forms/signals'` |
+| `import { FormsModule } from '@angular/forms'`                                                        | `import { form, FormField } from '@angular/forms/signals'`                                                           |
 
 #### Component imports array
 
-| Before | After |
-|--------|-------|
+| Before                | After       |
+| --------------------- | ----------- |
 | `ReactiveFormsModule` | `FormField` |
-| `FormsModule` | `FormField` |
+| `FormsModule`         | `FormField` |
 
 #### Form model
 
-| Before (Reactive) | Before (Template) | After (Signal) |
-|--------------------|-------------------|----------------|
-| `new FormGroup({ name: new FormControl('') })` | Class properties + `[(ngModel)]` | `signal({ name: '' })` + `form(this.model)` |
-| `new FormControl('', Validators.required)` | N/A | Schema function: `required(schemaPath.name)` |
-| `new FormArray([...])` | N/A | `signal({ items: [{ ... }] })` |
+| Before (Reactive)                              | Before (Template)                | After (Signal)                               |
+| ---------------------------------------------- | -------------------------------- | -------------------------------------------- |
+| `new FormGroup({ name: new FormControl('') })` | Class properties + `[(ngModel)]` | `signal({ name: '' })` + `form(this.model)`  |
+| `new FormControl('', Validators.required)`     | N/A                              | Schema function: `required(schemaPath.name)` |
+| `new FormArray([...])`                         | N/A                              | `signal({ items: [{ ... }] })`               |
 
 #### Template bindings
 
-| Before | After |
-|--------|-------|
-| `[formGroup]="form"` | Remove entirely (no form-level directive needed) |
-| `formControlName="name"` | `[formField]="myForm.name"` |
-| `[formControl]="control"` | `[formField]="myForm.fieldName"` |
+| Before                    | After                                                |
+| ------------------------- | ---------------------------------------------------- |
+| `[formGroup]="form"`      | Remove entirely (no form-level directive needed)     |
+| `formControlName="name"`  | `[formField]="myForm.name"`                          |
+| `[formControl]="control"` | `[formField]="myForm.fieldName"`                     |
 | `formGroupName="address"` | Access nested: `[formField]="myForm.address.street"` |
-| `formArrayName="items"` | Access by index: `myForm.items[i].field` |
-| `[(ngModel)]="property"` | `[formField]="myForm.property"` |
+| `formArrayName="items"`   | Access by index: `myForm.items[i].field`             |
+| `[(ngModel)]="property"`  | `[formField]="myForm.property"`                      |
 
 #### Validation display
 
-| Before | After |
-|--------|-------|
+| Before                                   | After                     |
+| ---------------------------------------- | ------------------------- |
 | `form.get('name')?.hasError('required')` | `myForm.name().invalid()` |
-| `form.get('name')?.touched` | `myForm.name().touched()` |
-| `form.get('name')?.dirty` | `myForm.name().dirty()` |
-| `form.get('name')?.errors` | `myForm.name().errors()` |
-| `form.get('name')?.valid` | `myForm.name().valid()` |
-| `form.invalid` | `myForm().invalid()` |
-| `form.valid` | `myForm().valid()` |
+| `form.get('name')?.touched`              | `myForm.name().touched()` |
+| `form.get('name')?.dirty`                | `myForm.name().dirty()`   |
+| `form.get('name')?.errors`               | `myForm.name().errors()`  |
+| `form.get('name')?.valid`                | `myForm.name().valid()`   |
+| `form.invalid`                           | `myForm().invalid()`      |
+| `form.valid`                             | `myForm().valid()`        |
 
 #### Value access
 
-| Before | After |
-|--------|-------|
-| `form.value` | `model()` (read the signal directly) |
-| `form.getRawValue()` | `model()` |
-| `form.patchValue({ name: 'x' })` | `model.update(v => ({ ...v, name: 'x' }))` |
-| `form.setValue(...)` | `model.set(...)` |
-| `form.reset()` | `model.set(initialValue)` |
-| `form.valueChanges` | Use `effect()` or `computed()` on the signal |
-| `form.statusChanges` | `myForm().valid()` / `myForm().invalid()` in `computed()` |
+| Before                           | After                                                     |
+| -------------------------------- | --------------------------------------------------------- |
+| `form.value`                     | `model()` (read the signal directly)                      |
+| `form.getRawValue()`             | `model()`                                                 |
+| `form.patchValue({ name: 'x' })` | `model.update(v => ({ ...v, name: 'x' }))`                |
+| `form.setValue(...)`             | `model.set(...)`                                          |
+| `form.reset()`                   | `model.set(initialValue)`                                 |
+| `form.valueChanges`              | Use `effect()` or `computed()` on the signal              |
+| `form.statusChanges`             | `myForm().valid()` / `myForm().invalid()` in `computed()` |
 
 #### Validation rules
 
-| Before (Reactive) | After (Signal) |
-|--------------------|----------------|
-| `Validators.required` | `required(schemaPath.field, { message: '...' })` |
-| `Validators.email` | `email(schemaPath.field, { message: '...' })` |
-| `Validators.minLength(n)` | `minLength(schemaPath.field, n, { message: '...' })` |
-| `Validators.maxLength(n)` | `maxLength(schemaPath.field, n, { message: '...' })` |
-| `Validators.min(n)` | `min(schemaPath.field, n, { message: '...' })` |
-| `Validators.max(n)` | `max(schemaPath.field, n, { message: '...' })` |
+| Before (Reactive)           | After (Signal)                                         |
+| --------------------------- | ------------------------------------------------------ |
+| `Validators.required`       | `required(schemaPath.field, { message: '...' })`       |
+| `Validators.email`          | `email(schemaPath.field, { message: '...' })`          |
+| `Validators.minLength(n)`   | `minLength(schemaPath.field, n, { message: '...' })`   |
+| `Validators.maxLength(n)`   | `maxLength(schemaPath.field, n, { message: '...' })`   |
+| `Validators.min(n)`         | `min(schemaPath.field, n, { message: '...' })`         |
+| `Validators.max(n)`         | `max(schemaPath.field, n, { message: '...' })`         |
 | `Validators.pattern(regex)` | `pattern(schemaPath.field, regex, { message: '...' })` |
-| Custom sync validator | Use `validate()` rule (see below) |
-| Custom async validator | Use `validateAsync()` rule (see below) |
+| Custom sync validator       | Use `validate()` rule (see below)                      |
+| Custom async validator      | Use `validateAsync()` rule (see below)                 |
 
 #### Disabled state
 
-| Before | After |
-|--------|-------|
-| `control.disable()` / `control.enable()` | `disabled(schemaPath.field, () => someSignal())` (declarative, signal-driven) |
-| `new FormControl({ value: '', disabled: true })` | `disabled(schemaPath.field, () => true)` in schema function |
+| Before                                           | After                                                                         |
+| ------------------------------------------------ | ----------------------------------------------------------------------------- |
+| `control.disable()` / `control.enable()`         | `disabled(schemaPath.field, () => someSignal())` (declarative, signal-driven) |
+| `new FormControl({ value: '', disabled: true })` | `disabled(schemaPath.field, () => true)` in schema function                   |
 
 ### 3. Handle edge cases
 
 #### Third-party UI components (PrimeNG, Material, etc.)
 
 Signal Forms `[formField]` supports three control types:
+
 1. **Native HTML elements** (`<input>`, `<select>`, `<textarea>`) — first-class support
 2. **Signal Forms custom controls** (implements `FormValueControl` or `FormCheckboxControl`)
 3. **ControlValueAccessor components** — backward-compatible, works with most third-party libraries
 
 **Strategy**: Try `[formField]` directly on the third-party component first. If it causes type errors or doesn't work (some PrimeNG components have conflicting `formField` properties), fall back to native HTML equivalents:
+
 - `p-select` / `p-dropdown` → `<select>` with `[formField]`
 - `p-checkbox` → `<input type="checkbox">` with `[formField]`
 - `p-inputText` → `<input>` with `[formField]`
@@ -153,15 +155,20 @@ removeItem(index: number) {
 
 ```typescript
 // Before: group-level validator
-new FormGroup({ password: new FormControl(''), confirm: new FormControl('') }, {
-  validators: passwordMatchValidator
-});
+new FormGroup(
+  { password: new FormControl(""), confirm: new FormControl("") },
+  {
+    validators: passwordMatchValidator,
+  },
+);
 
 // After: use validate() on one field referencing another
 form(this.model, (schemaPath) => {
   validate(schemaPath.confirm, () => {
     const m = this.model();
-    return m.password === m.confirm ? null : { kind: 'passwordMismatch', message: 'Passwords must match' };
+    return m.password === m.confirm
+      ? null
+      : { kind: "passwordMismatch", message: "Passwords must match" };
   });
 });
 ```
@@ -171,13 +178,13 @@ form(this.model, (schemaPath) => {
 If the form is very complex or uses many custom validators that are hard to port, use `compatForm` from `@angular/forms/signals/compat` to wrap existing `FormControl`/`FormGroup` instances inside a signal form. This allows gradual migration:
 
 ```typescript
-import { compatForm } from '@angular/forms/signals/compat';
+import { compatForm } from "@angular/forms/signals/compat";
 
 // Keep existing FormControl with complex validators
-const emailControl = new FormControl('', [Validators.required, customAsyncValidator()]);
+const emailControl = new FormControl("", [Validators.required, customAsyncValidator()]);
 
 // Wrap in signal form
-model = signal({ email: emailControl, name: '' });
+model = signal({ email: emailControl, name: "" });
 myForm = compatForm(this.model);
 ```
 
@@ -185,9 +192,13 @@ myForm = compatForm(this.model);
 
 ```typescript
 form(this.model, (schemaPath) => {
-  applyWhen(schemaPath.companyName, () => this.isBusinessAccount(), (p) => {
-    required(p, { message: 'Company name is required for business accounts' });
-  });
+  applyWhen(
+    schemaPath.companyName,
+    () => this.isBusinessAccount(),
+    (p) => {
+      required(p, { message: "Company name is required for business accounts" });
+    },
+  );
 });
 ```
 
@@ -217,4 +228,4 @@ form(this.model, (schemaPath) => {
 - Never mix `ReactiveFormsModule`/`FormsModule` directives with `FormField` on the same control
 - The `form()` function returns a field tree, not a signal — call `myForm()` to get the root state signal, and `myForm.field()` to get a specific field's state
 - Array fields are accessed by index: `myForm.items[0].name` — the form tree automatically tracks array mutations
-- Always add `novalidate` to `<form>` elements to prevent browser validation from conflicting 
+- Always add `novalidate` to `<form>` elements to prevent browser validation from conflicting
