@@ -22,7 +22,6 @@ internal sealed class UpdateTenantTaxRateHandler(
         }
 
         rate.RatePercent = req.RatePercent;
-        rate.TaxCode = req.TaxCode;
         rate.Description = req.Description;
         if (req.EffectiveFrom.HasValue) rate.EffectiveFrom = req.EffectiveFrom.Value;
         rate.EffectiveTo = req.EffectiveTo;

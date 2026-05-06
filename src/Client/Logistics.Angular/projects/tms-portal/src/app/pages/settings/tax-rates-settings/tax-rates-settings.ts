@@ -34,7 +34,6 @@ import { ToastService } from "@/core/services";
 interface TaxRateForm {
   jurisdictionKey: FormControl<string | null>;
   ratePercent: FormControl<number | null>;
-  taxCode: FormControl<string | null>;
   description: FormControl<string | null>;
   effectiveFrom: FormControl<Date | null>;
   effectiveTo: FormControl<Date | null>;
@@ -88,7 +87,6 @@ export class TaxRatesSettings implements OnInit {
     ratePercent: new FormControl<number | null>(null, {
       validators: [Validators.required, Validators.min(0), Validators.max(100)],
     }),
-    taxCode: new FormControl<string | null>(null),
     description: new FormControl<string | null>(null),
     effectiveFrom: new FormControl<Date | null>(null),
     effectiveTo: new FormControl<Date | null>(null),
@@ -103,7 +101,6 @@ export class TaxRatesSettings implements OnInit {
     this.form.reset({
       jurisdictionKey: null,
       ratePercent: null,
-      taxCode: null,
       description: null,
       effectiveFrom: null,
       effectiveTo: null,
@@ -120,7 +117,6 @@ export class TaxRatesSettings implements OnInit {
         region: rate.jurisdiction?.region ?? null,
       } as TaxJurisdictionInfoDto),
       ratePercent: rate.ratePercent ?? null,
-      taxCode: rate.taxCode ?? null,
       description: rate.description ?? null,
       effectiveFrom: rate.effectiveFrom ? new Date(rate.effectiveFrom) : null,
       effectiveTo: rate.effectiveTo ? new Date(rate.effectiveTo) : null,
@@ -155,7 +151,6 @@ export class TaxRatesSettings implements OnInit {
       if (editing) {
         const command: UpdateTenantTaxRateCommand = {
           ratePercent: value.ratePercent!,
-          taxCode: value.taxCode || null,
           description: value.description || null,
           effectiveFrom: value.effectiveFrom?.toISOString() ?? null,
           effectiveTo: value.effectiveTo?.toISOString() ?? null,
@@ -168,7 +163,6 @@ export class TaxRatesSettings implements OnInit {
           countryCode: country,
           region: region || null,
           ratePercent: value.ratePercent!,
-          taxCode: value.taxCode || null,
           description: value.description || null,
           effectiveFrom: value.effectiveFrom?.toISOString() ?? null,
           effectiveTo: value.effectiveTo?.toISOString() ?? null,

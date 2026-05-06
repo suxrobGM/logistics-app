@@ -31,7 +31,6 @@
               <tr>
                 <th>Jurisdiction</th>
                 <th class="text-right" style="width: 100px">Rate</th>
-                <th>Tax Code</th>
                 <th>Description</th>
                 <th>Effective</th>
                 <th style="width: 120px"></th>
@@ -44,7 +43,6 @@
                   }}{{ rate.jurisdiction?.region ? "-" + rate.jurisdiction?.region : "" }}
                 </td>
                 <td class="text-right">{{ rate.ratePercent }}%</td>
-                <td class="font-mono text-xs">{{ rate.taxCode || "—" }}</td>
                 <td>{{ rate.description || "—" }}</td>
                 <td class="text-xs">
                   {{ rate.effectiveFrom | dateFormat: "mediumDate" }}
@@ -122,21 +120,6 @@
         [maxFractionDigits]="2"
         suffix=" %"
         [fluid]="true"
-      />
-    </ui-form-field>
-
-    <ui-form-field
-      label="Tax code"
-      for="taxCode"
-      hint="Optional Stripe Tax product code (txcd_*); leave empty for the tenant default."
-      class="mt-4"
-    >
-      <input
-        pInputText
-        id="taxCode"
-        formControlName="taxCode"
-        class="w-full"
-        placeholder="txcd_99999999"
       />
     </ui-form-field>
 

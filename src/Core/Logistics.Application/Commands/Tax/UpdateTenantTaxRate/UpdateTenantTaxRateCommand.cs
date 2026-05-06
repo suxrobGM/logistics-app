@@ -7,7 +7,6 @@ public class UpdateTenantTaxRateCommand : IAppRequest<Result<TenantTaxRateDto>>
 {
     public Guid Id { get; set; }
     public required decimal RatePercent { get; set; }
-    public string? TaxCode { get; set; }
     public string? Description { get; set; }
     public DateTime? EffectiveFrom { get; set; }
     public DateTime? EffectiveTo { get; set; }

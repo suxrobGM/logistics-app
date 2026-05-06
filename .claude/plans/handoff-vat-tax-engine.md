@@ -4,6 +4,10 @@
 >
 > EU invoicing legally requires per-line VAT, VAT IDs on the issuer/customer, and reverse-charge handling for cross-border B2B. The codebase has zero tax logic today — `InvoiceLineItemType.Tax` exists as an enum value but nothing computes it.
 
+## Status
+
+- Completed fully
+
 ## Sequencing
 
 - **Position in overall order:** 1st

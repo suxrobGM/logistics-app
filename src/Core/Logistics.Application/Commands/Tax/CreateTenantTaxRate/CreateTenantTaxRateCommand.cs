@@ -8,7 +8,6 @@ public class CreateTenantTaxRateCommand : IAppRequest<Result<TenantTaxRateDto>>
     public required string CountryCode { get; set; }
     public string? Region { get; set; }
     public required decimal RatePercent { get; set; }
-    public string? TaxCode { get; set; }
     public string? Description { get; set; }
     public DateTime? EffectiveFrom { get; set; }
     public DateTime? EffectiveTo { get; set; }

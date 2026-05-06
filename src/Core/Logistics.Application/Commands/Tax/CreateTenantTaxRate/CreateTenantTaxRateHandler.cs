@@ -24,7 +24,6 @@ internal sealed class CreateTenantTaxRateHandler(
                 Region = string.IsNullOrWhiteSpace(req.Region) ? null : req.Region.ToUpperInvariant()
             },
             RatePercent = req.RatePercent,
-            TaxCode = req.TaxCode,
             Description = req.Description,
             EffectiveFrom = req.EffectiveFrom ?? DateTime.UtcNow,
             EffectiveTo = req.EffectiveTo
