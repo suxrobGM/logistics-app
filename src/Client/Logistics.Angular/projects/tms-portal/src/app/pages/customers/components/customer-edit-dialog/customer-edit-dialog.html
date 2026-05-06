@@ -60,6 +60,38 @@
       <ui-address-form formControlName="address" [allowedCountries]="allowedCountries()" />
     </ui-form-field>
 
+    <ui-grid container spacing="4" class="mt-4">
+      <ui-grid [size]="{ xs: 12, md: 6 }">
+        <ui-form-field
+          label="Tax ID / VAT number"
+          for="taxId"
+          [required]="customerIsEu()"
+          [hint]="
+            customerIsEu()
+              ? 'Required for EU customers — enables cross-border B2B reverse charge.'
+              : 'VAT, EIN, GSTIN, ABN, etc. (optional)'
+          "
+        >
+          <input
+            pInputText
+            id="taxId"
+            formControlName="taxId"
+            class="w-full"
+            placeholder="e.g. DE123456789"
+          />
+        </ui-form-field>
+      </ui-grid>
+
+      <ui-grid [size]="{ xs: 12, md: 6 }">
+        <ui-form-field label="Tax status" for="isVatExempt">
+          <div class="flex items-center gap-2 pt-2">
+            <p-checkbox formControlName="isVatExempt" inputId="isVatExempt" [binary]="true" />
+            <label for="isVatExempt">VAT / sales tax exempt</label>
+          </div>
+        </ui-form-field>
+      </ui-grid>
+    </ui-grid>
+
     <ui-form-field label="Notes" for="notes" class="mt-4">
       <textarea
         pInputTextarea

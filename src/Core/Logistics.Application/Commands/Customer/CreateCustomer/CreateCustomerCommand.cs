@@ -13,4 +13,6 @@ public class CreateCustomerCommand : IAppRequest<Result<CustomerDto>>
     public Address? Address { get; set; }
     public CustomerStatus Status { get; set; } = CustomerStatus.Active;
     public string? Notes { get; set; }
+    public string? TaxId { get; set; }
+    public bool IsVatExempt { get; set; }
 }

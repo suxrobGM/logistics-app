@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, input, model, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { regionAllowedCountries } from "@logistics/shared";
+import { isEuCountry, regionAllowedCountries } from "@logistics/shared";
 import {
   Api,
   updateCustomer,
@@ -19,6 +19,7 @@ import {
 } from "@logistics/shared/components";
 import { AccordionModule } from "primeng/accordion";
 import { ButtonModule } from "primeng/button";
+import { CheckboxModule } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
@@ -31,6 +32,7 @@ import { TenantService } from "@/core/services/tenant.service";
   imports: [
     DialogModule,
     ButtonModule,
+    CheckboxModule,
     ReactiveFormsModule,
     SelectModule,
     InputTextModule,
@@ -60,6 +62,12 @@ export class CustomerEditDialog {
   protected readonly statusOptions = customerStatusOptions;
   protected readonly isLoading = signal(false);
 
+  /** True when the customer's billing country is an EU member — drives the
+   *  Tax-ID required hint + validator. */
+  protected readonly customerIsEu = computed(() =>
+    isEuCountry(this.form?.controls.address.value?.country),
+  );
+
   constructor() {
     this.form = new FormGroup<UpdateCustomerForm>({
       name: new FormControl<string>("", {
@@ -74,6 +82,8 @@ export class CustomerEditDialog {
       }),
       address: new FormControl<Address | null>(null),
       notes: new FormControl<string | null>(null),
+      taxId: new FormControl<string | null>(null),
+      isVatExempt: new FormControl<boolean>(false, { nonNullable: true }),
     });
 
     effect(() => {
@@ -82,6 +92,8 @@ export class CustomerEditDialog {
         this.populateForm(cust);
       }
     });
+
+    this.form.controls.address.valueChanges.subscribe(() => this.applyTaxIdValidators());
   }
 
   async save(): Promise<void> {
@@ -100,6 +112,8 @@ export class CustomerEditDialog {
       status: formValue.status,
       address: formValue.address!,
       notes: formValue.notes,
+      taxId: formValue.taxId,
+      isVatExempt: formValue.isVatExempt,
     };
 
     this.isLoading.set(true);
@@ -118,6 +132,13 @@ export class CustomerEditDialog {
     this.visible.set(false);
   }
 
+  private applyTaxIdValidators(): void {
+    const taxId = this.form.controls.taxId;
+    const required = isEuCountry(this.form.controls.address.value?.country);
+    taxId.setValidators(required ? [Validators.required] : []);
+    taxId.updateValueAndValidity({ emitEvent: false });
+  }
+
   private populateForm(cust: CustomerDto): void {
     this.form.patchValue({
       name: cust.name ?? "",
@@ -126,6 +147,8 @@ export class CustomerEditDialog {
       status: cust.status ?? "active",
       address: cust.address ?? null,
       notes: cust.notes ?? null,
+      taxId: cust.taxId ?? null,
+      isVatExempt: cust.isVatExempt ?? false,
     });
   }
 }
@@ -137,4 +160,6 @@ interface UpdateCustomerForm {
   status: FormControl<CustomerStatus>;
   address: FormControl<Address | null>;
   notes: FormControl<string | null>;
+  taxId: FormControl<string | null>;
+  isVatExempt: FormControl<boolean>;
 }
