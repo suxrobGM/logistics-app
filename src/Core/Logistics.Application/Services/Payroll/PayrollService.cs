@@ -1,6 +1,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Services;
@@ -83,9 +84,12 @@ internal class PayrollService(
         var tenant = tenantUow.GetCurrentTenant();
         var currency = (tenant.Settings?.Currency ?? CurrencyCode.USD).ToString();
 
+        var subtotal = new Money { Amount = invoiceAmount, Currency = currency };
         var payrollInvoice = new PayrollInvoice
         {
-            Total = new() { Amount = invoiceAmount, Currency = currency },
+            Subtotal = subtotal,
+            TaxTotal = Money.Zero(currency),
+            Total = subtotal,
             Status = InvoiceStatus.Draft,
             PeriodStart = startDate,
             PeriodEnd = endDate,

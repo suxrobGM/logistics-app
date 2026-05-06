@@ -4,16 +4,38 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Domain.Entities;
 
-public abstract class Invoice : AuditableEntity, IMasterEntity, ITenantEntity, IAuditableEntity
+public abstract partial class Invoice : AuditableEntity, IMasterEntity, ITenantEntity, IAuditableEntity
 {
     public long Number { get; set; }
     public abstract InvoiceType Type { get; set; }
     public InvoiceStatus Status { get; set; }
 
     /// <summary>
-    ///     Total inclusive of tax & discounts.
+    /// Sum of line item nets (pre-tax) in the invoice currency. Set by <see cref="RecalculateTotals"/>.
+    /// </summary>
+    public required Money Subtotal { get; set; }
+
+    /// <summary>
+    /// Tax owed across all line items in the invoice currency. Always 0 when
+    /// <see cref="TaxBehavior"/> is <see cref="TaxBehavior.ReverseCharge"/>.
+    /// </summary>
+    public required Money TaxTotal { get; set; }
+
+    /// <summary>
+    /// Total inclusive of tax &amp; discounts. Equals Subtotal + TaxTotal for exclusive pricing.
     /// </summary>
     public required Money Total { get; set; }
+
+    /// <summary>
+    /// How tax is applied to line items. Defaults to Exclusive (tax added on top).
+    /// </summary>
+    public TaxBehavior TaxBehavior { get; set; } = TaxBehavior.Exclusive;
+
+    /// <summary>
+    /// Persisted JSON of <see cref="InvoiceTaxLine"/> entries. Use
+    /// <see cref="GetTaxBreakdown"/> / <see cref="SetTaxBreakdown"/> to access.
+    /// </summary>
+    public string? TaxBreakdownJson { get; set; }
 
     public string? Notes { get; set; }
     public DateTime? DueDate { get; set; }

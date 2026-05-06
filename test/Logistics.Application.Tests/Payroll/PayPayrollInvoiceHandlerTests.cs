@@ -58,10 +58,13 @@ public class PayPayrollInvoiceHandlerTests
 
     private static PayrollInvoice CreateApprovedPayrollInvoice(Guid employeeId, decimal amount = 1500m)
     {
+        var money = new Money { Amount = amount, Currency = "USD" };
         return new PayrollInvoice
         {
             EmployeeId = employeeId,
-            Total = new Money { Amount = amount, Currency = "USD" },
+            Subtotal = money,
+            TaxTotal = Money.Zero("USD"),
+            Total = money,
             Status = InvoiceStatus.Approved,
             PeriodStart = DateTime.UtcNow.AddDays(-14),
             PeriodEnd = DateTime.UtcNow

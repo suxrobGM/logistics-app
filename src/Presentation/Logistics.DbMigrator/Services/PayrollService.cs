@@ -3,6 +3,7 @@ using Logistics.DbMigrator.Utils;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.DbMigrator.Services;
 
@@ -66,9 +67,12 @@ public class PayrollService(
     {
         var amount = CalculateSalary(employee, startDate, endDate);
 
+        var money = new Money { Amount = amount, Currency = "USD" };
         var payroll = new PayrollInvoice
         {
-            Total = new() { Amount = amount, Currency = "USD" },
+            Subtotal = money,
+            TaxTotal = Money.Zero("USD"),
+            Total = money,
             Status = InvoiceStatus.Paid,
             PeriodStart = startDate,
             PeriodEnd = endDate,

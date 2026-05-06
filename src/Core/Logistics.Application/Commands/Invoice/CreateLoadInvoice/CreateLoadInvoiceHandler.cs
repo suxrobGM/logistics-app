@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
@@ -37,9 +38,12 @@ internal sealed class CreateLoadInvoiceHandler(ITenantUnitOfWork tenantUow)
             BillingAddress = tenant.CompanyAddress
         };
 
+        var amount = new Money { Amount = req.PaymentAmount, Currency = currency };
         var invoice = new LoadInvoice
         {
-            Total = new() { Amount = req.PaymentAmount, Currency = currency },
+            Subtotal = amount,
+            TaxTotal = Money.Zero(currency),
+            Total = amount,
             CustomerId = req.CustomerId,
             LoadId = req.LoadId
         };

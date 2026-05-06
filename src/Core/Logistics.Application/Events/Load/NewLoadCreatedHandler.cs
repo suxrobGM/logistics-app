@@ -3,6 +3,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Events;
@@ -35,10 +36,13 @@ internal sealed class NewLoadCreatedHandler(
         }
 
         // Create the invoice
+        var zero = Money.Zero(load.DeliveryCost.Currency);
         var invoice = new LoadInvoice
         {
             LoadId = load.Id,
             CustomerId = load.CustomerId,
+            Subtotal = load.DeliveryCost,
+            TaxTotal = zero,
             Total = load.DeliveryCost,
             Status = InvoiceStatus.Draft,
             DueDate = DateTime.UtcNow.AddDays(30) // Default 30-day payment terms

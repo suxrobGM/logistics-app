@@ -25,7 +25,26 @@ public class InvoiceLineItem : Entity, ITenantEntity
     public string? Notes { get; set; }
 
     /// <summary>
-    /// Calculates the total for this line item (Amount * Quantity).
+    /// Effective tax rate for this line, populated by <c>ITaxCalculator</c>. 0 when no tax applies
+    /// (e.g. reverse-charge B2B export, exempt customer, US tenant without Stripe Tax in
+    /// non-registered jurisdiction).
+    /// </summary>
+    public decimal TaxRatePercent { get; set; }
+
+    /// <summary>
+    /// Tax amount in the invoice currency. For inclusive pricing this is the embedded tax;
+    /// for exclusive pricing it's the tax added on top.
+    /// </summary>
+    public decimal TaxAmount { get; set; }
+
+    /// <summary>
+    /// Stripe Tax product code (txcd_*) or local tax-code identifier. Null falls back to the
+    /// tenant's Stripe Tax default.
+    /// </summary>
+    public string? TaxCode { get; set; }
+
+    /// <summary>
+    /// Net (pre-tax) total for this line: Amount * Quantity. Gross is Net + TaxAmount.
     /// </summary>
     public decimal Total => Amount.Amount * Quantity;
 }

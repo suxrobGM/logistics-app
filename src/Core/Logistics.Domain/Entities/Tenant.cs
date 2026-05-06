@@ -24,6 +24,36 @@ public class Tenant : Entity, IMasterEntity
     public string? LogoPath { get; set; }
     public string? PhoneNumber { get; set; }
 
+    #region Regulatory & tax IDs
+
+    /// <summary>
+    /// US Motor Carrier number (FMCSA).
+    /// </summary>
+    public string? McNumber { get; set; }
+
+    /// <summary>
+    /// EU/UK VAT ID (e.g. DE123456789, GB987654321).
+    /// </summary>
+    public string? VatNumber { get; set; }
+
+    /// <summary>
+    /// Economic Operators Registration and Identification number (EU/UK customs).
+    /// </summary>
+    public string? EoriNumber { get; set; }
+
+    /// <summary>
+    /// Companies House / Handelsregister / RCS / equivalent registry number.
+    /// </summary>
+    public string? CompanyRegistrationNumber { get; set; }
+
+    /// <summary>
+    /// ISO-2 country code where the tenant is tax-resident.
+    /// Defaults to <see cref="CompanyAddress"/>.<c>Country</c> when null.
+    /// </summary>
+    public string? TaxResidencyCountry { get; set; }
+
+    #endregion
+
     /// <summary>
     ///     Regional and localization settings for this tenant.
     /// </summary>

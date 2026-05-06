@@ -78,8 +78,11 @@ public static class LoadFactory
     /// </summary>
     public static LoadInvoice CreateInvoice(Load load)
     {
+        var zero = Money.Zero(load.DeliveryCost.Currency);
         var invoice = new LoadInvoice
         {
+            Subtotal = load.DeliveryCost,
+            TaxTotal = zero,
             Total = load.DeliveryCost,
             Status = InvoiceStatus.Draft,
             CustomerId = load.CustomerId,
