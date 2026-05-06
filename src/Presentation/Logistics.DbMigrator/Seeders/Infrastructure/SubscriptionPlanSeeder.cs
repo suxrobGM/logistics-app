@@ -35,7 +35,6 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
     private static readonly TenantFeature[] ProfessionalFeatures =
     [
         ..StarterFeatures,
-        TenantFeature.Eld,
         TenantFeature.LoadBoard,
         TenantFeature.Payroll,
         TenantFeature.Timesheets,
@@ -114,7 +113,8 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
                 await planRepo.AddAsync(newPlan, cancellationToken);
                 await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
 
-                foreach (var feature in planDef.Features)
+                var distinctFeatures = planDef.Features.Distinct().ToList();
+                foreach (var feature in distinctFeatures)
                 {
                     await featureRepo.AddAsync(new PlanFeature
                     {
@@ -125,7 +125,7 @@ internal class SubscriptionPlanSeeder(ILogger<SubscriptionPlanSeeder> logger) : 
 
                 await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
                 logger.LogInformation("Created subscription plan '{PlanName}' with {FeatureCount} features",
-                    planDef.Name, planDef.Features.Length);
+                    planDef.Name, distinctFeatures.Count);
             }
             else
             {
