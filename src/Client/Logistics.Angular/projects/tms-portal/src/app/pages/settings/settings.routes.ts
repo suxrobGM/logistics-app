@@ -22,6 +22,13 @@ export const settingsRoutes: Routes = [
     data: { breadcrumb: "Payments" },
   },
   {
+    path: "tax-rates",
+    loadComponent: () =>
+      import("./tax-rates-settings/tax-rates-settings").then((m) => m.TaxRatesSettings),
+    canActivate: [authGuard],
+    data: { breadcrumb: "Tax Rates" },
+  },
+  {
     path: "features",
     loadComponent: () =>
       import("./feature-settings/feature-settings").then((m) => m.FeatureSettingsComponent),

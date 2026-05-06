@@ -323,6 +323,11 @@ export const sidebarSections: NavSection[] = [
             route: "/settings/payments",
           },
           {
+            id: "settings-tax-rates",
+            label: "Tax Rates",
+            route: "/settings/tax-rates",
+          },
+          {
             id: "settings-features",
             label: "Features",
             route: "/settings/features",
