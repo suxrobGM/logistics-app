@@ -6415,6 +6415,55 @@
         }
       }
     },
+    "/invoices/preview-tax": {
+      "post": {
+        "tags": [
+          "Invoices"
+        ],
+        "operationId": "PreviewInvoiceTax",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreviewInvoiceTaxRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreviewInvoiceTaxRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreviewInvoiceTaxRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreviewInvoiceTaxResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/invoices/{id}/line-items": {
       "post": {
         "tags": [
@@ -11444,6 +11493,221 @@
         }
       }
     },
+    "/tax/jurisdictions": {
+      "get": {
+        "tags": [
+          "Tax"
+        ],
+        "operationId": "GetTaxJurisdictions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaxJurisdictionInfoDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tax/stripe-config": {
+      "get": {
+        "tags": [
+          "Tax"
+        ],
+        "operationId": "GetStripeTaxConfig",
+        "parameters": [
+          {
+            "name": "includeTaxCodes",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StripeTaxConfigDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tax-rates": {
+      "get": {
+        "tags": [
+          "TaxRates"
+        ],
+        "operationId": "GetTenantTaxRates",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TenantTaxRateDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "TaxRates"
+        ],
+        "operationId": "CreateTenantTaxRate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTenantTaxRateCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTenantTaxRateCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTenantTaxRateCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantTaxRateDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tax-rates/{id}": {
+      "put": {
+        "tags": [
+          "TaxRates"
+        ],
+        "operationId": "UpdateTenantTaxRate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTenantTaxRateCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTenantTaxRateCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTenantTaxRateCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantTaxRateDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "TaxRates"
+        ],
+        "operationId": "DeleteTenantTaxRate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/tenants/{identifier}": {
       "get": {
         "tags": [
@@ -16185,6 +16449,46 @@
         },
         "additionalProperties": false
       },
+      "CreateTenantTaxRateCommand": {
+        "required": [
+          "countryCode",
+          "ratePercent"
+        ],
+        "type": "object",
+        "properties": {
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          },
+          "ratePercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "effectiveTo": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CreateTerminalCommand": {
         "type": "object",
         "properties": {
@@ -16490,6 +16794,13 @@
           "notes": {
             "type": "string",
             "nullable": true
+          },
+          "taxId": {
+            "type": "string",
+            "nullable": true
+          },
+          "isVatExempt": {
+            "type": "boolean"
           },
           "createdAt": {
             "type": "string",
@@ -19026,8 +19337,24 @@
             "type": "string",
             "format": "date-time"
           },
+          "subtotal": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "taxTotal": {
+            "$ref": "#/components/schemas/Money"
+          },
           "total": {
             "$ref": "#/components/schemas/Money"
+          },
+          "taxBehavior": {
+            "$ref": "#/components/schemas/TaxBehavior"
+          },
+          "taxBreakdown": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceTaxLineDto"
+            },
+            "nullable": true
           },
           "notes": {
             "type": "string",
@@ -19173,6 +19500,18 @@
           "total": {
             "type": "number",
             "format": "double"
+          },
+          "taxRatePercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxCode": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -19210,6 +19549,35 @@
           "cancelled"
         ],
         "type": "string"
+      },
+      "InvoiceTaxLineDto": {
+        "type": "object",
+        "properties": {
+          "ratePercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "baseAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "jurisdiction": {
+            "$ref": "#/components/schemas/TaxJurisdictionDto"
+          },
+          "taxCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "InvoiceType": {
         "enum": [
@@ -21305,6 +21673,124 @@
         ],
         "type": "string"
       },
+      "PreviewInvoiceTaxLineItem": {
+        "required": [
+          "amount",
+          "description",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/InvoiceLineItemType"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "taxCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PreviewInvoiceTaxRequest": {
+        "required": [
+          "currency",
+          "customerId",
+          "lineItems"
+        ],
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "lineItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PreviewInvoiceTaxLineItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PreviewInvoiceTaxResponse": {
+        "type": "object",
+        "properties": {
+          "taxBehavior": {
+            "$ref": "#/components/schemas/TaxBehavior"
+          },
+          "subtotal": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "taxTotal": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "total": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "breakdown": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceTaxLineDto"
+            },
+            "nullable": true
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PreviewLineItemTax"
+            },
+            "nullable": true
+          },
+          "warning": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PreviewLineItemTax": {
+        "type": "object",
+        "properties": {
+          "lineItemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ratePercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxAmount": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ProblemDetails": {
         "type": "object",
         "properties": {
@@ -22300,6 +22786,83 @@
         },
         "additionalProperties": false
       },
+      "StripeTaxCodeDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StripeTaxConfigDto": {
+        "required": [
+          "defaultTaxCode"
+        ],
+        "type": "object",
+        "properties": {
+          "defaultTaxCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "registrations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StripeTaxRegistrationDto"
+            },
+            "nullable": true
+          },
+          "taxCodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StripeTaxCodeDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StripeTaxRegistrationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "activeFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "SubmitDvirReportCommand": {
         "required": [
           "reportId"
@@ -22450,6 +23013,60 @@
         ],
         "type": "string"
       },
+      "TaxBehavior": {
+        "enum": [
+          "exclusive",
+          "inclusive",
+          "reverse_charge"
+        ],
+        "type": "string"
+      },
+      "TaxJurisdictionDto": {
+        "type": "object",
+        "properties": {
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TaxJurisdictionInfoDto": {
+        "required": [
+          "countryCode",
+          "displayName",
+          "source"
+        ],
+        "type": "object",
+        "properties": {
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "defaultRatePercent": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "source": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TenantDto": {
         "required": [
           "companyAddress"
@@ -22474,6 +23091,26 @@
             "nullable": true
           },
           "dotNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "mcNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "vatNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "eoriNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyRegistrationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "taxResidencyCountry": {
             "type": "string",
             "nullable": true
           },
@@ -22667,6 +23304,48 @@
           },
           "llmProvider": {
             "$ref": "#/components/schemas/LlmProvider"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TenantTaxRateDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jurisdiction": {
+            "$ref": "#/components/schemas/TaxJurisdictionDto"
+          },
+          "ratePercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "effectiveTo": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -24279,6 +24958,41 @@
         },
         "additionalProperties": false
       },
+      "UpdateTenantTaxRateCommand": {
+        "required": [
+          "ratePercent"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ratePercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "taxCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "effectiveTo": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "UpdateTerminalCommand": {
         "type": "object",
         "properties": {
@@ -24752,6 +25466,12 @@
     },
     {
       "name": "Subscription"
+    },
+    {
+      "name": "Tax"
+    },
+    {
+      "name": "TaxRates"
     },
     {
       "name": "Tenant"
