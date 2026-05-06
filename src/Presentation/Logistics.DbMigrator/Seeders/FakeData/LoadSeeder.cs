@@ -3,6 +3,7 @@ using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Models;
 using Logistics.DbMigrator.Regions;
 using Logistics.DbMigrator.Utils;
+using Logistics.Application.Services.Tax;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
@@ -13,7 +14,9 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// Seeds 100 freight loads with a realistic type mix (general / reefer / hazmat / intermodal / tank)
 /// using region-specific route points, customer names, and container / terminal links.
 /// </summary>
-internal class LoadSeeder(ILogger<LoadSeeder> logger) : SeederBase(logger)
+internal class LoadSeeder(
+    ILogger<LoadSeeder> logger,
+    IInvoiceTaxApplier taxApplier) : SeederBase(logger)
 {
     private readonly DateTime endDate = DateTime.UtcNow.AddDays(-1);
     private readonly DateTime startDate = DateTime.UtcNow.AddMonths(-2);
@@ -125,6 +128,7 @@ internal class LoadSeeder(ILogger<LoadSeeder> logger) : SeederBase(logger)
             var deliveredAt = load.DeliveredAt ?? DateTime.UtcNow;
             invoice.DueDate = deliveredAt.AddDays(30);
             invoice.SentAt = deliveredAt.AddDays(1);
+            await taxApplier.ApplyAsync(invoice, cancellationToken);
 
             if (random.NextDouble() < 0.8)
             {
@@ -160,7 +164,7 @@ internal class LoadSeeder(ILogger<LoadSeeder> logger) : SeederBase(logger)
 
         return new Payment
         {
-            Amount = load.DeliveryCost,
+            Amount = load.Invoice?.Total ?? load.DeliveryCost,
             Status = PaymentStatus.Paid,
             StripePaymentMethodId = null,
             TenantId = tenant.Id,
@@ -204,7 +208,8 @@ internal class LoadSeeder(ILogger<LoadSeeder> logger) : SeederBase(logger)
             destLoc,
             customer,
             truck,
-            dispatcher);
+            dispatcher,
+            currency: region.Currency.ToString());
 
         load.Source = LoadSource.Manual;
         load.RequestedPickupDate = dispatchedAt.AddHours(-random.Next(2, 24));

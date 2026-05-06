@@ -2,8 +2,10 @@ using Logistics.DbMigrator.Data;
 using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Services;
 using Logistics.DbMigrator.Workers;
+using Logistics.Application;
 using Logistics.Infrastructure.Payments;
 using Logistics.Infrastructure.Persistence;
+using Logistics.Infrastructure.Tax;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -17,13 +19,16 @@ var builder = Host.CreateApplicationBuilder(args);
 builder.AddServiceDefaults();
 builder.Configuration.AddJsonFile("SeedData/us.json", optional: true);
 builder.Configuration.AddJsonFile("SeedData/eu.json", optional: true);
+builder.Configuration["Tax:Provider"] ??= "manual";
 
 builder.Services.AddPersistenceInfrastructure(builder.Configuration)
     .AddMasterDatabase()
     .AddTenantDatabase()
     .AddIdentity();
 
+builder.Services.AddApplicationTaxServices();
 builder.Services.AddPaymentsInfrastructure(builder.Configuration);
+builder.Services.AddTaxInfrastructure(builder.Configuration);
 builder.Services.AddScoped<PayrollService>();
 builder.Services.AddSeeders();
 

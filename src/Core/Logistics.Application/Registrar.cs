@@ -9,6 +9,12 @@ namespace Logistics.Application;
 
 public static class Registrar
 {
+    public static IServiceCollection AddApplicationTaxServices(this IServiceCollection services)
+    {
+        services.AddScoped<IInvoiceTaxApplier, InvoiceTaxApplier>();
+        return services;
+    }
+
     public static IServiceCollection AddApplicationLayer(this IServiceCollection services)
     {
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true);
@@ -24,7 +30,7 @@ public static class Registrar
         services.AddScoped<IPayrollService, PayrollService>();
         services.AddScoped<ILoadService, LoadService>();
         services.AddScoped<IMaintenanceReminderService, MaintenanceReminderService>();
-        services.AddScoped<IInvoiceTaxApplier, InvoiceTaxApplier>();
+        services.AddApplicationTaxServices();
         return services;
     }
 }

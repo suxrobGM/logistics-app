@@ -5,11 +5,12 @@ namespace Logistics.Infrastructure.Tax.Data;
 /// Used by <c>ManualTaxCalculator</c> when no tenant-specific <c>TenantTaxRate</c> matches.
 /// Stripe Tax is the recommended path for EU; this is a fallback so non-Stripe tenants don't crash.
 /// </summary>
-internal static class EuVatRates
+public static class EuVatRates
 {
     public static readonly DateOnly LastUpdated = new(2026, 5, 1);
 
-    private static readonly Dictionary<string, decimal> StandardRates = new(StringComparer.OrdinalIgnoreCase)
+    public static readonly IReadOnlyDictionary<string, decimal> StandardRates =
+        new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase)
     {
         // EU-27 standard rates
         ["AT"] = 20.00m, ["BE"] = 21.00m, ["BG"] = 20.00m, ["HR"] = 25.00m,

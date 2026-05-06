@@ -6,7 +6,7 @@ namespace Logistics.Infrastructure.Tax.Data;
 /// only true EU member states get reverse-charge under Article 196 of Directive 2006/112/EC.
 /// EEA/UK/Western-Balkans countries handled separately as they are not in the EU VAT area.
 /// </summary>
-internal static class EuVatRules
+public static class EuVatRules
 {
     /// <summary>EU-27 member states (ISO-2).</summary>
     public static readonly HashSet<string> EuMemberStates =

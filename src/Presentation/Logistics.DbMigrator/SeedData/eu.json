@@ -17,11 +17,56 @@
       }
     ],
     "Customers": [
-      { "Name": "Maersk" },
-      { "Name": "CMA CGM" },
-      { "Name": "Hapag-Lloyd" },
-      { "Name": "MSC" },
-      { "Name": "DHL Freight" }
+      {
+        "Name": "Maersk",
+        "Address": {
+          "Line1": "Esplanaden 50",
+          "City": "Copenhagen",
+          "State": "Capital Region",
+          "ZipCode": "1263",
+          "Country": "DK"
+        }
+      },
+      {
+        "Name": "CMA CGM",
+        "Address": {
+          "Line1": "4 Quai d'Arenc",
+          "City": "Marseille",
+          "State": "Provence-Alpes-Cote d'Azur",
+          "ZipCode": "13002",
+          "Country": "FR"
+        }
+      },
+      {
+        "Name": "Hapag-Lloyd",
+        "Address": {
+          "Line1": "Ballindamm 25",
+          "City": "Hamburg",
+          "State": "Hamburg",
+          "ZipCode": "20095",
+          "Country": "DE"
+        }
+      },
+      {
+        "Name": "MSC",
+        "Address": {
+          "Line1": "Via Balleydier 7",
+          "City": "Genova",
+          "State": "Liguria",
+          "ZipCode": "16149",
+          "Country": "IT"
+        }
+      },
+      {
+        "Name": "DHL Freight",
+        "Address": {
+          "Line1": "Charles-de-Gaulle-Strasse 20",
+          "City": "Bonn",
+          "State": "North Rhine-Westphalia",
+          "ZipCode": "53113",
+          "Country": "DE"
+        }
+      }
     ],
     "Users": [
       {

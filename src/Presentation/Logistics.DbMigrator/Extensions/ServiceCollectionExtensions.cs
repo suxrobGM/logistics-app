@@ -28,6 +28,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISeeder, StripeSubscriptionSyncSeeder>();
         services.AddScoped<ISeeder, DemoTenantsSeeder>();
         services.AddScoped<ISeeder, TenantRoleSeeder>();
+        services.AddScoped<ISeeder, TenantTaxRateSeeder>();
 
         // FakeData seeders (always tenant-scoped - run once per demo tenant)
         services.AddScoped<ISeeder, UserSeeder>();
@@ -46,6 +47,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISeeder, AccidentReportSeeder>();
         services.AddScoped<ISeeder, ExpenseSeeder>();
         services.AddScoped<ISeeder, TripSeeder>();
+        services.AddScoped<ISeeder, InvoiceVatSeeder>();
         services.AddScoped<ISeeder, NotificationSeeder>();
         services.AddScoped<ISeeder, PayrollSeeder>();
         services.AddScoped<ISeeder, CustomerUserSeeder>();

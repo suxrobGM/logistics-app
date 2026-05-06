@@ -68,6 +68,7 @@ internal sealed class DemoTenantsSeeder(
                     IsSubscriptionRequired = false
                 };
                 ApplyRegionalSettings(tenant, profile);
+                ApplyDemoTaxIdentifiers(tenant, profile);
 
                 await repo.AddAsync(tenant, cancellationToken);
                 await context.MasterUnitOfWork.SaveChangesAsync(cancellationToken);
@@ -83,6 +84,10 @@ internal sealed class DemoTenantsSeeder(
                 if (existing.Settings.Region != profile.Region)
                 {
                     ApplyRegionalSettings(existing, profile);
+                    updated = true;
+                }
+                if (ApplyDemoTaxIdentifiers(existing, profile))
+                {
                     updated = true;
                 }
 
@@ -120,5 +125,41 @@ internal sealed class DemoTenantsSeeder(
         tenant.Settings.WeightUnit = profile.WeightUnit;
         tenant.Settings.DateFormat = profile.DateFormat;
         tenant.Settings.Timezone = profile.Timezone;
+    }
+
+    private static bool ApplyDemoTaxIdentifiers(Tenant tenant, IRegionProfile profile)
+    {
+        var updated = false;
+
+        if (string.IsNullOrWhiteSpace(tenant.TaxResidencyCountry))
+        {
+            tenant.TaxResidencyCountry = profile.CompanyAddress.Country;
+            updated = true;
+        }
+
+        if (profile.Region != Logistics.Domain.Primitives.Enums.Region.EU)
+        {
+            return updated;
+        }
+
+        if (string.IsNullOrWhiteSpace(tenant.VatNumber))
+        {
+            tenant.VatNumber = "DE123456789";
+            updated = true;
+        }
+
+        if (string.IsNullOrWhiteSpace(tenant.EoriNumber))
+        {
+            tenant.EoriNumber = "DE123456789000";
+            updated = true;
+        }
+
+        if (string.IsNullOrWhiteSpace(tenant.CompanyRegistrationNumber))
+        {
+            tenant.CompanyRegistrationNumber = "HRB 123456";
+            updated = true;
+        }
+
+        return updated;
     }
 }

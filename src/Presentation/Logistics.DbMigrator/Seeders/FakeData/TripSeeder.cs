@@ -3,6 +3,7 @@ using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Models;
 using Logistics.DbMigrator.Regions;
 using Logistics.DbMigrator.Utils;
+using Logistics.Application.Services.Tax;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
@@ -13,7 +14,9 @@ namespace Logistics.DbMigrator.Seeders.FakeData;
 /// Seeds car-hauler trips made of multi-leg Vehicle loads, using region-specific corridor names
 /// and route points.
 /// </summary>
-internal class TripSeeder(ILogger<TripSeeder> logger) : SeederBase(logger)
+internal class TripSeeder(
+    ILogger<TripSeeder> logger,
+    IInvoiceTaxApplier taxApplier) : SeederBase(logger)
 {
     private readonly DateTime startDate = DateTime.UtcNow.AddMonths(-2);
     private readonly DateTime endDate = DateTime.UtcNow.AddDays(-1);
@@ -82,6 +85,7 @@ internal class TripSeeder(ILogger<TripSeeder> logger) : SeederBase(logger)
                 var deliveredAt = load.DeliveredAt ?? DateTime.UtcNow;
                 invoice.DueDate = deliveredAt.AddDays(30);
                 invoice.SentAt = deliveredAt.AddDays(1);
+                await taxApplier.ApplyAsync(invoice, cancellationToken);
 
                 if (random.NextDouble() < 0.8)
                 {
@@ -115,7 +119,7 @@ internal class TripSeeder(ILogger<TripSeeder> logger) : SeederBase(logger)
 
         return new Payment
         {
-            Amount = load.DeliveryCost,
+            Amount = load.Invoice?.Total ?? load.DeliveryCost,
             Status = PaymentStatus.Paid,
             StripePaymentMethodId = null,
             TenantId = tenant.Id,
@@ -156,7 +160,8 @@ internal class TripSeeder(ILogger<TripSeeder> logger) : SeederBase(logger)
             destLocation,
             customer,
             truck,
-            dispatcher);
+            dispatcher,
+            currency: region.Currency.ToString());
 
         load.Source = LoadSource.Manual;
         load.Dispatch(dispatchedAt);
