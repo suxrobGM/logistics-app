@@ -11,3 +11,4 @@ export * from "./grid/grid";
 export * from "./callout/callout";
 export * from "./toolbar/toolbar";
 export * from "./action-menu/action-menu";
+export * from "./money-with-tax/money-with-tax";

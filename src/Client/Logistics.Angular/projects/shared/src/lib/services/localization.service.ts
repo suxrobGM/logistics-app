@@ -1,4 +1,4 @@
-import { Injectable, InjectionToken, inject } from "@angular/core";
+import { inject, Injectable, InjectionToken } from "@angular/core";
 import type { TenantSettings } from "../api/generated/models/tenant-settings";
 import type { DistanceUnitTypes, WeightUnitTypes } from "../utils/converters";
 
@@ -165,6 +165,44 @@ export class LocalizationService {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(value);
+  }
+
+  /**
+   * Gets the tenant's operating region.
+   */
+  getRegion(): string {
+    return this.settingsProvider.getSettings().region ?? "us";
+  }
+
+  /**
+   * Returns the region-aware tax label used on invoices, PDFs, and forms.
+   * @returns 'VAT' for EU tenants, 'Sales Tax' for US, 'Tax' otherwise
+   */
+  getTaxLabel(): string {
+    switch (this.getRegion()) {
+      case "eu":
+        return "VAT";
+      case "us":
+        return "Sales Tax";
+      default:
+        return "Tax";
+    }
+  }
+
+  /**
+   * Formats a tax rate percentage with locale-aware decimal separator.
+   * @param percent Rate as a number (e.g. 19, 21.5). Zero / null renders as a dash.
+   */
+  formatTaxRate(percent: number | null | undefined): string {
+    if (percent == null || percent <= 0) {
+      return "—";
+    }
+    const locale = this.getLocaleForCurrency(this.getCurrencyCode());
+    const formatted = new Intl.NumberFormat(locale, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }).format(percent);
+    return `${formatted}%`;
   }
 
   /**

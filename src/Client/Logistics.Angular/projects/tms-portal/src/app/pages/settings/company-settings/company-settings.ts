@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { AddressForm, PhoneInput } from "@logistics/shared";
+import { AddressForm, PhoneInput, regionAllowedCountries } from "@logistics/shared";
 import {
   Api,
   getTenantById,
@@ -19,7 +19,6 @@ import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { TenantService, ToastService } from "@/core/services";
 import { FormField, ValidationSummary } from "@/shared/components";
-import { regionAllowedCountries } from "@/shared/utils";
 
 @Component({
   selector: "app-company-settings",

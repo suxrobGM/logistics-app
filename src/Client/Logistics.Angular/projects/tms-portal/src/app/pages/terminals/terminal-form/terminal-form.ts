@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, input, output } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import { COUNTRIES_OPTIONS } from "@logistics/shared";
+import { COUNTRIES_OPTIONS, regionAllowedCountries } from "@logistics/shared";
 import type { Address, TerminalType } from "@logistics/shared/api";
 import { regionOptions, terminalTypeOptions } from "@logistics/shared/api/enums";
 import {
@@ -19,7 +19,6 @@ import { InputTextModule } from "primeng/inputtext";
 import { Select } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
 import { TenantService } from "@/core/services/tenant.service";
-import { regionAllowedCountries } from "@/shared/utils";
 
 export interface TerminalFormValue {
   name: string;

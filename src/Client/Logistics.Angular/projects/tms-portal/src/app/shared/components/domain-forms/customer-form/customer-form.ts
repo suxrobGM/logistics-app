@@ -1,6 +1,7 @@
 import { Component, computed, effect, inject, input, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
+import { regionAllowedCountries } from "@logistics/shared";
 import {
   Api,
   createCustomer,
@@ -20,7 +21,6 @@ import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
 import { TenantService } from "@/core/services/tenant.service";
-import { regionAllowedCountries } from "@/shared/utils";
 
 export interface CustomerFormValue {
   name: string;

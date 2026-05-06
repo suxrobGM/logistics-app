@@ -58,9 +58,14 @@
               <ng-template #header>
                 <tr>
                   <th>Description</th>
-                  <th class="text-right" style="width: 100px">Qty</th>
-                  <th class="text-right" style="width: 120px">Rate</th>
-                  <th class="text-right" style="width: 120px">Amount</th>
+                  <th class="text-right" style="width: 80px">Qty</th>
+                  <th class="text-right" style="width: 110px">Unit</th>
+                  <th class="text-right" style="width: 110px">Net</th>
+                  @if (hasTax()) {
+                    <th class="text-right" style="width: 60px">Rate</th>
+                    <th class="text-right" style="width: 110px">{{ taxLabel() }}</th>
+                    <th class="text-right" style="width: 110px">Gross</th>
+                  }
                 </tr>
               </ng-template>
               <ng-template #body let-item>
@@ -74,6 +79,46 @@
                   <td class="text-right">{{ item.quantity ?? 1 }}</td>
                   <td class="text-right">{{ item.amount?.amount | currencyFormat }}</td>
                   <td class="text-right">{{ item.total | currencyFormat }}</td>
+                  @if (hasTax()) {
+                    <td class="text-right">
+                      {{ (item.taxRatePercent ?? 0) > 0 ? item.taxRatePercent + "%" : "—" }}
+                    </td>
+                    <td class="text-right">{{ item.taxAmount ?? 0 | currencyFormat }}</td>
+                    <td class="text-right">
+                      {{ (item.total ?? 0) + (item.taxAmount ?? 0) | currencyFormat }}
+                    </td>
+                  }
+                </tr>
+              </ng-template>
+            </p-table>
+          }
+
+          @if (isReverseCharge()) {
+            <ui-callout intent="warning" title="Reverse charge" class="mt-4">
+              VAT to be accounted for by the recipient (Article 196, Council Directive 2006/112/EC).
+            </ui-callout>
+          }
+
+          @if (hasTax() && (invoice()!.taxBreakdown?.length ?? 0) > 1) {
+            <p-divider />
+            <h4>{{ taxLabel() }} breakdown</h4>
+            <p-table [value]="invoice()!.taxBreakdown!">
+              <ng-template #header>
+                <tr>
+                  <th>Jurisdiction</th>
+                  <th class="text-right" style="width: 80px">Rate</th>
+                  <th class="text-right" style="width: 120px">Base</th>
+                  <th class="text-right" style="width: 120px">Amount</th>
+                </tr>
+              </ng-template>
+              <ng-template #body let-line>
+                <tr>
+                  <td>{{ line.description ?? line.jurisdiction?.countryCode }}</td>
+                  <td class="text-right">
+                    {{ (line.ratePercent ?? 0) > 0 ? line.ratePercent + "%" : "—" }}
+                  </td>
+                  <td class="text-right">{{ line.baseAmount | currencyFormat }}</td>
+                  <td class="text-right">{{ line.taxAmount | currencyFormat }}</td>
                 </tr>
               </ng-template>
             </p-table>
@@ -82,11 +127,21 @@
           <p-divider />
 
           <div class="flex justify-end">
-            <div class="w-64">
+            <div class="w-72">
               <div class="flex justify-between py-1">
                 <span>Subtotal:</span>
-                <span>{{ invoice()!.total?.amount | currencyFormat }}</span>
+                <span>{{ invoice()!.subtotal?.amount ?? 0 | currencyFormat }}</span>
               </div>
+              @if (hasTax()) {
+                <div class="flex justify-between py-1">
+                  <span>{{ taxLabel() }}:</span>
+                  @if (isReverseCharge()) {
+                    <span class="text-muted">0.00 (reverse charge)</span>
+                  } @else {
+                    <span>{{ invoice()!.taxTotal?.amount ?? 0 | currencyFormat }}</span>
+                  }
+                </div>
+              }
               <div class="mt-2 flex justify-between border-t py-1 pt-2 text-lg font-bold">
                 <span>Total:</span>
                 <span>{{ invoice()!.total?.amount | currencyFormat }}</span>

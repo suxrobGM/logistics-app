@@ -1,0 +1,13 @@
+@if (!hasTax()) {
+  <span>{{ netLabel() }}</span>
+} @else if (mode() === "compact") {
+  <span>
+    {{ netLabel() }} <span class="text-muted">({{ grossLabel() }})</span>
+  </span>
+} @else {
+  <span>
+    {{ netLabel() }}
+    <span class="text-muted"> + {{ rateLabel() }} ({{ taxLabel() }}) </span>
+    = <strong>{{ grossLabel() }}</strong>
+  </span>
+}

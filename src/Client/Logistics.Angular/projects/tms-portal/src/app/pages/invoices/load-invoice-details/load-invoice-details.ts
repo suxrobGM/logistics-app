@@ -1,9 +1,10 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, input, signal, type OnInit } from "@angular/core";
+import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Api, getInvoiceById, type Address, type InvoiceDto } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { Callout, Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { AddressPipe, CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
+import { LocalizationService } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -36,6 +37,7 @@ import { PaymentLinkDialog, RecordPaymentDialog, SendInvoiceDialog } from "../co
     SendInvoiceDialog,
     RecordPaymentDialog,
     PaymentLinkDialog,
+    Callout,
     Grid,
     Icon,
     Stack,
@@ -47,6 +49,7 @@ export class LoadInvoiceDetails implements OnInit {
   private readonly tenantService = inject(TenantService);
   private readonly pdfService = inject(PdfService);
   private readonly toastService = inject(ToastService);
+  private readonly localization = inject(LocalizationService);
 
   protected readonly invoiceId = input.required<string>();
   protected readonly isLoading = signal(false);
@@ -54,6 +57,26 @@ export class LoadInvoiceDetails implements OnInit {
   protected readonly companyName = signal<string | null>(null);
   protected readonly companyAddress = signal<Address | null>(null);
   protected readonly invoice = signal<InvoiceDto | null>(null);
+
+  /** Region-aware label: "VAT" / "Sales Tax" / "Tax". */
+  protected readonly taxLabel = computed(() => this.localization.getTaxLabel());
+
+  /** True when there is any tax to display — drives the Rate / Tax columns. */
+  protected readonly hasTax = computed(() => {
+    const inv = this.invoice();
+    if (!inv) return false;
+    if (inv.taxBehavior && inv.taxBehavior !== "exclusive") {
+      return true;
+    }
+    if ((inv.taxTotal?.amount ?? 0) > 0) return true;
+    return (
+      inv.lineItems?.some((li) => (li.taxAmount ?? 0) > 0 || (li.taxRatePercent ?? 0) > 0) ?? false
+    );
+  });
+
+  protected readonly isReverseCharge = computed(
+    () => this.invoice()?.taxBehavior === "reverse_charge",
+  );
 
   // Dialog visibility signals
   protected readonly showSendInvoiceDialog = signal(false);

@@ -1,5 +1,6 @@
 import { Component, computed, effect, inject, input, model, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { regionAllowedCountries } from "@logistics/shared";
 import {
   Api,
   updateCustomer,
@@ -23,7 +24,6 @@ import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
 import { TenantService } from "@/core/services/tenant.service";
-import { regionAllowedCountries } from "@/shared/utils";
 
 @Component({
   selector: "app-customer-edit-dialog",
