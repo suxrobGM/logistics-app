@@ -1,3 +1,4 @@
+using System.Globalization;
 using Logistics.Application.Services.Pdf;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
@@ -11,6 +12,10 @@ namespace Logistics.Infrastructure.Services.Pdf;
 
 public class InvoicePdfService : IInvoicePdfService
 {
+    private const string ReverseChargeNotice =
+        "Reverse charge — VAT to be accounted for by the recipient " +
+        "(Article 196, Council Directive 2006/112/EC).";
+
     public byte[] GenerateLoadInvoicePdf(LoadInvoice invoice, Tenant tenant)
     {
         Settings.License = LicenseType.Community;
@@ -24,7 +29,7 @@ public class InvoicePdfService : IInvoicePdfService
                 page.DefaultTextStyle(x => x.FontSize(10));
 
                 page.Header().Element(c => ComposeHeader(c, invoice, tenant));
-                page.Content().Element(c => ComposeContent(c, invoice));
+                page.Content().Element(c => ComposeContent(c, invoice, tenant));
                 page.Footer().Element(c => ComposeFooter(c, tenant));
             });
         });
@@ -55,8 +60,7 @@ public class InvoicePdfService : IInvoicePdfService
                         col.Item().Text(tenant.CompanyAddress.Line2);
                     }
 
-                    col.Item().Text(
-                        $"{tenant.CompanyAddress.City}, {tenant.CompanyAddress.State} {tenant.CompanyAddress.ZipCode}");
+                    col.Item().Text(FormatCityLine(tenant.CompanyAddress));
 
                     if (!string.IsNullOrEmpty(tenant.PhoneNumber))
                     {
@@ -68,6 +72,21 @@ public class InvoicePdfService : IInvoicePdfService
                     if (!string.IsNullOrEmpty(tenant.DotNumber))
                     {
                         col.Item().Text($"DOT#: {tenant.DotNumber}");
+                    }
+
+                    if (!string.IsNullOrEmpty(tenant.McNumber))
+                    {
+                        col.Item().Text($"MC#: {tenant.McNumber}");
+                    }
+
+                    if (!string.IsNullOrEmpty(tenant.VatNumber))
+                    {
+                        col.Item().Text($"VAT: {tenant.VatNumber}");
+                    }
+
+                    if (!string.IsNullOrEmpty(tenant.EoriNumber))
+                    {
+                        col.Item().Text($"EORI: {tenant.EoriNumber}");
                     }
                 });
 
@@ -98,6 +117,11 @@ public class InvoicePdfService : IInvoicePdfService
                     col.Item().PaddingTop(5).Text(invoice.Customer?.Name ?? "N/A")
                         .FontSize(12)
                         .Bold();
+
+                    if (!string.IsNullOrEmpty(invoice.Customer?.TaxId))
+                    {
+                        col.Item().Text($"Tax ID: {invoice.Customer.TaxId}").FontSize(9);
+                    }
                 });
 
                 // Invoice details (right side)
@@ -148,8 +172,12 @@ public class InvoicePdfService : IInvoicePdfService
         });
     }
 
-    private static void ComposeContent(IContainer container, LoadInvoice invoice)
+    private static void ComposeContent(IContainer container, LoadInvoice invoice, Tenant tenant)
     {
+        var currency = invoice.Total.Currency;
+        var taxLabel = GetTaxLabel(tenant.Settings?.Region);
+        var showTaxColumns = ShouldShowTaxColumns(invoice);
+
         container.PaddingVertical(20).Column(column =>
         {
             column.Spacing(15);
@@ -159,10 +187,16 @@ public class InvoicePdfService : IInvoicePdfService
             {
                 table.ColumnsDefinition(columns =>
                 {
-                    columns.RelativeColumn(4); // Description
-                    columns.ConstantColumn(60); // Qty
-                    columns.ConstantColumn(90); // Unit Price
-                    columns.ConstantColumn(90); // Amount
+                    columns.RelativeColumn(showTaxColumns ? 4 : 5); // Description
+                    columns.ConstantColumn(50); // Qty
+                    columns.ConstantColumn(80); // Unit
+                    columns.ConstantColumn(80); // Net
+                    if (showTaxColumns)
+                    {
+                        columns.ConstantColumn(45); // Rate
+                        columns.ConstantColumn(70); // Tax
+                        columns.ConstantColumn(80); // Gross
+                    }
                 });
 
                 // Header
@@ -170,59 +204,138 @@ public class InvoicePdfService : IInvoicePdfService
                 {
                     header.Cell().Element(HeaderCellStyle).Text("Description");
                     header.Cell().Element(HeaderCellStyle).AlignCenter().Text("Qty");
-                    header.Cell().Element(HeaderCellStyle).AlignRight().Text("Unit Price");
-                    header.Cell().Element(HeaderCellStyle).AlignRight().Text("Amount");
+                    header.Cell().Element(HeaderCellStyle).AlignRight().Text("Unit");
+                    header.Cell().Element(HeaderCellStyle).AlignRight().Text("Net");
+                    if (showTaxColumns)
+                    {
+                        header.Cell().Element(HeaderCellStyle).AlignRight().Text("Rate");
+                        header.Cell().Element(HeaderCellStyle).AlignRight().Text(taxLabel);
+                        header.Cell().Element(HeaderCellStyle).AlignRight().Text("Gross");
+                    }
                 });
 
                 // Line items
-                var lineItems = invoice.LineItems.OrderBy(li => li.Order).ToList() ?? [];
+                var lineItems = invoice.LineItems.OrderBy(li => li.Order).ToList();
                 foreach (var item in lineItems)
                 {
                     table.Cell().Element(CellStyle).Text(item.Description);
                     table.Cell().Element(CellStyle).AlignCenter().Text(item.Quantity.ToString());
-                    table.Cell().Element(CellStyle).AlignRight().Text(FormatCurrency(item.Amount.Amount));
-                    table.Cell().Element(CellStyle).AlignRight().Text(FormatCurrency(item.Total));
+                    table.Cell().Element(CellStyle).AlignRight().Text(FormatMoney(item.Amount.Amount, currency));
+                    table.Cell().Element(CellStyle).AlignRight().Text(FormatMoney(item.Total, currency));
+                    if (showTaxColumns)
+                    {
+                        table.Cell().Element(CellStyle).AlignRight().Text(FormatRate(item.TaxRatePercent));
+                        table.Cell().Element(CellStyle).AlignRight().Text(FormatMoney(item.TaxAmount, currency));
+                        table.Cell().Element(CellStyle).AlignRight()
+                            .Text(FormatMoney(item.Total + item.TaxAmount, currency));
+                    }
                 }
 
                 // If no line items, show delivery cost as default
-                if (lineItems.Count == 0)
+                if (lineItems.Count == 0 && invoice.Load is not null)
                 {
+                    var fallback = invoice.Load.DeliveryCost.Amount;
                     table.Cell().Element(CellStyle).Text("Delivery Service");
                     table.Cell().Element(CellStyle).AlignCenter().Text("1");
-                    table.Cell().Element(CellStyle).AlignRight().Text(FormatCurrency(invoice.Load.DeliveryCost.Amount));
-                    table.Cell().Element(CellStyle).AlignRight().Text(FormatCurrency(invoice.Load.DeliveryCost.Amount));
+                    table.Cell().Element(CellStyle).AlignRight().Text(FormatMoney(fallback, currency));
+                    table.Cell().Element(CellStyle).AlignRight().Text(FormatMoney(fallback, currency));
+                    if (showTaxColumns)
+                    {
+                        table.Cell().Element(CellStyle).AlignRight().Text("—");
+                        table.Cell().Element(CellStyle).AlignRight().Text(FormatMoney(0m, currency));
+                        table.Cell().Element(CellStyle).AlignRight().Text(FormatMoney(fallback, currency));
+                    }
                 }
             });
 
+            // Reverse-charge notice (legally required for EU cross-border B2B)
+            if (invoice.TaxBehavior == TaxBehavior.ReverseCharge)
+            {
+                column.Item().PaddingTop(10)
+                    .Background(Colors.Yellow.Lighten4)
+                    .Border(1).BorderColor(Colors.Yellow.Darken2)
+                    .Padding(10)
+                    .Text(ReverseChargeNotice)
+                    .Bold()
+                    .FontSize(10);
+            }
+
+            // Tax breakdown table (when there is more than one tax line, e.g. layered US sales tax)
+            var breakdown = invoice.GetTaxBreakdown();
+            if (showTaxColumns && breakdown.Count > 1)
+            {
+                column.Item().PaddingTop(10).Column(b =>
+                {
+                    b.Item().Text($"{taxLabel} breakdown")
+                        .FontSize(11).Bold().FontColor(Colors.Grey.Darken2);
+                    b.Item().PaddingTop(5).Table(t =>
+                    {
+                        t.ColumnsDefinition(c =>
+                        {
+                            c.RelativeColumn(3);  // Jurisdiction
+                            c.ConstantColumn(60); // Rate
+                            c.ConstantColumn(90); // Base
+                            c.ConstantColumn(90); // Amount
+                        });
+                        t.Header(h =>
+                        {
+                            h.Cell().Element(SmallHeaderCellStyle).Text("Jurisdiction");
+                            h.Cell().Element(SmallHeaderCellStyle).AlignRight().Text("Rate");
+                            h.Cell().Element(SmallHeaderCellStyle).AlignRight().Text("Base");
+                            h.Cell().Element(SmallHeaderCellStyle).AlignRight().Text("Amount");
+                        });
+                        foreach (var line in breakdown)
+                        {
+                            t.Cell().Element(SmallCellStyle).Text(line.Description ?? line.Jurisdiction.ToString());
+                            t.Cell().Element(SmallCellStyle).AlignRight().Text(FormatRate(line.RatePercent));
+                            t.Cell().Element(SmallCellStyle).AlignRight().Text(FormatMoney(line.BaseAmount, currency));
+                            t.Cell().Element(SmallCellStyle).AlignRight().Text(FormatMoney(line.TaxAmount, currency));
+                        }
+                    });
+                });
+            }
+
             // Totals section
-            column.Item().AlignRight().Width(200).Column(totals =>
+            column.Item().AlignRight().Width(220).Column(totals =>
             {
                 totals.Item().BorderTop(1).BorderColor(Colors.Grey.Lighten2).PaddingTop(10);
 
                 totals.Item().Row(row =>
                 {
                     row.RelativeItem().Text("Subtotal:").Bold();
-                    row.ConstantItem(80).AlignRight().Text(FormatCurrency(invoice.Total.Amount));
+                    row.ConstantItem(100).AlignRight().Text(FormatMoney(invoice.Subtotal.Amount, currency));
                 });
+
+                if (showTaxColumns)
+                {
+                    totals.Item().PaddingTop(3).Row(row =>
+                    {
+                        row.RelativeItem().Text($"{taxLabel}:").Bold();
+                        row.ConstantItem(100).AlignRight()
+                            .Text(invoice.TaxBehavior == TaxBehavior.ReverseCharge
+                                ? "0.00 (reverse charge)"
+                                : FormatMoney(invoice.TaxTotal.Amount, currency));
+                    });
+                }
 
                 totals.Item().PaddingTop(5).Row(row =>
                 {
                     row.RelativeItem().Text("Total:").FontSize(14).Bold();
-                    row.ConstantItem(80).AlignRight().Text(FormatCurrency(invoice.Total.Amount))
+                    row.ConstantItem(100).AlignRight().Text(FormatMoney(invoice.Total.Amount, currency))
                         .FontSize(14)
                         .Bold()
                         .FontColor(Colors.Blue.Darken3);
                 });
 
                 // Payments
-                var payments = invoice.Payments.Where(p => p.Status == PaymentStatus.Paid).ToList() ?? [];
+                var payments = invoice.Payments.Where(p => p.Status == PaymentStatus.Paid).ToList();
                 if (payments.Count > 0)
                 {
                     var totalPaid = payments.Sum(p => p.Amount.Amount);
                     totals.Item().PaddingTop(10).Row(row =>
                     {
                         row.RelativeItem().Text("Paid:").FontColor(Colors.Green.Darken2);
-                        row.ConstantItem(80).AlignRight().Text($"-{FormatCurrency(totalPaid)}")
+                        row.ConstantItem(100).AlignRight().Text($"-{FormatMoney(totalPaid, currency)}")
                             .FontColor(Colors.Green.Darken2);
                     });
 
@@ -230,7 +343,7 @@ public class InvoicePdfService : IInvoicePdfService
                     totals.Item().Row(row =>
                     {
                         row.RelativeItem().Text("Balance Due:").FontSize(12).Bold();
-                        row.ConstantItem(80).AlignRight().Text(FormatCurrency(balance))
+                        row.ConstantItem(100).AlignRight().Text(FormatMoney(balance, currency))
                             .FontSize(12)
                             .Bold()
                             .FontColor(balance > 0 ? Colors.Red.Darken2 : Colors.Green.Darken2);
@@ -239,7 +352,7 @@ public class InvoicePdfService : IInvoicePdfService
             });
 
             // Payment history
-            var paidPayments = invoice.Payments.Where(p => p.Status == PaymentStatus.Paid).ToList() ?? [];
+            var paidPayments = invoice.Payments.Where(p => p.Status == PaymentStatus.Paid).ToList();
             if (paidPayments.Count > 0)
             {
                 column.Item().PaddingTop(20).Column(paymentCol =>
@@ -270,7 +383,7 @@ public class InvoicePdfService : IInvoicePdfService
                             table.Cell().Element(SmallCellStyle).Text(payment.ReferenceNumber ?? "-");
                             table.Cell().Element(SmallCellStyle).Text(GetPaymentMethodText(payment));
                             table.Cell().Element(SmallCellStyle).AlignRight()
-                                .Text(FormatCurrency(payment.Amount.Amount));
+                                .Text(FormatMoney(payment.Amount.Amount, currency));
                         }
                     });
                 });
@@ -354,9 +467,38 @@ public class InvoicePdfService : IInvoicePdfService
             .DefaultTextStyle(x => x.FontSize(9));
     }
 
-    private static string FormatCurrency(decimal amount)
+    private static string GetTaxLabel(Region? region) => region switch
     {
-        return $"${amount:N2}";
+        Region.Eu => "VAT",
+        Region.Us => "Sales tax",
+        _ => "Tax"
+    };
+
+    private static bool ShouldShowTaxColumns(LoadInvoice invoice) =>
+        invoice.TaxBehavior != TaxBehavior.Exclusive
+        || invoice.TaxTotal.Amount > 0m
+        || invoice.LineItems.Any(li => li.TaxAmount > 0m || li.TaxRatePercent > 0m);
+
+    private static string FormatMoney(decimal amount, string currency)
+    {
+        try
+        {
+            var info = NumberFormatInfo.InvariantInfo;
+            return string.Create(CultureInfo.InvariantCulture, $"{amount.ToString("N2", info)} {currency}");
+        }
+        catch
+        {
+            return amount.ToString("N2", CultureInfo.InvariantCulture);
+        }
+    }
+
+    private static string FormatRate(decimal percent) =>
+        percent <= 0m ? "—" : percent.ToString("0.##", CultureInfo.InvariantCulture) + "%";
+
+    private static string FormatCityLine(Logistics.Domain.Primitives.ValueObjects.Address a)
+    {
+        var state = string.IsNullOrEmpty(a.State) ? "" : $", {a.State}";
+        return $"{a.City}{state} {a.ZipCode}, {a.Country}";
     }
 
     private static string GetStatusText(InvoiceStatus status)
