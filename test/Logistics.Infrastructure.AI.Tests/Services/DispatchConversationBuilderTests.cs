@@ -52,6 +52,7 @@ public class DispatchConversationBuilderTests
 
     private static LlmOptions ValidConfig => new()
     {
+        DefaultProvider = LlmProvider.Anthropic,
         MaxTokens = 4096,
         Providers = new Dictionary<LlmProvider, LlmProviderOptions>
         {
@@ -61,6 +62,7 @@ public class DispatchConversationBuilderTests
 
     private static LlmOptions EmptyApiKeyConfig => new()
     {
+        DefaultProvider = LlmProvider.Anthropic,
         MaxTokens = 100,
         Providers = new Dictionary<LlmProvider, LlmProviderOptions>
         {
