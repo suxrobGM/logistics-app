@@ -3,6 +3,7 @@
     <Project Path="test/Logistics.Application.Tests/Logistics.Application.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.AI.Tests/Logistics.Infrastructure.AI.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.Persistence.Tests/Logistics.Infrastructure.Persistence.Tests.csproj" />
+    <Project Path="test/Logistics.Infrastructure.Tax.Tests/Logistics.Infrastructure.Tax.Tests.csproj" />
   </Folder>
   <Folder Name="/Core/">
     <Project Path="src/Core/Logistics.Domain/Logistics.Domain.csproj" />

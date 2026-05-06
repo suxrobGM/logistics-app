@@ -15,4 +15,9 @@
     <ProjectReference Include="..\Logistics.Infrastructure.Payments\Logistics.Infrastructure.Payments.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Logistics.Infrastructure.Tax.Tests" />
+    <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+  </ItemGroup>
+
 </Project>

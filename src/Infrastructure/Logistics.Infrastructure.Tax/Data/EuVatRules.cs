@@ -27,8 +27,8 @@ internal static class EuVatRules
     /// </summary>
     public static bool IsReverseCharge(string? sellerCountry, string? buyerCountry, string? buyerVatId)
     {
-        if (string.IsNullOrEmpty(sellerCountry) || string.IsNullOrEmpty(buyerCountry)) return false;
-        if (string.IsNullOrEmpty(buyerVatId)) return false;
+        if (string.IsNullOrWhiteSpace(sellerCountry) || string.IsNullOrWhiteSpace(buyerCountry)) return false;
+        if (string.IsNullOrWhiteSpace(buyerVatId)) return false;
         if (!IsEuMember(sellerCountry) || !IsEuMember(buyerCountry)) return false;
         return !sellerCountry.Equals(buyerCountry, StringComparison.OrdinalIgnoreCase);
     }
