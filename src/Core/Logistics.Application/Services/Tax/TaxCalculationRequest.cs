@@ -12,6 +12,9 @@ public sealed record TaxCalculationRequest
     /// <summary>Currency for all line amounts (3-letter ISO).</summary>
     public required string Currency { get; init; }
 
+    /// <summary>Tenant id, used by <c>ManualTaxCalculator</c> to look up <c>TenantTaxRate</c> rows.</summary>
+    public required Guid TenantId { get; init; }
+
     /// <summary>Operating region of the tenant — drives reverse-charge eligibility.</summary>
     public required Region TenantRegion { get; init; }
 

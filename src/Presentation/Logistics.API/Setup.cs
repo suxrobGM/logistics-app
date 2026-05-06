@@ -21,6 +21,7 @@ using Logistics.Infrastructure.Integrations.LoadBoard;
 using Logistics.Infrastructure.Payments;
 using Logistics.Infrastructure.Persistence;
 using Logistics.Infrastructure.Persistence.Builder;
+using Logistics.Infrastructure.Tax;
 using Logistics.Infrastructure.Routing;
 using Logistics.Infrastructure.AI;
 using Logistics.Infrastructure.Storage;
@@ -57,6 +58,7 @@ internal static class Setup
         services.AddEldIntegrations(configuration);
         services.AddLoadBoardIntegrations(configuration);
         services.AddPaymentsInfrastructure(configuration);
+        services.AddTaxInfrastructure(configuration);
         services.AddRoutingInfrastructure(configuration);
         services.AddAIInfrastructure(configuration);
         services.AddMcpServerInfrastructure();
