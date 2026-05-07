@@ -1,4 +1,4 @@
-namespace Logistics.Infrastructure.Tax.Stripe;
+namespace Logistics.Infrastructure.Payments.Stripe;
 
 /// <summary>
 /// Best-effort mapping from a customer's billing country to Stripe's per-country tax-ID type
@@ -6,7 +6,7 @@ namespace Logistics.Infrastructure.Tax.Stripe;
 /// from prefix when the country code disagrees.
 /// Reference: https://stripe.com/docs/billing/customer/tax-ids
 /// </summary>
-internal static class StripeTaxIdTypes
+public static class StripeTaxIdTypes
 {
     private static readonly Dictionary<string, string> ByCountry = new(StringComparer.OrdinalIgnoreCase)
     {

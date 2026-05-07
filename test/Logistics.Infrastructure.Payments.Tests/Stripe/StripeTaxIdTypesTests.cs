@@ -1,6 +1,6 @@
-using Logistics.Infrastructure.Tax.Stripe;
+using Logistics.Infrastructure.Payments.Stripe;
 
-namespace Logistics.Infrastructure.Tax.Tests.Stripe;
+namespace Logistics.Infrastructure.Payments.Tests.Stripe;
 
 public class StripeTaxIdTypesTests
 {
