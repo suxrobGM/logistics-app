@@ -18,6 +18,7 @@ internal sealed class ProcessStripEventHandler(
     IMasterUnitOfWork masterUow,
     IStripeService stripeService,
     IStripeCustomerService stripeCustomerService,
+    IStripeConnectService stripeConnectService,
     ILogger<ProcessStripEventHandler> logger)
     : IAppRequestHandler<ProcessStripEventCommand, Result>
 {
@@ -43,6 +44,14 @@ internal sealed class ProcessStripEventHandler(
                     (stripeEvent.Data.Object as StripeSubscription)!),
                 EventTypes.CustomerSubscriptionDeleted => await HandleSubscriptionDeleted(
                     (stripeEvent.Data.Object as StripeSubscription)!),
+                EventTypes.PaymentIntentProcessing => await HandlePaymentIntentStatus(
+                    (stripeEvent.Data.Object as PaymentIntent)!, PaymentStatus.Pending),
+                EventTypes.PaymentIntentSucceeded => await HandlePaymentIntentStatus(
+                    (stripeEvent.Data.Object as PaymentIntent)!, PaymentStatus.Paid),
+                EventTypes.PaymentIntentPaymentFailed => await HandlePaymentIntentFailed(
+                    (stripeEvent.Data.Object as PaymentIntent)!),
+                EventTypes.AccountUpdated => await HandleAccountUpdated(
+                    (stripeEvent.Data.Object as Account)!),
                 _ => Result.Ok()
             };
         }
@@ -211,6 +220,131 @@ internal sealed class ProcessStripEventHandler(
 
         logger.LogInformation("Cancelled subscription {StripeSubscriptionId} for tenant {TenantId}",
             stripeSubscription.Id, tenantId);
+        return Result.Ok();
+    }
+
+    #endregion
+
+
+    #region PaymentIntent Handlers
+
+    private async Task<Result> HandlePaymentIntentStatus(PaymentIntent paymentIntent, PaymentStatus newStatus)
+    {
+        // Subscription billing flows through invoice.paid which already creates the Payment row
+        // (without StripePaymentIntentId). The lookup below naturally skips those events because
+        // no row matches the intent ID.
+        if (!TryGetTenantId(paymentIntent.Metadata, out var tenantId))
+        {
+            return Result.Fail($"{StripeMetadataKeys.TenantId} not found in PaymentIntent metadata.");
+        }
+
+        await tenantUow.SetCurrentTenantByIdAsync(tenantId);
+
+        var payment = await tenantUow.Repository<Payment>()
+            .GetAsync(p => p.StripePaymentIntentId == paymentIntent.Id);
+
+        if (payment is null)
+        {
+            return Result.Ok();
+        }
+
+        // Idempotency: don't downgrade a terminal status (Paid/Failed/Cancelled) back to Pending.
+        if (payment.Status == newStatus || IsTerminal(payment.Status))
+        {
+            return Result.Ok();
+        }
+
+        payment.Status = newStatus;
+        tenantUow.Repository<Payment>().Update(payment);
+        await tenantUow.SaveChangesAsync();
+
+        logger.LogInformation(
+            "Updated payment {PaymentId} to {Status} from PaymentIntent {PaymentIntentId}",
+            payment.Id, newStatus, paymentIntent.Id);
+        return Result.Ok();
+    }
+
+    private async Task<Result> HandlePaymentIntentFailed(PaymentIntent paymentIntent)
+    {
+        if (!TryGetTenantId(paymentIntent.Metadata, out var tenantId))
+        {
+            return Result.Fail($"{StripeMetadataKeys.TenantId} not found in PaymentIntent metadata.");
+        }
+
+        await tenantUow.SetCurrentTenantByIdAsync(tenantId);
+
+        var payment = await tenantUow.Repository<Payment>()
+            .GetAsync(p => p.StripePaymentIntentId == paymentIntent.Id);
+
+        if (payment is null)
+        {
+            return Result.Ok();
+        }
+
+        if (IsTerminal(payment.Status))
+        {
+            return Result.Ok();
+        }
+
+        payment.Status = PaymentStatus.Failed;
+        var errorMessage = paymentIntent.LastPaymentError?.Message;
+        if (!string.IsNullOrEmpty(errorMessage))
+        {
+            payment.Description = string.IsNullOrEmpty(payment.Description)
+                ? $"Failed: {errorMessage}"
+                : $"{payment.Description} | Failed: {errorMessage}";
+        }
+
+        tenantUow.Repository<Payment>().Update(payment);
+        await tenantUow.SaveChangesAsync();
+
+        logger.LogInformation(
+            "Marked payment {PaymentId} as Failed from PaymentIntent {PaymentIntentId}: {Error}",
+            payment.Id, paymentIntent.Id, errorMessage);
+        return Result.Ok();
+    }
+
+    private static bool IsTerminal(PaymentStatus status) =>
+        status is PaymentStatus.Paid
+            or PaymentStatus.Failed
+            or PaymentStatus.Cancelled
+            or PaymentStatus.Refunded;
+
+    private static bool TryGetTenantId(IDictionary<string, string> metadata, out Guid tenantId)
+    {
+        tenantId = Guid.Empty;
+        return metadata.TryGetValue(StripeMetadataKeys.TenantId, out var raw)
+            && Guid.TryParse(raw, out tenantId);
+    }
+
+    #endregion
+
+
+    #region Account Handlers
+
+    private async Task<Result> HandleAccountUpdated(Account account)
+    {
+        if (!account.Metadata.TryGetValue(StripeMetadataKeys.TenantId, out var tenantId)
+            || !Guid.TryParse(tenantId, out var parsedTenantId))
+        {
+            // Connect accounts created outside the tenant flow (e.g., employee payout accounts)
+            // don't carry tenant_id metadata — silently ignore.
+            return Result.Ok();
+        }
+
+        var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(parsedTenantId);
+        if (tenant is null || tenant.StripeConnectedAccountId != account.Id)
+        {
+            return Result.Ok();
+        }
+
+        await stripeConnectService.SyncConnectedAccountStatusAsync(tenant);
+        masterUow.Repository<Tenant>().Update(tenant);
+        await masterUow.SaveChangesAsync();
+
+        logger.LogInformation(
+            "Synced Connect status for tenant {TenantId} from account.updated webhook",
+            tenant.Id);
         return Result.Ok();
     }
 
