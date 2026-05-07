@@ -42,12 +42,15 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
         return account;
     }
 
-    public async Task<Account> CreateEmployeeConnectedAccountAsync(Employee employee)
+    public async Task<Account> CreateEmployeeConnectedAccountAsync(Employee employee, Address fallbackAddress)
     {
+        var address = employee.Address ?? fallbackAddress;
+        var country = GetCountryFromAddress(address);
+
         var options = new AccountCreateOptions
         {
             Type = "express",
-            Country = "US",
+            Country = country,
             Email = employee.Email,
             BusinessType = "individual",
             Individual = new AccountIndividualOptions
@@ -55,7 +58,8 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
                 Email = employee.Email,
-                Phone = employee.PhoneNumber
+                Phone = employee.PhoneNumber,
+                Address = address.ToStripeAddressOptions()
             },
             Capabilities = new AccountCapabilitiesOptions
             {

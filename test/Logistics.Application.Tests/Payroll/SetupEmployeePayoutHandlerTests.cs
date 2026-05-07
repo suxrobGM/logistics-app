@@ -2,12 +2,15 @@ using Logistics.Application.Commands;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.ValueObjects;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Stripe;
 using Xunit;
+using Address = Logistics.Domain.Primitives.ValueObjects.Address;
+using StripeAccount = Stripe.Account;
+using StripeException = Stripe.StripeException;
 
 namespace Logistics.Application.Tests.Payroll;
 
@@ -25,6 +28,7 @@ public class SetupEmployeePayoutHandlerTests
     public SetupEmployeePayoutHandlerTests()
     {
         tenantUow.Repository<Employee>().Returns(employeeRepo);
+        tenantUow.GetCurrentTenant().Returns(CreateTenant());
         sut = new SetupEmployeePayoutHandler(tenantUow, stripeConnectService, logger);
     }
 
@@ -39,13 +43,28 @@ public class SetupEmployeePayoutHandlerTests
         };
     }
 
+    private static Tenant CreateTenant() => new()
+    {
+        Name = "test",
+        ConnectionString = "test",
+        BillingEmail = "billing@test.com",
+        CompanyAddress = new Address
+        {
+            Line1 = "1 Test St",
+            City = "Test",
+            ZipCode = "00000",
+            State = "NA",
+            Country = "US"
+        }
+    };
+
     [Fact]
     public async Task Handle_NewEmployee_CreatesStripeAccount()
     {
         var employee = CreateEmployee();
         employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
-        stripeConnectService.CreateEmployeeConnectedAccountAsync(employee)
-            .Returns(new Account { Id = "acct_new_123" });
+        stripeConnectService.CreateEmployeeConnectedAccountAsync(employee, Arg.Any<Address>())
+            .Returns(new StripeAccount { Id = "acct_new_123" });
 
         var result = await sut.Handle(
             new SetupEmployeePayoutCommand { EmployeeId = employee.Id }, CancellationToken.None);
@@ -66,7 +85,8 @@ public class SetupEmployeePayoutHandlerTests
             new SetupEmployeePayoutCommand { EmployeeId = employee.Id }, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        await stripeConnectService.DidNotReceive().CreateEmployeeConnectedAccountAsync(Arg.Any<Employee>());
+        await stripeConnectService.DidNotReceive()
+            .CreateEmployeeConnectedAccountAsync(Arg.Any<Employee>(), Arg.Any<Address>());
     }
 
     [Fact]
@@ -87,7 +107,7 @@ public class SetupEmployeePayoutHandlerTests
     {
         var employee = CreateEmployee();
         employeeRepo.GetByIdAsync(employee.Id, Arg.Any<CancellationToken>()).Returns(employee);
-        stripeConnectService.CreateEmployeeConnectedAccountAsync(employee)
+        stripeConnectService.CreateEmployeeConnectedAccountAsync(employee, Arg.Any<Address>())
             .ThrowsAsync(new StripeException("Account creation failed"));
 
         var result = await sut.Handle(

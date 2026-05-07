@@ -1,4 +1,5 @@
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Shared.Models;
 
@@ -10,6 +11,7 @@ public class EmployeeDto
     public string? Email { get; set; }
     public string? PhoneNumber { get; set; }
     public string? FullName { get; set; }
+    public Address? Address { get; set; }
     public string? LastKnownLocation { get; set; }
     public double? LastKnownLocationLat { get; set; }
     public double? LastKnownLocationLng { get; set; }

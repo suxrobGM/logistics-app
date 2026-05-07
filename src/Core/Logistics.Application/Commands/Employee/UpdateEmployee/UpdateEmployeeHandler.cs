@@ -41,6 +41,11 @@ internal sealed class UpdateEmployeeHandler(ITenantUnitOfWork tenantUow)
             employeeEntity.Status = req.Status.Value;
         }
 
+        if (req.Address is not null)
+        {
+            employeeEntity.Address = req.Address;
+        }
+
         tenantUow.Repository<Employee>().Update(employeeEntity);
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();

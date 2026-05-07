@@ -11,6 +11,12 @@ public class Employee : Entity, ITenantEntity
     public required string LastName { get; set; }
     public string? PhoneNumber { get; set; }
 
+    /// <summary>
+    /// Personal address. Required for Stripe Connect onboarding when the employee's country differs
+    /// from the tenant's; otherwise the tenant's company address is used as a fallback.
+    /// </summary>
+    public Address? Address { get; set; }
+
     public Money Salary { get; set; } = Money.Zero("USD");
     public SalaryType SalaryType { get; set; } = SalaryType.None;
     public EmployeeStatus Status { get; set; } = EmployeeStatus.Active;

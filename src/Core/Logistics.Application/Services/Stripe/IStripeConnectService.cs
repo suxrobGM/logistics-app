@@ -1,5 +1,6 @@
 using Logistics.Domain.Entities;
 using Stripe;
+using Address = Logistics.Domain.Primitives.ValueObjects.Address;
 
 namespace Logistics.Application.Services;
 
@@ -18,8 +19,10 @@ public interface IStripeConnectService
 
     /// <summary>
     /// Creates a new Stripe Connect Express account for an employee (individual) to receive payroll payouts.
+    /// The connected account country is taken from <paramref name="employee"/>.Address when set,
+    /// otherwise from <paramref name="fallbackAddress"/> (typically the tenant's company address).
     /// </summary>
-    Task<Account> CreateEmployeeConnectedAccountAsync(Employee employee);
+    Task<Account> CreateEmployeeConnectedAccountAsync(Employee employee, Address fallbackAddress);
 
     /// <summary>
     /// Creates an account link for the employee's onboarding flow.

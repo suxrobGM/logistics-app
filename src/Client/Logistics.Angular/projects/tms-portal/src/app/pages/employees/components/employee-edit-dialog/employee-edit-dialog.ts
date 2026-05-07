@@ -1,17 +1,18 @@
-import { Component, effect, inject, input, model, output, signal } from "@angular/core";
+import { Component, computed, effect, inject, input, model, output, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { UserRole } from "@logistics/shared";
+import { regionAllowedCountries, UserRole } from "@logistics/shared";
 import {
   Api,
   updateEmployee,
+  type Address,
   type EmployeeDto,
   type EmployeeStatus,
   type SalaryType,
   type UpdateEmployeeCommand,
 } from "@logistics/shared/api";
 import { employeeStatusOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
-import { Stack } from "@logistics/shared/components";
+import { AddressForm, Stack } from "@logistics/shared/components";
 import { AccordionModule } from "primeng/accordion";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
@@ -19,6 +20,7 @@ import { InputGroupModule } from "primeng/inputgroup";
 import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
 import { AuthService } from "@/core/auth";
+import { TenantService } from "@/core/services/tenant.service";
 import { CurrencyInput, FormField, UnitInput, ValidationSummary } from "@/shared/components";
 import { NumberUtils } from "@/shared/utils";
 import { ChangeRoleDialog } from "../change-role-dialog/change-role-dialog";
@@ -38,6 +40,7 @@ import { ChangeRoleDialog } from "../change-role-dialog/change-role-dialog";
     UnitInput,
     CurrencyInput,
     ValidationSummary,
+    AddressForm,
     ChangeRoleDialog,
     Stack,
   ],
@@ -45,6 +48,11 @@ import { ChangeRoleDialog } from "../change-role-dialog/change-role-dialog";
 export class EmployeeEditDialog {
   private readonly api = inject(Api);
   private readonly authService = inject(AuthService);
+  private readonly tenantService = inject(TenantService);
+
+  protected readonly allowedCountries = computed(() =>
+    regionAllowedCountries(this.tenantService.tenantData()?.settings?.region),
+  );
 
   readonly visible = model<boolean>(false);
   readonly employee = input<EmployeeDto | null>(null);
@@ -72,6 +80,7 @@ export class EmployeeEditDialog {
         validators: Validators.required,
         nonNullable: true,
       }),
+      address: new FormControl<Address | null>(null),
     });
 
     this.form
@@ -122,6 +131,7 @@ export class EmployeeEditDialog {
       salary: salaryType === "share_of_gross" ? NumberUtils.toRatio(salary) : salary,
       salaryType: salaryType,
       status: status,
+      address: this.form.value.address ?? undefined,
     };
 
     this.isLoading.set(true);
@@ -165,6 +175,7 @@ export class EmployeeEditDialog {
       salary: salaryType === "share_of_gross" ? NumberUtils.toPercent(salary) : salary,
       salaryType: salaryType,
       status: emp.status ?? "active",
+      address: emp.address ?? null,
     });
   }
 
@@ -203,4 +214,5 @@ interface UpdateEmployeeForm {
   salary: FormControl<number>;
   salaryType: FormControl<SalaryType>;
   status: FormControl<EmployeeStatus>;
+  address: FormControl<Address | null>;
 }

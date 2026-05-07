@@ -16475,10 +16475,6 @@
             "type": "number",
             "format": "double"
           },
-          "taxCode": {
-            "type": "string",
-            "nullable": true
-          },
           "description": {
             "type": "string",
             "nullable": true
@@ -18325,6 +18321,9 @@
           "fullName": {
             "type": "string",
             "nullable": true
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
           },
           "lastKnownLocation": {
             "type": "string",
@@ -21890,8 +21889,24 @@
           "status": {
             "$ref": "#/components/schemas/InvoiceStatus"
           },
+          "subtotal": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "taxTotal": {
+            "$ref": "#/components/schemas/Money"
+          },
           "total": {
             "$ref": "#/components/schemas/Money"
+          },
+          "taxBehavior": {
+            "$ref": "#/components/schemas/TaxBehavior"
+          },
+          "taxBreakdown": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceTaxLineDto"
+            },
+            "nullable": true
           },
           "dueDate": {
             "type": "string",
@@ -24493,6 +24508,9 @@
           },
           "status": {
             "$ref": "#/components/schemas/EmployeeStatus"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address"
           }
         },
         "additionalProperties": false
@@ -25005,10 +25023,6 @@
           "ratePercent": {
             "type": "number",
             "format": "double"
-          },
-          "taxCode": {
-            "type": "string",
-            "nullable": true
           },
           "description": {
             "type": "string",

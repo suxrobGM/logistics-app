@@ -58,6 +58,14 @@
       </p-inputgroup>
     </ui-form-field>
 
+    <ui-form-field
+      label="Address"
+      class="mt-4"
+      hint="Optional. Used for Stripe Connect payout onboarding when the employee's country differs from the company's."
+    >
+      <ui-address-form formControlName="address" [allowedCountries]="allowedCountries()" />
+    </ui-form-field>
+
     <ui-validation-summary [form]="form" class="mt-4" />
 
     <ui-stack direction="row" justify="end" gap="2" class="mt-6">

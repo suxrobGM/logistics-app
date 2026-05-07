@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Commands;
 
@@ -10,4 +11,5 @@ public class UpdateEmployeeCommand : IAppRequest
     public decimal? Salary { get; set; }
     public SalaryType? SalaryType { get; set; }
     public EmployeeStatus? Status { get; set; }
+    public Address? Address { get; set; }
 }

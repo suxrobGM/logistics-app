@@ -15,6 +15,7 @@ public static class EmployeeMapper
             LastName = entity.LastName,
             FullName = entity.GetFullName(),
             PhoneNumber = entity.PhoneNumber,
+            Address = entity.Address,
             JoinedDate = entity.JoinedDate,
             Salary = entity.Salary,
             SalaryType = entity.SalaryType,
