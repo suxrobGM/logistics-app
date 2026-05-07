@@ -4,6 +4,13 @@
 >
 > Stripe `PaymentIntent` already accepts EUR ([StripePaymentService.cs](../../src/Infrastructure/Logistics.Infrastructure.Payments/Stripe/StripePaymentService.cs)) but the Connect onboarding hardcodes US-only assumptions and EU bank-debit / wallet payment methods are not enabled.
 
+## Status
+
+- Completed (with one piece intentionally deferred — see notes)
+- **Done**: country-aware Connect capabilities (`StripeCapabilities.ForCountry`: SEPA/iDEAL/Bancontact/Giropay/Sofort/Bacs/ACH per ISO-2 country); employee Connect accounts now use `employee.Address ?? tenant.CompanyAddress` instead of hardcoded `"US"`; Stripe Customer creation passes `tax_id_data` (`eu_vat`/`gb_vat`/etc. via existing `StripeTaxIdTypes.Infer`); webhook handlers for `payment_intent.processing|succeeded|payment_failed` (SEPA Pending → Paid/Failed flow) and `account.updated` (auto Connect-status sync); customer-portal public payment page redirects to Stripe-hosted Checkout (replacing the broken SetupIntent + off-session PaymentIntent path) — Stripe Checkout natively handles 3DS / SEPA mandates / iDEAL etc., and the connected-account capabilities drive the method picker without `payment_method_types` plumbing.
+- **Deferred**: multi-currency subscription pricing (`SubscriptionPlan.PriceByCurrency` + per-currency Stripe Price IDs). Subscriptions still bill in USD by default; an EU tenant on a USD plan can pay by card. Adding EUR/GBP per-plan rows would let SEPA/Bacs work for subscription billing too — track as a follow-up if required.
+- **Out of scope (existed before this work)**: payment-method icons in the shared lib; "Accepting via" badges on tenant settings; subscription-list currency column in admin.
+
 ## Sequencing
 
 - **Position in overall order:** 2nd
