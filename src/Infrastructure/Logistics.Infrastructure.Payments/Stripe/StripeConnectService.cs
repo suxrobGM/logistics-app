@@ -16,10 +16,11 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
 
     public async Task<Account> CreateConnectedAccountAsync(Tenant tenant)
     {
+        var country = GetCountryFromAddress(tenant.CompanyAddress);
         var options = new AccountCreateOptions
         {
             Type = "express",
-            Country = GetCountryFromAddress(tenant.CompanyAddress),
+            Country = country,
             Email = tenant.BillingEmail,
             BusinessType = "company",
             Company =
@@ -29,13 +30,7 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
                     Address = tenant.CompanyAddress.ToStripeAddressOptions(),
                     Phone = tenant.PhoneNumber
                 },
-            Capabilities = new AccountCapabilitiesOptions
-            {
-                CardPayments = new AccountCapabilitiesCardPaymentsOptions { Requested = true },
-                Transfers = new AccountCapabilitiesTransfersOptions { Requested = true },
-                UsBankAccountAchPayments =
-                    new AccountCapabilitiesUsBankAccountAchPaymentsOptions { Requested = true }
-            },
+            Capabilities = StripeCapabilities.ForCountry(country),
             Metadata = new Dictionary<string, string> { [StripeMetadataKeys.TenantId] = tenant.Id.ToString() }
         };
 
