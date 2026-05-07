@@ -9753,12 +9753,12 @@
         }
       }
     },
-    "/public/payments/{tenantId}/{token}/pay": {
+    "/public/payments/{tenantId}/{token}/checkout": {
       "post": {
         "tags": [
           "PublicPayment"
         ],
-        "operationId": "ProcessPublicPayment",
+        "operationId": "CreatePublicCheckoutSession",
         "parameters": [
           {
             "name": "tenantId",
@@ -9782,17 +9782,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProcessPublicPaymentRequest"
+                "$ref": "#/components/schemas/CreatePublicCheckoutSessionRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/ProcessPublicPaymentRequest"
+                "$ref": "#/components/schemas/CreatePublicCheckoutSessionRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/ProcessPublicPaymentRequest"
+                "$ref": "#/components/schemas/CreatePublicCheckoutSessionRequest"
               }
             }
           }
@@ -9803,56 +9803,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProcessPublicPaymentResult"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/public/payments/{tenantId}/{token}/setup": {
-      "post": {
-        "tags": [
-          "PublicPayment"
-        ],
-        "operationId": "CreatePublicSetupIntent",
-        "parameters": [
-          {
-            "name": "tenantId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "token",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SetupIntentDto"
+                  "$ref": "#/components/schemas/PublicCheckoutSessionDto"
                 }
               }
             }
@@ -21834,13 +21785,18 @@
         },
         "additionalProperties": false
       },
-      "ProcessPublicPaymentRequest": {
+      "CreatePublicCheckoutSessionRequest": {
         "required": [
-          "paymentMethodId"
+          "successUrl",
+          "cancelUrl"
         ],
         "type": "object",
         "properties": {
-          "paymentMethodId": {
+          "successUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "cancelUrl": {
             "type": "string",
             "nullable": true
           },
@@ -21852,23 +21808,13 @@
         },
         "additionalProperties": false
       },
-      "ProcessPublicPaymentResult": {
+      "PublicCheckoutSessionDto": {
         "required": [
-          "clientSecret",
-          "paymentIntentId",
-          "status"
+          "url"
         ],
         "type": "object",
         "properties": {
-          "paymentIntentId": {
-            "type": "string",
-            "nullable": true
-          },
-          "clientSecret": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
+          "url": {
             "type": "string",
             "nullable": true
           }

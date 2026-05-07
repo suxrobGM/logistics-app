@@ -4,6 +4,7 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Geo;
 using Microsoft.Extensions.Logging;
 using Stripe;
+using Stripe.Checkout;
 using Address = Logistics.Domain.Primitives.ValueObjects.Address;
 
 namespace Logistics.Infrastructure.Payments.Stripe;
@@ -146,54 +147,64 @@ internal sealed class StripeConnectService(ILogger<StripeConnectService> logger)
         return account;
     }
 
-    public async Task<PaymentIntent> CreateConnectedPaymentIntentAsync(
-        Payment payment,
-        string connectedAccountId,
-        decimal applicationFeePercent = 0)
+    public async Task<Session> CreateConnectedCheckoutSessionAsync(CheckoutSessionRequest request)
     {
-        var amountInCents = (long)(payment.Amount.Amount * 100);
+        var amountInCents = (long)(request.Amount.Amount * 100);
 
-        var options = new PaymentIntentCreateOptions
+        var paymentIntentData = new SessionPaymentIntentDataOptions
         {
-            Amount = amountInCents,
-            Currency = payment.Amount.Currency.ToLower(),
-            AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions { Enabled = true },
-            Description = payment.Description,
-            Metadata = new Dictionary<string, string> { ["PaymentId"] = payment.Id.ToString() },
-            // Use destination charges to route payment to the connected account
-            TransferData = new PaymentIntentTransferDataOptions { Destination = connectedAccountId }
+            // Destination charges route the payment to the connected account.
+            TransferData = new SessionPaymentIntentDataTransferDataOptions
+            {
+                Destination = request.ConnectedAccountId
+            },
+            Metadata = request.Metadata is null
+                ? null
+                : new Dictionary<string, string>(request.Metadata)
         };
 
-        // Calculate and set application fee if specified
-        if (applicationFeePercent > 0)
+        if (request.ApplicationFeePercent > 0)
         {
-            var feeAmount = (long)(amountInCents * (applicationFeePercent / 100));
-            options.ApplicationFeeAmount = feeAmount;
+            paymentIntentData.ApplicationFeeAmount =
+                (long)(amountInCents * (request.ApplicationFeePercent / 100));
         }
 
-        var paymentIntent = await new PaymentIntentService().CreateAsync(options);
-        logger.LogInformation(
-            "Created connected PaymentIntent {PaymentIntentId} for amount {Amount} to account {AccountId}",
-            paymentIntent.Id, payment.Amount.Amount, connectedAccountId);
-
-        return paymentIntent;
-    }
-
-    public async Task<SetupIntent> CreateConnectedSetupIntentAsync(string connectedAccountId)
-    {
-        var options = new SetupIntentCreateOptions
+        var options = new SessionCreateOptions
         {
-            AutomaticPaymentMethods = new SetupIntentAutomaticPaymentMethodsOptions { Enabled = true },
-            OnBehalfOf = connectedAccountId,
-            Metadata = new Dictionary<string, string> { ["ConnectedAccountId"] = connectedAccountId }
+            Mode = "payment",
+            SuccessUrl = request.SuccessUrl,
+            CancelUrl = request.CancelUrl,
+            CustomerEmail = request.CustomerEmail,
+            // Payment methods are auto-selected from the connected account's capabilities
+            // (see StripeCapabilities.ForCountry). No need to pass payment_method_types.
+            LineItems =
+            [
+                new SessionLineItemOptions
+                {
+                    Quantity = 1,
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        Currency = request.Amount.Currency.ToLower(),
+                        UnitAmount = amountInCents,
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = request.LineItemDescription
+                        }
+                    }
+                }
+            ],
+            PaymentIntentData = paymentIntentData,
+            Metadata = request.Metadata is null
+                ? null
+                : new Dictionary<string, string>(request.Metadata)
         };
 
-        var setupIntent = await new SetupIntentService().CreateAsync(options);
+        var session = await new SessionService().CreateAsync(options);
         logger.LogInformation(
-            "Created connected SetupIntent {SetupIntentId} for account {AccountId}",
-            setupIntent.Id, connectedAccountId);
+            "Created Checkout Session {SessionId} for amount {Amount} {Currency} to account {AccountId}",
+            session.Id, request.Amount.Amount, request.Amount.Currency, request.ConnectedAccountId);
 
-        return setupIntent;
+        return session;
     }
 
     public async Task<Transfer> CreateTransferAsync(

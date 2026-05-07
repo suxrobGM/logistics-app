@@ -7,6 +7,8 @@ using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Stripe;
+using Stripe.Checkout;
+using DomainInvoice = Logistics.Domain.Entities.Invoice;
 using StripeInvoice = Stripe.Invoice;
 using StripeSubscription = Stripe.Subscription;
 using Subscription = Logistics.Domain.Entities.Subscription;
@@ -52,6 +54,8 @@ internal sealed class ProcessStripEventHandler(
                     (stripeEvent.Data.Object as PaymentIntent)!),
                 EventTypes.AccountUpdated => await HandleAccountUpdated(
                     (stripeEvent.Data.Object as Account)!),
+                EventTypes.CheckoutSessionCompleted => await HandleCheckoutSessionCompleted(
+                    (stripeEvent.Data.Object as Session)!),
                 _ => Result.Ok()
             };
         }
@@ -315,6 +319,86 @@ internal sealed class ProcessStripEventHandler(
         tenantId = Guid.Empty;
         return metadata.TryGetValue(StripeMetadataKeys.TenantId, out var raw)
             && Guid.TryParse(raw, out tenantId);
+    }
+
+    #endregion
+
+
+    #region Checkout Handlers
+
+    private async Task<Result> HandleCheckoutSessionCompleted(Session session)
+    {
+        if (!TryGetTenantId(session.Metadata, out var tenantId))
+        {
+            return Result.Ok();
+        }
+
+        if (!session.Metadata.TryGetValue("invoice_id", out var rawInvoiceId)
+            || !Guid.TryParse(rawInvoiceId, out var invoiceId))
+        {
+            return Result.Fail("invoice_id missing or invalid in Checkout Session metadata.");
+        }
+
+        await tenantUow.SetCurrentTenantByIdAsync(tenantId);
+
+        var invoice = await tenantUow.Repository<DomainInvoice>().GetByIdAsync(invoiceId);
+        if (invoice is null)
+        {
+            return Result.Fail($"Invoice {invoiceId} not found for tenant {tenantId}.");
+        }
+
+        // Idempotency: Stripe retries delivered events. Bail if we already recorded this session.
+        var paymentIntentId = session.PaymentIntentId;
+        if (!string.IsNullOrEmpty(paymentIntentId))
+        {
+            var existing = await tenantUow.Repository<Payment>()
+                .GetAsync(p => p.StripePaymentIntentId == paymentIntentId);
+            if (existing is not null)
+            {
+                return Result.Ok();
+            }
+        }
+
+        // SEPA / BACS settle 1–3 business days after the session completes; Stripe surfaces this
+        // as the PaymentIntent status. Mirror that on the local row.
+        var status = session.PaymentStatus switch
+        {
+            "paid" => PaymentStatus.Paid,
+            "no_payment_required" => PaymentStatus.Paid,
+            _ => PaymentStatus.Pending
+        };
+
+        var amount = (session.AmountTotal ?? 0) / 100m;
+        var currency = (session.Currency ?? invoice.Total.Currency).ToUpperInvariant();
+
+        var payment = new Payment
+        {
+            Amount = new Money { Amount = amount, Currency = currency },
+            Status = status,
+            TenantId = tenantId,
+            StripePaymentIntentId = paymentIntentId,
+            // Stripe's billing details aren't expanded onto the session payload; reuse the
+            // tenant's company address as a placeholder, matching ProcessPublicPaymentHandler.
+            BillingAddress = (await masterUow.Repository<Tenant>().GetByIdAsync(tenantId))!.CompanyAddress,
+            Description = $"Payment for Invoice #{invoice.Number}"
+        };
+
+        await tenantUow.Repository<Payment>().AddAsync(payment);
+
+        // Only apply the payment to the invoice once it actually settles. Pending SEPA payments
+        // remain unlinked until payment_intent.succeeded fires.
+        if (status == PaymentStatus.Paid)
+        {
+            invoice.ApplyPayment(payment);
+            tenantUow.Repository<DomainInvoice>().Update(invoice);
+        }
+
+        await tenantUow.SaveChangesAsync();
+
+        logger.LogInformation(
+            "Recorded payment {PaymentId} from Checkout Session {SessionId} for invoice {InvoiceId} (status: {Status})",
+            payment.Id, session.Id, invoice.Id, status);
+        return Result.Ok();
     }
 
     #endregion

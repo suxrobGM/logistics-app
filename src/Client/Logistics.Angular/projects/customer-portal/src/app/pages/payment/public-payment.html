@@ -159,8 +159,7 @@
               <p-inputnumber
                 [(ngModel)]="paymentAmount"
                 mode="currency"
-                currency="USD"
-                locale="en-US"
+                [currency]="currency()"
                 [min]="0.01"
                 [max]="inv.amountDue ?? 0"
                 class="w-full"
@@ -174,17 +173,17 @@
 
             <div class="mb-4">
               <ui-typography variant="body-sm" color="muted" class="mb-2">
-                Payment will be securely processed via Stripe.
+                You'll be redirected to Stripe to complete your payment.
               </ui-typography>
               <ui-stack direction="row" align="center" gap="2" class="text-gray-400">
                 <ui-icon name="lock" />
-                <ui-typography variant="body-sm">SSL Secured</ui-typography>
+                <ui-typography variant="body-sm">Securely processed via Stripe</ui-typography>
               </ui-stack>
             </div>
 
             <p-button
-              label="Pay Now"
-              icon="pi pi-credit-card"
+              label="Continue to Payment"
+              icon="pi pi-arrow-right"
               styleClass="w-full"
               [loading]="isProcessing()"
               (click)="processPayment()"

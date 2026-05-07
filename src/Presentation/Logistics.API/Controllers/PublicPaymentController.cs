@@ -9,7 +9,8 @@ namespace Logistics.API.Controllers;
 
 /// <summary>
 /// API endpoints for public payment links (no authentication required).
-/// These endpoints allow customers to view invoices and make payments via shareable links.
+/// These endpoints allow customers to view invoices and pay them via Stripe's hosted Checkout
+/// page from a shareable link.
 /// </summary>
 [ApiController]
 [Route("public/payments")]
@@ -30,40 +31,32 @@ public class PublicPaymentController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
-    /// Process a payment via a public payment link.
-    /// Creates a Stripe PaymentIntent with destination charges to the company's connected account.
+    /// Creates a Stripe Checkout Session for the invoice and returns the hosted-page URL.
+    /// The customer is redirected to the URL to complete payment.
     /// </summary>
-    [HttpPost("{tenantId:guid}/{token}/pay", Name = "ProcessPublicPayment")]
-    [ProducesResponseType(typeof(ProcessPublicPaymentResult), StatusCodes.Status200OK)]
+    [HttpPost("{tenantId:guid}/{token}/checkout", Name = "CreatePublicCheckoutSession")]
+    [ProducesResponseType(typeof(PublicCheckoutSessionDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> ProcessPayment(
+    public async Task<IActionResult> CreateCheckoutSession(
         Guid tenantId,
         string token,
-        [FromBody] ProcessPublicPaymentRequest request)
+        [FromBody] CreatePublicCheckoutSessionRequest request)
     {
-        var result = await mediator.Send(new ProcessPublicPaymentCommand
+        var result = await mediator.Send(new CreatePublicCheckoutSessionCommand
         {
             TenantId = tenantId,
             Token = token,
-            Amount = request.Amount,
-            StripePaymentMethodId = request.PaymentMethodId
+            SuccessUrl = request.SuccessUrl,
+            CancelUrl = request.CancelUrl,
+            Amount = request.Amount
         });
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
+}
 
-    /// <summary>
-    /// Create a Stripe SetupIntent for saving a payment method via a public payment link.
-    /// </summary>
-    [HttpPost("{tenantId:guid}/{token}/setup", Name = "CreatePublicSetupIntent")]
-    [ProducesResponseType(typeof(SetupIntentDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateSetupIntent(Guid tenantId, string token)
-    {
-        var result = await mediator.Send(new CreatePublicSetupIntentCommand
-        {
-            TenantId = tenantId,
-            Token = token
-        });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
-    }
+public record CreatePublicCheckoutSessionRequest
+{
+    public required string SuccessUrl { get; set; }
+    public required string CancelUrl { get; set; }
+    public decimal? Amount { get; set; }
 }

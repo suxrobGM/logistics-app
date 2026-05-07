@@ -4,8 +4,8 @@ import { FormsModule } from "@angular/forms";
 import { ErrorState, LoadingSkeleton, ToastService } from "@logistics/shared";
 import {
   Api,
+  createPublicCheckoutSession,
   getPublicInvoice,
-  processPublicPayment,
   type PublicInvoiceDto,
 } from "@logistics/shared/api";
 import { Callout, Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
@@ -56,6 +56,9 @@ export class PublicPayment {
   protected readonly paymentSuccess = signal(false);
   protected readonly paymentAmount = signal<number | null>(null);
 
+  /** Currency reported by the invoice — drives the currency input + formatting. */
+  protected readonly currency = computed(() => this.invoice()?.total?.currency ?? "USD");
+
   /** True when the invoice carries any tax — drives the Rate% / Tax columns + breakdown row. */
   protected readonly hasTax = computed(() => {
     const inv = this.invoice();
@@ -84,6 +87,15 @@ export class PublicPayment {
       const token = this.token();
       if (tenantId && token) {
         this.loadInvoice(tenantId, token);
+      }
+    });
+
+    // Detect Stripe Checkout return — the success URL is configured to point back here with
+    // ?paid=1, so flip into the success state without an extra round-trip to the API.
+    effect(() => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("paid") === "1") {
+        this.paymentSuccess.set(true);
       }
     });
   }
@@ -150,26 +162,28 @@ export class PublicPayment {
 
     this.isProcessing.set(true);
     try {
-      const result = await this.api.invoke(processPublicPayment, {
+      const baseUrl = window.location.origin + window.location.pathname;
+      const result = await this.api.invoke(createPublicCheckoutSession, {
         tenantId: this.tenantId(),
         token: this.token(),
         body: {
           amount,
-          paymentMethodId: null, // Will be set by Stripe Elements in production
+          successUrl: `${baseUrl}?paid=1`,
+          cancelUrl: baseUrl,
         },
       });
 
-      if (result.status === "succeeded" || result.status === "requires_action") {
-        this.paymentSuccess.set(true);
-        this.toastService.showSuccess("Payment initiated successfully");
-      } else if (result.clientSecret) {
-        // Handle Stripe payment confirmation if needed
-        this.toastService.showInfo("Please complete payment confirmation");
+      if (!result.url) {
+        this.toastService.showError("Could not start payment session.");
+        return;
       }
+
+      // Redirect to Stripe's hosted Checkout page; Stripe will return the customer to
+      // successUrl on completion or cancelUrl on cancel.
+      window.location.href = result.url;
     } catch (err) {
       console.error("Payment failed:", err);
       this.toastService.showError("Payment processing failed. Please try again.");
-    } finally {
       this.isProcessing.set(false);
     }
   }

@@ -1,5 +1,6 @@
 using Logistics.Domain.Entities;
 using Stripe;
+using Stripe.Checkout;
 using Address = Logistics.Domain.Primitives.ValueObjects.Address;
 
 namespace Logistics.Application.Services;
@@ -56,23 +57,10 @@ public interface IStripeConnectService
     Task<Account> SyncConnectedAccountStatusAsync(Tenant tenant);
 
     /// <summary>
-    /// Creates a PaymentIntent with destination charges to route payment to the connected account.
+    /// Creates a Stripe Checkout Session for a one-time payment that settles to a connected
+    /// account via destination charges. The hosted page handles 3DS, SEPA mandates, etc.
     /// </summary>
-    /// <param name="payment">Payment entity with amount details.</param>
-    /// <param name="connectedAccountId">The connected account to receive the payment.</param>
-    /// <param name="applicationFeePercent">Optional platform fee percentage (0-100). Default is 0.</param>
-    /// <returns>The created PaymentIntent.</returns>
-    Task<PaymentIntent> CreateConnectedPaymentIntentAsync(
-        Payment payment,
-        string connectedAccountId,
-        decimal applicationFeePercent = 0);
-
-    /// <summary>
-    /// Creates a SetupIntent for saving a payment method for future connected account payments.
-    /// </summary>
-    /// <param name="connectedAccountId">The connected account ID.</param>
-    /// <returns>The SetupIntent with client secret for frontend use.</returns>
-    Task<SetupIntent> CreateConnectedSetupIntentAsync(string connectedAccountId);
+    Task<Session> CreateConnectedCheckoutSessionAsync(CheckoutSessionRequest request);
 
     /// <summary>
     /// Creates a transfer to move funds from the platform account to a connected account.
