@@ -1,5 +1,6 @@
 using FluentValidation;
 using Logistics.Application.Constants;
+using Logistics.Application.Validators;
 
 namespace Logistics.Application.Commands;
 
@@ -25,5 +26,9 @@ internal sealed class CreateTenantValidator : AbstractValidator<CreateTenantComm
 
         RuleFor(i => i.OwnerLastName)
             .NotEmpty();
+
+        RuleFor(i => i.CompanyAddress)
+            .NotNull()
+            .SetValidator(new AddressValidator());
     }
 }

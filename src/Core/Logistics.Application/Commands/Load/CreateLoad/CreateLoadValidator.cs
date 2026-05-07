@@ -1,5 +1,6 @@
 using FluentValidation;
 using Logistics.Application.Constants;
+using Logistics.Application.Validators;
 
 namespace Logistics.Application.Commands;
 
@@ -11,9 +12,9 @@ internal sealed class CreateLoadValidator : AbstractValidator<CreateLoadCommand>
         RuleFor(i => i.Type).IsInEnum();
         RuleFor(i => i.AssignedDispatcherId).NotEmpty();
         // AssignedTruckId is optional - load can be created without truck assignment (e.g., from load board)
-        RuleFor(i => i.OriginAddress).NotEmpty();
+        RuleFor(i => i.OriginAddress).NotNull().SetValidator(new AddressValidator());
         RuleFor(i => i.OriginLocation).NotEmpty();
-        RuleFor(i => i.DestinationAddress).NotEmpty();
+        RuleFor(i => i.DestinationAddress).NotNull().SetValidator(new AddressValidator());
         RuleFor(i => i.DestinationLocation).NotEmpty();
         RuleFor(i => i.Distance).GreaterThan(0);
         RuleFor(i => i.DeliveryCost)

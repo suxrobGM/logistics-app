@@ -19,6 +19,7 @@ Stable starting points for finding code by feature. Read this before grepping. I
 - **Frontend pages**: `src/Client/Logistics.Angular/projects/{portal}/src/app/pages/{feature}/`
   - Portals: `tms-portal` (dispatchers), `customer-portal` (shippers), `admin-portal` (super admin), `website` (marketing)
 - **Mobile (driver)**: `src/Client/Logistics.DriverApp/composeApp/src/commonMain/kotlin/com/logisticsx/driver/`
+- **Address inputs**: every form that captures an `Address` value object MUST use `<ui-address-form>` from `@logistics/shared`. Do not build addresses from raw `<input>`s. Country drives the State / Region / Province label (US/CA/AU/MX/DE/NL/etc., see `state-labels.ts`); State stays required across all countries. Reusable server-side validator: `Logistics.Application.Validators.AddressValidator`.
 
 ## Operations
 
@@ -118,13 +119,13 @@ Stable starting points for finding code by feature. Read this before grepping. I
 
 ## Settings & integrations
 
-| Feature           | Domain                                     | Application                                     | Infrastructure                                                               | API / UI                     |
-| ----------------- | ------------------------------------------ | ----------------------------------------------- | ---------------------------------------------------------------------------- | ---------------------------- |
-| Tenant settings   | `Entities/Tenant.cs` → `TenantSettings` VO | `Commands/Tenant/UpdateTenantAiSettings*`, etc. | -                                                                            | `tms-portal/pages/settings/` |
-| System settings   | `Entities/SystemSetting.cs`                | `ISystemSettingService.cs`                      | -                                                                            | -                            |
-| Captcha           | -                                          | `Services/Captcha/`                             | `Infrastructure.Communications/Captcha/` (Google reCAPTCHA)                  | -                            |
-| Geocoding         | -                                          | `Services/Geocoding/`                           | `Infrastructure.Routing/Geocoding/` (Mapbox)                                 | -                            |
-| Trip optimization | -                                          | `ITripOptimizer.cs`                             | `Infrastructure.Routing/Optimization/` (heuristic, Mapbox Matrix, composite) | -                            |
+| Feature           | Domain                                                                                                                            | Application                                                                                                                                            | Infrastructure                                                               | API / UI                                      |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- | --------------------------------------------- |
+| Tenant settings   | `Entities/Tenant.cs` → `TenantSettings` VO; `McNumber`/`VatNumber`/`EoriNumber`/`CompanyRegistrationNumber`/`TaxResidencyCountry` | `Commands/Tenant/UpdateTenantAiSettings*`, `UpdateTenant` (regulatory IDs validated server-side via `RegexPatterns.VatNumber`/`McNumber`/`EoriNumber`) | -                                                                            | `tms-portal/pages/settings/company-settings/` |
+| System settings   | `Entities/SystemSetting.cs`                                                                                                       | `ISystemSettingService.cs`                                                                                                                             | -                                                                            | -                                             |
+| Captcha           | -                                                                                                                                 | `Services/Captcha/`                                                                                                                                    | `Infrastructure.Communications/Captcha/` (Google reCAPTCHA)                  | -                                             |
+| Geocoding         | -                                                                                                                                 | `Services/Geocoding/`                                                                                                                                  | `Infrastructure.Routing/Geocoding/` (Mapbox)                                 | -                                             |
+| Trip optimization | -                                                                                                                                 | `ITripOptimizer.cs`                                                                                                                                    | `Infrastructure.Routing/Optimization/` (heuristic, Mapbox Matrix, composite) | -                                             |
 
 ## Marketing site
 

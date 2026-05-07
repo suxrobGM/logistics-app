@@ -1,4 +1,5 @@
 using FluentValidation;
+using Logistics.Application.Validators;
 
 namespace Logistics.Application.Commands;
 
@@ -7,5 +8,9 @@ internal sealed class CreateCustomerValidator : AbstractValidator<CreateCustomer
     public CreateCustomerValidator()
     {
         RuleFor(i => i.Name).NotEmpty();
+
+        RuleFor(i => i.Address!)
+            .SetValidator(new AddressValidator())
+            .When(i => i.Address is not null);
     }
 }

@@ -1,4 +1,5 @@
 using FluentValidation;
+using Logistics.Application.Validators;
 
 namespace Logistics.Application.Commands;
 
@@ -17,5 +18,9 @@ internal sealed class UpdateTerminalValidator : AbstractValidator<UpdateTerminal
             RuleFor(i => i.CountryCode).Length(2)
                 .WithMessage("CountryCode must be a 2-letter ISO 3166-1 code.");
         });
+
+        RuleFor(i => i.Address!)
+            .SetValidator(new AddressValidator())
+            .When(i => i.Address is not null);
     }
 }

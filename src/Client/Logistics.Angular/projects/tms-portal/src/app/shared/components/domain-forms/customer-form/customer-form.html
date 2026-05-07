@@ -51,7 +51,7 @@
       />
     </ui-form-field>
 
-    <ui-form-field label="Address" class="mt-4">
+    <ui-form-field label="Address" class="mt-4" [required]="true">
       <ui-address-form formControlName="address" [allowedCountries]="allowedCountries()" />
     </ui-form-field>
 

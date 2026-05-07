@@ -13,13 +13,13 @@
     <input pInputText id="city" formControlName="city" class="w-full" />
   </ui-form-field>
 
-  <ui-form-field label="State / Region" for="state" [required]="true">
+  <ui-form-field [label]="stateLabel()" for="state" [required]="true">
     @if (hasStateOptions()) {
       <p-select
         inputId="state"
         formControlName="state"
         [options]="stateOptions()"
-        placeholder="Select a state"
+        [placeholder]="'Select a ' + stateLabel().toLowerCase()"
         class="w-full"
         [filter]="true"
       />

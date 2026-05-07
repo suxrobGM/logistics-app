@@ -77,7 +77,7 @@ export class CustomerForm {
       validators: Validators.required,
       nonNullable: true,
     }),
-    address: new FormControl<Address | null>(null),
+    address: new FormControl<Address | null>(null, { validators: Validators.required }),
     notes: new FormControl<string | null>(null),
     taxId: new FormControl<string | null>(null),
     isVatExempt: new FormControl<boolean>(false, { nonNullable: true }),

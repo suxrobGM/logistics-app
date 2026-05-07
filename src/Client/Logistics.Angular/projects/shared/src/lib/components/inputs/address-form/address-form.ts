@@ -11,7 +11,15 @@ import { InputTextModule } from "primeng/inputtext";
 import { KeyFilterModule } from "primeng/keyfilter";
 import { SelectModule } from "primeng/select";
 import type { Address } from "../../../api/generated/models";
-import { COUNTRIES_OPTIONS, DEFAULT_COUNTRY_OPTION, US_STATES_OPTIONS } from "../../../constants";
+import {
+  AU_STATES_OPTIONS,
+  CA_PROVINCES_OPTIONS,
+  COUNTRIES_OPTIONS,
+  DEFAULT_COUNTRY_OPTION,
+  DEFAULT_STATE_FIELD_LABEL,
+  STATE_FIELD_LABELS,
+  US_STATES_OPTIONS,
+} from "../../../constants";
 import type { SelectOption } from "../../../models/select-option";
 import { findOption } from "../../../utils/select-utils";
 import { FormField } from "../form-field/form-field";
@@ -20,6 +28,8 @@ import { ValidationSummary } from "../validation-summary/validation-summary";
 /** Country-specific state/province option lists. Countries not listed get a free-text input. */
 const COUNTRY_STATE_OPTIONS: Record<string, SelectOption[]> = {
   US: US_STATES_OPTIONS,
+  CA: CA_PROVINCES_OPTIONS,
+  AU: AU_STATES_OPTIONS,
 };
 
 @Component({
@@ -83,6 +93,11 @@ export class AddressForm implements ControlValueAccessor {
   );
 
   protected readonly hasStateOptions = computed(() => this.stateOptions() !== null);
+
+  /** Country-aware label for the state/region/province field. */
+  protected readonly stateLabel = computed(
+    () => STATE_FIELD_LABELS[this.country()] ?? DEFAULT_STATE_FIELD_LABEL,
+  );
 
   constructor() {
     // valueChanges only fires for user-driven changes (writeValue uses
