@@ -4,6 +4,10 @@
 >
 > [Address.cs](../../src/Core/Logistics.Domain.Primitives/ValueObjects/Address.cs) requires `State` for every address — true for US/CA/MX/AU but not for many EU countries (Germany Bundesland is optional, Netherlands has no state at all). Tenant has `DotNumber` already but is missing other regulatory IDs (MC number, VAT, EORI for customs).
 
+## Status
+
+- Completed fully
+
 ## Sequencing
 
 - **Position in overall order:** 5th
