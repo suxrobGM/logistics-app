@@ -43,12 +43,19 @@ export const appRoutes: Routes = [
   },
   {
     path: "blog-posts",
-    loadChildren: () => import("./pages/blog-posts/blog-posts.routes").then((m) => m.blogPostsRoutes),
+    loadChildren: () =>
+      import("./pages/blog-posts/blog-posts.routes").then((m) => m.blogPostsRoutes),
     canActivate: [authGuard],
   },
   {
     path: "features",
     loadChildren: () => import("./pages/features/features.routes").then((m) => m.featuresRoutes),
+    canActivate: [authGuard],
+  },
+  {
+    path: "data-requests",
+    loadChildren: () =>
+      import("./pages/data-requests/data-requests.routes").then((m) => m.dataRequestsRoutes),
     canActivate: [authGuard],
   },
   {

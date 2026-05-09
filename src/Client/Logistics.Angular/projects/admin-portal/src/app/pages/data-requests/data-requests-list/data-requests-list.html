@@ -1,0 +1,81 @@
+<ui-page-header title="Data Requests" />
+
+@if (isLoading()) {
+  <ui-stack align="center" justify="center" class="py-8">
+    <p-progress-spinner />
+  </ui-stack>
+} @else if (hasNothing()) {
+  <ui-surface padding="lg">
+    <ui-stack align="center" gap="2">
+      <ui-typography variant="h5">No pending data requests</ui-typography>
+      <ui-typography variant="body-sm" color="muted">
+        GDPR exports and deletion requests across all tenants will show up here while they are
+        pending. They disappear once processed by the background jobs.
+      </ui-typography>
+    </ui-stack>
+  </ui-surface>
+} @else {
+  <ui-stack gap="6">
+    <p-card>
+      <ng-template #title>Pending data exports</ng-template>
+      <ng-template #subtitle>
+        Exports waiting for the processing job to package and email the user.
+      </ng-template>
+
+      @if (pendingExports().length === 0) {
+        <ui-typography variant="body-sm" color="muted">No pending exports.</ui-typography>
+      } @else {
+        <p-table [value]="pendingExports()" dataKey="id">
+          <ng-template #header>
+            <tr>
+              <th>User</th>
+              <th>Requested</th>
+              <th>Status</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-row>
+            <tr>
+              <td>{{ row.userId }}</td>
+              <td>{{ row.requestedAt | date: "medium" }}</td>
+              <td>
+                <p-tag [severity]="statusSeverity(row.status)" [value]="row.status" />
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      }
+    </p-card>
+
+    <p-card>
+      <ng-template #title>Pending account deletions</ng-template>
+      <ng-template #subtitle>
+        Deletion requests still in the 30-day grace period — anonymization runs once
+        <code>scheduledFor</code>
+        elapses.
+      </ng-template>
+
+      @if (pendingDeletions().length === 0) {
+        <ui-typography variant="body-sm" color="muted">No pending deletions.</ui-typography>
+      } @else {
+        <p-table [value]="pendingDeletions()" dataKey="id">
+          <ng-template #header>
+            <tr>
+              <th>User</th>
+              <th>Requested</th>
+              <th>Scheduled for</th>
+              <th>Reason</th>
+            </tr>
+          </ng-template>
+          <ng-template #body let-row>
+            <tr>
+              <td>{{ row.userId }}</td>
+              <td>{{ row.requestedAt | date: "medium" }}</td>
+              <td>{{ row.scheduledFor | date: "mediumDate" }}</td>
+              <td class="max-w-md truncate">{{ row.reason || "—" }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      }
+    </p-card>
+  </ui-stack>
+}

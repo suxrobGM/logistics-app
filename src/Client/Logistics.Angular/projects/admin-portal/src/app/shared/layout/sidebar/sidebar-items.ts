@@ -64,6 +64,7 @@ export const sidebarSections: AdminNavSection[] = [
     items: [
       { label: "Demo Requests", icon: "inbox", route: "/demo-requests" },
       { label: "Contact Submissions", icon: "mail", route: "/contact-submissions" },
+      { label: "Data Requests", icon: "shield-check", route: "/data-requests" },
     ],
   },
 ];
