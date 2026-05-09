@@ -9704,6 +9704,297 @@
         }
       }
     },
+    "/privacy/exports": {
+      "post": {
+        "tags": [
+          "Privacy"
+        ],
+        "operationId": "RequestDataExport",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Privacy"
+        ],
+        "operationId": "GetMyDataExports",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DataExportRequestDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/privacy/exports/{id}": {
+      "get": {
+        "tags": [
+          "Privacy"
+        ],
+        "operationId": "GetDataExportRequest",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataExportRequestDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/privacy/deletions": {
+      "post": {
+        "tags": [
+          "Privacy"
+        ],
+        "operationId": "RequestDataDeletion",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestDataDeletionCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestDataDeletionCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestDataDeletionCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Privacy"
+        ],
+        "operationId": "GetMyDataDeletions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DataDeletionRequestDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/privacy/deletions/{id}": {
+      "delete": {
+        "tags": [
+          "Privacy"
+        ],
+        "operationId": "CancelDataDeletion",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/privacy/consent": {
+      "post": {
+        "tags": [
+          "Privacy"
+        ],
+        "operationId": "RecordConsent",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordConsentRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordConsentRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordConsentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/privacy/consent/history": {
+      "get": {
+        "tags": [
+          "Privacy"
+        ],
+        "operationId": "GetConsentHistory",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ConsentRecordDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/privacy/admin/requests": {
+      "get": {
+        "tags": [
+          "Privacy"
+        ],
+        "operationId": "GetPendingDataRequests",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PendingDataRequestsDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/public/payments/{tenantId}/{token}": {
       "get": {
         "tags": [
@@ -15131,6 +15422,45 @@
         },
         "additionalProperties": false
       },
+      "ConsentRecordDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "anonymousId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "consentType": {
+            "$ref": "#/components/schemas/ConsentType"
+          },
+          "granted": {
+            "type": "boolean"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ConsentType": {
+        "enum": [
+          "strictly_necessary",
+          "functional",
+          "analytics",
+          "marketing"
+        ],
+        "type": "string"
+      },
       "ContactSubject": {
         "enum": [
           "general",
@@ -16303,6 +16633,29 @@
         },
         "additionalProperties": false
       },
+      "CreatePublicCheckoutSessionRequest": {
+        "required": [
+          "cancelUrl",
+          "successUrl"
+        ],
+        "type": "object",
+        "properties": {
+          "successUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "cancelUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "amount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CreateSubscriptionCommand": {
         "type": "object",
         "properties": {
@@ -16908,6 +17261,100 @@
           }
         },
         "additionalProperties": false
+      },
+      "DataDeletionRequestDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requestedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scheduledFor": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DataDeletionStatus"
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "cancelledAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "processedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isCancellable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DataDeletionStatus": {
+        "enum": [
+          "pending",
+          "cancelled",
+          "processed"
+        ],
+        "type": "string"
+      },
+      "DataExportRequestDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requestedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/components/schemas/DataExportStatus"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "downloadUrl": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DataExportStatus": {
+        "enum": [
+          "pending",
+          "processing",
+          "ready",
+          "failed",
+          "expired"
+        ],
+        "type": "string"
       },
       "DateFormatType": {
         "enum": [
@@ -21274,6 +21721,26 @@
         },
         "additionalProperties": false
       },
+      "PendingDataRequestsDto": {
+        "type": "object",
+        "properties": {
+          "pendingExports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataExportRequestDto"
+            },
+            "nullable": true
+          },
+          "pendingDeletions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataDeletionRequestDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "PermissionDto": {
         "type": "object",
         "properties": {
@@ -21785,29 +22252,6 @@
         },
         "additionalProperties": false
       },
-      "CreatePublicCheckoutSessionRequest": {
-        "required": [
-          "successUrl",
-          "cancelUrl"
-        ],
-        "type": "object",
-        "properties": {
-          "successUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "cancelUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "amount": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "PublicCheckoutSessionDto": {
         "required": [
           "url"
@@ -21960,6 +22404,23 @@
         },
         "additionalProperties": false
       },
+      "RecordConsentRequest": {
+        "type": "object",
+        "properties": {
+          "anonymousId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "consentType": {
+            "$ref": "#/components/schemas/ConsentType"
+          },
+          "granted": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "RecordManualPaymentRequest": {
         "required": [
           "amount",
@@ -22078,6 +22539,16 @@
           "type": {
             "$ref": "#/components/schemas/LoadExceptionType"
           },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RequestDataDeletionCommand": {
+        "type": "object",
+        "properties": {
           "reason": {
             "type": "string",
             "nullable": true
@@ -25442,6 +25913,9 @@
     },
     {
       "name": "Portal"
+    },
+    {
+      "name": "Privacy"
     },
     {
       "name": "PublicPayment"
