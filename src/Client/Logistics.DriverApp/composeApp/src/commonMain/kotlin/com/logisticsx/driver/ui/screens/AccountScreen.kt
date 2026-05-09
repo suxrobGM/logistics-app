@@ -17,6 +17,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -53,6 +54,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun AccountScreen(
     onNavigateToStats: () -> Unit,
     onNavigateToSettings: () -> Unit,
+    onNavigateToPrivacy: () -> Unit,
     viewModel: AccountViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -193,6 +195,11 @@ fun AccountScreen(
                                 icon = Icons.Default.Settings,
                                 title = "Settings",
                                 onClick = onNavigateToSettings
+                            )
+                            MenuRow(
+                                icon = Icons.Default.Shield,
+                                title = "Privacy",
+                                onClick = onNavigateToPrivacy
                             )
                         }
                     }

@@ -39,6 +39,7 @@ class ApiFactory(
     val inspectionApi: InspectionApi by lazy { InspectionApi(baseUrl, httpClient) }
     val loadApi: LoadApi by lazy { LoadApi(baseUrl, httpClient) }
     val messageApi: MessageApi by lazy { MessageApi(baseUrl, httpClient) }
+    val privacyApi: PrivacyApi by lazy { PrivacyApi(baseUrl, httpClient) }
     val reportApi: ReportApi by lazy { ReportApi(baseUrl, httpClient) }
     val statApi: StatApi by lazy { StatApi(baseUrl, httpClient) }
     val tripApi: TripApi by lazy { TripApi(baseUrl, httpClient) }

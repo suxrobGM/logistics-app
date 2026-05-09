@@ -10,6 +10,7 @@ import com.logisticsx.driver.api.EmployeeApi
 import com.logisticsx.driver.api.InspectionApi
 import com.logisticsx.driver.api.LoadApi
 import com.logisticsx.driver.api.MessageApi
+import com.logisticsx.driver.api.PrivacyApi
 import com.logisticsx.driver.api.ReportApi
 import com.logisticsx.driver.api.StatApi
 import com.logisticsx.driver.api.TripApi
@@ -30,6 +31,7 @@ import com.logisticsx.driver.viewmodel.LoadDetailViewModel
 import com.logisticsx.driver.viewmodel.LoginViewModel
 import com.logisticsx.driver.viewmodel.PastLoadsViewModel
 import com.logisticsx.driver.viewmodel.PodCaptureViewModel
+import com.logisticsx.driver.viewmodel.PrivacyViewModel
 import com.logisticsx.driver.viewmodel.SettingsViewModel
 import com.logisticsx.driver.viewmodel.StatsViewModel
 import com.logisticsx.driver.viewmodel.TripDetailViewModel
@@ -57,6 +59,7 @@ fun commonModule() = module {
     single<InspectionApi> { get<ApiFactory>().inspectionApi }
     single<LoadApi> { get<ApiFactory>().loadApi }
     single<MessageApi> { get<ApiFactory>().messageApi }
+    single<PrivacyApi> { get<ApiFactory>().privacyApi }
     single<ReportApi> { get<ApiFactory>().reportApi }
     single<StatApi> { get<ApiFactory>().statApi }
     single<TripApi> { get<ApiFactory>().tripApi }
@@ -81,4 +84,5 @@ fun commonModule() = module {
     viewModelOf(::PodCaptureViewModel)
     viewModelOf(::ConditionReportViewModel)
     viewModelOf(::DvirFormViewModel)
+    viewModelOf(::PrivacyViewModel)
 }

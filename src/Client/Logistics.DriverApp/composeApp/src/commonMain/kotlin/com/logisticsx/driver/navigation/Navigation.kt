@@ -17,6 +17,7 @@ import com.logisticsx.driver.ui.screens.LoginScreen
 import com.logisticsx.driver.ui.screens.MessagesScreen
 import com.logisticsx.driver.ui.screens.PastLoadsScreen
 import com.logisticsx.driver.ui.screens.PodCaptureScreen
+import com.logisticsx.driver.ui.screens.PrivacyScreen
 import com.logisticsx.driver.ui.screens.SettingsScreen
 import com.logisticsx.driver.ui.screens.StatsScreen
 import com.logisticsx.driver.ui.screens.TripDetailScreen
@@ -189,7 +190,8 @@ fun createEntryProvider(
     entry<AccountRoute> {
         AccountScreen(
             onNavigateToStats = { navigator.navigate(StatsRoute) },
-            onNavigateToSettings = { navigator.navigate(SettingsRoute) }
+            onNavigateToSettings = { navigator.navigate(SettingsRoute) },
+            onNavigateToPrivacy = { navigator.navigate(PrivacyRoute) }
         )
     }
 
@@ -201,5 +203,10 @@ fun createEntryProvider(
     // About Screen
     entry<AboutRoute> {
         AboutScreen()
+    }
+
+    // Privacy Screen
+    entry<PrivacyRoute> {
+        PrivacyScreen(onNavigateBack = { navigator.goBack() })
     }
 }
