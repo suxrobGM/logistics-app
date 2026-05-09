@@ -15,7 +15,7 @@ namespace Logistics.Application.Behaviours;
 /// </summary>
 public sealed class FeatureCheckBehaviour<TRequest, TResponse>(
     IFeatureService featureService,
-    ITenantService tenantService)
+    ICurrentTenantAccessor tenantAccessor)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IAppRequest<TResponse>
     where TResponse : IResult, new()
@@ -37,7 +37,7 @@ public sealed class FeatureCheckBehaviour<TRequest, TResponse>(
         Guid tenantId;
         try
         {
-            var tenant = tenantService.GetCurrentTenant();
+            var tenant = tenantAccessor.GetCurrentTenant();
             tenantId = tenant.Id;
         }
         catch (InvalidTenantException)

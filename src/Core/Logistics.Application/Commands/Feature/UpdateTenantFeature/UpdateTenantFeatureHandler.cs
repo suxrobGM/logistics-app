@@ -9,13 +9,13 @@ namespace Logistics.Application.Commands;
 
 internal sealed class UpdateTenantFeatureHandler(
     IMasterUnitOfWork masterUow,
-    ITenantService tenantService,
+    ICurrentTenantAccessor tenantAccessor,
     ICurrentUserService currentUserService)
     : IAppRequestHandler<UpdateTenantFeatureCommand, Result>
 {
     public async Task<Result> Handle(UpdateTenantFeatureCommand req, CancellationToken ct)
     {
-        var tenant = tenantService.GetCurrentTenant();
+        var tenant = tenantAccessor.GetCurrentTenant();
 
         // Get existing config or create new one
         var config = await masterUow.Repository<TenantFeatureConfig>()

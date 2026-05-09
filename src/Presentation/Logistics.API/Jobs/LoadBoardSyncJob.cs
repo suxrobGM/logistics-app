@@ -25,13 +25,13 @@ public class LoadBoardSyncJob(
         RecurringJob.AddOrUpdate<LoadBoardSyncJob>(
             "loadboard-refresh-trucks",
             job => job.RefreshPostedTrucksAsync(CancellationToken.None),
-            "*/30 * * * *");
+            Cron.MinuteInterval(30));
 
         // Clean up expired listings every hour
         RecurringJob.AddOrUpdate<LoadBoardSyncJob>(
             "loadboard-cleanup",
             job => job.CleanupExpiredDataAsync(CancellationToken.None),
-            "0 * * * *");
+            Cron.Hourly());
     }
 
     /// <summary>

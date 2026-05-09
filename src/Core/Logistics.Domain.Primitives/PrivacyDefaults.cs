@@ -36,4 +36,16 @@ public static class PrivacyDefaults
     /// Maximum data export requests a single user can submit per 24h.
     /// </summary>
     public const int ExportRateLimitPerDay = 1;
+
+    /// <summary>
+    /// Blob storage container holding generated export ZIPs. Lower-case with no
+    /// underscores so it satisfies Azure Blob Storage container-name rules.
+    /// </summary>
+    public const string ExportBlobContainer = "data-exports";
+
+    /// <summary>
+    /// Path of the in-app privacy page on the TMS portal, used for the link
+    /// in the data-export-ready email.
+    /// </summary>
+    public const string PortalPrivacyPath = "/settings/privacy";
 }

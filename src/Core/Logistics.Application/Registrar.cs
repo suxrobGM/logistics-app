@@ -2,6 +2,7 @@ using System.Reflection;
 using FluentValidation;
 using Logistics.Application.Behaviours;
 using Logistics.Application.Services;
+using Logistics.Application.Services.Privacy;
 using Logistics.Application.Services.Tax;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,6 +31,10 @@ public static class Registrar
         services.AddScoped<IPayrollService, PayrollService>();
         services.AddScoped<ILoadService, LoadService>();
         services.AddScoped<IMaintenanceReminderService, MaintenanceReminderService>();
+        services.AddScoped<IDataExportProcessingService, DataExportProcessingService>();
+        services.AddScoped<IDataDeletionProcessingService, DataDeletionProcessingService>();
+        services.AddScoped<IDataRetentionService, DataRetentionService>();
+        services.AddScoped<IDataExportExpiryService, DataExportExpiryService>();
         services.AddApplicationTaxServices();
         return services;
     }

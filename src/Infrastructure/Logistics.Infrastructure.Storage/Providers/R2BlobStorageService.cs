@@ -2,6 +2,7 @@ using System.Net;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Logistics.Application.Services;
+using Logistics.Domain.Persistence;
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.Storage.Providers;
@@ -13,7 +14,7 @@ namespace Logistics.Infrastructure.Storage.Providers;
 public class R2BlobStorageService(
     IAmazonS3 s3Client,
     IOptions<R2BlobStorageOptions> options,
-    ITenantService tenantService)
+    ITenantUnitOfWork tenantUow)
     : IBlobStorageService
 {
     private readonly R2BlobStorageOptions options = options.Value;
@@ -21,7 +22,7 @@ public class R2BlobStorageService(
     public async Task<string> UploadAsync(string containerName, string blobName, Stream content, string contentType,
         CancellationToken ct = default)
     {
-        var tenantId = tenantService.GetCurrentTenant().Id;
+        var tenantId = tenantUow.GetCurrentTenant().Id;
         var key = GetTenantKey(containerName, blobName, tenantId);
 
         var request = new PutObjectRequest
@@ -114,7 +115,7 @@ public class R2BlobStorageService(
 
     private string GetTenantKey(string containerName, string blobName)
     {
-        var tenantId = tenantService.GetCurrentTenant().Id;
+        var tenantId = tenantUow.GetCurrentTenant().Id;
         return GetTenantKey(containerName, blobName, tenantId);
     }
 

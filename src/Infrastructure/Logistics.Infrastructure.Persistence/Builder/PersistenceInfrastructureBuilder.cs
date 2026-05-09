@@ -62,7 +62,7 @@ internal sealed class PersistenceInfrastructureBuilder : IPersistenceInfrastruct
         services.AddDbContext<MasterDbContext>();
         services.AddScoped<IMasterUnitOfWork, MasterUnitOfWork>();
         services.AddScoped(typeof(MasterRepository<,>));
-        services.AddScoped<ITenantService, TenantService>();
+        services.AddScoped<ICurrentTenantAccessor, CurrentTenantAccessor>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IFeatureService, FeatureService>();
         services.AddScoped<IAiQuotaService, AiQuotaService>();

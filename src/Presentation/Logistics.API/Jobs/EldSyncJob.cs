@@ -28,7 +28,7 @@ public class EldSyncJob(
         RecurringJob.AddOrUpdate<EldSyncJob>(
             "eld-sync",
             job => job.SyncAllTenantsAsync(CancellationToken.None),
-            "*/5 * * * *"); // Every 5 minutes
+            Cron.MinuteInterval(5)); // Every 5 minutes
     }
 
     /// <summary>

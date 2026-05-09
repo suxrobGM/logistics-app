@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -7,10 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Commands;
 
-internal sealed class CreateTruckHandler(
-    ITenantUnitOfWork tenantUow,
-    ITenantService tenantService,
-    IMasterUnitOfWork masterUow) : IAppRequestHandler<CreateTruckCommand, Result>
+internal sealed class CreateTruckHandler(ITenantUnitOfWork tenantUow) : IAppRequestHandler<CreateTruckCommand, Result>
 {
 
     public async Task<Result> Handle(
@@ -62,7 +58,7 @@ internal sealed class CreateTruckHandler(
 
     private async Task<Result> CheckTruckLimitAsync(CancellationToken ct)
     {
-        var tenant = tenantService.GetCurrentTenant();
+        var tenant = tenantUow.GetCurrentTenant();
 
         if (tenant.Subscription is null)
         {

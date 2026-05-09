@@ -27,6 +27,12 @@ public class DataExportRequest : Entity, IMasterEntity
     public string? BlobName { get; set; }
 
     /// <summary>
+    /// Tenant context used for the upload — needed at download time so the signed-URL
+    /// generator hits the same tenant-scoped container the job wrote to.
+    /// </summary>
+    public Guid? BlobTenantId { get; set; }
+
+    /// <summary>
     /// When the underlying blob is deleted by the expiry job.
     /// Signed download URLs are short-lived (~1h) and regenerated on demand
     /// from the portal while the blob still exists.

@@ -76,7 +76,7 @@ internal static class Setup
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
-        // Impersonation configuration
+        // Impersonation configuration (TmsPortalUrl is also reused by privacy emails)
         services.Configure<ImpersonationOptions>(configuration.GetSection(ImpersonationOptions.SectionName));
 
         // Rate limiting configuration
@@ -101,6 +101,18 @@ internal static class Setup
                         AutoReplenishment = true,
                         PermitLimit = 5,
                         Window = TimeSpan.FromMinutes(15),
+                        QueueLimit = 0
+                    }));
+
+            // Anonymous cookie consent endpoint — IP throttle to keep crawlers from spamming.
+            options.AddPolicy("privacy-consent-anon", context =>
+                RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                    factory: _ => new FixedWindowRateLimiterOptions
+                    {
+                        AutoReplenishment = true,
+                        PermitLimit = 10,
+                        Window = TimeSpan.FromMinutes(1),
                         QueueLimit = 0
                     }));
 
@@ -234,6 +246,10 @@ internal static class Setup
         EldSyncJob.ScheduleJobs();
         LoadBoardSyncJob.ScheduleJobs();
         MaintenanceReminderJob.ScheduleJobs();
+        DataExportProcessingJob.ScheduleJobs();
+        DataDeletionJob.ScheduleJobs();
+        DataRetentionJob.ScheduleJobs();
+        DataExportExpiryJob.ScheduleJobs();
 
         // Remove old stale dispatch agent job if it exists
         RecurringJob.RemoveIfExists("dispatch-agent");

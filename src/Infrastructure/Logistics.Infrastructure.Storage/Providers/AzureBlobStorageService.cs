@@ -2,6 +2,7 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
 using Logistics.Application.Services;
+using Logistics.Domain.Persistence;
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.Storage.Providers;
@@ -9,7 +10,7 @@ namespace Logistics.Infrastructure.Storage.Providers;
 public class AzureBlobStorageService(
     BlobServiceClient blobServiceClient,
     IOptions<AzureBlobStorageOptions> options,
-    ITenantService tenantService)
+    ITenantUnitOfWork tenantUow)
     : IBlobStorageService
 {
     private readonly AzureBlobStorageOptions options = options.Value;
@@ -116,7 +117,7 @@ public class AzureBlobStorageService(
 
     private string GetTenantAwareContainerName(string containerName)
     {
-        var tenant = tenantService.GetCurrentTenant();
+        var tenant = tenantUow.GetCurrentTenant();
         return GetTenantAwareContainerName(containerName, tenant.Id);
     }
 

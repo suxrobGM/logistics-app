@@ -11,11 +11,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace Logistics.Infrastructure.Services;
 
-internal class TenantService(
+internal class CurrentTenantAccessor(
     IMasterUnitOfWork masterUow,
     TenantDbContextOptions? dbContextContextOptions = null,
     IHttpContextAccessor? contextAccessor = null)
-    : ITenantService
+    : ICurrentTenantAccessor
 {
     private const string TenantHeader = "X-Tenant";
 
@@ -25,11 +25,6 @@ internal class TenantService(
     public Tenant GetCurrentTenant()
     {
         return GetCurrentTenantAsync().GetAwaiter().GetResult();
-    }
-
-    public Task<Tenant?> FindTenantByIdAsync(string tenantId)
-    {
-        return FindTenantAsync(tenantId);
     }
 
     public async Task<Tenant> GetCurrentTenantAsync(CancellationToken ct = default)

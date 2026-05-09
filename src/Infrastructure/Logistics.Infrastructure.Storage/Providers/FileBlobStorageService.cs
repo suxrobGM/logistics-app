@@ -1,11 +1,12 @@
 using System.Text;
 using System.Text.Json;
 using Logistics.Application.Services;
+using Logistics.Domain.Persistence;
 using Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.Storage.Providers;
 
-public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, ITenantService tenantService)
+public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, ITenantUnitOfWork tenantUow)
     : IBlobStorageService
 {
     private readonly FileBlobStorageOptions options = options.Value;
@@ -116,7 +117,7 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
 
     private string GetContainerPath(string containerName)
     {
-        var tenant = tenantService.GetCurrentTenant();
+        var tenant = tenantUow.GetCurrentTenant();
         var tenantId = tenant.Id.ToString();
         return Path.Combine(options.RootPath, tenantId, containerName);
     }
@@ -134,7 +135,7 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
 
     private string GetFileUri(string containerName, string blobName)
     {
-        var tenant = tenantService.GetCurrentTenant();
+        var tenant = tenantUow.GetCurrentTenant();
         return GetPublicUrl(containerName, blobName, tenant.Id);
     }
 

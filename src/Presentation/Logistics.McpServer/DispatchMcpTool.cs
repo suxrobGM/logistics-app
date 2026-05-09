@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Logistics.Application.Services;
+using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
@@ -51,11 +52,11 @@ internal sealed class DispatchMcpTool : McpServerTool
     {
         var services = request.Services!;
         var featureService = services.GetRequiredService<IFeatureService>();
-        var tenantService = services.GetRequiredService<ITenantService>();
+        var tenantUow = services.GetRequiredService<ITenantUnitOfWork>();
         var executor = services.GetRequiredService<IDispatchToolExecutor>();
 
         // Feature gate: MCP Server
-        var tenant = tenantService.GetCurrentTenant();
+        var tenant = tenantUow.GetCurrentTenant();
         if (!await featureService.IsFeatureEnabledAsync(tenant.Id, TenantFeature.McpServer))
         {
             return ErrorResult("MCP Server feature is not enabled for this tenant. Please upgrade your subscription plan.");

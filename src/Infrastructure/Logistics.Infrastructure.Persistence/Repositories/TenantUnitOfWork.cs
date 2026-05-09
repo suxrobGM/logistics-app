@@ -7,21 +7,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Logistics.Infrastructure.Persistence;
 
-internal sealed class TenantUnitOfWork
-    : UnitOfWork<ITenantEntity>, ITenantUnitOfWork
+internal sealed class TenantUnitOfWork(
+    TenantDbContext db,
+    ICurrentTenantAccessor currentTenantAccessor,
+    IMasterUnitOfWork masterUow,
+    IServiceProvider services)
+    : UnitOfWork<ITenantEntity>(db), ITenantUnitOfWork
 {
-    private readonly TenantDbContext db;
-    private readonly IServiceProvider services;
-    private readonly ITenantService tenantService;
     private Tenant? currentTenant;
-
-    public TenantUnitOfWork(TenantDbContext db, ITenantService tenantService, IServiceProvider services) :
-        base(db)
-    {
-        this.db = db;
-        this.tenantService = tenantService;
-        this.services = services;
-    }
 
     // Strongly typed repos (hide base with 'new')
     public new ITenantRepository<TEntity, Guid> Repository<TEntity>()
@@ -41,7 +34,7 @@ internal sealed class TenantUnitOfWork
     {
         if (currentTenant is null)
         {
-            currentTenant = tenantService.GetCurrentTenant();
+            currentTenant = currentTenantAccessor.GetCurrentTenant();
             db.SwitchToTenant(currentTenant);
         }
 
@@ -50,7 +43,7 @@ internal sealed class TenantUnitOfWork
 
     public async Task<Tenant> SetCurrentTenantByIdAsync(Guid tenantId)
     {
-        var tenant = await tenantService.FindTenantByIdAsync(tenantId.ToString());
+        var tenant = await masterUow.Repository<Tenant>().GetByIdAsync(tenantId);
         currentTenant = tenant ?? throw new InvalidOperationException($"Tenant with ID '{tenantId}' not found");
 
         db.SwitchToTenant(currentTenant);

@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Services;
 using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -8,9 +7,7 @@ using Logistics.Shared.Models.Messaging;
 
 namespace Logistics.Application.Queries;
 
-internal sealed class GetTenantChatHandler(
-    ITenantUnitOfWork tenantUow,
-    ITenantService tenantService)
+internal sealed class GetTenantChatHandler(ITenantUnitOfWork tenantUow)
     : IAppRequestHandler<GetTenantChatQuery, Result<ConversationDto>>
 {
     public async Task<Result<ConversationDto>> Handle(GetTenantChatQuery req, CancellationToken ct)
@@ -24,7 +21,7 @@ internal sealed class GetTenantChatHandler(
         // Create if it doesn't exist
         if (tenantChat is null)
         {
-            var tenant = tenantService.GetCurrentTenant();
+            var tenant = tenantUow.GetCurrentTenant();
             tenantChat = Conversation.CreateTenantChat(tenant.CompanyName ?? tenant.Name);
             await conversationRepo.AddAsync(tenantChat, ct);
             await tenantUow.SaveChangesAsync(ct);
