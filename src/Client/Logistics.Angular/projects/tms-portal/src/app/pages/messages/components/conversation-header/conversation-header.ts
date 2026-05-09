@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
+import { Component, input, output } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { ConversationDto } from "@logistics/shared/api";
 import { Icon, Stack, Typography } from "@logistics/shared/components";
@@ -11,7 +11,6 @@ import { Converters } from "@/shared/utils";
 @Component({
   selector: "app-conversation-header",
   templateUrl: "./conversation-header.html",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AvatarModule,
     ButtonModule,

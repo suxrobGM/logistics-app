@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from "@angular/core";
+import { Component, computed, input } from "@angular/core";
 import { SkeletonModule } from "primeng/skeleton";
 
 /**
@@ -7,7 +7,6 @@ import { SkeletonModule } from "primeng/skeleton";
 @Component({
   selector: "ui-loading-skeleton",
   templateUrl: "./loading-skeleton.html",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [SkeletonModule],
 })
 export class LoadingSkeleton {

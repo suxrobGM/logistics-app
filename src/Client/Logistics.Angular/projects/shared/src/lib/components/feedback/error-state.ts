@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
+import { Component, input, output } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 
 /**
@@ -7,7 +7,6 @@ import { ButtonModule } from "primeng/button";
 @Component({
   selector: "ui-error-state",
   templateUrl: "./error-state.html",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ButtonModule],
 })
 export class ErrorState {

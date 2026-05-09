@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, output, signal } from "@angular/core";
+import { Component, inject, input, output, signal } from "@angular/core";
 import { Api, getEmployees, type EmployeeDto } from "@logistics/shared/api";
 import { Icon, Stack, Typography } from "@logistics/shared/components";
 import {
@@ -15,7 +15,6 @@ import { Converters } from "@/shared/utils";
 @Component({
   selector: "app-recipient-selector",
   templateUrl: "./recipient-selector.html",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AvatarModule,
     AutoCompleteModule,

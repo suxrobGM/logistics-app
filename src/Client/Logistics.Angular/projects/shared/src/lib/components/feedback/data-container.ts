@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, output } from "@angular/core";
+import { Component, inject, input, output } from "@angular/core";
 import { OidcSecurityService } from "angular-auth-oidc-client";
 import type { AppError } from "../../errors/error.types";
 import { EmptyState } from "./empty-state";
@@ -12,7 +12,6 @@ import { LoadingSkeleton } from "./loading-skeleton";
 @Component({
   selector: "ui-data-container",
   templateUrl: "./data-container.html",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [LoadingSkeleton, ErrorState, EmptyState],
 })
 export class DataContainer {

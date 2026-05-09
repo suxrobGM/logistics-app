@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from "@angular/core";
+import { Component, computed, input, output } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 import { Stack } from "../primitives/stack/stack";
 import { Typography } from "../primitives/typography/typography";
@@ -25,7 +25,6 @@ const SEVERITY_COLOR: Record<Exclude<Severity, null>, string> = {
 @Component({
   selector: "ui-empty-state",
   templateUrl: "./empty-state.html",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ButtonModule, Stack, Typography],
 })
 export class EmptyState {

@@ -1,5 +1,5 @@
 import { DatePipe } from "@angular/common";
-import { ChangeDetectionStrategy, Component, input, model } from "@angular/core";
+import { Component, input, model } from "@angular/core";
 import type { ConversationDto } from "@logistics/shared/api";
 import { Icon, Stack, Typography } from "@logistics/shared/components";
 import { AvatarModule } from "primeng/avatar";
@@ -10,7 +10,6 @@ import { Converters } from "@/shared/utils";
 @Component({
   selector: "app-conversation-details",
   templateUrl: "./conversation-details.html",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AvatarModule, DatePipe, DrawerModule, UserAvatar, Icon, Stack, Typography],
 })
 export class ConversationDetails {

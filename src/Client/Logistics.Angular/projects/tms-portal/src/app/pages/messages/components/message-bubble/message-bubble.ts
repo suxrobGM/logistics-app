@@ -1,5 +1,5 @@
 import { DatePipe } from "@angular/common";
-import { ChangeDetectionStrategy, Component, input, output } from "@angular/core";
+import { Component, input, output } from "@angular/core";
 import type { MessageDto } from "@logistics/shared/api";
 import { AvatarModule } from "primeng/avatar";
 import { UserAvatar } from "@/shared/components";
@@ -8,7 +8,6 @@ import { Converters } from "@/shared/utils";
 @Component({
   selector: "app-message-bubble",
   templateUrl: "./message-bubble.html",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AvatarModule, DatePipe, UserAvatar],
 })
 export class MessageBubble {

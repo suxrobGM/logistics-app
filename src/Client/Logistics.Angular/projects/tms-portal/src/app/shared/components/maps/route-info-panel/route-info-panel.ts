@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from "@angular/core";
+import { Component, computed, input } from "@angular/core";
 import { formatDistanceMiles, formatDuration, type RouteInfo, type SegmentInfo } from "../types";
 
 /**
@@ -8,7 +8,6 @@ import { formatDistanceMiles, formatDuration, type RouteInfo, type SegmentInfo }
 @Component({
   selector: "app-route-info-panel",
   templateUrl: "./route-info-panel.html",
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RouteInfoPanel {
   /** Total distance in meters */

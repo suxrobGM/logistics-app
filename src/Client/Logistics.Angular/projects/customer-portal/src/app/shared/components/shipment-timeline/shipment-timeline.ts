@@ -1,5 +1,5 @@
 import { DatePipe } from "@angular/common";
-import { ChangeDetectionStrategy, Component, computed, input } from "@angular/core";
+import { Component, computed, input } from "@angular/core";
 import { Stack, Typography } from "@logistics/shared/components";
 
 interface TimelineStep {
@@ -14,7 +14,6 @@ interface TimelineStep {
 @Component({
   selector: "cp-shipment-timeline",
   templateUrl: "./shipment-timeline.html",
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DatePipe, Stack, Typography],
 })
 export class ShipmentTimeline {

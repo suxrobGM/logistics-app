@@ -1,5 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
+import { CookieBanner } from "@logistics/shared/components";
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { ToastModule } from "primeng/toast";
 import { Footer, Navbar } from "@/layout";
@@ -9,7 +10,7 @@ import { DemoDialogService } from "@/shared/services";
 @Component({
   selector: "web-root",
   templateUrl: "./app.html",
-  imports: [RouterOutlet, Navbar, Footer, DemoDialog, ToastModule, ConfirmDialog],
+  imports: [RouterOutlet, Navbar, Footer, DemoDialog, ToastModule, ConfirmDialog, CookieBanner],
 })
 export class App {
   protected readonly demoDialogService = inject(DemoDialogService);
