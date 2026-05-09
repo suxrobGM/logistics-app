@@ -96,7 +96,7 @@ public class R2BlobStorageService(
         return $"{options.PublicBaseUrl.TrimEnd('/')}/{tenantId}/{containerName}/{blobName}";
     }
 
-    public async Task<string> GetSignedUrlAsync(string containerName, string blobName, TimeSpan expiry, Guid tenantId,
+    public Task<string> GetSignedUrlAsync(string containerName, string blobName, TimeSpan expiry, Guid tenantId,
         CancellationToken ct = default)
     {
         var key = GetTenantKey(containerName, blobName, tenantId);
@@ -109,7 +109,7 @@ public class R2BlobStorageService(
             Expires = DateTime.UtcNow.Add(expiry)
         };
 
-        return await s3Client.GetPreSignedURLAsync(request);
+        return s3Client.GetPreSignedURLAsync(request);
     }
 
     private string GetTenantKey(string containerName, string blobName)
