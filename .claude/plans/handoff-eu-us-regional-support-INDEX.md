@@ -18,7 +18,7 @@
 | --- | ----------------- | --------------------------------------------------------------------------- | ------ | -------------------------------------------------------------------------------------------------- |
 | 1   | Done              | [VAT & tax engine](handoff-vat-tax-engine.md)                               | L      | EU invoices legally require VAT. Cross-border B2B reverse charge. No tax logic exists today.       |
 | 2   | Done (1 deferred) | [Stripe EU payment methods + Connect fixes](handoff-eu-payment-methods.md)  | M      | Hardcoded `Country = "US"` on employee accounts; no SEPA/iDEAL/Bancontact; no `vat_id` collection. |
-| 3   |                   | [GDPR data export, consent, retention](handoff-gdpr-compliance.md)          | M      | Required before any EU customer data is processed.                                                 |
+| 3   | Done              | [GDPR data export, consent, retention](handoff-gdpr-compliance.md)          | M      | Required before any EU customer data is processed.                                                 |
 | 4   |                   | [EU tachograph & EC 561/2006 HOS rules](handoff-eu-tachograph-hos.md)       | XL     | All ELD providers are US FMCSA. EU drivers need different rules and providers.                     |
 | 5   |                   | [EU load board integrations (Timocom, Trans.eu)](handoff-eu-load-boards.md) | L      | DAT/Truckstop/123Loadboard are US-only.                                                            |
 
@@ -43,9 +43,9 @@
 
 ## Suggested order
 
-~~1~~, ~~2~~, 3 (legal unblock) → 6 (i18n before more pages ship) → ~~10~~ (address shape touches every form) → 7, 8, 9 (domain polish) → 5 (EU load boards, well-scoped) → 4 (largest effort, partner-friendly) → 11, 12 (last).
+~~1~~, ~~2~~, ~~3~~, 6 (i18n before more pages ship) → ~~10~~ (address shape touches every form) → 7, 8, 9 (domain polish) → 5 (EU load boards, well-scoped) → 4 (largest effort, partner-friendly) → 11, 12 (last).
 
-Next up: **3 (GDPR)**.
+Next up: **6 (i18n multi-language)**.
 
 ## Conventions every plan follows
 
