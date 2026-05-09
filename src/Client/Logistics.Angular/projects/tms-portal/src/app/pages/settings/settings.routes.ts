@@ -48,4 +48,11 @@ export const settingsRoutes: Routes = [
     canActivate: [authGuard],
     data: { breadcrumb: "API Keys" },
   },
+  {
+    path: "privacy",
+    loadComponent: () =>
+      import("./privacy-settings/privacy-settings").then((m) => m.PrivacySettings),
+    canActivate: [authGuard],
+    data: { breadcrumb: "Privacy" },
+  },
 ];

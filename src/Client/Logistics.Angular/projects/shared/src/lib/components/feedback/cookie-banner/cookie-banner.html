@@ -1,0 +1,86 @@
+@if (visible()) {
+  <div role="dialog" aria-label="Cookie consent" class="fixed inset-x-0 bottom-0 z-50">
+    <ui-surface [radius]="'sm'" class="bg-elevated mx-auto block max-w-5xl shadow-lg">
+      @if (!customizing()) {
+        <ui-stack direction="row" gap="6" align="start" wrap class="md:flex-nowrap">
+          <ui-stack class="flex-1" gap="2">
+            <ui-typography variant="h5" tag="h2">We value your privacy</ui-typography>
+            <ui-typography variant="body-sm" color="muted">
+              We use cookies to keep the app working, remember your preferences, and (with your
+              consent) measure usage. Strictly necessary cookies are always on. You can change your
+              choices at any time from the privacy page.
+            </ui-typography>
+          </ui-stack>
+          <ui-stack direction="row" gap="2" wrap justify="end" class="md:min-w-65">
+            <p-button severity="secondary" outlined label="Customize" (onClick)="openCustomize()" />
+            <p-button severity="secondary" label="Reject all" (onClick)="rejectAll()" />
+            <p-button label="Accept all" (onClick)="acceptAll()" />
+          </ui-stack>
+        </ui-stack>
+      } @else {
+        <ui-stack gap="3">
+          <ui-typography variant="h5" tag="h2">Cookie preferences</ui-typography>
+          <ui-stack gap="3" tag="section">
+            <ui-stack direction="row" justify="between" align="start" gap="4">
+              <ui-stack gap="0">
+                <ui-typography variant="label">Strictly necessary</ui-typography>
+                <ui-typography variant="caption" color="muted">
+                  Required for sign-in, security, and core features.
+                </ui-typography>
+              </ui-stack>
+              <p-checkbox [binary]="true" [ngModel]="true" [disabled]="true" />
+            </ui-stack>
+            <ui-stack direction="row" justify="between" align="start" gap="4">
+              <ui-stack gap="0">
+                <ui-typography variant="label">Functional</ui-typography>
+                <ui-typography variant="caption" color="muted">
+                  Remember language, timezone, and other display preferences.
+                </ui-typography>
+              </ui-stack>
+              <p-checkbox
+                [binary]="true"
+                [ngModel]="functional()"
+                (ngModelChange)="functional.set($event)"
+              />
+            </ui-stack>
+            <ui-stack direction="row" justify="between" align="start" gap="4">
+              <ui-stack gap="0">
+                <ui-typography variant="label">Analytics</ui-typography>
+                <ui-typography variant="caption" color="muted">
+                  Help us understand how the app is used.
+                </ui-typography>
+              </ui-stack>
+              <p-checkbox
+                [binary]="true"
+                [ngModel]="analytics()"
+                (ngModelChange)="analytics.set($event)"
+              />
+            </ui-stack>
+            <ui-stack direction="row" justify="between" align="start" gap="4">
+              <ui-stack gap="0">
+                <ui-typography variant="label">Marketing</ui-typography>
+                <ui-typography variant="caption" color="muted">
+                  Show product news and offers tailored to you.
+                </ui-typography>
+              </ui-stack>
+              <p-checkbox
+                [binary]="true"
+                [ngModel]="marketing()"
+                (ngModelChange)="marketing.set($event)"
+              />
+            </ui-stack>
+          </ui-stack>
+          <ui-stack direction="row" gap="2" justify="end" wrap>
+            <p-button
+              severity="secondary"
+              outlined
+              label="Cancel"
+              (onClick)="customizing.set(false)"
+            />
+            <p-button label="Save preferences" (onClick)="savePreferences()" />
+          </ui-stack>
+        </ui-stack>
+      }
+    </ui-surface>
+  </div>
+}

@@ -13,6 +13,7 @@ const cacheRules: CacheRule[] = [
   { pattern: /\/documents/, ttl: 0 }, // Documents change often, don't cache
   { pattern: /\/messages/, ttl: 0 }, // Real-time data, don't cache
   { pattern: /\/invoices/, ttl: 0 }, // Invoices change often with payments, don't cache
+  { pattern: /\/privacy/, ttl: 0 }, // Export status polled while job runs; signed URL must be fresh
 
   // Reference/static data - longer TTL
   { pattern: /\/settings/, ttl: 30 * 60 * 1000 }, // 30 min

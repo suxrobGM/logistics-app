@@ -344,6 +344,11 @@ export const sidebarSections: NavSection[] = [
             feature: "mcp_server",
           },
           {
+            id: "settings-privacy",
+            label: "Privacy",
+            route: "/settings/privacy",
+          },
+          {
             id: "settings-subscription",
             label: "Subscription",
             route: "/subscription/manage",
