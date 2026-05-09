@@ -35,12 +35,18 @@
               <p class="font-semibold">{{ invoice()!.customer?.name ?? "N/A" }}</p>
             </ui-grid>
             <ui-grid [size]="6" class="text-right">
-              <p><strong>Load Number:</strong> {{ invoice()!.loadNumber }}</p>
+              <p>
+                <strong>Load Number:</strong>
+                {{ invoice()!.loadNumber }}
+              </p>
               <p>
                 <strong>Issue Date:</strong>
                 {{ invoice()!.createdDate | dateFormat: "mediumDate" }}
               </p>
-              <p><strong>Due Date:</strong> {{ invoice()!.dueDate | dateFormat: "mediumDate" }}</p>
+              <p>
+                <strong>Due Date:</strong>
+                {{ invoice()!.dueDate | dateFormat: "mediumDate" }}
+              </p>
               @if (invoice()!.sentAt) {
                 <ui-typography variant="caption" color="muted">
                   Sent to {{ invoice()!.sentToEmail }} on
@@ -94,9 +100,9 @@
           }
 
           @if (isReverseCharge()) {
-            <ui-callout intent="warning" title="Reverse charge" class="mt-4">
+            <ui-alert intent="warning" title="Reverse charge" class="mt-4">
               VAT to be accounted for by the recipient (Article 196, Council Directive 2006/112/EC).
-            </ui-callout>
+            </ui-alert>
           }
 
           @if (hasTax() && (invoice()!.taxBreakdown?.length ?? 0) > 1) {
@@ -152,9 +158,9 @@
               ) {
                 <div class="flex justify-between py-1 text-green-600">
                   <span>Paid:</span>
-                  <span>{{
-                    (invoice()!.total?.amount ?? 0) - getOutstandingAmount() | currencyFormat
-                  }}</span>
+                  <span>
+                    {{ (invoice()!.total?.amount ?? 0) - getOutstandingAmount() | currencyFormat }}
+                  </span>
                 </div>
                 <div class="flex justify-between py-1 font-semibold text-red-600">
                   <span>Outstanding:</span>

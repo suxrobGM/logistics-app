@@ -33,11 +33,11 @@ const intentIconColor: Record<CalloutIntent, "info" | "success" | "warning" | "d
  * picks the icon and accent color; supply `title`, body content, and optional dismiss.
  */
 @Component({
-  selector: "ui-callout",
-  templateUrl: "./callout.html",
+  selector: "ui-alert",
+  templateUrl: "./alert.html",
   imports: [Icon],
 })
-export class Callout {
+export class Alert {
   public readonly intent = input<CalloutIntent>("info");
   public readonly title = input<string | null>(null);
   public readonly icon = input<string | null>(null);

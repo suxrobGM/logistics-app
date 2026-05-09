@@ -13,18 +13,21 @@
         </ui-stack>
       } @else {
         <ui-stack direction="row" align="center" justify="between" class="mb-4">
-          <ui-typography variant="h5" tag="h2"
-            >Configured rates ({{ rates().length }})</ui-typography
-          >
+          <ui-typography variant="h5" tag="h2">
+            Configured rates ({{ rates().length }})
+          </ui-typography>
           <p-button icon="pi pi-plus" label="Add rate" (click)="openCreate()" />
         </ui-stack>
 
         @if (rates().length === 0) {
-          <ui-callout intent="info" title="No rates configured">
-            Add a rate per jurisdiction (e.g. <span class="font-mono">DE 19%</span>,
-            <span class="font-mono">US-CA 7.25%</span>) to override the built-in defaults. If you've
-            enabled Stripe Tax, you can leave this empty.
-          </ui-callout>
+          <ui-alert intent="info" title="No rates configured">
+            Add a rate per jurisdiction (e.g.
+            <span class="font-mono">DE 19%</span>
+            ,
+            <span class="font-mono">US-CA 7.25%</span>
+            ) to override the built-in defaults. If you've enabled Stripe Tax, you can leave this
+            empty.
+          </ui-alert>
         } @else {
           <p-table [value]="rates()" stripedRows>
             <ng-template #header>

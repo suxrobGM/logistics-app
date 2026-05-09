@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Api, getInvoiceById, type Address, type InvoiceDto } from "@logistics/shared/api";
-import { Callout, Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { Alert, Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { AddressPipe, CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
@@ -37,7 +37,7 @@ import { PaymentLinkDialog, RecordPaymentDialog, SendInvoiceDialog } from "../co
     SendInvoiceDialog,
     RecordPaymentDialog,
     PaymentLinkDialog,
-    Callout,
+    Alert,
     Grid,
     Icon,
     Stack,

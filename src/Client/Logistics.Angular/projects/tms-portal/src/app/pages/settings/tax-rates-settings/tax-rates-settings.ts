@@ -13,7 +13,7 @@ import {
   type UpdateTenantTaxRateCommand,
 } from "@logistics/shared/api";
 import {
-  Callout,
+  Alert,
   FormField,
   Stack,
   Typography,
@@ -55,7 +55,7 @@ interface TaxRateForm {
     ProgressSpinnerModule,
     FormField,
     ValidationSummary,
-    Callout,
+    Alert,
     Stack,
     Typography,
     DateFormatPipe,

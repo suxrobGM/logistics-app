@@ -11,9 +11,9 @@
         />
       } @else {
         <div class="mb-6">
-          <ui-typography variant="h4" tag="h2" color="primary" class="mb-2"
-            >Stripe Connect</ui-typography
-          >
+          <ui-typography variant="h4" tag="h2" color="primary" class="mb-2">
+            Stripe Connect
+          </ui-typography>
           <ui-typography variant="body-sm" color="muted">
             Connect your Stripe account to receive payments directly from customer invoices.
           </ui-typography>
@@ -27,9 +27,7 @@
               <ui-stack direction="row" align="center" gap="2" class="mt-1">
                 <p-tag [value]="statusLabel()" [severity]="statusSeverity()" />
                 @if (connectStatus()?.accountId) {
-                  <span class="text-muted text-xs">
-                    Account: {{ connectStatus()?.accountId }}
-                  </span>
+                  <span class="text-muted text-xs">Account: {{ connectStatus()?.accountId }}</span>
                 }
               </ui-stack>
             </div>
@@ -41,9 +39,9 @@
             <!-- Active State with Capabilities -->
             <ui-stack align="center" gap="2" class="mb-4 text-center">
               <ui-icon name="check-circle" size="xl" color="success" class="text-6xl" />
-              <ui-typography variant="h5" tag="h3" class="mb-2"
-                >Ready to Accept Payments</ui-typography
-              >
+              <ui-typography variant="h5" tag="h3" class="mb-2">
+                Ready to Accept Payments
+              </ui-typography>
               <ui-typography variant="body-sm" color="muted">
                 Your Stripe Connect account is fully set up and ready to receive customer payments.
               </ui-typography>
@@ -141,9 +139,9 @@
             <!-- Not Connected State -->
             <ui-stack align="center" justify="center" gap="2" class="py-12 text-center">
               <ui-icon name="credit-card" size="xl" color="muted" class="mb-4 text-6xl" />
-              <ui-typography variant="h5" tag="h3" class="mb-2"
-                >Connect Your Bank Account</ui-typography
-              >
+              <ui-typography variant="h5" tag="h3" class="mb-2">
+                Connect Your Bank Account
+              </ui-typography>
               <ui-typography variant="body-sm" color="muted" class="mb-6 max-w-md">
                 Set up Stripe Connect to receive payments from your customers directly into your
                 bank account. You'll be redirected to Stripe to complete the secure onboarding
@@ -176,10 +174,10 @@
         </ui-typography>
       </div>
 
-      <ui-callout intent="info" title="Set up in the Stripe dashboard" class="mb-4">
+      <ui-alert intent="info" title="Set up in the Stripe dashboard" class="mb-4">
         Configure a default tax code for your products, register the jurisdictions you collect tax
         in, and Stripe will start computing tax for every invoice we send.
-      </ui-callout>
+      </ui-alert>
 
       <ui-stack direction="row" gap="3">
         <a

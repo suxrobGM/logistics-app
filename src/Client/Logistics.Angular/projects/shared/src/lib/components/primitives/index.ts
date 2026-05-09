@@ -8,7 +8,7 @@ export * from "./badge/badge";
 export * from "./status-badge/status-badge";
 export * from "./status-badge/severity-maps";
 export * from "./grid/grid";
-export * from "./callout/callout";
+export * from "./alert/alert";
 export * from "./toolbar/toolbar";
 export * from "./action-menu/action-menu";
 export * from "./money-with-tax/money-with-tax";

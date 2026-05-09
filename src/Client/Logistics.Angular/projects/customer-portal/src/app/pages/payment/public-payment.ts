@@ -8,7 +8,7 @@ import {
   getPublicInvoice,
   type PublicInvoiceDto,
 } from "@logistics/shared/api";
-import { Callout, Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Alert, Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -34,7 +34,7 @@ import { PublicLayout } from "@/shared/layout";
     ErrorState,
     LoadingSkeleton,
     PublicLayout,
-    Callout,
+    Alert,
     Grid,
     Icon,
     Stack,
