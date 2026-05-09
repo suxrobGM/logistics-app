@@ -1,5 +1,6 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Sas;
 using Logistics.Application.Services;
 using Microsoft.Extensions.Options;
 
@@ -84,6 +85,33 @@ public class AzureBlobStorageService(
         var containerClient = blobServiceClient.GetBlobContainerClient(tenantAwareContainerName);
         var blobClient = containerClient.GetBlobClient(blobName);
         return blobClient.Uri.ToString();
+    }
+
+    public Task<string> GetSignedUrlAsync(string containerName, string blobName, TimeSpan expiry, Guid tenantId,
+        CancellationToken ct = default)
+    {
+        var tenantAwareContainerName = GetTenantAwareContainerName(containerName, tenantId);
+        var containerClient = blobServiceClient.GetBlobContainerClient(tenantAwareContainerName);
+        var blobClient = containerClient.GetBlobClient(blobName);
+
+        if (!blobClient.CanGenerateSasUri)
+        {
+            throw new InvalidOperationException(
+                "BlobServiceClient is not configured with shared-key credentials, so SAS URLs cannot be issued. " +
+                "Configure AzureBlobStorage:ConnectionString with an account key, or implement user-delegation SAS.");
+        }
+
+        var sasBuilder = new BlobSasBuilder
+        {
+            BlobContainerName = tenantAwareContainerName,
+            BlobName = blobName,
+            Resource = "b",
+            StartsOn = DateTimeOffset.UtcNow.AddMinutes(-5),
+            ExpiresOn = DateTimeOffset.UtcNow.Add(expiry)
+        };
+        sasBuilder.SetPermissions(BlobSasPermissions.Read);
+
+        return Task.FromResult(blobClient.GenerateSasUri(sasBuilder).ToString());
     }
 
     private string GetTenantAwareContainerName(string containerName)

@@ -58,6 +58,20 @@ public interface IBlobStorageService
     /// <param name="tenantId">Tenant ID for tenant-aware storage</param>
     /// <returns>Public URL for the blob</returns>
     string GetPublicUrl(string containerName, string blobName, Guid tenantId);
+
+    /// <summary>
+    ///     Generate a short-lived signed download URL for a blob.
+    ///     Use this for sensitive downloads (eg GDPR data exports) where the URL
+    ///     must not be guessable and must auto-expire.
+    /// </summary>
+    /// <param name="containerName">Container name</param>
+    /// <param name="blobName">Blob name/path</param>
+    /// <param name="expiry">Lifetime of the signed URL</param>
+    /// <param name="tenantId">Tenant ID for tenant-aware storage</param>
+    /// <param name="ct">Cancellation token</param>
+    /// <returns>Time-limited signed URL</returns>
+    Task<string> GetSignedUrlAsync(string containerName, string blobName, TimeSpan expiry, Guid tenantId,
+        CancellationToken ct = default);
 }
 
 public record BlobFileProperties(

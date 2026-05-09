@@ -103,6 +103,17 @@ public class FileBlobStorageService(IOptions<FileBlobStorageOptions> options, IT
         return $"/uploads/{tenantId}/{containerName}/{blobName}";
     }
 
+    /// <summary>
+    /// FileBlobStorageService is intended for local development only — there is no
+    /// real signing infrastructure. Returns the same URL as <see cref="GetPublicUrl"/>;
+    /// production deployments must use Azure or R2 for proper signed URLs.
+    /// </summary>
+    public Task<string> GetSignedUrlAsync(string containerName, string blobName, TimeSpan expiry, Guid tenantId,
+        CancellationToken ct = default)
+    {
+        return Task.FromResult(GetPublicUrl(containerName, blobName, tenantId));
+    }
+
     private string GetContainerPath(string containerName)
     {
         var tenant = tenantService.GetCurrentTenant();
