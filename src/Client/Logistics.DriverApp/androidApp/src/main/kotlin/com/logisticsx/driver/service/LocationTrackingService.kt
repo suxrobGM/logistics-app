@@ -223,13 +223,12 @@ class LocationTrackingService : Service() {
 
                     val nearOrigin = distanceToOrigin <= PROXIMITY_THRESHOLD
                     val nearDestination = distanceToDest <= PROXIMITY_THRESHOLD
+                    val isInProximity = nearOrigin || nearDestination
 
-                    // Update load proximity if near origin or destination
-                    if (nearOrigin || nearDestination) {
+                    if (isInProximity) {
                         val command = UpdateLoadProximityCommand(
                             loadId = load.id,
-                            canConfirmPickUp = nearOrigin,
-                            canConfirmDelivery = nearDestination
+                            isInProximity = true
                         )
                         driverApi.updateLoadProximity(command)
                         Logger.d(
