@@ -16,6 +16,17 @@ public class User : IdentityUser<Guid>, IEntity<Guid>, IMasterEntity, IAuditable
     public DateTime? UpdatedAt { get; set; }
     public string? UpdatedBy { get; set; }
 
+    /// <summary>
+    /// Set when the user submits a GDPR deletion request; cleared if cancelled within grace.
+    /// </summary>
+    public DateTime? DeletionRequestedAt { get; set; }
+
+    /// <summary>
+    /// Set after irreversible PII anonymization by the deletion job.
+    /// Anonymized users can no longer log in.
+    /// </summary>
+    public DateTime? AnonymizedAt { get; set; }
+
     public string GetFullName()
     {
         return string.Join(" ", FirstName, LastName);
