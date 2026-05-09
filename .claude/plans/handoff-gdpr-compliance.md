@@ -1,5 +1,7 @@
 # Handoff: GDPR Compliance — Data Export, Consent, Retention
 
+> **Status:** DONE (2026-05-09). Implemented across 14 commits ending at `a5ebed24`. See feature-map row "Privacy (GDPR)" under Compliance & safety. Tests for handlers/jobs deferred — see "Tests" section below.
+>
 > **Priority:** HIGH (legal blocker for EU customer data). **Effort:** M (3–5 days).
 >
 > The codebase has tenant deletion ([DeleteTenantHandler.cs](../../src/Core/Logistics.Application/Commands/Tenant/DeleteTenant/DeleteTenantHandler.cs)) which drops the entire tenant DB, but no per-user data export (Article 15), no cookie consent banner, and no retention policy. All three are mandatory before processing EU personal data.
