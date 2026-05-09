@@ -1,7 +1,9 @@
 ﻿using Logistics.Application.Services;
+using Logistics.Application.Services.Privacy;
 using Logistics.Domain.Options;
 using Logistics.Infrastructure.Persistence.Builder;
 using Logistics.Infrastructure.Persistence.Interceptors;
+using Logistics.Infrastructure.Persistence.Privacy;
 using Logistics.Infrastructure.Persistence.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -40,6 +42,9 @@ public static class Registrar
                 ? new CurrentUserService(httpContextAccessor)
                 : new NoopCurrentUserService();
         });
+
+        // Privacy / GDPR
+        services.AddScoped<IDataAnonymizer, DataAnonymizer>();
 
         return new PersistenceInfrastructureBuilder(services, configuration);
     }

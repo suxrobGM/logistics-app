@@ -1,6 +1,8 @@
 ﻿using Logistics.Application.Services;
 using Logistics.Application.Services.Pdf;
 using Logistics.Application.Services.PdfImport;
+using Logistics.Application.Services.Privacy;
+using Logistics.Infrastructure.Documents.Privacy;
 using Logistics.Infrastructure.Documents.Vin;
 using Logistics.Infrastructure.Services.Pdf;
 using Logistics.Infrastructure.Services.PdfImport;
@@ -24,6 +26,9 @@ public static class Registrar
 
         // VIN decoder
         services.AddHttpClient<IVinDecoderService, NhtsaVinDecoderService>();
+
+        // Privacy / GDPR
+        services.AddScoped<IDataExportService, DataExportService>();
         return services;
     }
 }
