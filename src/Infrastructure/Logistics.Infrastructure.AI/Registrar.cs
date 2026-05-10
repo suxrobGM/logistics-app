@@ -36,6 +36,7 @@ public static class Registrar
         services.AddScoped<IDispatchTool, GetDriverHosTool>();
         services.AddScoped<IDispatchTool, CheckHosFeasibilityTool>();
         services.AddScoped<IDispatchTool, BatchCheckHosFeasibilityTool>();
+        services.AddScoped<IDispatchTool, CheckDispatchEligibilityTool>();
         services.AddScoped<IDispatchTool, CalculateDistanceTool>();
         services.AddScoped<IDispatchTool, OptimizeTripStopsTool>();
         services.AddScoped<IDispatchTool, AssignLoadToTruckTool>();

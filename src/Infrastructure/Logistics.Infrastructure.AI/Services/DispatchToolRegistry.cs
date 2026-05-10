@@ -55,6 +55,21 @@ internal sealed class DispatchToolRegistry : IDispatchToolRegistry
                 ["required"] = new JsonArray("driver_id", "distance_km")
             })),
 
+        new("check_dispatch_eligibility",
+            "Check if a truck (and optionally a specific driver) is eligible to carry a load based on driver license class + endorsements, US Hazmat / EU ADR rules, ADR cert validity, truck Hazmat-placarding, and DOT medical certificate. Returns is_eligible and a list of issues with reason codes (severity: error blocks dispatch, warning is informational). Call this BEFORE dispatch_trip or assign_load_to_truck on hazmat / ADR loads, and whenever the human asks 'can driver X carry load Y'.",
+            BuildSchema(new JsonObject
+            {
+                ["type"] = "object",
+                ["properties"] = new JsonObject
+                {
+                    ["truck_id"] = Prop("string", "The truck ID (GUID)"),
+                    ["load_id"] = Prop("string", "The load ID (GUID)"),
+                    ["driver_id"] = Prop("string",
+                        "Optional driver ID (GUID). When omitted, the truck's currently assigned main driver is used.")
+                },
+                ["required"] = new JsonArray("truck_id", "load_id")
+            })),
+
         new("batch_check_hos_feasibility",
             "Check HOS feasibility for multiple driver-distance pairs in a single call. More efficient than calling check_hos_feasibility multiple times. Returns feasibility result for each pair.",
             BuildSchema(new JsonObject
