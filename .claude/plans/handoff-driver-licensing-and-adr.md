@@ -1,8 +1,20 @@
 # Handoff: Driver Licensing + ADR / Hazmat Compliance
 
-> **Priority:** MEDIUM. **Effort:** M (3–4 days).
+> **Status: Done (2026-05-10).** Landed in five slices on `main`:
 >
-> Today [Employee.cs](../../src/Core/Logistics.Domain/Entities/Employee.cs) has no driver-license fields. US needs CDL class + endorsements + Hazmat; EU needs categories C/CE/D + ADR (Accord Dangereux Routier) certification + ADR-equipped vehicle.
+> - `fea56e89` — domain entities + value object + tenant migration `Version_0007`
+> - `7e1391f4` — license CRUD, `IDispatchEligibilityService`, `LicenseExpiryReminderService` Hangfire job, 19 tests
+> - `47bc3457` — API endpoints, eligibility moved to dispatch handlers, TMS portal UI (licenses tab + truck-form ADR fieldset + load-form hazmat fieldset)
+> - `0d756fad` — AI dispatch tool `check_dispatch_eligibility` (read-only) + 8 tests
+> - `14b1e650` — mobile `MyLicensesScreen` + nav wiring + feature-map row
+>
+> Notable design choice differing from this plan: **eligibility is enforced at the dispatch gate (`DispatchLoadHandler` / `BulkDispatchLoadsHandler` / `DispatchTripHandler`), not on assignment**. Assignment is treated as planning; dispatch is the hard commit. The eligibility endpoint (`GET /loads/{id}/eligibility`) is read-only and the UI calls it to preview warnings before the dispatcher hits Dispatch. See [.claude/feature-map.md](../feature-map.md) "Driver licensing" + "ADR / Hazmat" rows under Compliance & safety.
+>
+> Known follow-ups (deferred): dashboard "expiring licenses" widget, type-specific notification renderer in `pages/notifications/`, `BypassEligibility` admin override flag, i18n string migration for new labels. The `[Flags]` enum wire format also needs a smoke test — `ng-openapi-gen` types them as string unions but the wire is a numeric bitfield; three `as unknown as number` casts in Angular handle the round-trip and may need adjustment if the API serializes them as comma-separated names.
+>
+> ---
+>
+> **Original priority:** MEDIUM. **Original effort estimate:** M (3–4 days). Pre-implementation, [Employee.cs](../../src/Core/Logistics.Domain/Entities/Employee.cs) had no driver-license fields. US needed CDL class + endorsements + Hazmat; EU needed categories C/CE/D + ADR (Accord Dangereux Routier) certification + ADR-equipped vehicle. The remaining sections of this document describe the original plan as written.
 
 ## Sequencing
 
