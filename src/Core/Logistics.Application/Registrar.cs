@@ -31,6 +31,8 @@ public static class Registrar
         services.AddScoped<IPayrollService, PayrollService>();
         services.AddScoped<ILoadService, LoadService>();
         services.AddScoped<IMaintenanceReminderService, MaintenanceReminderService>();
+        services.AddScoped<ILicenseExpiryReminderService, LicenseExpiryReminderService>();
+        services.AddScoped<IDispatchEligibilityService, DispatchEligibilityService>();
         services.AddScoped<IDataExportProcessingService, DataExportProcessingService>();
         services.AddScoped<IDataDeletionProcessingService, DataDeletionProcessingService>();
         services.AddScoped<IDataRetentionService, DataRetentionService>();

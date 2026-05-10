@@ -1,0 +1,64 @@
+namespace Logistics.Application.Services;
+
+/// <summary>
+/// Single source of truth for "can this truck + driver carry this load?". Validates driver
+/// license status, endorsements, ADR/Hazmat compatibility, and truck ADR equipment. Used by
+/// trip assignment commands and surfaced to the AI dispatch agent as a tool.
+/// </summary>
+public interface IDispatchEligibilityService
+{
+    /// <summary>
+    /// Checks whether the supplied truck (and optionally a specific driver) is eligible to
+    /// carry the given load. Returns an <see cref="EligibilityResult"/> with structured
+    /// reason codes — never throws on business-rule violations.
+    /// </summary>
+    /// <param name="truckId">Truck under consideration.</param>
+    /// <param name="loadId">Target load.</param>
+    /// <param name="driverId">
+    /// Optional explicit driver. When <c>null</c>, the truck's current MainDriver is used.
+    /// </param>
+    Task<EligibilityResult> CheckAsync(
+        Guid truckId,
+        Guid loadId,
+        Guid? driverId = null,
+        CancellationToken ct = default);
+}
+
+public sealed record EligibilityResult(bool IsEligible, IReadOnlyList<EligibilityIssue> Issues)
+{
+    public static EligibilityResult Ok() => new(true, []);
+    public static EligibilityResult Block(params EligibilityIssue[] issues) =>
+        new(issues.All(i => i.Severity != EligibilitySeverity.Error), issues);
+}
+
+public sealed record EligibilityIssue(
+    EligibilityIssueCode Code,
+    EligibilitySeverity Severity,
+    string Message);
+
+public enum EligibilitySeverity
+{
+    Warning,
+    Error
+}
+
+public enum EligibilityIssueCode
+{
+    TruckNotFound,
+    LoadNotFound,
+    DriverNotAssigned,
+    DriverNotFound,
+    NoActiveLicense,
+    LicenseExpired,
+    LicenseClassInsufficient,
+    MissingHazmatEndorsement,
+    MissingAdrEndorsement,
+    MissingAdrClass1Endorsement,
+    MissingAdrClass7Endorsement,
+    AdrCertExpired,
+    TruckNotAdrCertified,
+    TruckClassNotAllowed,
+    HazmatPlacardingRequired,
+    MedicalCertExpired,
+    MedicalCertExpiringSoon
+}

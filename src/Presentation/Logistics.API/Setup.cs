@@ -234,6 +234,7 @@ internal static class Setup
         EldSyncJob.ScheduleJobs();
         LoadBoardSyncJob.ScheduleJobs();
         MaintenanceReminderJob.ScheduleJobs();
+        LicenseExpiryReminderJob.ScheduleJobs();
         DataExportProcessingJob.ScheduleJobs();
         DataDeletionJob.ScheduleJobs();
         DataRetentionJob.ScheduleJobs();
