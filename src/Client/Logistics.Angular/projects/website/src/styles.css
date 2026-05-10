@@ -172,4 +172,23 @@ html {
   .border-ink {
     border-color: var(--color-ink);
   }
+
+  /* Shared design-system tokens used by @logistics/shared components
+     (Surface, Typography, etc.). Map them to the website palette so
+     shared primitives render correctly on this project too. */
+  .bg-elevated {
+    background-color: #ffffff;
+  }
+
+  .bg-subtle {
+    background-color: var(--color-paper-dark);
+  }
+
+  .border-default {
+    border-color: rgba(20, 20, 20, 0.12);
+  }
+
+  .text-muted {
+    color: var(--color-steel);
+  }
 }

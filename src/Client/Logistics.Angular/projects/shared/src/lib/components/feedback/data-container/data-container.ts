@@ -1,9 +1,9 @@
 import { Component, inject, input, output } from "@angular/core";
 import { OidcSecurityService } from "angular-auth-oidc-client";
-import type { AppError } from "../../errors/error.types";
-import { EmptyState } from "./empty-state";
-import { ErrorState } from "./error-state";
-import { LoadingSkeleton } from "./loading-skeleton";
+import type { AppError } from "../../../errors/error.types";
+import { EmptyState } from "../empty-state/empty-state";
+import { ErrorState } from "../error-state/error-state";
+import { LoadingSkeleton } from "../loading-skeleton/loading-skeleton";
 
 /**
  * Container component that handles loading, error, empty, and data states.

@@ -14,6 +14,27 @@ body {
   background-color: #f5f7fa;
 }
 
+/* Shared design-system tokens used by @logistics/shared components
+   (Surface, Typography, etc.). Map them to the customer-portal palette
+   so shared primitives render correctly on this project too. */
+@layer utilities {
+  .bg-elevated {
+    background-color: #ffffff;
+  }
+
+  .bg-subtle {
+    background-color: #f5f7fa;
+  }
+
+  .border-default {
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .text-muted {
+    color: #6b7280;
+  }
+}
+
 /* Typography base styles */
 @layer base {
   h1 {

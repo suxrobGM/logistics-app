@@ -1,7 +1,7 @@
 import { Component, computed, input, output } from "@angular/core";
 import { ButtonModule } from "primeng/button";
-import { Stack } from "../primitives/stack/stack";
-import { Typography } from "../primitives/typography/typography";
+import { Stack } from "../../primitives/stack/stack";
+import { Typography } from "../../primitives/typography/typography";
 
 type Severity = "info" | "success" | "warning" | "danger" | null;
 
