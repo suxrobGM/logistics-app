@@ -1,4 +1,6 @@
 using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 
 namespace Logistics.Mappings;
@@ -22,7 +24,7 @@ public static class TruckMapper
             Vin = entity.Vin,
             LicensePlate = entity.LicensePlate,
             LicensePlateState = entity.LicensePlateState,
-            AdrEquipment = entity.AdrEquipment,
+            AdrEquipment = entity.AdrEquipment.ToDto(),
             IsHazmatPlacarded = entity.IsHazmatPlacarded,
             CurrentLocation = entity.CurrentLocation,
             CurrentAddress = entity.CurrentAddress,
@@ -32,6 +34,22 @@ public static class TruckMapper
             SecondaryDriver = entity.SecondaryDriver?.ToDto(),
         };
     }
+
+    public static AdrEquipmentDto ToDto(this AdrEquipment entity) => new()
+    {
+        IsAdrCertified = entity.IsAdrCertified,
+        AdrCertExpiresAt = entity.AdrCertExpiresAt,
+        AllowedClasses = entity.AllowedClasses.ToClasses(),
+        OrangePlateNumber = entity.OrangePlateNumber
+    };
+
+    public static AdrEquipment ToDomain(this AdrEquipmentDto dto) => new()
+    {
+        IsAdrCertified = dto.IsAdrCertified,
+        AdrCertExpiresAt = dto.AdrCertExpiresAt,
+        AllowedClasses = dto.AllowedClasses.ToFlags(),
+        OrangePlateNumber = dto.OrangePlateNumber
+    };
 
     /// <summary>
     ///     Maps a Truck entity to TruckDto with loads.

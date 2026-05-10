@@ -1,6 +1,6 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
@@ -23,7 +23,7 @@ public class UpdateTruckCommand : IAppRequest
     /// <summary>
     /// Replaces the truck's ADR equipment configuration when supplied. Null leaves it unchanged.
     /// </summary>
-    public AdrEquipment? AdrEquipment { get; set; }
+    public AdrEquipmentDto? AdrEquipment { get; set; }
 
     /// <summary>
     /// US Hazmat placarding flag. Null leaves it unchanged.

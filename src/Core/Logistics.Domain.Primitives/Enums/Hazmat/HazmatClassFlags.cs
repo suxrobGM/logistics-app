@@ -60,4 +60,29 @@ public static class HazmatClassFlagsExtensions
             _ => HazmatClassFlags.None
         };
     }
+
+    private static readonly (HazmatClassFlags Flag, HazmatClass Class)[] FlagToClassMap =
+    [
+        (HazmatClassFlags.Class1, HazmatClass.Class1),
+        (HazmatClassFlags.Class2, HazmatClass.Class2),
+        (HazmatClassFlags.Class3, HazmatClass.Class3),
+        (HazmatClassFlags.Class4, HazmatClass.Class4),
+        (HazmatClassFlags.Class5, HazmatClass.Class5),
+        (HazmatClassFlags.Class6, HazmatClass.Class6),
+        (HazmatClassFlags.Class7, HazmatClass.Class7),
+        (HazmatClassFlags.Class8, HazmatClass.Class8),
+        (HazmatClassFlags.Class9, HazmatClass.Class9)
+    ];
+
+    /// <summary>
+    /// Expands a flags value into the set of individual <see cref="HazmatClass"/> values it contains.
+    /// </summary>
+    public static HazmatClass[] ToClasses(this HazmatClassFlags flags) =>
+        FlagToClassMap.Where(pair => flags.HasFlag(pair.Flag)).Select(pair => pair.Class).ToArray();
+
+    /// <summary>
+    /// Combines a set of <see cref="HazmatClass"/> values into a single flags bitfield.
+    /// </summary>
+    public static HazmatClassFlags ToFlags(this IEnumerable<HazmatClass>? classes) =>
+        classes?.Aggregate(HazmatClassFlags.None, (acc, c) => acc | c.ToFlag()) ?? HazmatClassFlags.None;
 }

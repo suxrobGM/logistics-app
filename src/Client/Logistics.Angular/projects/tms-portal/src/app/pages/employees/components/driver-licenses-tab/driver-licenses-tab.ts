@@ -132,10 +132,9 @@ export class DriverLicensesTab {
       license.licenseClass ??
       "";
 
-    // Wire is numeric bitfield; ng-openapi-gen treats [Flags] enum as string union.
-    const endorsementBits = (license.endorsements as unknown as number | undefined) ?? 0;
+    const endorsements = new Set(license.endorsements ?? []);
     const endorsementLabels = licenseEndorsementOptions
-      .filter((opt) => (endorsementBits & opt.value) === opt.value)
+      .filter((opt) => endorsements.has(opt.value))
       .map((opt) => opt.label);
 
     const status = license.status;

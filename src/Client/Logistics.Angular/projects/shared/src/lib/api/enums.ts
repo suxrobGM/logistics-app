@@ -15,6 +15,7 @@ import type {
   InvoiceLineItemType,
   InvoiceStatus,
   LicenseClass,
+  LicenseEndorsement,
   LoadExceptionType,
   LoadSource,
   LoadStatus,
@@ -279,54 +280,17 @@ export const hazmatClassOptions: SelectOption<HazmatClass>[] = [
   { label: "Class 9 - Miscellaneous", value: "class9" },
 ];
 
-/**
- * License endorsement bit-flag values matching LicenseEndorsement enum on the server.
- */
-export const licenseEndorsementFlags = {
-  hazmat: 1,
-  tanker: 2,
-  doubles: 4,
-  passenger: 8,
-  adr: 16,
-  adrTanks: 32,
-  adrClass1: 64,
-  adrClass7: 128,
-} as const;
-
-export const licenseEndorsementOptions: { label: string; value: number; group: "us" | "eu" }[] = [
-  { label: "Hazmat (H)", value: licenseEndorsementFlags.hazmat, group: "us" },
-  { label: "Tanker (N)", value: licenseEndorsementFlags.tanker, group: "us" },
-  { label: "Doubles/Triples (T)", value: licenseEndorsementFlags.doubles, group: "us" },
-  { label: "Passenger (P)", value: licenseEndorsementFlags.passenger, group: "us" },
-  { label: "ADR (Basic)", value: licenseEndorsementFlags.adr, group: "eu" },
-  { label: "ADR Tanks", value: licenseEndorsementFlags.adrTanks, group: "eu" },
-  { label: "ADR Class 1 (Explosives)", value: licenseEndorsementFlags.adrClass1, group: "eu" },
-  { label: "ADR Class 7 (Radioactive)", value: licenseEndorsementFlags.adrClass7, group: "eu" },
-];
-
-/**
- * HazmatClassFlags bit values for truck ADR-equipment allowed-classes multi-select.
- */
-export const hazmatClassFlagValues = {
-  class1: 1,
-  class2: 2,
-  class3: 4,
-  class4: 8,
-  class5: 16,
-  class6: 32,
-  class7: 64,
-  class8: 128,
-  class9: 256,
-} as const;
-
-export const hazmatClassFlagOptions: { label: string; value: number }[] = [
-  { label: "Class 1 - Explosives", value: hazmatClassFlagValues.class1 },
-  { label: "Class 2 - Gases", value: hazmatClassFlagValues.class2 },
-  { label: "Class 3 - Flammable Liquids", value: hazmatClassFlagValues.class3 },
-  { label: "Class 4 - Flammable Solids", value: hazmatClassFlagValues.class4 },
-  { label: "Class 5 - Oxidizers", value: hazmatClassFlagValues.class5 },
-  { label: "Class 6 - Toxic & Infectious", value: hazmatClassFlagValues.class6 },
-  { label: "Class 7 - Radioactive", value: hazmatClassFlagValues.class7 },
-  { label: "Class 8 - Corrosives", value: hazmatClassFlagValues.class8 },
-  { label: "Class 9 - Miscellaneous", value: hazmatClassFlagValues.class9 },
+export const licenseEndorsementOptions: {
+  label: string;
+  value: LicenseEndorsement;
+  group: "us" | "eu";
+}[] = [
+  { label: "Hazmat (H)", value: "hazmat", group: "us" },
+  { label: "Tanker (N)", value: "tanker", group: "us" },
+  { label: "Doubles/Triples (T)", value: "doubles", group: "us" },
+  { label: "Passenger (P)", value: "passenger", group: "us" },
+  { label: "ADR (Basic)", value: "adr", group: "eu" },
+  { label: "ADR Tanks", value: "adr_tanks", group: "eu" },
+  { label: "ADR Class 1 (Explosives)", value: "adr_class1", group: "eu" },
+  { label: "ADR Class 7 (Radioactive)", value: "adr_class7", group: "eu" },
 ];

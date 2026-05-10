@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
@@ -32,7 +33,10 @@ internal sealed class UpdateDriverLicenseHandler(ITenantUnitOfWork tenantUow)
         }
 
         license.LicenseClass = PropertyUpdater.UpdateIfChanged(req.LicenseClass, license.LicenseClass);
-        license.Endorsements = PropertyUpdater.UpdateIfChanged(req.Endorsements, license.Endorsements);
+        if (req.Endorsements is not null)
+        {
+            license.Endorsements = req.Endorsements.Combine();
+        }
         license.IssuingRegion = PropertyUpdater.UpdateIfChanged(req.IssuingRegion, license.IssuingRegion);
         license.IssuedDate = PropertyUpdater.UpdateIfChanged(req.IssuedDate, license.IssuedDate);
         license.ExpiresAt = PropertyUpdater.UpdateIfChanged(req.ExpiresAt, license.ExpiresAt);

@@ -1,6 +1,7 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
@@ -44,7 +45,7 @@ internal sealed class CreateDriverLicenseHandler(ITenantUnitOfWork tenantUow)
             req.IssuingCountry,
             req.IssuedDate,
             req.ExpiresAt,
-            req.Endorsements,
+            req.Endorsements.Combine(),
             req.IssuingRegion,
             req.MedicalCertExpiresAt,
             req.DocumentId);

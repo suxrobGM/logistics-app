@@ -9,7 +9,7 @@ public class CreateDriverLicenseCommand : IAppRequest<Result<Guid>>
     public Guid EmployeeId { get; set; }
     public string LicenseNumber { get; set; } = null!;
     public LicenseClass LicenseClass { get; set; }
-    public LicenseEndorsement Endorsements { get; set; } = LicenseEndorsement.None;
+    public LicenseEndorsement[] Endorsements { get; set; } = [];
     public string IssuingCountry { get; set; } = null!;
     public string? IssuingRegion { get; set; }
     public DateTime IssuedDate { get; set; }

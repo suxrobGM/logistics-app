@@ -1,4 +1,5 @@
 using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
 namespace Logistics.Mappings;
@@ -13,7 +14,7 @@ public static class DriverLicenseMapper
             EmployeeId = entity.EmployeeId,
             LicenseNumber = entity.LicenseNumber,
             LicenseClass = entity.LicenseClass,
-            Endorsements = entity.Endorsements,
+            Endorsements = entity.Endorsements.ToArray(),
             IssuingCountry = entity.IssuingCountry,
             IssuingRegion = entity.IssuingRegion,
             IssuedDate = entity.IssuedDate,

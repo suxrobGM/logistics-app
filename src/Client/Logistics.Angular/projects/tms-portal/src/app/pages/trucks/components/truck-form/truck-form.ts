@@ -10,14 +10,15 @@ import { RouterLink } from "@angular/router";
 import {
   Api,
   getEmployees,
-  type AdrEquipment,
+  type AdrEquipmentDto,
   type EmployeeDto,
+  type HazmatClass,
   type TruckDto,
   type TruckStatus,
   type TruckType,
 } from "@logistics/shared/api";
 import {
-  hazmatClassFlagOptions,
+  hazmatClassOptions,
   truckStatusOptions,
   truckTypeOptions,
 } from "@logistics/shared/api/enums";
@@ -54,7 +55,7 @@ export interface TruckFormData {
   vin: string | null;
   licensePlate: string | null;
   licensePlateState: string | null;
-  adrEquipment: AdrEquipment;
+  adrEquipment: AdrEquipmentDto;
   isHazmatPlacarded: boolean;
 }
 
@@ -96,7 +97,7 @@ export class TruckForm implements OnInit {
 
   protected readonly truckTypes = truckTypeOptions;
   protected readonly truckStatuses = truckStatusOptions;
-  protected readonly hazmatClassOptions = hazmatClassFlagOptions;
+  protected readonly hazmatClassOptions = hazmatClassOptions;
   protected readonly suggestedDrivers = signal<EmployeeDto[]>([]);
 
   protected readonly form = new FormGroup({
@@ -123,7 +124,7 @@ export class TruckForm implements OnInit {
     licensePlateState: new FormControl<string | null>(null),
     isAdrCertified: new FormControl<boolean>(false, { nonNullable: true }),
     adrCertExpiresAt: new FormControl<Date | null>(null),
-    adrAllowedClasses: new FormControl<number[]>([], { nonNullable: true }),
+    adrAllowedClasses: new FormControl<HazmatClass[]>([], { nonNullable: true }),
     orangePlateNumber: new FormControl<string | null>(null),
     isHazmatPlacarded: new FormControl<boolean>(false, { nonNullable: true }),
   });
@@ -136,12 +137,6 @@ export class TruckForm implements OnInit {
     const initial = this.initial();
     if (initial) {
       const adr = initial.adrEquipment;
-      // ng-openapi-gen renders [Flags] enums as string union types, but the wire format
-      // is a numeric bitfield. Cast through unknown so bit math works.
-      const allowedClassesBits = (adr?.allowedClasses as unknown as number | undefined) ?? 0;
-      const selectedClasses = hazmatClassFlagOptions
-        .filter((opt) => (allowedClassesBits & opt.value) === opt.value)
-        .map((opt) => opt.value);
 
       this.form.patchValue({
         truckNumber: initial.number ?? "",
@@ -158,7 +153,7 @@ export class TruckForm implements OnInit {
         licensePlateState: initial.licensePlateState ?? null,
         isAdrCertified: adr?.isAdrCertified ?? false,
         adrCertExpiresAt: adr?.adrCertExpiresAt ? new Date(adr.adrCertExpiresAt) : null,
-        adrAllowedClasses: selectedClasses,
+        adrAllowedClasses: adr?.allowedClasses ?? [],
         orangePlateNumber: adr?.orangePlateNumber ?? null,
         isHazmatPlacarded: initial.isHazmatPlacarded ?? false,
       });
@@ -189,10 +184,6 @@ export class TruckForm implements OnInit {
     }
 
     const isAdrCertified = this.form.value.isAdrCertified ?? false;
-    const allowedClassesValue = (this.form.value.adrAllowedClasses ?? []).reduce(
-      (acc, n) => acc | n,
-      0,
-    );
 
     this.save.emit({
       truckNumber: this.form.value.truckNumber!,
@@ -210,8 +201,7 @@ export class TruckForm implements OnInit {
       adrEquipment: {
         isAdrCertified,
         adrCertExpiresAt: this.form.value.adrCertExpiresAt?.toISOString() ?? null,
-        // Cast back to the generated string-union type — wire is numeric bitfield.
-        allowedClasses: allowedClassesValue as unknown as AdrEquipment["allowedClasses"],
+        allowedClasses: this.form.value.adrAllowedClasses ?? [],
         orangePlateNumber: this.form.value.orangePlateNumber ?? null,
       },
       isHazmatPlacarded: this.form.value.isHazmatPlacarded ?? false,

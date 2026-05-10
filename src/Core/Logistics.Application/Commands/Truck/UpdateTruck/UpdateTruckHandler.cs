@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions;
 using Logistics.Application.Utilities;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Mappings;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
@@ -55,7 +56,7 @@ internal sealed class UpdateTruckHandler(ITenantUnitOfWork tenantUow) : IAppRequ
 
         if (req.AdrEquipment is not null)
         {
-            truck.AdrEquipment = req.AdrEquipment;
+            truck.AdrEquipment = req.AdrEquipment.ToDomain();
         }
 
         if (req.IsHazmatPlacarded.HasValue)

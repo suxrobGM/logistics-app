@@ -15074,7 +15074,7 @@
         },
         "additionalProperties": false
       },
-      "AdrEquipment": {
+      "AdrEquipmentDto": {
         "type": "object",
         "properties": {
           "isAdrCertified": {
@@ -15086,7 +15086,11 @@
             "nullable": true
           },
           "allowedClasses": {
-            "$ref": "#/components/schemas/HazmatClassFlags"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HazmatClass"
+            },
+            "nullable": true
           },
           "orangePlateNumber": {
             "type": "string",
@@ -16479,7 +16483,11 @@
             "$ref": "#/components/schemas/LicenseClass"
           },
           "endorsements": {
-            "$ref": "#/components/schemas/LicenseEndorsement"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LicenseEndorsement"
+            },
+            "nullable": true
           },
           "issuingCountry": {
             "type": "string",
@@ -18510,7 +18518,11 @@
             "$ref": "#/components/schemas/LicenseClass"
           },
           "endorsements": {
-            "$ref": "#/components/schemas/LicenseEndorsement"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LicenseEndorsement"
+            },
+            "nullable": true
           },
           "issuingCountry": {
             "type": "string",
@@ -19803,21 +19815,6 @@
       },
       "HazmatClass": {
         "enum": [
-          "class1",
-          "class2",
-          "class3",
-          "class4",
-          "class5",
-          "class6",
-          "class7",
-          "class8",
-          "class9"
-        ],
-        "type": "string"
-      },
-      "HazmatClassFlags": {
-        "enum": [
-          "none",
           "class1",
           "class2",
           "class3",
@@ -24891,7 +24888,7 @@
             "nullable": true
           },
           "adrEquipment": {
-            "$ref": "#/components/schemas/AdrEquipment"
+            "$ref": "#/components/schemas/AdrEquipmentDto"
           },
           "isHazmatPlacarded": {
             "type": "boolean"
@@ -25419,7 +25416,11 @@
             "$ref": "#/components/schemas/LicenseClass"
           },
           "endorsements": {
-            "$ref": "#/components/schemas/LicenseEndorsement"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LicenseEndorsement"
+            },
+            "nullable": true
           },
           "issuingRegion": {
             "type": "string",
@@ -25670,6 +25671,17 @@
           "destinationTerminalId": {
             "type": "string",
             "format": "uuid",
+            "nullable": true
+          },
+          "isHazmat": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "hazmatClass": {
+            "$ref": "#/components/schemas/HazmatClass"
+          },
+          "unNumber": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -26189,7 +26201,7 @@
             "nullable": true
           },
           "adrEquipment": {
-            "$ref": "#/components/schemas/AdrEquipment"
+            "$ref": "#/components/schemas/AdrEquipmentDto"
           },
           "isHazmatPlacarded": {
             "type": "boolean",

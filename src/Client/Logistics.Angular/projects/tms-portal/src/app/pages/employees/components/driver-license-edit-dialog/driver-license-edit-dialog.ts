@@ -8,6 +8,7 @@ import {
   type DriverLicenseDto,
   type DriverLicenseStatus,
   type LicenseClass,
+  type LicenseEndorsement,
   type UpdateDriverLicenseCommand,
 } from "@logistics/shared/api";
 import {
@@ -87,7 +88,7 @@ export class DriverLicenseEditDialog {
       expiresAt: new FormControl<Date | null>(null, Validators.required),
       medicalCertExpiresAt: new FormControl<Date | null>(null),
       status: new FormControl<DriverLicenseStatus>("active", { nonNullable: true }),
-      endorsements: new FormControl<number[]>([], { nonNullable: true }),
+      endorsements: new FormControl<LicenseEndorsement[]>([], { nonNullable: true }),
     });
 
     effect(() => {
@@ -115,7 +116,7 @@ export class DriverLicenseEditDialog {
   async save(): Promise<void> {
     if (!this.form.valid) return;
     const v = this.form.value;
-    const endorsementsBitfield = (v.endorsements ?? []).reduce((acc, n) => acc | n, 0);
+    const endorsements = v.endorsements ?? [];
 
     this.isLoading.set(true);
     try {
@@ -124,9 +125,7 @@ export class DriverLicenseEditDialog {
         const command: UpdateDriverLicenseCommand = {
           licenseId: lic.id,
           licenseClass: v.licenseClass,
-          // Wire is numeric bitfield; ng-openapi-gen treats [Flags] enum as string union.
-          endorsements:
-            endorsementsBitfield as unknown as UpdateDriverLicenseCommand["endorsements"],
+          endorsements,
           issuingRegion: v.issuingRegion ?? null,
           issuedDate: v.issuedDate?.toISOString(),
           expiresAt: v.expiresAt?.toISOString(),
@@ -144,9 +143,7 @@ export class DriverLicenseEditDialog {
           employeeId: this.employeeId(),
           licenseNumber: v.licenseNumber!,
           licenseClass: v.licenseClass,
-          // Wire is numeric bitfield; ng-openapi-gen treats [Flags] enum as string union.
-          endorsements:
-            endorsementsBitfield as unknown as UpdateDriverLicenseCommand["endorsements"],
+          endorsements,
           issuingCountry: v.issuingCountry!,
           issuingRegion: v.issuingRegion ?? null,
           issuedDate: v.issuedDate!.toISOString(),
@@ -173,11 +170,6 @@ export class DriverLicenseEditDialog {
   }
 
   private populateForm(lic: DriverLicenseDto): void {
-    const endorsementBits = (lic.endorsements as unknown as number | undefined) ?? 0;
-    const selected = this.endorsementOptions
-      .filter((opt) => (endorsementBits & opt.value) === opt.value)
-      .map((opt) => opt.value);
-
     this.form.patchValue({
       licenseNumber: lic.licenseNumber ?? "",
       licenseClass: lic.licenseClass ?? "us_class_a",
@@ -187,7 +179,7 @@ export class DriverLicenseEditDialog {
       expiresAt: lic.expiresAt ? new Date(lic.expiresAt) : null,
       medicalCertExpiresAt: lic.medicalCertExpiresAt ? new Date(lic.medicalCertExpiresAt) : null,
       status: lic.status ?? "active",
-      endorsements: selected,
+      endorsements: lic.endorsements ?? [],
     });
 
     // License number is immutable on update — disable the control.
@@ -204,5 +196,5 @@ interface DriverLicenseForm {
   expiresAt: FormControl<Date | null>;
   medicalCertExpiresAt: FormControl<Date | null>;
   status: FormControl<DriverLicenseStatus>;
-  endorsements: FormControl<number[]>;
+  endorsements: FormControl<LicenseEndorsement[]>;
 }
