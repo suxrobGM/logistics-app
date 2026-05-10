@@ -15,7 +15,11 @@
     "**/dist": true,
     "**/out-tsc": true
   },
-  "VSCodeCounter.exclude": ["bun.lock", "openapi.json"],
+  "VSCodeCounter.exclude": [
+    "bun.lock",
+    "openapi.json",
+    "src/Infrastructure/Logistics.Infrastructure.Persistence/Migrations"
+  ],
   "VSCodeCounter.languages": {
     "kotlin": {
       "aliases": ["Kotlin"],
