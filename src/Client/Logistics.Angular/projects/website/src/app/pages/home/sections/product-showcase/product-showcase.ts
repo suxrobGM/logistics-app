@@ -42,7 +42,7 @@ export class ProductShowcase {
           label: "Session Summary",
         },
         {
-          src: "images/screenshots/ai-dispatch-agent-timeline.png",
+          src: "images/screenshots/ai-dispatch-timeline.png",
           alt: "AI Dispatch agent timeline with tool calls, HOS checks, and decisions",
           label: "Agent Timeline",
         },

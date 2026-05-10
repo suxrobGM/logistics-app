@@ -11,20 +11,20 @@ import {
 import { PageHeader } from "@logistics/shared";
 import {
   Api,
-  approveDispatchDecision,
-  cancelDispatchSession,
-  getDispatchSessionById,
-  rejectDispatchDecision,
-  replanDispatchSession,
-  type DispatchDecisionDto,
-  type DispatchSessionDto,
+  approveAiDispatchDecision,
+  cancelAiDispatchSession,
+  getAiDispatchSessionById,
+  rejectAiDispatchDecision,
+  replanAiDispatchSession,
+  type AiDispatchDecisionDto,
+  type AiDispatchSessionDto,
 } from "@logistics/shared/api";
 import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
-import { DispatchAgentHubService, TenantService, ToastService } from "@/core/services";
+import { AiDispatchHubService, TenantService, ToastService } from "@/core/services";
 import { DateUtils, Labels } from "@/shared/utils";
 import { ApproveRejectActions } from "../components/approve-reject-actions/approve-reject-actions";
 import { ModeBadge } from "../components/mode-badge/mode-badge";
@@ -63,12 +63,12 @@ import { MarkdownPipe } from "../utils/markdown";
 export class SessionDetailPage implements OnInit, OnDestroy {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
-  private readonly dispatchAgentHub = inject(DispatchAgentHubService);
+  private readonly aiDispatchHub = inject(AiDispatchHubService);
   private readonly tenantService = inject(TenantService);
 
   public readonly id = input.required<string>();
 
-  protected readonly session = signal<DispatchSessionDto | null>(null);
+  protected readonly session = signal<AiDispatchSessionDto | null>(null);
   protected readonly isLoading = signal(false);
 
   protected readonly Labels = Labels;
@@ -131,7 +131,7 @@ export class SessionDetailPage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     const tenant = this.tenantService.getTenantData();
     if (tenant?.id) {
-      this.dispatchAgentHub.unsubscribeFromDispatchBoard(tenant.id);
+      this.aiDispatchHub.unsubscribeFromDispatchBoard(tenant.id);
     }
   }
 
@@ -139,13 +139,13 @@ export class SessionDetailPage implements OnInit, OnDestroy {
     const tenant = this.tenantService.getTenantData();
     if (!tenant?.id) return;
 
-    this.dispatchAgentHub.onReceiveDispatchAgentUpdate = (update) => {
+    this.aiDispatchHub.onReceiveAiDispatchUpdate = (update) => {
       if (update.sessionId === this.id()) {
         this.loadSession();
       }
     };
 
-    this.dispatchAgentHub.onReceiveDispatchDecision = (decision) => {
+    this.aiDispatchHub.onReceiveAiDispatchDecision = (decision) => {
       if (decision.sessionId === this.id()) {
         this.session.update((s) => {
           if (!s) return s;
@@ -155,14 +155,14 @@ export class SessionDetailPage implements OnInit, OnDestroy {
       }
     };
 
-    await this.dispatchAgentHub.connect();
-    await this.dispatchAgentHub.subscribeToDispatchBoard(tenant.id);
+    await this.aiDispatchHub.connect();
+    await this.aiDispatchHub.subscribeToDispatchBoard(tenant.id);
   }
 
   protected async loadSession(): Promise<void> {
     this.isLoading.set(true);
     try {
-      const session = await this.api.invoke(getDispatchSessionById, { sessionId: this.id() });
+      const session = await this.api.invoke(getAiDispatchSessionById, { sessionId: this.id() });
       this.session.set(session);
     } catch {
       this.toastService.showError("Failed to load session");
@@ -171,7 +171,7 @@ export class SessionDetailPage implements OnInit, OnDestroy {
     }
   }
 
-  protected approveDecision(decision: DispatchDecisionDto): void {
+  protected approveDecision(decision: AiDispatchDecisionDto): void {
     this.toastService.confirm({
       message: `Are you sure you want to approve and execute this decision?\n\n${buildDecisionDetail(decision)}`,
       header: "Approve Decision",
@@ -179,7 +179,7 @@ export class SessionDetailPage implements OnInit, OnDestroy {
       acceptButtonStyleClass: "p-button-success",
       accept: async () => {
         try {
-          await this.api.invoke(approveDispatchDecision, { decisionId: decision.id! });
+          await this.api.invoke(approveAiDispatchDecision, { decisionId: decision.id! });
           this.toastService.showSuccess("Decision approved and executed");
           await this.loadSession();
         } catch {
@@ -189,7 +189,7 @@ export class SessionDetailPage implements OnInit, OnDestroy {
     });
   }
 
-  protected rejectDecision(decision: DispatchDecisionDto): void {
+  protected rejectDecision(decision: AiDispatchDecisionDto): void {
     this.toastService.confirm({
       message: `Are you sure you want to reject this decision?\n\n${buildDecisionDetail(decision)}`,
       header: "Reject Decision",
@@ -197,7 +197,7 @@ export class SessionDetailPage implements OnInit, OnDestroy {
       acceptButtonStyleClass: "p-button-danger",
       accept: async () => {
         try {
-          await this.api.invoke(rejectDispatchDecision, { decisionId: decision.id!, body: {} });
+          await this.api.invoke(rejectAiDispatchDecision, { decisionId: decision.id!, body: {} });
           this.toastService.showSuccess("Decision rejected");
           await this.loadSession();
         } catch {
@@ -212,7 +212,7 @@ export class SessionDetailPage implements OnInit, OnDestroy {
     if (!session) return;
 
     try {
-      await this.api.invoke(replanDispatchSession, {
+      await this.api.invoke(replanAiDispatchSession, {
         sessionId: session.id!,
         body: {},
       });
@@ -227,7 +227,7 @@ export class SessionDetailPage implements OnInit, OnDestroy {
     if (!session) return;
 
     try {
-      await this.api.invoke(cancelDispatchSession, { sessionId: session.id! });
+      await this.api.invoke(cancelAiDispatchSession, { sessionId: session.id! });
       this.toastService.showSuccess("Session cancelled");
       await this.loadSession();
     } catch {

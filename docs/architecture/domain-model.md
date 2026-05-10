@@ -221,18 +221,18 @@ A tenant DB also includes the supporting graph: **HOS / ELD** (`HosLog`, `HosVio
 
 An aggregate is a consistency boundary - the root entity is the only thing outside code can hold a reference to, and operations on the aggregate go through the root.
 
-| Aggregate root    | Owns                                                                        |
-| ----------------- | --------------------------------------------------------------------------- |
-| `Tenant`          | `Subscription`, `TenantFeatureConfig[]`                                     |
-| `Load`            | `LoadDocument[]`, `LoadException[]`, optional `LoadInvoice`                 |
-| `Trip`            | `TripStop[]` (each stop references a `Load` but stops are part of the trip) |
-| `Truck`           | `TruckDocument[]`                                                           |
-| `Container`       | (lifecycle owner - referenced by `Load`)                                    |
-| `Invoice` TPH     | `InvoiceLineItem[]`, `Payment[]`, `PaymentLink[]`                           |
-| `DispatchSession` | `DispatchDecision[]`                                                        |
-| `Conversation`    | `Message[]`, `ConversationParticipant[]`, `MessageReadReceipt[]`            |
-| `DvirReport`      | `DvirDefect[]`                                                              |
-| `AccidentReport`  | `AccidentThirdParty[]`, `AccidentWitness[]`                                 |
+| Aggregate root      | Owns                                                                        |
+| ------------------- | --------------------------------------------------------------------------- |
+| `Tenant`            | `Subscription`, `TenantFeatureConfig[]`                                     |
+| `Load`              | `LoadDocument[]`, `LoadException[]`, optional `LoadInvoice`                 |
+| `Trip`              | `TripStop[]` (each stop references a `Load` but stops are part of the trip) |
+| `Truck`             | `TruckDocument[]`                                                           |
+| `Container`         | (lifecycle owner - referenced by `Load`)                                    |
+| `Invoice` TPH       | `InvoiceLineItem[]`, `Payment[]`, `PaymentLink[]`                           |
+| `AiDispatchSession` | `AiDispatchDecision[]`                                                      |
+| `Conversation`      | `Message[]`, `ConversationParticipant[]`, `MessageReadReceipt[]`            |
+| `DvirReport`        | `DvirDefect[]`                                                              |
+| `AccidentReport`    | `AccidentThirdParty[]`, `AccidentWitness[]`                                 |
 
 Cross-aggregate references are by `Guid` ID, not navigation property, with one important exception: EF Core lazy loading is enabled, so `virtual` navigation properties are populated on access. The codebase relies on this and avoids `.Include()` calls.
 

@@ -116,7 +116,7 @@ internal static class Setup
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
-        services.AddScoped<IBackgroundJobRunner<DispatchAgentRequest>, HangfireDispatchJobRunner>();
+        services.AddScoped<IBackgroundJobRunner<AiDispatchRequest>, HangfireAiDispatchJobRunner>();
         services.AddHangfireServer();
         services.AddHangfire(config => config
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
@@ -222,7 +222,7 @@ internal static class Setup
 
         // SignalR Hubs
         app.MapHub<TrackingHub>("/hubs/tracking");
-        app.MapHub<DispatchAgentHub>("/hubs/dispatch-agent");
+        app.MapHub<AiDispatchHub>("/hubs/ai-dispatch");
         app.MapHub<NotificationHub>("/hubs/notification");
         app.MapHub<ChatHub>("/hubs/chat");
         return app;
@@ -241,7 +241,7 @@ internal static class Setup
         DataExportExpiryJob.ScheduleJobs();
 
         // Remove old stale dispatch agent job if it exists
-        RecurringJob.RemoveIfExists("dispatch-agent");
+        RecurringJob.RemoveIfExists("ai-dispatch");
         return app;
     }
 

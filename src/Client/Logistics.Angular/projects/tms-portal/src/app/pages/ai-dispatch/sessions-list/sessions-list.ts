@@ -4,17 +4,17 @@ import { Router } from "@angular/router";
 import { PageHeader } from "@logistics/shared";
 import {
   Api,
-  approveDispatchDecision,
+  approveAiDispatchDecision,
+  getAiDispatchSessions,
   getAiQuotaStatus,
-  getDispatchSessions,
   getPendingDecisions,
   getTrucks,
-  rejectDispatchDecision,
-  runDispatchAgent,
+  rejectAiDispatchDecision,
+  runAiDispatch,
+  type AiDispatchDecisionDto,
+  type AiDispatchMode,
+  type AiDispatchSessionDto,
   type AiQuotaStatusDto,
-  type DispatchAgentMode,
-  type DispatchDecisionDto,
-  type DispatchSessionDto,
   type TruckDto,
 } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
@@ -25,7 +25,7 @@ import { TableModule, type TableLazyLoadEvent } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import {
-  DispatchAgentHubService,
+  AiDispatchHubService,
   DispatchBadgeService,
   TenantService,
   ToastService,
@@ -67,7 +67,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
   private readonly api = inject(Api);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
-  private readonly dispatchAgentHub = inject(DispatchAgentHubService);
+  private readonly aiDispatchHub = inject(AiDispatchHubService);
   private readonly tenantService = inject(TenantService);
   private readonly dispatchBadgeService = inject(DispatchBadgeService);
 
@@ -75,18 +75,18 @@ export class SessionsListPage implements OnInit, OnDestroy {
   protected readonly Math = Math;
   protected readonly stripMarkdown = stripMarkdown;
 
-  protected readonly sessions = signal<DispatchSessionDto[]>([]);
+  protected readonly sessions = signal<AiDispatchSessionDto[]>([]);
   protected readonly totalRecords = signal(0);
   protected readonly page = signal(1);
   protected readonly pageSize = signal(10);
   protected readonly first = signal(0);
-  protected readonly pendingDecisions = signal<DispatchDecisionDto[]>([]);
+  protected readonly pendingDecisions = signal<AiDispatchDecisionDto[]>([]);
   protected readonly quotaStatus = signal<AiQuotaStatusDto | null>(null);
   protected readonly trucks = signal<TruckDto[]>([]);
   protected readonly isLoading = signal(false);
   protected readonly isRunning = signal(false);
   protected readonly showRunDialog = signal(false);
-  protected readonly runMode = signal<DispatchAgentMode>("human_in_the_loop");
+  protected readonly runMode = signal<AiDispatchMode>("human_in_the_loop");
 
   /** Only write-tool decisions (assign, create trip, dispatch) that need approval */
   protected readonly writeDecisions = computed(() =>
@@ -119,7 +119,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     const tenant = this.tenantService.getTenantData();
     if (tenant?.id) {
-      this.dispatchAgentHub.unsubscribeFromDispatchBoard(tenant.id);
+      this.aiDispatchHub.unsubscribeFromDispatchBoard(tenant.id);
     }
   }
 
@@ -127,25 +127,25 @@ export class SessionsListPage implements OnInit, OnDestroy {
     const tenant = this.tenantService.getTenantData();
     if (!tenant?.id) return;
 
-    this.dispatchAgentHub.onReceiveDispatchAgentUpdate = () => {
+    this.aiDispatchHub.onReceiveAiDispatchUpdate = () => {
       this.loadData();
     };
 
-    this.dispatchAgentHub.onReceiveDispatchDecision = (decision) => {
+    this.aiDispatchHub.onReceiveAiDispatchDecision = (decision) => {
       if (decision.status === "suggested") {
         this.pendingDecisions.update((list) => [...list, decision]);
       }
     };
 
-    await this.dispatchAgentHub.connect();
-    await this.dispatchAgentHub.subscribeToDispatchBoard(tenant.id);
+    await this.aiDispatchHub.connect();
+    await this.aiDispatchHub.subscribeToDispatchBoard(tenant.id);
   }
 
   protected async loadData(): Promise<void> {
     this.isLoading.set(true);
     try {
       const [sessionsRes, pending, quota, trucksRes] = await Promise.all([
-        this.api.invoke(getDispatchSessions, {
+        this.api.invoke(getAiDispatchSessions, {
           Page: this.page(),
           PageSize: this.pageSize(),
           OrderBy: "-StartedAt",
@@ -175,7 +175,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
     this.loadData();
   }
 
-  protected openRunDialog(mode: DispatchAgentMode): void {
+  protected openRunDialog(mode: AiDispatchMode): void {
     this.runMode.set(mode);
     this.showRunDialog.set(true);
   }
@@ -183,7 +183,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
   protected async onRunConfirmed(event: RunAgentDialogData): Promise<void> {
     this.isRunning.set(true);
     try {
-      await this.api.invoke(runDispatchAgent, {
+      await this.api.invoke(runAiDispatch, {
         body: { mode: event.mode, instructions: event.instructions },
       });
       this.toastService.showSuccess("Agent session started - updates will appear in real-time");
@@ -195,7 +195,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
     }
   }
 
-  protected approveDecision(decision: DispatchDecisionDto): void {
+  protected approveDecision(decision: AiDispatchDecisionDto): void {
     this.toastService.confirm({
       message: `Are you sure you want to approve and execute this decision?\n\n${buildDecisionDetail(decision)}`,
       header: "Approve Decision",
@@ -203,7 +203,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
       acceptButtonStyleClass: "p-button-success",
       accept: async () => {
         try {
-          await this.api.invoke(approveDispatchDecision, { decisionId: decision.id! });
+          await this.api.invoke(approveAiDispatchDecision, { decisionId: decision.id! });
           this.toastService.showSuccess("Decision approved and executed");
           await this.loadData();
         } catch {
@@ -213,7 +213,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
     });
   }
 
-  protected rejectDecision(decision: DispatchDecisionDto): void {
+  protected rejectDecision(decision: AiDispatchDecisionDto): void {
     this.toastService.confirm({
       message: `Are you sure you want to reject this decision?\n\n${buildDecisionDetail(decision)}`,
       header: "Reject Decision",
@@ -221,7 +221,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
       acceptButtonStyleClass: "p-button-danger",
       accept: async () => {
         try {
-          await this.api.invoke(rejectDispatchDecision, { decisionId: decision.id!, body: {} });
+          await this.api.invoke(rejectAiDispatchDecision, { decisionId: decision.id!, body: {} });
           this.toastService.showSuccess("Decision rejected");
           await this.loadData();
         } catch {
@@ -231,7 +231,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
     });
   }
 
-  protected viewSession(session: DispatchSessionDto): void {
+  protected viewSession(session: AiDispatchSessionDto): void {
     this.router.navigate(["/ai-dispatch", session.id]);
   }
 }

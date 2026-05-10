@@ -62,18 +62,18 @@ Write tools create suggestions in Human-in-the-Loop mode and execute immediately
 All endpoints require `Permission.Dispatch.View` or `Permission.Dispatch.Manage` and the `AgenticDispatch` feature to be enabled.
 
 ```text
-POST   /dispatch/agent/run                         Trigger on-demand agent run
-POST   /dispatch/agent/cancel/{sessionId}           Cancel a running session
-GET    /dispatch/agent/sessions                     List sessions (paged)
-GET    /dispatch/agent/sessions/{sessionId}         Session detail with decisions
-GET    /dispatch/agent/pending                      All pending decisions
-POST   /dispatch/agent/decisions/{id}/approve       Approve a suggestion
-POST   /dispatch/agent/decisions/{id}/reject        Reject a suggestion
+POST   /ai/dispatch/run                         Trigger on-demand agent run
+POST   /ai/dispatch/cancel/{sessionId}           Cancel a running session
+GET    /ai/dispatch/sessions                     List sessions (paged)
+GET    /ai/dispatch/sessions/{sessionId}         Session detail with decisions
+GET    /ai/dispatch/pending                      All pending decisions
+POST   /ai/dispatch/decisions/{id}/approve       Approve a suggestion
+POST   /ai/dispatch/decisions/{id}/reject        Reject a suggestion
 ```
 
 ## Audit Trail
 
-Every agent run creates a **DispatchSession** with:
+Every agent run creates a **AiDispatchSession** with:
 
 - Mode (HumanInTheLoop / Autonomous)
 - Who triggered it (user or background job)
@@ -82,7 +82,7 @@ Every agent run creates a **DispatchSession** with:
 - Model used and provider
 - Agent's summary
 
-Each decision within a session is a **DispatchDecision** with:
+Each decision within a session is a **AiDispatchDecision** with:
 
 - Tool called and input parameters
 - Agent's reasoning
@@ -150,15 +150,15 @@ src/Infrastructure/Logistics.Infrastructure.AI/
 │   ├── OpenAiLlmProvider.cs             # OpenAI-compatible adapter
 │   └── LlmProviderFactory.cs            # Resolves provider from config
 ├── Services/
-│   ├── DispatchAgentService.cs          # Agent loop orchestration
-│   ├── DispatchConversationBuilder.cs   # Builds provider-agnostic conversation
-│   ├── DispatchDecisionProcessor.cs     # Tool call → decision entity processing
-│   ├── DispatchToolExecutor.cs          # Maps tool calls to MediatR
-│   ├── DispatchToolRegistry.cs          # Tool definitions (JSON Schema)
+│   ├── AiDispatchService.cs          # Agent loop orchestration
+│   ├── AiDispatchConversationBuilder.cs   # Builds provider-agnostic conversation
+│   ├── AiDispatchDecisionProcessor.cs     # Tool call → decision entity processing
+│   ├── AiDispatchToolExecutor.cs          # Maps tool calls to MediatR
+│   ├── AiDispatchToolRegistry.cs          # Tool definitions (JSON Schema)
 │   └── LlmPricing.cs                   # Token → USD cost calculator
-├── Tools/                               # Individual IDispatchTool implementations
+├── Tools/                               # Individual IAiDispatchTool implementations
 └── Prompts/
-    └── DispatchSystemPrompt.cs          # Dynamic system prompt builder
+    └── AiDispatchSystemPrompt.cs          # Dynamic system prompt builder
 ```
 
 `ILlmProvider` keeps SDK-specific code isolated to one file per provider. The agent loop, tools, and decision processor only deal with `LlmTypes`, the provider-agnostic records for requests, responses, messages, and tool calls.

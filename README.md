@@ -1,4 +1,4 @@
-# LogisticsX
+﻿# LogisticsX
 
 [![Build Status](https://github.com/suxrobgm/logistics-app/actions/workflows/build.yml/badge.svg)](https://github.com/suxrobgm/logistics-app/actions/workflows/build.yml)
 [![Deploy](https://github.com/suxrobGM/logistics-app/actions/workflows/deploy.yml/badge.svg)](https://github.com/suxrobGM/logistics-app/actions/workflows/deploy.yml)
@@ -101,9 +101,9 @@ Architecture: DDD + CQRS with MediatR, multi-tenant with one database per compan
 
 ## Screenshots
 
-|                     Sessions & Decisions                     |                           Agent Timeline                           |
-| :----------------------------------------------------------: | :----------------------------------------------------------------: |
-| ![Sessions](docs/images/tms-portal/ai-dispatch-sessions.png) | ![Timeline](docs/images/tms-portal/ai-dispatch-agent-timeline.png) |
+|                     Sessions & Decisions                     |                        Agent Timeline                        |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| ![Sessions](docs/images/tms-portal/ai-dispatch-sessions.png) | ![Timeline](docs/images/tms-portal/ai-dispatch-timeline.png) |
 
 <details>
 <summary>More screenshots</summary>

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools;
 
-internal sealed class CreateTripTool(IMediator mediator) : IDispatchTool
+internal sealed class CreateTripTool(IMediator mediator) : IAiDispatchTool
 {
     public string Name => "create_trip";
 

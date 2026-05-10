@@ -30,7 +30,7 @@ public static class PrivacyDefaults
     /// <summary>
     /// Dispatch session transcripts older than this are purged by the retention job.
     /// </summary>
-    public static readonly TimeSpan DispatchSessionRetention = TimeSpan.FromDays(730);
+    public static readonly TimeSpan AiDispatchSessionRetention = TimeSpan.FromDays(730);
 
     /// <summary>
     /// Maximum data export requests a single user can submit per 24h.

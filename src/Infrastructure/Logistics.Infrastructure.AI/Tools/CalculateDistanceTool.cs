@@ -4,7 +4,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Infrastructure.AI.Tools;
 
-internal sealed class CalculateDistanceTool : IDispatchTool
+internal sealed class CalculateDistanceTool : IAiDispatchTool
 {
     public string Name => "calculate_distance";
 

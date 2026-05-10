@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Logistics.Infrastructure.AI.Tools;
 
-internal sealed class GetUnassignedLoadsTool(IMediator mediator) : IDispatchTool
+internal sealed class GetUnassignedLoadsTool(IMediator mediator) : IAiDispatchTool
 {
     public string Name => "get_unassigned_loads";
 

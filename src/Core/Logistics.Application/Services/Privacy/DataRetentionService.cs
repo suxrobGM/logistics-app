@@ -15,7 +15,7 @@ internal sealed class DataRetentionService(
     {
         var now = DateTime.UtcNow;
         var notificationCutoff = now - PrivacyDefaults.NotificationRetention;
-        var dispatchCutoff = now - PrivacyDefaults.DispatchSessionRetention;
+        var dispatchCutoff = now - PrivacyDefaults.AiDispatchSessionRetention;
 
         var tenants = await masterUow.Repository<Tenant>().GetListAsync(ct: ct);
 
@@ -40,14 +40,14 @@ internal sealed class DataRetentionService(
                     tenantUow.Repository<Notification>().Delete(notification);
                 }
 
-                var oldSessions = await tenantUow.Repository<DispatchSession>()
+                var oldSessions = await tenantUow.Repository<AiDispatchSession>()
                     .Query()
                     .Where(s => s.StartedAt < dispatchCutoff)
                     .ToListAsync(ct);
 
                 foreach (var session in oldSessions)
                 {
-                    tenantUow.Repository<DispatchSession>().Delete(session);
+                    tenantUow.Repository<AiDispatchSession>().Delete(session);
                 }
 
                 if (oldNotifications.Count > 0 || oldSessions.Count > 0)

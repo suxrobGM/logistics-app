@@ -1,6 +1,6 @@
 import { Component, computed, input, output, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import type { DispatchDecisionDto } from "@logistics/shared/api";
+import type { AiDispatchDecisionDto } from "@logistics/shared/api";
 import { Icon, Stack, Surface } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
@@ -15,10 +15,10 @@ import { stripMarkdown } from "../../utils/markdown";
   imports: [ButtonModule, TagModule, TooltipModule, RouterLink, Icon, Stack, Surface],
 })
 export class DecisionCard {
-  public readonly decision = input.required<DispatchDecisionDto>();
+  public readonly decision = input.required<AiDispatchDecisionDto>();
   public readonly showSessionLink = input(false);
-  public readonly approve = output<DispatchDecisionDto>();
-  public readonly reject = output<DispatchDecisionDto>();
+  public readonly approve = output<AiDispatchDecisionDto>();
+  public readonly reject = output<AiDispatchDecisionDto>();
 
   protected readonly Labels = Labels;
   protected readonly stripMarkdown = stripMarkdown;

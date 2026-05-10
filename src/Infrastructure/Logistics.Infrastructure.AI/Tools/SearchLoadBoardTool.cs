@@ -3,7 +3,7 @@ using System.Text.Json.Nodes;
 
 namespace Logistics.Infrastructure.AI.Tools;
 
-internal sealed class SearchLoadBoardTool : IDispatchTool
+internal sealed class SearchLoadBoardTool : IAiDispatchTool
 {
     public string Name => "search_loadboard";
 

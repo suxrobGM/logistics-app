@@ -66,7 +66,7 @@
 ### Persistence / migration
 
 - Tenant DB migration: new tables `DataExportRequests`, `DataDeletionRequests`, `ConsentRecords`; add columns to `User`
-- Add `RetainUntil` (nullable DateTime) to: `Notification`, `TripTracking` (or whatever tracking entity exists), `DispatchSession`
+- Add `RetainUntil` (nullable DateTime) to: `Notification`, `TripTracking` (or whatever tracking entity exists), `AiDispatchSession`
 - Add `TenantSettings.RetentionDays` complex sub-record (TrackingDays, NotificationDays, etc.) — default values
 
 ## API

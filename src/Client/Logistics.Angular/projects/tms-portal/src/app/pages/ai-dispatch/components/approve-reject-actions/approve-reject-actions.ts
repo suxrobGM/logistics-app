@@ -1,5 +1,5 @@
 import { Component, input, output } from "@angular/core";
-import type { DispatchDecisionDto } from "@logistics/shared/api";
+import type { AiDispatchDecisionDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 
 @Component({
@@ -8,7 +8,7 @@ import { ButtonModule } from "primeng/button";
   imports: [ButtonModule],
 })
 export class ApproveRejectActions {
-  public readonly decision = input.required<DispatchDecisionDto>();
-  public readonly approve = output<DispatchDecisionDto>();
-  public readonly reject = output<DispatchDecisionDto>();
+  public readonly decision = input.required<AiDispatchDecisionDto>();
+  public readonly approve = output<AiDispatchDecisionDto>();
+  public readonly reject = output<AiDispatchDecisionDto>();
 }

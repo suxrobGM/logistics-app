@@ -160,20 +160,20 @@ MCP Client (Claude Desktop, Cursor, etc.)
   ├── ApiKeyAuthenticationHandler
   │     Parse tenant ID from key → resolve tenant → validate hash
   │
-  └── DispatchMcpTool (one per tool definition)
+  └── AiDispatchMcpTool (one per tool definition)
         ├── Feature gate check (MCP Server + Load Board)
-        └── IDispatchToolExecutor.ExecuteToolAsync()
-              └── IDispatchTool implementation (same as AI agent)
+        └── IAiDispatchToolExecutor.ExecuteToolAsync()
+              └── IAiDispatchTool implementation (same as AI agent)
 ```
 
-Tool definitions - names, descriptions, schemas - live in one registry (`DispatchToolRegistry`) shared by the AI dispatch agent and the MCP server. Add a tool to the registry and it shows up in both.
+Tool definitions - names, descriptions, schemas - live in one registry (`AiDispatchToolRegistry`) shared by the AI dispatch agent and the MCP server. Add a tool to the registry and it shows up in both.
 
 ### Project Structure
 
 ```text
 src/Presentation/Logistics.McpServer/
 ├── Registrar.cs                              # DI + MCP SDK + auth + rate limit
-├── DispatchMcpTool.cs                        # McpServerTool subclass wrapping DispatchToolDefinition
+├── AiDispatchMcpTool.cs                        # McpServerTool subclass wrapping AiDispatchToolDefinition
 └── Authentication/
     ├── ApiKeyDefaults.cs                     # Scheme constants
     └── ApiKeyAuthenticationHandler.cs        # API key validation + tenant resolution

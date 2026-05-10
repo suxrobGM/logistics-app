@@ -5,14 +5,14 @@ description: Add a new tool to the AI dispatch agent. Use when the user wants to
 
 # Add a Dispatch Tool
 
-Adds a new tool that the AI dispatch agent can call. Tools are auto-discovered via DI: each tool is a class implementing `IDispatchTool`, registered in `Registrar.cs`, and described in `DispatchToolRegistry.cs` for the LLM.
+Adds a new tool that the AI dispatch agent can call. Tools are auto-discovered via DI: each tool is a class implementing `IAiDispatchTool`, registered in `Registrar.cs`, and described in `AiDispatchToolRegistry.cs` for the LLM.
 
 ## Files that must change
 
 1. **`src/Infrastructure/Logistics.Infrastructure.AI/Tools/{ToolName}Tool.cs`** — the tool implementation
-2. **`src/Infrastructure/Logistics.Infrastructure.AI/Services/DispatchToolRegistry.cs`** — JSON schema + description for the LLM
+2. **`src/Infrastructure/Logistics.Infrastructure.AI/Services/AiDispatchToolRegistry.cs`** — JSON schema + description for the LLM
 3. **`src/Infrastructure/Logistics.Infrastructure.AI/Registrar.cs`** — DI registration
-4. **`src/Infrastructure/Logistics.Infrastructure.AI/Services/DispatchDecisionProcessor.cs`** — only if write tool, add name to `WriteTools` HashSet
+4. **`src/Infrastructure/Logistics.Infrastructure.AI/Services/AiDispatchDecisionProcessor.cs`** — only if write tool, add name to `WriteTools` HashSet
 5. **`tests/Logistics.Infrastructure.AI.Tests/Tools/{ToolName}ToolTests.cs`** — unit test
 
 ## Step-by-step
@@ -34,7 +34,7 @@ using System.Text.Json.Nodes;
 
 namespace Logistics.Infrastructure.AI.Tools;
 
-internal sealed class GetSomethingTool(ITenantUnitOfWork tenantUow) : IDispatchTool
+internal sealed class GetSomethingTool(ITenantUnitOfWork tenantUow) : IAiDispatchTool
 {
     public string Name => "get_something";
 
@@ -64,7 +64,7 @@ Conventions:
 
 ### 3. Add the schema definition
 
-In `DispatchToolRegistry.cs`, append to the `Tools` list. The JSON schema is what the LLM sees — descriptions matter:
+In `AiDispatchToolRegistry.cs`, append to the `Tools` list. The JSON schema is what the LLM sees — descriptions matter:
 
 ```csharp
 new("get_something",
@@ -84,15 +84,15 @@ Group with other read tools or other write tools (look at the `── Read Tools
 
 ### 4. Register in DI
 
-In `Registrar.cs`, add to the `AddDispatchAgentInfrastructure` method alongside the other tools:
+In `Registrar.cs`, add to the `AddAiDispatchInfrastructure` method alongside the other tools:
 
 ```csharp
-services.AddScoped<IDispatchTool, GetSomethingTool>();
+services.AddScoped<IAiDispatchTool, GetSomethingTool>();
 ```
 
 ### 5. If write tool, register in WriteTools
 
-In `DispatchDecisionProcessor.cs`, add the tool name to the `WriteTools` HashSet:
+In `AiDispatchDecisionProcessor.cs`, add the tool name to the `WriteTools` HashSet:
 
 ```csharp
 private static readonly HashSet<string> WriteTools =
@@ -136,10 +136,10 @@ public class GetSomethingToolTests
 
 Before reporting done:
 
-- [ ] Tool class created, implements `IDispatchTool`, name is `snake_case`
-- [ ] Registered in `Registrar.cs` (otherwise DI won't find it and `DispatchToolExecutor` returns "Unknown tool")
-- [ ] Added to `DispatchToolRegistry.Tools` list (otherwise the LLM never knows it exists)
-- [ ] **If write tool**: added to `DispatchDecisionProcessor.WriteTools` HashSet
+- [ ] Tool class created, implements `IAiDispatchTool`, name is `snake_case`
+- [ ] Registered in `Registrar.cs` (otherwise DI won't find it and `AiDispatchToolExecutor` returns "Unknown tool")
+- [ ] Added to `AiDispatchToolRegistry.Tools` list (otherwise the LLM never knows it exists)
+- [ ] **If write tool**: added to `AiDispatchDecisionProcessor.WriteTools` HashSet
 - [ ] Unit test added under `tests/Logistics.Infrastructure.AI.Tests/Tools/`
 - [ ] `dotnet build` passes
 - [ ] `dotnet test --filter "{ToolName}ToolTests"` passes
@@ -149,7 +149,7 @@ Before reporting done:
 - **Missing `WriteTools` registration**: Tool runs in Autonomous mode but is silently auto-executed in HumanInTheLoop instead of creating a `Suggested` decision.
 - **Throwing instead of returning `{error}`**: The agent loop catches exceptions but the agent loses the context of what went wrong.
 - **Verbose tool names or descriptions**: Every tool definition is sent on every API call — keep descriptions tight.
-- **Not registering in `Registrar.cs`**: `DispatchToolExecutor.toolMap` is built from DI; an unregistered tool is invisible at runtime.
+- **Not registering in `Registrar.cs`**: `AiDispatchToolExecutor.toolMap` is built from DI; an unregistered tool is invisible at runtime.
 
 ## Related
 

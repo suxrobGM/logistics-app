@@ -26,6 +26,205 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Logistics.Domain.Entities.AiDispatchDecision", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("ApprovedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("approved_by_user_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("ExecutedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("executed_at");
+
+                    b.Property<Guid?>("LoadId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("load_id");
+
+                    b.Property<string>("Reasoning")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("reasoning");
+
+                    b.Property<string>("RejectionReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("rejection_reason");
+
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("session_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<string>("ToolInput")
+                        .HasColumnType("text")
+                        .HasColumnName("tool_input");
+
+                    b.Property<string>("ToolName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("tool_name");
+
+                    b.Property<string>("ToolOutput")
+                        .HasColumnType("text")
+                        .HasColumnName("tool_output");
+
+                    b.Property<Guid?>("TripId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("trip_id");
+
+                    b.Property<Guid?>("TruckId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("truck_id");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id")
+                        .HasName("pk_ai_dispatch_decisions");
+
+                    b.HasIndex("SessionId")
+                        .HasDatabaseName("ix_ai_dispatch_decisions_session_id");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_ai_dispatch_decisions_status");
+
+                    b.ToTable("ai_dispatch_decisions", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.AiDispatchSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int>("CacheCreationTokens")
+                        .HasColumnType("integer")
+                        .HasColumnName("cache_creation_tokens");
+
+                    b.Property<int>("CacheReadTokens")
+                        .HasColumnType("integer")
+                        .HasColumnName("cache_read_tokens");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("completed_at");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<int>("DecisionCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("decision_count");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("error_message");
+
+                    b.Property<decimal>("EstimatedCostUsd")
+                        .HasColumnType("numeric")
+                        .HasColumnName("estimated_cost_usd");
+
+                    b.Property<int>("InputTokensUsed")
+                        .HasColumnType("integer")
+                        .HasColumnName("input_tokens_used");
+
+                    b.Property<string>("Instructions")
+                        .HasColumnType("text")
+                        .HasColumnName("instructions");
+
+                    b.Property<bool>("IsOverage")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_overage");
+
+                    b.Property<string>("Mode")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("mode");
+
+                    b.Property<string>("ModelUsed")
+                        .HasColumnType("text")
+                        .HasColumnName("model_used");
+
+                    b.Property<long>("Number")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("number");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Number"));
+
+                    b.Property<int>("OutputTokensUsed")
+                        .HasColumnType("integer")
+                        .HasColumnName("output_tokens_used");
+
+                    b.Property<int>("RequestCost")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("request_cost");
+
+                    b.Property<DateTime>("StartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("started_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Summary")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("summary");
+
+                    b.Property<Guid?>("TriggeredByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("triggered_by_user_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
+
+                    b.HasKey("Id")
+                        .HasName("pk_ai_dispatch_sessions");
+
+                    b.HasIndex("Number")
+                        .IsUnique()
+                        .HasDatabaseName("ix_ai_dispatch_sessions_number");
+
+                    b.ToTable("ai_dispatch_sessions", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.ApiKey", b =>
                 {
                     b.Property<Guid>("Id")
@@ -334,205 +533,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasDatabaseName("ix_customer_users_customer_id_user_id");
 
                     b.ToTable("customer_users", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.DispatchDecision", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid?>("ApprovedByUserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("approved_by_user_id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime?>("ExecutedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("executed_at");
-
-                    b.Property<Guid?>("LoadId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("load_id");
-
-                    b.Property<string>("Reasoning")
-                        .IsRequired()
-                        .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)")
-                        .HasColumnName("reasoning");
-
-                    b.Property<string>("RejectionReason")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)")
-                        .HasColumnName("rejection_reason");
-
-                    b.Property<Guid>("SessionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("session_id");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("status");
-
-                    b.Property<string>("ToolInput")
-                        .HasColumnType("text")
-                        .HasColumnName("tool_input");
-
-                    b.Property<string>("ToolName")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("tool_name");
-
-                    b.Property<string>("ToolOutput")
-                        .HasColumnType("text")
-                        .HasColumnName("tool_output");
-
-                    b.Property<Guid?>("TripId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("trip_id");
-
-                    b.Property<Guid?>("TruckId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("truck_id");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("type");
-
-                    b.HasKey("Id")
-                        .HasName("pk_dispatch_decisions");
-
-                    b.HasIndex("SessionId")
-                        .HasDatabaseName("ix_dispatch_decisions_session_id");
-
-                    b.HasIndex("Status")
-                        .HasDatabaseName("ix_dispatch_decisions_status");
-
-                    b.ToTable("dispatch_decisions", (string)null);
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.DispatchSession", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<int>("CacheCreationTokens")
-                        .HasColumnType("integer")
-                        .HasColumnName("cache_creation_tokens");
-
-                    b.Property<int>("CacheReadTokens")
-                        .HasColumnType("integer")
-                        .HasColumnName("cache_read_tokens");
-
-                    b.Property<DateTime?>("CompletedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("completed_at");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("CreatedAt")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("CreatedBy");
-
-                    b.Property<int>("DecisionCount")
-                        .HasColumnType("integer")
-                        .HasColumnName("decision_count");
-
-                    b.Property<string>("ErrorMessage")
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)")
-                        .HasColumnName("error_message");
-
-                    b.Property<decimal>("EstimatedCostUsd")
-                        .HasColumnType("numeric")
-                        .HasColumnName("estimated_cost_usd");
-
-                    b.Property<int>("InputTokensUsed")
-                        .HasColumnType("integer")
-                        .HasColumnName("input_tokens_used");
-
-                    b.Property<string>("Instructions")
-                        .HasColumnType("text")
-                        .HasColumnName("instructions");
-
-                    b.Property<bool>("IsOverage")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_overage");
-
-                    b.Property<string>("Mode")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("mode");
-
-                    b.Property<string>("ModelUsed")
-                        .HasColumnType("text")
-                        .HasColumnName("model_used");
-
-                    b.Property<long>("Number")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("number");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Number"));
-
-                    b.Property<int>("OutputTokensUsed")
-                        .HasColumnType("integer")
-                        .HasColumnName("output_tokens_used");
-
-                    b.Property<int>("RequestCost")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(1)
-                        .HasColumnName("request_cost");
-
-                    b.Property<DateTime>("StartedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("started_at");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("status");
-
-                    b.Property<string>("Summary")
-                        .HasMaxLength(4000)
-                        .HasColumnType("character varying(4000)")
-                        .HasColumnName("summary");
-
-                    b.Property<Guid?>("TriggeredByUserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("triggered_by_user_id");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("LastModifiedAt");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("LastModifiedBy");
-
-                    b.HasKey("Id")
-                        .HasName("pk_dispatch_sessions");
-
-                    b.HasIndex("Number")
-                        .IsUnique()
-                        .HasDatabaseName("ix_dispatch_sessions_number");
-
-                    b.ToTable("dispatch_sessions", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Document", b =>
@@ -4911,6 +4911,18 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.HasDiscriminator().HasValue("delivery");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.AiDispatchDecision", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.AiDispatchSession", "Session")
+                        .WithMany("Decisions")
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_ai_dispatch_decisions_ai_dispatch_session_session_id");
+
+                    b.Navigation("Session");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Container", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.Terminal", "CurrentTerminal")
@@ -4932,18 +4944,6 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                         .HasConstraintName("fk_customer_users_customers_customer_id");
 
                     b.Navigation("Customer");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.DispatchDecision", b =>
-                {
-                    b.HasOne("Logistics.Domain.Entities.DispatchSession", "Session")
-                        .WithMany("Decisions")
-                        .HasForeignKey("SessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_dispatch_decisions_dispatch_session_session_id");
-
-                    b.Navigation("Session");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Document", b =>
@@ -5678,14 +5678,14 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Tenant
                     b.Navigation("TripStop");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.AiDispatchSession", b =>
+                {
+                    b.Navigation("Decisions");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Customer", b =>
                 {
                     b.Navigation("Invoices");
-                });
-
-            modelBuilder.Entity("Logistics.Domain.Entities.DispatchSession", b =>
-                {
-                    b.Navigation("Decisions");
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.Employee", b =>

@@ -12,7 +12,7 @@ namespace Logistics.Infrastructure.AI.Tools;
 /// Read tool: safe to call in any mode. Backed by <c>PreviewInvoiceTaxQuery</c>, which routes
 /// through the configured <c>ITaxCalculator</c> (Stripe Tax in production, Manual fallback).
 /// </summary>
-internal sealed class PreviewTaxCalculationTool(IMediator mediator) : IDispatchTool
+internal sealed class PreviewTaxCalculationTool(IMediator mediator) : IAiDispatchTool
 {
     public string Name => "preview_tax_calculation";
 

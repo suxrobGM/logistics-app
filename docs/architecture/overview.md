@@ -259,8 +259,8 @@ Real-time and outbound messaging.
 LLM dispatch agent and tool registry.
 
 - `ILlmProvider` adapter pattern with `AnthropicLlmProvider` (Claude SDK) and `OpenAiLlmProvider` (OpenAI-compatible: OpenAI, DeepSeek, GLM)
-- `DispatchAgentService` agent loop (max 25 iterations, prompt caching, extended thinking)
-- `DispatchToolRegistry` - shared tool definitions used by both the agent and the MCP server
+- `AiDispatchService` agent loop (max 25 iterations, prompt caching, extended thinking)
+- `AiDispatchToolRegistry` - shared tool definitions used by both the agent and the MCP server
 - Quota tracking with multiplier-based weekly limits (1x / 5x / 10x by model tier)
 - Model tier gating by subscription plan (Base / Premium / Ultra)
 
@@ -316,13 +316,13 @@ Load board providers: DAT, Truckstop, 123Loadboard, and a Demo provider. Search 
 
 ## Presentation Projects
 
-| Project                    | Role                                                                                               |
-| -------------------------- | -------------------------------------------------------------------------------------------------- |
-| `Logistics.API`            | REST API, SignalR hubs, Hangfire background jobs, webhooks (Stripe, ELD)                           |
-| `Logistics.IdentityServer` | OAuth2 / OIDC via Duende IdentityServer, JWT issuance, user management                             |
-| `Logistics.McpServer`      | MCP over Streamable HTTP at `/mcp`; exposes `DispatchToolRegistry` to Claude Desktop, Cursor, etc. |
-| `Logistics.TelegramBot`    | Telegram bot worker for driver / dispatcher commands                                               |
-| `Logistics.DbMigrator`     | Standalone EF Core migrations runner (master + tenant)                                             |
+| Project                    | Role                                                                                                 |
+| -------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `Logistics.API`            | REST API, SignalR hubs, Hangfire background jobs, webhooks (Stripe, ELD)                             |
+| `Logistics.IdentityServer` | OAuth2 / OIDC via Duende IdentityServer, JWT issuance, user management                               |
+| `Logistics.McpServer`      | MCP over Streamable HTTP at `/mcp`; exposes `AiDispatchToolRegistry` to Claude Desktop, Cursor, etc. |
+| `Logistics.TelegramBot`    | Telegram bot worker for driver / dispatcher commands                                                 |
+| `Logistics.DbMigrator`     | Standalone EF Core migrations runner (master + tenant)                                               |
 
 ## Multi-Tenancy
 

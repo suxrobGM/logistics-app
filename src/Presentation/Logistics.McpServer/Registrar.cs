@@ -14,9 +14,9 @@ public static class Registrar
     public static IServiceCollection AddMcpServerInfrastructure(this IServiceCollection services)
     {
         // Build MCP tools dynamically from the dispatch tool registry (single source of truth)
-        var registry = services.BuildServiceProvider().GetRequiredService<IDispatchToolRegistry>();
+        var registry = services.BuildServiceProvider().GetRequiredService<IAiDispatchToolRegistry>();
         var mcpTools = registry.GetToolDefinitions(includeLoadBoardTools: true)
-            .Select(def => (McpServerTool)new DispatchMcpTool(def))
+            .Select(def => (McpServerTool)new AiDispatchMcpTool(def))
             .ToList();
 
         // MCP server with Streamable HTTP transport and server instructions

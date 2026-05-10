@@ -1,8 +1,8 @@
 ---
 paths:
   - "src/Infrastructure/Logistics.Infrastructure.AI/**/*.cs"
-  - "src/Core/Logistics.Application/Commands/Dispatch/**/*.cs"
-  - "src/Core/Logistics.Application/Queries/Dispatch/**/*.cs"
+  - "src/Core/Logistics.Application/Commands/AiDispatch/**/*.cs"
+  - "src/Core/Logistics.Application/Queries/AiDispatch/**/*.cs"
   - "src/Presentation/Logistics.McpServer/**/*.cs"
 ---
 
@@ -20,8 +20,8 @@ This file is conventions only.
 All AI agent code lives in `src/Infrastructure/Logistics.Infrastructure.AI/`:
 
 - `Providers/` — `ILlmProvider` interface, `LlmTypes`, `AnthropicLlmProvider`, `OpenAiLlmProvider`, `LlmProviderFactory`
-- `Services/` — Agent loop (`DispatchAgentService`), `DispatchToolExecutor`, `DispatchToolRegistry`, `DispatchDecisionProcessor`, `DispatchConversationBuilder`, `LlmPricing`
-- `Tools/` — Individual tool implementations (one per file, each implementing `IDispatchTool`)
+- `Services/` — Agent loop (`AiDispatchService`), `AiDispatchToolExecutor`, `AiDispatchToolRegistry`, `AiDispatchDecisionProcessor`, `AiDispatchConversationBuilder`, `LlmPricing`
+- `Tools/` — Individual tool implementations (one per file, each implementing `IAiDispatchTool`)
 - `Prompts/` — System prompt builders
 - `Options/` — Configuration (`LlmOptions`, `LlmProviderOptions`)
 
@@ -37,17 +37,17 @@ Provider-agnostic via the `ILlmProvider` adapter pattern:
 
 ## Tools
 
-Each tool is its own class implementing `IDispatchTool`:
+Each tool is its own class implementing `IAiDispatchTool`:
 
 ```csharp
-internal sealed class GetSomethingTool(ITenantUnitOfWork tenantUow) : IDispatchTool
+internal sealed class GetSomethingTool(ITenantUnitOfWork tenantUow) : IAiDispatchTool
 {
     public string Name => "get_something";
     public Task<string> ExecuteAsync(JsonNode input, CancellationToken ct) { /* ... */ }
 }
 ```
 
-`DispatchToolExecutor` builds a name → tool dictionary from DI-injected `IEnumerable<IDispatchTool>`. Tools must be registered in `Registrar.cs` with `services.AddScoped<IDispatchTool, MyTool>()`. Their schemas live in `DispatchToolRegistry.Tools`.
+`AiDispatchToolExecutor` builds a name → tool dictionary from DI-injected `IEnumerable<IAiDispatchTool>`. Tools must be registered in `Registrar.cs` with `services.AddScoped<IAiDispatchTool, MyTool>()`. Their schemas live in `AiDispatchToolRegistry.Tools`.
 
 Tool names use **snake_case**. Schemas follow JSON Schema (compatible with both Claude and OpenAI function calling).
 
@@ -56,11 +56,11 @@ Tool names use **snake_case**. Schemas follow JSON Schema (compatible with both 
 - **Read tools** — pure queries. Always execute immediately in both modes.
 - **Write tools** — mutate state. In `HumanInTheLoop` → create `Suggested` decisions for approval. In `Autonomous` → execute immediately.
 
-A write tool's name **must** be added to `DispatchDecisionProcessor.WriteTools` HashSet. Missing this entry silently breaks HumanInTheLoop approvals.
+A write tool's name **must** be added to `AiDispatchDecisionProcessor.WriteTools` HashSet. Missing this entry silently breaks HumanInTheLoop approvals.
 
 ## Agent loop pattern
 
-`DispatchAgentService` loop: send message → receive tool calls → record decision → execute or suggest → send tool results → repeat until `end_turn`.
+`AiDispatchService` loop: send message → receive tool calls → record decision → execute or suggest → send tool results → repeat until `end_turn`.
 
 Max **25 iterations per session** to prevent runaway token usage.
 
@@ -105,7 +105,7 @@ Plans: Starter = Base, Professional = Premium, Enterprise = Ultra.
 Weekly AI request quotas use multiplier-based counting (not flat session counts):
 
 - `SubscriptionPlan.WeeklyAiRequestQuota` — weekly limit in request units
-- `DispatchSession.RequestCost` — multiplier (1, 5, or 10) set from `LlmPricing.GetMultiplier()`
+- `AiDispatchSession.RequestCost` — multiplier (1, 5, or 10) set from `LlmPricing.GetMultiplier()`
 - `AiQuotaService` sums `RequestCost` across completed sessions for the week
 - Tenant-facing API returns usage as a percentage (no raw numbers)
 - Overage billing via Stripe: `LlmPricing.GetOverageBillingUnits()` returns 1 / 2 / 4 at $0.20/unit
@@ -114,7 +114,7 @@ Weekly AI request quotas use multiplier-based counting (not flat session counts)
 
 ## Model selection priority
 
-Resolution order in `DispatchConversationBuilder`:
+Resolution order in `AiDispatchConversationBuilder`:
 
 1. **Tenant selection** — `TenantSettings.LlmModel` (set by tenant in AI Settings, or by admin in tenant-edit)
 2. **System default** — `LlmProviderOptions.Model` from appsettings

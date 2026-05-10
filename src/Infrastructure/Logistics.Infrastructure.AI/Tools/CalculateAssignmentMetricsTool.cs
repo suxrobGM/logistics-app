@@ -5,7 +5,7 @@ using Logistics.Domain.Persistence;
 
 namespace Logistics.Infrastructure.AI.Tools;
 
-internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow) : IDispatchTool
+internal sealed class CalculateAssignmentMetricsTool(ITenantUnitOfWork tenantUow) : IAiDispatchTool
 {
     private const double KmToMiles = 0.621371;
 

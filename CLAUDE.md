@@ -55,5 +55,5 @@ cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 - Endpoint: `/mcp` (Streamable HTTP)
 - Auth: API key header, format `logsx_{tenantId}_{random}`. Validated by `ApiKeyAuthenticationHandler`, which sets `HttpContext.Items["McpTenantId"]` so `TenantService` resolves the tenant without an `X-Tenant` header
 - Rate limit: 100 req/min per key
-- Tools come from `DispatchToolRegistry` — single source of truth shared with the AI dispatch agent. Add a tool in one place, both surfaces pick it up
+- Tools come from `AiDispatchToolRegistry` — single source of truth shared with the AI dispatch agent. Add a tool in one place, both surfaces pick it up
 - Project: `src/Presentation/Logistics.McpServer/`

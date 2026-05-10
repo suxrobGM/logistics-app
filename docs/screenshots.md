@@ -1,4 +1,4 @@
-# Screenshots
+﻿# Screenshots
 
 Visual tour of LogisticsX applications.
 
@@ -12,7 +12,7 @@ The dispatcher and manager web interface for managing loads, customers, operatio
 
 ![AI Dispatch Session Detail](images/tms-portal/ai-dispatch-session-detail.png)
 
-![AI Dispatch Agent Timeline](images/tms-portal/ai-dispatch-agent-timeline.png)
+![AI Dispatch Agent Timeline](images/tms-portal/ai-ai-dispatch-timeline.png)
 
 ### Dashboard
 
@@ -72,24 +72,24 @@ Native driver app built with Kotlin Multiplatform and Compose, supporting both A
 
 ### Dashboard & Statistics
 
-| Dashboard | Statistics |
-|:---------:|:----------:|
+|                                  Dashboard                                   |                                Statistics                                |
+| :--------------------------------------------------------------------------: | :----------------------------------------------------------------------: |
 | ![Dashboard](../src/Client/Logistics.DriverApp/docs/images/screenshot_1.png) | ![Stats](../src/Client/Logistics.DriverApp/docs/images/screenshot_2.png) |
 
 ### Charts & Analytics
 
-| Bar Chart | Line Chart |
-|:---------:|:----------:|
+|                                  Bar Chart                                   |                                  Line Chart                                   |
+| :--------------------------------------------------------------------------: | :---------------------------------------------------------------------------: |
 | ![Bar Chart](../src/Client/Logistics.DriverApp/docs/images/screenshot_3.png) | ![Past Loads](../src/Client/Logistics.DriverApp/docs/images/screenshot_4.png) |
 
 ### Load Details & Maps
 
-| Load Details | Map View |
-|:------------:|:--------:|
+|                                  Load Details                                   |                                Map View                                 |
+| :-----------------------------------------------------------------------------: | :---------------------------------------------------------------------: |
 | ![Load Details](../src/Client/Logistics.DriverApp/docs/images/screenshot_5.png) | ![Maps](../src/Client/Logistics.DriverApp/docs/images/screenshot_6.png) |
 
 ### Account & Settings
 
-| Account | Settings |
-|:-------:|:--------:|
+|                                  Account                                   |                                  Settings                                   |
+| :------------------------------------------------------------------------: | :-------------------------------------------------------------------------: |
 | ![Account](../src/Client/Logistics.DriverApp/docs/images/screenshot_7.png) | ![Settings](../src/Client/Logistics.DriverApp/docs/images/screenshot_8.png) |

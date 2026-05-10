@@ -23,31 +23,31 @@ public static class Registrar
         services.AddSingleton<LlmProviderFactory>();
 
         // Agent services
-        services.AddSingleton<DispatchSessionCancellationRegistry>();
-        services.AddScoped<IDispatchAgentService, DispatchAgentService>();
-        services.AddScoped<DispatchConversationBuilder>();
-        services.AddScoped<DispatchDecisionProcessor>();
-        services.AddScoped<IDispatchToolExecutor, DispatchToolExecutor>();
-        services.AddSingleton<IDispatchToolRegistry, DispatchToolRegistry>();
+        services.AddSingleton<AiDispatchSessionCancellationRegistry>();
+        services.AddScoped<IAiDispatchService, AiDispatchService>();
+        services.AddScoped<AiDispatchConversationBuilder>();
+        services.AddScoped<AiDispatchDecisionProcessor>();
+        services.AddScoped<IAiDispatchToolExecutor, AiDispatchToolExecutor>();
+        services.AddSingleton<IAiDispatchToolRegistry, AiDispatchToolRegistry>();
 
         // Individual dispatch tools
-        services.AddScoped<IDispatchTool, GetUnassignedLoadsTool>();
-        services.AddScoped<IDispatchTool, GetAvailableTrucksTool>();
-        services.AddScoped<IDispatchTool, GetDriverHosTool>();
-        services.AddScoped<IDispatchTool, CheckHosFeasibilityTool>();
-        services.AddScoped<IDispatchTool, BatchCheckHosFeasibilityTool>();
-        services.AddScoped<IDispatchTool, CheckDispatchEligibilityTool>();
-        services.AddScoped<IDispatchTool, CalculateDistanceTool>();
-        services.AddScoped<IDispatchTool, OptimizeTripStopsTool>();
-        services.AddScoped<IDispatchTool, AssignLoadToTruckTool>();
-        services.AddScoped<IDispatchTool, CreateTripTool>();
-        services.AddScoped<IDispatchTool, DispatchTripTool>();
-        services.AddScoped<IDispatchTool, CalculateAssignmentMetricsTool>();
-        services.AddScoped<IDispatchTool, PreviewTaxCalculationTool>();
+        services.AddScoped<IAiDispatchTool, GetUnassignedLoadsTool>();
+        services.AddScoped<IAiDispatchTool, GetAvailableTrucksTool>();
+        services.AddScoped<IAiDispatchTool, GetDriverHosTool>();
+        services.AddScoped<IAiDispatchTool, CheckHosFeasibilityTool>();
+        services.AddScoped<IAiDispatchTool, BatchCheckHosFeasibilityTool>();
+        services.AddScoped<IAiDispatchTool, CheckDispatchEligibilityTool>();
+        services.AddScoped<IAiDispatchTool, CalculateDistanceTool>();
+        services.AddScoped<IAiDispatchTool, OptimizeTripStopsTool>();
+        services.AddScoped<IAiDispatchTool, AssignLoadToTruckTool>();
+        services.AddScoped<IAiDispatchTool, CreateTripTool>();
+        services.AddScoped<IAiDispatchTool, DispatchTripTool>();
+        services.AddScoped<IAiDispatchTool, CalculateAssignmentMetricsTool>();
+        services.AddScoped<IAiDispatchTool, PreviewTaxCalculationTool>();
 
         // Load board tools (conditionally included in tool definitions based on tenant feature flag)
-        services.AddScoped<IDispatchTool, SearchLoadBoardTool>();
-        services.AddScoped<IDispatchTool, BookLoadBoardLoadTool>();
+        services.AddScoped<IAiDispatchTool, SearchLoadBoardTool>();
+        services.AddScoped<IAiDispatchTool, BookLoadBoardLoadTool>();
 
         return services;
     }
