@@ -1,292 +1,284 @@
-<div class="flex flex-col gap-6 md:flex-row">
+<ui-stack direction="row" gap="6" wrap class="md:flex-nowrap">
   <div class="w-full md:w-1/2">
     @if (isLoading()) {
       <p-progress-spinner />
     }
 
     <form [formGroup]="form" (ngSubmit)="submit()">
-      <ui-validation-summary [form]="form" />
+      <ui-stack gap="6">
+        <ui-validation-summary [form]="form" />
 
-      <!-- Load Information Section -->
-      <div class="mb-6">
-        <h3
-          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
-        >
-          <i class="pi pi-box"></i>
-          Load Information
-        </h3>
-        <div class="border-default bg-elevated rounded-lg border p-4">
-          <ui-form-field label="Name" for="name" [required]="true">
-            <input
-              pInputText
-              id="name"
-              formControlName="name"
-              type="text"
-              placeholder="Load name"
-            />
-          </ui-form-field>
-          <ui-form-field label="Load Type" for="type" [required]="true">
-            <p-select formControlName="type" [options]="loadTypes" />
-          </ui-form-field>
-          <ui-form-field label="Source" for="source" [required]="true" class="mb-0">
-            <p-select formControlName="source" [options]="loadSources" />
-          </ui-form-field>
-        </div>
-      </div>
-
-      @if (initial()?.tripNumber && initial()?.tripId) {
-        <!-- Trip Section (only shown when associated with a trip) -->
-        <div class="mb-6">
-          <h3
-            class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
-          >
-            <i class="pi pi-directions"></i>
-            Trip Association
-          </h3>
-          <div class="border-default bg-elevated rounded-lg border p-4">
-            <ui-form-field label="Trip" for="tripNumber" class="mb-0">
+        <!-- Load Information Section -->
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="box" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Load Information</ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
+            <ui-form-field label="Name" for="name" [required]="true">
               <input
                 pInputText
-                id="tripNumber"
-                formControlName="tripNumber"
+                id="name"
+                formControlName="name"
                 type="text"
-                placeholder="Trip"
+                placeholder="Load name"
               />
             </ui-form-field>
-          </div>
-        </div>
-      }
+            <ui-form-field label="Load Type" for="type" [required]="true">
+              <p-select formControlName="type" [options]="loadTypes" />
+            </ui-form-field>
+            <ui-form-field label="Source" for="source" [required]="true" class="mb-0">
+              <p-select formControlName="source" [options]="loadSources" />
+            </ui-form-field>
+          </ui-surface>
+        </ui-stack>
 
-      <!-- Customer Section -->
-      <div class="mb-6">
-        <h3
-          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
-        >
-          <i class="pi pi-building"></i>
-          Customer
-        </h3>
-        <div class="border-default bg-elevated rounded-lg border p-4">
-          <ui-form-field label="Customer" for="customer" [required]="true" class="mb-0">
-            <app-search-customer formControlName="customer" />
-          </ui-form-field>
-        </div>
-      </div>
-
-      <!-- Route Section -->
-      <div class="mb-6">
-        <h3
-          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
-        >
-          <i class="pi pi-map-marker"></i>
-          Route
-        </h3>
-        <div class="border-default bg-elevated rounded-lg border p-4">
-          <ui-form-field label="Origin Address" for="originAddress" [required]="true">
-            <app-address-autocomplete
-              field="originAddress"
-              formControlName="originAddress"
-              [forceSelection]="true"
-              (selectedAddress)="updateOrigin($event)"
-            />
-          </ui-form-field>
-
-          <ui-form-field
-            label="Destination Address"
-            for="destinationAddress"
-            [required]="true"
-            class="mb-0"
-          >
-            <app-address-autocomplete
-              field="destinationAddress"
-              formControlName="destinationAddress"
-              [forceSelection]="true"
-              (selectedAddress)="updateDestination($event)"
-            />
-          </ui-form-field>
-        </div>
-      </div>
-
-      <!-- Schedule Section (collapsable) -->
-      <p-fieldset legend="Schedule" [toggleable]="true" [collapsed]="true" styleClass="mb-6">
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <ui-form-field label="Requested Pickup Date" for="requestedPickupDate">
-            <p-datepicker
-              formControlName="requestedPickupDate"
-              [showIcon]="true"
-              [showTime]="true"
-              inputId="requestedPickupDate"
-            />
-          </ui-form-field>
-          <ui-form-field label="Requested Delivery Date" for="requestedDeliveryDate" class="mb-0">
-            <p-datepicker
-              formControlName="requestedDeliveryDate"
-              [showIcon]="true"
-              [showTime]="true"
-              inputId="requestedDeliveryDate"
-            />
-          </ui-form-field>
-        </div>
-      </p-fieldset>
-
-      <!-- Intermodal Section (collapsable) -->
-      <p-fieldset
-        legend="Intermodal (optional)"
-        [toggleable]="true"
-        [collapsed]="true"
-        styleClass="mb-6"
-      >
-        <ui-form-field label="Container" for="container">
-          <app-search-container formControlName="container" />
-        </ui-form-field>
-        <ui-form-field label="Origin Terminal" for="originTerminal">
-          <app-search-terminal formControlName="originTerminal" />
-        </ui-form-field>
-        <ui-form-field label="Destination Terminal" for="destinationTerminal" class="mb-0">
-          <app-search-terminal formControlName="destinationTerminal" />
-        </ui-form-field>
-      </p-fieldset>
-
-      <!-- Hazmat / ADR Section -->
-      <p-fieldset
-        legend="Hazmat / ADR"
-        [toggleable]="true"
-        [collapsed]="!form.controls.isHazmat.value"
-        styleClass="mb-6"
-      >
-        <ui-form-field label="Contains hazardous materials" for="isHazmat">
-          <p-checkbox inputId="isHazmat" formControlName="isHazmat" [binary]="true" />
-        </ui-form-field>
-
-        @if (form.controls.isHazmat.value) {
-          <ui-form-field label="Hazmat class" for="hazmatClass" hint="UN/ADR classification">
-            <p-select
-              id="hazmatClass"
-              formControlName="hazmatClass"
-              [options]="hazmatClasses"
-              optionLabel="label"
-              optionValue="value"
-              placeholder="Select class"
-              appendTo="body"
-            />
-          </ui-form-field>
-
-          <ui-form-field
-            label="UN number"
-            for="unNumber"
-            hint="e.g., UN1203 for petrol"
-            class="mb-0"
-            [control]="form.controls.unNumber"
-          >
-            <input
-              pInputText
-              id="unNumber"
-              formControlName="unNumber"
-              type="text"
-              maxlength="16"
-              placeholder="UN0000"
-              style="text-transform: uppercase"
-            />
-          </ui-form-field>
+        @if (initial()?.tripNumber && initial()?.tripId) {
+          <!-- Trip Section (only shown when associated with a trip) -->
+          <ui-stack tag="section" gap="3">
+            <ui-stack direction="row" gap="2" align="center">
+              <ui-icon name="directions" color="secondary" />
+              <ui-typography variant="overline" color="secondary">Trip Association</ui-typography>
+            </ui-stack>
+            <ui-surface variant="elevated" [border]="true">
+              <ui-form-field label="Trip" for="tripNumber" class="mb-0">
+                <input
+                  pInputText
+                  id="tripNumber"
+                  formControlName="tripNumber"
+                  type="text"
+                  placeholder="Trip"
+                />
+              </ui-form-field>
+            </ui-surface>
+          </ui-stack>
         }
-      </p-fieldset>
 
-      <!-- Notes Section (collapsable) -->
-      <p-fieldset legend="Notes" [toggleable]="true" [collapsed]="true" styleClass="mb-6">
-        <ui-form-field label="Notes" for="notes" hint="Max 2000 characters" class="mb-0">
-          <textarea
-            pTextarea
-            id="notes"
-            formControlName="notes"
-            rows="3"
-            maxlength="2000"
-          ></textarea>
-        </ui-form-field>
-      </p-fieldset>
+        <!-- Customer Section -->
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="building" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Customer</ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
+            <ui-form-field label="Customer" for="customer" [required]="true" class="mb-0">
+              <app-search-customer formControlName="customer" />
+            </ui-form-field>
+          </ui-surface>
+        </ui-stack>
 
-      <!-- Pricing Section -->
-      <div class="mb-6">
-        <h3
-          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
+        <!-- Route Section -->
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="map-marker" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Route</ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
+            <ui-form-field label="Origin Address" for="originAddress" [required]="true">
+              <app-address-autocomplete
+                field="originAddress"
+                formControlName="originAddress"
+                [forceSelection]="true"
+                (selectedAddress)="updateOrigin($event)"
+              />
+            </ui-form-field>
+
+            <ui-form-field
+              label="Destination Address"
+              for="destinationAddress"
+              [required]="true"
+              class="mb-0"
+            >
+              <app-address-autocomplete
+                field="destinationAddress"
+                formControlName="destinationAddress"
+                [forceSelection]="true"
+                (selectedAddress)="updateDestination($event)"
+              />
+            </ui-form-field>
+          </ui-surface>
+        </ui-stack>
+
+        <!-- Schedule Section (collapsable) -->
+        <p-fieldset legend="Schedule" [toggleable]="true" [collapsed]="true">
+          <ui-grid container spacing="4">
+            <ui-grid [size]="{ xs: 12, md: 6 }">
+              <ui-form-field label="Requested Pickup Date" for="requestedPickupDate" class="mb-0">
+                <p-datepicker
+                  formControlName="requestedPickupDate"
+                  [showIcon]="true"
+                  [showTime]="true"
+                  inputId="requestedPickupDate"
+                />
+              </ui-form-field>
+            </ui-grid>
+            <ui-grid [size]="{ xs: 12, md: 6 }">
+              <ui-form-field
+                label="Requested Delivery Date"
+                for="requestedDeliveryDate"
+                class="mb-0"
+              >
+                <p-datepicker
+                  formControlName="requestedDeliveryDate"
+                  [showIcon]="true"
+                  [showTime]="true"
+                  inputId="requestedDeliveryDate"
+                />
+              </ui-form-field>
+            </ui-grid>
+          </ui-grid>
+        </p-fieldset>
+
+        <!-- Intermodal Section (collapsable) -->
+        <p-fieldset legend="Intermodal (optional)" [toggleable]="true" [collapsed]="true">
+          <ui-form-field label="Container" for="container">
+            <app-search-container formControlName="container" />
+          </ui-form-field>
+          <ui-form-field label="Origin Terminal" for="originTerminal">
+            <app-search-terminal formControlName="originTerminal" />
+          </ui-form-field>
+          <ui-form-field label="Destination Terminal" for="destinationTerminal" class="mb-0">
+            <app-search-terminal formControlName="destinationTerminal" />
+          </ui-form-field>
+        </p-fieldset>
+
+        <!-- Hazmat / ADR Section -->
+        <p-fieldset
+          legend="Hazmat / ADR"
+          [toggleable]="true"
+          [collapsed]="!form.controls.isHazmat.value"
         >
-          <i class="pi pi-dollar"></i>
-          Pricing & Distance
-        </h3>
-        <div class="border-default bg-elevated rounded-lg border p-4">
-          <ui-form-field label="Delivery Cost" for="deliveryCost" [required]="true">
-            <p-inputgroup>
-              <p-inputgroup-addon>$$</p-inputgroup-addon>
-              <p-input-number id="deliveryCost" formControlName="deliveryCost" [min]="0" />
-            </p-inputgroup>
+          <ui-form-field label="Contains hazardous materials" for="isHazmat">
+            <p-checkbox inputId="isHazmat" formControlName="isHazmat" [binary]="true" />
           </ui-form-field>
 
-          <ui-form-field label="Estimated Distance" for="distance" class="mb-0">
-            <p-inputgroup>
-              <p-inputgroup-addon>mi</p-inputgroup-addon>
-              <p-input-number id="distance" formControlName="distance" [min]="0" />
-            </p-inputgroup>
-          </ui-form-field>
-        </div>
-      </div>
+          @if (form.controls.isHazmat.value) {
+            <ui-form-field label="Hazmat class" for="hazmatClass" hint="UN/ADR classification">
+              <p-select
+                id="hazmatClass"
+                formControlName="hazmatClass"
+                [options]="hazmatClasses"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select class"
+                appendTo="body"
+              />
+            </ui-form-field>
 
-      <!-- Assignment Section -->
-      <div class="mb-6">
-        <h3
-          class="text-secondary mb-3 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
-        >
-          <i class="pi pi-users"></i>
-          Assignment
-        </h3>
-        <div class="border-default bg-elevated rounded-lg border p-4">
-          <ui-form-field label="Assigned Dispatcher" for="dispatcherName">
-            <input
-              pInputText
-              id="dispatcherName"
-              formControlName="assignedDispatcherName"
-              type="text"
-            />
-          </ui-form-field>
-
-          @if (canChangeAssignedTruck()) {
-            <ui-form-field label="Assigned Truck" for="assignedTruck">
-              <app-search-truck formControlName="assignedTruck" />
+            <ui-form-field
+              label="UN number"
+              for="unNumber"
+              hint="e.g., UN1203 for petrol"
+              class="mb-0"
+              [control]="form.controls.unNumber"
+            >
+              <input
+                pInputText
+                id="unNumber"
+                formControlName="unNumber"
+                type="text"
+                maxlength="16"
+                placeholder="UN0000"
+                style="text-transform: uppercase"
+              />
             </ui-form-field>
           }
+        </p-fieldset>
+
+        <!-- Notes Section (collapsable) -->
+        <p-fieldset legend="Notes" [toggleable]="true" [collapsed]="true">
+          <ui-form-field label="Notes" for="notes" hint="Max 2000 characters" class="mb-0">
+            <textarea
+              pTextarea
+              id="notes"
+              formControlName="notes"
+              rows="3"
+              maxlength="2000"
+            ></textarea>
+          </ui-form-field>
+        </p-fieldset>
+
+        <!-- Pricing Section -->
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="dollar" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Pricing & Distance</ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
+            <ui-form-field label="Delivery Cost" for="deliveryCost" [required]="true">
+              <p-inputgroup>
+                <p-inputgroup-addon>$$</p-inputgroup-addon>
+                <p-input-number id="deliveryCost" formControlName="deliveryCost" [min]="0" />
+              </p-inputgroup>
+            </ui-form-field>
+
+            <ui-form-field label="Estimated Distance" for="distance" class="mb-0">
+              <p-inputgroup>
+                <p-inputgroup-addon>mi</p-inputgroup-addon>
+                <p-input-number id="distance" formControlName="distance" [min]="0" />
+              </p-inputgroup>
+            </ui-form-field>
+          </ui-surface>
+        </ui-stack>
+
+        <!-- Assignment Section -->
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="users" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Assignment</ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
+            <ui-form-field label="Assigned Dispatcher" for="dispatcherName">
+              <input
+                pInputText
+                id="dispatcherName"
+                formControlName="assignedDispatcherName"
+                type="text"
+              />
+            </ui-form-field>
+
+            @if (canChangeAssignedTruck()) {
+              <ui-form-field label="Assigned Truck" for="assignedTruck">
+                <app-search-truck formControlName="assignedTruck" />
+              </ui-form-field>
+            }
+
+            @if (mode() === "edit") {
+              <ui-form-field label="Status" for="status" class="mb-0">
+                <p-select formControlName="status" [options]="loadStatuses" />
+              </ui-form-field>
+            }
+          </ui-surface>
+        </ui-stack>
+
+        <!-- Action Buttons -->
+        <ui-stack direction="row" gap="2">
+          <p-button
+            type="submit"
+            icon="pi pi-pencil"
+            [label]="mode() === 'create' ? 'Create' : 'Update'"
+            [disabled]="isLoading()"
+          />
 
           @if (mode() === "edit") {
-            <ui-form-field label="Status" for="status" class="mb-0">
-              <p-select formControlName="status" [options]="loadStatuses" />
-            </ui-form-field>
+            <p-button
+              type="button"
+              icon="pi pi-trash"
+              label="Delete"
+              severity="danger"
+              [disabled]="isLoading()"
+              (click)="askRemove()"
+            />
+
+            <p-button
+              type="button"
+              icon="pi pi-arrow-left"
+              label="Back to list"
+              [routerLink]="['/loads']"
+            />
           }
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="flex gap-2">
-        <p-button
-          type="submit"
-          icon="pi pi-pencil"
-          [label]="mode() === 'create' ? 'Create' : 'Update'"
-          [disabled]="isLoading()"
-        />
-
-        @if (mode() === "edit") {
-          <p-button
-            type="button"
-            icon="pi pi-trash"
-            label="Delete"
-            severity="danger"
-            [disabled]="isLoading()"
-            (click)="askRemove()"
-          />
-
-          <p-button
-            type="button"
-            icon="pi pi-arrow-left"
-            label="Back to list"
-            [routerLink]="['/loads']"
-          />
-        }
-      </div>
+        </ui-stack>
+      </ui-stack>
     </form>
   </div>
 
@@ -297,4 +289,4 @@
       [height]="mapHeight()"
     />
   </div>
-</div>
+</ui-stack>

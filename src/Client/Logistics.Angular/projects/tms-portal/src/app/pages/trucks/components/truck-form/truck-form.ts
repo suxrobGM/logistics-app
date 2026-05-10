@@ -21,6 +21,15 @@ import {
   truckStatusOptions,
   truckTypeOptions,
 } from "@logistics/shared/api/enums";
+import {
+  FormField,
+  Grid,
+  Icon,
+  Stack,
+  Surface,
+  Typography,
+  ValidationSummary,
+} from "@logistics/shared/components";
 import { AutoCompleteModule } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
 import { CheckboxModule } from "primeng/checkbox";
@@ -31,7 +40,6 @@ import { InputTextModule } from "primeng/inputtext";
 import { MultiSelectModule } from "primeng/multiselect";
 import { SelectModule } from "primeng/select";
 import { ToastService } from "@/core/services";
-import { FormField, ValidationSummary } from "@/shared/components";
 
 export interface TruckFormData {
   truckNumber: string;
@@ -67,6 +75,11 @@ export interface TruckFormData {
     Fieldset,
     AutoCompleteModule,
     FormField,
+    Grid,
+    Icon,
+    Stack,
+    Surface,
+    Typography,
     ValidationSummary,
   ],
 })

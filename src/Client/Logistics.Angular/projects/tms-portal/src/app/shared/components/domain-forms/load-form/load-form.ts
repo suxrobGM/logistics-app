@@ -19,7 +19,15 @@ import {
   loadStatusOptions,
   loadTypeOptions,
 } from "@logistics/shared/api/enums";
-import { FormField, ValidationSummary } from "@logistics/shared/components";
+import {
+  FormField,
+  Grid,
+  Icon,
+  Stack,
+  Surface,
+  Typography,
+  ValidationSummary,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CheckboxModule } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
@@ -111,6 +119,11 @@ export interface LoadFormValue {
     DirectionMap,
     ValidationSummary,
     FormField,
+    Grid,
+    Icon,
+    Stack,
+    Surface,
+    Typography,
     SearchContainer,
     SearchCustomer,
     SearchTerminal,

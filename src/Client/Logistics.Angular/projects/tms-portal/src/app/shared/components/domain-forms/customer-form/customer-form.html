@@ -1,120 +1,130 @@
-<div class="flex flex-col gap-6">
+<ui-stack gap="6">
   @if (isLoading()) {
     <p-progress-spinner />
   }
 
   <form [formGroup]="form" (ngSubmit)="submit()">
-    <ui-validation-summary [form]="form" />
+    <ui-stack gap="4">
+      <ui-validation-summary [form]="form" />
 
-    <ui-form-field label="Customer Name" for="name" [required]="true">
-      <input
-        pInputText
-        id="name"
-        formControlName="name"
-        class="w-full"
-        placeholder="Customer name"
-      />
-    </ui-form-field>
-
-    <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-      <ui-form-field label="Email" for="email">
+      <ui-form-field label="Customer Name" for="name" [required]="true">
         <input
           pInputText
-          id="email"
-          formControlName="email"
-          type="email"
+          id="name"
+          formControlName="name"
           class="w-full"
-          placeholder="email@example.com"
+          placeholder="Customer name"
         />
       </ui-form-field>
 
-      <ui-form-field label="Phone" for="phone">
-        <input
-          pInputText
-          id="phone"
-          formControlName="phone"
-          type="tel"
+      <ui-grid container spacing="4">
+        <ui-grid [size]="{ xs: 12, md: 6 }">
+          <ui-form-field label="Email" for="email">
+            <input
+              pInputText
+              id="email"
+              formControlName="email"
+              type="email"
+              class="w-full"
+              placeholder="email@example.com"
+            />
+          </ui-form-field>
+        </ui-grid>
+
+        <ui-grid [size]="{ xs: 12, md: 6 }">
+          <ui-form-field label="Phone" for="phone">
+            <input
+              pInputText
+              id="phone"
+              formControlName="phone"
+              type="tel"
+              class="w-full"
+              placeholder="(555) 555-5555"
+            />
+          </ui-form-field>
+        </ui-grid>
+      </ui-grid>
+
+      <ui-form-field label="Status" for="status">
+        <p-select
+          formControlName="status"
+          id="status"
           class="w-full"
-          placeholder="(555) 555-5555"
+          [options]="statusOptions"
+          optionLabel="label"
+          optionValue="value"
         />
       </ui-form-field>
-    </div>
 
-    <ui-form-field label="Status" for="status" class="mt-4">
-      <p-select
-        formControlName="status"
-        id="status"
-        class="w-full"
-        [options]="statusOptions"
-        optionLabel="label"
-        optionValue="value"
-      />
-    </ui-form-field>
+      <ui-form-field label="Address" [required]="true">
+        <ui-address-form formControlName="address" [allowedCountries]="allowedCountries()" />
+      </ui-form-field>
 
-    <ui-form-field label="Address" class="mt-4" [required]="true">
-      <ui-address-form formControlName="address" [allowedCountries]="allowedCountries()" />
-    </ui-form-field>
+      <ui-grid container spacing="4">
+        <ui-grid [size]="{ xs: 12, md: 6 }">
+          <ui-form-field
+            label="Tax ID / VAT number"
+            for="taxId"
+            [required]="customerIsEu()"
+            [hint]="
+              customerIsEu()
+                ? 'Required for EU customers — enables cross-border B2B reverse charge.'
+                : 'VAT, EIN, GSTIN, ABN, etc. (optional)'
+            "
+          >
+            <input
+              pInputText
+              id="taxId"
+              formControlName="taxId"
+              class="w-full"
+              placeholder="e.g. DE123456789"
+            />
+          </ui-form-field>
+        </ui-grid>
 
-    <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-      <ui-form-field
-        label="Tax ID / VAT number"
-        for="taxId"
-        [required]="customerIsEu()"
-        [hint]="
-          customerIsEu()
-            ? 'Required for EU customers — enables cross-border B2B reverse charge.'
-            : 'VAT, EIN, GSTIN, ABN, etc. (optional)'
-        "
-      >
-        <input
-          pInputText
-          id="taxId"
-          formControlName="taxId"
+        <ui-grid [size]="{ xs: 12, md: 6 }">
+          <ui-form-field label="Tax status" for="isVatExempt">
+            <ui-stack direction="row" gap="2" align="center" class="pt-2">
+              <p-checkbox formControlName="isVatExempt" inputId="isVatExempt" [binary]="true" />
+              <label for="isVatExempt">VAT / sales tax exempt (charity, government, etc.)</label>
+            </ui-stack>
+          </ui-form-field>
+        </ui-grid>
+      </ui-grid>
+
+      <ui-form-field label="Notes" for="notes">
+        <textarea
+          pInputTextarea
+          formControlName="notes"
+          id="notes"
           class="w-full"
-          placeholder="e.g. DE123456789"
-        />
+          rows="3"
+          placeholder="Additional notes about this customer..."
+        ></textarea>
       </ui-form-field>
 
-      <ui-form-field label="Tax status" for="isVatExempt">
-        <div class="flex items-center gap-2 pt-2">
-          <p-checkbox formControlName="isVatExempt" inputId="isVatExempt" [binary]="true" />
-          <label for="isVatExempt">VAT / sales tax exempt (charity, government, etc.)</label>
-        </div>
-      </ui-form-field>
-    </div>
+      <ui-stack direction="row" gap="2" class="mt-2">
+        <p-button type="submit" icon="pi pi-check" label="Save" [disabled]="isLoading()" />
 
-    <ui-form-field label="Notes" for="notes" class="mt-4">
-      <textarea
-        pInputTextarea
-        formControlName="notes"
-        id="notes"
-        class="w-full"
-        rows="3"
-        placeholder="Additional notes about this customer..."
-      ></textarea>
-    </ui-form-field>
+        @if (mode() === "edit") {
+          <p-button
+            type="button"
+            icon="pi pi-trash"
+            label="Delete"
+            severity="danger"
+            [disabled]="isLoading()"
+            (click)="askRemove()"
+          />
 
-    <div class="mt-6 flex gap-2">
-      <p-button type="submit" icon="pi pi-check" label="Save" [disabled]="isLoading()" />
-
-      @if (mode() === "edit") {
-        <p-button
-          type="button"
-          icon="pi pi-trash"
-          label="Delete"
-          severity="danger"
-          [disabled]="isLoading()"
-          (click)="askRemove()"
-        />
-
-        <p-button
-          type="button"
-          icon="pi pi-arrow-left"
-          label="Back to list"
-          [outlined]="true"
-          [routerLink]="['/customers']"
-        />
-      }
-    </div>
+          <p-button
+            type="button"
+            icon="pi pi-arrow-left"
+            label="Back to list"
+            [outlined]="true"
+            [routerLink]="['/customers']"
+          />
+        }
+      </ui-stack>
+    </ui-stack>
   </form>
-</div>
+</ui-stack>
