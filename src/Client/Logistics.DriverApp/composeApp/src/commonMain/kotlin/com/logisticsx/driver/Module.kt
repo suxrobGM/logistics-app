@@ -29,6 +29,7 @@ import com.logisticsx.driver.viewmodel.DvirFormViewModel
 import com.logisticsx.driver.viewmodel.EmployeeSelectViewModel
 import com.logisticsx.driver.viewmodel.LoadDetailViewModel
 import com.logisticsx.driver.viewmodel.LoginViewModel
+import com.logisticsx.driver.viewmodel.MyLicensesViewModel
 import com.logisticsx.driver.viewmodel.PastLoadsViewModel
 import com.logisticsx.driver.viewmodel.PodCaptureViewModel
 import com.logisticsx.driver.viewmodel.PrivacyViewModel
@@ -73,6 +74,7 @@ fun commonModule() = module {
     viewModelOf(::AccountViewModel)
     viewModelOf(::LoadDetailViewModel)
     viewModelOf(::PastLoadsViewModel)
+    viewModelOf(::MyLicensesViewModel)
     viewModelOf(::StatsViewModel)
     viewModelOf(::LoginViewModel)
     viewModelOf(::SettingsViewModel)

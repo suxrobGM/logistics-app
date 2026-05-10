@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Settings
@@ -55,6 +56,7 @@ fun AccountScreen(
     onNavigateToStats: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToPrivacy: () -> Unit,
+    onNavigateToMyLicenses: () -> Unit,
     viewModel: AccountViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -190,6 +192,11 @@ fun AccountScreen(
                                 icon = Icons.Default.BarChart,
                                 title = "Statistics",
                                 onClick = onNavigateToStats
+                            )
+                            MenuRow(
+                                icon = Icons.Default.Badge,
+                                title = "My Licenses",
+                                onClick = onNavigateToMyLicenses
                             )
                             MenuRow(
                                 icon = Icons.Default.Settings,

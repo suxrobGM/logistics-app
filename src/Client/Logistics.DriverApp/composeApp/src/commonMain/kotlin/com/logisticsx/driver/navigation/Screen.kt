@@ -71,6 +71,9 @@ data object AboutRoute : NavKey
 @Serializable
 data object PrivacyRoute : NavKey
 
+@Serializable
+data object MyLicensesRoute : NavKey
+
 /**
  * Top-level routes that appear in the bottom navigation bar.
  * These routes maintain separate back stacks.

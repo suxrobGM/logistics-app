@@ -15,6 +15,7 @@ import com.logisticsx.driver.ui.screens.EmployeeSelectScreen
 import com.logisticsx.driver.ui.screens.LoadDetailScreen
 import com.logisticsx.driver.ui.screens.LoginScreen
 import com.logisticsx.driver.ui.screens.MessagesScreen
+import com.logisticsx.driver.ui.screens.MyLicensesScreen
 import com.logisticsx.driver.ui.screens.PastLoadsScreen
 import com.logisticsx.driver.ui.screens.PodCaptureScreen
 import com.logisticsx.driver.ui.screens.PrivacyScreen
@@ -191,7 +192,8 @@ fun createEntryProvider(
         AccountScreen(
             onNavigateToStats = { navigator.navigate(StatsRoute) },
             onNavigateToSettings = { navigator.navigate(SettingsRoute) },
-            onNavigateToPrivacy = { navigator.navigate(PrivacyRoute) }
+            onNavigateToPrivacy = { navigator.navigate(PrivacyRoute) },
+            onNavigateToMyLicenses = { navigator.navigate(MyLicensesRoute) }
         )
     }
 
@@ -208,5 +210,10 @@ fun createEntryProvider(
     // Privacy Screen
     entry<PrivacyRoute> {
         PrivacyScreen(onNavigateBack = { navigator.goBack() })
+    }
+
+    // My Licenses Screen
+    entry<MyLicensesRoute> {
+        MyLicensesScreen(onNavigateBack = { navigator.goBack() })
     }
 }
