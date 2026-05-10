@@ -108,6 +108,9 @@ internal sealed class LoadService(ITenantUnitOfWork tenantUow) : ILoadService
             load.ContainerId = p.ContainerId;
             load.OriginTerminalId = p.OriginTerminalId;
             load.DestinationTerminalId = p.DestinationTerminalId;
+            load.IsHazmat = p.IsHazmat;
+            load.HazmatClass = p.HazmatClass;
+            load.UnNumber = p.UnNumber;
             loads.Add(load);
         }
 

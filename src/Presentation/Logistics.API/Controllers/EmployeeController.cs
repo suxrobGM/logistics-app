@@ -65,6 +65,59 @@ public class EmployeeController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
     }
 
+    #region Driver licenses
+
+    [HttpGet("{userId:guid}/licenses", Name = "GetDriverLicenses")]
+    [ProducesResponseType(typeof(IList<DriverLicenseDto>), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Employee.View)]
+    public async Task<IActionResult> GetDriverLicenses(Guid userId, [FromQuery] bool includeRevoked = false)
+    {
+        var result = await mediator.Send(new GetDriverLicensesQuery
+        {
+            EmployeeId = userId,
+            IncludeRevoked = includeRevoked
+        });
+        return result.IsSuccess
+            ? Ok(result.Value)
+            : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPost("{userId:guid}/licenses", Name = "CreateDriverLicense")]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Employee.Manage)]
+    public async Task<IActionResult> CreateDriverLicense(
+        Guid userId, [FromBody] CreateDriverLicenseCommand request)
+    {
+        request.EmployeeId = userId;
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpPut("{userId:guid}/licenses/{licenseId:guid}", Name = "UpdateDriverLicense")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Employee.Manage)]
+    public async Task<IActionResult> UpdateDriverLicense(
+        Guid userId, Guid licenseId, [FromBody] UpdateDriverLicenseCommand request)
+    {
+        request.LicenseId = licenseId;
+        var result = await mediator.Send(request);
+        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpDelete("{userId:guid}/licenses/{licenseId:guid}", Name = "DeleteDriverLicense")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [Authorize(Policy = Permission.Employee.Manage)]
+    public async Task<IActionResult> DeleteDriverLicense(Guid userId, Guid licenseId)
+    {
+        var result = await mediator.Send(new DeleteDriverLicenseCommand { LicenseId = licenseId });
+        return result.IsSuccess ? NoContent() : NotFound(ErrorResponse.FromResult(result));
+    }
+
+    #endregion
+
     #region Payout
 
     /// <summary>

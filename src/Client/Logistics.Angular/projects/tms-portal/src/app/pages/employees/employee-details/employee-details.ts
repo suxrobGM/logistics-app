@@ -20,6 +20,7 @@ import { TooltipModule } from "primeng/tooltip";
 import { DocumentManager, PageHeader } from "@/shared/components";
 import { EmployeeStatusTag } from "@/shared/components/tags";
 import { EmployeeAvatar } from "../components";
+import { DriverLicensesTab } from "../components/driver-licenses-tab/driver-licenses-tab";
 import { EmployeeEditDialog } from "../components/employee-edit-dialog/employee-edit-dialog";
 import { EmployeeLoadsList } from "../components/employee-loads-list/employee-loads-list";
 import { EmployeeDetailsStore } from "../store";
@@ -43,6 +44,7 @@ import { EmployeeDetailsStore } from "../store";
     EmployeeStatusTag,
     EmployeeAvatar,
     DocumentManager,
+    DriverLicensesTab,
     EmployeeEditDialog,
     EmployeeLoadsList,
     Grid,

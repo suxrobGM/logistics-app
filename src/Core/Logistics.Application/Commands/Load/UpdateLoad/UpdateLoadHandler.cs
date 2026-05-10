@@ -30,20 +30,26 @@ internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow)
             load.OriginLocation = PropertyUpdater.UpdateIfChanged(req.OriginLocation, load.OriginLocation);
             load.DestinationAddress = PropertyUpdater.UpdateIfChanged(req.DestinationAddress, load.DestinationAddress);
             load.DestinationLocation = PropertyUpdater.UpdateIfChanged(req.DestinationLocation, load.DestinationLocation);
+
             if (req.DeliveryCost is not null && req.DeliveryCost != load.DeliveryCost.Amount)
             {
                 load.DeliveryCost = new() { Amount = req.DeliveryCost.Value, Currency = load.DeliveryCost.Currency };
             }
+
             load.Distance = PropertyUpdater.UpdateIfChanged(req.Distance, load.Distance);
             load.Type = PropertyUpdater.UpdateIfChanged(req.Type, load.Type);
             load.Source = PropertyUpdater.UpdateIfChanged(req.Source, load.Source);
             load.Notes = PropertyUpdater.UpdateIfChanged(req.Notes, load.Notes);
+
             // Nullable<T>-to-Nullable<T> assignments - PropertyUpdater's T : struct constraint can't take Nullable<T> as T.
             if (req.RequestedPickupDate.HasValue) load.RequestedPickupDate = req.RequestedPickupDate;
             if (req.RequestedDeliveryDate.HasValue) load.RequestedDeliveryDate = req.RequestedDeliveryDate;
             if (req.ContainerId.HasValue) load.ContainerId = req.ContainerId;
             if (req.OriginTerminalId.HasValue) load.OriginTerminalId = req.OriginTerminalId;
             if (req.DestinationTerminalId.HasValue) load.DestinationTerminalId = req.DestinationTerminalId;
+            if (req.IsHazmat.HasValue) load.IsHazmat = req.IsHazmat.Value;
+            if (req.HazmatClass.HasValue) load.HazmatClass = req.HazmatClass;
+            if (req.UnNumber is not null) load.UnNumber = req.UnNumber;
 
             if (req.Status.HasValue)
             {
@@ -78,11 +84,8 @@ internal sealed class UpdateLoadHandler(ITenantUnitOfWork tenantUow)
             return;
         }
 
-        var customer = await tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId.Value);
-        if (customer is null)
-        {
-            throw new InvalidOperationException($"Could not find a customer with ID '{req.CustomerId}'");
-        }
+        var customer = await tenantUow.Repository<Customer>().GetByIdAsync(req.CustomerId.Value)
+            ?? throw new InvalidOperationException($"Could not find a customer with ID '{req.CustomerId}'");
 
         if (loadEntity.CustomerId != customer.Id)
         {

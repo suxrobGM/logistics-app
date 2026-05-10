@@ -10,16 +10,25 @@ import { RouterLink } from "@angular/router";
 import {
   Api,
   getEmployees,
+  type AdrEquipment,
   type EmployeeDto,
   type TruckDto,
   type TruckStatus,
   type TruckType,
 } from "@logistics/shared/api";
-import { truckStatusOptions, truckTypeOptions } from "@logistics/shared/api/enums";
+import {
+  hazmatClassFlagOptions,
+  truckStatusOptions,
+  truckTypeOptions,
+} from "@logistics/shared/api/enums";
 import { AutoCompleteModule } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
+import { CheckboxModule } from "primeng/checkbox";
+import { DatePickerModule } from "primeng/datepicker";
+import { Fieldset } from "primeng/fieldset";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
+import { MultiSelectModule } from "primeng/multiselect";
 import { SelectModule } from "primeng/select";
 import { ToastService } from "@/core/services";
 import { FormField, ValidationSummary } from "@/shared/components";
@@ -37,6 +46,8 @@ export interface TruckFormData {
   vin: string | null;
   licensePlate: string | null;
   licensePlateState: string | null;
+  adrEquipment: AdrEquipment;
+  isHazmatPlacarded: boolean;
 }
 
 @Component({
@@ -50,6 +61,10 @@ export interface TruckFormData {
     InputTextModule,
     InputNumberModule,
     SelectModule,
+    MultiSelectModule,
+    DatePickerModule,
+    CheckboxModule,
+    Fieldset,
     AutoCompleteModule,
     FormField,
     ValidationSummary,
@@ -68,6 +83,7 @@ export class TruckForm implements OnInit {
 
   protected readonly truckTypes = truckTypeOptions;
   protected readonly truckStatuses = truckStatusOptions;
+  protected readonly hazmatClassOptions = hazmatClassFlagOptions;
   protected readonly suggestedDrivers = signal<EmployeeDto[]>([]);
 
   protected readonly form = new FormGroup({
@@ -92,6 +108,11 @@ export class TruckForm implements OnInit {
     vin: new FormControl<string | null>(null),
     licensePlate: new FormControl<string | null>(null),
     licensePlateState: new FormControl<string | null>(null),
+    isAdrCertified: new FormControl<boolean>(false, { nonNullable: true }),
+    adrCertExpiresAt: new FormControl<Date | null>(null),
+    adrAllowedClasses: new FormControl<number[]>([], { nonNullable: true }),
+    orangePlateNumber: new FormControl<string | null>(null),
+    isHazmatPlacarded: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
   protected readonly isCarHauler = computed(() => {
@@ -101,6 +122,14 @@ export class TruckForm implements OnInit {
   ngOnInit(): void {
     const initial = this.initial();
     if (initial) {
+      const adr = initial.adrEquipment;
+      // ng-openapi-gen renders [Flags] enums as string union types, but the wire format
+      // is a numeric bitfield. Cast through unknown so bit math works.
+      const allowedClassesBits = (adr?.allowedClasses as unknown as number | undefined) ?? 0;
+      const selectedClasses = hazmatClassFlagOptions
+        .filter((opt) => (allowedClassesBits & opt.value) === opt.value)
+        .map((opt) => opt.value);
+
       this.form.patchValue({
         truckNumber: initial.number ?? "",
         truckType: initial.type ?? "freight_truck",
@@ -114,6 +143,11 @@ export class TruckForm implements OnInit {
         vin: initial.vin ?? null,
         licensePlate: initial.licensePlate ?? null,
         licensePlateState: initial.licensePlateState ?? null,
+        isAdrCertified: adr?.isAdrCertified ?? false,
+        adrCertExpiresAt: adr?.adrCertExpiresAt ? new Date(adr.adrCertExpiresAt) : null,
+        adrAllowedClasses: selectedClasses,
+        orangePlateNumber: adr?.orangePlateNumber ?? null,
+        isHazmatPlacarded: initial.isHazmatPlacarded ?? false,
       });
     }
 
@@ -141,6 +175,12 @@ export class TruckForm implements OnInit {
       return;
     }
 
+    const isAdrCertified = this.form.value.isAdrCertified ?? false;
+    const allowedClassesValue = (this.form.value.adrAllowedClasses ?? []).reduce(
+      (acc, n) => acc | n,
+      0,
+    );
+
     this.save.emit({
       truckNumber: this.form.value.truckNumber!,
       truckType: this.form.value.truckType!,
@@ -154,6 +194,14 @@ export class TruckForm implements OnInit {
       vin: this.form.value.vin ?? null,
       licensePlate: this.form.value.licensePlate ?? null,
       licensePlateState: this.form.value.licensePlateState ?? null,
+      adrEquipment: {
+        isAdrCertified,
+        adrCertExpiresAt: this.form.value.adrCertExpiresAt?.toISOString() ?? null,
+        // Cast back to the generated string-union type — wire is numeric bitfield.
+        allowedClasses: allowedClassesValue as unknown as AdrEquipment["allowedClasses"],
+        orangePlateNumber: this.form.value.orangePlateNumber ?? null,
+      },
+      isHazmatPlacarded: this.form.value.isHazmatPlacarded ?? false,
     });
   }
 

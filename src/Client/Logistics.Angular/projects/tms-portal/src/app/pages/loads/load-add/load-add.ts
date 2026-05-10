@@ -42,6 +42,9 @@ export class LoadAddComponent {
       originTerminalId: formValue.originTerminalId ?? null,
       destinationTerminalId: formValue.destinationTerminalId ?? null,
       notes: formValue.notes ?? null,
+      isHazmat: formValue.isHazmat ?? false,
+      hazmatClass: formValue.hazmatClass ?? undefined,
+      unNumber: formValue.unNumber ?? null,
     };
 
     await this.api.invoke(createLoad, { body: command });

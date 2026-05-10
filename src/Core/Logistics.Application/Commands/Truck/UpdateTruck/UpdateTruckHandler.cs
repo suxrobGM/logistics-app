@@ -53,6 +53,16 @@ internal sealed class UpdateTruckHandler(ITenantUnitOfWork tenantUow) : IAppRequ
             truck.Year = req.Year.Value;
         }
 
+        if (req.AdrEquipment is not null)
+        {
+            truck.AdrEquipment = req.AdrEquipment;
+        }
+
+        if (req.IsHazmatPlacarded.HasValue)
+        {
+            truck.IsHazmatPlacarded = req.IsHazmatPlacarded.Value;
+        }
+
         await tenantUow.SaveChangesAsync(ct);
         return Result.Ok();
     }

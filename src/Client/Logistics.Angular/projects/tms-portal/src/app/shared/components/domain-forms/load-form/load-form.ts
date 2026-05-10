@@ -6,15 +6,22 @@ import {
   type ContainerDto,
   type CustomerDto,
   type GeoPoint,
+  type HazmatClass,
   type LoadSource,
   type LoadStatus,
   type LoadType,
   type TerminalDto,
   type TruckDto,
 } from "@logistics/shared/api";
-import { loadSourceOptions, loadStatusOptions, loadTypeOptions } from "@logistics/shared/api/enums";
+import {
+  hazmatClassOptions,
+  loadSourceOptions,
+  loadStatusOptions,
+  loadTypeOptions,
+} from "@logistics/shared/api/enums";
 import { FormField, ValidationSummary } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
+import { CheckboxModule } from "primeng/checkbox";
 import { DatePicker } from "primeng/datepicker";
 import { DividerModule } from "primeng/divider";
 import { Fieldset } from "primeng/fieldset";
@@ -76,6 +83,10 @@ export interface LoadFormValue {
   destinationTerminal?: TerminalDto | null;
   // Notes
   notes?: string | null;
+  // Hazmat / ADR
+  isHazmat?: boolean;
+  hazmatClass?: HazmatClass | null;
+  unNumber?: string | null;
 }
 
 @Component({
@@ -90,6 +101,7 @@ export interface LoadFormValue {
     InputGroupAddonModule,
     InputNumberModule,
     ButtonModule,
+    CheckboxModule,
     DatePicker,
     Fieldset,
     Select,
@@ -110,6 +122,7 @@ export class LoadForm implements OnInit {
   protected readonly loadTypes = loadTypeOptions;
   protected readonly loadStatuses = loadStatusOptions;
   protected readonly loadSources = loadSourceOptions;
+  protected readonly hazmatClasses = hazmatClassOptions;
   private readonly dummyLocation: GeoPoint = { longitude: 0, latitude: 0 };
 
   private readonly authService = inject(AuthService);
@@ -174,6 +187,11 @@ export class LoadForm implements OnInit {
     originTerminal: new FormControl<TerminalDto | null>(null),
     destinationTerminal: new FormControl<TerminalDto | null>(null),
     notes: new FormControl<string | null>(null, { validators: [Validators.maxLength(2000)] }),
+    isHazmat: new FormControl<boolean>(false, { nonNullable: true }),
+    hazmatClass: new FormControl<HazmatClass | null>(null),
+    unNumber: new FormControl<string | null>(null, {
+      validators: [Validators.maxLength(16), Validators.pattern(/^UN\d{4}$/i)],
+    }),
     // only visible/patched when mode === 'edit'
     status: new FormControl<LoadStatus | null>(null),
     // Truck assignment is optional - load can be created without a truck (e.g., from load board)
@@ -262,6 +280,9 @@ export class LoadForm implements OnInit {
       containerId: raw.container?.id ?? null,
       originTerminalId: raw.originTerminal?.id ?? null,
       destinationTerminalId: raw.destinationTerminal?.id ?? null,
+      isHazmat: raw.isHazmat,
+      hazmatClass: raw.isHazmat ? (raw.hazmatClass ?? null) : null,
+      unNumber: raw.isHazmat ? (raw.unNumber ?? null) : null,
     } as LoadFormValue;
 
     this.save.emit(formValue);

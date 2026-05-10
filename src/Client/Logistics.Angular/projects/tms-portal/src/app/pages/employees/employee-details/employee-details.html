@@ -79,6 +79,10 @@
           <ui-icon name="dollar" class="mr-2" />
           Payroll
         </p-tab>
+        <p-tab [value]="4">
+          <ui-icon name="id-card" class="mr-2" />
+          Licenses
+        </p-tab>
       </p-tablist>
 
       <p-tabpanels>
@@ -294,6 +298,15 @@
                 />
               }
             </p-card>
+          </div>
+        </p-tabpanel>
+
+        <!-- Licenses Tab -->
+        <p-tabpanel [value]="4">
+          <div class="pt-4">
+            @if (id(); as employeeId) {
+              <app-driver-licenses-tab [employeeId]="employeeId" />
+            }
           </div>
         </p-tabpanel>
       </p-tabpanels>

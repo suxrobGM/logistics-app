@@ -25,4 +25,8 @@ public class CreateLoadCommand : IAppRequest
     public Guid? ContainerId { get; set; }
     public Guid? OriginTerminalId { get; set; }
     public Guid? DestinationTerminalId { get; set; }
+
+    public bool IsHazmat { get; set; }
+    public HazmatClass? HazmatClass { get; set; }
+    public string? UnNumber { get; set; }
 }

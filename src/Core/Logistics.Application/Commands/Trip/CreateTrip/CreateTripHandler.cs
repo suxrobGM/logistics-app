@@ -10,7 +10,6 @@ namespace Logistics.Application.Commands;
 internal sealed class CreateTripHandler(
     ITenantUnitOfWork tenantUow,
     ILoadService loadService,
-    IDispatchEligibilityService eligibilityService,
     ILogger<CreateTripHandler> logger)
     : IAppRequestHandler<CreateTripCommand, Result<Guid>>
 {
@@ -34,26 +33,6 @@ internal sealed class CreateTripHandler(
 
         // List of all loads for the trip
         var loads = new List<Load>([..existingLoads, ..newLoads]);
-
-        // Eligibility check — run only for already-persisted loads when a truck is assigned.
-        // New loads created in this same command don't yet have IDs to look up, but they
-        // are validated against the same truck so the existing-load check is representative.
-        if (truck is not null)
-        {
-            foreach (var load in existingLoads)
-            {
-                var eligibility = await eligibilityService.CheckAsync(truck.Id, load.Id, ct: ct);
-                if (!eligibility.IsEligible)
-                {
-                    var reasons = string.Join("; ",
-                        eligibility.Issues
-                            .Where(i => i.Severity == EligibilitySeverity.Error)
-                            .Select(i => i.Message));
-                    return Result<Guid>.Fail(
-                        $"Truck not eligible for load '{load.Name}': {reasons}");
-                }
-            }
-        }
 
         // Convert optimized stops DTOs to domain entities if provided
         if (req.OptimizedStops != null && req.OptimizedStops.Any())

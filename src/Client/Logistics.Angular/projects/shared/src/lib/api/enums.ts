@@ -9,9 +9,12 @@ import type {
   ContainerStatus,
   CustomerStatus,
   DocumentType,
+  DriverLicenseStatus,
   EmployeeStatus,
+  HazmatClass,
   InvoiceLineItemType,
   InvoiceStatus,
+  LicenseClass,
   LoadExceptionType,
   LoadSource,
   LoadStatus,
@@ -243,4 +246,87 @@ export const terminalTypeOptions: SelectOption<TerminalType>[] = [
 export const regionOptions: SelectOption<Region>[] = [
   { label: "United States", value: "us" },
   { label: "Europe", value: "eu" },
+];
+
+export const licenseClassOptions: SelectOption<LicenseClass>[] = [
+  { label: "US CDL Class A", value: "us_class_a" },
+  { label: "US CDL Class B", value: "us_class_b" },
+  { label: "US CDL Class C", value: "us_class_c" },
+  { label: "EU Category C", value: "eu_c" },
+  { label: "EU Category C+E", value: "eu_ce" },
+  { label: "EU Category D", value: "eu_d" },
+  { label: "EU Category D+E", value: "eu_de" },
+  { label: "EU Category C1", value: "eu_c1" },
+  { label: "EU Category C1+E", value: "eu_c1_e" },
+];
+
+export const driverLicenseStatusOptions: SelectOption<DriverLicenseStatus>[] = [
+  { label: "Active", value: "active" },
+  { label: "Expired", value: "expired" },
+  { label: "Suspended", value: "suspended" },
+  { label: "Revoked", value: "revoked" },
+];
+
+export const hazmatClassOptions: SelectOption<HazmatClass>[] = [
+  { label: "Class 1 - Explosives", value: "class1" },
+  { label: "Class 2 - Gases", value: "class2" },
+  { label: "Class 3 - Flammable Liquids", value: "class3" },
+  { label: "Class 4 - Flammable Solids", value: "class4" },
+  { label: "Class 5 - Oxidizers", value: "class5" },
+  { label: "Class 6 - Toxic & Infectious", value: "class6" },
+  { label: "Class 7 - Radioactive", value: "class7" },
+  { label: "Class 8 - Corrosives", value: "class8" },
+  { label: "Class 9 - Miscellaneous", value: "class9" },
+];
+
+/**
+ * License endorsement bit-flag values matching LicenseEndorsement enum on the server.
+ */
+export const licenseEndorsementFlags = {
+  hazmat: 1,
+  tanker: 2,
+  doubles: 4,
+  passenger: 8,
+  adr: 16,
+  adrTanks: 32,
+  adrClass1: 64,
+  adrClass7: 128,
+} as const;
+
+export const licenseEndorsementOptions: { label: string; value: number; group: "us" | "eu" }[] = [
+  { label: "Hazmat (H)", value: licenseEndorsementFlags.hazmat, group: "us" },
+  { label: "Tanker (N)", value: licenseEndorsementFlags.tanker, group: "us" },
+  { label: "Doubles/Triples (T)", value: licenseEndorsementFlags.doubles, group: "us" },
+  { label: "Passenger (P)", value: licenseEndorsementFlags.passenger, group: "us" },
+  { label: "ADR (Basic)", value: licenseEndorsementFlags.adr, group: "eu" },
+  { label: "ADR Tanks", value: licenseEndorsementFlags.adrTanks, group: "eu" },
+  { label: "ADR Class 1 (Explosives)", value: licenseEndorsementFlags.adrClass1, group: "eu" },
+  { label: "ADR Class 7 (Radioactive)", value: licenseEndorsementFlags.adrClass7, group: "eu" },
+];
+
+/**
+ * HazmatClassFlags bit values for truck ADR-equipment allowed-classes multi-select.
+ */
+export const hazmatClassFlagValues = {
+  class1: 1,
+  class2: 2,
+  class3: 4,
+  class4: 8,
+  class5: 16,
+  class6: 32,
+  class7: 64,
+  class8: 128,
+  class9: 256,
+} as const;
+
+export const hazmatClassFlagOptions: { label: string; value: number }[] = [
+  { label: "Class 1 - Explosives", value: hazmatClassFlagValues.class1 },
+  { label: "Class 2 - Gases", value: hazmatClassFlagValues.class2 },
+  { label: "Class 3 - Flammable Liquids", value: hazmatClassFlagValues.class3 },
+  { label: "Class 4 - Flammable Solids", value: hazmatClassFlagValues.class4 },
+  { label: "Class 5 - Oxidizers", value: hazmatClassFlagValues.class5 },
+  { label: "Class 6 - Toxic & Infectious", value: hazmatClassFlagValues.class6 },
+  { label: "Class 7 - Radioactive", value: hazmatClassFlagValues.class7 },
+  { label: "Class 8 - Corrosives", value: hazmatClassFlagValues.class8 },
+  { label: "Class 9 - Miscellaneous", value: hazmatClassFlagValues.class9 },
 ];

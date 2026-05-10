@@ -69,6 +69,13 @@ export class LoadEditComponent implements OnInit {
       originTerminalId: formValue.originTerminalId ?? null,
       destinationTerminalId: formValue.destinationTerminalId ?? null,
       notes: formValue.notes ?? null,
+      // The generated UpdateLoadCommand may be stale (missing hazmat fields) — re-run
+      // `bun run gen:api:live` after restarting the API to pick up the latest spec.
+      ...({
+        isHazmat: formValue.isHazmat ?? false,
+        hazmatClass: formValue.hazmatClass ?? undefined,
+        unNumber: formValue.unNumber ?? null,
+      } as Partial<UpdateLoadCommand>),
     };
 
     await this.api.invoke(updateLoad, { id: this.id()!, body: command });

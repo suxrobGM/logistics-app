@@ -28,12 +28,15 @@ internal sealed class CreateLoadHandler(ILoadService loadService)
                 Notes: req.Notes,
                 ContainerId: req.ContainerId,
                 OriginTerminalId: req.OriginTerminalId,
-                DestinationTerminalId: req.DestinationTerminalId);
+                DestinationTerminalId: req.DestinationTerminalId,
+                IsHazmat: req.IsHazmat,
+                HazmatClass: req.HazmatClass,
+                UnNumber: req.UnNumber);
 
             // Load.Create() raises domain events for notifications:
             // - NewLoadCreatedEvent (always)
             // - LoadAssignedToTruckEvent (if truck assigned)
-            await loadService.CreateLoadAsync(createLoadParameters);
+            await loadService.CreateLoadAsync(createLoadParameters, ct: ct);
 
             return Result.Ok();
         }

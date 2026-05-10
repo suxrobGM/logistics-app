@@ -117,11 +117,7 @@
               inputId="requestedPickupDate"
             />
           </ui-form-field>
-          <ui-form-field
-            label="Requested Delivery Date"
-            for="requestedDeliveryDate"
-            class="mb-0"
-          >
+          <ui-form-field label="Requested Delivery Date" for="requestedDeliveryDate" class="mb-0">
             <p-datepicker
               formControlName="requestedDeliveryDate"
               [showIcon]="true"
@@ -148,6 +144,50 @@
         <ui-form-field label="Destination Terminal" for="destinationTerminal" class="mb-0">
           <app-search-terminal formControlName="destinationTerminal" />
         </ui-form-field>
+      </p-fieldset>
+
+      <!-- Hazmat / ADR Section -->
+      <p-fieldset
+        legend="Hazmat / ADR"
+        [toggleable]="true"
+        [collapsed]="!form.controls.isHazmat.value"
+        styleClass="mb-6"
+      >
+        <ui-form-field label="Contains hazardous materials" for="isHazmat">
+          <p-checkbox inputId="isHazmat" formControlName="isHazmat" [binary]="true" />
+        </ui-form-field>
+
+        @if (form.controls.isHazmat.value) {
+          <ui-form-field label="Hazmat class" for="hazmatClass" hint="UN/ADR classification">
+            <p-select
+              id="hazmatClass"
+              formControlName="hazmatClass"
+              [options]="hazmatClasses"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select class"
+              appendTo="body"
+            />
+          </ui-form-field>
+
+          <ui-form-field
+            label="UN number"
+            for="unNumber"
+            hint="e.g., UN1203 for petrol"
+            class="mb-0"
+            [control]="form.controls.unNumber"
+          >
+            <input
+              pInputText
+              id="unNumber"
+              formControlName="unNumber"
+              type="text"
+              maxlength="16"
+              placeholder="UN0000"
+              style="text-transform: uppercase"
+            />
+          </ui-form-field>
+        }
       </p-fieldset>
 
       <!-- Notes Section (collapsable) -->

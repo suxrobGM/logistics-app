@@ -1,0 +1,81 @@
+<ui-stack direction="row" align="center" justify="between" class="mb-4">
+  <ui-typography variant="h5" tag="h3" class="m-0">Driver licenses</ui-typography>
+  <p-button label="Add license" icon="pi pi-plus" size="small" (click)="openCreateDialog()" />
+</ui-stack>
+
+<p-table [value]="rows()" [loading]="isLoading()" [scrollable]="true" scrollHeight="500px">
+  <ng-template #header>
+    <tr>
+      <th>Class</th>
+      <th>Number</th>
+      <th>Country</th>
+      <th>Endorsements</th>
+      <th>Expires</th>
+      <th>Status</th>
+      <th class="w-32"></th>
+    </tr>
+  </ng-template>
+
+  <ng-template #body let-row>
+    <tr>
+      <td>{{ row.classLabel }}</td>
+      <td class="font-mono text-sm">{{ row.license.licenseNumber }}</td>
+      <td>
+        {{ row.license.issuingCountry }}
+        @if (row.license.issuingRegion) {
+          <span class="text-muted text-xs">/ {{ row.license.issuingRegion }}</span>
+        }
+      </td>
+      <td>
+        @if (row.endorsementLabels.length) {
+          <ui-stack direction="row" gap="1" class="flex-wrap">
+            @for (label of row.endorsementLabels; track label) {
+              <p-chip [label]="label" styleClass="text-xs" />
+            }
+          </ui-stack>
+        } @else {
+          <span class="text-muted text-sm">—</span>
+        }
+      </td>
+      <td>{{ row.license.expiresAt | date: "mediumDate" }}</td>
+      <td>
+        <p-tag [value]="row.expiryLabel" [severity]="row.expirySeverity" />
+      </td>
+      <td>
+        <ui-stack direction="row" gap="1">
+          <p-button
+            icon="pi pi-pencil"
+            severity="secondary"
+            [text]="true"
+            [rounded]="true"
+            size="small"
+            (click)="openEditDialog(row.license)"
+          />
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            [text]="true"
+            [rounded]="true"
+            size="small"
+            (click)="onDelete(row.license)"
+          />
+        </ui-stack>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template #emptymessage>
+    <tr>
+      <td colspan="7" class="text-muted py-12 text-center">
+        No licenses on file. Click "Add license" to record one.
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<app-driver-license-edit-dialog
+  [(visible)]="editDialogVisible"
+  [employeeId]="employeeId()"
+  [license]="editingLicense()"
+  (saved)="onSaved()"
+/>

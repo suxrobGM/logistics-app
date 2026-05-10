@@ -1,0 +1,144 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [header]="title()"
+  [style]="{ width: '600px' }"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <ui-validation-summary [form]="form" />
+
+    <ui-stack gap="3">
+      <ui-form-field
+        label="License number"
+        for="licenseNumber"
+        [required]="true"
+        [control]="form.controls.licenseNumber"
+      >
+        <input pInputText id="licenseNumber" formControlName="licenseNumber" type="text" />
+      </ui-form-field>
+
+      <ui-form-field
+        label="License class"
+        for="licenseClass"
+        [required]="true"
+        [control]="form.controls.licenseClass"
+      >
+        <p-select
+          id="licenseClass"
+          formControlName="licenseClass"
+          [options]="classOptions"
+          optionLabel="label"
+          optionValue="value"
+          appendTo="body"
+        />
+      </ui-form-field>
+
+      <ui-form-field
+        label="Issuing country (ISO 3166)"
+        for="issuingCountry"
+        hint="2-letter country code, e.g. US, DE, PL"
+        [required]="true"
+        [control]="form.controls.issuingCountry"
+      >
+        <input
+          pInputText
+          id="issuingCountry"
+          formControlName="issuingCountry"
+          type="text"
+          maxlength="2"
+          style="text-transform: uppercase"
+        />
+      </ui-form-field>
+
+      <ui-form-field
+        label="Issuing region"
+        for="issuingRegion"
+        hint="State / province, e.g. TX, BY"
+      >
+        <input pInputText id="issuingRegion" formControlName="issuingRegion" type="text" />
+      </ui-form-field>
+
+      <ui-form-field
+        label="Issued date"
+        for="issuedDate"
+        [required]="true"
+        [control]="form.controls.issuedDate"
+      >
+        <p-datepicker
+          id="issuedDate"
+          formControlName="issuedDate"
+          dateFormat="yy-mm-dd"
+          appendTo="body"
+        />
+      </ui-form-field>
+
+      <ui-form-field
+        label="Expires at"
+        for="expiresAt"
+        [required]="true"
+        [control]="form.controls.expiresAt"
+      >
+        <p-datepicker
+          id="expiresAt"
+          formControlName="expiresAt"
+          dateFormat="yy-mm-dd"
+          appendTo="body"
+        />
+      </ui-form-field>
+
+      <ui-form-field
+        label="DOT medical certificate expiry"
+        for="medicalCertExpiresAt"
+        hint="US CDL only — leave blank for non-US licenses"
+      >
+        <p-datepicker
+          id="medicalCertExpiresAt"
+          formControlName="medicalCertExpiresAt"
+          dateFormat="yy-mm-dd"
+          appendTo="body"
+        />
+      </ui-form-field>
+
+      @if (mode() === "update") {
+        <ui-form-field label="Status" for="status">
+          <p-select
+            id="status"
+            formControlName="status"
+            [options]="statusOptions"
+            optionLabel="label"
+            optionValue="value"
+            appendTo="body"
+          />
+        </ui-form-field>
+      }
+
+      <ui-form-field label="Endorsements" for="endorsements">
+        <ui-stack gap="2">
+          @for (opt of endorsementOptions; track opt.value) {
+            <ui-stack direction="row" align="center" gap="2">
+              <p-checkbox
+                [inputId]="'endorsement-' + opt.value"
+                [value]="opt.value"
+                formControlName="endorsements"
+              />
+              <label [for]="'endorsement-' + opt.value">{{ opt.label }}</label>
+            </ui-stack>
+          }
+        </ui-stack>
+      </ui-form-field>
+    </ui-stack>
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" [outlined]="true" (click)="close()" />
+    <p-button
+      label="Save"
+      icon="pi pi-check"
+      [loading]="isLoading()"
+      [disabled]="!form.valid"
+      (click)="save()"
+    />
+  </ng-template>
+</p-dialog>

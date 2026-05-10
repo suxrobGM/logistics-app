@@ -16,6 +16,8 @@ public record TruckDto
     public string? Vin { get; set; }
     public string? LicensePlate { get; set; }
     public string? LicensePlateState { get; set; }
+    public AdrEquipment AdrEquipment { get; set; } = AdrEquipment.None;
+    public bool IsHazmatPlacarded { get; set; }
     public Address? CurrentAddress { get; set; }
     public GeoPoint? CurrentLocation { get; set; }
     public EmployeeDto? MainDriver { get; set; }

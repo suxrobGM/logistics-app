@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -8,6 +9,7 @@ namespace Logistics.Application.Commands;
 
 internal sealed class DispatchTripHandler(
     ITenantUnitOfWork tenantUow,
+    IDispatchEligibilityService eligibilityService,
     ILogger<DispatchTripHandler> logger)
     : IAppRequestHandler<DispatchTripCommand, Result>
 {
@@ -18,6 +20,29 @@ internal sealed class DispatchTripHandler(
         if (trip is null)
         {
             return Result.Fail($"Could not find the trip with ID '{req.TripId}'");
+        }
+
+        // Hard eligibility gate at dispatch — every load on the trip must be carryable
+        // by the assigned truck/driver. Planning steps (assignment, trip creation) don't
+        // enforce this; the dispatcher is the final commit.
+        if (trip.TruckId.HasValue)
+        {
+            // Distinct load IDs across stops (a load may have both pickup + dropoff stops).
+            var loadIds = trip.Stops.Select(s => s.LoadId).Distinct();
+            foreach (var loadId in loadIds)
+            {
+                var eligibility = await eligibilityService.CheckAsync(
+                    trip.TruckId.Value, loadId, ct: ct);
+                if (!eligibility.IsEligible)
+                {
+                    var reasons = string.Join("; ",
+                        eligibility.Issues
+                            .Where(i => i.Severity == EligibilitySeverity.Error)
+                            .Select(i => i.Message));
+                    return Result.Fail(
+                        $"Cannot dispatch trip — load '{loadId}' not eligible: {reasons}");
+                }
+            }
         }
 
         try

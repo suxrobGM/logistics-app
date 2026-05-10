@@ -22,6 +22,8 @@ public static class TruckMapper
             Vin = entity.Vin,
             LicensePlate = entity.LicensePlate,
             LicensePlateState = entity.LicensePlateState,
+            AdrEquipment = entity.AdrEquipment,
+            IsHazmatPlacarded = entity.IsHazmatPlacarded,
             CurrentLocation = entity.CurrentLocation,
             CurrentAddress = entity.CurrentAddress,
             VehicleCapacity = entity.VehicleCapacity,

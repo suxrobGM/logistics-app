@@ -128,6 +128,29 @@ public class LoadController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
+    /// <summary>
+    /// Preview the dispatch eligibility for this load against a candidate truck/driver.
+    /// Used by the UI to surface warnings before the dispatcher commits via POST .../dispatch.
+    /// Read-only — does not mutate state.
+    /// </summary>
+    [HttpGet("{id:guid}/eligibility", Name = "CheckLoadDispatchEligibility")]
+    [ProducesResponseType(typeof(EligibilityResultDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize(Policy = Permission.Load.View)]
+    public async Task<IActionResult> CheckEligibility(
+        Guid id,
+        [FromQuery] Guid truckId,
+        [FromQuery] Guid? driverId = null)
+    {
+        var result = await mediator.Send(new CheckDispatchEligibilityQuery
+        {
+            TruckId = truckId,
+            LoadId = id,
+            DriverId = driverId
+        });
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
     [HttpPost("{id:guid}/assign", Name = "AssignLoadToTruck")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]

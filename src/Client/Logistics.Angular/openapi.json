@@ -4490,6 +4490,210 @@
         }
       }
     },
+    "/employees/{userId}/licenses": {
+      "get": {
+        "tags": [
+          "Employee"
+        ],
+        "operationId": "GetDriverLicenses",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "includeRevoked",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DriverLicenseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Employee"
+        ],
+        "operationId": "CreateDriverLicense",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDriverLicenseCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDriverLicenseCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDriverLicenseCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/employees/{userId}/licenses/{licenseId}": {
+      "put": {
+        "tags": [
+          "Employee"
+        ],
+        "operationId": "UpdateDriverLicense",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "licenseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDriverLicenseCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDriverLicenseCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDriverLicenseCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Employee"
+        ],
+        "operationId": "DeleteDriverLicense",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "licenseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/employees/{userId}/payout/setup": {
       "post": {
         "tags": [
@@ -7660,6 +7864,63 @@
         "responses": {
           "204": {
             "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/loads/{id}/eligibility": {
+      "get": {
+        "tags": [
+          "Load"
+        ],
+        "operationId": "CheckLoadDispatchEligibility",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "truckId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "driverId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EligibilityResultDto"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad Request",
@@ -14813,6 +15074,27 @@
         },
         "additionalProperties": false
       },
+      "AdrEquipment": {
+        "type": "object",
+        "properties": {
+          "isAdrCertified": {
+            "type": "boolean"
+          },
+          "adrCertExpiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "allowedClasses": {
+            "$ref": "#/components/schemas/HazmatClassFlags"
+          },
+          "orangePlateNumber": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "AiQuotaStatusDto": {
         "type": "object",
         "properties": {
@@ -16182,6 +16464,52 @@
         },
         "additionalProperties": false
       },
+      "CreateDriverLicenseCommand": {
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "licenseNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "licenseClass": {
+            "$ref": "#/components/schemas/LicenseClass"
+          },
+          "endorsements": {
+            "$ref": "#/components/schemas/LicenseEndorsement"
+          },
+          "issuingCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "issuingRegion": {
+            "type": "string",
+            "nullable": true
+          },
+          "issuedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "medicalCertExpiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "documentId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CreateDvirDefectRequest": {
         "required": [
           "category",
@@ -16445,6 +16773,16 @@
           "destinationTerminalId": {
             "type": "string",
             "format": "uuid",
+            "nullable": true
+          },
+          "isHazmat": {
+            "type": "boolean"
+          },
+          "hazmatClass": {
+            "$ref": "#/components/schemas/HazmatClass"
+          },
+          "unNumber": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -18153,6 +18491,72 @@
         },
         "additionalProperties": false
       },
+      "DriverLicenseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "licenseNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "licenseClass": {
+            "$ref": "#/components/schemas/LicenseClass"
+          },
+          "endorsements": {
+            "$ref": "#/components/schemas/LicenseEndorsement"
+          },
+          "issuingCountry": {
+            "type": "string",
+            "nullable": true
+          },
+          "issuingRegion": {
+            "type": "string",
+            "nullable": true
+          },
+          "issuedDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "medicalCertExpiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/DriverLicenseStatus"
+          },
+          "documentId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "daysUntilExpiry": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DriverLicenseStatus": {
+        "enum": [
+          "active",
+          "expired",
+          "suspended",
+          "revoked"
+        ],
+        "type": "string"
+      },
       "DriverPerformanceDto": {
         "type": "object",
         "properties": {
@@ -18685,6 +19089,40 @@
           "demo"
         ],
         "type": "string"
+      },
+      "EligibilityIssueDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "nullable": true
+          },
+          "severity": {
+            "type": "string",
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EligibilityResultDto": {
+        "type": "object",
+        "properties": {
+          "isEligible": {
+            "type": "boolean"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EligibilityIssueDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "EmployeeDto": {
         "type": "object",
@@ -19363,6 +19801,35 @@
         },
         "additionalProperties": false
       },
+      "HazmatClass": {
+        "enum": [
+          "class1",
+          "class2",
+          "class3",
+          "class4",
+          "class5",
+          "class6",
+          "class7",
+          "class8",
+          "class9"
+        ],
+        "type": "string"
+      },
+      "HazmatClassFlags": {
+        "enum": [
+          "none",
+          "class1",
+          "class2",
+          "class3",
+          "class4",
+          "class5",
+          "class6",
+          "class7",
+          "class8",
+          "class9"
+        ],
+        "type": "string"
+      },
       "HosLogDto": {
         "type": "object",
         "properties": {
@@ -19986,6 +20453,34 @@
         ],
         "type": "string"
       },
+      "LicenseClass": {
+        "enum": [
+          "us_class_a",
+          "us_class_b",
+          "us_class_c",
+          "eu_c",
+          "eu_ce",
+          "eu_d",
+          "eu_de",
+          "eu_c1",
+          "eu_c1_e"
+        ],
+        "type": "string"
+      },
+      "LicenseEndorsement": {
+        "enum": [
+          "none",
+          "hazmat",
+          "tanker",
+          "doubles",
+          "passenger",
+          "adr",
+          "adr_tanks",
+          "adr_class1",
+          "adr_class7"
+        ],
+        "type": "string"
+      },
       "LinkContainerToLoadCommand": {
         "type": "object",
         "properties": {
@@ -20426,6 +20921,16 @@
             "nullable": true
           },
           "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "isHazmat": {
+            "type": "boolean"
+          },
+          "hazmatClass": {
+            "$ref": "#/components/schemas/HazmatClass"
+          },
+          "unNumber": {
             "type": "string",
             "nullable": true
           },
@@ -24385,6 +24890,12 @@
             "type": "string",
             "nullable": true
           },
+          "adrEquipment": {
+            "$ref": "#/components/schemas/AdrEquipment"
+          },
+          "isHazmatPlacarded": {
+            "type": "boolean"
+          },
           "currentAddress": {
             "$ref": "#/components/schemas/Address"
           },
@@ -24893,6 +25404,49 @@
           "updatedById": {
             "type": "string",
             "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateDriverLicenseCommand": {
+        "type": "object",
+        "properties": {
+          "licenseId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "licenseClass": {
+            "$ref": "#/components/schemas/LicenseClass"
+          },
+          "endorsements": {
+            "$ref": "#/components/schemas/LicenseEndorsement"
+          },
+          "issuingRegion": {
+            "type": "string",
+            "nullable": true
+          },
+          "issuedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "medicalCertExpiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/DriverLicenseStatus"
+          },
+          "documentId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -25632,6 +26186,13 @@
           },
           "licensePlateState": {
             "type": "string",
+            "nullable": true
+          },
+          "adrEquipment": {
+            "$ref": "#/components/schemas/AdrEquipment"
+          },
+          "isHazmatPlacarded": {
+            "type": "boolean",
             "nullable": true
           }
         },

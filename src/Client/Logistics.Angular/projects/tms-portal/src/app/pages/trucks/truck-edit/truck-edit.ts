@@ -107,6 +107,8 @@ export class TruckEdit implements OnInit {
         vin: data.vin ?? undefined,
         licensePlate: data.licensePlate ?? undefined,
         licensePlateState: data.licensePlateState ?? undefined,
+        adrEquipment: data.adrEquipment,
+        isHazmatPlacarded: data.isHazmatPlacarded,
       };
 
       await this.api.invoke(updateTruck, {

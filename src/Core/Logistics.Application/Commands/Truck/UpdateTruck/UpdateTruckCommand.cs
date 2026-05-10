@@ -1,5 +1,6 @@
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Commands;
 
@@ -18,4 +19,14 @@ public class UpdateTruckCommand : IAppRequest
     public string? Vin { get; set; }
     public string? LicensePlate { get; set; }
     public string? LicensePlateState { get; set; }
+
+    /// <summary>
+    /// Replaces the truck's ADR equipment configuration when supplied. Null leaves it unchanged.
+    /// </summary>
+    public AdrEquipment? AdrEquipment { get; set; }
+
+    /// <summary>
+    /// US Hazmat placarding flag. Null leaves it unchanged.
+    /// </summary>
+    public bool? IsHazmatPlacarded { get; set; }
 }
