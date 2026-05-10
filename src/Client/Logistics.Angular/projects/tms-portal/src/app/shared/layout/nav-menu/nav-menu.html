@@ -36,7 +36,7 @@
             @if (!collapsed()) {
               <svg
                 lucideIcon="chevron-down"
-                class="text-muted shrink-0 size-3 transition-transform duration-200"
+                class="text-muted size-3 shrink-0 transition-transform duration-200"
                 [class.rotate-180]="isGroupExpanded(item)"
                 [class.text-accent]="isGroupExpanded(item)"
               ></svg>
@@ -46,7 +46,7 @@
           <!-- Children (animated expand/collapse) -->
           @if (!collapsed()) {
             <div class="nav-children-wrapper" [class.expanded]="isGroupExpanded(item)">
-              <div class="nav-children-inner border-subtle ml-7 border-l py-1">
+              <div class="nav-children-inner border-subtle ml-7 border-l">
                 @for (child of item.children; track child.id) {
                   <a
                     class="nav-child"
@@ -126,7 +126,7 @@
             @if (!collapsed()) {
               <svg
                 lucideIcon="chevron-down"
-                class="text-muted shrink-0 size-3 transition-transform duration-200"
+                class="text-muted size-3 shrink-0 transition-transform duration-200"
                 [class.rotate-180]="isGroupExpanded(item)"
                 [class.text-accent]="isGroupExpanded(item)"
               ></svg>
@@ -135,7 +135,7 @@
 
           @if (!collapsed()) {
             <div class="nav-children-wrapper" [class.expanded]="isGroupExpanded(item)">
-              <div class="nav-children-inner border-subtle ml-7 border-l py-1">
+              <div class="nav-children-inner border-subtle ml-7 border-l">
                 @for (child of item.children; track child.id) {
                   <a
                     class="nav-child"
