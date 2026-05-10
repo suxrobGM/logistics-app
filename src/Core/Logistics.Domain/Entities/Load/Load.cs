@@ -89,6 +89,22 @@ public partial class Load : AuditableEntity, ITenantEntity
     public string? Notes { get; set; }
 
     /// <summary>
+    /// True when the load contains hazardous materials. When set, <see cref="HazmatClass"/>
+    /// and <see cref="UnNumber"/> should also be populated.
+    /// </summary>
+    public bool IsHazmat { get; set; }
+
+    /// <summary>
+    /// UN/ADR hazardous material class (1–9). Required for ADR-aware dispatch eligibility.
+    /// </summary>
+    public HazmatClass? HazmatClass { get; set; }
+
+    /// <summary>
+    /// UN number identifying the specific hazardous substance (e.g., "UN1203" for petrol).
+    /// </summary>
+    public string? UnNumber { get; set; }
+
+    /// <summary>
     /// Optional intermodal container being moved by this load.
     /// </summary>
     public Guid? ContainerId { get; set; }

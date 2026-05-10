@@ -48,6 +48,17 @@ public class Truck : Entity, ITenantEntity
     public string? LicensePlateState { get; set; }
 
     /// <summary>
+    ///     ADR (Accord Dangereux Routier) equipment configuration. Tracks whether this
+    ///     truck is certified to carry hazardous goods and which classes it is approved for.
+    /// </summary>
+    public AdrEquipment AdrEquipment { get; set; } = AdrEquipment.None;
+
+    /// <summary>
+    ///     US-side flag: truck is placarded for Hazmat transport (per FMCSA / DOT).
+    /// </summary>
+    public bool IsHazmatPlacarded { get; set; }
+
+    /// <summary>
     ///     Truck's last known location address
     /// </summary>
     public Address? CurrentAddress { get; set; }

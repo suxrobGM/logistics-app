@@ -41,6 +41,10 @@ internal sealed class LoadEntityConfiguration : IEntityTypeConfiguration<Load>
         builder.Property(i => i.Notes)
             .HasMaxLength(2000);
 
+        // Hazmat / ADR
+        builder.Property(i => i.UnNumber)
+            .HasMaxLength(16);
+
         builder.HasOne(i => i.Container)
             .WithMany()
             .HasForeignKey(i => i.ContainerId)

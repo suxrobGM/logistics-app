@@ -13,6 +13,11 @@ internal sealed class TruckEntityConfiguration : IEntityTypeConfiguration<Truck>
         builder.HasIndex(i => i.Number)
             .IsUnique();
 
+        builder.ComplexProperty(i => i.AdrEquipment, adr =>
+        {
+            adr.Property(a => a.OrangePlateNumber).HasMaxLength(8);
+        });
+
         builder.HasOne(i => i.MainDriver)
             .WithMany()
             .HasForeignKey(i => i.MainDriverId)

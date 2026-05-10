@@ -34,6 +34,12 @@ public class Employee : Entity, ITenantEntity
     public virtual List<EmployeeDocument> Documents { get; set; } = [];
 
     /// <summary>
+    ///     Driver licenses (history). A driver can hold multiple licenses across jurisdictions
+    ///     or accumulated renewals.
+    /// </summary>
+    public virtual List<DriverLicense> Licenses { get; set; } = [];
+
+    /// <summary>
     ///     Dispatched loads by dispatchers
     /// </summary>
     public virtual List<Load> DispatchedLoads { get; } = [];
