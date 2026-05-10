@@ -12,7 +12,7 @@ Codex and other coding agents should not duplicate project rules here. Instead, 
    - Angular frontend: `.claude/rules/frontend/angular-conventions.md` and `.claude/rules/frontend/angular-security.md`
    - React frontend: `.claude/rules/frontend/react-conventions.md`
    - Kotlin driver app: `.claude/rules/mobile/kotlin-driver-app.md`
-5. Reuse skills from `.claude/skills/`. Each skill folder's `SKILL.md` is authoritative; do not copy skill instructions into `.agents/skills/` or this file. If an agent runtime needs skills under `.agents/skills/` for discovery, add filesystem links or directory junctions that point back to `.claude/skills/<skill-name>/`.
+5. Reuse skills from `.claude/skills/`. Each skill folder's `SKILL.md` is authoritative; do not copy skill instructions into `.agents/skills/` or this file. If an agent runtime needs skills under `.agents/skills/` for discovery, add thin forwarding `SKILL.md` shims that point back to `.claude/skills/<skill-name>/SKILL.md` using `@` imports. Filesystem links or directory junctions are also acceptable, but shims are preferred on Windows.
 6. When adding or changing a top-level feature, update [.claude/feature-map.md](.claude/feature-map.md) so Claude Code remains authoritative.
 
 If this file and the Claude files ever disagree, treat the Claude files as authoritative and update this file only to preserve that delegation.
