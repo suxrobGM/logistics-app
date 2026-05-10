@@ -10,7 +10,6 @@ import { DashboardSettingsService } from "@/core/services";
 @Component({
   selector: "app-home-skeleton",
   templateUrl: "./home-skeleton.html",
-  styleUrl: "./home-skeleton.css",
   imports: [SkeletonModule],
 })
 export class HomeSkeleton {

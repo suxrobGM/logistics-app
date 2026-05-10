@@ -22,20 +22,20 @@
 } @else {
   <!-- Stats Cards -->
   <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
-    <ui-stat-card
+    <app-stat-card
       label="Active Providers"
       [value]="activeProviders().length"
       icon="pi-link"
       color="blue"
     />
-    <ui-stat-card label="Available Loads" [value]="availableLoads()" icon="pi-box" color="green" />
-    <ui-stat-card
+    <app-stat-card label="Available Loads" [value]="availableLoads()" icon="pi-box" color="green" />
+    <app-stat-card
       label="Posted Trucks"
       [value]="activePostedTrucks()"
       icon="pi-truck"
       color="purple"
     />
-    <ui-stat-card
+    <app-stat-card
       label="Total Providers"
       [value]="providers().length"
       icon="pi-cog"

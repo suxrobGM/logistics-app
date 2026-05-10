@@ -20,7 +20,7 @@
   <!-- Key Safety Metrics Cards -->
   <ui-grid container spacing="2" class="mb-6">
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
-      <ui-stat-card
+      <app-stat-card
         icon="pi-file-edit"
         label="Total DVIRs"
         [value]="(data()?.totalDvirs || 0).toString()"
@@ -30,7 +30,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
-      <ui-stat-card
+      <app-stat-card
         icon="pi-car"
         label="Accidents"
         [value]="(data()?.totalAccidents || 0).toString()"
@@ -40,7 +40,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
-      <ui-stat-card
+      <app-stat-card
         icon="pi-dollar"
         label="Estimated Damage"
         [value]="(data()?.estimatedDamageCost || 0 | currencyFormat) ?? '$0'"
@@ -50,7 +50,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
-      <ui-stat-card
+      <app-stat-card
         icon="pi-exclamation-triangle"
         label="Behavior Events"
         [value]="(data()?.totalBehaviorEvents || 0).toString()"

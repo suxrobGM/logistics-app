@@ -20,7 +20,7 @@
   <!-- Key Maintenance Metrics Cards -->
   <ui-grid container spacing="2" class="mb-6">
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
-      <ui-stat-card
+      <app-stat-card
         icon="pi-dollar"
         label="Total Cost"
         [value]="(data()?.totalCost || 0 | currencyFormat) ?? '$0'"
@@ -30,7 +30,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
-      <ui-stat-card
+      <app-stat-card
         icon="pi-wrench"
         label="Labor Cost"
         [value]="(data()?.laborCost || 0 | currencyFormat) ?? '$0'"
@@ -40,7 +40,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
-      <ui-stat-card
+      <app-stat-card
         icon="pi-box"
         label="Parts Cost"
         [value]="(data()?.partsCost || 0 | currencyFormat) ?? '$0'"
@@ -50,7 +50,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
-      <ui-stat-card
+      <app-stat-card
         icon="pi-calendar-times"
         label="Overdue"
         [value]="(data()?.overdueCount || 0).toString()"

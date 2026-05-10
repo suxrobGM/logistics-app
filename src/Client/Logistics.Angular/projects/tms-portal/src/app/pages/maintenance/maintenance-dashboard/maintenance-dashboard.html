@@ -2,7 +2,7 @@
 
 <ui-grid container spacing="4" class="mb-4">
   <ui-grid [size]="{ xs: 12, md: 4 }">
-    <ui-stat-card
+    <app-stat-card
       label="Overdue"
       [value]="overdueCount()"
       icon="pi pi-exclamation-triangle"
@@ -10,7 +10,7 @@
     />
   </ui-grid>
   <ui-grid [size]="{ xs: 12, md: 4 }">
-    <ui-stat-card
+    <app-stat-card
       label="Due Soon"
       [value]="dueSoonCount()"
       icon="pi pi-clock"
@@ -18,7 +18,7 @@
     />
   </ui-grid>
   <ui-grid [size]="{ xs: 12, md: 4 }">
-    <ui-stat-card
+    <app-stat-card
       label="This Month"
       [value]="totalCostThisMonth()"
       icon="pi pi-dollar"

@@ -8,7 +8,7 @@ import {
   type CompanyStatsDto,
   type LoadDto,
 } from "@logistics/shared/api";
-import { Icon, Stack, StatCard, StatusBadge, Typography } from "@logistics/shared/components";
+import { Icon, Stack, StatusBadge, Typography } from "@logistics/shared/components";
 import {
   AddressPipe,
   CurrencyFormatPipe,
@@ -26,7 +26,7 @@ import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "@/core/auth";
 import { DashboardSettingsService, type DashboardPanelConfig } from "@/core/services";
-import { TrucksMap } from "@/shared/components";
+import { StatCard, TrucksMap } from "@/shared/components";
 import { Converters } from "@/shared/utils";
 import {
   AttentionPanelComponent,

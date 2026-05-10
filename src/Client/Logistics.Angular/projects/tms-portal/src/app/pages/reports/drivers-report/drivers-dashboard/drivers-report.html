@@ -20,7 +20,7 @@
   <!-- Key Metrics Cards -->
   <ui-grid container spacing="2" class="mb-6">
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
-      <ui-stat-card
+      <app-stat-card
         icon="pi-users"
         label="Total Drivers"
         [value]="(data()?.totalDrivers || 0 | number) ?? '0'"
@@ -30,7 +30,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
-      <ui-stat-card
+      <app-stat-card
         icon="pi-dollar"
         label="Total Earnings"
         [value]="(data()?.totalEarnings || 0 | currencyFormat) ?? '$0'"
@@ -41,7 +41,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
-      <ui-stat-card
+      <app-stat-card
         icon="pi-map"
         label="Total Distance"
         [value]="(data()?.totalDistance || 0 | number: '1.0-0') + ' ' + distanceUnitLabel"
@@ -52,7 +52,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }" class="mb-4">
-      <ui-stat-card
+      <app-stat-card
         icon="pi-check-circle"
         label="Loads Delivered"
         [value]="(data()?.totalLoadsDelivered || 0 | number) ?? '0'"

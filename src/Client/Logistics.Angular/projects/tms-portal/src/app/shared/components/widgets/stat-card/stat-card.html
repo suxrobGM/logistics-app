@@ -3,9 +3,11 @@
     <div class="stat-icon-ring flex h-14 w-14 shrink-0 items-center justify-center rounded-full">
       <ui-icon [name]="icon()" size="xl" color="inherit" />
     </div>
-    <div class="grow">
+    <div class="min-w-0 grow">
       <ui-stack direction="row" align="center" gap="1" class="mb-1">
-        <ui-typography variant="h6" color="muted" tag="h6" class="m-0">{{ label() }}</ui-typography>
+        <ui-typography variant="h6" color="muted" tag="div" class="m-0 truncate">
+          {{ label() }}
+        </ui-typography>
         @if (tooltip()) {
           <ui-icon
             name="info-circle"
@@ -16,7 +18,7 @@
           />
         }
       </ui-stack>
-      <ui-typography variant="h3" color="primary" tag="div" class="m-0 font-mono">
+      <ui-typography variant="h3" color="primary" tag="div" class="m-0 truncate font-mono">
         {{ value() }}
       </ui-typography>
       @if (trend()) {

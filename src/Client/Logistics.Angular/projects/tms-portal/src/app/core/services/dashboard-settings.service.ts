@@ -99,7 +99,7 @@ const DEFAULT_PANELS: DashboardPanelConfig[] = [
     x: 0,
     y: 2,
     cols: 4,
-    rows: 4,
+    rows: 5,
     minItemCols: 3,
     minItemRows: 2,
     roles: [UserRole.Owner],
@@ -111,7 +111,7 @@ const DEFAULT_PANELS: DashboardPanelConfig[] = [
     x: 4,
     y: 2,
     cols: 4,
-    rows: 4,
+    rows: 5,
     minItemCols: 3,
     minItemRows: 2,
     roles: [UserRole.Owner],
@@ -123,51 +123,51 @@ const DEFAULT_PANELS: DashboardPanelConfig[] = [
     x: 8,
     y: 2,
     cols: 4,
-    rows: 4,
+    rows: 5,
     minItemCols: 3,
     minItemRows: 2,
     roles: [UserRole.Owner],
     feature: "dashboard",
   },
-  // Active Loads Table (y=6 to leave room for owner row)
+  // Active Loads Table (y=7 to leave room for owner row of rows=5)
   {
     id: "active-loads",
     label: "Active Loads",
     x: 0,
-    y: 6,
+    y: 7,
     cols: 6,
     rows: 5,
     minItemCols: 6,
     minItemRows: 3,
   },
-  // Fleet Map (y=6)
+  // Fleet Map (y=7)
   {
     id: "fleet-map",
     label: "Fleet Map",
     x: 6,
-    y: 6,
+    y: 7,
     cols: 6,
     rows: 12,
     minItemCols: 4,
     minItemRows: 2,
   },
-  // Recent Activity (y=11)
+  // Recent Activity (y=12)
   {
     id: "recent-activity",
     label: "Recent Activity",
     x: 0,
-    y: 11,
+    y: 12,
     cols: 6,
     rows: 7,
     minItemCols: 3,
     minItemRows: 2,
   },
-  // Daily Gross Chart (y=18)
+  // Daily Gross Chart (y=19)
   {
     id: "daily-gross-chart",
     label: "Daily Gross Chart",
     x: 0,
-    y: 18,
+    y: 19,
     cols: 12,
     rows: 5,
     minItemCols: 6,

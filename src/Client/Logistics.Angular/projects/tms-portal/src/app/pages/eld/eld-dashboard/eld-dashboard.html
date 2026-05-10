@@ -20,7 +20,7 @@
   <!-- Summary Cards Row -->
   <ui-grid container spacing="4" class="mb-6">
     <ui-grid [size]="{ xs: 12, md: 6, lg: 4 }">
-      <ui-stat-card
+      <app-stat-card
         icon="pi-check-circle"
         label="Available Drivers"
         [value]="availableDrivers().length"
@@ -30,7 +30,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 4 }">
-      <ui-stat-card
+      <app-stat-card
         icon="pi-users"
         label="Total Drivers"
         [value]="drivers().length"

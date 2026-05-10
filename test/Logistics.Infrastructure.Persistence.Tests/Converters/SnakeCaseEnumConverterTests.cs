@@ -14,6 +14,9 @@ public class SnakeCaseEnumConverterTests
     public enum SingleValueEnum { Default }
     public enum NumberSuffixEnum { Gpt54, Version2 }
 
+    [Flags]
+    public enum FlagsEnum { None = 0, A = 1, B = 2, C = 4 }
+
     #endregion
 
     #region Enum to snake_case (serialization)
@@ -126,6 +129,24 @@ public class SnakeCaseEnumConverterTests
         var converter = new SnakeCaseEnumConverter<MixedAcronymEnum>();
         var result = FromProvider(converter, input);
         Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void FromSnakeCase_EmptyString_ReturnsDefault()
+    {
+        // Existing rows can carry a "" default left over from an AddColumn migration
+        // (e.g. trucks.adr_equipment_allowed_classes). Must not throw.
+        var converter = new SnakeCaseEnumConverter<FlagsEnum>();
+        var result = FromProvider(converter, "");
+        Assert.Equal(FlagsEnum.None, result);
+    }
+
+    [Fact]
+    public void FromSnakeCase_NullString_ReturnsDefault()
+    {
+        var converter = new SnakeCaseEnumConverter<FlagsEnum>();
+        var result = FromProvider(converter, null!);
+        Assert.Equal(FlagsEnum.None, result);
     }
 
     #endregion

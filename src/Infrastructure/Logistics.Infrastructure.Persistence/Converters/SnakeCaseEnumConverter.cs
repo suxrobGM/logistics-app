@@ -18,7 +18,7 @@ public class SnakeCaseEnumConverter<TEnum> : ValueConverter<TEnum, string>
     public SnakeCaseEnumConverter()
         : base(
             v => EnumToSnake.GetValueOrDefault(v, ToSnakeCase(v.ToString())),
-            v => SnakeToEnum.GetValueOrDefault(v, ParseFallback(v)))
+            v => string.IsNullOrEmpty(v) ? default : SnakeToEnum.GetValueOrDefault(v, ParseFallback(v)))
     {
     }
 
