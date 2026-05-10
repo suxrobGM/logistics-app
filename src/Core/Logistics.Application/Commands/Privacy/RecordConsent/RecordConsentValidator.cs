@@ -6,8 +6,7 @@ internal sealed class RecordConsentValidator : AbstractValidator<RecordConsentCo
 {
     public RecordConsentValidator()
     {
-        RuleFor(c => c)
-            .Must(c => c.UserId.HasValue || c.AnonymousId.HasValue)
-            .WithMessage("Either UserId or AnonymousId must be supplied.");
+        RuleFor(c => c.UserId).NotEmpty();
+        RuleFor(c => c.ConsentType).IsInEnum();
     }
 }

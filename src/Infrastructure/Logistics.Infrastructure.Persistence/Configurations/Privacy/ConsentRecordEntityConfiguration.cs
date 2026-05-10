@@ -18,10 +18,9 @@ internal sealed class ConsentRecordEntityConfiguration : IEntityTypeConfiguratio
         builder.HasOne(r => r.User)
             .WithMany()
             .HasForeignKey(r => r.UserId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(r => r.UserId);
-        builder.HasIndex(r => r.AnonymousId);
         builder.HasIndex(r => new { r.ConsentType, r.Timestamp });
     }
 }

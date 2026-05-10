@@ -15431,13 +15431,7 @@
           },
           "userId": {
             "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "anonymousId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
+            "format": "uuid"
           },
           "consentType": {
             "$ref": "#/components/schemas/ConsentType"
@@ -22407,11 +22401,6 @@
       "RecordConsentRequest": {
         "type": "object",
         "properties": {
-          "anonymousId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
           "consentType": {
             "$ref": "#/components/schemas/ConsentType"
           },

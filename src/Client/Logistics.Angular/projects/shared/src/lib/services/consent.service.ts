@@ -1,6 +1,4 @@
 import { computed, inject, Injectable, signal } from "@angular/core";
-import { Api } from "../api/generated/api";
-import { recordConsent } from "../api/generated/fn/privacy/record-consent";
 import type { ConsentType } from "../api/generated/models/consent-type";
 import { StorageService } from "./storage.service";
 
@@ -17,7 +15,6 @@ export interface ConsentChoices {
 
 interface PersistedConsent {
   version: number;
-  anonymousId: string;
   choices: ConsentChoices;
   timestamp: string;
 }
@@ -37,9 +34,7 @@ const ACCEPT_ALL_CHOICES: ConsentChoices = {
 };
 
 /**
- * Tracks the user's cookie / processing-consent decisions.
- * Reads/writes localStorage and reports each category to the privacy API so we
- * keep an auditable consent log alongside the GDPR data subject endpoints.
+ * Tracks the user's cookie / processing-consent decisions in localStorage.
  *
  * Analytics, marketing, and functional SDK initializers must call
  * {@link hasConsent} before loading any third-party scripts.
@@ -47,7 +42,6 @@ const ACCEPT_ALL_CHOICES: ConsentChoices = {
 @Injectable({ providedIn: "root" })
 export class ConsentService {
   private readonly storage = inject(StorageService);
-  private readonly api = inject(Api);
 
   private readonly state = signal<PersistedConsent | null>(this.load());
 
@@ -89,13 +83,6 @@ export class ConsentService {
     this.persist(this.applyDoNotTrack(merged));
   }
 
-  /** Re-emit the current choices to the API; useful after a consent-history wipe. */
-  public async resync(): Promise<void> {
-    const current = this.state();
-    if (current === null) return;
-    await this.report(current.anonymousId, current.choices);
-  }
-
   private load(): PersistedConsent | null {
     const raw = this.storage.get<PersistedConsent>(STORAGE_KEY);
     if (raw === null || raw.version !== STORAGE_VERSION) return null;
@@ -103,16 +90,13 @@ export class ConsentService {
   }
 
   private persist(choices: ConsentChoices): void {
-    const existing = this.state();
     const next: PersistedConsent = {
       version: STORAGE_VERSION,
-      anonymousId: existing?.anonymousId ?? crypto.randomUUID(),
       choices,
       timestamp: new Date().toISOString(),
     };
     this.storage.set(STORAGE_KEY, next);
     this.state.set(next);
-    void this.report(next.anonymousId, choices);
   }
 
   private applyDoNotTrack(choices: ConsentChoices): ConsentChoices {
@@ -120,24 +104,5 @@ export class ConsentService {
       return { ...choices, analytics: false, marketing: false };
     }
     return choices;
-  }
-
-  private async report(anonymousId: string, choices: ConsentChoices): Promise<void> {
-    const entries: [ConsentType, boolean][] = [
-      ["functional", choices.functional],
-      ["analytics", choices.analytics],
-      ["marketing", choices.marketing],
-    ];
-
-    for (const [category, granted] of entries) {
-      try {
-        await this.api.invoke(recordConsent, {
-          body: { anonymousId, consentType: category, granted },
-        });
-      } catch (err) {
-        // Best-effort — a failed consent post must not break the visitor's experience.
-        console.warn("Failed to report consent", { category, err });
-      }
-    }
   }
 }

@@ -1,3 +1,4 @@
+using Logistics.API.Extensions;
 using Logistics.Application.Commands;
 using Logistics.Application.Queries;
 using Logistics.Domain.Primitives.Enums;
@@ -6,7 +7,6 @@ using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
 
 namespace Logistics.API.Controllers;
 
@@ -98,22 +98,17 @@ public class PrivacyController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
-    ///     Record a cookie / processing consent decision. Anonymous-friendly so the
-    ///     website cookie banner can call this before the visitor logs in.
+    ///     Record a cookie / processing consent decision for the current authenticated user.
     /// </summary>
     [HttpPost("consent", Name = "RecordConsent")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [AllowAnonymous]
-    [EnableRateLimiting("privacy-consent-anon")]
+    [Authorize]
     public async Task<IActionResult> RecordConsent([FromBody] RecordConsentRequest body)
     {
         var command = new RecordConsentCommand
         {
-            UserId = User.Identity?.IsAuthenticated == true && Guid.TryParse(User.FindFirst("sub")?.Value, out var uid)
-                ? uid
-                : null,
-            AnonymousId = body.AnonymousId,
+            UserId = User.GetUserId()!.Value,
             ConsentType = body.ConsentType,
             Granted = body.Granted,
             IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
@@ -150,6 +145,6 @@ public class PrivacyController(IMediator mediator) : ControllerBase
 }
 
 /// <summary>
-///     Body for the anonymous consent endpoint — UserId is taken from auth context, not the body.
+///     Body for the consent endpoint — UserId is taken from the auth context.
 /// </summary>
-public record RecordConsentRequest(Guid? AnonymousId, ConsentType ConsentType, bool Granted);
+public record RecordConsentRequest(ConsentType ConsentType, bool Granted);

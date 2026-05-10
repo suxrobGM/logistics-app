@@ -13,7 +13,6 @@ internal sealed class RecordConsentHandler(IMasterUnitOfWork masterUow)
         var record = new ConsentRecord
         {
             UserId = req.UserId,
-            AnonymousId = req.AnonymousId,
             ConsentType = req.ConsentType,
             Granted = req.Granted,
             Timestamp = DateTime.UtcNow,
