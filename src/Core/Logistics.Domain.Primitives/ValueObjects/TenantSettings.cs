@@ -17,6 +17,11 @@ public record TenantSettings
     public WeightUnit WeightUnit { get; set; } = WeightUnit.Pounds;
 
     /// <summary>
+    /// ISO 639-1 language code used as the tenant's UI/document default. Falls back to "en".
+    /// </summary>
+    public string Language { get; set; } = "en";
+
+    /// <summary>
     /// Whether LLM API calls are enabled for this tenant. Null/true = enabled, false = blocked.
     /// Used to prevent LLM usage on demo/test tenants in production.
     /// Bypassed in development environments.

@@ -3,6 +3,7 @@ package com.logisticsx.driver.viewmodel
 import com.logisticsx.driver.model.DistanceUnit
 import com.logisticsx.driver.model.Language
 import com.logisticsx.driver.model.UserSettings
+import com.logisticsx.driver.service.LocaleManager
 import com.logisticsx.driver.service.PreferencesManager
 import com.logisticsx.driver.viewmodel.base.ActionState
 import com.logisticsx.driver.viewmodel.base.BaseViewModel
@@ -11,7 +12,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class SettingsViewModel(
-    private val preferencesManager: PreferencesManager
+    private val preferencesManager: PreferencesManager,
+    private val localeManager: LocaleManager
 ) : BaseViewModel() {
 
     private val _settings = MutableStateFlow(UserSettings())
@@ -48,6 +50,7 @@ class SettingsViewModel(
         }) {
             preferencesManager.saveLanguage(language)
             _settings.value = _settings.value.copy(language = language)
+            localeManager.apply(language.code)
             _saveState.value = ActionState.Success(Unit)
         }
     }

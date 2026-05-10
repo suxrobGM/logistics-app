@@ -11,6 +11,11 @@ public class User : IdentityUser<Guid>, IEntity<Guid>, IMasterEntity, IAuditable
     public Guid? TenantId { get; set; }
     public virtual Tenant? Tenant { get; set; }
 
+    /// <summary>
+    /// ISO 639-1 code (e.g. "en", "de"). Null means fall back to the tenant's default language.
+    /// </summary>
+    public string? PreferredLanguage { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public string? CreatedBy { get; set; }
     public DateTime? UpdatedAt { get; set; }

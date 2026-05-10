@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import com.logisticsx.driver.config.AppConfig
 import com.logisticsx.driver.config.messagingHubUrl
 import com.logisticsx.driver.config.signalRHubUrl
+import com.logisticsx.driver.service.AndroidLocaleManager
+import com.logisticsx.driver.service.LocaleManager
 import com.logisticsx.driver.service.LocationService
 import com.logisticsx.driver.service.AndroidNetworkMonitor
 import com.logisticsx.driver.service.NetworkMonitor
@@ -54,6 +56,7 @@ private fun androidModule(
     single { MessagingService(AppConfig.messagingHubUrl, get()) }
     singleOf(::LocationService)
     single<NetworkMonitor> { AndroidNetworkMonitor(get()) }
+    single<LocaleManager> { AndroidLocaleManager() }
 
     // Platform-specific launchers
     single { cameraLauncher }

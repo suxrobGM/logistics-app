@@ -4,6 +4,30 @@
 >
 > All Angular labels are hardcoded English. The mobile driver app already declares a `Language` enum (`en`/`ru`/`uz`) in [Settings.kt](../../src/Client/Logistics.DriverApp/composeApp/src/commonMain/kotlin/com/logisticsx/driver/model/Settings.kt) but only one `strings.xml` exists. We need a real i18n pipeline before the codebase grows further.
 
+## Status
+
+**Foundation landed 2026-05-09** — the plumbing below is in place so any new component can reach for `{{ 'key' | translate }}` without further setup. **No existing English strings have been replaced**; that work proceeds gradually.
+
+What landed:
+
+- `TenantSettings.Language` (default `"en"`) and nullable `User.PreferredLanguage` on the master DB (migration `Version_0008`).
+- `UserDto.PreferredLanguage` propagated through `UserMapper`; `TenantSettings.Language` flows through the existing record mapping. `openapi.json` and the generated Angular client include both fields.
+- `@ngx-translate/core` + `@ngx-translate/http-loader` v17 installed in the Angular workspace. Wired into **TMS** and **Customer** portals via `provideTranslateService` + `provideTranslateHttpLoader` + `provideAppInitializer`. Each portal serves `public/assets/i18n/en.json` (currently `{}`).
+- Shared lib: new `I18nService` (signal-based `currentLanguage`, browser/tenant fallback resolution); `LocalizationService.getLocale()` returns BCP-47 and is used by `formatCurrency`/`formatTaxRate`; new `<ui-language-picker>` component built and exported but **not** placed in any layout.
+- Mobile (KMP): empty `composeResources/values-ru/strings.xml` and `values-uz/strings.xml` added; `LocaleManager` interface in commonMain with Android (`Locale.setDefault`) and iOS (`AppleLanguages` via `NSUserDefaults`) implementations registered via Koin; `SettingsViewModel.updateLanguage` now invokes it.
+
+What is **deferred** to the gradual phase:
+
+- Replacing English literals in templates with `| translate` — every existing component still ships in English.
+- Email templates (Liquid) and the `InvoicePdfService` `IStringLocalizer` extraction.
+- A `PUT /api/users/me/preferred-language` endpoint plus client persistence in `I18nService.setLanguage`.
+- Admin portal and website portal wiring (only TMS + Customer are wired today).
+- Placing `<ui-language-picker>` into a layout (e.g., near the TMS theme toggle).
+- `bun run i18n:extract` script and the CI lint banning literal English strings.
+- Mobile per-app system locale via `AppCompatDelegate.setApplicationLocales` (needs the `androidx.appcompat` dependency added) and any string extraction from inline composables.
+
+Treat the rest of this plan as the gradual-phase backlog.
+
 ## Sequencing
 
 - **Position in overall order:** 4th
@@ -95,10 +119,10 @@
 
 ### Migration approach (avoid big bang)
 
-1. Set up infrastructure + scaffolding (1–2 days)
+1. ~~Set up infrastructure + scaffolding (1–2 days)~~ — done 2026-05-09
 2. Migrate **shared lib** first — every portal benefits immediately
 3. Migrate TMS portal pages incrementally — newest pages first
-4. Migrate customer portal + admin portal + website
+4. Migrate customer portal + admin portal + website (admin and website still need `provideTranslateService` wiring before string extraction)
 5. Remove all hardcoded strings; CI step fails if a template contains a literal `>Some Text<` outside specific allowlist
 
 ### Translation memory

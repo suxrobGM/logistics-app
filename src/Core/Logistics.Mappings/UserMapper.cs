@@ -16,7 +16,8 @@ public static class UserMapper
             Email = entity.Email,
             PhoneNumber = entity.PhoneNumber,
             TenantId = entity.TenantId,
-            TenantName = entity.Tenant?.Name
+            TenantName = entity.Tenant?.Name,
+            PreferredLanguage = entity.PreferredLanguage
         };
         return dto;
     }

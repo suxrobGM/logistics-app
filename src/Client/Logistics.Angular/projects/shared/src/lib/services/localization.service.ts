@@ -158,7 +158,7 @@ export class LocalizationService {
    */
   formatCurrency(value: number): string {
     const currencyCode = this.getCurrencyCode();
-    const locale = this.getLocaleForCurrency(currencyCode);
+    const locale = this.getLocale() ?? "en-US";
     return new Intl.NumberFormat(locale, {
       style: "currency",
       currency: currencyCode,
@@ -172,6 +172,28 @@ export class LocalizationService {
    */
   getRegion(): string {
     return this.settingsProvider.getSettings().region ?? "us";
+  }
+
+  /**
+   * Gets the BCP-47 locale combining the tenant's language and region
+   * (e.g., 'en-US', 'de-DE'). Used by Intl.* formatters.
+   */
+  getLocale(): string {
+    const settings = this.settingsProvider.getSettings();
+    const language = (settings.language ?? "en").toLowerCase();
+    const country = this.getCountryForRegion(this.getRegion());
+    return country ? `${language}-${country}` : language;
+  }
+
+  private getCountryForRegion(region: string): string | null {
+    switch (region.toLowerCase()) {
+      case "us":
+        return "US";
+      case "eu":
+        return "DE";
+      default:
+        return null;
+    }
   }
 
   /**
@@ -197,26 +219,11 @@ export class LocalizationService {
     if (percent == null || percent <= 0) {
       return "—";
     }
-    const locale = this.getLocaleForCurrency(this.getCurrencyCode());
+    const locale = this.getLocale() ?? "en-US";
     const formatted = new Intl.NumberFormat(locale, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     }).format(percent);
     return `${formatted}%`;
-  }
-
-  /**
-   * Gets the appropriate locale for a currency code.
-   */
-  private getLocaleForCurrency(currencyCode: string): string {
-    const locales: Record<string, string> = {
-      USD: "en-US",
-      EUR: "de-DE",
-      GBP: "en-GB",
-      CAD: "en-CA",
-      MXN: "es-MX",
-      AUD: "en-AU",
-    };
-    return locales[currencyCode] ?? "en-US";
   }
 }

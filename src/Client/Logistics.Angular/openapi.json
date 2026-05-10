@@ -23718,6 +23718,10 @@
           "weightUnit": {
             "$ref": "#/components/schemas/WeightUnit"
           },
+          "language": {
+            "type": "string",
+            "nullable": true
+          },
           "llmEnabled": {
             "type": "boolean",
             "nullable": true
@@ -25704,6 +25708,10 @@
             "nullable": true
           },
           "role": {
+            "type": "string",
+            "nullable": true
+          },
+          "preferredLanguage": {
             "type": "string",
             "nullable": true
           }

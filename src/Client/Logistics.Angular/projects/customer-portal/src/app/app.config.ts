@@ -1,12 +1,16 @@
 import {
-  type ApplicationConfig,
   importProvidersFrom,
+  inject,
+  provideAppInitializer,
   provideBrowserGlobalErrorListeners,
+  type ApplicationConfig,
 } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { provideRouter, withComponentInputBinding } from "@angular/router";
 import { getAccessToken, provideApi } from "@logistics/shared";
-import { TENANT_SETTINGS_PROVIDER } from "@logistics/shared/services";
+import { I18nService, TENANT_SETTINGS_PROVIDER } from "@logistics/shared/services";
+import { provideTranslateService } from "@ngx-translate/core";
+import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
 import Aura from "@primeuix/themes/aura";
 import { provideAuth } from "angular-auth-oidc-client";
 import { ConfirmationService, MessageService } from "primeng/api";
@@ -35,6 +39,11 @@ export const appConfig: ApplicationConfig = {
       baseUrl: environment.apiUrl,
       tokenGetter: () => getAccessToken("customerportal"),
       interceptors: [tenantInterceptor],
+    }),
+    provideTranslateService({ fallbackLang: "en", lang: "en" }),
+    provideTranslateHttpLoader({ prefix: "/assets/i18n/", suffix: ".json" }),
+    provideAppInitializer(() => {
+      inject(I18nService).init({ supportedLanguages: ["en"] });
     }),
 
     MessageService,

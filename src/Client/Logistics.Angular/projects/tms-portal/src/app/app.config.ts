@@ -1,5 +1,7 @@
 import {
   importProvidersFrom,
+  inject,
+  provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   type ApplicationConfig,
 } from "@angular/core";
@@ -12,8 +14,14 @@ import {
   UPGRADE_HANDLER,
 } from "@logistics/shared";
 import { provideApi } from "@logistics/shared/api";
-import { FEATURE_PROVIDER, TENANT_SETTINGS_PROVIDER } from "@logistics/shared/services";
+import {
+  FEATURE_PROVIDER,
+  I18nService,
+  TENANT_SETTINGS_PROVIDER,
+} from "@logistics/shared/services";
 import { provideLucideIcons } from "@lucide/angular";
+import { provideTranslateService } from "@ngx-translate/core";
+import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
 import { provideAuth } from "angular-auth-oidc-client";
 import { provideMapboxGL } from "ngx-mapbox-gl";
 import { ConfirmationService, MessageService } from "primeng/api";
@@ -47,9 +55,15 @@ export const appConfig: ApplicationConfig = {
     }),
     provideMapboxGL({ accessToken: environment.mapboxToken }),
     provideLucideIcons(...BASE_LUCIDE_ICONS, ...TMS_LUCIDE_ICONS),
+    provideTranslateService({ fallbackLang: "en", lang: "en" }),
+    provideTranslateHttpLoader({ prefix: "/assets/i18n/", suffix: ".json" }),
+    provideAppInitializer(() => {
+      inject(I18nService).init({ supportedLanguages: ["en"] });
+    }),
 
     MessageService,
     ConfirmationService,
+
     { provide: PERMISSION_CHECKER, useExisting: PermissionService },
     { provide: TENANT_SETTINGS_PROVIDER, useExisting: TmsTenantSettingsProvider },
     { provide: FEATURE_PROVIDER, useExisting: TmsFeatureProvider },

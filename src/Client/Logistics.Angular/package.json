@@ -34,6 +34,8 @@
     "@lucide/angular": "^1.14.0",
     "@microsoft/signalr": "^10.0.0",
     "@ngrx/signals": "^21.1.0",
+    "@ngx-translate/core": "^17.0.0",
+    "@ngx-translate/http-loader": "^17.0.0",
     "@primeuix/themes": "^2.0.3",
     "angular-auth-oidc-client": "^21.0.2",
     "angular-gridster2": "^21.0.1",

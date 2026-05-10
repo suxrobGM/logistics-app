@@ -3,6 +3,8 @@ package com.logisticsx.driver
 import com.logisticsx.driver.config.AppConfig
 import com.logisticsx.driver.config.messagingHubUrl
 import com.logisticsx.driver.config.signalRHubUrl
+import com.logisticsx.driver.service.IosLocaleManager
+import com.logisticsx.driver.service.LocaleManager
 import com.logisticsx.driver.service.LocationService
 import com.logisticsx.driver.service.IosNetworkMonitor
 import com.logisticsx.driver.service.NetworkMonitor
@@ -40,4 +42,5 @@ val iosModule = module {
     single { MessagingService(AppConfig.messagingHubUrl, get()) }
     singleOf(::LocationService)
     single<NetworkMonitor> { IosNetworkMonitor() }
+    single<LocaleManager> { IosLocaleManager() }
 }

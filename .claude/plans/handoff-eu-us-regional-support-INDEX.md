@@ -26,13 +26,13 @@
 
 ## Medium priority (regional usability)
 
-| #   | Status | Plan                                                                                        | Effort | Why                                                                                        |
-| --- | ------ | ------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------ |
-| 6   |        | [Multi-language i18n (UI translations)](handoff-i18n-multi-language.md)                     | L      | All Angular labels hardcoded English. Mobile already has the enum but no resource strings. |
-| 7   |        | [Driver licensing + ADR / Hazmat](handoff-driver-licensing-and-adr.md)                      | M      | No CDL/EU category tracking; no ADR cert / Hazmat endorsement on `Employee`/`Truck`.       |
-| 8   |        | [VIN decoder EU fallback](handoff-vin-decoder-eu.md)                                        | S      | NHTSA only knows US-market VINs.                                                           |
-| 9   |        | [Fuel volume + temperature units](handoff-fuel-volume-temperature-units.md)                 | S      | Gallons/Liters, F/C for reefer cargo, MPG ↔ L/100km.                                       |
-| 10  | Done   | [Region-aware addresses + Tenant MC/VAT](handoff-region-aware-address-and-tenant-fields.md) | M      | `Address.State` always required. Tenant missing MC number, VAT ID, EORI.                   |
+| #   | Status            | Plan                                                                                        | Effort | Why                                                                                        |
+| --- | ----------------- | ------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------ |
+| 6   | Done (foundation) | [Multi-language i18n (UI translations)](handoff-i18n-multi-language.md)                     | L      | All Angular labels hardcoded English. Mobile already has the enum but no resource strings. |
+| 7   |                   | [Driver licensing + ADR / Hazmat](handoff-driver-licensing-and-adr.md)                      | M      | No CDL/EU category tracking; no ADR cert / Hazmat endorsement on `Employee`/`Truck`.       |
+| 8   |                   | [VIN decoder EU fallback](handoff-vin-decoder-eu.md)                                        | S      | NHTSA only knows US-market VINs.                                                           |
+| 9   |                   | [Fuel volume + temperature units](handoff-fuel-volume-temperature-units.md)                 | S      | Gallons/Liters, F/C for reefer cargo, MPG ↔ L/100km.                                       |
+| 10  | Done              | [Region-aware addresses + Tenant MC/VAT](handoff-region-aware-address-and-tenant-fields.md) | M      | `Address.State` always required. Tenant missing MC number, VAT ID, EORI.                   |
 
 ## Low priority (US-side completeness, polish)
 
@@ -43,9 +43,9 @@
 
 ## Suggested order
 
-~~1~~, ~~2~~, ~~3~~, 6 (i18n before more pages ship) → ~~10~~ (address shape touches every form) → 7, 8, 9 (domain polish) → 5 (EU load boards, well-scoped) → 4 (largest effort, partner-friendly) → 11, 12 (last).
+~~1~~, ~~2~~, ~~3~~, ~~6 (foundation)~~ → ~~10~~ (address shape touches every form) → 7, 8, 9 (domain polish) → 5 (EU load boards, well-scoped) → 4 (largest effort, partner-friendly) → 11, 12 (last). Gradual i18n string migration runs alongside the remaining work, not as its own phase.
 
-Next up: **6 (i18n multi-language)**.
+Next up: **7 (driver licensing + ADR / Hazmat)**.
 
 ## Conventions every plan follows
 

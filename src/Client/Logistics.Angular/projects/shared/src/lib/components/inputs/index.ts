@@ -5,3 +5,4 @@ export * from "./phone-input/phone-input";
 export * from "./form-field/form-field";
 export * from "./validation-summary/validation-summary";
 export * from "./address-form/address-form";
+export * from "./language-picker/language-picker";
