@@ -1,6 +1,6 @@
 <div class="mx-auto max-w-4xl">
   <div class="mb-6 flex items-start justify-between">
-    <ui-page-header title="Expense Details" [showAddButton]="false" />
+    <ui-page-header title="Expense Details" />
     <div class="flex gap-2">
       @if (canApproveOrReject()) {
         <p-button icon="pi pi-check" label="Approve" severity="success" (click)="onApprove()" />
@@ -64,7 +64,10 @@
           <div class="flex items-center justify-between">
             <span class="text-muted">Amount</span>
             <span class="text-success text-xl font-bold">
-              {{ expense()!.amount?.amount ?? 0 | currencyFormat: expense()!.amount?.currency ?? "USD" }}
+              {{
+                expense()!.amount?.amount ?? 0
+                  | currencyFormat: expense()!.amount?.currency ?? "USD"
+              }}
             </span>
           </div>
 

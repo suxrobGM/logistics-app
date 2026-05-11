@@ -21,8 +21,11 @@ const maxWidthClasses: Record<ContainerMaxWidth, string> = {
   templateUrl: "./container.html",
 })
 export class Container {
+  /** Maximum width of the container. Defaults to `lg`. */
   public readonly maxWidth = input<ContainerMaxWidth>("lg");
-  public readonly gutters = input<boolean, unknown>(true, { transform: booleanAttribute });
+
+  /** Controls horizontal padding. Defaults to `false`. */
+  public readonly gutters = input<boolean, unknown>(false, { transform: booleanAttribute });
 
   protected readonly classes = computed(() => {
     const parts = ["mx-auto w-full", maxWidthClasses[this.maxWidth()]];

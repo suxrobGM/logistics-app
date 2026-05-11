@@ -17,10 +17,9 @@ import {
   type UserDto,
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
-import { Stack } from "@logistics/shared/components";
+import { Container, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { AutoCompleteModule } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputGroupAddonModule } from "primeng/inputgroupaddon";
@@ -44,7 +43,6 @@ import { UserService } from "../services";
   imports: [
     ToastModule,
     ConfirmDialogModule,
-    CardModule,
     ProgressSpinnerModule,
     FormsModule,
     ReactiveFormsModule,
@@ -60,7 +58,11 @@ import { UserService } from "../services";
     InputTextModule,
     UnitInput,
     CurrencyInput,
+    Icon,
     Stack,
+    Surface,
+    Typography,
+    Container,
   ],
 })
 export class EmployeeAdd {

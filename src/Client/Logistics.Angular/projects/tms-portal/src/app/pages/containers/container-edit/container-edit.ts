@@ -16,6 +16,7 @@ import {
 } from "@logistics/shared/api";
 import { containerIsoTypeOptions, containerStatusOptions } from "@logistics/shared/api/enums";
 import {
+  Container,
   FormField,
   Grid,
   Icon,
@@ -61,6 +62,7 @@ import { SearchTerminal } from "@/shared/components/search";
     Stack,
     Surface,
     Typography,
+    Container,
   ],
 })
 export class ContainerEdit implements OnInit {

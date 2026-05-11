@@ -1,9 +1,4 @@
-<ui-page-header
-  title="Add New Payroll"
-  [showAddButton]="false"
-  [centered]="true"
-  backLink="/payroll/invoices"
-/>
+<ui-page-header title="Add New Payroll" [centered]="true" backLink="/payroll/invoices" />
 
 <div class="mx-auto max-w-4xl">
   <p-card>
@@ -56,7 +51,9 @@
         <!-- Single Mode Preview -->
         @if (selectedEmployee() && previewPayrollInvoice()) {
           <p-divider />
-          <ui-typography variant="h4" tag="h4" color="primary" weight="semibold" class="mb-4">Preview Payroll Invoice</ui-typography>
+          <ui-typography variant="h4" tag="h4" color="primary" weight="semibold" class="mb-4">
+            Preview Payroll Invoice
+          </ui-typography>
 
           <ui-surface variant="subtle" padding="md" radius="lg" class="mb-6 block">
             <ui-grid container spacing="4">
@@ -87,7 +84,9 @@
                 </p>
               </ui-grid>
               <ui-grid [size]="12">
-                <ui-typography variant="caption" color="muted">Expected Invoice Total</ui-typography>
+                <ui-typography variant="caption" color="muted">
+                  Expected Invoice Total
+                </ui-typography>
                 <p class="text-success text-xl font-bold">
                   {{ previewPayrollInvoice()!.total?.amount | currencyFormat }}
                 </p>
@@ -140,7 +139,9 @@
             </ui-typography>
             <div class="text-right">
               <ui-typography variant="caption" color="muted">Total Amount</ui-typography>
-              <p class="text-success text-xl font-bold">{{ getBulkTotalAmount() | currencyFormat }}</p>
+              <p class="text-success text-xl font-bold">
+                {{ getBulkTotalAmount() | currencyFormat }}
+              </p>
             </div>
           </ui-stack>
 

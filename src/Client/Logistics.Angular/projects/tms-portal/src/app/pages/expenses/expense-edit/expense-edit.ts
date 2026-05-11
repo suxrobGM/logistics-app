@@ -2,6 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
+import { ToastService } from "@logistics/shared";
 import {
   Api,
   getExpenseById,
@@ -11,8 +12,7 @@ import {
   type ExpenseDto,
   type TruckDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
-import { MessageService } from "primeng/api";
+import { Container, Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
@@ -33,7 +33,6 @@ interface CategoryOption {
 @Component({
   selector: "app-expense-edit",
   templateUrl: "./expense-edit.html",
-  providers: [MessageService],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -54,13 +53,14 @@ interface CategoryOption {
     Icon,
     Stack,
     Typography,
+    Container,
   ],
 })
 export class ExpenseEditPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly api = inject(Api);
   private readonly router = inject(Router);
-  private readonly messageService = inject(MessageService);
+  private readonly toast = inject(ToastService);
 
   protected readonly id = input.required<string>();
   protected readonly isLoading = signal(false);
@@ -126,27 +126,15 @@ export class ExpenseEditPage implements OnInit {
 
     if (result?.blobPath) {
       this.receiptPath.set(result.blobPath);
-      this.messageService.add({
-        severity: "success",
-        summary: "Receipt Uploaded",
-        detail: "Receipt file attached successfully.",
-      });
+      this.toast.showSuccess("Receipt file attached successfully.", "Receipt Uploaded");
     } else {
-      this.messageService.add({
-        severity: "error",
-        summary: "Upload Failed",
-        detail: "Failed to upload receipt. Please try again.",
-      });
+      this.toast.showError("Failed to upload receipt. Please try again.");
     }
   }
 
   async onSubmit(): Promise<void> {
     if (!this.form.valid) {
-      this.messageService.add({
-        severity: "error",
-        summary: "Validation Error",
-        detail: "Please fill all required fields.",
-      });
+      this.toast.showError("Please fill all required fields.");
       return;
     }
 
@@ -190,11 +178,7 @@ export class ExpenseEditPage implements OnInit {
 
     this.isSaving.set(false);
 
-    this.messageService.add({
-      severity: "success",
-      summary: "Success",
-      detail: "Expense updated successfully.",
-    });
+    this.toast.showSuccess("Expense updated successfully.");
     this.router.navigate(["/expenses", this.id()]);
   }
 

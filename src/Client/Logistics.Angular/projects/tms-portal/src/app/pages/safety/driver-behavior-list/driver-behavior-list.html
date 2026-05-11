@@ -1,4 +1,4 @@
-<ui-page-header title="Driver Behavior Events" [showAddButton]="false" />
+<ui-page-header title="Driver Behavior Events" />
 
 <p-card>
   <!-- Filters -->
@@ -123,7 +123,9 @@
       <!-- Event Details -->
       <ui-grid container spacing="4">
         <ui-grid [size]="{ xs: 6 }">
-          <ui-typography variant="body-sm" color="muted" class="mb-1 block">Event Type</ui-typography>
+          <ui-typography variant="body-sm" color="muted" class="mb-1 block">
+            Event Type
+          </ui-typography>
           <p-tag
             [value]="selectedEvent()!.eventTypeDisplay ?? ''"
             [severity]="
@@ -134,19 +136,27 @@
           />
         </ui-grid>
         <ui-grid [size]="{ xs: 6 }">
-          <ui-typography variant="body-sm" color="muted" class="mb-1 block">Date/Time</ui-typography>
-          <ui-typography variant="body" weight="medium">{{ selectedEvent()!.occurredAt | date: "medium" }}</ui-typography>
+          <ui-typography variant="body-sm" color="muted" class="mb-1 block">
+            Date/Time
+          </ui-typography>
+          <ui-typography variant="body" weight="medium">
+            {{ selectedEvent()!.occurredAt | date: "medium" }}
+          </ui-typography>
         </ui-grid>
       </ui-grid>
 
       <ui-grid container spacing="4">
         <ui-grid [size]="{ xs: 6 }">
           <ui-typography variant="body-sm" color="muted" class="mb-1 block">Driver</ui-typography>
-          <ui-typography variant="body" weight="medium">{{ selectedEvent()!.driverName }}</ui-typography>
+          <ui-typography variant="body" weight="medium">
+            {{ selectedEvent()!.driverName }}
+          </ui-typography>
         </ui-grid>
         <ui-grid [size]="{ xs: 6 }">
           <ui-typography variant="body-sm" color="muted" class="mb-1 block">Truck</ui-typography>
-          <ui-typography variant="body" weight="medium">{{ selectedEvent()!.truckNumber ?? "N/A" }}</ui-typography>
+          <ui-typography variant="body" weight="medium">
+            {{ selectedEvent()!.truckNumber ?? "N/A" }}
+          </ui-typography>
         </ui-grid>
       </ui-grid>
 
@@ -164,11 +174,15 @@
         <ui-grid container spacing="4">
           <ui-grid [size]="{ xs: 6 }">
             <ui-typography variant="body-sm" color="muted" class="mb-1 block">Speed</ui-typography>
-            <ui-typography variant="body" weight="medium">{{ selectedEvent()!.speedMph | number: "1.0-0" }} mph</ui-typography>
+            <ui-typography variant="body" weight="medium">
+              {{ selectedEvent()!.speedMph | number: "1.0-0" }} mph
+            </ui-typography>
           </ui-grid>
           @if (selectedEvent()!.speedLimitMph) {
             <ui-grid [size]="{ xs: 6 }">
-              <ui-typography variant="body-sm" color="muted" class="mb-1 block">Speed Limit</ui-typography>
+              <ui-typography variant="body-sm" color="muted" class="mb-1 block">
+                Speed Limit
+              </ui-typography>
               <ui-typography variant="body" weight="medium">
                 {{ selectedEvent()!.speedLimitMph | number: "1.0-0" }} mph
               </ui-typography>
@@ -180,14 +194,18 @@
       @if (selectedEvent()!.gForce) {
         <div>
           <ui-typography variant="body-sm" color="muted" class="mb-1 block">G-Force</ui-typography>
-          <ui-typography variant="body" weight="medium">{{ selectedEvent()!.gForce | number: "1.2-2" }} G</ui-typography>
+          <ui-typography variant="body" weight="medium">
+            {{ selectedEvent()!.gForce | number: "1.2-2" }} G
+          </ui-typography>
         </div>
       }
 
       @if (selectedEvent()!.durationSeconds) {
         <div>
           <ui-typography variant="body-sm" color="muted" class="mb-1 block">Duration</ui-typography>
-          <ui-typography variant="body" weight="medium">{{ selectedEvent()!.durationSeconds }} seconds</ui-typography>
+          <ui-typography variant="body" weight="medium">
+            {{ selectedEvent()!.durationSeconds }} seconds
+          </ui-typography>
         </div>
       }
 
@@ -199,27 +217,37 @@
       <!-- Review Section -->
       @if (selectedEvent()!.isReviewed) {
         <div class="border-t pt-4">
-          <ui-typography variant="h6" tag="h4" weight="semibold" class="mb-2 block">Previous Review</ui-typography>
+          <ui-typography variant="h6" tag="h4" weight="semibold" class="mb-2 block">
+            Previous Review
+          </ui-typography>
           <ui-grid container spacing="4">
             <ui-grid [size]="{ xs: 6 }">
-              <ui-typography variant="body-sm" color="muted" class="mb-1 block">Reviewed By</ui-typography>
+              <ui-typography variant="body-sm" color="muted" class="mb-1 block">
+                Reviewed By
+              </ui-typography>
               <div>{{ selectedEvent()!.reviewedByName }}</div>
             </ui-grid>
             <ui-grid [size]="{ xs: 6 }">
-              <ui-typography variant="body-sm" color="muted" class="mb-1 block">Reviewed At</ui-typography>
+              <ui-typography variant="body-sm" color="muted" class="mb-1 block">
+                Reviewed At
+              </ui-typography>
               <div>{{ selectedEvent()!.reviewedAt | date: "medium" }}</div>
             </ui-grid>
           </ui-grid>
           @if (selectedEvent()!.reviewNotes) {
             <div class="mt-2">
-              <ui-typography variant="body-sm" color="muted" class="mb-1 block">Notes</ui-typography>
+              <ui-typography variant="body-sm" color="muted" class="mb-1 block">
+                Notes
+              </ui-typography>
               <p>{{ selectedEvent()!.reviewNotes }}</p>
             </div>
           }
         </div>
       } @else {
         <div class="border-t pt-4">
-          <ui-typography variant="h6" tag="h4" weight="semibold" class="mb-2 block">Review This Event</ui-typography>
+          <ui-typography variant="h6" tag="h4" weight="semibold" class="mb-2 block">
+            Review This Event
+          </ui-typography>
 
           <ui-stack direction="row" align="center" justify="between" class="mb-4">
             <span>Dismiss this event (false positive)?</span>

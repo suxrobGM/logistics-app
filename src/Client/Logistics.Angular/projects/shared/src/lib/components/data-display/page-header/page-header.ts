@@ -1,4 +1,4 @@
-import { Component, input, output } from "@angular/core";
+import { Component, input } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { TooltipModule } from "primeng/tooltip";
@@ -16,12 +16,6 @@ export class PageHeader {
   public readonly subtitle = input<string | null>(null);
   public readonly addRoute = input<string | null>(null);
   public readonly addTooltip = input<string>("Add new item");
-  public readonly showAddButton = input<boolean>(true);
   public readonly centered = input<boolean>(false);
   public readonly backLink = input<string | null>(null);
-  public readonly addClick = output<void>();
-
-  protected handleAdd(): void {
-    this.addClick.emit();
-  }
 }

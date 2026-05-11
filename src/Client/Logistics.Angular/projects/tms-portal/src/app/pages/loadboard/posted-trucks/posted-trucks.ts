@@ -221,6 +221,10 @@ export class PostedTrucksComponent implements OnInit {
     this.router.navigate(["/loadboard"]);
   }
 
+  protected configureProviders(): void {
+    this.router.navigate(["/loadboard/providers"]);
+  }
+
   protected getProviderOptions(): { label: string; value: LoadBoardProviderType }[] {
     return this.providers()
       .filter((p) => p.isActive)

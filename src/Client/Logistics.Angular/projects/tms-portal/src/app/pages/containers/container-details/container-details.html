@@ -1,6 +1,6 @@
 @let c = container();
 
-<ui-page-header [title]="title()" backLink="/containers" [showAddButton]="false">
+<ui-page-header [title]="title()" backLink="/containers">
   @if (c) {
     <ui-stack direction="row" gap="2">
       <p-button
@@ -50,9 +50,7 @@
         <ui-status-badge [status]="c.status" kind="container" />
         @if (c.currentTerminalCode) {
           <ui-typography variant="body-sm" color="secondary">Terminal:</ui-typography>
-          <span class="font-medium">
-            {{ c.currentTerminalCode }} - {{ c.currentTerminalName }}
-          </span>
+          <span class="font-medium">{{ c.currentTerminalCode }} - {{ c.currentTerminalName }}</span>
         }
         <ui-typography variant="body-sm" color="secondary" class="ml-auto">Laden:</ui-typography>
         @if (c.isLaden) {

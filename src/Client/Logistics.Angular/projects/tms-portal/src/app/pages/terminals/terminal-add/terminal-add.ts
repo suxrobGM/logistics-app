@@ -3,13 +3,13 @@ import { Router } from "@angular/router";
 import { Api, createTerminal, type CreateTerminalCommand } from "@logistics/shared/api";
 import { CardModule } from "primeng/card";
 import { ToastService } from "@/core/services";
-import { PageHeader } from "@/shared/components";
+import { Container, PageHeader } from "@/shared/components";
 import { TerminalForm, type TerminalFormValue } from "../terminal-form/terminal-form";
 
 @Component({
   selector: "app-terminal-add",
   templateUrl: "./terminal-add.html",
-  imports: [CardModule, TerminalForm, PageHeader],
+  imports: [CardModule, TerminalForm, PageHeader, Container],
 })
 export class TerminalAdd {
   private readonly api = inject(Api);

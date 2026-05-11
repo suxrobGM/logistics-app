@@ -1,7 +1,7 @@
 <ui-typography variant="h2" tag="h1" align="center">Edit a trip #{{ tripNumber() }}</ui-typography>
 
-<ui-stack direction="row" justify="center" gap="4" class="md:flex-row" wrap>
-  <p-card class="w-full md:w-3/4">
+<ui-container maxWidth="md">
+  <p-card>
     <app-trip-wizard
       [mode]="'edit'"
       [disabled]="disabledForEditing()"
@@ -10,4 +10,4 @@
       (save)="updateTrip($event)"
     />
   </p-card>
-</ui-stack>
+</ui-container>

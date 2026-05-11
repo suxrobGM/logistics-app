@@ -15,6 +15,7 @@ import { GalleriaModule } from "primeng/galleria";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
+import { PageHeader } from "@/shared/components";
 import { VehicleDiagram, type DamageMarker } from "@/shared/components/inspections";
 
 @Component({
@@ -30,6 +31,7 @@ import { VehicleDiagram, type DamageMarker } from "@/shared/components/inspectio
     TableModule,
     TagModule,
     GalleriaModule,
+    PageHeader,
     VehicleDiagram,
     Grid,
     Icon,

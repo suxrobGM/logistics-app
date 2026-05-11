@@ -3,7 +3,6 @@
   <ui-page-header
     title="Financial Dashboard"
     subtitle="Comprehensive financial overview and performance metrics"
-    [showAddButton]="false"
   />
   <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
 </ui-stack>
@@ -186,9 +185,9 @@
               <td>{{ customer.totalInvoiced | currencyFormat }}</td>
               <td>{{ customer.totalPaid | currencyFormat }}</td>
               <td>
-                <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{
-                  customer.invoiceCount
-                }}</span>
+                <span class="bg-secondary rounded px-2 py-1 text-sm text-white">
+                  {{ customer.invoiceCount }}
+                </span>
               </td>
             </tr>
           </ng-template>

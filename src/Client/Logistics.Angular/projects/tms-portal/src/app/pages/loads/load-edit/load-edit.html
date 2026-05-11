@@ -1,11 +1,9 @@
-<ui-typography variant="h2" tag="h1">Edit a load #{{ loadNumber() }}</ui-typography>
+<ui-page-header [title]="'Edit a load #' + loadNumber()" backLink="/loads" />
 
-<p-card>
-  <app-load-form
-    [mode]="'edit'"
-    [initial]="initialData()"
-    [isLoading]="isLoading()"
-    (save)="updateLoad($event)"
-    (remove)="deleteLoad()"
-  />
-</p-card>
+<app-load-form
+  [mode]="'edit'"
+  [initial]="initialData()"
+  [isLoading]="isLoading()"
+  (save)="updateLoad($event)"
+  (remove)="deleteLoad()"
+/>

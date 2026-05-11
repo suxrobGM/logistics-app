@@ -1,7 +1,7 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { Api, createTrip, type CreateTripCommand } from "@logistics/shared/api";
-import { Stack, Typography } from "@logistics/shared/components";
+import { Container, Typography } from "@logistics/shared/components";
 import { CardModule } from "primeng/card";
 import { ToastService } from "@/core/services";
 import { TripWizard, type TripWizardValue } from "../components";
@@ -9,7 +9,7 @@ import { TripWizard, type TripWizardValue } from "../components";
 @Component({
   selector: "app-trip-add",
   templateUrl: "./trip-add.html",
-  imports: [CardModule, TripWizard, Stack, Typography],
+  imports: [CardModule, TripWizard, Typography, Container],
 })
 export class TripAddPage {
   private readonly router = inject(Router);

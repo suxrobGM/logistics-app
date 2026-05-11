@@ -1,26 +1,15 @@
-<!-- Header -->
-<ui-stack direction="row" align="center" justify="between" class="mb-3">
-  <ui-stack direction="row" align="center" gap="3">
-    <p-button
-      icon="pi pi-arrow-left"
-      [rounded]="true"
-      [text]="true"
-      (onClick)="goBack()"
-      pTooltip="Back to Dashboard"
-    />
-    <ui-page-header
-      title="Posted Trucks"
-      subtitle="Manage trucks posted to load boards to advertise available capacity"
-      [showAddButton]="false"
-    />
-  </ui-stack>
+<ui-page-header
+  title="Posted Trucks"
+  subtitle="Manage trucks posted to load boards to advertise available capacity"
+  backLink="/loadboard"
+>
   <p-button
     label="Post Truck"
     icon="pi pi-plus"
     (onClick)="openPostDialog()"
     [disabled]="providers().length === 0"
   />
-</ui-stack>
+</ui-page-header>
 
 <!-- Info Card -->
 @if (providers().length === 0) {
@@ -37,7 +26,7 @@
             label="Configure Providers"
             icon="pi pi-cog"
             size="small"
-            routerLink="/loadboard/providers"
+            (onClick)="configureProviders()"
           />
         </div>
       </ui-stack>
@@ -70,7 +59,9 @@
         <ui-typography variant="h5" class="mb-0">Your Posted Trucks</ui-typography>
       </ui-stack>
       @if (postedTrucks().length > 0) {
-        <ui-typography variant="body-sm" color="muted">{{ postedTrucks().length }} trucks posted</ui-typography>
+        <ui-typography variant="body-sm" color="muted">
+          {{ postedTrucks().length }} trucks posted
+        </ui-typography>
       }
     </ui-stack>
   </ng-template>

@@ -1,6 +1,6 @@
 @let t = terminal();
 
-<ui-page-header [title]="title()" backLink="/terminals" [showAddButton]="false">
+<ui-page-header [title]="title()" backLink="/terminals">
   @if (t) {
     <ui-stack direction="row" gap="2">
       <p-button
@@ -23,7 +23,7 @@
   }
 </ui-page-header>
 
-<div class="mx-auto max-w-5xl">
+<ui-container maxWidth="md">
   @if (isLoading() && !t) {
     <p-card>
       <ui-stack align="center" justify="center" class="py-10">
@@ -137,4 +137,4 @@
       </ui-stack>
     </p-card>
   }
-</div>
+</ui-container>

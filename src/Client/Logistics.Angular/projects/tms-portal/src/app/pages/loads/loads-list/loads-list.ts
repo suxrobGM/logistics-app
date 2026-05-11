@@ -1,12 +1,13 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { Api, dispatchLoad, type LoadDto } from "@logistics/shared/api";
-import { Stack, Typography } from "@logistics/shared/components";
+import { Stack } from "@logistics/shared/components";
 import { AddressPipe } from "@logistics/shared/pipes";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
+import { PageHeader } from "@/shared/components";
 import {
   BulkAssignDialog,
   LoadsBulkToolbar,
@@ -30,15 +31,15 @@ import { LoadsListStore } from "../store/loads-list.store";
     LoadsBulkToolbar,
     LoadsTable,
     BulkAssignDialog,
+    PageHeader,
     Stack,
-    Typography,
   ],
 })
 export class LoadsListComponent {
   private readonly api = inject(Api);
   private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
-  private readonly addressPipe = new AddressPipe();
+  private readonly addressPipe = inject(AddressPipe);
   protected readonly store = inject(LoadsListStore);
 
   // Bulk selection state

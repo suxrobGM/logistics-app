@@ -1,6 +1,6 @@
 <!-- Header with actions -->
 <ui-stack direction="row" align="start" justify="between" class="mb-6">
-  <ui-page-header title="Truck Details" [showAddButton]="false" />
+  <ui-page-header title="Truck Details" />
   <ui-stack direction="row" gap="2">
     <p-button
       icon="pi pi-pencil"
@@ -166,7 +166,9 @@
               <p-card class="border-default border">
                 <ng-template #header>
                   <div class="p-4 pb-0">
-                    <ui-typography variant="h5" tag="h3" weight="semibold">Assignment</ui-typography>
+                    <ui-typography variant="h5" tag="h3" weight="semibold">
+                      Assignment
+                    </ui-typography>
                   </div>
                 </ng-template>
 

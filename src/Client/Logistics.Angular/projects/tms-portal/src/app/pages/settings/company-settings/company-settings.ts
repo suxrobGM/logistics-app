@@ -10,34 +10,35 @@ import {
   type TenantSettings,
   type UpdateTenantCommand,
 } from "@logistics/shared/api";
-import { Icon, Stack, Typography } from "@logistics/shared/components";
+import { Container, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { TenantService, ToastService } from "@/core/services";
-import { FormField, ValidationSummary } from "@/shared/components";
+import { FormField, PageHeader, ValidationSummary } from "@/shared/components";
 
 @Component({
   selector: "app-company-settings",
   templateUrl: "./company-settings.html",
   imports: [
     ToastModule,
-    CardModule,
     ProgressSpinnerModule,
     ButtonModule,
     ReactiveFormsModule,
     ValidationSummary,
     FormField,
+    PageHeader,
     InputTextModule,
     AddressForm,
     PhoneInput,
     SelectModule,
     Icon,
     Stack,
+    Surface,
     Typography,
+    Container,
   ],
 })
 export class CompanySettingsComponent implements OnInit {

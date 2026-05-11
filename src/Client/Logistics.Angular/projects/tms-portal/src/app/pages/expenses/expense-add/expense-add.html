@@ -2,7 +2,7 @@
 
 <div class="mx-auto max-w-4xl">
   <ui-stack direction="row" align="start" justify="between">
-    <ui-page-header title="Add Expense" [showAddButton]="false" />
+    <ui-page-header title="Add Expense" />
     <p-button icon="pi pi-arrow-left" label="Back" [routerLink]="['/expenses']" [outlined]="true" />
   </ui-stack>
 
@@ -51,7 +51,12 @@
 
               <ui-grid [size]="{ xs: 12, md: 6 }">
                 <ui-form-field label="Vendor Name" for="company-vendor">
-                  <input pInputText id="company-vendor" formControlName="vendorName" class="w-full" />
+                  <input
+                    pInputText
+                    id="company-vendor"
+                    formControlName="vendorName"
+                    class="w-full"
+                  />
                 </ui-form-field>
               </ui-grid>
 
@@ -86,7 +91,7 @@
                 (onSelect)="onReceiptUpload($event)"
               />
               @if (receiptPath()) {
-                <ui-stack direction="row" align="center" gap="1" class="mt-2 text-sm text-success">
+                <ui-stack direction="row" align="center" gap="1" class="text-success mt-2 text-sm">
                   <ui-icon name="check" size="sm" />
                   <span>Receipt attached</span>
                 </ui-stack>
@@ -198,7 +203,7 @@
                 (onSelect)="onReceiptUpload($event)"
               />
               @if (receiptPath()) {
-                <ui-stack direction="row" align="center" gap="1" class="mt-2 text-sm text-success">
+                <ui-stack direction="row" align="center" gap="1" class="text-success mt-2 text-sm">
                   <ui-icon name="check" size="sm" />
                   <span>Receipt attached</span>
                 </ui-stack>
@@ -350,7 +355,7 @@
                 (onSelect)="onReceiptUpload($event)"
               />
               @if (receiptPath()) {
-                <ui-stack direction="row" align="center" gap="1" class="mt-2 text-sm text-success">
+                <ui-stack direction="row" align="center" gap="1" class="text-success mt-2 text-sm">
                   <ui-icon name="check" size="sm" />
                   <span>Receipt attached</span>
                 </ui-stack>

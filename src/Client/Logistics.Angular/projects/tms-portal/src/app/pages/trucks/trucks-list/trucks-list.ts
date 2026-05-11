@@ -1,7 +1,7 @@
 import { Component, inject, signal } from "@angular/core";
-import { Router, RouterLink } from "@angular/router";
+import { Router } from "@angular/router";
 import type { Address, TruckDto } from "@logistics/shared/api";
-import { Stack, Typography } from "@logistics/shared/components";
+import { Stack } from "@logistics/shared/components";
 import { AddressPipe } from "@logistics/shared/pipes";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
@@ -9,7 +9,7 @@ import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { DataContainer, TruckStatusTag, TruckTypeTag } from "@/shared/components";
+import { DataContainer, PageHeader, TruckStatusTag, TruckTypeTag } from "@/shared/components";
 import {
   TrucksFilterPanel,
   type TrucksFilterState,
@@ -28,16 +28,15 @@ import { TrucksListStore } from "../store/trucks-list.store";
     CardModule,
     TableModule,
     MenuModule,
-    RouterLink,
     AddressPipe,
     DataContainer,
+    PageHeader,
     TruckStatusTag,
     TruckTypeTag,
     TrucksSummaryStats,
     TrucksFilterPanel,
     TrucksMapView,
     Stack,
-    Typography,
   ],
 })
 export class TrucksList {

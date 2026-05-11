@@ -8,13 +8,13 @@ import {
 } from "@logistics/shared/api";
 import { CardModule } from "primeng/card";
 import { ToastService } from "@/core/services";
-import { PageHeader } from "@/shared/components";
+import { Container, PageHeader } from "@/shared/components";
 import { TerminalForm, type TerminalFormValue } from "../terminal-form/terminal-form";
 
 @Component({
   selector: "app-terminal-edit",
   templateUrl: "./terminal-edit.html",
-  imports: [CardModule, TerminalForm, PageHeader],
+  imports: [CardModule, TerminalForm, PageHeader, Container],
 })
 export class TerminalEdit implements OnInit {
   private readonly api = inject(Api);

@@ -3,7 +3,6 @@
   <ui-page-header
     title="Maintenance Report"
     subtitle="Service records, costs, and schedule metrics"
-    [showAddButton]="false"
   />
   <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
 </ui-stack>
@@ -73,9 +72,9 @@
           />
         } @else {
           <ui-stack align="center" justify="center" class="text-muted h-75">
-            <ui-typography variant="body" color="muted"
-              >No service type data available</ui-typography
-            >
+            <ui-typography variant="body" color="muted">
+              No service type data available
+            </ui-typography>
           </ui-stack>
         }
       </ui-dashboard-card>
@@ -133,14 +132,14 @@
           <ng-template #body let-item>
             <tr>
               <td>
-                <span class="font-medium">{{
-                  item.maintenanceTypeDisplay || item.maintenanceType
-                }}</span>
+                <span class="font-medium">
+                  {{ item.maintenanceTypeDisplay || item.maintenanceType }}
+                </span>
               </td>
               <td class="text-right">
-                <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{
-                  item.count
-                }}</span>
+                <span class="bg-secondary rounded px-2 py-1 text-sm text-white">
+                  {{ item.count }}
+                </span>
               </td>
               <td class="text-right">
                 {{ item.totalCost | currencyFormat }}
@@ -188,9 +187,9 @@
                 </a>
               </td>
               <td class="text-right">
-                <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{
-                  truck.serviceCount
-                }}</span>
+                <span class="bg-secondary rounded px-2 py-1 text-sm text-white">
+                  {{ truck.serviceCount }}
+                </span>
               </td>
               <td class="text-right">
                 {{ truck.totalCost | currencyFormat }}
@@ -231,9 +230,9 @@
               <span class="font-medium">{{ vendor.vendorName || "Unknown" }}</span>
             </td>
             <td class="text-right">
-              <span class="bg-secondary rounded px-2 py-1 text-sm text-white">{{
-                vendor.serviceCount
-              }}</span>
+              <span class="bg-secondary rounded px-2 py-1 text-sm text-white">
+                {{ vendor.serviceCount }}
+              </span>
             </td>
             <td class="text-right">
               {{ vendor.totalCost | currencyFormat }}
@@ -255,9 +254,9 @@
       <ui-grid container spacing="4" class="p-4">
         <ui-grid [size]="{ xs: 12, md: 4 }">
           <ui-typography variant="caption" color="muted">Total Schedules</ui-typography>
-          <ui-typography variant="h4" weight="semibold">{{
-            data()?.totalSchedules || 0
-          }}</ui-typography>
+          <ui-typography variant="h4" weight="semibold">
+            {{ data()?.totalSchedules || 0 }}
+          </ui-typography>
         </ui-grid>
         <ui-grid [size]="{ xs: 12, md: 4 }">
           <ui-typography variant="caption" color="muted">Overdue</ui-typography>

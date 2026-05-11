@@ -1,11 +1,12 @@
-<ui-stack direction="row" gap="6" wrap class="md:flex-nowrap">
-  <div class="w-full md:w-1/2">
+<ui-grid container spacing="3">
+  <ui-grid [size]="{ xs: 12, md: 6 }">
+    <!-- Form Section -->
     @if (isLoading()) {
       <p-progress-spinner />
     }
 
     <form [formGroup]="form" (ngSubmit)="submit()">
-      <ui-stack gap="6">
+      <ui-stack gap="2">
         <ui-validation-summary [form]="form" />
 
         <!-- Load Information Section -->
@@ -280,13 +281,14 @@
         </ui-stack>
       </ui-stack>
     </form>
-  </div>
+  </ui-grid>
 
-  <div class="w-full md:w-1/2">
+  <ui-grid [size]="{ xs: 12, md: 6 }">
+    <!-- Map Section -->
     <app-direction-map
       [waypoints]="[originCoords(), destinationCoords()]"
       (routeChange)="updateDistance($event)"
       [height]="mapHeight()"
     />
-  </div>
-</ui-stack>
+  </ui-grid>
+</ui-grid>

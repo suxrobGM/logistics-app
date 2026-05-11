@@ -1,8 +1,8 @@
 <p-toast />
 
-<div class="mx-auto max-w-4xl">
+<ui-container maxWidth="md">
   <ui-stack direction="row" align="start" justify="between">
-    <ui-page-header [title]="'Edit ' + getTypeLabel(expense()?.type)" [showAddButton]="false" />
+    <ui-page-header [title]="'Edit ' + getTypeLabel(expense()?.type)" />
     <p-button
       icon="pi pi-arrow-left"
       label="Back"
@@ -198,7 +198,7 @@
             (onSelect)="onReceiptUpload($event)"
           />
           @if (receiptPath()) {
-            <ui-stack direction="row" align="center" gap="1" class="mt-2 text-sm text-success">
+            <ui-stack direction="row" align="center" gap="1" class="text-success mt-2 text-sm">
               <ui-icon name="check" size="sm" />
               <span>Receipt attached</span>
             </ui-stack>
@@ -220,4 +220,4 @@
       </ui-stack>
     </p-card>
   }
-</div>
+</ui-container>

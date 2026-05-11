@@ -61,6 +61,7 @@ export class TruckVinField {
       if (result.make) patch["make"] = result.make;
       if (result.model) patch["model"] = result.model;
       if (result.year) patch["year"] = result.year;
+
       this.form().patchValue(patch);
 
       this.decodedSource.set(result.source ?? null);

@@ -1,18 +1,8 @@
-<!-- Header -->
-<ui-stack direction="row" align="center" gap="3" class="mb-3">
-  <p-button
-    icon="pi pi-arrow-left"
-    [rounded]="true"
-    [text]="true"
-    (onClick)="goBack()"
-    pTooltip="Back to Dashboard"
-  />
-  <ui-page-header
-    title="Search Load Boards"
-    subtitle="Find available freight from DAT, Truckstop, and 123Loadboard"
-    [showAddButton]="false"
-  />
-</ui-stack>
+<ui-page-header
+  title="Search Load Boards"
+  subtitle="Find available freight from DAT, Truckstop, and 123Loadboard"
+  backLink="/loadboard"
+/>
 
 <!-- Search Filters -->
 <p-card class="mb-6 border-0 shadow-sm">
@@ -173,7 +163,9 @@
         <ui-typography variant="h5" class="mb-0">Search Results</ui-typography>
       </ui-stack>
       @if (listings().length > 0) {
-        <ui-typography variant="body-sm" color="muted">{{ listings().length }} loads found</ui-typography>
+        <ui-typography variant="body-sm" color="muted">
+          {{ listings().length }} loads found
+        </ui-typography>
       }
     </ui-stack>
   </ng-template>
@@ -186,7 +178,9 @@
     <ui-stack align="center" gap="3" class="p-5">
       <ui-icon name="search" size="xl" color="muted" />
       <ui-typography color="secondary">No loads found.</ui-typography>
-      <ui-typography variant="body-sm" color="muted">Enter search criteria and click "Search Loads"</ui-typography>
+      <ui-typography variant="body-sm" color="muted">
+        Enter search criteria and click "Search Loads"
+      </ui-typography>
     </ui-stack>
   } @else {
     <p-table
@@ -248,7 +242,9 @@
             }
           </td>
           <td>
-            <span class="text-success font-medium">{{ (listing.totalRate | currencyFormat) ?? "-" }}</span>
+            <span class="text-success font-medium">
+              {{ (listing.totalRate | currencyFormat) ?? "-" }}
+            </span>
           </td>
           <td>
             <span class="text-sm">{{ (listing.ratePerMile | currencyFormat) ?? "-" }}/mi</span>
@@ -282,17 +278,19 @@
   @if (selectedListing(); as listing) {
     <div class="bg-hover mb-4 rounded p-3">
       <ui-stack direction="row" align="center" justify="between" class="mb-2">
-        <span class="font-medium"
-          >{{ listing.originAddress.city }}, {{ listing.originAddress.state }}</span
-        >
+        <span class="font-medium">
+          {{ listing.originAddress.city }}, {{ listing.originAddress.state }}
+        </span>
         <span class="text-muted">→</span>
-        <span class="font-medium"
-          >{{ listing.destinationAddress.city }}, {{ listing.destinationAddress.state }}</span
-        >
+        <span class="font-medium">
+          {{ listing.destinationAddress.city }}, {{ listing.destinationAddress.state }}
+        </span>
       </ui-stack>
       <ui-stack direction="row" align="center" justify="between" class="text-secondary text-sm">
         <span>{{ listing.equipmentType }}</span>
-        <span class="text-success font-medium">{{ (listing.totalRate | currencyFormat) ?? "-" }}</span>
+        <span class="text-success font-medium">
+          {{ (listing.totalRate | currencyFormat) ?? "-" }}
+        </span>
       </ui-stack>
     </div>
 

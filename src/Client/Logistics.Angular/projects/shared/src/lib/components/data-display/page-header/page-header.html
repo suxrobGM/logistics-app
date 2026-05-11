@@ -11,28 +11,17 @@
       />
     }
     <h1 class="mb-0 w-full">{{ title() }}</h1>
-    @if (showAddButton()) {
-      @if (addRoute()) {
-        <p-button
-          styleClass="ml-2"
-          icon="pi pi-plus-circle"
-          size="large"
-          [rounded]="true"
-          [text]="true"
-          [pTooltip]="addTooltip()"
-          [routerLink]="[addRoute()]"
-        />
-      } @else {
-        <p-button
-          styleClass="ml-2"
-          icon="pi pi-plus-circle"
-          size="large"
-          [rounded]="true"
-          [text]="true"
-          [pTooltip]="addTooltip()"
-          (click)="handleAdd()"
-        />
-      }
+
+    @if (addRoute()) {
+      <p-button
+        styleClass="ml-2"
+        icon="pi pi-plus-circle"
+        size="large"
+        [rounded]="true"
+        [text]="true"
+        [pTooltip]="addTooltip()"
+        [routerLink]="[addRoute()]"
+      />
     }
     <div class="ml-auto">
       <ng-content />

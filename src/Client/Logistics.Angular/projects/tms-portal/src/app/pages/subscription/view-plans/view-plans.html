@@ -2,7 +2,6 @@
   title="Subscription Plans"
   subtitle="Choose the plan that fits your fleet. All plans include a 30-day free trial."
   [centered]="true"
-  [showAddButton]="false"
 />
 
 <ui-grid container spacing="4">
@@ -13,21 +12,22 @@
           <ui-stack align="center" gap="2" class="p-4 pb-0">
             <p-tag [severity]="getTierSeverity(plan)" [value]="Labels.planTierLabel(plan.tier!)" />
             <ui-typography variant="h2" tag="h2" class="m-0">{{ plan.name }}</ui-typography>
-            <ui-typography color="secondary" align="center" class="m-0">{{
-              plan.description
-            }}</ui-typography>
+            <ui-typography color="secondary" align="center" class="m-0">
+              {{ plan.description }}
+            </ui-typography>
           </ui-stack>
         </ng-template>
 
         <!-- Pricing -->
         <ui-stack align="center" gap="1" class="mb-4">
           <div class="text-3xl font-bold">
-            {{ plan.price | currency }}<span class="text-secondary font-normal">/mo</span>
+            {{ plan.price | currency }}
+            <span class="text-secondary font-normal">/mo</span>
           </div>
           <div class="text-secondary">+ {{ plan.perTruckPrice | currency }} per truck / mo</div>
-          <ui-typography variant="body-sm" color="secondary">{{
-            getMaxTrucksLabel(plan)
-          }}</ui-typography>
+          <ui-typography variant="body-sm" color="secondary">
+            {{ getMaxTrucksLabel(plan) }}
+          </ui-typography>
         </ui-stack>
 
         <!-- AI Dispatch model access -->

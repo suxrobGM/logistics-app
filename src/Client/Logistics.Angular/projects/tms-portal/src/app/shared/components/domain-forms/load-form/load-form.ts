@@ -154,7 +154,7 @@ export class LoadForm implements OnInit {
   public readonly canChangeAssignedTruck = input<boolean>(true);
   public readonly initial = input<Partial<LoadFormValue> | null>(null);
   public readonly isLoading = input(false);
-  public readonly mapHeight = input<string>("100%");
+  public readonly mapHeight = input<string>("600px");
 
   public readonly save = output<LoadFormValue>();
   public readonly remove = output<void>();

@@ -1,7 +1,7 @@
-<ui-page-header title="Add Customer" [showAddButton]="false" />
+<ui-page-header title="Add Customer" [centered]="true" />
 
-<ui-stack justify="center" gap="6" class="md:flex-row">
-  <p-card class="w-full md:w-1/2">
+<ui-container maxWidth="md">
+  <p-card>
     <app-customer-form [mode]="'create'" (save)="handleCustomerCreated($event)" />
   </p-card>
-</ui-stack>
+</ui-container>

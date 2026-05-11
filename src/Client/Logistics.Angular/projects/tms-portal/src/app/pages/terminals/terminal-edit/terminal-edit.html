@@ -1,6 +1,6 @@
-<ui-page-header [title]="title()" backLink="/terminals" [showAddButton]="false" />
+<ui-page-header [title]="title()" backLink="/terminals" />
 
-<div class="mx-auto max-w-5xl">
+<ui-container maxWidth="md">
   <p-card>
     <app-terminal-form
       mode="edit"
@@ -9,4 +9,4 @@
       (save)="update($event)"
     />
   </p-card>
-</div>
+</ui-container>

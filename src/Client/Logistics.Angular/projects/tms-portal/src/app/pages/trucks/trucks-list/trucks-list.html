@@ -1,21 +1,5 @@
 <div class="animate-fadein">
-  <!-- Header -->
-  <ui-stack direction="row" align="center" justify="between" class="mb-4">
-    <ui-stack direction="row" align="center">
-      <ui-typography variant="h2" tag="h1" color="primary" class="mb-0">List Trucks</ui-typography>
-      <p-button
-        styleClass="ml-2"
-        icon="pi pi-plus-circle"
-        size="large"
-        [rounded]="true"
-        [text]="true"
-        pTooltip="Add a new truck"
-        aria-label="Add a new truck"
-        [routerLink]="['/trucks/add']"
-      />
-    </ui-stack>
-
-    <!-- View Toggle -->
+  <ui-page-header title="List Trucks" addRoute="/trucks/add" addTooltip="Add a new truck">
     <ui-stack direction="row" gap="1" class="border-default bg-elevated rounded-lg border p-1">
       <p-button
         icon="pi pi-table"
@@ -34,7 +18,7 @@
         (click)="viewMode.set('map')"
       />
     </ui-stack>
-  </ui-stack>
+  </ui-page-header>
 
   <!-- Summary Stats -->
   <app-trucks-summary-stats

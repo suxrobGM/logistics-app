@@ -1,7 +1,7 @@
-<ui-page-header title="Add Terminal" backLink="/terminals" [showAddButton]="false" />
+<ui-page-header title="Add Terminal" backLink="/terminals" />
 
-<div class="mx-auto max-w-5xl">
+<ui-container maxWidth="md">
   <p-card>
     <app-terminal-form mode="create" [isLoading]="isLoading()" (save)="create($event)" />
   </p-card>
-</div>
+</ui-container>

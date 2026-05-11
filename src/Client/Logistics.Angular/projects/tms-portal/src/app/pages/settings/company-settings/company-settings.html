@@ -1,21 +1,24 @@
-<ui-typography variant="h2" tag="h1" align="center" class="mb-6">Company Settings</ui-typography>
+<ui-page-header title="Company Settings" [centered]="true" />
 
-<ui-stack align="center">
-  <div class="w-full md:w-2/3 lg:w-1/2">
-    <p-card>
-      @if (isLoading()) {
-        <ui-stack align="center" justify="center" class="py-8">
-          <p-progress-spinner />
-        </ui-stack>
-      } @else {
-        <form [formGroup]="form" (ngSubmit)="save()">
-          <ui-validation-summary [form]="form" />
+<ui-container maxWidth="md">
+  @if (isLoading()) {
+    <ui-stack align="center" justify="center" class="py-8">
+      <p-progress-spinner />
+    </ui-stack>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <ui-stack gap="6">
+        <ui-validation-summary [form]="form" />
 
-          <!-- Logo Upload Section -->
-          <div class="mb-6">
-            <ui-form-field label="Company Logo">
+        <!-- Branding Section -->
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="image" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Branding</ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
+            <ui-form-field label="Company Logo" class="mb-0">
               <ui-stack direction="row" align="center" gap="4">
-                <!-- Logo Preview -->
                 <div
                   class="border-default flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border-2 border-dashed"
                 >
@@ -29,7 +32,6 @@
                     <ui-icon name="image" size="xl" color="muted" />
                   }
                 </div>
-                <!-- Upload Button -->
                 <div>
                   <input
                     type="file"
@@ -51,39 +53,56 @@
                 </div>
               </ui-stack>
             </ui-form-field>
-          </div>
+          </ui-surface>
+        </ui-stack>
 
-          <!-- Company Name -->
-          <ui-form-field label="Company Name" for="companyName" [required]="true">
-            <input pInputText formControlName="companyName" id="companyName" class="w-full" />
-          </ui-form-field>
+        <!-- Company Info Section -->
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="building" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Company Info</ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
+            <ui-form-field label="Company Name" for="companyName" [required]="true">
+              <input pInputText formControlName="companyName" id="companyName" class="w-full" />
+            </ui-form-field>
 
-          <!-- Phone Number -->
-          <ui-form-field label="Phone Number" for="phoneNumber">
-            <ui-phone-input formControlName="phoneNumber" />
-          </ui-form-field>
+            <ui-form-field label="Phone Number" for="phoneNumber">
+              <ui-phone-input formControlName="phoneNumber" />
+            </ui-form-field>
 
-          <!-- Billing Email -->
-          <ui-form-field label="Billing Email" for="billingEmail" [required]="true">
-            <input
-              pInputText
-              formControlName="billingEmail"
-              id="billingEmail"
-              type="email"
-              class="w-full"
-            />
-          </ui-form-field>
+            <ui-form-field label="Billing Email" for="billingEmail" [required]="true" class="mb-0">
+              <input
+                pInputText
+                formControlName="billingEmail"
+                id="billingEmail"
+                type="email"
+                class="w-full"
+              />
+            </ui-form-field>
+          </ui-surface>
+        </ui-stack>
 
-          <!-- Regulatory & tax IDs -->
-          <div class="border-default mt-6 border-t pt-6">
-            <h2 class="mb-4 text-lg font-semibold">Regulatory &amp; Tax IDs</h2>
-
+        <!-- Regulatory & Tax IDs Section -->
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="id-card" color="secondary" />
+            <ui-typography variant="overline" color="secondary">
+              Regulatory &amp; Tax IDs
+            </ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <ui-form-field label="US DOT Number" for="dotNumber">
+              <ui-form-field label="US DOT Number" for="dotNumber" class="mb-0">
                 <input pInputText formControlName="dotNumber" id="dotNumber" class="w-full" />
               </ui-form-field>
 
-              <ui-form-field label="MC Number" for="mcNumber" hint="US Motor Carrier number">
+              <ui-form-field
+                label="MC Number"
+                for="mcNumber"
+                hint="US Motor Carrier number"
+                class="mb-0"
+              >
                 <input pInputText formControlName="mcNumber" id="mcNumber" class="w-full" />
               </ui-form-field>
 
@@ -91,6 +110,7 @@
                 label="VAT Number"
                 for="vatNumber"
                 hint="Required to send invoices for EU tenants"
+                class="mb-0"
               >
                 <input
                   pInputText
@@ -101,7 +121,12 @@
                 />
               </ui-form-field>
 
-              <ui-form-field label="EORI Number" for="eoriNumber" hint="EU/UK customs ID">
+              <ui-form-field
+                label="EORI Number"
+                for="eoriNumber"
+                hint="EU/UK customs ID"
+                class="mb-0"
+              >
                 <input pInputText formControlName="eoriNumber" id="eoriNumber" class="w-full" />
               </ui-form-field>
 
@@ -109,6 +134,7 @@
                 label="Company Registration Number"
                 for="companyRegistrationNumber"
                 hint="Companies House, Handelsregister, RCS, etc."
+                class="mb-0"
               >
                 <input
                   pInputText
@@ -122,6 +148,7 @@
                 label="Tax Residency Country"
                 for="taxResidencyCountry"
                 hint="ISO-2 code, defaults to billing-address country"
+                class="mb-0"
               >
                 <input
                   pInputText
@@ -133,85 +160,93 @@
                 />
               </ui-form-field>
             </div>
-          </div>
+          </ui-surface>
+        </ui-stack>
 
-          <!-- Company Address -->
-          <ui-form-field label="Company Address" [required]="true">
-            <ui-address-form
-              formControlName="companyAddress"
-              [allowedCountries]="allowedCountries()"
-            />
-          </ui-form-field>
+        <!-- Address Section -->
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="map-marker" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Company Address</ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
+            <ui-form-field label="Address" [required]="true" class="mb-0">
+              <ui-address-form
+                formControlName="companyAddress"
+                [allowedCountries]="allowedCountries()"
+              />
+            </ui-form-field>
+          </ui-surface>
+        </ui-stack>
 
-          <!-- Regional Settings Section -->
-          <div class="border-default mt-8 border-t pt-6">
-            <h2 class="mb-4 text-lg font-semibold">Regional Settings</h2>
-
+        <!-- Regional Settings Section -->
+        <ui-stack tag="section" gap="3">
+          <ui-stack direction="row" gap="2" align="center">
+            <ui-icon name="globe" color="secondary" />
+            <ui-typography variant="overline" color="secondary">Regional Settings</ui-typography>
+          </ui-stack>
+          <ui-surface variant="elevated" [border]="true">
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <!-- Distance Unit -->
-              <ui-form-field label="Distance Unit" for="distanceUnit">
+              <ui-form-field label="Distance Unit" for="distanceUnit" class="mb-0">
                 <p-select
                   id="distanceUnit"
                   formControlName="distanceUnit"
                   [options]="distanceUnitOptions"
                   optionLabel="label"
                   optionValue="value"
-                  styleClass="w-full"
+                  [fluid]="true"
                 />
               </ui-form-field>
 
-              <!-- Weight Unit -->
-              <ui-form-field label="Weight Unit" for="weightUnit">
+              <ui-form-field label="Weight Unit" for="weightUnit" class="mb-0">
                 <p-select
                   id="weightUnit"
                   formControlName="weightUnit"
                   [options]="weightUnitOptions"
                   optionLabel="label"
                   optionValue="value"
-                  styleClass="w-full"
+                  [fluid]="true"
                 />
               </ui-form-field>
 
-              <!-- Date Format -->
-              <ui-form-field label="Date Format" for="dateFormat">
+              <ui-form-field label="Date Format" for="dateFormat" class="mb-0">
                 <p-select
                   id="dateFormat"
                   formControlName="dateFormat"
                   [options]="dateFormatOptions"
                   optionLabel="label"
                   optionValue="value"
-                  styleClass="w-full"
+                  [fluid]="true"
                 />
               </ui-form-field>
 
-              <!-- Timezone -->
-              <ui-form-field label="Timezone" for="timezone">
+              <ui-form-field label="Timezone" for="timezone" class="mb-0">
                 <p-select
                   id="timezone"
                   formControlName="timezone"
                   [options]="timezoneOptions"
                   optionLabel="label"
                   optionValue="value"
-                  styleClass="w-full"
+                  [fluid]="true"
                   [filter]="true"
                   filterPlaceholder="Search timezone..."
                 />
               </ui-form-field>
             </div>
-          </div>
+          </ui-surface>
+        </ui-stack>
 
-          <!-- Actions -->
-          <div class="mt-6 flex gap-2">
-            <p-button
-              type="submit"
-              icon="pi pi-save"
-              label="Save Changes"
-              [loading]="isSaving()"
-              [disabled]="form.invalid"
-            />
-          </div>
-        </form>
-      }
-    </p-card>
-  </div>
-</ui-stack>
+        <!-- Actions -->
+        <ui-stack direction="row" gap="2">
+          <p-button
+            type="submit"
+            icon="pi pi-save"
+            label="Save Changes"
+            [loading]="isSaving()"
+            [disabled]="form.invalid"
+          />
+        </ui-stack>
+      </ui-stack>
+    </form>
+  }
+</ui-container>

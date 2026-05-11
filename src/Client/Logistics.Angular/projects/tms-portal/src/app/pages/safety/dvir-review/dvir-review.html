@@ -1,4 +1,4 @@
-<ui-page-header title="Review DVIR Report" [showAddButton]="false" [backLink]="'/safety/dvir/' + id()" />
+<ui-page-header title="Review DVIR Report" [backLink]="'/safety/dvir/' + id()" />
 
 @if (isLoading()) {
   <div class="flex justify-center py-16">
@@ -20,7 +20,9 @@
           </div>
           <div>
             <div class="text-muted mb-1 text-sm">Type</div>
-            <div class="font-medium">{{ report()!.type === "pre_trip" ? "Pre-Trip" : "Post-Trip" }}</div>
+            <div class="font-medium">
+              {{ report()!.type === "pre_trip" ? "Pre-Trip" : "Post-Trip" }}
+            </div>
           </div>
           <div>
             <div class="text-muted mb-1 text-sm">Defects Found</div>

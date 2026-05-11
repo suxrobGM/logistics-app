@@ -11,9 +11,7 @@ import {
   type UpdateTruckCommand,
 } from "@logistics/shared/api";
 import { Stack } from "@logistics/shared/components";
-import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import { TruckForm, type TruckFormData } from "../components";
@@ -21,7 +19,7 @@ import { TruckForm, type TruckFormData } from "../components";
 @Component({
   selector: "app-truck-edit",
   templateUrl: "./truck-edit.html",
-  imports: [ToastModule, ConfirmDialogModule, ProgressSpinnerModule, PageHeader, TruckForm, Stack],
+  imports: [ProgressSpinnerModule, PageHeader, TruckForm, Stack],
 })
 export class TruckEdit implements OnInit {
   private readonly api = inject(Api);

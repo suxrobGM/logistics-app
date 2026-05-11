@@ -178,7 +178,7 @@ const justifyClasses: ResponsiveClassTable<StackJustify> = {
 })
 export class Stack {
   public readonly direction = input<Responsive<StackDirection>>("col");
-  public readonly gap = input<Responsive<StackGap>>("4");
+  public readonly gap = input<Responsive<StackGap>>("0");
   public readonly align = input<Responsive<StackAlign> | null>(null);
   public readonly justify = input<Responsive<StackJustify> | null>(null);
   public readonly wrap = input<boolean, unknown>(false, { transform: booleanAttribute });

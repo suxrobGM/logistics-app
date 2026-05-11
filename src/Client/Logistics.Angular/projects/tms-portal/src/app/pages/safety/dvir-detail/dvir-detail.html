@@ -1,4 +1,4 @@
-<ui-page-header [title]="pageTitle()" [showAddButton]="false" backLink="/safety/dvir">
+<ui-page-header [title]="pageTitle()" backLink="/safety/dvir">
   <ui-stack direction="row" gap="2">
     @if (canDismiss()) {
       <p-button
@@ -35,11 +35,17 @@
       <ui-grid container spacing="4">
         <ui-grid [size]="{ xs: 6, md: 3 }">
           <div class="text-muted mb-1 text-sm">Status</div>
-          <p-tag [value]="getStatusLabel(report()!.status)" [severity]="getStatusSeverity(report()!.status)" />
+          <p-tag
+            [value]="getStatusLabel(report()!.status)"
+            [severity]="getStatusSeverity(report()!.status)"
+          />
         </ui-grid>
         <ui-grid [size]="{ xs: 6, md: 3 }">
           <div class="text-muted mb-1 text-sm">Type</div>
-          <p-tag [value]="getTypeLabel(report()!.type)" [severity]="getTypeSeverity(report()!.type)" />
+          <p-tag
+            [value]="getTypeLabel(report()!.type)"
+            [severity]="getTypeSeverity(report()!.type)"
+          />
         </ui-grid>
         <ui-grid [size]="{ xs: 6, md: 3 }">
           <div class="text-muted mb-1 text-sm">Date</div>
@@ -147,7 +153,11 @@
           @for (photo of report()!.photos; track photo.id) {
             <ui-grid [size]="{ xs: 6, sm: 4, md: 3 }">
               <div class="bg-subtle aspect-video overflow-hidden rounded-lg">
-                <img [src]="photo.blobPath" [alt]="photo.fileName" class="h-full w-full object-cover" />
+                <img
+                  [src]="photo.blobPath"
+                  [alt]="photo.fileName"
+                  class="h-full w-full object-cover"
+                />
               </div>
             </ui-grid>
           }

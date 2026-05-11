@@ -1,39 +1,27 @@
 <div class="animate-fadein">
-  <!-- Header -->
-  <ui-stack direction="row" align="center">
-    <ui-typography variant="h2" tag="h1" color="primary" class="mb-0">List Loads</ui-typography>
-    <p-button
-      styleClass="ml-2"
-      icon="pi pi-plus-circle"
-      size="large"
-      [rounded]="true"
-      [text]="true"
-      pTooltip="Add a new load"
-      aria-label="Add a new load"
-      [routerLink]="['/loads/add']"
-    />
-    <p-button
-      styleClass="ml-2"
-      icon="pi pi-file-import"
-      size="large"
-      [rounded]="true"
-      [text]="true"
-      pTooltip="Import from PDF"
-      aria-label="Import from PDF"
-      [routerLink]="['/loads/import']"
-    />
-    <p-button
-      styleClass="ml-2"
-      icon="pi pi-download"
-      size="large"
-      [rounded]="true"
-      [text]="true"
-      pTooltip="Export to CSV"
-      aria-label="Export to CSV"
-      (click)="exportToCsv()"
-      [disabled]="store.isEmpty()"
-    />
-  </ui-stack>
+  <ui-page-header title="List Loads" addRoute="/loads/add" addTooltip="Add a new load">
+    <ui-stack direction="row" gap="1">
+      <p-button
+        icon="pi pi-file-import"
+        size="large"
+        [rounded]="true"
+        [text]="true"
+        pTooltip="Import from PDF"
+        aria-label="Import from PDF"
+        [routerLink]="['/loads/import']"
+      />
+      <p-button
+        icon="pi pi-download"
+        size="large"
+        [rounded]="true"
+        [text]="true"
+        pTooltip="Export to CSV"
+        aria-label="Export to CSV"
+        (click)="exportToCsv()"
+        [disabled]="store.isEmpty()"
+      />
+    </ui-stack>
+  </ui-page-header>
 
   <!-- Summary Stats -->
   <app-loads-summary-stats

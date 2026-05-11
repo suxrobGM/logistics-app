@@ -1,64 +1,62 @@
-<ui-typography variant="h2" tag="h1" align="center">Feature Settings</ui-typography>
+<ui-page-header title="Feature Settings" [centered]="true" />
 
-<ui-stack direction="row" justify="center">
-  <div class="w-full md:w-2/3 lg:w-1/2">
-    <p-card>
-      @if (isLoading()) {
-        <ui-stack align="center" justify="center" class="py-8">
-          <p-progress-spinner />
-        </ui-stack>
-      } @else {
-        <ui-typography variant="body" color="muted" class="mb-6">
-          Enable or disable features for your organization. Disabled features will be hidden from
-          all users and inaccessible via API.
-        </ui-typography>
+<ui-container maxWidth="md">
+  <p-card>
+    @if (isLoading()) {
+      <ui-stack align="center" justify="center" class="py-8">
+        <p-progress-spinner />
+      </ui-stack>
+    } @else {
+      <ui-typography variant="body" color="muted" class="mb-6">
+        Enable or disable features for your organization. Disabled features will be hidden from all
+        users and inaccessible via API.
+      </ui-typography>
 
-        <ui-stack gap="2">
-          @for (feature of features(); track feature.feature) {
-            <ui-surface
-              variant="plain"
-              [border]="true"
-              padding="md"
-              radius="lg"
-              [class.opacity-60]="feature.isAdminLocked"
-            >
-              <ui-stack direction="row" align="center" justify="between">
-                <div class="flex-1">
-                  <ui-stack direction="row" align="center" gap="2">
-                    <span class="font-medium">{{ feature.name }}</span>
-                    @if (feature.isAdminLocked) {
-                      <ui-icon
-                        name="lock"
-                        size="sm"
-                        color="muted"
-                        pTooltip="This feature is locked by the administrator"
-                        tooltipPosition="top"
-                      />
-                    }
-                  </ui-stack>
-                  <p class="mt-1 text-sm text-muted">
-                    {{ getFeatureDescription(feature.feature) }}
-                  </p>
-                </div>
-                <div class="ml-4">
-                  <p-toggleswitch
-                    [ngModel]="feature.isEnabled"
-                    [disabled]="feature.isAdminLocked || isSaving() === feature.feature"
-                    (onChange)="toggleFeature(feature)"
-                  />
-                </div>
-              </ui-stack>
-            </ui-surface>
-          }
-        </ui-stack>
-
-        @if (features().length === 0) {
-          <ui-stack align="center" gap="2" class="py-8 text-muted">
-            <ui-icon name="info-circle" size="xl" />
-            <p>No features available to configure.</p>
-          </ui-stack>
+      <ui-stack gap="2">
+        @for (feature of features(); track feature.feature) {
+          <ui-surface
+            variant="plain"
+            [border]="true"
+            padding="md"
+            radius="lg"
+            [class.opacity-60]="feature.isAdminLocked"
+          >
+            <ui-stack direction="row" align="center" justify="between">
+              <div class="flex-1">
+                <ui-stack direction="row" align="center" gap="2">
+                  <span class="font-medium">{{ feature.name }}</span>
+                  @if (feature.isAdminLocked) {
+                    <ui-icon
+                      name="lock"
+                      size="sm"
+                      color="muted"
+                      pTooltip="This feature is locked by the administrator"
+                      tooltipPosition="top"
+                    />
+                  }
+                </ui-stack>
+                <p class="text-muted mt-1 text-sm">
+                  {{ getFeatureDescription(feature.feature) }}
+                </p>
+              </div>
+              <div class="ml-4">
+                <p-toggleswitch
+                  [ngModel]="feature.isEnabled"
+                  [disabled]="feature.isAdminLocked || isSaving() === feature.feature"
+                  (onChange)="toggleFeature(feature)"
+                />
+              </div>
+            </ui-stack>
+          </ui-surface>
         }
+      </ui-stack>
+
+      @if (features().length === 0) {
+        <ui-stack align="center" gap="2" class="text-muted py-8">
+          <ui-icon name="info-circle" size="xl" />
+          <p>No features available to configure.</p>
+        </ui-stack>
       }
-    </p-card>
-  </div>
-</ui-stack>
+    }
+  </p-card>
+</ui-container>

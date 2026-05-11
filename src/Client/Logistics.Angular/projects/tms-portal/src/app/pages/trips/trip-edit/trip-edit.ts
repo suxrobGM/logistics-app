@@ -7,7 +7,7 @@ import {
   updateTrip,
   type UpdateTripCommand,
 } from "@logistics/shared/api";
-import { Stack, Typography } from "@logistics/shared/components";
+import { Container, Typography } from "@logistics/shared/components";
 import { CardModule } from "primeng/card";
 import { ToastService } from "@/core/services";
 import { TripWizard, type TripWizardValue } from "../components";
@@ -15,7 +15,7 @@ import { TripWizard, type TripWizardValue } from "../components";
 @Component({
   selector: "app-trip-edit",
   templateUrl: "./trip-edit.html",
-  imports: [CardModule, TripWizard, Stack, Typography],
+  imports: [CardModule, TripWizard, Container, Typography],
 })
 export class TripEditPage implements OnInit {
   private readonly toastService = inject(ToastService);

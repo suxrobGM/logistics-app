@@ -1,10 +1,6 @@
-<ui-page-header
-  [title]="'Container ' + (container()?.number ?? '')"
-  backLink="/containers"
-  [showAddButton]="false"
-/>
+<ui-page-header [title]="'Container ' + (container()?.number ?? '')" backLink="/containers" />
 
-<div class="mx-auto max-w-5xl">
+<ui-container maxWidth="md">
   <p-card>
     <ui-stack direction="row" align="center" gap="3" wrap class="border-default mb-4 border-b pb-4">
       <ui-typography variant="body-sm" color="secondary">Status:</ui-typography>
@@ -123,7 +119,7 @@
       </ui-stack>
     </form>
   </p-card>
-</div>
+</ui-container>
 
 <!-- Status change dialog -->
 <p-dialog

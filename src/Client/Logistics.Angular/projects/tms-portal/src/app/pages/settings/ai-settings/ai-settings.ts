@@ -6,7 +6,7 @@ import {
   updateTenantAiSettings,
   type AiQuotaStatusDto,
 } from "@logistics/shared/api";
-import { Stack, Typography } from "@logistics/shared/components";
+import { Container, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MessageModule } from "primeng/message";
@@ -14,7 +14,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { TagModule } from "primeng/tag";
 import { ToastService } from "@/core/services";
-import { AiQuotaUsage, FormField } from "@/shared/components";
+import { AiQuotaUsage, FormField, PageHeader } from "@/shared/components";
 
 interface ModelOption {
   label: string;
@@ -45,9 +45,11 @@ const allModels: ModelOption[] = [
     TagModule,
     MessageModule,
     FormField,
+    PageHeader,
     AiQuotaUsage,
     Stack,
     Typography,
+    Container,
   ],
 })
 export class AiSettingsComponent implements OnInit {

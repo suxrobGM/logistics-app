@@ -1,17 +1,15 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { Api, createLoad, type CreateLoadCommand } from "@logistics/shared/api";
-import { Typography } from "@logistics/shared/components";
-import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
-import { LoadForm, type LoadFormValue } from "@/shared/components";
+import { LoadForm, PageHeader, type LoadFormValue } from "@/shared/components";
 
 @Component({
   selector: "app-load-add",
   templateUrl: "./load-add.html",
-  imports: [ToastModule, CardModule, ProgressSpinnerModule, LoadForm, Typography],
+  imports: [ToastModule, ProgressSpinnerModule, LoadForm, PageHeader],
 })
 export class LoadAddComponent {
   private readonly api = inject(Api);

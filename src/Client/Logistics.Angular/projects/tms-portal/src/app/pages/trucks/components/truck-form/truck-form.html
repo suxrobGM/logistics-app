@@ -1,231 +1,228 @@
-<ui-stack direction="row" gap="6" wrap class="md:flex-nowrap">
+<ui-stack [direction]="{ sm: 'col', md: 'row' }" gap="6">
   <!-- Left: Form -->
-  <div class="w-full md:w-1/2">
-    @if (isLoading()) {
-      <ui-stack direction="row" justify="center" class="py-8">
-        <ui-icon name="spin pi-spinner" size="xl" />
-      </ui-stack>
-    }
+  @if (isLoading()) {
+    <ui-stack direction="row" justify="center" class="py-8">
+      <ui-icon name="spin pi-spinner" size="xl" />
+    </ui-stack>
+  }
 
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <ui-stack gap="6">
-        <ui-validation-summary [form]="form" />
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <ui-stack gap="6">
+      <ui-validation-summary [form]="form" />
 
-        <!-- Truck Information Section -->
-        <ui-stack tag="section" gap="3">
-          <ui-stack direction="row" gap="2" align="center">
-            <ui-icon name="truck" color="secondary" />
-            <ui-typography variant="overline" color="secondary">Truck Information</ui-typography>
-          </ui-stack>
-          <ui-surface variant="elevated" [border]="true">
-            <ui-form-field label="Truck Number" for="truckNumber" [required]="true">
-              <input
-                pInputText
-                id="truckNumber"
-                formControlName="truckNumber"
-                type="text"
-                placeholder="e.g., T-001"
-              />
-            </ui-form-field>
-
-            <ui-form-field label="Truck Type" for="truckType" [required]="true">
-              <p-select
-                formControlName="truckType"
-                [options]="truckTypes"
-                placeholder="Select truck type"
-                class="w-full"
-              />
-            </ui-form-field>
-
-            @if (mode() === "edit") {
-              <ui-form-field label="Status" for="truckStatus" [required]="true">
-                <p-select
-                  formControlName="truckStatus"
-                  [options]="truckStatuses"
-                  placeholder="Select status"
-                  class="w-full"
-                />
-              </ui-form-field>
-            }
-
-            @if (isCarHauler()) {
-              <ui-form-field
-                label="Vehicle Capacity"
-                for="vehicleCapacity"
-                hint="Maximum number of vehicles this hauler can carry"
-                class="mb-0"
-              >
-                <p-inputNumber
-                  formControlName="vehicleCapacity"
-                  inputId="vehicleCapacity"
-                  [min]="1"
-                  [max]="12"
-                  placeholder="e.g., 8"
-                />
-              </ui-form-field>
-            }
-          </ui-surface>
+      <!-- Truck Information Section -->
+      <ui-stack tag="section" gap="3">
+        <ui-stack direction="row" gap="2" align="center">
+          <ui-icon name="truck" color="secondary" />
+          <ui-typography variant="overline" color="secondary">Truck Information</ui-typography>
         </ui-stack>
+        <ui-surface variant="elevated" [border]="true">
+          <ui-form-field label="Truck Number" for="truckNumber" [required]="true">
+            <input
+              pInputText
+              id="truckNumber"
+              formControlName="truckNumber"
+              type="text"
+              placeholder="e.g., T-001"
+            />
+          </ui-form-field>
 
-        <!-- Vehicle Details Section -->
-        <ui-stack tag="section" gap="3">
-          <ui-stack direction="row" gap="2" align="center">
-            <ui-icon name="car" color="secondary" />
-            <ui-typography variant="overline" color="secondary">Vehicle Details</ui-typography>
-          </ui-stack>
-          <ui-surface variant="elevated" [border]="true">
-            <ui-grid container spacing="4">
-              <ui-grid [size]="{ xs: 12, md: 6 }">
-                <ui-form-field label="Make" for="make">
-                  <input
-                    pInputText
-                    id="make"
-                    formControlName="make"
-                    type="text"
-                    placeholder="e.g., Freightliner"
-                  />
-                </ui-form-field>
-              </ui-grid>
-
-              <ui-grid [size]="{ xs: 12, md: 6 }">
-                <ui-form-field label="Model" for="model">
-                  <input
-                    pInputText
-                    id="model"
-                    formControlName="model"
-                    type="text"
-                    placeholder="e.g., Cascadia"
-                  />
-                </ui-form-field>
-              </ui-grid>
-
-              <ui-grid [size]="{ xs: 12, md: 6 }">
-                <ui-form-field label="Year" for="year">
-                  <p-inputNumber
-                    formControlName="year"
-                    inputId="year"
-                    [min]="1900"
-                    [max]="2100"
-                    [useGrouping]="false"
-                    placeholder="e.g., 2023"
-                  />
-                </ui-form-field>
-              </ui-grid>
-
-              <ui-grid [size]="{ xs: 12, md: 6 }">
-                <app-truck-vin-field [form]="form" />
-              </ui-grid>
-            </ui-grid>
-          </ui-surface>
-        </ui-stack>
-
-        <!-- Registration Section -->
-        <ui-stack tag="section" gap="3">
-          <ui-stack direction="row" gap="2" align="center">
-            <ui-icon name="id-card" color="secondary" />
-            <ui-typography variant="overline" color="secondary">Registration</ui-typography>
-          </ui-stack>
-          <ui-surface variant="elevated" [border]="true">
-            <ui-grid container spacing="4">
-              <ui-grid [size]="{ xs: 12, md: 6 }">
-                <ui-form-field label="License Plate" for="licensePlate">
-                  <input
-                    pInputText
-                    id="licensePlate"
-                    formControlName="licensePlate"
-                    type="text"
-                    placeholder="e.g., ABC-1234"
-                  />
-                </ui-form-field>
-              </ui-grid>
-
-              <ui-grid [size]="{ xs: 12, md: 6 }">
-                <ui-form-field label="License Plate State" for="licensePlateState" class="mb-0">
-                  <input
-                    pInputText
-                    id="licensePlateState"
-                    formControlName="licensePlateState"
-                    type="text"
-                    placeholder="e.g., TX"
-                    maxlength="2"
-                  />
-                </ui-form-field>
-              </ui-grid>
-            </ui-grid>
-          </ui-surface>
-        </ui-stack>
-
-        <!-- Driver Assignment Section -->
-        <ui-stack tag="section" gap="3">
-          <ui-stack direction="row" gap="2" align="center">
-            <ui-icon name="users" color="secondary" />
-            <ui-typography variant="overline" color="secondary">Driver Assignment</ui-typography>
-          </ui-stack>
-          <ui-surface variant="elevated" [border]="true">
-            <ui-form-field label="Main Driver" for="mainDriver">
-              <p-autocomplete
-                formControlName="mainDriver"
-                class="w-full"
-                inputStyleClass="w-full"
-                placeholder="Search for a driver..."
-                optionLabel="fullName"
-                [minLength]="2"
-                [suggestions]="suggestedDrivers()"
-                (completeMethod)="searchDriver($event)"
-              />
-            </ui-form-field>
-
-            <ui-form-field label="Secondary Driver" for="secondaryDriver" class="mb-0">
-              <p-autocomplete
-                formControlName="secondaryDriver"
-                class="w-full"
-                inputStyleClass="w-full"
-                placeholder="Search for a driver..."
-                optionLabel="fullName"
-                [minLength]="2"
-                [suggestions]="suggestedDrivers()"
-                (completeMethod)="searchDriver($event)"
-              />
-            </ui-form-field>
-          </ui-surface>
-        </ui-stack>
-
-        <app-truck-hazmat-section [form]="form" />
-
-        <!-- Action Buttons -->
-        <ui-stack direction="row" gap="2">
-          <p-button
-            type="submit"
-            icon="pi pi-check"
-            [label]="mode() === 'create' ? 'Create Truck' : 'Update Truck'"
-            [disabled]="isLoading()"
-          />
+          <ui-form-field label="Truck Type" for="truckType" [required]="true">
+            <p-select
+              formControlName="truckType"
+              [options]="truckTypes"
+              placeholder="Select truck type"
+              class="w-full"
+            />
+          </ui-form-field>
 
           @if (mode() === "edit") {
-            <p-button
-              type="button"
-              icon="pi pi-trash"
-              label="Delete"
-              severity="danger"
-              [disabled]="isLoading()"
-              (click)="askRemove()"
-            />
+            <ui-form-field label="Status" for="truckStatus" [required]="true">
+              <p-select
+                formControlName="truckStatus"
+                [options]="truckStatuses"
+                placeholder="Select status"
+                class="w-full"
+              />
+            </ui-form-field>
           }
 
+          @if (isCarHauler()) {
+            <ui-form-field
+              label="Vehicle Capacity"
+              for="vehicleCapacity"
+              hint="Maximum number of vehicles this hauler can carry"
+              class="mb-0"
+            >
+              <p-inputNumber
+                formControlName="vehicleCapacity"
+                inputId="vehicleCapacity"
+                [min]="1"
+                [max]="12"
+                placeholder="e.g., 8"
+              />
+            </ui-form-field>
+          }
+        </ui-surface>
+      </ui-stack>
+
+      <!-- Vehicle Details Section -->
+      <ui-stack tag="section" gap="3">
+        <ui-stack direction="row" gap="2" align="center">
+          <ui-icon name="car" color="secondary" />
+          <ui-typography variant="overline" color="secondary">Vehicle Details</ui-typography>
+        </ui-stack>
+        <ui-surface variant="elevated" [border]="true">
+          <ui-grid container spacing="4">
+            <ui-grid [size]="{ xs: 12, md: 6 }">
+              <ui-form-field label="Make" for="make">
+                <input
+                  pInputText
+                  id="make"
+                  formControlName="make"
+                  type="text"
+                  placeholder="e.g., Freightliner"
+                />
+              </ui-form-field>
+            </ui-grid>
+
+            <ui-grid [size]="{ xs: 12, md: 6 }">
+              <ui-form-field label="Model" for="model">
+                <input
+                  pInputText
+                  id="model"
+                  formControlName="model"
+                  type="text"
+                  placeholder="e.g., Cascadia"
+                />
+              </ui-form-field>
+            </ui-grid>
+
+            <ui-grid [size]="{ xs: 12, md: 6 }">
+              <ui-form-field label="Year" for="year">
+                <p-inputNumber
+                  formControlName="year"
+                  inputId="year"
+                  [min]="1900"
+                  [max]="2100"
+                  [useGrouping]="false"
+                  placeholder="e.g., 2023"
+                />
+              </ui-form-field>
+            </ui-grid>
+
+            <ui-grid [size]="{ xs: 12, md: 6 }">
+              <app-truck-vin-field [form]="form" />
+            </ui-grid>
+          </ui-grid>
+        </ui-surface>
+      </ui-stack>
+
+      <!-- Registration Section -->
+      <ui-stack tag="section" gap="3">
+        <ui-stack direction="row" gap="2" align="center">
+          <ui-icon name="id-card" color="secondary" />
+          <ui-typography variant="overline" color="secondary">Registration</ui-typography>
+        </ui-stack>
+        <ui-surface variant="elevated" [border]="true">
+          <ui-grid container spacing="4">
+            <ui-grid [size]="{ xs: 12, md: 6 }">
+              <ui-form-field label="License Plate" for="licensePlate">
+                <input
+                  pInputText
+                  id="licensePlate"
+                  formControlName="licensePlate"
+                  type="text"
+                  placeholder="e.g., ABC-1234"
+                />
+              </ui-form-field>
+            </ui-grid>
+
+            <ui-grid [size]="{ xs: 12, md: 6 }">
+              <ui-form-field label="License Plate State" for="licensePlateState" class="mb-0">
+                <input
+                  pInputText
+                  id="licensePlateState"
+                  formControlName="licensePlateState"
+                  type="text"
+                  placeholder="e.g., TX"
+                  maxlength="2"
+                />
+              </ui-form-field>
+            </ui-grid>
+          </ui-grid>
+        </ui-surface>
+      </ui-stack>
+
+      <!-- Driver Assignment Section -->
+      <ui-stack tag="section" gap="3">
+        <ui-stack direction="row" gap="2" align="center">
+          <ui-icon name="users" color="secondary" />
+          <ui-typography variant="overline" color="secondary">Driver Assignment</ui-typography>
+        </ui-stack>
+        <ui-surface variant="elevated" [border]="true">
+          <ui-form-field label="Main Driver" for="mainDriver">
+            <p-autocomplete
+              formControlName="mainDriver"
+              class="w-full"
+              inputStyleClass="w-full"
+              placeholder="Search for a driver..."
+              optionLabel="fullName"
+              [minLength]="2"
+              [suggestions]="suggestedDrivers()"
+              (completeMethod)="searchDriver($event)"
+            />
+          </ui-form-field>
+
+          <ui-form-field label="Secondary Driver" for="secondaryDriver" class="mb-0">
+            <p-autocomplete
+              formControlName="secondaryDriver"
+              class="w-full"
+              inputStyleClass="w-full"
+              placeholder="Search for a driver..."
+              optionLabel="fullName"
+              [minLength]="2"
+              [suggestions]="suggestedDrivers()"
+              (completeMethod)="searchDriver($event)"
+            />
+          </ui-form-field>
+        </ui-surface>
+      </ui-stack>
+
+      <app-truck-hazmat-section [form]="form" />
+
+      <!-- Action Buttons -->
+      <ui-stack direction="row" gap="2">
+        <p-button
+          type="submit"
+          icon="pi pi-check"
+          [label]="mode() === 'create' ? 'Create Truck' : 'Update Truck'"
+          [disabled]="isLoading()"
+        />
+
+        @if (mode() === "edit") {
           <p-button
             type="button"
-            icon="pi pi-arrow-left"
-            label="Back to list"
-            [outlined]="true"
-            [routerLink]="['/trucks']"
+            icon="pi pi-trash"
+            label="Delete"
+            severity="danger"
+            [disabled]="isLoading()"
+            (click)="askRemove()"
           />
-        </ui-stack>
+        }
+
+        <p-button
+          type="button"
+          icon="pi pi-arrow-left"
+          label="Back to list"
+          [outlined]="true"
+          [routerLink]="['/trucks']"
+        />
       </ui-stack>
-    </form>
-  </div>
+    </ui-stack>
+  </form>
 
   <!-- Right: Tips Panel -->
-  <div class="w-full md:w-1/2">
-    <app-truck-form-tips [mode]="mode()" />
-  </div>
+
+  <app-truck-form-tips [mode]="mode()" />
 </ui-stack>

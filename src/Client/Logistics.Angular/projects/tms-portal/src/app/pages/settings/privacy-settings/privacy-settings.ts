@@ -14,7 +14,7 @@ import {
   type DataDeletionRequestDto,
   type DataExportRequestDto,
 } from "@logistics/shared/api";
-import { Stack, Typography } from "@logistics/shared/components";
+import { Container, Stack } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -24,7 +24,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
-import { FormField } from "@/shared/components";
+import { FormField, PageHeader } from "@/shared/components";
 import type { SeverityLevel } from "@/shared/utils";
 
 @Component({
@@ -42,8 +42,9 @@ import type { SeverityLevel } from "@/shared/utils";
     TagModule,
     TextareaModule,
     FormField,
+    PageHeader,
     Stack,
-    Typography,
+    Container,
   ],
 })
 export class PrivacySettings {

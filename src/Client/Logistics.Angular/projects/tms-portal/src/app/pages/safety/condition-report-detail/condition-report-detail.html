@@ -1,32 +1,17 @@
-<div class="condition-report-detail mx-auto max-w-7xl p-6">
-  <!-- Header -->
-  <div class="page-header border-subtle mb-6 border-b pb-4">
-    <ui-stack direction="row" align="center" justify="between">
-      <div>
-        <ui-typography variant="h2" tag="h1" class="mb-2 block">Condition Report Details</ui-typography>
-        @if (report()) {
-          <ui-stack direction="row" align="center" gap="3">
-            <p-tag
-              [value]="getTypeLabel(report()!.type ?? '')"
-              [severity]="getTypeSeverity(report()!.type ?? '')"
-            />
-            <ui-typography variant="body" color="muted" tag="span">|</ui-typography>
-            <span class="text-secondary font-mono text-sm">VIN: {{ report()!.vin || "N/A" }}</span>
-          </ui-stack>
-        }
-      </div>
-      <ui-stack direction="row" gap="2">
-        <p-button
-          icon="pi pi-arrow-left"
-          label="Back to List"
-          [routerLink]="['/inspections']"
-          [outlined]="true"
-        />
-      </ui-stack>
+<ui-page-header title="Condition Report Details" backLink="/inspections/condition-reports">
+  @if (report()) {
+    <ui-stack direction="row" align="center" gap="3">
+      <p-tag
+        [value]="getTypeLabel(report()!.type ?? '')"
+        [severity]="getTypeSeverity(report()!.type ?? '')"
+      />
+      <ui-typography variant="body" color="muted" tag="span">|</ui-typography>
+      <span class="text-secondary font-mono text-sm">VIN: {{ report()!.vin || "N/A" }}</span>
     </ui-stack>
-  </div>
+  }
+</ui-page-header>
 
-  @if (isLoading()) {
+@if (isLoading()) {
     <div class="flex justify-center py-16">
       <p-progress-spinner />
     </div>
@@ -46,16 +31,22 @@
 
             <ui-grid container spacing="4">
               <ui-grid [size]="{ xs: 6 }">
-                <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">VIN</ui-typography>
+                <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
+                  VIN
+                </ui-typography>
                 <p class="font-mono text-sm">{{ report()!.vin || "N/A" }}</p>
               </ui-grid>
               <ui-grid [size]="{ xs: 6 }">
-                <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">Vehicle</ui-typography>
+                <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
+                  Vehicle
+                </ui-typography>
                 <ui-typography variant="body-sm">{{ getVehicleInfo() }}</ui-typography>
               </ui-grid>
               @if (report()!.vehicleBodyClass) {
                 <ui-grid [size]="{ xs: 12 }">
-                  <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">Body Class</ui-typography>
+                  <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
+                    Body Class
+                  </ui-typography>
                   <ui-typography variant="body-sm">{{ report()!.vehicleBodyClass }}</ui-typography>
                 </ui-grid>
               }
@@ -132,21 +123,27 @@
             <ui-stack gap="4">
               <ui-grid container spacing="4">
                 <ui-grid [size]="{ xs: 6 }">
-                  <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">Inspection Type</ui-typography>
+                  <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
+                    Inspection Type
+                  </ui-typography>
                   <p-tag
                     [value]="getTypeLabel(report()!.type ?? '')"
                     [severity]="getTypeSeverity(report()!.type ?? '')"
                   />
                 </ui-grid>
                 <ui-grid [size]="{ xs: 6 }">
-                  <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">Signature</ui-typography>
+                  <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
+                    Signature
+                  </ui-typography>
                   @if (report()!.hasSignature) {
                     <ui-stack direction="row" align="center" gap="1" class="text-success">
                       <ui-icon name="check-circle" />
                       Captured
                     </ui-stack>
                   } @else {
-                    <ui-typography variant="body" color="muted" tag="span">Not captured</ui-typography>
+                    <ui-typography variant="body" color="muted" tag="span">
+                      Not captured
+                    </ui-typography>
                   }
                 </ui-grid>
               </ui-grid>
@@ -155,18 +152,28 @@
 
               <ui-grid container spacing="4">
                 <ui-grid [size]="{ xs: 6 }">
-                  <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">Inspector</ui-typography>
-                  <ui-typography variant="body-sm">{{ report()!.inspectorName || "N/A" }}</ui-typography>
+                  <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
+                    Inspector
+                  </ui-typography>
+                  <ui-typography variant="body-sm">
+                    {{ report()!.inspectorName || "N/A" }}
+                  </ui-typography>
                 </ui-grid>
                 <ui-grid [size]="{ xs: 6 }">
-                  <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">Inspected At</ui-typography>
-                  <ui-typography variant="body-sm">{{ report()!.inspectedAt | date: "medium" }}</ui-typography>
+                  <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
+                    Inspected At
+                  </ui-typography>
+                  <ui-typography variant="body-sm">
+                    {{ report()!.inspectedAt | date: "medium" }}
+                  </ui-typography>
                 </ui-grid>
               </ui-grid>
 
               @if (report()!.latitude && report()!.longitude) {
                 <div class="bg-success/10 rounded-lg p-3">
-                  <ui-typography variant="caption" weight="medium" class="text-success mb-1 block">Location</ui-typography>
+                  <ui-typography variant="caption" weight="medium" class="text-success mb-1 block">
+                    Location
+                  </ui-typography>
                   <ui-stack direction="row" align="center" justify="between">
                     <ui-typography variant="body-sm">
                       {{ formatCoordinates(report()!.latitude, report()!.longitude) }}
@@ -184,7 +191,9 @@
               }
 
               <div>
-                <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">Load ID</ui-typography>
+                <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
+                  Load ID
+                </ui-typography>
                 <a
                   [routerLink]="['/loads', report()!.loadId]"
                   class="text-primary text-sm hover:underline"
@@ -256,13 +265,12 @@
       <ui-typography variant="body" color="muted">Condition report not found</ui-typography>
       <p-button
         label="Back to List"
-        [routerLink]="['/inspections']"
+        [routerLink]="['/inspections/condition-reports']"
         [outlined]="true"
         class="mt-4"
       />
     </ui-stack>
   }
-</div>
 
 <!-- Photo Gallery Dialog -->
 <p-galleria
