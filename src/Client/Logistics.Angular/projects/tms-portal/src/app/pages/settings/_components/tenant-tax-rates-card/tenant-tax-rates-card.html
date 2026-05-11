@@ -1,0 +1,167 @@
+<p-card>
+  <div class="mb-4">
+    <ui-typography variant="h4" tag="h2" color="primary" class="mb-2">Tax Rates</ui-typography>
+    <ui-typography variant="body-sm" color="muted">
+      Manual VAT / sales-tax rates used by the tax calculator when Stripe Tax is not configured.
+      State-specific rates take precedence over country-only rates.
+    </ui-typography>
+  </div>
+
+  @if (isLoading()) {
+    <ui-stack align="center" justify="center" class="py-8">
+      <p-progress-spinner />
+    </ui-stack>
+  } @else {
+    <ui-stack direction="row" align="center" justify="between" class="mb-4">
+      <ui-typography variant="h5" tag="h3">Configured rates ({{ rates().length }})</ui-typography>
+      <p-button icon="pi pi-plus" label="Add rate" (click)="openCreate()" />
+    </ui-stack>
+
+    @if (rates().length === 0) {
+      <ui-alert intent="info" title="No rates configured">
+        Add a rate per jurisdiction (e.g.
+        <span class="font-mono">DE 19%</span>
+        ,
+        <span class="font-mono">US-CA 7.25%</span>
+        ) to override the built-in defaults. If you've enabled Stripe Tax, you can leave this empty.
+      </ui-alert>
+    } @else {
+      <p-table [value]="rates()" stripedRows>
+        <ng-template #header>
+          <tr>
+            <th>Jurisdiction</th>
+            <th class="text-right" style="width: 100px">Rate</th>
+            <th>Description</th>
+            <th>Effective</th>
+            <th style="width: 120px"></th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-rate>
+          <tr>
+            <td>
+              {{ rate.jurisdiction?.countryCode
+              }}{{ rate.jurisdiction?.region ? "-" + rate.jurisdiction?.region : "" }}
+            </td>
+            <td class="text-right">{{ rate.ratePercent }}%</td>
+            <td>{{ rate.description || "—" }}</td>
+            <td class="text-xs">
+              {{ rate.effectiveFrom | dateFormat: "mediumDate" }}
+              @if (rate.effectiveTo) {
+                – {{ rate.effectiveTo | dateFormat: "mediumDate" }}
+              }
+            </td>
+            <td>
+              <ui-stack direction="row" gap="2">
+                <p-button
+                  icon="pi pi-pencil"
+                  [text]="true"
+                  severity="secondary"
+                  size="small"
+                  (click)="openEdit(rate)"
+                  ariaLabel="Edit"
+                />
+                <p-button
+                  icon="pi pi-trash"
+                  [text]="true"
+                  severity="danger"
+                  size="small"
+                  (click)="askDelete(rate)"
+                  ariaLabel="Delete"
+                />
+              </ui-stack>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  }
+</p-card>
+
+<p-dialog
+  [header]="editingId() ? 'Edit tax rate' : 'Add tax rate'"
+  [(visible)]="dialogOpen"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+  [closable]="true"
+  [draggable]="false"
+>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <ui-validation-summary [form]="form" />
+
+    <ui-form-field label="Jurisdiction" for="jurisdictionKey" [required]="true">
+      <p-select
+        id="jurisdictionKey"
+        formControlName="jurisdictionKey"
+        [options]="jurisdictionOptions()"
+        optionLabel="label"
+        optionValue="value"
+        [fluid]="true"
+        [filter]="true"
+        filterPlaceholder="Search country or US state..."
+        placeholder="Select a jurisdiction"
+        (onChange)="onJurisdictionChange($event.value)"
+      />
+    </ui-form-field>
+
+    <ui-form-field
+      label="Rate (%)"
+      for="ratePercent"
+      [required]="true"
+      hint="0–100. Pre-filled from the jurisdiction's default if available."
+      class="mt-4"
+    >
+      <p-inputNumber
+        inputId="ratePercent"
+        formControlName="ratePercent"
+        [min]="0"
+        [max]="100"
+        [maxFractionDigits]="2"
+        suffix=" %"
+        [fluid]="true"
+      />
+    </ui-form-field>
+
+    <ui-form-field label="Description" for="description" class="mt-4">
+      <input
+        pInputText
+        id="description"
+        formControlName="description"
+        class="w-full"
+        placeholder="e.g. Reduced rate for digital services"
+      />
+    </ui-form-field>
+
+    <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <ui-form-field label="Effective from" for="effectiveFrom" hint="Defaults to today">
+        <p-datepicker
+          inputId="effectiveFrom"
+          formControlName="effectiveFrom"
+          showIcon
+          dateFormat="yy-mm-dd"
+          [fluid]="true"
+        />
+      </ui-form-field>
+
+      <ui-form-field label="Effective to" for="effectiveTo" hint="Optional; null = forever">
+        <p-datepicker
+          inputId="effectiveTo"
+          formControlName="effectiveTo"
+          showIcon
+          dateFormat="yy-mm-dd"
+          [fluid]="true"
+        />
+      </ui-form-field>
+    </div>
+
+    <ui-stack direction="row" justify="end" gap="2" class="mt-6">
+      <p-button type="button" label="Cancel" [outlined]="true" (click)="closeDialog()" />
+      <p-button
+        type="submit"
+        icon="pi pi-check"
+        label="Save"
+        [loading]="isSaving()"
+        [disabled]="!form.valid"
+      />
+    </ui-stack>
+  </form>
+</p-dialog>

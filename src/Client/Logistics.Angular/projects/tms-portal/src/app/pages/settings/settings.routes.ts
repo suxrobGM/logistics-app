@@ -8,6 +8,11 @@ export const settingsRoutes: Routes = [
     pathMatch: "full",
   },
   {
+    path: "tax-rates",
+    redirectTo: "payments",
+    pathMatch: "full",
+  },
+  {
     path: "company",
     loadComponent: () =>
       import("./company-settings/company-settings").then((m) => m.CompanySettingsComponent),
@@ -20,13 +25,6 @@ export const settingsRoutes: Routes = [
       import("./payment-settings/payment-settings").then((m) => m.PaymentSettingsComponent),
     canActivate: [authGuard],
     data: { breadcrumb: "Payments" },
-  },
-  {
-    path: "tax-rates",
-    loadComponent: () =>
-      import("./tax-rates-settings/tax-rates-settings").then((m) => m.TaxRatesSettings),
-    canActivate: [authGuard],
-    data: { breadcrumb: "Tax Rates" },
   },
   {
     path: "features",

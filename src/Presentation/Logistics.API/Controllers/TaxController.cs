@@ -8,8 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Logistics.API.Controllers;
 
 /// <summary>
-///     Read-only tax metadata: supported jurisdictions for the manual-rate UI and Stripe Tax
-///     account-level config (default code, registered jurisdictions, optional code list).
+///     Read-only tax metadata: supported jurisdictions for the manual-rate UI.
 /// </summary>
 [ApiController]
 [Route("tax")]
@@ -22,15 +21,6 @@ public class TaxController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetJurisdictions()
     {
         var result = await mediator.Send(new GetTaxJurisdictionsQuery());
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
-    }
-
-    [HttpGet("stripe-config", Name = "GetStripeTaxConfig")]
-    [ProducesResponseType(typeof(StripeTaxConfigDto), StatusCodes.Status200OK)]
-    [Authorize(Policy = Permission.Tax.View)]
-    public async Task<IActionResult> GetStripeConfig([FromQuery] bool includeTaxCodes = false)
-    {
-        var result = await mediator.Send(new GetStripeTaxConfigQuery { IncludeTaxCodes = includeTaxCodes });
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 }

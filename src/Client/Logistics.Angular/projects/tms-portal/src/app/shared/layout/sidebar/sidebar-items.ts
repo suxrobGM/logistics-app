@@ -323,9 +323,9 @@ export const sidebarSections: NavSection[] = [
             route: "/settings/payments",
           },
           {
-            id: "settings-tax-rates",
-            label: "Tax Rates",
-            route: "/settings/tax-rates",
+            id: "settings-subscription",
+            label: "Plan & Billing",
+            route: "/subscription/manage",
           },
           {
             id: "settings-features",
@@ -334,7 +334,7 @@ export const sidebarSections: NavSection[] = [
           },
           {
             id: "settings-ai",
-            label: "AI Settings",
+            label: "AI",
             route: "/settings/ai",
           },
           {
@@ -347,11 +347,6 @@ export const sidebarSections: NavSection[] = [
             id: "settings-privacy",
             label: "Privacy",
             route: "/settings/privacy",
-          },
-          {
-            id: "settings-subscription",
-            label: "Subscription",
-            route: "/subscription/manage",
           },
         ],
       },

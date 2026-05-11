@@ -12019,36 +12019,6 @@
         }
       }
     },
-    "/tax/stripe-config": {
-      "get": {
-        "tags": [
-          "Tax"
-        ],
-        "operationId": "GetStripeTaxConfig",
-        "parameters": [
-          {
-            "name": "includeTaxCodes",
-            "in": "query",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/StripeTaxConfigDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/tax-rates": {
       "get": {
         "tags": [
@@ -23712,83 +23682,6 @@
           "isOnboarded": {
             "type": "boolean",
             "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "StripeTaxCodeDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "StripeTaxConfigDto": {
-        "required": [
-          "defaultTaxCode"
-        ],
-        "type": "object",
-        "properties": {
-          "defaultTaxCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "registrations": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StripeTaxRegistrationDto"
-            },
-            "nullable": true
-          },
-          "taxCodes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StripeTaxCodeDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "StripeTaxRegistrationDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
-          "country": {
-            "type": "string",
-            "nullable": true
-          },
-          "state": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "string",
-            "nullable": true
-          },
-          "activeFrom": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "expiresAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
           }
         },
         "additionalProperties": false

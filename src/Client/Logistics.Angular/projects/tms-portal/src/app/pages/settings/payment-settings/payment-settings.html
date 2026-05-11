@@ -159,42 +159,8 @@
       }
     </p-card>
 
-    <!-- Stripe Tax onboarding -->
-    <p-card class="mt-6">
-      <div class="mb-4">
-        <ui-typography variant="h4" tag="h2" color="primary" class="mb-2">
-          Stripe Tax (VAT / Sales Tax)
-        </ui-typography>
-        <ui-typography variant="body-sm" color="muted">
-          Stripe Tax computes EU VAT, US destination-based sales tax, UK VAT, and AU/CA GST
-          automatically when you create invoices. Setup is per-Stripe-account and completed in the
-          Stripe dashboard — once enabled, the
-          <span class="font-mono">Tax:Provider = stripe</span>
-          calculator on this server picks it up on the next invoice.
-        </ui-typography>
-      </div>
-
-      <ui-alert intent="info" title="Set up in the Stripe dashboard" class="mb-4">
-        Configure a default tax code for your products, register the jurisdictions you collect tax
-        in, and Stripe will start computing tax for every invoice we send.
-      </ui-alert>
-
-      <ui-stack direction="row" gap="3">
-        <a
-          href="https://dashboard.stripe.com/tax/settings"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <p-button icon="pi pi-external-link" label="Open Stripe Tax settings" />
-        </a>
-        <a
-          href="https://dashboard.stripe.com/tax/registrations"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <p-button icon="pi pi-globe" label="Manage tax registrations" [outlined]="true" />
-        </a>
-      </ui-stack>
-    </p-card>
+    <div class="mt-6">
+      <app-tenant-tax-rates-card />
+    </div>
   </div>
 </ui-stack>

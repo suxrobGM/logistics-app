@@ -8,13 +8,14 @@ import {
   type StripeConnectStatus,
   type StripeConnectStatusDto,
 } from "@logistics/shared/api";
-import { Alert, Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
 import { EmptyState, LoadingSkeleton } from "@/shared/components";
+import { TenantTaxRatesCard } from "../_components";
 
 @Component({
   selector: "app-payment-settings",
@@ -26,12 +27,12 @@ import { EmptyState, LoadingSkeleton } from "@/shared/components";
     TagModule,
     EmptyState,
     LoadingSkeleton,
-    Alert,
     Grid,
     Icon,
     Stack,
     Surface,
     Typography,
+    TenantTaxRatesCard,
   ],
 })
 export class PaymentSettingsComponent implements OnInit {

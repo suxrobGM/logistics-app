@@ -40,8 +40,8 @@ interface TaxRateForm {
 }
 
 @Component({
-  selector: "app-tax-rates-settings",
-  templateUrl: "./tax-rates-settings.html",
+  selector: "app-tenant-tax-rates-card",
+  templateUrl: "./tenant-tax-rates-card.html",
   imports: [
     ReactiveFormsModule,
     CardModule,
@@ -61,7 +61,7 @@ interface TaxRateForm {
     DateFormatPipe,
   ],
 })
-export class TaxRatesSettings implements OnInit {
+export class TenantTaxRatesCard implements OnInit {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
 
@@ -155,6 +155,7 @@ export class TaxRatesSettings implements OnInit {
           effectiveFrom: value.effectiveFrom?.toISOString() ?? null,
           effectiveTo: value.effectiveTo?.toISOString() ?? null,
         };
+
         await this.api.invoke(updateTenantTaxRate, { id: editing, body: command });
         this.toastService.showSuccess("Tax rate updated");
       } else {
@@ -167,6 +168,7 @@ export class TaxRatesSettings implements OnInit {
           effectiveFrom: value.effectiveFrom?.toISOString() ?? null,
           effectiveTo: value.effectiveTo?.toISOString() ?? null,
         };
+
         await this.api.invoke(createTenantTaxRate, { body: command });
         this.toastService.showSuccess("Tax rate created");
       }
