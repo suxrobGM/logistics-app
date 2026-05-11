@@ -90,7 +90,7 @@ public class AiDispatchController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result) : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    [HttpPut("ai-settings", Name = "UpdateTenantAiSettings")]
+    [HttpPut("settings", Name = "UpdateTenantAiSettings")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Dispatch.Manage)]

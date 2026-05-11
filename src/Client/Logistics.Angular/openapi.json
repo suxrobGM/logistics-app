@@ -713,7 +713,7 @@
         }
       }
     },
-    "/ai/dispatch/ai-settings": {
+    "/ai/dispatch/settings": {
       "put": {
         "tags": [
           "AiDispatch"
