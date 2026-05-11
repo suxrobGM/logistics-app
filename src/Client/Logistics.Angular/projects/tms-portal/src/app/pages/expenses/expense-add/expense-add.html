@@ -31,7 +31,7 @@
                     mode="currency"
                     currency="USD"
                     [min]="0"
-                    styleClass="w-full"
+                    [fluid]="true"
                   />
                 </ui-form-field>
               </ui-grid>
@@ -44,7 +44,7 @@
                     [options]="companyCategories"
                     optionLabel="label"
                     optionValue="value"
-                    styleClass="w-full"
+                    [fluid]="true"
                   />
                 </ui-form-field>
               </ui-grid>
@@ -66,7 +66,7 @@
                     id="company-date"
                     formControlName="expenseDate"
                     [showIcon]="true"
-                    styleClass="w-full"
+                    [fluid]="true"
                   />
                 </ui-form-field>
               </ui-grid>
@@ -122,7 +122,7 @@
                     mode="currency"
                     currency="USD"
                     [min]="0"
-                    styleClass="w-full"
+                    [fluid]="true"
                   />
                 </ui-form-field>
               </ui-grid>
@@ -135,7 +135,7 @@
                     [options]="truckCategories"
                     optionLabel="label"
                     optionValue="value"
-                    styleClass="w-full"
+                    [fluid]="true"
                   />
                 </ui-form-field>
               </ui-grid>
@@ -149,7 +149,7 @@
                     optionLabel="number"
                     optionValue="id"
                     placeholder="Select a truck"
-                    styleClass="w-full"
+                    [fluid]="true"
                   />
                 </ui-form-field>
               </ui-grid>
@@ -160,7 +160,7 @@
                     id="truck-date"
                     formControlName="expenseDate"
                     [showIcon]="true"
-                    styleClass="w-full"
+                    [fluid]="true"
                   />
                 </ui-form-field>
               </ui-grid>
@@ -178,10 +178,38 @@
                     formControlName="odometerReading"
                     [min]="0"
                     suffix=" mi"
-                    styleClass="w-full"
+                    [fluid]="true"
                   />
                 </ui-form-field>
               </ui-grid>
+
+              @if (truckForm.get("category")?.value === "fuel") {
+                <ui-grid [size]="{ xs: 12, md: 6 }">
+                  <ui-form-field label="Quantity" for="truck-quantity">
+                    <p-inputNumber
+                      id="truck-quantity"
+                      formControlName="quantity"
+                      [min]="0"
+                      [minFractionDigits]="0"
+                      [maxFractionDigits]="2"
+                      [fluid]="true"
+                    />
+                  </ui-form-field>
+                </ui-grid>
+
+                <ui-grid [size]="{ xs: 12, md: 6 }">
+                  <ui-form-field label="Quantity Unit" for="truck-quantity-unit">
+                    <p-select
+                      id="truck-quantity-unit"
+                      formControlName="quantityUnit"
+                      [options]="volumeUnitOptions"
+                      optionLabel="label"
+                      optionValue="value"
+                      [fluid]="true"
+                    />
+                  </ui-form-field>
+                </ui-grid>
+              }
             </ui-grid>
 
             <ui-form-field label="Notes" for="truck-notes">
@@ -238,7 +266,7 @@
                     mode="currency"
                     currency="USD"
                     [min]="0"
-                    styleClass="w-full"
+                    [fluid]="true"
                   />
                 </ui-form-field>
               </ui-grid>
@@ -252,7 +280,7 @@
                     optionLabel="number"
                     optionValue="id"
                     placeholder="Select a truck"
-                    styleClass="w-full"
+                    [fluid]="true"
                   />
                 </ui-form-field>
               </ui-grid>
@@ -274,7 +302,7 @@
                     id="bodyshop-date"
                     formControlName="expenseDate"
                     [showIcon]="true"
-                    styleClass="w-full"
+                    [fluid]="true"
                   />
                 </ui-form-field>
               </ui-grid>
@@ -319,7 +347,7 @@
                     id="bodyshop-est-date"
                     formControlName="estimatedCompletionDate"
                     [showIcon]="true"
-                    styleClass="w-full"
+                    [fluid]="true"
                   />
                 </ui-form-field>
               </ui-grid>
@@ -330,7 +358,7 @@
                     id="bodyshop-actual-date"
                     formControlName="actualCompletionDate"
                     [showIcon]="true"
-                    styleClass="w-full"
+                    [fluid]="true"
                   />
                 </ui-form-field>
               </ui-grid>

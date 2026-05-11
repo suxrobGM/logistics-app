@@ -1,6 +1,13 @@
 import { inject, Injectable, InjectionToken } from "@angular/core";
 import type { TenantSettings } from "../api/generated/models/tenant-settings";
-import type { DistanceUnitTypes, WeightUnitTypes } from "../utils/converters";
+import {
+  Converters,
+  type DistanceUnitTypes,
+  type FuelEfficiencyUnitTypes,
+  type TemperatureUnitTypes,
+  type VolumeUnitTypes,
+  type WeightUnitTypes,
+} from "../utils/converters";
 
 /**
  * Interface for providing tenant settings to the localization service.
@@ -149,6 +156,100 @@ export class LocalizationService {
     const settings = this.settingsProvider.getSettings();
     const unit = settings.weightUnit;
     return unit === "kilograms" ? "Kilograms" : "Pounds";
+  }
+
+  /**
+   * Gets the volume unit code for conversions.
+   * @returns 'gal' or 'L'
+   */
+  getVolumeUnit(): VolumeUnitTypes {
+    const settings = this.settingsProvider.getSettings();
+    return settings.volumeUnit === "liters" ? "L" : "gal";
+  }
+
+  /**
+   * Gets the volume unit label for display.
+   * @returns 'gal' or 'L'
+   */
+  getVolumeUnitLabel(): string {
+    return this.getVolumeUnit();
+  }
+
+  /**
+   * Gets the full volume unit name for display.
+   * @returns 'Gallons' or 'Liters'
+   */
+  getVolumeUnitName(): string {
+    return this.getVolumeUnit() === "L" ? "Liters" : "Gallons";
+  }
+
+  /**
+   * Formats a volume value, converting to the tenant unit when a source unit is provided.
+   * @param value Volume value
+   * @param fromUnit Source unit; defaults to tenant unit (no conversion)
+   * @returns Formatted string like "10.5 gal"
+   */
+  formatVolume(value: number, fromUnit?: VolumeUnitTypes): string {
+    const target = this.getVolumeUnit();
+    const converted = fromUnit ? Converters.convertVolume(value, fromUnit, target) : value;
+    return `${converted} ${target}`;
+  }
+
+  /**
+   * Gets the temperature unit code for conversions.
+   * @returns 'F' or 'C'
+   */
+  getTemperatureUnit(): TemperatureUnitTypes {
+    const settings = this.settingsProvider.getSettings();
+    return settings.temperatureUnit === "celsius" ? "C" : "F";
+  }
+
+  /**
+   * Gets the temperature unit label for display.
+   * @returns '°F' or '°C'
+   */
+  getTemperatureUnitLabel(): string {
+    return `°${this.getTemperatureUnit()}`;
+  }
+
+  /**
+   * Gets the full temperature unit name for display.
+   * @returns 'Fahrenheit' or 'Celsius'
+   */
+  getTemperatureUnitName(): string {
+    return this.getTemperatureUnit() === "C" ? "Celsius" : "Fahrenheit";
+  }
+
+  /**
+   * Formats a temperature value, converting to the tenant unit when a source unit is provided.
+   * @param value Temperature value
+   * @param fromUnit Source unit; defaults to tenant unit (no conversion)
+   * @returns Formatted string like "14°F"
+   */
+  formatTemperature(value: number, fromUnit?: TemperatureUnitTypes): string {
+    const target = this.getTemperatureUnit();
+    const converted = fromUnit ? Converters.convertTemperature(value, fromUnit, target) : value;
+    return `${converted}°${target}`;
+  }
+
+  /**
+   * Gets the fuel-efficiency unit derived from the tenant's volume unit.
+   * @returns 'mpg' for gallons, 'L/100km' for liters
+   */
+  getFuelEfficiencyUnit(): FuelEfficiencyUnitTypes {
+    return this.getVolumeUnit() === "L" ? "L/100km" : "mpg";
+  }
+
+  /**
+   * Formats a fuel-efficiency value, converting to the tenant unit when a source unit is provided.
+   * @param value Efficiency value
+   * @param fromUnit Source unit; defaults to tenant unit (no conversion)
+   * @returns Formatted string like "8.5 L/100km"
+   */
+  formatFuelEfficiency(value: number, fromUnit?: FuelEfficiencyUnitTypes): string {
+    const target = this.getFuelEfficiencyUnit();
+    const converted = fromUnit ? Converters.convertFuelEfficiency(value, fromUnit, target) : value;
+    return `${converted} ${target}`;
   }
 
   /**

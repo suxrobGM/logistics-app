@@ -2,6 +2,9 @@ import type { Address } from "../api";
 
 export type DistanceUnitTypes = "m" | "km" | "mi" | "yd";
 export type WeightUnitTypes = "lbs" | "kg";
+export type VolumeUnitTypes = "gal" | "L";
+export type TemperatureUnitTypes = "F" | "C";
+export type FuelEfficiencyUnitTypes = "mpg" | "L/100km";
 
 export abstract class Converters {
   /**
@@ -77,6 +80,67 @@ export abstract class Converters {
     }
 
     return value;
+  }
+
+  /**
+   * Converts volume between US gallons and liters.
+   * @param value Volume value
+   * @param fromUnit Source unit
+   * @param toUnit Target unit
+   * @returns Converted volume in 2 decimals format
+   */
+  static convertVolume(value: number, fromUnit: VolumeUnitTypes, toUnit: VolumeUnitTypes): number {
+    if (fromUnit === toUnit) return value;
+
+    if (fromUnit === "gal" && toUnit === "L") {
+      return Number.parseFloat((value * 3.78541).toFixed(2));
+    }
+    if (fromUnit === "L" && toUnit === "gal") {
+      return Number.parseFloat((value / 3.78541).toFixed(2));
+    }
+
+    return value;
+  }
+
+  /**
+   * Converts temperature between Fahrenheit and Celsius.
+   * @param value Temperature value
+   * @param fromUnit Source unit
+   * @param toUnit Target unit
+   * @returns Converted temperature in 1 decimal format
+   */
+  static convertTemperature(
+    value: number,
+    fromUnit: TemperatureUnitTypes,
+    toUnit: TemperatureUnitTypes,
+  ): number {
+    if (fromUnit === toUnit) return value;
+
+    if (fromUnit === "F" && toUnit === "C") {
+      return Number.parseFloat((((value - 32) * 5) / 9).toFixed(1));
+    }
+    if (fromUnit === "C" && toUnit === "F") {
+      return Number.parseFloat(((value * 9) / 5 + 32).toFixed(1));
+    }
+
+    return value;
+  }
+
+  /**
+   * Converts fuel efficiency between MPG and L/100km. Both share the formula
+   * `L/100km = 235.215 / mpg` (and inverse).
+   * @param value Efficiency value
+   * @param fromUnit Source unit
+   * @param toUnit Target unit
+   * @returns Converted efficiency in 2 decimals format
+   */
+  static convertFuelEfficiency(
+    value: number,
+    fromUnit: FuelEfficiencyUnitTypes,
+    toUnit: FuelEfficiencyUnitTypes,
+  ): number {
+    if (fromUnit === toUnit || value === 0) return value;
+    return Number.parseFloat((235.215 / value).toFixed(2));
   }
 
   /**

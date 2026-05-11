@@ -15,6 +15,8 @@ public interface IRegionProfile
     CurrencyCode Currency { get; }
     DistanceUnit DistanceUnit { get; }
     WeightUnit WeightUnit { get; }
+    VolumeUnit VolumeUnit { get; }
+    TemperatureUnit TemperatureUnit { get; }
     DateFormatType DateFormat { get; }
     string Timezone { get; }
 

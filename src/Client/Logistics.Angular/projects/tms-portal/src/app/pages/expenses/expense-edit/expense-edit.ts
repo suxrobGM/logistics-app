@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
-import { ToastService } from "@logistics/shared";
+import { LocalizationService, ToastService } from "@logistics/shared";
 import {
   Api,
   getExpenseById,
@@ -11,6 +11,7 @@ import {
   uploadExpenseReceipt,
   type ExpenseDto,
   type TruckDto,
+  type VolumeUnit,
 } from "@logistics/shared/api";
 import { Container, Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
@@ -61,6 +62,7 @@ export class ExpenseEditPage implements OnInit {
   private readonly api = inject(Api);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+  protected readonly localization = inject(LocalizationService);
 
   protected readonly id = input.required<string>();
   protected readonly isLoading = signal(false);
@@ -88,6 +90,11 @@ export class ExpenseEditPage implements OnInit {
     { label: "Other", value: "other" },
   ];
 
+  protected readonly volumeUnitOptions: CategoryOption[] = [
+    { label: "Gallons", value: "gallons" },
+    { label: "Liters", value: "liters" },
+  ];
+
   protected readonly form: FormGroup = this.fb.group({
     amount: [null, [Validators.required, Validators.min(0.01)]],
     vendorName: [""],
@@ -99,6 +106,8 @@ export class ExpenseEditPage implements OnInit {
     truckId: [null],
     truckCategory: [""],
     odometerReading: [null],
+    quantity: [null],
+    quantityUnit: [null as VolumeUnit | null],
     // Body shop fields
     vendorAddress: [""],
     vendorPhone: [""],
@@ -158,6 +167,14 @@ export class ExpenseEditPage implements OnInit {
         companyCategory: e?.type === "company" ? formValue.companyCategory : undefined,
         truckCategory: e?.type === "truck" ? formValue.truckCategory : undefined,
         odometerReading: e?.type === "truck" ? formValue.odometerReading : undefined,
+        quantity:
+          e?.type === "truck" && formValue.truckCategory === "fuel"
+            ? formValue.quantity
+            : undefined,
+        quantityUnit:
+          e?.type === "truck" && formValue.truckCategory === "fuel"
+            ? formValue.quantityUnit
+            : undefined,
         vendorAddress: e?.type === "body_shop" ? formValue.vendorAddress : undefined,
         vendorPhone: e?.type === "body_shop" ? formValue.vendorPhone : undefined,
         repairDescription: e?.type === "body_shop" ? formValue.repairDescription : undefined,
@@ -220,6 +237,8 @@ export class ExpenseEditPage implements OnInit {
       truckId: e.truckId,
       truckCategory: e.truckCategory,
       odometerReading: e.odometerReading,
+      quantity: e.quantity,
+      quantityUnit: e.quantityUnit ?? this.defaultVolumeUnit(),
       vendorAddress: e.vendorAddress,
       vendorPhone: e.vendorPhone,
       repairDescription: e.repairDescription,
@@ -228,6 +247,10 @@ export class ExpenseEditPage implements OnInit {
         : null,
       actualCompletionDate: e.actualCompletionDate ? new Date(e.actualCompletionDate) : null,
     });
+  }
+
+  private defaultVolumeUnit(): VolumeUnit {
+    return this.localization.getVolumeUnit() === "L" ? "liters" : "gallons";
   }
 
   private async loadTrucks(): Promise<void> {

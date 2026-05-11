@@ -15,4 +15,6 @@ public class CreateTruckExpenseCommand : IAppRequest<Result<Guid>>
     public required Guid TruckId { get; set; }
     public TruckExpenseCategory Category { get; set; }
     public int? OdometerReading { get; set; }
+    public decimal? Quantity { get; set; }
+    public VolumeUnit? QuantityUnit { get; set; }
 }

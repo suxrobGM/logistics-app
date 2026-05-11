@@ -20,6 +20,8 @@ public class UpdateExpenseCommand : IAppRequest<Result>
     // TruckExpense fields
     public TruckExpenseCategory? TruckCategory { get; set; }
     public int? OdometerReading { get; set; }
+    public decimal? Quantity { get; set; }
+    public VolumeUnit? QuantityUnit { get; set; }
 
     // BodyShopExpense fields
     public string? VendorAddress { get; set; }

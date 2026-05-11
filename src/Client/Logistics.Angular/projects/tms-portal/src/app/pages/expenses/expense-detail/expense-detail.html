@@ -113,6 +113,13 @@
             </div>
           }
 
+          @if (expense()!.quantity !== null) {
+            <div class="flex items-center justify-between">
+              <span class="text-muted">Quantity</span>
+              <span>{{ formatQuantity() }}</span>
+            </div>
+          }
+
           @if (expense()!.type === "body_shop") {
             @if (expense()!.vendorAddress) {
               <div class="flex items-center justify-between">

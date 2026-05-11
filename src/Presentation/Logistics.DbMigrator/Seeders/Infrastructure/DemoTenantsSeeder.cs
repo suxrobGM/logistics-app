@@ -123,6 +123,8 @@ internal sealed class DemoTenantsSeeder(
         tenant.Settings.Currency = profile.Currency;
         tenant.Settings.DistanceUnit = profile.DistanceUnit;
         tenant.Settings.WeightUnit = profile.WeightUnit;
+        tenant.Settings.VolumeUnit = profile.VolumeUnit;
+        tenant.Settings.TemperatureUnit = profile.TemperatureUnit;
         tenant.Settings.DateFormat = profile.DateFormat;
         tenant.Settings.Timezone = profile.Timezone;
     }

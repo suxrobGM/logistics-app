@@ -17587,6 +17587,14 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "quantityUnit": {
+            "$ref": "#/components/schemas/VolumeUnit"
           }
         },
         "additionalProperties": false
@@ -19342,6 +19350,14 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "quantityUnit": {
+            "$ref": "#/components/schemas/VolumeUnit"
           },
           "vendorAddress": {
             "type": "string",
@@ -23890,6 +23906,13 @@
         },
         "additionalProperties": false
       },
+      "TemperatureUnit": {
+        "enum": [
+          "fahrenheit",
+          "celsius"
+        ],
+        "type": "string"
+      },
       "TenantDto": {
         "required": [
           "companyAddress"
@@ -24112,6 +24135,12 @@
           },
           "weightUnit": {
             "$ref": "#/components/schemas/WeightUnit"
+          },
+          "volumeUnit": {
+            "$ref": "#/components/schemas/VolumeUnit"
+          },
+          "temperatureUnit": {
+            "$ref": "#/components/schemas/TemperatureUnit"
           },
           "language": {
             "type": "string",
@@ -25415,6 +25444,14 @@
             "format": "int32",
             "nullable": true
           },
+          "quantity": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "quantityUnit": {
+            "$ref": "#/components/schemas/VolumeUnit"
+          },
           "vendorAddress": {
             "type": "string",
             "nullable": true
@@ -26287,6 +26324,13 @@
           }
         },
         "additionalProperties": false
+      },
+      "VolumeUnit": {
+        "enum": [
+          "gallons",
+          "liters"
+        ],
+        "type": "string"
       },
       "WeightUnit": {
         "enum": [

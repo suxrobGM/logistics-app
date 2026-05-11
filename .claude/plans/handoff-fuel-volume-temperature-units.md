@@ -1,8 +1,29 @@
 # Handoff: Fuel Volume + Temperature Units
 
-> **Priority:** MEDIUM. **Effort:** S (1–2 days).
+> **Priority:** MEDIUM. **Effort:** S (1–2 days). **Status:** Done 2026-05-11 (Load reefer + mobile + C# converters deferred — see below).
 >
 > Distance and weight units already exist; volume (gallons vs liters) and temperature (F vs C) do not. Reefer cargo is shipped at temperature — wrong unit means wrong cargo. Fuel expense reporting needs gallons or liters.
+
+## Status (2026-05-11)
+
+Shipped:
+
+- Domain enums `VolumeUnit { Gallons, Liters }` and `TemperatureUnit { Fahrenheit, Celsius }` under `Logistics.Domain.Primitives.Enums`.
+- `TenantSettings.VolumeUnit` (default Gallons) and `TenantSettings.TemperatureUnit` (default Fahrenheit) — Master DB migration `Version_0009` adds the columns with backfill defaults.
+- US/EU `RegionProfile` set the new units; `DemoTenantsSeeder.ApplyRegionalSettings` propagates them.
+- `TruckExpense.Quantity (decimal?)` + `TruckExpense.QuantityUnit (VolumeUnit?)` — Tenant DB migration `Version_0009` adds nullable columns; cascaded through `CreateTruckExpenseCommand`/Handler/Validator, `UpdateExpenseCommand`/Handler, `ExpenseDto`, `ExpenseMapper`.
+- Angular `Converters` gains `convertVolume`, `convertTemperature`, `convertFuelEfficiency` plus three new unit type aliases.
+- `LocalizationService` gains `getVolumeUnit/Label/Name`, `formatVolume`, `getTemperatureUnit/Label/Name`, `formatTemperature`, `getFuelEfficiencyUnit`, `formatFuelEfficiency`.
+- TMS portal `expense-add` / `expense-edit` show Quantity + Unit inputs only when the truck-expense category is Fuel; defaults the unit from `LocalizationService`.
+- TMS portal `expense-detail` renders fuel quantity formatted in the tenant's preferred unit (with conversion when stored in a different unit).
+- `openapi.json` extended and Angular API client regenerated (`bun run gen:api`); 558 generated files refreshed.
+
+Deferred (out of scope of this handoff — call out in next planning round):
+
+- **Load reefer fields.** `Load` has no `TemperatureSetpoint` today. Adding both fields plus DTO, mapper, create/update commands, validators, and load forms is a larger slice. The `formatTemperature` helper is in place; just wire fields when reefer becomes priority.
+- **Mobile / Kotlin driver app.** No fuel-entry or reefer screens exist yet. Add `VolumeUnit`/`TemperatureUnit` to `UserSettings.kt` when those flows ship.
+- **Server-side C# conversion helpers.** No equivalents exist for distance/weight today; conversion stays a presentation concern. Add when fuel-report PDF generation needs it.
+- **Fuel efficiency dashboard widget** + **fuel report PDF** — plan only added primitives. Build the widgets in a follow-up.
 
 ## Sequencing
 

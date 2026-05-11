@@ -28,4 +28,15 @@ public class TruckExpense : Expense
     ///     Odometer reading at the time of expense (optional).
     /// </summary>
     public int? OdometerReading { get; set; }
+
+    /// <summary>
+    ///     Quantity purchased (typically fuel volume). Captured in <see cref="QuantityUnit"/>;
+    ///     never auto-converted between units.
+    /// </summary>
+    public decimal? Quantity { get; set; }
+
+    /// <summary>
+    ///     Unit the <see cref="Quantity"/> is expressed in (Gallons / Liters).
+    /// </summary>
+    public VolumeUnit? QuantityUnit { get; set; }
 }

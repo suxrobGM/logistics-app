@@ -28,7 +28,7 @@
                 mode="currency"
                 [currency]="expense()?.amount?.currency || 'USD'"
                 [min]="0"
-                styleClass="w-full"
+                [fluid]="true"
               />
             </ui-form-field>
           </ui-grid>
@@ -39,7 +39,7 @@
                 id="expenseDate"
                 formControlName="expenseDate"
                 [showIcon]="true"
-                styleClass="w-full"
+                [fluid]="true"
               />
             </ui-form-field>
           </ui-grid>
@@ -60,7 +60,7 @@
                   [options]="companyCategories"
                   optionLabel="label"
                   optionValue="value"
-                  styleClass="w-full"
+                  [fluid]="true"
                 />
               </ui-form-field>
             </ui-grid>
@@ -76,7 +76,7 @@
                   [options]="truckCategories"
                   optionLabel="label"
                   optionValue="value"
-                  styleClass="w-full"
+                  [fluid]="true"
                 />
               </ui-form-field>
             </ui-grid>
@@ -95,7 +95,7 @@
                   optionLabel="number"
                   optionValue="id"
                   placeholder="Select a truck"
-                  styleClass="w-full"
+                  [fluid]="true"
                   [disabled]="true"
                 />
               </ui-form-field>
@@ -108,10 +108,38 @@
                   formControlName="odometerReading"
                   [min]="0"
                   suffix=" mi"
-                  styleClass="w-full"
+                  [fluid]="true"
                 />
               </ui-form-field>
             </ui-grid>
+
+            @if (form.get("truckCategory")?.value === "fuel") {
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Quantity" for="quantity">
+                  <p-inputNumber
+                    id="quantity"
+                    formControlName="quantity"
+                    [min]="0"
+                    [minFractionDigits]="0"
+                    [maxFractionDigits]="2"
+                    [fluid]="true"
+                  />
+                </ui-form-field>
+              </ui-grid>
+
+              <ui-grid [size]="{ xs: 12, md: 6 }">
+                <ui-form-field label="Quantity Unit" for="quantityUnit">
+                  <p-select
+                    id="quantityUnit"
+                    formControlName="quantityUnit"
+                    [options]="volumeUnitOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    [fluid]="true"
+                  />
+                </ui-form-field>
+              </ui-grid>
+            }
           </ui-grid>
         }
 
@@ -127,7 +155,7 @@
                   optionLabel="number"
                   optionValue="id"
                   placeholder="Select a truck"
-                  styleClass="w-full"
+                  [fluid]="true"
                   [disabled]="true"
                 />
               </ui-form-field>
@@ -161,7 +189,7 @@
                   id="estimatedCompletionDate"
                   formControlName="estimatedCompletionDate"
                   [showIcon]="true"
-                  styleClass="w-full"
+                  [fluid]="true"
                 />
               </ui-form-field>
             </ui-grid>

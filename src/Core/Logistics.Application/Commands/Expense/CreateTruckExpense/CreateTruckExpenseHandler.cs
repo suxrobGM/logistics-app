@@ -27,7 +27,9 @@ internal sealed class CreateTruckExpenseHandler(ITenantUnitOfWork tenantUow)
             Notes = req.Notes,
             TruckId = req.TruckId,
             Category = req.Category,
-            OdometerReading = req.OdometerReading
+            OdometerReading = req.OdometerReading,
+            Quantity = req.Quantity,
+            QuantityUnit = req.QuantityUnit
         };
 
         await tenantUow.Repository<Expense>().AddAsync(expense, ct);

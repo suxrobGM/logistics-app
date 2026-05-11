@@ -12,6 +12,8 @@ internal sealed class UsRegionProfile : IRegionProfile
     public CurrencyCode Currency => CurrencyCode.USD;
     public DistanceUnit DistanceUnit => DistanceUnit.Miles;
     public WeightUnit WeightUnit => WeightUnit.Pounds;
+    public VolumeUnit VolumeUnit => VolumeUnit.Gallons;
+    public TemperatureUnit TemperatureUnit => TemperatureUnit.Fahrenheit;
     public DateFormatType DateFormat => DateFormatType.US;
     public string Timezone => "America/New_York";
 

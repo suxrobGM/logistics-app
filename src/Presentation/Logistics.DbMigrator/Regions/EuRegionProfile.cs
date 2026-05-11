@@ -12,6 +12,8 @@ internal sealed class EuRegionProfile : IRegionProfile
     public CurrencyCode Currency => CurrencyCode.EUR;
     public DistanceUnit DistanceUnit => DistanceUnit.Kilometers;
     public WeightUnit WeightUnit => WeightUnit.Kilograms;
+    public VolumeUnit VolumeUnit => VolumeUnit.Liters;
+    public TemperatureUnit TemperatureUnit => TemperatureUnit.Celsius;
     public DateFormatType DateFormat => DateFormatType.European;
     public string Timezone => "Europe/Berlin";
 

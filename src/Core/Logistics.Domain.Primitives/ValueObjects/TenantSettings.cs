@@ -15,6 +15,8 @@ public record TenantSettings
     public DateFormatType DateFormat { get; set; } = DateFormatType.US;
     public string Timezone { get; set; } = "America/New_York";
     public WeightUnit WeightUnit { get; set; } = WeightUnit.Pounds;
+    public VolumeUnit VolumeUnit { get; set; } = VolumeUnit.Gallons;
+    public TemperatureUnit TemperatureUnit { get; set; } = TemperatureUnit.Fahrenheit;
 
     /// <summary>
     /// ISO 639-1 language code used as the tenant's UI/document default. Falls back to "en".

@@ -40,6 +40,8 @@ public record ExpenseDto
     public TruckDto? Truck { get; init; }
     public TruckExpenseCategory? TruckCategory { get; init; }
     public int? OdometerReading { get; init; }
+    public decimal? Quantity { get; init; }
+    public VolumeUnit? QuantityUnit { get; init; }
 
     // BodyShopExpense fields
     public string? VendorAddress { get; init; }

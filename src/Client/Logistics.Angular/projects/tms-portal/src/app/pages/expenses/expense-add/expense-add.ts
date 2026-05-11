@@ -2,6 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
+import { LocalizationService } from "@logistics/shared";
 import {
   Api,
   createBodyShopExpense,
@@ -10,6 +11,7 @@ import {
   getTrucks,
   uploadExpenseReceipt,
   type TruckDto,
+  type VolumeUnit,
 } from "@logistics/shared/api";
 import { Grid, Icon, Stack } from "@logistics/shared/components";
 import { MessageService } from "primeng/api";
@@ -62,6 +64,7 @@ export class ExpenseAddPage implements OnInit {
   private readonly router = inject(Router);
   private readonly messageService = inject(MessageService);
   private readonly tenantService = inject(TenantService);
+  protected readonly localization = inject(LocalizationService);
 
   protected readonly isLoading = signal(false);
   protected readonly activeTab = signal(0);
@@ -87,6 +90,11 @@ export class ExpenseAddPage implements OnInit {
     { label: "Other", value: "other" },
   ];
 
+  protected readonly volumeUnitOptions: CategoryOption[] = [
+    { label: "Gallons", value: "gallons" },
+    { label: "Liters", value: "liters" },
+  ];
+
   // Company expense form
   protected readonly companyForm: FormGroup = this.fb.group({
     amount: [null, [Validators.required, Validators.min(0.01)]],
@@ -105,6 +113,8 @@ export class ExpenseAddPage implements OnInit {
     truckId: [null, Validators.required],
     category: ["fuel", Validators.required],
     odometerReading: [null],
+    quantity: [null],
+    quantityUnit: [this.defaultVolumeUnit() as VolumeUnit],
   });
 
   // Body shop expense form
@@ -178,7 +188,7 @@ export class ExpenseAddPage implements OnInit {
         currency: this.tenantService.tenantCurrency(),
         vendorName: formValue.vendorName,
         expenseDate: formValue.expenseDate.toISOString(),
-        receiptBlobPath: this.receiptPath() || null,
+        receiptBlobPath: this.receiptPath(),
         notes: formValue.notes,
         category: formValue.category,
       },
@@ -215,11 +225,13 @@ export class ExpenseAddPage implements OnInit {
         currency: this.tenantService.tenantCurrency(),
         vendorName: formValue.vendorName,
         expenseDate: formValue.expenseDate.toISOString(),
-        receiptBlobPath: this.receiptPath() || null,
+        receiptBlobPath: this.receiptPath(),
         notes: formValue.notes,
         truckId: formValue.truckId,
         category: formValue.category,
         odometerReading: formValue.odometerReading,
+        quantity: formValue.category === "fuel" ? formValue.quantity : undefined,
+        quantityUnit: formValue.category === "fuel" ? formValue.quantityUnit : undefined,
       },
     });
 
@@ -254,7 +266,7 @@ export class ExpenseAddPage implements OnInit {
         currency: this.tenantService.tenantCurrency(),
         vendorName: formValue.vendorName,
         expenseDate: formValue.expenseDate.toISOString(),
-        receiptBlobPath: this.receiptPath() || null,
+        receiptBlobPath: this.receiptPath(),
         notes: formValue.notes,
         truckId: formValue.truckId,
         vendorAddress: formValue.vendorAddress,
@@ -275,6 +287,10 @@ export class ExpenseAddPage implements OnInit {
       });
       this.router.navigate(["/expenses"]);
     }
+  }
+
+  private defaultVolumeUnit(): VolumeUnit {
+    return this.localization.getVolumeUnit() === "L" ? "liters" : "gallons";
   }
 
   private async loadTrucks(): Promise<void> {

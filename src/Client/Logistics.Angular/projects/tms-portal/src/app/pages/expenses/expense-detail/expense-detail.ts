@@ -1,12 +1,13 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { CurrencyFormatPipe } from "@logistics/shared";
+import { CurrencyFormatPipe, LocalizationService } from "@logistics/shared";
 import {
   Api,
   downloadExpenseReceipt,
   getExpenseById,
   type ExpenseDto,
+  type VolumeUnit,
 } from "@logistics/shared/api";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
@@ -40,6 +41,7 @@ export class ExpenseDetailPage implements OnInit {
   private readonly api = inject(Api);
   private readonly router = inject(Router);
   private readonly expenseActions = inject(ExpenseActionsService);
+  private readonly localization = inject(LocalizationService);
 
   protected readonly id = input.required<string>();
   protected readonly isLoading = signal(false);
@@ -53,6 +55,19 @@ export class ExpenseDetailPage implements OnInit {
     const e = this.expense();
     if (!e) return "N/A";
     return e.companyCategory ?? e.truckCategory ?? "N/A";
+  }
+
+  formatQuantity(): string {
+    const e = this.expense();
+    if (!e || e.quantity == null) return "";
+    const sourceUnit = this.toShortUnit(e.quantityUnit);
+    return this.localization.formatVolume(e.quantity, sourceUnit);
+  }
+
+  private toShortUnit(unit: VolumeUnit | undefined): "gal" | "L" | undefined {
+    if (unit === "liters") return "L";
+    if (unit === "gallons") return "gal";
+    return undefined;
   }
 
   canApproveOrReject(): boolean {

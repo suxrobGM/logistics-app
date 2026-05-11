@@ -50,6 +50,8 @@ internal sealed class UpdateExpenseHandler(ITenantUnitOfWork tenantUow)
                 }
 
                 truckExpense.OdometerReading = req.OdometerReading;
+                truckExpense.Quantity = req.Quantity;
+                truckExpense.QuantityUnit = req.QuantityUnit;
                 break;
 
             case BodyShopExpense bodyShopExpense:
