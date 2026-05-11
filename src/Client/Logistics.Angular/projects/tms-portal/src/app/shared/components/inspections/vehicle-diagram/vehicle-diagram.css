@@ -1,6 +1,51 @@
-.damage-marker {
-  transition: transform 0.2s ease;
+.vehicle-diagram__marker {
+  --marker-color: var(--p-yellow-500);
+
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 0.1875rem solid var(--bg-surface);
+  border-radius: 999px;
+  background: var(--marker-color);
+  color: var(--bg-surface);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  box-shadow: var(--shadow-md);
+  transition: transform 150ms ease;
 }
-.damage-marker:hover {
-  transform: scale(1.2);
+
+.vehicle-diagram__marker:hover,
+.vehicle-diagram__marker:focus-visible {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.vehicle-diagram__marker:focus-visible {
+  outline: 0.125rem solid var(--primary-500);
+  outline-offset: 0.125rem;
+}
+
+.vehicle-diagram__marker--minor {
+  --marker-color: var(--p-yellow-500);
+}
+
+.vehicle-diagram__marker--moderate {
+  --marker-color: var(--p-orange-500);
+}
+
+.vehicle-diagram__marker--severe {
+  --marker-color: var(--p-red-500);
+}
+
+.vehicle-diagram__legend-dot {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 999px;
+  background: var(--marker-color);
 }
