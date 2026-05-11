@@ -22,7 +22,7 @@ import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import type { TagSeverity } from "@/shared/types";
-import { DvirDefectsList } from "../components/dvir-defects-list/dvir-defects-list";
+import { DvirDefectsList } from "../_components/dvir-defects-list/dvir-defects-list";
 
 @Component({
   selector: "app-dvir-detail",

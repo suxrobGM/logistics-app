@@ -1,28 +1,30 @@
-import { Component, type OnInit, inject, input, signal } from "@angular/core";
+import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { Api, getAccidentReportById, updateAccidentReport } from "@logistics/shared/api";
-import type {
-  AccidentReportDto,
-  AccidentSeverity,
-  AccidentType,
-  Address,
-  EmployeeDto,
-  TruckDto,
-  UpdateAccidentReportCommand,
+import {
+  Api,
+  getAccidentReportById,
+  updateAccidentReport,
+  type AccidentReportDto,
+  type AccidentSeverity,
+  type AccidentType,
+  type Address,
+  type EmployeeDto,
+  type TruckDto,
+  type UpdateAccidentReportCommand,
 } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { StepperModule } from "primeng/stepper";
-import { PageHeader } from "@/shared/components";
 import { ToastService } from "@/core/services";
+import { PageHeader } from "@/shared/components";
 import { Converters } from "@/shared/utils";
 import {
   AccidentIncidentForm,
   AccidentInjuriesDamageForm,
   AccidentReviewSummary,
-} from "../components";
+} from "../_components";
 
 @Component({
   selector: "app-accident-edit",
@@ -67,7 +69,10 @@ export class AccidentEditPage implements OnInit {
       validators: Validators.required,
       nonNullable: true,
     }),
-    description: new FormControl<string>("", { validators: Validators.required, nonNullable: true }),
+    description: new FormControl<string>("", {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
     weatherConditions: new FormControl<string | null>(null),
     roadConditions: new FormControl<string | null>(null),
   });

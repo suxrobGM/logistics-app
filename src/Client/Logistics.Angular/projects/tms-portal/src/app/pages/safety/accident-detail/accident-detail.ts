@@ -25,7 +25,7 @@ import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import type { TagSeverity } from "@/shared/types";
-import { AccidentQuickInfo } from "../components";
+import { AccidentQuickInfo } from "../_components";
 
 @Component({
   selector: "app-accident-detail",

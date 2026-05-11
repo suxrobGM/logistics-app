@@ -1,27 +1,28 @@
 import { Component, inject, signal } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { Api, createAccidentReport } from "@logistics/shared/api";
-import type {
-  AccidentSeverity,
-  AccidentType,
-  Address,
-  CreateAccidentReportCommand,
-  EmployeeDto,
-  TruckDto,
+import {
+  Api,
+  createAccidentReport,
+  type AccidentSeverity,
+  type AccidentType,
+  type Address,
+  type CreateAccidentReportCommand,
+  type EmployeeDto,
+  type TruckDto,
 } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { StepperModule } from "primeng/stepper";
-import { PageHeader } from "@/shared/components";
 import { ToastService } from "@/core/services";
+import { PageHeader } from "@/shared/components";
 import { Converters } from "@/shared/utils";
 import {
   AccidentIncidentForm,
   AccidentInjuriesDamageForm,
   AccidentReviewSummary,
-} from "../components";
+} from "../_components";
 
 @Component({
   selector: "app-accident-add",
@@ -63,7 +64,10 @@ export class AccidentAddPage {
       validators: Validators.required,
       nonNullable: true,
     }),
-    description: new FormControl<string>("", { validators: Validators.required, nonNullable: true }),
+    description: new FormControl<string>("", {
+      validators: Validators.required,
+      nonNullable: true,
+    }),
     weatherConditions: new FormControl<string | null>(null),
     roadConditions: new FormControl<string | null>(null),
   });
