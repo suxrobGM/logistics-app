@@ -2,7 +2,19 @@
 
 > **Priority:** MEDIUM. **Effort:** S (1–2 days).
 >
-> Existing [NhtsaVinDecoderService](../../src/Infrastructure/Logistics.Infrastructure.Documents/Vin/NhtsaVinDecoderService.cs) calls the US NHTSA `vpic` API. NHTSA only knows US-market VINs reliably. EU-market vehicles return partial data or 404.
+> Existing `NhtsaVinDecoderService` calls the US NHTSA `vpic` API. NHTSA's `DecodeVinValues` endpoint only knows US-market VINs reliably. EU-market vehicles return partial data or 404.
+
+## Status
+
+- **Completed 2026-05-11** in commit `567b482b` — `feat(vin-decoder): add EU fallback via WMI + NHTSA composite chain`.
+- **Scope deviations from original plan** (intentional):
+  - **WMI data source:** used NHTSA's `DecodeWMI/{prefix}` endpoint on demand instead of shipping a static ~3000-prefix JSON resource. Same upstream (NHTSA's WMI database is sourced from ISO 3779 and covers global manufacturers), one extra cheap HTTP call per decode, no embedded data to maintain. Connection pooling keeps it warm.
+  - **Project structure:** VIN decoding moved out of `Logistics.Infrastructure.Documents` into a new dedicated `Logistics.Infrastructure.Vin` project, matching the per-module infrastructure convention (`Logistics.Infrastructure.AI`, `Logistics.Infrastructure.Tax`, etc.).
+  - **DTO:** added both `CountryOfManufacture` and `Source` (the original plan only called for `Source`, but the acceptance criterion requires country exposure).
+  - **EUCARIS / VindecoderEU:** deferred. Add when a paying EU tenant needs full-detail decode for EU VINs.
+  - **`VinDecoder` config block:** not added — both providers are always-on, no config needed yet. Re-introduce when EUCARIS lands.
+- **Out-of-scope discovery:** the handoff said "Mobile N/A," but [`ConditionReportViewModel.decodeVin()`](../../src/Client/Logistics.DriverApp/composeApp/src/commonMain/kotlin) already calls the endpoint. Mobile benefits transparently from EU coverage; surfacing a source badge in the driver app is a follow-up if support requests it.
+- **Bonus refactor in same commit:** truck-form was over the template refactor threshold (374 lines); split into `truck-vin-field`, `truck-hazmat-section`, and `truck-form-tips` subcomponents. Also fixed a latent bug where `decodeVin()` never populated the form (`patch` object was empty before `patchValue`).
 
 ## Sequencing
 
