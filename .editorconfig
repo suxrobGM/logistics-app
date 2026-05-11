@@ -13,6 +13,17 @@ trim_trailing_whitespace = true
 [*.cs]
 csharp_style_namespace_declarations = file_scoped:warning
 
+# Private fields: camelCase without underscore prefix
+dotnet_naming_rule.private_fields_camel_case.symbols = private_fields
+dotnet_naming_rule.private_fields_camel_case.style = camel_case_style
+dotnet_naming_rule.private_fields_camel_case.severity = warning
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_fields.required_modifiers =
+
+dotnet_naming_style.camel_case_style.capitalization = camel_case
+
 # Web Files (TypeScript, JavaScript, HTML, CSS, JSON)
 [*.{ts,tsx,js,jsx,mjs,cjs,html,css,scss,sass,less,json}]
 indent_size = 2

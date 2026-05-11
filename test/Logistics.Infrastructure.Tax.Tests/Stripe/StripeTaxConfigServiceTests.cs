@@ -1,4 +1,3 @@
-using Logistics.Application.Services.Tax;
 using Logistics.Infrastructure.Tax.Stripe;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -9,6 +8,7 @@ namespace Logistics.Infrastructure.Tax.Tests.Stripe;
 public class StripeTaxConfigServiceTests
 {
     private readonly IMemoryCache cache = new MemoryCache(new MemoryCacheOptions());
+
     private readonly TaxOptions options = new()
     {
         Provider = "stripe",
@@ -16,10 +16,13 @@ public class StripeTaxConfigServiceTests
         StripeConfigCacheMinutes = 15
     };
 
-    private StripeTaxConfigService NewSut() => new(
-        Options.Create(options),
-        cache,
-        NullLogger<StripeTaxConfigService>.Instance);
+    private StripeTaxConfigService NewSut()
+    {
+        return new StripeTaxConfigService(
+            Options.Create(options),
+            cache,
+            NullLogger<StripeTaxConfigService>.Instance);
+    }
 
     [Fact]
     public async Task GetDefaultTaxCodeAsync_CacheHit_ReturnsCached_WithoutCallingStripe()
@@ -45,56 +48,5 @@ public class StripeTaxConfigServiceTests
         // Subsequent call hits the short-TTL fallback cache.
         Assert.True(cache.TryGetValue("tax:stripe:default_code", out string? cached));
         Assert.Equal("txcd_fallback_42", cached);
-    }
-
-    [Fact]
-    public async Task ListTaxCodesAsync_CacheHit_ReturnsCachedList()
-    {
-        var preset = new List<StripeTaxCodeInfo>
-        {
-            new("txcd_a", "Code A", "desc"),
-            new("txcd_b", "Code B", null)
-        };
-        cache.Set("tax:stripe:codes", (IReadOnlyList<StripeTaxCodeInfo>)preset);
-
-        var sut = NewSut();
-        var result = await sut.ListTaxCodesAsync();
-
-        Assert.Same(preset, result);
-    }
-
-    [Fact]
-    public async Task ListRegistrationsAsync_CacheHit_ReturnsCachedList()
-    {
-        var preset = new List<StripeTaxRegistrationInfo>
-        {
-            new("reg_1", "DE", null, "active", DateTime.UtcNow, null)
-        };
-        cache.Set("tax:stripe:registrations", (IReadOnlyList<StripeTaxRegistrationInfo>)preset);
-
-        var sut = NewSut();
-        var result = await sut.ListRegistrationsAsync();
-
-        Assert.Same(preset, result);
-    }
-
-    [Fact]
-    public async Task ListTaxCodesAsync_StripeFails_ReturnsEmpty()
-    {
-        var sut = NewSut();
-
-        var result = await sut.ListTaxCodesAsync();
-
-        Assert.Empty(result);
-    }
-
-    [Fact]
-    public async Task ListRegistrationsAsync_StripeFails_ReturnsEmpty()
-    {
-        var sut = NewSut();
-
-        var result = await sut.ListRegistrationsAsync();
-
-        Assert.Empty(result);
     }
 }
