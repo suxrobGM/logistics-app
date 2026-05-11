@@ -1,7 +1,7 @@
 <div class="animate-fadein">
   <!-- Header -->
   <ui-page-header title="AI Dispatch" [showAddButton]="false">
-    <ui-stack gap="2" class="whitespace-nowrap md:flex-row">
+    <ui-stack [direction]="{ xs: 'col', sm: 'row' }" gap="2" class="whitespace-nowrap">
       <p-button
         label="Run (Suggestions)"
         icon="pi pi-play"
@@ -51,11 +51,13 @@
       </p>
       <p class="m-0">
         <i class="pi pi-play text-primary mr-1 text-xs"></i>
-        <strong>Suggestions</strong> - proposes assignments for your review. Approve or reject each
-        one, then use <strong>Re-plan</strong> to retry with rejection context.
+        <strong>Suggestions</strong>
+        - proposes assignments for your review. Approve or reject each one, then use
+        <strong>Re-plan</strong>
+        to retry with rejection context.
         <i class="pi pi-bolt mr-1 ml-3 text-xs text-orange-500"></i>
-        <strong>Autonomous</strong> - executes assignments, creates trips, and dispatches
-        immediately.
+        <strong>Autonomous</strong>
+        - executes assignments, creates trips, and dispatches immediately.
       </p>
       <p class="text-muted-color m-0">
         <i class="pi pi-comment mr-1 text-xs"></i>
