@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from "@angular/core";
+import { inject, Injectable, signal } from "@angular/core";
 import { Api, approveExpense, rejectExpense } from "@logistics/shared/api";
 import { ToastService } from "@logistics/shared/services";
 
@@ -12,10 +12,10 @@ export class ExpenseActionsService {
   private readonly api = inject(Api);
   private readonly toast = inject(ToastService);
 
-  readonly showRejectDialog = signal(false);
-  readonly rejectionReason = signal("");
-  readonly pendingExpenseId = signal<string | null>(null);
-  readonly pendingExpenseNumber = signal<string | number | null>(null);
+  public readonly showRejectDialog = signal(false);
+  public readonly rejectionReason = signal("");
+  public readonly pendingExpenseId = signal<string | null>(null);
+  public readonly pendingExpenseNumber = signal<string | number | null>(null);
 
   private onActionComplete?: (result: ExpenseActionResult) => void;
 
@@ -32,13 +32,10 @@ export class ExpenseActionsService {
       icon: "pi pi-check-circle",
       acceptButtonStyleClass: "p-button-success",
       accept: async () => {
-        const result = await this.api.invoke(approveExpense, { id: expenseId });
-        if (result !== undefined) {
-          this.toast.showSuccess(`Expense #${expenseNumber} has been approved.`, "Approved");
-          this.onActionComplete?.({ success: true, action: "approve" });
-        } else {
-          this.onActionComplete?.({ success: false, action: "approve" });
-        }
+        await this.api.invoke(approveExpense, { id: expenseId });
+
+        this.toast.showSuccess(`Expense #${expenseNumber} has been approved.`, "Approved");
+        this.onActionComplete?.({ success: true, action: "approve" });
       },
       reject: () => {
         this.onActionComplete?.({ success: false, action: "approve" });
@@ -69,18 +66,14 @@ export class ExpenseActionsService {
       return;
     }
 
-    const result = await this.api.invoke(rejectExpense, {
+    await this.api.invoke(rejectExpense, {
       id: expenseId,
       body: { reason },
     });
 
-    if (result !== undefined) {
-      this.toast.showSuccess(`Expense #${expenseNumber} has been rejected.`, "Rejected");
-      this.closeRejectDialog();
-      this.onActionComplete?.({ success: true, action: "reject" });
-    } else {
-      this.onActionComplete?.({ success: false, action: "reject" });
-    }
+    this.toast.showSuccess(`Expense #${expenseNumber} has been rejected.`, "Rejected");
+    this.closeRejectDialog();
+    this.onActionComplete?.({ success: true, action: "reject" });
   }
 
   cancelReject(): void {

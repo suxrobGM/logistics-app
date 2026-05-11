@@ -1,189 +1,187 @@
-<div class="w-full p-6">
-  <!-- Header -->
-  <ui-stack direction="row" align="center" justify="between" class="mb-6">
-    <ui-stack direction="row" align="center" gap="4">
-      <p-button
-        icon="pi pi-arrow-left"
-        [rounded]="true"
-        [text]="true"
-        (onClick)="goBack()"
-        pTooltip="Back to Dashboard"
-      />
-      <div>
-        <ui-typography variant="h2" tag="h1" class="mb-1">
-          HOS Logs - {{ employeeName() }}
-        </ui-typography>
-        <ui-typography variant="body" color="muted" class="mb-0">
-          View driver duty status history
-        </ui-typography>
-      </div>
-    </ui-stack>
+<!-- Header -->
+<ui-stack direction="row" align="center" justify="between" class="mb-6">
+  <ui-stack direction="row" align="center" gap="4">
+    <p-button
+      icon="pi pi-arrow-left"
+      [rounded]="true"
+      [text]="true"
+      (onClick)="goBack()"
+      pTooltip="Back to Dashboard"
+    />
+    <div>
+      <ui-typography variant="h2" tag="h1" class="mb-1">
+        HOS Logs - {{ employeeName() }}
+      </ui-typography>
+      <ui-typography variant="body" color="muted" class="mb-0">
+        View driver duty status history
+      </ui-typography>
+    </div>
   </ui-stack>
+</ui-stack>
 
-  <!-- Date Range Filter -->
-  <div class="mb-6">
-    <p-card class="border-0 shadow-sm">
-      <ui-stack direction="row" align="end" gap="4" wrap>
-        <ui-form-field label="Start Date" for="startDate">
-          <p-datepicker
-            id="startDate"
-            [(ngModel)]="startDate"
-            [showIcon]="true"
-            [maxDate]="endDate"
-            dateFormat="mm/dd/yy"
-            (onSelect)="onDateRangeChange()"
-          />
-        </ui-form-field>
-        <ui-form-field label="End Date" for="endDate">
-          <p-datepicker
-            id="endDate"
-            [(ngModel)]="endDate"
-            [showIcon]="true"
-            [minDate]="startDate"
-            [maxDate]="today"
-            dateFormat="mm/dd/yy"
-            (onSelect)="onDateRangeChange()"
-          />
-        </ui-form-field>
-      </ui-stack>
-      <p-button label="Refresh" icon="pi pi-refresh" (onClick)="loadData()" [loading]="loading()" />
-    </p-card>
-  </div>
-
-  <!-- Summary Cards -->
-  <ui-grid container spacing="4" class="mb-6">
-    <ui-grid [size]="{ xs: 12, md: 6 }">
-      <p-card class="h-full border-0 shadow-sm">
-        <ui-stack direction="row" align="center">
-          <div
-            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-600/10"
-          >
-            <ui-icon name="car" class="text-green-600" />
-          </div>
-          <div class="ml-4">
-            <ui-typography variant="caption" color="muted" class="mb-1">
-              Total Driving Time
-            </ui-typography>
-            <ui-typography variant="h6" weight="bold" class="mb-0">
-              {{ formatMinutes(totalDrivingMinutes()) }}
-            </ui-typography>
-          </div>
-        </ui-stack>
-      </p-card>
-    </ui-grid>
-    <ui-grid [size]="{ xs: 12, md: 6 }">
-      <p-card class="h-full border-0 shadow-sm">
-        <ui-stack direction="row" align="center">
-          <div
-            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-600/10"
-          >
-            <ui-icon name="clock" class="text-blue-600" />
-          </div>
-          <div class="ml-4">
-            <ui-typography variant="caption" color="muted" class="mb-1">
-              Total On-Duty Time
-            </ui-typography>
-            <ui-typography variant="h6" weight="bold" class="mb-0">
-              {{ formatMinutes(totalOnDutyMinutes()) }}
-            </ui-typography>
-          </div>
-        </ui-stack>
-      </p-card>
-    </ui-grid>
-  </ui-grid>
-
-  <!-- Logs Table -->
+<!-- Date Range Filter -->
+<div class="mb-6">
   <p-card class="border-0 shadow-sm">
-    <ng-template #header>
-      <ui-stack direction="row" align="center" class="p-3">
-        <ui-icon name="history" class="mr-2 text-blue-600" />
-        <ui-typography variant="h6" tag="h5" class="mb-0">Duty Status Logs</ui-typography>
-      </ui-stack>
-    </ng-template>
-
-    @if (loading()) {
-      <ui-stack align="center" justify="center" class="p-5">
-        <p-progressSpinner />
-      </ui-stack>
-    } @else if (error()) {
-      <ui-stack align="center" gap="3" class="p-4">
-        <ui-icon name="exclamation-circle" size="xl" class="text-red-500" />
-        <p class="text-red-500">{{ error() }}</p>
-        <p-button label="Retry" icon="pi pi-refresh" (onClick)="loadData()" />
-      </ui-stack>
-    } @else if (logs().length === 0) {
-      <ui-stack align="center" gap="3" class="p-5">
-        <ui-icon name="inbox" size="xl" color="muted" />
-        <ui-typography variant="body" class="text-secondary">
-          No HOS logs found for the selected date range.
-        </ui-typography>
-        <ui-typography variant="caption" color="muted" class="mb-0">
-          Try adjusting the date filter above.
-        </ui-typography>
-      </ui-stack>
-    } @else {
-      <p-table
-        [value]="logs()"
-        [lazy]="true"
-        [paginator]="true"
-        [rows]="pageSize()"
-        [first]="first()"
-        [totalRecords]="totalRecords()"
-        [rowsPerPageOptions]="[10, 25, 50]"
-        [showCurrentPageReport]="true"
-        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} logs"
-        (onLazyLoad)="onLazyLoad($event)"
-      >
-        <ng-template #header>
-          <tr>
-            <th>Date</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Status</th>
-            <th>Duration</th>
-            <th>Location</th>
-            <th>Remark</th>
-          </tr>
-        </ng-template>
-        <ng-template #body let-log>
-          <tr>
-            <td>{{ log.logDate | date: "mediumDate" }}</td>
-            <td>{{ log.startTime | date: "shortTime" }}</td>
-            <td>
-              @if (log.endTime) {
-                {{ log.endTime | date: "shortTime" }}
-              } @else {
-                <span class="text-muted">Ongoing</span>
-              }
-            </td>
-            <td>
-              <p-tag
-                [value]="log.dutyStatusDisplay"
-                [severity]="getDutyStatusSeverity(log.dutyStatus)"
-              />
-            </td>
-            <td>{{ log.durationDisplay }}</td>
-            <td>
-              @if (log.location) {
-                <span class="text-sm">{{ log.location }}</span>
-              } @else if (log.latitude && log.longitude) {
-                <span class="text-muted text-sm">
-                  {{ log.latitude | number: "1.4-4" }}, {{ log.longitude | number: "1.4-4" }}
-                </span>
-              } @else {
-                <span class="text-muted">-</span>
-              }
-            </td>
-            <td>
-              @if (log.remark) {
-                <span class="text-sm">{{ log.remark }}</span>
-              } @else {
-                <span class="text-muted">-</span>
-              }
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    }
+    <ui-stack direction="row" align="end" gap="4" wrap>
+      <ui-form-field label="Start Date" for="startDate">
+        <p-datepicker
+          id="startDate"
+          [(ngModel)]="startDate"
+          [showIcon]="true"
+          [maxDate]="endDate"
+          dateFormat="mm/dd/yy"
+          (onSelect)="onDateRangeChange()"
+        />
+      </ui-form-field>
+      <ui-form-field label="End Date" for="endDate">
+        <p-datepicker
+          id="endDate"
+          [(ngModel)]="endDate"
+          [showIcon]="true"
+          [minDate]="startDate"
+          [maxDate]="today"
+          dateFormat="mm/dd/yy"
+          (onSelect)="onDateRangeChange()"
+        />
+      </ui-form-field>
+    </ui-stack>
+    <p-button label="Refresh" icon="pi pi-refresh" (onClick)="loadData()" [loading]="loading()" />
   </p-card>
 </div>
+
+<!-- Summary Cards -->
+<ui-grid container spacing="4" class="mb-6">
+  <ui-grid [size]="{ xs: 12, md: 6 }">
+    <p-card class="h-full border-0 shadow-sm">
+      <ui-stack direction="row" align="center">
+        <div
+          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-600/10"
+        >
+          <ui-icon name="car" class="text-green-600" />
+        </div>
+        <div class="ml-4">
+          <ui-typography variant="caption" color="muted" class="mb-1">
+            Total Driving Time
+          </ui-typography>
+          <ui-typography variant="h6" weight="bold" class="mb-0">
+            {{ formatMinutes(totalDrivingMinutes()) }}
+          </ui-typography>
+        </div>
+      </ui-stack>
+    </p-card>
+  </ui-grid>
+  <ui-grid [size]="{ xs: 12, md: 6 }">
+    <p-card class="h-full border-0 shadow-sm">
+      <ui-stack direction="row" align="center">
+        <div
+          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-600/10"
+        >
+          <ui-icon name="clock" class="text-blue-600" />
+        </div>
+        <div class="ml-4">
+          <ui-typography variant="caption" color="muted" class="mb-1">
+            Total On-Duty Time
+          </ui-typography>
+          <ui-typography variant="h6" weight="bold" class="mb-0">
+            {{ formatMinutes(totalOnDutyMinutes()) }}
+          </ui-typography>
+        </div>
+      </ui-stack>
+    </p-card>
+  </ui-grid>
+</ui-grid>
+
+<!-- Logs Table -->
+<p-card class="border-0 shadow-sm">
+  <ng-template #header>
+    <ui-stack direction="row" align="center" class="p-3">
+      <ui-icon name="history" class="mr-2 text-blue-600" />
+      <ui-typography variant="h6" tag="h5" class="mb-0">Duty Status Logs</ui-typography>
+    </ui-stack>
+  </ng-template>
+
+  @if (loading()) {
+    <ui-stack align="center" justify="center" class="p-5">
+      <p-progressSpinner />
+    </ui-stack>
+  } @else if (error()) {
+    <ui-stack align="center" gap="3" class="p-4">
+      <ui-icon name="exclamation-circle" size="xl" class="text-red-500" />
+      <p class="text-red-500">{{ error() }}</p>
+      <p-button label="Retry" icon="pi pi-refresh" (onClick)="loadData()" />
+    </ui-stack>
+  } @else if (logs().length === 0) {
+    <ui-stack align="center" gap="3" class="p-5">
+      <ui-icon name="inbox" size="xl" color="muted" />
+      <ui-typography variant="body" class="text-secondary">
+        No HOS logs found for the selected date range.
+      </ui-typography>
+      <ui-typography variant="caption" color="muted" class="mb-0">
+        Try adjusting the date filter above.
+      </ui-typography>
+    </ui-stack>
+  } @else {
+    <p-table
+      [value]="logs()"
+      [lazy]="true"
+      [paginator]="true"
+      [rows]="pageSize()"
+      [first]="first()"
+      [totalRecords]="totalRecords()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} logs"
+      (onLazyLoad)="onLazyLoad($event)"
+    >
+      <ng-template #header>
+        <tr>
+          <th>Date</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+          <th>Status</th>
+          <th>Duration</th>
+          <th>Location</th>
+          <th>Remark</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-log>
+        <tr>
+          <td>{{ log.logDate | date: "mediumDate" }}</td>
+          <td>{{ log.startTime | date: "shortTime" }}</td>
+          <td>
+            @if (log.endTime) {
+              {{ log.endTime | date: "shortTime" }}
+            } @else {
+              <span class="text-muted">Ongoing</span>
+            }
+          </td>
+          <td>
+            <p-tag
+              [value]="log.dutyStatusDisplay"
+              [severity]="getDutyStatusSeverity(log.dutyStatus)"
+            />
+          </td>
+          <td>{{ log.durationDisplay }}</td>
+          <td>
+            @if (log.location) {
+              <span class="text-sm">{{ log.location }}</span>
+            } @else if (log.latitude && log.longitude) {
+              <span class="text-muted text-sm">
+                {{ log.latitude | number: "1.4-4" }}, {{ log.longitude | number: "1.4-4" }}
+              </span>
+            } @else {
+              <span class="text-muted">-</span>
+            }
+          </td>
+          <td>
+            @if (log.remark) {
+              <span class="text-sm">{{ log.remark }}</span>
+            } @else {
+              <span class="text-muted">-</span>
+            }
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  }
+</p-card>

@@ -74,9 +74,10 @@
         <!-- Multiplier Warning -->
         @if (showMultiplierWarning()) {
           <p-message severity="warn" class="mb-4">
-            <strong>{{ selectedModelInfo().label }}</strong> uses
-            <strong>{{ selectedModelInfo().multiplier }}x</strong> requests per session. This will
-            consume your weekly AI quota faster.
+            <strong>{{ selectedModelInfo().label }}</strong>
+            uses
+            <strong>{{ selectedModelInfo().multiplier }}x</strong>
+            requests per session. This will consume your weekly AI quota faster.
           </p-message>
         }
 

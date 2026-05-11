@@ -154,7 +154,7 @@ export class ExpenseEditPage implements OnInit {
     const formValue = this.form.value;
     const e = this.expense();
 
-    const result = await this.api.invoke(updateExpense, {
+    await this.api.invoke(updateExpense, {
       id: this.id(),
       body: {
         id: this.id(),
@@ -190,14 +190,12 @@ export class ExpenseEditPage implements OnInit {
 
     this.isSaving.set(false);
 
-    if (result !== undefined) {
-      this.messageService.add({
-        severity: "success",
-        summary: "Success",
-        detail: "Expense updated successfully.",
-      });
-      this.router.navigate(["/expenses", this.id()]);
-    }
+    this.messageService.add({
+      severity: "success",
+      summary: "Success",
+      detail: "Expense updated successfully.",
+    });
+    this.router.navigate(["/expenses", this.id()]);
   }
 
   getTypeLabel(type: string | undefined): string {

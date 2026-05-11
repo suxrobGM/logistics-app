@@ -40,17 +40,20 @@ import { VehicleDiagram, type DamageMarker } from "@/shared/components/inspectio
 export class ConditionReportDetailPage implements OnInit {
   private readonly api = inject(Api);
 
-  readonly id = input.required<string>();
-  readonly isLoading = signal(false);
-  readonly report = signal<ConditionReportDto | null>(null);
-  readonly showGallery = signal(false);
-  readonly activeImageIndex = signal(0);
+  public readonly id = input.required<string>();
+  public readonly isLoading = signal(false);
+  public readonly report = signal<ConditionReportDto | null>(null);
+  public readonly showGallery = signal(false);
+  public readonly activeImageIndex = signal(0);
 
-  readonly damageMarkers = computed<DamageMarker[]>(() => {
+  public readonly damageMarkers = computed<DamageMarker[]>(() => {
     const r = this.report();
-    if (!r?.damageMarkers) return [];
+    if (!r?.damageMarkers) {
+      return [];
+    }
+
     return r.damageMarkers
-      .filter((m: DamageMarkerDto) => m.x !== undefined && m.y !== undefined)
+      .filter((m: DamageMarkerDto) => m.x != null && m.y != null)
       .map((m: DamageMarkerDto) => ({
         x: m.x!,
         y: m.y!,
@@ -59,9 +62,12 @@ export class ConditionReportDetailPage implements OnInit {
       }));
   });
 
-  readonly photoUrls = computed(() => {
+  public readonly photoUrls = computed(() => {
     const r = this.report();
-    if (!r?.photos) return [];
+    if (!r?.photos) {
+      return [];
+    }
+
     return r.photos.map((p) => ({
       itemImageSrc: this.getPhotoUrl(p.blobPath),
       thumbnailImageSrc: this.getPhotoUrl(p.blobPath),
