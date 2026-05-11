@@ -22,6 +22,7 @@ using Logistics.Infrastructure.Payments;
 using Logistics.Infrastructure.Persistence;
 using Logistics.Infrastructure.Persistence.Builder;
 using Logistics.Infrastructure.Tax;
+using Logistics.Infrastructure.Vin;
 using Logistics.Infrastructure.Routing;
 using Logistics.Infrastructure.AI;
 using Logistics.Infrastructure.Storage;
@@ -55,6 +56,7 @@ internal static class Setup
         // Infrastructure layers
         services.AddCommunicationsInfrastructure(configuration);
         services.AddDocumentsInfrastructure();
+        services.AddVinInfrastructure();
         services.AddEldIntegrations(configuration);
         services.AddLoadBoardIntegrations(configuration);
         services.AddPaymentsInfrastructure(configuration);

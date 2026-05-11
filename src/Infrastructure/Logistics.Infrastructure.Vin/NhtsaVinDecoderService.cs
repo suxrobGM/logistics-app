@@ -3,11 +3,12 @@ using Logistics.Application.Services;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 
-namespace Logistics.Infrastructure.Documents.Vin;
+namespace Logistics.Infrastructure.Vin;
 
 /// <summary>
-///     VIN decoder using the free NHTSA (National Highway Traffic Safety Administration) API.
-///     API Documentation: https://vpic.nhtsa.dot.gov/api/
+///     Full-VIN decoder using NHTSA's <c>DecodeVinValues</c> endpoint.
+///     Reliable for US-market VINs; returns sparse / null fields for EU VINs.
+///     API documentation: https://vpic.nhtsa.dot.gov/api/
 /// </summary>
 internal sealed class NhtsaVinDecoderService(HttpClient httpClient, ILogger<NhtsaVinDecoderService> logger)
     : IVinDecoderService
@@ -25,7 +26,7 @@ internal sealed class NhtsaVinDecoderService(HttpClient httpClient, ILogger<Nhts
         try
         {
             var url = $"{BaseUrl}/DecodeVinValues/{vin}?format=json";
-            var response = await httpClient.GetFromJsonAsync<NhtsaResponse>(url, ct);
+            var response = await httpClient.GetFromJsonAsync<NhtsaVinValuesResponse>(url, ct);
 
             if (response?.Results == null || response.Results.Count == 0)
             {
@@ -35,7 +36,6 @@ internal sealed class NhtsaVinDecoderService(HttpClient httpClient, ILogger<Nhts
 
             var result = response.Results[0];
 
-            // Check for error codes - 0 means successful decode
             if (!string.IsNullOrEmpty(result.ErrorCode) && result.ErrorCode != "0")
             {
                 logger.LogWarning("NHTSA returned error for VIN {Vin}: {ErrorText}", vin, result.ErrorText);
@@ -56,7 +56,9 @@ internal sealed class NhtsaVinDecoderService(HttpClient httpClient, ILogger<Nhts
                 string.IsNullOrEmpty(result.VehicleType) ? null : result.VehicleType,
                 string.IsNullOrEmpty(result.DriveType) ? null : result.DriveType,
                 string.IsNullOrEmpty(result.FuelTypePrimary) ? null : result.FuelTypePrimary,
-                BuildEngineInfo(result));
+                BuildEngineInfo(result),
+                CountryOfManufacture: null,
+                Source: "nhtsa");
         }
         catch (Exception ex)
         {
@@ -65,7 +67,7 @@ internal sealed class NhtsaVinDecoderService(HttpClient httpClient, ILogger<Nhts
         }
     }
 
-    private static string? BuildEngineInfo(NhtsaResult result)
+    private static string? BuildEngineInfo(NhtsaVinValuesResult result)
     {
         var parts = new List<string>();
 

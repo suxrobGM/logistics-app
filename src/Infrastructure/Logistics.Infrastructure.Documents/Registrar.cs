@@ -1,9 +1,7 @@
-﻿using Logistics.Application.Services;
-using Logistics.Application.Services.Pdf;
+﻿using Logistics.Application.Services.Pdf;
 using Logistics.Application.Services.PdfImport;
 using Logistics.Application.Services.Privacy;
 using Logistics.Infrastructure.Documents.Privacy;
-using Logistics.Infrastructure.Documents.Vin;
 using Logistics.Infrastructure.Services.Pdf;
 using Logistics.Infrastructure.Services.PdfImport;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +11,7 @@ namespace Logistics.Infrastructure.Documents;
 public static class Registrar
 {
     /// <summary>
-    ///     Add document infrastructure (PDF generation/import, VIN decoder).
+    ///     Add document infrastructure (PDF generation/import, GDPR data export).
     /// </summary>
     public static IServiceCollection AddDocumentsInfrastructure(this IServiceCollection services)
     {
@@ -23,9 +21,6 @@ public static class Registrar
 
         // PDF import (template-based extraction)
         services.AddScoped<IPdfDataExtractor, TemplateBasedDataExtractor>();
-
-        // VIN decoder
-        services.AddHttpClient<IVinDecoderService, NhtsaVinDecoderService>();
 
         // Privacy / GDPR
         services.AddScoped<IDataExportService, DataExportService>();

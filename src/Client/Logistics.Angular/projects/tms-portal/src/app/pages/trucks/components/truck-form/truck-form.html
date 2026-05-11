@@ -113,20 +113,7 @@
               </ui-grid>
 
               <ui-grid [size]="{ xs: 12, md: 6 }">
-                <ui-form-field
-                  label="VIN"
-                  for="vin"
-                  hint="17-character Vehicle Identification Number"
-                >
-                  <input
-                    pInputText
-                    id="vin"
-                    formControlName="vin"
-                    type="text"
-                    placeholder="e.g., 1FUJGLDR5BSAV1234"
-                    maxlength="17"
-                  />
-                </ui-form-field>
+                <app-truck-vin-field [form]="form" />
               </ui-grid>
             </ui-grid>
           </ui-surface>
@@ -203,73 +190,7 @@
           </ui-surface>
         </ui-stack>
 
-        <!-- Hazmat & ADR Section -->
-        <p-fieldset
-          legend="Hazmat & ADR"
-          [toggleable]="true"
-          [collapsed]="
-            !form.controls.isHazmatPlacarded.value && !form.controls.isAdrCertified.value
-          "
-        >
-          <ui-form-field
-            label="Hazmat placarded (US)"
-            for="isHazmatPlacarded"
-            hint="Required for US Hazmat transport"
-          >
-            <p-checkbox
-              inputId="isHazmatPlacarded"
-              formControlName="isHazmatPlacarded"
-              [binary]="true"
-            />
-          </ui-form-field>
-
-          <ui-form-field label="ADR certified (EU)" for="isAdrCertified">
-            <p-checkbox inputId="isAdrCertified" formControlName="isAdrCertified" [binary]="true" />
-          </ui-form-field>
-
-          @if (form.controls.isAdrCertified.value) {
-            <ui-form-field label="ADR certificate expiry" for="adrCertExpiresAt">
-              <p-datepicker
-                id="adrCertExpiresAt"
-                formControlName="adrCertExpiresAt"
-                dateFormat="yy-mm-dd"
-                appendTo="body"
-              />
-            </ui-form-field>
-
-            <ui-form-field
-              label="Allowed hazmat classes"
-              for="adrAllowedClasses"
-              hint="Classes this truck is certified to carry"
-            >
-              <p-multiselect
-                id="adrAllowedClasses"
-                formControlName="adrAllowedClasses"
-                [options]="hazmatClassOptions"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Select classes"
-                appendTo="body"
-                class="w-full"
-              />
-            </ui-form-field>
-
-            <ui-form-field
-              label="Orange plate number"
-              for="orangePlateNumber"
-              hint="ADR orange plate identifier (e.g., 30/1203)"
-              class="mb-0"
-            >
-              <input
-                pInputText
-                id="orangePlateNumber"
-                formControlName="orangePlateNumber"
-                type="text"
-                maxlength="8"
-              />
-            </ui-form-field>
-          }
-        </p-fieldset>
+        <app-truck-hazmat-section [form]="form" />
 
         <!-- Action Buttons -->
         <ui-stack direction="row" gap="2">
@@ -305,49 +226,6 @@
 
   <!-- Right: Tips Panel -->
   <div class="w-full md:w-1/2">
-    <ui-surface variant="subtle" [border]="true">
-      <ui-stack gap="3">
-        <ui-stack direction="row" gap="2" align="center">
-          <ui-icon name="info-circle" color="secondary" />
-          <ui-typography variant="h6" color="secondary">Tips</ui-typography>
-        </ui-stack>
-
-        <ui-stack gap="4" class="text-sm">
-          <div>
-            <ui-typography variant="label" tag="span">Truck Types</ui-typography>
-            <ui-typography variant="body-sm" color="muted" class="mt-1">
-              Choose the type that matches your vehicle. Car Haulers require specifying the maximum
-              vehicle capacity.
-            </ui-typography>
-          </div>
-
-          <div>
-            <ui-typography variant="label" tag="span">Driver Assignment</ui-typography>
-            <ui-typography variant="body-sm" color="muted" class="mt-1">
-              Assign a main driver to this truck. Secondary driver is optional and useful for team
-              driving operations.
-            </ui-typography>
-          </div>
-
-          @if (mode() === "edit") {
-            <div>
-              <ui-typography variant="label" tag="span">Status</ui-typography>
-              <ui-typography variant="body-sm" color="muted" class="mt-1">
-                Set to "Available" when ready for dispatch. Use "Maintenance" for scheduled service
-                or "Out of Service" for breakdowns.
-              </ui-typography>
-            </div>
-          }
-
-          <div>
-            <ui-typography variant="label" tag="span">Truck Number</ui-typography>
-            <ui-typography variant="body-sm" color="muted" class="mt-1">
-              Use a unique identifier for this truck. This will be displayed throughout the system
-              and on documents.
-            </ui-typography>
-          </div>
-        </ui-stack>
-      </ui-stack>
-    </ui-surface>
+    <app-truck-form-tips [mode]="mode()" />
   </div>
 </ui-stack>

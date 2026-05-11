@@ -5,6 +5,7 @@
     <Project Path="test/Logistics.Infrastructure.Payments.Tests/Logistics.Infrastructure.Payments.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.Persistence.Tests/Logistics.Infrastructure.Persistence.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.Tax.Tests/Logistics.Infrastructure.Tax.Tests.csproj" />
+    <Project Path="test/Logistics.Infrastructure.Vin.Tests/Logistics.Infrastructure.Vin.Tests.csproj" />
   </Folder>
   <Folder Name="/Core/">
     <Project Path="src/Core/Logistics.Domain/Logistics.Domain.csproj" />
@@ -32,6 +33,7 @@
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Storage/Logistics.Infrastructure.Storage.csproj" />
     <Project Path="src/Infrastructure/Logistics.Infrastructure.AI/Logistics.Infrastructure.AI.csproj" />
     <Project Path="src/Infrastructure/Logistics.Infrastructure.Tax/Logistics.Infrastructure.Tax.csproj" />
+    <Project Path="src/Infrastructure/Logistics.Infrastructure.Vin/Logistics.Infrastructure.Vin.csproj" />
   </Folder>
   <Folder Name="/Presentation/">
     <Project Path="src/Presentation/Logistics.API/Logistics.API.csproj" />

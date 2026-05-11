@@ -1,17 +1,17 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
-namespace Logistics.Infrastructure.Documents.Vin;
+namespace Logistics.Infrastructure.Vin;
 
-internal class NhtsaResponse
+internal class NhtsaVinValuesResponse
 {
     [JsonPropertyName("Count")]
     public int Count { get; set; }
 
     [JsonPropertyName("Results")]
-    public List<NhtsaResult> Results { get; set; } = new();
+    public List<NhtsaVinValuesResult> Results { get; set; } = new();
 }
 
-internal class NhtsaResult
+internal class NhtsaVinValuesResult
 {
     [JsonPropertyName("ErrorCode")]
     public string? ErrorCode { get; set; }

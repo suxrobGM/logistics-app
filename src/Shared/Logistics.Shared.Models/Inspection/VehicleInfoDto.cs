@@ -9,4 +9,6 @@ public record VehicleInfoDto(
     string? VehicleType,
     string? DriveType,
     string? FuelType,
-    string? EngineInfo);
+    string? EngineInfo,
+    string? CountryOfManufacture = null,
+    string? Source = null);

@@ -1,0 +1,33 @@
+<ng-container [formGroup]="form()">
+  <ui-form-field label="VIN" for="vin" hint="17-character Vehicle Identification Number">
+    <ui-stack direction="row" gap="2" align="center">
+      <input
+        pInputText
+        id="vin"
+        formControlName="vin"
+        type="text"
+        placeholder="e.g., 1FUJGLDR5BSAV1234"
+        maxlength="17"
+        class="flex-1"
+      />
+      <p-button
+        type="button"
+        label="Decode VIN"
+        severity="secondary"
+        [loading]="decoding()"
+        [disabled]="decoding()"
+        (onClick)="decodeVin()"
+      />
+    </ui-stack>
+    @if (sourceLabel()) {
+      <ui-stack direction="row" gap="2" align="center" class="mt-2">
+        <p-tag [value]="sourceLabel()!" severity="info" />
+      </ui-stack>
+    }
+    @if (decodedModelMissing()) {
+      <p-message severity="info" class="mt-2 block">
+        Make detected from VIN prefix only — please fill in model and year manually.
+      </p-message>
+    }
+  </ui-form-field>
+</ng-container>

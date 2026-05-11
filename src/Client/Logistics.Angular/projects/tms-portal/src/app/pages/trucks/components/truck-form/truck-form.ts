@@ -17,11 +17,7 @@ import {
   type TruckStatus,
   type TruckType,
 } from "@logistics/shared/api";
-import {
-  hazmatClassOptions,
-  truckStatusOptions,
-  truckTypeOptions,
-} from "@logistics/shared/api/enums";
+import { truckStatusOptions, truckTypeOptions } from "@logistics/shared/api/enums";
 import {
   FormField,
   Grid,
@@ -33,14 +29,13 @@ import {
 } from "@logistics/shared/components";
 import { AutoCompleteModule } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
-import { CheckboxModule } from "primeng/checkbox";
-import { DatePickerModule } from "primeng/datepicker";
-import { Fieldset } from "primeng/fieldset";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
-import { MultiSelectModule } from "primeng/multiselect";
 import { SelectModule } from "primeng/select";
 import { ToastService } from "@/core/services";
+import { TruckFormTips } from "./truck-form-tips";
+import { TruckHazmatSection } from "./truck-hazmat-section";
+import { TruckVinField } from "./truck-vin-field";
 
 export interface TruckFormData {
   truckNumber: string;
@@ -70,10 +65,6 @@ export interface TruckFormData {
     InputTextModule,
     InputNumberModule,
     SelectModule,
-    MultiSelectModule,
-    DatePickerModule,
-    CheckboxModule,
-    Fieldset,
     AutoCompleteModule,
     FormField,
     Grid,
@@ -82,6 +73,9 @@ export interface TruckFormData {
     Surface,
     Typography,
     ValidationSummary,
+    TruckFormTips,
+    TruckHazmatSection,
+    TruckVinField,
   ],
 })
 export class TruckForm implements OnInit {
@@ -97,7 +91,6 @@ export class TruckForm implements OnInit {
 
   protected readonly truckTypes = truckTypeOptions;
   protected readonly truckStatuses = truckStatusOptions;
-  protected readonly hazmatClassOptions = hazmatClassOptions;
   protected readonly suggestedDrivers = signal<EmployeeDto[]>([]);
 
   protected readonly form = new FormGroup({
@@ -159,7 +152,6 @@ export class TruckForm implements OnInit {
       });
     }
 
-    // Watch for truck type changes to show/hide vehicle capacity
     this.form.get("truckType")?.valueChanges.subscribe((type) => {
       if (type !== "car_hauler") {
         this.form.patchValue({ vehicleCapacity: null });
@@ -183,8 +175,6 @@ export class TruckForm implements OnInit {
       return;
     }
 
-    const isAdrCertified = this.form.value.isAdrCertified ?? false;
-
     this.save.emit({
       truckNumber: this.form.value.truckNumber!,
       truckType: this.form.value.truckType!,
@@ -199,7 +189,7 @@ export class TruckForm implements OnInit {
       licensePlate: this.form.value.licensePlate ?? null,
       licensePlateState: this.form.value.licensePlateState ?? null,
       adrEquipment: {
-        isAdrCertified,
+        isAdrCertified: this.form.value.isAdrCertified ?? false,
         adrCertExpiresAt: this.form.value.adrCertExpiresAt?.toISOString() ?? null,
         allowedClasses: this.form.value.adrAllowedClasses ?? [],
         orangePlateNumber: this.form.value.orangePlateNumber ?? null,

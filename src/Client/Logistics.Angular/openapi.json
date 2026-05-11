@@ -26276,6 +26276,14 @@
           "engineInfo": {
             "type": "string",
             "nullable": true
+          },
+          "countryOfManufacture": {
+            "type": "string",
+            "nullable": true
+          },
+          "source": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

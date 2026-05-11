@@ -1,0 +1,44 @@
+<ui-surface variant="subtle" [border]="true">
+  <ui-stack gap="3">
+    <ui-stack direction="row" gap="2" align="center">
+      <ui-icon name="info-circle" color="secondary" />
+      <ui-typography variant="h6" color="secondary">Tips</ui-typography>
+    </ui-stack>
+
+    <ui-stack gap="4" class="text-sm">
+      <div>
+        <ui-typography variant="label" tag="span">Truck Types</ui-typography>
+        <ui-typography variant="body-sm" color="muted" class="mt-1">
+          Choose the type that matches your vehicle. Car Haulers require specifying the maximum
+          vehicle capacity.
+        </ui-typography>
+      </div>
+
+      <div>
+        <ui-typography variant="label" tag="span">Driver Assignment</ui-typography>
+        <ui-typography variant="body-sm" color="muted" class="mt-1">
+          Assign a main driver to this truck. Secondary driver is optional and useful for team
+          driving operations.
+        </ui-typography>
+      </div>
+
+      @if (mode() === "edit") {
+        <div>
+          <ui-typography variant="label" tag="span">Status</ui-typography>
+          <ui-typography variant="body-sm" color="muted" class="mt-1">
+            Set to "Available" when ready for dispatch. Use "Maintenance" for scheduled service or
+            "Out of Service" for breakdowns.
+          </ui-typography>
+        </div>
+      }
+
+      <div>
+        <ui-typography variant="label" tag="span">Truck Number</ui-typography>
+        <ui-typography variant="body-sm" color="muted" class="mt-1">
+          Use a unique identifier for this truck. This will be displayed throughout the system and
+          on documents.
+        </ui-typography>
+      </div>
+    </ui-stack>
+  </ui-stack>
+</ui-surface>
