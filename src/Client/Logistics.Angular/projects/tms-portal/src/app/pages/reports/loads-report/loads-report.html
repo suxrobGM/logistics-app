@@ -1,11 +1,9 @@
-<!-- Header -->
-<ui-stack direction="row" justify="between">
-  <ui-page-header
-    title="Loads Dashboard"
-    subtitle="Comprehensive overview of load performance and trends"
-  />
+<ui-page-header
+  title="Loads Dashboard"
+  subtitle="Comprehensive overview of load performance and trends"
+>
   <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
-</ui-stack>
+</ui-page-header>
 
 @if (isLoading()) {
   <!-- Loading State -->

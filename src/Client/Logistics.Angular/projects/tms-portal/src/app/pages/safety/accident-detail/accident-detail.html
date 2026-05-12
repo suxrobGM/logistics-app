@@ -1,36 +1,33 @@
-<ui-stack direction="row" align="start" justify="between" class="mb-6">
-  <ui-page-header [title]="pageTitle()" backLink="/safety/accidents" />
-  <ui-stack direction="row" gap="2">
-    @if (canEdit()) {
-      <p-button label="Edit" icon="pi pi-pencil" [outlined]="true" (click)="editReport()" />
-    }
-    @if (canSubmit()) {
-      <p-button
-        label="Submit Report"
-        icon="pi pi-send"
-        (click)="submitReport()"
-        [loading]="isSubmitting()"
-      />
-    }
-    @if (canReview()) {
-      <p-button
-        label="Start Review"
-        icon="pi pi-eye"
-        severity="info"
-        [outlined]="true"
-        (click)="openReviewDialog()"
-      />
-    }
-    @if (canResolve()) {
-      <p-button
-        label="Resolve"
-        icon="pi pi-check-circle"
-        severity="success"
-        (click)="openResolveDialog()"
-      />
-    }
-  </ui-stack>
-</ui-stack>
+<ui-page-header [title]="pageTitle()" backLink="/safety/accidents">
+  @if (canEdit()) {
+    <p-button label="Edit" icon="pi pi-pencil" [outlined]="true" (click)="editReport()" />
+  }
+  @if (canSubmit()) {
+    <p-button
+      label="Submit Report"
+      icon="pi pi-send"
+      (click)="submitReport()"
+      [loading]="isSubmitting()"
+    />
+  }
+  @if (canReview()) {
+    <p-button
+      label="Start Review"
+      icon="pi pi-eye"
+      severity="info"
+      [outlined]="true"
+      (click)="openReviewDialog()"
+    />
+  }
+  @if (canResolve()) {
+    <p-button
+      label="Resolve"
+      icon="pi pi-check-circle"
+      severity="success"
+      (click)="openResolveDialog()"
+    />
+  }
+</ui-page-header>
 
 @if (isLoading()) {
   <div class="flex justify-center py-16">

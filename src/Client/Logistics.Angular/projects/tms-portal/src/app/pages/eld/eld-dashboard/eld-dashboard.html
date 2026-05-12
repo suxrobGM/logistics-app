@@ -1,19 +1,15 @@
-<!-- Header -->
-<div class="flex items-center justify-between">
-  <ui-page-header
-    title="ELD / HOS Dashboard"
-    subtitle="Monitor driver Hours of Service compliance"
+<ui-page-header
+  title="ELD / HOS Dashboard"
+  subtitle="Monitor driver Hours of Service compliance"
+>
+  <p-button label="Configure Providers" icon="pi pi-cog" (onClick)="configureProviders()" />
+  <p-button
+    label="Sync HOS Data"
+    icon="pi pi-refresh"
+    [loading]="loading()"
+    (onClick)="syncDriversHos()"
   />
-  <div class="flex gap-2">
-    <p-button label="Configure Providers" icon="pi pi-cog" (onClick)="configureProviders()" />
-    <p-button
-      label="Sync HOS Data"
-      icon="pi pi-refresh"
-      [loading]="loading()"
-      (onClick)="syncDriversHos()"
-    />
-  </div>
-</div>
+</ui-page-header>
 
 <!-- Summary Cards Row -->
 <ui-grid container spacing="4" class="mb-6">

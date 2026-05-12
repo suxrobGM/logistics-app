@@ -1,11 +1,9 @@
-<!-- Header -->
-<ui-stack direction="row" align="center" justify="between">
-  <ui-page-header
-    title="Financial Dashboard"
-    subtitle="Comprehensive financial overview and performance metrics"
-  />
+<ui-page-header
+  title="Financial Dashboard"
+  subtitle="Comprehensive financial overview and performance metrics"
+>
   <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
-</ui-stack>
+</ui-page-header>
 
 @if (isLoading()) {
   <ui-grid container>

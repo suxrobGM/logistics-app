@@ -1,16 +1,12 @@
-<!-- Header with actions -->
-<ui-stack direction="row" align="start" justify="between" class="mb-6">
-  <ui-page-header title="Customer Details" />
-  <ui-stack direction="row" gap="2">
-    <p-button icon="pi pi-pencil" label="Edit" [outlined]="true" (click)="openEditDialog()" />
-    <p-button
-      icon="pi pi-arrow-left"
-      label="Back"
-      [routerLink]="['/customers']"
-      [outlined]="true"
-    />
-  </ui-stack>
-</ui-stack>
+<ui-page-header title="Customer Details">
+  <p-button icon="pi pi-pencil" label="Edit" [outlined]="true" (click)="openEditDialog()" />
+  <p-button
+    icon="pi pi-arrow-left"
+    label="Back"
+    [routerLink]="['/customers']"
+    [outlined]="true"
+  />
+</ui-page-header>
 
 @if (store.isLoading()) {
   <ui-stack align="center" justify="center" class="py-16">

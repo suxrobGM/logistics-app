@@ -1,11 +1,9 @@
-<!-- Header -->
-<ui-stack direction="row" align="center" justify="between">
-  <ui-page-header
-    title="Payroll Report"
-    subtitle="Comprehensive payroll overview and employee earnings"
-  />
+<ui-page-header
+  title="Payroll Report"
+  subtitle="Comprehensive payroll overview and employee earnings"
+>
   <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
-</ui-stack>
+</ui-page-header>
 
 @if (isLoading()) {
   <ui-grid container>

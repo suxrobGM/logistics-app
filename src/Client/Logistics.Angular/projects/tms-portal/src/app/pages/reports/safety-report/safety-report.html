@@ -1,8 +1,6 @@
-<!-- Header -->
-<ui-stack direction="row" align="center" justify="between">
-  <ui-page-header title="Safety Report" subtitle="DVIR, accidents, and driver behavior metrics" />
+<ui-page-header title="Safety Report" subtitle="DVIR, accidents, and driver behavior metrics">
   <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
-</ui-stack>
+</ui-page-header>
 
 @if (isLoading()) {
   <ui-grid container>

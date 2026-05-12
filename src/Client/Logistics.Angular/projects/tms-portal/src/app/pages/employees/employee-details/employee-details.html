@@ -1,23 +1,19 @@
-<!-- Header with actions -->
-<ui-stack direction="row" align="start" justify="between" class="mb-6">
-  <ui-page-header title="Employee Details" />
-  <ui-stack direction="row" gap="2">
-    <p-button icon="pi pi-pencil" label="Edit" [outlined]="true" (click)="openEditDialog()" />
-    <p-button
-      icon="pi pi-chart-line"
-      label="View Report"
-      [outlined]="true"
-      [routerLink]="['/reports/drivers/detailed']"
-      [queryParams]="{ driverId: id() }"
-    />
-    <p-button
-      icon="pi pi-arrow-left"
-      label="Back"
-      [routerLink]="['/employees']"
-      [outlined]="true"
-    />
-  </ui-stack>
-</ui-stack>
+<ui-page-header title="Employee Details">
+  <p-button icon="pi pi-pencil" label="Edit" [outlined]="true" (click)="openEditDialog()" />
+  <p-button
+    icon="pi pi-chart-line"
+    label="View Report"
+    [outlined]="true"
+    [routerLink]="['/reports/drivers/detailed']"
+    [queryParams]="{ driverId: id() }"
+  />
+  <p-button
+    icon="pi pi-arrow-left"
+    label="Back"
+    [routerLink]="['/employees']"
+    [outlined]="true"
+  />
+</ui-page-header>
 
 @if (store.isLoading()) {
   <ui-stack align="center" justify="center" class="py-16">
