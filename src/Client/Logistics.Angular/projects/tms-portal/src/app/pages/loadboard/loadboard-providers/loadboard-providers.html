@@ -3,235 +3,45 @@
   subtitle="Connect to load boards to search for available freight and post trucks"
   backLink="/loadboard"
 >
-  <p-button label="Add Provider" icon="pi pi-plus" (onClick)="openAddDialog()" />
+  <p-button
+    label="Add Provider"
+    icon="pi pi-plus"
+    styleClass="whitespace-nowrap"
+    (onClick)="showAddDialog.set(true)"
+  />
 </ui-page-header>
 
-<!-- Info Card -->
-<div class="mb-6">
-  <p-card class="border-0 bg-blue-500/10 shadow-sm">
-    <ui-stack direction="row" align="start" gap="3">
-      <ui-icon name="info-circle" size="lg" class="text-blue-600" />
-      <div>
-        <ui-typography variant="h6">How Load Board Integration Works</ui-typography>
-        <ui-typography variant="body-sm" color="secondary" class="mb-0">
-          Connect your load board accounts to search for available loads, get rate information, and
-          post your available trucks to attract freight. Each provider requires API credentials
-          which you can obtain from their respective developer portals.
-        </ui-typography>
-      </div>
-    </ui-stack>
-  </p-card>
-</div>
+<ui-alert intent="info" title="How Load Board Integration Works" class="mb-6 block">
+  Connect your load board accounts to search for available loads, get rate information, and post
+  your available trucks to attract freight. Each provider requires API credentials which you can
+  obtain from their respective developer portals.
+</ui-alert>
 
-<!-- Providers List -->
-<p-card class="border-0 shadow-sm">
-  <ng-template #header>
-    <ui-stack direction="row" align="center" gap="2" class="p-3">
-      <ui-icon name="link" class="text-blue-600" />
-      <ui-typography variant="h5" class="mb-0">Configured Providers</ui-typography>
-    </ui-stack>
-  </ng-template>
-
-  @if (loading()) {
+<ui-dashboard-card title="Configured Providers" icon="pi-link">
+  @if (store.loading()) {
     <ui-stack align="center" justify="center" class="p-5">
       <p-progressSpinner />
     </ui-stack>
-  } @else if (error()) {
-    <ui-stack align="center" gap="3" class="p-4">
-      <ui-icon name="exclamation-circle" size="xl" class="text-red-500" />
-      <ui-typography class="text-red-500">{{ error() }}</ui-typography>
-      <p-button label="Retry" icon="pi pi-refresh" (onClick)="loadProviders()" />
-    </ui-stack>
-  } @else if (providers().length === 0) {
-    <ui-stack align="center" gap="3" class="p-5">
-      <ui-icon name="link" size="xl" color="muted" />
-      <ui-typography color="secondary">No load board providers configured yet.</ui-typography>
-      <ui-typography variant="body-sm" color="muted" class="mb-4">
-        Add your first load board provider to start searching for freight.
-      </ui-typography>
-      <p-button label="Add Provider" icon="pi pi-plus" (onClick)="openAddDialog()" />
-    </ui-stack>
-  } @else {
-    <p-table [value]="providers()">
-      <ng-template #header>
-        <tr>
-          <th>Provider</th>
-          <th>Status</th>
-          <th>DOT Number</th>
-          <th>MC Number</th>
-          <th>Created</th>
-          <th>Actions</th>
-        </tr>
-      </ng-template>
-      <ng-template #body let-provider>
-        <tr>
-          <td>
-            <ui-stack direction="row" align="center" gap="3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600/10">
-                <ui-icon name="link" class="text-blue-600" />
-              </div>
-              <div>
-                <div class="font-medium">{{ getProviderLabel(provider.providerType) }}</div>
-                <small class="text-muted">{{ provider.providerType }}</small>
-              </div>
-            </ui-stack>
-          </td>
-          <td>
-            @if (provider.isActive) {
-              <p-tag value="Active" severity="success"></p-tag>
-            } @else {
-              <p-tag value="Inactive" severity="danger"></p-tag>
-            }
-          </td>
-          <td>
-            <span class="text-sm">{{ provider.companyDotNumber || "-" }}</span>
-          </td>
-          <td>
-            <span class="text-sm">{{ provider.companyMcNumber || "-" }}</span>
-          </td>
-          <td>
-            @if (provider.createdAt) {
-              <span class="text-muted text-sm">{{ provider.createdAt | date: "short" }}</span>
-            } @else {
-              <span class="text-muted text-sm">-</span>
-            }
-          </td>
-          <td>
-            <div class="flex gap-1">
-              <p-button
-                icon="pi pi-trash"
-                [rounded]="true"
-                [text]="true"
-                severity="danger"
-                pTooltip="Delete Provider"
-                (onClick)="confirmDeleteProvider(provider)"
-              />
-            </div>
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-  }
-</p-card>
-
-<!-- Add Provider Dialog -->
-<p-dialog
-  header="Add Load Board Provider"
-  [(visible)]="showAddDialog"
-  [modal]="true"
-  [style]="{ width: '500px' }"
-  [draggable]="false"
->
-  <form [formGroup]="addForm" (ngSubmit)="saveProvider()">
-    <ui-form-field
-      label="Provider"
-      for="providerType"
-      [required]="true"
-      [control]="addForm.controls.providerType"
-    >
-      <p-select
-        id="providerType"
-        formControlName="providerType"
-        [options]="providerOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Select provider"
-        class="w-full"
-        [style]="{ width: '100%' }"
-      >
-        <ng-template #item let-item>
-          <div>
-            <div class="font-medium">{{ item.label }}</div>
-            <small class="text-muted">{{ item.description }}</small>
-          </div>
-        </ng-template>
-      </p-select>
-    </ui-form-field>
-
-    <ui-form-field
-      label="API Key"
-      for="apiKey"
-      [required]="true"
-      hint="Your load board API key or client ID"
-      [control]="addForm.controls.apiKey"
-    >
-      <input
-        pInputText
-        id="apiKey"
-        formControlName="apiKey"
-        class="w-full"
-        placeholder="Enter API key"
-      />
-    </ui-form-field>
-
-    <ui-form-field
-      label="API Secret (Optional)"
-      for="apiSecret"
-      hint="Required for some providers (e.g., DAT)"
-    >
-      <p-password
-        id="apiSecret"
-        formControlName="apiSecret"
-        [toggleMask]="true"
-        [feedback]="false"
-        class="w-full"
-        inputStyleClass="w-full"
-        placeholder="Enter API secret"
-      />
-    </ui-form-field>
-
-    <ui-form-field
-      label="DOT Number (Optional)"
-      for="companyDotNumber"
-      hint="Your company's USDOT number"
-    >
-      <input
-        pInputText
-        id="companyDotNumber"
-        formControlName="companyDotNumber"
-        class="w-full"
-        placeholder="e.g., 1234567"
-      />
-    </ui-form-field>
-
-    <ui-form-field
-      label="MC Number (Optional)"
-      for="companyMcNumber"
-      hint="Your company's Motor Carrier number"
-    >
-      <input
-        pInputText
-        id="companyMcNumber"
-        formControlName="companyMcNumber"
-        class="w-full"
-        placeholder="e.g., MC123456"
-      />
-    </ui-form-field>
-
-    <div class="rounded bg-yellow-500/10 p-3">
-      <ui-stack direction="row" align="start" gap="2">
-        <ui-icon name="exclamation-triangle" class="text-yellow-600" />
-        <div class="text-sm">
-          <strong>Where to get credentials:</strong>
-          <ul class="text-secondary mt-1 mb-0 list-inside list-disc">
-            <li>Demo: Enter any text as API key (for testing only)</li>
-            <li>DAT: freight.api.dat.com developer portal</li>
-            <li>Truckstop: api.truckstop.com developer portal</li>
-            <li>123Loadboard: 123loadboard.com/developers</li>
-          </ul>
-        </div>
-      </ui-stack>
-    </div>
-  </form>
-
-  <ng-template #footer>
-    <p-button label="Cancel" (onClick)="showAddDialog.set(false)" [text]="true" />
-    <p-button
-      label="Add Provider"
-      icon="pi pi-check"
-      (onClick)="saveProvider()"
-      [loading]="saving()"
-      [disabled]="addForm.invalid"
+  } @else if (store.error()) {
+    <ui-error-state [message]="store.error()!" (retry)="store.loadProviders()" />
+  } @else if (store.providers().length === 0) {
+    <ui-empty-state
+      title="No providers configured"
+      message="Add your first load board provider to start searching for freight."
+      icon="link"
+      actionLabel="Add Provider"
+      (action)="showAddDialog.set(true)"
     />
-  </ng-template>
-</p-dialog>
+  } @else {
+    <app-providers-table
+      [providers]="store.providers()"
+      (delete)="store.deleteProvider($event)"
+    />
+  }
+</ui-dashboard-card>
+
+<app-provider-add-dialog
+  [(visible)]="showAddDialog"
+  [saving]="saving()"
+  (save)="onSave($event)"
+/>

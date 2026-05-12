@@ -1,18 +1,11 @@
 <div class="animate-fadein">
-  <!-- Page Header -->
-  <ui-stack direction="row" align="center" justify="between" class="mb-6">
-    <div>
-      <ui-typography variant="h2" tag="h1" color="primary" class="mb-1">
-        {{ greeting() }}
-      </ui-typography>
-      <ui-typography variant="body" color="muted">
-        {{ currentDate | dateFormat: "EEEE, MMMM d, yyyy" }}
-      </ui-typography>
-    </div>
+  <ui-page-header
+    [title]="greeting()"
+    [subtitle]="currentDate | dateFormat: 'EEEE, MMMM d, yyyy'"
+  >
     <ui-stack direction="row" align="center" gap="3">
-      <!-- Data Freshness Indicator -->
       <ui-stack direction="row" align="center" gap="2">
-        <ui-typography variant="body-sm" color="muted">
+        <ui-typography variant="body-sm" color="muted" class="whitespace-nowrap">
           Updated {{ lastUpdated() | dateFormat: "shortTime" }}
         </ui-typography>
         <p-button
@@ -37,12 +30,13 @@
       <p-button
         label="Quick Actions"
         icon="pi pi-plus"
+        styleClass="whitespace-nowrap"
         [outlined]="true"
         (click)="menu.toggle($event)"
       />
       <p-menu #menu [model]="quickActions" [popup]="true" />
     </ui-stack>
-  </ui-stack>
+  </ui-page-header>
 
   <!-- Skeleton during initial load (mirrors panel grid coordinates) -->
   @if (!initialLoadComplete()) {
@@ -203,9 +197,9 @@
                       <td colspan="5" class="text-center">
                         <ui-stack align="center" gap="2" class="text-muted py-8">
                           <i class="pi pi-inbox text-4xl" aria-hidden="true"></i>
-                          <ui-typography variant="body" color="muted"
-                            >No active loads</ui-typography
-                          >
+                          <ui-typography variant="body" color="muted">
+                            No active loads
+                          </ui-typography>
                         </ui-stack>
                       </td>
                     </tr>

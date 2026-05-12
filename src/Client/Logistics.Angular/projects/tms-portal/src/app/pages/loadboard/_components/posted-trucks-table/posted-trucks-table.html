@@ -1,0 +1,74 @@
+<p-table [value]="trucks()" [paginator]="true" [rows]="10">
+  <ng-template #header>
+    <tr>
+      <th>Truck</th>
+      <th>Provider</th>
+      <th>Available At</th>
+      <th>Destination</th>
+      <th>Available From</th>
+      <th>Equipment</th>
+      <th>Status</th>
+      <th>Expires</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template #body let-truck>
+    <tr>
+      <td>
+        <ui-stack direction="row" align="center" gap="2">
+          <ui-icon name="truck" color="info" />
+          <span class="font-medium">{{ truck.truckNumber || "N/A" }}</span>
+        </ui-stack>
+      </td>
+      <td>
+        <p-tag [value]="truck.providerName" severity="info" />
+      </td>
+      <td>
+        <div class="text-sm">
+          {{ truck.availableAtAddress?.city }}, {{ truck.availableAtAddress?.state }}
+        </div>
+      </td>
+      <td>
+        @if (truck.destinationPreference?.city) {
+          <div class="text-sm">
+            {{ truck.destinationPreference.city }}, {{ truck.destinationPreference.state }}
+            @if (truck.destinationRadius) {
+              <span class="text-muted text-xs">({{ truck.destinationRadius }} mi)</span>
+            }
+          </div>
+        } @else {
+          <span class="text-muted">Anywhere</span>
+        }
+      </td>
+      <td>
+        <span class="text-sm">{{ truck.availableFrom | date: "shortDate" }}</span>
+        @if (truck.availableTo) {
+          <span class="text-muted text-xs">- {{ truck.availableTo | date: "shortDate" }}</span>
+        }
+      </td>
+      <td>
+        <span class="text-sm">{{ truck.equipmentType || "-" }}</span>
+      </td>
+      <td>
+        <p-tag [value]="truck.status" [severity]="getStatusSeverity(truck.status)" />
+      </td>
+      <td>
+        @if (truck.expiresAt) {
+          <span class="text-muted text-sm">{{ truck.expiresAt | date: "shortDate" }}</span>
+        } @else {
+          <span class="text-muted">-</span>
+        }
+      </td>
+      <td>
+        <p-button
+          icon="pi pi-trash"
+          [rounded]="true"
+          [text]="true"
+          severity="danger"
+          pTooltip="Remove Post"
+          (onClick)="confirmRemove(truck)"
+        />
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

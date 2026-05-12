@@ -6,399 +6,61 @@
   <p-button
     label="Post Truck"
     icon="pi pi-plus"
-    (onClick)="openPostDialog()"
-    [disabled]="providers().length === 0"
+    styleClass="whitespace-nowrap"
+    (onClick)="showPostDialog.set(true)"
+    [disabled]="!store.hasProviders()"
   />
 </ui-page-header>
 
-<!-- Info Card -->
-@if (providers().length === 0) {
-  <div class="mb-6">
-    <p-card class="bg-warning/10 border-0 shadow-sm">
-      <ui-stack direction="row" align="start" gap="3">
-        <ui-icon name="exclamation-triangle" size="lg" class="text-warning" />
-        <div>
-          <ui-typography variant="h6">No Load Board Providers Configured</ui-typography>
-          <ui-typography variant="body-sm" color="secondary" class="mb-2">
-            You need to configure at least one load board provider before you can post trucks.
-          </ui-typography>
-          <p-button
-            label="Configure Providers"
-            icon="pi pi-cog"
-            size="small"
-            (onClick)="configureProviders()"
-          />
-        </div>
-      </ui-stack>
-    </p-card>
-  </div>
+@if (!store.hasProviders()) {
+  <ui-alert intent="warning" title="No Load Board Providers Configured" class="mb-6 block">
+    <ui-stack direction="col" gap="2" align="start">
+      <ui-typography variant="body-sm" color="secondary">
+        You need to configure at least one load board provider before you can post trucks.
+      </ui-typography>
+      <p-button
+        label="Configure Providers"
+        icon="pi pi-cog"
+        size="small"
+        (onClick)="configureProviders()"
+      />
+    </ui-stack>
+  </ui-alert>
 } @else {
-  <div class="mb-6">
-    <p-card class="bg-info/10 border-0 shadow-sm">
-      <ui-stack direction="row" align="start" gap="3">
-        <ui-icon name="info-circle" size="lg" class="text-blue-600" />
-        <div>
-          <ui-typography variant="h6">How Truck Posting Works</ui-typography>
-          <ui-typography variant="body-sm" color="secondary" class="mb-0">
-            Post your available trucks to load boards so brokers can find you. Specify where the
-            truck is available, where it can go, and when. Posts are automatically refreshed and
-            expire after a set period. Remove posts when the truck is no longer available.
-          </ui-typography>
-        </div>
-      </ui-stack>
-    </p-card>
-  </div>
+  <ui-alert intent="info" title="How Truck Posting Works" class="mb-6 block">
+    Post your available trucks to load boards so brokers can find you. Specify where the truck is
+    available, where it can go, and when. Posts are automatically refreshed and expire after a set
+    period. Remove posts when the truck is no longer available.
+  </ui-alert>
 }
 
-<!-- Posted Trucks List -->
-<p-card class="border-0 shadow-sm">
-  <ng-template #header>
-    <ui-stack direction="row" align="center" justify="between" class="p-3">
-      <ui-stack direction="row" align="center" gap="2">
-        <ui-icon name="truck" class="text-blue-600" />
-        <ui-typography variant="h5" class="mb-0">Your Posted Trucks</ui-typography>
-      </ui-stack>
-      @if (postedTrucks().length > 0) {
-        <ui-typography variant="body-sm" color="muted">
-          {{ postedTrucks().length }} trucks posted
-        </ui-typography>
-      }
-    </ui-stack>
-  </ng-template>
-
-  @if (loading()) {
+<ui-dashboard-card title="Your Posted Trucks" icon="pi-truck">
+  @if (store.loading()) {
     <ui-stack align="center" justify="center" class="p-5">
       <p-progressSpinner />
     </ui-stack>
-  } @else if (error()) {
-    <ui-stack align="center" gap="3" class="p-4">
-      <ui-icon name="exclamation-circle" size="xl" class="text-danger" />
-      <ui-typography color="inherit" class="text-danger">{{ error() }}</ui-typography>
-      <p-button label="Retry" icon="pi pi-refresh" (onClick)="loadData()" />
-    </ui-stack>
-  } @else if (postedTrucks().length === 0) {
-    <ui-stack align="center" gap="3" class="p-5">
-      <ui-icon name="truck" size="xl" color="muted" />
-      <ui-typography color="secondary">No trucks posted to load boards yet.</ui-typography>
-      <ui-typography variant="body-sm" color="muted" class="mb-4">
-        Post your available trucks to let brokers know you're looking for freight.
-      </ui-typography>
-      @if (providers().length > 0) {
-        <p-button label="Post a Truck" icon="pi pi-plus" (onClick)="openPostDialog()" />
-      }
-    </ui-stack>
-  } @else {
-    <p-table [value]="postedTrucks()" [paginator]="true" [rows]="10">
-      <ng-template #header>
-        <tr>
-          <th>Truck</th>
-          <th>Provider</th>
-          <th>Available At</th>
-          <th>Destination</th>
-          <th>Available From</th>
-          <th>Equipment</th>
-          <th>Status</th>
-          <th>Expires</th>
-          <th>Actions</th>
-        </tr>
-      </ng-template>
-      <ng-template #body let-truck>
-        <tr>
-          <td>
-            <ui-stack direction="row" align="center" gap="2">
-              <ui-icon name="truck" class="text-blue-600" />
-              <span class="font-medium">{{ truck.truckNumber || "N/A" }}</span>
-            </ui-stack>
-          </td>
-          <td>
-            <p-tag [value]="truck.providerName" severity="info" />
-          </td>
-          <td>
-            <div class="text-sm">
-              {{ truck.availableAtAddress?.city }}, {{ truck.availableAtAddress?.state }}
-            </div>
-          </td>
-          <td>
-            @if (truck.destinationPreference?.city) {
-              <div class="text-sm">
-                {{ truck.destinationPreference.city }}, {{ truck.destinationPreference.state }}
-                @if (truck.destinationRadius) {
-                  <span class="text-muted text-xs">({{ truck.destinationRadius }} mi)</span>
-                }
-              </div>
-            } @else {
-              <span class="text-muted">Anywhere</span>
-            }
-          </td>
-          <td>
-            <span class="text-sm">{{ truck.availableFrom | date: "shortDate" }}</span>
-            @if (truck.availableTo) {
-              <span class="text-muted text-xs">- {{ truck.availableTo | date: "shortDate" }}</span>
-            }
-          </td>
-          <td>
-            <span class="text-sm">{{ truck.equipmentType || "-" }}</span>
-          </td>
-          <td>
-            <p-tag [value]="truck.status" [severity]="getStatusSeverity(truck.status)" />
-          </td>
-          <td>
-            @if (truck.expiresAt) {
-              <span class="text-muted text-sm">{{ truck.expiresAt | date: "shortDate" }}</span>
-            } @else {
-              <span class="text-muted">-</span>
-            }
-          </td>
-          <td>
-            <p-button
-              icon="pi pi-trash"
-              [rounded]="true"
-              [text]="true"
-              severity="danger"
-              pTooltip="Remove Post"
-              (onClick)="confirmRemovePost(truck)"
-            />
-          </td>
-        </tr>
-      </ng-template>
-    </p-table>
-  }
-</p-card>
-
-<!-- Post Truck Dialog -->
-<p-dialog
-  header="Post Truck to Load Board"
-  [(visible)]="showPostDialog"
-  [modal]="true"
-  [style]="{ width: '600px' }"
-  [draggable]="false"
->
-  <form [formGroup]="postForm" (ngSubmit)="postTruck()">
-    <ui-grid container spacing="4">
-      <ui-grid [size]="{ xs: 12, md: 6 }">
-        <ui-form-field
-          label="Truck"
-          for="truckId"
-          [required]="true"
-          [control]="postForm.controls.truckId"
-        >
-          <p-select
-            id="truckId"
-            formControlName="truckId"
-            [options]="trucks()"
-            optionLabel="number"
-            optionValue="id"
-            placeholder="Select truck"
-            class="w-full"
-            [style]="{ width: '100%' }"
-          >
-            <ng-template #item let-truck>
-              <div>
-                <div class="font-medium">{{ truck.number }}</div>
-                <small class="text-muted">{{ truck.type }}</small>
-              </div>
-            </ng-template>
-          </p-select>
-        </ui-form-field>
-      </ui-grid>
-
-      <ui-grid [size]="{ xs: 12, md: 6 }">
-        <ui-form-field
-          label="Load Board"
-          for="providerType"
-          [required]="true"
-          [control]="postForm.controls.providerType"
-        >
-          <p-select
-            id="providerType"
-            formControlName="providerType"
-            [options]="getProviderOptions()"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Select provider"
-            class="w-full"
-            [style]="{ width: '100%' }"
-          />
-        </ui-form-field>
-      </ui-grid>
-    </ui-grid>
-
-    <ui-typography variant="h6" class="mt-4 mb-3">Available Location</ui-typography>
-    <ui-grid container spacing="4">
-      <ui-grid [size]="{ xs: 12, md: 4 }">
-        <ui-form-field
-          label="City"
-          for="availableAtCity"
-          [required]="true"
-          [control]="postForm.controls.availableAtCity"
-        >
-          <input
-            pInputText
-            id="availableAtCity"
-            formControlName="availableAtCity"
-            class="w-full"
-            placeholder="e.g., Los Angeles"
-          />
-        </ui-form-field>
-      </ui-grid>
-
-      <ui-grid [size]="{ xs: 12, md: 4 }">
-        <ui-form-field
-          label="State"
-          for="availableAtState"
-          [required]="true"
-          [control]="postForm.controls.availableAtState"
-        >
-          <input
-            pInputText
-            id="availableAtState"
-            formControlName="availableAtState"
-            class="w-full"
-            placeholder="e.g., CA"
-          />
-        </ui-form-field>
-      </ui-grid>
-
-      <ui-grid [size]="{ xs: 12, md: 4 }">
-        <ui-form-field label="ZIP Code" for="availableAtZipCode">
-          <input
-            pInputText
-            id="availableAtZipCode"
-            formControlName="availableAtZipCode"
-            class="w-full"
-            placeholder="e.g., 90001"
-          />
-        </ui-form-field>
-      </ui-grid>
-    </ui-grid>
-
-    <ui-typography variant="h6" class="mt-4 mb-3">Destination Preference (Optional)</ui-typography>
-    <ui-grid container spacing="4">
-      <ui-grid [size]="{ xs: 12, md: 4 }">
-        <ui-form-field label="City" for="destinationCity">
-          <input
-            pInputText
-            id="destinationCity"
-            formControlName="destinationCity"
-            class="w-full"
-            placeholder="e.g., Dallas"
-          />
-        </ui-form-field>
-      </ui-grid>
-
-      <ui-grid [size]="{ xs: 12, md: 4 }">
-        <ui-form-field label="State" for="destinationState">
-          <input
-            pInputText
-            id="destinationState"
-            formControlName="destinationState"
-            class="w-full"
-            placeholder="e.g., TX"
-          />
-        </ui-form-field>
-      </ui-grid>
-
-      <ui-grid [size]="{ xs: 12, md: 4 }">
-        <ui-form-field label="Radius (mi)" for="destinationRadius">
-          <p-inputNumber
-            id="destinationRadius"
-            formControlName="destinationRadius"
-            [min]="0"
-            [max]="500"
-            class="w-full"
-            inputStyleClass="w-full"
-          />
-        </ui-form-field>
-      </ui-grid>
-    </ui-grid>
-
-    <ui-typography variant="h6" class="mt-4 mb-3">Availability</ui-typography>
-    <ui-grid container spacing="4">
-      <ui-grid [size]="{ xs: 12, md: 6 }">
-        <ui-form-field
-          label="Available From"
-          for="availableFrom"
-          [required]="true"
-          [control]="postForm.controls.availableFrom"
-        >
-          <p-datePicker
-            id="availableFrom"
-            formControlName="availableFrom"
-            [showIcon]="true"
-            dateFormat="mm/dd/yy"
-            class="w-full"
-            inputStyleClass="w-full"
-          />
-        </ui-form-field>
-      </ui-grid>
-
-      <ui-grid [size]="{ xs: 12, md: 6 }">
-        <ui-form-field label="Available To" for="availableTo">
-          <p-datePicker
-            id="availableTo"
-            formControlName="availableTo"
-            [showIcon]="true"
-            dateFormat="mm/dd/yy"
-            class="w-full"
-            inputStyleClass="w-full"
-          />
-        </ui-form-field>
-      </ui-grid>
-    </ui-grid>
-
-    <ui-typography variant="h6" class="mt-4 mb-3">Equipment Details (Optional)</ui-typography>
-    <ui-grid container spacing="4">
-      <ui-grid [size]="{ xs: 12, md: 4 }">
-        <ui-form-field label="Equipment Type" for="equipmentType">
-          <p-select
-            id="equipmentType"
-            formControlName="equipmentType"
-            [options]="equipmentOptions"
-            optionLabel="label"
-            optionValue="value"
-            placeholder="Select type"
-            class="w-full"
-            [style]="{ width: '100%' }"
-          />
-        </ui-form-field>
-      </ui-grid>
-
-      <ui-grid [size]="{ xs: 12, md: 4 }">
-        <ui-form-field label="Max Weight (lbs)" for="maxWeight">
-          <p-inputNumber
-            id="maxWeight"
-            formControlName="maxWeight"
-            [min]="0"
-            [max]="100000"
-            class="w-full"
-            inputStyleClass="w-full"
-          />
-        </ui-form-field>
-      </ui-grid>
-
-      <ui-grid [size]="{ xs: 12, md: 4 }">
-        <ui-form-field label="Max Length (ft)" for="maxLength">
-          <p-inputNumber
-            id="maxLength"
-            formControlName="maxLength"
-            [min]="0"
-            [max]="100"
-            class="w-full"
-            inputStyleClass="w-full"
-          />
-        </ui-form-field>
-      </ui-grid>
-    </ui-grid>
-  </form>
-
-  <ng-template #footer>
-    <p-button label="Cancel" (onClick)="showPostDialog.set(false)" [text]="true" />
-    <p-button
-      label="Post Truck"
-      icon="pi pi-check"
-      (onClick)="postTruck()"
-      [loading]="posting()"
-      [disabled]="postForm.invalid"
+  } @else if (store.error()) {
+    <ui-error-state [message]="store.error()!" (retry)="store.loadPostedTrucks()" />
+  } @else if (store.postedTrucks().length === 0) {
+    <ui-empty-state
+      title="No trucks posted"
+      message="Post your available trucks to let brokers know you're looking for freight."
+      icon="truck"
+      [actionLabel]="store.hasProviders() ? 'Post a Truck' : null"
+      (action)="showPostDialog.set(true)"
     />
-  </ng-template>
-</p-dialog>
+  } @else {
+    <app-posted-trucks-table
+      [trucks]="store.postedTrucks()"
+      (remove)="store.removePostedTruck($event)"
+    />
+  }
+</ui-dashboard-card>
+
+<app-post-truck-dialog
+  [(visible)]="showPostDialog"
+  [posting]="posting()"
+  [trucks]="store.trucks()"
+  [providerOptions]="store.activeProviderOptions()"
+  (submitted)="onPost($event)"
+/>

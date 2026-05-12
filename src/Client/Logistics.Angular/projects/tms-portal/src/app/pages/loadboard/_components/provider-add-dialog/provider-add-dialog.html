@@ -1,0 +1,139 @@
+<p-dialog
+  header="Add Load Board Provider"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [draggable]="false"
+  (onShow)="onShow()"
+>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <ui-form-field
+      label="Provider"
+      for="providerType"
+      [required]="true"
+      [control]="form.controls.providerType"
+    >
+      <p-select
+        id="providerType"
+        formControlName="providerType"
+        [options]="providerOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select provider"
+        class="w-full"
+        [style]="{ width: '100%' }"
+      >
+        <ng-template #item let-item>
+          <div>
+            <div class="font-medium">{{ item.label }}</div>
+            <small class="text-muted">{{ item.description }}</small>
+          </div>
+        </ng-template>
+      </p-select>
+    </ui-form-field>
+
+    <ui-form-field
+      label="API Key"
+      for="apiKey"
+      [required]="true"
+      hint="Your load board API key or client ID"
+      [control]="form.controls.apiKey"
+    >
+      <input
+        pInputText
+        id="apiKey"
+        formControlName="apiKey"
+        class="w-full"
+        placeholder="Enter API key"
+      />
+    </ui-form-field>
+
+    <ui-form-field
+      label="API Secret (Optional)"
+      for="apiSecret"
+      hint="Required for some providers (e.g., DAT)"
+    >
+      <p-password
+        id="apiSecret"
+        formControlName="apiSecret"
+        [toggleMask]="true"
+        [feedback]="false"
+        class="w-full"
+        inputStyleClass="w-full"
+        placeholder="Enter API secret"
+      />
+    </ui-form-field>
+
+    <ui-form-field
+      label="DOT Number (Optional)"
+      for="companyDotNumber"
+      hint="Your company's USDOT number"
+    >
+      <input
+        pInputText
+        id="companyDotNumber"
+        formControlName="companyDotNumber"
+        class="w-full"
+        placeholder="e.g., 1234567"
+      />
+    </ui-form-field>
+
+    <ui-form-field
+      label="MC Number (Optional)"
+      for="companyMcNumber"
+      hint="Your company's Motor Carrier number"
+    >
+      <input
+        pInputText
+        id="companyMcNumber"
+        formControlName="companyMcNumber"
+        class="w-full"
+        placeholder="e.g., MC123456"
+      />
+    </ui-form-field>
+
+    <div class="border-default bg-subtle mt-4 rounded border p-3">
+      <ui-stack direction="row" align="start" gap="2">
+        <ui-icon name="exclamation-triangle" color="warning" />
+        <div>
+          <ui-typography variant="body-sm" class="font-semibold">
+            Where to get credentials:
+          </ui-typography>
+          <ul class="mt-1 mb-0 list-inside list-disc">
+            <li>
+              <ui-typography variant="body-sm" color="secondary">
+                Demo: Enter any text as API key (for testing only)
+              </ui-typography>
+            </li>
+            <li>
+              <ui-typography variant="body-sm" color="secondary">
+                DAT: freight.api.dat.com developer portal
+              </ui-typography>
+            </li>
+            <li>
+              <ui-typography variant="body-sm" color="secondary">
+                Truckstop: api.truckstop.com developer portal
+              </ui-typography>
+            </li>
+            <li>
+              <ui-typography variant="body-sm" color="secondary">
+                123Loadboard: 123loadboard.com/developers
+              </ui-typography>
+            </li>
+          </ul>
+        </div>
+      </ui-stack>
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Cancel" (onClick)="close()" [text]="true" />
+    <p-button
+      label="Add Provider"
+      icon="pi pi-check"
+      (onClick)="submit()"
+      [loading]="saving()"
+      [disabled]="form.invalid"
+    />
+  </ng-template>
+</p-dialog>

@@ -1,0 +1,57 @@
+<p-table [value]="providers()">
+  <ng-template #header>
+    <tr>
+      <th>Provider</th>
+      <th>Status</th>
+      <th>DOT Number</th>
+      <th>MC Number</th>
+      <th>Created</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template #body let-provider>
+    <tr>
+      <td>
+        <ui-stack direction="row" align="center" gap="3">
+          <div class="bg-subtle flex h-10 w-10 items-center justify-center rounded-full">
+            <ui-icon name="link" color="info" />
+          </div>
+          <div>
+            <div class="font-medium">{{ getProviderLabel(provider.providerType) }}</div>
+            <small class="text-muted">{{ provider.providerType }}</small>
+          </div>
+        </ui-stack>
+      </td>
+      <td>
+        @if (provider.isActive) {
+          <p-tag value="Active" severity="success" />
+        } @else {
+          <p-tag value="Inactive" severity="danger" />
+        }
+      </td>
+      <td>
+        <span class="text-sm">{{ provider.companyDotNumber || "-" }}</span>
+      </td>
+      <td>
+        <span class="text-sm">{{ provider.companyMcNumber || "-" }}</span>
+      </td>
+      <td>
+        @if (provider.createdAt) {
+          <span class="text-muted text-sm">{{ provider.createdAt | date: "short" }}</span>
+        } @else {
+          <span class="text-muted text-sm">-</span>
+        }
+      </td>
+      <td>
+        <p-button
+          icon="pi pi-trash"
+          [rounded]="true"
+          [text]="true"
+          severity="danger"
+          pTooltip="Delete Provider"
+          (onClick)="confirmDelete(provider)"
+        />
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

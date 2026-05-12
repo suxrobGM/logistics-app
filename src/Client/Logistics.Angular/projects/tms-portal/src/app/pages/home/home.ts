@@ -26,7 +26,7 @@ import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "@/core/auth";
 import { DashboardSettingsService, type DashboardPanelConfig } from "@/core/services";
-import { StatCard, TrucksMap } from "@/shared/components";
+import { PageHeader, StatCard, TrucksMap } from "@/shared/components";
 import { Converters } from "@/shared/utils";
 import {
   AttentionPanelComponent,
@@ -63,6 +63,7 @@ import { HomeSkeleton } from "./home-skeleton/home-skeleton";
     TopPerformersWidgetComponent,
     DividerModule,
     MenuModule,
+    PageHeader,
     StatCard,
     StatusBadge,
     Icon,

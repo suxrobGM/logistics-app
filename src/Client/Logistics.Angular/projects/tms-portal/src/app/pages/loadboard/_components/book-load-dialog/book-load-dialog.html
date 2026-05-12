@@ -1,0 +1,101 @@
+<p-dialog
+  header="Book Load"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [draggable]="false"
+  (onShow)="onShow()"
+>
+  @if (listing(); as l) {
+    <ui-surface variant="subtle" padding="sm" radius="md" class="mb-4 block">
+      <ui-stack direction="row" align="center" justify="between" class="mb-2">
+        <ui-typography class="font-medium">
+          {{ l.originAddress.city }}, {{ l.originAddress.state }}
+        </ui-typography>
+        <ui-typography color="muted">→</ui-typography>
+        <ui-typography class="font-medium">
+          {{ l.destinationAddress.city }}, {{ l.destinationAddress.state }}
+        </ui-typography>
+      </ui-stack>
+      <ui-stack direction="row" align="center" justify="between">
+        <ui-typography variant="body-sm" color="secondary">
+          {{ l.equipmentType }}
+        </ui-typography>
+        <ui-typography variant="body-sm" class="text-success font-medium">
+          {{ (l.totalRate | currencyFormat) ?? "-" }}
+        </ui-typography>
+      </ui-stack>
+    </ui-surface>
+
+    <form [formGroup]="form">
+      <ui-form-field label="Assign Truck" for="truckId">
+        <p-select
+          id="truckId"
+          formControlName="truckId"
+          [options]="trucks()"
+          optionLabel="number"
+          optionValue="id"
+          placeholder="Select a truck"
+          class="w-full"
+          [style]="{ width: '100%' }"
+        >
+          <ng-template #item let-truck>
+            <div>
+              <div class="font-medium">{{ truck.number }}</div>
+              <small class="text-muted">{{ truck.type }}</small>
+            </div>
+          </ng-template>
+        </p-select>
+      </ui-form-field>
+
+      <ui-form-field label="Contact Name" for="contactName">
+        <input
+          pInputText
+          id="contactName"
+          formControlName="contactName"
+          class="w-full"
+          placeholder="Your name"
+        />
+      </ui-form-field>
+
+      <ui-form-field label="Contact Phone" for="contactPhone">
+        <input
+          pInputText
+          id="contactPhone"
+          formControlName="contactPhone"
+          class="w-full"
+          placeholder="Your phone number"
+        />
+      </ui-form-field>
+
+      <ui-form-field label="Contact Email" for="contactEmail">
+        <input
+          pInputText
+          id="contactEmail"
+          formControlName="contactEmail"
+          class="w-full"
+          placeholder="Your email"
+        />
+      </ui-form-field>
+
+      <ui-form-field label="Notes" for="notes">
+        <input
+          pInputText
+          id="notes"
+          formControlName="notes"
+          class="w-full"
+          placeholder="Additional notes for the broker"
+        />
+      </ui-form-field>
+    </form>
+
+    <ui-alert intent="info" class="mt-3 block">
+      Booking this load will create a new load in your TMS with the details from the load board.
+    </ui-alert>
+  }
+
+  <ng-template #footer>
+    <p-button label="Cancel" (onClick)="close()" [text]="true" />
+    <p-button label="Book Load" icon="pi pi-check" (onClick)="submit()" [loading]="booking()" />
+  </ng-template>
+</p-dialog>

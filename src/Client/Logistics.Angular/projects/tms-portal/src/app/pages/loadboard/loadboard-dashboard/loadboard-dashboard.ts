@@ -1,108 +1,69 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import {
-  Api,
-  getLoadBoardProviders,
-  getPostedTrucks,
-  searchLoadBoard,
-  type LoadBoardConfigurationDto,
-  type LoadBoardListingDto,
-  type PostedTruckDto,
-} from "@logistics/shared/api";
+import { Api, searchLoadBoard, type LoadBoardListingDto } from "@logistics/shared/api";
+import { Grid, Stack } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
-import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { DashboardCard, PageHeader, StatCard } from "@/shared/components";
+import { DashboardCard, EmptyState, ErrorState, PageHeader, StatCard } from "@/shared/components";
+import { LoadBoardQuickActions } from "../_components";
+import { LoadBoardStore } from "../store";
 
 @Component({
   selector: "app-loadboard-dashboard",
   templateUrl: "./loadboard-dashboard.html",
   imports: [
     ButtonModule,
-    TooltipModule,
-    CardModule,
+    DashboardCard,
+    DatePipe,
+    EmptyState,
+    ErrorState,
+    Grid,
+    LoadBoardQuickActions,
+    PageHeader,
+    Stack,
+    StatCard,
     TableModule,
     TagModule,
-    DatePipe,
-    ProgressSpinnerModule,
-    PageHeader,
-    StatCard,
-    DashboardCard,
+    TooltipModule,
   ],
 })
 export class LoadBoardDashboardComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly api = inject(Api);
+  protected readonly store = inject(LoadBoardStore);
 
-  protected readonly loading = signal(true);
-  protected readonly error = signal<string | null>(null);
-  protected readonly providers = signal<LoadBoardConfigurationDto[]>([]);
   protected readonly recentListings = signal<LoadBoardListingDto[]>([]);
-  protected readonly postedTrucks = signal<PostedTruckDto[]>([]);
-
-  protected readonly activeProviders = computed(() => this.providers().filter((p) => p.isActive));
-
   protected readonly availableLoads = computed(() => this.recentListings().length);
 
-  protected readonly activePostedTrucks = computed(
-    () => this.postedTrucks().filter((t) => t.status === "available").length,
-  );
-
   ngOnInit(): void {
-    this.loadDashboardData();
+    void this.loadDashboardData();
   }
 
   protected async loadDashboardData(): Promise<void> {
-    this.loading.set(true);
-    this.error.set(null);
+    await this.store.loadAll(true);
 
-    try {
-      const [providersData, postedTrucksData] = await Promise.all([
-        this.api.invoke(getLoadBoardProviders),
-        this.api.invoke(getPostedTrucks, {}),
-      ]);
-
-      this.providers.set(providersData ?? []);
-      this.postedTrucks.set(postedTrucksData ?? []);
-
-      // If we have active providers, fetch some sample listings
-      if (this.activeProviders().length > 0) {
-        try {
-          const result = await this.api.invoke(searchLoadBoard, {
-            body: {
-              maxResults: 5,
-            },
-          });
-          this.recentListings.set(result?.listings ?? []);
-        } catch {
-          // Search may fail without origin, that's okay
-        }
+    if (this.store.hasActiveProviders()) {
+      try {
+        const result = await this.api.invoke(searchLoadBoard, { body: { maxResults: 5 } });
+        this.recentListings.set(result?.listings ?? []);
+      } catch {
+        // Search may fail without origin, that's okay
       }
-    } catch (err) {
-      this.error.set("Failed to load dashboard data");
-      console.error("Error loading dashboard:", err);
-    } finally {
-      this.loading.set(false);
     }
   }
 
-  protected getProviderStatusSeverity(isActive: boolean): "success" | "danger" {
-    return isActive ? "success" : "danger";
-  }
-
-  protected configureProviders(): void {
-    this.router.navigate(["/loadboard/providers"]);
-  }
-
   protected searchLoads(): void {
-    this.router.navigate(["/loadboard/search"]);
+    this.router.navigateByUrl("/loadboard/search");
   }
 
   protected managePostedTrucks(): void {
-    this.router.navigate(["/loadboard/posted-trucks"]);
+    this.router.navigateByUrl("/loadboard/posted-trucks");
+  }
+
+  protected configureProviders(): void {
+    this.router.navigateByUrl("/loadboard/providers");
   }
 }

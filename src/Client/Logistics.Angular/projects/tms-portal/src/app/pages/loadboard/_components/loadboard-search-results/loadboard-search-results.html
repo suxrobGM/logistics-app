@@ -1,0 +1,79 @@
+<p-table
+  [value]="listings()"
+  [paginator]="true"
+  [rows]="10"
+  [rowsPerPageOptions]="[10, 25, 50]"
+  [scrollable]="true"
+>
+  <ng-template #header>
+    <tr>
+      <th>Provider</th>
+      <th>Route</th>
+      <th>Pickup</th>
+      <th>Equipment</th>
+      <th>Weight</th>
+      <th>Rate</th>
+      <th>Rate/Mile</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template #body let-listing>
+    <tr>
+      <td>
+        <p-tag
+          [value]="listing.providerName"
+          [severity]="getProviderSeverity(listing.providerType)"
+        />
+      </td>
+      <td>
+        <div class="max-w-50">
+          <div class="font-medium">
+            {{ listing.originAddress.city }}, {{ listing.originAddress.state }}
+          </div>
+          <div class="text-muted text-sm">↓</div>
+          <div class="font-medium">
+            {{ listing.destinationAddress.city }}, {{ listing.destinationAddress.state }}
+          </div>
+          @if (listing.distance) {
+            <div class="text-muted text-xs">{{ listing.distance | distanceUnit }}</div>
+          }
+        </div>
+      </td>
+      <td>
+        @if (listing.pickupDateStart) {
+          <div class="text-sm">{{ listing.pickupDateStart | dateFormat: "shortDate" }}</div>
+        } @else {
+          <span class="text-muted">-</span>
+        }
+      </td>
+      <td>
+        <span class="text-sm">{{ listing.equipmentType || "-" }}</span>
+      </td>
+      <td>
+        @if (listing.weight) {
+          <span class="text-sm">{{ listing.weight | number }} lbs</span>
+        } @else {
+          <span class="text-muted">-</span>
+        }
+      </td>
+      <td>
+        <span class="text-success font-medium">
+          {{ (listing.totalRate | currencyFormat) ?? "-" }}
+        </span>
+      </td>
+      <td>
+        <span class="text-sm">{{ (listing.ratePerMile | currencyFormat) ?? "-" }}/mi</span>
+      </td>
+      <td>
+        <p-button
+          icon="pi pi-check"
+          label="Book"
+          [rounded]="true"
+          size="small"
+          (onClick)="book.emit(listing)"
+          pTooltip="Book this load"
+        />
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
