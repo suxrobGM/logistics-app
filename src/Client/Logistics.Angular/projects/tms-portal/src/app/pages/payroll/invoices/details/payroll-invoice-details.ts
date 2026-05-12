@@ -25,7 +25,7 @@ import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { PdfService, TenantService, ToastService } from "@/core/services";
 import { RecordPaymentDialog } from "@/pages/invoices/components";
-import { InvoiceStatusTag, PaymentStatusTag } from "@/shared/components";
+import { InvoiceStatusTag, PageHeader, PaymentStatusTag } from "@/shared/components";
 
 @Component({
   selector: "app-payroll-invoice-details",
@@ -49,6 +49,7 @@ import { InvoiceStatusTag, PaymentStatusTag } from "@/shared/components";
     RecordPaymentDialog,
     DialogModule,
     TextareaModule,
+    PageHeader,
     Grid,
     Icon,
     Stack,

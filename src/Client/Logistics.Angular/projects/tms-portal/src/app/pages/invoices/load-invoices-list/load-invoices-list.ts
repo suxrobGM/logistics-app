@@ -17,6 +17,7 @@ import {
   DateRangePicker,
   FormField,
   InvoiceStatusTag,
+  PageHeader,
   SearchInput,
 } from "@/shared/components";
 import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
@@ -41,6 +42,7 @@ import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
     FormField,
     CurrencyFormatPipe,
     DateFormatPipe,
+    PageHeader,
     Grid,
     Stack,
     Typography,

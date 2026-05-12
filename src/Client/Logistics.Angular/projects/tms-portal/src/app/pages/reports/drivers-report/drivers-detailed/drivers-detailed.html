@@ -1,32 +1,18 @@
-<!-- Header -->
-<ui-stack direction="row" align="center" justify="between" class="mb-6">
-  <div>
-    <ui-typography variant="h2" tag="h1" color="primary" class="mb-1">
-      Drivers Report
-    </ui-typography>
-    <ui-typography variant="body" color="muted">
-      Detailed driver performance and statistics
-    </ui-typography>
-  </div>
-  <ui-stack direction="row" align="center" gap="2">
-    <ui-stack direction="row" align="center" gap="2">
-      <ui-typography variant="label" tag="label" color="primary">
-        <label for="search">Search:</label>
-      </ui-typography>
-      <input
-        pInputText
-        id="search"
-        type="text"
-        (change)="onSearch($event)"
-        name="search"
-        placeholder="Search drivers..."
-        class="w-full"
-        style="width: 200px"
-      />
-    </ui-stack>
-    <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
-  </ui-stack>
-</ui-stack>
+<ui-page-header
+  title="Drivers Report"
+  subtitle="Detailed driver performance and statistics"
+>
+  <input
+    pInputText
+    id="search"
+    type="text"
+    (change)="onSearch($event)"
+    name="search"
+    placeholder="Search drivers..."
+    style="width: 200px"
+  />
+  <ui-date-range-picker (datesChange)="onDateRangeChange($event)" />
+</ui-page-header>
 
 <!-- Drivers Table -->
 <p-card class="border-0 p-2 shadow-sm">

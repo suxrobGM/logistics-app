@@ -10,7 +10,7 @@ import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { InvoiceStatusTag } from "@/shared/components";
+import { InvoiceStatusTag, PageHeader } from "@/shared/components";
 
 interface PayrollDashboardData {
   draftCount: number;
@@ -38,6 +38,7 @@ interface PayrollDashboardData {
     TooltipModule,
     DatePipe,
     InvoiceStatusTag,
+    PageHeader,
     Grid,
     Stack,
     Surface,

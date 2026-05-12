@@ -8,7 +8,7 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { DataContainer, PaymentStatusTag } from "@/shared/components";
+import { DataContainer, PageHeader, PaymentStatusTag } from "@/shared/components";
 import { PaymentsListStore } from "../store/payments-list.store";
 
 @Component({
@@ -26,6 +26,7 @@ import { PaymentsListStore } from "../store/payments-list.store";
     PaymentStatusTag,
     AddressPipe,
     DataContainer,
+    PageHeader,
   ],
 })
 export class PaymentsListComponent {

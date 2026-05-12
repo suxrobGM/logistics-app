@@ -1,10 +1,12 @@
 <div class="animate-fadein">
-  <ui-stack direction="row" align="center" justify="between" class="mb-4">
-    <ui-typography variant="h2" tag="h1" color="primary" class="mb-0">Load Invoices</ui-typography>
-    <a routerLink="/invoices" class="no-underline">
-      <p-button icon="pi pi-chart-bar" label="Dashboard" [outlined]="true" />
-    </a>
-  </ui-stack>
+  <ui-page-header title="Load Invoices">
+    <p-button
+      icon="pi pi-chart-bar"
+      label="Dashboard"
+      [outlined]="true"
+      [routerLink]="['/invoices']"
+    />
+  </ui-page-header>
 
   <!-- Filter Panel -->
   <p-card class="mb-4">

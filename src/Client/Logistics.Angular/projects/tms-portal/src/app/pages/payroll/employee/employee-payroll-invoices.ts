@@ -9,7 +9,7 @@ import {
   type SalaryType,
 } from "@logistics/shared/api";
 import { paymentMethodTypeOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
-import { Grid, Stack, Typography } from "@logistics/shared/components";
+import { Grid, Stack } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -17,7 +17,7 @@ import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { DataContainer, InvoiceStatusTag } from "@/shared/components";
+import { DataContainer, InvoiceStatusTag, PageHeader } from "@/shared/components";
 import { EmployeePayrollListStore } from "../store/employee-list.store";
 
 @Component({
@@ -36,9 +36,9 @@ import { EmployeePayrollListStore } from "../store/employee-list.store";
     ProgressSpinnerModule,
     DataContainer,
     DividerModule,
+    PageHeader,
     Grid,
     Stack,
-    Typography,
   ],
 })
 export class EmployeePayrollInvoices {

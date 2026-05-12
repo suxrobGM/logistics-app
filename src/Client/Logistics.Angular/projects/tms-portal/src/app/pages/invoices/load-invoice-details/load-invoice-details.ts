@@ -13,7 +13,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { PdfService, TenantService, ToastService } from "@/core/services";
-import { InvoiceStatusTag, PaymentStatusTag } from "@/shared/components";
+import { InvoiceStatusTag, PageHeader, PaymentStatusTag } from "@/shared/components";
 import { PaymentLinkDialog, RecordPaymentDialog, SendInvoiceDialog } from "../components";
 
 @Component({
@@ -38,6 +38,7 @@ import { PaymentLinkDialog, RecordPaymentDialog, SendInvoiceDialog } from "../co
     RecordPaymentDialog,
     PaymentLinkDialog,
     Alert,
+    PageHeader,
     Grid,
     Icon,
     Stack,

@@ -1,12 +1,10 @@
-<ui-page-header [title]="pageTitle" />
-
-<ui-stack direction="row" align="center" gap="2" wrap class="mb-4">
+<ui-page-header [title]="pageTitle">
   <ui-permission-guard [permissions]="Permission.Payroll.Manage">
     <p-button icon="pi pi-plus" label="Add Entry" (click)="openAddDialog()" />
   </ui-permission-guard>
+</ui-page-header>
 
-  <div class="flex-1"></div>
-
+<ui-stack direction="row" align="center" gap="2" wrap class="mb-4">
   <!-- Filters -->
   <p-select
     [ngModel]="filterType()"

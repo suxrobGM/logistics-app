@@ -1,15 +1,8 @@
-<ui-stack direction="row" align="center">
-  <ui-typography variant="h2" tag="h1" class="mb-0">Employee Payroll Invoices</ui-typography>
-  <p-button
-    styleClass="text-black ml-2"
-    icon="pi pi-plus-circle"
-    size="large"
-    [rounded]="true"
-    [text]="true"
-    pTooltip="Add a new payroll invoice"
-    [routerLink]="['/invoices/payroll/add']"
-  />
-</ui-stack>
+<ui-page-header
+  title="Employee Payroll Invoices"
+  addRoute="/invoices/payroll/add"
+  addTooltip="Add a new payroll invoice"
+/>
 
 @if (isLoadingEmployee() || !employee()) {
   <ui-stack direction="row" align="center">

@@ -29,6 +29,7 @@ import {
   DateRangePicker,
   FormField,
   InvoiceStatusTag,
+  PageHeader,
   SearchInput,
 } from "@/shared/components";
 import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
@@ -53,6 +54,7 @@ import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
     FormField,
     DialogModule,
     TextareaModule,
+    PageHeader,
     Grid,
     Stack,
     Typography,

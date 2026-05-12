@@ -1,7 +1,5 @@
 <div class="animate-fadein">
-  <ui-typography variant="h2" tag="h1" align="center" class="mb-6">
-    Payroll Invoice Details
-  </ui-typography>
+  <ui-page-header title="Payroll Invoice Details" backLink="/payroll/invoices" />
 
   @if (isLoading()) {
     <ui-stack align="center" justify="center" class="py-8">
@@ -52,7 +50,10 @@
                   {{ invoice()!.employee?.salary | currencyFormat }}
                 }
               </p>
-              <p><strong>Issue Date:</strong> {{ invoice()!.createdDate | date: "mediumDate" }}</p>
+              <p>
+                <strong>Issue Date:</strong>
+                {{ invoice()!.createdDate | date: "mediumDate" }}
+              </p>
             </ui-grid>
           </ui-grid>
 
@@ -100,9 +101,9 @@
               ) {
                 <div class="flex justify-between py-1 text-green-600">
                   <span>Paid:</span>
-                  <span>{{
-                    (invoice()!.total?.amount ?? 0) - getOutstandingAmount() | currencyFormat
-                  }}</span>
+                  <span>
+                    {{ (invoice()!.total?.amount ?? 0) - getOutstandingAmount() | currencyFormat }}
+                  </span>
                 </div>
                 <div class="flex justify-between py-1 font-semibold text-red-600">
                   <span>Outstanding:</span>
@@ -122,7 +123,8 @@
             <p-divider />
             <div class="rounded bg-green-50 p-3">
               <p class="font-semibold text-green-700">
-                <i class="pi pi-check-circle mr-2"></i>Approved
+                <i class="pi pi-check-circle mr-2"></i>
+                Approved
               </p>
             </div>
           }
@@ -131,7 +133,8 @@
             <p-divider />
             <div class="rounded bg-red-50 p-3">
               <p class="font-semibold text-red-700">
-                <i class="pi pi-times-circle mr-2"></i>Rejected
+                <i class="pi pi-times-circle mr-2"></i>
+                Rejected
               </p>
             </div>
           }

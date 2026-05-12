@@ -1,48 +1,45 @@
 <div class="animate-fadein">
-  <ui-stack direction="row" align="center" justify="between" class="mb-4">
-    <ui-stack direction="row" align="center">
-      <ui-typography variant="h2" tag="h1" color="primary" class="mb-0">Payroll Invoices</ui-typography>
+  <ui-page-header
+    title="Payroll Invoices"
+    addRoute="/payroll/invoices/add"
+    addTooltip="Add a new payroll invoice"
+  >
+    @if (selectedInvoices().length > 0) {
       <p-button
-        class="ml-2"
-        icon="pi pi-plus-circle"
-        size="large"
-        [rounded]="true"
-        [text]="true"
-        pTooltip="Add a new payroll invoice"
-        [routerLink]="['/payroll/invoices/add']"
+        icon="pi pi-check-circle"
+        label="Approve Selected ({{ selectedInvoices().length }})"
+        severity="success"
+        [loading]="isBatchApproving()"
+        (click)="batchApprove()"
       />
-    </ui-stack>
-    <ui-stack direction="row" align="center" gap="2">
-      @if (selectedInvoices().length > 0) {
-        <p-button
-          icon="pi pi-check-circle"
-          label="Approve Selected ({{ selectedInvoices().length }})"
-          severity="success"
-          [loading]="isBatchApproving()"
-          (click)="batchApprove()"
-        />
-        <p-button icon="pi pi-times" label="Clear" [text]="true" (click)="clearSelection()" />
-      }
-      <p-button
-        icon="pi pi-download"
-        label="Export CSV"
-        [outlined]="true"
-        [loading]="isExporting()"
-        (click)="exportToCsv()"
-      />
-      <a routerLink="/payroll" class="no-underline">
-        <p-button icon="pi pi-chart-bar" label="Dashboard" [outlined]="true" />
-      </a>
-    </ui-stack>
-  </ui-stack>
+      <p-button icon="pi pi-times" label="Clear" [text]="true" (click)="clearSelection()" />
+    }
+    <p-button
+      icon="pi pi-download"
+      label="Export CSV"
+      [outlined]="true"
+      [loading]="isExporting()"
+      (click)="exportToCsv()"
+    />
+    <p-button
+      icon="pi pi-chart-bar"
+      label="Dashboard"
+      [outlined]="true"
+      [routerLink]="['/payroll']"
+    />
+  </ui-page-header>
 
   <!-- Filter Panel -->
   <p-card class="mb-4">
     <ui-stack direction="row" align="center" justify="between" class="mb-4">
-      <ui-typography variant="body" color="primary" weight="semibold" class="text-lg">Filters</ui-typography>
+      <ui-typography variant="body" color="primary" weight="semibold" class="text-lg">
+        Filters
+      </ui-typography>
       <ui-stack direction="row" align="center" gap="2">
         @if (activeFilterCount() > 0) {
-          <ui-typography variant="body-sm" color="muted">{{ activeFilterCount() }} active</ui-typography>
+          <ui-typography variant="body-sm" color="muted">
+            {{ activeFilterCount() }} active
+          </ui-typography>
         }
         <p-button
           label="Clear All"

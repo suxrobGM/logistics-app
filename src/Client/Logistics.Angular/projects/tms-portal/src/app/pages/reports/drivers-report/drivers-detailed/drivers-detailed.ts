@@ -18,7 +18,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
 import { from, Observable } from "rxjs";
-import { BaseTable, DateRangePicker, type TableQueryParams } from "@/shared/components";
+import { BaseTable, DateRangePicker, PageHeader, type TableQueryParams } from "@/shared/components";
 import { DateUtils, getPerformanceLevel, getPerformanceSeverity } from "@/shared/utils";
 
 @Component({
@@ -35,6 +35,7 @@ import { DateUtils, getPerformanceLevel, getPerformanceSeverity } from "@/shared
     CurrencyFormatPipe,
     DecimalPipe,
     TagModule,
+    PageHeader,
     Icon,
     Stack,
     Typography,
