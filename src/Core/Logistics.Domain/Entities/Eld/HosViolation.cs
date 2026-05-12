@@ -47,4 +47,11 @@ public class HosViolation : Entity, ITenantEntity
     /// Which ELD provider reported this violation
     /// </summary>
     public EldProviderType ProviderType { get; set; }
+
+    /// <summary>
+    /// Regulatory rule set this violation belongs to (e.g. "FMCSA", "EU_561_2006").
+    /// Stamped from <c>Tenant.Settings.Region</c> at creation time so the UI can show
+    /// the correct badge and the historical record survives later region changes.
+    /// </summary>
+    public string RuleSetCode { get; set; } = "FMCSA";
 }
