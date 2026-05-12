@@ -313,6 +313,21 @@ export class LocalizationService {
   }
 
   /**
+   * Formats an HOS duration in minutes using locale-appropriate spacing.
+   * US: "11h 30m" (compact). EU: "11 h 30 min" (with spaces, per regulation labelling).
+   * Negative values are rendered as zero; nulls return a dash.
+   */
+  formatHosDuration(minutes: number | null | undefined): string {
+    if (minutes == null) {
+      return "—";
+    }
+    const total = Math.max(0, Math.trunc(minutes));
+    const h = Math.trunc(total / 60);
+    const m = total % 60;
+    return this.getRegion() === "eu" ? `${h} h ${m} min` : `${h}h ${m}m`;
+  }
+
+  /**
    * Formats a tax rate percentage with locale-aware decimal separator.
    * @param percent Rate as a number (e.g. 19, 21.5). Zero / null renders as a dash.
    */
