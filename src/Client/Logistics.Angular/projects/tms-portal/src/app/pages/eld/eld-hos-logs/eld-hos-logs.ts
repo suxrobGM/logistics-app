@@ -9,6 +9,7 @@ import {
   type HosLogDto,
 } from "@logistics/shared/api";
 import { EmptyState, ErrorState, Grid, Stack } from "@logistics/shared/components";
+import { LocalizationService } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
@@ -44,8 +45,9 @@ import { DashboardCard, FormField, PageHeader, StatCard } from "@/shared/compone
 })
 export class EldHosLogsComponent implements OnInit {
   private readonly api = inject(Api);
+  protected readonly localization = inject(LocalizationService);
 
-  readonly employeeId = input.required<string>();
+  public readonly employeeId = input.required<string>();
 
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);
@@ -55,9 +57,9 @@ export class EldHosLogsComponent implements OnInit {
   protected readonly pageSize = signal(25);
   protected readonly first = signal(0);
 
-  protected startDate: Date = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-  protected endDate: Date = new Date();
-  protected readonly today: Date = new Date();
+  protected startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  protected endDate = new Date();
+  protected readonly today = new Date();
 
   protected readonly headerTitle = computed(() => `HOS Logs - ${this.employeeName()}`);
 
@@ -74,12 +76,14 @@ export class EldHosLogsComponent implements OnInit {
   );
 
   protected readonly totalDrivingDisplay = computed(() =>
-    this.formatMinutes(this.totalDrivingMinutes()),
+    this.localization.formatHosDuration(this.totalDrivingMinutes()),
   );
 
   protected readonly totalOnDutyDisplay = computed(() =>
-    this.formatMinutes(this.totalOnDutyMinutes()),
+    this.localization.formatHosDuration(this.totalOnDutyMinutes()),
   );
+
+  protected readonly dateFormat = computed(() => this.localization.getPrimeNgDateFormat());
 
   ngOnInit(): void {
     this.loadData();
@@ -144,11 +148,5 @@ export class EldHosLogsComponent implements OnInit {
       default:
         return "secondary";
     }
-  }
-
-  private formatMinutes(minutes: number): string {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours}h ${mins}m`;
   }
 }

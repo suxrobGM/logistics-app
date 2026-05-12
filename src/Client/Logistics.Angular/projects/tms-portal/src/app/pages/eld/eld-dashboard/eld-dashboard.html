@@ -2,6 +2,7 @@
   title="ELD / HOS Dashboard"
   subtitle="Monitor driver Hours of Service compliance"
 >
+  <p-tag [value]="rules.ruleSetLabel()" severity="info" pTooltip="Active HOS rule set" />
   <p-button label="Configure Providers" icon="pi pi-cog" (onClick)="configureProviders()" />
   <p-button
     label="Sync HOS Data"
@@ -114,12 +115,12 @@
                 ></p-tag>
               </td>
               <td>
-                <span [class.text-danger]="driver.drivingMinutesRemaining < 60">
+                <span [class.text-danger]="driver.drivingMinutesRemaining < drivingWarnMinutes()">
                   {{ driver.drivingTimeRemainingDisplay }}
                 </span>
               </td>
               <td>
-                <span [class.text-warning]="driver.onDutyMinutesRemaining < 120">
+                <span [class.text-warning]="driver.onDutyMinutesRemaining < onDutyWarnMinutes()">
                   {{ driver.onDutyTimeRemainingDisplay }}
                 </span>
               </td>

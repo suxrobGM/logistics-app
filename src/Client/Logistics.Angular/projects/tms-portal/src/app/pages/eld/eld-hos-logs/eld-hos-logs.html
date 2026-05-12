@@ -21,7 +21,7 @@
         [(ngModel)]="startDate"
         [showIcon]="true"
         [maxDate]="endDate"
-        dateFormat="mm/dd/yy"
+        [dateFormat]="dateFormat()"
         (onSelect)="onDateRangeChange()"
       />
     </ui-form-field>
@@ -32,7 +32,7 @@
         [showIcon]="true"
         [minDate]="startDate"
         [maxDate]="today"
-        dateFormat="mm/dd/yy"
+        [dateFormat]="dateFormat()"
         (onSelect)="onDateRangeChange()"
       />
     </ui-form-field>
