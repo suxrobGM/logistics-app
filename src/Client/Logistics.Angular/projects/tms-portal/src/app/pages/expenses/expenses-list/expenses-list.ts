@@ -13,7 +13,7 @@ import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
 import { ExpenseStatusTag, ExpenseTypeTag } from "@/shared/components/tags";
-import { RejectExpenseDialog } from "../components";
+import { RejectExpenseDialog } from "../_components";
 import { ExpenseActionsService } from "../services/expense-actions.service";
 import { ExpensesListStore } from "../store/expenses-list.store";
 

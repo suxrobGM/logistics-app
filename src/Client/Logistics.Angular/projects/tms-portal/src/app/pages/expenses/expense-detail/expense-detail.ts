@@ -16,7 +16,7 @@ import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { PageHeader } from "@/shared/components";
 import { ExpenseStatusTag, ExpenseTypeTag } from "@/shared/components/tags";
-import { RejectExpenseDialog } from "../components";
+import { RejectExpenseDialog } from "../_components";
 import { ExpenseActionsService } from "../services/expense-actions.service";
 
 @Component({
