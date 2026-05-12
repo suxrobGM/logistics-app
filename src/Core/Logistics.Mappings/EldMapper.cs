@@ -1,5 +1,6 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 
 namespace Logistics.Mappings;
@@ -112,7 +113,25 @@ public static class EldMapper
             SeverityLevel = entity.SeverityLevel,
             IsResolved = entity.IsResolved,
             ResolvedAt = entity.ResolvedAt,
-            ProviderType = entity.ProviderType
+            ProviderType = entity.ProviderType,
+            RuleSetCode = entity.RuleSetCode
+        };
+    }
+
+    public static HosLimitsDto ToDto(this HosLimits limits)
+    {
+        return new HosLimitsDto
+        {
+            RuleSetCode = limits.RuleSetCode,
+            MaxDailyDrivingMinutes = limits.MaxDailyDrivingMinutes,
+            MaxDailyOnDutyMinutes = limits.MaxDailyOnDutyMinutes,
+            MaxWeeklyDrivingMinutes = limits.MaxWeeklyDrivingMinutes,
+            MaxBiweeklyDrivingMinutes = limits.MaxBiweeklyDrivingMinutes,
+            MaxContinuousDrivingMinutes = limits.MaxContinuousDrivingMinutes,
+            MinDailyRestMinutes = limits.MinDailyRestMinutes,
+            MinWeeklyRestMinutes = limits.MinWeeklyRestMinutes,
+            RequiredBreakAfterMinutes = limits.RequiredBreakAfterMinutes,
+            CycleDays = limits.CycleDays
         };
     }
 

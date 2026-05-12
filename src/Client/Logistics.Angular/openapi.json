@@ -4244,6 +4244,26 @@
         }
       }
     },
+    "/eld/rules/limits": {
+      "get": {
+        "tags": [
+          "Eld"
+        ],
+        "operationId": "GetHosLimits",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HosLimitsDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/eld/sync/drivers/hos": {
       "post": {
         "tags": [
@@ -19812,6 +19832,54 @@
           "class9"
         ],
         "type": "string"
+      },
+      "HosLimitsDto": {
+        "type": "object",
+        "properties": {
+          "ruleSetCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "maxDailyDrivingMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxDailyOnDutyMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxWeeklyDrivingMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxBiweeklyDrivingMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxContinuousDrivingMinutes": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "minDailyRestMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minWeeklyRestMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requiredBreakAfterMinutes": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "cycleDays": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
       },
       "HosLogDto": {
         "type": "object",
