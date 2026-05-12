@@ -1,6 +1,5 @@
-<ui-typography variant="h2" tag="h1" align="center">Edit a trip #{{ tripNumber() }}</ui-typography>
-
 <ui-container maxWidth="md">
+  <ui-page-header [title]="'Edit a trip #' + tripNumber()" backLink="/trips" />
   <p-card>
     <app-trip-wizard
       [mode]="'edit'"

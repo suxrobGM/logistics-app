@@ -1,15 +1,5 @@
 <div class="animate-fadein">
-  <ui-stack direction="row" align="center" gap="2">
-    <ui-typography variant="h2" tag="h1">Trips</ui-typography>
-    <p-button
-      icon="pi pi-plus-circle"
-      size="large"
-      [rounded]="true"
-      [text]="true"
-      pTooltip="Add a new trip"
-      aria-label="Add a new trip"
-      [routerLink]="['/trips/add']"
-    />
+  <ui-page-header title="Trips" addRoute="/trips/add" addTooltip="Add a new trip">
     <p-button
       icon="pi pi-download"
       size="large"
@@ -20,7 +10,7 @@
       (click)="exportToCsv()"
       [disabled]="store.isEmpty()"
     />
-  </ui-stack>
+  </ui-page-header>
 
   <!-- Summary Stats -->
   <app-trips-summary-stats

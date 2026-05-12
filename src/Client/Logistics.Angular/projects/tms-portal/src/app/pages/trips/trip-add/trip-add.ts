@@ -1,15 +1,16 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { Api, createTrip, type CreateTripCommand } from "@logistics/shared/api";
-import { Container, Typography } from "@logistics/shared/components";
+import { Container } from "@logistics/shared/components";
 import { CardModule } from "primeng/card";
 import { ToastService } from "@/core/services";
+import { PageHeader } from "@/shared/components";
 import { TripWizard, type TripWizardValue } from "../components";
 
 @Component({
   selector: "app-trip-add",
   templateUrl: "./trip-add.html",
-  imports: [CardModule, TripWizard, Typography, Container],
+  imports: [CardModule, TripWizard, Container, PageHeader],
 })
 export class TripAddPage {
   private readonly router = inject(Router);

@@ -21,6 +21,7 @@ import { ToastModule } from "primeng/toast";
 import {
   DirectionMap,
   LoadStatusTag,
+  PageHeader,
   TripStatusTag,
   type RouteSegmentClickEvent,
   type Waypoint,
@@ -57,6 +58,7 @@ import { TripDetailsStore } from "../store/trip-details.store";
     Stack,
     Surface,
     Typography,
+    PageHeader,
   ],
 })
 export class TripDetailsPage {

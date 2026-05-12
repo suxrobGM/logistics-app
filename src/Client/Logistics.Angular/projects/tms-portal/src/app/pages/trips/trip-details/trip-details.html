@@ -1,10 +1,8 @@
-<ui-typography variant="h2" tag="h1">
-  Trip #{{ store.trip()?.number }} - {{ store.trip()?.name }}
-</ui-typography>
-
-<!-- Action Buttons -->
-@if (store.trip()) {
-  <div class="mb-4">
+<ui-page-header
+  [title]="'Trip #' + (store.trip()?.number ?? '') + ' - ' + (store.trip()?.name ?? '')"
+  backLink="/trips"
+>
+  @if (store.trip()) {
     <app-trip-actions
       [status]="store.trip()!.status"
       [truckId]="store.trip()!.truckId"
@@ -13,8 +11,8 @@
       (dispatch)="onDispatch()"
       (cancel)="onCancel($event)"
     />
-  </div>
-}
+  }
+</ui-page-header>
 
 <ui-stack gap="4">
   <p-card>

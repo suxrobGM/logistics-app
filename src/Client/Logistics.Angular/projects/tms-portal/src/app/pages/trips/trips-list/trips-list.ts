@@ -36,6 +36,7 @@ import {
   FormField,
   LoadStatusTag,
   LoadTypeTag,
+  PageHeader,
   RouteBadge,
   SearchInput,
   SearchTruck,
@@ -75,6 +76,7 @@ import { TripsListStore } from "../store/trips-list.store";
     Grid,
     Stack,
     Typography,
+    PageHeader,
   ],
 })
 export class TripsList {

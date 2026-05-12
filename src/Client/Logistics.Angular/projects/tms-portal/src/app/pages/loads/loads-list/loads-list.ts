@@ -21,7 +21,7 @@ import { LoadsListStore } from "../store/loads-list.store";
 @Component({
   selector: "app-loads-list",
   templateUrl: "./loads-list.html",
-  providers: [LoadsListStore],
+  providers: [LoadsListStore, AddressPipe],
   imports: [
     ButtonModule,
     TooltipModule,

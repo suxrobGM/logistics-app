@@ -1,6 +1,5 @@
-<ui-typography variant="h2" tag="h1" align="center">Add a new trip</ui-typography>
-
 <ui-container maxWidth="md">
+  <ui-page-header title="Add a new trip" backLink="/trips" />
   <p-card>
     <app-trip-wizard [mode]="'create'" (save)="createTrip($event)" />
   </p-card>

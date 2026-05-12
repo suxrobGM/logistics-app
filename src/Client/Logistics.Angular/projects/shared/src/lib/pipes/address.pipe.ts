@@ -5,10 +5,7 @@ import type { Address } from "../api/generated/models";
  * Formats an Address object into a readable string.
  * Usage: {{ address | address }} or {{ address | address:'short' }}
  */
-@Pipe({
-  name: "address",
-  pure: true,
-})
+@Pipe({ name: "address" })
 export class AddressPipe implements PipeTransform {
   /**
    * Transforms an Address object into a formatted string. E.g. "123 Main St, Springfield, IL, 62701"
