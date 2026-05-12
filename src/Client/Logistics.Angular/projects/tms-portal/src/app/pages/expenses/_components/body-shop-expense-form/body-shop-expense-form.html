@@ -1,0 +1,122 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4 pt-4">
+  <ui-grid container spacing="4">
+    <ui-grid [size]="{ xs: 12, md: 6 }">
+      <ui-form-field label="Amount" for="bodyshop-amount" [required]="true">
+        <p-inputNumber
+          id="bodyshop-amount"
+          formControlName="amount"
+          mode="currency"
+          currency="USD"
+          [min]="0"
+          [fluid]="true"
+        />
+      </ui-form-field>
+    </ui-grid>
+
+    <ui-grid [size]="{ xs: 12, md: 6 }">
+      <ui-form-field label="Truck" for="bodyshop-truck" [required]="true">
+        <p-select
+          id="bodyshop-truck"
+          formControlName="truckId"
+          [options]="trucks()"
+          optionLabel="number"
+          optionValue="id"
+          placeholder="Select a truck"
+          [fluid]="true"
+        />
+      </ui-form-field>
+    </ui-grid>
+
+    <ui-grid [size]="{ xs: 12, md: 6 }">
+      <ui-form-field label="Body Shop Name" for="bodyshop-vendor">
+        <input pInputText id="bodyshop-vendor" formControlName="vendorName" class="w-full" />
+      </ui-form-field>
+    </ui-grid>
+
+    <ui-grid [size]="{ xs: 12, md: 6 }">
+      <ui-form-field label="Expense Date" for="bodyshop-date" [required]="true">
+        <p-datepicker
+          id="bodyshop-date"
+          formControlName="expenseDate"
+          [showIcon]="true"
+          [fluid]="true"
+        />
+      </ui-form-field>
+    </ui-grid>
+
+    <ui-grid [size]="{ xs: 12, md: 6 }">
+      <ui-form-field label="Shop Address" for="bodyshop-address">
+        <input pInputText id="bodyshop-address" formControlName="vendorAddress" class="w-full" />
+      </ui-form-field>
+    </ui-grid>
+
+    <ui-grid [size]="{ xs: 12, md: 6 }">
+      <ui-form-field label="Shop Phone" for="bodyshop-phone">
+        <input pInputText id="bodyshop-phone" formControlName="vendorPhone" class="w-full" />
+      </ui-form-field>
+    </ui-grid>
+  </ui-grid>
+
+  <ui-form-field label="Repair Description" for="bodyshop-description">
+    <textarea
+      pInputTextarea
+      id="bodyshop-description"
+      formControlName="repairDescription"
+      rows="3"
+      class="w-full"
+    ></textarea>
+  </ui-form-field>
+
+  <ui-grid container spacing="4">
+    <ui-grid [size]="{ xs: 12, md: 6 }">
+      <ui-form-field label="Estimated Completion" for="bodyshop-est-date">
+        <p-datepicker
+          id="bodyshop-est-date"
+          formControlName="estimatedCompletionDate"
+          [showIcon]="true"
+          [fluid]="true"
+        />
+      </ui-form-field>
+    </ui-grid>
+
+    <ui-grid [size]="{ xs: 12, md: 6 }">
+      <ui-form-field label="Actual Completion" for="bodyshop-actual-date">
+        <p-datepicker
+          id="bodyshop-actual-date"
+          formControlName="actualCompletionDate"
+          [showIcon]="true"
+          [fluid]="true"
+        />
+      </ui-form-field>
+    </ui-grid>
+  </ui-grid>
+
+  <ui-form-field label="Notes" for="bodyshop-notes">
+    <textarea
+      pInputTextarea
+      id="bodyshop-notes"
+      formControlName="notes"
+      rows="3"
+      class="w-full"
+    ></textarea>
+  </ui-form-field>
+
+  <app-expense-receipt-upload
+    [initialPath]="receiptPath()"
+    (uploaded)="onReceiptUploaded($event)"
+  />
+
+  <ui-stack direction="row" justify="end" gap="2" class="pt-4">
+    <p-button
+      label="Cancel"
+      [routerLink]="mode() === 'edit' ? ['/expenses', initial()?.id] : ['/expenses']"
+      [outlined]="true"
+    />
+    <p-button
+      type="submit"
+      [label]="mode() === 'edit' ? 'Save Changes' : 'Create Expense'"
+      icon="pi pi-save"
+      [loading]="isSaving()"
+    />
+  </ui-stack>
+</form>

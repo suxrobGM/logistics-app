@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, downloadExpenseReceipt, type ExpenseDto } from "@logistics/shared/api";
-import { Icon, Stack } from "@logistics/shared/components";
+import { Icon } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import type { MenuItem } from "primeng/api";
@@ -13,7 +13,7 @@ import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
 import { ExpenseStatusTag, ExpenseTypeTag } from "@/shared/components/tags";
-import { RejectExpenseDialog } from "../_components";
+import { getCategoryLabel, RejectExpenseDialog } from "../_components";
 import { ExpenseActionsService } from "../services/expense-actions.service";
 import { ExpensesListStore } from "../store/expenses-list.store";
 
@@ -35,7 +35,6 @@ import { ExpensesListStore } from "../store/expenses-list.store";
     PageHeader,
     SearchInput,
     Icon,
-    Stack,
     ExpenseStatusTag,
     ExpenseTypeTag,
     RejectExpenseDialog,
@@ -98,15 +97,7 @@ export class ExpensesListPage {
     this.store.setSearch(search);
   }
 
-  getCategoryLabel(expense: ExpenseDto): string {
-    if (expense.companyCategory) {
-      return expense.companyCategory;
-    }
-    if (expense.truckCategory) {
-      return expense.truckCategory;
-    }
-    return "N/A";
-  }
+  protected readonly getCategoryLabel = getCategoryLabel;
 
   private viewDetails(): void {
     const expense = this.selectedRow();

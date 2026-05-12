@@ -1,143 +1,54 @@
-<div class="mb-3 flex items-start justify-between">
-  <ui-page-header title="Expense Analytics" />
-  <div class="flex items-center gap-4">
-    <div class="flex items-center gap-2">
-      <p-datepicker
-        [(ngModel)]="fromDate"
-        placeholder="From Date"
-        [showIcon]="true"
-        (onSelect)="onDateChange()"
-      />
-      <span class="text-muted">to</span>
-      <p-datepicker
-        [(ngModel)]="toDate"
-        placeholder="To Date"
-        [showIcon]="true"
-        (onSelect)="onDateChange()"
-      />
-    </div>
-    <p-button
-      icon="pi pi-download"
-      label="Export CSV"
-      [outlined]="true"
-      (click)="exportToCsv()"
-      [disabled]="!stats()"
-    />
-    <p-button icon="pi pi-arrow-left" label="Back" [routerLink]="['/expenses']" [outlined]="true" />
-  </div>
-</div>
+<ui-page-header title="Expense Analytics" backLink="/expenses">
+  <p-datepicker
+    [ngModel]="store.fromDate()"
+    (ngModelChange)="store.setFromDate($event)"
+    placeholder="From Date"
+    [showIcon]="true"
+    (onSelect)="onDateChange()"
+  />
+  <ui-typography variant="body-sm" color="muted">to</ui-typography>
+  <p-datepicker
+    [ngModel]="store.toDate()"
+    (ngModelChange)="store.setToDate($event)"
+    placeholder="To Date"
+    [showIcon]="true"
+    (onSelect)="onDateChange()"
+  />
+  <p-button
+    icon="pi pi-download"
+    label="Export CSV"
+    [outlined]="true"
+    (click)="store.exportCsv()"
+    [disabled]="!store.stats()"
+  />
+</ui-page-header>
 
-@if (isLoading()) {
+@if (store.isLoading()) {
   <div class="flex justify-center py-16">
     <p-progress-spinner />
   </div>
-} @else if (stats()) {
-  <!-- Summary Cards -->
-  <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-    <p-card class="text-center">
-      <div class="text-muted">Total Expenses</div>
-      <div class="text-primary text-2xl font-bold">
-        {{ stats()!.totalAmount | currencyFormat }}
-      </div>
-      <div class="text-muted text-sm">{{ stats()!.totalCount }} expenses</div>
-    </p-card>
-
-    <p-card class="text-center">
-      <div class="text-muted">Pending</div>
-      <div class="text-warning text-2xl font-bold">
-        {{ stats()!.pendingAmount | currencyFormat }}
-      </div>
-      <div class="text-muted text-sm">{{ stats()!.pendingCount }} pending</div>
-    </p-card>
-
-    <p-card class="text-center">
-      <div class="text-muted">Approved</div>
-      <div class="text-success text-2xl font-bold">
-        {{ stats()!.approvedAmount | currencyFormat }}
-      </div>
-      <div class="text-muted text-sm">{{ stats()!.approvedCount }} approved</div>
-    </p-card>
-
-    <p-card class="text-center">
-      <div class="text-muted">Paid</div>
-      <div class="text-info text-2xl font-bold">
-        {{ stats()!.paidAmount | currencyFormat }}
-      </div>
-      <div class="text-muted text-sm">{{ stats()!.paidCount }} paid</div>
-    </p-card>
+} @else if (store.stats(); as stats) {
+  <div class="mb-6">
+    <app-expense-analytics-summary [stats]="stats" />
   </div>
 
-  <!-- Charts Row 1 -->
-  <div class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-    <!-- Expense Type Distribution -->
-    @if (typeChartData()) {
-      <p-card class="overflow-hidden">
-        <ng-template #header>
-          <div class="p-4 pb-0">
-            <h3 class="m-0 text-lg font-semibold">Expense by Type</h3>
-          </div>
-        </ng-template>
-        <div class="h-80">
-          <p-chart type="pie" [data]="typeChartData()" [options]="chartOptions" />
-        </div>
-      </p-card>
-    }
-
-    <!-- Monthly Trend -->
-    @if (monthlyTrendChartData()) {
-      <p-card class="overflow-hidden">
-        <ng-template #header>
-          <div class="p-4 pb-0">
-            <h3 class="m-0 text-lg font-semibold">Monthly Expense Trend</h3>
-          </div>
-        </ng-template>
-        <div class="h-80">
-          <p-chart type="line" [data]="monthlyTrendChartData()" [options]="lineChartOptions" />
-        </div>
-      </p-card>
-    }
+  <div class="mb-6">
+    <app-expense-analytics-charts
+      [typeData]="store.typeChartData()"
+      [companyCategoryData]="store.companyCategoryChartData()"
+      [truckCategoryData]="store.truckCategoryChartData()"
+      [monthlyTrendData]="store.monthlyTrendChartData()"
+    />
   </div>
 
-  <!-- Charts Row 2 -->
-  <div class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-    <!-- Company Category Distribution -->
-    @if (companyCategoryChartData()) {
-      <p-card class="overflow-hidden">
-        <ng-template #header>
-          <div class="p-4 pb-0">
-            <h3 class="m-0 text-lg font-semibold">Company Expenses by Category</h3>
-          </div>
-        </ng-template>
-        <div class="h-80">
-          <p-chart type="doughnut" [data]="companyCategoryChartData()" [options]="chartOptions" />
-        </div>
-      </p-card>
-    }
-
-    <!-- Truck Category Distribution -->
-    @if (truckCategoryChartData()) {
-      <p-card class="overflow-hidden">
-        <ng-template #header>
-          <div class="p-4 pb-0">
-            <h3 class="m-0 text-lg font-semibold">Truck Expenses by Category</h3>
-          </div>
-        </ng-template>
-        <div class="h-80">
-          <p-chart type="bar" [data]="truckCategoryChartData()" [options]="chartOptions" />
-        </div>
-      </p-card>
-    }
-  </div>
-
-  <!-- Top Trucks Table -->
-  @if ((stats()!.topTrucks ?? []).length > 0) {
+  @if ((stats.topTrucks ?? []).length > 0) {
     <p-card>
       <ng-template #header>
         <div class="p-4 pb-0">
-          <h3 class="m-0 text-lg font-semibold">Top Trucks by Expense</h3>
+          <ui-typography variant="h4">Top Trucks by Expense</ui-typography>
         </div>
       </ng-template>
-      <p-table [value]="stats()!.topTrucks ?? []" [scrollable]="true" class="p-datatable-sm">
+      <p-table [value]="stats.topTrucks ?? []" [scrollable]="true" class="p-datatable-sm">
         <ng-template #header>
           <tr>
             <th>Rank</th>
@@ -151,15 +62,7 @@
             <td>
               <span
                 class="flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold"
-                [class]="
-                  i === 0
-                    ? 'bg-warning/20 text-warning'
-                    : i === 1
-                      ? 'bg-active text-secondary'
-                      : i === 2
-                        ? 'bg-warning/20 text-warning'
-                        : 'bg-hover text-secondary'
-                "
+                [class]="rankBadgeClass(i)"
               >
                 {{ i + 1 }}
               </span>
@@ -183,7 +86,7 @@
   <p-card>
     <div class="py-16 text-center">
       <i class="pi pi-chart-bar text-muted mb-4 text-4xl"></i>
-      <p class="text-muted">No expense data available for the selected period</p>
+      <ui-typography color="muted">No expense data available for the selected period</ui-typography>
     </div>
   </p-card>
 }

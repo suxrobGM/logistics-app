@@ -1,0 +1,129 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4 pt-4">
+  <ui-grid container spacing="4">
+    <ui-grid [size]="{ xs: 12, md: 6 }">
+      <ui-form-field label="Amount" for="truck-amount" [required]="true">
+        <p-inputNumber
+          id="truck-amount"
+          formControlName="amount"
+          mode="currency"
+          currency="USD"
+          [min]="0"
+          [fluid]="true"
+        />
+      </ui-form-field>
+    </ui-grid>
+
+    <ui-grid [size]="{ xs: 12, md: 6 }">
+      <ui-form-field label="Category" for="truck-category" [required]="true">
+        <p-select
+          id="truck-category"
+          formControlName="category"
+          [options]="categories"
+          optionLabel="label"
+          optionValue="value"
+          [fluid]="true"
+        />
+      </ui-form-field>
+    </ui-grid>
+
+    <ui-grid [size]="{ xs: 12, md: 6 }">
+      <ui-form-field label="Truck" for="truck-select" [required]="true">
+        <p-select
+          id="truck-select"
+          formControlName="truckId"
+          [options]="trucks()"
+          optionLabel="number"
+          optionValue="id"
+          placeholder="Select a truck"
+          [fluid]="true"
+        />
+      </ui-form-field>
+    </ui-grid>
+
+    <ui-grid [size]="{ xs: 12, md: 6 }">
+      <ui-form-field label="Expense Date" for="truck-date" [required]="true">
+        <p-datepicker
+          id="truck-date"
+          formControlName="expenseDate"
+          [showIcon]="true"
+          [fluid]="true"
+        />
+      </ui-form-field>
+    </ui-grid>
+
+    <ui-grid [size]="{ xs: 12, md: 6 }">
+      <ui-form-field label="Vendor Name" for="truck-vendor">
+        <input pInputText id="truck-vendor" formControlName="vendorName" class="w-full" />
+      </ui-form-field>
+    </ui-grid>
+
+    <ui-grid [size]="{ xs: 12, md: 6 }">
+      <ui-form-field label="Odometer Reading" for="truck-odometer">
+        <p-inputNumber
+          id="truck-odometer"
+          formControlName="odometerReading"
+          [min]="0"
+          suffix=" mi"
+          [fluid]="true"
+        />
+      </ui-form-field>
+    </ui-grid>
+
+    @if (form.controls.category.value === "fuel") {
+      <ui-grid [size]="{ xs: 12, md: 6 }">
+        <ui-form-field label="Quantity" for="truck-quantity">
+          <p-inputNumber
+            id="truck-quantity"
+            formControlName="quantity"
+            [min]="0"
+            [minFractionDigits]="0"
+            [maxFractionDigits]="2"
+            [fluid]="true"
+          />
+        </ui-form-field>
+      </ui-grid>
+
+      <ui-grid [size]="{ xs: 12, md: 6 }">
+        <ui-form-field label="Quantity Unit" for="truck-quantity-unit">
+          <p-select
+            id="truck-quantity-unit"
+            formControlName="quantityUnit"
+            [options]="volumeUnits"
+            optionLabel="label"
+            optionValue="value"
+            [fluid]="true"
+          />
+        </ui-form-field>
+      </ui-grid>
+    }
+  </ui-grid>
+
+  <ui-form-field label="Notes" for="truck-notes">
+    <textarea
+      pInputTextarea
+      id="truck-notes"
+      formControlName="notes"
+      rows="3"
+      class="w-full"
+    ></textarea>
+  </ui-form-field>
+
+  <app-expense-receipt-upload
+    [initialPath]="receiptPath()"
+    (uploaded)="onReceiptUploaded($event)"
+  />
+
+  <ui-stack direction="row" justify="end" gap="2" class="pt-4">
+    <p-button
+      label="Cancel"
+      [routerLink]="mode() === 'edit' ? ['/expenses', initial()?.id] : ['/expenses']"
+      [outlined]="true"
+    />
+    <p-button
+      type="submit"
+      [label]="mode() === 'edit' ? 'Save Changes' : 'Create Expense'"
+      icon="pi pi-save"
+      [loading]="isSaving()"
+    />
+  </ui-stack>
+</form>

@@ -1,0 +1,15 @@
+<ui-form-field label="Receipt (Optional)">
+  <p-fileUpload
+    mode="basic"
+    [auto]="true"
+    accept="image/*,.pdf"
+    [chooseLabel]="chooseLabel()"
+    (onSelect)="onSelect($event)"
+  />
+  @if (hasReceipt()) {
+    <ui-stack direction="row" align="center" gap="1" class="text-success mt-2 text-sm">
+      <ui-icon name="check" size="sm" />
+      <span>Receipt attached</span>
+    </ui-stack>
+  }
+</ui-form-field>

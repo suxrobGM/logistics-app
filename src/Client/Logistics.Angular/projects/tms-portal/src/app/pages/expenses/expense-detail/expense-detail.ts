@@ -1,22 +1,23 @@
-import { CommonModule } from "@angular/common";
 import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { CurrencyFormatPipe, LocalizationService } from "@logistics/shared";
 import {
   Api,
   downloadExpenseReceipt,
   getExpenseById,
   type ExpenseDto,
-  type VolumeUnit,
 } from "@logistics/shared/api";
+import { Container, Grid, Typography } from "@logistics/shared/components";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { PageHeader } from "@/shared/components";
-import { ExpenseStatusTag, ExpenseTypeTag } from "@/shared/components/tags";
-import { RejectExpenseDialog } from "../_components";
+import {
+  ExpenseDetailAuditCard,
+  ExpenseDetailExtraCard,
+  ExpenseDetailInfoCard,
+  RejectExpenseDialog,
+} from "../_components";
 import { ExpenseActionsService } from "../services/expense-actions.service";
 
 @Component({
@@ -24,24 +25,24 @@ import { ExpenseActionsService } from "../services/expense-actions.service";
   templateUrl: "./expense-detail.html",
   providers: [ExpenseActionsService],
   imports: [
-    CommonModule,
+    RouterModule,
     CardModule,
     ButtonModule,
     ProgressSpinnerModule,
-    RouterModule,
-    DividerModule,
     PageHeader,
-    ExpenseStatusTag,
-    ExpenseTypeTag,
+    Grid,
+    Typography,
+    ExpenseDetailInfoCard,
+    ExpenseDetailExtraCard,
+    ExpenseDetailAuditCard,
     RejectExpenseDialog,
-    CurrencyFormatPipe,
+    Container,
   ],
 })
 export class ExpenseDetailPage implements OnInit {
   private readonly api = inject(Api);
   private readonly router = inject(Router);
   private readonly expenseActions = inject(ExpenseActionsService);
-  private readonly localization = inject(LocalizationService);
 
   protected readonly id = input.required<string>();
   protected readonly isLoading = signal(false);
@@ -49,25 +50,6 @@ export class ExpenseDetailPage implements OnInit {
 
   ngOnInit(): void {
     this.fetchExpense();
-  }
-
-  getCategoryLabel(): string {
-    const e = this.expense();
-    if (!e) return "N/A";
-    return e.companyCategory ?? e.truckCategory ?? "N/A";
-  }
-
-  formatQuantity(): string {
-    const e = this.expense();
-    if (!e || e.quantity == null) return "";
-    const sourceUnit = this.toShortUnit(e.quantityUnit);
-    return this.localization.formatVolume(e.quantity, sourceUnit);
-  }
-
-  private toShortUnit(unit: VolumeUnit | undefined): "gal" | "L" | undefined {
-    if (unit === "liters") return "L";
-    if (unit === "gallons") return "gal";
-    return undefined;
   }
 
   canApproveOrReject(): boolean {
@@ -79,9 +61,7 @@ export class ExpenseDetailPage implements OnInit {
     if (!e?.id) return;
 
     this.expenseActions.approve(e.id, e.number!, (result) => {
-      if (result.success) {
-        this.fetchExpense();
-      }
+      if (result.success) this.fetchExpense();
     });
   }
 
@@ -90,9 +70,7 @@ export class ExpenseDetailPage implements OnInit {
     if (!e?.id) return;
 
     this.expenseActions.reject(e.id, e.number!, (result) => {
-      if (result.success) {
-        this.fetchExpense();
-      }
+      if (result.success) this.fetchExpense();
     });
   }
 
@@ -112,15 +90,11 @@ export class ExpenseDetailPage implements OnInit {
   }
 
   private async fetchExpense(): Promise<void> {
-    if (!this.id()) {
-      return;
-    }
+    if (!this.id()) return;
 
     this.isLoading.set(true);
     const result = await this.api.invoke(getExpenseById, { id: this.id() });
-    if (result) {
-      this.expense.set(result);
-    }
+    if (result) this.expense.set(result);
     this.isLoading.set(false);
   }
 }

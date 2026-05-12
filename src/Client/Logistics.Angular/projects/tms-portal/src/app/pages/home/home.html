@@ -1,41 +1,34 @@
 <div class="animate-fadein">
-  <ui-page-header
-    [title]="greeting()"
-    [subtitle]="currentDate | dateFormat: 'EEEE, MMMM d, yyyy'"
-  >
-    <ui-stack direction="row" align="center" gap="3">
-      <ui-stack direction="row" align="center" gap="2">
-        <ui-typography variant="body-sm" color="muted" class="whitespace-nowrap">
-          Updated {{ lastUpdated() | dateFormat: "shortTime" }}
-        </ui-typography>
-        <p-button
-          icon="pi pi-refresh"
-          [rounded]="true"
-          [text]="true"
-          severity="secondary"
-          (click)="refreshData()"
-          pTooltip="Refresh data"
-          tooltipPosition="bottom"
-        />
-      </ui-stack>
-      <p-button
-        icon="pi pi-th-large"
-        [rounded]="true"
-        [text]="true"
-        severity="secondary"
-        (click)="resetLayout()"
-        pTooltip="Reset Layout"
-        tooltipPosition="bottom"
-      />
-      <p-button
-        label="Quick Actions"
-        icon="pi pi-plus"
-        styleClass="whitespace-nowrap"
-        [outlined]="true"
-        (click)="menu.toggle($event)"
-      />
-      <p-menu #menu [model]="quickActions" [popup]="true" />
-    </ui-stack>
+  <ui-page-header [title]="greeting()" [subtitle]="currentDate | dateFormat: 'EEEE, MMMM d, yyyy'">
+    <ui-typography variant="body-sm" color="muted" class="whitespace-nowrap">
+      Updated {{ lastUpdated() | dateFormat: "shortTime" }}
+    </ui-typography>
+    <p-button
+      icon="pi pi-refresh"
+      [rounded]="true"
+      [text]="true"
+      severity="secondary"
+      (click)="refreshData()"
+      pTooltip="Refresh data"
+      tooltipPosition="bottom"
+    />
+    <p-button
+      icon="pi pi-th-large"
+      [rounded]="true"
+      [text]="true"
+      severity="secondary"
+      (click)="resetLayout()"
+      pTooltip="Reset Layout"
+      tooltipPosition="bottom"
+    />
+    <p-button
+      label="Quick Actions"
+      icon="pi pi-plus"
+      styleClass="whitespace-nowrap"
+      [outlined]="true"
+      (click)="menu.toggle($event)"
+    />
+    <p-menu #menu [model]="quickActions" [popup]="true" />
   </ui-page-header>
 
   <!-- Skeleton during initial load (mirrors panel grid coordinates) -->

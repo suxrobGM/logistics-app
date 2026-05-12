@@ -1,12 +1,11 @@
-<ui-stack direction="row" align="start" justify="between">
-  <ui-page-header title="Expenses" addRoute="/expenses/add" addTooltip="Add a new expense" />
+<ui-page-header title="Expenses" addRoute="/expenses/add" addTooltip="Add a new expense">
   <p-button
     icon="pi pi-chart-bar"
     label="Analytics"
     [routerLink]="['/expenses/analytics']"
     [outlined]="true"
   />
-</ui-stack>
+</ui-page-header>
 
 <p-card>
   <div class="mb-4">

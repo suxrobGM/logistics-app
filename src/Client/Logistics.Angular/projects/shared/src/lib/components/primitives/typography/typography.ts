@@ -89,7 +89,7 @@ const alignClasses: Record<TypographyAlign, string> = {
   selector: "ui-typography",
   templateUrl: "./typography.html",
   imports: [NgTemplateOutlet],
-  host: { class: "block" },
+  host: { class: "inline" },
 })
 export class Typography {
   public readonly variant = input<TypographyVariant>("body");

@@ -1,0 +1,36 @@
+<p-card>
+  <ng-template #header>
+    <div class="p-4 pb-0">
+      <ui-typography variant="h4">Audit Information</ui-typography>
+    </div>
+  </ng-template>
+
+  <ui-grid container spacing="4">
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+      <ui-typography variant="caption" color="muted" tag="div">Created By</ui-typography>
+      <ui-typography weight="medium">{{ expense().createdByName || "N/A" }}</ui-typography>
+    </ui-grid>
+    <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+      <ui-typography variant="caption" color="muted" tag="div">Created At</ui-typography>
+      <ui-typography>{{ expense().createdAt | date: "medium" }}</ui-typography>
+    </ui-grid>
+    @if (expense().approvedByName) {
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+        <ui-typography variant="caption" color="muted" tag="div">Approved By</ui-typography>
+        <ui-typography weight="medium">{{ expense().approvedByName }}</ui-typography>
+      </ui-grid>
+      <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+        <ui-typography variant="caption" color="muted" tag="div">Approved At</ui-typography>
+        <ui-typography>{{ expense().approvedAt | date: "medium" }}</ui-typography>
+      </ui-grid>
+    }
+    @if (expense().rejectionReason) {
+      <ui-grid [size]="12">
+        <ui-typography variant="caption" color="muted" tag="div">Rejection Reason</ui-typography>
+        <ui-typography>
+          <span class="text-danger">{{ expense().rejectionReason }}</span>
+        </ui-typography>
+      </ui-grid>
+    }
+  </ui-grid>
+</p-card>

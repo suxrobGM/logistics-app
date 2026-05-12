@@ -1,250 +1,28 @@
-<p-toast />
-
 <ui-container maxWidth="md">
-  <ui-stack direction="row" align="start" justify="between">
-    <ui-page-header [title]="'Edit ' + getTypeLabel(expense()?.type)" />
-    <p-button
-      icon="pi pi-arrow-left"
-      label="Back"
-      [routerLink]="['/expenses', id()]"
-      [outlined]="true"
-    />
-  </ui-stack>
+  <ui-page-header [title]="headerTitle()" [backLink]="'/expenses/' + id()" />
 
   @if (isLoading()) {
     <ui-stack align="center" justify="center" class="py-16">
       <p-progress-spinner />
     </ui-stack>
-  } @else if (expense()) {
+  } @else if (expense(); as e) {
     <p-card>
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
-        <!-- Common Fields -->
-        <ui-grid container spacing="4">
-          <ui-grid [size]="{ xs: 12, md: 6 }">
-            <ui-form-field label="Amount" for="amount" [required]="true">
-              <p-inputNumber
-                id="amount"
-                formControlName="amount"
-                mode="currency"
-                [currency]="expense()?.amount?.currency || 'USD'"
-                [min]="0"
-                [fluid]="true"
-              />
-            </ui-form-field>
-          </ui-grid>
-
-          <ui-grid [size]="{ xs: 12, md: 6 }">
-            <ui-form-field label="Expense Date" for="expenseDate" [required]="true">
-              <p-datepicker
-                id="expenseDate"
-                formControlName="expenseDate"
-                [showIcon]="true"
-                [fluid]="true"
-              />
-            </ui-form-field>
-          </ui-grid>
-
-          <ui-grid [size]="{ xs: 12, md: 6 }">
-            <ui-form-field label="Vendor Name" for="vendorName">
-              <input pInputText id="vendorName" formControlName="vendorName" class="w-full" />
-            </ui-form-field>
-          </ui-grid>
-
-          <!-- Company Category -->
-          @if (expense()?.type === "company") {
-            <ui-grid [size]="{ xs: 12, md: 6 }">
-              <ui-form-field label="Category" for="companyCategory" [required]="true">
-                <p-select
-                  id="companyCategory"
-                  formControlName="companyCategory"
-                  [options]="companyCategories"
-                  optionLabel="label"
-                  optionValue="value"
-                  [fluid]="true"
-                />
-              </ui-form-field>
-            </ui-grid>
-          }
-
-          <!-- Truck Category -->
-          @if (expense()?.type === "truck") {
-            <ui-grid [size]="{ xs: 12, md: 6 }">
-              <ui-form-field label="Category" for="truckCategory" [required]="true">
-                <p-select
-                  id="truckCategory"
-                  formControlName="truckCategory"
-                  [options]="truckCategories"
-                  optionLabel="label"
-                  optionValue="value"
-                  [fluid]="true"
-                />
-              </ui-form-field>
-            </ui-grid>
-          }
-        </ui-grid>
-
-        <!-- Truck-specific Fields -->
-        @if (expense()?.type === "truck") {
-          <ui-grid container spacing="4">
-            <ui-grid [size]="{ xs: 12, md: 6 }">
-              <ui-form-field label="Truck" for="truckId">
-                <p-select
-                  id="truckId"
-                  formControlName="truckId"
-                  [options]="trucks()"
-                  optionLabel="number"
-                  optionValue="id"
-                  placeholder="Select a truck"
-                  [fluid]="true"
-                  [disabled]="true"
-                />
-              </ui-form-field>
-            </ui-grid>
-
-            <ui-grid [size]="{ xs: 12, md: 6 }">
-              <ui-form-field label="Odometer Reading" for="odometerReading">
-                <p-inputNumber
-                  id="odometerReading"
-                  formControlName="odometerReading"
-                  [min]="0"
-                  suffix=" mi"
-                  [fluid]="true"
-                />
-              </ui-form-field>
-            </ui-grid>
-
-            @if (form.get("truckCategory")?.value === "fuel") {
-              <ui-grid [size]="{ xs: 12, md: 6 }">
-                <ui-form-field label="Quantity" for="quantity">
-                  <p-inputNumber
-                    id="quantity"
-                    formControlName="quantity"
-                    [min]="0"
-                    [minFractionDigits]="0"
-                    [maxFractionDigits]="2"
-                    [fluid]="true"
-                  />
-                </ui-form-field>
-              </ui-grid>
-
-              <ui-grid [size]="{ xs: 12, md: 6 }">
-                <ui-form-field label="Quantity Unit" for="quantityUnit">
-                  <p-select
-                    id="quantityUnit"
-                    formControlName="quantityUnit"
-                    [options]="volumeUnitOptions"
-                    optionLabel="label"
-                    optionValue="value"
-                    [fluid]="true"
-                  />
-                </ui-form-field>
-              </ui-grid>
-            }
-          </ui-grid>
+      @switch (e.type) {
+        @case ("company") {
+          <app-company-expense-form mode="edit" [initial]="e" />
         }
-
-        <!-- Body Shop-specific Fields -->
-        @if (expense()?.type === "body_shop") {
-          <ui-grid container spacing="4">
-            <ui-grid [size]="{ xs: 12, md: 6 }">
-              <ui-form-field label="Truck" for="truckId">
-                <p-select
-                  id="truckId"
-                  formControlName="truckId"
-                  [options]="trucks()"
-                  optionLabel="number"
-                  optionValue="id"
-                  placeholder="Select a truck"
-                  [fluid]="true"
-                  [disabled]="true"
-                />
-              </ui-form-field>
-            </ui-grid>
-
-            <ui-grid [size]="{ xs: 12, md: 6 }">
-              <ui-form-field label="Shop Phone" for="vendorPhone">
-                <input pInputText id="vendorPhone" formControlName="vendorPhone" class="w-full" />
-              </ui-form-field>
-            </ui-grid>
-          </ui-grid>
-
-          <ui-form-field label="Shop Address" for="vendorAddress">
-            <input pInputText id="vendorAddress" formControlName="vendorAddress" class="w-full" />
-          </ui-form-field>
-
-          <ui-form-field label="Repair Description" for="repairDescription">
-            <textarea
-              pInputTextarea
-              id="repairDescription"
-              formControlName="repairDescription"
-              rows="3"
-              class="w-full"
-            ></textarea>
-          </ui-form-field>
-
-          <ui-grid container spacing="4">
-            <ui-grid [size]="{ xs: 12, md: 6 }">
-              <ui-form-field label="Estimated Completion" for="estimatedCompletionDate">
-                <p-datepicker
-                  id="estimatedCompletionDate"
-                  formControlName="estimatedCompletionDate"
-                  [showIcon]="true"
-                  [fluid]="true"
-                />
-              </ui-form-field>
-            </ui-grid>
-
-            <ui-grid [size]="{ xs: 12, md: 6 }">
-              <ui-form-field label="Actual Completion" for="actualCompletionDate">
-                <p-datepicker
-                  id="actualCompletionDate"
-                  formControlName="actualCompletionDate"
-                  [showIcon]="true"
-                  styleClass="w-full"
-                />
-              </ui-form-field>
-            </ui-grid>
-          </ui-grid>
+        @case ("truck") {
+          <app-truck-expense-form mode="edit" [initial]="e" />
         }
-
-        <ui-form-field label="Notes" for="notes">
-          <textarea
-            pInputTextarea
-            id="notes"
-            formControlName="notes"
-            rows="3"
-            class="w-full"
-          ></textarea>
-        </ui-form-field>
-
-        <ui-form-field label="Receipt (Optional)">
-          <p-fileUpload
-            mode="basic"
-            [auto]="true"
-            accept="image/*,.pdf"
-            chooseLabel="Upload New Receipt"
-            (onSelect)="onReceiptUpload($event)"
-          />
-          @if (receiptPath()) {
-            <ui-stack direction="row" align="center" gap="1" class="text-success mt-2 text-sm">
-              <ui-icon name="check" size="sm" />
-              <span>Receipt attached</span>
-            </ui-stack>
-          }
-        </ui-form-field>
-
-        <ui-stack direction="row" justify="end" gap="2" class="pt-4">
-          <p-button label="Cancel" [routerLink]="['/expenses', id()]" [outlined]="true" />
-          <p-button type="submit" label="Save Changes" icon="pi pi-save" [loading]="isSaving()" />
-        </ui-stack>
-      </form>
+        @case ("body_shop") {
+          <app-body-shop-expense-form mode="edit" [initial]="e" />
+        }
+      }
     </p-card>
   } @else {
     <p-card>
       <ui-stack align="center" gap="3" class="py-16">
-        <ui-icon name="exclamation-circle" size="xl" color="muted" />
         <ui-typography color="muted">Expense not found</ui-typography>
-        <p-button label="Back to Expenses" [routerLink]="['/expenses']" />
       </ui-stack>
     </p-card>
   }

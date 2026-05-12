@@ -1,0 +1,47 @@
+<ui-grid container spacing="4">
+  <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+    <p-card class="text-center">
+      <ui-typography color="muted">Total Expenses</ui-typography>
+      <ui-typography variant="stat" color="primary" tag="div">
+        {{ stats().totalAmount | currencyFormat }}
+      </ui-typography>
+      <ui-typography variant="caption" color="muted">
+        {{ stats().totalCount }} expenses
+      </ui-typography>
+    </p-card>
+  </ui-grid>
+
+  <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+    <p-card class="text-center">
+      <ui-typography color="muted">Pending</ui-typography>
+      <ui-typography variant="stat" tag="div">
+        <span class="text-warning">{{ stats().pendingAmount | currencyFormat }}</span>
+      </ui-typography>
+      <ui-typography variant="caption" color="muted">
+        {{ stats().pendingCount }} pending
+      </ui-typography>
+    </p-card>
+  </ui-grid>
+
+  <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+    <p-card class="text-center">
+      <ui-typography color="muted">Approved</ui-typography>
+      <ui-typography variant="stat" tag="div">
+        <span class="text-success">{{ stats().approvedAmount | currencyFormat }}</span>
+      </ui-typography>
+      <ui-typography variant="caption" color="muted">
+        {{ stats().approvedCount }} approved
+      </ui-typography>
+    </p-card>
+  </ui-grid>
+
+  <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
+    <p-card class="text-center">
+      <ui-typography color="muted">Paid</ui-typography>
+      <ui-typography variant="stat" tag="div">
+        <span class="text-info">{{ stats().paidAmount | currencyFormat }}</span>
+      </ui-typography>
+      <ui-typography variant="caption" color="muted">{{ stats().paidCount }} paid</ui-typography>
+    </p-card>
+  </ui-grid>
+</ui-grid>

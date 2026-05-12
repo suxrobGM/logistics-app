@@ -1,0 +1,89 @@
+<p-card>
+  <ng-template #header>
+    <div class="p-4 pb-0">
+      <ui-typography variant="h4">Additional Details</ui-typography>
+    </div>
+  </ng-template>
+
+  <div class="space-y-4">
+    @if (expense().truck) {
+      <app-expense-detail-row label="Truck">
+        <a
+          [routerLink]="['/trucks', expense().truckId, 'edit']"
+          class="text-primary font-medium hover:underline"
+        >
+          {{ expense().truck?.number }}
+        </a>
+      </app-expense-detail-row>
+    }
+
+    @if (expense().odometerReading) {
+      <app-expense-detail-row label="Odometer">
+        <span>{{ expense().odometerReading | number }} mi</span>
+      </app-expense-detail-row>
+    }
+
+    @if (expense().quantity !== null) {
+      <app-expense-detail-row label="Quantity">
+        <span>{{ formatQuantity() }}</span>
+      </app-expense-detail-row>
+    }
+
+    @if (expense().type === "body_shop") {
+      @if (expense().vendorAddress) {
+        <app-expense-detail-row label="Shop Address">
+          <span class="text-right">{{ expense().vendorAddress }}</span>
+        </app-expense-detail-row>
+      }
+
+      @if (expense().vendorPhone) {
+        <app-expense-detail-row label="Shop Phone">
+          <span>{{ expense().vendorPhone }}</span>
+        </app-expense-detail-row>
+      }
+
+      @if (expense().repairDescription) {
+        <app-expense-detail-row label="Repair Description" [stacked]="true">
+          {{ expense().repairDescription }}
+        </app-expense-detail-row>
+      }
+
+      @if (expense().estimatedCompletionDate) {
+        <app-expense-detail-row label="Est. Completion">
+          <span>{{ expense().estimatedCompletionDate | date: "mediumDate" }}</span>
+        </app-expense-detail-row>
+      }
+
+      @if (expense().actualCompletionDate) {
+        <app-expense-detail-row label="Actual Completion">
+          <span>{{ expense().actualCompletionDate | date: "mediumDate" }}</span>
+        </app-expense-detail-row>
+      }
+    }
+
+    @if (expense().notes) {
+      <p-divider />
+      <app-expense-detail-row label="Notes" [stacked]="true">
+        {{ expense().notes }}
+      </app-expense-detail-row>
+    }
+
+    <p-divider />
+
+    @if (expense().receiptBlobPath) {
+      <app-expense-detail-row label="Receipt">
+        <p-button
+          icon="pi pi-file"
+          label="View Receipt"
+          [outlined]="true"
+          size="small"
+          (click)="viewReceipt.emit()"
+        />
+      </app-expense-detail-row>
+    } @else {
+      <app-expense-detail-row label="Receipt">
+        <span class="text-muted">No receipt attached</span>
+      </app-expense-detail-row>
+    }
+  </div>
+</p-card>

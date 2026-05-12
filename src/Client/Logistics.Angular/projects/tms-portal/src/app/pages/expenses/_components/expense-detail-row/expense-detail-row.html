@@ -1,0 +1,13 @@
+@if (stacked()) {
+  <div>
+    <span class="text-muted block">{{ label() }}</span>
+    <span class="mt-1 block">
+      <ng-content />
+    </span>
+  </div>
+} @else {
+  <div class="flex items-center justify-between">
+    <span class="text-muted">{{ label() }}</span>
+    <ng-content />
+  </div>
+}

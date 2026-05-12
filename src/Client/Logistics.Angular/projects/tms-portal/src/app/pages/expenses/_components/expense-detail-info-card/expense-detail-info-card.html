@@ -1,0 +1,45 @@
+<p-card>
+  <ng-template #header>
+    <div class="p-4 pb-0">
+      <ui-typography variant="h4">Expense Information</ui-typography>
+    </div>
+  </ng-template>
+
+  <div class="space-y-4">
+    <app-expense-detail-row label="Expense #">
+      <span class="font-mono font-semibold">{{ expense().number }}</span>
+    </app-expense-detail-row>
+
+    <p-divider />
+
+    <app-expense-detail-row label="Type">
+      <app-expense-type-tag [type]="expense().type" />
+    </app-expense-detail-row>
+
+    <app-expense-detail-row label="Status">
+      <app-expense-status-tag [status]="expense().status" />
+    </app-expense-detail-row>
+
+    <app-expense-detail-row label="Category">
+      <span class="font-medium">{{ categoryLabel() }}</span>
+    </app-expense-detail-row>
+
+    <p-divider />
+
+    <app-expense-detail-row label="Amount">
+      <span class="text-success text-xl font-bold">
+        {{ expense().amount?.amount ?? 0 | currencyFormat: expense().amount?.currency ?? "USD" }}
+      </span>
+    </app-expense-detail-row>
+
+    <app-expense-detail-row label="Expense Date">
+      <span>{{ expense().expenseDate | date: "mediumDate" }}</span>
+    </app-expense-detail-row>
+
+    @if (expense().vendorName) {
+      <app-expense-detail-row label="Vendor">
+        <span>{{ expense().vendorName }}</span>
+      </app-expense-detail-row>
+    }
+  </div>
+</p-card>

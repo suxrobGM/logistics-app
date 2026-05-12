@@ -1,238 +1,43 @@
-<div class="mx-auto max-w-4xl">
-  <div class="mb-6 flex items-start justify-between">
-    <ui-page-header title="Expense Details" />
-    <div class="flex gap-2">
-      @if (canApproveOrReject()) {
-        <p-button icon="pi pi-check" label="Approve" severity="success" (click)="onApprove()" />
-        <p-button
-          icon="pi pi-times"
-          label="Reject"
-          severity="danger"
-          [outlined]="true"
-          (click)="onReject()"
-        />
-      }
-      <p-button icon="pi pi-pencil" label="Edit" [outlined]="true" (click)="onEdit()" />
+<ui-container maxWidth="md">
+  <ui-page-header title="Expense Details" backLink="/expenses">
+    @if (canApproveOrReject()) {
+      <p-button icon="pi pi-check" label="Approve" severity="success" (click)="onApprove()" />
       <p-button
-        icon="pi pi-arrow-left"
-        label="Back"
-        [routerLink]="['/expenses']"
+        icon="pi pi-times"
+        label="Reject"
+        severity="danger"
         [outlined]="true"
+        (click)="onReject()"
       />
-    </div>
-  </div>
+    }
+    <p-button icon="pi pi-pencil" label="Edit" [outlined]="true" (click)="onEdit()" />
+  </ui-page-header>
 
   @if (isLoading()) {
     <div class="flex justify-center py-16">
       <p-progress-spinner />
     </div>
-  } @else if (expense()) {
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-      <!-- Main Info Card -->
-      <p-card>
-        <ng-template #header>
-          <div class="p-4 pb-0">
-            <h3 class="m-0 text-lg font-semibold">Expense Information</h3>
-          </div>
-        </ng-template>
-
-        <div class="space-y-4">
-          <div class="flex items-center justify-between">
-            <span class="text-muted">Expense #</span>
-            <span class="font-mono font-semibold">{{ expense()!.number }}</span>
-          </div>
-
-          <p-divider />
-
-          <div class="flex items-center justify-between">
-            <span class="text-muted">Type</span>
-            <app-expense-type-tag [type]="expense()!.type" />
-          </div>
-
-          <div class="flex items-center justify-between">
-            <span class="text-muted">Status</span>
-            <app-expense-status-tag [status]="expense()!.status" />
-          </div>
-
-          <div class="flex items-center justify-between">
-            <span class="text-muted">Category</span>
-            <span class="font-medium">{{ getCategoryLabel() }}</span>
-          </div>
-
-          <p-divider />
-
-          <div class="flex items-center justify-between">
-            <span class="text-muted">Amount</span>
-            <span class="text-success text-xl font-bold">
-              {{
-                expense()!.amount?.amount ?? 0
-                  | currencyFormat: expense()!.amount?.currency ?? "USD"
-              }}
-            </span>
-          </div>
-
-          <div class="flex items-center justify-between">
-            <span class="text-muted">Expense Date</span>
-            <span>{{ expense()!.expenseDate | date: "mediumDate" }}</span>
-          </div>
-
-          @if (expense()!.vendorName) {
-            <div class="flex items-center justify-between">
-              <span class="text-muted">Vendor</span>
-              <span>{{ expense()!.vendorName }}</span>
-            </div>
-          }
-        </div>
-      </p-card>
-
-      <!-- Additional Details Card -->
-      <p-card>
-        <ng-template #header>
-          <div class="p-4 pb-0">
-            <h3 class="m-0 text-lg font-semibold">Additional Details</h3>
-          </div>
-        </ng-template>
-
-        <div class="space-y-4">
-          @if (expense()!.truck) {
-            <div class="flex items-center justify-between">
-              <span class="text-muted">Truck</span>
-              <a
-                [routerLink]="['/trucks', expense()!.truckId, 'edit']"
-                class="text-primary font-medium hover:underline"
-              >
-                {{ expense()!.truck?.number }}
-              </a>
-            </div>
-          }
-
-          @if (expense()!.odometerReading) {
-            <div class="flex items-center justify-between">
-              <span class="text-muted">Odometer</span>
-              <span>{{ expense()!.odometerReading | number }} mi</span>
-            </div>
-          }
-
-          @if (expense()!.quantity !== null) {
-            <div class="flex items-center justify-between">
-              <span class="text-muted">Quantity</span>
-              <span>{{ formatQuantity() }}</span>
-            </div>
-          }
-
-          @if (expense()!.type === "body_shop") {
-            @if (expense()!.vendorAddress) {
-              <div class="flex items-center justify-between">
-                <span class="text-muted">Shop Address</span>
-                <span class="text-right">{{ expense()!.vendorAddress }}</span>
-              </div>
-            }
-
-            @if (expense()!.vendorPhone) {
-              <div class="flex items-center justify-between">
-                <span class="text-muted">Shop Phone</span>
-                <span>{{ expense()!.vendorPhone }}</span>
-              </div>
-            }
-
-            @if (expense()!.repairDescription) {
-              <div>
-                <span class="text-muted block">Repair Description</span>
-                <span class="mt-1 block">{{ expense()!.repairDescription }}</span>
-              </div>
-            }
-
-            @if (expense()!.estimatedCompletionDate) {
-              <div class="flex items-center justify-between">
-                <span class="text-muted">Est. Completion</span>
-                <span>{{ expense()!.estimatedCompletionDate | date: "mediumDate" }}</span>
-              </div>
-            }
-
-            @if (expense()!.actualCompletionDate) {
-              <div class="flex items-center justify-between">
-                <span class="text-muted">Actual Completion</span>
-                <span>{{ expense()!.actualCompletionDate | date: "mediumDate" }}</span>
-              </div>
-            }
-          }
-
-          @if (expense()!.notes) {
-            <p-divider />
-            <div>
-              <span class="text-muted block">Notes</span>
-              <span class="mt-1 block">{{ expense()!.notes }}</span>
-            </div>
-          }
-
-          <p-divider />
-
-          @if (expense()!.receiptBlobPath) {
-            <div class="flex items-center justify-between">
-              <span class="text-muted">Receipt</span>
-              <p-button
-                icon="pi pi-file"
-                label="View Receipt"
-                [outlined]="true"
-                size="small"
-                (click)="viewReceipt()"
-              />
-            </div>
-          } @else {
-            <div class="flex items-center justify-between">
-              <span class="text-muted">Receipt</span>
-              <span class="text-muted">No receipt attached</span>
-            </div>
-          }
-        </div>
-      </p-card>
-    </div>
-
-    <!-- Audit Info Card -->
-    <p-card class="mt-6">
-      <ng-template #header>
-        <div class="p-4 pb-0">
-          <h3 class="m-0 text-lg font-semibold">Audit Information</h3>
-        </div>
-      </ng-template>
-
-      <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div>
-          <span class="text-muted block text-sm">Created By</span>
-          <span class="font-medium">{{ expense()!.createdByName || "N/A" }}</span>
-        </div>
-        <div>
-          <span class="text-muted block text-sm">Created At</span>
-          <span>{{ expense()!.createdAt | date: "medium" }}</span>
-        </div>
-        @if (expense()!.approvedByName) {
-          <div>
-            <span class="text-muted block text-sm">Approved By</span>
-            <span class="font-medium">{{ expense()!.approvedByName }}</span>
-          </div>
-          <div>
-            <span class="text-muted block text-sm">Approved At</span>
-            <span>{{ expense()!.approvedAt | date: "medium" }}</span>
-          </div>
-        }
-        @if (expense()!.rejectionReason) {
-          <div class="col-span-full">
-            <span class="text-muted block text-sm">Rejection Reason</span>
-            <span class="text-danger">{{ expense()!.rejectionReason }}</span>
-          </div>
-        }
-      </div>
-    </p-card>
+  } @else if (expense(); as e) {
+    <ui-grid container spacing="6">
+      <ui-grid [size]="{ xs: 12, lg: 6 }">
+        <app-expense-detail-info-card [expense]="e" />
+      </ui-grid>
+      <ui-grid [size]="{ xs: 12, lg: 6 }">
+        <app-expense-detail-extra-card [expense]="e" (viewReceipt)="viewReceipt()" />
+      </ui-grid>
+      <ui-grid [size]="12">
+        <app-expense-detail-audit-card [expense]="e" />
+      </ui-grid>
+    </ui-grid>
   } @else {
     <p-card>
       <div class="py-16 text-center">
         <i class="pi pi-exclamation-circle text-muted mb-4 text-4xl"></i>
-        <p class="text-muted">Expense not found</p>
+        <ui-typography color="muted">Expense not found</ui-typography>
         <p-button label="Back to Expenses" [routerLink]="['/expenses']" class="mt-4" />
       </div>
     </p-card>
   }
-</div>
+</ui-container>
 
-<!-- Reject dialog -->
 <app-reject-expense-dialog />
