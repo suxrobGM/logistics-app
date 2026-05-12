@@ -1,0 +1,74 @@
+<p-table [value]="providers()">
+  <ng-template #header>
+    <tr>
+      <th>Provider</th>
+      <th>Status</th>
+      <th>Mapped Drivers</th>
+      <th>Mapped Vehicles</th>
+      <th>Last Synced</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+  <ng-template #body let-provider>
+    <tr>
+      <td>
+        <ui-stack direction="row" align="center" gap="3">
+          <div class="bg-subtle flex h-10 w-10 items-center justify-center rounded-full">
+            <ui-icon name="link" color="info" />
+          </div>
+          <div>
+            <div class="font-medium">{{ getProviderLabel(provider.providerType) }}</div>
+            <small class="text-muted">
+              {{ provider.providerName || provider.providerType }}
+            </small>
+          </div>
+        </ui-stack>
+      </td>
+      <td>
+        @if (provider.isConnected) {
+          <p-tag value="Connected" severity="success" />
+        } @else {
+          <p-tag value="Disconnected" severity="danger" />
+        }
+      </td>
+      <td>
+        <span class="bg-subtle rounded px-2 py-1 text-sm">
+          {{ provider.mappedDriversCount || 0 }}
+        </span>
+      </td>
+      <td>
+        <span class="bg-subtle rounded px-2 py-1 text-sm">
+          {{ provider.mappedVehiclesCount || 0 }}
+        </span>
+      </td>
+      <td>
+        @if (provider.lastSyncedAt) {
+          <span class="text-muted text-sm">{{ provider.lastSyncedAt | date: "short" }}</span>
+        } @else {
+          <span class="text-muted text-sm">Never</span>
+        }
+      </td>
+      <td>
+        <div class="flex gap-1">
+          <p-button
+            icon="pi pi-users"
+            [rounded]="true"
+            [text]="true"
+            pTooltip="Manage Driver Mappings"
+            aria-label="Manage driver mappings"
+            (onClick)="manageMappings.emit(provider.id!)"
+          />
+          <p-button
+            icon="pi pi-trash"
+            [rounded]="true"
+            [text]="true"
+            severity="danger"
+            pTooltip="Delete Provider"
+            aria-label="Delete provider"
+            (onClick)="confirmDelete(provider)"
+          />
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

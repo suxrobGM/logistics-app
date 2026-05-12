@@ -7,9 +7,8 @@ import {
   syncAllDriversHos,
   type DriverHosStatusDto,
 } from "@logistics/shared/api";
-import { Grid } from "@logistics/shared/components";
+import { EmptyState, ErrorState, Grid, Stack } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
@@ -21,16 +20,18 @@ import { DashboardCard, PageHeader, StatCard } from "@/shared/components";
   templateUrl: "./eld-dashboard.html",
   imports: [
     ButtonModule,
-    TooltipModule,
-    CardModule,
+    DashboardCard,
+    DatePipe,
+    EmptyState,
+    ErrorState,
+    Grid,
+    PageHeader,
+    ProgressSpinnerModule,
+    Stack,
+    StatCard,
     TableModule,
     TagModule,
-    DatePipe,
-    ProgressSpinnerModule,
-    PageHeader,
-    StatCard,
-    DashboardCard,
-    Grid,
+    TooltipModule,
   ],
 })
 export class EldDashboardComponent implements OnInit {

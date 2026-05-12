@@ -1,125 +1,78 @@
-<!-- Header -->
-<ui-stack direction="row" align="center" justify="between" class="mb-6">
-  <ui-stack direction="row" align="center" gap="4">
-    <p-button
-      icon="pi pi-arrow-left"
-      [rounded]="true"
-      [text]="true"
-      (onClick)="goBack()"
-      pTooltip="Back to Dashboard"
-    />
-    <div>
-      <ui-typography variant="h2" tag="h1" class="mb-1">
-        HOS Logs - {{ employeeName() }}
-      </ui-typography>
-      <ui-typography variant="body" color="muted" class="mb-0">
-        View driver duty status history
-      </ui-typography>
-    </div>
-  </ui-stack>
-</ui-stack>
+<ui-page-header
+  [title]="headerTitle()"
+  subtitle="View driver duty status history"
+  backLink="/eld"
+>
+  <p-button
+    label="Refresh"
+    icon="pi pi-refresh"
+    [outlined]="true"
+    [loading]="loading()"
+    (onClick)="loadData()"
+  />
+</ui-page-header>
 
 <!-- Date Range Filter -->
-<div class="mb-6">
-  <p-card class="border-0 shadow-sm">
-    <ui-stack direction="row" align="end" gap="4" wrap>
-      <ui-form-field label="Start Date" for="startDate">
-        <p-datepicker
-          id="startDate"
-          [(ngModel)]="startDate"
-          [showIcon]="true"
-          [maxDate]="endDate"
-          dateFormat="mm/dd/yy"
-          (onSelect)="onDateRangeChange()"
-        />
-      </ui-form-field>
-      <ui-form-field label="End Date" for="endDate">
-        <p-datepicker
-          id="endDate"
-          [(ngModel)]="endDate"
-          [showIcon]="true"
-          [minDate]="startDate"
-          [maxDate]="today"
-          dateFormat="mm/dd/yy"
-          (onSelect)="onDateRangeChange()"
-        />
-      </ui-form-field>
-    </ui-stack>
-    <p-button label="Refresh" icon="pi pi-refresh" (onClick)="loadData()" [loading]="loading()" />
-  </p-card>
-</div>
+<p-card class="mb-6 block">
+  <ui-stack direction="row" align="end" gap="4" wrap>
+    <ui-form-field label="Start Date" for="startDate">
+      <p-datepicker
+        id="startDate"
+        [(ngModel)]="startDate"
+        [showIcon]="true"
+        [maxDate]="endDate"
+        dateFormat="mm/dd/yy"
+        (onSelect)="onDateRangeChange()"
+      />
+    </ui-form-field>
+    <ui-form-field label="End Date" for="endDate">
+      <p-datepicker
+        id="endDate"
+        [(ngModel)]="endDate"
+        [showIcon]="true"
+        [minDate]="startDate"
+        [maxDate]="today"
+        dateFormat="mm/dd/yy"
+        (onSelect)="onDateRangeChange()"
+      />
+    </ui-form-field>
+  </ui-stack>
+</p-card>
 
 <!-- Summary Cards -->
 <ui-grid container spacing="4" class="mb-6">
   <ui-grid [size]="{ xs: 12, md: 6 }">
-    <p-card class="h-full border-0 shadow-sm">
-      <ui-stack direction="row" align="center">
-        <div
-          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-green-600/10"
-        >
-          <ui-icon name="car" class="text-green-600" />
-        </div>
-        <div class="ml-4">
-          <ui-typography variant="caption" color="muted" class="mb-1">
-            Total Driving Time
-          </ui-typography>
-          <ui-typography variant="h6" weight="bold" class="mb-0">
-            {{ formatMinutes(totalDrivingMinutes()) }}
-          </ui-typography>
-        </div>
-      </ui-stack>
-    </p-card>
+    <app-stat-card
+      icon="pi-car"
+      label="Total Driving Time"
+      [value]="totalDrivingDisplay()"
+      color="green"
+    />
   </ui-grid>
   <ui-grid [size]="{ xs: 12, md: 6 }">
-    <p-card class="h-full border-0 shadow-sm">
-      <ui-stack direction="row" align="center">
-        <div
-          class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-blue-600/10"
-        >
-          <ui-icon name="clock" class="text-blue-600" />
-        </div>
-        <div class="ml-4">
-          <ui-typography variant="caption" color="muted" class="mb-1">
-            Total On-Duty Time
-          </ui-typography>
-          <ui-typography variant="h6" weight="bold" class="mb-0">
-            {{ formatMinutes(totalOnDutyMinutes()) }}
-          </ui-typography>
-        </div>
-      </ui-stack>
-    </p-card>
+    <app-stat-card
+      icon="pi-clock"
+      label="Total On-Duty Time"
+      [value]="totalOnDutyDisplay()"
+      color="blue"
+    />
   </ui-grid>
 </ui-grid>
 
 <!-- Logs Table -->
-<p-card class="border-0 shadow-sm">
-  <ng-template #header>
-    <ui-stack direction="row" align="center" class="p-3">
-      <ui-icon name="history" class="mr-2 text-blue-600" />
-      <ui-typography variant="h6" tag="h5" class="mb-0">Duty Status Logs</ui-typography>
-    </ui-stack>
-  </ng-template>
-
+<ui-dashboard-card title="Duty Status Logs" icon="pi-history" iconColor="blue">
   @if (loading()) {
     <ui-stack align="center" justify="center" class="p-5">
       <p-progressSpinner />
     </ui-stack>
   } @else if (error()) {
-    <ui-stack align="center" gap="3" class="p-4">
-      <ui-icon name="exclamation-circle" size="xl" class="text-red-500" />
-      <p class="text-red-500">{{ error() }}</p>
-      <p-button label="Retry" icon="pi pi-refresh" (onClick)="loadData()" />
-    </ui-stack>
+    <ui-error-state [message]="error()!" (retry)="loadData()" />
   } @else if (logs().length === 0) {
-    <ui-stack align="center" gap="3" class="p-5">
-      <ui-icon name="inbox" size="xl" color="muted" />
-      <ui-typography variant="body" class="text-secondary">
-        No HOS logs found for the selected date range.
-      </ui-typography>
-      <ui-typography variant="caption" color="muted" class="mb-0">
-        Try adjusting the date filter above.
-      </ui-typography>
-    </ui-stack>
+    <ui-empty-state
+      title="No logs found"
+      message="Try adjusting the date filter above."
+      icon="inbox"
+    />
   } @else {
     <p-table
       [value]="logs()"
@@ -184,4 +137,4 @@
       </ng-template>
     </p-table>
   }
-</p-card>
+</ui-dashboard-card>

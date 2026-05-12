@@ -1,7 +1,6 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Router } from "@angular/router";
 import {
   Api,
   deleteEldDriverMapping,
@@ -15,39 +14,47 @@ import {
   type EldProviderType,
   type EmployeeDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import {
+  DashboardCard,
+  EmptyState,
+  ErrorState,
+  Grid,
+  Icon,
+  Stack,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { FormField } from "@/shared/components";
+import { FormField, PageHeader } from "@/shared/components";
+import { getEldProviderLabel } from "../_components";
 
 @Component({
   selector: "app-eld-driver-mappings",
   templateUrl: "./eld-driver-mappings.html",
   imports: [
     ButtonModule,
-    CardModule,
+    DashboardCard,
     DatePipe,
+    EmptyState,
+    ErrorState,
     FormsModule,
     FormField,
+    Grid,
+    Icon,
+    PageHeader,
     ProgressSpinnerModule,
     SelectModule,
+    Stack,
     TableModule,
     TagModule,
     TooltipModule,
-    Grid,
-    Icon,
-    Stack,
-    Typography,
   ],
 })
 export class EldDriverMappingsComponent implements OnInit {
-  private readonly router = inject(Router);
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
 
@@ -62,6 +69,14 @@ export class EldDriverMappingsComponent implements OnInit {
   protected readonly mappings = signal<EldDriverMappingDto[]>([]);
   protected readonly eldDrivers = signal<EldDriverDto[]>([]);
   protected readonly employees = signal<EmployeeDto[]>([]);
+
+  protected readonly headerSubtitle = computed(
+    () => `Map your TMS drivers to ${this.providerName()} ELD drivers`,
+  );
+
+  protected readonly mappingsCardTitle = computed(
+    () => `Current Mappings (${this.mappings().length})`,
+  );
 
   protected readonly unmappedEldDrivers = computed(() => {
     const mappedIds = new Set(this.mappings().map((m) => m.externalDriverId));
@@ -87,15 +102,13 @@ export class EldDriverMappingsComponent implements OnInit {
     this.error.set(null);
 
     try {
-      // Load provider info
       const providers = await this.api.invoke(getEldProviders);
       const provider = providers?.find((p) => p.id === providerId);
       if (provider) {
-        this.providerName.set(this.getProviderLabel(provider.providerType));
+        this.providerName.set(getEldProviderLabel(provider.providerType));
         this.providerType.set(provider.providerType ?? null);
       }
 
-      // Load data in parallel
       const [mappingsData, driversData, employeesData] = await Promise.all([
         this.api.invoke(getEldDriverMappings, { providerId }),
         this.api.invoke(getEldProviderDrivers, { providerId }),
@@ -160,21 +173,5 @@ export class EldDriverMappingsComponent implements OnInit {
     } finally {
       this.loading.set(false);
     }
-  }
-
-  protected goBack(): void {
-    this.router.navigate(["/eld/providers"]);
-  }
-
-  private getProviderLabel(type?: EldProviderType): string {
-    const labels: Record<string, string> = {
-      demo: "Demo (Testing)",
-      samsara: "Samsara",
-      motive: "Motive (KeepTruckin)",
-      geotab: "Geotab",
-      omnitracs: "Omnitracs",
-      people_net: "PeopleNet",
-    };
-    return type ? (labels[type] ?? type) : "Unknown";
   }
 }

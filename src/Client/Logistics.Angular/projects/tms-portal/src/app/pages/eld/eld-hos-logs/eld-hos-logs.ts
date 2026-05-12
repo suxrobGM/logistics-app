@@ -1,7 +1,6 @@
 import { DatePipe, DecimalPipe } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { Router } from "@angular/router";
 import {
   Api,
   getDriverHosLogs,
@@ -9,7 +8,7 @@ import {
   type DutyStatus,
   type HosLogDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { EmptyState, ErrorState, Grid, Stack } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
@@ -17,7 +16,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule, type TableLazyLoadEvent } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { FormField } from "@/shared/components";
+import { DashboardCard, FormField, PageHeader, StatCard } from "@/shared/components";
 
 @Component({
   selector: "app-eld-hos-logs",
@@ -25,23 +24,25 @@ import { FormField } from "@/shared/components";
   imports: [
     ButtonModule,
     CardModule,
+    DashboardCard,
     DatePicker,
     DatePipe,
     DecimalPipe,
+    EmptyState,
+    ErrorState,
     FormsModule,
     FormField,
+    Grid,
+    PageHeader,
     ProgressSpinnerModule,
+    Stack,
+    StatCard,
     TableModule,
     TagModule,
     TooltipModule,
-    Grid,
-    Icon,
-    Stack,
-    Typography,
   ],
 })
 export class EldHosLogsComponent implements OnInit {
-  private readonly router = inject(Router);
   private readonly api = inject(Api);
 
   readonly employeeId = input.required<string>();
@@ -54,10 +55,11 @@ export class EldHosLogsComponent implements OnInit {
   protected readonly pageSize = signal(25);
   protected readonly first = signal(0);
 
-  // Date range filter - default to last 7 days
   protected startDate: Date = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   protected endDate: Date = new Date();
   protected readonly today: Date = new Date();
+
+  protected readonly headerTitle = computed(() => `HOS Logs - ${this.employeeName()}`);
 
   protected readonly totalDrivingMinutes = computed(() =>
     this.logs()
@@ -71,6 +73,14 @@ export class EldHosLogsComponent implements OnInit {
       .reduce((sum, l) => sum + (l.durationMinutes ?? 0), 0),
   );
 
+  protected readonly totalDrivingDisplay = computed(() =>
+    this.formatMinutes(this.totalDrivingMinutes()),
+  );
+
+  protected readonly totalOnDutyDisplay = computed(() =>
+    this.formatMinutes(this.totalOnDutyMinutes()),
+  );
+
   ngOnInit(): void {
     this.loadData();
   }
@@ -82,7 +92,6 @@ export class EldHosLogsComponent implements OnInit {
     this.error.set(null);
 
     try {
-      // Load employee info and logs in parallel
       const [employee, logsResponse] = await Promise.all([
         this.api.invoke(getEmployeeById, { userId: employeeId }),
         this.api.invoke(getDriverHosLogs, {
@@ -137,13 +146,9 @@ export class EldHosLogsComponent implements OnInit {
     }
   }
 
-  protected formatMinutes(minutes: number): string {
+  private formatMinutes(minutes: number): string {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return `${hours}h ${mins}m`;
-  }
-
-  protected goBack(): void {
-    this.router.navigate(["/eld"]);
   }
 }

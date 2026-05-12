@@ -1,59 +1,26 @@
-<!-- Header -->
-<ui-stack direction="row" align="center" justify="between" class="mb-6">
-  <ui-stack direction="row" align="center" gap="4">
-    <p-button
-      icon="pi pi-arrow-left"
-      [rounded]="true"
-      [text]="true"
-      (onClick)="goBack()"
-      pTooltip="Back to Providers"
-      aria-label="Go back to providers"
-    />
-    <div>
-      <ui-typography variant="h2" tag="h1" class="mb-1">Driver Mappings</ui-typography>
-      <ui-typography variant="body" color="muted" class="mb-0">
-        Map your TMS drivers to {{ providerName() }} ELD drivers
-      </ui-typography>
-    </div>
-  </ui-stack>
-</ui-stack>
+<ui-page-header
+  title="Driver Mappings"
+  [subtitle]="headerSubtitle()"
+  backLink="/eld/providers"
+/>
 
 @if (loading()) {
   <ui-stack align="center" justify="center" class="p-10">
     <p-progressSpinner />
   </ui-stack>
 } @else if (error()) {
-  <ui-stack align="center" gap="3" class="p-4">
-    <ui-icon name="exclamation-circle" size="xl" class="text-danger" />
-    <p class="text-danger">{{ error() }}</p>
-    <p-button label="Retry" icon="pi pi-refresh" (onClick)="loadData()" />
-  </ui-stack>
+  <ui-error-state [message]="error()!" (retry)="loadData()" />
 } @else {
   <ui-grid container spacing="6">
     <!-- Current Mappings -->
     <ui-grid [size]="12">
-      <p-card class="border-0 shadow-sm">
-        <ng-template #header>
-          <ui-stack direction="row" align="center" justify="between" class="p-3">
-            <ui-stack direction="row" align="center">
-              <ui-icon name="link" class="mr-2 text-blue-600" />
-              <ui-typography variant="h6" tag="h5" class="mb-0">
-                Current Mappings ({{ mappings().length }})
-              </ui-typography>
-            </ui-stack>
-          </ui-stack>
-        </ng-template>
-
+      <ui-dashboard-card [title]="mappingsCardTitle()" icon="pi-link" iconColor="blue">
         @if (mappings().length === 0) {
-          <ui-stack align="center" gap="3" class="p-5">
-            <ui-icon name="users" size="xl" color="muted" />
-            <ui-typography variant="body" class="text-secondary">
-              No driver mappings configured yet.
-            </ui-typography>
-            <ui-typography variant="caption" color="muted" class="mb-0">
-              Select an ELD driver and TMS employee below to create a mapping.
-            </ui-typography>
-          </ui-stack>
+          <ui-empty-state
+            title="No mappings yet"
+            message="Select an ELD driver and TMS employee below to create a mapping."
+            icon="users"
+          />
         } @else {
           <p-table [value]="mappings()" [size]="'small'">
             <ng-template #header>
@@ -69,21 +36,13 @@
               <tr>
                 <td>
                   <ui-stack direction="row" align="center" gap="2">
-                    <div
-                      class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600/10"
-                    >
-                      <ui-icon name="user" class="text-blue-600" />
-                    </div>
+                    <ui-icon name="user" color="info" />
                     <span class="font-medium">{{ mapping.employeeName }}</span>
                   </ui-stack>
                 </td>
                 <td>
                   <ui-stack direction="row" align="center" gap="2">
-                    <div
-                      class="flex h-8 w-8 items-center justify-center rounded-full bg-green-600/10"
-                    >
-                      <ui-icon name="id-card" class="text-green-600" />
-                    </div>
+                    <ui-icon name="id-card" color="success" />
                     <div>
                       <div>{{ mapping.externalDriverName || mapping.externalDriverId }}</div>
                       <small class="text-muted">{{ mapping.externalDriverId }}</small>
@@ -121,19 +80,12 @@
             </ng-template>
           </p-table>
         }
-      </p-card>
+      </ui-dashboard-card>
     </ui-grid>
 
     <!-- Create New Mapping -->
     <ui-grid [size]="12">
-      <p-card class="border-0 shadow-sm">
-        <ng-template #header>
-          <ui-stack direction="row" align="center" class="p-3">
-            <ui-icon name="plus-circle" class="mr-2 text-green-600" />
-            <ui-typography variant="h6" tag="h5" class="mb-0">Create New Mapping</ui-typography>
-          </ui-stack>
-        </ng-template>
-
+      <ui-dashboard-card title="Create New Mapping" icon="pi-plus-circle" iconColor="green">
         <ui-grid container spacing="4">
           <ui-grid [size]="{ xs: 12, md: 5 }">
             <ui-form-field label="ELD Driver" for="eldDriver">
@@ -149,7 +101,7 @@
               >
                 <ng-template #selectedItem let-item>
                   <ui-stack direction="row" align="center" gap="2">
-                    <ui-icon name="id-card" class="text-green-600" />
+                    <ui-icon name="id-card" color="success" />
                     <span>{{ item.name }} ({{ item.externalDriverId }})</span>
                   </ui-stack>
                 </ng-template>
@@ -181,7 +133,7 @@
               >
                 <ng-template #selectedItem let-item>
                   <ui-stack direction="row" align="center" gap="2">
-                    <ui-icon name="user" class="text-blue-600" />
+                    <ui-icon name="user" color="info" />
                     <span>{{ item.fullName }}</span>
                   </ui-stack>
                 </ng-template>
@@ -205,7 +157,7 @@
             [disabled]="!selectedEldDriver || !selectedEmployee"
           />
         </ui-stack>
-      </p-card>
+      </ui-dashboard-card>
     </ui-grid>
   </ui-grid>
 }

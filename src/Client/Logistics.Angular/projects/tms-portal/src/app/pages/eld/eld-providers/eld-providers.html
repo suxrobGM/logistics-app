@@ -1,253 +1,48 @@
-<div class="w-full p-6">
-  <!-- Header -->
-  <ui-stack direction="row" align="center" justify="between" class="mb-6">
-    <ui-stack direction="row" align="center" gap="4">
-      <p-button
-        icon="pi pi-arrow-left"
-        [rounded]="true"
-        [text]="true"
-        (onClick)="goBack()"
-        pTooltip="Back to Dashboard"
-        aria-label="Go back to dashboard"
-      />
-      <div>
-        <ui-typography variant="h2" tag="h1" class="mb-1">ELD Provider Configuration</ui-typography>
-        <ui-typography color="muted" class="mb-0">Connect your ELD devices to sync driver Hours of Service data</ui-typography>
-      </div>
-    </ui-stack>
-    <p-button label="Add Provider" icon="pi pi-plus" (onClick)="openAddDialog()" />
-  </ui-stack>
-
-  <!-- Info Card -->
-  <div class="mb-6">
-    <p-card class="border-0 bg-blue-500/10 shadow-sm">
-      <ui-stack direction="row" align="start" gap="3">
-        <ui-icon name="info-circle" size="lg" class="text-blue-600" />
-        <div>
-          <ui-typography variant="h6" weight="medium" class="mb-1">How ELD Integration Works</ui-typography>
-          <ui-typography variant="body-sm" color="secondary" class="mb-0">
-            Connect your ELD provider to automatically sync driver Hours of Service (HOS) data.
-            After adding a provider, you'll need to map your TMS drivers to the ELD system drivers.
-            The system will then sync HOS data every 5 minutes and receive real-time updates via
-            webhooks.
-          </ui-typography>
-        </div>
-      </ui-stack>
-    </p-card>
-  </div>
-
-  <!-- Providers List -->
-  <p-card class="border-0 shadow-sm">
-    <ng-template #header>
-      <ui-stack direction="row" align="center" gap="2" class="p-3">
-        <ui-icon name="cog" class="text-blue-600" />
-        <ui-typography variant="h5" class="mb-0">Configured Providers</ui-typography>
-      </ui-stack>
-    </ng-template>
-
-    @if (loading()) {
-      <ui-stack align="center" justify="center" class="p-5">
-        <p-progressSpinner />
-      </ui-stack>
-    } @else if (error()) {
-      <ui-stack align="center" gap="3" class="p-4">
-        <ui-icon name="exclamation-circle" size="xl" class="text-red-500" />
-        <ui-typography class="text-red-500">{{ error() }}</ui-typography>
-        <p-button label="Retry" icon="pi pi-refresh" (onClick)="loadProviders()" />
-      </ui-stack>
-    } @else if (providers().length === 0) {
-      <ui-stack align="center" gap="3" class="p-5">
-        <ui-icon name="link" size="xl" color="muted" />
-        <ui-typography color="secondary">No ELD providers configured yet.</ui-typography>
-        <ui-typography variant="body-sm" color="muted" class="mb-4">
-          Add your first ELD provider to start syncing driver HOS data.
-        </ui-typography>
-        <p-button label="Add Provider" icon="pi pi-plus" (onClick)="openAddDialog()" />
-      </ui-stack>
-    } @else {
-      <p-table [value]="providers()">
-        <ng-template #header>
-          <tr>
-            <th>Provider</th>
-            <th>Status</th>
-            <th>Mapped Drivers</th>
-            <th>Mapped Vehicles</th>
-            <th>Last Synced</th>
-            <th>Actions</th>
-          </tr>
-        </ng-template>
-        <ng-template #body let-provider>
-          <tr>
-            <td>
-              <ui-stack direction="row" align="center" gap="3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600/10">
-                  <ui-icon name="link" class="text-blue-600" />
-                </div>
-                <div>
-                  <div class="font-medium">{{ getProviderLabel(provider.providerType) }}</div>
-                  <small class="text-muted">{{
-                    provider.providerName || provider.providerType
-                  }}</small>
-                </div>
-              </ui-stack>
-            </td>
-            <td>
-              @if (provider.isConnected) {
-                <p-tag value="Connected" severity="success"></p-tag>
-              } @else {
-                <p-tag value="Disconnected" severity="danger"></p-tag>
-              }
-            </td>
-            <td>
-              <span class="bg-hover rounded px-2 py-1 text-sm">{{
-                provider.mappedDriversCount || 0
-              }}</span>
-            </td>
-            <td>
-              <span class="bg-hover rounded px-2 py-1 text-sm">{{
-                provider.mappedVehiclesCount || 0
-              }}</span>
-            </td>
-            <td>
-              @if (provider.lastSyncedAt) {
-                <span class="text-muted text-sm">{{ provider.lastSyncedAt | date: "short" }}</span>
-              } @else {
-                <span class="text-muted text-sm">Never</span>
-              }
-            </td>
-            <td>
-              <div class="flex gap-1">
-                <p-button
-                  icon="pi pi-users"
-                  [rounded]="true"
-                  [text]="true"
-                  pTooltip="Manage Driver Mappings"
-                  aria-label="Manage driver mappings"
-                  (onClick)="manageDriverMappings(provider.id!)"
-                />
-                <p-button
-                  icon="pi pi-trash"
-                  [rounded]="true"
-                  [text]="true"
-                  severity="danger"
-                  pTooltip="Delete Provider"
-                  aria-label="Delete provider"
-                  (onClick)="confirmDeleteProvider(provider)"
-                />
-              </div>
-            </td>
-          </tr>
-        </ng-template>
-      </p-table>
-    }
-  </p-card>
-</div>
-
-<!-- Add Provider Dialog -->
-<p-dialog
-  header="Add ELD Provider"
-  [(visible)]="showAddDialog"
-  [modal]="true"
-  [style]="{ width: '500px' }"
-  [draggable]="false"
+<ui-page-header
+  title="ELD Provider Configuration"
+  subtitle="Connect your ELD devices to sync driver Hours of Service data"
+  backLink="/eld"
 >
-  <form [formGroup]="addForm" (ngSubmit)="saveProvider()">
-    <ui-form-field
-      label="Provider"
-      for="providerType"
-      [required]="true"
-      [control]="addForm.controls.providerType"
-    >
-      <p-select
-        id="providerType"
-        formControlName="providerType"
-        [options]="providerOptions"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Select provider"
-        class="w-full"
-        [style]="{ width: '100%' }"
-      >
-        <ng-template #item let-item>
-          <div>
-            <div class="font-medium">{{ item.label }}</div>
-            <small class="text-muted">{{ item.description }}</small>
-          </div>
-        </ng-template>
-      </p-select>
-    </ui-form-field>
+  <p-button
+    label="Add Provider"
+    icon="pi pi-plus"
+    styleClass="whitespace-nowrap"
+    (onClick)="showAddDialog.set(true)"
+  />
+</ui-page-header>
 
-    <ui-form-field
-      label="API Key"
-      for="apiKey"
-      [required]="true"
-      hint="Your ELD provider API key or access token"
-      [control]="addForm.controls.apiKey"
-    >
-      <input
-        pInputText
-        id="apiKey"
-        formControlName="apiKey"
-        class="w-full"
-        placeholder="Enter API key"
-      />
-    </ui-form-field>
+<ui-alert intent="info" title="How ELD Integration Works" class="mb-6 block">
+  Connect your ELD provider to automatically sync driver Hours of Service (HOS) data. After adding a
+  provider, you'll need to map your TMS drivers to the ELD system drivers. The system will then sync
+  HOS data every 5 minutes and receive real-time updates via webhooks.
+</ui-alert>
 
-    <ui-form-field
-      label="API Secret (Optional)"
-      for="apiSecret"
-      hint="Required for some providers"
-    >
-      <p-password
-        id="apiSecret"
-        formControlName="apiSecret"
-        [toggleMask]="true"
-        [feedback]="false"
-        class="w-full"
-        inputStyleClass="w-full"
-        placeholder="Enter API secret"
-      />
-    </ui-form-field>
-
-    <ui-form-field
-      label="Webhook Secret (Optional)"
-      for="webhookSecret"
-      hint="For verifying incoming webhook requests"
-    >
-      <p-password
-        id="webhookSecret"
-        formControlName="webhookSecret"
-        [toggleMask]="true"
-        [feedback]="false"
-        class="w-full"
-        inputStyleClass="w-full"
-        placeholder="Enter webhook secret"
-      />
-    </ui-form-field>
-
-    <div class="rounded bg-yellow-500/10 p-3">
-      <ui-stack direction="row" align="start" gap="2">
-        <ui-icon name="exclamation-triangle" class="text-yellow-600" />
-        <div class="text-sm">
-          <strong>Where to get credentials:</strong>
-          <ul class="text-secondary mt-1 mb-0 list-inside list-disc">
-            <li>Demo: Enter any text as API key (for testing only)</li>
-            <li>Samsara: Settings → API Tokens in your Samsara dashboard</li>
-            <li>Motive: Settings → Integrations → API Keys</li>
-          </ul>
-        </div>
-      </ui-stack>
-    </div>
-  </form>
-
-  <ng-template #footer>
-    <p-button label="Cancel" (onClick)="showAddDialog.set(false)" [text]="true" />
-    <p-button
-      label="Add Provider"
-      icon="pi pi-check"
-      (onClick)="saveProvider()"
-      [loading]="saving()"
-      [disabled]="addForm.invalid"
+<ui-dashboard-card title="Configured Providers" icon="pi-cog">
+  @if (loading()) {
+    <ui-stack align="center" justify="center" class="p-5">
+      <p-progressSpinner />
+    </ui-stack>
+  } @else if (error()) {
+    <ui-error-state [message]="error()!" (retry)="loadProviders()" />
+  } @else if (providers().length === 0) {
+    <ui-empty-state
+      title="No providers configured"
+      message="Add your first ELD provider to start syncing driver HOS data."
+      icon="link"
+      actionLabel="Add Provider"
+      (action)="showAddDialog.set(true)"
     />
-  </ng-template>
-</p-dialog>
+  } @else {
+    <app-eld-providers-table
+      [providers]="providers()"
+      (manageMappings)="manageMappings($event)"
+      (delete)="deleteProvider($event)"
+    />
+  }
+</ui-dashboard-card>
+
+<app-eld-provider-add-dialog
+  [(visible)]="showAddDialog"
+  [saving]="saving()"
+  (save)="onSave($event)"
+/>
