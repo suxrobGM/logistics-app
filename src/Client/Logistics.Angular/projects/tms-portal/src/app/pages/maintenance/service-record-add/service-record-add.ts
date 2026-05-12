@@ -1,6 +1,5 @@
 import { Component, inject } from "@angular/core";
 import { Router } from "@angular/router";
-import type { MaintenanceRecordDto } from "@logistics/shared/api";
 import { CardModule } from "primeng/card";
 import { PageHeader } from "@/shared/components";
 import { MaintenanceRecordForm } from "../components/maintenance-record-form/maintenance-record-form";
@@ -13,7 +12,7 @@ import { MaintenanceRecordForm } from "../components/maintenance-record-form/mai
 export class ServiceRecordAddPage {
   private readonly router = inject(Router);
 
-  protected onSave(record: MaintenanceRecordDto): void {
+  protected onSave(): void {
     this.router.navigateByUrl("/maintenance/records");
   }
 }

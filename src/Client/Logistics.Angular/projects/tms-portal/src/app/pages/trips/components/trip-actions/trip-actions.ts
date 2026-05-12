@@ -20,7 +20,7 @@ export class TripActions {
 
   // Outputs
   public readonly dispatch = output<void>();
-  public readonly cancel = output<string | undefined>();
+  public readonly cancelTrip = output<string | undefined>();
 
   // Computed values
   protected canDispatch(): boolean {
@@ -64,7 +64,7 @@ export class TripActions {
       rejectLabel: "Keep Trip",
       acceptButtonStyleClass: "p-button-danger",
       accept: () => {
-        this.cancel.emit(undefined);
+        this.cancelTrip.emit(undefined);
       },
     });
   }

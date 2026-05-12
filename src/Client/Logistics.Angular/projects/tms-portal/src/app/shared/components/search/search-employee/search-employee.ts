@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Component, forwardRef, inject, input, model, output, signal } from "@angular/core";
-import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
-import { TenantRole, type TenantRoleValue } from "@logistics/shared";
-import { isEmptyGuid } from "@logistics/shared";
-import { Api, type EmployeeDto, getEmployeeById, getEmployees } from "@logistics/shared/api";
+import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
+import { isEmptyGuid, type TenantRoleValue } from "@logistics/shared";
+import { Api, getEmployeeById, getEmployees, type EmployeeDto } from "@logistics/shared/api";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 
 /**
