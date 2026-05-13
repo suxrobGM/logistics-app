@@ -1,5 +1,4 @@
 using System.Linq.Expressions;
-using Logistics.Application.Services.Tax;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;

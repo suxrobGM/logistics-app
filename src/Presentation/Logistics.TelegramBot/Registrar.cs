@@ -1,4 +1,3 @@
-using Logistics.Application.Services;
 using Logistics.TelegramBot.Authentication;
 using Logistics.TelegramBot.Commands;
 using Logistics.TelegramBot.Handlers;

@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Logistics.Application.Services;
 using Microsoft.AspNetCore.Http;
 using Logistics.Application.Abstractions.CurrentUser;
 

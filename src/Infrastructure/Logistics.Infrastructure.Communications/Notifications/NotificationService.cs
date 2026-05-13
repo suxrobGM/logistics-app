@@ -1,4 +1,3 @@
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.Communications.SignalR.Clients;

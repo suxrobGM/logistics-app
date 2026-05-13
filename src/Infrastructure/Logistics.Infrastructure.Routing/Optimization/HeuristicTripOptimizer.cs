@@ -1,5 +1,4 @@
-﻿using Logistics.Application.Services;
-using Logistics.Domain.Primitives.Enums;
+﻿using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Routing;
 

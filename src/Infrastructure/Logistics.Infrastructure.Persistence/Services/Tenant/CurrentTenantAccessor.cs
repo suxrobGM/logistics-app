@@ -1,4 +1,3 @@
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Exceptions;
 using Logistics.Domain.Persistence;

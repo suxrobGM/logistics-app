@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Logistics.Application.Services;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Microsoft.Extensions.DependencyInjection;

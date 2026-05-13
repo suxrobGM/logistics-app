@@ -1,5 +1,4 @@
-﻿using Logistics.Application.Services;
-using Logistics.Infrastructure.Integrations.LoadBoard.Providers;
+﻿using Logistics.Infrastructure.Integrations.LoadBoard.Providers;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers.Dat;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers.OneTwo3;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers.Truckstop;

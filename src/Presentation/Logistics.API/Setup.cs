@@ -8,7 +8,6 @@ using Logistics.API.Authorization;
 using Logistics.API.Converters;
 using Logistics.API.Extensions;
 using Logistics.API.Jobs;
-using Logistics.Application.Services;
 using Logistics.API.Middlewares;
 using Logistics.API.ModelBinders;
 using Logistics.Application;

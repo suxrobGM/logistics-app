@@ -1,6 +1,5 @@
 using System.Data.Common;
 using System.Text.RegularExpressions;
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.Infrastructure.Persistence.Data;

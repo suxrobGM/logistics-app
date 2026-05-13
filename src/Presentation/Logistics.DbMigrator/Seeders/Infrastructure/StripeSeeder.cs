@@ -1,4 +1,3 @@
-using Logistics.Application.Services;
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Models;
 using Logistics.Domain.Entities;

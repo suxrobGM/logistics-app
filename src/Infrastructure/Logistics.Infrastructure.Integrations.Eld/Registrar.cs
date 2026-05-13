@@ -1,5 +1,4 @@
-﻿using Logistics.Application.Services;
-using Logistics.Infrastructure.Integrations.Eld.Providers;
+﻿using Logistics.Infrastructure.Integrations.Eld.Providers;
 using Logistics.Infrastructure.Integrations.Eld.Providers.Geotab;
 using Logistics.Infrastructure.Integrations.Eld.Providers.Motive;
 using Logistics.Infrastructure.Integrations.Eld.Providers.Samsara;

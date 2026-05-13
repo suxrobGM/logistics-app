@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions.Services.Email;
-using Logistics.Application.Services;
 using Logistics.Infrastructure.Communications.Captcha;
 using Logistics.Infrastructure.Communications.Email;
 using Logistics.Infrastructure.Communications.Services;

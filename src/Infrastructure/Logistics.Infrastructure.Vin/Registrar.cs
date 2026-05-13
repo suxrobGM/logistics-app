@@ -1,4 +1,3 @@
-using Logistics.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Logistics.Application.Abstractions.Vin;
 

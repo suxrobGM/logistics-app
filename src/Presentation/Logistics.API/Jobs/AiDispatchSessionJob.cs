@@ -1,5 +1,4 @@
 using Hangfire;
-using Logistics.Application.Services;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Application.Abstractions.BackgroundJobs;

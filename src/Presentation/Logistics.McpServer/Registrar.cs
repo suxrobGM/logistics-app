@@ -1,6 +1,5 @@
 using System.Security.Claims;
 using System.Threading.RateLimiting;
-using Logistics.Application.Services;
 using Logistics.McpServer.Authentication;
 using ModelContextProtocol.Server;
 using Microsoft.AspNetCore.Authentication;

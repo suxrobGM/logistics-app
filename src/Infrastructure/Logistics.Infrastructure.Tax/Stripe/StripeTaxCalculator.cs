@@ -1,5 +1,4 @@
 using System.Globalization;
-using Logistics.Application.Services.Tax;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Payments.Stripe;

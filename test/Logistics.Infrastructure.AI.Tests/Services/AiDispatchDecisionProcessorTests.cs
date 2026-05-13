@@ -1,5 +1,4 @@
 using System.Text.Json.Nodes;
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;

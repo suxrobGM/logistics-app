@@ -1,4 +1,3 @@
-using Logistics.Application.Services;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Vin;

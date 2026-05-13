@@ -1,4 +1,3 @@
-using Logistics.Application.Services;
 using Logistics.Domain.Core;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
