@@ -2,7 +2,6 @@ using Logistics.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using Logistics.Application.Abstractions.Payments.Stripe;
-using Logistics.Application.Services;
 using StripeCustomer = Stripe.Customer;
 
 namespace Logistics.Infrastructure.Payments.Stripe;
