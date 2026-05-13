@@ -1,4 +1,4 @@
-namespace Logistics.Application.Services.Privacy;
+namespace Logistics.Application.Abstractions.Privacy;
 
 /// <summary>
 /// Generates a GDPR Article 15 / 20 data export ZIP for a single user, covering

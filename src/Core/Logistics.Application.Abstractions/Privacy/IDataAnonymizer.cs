@@ -1,4 +1,4 @@
-namespace Logistics.Application.Services.Privacy;
+namespace Logistics.Application.Abstractions.Privacy;
 
 /// <summary>
 /// Irreversibly replaces a user's PII with placeholder values across the master

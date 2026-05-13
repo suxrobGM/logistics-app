@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Logistics.Application.Abstractions.Storage;
+using Logistics.Application.Abstractions.Privacy;
 
 namespace Logistics.Application.Services.Privacy;
 

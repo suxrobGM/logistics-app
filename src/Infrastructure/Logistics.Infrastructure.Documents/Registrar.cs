@@ -1,4 +1,4 @@
-﻿using Logistics.Application.Services.Privacy;
+﻿using Logistics.Application.Abstractions.Privacy;
 using Logistics.Infrastructure.Documents.Privacy;
 using Logistics.Infrastructure.Services.Pdf;
 using Logistics.Infrastructure.Services.PdfImport;

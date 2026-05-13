@@ -1,5 +1,5 @@
 ﻿using Logistics.Application.Services;
-using Logistics.Application.Services.Privacy;
+using Logistics.Application.Abstractions.Privacy;
 using Logistics.Domain.Options;
 using Logistics.Infrastructure.Persistence.Builder;
 using Logistics.Infrastructure.Persistence.Interceptors;

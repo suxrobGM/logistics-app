@@ -1,4 +1,4 @@
-using Logistics.Application.Services.Privacy;
+using Logistics.Application.Abstractions.Privacy;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Microsoft.AspNetCore.Identity;
