@@ -1,5 +1,16 @@
 # Slice 1.8 — Replace Stripe SDK types in port signatures with DTOs
 
+> **Status (2026-05-13): DEFERRED.** User chose not to pursue this slice. The rationale: per-port DTO redesign is a real coding session of API design decisions (not a mechanical relocation), the risk of subtly missing a webhook field is high, and the value of dropping `Stripe.net` from `Abstractions.csproj` did not justify that risk for the team's current priorities.
+>
+> Consequences carried forward:
+>
+> - `Abstractions.csproj` still has `<PackageReference Include="Stripe.net" Version="50.2.0" />`.
+> - The 8 port interfaces under `src/Core/Logistics.Application.Abstractions/Payments/Stripe/` still expose Stripe SDK types (`Account`, `Session`, `PaymentIntent`, etc.) in their signatures.
+> - The Phase 5 arch test that would forbid third-party SDK types in `Abstractions/Payments/Stripe/*.cs` must be written with an allow-list — or this slice runs before that arch test lands.
+> - This slice overlaps heavily with [03-abstractions-domain-decoupling.md](03-abstractions-domain-decoupling.md) because the Stripe ports also accept Domain entities. Whichever runs first defines the DTOs the other reuses.
+>
+> Re-open this slice when the team revisits Stripe model decoupling. The body below is the original plan and remains usable.
+
 ## Goal
 
 Remove `Stripe.*` SDK types from the public surface of [Logistics.Application.Abstractions/Payments/Stripe/](../../../../src/Core/Logistics.Application.Abstractions/Payments/Stripe/) port interfaces. Replace each SDK return type with a hand-designed DTO in `Abstractions/Models/Payments/`. After this slice, drop `<PackageReference Include="Stripe.net" />` from `Abstractions.csproj`.

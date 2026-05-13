@@ -1,5 +1,61 @@
 # Slice 1.9 (remainder) — Decouple the 5 Infrastructure projects still referencing Application
 
+> **Status (2026-05-13): PARTIAL — 4 of 5 projects landed.** Persistence, Documents, Communications, and Payments now reference `Logistics.Application.Abstractions` only. `Infrastructure.AI` remains and is deferred to its own follow-up slice (see "Remaining work" below).
+>
+> Build green, all tests passing (`Logistics.Application.Tests`, `Logistics.Infrastructure.AI.Tests`, `Logistics.Infrastructure.Payments.Tests`, `Logistics.Infrastructure.Persistence.Tests`, `Logistics.Infrastructure.Tax.Tests`, `Logistics.Infrastructure.Vin.Tests` — 453/453).
+>
+> ## What landed (commits `e09ffeca` → `135f4de6`)
+>
+> | PR  | Commit     | Project                          | Summary                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+> | --- | ---------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+> | 1   | `e09ffeca` | (port relocation, multi-project) | Moved `IDataAnonymizer` **and** `IDataExportService` from `Application/Services/Privacy/` to `Abstractions/Privacy/`. Audit was wrong to flag only `IDataAnonymizer`; Documents also implements `IDataExportService`, so both ports moved.                                                                                                                                                                                                                                                                                                                         |
+> | 2   | `63c8d552` | `Infrastructure.Persistence`     | Moved `IUserService → UserService` DI registration from `PersistenceInfrastructureBuilder.AddMasterDatabase()` to `Logistics.Application.Registrar.AddApplicationLayer()`. Persistence csproj switched to Abstractions. Added explicit `MediatR` and `Logistics.Shared.Identity` refs (previously transitive).                                                                                                                                                                                                                                                     |
+> | 3   | `f71c2658` | `Infrastructure.Documents`       | csproj switched from Application to Abstractions. Added explicit `Microsoft.EntityFrameworkCore` ref (previously transitive).                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+> | 4   | `50b27390` | `Infrastructure.Communications`  | Introduced narrow port `ITruckGeolocationUpdater` in `Abstractions/Realtime/`; impl in `Application/Services/Tracking/TruckGeolocationUpdater.cs` wraps the existing `SetTruckGeolocationCommand`. `TrackingHub` depends on the port, not `IMediator`. csproj switched. Added explicit `Logistics.Mappings` ref.                                                                                                                                                                                                                                                   |
+> |     |            | `Logistics.IdentityServer`       | Side fix: added explicit `Logistics.Application` ProjectReference to IdentityServer — its `Pages/Account/Manage/Profile/Index.cshtml.cs` consumes `IUserService` and was getting Application transitively through Persistence before this slice.                                                                                                                                                                                                                                                                                                                   |
+> | 5   | `135f4de6` | `Infrastructure.Payments`        | Split `StripeObjectMapper`: extracted `ToStripeAddressOptions` + `GetCountryCode` into new internal `Infrastructure.Payments/Stripe/StripeAddressMapper.cs`. Other helpers (`GetSubscriptionStatus`, `GetPaymentStatus`, `ToAddressEntity`) stay in `Application/Services/Stripe/StripeObjectMapper.cs` because Application handlers and Presentation seeders use them. csproj switched. Added explicit `Microsoft.Extensions.Caching.Memory` ref to `Infrastructure.Tax` (it consumed `AddMemoryCache()` and got it transitively through Payments → Application). |
+>
+> ## Final-state audit
+>
+> ```bash
+> grep -rln "Logistics\.Application\.csproj" src/Infrastructure --include='*.csproj'
+> # → src/Infrastructure/Logistics.Infrastructure.AI/Logistics.Infrastructure.AI.csproj  (only)
+>
+> grep -rn '^using Logistics\.Application\.' src/Infrastructure --include='*.cs' | grep -v '\.Abstractions'
+> # → 6 hits, all in Infrastructure.AI/Tools/ (the deferred slice)
+> ```
+>
+> ## Notable detours from the originally-approved plan
+>
+> 1. **PR 1 expanded to two ports.** Audit had flagged only `IDataAnonymizer`; in fact `Infrastructure.Documents/Privacy/DataExportService.cs` implements `IDataExportService` (also in `Application/Services/Privacy/`), so both interfaces moved together.
+> 2. **PR 2 needed a DI re-home.** Switching `Infrastructure.Persistence.csproj` to Abstractions only is not enough — `PersistenceInfrastructureBuilder` registers `IUserService` (both interface and impl live in `Application/Services/User/`). The fix was to move that single `services.AddScoped<IUserService, UserService>()` line into `Application/Registrar.AddApplicationLayer()`, then Persistence stops needing the `Logistics.Application.Services` using.
+> 3. **Transitive-ref flush.** Switching csprojs to Abstractions exposed several transitive package/project references that had been silently inherited from `Application`. Each affected csproj gained an explicit ref:
+>    - `Infrastructure.Persistence` → `MediatR`, `Logistics.Shared.Identity`
+>    - `Infrastructure.Documents` → `Microsoft.EntityFrameworkCore`
+>    - `Infrastructure.Communications` → `Logistics.Mappings`
+>    - `Infrastructure.Tax` → `Microsoft.Extensions.Caching.Memory` (transitively via Payments → Application before)
+>    - `Logistics.IdentityServer` → `Logistics.Application` (Profile page consumes `IUserService`)
+> 4. **PR 4 used a narrow port instead of `IMediatorAdapter`.** The Communications surface is exactly one MediatR call site; a `ITruckGeolocationUpdater` port models what's actually being done. No generic adapter was introduced.
+> 5. **PR 5 partial Phase 2 work.** Splitting `StripeObjectMapper` was the only way to remove Payments' real Application using. The remaining helpers stay in Application until the deferred Stripe slice runs.
+>
+> ## Remaining work — `Infrastructure.AI`
+>
+> 6 tool files still import `Application.Commands` / `Application.Queries` / `Application.Services`:
+>
+> - `Tools/AssignLoadToTruckTool.cs` (`AssignLoadToTruckCommand`)
+> - `Tools/CreateTripTool.cs` (`CreateTripCommand`)
+> - `Tools/DispatchTripTool.cs` (`DispatchTripCommand`)
+> - `Tools/GetUnassignedLoadsTool.cs` (`GetUnassignedLoadsQuery`)
+> - `Tools/PreviewTaxCalculationTool.cs` (`PreviewInvoiceTaxQuery`)
+> - `Tools/CheckDispatchEligibilityTool.cs` (`IDispatchEligibilityService`)
+>
+> Open design questions for the follow-up slice (write as `04-slice-1.9-ai-decoupling.md`):
+>
+> - **Option A — move tools.** Relocate the 6 tool classes into `Application/Modules/Integrations/AiDispatch/Tools/`. `Infrastructure.AI` keeps only LLM provider plumbing. Cleanest long-term; largest diff.
+> - **Option B+exception — keep AI's Application ref.** Document Infrastructure.AI as an explicit exception in the Phase 5 arch-test allow-list. The earlier "`IMediatorAdapter`" sketch was reconsidered: hiding MediatR doesn't help because tools still construct `AssignLoadToTruckCommand` etc., so the csproj ref to Application is required regardless.
+>
+> Section below is the original execution recipe and is retained for context. **Don't re-run sections 1–4 above as written for AI** — they assume only a using-line cleanup, but the AI tools actually need to construct command types.
+
 ## Goal
 
 After Slice 1.9-partial (commit `00ddc2a1`), 6 of 11 Infrastructure projects reference `Logistics.Application.Abstractions` only. **5 still reference `Logistics.Application`** because of real residual couplings that are not mere stale usings. This plan resolves each one.

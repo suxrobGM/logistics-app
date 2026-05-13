@@ -1,5 +1,20 @@
 # Abstractions → Domain decoupling
 
+> **Status (2026-05-13): DEFERRED.** Two reasons:
+>
+> 1. **Heavy overlap with Slice 1.8 on the Stripe ports.** The 8 Stripe interfaces take Domain entities (`Tenant`, `Employee`, `Payment`, `SubscriptionPlan`, `Subscription`) AND return Stripe SDK types. If 1.8 doesn't run, decoupling Domain piecemeal on the Stripe ports is wasted work — the Stripe ports stay coupled either way.
+> 2. **User decision on 1.8.** Slice 1.8 was deferred for risk/benefit reasons. Running this slice without 1.8 means doing the entity→snapshot half of the work, leaving the SDK-type half in place — a half-decoupled posture that doesn't pay off.
+>
+> Non-Stripe ports that reference Domain types could be decoupled independently (Tenancy `ICurrentTenantAccessor.GetCurrentTenant() → Tenant`, etc.), but the value is limited until the full Abstractions→Domain reference can actually be dropped from `Abstractions.csproj`. Re-open this slice when (a) Slice 1.8 also runs, or (b) the team decides to do the non-Stripe portion only and documents Stripe ports as an explicit Domain-coupling exception.
+>
+> Consequences carried forward:
+>
+> - `Abstractions.csproj` still has `<ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />` and `<ProjectReference Include="..\Logistics.Domain.Primitives\Logistics.Domain.Primitives.csproj" />`.
+> - Domain entity types appear in port surfaces across `Abstractions/{Tenancy,Payments,Geocoding,Eld,Routing,Documents,LoadBoard,Tax,AiDispatch,Notifications,Realtime}/`.
+> - Infrastructure projects that implement one narrow port (e.g., `IBlobStorageService`) continue to see the entire Domain assembly transitively. The Phase 5 arch test for `Abstractions_does_not_reference_Domain` cannot pass yet.
+>
+> Body below is the original plan and remains usable.
+
 ## Goal
 
 Remove `<ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />` from `Logistics.Application.Abstractions.csproj`. Replace every domain-entity type that appears in a port signature with a DTO/snapshot in `Abstractions/Models/`.
