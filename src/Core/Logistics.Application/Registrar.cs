@@ -28,6 +28,7 @@ public static class Registrar
             cfg.AddOpenBehavior(typeof(FeatureCheckBehaviour<,>));
         });
 
+        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IPayrollService, PayrollService>();
         services.AddScoped<ILoadService, LoadService>();
         services.AddScoped<IMaintenanceReminderService, MaintenanceReminderService>();
