@@ -1,9 +1,10 @@
 using Logistics.Domain.Entities;
 using Stripe;
+using Logistics.Application.Abstractions.Payments.Stripe;
 using StripeSubscription = Stripe.Subscription;
 using Subscription = Logistics.Domain.Entities.Subscription;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.Payments.Stripe;
 
 /// <summary>
 /// Manages customer subscriptions in Stripe (create, cancel, renew, change plan).

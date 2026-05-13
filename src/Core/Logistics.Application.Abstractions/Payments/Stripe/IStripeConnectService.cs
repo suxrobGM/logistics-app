@@ -1,9 +1,11 @@
 using Logistics.Domain.Entities;
 using Stripe;
 using Stripe.Checkout;
+using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Application.Abstractions.Models.Payments;
 using Address = Logistics.Domain.Primitives.ValueObjects.Address;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.Payments.Stripe;
 
 /// <summary>
 /// Service for Stripe Connect operations - onboarding, payouts, and connected account payments.

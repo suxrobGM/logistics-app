@@ -1,7 +1,8 @@
 using Logistics.Domain.Entities;
+using Logistics.Application.Abstractions.Payments.Stripe;
 using StripeCustomer = Stripe.Customer;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.Payments.Stripe;
 
 public interface IStripeCustomerService
 {

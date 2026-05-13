@@ -5,6 +5,7 @@ using Logistics.Domain.Entities;
 using Stripe;
 using Stripe.Billing;
 using Logistics.Application.Abstractions.SystemSettings;
+using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.DbMigrator.Seeders.Infrastructure;
 

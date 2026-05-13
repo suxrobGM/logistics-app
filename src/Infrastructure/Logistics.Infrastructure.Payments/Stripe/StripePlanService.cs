@@ -3,6 +3,7 @@ using Logistics.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using Logistics.Application.Abstractions.SystemSettings;
+using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Infrastructure.Payments.Stripe;
 

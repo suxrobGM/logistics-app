@@ -1,7 +1,8 @@
 using Logistics.Domain.Entities;
 using Stripe;
+using Logistics.Application.Abstractions.Payments.Stripe;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.Payments.Stripe;
 
 public interface IStripePaymentService
 {

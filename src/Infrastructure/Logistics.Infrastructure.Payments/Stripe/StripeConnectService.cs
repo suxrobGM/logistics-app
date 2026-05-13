@@ -5,6 +5,8 @@ using Logistics.Shared.Geo;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using Stripe.Checkout;
+using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Application.Abstractions.Models.Payments;
 using Address = Logistics.Domain.Primitives.ValueObjects.Address;
 
 namespace Logistics.Infrastructure.Payments.Stripe;

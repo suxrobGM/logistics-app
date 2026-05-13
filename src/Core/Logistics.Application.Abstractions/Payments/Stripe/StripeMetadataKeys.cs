@@ -1,4 +1,5 @@
-namespace Logistics.Application.Services;
+using Logistics.Application.Abstractions.Payments.Stripe;
+namespace Logistics.Application.Abstractions.Payments.Stripe;
 
 public static class StripeMetadataKeys
 {

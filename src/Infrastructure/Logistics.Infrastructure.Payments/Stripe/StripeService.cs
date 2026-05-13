@@ -1,5 +1,6 @@
 using Logistics.Application.Services;
 using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Infrastructure.Payments.Stripe;
 

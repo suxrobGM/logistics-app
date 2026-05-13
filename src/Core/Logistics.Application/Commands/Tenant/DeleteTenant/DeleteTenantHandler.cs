@@ -4,6 +4,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Tenancy;
+using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Application.Commands;
 

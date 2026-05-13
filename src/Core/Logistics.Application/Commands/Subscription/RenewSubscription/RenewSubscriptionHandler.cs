@@ -5,6 +5,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Stripe;
+using Logistics.Application.Abstractions.Payments.Stripe;
 using Subscription = Logistics.Domain.Entities.Subscription;
 
 namespace Logistics.Application.Commands;

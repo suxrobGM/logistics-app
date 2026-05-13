@@ -1,6 +1,7 @@
 using Logistics.Application.Services;
 using Microsoft.Extensions.Logging;
 using Stripe.BillingPortal;
+using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Infrastructure.Payments.Stripe;
 

@@ -6,6 +6,8 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
+using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Application.Abstractions.Models.Payments;
 
 namespace Logistics.Application.Commands;
 

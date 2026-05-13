@@ -1,7 +1,8 @@
 using Logistics.Domain.Entities;
 using Stripe;
+using Logistics.Application.Abstractions.Payments.Stripe;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.Payments.Stripe;
 
 /// <summary>
 /// Manages subscription plan products and prices in Stripe.

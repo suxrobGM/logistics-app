@@ -11,6 +11,7 @@ using NSubstitute.ExceptionExtensions;
 using Xunit;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Abstractions.AiDispatch;
+using Logistics.Application.Abstractions.Payments.Stripe;
 using MsOptions = Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.AI.Tests.Services;

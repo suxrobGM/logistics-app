@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Stripe.net" Version="50.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
     <ProjectReference Include="..\Logistics.Domain.Primitives\Logistics.Domain.Primitives.csproj" />
     <ProjectReference Include="..\..\Shared\Logistics.Shared.Geo\Logistics.Shared.Geo.csproj" />

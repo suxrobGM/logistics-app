@@ -1,4 +1,5 @@
-namespace Logistics.Application.Services;
+using Logistics.Application.Abstractions.Payments.Stripe;
+namespace Logistics.Application.Abstractions.Payments.Stripe;
 
 /// <summary>
 /// Reports metered usage to Stripe for usage-based billing (e.g., AI session overages).

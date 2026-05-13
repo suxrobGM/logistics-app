@@ -8,6 +8,7 @@ using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Logistics.Application.Abstractions.AiDispatch;
+using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Infrastructure.AI.Services;
 

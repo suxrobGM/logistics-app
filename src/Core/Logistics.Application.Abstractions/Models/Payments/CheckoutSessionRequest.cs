@@ -1,6 +1,7 @@
 using Logistics.Domain.Primitives.ValueObjects;
+using Logistics.Application.Abstractions.Models.Payments;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.Models.Payments;
 
 /// <summary>
 /// Inputs for <see cref="IStripeConnectService.CreateConnectedCheckoutSessionAsync"/>.

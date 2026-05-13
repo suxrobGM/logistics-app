@@ -8,6 +8,7 @@ using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using Stripe.Checkout;
+using Logistics.Application.Abstractions.Payments.Stripe;
 using DomainInvoice = Logistics.Domain.Entities.Invoice;
 using StripeInvoice = Stripe.Invoice;
 using StripeSubscription = Stripe.Subscription;
