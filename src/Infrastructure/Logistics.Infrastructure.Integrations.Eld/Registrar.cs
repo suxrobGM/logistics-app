@@ -1,4 +1,5 @@
 ﻿using Logistics.Application.Services;
+using Logistics.Infrastructure.Integrations.Eld.Geotab;
 using Logistics.Infrastructure.Integrations.Eld.Motive;
 using Logistics.Infrastructure.Integrations.Eld.Providers;
 using Logistics.Infrastructure.Integrations.Eld.Samsara;
@@ -24,6 +25,8 @@ public static class Registrar
         services.AddHttpClient<SamsaraEldService>();
         services.AddHttpClient<MotiveEldService>();
         services.AddHttpClient<TtEldService>();
+        services.AddHttpClient<GeotabClient>();
+        services.AddScoped<GeotabEldService>();
         services.AddScoped<DemoEldService>();
 
         // Factory pattern for provider selection

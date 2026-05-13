@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Core\Logistics.Application\Logistics.Application.csproj"/>
+    <ProjectReference Include="..\..\src\Infrastructure\Logistics.Infrastructure.Integrations.Eld\Logistics.Infrastructure.Integrations.Eld.csproj"/>
   </ItemGroup>
 
 </Project>

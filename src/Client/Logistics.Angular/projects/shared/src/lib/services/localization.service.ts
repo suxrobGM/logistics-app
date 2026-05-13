@@ -109,6 +109,20 @@ export class LocalizationService {
   }
 
   /**
+   * Gets the PrimeNG p-datepicker date format string. PrimeNG uses a different
+   * syntax to the Angular date pipe (lowercase, single chars).
+   * @returns PrimeNG-compatible pattern
+   */
+  getPrimeNgDateFormat(): string {
+    const formats: Record<string, string> = {
+      us: "mm/dd/yy",
+      european: "dd/mm/yy",
+      iso: "yy-mm-dd",
+    };
+    return formats[this.getDateFormatType()] ?? "mm/dd/yy";
+  }
+
+  /**
    * Gets the Angular datetime format string.
    * @returns Angular datetime format pattern
    */
@@ -310,6 +324,21 @@ export class LocalizationService {
       default:
         return "Tax";
     }
+  }
+
+  /**
+   * Formats an HOS duration in minutes using locale-appropriate spacing.
+   * US: "11h 30m" (compact). EU: "11 h 30 min" (with spaces, per regulation labelling).
+   * Negative values are rendered as zero; nulls return a dash.
+   */
+  formatHosDuration(minutes: number | null | undefined): string {
+    if (minutes == null) {
+      return "—";
+    }
+    const total = Math.max(0, Math.trunc(minutes));
+    const h = Math.trunc(total / 60);
+    const m = total % 60;
+    return this.getRegion() === "eu" ? `${h} h ${m} min` : `${h}h ${m}m`;
   }
 
   /**

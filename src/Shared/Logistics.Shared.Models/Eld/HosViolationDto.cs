@@ -15,6 +15,12 @@ public record HosViolationDto
     public bool IsResolved { get; set; }
     public DateTime? ResolvedAt { get; set; }
     public EldProviderType ProviderType { get; set; }
+
+    /// <summary>
+    /// Regulatory rule set this violation was raised under (e.g. "FMCSA", "EU_561_2006").
+    /// Used by the UI to render the rule-set badge.
+    /// </summary>
+    public string RuleSetCode { get; set; } = "FMCSA";
 }
 
 /// <summary>

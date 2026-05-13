@@ -111,6 +111,19 @@ public class EldController(IMediator mediator) : ControllerBase
 
     #endregion
 
+    #region Rules
+
+    [HttpGet("rules/limits", Name = "GetHosLimits")]
+    [ProducesResponseType(typeof(HosLimitsDto), StatusCodes.Status200OK)]
+    [Authorize(Policy = Permission.Eld.View)]
+    public async Task<IActionResult> GetHosLimits()
+    {
+        var result = await mediator.Send(new GetHosLimitsQuery());
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    #endregion
+
     #region Sync Operations
 
     [HttpPost("sync/drivers/hos", Name = "SyncAllDriversHos")]

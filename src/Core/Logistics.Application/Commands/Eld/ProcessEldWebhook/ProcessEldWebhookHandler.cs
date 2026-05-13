@@ -164,7 +164,9 @@ internal sealed class ProcessEldWebhookHandler(
             }
         }
 
-        // Create new violation entity
+        // Create new violation entity. Rule-set code is stamped at write time so the
+        // historical record survives later tenant region changes.
+        var region = tenantUow.GetCurrentTenant().Settings.Region;
         var violation = new HosViolation
         {
             EmployeeId = mapping.EmployeeId,
@@ -174,7 +176,8 @@ internal sealed class ProcessEldWebhookHandler(
             SeverityLevel = latestViolation.SeverityLevel,
             IsResolved = false,
             ExternalViolationId = latestViolation.ExternalViolationId,
-            ProviderType = config.ProviderType
+            ProviderType = config.ProviderType,
+            RuleSetCode = RuleSetSelector.CodeFor(region)
         };
 
         await tenantUow.Repository<HosViolation>().AddAsync(violation);

@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using System.Text.Json;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
@@ -38,7 +37,7 @@ internal class MotiveEldService(
             var response = await httpClient.SendAsync(request);
             return response.IsSuccessStatusCode;
         }
-        catch (Exception ex)
+        catch (HttpRequestException ex)
         {
             logger.LogError(ex, "Failed to validate Motive credentials");
             return false;
@@ -53,49 +52,23 @@ internal class MotiveEldService(
 
     public async Task<EldDriverHosDataDto?> GetDriverHosStatusAsync(string externalDriverId)
     {
-        try
-        {
-            var response = await httpClient.GetAsync(
-                $"{baseUrl}/hours_of_service?driver_ids={externalDriverId}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                logger.LogWarning("Failed to get HOS for driver {DriverId}: {StatusCode}",
-                    externalDriverId, response.StatusCode);
-                return null;
-            }
-
-            var result = await response.Content.ReadFromJsonAsync<MotiveHosResponse>();
-            var driverHos = result?.HoursOfService?.FirstOrDefault();
-            return driverHos != null ? MotiveMapper.MapToDto(driverHos) : null;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error fetching HOS for driver {DriverId}", externalDriverId);
-            return null;
-        }
+        var result = await httpClient.TryGetFromJsonAsync<MotiveHosResponse>(
+            $"{baseUrl}/hours_of_service?driver_ids={externalDriverId}",
+            EldJsonOptions.SnakeCase,
+            logger,
+            $"Motive HOS for driver {externalDriverId}");
+        var driverHos = result?.HoursOfService?.FirstOrDefault();
+        return driverHos is null ? null : MotiveMapper.MapToDto(driverHos);
     }
 
     public async Task<IEnumerable<EldDriverHosDataDto>> GetAllDriversHosStatusAsync()
     {
-        try
-        {
-            var response = await httpClient.GetAsync($"{baseUrl}/hours_of_service");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                logger.LogWarning("Failed to get all drivers HOS: {StatusCode}", response.StatusCode);
-                return [];
-            }
-
-            var result = await response.Content.ReadFromJsonAsync<MotiveHosResponse>();
-            return result?.HoursOfService?.Select(MotiveMapper.MapToDto) ?? [];
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error fetching all drivers HOS");
-            return [];
-        }
+        var result = await httpClient.TryGetFromJsonAsync<MotiveHosResponse>(
+            $"{baseUrl}/hours_of_service",
+            EldJsonOptions.SnakeCase,
+            logger,
+            "Motive HOS (all drivers)");
+        return result?.HoursOfService?.Select(MotiveMapper.MapToDto) ?? [];
     }
 
     public async Task<IEnumerable<EldHosLogEntryDto>> GetDriverHosLogsAsync(
@@ -103,30 +76,16 @@ internal class MotiveEldService(
         DateTime startDate,
         DateTime endDate)
     {
-        try
-        {
-            var startStr = startDate.ToString("yyyy-MM-dd");
-            var endStr = endDate.ToString("yyyy-MM-dd");
+        var startStr = startDate.ToString("yyyy-MM-dd");
+        var endStr = endDate.ToString("yyyy-MM-dd");
 
-            var response = await httpClient.GetAsync(
-                $"{baseUrl}/driver_logs?driver_ids={externalDriverId}&start_date={startStr}&end_date={endStr}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                logger.LogWarning("Failed to get HOS logs for driver {DriverId}: {StatusCode}",
-                    externalDriverId, response.StatusCode);
-                return [];
-            }
-
-            var result = await response.Content.ReadFromJsonAsync<MotiveDriverLogsResponse>();
-            return result?.DriverLogs?.SelectMany(dl =>
-                dl.Events?.Select(e => MotiveMapper.MapToLogDto(externalDriverId, dl.LogDate, e)) ?? []) ?? [];
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error fetching HOS logs for driver {DriverId}", externalDriverId);
-            return [];
-        }
+        var result = await httpClient.TryGetFromJsonAsync<MotiveDriverLogsResponse>(
+            $"{baseUrl}/driver_logs?driver_ids={externalDriverId}&start_date={startStr}&end_date={endStr}",
+            EldJsonOptions.SnakeCase,
+            logger,
+            $"Motive HOS logs for driver {externalDriverId}");
+        return result?.DriverLogs?.SelectMany(dl =>
+            dl.Events?.Select(e => MotiveMapper.MapToLogDto(externalDriverId, dl.LogDate, e)) ?? []) ?? [];
     }
 
     public async Task<IEnumerable<EldViolationDataDto>> GetDriverViolationsAsync(
@@ -134,88 +93,45 @@ internal class MotiveEldService(
         DateTime startDate,
         DateTime endDate)
     {
-        try
-        {
-            var startStr = startDate.ToString("yyyy-MM-dd");
-            var endStr = endDate.ToString("yyyy-MM-dd");
+        var startStr = startDate.ToString("yyyy-MM-dd");
+        var endStr = endDate.ToString("yyyy-MM-dd");
 
-            var response = await httpClient.GetAsync(
-                $"{baseUrl}/hos_violations?driver_ids={externalDriverId}&start_date={startStr}&end_date={endStr}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                logger.LogWarning("Failed to get violations for driver {DriverId}: {StatusCode}",
-                    externalDriverId, response.StatusCode);
-                return [];
-            }
-
-            var result = await response.Content.ReadFromJsonAsync<MotiveViolationsResponse>();
-            return result?.HosViolations?.Select(v => MotiveMapper.MapToViolationDto(externalDriverId, v)) ?? [];
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error fetching violations for driver {DriverId}", externalDriverId);
-            return [];
-        }
+        var result = await httpClient.TryGetFromJsonAsync<MotiveViolationsResponse>(
+            $"{baseUrl}/hos_violations?driver_ids={externalDriverId}&start_date={startStr}&end_date={endStr}",
+            EldJsonOptions.SnakeCase,
+            logger,
+            $"Motive violations for driver {externalDriverId}");
+        return result?.HosViolations?.Select(v => MotiveMapper.MapToViolationDto(externalDriverId, v)) ?? [];
     }
 
     public async Task<IEnumerable<EldDriverDto>> GetAllDriversAsync()
     {
-        try
-        {
-            var response = await httpClient.GetAsync($"{baseUrl}/users?role=driver");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                logger.LogWarning("Failed to get drivers: {StatusCode}", response.StatusCode);
-                return [];
-            }
-
-            var result = await response.Content.ReadFromJsonAsync<MotiveUsersResponse>();
-            return result?.Users?.Select(MotiveMapper.MapToDriverDto) ?? [];
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error fetching drivers");
-            return [];
-        }
+        var result = await httpClient.TryGetFromJsonAsync<MotiveUsersResponse>(
+            $"{baseUrl}/users?role=driver",
+            EldJsonOptions.SnakeCase,
+            logger,
+            "Motive users (drivers)");
+        return result?.Users?.Select(MotiveMapper.MapToDriverDto) ?? [];
     }
 
     public async Task<IEnumerable<EldVehicleDto>> GetAllVehiclesAsync()
     {
-        try
-        {
-            var response = await httpClient.GetAsync($"{baseUrl}/vehicles");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                logger.LogWarning("Failed to get vehicles: {StatusCode}", response.StatusCode);
-                return [];
-            }
-
-            var result = await response.Content.ReadFromJsonAsync<MotiveVehiclesResponse>();
-            return result?.Vehicles?.Select(MotiveMapper.MapToVehicleDto) ?? [];
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error fetching vehicles");
-            return [];
-        }
+        var result = await httpClient.TryGetFromJsonAsync<MotiveVehiclesResponse>(
+            $"{baseUrl}/vehicles",
+            EldJsonOptions.SnakeCase,
+            logger,
+            "Motive vehicles");
+        return result?.Vehicles?.Select(MotiveMapper.MapToVehicleDto) ?? [];
     }
 
     public Task<EldWebhookResultDto> ProcessWebhookAsync(string payload, string? signature, string? webhookSecret)
     {
         try
         {
-            var webhook = JsonSerializer.Deserialize<MotiveWebhookPayload>(payload);
-            if (webhook == null)
+            var webhook = JsonSerializer.Deserialize<MotiveWebhookPayload>(payload, EldJsonOptions.SnakeCase);
+            if (webhook is null)
             {
-                return Task.FromResult(new EldWebhookResultDto
-                {
-                    EventType = EldWebhookEventType.Unknown,
-                    IsValid = false,
-                    ErrorMessage = "Failed to parse webhook payload"
-                });
+                return Task.FromResult(InvalidWebhook("Failed to parse webhook payload"));
             }
 
             var eventType = webhook.EventType switch
@@ -237,15 +153,17 @@ internal class MotiveEldService(
                 IsValid = true
             });
         }
-        catch (Exception ex)
+        catch (JsonException ex)
         {
             logger.LogError(ex, "Error processing Motive webhook");
-            return Task.FromResult(new EldWebhookResultDto
-            {
-                EventType = EldWebhookEventType.Unknown,
-                IsValid = false,
-                ErrorMessage = ex.Message
-            });
+            return Task.FromResult(InvalidWebhook(ex.Message));
         }
     }
+
+    private static EldWebhookResultDto InvalidWebhook(string error) => new()
+    {
+        EventType = EldWebhookEventType.Unknown,
+        IsValid = false,
+        ErrorMessage = error
+    };
 }

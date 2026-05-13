@@ -22,6 +22,11 @@ export const ELD_PROVIDER_OPTIONS: EldProviderOption[] = [
     value: "motive" as EldProviderType,
     description: "Connect to Motive/KeepTruckin ELD devices",
   },
+  {
+    label: "Geotab",
+    value: "geotab" as EldProviderType,
+    description: "Connect to Geotab tachograph (EU) or US ELD devices",
+  },
 ];
 
 const ELD_PROVIDER_LABELS: Record<string, string> = {

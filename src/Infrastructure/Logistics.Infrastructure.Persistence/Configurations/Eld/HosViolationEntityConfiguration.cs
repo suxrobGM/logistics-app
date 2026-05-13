@@ -25,5 +25,10 @@ internal sealed class HosViolationEntityConfiguration : IEntityTypeConfiguration
 
         builder.Property(i => i.ExternalViolationId)
             .HasMaxLength(100);
+
+        builder.Property(i => i.RuleSetCode)
+            .HasMaxLength(32)
+            .HasDefaultValue("FMCSA")
+            .IsRequired();
     }
 }
