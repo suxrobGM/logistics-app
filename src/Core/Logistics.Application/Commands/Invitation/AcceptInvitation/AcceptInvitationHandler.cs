@@ -6,7 +6,6 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.Application.Commands;
@@ -22,9 +21,7 @@ internal sealed class AcceptInvitationHandler(
     {
         // Find and validate invitation
         var invitation = await masterUow.Repository<Invitation>()
-            .Query()
-            .Include(i => i.Tenant)
-            .FirstOrDefaultAsync(i => i.Token == req.Token, ct);
+            .GetAsync(i => i.Token == req.Token, ct);
 
         if (invitation is null)
         {
