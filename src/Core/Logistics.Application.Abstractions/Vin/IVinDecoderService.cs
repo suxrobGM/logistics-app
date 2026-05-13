@@ -1,6 +1,6 @@
 using Logistics.Shared.Models;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.Vin;
 
 /// <summary>
 ///    Service for decoding VINs (Vehicle Identification Numbers).

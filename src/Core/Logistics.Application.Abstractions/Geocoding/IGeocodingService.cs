@@ -1,7 +1,7 @@
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 
-namespace Logistics.Application.Services.Geocoding;
+namespace Logistics.Application.Abstractions.Geocoding;
 
 /// <summary>
 /// Service for geocoding addresses to coordinates.

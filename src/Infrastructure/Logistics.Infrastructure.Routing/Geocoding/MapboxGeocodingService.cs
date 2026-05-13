@@ -1,12 +1,12 @@
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Web;
-using Logistics.Application.Services.Geocoding;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.Options;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.Geocoding;
 
 namespace Logistics.Infrastructure.Routing.Geocoding;
 

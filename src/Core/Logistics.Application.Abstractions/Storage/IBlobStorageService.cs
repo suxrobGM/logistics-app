@@ -1,4 +1,4 @@
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.Storage;
 
 public interface IBlobStorageService
 {

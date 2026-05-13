@@ -4,6 +4,7 @@ using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
+using Logistics.Application.Abstractions.Storage;
 
 namespace Logistics.Application.Commands;
 

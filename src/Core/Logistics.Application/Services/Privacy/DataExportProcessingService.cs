@@ -8,6 +8,7 @@ using Logistics.Domain.Primitives.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.Storage;
 
 namespace Logistics.Application.Services.Privacy;
 

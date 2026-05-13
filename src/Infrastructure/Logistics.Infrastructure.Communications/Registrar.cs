@@ -9,6 +9,7 @@ using Logistics.Infrastructure.Communications.SignalR.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Resend;
+using Logistics.Application.Abstractions.Captcha;
 
 namespace Logistics.Infrastructure.Communications;
 

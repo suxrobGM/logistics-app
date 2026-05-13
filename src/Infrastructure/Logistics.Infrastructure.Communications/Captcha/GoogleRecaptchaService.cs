@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using Logistics.Application.Services;
 using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.Captcha;
 
 namespace Logistics.Infrastructure.Communications.Captcha;
 
