@@ -1,4 +1,5 @@
-namespace Logistics.Application.Services;
+using Logistics.Application.Abstractions.AiDispatch;
+namespace Logistics.Application.Abstractions.AiDispatch;
 
 /// <summary>
 /// Executes agent tool calls by dispatching to MediatR commands/queries or domain services.

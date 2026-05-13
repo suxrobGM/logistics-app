@@ -5,6 +5,7 @@ using Logistics.Infrastructure.AI.Services;
 using Logistics.Infrastructure.AI.Tools;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.Infrastructure.AI;
 

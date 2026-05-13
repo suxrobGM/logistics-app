@@ -6,6 +6,7 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.BackgroundJobs;
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.Application.Commands;
 

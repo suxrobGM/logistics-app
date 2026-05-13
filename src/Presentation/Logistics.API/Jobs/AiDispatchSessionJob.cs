@@ -3,6 +3,7 @@ using Logistics.Application.Services;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Application.Abstractions.BackgroundJobs;
+using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.API.Jobs;
 

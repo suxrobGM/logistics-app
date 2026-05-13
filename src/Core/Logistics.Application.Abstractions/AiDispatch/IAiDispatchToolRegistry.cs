@@ -1,4 +1,5 @@
-namespace Logistics.Application.Services;
+using Logistics.Application.Abstractions.AiDispatch;
+namespace Logistics.Application.Abstractions.AiDispatch;
 
 /// <summary>
 /// Registry of all tools available to the dispatch agent.

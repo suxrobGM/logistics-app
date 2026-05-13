@@ -7,6 +7,7 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.AI.Providers;
 using Logistics.Mappings;
 using Microsoft.Extensions.Logging;
+using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.Infrastructure.AI.Services;
 

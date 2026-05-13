@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.McpServer;
 

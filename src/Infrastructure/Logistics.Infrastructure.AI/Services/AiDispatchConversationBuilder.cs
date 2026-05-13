@@ -8,6 +8,7 @@ using Logistics.Infrastructure.AI.Providers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.Infrastructure.AI.Services;
 

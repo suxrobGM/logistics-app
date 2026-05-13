@@ -4,6 +4,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.Enums;
 using Microsoft.EntityFrameworkCore;
+using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.Infrastructure.Services;
 

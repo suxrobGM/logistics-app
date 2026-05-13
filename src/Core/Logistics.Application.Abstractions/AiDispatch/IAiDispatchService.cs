@@ -1,7 +1,8 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Application.Abstractions.AiDispatch;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.AiDispatch;
 
 /// <summary>
 /// Core orchestration service for the AI dispatch agent.

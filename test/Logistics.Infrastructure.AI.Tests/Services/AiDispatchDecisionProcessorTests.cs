@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Xunit;
+using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.Infrastructure.AI.Tests.Services;
 

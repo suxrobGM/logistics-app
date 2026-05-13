@@ -12,6 +12,7 @@ using MockQueryable;
 using NSubstitute;
 using Xunit;
 using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.AiDispatch;
 using MsOptions = Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.AI.Tests.Services;

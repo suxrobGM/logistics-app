@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Abstractions.SystemSettings;
 using Logistics.Application.Abstractions.Tenancy;
+using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.Infrastructure.Persistence.Builder;
 

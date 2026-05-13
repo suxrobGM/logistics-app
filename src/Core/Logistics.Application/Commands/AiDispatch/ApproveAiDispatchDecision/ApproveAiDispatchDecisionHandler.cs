@@ -6,6 +6,7 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Configuration;
 using Logistics.Application.Abstractions.CurrentUser;
+using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.Application.Commands;
 

@@ -1,6 +1,7 @@
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Application.Abstractions.AiDispatch;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.AiDispatch;
 
 public interface IAiQuotaService
 {

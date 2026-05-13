@@ -1,6 +1,7 @@
 using Logistics.Shared.Models;
+using Logistics.Application.Abstractions.AiDispatch;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.AiDispatch;
 
 /// <summary>
 /// Service for broadcasting AI dispatch agent updates to connected clients.

@@ -38,6 +38,7 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Extensions.Logging;
 using Logistics.Application.Abstractions.BackgroundJobs;
+using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.API;
 

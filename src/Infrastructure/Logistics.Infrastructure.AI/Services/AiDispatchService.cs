@@ -7,6 +7,7 @@ using Logistics.Infrastructure.AI.Providers;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.Infrastructure.AI.Services;
 

@@ -12,6 +12,7 @@ using Logistics.Application.Abstractions.Captcha;
 using Logistics.Application.Abstractions.Notifications;
 using Logistics.Application.Abstractions.Realtime;
 using Logistics.Application.Abstractions.Routing;
+using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.Infrastructure.Communications;
 
