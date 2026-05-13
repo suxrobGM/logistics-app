@@ -1,10 +1,10 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Logistics.Application.Services;
+using Logistics.Application.Abstractions.Dispatch;
 
 namespace Logistics.Infrastructure.AI.Tools;
 
-internal sealed class CheckDispatchEligibilityTool(IDispatchEligibilityService eligibilityService)
+internal sealed class CheckDispatchEligibilityTool(IEligibilityCheck eligibilityService)
     : IAiDispatchTool
 {
     public string Name => "check_dispatch_eligibility";

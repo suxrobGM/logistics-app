@@ -1,6 +1,7 @@
 using System.Reflection;
 using FluentValidation;
 using Logistics.Application.Behaviours;
+using Logistics.Application.Abstractions.Dispatch;
 using Logistics.Application.Abstractions.Realtime;
 using Logistics.Application.Services;
 using Logistics.Application.Services.Privacy;
@@ -36,7 +37,9 @@ public static class Registrar
         services.AddScoped<ILoadService, LoadService>();
         services.AddScoped<IMaintenanceReminderService, MaintenanceReminderService>();
         services.AddScoped<ILicenseExpiryReminderService, LicenseExpiryReminderService>();
-        services.AddScoped<IDispatchEligibilityService, DispatchEligibilityService>();
+        services.AddScoped<DispatchEligibilityService>();
+        services.AddScoped<IDispatchEligibilityService>(sp => sp.GetRequiredService<DispatchEligibilityService>());
+        services.AddScoped<IEligibilityCheck>(sp => sp.GetRequiredService<DispatchEligibilityService>());
         services.AddScoped<IDataExportProcessingService, DataExportProcessingService>();
         services.AddScoped<IDataDeletionProcessingService, DataDeletionProcessingService>();
         services.AddScoped<IDataRetentionService, DataRetentionService>();

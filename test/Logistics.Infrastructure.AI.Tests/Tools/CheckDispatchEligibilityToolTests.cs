@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Logistics.Application.Services;
+using Logistics.Application.Abstractions.Dispatch;
 using Logistics.Infrastructure.AI.Tools;
 using NSubstitute;
 using Xunit;
@@ -9,8 +9,8 @@ namespace Logistics.Infrastructure.AI.Tests.Tools;
 
 public class CheckDispatchEligibilityToolTests
 {
-    private readonly IDispatchEligibilityService eligibilityService =
-        Substitute.For<IDispatchEligibilityService>();
+    private readonly IEligibilityCheck eligibilityService =
+        Substitute.For<IEligibilityCheck>();
 
     private readonly CheckDispatchEligibilityTool sut;
 

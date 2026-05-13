@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Dispatch;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -8,7 +9,7 @@ namespace Logistics.Application.Services;
 internal sealed class DispatchEligibilityService(
     ITenantUnitOfWork tenantUow,
     ILogger<DispatchEligibilityService> logger)
-    : IDispatchEligibilityService
+    : IDispatchEligibilityService, IEligibilityCheck
 {
     /// <summary>
     /// Days before medical-cert expiry at which we surface a warning rather than a hard block.
