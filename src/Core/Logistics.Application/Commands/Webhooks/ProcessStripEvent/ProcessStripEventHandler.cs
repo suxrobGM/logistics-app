@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Payments;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -22,6 +23,7 @@ internal sealed class ProcessStripEventHandler(
     IStripeService stripeService,
     IStripeCustomerService stripeCustomerService,
     IStripeConnectService stripeConnectService,
+    IStripeAddressMapper stripeAddressMapper,
     ILogger<ProcessStripEventHandler> logger)
     : IAppRequestHandler<ProcessStripEventCommand, Result>
 {
@@ -94,7 +96,7 @@ internal sealed class ProcessStripEventHandler(
             StripePaymentMethodId = stripeInvoice.DefaultPaymentMethodId,
             TenantId = tenant.Id,
             Status = PaymentStatus.Paid,
-            BillingAddress = stripeInvoice.CustomerAddress.ToAddressEntity()
+            BillingAddress = stripeAddressMapper.ToAddress(stripeInvoice.CustomerAddress)
         };
 
         await tenantUow.Repository<Payment>().AddAsync(payment);
