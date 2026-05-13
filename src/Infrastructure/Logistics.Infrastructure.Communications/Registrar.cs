@@ -11,6 +11,7 @@ using Resend;
 using Logistics.Application.Abstractions.Captcha;
 using Logistics.Application.Abstractions.Notifications;
 using Logistics.Application.Abstractions.Realtime;
+using Logistics.Application.Abstractions.Routing;
 
 namespace Logistics.Infrastructure.Communications;
 

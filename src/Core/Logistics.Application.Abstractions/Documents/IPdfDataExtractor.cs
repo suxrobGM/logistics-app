@@ -1,6 +1,7 @@
 using Logistics.Shared.Models;
+using Logistics.Application.Abstractions.Documents;
 
-namespace Logistics.Application.Services.PdfImport;
+namespace Logistics.Application.Abstractions.Documents;
 
 /// <summary>
 /// Service for extracting load data from PDF files.

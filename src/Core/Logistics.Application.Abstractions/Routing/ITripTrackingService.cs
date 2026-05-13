@@ -1,6 +1,7 @@
 using Logistics.Shared.Models;
+using Logistics.Application.Abstractions.Routing;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.Routing;
 
 /// <summary>
 /// Service for broadcasting trip-related updates to connected clients.

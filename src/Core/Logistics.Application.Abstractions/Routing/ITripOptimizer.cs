@@ -1,7 +1,8 @@
 ﻿using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
+using Logistics.Application.Abstractions.Routing;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.Routing;
 
 /// <summary>
 ///     Service for optimizing trip routes.

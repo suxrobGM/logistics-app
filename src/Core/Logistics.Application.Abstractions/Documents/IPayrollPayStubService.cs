@@ -1,6 +1,7 @@
 using Logistics.Domain.Entities;
+using Logistics.Application.Abstractions.Documents;
 
-namespace Logistics.Application.Services.Pdf;
+namespace Logistics.Application.Abstractions.Documents;
 
 /// <summary>
 /// Service for generating payroll pay stub PDF documents.

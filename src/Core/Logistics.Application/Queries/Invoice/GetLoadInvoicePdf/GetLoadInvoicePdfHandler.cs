@@ -1,8 +1,8 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Services.Pdf;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
+using Logistics.Application.Abstractions.Documents;
 
 namespace Logistics.Application.Queries;
 

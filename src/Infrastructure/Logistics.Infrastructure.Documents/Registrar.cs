@@ -1,10 +1,9 @@
-﻿using Logistics.Application.Services.Pdf;
-using Logistics.Application.Services.PdfImport;
-using Logistics.Application.Services.Privacy;
+﻿using Logistics.Application.Services.Privacy;
 using Logistics.Infrastructure.Documents.Privacy;
 using Logistics.Infrastructure.Services.Pdf;
 using Logistics.Infrastructure.Services.PdfImport;
 using Microsoft.Extensions.DependencyInjection;
+using Logistics.Application.Abstractions.Documents;
 
 namespace Logistics.Infrastructure.Documents;
 
