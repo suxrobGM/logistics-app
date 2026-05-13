@@ -1,9 +1,11 @@
 using System.Reflection;
 using FluentValidation;
 using Logistics.Application.Behaviours;
+using Logistics.Application.Abstractions.Realtime;
 using Logistics.Application.Services;
 using Logistics.Application.Services.Privacy;
 using Logistics.Application.Services.Tax;
+using Logistics.Application.Services.Tracking;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Logistics.Application;
@@ -29,6 +31,7 @@ public static class Registrar
         });
 
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<ITruckGeolocationUpdater, TruckGeolocationUpdater>();
         services.AddScoped<IPayrollService, PayrollService>();
         services.AddScoped<ILoadService, LoadService>();
         services.AddScoped<IMaintenanceReminderService, MaintenanceReminderService>();

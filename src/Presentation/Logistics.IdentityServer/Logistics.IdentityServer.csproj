@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\Logistics.Application\Logistics.Application.csproj"/>
     <ProjectReference Include="..\..\Core\Logistics.Application.Abstractions\Logistics.Application.Abstractions.csproj"/>
     <ProjectReference Include="..\..\Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj"/>
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Communications\Logistics.Infrastructure.Communications.csproj"/>

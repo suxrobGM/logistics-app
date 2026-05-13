@@ -1,13 +1,12 @@
-using Logistics.Application.Commands;
+using Logistics.Application.Abstractions.Realtime;
 using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Shared.Models;
-using MediatR;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Logistics.Infrastructure.Communications.SignalR.Hubs;
 
 public class TrackingHub(
-    IMediator mediator,
+    ITruckGeolocationUpdater geolocationUpdater,
     TrackingHubContext hubContext) : Hub<ITrackingHubClient>
 {
     private const string TripGroupPrefix = "trip:";
@@ -24,7 +23,7 @@ public class TrackingHub(
 
         if (geolocationData != null)
         {
-            await mediator.Send(new SetTruckGeolocationCommand(geolocationData));
+            await geolocationUpdater.UpdateAsync(geolocationData);
         }
 
         hubContext.RemoveClient(Context.ConnectionId);
