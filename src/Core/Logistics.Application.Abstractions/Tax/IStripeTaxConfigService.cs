@@ -1,4 +1,5 @@
-namespace Logistics.Application.Services.Tax;
+using Logistics.Application.Abstractions.Tax;
+namespace Logistics.Application.Abstractions.Tax;
 
 /// <summary>
 /// Reads tenant-level tax configuration from Stripe (cached): the default Stripe tax code

@@ -5,6 +5,8 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.Tax.Data;
 using Microsoft.Extensions.Logging;
+using Logistics.Application.Abstractions.Tax;
+using Logistics.Application.Abstractions.Models.Tax;
 
 namespace Logistics.Infrastructure.Tax.Manual;
 

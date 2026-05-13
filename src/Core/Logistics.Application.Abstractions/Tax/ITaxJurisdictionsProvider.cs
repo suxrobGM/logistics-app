@@ -1,4 +1,5 @@
-namespace Logistics.Application.Services.Tax;
+using Logistics.Application.Abstractions.Tax;
+namespace Logistics.Application.Abstractions.Tax;
 
 /// <summary>
 /// Returns the static set of supported jurisdictions (country + optional region) backed by the

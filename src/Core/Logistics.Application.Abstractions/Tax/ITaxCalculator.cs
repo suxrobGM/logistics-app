@@ -1,4 +1,6 @@
-namespace Logistics.Application.Services.Tax;
+using Logistics.Application.Abstractions.Tax;
+using Logistics.Application.Abstractions.Models.Tax;
+namespace Logistics.Application.Abstractions.Tax;
 
 /// <summary>
 /// Computes per-line and aggregate tax for an invoice. Two implementations live in

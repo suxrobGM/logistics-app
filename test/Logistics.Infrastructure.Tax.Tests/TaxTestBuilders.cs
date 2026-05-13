@@ -5,6 +5,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using NSubstitute;
+using Logistics.Application.Abstractions.Models.Tax;
 
 namespace Logistics.Infrastructure.Tax.Tests;
 
