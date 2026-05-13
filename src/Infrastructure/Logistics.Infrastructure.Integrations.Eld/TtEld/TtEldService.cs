@@ -1,4 +1,3 @@
-using System.Net.Http.Json;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
@@ -46,7 +45,7 @@ internal class TtEldService(
             var response = await httpClient.SendAsync(request);
             return response.IsSuccessStatusCode;
         }
-        catch (Exception ex)
+        catch (HttpRequestException ex)
         {
             logger.LogError(ex, "Failed to validate TT ELD credentials");
             return false;
@@ -62,25 +61,16 @@ internal class TtEldService(
     #region HOS Methods (not supported by TT ELD)
 
     public Task<EldDriverHosDataDto?> GetDriverHosStatusAsync(string externalDriverId)
-    {
-        // TT ELD does not provide HOS data
-        return Task.FromResult<EldDriverHosDataDto?>(null);
-    }
+        => Task.FromResult<EldDriverHosDataDto?>(null);
 
     public Task<IEnumerable<EldDriverHosDataDto>> GetAllDriversHosStatusAsync()
-    {
-        // TT ELD does not provide HOS data
-        return Task.FromResult<IEnumerable<EldDriverHosDataDto>>([]);
-    }
+        => Task.FromResult<IEnumerable<EldDriverHosDataDto>>([]);
 
     public Task<IEnumerable<EldViolationDataDto>> GetDriverViolationsAsync(
         string externalDriverId,
         DateTime startDate,
         DateTime endDate)
-    {
-        // TT ELD does not provide violation data
-        return Task.FromResult<IEnumerable<EldViolationDataDto>>([]);
-    }
+        => Task.FromResult<IEnumerable<EldViolationDataDto>>([]);
 
     #endregion
 
@@ -89,105 +79,35 @@ internal class TtEldService(
         DateTime startDate,
         DateTime endDate)
     {
-        try
-        {
-            var fromStr = startDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
-            var toStr = endDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+        var fromStr = startDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
+        var toStr = endDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ");
 
-            var response = await httpClient.GetAsync(
-                $"{baseUrl}/api/externalservice/trackings/{usdot}/{externalDriverId}/?from={fromStr}&to={toStr}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                logger.LogWarning("Failed to get tracking data for vehicle {VehicleId}: {StatusCode}",
-                    externalDriverId, response.StatusCode);
-                return [];
-            }
-
-            var result = await response.Content.ReadFromJsonAsync<List<TtEldTrackingPoint>>();
-            return result?.Select(p => TtEldMapper.MapToLogDto(p, externalDriverId)) ?? [];
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error fetching tracking data for vehicle {VehicleId}", externalDriverId);
-            return [];
-        }
+        var result = await httpClient.TryGetFromJsonAsync<List<TtEldTrackingPoint>>(
+            $"{baseUrl}/api/externalservice/trackings/{usdot}/{externalDriverId}/?from={fromStr}&to={toStr}",
+            EldJsonOptions.CamelCase,
+            logger,
+            $"TT ELD tracking for vehicle {externalDriverId}");
+        return result?.Select(p => TtEldMapper.MapToLogDto(p, externalDriverId)) ?? [];
     }
 
     public async Task<IEnumerable<EldDriverDto>> GetAllDriversAsync()
     {
-        try
-        {
-            var allDrivers = new List<EldDriverDto>();
-            var page = 1;
-            int totalPages;
-
-            do
-            {
-                var response = await httpClient.GetAsync(
-                    $"{baseUrl}/api/externalservice/drivers-list/{usdot}?page={page}&perPage=100&is_active=true");
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    logger.LogWarning("Failed to get drivers page {Page}: {StatusCode}", page, response.StatusCode);
-                    break;
-                }
-
-                var result = await response.Content.ReadFromJsonAsync<TtEldDriversResponse>();
-                if (result?.Data is not null)
-                {
-                    allDrivers.AddRange(result.Data.Select(TtEldMapper.MapToDriverDto));
-                }
-
-                totalPages = result?.Meta?.TotalPages ?? 1;
-                page++;
-            } while (page <= totalPages);
-
-            return allDrivers;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error fetching drivers");
-            return [];
-        }
+        return await GetAllPaginatedAsync<TtEldDriversResponse, TtEldDriverData, EldDriverDto>(
+            page => $"{baseUrl}/api/externalservice/drivers-list/{usdot}?page={page}&perPage=100&is_active=true",
+            r => r.Data,
+            r => r.Meta?.TotalPages ?? 1,
+            TtEldMapper.MapToDriverDto,
+            "TT ELD drivers");
     }
 
     public async Task<IEnumerable<EldVehicleDto>> GetAllVehiclesAsync()
     {
-        try
-        {
-            var allVehicles = new List<EldVehicleDto>();
-            var page = 1;
-            int totalPages;
-
-            do
-            {
-                var response = await httpClient.GetAsync(
-                    $"{baseUrl}/api/externalservice/current-units/{usdot}?page={page}&perPage=100&is_active=true");
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    logger.LogWarning("Failed to get units page {Page}: {StatusCode}", page, response.StatusCode);
-                    break;
-                }
-
-                var result = await response.Content.ReadFromJsonAsync<TtEldUnitsResponse>();
-                if (result?.Data is not null)
-                {
-                    allVehicles.AddRange(result.Data.Select(TtEldMapper.MapToVehicleDto));
-                }
-
-                totalPages = result?.Meta?.TotalPages ?? 1;
-                page++;
-            } while (page <= totalPages);
-
-            return allVehicles;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error fetching vehicles");
-            return [];
-        }
+        return await GetAllPaginatedAsync<TtEldUnitsResponse, TtEldUnitData, EldVehicleDto>(
+            page => $"{baseUrl}/api/externalservice/current-units/{usdot}?page={page}&perPage=100&is_active=true",
+            r => r.Data,
+            r => r.Meta?.TotalPages ?? 1,
+            TtEldMapper.MapToVehicleDto,
+            "TT ELD units");
     }
 
     public Task<EldWebhookResultDto> ProcessWebhookAsync(string payload, string? signature, string? webhookSecret)
@@ -205,26 +125,50 @@ internal class TtEldService(
 
     public async Task<IEnumerable<EldVehicleLocationDto>> GetAllVehicleLocationsAsync(CancellationToken ct = default)
     {
-        try
-        {
-            var response = await httpClient.GetAsync(
-                $"{baseUrl}/api/v2/units-by-usdot/{usdot}", ct);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                logger.LogWarning("Failed to get vehicle locations: {StatusCode}", response.StatusCode);
-                return [];
-            }
-
-            var result = await response.Content.ReadFromJsonAsync<TtEldTrackingV2Response>(ct);
-            return result?.Units?.Select(TtEldMapper.MapToLocationDto) ?? [];
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error fetching vehicle locations");
-            return [];
-        }
+        var result = await httpClient.TryGetFromJsonAsync<TtEldTrackingV2Response>(
+            $"{baseUrl}/api/v2/units-by-usdot/{usdot}",
+            EldJsonOptions.CamelCase,
+            logger,
+            "TT ELD vehicle locations",
+            ct);
+        return result?.Units?.Select(TtEldMapper.MapToLocationDto) ?? [];
     }
 
     #endregion
+
+    private async Task<List<TOut>> GetAllPaginatedAsync<TResponse, TItem, TOut>(
+        Func<int, string> urlForPage,
+        Func<TResponse, IEnumerable<TItem>?> selectItems,
+        Func<TResponse, int> selectTotalPages,
+        Func<TItem, TOut> map,
+        string action)
+    {
+        var all = new List<TOut>();
+        var page = 1;
+        int totalPages;
+
+        do
+        {
+            var result = await httpClient.TryGetFromJsonAsync<TResponse>(
+                urlForPage(page),
+                EldJsonOptions.CamelCase,
+                logger,
+                $"{action} page {page}");
+            if (result is null)
+            {
+                break;
+            }
+
+            var items = selectItems(result);
+            if (items is not null)
+            {
+                all.AddRange(items.Select(map));
+            }
+
+            totalPages = selectTotalPages(result);
+            page++;
+        } while (page <= totalPages);
+
+        return all;
+    }
 }

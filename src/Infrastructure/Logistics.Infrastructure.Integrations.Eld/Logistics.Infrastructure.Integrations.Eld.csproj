@@ -14,4 +14,8 @@
     <ProjectReference Include="..\..\Core\Logistics.Application\Logistics.Application.csproj"/>
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Logistics.Application.Tests"/>
+  </ItemGroup>
+
 </Project>

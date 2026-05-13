@@ -1,6 +1,7 @@
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Infrastructure.Integrations.Eld.Geotab;
 using Logistics.Infrastructure.Integrations.Eld.Motive;
 using Logistics.Infrastructure.Integrations.Eld.Providers;
 using Logistics.Infrastructure.Integrations.Eld.Samsara;
@@ -23,7 +24,7 @@ internal class EldProviderFactory(
             EldProviderType.Motive => serviceProvider.GetRequiredService<MotiveEldService>(),
             EldProviderType.TtEld => serviceProvider.GetRequiredService<TtEldService>(),
             EldProviderType.Demo => serviceProvider.GetRequiredService<DemoEldService>(),
-            EldProviderType.Geotab => throw new NotImplementedException("Geotab ELD provider is not supported"),
+            EldProviderType.Geotab => serviceProvider.GetRequiredService<GeotabEldService>(),
             EldProviderType.Omnitracs => throw new NotImplementedException("Omnitracs ELD provider is not supported"),
             EldProviderType.PeopleNet => throw new NotImplementedException("PeopleNet ELD provider is not supported"),
             _ => throw new NotSupportedException($"ELD provider '{providerType}' is not supported")
@@ -45,6 +46,7 @@ internal class EldProviderFactory(
         return providerType is EldProviderType.Samsara or
             EldProviderType.Motive or
             EldProviderType.TtEld or
+            EldProviderType.Geotab or
             EldProviderType.Demo;
     }
 }
