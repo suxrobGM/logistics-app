@@ -6,7 +6,6 @@ using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,7 +17,6 @@ internal sealed class ImpersonateUserHandler(
     IMasterUnitOfWork masterUow,
     UserManager<User> userManager,
     ICurrentUserService currentUserService,
-    IHttpContextAccessor httpContextAccessor,
     IOptions<ImpersonationOptions> impersonationOptions,
     IOptions<IdentityServerOptions> identityServerOptions,
     ILogger<ImpersonateUserHandler> logger)
@@ -27,8 +25,8 @@ internal sealed class ImpersonateUserHandler(
     public async Task<Result<ImpersonateUserResult>> Handle(
         ImpersonateUserCommand req, CancellationToken ct)
     {
-        var ipAddress = httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-        var userAgent = httpContextAccessor.HttpContext?.Request.Headers["User-Agent"].ToString() ?? "unknown";
+        var ipAddress = currentUserService.IpAddress ?? "unknown";
+        var userAgent = currentUserService.UserAgent ?? "unknown";
 
         // 1. Get current admin user
         var adminUserId = currentUserService.GetUserId();

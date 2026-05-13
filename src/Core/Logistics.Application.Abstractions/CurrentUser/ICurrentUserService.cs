@@ -1,4 +1,3 @@
-using Logistics.Application.Abstractions.CurrentUser;
 namespace Logistics.Application.Abstractions.CurrentUser;
 
 /// <summary>
@@ -17,4 +16,15 @@ public interface ICurrentUserService
     /// </summary>
     /// <returns>The user's full name if available, "Unknown" otherwise.</returns>
     string GetUserName();
+
+    /// <summary>
+    /// Gets the IP address of the current request, or null when no HTTP context is present
+    /// (e.g., background jobs, the DbMigrator).
+    /// </summary>
+    string? IpAddress { get; }
+
+    /// <summary>
+    /// Gets the User-Agent header of the current request, or null when no HTTP context is present.
+    /// </summary>
+    string? UserAgent { get; }
 }
