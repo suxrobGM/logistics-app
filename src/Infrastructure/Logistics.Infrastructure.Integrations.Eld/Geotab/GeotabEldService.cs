@@ -129,20 +129,22 @@ internal class GeotabEldService(
 
     public Task<EldWebhookResultDto> ProcessWebhookAsync(string payload, string? signature, string? webhookSecret)
     {
-        // Signature verification: Geotab Add-Ins typically sign with the webhookSecret as
-        // an HMAC of the body. Real verification is wired in C2; here we accept payloads
-        // when no secret is configured to keep parity with other providers.
+        // Geotab does not natively push HOS events; integrators sign Add-In / IOX
+        // forwarder calls with HMAC-SHA256 of the body using the configured secret.
+        // When a secret is configured, reject any payload without a matching signature.
+        if (!string.IsNullOrEmpty(webhookSecret)
+            && !WebhookSignature.VerifyHmacSha256(payload, signature, webhookSecret))
+        {
+            logger.LogWarning("Rejected Geotab webhook with invalid signature");
+            return Task.FromResult(InvalidWebhook("Invalid webhook signature"));
+        }
+
         try
         {
             var webhook = JsonSerializer.Deserialize<GeotabWebhookPayload>(payload, EldJsonOptions.CamelCase);
             if (webhook is null)
             {
-                return Task.FromResult(new EldWebhookResultDto
-                {
-                    EventType = EldWebhookEventType.Unknown,
-                    IsValid = false,
-                    ErrorMessage = "Failed to parse webhook payload"
-                });
+                return Task.FromResult(InvalidWebhook("Failed to parse webhook payload"));
             }
 
             var eventType = webhook.EventType?.ToLowerInvariant() switch
@@ -162,17 +164,19 @@ internal class GeotabEldService(
                 IsValid = true
             });
         }
-        catch (Exception ex)
+        catch (JsonException ex)
         {
             logger.LogError(ex, "Error processing Geotab webhook");
-            return Task.FromResult(new EldWebhookResultDto
-            {
-                EventType = EldWebhookEventType.Unknown,
-                IsValid = false,
-                ErrorMessage = ex.Message
-            });
+            return Task.FromResult(InvalidWebhook(ex.Message));
         }
     }
+
+    private static EldWebhookResultDto InvalidWebhook(string error) => new()
+    {
+        EventType = EldWebhookEventType.Unknown,
+        IsValid = false,
+        ErrorMessage = error
+    };
 
     private static (string? database, string? userName) ParseAccount(string apiKey)
     {

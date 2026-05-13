@@ -63,6 +63,21 @@ public class WebhookController(IMediator mediator) : ControllerBase
         return Task.FromResult<IActionResult>(Ok());
     }
 
+    [HttpPost("eld/geotab", Name = "ProcessGeotabWebhook")]
+    public async Task<IActionResult> GeotabWebhook()
+    {
+        var requestBodyJson = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+        var signature = Request.Headers["X-Geotab-Signature"].ToString();
+
+        var result = await mediator.Send(new ProcessEldWebhookCommand
+        {
+            ProviderType = EldProviderType.Geotab,
+            RequestBodyJson = requestBodyJson,
+            Signature = signature
+        });
+        return result.IsSuccess ? Ok() : BadRequest();
+    }
+
     #region Load Board Webhooks
 
     [HttpPost("loadboard/dat", Name = "ProcessDatWebhook")]
