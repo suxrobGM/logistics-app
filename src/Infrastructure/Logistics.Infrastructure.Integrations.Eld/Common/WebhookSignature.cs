@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Logistics.Infrastructure.Integrations.Eld;
+namespace Logistics.Infrastructure.Integrations.Eld.Common;
 
 /// <summary>
 /// Helpers for verifying inbound webhook HMAC signatures with constant-time

@@ -1,4 +1,4 @@
-namespace Logistics.Infrastructure.Integrations.Eld.Motive;
+namespace Logistics.Infrastructure.Integrations.Eld.Providers.Motive;
 
 // Motive wire format is snake_case — see EldJsonOptions.SnakeCase. No [JsonPropertyName] needed.
 

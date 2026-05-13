@@ -1,7 +1,7 @@
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
-namespace Logistics.Infrastructure.Integrations.Eld.TtEld;
+namespace Logistics.Infrastructure.Integrations.Eld.Providers.TtEld;
 
 internal static class TtEldMapper
 {

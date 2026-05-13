@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace Logistics.Infrastructure.Integrations.Eld;
+namespace Logistics.Infrastructure.Integrations.Eld.Common;
 
 /// <summary>
 /// Shared <see cref="JsonSerializerOptions"/> instances for ELD provider APIs. Each provider

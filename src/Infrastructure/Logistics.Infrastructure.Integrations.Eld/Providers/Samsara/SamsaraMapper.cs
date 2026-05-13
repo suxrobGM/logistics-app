@@ -1,7 +1,7 @@
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
-namespace Logistics.Infrastructure.Integrations.Eld.Samsara;
+namespace Logistics.Infrastructure.Integrations.Eld.Providers.Samsara;
 
 internal static class SamsaraMapper
 {

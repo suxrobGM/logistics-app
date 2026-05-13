@@ -5,7 +5,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.Integrations.Eld;
-using Logistics.Infrastructure.Integrations.Eld.Geotab;
+using Logistics.Infrastructure.Integrations.Eld.Providers.Geotab;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;

@@ -1,9 +1,9 @@
 ﻿using Logistics.Application.Services;
-using Logistics.Infrastructure.Integrations.Eld.Geotab;
-using Logistics.Infrastructure.Integrations.Eld.Motive;
 using Logistics.Infrastructure.Integrations.Eld.Providers;
-using Logistics.Infrastructure.Integrations.Eld.Samsara;
-using Logistics.Infrastructure.Integrations.Eld.TtEld;
+using Logistics.Infrastructure.Integrations.Eld.Providers.Geotab;
+using Logistics.Infrastructure.Integrations.Eld.Providers.Motive;
+using Logistics.Infrastructure.Integrations.Eld.Providers.Samsara;
+using Logistics.Infrastructure.Integrations.Eld.Providers.TtEld;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

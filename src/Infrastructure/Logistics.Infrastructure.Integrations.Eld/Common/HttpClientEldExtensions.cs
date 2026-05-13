@@ -2,7 +2,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
-namespace Logistics.Infrastructure.Integrations.Eld;
+namespace Logistics.Infrastructure.Integrations.Eld.Common;
 
 /// <summary>
 /// HttpClient extensions used by ELD provider services. Centralises the

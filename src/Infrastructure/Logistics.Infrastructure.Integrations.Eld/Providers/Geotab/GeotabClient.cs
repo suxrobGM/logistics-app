@@ -1,8 +1,9 @@
 using System.Net.Http.Json;
 using System.Text.Json;
+using Logistics.Infrastructure.Integrations.Eld.Common;
 using Microsoft.Extensions.Logging;
 
-namespace Logistics.Infrastructure.Integrations.Eld.Geotab;
+namespace Logistics.Infrastructure.Integrations.Eld.Providers.Geotab;
 
 /// <summary>
 /// Thin wrapper around the MyGeotab JSON-RPC endpoint. All MyGeotab calls are

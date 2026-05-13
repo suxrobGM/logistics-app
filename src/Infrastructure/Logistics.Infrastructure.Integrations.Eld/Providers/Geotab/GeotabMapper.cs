@@ -1,7 +1,7 @@
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
-namespace Logistics.Infrastructure.Integrations.Eld.Geotab;
+namespace Logistics.Infrastructure.Integrations.Eld.Providers.Geotab;
 
 /// <summary>
 /// Maps MyGeotab DutyStatusLog / DutyStatusViolation / Device / User entities to the

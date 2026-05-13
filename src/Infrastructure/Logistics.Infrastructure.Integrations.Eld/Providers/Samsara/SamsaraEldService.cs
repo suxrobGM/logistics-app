@@ -3,11 +3,12 @@ using System.Text.Json;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Infrastructure.Integrations.Eld.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Logistics.Infrastructure.Integrations.Eld.Samsara;
+namespace Logistics.Infrastructure.Integrations.Eld.Providers.Samsara;
 
 /// <summary>
 ///     Samsara ELD provider implementation.

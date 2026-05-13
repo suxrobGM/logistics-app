@@ -3,11 +3,12 @@ using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Infrastructure.Integrations.Eld.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Logistics.Infrastructure.Integrations.Eld.Geotab;
+namespace Logistics.Infrastructure.Integrations.Eld.Providers.Geotab;
 
 /// <summary>
 ///     Geotab MyGeotab provider implementation. Serves both US (FMCSA) and EU

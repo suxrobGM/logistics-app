@@ -1,7 +1,7 @@
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 
-namespace Logistics.Infrastructure.Integrations.Eld.Motive;
+namespace Logistics.Infrastructure.Integrations.Eld.Providers.Motive;
 
 internal static class MotiveMapper
 {

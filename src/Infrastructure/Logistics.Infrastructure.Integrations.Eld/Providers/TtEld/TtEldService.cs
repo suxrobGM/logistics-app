@@ -1,11 +1,12 @@
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Infrastructure.Integrations.Eld.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Logistics.Infrastructure.Integrations.Eld.TtEld;
+namespace Logistics.Infrastructure.Integrations.Eld.Providers.TtEld;
 
 /// <summary>
 ///     TT ELD provider implementation.

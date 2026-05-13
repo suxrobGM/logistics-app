@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Logistics.Infrastructure.Integrations.Eld.TtEld;
+namespace Logistics.Infrastructure.Integrations.Eld.Providers.TtEld;
 
 // TT ELD wire format is mostly camelCase — see EldJsonOptions.CamelCase. Only fields whose
 // JSON key uses snake_case keep an explicit [JsonPropertyName].

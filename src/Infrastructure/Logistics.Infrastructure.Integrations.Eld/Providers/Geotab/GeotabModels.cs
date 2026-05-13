@@ -1,4 +1,4 @@
-namespace Logistics.Infrastructure.Integrations.Eld.Geotab;
+namespace Logistics.Infrastructure.Integrations.Eld.Providers.Geotab;
 
 /// <summary>
 /// MyGeotab API uses a JSON-RPC-style envelope: POST /apiv1 with { method, params }.

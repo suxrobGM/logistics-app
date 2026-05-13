@@ -1,8 +1,8 @@
-using System.Net.Http.Json;
 using System.Text.Json;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Infrastructure.Integrations.LoadBoard.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -23,7 +23,6 @@ internal class OneTwo3LoadBoardService(
     private readonly OneTwo3LoadboardOptions options = options.Value.OneTwo3Loadboard ?? new OneTwo3LoadboardOptions();
     private readonly Lock rateLimitLock = new();
     private int dailySearchCount;
-
     private int hourlySearchCount;
     private DateTime lastDayReset = DateTime.UtcNow;
     private DateTime lastHourReset = DateTime.UtcNow;
@@ -53,7 +52,6 @@ internal class OneTwo3LoadBoardService(
             testClient.DefaultRequestHeaders.Add("X-API-Key", apiKey);
 
             var response = await testClient.GetAsync("/v1/account");
-
             if (response.IsSuccessStatusCode)
             {
                 logger.LogInformation("123Loadboard credentials validated successfully");
@@ -63,7 +61,7 @@ internal class OneTwo3LoadBoardService(
             logger.LogWarning("123Loadboard credential validation failed: {StatusCode}", response.StatusCode);
             return false;
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
             logger.LogError(ex, "Error validating 123Loadboard credentials");
             return false;
@@ -85,253 +83,158 @@ internal class OneTwo3LoadBoardService(
         }
 
         logger.LogInformation("Searching 123Loadboard loads: Origin={Origin}, Dest={Dest}",
-            criteria.OriginAddress?.City,
-            criteria.DestinationAddress?.City);
+            criteria.OriginAddress?.City, criteria.DestinationAddress?.City);
 
-        try
+        var searchRequest = new
         {
-            var searchRequest = new
+            origin = new
             {
-                origin = new
+                city = criteria.OriginAddress?.City,
+                state = criteria.OriginAddress?.State,
+                radius = criteria.OriginRadius
+            },
+            destination = criteria.DestinationAddress != null
+                ? new
                 {
-                    city = criteria.OriginAddress?.City,
-                    state = criteria.OriginAddress?.State,
-                    radius = criteria.OriginRadius
-                },
-                destination = criteria.DestinationAddress != null
-                    ? new
-                    {
-                        city = criteria.DestinationAddress.City,
-                        state = criteria.DestinationAddress.State,
-                        radius = criteria.DestinationRadius
-                    }
-                    : null,
-                pickupDateStart = criteria.PickupDateStart?.ToString("yyyy-MM-dd"),
-                pickupDateEnd = criteria.PickupDateEnd?.ToString("yyyy-MM-dd"),
-                equipmentTypes = criteria.EquipmentTypes,
-                limit = criteria.MaxResults
-            };
+                    city = criteria.DestinationAddress.City,
+                    state = criteria.DestinationAddress.State,
+                    radius = criteria.DestinationRadius
+                }
+                : null,
+            pickupDateStart = criteria.PickupDateStart?.ToString("yyyy-MM-dd"),
+            pickupDateEnd = criteria.PickupDateEnd?.ToString("yyyy-MM-dd"),
+            equipmentTypes = criteria.EquipmentTypes,
+            limit = criteria.MaxResults
+        };
 
-            var response = await httpClient.PostAsJsonAsync("/v1/loads/search", searchRequest);
-            IncrementSearchCount();
+        var result = await httpClient.TryPostAsJsonAsync<object, OneTwo3SearchResponse>(
+            "/v1/loads/search", searchRequest, logger, "123Loadboard search loads");
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                logger.LogWarning("123Loadboard search failed: {StatusCode} - {Error}", response.StatusCode, error);
-                return [];
-            }
-
-            var result = await response.Content.ReadFromJsonAsync<OneTwo3SearchResponse>();
-            return result?.Loads?.Select(OneTwo3Mapper.ToListingDto) ?? [];
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error searching 123Loadboard loads");
-            return [];
-        }
+        IncrementSearchCount();
+        return result.Value?.Loads?.Select(OneTwo3Mapper.ToListingDto) ?? [];
     }
 
     public async Task<LoadBoardListingDto?> GetLoadDetailsAsync(string externalListingId)
     {
-        try
-        {
-            var response = await httpClient.GetAsync($"/v1/loads/{externalListingId}");
+        var load = await httpClient.TryGetFromJsonAsync<OneTwo3Load>(
+            $"/v1/loads/{externalListingId}", logger, $"123Loadboard get load {externalListingId}");
 
-            if (!response.IsSuccessStatusCode)
-            {
-                logger.LogWarning("123Loadboard get load details failed: {StatusCode}", response.StatusCode);
-                return null;
-            }
-
-            var load = await response.Content.ReadFromJsonAsync<OneTwo3Load>();
-            return load != null ? OneTwo3Mapper.ToListingDto(load) : null;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error getting 123Loadboard load details for {ListingId}", externalListingId);
-            return null;
-        }
+        return load != null ? OneTwo3Mapper.ToListingDto(load) : null;
     }
 
     public async Task<LoadBoardBookingResultDto> BookLoadAsync(string externalListingId,
         LoadBoardBookingRequest request)
     {
-        logger.LogInformation("Booking 123Loadboard load {ListingId} for truck {TruckId}", externalListingId,
-            request.TruckId);
+        logger.LogInformation("Booking 123Loadboard load {ListingId} for truck {TruckId}",
+            externalListingId, request.TruckId);
 
-        try
-        {
-            var bookRequest = new { loadId = externalListingId, message = request.Notes };
-            var response = await httpClient.PostAsJsonAsync($"/v1/loads/{externalListingId}/contact", bookRequest);
+        var bookRequest = new { loadId = externalListingId, message = request.Notes };
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                logger.LogWarning("123Loadboard booking failed: {StatusCode} - {Error}", response.StatusCode, error);
-                return new LoadBoardBookingResultDto
-                {
-                    Success = false, ErrorMessage = $"123Loadboard booking failed: {error}"
-                };
-            }
+        var result = await httpClient.TryPostAsJsonAsync<object, OneTwo3BookingResponse>(
+            $"/v1/loads/{externalListingId}/contact", bookRequest, logger,
+            $"123Loadboard book load {externalListingId}");
 
-            var result = await response.Content.ReadFromJsonAsync<OneTwo3BookingResponse>();
-            return new LoadBoardBookingResultDto { Success = true, ExternalConfirmationId = result?.ReferenceId };
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error booking 123Loadboard load {ListingId}", externalListingId);
-            return new LoadBoardBookingResultDto { Success = false, ErrorMessage = ex.Message };
-        }
+        return result.IsSuccess
+            ? new LoadBoardBookingResultDto { Success = true, ExternalConfirmationId = result.Value?.ReferenceId }
+            : new LoadBoardBookingResultDto { Success = false, ErrorMessage = $"123Loadboard booking failed: {result.ErrorBody}" };
     }
 
-    public async Task<bool> CancelBookingAsync(string externalListingId, string? reason)
+    public Task<bool> CancelBookingAsync(string externalListingId, string? reason)
     {
-        try
-        {
-            var response = await httpClient.PostAsJsonAsync($"/v1/loads/{externalListingId}/cancel", new { reason });
-            return response.IsSuccessStatusCode;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error cancelling 123Loadboard booking {ListingId}", externalListingId);
-            return false;
-        }
+        return httpClient.TryPostAsync(
+            $"/v1/loads/{externalListingId}/cancel", new { reason }, logger,
+            $"123Loadboard cancel booking {externalListingId}");
     }
 
     public async Task<PostTruckResultDto> PostTruckAsync(PostTruckRequest request)
     {
         logger.LogInformation("Posting truck {TruckId} to 123Loadboard", request.TruckId);
 
-        try
+        var postRequest = new
         {
-            var postRequest = new
+            origin = new
             {
-                origin = new
+                city = request.AvailableAtAddress.City,
+                state = request.AvailableAtAddress.State,
+                zipCode = request.AvailableAtAddress.ZipCode,
+                lat = request.AvailableAtLocation.Latitude,
+                lng = request.AvailableAtLocation.Longitude
+            },
+            destination = request.DestinationPreference != null
+                ? new
                 {
-                    city = request.AvailableAtAddress.City,
-                    state = request.AvailableAtAddress.State,
-                    zipCode = request.AvailableAtAddress.ZipCode,
-                    lat = request.AvailableAtLocation.Latitude,
-                    lng = request.AvailableAtLocation.Longitude
-                },
-                destination = request.DestinationPreference != null
-                    ? new
-                    {
-                        city = request.DestinationPreference.City,
-                        state = request.DestinationPreference.State,
-                        radius = request.DestinationRadius
-                    }
-                    : null,
-                availableFrom = request.AvailableFrom.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                availableTo = request.AvailableTo?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                equipment = request.EquipmentType,
-                maxWeight = request.MaxWeight,
-                maxLength = request.MaxLength
-            };
+                    city = request.DestinationPreference.City,
+                    state = request.DestinationPreference.State,
+                    radius = request.DestinationRadius
+                }
+                : null,
+            availableFrom = request.AvailableFrom.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+            availableTo = request.AvailableTo?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+            equipment = request.EquipmentType,
+            maxWeight = request.MaxWeight,
+            maxLength = request.MaxLength
+        };
 
-            var response = await httpClient.PostAsJsonAsync("/v1/trucks", postRequest);
+        var result = await httpClient.TryPostAsJsonAsync<object, OneTwo3PostTruckResponse>(
+            "/v1/trucks", postRequest, logger, $"123Loadboard post truck {request.TruckId}");
 
-            if (!response.IsSuccessStatusCode)
+        return result.IsSuccess
+            ? new PostTruckResultDto
             {
-                var error = await response.Content.ReadAsStringAsync();
-                logger.LogWarning("123Loadboard post truck failed: {StatusCode} - {Error}", response.StatusCode, error);
-                return new PostTruckResultDto
-                {
-                    Success = false, ErrorMessage = $"123Loadboard post truck failed: {error}"
-                };
+                Success = true, ExternalPostId = result.Value?.TruckPostId, ExpiresAt = result.Value?.ExpiresAt
             }
-
-            var result = await response.Content.ReadFromJsonAsync<OneTwo3PostTruckResponse>();
-            return new PostTruckResultDto
-            {
-                Success = true, ExternalPostId = result?.TruckPostId, ExpiresAt = result?.ExpiresAt
-            };
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error posting truck {TruckId} to 123Loadboard", request.TruckId);
-            return new PostTruckResultDto { Success = false, ErrorMessage = ex.Message };
-        }
+            : new PostTruckResultDto { Success = false, ErrorMessage = $"123Loadboard post truck failed: {result.ErrorBody}" };
     }
 
-    public async Task<bool> UpdateTruckPostAsync(string externalPostId, PostTruckRequest request)
+    public Task<bool> UpdateTruckPostAsync(string externalPostId, PostTruckRequest request)
     {
-        try
+        var updateRequest = new
         {
-            var updateRequest = new
-            {
-                availableFrom = request.AvailableFrom.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                availableTo = request.AvailableTo?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                equipment = request.EquipmentType,
-                maxWeight = request.MaxWeight,
-                maxLength = request.MaxLength
-            };
+            availableFrom = request.AvailableFrom.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+            availableTo = request.AvailableTo?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+            equipment = request.EquipmentType,
+            maxWeight = request.MaxWeight,
+            maxLength = request.MaxLength
+        };
 
-            var response = await httpClient.PutAsJsonAsync($"/v1/trucks/{externalPostId}", updateRequest);
-            return response.IsSuccessStatusCode;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error updating 123Loadboard truck post {PostId}", externalPostId);
-            return false;
-        }
+        return httpClient.TryPutAsync(
+            $"/v1/trucks/{externalPostId}", updateRequest, logger, $"123Loadboard update truck post {externalPostId}");
     }
 
-    public async Task<bool> RemoveTruckPostAsync(string externalPostId)
+    public Task<bool> RemoveTruckPostAsync(string externalPostId)
     {
-        try
-        {
-            var response = await httpClient.DeleteAsync($"/v1/trucks/{externalPostId}");
-            return response.IsSuccessStatusCode;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error removing 123Loadboard truck post {PostId}", externalPostId);
-            return false;
-        }
+        return httpClient.TryDeleteAsync(
+            $"/v1/trucks/{externalPostId}", logger, $"123Loadboard remove truck post {externalPostId}");
     }
 
     public async Task<IEnumerable<PostedTruckDto>> GetPostedTrucksAsync()
     {
-        try
-        {
-            var response = await httpClient.GetAsync("/v1/trucks");
-            if (!response.IsSuccessStatusCode)
-            {
-                return [];
-            }
+        var result = await httpClient.TryGetFromJsonAsync<OneTwo3TrucksResponse>(
+            "/v1/trucks", logger, "123Loadboard get posted trucks");
 
-            var result = await response.Content.ReadFromJsonAsync<OneTwo3TrucksResponse>();
-            return result?.Trucks?.Select(OneTwo3Mapper.ToPostedTruckDto) ?? [];
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error getting 123Loadboard posted trucks");
-            return [];
-        }
+        return result?.Trucks?.Select(OneTwo3Mapper.ToPostedTruckDto) ?? [];
     }
 
-    public async Task<LoadBoardWebhookResultDto> ProcessWebhookAsync(string payload, string? signature,
+    public Task<LoadBoardWebhookResultDto> ProcessWebhookAsync(string payload, string? signature,
         string? webhookSecret)
     {
         try
         {
             var webhook = JsonSerializer.Deserialize<OneTwo3WebhookPayload>(payload);
-            return new LoadBoardWebhookResultDto
+            return Task.FromResult(new LoadBoardWebhookResultDto
             {
                 IsValid = true,
                 EventType = OneTwo3Mapper.MapWebhookEventType(webhook?.EventType),
                 ExternalListingId = webhook?.LoadId
-            };
+            });
         }
-        catch (Exception ex)
+        catch (JsonException ex)
         {
             logger.LogError(ex, "Error processing 123Loadboard webhook");
-            return new LoadBoardWebhookResultDto
+            return Task.FromResult(new LoadBoardWebhookResultDto
             {
                 IsValid = false, EventType = LoadBoardWebhookEventType.Unknown, ErrorMessage = ex.Message
-            };
+            });
         }
     }
 
@@ -355,15 +258,15 @@ internal class OneTwo3LoadBoardService(
 
             if (hourlySearchCount >= options.MaxSearchesPerHour)
             {
-                logger.LogWarning("123Loadboard hourly rate limit reached: {Count}/{Max}", hourlySearchCount,
-                    options.MaxSearchesPerHour);
+                logger.LogWarning("123Loadboard hourly rate limit reached: {Count}/{Max}",
+                    hourlySearchCount, options.MaxSearchesPerHour);
                 return false;
             }
 
             if (dailySearchCount >= options.MaxSearchesPerDay)
             {
-                logger.LogWarning("123Loadboard daily rate limit reached: {Count}/{Max}", dailySearchCount,
-                    options.MaxSearchesPerDay);
+                logger.LogWarning("123Loadboard daily rate limit reached: {Count}/{Max}",
+                    dailySearchCount, options.MaxSearchesPerDay);
                 return false;
             }
 

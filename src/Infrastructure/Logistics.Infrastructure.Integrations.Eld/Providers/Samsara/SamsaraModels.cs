@@ -1,4 +1,4 @@
-namespace Logistics.Infrastructure.Integrations.Eld.Samsara;
+namespace Logistics.Infrastructure.Integrations.Eld.Providers.Samsara;
 
 // Samsara wire format is camelCase — see EldJsonOptions.CamelCase. No [JsonPropertyName] needed.
 
