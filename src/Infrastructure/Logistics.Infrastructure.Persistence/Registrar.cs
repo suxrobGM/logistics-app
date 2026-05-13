@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Infrastructure.Persistence;
 

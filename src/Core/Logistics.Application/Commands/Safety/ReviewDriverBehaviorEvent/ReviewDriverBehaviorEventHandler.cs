@@ -4,6 +4,7 @@ using Logistics.Domain.Entities.Safety;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
+using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Application.Commands;
 

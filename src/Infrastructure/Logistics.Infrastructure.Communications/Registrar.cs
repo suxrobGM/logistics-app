@@ -1,6 +1,5 @@
 using Logistics.Application.Abstractions.Services.Email;
 using Logistics.Application.Services;
-using Logistics.Application.Services.Realtime;
 using Logistics.Infrastructure.Communications.Captcha;
 using Logistics.Infrastructure.Communications.Email;
 using Logistics.Infrastructure.Communications.Services;
@@ -10,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Resend;
 using Logistics.Application.Abstractions.Captcha;
+using Logistics.Application.Abstractions.Notifications;
+using Logistics.Application.Abstractions.Realtime;
 
 namespace Logistics.Infrastructure.Communications;
 

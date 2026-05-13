@@ -4,6 +4,7 @@ using Logistics.Domain.Persistence;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Stripe.Billing;
+using Logistics.Application.Abstractions.SystemSettings;
 
 namespace Logistics.Infrastructure.Payments.Stripe;
 

@@ -37,6 +37,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Extensions.Logging;
+using Logistics.Application.Abstractions.BackgroundJobs;
 
 namespace Logistics.API;
 

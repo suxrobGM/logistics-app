@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.SystemSettings;
+using Logistics.Application.Abstractions.Tenancy;
 
 namespace Logistics.Infrastructure.Persistence.Builder;
 

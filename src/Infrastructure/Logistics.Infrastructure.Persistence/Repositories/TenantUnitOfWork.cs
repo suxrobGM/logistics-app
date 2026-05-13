@@ -4,6 +4,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.Persistence.Data;
 using Microsoft.Extensions.DependencyInjection;
+using Logistics.Application.Abstractions.Tenancy;
 
 namespace Logistics.Infrastructure.Persistence;
 

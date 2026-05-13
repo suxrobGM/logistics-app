@@ -1,3 +1,4 @@
+using Logistics.Application.Abstractions.Storage;
 namespace Logistics.Application.Abstractions.Storage;
 
 public interface IBlobStorageService

@@ -1,7 +1,8 @@
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Logistics.Application.Abstractions.Features;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.Features;
 
 /// <summary>
 /// Service for managing feature toggles across tenants.

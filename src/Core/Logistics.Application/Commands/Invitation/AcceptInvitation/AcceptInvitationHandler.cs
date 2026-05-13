@@ -7,6 +7,7 @@ using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.Application.Commands;
 

@@ -1,4 +1,5 @@
-namespace Logistics.Application.Services;
+using Logistics.Application.Abstractions.Notifications;
+namespace Logistics.Application.Abstractions.Notifications;
 
 public interface IPushNotificationService
 {

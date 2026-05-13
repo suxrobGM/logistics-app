@@ -6,6 +6,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Options;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Application.Commands;
 

@@ -1,7 +1,8 @@
 ﻿using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Logistics.Application.Abstractions.Realtime;
 
-namespace Logistics.Application.Services.Realtime;
+namespace Logistics.Application.Abstractions.Realtime;
 
 /// <summary>
 ///     Abstraction for real-time live tracking (GPS, trip updates).

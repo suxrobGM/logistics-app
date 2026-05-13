@@ -4,6 +4,8 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Logistics.Application.Abstractions.Tenancy;
+using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Application.Commands;
 

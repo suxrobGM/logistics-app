@@ -1,4 +1,5 @@
-namespace Logistics.Application.Services;
+using Logistics.Application.Abstractions.BackgroundJobs;
+namespace Logistics.Application.Abstractions.BackgroundJobs;
 
 /// <summary>
 /// Enqueues a job to run in the background via a durable job system (e.g., Hangfire).

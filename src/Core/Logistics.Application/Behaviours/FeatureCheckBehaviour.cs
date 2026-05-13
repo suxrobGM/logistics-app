@@ -6,6 +6,8 @@ using Logistics.Domain.Exceptions;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using MediatR;
+using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.Tenancy;
 
 namespace Logistics.Application.Behaviours;
 

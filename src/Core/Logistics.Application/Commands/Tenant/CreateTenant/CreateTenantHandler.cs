@@ -12,6 +12,8 @@ using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.Tenancy;
 
 namespace Logistics.Application.Commands;
 

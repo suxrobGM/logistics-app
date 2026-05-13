@@ -1,6 +1,7 @@
 ﻿using Logistics.Shared.Models.Messaging;
+using Logistics.Application.Abstractions.Realtime;
 
-namespace Logistics.Application.Services.Realtime;
+namespace Logistics.Application.Abstractions.Realtime;
 
 /// <summary>
 ///     Abstraction for real-time messaging

@@ -1,7 +1,8 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Exceptions;
+using Logistics.Application.Abstractions.Tenancy;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.Tenancy;
 
 /// <summary>
 ///     Resolves the tenant for the current scope (HTTP request, background job,

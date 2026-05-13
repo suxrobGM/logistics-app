@@ -7,6 +7,7 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.Storage;
+using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Application.Queries;
 

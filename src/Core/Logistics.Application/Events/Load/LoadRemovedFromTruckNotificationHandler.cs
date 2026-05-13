@@ -4,6 +4,7 @@ using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Microsoft.Extensions.Logging;
+using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.Application.Events;
 

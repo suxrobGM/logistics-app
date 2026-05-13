@@ -5,6 +5,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Configuration;
+using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Application.Commands;
 

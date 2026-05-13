@@ -1,12 +1,13 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Services;
-using Logistics.Application.Services.Realtime;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Logistics.Shared.Models.Messaging;
+using Logistics.Application.Abstractions.Notifications;
+using Logistics.Application.Abstractions.Realtime;
 
 namespace Logistics.Application.Commands;
 

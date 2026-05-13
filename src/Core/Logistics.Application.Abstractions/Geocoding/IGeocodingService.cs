@@ -1,5 +1,6 @@
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
+using Logistics.Application.Abstractions.Geocoding;
 
 namespace Logistics.Application.Abstractions.Geocoding;
 

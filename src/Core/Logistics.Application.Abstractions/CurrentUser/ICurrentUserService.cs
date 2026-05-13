@@ -1,4 +1,5 @@
-namespace Logistics.Application.Services;
+using Logistics.Application.Abstractions.CurrentUser;
+namespace Logistics.Application.Abstractions.CurrentUser;
 
 /// <summary>
 /// Service for accessing the current authenticated user's information.

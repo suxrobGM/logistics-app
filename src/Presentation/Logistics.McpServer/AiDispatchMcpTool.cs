@@ -5,6 +5,7 @@ using Logistics.Domain.Primitives.Enums;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
+using Logistics.Application.Abstractions.Features;
 
 namespace Logistics.McpServer;
 

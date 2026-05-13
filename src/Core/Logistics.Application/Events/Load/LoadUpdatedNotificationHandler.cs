@@ -3,6 +3,7 @@ using Logistics.Application.Services;
 using Logistics.Domain.Events;
 using Logistics.Domain.Persistence;
 using Microsoft.Extensions.Logging;
+using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.Application.Events;
 

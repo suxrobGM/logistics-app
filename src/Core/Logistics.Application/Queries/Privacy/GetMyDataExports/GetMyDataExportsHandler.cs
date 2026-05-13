@@ -5,6 +5,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Microsoft.EntityFrameworkCore;
+using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Application.Queries;
 

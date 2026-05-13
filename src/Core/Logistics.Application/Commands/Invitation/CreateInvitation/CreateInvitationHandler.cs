@@ -12,6 +12,7 @@ using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Application.Commands;
 

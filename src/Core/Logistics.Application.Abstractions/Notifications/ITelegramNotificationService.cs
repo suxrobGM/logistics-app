@@ -1,6 +1,7 @@
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Application.Abstractions.Notifications;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.Notifications;
 
 public interface ITelegramNotificationService
 {

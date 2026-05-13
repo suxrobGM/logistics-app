@@ -1,4 +1,5 @@
 using Logistics.Shared.Models;
+using Logistics.Application.Abstractions.Vin;
 
 namespace Logistics.Application.Abstractions.Vin;
 

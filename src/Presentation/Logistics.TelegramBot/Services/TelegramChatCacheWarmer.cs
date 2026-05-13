@@ -6,6 +6,7 @@ using Logistics.TelegramBot.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Logistics.Application.Abstractions.Features;
 
 namespace Logistics.TelegramBot.Services;
 

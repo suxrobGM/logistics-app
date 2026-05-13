@@ -1,4 +1,5 @@
-namespace Logistics.Application.Services;
+using Logistics.Application.Abstractions.Tenancy;
+namespace Logistics.Application.Abstractions.Tenancy;
 
 public interface ITenantDatabaseService
 {

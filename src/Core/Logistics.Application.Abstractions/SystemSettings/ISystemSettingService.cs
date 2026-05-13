@@ -1,4 +1,5 @@
-namespace Logistics.Application.Services;
+using Logistics.Application.Abstractions.SystemSettings;
+namespace Logistics.Application.Abstractions.SystemSettings;
 
 /// <summary>
 /// Service for reading and writing system-wide settings stored in the master database.
