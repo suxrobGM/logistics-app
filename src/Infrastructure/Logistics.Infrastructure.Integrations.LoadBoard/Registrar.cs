@@ -5,6 +5,7 @@ using Logistics.Infrastructure.Integrations.LoadBoard.Providers.OneTwo3;
 using Logistics.Infrastructure.Integrations.LoadBoard.Providers.Truckstop;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Logistics.Application.Abstractions.LoadBoard;
 
 namespace Logistics.Infrastructure.Integrations.LoadBoard;
 

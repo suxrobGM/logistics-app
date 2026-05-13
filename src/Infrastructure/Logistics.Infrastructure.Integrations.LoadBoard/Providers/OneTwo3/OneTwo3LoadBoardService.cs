@@ -6,6 +6,7 @@ using Logistics.Infrastructure.Integrations.LoadBoard.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.LoadBoard;
 
 namespace Logistics.Infrastructure.Integrations.LoadBoard.Providers.OneTwo3;
 

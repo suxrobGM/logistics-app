@@ -1,7 +1,8 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Application.Abstractions.Eld;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.Eld;
 
 /// <summary>
 /// Factory for creating ELD provider service instances

@@ -4,6 +4,7 @@ using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
+using Logistics.Application.Abstractions.LoadBoard;
 
 namespace Logistics.Application.Commands;
 

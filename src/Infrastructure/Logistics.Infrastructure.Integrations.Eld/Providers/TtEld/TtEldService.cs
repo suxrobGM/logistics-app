@@ -5,6 +5,7 @@ using Logistics.Infrastructure.Integrations.Eld.Common;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.Eld;
 
 namespace Logistics.Infrastructure.Integrations.Eld.Providers.TtEld;
 

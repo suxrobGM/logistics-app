@@ -6,6 +6,7 @@ using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
+using Logistics.Application.Abstractions.LoadBoard;
 
 namespace Logistics.Application.Commands;
 

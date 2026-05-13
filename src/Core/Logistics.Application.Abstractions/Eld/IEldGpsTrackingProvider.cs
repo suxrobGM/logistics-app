@@ -1,6 +1,7 @@
 using Logistics.Shared.Models;
+using Logistics.Application.Abstractions.Eld;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.Eld;
 
 /// <summary>
 /// Interface for ELD providers that support real-time GPS vehicle tracking.

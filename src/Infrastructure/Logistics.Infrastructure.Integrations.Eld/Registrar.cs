@@ -6,6 +6,7 @@ using Logistics.Infrastructure.Integrations.Eld.Providers.Samsara;
 using Logistics.Infrastructure.Integrations.Eld.Providers.TtEld;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Logistics.Application.Abstractions.Eld;
 
 namespace Logistics.Infrastructure.Integrations.Eld;
 

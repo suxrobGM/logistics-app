@@ -1,7 +1,8 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Application.Abstractions.LoadBoard;
 
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.LoadBoard;
 
 /// <summary>
 /// Factory for creating load board provider service instances
