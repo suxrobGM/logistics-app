@@ -27,7 +27,7 @@
     <ProjectReference Include="..\..\Shared\Logistics.Shared.Geo\Logistics.Shared.Geo.csproj" />
     <ProjectReference Include="..\..\Shared\Logistics.Shared.Identity\Logistics.Shared.Identity.csproj" />
     <ProjectReference Include="..\..\Shared\Logistics.Shared.Models\Logistics.Shared.Models.csproj" />
-    <ProjectReference Include="..\Logistics.Application.Contracts\Logistics.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Logistics.Application.Abstractions\Logistics.Application.Abstractions.csproj" />
     <ProjectReference Include="..\Logistics.Domain\Logistics.Domain.csproj" />
     <ProjectReference Include="..\Logistics.Mappings\Logistics.Mappings.csproj" />
   </ItemGroup>

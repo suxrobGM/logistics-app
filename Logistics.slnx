@@ -9,7 +9,7 @@
   </Folder>
   <Folder Name="/Core/">
     <Project Path="src/Core/Logistics.Domain/Logistics.Domain.csproj" />
-    <Project Path="src/Core/Logistics.Application.Contracts/Logistics.Application.Contracts.csproj" />
+    <Project Path="src/Core/Logistics.Application.Abstractions/Logistics.Application.Abstractions.csproj" />
     <Project Path="src/Core/Logistics.Application/Logistics.Application.csproj" />
     <Project Path="src/Core/Logistics.Mappings/Logistics.Mappings.csproj" />
     <Project Path="src/Core/Logistics.Domain.Primitives/Logistics.Domain.Primitives.csproj" />

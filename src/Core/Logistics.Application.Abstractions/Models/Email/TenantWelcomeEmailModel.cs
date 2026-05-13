@@ -1,4 +1,4 @@
-namespace Logistics.Application.Contracts.Models.Email;
+namespace Logistics.Application.Abstractions.Models.Email;
 
 /// <summary>
 /// Model for tenant owner welcome email template.

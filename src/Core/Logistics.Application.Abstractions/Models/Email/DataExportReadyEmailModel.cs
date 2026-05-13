@@ -1,4 +1,4 @@
-namespace Logistics.Application.Contracts.Models.Email;
+namespace Logistics.Application.Abstractions.Models.Email;
 
 public class DataExportReadyEmailModel
 {

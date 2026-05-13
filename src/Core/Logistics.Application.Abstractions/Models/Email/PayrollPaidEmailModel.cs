@@ -1,4 +1,4 @@
-namespace Logistics.Application.Contracts.Models.Email;
+namespace Logistics.Application.Abstractions.Models.Email;
 
 /// <summary>
 /// Email model for payroll payment notification.
