@@ -13,7 +13,7 @@ trim_trailing_whitespace = true
 [*.cs]
 csharp_style_namespace_declarations = file_scoped:warning
 
-# Private fields: camelCase without underscore prefix
+# Private instance fields: camelCase without underscore prefix
 dotnet_naming_rule.private_fields_camel_case.symbols = private_fields
 dotnet_naming_rule.private_fields_camel_case.style = camel_case_style
 dotnet_naming_rule.private_fields_camel_case.severity = warning
@@ -23,6 +23,26 @@ dotnet_naming_symbols.private_fields.applicable_accessibilities = private
 dotnet_naming_symbols.private_fields.required_modifiers =
 
 dotnet_naming_style.camel_case_style.capitalization = camel_case
+
+# Private static readonly fields: PascalCase (default C# convention for readonly cache/state)
+dotnet_naming_rule.private_static_readonly_fields_pascal_case.symbols = private_static_readonly_fields
+dotnet_naming_rule.private_static_readonly_fields_pascal_case.style = pascal_case_style
+dotnet_naming_rule.private_static_readonly_fields_pascal_case.severity = warning
+
+dotnet_naming_symbols.private_static_readonly_fields.applicable_kinds = field
+dotnet_naming_symbols.private_static_readonly_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_static_readonly_fields.required_modifiers = static, readonly
+
+# Private const fields: PascalCase (default C# convention)
+dotnet_naming_rule.private_const_fields_pascal_case.symbols = private_const_fields
+dotnet_naming_rule.private_const_fields_pascal_case.style = pascal_case_style
+dotnet_naming_rule.private_const_fields_pascal_case.severity = warning
+
+dotnet_naming_symbols.private_const_fields.applicable_kinds = field
+dotnet_naming_symbols.private_const_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_const_fields.required_modifiers = const
+
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
 
 # Web Files (TypeScript, JavaScript, HTML, CSS, JSON)
 [*.{ts,tsx,js,jsx,mjs,cjs,html,css,scss,sass,less,json}]

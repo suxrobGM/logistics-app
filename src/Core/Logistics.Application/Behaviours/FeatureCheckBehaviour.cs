@@ -22,12 +22,16 @@ public sealed class FeatureCheckBehaviour<TRequest, TResponse>(
     where TRequest : IAppRequest<TResponse>
     where TResponse : IResult, new()
 {
+    // Evaluated once per closed generic instantiation — avoids per-call reflection.
+    private static readonly RequiresFeatureAttribute? Attribute =
+        typeof(TRequest).GetCustomAttribute<RequiresFeatureAttribute>();
+
     public async Task<TResponse> Handle(
         TRequest request,
         RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        var attribute = typeof(TRequest).GetCustomAttribute<RequiresFeatureAttribute>();
+        var attribute = Attribute;
 
         // If no RequiresFeature attribute, proceed normally
         if (attribute is null)
