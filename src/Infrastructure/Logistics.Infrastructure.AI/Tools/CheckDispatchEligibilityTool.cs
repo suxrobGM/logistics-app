@@ -4,7 +4,7 @@ using Logistics.Application.Abstractions.Dispatch;
 
 namespace Logistics.Infrastructure.AI.Tools;
 
-internal sealed class CheckDispatchEligibilityTool(IEligibilityCheck eligibilityService)
+internal sealed class CheckDispatchEligibilityTool(IDispatchEligibilityService eligibilityService)
     : IAiDispatchTool
 {
     public string Name => "check_dispatch_eligibility";

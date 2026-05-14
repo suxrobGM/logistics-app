@@ -1,6 +1,4 @@
-using Logistics.Application.Abstractions.Dispatch;
-
-namespace Logistics.Application.Services;
+namespace Logistics.Application.Abstractions.Dispatch;
 
 /// <summary>
 /// Single source of truth for "can this truck + driver carry this load?". Validates driver

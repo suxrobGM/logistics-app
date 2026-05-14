@@ -9,8 +9,8 @@ namespace Logistics.Infrastructure.AI.Tests.Tools;
 
 public class CheckDispatchEligibilityToolTests
 {
-    private readonly IEligibilityCheck eligibilityService =
-        Substitute.For<IEligibilityCheck>();
+    private readonly IDispatchEligibilityService eligibilityService =
+        Substitute.For<IDispatchEligibilityService>();
 
     private readonly CheckDispatchEligibilityTool sut;
 

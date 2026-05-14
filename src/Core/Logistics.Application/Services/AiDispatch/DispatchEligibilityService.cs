@@ -9,7 +9,7 @@ namespace Logistics.Application.Services;
 internal sealed class DispatchEligibilityService(
     ITenantUnitOfWork tenantUow,
     ILogger<DispatchEligibilityService> logger)
-    : IDispatchEligibilityService, IEligibilityCheck
+    : IDispatchEligibilityService
 {
     /// <summary>
     /// Days before medical-cert expiry at which we surface a warning rather than a hard block.
