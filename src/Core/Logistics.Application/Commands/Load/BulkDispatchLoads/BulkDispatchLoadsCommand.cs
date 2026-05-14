@@ -2,7 +2,7 @@ using Logistics.Application.Abstractions;
 
 namespace Logistics.Application.Commands;
 
-public class BulkDispatchLoadsCommand : IAppRequest
+public class BulkDispatchLoadsCommand : ICommand
 {
     public Guid[] LoadIds { get; set; } = [];
 }

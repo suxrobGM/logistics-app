@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.LoadBoard)]
-public class RemovePostedTruckCommand : IAppRequest<Result>
+public class RemovePostedTruckCommand : ICommand<Result>
 {
     public Guid PostedTruckId { get; set; }
 }

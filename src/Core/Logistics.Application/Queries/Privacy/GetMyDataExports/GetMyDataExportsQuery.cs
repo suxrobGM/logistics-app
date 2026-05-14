@@ -3,6 +3,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetMyDataExportsQuery : IAppRequest<Result<List<DataExportRequestDto>>>
+public class GetMyDataExportsQuery : IQuery<Result<List<DataExportRequestDto>>>
 {
 }

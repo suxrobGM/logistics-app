@@ -6,4 +6,4 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Queries;
 
 [RequiresFeature(TenantFeature.AgenticDispatch)]
-public sealed class GetAiQuotaStatusQuery : IAppRequest<Result<AiQuotaStatusDto>>;
+public sealed class GetAiQuotaStatusQuery : IQuery<Result<AiQuotaStatusDto>>;

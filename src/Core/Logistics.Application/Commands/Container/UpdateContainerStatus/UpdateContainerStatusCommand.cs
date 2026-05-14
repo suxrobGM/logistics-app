@@ -9,7 +9,7 @@ namespace Logistics.Application.Commands;
 /// <see cref="TerminalId"/> is required for transitions to <c>AtPort</c> and <c>Returned</c>;
 /// ignored for other targets.
 /// </summary>
-public class UpdateContainerStatusCommand : IAppRequest<Result>
+public class UpdateContainerStatusCommand : ICommand<Result>
 {
     public Guid Id { get; set; }
     public ContainerStatus TargetStatus { get; set; }

@@ -3,4 +3,4 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public record GetPendingDvirReviewsQuery : IAppRequest<Result<List<DvirReportDto>>>;
+public record GetPendingDvirReviewsQuery : IQuery<Result<List<DvirReportDto>>>;

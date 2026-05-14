@@ -8,7 +8,7 @@ namespace Logistics.Application.Commands;
 /// URL the customer is redirected to. Settlement is recorded by the
 /// <c>checkout.session.completed</c> webhook.
 /// </summary>
-public record CreatePublicCheckoutSessionCommand : IAppRequest<Result<PublicCheckoutSessionDto>>
+public record CreatePublicCheckoutSessionCommand : ICommand<Result<PublicCheckoutSessionDto>>
 {
     public required Guid TenantId { get; init; }
     public required string Token { get; init; }

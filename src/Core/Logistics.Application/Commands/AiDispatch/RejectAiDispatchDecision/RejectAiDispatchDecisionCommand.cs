@@ -5,7 +5,7 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.AgenticDispatch)]
-public class RejectAiDispatchDecisionCommand : IAppRequest
+public class RejectAiDispatchDecisionCommand : ICommand
 {
     public Guid DecisionId { get; set; }
     public string? Reason { get; set; }

@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class ValidateInvitationTokenQuery : IAppRequest<Result<InvitationValidationResult>>
+public class ValidateInvitationTokenQuery : IQuery<Result<InvitationValidationResult>>
 {
     public required string Token { get; set; }
 }

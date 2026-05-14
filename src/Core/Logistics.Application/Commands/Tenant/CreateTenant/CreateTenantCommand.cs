@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Commands;
 
-public class CreateTenantCommand : IAppRequest
+public class CreateTenantCommand : ICommand
 {
     public string Name { get; set; } = null!;
     public string? CompanyName { get; set; }

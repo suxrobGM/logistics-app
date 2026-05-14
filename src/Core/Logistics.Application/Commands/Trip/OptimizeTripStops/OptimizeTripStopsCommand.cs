@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public sealed class OptimizeTripStopsCommand : IAppRequest<Result<OptimizedTripStopsDto>>
+public sealed class OptimizeTripStopsCommand : ICommand<Result<OptimizedTripStopsDto>>
 {
     /// <summary>
     ///     Which strategy to use for route optimization.

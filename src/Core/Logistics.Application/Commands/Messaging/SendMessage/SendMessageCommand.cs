@@ -4,7 +4,7 @@ using Logistics.Shared.Models.Messaging;
 
 namespace Logistics.Application.Commands;
 
-public class SendMessageCommand : IAppRequest<Result<MessageDto>>
+public class SendMessageCommand : ICommand<Result<MessageDto>>
 {
     public Guid ConversationId { get; set; }
     public Guid SenderId { get; set; }

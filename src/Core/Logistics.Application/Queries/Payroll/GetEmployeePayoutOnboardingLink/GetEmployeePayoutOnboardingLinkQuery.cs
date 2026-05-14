@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetEmployeePayoutOnboardingLinkQuery : IAppRequest<Result<EmployeePayoutOnboardingLinkDto>>
+public class GetEmployeePayoutOnboardingLinkQuery : IQuery<Result<EmployeePayoutOnboardingLinkDto>>
 {
     public Guid EmployeeId { get; set; }
     public required string ReturnUrl { get; set; }

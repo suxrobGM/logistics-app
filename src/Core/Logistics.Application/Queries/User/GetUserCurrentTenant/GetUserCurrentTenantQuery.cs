@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetUserCurrentTenantQuery : IAppRequest<Result<TenantDto>>
+public class GetUserCurrentTenantQuery : IQuery<Result<TenantDto>>
 {
     public Guid UserId { get; set; }
 }

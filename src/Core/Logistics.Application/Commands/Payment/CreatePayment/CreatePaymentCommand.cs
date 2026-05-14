@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Commands;
 
-public class CreatePaymentCommand : IAppRequest
+public class CreatePaymentCommand : ICommand
 {
     public string? StripePaymentMethodId { get; set; }
     public decimal Amount { get; set; }

@@ -5,7 +5,7 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.Eld)]
-public class CreateEldProviderConfigurationCommand : IAppRequest
+public class CreateEldProviderConfigurationCommand : ICommand
 {
     public EldProviderType ProviderType { get; set; }
     public required string ApiKey { get; set; }

@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetMaintenanceRecordByIdQuery : IAppRequest<Result<MaintenanceRecordDto>>
+public class GetMaintenanceRecordByIdQuery : IQuery<Result<MaintenanceRecordDto>>
 {
     public Guid Id { get; set; }
 }

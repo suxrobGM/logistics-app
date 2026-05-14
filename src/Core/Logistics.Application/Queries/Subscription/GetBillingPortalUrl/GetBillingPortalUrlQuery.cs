@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetBillingPortalUrlQuery : IAppRequest<Result<BillingPortalUrlDto>>
+public class GetBillingPortalUrlQuery : IQuery<Result<BillingPortalUrlDto>>
 {
     public required string ReturnUrl { get; set; }
 }

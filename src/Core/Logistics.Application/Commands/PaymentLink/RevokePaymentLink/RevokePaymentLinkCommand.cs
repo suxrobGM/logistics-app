@@ -6,4 +6,4 @@ namespace Logistics.Application.Commands;
 /// <summary>
 /// Revokes a payment link, making it invalid.
 /// </summary>
-public record RevokePaymentLinkCommand(Guid PaymentLinkId) : IAppRequest<Result>;
+public record RevokePaymentLinkCommand(Guid PaymentLinkId) : ICommand<Result>;

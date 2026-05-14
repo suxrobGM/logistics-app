@@ -6,7 +6,7 @@ namespace Logistics.Application.Queries;
 /// <summary>
 /// Query to get documents for a load via public tracking link.
 /// </summary>
-public class GetPublicTrackingDocumentsQuery : IAppRequest<Result<IEnumerable<DocumentDto>>>
+public class GetPublicTrackingDocumentsQuery : IQuery<Result<IEnumerable<DocumentDto>>>
 {
     /// <summary>
     /// The tenant ID that owns the tracking link.

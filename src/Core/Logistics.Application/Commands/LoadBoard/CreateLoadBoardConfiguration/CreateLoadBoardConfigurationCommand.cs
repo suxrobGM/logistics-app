@@ -5,7 +5,7 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.LoadBoard)]
-public class CreateLoadBoardConfigurationCommand : IAppRequest
+public class CreateLoadBoardConfigurationCommand : ICommand
 {
     public LoadBoardProviderType ProviderType { get; set; }
     public required string ApiKey { get; set; }

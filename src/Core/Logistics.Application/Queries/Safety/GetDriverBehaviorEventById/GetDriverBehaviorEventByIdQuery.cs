@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetDriverBehaviorEventByIdQuery : IAppRequest<Result<DriverBehaviorEventDto>>
+public class GetDriverBehaviorEventByIdQuery : IQuery<Result<DriverBehaviorEventDto>>
 {
     public Guid Id { get; set; }
 }

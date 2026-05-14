@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetPaymentQuery : IAppRequest<Result<PaymentDto>>
+public class GetPaymentQuery : IQuery<Result<PaymentDto>>
 {
     public Guid Id { get; set; }
 }

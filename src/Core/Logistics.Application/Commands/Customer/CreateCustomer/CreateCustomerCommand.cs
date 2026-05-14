@@ -5,7 +5,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class CreateCustomerCommand : IAppRequest<Result<CustomerDto>>
+public class CreateCustomerCommand : ICommand<Result<CustomerDto>>
 {
     public string Name { get; set; } = null!;
     public string? Email { get; set; }

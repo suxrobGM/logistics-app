@@ -5,7 +5,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class UpdateTerminalCommand : IAppRequest<Result>
+public class UpdateTerminalCommand : ICommand<Result>
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }

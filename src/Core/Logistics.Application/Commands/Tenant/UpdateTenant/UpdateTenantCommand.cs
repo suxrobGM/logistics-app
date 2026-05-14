@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Commands;
 
-public class UpdateTenantCommand : IAppRequest
+public class UpdateTenantCommand : ICommand
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }

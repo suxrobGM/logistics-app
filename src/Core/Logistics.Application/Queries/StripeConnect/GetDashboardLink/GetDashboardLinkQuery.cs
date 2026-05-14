@@ -6,4 +6,4 @@ namespace Logistics.Application.Queries;
 /// <summary>
 /// Gets the Stripe Express dashboard link for the current tenant's connected account.
 /// </summary>
-public record GetDashboardLinkQuery : IAppRequest<Result<DashboardLinkDto>>;
+public record GetDashboardLinkQuery : IQuery<Result<DashboardLinkDto>>;

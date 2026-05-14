@@ -2,7 +2,7 @@ using Logistics.Application.Abstractions;
 
 namespace Logistics.Application.Commands;
 
-public class ProcessPaymentCommand : IAppRequest
+public class ProcessPaymentCommand : ICommand
 {
     public Guid PaymentId { get; set; }
 }

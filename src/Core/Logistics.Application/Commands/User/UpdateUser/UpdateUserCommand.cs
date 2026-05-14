@@ -2,7 +2,7 @@ using Logistics.Application.Abstractions;
 
 namespace Logistics.Application.Commands;
 
-public class UpdateUserCommand : IAppRequest
+public class UpdateUserCommand : ICommand
 {
     public Guid Id { get; set; }
     public string? FirstName { get; set; }

@@ -2,7 +2,7 @@ using Logistics.Application.Abstractions;
 
 namespace Logistics.Application.Commands;
 
-public class UpdateLoadProximityCommand : IAppRequest
+public class UpdateLoadProximityCommand : ICommand
 {
     public Guid LoadId { get; set; }
 

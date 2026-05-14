@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public sealed class UpdateContactSubmissionCommand : IAppRequest<Result>
+public sealed class UpdateContactSubmissionCommand : ICommand<Result>
 {
     public Guid Id { get; set; }
     public ContactSubmissionStatus Status { get; set; }

@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public sealed class CreateContactSubmissionCommand : IAppRequest<Result>
+public sealed class CreateContactSubmissionCommand : ICommand<Result>
 {
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;

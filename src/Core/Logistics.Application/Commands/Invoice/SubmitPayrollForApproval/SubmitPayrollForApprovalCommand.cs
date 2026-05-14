@@ -5,7 +5,7 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.Payroll)]
-public class SubmitPayrollForApprovalCommand : IAppRequest
+public class SubmitPayrollForApprovalCommand : ICommand
 {
     public Guid Id { get; set; }
 }

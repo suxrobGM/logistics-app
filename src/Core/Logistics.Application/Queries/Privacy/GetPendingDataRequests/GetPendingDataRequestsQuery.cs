@@ -6,7 +6,7 @@ namespace Logistics.Application.Queries;
 /// <summary>
 /// Admin-only — list pending exports and deletion requests across all tenants.
 /// </summary>
-public class GetPendingDataRequestsQuery : IAppRequest<Result<PendingDataRequestsDto>>
+public class GetPendingDataRequestsQuery : IQuery<Result<PendingDataRequestsDto>>
 {
 }
 

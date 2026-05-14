@@ -6,4 +6,4 @@ namespace Logistics.Application.Commands;
 /// <summary>
 /// Removes a line item from an invoice.
 /// </summary>
-public record DeleteLineItemCommand(Guid InvoiceId, Guid LineItemId) : IAppRequest<Result>;
+public record DeleteLineItemCommand(Guid InvoiceId, Guid LineItemId) : ICommand<Result>;

@@ -6,7 +6,7 @@ namespace Logistics.Application.Commands;
 /// <summary>
 /// Command to update the default feature configuration for new tenants (used by admin).
 /// </summary>
-public class UpdateDefaultFeaturesCommand : IAppRequest
+public class UpdateDefaultFeaturesCommand : ICommand
 {
     /// <summary>
     /// The list of default feature updates.

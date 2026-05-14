@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetExpenseStatsQuery : IAppRequest<Result<ExpenseStatsDto>>
+public class GetExpenseStatsQuery : IQuery<Result<ExpenseStatsDto>>
 {
     /// <summary>
     ///     Filter from this date

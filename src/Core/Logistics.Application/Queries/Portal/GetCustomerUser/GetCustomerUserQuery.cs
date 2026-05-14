@@ -6,7 +6,7 @@ namespace Logistics.Application.Queries;
 /// <summary>
 /// Query to get the CustomerUser info for an authenticated user.
 /// </summary>
-public class GetCustomerUserQuery : IAppRequest<Result<CustomerUserDto>>
+public class GetCustomerUserQuery : IQuery<Result<CustomerUserDto>>
 {
     /// <summary>
     /// The user ID (from authentication token).

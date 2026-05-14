@@ -3,4 +3,4 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public record ResendTenantWelcomeCommand(Guid TenantId) : IAppRequest<Result>;
+public record ResendTenantWelcomeCommand(Guid TenantId) : ICommand<Result>;

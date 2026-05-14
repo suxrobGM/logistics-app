@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class CreateContainerCommand : IAppRequest<Result<ContainerDto>>
+public class CreateContainerCommand : ICommand<Result<ContainerDto>>
 {
     public string Number { get; set; } = null!;
     public ContainerIsoType IsoType { get; set; }

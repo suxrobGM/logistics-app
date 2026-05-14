@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class SetTruckGeolocationCommand : IAppRequest
+public class SetTruckGeolocationCommand : ICommand
 {
     public SetTruckGeolocationCommand(TruckGeolocationDto geolocationData)
     {

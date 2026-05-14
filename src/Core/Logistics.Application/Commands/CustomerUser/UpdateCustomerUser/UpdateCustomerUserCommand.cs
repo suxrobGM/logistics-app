@@ -6,7 +6,7 @@ namespace Logistics.Application.Commands;
 /// <summary>
 /// Command to update a customer portal user.
 /// </summary>
-public class UpdateCustomerUserCommand : IAppRequest<Result>
+public class UpdateCustomerUserCommand : ICommand<Result>
 {
     /// <summary>
     /// The customer user ID to update.

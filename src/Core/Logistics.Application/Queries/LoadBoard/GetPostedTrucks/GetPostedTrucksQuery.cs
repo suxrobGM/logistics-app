@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetPostedTrucksQuery : IAppRequest<Result<List<PostedTruckDto>>>
+public class GetPostedTrucksQuery : IQuery<Result<List<PostedTruckDto>>>
 {
     public LoadBoardProviderType? ProviderType { get; set; }
     public PostedTruckStatus? Status { get; set; }

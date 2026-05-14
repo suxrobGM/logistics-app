@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Commands;
 
-public class UpdateDocumentCommand : IAppRequest
+public class UpdateDocumentCommand : ICommand
 {
     public Guid DocumentId { get; set; }
     public DocumentType? Type { get; set; }

@@ -3,6 +3,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetCompanyStatsQuery : IAppRequest<Result<CompanyStatsDto>>
+public class GetCompanyStatsQuery : IQuery<Result<CompanyStatsDto>>
 {
 }

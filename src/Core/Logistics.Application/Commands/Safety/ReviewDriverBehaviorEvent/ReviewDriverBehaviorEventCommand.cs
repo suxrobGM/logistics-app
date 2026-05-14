@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.Safety)]
-public record ReviewDriverBehaviorEventCommand : IAppRequest<Result<DriverBehaviorEventDto>>
+public record ReviewDriverBehaviorEventCommand : ICommand<Result<DriverBehaviorEventDto>>
 {
     public required Guid Id { get; set; }
     public string? ReviewNotes { get; set; }

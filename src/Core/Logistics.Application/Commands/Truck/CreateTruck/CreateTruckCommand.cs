@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Commands;
 
-public class CreateTruckCommand : IAppRequest
+public class CreateTruckCommand : ICommand
 {
     public string TruckNumber { get; set; } = null!;
     public TruckType TruckType { get; set; }

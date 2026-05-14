@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class CreateTrackingLinkCommand : IAppRequest<Result<TrackingLinkDto>>
+public class CreateTrackingLinkCommand : ICommand<Result<TrackingLinkDto>>
 {
     public required Guid LoadId { get; set; }
 }

@@ -2,7 +2,7 @@ using Logistics.Application.Abstractions;
 
 namespace Logistics.Application.Commands;
 
-public class DeleteEmployeeCommand : IAppRequest
+public class DeleteEmployeeCommand : ICommand
 {
     public Guid UserId { get; set; }
 }

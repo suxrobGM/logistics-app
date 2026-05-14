@@ -6,7 +6,7 @@ namespace Logistics.Application.Commands;
 /// <summary>
 /// Command to toggle a single feature for the current tenant (used by tenant owner).
 /// </summary>
-public class UpdateTenantFeatureCommand : IAppRequest
+public class UpdateTenantFeatureCommand : ICommand
 {
     /// <summary>
     /// The feature to toggle.

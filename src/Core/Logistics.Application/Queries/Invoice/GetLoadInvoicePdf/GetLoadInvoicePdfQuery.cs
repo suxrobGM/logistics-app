@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetLoadInvoicePdfQuery : IAppRequest<Result<InvoicePdfResult>>
+public class GetLoadInvoicePdfQuery : IQuery<Result<InvoicePdfResult>>
 {
     public Guid InvoiceId { get; set; }
 }

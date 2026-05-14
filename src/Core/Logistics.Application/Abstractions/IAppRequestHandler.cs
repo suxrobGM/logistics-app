@@ -29,7 +29,7 @@ namespace Logistics.Application.Abstractions;
 ///     constructor.
 /// </typeparam>
 public interface IAppRequestHandler<in TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
-    where TRequest : IAppRequest<TResponse>
+    where TRequest : IRequest<TResponse>
     where TResponse : IResult, new()
 {
     /// <summary>

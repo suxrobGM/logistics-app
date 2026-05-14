@@ -8,7 +8,7 @@ namespace Logistics.Application.Commands;
 /// Updates non-status fields of a Container. Status transitions go through
 /// the dedicated MarkContainer* commands; location-only moves use MoveContainerToTerminal.
 /// </summary>
-public class UpdateContainerCommand : IAppRequest<Result>
+public class UpdateContainerCommand : ICommand<Result>
 {
     public Guid Id { get; set; }
     public string? Number { get; set; }

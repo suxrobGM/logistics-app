@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class AcceptInvitationCommand : IAppRequest<Result<AcceptInvitationResult>>
+public class AcceptInvitationCommand : ICommand<Result<AcceptInvitationResult>>
 {
     public required string Token { get; set; }
     public required string FirstName { get; set; }

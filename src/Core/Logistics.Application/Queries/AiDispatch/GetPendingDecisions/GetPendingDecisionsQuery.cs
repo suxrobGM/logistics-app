@@ -6,6 +6,6 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Queries;
 
 [RequiresFeature(TenantFeature.AgenticDispatch)]
-public sealed class GetPendingDecisionsQuery : IAppRequest<Result<List<AiDispatchDecisionDto>>>
+public sealed class GetPendingDecisionsQuery : IQuery<Result<List<AiDispatchDecisionDto>>>
 {
 }

@@ -4,7 +4,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Commands;
 
-public class UpdateCustomerCommand : IAppRequest
+public class UpdateCustomerCommand : ICommand
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = null!;

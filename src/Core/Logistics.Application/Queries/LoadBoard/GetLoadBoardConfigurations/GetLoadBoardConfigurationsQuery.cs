@@ -3,6 +3,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetLoadBoardConfigurationsQuery : IAppRequest<Result<List<LoadBoardConfigurationDto>>>
+public class GetLoadBoardConfigurationsQuery : IQuery<Result<List<LoadBoardConfigurationDto>>>
 {
 }

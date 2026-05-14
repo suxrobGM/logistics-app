@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.Maintenance)]
-public record UpdateMaintenanceRecordCommand : IAppRequest<Result<MaintenanceRecordDto>>
+public record UpdateMaintenanceRecordCommand : ICommand<Result<MaintenanceRecordDto>>
 {
     public required Guid Id { get; set; }
     public required Guid TruckId { get; set; }

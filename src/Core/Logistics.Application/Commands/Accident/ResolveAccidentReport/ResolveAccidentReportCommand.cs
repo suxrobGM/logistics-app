@@ -9,7 +9,7 @@ namespace Logistics.Application.Commands;
 /// Command to resolve an accident report (changes status to Resolved)
 /// </summary>
 [RequiresFeature(TenantFeature.Safety)]
-public record ResolveAccidentReportCommand : IAppRequest<Result<AccidentReportDto>>
+public record ResolveAccidentReportCommand : ICommand<Result<AccidentReportDto>>
 {
     public required Guid ReportId { get; init; }
     public string? ResolutionNotes { get; init; }

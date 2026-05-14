@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class UploadDocumentCommand : IAppRequest<Result<Guid>>
+public class UploadDocumentCommand : ICommand<Result<Guid>>
 {
     public DocumentOwnerType OwnerType { get; set; }
     public Guid OwnerId { get; set; }

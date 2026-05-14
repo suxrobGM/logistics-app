@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class CaptureBillOfLadingCommand : IAppRequest<Result<Guid>>
+public class CaptureBillOfLadingCommand : ICommand<Result<Guid>>
 {
     public required Guid LoadId { get; set; }
     public Guid? TripStopId { get; set; }

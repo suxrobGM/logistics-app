@@ -6,7 +6,7 @@ namespace Logistics.Application.Commands;
 /// <summary>
 /// Creates a public payment link for an invoice.
 /// </summary>
-public record CreatePaymentLinkCommand : IAppRequest<Result<PaymentLinkDto>>
+public record CreatePaymentLinkCommand : ICommand<Result<PaymentLinkDto>>
 {
     public required Guid InvoiceId { get; set; }
 

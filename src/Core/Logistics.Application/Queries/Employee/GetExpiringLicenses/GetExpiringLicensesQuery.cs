@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetExpiringLicensesQuery : IAppRequest<Result<IList<DriverLicenseDto>>>
+public class GetExpiringLicensesQuery : IQuery<Result<IList<DriverLicenseDto>>>
 {
     /// <summary>
     /// Window in days. Returns active licenses expiring within this many days from now.

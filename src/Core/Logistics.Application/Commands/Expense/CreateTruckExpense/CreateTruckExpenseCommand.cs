@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class CreateTruckExpenseCommand : IAppRequest<Result<Guid>>
+public class CreateTruckExpenseCommand : ICommand<Result<Guid>>
 {
     public decimal Amount { get; set; }
     public string Currency { get; set; } = "USD";

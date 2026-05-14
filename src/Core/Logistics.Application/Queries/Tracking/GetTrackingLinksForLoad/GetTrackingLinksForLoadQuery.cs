@@ -6,7 +6,7 @@ namespace Logistics.Application.Queries;
 /// <summary>
 /// Query to get all tracking links for a specific load.
 /// </summary>
-public class GetTrackingLinksForLoadQuery : IAppRequest<Result<IEnumerable<TrackingLinkDto>>>
+public class GetTrackingLinksForLoadQuery : IQuery<Result<IEnumerable<TrackingLinkDto>>>
 {
     /// <summary>
     /// The load ID to get tracking links for.

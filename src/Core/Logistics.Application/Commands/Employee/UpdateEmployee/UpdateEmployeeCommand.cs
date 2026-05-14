@@ -4,7 +4,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Commands;
 
-public class UpdateEmployeeCommand : IAppRequest
+public class UpdateEmployeeCommand : ICommand
 {
     public Guid UserId { get; set; }
     public string? Role { get; set; }

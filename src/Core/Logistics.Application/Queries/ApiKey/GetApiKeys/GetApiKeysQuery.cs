@@ -3,4 +3,4 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public sealed class GetApiKeysQuery : IAppRequest<Result<List<ApiKeyDto>>>;
+public sealed class GetApiKeysQuery : IQuery<Result<List<ApiKeyDto>>>;

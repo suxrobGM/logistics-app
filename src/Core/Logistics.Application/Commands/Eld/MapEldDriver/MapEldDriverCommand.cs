@@ -5,7 +5,7 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.Eld)]
-public class MapEldDriverCommand : IAppRequest
+public class MapEldDriverCommand : ICommand
 {
     public Guid EmployeeId { get; set; }
     public EldProviderType ProviderType { get; set; }

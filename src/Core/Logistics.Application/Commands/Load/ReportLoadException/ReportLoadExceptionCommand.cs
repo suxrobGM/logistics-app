@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class ReportLoadExceptionCommand : IAppRequest<Result>
+public class ReportLoadExceptionCommand : ICommand<Result>
 {
     public Guid LoadId { get; set; }
     public LoadExceptionType Type { get; set; }

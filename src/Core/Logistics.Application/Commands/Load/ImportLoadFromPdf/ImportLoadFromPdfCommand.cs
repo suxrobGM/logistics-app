@@ -6,7 +6,7 @@ namespace Logistics.Application.Commands;
 /// <summary>
 /// Command to import a load from a PDF dispatch sheet.
 /// </summary>
-public class ImportLoadFromPdfCommand : IAppRequest<Result<ImportLoadFromPdfResponse>>
+public class ImportLoadFromPdfCommand : ICommand<Result<ImportLoadFromPdfResponse>>
 {
     /// <summary>
     /// The PDF file stream.

@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public sealed class UpdateDemoRequestCommand : IAppRequest<Result>
+public sealed class UpdateDemoRequestCommand : ICommand<Result>
 {
     public Guid Id { get; set; }
     public DemoRequestStatus Status { get; set; }

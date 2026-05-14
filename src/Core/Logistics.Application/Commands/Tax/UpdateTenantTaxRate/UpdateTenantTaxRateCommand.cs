@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class UpdateTenantTaxRateCommand : IAppRequest<Result<TenantTaxRateDto>>
+public class UpdateTenantTaxRateCommand : ICommand<Result<TenantTaxRateDto>>
 {
     public Guid Id { get; set; }
     public required decimal RatePercent { get; set; }

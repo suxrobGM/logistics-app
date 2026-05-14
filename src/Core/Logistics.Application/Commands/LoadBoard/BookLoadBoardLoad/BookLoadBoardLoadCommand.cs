@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.LoadBoard)]
-public class BookLoadBoardLoadCommand : IAppRequest<Result<LoadBoardBookingResultDto>>
+public class BookLoadBoardLoadCommand : ICommand<Result<LoadBoardBookingResultDto>>
 {
     /// <summary>
     /// ID of the load board listing to book

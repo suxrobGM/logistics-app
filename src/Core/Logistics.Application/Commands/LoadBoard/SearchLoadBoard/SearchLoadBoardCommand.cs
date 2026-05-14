@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.LoadBoard)]
-public class SearchLoadBoardCommand : IAppRequest<Result<LoadBoardSearchResultDto>>
+public class SearchLoadBoardCommand : ICommand<Result<LoadBoardSearchResultDto>>
 {
     public Address? OriginAddress { get; set; }
     public int OriginRadius { get; set; } = 50;

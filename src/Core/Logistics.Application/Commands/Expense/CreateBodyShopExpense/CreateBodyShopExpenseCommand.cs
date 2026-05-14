@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class CreateBodyShopExpenseCommand : IAppRequest<Result<Guid>>
+public class CreateBodyShopExpenseCommand : ICommand<Result<Guid>>
 {
     public decimal Amount { get; set; }
     public string Currency { get; set; } = "USD";

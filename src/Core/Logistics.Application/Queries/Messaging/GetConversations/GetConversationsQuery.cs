@@ -4,7 +4,7 @@ using Logistics.Shared.Models.Messaging;
 
 namespace Logistics.Application.Queries;
 
-public class GetConversationsQuery : IAppRequest<Result<ConversationDto[]>>
+public class GetConversationsQuery : IQuery<Result<ConversationDto[]>>
 {
     /// <summary>
     /// Filter conversations by participant employee ID.

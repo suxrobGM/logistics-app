@@ -6,4 +6,4 @@ namespace Logistics.Application.Queries;
 /// <summary>
 /// Gets the current Stripe Connect status for the tenant.
 /// </summary>
-public record GetConnectStatusQuery : IAppRequest<Result<StripeConnectStatusDto>>;
+public record GetConnectStatusQuery : IQuery<Result<StripeConnectStatusDto>>;

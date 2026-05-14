@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class CheckDispatchEligibilityQuery : IAppRequest<Result<EligibilityResultDto>>
+public class CheckDispatchEligibilityQuery : IQuery<Result<EligibilityResultDto>>
 {
     public Guid TruckId { get; set; }
     public Guid LoadId { get; set; }

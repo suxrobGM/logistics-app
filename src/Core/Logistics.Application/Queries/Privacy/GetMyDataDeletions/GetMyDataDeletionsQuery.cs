@@ -3,6 +3,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetMyDataDeletionsQuery : IAppRequest<Result<List<DataDeletionRequestDto>>>
+public class GetMyDataDeletionsQuery : IQuery<Result<List<DataDeletionRequestDto>>>
 {
 }

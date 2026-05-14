@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetEldProviderDriversQuery : IAppRequest<Result<List<EldDriverDto>>>
+public class GetEldProviderDriversQuery : IQuery<Result<List<EldDriverDto>>>
 {
     public Guid ProviderId { get; set; }
 }

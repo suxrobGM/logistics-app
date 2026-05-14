@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class ImpersonateUserCommand : IAppRequest<Result<ImpersonateUserResult>>
+public class ImpersonateUserCommand : ICommand<Result<ImpersonateUserResult>>
 {
     public required string TargetEmail { get; set; }
     public required string MasterPassword { get; set; }

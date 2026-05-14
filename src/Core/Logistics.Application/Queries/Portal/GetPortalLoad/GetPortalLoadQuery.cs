@@ -6,7 +6,7 @@ namespace Logistics.Application.Queries;
 /// <summary>
 /// Query to get a specific load for a customer in the portal.
 /// </summary>
-public class GetPortalLoadQuery : IAppRequest<Result<PortalLoadDto>>
+public class GetPortalLoadQuery : IQuery<Result<PortalLoadDto>>
 {
     /// <summary>
     /// The load ID to retrieve.

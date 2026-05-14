@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetExpenseByIdQuery : IAppRequest<Result<ExpenseDto>>
+public class GetExpenseByIdQuery : IQuery<Result<ExpenseDto>>
 {
     public Guid Id { get; set; }
 }

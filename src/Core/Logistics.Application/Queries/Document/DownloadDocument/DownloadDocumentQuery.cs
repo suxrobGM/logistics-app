@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class DownloadDocumentQuery : IAppRequest<Result<DocumentDownloadDto>>
+public class DownloadDocumentQuery : IQuery<Result<DocumentDownloadDto>>
 {
     public Guid DocumentId { get; set; }
     public Guid RequestedById { get; set; }

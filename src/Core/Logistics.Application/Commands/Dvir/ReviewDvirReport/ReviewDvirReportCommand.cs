@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.Safety)]
-public record ReviewDvirReportCommand : IAppRequest<Result<DvirReportDto>>
+public record ReviewDvirReportCommand : ICommand<Result<DvirReportDto>>
 {
     public required Guid ReportId { get; set; }
     public required Guid ReviewedById { get; set; }

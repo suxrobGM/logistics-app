@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class DeleteContainerCommand : IAppRequest<Result>
+public class DeleteContainerCommand : ICommand<Result>
 {
     public Guid Id { get; set; }
 }

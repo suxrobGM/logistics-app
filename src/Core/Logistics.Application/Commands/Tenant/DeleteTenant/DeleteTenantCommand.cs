@@ -2,7 +2,7 @@ using Logistics.Application.Abstractions;
 
 namespace Logistics.Application.Commands;
 
-public class DeleteTenantCommand : IAppRequest
+public class DeleteTenantCommand : ICommand
 {
     public Guid Id { get; set; }
 }

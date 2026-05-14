@@ -5,7 +5,7 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.Eld)]
-public class DeleteEldProviderConfigurationCommand : IAppRequest
+public class DeleteEldProviderConfigurationCommand : ICommand
 {
     public Guid ProviderId { get; set; }
 }

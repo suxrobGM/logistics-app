@@ -6,4 +6,4 @@ namespace Logistics.Application.Queries;
 /// <summary>
 /// Gets invoice dashboard statistics including counts and amounts by status.
 /// </summary>
-public record GetInvoiceDashboardQuery : IAppRequest<Result<InvoiceDashboardDto>>;
+public record GetInvoiceDashboardQuery : IQuery<Result<InvoiceDashboardDto>>;

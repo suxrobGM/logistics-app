@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.Safety)]
-public class CreateConditionReportCommand : IAppRequest<Result<Guid>>
+public class CreateConditionReportCommand : ICommand<Result<Guid>>
 {
     public required Guid LoadId { get; set; }
     public required string Vin { get; set; }

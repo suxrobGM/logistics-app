@@ -7,7 +7,7 @@ namespace Logistics.Application.Queries;
 /// <summary>
 /// Gets or creates the tenant-wide group chat.
 /// </summary>
-public class GetTenantChatQuery : IAppRequest<Result<ConversationDto>>
+public class GetTenantChatQuery : IQuery<Result<ConversationDto>>
 {
     /// <summary>
     /// The ID of the employee requesting the chat (for unread count calculation).

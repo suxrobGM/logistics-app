@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.Safety)]
-public record CreateDvirReportCommand : IAppRequest<Result<DvirReportDto>>
+public record CreateDvirReportCommand : ICommand<Result<DvirReportDto>>
 {
     public required Guid TruckId { get; set; }
     public required Guid DriverId { get; set; }

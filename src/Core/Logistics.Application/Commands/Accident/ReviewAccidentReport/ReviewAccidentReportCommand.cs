@@ -9,7 +9,7 @@ namespace Logistics.Application.Commands;
 /// Command to review a submitted accident report (changes status to UnderReview)
 /// </summary>
 [RequiresFeature(TenantFeature.Safety)]
-public record ReviewAccidentReportCommand : IAppRequest<Result<AccidentReportDto>>
+public record ReviewAccidentReportCommand : ICommand<Result<AccidentReportDto>>
 {
     public required Guid ReportId { get; init; }
     public required Guid ReviewedById { get; init; }

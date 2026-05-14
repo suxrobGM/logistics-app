@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.Safety)]
-public record SubmitAccidentReportCommand : IAppRequest<Result<AccidentReportDto>>
+public record SubmitAccidentReportCommand : ICommand<Result<AccidentReportDto>>
 {
     public required Guid ReportId { get; set; }
 }

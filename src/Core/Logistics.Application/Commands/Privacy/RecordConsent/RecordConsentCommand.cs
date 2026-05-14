@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class RecordConsentCommand : IAppRequest<Result<Guid>>
+public class RecordConsentCommand : ICommand<Result<Guid>>
 {
     public Guid UserId { get; set; }
     public ConsentType ConsentType { get; set; }

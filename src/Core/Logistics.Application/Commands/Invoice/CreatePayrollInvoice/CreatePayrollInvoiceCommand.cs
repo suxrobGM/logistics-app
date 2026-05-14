@@ -5,7 +5,7 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.Payroll)]
-public class CreatePayrollInvoiceCommand : IAppRequest
+public class CreatePayrollInvoiceCommand : ICommand
 {
     public Guid EmployeeId { get; set; }
     public DateTime PeriodStart { get; set; }

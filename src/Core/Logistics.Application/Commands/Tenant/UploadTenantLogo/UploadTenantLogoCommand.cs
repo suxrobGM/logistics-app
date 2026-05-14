@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class UploadTenantLogoCommand : IAppRequest<Result<string>>
+public class UploadTenantLogoCommand : ICommand<Result<string>>
 {
     public Guid TenantId { get; set; }
     public required Stream FileContent { get; set; }

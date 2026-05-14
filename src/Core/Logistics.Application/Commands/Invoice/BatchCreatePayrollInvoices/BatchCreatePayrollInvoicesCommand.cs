@@ -9,7 +9,7 @@ namespace Logistics.Application.Commands;
 /// Creates payroll invoices for multiple employees at once.
 /// </summary>
 [RequiresFeature(TenantFeature.Payroll)]
-public record BatchCreatePayrollInvoicesCommand : IAppRequest<Result<BatchCreatePayrollInvoicesResult>>
+public record BatchCreatePayrollInvoicesCommand : ICommand<Result<BatchCreatePayrollInvoicesResult>>
 {
     public required List<Guid> EmployeeIds { get; set; }
     public required DateTime PeriodStart { get; set; }

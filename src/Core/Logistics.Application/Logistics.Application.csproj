@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Using Include="Logistics.Application.Abstractions.Common" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="Logistics.Application.Tests" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
   </ItemGroup>

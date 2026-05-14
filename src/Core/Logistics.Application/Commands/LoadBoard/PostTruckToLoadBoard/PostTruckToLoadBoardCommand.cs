@@ -7,7 +7,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.LoadBoard)]
-public class PostTruckToLoadBoardCommand : IAppRequest<Result<PostTruckResultDto>>
+public class PostTruckToLoadBoardCommand : ICommand<Result<PostTruckResultDto>>
 {
     public Guid TruckId { get; set; }
     public LoadBoardProviderType ProviderType { get; set; }

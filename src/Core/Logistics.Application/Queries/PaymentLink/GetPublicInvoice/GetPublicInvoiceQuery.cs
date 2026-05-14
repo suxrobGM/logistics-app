@@ -7,4 +7,4 @@ namespace Logistics.Application.Queries;
 /// Gets invoice details via a public payment link token.
 /// This query does not require authentication.
 /// </summary>
-public record GetPublicInvoiceQuery(Guid TenantId, string Token) : IAppRequest<Result<PublicInvoiceDto>>;
+public record GetPublicInvoiceQuery(Guid TenantId, string Token) : IQuery<Result<PublicInvoiceDto>>;

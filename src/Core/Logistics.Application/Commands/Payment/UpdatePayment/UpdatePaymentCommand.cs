@@ -4,7 +4,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 
 namespace Logistics.Application.Commands;
 
-public class UpdatePaymentCommand : IAppRequest
+public class UpdatePaymentCommand : ICommand
 {
     public Guid Id { get; set; }
     public string? StripePaymentMethodId { get; set; }

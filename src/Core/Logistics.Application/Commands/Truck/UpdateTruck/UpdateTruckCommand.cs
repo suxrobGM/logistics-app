@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class UpdateTruckCommand : IAppRequest
+public class UpdateTruckCommand : ICommand
 {
     public Guid Id { get; set; }
     public string? TruckNumber { get; set; }

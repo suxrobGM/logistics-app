@@ -8,7 +8,7 @@ namespace Logistics.Application.Queries;
 /// Backs the create/edit-invoice form's live recalc + the AI dispatch
 /// <c>preview_tax_calculation</c> tool.
 /// </summary>
-public record PreviewInvoiceTaxQuery : IAppRequest<Result<PreviewInvoiceTaxResponse>>
+public record PreviewInvoiceTaxQuery : IQuery<Result<PreviewInvoiceTaxResponse>>
 {
     public required PreviewInvoiceTaxRequest Request { get; init; }
 }

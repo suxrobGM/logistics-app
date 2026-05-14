@@ -6,7 +6,7 @@ namespace Logistics.Application.Commands;
 /// <summary>
 /// Command to update multiple feature settings for a tenant (used by admin).
 /// </summary>
-public class UpdateTenantFeaturesAdminCommand : IAppRequest
+public class UpdateTenantFeaturesAdminCommand : ICommand
 {
     /// <summary>
     /// The tenant ID to update features for.

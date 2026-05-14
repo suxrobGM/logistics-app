@@ -5,7 +5,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class CreateTerminalCommand : IAppRequest<Result<TerminalDto>>
+public class CreateTerminalCommand : ICommand<Result<TerminalDto>>
 {
     public string Name { get; set; } = null!;
     public string Code { get; set; } = null!;

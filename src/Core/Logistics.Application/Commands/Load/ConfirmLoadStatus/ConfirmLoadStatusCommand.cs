@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Commands;
 
-public class ConfirmLoadStatusCommand : IAppRequest
+public class ConfirmLoadStatusCommand : ICommand
 {
     public Guid DriverId { get; set; }
     public Guid LoadId { get; set; }

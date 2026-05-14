@@ -3,4 +3,4 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public record GetTaxJurisdictionsQuery : IAppRequest<Result<IReadOnlyList<TaxJurisdictionInfoDto>>>;
+public record GetTaxJurisdictionsQuery : IQuery<Result<IReadOnlyList<TaxJurisdictionInfoDto>>>;

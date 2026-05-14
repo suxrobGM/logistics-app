@@ -3,6 +3,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class CreateSetupIntentCommand : IAppRequest<Result<SetupIntentDto>>
+public class CreateSetupIntentCommand : ICommand<Result<SetupIntentDto>>
 {
 }

@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class CreateDriverLicenseCommand : IAppRequest<Result<Guid>>
+public class CreateDriverLicenseCommand : ICommand<Result<Guid>>
 {
     public Guid EmployeeId { get; set; }
     public string LicenseNumber { get; set; } = null!;

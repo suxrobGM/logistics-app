@@ -8,7 +8,7 @@ namespace Logistics.Application.Commands;
 /// Records a manual payment (cash or check) for an invoice.
 /// Only Owner and Manager roles can record manual payments.
 /// </summary>
-public record RecordManualPaymentCommand : IAppRequest<Result>
+public record RecordManualPaymentCommand : ICommand<Result>
 {
     public required Guid InvoiceId { get; set; }
     public required decimal Amount { get; set; }

@@ -7,7 +7,7 @@ namespace Logistics.Application.Commands;
 /// <summary>
 /// Adds a line item to an invoice.
 /// </summary>
-public record AddLineItemCommand : IAppRequest<Result<InvoiceLineItemDto>>
+public record AddLineItemCommand : ICommand<Result<InvoiceLineItemDto>>
 {
     public required Guid InvoiceId { get; set; }
     public required string Description { get; set; }

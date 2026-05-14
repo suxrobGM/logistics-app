@@ -3,4 +3,4 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public record GetDvirReportByIdQuery(Guid Id) : IAppRequest<Result<DvirReportDto>>;
+public record GetDvirReportByIdQuery(Guid Id) : IQuery<Result<DvirReportDto>>;

@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetDriverLicensesQuery : IAppRequest<Result<IList<DriverLicenseDto>>>
+public class GetDriverLicensesQuery : IQuery<Result<IList<DriverLicenseDto>>>
 {
     public Guid EmployeeId { get; set; }
 

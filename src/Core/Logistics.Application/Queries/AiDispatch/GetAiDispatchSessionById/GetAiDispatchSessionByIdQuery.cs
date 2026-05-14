@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Queries;
 
 [RequiresFeature(TenantFeature.AgenticDispatch)]
-public sealed class GetAiDispatchSessionByIdQuery : IAppRequest<Result<AiDispatchSessionDto>>
+public sealed class GetAiDispatchSessionByIdQuery : IQuery<Result<AiDispatchSessionDto>>
 {
     public Guid SessionId { get; set; }
 }

@@ -6,7 +6,7 @@ namespace Logistics.Application.Commands;
 /// <summary>
 /// Command to delete a customer portal user.
 /// </summary>
-public class DeleteCustomerUserCommand : IAppRequest<Result>
+public class DeleteCustomerUserCommand : ICommand<Result>
 {
     /// <summary>
     /// The customer user ID to delete.

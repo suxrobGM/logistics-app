@@ -4,7 +4,7 @@ using Logistics.Shared.Models.Messaging;
 
 namespace Logistics.Application.Queries;
 
-public class GetMessagesQuery : IAppRequest<Result<MessageDto[]>>
+public class GetMessagesQuery : IQuery<Result<MessageDto[]>>
 {
     public Guid ConversationId { get; set; }
 

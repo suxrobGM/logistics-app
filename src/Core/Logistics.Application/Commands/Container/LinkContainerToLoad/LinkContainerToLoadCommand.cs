@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class LinkContainerToLoadCommand : IAppRequest<Result>
+public class LinkContainerToLoadCommand : ICommand<Result>
 {
     public Guid ContainerId { get; set; }
     public Guid LoadId { get; set; }

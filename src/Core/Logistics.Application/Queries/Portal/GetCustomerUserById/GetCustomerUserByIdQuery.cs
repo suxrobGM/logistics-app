@@ -6,7 +6,7 @@ namespace Logistics.Application.Queries;
 /// <summary>
 /// Query to get a CustomerUser by ID.
 /// </summary>
-public class GetCustomerUserByIdQuery : IAppRequest<Result<CustomerUserDto>>
+public class GetCustomerUserByIdQuery : IQuery<Result<CustomerUserDto>>
 {
     /// <summary>
     /// The customer user ID.

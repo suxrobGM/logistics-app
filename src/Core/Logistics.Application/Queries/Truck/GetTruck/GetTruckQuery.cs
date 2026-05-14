@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetTruckQuery : IAppRequest<Result<TruckDto>>
+public class GetTruckQuery : IQuery<Result<TruckDto>>
 {
     public Guid? TruckOrDriverId { get; set; }
     public bool IncludeLoads { get; set; }

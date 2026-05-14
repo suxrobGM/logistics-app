@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class PreviewPayrollInvoiceQuery : IAppRequest<Result<InvoiceDto>>
+public class PreviewPayrollInvoiceQuery : IQuery<Result<InvoiceDto>>
 {
     public Guid EmployeeId { get; set; }
     public DateTime PeriodStart { get; set; }

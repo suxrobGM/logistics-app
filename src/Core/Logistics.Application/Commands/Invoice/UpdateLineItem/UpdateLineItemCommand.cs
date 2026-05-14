@@ -7,7 +7,7 @@ namespace Logistics.Application.Commands;
 /// <summary>
 /// Updates an existing line item on an invoice.
 /// </summary>
-public record UpdateLineItemCommand : IAppRequest<Result<InvoiceLineItemDto>>
+public record UpdateLineItemCommand : ICommand<Result<InvoiceLineItemDto>>
 {
     public required Guid InvoiceId { get; set; }
     public required Guid LineItemId { get; set; }

@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.Timesheets)]
-public class UpdateTimeEntryCommand : IAppRequest<Result>
+public class UpdateTimeEntryCommand : ICommand<Result>
 {
     public required Guid Id { get; set; }
     public DateTime? Date { get; set; }

@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class SendTrackingLinkEmailCommand : IAppRequest<Result>
+public class SendTrackingLinkEmailCommand : ICommand<Result>
 {
     public required Guid TrackingLinkId { get; set; }
     public required string RecipientEmail { get; set; }

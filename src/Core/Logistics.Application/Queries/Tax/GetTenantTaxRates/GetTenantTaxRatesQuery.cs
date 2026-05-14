@@ -3,4 +3,4 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public record GetTenantTaxRatesQuery : IAppRequest<Result<IReadOnlyList<TenantTaxRateDto>>>;
+public record GetTenantTaxRatesQuery : IQuery<Result<IReadOnlyList<TenantTaxRateDto>>>;

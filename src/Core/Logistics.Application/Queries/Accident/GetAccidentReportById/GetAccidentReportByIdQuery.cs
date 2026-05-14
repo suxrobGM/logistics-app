@@ -3,4 +3,4 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public record GetAccidentReportByIdQuery(Guid Id) : IAppRequest<Result<AccidentReportDto>>;
+public record GetAccidentReportByIdQuery(Guid Id) : IQuery<Result<AccidentReportDto>>;

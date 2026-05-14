@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Commands;
 
-public class CreateEmployeeCommand : IAppRequest
+public class CreateEmployeeCommand : ICommand
 {
     public Guid UserId { get; set; }
     public string? Role { get; set; }

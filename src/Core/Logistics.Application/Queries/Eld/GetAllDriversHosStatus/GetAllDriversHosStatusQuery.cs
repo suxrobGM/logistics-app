@@ -3,4 +3,4 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetAllDriversHosStatusQuery : IAppRequest<Result<List<DriverHosStatusDto>>>;
+public class GetAllDriversHosStatusQuery : IQuery<Result<List<DriverHosStatusDto>>>;

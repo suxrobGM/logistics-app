@@ -5,7 +5,7 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.AgenticDispatch)]
-public class CancelAiDispatchSessionCommand : IAppRequest
+public class CancelAiDispatchSessionCommand : ICommand
 {
     public Guid SessionId { get; set; }
 }

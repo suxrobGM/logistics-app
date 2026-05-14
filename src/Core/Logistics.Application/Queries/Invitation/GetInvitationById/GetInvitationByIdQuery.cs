@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetInvitationByIdQuery : IAppRequest<Result<InvitationDto>>
+public class GetInvitationByIdQuery : IQuery<Result<InvitationDto>>
 {
     public Guid Id { get; set; }
 }

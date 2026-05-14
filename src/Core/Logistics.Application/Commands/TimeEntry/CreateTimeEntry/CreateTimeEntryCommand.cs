@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.Timesheets)]
-public class CreateTimeEntryCommand : IAppRequest<Result<Guid>>
+public class CreateTimeEntryCommand : ICommand<Result<Guid>>
 {
     public required Guid EmployeeId { get; set; }
     public DateTime Date { get; set; }

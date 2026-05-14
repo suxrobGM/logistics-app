@@ -6,4 +6,4 @@ namespace Logistics.Application.Commands;
 /// <summary>
 /// Creates a Stripe Connect Express account for the current tenant.
 /// </summary>
-public record CreateConnectAccountCommand : IAppRequest<Result<CreateConnectAccountDto>>;
+public record CreateConnectAccountCommand : ICommand<Result<CreateConnectAccountDto>>;

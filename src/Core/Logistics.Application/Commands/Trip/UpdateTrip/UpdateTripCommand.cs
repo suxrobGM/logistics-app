@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class UpdateTripCommand : IAppRequest
+public class UpdateTripCommand : ICommand
 {
     public Guid TripId { get; set; }
     public string? Name { get; set; }

@@ -3,6 +3,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetConsentHistoryQuery : IAppRequest<Result<List<ConsentRecordDto>>>
+public class GetConsentHistoryQuery : IQuery<Result<List<ConsentRecordDto>>>
 {
 }

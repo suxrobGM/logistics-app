@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Commands;
 
-public class UpdateDriverLicenseCommand : IAppRequest
+public class UpdateDriverLicenseCommand : ICommand
 {
     public Guid LicenseId { get; set; }
     public LicenseClass? LicenseClass { get; set; }

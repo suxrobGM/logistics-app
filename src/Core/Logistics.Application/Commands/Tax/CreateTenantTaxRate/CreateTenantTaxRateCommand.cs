@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public class CreateTenantTaxRateCommand : IAppRequest<Result<TenantTaxRateDto>>
+public class CreateTenantTaxRateCommand : ICommand<Result<TenantTaxRateDto>>
 {
     public required string CountryCode { get; set; }
     public string? Region { get; set; }

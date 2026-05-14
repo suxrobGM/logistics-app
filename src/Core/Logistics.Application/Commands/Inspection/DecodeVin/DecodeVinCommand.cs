@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.Safety)]
-public class DecodeVinCommand : IAppRequest<Result<VehicleInfoDto>>
+public class DecodeVinCommand : ICommand<Result<VehicleInfoDto>>
 {
     public required string Vin { get; set; }
 }

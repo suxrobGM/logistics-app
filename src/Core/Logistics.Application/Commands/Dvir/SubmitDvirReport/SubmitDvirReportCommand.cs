@@ -6,7 +6,7 @@ using Logistics.Shared.Models;
 namespace Logistics.Application.Commands;
 
 [RequiresFeature(TenantFeature.Safety)]
-public record SubmitDvirReportCommand : IAppRequest<Result<DvirReportDto>>
+public record SubmitDvirReportCommand : ICommand<Result<DvirReportDto>>
 {
     public required Guid ReportId { get; set; }
     public string? DriverSignature { get; set; }

@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public sealed class CreateDemoRequestCommand : IAppRequest<Result>
+public sealed class CreateDemoRequestCommand : ICommand<Result>
 {
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;

@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetDocumentsQuery : IAppRequest<Result<IEnumerable<DocumentDto>>>
+public class GetDocumentsQuery : IQuery<Result<IEnumerable<DocumentDto>>>
 {
     /// <summary>
     ///     Filter by document owner type and ID.

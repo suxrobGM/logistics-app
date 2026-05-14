@@ -3,7 +3,7 @@ using Logistics.Domain.Primitives.Enums;
 
 namespace Logistics.Application.Commands;
 
-public class CreateSubscriptionPlanCommand : IAppRequest
+public class CreateSubscriptionPlanCommand : ICommand
 {
     public string Name { get; set; } = null!;
     public string? Description { get; set; }

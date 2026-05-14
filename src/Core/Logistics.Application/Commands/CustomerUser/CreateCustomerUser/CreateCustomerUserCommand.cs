@@ -6,7 +6,7 @@ namespace Logistics.Application.Commands;
 /// <summary>
 /// Command to create a new customer portal user.
 /// </summary>
-public class CreateCustomerUserCommand : IAppRequest<Result<CustomerUserDto>>
+public class CreateCustomerUserCommand : ICommand<Result<CustomerUserDto>>
 {
     /// <summary>
     /// The user ID (from master database) to link.
