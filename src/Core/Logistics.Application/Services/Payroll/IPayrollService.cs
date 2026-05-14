@@ -2,7 +2,7 @@ using Logistics.Domain.Entities;
 
 namespace Logistics.Application.Services;
 
-public interface IPayrollService
+public interface IPayrollService : IApplicationService
 {
     Task GenerateMonthlyPayrollsAsync();
     Task GenerateWeeklyPayrollsAsync();

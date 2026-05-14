@@ -1,6 +1,6 @@
 namespace Logistics.Application.Services;
 
-public interface IMaintenanceReminderService
+public interface IMaintenanceReminderService : IApplicationService
 {
     /// <summary>
     /// Check for upcoming and overdue maintenance schedules and send reminders

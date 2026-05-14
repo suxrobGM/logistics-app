@@ -1,6 +1,6 @@
 # Phase 4 — Per-module registrars + Scrutor scanning
 
-> **Status: PENDING.** Part of group `03-modular-reorganization/`. Open after `02-architectural-foundations/` settles (which is now done).
+> **Status: DONE on 2026-05-14.** Part of group `03-modular-reorganization/`. `IApplicationService` marker live; Scrutor scan registers 13 services; 6 stub module registrars in place; DI smoke test green (17/17 passing).
 
 ## Goal
 

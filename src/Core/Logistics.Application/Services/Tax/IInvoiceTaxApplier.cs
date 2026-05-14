@@ -7,7 +7,7 @@ namespace Logistics.Application.Services.Tax;
 /// from tenant + invoice context, applies per-line tax + breakdown, then calls
 /// <see cref="Invoice.RecalculateTotals"/>. Must be called after every line-item mutation.
 /// </summary>
-public interface IInvoiceTaxApplier
+public interface IInvoiceTaxApplier : IApplicationService
 {
     /// <summary>
     /// Applies tax to <paramref name="invoice"/> in place. Only <see cref="LoadInvoice"/>

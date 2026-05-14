@@ -1,3 +1,5 @@
+using Logistics.Application.Abstractions.Common;
+
 namespace Logistics.Application.Abstractions.Dispatch;
 
 /// <summary>
@@ -5,7 +7,7 @@ namespace Logistics.Application.Abstractions.Dispatch;
 /// license status, endorsements, ADR/Hazmat compatibility, and truck ADR equipment. Used by
 /// trip assignment commands and surfaced to the AI dispatch agent as a tool.
 /// </summary>
-public interface IDispatchEligibilityService
+public interface IDispatchEligibilityService : IApplicationService
 {
     /// <summary>
     /// Checks whether the supplied truck (and optionally a specific driver) is eligible to

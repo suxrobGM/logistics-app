@@ -1,6 +1,6 @@
 # Phase 9 — Update documentation, rules, and skills
 
-> **Status: PENDING.** Part of group `03-modular-reorganization/`. Should run after Phase 7 (folders move) so the docs describe the new structure, not the old.
+> **Status: PENDING — deferred from 2026-05-14 session** (most updates are Phase-7-driven; reconciliation pass should run after Phase 7 lands). Part of group `03-modular-reorganization/`. Should run after Phase 7 (folders move) so the docs describe the new structure, not the old.
 
 ## Goal
 

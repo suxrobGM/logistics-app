@@ -1,6 +1,6 @@
 # Phase 8 — Read-side projection services
 
-> **Status: PENDING.** Part of group `03-modular-reorganization/`.
+> **Status: PENDING — deferred from 2026-05-14 session** (gated on production p95 telemetry; plan says picking handlers blind defeats the purpose). Part of group `03-modular-reorganization/`.
 
 ## Goal
 

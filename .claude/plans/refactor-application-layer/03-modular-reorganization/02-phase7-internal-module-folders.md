@@ -1,6 +1,6 @@
 # Phase 7 — Internal module reorganization (folders + namespaces, no project split)
 
-> **Status: PENDING.** Part of group `03-modular-reorganization/`.
+> **Status: PENDING — deferred from 2026-05-14 session** (scope: too large for one PR; plan recommends 6 PRs, one per module). Part of group `03-modular-reorganization/`.
 
 ## Goal
 

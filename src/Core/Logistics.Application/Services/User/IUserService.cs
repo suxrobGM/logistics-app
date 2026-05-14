@@ -1,6 +1,6 @@
 namespace Logistics.Application.Services;
 
-public interface IUserService
+public interface IUserService : IApplicationService
 {
     Task UpdateUserAsync(UpdateUserParams userParams);
 }
