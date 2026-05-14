@@ -45,11 +45,11 @@ public class MessageController(IMediator mediator) : ControllerBase
             : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    [HttpGet("conversations/common", Name = "GetTenantChat")]
+    [HttpPost("conversations/common/open", Name = "OpenTenantChat")]
     [ProducesResponseType(typeof(ConversationDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize(Policy = Permission.Message.View)]
-    public async Task<IActionResult> GetTenantChat()
+    public async Task<IActionResult> OpenTenantChat()
     {
         var employeeId = User.GetUserId();
         if (employeeId is null)
@@ -57,8 +57,8 @@ public class MessageController(IMediator mediator) : ControllerBase
             return BadRequest(new ErrorResponse("Unable to identify user"));
         }
 
-        var query = new GetTenantChatQuery { EmployeeId = employeeId.Value };
-        var result = await mediator.Send(query);
+        var command = new OpenTenantChatCommand { EmployeeId = employeeId.Value };
+        var result = await mediator.Send(command);
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 

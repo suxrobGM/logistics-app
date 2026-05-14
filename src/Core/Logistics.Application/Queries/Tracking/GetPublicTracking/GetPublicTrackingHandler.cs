@@ -1,4 +1,6 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.BackgroundJobs;
+using Logistics.Application.Commands;
 using Logistics.Application.Constants;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
@@ -9,11 +11,10 @@ using Logistics.Application.Abstractions.Storage;
 
 namespace Logistics.Application.Queries;
 
-// CQS violation accepted: public tracking read with audit-write (access count + last access).
-// Mutation is bookkeeping; relocating would split a single public endpoint into command+query.
 internal sealed class GetPublicTrackingHandler(
     ITenantUnitOfWork tenantUow,
-    IBlobStorageService blobStorageService)
+    IBlobStorageService blobStorageService,
+    ICommandEnqueuer commandEnqueuer)
     : IAppRequestHandler<GetPublicTrackingQuery, Result<PublicTrackingDto>>
 {
     public async Task<Result<PublicTrackingDto>> Handle(
@@ -45,11 +46,12 @@ internal sealed class GetPublicTrackingHandler(
             return Result<PublicTrackingDto>.Fail("This tracking link has expired or been revoked.");
         }
 
-        // Update access tracking
-        trackingLink.AccessCount++;
-        trackingLink.LastAccessedAt = DateTime.UtcNow;
-        tenantUow.Repository<TrackingLink>().Update(trackingLink);
-        await tenantUow.SaveChangesAsync(ct);
+        // Defer access bookkeeping so the read path stays write-free.
+        commandEnqueuer.Enqueue(new RecordTrackingAccessCommand
+        {
+            TenantId = req.TenantId,
+            TrackingLinkId = trackingLink.Id
+        });
 
         // Get the load
         var load = trackingLink.Load;

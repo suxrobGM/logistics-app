@@ -216,10 +216,10 @@ export const MessagesStore = signalStore(
         return conversation;
       },
 
-      async getTenantChat(): Promise<ConversationDto> {
+      async openTenantChat(): Promise<ConversationDto> {
         patchState(store, { loading: true });
         try {
-          const tenantChat = await messagingService.getTenantChat();
+          const tenantChat = await messagingService.openTenantChat();
 
           // Add to conversations if not already present
           const exists = store.conversations().some((c) => c.id === tenantChat.id);

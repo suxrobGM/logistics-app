@@ -47,4 +47,13 @@ public class TrackingLink : AuditableEntity, ITenantEntity
     /// Whether the tracking link is currently valid (active and not expired).
     /// </summary>
     public bool IsValid => IsActive && DateTime.UtcNow < ExpiresAt;
+
+    /// <summary>
+    /// Records an access to this tracking link.
+    /// </summary>
+    public void RecordAccess()
+    {
+        AccessCount++;
+        LastAccessedAt = DateTime.UtcNow;
+    }
 }

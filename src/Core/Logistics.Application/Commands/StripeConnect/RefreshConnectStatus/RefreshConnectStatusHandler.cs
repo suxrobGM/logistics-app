@@ -1,23 +1,20 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Services;
+using Logistics.Application.Abstractions.Payments.Stripe;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
-using Logistics.Application.Abstractions.Payments.Stripe;
 
-namespace Logistics.Application.Queries;
+namespace Logistics.Application.Commands;
 
-// CQS violation accepted: read syncs cached Stripe Connect status into the master DB after
-// each external lookup. Auto-transaction would wrap the Stripe API call inside a DB tx.
-internal sealed class GetConnectStatusHandler(
+internal sealed class RefreshConnectStatusHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
     IStripeConnectService stripeConnectService,
-    ILogger<GetConnectStatusHandler> logger)
-    : IAppRequestHandler<GetConnectStatusQuery, Result<StripeConnectStatusDto>>
+    ILogger<RefreshConnectStatusHandler> logger)
+    : IAppRequestHandler<RefreshConnectStatusCommand, Result<StripeConnectStatusDto>>
 {
-    public async Task<Result<StripeConnectStatusDto>> Handle(GetConnectStatusQuery req, CancellationToken ct)
+    public async Task<Result<StripeConnectStatusDto>> Handle(RefreshConnectStatusCommand req, CancellationToken ct)
     {
         var tenant = tenantUow.GetCurrentTenant();
 
@@ -52,7 +49,7 @@ internal sealed class GetConnectStatusHandler(
         }
         catch (Stripe.StripeException ex)
         {
-            logger.LogError(ex, "Failed to get Connect status for tenant {TenantId}", tenant.Id);
+            logger.LogError(ex, "Failed to refresh Connect status for tenant {TenantId}", tenant.Id);
 
             // Return cached status if Stripe call fails
             return Result<StripeConnectStatusDto>.Ok(new StripeConnectStatusDto

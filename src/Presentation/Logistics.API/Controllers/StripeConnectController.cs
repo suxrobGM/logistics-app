@@ -46,14 +46,16 @@ public class StripeConnectController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
-    /// Gets the current Stripe Connect status for the tenant.
+    /// Refreshes the Stripe Connect status for the tenant: syncs from Stripe, persists the
+    /// cached fields, and returns the latest status DTO. If the Stripe call fails the cached
+    /// status is returned with a 200.
     /// </summary>
-    [HttpGet("status", Name = "GetConnectStatus")]
+    [HttpPost("status/refresh", Name = "RefreshConnectStatus")]
     [ProducesResponseType(typeof(StripeConnectStatusDto), StatusCodes.Status200OK)]
     [Authorize(Policy = Permission.Payment.View)]
-    public async Task<IActionResult> GetStatus()
+    public async Task<IActionResult> RefreshStatus()
     {
-        var result = await mediator.Send(new GetConnectStatusQuery());
+        var result = await mediator.Send(new RefreshConnectStatusCommand());
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 

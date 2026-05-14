@@ -5,14 +5,12 @@ using Logistics.Mappings;
 using Logistics.Shared.Models;
 using Logistics.Shared.Models.Messaging;
 
-namespace Logistics.Application.Queries;
+namespace Logistics.Application.Commands;
 
-// CQS violation accepted: find-or-create tenant chat + ensure-participant. Mutations are
-// idempotent bookkeeping; relocating to Commands would distort the read-shaped API.
-internal sealed class GetTenantChatHandler(ITenantUnitOfWork tenantUow)
-    : IAppRequestHandler<GetTenantChatQuery, Result<ConversationDto>>
+internal sealed class OpenTenantChatHandler(ITenantUnitOfWork tenantUow)
+    : IAppRequestHandler<OpenTenantChatCommand, Result<ConversationDto>>
 {
-    public async Task<Result<ConversationDto>> Handle(GetTenantChatQuery req, CancellationToken ct)
+    public async Task<Result<ConversationDto>> Handle(OpenTenantChatCommand req, CancellationToken ct)
     {
         var conversationRepo = tenantUow.Repository<Conversation>();
         var participantRepo = tenantUow.Repository<ConversationParticipant>();

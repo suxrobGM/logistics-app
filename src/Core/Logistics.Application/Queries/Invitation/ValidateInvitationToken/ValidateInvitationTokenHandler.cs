@@ -9,8 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Queries;
 
-// CQS violation accepted: opportunistic Status=Expired write when an expired invitation is
-// looked up. Idempotent and best-effort; cleanup can also be done by a scheduled job later.
 internal sealed class ValidateInvitationTokenHandler(
     IMasterUnitOfWork masterUow,
     UserManager<User> userManager)
@@ -50,11 +48,6 @@ internal sealed class ValidateInvitationTokenHandler(
 
         if (invitation.IsExpired)
         {
-            // Update status to expired
-            invitation.Status = InvitationStatus.Expired;
-            masterUow.Repository<Invitation>().Update(invitation);
-            await masterUow.SaveChangesAsync(ct);
-
             return Result<InvitationValidationResult>.Ok(new InvitationValidationResult
             {
                 IsValid = false,

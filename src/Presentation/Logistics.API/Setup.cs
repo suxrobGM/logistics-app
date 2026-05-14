@@ -120,6 +120,7 @@ internal static class Setup
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
         services.AddScoped<IBackgroundJobRunner<AiDispatchRequest>, HangfireAiDispatchJobRunner>();
+        services.AddScoped<ICommandEnqueuer, HangfireCommandEnqueuer>();
         services.AddHangfireServer();
         services.AddHangfire(config => config
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
@@ -238,6 +239,7 @@ internal static class Setup
         LoadBoardSyncJob.ScheduleJobs();
         MaintenanceReminderJob.ScheduleJobs();
         LicenseExpiryReminderJob.ScheduleJobs();
+        InvitationExpiryJob.ScheduleJobs();
         DataExportProcessingJob.ScheduleJobs();
         DataDeletionJob.ScheduleJobs();
         DataRetentionJob.ScheduleJobs();

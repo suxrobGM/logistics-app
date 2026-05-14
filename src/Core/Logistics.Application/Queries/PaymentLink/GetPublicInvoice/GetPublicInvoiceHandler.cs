@@ -1,4 +1,6 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.BackgroundJobs;
+using Logistics.Application.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -7,11 +9,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Queries;
 
-// CQS violation accepted: public invoice read with payment-link access bookkeeping.
-// Mutation is audit-only; relocating would split a single public endpoint into command+query.
 internal sealed class GetPublicInvoiceHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
+    ICommandEnqueuer commandEnqueuer,
     ILogger<GetPublicInvoiceHandler> logger)
     : IAppRequestHandler<GetPublicInvoiceQuery, Result<PublicInvoiceDto>>
 {
@@ -48,10 +49,12 @@ internal sealed class GetPublicInvoiceHandler(
             return Result<PublicInvoiceDto>.Fail("Invoice not found.");
         }
 
-        // Record the access
-        paymentLink.RecordAccess();
-        tenantUow.Repository<PaymentLink>().Update(paymentLink);
-        await tenantUow.SaveChangesAsync(ct);
+        // Defer access bookkeeping so the read path stays write-free.
+        commandEnqueuer.Enqueue(new RecordPaymentLinkAccessCommand
+        {
+            TenantId = tenant.Id,
+            PaymentLinkId = paymentLink.Id
+        });
 
         // Calculate amount due
         var totalPaid = invoice.Payments.Sum(p => p.Amount.Amount);

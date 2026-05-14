@@ -9059,12 +9059,12 @@
         }
       }
     },
-    "/messages/conversations/common": {
-      "get": {
+    "/messages/conversations/common/open": {
+      "post": {
         "tags": [
           "Message"
         ],
-        "operationId": "GetTenantChat",
+        "operationId": "OpenTenantChat",
         "responses": {
           "200": {
             "description": "OK",
@@ -11387,12 +11387,12 @@
         }
       }
     },
-    "/stripe/connect/status": {
-      "get": {
+    "/stripe/connect/status/refresh": {
+      "post": {
         "tags": [
           "StripeConnect"
         ],
-        "operationId": "GetConnectStatus",
+        "operationId": "RefreshConnectStatus",
         "responses": {
           "200": {
             "description": "OK",

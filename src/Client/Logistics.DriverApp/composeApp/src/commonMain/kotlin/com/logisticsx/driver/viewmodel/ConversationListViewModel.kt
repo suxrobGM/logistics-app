@@ -149,7 +149,7 @@ class ConversationListViewModel(
         }) {
             _teamChatState.value = ActionState.Loading
 
-            val tenantChat = messageApi.getTenantChat().bodyOrThrow()
+            val tenantChat = messageApi.openTenantChat().bodyOrThrow()
             tenantChat.id?.let { conversationId ->
                 loadConversations()
                 _teamChatState.value = ActionState.Success(conversationId)
