@@ -6,7 +6,7 @@ namespace Logistics.Application.Queries;
 /// <summary>
 /// Query to get loads for a customer in the portal.
 /// </summary>
-public class GetPortalLoadsQuery : SearchableQuery, IAppRequest<PagedResult<PortalLoadDto>>
+public class GetPortalLoadsQuery : SearchableQuery, IQuery<PagedResult<PortalLoadDto>>
 {
     /// <summary>
     /// The customer ID to filter loads by (set from authenticated user context).

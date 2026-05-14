@@ -3,6 +3,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class MaintenanceReportQuery : PagedIntervalQuery, IAppRequest<Result<MaintenanceReportDto>>
+public class MaintenanceReportQuery : PagedIntervalQuery, IQuery<Result<MaintenanceReportDto>>
 {
 }

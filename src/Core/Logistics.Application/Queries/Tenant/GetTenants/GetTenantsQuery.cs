@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public sealed class GetTenantsQuery : SearchableQuery, IAppRequest<PagedResult<TenantDto>>
+public sealed class GetTenantsQuery : SearchableQuery, IQuery<PagedResult<TenantDto>>
 {
     [JsonIgnore] public bool IncludeConnectionStrings { get; set; }
 }

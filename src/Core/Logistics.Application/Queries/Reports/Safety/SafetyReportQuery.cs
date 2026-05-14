@@ -3,6 +3,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class SafetyReportQuery : PagedIntervalQuery, IAppRequest<Result<SafetyReportDto>>
+public class SafetyReportQuery : PagedIntervalQuery, IQuery<Result<SafetyReportDto>>
 {
 }

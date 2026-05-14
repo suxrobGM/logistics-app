@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetTrucksQuery : SearchableQuery, IAppRequest<PagedResult<TruckDto>>
+public class GetTrucksQuery : SearchableQuery, IQuery<PagedResult<TruckDto>>
 {
     public bool IncludeLoads { get; set; } = false;
     public TruckStatus[]? Statuses { get; set; }

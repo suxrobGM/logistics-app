@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetInvoicesQuery : SearchableQuery, IAppRequest<PagedResult<InvoiceDto>>
+public class GetInvoicesQuery : SearchableQuery, IQuery<PagedResult<InvoiceDto>>
 {
     /// <summary>
     ///     Filter invoices by Load ID

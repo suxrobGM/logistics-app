@@ -6,6 +6,6 @@ namespace Logistics.Application.Queries;
 /// <summary>
 /// Query to generate a payroll report for a specified date range.
 /// </summary>
-public class PayrollReportQuery : PagedIntervalQuery, IAppRequest<Result<PayrollReportDto>>
+public class PayrollReportQuery : PagedIntervalQuery, IQuery<Result<PayrollReportDto>>
 {
 }

@@ -22,7 +22,8 @@ namespace Logistics.Application.Abstractions;
 ///     Use it to ensure all handlers in the Application layer return standard <c>Result</c>/<c>Result&lt;T&gt;</c>.
 /// </remarks>
 /// <typeparam name="TRequest">
-///     The request type handled by this handler. Must implement <see cref="IAppRequest{TResponse}" />.
+///     The request type handled by this handler. Must implement <see cref="IRequest{TResponse}" />
+///     (typically via <c>ICommand&lt;T&gt;</c> or <c>IQuery&lt;T&gt;</c>).
 /// </typeparam>
 /// <typeparam name="TResponse">
 ///     The response type produced by the handler. Must implement <see cref="IResult" /> and provide a parameterless

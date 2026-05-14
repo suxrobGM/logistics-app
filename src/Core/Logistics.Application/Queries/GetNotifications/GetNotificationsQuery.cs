@@ -3,6 +3,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetNotificationsQuery : IntervalQuery, IAppRequest<Result<NotificationDto[]>>
+public class GetNotificationsQuery : IntervalQuery, IQuery<Result<NotificationDto[]>>
 {
 }

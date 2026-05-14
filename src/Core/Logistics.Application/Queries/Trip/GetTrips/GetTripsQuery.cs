@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public sealed class GetTripsQuery : PagedQuery, IAppRequest<PagedResult<TripDto>>
+public sealed class GetTripsQuery : PagedQuery, IQuery<PagedResult<TripDto>>
 {
     public string? Name { get; set; }
     public TripStatus? Status { get; set; }

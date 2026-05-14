@@ -3,6 +3,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public sealed class GetUsersQuery : SearchableQuery, IAppRequest<PagedResult<UserDto>>
+public sealed class GetUsersQuery : SearchableQuery, IQuery<PagedResult<UserDto>>
 {
 }

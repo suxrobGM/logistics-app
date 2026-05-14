@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class DriverDashboardQuery : PagedIntervalQuery, IAppRequest<Result<DriverDashboardDto>>
+public class DriverDashboardQuery : PagedIntervalQuery, IQuery<Result<DriverDashboardDto>>
 {
 }
 

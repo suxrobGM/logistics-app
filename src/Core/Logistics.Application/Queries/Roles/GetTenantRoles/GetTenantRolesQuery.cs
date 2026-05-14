@@ -3,6 +3,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetTenantRolesQuery : SearchableQuery, IAppRequest<PagedResult<RoleDto>>
+public class GetTenantRolesQuery : SearchableQuery, IQuery<PagedResult<RoleDto>>
 {
 }

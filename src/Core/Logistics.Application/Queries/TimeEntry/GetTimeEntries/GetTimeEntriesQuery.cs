@@ -3,7 +3,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetTimeEntriesQuery : SearchableQuery, IAppRequest<PagedResult<TimeEntryDto>>
+public class GetTimeEntriesQuery : SearchableQuery, IQuery<PagedResult<TimeEntryDto>>
 {
     public Guid? EmployeeId { get; set; }
     public DateTime? StartDate { get; set; }

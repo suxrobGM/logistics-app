@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetExpensesQuery : PagedQuery, IAppRequest<PagedResult<ExpenseDto>>
+public class GetExpensesQuery : PagedQuery, IQuery<PagedResult<ExpenseDto>>
 {
     /// <summary>
     ///     Filter expenses by type (Company, Truck, BodyShop)

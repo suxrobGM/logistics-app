@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetTerminalsQuery : SearchableQuery, IAppRequest<PagedResult<TerminalDto>>
+public class GetTerminalsQuery : SearchableQuery, IQuery<PagedResult<TerminalDto>>
 {
     public TerminalType? Type { get; set; }
     public string? CountryCode { get; set; }

@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetDriverBehaviorEventsQuery : SearchableQuery, IAppRequest<PagedResult<DriverBehaviorEventDto>>
+public class GetDriverBehaviorEventsQuery : SearchableQuery, IQuery<PagedResult<DriverBehaviorEventDto>>
 {
     public Guid? DriverId { get; set; }
     public Guid? TruckId { get; set; }

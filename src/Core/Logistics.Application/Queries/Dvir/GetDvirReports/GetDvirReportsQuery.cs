@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetDvirReportsQuery : SearchableQuery, IAppRequest<PagedResult<DvirReportDto>>
+public class GetDvirReportsQuery : SearchableQuery, IQuery<PagedResult<DvirReportDto>>
 {
     public Guid? TruckId { get; set; }
     public Guid? DriverId { get; set; }

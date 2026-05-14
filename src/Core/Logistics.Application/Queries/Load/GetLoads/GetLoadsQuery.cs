@@ -4,7 +4,7 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetLoadsQuery : SearchableQuery, IAppRequest<PagedResult<LoadDto>>
+public class GetLoadsQuery : SearchableQuery, IQuery<PagedResult<LoadDto>>
 {
     public bool LoadAllPages { get; set; }
     public bool OnlyActiveLoads { get; set; }

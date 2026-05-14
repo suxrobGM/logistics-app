@@ -3,6 +3,6 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public class GetTrucksStatsListQuery : PagedIntervalQuery, IAppRequest<PagedResult<TruckStatsDto>>
+public class GetTrucksStatsListQuery : PagedIntervalQuery, IQuery<PagedResult<TruckStatsDto>>
 {
 }

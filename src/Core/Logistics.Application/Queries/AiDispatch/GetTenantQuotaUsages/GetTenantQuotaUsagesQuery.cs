@@ -3,4 +3,4 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Queries;
 
-public sealed class GetTenantQuotaUsagesQuery : PagedQuery, IAppRequest<PagedResult<TenantQuotaUsageDto>>;
+public sealed class GetTenantQuotaUsagesQuery : PagedQuery, IQuery<PagedResult<TenantQuotaUsageDto>>;
