@@ -1,5 +1,4 @@
 using System.Reflection;
-using Logistics.Application.Abstractions;
 using Logistics.Application.Attributes;
 using Logistics.Application.Services;
 using Logistics.Domain.Exceptions;
@@ -19,7 +18,7 @@ public sealed class FeatureCheckBehaviour<TRequest, TResponse>(
     IFeatureService featureService,
     ICurrentTenantAccessor tenantAccessor)
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IAppRequest<TResponse>
+    where TRequest : IRequest<TResponse>
     where TResponse : IResult, new()
 {
     // Evaluated once per closed generic instantiation — avoids per-call reflection.

@@ -1,4 +1,3 @@
-using Logistics.Application.Abstractions;
 using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -7,7 +6,7 @@ namespace Logistics.Application.Behaviours;
 
 public class LoggingBehavior<TRequest, TResponse>(ILogger<LoggingBehavior<TRequest, TResponse>> logger)
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IAppRequest<TResponse>
+    where TRequest : IRequest<TResponse>
     where TResponse : IResult, new()
 {
     public async Task<TResponse> Handle(

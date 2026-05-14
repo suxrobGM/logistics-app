@@ -29,6 +29,8 @@ public static class Registrar
             cfg.AddOpenBehavior(typeof(UnhandledExceptionBehaviour<,>));
             cfg.AddOpenBehavior(typeof(ValidationBehaviour<,>));
             cfg.AddOpenBehavior(typeof(FeatureCheckBehaviour<,>));
+            // Innermost: only binds to ICommand<T> via its generic constraint, so queries skip it.
+            cfg.AddOpenBehavior(typeof(TransactionBehaviour<,>));
         });
 
         services.AddScoped<IUserService, UserService>();
