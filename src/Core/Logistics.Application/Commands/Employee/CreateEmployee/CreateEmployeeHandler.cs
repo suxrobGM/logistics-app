@@ -7,6 +7,7 @@ using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.Application.Commands;
 
+[NoAutoTransaction]
 internal sealed class CreateEmployeeHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,

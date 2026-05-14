@@ -8,6 +8,7 @@ using Logistics.Application.Abstractions.Eld;
 
 namespace Logistics.Application.Commands;
 
+[NoAutoTransaction]
 internal sealed class ProcessEldWebhookHandler(
     ITenantUnitOfWork tenantUow,
     IEldProviderFactory eldProviderFactory,

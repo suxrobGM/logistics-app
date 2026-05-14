@@ -10,6 +10,7 @@ using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.Application.Commands;
 
+[NoAutoTransaction]
 internal sealed class AcceptInvitationHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,

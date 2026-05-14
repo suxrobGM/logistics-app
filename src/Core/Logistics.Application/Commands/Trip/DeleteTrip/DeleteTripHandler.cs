@@ -7,6 +7,7 @@ using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.Application.Commands;
 
+[NoAutoTransaction]
 internal sealed class DeleteTripHandler : IAppRequestHandler<DeleteTripCommand, Result>
 {
     private readonly IPushNotificationService _pushNotificationService;

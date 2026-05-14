@@ -17,6 +17,7 @@ using Logistics.Application.Abstractions.Tenancy;
 
 namespace Logistics.Application.Commands;
 
+[NoAutoTransaction]
 internal sealed class CreateTenantHandler(
     ITenantDatabaseService tenantDatabase,
     IMasterUnitOfWork masterUow,

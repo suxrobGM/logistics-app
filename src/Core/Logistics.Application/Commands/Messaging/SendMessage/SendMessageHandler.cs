@@ -11,6 +11,7 @@ using Logistics.Application.Abstractions.Realtime;
 
 namespace Logistics.Application.Commands;
 
+[NoAutoTransaction]
 internal sealed class SendMessageHandler(
     ITenantUnitOfWork tenantUow,
     IRealtimeMessagingService messagingService,
