@@ -1,19 +1,20 @@
-using System.Reflection;
-using NetArchTest.Rules;
+using ArchUnitNET.xUnit;
 using Xunit;
+using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
 namespace Logistics.Architecture.Tests;
 
 /// <summary>
-/// Layering rules over compiled assemblies.
+/// Layering rules over compiled assemblies, expressed in ArchUnitNET.
 ///
-/// Layering checks against other Logistics.* assemblies use <c>GetReferencedAssemblies()</c>
-/// (exact-name matching), because NetArchTest's <c>HaveDependencyOn</c> matches by prefix
-/// and would falsely flag <c>Logistics.Application.Abstractions</c> on a rule meant only
-/// for <c>Logistics.Application</c>.
+/// Internal cross-assembly checks use <c>ResideInAssembly(Assembly)</c>, which compares
+/// by Assembly identity — so <c>Logistics.Application</c> and
+/// <c>Logistics.Application.Abstractions</c> are cleanly separated (unlike NetArchTest's
+/// prefix matching, which forced us into reflection workarounds).
 ///
-/// Checks against external SDKs (Stripe, EF Core, AspNetCore.Http) use NetArchTest because
-/// those names don't overlap with anything we ship.
+/// External SDK checks (Stripe, AspNetCore.Http, EFCore) use raw IL-level dependency
+/// inspection (<c>cls.Dependencies</c>) via <c>FollowCustomCondition</c>, which works
+/// without having to load those framework assemblies into the Architecture.
 ///
 /// Some assertions are <c>[Fact(Skip = ...)]</c> because slice 1.8 (Stripe SDK→DTO replacement)
 /// and slice 1.9-AI (Infrastructure.AI decoupling) are deferred. Re-enable when those land.
@@ -21,123 +22,120 @@ namespace Logistics.Architecture.Tests;
 /// </summary>
 public class BoundaryTests
 {
-    private static readonly string[] AllInfrastructureAssemblies =
-    [
-        "Logistics.Infrastructure.AI",
-        "Logistics.Infrastructure.Communications",
-        "Logistics.Infrastructure.Documents",
-        "Logistics.Infrastructure.Integrations.Eld",
-        "Logistics.Infrastructure.Integrations.LoadBoard",
-        "Logistics.Infrastructure.Payments",
-        "Logistics.Infrastructure.Persistence",
-        "Logistics.Infrastructure.Routing",
-        "Logistics.Infrastructure.Storage",
-        "Logistics.Infrastructure.Tax",
-        "Logistics.Infrastructure.Vin"
-    ];
-
     [Fact]
     public void Application_must_not_depend_on_AspNetCore_Http()
     {
-        var result = Types.InAssembly(AssemblyAnchors.Application.Assembly)
-            .ShouldNot().HaveDependencyOn("Microsoft.AspNetCore.Http")
-            .GetResult();
-
-        Assert.True(result.IsSuccessful, FormatFailures(result));
+        Classes().That().ResideInAssembly(AssemblyAnchors.Application)
+            .Should().FollowCustomCondition(
+                cls => !DependsOnNamespace(cls, "Microsoft.AspNetCore.Http"),
+                "not depend on Microsoft.AspNetCore.Http.*",
+                "depends on Microsoft.AspNetCore.Http.*")
+            .Check(AssemblyAnchors.Architecture);
     }
 
     [Fact(Skip = "Re-enable when slice 1.8 lands; ProcessStripEventHandler still consumes raw Stripe.Event payloads.")]
     public void Application_must_not_depend_on_Stripe()
     {
-        var result = Types.InAssembly(AssemblyAnchors.Application.Assembly)
-            .ShouldNot().HaveDependencyOn("Stripe")
-            .GetResult();
-
-        Assert.True(result.IsSuccessful, FormatFailures(result));
+        Classes().That().ResideInAssembly(AssemblyAnchors.Application)
+            .Should().FollowCustomCondition(
+                cls => !DependsOnNamespace(cls, "Stripe"),
+                "not depend on Stripe.*",
+                "depends on Stripe.*")
+            .Check(AssemblyAnchors.Architecture);
     }
 
     [Fact]
     public void Application_must_not_reference_Infrastructure_assemblies()
     {
-        var hits = ReferencedAssemblyNames(AssemblyAnchors.Application.Assembly)
-            .Intersect(AllInfrastructureAssemblies, StringComparer.OrdinalIgnoreCase)
-            .ToList();
-
-        Assert.True(hits.Count == 0,
-            "Logistics.Application directly references forbidden Infrastructure assemblies: " +
-            string.Join(", ", hits));
+        Classes().That().ResideInAssembly(AssemblyAnchors.Application)
+            .Should().NotDependOnAny(
+                Types().That().ResideInAssembly(
+                    AssemblyAnchors.InfrastructureAI,
+                    AssemblyAnchors.InfrastructureCommunications,
+                    AssemblyAnchors.InfrastructureDocuments,
+                    AssemblyAnchors.InfrastructureEld,
+                    AssemblyAnchors.InfrastructureLoadBoard,
+                    AssemblyAnchors.InfrastructurePayments,
+                    AssemblyAnchors.InfrastructurePersistence,
+                    AssemblyAnchors.InfrastructureRouting,
+                    AssemblyAnchors.InfrastructureStorage,
+                    AssemblyAnchors.InfrastructureTax,
+                    AssemblyAnchors.InfrastructureVin))
+            .Check(AssemblyAnchors.Architecture);
     }
 
     [Fact]
     public void Abstractions_must_not_reference_Application_or_Infrastructure_assemblies()
     {
-        // Exact-name match via reflection — NetArchTest's prefix matching can't safely separate
-        // "Logistics.Application" from "Logistics.Application.Abstractions" itself.
-        var refs = ReferencedAssemblyNames(AssemblyAnchors.ApplicationAbstractions.Assembly).ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        var forbidden = new[] { "Logistics.Application" }
-            .Concat(AllInfrastructureAssemblies)
-            .ToList();
-
-        var hits = forbidden.Where(refs.Contains).ToList();
-        Assert.True(hits.Count == 0,
-            "Logistics.Application.Abstractions references forbidden assemblies: " +
-            string.Join(", ", hits));
+        Classes().That().ResideInAssembly(AssemblyAnchors.ApplicationAbstractions)
+            .Should().NotDependOnAny(
+                Types().That().ResideInAssembly(
+                    AssemblyAnchors.Application,
+                    AssemblyAnchors.InfrastructureAI,
+                    AssemblyAnchors.InfrastructureCommunications,
+                    AssemblyAnchors.InfrastructureDocuments,
+                    AssemblyAnchors.InfrastructureEld,
+                    AssemblyAnchors.InfrastructureLoadBoard,
+                    AssemblyAnchors.InfrastructurePayments,
+                    AssemblyAnchors.InfrastructurePersistence,
+                    AssemblyAnchors.InfrastructureRouting,
+                    AssemblyAnchors.InfrastructureStorage,
+                    AssemblyAnchors.InfrastructureTax,
+                    AssemblyAnchors.InfrastructureVin))
+            .Check(AssemblyAnchors.Architecture);
     }
 
     [Fact]
     public void Abstractions_must_not_depend_on_EFCore_or_AspNetCore_Http()
     {
-        var result = Types.InAssembly(AssemblyAnchors.ApplicationAbstractions.Assembly)
-            .ShouldNot().HaveDependencyOnAny(
-                "Microsoft.EntityFrameworkCore",
-                "Microsoft.AspNetCore.Http")
-            .GetResult();
-
-        Assert.True(result.IsSuccessful, FormatFailures(result));
+        Classes().That().ResideInAssembly(AssemblyAnchors.ApplicationAbstractions)
+            .Should().FollowCustomCondition(
+                cls => !DependsOnNamespace(cls, "Microsoft.EntityFrameworkCore")
+                       && !DependsOnNamespace(cls, "Microsoft.AspNetCore.Http"),
+                "not depend on Microsoft.EntityFrameworkCore.* or Microsoft.AspNetCore.Http.*",
+                "depends on Microsoft.EntityFrameworkCore.* or Microsoft.AspNetCore.Http.*")
+            .Check(AssemblyAnchors.Architecture);
     }
 
     [Fact(Skip = "Re-enable when slice 1.8 lands; Abstractions still ships Stripe.net to support port signatures that take Stripe SDK types.")]
     public void Abstractions_must_not_depend_on_Stripe()
     {
-        var result = Types.InAssembly(AssemblyAnchors.ApplicationAbstractions.Assembly)
-            .ShouldNot().HaveDependencyOn("Stripe")
-            .GetResult();
-
-        Assert.True(result.IsSuccessful, FormatFailures(result));
+        Classes().That().ResideInAssembly(AssemblyAnchors.ApplicationAbstractions)
+            .Should().FollowCustomCondition(
+                cls => !DependsOnNamespace(cls, "Stripe"),
+                "not depend on Stripe.*",
+                "depends on Stripe.*")
+            .Check(AssemblyAnchors.Architecture);
     }
 
     // Logistics.Infrastructure.AI is intentionally omitted from this Theory
     // until slice 1.9-AI decouples it. See REFACTOR-INDEX.md.
     [Theory]
-    [InlineData("Logistics.Infrastructure.Communications")]
-    [InlineData("Logistics.Infrastructure.Documents")]
-    [InlineData("Logistics.Infrastructure.Integrations.Eld")]
-    [InlineData("Logistics.Infrastructure.Integrations.LoadBoard")]
-    [InlineData("Logistics.Infrastructure.Payments")]
-    [InlineData("Logistics.Infrastructure.Persistence")]
-    [InlineData("Logistics.Infrastructure.Routing")]
-    [InlineData("Logistics.Infrastructure.Storage")]
-    [InlineData("Logistics.Infrastructure.Tax")]
-    [InlineData("Logistics.Infrastructure.Vin")]
-    public void Each_Infrastructure_assembly_references_Abstractions_not_Application(string assemblyName)
+    [InlineData(nameof(AssemblyAnchors.InfrastructureCommunications))]
+    [InlineData(nameof(AssemblyAnchors.InfrastructureDocuments))]
+    [InlineData(nameof(AssemblyAnchors.InfrastructureEld))]
+    [InlineData(nameof(AssemblyAnchors.InfrastructureLoadBoard))]
+    [InlineData(nameof(AssemblyAnchors.InfrastructurePayments))]
+    [InlineData(nameof(AssemblyAnchors.InfrastructurePersistence))]
+    [InlineData(nameof(AssemblyAnchors.InfrastructureRouting))]
+    [InlineData(nameof(AssemblyAnchors.InfrastructureStorage))]
+    [InlineData(nameof(AssemblyAnchors.InfrastructureTax))]
+    [InlineData(nameof(AssemblyAnchors.InfrastructureVin))]
+    public void Each_Infrastructure_assembly_references_Abstractions_not_Application(string assemblyAnchorName)
     {
-        var asm = AssemblyAnchors.LoadByName(assemblyName);
-        var refs = ReferencedAssemblyNames(asm).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var asm = typeof(AssemblyAnchors)
+            .GetField(assemblyAnchorName)!
+            .GetValue(null) as System.Reflection.Assembly
+            ?? throw new InvalidOperationException($"Anchor '{assemblyAnchorName}' is not a System.Reflection.Assembly.");
 
-        // Exact match — Logistics.Application.Abstractions is allowed; only the bare Application is forbidden.
-        Assert.False(refs.Contains("Logistics.Application"),
-            $"{assemblyName} directly references Logistics.Application — should reference Logistics.Application.Abstractions only.");
+        Classes().That().ResideInAssembly(asm)
+            .Should().NotDependOnAny(Types().That().ResideInAssembly(AssemblyAnchors.Application))
+            .Check(AssemblyAnchors.Architecture);
     }
 
-    private static IEnumerable<string> ReferencedAssemblyNames(Assembly asm) =>
-        asm.GetReferencedAssemblies()
-            .Select(r => r.Name)
-            .Where(n => n is not null)
-            .Select(n => n!);
-
-    private static string FormatFailures(TestResult r) =>
-        r.FailingTypeNames is null
-            ? "(no details)"
-            : string.Join("\n  ", r.FailingTypeNames);
+    private static bool DependsOnNamespace(ArchUnitNET.Domain.IType cls, string namespacePrefix) =>
+        cls.Dependencies.Any(d =>
+            d.Target.FullName is { } fullName &&
+            (fullName.StartsWith(namespacePrefix + ".", StringComparison.Ordinal)
+             || fullName.Equals(namespacePrefix, StringComparison.Ordinal)));
 }

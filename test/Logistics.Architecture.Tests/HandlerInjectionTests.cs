@@ -1,21 +1,22 @@
-using NetArchTest.Rules;
+using ArchUnitNET.xUnit;
 using Xunit;
+using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
 namespace Logistics.Architecture.Tests;
 
 public class HandlerInjectionTests
 {
+    private const string forbiddenType = "Microsoft.AspNetCore.Http.IHttpContextAccessor";
+
     [Fact]
     public void No_handler_injects_IHttpContextAccessor()
     {
-        var result = Types.InAssembly(AssemblyAnchors.Application.Assembly)
-            .That().HaveNameEndingWith("Handler")
-            .ShouldNot().HaveDependencyOn("Microsoft.AspNetCore.Http.IHttpContextAccessor")
-            .GetResult();
-
-        Assert.True(result.IsSuccessful,
-            result.FailingTypeNames is null
-                ? "(no details)"
-                : string.Join("\n  ", result.FailingTypeNames));
+        Classes().That().ResideInAssembly(AssemblyAnchors.Application)
+            .And().HaveNameEndingWith("Handler")
+            .Should().FollowCustomCondition(
+                cls => cls.Dependencies.All(d => d.Target.FullName != forbiddenType),
+                $"not inject {forbiddenType}",
+                $"injects {forbiddenType}")
+            .Check(AssemblyAnchors.Architecture);
     }
 }
