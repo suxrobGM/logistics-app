@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Test/">
     <Project Path="test/Logistics.Application.Tests/Logistics.Application.Tests.csproj" />
+    <Project Path="test/Logistics.Architecture.Tests/Logistics.Architecture.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.AI.Tests/Logistics.Infrastructure.AI.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.Payments.Tests/Logistics.Infrastructure.Payments.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.Persistence.Tests/Logistics.Infrastructure.Persistence.Tests.csproj" />
