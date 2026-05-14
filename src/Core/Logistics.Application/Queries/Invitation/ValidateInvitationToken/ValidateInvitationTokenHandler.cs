@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Common;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -9,6 +10,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Queries;
 
+// CQS violation accepted: opportunistic Status=Expired write when an expired invitation is
+// looked up. Idempotent and best-effort; cleanup can also be done by a scheduled job later.
+[NoAutoTransaction]
 internal sealed class ValidateInvitationTokenHandler(
     IMasterUnitOfWork masterUow,
     UserManager<User> userManager)

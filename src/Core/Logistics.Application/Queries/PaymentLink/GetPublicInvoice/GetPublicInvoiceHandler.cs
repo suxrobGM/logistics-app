@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Abstractions.Common;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -7,6 +8,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Logistics.Application.Queries;
 
+// CQS violation accepted: public invoice read with payment-link access bookkeeping.
+// Mutation is audit-only; relocating would split a single public endpoint into command+query.
+[NoAutoTransaction]
 internal sealed class GetPublicInvoiceHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,
