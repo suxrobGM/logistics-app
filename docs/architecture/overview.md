@@ -169,22 +169,28 @@ The repository follows the layer split above. Each project name is `Logistics.{L
 
 ### CQRS
 
-Commands and queries are separated and dispatched through MediatR.
+Commands and queries are separated and dispatched through MediatR. Both extend `IRequest<TResponse>` via the `ICommand<T>` / `IQuery<T>` markers in `Logistics.Application.Abstractions.Common`. Use `IMasterCommand<T>` for commands that target the master DB, otherwise the tenant DB. Handlers own their own `SaveChangesAsync` calls — there is no auto-transaction wrapper.
 
 ```csharp
-public record CreateLoadCommand(CreateLoadDto Dto) : IRequest<DataResult<LoadDto>>;
-public record GetLoadByIdQuery(string Id) : IRequest<DataResult<LoadDto>>;
+public record CreateLoadCommand(CreateLoadDto Dto) : ICommand<Result<LoadDto>>;
+public record GetLoadByIdQuery(string Id) : IQuery<Result<LoadDto>>;
 ```
 
 ### MediatR Pipeline
 
+A single pipeline applies to both commands and queries. Behaviours are constrained to `IRequest<TResponse>` where `TResponse : IResult, new()`, so they bind to `ICommand<T>` and `IQuery<T>` alike.
+
 ```mermaid
 flowchart LR
-    Req["Request"] --> V["ValidationBehavior<br/>(FluentValidation)"]
-    V --> L["LoggingBehavior"]
-    L --> H["Handler"]
+    Req["Request"] --> Lg["LoggingBehavior"]
+    Lg --> Ex["UnhandledExceptionBehaviour"]
+    Ex --> V["ValidationBehaviour<br/>(FluentValidation)"]
+    V --> F["FeatureCheckBehaviour"]
+    F --> H["Handler"]
     H --> Resp["Response"]
 ```
+
+`FeatureCheckBehaviour` reads the optional `[RequiresFeature]` attribute on the request type and short-circuits with a `Result.Fail` when the tenant's plan or admin lock disables the feature; the lookup is cached per closed generic instantiation.
 
 ### Repository + Specification
 

@@ -1,6 +1,10 @@
 # Phase 6 — `ICommand`/`IQuery` markers + split pipeline + `TransactionBehaviour`
 
-> **Status: PENDING.** Multi-PR rollout per Commands area (per the rollout strategy in this plan). Not part of the Phases 2/3/5 wrap-up. Open when ready to coordinate the 700-file rename + 191 `SaveChangesAsync` removals.
+> **Status: PARTIAL — 2026-05-13.** Markers, pipeline split, and rename landed on branch `refactor/application-abstractions` (commits `dce25226` … `5afad245`). `TransactionBehaviour` was implemented, audited, then **reverted**: the audit surfaced ~15% of handlers that need `[NoAutoTransaction]` (persist-on-Fail audit logs, blob-rollback patterns, webhooks, DDL provisioning, out-of-process side-effects), so a "centralized tx" with that opt-out rate is a leaky abstraction. Handlers continue to own `SaveChangesAsync` deterministically. The audit insights are preserved in the revert commit message.
+>
+> **What landed (kept):** `ICommand<T>` / `IQuery<T>` / `IMasterCommand<T>` markers replace `IAppRequest<T>`; queries now also flow through Validation + FeatureCheck behaviours; `IAppRequest` deleted; `FeatureCheckBehaviour` caches its attribute lookup.
+>
+> **What did not land (reverted):** `TransactionBehaviour`, `NoAutoTransactionAttribute`, `ICrossDatabaseCommand`, all `[NoAutoTransaction]` applications, all `ICrossDatabaseCommand` applications, the `SaveChangesAsync`-removal sweep, the rollback-on-failure integration test, the `No_handler_calls_SaveChangesAsync_directly` arch test.
 
 ## Goal
 

@@ -40,7 +40,7 @@ cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 
 ## Architecture (first-pass facts)
 
-- **DDD + CQRS**: Commands/Queries via MediatR in `src/Core/Logistics.Application/`
+- **DDD + CQRS**: Commands/Queries via MediatR in `src/Core/Logistics.Application/`. Requests implement `ICommand<T>` or `IQuery<T>` (in `Application.Abstractions/Common/`); handlers own their `SaveChangesAsync` calls (no auto-transaction wrapper)
 - **Multi-tenant**: Master DB (tenants, subscriptions) + one DB per tenant. Tenant resolved per-request via `TenantService` (priority: MCP API key → `X-Tenant` header → JWT claim)
 - **Lazy loading**: EF Core lazy loading enabled — do NOT use `.Include()` for navigation properties
 - **Clean architecture**: Application references only interfaces; implementations in `src/Infrastructure/{module}/`. Composition root in each presentation project's `Program.cs`

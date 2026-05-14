@@ -8,11 +8,11 @@ Master plan (motivation): `C:\Users\admin\.claude\plans\okay-let-s-build-a-rippl
 
 Branch `refactor/application-abstractions` is **21 commits ahead of `main`**, all green.
 
-| Group                                                            | Status                                                                                  |
-| ---------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| [`01-phase1-completion/`](01-phase1-completion/)                 | **Partial.** 1.9-remainder (4 of 5) landed; 1.8, Domain decoupling, and 1.9-AI deferred |
-| [`02-architectural-foundations/`](02-architectural-foundations/) | **Done** (Phases 2/3/5). Phase 6 deferred — multi-PR rollout per its own plan           |
-| [`03-modular-reorganization/`](03-modular-reorganization/)       | Pending                                                                                 |
+| Group                                                            | Status                                                                                                                           |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| [`01-phase1-completion/`](01-phase1-completion/)                 | **Partial.** 1.9-remainder (4 of 5) landed; 1.8, Domain decoupling, and 1.9-AI deferred                                          |
+| [`02-architectural-foundations/`](02-architectural-foundations/) | **Done** (Phases 2/3/5). Phase 6 partial: markers + pipeline split landed, `TransactionBehaviour` reverted after audit; see plan |
+| [`03-modular-reorganization/`](03-modular-reorganization/)       | Pending                                                                                                                          |
 
 `Logistics.Infrastructure.AI` is the only Infrastructure project still referencing `Logistics.Application`.
 
