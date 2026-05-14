@@ -1,5 +1,7 @@
 # Phase 8 — Read-side projection services
 
+> **Status: PENDING.** Part of group `03-modular-reorganization/`.
+
 ## Goal
 
 Replace the top ~10 heaviest query handlers with thin shims that delegate to dedicated read services. The read services live in `Infrastructure.Persistence/Reads/` and bypass the generic repository — direct `DbContext` access, compiled queries, projection to DTO.

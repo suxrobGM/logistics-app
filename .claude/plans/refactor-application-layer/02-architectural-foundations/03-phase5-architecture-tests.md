@@ -1,5 +1,9 @@
 # Phase 5 — Architecture tests as CI gate
 
+> **Status: DONE — 2026-05-13.** Commit `15081403`.
+>
+> `tests/Logistics.Architecture.Tests/` scaffolded with NetArchTest IL rules + csproj-XML rules + handler-injection rules. 27 enforced tests pass; 4 are `[Fact(Skip = ...)]`-tagged for slice 1.8 (`Application_must_not_depend_on_Stripe`, `Abstractions_must_not_depend_on_Stripe`, plus their csproj-XML variants). `Logistics.Infrastructure.AI` is omitted from the layering rules' `[Theory] InlineData` with TODO comments pointing at slice 1.9-AI.
+
 ## Goal
 
 Add a new `tests/Logistics.Architecture.Tests/` project using **NetArchTest.Rules** + xUnit that locks in the layering decisions made across Phases 1–3. Wire it into CI so any future PR introducing a forbidden dependency fails the build.

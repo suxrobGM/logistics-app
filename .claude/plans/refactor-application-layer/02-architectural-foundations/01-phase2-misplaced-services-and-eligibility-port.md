@@ -1,5 +1,13 @@
 # Phase 2 — Move misplaced concrete services + add IEligibilityCheck port
 
+> **Status: DONE (with deviations) — 2026-05-13.** Commits `7fc4e1cf`, `5c9d6133`, `44f6c60b`.
+>
+> Deviations from the original plan:
+>
+> - **`StripeObjectMapper` split, not full move.** Status mappers (`GetSubscriptionStatus`, `GetPaymentStatus`) take `string` and stayed in Application — they have legitimate non-Stripe-coupled consumers. Address mappers moved to `Infrastructure.Payments/Stripe/StripeAddressMapper.cs` behind a new `IStripeAddressMapper` port in Abstractions. `ProcessStripEventHandler` consumes the port. `Stripe.net` package stays in `Application.csproj` because that handler still processes raw `Stripe.Event` payloads — slice 1.8 territory.
+> - **`TaxCalculationMappings` stayed put.** Plan premise (orphan + Stripe-shaped) was wrong: file is used by `InvoiceTaxApplier` and `PreviewInvoiceTaxHandler`, maps Domain↔`Abstractions.Models.Tax`↔`Shared.Models` types with no SDK coupling. Moving to Infrastructure.Tax would have created a layering violation.
+> - **`IEligibilityCheck` collapsed back into `IDispatchEligibilityService`.** "Narrow port vs full surface" framing didn't survive contact with the code (single method, identical signature). Kept the established `IDispatchEligibilityService` name and moved it to `Abstractions/Dispatch/`. Single DI registration.
+
 ## Goal
 
 Move the two genuinely-misplaced concrete services from `Application/Services/` into Infrastructure, and add the narrow `IEligibilityCheck` port that lets `Infrastructure.AI` consume dispatch eligibility without depending on `Application` directly.

@@ -1,5 +1,7 @@
 # Phase 10 — (Optional) Promote stable modules to standalone csproj
 
+> **Status: PENDING (optional).** Part of group `03-modular-reorganization/`. Only worth doing once Phases 7/8 have stabilized module boundaries.
+
 ## Goal
 
 Once a module's boundary has been stable for an extended period (suggested: ≥1 quarter post-Phase 7), promote it from a folder inside `Logistics.Application` to its own csproj: `Logistics.Application.{Module}`.

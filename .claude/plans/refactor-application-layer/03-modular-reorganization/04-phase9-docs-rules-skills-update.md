@@ -1,5 +1,7 @@
 # Phase 9 — Update documentation, rules, and skills
 
+> **Status: PENDING.** Part of group `03-modular-reorganization/`. Should run after Phase 7 (folders move) so the docs describe the new structure, not the old.
+
 ## Goal
 
 Bring every load-bearing doc, rule, skill, and architecture page in line with the new layout. After this phase, neither a human reading docs nor Claude Code reading rules should be misled by stale Phase-0 facts (e.g., "`Application.Contracts` is the email-only project").

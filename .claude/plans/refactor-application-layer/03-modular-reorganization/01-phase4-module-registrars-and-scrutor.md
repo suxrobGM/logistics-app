@@ -1,5 +1,7 @@
 # Phase 4 — Per-module registrars + Scrutor scanning
 
+> **Status: PENDING.** Part of group `03-modular-reorganization/`. Open after `02-architectural-foundations/` settles (which is now done).
+
 ## Goal
 
 Shrink the top-level [`Application/Registrar.cs`](../../../../src/Core/Logistics.Application/Registrar.cs) from a hand-listed catalog of services into a thin orchestrator that delegates to per-module registrars and an assembly-scanning convention.

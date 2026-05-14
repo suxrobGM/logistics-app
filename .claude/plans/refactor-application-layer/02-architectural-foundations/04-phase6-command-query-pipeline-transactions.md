@@ -1,5 +1,7 @@
 # Phase 6 — `ICommand`/`IQuery` markers + split pipeline + `TransactionBehaviour`
 
+> **Status: PENDING.** Multi-PR rollout per Commands area (per the rollout strategy in this plan). Not part of the Phases 2/3/5 wrap-up. Open when ready to coordinate the 700-file rename + 191 `SaveChangesAsync` removals.
+
 ## Goal
 
 Replace `IAppRequest<TResponse>` with two markers (`ICommand<TResponse>`, `IQuery<TResponse>`). Split the MediatR pipeline so commands and queries get appropriate behaviours. Add a `TransactionBehaviour` that wraps every command in a Unit-of-Work transaction. Migrate **191 scattered `SaveChangesAsync` calls** out of handlers.

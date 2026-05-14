@@ -1,5 +1,9 @@
 # Phase 3 — Surgical fixes for the two flagrant Application-layer leaks
 
+> **Status: DONE — 2026-05-13.** Commits `27adc83d`, `de8b4998`, `9af475f6`.
+>
+> `ICurrentUserService` exposes `IpAddress`/`UserAgent`; both `CurrentUserService` and `NoopCurrentUserService` implement them. `ImpersonateUserHandler` no longer injects `IHttpContextAccessor`. `Microsoft.AspNetCore.Http` package dropped from `Application.csproj`. `.Include(i => i.Tenant)` removed from `AcceptInvitationHandler` — invitation accept now lazy-loads the navigation property.
+
 ## Goal
 
 Fix two specific layering violations discovered during the Phase 1 audit. Each is independent of the bigger reorg work and can ship in isolation.

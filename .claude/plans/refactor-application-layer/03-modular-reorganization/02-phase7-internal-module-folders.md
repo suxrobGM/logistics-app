@@ -1,5 +1,7 @@
 # Phase 7 — Internal module reorganization (folders + namespaces, no project split)
 
+> **Status: PENDING.** Part of group `03-modular-reorganization/`.
+
 ## Goal
 
 Reorganize the 433 Commands files + 306 Queries files (~740 files) under `src/Core/Logistics.Application/` from a flat per-entity layout into a per-bounded-context layout. Folder + namespace move only — **no project split**.
