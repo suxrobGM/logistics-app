@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Common;
 using Logistics.Application.Constants;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;
@@ -12,7 +11,6 @@ namespace Logistics.Application.Queries;
 
 // CQS violation accepted: public tracking read with audit-write (access count + last access).
 // Mutation is bookkeeping; relocating would split a single public endpoint into command+query.
-[NoAutoTransaction]
 internal sealed class GetPublicTrackingHandler(
     ITenantUnitOfWork tenantUow,
     IBlobStorageService blobStorageService)

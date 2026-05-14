@@ -3,4 +3,4 @@ using Logistics.Shared.Models;
 
 namespace Logistics.Application.Commands;
 
-public record DeleteTenantTaxRateCommand(Guid Id) : ICrossDatabaseCommand<Result>;
+public record DeleteTenantTaxRateCommand(Guid Id) : ICommand<Result>;

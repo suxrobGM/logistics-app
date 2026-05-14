@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Common;
 using Logistics.Application.Services;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -11,7 +10,6 @@ namespace Logistics.Application.Queries;
 
 // CQS violation accepted: read syncs cached Stripe Connect status into the master DB after
 // each external lookup. Auto-transaction would wrap the Stripe API call inside a DB tx.
-[NoAutoTransaction]
 internal sealed class GetConnectStatusHandler(
     IMasterUnitOfWork masterUow,
     ITenantUnitOfWork tenantUow,

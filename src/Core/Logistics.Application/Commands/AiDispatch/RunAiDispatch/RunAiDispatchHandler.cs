@@ -8,7 +8,6 @@ using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.Application.Commands;
 
-[NoAutoTransaction]
 internal sealed class RunAiDispatchHandler(
     ICurrentUserService currentUser,
     ITenantUnitOfWork tenantUow,

@@ -7,7 +7,6 @@ using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.Application.Commands;
 
-[NoAutoTransaction]
 internal sealed class ConfirmLoadStatusHandler : IAppRequestHandler<ConfirmLoadStatusCommand, Result>
 {
     private readonly INotificationService _notificationService;

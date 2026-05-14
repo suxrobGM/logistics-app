@@ -8,7 +8,6 @@ using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Application.Commands;
 
-[NoAutoTransaction]
 internal sealed class DeleteTenantHandler(
     ITenantDatabaseService tenantDatabase,
     IMasterUnitOfWork masterRepository,

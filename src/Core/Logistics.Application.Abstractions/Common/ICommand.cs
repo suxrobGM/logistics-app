@@ -4,9 +4,9 @@ using MediatR;
 namespace Logistics.Application.Abstractions.Common;
 
 /// <summary>
-/// Marker for application commands (state-mutating requests). The pipeline wraps every
-/// <see cref="ICommand{TResponse}"/> in a Unit-of-Work transaction unless the handler is
-/// annotated with <see cref="NoAutoTransactionAttribute"/>.
+/// Marker for application commands (state-mutating requests). Commands flow through the full
+/// MediatR pipeline (Logging, UnhandledException, Validation, FeatureCheck) and are responsible
+/// for calling <c>SaveChangesAsync</c> on the appropriate <see cref="Logistics.Domain.Persistence.IUnitOfWork{T}"/>.
 /// </summary>
 public interface ICommand<TResponse> : IRequest<TResponse>
     where TResponse : IResult, new();

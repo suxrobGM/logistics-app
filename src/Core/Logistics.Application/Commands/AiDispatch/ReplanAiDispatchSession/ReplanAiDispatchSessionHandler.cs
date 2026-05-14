@@ -10,7 +10,6 @@ using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.Application.Commands;
 
-[NoAutoTransaction]
 internal sealed class ReplanAiDispatchSessionHandler(
     ICurrentUserService currentUser,
     ITenantUnitOfWork tenantUow,

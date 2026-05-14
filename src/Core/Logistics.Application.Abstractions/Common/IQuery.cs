@@ -4,10 +4,10 @@ using MediatR;
 namespace Logistics.Application.Abstractions.Common;
 
 /// <summary>
-/// Marker for application queries (read requests). Queries flow through Logging,
-/// UnhandledException, Validation, and FeatureCheck behaviours but skip TransactionBehaviour —
-/// queries that intentionally mutate state must declare <see cref="NoAutoTransactionAttribute"/>
-/// and remain responsible for their own SaveChangesAsync calls.
+/// Marker for application queries (read requests). Queries flow through the full MediatR
+/// pipeline (Logging, UnhandledException, Validation, FeatureCheck). Handlers should not
+/// mutate state; the rare CQS-violating queries that do are responsible for their own
+/// <c>SaveChangesAsync</c> calls.
 /// </summary>
 public interface IQuery<TResponse> : IRequest<TResponse>
     where TResponse : IResult, new();

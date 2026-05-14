@@ -17,7 +17,6 @@ using Subscription = Logistics.Domain.Entities.Subscription;
 
 namespace Logistics.Application.Commands;
 
-[NoAutoTransaction]
 internal sealed class ProcessStripEventHandler(
     ITenantUnitOfWork tenantUow,
     IMasterUnitOfWork masterUow,

@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Abstractions.Common;
 using Logistics.Domain.Entities.Messaging;
 using Logistics.Domain.Persistence;
 using Logistics.Mappings;
@@ -10,7 +9,6 @@ namespace Logistics.Application.Queries;
 
 // CQS violation accepted: find-or-create tenant chat + ensure-participant. Mutations are
 // idempotent bookkeeping; relocating to Commands would distort the read-shaped API.
-[NoAutoTransaction]
 internal sealed class GetTenantChatHandler(ITenantUnitOfWork tenantUow)
     : IAppRequestHandler<GetTenantChatQuery, Result<ConversationDto>>
 {
