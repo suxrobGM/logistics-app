@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Logistics.Application.Modules.Compliance.Eld.Commands;
+using Logistics.Application.Modules.Integrations.Webhooks.Commands;
 
 namespace Logistics.API.Controllers;
 

@@ -6,6 +6,8 @@ using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Logistics.Application.Modules.Integrations.Documents.Commands;
+using Logistics.Application.Modules.Integrations.Documents.Queries;
 
 namespace Logistics.API.Controllers;
 

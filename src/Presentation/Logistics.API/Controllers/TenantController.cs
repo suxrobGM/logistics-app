@@ -11,6 +11,8 @@ using CreateTenantCommand = Logistics.Application.Modules.IdentityAccess.Tenants
 using UpdateTenantCommand = Logistics.Application.Modules.IdentityAccess.Tenants.Commands.UpdateTenantCommand;
 using Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
 using Logistics.Application.Modules.IdentityAccess.Tenants.Queries;
+using Logistics.Application.Modules.Integrations.AiDispatch.Commands;
+using Logistics.Application.Modules.Integrations.AiDispatch.Queries;
 
 namespace Logistics.API.Controllers;
 

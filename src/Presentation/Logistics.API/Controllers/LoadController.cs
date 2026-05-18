@@ -10,6 +10,7 @@ using CreateLoadCommand = Logistics.Application.Commands.CreateLoadCommand;
 using GetLoadsQuery = Logistics.Application.Queries.GetLoadsQuery;
 using GetUnassignedLoadsQuery = Logistics.Application.Queries.GetUnassignedLoadsQuery;
 using UpdateLoadCommand = Logistics.Application.Commands.UpdateLoadCommand;
+using Logistics.Application.Modules.Integrations.AiDispatch.Queries;
 
 namespace Logistics.API.Controllers;
 

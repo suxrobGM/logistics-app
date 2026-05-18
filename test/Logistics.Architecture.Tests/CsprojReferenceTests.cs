@@ -1,4 +1,5 @@
 using Xunit;
+using Logistics.Application.Modules.Integrations.Webhooks.Commands;
 
 namespace Logistics.Architecture.Tests;
 

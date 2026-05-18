@@ -6,6 +6,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
+using Logistics.Application.Modules.Integrations.AiDispatch.Commands;
+using Logistics.Application.Modules.Integrations.AiDispatch.Queries;
 
 namespace Logistics.API.Controllers;
 

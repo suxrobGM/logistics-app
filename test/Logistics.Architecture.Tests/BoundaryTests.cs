@@ -1,6 +1,7 @@
 using ArchUnitNET.xUnit;
 using Xunit;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
+using Logistics.Application.Modules.Integrations.Webhooks.Commands;
 
 namespace Logistics.Architecture.Tests;
 
