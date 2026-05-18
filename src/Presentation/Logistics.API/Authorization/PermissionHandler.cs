@@ -4,6 +4,7 @@ using Logistics.Shared.Identity.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Memory;
+using Logistics.Application.Modules.IdentityAccess.Users.Queries;
 
 namespace Logistics.API.Authorization;
 

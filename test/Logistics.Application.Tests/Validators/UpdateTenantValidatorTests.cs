@@ -2,6 +2,7 @@ using FluentValidation.TestHelper;
 using Logistics.Application.Commands;
 using Logistics.Domain.Primitives.ValueObjects;
 using Xunit;
+using Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
 
 namespace Logistics.Application.Tests.Validators;
 

@@ -1,0 +1,18 @@
+using Logistics.Application.Abstractions;
+using Logistics.Domain.Primitives.ValueObjects;
+
+namespace Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
+
+public class CreateTenantCommand : ICommand
+{
+    public string Name { get; set; } = null!;
+    public string? CompanyName { get; set; }
+    public string? BillingEmail { get; set; }
+    public string? DotNumber { get; set; }
+    public required Address CompanyAddress { get; set; }
+
+    // Owner account created alongside the tenant
+    public string OwnerEmail { get; set; } = null!;
+    public string OwnerFirstName { get; set; } = null!;
+    public string OwnerLastName { get; set; } = null!;
+}

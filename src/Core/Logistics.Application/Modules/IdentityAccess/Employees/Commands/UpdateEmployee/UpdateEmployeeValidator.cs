@@ -1,0 +1,25 @@
+using FluentValidation;
+
+using Logistics.Domain.Primitives.Enums;
+
+namespace Logistics.Application.Modules.IdentityAccess.Employees.Commands;
+
+internal sealed class UpdateEmployeeValidator : AbstractValidator<UpdateEmployeeCommand>
+{
+    public UpdateEmployeeValidator()
+    {
+        RuleFor(i => i.UserId).NotEmpty();
+
+        When(i => i.SalaryType.HasValue, () =>
+            {
+                When(i => i.SalaryType == SalaryType.ShareOfGross, () => RuleFor(i => i.Salary)
+                    .NotEmpty()
+                    .InclusiveBetween(0, 1));
+
+                When(i => i.SalaryType != SalaryType.ShareOfGross, () => RuleFor(i => i.Salary)
+                    .NotEmpty()
+                    .GreaterThanOrEqualTo(0M));
+            }
+        );
+    }
+}

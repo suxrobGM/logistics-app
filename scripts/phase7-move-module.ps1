@@ -86,7 +86,7 @@ Write-Host ("Built type map: {0} types from module {1}" -f $typeMap.Count, $Modu
 # ---- Step 4: add new usings to consumer files that reference these types -----------------
 $consumerRoots = @(
     'src/Presentation',
-    'src/Infrastructure',
+    'src/Infrastructure/Logistics.Infrastructure.AI',
     'src/Core/Logistics.Application/Services',
     'src/Core/Logistics.Application/Commands',
     'src/Core/Logistics.Application/Queries',
@@ -98,6 +98,8 @@ $consumerRoots = @(
     'src/Core/Logistics.Application/Modules',
     'test'
 )
+# Projects that do NOT reference Logistics.Application — never add Application usings here.
+# (src/Shared/*, src/Client/*, src/Core/Logistics.Domain/*, etc. — excluded by allowlist above.)
 $oldNamespaces = @('Logistics.Application.Commands','Logistics.Application.Queries','Logistics.Application.Events')
 
 $consumerCount = 0

@@ -6,6 +6,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UpdateLoadProximityCommand = Logistics.Application.Commands.UpdateLoadProximityCommand;
+using Logistics.Application.Modules.IdentityAccess.Employees.Commands;
+using Logistics.Application.Modules.IdentityAccess.Employees.Queries;
 
 namespace Logistics.API.Controllers;
 

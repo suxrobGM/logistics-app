@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Logistics.Application.Modules.IdentityAccess.Users.Commands;
 
 namespace Logistics.API.Controllers;
 

@@ -5,11 +5,13 @@ using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CancelSubscriptionCommand = Logistics.Application.Commands.CancelSubscriptionCommand;
-using CreateSubscriptionCommand = Logistics.Application.Commands.CreateSubscriptionCommand;
-using CreateSubscriptionPlanCommand = Logistics.Application.Commands.CreateSubscriptionPlanCommand;
-using UpdateSubscriptionPlanCommand = Logistics.Application.Commands.UpdateSubscriptionPlanCommand;
-using ChangeSubscriptionPlanCommand = Logistics.Application.Commands.ChangeSubscriptionPlanCommand;
+using CancelSubscriptionCommand = Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands.CancelSubscriptionCommand;
+using CreateSubscriptionCommand = Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands.CreateSubscriptionCommand;
+using CreateSubscriptionPlanCommand = Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands.CreateSubscriptionPlanCommand;
+using UpdateSubscriptionPlanCommand = Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands.UpdateSubscriptionPlanCommand;
+using ChangeSubscriptionPlanCommand = Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands.ChangeSubscriptionPlanCommand;
+using Logistics.Application.Modules.IdentityAccess.Subscriptions.Commands;
+using Logistics.Application.Modules.IdentityAccess.Subscriptions.Queries;
 
 namespace Logistics.API.Controllers;
 

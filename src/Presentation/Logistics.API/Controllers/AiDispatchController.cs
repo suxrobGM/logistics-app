@@ -5,6 +5,7 @@ using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
 
 namespace Logistics.API.Controllers;
 

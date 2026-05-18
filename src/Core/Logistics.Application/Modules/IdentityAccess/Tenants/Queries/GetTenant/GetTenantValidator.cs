@@ -1,0 +1,17 @@
+using FluentValidation;
+
+namespace Logistics.Application.Modules.IdentityAccess.Tenants.Queries;
+
+internal sealed class GetTenantValidator : AbstractValidator<GetTenantQuery>
+{
+    public GetTenantValidator()
+    {
+        RuleFor(i => i).Must(HaveIdOrName)
+            .WithMessage("Both tenant's ID and tenant's name are an empty string, specify at least either ID or tenant's name");
+    }
+
+    private static bool HaveIdOrName(GetTenantQuery query)
+    {
+        return query.Id.HasValue || !string.IsNullOrEmpty(query.Name);
+    }
+}

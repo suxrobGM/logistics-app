@@ -1,4 +1,5 @@
 using FluentValidation;
+using Logistics.Application.Modules.IdentityAccess.Tenants.Queries;
 
 namespace Logistics.Application.Queries;
 
