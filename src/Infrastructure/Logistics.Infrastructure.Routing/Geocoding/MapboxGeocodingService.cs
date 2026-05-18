@@ -1,6 +1,8 @@
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Web;
+using Logistics.Application.Abstractions.Tenancy;
+using Logistics.Domain.Primitives;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.Options;
 using Logistics.Shared.Models;
@@ -16,9 +18,13 @@ namespace Logistics.Infrastructure.Routing.Geocoding;
 public sealed class MapboxGeocodingService(
     HttpClient http,
     IOptions<MapboxOptions> options,
+    ICurrentTenantAccessor currentTenantAccessor,
     ILogger<MapboxGeocodingService> logger)
     : IGeocodingService
 {
+    // Mapbox rejects more than 5 ISO codes in a single `country` filter.
+    private const int MaxCountryFilterCodes = 5;
+
     private readonly MapboxOptions options = options.Value;
 
     public async Task<Result<GeoPoint>> GeocodeAddressAsync(
@@ -43,11 +49,23 @@ public sealed class MapboxGeocodingService(
             var searchText = string.Join(", ", addressParts);
             var encodedSearch = HttpUtility.UrlEncode(searchText);
 
+            var (countryFilter, languageFilter) = ResolveTenantBias();
+
             // Call Mapbox Geocoding API
             var url = $"https://api.mapbox.com/geocoding/v5/mapbox.places/{encodedSearch}.json" +
                       $"?access_token={options.AccessToken}" +
                       "&limit=1" +
                       "&types=address,place";
+
+            if (!string.IsNullOrEmpty(countryFilter))
+            {
+                url += $"&country={countryFilter}";
+            }
+
+            if (!string.IsNullOrEmpty(languageFilter))
+            {
+                url += $"&language={languageFilter}";
+            }
 
             logger.LogDebug("Geocoding address: {Address}", searchText);
 
@@ -84,6 +102,31 @@ public sealed class MapboxGeocodingService(
         {
             logger.LogError(ex, "Error during geocoding");
             return Result<GeoPoint>.Fail($"Geocoding error: {ex.Message}");
+        }
+    }
+
+    private (string countryFilter, string languageFilter) ResolveTenantBias()
+    {
+        try
+        {
+            var tenant = currentTenantAccessor.GetCurrentTenant();
+            var settings = tenant.Settings;
+
+            var countries = RegionCountries.GetAllowed(settings.Region)
+                .Take(MaxCountryFilterCodes)
+                .Select(c => c.ToLowerInvariant());
+
+            var countryFilter = string.Join(",", countries);
+            var languageFilter = string.IsNullOrWhiteSpace(settings.Language)
+                ? "en"
+                : settings.Language;
+
+            return (countryFilter, languageFilter);
+        }
+        catch (InvalidOperationException)
+        {
+            // No tenant in scope (background job, test, etc.) — skip the bias.
+            return (string.Empty, string.Empty);
         }
     }
 

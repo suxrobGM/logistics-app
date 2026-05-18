@@ -39,11 +39,11 @@
 | #   | Status | Plan                                                                         | Effort | Why                                                                                 |
 | --- | ------ | ---------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------------- |
 | 11  |        | [IFTA fuel-tax reporting (US/Canada)](handoff-ifta-fuel-tax.md)              | L      | Quarterly fuel-by-jurisdiction reporting, US-only — but blocking some US customers. |
-| 12  |        | [Region-aware routing & geocoding defaults](handoff-region-aware-routing.md) | S      | Mapbox biasing, country code in geocoding, optional Google fallback.                |
+| 12  | Done   | [Region-aware routing & geocoding defaults](handoff-region-aware-routing.md) | S      | Mapbox biasing, country code in geocoding, optional Google fallback.                |
 
 ## Suggested order
 
-~~1~~, ~~2~~, ~~3~~, ~~6 (foundation)~~ → ~~10~~ (address shape touches every form) → ~~7~~, ~~8~~, ~~9~~ (domain polish) → 5 (EU load boards, well-scoped) → ~~4~~ (largest effort, partner-friendly) → 11, 12 (last). Gradual i18n string migration runs alongside the remaining work, not as its own phase.
+~~1~~, ~~2~~, ~~3~~, ~~6 (foundation)~~ → ~~10~~ (address shape touches every form) → ~~7~~, ~~8~~, ~~9~~ (domain polish) → 5 (EU load boards, well-scoped) → ~~4~~ (largest effort, partner-friendly) → 11, ~~12~~ (last). Gradual i18n string migration runs alongside the remaining work, not as its own phase.
 
 Next up: **5 (EU load boards)**.
 

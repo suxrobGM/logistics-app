@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Component, inject, input, model, output, signal } from "@angular/core";
-import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { Component, computed, inject, input, model, output, signal } from "@angular/core";
+import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
 import type { Address } from "@logistics/shared/api";
+import { regionAllowedCountries } from "@logistics/shared/utils";
 import { InputTextModule } from "primeng/inputtext";
 import { catchError } from "rxjs";
+import { TenantService } from "@/core/services";
 import { environment } from "@/env";
 import type {
   GeoPoint,
@@ -13,6 +15,9 @@ import type {
   MapboxGeocodingResponse,
 } from "@/shared/types/mapbox";
 import { Converters } from "@/shared/utils";
+
+// Mapbox rejects more than 5 ISO codes in a single `country` filter.
+const MAPBOX_MAX_COUNTRY_CODES = 5;
 
 @Component({
   selector: "app-address-autocomplete",
@@ -29,6 +34,7 @@ import { Converters } from "@/shared/utils";
 })
 export class AddressAutocomplete implements ControlValueAccessor {
   private readonly http = inject(HttpClient);
+  private readonly tenantService = inject(TenantService);
   private isDisabled = false;
   private isTouched = false;
   private readonly accessToken = environment.mapboxToken;
@@ -37,8 +43,26 @@ export class AddressAutocomplete implements ControlValueAccessor {
 
   public readonly field = input("");
   public readonly placeholder = input("Type address...");
-  public readonly country = input("us");
+  // When omitted, falls back to the tenant's region (see `effectiveCountry`).
+  public readonly country = input<string | null>(null);
   public readonly forceSelection = input(false);
+
+  private readonly effectiveCountry = computed<string>(() => {
+    const override = this.country();
+    if (override) {
+      return override;
+    }
+
+    const region = this.tenantService.tenantData()?.settings?.region;
+    return regionAllowedCountries(region)
+      .slice(0, MAPBOX_MAX_COUNTRY_CODES)
+      .map((c) => c.toLowerCase())
+      .join(",");
+  });
+
+  private readonly effectiveLanguage = computed<string>(
+    () => this.tenantService.tenantData()?.settings?.language ?? "en",
+  );
   public readonly address = model<Address | null>(null);
   public readonly addressChange = output<Address>();
   public readonly selectedAddress = output<SelectedAddressEvent>();
@@ -60,11 +84,16 @@ export class AddressAutocomplete implements ControlValueAccessor {
       return;
     }
 
-    const params = new HttpParams()
+    let params = new HttpParams()
       .set("q", query)
       .set("access_token", this.accessToken)
-      .set("country", this.country())
-      .set("types", "address");
+      .set("types", "address")
+      .set("language", this.effectiveLanguage());
+
+    const countryFilter = this.effectiveCountry();
+    if (countryFilter) {
+      params = params.set("country", countryFilter);
+    }
 
     this.http
       .get<MapboxGeocodingResponse>("https://api.mapbox.com/search/geocode/v6/forward", { params })

@@ -1,6 +1,8 @@
 # Handoff: Region-Aware Routing & Geocoding Defaults
 
-> **Priority:** LOW (polish). **Effort:** S (~1 day).
+> **Status:** Done (2026-05-18). **Priority:** LOW (polish). **Effort:** S (~1 day).
+>
+> Implementation: [MapboxGeocodingService.cs](../../src/Infrastructure/Logistics.Infrastructure.Routing/Geocoding/MapboxGeocodingService.cs) now adds Mapbox `country=` + `language=` filters derived from `Tenant.Settings.Region` / `Tenant.Settings.Language`. The Angular [AddressAutocomplete](../../src/Client/Logistics.Angular/projects/tms-portal/src/app/shared/components/maps/address-autocomplete/address-autocomplete.ts) defaults its country bias to `regionAllowedCountries(tenant.region)` (capped at Mapbox's 5-code limit) and forwards the tenant language. Map default center/zoom were already region-aware. Google provider remains deferred until a customer requires it. Tests: [MapboxGeocodingServiceTests.cs](../../test/Logistics.Infrastructure.Routing.Tests/Geocoding/MapboxGeocodingServiceTests.cs).
 >
 > [Mapbox geocoding/routing](../../src/Infrastructure/Logistics.Infrastructure.Routing/) is global so technically works in both regions, but defaults are US-biased: address autocomplete favors US results, distance computations don't pass a country filter, and there's no per-tenant fallback.
 
