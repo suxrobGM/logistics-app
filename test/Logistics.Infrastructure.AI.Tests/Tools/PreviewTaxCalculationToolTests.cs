@@ -8,6 +8,7 @@ using Logistics.Shared.Models;
 using MediatR;
 using NSubstitute;
 using Xunit;
+using Logistics.Application.Modules.Financial.Invoices.Queries;
 
 namespace Logistics.Infrastructure.AI.Tests.Tools;
 

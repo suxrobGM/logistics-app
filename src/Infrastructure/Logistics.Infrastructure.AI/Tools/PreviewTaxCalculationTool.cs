@@ -4,6 +4,7 @@ using Logistics.Application.Queries;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using MediatR;
+using Logistics.Application.Modules.Financial.Invoices.Queries;
 
 namespace Logistics.Infrastructure.AI.Tools;
 

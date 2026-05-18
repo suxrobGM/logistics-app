@@ -6,6 +6,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Logistics.Application.Modules.Financial.Expenses.Commands;
+using Logistics.Application.Modules.Financial.Expenses.Queries;
 
 namespace Logistics.API.Controllers;
 

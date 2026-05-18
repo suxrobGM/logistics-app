@@ -13,6 +13,7 @@ using Logistics.Application.Abstractions.Payments.Stripe;
 using Address = Logistics.Domain.Primitives.ValueObjects.Address;
 using Invoice = Logistics.Domain.Entities.Invoice;
 using Payment = Logistics.Domain.Entities.Payment;
+using Logistics.Application.Modules.Financial.Payroll.Commands;
 
 namespace Logistics.Application.Tests.Payroll;
 

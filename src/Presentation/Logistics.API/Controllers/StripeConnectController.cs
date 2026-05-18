@@ -5,6 +5,8 @@ using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Logistics.Application.Modules.Financial.StripeConnect.Commands;
+using Logistics.Application.Modules.Financial.StripeConnect.Queries;
 
 namespace Logistics.API.Controllers;
 

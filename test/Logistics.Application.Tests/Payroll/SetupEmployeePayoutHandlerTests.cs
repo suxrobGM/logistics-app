@@ -11,6 +11,7 @@ using Logistics.Application.Abstractions.Payments.Stripe;
 using Address = Logistics.Domain.Primitives.ValueObjects.Address;
 using StripeAccount = Stripe.Account;
 using StripeException = Stripe.StripeException;
+using Logistics.Application.Modules.Financial.Payroll.Commands;
 
 namespace Logistics.Application.Tests.Payroll;
 

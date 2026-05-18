@@ -9,6 +9,8 @@ using CreateEmployeeCommand = Logistics.Application.Modules.IdentityAccess.Emplo
 using UpdateEmployeeCommand = Logistics.Application.Modules.IdentityAccess.Employees.Commands.UpdateEmployeeCommand;
 using Logistics.Application.Modules.IdentityAccess.Employees.Commands;
 using Logistics.Application.Modules.IdentityAccess.Employees.Queries;
+using Logistics.Application.Modules.Financial.Payroll.Commands;
+using Logistics.Application.Modules.Financial.Payroll.Queries;
 
 namespace Logistics.API.Controllers;
 
