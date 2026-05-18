@@ -1,5 +1,3 @@
-using Logistics.Application.Commands;
-using Logistics.Application.Queries;
 using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

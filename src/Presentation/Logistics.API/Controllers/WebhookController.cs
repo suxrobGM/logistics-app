@@ -1,4 +1,3 @@
-using Logistics.Application.Commands;
 using Logistics.Domain.Primitives.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

@@ -1,0 +1,70 @@
+using Logistics.Application.Abstractions;
+using Logistics.Application.Specifications;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Extensions;
+using Logistics.Domain.Persistence;
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Modules.Platform.Stats.Queries;
+
+internal sealed class GetMonthlyGrossesHandler : IAppRequestHandler<GetMonthlyGrossesQuery, Result<MonthlyGrossesDto>>
+{
+    private readonly ITenantUnitOfWork _tenantUow;
+
+    public GetMonthlyGrossesHandler(ITenantUnitOfWork tenantUow)
+    {
+        _tenantUow = tenantUow;
+    }
+
+    public async Task<Result<MonthlyGrossesDto>> Handle(
+        GetMonthlyGrossesQuery req, CancellationToken ct)
+    {
+        var truckId = req.TruckId;
+
+        if (req.UserId.HasValue)
+        {
+            var truck = await _tenantUow.Repository<Truck>().GetAsync(i => i.MainDriverId == req.UserId.Value ||
+                                                                           i.SecondaryDriverId == req.UserId.Value);
+
+            if (truck is null)
+            {
+                return Result<MonthlyGrossesDto>.Fail($"Could not find a truck with driver ID '{req.UserId}'");
+            }
+
+            truckId = truck.Id;
+        }
+
+        // Ensure dates are UTC for PostgreSQL compatibility
+        var startDate = DateTime.SpecifyKind(req.StartDate, DateTimeKind.Utc);
+        var endDate = DateTime.SpecifyKind(req.EndDate, DateTimeKind.Utc);
+
+        var spec = new FilterLoadsByDeliveryDate(truckId, startDate, endDate);
+        var months = req.StartDate.MonthsBetween(req.EndDate);
+        var filteredLoads = _tenantUow.Repository<Load>().ApplySpecification(spec).ToArray();
+
+        var dict = months.ToDictionary(
+            k => (k.Year, k.Month),
+            m => new MonthlyGrossDto(m.Year, m.Month));
+
+        foreach (var load in filteredLoads)
+        {
+            var date = load.DeliveredAt!.Value;
+            var key = (date.Year, date.Month);
+
+            if (!dict.ContainsKey(key))
+            {
+                continue;
+            }
+
+            dict[key].Distance += load.Distance;
+            dict[key].Gross += load.DeliveryCost;
+            dict[key].DriverShare += load.CalcDriverShare();
+        }
+
+        var monthlyGrosses = new MonthlyGrossesDto
+        {
+            Data = dict.Values
+        };
+        return Result<MonthlyGrossesDto>.Ok(monthlyGrosses);
+    }
+}

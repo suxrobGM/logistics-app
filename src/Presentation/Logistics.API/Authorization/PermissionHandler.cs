@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

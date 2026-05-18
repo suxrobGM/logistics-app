@@ -1,4 +1,3 @@
-using Logistics.Application.Queries;
 using Logistics.TelegramBot.Authentication;
 using Logistics.TelegramBot.Formatters;
 using MediatR;

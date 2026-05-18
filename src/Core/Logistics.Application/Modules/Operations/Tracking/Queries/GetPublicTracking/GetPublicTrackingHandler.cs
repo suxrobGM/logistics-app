@@ -1,6 +1,5 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.BackgroundJobs;
-using Logistics.Application.Commands;
 using Logistics.Application.Constants;
 using Logistics.Application.Services;
 using Logistics.Domain.Entities;

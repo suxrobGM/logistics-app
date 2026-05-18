@@ -1,6 +1,4 @@
 using Logistics.API.Extensions;
-using Logistics.Application.Commands;
-using Logistics.Application.Queries;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;

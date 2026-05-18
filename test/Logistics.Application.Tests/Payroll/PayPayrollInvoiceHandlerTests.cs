@@ -1,4 +1,3 @@
-using Logistics.Application.Commands;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
