@@ -71,13 +71,13 @@ Response:
 
 ## Connect Status States
 
-| Status | Description |
-| ------ | ----------- |
-| NotConnected | No Stripe account created |
-| Pending | Account created, onboarding incomplete |
-| Active | Fully onboarded, can receive payments |
-| Restricted | Limited functionality (verification needed) |
-| Disabled | Account disabled |
+| Status       | Description                                 |
+| ------------ | ------------------------------------------- |
+| NotConnected | No Stripe account created                   |
+| Pending      | Account created, onboarding incomplete      |
+| Active       | Fully onboarded, can receive payments       |
+| Restricted   | Limited functionality (verification needed) |
+| Disabled     | Account disabled                            |
 
 ## Processing Payments
 
@@ -121,9 +121,9 @@ var options = new PaymentIntentCreateOptions
 
 The platform handles these Connect-specific webhook events:
 
-| Event | Action |
-| ----- | ------ |
-| `account.updated` | Sync tenant's ConnectStatus |
+| Event                | Action                               |
+| -------------------- | ------------------------------------ |
+| `account.updated`    | Sync tenant's ConnectStatus          |
 | `capability.updated` | Update ChargesEnabled/PayoutsEnabled |
 
 ## Testing
@@ -155,9 +155,9 @@ CustomerPortal__BaseUrl=https://portal.example.com
 
 ## Related Files
 
-- Interface: `src/Core/Logistics.Application/Services/Stripe/IStripeConnectService.cs`
-- Implementation: `src/Core/Logistics.Infrastructure/Services/Stripe/StripeConnectService.cs`
-- Commands: `src/Core/Logistics.Application/Commands/StripeConnect/`
-- Queries: `src/Core/Logistics.Application/Queries/StripeConnect/`
+- Interface: `src/Core/Logistics.Application.Abstractions/Payments/Stripe/IStripeConnectService.cs`
+- Implementation: `src/Infrastructure/Logistics.Infrastructure.Payments/Stripe/StripeConnectService.cs`
+- Commands: `src/Core/Logistics.Application/Modules/Financial/StripeConnect/Commands/`
+- Queries: `src/Core/Logistics.Application/Modules/Financial/StripeConnect/Queries/`
 - API: `src/Presentation/Logistics.API/Controllers/StripeConnectController.cs`
 - Tenant fields: `StripeConnectedAccountId`, `ConnectStatus`, `ChargesEnabled`, `PayoutsEnabled`

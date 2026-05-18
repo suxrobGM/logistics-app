@@ -12,9 +12,10 @@ Adds a new top-level feature end-to-end. Run through the steps in order — earl
 Before writing any code:
 
 1. **Master DB or tenant DB?** Master = platform-level data shared across tenants (Tenant, Subscription, BlogPost). Tenant = per-company operational data (Load, Trip, Customer). Most new features are tenant-scoped.
-2. **Aggregate root or child entity?** A new aggregate gets its own folder under `Entities/{Feature}/`. A child entity belongs to an existing aggregate's folder.
-3. **Is it auditable?** Almost always yes — inherit `AuditableEntity`. Use `Entity` only for very simple lookup tables.
-4. **Which marker interface?** `IMasterEntity` (master DB) or `ITenantEntity` (tenant DB). The DbContext picks up the entity automatically based on this — **no manual `DbSet<T>` needed**.
+2. **Which module?** Application code lives under `Logistics.Application/Modules/{Module}/{Feature}/`. Pick by bounded context: `Operations` (dispatching, fleet), `Compliance` (ELD, DVIR, safety, privacy), `Financial` (invoices, payments, payroll, tax), `IdentityAccess` (users, tenants, subscriptions), `Integrations` (AI dispatch, load board, webhooks), `Platform` (stats, marketing, notifications). See [module-layout.md](../../../docs/architecture/module-layout.md).
+3. **Aggregate root or child entity?** A new aggregate gets its own folder under `Entities/{Feature}/`. A child entity belongs to an existing aggregate's folder.
+4. **Is it auditable?** Almost always yes — inherit `AuditableEntity`. Use `Entity` only for very simple lookup tables.
+5. **Which marker interface?** `IMasterEntity` (master DB) or `ITenantEntity` (tenant DB). The DbContext picks up the entity automatically based on this — **no manual `DbSet<T>` needed**.
 
 ## Step-by-step
 
@@ -80,17 +81,19 @@ Reuse pattern: `Specification<T>` with `Query.Where(...)` + `OrderBy(...)`.
 
 ### 5. Commands and queries
 
-`src/Core/Logistics.Application/Commands/{Feature}/`:
+`src/Core/Logistics.Application/Modules/{Module}/{Feature}/Commands/`:
 
-- `Create{Entity}/Create{Entity}Command.cs` — `record Create{Entity}Command(Create{Entity}Dto Dto) : IRequest<DataResult<{Entity}Dto>>`
+- `Create{Entity}/Create{Entity}Command.cs` — `record Create{Entity}Command(Create{Entity}Dto Dto) : ICommand<Result<{Entity}Dto>>`
 - `Create{Entity}/Create{Entity}Handler.cs` — `internal sealed class`, primary-constructor DI
 - `Create{Entity}/Create{Entity}Validator.cs` — FluentValidation
 - Same pattern for `Update{Entity}/`, `Delete{Entity}/`
 
-`src/Core/Logistics.Application/Queries/{Feature}/`:
+`src/Core/Logistics.Application/Modules/{Module}/{Feature}/Queries/`:
 
-- `Get{Entity}ById/Get{Entity}ByIdQuery.cs` + handler
+- `Get{Entity}ById/Get{Entity}ByIdQuery.cs` + handler — `: IQuery<Result<{Entity}Dto>>`
 - `Get{Entities}/Get{Entities}Query.cs` + handler — paged list
+
+For master-DB commands, use `IMasterCommand<T>` instead of `ICommand<T>`. Handlers own their own `SaveChangesAsync` calls — there is no auto-transaction wrapper.
 
 ### 6. DTOs and Mapperly mapper
 
@@ -191,7 +194,7 @@ Default cache TTL is 2 min. If the feature gets real-time updates via SignalR, a
 Add a row under the appropriate domain section in `.claude/feature-map.md`:
 
 ```markdown
-| Subcontractors | `Entities/Subcontractor.cs` | `Commands/Subcontractor/`, `Queries/Subcontractor/` | - | `SubcontractorController.cs`, `tms-portal/pages/subcontractors/` |
+| Subcontractors | `Entities/Subcontractor.cs` | `Modules/Operations/Subcontractors/Commands/`, `Modules/Operations/Subcontractors/Queries/` | - | `SubcontractorController.cs`, `tms-portal/pages/subcontractors/` |
 ```
 
 ## Verification checklist

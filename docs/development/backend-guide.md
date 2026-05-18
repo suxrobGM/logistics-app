@@ -6,23 +6,22 @@ Patterns and conventions for .NET backend development.
 
 ```text
 src/Core/Logistics.Application/
-├── Commands/           # Write operations
-│   └── Load/
-│       ├── CreateLoadCommand.cs
-│       └── CreateLoadHandler.cs
-├── Queries/            # Read operations
-│   └── Load/
-│       ├── GetLoadByIdQuery.cs
-│       └── GetLoadByIdHandler.cs
-├── Services/           # Application services (interfaces only)
-├── Behaviors/          # MediatR pipeline
+├── Modules/            # Feature code grouped by bounded context
+│   ├── Operations/     # Loads, Trips, Trucks, Containers, Terminals, …
+│   │   └── Loads/
+│   │       ├── Commands/CreateLoad/
+│   │       └── Queries/GetLoadById/
+│   ├── Compliance/     # ELD, DVIR, Accidents, Safety, Privacy
+│   ├── Financial/      # Invoices, Payments, Payroll, Expenses, Tax
+│   ├── IdentityAccess/ # Users, Tenants, Roles, Subscriptions
+│   ├── Integrations/   # AiDispatch, LoadBoard, Webhooks, Messaging, Documents
+│   └── Platform/       # Stats, Reports, BlogPosts, Notifications
+├── Services/           # Application workflow services
+├── Behaviours/         # MediatR pipeline
 └── Validators/         # FluentValidation
 
-src/Core/Logistics.Application.Contracts/
-└── Services/           # Service interfaces (shared)
-    ├── Email/
-    ├── Realtime/       # SignalR abstractions
-    └── Payment/
+src/Core/Logistics.Application.Abstractions/
+└── (Infrastructure ports grouped by domain: AiDispatch, Storage, Geocoding, Eld, Payments, …)
 
 src/Core/Logistics.Domain/
 ├── Entities/           # Domain entities
@@ -68,7 +67,7 @@ src/Infrastructure/
 ### Step 1: Create Command/Query
 
 ```csharp
-// Commands/Load/CreateLoadCommand.cs
+// Modules/Operations/Loads/Commands/CreateLoad/CreateLoadCommand.cs
 public record CreateLoadCommand(CreateLoadDto Dto) : IRequest<DataResult<LoadDto>>;
 
 public class CreateLoadHandler : IRequestHandler<CreateLoadCommand, DataResult<LoadDto>>
