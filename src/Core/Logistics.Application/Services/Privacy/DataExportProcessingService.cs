@@ -1,5 +1,5 @@
-using Logistics.Application.Contracts.Models.Email;
-using Logistics.Application.Contracts.Services.Email;
+using Logistics.Application.Abstractions.Models.Email;
+using Logistics.Application.Abstractions.Services.Email;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
@@ -8,6 +8,8 @@ using Logistics.Domain.Primitives.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.Storage;
+using Logistics.Application.Abstractions.Privacy;
 
 namespace Logistics.Application.Services.Privacy;
 

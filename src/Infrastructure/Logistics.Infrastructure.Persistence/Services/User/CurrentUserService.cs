@@ -1,11 +1,17 @@
 using System.Security.Claims;
-using Logistics.Application.Services;
 using Microsoft.AspNetCore.Http;
+using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Infrastructure.Persistence.Services;
 
 public sealed class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
 {
+    public string? IpAddress =>
+        httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
+
+    public string? UserAgent =>
+        httpContextAccessor.HttpContext?.Request.Headers["User-Agent"].ToString();
+
     public Guid? GetUserId()
     {
         var userIdClaim = httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);

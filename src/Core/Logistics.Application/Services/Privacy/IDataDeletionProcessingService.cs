@@ -4,7 +4,7 @@ namespace Logistics.Application.Services.Privacy;
 /// Processes deletion requests whose 30-day grace period has elapsed by
 /// invoking <see cref="IDataAnonymizer"/> and marking each request Processed.
 /// </summary>
-public interface IDataDeletionProcessingService
+public interface IDataDeletionProcessingService : IApplicationService
 {
     Task ProcessDueAsync(CancellationToken ct = default);
 }

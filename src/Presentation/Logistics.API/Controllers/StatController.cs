@@ -1,11 +1,11 @@
-using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using GetDailyGrossesQuery = Logistics.Application.Queries.GetDailyGrossesQuery;
-using GetMonthlyGrossesQuery = Logistics.Application.Queries.GetMonthlyGrossesQuery;
+using GetDailyGrossesQuery = Logistics.Application.Modules.Platform.Stats.Queries.GetDailyGrossesQuery;
+using GetMonthlyGrossesQuery = Logistics.Application.Modules.Platform.Stats.Queries.GetMonthlyGrossesQuery;
+using Logistics.Application.Modules.Platform.Stats.Queries;
 
 namespace Logistics.API.Controllers;
 

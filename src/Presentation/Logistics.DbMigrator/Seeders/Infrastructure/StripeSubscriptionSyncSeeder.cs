@@ -4,6 +4,7 @@ using Logistics.DbMigrator.Models;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Stripe;
+using Logistics.Application.Abstractions.Payments.Stripe;
 using StripeSubscription = Stripe.Subscription;
 using Subscription = Logistics.Domain.Entities.Subscription;
 

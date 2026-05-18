@@ -1,9 +1,9 @@
-using Logistics.Application.Services.Tax;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Stripe;
 using Stripe.Tax;
+using Logistics.Application.Abstractions.Tax;
 
 namespace Logistics.Infrastructure.Tax.Stripe;
 

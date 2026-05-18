@@ -60,7 +60,7 @@ export class MessagesListComponent implements OnInit, OnDestroy {
 
   protected async openTeamChat(): Promise<void> {
     try {
-      const tenantChat = await this.store.getTenantChat();
+      const tenantChat = await this.store.openTenantChat();
       this.router.navigate(["/messages", tenantChat.id]);
     } catch (e) {
       console.error("Failed to open team chat", e);

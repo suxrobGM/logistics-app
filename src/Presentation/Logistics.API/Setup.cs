@@ -8,7 +8,6 @@ using Logistics.API.Authorization;
 using Logistics.API.Converters;
 using Logistics.API.Extensions;
 using Logistics.API.Jobs;
-using Logistics.Application.Services;
 using Logistics.API.Middlewares;
 using Logistics.API.ModelBinders;
 using Logistics.Application;
@@ -37,6 +36,8 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Extensions.Logging;
+using Logistics.Application.Abstractions.BackgroundJobs;
+using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.API;
 
@@ -119,6 +120,7 @@ internal static class Setup
         services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
         services.AddScoped<IBackgroundJobRunner<AiDispatchRequest>, HangfireAiDispatchJobRunner>();
+        services.AddScoped<ICommandEnqueuer, HangfireCommandEnqueuer>();
         services.AddHangfireServer();
         services.AddHangfire(config => config
             .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
@@ -237,6 +239,7 @@ internal static class Setup
         LoadBoardSyncJob.ScheduleJobs();
         MaintenanceReminderJob.ScheduleJobs();
         LicenseExpiryReminderJob.ScheduleJobs();
+        InvitationExpiryJob.ScheduleJobs();
         DataExportProcessingJob.ScheduleJobs();
         DataDeletionJob.ScheduleJobs();
         DataRetentionJob.ScheduleJobs();

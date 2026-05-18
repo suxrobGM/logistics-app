@@ -1,5 +1,4 @@
 using System.Text.Json.Nodes;
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -11,6 +10,8 @@ using Microsoft.Extensions.Logging.Abstractions;
 using MockQueryable;
 using NSubstitute;
 using Xunit;
+using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.AiDispatch;
 using MsOptions = Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.AI.Tests.Services;

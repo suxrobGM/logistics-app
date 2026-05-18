@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Logistics.Application.Services;
+using Logistics.Application.Abstractions.Dispatch;
 
 namespace Logistics.Infrastructure.AI.Tools;
 

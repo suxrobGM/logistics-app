@@ -1,10 +1,10 @@
-using Logistics.Application.Queries;
 using Logistics.TelegramBot.Authentication;
 using Logistics.TelegramBot.Formatters;
 using MediatR;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Logistics.Application.Modules.Operations.Trips.Queries;
 
 namespace Logistics.TelegramBot.Commands;
 

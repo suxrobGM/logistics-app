@@ -1,4 +1,3 @@
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.Domain.Persistence;
@@ -11,6 +10,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.Modules.Platform.ReadModels;
+using Logistics.Application.Abstractions.SystemSettings;
+using Logistics.Application.Abstractions.Tenancy;
+using Logistics.Application.Abstractions.AiDispatch;
+using Logistics.Infrastructure.Persistence.Reads.Platform;
 
 namespace Logistics.Infrastructure.Persistence.Builder;
 
@@ -63,7 +68,6 @@ internal sealed class PersistenceInfrastructureBuilder : IPersistenceInfrastruct
         services.AddScoped<IMasterUnitOfWork, MasterUnitOfWork>();
         services.AddScoped(typeof(MasterRepository<,>));
         services.AddScoped<ICurrentTenantAccessor, CurrentTenantAccessor>();
-        services.AddScoped<IUserService, UserService>();
         services.AddScoped<IFeatureService, FeatureService>();
         services.AddScoped<IAiQuotaService, AiQuotaService>();
         services.AddScoped<ISystemSettingService, SystemSettingService>();
@@ -92,6 +96,7 @@ internal sealed class PersistenceInfrastructureBuilder : IPersistenceInfrastruct
         services.AddDbContext<TenantDbContext>();
         services.AddScoped<ITenantUnitOfWork, TenantUnitOfWork>();
         services.AddScoped(typeof(TenantRepository<,>));
+        services.AddScoped<ISafetyReportReader, SafetyReportReader>();
         logger?.LogInformation("Added default tenant database with connection string: {ConnectionString}",
             connectionString);
         return this;

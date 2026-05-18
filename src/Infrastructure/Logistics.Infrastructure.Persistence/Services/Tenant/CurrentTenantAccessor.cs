@@ -1,4 +1,3 @@
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Exceptions;
 using Logistics.Domain.Persistence;
@@ -8,6 +7,7 @@ using Logistics.Infrastructure.Persistence;
 using Logistics.Infrastructure.Persistence.Options;
 using Logistics.Shared.Identity.Claims;
 using Microsoft.AspNetCore.Http;
+using Logistics.Application.Abstractions.Tenancy;
 
 namespace Logistics.Infrastructure.Services;
 

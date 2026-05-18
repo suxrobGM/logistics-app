@@ -2,9 +2,9 @@ import { Component, computed, inject, signal, type OnInit } from "@angular/core"
 import {
   Api,
   createConnectAccount,
-  getConnectStatus,
   getDashboardLink,
   getOnboardingLink,
+  refreshConnectStatus,
   type StripeConnectStatus,
   type StripeConnectStatusDto,
 } from "@logistics/shared/api";
@@ -132,7 +132,7 @@ export class PaymentSettingsComponent implements OnInit {
   private async fetchConnectStatus(): Promise<void> {
     this.isLoading.set(true);
     try {
-      const status = await this.api.invoke(getConnectStatus, {});
+      const status = await this.api.invoke(refreshConnectStatus, {});
       this.connectStatus.set(status);
     } catch {
       this.toastService.showError("Failed to load payment settings");

@@ -1,12 +1,12 @@
 using Logistics.API.Extensions;
-using Logistics.Application.Commands;
-using Logistics.Application.Queries;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Logistics.Application.Modules.Compliance.Privacy.Commands;
+using Logistics.Application.Modules.Compliance.Privacy.Queries;
 
 namespace Logistics.API.Controllers;
 

@@ -5,7 +5,7 @@ namespace Logistics.Application.Services;
 /// <summary>
 ///     Interface for the Load service that provides methods to manage loads in the logistics system.
 /// </summary>
-public interface ILoadService
+public interface ILoadService : IApplicationService
 {
     /// <summary>
     ///     Creates a new load with the specified parameters.

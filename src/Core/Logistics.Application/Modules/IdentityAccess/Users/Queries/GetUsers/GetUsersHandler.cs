@@ -1,0 +1,32 @@
+using Logistics.Application.Abstractions;
+using Logistics.Application.Specifications;
+using Logistics.Domain.Entities;
+using Logistics.Domain.Persistence;
+using Logistics.Mappings;
+using Logistics.Shared.Models;
+
+namespace Logistics.Application.Modules.IdentityAccess.Users.Queries;
+
+internal sealed class GetUsersHandler : IAppRequestHandler<GetUsersQuery, PagedResult<UserDto>>
+{
+    private readonly IMasterUnitOfWork _masterUow;
+
+    public GetUsersHandler(IMasterUnitOfWork masterUow)
+    {
+        _masterUow = masterUow;
+    }
+
+    public async Task<PagedResult<UserDto>> Handle(
+        GetUsersQuery req,
+        CancellationToken ct)
+    {
+        var totalItems = await _masterUow.Repository<User>().CountAsync();
+
+        var users = _masterUow.Repository<User>()
+            .ApplySpecification(new SearchUsers(req.Search, req.OrderBy, req.Page, req.PageSize))
+            .Select(i => i.ToDto())
+            .ToArray();
+
+        return PagedResult<UserDto>.Ok(users, totalItems, req.PageSize);
+    }
+}

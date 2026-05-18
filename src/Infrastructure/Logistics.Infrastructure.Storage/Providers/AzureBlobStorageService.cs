@@ -1,9 +1,9 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
-using Logistics.Application.Services;
 using Logistics.Domain.Persistence;
 using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.Storage;
 
 namespace Logistics.Infrastructure.Storage.Providers;
 

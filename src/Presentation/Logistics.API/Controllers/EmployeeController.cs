@@ -1,12 +1,14 @@
-using Logistics.Application.Commands;
-using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CreateEmployeeCommand = Logistics.Application.Commands.CreateEmployeeCommand;
-using UpdateEmployeeCommand = Logistics.Application.Commands.UpdateEmployeeCommand;
+using CreateEmployeeCommand = Logistics.Application.Modules.IdentityAccess.Employees.Commands.CreateEmployeeCommand;
+using UpdateEmployeeCommand = Logistics.Application.Modules.IdentityAccess.Employees.Commands.UpdateEmployeeCommand;
+using Logistics.Application.Modules.IdentityAccess.Employees.Commands;
+using Logistics.Application.Modules.IdentityAccess.Employees.Queries;
+using Logistics.Application.Modules.Financial.Payroll.Commands;
+using Logistics.Application.Modules.Financial.Payroll.Queries;
 
 namespace Logistics.API.Controllers;
 

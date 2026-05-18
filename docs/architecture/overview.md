@@ -1,6 +1,8 @@
 # Architecture Overview
 
-LogisticsX is a Domain-Driven Design (DDD) monolith with CQRS, organized into clear layers and a modular infrastructure split into nine focused projects. The runtime is .NET 10 on PostgreSQL 18, orchestrated by .NET Aspire.
+LogisticsX is a Domain-Driven Design (DDD) monolith with CQRS, organized into clear layers and a modular infrastructure split into focused projects. The runtime is .NET 10 on PostgreSQL 18, orchestrated by .NET Aspire.
+
+> See [layering.md](layering.md) for the 4-layer rule and the Abstractions / Application split. See [module-layout.md](module-layout.md) for the Application `Modules/` layout.
 
 ## System Architecture
 
@@ -25,8 +27,8 @@ flowchart TB
 
     subgraph Core["Core"]
         direction LR
-        Application["Application<br/>Commands · Queries · Behaviors"]
-        Contracts["Application.Contracts<br/>Service interfaces"]
+        Application["Application<br/>Modules · Commands · Queries · Behaviors"]
+        Abstractions["Application.Abstractions<br/>Infrastructure ports"]
         Mappings["Mappings<br/>Entity ↔ DTO"]
         Domain["Domain<br/>Entities · Aggregates · Events"]
         Primitives["Domain.Primitives<br/>Value objects · Enums"]
@@ -63,39 +65,51 @@ flowchart TB
     Clients --> Presentation
     Presentation --> Application
     Migrator --> Persistence
-    Application --> Contracts
+    Application --> Abstractions
     Application --> Domain
     Application --> Mappings
     Domain --> Primitives
     Application -.uses.-> Shared
     Infra -.uses.-> Shared
-    Contracts -. implemented by .-> Infra
+    Abstractions -. implemented by .-> Infra
     Infra --> External
 ```
 
 ## Layered Design
 
-The codebase follows a Clean / Onion architecture: outer layers depend on inner layers, and inner layers know nothing about outer layers. Infrastructure implements abstractions defined in `Logistics.Application.Contracts`.
+The codebase follows a Clean / Onion architecture: `Domain ← Abstractions ← Application/Infrastructure ← Presentation`. Application depends on `Application.Abstractions` for infrastructure ports; Infrastructure implements those ports and **never** references `Application`. See [layering.md](layering.md) for the port vs. workflow-service rule.
 
 ```mermaid
 flowchart TB
     P["Presentation<br/>API · IdentityServer · McpServer · TelegramBot · DbMigrator"]
-    A["Application<br/>Commands · Queries · MediatR pipeline"]
-    C["Application.Contracts<br/>Service interfaces · DTO contracts"]
+    A["Application<br/>Modules · Commands · Queries · Behaviours · workflow services"]
+    Ab["Application.Abstractions<br/>Infrastructure ports · marker interfaces · DTOs"]
     D["Domain<br/>Entities · Aggregates · Events · Specifications"]
     Pr["Domain.Primitives<br/>Value objects · Enums"]
-    I["Infrastructure (9 projects)<br/>Persistence · Communications · AI · Eld · LoadBoard · Payments · Documents · Routing · Storage"]
+    I["Infrastructure<br/>Persistence · Communications · AI · Eld · LoadBoard · Payments · Documents · Routing · Storage · Tax · Vin"]
 
     P --> A
     P -.composition root.-> I
-    A --> C
+    A --> Ab
     A --> D
+    Ab --> D
     D --> Pr
-    I --> C
+    I --> Ab
     I --> D
 ```
 
-Application code is wired to infrastructure implementations only at the **composition root** (each presentation project's `Program.cs` calls registrar extensions like `AddPersistenceInfrastructure`, `AddPaymentsInfrastructure`, etc.).
+Application is wired to infrastructure implementations only at the **composition root**. Each module ships its own DI registrar inside `Logistics.Application/Modules/{Module}/` and each infrastructure project ships a registrar (`AddPersistenceInfrastructure`, `AddPaymentsInfrastructure`, …) consumed by every presentation `Program.cs`.
+
+### Architecture enforcement
+
+Layering rules are enforced by [`test/Logistics.Architecture.Tests/`](../../test/Logistics.Architecture.Tests/) (ArchUnitNET over compiled assemblies):
+
+- `Application` must not depend on `Microsoft.AspNetCore.Http` or any Infrastructure assembly.
+- `Application.Abstractions` must not depend on `Application`, Infrastructure, EF Core, or AspNetCore.Http.
+- Each Infrastructure assembly references `Application.Abstractions`, not `Application`.
+- No handler injects `IHttpContextAccessor`.
+
+Adding a new infrastructure assembly? Append its anchor to the `[Theory]` in `BoundaryTests.cs` so it's covered.
 
 ## Project Structure
 
@@ -105,7 +119,7 @@ The repository follows the layer split above. Each project name is `Logistics.{L
 | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/Aspire`         | `Logistics.Aspire.AppHost`, `Logistics.Aspire.ServiceDefaults`                                                                                                                      |
 | `src/Client`         | `Logistics.Angular` (workspace: tms-portal, customer-portal, admin-portal, website, shared library), `Logistics.DriverApp` (Kotlin Multiplatform), `Logistics.DemoVideo` (Remotion) |
-| `src/Core`           | `Logistics.Application`, `Logistics.Application.Contracts`, `Logistics.Domain`, `Logistics.Domain.Primitives`, `Logistics.Mappings`                                                 |
+| `src/Core`           | `Logistics.Application`, `Logistics.Application.Abstractions`, `Logistics.Domain`, `Logistics.Domain.Primitives`, `Logistics.Mappings`                                              |
 | `src/Shared`         | `Logistics.Shared.Geo`, `Logistics.Shared.Identity`, `Logistics.Shared.Models`                                                                                                      |
 | `src/Infrastructure` | `Persistence`, `Communications`, `AI`, `Integrations.Eld`, `Integrations.LoadBoard`, `Payments`, `Documents`, `Routing`, `Storage`                                                  |
 | `src/Presentation`   | `Logistics.API`, `Logistics.IdentityServer`, `Logistics.McpServer`, `Logistics.TelegramBot`, `Logistics.DbMigrator`                                                                 |
@@ -169,22 +183,30 @@ The repository follows the layer split above. Each project name is `Logistics.{L
 
 ### CQRS
 
-Commands and queries are separated and dispatched through MediatR.
+Commands and queries are separated and dispatched through MediatR. Both extend `IRequest<TResponse>` via the `ICommand<T>` / `IQuery<T>` markers in `Logistics.Application.Abstractions.Common`. Use `IMasterCommand<T>` for commands that target the master DB, otherwise the tenant DB. Handlers own their own `SaveChangesAsync` calls — there is no auto-transaction wrapper.
+
+Commands and queries live under `Logistics.Application/Modules/{Module}/{Feature}/{Commands|Queries}/`. See [module-layout.md](module-layout.md) for the six modules and the feature-folder convention.
 
 ```csharp
-public record CreateLoadCommand(CreateLoadDto Dto) : IRequest<DataResult<LoadDto>>;
-public record GetLoadByIdQuery(string Id) : IRequest<DataResult<LoadDto>>;
+public record CreateLoadCommand(CreateLoadDto Dto) : ICommand<Result<LoadDto>>;
+public record GetLoadByIdQuery(string Id) : IQuery<Result<LoadDto>>;
 ```
 
 ### MediatR Pipeline
 
+A single pipeline applies to both commands and queries. Behaviours are constrained to `IRequest<TResponse>` where `TResponse : IResult, new()`, so they bind to `ICommand<T>` and `IQuery<T>` alike.
+
 ```mermaid
 flowchart LR
-    Req["Request"] --> V["ValidationBehavior<br/>(FluentValidation)"]
-    V --> L["LoggingBehavior"]
-    L --> H["Handler"]
+    Req["Request"] --> Lg["LoggingBehavior"]
+    Lg --> Ex["UnhandledExceptionBehaviour"]
+    Ex --> V["ValidationBehaviour<br/>(FluentValidation)"]
+    V --> F["FeatureCheckBehaviour"]
+    F --> H["Handler"]
     H --> Resp["Response"]
 ```
+
+`FeatureCheckBehaviour` reads the optional `[RequiresFeature]` attribute on the request type and short-circuits with a `Result.Fail` when the tenant's plan or admin lock disables the feature; the lookup is cached per closed generic instantiation.
 
 ### Repository + Specification
 
@@ -210,7 +232,7 @@ public class ActiveLoadsSpec : Specification<Load>
 
 ### Domain Events
 
-Entities raise events from inside their methods. Handlers live in `Logistics.Application/Events/`.
+Entities raise events from inside their methods. Handlers live next to the feature in `Logistics.Application/Modules/{Module}/{Feature}/Events/`.
 
 ```csharp
 public class Load : AggregateRoot

@@ -1,8 +1,8 @@
-using Logistics.Application.Services;
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Models;
 using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
+using Logistics.Application.Abstractions.Tenancy;
 
 namespace Logistics.DbMigrator.Seeders.Infrastructure;
 

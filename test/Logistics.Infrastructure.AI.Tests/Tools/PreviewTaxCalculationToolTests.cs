@@ -1,6 +1,5 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Logistics.Application.Queries;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Infrastructure.AI.Tools;
@@ -8,6 +7,7 @@ using Logistics.Shared.Models;
 using MediatR;
 using NSubstitute;
 using Xunit;
+using Logistics.Application.Modules.Financial.Invoices.Queries;
 
 namespace Logistics.Infrastructure.AI.Tests.Tools;
 

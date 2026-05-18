@@ -1,11 +1,11 @@
 ﻿using Amazon.Runtime;
 using Amazon.S3;
 using Azure.Storage.Blobs;
-using Logistics.Application.Services;
 using Logistics.Infrastructure.Storage.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.Storage;
 
 namespace Logistics.Infrastructure.Storage;
 

@@ -1,8 +1,8 @@
 using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
-using Logistics.Application.Services;
 using Microsoft.Extensions.Logging;
+using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.Infrastructure.Communications.Services;
 

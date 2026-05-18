@@ -1,5 +1,4 @@
-﻿using Logistics.Application.Services;
-using Logistics.Application.Services.Privacy;
+﻿using Logistics.Application.Abstractions.Privacy;
 using Logistics.Domain.Options;
 using Logistics.Infrastructure.Persistence.Builder;
 using Logistics.Infrastructure.Persistence.Interceptors;
@@ -9,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Infrastructure.Persistence;
 

@@ -1,7 +1,7 @@
 using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
-using Logistics.Application.Services.Privacy;
+using Logistics.Application.Abstractions.Privacy;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,4 @@
-using Logistics.Application.Services;
+using Logistics.Application.Abstractions.Dispatch;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -6,6 +6,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
+using Logistics.Application.Services;
 
 namespace Logistics.Application.Tests.Services;
 

@@ -1,5 +1,3 @@
-using Logistics.Application.Commands;
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -10,9 +8,11 @@ using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Stripe;
 using Xunit;
+using Logistics.Application.Abstractions.Payments.Stripe;
 using Address = Logistics.Domain.Primitives.ValueObjects.Address;
 using Invoice = Logistics.Domain.Entities.Invoice;
 using Payment = Logistics.Domain.Entities.Payment;
+using Logistics.Application.Modules.Financial.Payroll.Commands;
 
 namespace Logistics.Application.Tests.Payroll;
 

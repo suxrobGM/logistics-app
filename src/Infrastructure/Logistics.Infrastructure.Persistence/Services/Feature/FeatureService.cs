@@ -1,8 +1,8 @@
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
+using Logistics.Application.Abstractions.Features;
 
 namespace Logistics.Infrastructure.Services;
 

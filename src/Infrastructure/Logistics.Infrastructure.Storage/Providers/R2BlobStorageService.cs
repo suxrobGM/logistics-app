@@ -1,9 +1,9 @@
 using System.Net;
 using Amazon.S3;
 using Amazon.S3.Model;
-using Logistics.Application.Services;
 using Logistics.Domain.Persistence;
 using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.Storage;
 
 namespace Logistics.Infrastructure.Storage.Providers;
 

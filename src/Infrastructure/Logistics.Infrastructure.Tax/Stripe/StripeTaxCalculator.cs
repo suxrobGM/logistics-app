@@ -1,11 +1,12 @@
 using System.Globalization;
-using Logistics.Application.Services.Tax;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Infrastructure.Payments.Stripe;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using Stripe.Tax;
+using Logistics.Application.Abstractions.Tax;
+using Logistics.Application.Abstractions.Models.Tax;
 using DomainAddress = Logistics.Domain.Primitives.ValueObjects.Address;
 using DomainTaxJurisdiction = Logistics.Domain.Primitives.ValueObjects.TaxJurisdiction;
 

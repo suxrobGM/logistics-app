@@ -1,9 +1,9 @@
 using System.Text;
-using Logistics.Application.Services.PdfImport;
 using Logistics.Infrastructure.Services.PdfImport.Templates;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using UglyToad.PdfPig;
+using Logistics.Application.Abstractions.Documents;
 
 namespace Logistics.Infrastructure.Services.PdfImport;
 

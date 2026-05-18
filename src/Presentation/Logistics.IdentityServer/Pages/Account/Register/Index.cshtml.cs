@@ -1,7 +1,6 @@
 using System.Text;
-using Logistics.Application.Contracts.Models.Email;
-using Logistics.Application.Contracts.Services.Email;
-using Logistics.Application.Services;
+using Logistics.Application.Abstractions.Models.Email;
+using Logistics.Application.Abstractions.Services.Email;
 using Logistics.Domain.Entities;
 
 using Microsoft.AspNetCore.Authentication;
@@ -10,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Logistics.Application.Abstractions.Captcha;
 
 namespace Logistics.IdentityServer.Pages.Account.Register;
 

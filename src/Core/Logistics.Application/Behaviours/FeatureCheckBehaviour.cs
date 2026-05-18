@@ -1,11 +1,12 @@
 using System.Reflection;
-using Logistics.Application.Abstractions;
 using Logistics.Application.Attributes;
 using Logistics.Application.Services;
 using Logistics.Domain.Exceptions;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
 using MediatR;
+using Logistics.Application.Abstractions.Features;
+using Logistics.Application.Abstractions.Tenancy;
 
 namespace Logistics.Application.Behaviours;
 
@@ -17,15 +18,19 @@ public sealed class FeatureCheckBehaviour<TRequest, TResponse>(
     IFeatureService featureService,
     ICurrentTenantAccessor tenantAccessor)
     : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IAppRequest<TResponse>
+    where TRequest : IRequest<TResponse>
     where TResponse : IResult, new()
 {
+    // Evaluated once per closed generic instantiation — avoids per-call reflection.
+    private static readonly RequiresFeatureAttribute? Attribute =
+        typeof(TRequest).GetCustomAttribute<RequiresFeatureAttribute>();
+
     public async Task<TResponse> Handle(
         TRequest request,
         RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        var attribute = typeof(TRequest).GetCustomAttribute<RequiresFeatureAttribute>();
+        var attribute = Attribute;
 
         // If no RequiresFeature attribute, proceed normally
         if (attribute is null)

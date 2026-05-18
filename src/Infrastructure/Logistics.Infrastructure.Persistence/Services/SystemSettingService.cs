@@ -1,6 +1,6 @@
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
+using Logistics.Application.Abstractions.SystemSettings;
 
 namespace Logistics.Infrastructure.Services;
 

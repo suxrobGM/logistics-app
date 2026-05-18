@@ -1,10 +1,10 @@
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Mappings;
 using Microsoft.AspNetCore.SignalR;
+using Logistics.Application.Abstractions.Notifications;
 
 namespace Logistics.Infrastructure.Communications.Services;
 

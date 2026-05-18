@@ -1,6 +1,4 @@
-using Logistics.Application.Contracts.Services.Email;
-using Logistics.Application.Services;
-using Logistics.Application.Services.Realtime;
+using Logistics.Application.Abstractions.Services.Email;
 using Logistics.Infrastructure.Communications.Captcha;
 using Logistics.Infrastructure.Communications.Email;
 using Logistics.Infrastructure.Communications.Services;
@@ -9,6 +7,11 @@ using Logistics.Infrastructure.Communications.SignalR.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Resend;
+using Logistics.Application.Abstractions.Captcha;
+using Logistics.Application.Abstractions.Notifications;
+using Logistics.Application.Abstractions.Realtime;
+using Logistics.Application.Abstractions.Routing;
+using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.Infrastructure.Communications;
 

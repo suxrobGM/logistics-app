@@ -1,4 +1,4 @@
-using Logistics.Application.Services;
+using Logistics.Application.Abstractions.CurrentUser;
 
 namespace Logistics.Infrastructure.Persistence.Services;
 
@@ -7,6 +7,10 @@ namespace Logistics.Infrastructure.Persistence.Services;
 /// </summary>
 public sealed class NoopCurrentUserService : ICurrentUserService
 {
+    public string? IpAddress => null;
+
+    public string? UserAgent => null;
+
     public Guid? GetUserId()
     {
         return null;

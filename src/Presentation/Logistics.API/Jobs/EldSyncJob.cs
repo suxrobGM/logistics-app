@@ -1,5 +1,4 @@
 using Hangfire;
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -8,6 +7,7 @@ using Logistics.Infrastructure.Communications.SignalR.Clients;
 using Logistics.Infrastructure.Communications.SignalR.Hubs;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.SignalR;
+using Logistics.Application.Abstractions.Eld;
 
 namespace Logistics.API.Jobs;
 

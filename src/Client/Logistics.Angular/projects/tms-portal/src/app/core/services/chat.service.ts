@@ -1,17 +1,17 @@
-import { Injectable, inject, signal } from "@angular/core";
+import { inject, Injectable, signal } from "@angular/core";
 import {
   Api,
+  createConversation,
+  getConversations,
+  getMessages,
+  getUnreadCount,
+  markMessageRead,
+  openTenantChat,
+  sendMessage,
   type ConversationDto,
   type CreateConversationRequest,
   type MessageDto,
   type SendMessageRequest,
-  createConversation,
-  getConversations,
-  getMessages,
-  getTenantChat,
-  getUnreadCount,
-  markMessageRead,
-  sendMessage,
 } from "@logistics/shared/api";
 import { BaseHubConnection } from "./base-hub-connection";
 
@@ -93,7 +93,7 @@ export class ChatService extends BaseHubConnection {
     return count;
   }
 
-  getTenantChat(): Promise<ConversationDto> {
-    return this.api.invoke(getTenantChat);
+  openTenantChat(): Promise<ConversationDto> {
+    return this.api.invoke(openTenantChat);
   }
 }

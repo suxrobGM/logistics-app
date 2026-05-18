@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Logistics.Application.Commands;
 using MediatR;
+using Logistics.Application.Modules.Operations.Trips.Commands;
 
 namespace Logistics.Infrastructure.AI.Tools;
 

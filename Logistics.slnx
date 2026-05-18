@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Test/">
     <Project Path="test/Logistics.Application.Tests/Logistics.Application.Tests.csproj" />
+    <Project Path="test/Logistics.Architecture.Tests/Logistics.Architecture.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.AI.Tests/Logistics.Infrastructure.AI.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.Payments.Tests/Logistics.Infrastructure.Payments.Tests.csproj" />
     <Project Path="test/Logistics.Infrastructure.Persistence.Tests/Logistics.Infrastructure.Persistence.Tests.csproj" />
@@ -9,7 +10,7 @@
   </Folder>
   <Folder Name="/Core/">
     <Project Path="src/Core/Logistics.Domain/Logistics.Domain.csproj" />
-    <Project Path="src/Core/Logistics.Application.Contracts/Logistics.Application.Contracts.csproj" />
+    <Project Path="src/Core/Logistics.Application.Abstractions/Logistics.Application.Abstractions.csproj" />
     <Project Path="src/Core/Logistics.Application/Logistics.Application.csproj" />
     <Project Path="src/Core/Logistics.Mappings/Logistics.Mappings.csproj" />
     <Project Path="src/Core/Logistics.Domain.Primitives/Logistics.Domain.Primitives.csproj" />

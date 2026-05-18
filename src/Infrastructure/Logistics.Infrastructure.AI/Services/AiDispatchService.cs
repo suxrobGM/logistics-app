@@ -1,4 +1,3 @@
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -7,6 +6,8 @@ using Logistics.Infrastructure.AI.Providers;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Logistics.Application.Abstractions.AiDispatch;
+using Logistics.Application.Abstractions.Payments.Stripe;
 
 namespace Logistics.Infrastructure.AI.Services;
 

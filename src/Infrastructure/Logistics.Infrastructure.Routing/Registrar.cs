@@ -1,10 +1,10 @@
-﻿using Logistics.Application.Services;
-using Logistics.Application.Services.Geocoding;
-using Logistics.Infrastructure.Options;
+﻿using Logistics.Infrastructure.Options;
 using Logistics.Infrastructure.Routing.Geocoding;
 using Logistics.Infrastructure.Routing.Optimization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Logistics.Application.Abstractions.Geocoding;
+using Logistics.Application.Abstractions.Routing;
 
 namespace Logistics.Infrastructure.Routing;
 

@@ -7,13 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.2"/>
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.2"/>
     <PackageReference Include="PdfPig" Version="0.1.13"/>
     <PackageReference Include="QuestPDF" Version="2025.12.3"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Logistics.Application\Logistics.Application.csproj"/>
+    <ProjectReference Include="..\..\Core\Logistics.Application.Abstractions\Logistics.Application.Abstractions.csproj"/>
   </ItemGroup>
 
 </Project>

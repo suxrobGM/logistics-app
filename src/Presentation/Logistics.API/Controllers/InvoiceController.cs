@@ -1,10 +1,13 @@
-using Logistics.Application.Commands;
-using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Logistics.Application.Modules.Financial.Invoices.Commands;
+using Logistics.Application.Modules.Financial.Invoices.Queries;
+using Logistics.Application.Modules.Financial.PaymentLinks.Commands;
+using Logistics.Application.Modules.Financial.Payments.Commands;
+using Logistics.Application.Modules.Financial.Payroll.Commands;
 
 namespace Logistics.API.Controllers;
 

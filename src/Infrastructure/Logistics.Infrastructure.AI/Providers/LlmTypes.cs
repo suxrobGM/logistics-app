@@ -1,5 +1,5 @@
 using System.Text.Json.Nodes;
-using Logistics.Application.Services;
+using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.Infrastructure.AI.Providers;
 

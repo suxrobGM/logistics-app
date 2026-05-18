@@ -1,7 +1,7 @@
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using Stripe;
+using Logistics.Application.Abstractions.Payments.Stripe;
 using StripeSubscription = Stripe.Subscription;
 using Subscription = Logistics.Domain.Entities.Subscription;
 

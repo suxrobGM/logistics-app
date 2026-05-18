@@ -1,14 +1,16 @@
 using Logistics.API.Extensions;
-using Logistics.Application.Commands;
-using Logistics.Application.Queries;
 using Logistics.Shared.Identity.Policies;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CreateTenantCommand = Logistics.Application.Commands.CreateTenantCommand;
-using UpdateTenantCommand = Logistics.Application.Commands.UpdateTenantCommand;
+using CreateTenantCommand = Logistics.Application.Modules.IdentityAccess.Tenants.Commands.CreateTenantCommand;
+using UpdateTenantCommand = Logistics.Application.Modules.IdentityAccess.Tenants.Commands.UpdateTenantCommand;
+using Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
+using Logistics.Application.Modules.IdentityAccess.Tenants.Queries;
+using Logistics.Application.Modules.Integrations.AiDispatch.Commands;
+using Logistics.Application.Modules.Integrations.AiDispatch.Queries;
 
 namespace Logistics.API.Controllers;
 
