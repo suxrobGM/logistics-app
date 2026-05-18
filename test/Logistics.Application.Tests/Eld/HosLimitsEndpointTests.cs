@@ -7,6 +7,7 @@ using Logistics.Shared.Models;
 using NSubstitute;
 using Xunit;
 using Logistics.Application.Services;
+using Logistics.Application.Modules.Compliance.Eld.Queries;
 
 namespace Logistics.Application.Tests.Eld;
 

@@ -3,6 +3,7 @@ using Logistics.Domain.Primitives.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Logistics.Application.Modules.Compliance.Eld.Commands;
 
 namespace Logistics.API.Controllers;
 

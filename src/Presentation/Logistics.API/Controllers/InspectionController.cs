@@ -7,6 +7,8 @@ using Logistics.Shared.Models.Inspection;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Logistics.Application.Modules.Compliance.Inspections.Commands;
+using Logistics.Application.Modules.Compliance.Inspections.Queries;
 
 namespace Logistics.API.Controllers;
 
