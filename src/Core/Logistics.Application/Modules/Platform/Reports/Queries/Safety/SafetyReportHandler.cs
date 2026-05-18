@@ -1,15 +1,12 @@
 using Logistics.Application.Abstractions;
-using Logistics.Domain.Entities;
-using Logistics.Domain.Entities.Safety;
-using Logistics.Domain.Persistence;
+using Logistics.Application.Abstractions.Modules.Platform.ReadModels;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.Enums.Safety;
 using Logistics.Shared.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Logistics.Application.Modules.Platform.Reports.Queries;
 
-internal sealed class SafetyReportHandler(ITenantUnitOfWork tenantUow)
+internal sealed class SafetyReportHandler(ISafetyReportReader reader)
     : IAppRequestHandler<SafetyReportQuery, Result<SafetyReportDto>>
 {
     public async Task<Result<SafetyReportDto>> Handle(SafetyReportQuery req, CancellationToken ct)
@@ -17,137 +14,35 @@ internal sealed class SafetyReportHandler(ITenantUnitOfWork tenantUow)
         var startDate = req.StartDate == default ? DateTime.UtcNow.AddMonths(-6) : req.StartDate;
         var endDate = req.EndDate == default ? DateTime.UtcNow : req.EndDate;
 
-        var dvirRepo = tenantUow.Repository<DvirReport>();
-        var accidentRepo = tenantUow.Repository<AccidentReport>();
-        var behaviorRepo = tenantUow.Repository<DriverBehaviorEvent>();
+        var facts = await reader.GetSafetyFactsAsync(startDate, endDate, ct);
 
-        // Build base queries with date filters
-        var dvirQuery = dvirRepo.Query()
-            .Where(d => d.InspectionDate >= startDate && d.InspectionDate <= endDate);
-        var accidentQuery = accidentRepo.Query()
-            .Where(a => a.AccidentDateTime >= startDate && a.AccidentDateTime <= endDate);
-        var behaviorQuery = behaviorRepo.Query()
-            .Where(b => b.OccurredAt >= startDate && b.OccurredAt <= endDate);
+        // DVIR rollups
+        var totalDvirs = facts.DvirByStatusAndMonth.Sum(r => r.Count);
+        var pendingDvirReviews = facts.DvirByStatusAndMonth
+            .Where(r => r.Status == DvirStatus.Submitted)
+            .Sum(r => r.Count);
+        var dvirsWithDefects = facts.DvirByStatusAndMonth
+            .Where(r => r.HasDefects)
+            .Sum(r => r.Count);
 
-        // DVIR: Combined summary stats (1 query instead of 3) + status breakdown with defect count
-        var dvirStatusBreakdown = await dvirQuery
-            .GroupBy(d => d.Status)
-            .Select(g => new
-            {
-                Status = g.Key,
-                Count = g.Count(),
-                WithDefects = g.Count(d => d.HasDefects)
-            })
-            .ToListAsync(ct);
+        // Accident rollups
+        var totalAccidents = facts.AccidentByStatusSeverityAndMonth.Sum(r => r.Count);
+        var unresolvedAccidents = facts.AccidentByStatusSeverityAndMonth
+            .Where(r => r.Status != AccidentReportStatus.Resolved)
+            .Sum(r => r.Count);
+        var estimatedDamageCost = facts.AccidentByStatusSeverityAndMonth.Sum(r => r.Damage);
+        var injuriesReported = facts.AccidentByStatusSeverityAndMonth.Sum(r => r.Injuries);
 
-        var totalDvirs = dvirStatusBreakdown.Sum(x => x.Count);
-        var pendingDvirReviews = dvirStatusBreakdown
-            .Where(x => x.Status == DvirStatus.Submitted)
-            .Sum(x => x.Count);
-        var dvirsWithDefects = dvirStatusBreakdown.Sum(x => x.WithDefects);
+        // Behavior rollups
+        var totalBehaviorEvents = facts.BehaviorByTypeAndMonth.Sum(r => r.Count);
+        var unreviewedBehaviorEvents = facts.BehaviorByTypeAndMonth.Sum(r => r.Unreviewed);
 
-        // Accidents: Combined summary stats (1 query instead of 4) + status/severity breakdowns
-        var accidentSummary = await accidentQuery
-            .GroupBy(_ => 1)
-            .Select(g => new
-            {
-                Total = g.Count(),
-                Unresolved = g.Count(a => a.Status != AccidentReportStatus.Resolved),
-                EstimatedDamageCost = g.Sum(a => a.EstimatedDamageCost ?? 0),
-                InjuriesReported = g.Sum(a => a.NumberOfInjuries ?? 0)
-            })
-            .FirstOrDefaultAsync(ct);
-
-        var totalAccidents = accidentSummary?.Total ?? 0;
-        var unresolvedAccidents = accidentSummary?.Unresolved ?? 0;
-        var estimatedDamageCost = accidentSummary?.EstimatedDamageCost ?? 0;
-        var injuriesReported = accidentSummary?.InjuriesReported ?? 0;
-
-        var accidentStatusBreakdown = await accidentQuery
-            .GroupBy(a => a.Status)
-            .Select(g => new { Status = g.Key, Count = g.Count() })
-            .ToListAsync(ct);
-
-        var accidentSeverityBreakdown = await accidentQuery
-            .GroupBy(a => a.Severity)
-            .Select(g => new { Severity = g.Key, Count = g.Count(), TotalDamage = g.Sum(a => a.EstimatedDamageCost ?? 0) })
-            .ToListAsync(ct);
-
-        // Behavior: Combined summary in breakdown (1 query instead of 3)
-        var behaviorEventBreakdown = await behaviorQuery
-            .GroupBy(e => e.EventType)
-            .Select(g => new
-            {
-                EventType = g.Key,
-                Count = g.Count(),
-                Unreviewed = g.Count(b => !b.ReviewedAt.HasValue)
-            })
-            .ToListAsync(ct);
-        var totalBehaviorEvents = behaviorEventBreakdown.Sum(x => x.Count);
-        var unreviewedBehaviorEvents = behaviorEventBreakdown.Sum(x => x.Unreviewed);
-
-        // Trends - group by year/month
-        var dvirTrends = await dvirQuery
-            .GroupBy(d => new { d.InspectionDate.Year, d.InspectionDate.Month })
-            .Select(g => new { g.Key.Year, g.Key.Month, Count = g.Count() })
-            .ToListAsync(ct);
-
-        var accidentTrends = await accidentQuery
-            .GroupBy(a => new { a.AccidentDateTime.Year, a.AccidentDateTime.Month })
-            .Select(g => new { g.Key.Year, g.Key.Month, Count = g.Count(), Value = g.Sum(a => a.EstimatedDamageCost ?? 0) })
-            .ToListAsync(ct);
-
-        var behaviorTrends = await behaviorQuery
-            .GroupBy(b => new { b.OccurredAt.Year, b.OccurredAt.Month })
-            .Select(g => new { g.Key.Year, g.Key.Month, Count = g.Count() })
-            .ToListAsync(ct);
-
-        // Top drivers with accident counts in single query
-        var topDriverBehavior = await behaviorQuery
-            .GroupBy(b => b.EmployeeId)
-            .Select(g => new { DriverId = g.Key, BehaviorCount = g.Count() })
-            .OrderByDescending(x => x.BehaviorCount)
-            .Take(10)
-            .ToListAsync(ct);
-
-        var driverAccidentCounts = (await accidentQuery
-            .GroupBy(a => a.DriverId)
-            .Select(g => new { DriverId = g.Key, AccidentCount = g.Count() })
-            .ToListAsync(ct))
-            .ToDictionary(x => x.DriverId, x => x.AccidentCount);
-
-        // Top trucks with defects
-        var topTruckDefects = await dvirQuery
-            .Where(d => d.HasDefects)
-            .GroupBy(d => d.TruckId)
-            .Select(g => new { TruckId = g.Key, DefectCount = g.Sum(d => d.Defects.Count) })
-            .OrderByDescending(x => x.DefectCount)
-            .Take(10)
-            .ToListAsync(ct);
-
-        var truckAccidentCounts = (await accidentQuery
-            .GroupBy(a => a.TruckId)
-            .Select(g => new { TruckId = g.Key, AccidentCount = g.Count() })
-            .ToListAsync(ct))
-            .ToDictionary(x => x.TruckId, x => x.AccidentCount);
-
-        // Fetch driver names for top drivers
-        var topDriverIds = topDriverBehavior.Select(x => x.DriverId).ToList();
-        var driverNames = await tenantUow.Repository<Employee>().Query()
-            .Where(e => topDriverIds.Contains(e.Id))
-            .Select(e => new { e.Id, e.FirstName, e.LastName })
-            .ToDictionaryAsync(e => e.Id, e => $"{e.FirstName} {e.LastName}", ct);
-
-        // Fetch truck numbers for top trucks
-        var topTruckIds = topTruckDefects.Select(x => x.TruckId).ToList();
-        var truckNumbers = await tenantUow.Repository<Truck>().Query()
-            .Where(t => topTruckIds.Contains(t.Id))
-            .Select(t => new { t.Id, t.Number })
-            .ToDictionaryAsync(t => t.Id, t => t.Number, ct);
+        var driverAccidentLookup = facts.DriverAccidentCounts.ToDictionary(r => r.DriverId, r => r.Count);
+        var truckAccidentLookup = facts.TruckAccidentCounts.ToDictionary(r => r.TruckId, r => r.Count);
 
         var dto = new SafetyReportDto
         {
-            // DVIR Summary
+            // DVIR summary
             TotalDvirs = totalDvirs,
             PendingDvirReviews = pendingDvirReviews,
             DvirsWithDefects = dvirsWithDefects,
@@ -155,83 +50,93 @@ internal sealed class SafetyReportHandler(ITenantUnitOfWork tenantUow)
                 ? Math.Round((double)dvirsWithDefects / totalDvirs * 100, 1)
                 : 0,
 
-            // Accident Summary
+            // Accident summary
             TotalAccidents = totalAccidents,
             UnresolvedAccidents = unresolvedAccidents,
             EstimatedDamageCost = estimatedDamageCost,
             InjuriesReported = injuriesReported,
 
-            // Driver Behavior Summary
+            // Behavior summary
             TotalBehaviorEvents = totalBehaviorEvents,
             UnreviewedBehaviorEvents = unreviewedBehaviorEvents,
 
-            // Breakdowns - map to DTOs with display names
-            DvirStatusBreakdown = dvirStatusBreakdown
-                .Select(x => new SafetyStatusBreakdownDto
+            // Breakdowns
+            DvirStatusBreakdown = facts.DvirByStatusAndMonth
+                .GroupBy(r => r.Status)
+                .Select(g => new SafetyStatusBreakdownDto
                 {
-                    Status = x.Status.ToString(),
-                    StatusDisplay = x.Status.GetDescription(),
-                    Count = x.Count
+                    Status = g.Key.ToString(),
+                    StatusDisplay = g.Key.GetDescription(),
+                    Count = g.Sum(r => r.Count)
                 })
                 .OrderByDescending(x => x.Count)
                 .ToList(),
 
-            AccidentStatusBreakdown = accidentStatusBreakdown
-                .Select(x => new SafetyStatusBreakdownDto
+            AccidentStatusBreakdown = facts.AccidentByStatusSeverityAndMonth
+                .GroupBy(r => r.Status)
+                .Select(g => new SafetyStatusBreakdownDto
                 {
-                    Status = x.Status.ToString(),
-                    StatusDisplay = x.Status.GetDescription(),
-                    Count = x.Count
+                    Status = g.Key.ToString(),
+                    StatusDisplay = g.Key.GetDescription(),
+                    Count = g.Sum(r => r.Count)
                 })
                 .OrderByDescending(x => x.Count)
                 .ToList(),
 
-            AccidentSeverityBreakdown = accidentSeverityBreakdown
-                .Select(x => new SafetySeverityBreakdownDto
+            AccidentSeverityBreakdown = facts.AccidentByStatusSeverityAndMonth
+                .GroupBy(r => r.Severity)
+                .Select(g => new SafetySeverityBreakdownDto
                 {
-                    Severity = x.Severity.ToString(),
-                    SeverityDisplay = x.Severity.GetDescription(),
-                    Count = x.Count,
-                    TotalDamage = x.TotalDamage
+                    Severity = g.Key.ToString(),
+                    SeverityDisplay = g.Key.GetDescription(),
+                    Count = g.Sum(r => r.Count),
+                    TotalDamage = g.Sum(r => r.Damage)
                 })
                 .OrderByDescending(x => x.Count)
                 .ToList(),
 
-            BehaviorEventBreakdown = behaviorEventBreakdown
-                .Select(x => new SafetyEventTypeBreakdownDto
+            BehaviorEventBreakdown = facts.BehaviorByTypeAndMonth
+                .GroupBy(r => r.EventType)
+                .Select(g => new SafetyEventTypeBreakdownDto
                 {
-                    EventType = x.EventType.ToString(),
-                    EventTypeDisplay = x.EventType.GetDescription(),
-                    Count = x.Count
+                    EventType = g.Key.ToString(),
+                    EventTypeDisplay = g.Key.GetDescription(),
+                    Count = g.Sum(r => r.Count)
                 })
                 .OrderByDescending(x => x.Count)
                 .ToList(),
 
-            // Trends - fill in gaps for months with no data
-            DvirTrends = BuildTrends(dvirTrends, startDate, endDate),
-            AccidentTrends = BuildAccidentTrends(accidentTrends, startDate, endDate),
-            BehaviorTrends = BuildTrends(behaviorTrends, startDate, endDate),
+            // Trends (gap-filled)
+            DvirTrends = BuildCountTrends(
+                facts.DvirByStatusAndMonth.Select(r => (r.Year, r.Month, r.Count)),
+                startDate, endDate),
+            AccidentTrends = BuildValueTrends(
+                facts.AccidentByStatusSeverityAndMonth.Select(r => (r.Year, r.Month, r.Count, r.Damage)),
+                startDate, endDate),
+            BehaviorTrends = BuildCountTrends(
+                facts.BehaviorByTypeAndMonth.Select(r => (r.Year, r.Month, r.Count)),
+                startDate, endDate),
 
-            // Top offenders
-            TopDriversByEvents = topDriverBehavior
-                .Select(x => new SafetyDriverSummaryDto
+            // Top offenders — merged behavior + accident counts per driver, defects + accidents per truck
+            TopDriversByEvents = facts.TopBehaviorByDriver
+                .Select(r => new SafetyDriverSummaryDto
                 {
-                    DriverId = x.DriverId,
-                    DriverName = driverNames.GetValueOrDefault(x.DriverId, "Unknown"),
-                    BehaviorEventCount = x.BehaviorCount,
-                    AccidentCount = driverAccidentCounts.GetValueOrDefault(x.DriverId, 0)
+                    DriverId = r.DriverId,
+                    DriverName = facts.DriverNames.GetValueOrDefault(r.DriverId, "Unknown"),
+                    BehaviorEventCount = r.Count,
+                    AccidentCount = driverAccidentLookup.GetValueOrDefault(r.DriverId, 0)
                 })
                 .OrderByDescending(d => d.BehaviorEventCount + d.AccidentCount)
                 .Take(5)
                 .ToList(),
 
-            TopTrucksByDefects = topTruckDefects
-                .Select(x => new SafetyTruckSummaryDto
+            TopTrucksByDefects = facts.TopTruckDefects
+                .Select(r => new SafetyTruckSummaryDto
                 {
-                    TruckId = x.TruckId,
-                    TruckNumber = truckNumbers.GetValueOrDefault(x.TruckId, "Unknown"),
-                    DefectCount = x.DefectCount,
-                    AccidentCount = truckAccidentCounts.GetValueOrDefault(x.TruckId, 0)
+                    TruckId = r.TruckId,
+                    TruckNumber = facts.TruckNumbers.GetValueOrDefault(r.TruckId, "Unknown"),
+                    DefectCount = r.DefectCount,
+                    AccidentCount = truckAccidentLookup.GetValueOrDefault(r.TruckId, 0)
                 })
                 .OrderByDescending(t => t.DefectCount + t.AccidentCount)
                 .Take(5)
@@ -241,47 +146,36 @@ internal sealed class SafetyReportHandler(ITenantUnitOfWork tenantUow)
         return Result<SafetyReportDto>.Ok(dto);
     }
 
-    private static List<SafetyTrendDto> BuildTrends<T>(
-        List<T> data,
+    private static List<SafetyTrendDto> BuildCountTrends(
+        IEnumerable<(int Year, int Month, int Count)> rows,
         DateTime startDate,
-        DateTime endDate) where T : class
+        DateTime endDate)
     {
-        // Handle anonymous types from EF Core queries
-        var dataDict = new Dictionary<(int, int), int>();
-        foreach (var item in data)
-        {
-            var year = (int)item.GetType().GetProperty("Year")!.GetValue(item)!;
-            var month = (int)item.GetType().GetProperty("Month")!.GetValue(item)!;
-            var count = (int)item.GetType().GetProperty("Count")!.GetValue(item)!;
-            dataDict[(year, month)] = count;
-        }
+        var bucket = rows
+            .GroupBy(r => (r.Year, r.Month))
+            .ToDictionary(g => g.Key, g => g.Sum(r => r.Count));
 
-        return BuildTrendPeriods(startDate, endDate, (year, month) =>
-            new SafetyTrendDto
-            {
-                Period = new DateTime(year, month, 1).ToString("MMM yyyy"),
-                Count = dataDict.GetValueOrDefault((year, month), 0)
-            });
+        return BuildTrendPeriods(startDate, endDate, (year, month) => new SafetyTrendDto
+        {
+            Period = new DateTime(year, month, 1).ToString("MMM yyyy"),
+            Count = bucket.GetValueOrDefault((year, month), 0)
+        });
     }
 
-    private static List<SafetyTrendDto> BuildAccidentTrends<T>(
-        List<T> data,
+    private static List<SafetyTrendDto> BuildValueTrends(
+        IEnumerable<(int Year, int Month, int Count, decimal Value)> rows,
         DateTime startDate,
-        DateTime endDate) where T : class
+        DateTime endDate)
     {
-        var dataDict = new Dictionary<(int, int), (int Count, decimal Value)>();
-        foreach (var item in data)
-        {
-            var year = (int)item.GetType().GetProperty("Year")!.GetValue(item)!;
-            var month = (int)item.GetType().GetProperty("Month")!.GetValue(item)!;
-            var count = (int)item.GetType().GetProperty("Count")!.GetValue(item)!;
-            var value = (decimal)item.GetType().GetProperty("Value")!.GetValue(item)!;
-            dataDict[(year, month)] = (count, value);
-        }
+        var bucket = rows
+            .GroupBy(r => (r.Year, r.Month))
+            .ToDictionary(
+                g => g.Key,
+                g => (Count: g.Sum(r => r.Count), Value: g.Sum(r => r.Value)));
 
         return BuildTrendPeriods(startDate, endDate, (year, month) =>
         {
-            var (count, value) = dataDict.GetValueOrDefault((year, month), (0, 0));
+            var (count, value) = bucket.GetValueOrDefault((year, month), (0, 0m));
             return new SafetyTrendDto
             {
                 Period = new DateTime(year, month, 1).ToString("MMM yyyy"),
@@ -297,13 +191,13 @@ internal sealed class SafetyReportHandler(ITenantUnitOfWork tenantUow)
         Func<int, int, SafetyTrendDto> createTrend)
     {
         var trends = new List<SafetyTrendDto>();
-        var currentDate = new DateTime(startDate.Year, startDate.Month, 1, 0, 0, 0, DateTimeKind.Utc);
+        var current = new DateTime(startDate.Year, startDate.Month, 1, 0, 0, 0, DateTimeKind.Utc);
         var end = new DateTime(endDate.Year, endDate.Month, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        while (currentDate <= end)
+        while (current <= end)
         {
-            trends.Add(createTrend(currentDate.Year, currentDate.Month));
-            currentDate = currentDate.AddMonths(1);
+            trends.Add(createTrend(current.Year, current.Month));
+            current = current.AddMonths(1);
         }
 
         return trends;
