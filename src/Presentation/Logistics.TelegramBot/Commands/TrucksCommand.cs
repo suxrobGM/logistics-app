@@ -5,6 +5,7 @@ using MediatR;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Logistics.Application.Modules.Operations.Trucks.Queries;
 
 namespace Logistics.TelegramBot.Commands;
 

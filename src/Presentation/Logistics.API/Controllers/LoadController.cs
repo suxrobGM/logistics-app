@@ -6,11 +6,14 @@ using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CreateLoadCommand = Logistics.Application.Commands.CreateLoadCommand;
-using GetLoadsQuery = Logistics.Application.Queries.GetLoadsQuery;
-using GetUnassignedLoadsQuery = Logistics.Application.Queries.GetUnassignedLoadsQuery;
-using UpdateLoadCommand = Logistics.Application.Commands.UpdateLoadCommand;
+using CreateLoadCommand = Logistics.Application.Modules.Operations.Loads.Commands.CreateLoadCommand;
+using GetLoadsQuery = Logistics.Application.Modules.Operations.Loads.Queries.GetLoadsQuery;
+using GetUnassignedLoadsQuery = Logistics.Application.Modules.Operations.Loads.Queries.GetUnassignedLoadsQuery;
+using UpdateLoadCommand = Logistics.Application.Modules.Operations.Loads.Commands.UpdateLoadCommand;
 using Logistics.Application.Modules.Integrations.AiDispatch.Queries;
+using Logistics.Application.Modules.Operations.Containers.Commands;
+using Logistics.Application.Modules.Operations.Loads.Commands;
+using Logistics.Application.Modules.Operations.Loads.Queries;
 
 namespace Logistics.API.Controllers;
 

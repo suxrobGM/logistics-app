@@ -5,9 +5,11 @@ using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CreateTruckCommand = Logistics.Application.Commands.CreateTruckCommand;
-using GetTruckQuery = Logistics.Application.Queries.GetTruckQuery;
-using UpdateTruckCommand = Logistics.Application.Commands.UpdateTruckCommand;
+using CreateTruckCommand = Logistics.Application.Modules.Operations.Trucks.Commands.CreateTruckCommand;
+using GetTruckQuery = Logistics.Application.Modules.Operations.Trucks.Queries.GetTruckQuery;
+using UpdateTruckCommand = Logistics.Application.Modules.Operations.Trucks.Commands.UpdateTruckCommand;
+using Logistics.Application.Modules.Operations.Trucks.Commands;
+using Logistics.Application.Modules.Operations.Trucks.Queries;
 
 namespace Logistics.API.Controllers;
 

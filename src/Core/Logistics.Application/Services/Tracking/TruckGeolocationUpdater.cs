@@ -2,6 +2,7 @@ using Logistics.Application.Abstractions.Realtime;
 using Logistics.Application.Commands;
 using Logistics.Shared.Models;
 using MediatR;
+using Logistics.Application.Modules.Operations.Trucks.Commands;
 
 namespace Logistics.Application.Services.Tracking;
 

@@ -1,0 +1,32 @@
+using FluentValidation;
+using Logistics.Application.Constants;
+using Logistics.Application.Validators;
+
+namespace Logistics.Application.Modules.Operations.Loads.Commands;
+
+internal sealed class UpdateLoadValidator : AbstractValidator<UpdateLoadCommand>
+{
+    public UpdateLoadValidator()
+    {
+        RuleFor(i => i.Id).NotEmpty();
+        RuleFor(i => i.Distance).GreaterThan(0);
+        RuleFor(i => i.DeliveryCost)
+            .GreaterThan(LoadConstants.MinDeliveryCost)
+            .LessThan(LoadConstants.MaxDeliveryCost);
+
+        RuleFor(i => i.OriginAddress!)
+            .SetValidator(new AddressValidator())
+            .When(i => i.OriginAddress is not null);
+
+        RuleFor(i => i.DestinationAddress!)
+            .SetValidator(new AddressValidator())
+            .When(i => i.DestinationAddress is not null);
+
+        When(i => i.RequestedPickupDate.HasValue && i.RequestedDeliveryDate.HasValue, () =>
+        {
+            RuleFor(i => i.RequestedDeliveryDate!.Value)
+                .GreaterThanOrEqualTo(i => i.RequestedPickupDate!.Value)
+                .WithMessage("Requested delivery date must be on or after requested pickup date.");
+        });
+    }
+}
