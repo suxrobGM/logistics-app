@@ -1,6 +1,6 @@
 # Phase 7 — Internal module reorganization (folders + namespaces, no project split)
 
-> **Status: PENDING — deferred from 2026-05-14 session** (scope: too large for one PR; plan recommends 6 PRs, one per module). Part of group `03-modular-reorganization/`.
+> **Status: DONE — completed 2026-05-18** (executed in one session as 6 module commits + 1 cleanup-of-empty-namespaces commit folded into the Platform commit + 1 feature-map commit; namespaces went hierarchical to `Logistics.Application.Modules.{Module}.{Feature}.{Commands|Queries|Events}`. Full build clean; 497 tests pass, 0 fail). Part of group `03-modular-reorganization/`.
 
 ## Goal
 
@@ -181,11 +181,11 @@ Verify by eye — feature-map is load-bearing for navigation.
 
 ## Acceptance
 
-- [ ] All 740-ish files moved into `Modules/{Module}/{Feature}/{Commands|Queries|Events}/`.
-- [ ] Namespaces match the new locations.
-- [ ] `Commands/` and `Queries/` top-level folders (the old layout) are empty/deleted.
-- [ ] `feature-map.md` updated; every row points at the new path.
-- [ ] Module registrars exist and are wired in `Registrar.cs`.
-- [ ] All tests pass.
-- [ ] Architecture tests pass.
-- [ ] 6 commits (one per module).
+- [x] All 740-ish files moved into `Modules/{Module}/{Feature}/{Commands|Queries|Events}/`.
+- [x] Namespaces match the new locations.
+- [x] `Commands/` and `Queries/` top-level folders (the old layout) are empty/deleted.
+- [x] `feature-map.md` updated; every row points at the new path.
+- [x] Module registrars exist and are wired in `Registrar.cs`.
+- [x] All tests pass.
+- [x] Architecture tests pass.
+- [x] 6 commits (one per module).
