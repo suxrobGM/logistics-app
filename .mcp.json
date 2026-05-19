@@ -7,6 +7,12 @@
         "Authorization": "Bearer <your-api-key>"
       },
       "note": "Replace <your-api-key> with an API key from TMS Portal > Settings > API Keys"
+    },
+    "mobile-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@mobilenext/mobile-mcp@latest"],
+      "env": {}
     }
   }
 }
