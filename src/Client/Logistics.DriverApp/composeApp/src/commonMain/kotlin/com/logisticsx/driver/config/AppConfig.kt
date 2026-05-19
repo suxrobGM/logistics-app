@@ -16,5 +16,5 @@ expect object AppConfig {
 /**
  * Derived URLs that are the same formula on all platforms.
  */
-val AppConfig.signalRHubUrl: String get() = "${apiBaseUrl}hubs/tracking"
-val AppConfig.messagingHubUrl: String get() = "${apiBaseUrl}hubs/chat"
+val AppConfig.signalRHubUrl: String get() = "$apiBaseUrl/hubs/tracking"
+val AppConfig.messagingHubUrl: String get() = "$apiBaseUrl/hubs/chat"

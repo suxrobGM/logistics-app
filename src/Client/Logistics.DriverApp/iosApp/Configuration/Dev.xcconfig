@@ -1,6 +1,6 @@
 #include "Config.xcconfig"
 
 // Dev environment (iOS Simulator - localhost)
-API_BASE_URL = http:/$()/localhost:7000/
-IDENTITY_SERVER_URL = http:/$()/localhost:7001/
+API_BASE_URL = http:/$()/localhost:7000
+IDENTITY_SERVER_URL = http:/$()/localhost:7001
 IS_PRODUCTION = NO

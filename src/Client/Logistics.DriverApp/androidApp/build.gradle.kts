@@ -26,14 +26,14 @@ android {
         create("dev") {
             dimension = "environment"
             versionNameSuffix = "-dev"
-            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:7000/\"")
-            buildConfigField("String", "IDENTITY_SERVER_URL", "\"http://10.0.2.2:7001/\"")
+            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:7000\"")
+            buildConfigField("String", "IDENTITY_SERVER_URL", "\"http://10.0.2.2:7001\"")
             manifestPlaceholders["allowCleartext"] = "true"
         }
         create("prod") {
             dimension = "environment"
-            buildConfigField("String", "API_BASE_URL", "\"https://api.logisticsx.app/\"")
-            buildConfigField("String", "IDENTITY_SERVER_URL", "\"https://id.logisticsx.app/\"")
+            buildConfigField("String", "API_BASE_URL", "\"https://api.logisticsx.app\"")
+            buildConfigField("String", "IDENTITY_SERVER_URL", "\"https://id.logisticsx.app\"")
             manifestPlaceholders["allowCleartext"] = "false"
         }
     }
