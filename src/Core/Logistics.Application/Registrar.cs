@@ -29,11 +29,30 @@ public static class Registrar
     }
 
     /// <summary>
-    /// Kept for backward compatibility with callers in Program.cs files that invoke it
-    /// independently. Scrutor now covers IInvoiceTaxApplier via the IApplicationService scan.
+    /// Registers tax-related application services (currently <see cref="Services.Tax.IInvoiceTaxApplier"/>).
+    /// Used by hosts like DbMigrator that need to apply tax during seeding but don't pull in the
+    /// full <see cref="AddApplicationLayer"/> stack (which also registers services that depend on
+    /// SignalR, blob storage, and other infrastructure those hosts don't wire).
     /// </summary>
     public static IServiceCollection AddApplicationTaxServices(this IServiceCollection services)
-        => services;
+    {
+        services.Scan(scan => scan
+            .FromAssemblies(typeof(Registrar).Assembly)
+            .AddClasses(c => c.InNamespaces("Logistics.Application.Services.Tax"), publicOnly: false)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+        return services;
+    }
+
+    private static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    {
+        services.Scan(scan => scan
+            .FromAssemblies(typeof(Registrar).Assembly)
+            .AddClasses(c => c.AssignableTo<IApplicationService>(), publicOnly: false)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
+        return services;
+    }
 
     private static IServiceCollection AddApplicationCommon(this IServiceCollection services)
     {
@@ -49,13 +68,4 @@ public static class Registrar
         return services;
     }
 
-    private static IServiceCollection AddApplicationServices(this IServiceCollection services)
-    {
-        services.Scan(scan => scan
-            .FromAssemblies(typeof(Registrar).Assembly)
-            .AddClasses(c => c.AssignableTo<IApplicationService>(), publicOnly: false)
-            .AsImplementedInterfaces()
-            .WithScopedLifetime());
-        return services;
-    }
 }
