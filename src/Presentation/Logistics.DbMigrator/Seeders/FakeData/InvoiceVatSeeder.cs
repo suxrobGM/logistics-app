@@ -1,6 +1,6 @@
+using Logistics.Application.Modules.Financial.Tax.Services;
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Models;
-using Logistics.Application.Services.Tax;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
 

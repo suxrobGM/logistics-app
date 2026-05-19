@@ -1,6 +1,5 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Dispatch;
-using Logistics.Application.Services;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Integrations.AiDispatch.Queries;

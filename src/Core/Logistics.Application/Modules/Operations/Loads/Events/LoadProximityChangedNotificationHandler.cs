@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Services;
 using Logistics.Domain.Events;
 using Logistics.Domain.Primitives.Enums;
 using Microsoft.Extensions.Logging;

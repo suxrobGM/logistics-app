@@ -1,6 +1,6 @@
+using Logistics.Application.Modules.Financial.Payroll.Services;
 using Hangfire;
 
-using Logistics.Application.Services;
 
 namespace Logistics.API.Jobs;
 

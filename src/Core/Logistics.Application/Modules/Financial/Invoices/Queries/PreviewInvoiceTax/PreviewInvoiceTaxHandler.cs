@@ -1,11 +1,10 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Services.Tax;
+using Logistics.Application.Abstractions.Tax;
+using Logistics.Application.Modules.Financial.Tax.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.Tax;
-using Logistics.Application.Abstractions.Tax;
 
 namespace Logistics.Application.Modules.Financial.Invoices.Queries;
 

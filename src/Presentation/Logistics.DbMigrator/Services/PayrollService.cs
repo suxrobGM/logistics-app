@@ -85,7 +85,7 @@ public class PayrollService(
 
     private decimal CalculateSalary(Employee employee, DateTime startDate, DateTime endDate)
     {
-        // Fixed amount (weekly / monthly) – nothing changed
+        // Fixed amount (weekly / monthly) - nothing changed
         if (employee.SalaryType is not SalaryType.ShareOfGross)
         {
             return employee.Salary;

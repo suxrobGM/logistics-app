@@ -1,6 +1,6 @@
+using Logistics.Application.Modules.Financial.StripeConnect.Services;
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Payments;
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -362,7 +362,7 @@ internal sealed class ProcessStripEventHandler(
             }
         }
 
-        // SEPA / BACS settle 1–3 business days after the session completes; Stripe surfaces this
+        // SEPA / BACS settle 1Ã¢â‚¬â€œ3 business days after the session completes; Stripe surfaces this
         // as the PaymentIntent status. Mirror that on the local row.
         var status = session.PaymentStatus switch
         {
@@ -415,7 +415,7 @@ internal sealed class ProcessStripEventHandler(
             || !Guid.TryParse(tenantId, out var parsedTenantId))
         {
             // Connect accounts created outside the tenant flow (e.g., employee payout accounts)
-            // don't carry tenant_id metadata — silently ignore.
+            // don't carry tenant_id metadata Ã¢â‚¬â€ silently ignore.
             return Result.Ok();
         }
 

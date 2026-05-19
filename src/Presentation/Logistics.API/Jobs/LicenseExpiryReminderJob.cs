@@ -1,5 +1,5 @@
+using Logistics.Application.Modules.Compliance.Safety.Services;
 using Hangfire;
-using Logistics.Application.Services;
 
 namespace Logistics.API.Jobs;
 

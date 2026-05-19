@@ -1,5 +1,4 @@
 using Logistics.Application.Abstractions;
-using Logistics.Application.Services;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
 using Logistics.Application.Abstractions.BackgroundJobs;

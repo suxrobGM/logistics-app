@@ -1,6 +1,5 @@
 using Logistics.Application.Abstractions;
 using Logistics.Application.Abstractions.Dispatch;
-using Logistics.Application.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Shared.Models;
@@ -23,7 +22,7 @@ internal sealed class DispatchTripHandler(
             return Result.Fail($"Could not find the trip with ID '{req.TripId}'");
         }
 
-        // Hard eligibility gate at dispatch — every load on the trip must be carryable
+        // Hard eligibility gate at dispatch â€” every load on the trip must be carryable
         // by the assigned truck/driver. Planning steps (assignment, trip creation) don't
         // enforce this; the dispatcher is the final commit.
         if (trip.TruckId.HasValue)
@@ -41,7 +40,7 @@ internal sealed class DispatchTripHandler(
                             .Where(i => i.Severity == EligibilitySeverity.Error)
                             .Select(i => i.Message));
                     return Result.Fail(
-                        $"Cannot dispatch trip — load '{loadId}' not eligible: {reasons}");
+                        $"Cannot dispatch trip â€” load '{loadId}' not eligible: {reasons}");
                 }
             }
         }

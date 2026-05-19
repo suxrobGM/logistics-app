@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Financial.Payroll.Services;
 using Logistics.DbMigrator.Data;
 using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Services;

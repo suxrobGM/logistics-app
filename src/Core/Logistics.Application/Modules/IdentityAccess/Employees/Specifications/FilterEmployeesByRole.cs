@@ -1,0 +1,12 @@
+using Logistics.Domain.Entities;
+using Logistics.Domain.Specifications;
+
+namespace Logistics.Application.Modules.IdentityAccess.Employees.Specifications;
+
+public class FilterEmployeesByRole : BaseSpecification<Employee>
+{
+    public FilterEmployeesByRole(Guid roleId)
+    {
+        Criteria = e => e.RoleId == roleId;
+    }
+}

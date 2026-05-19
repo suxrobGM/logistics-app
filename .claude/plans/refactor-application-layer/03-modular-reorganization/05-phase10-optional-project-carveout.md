@@ -1,6 +1,8 @@
 # Phase 10 — (Optional) Promote stable modules to standalone csproj
 
 > **Status: PENDING (optional).** Part of group `03-modular-reorganization/`. Only worth doing once Phases 7/8 have stabilized module boundaries.
+>
+> **Baseline update (post-`Modules/` consolidation):** Each module folder under `src/Core/Logistics.Application/Modules/{Module}/` is now self-contained — feature subfolders own their own `Commands/`, `Queries/`, `Services/`, `Specifications/`, and (where applicable) `Constants/`. The old top-level `Services/`, `Specifications/`, and `Constants/` folders no longer exist at the Application root. Cross-module shared items live in `Modules/Common/Constants/`. **Implication for this phase:** when promoting a module to its own csproj, the carve-out is a single `git mv Modules/{Module} ...` — there are no horizontal `Services/`/`Specifications/`/`Constants/` strands at the Application root that need to be untangled first. `Modules/Common/` stays in the root Application project as the shared kernel.
 
 ## Goal
 

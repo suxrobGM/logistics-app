@@ -1,5 +1,5 @@
+using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Abstractions;
-using Logistics.Application.Services;
 using Logistics.Shared.Models;
 
 namespace Logistics.Application.Modules.Operations.Loads.Commands;

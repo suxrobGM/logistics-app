@@ -29,7 +29,7 @@ public static class Registrar
     }
 
     /// <summary>
-    /// Registers tax-related application services (currently <see cref="Services.Tax.IInvoiceTaxApplier"/>).
+    /// Registers tax-related application services (currently <see cref="Modules.Financial.Tax.Services.IInvoiceTaxApplier"/>).
     /// Used by hosts like DbMigrator that need to apply tax during seeding but don't pull in the
     /// full <see cref="AddApplicationLayer"/> stack (which also registers services that depend on
     /// SignalR, blob storage, and other infrastructure those hosts don't wire).
@@ -38,7 +38,7 @@ public static class Registrar
     {
         services.Scan(scan => scan
             .FromAssemblies(typeof(Registrar).Assembly)
-            .AddClasses(c => c.InNamespaces("Logistics.Application.Services.Tax"), publicOnly: false)
+            .AddClasses(c => c.InNamespaces("Logistics.Application.Modules.Financial.Tax.Services"), publicOnly: false)
             .AsImplementedInterfaces()
             .WithScopedLifetime());
         return services;

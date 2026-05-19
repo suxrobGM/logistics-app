@@ -1,6 +1,5 @@
 using System.Reflection;
 using Logistics.Application.Attributes;
-using Logistics.Application.Services;
 using Logistics.Domain.Exceptions;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
@@ -21,7 +20,7 @@ public sealed class FeatureCheckBehaviour<TRequest, TResponse>(
     where TRequest : IRequest<TResponse>
     where TResponse : IResult, new()
 {
-    // Evaluated once per closed generic instantiation — avoids per-call reflection.
+    // Evaluated once per closed generic instantiation - avoids per-call reflection.
     private static readonly RequiresFeatureAttribute? Attribute =
         typeof(TRequest).GetCustomAttribute<RequiresFeatureAttribute>();
 

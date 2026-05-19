@@ -1,8 +1,12 @@
+using Logistics.Application.Modules.Compliance.Privacy.Services;
+using Logistics.Application.Modules.Compliance.Safety.Services;
+using Logistics.Application.Modules.Financial.Payroll.Services;
+using Logistics.Application.Modules.Financial.Tax.Services;
+using Logistics.Application.Modules.IdentityAccess.Invitations.Services;
+using Logistics.Application.Modules.IdentityAccess.Users.Services;
+using Logistics.Application.Modules.Operations.Loads.Services;
 using Logistics.Application.Abstractions.Dispatch;
 using Logistics.Application.Abstractions.Realtime;
-using Logistics.Application.Services;
-using Logistics.Application.Services.Privacy;
-using Logistics.Application.Services.Tax;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 

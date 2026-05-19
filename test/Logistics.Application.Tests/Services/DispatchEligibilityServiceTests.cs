@@ -1,3 +1,4 @@
+using Logistics.Application.Modules.Integrations.AiDispatch.Services;
 using Logistics.Application.Abstractions.Dispatch;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -6,7 +7,6 @@ using Logistics.Domain.Primitives.ValueObjects;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 using Xunit;
-using Logistics.Application.Services;
 
 namespace Logistics.Application.Tests.Services;
 
@@ -144,7 +144,7 @@ public class DispatchEligibilityServiceTests
         var result = await sut.CheckAsync(TruckId, LoadId);
 
         Assert.False(result.IsEligible);
-        // Either NoActiveLicense (filtered out) or LicenseExpired (kept and flagged) — both are valid blocks
+        // Either NoActiveLicense (filtered out) or LicenseExpired (kept and flagged) Ã¢â‚¬â€ both are valid blocks
         Assert.Contains(result.Issues,
             i => i.Code is EligibilityIssueCode.LicenseExpired or EligibilityIssueCode.NoActiveLicense);
     }
@@ -183,7 +183,7 @@ public class DispatchEligibilityServiceTests
     public async Task CheckAsync_UsHazmatRoute_DriverHasHazmat_TruckNotPlacarded_Blocked()
     {
         var driver = CreateDriver(license: BuildLicense("US", LicenseClass.UsClassA, LicenseEndorsement.Hazmat));
-        // Truck not placarded — required for US Hazmat transport.
+        // Truck not placarded Ã¢â‚¬â€ required for US Hazmat transport.
         var truck = CreateTruck(driver, isHazmatPlacarded: false);
         var load = CreateLoad(isHazmat: true, hazmatClass: HazmatClass.Class3,
             originCountry: "US", destCountry: "US");
@@ -199,7 +199,7 @@ public class DispatchEligibilityServiceTests
     [Fact]
     public async Task CheckAsync_UsHazmatRoute_DoesNotRequireAdrCertOnTruck()
     {
-        // US-issued license with Hazmat + a non-ADR-certified but placarded truck →
+        // US-issued license with Hazmat + a non-ADR-certified but placarded truck Ã¢â€ â€™
         // should pass even though truck.AdrEquipment.IsAdrCertified == false.
         var driver = CreateDriver(license: BuildLicense("US", LicenseClass.UsClassA, LicenseEndorsement.Hazmat));
         var truck = CreateTruck(driver, isHazmatPlacarded: true);
@@ -274,11 +274,11 @@ public class DispatchEligibilityServiceTests
     [Fact]
     public async Task CheckAsync_UsRoute_DriverHasOnlyEuLicense_NoUsCdl_Blocked()
     {
-        // Driver only holds an EU license; load is US domestic. No US CDL on file →
+        // Driver only holds an EU license; load is US domestic. No US CDL on file Ã¢â€ â€™
         // primary-license picker still selects the EU license (it's the only active one),
         // and the US Hazmat-endorsement gate doesn't apply (license is non-US), so on a
         // non-hazmat US load this passes. But on a US Hazmat load, the EU branch fires
-        // and demands ADR — which the truck doesn't have → blocked.
+        // and demands ADR Ã¢â‚¬â€ which the truck doesn't have Ã¢â€ â€™ blocked.
         var driver = CreateDriver(license: BuildLicense("DE", LicenseClass.EuCE));
         var truck = CreateTruck(driver, isHazmatPlacarded: true);
         var load = CreateLoad(isHazmat: true, hazmatClass: HazmatClass.Class3,
@@ -296,7 +296,7 @@ public class DispatchEligibilityServiceTests
     public async Task CheckAsync_UsRoute_MultipleLicenses_PrefersUsIssuedForUsRoute()
     {
         // Driver holds both an EU CE license (no Hazmat) and a US CDL with Hazmat.
-        // For a US route + Hazmat load, the picker should prefer the US license — and so
+        // For a US route + Hazmat load, the picker should prefer the US license Ã¢â‚¬â€ and so
         // the US Hazmat-endorsement gate should pass.
         var euLicense = BuildLicense("DE", LicenseClass.EuCE, LicenseEndorsement.Adr);
         var usLicense = BuildLicense("US", LicenseClass.UsClassA, LicenseEndorsement.Hazmat);
