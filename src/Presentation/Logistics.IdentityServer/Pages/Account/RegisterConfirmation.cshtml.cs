@@ -1,5 +1,5 @@
 using System.Text;
-using Logistics.Application.Abstractions.Services.Email;
+using Logistics.Application.Abstractions.Email;
 using Logistics.Domain.Entities;
 
 using Microsoft.AspNetCore.Authorization;

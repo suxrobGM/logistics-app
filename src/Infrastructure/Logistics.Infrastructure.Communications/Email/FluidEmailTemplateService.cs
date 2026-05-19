@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Reflection;
 using Fluid;
-using Logistics.Application.Abstractions.Services.Email;
+using Logistics.Application.Abstractions.Email;
 using Microsoft.Extensions.Logging;
 
 namespace Logistics.Infrastructure.Communications.Email;
@@ -45,7 +45,7 @@ internal sealed class FluidEmailTemplateService : IEmailTemplateService
 
     private void RegisterEmailModels()
     {
-        const string emailModelNamespace = "Logistics.Application.Abstractions.Models.Email";
+        const string emailModelNamespace = "Logistics.Application.Abstractions.Email.Models";
         var emailModelAssembly = AppDomain.CurrentDomain.GetAssemblies()
             .FirstOrDefault(a => a.GetName().Name == "Logistics.Application.Abstractions")
             ?? Assembly.Load("Logistics.Application.Abstractions");

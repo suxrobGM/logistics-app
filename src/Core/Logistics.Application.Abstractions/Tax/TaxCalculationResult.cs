@@ -1,8 +1,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
-using Logistics.Application.Abstractions.Models.Tax;
 
-namespace Logistics.Application.Abstractions.Models.Tax;
+namespace Logistics.Application.Abstractions.Tax;
 
 /// <summary>
 /// Output of a tax calculation. Per-line entries map back to <see cref="InvoiceLineItem.Id"/>;

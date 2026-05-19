@@ -1,4 +1,4 @@
-namespace Logistics.Application.Abstractions.Models.Email;
+namespace Logistics.Application.Abstractions.Email.Models;
 
 /// <summary>
 /// Model for invitation email templates.

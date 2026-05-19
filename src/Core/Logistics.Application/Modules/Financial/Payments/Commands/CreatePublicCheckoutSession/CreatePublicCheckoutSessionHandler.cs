@@ -7,7 +7,7 @@ using Logistics.Domain.Primitives.ValueObjects;
 using Logistics.Shared.Models;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Payments.Stripe;
-using Logistics.Application.Abstractions.Models.Payments;
+using Logistics.Application.Abstractions.Payments;
 
 namespace Logistics.Application.Modules.Financial.Payments.Commands;
 

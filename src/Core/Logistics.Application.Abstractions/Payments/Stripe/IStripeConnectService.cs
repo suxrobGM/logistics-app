@@ -2,7 +2,7 @@ using Logistics.Domain.Entities;
 using Stripe;
 using Stripe.Checkout;
 using Logistics.Application.Abstractions.Payments.Stripe;
-using Logistics.Application.Abstractions.Models.Payments;
+using Logistics.Application.Abstractions.Payments;
 using Address = Logistics.Domain.Primitives.ValueObjects.Address;
 
 namespace Logistics.Application.Abstractions.Payments.Stripe;

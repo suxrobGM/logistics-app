@@ -5,7 +5,6 @@ using NSubstitute;
 using Stripe;
 using Stripe.Tax;
 using Logistics.Application.Abstractions.Tax;
-using Logistics.Application.Abstractions.Models.Tax;
 using static Logistics.Infrastructure.Tax.Tests.TaxTestBuilders;
 
 namespace Logistics.Infrastructure.Tax.Tests.Stripe;

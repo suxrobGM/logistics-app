@@ -3,7 +3,7 @@ using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Tax;
-using Logistics.Application.Abstractions.Models.Tax;
+using Logistics.Application.Abstractions.Tax;
 
 namespace Logistics.Application.Services.Tax;
 

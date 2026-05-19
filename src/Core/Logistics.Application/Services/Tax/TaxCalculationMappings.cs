@@ -1,7 +1,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Mappings;
 using Logistics.Shared.Models;
-using Logistics.Application.Abstractions.Models.Tax;
+using Logistics.Application.Abstractions.Tax;
 
 namespace Logistics.Application.Services.Tax;
 

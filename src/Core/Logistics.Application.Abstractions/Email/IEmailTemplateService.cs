@@ -1,4 +1,4 @@
-namespace Logistics.Application.Abstractions.Services.Email;
+namespace Logistics.Application.Abstractions.Email;
 
 /// <summary>
 /// Service for rendering email templates with dynamic data.

@@ -1,8 +1,7 @@
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Domain.Primitives.ValueObjects;
-using Logistics.Application.Abstractions.Models.Tax;
 
-namespace Logistics.Application.Abstractions.Models.Tax;
+namespace Logistics.Application.Abstractions.Tax;
 
 /// <summary>
 /// Inputs to a tax calculation. The calculator decides reverse-charge / inclusive / exclusive
