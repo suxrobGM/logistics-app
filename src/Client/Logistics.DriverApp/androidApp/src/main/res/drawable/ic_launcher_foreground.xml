@@ -6,45 +6,91 @@
     android:viewportWidth="512"
     android:viewportHeight="512">
 
-    <!-- X lines -->
+    <!-- Hex frame (gradient stroke) -->
     <path
-        android:pathData="M196,196L316,316"
-        android:strokeWidth="10"
-        android:strokeLineCap="round"
-        android:strokeColor="#3B82F6" />
+        android:pathData="M256,106 L386,181 L386,331 L256,406 L126,331 L126,181 Z"
+        android:strokeWidth="7"
+        android:strokeLineJoin="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:startX="126" android:startY="106"
+                android:endX="386" android:endY="406"
+                android:type="linear">
+                <item android:offset="0" android:color="#3B82F6" />
+                <item android:offset="1" android:color="#06B6D4" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Curved side arcs (subtle) -->
     <path
-        android:pathData="M316,196L196,316"
+        android:pathData="M190,190 Q170,256 190,322"
+        android:strokeWidth="2.4"
+        android:strokeColor="#3B82F6"
+        android:strokeAlpha="0.35" />
+    <path
+        android:pathData="M322,190 Q342,256 322,322"
+        android:strokeWidth="2.4"
+        android:strokeColor="#06B6D4"
+        android:strokeAlpha="0.35" />
+
+    <!-- X lines (gradient) -->
+    <path
+        android:pathData="M190,190 L322,322"
         android:strokeWidth="10"
-        android:strokeLineCap="round"
-        android:strokeColor="#06B6D4" />
+        android:strokeLineCap="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:startX="190" android:startY="190"
+                android:endX="322" android:endY="322"
+                android:type="linear">
+                <item android:offset="0" android:color="#3B82F6" />
+                <item android:offset="1" android:color="#06B6D4" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M322,190 L190,322"
+        android:strokeWidth="10"
+        android:strokeLineCap="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:startX="322" android:startY="190"
+                android:endX="190" android:endY="322"
+                android:type="linear">
+                <item android:offset="0" android:color="#0EA5E9" />
+                <item android:offset="1" android:color="#0EA5E9" />
+            </gradient>
+        </aapt:attr>
+    </path>
 
     <!-- Center hub -->
-    <path
-        android:fillColor="#0EA5E9"
-        android:pathData="M256,256m-14,0a14,14 0,1 1,28 0a14,14 0,1 1,-28 0" />
+    <path android:pathData="M256,256 m-16,0 a16,16 0,1 1,32 0 a16,16 0,1 1,-32 0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="240" android:startY="240"
+                android:endX="272" android:endY="272"
+                android:type="linear">
+                <item android:offset="0" android:color="#3B82F6" />
+                <item android:offset="1" android:color="#06B6D4" />
+            </gradient>
+        </aapt:attr>
+    </path>
     <path
         android:fillColor="#0F172A"
-        android:pathData="M256,256m-6,0a6,6 0,1 1,12 0a6,6 0,1 1,-12 0" />
+        android:pathData="M256,256 m-7,0 a7,7 0,1 1,14 0 a7,7 0,1 1,-14 0" />
 
     <!-- Corner nodes -->
     <path
         android:fillColor="#3B82F6"
-        android:pathData="M196,196m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
+        android:pathData="M190,190 m-11,0 a11,11 0,1 1,22 0 a11,11 0,1 1,-22 0" />
     <path
         android:fillColor="#0EA5E9"
-        android:pathData="M316,196m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
+        android:pathData="M322,190 m-11,0 a11,11 0,1 1,22 0 a11,11 0,1 1,-22 0" />
     <path
         android:fillColor="#06B6D4"
-        android:pathData="M316,316m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
+        android:pathData="M322,322 m-11,0 a11,11 0,1 1,22 0 a11,11 0,1 1,-22 0" />
     <path
         android:fillColor="#0EA5E9"
-        android:pathData="M196,316m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
-
-    <!-- Hex frame -->
-    <path
-        android:pathData="M256,146L351,201L351,311L256,366L161,311L161,201Z"
-        android:strokeWidth="4"
-        android:strokeLineJoin="round"
-        android:strokeColor="#3B82F6"
-        android:strokeAlpha="0.25" />
+        android:pathData="M190,322 m-11,0 a11,11 0,1 1,22 0 a11,11 0,1 1,-22 0" />
 </vector>

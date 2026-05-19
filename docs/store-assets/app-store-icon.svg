@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6"/>
+      <stop offset="100%" style="stop-color:#06B6D4"/>
+    </linearGradient>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0F172A"/>
+      <stop offset="100%" style="stop-color:#0B1226"/>
+    </linearGradient>
+  </defs>
+
+  <!-- App Store requires a fully opaque square (no alpha, no rounded corners — iOS applies its own mask) -->
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <g transform="translate(512, 512)">
+    <path d="M0,-300 L260,-150 L260,150 L0,300 L-260,150 L-260,-150 Z"
+          fill="none" stroke="url(#g)" stroke-width="14" stroke-linejoin="round"/>
+
+    <line x1="-132" y1="-132" x2="132" y2="132" stroke="url(#g)" stroke-width="20" stroke-linecap="round"/>
+    <line x1="132" y1="-132" x2="-132" y2="132" stroke="url(#g)" stroke-width="20" stroke-linecap="round"/>
+
+    <circle cx="0" cy="0" r="32" fill="url(#g)"/>
+    <circle cx="0" cy="0" r="14" fill="#0F172A"/>
+
+    <circle cx="-132" cy="-132" r="22" fill="#3B82F6"/>
+    <circle cx="132" cy="-132" r="22" fill="#0EA5E9"/>
+    <circle cx="132" cy="132" r="22" fill="#06B6D4"/>
+    <circle cx="-132" cy="132" r="22" fill="#0EA5E9"/>
+
+    <path d="M-132,-132 Q-172,0 -132,132" fill="none" stroke="#3B82F6" stroke-width="4.8" opacity="0.35"/>
+    <path d="M132,-132 Q172,0 132,132" fill="none" stroke="#06B6D4" stroke-width="4.8" opacity="0.35"/>
+  </g>
+</svg>
