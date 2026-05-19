@@ -14,6 +14,9 @@ import kotlinx.serialization.Serializable
 data object LoginRoute : NavKey
 
 @Serializable
+data object LocationDisclosureRoute : NavKey
+
+@Serializable
 data object DashboardRoute : NavKey
 
 @Serializable

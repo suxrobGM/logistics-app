@@ -25,6 +25,8 @@ import platform.CoreLocation.kCLAuthorizationStatusNotDetermined
 import platform.CoreLocation.kCLLocationAccuracyBest
 import platform.Foundation.NSError
 import platform.darwin.NSObject
+import com.logisticsx.driver.service.LocationUpdateBus
+import com.logisticsx.driver.service.LocationFix
 
 /**
  * iOS implementation of LocationTracker using platform.CoreLocation directly.
@@ -64,12 +66,15 @@ actual object LocationTracker : KoinComponent {
             kCLAuthorizationStatusAuthorizedAlways,
             kCLAuthorizationStatusAuthorizedWhenInUse -> {
                 manager.startUpdatingLocation()
-                manager.startMonitoringSignificantLocationChanges()
                 Logger.d("iOS Location: Tracking started")
             }
             kCLAuthorizationStatusNotDetermined -> {
-                manager.requestAlwaysAuthorization()
-                Logger.d("iOS Location: Requesting authorization")
+                // Apple prefers "When In Use" first; users who grant it can
+                // be prompted to upgrade to Always later. Background updates
+                // still work with When-In-Use as long as they started while
+                // foregrounded (blue status pill).
+                manager.requestWhenInUseAuthorization()
+                Logger.d("iOS Location: Requesting When-In-Use authorization")
             }
             else -> {
                 Logger.w("iOS Location: Permission denied")
@@ -84,7 +89,6 @@ actual object LocationTracker : KoinComponent {
 
     actual fun stop() {
         locationManager?.stopUpdatingLocation()
-        locationManager?.stopMonitoringSignificantLocationChanges()
         locationManager?.delegate = null
         locationManager = null
         delegate = null
@@ -117,6 +121,10 @@ private class LocationTrackerDelegate(
             latitude = this.latitude
             longitude = this.longitude
         }
+
+        // Publish to the bus so LoadProximityWatcher (common) can react
+        // without depending on platform location types.
+        LocationUpdateBus.tryEmit(LocationFix(latitude, longitude))
 
         // Reverse geocode and send via SignalR
         geocoder.reverseGeocodeLocation(location) { placemarks, error ->
@@ -167,7 +175,6 @@ private class LocationTrackerDelegate(
             kCLAuthorizationStatusAuthorizedAlways,
             kCLAuthorizationStatusAuthorizedWhenInUse -> {
                 manager.startUpdatingLocation()
-                manager.startMonitoringSignificantLocationChanges()
                 Logger.d("iOS Location: Authorization granted, started updates")
             }
             else -> {

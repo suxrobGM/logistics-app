@@ -1,7 +1,6 @@
 package com.logisticsx.driver.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -35,9 +34,9 @@ import com.logisticsx.driver.api.models.LoadDto
 import com.logisticsx.driver.api.models.TripDto
 import com.logisticsx.driver.model.driversList
 import com.logisticsx.driver.model.fullName
-import com.logisticsx.driver.permission.RequestBackgroundLocationIfNeeded
 import com.logisticsx.driver.ui.components.AppTopBar
 import com.logisticsx.driver.ui.components.CardContainer
+import com.logisticsx.driver.ui.components.DutyStatusCard
 import com.logisticsx.driver.ui.components.ErrorView
 import com.logisticsx.driver.ui.components.LoadCard
 import com.logisticsx.driver.ui.components.LoadingIndicator
@@ -58,9 +57,7 @@ fun DashboardScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isRefreshing = uiState is UiState.Loading
-
-    // Request background location permission (only if foreground location already granted)
-    RequestBackgroundLocationIfNeeded()
+    val isOnDuty by viewModel.isOnDuty.collectAsState()
 
     Scaffold(
         topBar = {
@@ -100,6 +97,16 @@ fun DashboardScreen(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
+                        // Duty Status Card
+                        item {
+                            DutyStatusCard(
+                                isOnDuty = isOnDuty,
+                                onToggle = { goingOnDuty ->
+                                    if (goingOnDuty) viewModel.goOnDuty() else viewModel.goOffDuty()
+                                }
+                            )
+                        }
+
                         // Truck Info Card
                         item {
                             CardContainer {
@@ -146,17 +153,14 @@ fun DashboardScreen(
                         if (truck.loads == null || truck.loads.isEmpty()) {
                             item {
                                 CardContainer {
-                                    Box(
+                                    Text(
+                                        text = "No active loads",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(32.dp)
-                                    ) {
-                                        Text(
-                                            text = "No active loads",
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
+                                    )
                                 }
                             }
                         } else {
@@ -181,17 +185,14 @@ fun DashboardScreen(
                         if (trips.isEmpty()) {
                             item {
                                 CardContainer {
-                                    Box(
+                                    Text(
+                                        text = "No active trips",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(32.dp)
-                                    ) {
-                                        Text(
-                                            text = "No active trips",
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
+                                    )
                                 }
                             }
                         } else {

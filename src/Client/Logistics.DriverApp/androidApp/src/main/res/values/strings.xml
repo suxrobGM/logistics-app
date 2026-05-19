@@ -7,7 +7,8 @@
     <string name="notification_channel_name">LogisticsX Notifications</string>
     <string name="notification_channel_description">Notifications for load updates</string>
     <string name="location_tracking_channel_name">Location Tracking</string>
-    <string name="location_tracking_channel_description">Tracking your location in the background</string>
-    <string name="location_tracking_notification_title">Location Tracking Active</string>
-    <string name="location_tracking_notification_text">Tracking your location for load management</string>
+    <string name="location_tracking_channel_description">Active while you are On Duty</string>
+    <string name="location_tracking_notification_title">On Duty — sharing location</string>
+    <string name="location_tracking_notification_text">Sharing truck location with dispatch</string>
+    <string name="location_tracking_notification_text_with_truck">Truck #%1$s · sharing location with dispatch</string>
 </resources>

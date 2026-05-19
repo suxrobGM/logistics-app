@@ -13,6 +13,7 @@ import com.logisticsx.driver.ui.screens.DashboardScreen
 import com.logisticsx.driver.ui.screens.DvirFormScreen
 import com.logisticsx.driver.ui.screens.EmployeeSelectScreen
 import com.logisticsx.driver.ui.screens.LoadDetailScreen
+import com.logisticsx.driver.ui.screens.LocationDisclosureScreen
 import com.logisticsx.driver.ui.screens.LoginScreen
 import com.logisticsx.driver.ui.screens.MessagesScreen
 import com.logisticsx.driver.ui.screens.MyLicensesScreen
@@ -40,8 +41,24 @@ fun createEntryProvider(
     // Login Screen
     entry<LoginRoute> {
         LoginScreen(
-            onLoginSuccess = {
-                navigator.navigateAndClear(DashboardRoute, LoginRoute)
+            onLoginSuccess = { hasAcceptedDisclosure ->
+                if (hasAcceptedDisclosure) {
+                    navigator.navigateAndClear(DashboardRoute, LoginRoute)
+                } else {
+                    navigator.navigateAndClear(LocationDisclosureRoute, LoginRoute)
+                }
+            }
+        )
+    }
+
+    // Location Disclosure Screen (shown once before first dashboard load)
+    entry<LocationDisclosureRoute> {
+        LocationDisclosureScreen(
+            onAccepted = {
+                navigator.navigateAndClear(DashboardRoute, LocationDisclosureRoute)
+            },
+            onDeclined = {
+                navigator.clearAndNavigate(LoginRoute)
             }
         )
     }

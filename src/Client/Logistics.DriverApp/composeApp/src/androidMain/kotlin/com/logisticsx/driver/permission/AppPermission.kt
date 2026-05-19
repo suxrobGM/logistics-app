@@ -39,14 +39,6 @@ sealed class AppPermission(
         displayName = "Approximate Location"
     )
 
-    /** Background location for tracking while app is in background */
-    @RequiresApi(Build.VERSION_CODES.Q)
-    data object BackgroundLocation : AppPermission(
-        permission = Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-        minSdkVersion = Build.VERSION_CODES.Q,
-        displayName = "Background Location"
-    )
-
     /** Camera for document scanning */
     data object Camera : AppPermission(
         permission = Manifest.permission.CAMERA,
@@ -56,21 +48,21 @@ sealed class AppPermission(
 
     companion object {
         /**
-         * Permissions to request at app startup.
-         * Note: BackgroundLocation must be requested separately AFTER foreground location is granted.
-         * Android silently denies all permissions if background location is requested with others.
+         * Permissions requested at app startup. Location is NOT included — it
+         * is requested on-demand from the location disclosure screen so the
+         * driver sees the rationale before the OS prompt (Play policy).
          */
         val startupPermissions: List<AppPermission> by lazy {
-            val permissions = mutableListOf(
-                FineLocation,
-                CoarseLocation,
-                Camera
-            )
-
+            val permissions = mutableListOf<AppPermission>(Camera)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 permissions.add(PostNotifications)
             }
             permissions
+        }
+
+        /** Foreground location permissions, requested from the disclosure screen. */
+        val locationPermissions: List<AppPermission> by lazy {
+            listOf(FineLocation, CoarseLocation)
         }
 
         /** All defined permissions */
@@ -81,9 +73,6 @@ sealed class AppPermission(
                 Camera
             )
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                permissions.add(BackgroundLocation)
-            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 permissions.add(PostNotifications)
             }

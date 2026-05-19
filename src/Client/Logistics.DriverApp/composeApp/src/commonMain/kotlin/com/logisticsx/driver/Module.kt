@@ -17,6 +17,8 @@ import com.logisticsx.driver.api.TripApi
 import com.logisticsx.driver.api.TruckApi
 import com.logisticsx.driver.api.UserApi
 import com.logisticsx.driver.api.models.InspectionType
+import com.logisticsx.driver.service.DutyStatusManager
+import com.logisticsx.driver.service.LoadProximityWatcher
 import com.logisticsx.driver.service.PreferencesManager
 import com.logisticsx.driver.service.messaging.ConversationStateManager
 import com.logisticsx.driver.viewmodel.AccountViewModel
@@ -69,6 +71,10 @@ fun commonModule() = module {
 
     // ConversationStateManager service for shared messaging state
     singleOf(::ConversationStateManager)
+
+    // Duty status + proximity watcher (drives location tracking lifecycle)
+    singleOf(::LoadProximityWatcher)
+    singleOf(::DutyStatusManager)
 
     viewModelOf(::DashboardViewModel)
     viewModelOf(::AccountViewModel)

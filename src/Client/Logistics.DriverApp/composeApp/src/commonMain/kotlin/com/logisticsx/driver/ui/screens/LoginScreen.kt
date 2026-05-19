@@ -41,7 +41,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.logisticsx.driver.service.LocationTracker
+import com.logisticsx.driver.service.PreferencesManager
 import com.logisticsx.driver.ui.components.LoadingIndicator
 import com.logisticsx.driver.viewmodel.LoginUiState
 import com.logisticsx.driver.viewmodel.LoginViewModel
@@ -52,8 +52,9 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit = {}) {
+fun LoginScreen(onLoginSuccess: (hasAcceptedDisclosure: Boolean) -> Unit = {}) {
     val viewModel: LoginViewModel = koinInject()
+    val preferencesManager: PreferencesManager = koinInject()
     val uiState by viewModel.uiState.collectAsState()
     val username by viewModel.username.collectAsState()
     val password by viewModel.password.collectAsState()
@@ -65,9 +66,8 @@ fun LoginScreen(onLoginSuccess: () -> Unit = {}) {
     LaunchedEffect(uiState) {
         when (uiState) {
             is LoginUiState.Success -> {
-                // Start location tracking after successful login
-                LocationTracker.start()
-                onLoginSuccess()
+                val hasAccepted = preferencesManager.getHasAcceptedLocationDisclosure()
+                onLoginSuccess(hasAccepted)
                 viewModel.resetState()
             }
 

@@ -9,6 +9,7 @@ import com.logisticsx.driver.api.models.TripDto
 import com.logisticsx.driver.api.models.TripStatus
 import com.logisticsx.driver.api.models.TruckDto
 import com.logisticsx.driver.model.fullName
+import com.logisticsx.driver.service.DutyStatusManager
 import com.logisticsx.driver.service.PreferencesManager
 import com.logisticsx.driver.service.auth.AuthService
 import com.logisticsx.driver.viewmodel.base.BaseViewModel
@@ -27,11 +28,14 @@ class DashboardViewModel(
     private val tripApi: TripApi,
     private val driverApi: DriverApi,
     private val preferencesManager: PreferencesManager,
-    private val authService: AuthService
+    private val authService: AuthService,
+    private val dutyStatusManager: DutyStatusManager
 ) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<DashboardData>>(UiState.Loading)
     val uiState: StateFlow<UiState<DashboardData>> = _uiState.asStateFlow()
+
+    val isOnDuty: StateFlow<Boolean> = dutyStatusManager.isOnDuty
 
     init {
         loadDashboard()
@@ -79,8 +83,19 @@ class DashboardViewModel(
 
     fun logout() {
         launchSafely {
+            // Stop tracking before clearing tokens so the user is reported
+            // off-duty cleanly (no stale notification, no lingering service).
+            dutyStatusManager.goOffDuty()
             authService.logout()
         }
+    }
+
+    fun goOnDuty() {
+        launchSafely { dutyStatusManager.goOnDuty() }
+    }
+
+    fun goOffDuty() {
+        launchSafely { dutyStatusManager.goOffDuty() }
     }
 
     fun refresh() {

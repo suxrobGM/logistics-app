@@ -2,6 +2,7 @@ package com.logisticsx.driver.service
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -30,6 +31,8 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
         val DRIVER_NAME = stringPreferencesKey("driver_name")
         val DISTANCE_UNIT = stringPreferencesKey("distance_unit")
         val LANGUAGE = stringPreferencesKey("language")
+        val IS_ON_DUTY = booleanPreferencesKey("is_on_duty")
+        val HAS_ACCEPTED_LOCATION_DISCLOSURE = booleanPreferencesKey("has_accepted_location_disclosure")
     }
 
     // Access Token
@@ -131,6 +134,24 @@ class PreferencesManager(private val dataStore: DataStore<Preferences>) {
     suspend fun getLanguage(): Language {
         val code = dataStore.data.first()[LANGUAGE]
         return Language.fromCode(code ?: Language.ENGLISH.code)
+    }
+
+    // Duty Status
+    suspend fun saveIsOnDuty(isOnDuty: Boolean) {
+        dataStore.edit { prefs -> prefs[IS_ON_DUTY] = isOnDuty }
+    }
+
+    suspend fun getIsOnDuty(): Boolean {
+        return dataStore.data.first()[IS_ON_DUTY] ?: false
+    }
+
+    // Location Disclosure
+    suspend fun saveHasAcceptedLocationDisclosure(accepted: Boolean) {
+        dataStore.edit { prefs -> prefs[HAS_ACCEPTED_LOCATION_DISCLOSURE] = accepted }
+    }
+
+    suspend fun getHasAcceptedLocationDisclosure(): Boolean {
+        return dataStore.data.first()[HAS_ACCEPTED_LOCATION_DISCLOSURE] ?: false
     }
 
     // User Settings (combined)
