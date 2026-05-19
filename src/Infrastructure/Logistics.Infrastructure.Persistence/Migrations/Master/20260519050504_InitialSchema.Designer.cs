@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logistics.Infrastructure.Persistence.Migrations.Master
 {
     [DbContext(typeof(MasterDbContext))]
-    [Migration("20260429102853_Version_0003")]
-    partial class Version_0003
+    [Migration("20260519050504_InitialSchema")]
+    partial class InitialSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -183,6 +183,52 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.ToTable("blog_posts", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.ConsentRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ConsentType")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("consent_type");
+
+                    b.Property<bool>("Granted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("granted");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("ip_address");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("timestamp");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)")
+                        .HasColumnName("user_agent");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_consent_records");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_consent_records_user_id");
+
+                    b.HasIndex("ConsentType", "Timestamp")
+                        .HasDatabaseName("ix_consent_records_consent_type_timestamp");
+
+                    b.ToTable("consent_records", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.ContactSubmission", b =>
                 {
                     b.Property<Guid>("Id")
@@ -257,6 +303,119 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasDatabaseName("ix_contact_submissions_status");
 
                     b.ToTable("contact_submissions", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.DataDeletionRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("cancelled_at");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("processed_at");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
+                        .HasColumnName("reason");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("requested_at");
+
+                    b.Property<DateTime>("ScheduledFor")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("scheduled_for");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_data_deletion_requests");
+
+                    b.HasIndex("ScheduledFor")
+                        .HasDatabaseName("ix_data_deletion_requests_scheduled_for");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_data_deletion_requests_status");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_data_deletion_requests_user_id");
+
+                    b.ToTable("data_deletion_requests", (string)null);
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.DataExportRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("BlobContainer")
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)")
+                        .HasColumnName("blob_container");
+
+                    b.Property<string>("BlobName")
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)")
+                        .HasColumnName("blob_name");
+
+                    b.Property<Guid?>("BlobTenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("blob_tenant_id");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)")
+                        .HasColumnName("error_message");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("requested_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("status");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_data_export_requests");
+
+                    b.HasIndex("ExpiresAt")
+                        .HasDatabaseName("ix_data_export_requests_expires_at");
+
+                    b.HasIndex("RequestedAt")
+                        .HasDatabaseName("ix_data_export_requests_requested_at");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_data_export_requests_status");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_data_export_requests_user_id");
+
+                    b.ToTable("data_export_requests", (string)null);
                 });
 
             modelBuilder.Entity("Logistics.Domain.Entities.DefaultFeatureConfig", b =>
@@ -651,6 +810,17 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnType("text")
                         .HasColumnName("stripe_invoice_id");
 
+                    b.Property<string>("TaxBehavior")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("exclusive")
+                        .HasColumnName("tax_behavior");
+
+                    b.Property<string>("TaxBreakdownJson")
+                        .HasColumnType("text")
+                        .HasColumnName("tax_breakdown_json");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("text")
@@ -664,6 +834,38 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("LastModifiedBy");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Subtotal", "Logistics.Domain.Entities.Invoice.Subtotal#Money", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("subtotal_amount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("subtotal_currency");
+                        });
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "TaxTotal", "Logistics.Domain.Entities.Invoice.TaxTotal#Money", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<decimal>("Amount")
+                                .HasPrecision(18, 2)
+                                .HasColumnType("numeric(18,2)")
+                                .HasColumnName("tax_total_amount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("tax_total_currency");
+                        });
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "Total", "Logistics.Domain.Entities.Invoice.Total#Money", b1 =>
                         {
@@ -1130,6 +1332,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnType("text")
                         .HasColumnName("company_name");
 
+                    b.Property<string>("CompanyRegistrationNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("company_registration_number");
+
                     b.Property<string>("ConnectStatus")
                         .IsRequired()
                         .HasColumnType("text")
@@ -1144,6 +1351,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasColumnType("text")
                         .HasColumnName("dot_number");
 
+                    b.Property<string>("EoriNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("eori_number");
+
                     b.Property<bool>("IsSubscriptionRequired")
                         .HasColumnType("boolean")
                         .HasColumnName("is_subscription_required");
@@ -1151,6 +1363,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<string>("LogoPath")
                         .HasColumnType("text")
                         .HasColumnName("logo_path");
+
+                    b.Property<string>("McNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("mc_number");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1176,6 +1393,16 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<string>("StripeCustomerId")
                         .HasColumnType("text")
                         .HasColumnName("stripe_customer_id");
+
+                    b.Property<string>("TaxResidencyCountry")
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)")
+                        .HasColumnName("tax_residency_country");
+
+                    b.Property<string>("VatNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("vat_number");
 
                     b.ComplexProperty(typeof(Dictionary<string, object>), "CompanyAddress", "Logistics.Domain.Entities.Tenant.CompanyAddress#Address", b1 =>
                         {
@@ -1230,6 +1457,11 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                                 .HasColumnType("text")
                                 .HasColumnName("settings_distance_unit");
 
+                            b1.Property<string>("Language")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("settings_language");
+
                             b1.Property<bool?>("LlmEnabled")
                                 .HasColumnType("boolean")
                                 .HasColumnName("settings_llm_enabled");
@@ -1251,10 +1483,20 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                                 .HasColumnType("text")
                                 .HasColumnName("settings_region");
 
+                            b1.Property<string>("TemperatureUnit")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("settings_temperature_unit");
+
                             b1.Property<string>("Timezone")
                                 .IsRequired()
                                 .HasColumnType("text")
                                 .HasColumnName("settings_timezone");
+
+                            b1.Property<string>("VolumeUnit")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("settings_volume_unit");
 
                             b1.Property<string>("WeightUnit")
                                 .IsRequired()
@@ -1322,6 +1564,85 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.ToTable("tenant_feature_configs", (string)null);
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.TenantTaxRate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("CreatedAt")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("CreatedBy");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("description");
+
+                    b.Property<DateTime>("EffectiveFrom")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("effective_from");
+
+                    b.Property<DateTime?>("EffectiveTo")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("effective_to");
+
+                    b.Property<decimal>("RatePercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("numeric(5,2)")
+                        .HasColumnName("rate_percent");
+
+                    b.Property<string>("TaxCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("tax_code");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("tenant_id");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LastModifiedAt");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("LastModifiedBy");
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Jurisdiction", "Logistics.Domain.Entities.TenantTaxRate.Jurisdiction#TaxJurisdiction", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("CountryCode")
+                                .IsRequired()
+                                .HasMaxLength(2)
+                                .HasColumnType("character varying(2)")
+                                .HasColumnName("jurisdiction_country_code");
+
+                            b1.Property<string>("Region")
+                                .HasMaxLength(10)
+                                .HasColumnType("character varying(10)")
+                                .HasColumnName("jurisdiction_region");
+                        });
+
+                    b.HasKey("Id")
+                        .HasName("pk_tenant_tax_rates");
+
+                    b.HasIndex("TenantId", "EffectiveFrom")
+                        .HasDatabaseName("ix_tenant_tax_rates_tenant_id_effective_from");
+
+                    b.ToTable("tenant_tax_rates", (string)null);
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1332,6 +1653,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer")
                         .HasColumnName("access_failed_count");
+
+                    b.Property<DateTime?>("AnonymizedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("anonymized_at");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -1348,6 +1673,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("CreatedBy");
+
+                    b.Property<DateTime?>("DeletionRequestedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("deletion_requested_at");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -1397,6 +1726,10 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean")
                         .HasColumnName("phone_number_confirmed");
+
+                    b.Property<string>("PreferredLanguage")
+                        .HasColumnType("text")
+                        .HasColumnName("preferred_language");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text")
@@ -1732,6 +2065,42 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("Logistics.Domain.Entities.ConsentRecord", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_consent_records_users_user_id");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.DataDeletionRequest", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_data_deletion_requests_users_user_id");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.DataExportRequest", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_data_export_requests_users_user_id");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Logistics.Domain.Entities.Invitation", b =>
                 {
                     b.HasOne("Logistics.Domain.Entities.User", "AcceptedByUser")
@@ -1810,6 +2179,18 @@ namespace Logistics.Infrastructure.Persistence.Migrations.Master
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_tenant_feature_configs_tenants_tenant_id");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("Logistics.Domain.Entities.TenantTaxRate", b =>
+                {
+                    b.HasOne("Logistics.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_tenant_tax_rates_tenants_tenant_id");
 
                     b.Navigation("Tenant");
                 });

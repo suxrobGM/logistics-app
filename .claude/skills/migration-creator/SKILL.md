@@ -41,5 +41,14 @@ dotnet ef migrations add {MigrationName} --project src/Infrastructure/Logistics.
 
 1. Identify which database the entity change affects (Master or Tenant)
 2. Review the entity changes to understand the migration scope
-3. Generate the migration with a `Version_{lastMigrationNumber+1}` format
+3. Generate the migration with a **concise descriptive name** (PascalCase) that summarizes what changed
 4. Review the generated migration file for correctness
+
+## Migration Naming
+
+Use a short, descriptive PascalCase name that says what the migration does — EF Core auto-prefixes the timestamp, so do **not** add `Version_NNNN`, numeric suffixes, or a date.
+
+- Good: `InitialSchema`, `AddDriverLicenseExpiry`, `RenameLoadStatus`, `AddTenantVatNumber`, `DropLegacyDispatchTable`
+- Bad: `Version_0042`, `Migration_5`, `Update3`, `Changes_2026_05_19`
+
+The first migration for a database is conventionally named `InitialSchema` (or `InitialCreate`).
