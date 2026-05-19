@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.logisticsx.driver"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.logisticsx.driver"
@@ -50,6 +50,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
