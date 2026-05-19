@@ -9,6 +9,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: "privacy", renderMode: RenderMode.Prerender },
   { path: "terms", renderMode: RenderMode.Prerender },
   { path: "cookies", renderMode: RenderMode.Prerender },
+  { path: "account-deletion", renderMode: RenderMode.Prerender },
 
   // Blog posts - SSR for dynamic content
   { path: "blog", renderMode: RenderMode.Server },

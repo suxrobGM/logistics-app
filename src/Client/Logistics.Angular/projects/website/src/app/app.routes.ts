@@ -38,6 +38,11 @@ export const routes: Routes = [
     loadComponent: () => import("./pages/legal/cookies/cookies").then((m) => m.Cookies),
   },
   {
+    path: "account-deletion",
+    loadComponent: () =>
+      import("./pages/legal/account-deletion/account-deletion").then((m) => m.AccountDeletion),
+  },
+  {
     path: "compare",
     loadComponent: () => import("./pages/compare/compare").then((m) => m.Compare),
   },

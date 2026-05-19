@@ -1,0 +1,192 @@
+<!-- Hero Section -->
+<web-section-container background="dark">
+  <div class="text-center" webScrollAnimate="fade-up">
+    <h1 class="text-4xl font-bold text-white sm:text-5xl">Delete Your Account</h1>
+    <p class="mt-4 text-lg text-purple-200">
+      How to delete your {{ appName }} account and the data associated with it.
+    </p>
+    <p class="mt-2 text-sm text-purple-300">Last updated: {{ lastUpdated }}</p>
+  </div>
+</web-section-container>
+
+<!-- Content Section -->
+<web-section-container background="white" maxWidth="3xl">
+  <!-- Table of Contents -->
+  <nav class="mb-12 rounded-lg bg-slate-50 p-6" webScrollAnimate="fade-up">
+    <h2 class="mb-4 text-lg font-semibold text-gray-900">Table of Contents</h2>
+    <ul class="space-y-2">
+      @for (section of sections; track section.id) {
+        <li>
+          <a
+            [href]="'#' + section.id"
+            class="text-blue-600 transition-colors hover:text-blue-800 hover:underline"
+          >
+            {{ section.title }}
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <div class="prose prose-lg max-w-none">
+    <!-- Overview -->
+    <section [id]="sections[0].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[0].title }}</h2>
+      <p class="mt-4 text-gray-600">
+        {{ developerName }} provides the {{ appName }} mobile application for truck drivers. You can
+        request deletion of your driver account and personal data at any time, either directly from
+        the app or by contacting our privacy team.
+      </p>
+      <p class="mt-4 text-gray-600">
+        This page describes the steps to take, what data is removed, what we are legally required to
+        retain, and how long the process takes.
+      </p>
+    </section>
+
+    <!-- In-App Steps -->
+    <section [id]="sections[1].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[1].title }}</h2>
+      <p class="mt-4 text-gray-600">
+        The fastest way to delete your account is from inside the {{ appName }} app:
+      </p>
+      <ol class="mt-4 list-decimal space-y-2 pl-6 text-gray-600">
+        <li>Open the {{ appName }} app and sign in.</li>
+        <li>
+          Tap the menu (top-left) and go to
+          <strong>Settings</strong>
+          .
+        </li>
+        <li>
+          Open
+          <strong>Privacy</strong>
+          .
+        </li>
+        <li>
+          Scroll to
+          <strong>Delete Account</strong>
+          .
+        </li>
+        <li>
+          Optionally enter a reason, then confirm. The request enters a
+          {{ gracePeriodDays }}-day grace period during which you can cancel it from the same
+          screen.
+        </li>
+      </ol>
+    </section>
+
+    <!-- Email Request -->
+    <section [id]="sections[2].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[2].title }}</h2>
+      <p class="mt-4 text-gray-600">
+        If you no longer have access to the app, email
+        <a [href]="'mailto:' + contactEmail" class="text-blue-600 hover:underline">
+          {{ contactEmail }}
+        </a>
+        from the address associated with your driver account and include:
+      </p>
+      <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+        <li>Your full name as it appears on your driver profile</li>
+        <li>The phone number or email used to sign in</li>
+        <li>The name of the carrier / company you drove for</li>
+      </ul>
+      <p class="mt-4 text-gray-600">
+        We will verify ownership before processing the request. Verification typically takes 1–3
+        business days.
+      </p>
+    </section>
+
+    <!-- What Gets Deleted -->
+    <section [id]="sections[3].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[3].title }}</h2>
+      <p class="mt-4 text-gray-600">
+        After the grace period elapses, the following data is permanently removed or anonymized:
+      </p>
+      <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+        @for (item of deletedData; track item) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+    </section>
+
+    <!-- What Is Retained -->
+    <section [id]="sections[4].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[4].title }}</h2>
+      <p class="mt-4 text-gray-600">
+        Some records cannot be deleted because federal and state regulations require motor carriers
+        to retain them. Where possible, these records are anonymized so they no longer identify you
+        directly, but the underlying operational data must be preserved:
+      </p>
+      <ul class="mt-4 list-disc space-y-3 pl-6 text-gray-600">
+        @for (item of retainedData; track item.label) {
+          <li>
+            <strong>{{ item.label }}</strong>
+            <span class="block text-sm text-gray-500">{{ item.reason }}</span>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <!-- Timeline -->
+    <section [id]="sections[5].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[5].title }}</h2>
+      <p class="mt-4 text-gray-600">
+        Deletion requests follow a
+        <strong>{{ gracePeriodDays }}-day grace period</strong>
+        :
+      </p>
+      <ul class="mt-4 list-disc space-y-2 pl-6 text-gray-600">
+        <li>
+          <strong>Day 0:</strong>
+          You submit the request. Your account is immediately disabled and you are signed out.
+        </li>
+        <li>
+          <strong>Days 1–{{ gracePeriodDays }}:</strong>
+          You can cancel the request from the Privacy screen (after signing back in) or by emailing
+          us. Nothing is destroyed during this window.
+        </li>
+        <li>
+          <strong>After day {{ gracePeriodDays }}:</strong>
+          Anonymization runs automatically. The deletion is irreversible from this point.
+        </li>
+      </ul>
+    </section>
+
+    <!-- Partial Deletion -->
+    <section [id]="sections[6].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[6].title }}</h2>
+      <p class="mt-4 text-gray-600">
+        If you only want to delete specific data (for example, uploaded documents or saved
+        addresses) without closing the account, email
+        <a [href]="'mailto:' + contactEmail" class="text-blue-600 hover:underline">
+          {{ contactEmail }}
+        </a>
+        describing what you want removed. You can also export a copy of your personal data from the
+        same Privacy screen before requesting deletion.
+      </p>
+    </section>
+
+    <!-- Contact -->
+    <section [id]="sections[7].id" class="mb-12" webScrollAnimate="fade-up">
+      <h2 class="text-2xl font-bold text-gray-900">{{ sections[7].title }}</h2>
+      <p class="mt-4 text-gray-600">
+        Questions about account deletion or data retention? Contact us:
+      </p>
+      <ul class="mt-4 space-y-2 text-gray-600">
+        <li>
+          <strong>Email:</strong>
+          <a [href]="'mailto:' + contactEmail" class="text-blue-600 hover:underline">
+            {{ contactEmail }}
+          </a>
+        </li>
+        <li>
+          <strong>Address:</strong>
+          10016 Sandmeyer Ln, Philadelphia, PA 19116
+        </li>
+        <li>
+          <strong>Phone:</strong>
+          <a href="tel:+18578671942" class="text-blue-600 hover:underline">(857) 867-1942</a>
+        </li>
+      </ul>
+    </section>
+  </div>
+</web-section-container>
