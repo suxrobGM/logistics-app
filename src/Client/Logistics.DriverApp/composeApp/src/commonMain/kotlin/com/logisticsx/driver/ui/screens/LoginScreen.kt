@@ -47,8 +47,8 @@ import com.logisticsx.driver.viewmodel.LoginUiState
 import com.logisticsx.driver.viewmodel.LoginViewModel
 import logisticsdriver.composeapp.generated.resources.Res
 import logisticsdriver.composeapp.generated.resources.logisticsx_brandmark
+import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.koinInject
 
 @Composable

@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -20,6 +20,7 @@ openApiGenerate {
     packageName.set("com.logisticsx.driver")
     apiPackage.set("com.logisticsx.driver.api")
     modelPackage.set("com.logisticsx.driver.api.models")
+    validateSpec.set(false)
     configOptions.set(
         mapOf(
             "library" to "multiplatform",
@@ -30,10 +31,42 @@ openApiGenerate {
     )
 }
 
+// Post-process OpenAPI-generated Kotlin code to fix known generator bugs for the KMP target.
+val openApiGeneratedDir: Provider<Directory> =
+    layout.buildDirectory.dir("generated/openapi/src/main/kotlin")
+
+tasks.named("openApiGenerate") {
+    val generatedDirProvider = openApiGeneratedDir
+    doLast {
+        val generatedDir = generatedDirProvider.get().asFile
+        if (!generatedDir.exists()) return@doLast
+
+        val hashMapPattern = Regex("""\)\s*:\s*kotlin\.collections\.HashMap<[^>]+>\(\)\s*\{""")
+        generatedDir.walkTopDown().filter { it.extension == "kt" }.forEach { file ->
+            val original = file.readText()
+            var content = original
+
+            // Fix 1: `append(File)` -> `append(file)` (uppercase File references java.io.File, not the parameter)
+            content = content.replace("append(File)", "append(file)")
+
+            // Fix 2: Double constructor call `()()` on HashMap inheritance
+            content = content.replace(">()() {", ">() {")
+
+            // Fix 3: Remove HashMap inheritance (final class in Kotlin, generated for additionalProperties)
+            content = hashMapPattern.replace(content, ") {")
+
+            if (content != original) {
+                file.writeText(content)
+                logger.lifecycle("openapi-fix: patched ${file.name}")
+            }
+        }
+    }
+}
+
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.logisticsx.driver.shared"
-        compileSdk = 36
+        compileSdk = 37
         minSdk = 26
 
         // Required for Compose Multiplatform resources in Android library targets (AGP 8.8.0+)
@@ -64,14 +97,9 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            // Compose Multiplatform
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            // Compose Multiplatform (direct artifacts — 'compose.X' shortcuts deprecated in 1.11)
+            implementation(libs.bundles.compose)
+            implementation(libs.compose.material.icons.extended)
 
             // JetBrains Compose Multiplatform (Lifecycle, ViewModel, Navigation)
             implementation(libs.bundles.jetbrains.compose.multiplatform)
@@ -96,28 +124,16 @@ kotlin {
         }
 
         androidMain.dependencies {
-            // Android Compose
             implementation(libs.androidx.activity.compose)
-
-            // Android-specific Ktor
             implementation(libs.ktor.client.okhttp)
-
-            // AndroidX Core
             implementation(libs.androidx.core.ktx)
-
-            // Koin Android
             implementation(libs.koin.androidx.compose)
 
             // Google Play Services Location (for LocationTracker.android.kt)
             implementation(libs.play.services.location)
 
-            // SignalR Client
             implementation(libs.signalr.client)
-
-            // CameraX (for barcode scanning)
             implementation(libs.bundles.camerax)
-
-            // ML Kit Barcode Scanning
             implementation(libs.mlkit.barcode)
         }
 
@@ -127,11 +143,7 @@ kotlin {
     }
 }
 
-// Apply OpenAPI generator post-processing fixes and ensure task ordering
-apply(from = "../gradle/openapi-fix.gradle.kts")
-
-tasks.configureEach {
-    if (this is KotlinCompile || name.contains("ArtProfile", ignoreCase = true)) {
-        dependsOn(tasks.named("openApiGenerate"))
-    }
+// Ensure OpenAPI sources are generated before any Kotlin compilation
+tasks.withType<KotlinCompilationTask<*>>().configureEach {
+    dependsOn(tasks.named("openApiGenerate"))
 }

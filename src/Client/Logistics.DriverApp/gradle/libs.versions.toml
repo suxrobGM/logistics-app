@@ -12,6 +12,11 @@ androidx-datastore = "1.2.1"
 
 # Compose & UI
 compose-activity = "1.13.0"
+# Compose Multiplatform decouples some artifact versions from the plugin (compose-plugin) version.
+# material3 ships at 1.9.0, material-icons-extended is frozen at 1.7.3.
+# See https://kotlinlang.org/docs/multiplatform/whats-new-compose-180.html
+compose-material3 = "1.9.0"
+compose-material-icons = "1.7.3"
 
 # JetBrains Compose Multiplatform Libraries
 jetbrains-lifecycle = "2.10.0"
@@ -87,6 +92,15 @@ androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx
 # Android Activity Compose
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "compose-activity" }
 
+# Compose Multiplatform (direct artifacts — 'compose.X' shortcuts are deprecated in Compose 1.11)
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-plugin" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-plugin" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-material3" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-plugin" }
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-plugin" }
+compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose-plugin" }
+compose-material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "compose-material-icons" }
+
 # Firebase
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
@@ -122,6 +136,15 @@ googleServices = { id = "com.google.gms.google-services", version.ref = "google-
 openApiGenerator = { id = "org.openapi.generator", version.ref = "openapi-generator" }
 
 [bundles]
+compose = [
+    "compose-runtime",
+    "compose-foundation",
+    "compose-material3",
+    "compose-ui",
+    "compose-components-resources",
+    "compose-ui-tooling-preview"
+]
+
 ktor-common = [
     "ktor-client-core",
     "ktor-client-content-negotiation",
