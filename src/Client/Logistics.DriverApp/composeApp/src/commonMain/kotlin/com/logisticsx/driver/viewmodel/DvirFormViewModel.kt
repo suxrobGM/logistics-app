@@ -11,7 +11,7 @@ import com.logisticsx.driver.api.models.TruckDto
 import com.logisticsx.driver.service.LocationService
 import com.logisticsx.driver.service.PreferencesManager
 import com.logisticsx.driver.ui.components.PathData
-import com.logisticsx.driver.viewmodel.base.CaptureFormViewModel
+import com.logisticsx.driver.viewmodel.base.BaseViewModel
 import com.logisticsx.driver.viewmodel.base.CaptureFormState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,46 +47,41 @@ data class DvirFormUiState(
 class DvirFormViewModel(
     private val truckApi: TruckApi,
     private val dvirApi: DvirApi,
-    locationService: LocationService,
+    private val locationService: LocationService,
     private val preferencesManager: PreferencesManager,
     private val truckId: String?,
-    private val tripId: String?,
+    tripId: String?,
     initialDvirType: DvirType? = null
-) : CaptureFormViewModel<DvirFormUiState>(locationService) {
+) : BaseViewModel() {
 
-    override val _formState = MutableStateFlow(
+    private val _formState = MutableStateFlow(
         DvirFormUiState(
             truckId = truckId,
             tripId = tripId,
             dvirType = initialDvirType ?: DvirType.PRE_TRIP
         )
     )
-    override val formState: StateFlow<DvirFormUiState> = _formState.asStateFlow()
-
-    // Keep backward-compatible property name
-    val uiState: StateFlow<DvirFormUiState> get() = formState
+    val uiState: StateFlow<DvirFormUiState> = _formState.asStateFlow()
 
     init {
         loadTrucks()
         fetchCurrentLocation()
     }
 
-    override fun updateState(transform: DvirFormUiState.() -> DvirFormUiState) {
-        _formState.update { it.transform() }
+    private fun fetchCurrentLocation() {
+        launchSafely {
+            locationService.getCurrentLocation()?.let { loc ->
+                _formState.update { it.copy(latitude = loc.latitude, longitude = loc.longitude) }
+            }
+        }
     }
 
-    override fun DvirFormUiState.copyWithLocation(lat: Double, lng: Double) =
-        copy(latitude = lat, longitude = lng)
-    override fun DvirFormUiState.copyWithPhotos(photos: List<CapturedPhoto>) =
-        copy(photos = photos)
-    override fun DvirFormUiState.copyWithSignature(paths: List<PathData>?, base64: String?) =
-        copy(signaturePaths = paths, signatureBase64 = base64)
-    override fun DvirFormUiState.copyWithNotes(notes: String) =
-        copy(notes = notes)
-    override fun DvirFormUiState.copyWithError(error: String?) =
-        copy(error = error)
-    override fun DvirFormUiState.copyWithSubmitting(isSubmitting: Boolean, error: String?, isSuccess: Boolean) =
-        copy(isSubmitting = isSubmitting, error = error, isSuccess = isSuccess)
+    fun addPhoto(photo: CapturedPhoto) = _formState.update { it.copy(photos = it.photos + photo) }
+    fun removePhoto(photoId: String) = _formState.update { it.copy(photos = it.photos.filter { p -> p.id != photoId }) }
+    fun setSignature(paths: List<PathData>, base64: String) = _formState.update { it.copy(signaturePaths = paths, signatureBase64 = base64) }
+    fun clearSignature() = _formState.update { it.copy(signaturePaths = null, signatureBase64 = null) }
+    fun setNotes(notes: String) = _formState.update { it.copy(notes = notes) }
+    fun clearError() = _formState.update { it.copy(error = null) }
 
     private fun loadTrucks() {
         launchSafely(onError = { e ->
@@ -135,14 +130,23 @@ class DvirFormViewModel(
         }
     }
 
-    override fun canSubmit(): Boolean {
+    fun canSubmit(): Boolean {
         val state = _formState.value
         return !state.isSubmitting &&
             state.selectedTruck != null &&
             state.signatureBase64 != null
     }
 
-    override suspend fun performSubmit() {
+    fun submit() = submitForm(
+        state = _formState,
+        canSubmit = canSubmit(),
+        setSubmitting = { isSubmitting, error, isSuccess ->
+            copy(isSubmitting = isSubmitting, error = error, isSuccess = isSuccess)
+        },
+        perform = { performSubmit() }
+    )
+
+    private suspend fun performSubmit() {
         val state = _formState.value
         val driverId = preferencesManager.getUserId()
             ?: throw IllegalStateException("Driver ID not found. Please log in again.")

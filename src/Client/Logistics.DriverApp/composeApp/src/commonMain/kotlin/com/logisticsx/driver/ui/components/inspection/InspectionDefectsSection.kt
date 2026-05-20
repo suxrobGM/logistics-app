@@ -40,6 +40,20 @@ interface InspectionDefectView {
 }
 
 /**
+ * Adapts any defect kind (DVIR / cargo condition) into an [InspectionDefectView]
+ * for the shared inspection components, so screens don't each define their own adapter.
+ */
+fun InspectionDefectView(
+    categoryDisplay: String,
+    description: String,
+    severity: DefectSeverity
+): InspectionDefectView = object : InspectionDefectView {
+    override val categoryDisplay = categoryDisplay
+    override val description = description
+    override val severity = severity
+}
+
+/**
  * Generalized defects section — used by both the DVIR form and the cargo
  * Condition Report. The owner screen passes in already-adapted defects, an
  * optional [sectionTitle], and the empty-state hint.

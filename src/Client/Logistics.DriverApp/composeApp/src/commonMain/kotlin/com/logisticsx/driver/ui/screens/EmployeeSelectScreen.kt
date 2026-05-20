@@ -60,11 +60,10 @@ fun EmployeeSelectScreen(
 
     // Handle successful conversation creation
     LaunchedEffect(createState) {
-        if (createState is ActionState.Success<*>) {
-            @Suppress("UNCHECKED_CAST")
-            val conversationId = (createState as ActionState.Success<String>).data
+        val state = createState
+        if (state is ActionState.Success) {
             viewModel.resetCreateState()
-            onConversationCreated(conversationId)
+            onConversationCreated(state.data)
         }
     }
 
@@ -130,9 +129,8 @@ fun EmployeeSelectScreen(
                     }
                 }
 
-                is UiState.Success<*> -> {
-                    @Suppress("UNCHECKED_CAST")
-                    val employees = (state as UiState.Success<List<EmployeeDto>>).data
+                is UiState.Success -> {
+                    val employees = state.data
                     if (employees.isEmpty()) {
                         EmptyStateView(
                             icon = Icons.Default.Person,

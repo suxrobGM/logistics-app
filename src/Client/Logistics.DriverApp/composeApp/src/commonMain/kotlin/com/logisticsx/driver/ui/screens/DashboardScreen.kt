@@ -43,11 +43,9 @@ import com.logisticsx.driver.model.fullName
 import com.logisticsx.driver.ui.components.AppTopBar
 import com.logisticsx.driver.ui.components.CardContainer
 import com.logisticsx.driver.ui.components.DutyStatusCard
-import com.logisticsx.driver.ui.components.ErrorView
 import com.logisticsx.driver.ui.components.LoadCard
-import com.logisticsx.driver.ui.components.LoadingIndicator
 import com.logisticsx.driver.ui.components.TripCard
-import com.logisticsx.driver.viewmodel.DashboardData
+import com.logisticsx.driver.ui.components.UiStateContent
 import com.logisticsx.driver.viewmodel.DashboardViewModel
 import com.logisticsx.driver.viewmodel.base.UiState
 import org.koin.compose.viewmodel.koinViewModel
@@ -86,17 +84,10 @@ fun DashboardScreen(
             onRefresh = { viewModel.refresh() },
             modifier = Modifier.padding(paddingValues)
         ) {
-            when (val state = uiState) {
-                is UiState.Loading -> {
-                    LoadingIndicator()
-                }
-
-                is UiState.Success<*> -> {
-                    @Suppress("UNCHECKED_CAST")
-                    val dashboardData = (state as UiState.Success<DashboardData>).data
-                    val truck = dashboardData.truck
-                    val trips = dashboardData.trips
-                    LazyColumn(
+            UiStateContent(uiState, viewModel::refresh) { dashboardData ->
+                val truck = dashboardData.truck
+                val trips = dashboardData.trips
+                LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -208,14 +199,6 @@ fun DashboardScreen(
                             }
                         }
                     }
-                }
-
-                is UiState.Error -> {
-                    ErrorView(
-                        message = state.message,
-                        onRetry = { viewModel.refresh() }
-                    )
-                }
             }
         }
     }

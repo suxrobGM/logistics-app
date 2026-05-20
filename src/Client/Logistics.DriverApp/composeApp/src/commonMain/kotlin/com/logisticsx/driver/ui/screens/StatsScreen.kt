@@ -32,21 +32,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.logisticsx.driver.api.models.DriverStatsDto
 import com.logisticsx.driver.model.ChartData
 import com.logisticsx.driver.model.LocalUserSettings
 import com.logisticsx.driver.model.toChartData
 import com.logisticsx.driver.ui.components.AppTopBar
 import com.logisticsx.driver.ui.components.CardContainer
-import com.logisticsx.driver.ui.components.ErrorView
 import com.logisticsx.driver.ui.components.LoadingIndicator
+import com.logisticsx.driver.ui.components.UiStateContent
 import com.logisticsx.driver.ui.components.charts.bar.BarChart
 import com.logisticsx.driver.ui.components.charts.line.LineChart
 import com.logisticsx.driver.util.formatCurrency
 import com.logisticsx.driver.util.formatDistance
 import com.logisticsx.driver.viewmodel.ChartUiState
 import com.logisticsx.driver.viewmodel.StatsViewModel
-import com.logisticsx.driver.viewmodel.base.UiState
 import org.koin.compose.viewmodel.koinViewModel
 
 enum class ChartType(val label: String) {
@@ -79,15 +77,8 @@ fun StatsScreen(
             )
         }
     ) { paddingValues ->
-        when (val state = statsState) {
-            is UiState.Loading -> {
-                LoadingIndicator()
-            }
-
-            is UiState.Success<*> -> {
-                @Suppress("UNCHECKED_CAST")
-                val stats = (state as UiState.Success<DriverStatsDto>).data
-                LazyColumn(
+        UiStateContent(statsState, viewModel::refresh) { stats ->
+            LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues),
@@ -284,14 +275,6 @@ fun StatsScreen(
                         }
                     }
                 }
-            }
-
-            is UiState.Error -> {
-                ErrorView(
-                    message = state.message,
-                    onRetry = { viewModel.refresh() }
-                )
-            }
         }
     }
 

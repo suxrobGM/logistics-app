@@ -97,7 +97,7 @@ actual class MessagingService(
             } catch (e: Exception) {
                 Logger.e("MessagingService: Error parsing message: ${e.message}", e)
             }
-        }, Object::class.java)
+        }, Any::class.java)
 
         // Handle typing indicators - SignalR sends as LinkedHashMap
         hubConnection?.on("TypingIndicator", { indicatorData ->

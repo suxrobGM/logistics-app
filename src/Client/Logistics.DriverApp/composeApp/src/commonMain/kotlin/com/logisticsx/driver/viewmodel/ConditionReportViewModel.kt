@@ -14,8 +14,8 @@ import com.logisticsx.driver.model.toFormParts
 import com.logisticsx.driver.service.LocationService
 import com.logisticsx.driver.ui.components.PathData
 import com.logisticsx.driver.util.isContainerLoad
+import com.logisticsx.driver.viewmodel.base.BaseViewModel
 import com.logisticsx.driver.viewmodel.base.CaptureFormState
-import com.logisticsx.driver.viewmodel.base.CaptureFormViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -66,39 +66,35 @@ class ConditionReportViewModel(
     private val inspectionsApi: InspectionsApi,
     private val vinsApi: VinsApi,
     private val loadApi: LoadApi,
-    locationService: LocationService,
+    private val locationService: LocationService,
     private val loadId: String,
-    private val inspectionType: InspectionType
-) : CaptureFormViewModel<ConditionReportUiState>(locationService) {
+    inspectionType: InspectionType
+) : BaseViewModel() {
 
-    override val _formState = MutableStateFlow(
+    private val _formState = MutableStateFlow(
         ConditionReportUiState(loadId = loadId, inspectionType = inspectionType)
     )
-    override val formState: StateFlow<ConditionReportUiState> = _formState.asStateFlow()
-
-    val uiState: StateFlow<ConditionReportUiState> get() = formState
+    val uiState: StateFlow<ConditionReportUiState> = _formState.asStateFlow()
 
     init {
         fetchCurrentLocation()
         loadCargoType()
     }
 
-    override fun updateState(transform: ConditionReportUiState.() -> ConditionReportUiState) {
-        _formState.update { it.transform() }
+    private fun fetchCurrentLocation() {
+        launchSafely {
+            locationService.getCurrentLocation()?.let { loc ->
+                _formState.update { it.copy(latitude = loc.latitude, longitude = loc.longitude) }
+            }
+        }
     }
 
-    override fun ConditionReportUiState.copyWithLocation(lat: Double, lng: Double) =
-        copy(latitude = lat, longitude = lng)
-    override fun ConditionReportUiState.copyWithPhotos(photos: List<CapturedPhoto>) =
-        copy(photos = photos)
-    override fun ConditionReportUiState.copyWithSignature(paths: List<PathData>?, base64: String?) =
-        copy(signaturePaths = paths, signatureBase64 = base64)
-    override fun ConditionReportUiState.copyWithNotes(notes: String) =
-        copy(notes = notes)
-    override fun ConditionReportUiState.copyWithError(error: String?) =
-        copy(error = error)
-    override fun ConditionReportUiState.copyWithSubmitting(isSubmitting: Boolean, error: String?, isSuccess: Boolean) =
-        copy(isSubmitting = isSubmitting, error = error, isSuccess = isSuccess)
+    fun addPhoto(photo: CapturedPhoto) = _formState.update { it.copy(photos = it.photos + photo) }
+    fun removePhoto(photoId: String) = _formState.update { it.copy(photos = it.photos.filter { p -> p.id != photoId }) }
+    fun setSignature(paths: List<PathData>, base64: String) = _formState.update { it.copy(signaturePaths = paths, signatureBase64 = base64) }
+    fun clearSignature() = _formState.update { it.copy(signaturePaths = null, signatureBase64 = null) }
+    fun setNotes(notes: String) = _formState.update { it.copy(notes = notes) }
+    fun clearError() = _formState.update { it.copy(error = null) }
 
     private fun loadCargoType() {
         launchSafely(onError = { e ->
@@ -157,7 +153,7 @@ class ConditionReportViewModel(
         }
     }
 
-    override fun canSubmit(): Boolean {
+    fun canSubmit(): Boolean {
         val state = _formState.value
         if (state.isSubmitting || state.isLoadingLoad) return false
 
@@ -168,7 +164,16 @@ class ConditionReportViewModel(
         }
     }
 
-    override suspend fun performSubmit() {
+    fun submit() = submitForm(
+        state = _formState,
+        canSubmit = canSubmit(),
+        setSubmitting = { isSubmitting, error, isSuccess ->
+            copy(isSubmitting = isSubmitting, error = error, isSuccess = isSuccess)
+        },
+        perform = { performSubmit() }
+    )
+
+    private suspend fun performSubmit() {
         val state = _formState.value
         val photoFormParts = state.photos.map { photo ->
             FileUploadData(

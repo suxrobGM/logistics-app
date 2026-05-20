@@ -69,9 +69,9 @@ fun AccountScreen(
     var userId by remember { mutableStateOf("") }
 
     LaunchedEffect(uiState) {
-        if (uiState is UiState.Success<*>) {
-            @Suppress("UNCHECKED_CAST")
-            val user = (uiState as UiState.Success<UserDto>).data
+        val state = uiState
+        if (state is UiState.Success) {
+            val user = state.data
             firstName = user.firstName ?: ""
             lastName = user.lastName ?: ""
             phoneNumber = user.phoneNumber ?: ""
@@ -81,7 +81,7 @@ fun AccountScreen(
     }
 
     LaunchedEffect(saveState) {
-        if (saveState is ActionState.Success<*>) {
+        if (saveState is ActionState.Success) {
             // Show success message and reset after a delay
             delay(2000)
             viewModel.resetSaveState()
@@ -93,7 +93,7 @@ fun AccountScreen(
             AppTopBar(
                 title = "Account",
                 actions = {
-                    if (uiState is UiState.Success<*>) {
+                    if (uiState is UiState.Success) {
                         IconButton(
                             onClick = {
                                 viewModel.updateUser(
@@ -115,12 +115,12 @@ fun AccountScreen(
             )
         }
     ) { paddingValues ->
-        when (uiState) {
+        when (val state = uiState) {
             is UiState.Loading -> {
                 LoadingIndicator()
             }
 
-            is UiState.Success<*> -> {
+            is UiState.Success -> {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -161,12 +161,12 @@ fun AccountScreen(
                         }
                     }
 
-                    when (saveState) {
+                    when (val saved = saveState) {
                         is ActionState.Loading -> {
                             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                         }
 
-                        is ActionState.Success<*> -> {
+                        is ActionState.Success -> {
                             Text(
                                 text = "Account updated successfully!",
                                 color = MaterialTheme.colorScheme.primary,
@@ -176,7 +176,7 @@ fun AccountScreen(
 
                         is ActionState.Error -> {
                             Text(
-                                text = "Error: ${(saveState as ActionState.Error).message}",
+                                text = "Error: ${saved.message}",
                                 color = MaterialTheme.colorScheme.error,
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             )
@@ -214,7 +214,7 @@ fun AccountScreen(
             }
 
             is UiState.Error -> {
-                ErrorView(message = (uiState as UiState.Error).message)
+                ErrorView(message = state.message)
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.logisticsx.driver.ui.screens
 
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -14,36 +13,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.logisticsx.driver.api.models.InspectionType
 import com.logisticsx.driver.api.models.LoadType
-import com.logisticsx.driver.ui.components.SignaturePad
+import com.logisticsx.driver.ui.components.capture.CaptureScreenScaffold
 import com.logisticsx.driver.ui.components.capture.NotesTextField
 import com.logisticsx.driver.ui.components.capture.PhotoCaptureSection
+import com.logisticsx.driver.ui.components.capture.SignatureCaptureField
 import com.logisticsx.driver.ui.components.capture.SubmitButton
 import com.logisticsx.driver.ui.components.capture.rememberCameraCapture
 import com.logisticsx.driver.ui.components.inspection.AddInspectionDefectDialog
 import com.logisticsx.driver.ui.components.inspection.ContainerInputSection
 import com.logisticsx.driver.ui.components.inspection.InspectionDefectView
 import com.logisticsx.driver.ui.components.inspection.InspectionDefectsSection
-import com.logisticsx.driver.ui.components.inspection.InspectionScreenScaffold
 import com.logisticsx.driver.ui.components.inspection.VehicleInfoCard
 import com.logisticsx.driver.ui.components.inspection.VinInputSection
 import com.logisticsx.driver.util.BarcodeScannerLauncher
-import com.logisticsx.driver.util.SignatureConverter
 import com.logisticsx.driver.util.cargoPartCatalogGrouped
 import com.logisticsx.driver.util.displayName
 import com.logisticsx.driver.util.isContainerLoad
 import com.logisticsx.driver.viewmodel.ConditionDefect
 import com.logisticsx.driver.viewmodel.ConditionReportViewModel
 import org.koin.compose.getKoin
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConditionReportScreen(
-    loadId: String,
-    inspectionType: InspectionType,
     onNavigateBack: () -> Unit,
-    viewModel: ConditionReportViewModel = koinViewModel { parametersOf(loadId, inspectionType) }
+    viewModel: ConditionReportViewModel
 ) {
     val onCapturePhoto = rememberCameraCapture(onPhotoCaptured = viewModel::addPhoto)
     val barcodeScannerLauncher: BarcodeScannerLauncher? = getKoin().getOrNull()
@@ -51,9 +45,9 @@ fun ConditionReportScreen(
     val uiState by viewModel.uiState.collectAsState()
     var showAddDefectDialog by remember { mutableStateOf(false) }
 
-    val title = inspectionType.displayTitle(uiState.cargoType)
+    val title = uiState.inspectionType.displayTitle(uiState.cargoType)
 
-    InspectionScreenScaffold(
+    CaptureScreenScaffold(
         title = title,
         error = uiState.error,
         isSuccess = uiState.isSuccess,
@@ -105,7 +99,9 @@ fun ConditionReportScreen(
 
         item {
             InspectionDefectsSection(
-                defects = uiState.defects.map { it.toView() },
+                defects = uiState.defects.map {
+                    InspectionDefectView(it.partCategory.displayName, it.description, it.severity)
+                },
                 onAddDefect = { showAddDefectDialog = true },
                 onRemoveDefect = viewModel::removeDefect,
                 sectionTitle = "Damage / Defects",
@@ -116,18 +112,14 @@ fun ConditionReportScreen(
         item {
             PhotoCaptureSection(
                 photos = uiState.photos,
-                onAddPhoto = onCapturePhoto ?: {},
+                onAddPhoto = onCapturePhoto,
                 onRemovePhoto = viewModel::removePhoto
             )
         }
 
         item {
-            SignaturePad(
-                modifier = Modifier.fillMaxWidth(),
-                onSignatureComplete = { paths ->
-                    val base64 = SignatureConverter.pathsToBase64Png(paths) ?: ""
-                    viewModel.setSignature(paths, base64)
-                },
+            SignatureCaptureField(
+                onCaptured = viewModel::setSignature,
                 onClear = viewModel::clearSignature
             )
         }
@@ -174,10 +166,4 @@ private fun InspectionType.displayTitle(cargoType: LoadType): String {
         cargoType.isContainerLoad -> "Container $action"
         else -> action
     }
-}
-
-private fun ConditionDefect.toView(): InspectionDefectView = object : InspectionDefectView {
-    override val categoryDisplay = partCategory.displayName
-    override val description = this@toView.description
-    override val severity = this@toView.severity
 }

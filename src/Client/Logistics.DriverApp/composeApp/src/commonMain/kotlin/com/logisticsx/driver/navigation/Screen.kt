@@ -1,10 +1,14 @@
 package com.logisticsx.driver.navigation
 
 import androidx.navigation3.runtime.NavKey
+import androidx.savedstate.serialization.SavedStateConfiguration
 import com.logisticsx.driver.api.models.DvirType
 import com.logisticsx.driver.api.models.InspectionType
 import com.logisticsx.driver.viewmodel.DocumentCaptureType
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 
 /**
  * Navigation routes for the Driver app using Navigation 3.
@@ -90,3 +94,36 @@ val topLevelRoutes: Set<NavKey> = setOf(
     PastLoadsRoute,
     AccountRoute
 )
+
+/**
+ * Saved-state configuration for [rememberNavBackStack][androidx.navigation3.runtime.rememberNavBackStack].
+ *
+ * On non-Android (iOS) targets there is no reflection-based overload, so every [NavKey] subtype
+ * must be registered here for the back stack to survive process death / configuration changes.
+ * Add new routes to this list when you add them above — an unregistered route crashes on save.
+ */
+val navSavedStateConfiguration: SavedStateConfiguration = SavedStateConfiguration {
+    serializersModule = SerializersModule {
+        polymorphic(NavKey::class) {
+            subclass(LoginRoute::class)
+            subclass(LocationDisclosureRoute::class)
+            subclass(DashboardRoute::class)
+            subclass(StatsRoute::class)
+            subclass(PastLoadsRoute::class)
+            subclass(TripsRoute::class)
+            subclass(TripDetailRoute::class)
+            subclass(LoadDetailRoute::class)
+            subclass(MessagesRoute::class)
+            subclass(ConversationRoute::class)
+            subclass(EmployeeSelectRoute::class)
+            subclass(PodCaptureRoute::class)
+            subclass(ConditionReportRoute::class)
+            subclass(DvirFormRoute::class)
+            subclass(AccountRoute::class)
+            subclass(SettingsRoute::class)
+            subclass(AboutRoute::class)
+            subclass(PrivacyRoute::class)
+            subclass(MyLicensesRoute::class)
+        }
+    }
+}

@@ -33,11 +33,9 @@ import com.logisticsx.driver.ui.components.CardContainer
 import com.logisticsx.driver.ui.components.Chip
 import com.logisticsx.driver.ui.components.DetailRow
 import com.logisticsx.driver.ui.components.EmptyStateView
-import com.logisticsx.driver.ui.components.ErrorView
-import com.logisticsx.driver.ui.components.LoadingIndicator
+import com.logisticsx.driver.ui.components.UiStateContent
 import com.logisticsx.driver.util.formatShort
 import com.logisticsx.driver.viewmodel.MyLicensesViewModel
-import com.logisticsx.driver.viewmodel.base.UiState
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.time.ExperimentalTime
 
@@ -66,38 +64,27 @@ fun MyLicensesScreen(
             )
         }
     ) { paddingValues ->
-        when (val state = uiState) {
-            is UiState.Loading -> LoadingIndicator()
-
-            is UiState.Success<*> -> {
-                @Suppress("UNCHECKED_CAST")
-                val licenses = (state as UiState.Success<List<DriverLicenseDto>>).data
-                if (licenses.isEmpty()) {
-                    EmptyStateView(
-                        icon = Icons.Default.Badge,
-                        title = "No licenses on file",
-                        message = "Ask your dispatcher to add your driver's license.",
-                        modifier = Modifier.padding(paddingValues)
-                    )
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(paddingValues),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(licenses) { license ->
-                            LicenseCard(license)
-                        }
+        UiStateContent(uiState, viewModel::refresh) { licenses ->
+            if (licenses.isEmpty()) {
+                EmptyStateView(
+                    icon = Icons.Default.Badge,
+                    title = "No licenses on file",
+                    message = "Ask your dispatcher to add your driver's license.",
+                    modifier = Modifier.padding(paddingValues)
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(licenses) { license ->
+                        LicenseCard(license)
                     }
                 }
             }
-
-            is UiState.Error -> ErrorView(
-                message = state.message,
-                onRetry = { viewModel.refresh() }
-            )
         }
     }
 }

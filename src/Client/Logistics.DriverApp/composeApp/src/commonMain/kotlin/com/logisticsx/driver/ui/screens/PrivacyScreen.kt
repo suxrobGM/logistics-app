@@ -237,7 +237,7 @@ private fun ExportStatusChip(status: DataExportStatus?) {
 @Composable
 private fun ActionFeedback(state: ActionState<Unit>, successText: String) {
     when (state) {
-        is ActionState.Success<*> -> {
+        is ActionState.Success -> {
             Spacer(Modifier.height(8.dp))
             Text(
                 successText,

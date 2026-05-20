@@ -43,16 +43,14 @@ import com.logisticsx.driver.model.toDisplayString
 import com.logisticsx.driver.ui.components.AppTopBar
 import com.logisticsx.driver.ui.components.CardContainer
 import com.logisticsx.driver.ui.components.DetailRow
-import com.logisticsx.driver.ui.components.ErrorView
-import com.logisticsx.driver.ui.components.LoadingIndicator
 import com.logisticsx.driver.ui.components.SectionCard
 import com.logisticsx.driver.ui.components.TripStatusChip
 import com.logisticsx.driver.ui.components.TripStopItem
+import com.logisticsx.driver.ui.components.UiStateContent
 import com.logisticsx.driver.util.formatCurrency
 import com.logisticsx.driver.util.formatDistance
 import com.logisticsx.driver.util.formatShort
 import com.logisticsx.driver.viewmodel.TripDetailViewModel
-import com.logisticsx.driver.viewmodel.base.UiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,15 +76,10 @@ fun TripDetailScreen(
             )
         }
     ) { paddingValues ->
-        when (val state = uiState) {
-            is UiState.Loading -> LoadingIndicator()
+        UiStateContent(uiState, viewModel::refresh) { trip ->
+            val stops = trip.stops?.sortedBy { it.order } ?: emptyList()
 
-            is UiState.Success<*> -> {
-                @Suppress("UNCHECKED_CAST")
-                val trip = (state as UiState.Success<TripDto>).data
-                val stops = trip.stops?.sortedBy { it.order } ?: emptyList()
-
-                Column(
+            Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
@@ -140,14 +133,6 @@ fun TripDetailScreen(
 
                     TripTimelineCard(trip = trip)
                 }
-            }
-
-            is UiState.Error -> {
-                ErrorView(
-                    message = state.message,
-                    onRetry = { viewModel.refresh() }
-                )
-            }
         }
     }
 }
