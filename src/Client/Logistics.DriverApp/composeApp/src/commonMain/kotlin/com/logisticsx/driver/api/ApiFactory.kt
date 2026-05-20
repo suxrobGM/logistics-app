@@ -36,7 +36,7 @@ class ApiFactory(
     val driverApi: DriverApi by lazy { DriverApi(baseUrl, httpClient) }
     val dvirApi: DvirApi by lazy { DvirApi(baseUrl, httpClient) }
     val employeeApi: EmployeeApi by lazy { EmployeeApi(baseUrl, httpClient) }
-    val inspectionApi: InspectionApi by lazy { InspectionApi(baseUrl, httpClient) }
+    val inspectionsApi: InspectionsApi by lazy { InspectionsApi(baseUrl, httpClient) }
     val loadApi: LoadApi by lazy { LoadApi(baseUrl, httpClient) }
     val messageApi: MessageApi by lazy { MessageApi(baseUrl, httpClient) }
     val privacyApi: PrivacyApi by lazy { PrivacyApi(baseUrl, httpClient) }
@@ -45,6 +45,7 @@ class ApiFactory(
     val tripApi: TripApi by lazy { TripApi(baseUrl, httpClient) }
     val truckApi: TruckApi by lazy { TruckApi(baseUrl, httpClient) }
     val userApi: UserApi by lazy { UserApi(baseUrl, httpClient) }
+    val vinsApi: VinsApi by lazy { VinsApi(baseUrl, httpClient) }
 
     private fun createHttpClient(): HttpClient {
         val client = HttpClientFactory.create {

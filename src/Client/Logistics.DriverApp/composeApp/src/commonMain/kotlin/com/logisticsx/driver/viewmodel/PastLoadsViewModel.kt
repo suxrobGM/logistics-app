@@ -33,7 +33,7 @@ class PastLoadsViewModel(
                 startDate = ninetyDaysAgo,
                 endDate = now
             ).bodyOrThrow()
-            response?.items ?: emptyList()
+            response.items ?: emptyList()
         }
     }
 

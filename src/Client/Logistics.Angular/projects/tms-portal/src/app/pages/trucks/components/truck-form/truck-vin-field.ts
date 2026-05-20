@@ -55,7 +55,7 @@ export class TruckVinField {
     this.decoding.set(true);
 
     try {
-      const result = await this.api.invoke(decodeVin, { body: { vin } });
+      const result = await this.api.invoke(decodeVin, { vin });
 
       const patch: Record<string, unknown> = {};
       if (result.make) patch["make"] = result.make;

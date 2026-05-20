@@ -6,21 +6,22 @@
         [severity]="getTypeSeverity(report()!.type ?? '')"
       />
       <ui-typography variant="body" color="muted" tag="span">|</ui-typography>
-      <span class="text-secondary font-mono text-sm">VIN: {{ report()!.vin || "N/A" }}</span>
+      <span class="text-secondary font-mono text-sm">{{ getCargoTypeLabel() }}</span>
     </ui-stack>
   }
 </ui-page-header>
 
 @if (isLoading()) {
-    <div class="flex justify-center py-16">
-      <p-progress-spinner />
-    </div>
-  } @else if (report()) {
-    <ui-grid container spacing="6">
-      <!-- Left Column: Vehicle Info & Diagram -->
-      <ui-grid [size]="{ xs: 12, lg: 6 }">
-        <ui-stack gap="6">
-          <!-- Vehicle Information -->
+  <div class="flex justify-center py-16">
+    <p-progress-spinner />
+  </div>
+} @else if (report()) {
+  <ui-grid container spacing="6">
+    <!-- Left Column: Cargo-type-specific identifier + Defects -->
+    <ui-grid [size]="{ xs: 12, lg: 6 }">
+      <ui-stack gap="6">
+        <!-- Vehicle Information (only for Vehicle loads) -->
+        @if (isVehicleLoad()) {
           <p-card>
             <ng-template #header>
               <ui-stack direction="row" align="center" gap="2" class="p-4 pb-0">
@@ -52,225 +53,219 @@
               }
             </ui-grid>
           </p-card>
+        }
 
-          <!-- Vehicle Diagram with Damage Markers -->
+        <!-- Container Information (only for container loads) -->
+        @if (isContainerLoad()) {
+          <p-card>
+            <ng-template #header>
+              <ui-stack direction="row" align="center" gap="2" class="p-4 pb-0">
+                <ui-icon name="package" color="primary" />
+                <ui-typography variant="h5" tag="h3">Container Information</ui-typography>
+              </ui-stack>
+            </ng-template>
+
+            <ui-grid container spacing="4">
+              <ui-grid [size]="{ xs: 6 }">
+                <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
+                  Container Number
+                </ui-typography>
+                <p class="font-mono text-sm">{{ report()!.containerNumber || "N/A" }}</p>
+              </ui-grid>
+              <ui-grid [size]="{ xs: 6 }">
+                <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
+                  Seal Number
+                </ui-typography>
+                <p class="font-mono text-sm">{{ report()!.sealNumber || "N/A" }}</p>
+              </ui-grid>
+            </ui-grid>
+          </p-card>
+        }
+
+        <!-- Defects -->
+        <p-card>
+          <ng-template #header>
+            <ui-stack direction="row" align="center" justify="between" class="p-4 pb-0">
+              <ui-stack direction="row" align="center" gap="2">
+                <ui-icon name="exclamation-triangle" color="warning" />
+                <ui-typography variant="h5" tag="h3">Damage / Defects</ui-typography>
+              </ui-stack>
+              @if ((report()!.defects ?? []).length > 0) {
+                <p-tag [value]="(report()!.defects ?? []).length + ' defect(s)'" severity="danger" />
+              } @else {
+                <p-tag value="No defects" severity="success" />
+              }
+            </ui-stack>
+          </ng-template>
+
+          <app-condition-defects-list [defects]="report()!.defects ?? []" />
+        </p-card>
+      </ui-stack>
+    </ui-grid>
+
+    <!-- Right Column: Inspection Info, Photos, Notes -->
+    <ui-grid [size]="{ xs: 12, lg: 6 }">
+      <ui-stack gap="6">
+        <!-- Inspection Information -->
+        <p-card>
+          <ng-template #header>
+            <ui-stack direction="row" align="center" gap="2" class="p-4 pb-0">
+              <ui-icon name="clipboard" color="primary" />
+              <ui-typography variant="h5" tag="h3">Inspection Information</ui-typography>
+            </ui-stack>
+          </ng-template>
+
+          <ui-stack gap="4">
+            <ui-grid container spacing="4">
+              <ui-grid [size]="{ xs: 6 }">
+                <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
+                  Inspection Type
+                </ui-typography>
+                <p-tag
+                  [value]="getTypeLabel(report()!.type ?? '')"
+                  [severity]="getTypeSeverity(report()!.type ?? '')"
+                />
+              </ui-grid>
+              <ui-grid [size]="{ xs: 6 }">
+                <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
+                  Signature
+                </ui-typography>
+                @if (report()!.hasSignature) {
+                  <ui-stack direction="row" align="center" gap="1" class="text-success">
+                    <ui-icon name="check-circle" />
+                    Captured
+                  </ui-stack>
+                } @else {
+                  <ui-typography variant="body" color="muted" tag="span">
+                    Not captured
+                  </ui-typography>
+                }
+              </ui-grid>
+            </ui-grid>
+
+            <p-divider />
+
+            <ui-grid container spacing="4">
+              <ui-grid [size]="{ xs: 6 }">
+                <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
+                  Inspector
+                </ui-typography>
+                <ui-typography variant="body-sm">
+                  {{ report()!.inspectorName || "N/A" }}
+                </ui-typography>
+              </ui-grid>
+              <ui-grid [size]="{ xs: 6 }">
+                <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
+                  Inspected At
+                </ui-typography>
+                <ui-typography variant="body-sm">
+                  {{ report()!.inspectedAt | date: "medium" }}
+                </ui-typography>
+              </ui-grid>
+            </ui-grid>
+
+            @if (report()!.latitude && report()!.longitude) {
+              <div class="bg-success/10 rounded-lg p-3">
+                <ui-typography variant="caption" weight="medium" class="text-success mb-1 block">
+                  Location
+                </ui-typography>
+                <ui-stack direction="row" align="center" justify="between">
+                  <ui-typography variant="body-sm">
+                    {{ formatCoordinates(report()!.latitude, report()!.longitude) }}
+                  </ui-typography>
+                  <a
+                    [href]="getGoogleMapsUrl(report()!.latitude, report()!.longitude)"
+                    target="_blank"
+                    class="text-primary text-sm hover:underline"
+                  >
+                    <ui-icon name="external-link" size="xs" />
+                    Open in Maps
+                  </a>
+                </ui-stack>
+              </div>
+            }
+
+            <div>
+              <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
+                Load ID
+              </ui-typography>
+              <a
+                [routerLink]="['/loads', report()!.loadId]"
+                class="text-primary text-sm hover:underline"
+              >
+                {{ report()!.loadId }}
+                <ui-icon name="external-link" size="xs" />
+              </a>
+            </div>
+          </ui-stack>
+        </p-card>
+
+        <!-- Notes -->
+        @if (report()!.notes) {
+          <p-card>
+            <ng-template #header>
+              <ui-stack direction="row" align="center" gap="2" class="p-4 pb-0">
+                <ui-icon name="file-edit" color="primary" />
+                <ui-typography variant="h5" tag="h3">Notes</ui-typography>
+              </ui-stack>
+            </ng-template>
+
+            <p class="text-secondary text-sm whitespace-pre-wrap">{{ report()!.notes }}</p>
+          </p-card>
+        }
+
+        <!-- Photos -->
+        @if (report()!.photos && (report()!.photos ?? []).length > 0) {
           <p-card>
             <ng-template #header>
               <ui-stack direction="row" align="center" justify="between" class="p-4 pb-0">
                 <ui-stack direction="row" align="center" gap="2">
-                  <ui-icon name="map" color="primary" />
-                  <ui-typography variant="h5" tag="h3">Damage Locations</ui-typography>
+                  <ui-icon name="images" color="primary" />
+                  <ui-typography variant="h5" tag="h3">Photos</ui-typography>
                 </ui-stack>
-                @if (damageMarkers().length > 0) {
-                  <p-tag [value]="damageMarkers().length + ' damage(s)'" severity="danger" />
-                } @else {
-                  <p-tag value="No damage" severity="success" />
-                }
+                <p-tag [value]="(report()!.photos ?? []).length + ' photo(s)'" severity="info" />
               </ui-stack>
             </ng-template>
 
-            <app-vehicle-diagram [markers]="damageMarkers()" [showLegend]="true" />
-          </p-card>
-
-          <!-- Damage Details Table -->
-          @if (damageMarkers().length > 0) {
-            <p-card>
-              <ng-template #header>
-                <ui-stack direction="row" align="center" gap="2" class="p-4 pb-0">
-                  <ui-icon name="exclamation-triangle" color="warning" />
-                  <ui-typography variant="h5" tag="h3">Damage Details</ui-typography>
-                </ui-stack>
-              </ng-template>
-
-              <p-table [value]="damageMarkers()" [scrollable]="true" class="p-datatable-sm">
-                <ng-template #header>
-                  <tr>
-                    <th class="w-16">#</th>
-                    <th class="w-28">Severity</th>
-                    <th>Description</th>
-                  </tr>
-                </ng-template>
-                <ng-template #body let-marker let-i="rowIndex">
-                  <tr>
-                    <td class="font-bold">{{ i + 1 }}</td>
-                    <td>
-                      <p-tag
-                        [value]="marker.severity || 'Unknown'"
-                        [severity]="getSeverityBadge(marker.severity)"
-                      />
-                    </td>
-                    <td>{{ marker.description || "No description provided" }}</td>
-                  </tr>
-                </ng-template>
-              </p-table>
-            </p-card>
-          }
-        </ui-stack>
-      </ui-grid>
-
-      <!-- Right Column: Inspection Info, Photos, Notes -->
-      <ui-grid [size]="{ xs: 12, lg: 6 }">
-        <ui-stack gap="6">
-          <!-- Inspection Information -->
-          <p-card>
-            <ng-template #header>
-              <ui-stack direction="row" align="center" gap="2" class="p-4 pb-0">
-                <ui-icon name="clipboard" color="primary" />
-                <ui-typography variant="h5" tag="h3">Inspection Information</ui-typography>
-              </ui-stack>
-            </ng-template>
-
-            <ui-stack gap="4">
-              <ui-grid container spacing="4">
-                <ui-grid [size]="{ xs: 6 }">
-                  <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
-                    Inspection Type
-                  </ui-typography>
-                  <p-tag
-                    [value]="getTypeLabel(report()!.type ?? '')"
-                    [severity]="getTypeSeverity(report()!.type ?? '')"
+            <div class="grid grid-cols-3 gap-3">
+              @for (photo of report()!.photos; track photo.id; let i = $index) {
+                <div
+                  class="group focus:ring-primary relative cursor-pointer overflow-hidden rounded-lg border focus:ring-2 focus:outline-none"
+                  role="button"
+                  tabindex="0"
+                  (click)="openGallery(i)"
+                  (keydown.enter)="openGallery(i)"
+                >
+                  <img
+                    [src]="getPhotoUrl(photo.blobPath)"
+                    [alt]="photo.originalFileName || photo.fileName"
+                    class="aspect-square w-full object-cover transition-transform group-hover:scale-105"
                   />
-                </ui-grid>
-                <ui-grid [size]="{ xs: 6 }">
-                  <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
-                    Signature
-                  </ui-typography>
-                  @if (report()!.hasSignature) {
-                    <ui-stack direction="row" align="center" gap="1" class="text-success">
-                      <ui-icon name="check-circle" />
-                      Captured
-                    </ui-stack>
-                  } @else {
-                    <ui-typography variant="body" color="muted" tag="span">
-                      Not captured
-                    </ui-typography>
-                  }
-                </ui-grid>
-              </ui-grid>
-
-              <p-divider />
-
-              <ui-grid container spacing="4">
-                <ui-grid [size]="{ xs: 6 }">
-                  <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
-                    Inspector
-                  </ui-typography>
-                  <ui-typography variant="body-sm">
-                    {{ report()!.inspectorName || "N/A" }}
-                  </ui-typography>
-                </ui-grid>
-                <ui-grid [size]="{ xs: 6 }">
-                  <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
-                    Inspected At
-                  </ui-typography>
-                  <ui-typography variant="body-sm">
-                    {{ report()!.inspectedAt | date: "medium" }}
-                  </ui-typography>
-                </ui-grid>
-              </ui-grid>
-
-              @if (report()!.latitude && report()!.longitude) {
-                <div class="bg-success/10 rounded-lg p-3">
-                  <ui-typography variant="caption" weight="medium" class="text-success mb-1 block">
-                    Location
-                  </ui-typography>
-                  <ui-stack direction="row" align="center" justify="between">
-                    <ui-typography variant="body-sm">
-                      {{ formatCoordinates(report()!.latitude, report()!.longitude) }}
-                    </ui-typography>
-                    <a
-                      [href]="getGoogleMapsUrl(report()!.latitude, report()!.longitude)"
-                      target="_blank"
-                      class="text-primary text-sm hover:underline"
-                    >
-                      <ui-icon name="external-link" size="xs" />
-                      Open in Maps
-                    </a>
-                  </ui-stack>
+                  <div
+                    class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100"
+                  >
+                    <ui-icon name="search-plus" size="xl" />
+                  </div>
                 </div>
               }
-
-              <div>
-                <ui-typography variant="caption" color="muted" weight="medium" class="mb-1 block">
-                  Load ID
-                </ui-typography>
-                <a
-                  [routerLink]="['/loads', report()!.loadId]"
-                  class="text-primary text-sm hover:underline"
-                >
-                  {{ report()!.loadId }}
-                  <ui-icon name="external-link" size="xs" />
-                </a>
-              </div>
-            </ui-stack>
+            </div>
           </p-card>
-
-          <!-- Notes -->
-          @if (report()!.notes) {
-            <p-card>
-              <ng-template #header>
-                <ui-stack direction="row" align="center" gap="2" class="p-4 pb-0">
-                  <ui-icon name="file-edit" color="primary" />
-                  <ui-typography variant="h5" tag="h3">Notes</ui-typography>
-                </ui-stack>
-              </ng-template>
-
-              <p class="text-secondary text-sm whitespace-pre-wrap">{{ report()!.notes }}</p>
-            </p-card>
-          }
-
-          <!-- Photos -->
-          @if (report()!.photos && (report()!.photos ?? []).length > 0) {
-            <p-card>
-              <ng-template #header>
-                <ui-stack direction="row" align="center" justify="between" class="p-4 pb-0">
-                  <ui-stack direction="row" align="center" gap="2">
-                    <ui-icon name="images" color="primary" />
-                    <ui-typography variant="h5" tag="h3">Photos</ui-typography>
-                  </ui-stack>
-                  <p-tag [value]="(report()!.photos ?? []).length + ' photo(s)'" severity="info" />
-                </ui-stack>
-              </ng-template>
-
-              <div class="grid grid-cols-3 gap-3">
-                @for (photo of report()!.photos; track photo.id; let i = $index) {
-                  <div
-                    class="group focus:ring-primary relative cursor-pointer overflow-hidden rounded-lg border focus:ring-2 focus:outline-none"
-                    role="button"
-                    tabindex="0"
-                    (click)="openGallery(i)"
-                    (keydown.enter)="openGallery(i)"
-                  >
-                    <img
-                      [src]="getPhotoUrl(photo.blobPath)"
-                      [alt]="photo.originalFileName || photo.fileName"
-                      class="aspect-square w-full object-cover transition-transform group-hover:scale-105"
-                    />
-                    <div
-                      class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100"
-                    >
-                      <ui-icon name="search-plus" size="xl" />
-                    </div>
-                  </div>
-                }
-              </div>
-            </p-card>
-          }
-        </ui-stack>
-      </ui-grid>
+        }
+      </ui-stack>
     </ui-grid>
-  } @else {
-    <ui-stack align="center" gap="4" class="py-16 text-center">
-      <ui-icon name="exclamation-circle" size="xl" color="muted" />
-      <ui-typography variant="body" color="muted">Condition report not found</ui-typography>
-      <p-button
-        label="Back to List"
-        [routerLink]="['/inspections/condition-reports']"
-        [outlined]="true"
-        class="mt-4"
-      />
-    </ui-stack>
-  }
+  </ui-grid>
+} @else {
+  <ui-stack align="center" gap="4" class="py-16 text-center">
+    <ui-icon name="exclamation-circle" size="xl" color="muted" />
+    <ui-typography variant="body" color="muted">Condition report not found</ui-typography>
+    <p-button
+      label="Back to List"
+      [routerLink]="['/inspections/condition-reports']"
+      [outlined]="true"
+      class="mt-4"
+    />
+  </ui-stack>
+}
 
 <!-- Photo Gallery Dialog -->
 <p-galleria

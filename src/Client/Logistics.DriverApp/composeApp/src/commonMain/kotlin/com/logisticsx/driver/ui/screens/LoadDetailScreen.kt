@@ -148,7 +148,7 @@ fun LoadDetailScreen(
                                     fontWeight = FontWeight.Bold
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
-                                DetailRow("Number", load.containerNumber ?: "")
+                                DetailRow("Number", load.containerNumber)
                                 load.containerIsoType?.let {
                                     Spacer(modifier = Modifier.height(4.dp))
                                     DetailRow("ISO Type", it.name.replace("_", " "))
@@ -286,7 +286,7 @@ fun LoadDetailScreen(
                                 ) {
                                     Icon(Icons.Default.Description, "Pickup Inspection")
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Text("Pickup Inspection (DVIR)")
+                                    Text("Pickup Inspection")
                                 }
 
                                 Spacer(modifier = Modifier.height(8.dp))
@@ -298,7 +298,7 @@ fun LoadDetailScreen(
                                 ) {
                                     Icon(Icons.Default.Description, "Delivery Inspection")
                                     Spacer(modifier = Modifier.width(8.dp))
-                                    Text("Delivery Inspection (DVIR)")
+                                    Text("Delivery Inspection")
                                 }
                             }
                         }

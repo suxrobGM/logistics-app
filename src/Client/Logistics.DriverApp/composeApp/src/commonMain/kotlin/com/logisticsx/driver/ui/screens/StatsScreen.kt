@@ -200,7 +200,6 @@ fun StatsScreen(
                                     val chartData: List<ChartData> = when (chart) {
                                         is ChartUiState.DailySuccess -> chart.data.map { it.toChartData() }
                                         is ChartUiState.MonthlySuccess -> chart.data.map { it.toChartData() }
-                                        else -> emptyList()
                                     }
 
                                     Column(modifier = Modifier.padding(16.dp)) {

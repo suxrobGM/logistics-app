@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Logistics.Application.Abstractions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
@@ -14,17 +13,16 @@ internal sealed class GetConditionReportsHandler(ITenantUnitOfWork tenantUow)
 {
     public async Task<Result<List<ConditionReportDto>>> Handle(GetConditionReportsQuery req, CancellationToken ct)
     {
-        var query = tenantUow.Repository<VehicleConditionReport>().Query()
-            .AsQueryable();
+        var query = tenantUow.Repository<LoadConditionReport>().Query();
 
         if (req.LoadId.HasValue)
         {
             query = query.Where(r => r.LoadId == req.LoadId.Value);
         }
 
-        if (req.VehicleConditionReportId.HasValue)
+        if (req.ConditionReportId.HasValue)
         {
-            query = query.Where(r => r.Id == req.VehicleConditionReportId.Value);
+            query = query.Where(r => r.Id == req.ConditionReportId.Value);
         }
 
         var reports = await query
@@ -35,7 +33,8 @@ internal sealed class GetConditionReportsHandler(ITenantUnitOfWork tenantUow)
 
         foreach (var report in reports)
         {
-            // Get associated photos (inspection photos are stored as DeliveryDocuments with capture metadata)
+            // Photos are stored as DeliveryDocument rows linked by LoadId + inspection
+            // timestamp proximity (legacy pattern — out of scope to refactor here).
             var photos = await tenantUow.Repository<DeliveryDocument>().Query()
                 .Where(d => d.LoadId == report.LoadId &&
                     (d.Type == DocumentType.PickupInspection || d.Type == DocumentType.DeliveryInspection) &&
@@ -49,12 +48,15 @@ internal sealed class GetConditionReportsHandler(ITenantUnitOfWork tenantUow)
                 Id = report.Id,
                 LoadId = report.LoadId,
                 LoadReferenceId = report.Load?.Number.ToString(),
-                Vin = report.Vin,
+                LoadType = report.Load?.Type ?? LoadType.GeneralFreight,
                 Type = report.Type,
+                Vin = report.Vin,
                 VehicleYear = report.VehicleYear,
                 VehicleMake = report.VehicleMake,
                 VehicleModel = report.VehicleModel,
                 VehicleBodyClass = report.VehicleBodyClass,
+                ContainerNumber = report.ContainerNumber,
+                SealNumber = report.SealNumber,
                 Notes = report.Notes,
                 HasSignature = !string.IsNullOrEmpty(report.InspectorSignature),
                 Latitude = report.Latitude,
@@ -63,7 +65,7 @@ internal sealed class GetConditionReportsHandler(ITenantUnitOfWork tenantUow)
                 CreatedAt = report.CreatedAt,
                 InspectedById = report.InspectedById,
                 InspectorName = report.InspectedBy?.GetFullName(),
-                DamageMarkers = ParseDamageMarkers(report.DamageMarkersJson),
+                Defects = [.. report.Defects.Select(d => d.ToDto())],
                 Photos = [.. photos.Select(p => p.ToDto())]
             };
 
@@ -71,22 +73,5 @@ internal sealed class GetConditionReportsHandler(ITenantUnitOfWork tenantUow)
         }
 
         return Result<List<ConditionReportDto>>.Ok(dtos);
-    }
-
-    private static List<DamageMarkerDto> ParseDamageMarkers(string? json)
-    {
-        if (string.IsNullOrEmpty(json))
-        {
-            return [];
-        }
-
-        try
-        {
-            return JsonSerializer.Deserialize<List<DamageMarkerDto>>(json) ?? [];
-        }
-        catch
-        {
-            return [];
-        }
     }
 }

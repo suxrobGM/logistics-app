@@ -50,11 +50,16 @@ class DvirFormViewModel(
     locationService: LocationService,
     private val preferencesManager: PreferencesManager,
     private val truckId: String?,
-    private val tripId: String?
+    private val tripId: String?,
+    initialDvirType: DvirType? = null
 ) : CaptureFormViewModel<DvirFormUiState>(locationService) {
 
     override val _formState = MutableStateFlow(
-        DvirFormUiState(truckId = truckId, tripId = tripId)
+        DvirFormUiState(
+            truckId = truckId,
+            tripId = tripId,
+            dvirType = initialDvirType ?: DvirType.PRE_TRIP
+        )
     )
     override val formState: StateFlow<DvirFormUiState> = _formState.asStateFlow()
 
@@ -91,7 +96,7 @@ class DvirFormViewModel(
         }) {
             _formState.update { it.copy(isLoadingTrucks = true) }
             val response = truckApi.getTrucks(pageSize = 100)
-            val trucks = response.body()?.items ?: emptyList()
+            val trucks = response.body().items ?: emptyList()
             _formState.update { state ->
                 state.copy(
                     availableTrucks = trucks,

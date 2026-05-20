@@ -58,7 +58,7 @@ class DashboardViewModel(
             ).bodyOrThrow()
 
             val tripsResponse = tripApi.getTrips(orderBy = "-CreatedAt").bodyOrThrow()
-            val allTrips = tripsResponse?.items ?: emptyList()
+            val allTrips = tripsResponse.items ?: emptyList()
             val trips = allTrips.filter { trip ->
                 trip.status in listOf(TripStatus.DISPATCHED, TripStatus.IN_TRANSIT)
             }

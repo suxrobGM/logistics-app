@@ -1,20 +1,18 @@
-import { Component, inject, type OnInit, signal } from "@angular/core";
-import { Router } from "@angular/router";
 import { DatePipe } from "@angular/common";
+import { Component, inject, signal, type OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 import {
   Api,
-  getPendingDvirReviews,
-  getDvirReports,
   getAccidentReports,
-  getConditionReports,
-} from "@logistics/shared/api";
-import type {
-  DvirReportDto,
-  AccidentReportDto,
-  ConditionReportDto,
-  AccidentReportStatus,
-  AccidentSeverity,
-  DvirStatus,
+  getDvirReports,
+  getInspections,
+  getPendingDvirReviews,
+  type AccidentReportDto,
+  type AccidentReportStatus,
+  type AccidentSeverity,
+  type ConditionReportDto,
+  type DvirReportDto,
+  type DvirStatus,
 } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -64,13 +62,13 @@ export class InspectionsDashboardPage implements OnInit {
         this.api.invoke(getPendingDvirReviews, {}),
         this.api.invoke(getDvirReports, { PageSize: 5, OrderBy: "-InspectionDate" }),
         this.api.invoke(getAccidentReports, { PageSize: 5, OrderBy: "-AccidentDateTime" }),
-        this.api.invoke(getConditionReports, {}),
+        this.api.invoke(getInspections, {}),
       ]);
 
       // Stats
       this.pendingDvirCount.set(pendingDvirs?.length ?? 0);
       this.openAccidentsCount.set(
-        accidents?.items?.filter((a: AccidentReportDto) => a.status !== "resolved").length ?? 0
+        accidents?.items?.filter((a: AccidentReportDto) => a.status !== "resolved").length ?? 0,
       );
       this.conditionReportsCount.set(conditionReports?.length ?? 0);
 

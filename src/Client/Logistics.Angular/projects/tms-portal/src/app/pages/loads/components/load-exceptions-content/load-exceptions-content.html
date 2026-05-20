@@ -32,7 +32,7 @@
       <p-progress-spinner />
     </div>
   } @else {
-    <p-table [value]="exceptions()" [dataKey]="'id'" class="p-datatable-sm">
+    <p-table [value]="exceptions()" [dataKey]="'id'">
       <ng-template #header>
         <tr>
           <th class="w-36">Type</th>
@@ -67,7 +67,9 @@
                 <i class="pi pi-check-circle"></i>
                 Resolved
               </span>
-              <span class="text-muted text-xs">{{ exception.resolvedAt | date: "mediumDate" }}</span>
+              <span class="text-muted text-xs">
+                {{ exception.resolvedAt | date: "mediumDate" }}
+              </span>
             } @else {
               <span class="text-warning flex items-center gap-1 text-sm font-medium">
                 <i class="pi pi-clock"></i>

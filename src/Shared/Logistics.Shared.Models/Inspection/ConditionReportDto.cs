@@ -1,4 +1,5 @@
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Enums.Safety;
 
 namespace Logistics.Shared.Models;
 
@@ -7,41 +8,66 @@ public class ConditionReportDto
     public Guid Id { get; set; }
     public Guid LoadId { get; set; }
     public string? LoadReferenceId { get; set; }
-    public string Vin { get; set; } = string.Empty;
+
+    /// <summary>
+    /// The load's cargo type. Drives which identifier section the clients render
+    /// (VIN block for Vehicle, container block for container types, neither otherwise)
+    /// and which part catalog is valid for defects.
+    /// </summary>
+    public LoadType LoadType { get; set; }
+
     public InspectionType Type { get; set; }
 
-    // Vehicle info
+    // Vehicle-cargo identifier (only populated when LoadType == Vehicle)
+    public string? Vin { get; set; }
     public int? VehicleYear { get; set; }
     public string? VehicleMake { get; set; }
     public string? VehicleModel { get; set; }
     public string? VehicleBodyClass { get; set; }
 
-    // Damage markers
-    public List<DamageMarkerDto> DamageMarkers { get; set; } = new();
+    // Container-cargo identifier (only populated for container LoadTypes)
+    public string? ContainerNumber { get; set; }
+    public string? SealNumber { get; set; }
+
+    public List<ConditionDefectDto> Defects { get; set; } = [];
 
     public string? Notes { get; set; }
     public bool HasSignature { get; set; }
 
-    // Location
     public double? Latitude { get; set; }
     public double? Longitude { get; set; }
 
-    // Timestamps
     public DateTime InspectedAt { get; set; }
     public DateTime CreatedAt { get; set; }
 
-    // Inspector info
     public Guid InspectedById { get; set; }
     public string? InspectorName { get; set; }
 
-    // Photos
-    public List<DocumentDto> Photos { get; set; } = new();
+    public List<DocumentDto> Photos { get; set; } = [];
 }
 
-public class DamageMarkerDto
+public class ConditionDefectDto
 {
-    public double X { get; set; }  // 0.0 - 1.0 position on vehicle diagram
-    public double Y { get; set; }  // 0.0 - 1.0 position on vehicle diagram
-    public string? Description { get; set; }
-    public string? Severity { get; set; }  // Minor, Moderate, Severe
+    public Guid Id { get; set; }
+    public CargoInspectionPartCategory PartCategory { get; set; }
+    public string PartCategoryDisplay { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public DefectSeverity Severity { get; set; }
+    public string SeverityDisplay { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// Per-load-type catalog of valid <see cref="CargoInspectionPartCategory"/> values
+/// returned by <c>GET /inspections/parts</c>.
+/// </summary>
+public class InspectionPartCatalogDto
+{
+    public LoadType LoadType { get; set; }
+    public List<InspectionPartCategoryDto> Categories { get; set; } = [];
+}
+
+public class InspectionPartCategoryDto
+{
+    public CargoInspectionPartCategory Value { get; set; }
+    public string Display { get; set; } = string.Empty;
 }

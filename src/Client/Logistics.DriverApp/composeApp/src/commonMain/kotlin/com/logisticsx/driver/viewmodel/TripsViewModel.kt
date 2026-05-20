@@ -26,7 +26,7 @@ class TripsViewModel(
         launchWithState(_uiState) {
             val truckId = preferencesManager.getTruckId()
             val response = tripApi.getTrips(truckId = truckId, orderBy = "-CreatedAt").bodyOrThrow()
-            response?.items ?: emptyList()
+            response.items ?: emptyList()
         }
     }
 

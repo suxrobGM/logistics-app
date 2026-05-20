@@ -1,49 +1,49 @@
 [versions]
 # Kotlin & Gradle
-kotlin = "2.3.10"
-agp = "9.0.1"
-compose-plugin = "1.10.1"
+kotlin = "2.3.21"
+agp = "9.2.1"
+compose-plugin = "1.11.0"
 
 # Kotlin Libraries
-kotlinx-coroutines = "1.10.2"
-kotlinx-serialization = "1.10.0"
-kotlinx-datetime = "0.7.1"
-androidx-datastore = "1.2.0"
+kotlinx-coroutines = "1.11.0"
+kotlinx-serialization = "1.11.0"
+kotlinx-datetime = "0.8.0"
+androidx-datastore = "1.2.1"
 
 # Compose & UI
-compose-activity = "1.12.4"
+compose-activity = "1.13.0"
 
 # JetBrains Compose Multiplatform Libraries
-jetbrains-lifecycle = "2.10.0-alpha08"
-jetbrains-navigation3 = "1.0.0-alpha06"
+jetbrains-lifecycle = "2.10.0"
+jetbrains-navigation3 = "1.1.1"
 
 # Networking
-ktor = "3.4.0"
+ktor = "3.5.0"
 
 # Code Generation
-openapi-generator = "7.20.0"
+openapi-generator = "7.22.0"
 
 # Dependency Injection
-koin-bom = "4.1.1"
+koin-bom = "4.2.1"
 
 # Android-specific
-androidx-core = "1.17.0"
+androidx-core = "1.18.0"
 
 # Firebase
-firebase-bom = "34.9.0"
-firebase-crashlytics-plugin = "3.0.3"
+firebase-bom = "34.13.0"
+firebase-crashlytics-plugin = "3.0.7"
 google-services = "4.4.4"
 
 # Google Play Services
 play-services-location = "21.3.0"
 play-services-maps = "20.0.0"
-maps-compose = "8.1.0"
+maps-compose = "8.3.0"
 
 # SignalR
-signalr = "10.0.3"
+signalr = "10.0.8"
 
 # CameraX
-camerax = "1.5.3"
+camerax = "1.6.1"
 
 # ML Kit
 mlkit-barcode = "17.3.0"

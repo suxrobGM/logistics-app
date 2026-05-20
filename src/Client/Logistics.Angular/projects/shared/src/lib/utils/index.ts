@@ -7,3 +7,4 @@ export * from "./file-download-utils";
 export * from "./color-utils";
 export * from "./converters";
 export * from "./region-countries";
+export * from "./load-type-utils";

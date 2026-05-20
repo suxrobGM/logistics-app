@@ -1,4 +1,4 @@
-package com.logisticsx.driver.ui.components.dvir
+package com.logisticsx.driver.ui.components.inspection
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -29,29 +29,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.logisticsx.driver.api.models.DefectSeverity
-import com.logisticsx.driver.api.models.DvirInspectionCategory
 import com.logisticsx.driver.util.displayName
-import com.logisticsx.driver.util.grouped
-import com.logisticsx.driver.viewmodel.DvirDefect
 
+/**
+ * Generic "add defect" dialog used by both DVIR and cargo Condition Report.
+ *
+ * The caller supplies:
+ *  - [groupedCategories]: section name -> list of category values valid for
+ *    the inspection type (DVIR uses [com.logisticsx.driver.api.models.DvirInspectionCategory.Companion.grouped],
+ *    Condition Report uses [com.logisticsx.driver.util.cargoPartCatalogGrouped]).
+ *  - [categoryDisplay]: how to render a single category value as a chip label.
+ *  - [onConfirm]: called with the chosen category, description, and severity.
+ */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun DvirAddDefectDialog(
+fun <T : Any> AddInspectionDefectDialog(
+    title: String,
+    groupedCategories: Map<String, List<T>>,
+    categoryDisplay: (T) -> String,
     onDismiss: () -> Unit,
-    onConfirm: (DvirDefect) -> Unit
+    onConfirm: (category: T, description: String, severity: DefectSeverity) -> Unit
 ) {
-    var selectedCategory by remember { mutableStateOf<DvirInspectionCategory?>(null) }
+    var selectedCategory by remember { mutableStateOf<T?>(null) }
     var description by remember { mutableStateOf("") }
     var severity by remember { mutableStateOf(DefectSeverity.MINOR) }
-    var expandedCategoryGroup by remember { mutableStateOf<String?>(null) }
+    var expandedGroup by remember { mutableStateOf<String?>(null) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Report Defect") },
+        title = { Text(title) },
         text = {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 item {
                     Text(
                         text = "Category",
@@ -59,17 +67,16 @@ fun DvirAddDefectDialog(
                     )
                 }
 
-                // Category Groups
-                DvirInspectionCategory.grouped.forEach { (groupName, categories) ->
+                groupedCategories.forEach { (groupName, categories) ->
                     item {
                         CategoryGroupCard(
                             groupName = groupName,
                             categories = categories,
                             selectedCategory = selectedCategory,
-                            isExpanded = expandedCategoryGroup == groupName,
+                            categoryDisplay = categoryDisplay,
+                            isExpanded = expandedGroup == groupName,
                             onExpandToggle = {
-                                expandedCategoryGroup =
-                                    if (expandedCategoryGroup == groupName) null else groupName
+                                expandedGroup = if (expandedGroup == groupName) null else groupName
                             },
                             onCategorySelected = { selectedCategory = it }
                         )
@@ -100,13 +107,7 @@ fun DvirAddDefectDialog(
             TextButton(
                 onClick = {
                     selectedCategory?.let { cat ->
-                        onConfirm(
-                            DvirDefect(
-                                category = cat,
-                                description = description,
-                                severity = severity
-                            )
-                        )
+                        onConfirm(cat, description, severity)
                     }
                 },
                 enabled = selectedCategory != null && description.isNotBlank()
@@ -115,22 +116,21 @@ fun DvirAddDefectDialog(
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
+            TextButton(onClick = onDismiss) { Text("Cancel") }
         }
     )
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun CategoryGroupCard(
+private fun <T : Any> CategoryGroupCard(
     groupName: String,
-    categories: List<DvirInspectionCategory>,
-    selectedCategory: DvirInspectionCategory?,
+    categories: List<T>,
+    selectedCategory: T?,
+    categoryDisplay: (T) -> String,
     isExpanded: Boolean,
     onExpandToggle: () -> Unit,
-    onCategorySelected: (DvirInspectionCategory) -> Unit
+    onCategorySelected: (T) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -156,7 +156,7 @@ private fun CategoryGroupCard(
                         FilterChip(
                             selected = selectedCategory == category,
                             onClick = { onCategorySelected(category) },
-                            label = { Text(category.displayName) }
+                            label = { Text(categoryDisplay(category)) }
                         )
                     }
                 }
@@ -172,14 +172,9 @@ private fun SeveritySelector(
     onSeveritySelected: (DefectSeverity) -> Unit
 ) {
     Column {
-        Text(
-            text = "Severity",
-            style = MaterialTheme.typography.labelLarge
-        )
+        Text(text = "Severity", style = MaterialTheme.typography.labelLarge)
         Spacer(modifier = Modifier.height(8.dp))
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             DefectSeverity.entries.forEach { sev ->
                 FilterChip(
                     selected = selectedSeverity == sev,

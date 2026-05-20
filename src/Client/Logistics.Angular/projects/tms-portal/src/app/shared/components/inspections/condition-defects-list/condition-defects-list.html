@@ -1,0 +1,27 @@
+@if (defects().length === 0) {
+  <p class="text-muted py-4 text-center text-sm">No defects documented.</p>
+} @else {
+  <p-table [value]="defects()" [scrollable]="true">
+    <ng-template #header>
+      <tr>
+        <th class="w-16">#</th>
+        <th class="w-48">Part</th>
+        <th class="w-32">Severity</th>
+        <th>Description</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-defect let-i="rowIndex">
+      <tr>
+        <td class="font-bold">{{ i + 1 }}</td>
+        <td>{{ defect.partCategoryDisplay || defect.partCategory }}</td>
+        <td>
+          <p-tag
+            [value]="defect.severityDisplay || defect.severity"
+            [severity]="getSeverityBadge(defect.severity)"
+          />
+        </td>
+        <td>{{ defect.description || "No description" }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+}

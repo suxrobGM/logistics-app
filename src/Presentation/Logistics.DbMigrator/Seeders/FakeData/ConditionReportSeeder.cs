@@ -1,20 +1,23 @@
-using System.Text.Json;
 using Logistics.DbMigrator.Abstractions;
 using Logistics.DbMigrator.Extensions;
 using Logistics.DbMigrator.Models;
 using Logistics.DbMigrator.Regions;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Domain.Primitives.Enums.Safety;
 using Logistics.Shared.Identity.Roles;
 
 namespace Logistics.DbMigrator.Seeders.FakeData;
 
 /// <summary>
-/// Seeds sample vehicle condition reports (DVIR - Driver Vehicle Inspection Reports).
+/// Seeds sample load condition reports (cargo inspection — pickup/delivery).
+/// Defects are drawn from the per-load-type catalog so vehicle loads get
+/// vehicle-part defects, container loads get container-part defects, and
+/// generic freight loads get generic-part defects.
 /// </summary>
 internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : SeederBase(logger)
 {
-    // Sample VIN data with decoded vehicle info
+    // Used to pre-populate vehicle decode fields when the load is a Vehicle.
     private static readonly (string Vin, int Year, string Make, string Model, string BodyClass)[] SampleVehicles =
     [
         ("1HGCM82633A004352", 2020, "Honda", "Accord", "Sedan/Saloon"),
@@ -31,29 +34,59 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
         ("5NPEB4AC1BH123456", 2022, "Hyundai", "Sonata", "Sedan/Saloon")
     ];
 
-    private static readonly string[] DamageDescriptions =
-    [
-        "Minor scratch on door panel",
-        "Small dent on rear bumper",
-        "Paint chip on hood",
-        "Scratch on front fender",
-        "Scuff mark on side mirror",
-        "Minor ding on quarter panel",
-        "Light scratch on roof",
-        "Small crack in taillight cover"
-    ];
+    private static readonly Dictionary<CargoInspectionPartCategory, string[]> DefectDescriptions = new()
+    {
+        // Vehicle parts
+        [CargoInspectionPartCategory.VehicleFrontBumper]    = ["Scratch on front bumper", "Paint chip on front bumper", "Small crack in bumper cover"],
+        [CargoInspectionPartCategory.VehicleRearBumper]     = ["Dent on rear bumper", "Scuff on rear bumper"],
+        [CargoInspectionPartCategory.VehicleHood]           = ["Paint chip on hood", "Light scratch on hood"],
+        [CargoInspectionPartCategory.VehicleRoof]           = ["Hairline scratch on roof", "Small dent on roof panel"],
+        [CargoInspectionPartCategory.VehicleTrunkLiftgate]  = ["Scratch near trunk latch", "Dent on liftgate"],
+        [CargoInspectionPartCategory.VehicleFrontLeftDoor]  = ["Door ding on front left", "Scratch on front left door"],
+        [CargoInspectionPartCategory.VehicleFrontRightDoor] = ["Door ding on front right", "Scuff on front right door"],
+        [CargoInspectionPartCategory.VehicleRearLeftDoor]   = ["Scratch on rear left door"],
+        [CargoInspectionPartCategory.VehicleRearRightDoor]  = ["Scratch on rear right door"],
+        [CargoInspectionPartCategory.VehicleFenders]        = ["Dent on quarter panel", "Scrape on fender"],
+        [CargoInspectionPartCategory.VehicleWheels]         = ["Curb rash on alloy wheel", "Scuff on wheel rim"],
+        [CargoInspectionPartCategory.VehicleMirrors]        = ["Mirror housing cracked", "Scuff on side mirror"],
+        [CargoInspectionPartCategory.VehicleWindshield]     = ["Small chip in windshield", "Crack starting in lower windshield"],
+        [CargoInspectionPartCategory.VehicleSideGlass]      = ["Scratch on side glass"],
+        [CargoInspectionPartCategory.VehicleLights]         = ["Cracked headlight lens", "Foggy lens"],
+        [CargoInspectionPartCategory.VehicleBodyPanels]     = ["Minor ding on body panel"],
+        [CargoInspectionPartCategory.VehicleInterior]       = ["Stain on driver seat", "Scuff on dashboard"],
 
-    private static readonly string[] DamageSeverities = ["minor", "moderate", "severe"];
+        // Container parts
+        [CargoInspectionPartCategory.ContainerFrontWall]      = ["Bowed front wall", "Surface rust on front wall"],
+        [CargoInspectionPartCategory.ContainerRearDoors]      = ["Bent right door", "Worn rear door gasket"],
+        [CargoInspectionPartCategory.ContainerLeftWall]       = ["Pinhole in left wall", "Dent on left wall"],
+        [CargoInspectionPartCategory.ContainerRightWall]      = ["Dent on right wall", "Surface rust on right wall"],
+        [CargoInspectionPartCategory.ContainerRoof]           = ["Pinhole leak in roof", "Bowed roof panel"],
+        [CargoInspectionPartCategory.ContainerFloor]          = ["Soft spot on plywood floor", "Stained floor"],
+        [CargoInspectionPartCategory.ContainerLockingHardware]= ["Stiff locking rod", "Missing locking pin"],
+        [CargoInspectionPartCategory.ContainerCornerCastings] = ["Worn corner casting", "Crack in corner casting"],
+        [CargoInspectionPartCategory.ContainerSeal]           = ["Seal tampered", "Seal number does not match BoL"],
+
+        // Generic / freight
+        [CargoInspectionPartCategory.GenericWalls]      = ["Dent on trailer wall", "Hole in side wall"],
+        [CargoInspectionPartCategory.GenericDoors]      = ["Sticky rear door", "Damaged door seal"],
+        [CargoInspectionPartCategory.GenericFloor]      = ["Trailer floor soft spot", "Debris on trailer floor"],
+        [CargoInspectionPartCategory.GenericRoof]       = ["Roof tear in fabric", "Roof bracing loose"],
+        [CargoInspectionPartCategory.GenericLighting]   = ["Trailer marker light out", "Brake light intermittent"],
+        [CargoInspectionPartCategory.GenericTires]      = ["Low tread on trailer tire", "Sidewall scuff"],
+        [CargoInspectionPartCategory.GenericSecurement] = ["Strap frayed", "Missing securement chain", "E-track damaged"],
+
+        [CargoInspectionPartCategory.Other] = ["Other minor issue documented", "See notes for details"]
+    };
 
     public override string Name => nameof(ConditionReportSeeder);
     public override SeederType Type => SeederType.FakeData;
     public override int Order => 155;
     public override IReadOnlyList<string> DependsOn =>
-        [nameof(LoadSeeder), nameof(EmployeeSeeder)];
+        [nameof(LoadSeeder), nameof(EmployeeSeeder), nameof(ContainerSeeder)];
 
     protected override async Task<bool> HasExistingDataAsync(SeederContext context, CancellationToken cancellationToken)
     {
-        return await context.TenantUnitOfWork.Repository<VehicleConditionReport>().CountAsync(ct: cancellationToken) > 0;
+        return await context.TenantUnitOfWork.Repository<LoadConditionReport>().CountAsync(ct: cancellationToken) > 0;
     }
 
     public override async Task SeedAsync(SeederContext context, CancellationToken cancellationToken = default)
@@ -61,10 +94,9 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
         LogStarting();
 
         var loadRepository = context.TenantUnitOfWork.Repository<Load>();
-        var reportRepository = context.TenantUnitOfWork.Repository<VehicleConditionReport>();
+        var reportRepository = context.TenantUnitOfWork.Repository<LoadConditionReport>();
         var employeeRepository = context.TenantUnitOfWork.Repository<Employee>();
 
-        // Get loads (vehicle transport loads would be ideal, but we'll use any loads)
         var loads = await loadRepository.GetListAsync(ct: cancellationToken);
         if (loads.Count == 0)
         {
@@ -73,7 +105,6 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
             return;
         }
 
-        // Get drivers from context or load from database
         var drivers = context.CreatedEmployees?.Drivers
             ?? await employeeRepository.GetListAsync(e => e.Role != null && e.Role.Name == TenantRoles.Driver, ct: cancellationToken);
         if (drivers.Count == 0)
@@ -89,28 +120,24 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
         foreach (var load in loads.Take((int)(loads.Count * 0.4)))
         {
             var driver = random.Pick(drivers);
-            var vehicle = random.Pick(SampleVehicles);
             var captureLocation = random.Pick((IList<RoutePoint>)(context.Region?.RoutePoints ?? []));
 
-            // Create pickup inspection
             var pickupReport = CreateConditionReport(
                 load,
                 driver,
-                vehicle,
                 InspectionType.Pickup,
                 captureLocation,
                 load.PickedUpAt ?? load.DispatchedAt ?? DateTime.UtcNow.AddDays(-random.Next(1, 30)));
             await reportRepository.AddAsync(pickupReport, cancellationToken);
             count++;
 
-            // Create delivery inspection (50% chance to have delivery inspection)
+            // 50% chance of a delivery inspection
             if (random.NextDouble() > 0.5)
             {
                 var deliveryLocation = random.Pick((context.Region?.RoutePoints ?? []).Where(p => p != captureLocation).ToList());
                 var deliveryReport = CreateConditionReport(
                     load,
                     driver,
-                    vehicle,
                     InspectionType.Delivery,
                     deliveryLocation,
                     load.DeliveredAt ?? load.PickedUpAt?.AddHours(random.Next(4, 48)) ?? DateTime.UtcNow.AddDays(-random.Next(1, 15)));
@@ -123,77 +150,98 @@ internal class ConditionReportSeeder(ILogger<ConditionReportSeeder> logger) : Se
         LogCompleted(count);
     }
 
-    private VehicleConditionReport CreateConditionReport(
+    private LoadConditionReport CreateConditionReport(
         Load load,
         Employee driver,
-        (string Vin, int Year, string Make, string Model, string BodyClass) vehicle,
         InspectionType type,
         RoutePoint location,
         DateTime inspectedAt)
     {
-        var damageMarkers = GenerateDamageMarkers();
-
-        var report = VehicleConditionReport.Create(
+        var report = LoadConditionReport.Create(
             loadId: load.Id,
-            vin: vehicle.Vin,
             type: type,
             inspectedById: driver.Id,
-            damageMarkersJson: damageMarkers.Count > 0 ? JsonSerializer.Serialize(damageMarkers) : null,
-            notes: GenerateNotes(type, damageMarkers.Count),
+            notes: null,
             latitude: location.Latitude + (random.NextDouble() - 0.5) * 0.01,
-            longitude: location.Longitude + (random.NextDouble() - 0.5) * 0.01
-        );
+            longitude: location.Longitude + (random.NextDouble() - 0.5) * 0.01);
 
-        // Set vehicle info from VIN decode
-        report.VehicleYear = vehicle.Year;
-        report.VehicleMake = vehicle.Make;
-        report.VehicleModel = vehicle.Model;
-        report.VehicleBodyClass = vehicle.BodyClass;
         report.InspectedAt = inspectedAt;
         report.InspectorSignature = GenerateFakeSignature();
 
-        return report;
-    }
+        // Populate cargo-type-specific identifier fields
+        if (load.Type == LoadType.Vehicle)
+        {
+            var (Vin, Year, Make, Model, BodyClass) = random.Pick(SampleVehicles);
+            report.Vin = Vin;
+            report.VehicleYear = Year;
+            report.VehicleMake = Make;
+            report.VehicleModel = Model;
+            report.VehicleBodyClass = BodyClass;
+        }
+        else if (load.Type.IsContainerLoad())
+        {
+            // Reuse the container's existing ISO 6346 number + seal if attached
+            report.ContainerNumber = load.Container?.Number ?? GenerateFallbackContainerNumber();
+            report.SealNumber = load.Container?.SealNumber ?? $"SEAL{random.Next(100000, 999999)}";
+        }
 
-    private List<object> GenerateDamageMarkers()
-    {
-        var markers = new List<object>();
-
-        // 60% chance of no damage, 30% chance of 1-2 damages, 10% chance of 3+ damages
-        var damageChance = random.NextDouble();
-        var damageCount = damageChance switch
+        // Pick 0-3 defects from the cargo-type-specific catalog
+        var catalog = CargoInspectionPartCategoryExtensions.GetCatalogFor(load.Type);
+        var defectCount = random.NextDouble() switch
         {
             < 0.6 => 0,
             < 0.9 => random.Next(1, 3),
-            _ => random.Next(3, 6)
+            _ => random.Next(3, 5)
         };
 
-        for (var i = 0; i < damageCount; i++)
+        for (var i = 0; i < defectCount; i++)
         {
-            markers.Add(new
+            var partCategory = random.Pick(catalog);
+            var description = DefectDescriptions.TryGetValue(partCategory, out var descriptions)
+                ? random.Pick(descriptions)
+                : "Defect documented during inspection";
+
+            report.Defects.Add(new ConditionDefect
             {
-                x = Math.Round(random.NextDouble(), 2),
-                y = Math.Round(random.NextDouble(), 2),
-                description = random.Pick(DamageDescriptions),
-                severity = random.Pick(DamageSeverities)
+                PartCategory = partCategory,
+                Description = description,
+                Severity = PickSeverity()
             });
         }
 
-        return markers;
+        report.Notes = GenerateNotes(type, report.Defects.Count);
+        return report;
     }
 
-    private string GenerateNotes(InspectionType type, int damageCount)
+    private DefectSeverity PickSeverity()
     {
-        if (damageCount == 0)
+        return random.NextDouble() switch
+        {
+            < 0.6 => DefectSeverity.Minor,
+            < 0.9 => DefectSeverity.Major,
+            _ => DefectSeverity.OutOfService
+        };
+    }
+
+    private static string GenerateNotes(InspectionType type, int defectCount)
+    {
+        if (defectCount == 0)
         {
             return type == InspectionType.Pickup
-                ? "Vehicle received in excellent condition. No pre-existing damage noted."
-                : "Vehicle delivered in same condition as received. No new damage.";
+                ? "Cargo received in good condition. No pre-existing damage noted."
+                : "Cargo delivered in same condition as received. No new damage.";
         }
 
         return type == InspectionType.Pickup
-            ? $"Vehicle has {damageCount} pre-existing damage point(s) documented. Customer acknowledged condition."
-            : $"Vehicle delivered with {damageCount} noted condition issue(s). See damage markers for details.";
+            ? $"Cargo has {defectCount} pre-existing issue(s) documented. Customer acknowledged condition."
+            : $"Cargo delivered with {defectCount} noted condition issue(s). See defects for details.";
+    }
+
+    private string GenerateFallbackContainerNumber()
+    {
+        // ISO 6346: 4 letters (3 owner + U/J/Z category) + 7 digits
+        var owners = new[] { "MSCU", "MAEU", "TCNU", "TGHU", "HLBU", "OOLU", "CMAU" };
+        return $"{random.Pick(owners)}{random.Next(1000000, 9999999)}";
     }
 
     private string GenerateFakeSignature()

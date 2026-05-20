@@ -1,22 +1,17 @@
 import { CommonModule } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import {
-  Api,
-  getConditionReportById,
-  type ConditionReportDto,
-  type DamageMarkerDto,
-} from "@logistics/shared/api";
+import { Api, getConditionReportById, type ConditionReportDto } from "@logistics/shared/api";
 import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { isContainerLoadType } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { GalleriaModule } from "primeng/galleria";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { PageHeader } from "@/shared/components";
-import { VehicleDiagram, type DamageMarker } from "@/shared/components/inspections";
+import { ConditionDefectsList } from "@/shared/components/inspections";
 
 @Component({
   selector: "app-condition-report-detail",
@@ -28,11 +23,10 @@ import { VehicleDiagram, type DamageMarker } from "@/shared/components/inspectio
     ProgressSpinnerModule,
     RouterModule,
     DividerModule,
-    TableModule,
     TagModule,
     GalleriaModule,
     PageHeader,
-    VehicleDiagram,
+    ConditionDefectsList,
     Grid,
     Icon,
     Stack,
@@ -48,21 +42,9 @@ export class ConditionReportDetailPage implements OnInit {
   public readonly showGallery = signal(false);
   public readonly activeImageIndex = signal(0);
 
-  public readonly damageMarkers = computed<DamageMarker[]>(() => {
-    const r = this.report();
-    if (!r?.damageMarkers) {
-      return [];
-    }
+  public readonly isVehicleLoad = computed(() => this.report()?.loadType === "vehicle");
 
-    return r.damageMarkers
-      .filter((m: DamageMarkerDto) => m.x != null && m.y != null)
-      .map((m: DamageMarkerDto) => ({
-        x: m.x!,
-        y: m.y!,
-        description: m.description ?? undefined,
-        severity: m.severity ?? undefined,
-      }));
-  });
+  public readonly isContainerLoad = computed(() => isContainerLoadType(this.report()?.loadType));
 
   public readonly photoUrls = computed(() => {
     const r = this.report();
@@ -80,7 +62,6 @@ export class ConditionReportDetailPage implements OnInit {
 
   getPhotoUrl(blobPath?: string | null): string {
     if (!blobPath) return "";
-    // Construct URL from blob path - this assumes Azure Blob Storage pattern
     return `/api/documents/download?path=${encodeURIComponent(blobPath)}`;
   }
 
@@ -110,6 +91,23 @@ export class ConditionReportDetailPage implements OnInit {
     }
   }
 
+  getCargoTypeLabel(): string {
+    const t = this.report()?.loadType;
+    if (!t) return "Cargo";
+    switch (t) {
+      case "vehicle":
+        return "Vehicle";
+      case "intermodal_container":
+        return "Intermodal Container";
+      case "tank_container":
+        return "Tank Container";
+      case "reefer_container":
+        return "Reefer Container";
+      default:
+        return "Freight";
+    }
+  }
+
   getVehicleInfo(): string {
     const r = this.report();
     if (!r) return "N/A";
@@ -125,30 +123,6 @@ export class ConditionReportDetailPage implements OnInit {
   formatCoordinates(lat?: number | null, lng?: number | null): string {
     if (!lat || !lng) return "N/A";
     return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-  }
-
-  getSeverityClass(severity?: string): string {
-    switch (severity?.toLowerCase()) {
-      case "severe":
-        return "text-red-600 dark:text-red-400 bg-red-500/10";
-      case "moderate":
-        return "text-orange-600 dark:text-orange-400 bg-orange-500/10";
-      case "minor":
-      default:
-        return "text-yellow-600 dark:text-yellow-400 bg-yellow-500/10";
-    }
-  }
-
-  getSeverityBadge(severity?: string): "danger" | "warn" | "info" {
-    switch (severity?.toLowerCase()) {
-      case "severe":
-        return "danger";
-      case "moderate":
-        return "warn";
-      case "minor":
-      default:
-        return "info";
-    }
   }
 
   openGallery(index: number): void {

@@ -1,4 +1,4 @@
-<ui-page-header title="Vehicle Condition Reports" />
+<ui-page-header title="Cargo Condition Reports" />
 
 <p-card>
   <div class="mb-4">
@@ -31,12 +31,9 @@
             Type
             <p-sortIcon field="type" />
           </th>
-          <th pSortableColumn="vin">
-            VIN
-            <p-sortIcon field="vin" />
-          </th>
-          <th>Vehicle</th>
-          <th class="w-28">Damages</th>
+          <th>Identifier</th>
+          <th>Cargo</th>
+          <th class="w-28">Defects</th>
           <th pSortableColumn="inspectorName">
             Inspector
             <p-sortIcon field="inspectorName" />
@@ -56,17 +53,21 @@
             <p-tag [value]="getTypeLabel(report.type)" [severity]="getTypeSeverity(report.type)" />
           </td>
           <td>
-            <span class="font-mono text-sm">{{ report.vin || "N/A" }}</span>
+            <span class="font-mono text-sm">{{ getIdentifier(report) }}</span>
           </td>
           <td>
-            <span class="text-sm">{{ getVehicleInfo(report) }}</span>
-            @if (report.vehicleBodyClass) {
-              <span class="text-muted block text-xs">{{ report.vehicleBodyClass }}</span>
+            @if (report.loadType === "vehicle") {
+              <span class="text-sm">{{ getVehicleInfo(report) }}</span>
+              @if (report.vehicleBodyClass) {
+                <span class="text-muted block text-xs">{{ report.vehicleBodyClass }}</span>
+              }
+            } @else {
+              <span class="text-muted text-sm">{{ report.loadType }}</span>
             }
           </td>
           <td>
-            @if (getDamageCount(report) > 0) {
-              <p-tag [value]="getDamageCount(report).toString() + ' damages'" severity="danger" />
+            @if (getDefectCount(report) > 0) {
+              <p-tag [value]="getDefectCount(report).toString() + ' defect(s)'" severity="danger" />
             } @else {
               <span class="text-muted text-sm">None</span>
             }

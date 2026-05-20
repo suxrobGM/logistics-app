@@ -1,66 +1,61 @@
 using Logistics.API.Extensions;
+using Logistics.Application.Modules.Compliance.Inspections.Commands;
+using Logistics.Application.Modules.Compliance.Inspections.Queries;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Models;
-using Logistics.Shared.Models.Inspection;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Logistics.Application.Modules.Compliance.Inspections.Commands;
-using Logistics.Application.Modules.Compliance.Inspections.Queries;
 
 namespace Logistics.API.Controllers;
 
 [ApiController]
 [Route("inspections")]
 [Produces("application/json")]
-public class InspectionController(IMediator mediator) : ControllerBase
+public class InspectionsController(IMediator mediator) : ControllerBase
 {
-    // POST /inspections/decode-vin
-    [HttpPost("decode-vin", Name = "DecodeVin")]
-    [ProducesResponseType(typeof(VehicleInfoDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize]
-    public async Task<IActionResult> DecodeVin([FromBody] DecodeVinRequest request)
-    {
-        var result = await mediator.Send(new DecodeVinCommand { Vin = request.Vin });
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
-    }
-
-    // GET /inspections/condition-reports
-    [HttpGet("condition-reports", Name = "GetConditionReports")]
+    [HttpGet(Name = "GetInspections")]
     [ProducesResponseType(typeof(List<ConditionReportDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize]
-    public async Task<IActionResult> GetConditionReports([FromQuery] Guid? loadId)
+    public async Task<IActionResult> GetInspections([FromQuery] Guid? loadId)
     {
         var result = await mediator.Send(new GetConditionReportsQuery { LoadId = loadId });
         return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
     }
 
-    // GET /inspections/condition-reports/{id}
-    [HttpGet("condition-reports/{id:guid}", Name = "GetConditionReportById")]
+    [HttpGet("parts", Name = "GetInspectionParts")]
+    [ProducesResponseType(typeof(InspectionPartCatalogDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [Authorize]
+    public async Task<IActionResult> GetInspectionParts([FromQuery] LoadType loadType)
+    {
+        var result = await mediator.Send(new GetInspectionPartCatalogQuery { LoadType = loadType });
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(ErrorResponse.FromResult(result));
+    }
+
+    [HttpGet("{id:guid}", Name = "GetInspection")]
     [ProducesResponseType(typeof(ConditionReportDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
     [Authorize]
-    public async Task<IActionResult> GetConditionReportById(Guid id)
+    public async Task<IActionResult> GetInspection(Guid id)
     {
-        var result = await mediator.Send(new GetConditionReportsQuery { VehicleConditionReportId = id });
+        var result = await mediator.Send(new GetConditionReportsQuery { ConditionReportId = id });
 
         if (!result.IsSuccess || result.Value is null || result.Value.Count == 0)
         {
-            return NotFound(new ErrorResponse($"Condition report with ID '{id}' not found"));
+            return NotFound(new ErrorResponse($"Inspection with ID '{id}' not found"));
         }
 
         return Ok(result.Value.First());
     }
 
-    // POST /inspections/condition-reports
-    [HttpPost("condition-reports", Name = "CreateConditionReport")]
+    [HttpPost(Name = "CreateInspection")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
     [Authorize]
     [RequestSizeLimit(100 * 1024 * 1024)]
-    public async Task<IActionResult> CreateConditionReport([FromForm] CreateConditionReportRequest request)
+    public async Task<IActionResult> CreateInspection([FromForm] CreateInspectionRequest request)
     {
         var userId = User.GetUserId();
         if (userId is null)
@@ -86,16 +81,22 @@ public class InspectionController(IMediator mediator) : ControllerBase
             }
         }
 
+        // Defects arrive as a JSON-encoded string in the multipart form because
+        // POST is multipart/form-data (Photos are files). Parse here.
+        var defects = ConditionDefectInput.ParseDefects(request.DefectsJson);
+
         var cmd = new CreateConditionReportCommand
         {
             LoadId = request.LoadId,
-            Vin = request.Vin,
             Type = request.Type,
+            Vin = request.Vin,
             VehicleYear = request.VehicleYear,
             VehicleMake = request.VehicleMake,
             VehicleModel = request.VehicleModel,
             VehicleBodyClass = request.VehicleBodyClass,
-            DamageMarkersJson = request.DamageMarkersJson,
+            ContainerNumber = request.ContainerNumber,
+            SealNumber = request.SealNumber,
+            Defects = defects,
             Notes = request.Notes,
             SignatureBase64 = request.SignatureBase64,
             Photos = photos,
@@ -110,17 +111,20 @@ public class InspectionController(IMediator mediator) : ControllerBase
 }
 
 /// <summary>
-/// Request to create a vehicle condition report with photos and damage markers.
+/// Multipart request to create a cargo inspection. Defects are submitted
+/// as a JSON string so they can travel alongside Photos in the same form.
 /// </summary>
-public record CreateConditionReportRequest(
+public record CreateInspectionRequest(
     Guid LoadId,
-    string Vin,
     InspectionType Type,
+    string? Vin,
     int? VehicleYear,
     string? VehicleMake,
     string? VehicleModel,
     string? VehicleBodyClass,
-    string? DamageMarkersJson,
+    string? ContainerNumber,
+    string? SealNumber,
+    string? DefectsJson,
     string? Notes,
     string? SignatureBase64,
     List<IFormFile>? Photos,

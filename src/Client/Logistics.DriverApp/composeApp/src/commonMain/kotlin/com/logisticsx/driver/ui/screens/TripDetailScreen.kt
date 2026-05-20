@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.LocalShipping
 import androidx.compose.material.icons.filled.Map
@@ -116,9 +117,9 @@ fun TripDetailScreen(
                         onClick = { trip.id?.let { onDvirClick(it) } },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Icon(Icons.Default.Assignment, "DVIR")
+                        Icon(Icons.AutoMirrored.Filled.Assignment, "Truck DVIR")
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Start DVIR Inspection")
+                        Text("Truck DVIR (Post-Trip)")
                     }
 
                     if (stops.isNotEmpty()) {

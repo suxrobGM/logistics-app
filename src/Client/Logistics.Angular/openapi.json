@@ -5611,61 +5611,12 @@
         }
       }
     },
-    "/inspections/decode-vin": {
-      "post": {
-        "tags": [
-          "Inspection"
-        ],
-        "operationId": "DecodeVin",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DecodeVinRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DecodeVinRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/DecodeVinRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/VehicleInfoDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/inspections/condition-reports": {
+    "/inspections": {
       "get": {
         "tags": [
-          "Inspection"
+          "Inspections"
         ],
-        "operationId": "GetConditionReports",
+        "operationId": "GetInspections",
         "parameters": [
           {
             "name": "loadId",
@@ -5704,9 +5655,9 @@
       },
       "post": {
         "tags": [
-          "Inspection"
+          "Inspections"
         ],
-        "operationId": "CreateConditionReport",
+        "operationId": "CreateInspection",
         "requestBody": {
           "content": {
             "multipart/form-data": {
@@ -5717,11 +5668,11 @@
                     "type": "string",
                     "format": "uuid"
                   },
-                  "Vin": {
-                    "type": "string"
-                  },
                   "Type": {
                     "$ref": "#/components/schemas/InspectionType"
+                  },
+                  "Vin": {
+                    "type": "string"
                   },
                   "VehicleYear": {
                     "type": "integer",
@@ -5736,7 +5687,13 @@
                   "VehicleBodyClass": {
                     "type": "string"
                   },
-                  "DamageMarkersJson": {
+                  "ContainerNumber": {
+                    "type": "string"
+                  },
+                  "SealNumber": {
+                    "type": "string"
+                  },
+                  "DefectsJson": {
                     "type": "string"
                   },
                   "Notes": {
@@ -5766,10 +5723,10 @@
                 "LoadId": {
                   "style": "form"
                 },
-                "Vin": {
+                "Type": {
                   "style": "form"
                 },
-                "Type": {
+                "Vin": {
                   "style": "form"
                 },
                 "VehicleYear": {
@@ -5784,7 +5741,13 @@
                 "VehicleBodyClass": {
                   "style": "form"
                 },
-                "DamageMarkersJson": {
+                "ContainerNumber": {
+                  "style": "form"
+                },
+                "SealNumber": {
+                  "style": "form"
+                },
+                "DefectsJson": {
                   "style": "form"
                 },
                 "Notes": {
@@ -5831,12 +5794,51 @@
         }
       }
     },
-    "/inspections/condition-reports/{id}": {
+    "/inspections/parts": {
       "get": {
         "tags": [
-          "Inspection"
+          "Inspections"
         ],
-        "operationId": "GetConditionReportById",
+        "operationId": "GetInspectionParts",
+        "parameters": [
+          {
+            "name": "loadType",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/LoadType"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionPartCatalogDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inspections/{id}": {
+      "get": {
+        "tags": [
+          "Inspections"
+        ],
+        "operationId": "GetInspection",
         "parameters": [
           {
             "name": "id",
@@ -14495,6 +14497,46 @@
         }
       }
     },
+    "/vins/{vin}": {
+      "get": {
+        "tags": [
+          "Vins"
+        ],
+        "operationId": "DecodeVin",
+        "parameters": [
+          {
+            "name": "vin",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleInfoDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/webhooks/stripe": {
       "post": {
         "tags": [
@@ -14540,6 +14582,19 @@
           "Webhook"
         ],
         "operationId": "ProcessTtEldWebhook",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/webhooks/eld/geotab": {
+      "post": {
+        "tags": [
+          "Webhook"
+        ],
+        "operationId": "ProcessGeotabWebhook",
         "responses": {
           "200": {
             "description": "OK"
@@ -15668,6 +15723,45 @@
         },
         "additionalProperties": false
       },
+      "CargoInspectionPartCategory": {
+        "enum": [
+          "vehicle_front_bumper",
+          "vehicle_rear_bumper",
+          "vehicle_hood",
+          "vehicle_roof",
+          "vehicle_trunk_liftgate",
+          "vehicle_front_left_door",
+          "vehicle_front_right_door",
+          "vehicle_rear_left_door",
+          "vehicle_rear_right_door",
+          "vehicle_fenders",
+          "vehicle_wheels",
+          "vehicle_mirrors",
+          "vehicle_windshield",
+          "vehicle_side_glass",
+          "vehicle_lights",
+          "vehicle_body_panels",
+          "vehicle_interior",
+          "container_front_wall",
+          "container_rear_doors",
+          "container_left_wall",
+          "container_right_wall",
+          "container_roof",
+          "container_floor",
+          "container_locking_hardware",
+          "container_corner_castings",
+          "container_seal",
+          "generic_walls",
+          "generic_doors",
+          "generic_floor",
+          "generic_roof",
+          "generic_lighting",
+          "generic_tires",
+          "generic_securement",
+          "other"
+        ],
+        "type": "string"
+      },
       "ChangeSubscriptionPlanCommand": {
         "type": "object",
         "properties": {
@@ -15810,6 +15904,34 @@
         },
         "additionalProperties": false
       },
+      "ConditionDefectDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "partCategory": {
+            "$ref": "#/components/schemas/CargoInspectionPartCategory"
+          },
+          "partCategoryDisplay": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "severity": {
+            "$ref": "#/components/schemas/DefectSeverity"
+          },
+          "severityDisplay": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ConditionReportDto": {
         "type": "object",
         "properties": {
@@ -15825,12 +15947,15 @@
             "type": "string",
             "nullable": true
           },
-          "vin": {
-            "type": "string",
-            "nullable": true
+          "loadType": {
+            "$ref": "#/components/schemas/LoadType"
           },
           "type": {
             "$ref": "#/components/schemas/InspectionType"
+          },
+          "vin": {
+            "type": "string",
+            "nullable": true
           },
           "vehicleYear": {
             "type": "integer",
@@ -15849,10 +15974,18 @@
             "type": "string",
             "nullable": true
           },
-          "damageMarkers": {
+          "containerNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "sealNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "defects": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/DamageMarkerDto"
+              "$ref": "#/components/schemas/ConditionDefectDto"
             },
             "nullable": true
           },
@@ -17783,28 +17916,6 @@
         },
         "additionalProperties": false
       },
-      "DamageMarkerDto": {
-        "type": "object",
-        "properties": {
-          "x": {
-            "type": "number",
-            "format": "double"
-          },
-          "y": {
-            "type": "number",
-            "format": "double"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "severity": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "DashboardLinkDto": {
         "required": [
           "url"
@@ -17919,16 +18030,6 @@
           "iso"
         ],
         "type": "string"
-      },
-      "DecodeVinRequest": {
-        "type": "object",
-        "properties": {
-          "vin": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
       },
       "DefaultFeatureStatusDto": {
         "type": "object",
@@ -20030,6 +20131,35 @@
             "items": {
               "type": "string"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InspectionPartCatalogDto": {
+        "type": "object",
+        "properties": {
+          "loadType": {
+            "$ref": "#/components/schemas/LoadType"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InspectionPartCategoryDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InspectionPartCategoryDto": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/CargoInspectionPartCategory"
+          },
+          "display": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -26468,7 +26598,7 @@
       "name": "Impersonation"
     },
     {
-      "name": "Inspection"
+      "name": "Inspections"
     },
     {
       "name": "Invitation"
@@ -26547,6 +26677,9 @@
     },
     {
       "name": "User"
+    },
+    {
+      "name": "Vins"
     },
     {
       "name": "Webhook"

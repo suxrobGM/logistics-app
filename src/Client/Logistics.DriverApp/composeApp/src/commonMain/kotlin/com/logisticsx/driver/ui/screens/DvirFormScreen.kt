@@ -1,50 +1,39 @@
 package com.logisticsx.driver.ui.screens
 
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.logisticsx.driver.api.models.DvirInspectionCategory
 import com.logisticsx.driver.api.models.DvirType
 import com.logisticsx.driver.ui.components.SectionCard
 import com.logisticsx.driver.ui.components.SignaturePad
-import com.logisticsx.driver.ui.components.capture.HandleSideEffects
 import com.logisticsx.driver.ui.components.capture.NotesTextField
 import com.logisticsx.driver.ui.components.capture.PhotoCaptureSection
 import com.logisticsx.driver.ui.components.capture.SubmitButton
 import com.logisticsx.driver.ui.components.capture.rememberCameraCapture
-import com.logisticsx.driver.ui.components.dvir.DvirAddDefectDialog
-import com.logisticsx.driver.ui.components.dvir.DvirDefectsSection
 import com.logisticsx.driver.ui.components.dvir.DvirInspectionTypeSelector
 import com.logisticsx.driver.ui.components.dvir.DvirTruckSelector
+import com.logisticsx.driver.ui.components.inspection.AddInspectionDefectDialog
+import com.logisticsx.driver.ui.components.inspection.InspectionDefectView
+import com.logisticsx.driver.ui.components.inspection.InspectionDefectsSection
+import com.logisticsx.driver.ui.components.inspection.InspectionScreenScaffold
 import com.logisticsx.driver.util.SignatureConverter
+import com.logisticsx.driver.util.displayName
+import com.logisticsx.driver.util.grouped
+import com.logisticsx.driver.viewmodel.DvirDefect
 import com.logisticsx.driver.viewmodel.DvirFormViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -54,146 +43,118 @@ import org.koin.core.parameter.parametersOf
 fun DvirFormScreen(
     truckId: String?,
     tripId: String?,
+    initialDvirType: DvirType? = null,
     onNavigateBack: () -> Unit,
-    viewModel: DvirFormViewModel = koinViewModel { parametersOf(truckId, tripId) }
+    viewModel: DvirFormViewModel = koinViewModel { parametersOf(truckId, tripId, initialDvirType) }
 ) {
     val onCapturePhoto = rememberCameraCapture(onPhotoCaptured = viewModel::addPhoto)
     val uiState by viewModel.uiState.collectAsState()
-    val snackbarHostState = remember { SnackbarHostState() }
     var showAddDefectDialog by remember { mutableStateOf(false) }
-
-    val focusManager = LocalFocusManager.current
-
-    HandleSideEffects(
-        error = uiState.error,
-        isSuccess = uiState.isSuccess,
-        snackbarHostState = snackbarHostState,
-        onClearError = viewModel::clearError,
-        onNavigateBack = onNavigateBack
-    )
 
     val title = when (uiState.dvirType) {
         DvirType.PRE_TRIP -> "Pre-Trip Inspection"
         DvirType.POST_TRIP -> "Post-Trip Inspection"
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(title) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
+    InspectionScreenScaffold(
+        title = title,
+        error = uiState.error,
+        isSuccess = uiState.isSuccess,
+        onClearError = viewModel::clearError,
+        onNavigateBack = onNavigateBack
+    ) {
+        item {
+            DvirInspectionTypeSelector(
+                selectedType = uiState.dvirType,
+                onTypeSelected = viewModel::setDvirType
             )
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp)
-                .pointerInput(Unit) { detectTapGestures { focusManager.clearFocus() } },
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Inspection Type Selection
-            item {
-                DvirInspectionTypeSelector(
-                    selectedType = uiState.dvirType,
-                    onTypeSelected = viewModel::setDvirType
-                )
-            }
+        }
 
-            // Truck Selection
-            item {
-                DvirTruckSelector(
-                    selectedTruck = uiState.selectedTruck,
-                    availableTrucks = uiState.availableTrucks,
-                    isLoading = uiState.isLoadingTrucks,
-                    onTruckSelected = viewModel::selectTruck,
-                    enabled = truckId == null
-                )
-            }
+        item {
+            DvirTruckSelector(
+                selectedTruck = uiState.selectedTruck,
+                availableTrucks = uiState.availableTrucks,
+                isLoading = uiState.isLoadingTrucks,
+                onTruckSelected = viewModel::selectTruck,
+                enabled = truckId == null
+            )
+        }
 
-            // Odometer Reading
-            item {
-                SectionCard(title = "Odometer") {
-                    OutlinedTextField(
-                        value = uiState.odometerReading,
-                        onValueChange = viewModel::setOdometerReading,
-                        label = { Text("Odometer Reading") },
-                        placeholder = { Text("Enter current odometer") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.fillMaxWidth(),
-                        suffix = { Text("miles") }
-                    )
-                }
-            }
-
-            // Defects Section
-            item {
-                DvirDefectsSection(
-                    defects = uiState.defects,
-                    onAddDefect = { showAddDefectDialog = true },
-                    onRemoveDefect = viewModel::removeDefect
-                )
-            }
-
-            // Photos
-            item {
-                SectionCard(title = "Photos") {
-                    PhotoCaptureSection(
-                        photos = uiState.photos,
-                        onAddPhoto = onCapturePhoto ?: {},
-                        onRemovePhoto = viewModel::removePhoto,
-                        showTitle = false
-                    )
-                }
-            }
-
-            // Driver Signature
-            item {
-                SignaturePad(
+        item {
+            SectionCard(title = "Odometer") {
+                OutlinedTextField(
+                    value = uiState.odometerReading,
+                    onValueChange = viewModel::setOdometerReading,
+                    label = { Text("Odometer Reading") },
+                    placeholder = { Text("Enter current odometer") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth(),
-                    onSignatureComplete = { paths ->
-                        val base64 = SignatureConverter.pathsToBase64Png(paths) ?: ""
-                        viewModel.setSignature(paths, base64)
-                    },
-                    onClear = viewModel::clearSignature
+                    suffix = { Text("miles") }
                 )
             }
+        }
 
-            // Notes
-            item {
-                NotesTextField(
-                    value = uiState.notes,
-                    onValueChange = viewModel::setNotes
-                )
-            }
+        item {
+            InspectionDefectsSection(
+                defects = uiState.defects.map { it.toView() },
+                onAddDefect = { showAddDefectDialog = true },
+                onRemoveDefect = viewModel::removeDefect
+            )
+        }
 
-            // Submit Button
-            item {
-                SubmitButton(
-                    text = "Submit DVIR",
-                    onClick = viewModel::submit,
-                    isLoading = uiState.isSubmitting,
-                    enabled = viewModel.canSubmit()
-                )
+        item {
+            PhotoCaptureSection(
+                photos = uiState.photos,
+                onAddPhoto = onCapturePhoto ?: {},
+                onRemovePhoto = viewModel::removePhoto
+            )
+        }
 
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+        item {
+            SignaturePad(
+                modifier = Modifier.fillMaxWidth(),
+                onSignatureComplete = { paths ->
+                    val base64 = SignatureConverter.pathsToBase64Png(paths) ?: ""
+                    viewModel.setSignature(paths, base64)
+                },
+                onClear = viewModel::clearSignature
+            )
+        }
+
+        item {
+            NotesTextField(
+                value = uiState.notes,
+                onValueChange = viewModel::setNotes
+            )
+        }
+
+        item {
+            SubmitButton(
+                text = "Submit DVIR",
+                onClick = viewModel::submit,
+                isLoading = uiState.isSubmitting,
+                enabled = viewModel.canSubmit()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 
     if (showAddDefectDialog) {
-        DvirAddDefectDialog(
+        AddInspectionDefectDialog(
+            title = "Report Defect",
+            groupedCategories = DvirInspectionCategory.grouped,
+            categoryDisplay = { it.displayName },
             onDismiss = { showAddDefectDialog = false },
-            onConfirm = { defect ->
-                viewModel.addDefect(defect)
+            onConfirm = { category, description, severity ->
+                viewModel.addDefect(DvirDefect(category, description, severity))
                 showAddDefectDialog = false
             }
         )
     }
+}
+
+private fun DvirDefect.toView(): InspectionDefectView = object : InspectionDefectView {
+    override val categoryDisplay = category.displayName
+    override val description = this@toView.description
+    override val severity = this@toView.severity
 }

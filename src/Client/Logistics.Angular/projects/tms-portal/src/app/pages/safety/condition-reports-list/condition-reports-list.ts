@@ -3,6 +3,7 @@ import { Component, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import type { ConditionReportDto } from "@logistics/shared/api";
 import { Icon } from "@logistics/shared/components";
+import { isContainerLoadType } from "@logistics/shared/utils";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -79,8 +80,22 @@ export class ConditionReportsListPage implements OnInit {
     return type === "pickup" ? "Pickup" : "Delivery";
   }
 
-  protected getDamageCount(report: ConditionReportDto): number {
-    return report.damageMarkers?.length || 0;
+  protected getDefectCount(report: ConditionReportDto): number {
+    return report.defects?.length ?? 0;
+  }
+
+  /**
+   * Identifier shown in list view: VIN for Vehicle loads, container number for
+   * container loads, "Load #{loadReferenceId}" for everything else.
+   */
+  protected getIdentifier(report: ConditionReportDto): string {
+    if (report.loadType === "vehicle") {
+      return report.vin ?? "Vehicle (no VIN)";
+    }
+    if (isContainerLoadType(report.loadType)) {
+      return report.containerNumber ?? "Container (no number)";
+    }
+    return report.loadReferenceId ? `Load #${report.loadReferenceId}` : "Load";
   }
 
   protected getVehicleInfo(report: ConditionReportDto): string {

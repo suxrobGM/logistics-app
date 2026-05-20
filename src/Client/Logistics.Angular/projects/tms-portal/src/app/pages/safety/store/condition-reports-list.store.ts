@@ -1,6 +1,5 @@
 import { computed, inject } from "@angular/core";
-import { Api, getConditionReports } from "@logistics/shared/api";
-import type { ConditionReportDto } from "@logistics/shared/api";
+import { Api, getInspections, type ConditionReportDto } from "@logistics/shared/api";
 import type { AppError } from "@logistics/shared/errors";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 
@@ -71,7 +70,7 @@ export const ConditionReportsListStore = signalStore(
       patchState(store, { isLoading: true, error: null });
 
       try {
-        const result = await api.invoke(getConditionReports, loadId ? { loadId } : undefined);
+        const result = await api.invoke(getInspections, loadId ? { loadId } : undefined);
         patchState(store, { data: result ?? [], isLoading: false });
       } catch (error) {
         patchState(store, { isLoading: false, error: error as AppError });

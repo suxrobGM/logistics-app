@@ -7,7 +7,7 @@ import com.logisticsx.driver.api.DocumentApi
 import com.logisticsx.driver.api.DriverApi
 import com.logisticsx.driver.api.DvirApi
 import com.logisticsx.driver.api.EmployeeApi
-import com.logisticsx.driver.api.InspectionApi
+import com.logisticsx.driver.api.InspectionsApi
 import com.logisticsx.driver.api.LoadApi
 import com.logisticsx.driver.api.MessageApi
 import com.logisticsx.driver.api.PrivacyApi
@@ -16,6 +16,8 @@ import com.logisticsx.driver.api.StatApi
 import com.logisticsx.driver.api.TripApi
 import com.logisticsx.driver.api.TruckApi
 import com.logisticsx.driver.api.UserApi
+import com.logisticsx.driver.api.VinsApi
+import com.logisticsx.driver.api.models.DvirType
 import com.logisticsx.driver.api.models.InspectionType
 import com.logisticsx.driver.service.DutyStatusManager
 import com.logisticsx.driver.service.LoadProximityWatcher
@@ -59,7 +61,7 @@ fun commonModule() = module {
     single<DriverApi> { get<ApiFactory>().driverApi }
     single<DvirApi> { get<ApiFactory>().dvirApi }
     single<EmployeeApi> { get<ApiFactory>().employeeApi }
-    single<InspectionApi> { get<ApiFactory>().inspectionApi }
+    single<InspectionsApi> { get<ApiFactory>().inspectionsApi }
     single<LoadApi> { get<ApiFactory>().loadApi }
     single<MessageApi> { get<ApiFactory>().messageApi }
     single<PrivacyApi> { get<ApiFactory>().privacyApi }
@@ -68,6 +70,7 @@ fun commonModule() = module {
     single<TripApi> { get<ApiFactory>().tripApi }
     single<TruckApi> { get<ApiFactory>().truckApi }
     single<UserApi> { get<ApiFactory>().userApi }
+    single<VinsApi> { get<ApiFactory>().vinsApi }
 
     // ConversationStateManager service for shared messaging state
     singleOf(::ConversationStateManager)

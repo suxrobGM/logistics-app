@@ -72,7 +72,7 @@ class EmployeeSelectViewModel(
             _searchState.value = UiState.Loading
 
             val response = employeeApi.getEmployees(search = query).bodyOrThrow()
-            val employees = response?.items ?: emptyList()
+            val employees = response.items ?: emptyList()
             val filteredEmployees = employees.filter { it.id != currentUserId }
             _searchState.value = UiState.Success(filteredEmployees)
         }

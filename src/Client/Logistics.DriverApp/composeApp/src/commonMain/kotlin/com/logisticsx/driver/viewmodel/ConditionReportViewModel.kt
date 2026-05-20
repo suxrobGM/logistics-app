@@ -1,15 +1,21 @@
 package com.logisticsx.driver.viewmodel
 
-import com.logisticsx.driver.api.InspectionApi
-import com.logisticsx.driver.api.models.DecodeVinRequest
+import com.logisticsx.driver.api.InspectionsApi
+import com.logisticsx.driver.api.LoadApi
+import com.logisticsx.driver.api.VinsApi
+import com.logisticsx.driver.api.bodyOrThrow
+import com.logisticsx.driver.api.models.CargoInspectionPartCategory
+import com.logisticsx.driver.api.models.DefectSeverity
 import com.logisticsx.driver.api.models.InspectionType
+import com.logisticsx.driver.api.models.LoadType
 import com.logisticsx.driver.api.models.VehicleInfoDto
 import com.logisticsx.driver.model.FileUploadData
 import com.logisticsx.driver.model.toFormParts
 import com.logisticsx.driver.service.LocationService
 import com.logisticsx.driver.ui.components.PathData
-import com.logisticsx.driver.viewmodel.base.CaptureFormViewModel
+import com.logisticsx.driver.util.isContainerLoad
 import com.logisticsx.driver.viewmodel.base.CaptureFormState
+import com.logisticsx.driver.viewmodel.base.CaptureFormViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,21 +23,34 @@ import kotlinx.coroutines.flow.update
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
+/**
+ * A single defect captured during cargo inspection. Mirrors the server-side
+ * `ConditionDefect` value object — category drawn from the cargo-type-specific
+ * catalog ([CargoInspectionPartCategory]).
+ */
 @Serializable
-data class DamageMarker(
-    val x: Double,
-    val y: Double,
-    val description: String? = null,
-    val severity: String? = null
+data class ConditionDefect(
+    val partCategory: CargoInspectionPartCategory,
+    val description: String,
+    val severity: DefectSeverity
 )
 
 data class ConditionReportUiState(
     val loadId: String = "",
     val inspectionType: InspectionType = InspectionType.PICKUP,
+    val cargoType: LoadType = LoadType.GENERAL_FREIGHT,
+    val isLoadingLoad: Boolean = true,
+
+    // Vehicle-cargo identifier
     val vin: String = "",
     val vehicleInfo: VehicleInfoDto? = null,
     val isDecodingVin: Boolean = false,
-    val damageMarkers: List<DamageMarker> = emptyList(),
+
+    // Container-cargo identifier
+    val containerNumber: String = "",
+    val sealNumber: String = "",
+
+    val defects: List<ConditionDefect> = emptyList(),
     override val photos: List<CapturedPhoto> = emptyList(),
     override val signaturePaths: List<PathData>? = null,
     override val signatureBase64: String? = null,
@@ -44,17 +63,16 @@ data class ConditionReportUiState(
 ) : CaptureFormState
 
 class ConditionReportViewModel(
-    private val inspectionApi: InspectionApi,
+    private val inspectionsApi: InspectionsApi,
+    private val vinsApi: VinsApi,
+    private val loadApi: LoadApi,
     locationService: LocationService,
     private val loadId: String,
     private val inspectionType: InspectionType
 ) : CaptureFormViewModel<ConditionReportUiState>(locationService) {
 
     override val _formState = MutableStateFlow(
-        ConditionReportUiState(
-            loadId = loadId,
-            inspectionType = inspectionType
-        )
+        ConditionReportUiState(loadId = loadId, inspectionType = inspectionType)
     )
     override val formState: StateFlow<ConditionReportUiState> = _formState.asStateFlow()
 
@@ -62,6 +80,7 @@ class ConditionReportViewModel(
 
     init {
         fetchCurrentLocation()
+        loadCargoType()
     }
 
     override fun updateState(transform: ConditionReportUiState.() -> ConditionReportUiState) {
@@ -81,6 +100,23 @@ class ConditionReportViewModel(
     override fun ConditionReportUiState.copyWithSubmitting(isSubmitting: Boolean, error: String?, isSuccess: Boolean) =
         copy(isSubmitting = isSubmitting, error = error, isSuccess = isSuccess)
 
+    private fun loadCargoType() {
+        launchSafely(onError = { e ->
+            _formState.update {
+                it.copy(isLoadingLoad = false, error = "Failed to load: ${e.message}")
+            }
+        }) {
+            val load = loadApi.getLoadById(loadId).bodyOrThrow()
+            _formState.update {
+                it.copy(
+                    cargoType = load.type ?: LoadType.GENERAL_FREIGHT,
+                    containerNumber = load.containerNumber ?: it.containerNumber,
+                    isLoadingLoad = false
+                )
+            }
+        }
+    }
+
     fun setVin(vin: String) {
         _formState.update { it.copy(vin = vin.uppercase()) }
     }
@@ -98,43 +134,38 @@ class ConditionReportViewModel(
             }
         }) {
             _formState.update { it.copy(isDecodingVin = true, error = null) }
-            val vehicleInfo = inspectionApi.decodeVin(DecodeVinRequest(vin = vin)).body()
+            val vehicleInfo = vinsApi.decodeVin(vin = vin).body()
             _formState.update { it.copy(vehicleInfo = vehicleInfo, isDecodingVin = false) }
         }
     }
 
-    fun addDamageMarker(
-        x: Double,
-        y: Double,
-        description: String? = null,
-        severity: String? = null
-    ) {
-        val marker = DamageMarker(x, y, description, severity)
-        _formState.update { state ->
-            state.copy(damageMarkers = state.damageMarkers + marker)
-        }
+    fun setContainerNumber(value: String) {
+        _formState.update { it.copy(containerNumber = value.uppercase()) }
     }
 
-    fun removeDamageMarker(index: Int) {
-        _formState.update { state ->
-            state.copy(damageMarkers = state.damageMarkers.filterIndexed { i, _ -> i != index })
-        }
+    fun setSealNumber(value: String) {
+        _formState.update { it.copy(sealNumber = value) }
     }
 
-    fun updateDamageMarker(index: Int, description: String?, severity: String?) {
+    fun addDefect(defect: ConditionDefect) {
+        _formState.update { state -> state.copy(defects = state.defects + defect) }
+    }
+
+    fun removeDefect(index: Int) {
         _formState.update { state ->
-            val updatedMarkers = state.damageMarkers.toMutableList()
-            if (index in updatedMarkers.indices) {
-                val marker = updatedMarkers[index]
-                updatedMarkers[index] = marker.copy(description = description, severity = severity)
-            }
-            state.copy(damageMarkers = updatedMarkers)
+            state.copy(defects = state.defects.filterIndexed { i, _ -> i != index })
         }
     }
 
     override fun canSubmit(): Boolean {
         val state = _formState.value
-        return !state.isSubmitting && state.vin.length == 17
+        if (state.isSubmitting || state.isLoadingLoad) return false
+
+        return when {
+            state.cargoType == LoadType.VEHICLE -> state.vin.length == 17
+            state.cargoType.isContainerLoad -> state.containerNumber.isNotBlank()
+            else -> true
+        }
     }
 
     override suspend fun performSubmit() {
@@ -147,19 +178,21 @@ class ConditionReportViewModel(
             )
         }.toFormParts()
 
-        val damageMarkersJson = if (state.damageMarkers.isNotEmpty()) {
-            Json.encodeToString(state.damageMarkers)
+        val defectsJson = if (state.defects.isNotEmpty()) {
+            Json.encodeToString(state.defects)
         } else null
 
-        inspectionApi.createConditionReport(
+        inspectionsApi.createInspection(
             loadId = state.loadId,
-            vin = state.vin,
             type = state.inspectionType,
-            vehicleYear = state.vehicleInfo?.year,
-            vehicleMake = state.vehicleInfo?.make,
-            vehicleModel = state.vehicleInfo?.model,
-            vehicleBodyClass = state.vehicleInfo?.bodyClass,
-            damageMarkersJson = damageMarkersJson,
+            vin = state.vin.takeIf { state.cargoType == LoadType.VEHICLE && it.isNotBlank() },
+            vehicleYear = state.vehicleInfo?.year?.takeIf { state.cargoType == LoadType.VEHICLE },
+            vehicleMake = state.vehicleInfo?.make?.takeIf { state.cargoType == LoadType.VEHICLE },
+            vehicleModel = state.vehicleInfo?.model?.takeIf { state.cargoType == LoadType.VEHICLE },
+            vehicleBodyClass = state.vehicleInfo?.bodyClass?.takeIf { state.cargoType == LoadType.VEHICLE },
+            containerNumber = state.containerNumber.takeIf { state.cargoType.isContainerLoad && it.isNotBlank() },
+            sealNumber = state.sealNumber.takeIf { state.cargoType.isContainerLoad && it.isNotBlank() },
+            defectsJson = defectsJson,
             notes = state.notes.takeIf { it.isNotBlank() },
             signatureBase64 = state.signatureBase64,
             photos = photoFormParts,

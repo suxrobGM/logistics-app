@@ -4,10 +4,10 @@ The Logistics API is a RESTful service built with ASP.NET Core.
 
 ## Base URL
 
-| Environment | URL |
-|-------------|-----|
-| Development | <https://localhost:7000> |
-| Production | <https://api.yourdomain.com> |
+| Environment | URL                          |
+| ----------- | ---------------------------- |
+| Development | <https://localhost:7000>     |
+| Production  | <https://api.yourdomain.com> |
 
 ## Swagger Documentation
 
@@ -69,56 +69,57 @@ See [Authentication](authentication.md) for details on obtaining tokens.
 
 ### Core Resources
 
-| Resource | Endpoint | Description |
-|----------|----------|-------------|
-| Loads | `/api/loads` | Shipment management |
-| Trips | `/api/trips` | Trip tracking |
-| Customers | `/api/customers` | Customer management |
-| Employees | `/api/employees` | Employee records |
-| Drivers | `/api/drivers` | Driver-specific data |
-| Trucks | `/api/trucks` | Fleet management |
-| Invoices | `/api/invoices` | Billing |
-| Payments | `/api/payments` | Payment processing |
+| Resource  | Endpoint         | Description          |
+| --------- | ---------------- | -------------------- |
+| Loads     | `/api/loads`     | Shipment management  |
+| Trips     | `/api/trips`     | Trip tracking        |
+| Customers | `/api/customers` | Customer management  |
+| Employees | `/api/employees` | Employee records     |
+| Drivers   | `/api/drivers`   | Driver-specific data |
+| Trucks    | `/api/trucks`    | Fleet management     |
+| Invoices  | `/api/invoices`  | Billing              |
+| Payments  | `/api/payments`  | Payment processing   |
 
 ### Administrative
 
-| Resource | Endpoint | Description |
-|----------|----------|-------------|
-| Users | `/api/users` | User management |
-| Roles | `/api/roles` | Role management |
-| Tenants | `/api/tenants` | Tenant management |
-| Subscriptions | `/api/subscriptions` | Billing plans |
+| Resource      | Endpoint             | Description       |
+| ------------- | -------------------- | ----------------- |
+| Users         | `/api/users`         | User management   |
+| Roles         | `/api/roles`         | Role management   |
+| Tenants       | `/api/tenants`       | Tenant management |
+| Subscriptions | `/api/subscriptions` | Billing plans     |
 
 ### Messaging
 
-| Resource | Endpoint | Description |
-|----------|----------|-------------|
-| Conversations | `/api/messages/conversations` | Get/create conversations |
-| Messages | `/api/messages` | Send and receive messages |
-| Unread Count | `/api/messages/unread-count` | Get unread message count |
+| Resource      | Endpoint                      | Description               |
+| ------------- | ----------------------------- | ------------------------- |
+| Conversations | `/api/messages/conversations` | Get/create conversations  |
+| Messages      | `/api/messages`               | Send and receive messages |
+| Unread Count  | `/api/messages/unread-count`  | Get unread message count  |
 
 ### Inspections
 
-| Resource | Endpoint | Description |
-|----------|----------|-------------|
-| Condition Reports | `/api/inspections/condition-reports` | Vehicle condition reports (DVIR) |
-| VIN Decoder | `/api/inspections/decode-vin` | Decode VIN to vehicle info |
+| Resource         | Endpoint                              | Description                                          |
+| ---------------- | ------------------------------------- | ---------------------------------------------------- |
+| Inspections      | `/api/inspections`                    | Cargo condition reports (list/get/create)            |
+| Inspection Parts | `/api/inspections/parts?loadType=...` | Per-cargo-type part catalog used to classify defects |
+| VIN Decoder      | `/api/vins/{vin}`                     | Decode VIN to vehicle info                           |
 
 ### Documents
 
-| Resource | Endpoint | Description |
-|----------|----------|-------------|
-| Documents | `/api/documents` | File management |
+| Resource          | Endpoint             | Description                       |
+| ----------------- | -------------------- | --------------------------------- |
+| Documents         | `/api/documents`     | File management                   |
 | Proof of Delivery | `/api/documents/pod` | Capture POD with photos/signature |
-| Bill of Lading | `/api/documents/bol` | Capture BOL documents |
+| Bill of Lading    | `/api/documents/bol` | Capture BOL documents             |
 
 ### Utilities
 
-| Resource | Endpoint | Description |
-|----------|----------|-------------|
+| Resource      | Endpoint             | Description        |
+| ------------- | -------------------- | ------------------ |
 | Notifications | `/api/notifications` | Push notifications |
-| Reports | `/api/reports` | Report generation |
-| Stats | `/api/stats` | Analytics data |
+| Reports       | `/api/reports`       | Report generation  |
+| Stats         | `/api/stats`         | Analytics data     |
 
 ## Common Query Parameters
 
@@ -148,15 +149,15 @@ GET /api/loads?search=container
 
 ## HTTP Status Codes
 
-| Code | Meaning |
-|------|---------|
-| 200 | Success |
-| 201 | Created |
-| 400 | Bad Request (validation error) |
-| 401 | Unauthorized (no/invalid token) |
-| 403 | Forbidden (insufficient permissions) |
-| 404 | Not Found |
-| 500 | Internal Server Error |
+| Code | Meaning                              |
+| ---- | ------------------------------------ |
+| 200  | Success                              |
+| 201  | Created                              |
+| 400  | Bad Request (validation error)       |
+| 401  | Unauthorized (no/invalid token)      |
+| 403  | Forbidden (insufficient permissions) |
+| 404  | Not Found                            |
+| 500  | Internal Server Error                |
 
 ## Rate Limiting
 

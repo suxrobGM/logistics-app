@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Assignment
 import androidx.compose.material.icons.filled.Refresh
@@ -133,11 +134,11 @@ fun DashboardScreen(
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
                                         Icon(
-                                            imageVector = Icons.Default.Assignment,
+                                            imageVector = Icons.AutoMirrored.Filled.Assignment,
                                             contentDescription = null
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
-                                        Text("Start DVIR Inspection")
+                                        Text("Truck DVIR (Pre-Trip)")
                                     }
                                 }
                             }

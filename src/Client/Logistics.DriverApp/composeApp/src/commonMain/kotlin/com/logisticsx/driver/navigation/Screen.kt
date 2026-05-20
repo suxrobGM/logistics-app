@@ -1,6 +1,7 @@
 package com.logisticsx.driver.navigation
 
 import androidx.navigation3.runtime.NavKey
+import com.logisticsx.driver.api.models.DvirType
 import com.logisticsx.driver.api.models.InspectionType
 import com.logisticsx.driver.viewmodel.DocumentCaptureType
 import kotlinx.serialization.Serializable
@@ -59,7 +60,8 @@ data class ConditionReportRoute(
 @Serializable
 data class DvirFormRoute(
     val truckId: String? = null,
-    val tripId: String? = null
+    val tripId: String? = null,
+    val dvirType: DvirType? = null
 ) : NavKey
 
 @Serializable

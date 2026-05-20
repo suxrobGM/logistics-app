@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
+import com.logisticsx.driver.api.models.DvirType
 import com.logisticsx.driver.api.models.InspectionType
 import com.logisticsx.driver.ui.screens.AboutScreen
 import com.logisticsx.driver.ui.screens.AccountScreen
@@ -73,7 +74,7 @@ fun createEntryProvider(
                 navigator.navigate(TripDetailRoute(tripId))
             },
             onDvirClick = { truckId ->
-                navigator.navigate(DvirFormRoute(truckId = truckId))
+                navigator.navigate(DvirFormRoute(truckId = truckId, dvirType = DvirType.PRE_TRIP))
             },
             onLogout = {
                 navigator.clearAndNavigate(LoginRoute)
@@ -115,7 +116,7 @@ fun createEntryProvider(
                 navigator.navigate(LoadDetailRoute(loadId))
             },
             onDvirClick = { tripId ->
-                navigator.navigate(DvirFormRoute(tripId = tripId))
+                navigator.navigate(DvirFormRoute(tripId = tripId, dvirType = DvirType.POST_TRIP))
             },
             viewModel = viewModel
         )
@@ -200,6 +201,7 @@ fun createEntryProvider(
         DvirFormScreen(
             truckId = key.truckId,
             tripId = key.tripId,
+            initialDvirType = key.dvirType,
             onNavigateBack = { navigator.goBack() }
         )
     }
