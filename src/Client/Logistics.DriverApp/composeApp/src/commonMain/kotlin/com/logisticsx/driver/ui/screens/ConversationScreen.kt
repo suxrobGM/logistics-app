@@ -64,9 +64,9 @@ fun ConversationScreen(
 
     // Scroll to bottom when new messages arrive
     LaunchedEffect(uiState) {
-        if (uiState is UiState.Success<*>) {
-            @Suppress("UNCHECKED_CAST")
-            val messages = (uiState as UiState.Success<ChatData>).data.messages
+        val state = uiState
+        if (state is UiState.Success) {
+            val messages = state.data.messages
             if (messages.isNotEmpty()) {
                 listState.animateScrollToItem(messages.size - 1)
             }
@@ -103,9 +103,8 @@ fun ConversationScreen(
                         LoadingIndicator()
                     }
 
-                    is UiState.Success<*> -> {
-                        @Suppress("UNCHECKED_CAST")
-                        val chatData = (state as UiState.Success<ChatData>).data
+                    is UiState.Success -> {
+                        val chatData = state.data
 
                         if (chatData.messages.isEmpty()) {
                             EmptyStateView(
@@ -222,9 +221,8 @@ private fun MessageInput(
  */
 private fun UiState<ChatData>.getConversationTitle(): String {
     return when (this) {
-        is UiState.Success<*> -> {
-            @Suppress("UNCHECKED_CAST")
-            val chatData = (this as UiState.Success<ChatData>).data
+        is UiState.Success -> {
+            val chatData = this.data
             // Try conversation name first
             chatData.conversation?.name?.takeIf { it.isNotBlank() }
             // Then try participant names

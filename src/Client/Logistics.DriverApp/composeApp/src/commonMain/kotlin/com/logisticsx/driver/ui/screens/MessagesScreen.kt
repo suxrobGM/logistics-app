@@ -36,7 +36,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.logisticsx.driver.api.models.ConversationDto
 import com.logisticsx.driver.ui.components.AppTopBar
 import com.logisticsx.driver.ui.components.ConversationListItem
 import com.logisticsx.driver.ui.components.EmptyStateView
@@ -65,21 +64,19 @@ fun MessagesScreen(
 
     // Handle successful conversation creation - navigate to the new conversation
     LaunchedEffect(createState) {
-        if (createState is ActionState.Success<*>) {
-            @Suppress("UNCHECKED_CAST")
-            val conversationId = (createState as ActionState.Success<String>).data
+        val state = createState
+        if (state is ActionState.Success) {
             viewModel.resetCreateState()
-            onConversationClick(conversationId)
+            onConversationClick(state.data)
         }
     }
 
     // Handle successful team chat open - navigate to the team chat conversation
     LaunchedEffect(teamChatState) {
-        if (teamChatState is ActionState.Success<*>) {
-            @Suppress("UNCHECKED_CAST")
-            val conversationId = (teamChatState as ActionState.Success<String>).data
+        val state = teamChatState
+        if (state is ActionState.Success) {
             viewModel.resetTeamChatState()
-            onConversationClick(conversationId)
+            onConversationClick(state.data)
         }
     }
 
@@ -101,9 +98,9 @@ fun MessagesScreen(
         },
         floatingActionButton = {
             // Show FAB to message dispatcher if dispatcher info is available and has conversations
-            if (dispatcherInfo != null && uiState is UiState.Success<*>) {
-                @Suppress("UNCHECKED_CAST")
-                val conversations = (uiState as UiState.Success<List<ConversationDto>>).data
+            val state = uiState
+            if (dispatcherInfo != null && state is UiState.Success) {
+                val conversations = state.data
                 if (conversations.isNotEmpty()) {
                     FloatingActionButton(
                         onClick = { viewModel.startConversationWithDispatcher() },
@@ -136,9 +133,8 @@ fun MessagesScreen(
                     LoadingIndicator()
                 }
 
-                is UiState.Success<*> -> {
-                    @Suppress("UNCHECKED_CAST")
-                    val conversations = (state as UiState.Success<List<ConversationDto>>).data
+                is UiState.Success -> {
+                    val conversations = state.data
                     val isLoadingTeamChat = teamChatState is ActionState.Loading
 
                     Column(modifier = Modifier.fillMaxSize()) {

@@ -4,7 +4,8 @@ import io.ktor.client.request.forms.FormPart
 import io.ktor.client.request.forms.InputProvider
 import io.ktor.http.HttpHeaders
 import io.ktor.http.headersOf
-import io.ktor.utils.io.core.ByteReadPacket
+import kotlinx.io.Buffer
+import kotlinx.io.write
 
 /**
  * Data class representing file upload information for multipart form requests.
@@ -20,7 +21,7 @@ data class FileUploadData(
     fun toFormPart(fieldName: String = "Photos"): FormPart<InputProvider> {
         return FormPart(
             key = fieldName,
-            value = InputProvider { ByteReadPacket(bytes) },
+            value = InputProvider { Buffer().apply { write(bytes) } },
             headers = headersOf(
                 HttpHeaders.ContentDisposition to listOf("form-data; name=\"$fieldName\"; filename=\"$fileName\""),
                 HttpHeaders.ContentType to listOf(contentType)

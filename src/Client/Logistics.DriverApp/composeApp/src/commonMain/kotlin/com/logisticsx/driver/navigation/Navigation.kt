@@ -1,6 +1,5 @@
 package com.logisticsx.driver.navigation
 
-import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
@@ -25,8 +24,11 @@ import com.logisticsx.driver.ui.screens.SettingsScreen
 import com.logisticsx.driver.ui.screens.StatsScreen
 import com.logisticsx.driver.ui.screens.TripDetailScreen
 import com.logisticsx.driver.ui.screens.TripsScreen
+import com.logisticsx.driver.viewmodel.ConditionReportViewModel
 import com.logisticsx.driver.viewmodel.DocumentCaptureType
+import com.logisticsx.driver.viewmodel.DvirFormViewModel
 import com.logisticsx.driver.viewmodel.LoadDetailViewModel
+import com.logisticsx.driver.viewmodel.PodCaptureViewModel
 import com.logisticsx.driver.viewmodel.TripDetailViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -34,7 +36,6 @@ import org.koin.core.parameter.parametersOf
 /**
  * Creates the entry provider that maps routes to screen composables.
  */
-@Composable
 fun createEntryProvider(
     navigator: Navigator,
     onOpenUrl: (String) -> Unit
@@ -179,30 +180,34 @@ fun createEntryProvider(
 
     // POD Capture Screen
     entry<PodCaptureRoute> { key ->
+        val viewModel: PodCaptureViewModel =
+            koinViewModel { parametersOf(key.loadId, key.tripStopId ?: "", key.captureType) }
+
         PodCaptureScreen(
-            loadId = key.loadId,
-            tripStopId = key.tripStopId ?: "",
-            captureType = key.captureType,
-            onNavigateBack = { navigator.goBack() }
+            onNavigateBack = { navigator.goBack() },
+            viewModel = viewModel
         )
     }
 
     // Condition Report Screen
     entry<ConditionReportRoute> { key ->
+        val viewModel: ConditionReportViewModel =
+            koinViewModel { parametersOf(key.loadId, key.inspectionType) }
+
         ConditionReportScreen(
-            loadId = key.loadId,
-            inspectionType = key.inspectionType,
-            onNavigateBack = { navigator.goBack() }
+            onNavigateBack = { navigator.goBack() },
+            viewModel = viewModel
         )
     }
 
     // DVIR Form Screen
     entry<DvirFormRoute> { key ->
+        val viewModel: DvirFormViewModel =
+            koinViewModel { parametersOf(key.truckId, key.tripId, key.dvirType) }
+
         DvirFormScreen(
-            truckId = key.truckId,
-            tripId = key.tripId,
-            initialDvirType = key.dvirType,
-            onNavigateBack = { navigator.goBack() }
+            onNavigateBack = { navigator.goBack() },
+            viewModel = viewModel
         )
     }
 

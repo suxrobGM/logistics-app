@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.logisticsx.driver.util.Logger
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
@@ -48,6 +49,27 @@ abstract class BaseViewModel : ViewModel() {
                 Logger.e("${this@BaseViewModel::class.simpleName}: ${e.message}", e)
                 onError?.invoke(e)
             }
+        }
+    }
+
+    /**
+     * Runs a capture/inspection form submission with the shared submitting → success/error
+     * lifecycle. [setSubmitting] applies the three submission flags onto the form state via a
+     * `copy(...)` on the concrete state type.
+     */
+    protected fun <S> submitForm(
+        state: MutableStateFlow<S>,
+        canSubmit: Boolean,
+        setSubmitting: S.(isSubmitting: Boolean, error: String?, isSuccess: Boolean) -> S,
+        perform: suspend () -> Unit
+    ) {
+        if (!canSubmit) return
+        launchSafely(onError = { e ->
+            state.update { it.setSubmitting(false, e.message ?: "Submission failed", false) }
+        }) {
+            state.update { it.setSubmitting(true, null, false) }
+            perform()
+            state.update { it.setSubmitting(false, null, true) }
         }
     }
 }

@@ -1,12 +1,14 @@
 package com.logisticsx.driver.navigation
 
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.navigation3.runtime.NavKey
 
 /**
  * Simple navigator that wraps a back stack for navigation operations.
+ *
+ * Accepts any [MutableList] so it works with both a plain `mutableStateListOf` and the
+ * saveable `NavBackStack` returned by `rememberNavBackStack`.
  */
-class Navigator(private val backStack: SnapshotStateList<NavKey>) {
+class Navigator(private val backStack: MutableList<NavKey>) {
     /**
      * Current destination (last item in the back stack).
      */

@@ -34,18 +34,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.logisticsx.driver.api.models.LoadStatus
 import com.logisticsx.driver.model.LocalUserSettings
+import com.logisticsx.driver.model.getMapsUrl
 import com.logisticsx.driver.model.toDisplayString
 import com.logisticsx.driver.ui.components.AppTopBar
 import com.logisticsx.driver.ui.components.CardContainer
 import com.logisticsx.driver.ui.components.DetailRow
-import com.logisticsx.driver.ui.components.ErrorView
-import com.logisticsx.driver.ui.components.LoadingIndicator
+import com.logisticsx.driver.ui.components.UiStateContent
 import com.logisticsx.driver.util.formatCurrency
 import com.logisticsx.driver.util.formatDistance
 import com.logisticsx.driver.util.formatShort
-import com.logisticsx.driver.api.models.LoadDto
 import com.logisticsx.driver.viewmodel.LoadDetailViewModel
-import com.logisticsx.driver.viewmodel.base.UiState
 import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,15 +72,8 @@ fun LoadDetailScreen(
             )
         }
     ) { paddingValues ->
-        when (val state = uiState) {
-            is UiState.Loading -> {
-                LoadingIndicator()
-            }
-
-            is UiState.Success<*> -> {
-                @Suppress("UNCHECKED_CAST")
-                val load = (state as UiState.Success<LoadDto>).data
-                Column(
+        UiStateContent(uiState, viewModel::refresh) { load ->
+            Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
@@ -203,10 +194,7 @@ fun LoadDetailScreen(
 
                     // Map Button - always show since coordinates are required
                     Button(
-                        onClick = {
-                            val mapsUrl = viewModel.getMapsUrl(load)
-                            onOpenMaps(mapsUrl)
-                        },
+                        onClick = { onOpenMaps(load.getMapsUrl()) },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Icon(Icons.Default.Map, "Map")
@@ -304,14 +292,6 @@ fun LoadDetailScreen(
                         }
                     }
                 }
-            }
-
-            is UiState.Error -> {
-                ErrorView(
-                    message = state.message,
-                    onRetry = { viewModel.refresh() }
-                )
-            }
         }
     }
 }

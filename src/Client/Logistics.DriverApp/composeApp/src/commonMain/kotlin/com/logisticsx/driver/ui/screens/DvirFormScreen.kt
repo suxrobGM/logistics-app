@@ -19,9 +19,10 @@ import androidx.compose.ui.unit.dp
 import com.logisticsx.driver.api.models.DvirInspectionCategory
 import com.logisticsx.driver.api.models.DvirType
 import com.logisticsx.driver.ui.components.SectionCard
-import com.logisticsx.driver.ui.components.SignaturePad
+import com.logisticsx.driver.ui.components.capture.CaptureScreenScaffold
 import com.logisticsx.driver.ui.components.capture.NotesTextField
 import com.logisticsx.driver.ui.components.capture.PhotoCaptureSection
+import com.logisticsx.driver.ui.components.capture.SignatureCaptureField
 import com.logisticsx.driver.ui.components.capture.SubmitButton
 import com.logisticsx.driver.ui.components.capture.rememberCameraCapture
 import com.logisticsx.driver.ui.components.dvir.DvirInspectionTypeSelector
@@ -29,23 +30,16 @@ import com.logisticsx.driver.ui.components.dvir.DvirTruckSelector
 import com.logisticsx.driver.ui.components.inspection.AddInspectionDefectDialog
 import com.logisticsx.driver.ui.components.inspection.InspectionDefectView
 import com.logisticsx.driver.ui.components.inspection.InspectionDefectsSection
-import com.logisticsx.driver.ui.components.inspection.InspectionScreenScaffold
-import com.logisticsx.driver.util.SignatureConverter
 import com.logisticsx.driver.util.displayName
 import com.logisticsx.driver.util.grouped
 import com.logisticsx.driver.viewmodel.DvirDefect
 import com.logisticsx.driver.viewmodel.DvirFormViewModel
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DvirFormScreen(
-    truckId: String?,
-    tripId: String?,
-    initialDvirType: DvirType? = null,
     onNavigateBack: () -> Unit,
-    viewModel: DvirFormViewModel = koinViewModel { parametersOf(truckId, tripId, initialDvirType) }
+    viewModel: DvirFormViewModel
 ) {
     val onCapturePhoto = rememberCameraCapture(onPhotoCaptured = viewModel::addPhoto)
     val uiState by viewModel.uiState.collectAsState()
@@ -56,7 +50,7 @@ fun DvirFormScreen(
         DvirType.POST_TRIP -> "Post-Trip Inspection"
     }
 
-    InspectionScreenScaffold(
+    CaptureScreenScaffold(
         title = title,
         error = uiState.error,
         isSuccess = uiState.isSuccess,
@@ -76,7 +70,7 @@ fun DvirFormScreen(
                 availableTrucks = uiState.availableTrucks,
                 isLoading = uiState.isLoadingTrucks,
                 onTruckSelected = viewModel::selectTruck,
-                enabled = truckId == null
+                enabled = uiState.truckId == null
             )
         }
 
@@ -96,7 +90,9 @@ fun DvirFormScreen(
 
         item {
             InspectionDefectsSection(
-                defects = uiState.defects.map { it.toView() },
+                defects = uiState.defects.map {
+                    InspectionDefectView(it.category.displayName, it.description, it.severity)
+                },
                 onAddDefect = { showAddDefectDialog = true },
                 onRemoveDefect = viewModel::removeDefect
             )
@@ -105,18 +101,14 @@ fun DvirFormScreen(
         item {
             PhotoCaptureSection(
                 photos = uiState.photos,
-                onAddPhoto = onCapturePhoto ?: {},
+                onAddPhoto = onCapturePhoto,
                 onRemovePhoto = viewModel::removePhoto
             )
         }
 
         item {
-            SignaturePad(
-                modifier = Modifier.fillMaxWidth(),
-                onSignatureComplete = { paths ->
-                    val base64 = SignatureConverter.pathsToBase64Png(paths) ?: ""
-                    viewModel.setSignature(paths, base64)
-                },
+            SignatureCaptureField(
+                onCaptured = viewModel::setSignature,
                 onClear = viewModel::clearSignature
             )
         }
@@ -151,10 +143,4 @@ fun DvirFormScreen(
             }
         )
     }
-}
-
-private fun DvirDefect.toView(): InspectionDefectView = object : InspectionDefectView {
-    override val categoryDisplay = category.displayName
-    override val description = this@toView.description
-    override val severity = this@toView.severity
 }

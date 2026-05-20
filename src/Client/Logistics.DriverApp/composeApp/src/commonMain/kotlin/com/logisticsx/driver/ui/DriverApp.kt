@@ -18,28 +18,26 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.logisticsx.driver.model.LocalUserSettings
 import com.logisticsx.driver.model.UserSettings
 import com.logisticsx.driver.navigation.AccountRoute
-import com.logisticsx.driver.navigation.ConditionReportRoute
-import com.logisticsx.driver.navigation.ConversationRoute
 import com.logisticsx.driver.navigation.DashboardRoute
-import com.logisticsx.driver.navigation.EmployeeSelectRoute
-import com.logisticsx.driver.navigation.LoadDetailRoute
 import com.logisticsx.driver.navigation.LoginRoute
 import com.logisticsx.driver.navigation.MessagesRoute
 import com.logisticsx.driver.navigation.Navigator
 import com.logisticsx.driver.navigation.PastLoadsRoute
-import com.logisticsx.driver.navigation.PodCaptureRoute
-import com.logisticsx.driver.navigation.TripDetailRoute
 import com.logisticsx.driver.navigation.TripsRoute
 import com.logisticsx.driver.navigation.createEntryProvider
+import com.logisticsx.driver.navigation.navSavedStateConfiguration
+import com.logisticsx.driver.navigation.topLevelRoutes
 import com.logisticsx.driver.service.PreferencesManager
 import com.logisticsx.driver.service.auth.AuthEvent
 import com.logisticsx.driver.service.auth.AuthEventBus
@@ -57,12 +55,12 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
 
     val userSettings by preferencesManager.getUserSettingsFlow().collectAsState(UserSettings())
 
-    // Simple single back stack with Dashboard as start
-    val backStack = remember { mutableStateListOf<NavKey>(DashboardRoute) }
+    // Saveable single back stack with Dashboard as start (survives config change / process death)
+    val backStack = rememberNavBackStack(navSavedStateConfiguration, DashboardRoute)
     val navigator = remember { Navigator(backStack) }
 
-    // Create the entry provider for all screens
-    val entryProvider = createEntryProvider(navigator, onOpenUrl)
+    // Create the entry provider for all screens (stable across recompositions)
+    val entryProvider = remember(navigator, onOpenUrl) { createEntryProvider(navigator, onOpenUrl) }
 
     // Check auth status once and navigate if not logged in
     LaunchedEffect(Unit) {
@@ -96,17 +94,9 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
         BottomNavItem("Account", AccountRoute, Icons.Default.AccountCircle),
     )
 
-    // Determine current destination for bottom bar visibility
+    // Bottom bar shows only on top-level destinations.
     val currentDestination = navigator.currentDestination
-
-    val showBottomBar = currentDestination != null &&
-            currentDestination !is LoginRoute &&
-            currentDestination !is LoadDetailRoute &&
-            currentDestination !is TripDetailRoute &&
-            currentDestination !is ConversationRoute &&
-            currentDestination !is EmployeeSelectRoute &&
-            currentDestination !is ConditionReportRoute &&
-            currentDestination !is PodCaptureRoute
+    val showBottomBar = currentDestination in topLevelRoutes
 
     CompositionLocalProvider(LocalUserSettings provides userSettings) {
         LogisticsDriverTheme {
@@ -119,9 +109,7 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
 
                     NavigationBar {
                         bottomNavItems.forEach { item ->
-                            val isSelected = currentDestination == item.route ||
-                                    (currentDestination is LoadDetailRoute && item.route == DashboardRoute) ||
-                                    (currentDestination is TripDetailRoute && item.route == TripsRoute)
+                            val isSelected = currentDestination == item.route
 
                             NavigationBarItem(
                                 icon = { Icon(item.icon, contentDescription = item.label) },
@@ -141,6 +129,12 @@ fun DriverApp(onOpenUrl: (String) -> Unit) {
                     backStack = backStack,
                     entryProvider = entryProvider,
                     onBack = { navigator.goBack() },
+                    // Scope a ViewModelStore to each NavEntry so parametrized ViewModels
+                    // (load/trip/capture screens) are recreated per destination and cleared on pop.
+                    entryDecorators = listOf(
+                        rememberSaveableStateHolderNavEntryDecorator(),
+                        rememberViewModelStoreNavEntryDecorator()
+                    ),
                     modifier = Modifier.padding(innerPadding)
                 )
             }
