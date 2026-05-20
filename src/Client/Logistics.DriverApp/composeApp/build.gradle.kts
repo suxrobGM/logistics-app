@@ -20,7 +20,6 @@ openApiGenerate {
     packageName.set("com.logisticsx.driver")
     apiPackage.set("com.logisticsx.driver.api")
     modelPackage.set("com.logisticsx.driver.api.models")
-    validateSpec.set(false)
     configOptions.set(
         mapOf(
             "library" to "multiplatform",
@@ -64,6 +63,10 @@ tasks.named("openApiGenerate") {
 }
 
 kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+
     android {
         namespace = "com.logisticsx.driver.shared"
         compileSdk = 37
