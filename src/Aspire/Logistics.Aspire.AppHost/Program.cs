@@ -10,6 +10,7 @@ builder.AddDockerComposeEnvironment("compose")
 
 IResourceBuilder<IResourceWithConnectionString> masterDb;
 IResourceBuilder<IResourceWithConnectionString> usTenantDb;
+IResourceBuilder<IResourceWithConnectionString> euTenantDb;
 
 // Development: use containerized PostgreSQL
 // Production: use external (installed) PostgreSQL via connection strings from appsettings
@@ -17,6 +18,7 @@ if (isProdEnv)
 {
     masterDb = builder.AddConnectionString("MasterDatabase");
     usTenantDb = builder.AddConnectionString("UsTenantDatabase");
+    euTenantDb = builder.AddConnectionString("EuTenantDatabase");
 }
 else
 {
@@ -29,9 +31,7 @@ else
 
     masterDb = postgres.AddDatabase("master", "master_logisticsx");
     usTenantDb = postgres.AddDatabase("us-tenant", "us_logisticsx");
-
-    // Provision the EU tenant database so the independently-run DB migrator has a target.
-    postgres.AddDatabase("eu-tenant", "eu_logisticsx");
+    euTenantDb = postgres.AddDatabase("eu-tenant", "eu_logisticsx");
 }
 
 var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-server")
@@ -95,6 +95,38 @@ var logisticsApi = builder.AddProject<Logistics_API>("api")
         builder.GetConfigValue("TenantDatabaseDefaults:Password"))
     .WaitFor(identityServer)
     .WithComposeRestartPolicy();
+
+// Development only: run the migrator before starting services
+if (isDevEnv)
+{
+    var migrator = builder.AddProject<Logistics_DbMigrator>("migrator")
+        .WithReference(masterDb, "MasterDatabase")
+        .WithReference(usTenantDb, "UsTenantDatabase")
+        .WithReference(euTenantDb, "EuTenantDatabase")
+        .WithEnvironment("SuperAdmin__Email", builder.GetConfigValue("SuperAdmin:Email"))
+        .WithEnvironment("SuperAdmin__Password", builder.GetConfigValue("SuperAdmin:Password"))
+        .WithEnvironment("Tenants__0__Name", "us")
+        .WithEnvironment("Tenants__0__CompanyName", "Heartland Logistics LLC")
+        .WithEnvironment("Tenants__0__BillingEmail", "billing@heartlandlogistics.com")
+        .WithEnvironment("Tenants__0__Region", "Us")
+        .WithEnvironment("Tenants__1__Name", "eu")
+        .WithEnvironment("Tenants__1__CompanyName", "EuroFreight GmbH")
+        .WithEnvironment("Tenants__1__BillingEmail", "billing@eurofreight.de")
+        .WithEnvironment("Tenants__1__Region", "Eu")
+        .WithEnvironment("TenantDatabaseDefaults__NameTemplate",
+            builder.GetConfigValue("TenantDatabaseDefaults:NameTemplate"))
+        .WithEnvironment("TenantDatabaseDefaults__Host",
+            builder.GetConfigValue("TenantDatabaseDefaults:Host"))
+        .WithEnvironment("TenantDatabaseDefaults__Port",
+            builder.GetConfigValue("TenantDatabaseDefaults:Port"))
+        .WithEnvironment("TenantDatabaseDefaults__UserId",
+            builder.GetConfigValue("TenantDatabaseDefaults:UserId"))
+        .WithEnvironment("TenantDatabaseDefaults__Password",
+            builder.GetConfigValue("TenantDatabaseDefaults:Password"));
+
+    identityServer.WaitForCompletion(migrator);
+    logisticsApi.WaitForCompletion(migrator);
+}
 
 // Use BunApp for local dev, Container for publishing
 if (isProdEnv)
