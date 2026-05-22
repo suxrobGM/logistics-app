@@ -32,8 +32,6 @@ services:
       OTEL_SERVICE_NAME: "identity-server"
     ports:
       - "${IDENTITY_SERVER_PORT}:${IDENTITY_SERVER_PORT}"
-    networks:
-      - "aspire"
   api:
     image: "${API_IMAGE}"
     environment:
@@ -85,6 +83,7 @@ services:
         condition: "service_started"
     networks:
       - "aspire"
+    restart: "unless-stopped"
   admin-portal:
     image: "ghcr.io/suxrobgm/logistics-app/admin-portal:latest"
     ports:
@@ -96,6 +95,7 @@ services:
         condition: "service_started"
     networks:
       - "aspire"
+    restart: "unless-stopped"
   tms-portal:
     image: "ghcr.io/suxrobgm/logistics-app/tms-portal:latest"
     environment:
@@ -109,6 +109,7 @@ services:
         condition: "service_started"
     networks:
       - "aspire"
+    restart: "unless-stopped"
   customer-portal:
     image: "ghcr.io/suxrobgm/logistics-app/customer-portal:latest"
     ports:
@@ -120,6 +121,7 @@ services:
         condition: "service_started"
     networks:
       - "aspire"
+    restart: "unless-stopped"
   website:
     image: "ghcr.io/suxrobgm/logistics-app/website:latest"
     ports:
@@ -129,6 +131,7 @@ services:
         condition: "service_started"
     networks:
       - "aspire"
+    restart: "unless-stopped"
   portainer-agent:
     image: "portainer/agent:latest"
     expose:
@@ -144,6 +147,7 @@ services:
         read_only: true
     networks:
       - "aspire"
+    restart: "unless-stopped"
   portainer:
     image: "portainer/portainer-ce:latest"
     ports:
@@ -162,6 +166,7 @@ services:
         condition: "service_started"
     networks:
       - "aspire"
+    restart: "unless-stopped"
 networks:
   aspire:
     driver: "bridge"

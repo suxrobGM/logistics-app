@@ -1,7 +1,23 @@
-﻿namespace Logistics.Aspire.AppHost;
+﻿using Aspire.Hosting.Docker.Resources.ComposeNodes;
+
+namespace Logistics.Aspire.AppHost;
 
 public static class BuilderExtensions
 {
+    /// <summary>
+    ///     Sets the Docker Compose <c>restart</c> policy for the resource so the container is
+    ///     brought back up automatically after a crash or a server reboot. Only takes effect in
+    ///     publish mode (when the docker-compose.yaml is generated); a no-op in run mode.
+    /// </summary>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="policy">The restart policy: "no", "always", "on-failure", or "unless-stopped".</param>
+    public static IResourceBuilder<T> WithComposeRestartPolicy<T>(
+        this IResourceBuilder<T> builder, string policy = "unless-stopped")
+        where T : IComputeResource
+    {
+        return builder.PublishAsDockerComposeService((_, service) => service.Restart = policy);
+    }
+
     /// <param name="builder">The distributed application builder.</param>
     extension(IDistributedApplicationBuilder builder)
     {

@@ -10,7 +10,6 @@ builder.AddDockerComposeEnvironment("compose")
 
 IResourceBuilder<IResourceWithConnectionString> masterDb;
 IResourceBuilder<IResourceWithConnectionString> usTenantDb;
-IResourceBuilder<IResourceWithConnectionString> euTenantDb;
 
 // Development: use containerized PostgreSQL
 // Production: use external (installed) PostgreSQL via connection strings from appsettings
@@ -18,7 +17,6 @@ if (isProdEnv)
 {
     masterDb = builder.AddConnectionString("MasterDatabase");
     usTenantDb = builder.AddConnectionString("UsTenantDatabase");
-    euTenantDb = builder.AddConnectionString("EuTenantDatabase");
 }
 else
 {
@@ -31,7 +29,9 @@ else
 
     masterDb = postgres.AddDatabase("master", "master_logisticsx");
     usTenantDb = postgres.AddDatabase("us-tenant", "us_logisticsx");
-    euTenantDb = postgres.AddDatabase("eu-tenant", "eu_logisticsx");
+
+    // Provision the EU tenant database so the independently-run DB migrator has a target.
+    postgres.AddDatabase("eu-tenant", "eu_logisticsx");
 }
 
 var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-server")
@@ -45,7 +45,8 @@ var identityServer = builder.AddProject<Logistics_IdentityServer>("identity-serv
     .WithEnvironment("Authentication__Google__ClientSecret", builder.GetConfigValue("Authentication:Google:ClientSecret"))
     .WithEnvironment("Resend__ApiKey", builder.GetConfigValue("Resend:ApiKey"))
     .WithEnvironment("Resend__SenderEmail", builder.GetConfigValue("Resend:SenderEmail"))
-    .WithEnvironment("Resend__SenderName", builder.GetConfigValue("Resend:SenderName"));
+    .WithEnvironment("Resend__SenderName", builder.GetConfigValue("Resend:SenderName"))
+    .WithComposeRestartPolicy();
 
 var logisticsApi = builder.AddProject<Logistics_API>("api")
     .WithExternalHttpEndpoints()
@@ -92,39 +93,8 @@ var logisticsApi = builder.AddProject<Logistics_API>("api")
         builder.GetConfigValue("TenantDatabaseDefaults:UserId"))
     .WithEnvironment("TenantDatabaseDefaults__Password",
         builder.GetConfigValue("TenantDatabaseDefaults:Password"))
-    .WaitFor(identityServer);
-
-// Development only: run the migrator before starting services
-if (isDevEnv)
-{
-    var migrator = builder.AddProject<Logistics_DbMigrator>("migrator")
-        .WithReference(masterDb, "MasterDatabase")
-        .WithReference(usTenantDb, "UsTenantDatabase")
-        .WithReference(euTenantDb, "EuTenantDatabase")
-        .WithEnvironment("SuperAdmin__Email", builder.GetConfigValue("SuperAdmin:Email"))
-        .WithEnvironment("SuperAdmin__Password", builder.GetConfigValue("SuperAdmin:Password"))
-        .WithEnvironment("Tenants__0__Name", "us")
-        .WithEnvironment("Tenants__0__CompanyName", "Heartland Logistics LLC")
-        .WithEnvironment("Tenants__0__BillingEmail", "billing@heartlandlogistics.com")
-        .WithEnvironment("Tenants__0__Region", "Us")
-        .WithEnvironment("Tenants__1__Name", "eu")
-        .WithEnvironment("Tenants__1__CompanyName", "EuroFreight GmbH")
-        .WithEnvironment("Tenants__1__BillingEmail", "billing@eurofreight.de")
-        .WithEnvironment("Tenants__1__Region", "Eu")
-        .WithEnvironment("TenantDatabaseDefaults__NameTemplate",
-            builder.GetConfigValue("TenantDatabaseDefaults:NameTemplate"))
-        .WithEnvironment("TenantDatabaseDefaults__Host",
-            builder.GetConfigValue("TenantDatabaseDefaults:Host"))
-        .WithEnvironment("TenantDatabaseDefaults__Port",
-            builder.GetConfigValue("TenantDatabaseDefaults:Port"))
-        .WithEnvironment("TenantDatabaseDefaults__UserId",
-            builder.GetConfigValue("TenantDatabaseDefaults:UserId"))
-        .WithEnvironment("TenantDatabaseDefaults__Password",
-            builder.GetConfigValue("TenantDatabaseDefaults:Password"));
-
-    identityServer.WaitForCompletion(migrator);
-    logisticsApi.WaitForCompletion(migrator);
-}
+    .WaitFor(identityServer)
+    .WithComposeRestartPolicy();
 
 // Use BunApp for local dev, Container for publishing
 if (isProdEnv)
@@ -134,7 +104,8 @@ if (isProdEnv)
         .WithHttpEndpoint(7002, 80, "admin-http")
         .WithExternalHttpEndpoints()
         .WaitFor(logisticsApi)
-        .WaitFor(identityServer);
+        .WaitFor(identityServer)
+        .WithComposeRestartPolicy();
 
     builder.AddContainer("tms-portal", "ghcr.io/suxrobgm/logistics-app/tms-portal")
         .WithImageTag("latest")
@@ -142,20 +113,23 @@ if (isProdEnv)
         .WithExternalHttpEndpoints()
         .WithEnvironment("MAPBOX_TOKEN", builder.GetConfigValue("Mapbox:AccessToken"))
         .WaitFor(logisticsApi)
-        .WaitFor(identityServer);
+        .WaitFor(identityServer)
+        .WithComposeRestartPolicy();
 
     builder.AddContainer("customer-portal", "ghcr.io/suxrobgm/logistics-app/customer-portal")
         .WithImageTag("latest")
         .WithHttpEndpoint(7004, 80, "customer-http")
         .WithExternalHttpEndpoints()
         .WaitFor(logisticsApi)
-        .WaitFor(identityServer);
+        .WaitFor(identityServer)
+        .WithComposeRestartPolicy();
 
     builder.AddContainer("website", "ghcr.io/suxrobgm/logistics-app/website")
         .WithImageTag("latest")
         .WithHttpEndpoint(7005, 7005, "website-http")
         .WithExternalHttpEndpoints()
-        .WaitFor(logisticsApi);
+        .WaitFor(logisticsApi)
+        .WithComposeRestartPolicy();
 }
 else
 {
@@ -205,7 +179,8 @@ if (isProdEnv)
         .WithVolume("portainer-agent-data", "/var/lib/docker/volumes")
         .WithBindMount("/var/run/docker.sock", "/var/run/docker.sock", true)
         .WithEndpoint(9001, 9001, name: "portainer-agent")
-        .WithExternalHttpEndpoints();
+        .WithExternalHttpEndpoints()
+        .WithComposeRestartPolicy();
 
     // Portainer CE: Web UI for container management
     builder.AddContainer("portainer", "portainer/portainer-ce:latest")
@@ -213,7 +188,8 @@ if (isProdEnv)
         .WithBindMount("/var/run/docker.sock", "/var/run/docker.sock", true)
         .WithHttpEndpoint(9000, 9000, "portainer-http")
         .WithExternalHttpEndpoints()
-        .WaitFor(portainerAgent);
+        .WaitFor(portainerAgent)
+        .WithComposeRestartPolicy();
 }
 
 builder.Build().Run();

@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Presentation\Logistics.API\Logistics.API.csproj" />
-    <ProjectReference Include="..\..\Presentation\Logistics.DbMigrator\Logistics.DbMigrator.csproj" />
     <ProjectReference Include="..\..\Presentation\Logistics.IdentityServer\Logistics.IdentityServer.csproj" />
     <ProjectReference Include="..\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj" />
   </ItemGroup>
