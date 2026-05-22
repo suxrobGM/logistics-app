@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Api, getConditionReportById, type ConditionReportDto } from "@logistics/shared/api";
+import { Api, getInspection, type ConditionReportDto } from "@logistics/shared/api";
 import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { isContainerLoadType } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
@@ -136,7 +136,7 @@ export class ConditionReportDetailPage implements OnInit {
     }
 
     this.isLoading.set(true);
-    const result = await this.api.invoke(getConditionReportById, { id: this.id() });
+    const result = await this.api.invoke(getInspection, { id: this.id() });
     if (result) {
       this.report.set(result);
     }
