@@ -24,6 +24,8 @@
 | TMS Portal      | [tms.logisticsx.app](https://tms.logisticsx.app)           |
 | Customer Portal | [customer.logisticsx.app](https://customer.logisticsx.app) |
 
+**US tenant** (Default Logistics):
+
 | Role       | Email                  | Password   |
 | ---------- | ---------------------- | ---------- |
 | Owner      | `owner@test.com`       | Test12345# |
@@ -31,6 +33,16 @@
 | Dispatcher | `dispatcher1@test.com` | Test12345# |
 | Driver     | `driver1@test.com`     | Test12345# |
 | Customer   | `customer1@test.com`   | Test12345# |
+
+**EU tenant** (EuroFreight GmbH - EUR billing, metric units, Europe/Berlin):
+
+| Role       | Email                     | Password   |
+| ---------- | ------------------------- | ---------- |
+| Owner      | `eu_owner@test.com`       | Test12345# |
+| Manager    | `eu_manager@test.com`     | Test12345# |
+| Dispatcher | `eu_dispatcher1@test.com` | Test12345# |
+| Driver     | `eu_driver1@test.com`     | Test12345# |
+| Customer   | `eu_customer1@test.com`   | Test12345# |
 
 [All test credentials](docs/getting-started/test-credentials.md)
 
@@ -105,6 +117,10 @@ Architecture: DDD + CQRS with MediatR, multi-tenant with one database per compan
 | :----------------------------------------------------------: | :----------------------------------------------------------: |
 | ![Sessions](docs/images/tms-portal/ai-dispatch-sessions.png) | ![Timeline](docs/images/tms-portal/ai-dispatch-timeline.png) |
 
+### Driver Mobile App
+
+![Feature graphic](docs/store-assets/feature-graphic.png)
+
 <details>
 <summary>More screenshots</summary>
 
@@ -123,6 +139,12 @@ Architecture: DDD + CQRS with MediatR, multi-tenant with one database per compan
 |                            Dashboard                             |                        Shipment Details                        |
 | :--------------------------------------------------------------: | :------------------------------------------------------------: |
 | ![Dashboard](docs/images/customer-portal/customer-dashboard.png) | ![Shipment](docs/images/customer-portal/customer-shipment.png) |
+
+### Driver Mobile App Screens
+
+|                           Trips                            |                              Trip Detail                               |                              Load Detail                               |
+| :--------------------------------------------------------: | :--------------------------------------------------------------------: | :--------------------------------------------------------------------: |
+| ![Trips](docs/store-assets/screenshots/phone/01-trips.png) | ![Trip Detail](docs/store-assets/screenshots/phone/02-trip-detail.png) | ![Load Detail](docs/store-assets/screenshots/phone/04-load-detail.png) |
 
 </details>
 
