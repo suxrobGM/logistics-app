@@ -179,7 +179,9 @@ export class AddressForm implements ControlValueAccessor {
       city: values.city,
       state: values.state,
       zipCode: values.zipCode,
-      country: countryOption?.label ?? DEFAULT_COUNTRY_OPTION.label,
+      // Emit the ISO-3166-1 alpha-2 code (e.g. "US"), not the display label.
+      // The backend AddressValidator requires a 2-letter country code.
+      country: countryOption?.value ?? DEFAULT_COUNTRY_OPTION.value,
     };
 
     this.onChanged?.(address);

@@ -11,7 +11,9 @@ fun Address?.toAddressDto(): AddressDto = AddressDto(
     city = this?.locality ?: "",
     zipCode = this?.postalCode ?: "",
     state = this?.adminArea ?: "",
-    country = this?.countryName ?: "",
+    // ISO-3166-1 alpha-2 code (e.g. "US"), not the display name — the backend
+    // requires a 2-letter country code.
+    country = this?.countryCode ?: "",
 )
 
 fun Location.toGeoPoint(): GeoPoint = GeoPoint(

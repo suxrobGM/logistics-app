@@ -117,7 +117,9 @@ export class AddressAutocomplete implements ControlValueAccessor {
     const city = geocodingFeature.properties.context.place.name;
     const region = geocodingFeature.properties.context.region.name;
     const zipCode = geocodingFeature.properties.context.postcode.name;
-    const country = geocodingFeature.properties.context.country.name;
+    // Use the ISO-3166-1 alpha-2 code (Mapbox returns it lowercase, e.g. "us"),
+    // uppercased to match the rest of the app. The backend requires a 2-letter code.
+    const country = geocodingFeature.properties.context.country.country_code?.toUpperCase();
 
     const addressObj: Address = {
       line1: street,
