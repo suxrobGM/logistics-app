@@ -46,6 +46,11 @@ internal sealed class CreateTenantHandler(
             CompanyAddress = req.CompanyAddress,
             BillingEmail = req.BillingEmail!,
             ConnectionString = tenantDatabase.GenerateConnectionString(tenantName),
+            // New tenants start subscription-less so they're usable immediately
+            // (admin-led onboarding/impersonation). The subscription check only
+            // enforces when IsSubscriptionRequired is true; an admin assigns a
+            // subscription later via the Subscriptions page.
+            IsSubscriptionRequired = false,
             Settings = new()
             {
                 LlmProvider = Enum.TryParse<LlmProvider>(defaultProvider, out var provider) ? provider : null,
