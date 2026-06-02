@@ -32,6 +32,9 @@ services:
       OTEL_SERVICE_NAME: "identity-server"
     ports:
       - "${IDENTITY_SERVER_PORT}:${IDENTITY_SERVER_PORT}"
+    networks:
+      - "aspire"
+    restart: "unless-stopped"
   api:
     image: "${API_IMAGE}"
     environment:
