@@ -6,12 +6,12 @@ import { InputTextModule } from "primeng/inputtext";
 import { debounceTime, distinctUntilChanged, Subject } from "rxjs";
 
 @Component({
-  selector: "ui-search-input",
-  templateUrl: "./search-input.html",
+  selector: "ui-search-field",
+  templateUrl: "./search-field.html",
   imports: [IconFieldModule, InputIconModule, InputTextModule],
   host: { class: "block" },
 })
-export class SearchInput implements OnInit {
+export class SearchField implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly searchSubject = new Subject<string>();
 

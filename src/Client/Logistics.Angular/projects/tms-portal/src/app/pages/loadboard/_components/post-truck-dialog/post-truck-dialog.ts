@@ -5,7 +5,7 @@ import {
   type PostTruckToLoadBoardCommand,
   type TruckDto,
 } from "@logistics/shared/api";
-import { Grid, Typography } from "@logistics/shared/components";
+import { Grid, Typography, ValidatedForm } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DatePickerModule } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
@@ -24,6 +24,7 @@ interface ProviderOption {
   selector: "app-post-truck-dialog",
   templateUrl: "./post-truck-dialog.html",
   imports: [
+    ValidatedForm,
     ButtonModule,
     DatePickerModule,
     DialogModule,

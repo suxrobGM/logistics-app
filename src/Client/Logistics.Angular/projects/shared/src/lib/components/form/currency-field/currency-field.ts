@@ -5,11 +5,11 @@ import { InputGroupAddonModule } from "primeng/inputgroupaddon";
 import { InputNumberModule } from "primeng/inputnumber";
 
 @Component({
-  selector: "ui-currency-input",
-  templateUrl: "./currency-input.html",
+  selector: "ui-currency-field",
+  templateUrl: "./currency-field.html",
   imports: [InputGroupModule, InputGroupAddonModule, InputNumberModule, ReactiveFormsModule],
 })
-export class CurrencyInput {
+export class CurrencyField {
   public readonly control = input.required<FormControl<number | null>>();
   public readonly currency = input<string>("$");
   public readonly min = input<number>(0);

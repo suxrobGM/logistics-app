@@ -25,7 +25,7 @@ import {
   Stack,
   Surface,
   Typography,
-  ValidationSummary,
+  ValidatedForm,
 } from "@logistics/shared/components";
 import { AutoCompleteModule } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
@@ -72,7 +72,7 @@ export interface TruckFormData {
     Stack,
     Surface,
     Typography,
-    ValidationSummary,
+    ValidatedForm,
     TruckFormTips,
     TruckHazmatSection,
     TruckVinField,

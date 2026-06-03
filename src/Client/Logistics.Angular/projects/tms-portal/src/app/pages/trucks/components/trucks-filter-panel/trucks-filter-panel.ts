@@ -7,7 +7,7 @@ import type { SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MultiSelectModule } from "primeng/multiselect";
-import { FormField, SearchInput } from "@/shared/components";
+import { FormField, SearchField } from "@/shared/components";
 
 export interface TrucksFilterState {
   statuses: TruckStatus[];
@@ -22,7 +22,7 @@ export interface TrucksFilterState {
     ButtonModule,
     FormsModule,
     MultiSelectModule,
-    SearchInput,
+    SearchField,
     FormField,
     Stack,
     Typography,

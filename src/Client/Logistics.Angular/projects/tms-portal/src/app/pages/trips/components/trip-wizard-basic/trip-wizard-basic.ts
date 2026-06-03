@@ -6,14 +6,14 @@ import { Stack } from "@logistics/shared/components";
 import { Button } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { ToastService } from "@/core/services";
-import { FormField, SearchTruck, ValidationSummary } from "@/shared/components";
+import { FormField, SearchTruck, ValidatedForm } from "@/shared/components";
 import { TripWizardStore } from "../../store/trip-wizard-store";
 
 @Component({
   selector: "app-trip-wizard-basic",
   templateUrl: "./trip-wizard-basic.html",
   imports: [
-    ValidationSummary,
+    ValidatedForm,
     FormField,
     SearchTruck,
     Button,

@@ -3,7 +3,7 @@
 <p-card>
   <ui-stack direction="row" align="end" gap="3" wrap class="mb-4">
     <div class="min-w-72 flex-1">
-      <ui-search-input (searchChange)="search($event)" />
+      <ui-search-field (searchChange)="search($event)" />
     </div>
     <p-select
       [options]="statusOptions"

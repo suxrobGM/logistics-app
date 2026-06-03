@@ -9,6 +9,7 @@
   [(ngModel)]="selectedEmployee"
   (completeMethod)="searchEmployee($event)"
   (onSelect)="changeSelectedEmployee($event)"
+  (onBlur)="markTouched()"
   [disabled]="disabled()"
 >
   <ng-template #item let-employee>

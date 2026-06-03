@@ -10,7 +10,7 @@ import { CardModule } from "primeng/card";
 import { SelectModule } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
+import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { ContainersListStore } from "../store";
 
 @Component({
@@ -26,7 +26,7 @@ import { ContainersListStore } from "../store";
     DatePipe,
     DataContainer,
     PageHeader,
-    SearchInput,
+    SearchField,
     Icon,
     Stack,
     StatusBadge,

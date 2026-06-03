@@ -1,6 +1,6 @@
 import { Component, input } from "@angular/core";
 import { ReactiveFormsModule, type FormGroup } from "@angular/forms";
-import { FormField, ValidationSummary } from "@logistics/shared/components";
+import { FormField } from "@logistics/shared/components";
 import { DatePickerModule } from "primeng/datepicker";
 import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
@@ -19,7 +19,6 @@ import { ACCIDENT_SEVERITY_OPTIONS, ACCIDENT_TYPE_OPTIONS } from "../accident.co
     SelectModule,
     TextareaModule,
     FormField,
-    ValidationSummary,
     SearchEmployee,
     SearchTruck,
     AddressAutocomplete,

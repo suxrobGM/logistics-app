@@ -9,7 +9,7 @@ import { CardModule } from "primeng/card";
 import { SelectModule } from "primeng/select";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
+import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { TerminalsListStore } from "../store";
 
 @Component({
@@ -24,7 +24,7 @@ import { TerminalsListStore } from "../store";
     TooltipModule,
     DataContainer,
     PageHeader,
-    SearchInput,
+    SearchField,
     Stack,
   ],
 })

@@ -1,0 +1,41 @@
+<div class="mb-4 flex flex-col text-start">
+  @if (label()) {
+    <div class="mb-2 flex items-center gap-1 text-sm font-medium">
+      @if (required()) {
+        <span class="text-red-600 dark:text-red-400">*</span>
+      }
+      <label class="text-gray-700 dark:text-gray-300" [for]="for()">{{ label() }}</label>
+    </div>
+  }
+
+  <ng-content></ng-content>
+
+  @if (hint() && !isFieldInvalid()) {
+    <div class="text-sm text-gray-500 dark:text-gray-400">
+      {{ hint() }}
+    </div>
+  }
+
+  @if (isFieldInvalid()) {
+    <div class="text-sm text-red-600 dark:text-red-400">
+      @let fieldErrors = errors();
+      @if (fieldErrors?.["required"]) {
+        This field is required.
+      } @else if (fieldErrors?.["email"]) {
+        Enter a valid email address.
+      } @else if (fieldErrors?.["minlength"]) {
+        Minimum length is {{ fieldErrors?.["minlength"]?.requiredLength }} characters.
+      } @else if (fieldErrors?.["maxlength"]) {
+        Maximum length is {{ fieldErrors?.["maxlength"]?.requiredLength }} characters.
+      } @else if (fieldErrors?.["min"]) {
+        Must be at least {{ fieldErrors?.["min"]?.min }}.
+      } @else if (fieldErrors?.["max"]) {
+        Must be at most {{ fieldErrors?.["max"]?.max }}.
+      } @else if (fieldErrors?.["pattern"]) {
+        Invalid format.
+      } @else {
+        Invalid value.
+      }
+    </div>
+  }
+</div>

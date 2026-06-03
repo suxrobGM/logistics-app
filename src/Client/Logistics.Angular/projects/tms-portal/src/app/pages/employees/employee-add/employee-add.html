@@ -9,7 +9,6 @@
 
   <form [formGroup]="form" (ngSubmit)="submit()">
     <ui-stack gap="6">
-      <ui-validation-summary [form]="form" />
 
       <!-- Employee Details Section -->
       <ui-stack tag="section" gap="3">
@@ -58,9 +57,9 @@
 
           <ui-form-field label="Salary" for="salary" class="mb-0">
             @if (isShareOfGrossSalary()) {
-              <ui-unit-input [control]="form.controls.salary" unit="%" [min]="0" [max]="100" />
+              <ui-unit-field [control]="form.controls.salary" unit="%" [min]="0" [max]="100" />
             } @else {
-              <ui-currency-input [control]="form.controls.salary" [min]="0" />
+              <ui-currency-field [control]="form.controls.salary" [min]="0" />
             }
           </ui-form-field>
         </ui-surface>

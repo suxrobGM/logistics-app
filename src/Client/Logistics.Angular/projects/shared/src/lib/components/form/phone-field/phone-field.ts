@@ -6,18 +6,18 @@ import { SelectModule } from "primeng/select";
 import { DEFAULT_PHONE_COUNTRY, PHONE_COUNTRIES, type PhoneCountry } from "../../../constants";
 
 @Component({
-  selector: "ui-phone-input",
-  templateUrl: "./phone-input.html",
+  selector: "ui-phone-field",
+  templateUrl: "./phone-field.html",
   imports: [InputGroupModule, InputMaskModule, SelectModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: PhoneInput,
+      useExisting: PhoneField,
       multi: true,
     },
   ],
 })
-export class PhoneInput implements ControlValueAccessor {
+export class PhoneField implements ControlValueAccessor {
   protected readonly countries = PHONE_COUNTRIES;
   protected readonly selectedCountry = signal<PhoneCountry>(DEFAULT_PHONE_COUNTRY);
   protected readonly phoneNumber = signal<string>("");

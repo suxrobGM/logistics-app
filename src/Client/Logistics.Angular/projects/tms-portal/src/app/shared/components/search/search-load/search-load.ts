@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Component, forwardRef, inject, input, model, output, signal } from "@angular/core";
-import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
-import { Api, type LoadDto, getLoadById, getLoads } from "@logistics/shared/api";
+import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
+import { Api, getLoadById, getLoads, type LoadDto } from "@logistics/shared/api";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 import { LoadStatusTag } from "../../tags/load-status-tag/load-status-tag";
 
@@ -65,6 +65,11 @@ export class SearchLoad implements ControlValueAccessor {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onChange(value: LoadDto | null): void {}
   private onTouched(): void {}
+
+  /** Marks the control as touched so validation errors surface (on blur). */
+  protected markTouched(): void {
+    this.onTouched();
+  }
 
   writeValue(value: LoadDto | string | null): void {
     if (typeof value === "string") {

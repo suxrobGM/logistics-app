@@ -2,7 +2,7 @@ import { Component, inject, input, model, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { FormField } from "@logistics/shared";
 import { Api, sendInvoice } from "@logistics/shared/api";
-import { Stack } from "@logistics/shared/components";
+import { Stack, ValidatedForm } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -13,6 +13,7 @@ import { ToastService } from "@/core/services";
   selector: "app-send-invoice-dialog",
   templateUrl: "./send-invoice-dialog.html",
   imports: [
+    ValidatedForm,
     DialogModule,
     ButtonModule,
     ReactiveFormsModule,

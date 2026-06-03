@@ -44,7 +44,7 @@
       </ui-form-field>
 
       <ui-form-field label="Phone Number" for="phone">
-        <ui-phone-input id="phone" formControlName="phone" />
+        <ui-phone-field id="phone" formControlName="phone" />
       </ui-form-field>
 
       <ui-form-field label="Fleet Size" for="fleetSize">
@@ -73,7 +73,7 @@
         <p-button
           label="Submit Request"
           type="submit"
-          [disabled]="form.invalid || isLoading()"
+          [disabled]="isLoading()"
           [loading]="isLoading()"
         />
       </div>

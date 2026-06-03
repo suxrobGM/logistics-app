@@ -52,6 +52,11 @@ export class SearchTerminal implements ControlValueAccessor {
   private onChange(value: TerminalDto | null): void {}
   private onTouched(): void {}
 
+  /** Marks the control as touched so validation errors surface (on blur). */
+  protected markTouched(): void {
+    this.onTouched();
+  }
+
   writeValue(value: TerminalDto | null): void {
     this.selectedTerminal.set(value);
   }

@@ -26,7 +26,7 @@ import {
   Stack,
   Surface,
   Typography,
-  ValidationSummary,
+  ValidatedForm,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CheckboxModule } from "primeng/checkbox";
@@ -117,7 +117,7 @@ export interface LoadFormValue {
     RouterLink,
     AddressAutocomplete,
     DirectionMap,
-    ValidationSummary,
+    ValidatedForm,
     FormField,
     Grid,
     Icon,

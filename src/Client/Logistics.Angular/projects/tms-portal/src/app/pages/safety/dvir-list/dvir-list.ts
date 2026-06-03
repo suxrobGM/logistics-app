@@ -10,7 +10,7 @@ import { MenuModule } from "primeng/menu";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
+import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import type { TagSeverity } from "@/shared/types";
 import { DvirListStore } from "../store";
 
@@ -28,7 +28,7 @@ import { DvirListStore } from "../store";
     DatePipe,
     DataContainer,
     PageHeader,
-    SearchInput,
+    SearchField,
     Icon,
     Stack,
   ],

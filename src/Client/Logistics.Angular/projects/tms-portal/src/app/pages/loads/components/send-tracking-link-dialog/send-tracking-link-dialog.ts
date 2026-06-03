@@ -1,6 +1,6 @@
 import { Component, inject, input, model, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { FormField } from "@logistics/shared";
+import { FormField, ValidatedForm } from "@logistics/shared";
 import { Api, sendTrackingLinkEmail } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
@@ -12,6 +12,7 @@ import { ToastService } from "@/core/services";
   selector: "app-send-tracking-link-dialog",
   templateUrl: "./send-tracking-link-dialog.html",
   imports: [
+    ValidatedForm,
     DialogModule,
     ButtonModule,
     ReactiveFormsModule,

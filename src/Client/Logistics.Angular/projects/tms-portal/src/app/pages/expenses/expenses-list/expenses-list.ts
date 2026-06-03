@@ -11,7 +11,7 @@ import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
-import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
+import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { ExpenseStatusTag, ExpenseTypeTag } from "@/shared/components/tags";
 import { getCategoryLabel, RejectExpenseDialog } from "../_components";
 import { ExpenseActionsService } from "../services/expense-actions.service";
@@ -33,7 +33,7 @@ import { ExpensesListStore } from "../store/expenses-list.store";
     DateFormatPipe,
     DataContainer,
     PageHeader,
-    SearchInput,
+    SearchField,
     Icon,
     ExpenseStatusTag,
     ExpenseTypeTag,

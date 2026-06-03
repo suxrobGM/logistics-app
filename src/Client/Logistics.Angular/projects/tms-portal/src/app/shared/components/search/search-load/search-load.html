@@ -8,6 +8,7 @@
   [(ngModel)]="selectedLoad"
   (completeMethod)="searchLoad($event)"
   (onSelect)="changeSelectedLoad($event)"
+  (onBlur)="markTouched()"
 >
   <ng-template #item let-load>
     <div class="flex items-center gap-2">

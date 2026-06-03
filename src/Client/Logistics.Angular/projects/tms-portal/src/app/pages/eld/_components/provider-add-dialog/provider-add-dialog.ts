@@ -4,7 +4,7 @@ import {
   type CreateEldProviderConfigurationCommand,
   type EldProviderType,
 } from "@logistics/shared/api";
-import { Alert } from "@logistics/shared/components";
+import { Alert, ValidatedForm } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -17,6 +17,7 @@ import { ELD_PROVIDER_OPTIONS } from "../eld.constants";
   selector: "app-eld-provider-add-dialog",
   templateUrl: "./provider-add-dialog.html",
   imports: [
+    ValidatedForm,
     Alert,
     ButtonModule,
     DialogModule,

@@ -51,6 +51,11 @@ export class SearchContainer implements ControlValueAccessor {
   private onChange(value: ContainerDto | null): void {}
   private onTouched(): void {}
 
+  /** Marks the control as touched so validation errors surface (on blur). */
+  protected markTouched(): void {
+    this.onTouched();
+  }
+
   writeValue(value: ContainerDto | null): void {
     this.selectedContainer.set(value);
   }

@@ -9,6 +9,7 @@
   [(ngModel)]="selectedContainer"
   (completeMethod)="searchContainer($event)"
   (onSelect)="changeSelectedContainer($event)"
+  (onBlur)="markTouched()"
 >
   <ng-template #empty>
     <div class="p-2">

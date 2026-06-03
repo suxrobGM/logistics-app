@@ -59,7 +59,6 @@
           </ui-grid>
         </ui-grid>
 
-        <ui-validation-summary [form]="form" />
 
         <ui-stack direction="row" gap="2" class="mt-6">
           <p-button
@@ -68,7 +67,6 @@
             type="submit"
             [loading]="isLoading()"
             [disabled]="
-              form.invalid ||
               isLoading() ||
               tenantOptions().length === 0 ||
               planOptions().length === 0

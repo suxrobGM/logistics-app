@@ -23,7 +23,7 @@ import {
   Stack,
   Surface,
   Typography,
-  ValidationSummary,
+  ValidatedForm,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -54,7 +54,7 @@ import { SearchTerminal } from "@/shared/components/search";
     TagModule,
     TextareaModule,
     FormField,
-    ValidationSummary,
+    ValidatedForm,
     PageHeader,
     SearchTerminal,
     Grid,

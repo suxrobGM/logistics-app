@@ -1,9 +1,13 @@
 import { Component, computed, inject, signal, viewChild } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
-import { Api, cancelSubscription, deleteSubscription } from "@logistics/shared/api";
-import type { SubscriptionDto } from "@logistics/shared/api";
-import { DataContainer, PageHeader, SearchInput } from "@logistics/shared/components";
+import {
+  Api,
+  cancelSubscription,
+  deleteSubscription,
+  type SubscriptionDto,
+} from "@logistics/shared/api";
+import { DataContainer, PageHeader, SearchField } from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -27,7 +31,7 @@ import { SubscriptionsListStore } from "../store/subscriptions-list.store";
     ConfirmDialogModule,
     DataContainer,
     PageHeader,
-    SearchInput,
+    SearchField,
     TagModule,
     MenuModule,
   ],

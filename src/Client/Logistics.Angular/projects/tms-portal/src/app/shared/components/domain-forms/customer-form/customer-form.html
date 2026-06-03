@@ -5,7 +5,6 @@
 
   <form [formGroup]="form" (ngSubmit)="submit()">
     <ui-stack gap="4">
-      <ui-validation-summary [form]="form" />
 
       <ui-form-field label="Customer Name" for="name" [required]="true">
         <input

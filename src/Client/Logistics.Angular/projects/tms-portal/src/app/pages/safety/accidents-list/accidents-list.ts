@@ -17,7 +17,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
+import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import type { TagSeverity } from "@/shared/types";
 import { AccidentsListStore } from "../store";
 
@@ -35,7 +35,7 @@ import { AccidentsListStore } from "../store";
     DatePipe,
     DataContainer,
     PageHeader,
-    SearchInput,
+    SearchField,
     Icon,
     Stack,
   ],

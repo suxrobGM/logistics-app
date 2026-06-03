@@ -11,7 +11,7 @@ import { MenuModule } from "primeng/menu";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
+import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { ConditionReportsListStore } from "../store/condition-reports-list.store";
 
 @Component({
@@ -27,7 +27,7 @@ import { ConditionReportsListStore } from "../store/condition-reports-list.store
     DataContainer,
     DatePipe,
     PageHeader,
-    SearchInput,
+    SearchField,
     TagModule,
     Icon,
   ],

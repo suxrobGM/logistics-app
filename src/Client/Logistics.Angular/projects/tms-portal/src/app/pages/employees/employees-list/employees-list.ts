@@ -13,7 +13,7 @@ import { MenuModule } from "primeng/menu";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
+import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { EmployeeStatusTag } from "@/shared/components/tags";
 import { EmployeeAvatar, InviteEmployeeDialog } from "../components";
 import { EmployeesListStore } from "../store";
@@ -37,7 +37,7 @@ type SeverityType = "success" | "secondary" | "info" | "warn" | "danger" | "cont
     PercentPipe,
     DataContainer,
     PageHeader,
-    SearchInput,
+    SearchField,
     InviteEmployeeDialog,
     PermissionGuard,
     EmployeeAvatar,

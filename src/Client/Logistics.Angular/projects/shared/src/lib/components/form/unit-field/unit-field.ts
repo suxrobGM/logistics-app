@@ -5,11 +5,11 @@ import { InputGroupAddonModule } from "primeng/inputgroupaddon";
 import { InputTextModule } from "primeng/inputtext";
 
 @Component({
-  selector: "ui-unit-input",
-  templateUrl: "./unit-input.html",
+  selector: "ui-unit-field",
+  templateUrl: "./unit-field.html",
   imports: [InputGroupModule, InputGroupAddonModule, InputTextModule, ReactiveFormsModule],
 })
-export class UnitInput {
+export class UnitField {
   public readonly control = input.required<FormControl<number | string | null>>();
   public readonly unit = input.required<string>();
   public readonly type = input<"number" | "text">("number");

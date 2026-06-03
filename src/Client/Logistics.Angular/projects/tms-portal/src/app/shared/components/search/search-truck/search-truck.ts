@@ -60,6 +60,11 @@ export class SearchTruck implements ControlValueAccessor {
   private onChange(value: TruckDto | null): void {}
   private onTouched(): void {}
 
+  /** Marks the control as touched so validation errors surface (on blur). */
+  protected markTouched(): void {
+    this.onTouched();
+  }
+
   writeValue(value: TruckDto | string | null): void {
     if (typeof value === "string") {
       this.fetchTruckById(value);

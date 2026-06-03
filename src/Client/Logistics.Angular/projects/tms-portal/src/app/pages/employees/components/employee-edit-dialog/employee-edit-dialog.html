@@ -31,11 +31,11 @@
 
     <ui-form-field label="Salary" for="salary" class="mt-4">
       @if (isShareOfGrossSalary()) {
-        <ui-unit-input [control]="form.controls.salary" unit="%" [min]="0" [max]="100" />
+        <ui-unit-field [control]="form.controls.salary" unit="%" [min]="0" [max]="100" />
       } @else if (isNoneSalary()) {
         <input pInputText id="salary" type="text" class="w-full" [disabled]="true" value="N/A" />
       } @else {
-        <ui-currency-input [control]="form.controls.salary" [min]="0" />
+        <ui-currency-field [control]="form.controls.salary" [min]="0" />
       }
     </ui-form-field>
 
@@ -66,7 +66,6 @@
       <ui-address-form formControlName="address" [allowedCountries]="allowedCountries()" />
     </ui-form-field>
 
-    <ui-validation-summary [form]="form" class="mt-4" />
 
     <ui-stack direction="row" justify="end" gap="2" class="mt-6">
       <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />

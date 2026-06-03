@@ -1,7 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, inject, signal, type OnDestroy, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { SearchInput } from "@logistics/shared";
+import { SearchField } from "@logistics/shared";
 import {
   Api,
   getNotifications,
@@ -43,7 +43,7 @@ interface FilterOption {
     CheckboxModule,
     FormsModule,
     TooltipModule,
-    SearchInput,
+    SearchField,
     Icon,
     Stack,
     Typography,

@@ -18,7 +18,7 @@ import {
   type UpdateTimeEntryCommand,
 } from "@logistics/shared/api";
 import { timeEntryTypeOptions } from "@logistics/shared/api/enums";
-import { Grid, Icon, Stack } from "@logistics/shared/components";
+import { Grid, Icon, Stack, ValidatedForm } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DatePickerModule } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
@@ -33,6 +33,7 @@ import { FormField } from "@/shared/components";
   selector: "app-timesheet-form-dialog",
   templateUrl: "./form-dialog.html",
   imports: [
+    ValidatedForm,
     DialogModule,
     ProgressSpinnerModule,
     FormsModule,

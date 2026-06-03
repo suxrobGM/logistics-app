@@ -11,7 +11,7 @@ import {
   type TruckDto,
   type UpdateMaintenanceRecordCommand,
 } from "@logistics/shared/api";
-import { FormField, ValidationSummary } from "@logistics/shared/components";
+import { FormField, ValidatedForm } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DatePickerModule } from "primeng/datepicker";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -65,7 +65,7 @@ const maintenanceTypeOptions = [
   templateUrl: "./maintenance-record-form.html",
   imports: [
     ButtonModule,
-    ValidationSummary,
+    ValidatedForm,
     ReactiveFormsModule,
     RouterLink,
     ProgressSpinnerModule,

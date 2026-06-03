@@ -2,9 +2,8 @@ import { CurrencyPipe, TitleCasePipe } from "@angular/common";
 import { Component, computed, inject, signal, viewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import { ToastService } from "@logistics/shared";
-import type { PlanTier } from "@logistics/shared/api";
-import { Api, deleteSubscriptionPlan } from "@logistics/shared/api";
-import { DataContainer, PageHeader, SearchInput } from "@logistics/shared/components";
+import { Api, deleteSubscriptionPlan, type PlanTier } from "@logistics/shared/api";
+import { DataContainer, PageHeader, SearchField } from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -27,7 +26,7 @@ import { PlansListStore } from "../store/plans-list.store";
     ConfirmDialogModule,
     DataContainer,
     PageHeader,
-    SearchInput,
+    SearchField,
     TagModule,
     CurrencyPipe,
     TitleCasePipe,
@@ -89,7 +88,6 @@ export class PlansList {
     const plural = count && count > 1 ? "s" : "";
     return `${count ?? 1} ${interval}${plural}`;
   }
-
 
   protected formatTier(tier?: PlanTier): string {
     switch (tier) {

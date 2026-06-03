@@ -143,7 +143,7 @@
           type="submit"
           icon="pi pi-check"
           [label]="isEditMode ? 'Update' : 'Create'"
-          [disabled]="isLoading() || form.invalid || timeError()"
+          [disabled]="isLoading() || timeError()"
         />
       </ui-stack>
     </form>

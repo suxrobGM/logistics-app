@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angula
 import { FormField } from "@logistics/shared";
 import { Api, recordManualPayment, type PaymentMethodType } from "@logistics/shared/api";
 import { paymentMethodTypeOptions } from "@logistics/shared/api/enums";
-import { Stack } from "@logistics/shared/components";
+import { Stack, ValidatedForm } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DatePickerModule } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
@@ -17,6 +17,7 @@ import { ToastService } from "@/core/services";
   selector: "app-record-payment-dialog",
   templateUrl: "./record-payment-dialog.html",
   imports: [
+    ValidatedForm,
     DialogModule,
     ButtonModule,
     ReactiveFormsModule,

@@ -12,7 +12,7 @@ import {
   DateRangePicker,
   FormField,
   SearchCustomer,
-  SearchInput,
+  SearchField,
   SearchTruck,
 } from "@/shared/components";
 
@@ -34,7 +34,7 @@ export interface LoadsFilterState {
     FormsModule,
     MultiSelectModule,
     CheckboxModule,
-    SearchInput,
+    SearchField,
     SearchTruck,
     SearchCustomer,
     DateRangePicker,

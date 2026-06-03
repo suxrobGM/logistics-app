@@ -6,7 +6,7 @@ import { CardModule } from "primeng/card";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
+import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { InviteEmployeeDialog } from "../components";
 import { PendingInvitationsStore } from "../store";
 
@@ -23,7 +23,7 @@ import { PendingInvitationsStore } from "../store";
     TagModule,
     DataContainer,
     PageHeader,
-    SearchInput,
+    SearchField,
     InviteEmployeeDialog,
   ],
 })

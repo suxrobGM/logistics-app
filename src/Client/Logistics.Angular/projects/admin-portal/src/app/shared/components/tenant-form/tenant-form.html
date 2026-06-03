@@ -69,7 +69,6 @@
     </div>
   }
 
-  <ui-validation-summary [form]="form" />
 
   <div class="mt-6 flex gap-2">
     <p-button
@@ -77,7 +76,7 @@
       icon="pi pi-check"
       type="submit"
       [loading]="isLoading()"
-      [disabled]="form.invalid || isLoading()"
+      [disabled]="isLoading()"
     />
     <p-button label="Cancel" icon="pi pi-times" severity="secondary" routerLink="/tenants" />
     @if (mode() === "edit") {

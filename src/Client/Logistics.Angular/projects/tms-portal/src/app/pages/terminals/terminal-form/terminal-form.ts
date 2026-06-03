@@ -12,7 +12,7 @@ import {
   Stack,
   Surface,
   Typography,
-  ValidationSummary,
+  ValidatedForm,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
@@ -41,7 +41,7 @@ export interface TerminalFormValue {
     TextareaModule,
     AddressForm,
     FormField,
-    ValidationSummary,
+    ValidatedForm,
     Grid,
     Icon,
     Stack,

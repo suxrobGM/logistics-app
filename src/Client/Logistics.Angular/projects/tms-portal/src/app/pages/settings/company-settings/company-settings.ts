@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { AddressForm, PhoneInput, regionAllowedCountries } from "@logistics/shared";
+import { AddressForm, PhoneField, regionAllowedCountries } from "@logistics/shared";
 import {
   Api,
   getTenantById,
@@ -17,7 +17,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { TenantService, ToastService } from "@/core/services";
-import { FormField, PageHeader, ValidationSummary } from "@/shared/components";
+import { FormField, PageHeader, ValidatedForm } from "@/shared/components";
 
 @Component({
   selector: "app-company-settings",
@@ -27,12 +27,12 @@ import { FormField, PageHeader, ValidationSummary } from "@/shared/components";
     ProgressSpinnerModule,
     ButtonModule,
     ReactiveFormsModule,
-    ValidationSummary,
+    ValidatedForm,
     FormField,
     PageHeader,
     InputTextModule,
     AddressForm,
-    PhoneInput,
+    PhoneField,
     SelectModule,
     Icon,
     Stack,

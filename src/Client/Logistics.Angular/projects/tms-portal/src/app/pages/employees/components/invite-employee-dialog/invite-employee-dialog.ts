@@ -14,7 +14,7 @@ import {
   type CreateInvitationCommand,
   type RoleDto,
 } from "@logistics/shared/api";
-import { Stack } from "@logistics/shared/components";
+import { Stack, ValidatedForm } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -29,6 +29,7 @@ import { FormField } from "@/shared/components";
   selector: "app-invite-employee-dialog",
   templateUrl: "./invite-employee-dialog.html",
   imports: [
+    ValidatedForm,
     DialogModule,
     ProgressSpinnerModule,
     FormsModule,

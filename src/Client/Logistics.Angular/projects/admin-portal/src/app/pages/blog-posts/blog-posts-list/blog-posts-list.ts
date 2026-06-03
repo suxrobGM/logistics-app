@@ -8,7 +8,7 @@ import {
   unpublishBlogPost,
   type BlogPostDto,
 } from "@logistics/shared/api";
-import { DataContainer, Icon, PageHeader, SearchInput, Stack } from "@logistics/shared/components";
+import { DataContainer, Icon, PageHeader, SearchField, Stack } from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -31,7 +31,7 @@ import { BlogPostsListStore } from "../store/blog-posts-list.store";
     MenuModule,
     DataContainer,
     PageHeader,
-    SearchInput,
+    SearchField,
     TagModule,
     DatePipe,
     Icon,

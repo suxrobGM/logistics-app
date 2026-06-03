@@ -29,11 +29,11 @@ import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
 import {
-  CurrencyInput,
+  CurrencyField,
   FormField,
   PageHeader,
-  UnitInput,
-  ValidationSummary,
+  UnitField,
+  ValidatedForm,
 } from "@/shared/components";
 import { UserService } from "../services";
 
@@ -51,13 +51,13 @@ import { UserService } from "../services";
     ButtonModule,
     RouterLink,
     PageHeader,
-    ValidationSummary,
+    ValidatedForm,
     FormField,
     InputGroupModule,
     InputGroupAddonModule,
     InputTextModule,
-    UnitInput,
-    CurrencyInput,
+    UnitField,
+    CurrencyField,
     Icon,
     Stack,
     Surface,

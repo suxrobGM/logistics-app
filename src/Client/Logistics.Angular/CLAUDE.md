@@ -24,17 +24,43 @@ bun run lint               # Lint code
 | `website`         | 7005 | `web-` |
 | `shared`          | N/A  | `ui-`  |
 
-## Form Fields
+## Forms
 
-Always use `<ui-form-field>` from `@logistics/shared` instead of manually building labels, hints, and error messages. Pass the form control to render validation automatically.
+Shared form building blocks live in `projects/shared/src/lib/components/form/` (exported from
+`@logistics/shared/components`). The `*-field` components (`ui-form-field`, `ui-currency-field`,
+`ui-unit-field`, `ui-phone-field`, `ui-search-field`) replaced the old `*-input` names.
+
+### Field wrapper
+
+Always use `<ui-form-field>` instead of hand-building labels, hints, and error messages. It
+**auto-resolves the control from the projected `formControlName`** and renders validation errors
+reactively — no `[control]` binding required:
 
 ```html
-<ui-form-field label="Password" for="password" [required]="true" [control]="form.controls.password">
+<ui-form-field label="Password" for="password" [required]="true">
   <input pInputText id="password" formControlName="password" type="password" />
 </ui-form-field>
 ```
 
-Optional `hint="..."` for helper text.
+Optional `hint="..."` for helper text. Pass `[control]="form.controls.x"` only for the rare case
+where the control is not a projected child (it overrides auto-resolution).
+
+### Reveal-on-submit (`ValidatedForm`)
+
+Add the `ValidatedForm` directive to a form component's `imports`. It auto-applies to every
+`<form [formGroup]>` in that component — no template attribute, no submit-handler changes. On an
+invalid submit it marks all controls touched (so inline `ui-form-field` errors render), scrolls
+to / focuses the first invalid control, and announces the error count via an `aria-live` region.
+
+```ts
+import { FormField, ValidatedForm } from "@logistics/shared/components";
+// ...
+@Component({ imports: [ReactiveFormsModule, FormField, ValidatedForm, /* ... */] })
+```
+
+Do **not** disable the submit button with `[disabled]="form.invalid"` — keep it clickable
+(guard only on `isLoading()`) so `ValidatedForm` can reveal what's missing. There is no
+`ui-validation-summary`; inline field errors plus reveal-on-submit replace it.
 
 ## Theme files (TMS Portal)
 

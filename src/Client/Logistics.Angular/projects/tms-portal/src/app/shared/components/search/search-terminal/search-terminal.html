@@ -9,6 +9,7 @@
   [(ngModel)]="selectedTerminal"
   (completeMethod)="searchTerminal($event)"
   (onSelect)="changeSelectedTerminal($event)"
+  (onBlur)="markTouched()"
 >
   <ng-template #empty>
     <div class="p-2">

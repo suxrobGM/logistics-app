@@ -8,7 +8,6 @@
   } @else {
     <form [formGroup]="form" (ngSubmit)="save()">
       <ui-stack gap="6">
-        <ui-validation-summary [form]="form" />
 
         <!-- Branding Section -->
         <ui-stack tag="section" gap="3">
@@ -68,7 +67,7 @@
             </ui-form-field>
 
             <ui-form-field label="Phone Number" for="phoneNumber">
-              <ui-phone-input formControlName="phoneNumber" />
+              <ui-phone-field formControlName="phoneNumber" />
             </ui-form-field>
 
             <ui-form-field label="Billing Email" for="billingEmail" [required]="true" class="mb-0">
@@ -243,7 +242,6 @@
             icon="pi pi-save"
             label="Save Changes"
             [loading]="isSaving()"
-            [disabled]="form.invalid"
           />
         </ui-stack>
       </ui-stack>

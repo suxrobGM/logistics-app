@@ -1,7 +1,7 @@
 import { Component, inject, signal, viewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import { DataContainer, PageHeader, SearchInput } from "@logistics/shared/components";
+import { DataContainer, PageHeader, SearchField } from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -26,7 +26,7 @@ import { UsersListStore } from "../store/users-list.store";
     TableModule,
     DataContainer,
     PageHeader,
-    SearchInput,
+    SearchField,
     TagModule,
     ButtonModule,
     DialogModule,

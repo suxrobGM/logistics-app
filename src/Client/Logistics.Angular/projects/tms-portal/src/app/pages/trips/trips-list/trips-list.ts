@@ -38,7 +38,7 @@ import {
   LoadTypeTag,
   PageHeader,
   RouteBadge,
-  SearchInput,
+  SearchField,
   SearchTruck,
   TripStatusTag,
 } from "@/shared/components";
@@ -67,7 +67,7 @@ import { TripsListStore } from "../store/trips-list.store";
     Checkbox,
     DateRangePicker,
     SearchTruck,
-    SearchInput,
+    SearchField,
     FormField,
     ProgressBarModule,
     RouteBadge,

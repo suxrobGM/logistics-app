@@ -10,6 +10,7 @@
   [(ngModel)]="selectedTruck"
   (completeMethod)="searchTruck($event)"
   (onSelect)="changeSelectedTruck($event)"
+  (onBlur)="markTouched()"
   [disabled]="disabled()"
 >
   <ng-template #item let-truck>

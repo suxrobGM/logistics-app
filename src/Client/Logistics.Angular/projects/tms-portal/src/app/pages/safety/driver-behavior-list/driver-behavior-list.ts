@@ -20,7 +20,7 @@ import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { ToggleSwitchModule } from "primeng/toggleswitch";
 import { ToastService } from "@/core/services";
-import { DataContainer, PageHeader, SearchInput } from "@/shared/components";
+import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import type { TagSeverity } from "@/shared/types";
 import { DriverBehaviorListStore } from "../store";
 
@@ -67,7 +67,7 @@ const reviewStatusOptions = [
     ToggleSwitchModule,
     DataContainer,
     PageHeader,
-    SearchInput,
+    SearchField,
     Grid,
     Icon,
     Stack,

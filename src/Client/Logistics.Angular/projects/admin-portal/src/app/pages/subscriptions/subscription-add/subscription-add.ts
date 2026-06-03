@@ -17,7 +17,7 @@ import {
   Icon,
   Stack,
   Typography,
-  ValidationSummary,
+  ValidatedForm,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -42,7 +42,7 @@ interface SelectOption {
     SelectModule,
     ReactiveFormsModule,
     FormField,
-    ValidationSummary,
+    ValidatedForm,
     Grid,
     Icon,
     Stack,

@@ -4,7 +4,7 @@ import {
   type CreateLoadBoardConfigurationCommand,
   type LoadBoardProviderType,
 } from "@logistics/shared/api";
-import { Icon, Stack, Typography } from "@logistics/shared/components";
+import { Icon, Stack, Typography, ValidatedForm } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -17,6 +17,7 @@ import { PROVIDER_OPTIONS } from "../loadboard.constants";
   selector: "app-provider-add-dialog",
   templateUrl: "./provider-add-dialog.html",
   imports: [
+    ValidatedForm,
     ButtonModule,
     DialogModule,
     FormField,

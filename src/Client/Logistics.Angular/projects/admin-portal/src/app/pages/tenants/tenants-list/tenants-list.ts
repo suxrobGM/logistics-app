@@ -5,7 +5,7 @@ import {
   ConfirmDeleteDialog,
   DataContainer,
   PageHeader,
-  SearchInput,
+  SearchField,
 } from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
@@ -29,7 +29,7 @@ import { TenantsListStore } from "../store/tenants-list.store";
     MenuModule,
     DataContainer,
     PageHeader,
-    SearchInput,
+    SearchField,
     TagModule,
     ConfirmDeleteDialog,
   ],

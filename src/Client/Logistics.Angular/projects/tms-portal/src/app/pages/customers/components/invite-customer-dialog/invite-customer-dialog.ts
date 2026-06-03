@@ -13,7 +13,7 @@ import {
   type CreateInvitationCommand,
   type CustomerDto,
 } from "@logistics/shared/api";
-import { Stack } from "@logistics/shared/components";
+import { Stack, ValidatedForm } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -27,6 +27,7 @@ import { FormField } from "@/shared/components";
   selector: "app-invite-customer-dialog",
   templateUrl: "./invite-customer-dialog.html",
   imports: [
+    ValidatedForm,
     DialogModule,
     ProgressSpinnerModule,
     FormsModule,

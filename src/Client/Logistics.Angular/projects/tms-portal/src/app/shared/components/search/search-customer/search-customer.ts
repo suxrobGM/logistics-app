@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Component, forwardRef, inject, model, output, signal } from "@angular/core";
-import { type ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from "@angular/forms";
-import { Api, type CustomerDto, getCustomers } from "@logistics/shared/api";
+import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
+import { Api, getCustomers, type CustomerDto } from "@logistics/shared/api";
 import {
   AutoComplete,
   AutoCompleteModule,
@@ -74,6 +74,11 @@ export class SearchCustomer implements ControlValueAccessor {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private onChange(value: CustomerDto | null): void {}
   private onTouched(): void {}
+
+  /** Marks the control as touched so validation errors surface (on blur). */
+  protected markTouched(): void {
+    this.onTouched();
+  }
 
   writeValue(value: CustomerDto | null): void {
     this.selectedCustomer.set(value);

@@ -30,7 +30,7 @@ import {
   FormField,
   InvoiceStatusTag,
   PageHeader,
-  SearchInput,
+  SearchField,
 } from "@/shared/components";
 import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
 
@@ -50,7 +50,7 @@ import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
     DataContainer,
     MultiSelectModule,
     DateRangePicker,
-    SearchInput,
+    SearchField,
     FormField,
     DialogModule,
     TextareaModule,
