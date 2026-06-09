@@ -70,7 +70,7 @@ internal sealed class PersistenceInfrastructureBuilder : IPersistenceInfrastruct
         services.AddScoped<ICurrentTenantAccessor, CurrentTenantAccessor>();
         services.AddScoped<IFeatureService, FeatureService>();
         services.AddScoped<IAiQuotaService, AiQuotaService>();
-        services.AddScoped<ISystemSettingService, SystemSettingService>();
+        services.AddScoped<ISystemSettingsService, SystemSettingsService>();
         logger?.LogInformation("Added master database with connection string: {ConnectionString}", connectionString);
         return this;
     }

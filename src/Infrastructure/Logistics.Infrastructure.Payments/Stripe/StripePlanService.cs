@@ -10,7 +10,7 @@ namespace Logistics.Infrastructure.Payments.Stripe;
 /// Manages subscription plan products and prices in Stripe.
 /// </summary>
 internal sealed class StripePlanService(
-    ISystemSettingService settingService,
+    ISystemSettingsService settingService,
     ILogger<StripePlanService> logger) : IStripePlanService
 {
     private const string MeterSettingKey = "Stripe:AiOverageMeterId";

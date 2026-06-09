@@ -18,7 +18,7 @@ internal static class LlmPricing
     private static readonly Dictionary<string, ModelPricing> Pricing = new()
     {
         // Anthropic - https://platform.claude.com/docs/en/about-claude/pricing
-        ["claude-opus-4-6"] = new(5m, 25m, 0.50m, 6.25m),
+        ["claude-opus-4-8"] = new(5m, 25m, 0.50m, 6.25m),
         ["claude-sonnet-4-6"] = new(3m, 15m, 0.30m, 3.75m),
         ["claude-haiku-4-5"] = new(1m, 5m, 0.10m, 1.25m),
 
@@ -28,7 +28,7 @@ internal static class LlmPricing
 
         // DeepSeek - https://api-docs.deepseek.com/quick_start/pricing/
         ["deepseek-v4-flash"] = new(0.14m, 0.28m, 0.0028m),
-        ["deepseek-v4-pro"] = new(1.74m, 3.48m, 0.0145m),
+        ["deepseek-v4-pro"] = new(0.435m, 0.87m, 0.003625m),
     };
 
     private static readonly ModelPricing DefaultPricing = Pricing["claude-sonnet-4-6"];
@@ -41,7 +41,7 @@ internal static class LlmPricing
     {
         "deepseek-v4-flash" or "deepseek-v4-pro" or "gpt-5.4-mini" or "claude-haiku-4-5" => 1,
         "gpt-5.4" or "claude-sonnet-4-6" => 5,
-        "claude-opus-4-6" => 10,
+        "claude-opus-4-8" => 10,
         _ => 1
     };
 
@@ -51,7 +51,7 @@ internal static class LlmPricing
     public static LlmModelTier GetModelTier(string model) => model switch
     {
         "gpt-5.4" or "claude-sonnet-4-6" => LlmModelTier.Premium,
-        "claude-opus-4-6" => LlmModelTier.Ultra,
+        "claude-opus-4-8" => LlmModelTier.Ultra,
         _ => LlmModelTier.Base
     };
 
@@ -62,7 +62,7 @@ internal static class LlmPricing
     public static int GetOverageBillingUnits(string model) => model switch
     {
         "gpt-5.4" or "claude-sonnet-4-6" => 2,
-        "claude-opus-4-6" => 4,
+        "claude-opus-4-8" => 4,
         _ => 1
     };
 

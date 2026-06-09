@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Logistics.Infrastructure.Persistence.Configurations;
 
-internal sealed class SystemSettingEntityConfiguration : IEntityTypeConfiguration<SystemSetting>
+internal sealed class SystemSettingsEntityConfiguration : IEntityTypeConfiguration<SystemSettings>
 {
-    public void Configure(EntityTypeBuilder<SystemSetting> builder)
+    public void Configure(EntityTypeBuilder<SystemSettings> builder)
     {
         builder.ToTable("system_settings");
         builder.HasIndex(s => s.Key).IsUnique();

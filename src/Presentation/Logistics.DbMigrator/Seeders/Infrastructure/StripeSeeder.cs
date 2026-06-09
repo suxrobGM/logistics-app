@@ -39,11 +39,11 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
     {
         LogStarting();
 
-        var settingService = context.ServiceProvider.GetRequiredService<ISystemSettingService>();
+        var settingService = context.ServiceProvider.GetRequiredService<ISystemSettingsService>();
         var planService = context.ServiceProvider.GetRequiredService<IStripePlanService>();
         var planRepo = context.MasterUnitOfWork.Repository<SubscriptionPlan>();
 
-        // 1. Ensure billing meter exists (one-time setup, stored in SystemSetting)
+        // 1. Ensure billing meter exists (one-time setup, stored in SystemSettings)
         await EnsureBillingMeterAsync(settingService, ct);
 
         // 2. Create Stripe products and prices for plans without Stripe IDs
@@ -73,7 +73,7 @@ internal class StripeSeeder(ILogger<StripeSeeder> logger) : SeederBase(logger)
         LogCompleted(syncedCount);
     }
 
-    private async Task EnsureBillingMeterAsync(ISystemSettingService settingService, CancellationToken ct)
+    private async Task EnsureBillingMeterAsync(ISystemSettingsService settingService, CancellationToken ct)
     {
         var existing = await settingService.GetAsync(MeterSettingKey, ct);
         if (existing is not null)

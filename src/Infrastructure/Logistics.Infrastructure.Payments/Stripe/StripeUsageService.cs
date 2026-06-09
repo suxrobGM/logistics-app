@@ -10,7 +10,7 @@ namespace Logistics.Infrastructure.Payments.Stripe;
 
 internal sealed class StripeUsageService(
     IMasterUnitOfWork masterUow,
-    ISystemSettingService settingService,
+    ISystemSettingsService settingService,
     IOptions<StripeOptions> options,
     ILogger<StripeUsageService> logger) : IStripeUsageService
 {
