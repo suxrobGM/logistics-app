@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Abstractions.AiDispatch;
+using Logistics.Application.Abstractions.SystemSettings;
 
 namespace Logistics.Infrastructure.AI.Services;
 
@@ -20,8 +21,10 @@ internal sealed class AiDispatchConversationBuilder(
     IFeatureService featureService,
     LlmProviderFactory providerFactory,
     ITenantUnitOfWork tenantUow,
+    ISystemSettingsService systemSettings,
     ILogger<AiDispatchConversationBuilder> logger)
 {
+
     public async Task<LlmConversation> BuildAsync(
         AiDispatchSession session,
         AiDispatchRequest request,
@@ -30,8 +33,11 @@ internal sealed class AiDispatchConversationBuilder(
         var tenant = tenantUow.GetCurrentTenant();
         var companyName = tenant.Name ?? "Fleet";
 
-        // Resolve provider: tenant preference → system default
-        var resolvedProvider = tenant.Settings.LlmProvider ?? config.DefaultProvider;
+        // Resolve the global model (admin-managed): system setting → appsettings default.
+        // The provider is derived from the model via the catalog, so it can't drift.
+        var modelSetting = await systemSettings.GetAsync(AiSettingsKeys.Model);
+        var modelInfo = LlmModelCatalog.Find(modelSetting);
+        var resolvedProvider = modelInfo?.Provider ?? config.DefaultProvider;
         var provider = providerFactory.Create(resolvedProvider);
         var providerConfig = config.GetProviderConfig(resolvedProvider);
 
@@ -43,8 +49,7 @@ internal sealed class AiDispatchConversationBuilder(
         var systemPrompt = AiDispatchSystemPrompt.Build(companyName, request.Mode, hasLoadBoard, tenant.Settings.DistanceUnit);
         var tools = toolRegistry.GetToolDefinitions(includeLoadBoardTools: hasLoadBoard);
 
-        // Resolve model: tenant selection → provider default
-        var model = tenant.Settings.LlmModel ?? providerConfig.Model;
+        var model = modelInfo?.Id ?? providerConfig.Model;
         session.ModelUsed = model;
 
         logger.LogInformation(
@@ -59,9 +64,13 @@ internal sealed class AiDispatchConversationBuilder(
 
         var messages = new List<LlmMessage> { LlmMessage.FromUser(userMessage) };
 
-        // Build thinking options
+        // Build thinking options: global system setting → appsettings default.
+        // Only honored by providers/models that support it; others ignore it.
         LlmThinkingOptions? thinking = null;
-        var enableThinking = tenant.Settings.LlmExtendedThinking ?? config.EnableExtendedThinking;
+        var thinkingSetting = await systemSettings.GetAsync(AiSettingsKeys.ExtendedThinking);
+        var enableThinking = bool.TryParse(thinkingSetting, out var parsedThinking)
+            ? parsedThinking
+            : config.EnableExtendedThinking;
         if (enableThinking)
             thinking = new LlmThinkingOptions(config.ThinkingBudgetTokens);
 

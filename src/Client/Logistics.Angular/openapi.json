@@ -713,27 +713,55 @@
         }
       }
     },
-    "/ai/dispatch/settings": {
+    "/ai/settings": {
+      "get": {
+        "tags": [
+          "AiSettings"
+        ],
+        "operationId": "GetAiSettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiSettingsDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
       "put": {
         "tags": [
-          "AiDispatch"
+          "AiSettings"
         ],
-        "operationId": "UpdateTenantAiSettings",
+        "operationId": "UpdateAiSettings",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateTenantAiSettingsCommand"
+                "$ref": "#/components/schemas/UpdateAiSettingsCommand"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateTenantAiSettingsCommand"
+                "$ref": "#/components/schemas/UpdateAiSettingsCommand"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateTenantAiSettingsCommand"
+                "$ref": "#/components/schemas/UpdateAiSettingsCommand"
               }
             }
           }
@@ -15379,13 +15407,93 @@
           "resetsAt": {
             "type": "string",
             "format": "date-time"
-          },
-          "allowedModelTier": {
+          }
+        },
+        "additionalProperties": false
+      },
+      "AiSettingsDto": {
+        "type": "object",
+        "properties": {
+          "model": {
             "type": "string",
             "nullable": true
           },
-          "currentModel": {
+          "provider": {
             "type": "string",
+            "nullable": true
+          },
+          "extendedThinking": {
+            "type": "boolean"
+          },
+          "availableModels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LlmModelOptionDto"
+            },
+            "nullable": true
+          },
+          "plans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanQuotaDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LlmModelOptionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "provider": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PlanQuotaDto": {
+        "type": "object",
+        "properties": {
+          "planId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "planName": {
+            "type": "string",
+            "nullable": true
+          },
+          "weeklyAiRequestQuota": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateAiSettingsCommand": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "nullable": true
+          },
+          "extendedThinking": {
+            "type": "boolean"
+          },
+          "plans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlanQuotaDto"
+            },
             "nullable": true
           }
         },
@@ -17387,9 +17495,6 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
-          },
-          "allowedModelTier": {
-            "$ref": "#/components/schemas/LlmModelTier"
           },
           "interval": {
             "$ref": "#/components/schemas/BillingInterval"
@@ -20675,22 +20780,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "LlmModelTier": {
-        "enum": [
-          "base",
-          "premium",
-          "ultra"
-        ],
-        "type": "string"
-      },
-      "LlmProvider": {
-        "enum": [
-          "anthropic",
-          "open_ai",
-          "deep_seek"
-        ],
-        "type": "string"
       },
       "LoadBoardBookingRequest": {
         "type": "object",
@@ -24008,9 +24097,6 @@
             "format": "int32",
             "nullable": true
           },
-          "allowedModelTier": {
-            "$ref": "#/components/schemas/LlmModelTier"
-          },
           "features": {
             "type": "array",
             "items": {
@@ -24347,17 +24433,6 @@
           "llmEnabled": {
             "type": "boolean",
             "nullable": true
-          },
-          "llmModel": {
-            "type": "string",
-            "nullable": true
-          },
-          "llmExtendedThinking": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "llmProvider": {
-            "$ref": "#/components/schemas/LlmProvider"
           }
         },
         "additionalProperties": false
@@ -26001,28 +26076,12 @@
             "format": "int32",
             "nullable": true
           },
-          "allowedModelTier": {
-            "$ref": "#/components/schemas/LlmModelTier"
-          },
           "interval": {
             "$ref": "#/components/schemas/BillingInterval"
           },
           "intervalCount": {
             "type": "integer",
             "format": "int32",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "UpdateTenantAiSettingsCommand": {
-        "type": "object",
-        "properties": {
-          "provider": {
-            "$ref": "#/components/schemas/LlmProvider"
-          },
-          "model": {
-            "type": "string",
             "nullable": true
           }
         },

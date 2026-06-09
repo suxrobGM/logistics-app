@@ -25,8 +25,7 @@ internal sealed class CreateSubscriptionPlanHandler(
             Tier = req.Tier,
             PerTruckPrice = new() { Amount = req.PerTruckPrice, Currency = "USD" },
             MaxTrucks = req.MaxTrucks,
-            WeeklyAiRequestQuota = req.WeeklyAiRequestQuota,
-            AllowedModelTier = req.AllowedModelTier
+            WeeklyAiRequestQuota = req.WeeklyAiRequestQuota
         };
 
         var result = await stripePlanService.CreatePlanAsync(subscriptionPlan);

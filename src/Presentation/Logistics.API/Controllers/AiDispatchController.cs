@@ -3,7 +3,6 @@ using Logistics.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Logistics.Application.Modules.IdentityAccess.Tenants.Commands;
 using Logistics.Application.Modules.Integrations.AiDispatch.Commands;
 using Logistics.Application.Modules.Integrations.AiDispatch.Queries;
 
@@ -89,16 +88,6 @@ public class AiDispatchController(IMediator mediator) : ControllerBase
         command.OriginalSessionId = sessionId;
         var result = await mediator.Send(command);
         return result.IsSuccess ? Ok(result) : BadRequest(ErrorResponse.FromResult(result));
-    }
-
-    [HttpPut("settings", Name = "UpdateTenantAiSettings")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Policy = Permission.Dispatch.Manage)]
-    public async Task<IActionResult> UpdateAiSettings([FromBody] UpdateTenantAiSettingsCommand command)
-    {
-        var result = await mediator.Send(command);
-        return result.IsSuccess ? NoContent() : BadRequest(ErrorResponse.FromResult(result));
     }
 
     [HttpPost("decisions/{decisionId:guid}/reject", Name = "RejectAiDispatchDecision")]

@@ -11,6 +11,7 @@ using Xunit;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Abstractions.AiDispatch;
 using Logistics.Application.Abstractions.Payments.Stripe;
+using Logistics.Application.Abstractions.SystemSettings;
 using MsOptions = Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.AI.Tests.Services;
@@ -54,8 +55,9 @@ public class AiDispatchServiceTests
 
         var providerFactory = new LlmProviderFactory(llmOptions);
 
+        var systemSettings = Substitute.For<ISystemSettingsService>();
         var conversationBuilder = new AiDispatchConversationBuilder(
-            toolRegistry, featureService, providerFactory, tenantUow,
+            toolRegistry, featureService, providerFactory, tenantUow, systemSettings,
             NullLogger<AiDispatchConversationBuilder>.Instance);
 
         var toolExecutor = Substitute.For<IAiDispatchToolExecutor>();

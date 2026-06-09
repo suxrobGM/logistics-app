@@ -1,6 +1,3 @@
-using Logistics.Domain.Primitives.Enums;
-using Logistics.Application.Abstractions.AiDispatch;
-
 namespace Logistics.Application.Abstractions.AiDispatch;
 
 public interface IAiQuotaService
@@ -14,5 +11,4 @@ public record AiQuotaStatus(
     int Remaining,
     bool IsOverQuota,
     string? PlanName = null,
-    DateTime ResetsAt = default,
-    LlmModelTier AllowedModelTier = LlmModelTier.Base);
+    DateTime ResetsAt = default);

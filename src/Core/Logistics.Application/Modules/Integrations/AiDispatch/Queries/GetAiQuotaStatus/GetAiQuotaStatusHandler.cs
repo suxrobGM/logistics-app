@@ -21,9 +21,7 @@ internal sealed class GetAiQuotaStatusHandler(
                 : 0,
             IsOverQuota = status.IsOverQuota,
             PlanName = status.PlanName,
-            ResetsAt = status.ResetsAt,
-            AllowedModelTier = status.AllowedModelTier.ToString(),
-            CurrentModel = tenant.Settings.LlmModel
+            ResetsAt = status.ResetsAt
         });
     }
 }

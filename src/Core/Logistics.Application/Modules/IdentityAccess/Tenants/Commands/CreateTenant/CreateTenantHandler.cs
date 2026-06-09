@@ -24,19 +24,12 @@ internal sealed class CreateTenantHandler(
     UserManager<User> userManager,
     IEmailSender emailSender,
     IEmailTemplateService emailTemplateService,
-    IOptions<IdentityServerOptions> identityServerOptions,
-    IConfiguration configuration)
+    IOptions<IdentityServerOptions> identityServerOptions)
     : IAppRequestHandler<CreateTenantCommand, Result>
 {
     public async Task<Result> Handle(CreateTenantCommand req, CancellationToken ct)
     {
         var tenantName = req.Name.Trim().ToLower();
-
-        // Get default LLM settings from configuration for new tenants
-        var defaultProvider = configuration["Llm:DefaultProvider"];
-        var defaultModel = defaultProvider is not null
-            ? configuration[$"Llm:Providers:{defaultProvider}:Model"]
-            : null;
 
         var tenant = new Tenant
         {
@@ -50,12 +43,7 @@ internal sealed class CreateTenantHandler(
             // (admin-led onboarding/impersonation). The subscription check only
             // enforces when IsSubscriptionRequired is true; an admin assigns a
             // subscription later via the Subscriptions page.
-            IsSubscriptionRequired = false,
-            Settings = new()
-            {
-                LlmProvider = Enum.TryParse<LlmProvider>(defaultProvider, out var provider) ? provider : null,
-                LlmModel = defaultModel
-            }
+            IsSubscriptionRequired = false
         };
 
         var existingTenant = await masterUow.Repository<Tenant>().GetAsync(i => i.Name == tenant.Name, ct);

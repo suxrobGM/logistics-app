@@ -19,7 +19,7 @@ internal sealed class AiQuotaService(
         if (tenantInfo is null)
             return new AiQuotaStatus(0, 0, 0, IsOverQuota: false);
 
-        var (quota, planName, quotaResetAt, allowedModelTier) = tenantInfo;
+        var (quota, planName, quotaResetAt) = tenantInfo;
 
         // If tenant has a quota reset this week, count from that date; otherwise use ISO week start
         var weekStart = DateTimeHelpers.GetCurrentIsoWeekStart();
@@ -38,8 +38,7 @@ internal sealed class AiQuotaService(
             Remaining: remaining,
             IsOverQuota: usedThisWeek >= quota,
             PlanName: planName,
-            ResetsAt: resetsAt,
-            AllowedModelTier: allowedModelTier);
+            ResetsAt: resetsAt);
     }
 
     private async Task<TenantQuotaInfo?> GetTenantQuotaInfoAsync(
@@ -59,8 +58,7 @@ internal sealed class AiQuotaService(
         return new TenantQuotaInfo(
             Quota: plan.WeeklyAiRequestQuota.Value,
             PlanName: plan.Name,
-            QuotaResetAt: tenant.QuotaResetAt,
-            AllowedModelTier: plan.AllowedModelTier);
+            QuotaResetAt: tenant.QuotaResetAt);
     }
 
     #region Internal records
@@ -68,8 +66,7 @@ internal sealed class AiQuotaService(
     public record TenantQuotaInfo(
         int Quota,
         string? PlanName,
-        DateTime? QuotaResetAt,
-        LlmModelTier AllowedModelTier);
+        DateTime? QuotaResetAt);
 
     #endregion
 }

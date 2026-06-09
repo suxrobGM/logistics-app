@@ -46,7 +46,6 @@ internal sealed class UpdateSubscriptionPlanHandler(
             subscriptionPlan.WeeklyAiRequestQuota = req.WeeklyAiRequestQuota;
         }
         subscriptionPlan.Tier = PropertyUpdater.UpdateIfChanged(req.Tier, subscriptionPlan.Tier);
-        subscriptionPlan.AllowedModelTier = PropertyUpdater.UpdateIfChanged(req.AllowedModelTier, subscriptionPlan.AllowedModelTier);
 
         var result = await stripePlanService.UpdatePlanAsync(subscriptionPlan);
         subscriptionPlan.StripePriceId = result.BasePrice.Id;

@@ -12,6 +12,7 @@ using NSubstitute;
 using Xunit;
 using Logistics.Application.Abstractions.Features;
 using Logistics.Application.Abstractions.AiDispatch;
+using Logistics.Application.Abstractions.SystemSettings;
 using MsOptions = Microsoft.Extensions.Options;
 
 namespace Logistics.Infrastructure.AI.Tests.Services;
@@ -24,6 +25,7 @@ public class AiDispatchConversationBuilderTests
     private readonly IAiDispatchToolRegistry toolRegistry = Substitute.For<IAiDispatchToolRegistry>();
     private readonly IFeatureService featureService = Substitute.For<IFeatureService>();
     private readonly ITenantUnitOfWork tenantUow = Substitute.For<ITenantUnitOfWork>();
+    private readonly ISystemSettingsService systemSettings = Substitute.For<ISystemSettingsService>();
 
     public AiDispatchConversationBuilderTests()
     {
@@ -48,7 +50,7 @@ public class AiDispatchConversationBuilderTests
         var llmOptions = MsOptions.Options.Create(ValidConfig);
         var providerFactory = new LlmProviderFactory(llmOptions);
 
-        sut = new AiDispatchConversationBuilder(toolRegistry, featureService, providerFactory, tenantUow, logger);
+        sut = new AiDispatchConversationBuilder(toolRegistry, featureService, providerFactory, tenantUow, systemSettings, logger);
     }
 
     private static LlmOptions ValidConfig => new()

@@ -19,7 +19,6 @@ public static class SubscriptionPlanMapper
             Interval = entity.Interval,
             IntervalCount = entity.IntervalCount,
             WeeklyAiRequestQuota = entity.WeeklyAiRequestQuota,
-            AllowedModelTier = entity.AllowedModelTier,
             Features = entity.Features.Select(f => f.Feature).ToList()
         };
     }

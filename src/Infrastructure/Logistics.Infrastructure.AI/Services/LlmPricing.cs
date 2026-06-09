@@ -1,5 +1,3 @@
-using Logistics.Domain.Primitives.Enums;
-
 namespace Logistics.Infrastructure.AI.Services;
 
 /// <summary>
@@ -46,21 +44,12 @@ internal static class LlmPricing
     };
 
     /// <summary>
-    /// Returns the model tier classification.
-    /// </summary>
-    public static LlmModelTier GetModelTier(string model) => model switch
-    {
-        "gpt-5.4" or "claude-sonnet-4-6" => LlmModelTier.Premium,
-        "claude-opus-4-8" => LlmModelTier.Ultra,
-        _ => LlmModelTier.Base
-    };
-
-    /// <summary>
     /// Returns the Stripe billing units for overage reporting.
     /// At $0.20/unit: base=1 ($0.20), premium=2 ($0.40), ultra=4 ($0.80).
     /// </summary>
     public static int GetOverageBillingUnits(string model) => model switch
     {
+        "deepseek-v4-flash" or "deepseek-v4-pro" or "gpt-5.4-mini" or "claude-haiku-4-5" => 1,
         "gpt-5.4" or "claude-sonnet-4-6" => 2,
         "claude-opus-4-8" => 4,
         _ => 1

@@ -14,6 +14,5 @@ public record SubscriptionPlanDto
     public BillingInterval Interval { get; set; } = BillingInterval.Month;
     public int IntervalCount { get; set; } = 1;
     public int? WeeklyAiRequestQuota { get; set; }
-    public LlmModelTier AllowedModelTier { get; set; }
     public List<TenantFeature> Features { get; set; } = [];
 }

@@ -11,7 +11,6 @@ public class CreateSubscriptionPlanCommand
     public decimal PerTruckPrice { get; set; }
     public int? MaxTrucks { get; set; }
     public int? WeeklyAiRequestQuota { get; set; }
-    public LlmModelTier AllowedModelTier { get; set; }
     public BillingInterval Interval { get; set; }
     public int IntervalCount { get; set; }
 }
