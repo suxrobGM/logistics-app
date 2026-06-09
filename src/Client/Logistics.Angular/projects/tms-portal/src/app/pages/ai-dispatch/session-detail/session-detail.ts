@@ -101,7 +101,6 @@ export class SessionDetailPage implements OnInit, OnDestroy {
       },
       { label: "Duration", value: this.duration() ?? "-" },
       { label: "Decisions", value: String(s.decisionCount ?? 0) },
-      { label: "Model", value: s.modelUsed ?? "-", mono: true },
       { label: "Tokens Used", value: (s.totalTokensUsed ?? 0).toLocaleString(), mono: true },
     ];
     return items;

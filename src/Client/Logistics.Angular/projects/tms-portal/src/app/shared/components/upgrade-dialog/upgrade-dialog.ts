@@ -32,13 +32,13 @@ export class UpgradeDialog {
   }
 
   protected getAiQuotaLabel(plan: SubscriptionPlanDto): string {
-    switch (plan.allowedModelTier) {
-      case "ultra":
-        return "All AI models incl. Opus, 8× usage";
-      case "premium":
-        return "Base + premium AI models, 4× usage";
+    switch (plan.tier) {
+      case "enterprise":
+        return "Unlimited AI dispatch";
+      case "professional":
+        return "Higher AI dispatch usage";
       default:
-        return "Base AI models";
+        return "AI dispatch included";
     }
   }
 

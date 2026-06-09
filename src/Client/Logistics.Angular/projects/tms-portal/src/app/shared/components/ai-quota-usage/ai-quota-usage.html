@@ -6,20 +6,8 @@
       @if (quota().planName) {
         <p-tag [value]="quota().planName!" severity="info" [style]="{ fontSize: '0.7rem' }" />
       }
-      @if (quota().allowedModelTier) {
-        <p-tag
-          [value]="quota().allowedModelTier!"
-          severity="secondary"
-          [style]="{ fontSize: '0.7rem' }"
-        />
-      }
     </div>
     <div class="flex items-center gap-2">
-      @if (quota().currentModel) {
-        <span class="text-secondary text-sm">
-          <i class="pi pi-microchip mr-1 text-xs"></i>{{ quota().currentModel }}
-        </span>
-      }
       @if (quota().isOverQuota) {
         <p-tag value="Overage charges apply" severity="warn" />
       }

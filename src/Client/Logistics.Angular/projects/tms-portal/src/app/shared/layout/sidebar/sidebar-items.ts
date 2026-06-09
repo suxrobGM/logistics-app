@@ -333,11 +333,6 @@ export const sidebarSections: NavSection[] = [
             route: "/settings/features",
           },
           {
-            id: "settings-ai",
-            label: "AI",
-            route: "/settings/ai",
-          },
-          {
             id: "settings-api-keys",
             label: "API Keys",
             route: "/settings/api-keys",

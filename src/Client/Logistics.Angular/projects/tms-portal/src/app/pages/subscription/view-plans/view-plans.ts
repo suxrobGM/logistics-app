@@ -131,14 +131,14 @@ export class ViewPlansComponent implements OnInit {
     return plan.maxTrucks ? `Up to ${plan.maxTrucks} trucks` : "Unlimited trucks";
   }
 
-  protected getModelTierLabel(tier: string): string {
-    switch (tier) {
-      case "ultra":
-        return "all models incl. Opus, 8× usage";
-      case "premium":
-        return "base + premium models, 4× usage";
+  protected getAiDispatchLabel(plan: SubscriptionPlanDto): string {
+    switch (plan.tier) {
+      case "enterprise":
+        return "unlimited usage";
+      case "professional":
+        return "higher usage";
       default:
-        return "base models";
+        return "included";
     }
   }
 
