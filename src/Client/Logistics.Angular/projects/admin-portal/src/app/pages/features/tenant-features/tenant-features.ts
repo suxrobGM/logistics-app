@@ -1,16 +1,21 @@
-import { Component, type OnInit, inject, input, signal } from "@angular/core";
+import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import { ToastService } from "@logistics/shared";
-import { Api, getTenantById, getTenantFeatures, updateTenantFeatures } from "@logistics/shared/api";
-import type { FeatureStatusDto, TenantDto, TenantFeature } from "@logistics/shared/api";
-import { PageHeader } from "@logistics/shared/components";
+import {
+  Api,
+  getTenantById,
+  getTenantFeatures,
+  updateTenantFeatures,
+  type FeatureStatusDto,
+  type TenantDto,
+  type TenantFeature,
+} from "@logistics/shared/api";
+import { FeatureRow, PageHeader } from "@logistics/shared/components";
 import { FEATURE_DESCRIPTIONS } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { CheckboxModule } from "primeng/checkbox";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { ToggleSwitchModule } from "primeng/toggleswitch";
 import { TooltipModule } from "primeng/tooltip";
 
@@ -22,10 +27,9 @@ import { TooltipModule } from "primeng/tooltip";
     CardModule,
     ProgressSpinnerModule,
     ButtonModule,
-    TableModule,
     ToggleSwitchModule,
     TooltipModule,
-    CheckboxModule,
+    FeatureRow,
     PageHeader,
   ],
 })

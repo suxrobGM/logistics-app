@@ -81,6 +81,25 @@ const alignClasses: Record<TypographyAlign, string> = {
 };
 
 /**
+ * Variants that represent standalone blocks (headings, paragraphs, the big
+ * stat number) flow on their own line. Inline annotations (caption, overline,
+ * form label) stay inline so they can sit within surrounding text. Without
+ * this, a `caption` + `stat` pair in a plain container renders on one line
+ * (e.g. "Total Tenants2").
+ */
+const blockVariants = new Set<TypographyVariant>([
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "body",
+  "body-sm",
+  "stat",
+]);
+
+/**
  * Theme-aware text primitive. `variant` selects the visual hierarchy
  * (h1–h6, body, body-sm, caption, overline, label, stat) and drives the
  * default semantic tag, which `as` can override.
@@ -89,7 +108,10 @@ const alignClasses: Record<TypographyAlign, string> = {
   selector: "ui-typography",
   templateUrl: "./typography.html",
   imports: [NgTemplateOutlet],
-  host: { class: "inline" },
+  host: {
+    "[class.block]": "isBlock()",
+    "[class.inline]": "!isBlock()",
+  },
 })
 export class Typography {
   public readonly variant = input<TypographyVariant>("body");
@@ -101,6 +123,8 @@ export class Typography {
   protected readonly resolvedTag = computed<TypographyTag>(
     () => this.tag() ?? variantDefaultTag[this.variant()],
   );
+
+  protected readonly isBlock = computed(() => blockVariants.has(this.variant()));
 
   protected readonly classes = computed(() => {
     const parts = [variantClasses[this.variant()], colorClasses[this.color()]];

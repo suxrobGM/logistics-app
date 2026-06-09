@@ -14,40 +14,18 @@
 
       <ui-stack gap="2">
         @for (feature of features(); track feature.feature) {
-          <ui-surface
-            variant="plain"
-            [border]="true"
-            padding="md"
-            radius="lg"
-            [class.opacity-60]="feature.isAdminLocked"
+          <ui-feature-row
+            [name]="feature.name ?? ''"
+            [description]="getFeatureDescription(feature.feature)"
+            [locked]="feature.isAdminLocked ?? false"
+            lockedTooltip="This feature is locked by the administrator"
           >
-            <ui-stack direction="row" align="center" justify="between">
-              <div class="flex-1">
-                <ui-stack direction="row" align="center" gap="2">
-                  <span class="font-medium">{{ feature.name }}</span>
-                  @if (feature.isAdminLocked) {
-                    <ui-icon
-                      name="lock"
-                      size="sm"
-                      color="muted"
-                      pTooltip="This feature is locked by the administrator"
-                      tooltipPosition="top"
-                    />
-                  }
-                </ui-stack>
-                <p class="text-muted mt-1 text-sm">
-                  {{ getFeatureDescription(feature.feature) }}
-                </p>
-              </div>
-              <div class="ml-4">
-                <p-toggleswitch
-                  [ngModel]="feature.isEnabled"
-                  [disabled]="feature.isAdminLocked || isSaving() === feature.feature"
-                  (onChange)="toggleFeature(feature)"
-                />
-              </div>
-            </ui-stack>
-          </ui-surface>
+            <p-toggleswitch
+              [ngModel]="feature.isEnabled"
+              [disabled]="(feature.isAdminLocked ?? false) || isSaving() === feature.feature"
+              (onChange)="toggleFeature(feature)"
+            />
+          </ui-feature-row>
         }
       </ui-stack>
 

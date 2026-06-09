@@ -1,16 +1,15 @@
-<ui-typography variant="h2" tag="h1">Dashboard</ui-typography>
-<p-divider />
+<ui-page-header title="Dashboard" />
 
 <ui-grid container spacing="4" class="mt-4">
   @if (isLoading()) {
     @for (_ of [1, 2, 3, 4]; track $index) {
       <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
-        <p-skeleton height="8rem" styleClass="w-full" />
+        <p-skeleton height="8rem" />
       </ui-grid>
     }
   } @else {
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
-      <p-card styleClass="h-full">
+      <p-card>
         <ui-stack direction="row" align="center" gap="4">
           <div class="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
             <ui-icon name="building" size="lg" class="text-blue-600" />
@@ -33,7 +32,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
-      <p-card class="h-full">
+      <p-card>
         <ui-stack direction="row" align="center" gap="4">
           <div class="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
             <ui-icon name="credit-card" size="lg" class="text-green-600" />
@@ -56,7 +55,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
-      <p-card styleClass="h-full">
+      <p-card>
         <ui-stack direction="row" align="center" gap="4">
           <div class="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100">
             <ui-icon name="box" size="lg" class="text-purple-600" />
@@ -79,7 +78,7 @@
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
-      <p-card styleClass="h-full">
+      <p-card>
         <ui-stack direction="row" align="center" gap="4">
           <div class="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
             <ui-icon name="users" size="lg" class="text-orange-600" />

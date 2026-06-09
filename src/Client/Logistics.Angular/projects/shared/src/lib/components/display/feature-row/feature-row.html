@@ -1,0 +1,26 @@
+<div
+  class="border-surface flex items-center justify-between gap-4 rounded-lg border px-4 py-3"
+  [class.opacity-60]="locked()"
+>
+  <div class="min-w-0">
+    <div class="flex items-center gap-2">
+      <span class="font-medium">{{ name() }}</span>
+      @if (locked()) {
+        <ui-icon
+          name="lock"
+          size="sm"
+          color="muted"
+          [pTooltip]="lockedTooltip()"
+          tooltipPosition="top"
+        />
+      }
+    </div>
+    @if (description()) {
+      <p class="text-muted-color mt-0.5 text-sm">{{ description() }}</p>
+    }
+  </div>
+
+  <div class="flex shrink-0 items-center gap-4">
+    <ng-content />
+  </div>
+</div>

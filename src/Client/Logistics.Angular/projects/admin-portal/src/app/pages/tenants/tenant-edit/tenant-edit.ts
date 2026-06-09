@@ -10,10 +10,9 @@ import {
   type TenantDto,
   type UpdateTenantCommand,
 } from "@logistics/shared/api";
-import { Stack, Typography } from "@logistics/shared/components";
+import { PageHeader, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
 import { TenantForm, type TenantFormValue } from "@/shared/components";
 
@@ -26,10 +25,10 @@ import { TenantForm, type TenantFormValue } from "@/shared/components";
     RouterModule,
     FormField,
     TenantForm,
-    DividerModule,
     SkeletonModule,
     Stack,
     Typography,
+    PageHeader,
   ],
 })
 export class TenantEdit implements OnInit {

@@ -1,16 +1,19 @@
-import { Component, type OnInit, inject, signal } from "@angular/core";
+import { Component, inject, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ToastService } from "@logistics/shared";
-import { Api, getDefaultFeatures, updateDefaultFeatures } from "@logistics/shared/api";
-import type { DefaultFeatureStatusDto, TenantFeature } from "@logistics/shared/api";
-import { PageHeader } from "@logistics/shared/components";
+import {
+  Api,
+  getDefaultFeatures,
+  updateDefaultFeatures,
+  type DefaultFeatureStatusDto,
+  type TenantFeature,
+} from "@logistics/shared/api";
+import { FeatureRow, PageHeader } from "@logistics/shared/components";
 import { FEATURE_DESCRIPTIONS } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { ToggleSwitchModule } from "primeng/toggleswitch";
-import { TooltipModule } from "primeng/tooltip";
 
 @Component({
   selector: "adm-default-features",
@@ -20,9 +23,8 @@ import { TooltipModule } from "primeng/tooltip";
     CardModule,
     ProgressSpinnerModule,
     ButtonModule,
-    TableModule,
     ToggleSwitchModule,
-    TooltipModule,
+    FeatureRow,
     PageHeader,
   ],
 })

@@ -11,10 +11,9 @@ import {
   type BlogPostDto,
   type UpdateBlogPostCommand,
 } from "@logistics/shared/api";
-import { Stack, Typography } from "@logistics/shared/components";
+import { PageHeader, Stack } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
 import { BlogPostForm, type BlogPostFormValue } from "@/shared/components";
 
@@ -26,10 +25,9 @@ import { BlogPostForm, type BlogPostFormValue } from "@/shared/components";
     ButtonModule,
     RouterModule,
     BlogPostForm,
-    DividerModule,
     SkeletonModule,
     Stack,
-    Typography,
+    PageHeader,
   ],
 })
 export class BlogPostEdit implements OnInit {

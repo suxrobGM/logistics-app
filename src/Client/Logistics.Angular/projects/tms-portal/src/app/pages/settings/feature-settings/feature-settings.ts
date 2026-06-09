@@ -7,13 +7,12 @@ import {
   type FeatureStatusDto,
   type TenantFeature,
 } from "@logistics/shared/api";
-import { Container, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Container, FeatureRow, Icon, Stack, Typography } from "@logistics/shared/components";
 import { FEATURE_DESCRIPTIONS } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToggleSwitchModule } from "primeng/toggleswitch";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 
@@ -26,11 +25,10 @@ import { PageHeader } from "@/shared/components";
     ProgressSpinnerModule,
     ButtonModule,
     ToggleSwitchModule,
-    TooltipModule,
     PageHeader,
     Icon,
     Stack,
-    Surface,
+    FeatureRow,
     Typography,
     Container,
   ],

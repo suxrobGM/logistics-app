@@ -7,7 +7,7 @@ import {
   getTenants,
   getUsers,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { Grid, Icon, PageHeader, Stack, Typography } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -24,6 +24,7 @@ import { SkeletonModule } from "primeng/skeleton";
     SkeletonModule,
     Grid,
     Icon,
+    PageHeader,
     Stack,
     Typography,
   ],

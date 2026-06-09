@@ -11,49 +11,42 @@
       <p-progress-spinner />
     </div>
   } @else {
-    <p class="text-muted mb-4">
+    <p class="text-muted-color mb-4">
       Configure feature settings for this tenant. Locked features cannot be changed by the tenant
       owner.
     </p>
 
-    <p-table [value]="features()" [tableStyle]="{ 'min-width': '60rem' }">
-      <ng-template #header>
-        <tr>
-          <th>Feature</th>
-          <th>Description</th>
-          <th class="text-center" style="width: 120px">Enabled</th>
-          <th class="text-center" style="width: 120px">
-            <span
-              pTooltip="When locked, the tenant owner cannot change this setting"
-              tooltipPosition="top"
-            >
-              Admin Locked
-              <i class="pi pi-info-circle ml-1 text-xs"></i>
-            </span>
-          </th>
-        </tr>
-      </ng-template>
-      <ng-template #body let-feature>
-        <tr>
-          <td class="font-medium">{{ feature.name }}</td>
-          <td class="text-muted">{{ getFeatureDescription(feature.feature) }}</td>
-          <td class="text-center">
-            <p-toggleswitch [ngModel]="feature.isEnabled" (onChange)="toggleEnabled(feature)" />
-          </td>
-          <td class="text-center">
-            <p-checkbox
+    <div class="flex flex-col gap-2">
+      @for (feature of features(); track feature.feature) {
+        <ui-feature-row
+          [name]="feature.name ?? ''"
+          [description]="getFeatureDescription(feature.feature)"
+        >
+          <label [for]="'enabled-' + feature.feature" class="flex items-center gap-2 text-sm">
+            <span class="text-muted-color">Enabled</span>
+            <p-toggleswitch
+              [inputId]="'enabled-' + feature.feature"
+              [ngModel]="feature.isEnabled"
+              (onChange)="toggleEnabled(feature)"
+            />
+          </label>
+          <label
+            [for]="'locked-' + feature.feature"
+            class="flex items-center gap-2 text-sm"
+            pTooltip="When locked, the tenant owner cannot change this setting"
+            tooltipPosition="top"
+          >
+            <span class="text-muted-color">Locked</span>
+            <p-toggleswitch
+              [inputId]="'locked-' + feature.feature"
               [ngModel]="feature.isAdminLocked"
-              [binary]="true"
               (onChange)="toggleLocked(feature)"
             />
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template #emptymessage>
-        <tr>
-          <td colspan="4" class="text-muted text-center">No features available</td>
-        </tr>
-      </ng-template>
-    </p-table>
+          </label>
+        </ui-feature-row>
+      } @empty {
+        <p class="text-muted-color py-4 text-center">No features available</p>
+      }
+    </div>
   }
 </p-card>

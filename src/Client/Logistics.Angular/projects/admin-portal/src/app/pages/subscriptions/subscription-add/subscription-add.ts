@@ -15,13 +15,13 @@ import {
   FormField,
   Grid,
   Icon,
+  PageHeader,
   Stack,
   Typography,
   ValidatedForm,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { DividerModule } from "primeng/divider";
 import { SelectModule } from "primeng/select";
 import { SkeletonModule } from "primeng/skeleton";
 
@@ -37,7 +37,6 @@ interface SelectOption {
     CardModule,
     ButtonModule,
     RouterModule,
-    DividerModule,
     SkeletonModule,
     SelectModule,
     ReactiveFormsModule,
@@ -47,6 +46,7 @@ interface SelectOption {
     Icon,
     Stack,
     Typography,
+    PageHeader,
   ],
 })
 export class SubscriptionAdd implements OnInit {
