@@ -61,9 +61,9 @@ export class Faq {
         "The agent looks at unassigned loads, available trucks, HOS compliance, truck-type compatibility, and revenue per mile, and proposes assignments. In human-in-the-loop mode it suggests; in autonomous mode it acts. Either way, every decision is logged with the reasoning.",
     },
     {
-      question: "Which AI models does it support?",
+      question: "What happens if I reject an AI suggestion?",
       answer:
-        "Anthropic (Claude Sonnet, Haiku, Opus), OpenAI (GPT-5.4 series), and DeepSeek. You pick the model per session. Access is tiered: Starter is base models, Professional unlocks premium, Enterprise gets everything including Opus.",
+        "You can reject any suggestion and optionally hand back context, and the agent re-plans with your feedback. In human-in-the-loop mode nothing is dispatched until you approve it.",
     },
     {
       question: "Is AI Dispatch safe to use?",

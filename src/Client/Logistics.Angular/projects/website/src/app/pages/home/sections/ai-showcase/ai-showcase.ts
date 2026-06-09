@@ -62,10 +62,10 @@ export class AiShowcase {
       icon: "pi-bolt",
     },
     {
-      title: "Pick your model",
+      title: "Full audit trail",
       description:
-        "Use Claude, GPT, or DeepSeek. Tiered access by plan, and you can see how much quota each session burned.",
-      icon: "pi-sparkles",
+        "Every assignment is logged with the agent's reasoning - what it saw, why it picked that truck, and who approved it.",
+      icon: "pi-history",
     },
   ];
 }

@@ -65,9 +65,9 @@ export class Home implements OnInit {
           "The AI agent analyzes unassigned loads, available trucks, HOS compliance, truck type compatibility, and revenue per mile to find optimal assignments. In human-in-the-loop mode it suggests assignments for your approval; in autonomous mode it executes immediately.",
       },
       {
-        question: "Which AI models does it support?",
+        question: "What happens if I reject an AI suggestion?",
         answer:
-          "We support Anthropic (Claude Sonnet, Haiku, Opus), OpenAI (GPT-5.4 series), and DeepSeek. Model access is tiered by plan - Starter gets base models, Professional unlocks premium, and Enterprise gets all models.",
+          "You can reject any suggestion and optionally hand back context, and the agent re-plans with your feedback. In human-in-the-loop mode nothing is dispatched until you approve it.",
       },
       {
         question: "Is AI Dispatch safe to use?",
