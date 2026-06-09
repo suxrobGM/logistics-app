@@ -53,6 +53,12 @@ export const appRoutes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: "ai-settings",
+    loadChildren: () =>
+      import("./pages/ai-settings/ai-settings.routes").then((m) => m.aiSettingsRoutes),
+    canActivate: [authGuard],
+  },
+  {
     path: "data-requests",
     loadChildren: () =>
       import("./pages/data-requests/data-requests.routes").then((m) => m.dataRequestsRoutes),

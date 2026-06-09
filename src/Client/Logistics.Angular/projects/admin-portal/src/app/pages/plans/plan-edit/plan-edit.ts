@@ -66,7 +66,6 @@ export class PlanEdit implements OnInit {
       perTruckPrice: plan.perTruckPrice ?? 0,
       maxTrucks: plan.maxTrucks ?? null,
       weeklyAiRequestQuota: plan.weeklyAiRequestQuota ?? null,
-      allowedModelTier: plan.allowedModelTier ?? "base",
       interval: plan.interval ?? "month",
       intervalCount: plan.intervalCount ?? 1,
     };
@@ -87,7 +86,6 @@ export class PlanEdit implements OnInit {
       perTruckPrice: formValue.perTruckPrice,
       maxTrucks: formValue.maxTrucks,
       weeklyAiRequestQuota: formValue.weeklyAiRequestQuota,
-      allowedModelTier: formValue.allowedModelTier,
       interval: formValue.interval,
       intervalCount: formValue.intervalCount,
     };

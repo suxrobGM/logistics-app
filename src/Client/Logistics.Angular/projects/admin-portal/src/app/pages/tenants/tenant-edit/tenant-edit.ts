@@ -45,7 +45,6 @@ export class TenantEdit implements OnInit {
 
   protected readonly llmSettingsModel = signal({
     llmEnabled: true,
-    enableExtendedThinking: false,
   });
 
   protected readonly llmSettingsForm = form(this.llmSettingsModel);
@@ -73,7 +72,6 @@ export class TenantEdit implements OnInit {
     this.tenant.set(tenant);
     this.llmSettingsModel.set({
       llmEnabled: tenant.settings?.llmEnabled !== false,
-      enableExtendedThinking: tenant.settings?.llmExtendedThinking ?? false,
     });
     this.isFetching.set(false);
   }
@@ -130,7 +128,6 @@ export class TenantEdit implements OnInit {
         settings: {
           ...tenant.settings,
           llmEnabled: settings.llmEnabled,
-          llmExtendedThinking: settings.enableExtendedThinking,
         },
       };
 

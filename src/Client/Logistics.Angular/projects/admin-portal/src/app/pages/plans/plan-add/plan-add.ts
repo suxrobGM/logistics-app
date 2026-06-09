@@ -1,8 +1,11 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { ToastService } from "@logistics/shared";
-import { Api, createSubscriptionPlan } from "@logistics/shared/api";
-import type { CreateSubscriptionPlanCommand } from "@logistics/shared/api";
+import {
+  Api,
+  createSubscriptionPlan,
+  type CreateSubscriptionPlanCommand,
+} from "@logistics/shared/api";
 import { PageHeader } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -31,7 +34,6 @@ export class PlanAdd {
       perTruckPrice: formValue.perTruckPrice,
       maxTrucks: formValue.maxTrucks,
       weeklyAiRequestQuota: formValue.weeklyAiRequestQuota,
-      allowedModelTier: formValue.allowedModelTier,
       interval: formValue.interval,
       intervalCount: formValue.intervalCount,
     };

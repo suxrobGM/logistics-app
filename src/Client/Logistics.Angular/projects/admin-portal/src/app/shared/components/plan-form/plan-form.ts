@@ -2,7 +2,7 @@ import { Component, effect, inject, input, output } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
-import type { BillingInterval, LlmModelTier, PlanTier } from "@logistics/shared/api";
+import type { BillingInterval, PlanTier } from "@logistics/shared/api";
 import { CurrencyField, FormField, ValidatedForm } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -19,7 +19,6 @@ export interface PlanFormValue {
   perTruckPrice: number;
   maxTrucks: number | null;
   weeklyAiRequestQuota: number | null;
-  allowedModelTier: LlmModelTier;
   interval: BillingInterval;
   intervalCount: number;
 }
@@ -28,12 +27,6 @@ const TIER_OPTIONS = [
   { label: "Starter", value: "starter" },
   { label: "Professional", value: "professional" },
   { label: "Enterprise", value: "enterprise" },
-];
-
-const MODEL_TIER_OPTIONS = [
-  { label: "Base", value: "base" },
-  { label: "Premium", value: "premium" },
-  { label: "Ultra", value: "ultra" },
 ];
 
 const INTERVAL_OPTIONS = [
@@ -71,7 +64,6 @@ export class PlanForm {
   public readonly remove = output<void>();
 
   protected readonly tierOptions = TIER_OPTIONS;
-  protected readonly modelTierOptions = MODEL_TIER_OPTIONS;
   protected readonly intervalOptions = INTERVAL_OPTIONS;
 
   protected readonly form = new FormGroup({
@@ -91,10 +83,6 @@ export class PlanForm {
     }),
     maxTrucks: new FormControl<number | null>(null),
     weeklyAiRequestQuota: new FormControl<number | null>(null),
-    allowedModelTier: new FormControl<string>("base", {
-      validators: Validators.required,
-      nonNullable: true,
-    }),
     interval: new FormControl<BillingInterval>("month", {
       validators: Validators.required,
       nonNullable: true,

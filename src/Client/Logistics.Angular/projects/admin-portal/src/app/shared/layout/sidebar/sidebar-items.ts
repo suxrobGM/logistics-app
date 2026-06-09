@@ -28,9 +28,9 @@ export const sidebarSections: AdminNavSection[] = [
         permission: Permission.Tenant.Manage,
       },
       {
-        label: "AI Quotas",
-        icon: "sparkles",
-        route: "/tenants/quotas",
+        label: "AI Settings",
+        icon: "bot",
+        route: "/ai-settings",
         permission: Permission.Tenant.Manage,
       },
     ],

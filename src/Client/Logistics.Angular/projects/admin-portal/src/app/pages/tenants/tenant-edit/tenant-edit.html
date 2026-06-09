@@ -41,8 +41,8 @@
     @if (tenant()) {
       <p-card header="AI Dispatch Settings">
         <ui-typography variant="body-sm" color="muted" class="mb-4">
-          Configure LLM settings for the AI dispatch agent. Tenants select their own model in AI
-          Settings.
+          Enable or disable the AI dispatch agent for this tenant. The model and other AI options are
+          managed globally in AI Settings.
         </ui-typography>
         <ui-stack gap="4">
           <ui-stack direction="row" align="center" gap="3">
@@ -56,16 +56,6 @@
             <ui-typography variant="caption" color="muted">
               (uncheck to block LLM usage for demo/test tenants)
             </ui-typography>
-          </ui-stack>
-
-          <ui-stack direction="row" align="center" gap="3">
-            <input
-              type="checkbox"
-              id="extendedThinking"
-              [formField]="llmSettingsForm.enableExtendedThinking"
-              class="h-4 w-4"
-            />
-            <label for="extendedThinking">Enable Extended Thinking</label>
           </ui-stack>
 
           <p-button

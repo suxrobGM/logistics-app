@@ -1,0 +1,82 @@
+<ui-page-header title="AI Settings" />
+
+@if (isLoading()) {
+  <div class="flex justify-center p-8">
+    <p-progress-spinner />
+  </div>
+} @else {
+  <ui-stack gap="6">
+    <ui-grid container spacing="6">
+      <ui-grid [size]="{ xs: 12, lg: 6 }">
+        <!-- Model -->
+        <p-card header="Dispatch Model">
+      <ui-stack gap="4">
+        <ui-typography variant="body-sm" color="muted">
+          The model used by the AI dispatch agent for every tenant. Choose a cost-efficient model;
+          tenants never see or select the model.
+        </ui-typography>
+        <p-select
+          [ngModel]="selectedModel()"
+          (ngModelChange)="selectedModel.set($event)"
+          [options]="modelOptions()"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select a model"
+          [fluid]="true"
+        />
+
+        <ui-stack direction="row" align="center" gap="3">
+          <p-checkbox
+            inputId="extendedThinking"
+            [ngModel]="extendedThinking()"
+            (ngModelChange)="extendedThinking.set($event)"
+            [binary]="true"
+          />
+          <label for="extendedThinking">Enable extended thinking</label>
+        </ui-stack>
+        <p-message severity="secondary">
+          Not all models support extended thinking; it is ignored by models that don't.
+        </p-message>
+      </ui-stack>
+        </p-card>
+      </ui-grid>
+
+      <ui-grid [size]="{ xs: 12, lg: 6 }">
+        <!-- Weekly quotas -->
+        <p-card header="Weekly AI Quotas">
+      <ui-stack gap="4">
+        <ui-typography variant="body-sm" color="muted">
+          Weekly AI dispatch request quota per plan. Leave empty for unlimited. Sessions beyond the
+          quota are billed as overages.
+        </ui-typography>
+        @for (plan of plans(); track plan.planId) {
+          <ui-stack direction="row" align="center" gap="3">
+            <label class="w-40" [for]="'quota-' + plan.planId">{{ plan.planName }}</label>
+            <p-inputNumber
+              [inputId]="'quota-' + plan.planId"
+              [ngModel]="plan.weeklyAiRequestQuota"
+              (ngModelChange)="updatePlanQuota(plan.planId, $event)"
+              [min]="1"
+              [showButtons]="true"
+              placeholder="Unlimited"
+            />
+          </ui-stack>
+        }
+      </ui-stack>
+        </p-card>
+      </ui-grid>
+    </ui-grid>
+
+    <div>
+      <p-button
+        icon="pi pi-save"
+        label="Save AI Settings"
+        [loading]="isSaving()"
+        (onClick)="save()"
+      />
+    </div>
+
+    <!-- Live per-tenant usage -->
+    <adm-tenant-quotas />
+  </ui-stack>
+}

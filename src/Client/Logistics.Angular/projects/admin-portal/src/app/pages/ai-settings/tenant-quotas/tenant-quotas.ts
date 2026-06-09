@@ -11,7 +11,6 @@ import type { PagedResponse } from "@logistics/shared/api/models";
 import {
   BaseTable,
   Icon,
-  PageHeader,
   Stack,
   Typography,
   type TableQueryParams,
@@ -35,7 +34,6 @@ import { ToastService } from "@/core/services";
     TagModule,
     TooltipModule,
     DatePipe,
-    PageHeader,
     CurrencyPipe,
     Icon,
     Stack,
