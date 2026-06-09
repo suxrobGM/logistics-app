@@ -1,6 +1,6 @@
 ---
 name: add-llm-provider
-description: Add a new LLM provider or model to the AI dispatch system. Use when adding a new model from an existing provider (e.g., a new Claude version) or wiring up a new OpenAI-compatible endpoint. Walks through the seven places that must change to keep pricing, quotas, and UI dropdowns in sync.
+description: Add a new LLM provider or model to the AI dispatch system. Use when adding a new model from an existing provider (e.g., a new Claude version) or wiring up a new OpenAI-compatible endpoint. Walks through the places that must change to keep pricing, quotas, and the admin model catalog in sync.
 ---
 
 # Add an LLM Provider or Model
@@ -11,7 +11,11 @@ The AI dispatch agent supports multiple LLM providers via the `ILlmProvider` ada
 
 - **New OpenAI-compatible provider** (DeepSeek-style): no SDK code needed — just a new `LlmProvider` enum value and config. Skip step 3.
 - **New custom-SDK provider** (e.g., Gemini, Mistral): create a new `ILlmProvider` implementation in step 3.
-- **New model from an existing provider** (e.g., new Claude version): only steps 4–7 needed.
+- **New model from an existing provider** (e.g., new Claude version): only steps 4–6 needed.
+
+> The dispatch model is **global** (admin-selected). There is no per-tenant model selection and no
+> per-plan tier gating. The admin dropdown is populated automatically from `LlmModelCatalog`, so adding a
+> model needs **no UI change** — just the catalog + pricing.
 
 ## Files that must change (full provider)
 
@@ -20,10 +24,7 @@ The AI dispatch agent supports multiple LLM providers via the `ILlmProvider` ada
 3. `src/Infrastructure/Logistics.Infrastructure.AI/Providers/{X}LlmProvider.cs` — only for non-OpenAI-compatible
 4. `src/Infrastructure/Logistics.Infrastructure.AI/Providers/LlmProviderFactory.cs` — resolution case
 5. `src/Infrastructure/Logistics.Infrastructure.AI/Services/LlmPricing.cs` — pricing, multiplier, tier, billing units
-6. `src/Core/Logistics.Application/Commands/Tenant/UpdateTenantAiSettings/UpdateTenantAiSettingsHandler.cs` — `ModelTiers` dictionary
-7. UI dropdowns:
-   - `src/Client/Logistics.Angular/projects/admin-portal/src/app/pages/.../tenant-edit.ts` → `llmModelOptions`
-   - `src/Client/Logistics.Angular/projects/tms-portal/src/app/pages/settings/ai-settings/` (filtered by allowed tier)
+6. `src/Core/Logistics.Application.Abstractions/AiDispatch/LlmModelCatalog.cs` — add the model `{ Id, DisplayName, Provider }` (single source for the admin dropdown)
 
 ## Step-by-step
 
@@ -106,7 +107,7 @@ For OpenAI-compatible providers, instantiate `OpenAiLlmProvider` with the right 
 
 ### 5. Update `LlmPricing.cs`
 
-**Four places** in this file. Miss any one and quota/billing breaks silently.
+**Three places** in this file. Miss any one and quota/billing breaks silently.
 
 ```csharp
 private static readonly Dictionary<string, ModelPricing> Pricing = new()
@@ -119,53 +120,34 @@ public static int GetMultiplier(string model) => model switch
 {
     "deepseek-..." or "claude-haiku-4-5" or "gpt-5.4-mini" or "new-model-1" => 1, // base = 1x
     "gpt-5.4" or "claude-sonnet-4-6" => 5, // premium = 5x
-    "claude-opus-4-6" => 10, // ultra = 10x
+    "claude-opus-4-8" => 10, // ultra = 10x
     _ => 1
-};
-
-public static LlmModelTier GetModelTier(string model) => model switch
-{
-    "gpt-5.4" or "claude-sonnet-4-6" => LlmModelTier.Premium,
-    "claude-opus-4-6" => LlmModelTier.Ultra,
-    _ => LlmModelTier.Base // ← new-model-1 falls through to Base
 };
 
 public static int GetOverageBillingUnits(string model) => model switch
 {
     "gpt-5.4" or "claude-sonnet-4-6" => 2,
-    "claude-opus-4-6" => 4,
+    "claude-opus-4-8" => 4,
     _ => 1 // ← matches GetMultiplier mapping
 };
 ```
 
-Decide tier first (Base / Premium / Ultra), then multiplier (1 / 5 / 10), then billing units (1 / 2 / 4 at $0.20/unit).
+Decide the cost tier (1× / 5× / 10×), then keep billing units in step (1 / 2 / 4 at $0.20/unit). The tier only affects quota cost — it does **not** gate which plans can use the model (the model is global).
 
-### 6. Update `ModelTiers` dictionary
+### 6. Add the model to `LlmModelCatalog`
 
-In `UpdateTenantAiSettingsHandler`:
+In `src/Core/Logistics.Application.Abstractions/AiDispatch/LlmModelCatalog.cs`:
 
 ```csharp
-private static readonly Dictionary<string, LlmModelTier> ModelTiers = new()
-{
+public static readonly IReadOnlyList<LlmModelInfo> Models =
+[
     // existing entries
-    ["new-model-1"] = LlmModelTier.Base,
-};
-```
-
-This is what the tenant settings handler uses to validate that the user's plan tier allows the selected model. Mismatch with `GetModelTier` = silently broken validation.
-
-### 7. Wire the UI dropdowns
-
-**Admin portal** (`tenant-edit.ts`) — admin can set any model:
-
-```typescript
-const llmModelOptions = [
-  // existing
-  { label: "New Model 1", value: "new-model-1", provider: "NewProvider" },
+    new("new-model-1", "New Model 1", LlmProvider.NewProvider),
 ];
 ```
 
-**TMS portal AI Settings** — filter the same list by the tenant's `AllowedModelTier`. The page already does this filtering; just make sure the new model is in the source list.
+This is the **single source** for the admin AI Settings dropdown (`GET /ai/settings`) and for validating the
+selected model in `UpdateAiSettingsCommand`. The admin UI populates automatically — no frontend change.
 
 ## Verification checklist
 
@@ -173,16 +155,15 @@ const llmModelOptions = [
 - [ ] Config section + appsettings entry + env var documented
 - [ ] (If custom SDK) Provider implementation, no SDK types leak
 - [ ] Factory resolves the new provider
-- [ ] **All four `LlmPricing` switches/dictionaries updated** (Pricing, GetMultiplier, GetModelTier, GetOverageBillingUnits)
-- [ ] `ModelTiers` dictionary in `UpdateTenantAiSettingsHandler` agrees with `GetModelTier`
-- [ ] Admin portal dropdown updated
-- [ ] TMS portal AI settings page shows the model (filtered correctly by plan tier)
-- [ ] Test that selecting the model with an insufficient plan tier is rejected
+- [ ] **All three `LlmPricing` switches/dictionaries updated** (Pricing, GetMultiplier, GetOverageBillingUnits)
+- [ ] `LlmModelCatalog` includes the model (id matches the `LlmPricing` keys)
+- [ ] Admin AI Settings page shows the new model in the dropdown
+- [ ] Selecting the model as the global model runs a dispatch session successfully
 
 ## Common mistakes
 
 - **`GetMultiplier` and `GetOverageBillingUnits` out of sync**: a Premium model with multiplier=5 but billing=1 underbills overages.
-- **`ModelTiers` and `GetModelTier` out of sync**: handler accepts a model the system thinks is Base while the agent loads it as Premium.
+- **`LlmModelCatalog` id ≠ `LlmPricing` key**: the catalog offers a model the pricing map doesn't know, so it falls back to default pricing/multiplier.
 - **Forgetting `BaseUrl`** for OpenAI-compatible providers — `OpenAiLlmProvider` defaults to OpenAI's endpoint and 401s.
 - **SDK types leaking**: importing the provider SDK in any file other than `Providers/{X}LlmProvider.cs` breaks the abstraction.
 

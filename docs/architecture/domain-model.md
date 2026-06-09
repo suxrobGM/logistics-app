@@ -92,7 +92,6 @@ erDiagram
         PlanTier Tier
         Money BaseFee
         Money PerTruckFee
-        LlmModelTier AllowedModelTier
         int WeeklyAiRequestQuota
     }
     USER {
@@ -104,13 +103,13 @@ erDiagram
     }
 ```
 
-The master DB also stores `SuperAdmin`, `BlogPost`, `ContactSubmission`, `DemoRequest`, `SystemSetting`, `DefaultFeatureConfig`, and `ImpersonationAuditLog` / `ImpersonationToken` (used by SuperAdmins to act on behalf of a tenant).
+The master DB also stores `SuperAdmin`, `BlogPost`, `ContactSubmission`, `DemoRequest`, `SystemSettings`, `DefaultFeatureConfig`, and `ImpersonationAuditLog` / `ImpersonationToken` (used by SuperAdmins to act on behalf of a tenant).
 
 ### Tenants and subscriptions
 
 Every customer company is one `Tenant` row. The connection string for that company's tenant DB is stored in `Tenant.ConnectionString`, which is generated from `TenantDatabaseDefaults.NameTemplate` at provisioning time (see [Multi-Tenancy](multi-tenancy.md)).
 
-Subscriptions are 1:1 with tenants and reference a `SubscriptionPlan`. Plan tiers (Starter / Professional / Enterprise) gate features through the `PlanFeature` join table and cap LLM model access via `AllowedModelTier`.
+Subscriptions are 1:1 with tenants and reference a `SubscriptionPlan`. Plan tiers (Starter / Professional / Enterprise) gate features through the `PlanFeature` join table and set the weekly AI dispatch quota via `WeeklyAiRequestQuota` (the dispatch model itself is global, set by an admin — not per plan).
 
 ## Tenant database
 

@@ -87,36 +87,43 @@ Max **25 iterations per session** to prevent runaway token usage.
 
 API keys via env vars: `Llm__Providers__{Provider}__ApiKey`.
 
-## Model tier access
+## Global model (admin-managed)
 
-Models are classified into tiers via `LlmModelTier` enum. Each plan has `AllowedModelTier`:
+The dispatch model is **global**, set by an admin in the admin portal — tenants do not pick a model and
+never see model names. Plans differ by **quota only**, not by model tier (there is no per-plan model
+gating / `AllowedModelTier`).
 
-| Model                              | Tier    | Quota multiplier | Overage units (at $0.20) |
-| ---------------------------------- | ------- | ---------------- | ------------------------ |
-| deepseek-v4-flash, deepseek-v4-pro | Base    | 1×               | 1 ($0.20)                |
-| gpt-5.4-mini, claude-haiku-4-5     | Base    | 1×               | 1 ($0.20)                |
-| gpt-5.4, claude-sonnet-4-6         | Premium | 5×               | 2 ($0.40)                |
-| claude-opus-4-6                    | Ultra   | 10×              | 4 ($0.80)                |
+`LlmModelCatalog` (in `Application.Abstractions/AiDispatch`) is the single source of selectable models
+(`Id`, `DisplayName`, `Provider`). `LlmPricing` keeps pricing, the cost multiplier, and overage units keyed
+by the same ids:
 
-Plans: Starter = Base, Professional = Premium, Enterprise = Ultra.
+| Model                              | Multiplier | Overage units (at $0.20) |
+| ---------------------------------- | ---------- | ------------------------ |
+| deepseek-v4-flash, deepseek-v4-pro | 1×         | 1 ($0.20)                |
+| gpt-5.4-mini, claude-haiku-4-5     | 1×         | 1 ($0.20)                |
+| gpt-5.4, claude-sonnet-4-6         | 5×         | 2 ($0.40)                |
+| claude-opus-4-8                    | 10×        | 4 ($0.80)                |
 
 ## Quota system
 
 Weekly AI request quotas use multiplier-based counting (not flat session counts):
 
-- `SubscriptionPlan.WeeklyAiRequestQuota` — weekly limit in request units
+- `SubscriptionPlan.WeeklyAiRequestQuota` — weekly limit in request units (null = unlimited). Admin-editable
+  live from the admin portal AI Settings page.
 - `AiDispatchSession.RequestCost` — multiplier (1, 5, or 10) set from `LlmPricing.GetMultiplier()`
 - `AiQuotaService` sums `RequestCost` across completed sessions for the week
-- Tenant-facing API returns usage as a percentage (no raw numbers)
+- Tenant-facing API returns usage as a percentage (no raw numbers, no model/tier names)
 - Overage billing via Stripe: `LlmPricing.GetOverageBillingUnits()` returns 1 / 2 / 4 at $0.20/unit
 
-`GetMultiplier`, `GetModelTier`, and `GetOverageBillingUnits` must agree on which tier each model belongs to. The `add-llm-provider` skill enforces this.
+`GetMultiplier` and `GetOverageBillingUnits` must agree on each model's cost tier (1×→1 unit, 5×→2, 10×→4). The `add-llm-provider` skill enforces this.
 
 ## Model selection priority
 
-Resolution order in `AiDispatchConversationBuilder`:
+Resolution order in `AiDispatchConversationBuilder` (no tenant override):
 
-1. **Tenant selection** — `TenantSettings.LlmModel` (set by tenant in AI Settings, or by admin in tenant-edit)
-2. **System default** — `LlmProviderOptions.Model` from appsettings
+1. **Global system setting** — `SystemSettings["Ai.Model"]` / `["Ai.Provider"]` (keys in `AiSettingsKeys`),
+   set via the admin `UpdateAiSettingsCommand`.
+2. **System default** — `LlmOptions.DefaultProvider` + `LlmProviderOptions.Model` from appsettings.
 
-Provider resolution: `TenantSettings.LlmProvider` → `LlmOptions.DefaultProvider`.
+Extended thinking is likewise global: `SystemSettings["Ai.ExtendedThinking"]` → `LlmOptions.EnableExtendedThinking`.
+Only honored by providers that support it.

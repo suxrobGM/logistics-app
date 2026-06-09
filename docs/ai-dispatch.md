@@ -10,9 +10,11 @@ You can switch LLM providers without code changes:
 
 | Provider      | Models                                 | Notes                                                  |
 | ------------- | -------------------------------------- | ------------------------------------------------------ |
-| **Anthropic** | Claude Sonnet 4.6, Haiku 4.5, Opus 4.6 | Default. Supports prompt caching and extended thinking |
+| **Anthropic** | Claude Sonnet 4.6, Haiku 4.5, Opus 4.8 | Default. Supports prompt caching and extended thinking |
 | **OpenAI**    | GPT-5.4 Mini, GPT-5.4, GPT-5.4 Nano    | Via official OpenAI SDK                                |
 | **DeepSeek**  | DeepSeek V4 Flash, DeepSeek V4 Pro     | OpenAI-compatible API                                  |
+
+Quota cost is multiplier-based: **DeepSeek V4 Flash and Pro, GPT-5.4 Mini, and Claude Haiku 4.5 are all 1×**; GPT-5.4 and Claude Sonnet 4.6 are 5×; Claude Opus 4.8 is 10×.
 
 ## Operating Modes
 
@@ -120,7 +122,7 @@ Each decision within a session is a **AiDispatchDecision** with:
       },
       "DeepSeek": {
         "ApiKey": "<key>",
-        "Model": "deepseek-chat",
+        "Model": "deepseek-v4-flash",
         "BaseUrl": "https://api.deepseek.com/v1"
       }
     }
@@ -128,9 +130,14 @@ Each decision within a session is a **AiDispatchDecision** with:
 }
 ```
 
-### Per-Tenant Overrides
+### Global model (admin-managed)
 
-Admins can override the model per tenant via the Admin Portal → Tenant Edit → AI Dispatch Settings. The `TenantSettings.LlmModel` field accepts any model ID from the configured providers. Extended thinking can also be toggled per tenant.
+The dispatch model is global, not per-tenant. An admin sets it in the Admin Portal → AI Settings page,
+which persists `Ai.Model` / `Ai.Provider` / `Ai.ExtendedThinking` to `SystemSettings` (keys in
+`AiSettingsKeys`). `AiDispatchConversationBuilder` resolves the model from those settings, falling back to
+the appsettings `Llm` defaults. The selectable models come from `LlmModelCatalog`. Tenants never select or
+see the model. Per tenant, an admin can still toggle `LlmEnabled` (Tenant Edit) to block AI for demo/test
+tenants.
 
 ### Feature Gating
 
@@ -169,8 +176,10 @@ Tool definitions are JSON Schema, which works with both Claude API tool schemas 
 
 1. **OpenAI-compatible** (most providers): Add a new `LlmProvider` enum value and configure with `BaseUrl` in appsettings
 2. **Custom SDK**: Create a new `ILlmProvider` implementation, add a case in `LlmProviderFactory`
-3. Add model pricing to `LlmPricing.cs`
-4. Add model options to admin portal `tenant-edit.ts` → `llmModelOptions`
+3. Add model pricing to `LlmPricing.cs` (Pricing, GetMultiplier, GetOverageBillingUnits)
+4. Add the model to `LlmModelCatalog` — it populates the admin AI Settings dropdown automatically
+
+See the `add-llm-provider` skill for the full checklist.
 
 ## Roadmap
 
