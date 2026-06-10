@@ -1,6 +1,7 @@
 using System.Text.Json.Nodes;
 using Anthropic.SDK;
 using Anthropic.SDK.Messaging;
+using Logistics.Infrastructure.AI.Models;
 using Logistics.Infrastructure.AI.Options;
 using Logistics.Application.Abstractions.AiDispatch;
 using Tool = Anthropic.SDK.Common.Tool;
@@ -102,6 +103,28 @@ internal sealed class AnthropicLlmProvider(LlmProviderOptions config) : ILlmProv
                     {
                         ToolUseId = toolResult.ToolUseId,
                         Content = [new TextContent { Text = toolResult.Content }]
+                    });
+                    break;
+                case LlmImageBlock image:
+                    content.Add(new ImageContent
+                    {
+                        Source = new ImageSource
+                        {
+                            Type = SourceType.base64,
+                            MediaType = image.MediaType,
+                            Data = image.Base64Data
+                        }
+                    });
+                    break;
+                case LlmDocumentBlock document:
+                    content.Add(new DocumentContent
+                    {
+                        Source = new DocumentSource
+                        {
+                            Type = SourceType.base64,
+                            MediaType = document.MediaType,
+                            Data = document.Base64Data
+                        }
                     });
                     break;
             }

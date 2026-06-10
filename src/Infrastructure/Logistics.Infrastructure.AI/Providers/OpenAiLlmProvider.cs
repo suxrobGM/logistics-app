@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using OpenAI;
 using OpenAI.Chat;
+using Logistics.Infrastructure.AI.Models;
 
 namespace Logistics.Infrastructure.AI.Providers;
 
@@ -75,7 +76,39 @@ internal sealed class OpenAiLlmProvider(Options.LlmProviderOptions config) : ILl
 
             var textParts = message.Content.OfType<LlmTextBlock>().ToList();
             var text = string.Join("\n", textParts.Select(t => t.Text));
-            return ChatMessage.CreateUserMessage(text);
+            var images = message.Content.OfType<LlmImageBlock>().ToList();
+            var documents = message.Content.OfType<LlmDocumentBlock>().ToList();
+
+            if (images.Count == 0 && documents.Count == 0)
+                return ChatMessage.CreateUserMessage(text);
+
+            // Multimodal message: text plus inline images and/or documents (e.g. PDFs) as content parts.
+            var parts = new List<ChatMessageContentPart>();
+            if (!string.IsNullOrEmpty(text))
+            {
+                parts.Add(ChatMessageContentPart.CreateTextPart(text));
+            }
+
+            foreach (var image in images)
+            {
+                parts.Add(ChatMessageContentPart.CreateImagePart(
+                    BinaryData.FromBytes(Convert.FromBase64String(image.Base64Data)),
+                    image.MediaType));
+            }
+
+            foreach (var document in documents)
+            {
+                // CreateFilePart is annotated [Experimental(OPENAI001)] in the current SDK; the file
+                // content-part wire format is stable enough for our use, so opt in explicitly.
+#pragma warning disable OPENAI001
+                parts.Add(ChatMessageContentPart.CreateFilePart(
+                    BinaryData.FromBytes(Convert.FromBase64String(document.Base64Data)),
+                    document.MediaType,
+                    "document.pdf"));
+#pragma warning restore OPENAI001
+            }
+
+            return ChatMessage.CreateUserMessage(parts);
         }
 
         // Assistant message with potential tool calls

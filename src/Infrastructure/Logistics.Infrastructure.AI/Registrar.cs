@@ -4,6 +4,7 @@ using Logistics.Infrastructure.AI.Services;
 using Logistics.Infrastructure.AI.Tools;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Logistics.Application.Abstractions.Ai;
 using Logistics.Application.Abstractions.AiDispatch;
 
 namespace Logistics.Infrastructure.AI;
@@ -19,8 +20,12 @@ public static class Registrar
     {
         services.Configure<LlmOptions>(configuration.GetSection(LlmOptions.SectionName));
 
-        // Provider factory
+        // Provider factory and shared model resolution
         services.AddSingleton<LlmProviderFactory>();
+        services.AddScoped<LlmModelResolver>();
+
+        // One-shot LLM client (used by non-agent features, e.g. PDF parsing)
+        services.AddScoped<ILlmClient, LlmClient>();
 
         // Agent services
         services.AddSingleton<AiDispatchSessionCancellationRegistry>();

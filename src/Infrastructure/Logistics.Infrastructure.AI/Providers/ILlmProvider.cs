@@ -1,3 +1,5 @@
+using Logistics.Infrastructure.AI.Models;
+
 namespace Logistics.Infrastructure.AI.Providers;
 
 /// <summary>

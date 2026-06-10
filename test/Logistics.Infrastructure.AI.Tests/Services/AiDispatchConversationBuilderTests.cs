@@ -49,8 +49,9 @@ public class AiDispatchConversationBuilderTests
 
         var llmOptions = MsOptions.Options.Create(ValidConfig);
         var providerFactory = new LlmProviderFactory(llmOptions);
+        var modelResolver = new LlmModelResolver(systemSettings);
 
-        sut = new AiDispatchConversationBuilder(toolRegistry, featureService, providerFactory, tenantUow, systemSettings, logger);
+        sut = new AiDispatchConversationBuilder(toolRegistry, featureService, providerFactory, modelResolver, tenantUow, systemSettings, logger);
     }
 
     private static LlmOptions ValidConfig => new()

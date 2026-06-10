@@ -1,6 +1,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Infrastructure.AI.Models;
 using Logistics.Infrastructure.AI.Options;
 using Logistics.Infrastructure.AI.Providers;
 using Logistics.Shared.Models;

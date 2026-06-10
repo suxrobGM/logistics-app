@@ -1,6 +1,7 @@
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
+using Logistics.Infrastructure.AI.Models;
 using Logistics.Infrastructure.AI.Options;
 using Logistics.Infrastructure.AI.Prompts;
 using Logistics.Infrastructure.AI.Providers;
@@ -20,6 +21,7 @@ internal sealed class AiDispatchConversationBuilder(
     IAiDispatchToolRegistry toolRegistry,
     IFeatureService featureService,
     LlmProviderFactory providerFactory,
+    LlmModelResolver modelResolver,
     ITenantUnitOfWork tenantUow,
     ISystemSettingsService systemSettings,
     ILogger<AiDispatchConversationBuilder> logger)
@@ -35,11 +37,10 @@ internal sealed class AiDispatchConversationBuilder(
 
         // Resolve the global model (admin-managed): system setting → appsettings default.
         // The provider is derived from the model via the catalog, so it can't drift.
-        var modelSetting = await systemSettings.GetAsync(AiSettingsKeys.Model);
-        var modelInfo = LlmModelCatalog.Find(modelSetting);
-        var resolvedProvider = modelInfo?.Provider ?? config.DefaultProvider;
+        var selection = await modelResolver.ResolveAsync(config);
+        var resolvedProvider = selection.Provider;
         var provider = providerFactory.Create(resolvedProvider);
-        var providerConfig = config.GetProviderConfig(resolvedProvider);
+        var providerConfig = selection.ProviderConfig;
 
         if (string.IsNullOrWhiteSpace(providerConfig.ApiKey))
             throw new InvalidOperationException("LLM API key is not configured.");
@@ -49,7 +50,7 @@ internal sealed class AiDispatchConversationBuilder(
         var systemPrompt = AiDispatchSystemPrompt.Build(companyName, request.Mode, hasLoadBoard, tenant.Settings.DistanceUnit);
         var tools = toolRegistry.GetToolDefinitions(includeLoadBoardTools: hasLoadBoard);
 
-        var model = modelInfo?.Id ?? providerConfig.Model;
+        var model = selection.Model;
         session.ModelUsed = model;
 
         logger.LogInformation(
