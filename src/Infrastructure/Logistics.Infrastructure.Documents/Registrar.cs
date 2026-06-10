@@ -18,8 +18,8 @@ public static class Registrar
         services.AddScoped<IInvoicePdfService, InvoicePdfService>();
         services.AddScoped<IPayrollPayStubService, PayrollPayStubService>();
 
-        // PDF import (template-based extraction)
-        services.AddScoped<IPdfDataExtractor, TemplateBasedDataExtractor>();
+        // PDF import (LLM-based extraction)
+        services.AddScoped<IPdfDataExtractor, LlmPdfDataExtractor>();
 
         // Privacy / GDPR
         services.AddScoped<IDataExportService, DataExportService>();
