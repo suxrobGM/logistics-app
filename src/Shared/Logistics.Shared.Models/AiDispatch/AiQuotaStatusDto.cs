@@ -8,5 +8,5 @@ public record AiQuotaStatusDto
     public double UsagePercent { get; set; }
     public bool IsOverQuota { get; set; }
     public string? PlanName { get; set; }
-    public DateTime ResetsAt { get; set; }
+    public DateTime? ResetsAt { get; set; }
 }

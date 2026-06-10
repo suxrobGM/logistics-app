@@ -11,9 +11,11 @@
       @if (quota().isOverQuota) {
         <p-tag value="Overage charges apply" severity="warn" />
       }
-      <span class="text-muted text-sm">
-        Resets {{ quota().resetsAt | date: "EEE, MMM d, h:mm a" }}
-      </span>
+      @if (quota().resetsAt) {
+        <span class="text-muted text-sm">
+          Resets {{ quota().resetsAt | date: "EEE, MMM d, h:mm a" }}
+        </span>
+      }
     </div>
   </div>
   <p-progressBar
