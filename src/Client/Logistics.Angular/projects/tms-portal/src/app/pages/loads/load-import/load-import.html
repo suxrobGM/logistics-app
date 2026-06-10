@@ -43,12 +43,7 @@
           <ng-template #content>
             <ui-stack align="center" gap="4" class="p-8">
               <ui-icon name="file-pdf" color="muted" size="xl" />
-              <ui-typography color="secondary">
-                Drag and drop dispatch sheet PDF here
-              </ui-typography>
-              <ui-typography variant="body-sm" color="muted">
-                Supports: Super Dispatch, Ship.Cars, CentralDispatch
-              </ui-typography>
+              <ui-typography color="secondary">Drag and drop dispatch sheet PDF here</ui-typography>
             </ui-stack>
           </ng-template>
         </p-fileUpload>
@@ -105,7 +100,9 @@
           <ui-grid [size]="{ xs: 12, md: 6 }">
             <ui-typography variant="h6" tag="h4" weight="bold" class="mb-2">Payment</ui-typography>
             @if (data.paymentAmount) {
-              <p class="text-xl font-bold text-green-600">{{ data.paymentAmount | currencyFormat }}</p>
+              <p class="text-xl font-bold text-green-600">
+                {{ data.paymentAmount | currencyFormat }}
+              </p>
             } @else {
               <p class="text-muted">Not extracted</p>
             }
@@ -182,8 +179,9 @@
 
         <ui-stack gap="4">
           <p>
-            Load <strong>"{{ result.loadName }}"</strong> (# {{ result.loadNumber }}) has been
-            created.
+            Load
+            <strong>"{{ result.loadName }}"</strong>
+            (# {{ result.loadNumber }}) has been created.
           </p>
 
           @if (result.customerCreated) {
