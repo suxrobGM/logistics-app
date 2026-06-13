@@ -1,5 +1,6 @@
 using System.Threading.RateLimiting;
 using Duende.IdentityServer;
+using Logistics.Application.Modules.IdentityAccess.Users.Services;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Options;
 using Logistics.IdentityServer.Services;
@@ -42,6 +43,11 @@ internal static class Setup
                     .AddClaimsPrincipalFactory<UserCustomClaimsFactory>()
                     .AddDefaultTokenProviders();
             });
+
+        // Application services used directly by Razor pages (e.g. the Manage Profile page).
+        // The IdentityServer doesn't pull in the full Application/MediatR stack, so register
+        // only what it needs (UserService depends solely on the master/tenant unit of work).
+        services.AddScoped<IUserService, UserService>();
 
         services.AddRazorPages();
         AddAuthSchemes(services);

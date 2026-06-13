@@ -172,17 +172,12 @@ internal sealed class AcceptInvitationHandler(
         masterUow.Repository<Invitation>().Update(invitation);
         await masterUow.SaveChangesAsync(ct);
 
-        var roleDisplayName = InvitationMapper.GetAppRoleDisplayName(appRole);
-        await notificationService.SendNotificationAsync(
-            "New Administrator",
-            $"{user.GetFullName()} has joined as {roleDisplayName}");
-
         return Result<AcceptInvitationResult>.Ok(new AcceptInvitationResult
         {
             UserId = user.Id,
             Email = user.Email!,
             TenantName = PlatformConstants.PlatformName,
-            RoleDisplayName = roleDisplayName
+            RoleDisplayName = InvitationMapper.GetAppRoleDisplayName(appRole)
         });
     }
 
