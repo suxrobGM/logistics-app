@@ -41,17 +41,16 @@ internal sealed class CreateInvitationHandler(
 
         var tenant = tenantUow.GetCurrentTenant();
 
-        // Validate role assignment permissions - Owner can only be assigned by SuperAdmin/AppManager
+        // Validate role assignment permissions - Owner can only be assigned by SuperAdmin/Admin
         if (req.TenantRole == TenantRoles.Owner)
         {
             var currentUserRoles = await userManager.GetRolesAsync(currentUser);
             var canAssignOwner = currentUserRoles.Contains(AppRoles.SuperAdmin) ||
-                currentUserRoles.Contains(AppRoles.Admin) ||
-                currentUserRoles.Contains(AppRoles.Manager);
+                currentUserRoles.Contains(AppRoles.Admin);
 
             if (!canAssignOwner)
             {
-                return Result<InvitationDto>.Fail("Only Super Admins and App Managers can invite Owner users.");
+                return Result<InvitationDto>.Fail("Only Super Admins and Admins can invite Owner users.");
             }
         }
 

@@ -23,7 +23,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     [HttpGet("{id:guid}", Name = "GetSubscriptionById")]
     [ProducesResponseType(typeof(SubscriptionDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> GetSubscriptionById(Guid id)
     {
         var result = await mediator.Send(new GetSubscriptionQuery { Id = id });
@@ -32,7 +32,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
 
     [HttpGet(Name = "GetSubscriptions")]
     [ProducesResponseType(typeof(PagedResponse<SubscriptionDto>), StatusCodes.Status200OK)]
-    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> GetSubscriptions([FromQuery] GetSubscriptionsQuery request)
     {
         var result = await mediator.Send(request);
@@ -42,7 +42,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     [HttpPost(Name = "CreateSubscription")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> CreateSubscription([FromBody] CreateSubscriptionCommand request)
     {
         var result = await mediator.Send(request);
@@ -82,7 +82,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     [HttpDelete("{id:guid}", Name = "DeleteSubscription")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> DeleteSubscription(Guid id)
     {
         var result = await mediator.Send(new DeleteSubscriptionCommand { Id = id });
@@ -92,7 +92,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     [HttpGet("billing-portal", Name = "GetBillingPortalUrl")]
     [ProducesResponseType(typeof(BillingPortalUrlDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager},{TenantRoles.Owner},{TenantRoles.Manager}")]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{TenantRoles.Owner},{TenantRoles.Manager}")]
     public async Task<IActionResult> GetBillingPortalUrl([FromQuery] string returnUrl)
     {
         var result = await mediator.Send(new GetBillingPortalUrlQuery { ReturnUrl = returnUrl });
@@ -106,7 +106,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     [HttpGet("plans/{id:guid}", Name = "GetSubscriptionPlanById")]
     [ProducesResponseType(typeof(SubscriptionPlanDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    //[Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
+    //[Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> GetSubscriptionPlanById(Guid id)
     {
         var result = await mediator.Send(new GetSubscriptionPlanQuery { Id = id });
@@ -115,7 +115,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
 
     [HttpGet("plans", Name = "GetSubscriptionPlans")]
     [ProducesResponseType(typeof(PagedResponse<SubscriptionPlanDto>), StatusCodes.Status200OK)]
-    //[Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
+    //[Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> GetSubscriptionPlans([FromQuery] GetSubscriptionPlansQuery request)
     {
         var result = await mediator.Send(request);
@@ -125,7 +125,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     [HttpPost("plans", Name = "CreateSubscriptionPlan")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> CreateSubscriptionPlan([FromBody] CreateSubscriptionPlanCommand request)
     {
         var result = await mediator.Send(request);
@@ -135,7 +135,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     [HttpPut("plans/{id:guid}", Name = "UpdateSubscriptionPlan")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
-    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> UpdateSubscriptionPlan(Guid id, [FromBody] UpdateSubscriptionPlanCommand request)
     {
         request.Id = id;
@@ -146,7 +146,7 @@ public class SubscriptionController(IMediator mediator) : ControllerBase
     [HttpDelete("plans/{id:guid}", Name = "DeleteSubscriptionPlan")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
-    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin},{AppRoles.Manager}")]
+    [Authorize(Roles = $"{AppRoles.SuperAdmin},{AppRoles.Admin}")]
     public async Task<IActionResult> DeleteSubscriptionPlan(Guid id)
     {
         var result = await mediator.Send(new DeleteSubscriptionPlanCommand { Id = id });

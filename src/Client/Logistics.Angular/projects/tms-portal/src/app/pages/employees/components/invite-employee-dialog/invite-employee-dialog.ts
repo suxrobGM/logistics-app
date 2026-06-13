@@ -109,7 +109,7 @@ export class InviteEmployeeDialog {
         // Filter out Customer role - customers are invited via customer dialog
         roles = roles.filter((r) => r.name !== UserRole.Customer);
 
-        // Owner role can only be assigned by SuperAdmin/AppManager
+        // Owner role can only be assigned by SuperAdmin/Admin
         const canAssignOwner =
           this.userRole === UserRole.AppSuperAdmin || this.userRole === UserRole.AppAdmin;
 

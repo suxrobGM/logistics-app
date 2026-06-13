@@ -22,6 +22,7 @@ public static class ServiceCollectionExtensions
 
         // Infrastructure seeders (master DB unless IsTenantScoped is overridden)
         services.AddScoped<ISeeder, AppRoleSeeder>();
+        services.AddScoped<ISeeder, RemoveManagerRoleSeeder>();
         services.AddScoped<ISeeder, SuperAdminSeeder>();
         services.AddScoped<ISeeder, SubscriptionPlanSeeder>();
         services.AddScoped<ISeeder, StripeSeeder>();
