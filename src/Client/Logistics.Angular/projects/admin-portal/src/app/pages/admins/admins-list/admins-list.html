@@ -1,0 +1,176 @@
+<ui-page-header title="Admins" subtitle="Manage platform administrators" />
+
+<p-card>
+  <ui-data-container
+    [loading]="store.isLoading()"
+    [error]="store.error()"
+    [isEmpty]="store.isEmpty()"
+    skeletonVariant="table"
+    [skeletonRows]="5"
+    emptyTitle="No admins yet"
+    emptyMessage="Add an existing user or invite someone by email to grant admin access."
+    emptyActionLabel="Add Admin"
+    (retry)="store.retry()"
+    (emptyAction)="openAddDialog()"
+  >
+    <p-table
+      [value]="store.data()"
+      [lazy]="true"
+      [paginator]="true"
+      [showCurrentPageReport]="true"
+      (onLazyLoad)="store.onLazyLoad($event)"
+      [rows]="store.pageSize()"
+      [first]="store.first()"
+      [totalRecords]="store.totalRecords()"
+      [loading]="store.isLoading()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
+      <ng-template #caption>
+        <div class="flex items-center justify-between gap-4">
+          <ui-search-field (searchChange)="search($event)" />
+          <p-button label="Add Admin" icon="pi pi-plus" (onClick)="openAddDialog()" />
+        </div>
+      </ng-template>
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="Email">
+            Email
+            <p-sortIcon field="Email" />
+          </th>
+          <th>Name</th>
+          <th>Role</th>
+          <th class="w-16"></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-admin>
+        <tr>
+          <td>{{ admin.email }}</td>
+          <td>{{ getFullName(admin) }}</td>
+          <td>
+            <p-tag [value]="admin.role ?? 'Admin'" [severity]="getRoleSeverity(admin.role)" />
+          </td>
+          <td>
+            @if (!isSuperAdmin(admin)) {
+              <p-button
+                icon="pi pi-user-minus"
+                [text]="true"
+                severity="danger"
+                pTooltip="Revoke admin"
+                (click)="revoke(admin)"
+                aria-label="Revoke admin"
+              />
+            }
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ui-data-container>
+</p-card>
+
+<p-card class="mt-6 block">
+  <h2 class="mb-4 text-lg font-semibold">Pending Invitations</h2>
+  <ui-data-container
+    [loading]="invitationsStore.isLoading()"
+    [error]="invitationsStore.error()"
+    [isEmpty]="invitationsStore.isEmpty()"
+    skeletonVariant="table"
+    [skeletonRows]="3"
+    emptyTitle="No pending invitations"
+    emptyMessage="Admin invitations awaiting acceptance will appear here."
+    (retry)="invitationsStore.retry()"
+  >
+    <p-table
+      [value]="invitationsStore.data()"
+      [lazy]="true"
+      [paginator]="true"
+      (onLazyLoad)="invitationsStore.onLazyLoad($event)"
+      [rows]="invitationsStore.pageSize()"
+      [first]="invitationsStore.first()"
+      [totalRecords]="invitationsStore.totalRecords()"
+      [loading]="invitationsStore.isLoading()"
+      [rowsPerPageOptions]="[10, 25, 50]"
+    >
+      <ng-template #header>
+        <tr>
+          <th>Email</th>
+          <th>Invited By</th>
+          <th>Sent</th>
+          <th>Expires</th>
+          <th class="w-28"></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-invitation>
+        <tr>
+          <td>{{ invitation.email }}</td>
+          <td>{{ invitation.invitedByName || "—" }}</td>
+          <td>{{ invitation.lastSentAt ? (invitation.lastSentAt | date: "mediumDate") : "—" }}</td>
+          <td>
+            @if (invitation.isExpired) {
+              <p-tag value="Expired" severity="danger" />
+            } @else {
+              {{ invitation.expiresAt | date: "mediumDate" }}
+            }
+          </td>
+          <td>
+            <div class="flex gap-1">
+              <p-button
+                icon="pi pi-envelope"
+                [text]="true"
+                pTooltip="Resend"
+                (click)="resendInvitation(invitation)"
+                aria-label="Resend invitation"
+              />
+              <p-button
+                icon="pi pi-times"
+                [text]="true"
+                severity="danger"
+                pTooltip="Cancel"
+                (click)="cancelInvitation(invitation)"
+                aria-label="Cancel invitation"
+              />
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ui-data-container>
+</p-card>
+
+<p-dialog header="Add Admin" [(visible)]="showAddDialog" [modal]="true" [style]="{ width: '460px' }">
+  <div class="flex flex-col gap-4">
+    <p class="text-muted">
+      Enter an email address. If the user already exists they'll be granted the Admin role
+      immediately; otherwise we'll email them an invitation.
+    </p>
+    <div class="flex flex-col gap-2">
+      <label for="adminEmail" class="font-medium">Email</label>
+      <input
+        pInputText
+        id="adminEmail"
+        type="email"
+        [(ngModel)]="addEmail"
+        class="w-full"
+        placeholder="name@example.com"
+      />
+    </div>
+    <div class="flex flex-col gap-2">
+      <label for="adminMessage" class="font-medium">Message (optional)</label>
+      <input
+        pInputText
+        id="adminMessage"
+        [(ngModel)]="addMessage"
+        class="w-full"
+        placeholder="Add a personal note to the invitation"
+      />
+    </div>
+  </div>
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" (onClick)="showAddDialog.set(false)" />
+    <p-button
+      label="Add Admin"
+      icon="pi pi-plus"
+      [loading]="isAdding()"
+      (onClick)="submitAddAdmin()"
+    />
+  </ng-template>
+</p-dialog>

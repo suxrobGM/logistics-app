@@ -51,6 +51,7 @@ export const sidebarSections: AdminNavSection[] = [
     label: "Users & Content",
     items: [
       { label: "Users", icon: "user", route: "/users", permission: Permission.User.Manage },
+      { label: "Admins", icon: "shield", route: "/admins", permission: Permission.AppRole.Manage },
       {
         label: "Blog Posts",
         icon: "file-pen-line",

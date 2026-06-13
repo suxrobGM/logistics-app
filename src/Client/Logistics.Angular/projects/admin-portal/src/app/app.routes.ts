@@ -42,6 +42,11 @@ export const appRoutes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path: "admins",
+    loadChildren: () => import("./pages/admins/admin.routes").then((m) => m.adminRoutes),
+    canActivate: [authGuard],
+  },
+  {
     path: "blog-posts",
     loadChildren: () =>
       import("./pages/blog-posts/blog-posts.routes").then((m) => m.blogPostsRoutes),
