@@ -24,6 +24,7 @@ services:
       GoogleRecaptcha__SecretKey: "${GoogleRecaptcha__SecretKey}"
       GoogleRecaptcha__SiteKey: "${GoogleRecaptcha__SiteKey}"
       Impersonation__TmsPortalUrl: "${Impersonation__TmsPortalUrl}"
+      Api__BaseUrl: "${Api__BaseUrl}"
       Resend__ApiKey: "${Resend__ApiKey}"
       Resend__SenderEmail: "${Resend__SenderEmail}"
       Resend__SenderName: "${Resend__SenderName}"
