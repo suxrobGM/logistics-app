@@ -4,7 +4,8 @@ using Logistics.Domain.Primitives.Enums;
 namespace Logistics.Domain.Entities;
 
 /// <summary>
-/// Represents an invitation to join a tenant as an employee or customer user.
+/// Represents an invitation to join a tenant as an employee or customer user,
+/// or to join the platform as an app-level user (e.g. an Admin).
 /// Stored in the master database for cross-tenant access.
 /// </summary>
 public class Invitation : AuditableEntity, IMasterEntity
@@ -20,20 +21,27 @@ public class Invitation : AuditableEntity, IMasterEntity
     public required string Token { get; set; }
 
     /// <summary>
-    /// The tenant this invitation is for.
+    /// The tenant this invitation is for. Null for app-level (<see cref="InvitationType.AppUser"/>) invitations.
     /// </summary>
-    public required Guid TenantId { get; set; }
+    public Guid? TenantId { get; set; }
     public virtual Tenant? Tenant { get; set; }
 
     /// <summary>
-    /// The type of user being invited (Employee or CustomerUser).
+    /// The type of user being invited (Employee, CustomerUser, or AppUser).
     /// </summary>
     public required InvitationType Type { get; set; }
 
     /// <summary>
     /// The tenant role to assign upon acceptance (e.g., "tenant.dispatcher", "tenant.owner").
+    /// Null for app-level invitations, which use <see cref="AppRole"/> instead.
     /// </summary>
-    public required string TenantRole { get; set; }
+    public string? TenantRole { get; set; }
+
+    /// <summary>
+    /// The app-level role to assign upon acceptance (e.g., "app.admin").
+    /// Set only for <see cref="InvitationType.AppUser"/> invitations.
+    /// </summary>
+    public string? AppRole { get; set; }
 
     /// <summary>
     /// For CustomerUser invitations, the customer ID to associate with.

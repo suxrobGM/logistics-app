@@ -1,8 +1,10 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Common.Constants;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
 using Logistics.Mappings;
+using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 using Logistics.Application.Abstractions.Notifications;
@@ -38,6 +40,13 @@ internal sealed class AcceptInvitationHandler(
             masterUow.Repository<Invitation>().Update(invitation);
             await masterUow.SaveChangesAsync(ct);
             return Result<AcceptInvitationResult>.Fail("This invitation has expired.");
+        }
+
+        // App-level invitations (e.g. Admin) are not tenant-scoped: create the user
+        // without a tenant, assign the app role, and finish before any tenant DB switch.
+        if (invitation.Type == InvitationType.AppUser)
+        {
+            return await AcceptAppUserInvitationAsync(req, invitation, ct);
         }
 
         var tenant = invitation.Tenant;
@@ -82,7 +91,7 @@ internal sealed class AcceptInvitationHandler(
         }
 
         // Switch to tenant database
-        await tenantUow.SetCurrentTenantByIdAsync(invitation.TenantId);
+        await tenantUow.SetCurrentTenantByIdAsync(tenant.Id);
 
         // Create Employee or CustomerUser based on invitation type
         if (invitation.Type == InvitationType.Employee)
@@ -122,6 +131,57 @@ internal sealed class AcceptInvitationHandler(
             UserId = user.Id,
             Email = user.Email!,
             TenantName = tenant.CompanyName ?? tenant.Name,
+            RoleDisplayName = roleDisplayName
+        });
+    }
+
+    private async Task<Result<AcceptInvitationResult>> AcceptAppUserInvitationAsync(
+        AcceptInvitationCommand req, Invitation invitation, CancellationToken ct)
+    {
+        var appRole = invitation.AppRole ?? AppRoles.Admin;
+
+        var user = await userManager.FindByEmailAsync(invitation.Email);
+        if (user is null)
+        {
+            user = new User
+            {
+                UserName = invitation.Email,
+                Email = invitation.Email,
+                EmailConfirmed = true, // Pre-confirmed via invitation
+                FirstName = req.FirstName,
+                LastName = req.LastName
+            };
+
+            var createResult = await userManager.CreateAsync(user, req.Password);
+            if (!createResult.Succeeded)
+            {
+                var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
+                return Result<AcceptInvitationResult>.Fail($"Failed to create user: {errors}");
+            }
+        }
+
+        if (!await userManager.IsInRoleAsync(user, appRole))
+        {
+            await userManager.AddToRoleAsync(user, appRole);
+        }
+
+        invitation.Status = InvitationStatus.Accepted;
+        invitation.AcceptedAt = DateTime.UtcNow;
+        invitation.AcceptedByUserId = user.Id;
+
+        masterUow.Repository<Invitation>().Update(invitation);
+        await masterUow.SaveChangesAsync(ct);
+
+        var roleDisplayName = InvitationMapper.GetAppRoleDisplayName(appRole);
+        await notificationService.SendNotificationAsync(
+            "New Administrator",
+            $"{user.GetFullName()} has joined as {roleDisplayName}");
+
+        return Result<AcceptInvitationResult>.Ok(new AcceptInvitationResult
+        {
+            UserId = user.Id,
+            Email = user.Email!,
+            TenantName = PlatformConstants.PlatformName,
             RoleDisplayName = roleDisplayName
         });
     }
@@ -185,7 +245,7 @@ internal sealed class AcceptInvitationHandler(
         var tenantAccess = new UserTenantAccess
         {
             UserId = user.Id,
-            TenantId = invitation.TenantId,
+            TenantId = invitation.TenantId!.Value,
             CustomerUserId = customerUser.Id,
             CustomerName = customer.Name,
             IsActive = true

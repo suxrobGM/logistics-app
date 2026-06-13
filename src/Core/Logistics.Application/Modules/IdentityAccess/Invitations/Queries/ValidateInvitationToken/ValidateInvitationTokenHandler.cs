@@ -1,4 +1,5 @@
 using Logistics.Application.Abstractions;
+using Logistics.Application.Modules.Common.Constants;
 using Logistics.Domain.Entities;
 using Logistics.Domain.Persistence;
 using Logistics.Domain.Primitives.Enums;
@@ -57,13 +58,18 @@ internal sealed class ValidateInvitationTokenHandler(
 
         // Check if user already exists
         var existingUser = await userManager.FindByEmailAsync(invitation.Email);
+        var isAppUser = invitation.Type == InvitationType.AppUser;
 
         return Result<InvitationValidationResult>.Ok(new InvitationValidationResult
         {
             IsValid = true,
             Email = invitation.Email,
-            TenantName = invitation.Tenant?.CompanyName ?? invitation.Tenant?.Name ?? string.Empty,
-            RoleDisplayName = InvitationMapper.GetRoleDisplayName(invitation.TenantRole),
+            TenantName = isAppUser
+                ? PlatformConstants.PlatformName
+                : invitation.Tenant?.CompanyName ?? invitation.Tenant?.Name ?? string.Empty,
+            RoleDisplayName = isAppUser
+                ? InvitationMapper.GetAppRoleDisplayName(invitation.AppRole)
+                : InvitationMapper.GetRoleDisplayName(invitation.TenantRole),
             UserExists = existingUser is not null
         });
     }

@@ -21,7 +21,9 @@ internal sealed class InvitationEntityConfiguration : IEntityTypeConfiguration<I
             .HasMaxLength(128);
 
         builder.Property(i => i.TenantRole)
-            .IsRequired()
+            .HasMaxLength(64);
+
+        builder.Property(i => i.AppRole)
             .HasMaxLength(64);
 
         builder.Property(i => i.PersonalMessage)
@@ -34,7 +36,7 @@ internal sealed class InvitationEntityConfiguration : IEntityTypeConfiguration<I
         builder.HasOne(i => i.Tenant)
             .WithMany()
             .HasForeignKey(i => i.TenantId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasOne(i => i.InvitedByUser)
             .WithMany()

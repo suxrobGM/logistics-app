@@ -1,4 +1,5 @@
 using Logistics.Domain.Entities;
+using Logistics.Domain.Primitives.Enums;
 using Logistics.Shared.Identity.Roles;
 using Logistics.Shared.Models;
 using Riok.Mapperly.Abstractions;
@@ -22,7 +23,10 @@ public static partial class InvitationMapper
             TenantName = entity.Tenant?.CompanyName ?? entity.Tenant?.Name ?? string.Empty,
             Type = entity.Type,
             TenantRole = entity.TenantRole,
-            TenantRoleDisplayName = GetRoleDisplayName(entity.TenantRole),
+            TenantRoleDisplayName = entity.Type == InvitationType.AppUser
+                ? GetAppRoleDisplayName(entity.AppRole)
+                : GetRoleDisplayName(entity.TenantRole),
+            AppRole = entity.AppRole,
             CustomerId = entity.CustomerId,
             CustomerName = null, // Set by handler with tenant DB lookup
             ExpiresAt = entity.ExpiresAt,
@@ -52,13 +56,19 @@ public static partial class InvitationMapper
     /// <summary>
     /// Gets the display name for a tenant role.
     /// </summary>
-    public static string GetRoleDisplayName(string role) => role switch
+    public static string GetRoleDisplayName(string? role) => role switch
     {
         TenantRoles.Owner => "Owner",
         TenantRoles.Manager => "Manager",
         TenantRoles.Dispatcher => "Dispatcher",
         TenantRoles.Driver => "Driver",
         TenantRoles.Customer => "Customer",
-        _ => role
+        _ => role ?? string.Empty
     };
+
+    /// <summary>
+    /// Gets the display name for an app-level role, sourced from <see cref="AppRoles.GetValues"/>.
+    /// </summary>
+    public static string GetAppRoleDisplayName(string? role) =>
+        AppRoles.GetValues().FirstOrDefault(v => v.Value == role)?.DisplayName ?? role ?? string.Empty;
 }
