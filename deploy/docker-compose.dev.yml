@@ -9,6 +9,8 @@
 #
 # Postgres: localhost:5433
 
+name: logistics-dev
+
 services:
   postgres:
     image: postgres:latest

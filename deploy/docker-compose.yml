@@ -5,6 +5,8 @@
 # All app ports are bound to 127.0.0.1 — the host nginx (deploy/nginx/logisticsx.conf)
 # is the only public entry point and terminates TLS.
 
+name: logistics
+
 services:
   identity-server:
     image: "ghcr.io/${GITHUB_REPOSITORY:-suxrobgm/logistics-app}/identity:${IMAGE_TAG:-latest}"
