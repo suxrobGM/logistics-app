@@ -29,7 +29,10 @@ services:
       timeout: 5s
       retries: 10
 
-  # One-shot: migrates the master DB, creates/migrates tenant DBs, and seeds dev data.
+  # One-shot DB migrate + seed. Metadata comes from the DbMigrator's appsettings.json; here we
+  # only force Development (so the image-baked appsettings.Production.json can't load) and point
+  # the DB hosts at `postgres`. Tenant hosts must use Tenants__N__ConnectionString (seeder reads
+  # it before the ConnectionStrings:{Name}TenantDatabase fallback).
   migrator:
     build:
       context: ..
@@ -39,24 +42,12 @@ services:
       postgres:
         condition: service_healthy
     environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
       ConnectionStrings__MasterDatabase: "Host=postgres;Port=5432;Database=master_logisticsx;Username=postgres;Password=Test12345#"
-      ConnectionStrings__UsTenantDatabase: "Host=postgres;Port=5432;Database=us_logisticsx;Username=postgres;Password=Test12345#"
-      ConnectionStrings__EuTenantDatabase: "Host=postgres;Port=5432;Database=eu_logisticsx;Username=postgres;Password=Test12345#"
+      Tenants__0__ConnectionString: "Host=postgres;Port=5432;Database=us_logisticsx;Username=postgres;Password=Test12345#"
+      Tenants__1__ConnectionString: "Host=postgres;Port=5432;Database=eu_logisticsx;Username=postgres;Password=Test12345#"
       SuperAdmin__Email: "admin@test.com"
       SuperAdmin__Password: "Test12345#"
-      Tenants__0__Name: "us"
-      Tenants__0__CompanyName: "Heartland Logistics LLC"
-      Tenants__0__BillingEmail: "billing@heartlandlogistics.com"
-      Tenants__0__Region: "Us"
-      Tenants__1__Name: "eu"
-      Tenants__1__CompanyName: "EuroFreight GmbH"
-      Tenants__1__BillingEmail: "billing@eurofreight.de"
-      Tenants__1__Region: "Eu"
-      TenantDatabaseDefaults__NameTemplate: "{tenant}_logisticsx"
-      TenantDatabaseDefaults__Host: "postgres"
-      TenantDatabaseDefaults__Port: "5432"
-      TenantDatabaseDefaults__UserId: "postgres"
-      TenantDatabaseDefaults__Password: "Test12345#"
 
 volumes:
   logistics-pg-data:

@@ -10,20 +10,12 @@ name: logistics
 services:
   identity-server:
     image: "ghcr.io/${GITHUB_REPOSITORY:-suxrobgm/logistics-app}/identity:${IMAGE_TAG:-latest}"
+    # All config/secrets come from .env; entries below are literals not in .env
+    env_file:
+      - .env
     environment:
       ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
       HTTP_PORTS: "${IDENTITY_SERVER_PORT}"
-      ConnectionStrings__MasterDatabase: "${ConnectionStrings__MasterDatabase}"
-      ConnectionStrings__UsTenantDatabase: "${ConnectionStrings__UsTenantDatabase}"
-      Authentication__Google__ClientId: "${Authentication__Google__ClientId}"
-      Authentication__Google__ClientSecret: "${Authentication__Google__ClientSecret}"
-      GoogleRecaptcha__SecretKey: "${GoogleRecaptcha__SecretKey}"
-      GoogleRecaptcha__SiteKey: "${GoogleRecaptcha__SiteKey}"
-      Impersonation__TmsPortalUrl: "${Impersonation__TmsPortalUrl}"
-      Api__BaseUrl: "${Api__BaseUrl}"
-      Resend__ApiKey: "${Resend__ApiKey}"
-      Resend__SenderEmail: "${Resend__SenderEmail}"
-      Resend__SenderName: "${Resend__SenderName}"
     ports:
       - "127.0.0.1:${IDENTITY_SERVER_PORT}:${IDENTITY_SERVER_PORT}"
     networks:
@@ -32,43 +24,14 @@ services:
 
   api:
     image: "ghcr.io/${GITHUB_REPOSITORY:-suxrobgm/logistics-app}/api:${IMAGE_TAG:-latest}"
+    # All config/secrets come from .env; entries below are literals not in .env
+    env_file:
+      - .env
     environment:
       ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
       HTTP_PORTS: "${API_PORT}"
-      ConnectionStrings__MasterDatabase: "${ConnectionStrings__MasterDatabase}"
-      ConnectionStrings__UsTenantDatabase: "${ConnectionStrings__UsTenantDatabase}"
       IdentityServer__Authority: "http://identity-server:7001"
-      IdentityServer__ExternalAuthority: "${IdentityServer__ExternalAuthority}"
       IdentityServer__RequireHttpsMetadata: "false"
-      Impersonation__MasterPassword: "${Impersonation__MasterPassword}"
-      Resend__ApiKey: "${Resend__ApiKey}"
-      Resend__SenderEmail: "${Resend__SenderEmail}"
-      Resend__SenderName: "${Resend__SenderName}"
-      Stripe__SecretKey: "${Stripe__SecretKey}"
-      Stripe__WebhookSecret: "${Stripe__WebhookSecret}"
-      Mapbox__AccessToken: "${Mapbox__AccessToken}"
-      Llm__Providers__Anthropic__ApiKey: "${Llm__Providers__Anthropic__ApiKey}"
-      Llm__Providers__OpenAi__ApiKey: "${Llm__Providers__OpenAi__ApiKey}"
-      Llm__Providers__DeepSeek__ApiKey: "${Llm__Providers__DeepSeek__ApiKey}"
-      TelegramBot__BotToken: "${TelegramBot__BotToken}"
-      TelegramBot__WebhookUrl: "${TelegramBot__WebhookUrl}"
-      TelegramBot__SecretToken: "${TelegramBot__SecretToken}"
-      TelegramBot__IdentityServerUrl: "${TelegramBot__IdentityServerUrl}"
-      CustomerPortal__BaseUrl: "${CustomerPortal__BaseUrl}"
-      BlobStorage__Type: "${BlobStorage__Type}"
-      FileBlobStorage__BaseUrl: "${FileBlobStorage__BaseUrl}"
-      ConnectionStrings__AzureBlobStorage: "${ConnectionStrings__AzureBlobStorage}"
-      AzureBlobStorage__DefaultContainer: "${AzureBlobStorage__DefaultContainer}"
-      R2BlobStorage__AccountId: "${R2BlobStorage__AccountId}"
-      R2BlobStorage__AccessKeyId: "${R2BlobStorage__AccessKeyId}"
-      R2BlobStorage__SecretAccessKey: "${R2BlobStorage__SecretAccessKey}"
-      R2BlobStorage__BucketName: "${R2BlobStorage__BucketName}"
-      R2BlobStorage__PublicBaseUrl: "${R2BlobStorage__PublicBaseUrl}"
-      TenantDatabaseDefaults__NameTemplate: "${TenantDatabaseDefaults__NameTemplate}"
-      TenantDatabaseDefaults__Host: "${TenantDatabaseDefaults__Host}"
-      TenantDatabaseDefaults__Port: "${TenantDatabaseDefaults__Port}"
-      TenantDatabaseDefaults__UserId: "${TenantDatabaseDefaults__UserId}"
-      TenantDatabaseDefaults__Password: "${TenantDatabaseDefaults__Password}"
     ports:
       - "127.0.0.1:${API_PORT}:${API_PORT}"
     depends_on:
