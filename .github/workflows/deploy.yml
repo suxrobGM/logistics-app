@@ -131,9 +131,9 @@ jobs:
             # Create .env file from secret
             echo "$DOCKER_ENV" > .env
 
-            # Add required variables for docker-compose (lowercase repo name)
-            REPO_LOWER=$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')
-            echo "GITHUB_REPOSITORY=$REPO_LOWER" >> .env
+            # Lowercase for GHCR; export so it overrides .env (compose prefers shell env)
+            export GITHUB_REPOSITORY=$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')
+            echo "GITHUB_REPOSITORY=$GITHUB_REPOSITORY" >> .env
             echo "IMAGE_TAG=$IMAGE_TAG" >> .env
 
             # Login to GitHub Container Registry
