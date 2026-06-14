@@ -108,9 +108,9 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "src/Aspire/Logistics.Aspire.AppHost/aspire-output/docker-compose.yaml"
+          source: "deploy/docker-compose.yml"
           target: ${{ env.APP_DIR }}
-          strip_components: 4
+          strip_components: 1
 
       - name: Deploy with Docker Compose
         uses: appleboy/ssh-action@v1.2.4
@@ -139,8 +139,9 @@ jobs:
             # Login to GitHub Container Registry
             echo "$GHCR_PAT" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-            # Create proxy network if it doesn't exist
-            docker network create proxy 2>/dev/null || true
+            # Remove any stale compose file from the previous Aspire-generated deploy
+            # so the bare `docker compose` commands below resolve docker-compose.yml
+            rm -f docker-compose.yaml
 
             # Pull latest images BEFORE stopping anything (minimizes downtime)
             docker compose pull
@@ -173,7 +174,7 @@ jobs:
             curl -sf http://localhost:7000/health || echo "API not responding yet"
 
             echo "=== Container Status ==="
-            docker compose -f ${{ env.APP_DIR }}/docker-compose.yaml ps --format "table {{.Name}}\t{{.Status}}"
+            docker compose -f ${{ env.APP_DIR }}/docker-compose.yml ps --format "table {{.Name}}\t{{.Status}}"
 
             echo "=== Recent Logs ==="
-            docker compose -f ${{ env.APP_DIR }}/docker-compose.yaml logs --tail=10 2>/dev/null || true
+            docker compose -f ${{ env.APP_DIR }}/docker-compose.yml logs --tail=10 2>/dev/null || true

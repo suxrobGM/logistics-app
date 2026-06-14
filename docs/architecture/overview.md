@@ -1,6 +1,6 @@
 # Architecture Overview
 
-LogisticsX is a Domain-Driven Design (DDD) monolith with CQRS, organized into clear layers and a modular infrastructure split into focused projects. The runtime is .NET 10 on PostgreSQL 18, orchestrated by .NET Aspire.
+LogisticsX is a Domain-Driven Design (DDD) monolith with CQRS, organized into clear layers and a modular infrastructure split into focused projects. The runtime is .NET 10 on PostgreSQL 18, deployed with Docker Compose.
 
 > See [layering.md](layering.md) for the 4-layer rule and the Abstractions / Application split. See [module-layout.md](module-layout.md) for the Application `Modules/` layout.
 
@@ -117,7 +117,6 @@ The repository follows the layer split above. Each project name is `Logistics.{L
 
 | Folder               | Projects                                                                                                                                                                            |
 | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/Aspire`         | `Logistics.Aspire.AppHost`, `Logistics.Aspire.ServiceDefaults`                                                                                                                      |
 | `src/Client`         | `Logistics.Angular` (workspace: tms-portal, customer-portal, admin-portal, website, shared library), `Logistics.DriverApp` (Kotlin Multiplatform), `Logistics.DemoVideo` (Remotion) |
 | `src/Core`           | `Logistics.Application`, `Logistics.Application.Abstractions`, `Logistics.Domain`, `Logistics.Domain.Primitives`, `Logistics.Mappings`                                              |
 | `src/Shared`         | `Logistics.Shared.Geo`, `Logistics.Shared.Identity`, `Logistics.Shared.Models`                                                                                                      |
@@ -140,7 +139,6 @@ The repository follows the layer split above. Each project name is `Logistics.{L
 | SignalR               | Real-time hubs (tracking, chat, notification) |
 | Hangfire              | Background jobs                               |
 | QuestPDF              | Invoice & payroll PDF generation              |
-| .NET Aspire           | Local orchestration & observability           |
 
 ### Frontend & Mobile
 
@@ -159,7 +157,7 @@ The repository follows the layer split above. Each project name is `Logistics.{L
 | -------------- | ---------------- |
 | PostgreSQL 18  | Database         |
 | Docker         | Containerization |
-| .NET Aspire    | Orchestration    |
+| Docker Compose | Orchestration    |
 | Nginx          | Reverse proxy    |
 | GitHub Actions | CI/CD            |
 

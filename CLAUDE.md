@@ -9,13 +9,14 @@ Multi-tenant fleet management platform for trucking companies (intermodal contai
 ## Build & Run
 
 ```bash
-# Full stack (recommended) - requires Docker
-dotnet run --project src/Aspire/Logistics.Aspire.AppHost  # Dashboard: http://localhost:7100
+# Local dev infrastructure (Postgres; runs the migrator once) - requires Docker
+docker compose -f deploy/docker-compose.dev.yml up -d     # Postgres: 5433
 
 # Backend only
 dotnet build                                              # Build all
 dotnet test                                               # Run all tests
 dotnet test --filter "ClassName"                          # Filter by class
+dotnet run --project src/Presentation/Logistics.IdentityServer  # Identity: https://localhost:7001
 dotnet run --project src/Presentation/Logistics.API       # API: https://localhost:7000
 
 # Frontend (Angular workspace, bun)
@@ -28,15 +29,14 @@ cd src/Client/Logistics.DriverApp && ./gradlew assembleDebug
 
 ## Service Ports
 
-| Service          | Port |
-| ---------------- | ---- |
-| API              | 7000 |
-| Identity Server  | 7001 |
-| Admin Portal     | 7002 |
-| TMS Portal       | 7003 |
-| Customer Portal  | 7004 |
-| Website          | 7005 |
-| Aspire Dashboard | 7100 |
+| Service         | Port |
+| --------------- | ---- |
+| API             | 7000 |
+| Identity Server | 7001 |
+| Admin Portal    | 7002 |
+| TMS Portal      | 7003 |
+| Customer Portal | 7004 |
+| Website         | 7005 |
 
 ## Architecture (first-pass facts)
 

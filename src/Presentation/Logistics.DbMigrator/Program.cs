@@ -17,7 +17,6 @@ Log.Information("Starting up");
 
 var builder = Host.CreateApplicationBuilder(args);
 
-builder.AddServiceDefaults();
 builder.Configuration.AddJsonFile("SeedData/us.json", optional: true);
 builder.Configuration.AddJsonFile("SeedData/eu.json", optional: true);
 builder.Configuration["Tax:Provider"] ??= "manual";
@@ -37,6 +36,5 @@ builder.Services.AddSeeders();
 builder.Services.AddHostedService<MigrateDatabaseWorker>();
 builder.Services.AddHostedService<SeederOrchestrationWorker>();
 builder.Services.AddHostedService<CreateSqlFunctionsWorker>();
-builder.Services.AddHostedService<ShutdownWorker>();
 
 builder.Build().Run();

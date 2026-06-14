@@ -1,0 +1,60 @@
+# Local development infrastructure (replaces the old Aspire dev inner loop).
+#
+# Usage:
+#   docker compose -f deploy/docker-compose.dev.yml up -d   # Postgres, runs the migrator once
+# Then run the apps on the host:
+#   dotnet run --project src/Presentation/Logistics.IdentityServer
+#   dotnet run --project src/Presentation/Logistics.API
+#   bun start:tms   # (and start:admin / start:customer / start:website) from src/Client/Logistics.Angular
+#
+# Postgres: localhost:5433
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "Test12345#"
+      POSTGRES_DB: master_logisticsx
+    ports:
+      - "5433:5432"
+    volumes:
+      - logistics-pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # One-shot: migrates the master DB, creates/migrates tenant DBs, and seeds dev data.
+  migrator:
+    build:
+      context: ..
+      dockerfile: src/Presentation/Logistics.DbMigrator/Dockerfile
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__MasterDatabase: "Host=postgres;Port=5432;Database=master_logisticsx;Username=postgres;Password=Test12345#"
+      ConnectionStrings__UsTenantDatabase: "Host=postgres;Port=5432;Database=us_logisticsx;Username=postgres;Password=Test12345#"
+      ConnectionStrings__EuTenantDatabase: "Host=postgres;Port=5432;Database=eu_logisticsx;Username=postgres;Password=Test12345#"
+      SuperAdmin__Email: "admin@test.com"
+      SuperAdmin__Password: "Test12345#"
+      Tenants__0__Name: "us"
+      Tenants__0__CompanyName: "Heartland Logistics LLC"
+      Tenants__0__BillingEmail: "billing@heartlandlogistics.com"
+      Tenants__0__Region: "Us"
+      Tenants__1__Name: "eu"
+      Tenants__1__CompanyName: "EuroFreight GmbH"
+      Tenants__1__BillingEmail: "billing@eurofreight.de"
+      Tenants__1__Region: "Eu"
+      TenantDatabaseDefaults__NameTemplate: "{tenant}_logisticsx"
+      TenantDatabaseDefaults__Host: "postgres"
+      TenantDatabaseDefaults__Port: "5432"
+      TenantDatabaseDefaults__UserId: "postgres"
+      TenantDatabaseDefaults__Password: "Test12345#"
+
+volumes:
+  logistics-pg-data:

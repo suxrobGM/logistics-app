@@ -47,8 +47,4 @@
     <Project Path="src/Presentation/Logistics.McpServer/Logistics.McpServer.csproj" />
     <Project Path="src/Presentation/Logistics.TelegramBot/Logistics.TelegramBot.csproj" />
   </Folder>
-  <Folder Name="/Aspire/">
-    <Project Path="src/Aspire/Logistics.Aspire.AppHost/Logistics.Aspire.AppHost.csproj" />
-    <Project Path="src/Aspire/Logistics.Aspire.ServiceDefaults/Logistics.Aspire.ServiceDefaults.csproj" />
-  </Folder>
 </Solution>

@@ -14,6 +14,7 @@
     <PackageReference Include="Hangfire.PostgreSql" Version="1.20.13" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.8.22" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.1.0" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.15.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.0" />
@@ -21,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Logistics.Application\Logistics.Application.csproj" />
-    <ProjectReference Include="..\..\Aspire\Logistics.Aspire.ServiceDefaults\Logistics.Aspire.ServiceDefaults.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Communications\Logistics.Infrastructure.Communications.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Documents\Logistics.Infrastructure.Documents.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Logistics.Infrastructure.Integrations.Eld\Logistics.Infrastructure.Integrations.Eld.csproj" />

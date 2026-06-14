@@ -55,12 +55,11 @@ LogisticsX is a fleet management platform for trucking companies. The same syste
 
 ## Service Ports
 
-| Service          | Development              | Production              |
-| ---------------- | ------------------------ | ----------------------- |
-| API              | <https://localhost:7000> | api.yourdomain.com      |
-| Identity Server  | <https://localhost:7001> | id.yourdomain.com       |
-| Admin App        | <https://localhost:7002> | admin.yourdomain.com    |
-| TMS Portal       | <https://localhost:7003> | tms.yourdomain.com      |
-| Customer Portal  | <https://localhost:7004> | customer.yourdomain.com |
-| Website          | <http://localhost:7005>  | yourdomain.com          |
-| Aspire Dashboard | <http://localhost:7100>  | (dev only)              |
+| Service         | Development              | Production              |
+| --------------- | ------------------------ | ----------------------- |
+| API             | <https://localhost:7000> | api.yourdomain.com      |
+| Identity Server | <https://localhost:7001> | id.yourdomain.com       |
+| Admin App       | <https://localhost:7002> | admin.yourdomain.com    |
+| TMS Portal      | <https://localhost:7003> | tms.yourdomain.com      |
+| Customer Portal | <https://localhost:7004> | customer.yourdomain.com |
+| Website         | <http://localhost:7005>  | yourdomain.com          |

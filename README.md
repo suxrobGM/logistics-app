@@ -83,10 +83,16 @@ Every decision is logged with the reasoning that produced it, so dispatchers can
 ## Quick start
 
 ```bash
-dotnet run --project src/Aspire/Logistics.Aspire.AppHost
+# Start local infrastructure (Postgres, runs the DB migrator once)
+docker compose -f deploy/docker-compose.dev.yml up -d
+
+# Then run the backend + a frontend
+dotnet run --project src/Presentation/Logistics.IdentityServer
+dotnet run --project src/Presentation/Logistics.API
+bun start:tms
 ```
 
-Dashboard: http://localhost:7100. For manual setup, see the [Local Development Guide](docs/getting-started/local-development.md).
+For full setup details, see the [Local Development Guide](docs/getting-started/local-development.md).
 
 ## Tech stack
 
@@ -97,7 +103,7 @@ Dashboard: http://localhost:7100. For manual setup, see the [Local Development G
 | **Mobile**         | Kotlin Multiplatform, Compose Multiplatform                                 |
 | **Database**       | PostgreSQL 18                                                               |
 | **Payments**       | Stripe, Stripe Connect                                                      |
-| **Infrastructure** | Docker, .NET Aspire, Nginx, GitHub Actions                                  |
+| **Infrastructure** | Docker, Docker Compose, Nginx, GitHub Actions                               |
 | **Integrations**   | Mapbox, Firebase, Samsara, Motive, DAT, Truckstop, 123Loadboard, Claude API |
 
 Architecture: DDD + CQRS with MediatR, multi-tenant with one database per company. See [architecture overview](docs/architecture/overview.md).

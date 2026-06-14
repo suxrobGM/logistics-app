@@ -201,5 +201,5 @@ bun install --force
 
 ## Next Steps
 
-- [Docker Development](docker-development.md) - Simpler setup with Aspire
+- [Docker Development](docker-development.md) - Simpler setup with Docker
 - [Test Credentials](test-credentials.md) - Full credentials reference

@@ -195,7 +195,7 @@ For very large fleet counts, run multiple Postgres instances and shard tenants a
 2. Iterates over `Tenants` in the master DB and applies tenant migrations against each tenant DB.
 3. Optionally runs seeders (idempotent, ordered by `SeederBase.Order`).
 
-This is invoked manually for production rollouts and automatically by `Logistics.Aspire.AppHost` for local development.
+This is invoked manually for production rollouts and automatically by the `migrator` service in `deploy/docker-compose.dev.yml` for local development.
 
 ## Trade-offs and limits
 

@@ -10,7 +10,8 @@ Log.Information("Starting up");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-    builder.AddServiceDefaults();
+    builder.Services.AddHealthChecks();
+    builder.Services.ConfigureHttpClientDefaults(http => http.AddStandardResilienceHandler());
 
     builder.Host.UseSerilog((ctx, lc) => lc
         .WriteTo.Console()
@@ -21,7 +22,7 @@ try
         .ConfigureServices()
         .ConfigurePipeline()
         .ScheduleJobs();
-    app.MapDefaultEndpoints();
+    app.MapHealthChecks("/health");
 
     app.Run();
 }

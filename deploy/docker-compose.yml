@@ -1,20 +1,14 @@
+# LogisticsX production stack (plain Docker Compose).
+#
+# Images are pulled from GHCR. GITHUB_REPOSITORY and IMAGE_TAG are appended to .env
+# by the deploy workflow; the defaults below keep manual `docker compose` runs working.
+# All app ports are bound to 127.0.0.1 — the host nginx (deploy/nginx/logisticsx.conf)
+# is the only public entry point and terminates TLS.
+
 services:
-  compose-dashboard:
-    image: "mcr.microsoft.com/dotnet/nightly/aspire-dashboard:latest"
-    ports:
-      - "7100:18888"
-    expose:
-      - "18889"
-      - "18890"
-    networks:
-      - "aspire"
-    restart: "always"
   identity-server:
-    image: "${IDENTITY_SERVER_IMAGE}"
+    image: "ghcr.io/${GITHUB_REPOSITORY:-suxrobgm/logistics-app}/identity:${IMAGE_TAG:-latest}"
     environment:
-      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
-      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
-      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
       ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
       HTTP_PORTS: "${IDENTITY_SERVER_PORT}"
       ConnectionStrings__MasterDatabase: "${ConnectionStrings__MasterDatabase}"
@@ -28,20 +22,15 @@ services:
       Resend__ApiKey: "${Resend__ApiKey}"
       Resend__SenderEmail: "${Resend__SenderEmail}"
       Resend__SenderName: "${Resend__SenderName}"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://compose-dashboard:18889"
-      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
-      OTEL_SERVICE_NAME: "identity-server"
     ports:
-      - "${IDENTITY_SERVER_PORT}:${IDENTITY_SERVER_PORT}"
+      - "127.0.0.1:${IDENTITY_SERVER_PORT}:${IDENTITY_SERVER_PORT}"
     networks:
-      - "aspire"
-    restart: "unless-stopped"
+      - logistics
+    restart: unless-stopped
+
   api:
-    image: "${API_IMAGE}"
+    image: "ghcr.io/${GITHUB_REPOSITORY:-suxrobgm/logistics-app}/api:${IMAGE_TAG:-latest}"
     environment:
-      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
-      OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
-      OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
       ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
       HTTP_PORTS: "${API_PORT}"
       ConnectionStrings__MasterDatabase: "${ConnectionStrings__MasterDatabase}"
@@ -62,6 +51,7 @@ services:
       TelegramBot__BotToken: "${TelegramBot__BotToken}"
       TelegramBot__WebhookUrl: "${TelegramBot__WebhookUrl}"
       TelegramBot__SecretToken: "${TelegramBot__SecretToken}"
+      TelegramBot__IdentityServerUrl: "${TelegramBot__IdentityServerUrl}"
       CustomerPortal__BaseUrl: "${CustomerPortal__BaseUrl}"
       BlobStorage__Type: "${BlobStorage__Type}"
       FileBlobStorage__BaseUrl: "${FileBlobStorage__BaseUrl}"
@@ -77,105 +67,67 @@ services:
       TenantDatabaseDefaults__Port: "${TenantDatabaseDefaults__Port}"
       TenantDatabaseDefaults__UserId: "${TenantDatabaseDefaults__UserId}"
       TenantDatabaseDefaults__Password: "${TenantDatabaseDefaults__Password}"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "http://compose-dashboard:18889"
-      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
-      OTEL_SERVICE_NAME: "api"
     ports:
-      - "${API_PORT}:${API_PORT}"
+      - "127.0.0.1:${API_PORT}:${API_PORT}"
     depends_on:
       identity-server:
-        condition: "service_started"
+        condition: service_started
     networks:
-      - "aspire"
-    restart: "unless-stopped"
+      - logistics
+    restart: unless-stopped
+
   admin-portal:
-    image: "ghcr.io/suxrobgm/logistics-app/admin-portal:latest"
+    image: "ghcr.io/${GITHUB_REPOSITORY:-suxrobgm/logistics-app}/admin-portal:${IMAGE_TAG:-latest}"
     ports:
-      - "7002:80"
+      - "127.0.0.1:7002:80"
     depends_on:
       api:
-        condition: "service_started"
+        condition: service_started
       identity-server:
-        condition: "service_started"
+        condition: service_started
     networks:
-      - "aspire"
-    restart: "unless-stopped"
+      - logistics
+    restart: unless-stopped
+
   tms-portal:
-    image: "ghcr.io/suxrobgm/logistics-app/tms-portal:latest"
+    image: "ghcr.io/${GITHUB_REPOSITORY:-suxrobgm/logistics-app}/tms-portal:${IMAGE_TAG:-latest}"
     environment:
       MAPBOX_TOKEN: "${Mapbox__AccessToken}"
     ports:
-      - "7003:80"
+      - "127.0.0.1:7003:80"
     depends_on:
       api:
-        condition: "service_started"
+        condition: service_started
       identity-server:
-        condition: "service_started"
+        condition: service_started
     networks:
-      - "aspire"
-    restart: "unless-stopped"
+      - logistics
+    restart: unless-stopped
+
   customer-portal:
-    image: "ghcr.io/suxrobgm/logistics-app/customer-portal:latest"
+    image: "ghcr.io/${GITHUB_REPOSITORY:-suxrobgm/logistics-app}/customer-portal:${IMAGE_TAG:-latest}"
     ports:
-      - "7004:80"
+      - "127.0.0.1:7004:80"
     depends_on:
       api:
-        condition: "service_started"
+        condition: service_started
       identity-server:
-        condition: "service_started"
+        condition: service_started
     networks:
-      - "aspire"
-    restart: "unless-stopped"
+      - logistics
+    restart: unless-stopped
+
   website:
-    image: "ghcr.io/suxrobgm/logistics-app/website:latest"
+    image: "ghcr.io/${GITHUB_REPOSITORY:-suxrobgm/logistics-app}/website:${IMAGE_TAG:-latest}"
     ports:
-      - "7005:7005"
+      - "127.0.0.1:7005:7005"
     depends_on:
       api:
-        condition: "service_started"
+        condition: service_started
     networks:
-      - "aspire"
-    restart: "unless-stopped"
-  portainer-agent:
-    image: "portainer/agent:latest"
-    expose:
-      - "9001"
-    volumes:
-      - type: "volume"
-        target: "/var/lib/docker/volumes"
-        source: "portainer-agent-data"
-        read_only: false
-      - type: "bind"
-        target: "/var/run/docker.sock"
-        source: "/var/run/docker.sock"
-        read_only: true
-    networks:
-      - "aspire"
-    restart: "unless-stopped"
-  portainer:
-    image: "portainer/portainer-ce:latest"
-    ports:
-      - "9000:9000"
-    volumes:
-      - type: "volume"
-        target: "/data"
-        source: "portainer-data"
-        read_only: false
-      - type: "bind"
-        target: "/var/run/docker.sock"
-        source: "/var/run/docker.sock"
-        read_only: true
-    depends_on:
-      portainer-agent:
-        condition: "service_started"
-    networks:
-      - "aspire"
-    restart: "unless-stopped"
+      - logistics
+    restart: unless-stopped
+
 networks:
-  aspire:
-    driver: "bridge"
-volumes:
-  portainer-agent-data:
-    driver: "local"
-  portainer-data:
-    driver: "local"
+  logistics:
+    driver: bridge

@@ -65,7 +65,7 @@ psql --version
 
 ### Docker (Optional)
 
-Required only if using Aspire for local development.
+Required only for the Docker-based local development setup.
 
 Download [Docker Desktop](https://docs.docker.com/get-docker/) for Windows/macOS, or install Docker Engine on Linux.
 
@@ -80,11 +80,11 @@ docker compose version
 
 ### IDE Recommendations
 
-| IDE | Best For |
-|-----|----------|
-| **VS Code** | Lightweight, Angular development |
-| **JetBrains Rider** | Cross-platform .NET development |
-| **Android Studio** | Driver mobile app (Kotlin) |
+| IDE                 | Best For                         |
+| ------------------- | -------------------------------- |
+| **VS Code**         | Lightweight, Angular development |
+| **JetBrains Rider** | Cross-platform .NET development  |
+| **Android Studio**  | Driver mobile app (Kotlin)       |
 
 ### VS Code Extensions
 
@@ -105,27 +105,26 @@ For the best experience with VS Code:
 
 ## System Requirements
 
-| Component | Minimum | Recommended |
-|-----------|---------|-------------|
-| CPU | 4 cores | 8 cores |
-| RAM | 8 GB | 16 GB |
-| Storage | 20 GB free | 50 GB SSD |
-| OS | Windows 10, macOS 12, Ubuntu 22.04 | Latest versions |
+| Component | Minimum                            | Recommended     |
+| --------- | ---------------------------------- | --------------- |
+| CPU       | 4 cores                            | 8 cores         |
+| RAM       | 8 GB                               | 16 GB           |
+| Storage   | 20 GB free                         | 50 GB SSD       |
+| OS        | Windows 10, macOS 12, Ubuntu 22.04 | Latest versions |
 
 ## Port Requirements
 
 Ensure these ports are available:
 
-| Port | Service |
-|------|---------|
-| 5432 | PostgreSQL |
-| 7000 | API |
+| Port | Service         |
+| ---- | --------------- |
+| 5432 | PostgreSQL      |
+| 7000 | API             |
 | 7001 | Identity Server |
-| 7002 | Admin Portal |
-| 7003 | TMS Portal |
+| 7002 | Admin Portal    |
+| 7003 | TMS Portal      |
 | 7004 | Customer Portal |
-| 7005 | Website |
-| 7100 | Aspire Dashboard |
+| 7005 | Website         |
 
 Check port availability:
 
@@ -144,4 +143,4 @@ lsof -i :7000,:7001,:7002,:7003
 ## Next Steps
 
 - [Local Development](local-development.md) - Manual setup without Docker
-- [Docker Development](docker-development.md) - Run with Aspire and Docker
+- [Docker Development](docker-development.md) - Run with Docker

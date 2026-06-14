@@ -6,7 +6,6 @@ COPY *.slnx ./
 COPY src/Core/ src/Core/
 COPY src/Shared/ src/Shared/
 COPY src/Infrastructure/ src/Infrastructure/
-COPY src/Aspire/ src/Aspire/
 COPY src/Presentation/Logistics.DbMigrator/ src/Presentation/Logistics.DbMigrator/
 
 # Restore dependencies

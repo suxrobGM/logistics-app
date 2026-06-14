@@ -10,13 +10,13 @@ A live demo is available at [https://tms.logisticsx.app](https://tms.logisticsx.
 
 ## Account Credentials
 
-| Role | Email | Password | Application |
-|------|-------|----------|-------------|
-| **Super Admin** | admin@test.com | Test12345# | Admin App |
-| **Owner** | owner@test.com | Test12345# | Office App |
-| **Manager** | manager1@test.com | Test12345# | Office App |
-| **Dispatcher** | dispatcher1@test.com | Test12345# | Office App |
-| **Driver** | driver1@test.com | Test12345# | Driver Mobile App |
+| Role            | Email                | Password   | Application       |
+| --------------- | -------------------- | ---------- | ----------------- |
+| **Super Admin** | admin@test.com       | Test12345# | Admin App         |
+| **Owner**       | owner@test.com       | Test12345# | Office App        |
+| **Manager**     | manager1@test.com    | Test12345# | Office App        |
+| **Dispatcher**  | dispatcher1@test.com | Test12345# | Office App        |
+| **Driver**      | driver1@test.com     | Test12345# | Driver Mobile App |
 
 ## Role Permissions
 
@@ -61,18 +61,18 @@ A live demo is available at [https://tms.logisticsx.app](https://tms.logisticsx.
 
 ## Application Access Matrix
 
-| Feature | Super Admin | Owner | Manager | Dispatcher | Driver |
-|---------|:-----------:|:-----:|:-------:|:----------:|:------:|
-| Tenant Management | X | | | | |
-| User Management | X | X | | | |
-| Load Management | | X | X | X | View |
-| Customer Management | | X | X | | |
-| Invoice Management | | X | X | View | |
-| Driver Management | | X | X | | |
-| GPS Tracking | | X | X | X | Send |
-| Analytics Dashboard | X | X | X | | |
-| Payroll | | X | View | | |
-| Documents | | X | X | X | Upload |
+| Feature             | Super Admin | Owner | Manager | Dispatcher | Driver |
+| ------------------- | :---------: | :---: | :-----: | :--------: | :----: |
+| Tenant Management   |      X      |       |         |            |        |
+| User Management     |      X      |   X   |         |            |        |
+| Load Management     |             |   X   |    X    |     X      |  View  |
+| Customer Management |             |   X   |    X    |            |        |
+| Invoice Management  |             |   X   |    X    |    View    |        |
+| Driver Management   |             |   X   |    X    |            |        |
+| GPS Tracking        |             |   X   |    X    |     X      |  Send  |
+| Analytics Dashboard |      X      |   X   |    X    |            |        |
+| Payroll             |             |   X   |  View   |            |        |
+| Documents           |             |   X   |    X    |     X      | Upload |
 
 ## Test Tenant
 
@@ -117,6 +117,6 @@ dotnet run --project src/Presentation/Logistics.DbMigrator
 Or with Docker:
 
 ```bash
-docker compose down -v
-dotnet run --project src/Aspire/Logistics.Aspire.AppHost
+docker compose -f deploy/docker-compose.dev.yml down -v
+docker compose -f deploy/docker-compose.dev.yml up -d
 ```

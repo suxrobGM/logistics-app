@@ -159,7 +159,7 @@ Super admin management interface for platform operators.
 | Feature                       | Description                                                                                             |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------- |
 | **Multi-Tenant Architecture** | One PostgreSQL database per company. A master database holds tenants, subscriptions, and shared config. |
-| **Cloud-Native**              | .NET Aspire orchestration, Docker containers, GitHub Actions CI/CD.                                     |
+| **Cloud-Native**              | Docker Compose, Docker containers, GitHub Actions CI/CD.                                                |
 | **Live Updates**              | SignalR WebSocket connections for GPS tracking, messaging, and notifications.                           |
 | **API-First**                 | REST API with OpenAPI docs. TypeScript clients for the Angular apps are generated from the spec.        |
 | **OAuth2/OIDC**               | Authentication runs through Duende IdentityServer. JWT access tokens with refresh token rotation.       |

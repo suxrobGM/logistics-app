@@ -4,27 +4,26 @@ Configuration reference for LogisticsX Docker deployment.
 
 ## Docker Compose Environment (.env)
 
-The `.env` file in `src/Aspire/Logistics.Aspire.AppHost/aspire-output/` configures all services.
+The `.env` file alongside `deploy/docker-compose.yml` (copied from `deploy/.env.example`)
+configures all services. In CI it is created from the `DOCKER_ENV` GitHub secret.
 
-### Container Images and Ports
+### Images and Ports
+
+Images are selected by `GITHUB_REPOSITORY` and `IMAGE_TAG`, which the deploy workflow
+appends to `.env` automatically. The compose file defaults to `suxrobgm/logistics-app`
+and `latest` if they are unset.
 
 ```bash
-API_IMAGE="ghcr.io/suxrobgm/logistics-app/api:latest"
-ADMIN_APP_IMAGE="ghcr.io/suxrobgm/logistics-app/admin:latest"
-IDENTITY_SERVER_IMAGE="ghcr.io/suxrobgm/logistics-app/identity:latest"
-MIGRATOR_IMAGE="ghcr.io/suxrobgm/logistics-app/migrator:latest"
-
 API_PORT=7000
 IDENTITY_SERVER_PORT=7001
-ADMIN_APP_PORT=7002
 ```
 
-| Variable               | Description                                  |
-| ---------------------- | -------------------------------------------- |
-| `*_IMAGE`              | Docker image references for each service     |
-| `API_PORT`             | Port for the API service (default: 7000)     |
-| `IDENTITY_SERVER_PORT` | Port for the Identity Server (default: 7001) |
-| `ADMIN_APP_PORT`       | Port for the Admin App (default: 7002)       |
+| Variable               | Description                                                       |
+| ---------------------- | ----------------------------------------------------------------- |
+| `GITHUB_REPOSITORY`    | GHCR image owner/repo (set by CI; default suxrobgm/logistics-app) |
+| `IMAGE_TAG`            | Image tag to pull (set by CI; default latest)                     |
+| `API_PORT`             | Port for the API service (default: 7000)                          |
+| `IDENTITY_SERVER_PORT` | Port for the Identity Server (default: 7001)                      |
 
 ### Database (External PostgreSQL)
 
@@ -47,14 +46,12 @@ ConnectionStrings__EuTenantDatabase="Host=localhost;Port=5432;Database=eu_logist
 ```bash
 Stripe__SecretKey="sk_live_xxx"
 Stripe__WebhookSecret="whsec_xxx"
-STRIPE_API_KEY="sk_live_xxx"
 ```
 
-| Variable                | Description                               |
-| ----------------------- | ----------------------------------------- |
-| `Stripe__SecretKey`     | Stripe API secret key                     |
-| `Stripe__WebhookSecret` | Webhook signature verification secret     |
-| `STRIPE_API_KEY`        | Used by Stripe CLI for webhook forwarding |
+| Variable                | Description                           |
+| ----------------------- | ------------------------------------- |
+| `Stripe__SecretKey`     | Stripe API secret key                 |
+| `Stripe__WebhookSecret` | Webhook signature verification secret |
 
 ### Google reCAPTCHA (Optional)
 
@@ -101,7 +98,7 @@ Llm__Providers__Anthropic__ApiKey="sk-ant-xxx"
 The TMS portal Docker image uses runtime environment variable substitution for secrets. These are injected at container startup via the entrypoint script.
 
 ```bash
-# Mapped from Mapbox__AccessToken in docker-compose.yaml
+# Mapped from Mapbox__AccessToken in docker-compose.yml
 MAPBOX_TOKEN="pk.xxx"
 ```
 
@@ -109,7 +106,11 @@ MAPBOX_TOKEN="pk.xxx"
 | -------------- | ----------------------------------- |
 | `MAPBOX_TOKEN` | Mapbox public access token for maps |
 
-### Database Migrator
+### Database Migrator (run separately)
+
+These are read by `Logistics.DbMigrator`, not the API container. The migrator is not part
+of the production stack — run it manually (or via `deploy/docker-compose.dev.yml` locally)
+to apply migrations and seed the super-admin account. The local dev infra lives in `deploy/docker-compose.dev.yml`.
 
 ```bash
 SuperAdmin__Email="admin@example.com"
@@ -133,15 +134,9 @@ ASPNETCORE_ENVIRONMENT="Production"
 ## Complete .env Example
 
 ```bash
-# Container Images and Ports
-API_IMAGE="ghcr.io/suxrobgm/logistics-app/api:latest"
-ADMIN_APP_IMAGE="ghcr.io/suxrobgm/logistics-app/admin:latest"
-IDENTITY_SERVER_IMAGE="ghcr.io/suxrobgm/logistics-app/identity:latest"
-MIGRATOR_IMAGE="ghcr.io/suxrobgm/logistics-app/migrator:latest"
-
+# Ports (images are selected by GITHUB_REPOSITORY + IMAGE_TAG, appended by CI)
 API_PORT=7000
 IDENTITY_SERVER_PORT=7001
-ADMIN_APP_PORT=7002
 
 # Database (external PostgreSQL)
 ConnectionStrings__MasterDatabase="Host=localhost;Port=5432;Database=master_logisticsx;Username=postgres;Password=your-secure-password"

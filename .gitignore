@@ -382,6 +382,4 @@ PLAN.md
 # Playwright test artifacts
 .playwright-mcp/
 
-src/Aspire/.aspire/
-
 .DS_Store
