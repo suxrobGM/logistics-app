@@ -139,10 +139,6 @@ jobs:
             # Login to GitHub Container Registry
             echo "$GHCR_PAT" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-            # Remove any stale compose file from the previous Aspire-generated deploy
-            # so the bare `docker compose` commands below resolve docker-compose.yml
-            rm -f docker-compose.yaml
-
             # Pull latest images BEFORE stopping anything (minimizes downtime)
             docker compose pull
 
