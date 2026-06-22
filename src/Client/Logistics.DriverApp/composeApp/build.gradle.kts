@@ -10,12 +10,19 @@ plugins {
 }
 
 // OpenAPI Generator Configuration
+// Default: generate from the checked-in spec in the Angular project (no running API needed).
+// Override with -PopenApiSpecUrl=<url> to regenerate against a live API instance.
 openApiGenerate {
     generatorName.set("kotlin")
-    remoteInputSpec.set(
-        providers.gradleProperty("openApiSpecUrl")
-            .getOrElse("http://localhost:7000/swagger/v1/swagger.json")
-    )
+    val specUrl = providers.gradleProperty("openApiSpecUrl").orNull
+    if (specUrl != null) {
+        remoteInputSpec.set(specUrl)
+    } else {
+        inputSpec.set(
+            rootProject.layout.projectDirectory
+                .file("../Logistics.Angular/openapi.json").asFile.absolutePath
+        )
+    }
     outputDir.set(layout.buildDirectory.dir("generated/openapi").get().asFile.absolutePath)
     packageName.set("com.logisticsx.driver")
     apiPackage.set("com.logisticsx.driver.api")
