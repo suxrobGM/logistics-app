@@ -1,0 +1,19 @@
+<div class="flex items-center gap-2">
+  <p-toggleswitch
+    [inputId]="inputId()"
+    [ngModel]="value()"
+    (ngModelChange)="value.set($event)"
+    [ngModelOptions]="{ standalone: true }"
+    [disabled]="disabled()"
+    [readonly]="readonly()"
+    [required]="required()"
+    [invalid]="invalid()"
+    (focusout)="touch.emit()"
+  />
+
+  @if (label()) {
+    <label class="text-sm font-medium text-gray-700 dark:text-gray-300" [for]="inputId()">
+      {{ label() }}
+    </label>
+  }
+</div>

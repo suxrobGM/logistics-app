@@ -1,0 +1,18 @@
+<div class="flex items-center gap-2">
+  <p-checkbox
+    [binary]="true"
+    [inputId]="inputId()"
+    [ngModel]="value()"
+    (ngModelChange)="value.set($event)"
+    [ngModelOptions]="{ standalone: true }"
+    [disabled]="disabled()"
+    [readonly]="readonly()"
+    [required]="required()"
+    [attr.name]="name() || null"
+    [attr.aria-invalid]="invalid() ? 'true' : null"
+    (onBlur)="touch.emit()"
+  />
+  @if (label()) {
+    <label class="cursor-pointer text-sm" [for]="inputId()">{{ label() }}</label>
+  }
+</div>

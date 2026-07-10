@@ -1,0 +1,40 @@
+@if (prefixLabel() || suffixLabel()) {
+  <p-inputgroup>
+    @if (prefixLabel()) {
+      <p-inputgroup-addon>{{ prefixLabel() }}</p-inputgroup-addon>
+    }
+    <ng-container [ngTemplateOutlet]="numberInput" />
+    @if (suffixLabel()) {
+      <p-inputgroup-addon>{{ suffixLabel() }}</p-inputgroup-addon>
+    }
+  </p-inputgroup>
+} @else {
+  <ng-container [ngTemplateOutlet]="numberInput" />
+}
+
+<ng-template #numberInput>
+  <p-inputnumber
+    [attr.id]="id() || null"
+    [inputId]="inputId()"
+    [name]="name()"
+    [ngModel]="value()"
+    (ngModelChange)="value.set($event)"
+    [ngModelOptions]="{ standalone: true }"
+    [disabled]="disabled()"
+    [readonly]="readonly()"
+    [required]="required()"
+    [invalid]="invalid()"
+    [min]="min()"
+    [max]="max()"
+    [mode]="mode()"
+    [currency]="currency()"
+    [locale]="locale()"
+    [minFractionDigits]="minFractionDigits()"
+    [maxFractionDigits]="maxFractionDigits()"
+    [useGrouping]="useGrouping()"
+    [showButtons]="showButtons()"
+    [placeholder]="placeholder()"
+    [fluid]="fluid()"
+    (onBlur)="touch.emit()"
+  />
+</ng-template>
