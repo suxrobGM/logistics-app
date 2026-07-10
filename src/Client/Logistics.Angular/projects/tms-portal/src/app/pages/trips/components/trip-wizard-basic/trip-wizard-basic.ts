@@ -6,7 +6,7 @@ import { Stack } from "@logistics/shared/components";
 import { Button } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { ToastService } from "@/core/services";
-import { FormField, SearchTruck, ValidatedForm } from "@/shared/components";
+import { SearchTruck, UiFormField, ValidatedForm } from "@/shared/components";
 import { TripWizardStore } from "../../store/trip-wizard-store";
 
 @Component({
@@ -14,7 +14,7 @@ import { TripWizardStore } from "../../store/trip-wizard-store";
   templateUrl: "./trip-wizard-basic.html",
   imports: [
     ValidatedForm,
-    FormField,
+    UiFormField,
     SearchTruck,
     Button,
     RouterLink,

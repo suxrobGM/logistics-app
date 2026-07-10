@@ -6,12 +6,12 @@ import type { Address, TerminalType } from "@logistics/shared/api";
 import { regionOptions, terminalTypeOptions } from "@logistics/shared/api/enums";
 import {
   AddressForm,
-  FormField,
   Grid,
   Icon,
   Stack,
   Surface,
   Typography,
+  UiFormField,
   ValidatedForm,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
@@ -40,7 +40,7 @@ export interface TerminalFormValue {
     Select,
     TextareaModule,
     AddressForm,
-    FormField,
+    UiFormField,
     ValidatedForm,
     Grid,
     Icon,

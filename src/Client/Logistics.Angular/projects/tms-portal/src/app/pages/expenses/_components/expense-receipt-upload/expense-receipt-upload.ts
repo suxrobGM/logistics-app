@@ -3,12 +3,12 @@ import { Api, uploadExpenseReceipt } from "@logistics/shared/api";
 import { Icon, Stack } from "@logistics/shared/components";
 import { ToastService } from "@logistics/shared/services";
 import { FileUploadModule } from "primeng/fileupload";
-import { FormField } from "@/shared/components";
+import { UiFormField } from "@/shared/components";
 
 @Component({
   selector: "app-expense-receipt-upload",
   templateUrl: "./expense-receipt-upload.html",
-  imports: [FileUploadModule, FormField, Icon, Stack],
+  imports: [FileUploadModule, UiFormField, Icon, Stack],
 })
 export class ExpenseReceiptUpload {
   private readonly api = inject(Api);

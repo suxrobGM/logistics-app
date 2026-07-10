@@ -29,7 +29,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { FormField, PageHeader } from "@/shared/components";
+import { PageHeader, UiFormField } from "@/shared/components";
 import { getEldProviderLabel } from "../_components";
 
 @Component({
@@ -42,7 +42,7 @@ import { getEldProviderLabel } from "../_components";
     EmptyState,
     ErrorState,
     FormsModule,
-    FormField,
+    UiFormField,
     Grid,
     Icon,
     PageHeader,

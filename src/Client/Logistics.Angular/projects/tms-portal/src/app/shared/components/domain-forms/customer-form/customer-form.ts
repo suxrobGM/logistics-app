@@ -13,7 +13,7 @@ import {
   type UpdateCustomerCommand,
 } from "@logistics/shared/api";
 import { customerStatusOptions } from "@logistics/shared/api/enums";
-import { AddressForm, FormField, Grid, Stack, ValidatedForm } from "@logistics/shared/components";
+import { AddressForm, Grid, Stack, UiFormField, ValidatedForm } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CheckboxModule } from "primeng/checkbox";
 import { InputTextModule } from "primeng/inputtext";
@@ -44,7 +44,7 @@ export interface CustomerFormValue {
     ReactiveFormsModule,
     RouterLink,
     ProgressSpinnerModule,
-    FormField,
+    UiFormField,
     Grid,
     Stack,
     InputTextModule,

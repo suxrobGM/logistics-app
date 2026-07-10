@@ -10,10 +10,10 @@ import { CheckboxModule } from "primeng/checkbox";
 import { MultiSelectModule } from "primeng/multiselect";
 import {
   DateRangePicker,
-  FormField,
   SearchCustomer,
   SearchField,
   SearchTruck,
+  UiFormField,
 } from "@/shared/components";
 
 export interface LoadsFilterState {
@@ -38,7 +38,7 @@ export interface LoadsFilterState {
     SearchTruck,
     SearchCustomer,
     DateRangePicker,
-    FormField,
+    UiFormField,
     Stack,
     Typography,
   ],

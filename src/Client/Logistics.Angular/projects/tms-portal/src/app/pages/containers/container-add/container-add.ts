@@ -11,12 +11,12 @@ import {
 import { containerIsoTypeOptions } from "@logistics/shared/api/enums";
 import {
   Container,
-  FormField,
   Grid,
   Icon,
   Stack,
   Surface,
   Typography,
+  UiFormField,
   ValidatedForm,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
@@ -43,7 +43,7 @@ import { SearchTerminal } from "@/shared/components/search";
     InputNumberModule,
     Select,
     TextareaModule,
-    FormField,
+    UiFormField,
     ValidatedForm,
     PageHeader,
     SearchTerminal,

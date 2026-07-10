@@ -35,7 +35,7 @@ import { SelectButtonModule } from "primeng/selectbutton";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { FormField, PageHeader, ValidatedForm } from "@/shared/components";
+import { PageHeader, UiFormField, ValidatedForm } from "@/shared/components";
 import { DateUtils } from "@/shared/utils";
 
 type PayrollMode = "single" | "bulk";
@@ -54,7 +54,7 @@ interface BulkPreview {
     CommonModule,
     CardModule,
     ValidatedForm,
-    FormField,
+    UiFormField,
     RouterModule,
     AutoCompleteModule,
     ProgressSpinnerModule,

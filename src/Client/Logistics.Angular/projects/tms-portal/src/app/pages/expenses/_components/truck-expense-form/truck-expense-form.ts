@@ -19,7 +19,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
 import { TenantService } from "@/core/services";
-import { FormField } from "@/shared/components";
+import { UiFormField } from "@/shared/components";
 import { ExpenseReceiptUpload } from "../expense-receipt-upload/expense-receipt-upload";
 import { TRUCK_CATEGORIES, VOLUME_UNIT_OPTIONS } from "../expense.constants";
 
@@ -35,7 +35,7 @@ import { TRUCK_CATEGORIES, VOLUME_UNIT_OPTIONS } from "../expense.constants";
     TextareaModule,
     DatePicker,
     SelectModule,
-    FormField,
+    UiFormField,
     Grid,
     Stack,
     ExpenseReceiptUpload,

@@ -7,7 +7,7 @@ import { of, switchMap } from "rxjs";
   selector: "ui-form-field",
   templateUrl: "./form-field.html",
 })
-export class FormField {
+export class UiFormField {
   public readonly label = input<string | null>(null);
   public readonly for = input<string | null>(null);
   public readonly required = input(false);

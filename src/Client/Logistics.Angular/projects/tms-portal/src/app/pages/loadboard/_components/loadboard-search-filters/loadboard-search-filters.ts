@@ -8,7 +8,7 @@ import { DatePickerModule } from "primeng/datepicker";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
 import { MultiSelectModule } from "primeng/multiselect";
-import { FormField } from "@/shared/components";
+import { UiFormField } from "@/shared/components";
 import { EQUIPMENT_OPTIONS } from "../loadboard.constants";
 
 @Component({
@@ -17,7 +17,7 @@ import { EQUIPMENT_OPTIONS } from "../loadboard.constants";
   imports: [
     ButtonModule,
     DatePickerModule,
-    FormField,
+    UiFormField,
     Grid,
     InputNumberModule,
     InputTextModule,

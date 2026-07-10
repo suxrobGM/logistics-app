@@ -24,7 +24,7 @@ import { DatePickerModule } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
-import { FormField, ValidatedForm } from "@/shared/components";
+import { UiFormField, ValidatedForm } from "@/shared/components";
 
 @Component({
   selector: "app-driver-license-edit-dialog",
@@ -37,7 +37,7 @@ import { FormField, ValidatedForm } from "@/shared/components";
     SelectModule,
     DatePickerModule,
     CheckboxModule,
-    FormField,
+    UiFormField,
     ValidatedForm,
     Stack,
   ],

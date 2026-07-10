@@ -10,7 +10,7 @@ import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { PasswordModule } from "primeng/password";
 import { SelectModule } from "primeng/select";
-import { FormField } from "@/shared/components";
+import { UiFormField } from "@/shared/components";
 import { ELD_PROVIDER_OPTIONS } from "../eld.constants";
 
 @Component({
@@ -21,7 +21,7 @@ import { ELD_PROVIDER_OPTIONS } from "../eld.constants";
     Alert,
     ButtonModule,
     DialogModule,
-    FormField,
+    UiFormField,
     InputTextModule,
     PasswordModule,
     ReactiveFormsModule,

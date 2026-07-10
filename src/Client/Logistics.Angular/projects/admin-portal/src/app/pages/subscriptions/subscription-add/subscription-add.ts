@@ -12,12 +12,12 @@ import {
   type TenantDto,
 } from "@logistics/shared/api";
 import {
-  FormField,
   Grid,
   Icon,
   PageHeader,
   Stack,
   Typography,
+  UiFormField,
   ValidatedForm,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
@@ -40,7 +40,7 @@ interface SelectOption {
     SkeletonModule,
     SelectModule,
     ReactiveFormsModule,
-    FormField,
+    UiFormField,
     ValidatedForm,
     Grid,
     Icon,

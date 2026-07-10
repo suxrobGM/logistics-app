@@ -1,7 +1,7 @@
 import { Component, computed, inject, input, signal } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { Api, decodeVin } from "@logistics/shared/api";
-import { FormField, Stack } from "@logistics/shared/components";
+import { Stack, UiFormField } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
@@ -17,7 +17,7 @@ import { ToastService } from "@/core/services";
     InputTextModule,
     MessageModule,
     TagModule,
-    FormField,
+    UiFormField,
     Stack,
   ],
 })

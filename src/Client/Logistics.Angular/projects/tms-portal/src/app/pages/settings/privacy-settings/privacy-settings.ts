@@ -24,7 +24,7 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
-import { FormField, PageHeader } from "@/shared/components";
+import { PageHeader, UiFormField } from "@/shared/components";
 import type { SeverityLevel } from "@/shared/utils";
 
 @Component({
@@ -41,7 +41,7 @@ import type { SeverityLevel } from "@/shared/utils";
     TableModule,
     TagModule,
     TextareaModule,
-    FormField,
+    UiFormField,
     PageHeader,
     Stack,
     Container,

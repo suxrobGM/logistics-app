@@ -33,7 +33,6 @@ import { ToastService } from "@/core/services";
 import {
   DataContainer,
   DateRangePicker,
-  FormField,
   LoadStatusTag,
   LoadTypeTag,
   PageHeader,
@@ -41,6 +40,7 @@ import {
   SearchField,
   SearchTruck,
   TripStatusTag,
+  UiFormField,
 } from "@/shared/components";
 import { TripsSummaryStats } from "../components";
 import { TripsListStore } from "../store/trips-list.store";
@@ -68,7 +68,7 @@ import { TripsListStore } from "../store/trips-list.store";
     DateRangePicker,
     SearchTruck,
     SearchField,
-    FormField,
+    UiFormField,
     ProgressBarModule,
     RouteBadge,
     TripsSummaryStats,

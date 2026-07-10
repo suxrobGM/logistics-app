@@ -21,7 +21,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
-import { FormField } from "@/shared/components";
+import { UiFormField } from "@/shared/components";
 
 @Component({
   selector: "app-invite-customer-dialog",
@@ -36,7 +36,7 @@ import { FormField } from "@/shared/components";
     SelectModule,
     InputTextModule,
     TextareaModule,
-    FormField,
+    UiFormField,
     Stack,
   ],
 })

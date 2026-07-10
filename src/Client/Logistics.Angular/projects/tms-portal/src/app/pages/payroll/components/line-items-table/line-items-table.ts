@@ -21,7 +21,7 @@ import { TableModule } from "primeng/table";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { FormField } from "@/shared/components";
+import { UiFormField } from "@/shared/components";
 
 interface LineItemForm {
   description: FormControl<string>;
@@ -45,7 +45,7 @@ interface LineItemForm {
     SelectModule,
     TextareaModule,
     TooltipModule,
-    FormField,
+    UiFormField,
     CurrencyFormatPipe,
   ],
 })

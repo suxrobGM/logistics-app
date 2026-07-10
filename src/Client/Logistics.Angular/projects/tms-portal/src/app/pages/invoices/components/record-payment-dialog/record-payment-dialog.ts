@@ -1,6 +1,6 @@
 import { Component, inject, input, model, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { FormField } from "@logistics/shared";
+import { UiFormField } from "@logistics/shared";
 import { Api, recordManualPayment, type PaymentMethodType } from "@logistics/shared/api";
 import { paymentMethodTypeOptions } from "@logistics/shared/api/enums";
 import { Stack, ValidatedForm } from "@logistics/shared/components";
@@ -26,7 +26,7 @@ import { ToastService } from "@/core/services";
     TextareaModule,
     SelectModule,
     DatePickerModule,
-    FormField,
+    UiFormField,
     Stack,
   ],
 })

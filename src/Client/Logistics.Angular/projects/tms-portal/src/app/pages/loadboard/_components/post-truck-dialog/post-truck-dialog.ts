@@ -12,7 +12,7 @@ import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
-import { FormField } from "@/shared/components";
+import { UiFormField } from "@/shared/components";
 import { EQUIPMENT_OPTIONS } from "../loadboard.constants";
 
 interface ProviderOption {
@@ -28,7 +28,7 @@ interface ProviderOption {
     ButtonModule,
     DatePickerModule,
     DialogModule,
-    FormField,
+    UiFormField,
     Grid,
     InputNumberModule,
     InputTextModule,

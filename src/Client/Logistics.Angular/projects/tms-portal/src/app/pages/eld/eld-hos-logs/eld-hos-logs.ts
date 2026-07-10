@@ -17,7 +17,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule, type TableLazyLoadEvent } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
-import { DashboardCard, FormField, PageHeader, StatCard } from "@/shared/components";
+import { DashboardCard, PageHeader, StatCard, UiFormField } from "@/shared/components";
 
 @Component({
   selector: "app-eld-hos-logs",
@@ -32,7 +32,7 @@ import { DashboardCard, FormField, PageHeader, StatCard } from "@/shared/compone
     EmptyState,
     ErrorState,
     FormsModule,
-    FormField,
+    UiFormField,
     Grid,
     PageHeader,
     ProgressSpinnerModule,

@@ -27,7 +27,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
-import { FormField } from "@/shared/components";
+import { UiFormField } from "@/shared/components";
 
 @Component({
   selector: "app-timesheet-form-dialog",
@@ -43,7 +43,7 @@ import { FormField } from "@/shared/components";
     DatePickerModule,
     InputNumberModule,
     TextareaModule,
-    FormField,
+    UiFormField,
     Grid,
     Icon,
     Stack,

@@ -21,7 +21,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
 import { AuthService } from "@/core/auth";
 import { TenantService } from "@/core/services/tenant.service";
-import { CurrencyField, FormField, UnitField, ValidatedForm } from "@/shared/components";
+import { CurrencyField, UiFormField, UnitField, ValidatedForm } from "@/shared/components";
 import { NumberUtils } from "@/shared/utils";
 import { ChangeRoleDialog } from "../change-role-dialog/change-role-dialog";
 
@@ -36,7 +36,7 @@ import { ChangeRoleDialog } from "../change-role-dialog/change-role-dialog";
     InputGroupModule,
     InputTextModule,
     AccordionModule,
-    FormField,
+    UiFormField,
     UnitField,
     CurrencyField,
     ValidatedForm,

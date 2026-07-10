@@ -2,7 +2,7 @@ import { Component, effect, inject, input, output } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
-import { FormField, ValidatedForm } from "@logistics/shared/components";
+import { UiFormField, ValidatedForm } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CheckboxModule } from "primeng/checkbox";
 import { EditorModule } from "primeng/editor";
@@ -29,7 +29,7 @@ export interface BlogPostFormValue {
     ReactiveFormsModule,
     RouterLink,
     ProgressSpinnerModule,
-    FormField,
+    UiFormField,
     InputTextModule,
     TextareaModule,
     EditorModule,

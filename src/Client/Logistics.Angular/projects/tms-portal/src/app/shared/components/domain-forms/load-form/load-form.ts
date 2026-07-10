@@ -20,12 +20,12 @@ import {
   loadTypeOptions,
 } from "@logistics/shared/api/enums";
 import {
-  FormField,
   Grid,
   Icon,
   Stack,
   Surface,
   Typography,
+  UiFormField,
   ValidatedForm,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
@@ -118,7 +118,7 @@ export interface LoadFormValue {
     AddressAutocomplete,
     DirectionMap,
     ValidatedForm,
-    FormField,
+    UiFormField,
     Grid,
     Icon,
     Stack,

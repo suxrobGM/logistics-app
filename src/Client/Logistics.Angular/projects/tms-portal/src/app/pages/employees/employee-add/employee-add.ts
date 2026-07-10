@@ -30,8 +30,8 @@ import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
 import {
   CurrencyField,
-  FormField,
   PageHeader,
+  UiFormField,
   UnitField,
   ValidatedForm,
 } from "@/shared/components";
@@ -52,7 +52,7 @@ import { UserService } from "../services";
     RouterLink,
     PageHeader,
     ValidatedForm,
-    FormField,
+    UiFormField,
     InputGroupModule,
     InputGroupAddonModule,
     InputTextModule,

@@ -9,13 +9,13 @@ import {
 } from "@logistics/shared/api";
 import {
   DataContainer,
-  FormField,
   Grid,
   PageHeader,
   SearchField,
   Stack,
   Surface,
   Typography,
+  UiFormField,
 } from "@logistics/shared/components";
 import { DateUtils } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
@@ -51,7 +51,7 @@ interface StatusOption {
     SelectModule,
     TextareaModule,
     ReactiveFormsModule,
-    FormField,
+    UiFormField,
     Grid,
     Stack,
     Surface,

@@ -24,7 +24,7 @@ import { DatePicker } from "primeng/datepicker";
 import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
-import { FormField, PageHeader } from "@/shared/components";
+import { PageHeader, UiFormField } from "@/shared/components";
 import { DateUtils, PredefinedDateRanges } from "@/shared/utils";
 import { PayrollLineItemsTable, PayrollPaySummary } from "../../components";
 
@@ -35,7 +35,7 @@ import { PayrollLineItemsTable, PayrollPaySummary } from "../../components";
     CurrencyFormatPipe,
     CommonModule,
     CardModule,
-    FormField,
+    UiFormField,
     RouterModule,
     AutoCompleteModule,
     ProgressSpinnerModule,

@@ -1,6 +1,6 @@
 import { Component, computed, inject, input, model, output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { FormField } from "@logistics/shared";
+import { UiFormField } from "@logistics/shared";
 import { Api, resolveLoadException, type LoadExceptionDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
@@ -11,7 +11,7 @@ import { ExceptionTypeTag } from "@/shared/components/tags";
 @Component({
   selector: "app-resolve-exception-dialog",
   templateUrl: "./resolve-exception-dialog.html",
-  imports: [DialogModule, ButtonModule, FormsModule, TextareaModule, ExceptionTypeTag, FormField],
+  imports: [DialogModule, ButtonModule, FormsModule, TextareaModule, ExceptionTypeTag, UiFormField],
 })
 export class ResolveExceptionDialog {
   private readonly api = inject(Api);

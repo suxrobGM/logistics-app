@@ -19,12 +19,12 @@ import {
 } from "@logistics/shared/api";
 import { truckStatusOptions, truckTypeOptions } from "@logistics/shared/api/enums";
 import {
-  FormField,
   Grid,
   Icon,
   Stack,
   Surface,
   Typography,
+  UiFormField,
   ValidatedForm,
 } from "@logistics/shared/components";
 import { AutoCompleteModule } from "primeng/autocomplete";
@@ -66,7 +66,7 @@ export interface TruckFormData {
     InputNumberModule,
     SelectModule,
     AutoCompleteModule,
-    FormField,
+    UiFormField,
     Grid,
     Icon,
     Stack,

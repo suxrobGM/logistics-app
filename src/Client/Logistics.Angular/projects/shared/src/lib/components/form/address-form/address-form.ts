@@ -22,7 +22,7 @@ import {
 } from "../../../constants";
 import type { SelectOption } from "../../../models/select-option";
 import { findOption } from "../../../utils/select-utils";
-import { FormField } from "../form-field/form-field";
+import { UiFormField } from "../form-field/form-field";
 
 /** Country-specific state/province option lists. Countries not listed get a free-text input. */
 const COUNTRY_STATE_OPTIONS: Record<string, SelectOption[]> = {
@@ -34,7 +34,7 @@ const COUNTRY_STATE_OPTIONS: Record<string, SelectOption[]> = {
 @Component({
   selector: "ui-address-form",
   templateUrl: "./address-form.html",
-  imports: [ReactiveFormsModule, FormField, SelectModule, InputTextModule, KeyFilterModule],
+  imports: [ReactiveFormsModule, UiFormField, SelectModule, InputTextModule, KeyFilterModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

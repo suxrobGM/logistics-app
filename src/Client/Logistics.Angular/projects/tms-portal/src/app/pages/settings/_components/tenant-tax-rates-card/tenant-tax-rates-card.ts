@@ -12,7 +12,7 @@ import {
   type TenantTaxRateDto,
   type UpdateTenantTaxRateCommand,
 } from "@logistics/shared/api";
-import { Alert, FormField, Stack, Typography, ValidatedForm } from "@logistics/shared/components";
+import { Alert, Stack, Typography, UiFormField, ValidatedForm } from "@logistics/shared/components";
 import { DateFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -47,7 +47,7 @@ interface TaxRateForm {
     DatePickerModule,
     TableModule,
     ProgressSpinnerModule,
-    FormField,
+    UiFormField,
     ValidatedForm,
     Alert,
     Stack,

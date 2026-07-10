@@ -10,7 +10,7 @@ import {
   type UpdateCustomerCommand,
 } from "@logistics/shared/api";
 import { customerStatusOptions } from "@logistics/shared/api/enums";
-import { AddressForm, FormField, Grid, Stack, ValidatedForm } from "@logistics/shared/components";
+import { AddressForm, Grid, Stack, UiFormField, ValidatedForm } from "@logistics/shared/components";
 import { AccordionModule } from "primeng/accordion";
 import { ButtonModule } from "primeng/button";
 import { CheckboxModule } from "primeng/checkbox";
@@ -32,7 +32,7 @@ import { TenantService } from "@/core/services/tenant.service";
     InputTextModule,
     TextareaModule,
     AccordionModule,
-    FormField,
+    UiFormField,
     ValidatedForm,
     AddressForm,
     Grid,

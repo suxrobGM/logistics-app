@@ -53,10 +53,13 @@ invalid submit it marks all controls touched (so inline `ui-form-field` errors r
 to / focuses the first invalid control, and announces the error count via an `aria-live` region.
 
 ```ts
-import { FormField, ValidatedForm } from "@logistics/shared/components";
+import { UiFormField, ValidatedForm } from "@logistics/shared/components";
 // ...
-@Component({ imports: [ReactiveFormsModule, FormField, ValidatedForm, /* ... */] })
+@Component({ imports: [ReactiveFormsModule, UiFormField, ValidatedForm, /* ... */] })
 ```
+
+The class is `UiFormField` (selector `ui-form-field`). It is deliberately **not** named `FormField`,
+because Angular's Signal Forms directive owns that name — `import { FormField } from "@angular/forms/signals"`.
 
 Do **not** disable the submit button with `[disabled]="form.invalid"` — keep it clickable
 (guard only on `isLoading()`) so `ValidatedForm` can reveal what's missing. There is no

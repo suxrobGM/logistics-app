@@ -15,10 +15,10 @@ import { TooltipModule } from "primeng/tooltip";
 import {
   DataContainer,
   DateRangePicker,
-  FormField,
   InvoiceStatusTag,
   PageHeader,
   SearchField,
+  UiFormField,
 } from "@/shared/components";
 import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
 
@@ -39,7 +39,7 @@ import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
     DataContainer,
     DateRangePicker,
     SearchField,
-    FormField,
+    UiFormField,
     CurrencyFormatPipe,
     DateFormatPipe,
     PageHeader,

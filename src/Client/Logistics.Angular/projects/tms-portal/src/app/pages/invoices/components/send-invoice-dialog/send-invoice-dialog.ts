@@ -1,6 +1,6 @@
 import { Component, inject, input, model, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { FormField } from "@logistics/shared";
+import { UiFormField } from "@logistics/shared";
 import { Api, sendInvoice } from "@logistics/shared/api";
 import { Stack, ValidatedForm } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
@@ -19,7 +19,7 @@ import { ToastService } from "@/core/services";
     ReactiveFormsModule,
     InputTextModule,
     TextareaModule,
-    FormField,
+    UiFormField,
     Stack,
   ],
 })

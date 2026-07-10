@@ -10,7 +10,7 @@ import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { PasswordModule } from "primeng/password";
 import { SelectModule } from "primeng/select";
-import { FormField } from "@/shared/components";
+import { UiFormField } from "@/shared/components";
 import { PROVIDER_OPTIONS } from "../loadboard.constants";
 
 @Component({
@@ -20,7 +20,7 @@ import { PROVIDER_OPTIONS } from "../loadboard.constants";
     ValidatedForm,
     ButtonModule,
     DialogModule,
-    FormField,
+    UiFormField,
     Icon,
     InputTextModule,
     PasswordModule,

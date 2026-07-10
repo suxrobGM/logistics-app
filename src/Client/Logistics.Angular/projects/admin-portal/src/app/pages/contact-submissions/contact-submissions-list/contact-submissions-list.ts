@@ -10,13 +10,13 @@ import {
 } from "@logistics/shared/api";
 import {
   DataContainer,
-  FormField,
   Grid,
   PageHeader,
   SearchField,
   Stack,
   Surface,
   Typography,
+  UiFormField,
 } from "@logistics/shared/components";
 import type { SelectOption } from "@logistics/shared/models";
 import { DateUtils } from "@logistics/shared/utils";
@@ -48,7 +48,7 @@ import { ContactSubmissionsListStore } from "../store/contact-submissions-list.s
     SelectModule,
     TextareaModule,
     ReactiveFormsModule,
-    FormField,
+    UiFormField,
     Grid,
     Stack,
     Surface,

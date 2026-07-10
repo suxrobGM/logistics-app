@@ -11,7 +11,7 @@ import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
-import { FormField } from "@/shared/components";
+import { UiFormField } from "@/shared/components";
 
 @Component({
   selector: "app-book-load-dialog",
@@ -21,7 +21,7 @@ import { FormField } from "@/shared/components";
     ButtonModule,
     CurrencyFormatPipe,
     DialogModule,
-    FormField,
+    UiFormField,
     InputTextModule,
     ReactiveFormsModule,
     SelectModule,

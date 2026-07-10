@@ -27,10 +27,10 @@ import { ToastService } from "@/core/services";
 import {
   DataContainer,
   DateRangePicker,
-  FormField,
   InvoiceStatusTag,
   PageHeader,
   SearchField,
+  UiFormField,
 } from "@/shared/components";
 import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
 
@@ -51,7 +51,7 @@ import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
     MultiSelectModule,
     DateRangePicker,
     SearchField,
-    FormField,
+    UiFormField,
     DialogModule,
     TextareaModule,
     PageHeader,

@@ -19,7 +19,7 @@ import { MessageModule } from "primeng/message";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
-import { FormField, SearchTruck } from "@/shared/components";
+import { SearchTruck, UiFormField } from "@/shared/components";
 
 @Component({
   selector: "app-load-import",
@@ -35,7 +35,7 @@ import { FormField, SearchTruck } from "@/shared/components";
     ToastModule,
     RouterLink,
     SearchTruck,
-    FormField,
+    UiFormField,
     DividerModule,
     PdfViewer,
     Typography,

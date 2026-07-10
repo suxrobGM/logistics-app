@@ -17,7 +17,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
-import { FormField } from "@/shared/components";
+import { UiFormField } from "@/shared/components";
 
 @Component({
   selector: "app-api-keys-table",
@@ -30,7 +30,7 @@ import { FormField } from "@/shared/components";
     MessageModule,
     TableModule,
     TooltipModule,
-    FormField,
+    UiFormField,
     DatePipe,
     ProgressSpinnerModule,
   ],

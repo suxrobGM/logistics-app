@@ -17,7 +17,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { TenantService, ToastService } from "@/core/services";
-import { FormField, PageHeader, ValidatedForm } from "@/shared/components";
+import { PageHeader, UiFormField, ValidatedForm } from "@/shared/components";
 
 @Component({
   selector: "app-company-settings",
@@ -28,7 +28,7 @@ import { FormField, PageHeader, ValidatedForm } from "@/shared/components";
     ButtonModule,
     ReactiveFormsModule,
     ValidatedForm,
-    FormField,
+    UiFormField,
     PageHeader,
     InputTextModule,
     AddressForm,

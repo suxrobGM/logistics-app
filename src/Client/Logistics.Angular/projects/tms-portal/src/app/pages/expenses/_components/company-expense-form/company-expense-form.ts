@@ -11,7 +11,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
 import { TenantService } from "@/core/services";
-import { FormField } from "@/shared/components";
+import { UiFormField } from "@/shared/components";
 import { ExpenseReceiptUpload } from "../expense-receipt-upload/expense-receipt-upload";
 import { COMPANY_CATEGORIES } from "../expense.constants";
 
@@ -27,7 +27,7 @@ import { COMPANY_CATEGORIES } from "../expense.constants";
     TextareaModule,
     DatePicker,
     SelectModule,
-    FormField,
+    UiFormField,
     Grid,
     Stack,
     ExpenseReceiptUpload,
