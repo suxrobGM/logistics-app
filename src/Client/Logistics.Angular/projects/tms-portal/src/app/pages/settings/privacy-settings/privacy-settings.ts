@@ -14,13 +14,12 @@ import {
   type DataDeletionRequestDto,
   type DataExportRequestDto,
 } from "@logistics/shared/api";
-import { Container, Stack } from "@logistics/shared/components";
+import { Container, Stack, UiDataTable } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { MessageModule } from "primeng/message";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
@@ -38,13 +37,13 @@ import type { SeverityLevel } from "@/shared/utils";
     DialogModule,
     MessageModule,
     ProgressSpinnerModule,
-    TableModule,
     TagModule,
     TextareaModule,
     UiFormField,
     PageHeader,
     Stack,
     Container,
+    UiDataTable,
   ],
 })
 export class PrivacySettings {

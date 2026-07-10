@@ -7,10 +7,9 @@ import {
   getPortalLoads,
   type DocumentDto,
 } from "@logistics/shared/api";
-import { Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Icon, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 
 interface DocumentWithLoad extends DocumentDto {
@@ -25,7 +24,6 @@ interface DocumentWithLoad extends DocumentDto {
   imports: [
     DatePipe,
     RouterLink,
-    TableModule,
     ButtonModule,
     TagModule,
     ProgressSpinnerModule,
@@ -33,6 +31,7 @@ interface DocumentWithLoad extends DocumentDto {
     Stack,
     Surface,
     Typography,
+    UiDataTable,
   ],
 })
 export class DocumentsList {

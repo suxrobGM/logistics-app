@@ -12,11 +12,11 @@ import {
   Stack,
   Surface,
   Typography,
+  UiDataTable,
   type BadgeSeverity,
 } from "@logistics/shared/components";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { ToastService } from "@/core/services";
 
@@ -27,12 +27,12 @@ import { ToastService } from "@/core/services";
     CommonModule,
     CardModule,
     ProgressSpinnerModule,
-    TableModule,
     TagModule,
     PageHeader,
     Stack,
     Surface,
     Typography,
+    UiDataTable,
   ],
 })
 export class DataRequestsList {

@@ -74,7 +74,7 @@
       icon="inbox"
     />
   } @else {
-    <p-table
+    <ui-data-table
       [value]="logs()"
       [lazy]="true"
       [paginator]="true"
@@ -84,7 +84,7 @@
       [rowsPerPageOptions]="[10, 25, 50]"
       [showCurrentPageReport]="true"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} logs"
-      (onLazyLoad)="onLazyLoad($event)"
+      (lazyLoad)="onLazyLoad($event)"
     >
       <ng-template #header>
         <tr>
@@ -135,6 +135,6 @@
           </td>
         </tr>
       </ng-template>
-    </p-table>
+    </ui-data-table>
   }
 </ui-dashboard-card>

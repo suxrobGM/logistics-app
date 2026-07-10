@@ -124,7 +124,7 @@
     @if (documents().length > 0) {
       <ui-surface variant="elevated" padding="md" class="mt-6 block">
         <ui-typography variant="h5" tag="h3" class="mb-4">Documents</ui-typography>
-        <p-table [value]="documents()" styleClass="p-datatable-sm">
+        <ui-data-table [value]="documents()" styleClass="p-datatable-sm">
           <ng-template #header>
             <tr>
               <th>Document</th>
@@ -153,7 +153,7 @@
               </td>
             </tr>
           </ng-template>
-        </p-table>
+        </ui-data-table>
       </ui-surface>
     }
 

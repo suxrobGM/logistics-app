@@ -21,7 +21,14 @@ import {
   type SalaryType,
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
-import { DateRangePicker, Grid, Stack, Surface, Typography } from "@logistics/shared/components";
+import {
+  DateRangePicker,
+  Grid,
+  Stack,
+  Surface,
+  Typography,
+  UiDataTable,
+} from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { PredefinedDateRanges } from "@logistics/shared/utils";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
@@ -32,7 +39,6 @@ import { MultiSelectModule } from "primeng/multiselect";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { SelectButtonModule } from "primeng/selectbutton";
-import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { PageHeader, UiFormField, ValidatedForm } from "@/shared/components";
@@ -66,7 +72,7 @@ interface BulkPreview {
     DividerModule,
     SelectButtonModule,
     MultiSelectModule,
-    TableModule,
+    UiDataTable,
     TooltipModule,
     PageHeader,
     Grid,

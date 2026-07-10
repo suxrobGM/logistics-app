@@ -5,7 +5,7 @@
     <p class="text-muted text-sm">Invoices will appear here when created for loads</p>
   </div>
 } @else {
-  <p-table [value]="invoices()" dataKey="id" [scrollable]="true">
+  <ui-data-table [value]="invoices()" dataKey="id" [scrollable]="true">
     <ng-template #header>
       <tr>
         <th>Invoice #</th>
@@ -64,14 +64,14 @@
       </tr>
     </ng-template>
 
-    <ng-template #emptymessage>
+    <ng-template #empty>
       <tr>
         <td colspan="6" class="text-center">
           <span class="text-muted">No invoices found</span>
         </td>
       </tr>
     </ng-template>
-  </p-table>
+  </ui-data-table>
 
   @if (customerId()) {
     <div class="mt-4 text-right">

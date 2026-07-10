@@ -9,7 +9,7 @@
   </ui-stack>
 } @else {
   <ui-surface variant="elevated" padding="none">
-    <p-table [value]="documents()" [tableStyle]="{ 'min-width': '50rem' }">
+    <ui-data-table [value]="documents()" [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template #header>
         <tr>
           <th>Document</th>
@@ -40,7 +40,7 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template #emptymessage>
+      <ng-template #empty>
         <tr>
           <td colspan="5" class="py-12 text-center">
             <ui-stack align="center" gap="2">
@@ -53,6 +53,6 @@
           </td>
         </tr>
       </ng-template>
-    </p-table>
+    </ui-data-table>
   </ui-surface>
 }

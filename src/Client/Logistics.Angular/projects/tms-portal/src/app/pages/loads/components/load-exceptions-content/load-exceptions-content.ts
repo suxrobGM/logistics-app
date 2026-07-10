@@ -1,12 +1,11 @@
 import { CommonModule, DatePipe } from "@angular/common";
-import { Component, type OnInit, inject, input, output, signal } from "@angular/core";
-import { Api, getLoadExceptions } from "@logistics/shared/api";
-import type { LoadExceptionDto } from "@logistics/shared/api";
+import { Component, inject, input, output, signal, type OnInit } from "@angular/core";
+import { Api, getLoadExceptions, type LoadExceptionDto } from "@logistics/shared/api";
+import { UiDataTable } from "@logistics/shared/components";
 import { BadgeModule } from "primeng/badge";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ExceptionTypeTag } from "@/shared/components/tags";
 
@@ -16,7 +15,7 @@ import { ExceptionTypeTag } from "@/shared/components/tags";
   imports: [
     CommonModule,
     CardModule,
-    TableModule,
+    UiDataTable,
     DatePipe,
     ButtonModule,
     TooltipModule,

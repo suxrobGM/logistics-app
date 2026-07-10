@@ -114,7 +114,7 @@
   <ui-grid container spacing="2">
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Payroll Trends by Period" icon="pi-table" iconColor="blue">
-        <p-table [value]="data()?.payrollTrends || []" [paginator]="true" [rows]="5">
+        <ui-data-table [value]="data()?.payrollTrends || []" [paginator]="true" [rows]="5">
           <ng-template #header>
             <tr>
               <th>Period</th>
@@ -139,18 +139,18 @@
               </td>
             </tr>
           </ng-template>
-          <ng-template #emptymessage>
+          <ng-template #empty>
             <tr>
               <td colspan="4" class="text-muted text-center">No trend data available</td>
             </tr>
           </ng-template>
-        </p-table>
+        </ui-data-table>
       </ui-dashboard-card>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Top Employees by Earnings" icon="pi-users" iconColor="blue">
-        <p-table [value]="data()?.topEmployees || []" [paginator]="true" [rows]="5">
+        <ui-data-table [value]="data()?.topEmployees || []" [paginator]="true" [rows]="5">
           <ng-template #header>
             <tr>
               <th>Employee</th>
@@ -191,12 +191,12 @@
               </td>
             </tr>
           </ng-template>
-          <ng-template #emptymessage>
+          <ng-template #empty>
             <tr>
               <td colspan="4" class="text-muted text-center">No employee data available</td>
             </tr>
           </ng-template>
-        </p-table>
+        </ui-data-table>
       </ui-dashboard-card>
     </ui-grid>
   </ui-grid>
@@ -204,7 +204,7 @@
   <!-- Salary Type Breakdown Table -->
   <div class="mb-6">
     <ui-dashboard-card title="Salary Type Summary" icon="pi-list" iconColor="blue">
-      <p-table [value]="data()?.salaryTypeBreakdown || []">
+      <ui-data-table [value]="data()?.salaryTypeBreakdown || []">
         <ng-template #header>
           <tr>
             <th>Salary Type</th>
@@ -235,12 +235,12 @@
             </td>
           </tr>
         </ng-template>
-        <ng-template #emptymessage>
+        <ng-template #empty>
           <tr>
             <td colspan="4" class="text-muted text-center">No salary type data available</td>
           </tr>
         </ng-template>
-      </p-table>
+      </ui-data-table>
     </ui-dashboard-card>
   </div>
 }

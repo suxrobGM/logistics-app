@@ -128,7 +128,7 @@
   <ui-grid container spacing="2">
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Status Breakdown" icon="pi-table" iconColor="blue">
-        <p-table [value]="data()?.statusBreakdown || []" [paginator]="true" [rows]="5">
+        <ui-data-table [value]="data()?.statusBreakdown || []" [paginator]="true" [rows]="5">
           <ng-template #header>
             <tr>
               <th>Status</th>
@@ -147,13 +147,13 @@
               <td>{{ (item.count / (data()?.totalLoads ?? 1)) * 100 | number: "1.1-1" }}%</td>
             </tr>
           </ng-template>
-        </p-table>
+        </ui-data-table>
       </ui-dashboard-card>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Top Customers" icon="pi-users" iconColor="blue">
-        <p-table [value]="data()?.topCustomers || []" [paginator]="true" [rows]="5">
+        <ui-data-table [value]="data()?.topCustomers || []" [paginator]="true" [rows]="5">
           <ng-template #header>
             <tr>
               <th>Customer</th>
@@ -170,7 +170,7 @@
               <td>{{ customer.averageDistance | number: "1.0-0" }} {{ distanceUnitLabel }}</td>
             </tr>
           </ng-template>
-        </p-table>
+        </ui-data-table>
       </ui-dashboard-card>
     </ui-grid>
   </ui-grid>

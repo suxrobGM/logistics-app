@@ -4,13 +4,12 @@ import { Router, RouterLink } from "@angular/router";
 import { Permission, PermissionGuard } from "@logistics/shared";
 import type { EmployeeDto, SalaryType } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
-import { Stack } from "@logistics/shared/components";
+import { Stack, UiDataTable, UiSortHeader } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
@@ -30,7 +29,6 @@ type SeverityType = "success" | "secondary" | "info" | "warn" | "danger" | "cont
     TooltipModule,
     RouterLink,
     CardModule,
-    TableModule,
     MenuModule,
     TagModule,
     DatePipe,
@@ -43,6 +41,8 @@ type SeverityType = "success" | "secondary" | "info" | "warn" | "danger" | "cont
     EmployeeAvatar,
     EmployeeStatusTag,
     Stack,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class EmployeeList {

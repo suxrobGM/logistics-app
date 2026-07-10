@@ -2,14 +2,13 @@ import { CommonModule } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Api, getInvoiceById, type Address, type InvoiceDto } from "@logistics/shared/api";
-import { Alert, Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { Alert, Grid, Icon, Stack, Typography, UiDataTable } from "@logistics/shared/components";
 import { AddressPipe, CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { PdfService, TenantService, ToastService } from "@/core/services";
@@ -29,7 +28,6 @@ import { PaymentLinkDialog, RecordPaymentDialog, SendInvoiceDialog } from "../co
     InvoiceStatusTag,
     PaymentStatusTag,
     DividerModule,
-    TableModule,
     TagModule,
     TooltipModule,
     CurrencyFormatPipe,
@@ -43,6 +41,7 @@ import { PaymentLinkDialog, RecordPaymentDialog, SendInvoiceDialog } from "../co
     Icon,
     Stack,
     Typography,
+    UiDataTable,
   ],
 })
 export class LoadInvoiceDetails implements OnInit {

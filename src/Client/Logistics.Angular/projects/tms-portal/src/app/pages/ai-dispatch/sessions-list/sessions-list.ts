@@ -18,11 +18,10 @@ import {
   type TruckDto,
 } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
-import { Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Icon, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/components";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
 import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import {
@@ -47,7 +46,7 @@ import { stripMarkdown } from "../utils/markdown";
   templateUrl: "./sessions-list.html",
   imports: [
     ButtonModule,
-    TableModule,
+    UiDataTable,
     TagModule,
     TooltipModule,
     ConfirmDialogModule,

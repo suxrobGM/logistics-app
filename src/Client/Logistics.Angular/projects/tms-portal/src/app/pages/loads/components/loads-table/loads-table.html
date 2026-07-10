@@ -11,14 +11,14 @@
     (retry)="onRetry()"
     (emptyAction)="onAddLoad()"
   >
-    <p-table
+    <ui-data-table
       [value]="data()"
       dataKey="id"
       [scrollable]="true"
       [lazy]="true"
       [paginator]="true"
       [showCurrentPageReport]="true"
-      (onLazyLoad)="onLazyLoad($event)"
+      (lazyLoad)="onLazyLoad($event)"
       [rows]="pageSize()"
       [first]="first()"
       [totalRecords]="totalRecords()"
@@ -32,46 +32,16 @@
           <th style="width: 3rem">
             <p-tableHeaderCheckbox />
           </th>
-          <th pSortableColumn="Number">
-            Number
-            <p-sortIcon field="Number" />
-          </th>
-          <th pSortableColumn="Name">
-            Name
-            <p-sortIcon field="Name" />
-          </th>
-          <th pSortableColumn="Type">
-            Type
-            <p-sortIcon field="Type" />
-          </th>
-          <th pSortableColumn="Customer.Name">
-            Customer
-            <p-sortIcon field="Customer.Name" />
-          </th>
-          <th pSortableColumn="OriginAddress.City">
-            Route
-            <p-sortIcon field="OriginAddress.City" />
-          </th>
-          <th pSortableColumn="Status">
-            Status
-            <p-sortIcon field="Status" />
-          </th>
-          <th pSortableColumn="Distance">
-            Distance ({{ distanceUnitLabel() }})
-            <p-sortIcon field="Distance" />
-          </th>
-          <th pSortableColumn="DeliveryCost.Amount">
-            Revenue
-            <p-sortIcon field="DeliveryCost.Amount" />
-          </th>
-          <th pSortableColumn="AssignedTruck.Number">
-            Truck
-            <p-sortIcon field="AssignedTruck.Number" />
-          </th>
-          <th pSortableColumn="AssignedDispatcher.Name">
-            Dispatcher
-            <p-sortIcon field="AssignedDispatcher.Name" />
-          </th>
+          <th uiSortHeader="Number">Number</th>
+          <th uiSortHeader="Name">Name</th>
+          <th uiSortHeader="Type">Type</th>
+          <th uiSortHeader="Customer.Name">Customer</th>
+          <th uiSortHeader="OriginAddress.City">Route</th>
+          <th uiSortHeader="Status">Status</th>
+          <th uiSortHeader="Distance">Distance ({{ distanceUnitLabel() }})</th>
+          <th uiSortHeader="DeliveryCost.Amount">Revenue</th>
+          <th uiSortHeader="AssignedTruck.Number">Truck</th>
+          <th uiSortHeader="AssignedDispatcher.Name">Dispatcher</th>
           <th>Action</th>
         </tr>
       </ng-template>
@@ -157,7 +127,7 @@
           </td>
         </tr>
       </ng-template>
-    </p-table>
+    </ui-data-table>
   </ui-data-container>
 </p-card>
 

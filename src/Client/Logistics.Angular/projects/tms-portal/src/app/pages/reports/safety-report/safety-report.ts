@@ -9,11 +9,10 @@ import {
   type SafetyStatusBreakdownDto,
   type SafetyTrendDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { Grid, Icon, Stack, Typography, UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import {
   BaseReportComponent,
@@ -53,7 +52,7 @@ const EVENT_TYPE_COLORS = [
   selector: "app-safety-report",
   templateUrl: "./safety-report.html",
   imports: [
-    TableModule,
+    UiDataTable,
     ChartModule,
     DateRangePicker,
     CurrencyFormatPipe,

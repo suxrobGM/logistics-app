@@ -1,19 +1,21 @@
 import { CommonModule } from "@angular/common";
-import { Component, type OnInit, inject, input, output, signal } from "@angular/core";
+import { Component, inject, input, output, signal, type OnInit } from "@angular/core";
 import {
   Api,
   deleteDocument,
   downloadDocument,
   getDocuments,
   uploadDocument,
+  type DocumentDto,
+  type DocumentStatus,
+  type DocumentType,
 } from "@logistics/shared/api";
-import type { DocumentDto, DocumentStatus, DocumentType } from "@logistics/shared/api";
+import { UiDataTable } from "@logistics/shared/components";
 import { downloadBlobFile, formatFileSize } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { FileUploadModule } from "primeng/fileupload";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import { TooltipModule } from "primeng/tooltip";
@@ -26,7 +28,7 @@ import { Converters } from "@/shared/utils";
   imports: [
     CommonModule,
     ButtonModule,
-    TableModule,
+    UiDataTable,
     FileUploadModule,
     TagModule,
     ToastModule,

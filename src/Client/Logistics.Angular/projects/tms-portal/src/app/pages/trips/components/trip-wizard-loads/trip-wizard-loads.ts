@@ -2,14 +2,13 @@ import { Component, computed, inject, input, model, viewChild } from "@angular/c
 import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import type { LoadDto } from "@logistics/shared/api";
-import { Icon, Stack, Typography } from "@logistics/shared/components";
+import { Icon, Stack, Typography, UiDataTable, UiSortHeader } from "@logistics/shared/components";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { Dialog } from "primeng/dialog";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
-import { Table, TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { LoadForm, LoadStatusTag, type LoadFormValue } from "@/shared/components";
@@ -23,7 +22,8 @@ import { AttachLoadDialog } from "../attach-load-dialog/attach-load-dialog";
   imports: [
     FormsModule,
     ButtonModule,
-    TableModule,
+    UiDataTable,
+    UiSortHeader,
     TagModule,
     TooltipModule,
     AddressPipe,
@@ -45,7 +45,7 @@ import { AttachLoadDialog } from "../attach-load-dialog/attach-load-dialog";
 export class TripFormStepLoads {
   protected readonly store = inject(TripWizardStore);
 
-  protected readonly dataTable = viewChild<Table<TableRow>>("dataTable");
+  protected readonly dataTable = viewChild<UiDataTable<TableRow>>("dataTable");
   protected readonly tripLoadDialogVisible = model(false);
   protected readonly attachLoadDialogVisible = model(false);
 

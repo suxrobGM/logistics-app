@@ -2,9 +2,9 @@ import { DatePipe } from "@angular/common";
 import { Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { InvoiceDto } from "@logistics/shared/api";
+import { UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
-import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { InvoiceStatusTag } from "@/shared/components";
 
@@ -12,13 +12,13 @@ import { InvoiceStatusTag } from "@/shared/components";
   selector: "app-customer-invoices-list",
   templateUrl: "./customer-invoices-list.html",
   imports: [
-    TableModule,
     ButtonModule,
     TooltipModule,
     RouterLink,
     CurrencyFormatPipe,
     DatePipe,
     InvoiceStatusTag,
+    UiDataTable,
   ],
 })
 export class CustomerInvoicesList {

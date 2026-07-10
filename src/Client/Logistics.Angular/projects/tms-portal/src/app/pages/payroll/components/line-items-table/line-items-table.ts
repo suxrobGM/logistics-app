@@ -11,13 +11,13 @@ import {
   type InvoiceLineItemType,
 } from "@logistics/shared/api";
 import { payrollLineItemTypeOptions } from "@logistics/shared/api/enums";
+import { UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
-import { TableModule } from "primeng/table";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
@@ -37,7 +37,7 @@ interface LineItemForm {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    TableModule,
+    UiDataTable,
     ButtonModule,
     DialogModule,
     InputTextModule,

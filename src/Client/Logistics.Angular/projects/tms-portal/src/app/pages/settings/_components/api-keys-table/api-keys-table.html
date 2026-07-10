@@ -8,7 +8,7 @@
   </div>
 
   @if (apiKeys().length > 0) {
-    <p-table [value]="apiKeys()" [tableStyle]="{ 'min-width': '50rem' }">
+    <ui-data-table [value]="apiKeys()" [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template #header>
         <tr>
           <th>Name</th>
@@ -44,12 +44,12 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template #emptymessage>
+      <ng-template #empty>
         <tr>
           <td colspan="6" class="text-muted text-center">No API keys yet.</td>
         </tr>
       </ng-template>
-    </p-table>
+    </ui-data-table>
   } @else {
     <div class="text-muted py-8 text-center">
       <i class="pi pi-key mb-2 text-4xl"></i>

@@ -1,6 +1,7 @@
 import { Component, computed, inject, model, output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Api, getUnassignedLoads, type LoadDto } from "@logistics/shared/api";
+import { UiDataTable, UiTableRowDirectives } from "@logistics/shared/components";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { Dialog } from "primeng/dialog";
@@ -8,7 +9,6 @@ import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { LoadTypeTag } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
@@ -23,9 +23,10 @@ import { DistanceUnitPipe } from "@/shared/pipes";
     IconField,
     InputIcon,
     InputTextModule,
-    TableModule,
     TagModule,
     ProgressSpinnerModule,
+    UiDataTable,
+    UiTableRowDirectives,
     AddressPipe,
     CurrencyFormatPipe,
     LoadTypeTag,

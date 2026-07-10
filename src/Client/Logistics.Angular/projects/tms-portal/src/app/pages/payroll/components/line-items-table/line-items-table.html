@@ -10,7 +10,7 @@
 </div>
 
 @if (lineItems().length > 0) {
-  <p-table [value]="lineItems()" styleClass="p-datatable-sm">
+  <ui-data-table [value]="lineItems()" styleClass="p-datatable-sm">
     <ng-template #header>
       <tr>
         <th>Description</th>
@@ -66,7 +66,7 @@
         </td>
       </tr>
     </ng-template>
-  </p-table>
+  </ui-data-table>
 } @else {
   <div class="text-muted py-8 text-center">
     <i class="pi pi-inbox mb-2 text-4xl"></i>

@@ -61,7 +61,7 @@
           @if (invoice()!.lineItems && invoice()!.lineItems!.length > 0) {
             <p-divider />
             <h4>Earnings Breakdown</h4>
-            <p-table [value]="invoice()!.lineItems!">
+            <ui-data-table [value]="invoice()!.lineItems!">
               <ng-template #header>
                 <tr>
                   <th>Description</th>
@@ -83,7 +83,7 @@
                   <td class="text-right">{{ item.total | currencyFormat }}</td>
                 </tr>
               </ng-template>
-            </p-table>
+            </ui-data-table>
           }
 
           <p-divider />

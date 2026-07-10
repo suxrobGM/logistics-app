@@ -14,7 +14,7 @@
     emptyMessage="Vehicle condition reports will appear here when captured from the Driver App."
     (retry)="store.load()"
   >
-    <p-table
+    <ui-data-table
       [value]="store.filteredData()"
       dataKey="id"
       [scrollable]="true"
@@ -27,21 +27,12 @@
     >
       <ng-template #header>
         <tr>
-          <th pSortableColumn="type" class="w-28">
-            Type
-            <p-sortIcon field="type" />
-          </th>
+          <th uiSortHeader="type" class="w-28">Type</th>
           <th>Identifier</th>
           <th>Cargo</th>
           <th class="w-28">Defects</th>
-          <th pSortableColumn="inspectorName">
-            Inspector
-            <p-sortIcon field="inspectorName" />
-          </th>
-          <th pSortableColumn="inspectedAt">
-            Inspected At
-            <p-sortIcon field="inspectedAt" />
-          </th>
+          <th uiSortHeader="inspectorName">Inspector</th>
+          <th uiSortHeader="inspectedAt">Inspected At</th>
           <th class="w-24">Photos</th>
           <th class="w-24">Signature</th>
           <th class="w-24">Action</th>
@@ -98,7 +89,7 @@
           </td>
         </tr>
       </ng-template>
-    </p-table>
+    </ui-data-table>
   </ui-data-container>
 </p-card>
 

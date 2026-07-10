@@ -13,12 +13,12 @@
     (retry)="store.retry()"
     (emptyAction)="addBlogPost()"
   >
-    <p-table
+    <ui-data-table
       [value]="store.data()"
       [lazy]="true"
       [paginator]="true"
       [showCurrentPageReport]="true"
-      (onLazyLoad)="store.onLazyLoad($event)"
+      (lazyLoad)="store.onLazyLoad($event)"
       [rows]="store.pageSize()"
       [first]="store.first()"
       [totalRecords]="store.totalRecords()"
@@ -30,23 +30,11 @@
       </ng-template>
       <ng-template #header>
         <tr>
-          <th pSortableColumn="Title">
-            Title
-            <p-sortIcon field="Title" />
-          </th>
-          <th pSortableColumn="Category">
-            Category
-            <p-sortIcon field="Category" />
-          </th>
-          <th pSortableColumn="AuthorName">
-            Author
-            <p-sortIcon field="AuthorName" />
-          </th>
+          <th uiSortHeader="Title">Title</th>
+          <th uiSortHeader="Category">Category</th>
+          <th uiSortHeader="AuthorName">Author</th>
           <th>Status</th>
-          <th pSortableColumn="PublishedAt">
-            Published
-            <p-sortIcon field="PublishedAt" />
-          </th>
+          <th uiSortHeader="PublishedAt">Published</th>
           <th class="w-20">Actions</th>
         </tr>
       </ng-template>
@@ -77,7 +65,7 @@
           </td>
         </tr>
       </ng-template>
-    </p-table>
+    </ui-data-table>
   </ui-data-container>
 </p-card>
 

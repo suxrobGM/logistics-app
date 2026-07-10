@@ -44,7 +44,7 @@
       </div>
     } @else {
       <!-- Loads table -->
-      <p-table
+      <ui-data-table
         [value]="filteredLoads()"
         [scrollable]="true"
         scrollHeight="400px"
@@ -87,7 +87,7 @@
             <td class="text-right">{{ load.deliveryCost | currencyFormat }}</td>
           </tr>
         </ng-template>
-      </p-table>
+      </ui-data-table>
 
       <!-- Selection summary -->
       @if (selectedLoads().length > 0) {

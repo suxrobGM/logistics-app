@@ -3,7 +3,7 @@
   <p-button label="Add license" icon="pi pi-plus" size="small" (click)="openCreateDialog()" />
 </ui-stack>
 
-<p-table [value]="rows()" [loading]="isLoading()" [scrollable]="true" scrollHeight="500px">
+<ui-data-table [value]="rows()" [loading]="isLoading()" [scrollable]="true" scrollHeight="500px">
   <ng-template #header>
     <tr>
       <th>Class</th>
@@ -64,14 +64,14 @@
     </tr>
   </ng-template>
 
-  <ng-template #emptymessage>
+  <ng-template #empty>
     <tr>
       <td colspan="7" class="text-muted py-12 text-center">
         No licenses on file. Click "Add license" to record one.
       </td>
     </tr>
   </ng-template>
-</p-table>
+</ui-data-table>
 
 <app-driver-license-edit-dialog
   [(visible)]="editDialogVisible"

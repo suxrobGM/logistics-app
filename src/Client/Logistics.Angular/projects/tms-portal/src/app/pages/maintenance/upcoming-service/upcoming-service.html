@@ -16,7 +16,7 @@
     emptyMessage="All vehicles are up to date on maintenance."
     (retry)="store.retry()"
   >
-    <p-table
+    <ui-data-table
       [value]="store.data()"
       [paginator]="true"
       [rows]="10"
@@ -25,16 +25,10 @@
       <ng-template #header>
         <tr>
           <th>Status</th>
-          <th pSortableColumn="TruckNumber">
-            Truck
-            <p-sortIcon field="TruckNumber" />
-          </th>
+          <th uiSortHeader="TruckNumber">Truck</th>
           <th>Service Type</th>
           <th>Interval</th>
-          <th pSortableColumn="NextServiceDate">
-            Due Date
-            <p-sortIcon field="NextServiceDate" />
-          </th>
+          <th uiSortHeader="NextServiceDate">Due Date</th>
           <th>Due In</th>
           <th></th>
         </tr>
@@ -80,7 +74,7 @@
           </td>
         </tr>
       </ng-template>
-    </p-table>
+    </ui-data-table>
   </ui-data-container>
 </p-card>
 

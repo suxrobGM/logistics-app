@@ -1,7 +1,7 @@
 @if (defects().length === 0) {
   <p class="text-muted py-4 text-center text-sm">No defects documented.</p>
 } @else {
-  <p-table [value]="defects()" [scrollable]="true">
+  <ui-data-table [value]="defects()" [scrollable]="true">
     <ng-template #header>
       <tr>
         <th class="w-16">#</th>
@@ -23,5 +23,5 @@
         <td>{{ defect.description || "No description" }}</td>
       </tr>
     </ng-template>
-  </p-table>
+  </ui-data-table>
 }

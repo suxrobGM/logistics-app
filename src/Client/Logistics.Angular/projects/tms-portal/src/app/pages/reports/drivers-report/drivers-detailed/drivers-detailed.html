@@ -25,7 +25,7 @@
     </ui-stack>
   </ng-template>
 
-  <p-table
+  <ui-data-table
     [value]="store.data()"
     [loading]="store.isLoading()"
     [tableStyle]="{ 'min-width': '50rem' }"
@@ -34,7 +34,7 @@
     [lazy]="true"
     [paginator]="true"
     [showCurrentPageReport]="true"
-    (onLazyLoad)="store.onLazyLoad($event)"
+    (lazyLoad)="store.onLazyLoad($event)"
     [rows]="10"
     [first]="store.first()"
     [totalRecords]="store.totalRecords()"
@@ -45,26 +45,11 @@
         <th>Driver</th>
         <th>Truck</th>
         <th>Type</th>
-        <th pSortableColumn="LoadsDelivered">
-          Loads Delivered
-          <p-sortIcon field="LoadsDelivered" />
-        </th>
-        <th pSortableColumn="DistanceDriven">
-          Distance Driven
-          <p-sortIcon field="DistanceDriven" />
-        </th>
-        <th pSortableColumn="GrossEarnings">
-          Total Earnings
-          <p-sortIcon field="GrossEarnings" />
-        </th>
-        <th pSortableColumn="AverageEarningsPerLoad">
-          Avg per Load
-          <p-sortIcon field="AverageEarningsPerLoad" />
-        </th>
-        <th pSortableColumn="Efficiency">
-          Efficiency
-          <p-sortIcon field="Efficiency" />
-        </th>
+        <th uiSortHeader="LoadsDelivered">Loads Delivered</th>
+        <th uiSortHeader="DistanceDriven">Distance Driven</th>
+        <th uiSortHeader="GrossEarnings">Total Earnings</th>
+        <th uiSortHeader="AverageEarningsPerLoad">Avg per Load</th>
+        <th uiSortHeader="Efficiency">Efficiency</th>
         <th>Performance</th>
       </tr>
     </ng-template>
@@ -125,7 +110,7 @@
         </td>
       </tr>
     </ng-template>
-    <ng-template #emptymessage>
+    <ng-template #empty>
       <tr>
         <td colspan="9" class="py-4 text-center">
           <ui-stack align="center" gap="2">
@@ -138,5 +123,5 @@
         </td>
       </tr>
     </ng-template>
-  </p-table>
+  </ui-data-table>
 </p-card>

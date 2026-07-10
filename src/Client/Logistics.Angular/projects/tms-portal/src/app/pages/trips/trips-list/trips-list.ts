@@ -11,7 +11,14 @@ import {
   type TruckDto,
 } from "@logistics/shared/api";
 import { tripStatusOptions } from "@logistics/shared/api/enums";
-import { Grid, Stack, Typography } from "@logistics/shared/components";
+import {
+  Grid,
+  Stack,
+  Typography,
+  UiDataTable,
+  UiSortHeader,
+  UiTableRowDirectives,
+} from "@logistics/shared/components";
 import {
   AddressPipe,
   CurrencyFormatPipe,
@@ -27,7 +34,6 @@ import { Checkbox } from "primeng/checkbox";
 import { MenuModule } from "primeng/menu";
 import { MultiSelect } from "primeng/multiselect";
 import { ProgressBarModule } from "primeng/progressbar";
-import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import {
@@ -52,7 +58,9 @@ import { TripsListStore } from "../store/trips-list.store";
   imports: [
     Button,
     Card,
-    TableModule,
+    UiDataTable,
+    UiSortHeader,
+    UiTableRowDirectives,
     FormsModule,
     DateFormatPipe,
     DistanceUnitPipe,

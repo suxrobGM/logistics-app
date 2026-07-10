@@ -13,13 +13,19 @@ import {
   type SalaryType,
 } from "@logistics/shared/api";
 import { invoiceStatusOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
-import { Grid, Stack, Typography } from "@logistics/shared/components";
+import {
+  Grid,
+  Stack,
+  Typography,
+  UiDataTable,
+  UiSortHeader,
+  UiTableRowDirectives,
+} from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
-import { TableModule } from "primeng/table";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
@@ -40,7 +46,9 @@ import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
   imports: [
     CommonModule,
     FormsModule,
-    TableModule,
+    UiDataTable,
+    UiSortHeader,
+    UiTableRowDirectives,
     CardModule,
     RouterModule,
     ButtonModule,

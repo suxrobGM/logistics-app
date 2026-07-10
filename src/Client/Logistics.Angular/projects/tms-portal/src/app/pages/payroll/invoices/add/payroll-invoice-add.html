@@ -144,7 +144,7 @@
             </div>
           </ui-stack>
 
-          <p-table
+          <ui-data-table
             [value]="bulkPreviews()"
             [tableStyle]="{ 'min-width': '50rem' }"
             [scrollable]="true"
@@ -183,12 +183,12 @@
                 </td>
               </tr>
             </ng-template>
-            <ng-template #emptymessage>
+            <ng-template #empty>
               <tr>
                 <td colspan="5" class="text-muted text-center">No employees selected</td>
               </tr>
             </ng-template>
-          </p-table>
+          </ui-data-table>
         }
 
         <ui-stack direction="row" gap="2" class="mt-6">

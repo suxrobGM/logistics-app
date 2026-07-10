@@ -12,12 +12,11 @@ import {
   type TimeEntryType,
 } from "@logistics/shared/api";
 import { timeEntryTypeOptions } from "@logistics/shared/api/enums";
-import { Stack } from "@logistics/shared/components";
+import { Stack, UiDataTable, UiSortHeader } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePickerModule } from "primeng/datepicker";
 import { SelectModule } from "primeng/select";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
@@ -33,7 +32,6 @@ import { TimesheetsListStore } from "../store/list.store";
     ButtonModule,
     TooltipModule,
     CardModule,
-    TableModule,
     TagModule,
     SelectModule,
     DatePickerModule,
@@ -46,6 +44,8 @@ import { TimesheetsListStore } from "../store/list.store";
     TimesheetFormDialog,
     PermissionGuard,
     Stack,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class TimesheetsList {

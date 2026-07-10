@@ -8,12 +8,19 @@ import {
   unpublishBlogPost,
   type BlogPostDto,
 } from "@logistics/shared/api";
-import { DataContainer, Icon, PageHeader, SearchField, Stack } from "@logistics/shared/components";
+import {
+  DataContainer,
+  Icon,
+  PageHeader,
+  SearchField,
+  Stack,
+  UiDataTable,
+  UiSortHeader,
+} from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
@@ -27,7 +34,6 @@ import { BlogPostsListStore } from "../store/blog-posts-list.store";
     ButtonModule,
     TooltipModule,
     CardModule,
-    TableModule,
     MenuModule,
     DataContainer,
     PageHeader,
@@ -36,6 +42,8 @@ import { BlogPostsListStore } from "../store/blog-posts-list.store";
     DatePipe,
     Icon,
     Stack,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class BlogPostsList {

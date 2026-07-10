@@ -4,12 +4,11 @@ import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import type { InvoiceDto, InvoiceStatus } from "@logistics/shared/api";
 import { invoiceStatusOptions } from "@logistics/shared/api/enums";
-import { Grid, Stack, Typography } from "@logistics/shared/components";
+import { Grid, Stack, Typography, UiDataTable, UiSortHeader } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MultiSelectModule } from "primeng/multiselect";
-import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import {
   DataContainer,
@@ -28,7 +27,6 @@ import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
   imports: [
     CommonModule,
     FormsModule,
-    TableModule,
     CardModule,
     RouterModule,
     ButtonModule,
@@ -39,6 +37,8 @@ import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
     DateRangePicker,
     SearchField,
     UiFormField,
+    UiDataTable,
+    UiSortHeader,
     CurrencyFormatPipe,
     DateFormatPipe,
     PageHeader,

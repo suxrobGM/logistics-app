@@ -10,12 +10,17 @@ import {
   type InvitationDto,
   type UserDto,
 } from "@logistics/shared/api";
-import { DataContainer, PageHeader, SearchField } from "@logistics/shared/components";
+import {
+  DataContainer,
+  PageHeader,
+  SearchField,
+  UiDataTable,
+  UiSortHeader,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
@@ -31,7 +36,6 @@ import { AdminsListStore } from "../store/admins-list.store";
     DatePipe,
     ButtonModule,
     CardModule,
-    TableModule,
     DialogModule,
     InputTextModule,
     TagModule,
@@ -39,6 +43,8 @@ import { AdminsListStore } from "../store/admins-list.store";
     DataContainer,
     PageHeader,
     SearchField,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class AdminsList {

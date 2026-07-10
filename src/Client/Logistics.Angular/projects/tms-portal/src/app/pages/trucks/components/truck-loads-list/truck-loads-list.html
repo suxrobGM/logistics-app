@@ -4,7 +4,7 @@
     <p class="text-muted">No loads assigned to this truck</p>
   </div>
 } @else {
-  <p-table [value]="loads()" dataKey="id" [scrollable]="true">
+  <ui-data-table [value]="loads()" dataKey="id" [scrollable]="true">
     <ng-template #header>
       <tr>
         <th>Load #</th>
@@ -64,12 +64,12 @@
       </tr>
     </ng-template>
 
-    <ng-template #emptymessage>
+    <ng-template #empty>
       <tr>
         <td colspan="8" class="text-center">
           <span class="text-muted">No loads assigned</span>
         </td>
       </tr>
     </ng-template>
-  </p-table>
+  </ui-data-table>
 }

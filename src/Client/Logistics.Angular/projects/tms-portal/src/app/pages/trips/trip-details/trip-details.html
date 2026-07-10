@@ -192,7 +192,7 @@
               </ui-stack>
             </ng-template>
 
-            <p-table
+            <ui-data-table
               [value]="store.sortedStops()"
               dataKey="id"
               sortField="order"
@@ -202,7 +202,7 @@
             >
               <ng-template #header>
                 <tr>
-                  <th pSortableColumn="order">#<p-sortIcon field="order" /></th>
+                  <th uiSortHeader="order">#</th>
                   <th>Type</th>
                   <th>Address</th>
                   <th>Arrived</th>
@@ -242,7 +242,7 @@
                   }
                 </tr>
               </ng-template>
-            </p-table>
+            </ui-data-table>
           </p-card>
 
           <!-- Loads table -->
@@ -254,22 +254,16 @@
               </ui-stack>
             </ng-template>
 
-            <p-table [value]="store.trip()!.loads ?? []" [dataKey]="'id'">
+            <ui-data-table [value]="store.trip()!.loads ?? []" [dataKey]="'id'">
               <ng-template #header>
                 <tr>
-                  <th pSortableColumn="number">Load # <p-sortIcon field="number" /></th>
-                  <th pSortableColumn="name">Name <p-sortIcon field="name" /></th>
-                  <th pSortableColumn="customer.name">
-                    Customer <p-sortIcon field="customer.name" />
-                  </th>
-                  <th pSortableColumn="originAddress.line1">
-                    Origin <p-sortIcon field="originAddress.line1" />
-                  </th>
-                  <th pSortableColumn="destinationAddress.line1">
-                    Dest <p-sortIcon field="destinationAddress.line1" />
-                  </th>
-                  <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
-                  <th pSortableColumn="deliveryCost">Cost <p-sortIcon field="deliveryCost" /></th>
+                  <th uiSortHeader="number">Load #</th>
+                  <th uiSortHeader="name">Name</th>
+                  <th uiSortHeader="customer.name">Customer</th>
+                  <th uiSortHeader="originAddress.line1">Origin</th>
+                  <th uiSortHeader="destinationAddress.line1">Dest</th>
+                  <th uiSortHeader="status">Status</th>
+                  <th uiSortHeader="deliveryCost">Cost</th>
                 </tr>
               </ng-template>
               <ng-template #body let-load>
@@ -283,7 +277,7 @@
                   <td>{{ load.deliveryCost | currencyFormat }}</td>
                 </tr>
               </ng-template>
-            </p-table>
+            </ui-data-table>
           </p-card>
         </ui-stack>
       </ui-grid>

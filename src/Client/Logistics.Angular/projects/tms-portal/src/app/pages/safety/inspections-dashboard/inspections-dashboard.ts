@@ -14,10 +14,10 @@ import {
   type DvirReportDto,
   type DvirStatus,
 } from "@logistics/shared/api";
+import { UiDataTable } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { PageHeader } from "@/shared/components";
 import type { TagSeverity } from "@/shared/types";
@@ -30,9 +30,9 @@ import type { TagSeverity } from "@/shared/types";
     ButtonModule,
     CardModule,
     ProgressSpinnerModule,
-    TableModule,
     TagModule,
     PageHeader,
+    UiDataTable,
   ],
 })
 export class InspectionsDashboardPage implements OnInit {

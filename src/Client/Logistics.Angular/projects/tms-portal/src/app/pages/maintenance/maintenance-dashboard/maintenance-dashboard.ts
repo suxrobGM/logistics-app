@@ -8,11 +8,10 @@ import {
   type MaintenanceRecordDto,
   type MaintenanceScheduleDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { Grid, Icon, Stack, Typography, UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DashboardCard, PageHeader, StatCard } from "@/shared/components";
@@ -24,7 +23,7 @@ import { DashboardCard, PageHeader, StatCard } from "@/shared/components";
     ButtonModule,
     TooltipModule,
     CardModule,
-    TableModule,
+    UiDataTable,
     TagModule,
     DatePipe,
     CurrencyFormatPipe,

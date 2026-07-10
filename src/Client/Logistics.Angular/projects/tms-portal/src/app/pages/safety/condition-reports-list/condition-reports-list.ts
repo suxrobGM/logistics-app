@@ -2,13 +2,12 @@ import { DatePipe } from "@angular/common";
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import type { ConditionReportDto } from "@logistics/shared/api";
-import { Icon } from "@logistics/shared/components";
+import { Icon, UiDataTable, UiSortHeader } from "@logistics/shared/components";
 import { isContainerLoadType } from "@logistics/shared/utils";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
@@ -22,7 +21,6 @@ import { ConditionReportsListStore } from "../store/condition-reports-list.store
     ButtonModule,
     TooltipModule,
     CardModule,
-    TableModule,
     MenuModule,
     DataContainer,
     DatePipe,
@@ -30,6 +28,8 @@ import { ConditionReportsListStore } from "../store/condition-reports-list.store
     SearchField,
     TagModule,
     Icon,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class ConditionReportsListPage implements OnInit {

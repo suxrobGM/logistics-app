@@ -2,6 +2,7 @@ import { Component, computed, inject, input, model, output, signal } from "@angu
 import { Router, RouterLink } from "@angular/router";
 import type { AppError } from "@logistics/shared";
 import type { LoadDto, LoadStatus } from "@logistics/shared/api";
+import { UiDataTable, UiSortHeader, UiTableRowDirectives } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
@@ -9,7 +10,6 @@ import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
-import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { DataContainer, LoadStatusTag, LoadTypeTag, RouteBadge } from "@/shared/components";
@@ -19,7 +19,9 @@ import { DataContainer, LoadStatusTag, LoadTypeTag, RouteBadge } from "@/shared/
   templateUrl: "./loads-table.html",
   imports: [
     CardModule,
-    TableModule,
+    UiDataTable,
+    UiSortHeader,
+    UiTableRowDirectives,
     ButtonModule,
     TooltipModule,
     MenuModule,

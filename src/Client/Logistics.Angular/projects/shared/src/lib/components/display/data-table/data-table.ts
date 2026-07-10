@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from "@angular/common";
 import {
+  booleanAttribute,
   Component,
   contentChild,
   forwardRef,
@@ -71,14 +72,14 @@ export class UiDataTable<T> {
   public readonly value = input.required<readonly T[]>();
 
   // Server-side paging / sorting
-  public readonly lazy = input<boolean>(false);
-  public readonly paginator = input<boolean>(false);
+  public readonly lazy = input(false, { transform: booleanAttribute });
+  public readonly paginator = input(false, { transform: booleanAttribute });
   public readonly rows = input<number | undefined>(undefined);
   public readonly first = input<number | undefined>(undefined);
   public readonly totalRecords = input<number | undefined>(undefined);
   public readonly rowsPerPageOptions = input<number[] | undefined>(undefined);
-  public readonly showCurrentPageReport = input<boolean>(false);
-  public readonly loading = input<boolean>(false);
+  public readonly showCurrentPageReport = input(false, { transform: booleanAttribute });
+  public readonly loading = input(false, { transform: booleanAttribute });
 
   // Sorting
   public readonly sortField = input<string | undefined>(undefined);
@@ -88,18 +89,27 @@ export class UiDataTable<T> {
   // Selection
   public readonly dataKey = input<string | undefined>(undefined);
   public readonly selectionMode = input<DataTableSelectionMode>(undefined);
-  public readonly selection = model<unknown>(undefined);
+  /**
+   * Selected row(s). Untyped on purpose: the shape depends on `selectionMode` (a row, or an
+   * array of rows), exactly as PrimeNG models it.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public readonly selection = model<any>(undefined);
 
   // Presentation
-  public readonly scrollable = input<boolean>(false);
+  public readonly scrollable = input(false, { transform: booleanAttribute });
   public readonly scrollHeight = input<string | undefined>(undefined);
   public readonly styleClass = input<string | undefined>(undefined);
   public readonly tableStyle = input<Record<string, string> | undefined>(undefined);
   public readonly size = input<DataTableSize>(undefined);
-  public readonly stripedRows = input<boolean>(false);
-  public readonly rowHover = input<boolean>(false);
-  public readonly showLoader = input<boolean>(true);
-  public readonly currentPageReportTemplate = input<string | undefined>(undefined);
+  public readonly stripedRows = input(false, { transform: booleanAttribute });
+  public readonly rowHover = input(false, { transform: booleanAttribute });
+  public readonly showLoader = input(true, { transform: booleanAttribute });
+  /**
+   * Must default to PrimeNG's own default rather than `undefined`: the paginator does
+   * `currentPageReportTemplate.replace(...)` unguarded, so forwarding `undefined` throws.
+   */
+  public readonly currentPageReportTemplate = input<string>("{currentPage} of {totalPages}");
   public readonly globalFilterFields = input<string[] | undefined>(undefined);
 
   /** Emitted when the table needs a page of data (paging or sorting changed). */

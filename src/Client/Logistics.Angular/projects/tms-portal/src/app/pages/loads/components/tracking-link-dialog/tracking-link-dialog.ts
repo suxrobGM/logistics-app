@@ -5,12 +5,12 @@ import {
   createTrackingLink,
   getTrackingLinksForLoad,
   revokeTrackingLink,
+  type TrackingLinkDto,
 } from "@logistics/shared/api";
-import type { TrackingLinkDto } from "@logistics/shared/api";
+import { UiDataTable } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
@@ -23,7 +23,7 @@ import { SendTrackingLinkDialog } from "../send-tracking-link-dialog/send-tracki
     DialogModule,
     ProgressSpinnerModule,
     ButtonModule,
-    TableModule,
+    UiDataTable,
     TooltipModule,
     TagModule,
     DatePipe,

@@ -7,12 +7,11 @@ import {
   type DocumentDto,
   type PortalLoadDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Grid, Icon, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 
 @Component({
@@ -26,13 +25,13 @@ import { TagModule } from "primeng/tag";
     CardModule,
     ButtonModule,
     TagModule,
-    TableModule,
     ProgressSpinnerModule,
     Grid,
     Icon,
     Stack,
     Surface,
     Typography,
+    UiDataTable,
   ],
 })
 export class ShipmentDetails {

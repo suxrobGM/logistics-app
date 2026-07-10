@@ -9,12 +9,12 @@ import {
   type ApiKeyCreatedDto,
   type ApiKeyDto,
 } from "@logistics/shared/api";
+import { UiDataTable } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
@@ -28,11 +28,11 @@ import { UiFormField } from "@/shared/components";
     DialogModule,
     InputTextModule,
     MessageModule,
-    TableModule,
     TooltipModule,
     UiFormField,
     DatePipe,
     ProgressSpinnerModule,
+    UiDataTable,
   ],
 })
 export class ApiKeysTable implements OnInit {

@@ -1,13 +1,12 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import type { Address, TruckDto } from "@logistics/shared/api";
-import { Stack } from "@logistics/shared/components";
+import { Stack, UiDataTable, UiSortHeader } from "@logistics/shared/components";
 import { AddressPipe } from "@logistics/shared/pipes";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
-import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, TruckStatusTag, TruckTypeTag } from "@/shared/components";
 import {
@@ -26,7 +25,6 @@ import { TrucksListStore } from "../store/trucks-list.store";
     ButtonModule,
     TooltipModule,
     CardModule,
-    TableModule,
     MenuModule,
     AddressPipe,
     DataContainer,
@@ -37,6 +35,8 @@ import { TrucksListStore } from "../store/trucks-list.store";
     TrucksFilterPanel,
     TrucksMapView,
     Stack,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class TrucksList {

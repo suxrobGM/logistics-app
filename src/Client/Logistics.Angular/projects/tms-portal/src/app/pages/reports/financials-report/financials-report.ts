@@ -6,11 +6,10 @@ import {
   type FinancialsReportDto,
   type RevenueTrendDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { Grid, Icon, Stack, Typography, UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
-import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
 import {
   BaseReportComponent,
@@ -33,7 +32,7 @@ import {
   selector: "app-financials-report",
   templateUrl: "./financials-report.html",
   imports: [
-    TableModule,
+    UiDataTable,
     ChartModule,
     DateRangePicker,
     CurrencyFormatPipe,

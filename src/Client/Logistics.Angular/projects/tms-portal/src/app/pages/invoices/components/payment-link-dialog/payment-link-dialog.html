@@ -20,7 +20,7 @@
   </ui-stack>
 
   @if (links().length > 0) {
-    <p-table [value]="links()">
+    <ui-data-table [value]="links()">
       <ng-template #header>
         <tr>
           <th>Created</th>
@@ -59,14 +59,14 @@
           </td>
         </tr>
       </ng-template>
-      <ng-template #emptymessage>
+      <ng-template #empty>
         <tr>
           <td colspan="5" class="text-muted-color py-4 text-center">
             No payment links generated yet
           </td>
         </tr>
       </ng-template>
-    </p-table>
+    </ui-data-table>
   } @else {
     <ui-stack align="center" gap="2" class="text-muted-color py-4">
       <ui-icon name="link" size="xl" class="mb-2" />

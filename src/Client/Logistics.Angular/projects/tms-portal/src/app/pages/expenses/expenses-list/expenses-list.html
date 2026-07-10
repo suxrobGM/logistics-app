@@ -22,14 +22,14 @@
     emptyMessage="Try adjusting your search or add a new expense."
     (retry)="store.retry()"
   >
-    <p-table
+    <ui-data-table
       [value]="store.data()"
       dataKey="id"
       [scrollable]="true"
       [lazy]="true"
       [paginator]="true"
       [showCurrentPageReport]="true"
-      (onLazyLoad)="store.onLazyLoad($event)"
+      (lazyLoad)="store.onLazyLoad($event)"
       [rows]="store.pageSize()"
       [first]="store.first()"
       [totalRecords]="store.totalRecords()"
@@ -38,28 +38,13 @@
     >
       <ng-template #header>
         <tr>
-          <th pSortableColumn="Number" class="w-24">
-            #
-            <p-sortIcon field="Number" />
-          </th>
-          <th pSortableColumn="Type" class="w-28">
-            Type
-            <p-sortIcon field="Type" />
-          </th>
+          <th uiSortHeader="Number" class="w-24">#</th>
+          <th uiSortHeader="Type" class="w-28">Type</th>
           <th>Category</th>
           <th>Vendor</th>
-          <th pSortableColumn="Amount" class="w-32">
-            Amount
-            <p-sortIcon field="Amount" />
-          </th>
-          <th pSortableColumn="ExpenseDate" class="w-36">
-            Date
-            <p-sortIcon field="ExpenseDate" />
-          </th>
-          <th pSortableColumn="Status" class="w-28">
-            Status
-            <p-sortIcon field="Status" />
-          </th>
+          <th uiSortHeader="Amount" class="w-32">Amount</th>
+          <th uiSortHeader="ExpenseDate" class="w-36">Date</th>
+          <th uiSortHeader="Status" class="w-28">Status</th>
           <th class="w-24">Receipt</th>
           <th class="w-24">Action</th>
         </tr>
@@ -112,7 +97,7 @@
           </td>
         </tr>
       </ng-template>
-    </p-table>
+    </ui-data-table>
   </ui-data-container>
 </p-card>
 

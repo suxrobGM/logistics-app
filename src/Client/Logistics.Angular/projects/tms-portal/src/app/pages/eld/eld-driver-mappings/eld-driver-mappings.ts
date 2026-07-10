@@ -21,11 +21,11 @@ import {
   Grid,
   Icon,
   Stack,
+  UiDataTable,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
@@ -49,9 +49,9 @@ import { getEldProviderLabel } from "../_components";
     ProgressSpinnerModule,
     SelectModule,
     Stack,
-    TableModule,
     TagModule,
     TooltipModule,
+    UiDataTable,
   ],
 })
 export class EldDriverMappingsComponent implements OnInit {

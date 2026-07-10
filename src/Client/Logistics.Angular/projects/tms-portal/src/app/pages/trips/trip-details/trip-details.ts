@@ -3,7 +3,16 @@ import { Component, computed, effect, inject, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import type { TripStopDto, TripStopType } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import {
+  Grid,
+  Icon,
+  Stack,
+  Surface,
+  Typography,
+  UiDataTable,
+  UiSortHeader,
+  UiTableRowDirectives,
+} from "@logistics/shared/components";
 import {
   AddressPipe,
   CurrencyFormatPipe,
@@ -15,7 +24,6 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressBarModule } from "primeng/progressbar";
 import { SkeletonModule } from "primeng/skeleton";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
 import {
@@ -39,7 +47,6 @@ import { TripDetailsStore } from "../store/trip-details.store";
     RouterLink,
     CardModule,
     TagModule,
-    TableModule,
     ButtonModule,
     DirectionMap,
     DistanceUnitPipe,
@@ -59,6 +66,9 @@ import { TripDetailsStore } from "../store/trip-details.store";
     Surface,
     Typography,
     PageHeader,
+    UiDataTable,
+    UiSortHeader,
+    UiTableRowDirectives,
   ],
 })
 export class TripDetailsPage {

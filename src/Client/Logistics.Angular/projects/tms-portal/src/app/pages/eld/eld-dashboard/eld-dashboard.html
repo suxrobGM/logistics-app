@@ -66,7 +66,7 @@
           (action)="configureProviders()"
         />
       } @else {
-        <p-table
+        <ui-data-table
           [value]="drivers()"
           [paginator]="true"
           [rows]="10"
@@ -76,25 +76,13 @@
         >
           <ng-template #header>
             <tr>
-              <th pSortableColumn="employeeName">
-                Driver
-                <p-sortIcon field="employeeName"></p-sortIcon>
-              </th>
-              <th pSortableColumn="currentDutyStatus">
-                Status
-                <p-sortIcon field="currentDutyStatus"></p-sortIcon>
-              </th>
+              <th uiSortHeader="employeeName">Driver</th>
+              <th uiSortHeader="currentDutyStatus">Status</th>
               <th>Driving Time Left</th>
               <th>On-Duty Time Left</th>
               <th>Cycle Time Left</th>
-              <th pSortableColumn="isAvailableForDispatch">
-                Available
-                <p-sortIcon field="isAvailableForDispatch"></p-sortIcon>
-              </th>
-              <th pSortableColumn="lastUpdatedAt">
-                Last Updated
-                <p-sortIcon field="lastUpdatedAt"></p-sortIcon>
-              </th>
+              <th uiSortHeader="isAvailableForDispatch">Available</th>
+              <th uiSortHeader="lastUpdatedAt">Last Updated</th>
               <th>Actions</th>
             </tr>
           </ng-template>
@@ -144,7 +132,7 @@
               </td>
             </tr>
           </ng-template>
-        </p-table>
+        </ui-data-table>
       }
     </ui-dashboard-card>
   </ui-grid>

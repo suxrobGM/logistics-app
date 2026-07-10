@@ -58,7 +58,7 @@
           @if (invoice()!.lineItems && invoice()!.lineItems!.length > 0) {
             <p-divider />
             <h4>Line Items</h4>
-            <p-table [value]="invoice()!.lineItems!">
+            <ui-data-table [value]="invoice()!.lineItems!">
               <ng-template #header>
                 <tr>
                   <th>Description</th>
@@ -94,7 +94,7 @@
                   }
                 </tr>
               </ng-template>
-            </p-table>
+            </ui-data-table>
           }
 
           @if (isReverseCharge()) {
@@ -106,7 +106,7 @@
           @if (hasTax() && (invoice()!.taxBreakdown?.length ?? 0) > 1) {
             <p-divider />
             <h4>{{ taxLabel() }} breakdown</h4>
-            <p-table [value]="invoice()!.taxBreakdown!">
+            <ui-data-table [value]="invoice()!.taxBreakdown!">
               <ng-template #header>
                 <tr>
                   <th>Jurisdiction</th>
@@ -125,7 +125,7 @@
                   <td class="text-right">{{ line.taxAmount | currencyFormat }}</td>
                 </tr>
               </ng-template>
-            </p-table>
+            </ui-data-table>
           }
 
           <p-divider />

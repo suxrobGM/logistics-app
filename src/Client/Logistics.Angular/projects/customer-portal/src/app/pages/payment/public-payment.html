@@ -69,7 +69,7 @@
           <!-- Line Items -->
           @if (inv.lineItems && inv.lineItems.length > 0) {
             <p-divider />
-            <p-table [value]="inv.lineItems" styleClass="p-datatable-sm">
+            <ui-data-table [value]="inv.lineItems" styleClass="p-datatable-sm">
               <ng-template #header>
                 <tr>
                   <th>Description</th>
@@ -96,7 +96,7 @@
                   }
                 </tr>
               </ng-template>
-            </p-table>
+            </ui-data-table>
           }
 
           @if (isReverseCharge()) {

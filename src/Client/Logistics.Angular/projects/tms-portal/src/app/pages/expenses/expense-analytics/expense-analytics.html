@@ -48,7 +48,7 @@
           <ui-typography variant="h4">Top Trucks by Expense</ui-typography>
         </div>
       </ng-template>
-      <p-table [value]="stats.topTrucks ?? []" [scrollable]="true">
+      <ui-data-table [value]="stats.topTrucks ?? []" [scrollable]="true">
         <ng-template #header>
           <tr>
             <th>Rank</th>
@@ -79,7 +79,7 @@
             <td class="text-right">{{ truck.expenseCount }}</td>
           </tr>
         </ng-template>
-      </p-table>
+      </ui-data-table>
     </p-card>
   }
 } @else {

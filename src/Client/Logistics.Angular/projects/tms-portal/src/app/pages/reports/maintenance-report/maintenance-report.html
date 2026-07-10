@@ -118,7 +118,7 @@
   <ui-grid container spacing="2">
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Service Type Summary" icon="pi-list" iconColor="blue">
-        <p-table [value]="data()?.byServiceType || []" [paginator]="true" [rows]="5">
+        <ui-data-table [value]="data()?.byServiceType || []" [paginator]="true" [rows]="5">
           <ng-template #header>
             <tr>
               <th>Service Type</th>
@@ -147,18 +147,18 @@
               </td>
             </tr>
           </ng-template>
-          <ng-template #emptymessage>
+          <ng-template #empty>
             <tr>
               <td colspan="4" class="text-muted text-center">No service type data available</td>
             </tr>
           </ng-template>
-        </p-table>
+        </ui-data-table>
       </ui-dashboard-card>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Top Trucks by Cost" icon="pi-truck" iconColor="orange">
-        <p-table [value]="data()?.topCostTrucks || []" [paginator]="true" [rows]="5">
+        <ui-data-table [value]="data()?.topCostTrucks || []" [paginator]="true" [rows]="5">
           <ng-template #header>
             <tr>
               <th>Truck</th>
@@ -201,12 +201,12 @@
               </td>
             </tr>
           </ng-template>
-          <ng-template #emptymessage>
+          <ng-template #empty>
             <tr>
               <td colspan="4" class="text-muted text-center">No truck data available</td>
             </tr>
           </ng-template>
-        </p-table>
+        </ui-data-table>
       </ui-dashboard-card>
     </ui-grid>
   </ui-grid>
@@ -214,7 +214,7 @@
   <!-- Vendor Breakdown Table -->
   <div class="mb-6">
     <ui-dashboard-card title="Vendor Summary" icon="pi-building" iconColor="green">
-      <p-table [value]="data()?.byVendor || []">
+      <ui-data-table [value]="data()?.byVendor || []">
         <ng-template #header>
           <tr>
             <th>Vendor</th>
@@ -237,12 +237,12 @@
             </td>
           </tr>
         </ng-template>
-        <ng-template #emptymessage>
+        <ng-template #empty>
           <tr>
             <td colspan="3" class="text-muted text-center">No vendor data available</td>
           </tr>
         </ng-template>
-      </p-table>
+      </ui-data-table>
     </ui-dashboard-card>
   </div>
 

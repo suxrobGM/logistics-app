@@ -4,7 +4,7 @@
     <p-tag [value]="getAssignedLoadsCount()" severity="info" />
   </ui-stack>
 
-  <p-table
+  <ui-data-table
     #dataTable
     [value]="rows()"
     [dataKey]="'id'"
@@ -53,17 +53,13 @@
 
     <ng-template #header>
       <tr>
-        <th pSortableColumn="name">Load <p-sortIcon field="name" /></th>
-        <th pSortableColumn="customerName">Customer <p-sortIcon field="customerName" /></th>
-        <th pSortableColumn="origin">Origin <p-sortIcon field="origin" /></th>
-        <th pSortableColumn="destination">Destination <p-sortIcon field="destination" /></th>
-        <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
-        <th pSortableColumn="distance" class="text-right">
-          Distance <p-sortIcon field="distance" />
-        </th>
-        <th pSortableColumn="deliveryCost" class="text-right">
-          Cost <p-sortIcon field="deliveryCost" />
-        </th>
+        <th uiSortHeader="name">Load</th>
+        <th uiSortHeader="customerName">Customer</th>
+        <th uiSortHeader="origin">Origin</th>
+        <th uiSortHeader="destination">Destination</th>
+        <th uiSortHeader="status">Status</th>
+        <th uiSortHeader="distance" class="text-right">Distance</th>
+        <th uiSortHeader="deliveryCost" class="text-right">Cost</th>
         <th></th>
       </tr>
     </ng-template>
@@ -162,7 +158,7 @@
         <td></td>
       </tr>
     </ng-template>
-  </p-table>
+  </ui-data-table>
 
   <ui-stack direction="row" justify="between" class="pt-6">
     <p-button type="button" label="Back" icon="pi pi-arrow-left" (click)="goToPreviousStep()" />

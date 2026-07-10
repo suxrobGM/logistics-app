@@ -13,7 +13,7 @@
 </ui-stack>
 
 <ui-surface variant="elevated" padding="none">
-  <p-table
+  <ui-data-table
     [value]="invoices()"
     [lazy]="true"
     [paginator]="true"
@@ -23,7 +23,7 @@
     [loading]="isLoading()"
     [rowsPerPageOptions]="[10, 25, 50]"
     [tableStyle]="{ 'min-width': '50rem' }"
-    (onLazyLoad)="onLazyLoad($event)"
+    (lazyLoad)="onLazyLoad($event)"
   >
     <ng-template #header>
       <tr>
@@ -64,7 +64,7 @@
         </td>
       </tr>
     </ng-template>
-    <ng-template #emptymessage>
+    <ng-template #empty>
       <tr>
         <td colspan="7" class="py-12 text-center">
           <ui-stack align="center" gap="2">
@@ -74,7 +74,7 @@
         </td>
       </tr>
     </ng-template>
-  </p-table>
+  </ui-data-table>
 </ui-surface>
 
 <p-toast />

@@ -8,14 +8,13 @@ import {
   type DutyStatus,
   type HosLogDto,
 } from "@logistics/shared/api";
-import { EmptyState, ErrorState, Grid, Stack } from "@logistics/shared/components";
+import { EmptyState, ErrorState, Grid, Stack, UiDataTable } from "@logistics/shared/components";
 import { LocalizationService } from "@logistics/shared/services";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DashboardCard, PageHeader, StatCard, UiFormField } from "@/shared/components";
@@ -39,9 +38,9 @@ import { DashboardCard, PageHeader, StatCard, UiFormField } from "@/shared/compo
     ProgressSpinnerModule,
     Stack,
     StatCard,
-    TableModule,
     TagModule,
     TooltipModule,
+    UiDataTable,
   ],
 })
 export class EldHosLogsComponent implements OnInit {

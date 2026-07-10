@@ -15,14 +15,15 @@ import {
   Stack,
   Surface,
   Typography,
+  UiDataTable,
   UiFormField,
+  UiSortHeader,
 } from "@logistics/shared/components";
 import { DateUtils } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { SelectModule } from "primeng/select";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
@@ -42,7 +43,8 @@ interface StatusOption {
     ButtonModule,
     TooltipModule,
     CardModule,
-    TableModule,
+    UiDataTable,
+    UiSortHeader,
     DataContainer,
     PageHeader,
     SearchField,

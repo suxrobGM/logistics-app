@@ -72,7 +72,7 @@
             (action)="configureProviders()"
           />
         } @else {
-          <p-table [value]="store.providers()" [scrollable]="true" scrollHeight="250px">
+          <ui-data-table [value]="store.providers()" [scrollable]="true" scrollHeight="250px">
             <ng-template #header>
               <tr>
                 <th>Provider</th>
@@ -105,7 +105,7 @@
                 </td>
               </tr>
             </ng-template>
-          </p-table>
+          </ui-data-table>
         }
       </ui-dashboard-card>
     </ui-grid>
@@ -121,7 +121,7 @@
             (action)="managePostedTrucks()"
           />
         } @else {
-          <p-table [value]="store.postedTrucks()" [scrollable]="true" scrollHeight="250px">
+          <ui-data-table [value]="store.postedTrucks()" [scrollable]="true" scrollHeight="250px">
             <ng-template #header>
               <tr>
                 <th>Truck</th>
@@ -145,7 +145,7 @@
                 </td>
               </tr>
             </ng-template>
-          </p-table>
+          </ui-data-table>
         }
       </ui-dashboard-card>
     </ui-grid>

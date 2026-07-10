@@ -8,13 +8,20 @@ import {
   getPublicInvoice,
   type PublicInvoiceDto,
 } from "@logistics/shared/api";
-import { Alert, Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import {
+  Alert,
+  Grid,
+  Icon,
+  Stack,
+  Surface,
+  Typography,
+  UiDataTable,
+} from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { InputNumberModule } from "primeng/inputnumber";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { PublicLayout } from "@/shared/layout";
 
@@ -30,7 +37,6 @@ import { PublicLayout } from "@/shared/layout";
     DividerModule,
     InputNumberModule,
     TagModule,
-    TableModule,
     ErrorState,
     LoadingSkeleton,
     PublicLayout,
@@ -40,6 +46,7 @@ import { PublicLayout } from "@/shared/layout";
     Stack,
     Surface,
     Typography,
+    UiDataTable,
   ],
 })
 export class PublicPayment {

@@ -3,12 +3,11 @@ import { Component, inject, signal } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Api, getInvoices, type InvoiceDto } from "@logistics/shared/api";
 import { invoiceStatusOptions } from "@logistics/shared/api/enums";
-import { Grid, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Grid, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";
-import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { InvoiceStatusTag, PageHeader } from "@/shared/components";
 
@@ -33,7 +32,7 @@ interface PayrollDashboardData {
     RouterModule,
     CardModule,
     ButtonModule,
-    TableModule,
+    UiDataTable,
     SkeletonModule,
     TooltipModule,
     DatePipe,

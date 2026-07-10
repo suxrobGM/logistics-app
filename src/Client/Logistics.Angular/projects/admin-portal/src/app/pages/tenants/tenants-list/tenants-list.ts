@@ -6,12 +6,13 @@ import {
   DataContainer,
   PageHeader,
   SearchField,
+  UiDataTable,
+  UiSortHeader,
 } from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { Menu, MenuModule } from "primeng/menu";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
@@ -25,7 +26,8 @@ import { TenantsListStore } from "../store/tenants-list.store";
     ButtonModule,
     TooltipModule,
     CardModule,
-    TableModule,
+    UiDataTable,
+    UiSortHeader,
     MenuModule,
     DataContainer,
     PageHeader,

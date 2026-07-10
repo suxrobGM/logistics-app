@@ -7,13 +7,12 @@ import {
   deleteSubscription,
   type SubscriptionDto,
 } from "@logistics/shared/api";
-import { DataContainer, PageHeader, SearchField } from "@logistics/shared/components";
+import { DataContainer, PageHeader, SearchField, UiDataTable } from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { Menu, MenuModule } from "primeng/menu";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { SubscriptionsListStore } from "../store/subscriptions-list.store";
@@ -27,7 +26,7 @@ import { SubscriptionsListStore } from "../store/subscriptions-list.store";
     TooltipModule,
     RouterLink,
     CardModule,
-    TableModule,
+    UiDataTable,
     ConfirmDialogModule,
     DataContainer,
     PageHeader,

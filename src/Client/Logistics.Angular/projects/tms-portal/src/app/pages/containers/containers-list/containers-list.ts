@@ -4,11 +4,10 @@ import { Router } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import type { ContainerDto, ContainerIsoType, ContainerStatus } from "@logistics/shared/api";
 import { containerIsoTypeOptions, containerStatusOptions } from "@logistics/shared/api/enums";
-import { Icon, Stack, StatusBadge } from "@logistics/shared/components";
+import { Icon, Stack, StatusBadge, UiDataTable, UiSortHeader } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { SelectModule } from "primeng/select";
-import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { ContainersListStore } from "../store";
@@ -20,7 +19,6 @@ import { ContainersListStore } from "../store";
   imports: [
     ButtonModule,
     CardModule,
-    TableModule,
     SelectModule,
     TooltipModule,
     DatePipe,
@@ -30,6 +28,8 @@ import { ContainersListStore } from "../store";
     Icon,
     Stack,
     StatusBadge,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class ContainersList {

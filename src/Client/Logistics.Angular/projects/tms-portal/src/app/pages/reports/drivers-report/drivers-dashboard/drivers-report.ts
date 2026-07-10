@@ -8,11 +8,10 @@ import {
   type DriverPerformanceDto,
   type DriverTrendDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { Grid, Icon, Stack, Typography, UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import {
   BaseReportComponent,
@@ -35,7 +34,7 @@ import { getPerformanceLevel, getPerformanceSeverity } from "@/shared/utils";
   templateUrl: "./drivers-report.html",
   imports: [
     ChartModule,
-    TableModule,
+    UiDataTable,
     CurrencyFormatPipe,
     DateRangePicker,
     DecimalPipe,

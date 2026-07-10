@@ -2,12 +2,12 @@ import { DatePipe, DecimalPipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import type { MaintenanceRecordDto, MaintenanceType } from "@logistics/shared/api";
+import { UiDataTable, UiSortHeader } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
@@ -22,7 +22,6 @@ import { ServiceRecordsStore } from "../store";
     ButtonModule,
     TooltipModule,
     CardModule,
-    TableModule,
     MenuModule,
     TagModule,
     DatePipe,
@@ -31,6 +30,8 @@ import { ServiceRecordsStore } from "../store";
     DataContainer,
     PageHeader,
     SearchField,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class ServiceRecordsPage {

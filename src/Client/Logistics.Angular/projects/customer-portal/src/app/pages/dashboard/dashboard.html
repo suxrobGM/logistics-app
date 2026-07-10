@@ -89,7 +89,7 @@
     </ui-stack>
 
     @if (recentLoads().length > 0) {
-      <p-table [value]="recentLoads()">
+      <ui-data-table [value]="recentLoads()">
         <ng-template #header>
           <tr>
             <th>Load #</th>
@@ -117,7 +117,7 @@
             </td>
           </tr>
         </ng-template>
-      </p-table>
+      </ui-data-table>
     } @else {
       <ui-stack align="center" gap="2" class="py-8">
         <ui-icon name="inbox" size="xl" color="muted" />

@@ -128,7 +128,7 @@
                   <p-divider class="m-0" />
                 </ng-template>
 
-                <p-table
+                <ui-data-table
                   [value]="loads()"
                   [loading]="isLoadingLoadsData()"
                   [scrollable]="true"
@@ -185,7 +185,7 @@
                       </td>
                     </tr>
                   </ng-template>
-                  <ng-template #emptymessage>
+                  <ng-template #empty>
                     <tr>
                       <td colspan="5" class="text-center">
                         <ui-stack align="center" gap="2" class="text-muted py-8">
@@ -197,7 +197,7 @@
                       </td>
                     </tr>
                   </ng-template>
-                </p-table>
+                </ui-data-table>
               </p-card>
             }
             @case ("recent-activity") {

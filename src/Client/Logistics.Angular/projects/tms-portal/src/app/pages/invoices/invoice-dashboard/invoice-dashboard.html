@@ -121,7 +121,7 @@
         @if (isLoading()) {
           <p-skeleton height="12rem" />
         } @else {
-          <p-table
+          <ui-data-table
             [value]="dashboard()?.recentInvoices ?? []"
             [rows]="10"
             [tableStyle]="{ 'min-width': '50rem' }"
@@ -162,12 +162,12 @@
                 </td>
               </tr>
             </ng-template>
-            <ng-template #emptymessage>
+            <ng-template #empty>
               <tr>
                 <td colspan="7" class="text-muted p-4 text-center">No recent invoices</td>
               </tr>
             </ng-template>
-          </p-table>
+          </ui-data-table>
         }
       </p-card>
     </ui-grid>

@@ -9,11 +9,10 @@ import {
   type StatusDto,
   type TypeDto,
 } from "@logistics/shared/api";
-import { Grid, Stack, StatusBadge, Typography } from "@logistics/shared/components";
+import { Grid, Stack, StatusBadge, Typography, UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import {
   BaseReportComponent,
@@ -37,7 +36,7 @@ import {
   imports: [
     CurrencyFormatPipe,
     ChartModule,
-    TableModule,
+    UiDataTable,
     DateRangePicker,
     DecimalPipe,
     SkeletonModule,

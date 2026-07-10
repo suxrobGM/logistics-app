@@ -8,12 +8,19 @@ import {
   type CustomerUserDto,
   type PortalLoadDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, StatusBadge, Surface, Typography } from "@logistics/shared/components";
+import {
+  Grid,
+  Icon,
+  Stack,
+  StatusBadge,
+  Surface,
+  Typography,
+  UiDataTable,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SkeletonModule } from "primeng/skeleton";
-import { TableModule } from "primeng/table";
 import { TenantContextService } from "@/core/services";
 
 @Component({
@@ -25,13 +32,13 @@ import { TenantContextService } from "@/core/services";
     ButtonModule,
     ProgressSpinnerModule,
     SkeletonModule,
-    TableModule,
     Grid,
     Icon,
     Stack,
     StatusBadge,
     Surface,
     Typography,
+    UiDataTable,
   ],
 })
 export class Dashboard {

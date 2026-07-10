@@ -1,9 +1,9 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { ToastService } from "@logistics/shared";
+import { UiDataTable, UiSortHeader } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
@@ -18,13 +18,14 @@ import { PendingInvitationsStore } from "../store";
     ButtonModule,
     TooltipModule,
     CardModule,
-    TableModule,
     DatePipe,
     TagModule,
     DataContainer,
     PageHeader,
     SearchField,
     InviteEmployeeDialog,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class PendingInvitations {

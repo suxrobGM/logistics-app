@@ -2,14 +2,13 @@ import { CommonModule } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, downloadExpenseReceipt, type ExpenseDto } from "@logistics/shared/api";
-import { Icon } from "@logistics/shared/components";
+import { Icon, UiDataTable, UiSortHeader } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
-import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { ExpenseStatusTag, ExpenseTypeTag } from "@/shared/components/tags";
@@ -25,10 +24,11 @@ import { ExpensesListStore } from "../store/expenses-list.store";
     CommonModule,
     RouterModule,
     CardModule,
-    TableModule,
     ButtonModule,
     MenuModule,
     TooltipModule,
+    UiDataTable,
+    UiSortHeader,
     CurrencyFormatPipe,
     DateFormatPipe,
     DataContainer,

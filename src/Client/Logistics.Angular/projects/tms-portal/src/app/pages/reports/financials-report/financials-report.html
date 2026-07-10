@@ -134,7 +134,7 @@
   <ui-grid container spacing="2">
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Payment Trends" icon="pi-table" iconColor="blue">
-        <p-table [value]="data()?.paymentTrends || []" [paginator]="true" [rows]="5">
+        <ui-data-table [value]="data()?.paymentTrends || []" [paginator]="true" [rows]="5">
           <ng-template #header>
             <tr>
               <th>Period</th>
@@ -155,13 +155,13 @@
               </td>
             </tr>
           </ng-template>
-        </p-table>
+        </ui-data-table>
       </ui-dashboard-card>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, lg: 6 }" class="mb-6">
       <ui-dashboard-card title="Top Customers" icon="pi-users" iconColor="blue">
-        <p-table [value]="data()?.topCustomers || []" [paginator]="true" [rows]="5">
+        <ui-data-table [value]="data()?.topCustomers || []" [paginator]="true" [rows]="5">
           <ng-template #header>
             <tr>
               <th>Customer</th>
@@ -189,7 +189,7 @@
               </td>
             </tr>
           </ng-template>
-        </p-table>
+        </ui-data-table>
       </ui-dashboard-card>
     </ui-grid>
   </ui-grid>

@@ -16,7 +16,9 @@ import {
   Stack,
   Surface,
   Typography,
+  UiDataTable,
   UiFormField,
+  UiSortHeader,
 } from "@logistics/shared/components";
 import type { SelectOption } from "@logistics/shared/models";
 import { DateUtils } from "@logistics/shared/utils";
@@ -24,7 +26,6 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { SelectModule } from "primeng/select";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
@@ -39,7 +40,8 @@ import { ContactSubmissionsListStore } from "../store/contact-submissions-list.s
     ButtonModule,
     TooltipModule,
     CardModule,
-    TableModule,
+    UiDataTable,
+    UiSortHeader,
     DataContainer,
     PageHeader,
     SearchField,

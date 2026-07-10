@@ -134,7 +134,7 @@
   <!-- Session History -->
   <ui-typography variant="h5" tag="h2" class="mb-3">Session History</ui-typography>
 
-  <p-table
+  <ui-data-table
     [value]="sessions()"
     [loading]="isLoading()"
     [lazy]="true"
@@ -145,7 +145,7 @@
     [rowsPerPageOptions]="[10, 25, 50]"
     [showCurrentPageReport]="true"
     [rowHover]="true"
-    (onLazyLoad)="onPageChange($event)"
+    (lazyLoad)="onPageChange($event)"
   >
     <ng-template #header>
       <tr>
@@ -178,7 +178,7 @@
         </td>
       </tr>
     </ng-template>
-    <ng-template #emptymessage>
+    <ng-template #empty>
       <tr>
         <td colspan="7" class="py-8 text-center">
           <div class="text-muted">
@@ -188,5 +188,5 @@
         </td>
       </tr>
     </ng-template>
-  </p-table>
+  </ui-data-table>
 </div>

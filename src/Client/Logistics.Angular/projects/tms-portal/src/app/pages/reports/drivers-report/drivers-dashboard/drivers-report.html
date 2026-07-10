@@ -126,7 +126,7 @@
   <!-- Top Performers Table -->
   <div>
     <ui-dashboard-card title="Top Performing Drivers" icon="pi-star" iconColor="blue">
-      <p-table [value]="data()?.topPerformers || []" [paginator]="true" [rows]="10">
+      <ui-data-table [value]="data()?.topPerformers || []" [paginator]="true" [rows]="10">
         <ng-template #header>
           <tr>
             <th>Driver Name</th>
@@ -159,7 +159,7 @@
             </td>
           </tr>
         </ng-template>
-      </p-table>
+      </ui-data-table>
     </ui-dashboard-card>
   </div>
 }

@@ -1,21 +1,27 @@
 import { Component, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Api, getPortalLoads, type PortalLoadDto } from "@logistics/shared/api";
-import { Icon, Stack, StatusBadge, Surface, Typography } from "@logistics/shared/components";
+import {
+  Icon,
+  Stack,
+  StatusBadge,
+  Surface,
+  Typography,
+  UiDataTable,
+} from "@logistics/shared/components";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
 import { ButtonModule } from "primeng/button";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 
 @Component({
   selector: "cp-shipments-list",
   templateUrl: "./shipments-list.html",
   imports: [
     RouterLink,
-    TableModule,
+    UiDataTable,
     ButtonModule,
     IconFieldModule,
     InputIconModule,

@@ -15,9 +15,8 @@ import {
   type DocumentDto,
   type PublicTrackingDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Grid, Icon, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { ShipmentTimeline } from "@/shared/components";
 import { PublicLayout } from "@/shared/layout";
@@ -29,7 +28,6 @@ import { PublicLayout } from "@/shared/layout";
     DatePipe,
     ButtonModule,
     TagModule,
-    TableModule,
     AddressPipe,
     ErrorState,
     LoadingSkeleton,
@@ -40,6 +38,7 @@ import { PublicLayout } from "@/shared/layout";
     Stack,
     Surface,
     Typography,
+    UiDataTable,
   ],
 })
 export class PublicTracking {

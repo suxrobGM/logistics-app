@@ -2,12 +2,11 @@ import { DatePipe, DecimalPipe } from "@angular/common";
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import type { MaintenanceIntervalType, MaintenanceScheduleDto } from "@logistics/shared/api";
-import { Icon } from "@logistics/shared/components";
+import { Icon, UiDataTable, UiSortHeader } from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader } from "@/shared/components";
@@ -22,7 +21,8 @@ import { UpcomingServiceStore } from "../store";
     ButtonModule,
     TooltipModule,
     CardModule,
-    TableModule,
+    UiDataTable,
+    UiSortHeader,
     MenuModule,
     TagModule,
     DatePipe,

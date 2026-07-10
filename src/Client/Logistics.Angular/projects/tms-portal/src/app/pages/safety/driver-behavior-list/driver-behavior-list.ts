@@ -7,7 +7,14 @@ import {
   type DriverBehaviorEventDto,
   type DriverBehaviorEventType,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import {
+  Grid,
+  Icon,
+  Stack,
+  Typography,
+  UiDataTable,
+  UiSortHeader,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -15,7 +22,6 @@ import { InputTextModule } from "primeng/inputtext";
 import { MenuModule } from "primeng/menu";
 import { MultiSelectModule } from "primeng/multiselect";
 import { SelectModule } from "primeng/select";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { ToggleSwitchModule } from "primeng/toggleswitch";
@@ -61,7 +67,6 @@ const reviewStatusOptions = [
     MenuModule,
     MultiSelectModule,
     SelectModule,
-    TableModule,
     TagModule,
     TextareaModule,
     ToggleSwitchModule,
@@ -72,6 +77,8 @@ const reviewStatusOptions = [
     Icon,
     Stack,
     Typography,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class DriverBehaviorListPage {

@@ -2,13 +2,12 @@ import { DecimalPipe } from "@angular/common";
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { LocalizationService } from "@logistics/shared";
-import { Icon, Stack, Typography } from "@logistics/shared/components";
+import { Icon, Stack, Typography, UiDataTable, UiSortHeader } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePickerModule } from "primeng/datepicker";
 import { InputTextModule } from "primeng/inputtext";
-import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
 import { DateRangePicker, PageHeader } from "@/shared/components";
 import { DateUtils, getPerformanceLevel, getPerformanceSeverity } from "@/shared/utils";
@@ -23,7 +22,6 @@ import { DriversDetailedStore } from "./store";
     ButtonModule,
     CardModule,
     InputTextModule,
-    TableModule,
     DatePickerModule,
     DateRangePicker,
     CurrencyFormatPipe,
@@ -33,6 +31,8 @@ import { DriversDetailedStore } from "./store";
     Icon,
     Stack,
     Typography,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class DriversDetailedComponent implements OnInit {

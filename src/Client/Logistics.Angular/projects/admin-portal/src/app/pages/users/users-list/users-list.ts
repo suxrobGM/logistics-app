@@ -1,7 +1,13 @@
 import { Component, inject, signal, viewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
-import { DataContainer, PageHeader, SearchField } from "@logistics/shared/components";
+import {
+  DataContainer,
+  PageHeader,
+  SearchField,
+  UiDataTable,
+  UiSortHeader,
+} from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
@@ -9,7 +15,6 @@ import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { Menu, MenuModule } from "primeng/menu";
 import { PasswordModule } from "primeng/password";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ImpersonationService, ToastService } from "@/core/services";
@@ -23,7 +28,8 @@ import { UsersListStore } from "../store/users-list.store";
     TooltipModule,
     RouterLink,
     CardModule,
-    TableModule,
+    UiDataTable,
+    UiSortHeader,
     DataContainer,
     PageHeader,
     SearchField,

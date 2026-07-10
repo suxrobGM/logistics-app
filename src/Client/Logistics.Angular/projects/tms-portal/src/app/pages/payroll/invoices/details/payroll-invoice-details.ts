@@ -12,14 +12,13 @@ import {
   type InvoiceDto,
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { Grid, Icon, Stack, Typography, UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
@@ -40,7 +39,7 @@ import { InvoiceStatusTag, PageHeader, PaymentStatusTag } from "@/shared/compone
     InvoiceStatusTag,
     PaymentStatusTag,
     DividerModule,
-    TableModule,
+    UiDataTable,
     TagModule,
     TooltipModule,
     CurrencyFormatPipe,

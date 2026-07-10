@@ -102,14 +102,14 @@
       (retry)="store.retry()"
       (emptyAction)="addTrip()"
     >
-      <p-table
+      <ui-data-table
         [value]="store.data()"
         [dataKey]="'id'"
         [scrollable]="true"
         [lazy]="true"
         [paginator]="true"
         [showCurrentPageReport]="true"
-        (onLazyLoad)="store.onLazyLoad($event)"
+        (lazyLoad)="store.onLazyLoad($event)"
         [rows]="store.pageSize()"
         [first]="store.first()"
         [totalRecords]="store.totalRecords()"
@@ -119,32 +119,14 @@
         <ng-template #header>
           <tr>
             <th></th>
-            <th pSortableColumn="Number">
-              Number
-              <p-sortIcon field="Number" />
-            </th>
-            <th pSortableColumn="Name">
-              Name
-              <p-sortIcon field="Name" />
-            </th>
-            <th pSortableColumn="Truck.Number">
-              Truck
-              <p-sortIcon field="Truck.Number" />
-            </th>
+            <th uiSortHeader="Number">Number</th>
+            <th uiSortHeader="Name">Name</th>
+            <th uiSortHeader="Truck.Number">Truck</th>
             <th>Loads</th>
             <th>Total Revenue</th>
-            <th pSortableColumn="OriginAddress.City">
-              Route
-              <p-sortIcon field="OriginAddress.City" />
-            </th>
-            <th pSortableColumn="TotalDistance">
-              Distance ({{ distanceUnitLabel() }})
-              <p-sortIcon field="TotalDistance" />
-            </th>
-            <th pSortableColumn="Status">
-              Status
-              <p-sortIcon field="Status" />
-            </th>
+            <th uiSortHeader="OriginAddress.City">Route</th>
+            <th uiSortHeader="TotalDistance">Distance ({{ distanceUnitLabel() }})</th>
+            <th uiSortHeader="Status">Status</th>
             <th>Progress</th>
             <th>Action</th>
           </tr>
@@ -228,25 +210,17 @@
             <td colspan="11">
               <div class="p-4">
                 <h5 class="mb-4">Loads in this trip</h5>
-                <p-table [value]="trip.loads" [dataKey]="'id'">
+                <ui-data-table [value]="trip.loads" [dataKey]="'id'">
                   <ng-template #header>
                     <tr>
-                      <th pSortableColumn="number">Load Number <p-sortIcon field="number" /></th>
-                      <th pSortableColumn="name">Load Name <p-sortIcon field="name" /></th>
-                      <th pSortableColumn="type">Load Type <p-sortIcon field="type" /></th>
-                      <th pSortableColumn="customer.name">
-                        Customer <p-sortIcon field="customer.name" />
-                      </th>
-                      <th pSortableColumn="originAddress.line1">
-                        Route <p-sortIcon field="originAddress.line1" />
-                      </th>
-                      <th pSortableColumn="status">Status <p-sortIcon field="status" /></th>
-                      <th pSortableColumn="distance">
-                        Distance ({{ distanceUnitLabel() }}) <p-sortIcon field="distance" />
-                      </th>
-                      <th pSortableColumn="deliveryCost">
-                        Revenue <p-sortIcon field="deliveryCost" />
-                      </th>
+                      <th uiSortHeader="number">Load Number</th>
+                      <th uiSortHeader="name">Load Name</th>
+                      <th uiSortHeader="type">Load Type</th>
+                      <th uiSortHeader="customer.name">Customer</th>
+                      <th uiSortHeader="originAddress.line1">Route</th>
+                      <th uiSortHeader="status">Status</th>
+                      <th uiSortHeader="distance">Distance ({{ distanceUnitLabel() }})</th>
+                      <th uiSortHeader="deliveryCost">Revenue</th>
                     </tr>
                   </ng-template>
                   <ng-template #body let-load>
@@ -293,12 +267,12 @@
                       </td>
                     </tr>
                   </ng-template>
-                </p-table>
+                </ui-data-table>
               </div>
             </td>
           </tr>
         </ng-template>
-      </p-table>
+      </ui-data-table>
     </ui-data-container>
   </p-card>
 

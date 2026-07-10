@@ -2,7 +2,14 @@ import { Component, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import { Api, getPortalInvoices, type PortalInvoiceDto } from "@logistics/shared/api";
-import { Icon, Stack, StatusBadge, Surface, Typography } from "@logistics/shared/components";
+import {
+  Icon,
+  Stack,
+  StatusBadge,
+  Surface,
+  Typography,
+  UiDataTable,
+} from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
 import { ButtonModule } from "primeng/button";
@@ -10,7 +17,6 @@ import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { ToastModule } from "primeng/toast";
 
 @Component({
@@ -20,7 +26,7 @@ import { ToastModule } from "primeng/toast";
     CurrencyFormatPipe,
     DateFormatPipe,
     RouterLink,
-    TableModule,
+    UiDataTable,
     ButtonModule,
     IconFieldModule,
     InputIconModule,

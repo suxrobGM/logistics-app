@@ -6,7 +6,6 @@ import { InputGroupModule } from "primeng/inputgroup";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
 import { StepperModule } from "primeng/stepper";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { TripWizardStore } from "../../store/trip-wizard-store";
@@ -38,7 +37,6 @@ export interface TripWizardValue {
     InputGroupModule,
     ButtonModule,
     InputTextModule,
-    TableModule,
     StepperModule,
     TooltipModule,
     TagModule,

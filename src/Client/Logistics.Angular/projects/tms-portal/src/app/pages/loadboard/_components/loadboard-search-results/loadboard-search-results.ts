@@ -1,9 +1,9 @@
 import { DecimalPipe } from "@angular/common";
 import { Component, input, output } from "@angular/core";
 import { type LoadBoardListingDto } from "@logistics/shared/api";
+import { UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { getProviderSeverity } from "../loadboard.constants";
@@ -17,7 +17,7 @@ import { getProviderSeverity } from "../loadboard.constants";
     DateFormatPipe,
     DecimalPipe,
     DistanceUnitPipe,
-    TableModule,
+    UiDataTable,
     TagModule,
     TooltipModule,
   ],

@@ -32,7 +32,7 @@
       <p-progress-spinner />
     </div>
   } @else {
-    <p-table [value]="exceptions()" [dataKey]="'id'">
+    <ui-data-table [value]="exceptions()" [dataKey]="'id'">
       <ng-template #header>
         <tr>
           <th class="w-36">Type</th>
@@ -114,6 +114,6 @@
           </td>
         </tr>
       </ng-template>
-    </p-table>
+    </ui-data-table>
   }
 </p-card>

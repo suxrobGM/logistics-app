@@ -3,13 +3,18 @@ import { Component, computed, inject, signal, viewChild } from "@angular/core";
 import { Router } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import { Api, deleteSubscriptionPlan, type PlanTier } from "@logistics/shared/api";
-import { DataContainer, PageHeader, SearchField } from "@logistics/shared/components";
+import {
+  DataContainer,
+  PageHeader,
+  SearchField,
+  UiDataTable,
+  UiSortHeader,
+} from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { Menu, MenuModule } from "primeng/menu";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { PlansListStore } from "../store/plans-list.store";
@@ -22,7 +27,8 @@ import { PlansListStore } from "../store/plans-list.store";
     ButtonModule,
     TooltipModule,
     CardModule,
-    TableModule,
+    UiDataTable,
+    UiSortHeader,
     ConfirmDialogModule,
     DataContainer,
     PageHeader,

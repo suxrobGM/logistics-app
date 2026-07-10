@@ -6,11 +6,10 @@ import {
   revokePaymentLink,
   type PaymentLinkDto,
 } from "@logistics/shared/api";
-import { Icon, Stack } from "@logistics/shared/components";
+import { Icon, Stack, UiDataTable } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
@@ -22,12 +21,12 @@ import { ToastService } from "@/core/services";
     DialogModule,
     ProgressSpinnerModule,
     ButtonModule,
-    TableModule,
     TooltipModule,
     TagModule,
     DatePipe,
     Icon,
     Stack,
+    UiDataTable,
   ],
 })
 export class PaymentLinkDialog {

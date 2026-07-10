@@ -7,10 +7,16 @@ import {
   syncAllDriversHos,
   type DriverHosStatusDto,
 } from "@logistics/shared/api";
-import { EmptyState, ErrorState, Grid, Stack } from "@logistics/shared/components";
+import {
+  EmptyState,
+  ErrorState,
+  Grid,
+  Stack,
+  UiDataTable,
+  UiSortHeader,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { EldRulesService } from "@/core/services";
@@ -35,9 +41,10 @@ const ON_DUTY_WARN_PCT = 0.15;
     ProgressSpinnerModule,
     Stack,
     StatCard,
-    TableModule,
     TagModule,
     TooltipModule,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class EldDashboardComponent implements OnInit {

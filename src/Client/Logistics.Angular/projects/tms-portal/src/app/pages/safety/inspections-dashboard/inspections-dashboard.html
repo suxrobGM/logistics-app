@@ -100,7 +100,7 @@
       </ng-template>
 
       @if (recentDvirs().length > 0) {
-        <p-table [value]="recentDvirs()" [tableStyle]="{ 'min-width': '100%' }">
+        <ui-data-table [value]="recentDvirs()" [tableStyle]="{ 'min-width': '100%' }">
           <ng-template #header>
             <tr>
               <th>Date</th>
@@ -122,7 +122,7 @@
               </td>
             </tr>
           </ng-template>
-        </p-table>
+        </ui-data-table>
       } @else {
         <div class="flex flex-col items-center py-8 text-center">
           <i class="pi pi-clipboard text-muted mb-2 text-3xl"></i>
@@ -141,7 +141,7 @@
       </ng-template>
 
       @if (recentAccidents().length > 0) {
-        <p-table [value]="recentAccidents()" [tableStyle]="{ 'min-width': '100%' }">
+        <ui-data-table [value]="recentAccidents()" [tableStyle]="{ 'min-width': '100%' }">
           <ng-template #header>
             <tr>
               <th>Date</th>
@@ -168,7 +168,7 @@
               </td>
             </tr>
           </ng-template>
-        </p-table>
+        </ui-data-table>
       } @else {
         <div class="flex flex-col items-center py-8 text-center">
           <i class="pi pi-check-circle text-success mb-2 text-3xl"></i>
@@ -192,7 +192,7 @@
         </div>
       </ng-template>
 
-      <p-table [value]="recentConditionReports()" [tableStyle]="{ 'min-width': '100%' }">
+      <ui-data-table [value]="recentConditionReports()" [tableStyle]="{ 'min-width': '100%' }">
         <ng-template #header>
           <tr>
             <th>Date</th>
@@ -211,7 +211,7 @@
             </td>
           </tr>
         </ng-template>
-      </p-table>
+      </ui-data-table>
     </p-card>
   }
 }
