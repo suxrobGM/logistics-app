@@ -1,0 +1,190 @@
+/**
+ * spartan/ui token + variant layer — shared by all four apps.
+ * ==========================================================
+ *
+ * This file deliberately does NOT `@import "@spartan-ng/brain/hlm-tailwind-preset.css"`.
+ *
+ * That preset's `@theme inline` block registers the shadcn colour names as Tailwind theme keys:
+ * `--color-primary`, `--color-secondary`, `--color-muted`, `--color-accent`. All four collide with
+ * `tms-portal/src/styles/variables.css`, and three collide with INVERTED meaning — in this codebase
+ * `text-primary` is the primary *text* colour (dark slate) and `text-muted` is muted *text*, whereas
+ * in shadcn `--primary` is the brand colour and `--muted` is a surface. Importing the preset would
+ * silently repaint 723 utility usages across 173 files.
+ *
+ * So we vendor the parts we need with every colour token prefixed `sp-`. The `sp-` prefix is applied
+ * to the vendored Helm components too, by `tools/vendor-spartan-helm.mjs`. Nothing in app code
+ * changes meaning, and a token we forget to prefix produces an unstyled element — visible — rather
+ * than a silently wrong colour.
+ *
+ * Radius and font keys are also deliberately NOT taken from the preset: overriding `--radius-*` would
+ * change `rounded-*` for the whole app, and `--font-sans` is owned per app.
+ *
+ * The raw `--sp-*` values below resolve against each app's own tokens where they exist (tms-portal
+ * defines them, and re-defines them under `.dark-theme`, so dark mode flows through automatically)
+ * and fall back to literals for the three light-only apps that have no token system.
+ */
+
+@import "@angular/cdk/overlay-prebuilt.css";
+@import "tw-animate-css";
+
+/* CDK fades the backdrop with its own opacity transition and the spartan overlay class fades it
+   again, so the two visibly double up. Neutralise CDK's. Kept UNLAYERED so it beats CDK's runtime
+   `@layer cdk-overlay`. Scoped off `.cdk-overlay-transparent-backdrop` so CDK's invisible
+   click-catcher backdrops (menus, popovers) keep their own `opacity: 0`. Verbatim from the preset. */
+.cdk-overlay-backdrop:not(.cdk-overlay-transparent-backdrop) {
+  opacity: var(--spartan-overlay-backdrop-opacity, 1);
+  transition: var(--spartan-overlay-backdrop-transition, none);
+}
+
+/* ---------------------------------------------------------------------------------------------
+ * State variants that brain's primitives drive via data-attributes.
+ * Copied from the preset. `dark` is NOT copied — each app declares its own.
+ * ------------------------------------------------------------------------------------------- */
+
+@custom-variant data-open {
+  &:where([data-state="open"]),
+  &:where([data-open]:not([data-open="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-closed {
+  &:where([data-state="closed"]),
+  &:where([data-closed]:not([data-closed="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-checked {
+  &:where([data-state="checked"]),
+  &:where([data-checked]:not([data-checked="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-unchecked {
+  &:where([data-state="unchecked"]),
+  &:where([data-unchecked]:not([data-unchecked="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-selected {
+  &:where([data-selected="true"]) {
+    @slot;
+  }
+}
+
+@custom-variant data-disabled {
+  &:where([data-disabled="true"]),
+  &:where([data-disabled]:not([data-disabled="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-active {
+  &:where([data-state="active"]),
+  &:where([data-active]:not([data-active="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-horizontal {
+  &:where([data-orientation="horizontal"]) {
+    @slot;
+  }
+}
+
+@custom-variant data-vertical {
+  &:where([data-orientation="vertical"]) {
+    @slot;
+  }
+}
+
+/* ---------------------------------------------------------------------------------------------
+ * Raw shadcn values, mapped onto this codebase's palette.
+ *
+ * `var(--x, fallback)`: tms-portal supplies `--x` (and overrides it under `.dark-theme`);
+ * admin-portal, customer-portal and website have no token system and take the literal.
+ * ------------------------------------------------------------------------------------------- */
+
+:root {
+  --sp-background: var(--bg-base, #ffffff);
+  --sp-foreground: var(--text-primary, #0f172a);
+
+  --sp-card: var(--bg-surface, #ffffff);
+  --sp-card-foreground: var(--text-primary, #0f172a);
+
+  --sp-popover: var(--bg-elevated, #ffffff);
+  --sp-popover-foreground: var(--text-primary, #0f172a);
+
+  /* Brand. Note this is the codebase's `--color-accent`, not its `--color-primary`. */
+  --sp-primary: var(--primary-500, #0891b2);
+  --sp-primary-foreground: #ffffff;
+
+  --sp-secondary: var(--bg-hover, #e2e8f0);
+  --sp-secondary-foreground: var(--text-primary, #0f172a);
+
+  --sp-muted: var(--bg-hover, #e2e8f0);
+  --sp-muted-foreground: var(--text-muted, #94a3b8);
+
+  --sp-accent: var(--bg-hover, #e2e8f0);
+  --sp-accent-foreground: var(--text-primary, #0f172a);
+
+  --sp-destructive: var(--danger, #dc2626);
+
+  --sp-border: var(--border-default, #cbd5e1);
+  --sp-input: var(--border-default, #cbd5e1);
+  --sp-ring: var(--primary-500, #0891b2);
+
+  --sp-sidebar: var(--bg-surface, #ffffff);
+  --sp-sidebar-foreground: var(--text-primary, #0f172a);
+  --sp-sidebar-primary: var(--primary-500, #0891b2);
+  --sp-sidebar-primary-foreground: #ffffff;
+  --sp-sidebar-accent: var(--bg-hover, #e2e8f0);
+  --sp-sidebar-accent-foreground: var(--text-primary, #0f172a);
+  --sp-sidebar-border: var(--border-subtle, #e2e8f0);
+  --sp-sidebar-ring: var(--primary-500, #0891b2);
+}
+
+/* `inline` so the generated utilities emit `var(--sp-*)` rather than the resolved value — that is
+   what lets `.dark-theme` re-point the underlying `--text-primary` etc. at runtime. */
+@theme inline {
+  --color-sp-background: var(--sp-background);
+  --color-sp-foreground: var(--sp-foreground);
+  --color-sp-card: var(--sp-card);
+  --color-sp-card-foreground: var(--sp-card-foreground);
+  --color-sp-popover: var(--sp-popover);
+  --color-sp-popover-foreground: var(--sp-popover-foreground);
+  --color-sp-primary: var(--sp-primary);
+  --color-sp-primary-foreground: var(--sp-primary-foreground);
+  --color-sp-secondary: var(--sp-secondary);
+  --color-sp-secondary-foreground: var(--sp-secondary-foreground);
+  --color-sp-muted: var(--sp-muted);
+  --color-sp-muted-foreground: var(--sp-muted-foreground);
+  --color-sp-accent: var(--sp-accent);
+  --color-sp-accent-foreground: var(--sp-accent-foreground);
+  --color-sp-destructive: var(--sp-destructive);
+  --color-sp-border: var(--sp-border);
+  --color-sp-input: var(--sp-input);
+  --color-sp-ring: var(--sp-ring);
+  --color-sp-sidebar: var(--sp-sidebar);
+  --color-sp-sidebar-foreground: var(--sp-sidebar-foreground);
+  --color-sp-sidebar-primary: var(--sp-sidebar-primary);
+  --color-sp-sidebar-primary-foreground: var(--sp-sidebar-primary-foreground);
+  --color-sp-sidebar-accent: var(--sp-sidebar-accent);
+  --color-sp-sidebar-accent-foreground: var(--sp-sidebar-accent-foreground);
+  --color-sp-sidebar-border: var(--sp-sidebar-border);
+  --color-sp-sidebar-ring: var(--sp-sidebar-ring);
+
+  --animate-indeterminate: indeterminate 4s ease-in-out infinite;
+
+  @keyframes indeterminate {
+    0% {
+      transform: translateX(-100%) scaleX(0.5);
+    }
+    100% {
+      transform: translateX(100%) scaleX(0.5);
+    }
+  }
+}

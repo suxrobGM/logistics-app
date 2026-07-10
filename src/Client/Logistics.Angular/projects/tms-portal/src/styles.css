@@ -9,6 +9,9 @@
 @import "tailwindcss-primeui";
 @plugin "@tailwindcss/typography";
 
+/* spartan/ui token + variant layer (sp-* prefixed; see the file header for why) */
+@import "../../shared/src/styles/spartan.css";
+
 /* === Tailwind v4 Dark Mode Configuration === */
 /* Aligns Tailwind's dark: variant with PrimeNG's darkModeSelector */
 @custom-variant dark (&:where(.dark-theme, .dark-theme *));

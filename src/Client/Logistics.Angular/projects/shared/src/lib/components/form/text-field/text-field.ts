@@ -9,8 +9,8 @@ import {
   output,
 } from "@angular/core";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
-import { InputText } from "primeng/inputtext";
 import { focusFirstControl } from "../../../forms/focus-control";
+import { HlmInput } from "../../../spartan/input";
 
 export type TextFieldType = "text" | "email" | "password" | "tel" | "url" | "search";
 
@@ -22,10 +22,9 @@ export type TextFieldType = "text" | "email" | "password" | "tel" | "url" | "sea
  * component binds via `[formField]`, `formControlName` and `[(ngModel)]` alike — no
  * `ControlValueAccessor`, no compat shim.
  *
- * The PrimeNG input is driven internally with plain value/event bindings. Never put
- * `formControlName` or `[formField]` on a PrimeNG element: `pTextarea` crashes on
- * `ngControl.valueChanges`, and every `BaseInput` subclass collides with Signal Forms'
- * `pattern` state input. See `forms/signal-forms-compat-probe.spec.ts`.
+ * The inner native input is styled by spartan's `hlmInput` and driven with plain value/event
+ * bindings. `[forceInvalid]` feeds brain's `data-matches-spartan-invalid` styling hook, which is
+ * what paints the destructive ring.
  *
  * @example
  * <ui-form-field label="Name" for="name" [required]="true">
@@ -38,7 +37,7 @@ export type TextFieldType = "text" | "email" | "password" | "tel" | "url" | "sea
   // `id` is a declared input, but a static `id="x"` attribute also lands on the host element.
   // Strip it so the id lives only on the inner control and `<label for>` targets something focusable.
   host: { "[attr.id]": "null" },
-  imports: [InputText],
+  imports: [HlmInput],
 })
 export class UiTextField implements FormValueControl<string> {
   /** The control's value. Required by `FormValueControl`. */

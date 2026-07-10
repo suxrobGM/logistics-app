@@ -424,25 +424,60 @@ four default-drift bugs.
 and `provideSpartanHlm()` (sets `OVERLAY_DEFAULT_CONFIG.usePopover = false`, needed because Angular 21+ otherwise renders
 CDK overlays above `position: fixed` elements).
 
+### Step 2 is DONE — the token layer (`projects/shared/src/styles/spartan.css`, imported by all four apps)
+
+**We do NOT import `@spartan-ng/brain/hlm-tailwind-preset.css`.** Its `@theme inline` block registers the shadcn colour
+names as Tailwind theme keys, and four collide with `tms-portal/src/styles/variables.css` — three with **inverted
+meaning**: here `text-primary` is the primary _text_ colour and `text-muted` is muted _text_, while in shadcn `--primary`
+is the brand colour and `--muted` is a surface. Importing it would silently repaint **723 utility usages across 173
+files** (`primary` 143, `secondary` 63, `muted` 396, `accent` 121; tms-portal alone 627).
+
+**User decision (2026-07-10): namespace spartan's tokens `sp-*`, leave app code untouched.** We vendor the parts of the
+preset we need (CDK overlay css, `tw-animate-css`, the backdrop double-fade fix, the nine `data-*` custom variants) and
+declare our own `@theme inline` with every colour token prefixed. `tools/vendor-spartan-helm.mjs` applies the same prefix
+to the Helm components. A token we forget to prefix renders unstyled — visible — rather than silently wrong.
+
+Deliberately **not** taken from the preset: `@custom-variant dark` (each app declares its own; TMS uses `.dark-theme`),
+the `--radius-*` overrides (they would change `rounded-*` app-wide), `--font-sans` / `--font-mono` (owned per app), and
+`@utility container`.
+
+The raw `--sp-*` values resolve through `var(--x, literal)`: tms-portal supplies `--x` and redefines it under
+`.dark-theme`, so dark mode flows automatically; the three light-only apps take the literal. Verified in the built CSS:
+`dark:bg-sp-input/30` compiles to `:where(.dark-theme,.dark-theme *)`, and `--sp-input` resolves `#cbd5e1` → `#3d4760`.
+
+### Architectural stance: Helm for presentation, our wrappers own form state
+
+Brain's `BrnInput` / `BrnFieldControl` inject the ambient `NgControl` — which `[formField]` provides as an
+`InteropNgControl` — and host-bind `aria-invalid` / `data-invalid` from the **raw** `control.invalid`. That is true from
+form creation, so a required, untouched field announces itself invalid on load, and the directive's host binding beats
+the wrapper's own `[attr.aria-invalid]`. (Caught by `text-field.spec.ts`; the same class of bug as the Phase 4
+pristine-invalid regression.) Brain's own `data-matches-spartan-invalid` _is_ correctly gated by an `ErrorStateMatcher`.
+
+So `vendor-spartan-helm.mjs` strips `hostDirectives` for the primitives in `STRIP_FORM_STATE` and re-points the styling
+hook from `data-[matches-spartan-invalid=true]` onto `aria-[invalid=true]`, which our wrappers already drive from
+`showInvalid() = invalid() && (touched() || dirty())`. Visuals and a11y then agree, with one source of truth.
+
+Note also: brain's control-state tracker calls `control.events.subscribe(...)`, and `InteropNgControl` has no `events` —
+the same shape as the `pTextarea` crash. Stripping the wiring sidesteps it.
+
 ### Remaining
 
-2. Import `@spartan-ng/brain/hlm-tailwind-preset.css`; map spartan's shadcn CSS variables onto the token layer.
-   The preset's `@theme inline` block expects these raw vars: `--background --foreground --card(-foreground)
---popover(-foreground) --primary(-foreground) --secondary(-foreground) --muted(-foreground) --accent(-foreground)
---destructive --border --input --ring --sidebar* --radius --font-sans --font-mono`.
-   **Conflict to reconcile:** the preset declares `@custom-variant dark (&:is(.dark *))` while `tms-portal/styles.css`
-   declares `@custom-variant dark (&:where(.dark-theme, .dark-theme *))`. Ours must be declared _after_ the preset import.
-   **Promote `tms-portal/src/styles/variables.css` into `shared`** so all four apps use one token system (only TMS has
-   one today; `projects/shared/src/styles/` is currently empty). Reproduce the **load-bearing** parts of
-   `primeng-preset.ts`: the entire dark `colorScheme` surface ramp, plus the visual signatures (uppercase datatable
-   headers, tag sizing, gradient primary button).
 3. Swap wrapper internals **one component type at a time**. Feature code untouched — the payoff of Phase 3.
-   Primitives the 12 `ui-*-field` wrappers need: `utils`, `input`, `textarea`, `select`, `checkbox`, `switch`, `label`,
-   `field`, `input-group`, `date-picker` + `calendar` + `popover`, `autocomplete`/`combobox`, `button`.
-   Note `HlmInput` is a **directive** on a native `<input>` (`[hlmInput]`), a drop-in for `pInputText`.
+   - ✅ `ui-text-field` → `hlmInput` (vendored `utils`, `input`). 98 tests green; browser-verified: correct token
+     colours, destructive ring on submit only, dark mode, focus, disabled.
+   - Remaining primitives: `textarea`, `select`, `checkbox`, `switch`, `label`, `field`, `input-group`,
+     `date-picker` + `calendar` + `popover`, `autocomplete`/`combobox`, `button`.
+   - **Expect a mixed look mid-phase.** spartan inputs are `h-8` / `rounded-lg`; PrimeNG's are taller. Neighbouring
+     unswapped controls will not line up until the whole set moves.
+   - Still to reproduce from `primeng-preset.ts`: the dark `colorScheme` surface ramp and the visual signatures
+     (uppercase datatable headers, tag sizing, gradient primary button).
+   - `projects/shared/src/styles/` now exists; promoting `variables.css` into it is still open (only TMS has a token
+     system; admin/customer/website are light-only with their own palettes).
 4. Check each swap against the Phase 2 Playwright baseline.
 
 **Watch:** brain peers `luxon >=3.0.0` (only needed for `@spartan-ng/brain/date-time-luxon`); we have not installed it.
+`provideSpartanHlm()` (vendored in `spartan/utils`) sets `OVERLAY_DEFAULT_CONFIG.usePopover = false` and must be added
+to each `app.config.ts` before the first CDK-overlay-based primitive (select, date-picker, popover) ships.
 
 ## Phase 6 — Non-form component sweep
 
