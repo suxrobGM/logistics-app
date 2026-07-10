@@ -1,6 +1,4 @@
 <Solution>
-  <Folder Name="/src/" />
-  <Folder Name="/src/Infrastructure/" />
   <Folder Name="/Test/">
     <Project Path="test/Logistics.Application.Tests/Logistics.Application.Tests.csproj" />
     <Project Path="test/Logistics.Architecture.Tests/Logistics.Architecture.Tests.csproj" />

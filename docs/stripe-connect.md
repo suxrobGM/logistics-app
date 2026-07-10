@@ -119,12 +119,9 @@ var options = new PaymentIntentCreateOptions
 
 ## Webhook Events
 
-The platform handles these Connect-specific webhook events:
+One Connect-specific event is handled: `account.updated`, which calls `SyncConnectedAccountStatusAsync` to refresh the tenant's `ConnectStatus`, `ChargesEnabled`, and `PayoutsEnabled`.
 
-| Event                | Action                               |
-| -------------------- | ------------------------------------ |
-| `account.updated`    | Sync tenant's ConnectStatus          |
-| `capability.updated` | Update ChargesEnabled/PayoutsEnabled |
+Because it fires on a connected account, it requires a Stripe endpoint created with `connect: true` — separate from the platform endpoint, with its own signing secret. The app currently reads a single `Stripe__WebhookSecret`, so only one of the two endpoints can verify. See [Stripe Webhooks](stripe-webhooks.md) for the full event list and this limitation.
 
 ## Testing
 
