@@ -6,3 +6,4 @@ export * from "./status-badge/severity-maps";
 export * from "./alert/alert";
 export * from "./action-menu/action-menu";
 export * from "./money-with-tax/money-with-tax";
+export * from "./theme-toggle/theme-toggle";

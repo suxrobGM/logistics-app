@@ -1,6 +1,6 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Injectable, PLATFORM_ID, computed, inject, signal } from "@angular/core";
-import { ThemeService } from "./theme.service";
+import { computed, inject, Injectable, PLATFORM_ID, signal } from "@angular/core";
+import { ThemeService } from "@logistics/shared";
 import type { MapLayerType } from "@/shared/components/maps/types";
 
 const MAP_LAYER_STORAGE_KEY = "tms-map-layer";

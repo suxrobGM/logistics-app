@@ -1,4 +1,5 @@
 export * from "./toast.service";
+export * from "./theme.service";
 export * from "./http-cache.service";
 export * from "./cookie.service";
 export * from "./storage.service";

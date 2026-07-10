@@ -4,8 +4,8 @@
 /* spartan/ui token + variant layer (canonical shadcn tokens; see theme.css) */
 @import "../../shared/src/styles/theme.css";
 
-/* Disable dark mode - this project only supports light theme */
-@custom-variant dark (&:where(.dark-theme-disabled));
+/* Dark mode via the shared ThemeService (.dark-theme on <html>) */
+@custom-variant dark (&:where(.dark-theme, .dark-theme *));
 
 html,
 body {
@@ -14,28 +14,8 @@ body {
 }
 
 body {
-  background-color: #f5f7fa;
-}
-
-/* Shared design-system tokens used by @logistics/shared components
-   (Surface, Typography, etc.). Map them to the customer-portal palette
-   so shared primitives render correctly on this project too. */
-@layer utilities {
-  .bg-elevated {
-    background-color: #ffffff;
-  }
-
-  .bg-subtle {
-    background-color: #f5f7fa;
-  }
-
-  .border-default {
-    border-color: rgba(0, 0, 0, 0.1);
-  }
-
-  .text-muted {
-    color: #6b7280;
-  }
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 /* Typography base styles */

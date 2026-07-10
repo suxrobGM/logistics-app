@@ -41,6 +41,7 @@
 
       <!-- User menu -->
       <div class="flex items-center gap-3">
+        <ui-theme-toggle />
         @if (userName()) {
           <span class="hidden text-sm text-gray-600 sm:block">{{ userName() }}</span>
         }

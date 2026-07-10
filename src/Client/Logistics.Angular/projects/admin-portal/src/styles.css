@@ -4,8 +4,8 @@
 /* spartan/ui token + variant layer (canonical shadcn tokens; see theme.css) */
 @import "../../shared/src/styles/theme.css";
 
-/* Disable dark mode - this project only supports light theme */
-@custom-variant dark (&:where(.dark-theme-disabled));
+/* Dark mode via the shared ThemeService (.dark-theme on <html>) */
+@custom-variant dark (&:where(.dark-theme, .dark-theme *));
 
 html,
 body {
@@ -21,6 +21,11 @@ body {
     "Helvetica Neue",
     Arial,
     sans-serif;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 /* Custom scrollbar styles */

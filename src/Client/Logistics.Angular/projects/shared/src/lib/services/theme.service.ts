@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Injectable, PLATFORM_ID, inject, signal } from "@angular/core";
+import { inject, Injectable, PLATFORM_ID, signal } from "@angular/core";
 
-const THEME_STORAGE_KEY = "tms-theme";
+const THEME_STORAGE_KEY = "logisticsx-theme";
 
 @Injectable({ providedIn: "root" })
 export class ThemeService {

@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
-import type { UserTenantAccessDto } from "@logistics/shared";
+import { ThemeToggle, type UserTenantAccessDto } from "@logistics/shared";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { MenuModule } from "primeng/menu";
@@ -19,7 +19,15 @@ interface NavItem {
 @Component({
   selector: "cp-navbar",
   templateUrl: "./navbar.html",
-  imports: [FormsModule, RouterLink, RouterLinkActive, ButtonModule, MenuModule, SelectModule],
+  imports: [
+    FormsModule,
+    RouterLink,
+    RouterLinkActive,
+    ButtonModule,
+    MenuModule,
+    SelectModule,
+    ThemeToggle,
+  ],
 })
 export class Navbar {
   private readonly router = inject(Router);

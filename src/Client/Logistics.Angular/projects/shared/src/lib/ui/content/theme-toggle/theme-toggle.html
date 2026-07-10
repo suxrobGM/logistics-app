@@ -1,0 +1,9 @@
+<button
+  type="button"
+  (click)="toggle()"
+  [attr.aria-label]="isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+  [title]="isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+  class="text-muted-foreground hover:text-foreground hover:bg-accent inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors"
+>
+  <ui-icon [name]="isDark() ? 'sun' : 'moon'" size="md" />
+</button>
