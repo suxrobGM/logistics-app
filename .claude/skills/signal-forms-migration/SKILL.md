@@ -1,16 +1,28 @@
 ---
 name: signal-forms-migration
-description: "Convert Angular Reactive Forms (FormGroup/FormControl/FormArray) or template-driven forms (ngModel/FormsModule) to the new Signal Forms API (form()/FormField). Handles validation, arrays, nested objects, disabled state, and third-party component bindings."
+description: "Convert Angular Reactive Forms (FormGroup/FormControl/FormArray) or template-driven forms (ngModel/FormsModule) to the Signal Forms API (form()/FormField/FormRoot/submit()) on Angular 22. Handles validation, arrays, nested objects, disabled state, submission, and third-party component bindings."
 ---
 
 # Signal Forms Migration
 
-Convert an Angular component from Reactive Forms or template-driven forms to Signal Forms (`@angular/forms/signals`).
+Convert an Angular component from Reactive Forms or template-driven forms to Signal Forms
+(`@angular/forms/signals`).
 
-## Prerequisites
+## Provenance of everything below
 
-- Angular 22+ — Signal Forms are **stable** as of Angular 22 (this repo runs 22.0.6). The experimental v21 API differs; see the API-detail notes below.
-- The component must be identified by the user (file path or component name)
+Signal Forms are **stable** as of Angular 22 (this repo runs **22.0.6**). The v21 _experimental_ API
+differs substantially — ignore any v21-era blog post, and distrust any answer that mentions a
+`[control]` directive, `customError()`, or `FormArray`.
+
+Every claim here is pinned by an executable spec that CI runs:
+
+| Spec                                                               | Pins                                                                    |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| `projects/shared/src/lib/forms/signal-forms-compat-probe.spec.ts`  | PrimeNG interop (claims A–E)                                            |
+| `projects/shared/src/lib/forms/signal-forms-v22-api-probe.spec.ts` | The Signal Forms API itself (claims F–O), including every example below |
+
+**Those specs are the source of truth, not this doc.** If they disagree, the specs win and this file
+is stale. Run them with `bun run ng test shared --watch=false`.
 
 ## Step-by-step process
 
@@ -18,247 +30,355 @@ Convert an Angular component from Reactive Forms or template-driven forms to Sig
 
 Read both the `.ts` and `.html` files completely. Identify:
 
-- **Form type**: Reactive (`FormGroup`, `FormControl`, `FormArray`, `ReactiveFormsModule`) or template-driven (`ngModel`, `FormsModule`)
-- **Form structure**: All fields, their types, and nesting depth
-- **Validation rules**: `Validators.required`, `Validators.email`, `Validators.minLength`, `Validators.maxLength`, `Validators.pattern`, custom validators
-- **Dynamic behavior**: Conditional validators, disabled state toggling (`control.enable()`/`control.disable()`)
-- **Arrays**: `FormArray` usage, dynamic add/remove of items
+- **Form type**: Reactive (`FormGroup`, `FormControl`, `ReactiveFormsModule`) or template-driven (`ngModel`, `FormsModule`)
+- **Form structure**: fields, types, nesting depth
+- **Validation rules**: `Validators.*`, custom sync/async validators, group-level (cross-field) validators
+- **Dynamic behavior**: conditional validators, `control.enable()` / `control.disable()`
+- **Arrays**: `FormArray` usage, dynamic add/remove
 - **Template bindings**: `formControlName`, `formGroupName`, `formArrayName`, `[formControl]`, `[(ngModel)]`
-- **Third-party components**: PrimeNG, Material, or other UI library form controls
-- **Value access patterns**: `.value`, `.getRawValue()`, `.valueChanges`, `.statusChanges`, `.patchValue()`, `.setValue()`, `.reset()`
-- **Validation display**: How errors are shown in the template (`.hasError()`, `.errors`, `.touched`, `.dirty`, `.invalid`)
-- **Cross-field validation**: Validators applied to groups rather than individual controls
+- **Third-party controls**: PrimeNG / Material / custom
+- **Value access**: `.value`, `.getRawValue()`, `.valueChanges`, `.statusChanges`, `.patchValue()`, `.setValue()`, `.reset()`
+- **Validation display**: `.hasError()`, `.errors`, `.touched`, `.dirty`, `.invalid`
+- **Submission**: `(ngSubmit)`, `markAllAsTouched()`, server-error plumbing
 
 ### 2. Plan the migration
 
-Map each element to its signal forms equivalent:
-
 #### Imports
 
-| Before                                                                                                | After                                                                                                                |
-| ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `import { ReactiveFormsModule, FormGroup, FormControl, FormArray, Validators } from '@angular/forms'` | `import { form, FormField, required, email, minLength, maxLength, pattern, min, max } from '@angular/forms/signals'` |
-| `import { FormsModule } from '@angular/forms'`                                                        | `import { form, FormField } from '@angular/forms/signals'`                                                           |
+| Before                                                                                   | After                                                                                                       |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `import {ReactiveFormsModule, FormGroup, FormControl, Validators} from '@angular/forms'` | `import {form, FormField, FormRoot, submit, required, email, minLength, ...} from '@angular/forms/signals'` |
+| `import {FormsModule} from '@angular/forms'`                                             | `import {form, FormField} from '@angular/forms/signals'`                                                    |
 
-#### Component imports array
-
-| Before                | After       |
-| --------------------- | ----------- |
-| `ReactiveFormsModule` | `FormField` |
-| `FormsModule`         | `FormField` |
+Component `imports` array: `ReactiveFormsModule` / `FormsModule` → **`FormField`** (per control) and
+**`FormRoot`** (on the `<form>` element, if you use native submission).
 
 #### Form model
 
-| Before (Reactive)                              | Before (Template)                | After (Signal)                               |
-| ---------------------------------------------- | -------------------------------- | -------------------------------------------- |
-| `new FormGroup({ name: new FormControl('') })` | Class properties + `[(ngModel)]` | `signal({ name: '' })` + `form(this.model)`  |
-| `new FormControl('', Validators.required)`     | N/A                              | Schema function: `required(schemaPath.name)` |
-| `new FormArray([...])`                         | N/A                              | `signal({ items: [{ ... }] })`               |
+| Before (Reactive)                            | Before (Template)           | After (Signal)                             |
+| -------------------------------------------- | --------------------------- | ------------------------------------------ |
+| `new FormGroup({name: new FormControl('')})` | class props + `[(ngModel)]` | `signal({name: ''})` + `form(this.model)`  |
+| `new FormControl('', Validators.required)`   | n/a                         | schema function: `required(p.name)`        |
+| `new FormArray([...])`                       | n/a                         | `signal({items: [{...}]})` — a plain array |
+
+> **`form()` calls `inject()`.** It must run in an injection context — a field initializer or
+> constructor is fine. Outside one, pass `{injector}` (or use `runInInjectionContext`). Building a
+> form inside a plain method throws **NG0203**.
 
 #### Template bindings
 
-| Before                    | After                                                |
-| ------------------------- | ---------------------------------------------------- |
-| `[formGroup]="form"`      | Remove entirely (no form-level directive needed)     |
-| `formControlName="name"`  | `[formField]="myForm.name"`                          |
-| `[formControl]="control"` | `[formField]="myForm.fieldName"`                     |
-| `formGroupName="address"` | Access nested: `[formField]="myForm.address.street"` |
-| `formArrayName="items"`   | Access by index: `myForm.items[i].field`             |
-| `[(ngModel)]="property"`  | `[formField]="myForm.property"`                      |
+| Before                    | After                                                  |
+| ------------------------- | ------------------------------------------------------ |
+| `[formGroup]="form"`      | `[formRoot]="form"` on `<form>` (see submission below) |
+| `formControlName="name"`  | `[formField]="form.name"`                              |
+| `[formControl]="control"` | `[formField]="form.fieldName"`                         |
+| `formGroupName="address"` | nested access: `[formField]="form.address.street"`     |
+| `formArrayName="items"`   | index access: `form.items[i].field`                    |
+| `[(ngModel)]="prop"`      | `[formField]="form.prop"`                              |
 
 #### Validation display
 
-| Before                                   | After                     |
-| ---------------------------------------- | ------------------------- |
-| `form.get('name')?.hasError('required')` | `myForm.name().invalid()` |
-| `form.get('name')?.touched`              | `myForm.name().touched()` |
-| `form.get('name')?.dirty`                | `myForm.name().dirty()`   |
-| `form.get('name')?.errors`               | `myForm.name().errors()`  |
-| `form.get('name')?.valid`                | `myForm.name().valid()`   |
-| `form.invalid`                           | `myForm().invalid()`      |
-| `form.valid`                             | `myForm().valid()`        |
+| Before                                   | After                                                           |
+| ---------------------------------------- | --------------------------------------------------------------- |
+| `form.get('name')?.hasError('required')` | `form.name().invalid()` (or `form.name().getError('required')`) |
+| `form.get('name')?.touched`              | `form.name().touched()`                                         |
+| `form.get('name')?.dirty`                | `form.name().dirty()`                                           |
+| `form.get('name')?.errors`               | `form.name().errors()` — an **array**, see below                |
+| `form.get('name')?.valid`                | `form.name().valid()`                                           |
+| `form.invalid`                           | `form().invalid()`                                              |
 
 #### Value access
 
-| Before                           | After                                                     |
-| -------------------------------- | --------------------------------------------------------- |
-| `form.value`                     | `model()` (read the signal directly)                      |
-| `form.getRawValue()`             | `model()`                                                 |
-| `form.patchValue({ name: 'x' })` | `model.update(v => ({ ...v, name: 'x' }))`                |
-| `form.setValue(...)`             | `model.set(...)`                                          |
-| `form.reset()`                   | `model.set(initialValue)`                                 |
-| `form.valueChanges`              | Use `effect()` or `computed()` on the signal              |
-| `form.statusChanges`             | `myForm().valid()` / `myForm().invalid()` in `computed()` |
+| Before                              | After                                                     |
+| ----------------------------------- | --------------------------------------------------------- |
+| `form.value` / `form.getRawValue()` | `model()` or `form().value()`                             |
+| `form.patchValue({name: 'x'})`      | `form.name().value.set('x')`                              |
+| `form.setValue(v)`                  | `model.set(v)` or `form().value.set(v)`                   |
+| `form.reset()`                      | `form().reset()` — **clears touched/dirty only**          |
+| `form.reset(initial)`               | `form().reset(initial)` — clears state **and** sets value |
+| `form.valueChanges`                 | `effect()` / `computed()` / `linkedSignal()` on the model |
+| `form.statusChanges`                | `computed(() => form().valid())`                          |
+
+> `form()` does **not** copy the model — it wraps it. `form.x().value.set(...)` writes straight
+> through to the model signal, and vice versa.
 
 #### Validation rules
 
-| Before (Reactive)           | After (Signal)                                         |
-| --------------------------- | ------------------------------------------------------ |
-| `Validators.required`       | `required(schemaPath.field, { message: '...' })`       |
-| `Validators.email`          | `email(schemaPath.field, { message: '...' })`          |
-| `Validators.minLength(n)`   | `minLength(schemaPath.field, n, { message: '...' })`   |
-| `Validators.maxLength(n)`   | `maxLength(schemaPath.field, n, { message: '...' })`   |
-| `Validators.min(n)`         | `min(schemaPath.field, n, { message: '...' })`         |
-| `Validators.max(n)`         | `max(schemaPath.field, n, { message: '...' })`         |
-| `Validators.pattern(regex)` | `pattern(schemaPath.field, regex, { message: '...' })` |
-| Custom sync validator       | Use `validate()` rule (see below)                      |
-| Custom async validator      | Use `validateAsync()` rule (see below)                 |
+| Before (Reactive)         | After (Signal)                                                                |
+| ------------------------- | ----------------------------------------------------------------------------- |
+| `Validators.required`     | `required(p.field, {message: '...'})`                                         |
+| `Validators.email`        | `email(p.field, {message: '...'})`                                            |
+| `Validators.minLength(n)` | `minLength(p.field, n, {message: '...'})`                                     |
+| `Validators.maxLength(n)` | `maxLength(p.field, n, {message: '...'})`                                     |
+| `Validators.min(n)`       | `min(p.field, n, ...)` — **numbers only**                                     |
+| `Validators.max(n)`       | `max(p.field, n, ...)` — **numbers only**                                     |
+| `Validators.min(date)`    | `minDate(p.field, d, ...)` / `maxDate(p.field, d, ...)`                       |
+| `Validators.pattern(re)`  | `pattern(p.field, /re/, {message: '...'})` — takes a **RegExp**, not a string |
+| custom sync validator     | `validate()`                                                                  |
+| custom async validator    | `validateAsync()` / `validateHttp()`                                          |
+| group-level validator     | `validate()` on a field, or `validateTree()`                                  |
 
-#### Disabled state
+Every validator's config is `{message}` **XOR** `{error}`, plus an optional
+`when: ({value, valueOf}) => boolean` that makes the rule conditional.
 
-| Before                                           | After                                                                                   |
-| ------------------------------------------------ | --------------------------------------------------------------------------------------- |
-| `control.disable()` / `control.enable()`         | `disabled(schemaPath.field, { when: () => someSignal() })` (declarative, signal-driven) |
-| `new FormControl({ value: '', disabled: true })` | `disabled(schemaPath.field, { when: () => true })` in schema function                   |
+#### Disabled / readonly / hidden
 
-> Angular 22: `disabled()`, `readonly()`, and `hidden()` take a config object `{ when: LogicFn }`. The positional-logic overload (`disabled(path, () => ...)`) is deprecated.
+| Before                                         | After                                           |
+| ---------------------------------------------- | ----------------------------------------------- |
+| `control.disable()` / `.enable()`              | `disabled(p.field, {when: ({valueOf}) => ...})` |
+| `new FormControl({value: '', disabled: true})` | `disabled(p.field, {when: () => true})`         |
 
-### 3. Handle edge cases
+`disabled()`, `readonly()`, and `hidden()` take a config object `{when: LogicFn}`. The positional
+overload (`disabled(p.x, () => ...)`) still compiles but is **`@deprecated`** — do not use it.
 
-#### Third-party UI components (PrimeNG, Material, etc.)
+### 3. Submission — the part with no Reactive Forms analogue
 
-> **Verified facts.** Everything below is proven by the committed probe spec
-> `projects/shared/src/lib/forms/signal-forms-compat-probe.spec.ts` (9 tests, passing on
-> Angular 22.0.6 + primeng 21.1.6). CI runs it (`bun run ng test shared --watch=false`), so if
-> these facts drift the build fails. Treat that spec as the source of truth — not this doc.
+`submit()` does far more than an `(ngSubmit)` handler. Verified behavior:
 
-**Never put `[formField]` directly on a PrimeNG component.** Two independent, verified failure modes:
+1. **Marks the whole tree touched** — _before_ checking validity, and including already-valid fields.
+   Inline errors reveal themselves with no `markAllAsTouched()` call.
+2. **Skips `action` when the form is invalid**, running `onInvalid` instead. Resolves `false`.
+3. **Guards re-entrancy** — a second `submit()` while one is in flight returns `false` immediately.
+4. **Drives `form().submitting()`** for the duration of `action`.
+5. **Maps errors returned by `action` back onto individual fields** — this is how server-side
+   validation errors land on the right control, with no bespoke plumbing.
+6. Throws **NG1915** if no action is supplied.
+
+The clean shape — declare `submission` on the form, then let `[formRoot]` wire the `<form>`:
+
+```ts
+readonly model = signal({username: '', email: ''});
+readonly form = form(
+  this.model,
+  (p) => {
+    required(p.username, {message: 'Username is required'});
+    email(p.email, {message: 'Enter a valid email address'});
+  },
+  {
+    submission: {
+      action: async (root) => {
+        const res = await this.api.save(this.model());
+        // Return errors to attach them to fields; return undefined for success.
+        return res.ok
+          ? undefined
+          : [{kind: 'server', message: res.error, fieldTree: root.username}];
+      },
+    },
+  },
+);
+```
+
+```html
+<form [formRoot]="form">
+  <input [formField]="form.username" />
+  <button type="submit" [disabled]="form().submitting()">Save</button>
+</form>
+```
+
+`<form [formRoot]>` **sets `novalidate` itself** and calls `submit()` on the submit event (only when
+the form declares `submission` options). Do not add `novalidate` by hand, and do not add `(ngSubmit)`.
+
+To submit imperatively instead, call `submit(this.form, async () => {...})` — same semantics, no
+`[formRoot]` needed.
+
+### 4. Handle edge cases
+
+#### Errors are an array of `{kind, message}`, and the kinds are camelCase
+
+`field().errors()` returns `ValidationError[]`, **not** the classic `ValidationErrors` object. The
+built-in `kind`s do **not** all match the legacy reactive-forms keys:
+
+| Legacy reactive key | Signal Forms `kind` | payload prop                             |
+| ------------------- | ------------------- | ---------------------------------------- |
+| `required`          | `required`          | —                                        |
+| `email`             | `email`             | —                                        |
+| `min` / `max`       | `min` / `max`       | `.min` / `.max`                          |
+| **`minlength`**     | **`minLength`**     | **`.minLength`** (not `.requiredLength`) |
+| **`maxlength`**     | **`maxLength`**     | **`.maxLength`** (not `.requiredLength`) |
+| `pattern`           | `pattern`           | `.pattern`                               |
+
+This is a **silent** trap. A template checking `errors['minlength']?.requiredLength` compiles, runs,
+marks the field invalid — and renders nothing, or falls through to a generic message. It bites
+through `InteropNgControl.errors` too, which keys by the raw `kind`.
+
+So don't switch on kinds at all. Render the message the rule already carries:
+
+```html
+@if (form.email().touched() && form.email().invalid()) { @for (error of form.email().errors(); track
+error) {
+<p class="error">{{ error.message }}</p>
+} }
+```
+
+…which means **every validator call should pass `{message: '...'}`**.
+
+#### No `ng-invalid` / `ng-touched` / `ng-dirty` classes
+
+Signal Forms applies **no status classes at all** by default. Any CSS rule or
+`querySelector('.ng-invalid')` silently stops matching. Opt in explicitly if you need them:
+
+```ts
+provideSignalFormsConfig({
+  classes: {
+    "ng-invalid": (b) => b.state().invalid(),
+    "ng-touched": (b) => b.state().touched(),
+    "ng-dirty": (b) => b.state().dirty(),
+  },
+});
+```
+
+#### Third-party UI components (PrimeNG, Material, …)
+
+> Pinned by `signal-forms-compat-probe.spec.ts` (claims A–E) on Angular 22.0.6 + primeng 21.1.6.
+
+**Never put `[formField]` directly on a PrimeNG component.** Two verified failure modes:
 
 - **`pTextarea` crashes at runtime.** PrimeNG's Textarea subscribes to `ngControl.valueChanges` in
-  `onInit`, but Signal Forms provides `NgControl` as an `InteropNgControl` that has NO
-  `valueChanges` / `statusChanges` — so `undefined.subscribe(...)` throws on the first change
-  detection. Across all of primeng's `fesm2022`, Textarea is the ONLY component that does this.
+  `onInit`, but Signal Forms provides `NgControl` as an `InteropNgControl` with **no** `valueChanges`
+  / `statusChanges` — so `undefined.subscribe(...)` throws on the first change detection. Across all
+  of primeng's `fesm2022`, Textarea is the only component that does this.
 - **`pattern` type collision → TS2322 under `strictTemplates`.** Signal Forms binds the `pattern`
   state input as `readonly RegExp[]`; PrimeNG's `BaseInput` declares `pattern: string`. Six
-  components extend `BaseInput` and inherit the collision: **Select, InputNumber, DatePicker,
-  AutoComplete, InputMask, Password**.
-
-Components that do NOT extend `BaseInput` and do not subscribe to `valueChanges` (`pInputText`,
-`p-checkbox`, `p-toggleswitch`, `p-multiselect`, `p-selectbutton`) happen to work — but relying on
-that is fragile. PrimeNG is archived and frozen; do not build on the accident.
+  components inherit the collision: **Select, InputNumber, DatePicker, AutoComplete, InputMask,
+  Password**.
 
 **The correct pattern: a wrapper implementing `FormValueControl` only.** Angular 22 bridges custom
 Signal Form controls into legacy Reactive and Template-Driven forms automatically — angular.dev:
-_"Custom Signal Form Controls can be used with Signal, Reactive and Template-Driven Forms without
-any extra compatibility code."_ The probe verifies this (claim B): the SAME `FormValueControl`-only
-component two-way syncs under both `[formField]` and `formControlName`. Therefore:
+_"Custom Signal Form Controls can be used with Signal, Reactive and Template-Driven Forms without any
+extra compatibility code."_ Claim B pins this: the same `FormValueControl`-only component two-way
+syncs under both `[formField]` and `formControlName`. Therefore:
 
-- **NEVER implement `ControlValueAccessor` alongside `FormValueControl`.** No dual-interface
-  components, no `NG_VALUE_ACCESSOR` providers. The minimum contract is just `value = model<T>()`.
+- **Never implement `ControlValueAccessor` alongside `FormValueControl`.** No dual-interface
+  components, no `NG_VALUE_ACCESSOR`. The minimum contract is just `value = model<T>()`.
 - For a bare native control, put `[formField]` on the native element — always safe.
-- For anything richer, write a thin `FormValueControl` wrapper around the PrimeNG component (or its
-  spartan/ui replacement) and bind `[formField]` to the wrapper, never to PrimeNG directly.
+- For anything richer, wrap it and bind `[formField]` to the wrapper, never to PrimeNG directly.
 
-**Wrapper-first mapping** (native `<textarea>` for textarea; `FormValueControl` wrappers elsewhere):
+In **this repo** the wrappers already exist (`ui-text-field`, `ui-select-field`, `ui-date-field`, …
+in `projects/shared/src/lib/components/form/`). Templates already speak `ui-*-field`, so a form
+migration is normally a **`.ts`-only change**. If a control is still raw PrimeNG, wrap it first.
 
-- `p-textarea` → native `<textarea>` with `[formField]` (drop `pTextarea` — it crashes; see above)
-- `pInputText` → native `<input pInputText>` with `[formField]` (the directive sits on a native input, so this is safe)
-- `p-select` / `p-dropdown` → `FormValueControl` wrapper with `[formField]`
-- `p-inputNumber` → `FormValueControl` wrapper with `[formField]`
-- `p-calendar` / `p-datePicker` → `FormValueControl` wrapper with `[formField]`
-- `p-autoComplete` / `p-inputMask` / `p-password` → `FormValueControl` wrapper with `[formField]`
-- `p-checkbox` → native `<input type="checkbox">` with `[formField]`, or a `FormCheckboxControl` wrapper
+##### Optional control hooks, and reserved input names
 
-**Do NOT use `compatForm` or `SignalFormControl`** from `@angular/forms/signals/compat`. This
-project's migration forbids shims — convert forms fully; do not wrap legacy `FormControl` /
-`FormGroup` instances.
+`FormUiControl` declares optional `focus?(options?)` and `reset?()` methods; `focusBoundControl()`
+calls them. A wrapper whose host is a non-focusable custom element **must** implement `focus()` to
+delegate to its inner input — otherwise "focus the first invalid field" silently does nothing.
 
-#### FormArray / Dynamic arrays
+State inputs a control may opt into: `errors`, `disabled`, `disabledReasons`, `readonly`, `hidden`,
+`invalid`, `pending`, `touched`, `dirty`, `name`, `required`, `min`, `minLength`, `max`, `maxLength`,
+`pattern` — plus a `touch` output. **These names are reserved.** A wrapper input sharing one gets
+silently auto-bound by Signal Forms; TS2416 usually catches it (e.g. `ui-autocomplete-field`'s search
+threshold had to be renamed `minQueryLength`).
 
-There is **no `FormArray` class** in Signal Forms. Dynamic arrays are plain arrays inside the model
-signal; iterate the `FieldTree` with `@for` in the template.
+#### FormArray / dynamic arrays
 
-```typescript
-// Before
-items = new FormArray([new FormGroup({ name: new FormControl('') })]);
-addItem() { this.items.push(new FormGroup({ name: new FormControl('') })); }
+There is **no `FormArray` class**. Arrays are plain arrays inside the model signal; index the field
+tree directly, and use `applyEach` for a per-item schema.
 
-// After
-model = signal({ items: [{ name: '' }] });
-myForm = form(this.model);
+```ts
+readonly model = signal({items: [{name: ''}]});
+readonly form = form(this.model, (p) => {
+  applyEach(p.items, (item) => required(item.name, {message: 'Name is required'}));
+});
+
 addItem() {
-  this.model.update(v => ({ ...v, items: [...v.items, { name: '' }] }));
+  this.model.update((v) => ({...v, items: [...v.items, {name: ''}]}));
 }
 removeItem(index: number) {
-  this.model.update(v => ({ ...v, items: v.items.filter((_, i) => i !== index) }));
+  this.model.update((v) => ({...v, items: v.items.filter((_, i) => i !== index)}));
 }
-// Template: myForm.items[i].name
+// Template: [formField]="form.items[i].name"
 ```
 
 #### Cross-field validation
 
-```typescript
-// Before: group-level validator
-new FormGroup(
-  { password: new FormControl(""), confirm: new FormControl("") },
-  {
-    validators: passwordMatchValidator,
-  },
-);
+There is **no `customError()` export**. Return a plain `{kind, message}` object.
 
-// After: use validate() on one field referencing another
-form(this.model, (schemaPath) => {
-  validate(schemaPath.confirm, () => {
-    const m = this.model();
-    return m.password === m.confirm
+```ts
+form(this.model, (p) => {
+  validate(p.confirm, ({ valueOf }) =>
+    valueOf(p.password) === valueOf(p.confirm)
       ? null
-      : { kind: "passwordMismatch", message: "Passwords must match" };
-  });
-});
-```
-
-#### No compat shims — convert fully
-
-**Do NOT reach for `compatForm` or `SignalFormControl` from `@angular/forms/signals/compat`.** This
-project's migration forbids shims: never wrap existing `FormControl` / `FormGroup` instances inside a
-signal form for "gradual migration". Port the form fully — model signal + `form()` + schema rules —
-including custom and async validators (`validate()` / `validateAsync()`).
-
-#### Conditional validation with applyWhen
-
-```typescript
-form(this.model, (schemaPath) => {
-  applyWhen(
-    schemaPath.companyName,
-    () => this.isBusinessAccount(),
-    (p) => {
-      required(p, { message: "Company name is required for business accounts" });
-    },
+      : { kind: "passwordMismatch", message: "Passwords must match" },
   );
 });
 ```
 
-### 4. Implement the migration
+Use `validateTree()` when one rule must attach errors to _several_ fields at once.
 
-1. **Update imports** in the `.ts` file
-2. **Replace form creation** with `signal()` + `form()`
-3. **Move validation rules** to the schema function
-4. **Update template bindings** from `formControlName`/`ngModel` to `[formField]`
-5. **Update validation display** in the template
-6. **Update value access** patterns in the component class
-7. **Remove old imports** (`ReactiveFormsModule`, `FormsModule`, `Validators`, etc.)
-8. **Remove old form artifacts** (`FormGroup`, `FormControl`, `FormArray` declarations)
+#### Conditional validation
 
-### 5. Verify
+Two forms — `applyWhen` scopes a whole sub-schema, `{when}` scopes a single rule:
 
-- Check for IDE diagnostics / type errors in the template
-- Ensure all form fields are bound
-- Verify validation rules are equivalent
-- Confirm submit handler reads from `model()` instead of `form.value`
-- Check that disabled state logic is preserved
+```ts
+form(this.model, (p) => {
+  applyWhen(
+    p,
+    ({ value }) => value().isBusiness,
+    (bp) => {
+      required(bp.companyName, { message: "Company name is required for business accounts" });
+      required(bp.taxId);
+    },
+  );
 
-## Important notes
+  // single rule — no applyWhen needed
+  required(p.companyName, { when: ({ valueOf }) => valueOf(p.isBusiness) });
+});
+```
 
-- Signal Forms are **stable** as of Angular 22 (this repo runs 22.0.6) — no experimental caveat applies
-- `[formField]` on native elements is the most reliable binding method
-- Never mix `ReactiveFormsModule`/`FormsModule` directives with `FormField` on the same control
-- The `form()` function returns a field tree, not a signal — call `myForm()` to get the root state signal, and `myForm.field()` to get a specific field's state
-- Array fields are accessed by index: `myForm.items[0].name` — the form tree automatically tracks array mutations. There is **no `FormArray` class**
-- Always add `novalidate` to `<form>` elements to prevent browser validation from conflicting
+`applyWhenValue()` additionally narrows the value type via a type predicate.
 
-### Angular 22 API details (correct any v21-era assumptions)
+#### No compat shims — convert fully
 
-- `disabled()`, `readonly()`, `hidden()` take a config object `{ when: LogicFn }` — the positional-logic overload is deprecated
-- `touched` on a custom control is now a **`touched` input plus a `touch()` output** — the old `touched` model was split into the two
-- `min` / `max` validators no longer accept string values (numbers only)
-- There is **no official migration schematic** from Reactive Forms to Signal Forms — migrate by hand
+**Do NOT use `compatForm` or `SignalFormControl` from `@angular/forms/signals/compat`.** This
+project's migration forbids shims: never wrap an existing `FormControl` / `FormGroup` inside a signal
+form for "gradual migration". Port the form fully — model signal + `form()` + schema rules —
+including custom and async validators. If a form resists conversion, fix the form.
+
+### 5. Implement
+
+1. Replace form creation with `signal()` + `form()` (in a field initializer — injection context).
+2. Move validation rules into the schema function, each with a `{message}`.
+3. Move `disable()` / `enable()` logic into `disabled(p.x, {when})`.
+4. Move the submit handler into `submission.action`; delete `markAllAsTouched()`.
+5. Update template bindings to `[formField]` / `[formRoot]`.
+6. Update error rendering to iterate `errors()` and print `error.message`.
+7. Update value access in the class (`model()`, `form.x().value.set()`).
+8. Delete `ReactiveFormsModule` / `FormsModule` / `Validators` / `FormGroup` / `FormControl` imports.
+
+### 6. Verify
+
+- No template type errors (`strictTemplates` catches the `pattern` and reserved-name collisions).
+- Every field is bound; no orphan fields (**NG01902**).
+- Validation rules are equivalent — _including the error messages_, which are now data, not markup.
+- Submit reads from `model()`, not `form.value`.
+- Disabled logic is preserved.
+- Anything that depended on `.ng-invalid` has been re-pointed.
+
+## Angular 22 API reference (as installed)
+
+Exported from `@angular/forms/signals`:
+
+- **Structure**: `form`, `schema`, `apply`, `applyEach`, `applyWhen`, `applyWhenValue`, `submit`
+- **Directives**: `FormField` (`[formField]`), `FormRoot` (`form[formRoot]`)
+- **Validators**: `required`, `email`, `min`, `max`, `minDate`, `maxDate`, `minLength`, `maxLength`, `pattern`
+- **Custom validation**: `validate`, `validateAsync`, `validateHttp`, `validateTree`, `validateStandardSchema`
+- **Logic**: `disabled`, `readonly`, `hidden`, `debounce`
+- **Errors**: `requiredError`, `emailError`, `minError`, `maxError`, `minDateError`, `maxDateError`, `minLengthError`, `maxLengthError`, `patternError`, `standardSchemaError` (there is **no** `customError`)
+- **Types**: `FieldTree`, `FieldState`, `FormValueControl`, `FormCheckboxControl`, `FormUiControl`, `ValidationError`, `LogicFn`, `SchemaPath`
+- **Config**: `provideSignalFormsConfig`, `metadata`, `createMetadataKey`, `transformedValue`
+
+`FieldState` members: `value` (writable), `controlValue`, `errors`, `errorSummary` (self +
+descendants), `valid`, `invalid`, `pending`, `submitting`, `touched`, `dirty`, `disabled`,
+`disabledReasons`, `readonly`, `hidden`, `required`, `min`, `max`, `minLength`, `maxLength`,
+`pattern`, `name`, `keyInParent`, `markAsTouched(opts?)`, `markAsDirty()`, `reset(value?)`,
+`getError(kind)`, `reloadValidation()`, `focusBoundControl(opts?)`.
+
+Other v22 notes:
+
+- `touched` on a custom control is a **`touched` input plus a `touch()` output** — the old `touched`
+  model was split in two.
+- `min` / `max` no longer accept strings (numbers only); dates get `minDate` / `maxDate`.
+- `pattern()` takes a `RegExp`, not a string.
+- There is **no official migration schematic** from Reactive Forms to Signal Forms — migrate by hand.
+- `form()` returns a **field tree, not a signal**. Call `form()` for the root state, `form.x()` for a
+  field's state.
