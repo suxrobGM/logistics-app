@@ -28,7 +28,7 @@ export type TextFieldType = "text" | "email" | "password" | "tel" | "url" | "sea
  *
  * @example
  * <ui-form-field label="Name" for="name" [required]="true">
- *   <ui-text-field id="name" formControlName="name" placeholder="Full name" />
+ *   <ui-text-field id="name" [formField]="form.name" placeholder="Full name" />
  * </ui-form-field>
  */
 @Component({

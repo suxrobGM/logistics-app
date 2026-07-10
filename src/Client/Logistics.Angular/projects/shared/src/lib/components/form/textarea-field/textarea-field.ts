@@ -9,8 +9,8 @@ import {
   output,
 } from "@angular/core";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
-import { Textarea } from "primeng/textarea";
 import { focusFirstControl } from "../../../forms/focus-control";
+import { HlmTextarea } from "../../../spartan/textarea";
 
 /**
  * Multi-line text input.
@@ -20,14 +20,14 @@ import { focusFirstControl } from "../../../forms/focus-control";
  * component binds via `[formField]`, `formControlName` and `[(ngModel)]` alike — no
  * `ControlValueAccessor`, no compat shim.
  *
- * The PrimeNG `pTextarea` is driven internally with plain value/event bindings. Never put
- * `formControlName` or `[formField]` on a PrimeNG element: `pTextarea` crashes on
- * `ngControl.valueChanges`, and every `BaseInput` subclass collides with Signal Forms'
- * `pattern` state input. See `forms/signal-forms-compat-probe.spec.ts`.
+ * The inner native textarea is styled by spartan's `hlmTextarea` and driven with plain value/event
+ * bindings. It used to be PrimeNG's `pTextarea`, the one component in all of primeng that subscribes
+ * to `ngControl.valueChanges` and therefore throws under `[formField]`
+ * (`forms/signal-forms-compat-probe.spec.ts`, claim C).
  *
  * @example
  * <ui-form-field label="Notes" for="notes" [required]="true">
- *   <ui-textarea-field id="notes" formControlName="notes" placeholder="Details" />
+ *   <ui-textarea-field id="notes" [formField]="form.notes" placeholder="Details" />
  * </ui-form-field>
  */
 @Component({
@@ -36,7 +36,7 @@ import { focusFirstControl } from "../../../forms/focus-control";
   // `id` is a declared input, but a static `id="x"` attribute also lands on the host element.
   // Strip it so the id lives only on the inner control and `<label for>` targets something focusable.
   host: { "[attr.id]": "null" },
-  imports: [Textarea],
+  imports: [HlmTextarea],
 })
 export class UiTextareaField implements FormValueControl<string> {
   /** The control's value. Required by `FormValueControl`. */

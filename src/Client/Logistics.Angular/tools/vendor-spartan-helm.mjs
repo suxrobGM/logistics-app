@@ -85,15 +85,22 @@ function repointInvalidHook(text) {
   return text.replaceAll("data-[matches-spartan-invalid=true]", "aria-[invalid=true]");
 }
 
-/** Remove `hostDirectives: [...]` and the brain form-state imports it needed. */
+/**
+ * Remove `hostDirectives: [...]`, then drop any `@spartan-ng/brain/*` import whose symbols are no
+ * longer referenced. Which brain directives a primitive host-applies varies (BrnInput,
+ * BrnFieldControlDescribedBy, BrnTextarea, …), so prune by usage rather than by name.
+ */
 function stripFormStateWiring(text) {
-  return text
-    .replace(/^\s*hostDirectives: \[[\s\S]*?\],\r?\n/m, "")
-    .replace(/^import \{ BrnInput \} from '@spartan-ng\/brain\/input';\r?\n/m, "")
-    .replace(
-      /^import \{ BrnFieldControlDescribedBy \} from '@spartan-ng\/brain\/field';\r?\n/m,
-      "",
-    );
+  let out = text.replace(/^\s*hostDirectives: \[[\s\S]*?\],\r?\n/m, "");
+
+  const importRe = /^import \{([^}]+)\} from ['"]@spartan-ng\/brain\/[^'"]+['"];\r?\n/gm;
+  for (const match of [...out.matchAll(importRe)]) {
+    const symbols = match[1].split(",").map((s) => s.trim().split(/\s+as\s+/).pop());
+    const body = out.replace(match[0], "");
+    const stillUsed = symbols.some((sym) => new RegExp(`\\b${sym}\\b`).test(body));
+    if (!stillUsed) out = body;
+  }
+  return out;
 }
 
 /** Every shadcn colour token spartan's theme registers. Longest first so `primary-foreground` wins. */
