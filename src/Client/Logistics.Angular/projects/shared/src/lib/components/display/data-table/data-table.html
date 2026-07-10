@@ -1,0 +1,54 @@
+<p-table
+  [value]="$any(value())"
+  [lazy]="lazy()"
+  [paginator]="paginator()"
+  [rows]="$any(rows())"
+  [first]="$any(first())"
+  [totalRecords]="$any(totalRecords())"
+  [rowsPerPageOptions]="$any(rowsPerPageOptions())"
+  [showCurrentPageReport]="showCurrentPageReport()"
+  [loading]="loading()"
+  [sortField]="$any(sortField())"
+  [sortOrder]="$any(sortOrder())"
+  [sortMode]="sortMode()"
+  [dataKey]="$any(dataKey())"
+  [selectionMode]="$any(selectionMode())"
+  [(selection)]="selection"
+  [scrollable]="scrollable()"
+  [scrollHeight]="$any(scrollHeight())"
+  [styleClass]="$any(styleClass())"
+  [size]="$any(size())"
+  [stripedRows]="stripedRows()"
+  [globalFilterFields]="$any(globalFilterFields())"
+  (onLazyLoad)="lazyLoad.emit($event)"
+>
+  <ng-template #caption>
+    <ng-container [ngTemplateOutlet]="$any(captionTpl())" />
+  </ng-template>
+
+  <ng-template #header>
+    <ng-container [ngTemplateOutlet]="$any(headerTpl())" />
+  </ng-template>
+
+  <ng-template #body let-row let-rowIndex="rowIndex" let-expanded="expanded">
+    <ng-container
+      [ngTemplateOutlet]="$any(bodyTpl())"
+      [ngTemplateOutletContext]="{ $implicit: row, rowIndex: rowIndex, expanded: expanded }"
+    />
+  </ng-template>
+
+  <ng-template #expandedrow let-row let-rowIndex="rowIndex">
+    <ng-container
+      [ngTemplateOutlet]="$any(expandedRowTpl())"
+      [ngTemplateOutletContext]="{ $implicit: row, rowIndex: rowIndex }"
+    />
+  </ng-template>
+
+  <ng-template #footer>
+    <ng-container [ngTemplateOutlet]="$any(footerTpl())" />
+  </ng-template>
+
+  <ng-template #emptymessage>
+    <ng-container [ngTemplateOutlet]="$any(emptyTpl())" />
+  </ng-template>
+</p-table>

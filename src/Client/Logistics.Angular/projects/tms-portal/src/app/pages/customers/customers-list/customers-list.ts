@@ -3,13 +3,12 @@ import { Component, effect, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { Api, deleteCustomer, Permission, PermissionGuard } from "@logistics/shared";
 import type { CustomerDto } from "@logistics/shared/api";
-import { Stack } from "@logistics/shared/components";
+import { Stack, UiDataTable, UiSortHeader } from "@logistics/shared/components";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { MenuModule } from "primeng/menu";
-import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
@@ -25,7 +24,6 @@ import { CustomersListStore } from "../store";
     ButtonModule,
     TooltipModule,
     CardModule,
-    TableModule,
     MenuModule,
     ConfirmDialogModule,
     DatePipe,
@@ -37,6 +35,8 @@ import { CustomersListStore } from "../store";
     InviteCustomerDialogComponent,
     PermissionGuard,
     Stack,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class CustomersList {
