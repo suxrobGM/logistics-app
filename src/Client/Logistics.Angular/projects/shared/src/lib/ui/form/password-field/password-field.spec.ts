@@ -17,6 +17,8 @@ import { Component, provideZonelessChangeDetection, signal, viewChild } from "@a
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { form, FormField, required } from "@angular/forms/signals";
+import { provideLucideIcons } from "@lucide/angular";
+import { BASE_LUCIDE_ICONS } from "../../icons/lucide-icons";
 import { UiFormField } from "../form-field/form-field";
 import { UiPasswordField } from "./password-field";
 
@@ -76,7 +78,9 @@ function type(fixture: ComponentFixture<unknown>, text: string): void {
 
 describe("UiPasswordField — a FormValueControl-only wrapper", () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [provideZonelessChangeDetection()] });
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection(), provideLucideIcons(...BASE_LUCIDE_ICONS)],
+    });
   });
 
   it("renders the PrimeNG password input and reflects the initial value", async () => {

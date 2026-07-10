@@ -79,6 +79,8 @@ export const PI_TO_LUCIDE: Record<string, string> = {
   "arrow-right": "arrow-right",
   sun: "sun",
   moon: "moon",
+  eye: "eye",
+  "eye-slash": "eye-off",
 };
 
 /** Fallback rendered when a name is not mapped. */
