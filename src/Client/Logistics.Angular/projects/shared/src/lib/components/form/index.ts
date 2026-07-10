@@ -6,3 +6,4 @@ export * from "./form-field/form-field";
 export * from "./validated-form/validated-form";
 export * from "./address-form/address-form";
 export * from "./language-picker/language-picker";
+export * from "./text-field/text-field";
