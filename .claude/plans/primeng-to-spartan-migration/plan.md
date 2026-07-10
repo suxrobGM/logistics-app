@@ -262,12 +262,33 @@ Phases 5–6 must be re-driven through the Playwright MCP against this same rout
 
 ## Phase 3 — Seam hardening, still on PrimeNG _(no visual change; each item independently shippable)_
 
-> **Progress (branch `feat/angular-22-upgrade`):** 1 ✅, 2 ✅, 3 ✅, 5 partially (pattern proven, `ui-text-field` landed).
-> Remaining: the other 8 `ui-*-field` wrappers, the 9 CVA conversions, and `<ui-data-table>` + 82 templates.
+> **Progress (branch `feat/angular-22-upgrade`):** items 1, 2, 3, 4, 6 ✅ — and item 5's wrappers all exist with specs.
+>
+> **The ONLY thing left in Phase 3: adopt the wrappers in the 43 form templates.**
+> A census counts **221 raw PrimeNG controls still bound with `formControlName`** (pInputText 95, p-select 54,
+> textarea 30, p-datepicker 19, p-inputnumber 9, p-checkbox 8, p-toggleswitch 5, p-multiselect 1) and **zero**
+> `<ui-*-field>` usages. Replace each with its wrapper, keeping `formControlName` exactly as-is — the Angular 22
+> bridge makes that work with no Signal Forms changes. That is what unblocks Phase 4.
+>
+> Four hand-cases the mechanical pass cannot do: `(onChange)` on p-select (1), `(onClear)` on p-select (2),
+> `(onSelect)` on p-datepicker (2), and one `p-checkbox [value]` with no `[binary]` (a checkbox-group member,
+> not a boolean — `ui-checkbox-field` does not model it).
 >
 > **The wrapper pattern is proven, not assumed.** `projects/shared/src/lib/components/form/text-field/text-field.spec.ts`
 > shows a `FormValueControl`-only component syncing both ways under `formControlName` AND `[formField]`, propagating
-> `disabled`, and rendering errors through `ui-form-field` under both — with no transitional code. Replicate it exactly.
+> `disabled`, and rendering errors through `ui-form-field` under both — with no transitional code. All 8 wrappers
+> have an equivalent spec; 73 tests green.
+>
+> **Table sweep done.** All 82 templates use `<ui-data-table>`; 34 use `<th uiSortHeader="Field">`; 6 use
+> `UiTableRowDirectives`. `primeng/table` is imported by exactly 3 files, all in
+> `shared/src/lib/components/display/data-table/`. Phase 7 swaps those 3.
+>
+> Two traps recorded so the next person does not rediscover them:
+>
+> - A projected `<ng-template #header>` resolves DI against the CONSUMER, not the inner `p-table` — hence
+>   `UiDataTable` re-provides `Table` from its own view via a lazy factory. Without it: `NG0201`.
+> - `Paginator.currentPageReport` calls `currentPageReportTemplate.replace(...)` unguarded, so forwarding
+>   `undefined` throws on **every paginated table**. Defaults must match PrimeNG's, not `undefined`.
 
 1. ✅ **Renamed shared `FormField` → `UiFormField`** (class only; selector unchanged). 59 files.
 2. ✅ **De-leaked `ToastService`**: owned `ConfirmOptions` with semantic `ConfirmIcon` / `ConfirmSeverity` tokens,
