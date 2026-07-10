@@ -52,6 +52,9 @@ export class UiDateField implements FormValueControl<Date | null> {
   public readonly appendTo = input<unknown>("body");
   public readonly fluid = input<boolean>(true);
   public readonly showTime = input<boolean>(false);
+  public readonly timeOnly = input<boolean>(false);
+  public readonly styleClass = input<string | undefined>(undefined);
+  public readonly iconDisplay = input<"button" | "input" | undefined>(undefined);
   public readonly minDate = input<Date | undefined>(undefined);
   public readonly maxDate = input<Date | undefined>(undefined);
   public readonly selectionMode = input<"single" | "multiple" | "range">("single");

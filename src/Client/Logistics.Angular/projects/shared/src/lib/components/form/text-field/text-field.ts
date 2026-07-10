@@ -48,6 +48,7 @@ export class UiTextField implements FormValueControl<string> {
   public readonly type = input<TextFieldType>("text");
   public readonly placeholder = input<string>("");
   public readonly autocomplete = input<string>("");
+  public readonly maxlength = input<number | undefined>(undefined);
 
   protected onInput(event: Event): void {
     this.value.set((event.target as HTMLInputElement).value);

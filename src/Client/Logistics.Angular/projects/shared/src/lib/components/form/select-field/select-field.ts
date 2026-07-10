@@ -55,4 +55,8 @@ export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
   public readonly filter = input<boolean>(false);
   public readonly appendTo = input<unknown>("body");
   public readonly fluid = input<boolean>(true);
+  public readonly styleClass = input<string | undefined>(undefined);
+  public readonly filterPlaceholder = input<string | undefined>(undefined);
+  public readonly filterBy = input<string | undefined>(undefined);
+  public readonly loading = input<boolean>(false);
 }

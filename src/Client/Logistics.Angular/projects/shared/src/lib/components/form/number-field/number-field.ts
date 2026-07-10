@@ -65,6 +65,7 @@ export class UiNumberField implements FormValueControl<number | null> {
   public readonly id = input<string>("");
   public readonly inputId = input<string>("");
   public readonly fluid = input<boolean>(true);
+  public readonly styleClass = input<string | undefined>(undefined);
 
   /** Leading input-group addon (e.g. "$"). Renders the `p-inputgroup` chrome when set. */
   public readonly prefixLabel = input<string>("");
