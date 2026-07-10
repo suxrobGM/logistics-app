@@ -1,10 +1,12 @@
 import { Component, inject, input, model, output, signal } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { email, form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { UiFormField, UiTextareaField, UiTextField, ValidatedForm } from "@logistics/shared";
 import { Api, sendTrackingLinkEmail } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ToastService } from "@/core/services";
+
+const EMPTY = { email: "", personalMessage: "" };
 
 @Component({
   selector: "app-send-tracking-link-dialog",
@@ -13,7 +15,8 @@ import { ToastService } from "@/core/services";
     ValidatedForm,
     DialogModule,
     ButtonModule,
-    ReactiveFormsModule,
+    FormRoot,
+    FormField,
     UiFormField,
     UiTextField,
     UiTextareaField,
@@ -27,41 +30,49 @@ export class SendTrackingLinkDialog {
   public readonly visible = model<boolean>(false);
   public readonly sent = output<void>();
 
-  protected readonly isSending = signal(false);
+  protected readonly model = signal({ ...EMPTY });
 
-  protected readonly form = new FormGroup({
-    email: new FormControl("", [Validators.required, Validators.email]),
-    personalMessage: new FormControl(""),
-  });
+  /**
+   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips
+   * the action while invalid, and drives `form().submitting()` — so there is no `isSending` signal
+   * and no `markAllAsTouched()` call.
+   */
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.email, { message: "Email address is required." });
+      email(p.email, { message: "Enter a valid email address." });
+    },
+    {
+      submission: {
+        action: async () => {
+          try {
+            await this.api.invoke(sendTrackingLinkEmail, {
+              id: this.trackingLinkId(),
+              body: {
+                email: this.model().email,
+                personalMessage: this.model().personalMessage || undefined,
+              },
+            });
+          } catch {
+            this.toastService.showError("Failed to send email");
+            return undefined;
+          }
+          this.toastService.showSuccess("Tracking link sent by email");
+          this.sent.emit();
+          this.close();
+          return undefined;
+        },
+      },
+    },
+  );
 
   onShow(): void {
-    this.form.reset();
+    this.form().reset({ ...EMPTY });
   }
 
   close(): void {
     this.visible.set(false);
-    this.form.reset();
-  }
-
-  async send(): Promise<void> {
-    if (this.form.invalid) return;
-
-    this.isSending.set(true);
-    try {
-      await this.api.invoke(sendTrackingLinkEmail, {
-        id: this.trackingLinkId(),
-        body: {
-          email: this.form.value.email!,
-          personalMessage: this.form.value.personalMessage || undefined,
-        },
-      });
-      this.toastService.showSuccess("Tracking link sent by email");
-      this.sent.emit();
-      this.close();
-    } catch {
-      this.toastService.showError("Failed to send email");
-    } finally {
-      this.isSending.set(false);
-    }
+    this.form().reset({ ...EMPTY });
   }
 }
