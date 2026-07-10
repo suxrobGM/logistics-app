@@ -7,8 +7,9 @@ import {
 } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { provideRouter, withComponentInputBinding, withRouterConfig } from "@angular/router";
-import { getAccessToken, provideApi } from "@logistics/shared";
+import { BASE_LUCIDE_ICONS, getAccessToken, provideApi } from "@logistics/shared";
 import { I18nService, TENANT_SETTINGS_PROVIDER } from "@logistics/shared/services";
+import { provideLucideIcons } from "@lucide/angular";
 import { provideTranslateService } from "@ngx-translate/core";
 import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
 import Aura from "@primeuix/themes/aura";
@@ -23,6 +24,7 @@ import { routes } from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideLucideIcons(...BASE_LUCIDE_ICONS),
     provideBrowserGlobalErrorListeners(),
     provideAuth({ config: authConfig }),
     provideRouter(

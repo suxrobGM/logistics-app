@@ -1,4 +1,6 @@
 import { Component, computed, input } from "@angular/core";
+import { LucideDynamicIcon } from "@lucide/angular";
+import { PI_TO_LUCIDE, UI_ICON_FALLBACK } from "../../icons/ui-icons";
 
 export type IconSize = "xs" | "sm" | "md" | "lg" | "xl";
 export type IconColor =
@@ -31,21 +33,26 @@ const colorClasses: Record<IconColor, string> = {
 };
 
 /**
- * PrimeIcons wrapper with size and color variants. Pass `name` without the `pi-` prefix.
+ * Lucide icon (via @lucide/angular) with size and color variants. Accepts the legacy
+ * PrimeIcons-style `name` (with or without the `pi-` prefix); it is mapped to a lucide
+ * icon through {@link PI_TO_LUCIDE}, falling back to a circle for unmapped names.
  */
 @Component({
   selector: "ui-icon",
   templateUrl: "./icon.html",
+  imports: [LucideDynamicIcon],
 })
 export class Icon {
   public readonly name = input.required<string>();
   public readonly size = input<IconSize>("md");
   public readonly color = input<IconColor>("inherit");
 
-  protected readonly classes = computed(() => {
+  protected readonly iconName = computed(() => {
     const trimmed = this.name().replace(/^pi-?/, "");
-    return ["pi", `pi-${trimmed}`, sizeClasses[this.size()], colorClasses[this.color()]]
-      .filter(Boolean)
-      .join(" ");
+    return PI_TO_LUCIDE[trimmed] ?? UI_ICON_FALLBACK;
   });
+
+  protected readonly classes = computed(() =>
+    [sizeClasses[this.size()], colorClasses[this.color()]].filter(Boolean).join(" "),
+  );
 }
