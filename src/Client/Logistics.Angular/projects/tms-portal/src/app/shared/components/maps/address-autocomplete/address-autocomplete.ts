@@ -1,8 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Component, computed, inject, input, model, output, signal } from "@angular/core";
-import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  linkedSignal,
+  model,
+  output,
+  signal,
+} from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import type { FormValueControl } from "@angular/forms/signals";
 import type { Address } from "@logistics/shared/api";
 import { regionAllowedCountries } from "@logistics/shared/utils";
 import { InputTextModule } from "primeng/inputtext";
@@ -24,22 +32,30 @@ const MAPBOX_MAX_COUNTRY_CODES = 5;
   templateUrl: "./address-autocomplete.html",
   styleUrl: "./address-autocomplete.css",
   imports: [FormsModule, InputTextModule],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: AddressAutocomplete,
-      multi: true,
-    },
-  ],
 })
-export class AddressAutocomplete implements ControlValueAccessor {
+export class AddressAutocomplete implements FormValueControl<Address | null> {
   private readonly http = inject(HttpClient);
   private readonly tenantService = inject(TenantService);
-  private isDisabled = false;
   private isTouched = false;
   private readonly accessToken = environment.mapboxToken;
   protected readonly searchResults = signal<MapboxGeocodingFeature[]>([]);
-  protected readonly addressString = model<string | null>(null);
+
+  /** The control's value. Required by `FormValueControl`. */
+  public readonly value = model<Address | null>(null);
+  /** Driven by the Reactive Forms bridge; gates all user interaction. */
+  public readonly disabled = input<boolean>(false);
+  /** Raised the first time the field is interacted with so the form marks it touched. */
+  public readonly touch = output<void>();
+
+  /**
+   * Text rendered in the input. Reseeds from `value` whenever the form pushes a new
+   * address (the old `writeValue` behaviour); the user's typing overrides it until the
+   * next `value` change. `addressString` never writes back to `value`, so there is no
+   * value -> parse -> value loop.
+   */
+  protected readonly addressString = linkedSignal<string | null>(() =>
+    Converters.addressToString(this.value()),
+  );
 
   public readonly field = input("");
   public readonly placeholder = input("Type address...");
@@ -63,15 +79,10 @@ export class AddressAutocomplete implements ControlValueAccessor {
   private readonly effectiveLanguage = computed<string>(
     () => this.tenantService.tenantData()?.settings?.language ?? "en",
   );
-  public readonly address = model<Address | null>(null);
   public readonly selectedAddress = output<SelectedAddressEvent>();
 
-  constructor() {
-    this.setAddressString(this.address());
-  }
-
   protected handleAddressInputChange(event: Event): void {
-    if (this.isDisabled) {
+    if (this.disabled()) {
       return;
     }
 
@@ -108,7 +119,7 @@ export class AddressAutocomplete implements ControlValueAccessor {
   }
 
   protected handleClickAddress(geocodingFeature: MapboxGeocodingFeature): void {
-    if (this.isDisabled) {
+    if (this.disabled()) {
       return;
     }
 
@@ -128,64 +139,34 @@ export class AddressAutocomplete implements ControlValueAccessor {
       country: country,
     };
 
-    this.address.set(addressObj);
+    // Reseeds `addressString` via the linkedSignal above.
+    this.value.set(addressObj);
     this.selectedAddress.emit({
       address: addressObj,
       center: geocodingFeature.geometry.coordinates,
     });
 
     this.searchResults.set([]);
-    this.setAddressString(addressObj);
-    this.onChange(addressObj);
     this.markAsTouched();
   }
 
-  protected handleInputFocusOut(event: FocusEvent): void {
+  protected handleInputFocusOut(): void {
     // Delay the execution to allow click event to be processed (in case an address is clicked from the list)
     setTimeout(() => {
       if (this.forceSelection() && this.searchResults.length) {
-        this.address.set(null);
+        this.value.set(null);
         this.addressString.set(null);
         this.searchResults.set([]);
-        this.onChange(null);
       }
     }, 100);
   }
 
-  private setAddressString(address: Address | null): void {
-    this.addressString.set(Converters.addressToString(address));
-  }
-
-  // #region Reactive forms methods
-
-  private onChange(value: Address | null): void {}
-  private onTouched(): void {}
-
-  private markAsTouched() {
+  private markAsTouched(): void {
     if (!this.isTouched) {
       this.isTouched = true;
-      this.onTouched();
+      this.touch.emit();
     }
   }
-
-  writeValue(value: Address): void {
-    this.address.set(value);
-    this.setAddressString(value);
-  }
-
-  registerOnChange(fn: (value: Address | null) => void): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    this.isDisabled = isDisabled;
-  }
-
-  // #endregion
 }
 
 export interface SelectedAddressEvent {

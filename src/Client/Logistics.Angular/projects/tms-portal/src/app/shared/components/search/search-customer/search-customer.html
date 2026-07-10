@@ -7,10 +7,11 @@
   [delay]="300"
   optionLabel="name"
   [suggestions]="suggestedCustomers()"
-  [(ngModel)]="selectedCustomer"
+  [(ngModel)]="value"
+  [disabled]="disabled()"
   (completeMethod)="searchCustomer($event)"
   (onSelect)="changeSelectedCustomer($event)"
-  (onBlur)="markTouched()"
+  (onBlur)="touch.emit()"
 >
   <ng-template #empty>
     <div class="flex items-center justify-between gap-2 p-2">

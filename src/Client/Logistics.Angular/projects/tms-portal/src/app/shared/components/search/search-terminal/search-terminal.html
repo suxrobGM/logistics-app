@@ -5,11 +5,11 @@
   [minLength]="2"
   [delay]="300"
   optionLabel="name"
+  [disabled]="disabled()"
   [suggestions]="suggestedTerminals()"
-  [(ngModel)]="selectedTerminal"
+  [(ngModel)]="value"
   (completeMethod)="searchTerminal($event)"
-  (onSelect)="changeSelectedTerminal($event)"
-  (onBlur)="markTouched()"
+  (onBlur)="touch.emit()"
 >
   <ng-template #empty>
     <div class="p-2">

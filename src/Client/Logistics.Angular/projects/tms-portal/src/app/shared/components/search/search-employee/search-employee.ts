@@ -1,39 +1,44 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-import { Component, forwardRef, inject, input, model, signal } from "@angular/core";
-import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
-import { isEmptyGuid, type TenantRoleValue } from "@logistics/shared";
-import { Api, getEmployeeById, getEmployees, type EmployeeDto } from "@logistics/shared/api";
+import { Component, inject, input, model, output, signal } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import type { FormValueControl } from "@angular/forms/signals";
+import { type TenantRoleValue } from "@logistics/shared";
+import { Api, getEmployees, type EmployeeDto } from "@logistics/shared/api";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 
 /**
  * Component for searching and selecting an employee.
  * This component uses an autocomplete input to allow users to search for employees by name.
- * It accepts an employee ID or an EmployeeDto object as input and emits the selected employee.
- * Supports filtering by role (e.g., "Driver", "Dispatcher").
+ * It emits the selected employee via its `value` model. Supports filtering by role
+ * (e.g., "Driver", "Dispatcher").
+ *
+ * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
+ * signal-form controls into Reactive and Template-Driven forms automatically, so this one
+ * component binds via `[formField]`, `formControlName` and `[(value)]` alike — no
+ * `ControlValueAccessor`, no compat shim. Never put `formControlName` / `[formField]` on the
+ * inner PrimeNG element.
  */
 @Component({
   selector: "app-search-employee",
   templateUrl: "./search-employee.html",
   imports: [AutoCompleteModule, FormsModule],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SearchEmployee),
-      multi: true,
-    },
-  ],
 })
-export class SearchEmployee implements ControlValueAccessor {
+export class SearchEmployee implements FormValueControl<EmployeeDto | null> {
   private readonly api = inject(Api);
 
   protected readonly suggestedEmployees = signal<EmployeeDto[]>([]);
-  protected readonly disabled = signal<boolean>(false);
+
+  /** The selected employee. Required by `FormValueControl`. */
+  public readonly value = model<EmployeeDto | null>(null);
+
+  /** Driven by the forms bridge (Reactive Forms `.disable()`, Signal Forms `disabled()`). */
+  public readonly disabled = input<boolean>(false);
+
+  /** Raised on blur so the form can mark the field touched. */
+  public readonly touch = output<void>();
 
   /** Filter employees by role (e.g., "Driver", "Dispatcher") */
   public readonly role = input<TenantRoleValue | null>(null);
   public readonly placeholder = input<string>("Type employee name");
-
-  public readonly selectedEmployee = model<EmployeeDto | null>(null);
 
   protected async searchEmployee(event: { query: string }): Promise<void> {
     const roleValue = this.role() as string;
@@ -46,53 +51,10 @@ export class SearchEmployee implements ControlValueAccessor {
   }
 
   protected changeSelectedEmployee(event: AutoCompleteSelectEvent): void {
-    this.onChange(event.value);
+    this.value.set(event.value);
   }
 
-  private async fetchEmployeeById(id: string): Promise<void> {
-    if (isEmptyGuid(id)) {
-      this.selectedEmployee.set(null);
-      return;
-    }
-
-    const result = await this.api.invoke(getEmployeeById, { userId: id });
-    if (result) {
-      this.selectedEmployee.set(result);
-      this.onChange(result);
-    }
+  protected clearSelectedEmployee(): void {
+    this.value.set(null);
   }
-
-  //#region Implementation Reactive forms
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private onChange(value: EmployeeDto | null): void {}
-  private onTouched(): void {}
-
-  /** Marks the control as touched so validation errors surface (on blur). */
-  protected markTouched(): void {
-    this.onTouched();
-  }
-
-  writeValue(value: EmployeeDto | string | null): void {
-    if (typeof value === "string") {
-      this.fetchEmployeeById(value);
-      return;
-    }
-
-    this.selectedEmployee.set(value);
-  }
-
-  registerOnChange(fn: () => void): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    this.disabled.set(isDisabled);
-  }
-
-  //#endregion
 }

@@ -1,12 +1,6 @@
-import { Component, computed, input, output, signal } from "@angular/core";
-import {
-  FormControl,
-  FormGroup,
-  NG_VALUE_ACCESSOR,
-  ReactiveFormsModule,
-  Validators,
-  type ControlValueAccessor,
-} from "@angular/forms";
+import { Component, computed, input, linkedSignal, model, output } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import type { FormValueControl } from "@angular/forms/signals";
 import { InputTextModule } from "primeng/inputtext";
 import { KeyFilterModule } from "primeng/keyfilter";
 import { SelectModule } from "primeng/select";
@@ -31,41 +25,92 @@ const COUNTRY_STATE_OPTIONS: Record<string, SelectOption[]> = {
   AU: AU_STATES_OPTIONS,
 };
 
+/** Internal, editable representation of the composite address value. */
+interface AddressParts {
+  addressLine1: string;
+  addressLine2: string | null;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+}
+
+/**
+ * Parses an incoming {@link Address} into the individual, editable part signals.
+ * Replaces the old `writeValue`: normalises the country to an ISO code and, when the
+ * country has a fixed option list, normalises the state to a matching option value.
+ */
+function parseAddress(value: Address | null): AddressParts {
+  if (!value) {
+    return {
+      addressLine1: "",
+      addressLine2: null,
+      city: "",
+      state: "",
+      zipCode: "",
+      country: DEFAULT_COUNTRY_OPTION.value,
+    };
+  }
+
+  const countryOption = findOption(COUNTRIES_OPTIONS, value.country ?? "");
+  const countryCode = countryOption?.value ?? DEFAULT_COUNTRY_OPTION.value;
+  const stateOptions = COUNTRY_STATE_OPTIONS[countryCode];
+  const stateValue = stateOptions
+    ? (findOption(stateOptions, value.state ?? "")?.value ?? "")
+    : (value.state ?? "");
+
+  return {
+    addressLine1: value.line1 ?? "",
+    addressLine2: value.line2 ?? null,
+    city: value.city ?? "",
+    state: stateValue,
+    zipCode: value.zipCode ?? "",
+    country: countryCode,
+  };
+}
+
+/**
+ * Composite address editor.
+ *
+ * Implements Angular's `FormValueControl<Address | null>` and nothing else — the Angular 22
+ * forms bridge wires it into Reactive Forms (`formControlName`), Signal Forms (`[formField]`)
+ * and template-driven forms alike, so no `ControlValueAccessor` / compat shim is needed.
+ *
+ * The sub-fields are driven by plain signals rather than an internal `FormGroup`. Each edit
+ * recomposes an `Address` and pushes it through `value` — but only once every required part is
+ * present, mirroring the previous "don't emit an incomplete address" behaviour.
+ */
 @Component({
   selector: "ui-address-form",
   templateUrl: "./address-form.html",
-  imports: [ReactiveFormsModule, UiFormField, SelectModule, InputTextModule, KeyFilterModule],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: AddressForm,
-      multi: true,
-    },
-  ],
+  imports: [FormsModule, UiFormField, SelectModule, InputTextModule, KeyFilterModule],
 })
-export class AddressForm implements ControlValueAccessor {
-  public readonly form: FormGroup<AddressFormType> = new FormGroup<AddressFormType>({
-    addressLine1: new FormControl("", { validators: Validators.required, nonNullable: true }),
-    addressLine2: new FormControl(null),
-    city: new FormControl("", { validators: Validators.required, nonNullable: true }),
-    state: new FormControl("", { validators: Validators.required, nonNullable: true }),
-    zipCode: new FormControl("", { validators: Validators.required, nonNullable: true }),
-    country: new FormControl(DEFAULT_COUNTRY_OPTION.value, {
-      validators: Validators.required,
-      nonNullable: true,
-    }),
-  });
+export class AddressForm implements FormValueControl<Address | null> {
+  /** The control's value. Required by `FormValueControl`. */
+  public readonly value = model<Address | null>(null);
 
-  private onTouched?: () => void;
-  private onChanged?: (value: Address | null) => void;
+  /** Driven by the forms bridge; disables every sub-field when true. */
+  public readonly disabled = input<boolean>(false);
 
-  public readonly address = input<Address>();
-  public readonly addressChange = output<Address | null>();
+  /** Raised on blur so the form can mark the field touched. */
+  public readonly touch = output<void>();
+
   /**
    * Optional list of ISO-3166-1 alpha-2 country codes to allow.
    * When omitted, all countries are shown.
    */
   public readonly allowedCountries = input<readonly string[] | null>(null);
+
+  /**
+   * Editable parts, seeded from `value()`. This replaces `writeValue`: whenever the bound
+   * value changes externally, the parts re-derive from it. User edits update the parts in
+   * place (see the `on*` handlers) and re-compose a new value — so there is no write-back
+   * loop, because `value.set` is only ever called from a user-input handler, never reactively.
+   */
+  protected readonly parts = linkedSignal<Address | null, AddressParts>({
+    source: this.value,
+    computation: (value) => parseAddress(value),
+  });
 
   protected readonly countries = computed(() => {
     const allowed = this.allowedCountries();
@@ -76,8 +121,8 @@ export class AddressForm implements ControlValueAccessor {
     return COUNTRIES_OPTIONS.filter((opt) => set.has(opt.value));
   });
 
-  /** Currently selected country code. Updated from valueChanges and writeValue. */
-  private readonly country = signal(this.form.controls.country.value);
+  /** Currently selected country code. */
+  private readonly country = computed(() => this.parts().country);
 
   /** State/province options for the selected country, or null when free-text. */
   protected readonly stateOptions = computed<SelectOption[] | null>(
@@ -91,101 +136,78 @@ export class AddressForm implements ControlValueAccessor {
     () => STATE_FIELD_LABELS[this.country()] ?? DEFAULT_STATE_FIELD_LABEL,
   );
 
-  constructor() {
-    // valueChanges only fires for user-driven changes (writeValue uses
-    // emitEvent: false), so clearing here won't wipe a hydrated state value.
-    this.form.controls.country.valueChanges.subscribe((newCountry) => {
-      const prevHadOptions = !!COUNTRY_STATE_OPTIONS[this.country()];
+  protected onLine1Input(event: Event): void {
+    this.updatePart("addressLine1", (event.target as HTMLInputElement).value);
+  }
+
+  protected onLine2Input(event: Event): void {
+    this.updatePart("addressLine2", (event.target as HTMLInputElement).value);
+  }
+
+  protected onCityInput(event: Event): void {
+    this.updatePart("city", (event.target as HTMLInputElement).value);
+  }
+
+  protected onStateInput(event: Event): void {
+    this.updatePart("state", (event.target as HTMLInputElement).value);
+  }
+
+  protected onStateSelect(value: string): void {
+    this.updatePart("state", value ?? "");
+  }
+
+  protected onZipCodeInput(event: Event): void {
+    this.updatePart("zipCode", (event.target as HTMLInputElement).value);
+  }
+
+  /**
+   * Country changes additionally reset the state when the input mode flips between a fixed
+   * option list and free text (a stale option value is meaningless in the other mode).
+   */
+  protected onCountrySelect(newCountry: string): void {
+    this.parts.update((parts) => {
+      const prevHadOptions = !!COUNTRY_STATE_OPTIONS[parts.country];
       const newHasOptions = !!COUNTRY_STATE_OPTIONS[newCountry];
-      this.country.set(newCountry);
-
-      if (prevHadOptions !== newHasOptions) {
-        this.form.controls.state.setValue("");
-      }
+      return {
+        ...parts,
+        country: newCountry,
+        state: prevHadOptions !== newHasOptions ? "" : parts.state,
+      };
     });
-    this.form.valueChanges.subscribe(() => this.handleFormValueChange());
+    this.emit();
   }
 
-  writeValue(value: Address | null): void {
-    if (!value) {
+  private updatePart<K extends keyof AddressParts>(key: K, value: AddressParts[K]): void {
+    this.parts.update((parts) => ({ ...parts, [key]: value }));
+    this.emit();
+  }
+
+  /**
+   * Recomposes an `Address` from the current parts and pushes it through `value`. Skips the
+   * write while any required part is missing, so the bound control keeps its previous value
+   * (matching the legacy `handleFormValueChange` early-return) and stays invalid via the
+   * parent control's own `Validators.required`.
+   */
+  private emit(): void {
+    const parts = this.parts();
+
+    if (!parts.addressLine1 || !parts.city || !parts.state || !parts.zipCode || !parts.country) {
       return;
     }
 
-    const countryOption = findOption(COUNTRIES_OPTIONS, value.country ?? "");
-    const countryCode = countryOption?.value ?? DEFAULT_COUNTRY_OPTION.value;
-    const stateOptions = COUNTRY_STATE_OPTIONS[countryCode];
-    const stateValue = stateOptions
-      ? (findOption(stateOptions, value.state ?? "")?.value ?? "")
-      : (value.state ?? "");
-
-    // Sync the country signal so the state field renders the right input mode
-    // (dropdown vs free-text) immediately. setValue with emitEvent: false skips
-    // the valueChanges subscription that would otherwise drive this update.
-    this.country.set(countryCode);
-
-    this.form.setValue(
-      {
-        addressLine1: value.line1 ?? "",
-        addressLine2: value.line2 ?? null,
-        city: value.city ?? "",
-        state: stateValue,
-        zipCode: value.zipCode ?? "",
-        country: countryCode,
-      },
-      { emitEvent: false },
-    );
-  }
-
-  registerOnChange(fn: never): void {
-    this.onChanged = fn;
-  }
-
-  registerOnTouched(fn: never): void {
-    this.onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    if (isDisabled) {
-      this.form.disable({ emitEvent: false });
-    }
-  }
-
-  private handleFormValueChange(): void {
-    const values = this.form.getRawValue();
-
-    if (
-      !values.addressLine1 ||
-      !values.city ||
-      !values.state ||
-      !values.zipCode ||
-      !values.country
-    ) {
-      return;
-    }
-
-    const countryOption = findOption(COUNTRIES_OPTIONS, values.country);
+    const countryOption = findOption(COUNTRIES_OPTIONS, parts.country);
 
     const address: Address = {
-      line1: values.addressLine1,
-      line2: values.addressLine2,
-      city: values.city,
-      state: values.state,
-      zipCode: values.zipCode,
+      line1: parts.addressLine1,
+      line2: parts.addressLine2,
+      city: parts.city,
+      state: parts.state,
+      zipCode: parts.zipCode,
       // Emit the ISO-3166-1 alpha-2 code (e.g. "US"), not the display label.
       // The backend AddressValidator requires a 2-letter country code.
       country: countryOption?.value ?? DEFAULT_COUNTRY_OPTION.value,
     };
 
-    this.onChanged?.(address);
-    this.addressChange?.emit(address);
+    this.value.set(address);
   }
-}
-
-interface AddressFormType {
-  addressLine1: FormControl<string>;
-  addressLine2: FormControl<string | null>;
-  city: FormControl<string>;
-  state: FormControl<string>;
-  zipCode: FormControl<string>;
-  country: FormControl<string>;
 }

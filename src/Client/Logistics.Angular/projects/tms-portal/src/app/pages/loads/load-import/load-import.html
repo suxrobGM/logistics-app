@@ -25,8 +25,8 @@
           hint="Optionally select a truck to assign to the imported load"
         >
           <app-search-truck
-            [selectedTruck]="selectedTruck()"
-            (selectedTruckChange)="selectedTruck.set($event)"
+            [value]="selectedTruck()"
+            (valueChange)="selectedTruck.set($event)"
           />
         </ui-form-field>
 

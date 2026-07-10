@@ -1,44 +1,92 @@
-<form [formGroup]="form">
+<div>
 
   <ui-form-field label="Address Line 1" for="addressLine1" [required]="true">
-    <input pInputText id="addressLine1" formControlName="addressLine1" class="w-full" />
+    <input
+      pInputText
+      id="addressLine1"
+      class="w-full"
+      [value]="parts().addressLine1"
+      [disabled]="disabled()"
+      (input)="onLine1Input($event)"
+      (blur)="touch.emit()"
+    />
   </ui-form-field>
 
   <ui-form-field label="Address Line 2" for="addressLine2" hint="Optional">
-    <input pInputText id="addressLine2" formControlName="addressLine2" class="w-full" />
+    <input
+      pInputText
+      id="addressLine2"
+      class="w-full"
+      [value]="parts().addressLine2 ?? ''"
+      [disabled]="disabled()"
+      (input)="onLine2Input($event)"
+      (blur)="touch.emit()"
+    />
   </ui-form-field>
 
   <ui-form-field label="City" for="city" [required]="true">
-    <input pInputText id="city" formControlName="city" class="w-full" />
+    <input
+      pInputText
+      id="city"
+      class="w-full"
+      [value]="parts().city"
+      [disabled]="disabled()"
+      (input)="onCityInput($event)"
+      (blur)="touch.emit()"
+    />
   </ui-form-field>
 
   <ui-form-field [label]="stateLabel()" for="state" [required]="true">
     @if (hasStateOptions()) {
       <p-select
         inputId="state"
-        formControlName="state"
+        [ngModel]="parts().state"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="onStateSelect($event)"
         [options]="stateOptions()"
         [placeholder]="'Select a ' + stateLabel().toLowerCase()"
         class="w-full"
         [filter]="true"
+        [disabled]="disabled()"
+        (onBlur)="touch.emit()"
       />
     } @else {
-      <input pInputText id="state" formControlName="state" class="w-full" />
+      <input
+        pInputText
+        id="state"
+        class="w-full"
+        [value]="parts().state"
+        [disabled]="disabled()"
+        (input)="onStateInput($event)"
+        (blur)="touch.emit()"
+      />
     }
   </ui-form-field>
 
   <ui-form-field label="Zip Code" for="zipCode" [required]="true">
-    <input pInputText id="zipCode" formControlName="zipCode" class="w-full" />
+    <input
+      pInputText
+      id="zipCode"
+      class="w-full"
+      [value]="parts().zipCode"
+      [disabled]="disabled()"
+      (input)="onZipCodeInput($event)"
+      (blur)="touch.emit()"
+    />
   </ui-form-field>
 
   <ui-form-field label="Country" for="country" [required]="true">
     <p-select
       inputId="country"
-      formControlName="country"
+      [ngModel]="parts().country"
+      [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="onCountrySelect($event)"
       [options]="countries()"
       placeholder="Select a country"
       class="w-full"
       [filter]="true"
+      [disabled]="disabled()"
+      (onBlur)="touch.emit()"
     />
   </ui-form-field>
-</form>
+</div>

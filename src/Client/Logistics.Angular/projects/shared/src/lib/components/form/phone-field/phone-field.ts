@@ -1,36 +1,73 @@
-import { Component, computed, input, signal } from "@angular/core";
-import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
+import { Component, computed, effect, input, model, output, signal } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputMaskModule } from "primeng/inputmask";
 import { SelectModule } from "primeng/select";
 import { DEFAULT_PHONE_COUNTRY, PHONE_COUNTRIES, type PhoneCountry } from "../../../constants";
 
+/**
+ * Phone number input with a country dial-code selector.
+ *
+ * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
+ * signal-form controls into Reactive and Template-Driven forms automatically, so this one
+ * component binds via `[formField]`, `formControlName` and `[(ngModel)]` alike — no
+ * `ControlValueAccessor`, no compat shim.
+ *
+ * The public `value` is an E.164 string (`+[dialCode][digits]`). It is split into the
+ * `selectedCountry` + `phoneNumber` presentation signals when set from OUTSIDE, and
+ * recomposed from them on user edits. The recompose is idempotent (parsing what we just
+ * emitted yields the same country/number), and an internal guard prevents the
+ * emit -> parse round trip from clobbering local state — see `lastEmitted`.
+ */
 @Component({
   selector: "ui-phone-field",
   templateUrl: "./phone-field.html",
   imports: [InputGroupModule, InputMaskModule, SelectModule, FormsModule],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: PhoneField,
-      multi: true,
-    },
-  ],
 })
-export class PhoneField implements ControlValueAccessor {
-  protected readonly countries = PHONE_COUNTRIES;
-  protected readonly selectedCountry = signal<PhoneCountry>(DEFAULT_PHONE_COUNTRY);
-  protected readonly phoneNumber = signal<string>("");
-  protected readonly disabled = signal(false);
+export class PhoneField implements FormValueControl<string | null> {
+  /** The control's value in E.164 format. Required by `FormValueControl`. */
+  public readonly value = model<string | null>(null);
+
+  // Optional state inputs. Signal Forms binds these automatically when present;
+  // the Reactive Forms bridge drives `disabled`.
+  public readonly disabled = input<boolean>(false);
+  public readonly required = input<boolean>(false);
+  public readonly invalid = input<boolean>(false);
+  public readonly errors = input<readonly ValidationError[]>([]);
+  public readonly name = input<string>("");
+
+  /** Raised on blur so the form can mark the field touched. */
+  public readonly touch = output<void>();
 
   public readonly placeholder = input<string>("Enter phone number");
 
+  protected readonly countries = PHONE_COUNTRIES;
+  protected readonly selectedCountry = signal<PhoneCountry>(DEFAULT_PHONE_COUNTRY);
+  protected readonly phoneNumber = signal<string>("");
+
   protected readonly currentMask = computed(() => this.selectedCountry().mask);
 
-  private onTouched?: () => void;
-  private onChanged?: (value: string | null) => void;
+  /**
+   * The last value we emitted from a user edit. When `value()` matches it, the change
+   * originated here, so the parse effect skips re-deriving country/number — this keeps a
+   * user-selected country even when the composed value is `null` (empty number).
+   */
+  private lastEmitted: string | null | undefined = undefined;
 
-  writeValue(value: string | null): void {
+  constructor() {
+    effect(() => {
+      const value = this.value();
+      if (value === this.lastEmitted) {
+        return;
+      }
+      this.lastEmitted = value;
+      this.applyExternalValue(value);
+    });
+  }
+
+  /** Split an incoming E.164 value into the country + number presentation signals. */
+  private applyExternalValue(value: string | null): void {
     if (!value) {
       this.selectedCountry.set(DEFAULT_PHONE_COUNTRY);
       this.phoneNumber.set("");
@@ -48,18 +85,6 @@ export class PhoneField implements ControlValueAccessor {
     }
   }
 
-  registerOnChange(fn: (value: string | null) => void): void {
-    this.onChanged = fn;
-  }
-
-  registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    this.disabled.set(isDisabled);
-  }
-
   onCountryChange(country: PhoneCountry): void {
     this.selectedCountry.set(country);
     this.emitValue();
@@ -71,26 +96,32 @@ export class PhoneField implements ControlValueAccessor {
   }
 
   onBlur(): void {
-    this.onTouched?.();
+    this.touch.emit();
   }
 
   private emitValue(): void {
     const phone = this.phoneNumber();
     if (!phone) {
-      this.onChanged?.(null);
+      this.setValue(null);
       return;
     }
 
     // Strip non-digit characters from the phone number
     const digitsOnly = phone.replace(/\D/g, "");
     if (!digitsOnly) {
-      this.onChanged?.(null);
+      this.setValue(null);
       return;
     }
 
     // Emit in E.164 format: +[country code][number]
-    const fullNumber = `${this.selectedCountry().dialCode}${digitsOnly}`;
-    this.onChanged?.(fullNumber);
+    this.setValue(`${this.selectedCountry().dialCode}${digitsOnly}`);
+  }
+
+  private setValue(composed: string | null): void {
+    // Record before setting so the parse effect recognises this as a self-originated
+    // change and leaves the local country/number signals untouched.
+    this.lastEmitted = composed;
+    this.value.set(composed);
   }
 
   private parsePhoneNumber(value: string): { country: PhoneCountry; number: string } | null {

@@ -63,8 +63,8 @@
       <ui-grid [size]="{ xs: 12, md: 6, lg: 3 }">
         <ui-form-field label="Truck">
           <app-search-truck
-            [selectedTruck]="selectedTruck()"
-            (selectedTruckChange)="selectedTruck.set($event); applyFilters()"
+            [value]="selectedTruck()"
+            (valueChange)="selectedTruck.set($event); applyFilters()"
           />
         </ui-form-field>
       </ui-grid>

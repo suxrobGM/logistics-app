@@ -5,10 +5,11 @@
   optionLabel="number"
   [delay]="300"
   [suggestions]="suggestedLoads()"
-  [(ngModel)]="selectedLoad"
+  [(ngModel)]="value"
+  [disabled]="disabled()"
   (completeMethod)="searchLoad($event)"
   (onSelect)="changeSelectedLoad($event)"
-  (onBlur)="markTouched()"
+  (onBlur)="touch.emit()"
 >
   <ng-template #item let-load>
     <div class="flex items-center gap-2">

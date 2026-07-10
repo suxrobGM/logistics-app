@@ -46,14 +46,11 @@
     </ui-form-field>
 
     <ui-form-field label="Truck">
-      <app-search-truck [(selectedTruck)]="selectedTruck" (selectedTruckChange)="applyFilters()" />
+      <app-search-truck [(value)]="selectedTruck" (valueChange)="applyFilters()" />
     </ui-form-field>
 
     <ui-form-field label="Customer">
-      <app-search-customer
-        [(selectedCustomer)]="selectedCustomer"
-        (selectedCustomerChange)="applyFilters()"
-      />
+      <app-search-customer [(value)]="selectedCustomer" (valueChange)="applyFilters()" />
     </ui-form-field>
   </div>
 

@@ -1,28 +1,36 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-import { Component, forwardRef, inject, model, signal } from "@angular/core";
-import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
+import { Component, inject, input, model, output, signal } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import type { FormValueControl } from "@angular/forms/signals";
 import { Api, getContainers, type ContainerDto } from "@logistics/shared/api";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 
+/**
+ * Container search autocomplete.
+ *
+ * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
+ * signal-form controls into Reactive and Template-Driven forms automatically, so this
+ * component binds via `[formField]`, `formControlName` and `[(ngModel)]` alike — no
+ * `ControlValueAccessor`, no compat shim.
+ */
 @Component({
   selector: "app-search-container",
   templateUrl: "./search-container.html",
   imports: [AutoCompleteModule, FormsModule],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SearchContainer),
-      multi: true,
-    },
-  ],
 })
-export class SearchContainer implements ControlValueAccessor {
+export class SearchContainer implements FormValueControl<ContainerDto | null> {
   private readonly api = inject(Api);
 
   protected readonly suggestedContainers = signal<ContainerDto[]>([]);
   protected readonly lastQuery = signal<string>("");
 
-  public readonly selectedContainer = model<ContainerDto | null>(null);
+  /** The control's value. Required by `FormValueControl`. */
+  public readonly value = model<ContainerDto | null>(null);
+
+  /** The Reactive Forms bridge drives this; Signal Forms binds it when present. */
+  public readonly disabled = input<boolean>(false);
+
+  /** Raised on blur so the form can mark the field touched. */
+  public readonly touch = output<void>();
 
   protected async searchContainer(event: { query: string }): Promise<void> {
     const q = event.query?.trim() ?? "";
@@ -42,33 +50,6 @@ export class SearchContainer implements ControlValueAccessor {
   }
 
   protected changeSelectedContainer(event: AutoCompleteSelectEvent): void {
-    this.onChange(event.value);
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private onChange(value: ContainerDto | null): void {}
-  private onTouched(): void {}
-
-  /** Marks the control as touched so validation errors surface (on blur). */
-  protected markTouched(): void {
-    this.onTouched();
-  }
-
-  writeValue(value: ContainerDto | null): void {
-    this.selectedContainer.set(value);
-  }
-
-  registerOnChange(fn: () => void): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    if (isDisabled) {
-      this.selectedContainer.set(null);
-    }
+    this.value.set(event.value);
   }
 }

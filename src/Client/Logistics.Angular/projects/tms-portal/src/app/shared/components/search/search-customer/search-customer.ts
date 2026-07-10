@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-import { Component, forwardRef, inject, model, signal } from "@angular/core";
-import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
+import { Component, inject, input, model, output, signal } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import type { FormValueControl } from "@angular/forms/signals";
 import { Api, getCustomers, type CustomerDto } from "@logistics/shared/api";
 import {
   AutoComplete,
@@ -15,21 +15,21 @@ import { CustomerForm } from "@/shared/components/domain-forms";
   selector: "app-search-customer",
   templateUrl: "./search-customer.html",
   imports: [AutoCompleteModule, FormsModule, Button, Dialog, CustomerForm],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SearchCustomer),
-      multi: true,
-    },
-  ],
 })
-export class SearchCustomer implements ControlValueAccessor {
+export class SearchCustomer implements FormValueControl<CustomerDto | null> {
   private readonly api = inject(Api);
 
   protected readonly suggestedCustomers = signal<CustomerDto[]>([]);
   protected readonly lastQuery = signal<string>("");
 
-  public readonly selectedCustomer = model<CustomerDto | null>(null);
+  /** The control's value. Required by `FormValueControl`. */
+  public readonly value = model<CustomerDto | null>(null);
+
+  /** Driven by the Reactive Forms bridge / Signal Forms when disabled. */
+  public readonly disabled = input<boolean>(false);
+
+  /** Raised on blur so the form can mark the field touched. */
+  public readonly touch = output<void>();
 
   protected readonly customerDialogVisible = model<boolean>(false);
 
@@ -52,7 +52,7 @@ export class SearchCustomer implements ControlValueAccessor {
   }
 
   protected changeSelectedCustomer(event: AutoCompleteSelectEvent): void {
-    this.onChange(event.value);
+    this.value.set(event.value);
   }
 
   protected openCreateCustomer(autoComplete: AutoComplete): void {
@@ -63,38 +63,6 @@ export class SearchCustomer implements ControlValueAccessor {
 
   protected handleCustomerCreated(customer: CustomerDto): void {
     this.customerDialogVisible.set(false);
-    this.selectedCustomer.set(customer);
-    this.onChange(customer);
+    this.value.set(customer);
   }
-
-  //#region Implementation Reactive forms
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private onChange(value: CustomerDto | null): void {}
-  private onTouched(): void {}
-
-  /** Marks the control as touched so validation errors surface (on blur). */
-  protected markTouched(): void {
-    this.onTouched();
-  }
-
-  writeValue(value: CustomerDto | null): void {
-    this.selectedCustomer.set(value);
-  }
-
-  registerOnChange(fn: () => void): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    if (isDisabled) {
-      this.selectedCustomer.set(null);
-    }
-  }
-
-  //#endregion
 }

@@ -6,10 +6,11 @@
   [delay]="300"
   optionLabel="number"
   [suggestions]="suggestedContainers()"
-  [(ngModel)]="selectedContainer"
+  [disabled]="disabled()"
+  [(ngModel)]="value"
   (completeMethod)="searchContainer($event)"
   (onSelect)="changeSelectedContainer($event)"
-  (onBlur)="markTouched()"
+  (onBlur)="touch.emit()"
 >
   <ng-template #empty>
     <div class="p-2">

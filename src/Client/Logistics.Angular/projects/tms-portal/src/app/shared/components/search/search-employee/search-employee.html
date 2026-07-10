@@ -6,10 +6,11 @@
   [delay]="300"
   [minLength]="2"
   [suggestions]="suggestedEmployees()"
-  [(ngModel)]="selectedEmployee"
+  [ngModel]="value()"
   (completeMethod)="searchEmployee($event)"
   (onSelect)="changeSelectedEmployee($event)"
-  (onBlur)="markTouched()"
+  (onClear)="clearSelectedEmployee()"
+  (onBlur)="touch.emit()"
   [disabled]="disabled()"
 >
   <ng-template #item let-employee>
