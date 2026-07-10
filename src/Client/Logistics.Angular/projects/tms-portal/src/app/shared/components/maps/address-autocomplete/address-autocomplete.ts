@@ -64,7 +64,6 @@ export class AddressAutocomplete implements ControlValueAccessor {
     () => this.tenantService.tenantData()?.settings?.language ?? "en",
   );
   public readonly address = model<Address | null>(null);
-  public readonly addressChange = output<Address>();
   public readonly selectedAddress = output<SelectedAddressEvent>();
 
   constructor() {
@@ -130,7 +129,6 @@ export class AddressAutocomplete implements ControlValueAccessor {
     };
 
     this.address.set(addressObj);
-    this.addressChange.emit(addressObj);
     this.selectedAddress.emit({
       address: addressObj,
       center: geocodingFeature.geometry.coordinates,

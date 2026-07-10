@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Component, forwardRef, inject, input, model, output, signal } from "@angular/core";
+import { Component, forwardRef, inject, input, model, signal } from "@angular/core";
 import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
 import { isEmptyGuid, type TenantRoleValue } from "@logistics/shared";
 import { Api, getEmployeeById, getEmployees, type EmployeeDto } from "@logistics/shared/api";
@@ -34,7 +34,6 @@ export class SearchEmployee implements ControlValueAccessor {
   public readonly placeholder = input<string>("Type employee name");
 
   public readonly selectedEmployee = model<EmployeeDto | null>(null);
-  public readonly selectedEmployeeChange = output<EmployeeDto | null>();
 
   protected async searchEmployee(event: { query: string }): Promise<void> {
     const roleValue = this.role() as string;
@@ -47,7 +46,6 @@ export class SearchEmployee implements ControlValueAccessor {
   }
 
   protected changeSelectedEmployee(event: AutoCompleteSelectEvent): void {
-    this.selectedEmployeeChange.emit(event.value);
     this.onChange(event.value);
   }
 

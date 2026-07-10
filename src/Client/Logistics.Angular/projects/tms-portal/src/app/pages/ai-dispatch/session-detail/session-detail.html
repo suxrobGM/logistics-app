@@ -98,7 +98,7 @@
     @if (session.decisions?.length) {
       <ui-typography variant="h5" tag="h2" class="mb-4">Agent Timeline</ui-typography>
 
-      <p-timeline [value]="session.decisions ?? []">
+      <p-timeline [value]="session.decisions">
         <ng-template #content let-decision>
           <div class="animate-slide-in mb-4 pb-2">
             <!-- Tool name + time + status -->

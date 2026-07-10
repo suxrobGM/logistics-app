@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Component, forwardRef, inject, input, model, output, signal } from "@angular/core";
+import { Component, forwardRef, inject, input, model, signal } from "@angular/core";
 import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
 import { Api, getLoadById, getLoads, type LoadDto } from "@logistics/shared/api";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
@@ -28,7 +28,6 @@ export class SearchLoad implements ControlValueAccessor {
 
   public readonly filterActiveLoads = input(false);
   public readonly selectedLoad = model<LoadDto | null>(null);
-  public readonly selectedLoadChange = output<LoadDto | null>();
 
   protected async searchLoad(event: { query: string }): Promise<void> {
     const result = await this.api.invoke(getLoads, {
@@ -44,7 +43,6 @@ export class SearchLoad implements ControlValueAccessor {
   }
 
   protected changeSelectedLoad(event: AutoCompleteSelectEvent): void {
-    this.selectedLoadChange.emit(event.value);
     this.onChange(event.value);
   }
 

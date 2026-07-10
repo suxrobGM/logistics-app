@@ -6,7 +6,7 @@ import {
   type ApplicationConfig,
 } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
-import { provideRouter, withComponentInputBinding } from "@angular/router";
+import { provideRouter, withComponentInputBinding, withRouterConfig } from "@angular/router";
 import { getAccessToken, provideApi } from "@logistics/shared";
 import { I18nService, TENANT_SETTINGS_PROVIDER } from "@logistics/shared/services";
 import { provideTranslateService } from "@ngx-translate/core";
@@ -25,7 +25,13 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideAuth({ config: authConfig }),
-    provideRouter(routes, withComponentInputBinding()),
+    provideRouter(
+      routes,
+      withComponentInputBinding(),
+      // Angular 22 changed the default paramsInheritanceStrategy from 'emptyOnly' to 'always'.
+      // Pin 'emptyOnly' so children don't silently inherit parent params/data (no migration exists).
+      withRouterConfig({ paramsInheritanceStrategy: "emptyOnly" }),
+    ),
     importProvidersFrom(BrowserModule),
     providePrimeNG({
       theme: {

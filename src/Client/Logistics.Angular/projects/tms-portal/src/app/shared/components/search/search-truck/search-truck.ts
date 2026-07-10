@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Component, forwardRef, inject, model, output, signal } from "@angular/core";
+import { Component, forwardRef, inject, model, signal } from "@angular/core";
 import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
 import { isEmptyGuid } from "@logistics/shared";
 import { Api, getTruckById, getTrucks, type TruckDto } from "@logistics/shared/api";
@@ -29,7 +29,6 @@ export class SearchTruck implements ControlValueAccessor {
   protected readonly disabled = signal<boolean>(false);
 
   public readonly selectedTruck = model<TruckDto | null>(null);
-  public readonly selectedTruckChange = output<TruckDto | null>();
 
   protected async searchTruck(event: { query: string }): Promise<void> {
     const result = await this.api.invoke(getTrucks, { Search: event.query });
@@ -37,7 +36,6 @@ export class SearchTruck implements ControlValueAccessor {
   }
 
   protected changeSelectedTruck(event: AutoCompleteSelectEvent): void {
-    this.selectedTruckChange.emit(event.value);
     this.onChange(event.value);
   }
 

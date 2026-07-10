@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Component, forwardRef, inject, model, output, signal } from "@angular/core";
+import { Component, forwardRef, inject, model, signal } from "@angular/core";
 import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
 import { Api, getCustomers, type CustomerDto } from "@logistics/shared/api";
 import {
@@ -30,7 +30,6 @@ export class SearchCustomer implements ControlValueAccessor {
   protected readonly lastQuery = signal<string>("");
 
   public readonly selectedCustomer = model<CustomerDto | null>(null);
-  public readonly selectedCustomerChange = output<CustomerDto | null>();
 
   protected readonly customerDialogVisible = model<boolean>(false);
 
@@ -53,7 +52,6 @@ export class SearchCustomer implements ControlValueAccessor {
   }
 
   protected changeSelectedCustomer(event: AutoCompleteSelectEvent): void {
-    this.selectedCustomerChange.emit(event.value);
     this.onChange(event.value);
   }
 

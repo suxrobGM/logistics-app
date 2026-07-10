@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Component, forwardRef, inject, model, output, signal } from "@angular/core";
+import { Component, forwardRef, inject, model, signal } from "@angular/core";
 import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
 import { Api, getTerminals, type TerminalDto } from "@logistics/shared/api";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
@@ -23,7 +23,6 @@ export class SearchTerminal implements ControlValueAccessor {
   protected readonly lastQuery = signal<string>("");
 
   public readonly selectedTerminal = model<TerminalDto | null>(null);
-  public readonly selectedTerminalChange = output<TerminalDto | null>();
   public readonly placeholder = model<string>("Type a terminal code or name");
 
   protected async searchTerminal(event: { query: string }): Promise<void> {
@@ -44,7 +43,6 @@ export class SearchTerminal implements ControlValueAccessor {
   }
 
   protected changeSelectedTerminal(event: AutoCompleteSelectEvent): void {
-    this.selectedTerminalChange.emit(event.value);
     this.onChange(event.value);
   }
 

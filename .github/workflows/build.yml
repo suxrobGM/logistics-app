@@ -40,6 +40,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      # The Angular CLI runs under Node, not Bun, and v22 requires
+      # ^22.22.3 || ^24.15.0 || >=26.0.0 — it refuses to start otherwise.
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.15.0
+
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
 

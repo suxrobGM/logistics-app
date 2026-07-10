@@ -66,15 +66,16 @@ export class TimesheetsList {
   protected readonly filterStartDate = signal<Date | null>(null);
   protected readonly filterEndDate = signal<Date | null>(null);
 
-  private employeeId: string | null = null;
+  private readonly employeeId = signal<string | null>(null);
 
   constructor() {
     // Check if we have an employee ID in the route
     this.route.paramMap.subscribe((params) => {
-      this.employeeId = params.get("employeeId");
-      if (this.employeeId) {
-        this.store.setFilters({ EmployeeId: this.employeeId });
-        this.fetchEmployee(this.employeeId);
+      const employeeId = params.get("employeeId");
+      this.employeeId.set(employeeId);
+      if (employeeId) {
+        this.store.setFilters({ EmployeeId: employeeId });
+        this.fetchEmployee(employeeId);
       }
     });
   }
@@ -178,6 +179,6 @@ export class TimesheetsList {
   }
 
   protected get preselectedEmployeeId(): string | null {
-    return this.employeeId;
+    return this.employeeId();
   }
 }

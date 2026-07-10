@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Component, forwardRef, inject, model, output, signal } from "@angular/core";
+import { Component, forwardRef, inject, model, signal } from "@angular/core";
 import { FormsModule, NG_VALUE_ACCESSOR, type ControlValueAccessor } from "@angular/forms";
 import { Api, getContainers, type ContainerDto } from "@logistics/shared/api";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
@@ -23,7 +23,6 @@ export class SearchContainer implements ControlValueAccessor {
   protected readonly lastQuery = signal<string>("");
 
   public readonly selectedContainer = model<ContainerDto | null>(null);
-  public readonly selectedContainerChange = output<ContainerDto | null>();
 
   protected async searchContainer(event: { query: string }): Promise<void> {
     const q = event.query?.trim() ?? "";
@@ -43,7 +42,6 @@ export class SearchContainer implements ControlValueAccessor {
   }
 
   protected changeSelectedContainer(event: AutoCompleteSelectEvent): void {
-    this.selectedContainerChange.emit(event.value);
     this.onChange(event.value);
   }
 

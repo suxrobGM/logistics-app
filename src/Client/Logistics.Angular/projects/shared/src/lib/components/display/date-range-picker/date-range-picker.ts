@@ -1,4 +1,4 @@
-import { Component, effect, input, model, output } from "@angular/core";
+import { Component, effect, input, linkedSignal, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ButtonModule } from "primeng/button";
 import { DatePicker } from "primeng/datepicker";
@@ -20,8 +20,10 @@ export const DEFAULT_DATE_PRESETS: DatePreset[] = [
 /**
  * Date range picker with preset buttons in the calendar footer.
  *
+ * `datesChange` only fires once both ends of the range are picked.
+ *
  * @example
- * <ui-date-range-picker [(dates)]="dateRange" (datesChange)="onDateChange($event)" />
+ * <ui-date-range-picker [dates]="dateRange()" (datesChange)="onDateChange($event)" />
  */
 @Component({
   selector: "ui-date-range-picker",
@@ -30,12 +32,15 @@ export const DEFAULT_DATE_PRESETS: DatePreset[] = [
 })
 export class DateRangePicker {
   public readonly presets = input<DatePreset[]>(DEFAULT_DATE_PRESETS);
-  public readonly dates = model<Date[]>([]);
+  public readonly dates = input<Date[]>([]);
   public readonly datesChange = output<Date[]>();
+
+  /** Working value the datepicker writes into; seeded from `dates`. */
+  protected readonly selected = linkedSignal<Date[]>(() => this.dates());
 
   constructor() {
     effect(() => {
-      const dates = this.dates();
+      const dates = this.selected();
       if (DateUtils.isValidRange(dates)) {
         this.datesChange.emit(dates);
       }
@@ -44,6 +49,6 @@ export class DateRangePicker {
 
   selectPreset(preset: DatePreset): void {
     const range = preset.getRange();
-    this.dates.set([range.startDate, range.endDate]);
+    this.selected.set([range.startDate, range.endDate]);
   }
 }
