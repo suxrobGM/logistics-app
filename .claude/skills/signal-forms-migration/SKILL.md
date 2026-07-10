@@ -9,7 +9,7 @@ Convert an Angular component from Reactive Forms or template-driven forms to Sig
 
 ## Prerequisites
 
-- Angular 21+ (signal forms require v21 minimum)
+- Angular 22+ — Signal Forms are **stable** as of Angular 22 (this repo runs 22.0.6). The experimental v21 API differs; see the API-detail notes below.
 - The component must be identified by the user (file path or component name)
 
 ## Step-by-step process
@@ -106,33 +106,67 @@ Map each element to its signal forms equivalent:
 
 #### Disabled state
 
-| Before                                           | After                                                                         |
-| ------------------------------------------------ | ----------------------------------------------------------------------------- |
-| `control.disable()` / `control.enable()`         | `disabled(schemaPath.field, () => someSignal())` (declarative, signal-driven) |
-| `new FormControl({ value: '', disabled: true })` | `disabled(schemaPath.field, () => true)` in schema function                   |
+| Before                                           | After                                                                                   |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| `control.disable()` / `control.enable()`         | `disabled(schemaPath.field, { when: () => someSignal() })` (declarative, signal-driven) |
+| `new FormControl({ value: '', disabled: true })` | `disabled(schemaPath.field, { when: () => true })` in schema function                   |
+
+> Angular 22: `disabled()`, `readonly()`, and `hidden()` take a config object `{ when: LogicFn }`. The positional-logic overload (`disabled(path, () => ...)`) is deprecated.
 
 ### 3. Handle edge cases
 
 #### Third-party UI components (PrimeNG, Material, etc.)
 
-Signal Forms `[formField]` supports three control types:
+> **Verified facts.** Everything below is proven by the committed probe spec
+> `projects/shared/src/lib/forms/signal-forms-compat-probe.spec.ts` (9 tests, passing on
+> Angular 22.0.6 + primeng 21.1.6). CI runs it (`bun run ng test shared --watch=false`), so if
+> these facts drift the build fails. Treat that spec as the source of truth — not this doc.
 
-1. **Native HTML elements** (`<input>`, `<select>`, `<textarea>`) — first-class support
-2. **Signal Forms custom controls** (implements `FormValueControl` or `FormCheckboxControl`)
-3. **ControlValueAccessor components** — backward-compatible, works with most third-party libraries
+**Never put `[formField]` directly on a PrimeNG component.** Two independent, verified failure modes:
 
-**Strategy**: Try `[formField]` directly on the third-party component first. If it causes type errors or doesn't work (some PrimeNG components have conflicting `formField` properties), fall back to native HTML equivalents:
+- **`pTextarea` crashes at runtime.** PrimeNG's Textarea subscribes to `ngControl.valueChanges` in
+  `onInit`, but Signal Forms provides `NgControl` as an `InteropNgControl` that has NO
+  `valueChanges` / `statusChanges` — so `undefined.subscribe(...)` throws on the first change
+  detection. Across all of primeng's `fesm2022`, Textarea is the ONLY component that does this.
+- **`pattern` type collision → TS2322 under `strictTemplates`.** Signal Forms binds the `pattern`
+  state input as `readonly RegExp[]`; PrimeNG's `BaseInput` declares `pattern: string`. Six
+  components extend `BaseInput` and inherit the collision: **Select, InputNumber, DatePicker,
+  AutoComplete, InputMask, Password**.
 
-- `p-select` / `p-dropdown` → `<select>` with `[formField]`
-- `p-checkbox` → `<input type="checkbox">` with `[formField]`
-- `p-inputText` → `<input>` with `[formField]`
-- `p-textarea` → `<textarea>` with `[formField]`
-- `p-inputNumber` → `<input type="number">` with `[formField]`
-- `p-calendar` / `p-datePicker` → `<input type="date">` with `[formField]`
+Components that do NOT extend `BaseInput` and do not subscribe to `valueChanges` (`pInputText`,
+`p-checkbox`, `p-toggleswitch`, `p-multiselect`, `p-selectbutton`) happen to work — but relying on
+that is fragile. PrimeNG is archived and frozen; do not build on the accident.
 
-If the third-party component MUST be used (for complex functionality like multiselect, autocomplete, etc.), keep it with `ControlValueAccessor` compatibility — `[formField]` supports CVA as a fallback.
+**The correct pattern: a wrapper implementing `FormValueControl` only.** Angular 22 bridges custom
+Signal Form controls into legacy Reactive and Template-Driven forms automatically — angular.dev:
+_"Custom Signal Form Controls can be used with Signal, Reactive and Template-Driven Forms without
+any extra compatibility code."_ The probe verifies this (claim B): the SAME `FormValueControl`-only
+component two-way syncs under both `[formField]` and `formControlName`. Therefore:
+
+- **NEVER implement `ControlValueAccessor` alongside `FormValueControl`.** No dual-interface
+  components, no `NG_VALUE_ACCESSOR` providers. The minimum contract is just `value = model<T>()`.
+- For a bare native control, put `[formField]` on the native element — always safe.
+- For anything richer, write a thin `FormValueControl` wrapper around the PrimeNG component (or its
+  spartan/ui replacement) and bind `[formField]` to the wrapper, never to PrimeNG directly.
+
+**Wrapper-first mapping** (native `<textarea>` for textarea; `FormValueControl` wrappers elsewhere):
+
+- `p-textarea` → native `<textarea>` with `[formField]` (drop `pTextarea` — it crashes; see above)
+- `pInputText` → native `<input pInputText>` with `[formField]` (the directive sits on a native input, so this is safe)
+- `p-select` / `p-dropdown` → `FormValueControl` wrapper with `[formField]`
+- `p-inputNumber` → `FormValueControl` wrapper with `[formField]`
+- `p-calendar` / `p-datePicker` → `FormValueControl` wrapper with `[formField]`
+- `p-autoComplete` / `p-inputMask` / `p-password` → `FormValueControl` wrapper with `[formField]`
+- `p-checkbox` → native `<input type="checkbox">` with `[formField]`, or a `FormCheckboxControl` wrapper
+
+**Do NOT use `compatForm` or `SignalFormControl`** from `@angular/forms/signals/compat`. This
+project's migration forbids shims — convert forms fully; do not wrap legacy `FormControl` /
+`FormGroup` instances.
 
 #### FormArray / Dynamic arrays
+
+There is **no `FormArray` class** in Signal Forms. Dynamic arrays are plain arrays inside the model
+signal; iterate the `FieldTree` with `@for` in the template.
 
 ```typescript
 // Before
@@ -173,20 +207,12 @@ form(this.model, (schemaPath) => {
 });
 ```
 
-#### Incremental migration with compatForm
+#### No compat shims — convert fully
 
-If the form is very complex or uses many custom validators that are hard to port, use `compatForm` from `@angular/forms/signals/compat` to wrap existing `FormControl`/`FormGroup` instances inside a signal form. This allows gradual migration:
-
-```typescript
-import { compatForm } from "@angular/forms/signals/compat";
-
-// Keep existing FormControl with complex validators
-const emailControl = new FormControl("", [Validators.required, customAsyncValidator()]);
-
-// Wrap in signal form
-model = signal({ email: emailControl, name: "" });
-myForm = compatForm(this.model);
-```
+**Do NOT reach for `compatForm` or `SignalFormControl` from `@angular/forms/signals/compat`.** This
+project's migration forbids shims: never wrap existing `FormControl` / `FormGroup` instances inside a
+signal form for "gradual migration". Port the form fully — model signal + `form()` + schema rules —
+including custom and async validators (`validate()` / `validateAsync()`).
 
 #### Conditional validation with applyWhen
 
@@ -223,9 +249,16 @@ form(this.model, (schemaPath) => {
 
 ## Important notes
 
-- Signal forms are experimental in Angular 21 — API may evolve
+- Signal Forms are **stable** as of Angular 22 (this repo runs 22.0.6) — no experimental caveat applies
 - `[formField]` on native elements is the most reliable binding method
 - Never mix `ReactiveFormsModule`/`FormsModule` directives with `FormField` on the same control
 - The `form()` function returns a field tree, not a signal — call `myForm()` to get the root state signal, and `myForm.field()` to get a specific field's state
-- Array fields are accessed by index: `myForm.items[0].name` — the form tree automatically tracks array mutations
+- Array fields are accessed by index: `myForm.items[0].name` — the form tree automatically tracks array mutations. There is **no `FormArray` class**
 - Always add `novalidate` to `<form>` elements to prevent browser validation from conflicting
+
+### Angular 22 API details (correct any v21-era assumptions)
+
+- `disabled()`, `readonly()`, `hidden()` take a config object `{ when: LogicFn }` — the positional-logic overload is deprecated
+- `touched` on a custom control is now a **`touched` input plus a `touch()` output** — the old `touched` model was split into the two
+- `min` / `max` validators no longer accept string values (numbers only)
+- There is **no official migration schematic** from Reactive Forms to Signal Forms — migrate by hand

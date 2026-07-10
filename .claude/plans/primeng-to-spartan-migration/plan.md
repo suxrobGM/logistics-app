@@ -179,21 +179,31 @@ EOL-only diffs.
 
 ---
 
-## Phase 0 — Spike: does PrimeNG 21 survive Angular 22 + CDK 22? _(throwaway branch, ~1 day)_
+## Phase 0 — Spike: does PrimeNG 21 survive Angular 22 + CDK 22? — ✅ **DONE (2026-07-09). Answer: YES.**
 
-Gates everything.
+Executed on branch `feat/angular-22-upgrade` (started as `spike/angular-22-primeng-compat`).
 
-1. Throwaway branch. Bump `@angular/*` → 22, add `@angular/cdk@22`, pin `typescript@~6.0.3`.
-2. Add bun peer `overrides` in the **repo-root** `package.json` (the workspace root owning `bun.lock`) forcing `primeng`
-   and `@primeuix/themes` to accept `@angular/core@22` **and `@angular/cdk@22`**.
-3. `bun run build:all`, then smoke the **CDK-overlay-backed** surfaces — the likeliest cdk-skew breakage:
-   `p-select`, `p-autocomplete`, `p-datepicker`, `p-dialog`, `p-confirmdialog`, `p-tooltip`, `p-popover`, `p-drawer`, `p-menu`.
-4. Recreate the compat probe as a **committed** spec against v22-stable Signal Forms. Confirm the `BaseInput` `pattern`
-   collision (6 components) and the `pTextarea` crash still hold, and probe the known `FormValueControl` sharp edges:
-   angular/angular#65478 (value-as-`model()` recompute), #65576 (external model signal), #63625 (`min`/`max` + update).
+**Result: `bun run build:all` exits 0.** All five projects — `shared` (ng-packagr partial compilation), `tms-portal`
+(229 PrimeNG imports), `admin-portal` (already uses `@angular/forms/signals`), `customer-portal`, and `website`
+(SSR, prerenders 8 routes) — build clean on Angular **22.0.6** + `@angular/cdk` **22.0.4** + `primeng` **21.1.6**.
+`ng serve tms-portal` boots and serves the SPA shell (HTTP 200).
 
-**Exit criteria:** all five projects build; overlays work. If PrimeNG 21 breaks under Angular 22 / CDK 22, stop and
-re-plan — the fallback is swapping the overlay component families to spartan _before_ the framework bump.
+What we actually learned, versus what we feared:
+
+| Expectation                          | Reality                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **CDK overlay skew is the top risk** | **Void.** PrimeNG 21 imports `@angular/cdk` in exactly **3** components — `listbox`, `orderlist`, `picklist` — and only `@angular/cdk/drag-drop`. It never uses CDK overlays (PrimeNG ships its own). **This repo imports none of those 3**, and no app code imports `@angular/cdk` at all. CDK 21→22 cannot affect us.                                                                                                                |
+| **Peer overrides are needed**        | **Not needed.** `bun install` resolves cleanly with **no `overrides` block** and no peer errors — bun does not enforce peer ranges (npm would). Nothing was added to the root `package.json`.                                                                                                                                                                                                                                          |
+| Node just works                      | **No.** Angular 22 requires Node `^22.22.3 \|\| ^24.15.0 \|\| >=26.0.0`. The dev machine was on 24.9.0 and the CLI refused to run. **CI has no `setup-node` step** — `.github/workflows/build.yml` uses `setup-bun` only, so this is a latent CI break.                                                                                                                                                                                |
+| TypeScript range is comfortable      | The 6.x line stops at **6.0.3**; `7.0.2` is now npm `latest`. Pinned `~6.0.3`.                                                                                                                                                                                                                                                                                                                                                         |
+| —                                    | **New: diagnostic NG1054.** A `model()` named `foo` implicitly creates a `fooChange` output; declaring an explicit one is now a hard error. **8 components hit this**, and every one had a real duplicate-emission bug (the template bound `[(ngModel)]` to the model _and_ the class emitted `fooChange` manually). Fixed by deleting the redundant explicit outputs. Public API unchanged — `model()` supplies the same output name. |
+
+Remaining warnings only: pre-existing bundle-budget overages, a `quill`/CommonJS bailout, and one `NG8102`
+(`session.decisions ?? []` where the left side is non-nullable).
+
+**Still owed from this phase:** interactive smoke of overlay surfaces (`p-select`, `p-autocomplete`, `p-datepicker`,
+`p-dialog`, `p-confirmdialog`, `p-tooltip`, `p-popover`, `p-drawer`, `p-menu`) in a real browser — a build cannot prove
+runtime behavior. Folded into Phase 2's Playwright smoke.
 
 ## Phase 1 — Angular 22 upgrade _(its own PR)_
 
@@ -201,22 +211,34 @@ re-plan — the fallback is swapping the overlay component families to spartan _
    `ng-packagr`, `@ngrx/signals`, `angular-eslint`). `angular.json` sets `packageManager: bun`; if `ng update` misbehaves
    under bun, fall back to manual bumps + `ng update @angular/core --migrate-only --from=21 --to=22`.
 2. **Revert the CD migration's `Eager` stamping** — keep the new `OnPush` default. Convert the 7 audit-list files to signals.
-3. Pin `typescript` to `~6.0.3`. Bump CI Node to `^22.22.3 || ^24.15.0 || >=26.0.0`.
-4. Set `paramsInheritanceStrategy: 'emptyOnly'` explicitly in each app's `provideRouter(..., withRouterConfig({...}))`.
-5. Delete the deprecated `withFetch()` from `shared/src/lib/api/api.provider.ts`.
-6. Verify/override peers for `angular-gridster2`, `ngx-mapbox-gl`, `angular-auth-oidc-client`, `@ngx-translate/*`, `@microsoft/signalr`.
-7. Fix the `strictTemplates` tail from the optional-chaining semantics change.
+3. Pin `typescript` to `~6.0.3` (the 6.x line ends at 6.0.3; `7.0.2` is npm `latest` and Angular rejects it).
+4. **Add a `setup-node` step to `.github/workflows/build.yml`** pinning Node `24.15.0` — CI currently installs no Node
+   at all, so the Angular CLI would refuse to run. Also bump local dev docs.
+5. **Fix NG1054** — 8 components declared a `model()` plus a redundant explicit `<name>Change = output<T>()`.
+   Delete the explicit output; `model()` already provides it. (Done: `date-range-picker`, `address-autocomplete`,
+   6 × `search-*`. Each had a real duplicate-emission bug.)
+6. Set `paramsInheritanceStrategy: 'emptyOnly'` explicitly in each app's `provideRouter(..., withRouterConfig({...}))`.
+7. Delete the deprecated `withFetch()` from `shared/src/lib/api/api.provider.ts`.
+8. `angular-gridster2` → `^22.0.0`. `ngx-mapbox-gl@14` already peers `^21 || ^22`; `angular-auth-oidc-client` peers
+   `>=20`. **No peer `overrides` block is required** — bun does not enforce peer ranges.
+9. Fix the `strictTemplates` tail from the optional-chaining semantics change (one `NG8102` so far).
 
-**Gate:** `bun run build:all` + manual smoke of all four portals.
+**Gate:** `bun run build:all` (passes) + interactive smoke of all four portals.
 
-## Phase 2 — Safety net _(small, high leverage)_
+## Phase 2 — Safety net _(small, high leverage)_ — **mostly DONE**
 
-1. Add `test` targets for `shared`, `tms-portal`, `admin-portal`, `customer-portal` (only `website` has one).
-2. Commit the Phase 0 compat probe as a permanent spec in `shared`.
-3. Playwright smoke per portal covering exactly what the sweep will touch: load form create/edit, customer form,
-   dispatch board, one server-paged list, one dialog, one toast/confirm.
-4. Add `.gitattributes` (`* text=auto eol=lf`) **before** any bulk sweep.
-5. Add the test step to `.github/workflows/build.yml`.
+1. ✅ Added `test` targets (`@angular/build:unit-test`, vitest) + `tsconfig.spec.json` for `shared`, `tms-portal`,
+   `admin-portal`, `customer-portal`. All five projects now have one.
+2. ✅ Committed the compat probe: `projects/shared/src/lib/forms/signal-forms-compat-probe.spec.ts` — **9 tests, green.**
+   It pins the five load-bearing claims (A–E) plus the three `FormValueControl` sharp edges, so CI screams if any drift.
+   **This is the workspace's first executable test.**
+3. ✅ `.gitattributes` added (`* text=auto eol=lf`). NB: a deliberate `git add --renormalize .` commit is still owed;
+   it was intentionally NOT run here so it doesn't contaminate this diff.
+4. ✅ CI: added `setup-node@24.15.0` and a `bun run ng test shared --watch=false` step to `.github/workflows/build.yml`.
+5. ⬜ **Still owed:** Playwright smoke per portal — load form create/edit, customer form, dispatch board, one
+   server-paged list, one dialog, one toast/confirm. This also carries Phase 0's outstanding interactive overlay smoke
+   (`p-select`, `p-autocomplete`, `p-datepicker`, `p-dialog`, `p-confirmdialog`, `p-tooltip`, `p-popover`, `p-drawer`,
+   `p-menu`) — builds cannot prove runtime overlay behavior.
 
 ## Phase 3 — Seam hardening, still on PrimeNG _(no visual change; each item independently shippable)_
 
@@ -302,32 +324,44 @@ Templates already speak `ui-*-field`, so each form is a `.ts`-only change: `Form
 
 ## Cleanup ledger — every transitional artifact and its deletion phase
 
-| Artifact                                                             | Created    | Deleted                                 |
-| -------------------------------------------------------------------- | ---------- | --------------------------------------- |
-| `primeng` / `@primeuix/themes` peer overrides in root `package.json` | Phase 0    | Phase 7                                 |
-| `p-table` internals inside `<ui-data-table>`                         | Phase 3    | Phase 7                                 |
-| PrimeNG internals inside `ui-*-field` wrappers                       | Phase 3    | Phase 5                                 |
-| `BaseTable` abstract class                                           | _(exists)_ | Phase 3                                 |
-| Duplicate `base-list.store.ts` (admin copy)                          | _(exists)_ | Phase 3                                 |
-| `ui-currency-field`, `ui-unit-field`                                 | _(exists)_ | Phase 3 (folded into `ui-number-field`) |
-| 9 `ControlValueAccessor` implementations                             | _(exists)_ | Phase 3                                 |
-| Reactive-forms `ValidatedForm` directive                             | _(exists)_ | Phase 4                                 |
-| `ReactiveFormsModule` imports                                        | _(exists)_ | Phase 4                                 |
-| `primeicons` + `pi pi-*` classes                                     | _(exists)_ | Phase 6                                 |
-| `tailwindcss-primeui` + its utility classes                          | _(exists)_ | Phase 6                                 |
-| `primeng-preset.ts`                                                  | _(exists)_ | Phase 7                                 |
+| Artifact                                       | Created    | Deleted                                 |
+| ---------------------------------------------- | ---------- | --------------------------------------- |
+| ~~peer `overrides` in root `package.json`~~    | —          | **Never needed — bun ignores peers**    |
+| `p-table` internals inside `<ui-data-table>`   | Phase 3    | Phase 7                                 |
+| PrimeNG internals inside `ui-*-field` wrappers | Phase 3    | Phase 5                                 |
+| `BaseTable` abstract class                     | _(exists)_ | Phase 3                                 |
+| Duplicate `base-list.store.ts` (admin copy)    | _(exists)_ | Phase 3                                 |
+| `ui-currency-field`, `ui-unit-field`           | _(exists)_ | Phase 3 (folded into `ui-number-field`) |
+| 9 `ControlValueAccessor` implementations       | _(exists)_ | Phase 3                                 |
+| Reactive-forms `ValidatedForm` directive       | _(exists)_ | Phase 4                                 |
+| `ReactiveFormsModule` imports                  | _(exists)_ | Phase 4                                 |
+| `primeicons` + `pi pi-*` classes               | _(exists)_ | Phase 6                                 |
+| `tailwindcss-primeui` + its utility classes    | _(exists)_ | Phase 6                                 |
+| `primeng-preset.ts`                            | _(exists)_ | Phase 7                                 |
 
 ---
 
 ## Standing risks
 
-- **PrimeNG 21 under Angular 22 + CDK 22 is unproven.** Phase 0 exists solely to answer this. Prime suspect: CDK-backed
-  overlays. If it fails, the order inverts — swap overlays to spartan _before_ the framework bump.
+- ~~**PrimeNG 21 under Angular 22 + CDK 22 is unproven.**~~ **Resolved in Phase 0: it works.** All five projects build;
+  PrimeNG never touches CDK overlays, so the feared version skew does not exist. This de-risks the entire
+  "upgrade first, swap later" ordering.
+- **Node version is a latent CI break.** Angular 22 requires Node `^22.22.3 || ^24.15.0 || >=26.0.0`, and
+  `.github/workflows/build.yml` pins no Node at all (`setup-bun` only). Add `setup-node` before merging Phase 1.
 - **`paramsInheritanceStrategy` has no migration** and fails silently.
-- **`FormValueControl` has open sharp edges**: angular/angular#65478 (value-as-`model()` recomputes on every keystroke),
-  #65576 (cannot assign an external model signal), #63625 (`min`/`max` + value update throws). #67847 (CVA `writeValue`
-  loopback) is **fixed**. Probe these in Phase 0 _before_ designing wrappers — the no-shim rule means there is no
-  `compatForm` fallback if a wrapper design fails.
+- **`@ngrx/signals` has no Angular 22 release** (latest `21.1.1`, peer `^21.0.0`, no 22.x even in prerelease). It works
+  today because bun does not enforce peers, but it is unmaintained against v22 — and it backs `base-list.store.ts`.
+  Watch it; it is the most likely thing to break on Angular 23.
+- ~~**`FormValueControl` has open sharp edges.**~~ **Probed on 22.0.6 — mostly non-issues.** Measured by
+  `projects/shared/src/lib/forms/signal-forms-compat-probe.spec.ts`:
+  - #65478 (value-as-`model()` recompute): **bounded**. `model()` uses `Object.is`, so a `computed()` over `value()`
+    re-runs only on _distinct_ values, not on every raw `set()`. Not the per-keystroke cost the issue implies.
+  - #65576 (external model signal): **does not reproduce**. No NG0318. But note the semantics: when a control is bound
+    with both `[(value)]` and `[formField]`, **`[formField]` wins**. Wrappers must not expose an external two-way
+    `value` binding alongside `[formField]`.
+  - #63625 (`min`/`max` + value update): **works**. Validator-derived `min`/`max` push into the control's state inputs
+    and re-validate correctly.
+  - #67847 (CVA `writeValue` loopback) was already fixed upstream, and is moot — we implement no CVAs.
 - **`ui-data-table` (Phase 3.4) is the single largest chunk of work.** It is also what makes Phase 7 cheap.
   `trips-list`'s nested-table row expansion is the hard case; design against it first.
 - **The icon migration is a hidden project** (~90 icons, ~209 templates) and it _gates_ PrimeNG removal.
