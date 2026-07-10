@@ -110,7 +110,7 @@ export class DriverLicensesTab {
         `for dispatch eligibility.`,
       acceptLabel: "Revoke",
       rejectLabel: "Cancel",
-      acceptButtonStyleClass: "p-button-danger",
+      severity: "danger",
       accept: async () => {
         try {
           await this.api.invoke(deleteDriverLicense, {

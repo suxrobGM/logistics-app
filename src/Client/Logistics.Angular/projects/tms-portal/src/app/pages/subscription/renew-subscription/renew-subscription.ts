@@ -1,8 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, computed, effect, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
-import { Api, renewSubscription } from "@logistics/shared/api";
-import type { SubscriptionDto } from "@logistics/shared/api";
+import { Api, renewSubscription, type SubscriptionDto } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
@@ -56,7 +55,7 @@ export class RenewSubscriptionComponent {
     this.toastService.confirm({
       message: `Resume your ${this.planName()} subscription? Your billing will restart and you'll regain full access.`,
       header: "Resume Subscription",
-      icon: "pi pi-refresh",
+      icon: "refresh",
       acceptLabel: "Yes, Resume",
       rejectLabel: "Cancel",
       accept: () => this.renewSubscription(),

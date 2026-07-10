@@ -153,7 +153,7 @@ export class ViewPlansComponent implements OnInit {
     this.toastService.confirm({
       message,
       header: hasSubscription ? "Change Plan" : "Subscribe to Plan",
-      icon: "pi pi-credit-card",
+      icon: "payment",
       acceptLabel: hasSubscription ? "Yes, Switch" : "Yes, Subscribe",
       rejectLabel: "Cancel",
       accept: async () => {

@@ -112,8 +112,8 @@ export class AdminsList {
     this.toast.confirm({
       header: "Revoke admin access",
       message: `Are you sure you want to revoke admin access from ${admin.email}?`,
-      icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-danger",
+      icon: "warning",
+      severity: "danger",
       accept: async () => {
         try {
           await this.api.invoke(revokeAdmin, { userId: admin.id! });
@@ -143,8 +143,8 @@ export class AdminsList {
     this.toast.confirm({
       header: "Cancel invitation",
       message: `Cancel the admin invitation for ${invitation.email}?`,
-      icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-danger",
+      icon: "warning",
+      severity: "danger",
       accept: async () => {
         try {
           await this.api.invoke(cancelAdminInvitation, { id });

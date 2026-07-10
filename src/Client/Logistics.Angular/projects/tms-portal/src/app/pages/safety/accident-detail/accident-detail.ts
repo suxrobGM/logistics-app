@@ -147,7 +147,7 @@ export class AccidentDetailPage implements OnInit {
       message:
         "Are you sure you want to submit this accident report? Once submitted, it cannot be edited.",
       header: "Confirm Submission",
-      icon: "pi pi-exclamation-triangle",
+      icon: "warning",
       accept: () => this.doSubmitReport(),
     });
   }

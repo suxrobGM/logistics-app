@@ -26,8 +26,8 @@ export class PostedTrucksTable {
     this.toast.confirm({
       message: `Are you sure you want to remove this truck post from ${truck.providerName}?`,
       header: "Remove Posted Truck",
-      icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-danger",
+      icon: "warning",
+      severity: "danger",
       accept: () => this.remove.emit(truck.id!),
     });
   }

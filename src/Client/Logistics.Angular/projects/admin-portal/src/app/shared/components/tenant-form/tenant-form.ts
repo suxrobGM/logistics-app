@@ -102,8 +102,8 @@ export class TenantForm {
     this.toastService.confirm({
       message: "Are you sure that you want to delete this tenant? This action cannot be undone.",
       header: "Confirm Delete",
-      icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-danger",
+      icon: "warning",
+      severity: "danger",
       accept: () => this.remove.emit(),
     });
   }

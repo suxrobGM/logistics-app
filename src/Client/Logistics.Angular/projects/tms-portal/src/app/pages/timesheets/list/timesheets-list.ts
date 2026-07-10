@@ -98,8 +98,8 @@ export class TimesheetsList {
     this.toastService.confirm({
       message: `Are you sure you want to delete this timesheet entry for ${entry.employeeName} on ${new Date(entry.date!).toLocaleDateString()}?`,
       header: "Delete Timesheet Entry",
-      icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-danger",
+      icon: "warning",
+      severity: "danger",
       accept: () => this.deleteEntry(entry),
     });
   }

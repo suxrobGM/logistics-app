@@ -85,8 +85,8 @@ export class SubscriptionsList {
       message:
         "Are you sure you want to cancel this subscription? The subscription will be cancelled at the end of the current billing period.",
       header: "Confirm Cancel",
-      icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-warning",
+      icon: "warning",
+      severity: "warning",
       accept: () => this.cancelSub(id),
     });
   }

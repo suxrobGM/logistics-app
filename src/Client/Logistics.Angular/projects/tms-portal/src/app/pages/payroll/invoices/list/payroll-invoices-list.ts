@@ -15,7 +15,6 @@ import {
 import { invoiceStatusOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
 import { Grid, Stack, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import type { SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
@@ -86,8 +85,8 @@ export class PayrollInvoicesList {
   protected readonly isExporting = signal(false);
 
   // Filter options
-  protected readonly statusOptions: SelectItem[] = invoiceStatusOptions;
-  protected readonly salaryTypeOptions: SelectItem[] = salaryTypeOptions;
+  protected readonly statusOptions = invoiceStatusOptions;
+  protected readonly salaryTypeOptions = salaryTypeOptions;
 
   // Computed: count of active filters
   protected readonly activeFilterCount = computed(() => {
@@ -170,7 +169,7 @@ export class PayrollInvoicesList {
     this.toastService.confirm({
       message: `Are you sure you want to approve ${pendingApproval.length} payroll invoice(s)?`,
       header: "Batch Approve",
-      icon: "pi pi-check-circle",
+      icon: "success",
       accept: async () => {
         this.isBatchApproving.set(true);
         try {
@@ -195,7 +194,7 @@ export class PayrollInvoicesList {
     this.toastService.confirm({
       message: `Are you sure you want to approve the payroll for ${invoice.employee?.fullName}?`,
       header: "Approve Payroll",
-      icon: "pi pi-check-circle",
+      icon: "success",
       accept: async () => {
         try {
           await this.api.invoke(approvePayrollInvoice, {

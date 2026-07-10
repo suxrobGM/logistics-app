@@ -124,7 +124,7 @@ export class EmployeeDetails implements OnInit {
       message: "Are you sure you want to remove this employee? This action cannot be undone.",
       acceptLabel: "Delete",
       rejectLabel: "Cancel",
-      acceptButtonStyleClass: "p-button-danger",
+      severity: "danger",
       accept: async () => {
         const success = await this.store.deleteEmployee();
         if (success) {

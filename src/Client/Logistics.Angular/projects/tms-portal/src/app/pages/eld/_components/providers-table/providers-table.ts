@@ -27,8 +27,8 @@ export class EldProvidersTable {
     this.toast.confirm({
       message: `Are you sure you want to delete the ${getEldProviderLabel(provider.providerType)} provider? This will also remove all driver mappings and HOS data.`,
       header: "Delete Provider",
-      icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-danger",
+      icon: "warning",
+      severity: "danger",
       accept: () => this.delete.emit(provider.id!),
     });
   }

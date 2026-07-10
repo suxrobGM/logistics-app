@@ -199,8 +199,8 @@ export class SessionsListPage implements OnInit, OnDestroy {
     this.toastService.confirm({
       message: `Are you sure you want to approve and execute this decision?\n\n${buildDecisionDetail(decision)}`,
       header: "Approve Decision",
-      icon: "pi pi-check-circle",
-      acceptButtonStyleClass: "p-button-success",
+      icon: "success",
+      severity: "success",
       accept: async () => {
         try {
           await this.api.invoke(approveAiDispatchDecision, { decisionId: decision.id! });
@@ -217,8 +217,8 @@ export class SessionsListPage implements OnInit, OnDestroy {
     this.toastService.confirm({
       message: `Are you sure you want to reject this decision?\n\n${buildDecisionDetail(decision)}`,
       header: "Reject Decision",
-      icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-danger",
+      icon: "warning",
+      severity: "danger",
       accept: async () => {
         try {
           await this.api.invoke(rejectAiDispatchDecision, { decisionId: decision.id!, body: {} });

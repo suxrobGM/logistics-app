@@ -67,10 +67,10 @@ export class ContainerDetails implements OnInit {
     this.toast.confirm({
       header: "Delete Container",
       message: "Are you sure you want to delete this container? This action cannot be undone.",
-      icon: "pi pi-exclamation-triangle",
+      icon: "warning",
       acceptLabel: "Delete",
       rejectLabel: "Cancel",
-      acceptButtonStyleClass: "p-button-danger",
+      severity: "danger",
       accept: async () => {
         this.isDeleting.set(true);
         try {

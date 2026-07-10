@@ -3,7 +3,6 @@ import { FormsModule } from "@angular/forms";
 import type { CustomerDto, LoadStatus, LoadType, TruckDto } from "@logistics/shared/api";
 import { loadStatusOptions, loadTypeOptions } from "@logistics/shared/api/enums";
 import { Stack, Typography } from "@logistics/shared/components";
-import type { SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
@@ -57,8 +56,8 @@ export class LoadsFilterPanel {
   protected readonly dateRange = signal<Date[] | null>(null);
 
   // Filter options
-  protected readonly statusOptions: SelectItem[] = loadStatusOptions;
-  protected readonly typeOptions: SelectItem[] = loadTypeOptions;
+  protected readonly statusOptions = loadStatusOptions;
+  protected readonly typeOptions = loadTypeOptions;
 
   // Computed: count of active filters
   protected readonly activeFilterCount = computed(() => {

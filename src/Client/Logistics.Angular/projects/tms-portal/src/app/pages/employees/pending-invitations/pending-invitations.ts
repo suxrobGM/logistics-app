@@ -49,7 +49,7 @@ export class PendingInvitations {
     this.toastService.confirm({
       message: "Are you sure you want to resend this invitation?",
       header: "Resend Invitation",
-      icon: "pi pi-send",
+      icon: "send",
       acceptLabel: "Resend",
       rejectLabel: "Cancel",
       accept: () => {
@@ -62,10 +62,10 @@ export class PendingInvitations {
     this.toastService.confirm({
       message: "Are you sure you want to cancel this invitation? This action cannot be undone.",
       header: "Cancel Invitation",
-      icon: "pi pi-exclamation-triangle",
+      icon: "warning",
       acceptLabel: "Cancel Invitation",
       rejectLabel: "Keep",
-      acceptButtonStyleClass: "p-button-danger",
+      severity: "danger",
       accept: () => {
         this.store.cancel(id);
       },

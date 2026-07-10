@@ -111,7 +111,7 @@ export class PayrollLineItemsTable {
     this.toastService.confirm({
       message: `Are you sure you want to delete "${item.description}"?`,
       header: "Confirm Delete",
-      icon: "pi pi-exclamation-triangle",
+      icon: "warning",
       accept: () => this.deleteItem(item),
     });
   }

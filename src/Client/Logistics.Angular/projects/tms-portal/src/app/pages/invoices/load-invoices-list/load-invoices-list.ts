@@ -6,7 +6,6 @@ import type { InvoiceDto, InvoiceStatus } from "@logistics/shared/api";
 import { invoiceStatusOptions } from "@logistics/shared/api/enums";
 import { Grid, Stack, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
-import type { SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MultiSelectModule } from "primeng/multiselect";
@@ -56,7 +55,7 @@ export class LoadInvoicesList {
   protected readonly dateRange = signal<Date[] | null>(null);
 
   // Filter options
-  protected readonly statusOptions: SelectItem[] = invoiceStatusOptions;
+  protected readonly statusOptions = invoiceStatusOptions;
 
   protected readonly activeFilterCount = computed(() => {
     let count = 0;

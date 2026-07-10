@@ -156,8 +156,8 @@ export class EldDriverMappingsComponent implements OnInit {
     this.toastService.confirm({
       message: `Are you sure you want to remove the mapping for ${mapping.employeeName}?`,
       header: "Remove Mapping",
-      icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-danger",
+      icon: "warning",
+      severity: "danger",
       accept: () => this.deleteMapping(mapping.id!),
     });
   }

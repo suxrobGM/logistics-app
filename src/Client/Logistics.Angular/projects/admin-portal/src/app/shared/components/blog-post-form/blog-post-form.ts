@@ -78,8 +78,8 @@ export class BlogPostForm {
     this.toastService.confirm({
       message: "Are you sure that you want to delete this blog post? This action cannot be undone.",
       header: "Confirm Delete",
-      icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-danger",
+      icon: "warning",
+      severity: "danger",
       accept: () => this.remove.emit(),
     });
   }
@@ -88,7 +88,7 @@ export class BlogPostForm {
     this.toastService.confirm({
       message: "Are you sure you want to publish this blog post? It will be visible to the public.",
       header: "Confirm Publish",
-      icon: "pi pi-send",
+      icon: "send",
       accept: () => this.publish.emit(),
     });
   }
@@ -98,8 +98,8 @@ export class BlogPostForm {
       message:
         "Are you sure you want to unpublish this blog post? It will no longer be visible to the public.",
       header: "Confirm Unpublish",
-      icon: "pi pi-eye-slash",
-      acceptButtonStyleClass: "p-button-warning",
+      icon: "hide",
+      severity: "warning",
       accept: () => this.unpublish.emit(),
     });
   }

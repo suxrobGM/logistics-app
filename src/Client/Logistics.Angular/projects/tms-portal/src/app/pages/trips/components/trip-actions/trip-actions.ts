@@ -45,10 +45,10 @@ export class TripActions {
     this.toastService.confirm({
       message: "Are you sure you want to dispatch this trip?",
       header: "Confirm Dispatch",
-      icon: "pi pi-send",
+      icon: "send",
       acceptLabel: "Dispatch",
       rejectLabel: "Cancel",
-      acceptButtonStyleClass: "p-button-success",
+      severity: "success",
       accept: () => {
         this.dispatch.emit();
       },
@@ -59,10 +59,10 @@ export class TripActions {
     this.toastService.confirm({
       message: "Are you sure you want to cancel this trip? This action cannot be undone.",
       header: "Confirm Cancellation",
-      icon: "pi pi-exclamation-triangle",
+      icon: "warning",
       acceptLabel: "Cancel Trip",
       rejectLabel: "Keep Trip",
-      acceptButtonStyleClass: "p-button-danger",
+      severity: "danger",
       accept: () => {
         this.cancelTrip.emit(undefined);
       },

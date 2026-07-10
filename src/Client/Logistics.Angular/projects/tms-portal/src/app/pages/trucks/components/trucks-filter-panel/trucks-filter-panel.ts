@@ -3,7 +3,6 @@ import { FormsModule } from "@angular/forms";
 import type { TruckStatus, TruckType } from "@logistics/shared/api";
 import { truckStatusOptions, truckTypeOptions } from "@logistics/shared/api/enums";
 import { Stack, Typography } from "@logistics/shared/components";
-import type { SelectItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MultiSelectModule } from "primeng/multiselect";
@@ -38,8 +37,8 @@ export class TrucksFilterPanel {
   protected readonly selectedTypes = signal<TruckType[]>([]);
 
   // Filter options
-  protected readonly statusOptions: SelectItem[] = truckStatusOptions;
-  protected readonly typeOptions: SelectItem[] = truckTypeOptions;
+  protected readonly statusOptions = truckStatusOptions;
+  protected readonly typeOptions = truckTypeOptions;
 
   // Computed: count of active filters
   protected readonly activeFilterCount = computed(() => {

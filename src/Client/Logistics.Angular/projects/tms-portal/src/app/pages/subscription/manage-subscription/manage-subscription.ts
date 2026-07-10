@@ -72,13 +72,13 @@ export class ManageSubscriptionComponent {
       message:
         "Are you sure you want to cancel your subscription? Your subscription will be cancelled at the end of the billing cycle.",
       header: "Cancel Subscription",
-      icon: "pi pi-exclamation-triangle",
+      icon: "warning",
       acceptLabel: "Yes, Cancel",
       rejectLabel: "No, Keep",
-      acceptButtonStyleClass: "p-button-danger",
-      rejectButtonStyleClass: "p-button-success",
-      acceptIcon: "pi pi-check",
-      rejectIcon: "pi pi-times",
+      severity: "danger",
+      rejectSeverity: "success",
+      acceptIcon: "check",
+      rejectIcon: "close",
       closeOnEscape: true,
       dismissableMask: true,
       accept: async () => {

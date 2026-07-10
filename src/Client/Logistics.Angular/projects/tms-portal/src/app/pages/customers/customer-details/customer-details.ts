@@ -79,7 +79,7 @@ export class CustomerDetails implements OnInit {
       message: "Are you sure you want to delete this customer? This action cannot be undone.",
       acceptLabel: "Delete",
       rejectLabel: "Cancel",
-      acceptButtonStyleClass: "p-button-danger",
+      severity: "danger",
       accept: async () => {
         const success = await this.store.deleteCustomer();
         if (success) {

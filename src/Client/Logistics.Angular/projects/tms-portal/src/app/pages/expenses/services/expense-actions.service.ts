@@ -29,8 +29,8 @@ export class ExpenseActionsService {
     this.toast.confirm({
       message: `Are you sure you want to approve expense #${expenseNumber}?`,
       header: "Confirm Approval",
-      icon: "pi pi-check-circle",
-      acceptButtonStyleClass: "p-button-success",
+      icon: "success",
+      severity: "success",
       accept: async () => {
         await this.api.invoke(approveExpense, { id: expenseId });
 

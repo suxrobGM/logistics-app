@@ -26,8 +26,8 @@ export class ProvidersTable {
     this.toast.confirm({
       message: `Are you sure you want to delete the ${getProviderLabel(provider.providerType as LoadBoardProviderType)} provider?`,
       header: "Delete Provider",
-      icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-danger",
+      icon: "warning",
+      severity: "danger",
       accept: () => this.delete.emit(provider.id!),
     });
   }

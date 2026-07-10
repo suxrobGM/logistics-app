@@ -117,7 +117,7 @@ export class PayrollInvoiceDetails implements OnInit {
     this.toastService.confirm({
       message: "Are you sure you want to submit this payroll for approval?",
       header: "Submit for Approval",
-      icon: "pi pi-question-circle",
+      icon: "question",
       accept: async () => {
         this.isSubmitting.set(true);
         try {
@@ -137,7 +137,7 @@ export class PayrollInvoiceDetails implements OnInit {
     this.toastService.confirm({
       message: "Are you sure you want to approve this payroll?",
       header: "Approve Payroll",
-      icon: "pi pi-check-circle",
+      icon: "success",
       accept: async () => {
         this.isApproving.set(true);
         try {
@@ -195,7 +195,7 @@ export class PayrollInvoiceDetails implements OnInit {
     this.toastService.confirm({
       message: `Pay ${this.getOutstandingAmount().toLocaleString("en-US", { style: "currency", currency: this.tenantService.tenantCurrency() })} to ${invoice.employee?.fullName ?? "employee"} via bank transfer?`,
       header: "Confirm Payout",
-      icon: "pi pi-credit-card",
+      icon: "payment",
       acceptLabel: "Yes, Pay Now",
       rejectLabel: "Cancel",
       accept: async () => {

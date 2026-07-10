@@ -65,10 +65,10 @@ export class TerminalDetails implements OnInit {
     this.toast.confirm({
       header: "Delete Terminal",
       message: "Are you sure you want to delete this terminal? This action cannot be undone.",
-      icon: "pi pi-exclamation-triangle",
+      icon: "warning",
       acceptLabel: "Delete",
       rejectLabel: "Cancel",
-      acceptButtonStyleClass: "p-button-danger",
+      severity: "danger",
       accept: async () => {
         this.isDeleting.set(true);
         try {

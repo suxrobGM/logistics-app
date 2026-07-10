@@ -113,8 +113,8 @@ export class PlanForm {
       message:
         "Are you sure that you want to delete this subscription plan? This action cannot be undone.",
       header: "Confirm Delete",
-      icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-danger",
+      icon: "warning",
+      severity: "danger",
       accept: () => this.remove.emit(),
     });
   }

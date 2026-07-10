@@ -1,9 +1,77 @@
-import { Injectable, inject } from "@angular/core";
-import { type Confirmation, ConfirmationService, MessageService } from "primeng/api";
+import { inject, Injectable } from "@angular/core";
+import { ConfirmationService, MessageService } from "primeng/api";
 
 /**
- * ToastService is a service for displaying toast notifications and confirmation dialogs.
- * It uses PrimeNG's MessageService and ConfirmationService to show messages and confirmations.
+ * Semantic icon names for confirmation dialogs. Deliberately *not* icon-library names —
+ * this is the seam that lets us swap primeicons for lucide without touching call sites.
+ */
+export type ConfirmIcon =
+  | "warning"
+  | "success"
+  | "question"
+  | "info"
+  | "send"
+  | "payment"
+  | "refresh"
+  | "hide"
+  | "check"
+  | "close";
+
+/** Intent of a confirmation button. Drives its styling. */
+export type ConfirmSeverity = "default" | "danger" | "warning" | "success";
+
+/** Library-agnostic options for {@link ToastService.confirm}. */
+export interface ConfirmOptions {
+  /** Body text of the confirmation. */
+  message: string;
+  /** Dialog title. */
+  header?: string;
+  /** Dialog icon. Omit for no icon. */
+  icon?: ConfirmIcon;
+  /** Accept-button intent. Defaults to the library's neutral button. */
+  severity?: ConfirmSeverity;
+  /** Reject-button intent. Defaults to the library's neutral button. */
+  rejectSeverity?: ConfirmSeverity;
+  /** Accept button text. */
+  acceptLabel?: string;
+  /** Reject button text. */
+  rejectLabel?: string;
+  /** Icon rendered inside the accept button. */
+  acceptIcon?: ConfirmIcon;
+  /** Icon rendered inside the reject button. */
+  rejectIcon?: ConfirmIcon;
+  closeOnEscape?: boolean;
+  dismissableMask?: boolean;
+  accept: () => void;
+  reject?: () => void;
+}
+
+const ICONS: Record<ConfirmIcon, string> = {
+  warning: "pi pi-exclamation-triangle",
+  success: "pi pi-check-circle",
+  question: "pi pi-question-circle",
+  info: "pi pi-info-circle",
+  send: "pi pi-send",
+  payment: "pi pi-credit-card",
+  refresh: "pi pi-refresh",
+  hide: "pi pi-eye-slash",
+  check: "pi pi-check",
+  close: "pi pi-times",
+};
+
+const BUTTON_CLASS: Record<ConfirmSeverity, string | undefined> = {
+  default: undefined,
+  danger: "p-button-danger",
+  warning: "p-button-warning",
+  success: "p-button-success",
+};
+
+/**
+ * Toast notifications and confirmation dialogs.
+ *
+ * This is the single seam between the app and whatever notification library backs it.
+ * Nothing outside this file may reference `primeng/api` — call sites pass semantic
+ * {@link ConfirmIcon} / {@link ConfirmSeverity} tokens, never icon names or CSS classes.
  */
 @Injectable({ providedIn: "root" })
 export class ToastService {
@@ -66,15 +134,27 @@ export class ToastService {
   }
 
   /**
-   * Displays a confirmation dialog with the given message and actions.
-   * @param message The message to be displayed in the confirmation dialog.
-   * @param onAccept The callback function to be executed when the accept button is clicked.
-   * @param onReject The callback function to be executed when the reject button is clicked.
+   * Displays a confirmation dialog.
+   * @param options Message, title, icon/severity tokens and the accept/reject callbacks.
    */
-  confirm(options: Confirmation) {
+  confirm(options: ConfirmOptions): void {
     this.confirmService.confirm({
       key: "confirmDialog",
-      ...options,
+      message: options.message,
+      header: options.header,
+      icon: options.icon ? ICONS[options.icon] : undefined,
+      acceptButtonStyleClass: options.severity ? BUTTON_CLASS[options.severity] : undefined,
+      rejectButtonStyleClass: options.rejectSeverity
+        ? BUTTON_CLASS[options.rejectSeverity]
+        : undefined,
+      acceptLabel: options.acceptLabel,
+      rejectLabel: options.rejectLabel,
+      acceptIcon: options.acceptIcon ? ICONS[options.acceptIcon] : undefined,
+      rejectIcon: options.rejectIcon ? ICONS[options.rejectIcon] : undefined,
+      closeOnEscape: options.closeOnEscape,
+      dismissableMask: options.dismissableMask,
+      accept: options.accept,
+      reject: options.reject,
     });
   }
 
@@ -87,8 +167,8 @@ export class ToastService {
     this.confirm({
       message: `Are you sure that you want to delete this ${entityName}?`,
       header: "Confirm Delete",
-      icon: "pi pi-exclamation-triangle",
-      acceptButtonStyleClass: "p-button-danger",
+      icon: "warning",
+      severity: "danger",
       accept: onAccept,
     });
   }

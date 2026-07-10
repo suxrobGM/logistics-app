@@ -1,9 +1,9 @@
 import { Component, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import { ToastService } from "@logistics/shared";
 import { Api, getPortalInvoices, type PortalInvoiceDto } from "@logistics/shared/api";
 import { Icon, Stack, StatusBadge, Surface, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
-import { MessageService } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
@@ -35,7 +35,7 @@ import { ToastModule } from "primeng/toast";
 })
 export class InvoicesList {
   private readonly api = inject(Api);
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
 
   protected readonly invoices = signal<PortalInvoiceDto[]>([]);
   protected readonly totalRecords = signal(0);
@@ -79,10 +79,9 @@ export class InvoicesList {
 
   protected downloadInvoice(invoice: PortalInvoiceDto): void {
     // TODO: Implement actual PDF download when backend endpoint is available
-    this.messageService.add({
-      severity: "info",
-      summary: "Download",
-      detail: `Invoice INV-${invoice.number} download will be available soon.`,
-    });
+    this.toastService.showInfo(
+      `Invoice INV-${invoice.number} download will be available soon.`,
+      "Download",
+    );
   }
 }
