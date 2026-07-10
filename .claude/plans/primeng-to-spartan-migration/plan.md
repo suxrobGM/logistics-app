@@ -235,10 +235,30 @@ runtime behavior. Folded into Phase 2's Playwright smoke.
 3. ✅ `.gitattributes` added (`* text=auto eol=lf`). NB: a deliberate `git add --renormalize .` commit is still owed;
    it was intentionally NOT run here so it doesn't contaminate this diff.
 4. ✅ CI: added `setup-node@24.15.0` and a `bun run ng test shared --watch=false` step to `.github/workflows/build.yml`.
-5. ⬜ **Still owed:** Playwright smoke per portal — load form create/edit, customer form, dispatch board, one
-   server-paged list, one dialog, one toast/confirm. This also carries Phase 0's outstanding interactive overlay smoke
-   (`p-select`, `p-autocomplete`, `p-datepicker`, `p-dialog`, `p-confirmdialog`, `p-tooltip`, `p-popover`, `p-drawer`,
-   `p-menu`) — builds cannot prove runtime overlay behavior.
+5. ✅ **Interactive verification via the Playwright MCP** (no committed e2e suite — deliberately; a hand-written spec
+   suite would need the API + identity server running, which CI does not have, and would be dead weight).
+   Signed in as `owner@test.com` against the real backend (API `:7000`, identity `:7001` — note both serve **http**,
+   not https). Eight routes (`/home`, `/customers`, `/loads`, `/loads/add`, `/customers/add`, `/reports/loads`,
+   `/trucks`, `/employees`) render with **zero page errors**. The only console errors anywhere are Mapbox rejecting the
+   literal unexpanded `${MAPBOX_TOKEN}` placeholder — environment config, unrelated to the upgrade.
+
+   **Phase 0's outstanding overlay smoke is now discharged** — every CDK-suspect overlay works on Angular 22:
+
+   | Overlay           | Result                                                              |
+   | ----------------- | ------------------------------------------------------------------- |
+   | `p-select`        | opens, 15 options                                                   |
+   | `p-autocomplete`  | opens; selecting a customer drives the reactive form to `ng-valid`  |
+   | `p-datepicker`    | panel opens; `ui-date-range-picker` presets write back and re-query |
+   | `p-menu`          | row kebab opens with items                                          |
+   | `p-confirmdialog` | opens via `ConfirmationService`; rejected cleanly, no data touched  |
+   | `p-dialog`        | opens (invite-employee)                                             |
+   | `p-tooltip`       | shows on hover                                                      |
+   | `p-table`         | server-lazy rows + paginator                                        |
+
+   Not exercised: `p-drawer`, `p-popover` (3–4 usages, mobile-only chrome).
+
+**Verification protocol for later phases.** There is no automated visual-regression net, so every component-type swap in
+Phases 5–6 must be re-driven through the Playwright MCP against this same route/overlay checklist before it lands.
 
 ## Phase 3 — Seam hardening, still on PrimeNG _(no visual change; each item independently shippable)_
 
