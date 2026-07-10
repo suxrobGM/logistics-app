@@ -1,6 +1,7 @@
 import {
   booleanAttribute,
   Component,
+  computed,
   ElementRef,
   inject,
   input,
@@ -46,6 +47,8 @@ export class UiCheckboxField implements FormValueControl<boolean> {
   public readonly readonly = input(false, { transform: booleanAttribute });
   public readonly required = input(false, { transform: booleanAttribute });
   public readonly invalid = input(false, { transform: booleanAttribute });
+  public readonly touched = input(false, { transform: booleanAttribute });
+  public readonly dirty = input(false, { transform: booleanAttribute });
   public readonly errors = input<readonly ValidationError[]>([]);
   public readonly name = input<string>("");
 
@@ -55,6 +58,15 @@ export class UiCheckboxField implements FormValueControl<boolean> {
   // Presentation
   public readonly inputId = input<string>("");
   public readonly label = input<string>("");
+
+  /**
+   * Signal Forms drives `invalid` from form creation, so a required, untouched field would render
+   * as invalid on page load. Reveal it only once the user has interacted — the same rule
+   * `ui-form-field` uses for its inline error message.
+   */
+  protected readonly showInvalid = computed(
+    () => this.invalid() && (this.touched() || this.dirty()),
+  );
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 

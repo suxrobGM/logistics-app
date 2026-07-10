@@ -19,7 +19,7 @@
   [disabled]="disabled()"
   [readonlyInput]="readonly()"
   [required]="required()"
-  [invalid]="invalid()"
+  [invalid]="showInvalid()"
   (onBlur)="touch.emit()"
   (onSelect)="dateSelected.emit($event)"
 />

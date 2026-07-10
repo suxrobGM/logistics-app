@@ -11,7 +11,7 @@
     [required]="required()"
     [attr.min]="min() ?? null"
     [attr.max]="max() ?? null"
-    [attr.aria-invalid]="invalid() ? 'true' : null"
+    [attr.aria-invalid]="showInvalid() ? 'true' : null"
     [placeholder]="placeholder()"
     (input)="onInput($event)"
     (blur)="touch.emit()"

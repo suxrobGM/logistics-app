@@ -10,7 +10,7 @@
   [required]="required()"
   [placeholder]="placeholder()"
   [attr.maxlength]="maxlength()"
-  [attr.aria-invalid]="invalid() ? 'true' : null"
+  [attr.aria-invalid]="showInvalid() ? 'true' : null"
   (input)="onInput($event)"
   (blur)="touch.emit()"
 ></textarea>

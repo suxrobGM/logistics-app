@@ -18,7 +18,7 @@
   [disabled]="disabled()"
   [readonly]="readonly()"
   [required]="required()"
-  [invalid]="invalid()"
+  [invalid]="showInvalid()"
   (onBlur)="touch.emit()"
   (onChange)="selectionChange.emit($event.value)"
   (onClear)="cleared.emit()"

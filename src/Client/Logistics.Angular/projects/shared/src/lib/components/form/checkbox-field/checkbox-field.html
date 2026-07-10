@@ -9,7 +9,7 @@
     [readonly]="readonly()"
     [required]="required()"
     [attr.name]="name() || null"
-    [attr.aria-invalid]="invalid() ? 'true' : null"
+    [attr.aria-invalid]="showInvalid() ? 'true' : null"
     (onBlur)="touch.emit()"
   />
   @if (label()) {

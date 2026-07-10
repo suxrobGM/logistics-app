@@ -57,6 +57,24 @@ class HostSignalText {
   readonly field = viewChild.required(UiTextField);
 }
 
+/** Signal Forms host whose required field starts EMPTY — so it is invalid while still pristine. */
+@Component({
+  selector: "ui-host-signal-required-empty",
+  imports: [UiTextField, UiFormField, FormField],
+  template: `
+    <ui-form-field label="Name" for="name" [required]="true">
+      <ui-text-field id="name" [formField]="f.name" />
+    </ui-form-field>
+  `,
+})
+class HostSignalRequiredEmpty {
+  readonly model = signal({ name: "" });
+  readonly f = form(this.model, (p) => {
+    required(p.name);
+  });
+  readonly field = viewChild.required(UiTextField);
+}
+
 async function settle(fixture: ComponentFixture<unknown>): Promise<void> {
   fixture.detectChanges();
   await fixture.whenStable();
@@ -150,6 +168,21 @@ describe("UiTextField — a FormValueControl-only wrapper", () => {
 
       expect(fixture.componentInstance.f.name().invalid()).toBe(true);
       expect(fixture.nativeElement.textContent).toContain("This field is required.");
+    });
+
+    it("does not report aria-invalid until the field is touched", async () => {
+      const fixture = TestBed.createComponent(HostSignalRequiredEmpty);
+      await settle(fixture);
+
+      // The field is required and empty, so Signal Forms already reports it invalid — but while
+      // pristine the wrapper must NOT surface that on the inner input.
+      expect(fixture.componentInstance.f.name().invalid()).toBe(true);
+      expect(input(fixture).getAttribute("aria-invalid")).not.toBe("true");
+
+      fixture.componentInstance.f.name().markAsTouched();
+      await settle(fixture);
+
+      expect(input(fixture).getAttribute("aria-invalid")).toBe("true");
     });
   });
 });

@@ -2,6 +2,7 @@ import { NgTemplateOutlet } from "@angular/common";
 import {
   booleanAttribute,
   Component,
+  computed,
   ElementRef,
   inject,
   input,
@@ -55,6 +56,8 @@ export class UiNumberField implements FormValueControl<number | null> {
   public readonly readonly = input(false, { transform: booleanAttribute });
   public readonly required = input(false, { transform: booleanAttribute });
   public readonly invalid = input(false, { transform: booleanAttribute });
+  public readonly touched = input(false, { transform: booleanAttribute });
+  public readonly dirty = input(false, { transform: booleanAttribute });
   public readonly errors = input<readonly ValidationError[]>([]);
   public readonly name = input<string>("");
 
@@ -87,6 +90,15 @@ export class UiNumberField implements FormValueControl<number | null> {
   public readonly suffix = input<string | undefined>(undefined);
   /** Text rendered INSIDE the input before the number (p-inputnumber `prefix`), not an addon. */
   public readonly prefix = input<string | undefined>(undefined);
+
+  /**
+   * Signal Forms drives `invalid` from form creation, so a required, untouched field would render
+   * as invalid on page load. Reveal it only once the user has interacted — the same rule
+   * `ui-form-field` uses for its inline error message.
+   */
+  protected readonly showInvalid = computed(
+    () => this.invalid() && (this.touched() || this.dirty()),
+  );
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 

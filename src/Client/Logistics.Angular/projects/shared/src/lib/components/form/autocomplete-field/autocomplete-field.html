@@ -19,7 +19,7 @@
   [disabled]="disabled()"
   [readonly]="readonly()"
   [required]="required()"
-  [invalid]="invalid()"
+  [invalid]="showInvalid()"
   [attr.name]="name() || null"
   (completeMethod)="completeMethod.emit($event)"
   (onSelect)="optionSelected.emit($event.value)"

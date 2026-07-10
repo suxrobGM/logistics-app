@@ -11,7 +11,7 @@
   [placeholder]="placeholder()"
   [attr.autocomplete]="autocomplete() || null"
   [attr.maxlength]="maxlength() ?? null"
-  [attr.aria-invalid]="invalid() ? 'true' : null"
+  [attr.aria-invalid]="showInvalid() ? 'true' : null"
   (input)="onInput($event)"
   (blur)="touch.emit()"
 />
