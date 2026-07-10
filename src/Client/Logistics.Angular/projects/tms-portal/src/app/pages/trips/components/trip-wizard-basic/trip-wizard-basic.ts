@@ -1,5 +1,5 @@
-import { Component, effect, inject, input } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { Component, effect, inject, input, signal } from "@angular/core";
+import { disabled, form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { RouterLink } from "@angular/router";
 import type { TruckDto } from "@logistics/shared/api";
 import { Stack, UiTextField } from "@logistics/shared/components";
@@ -7,6 +7,12 @@ import { Button } from "primeng/button";
 import { ToastService } from "@/core/services";
 import { SearchTruck, UiFormField, ValidatedForm } from "@/shared/components";
 import { TripWizardStore } from "../../store/trip-wizard-store";
+
+interface TripBasicModel {
+  tripName: string;
+  // Truck assignment is optional - trip can be created without truck (e.g., from load board).
+  truck: TruckDto | null;
+}
 
 @Component({
   selector: "app-trip-wizard-basic",
@@ -17,7 +23,8 @@ import { TripWizardStore } from "../../store/trip-wizard-store";
     SearchTruck,
     Button,
     RouterLink,
-    ReactiveFormsModule,
+    FormRoot,
+    FormField,
     UiTextField,
     Stack,
   ],
@@ -28,56 +35,62 @@ export class TripWizardBasic {
 
   public readonly disabled = input<boolean>(false);
 
-  protected readonly form = new FormGroup({
-    tripName: new FormControl<string>("", { validators: [Validators.required], nonNullable: true }),
-    // Truck assignment is optional - trip can be created without truck (e.g., from load board)
-    truck: new FormControl<TruckDto | string | null>(null, { nonNullable: true }),
-  });
+  protected readonly model = signal<TripBasicModel>({ tripName: "", truck: null });
+
+  /**
+   * `[formRoot]` runs `submission.action` on submit: it marks the whole tree touched first, skips
+   * the action while invalid, and drives `form().submitting()` — so there is no validity guard and
+   * no `markAllAsTouched()` call here.
+   */
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.tripName, { message: "Trip name is required." });
+      disabled(p.truck, { when: () => this.disabled() });
+    },
+    {
+      submission: {
+        action: async () => {
+          // Reactive forms excluded a disabled control from `form.value`; reproduce that here so a
+          // disabled truck is treated as "no truck" in the payload.
+          const truck = this.form.truck().disabled() ? null : this.model().truck;
+
+          // Only validate truck type if a truck is selected.
+          if (truck && truck.type !== "car_hauler") {
+            this.toastService.showError("The selected truck is not a car hauler truck.");
+            return undefined;
+          }
+
+          // Update store with basic info.
+          this.store.setBasicInfo({
+            tripName: this.model().tripName,
+            truckId: truck?.id ?? null,
+            truckNumber: truck?.number ?? null,
+            truckVehicleCapacity: truck?.vehicleCapacity ?? 0,
+          });
+
+          // Navigate to next step.
+          this.store.nextStep();
+          return undefined;
+        },
+      },
+    },
+  );
 
   constructor() {
-    // Initialize form from store
+    // Seed the form from the store (e.g. when editing an existing trip). The truck field is seeded
+    // with the bare truck id; SearchTruck resolves it to the full TruckDto at runtime.
     effect(() => {
       const tripName = this.store.tripName();
       const truckId = this.store.truckId();
 
       if (tripName || truckId) {
-        this.form.patchValue({
-          tripName: tripName,
-          truck: truckId,
-        });
-      }
-
-      // Enable or disable form controls based on the disabled input
-      if (this.disabled()) {
-        this.form.get("truck")?.disable();
-      } else {
-        this.form.enable();
+        this.model.update((v) => ({
+          ...v,
+          tripName,
+          truck: (truckId ?? null) as unknown as TruckDto | null,
+        }));
       }
     });
-  }
-
-  protected goToNextStep(): void {
-    if (!this.form.valid) {
-      return;
-    }
-
-    const truck = this.form.value.truck as TruckDto | null;
-
-    // Only validate truck type if a truck is selected
-    if (truck && truck.type !== "car_hauler") {
-      this.toastService.showError("The selected truck is not a car hauler truck.");
-      return;
-    }
-
-    // Update store with basic info
-    this.store.setBasicInfo({
-      tripName: this.form.value.tripName ?? "",
-      truckId: truck?.id ?? null,
-      truckNumber: truck?.number ?? null,
-      truckVehicleCapacity: truck?.vehicleCapacity ?? 0,
-    });
-
-    // Navigate to next step
-    this.store.nextStep();
   }
 }

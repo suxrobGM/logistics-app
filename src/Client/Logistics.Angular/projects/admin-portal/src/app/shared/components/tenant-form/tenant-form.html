@@ -1,25 +1,25 @@
-<form [formGroup]="form" (ngSubmit)="submit()">
+<form [formRoot]="form">
   <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
     <ui-form-field label="Tenant Name" [required]="true">
-      <ui-text-field formControlName="name" placeholder="Enter tenant identifier" />
+      <ui-text-field [formField]="form.name" placeholder="Enter tenant identifier" />
     </ui-form-field>
 
     <ui-form-field label="Company Name" [required]="true">
-      <ui-text-field formControlName="companyName" placeholder="Enter company name" />
+      <ui-text-field [formField]="form.companyName" placeholder="Enter company name" />
     </ui-form-field>
   </div>
 
   <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
     <ui-form-field label="Billing Email" [required]="true">
       <ui-text-field
-        formControlName="billingEmail"
+        [formField]="form.billingEmail"
         placeholder="Enter billing email"
         type="email"
       />
     </ui-form-field>
 
     <ui-form-field label="DOT Number">
-      <ui-text-field formControlName="dotNumber" placeholder="Enter DOT number" />
+      <ui-text-field [formField]="form.dotNumber" placeholder="Enter DOT number" />
     </ui-form-field>
   </div>
 
@@ -29,13 +29,13 @@
       [required]="true"
       hint="Determines available countries for addresses"
     >
-      <ui-select-field formControlName="region" [options]="regionOptions" placeholder="Select region" />
+      <ui-select-field [formField]="form.region" [options]="regionOptions" placeholder="Select region" />
     </ui-form-field>
   </div>
 
   <div class="mb-4">
     <h4 class="mb-2 font-semibold">Company Address <span class="text-red-500">*</span></h4>
-    <ui-address-form formControlName="companyAddress" />
+    <ui-address-form [formField]="form.companyAddress" />
   </div>
 
   @if (mode() === "create") {
@@ -47,18 +47,18 @@
 
       <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         <ui-form-field label="First Name" [required]="true">
-          <ui-text-field formControlName="ownerFirstName" placeholder="Enter first name" />
+          <ui-text-field [formField]="form.ownerFirstName" placeholder="Enter first name" />
         </ui-form-field>
 
         <ui-form-field label="Last Name" [required]="true">
-          <ui-text-field formControlName="ownerLastName" placeholder="Enter last name" />
+          <ui-text-field [formField]="form.ownerLastName" placeholder="Enter last name" />
         </ui-form-field>
       </div>
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
         <ui-form-field label="Email" [required]="true">
           <ui-text-field
-            formControlName="ownerEmail"
+            [formField]="form.ownerEmail"
             placeholder="Enter owner email"
             type="email"
           />

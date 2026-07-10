@@ -1,15 +1,15 @@
 <ui-stack gap="6">
-  @if (isLoading()) {
+  @if (form().submitting()) {
     <p-progress-spinner />
   }
 
-  <form [formGroup]="form" (ngSubmit)="submit()">
+  <form [formRoot]="form">
     <ui-stack gap="4">
 
       <ui-form-field label="Customer Name" for="name" [required]="true">
         <ui-text-field
           id="name"
-          formControlName="name"
+          [formField]="form.name"
           placeholder="Customer name"
         />
       </ui-form-field>
@@ -19,7 +19,7 @@
           <ui-form-field label="Email" for="email">
             <ui-text-field
               id="email"
-              formControlName="email"
+              [formField]="form.email"
               type="email"
               placeholder="email@example.com"
             />
@@ -30,7 +30,7 @@
           <ui-form-field label="Phone" for="phone">
             <ui-text-field
               id="phone"
-              formControlName="phone"
+              [formField]="form.phone"
               type="tel"
               placeholder="(555) 555-5555"
             />
@@ -40,7 +40,7 @@
 
       <ui-form-field label="Status" for="status">
         <ui-select-field
-          formControlName="status"
+          [formField]="form.status"
           id="status"
           [options]="statusOptions"
           optionLabel="label"
@@ -49,7 +49,7 @@
       </ui-form-field>
 
       <ui-form-field label="Address" [required]="true">
-        <ui-address-form formControlName="address" [allowedCountries]="allowedCountries()" />
+        <ui-address-form [formField]="form.address" [allowedCountries]="allowedCountries()" />
       </ui-form-field>
 
       <ui-grid container spacing="4">
@@ -66,7 +66,7 @@
           >
             <ui-text-field
               id="taxId"
-              formControlName="taxId"
+              [formField]="form.taxId"
               placeholder="e.g. DE123456789"
             />
           </ui-form-field>
@@ -75,7 +75,7 @@
         <ui-grid [size]="{ xs: 12, md: 6 }">
           <ui-form-field label="Tax status" for="isVatExempt">
             <ui-stack direction="row" gap="2" align="center" class="pt-2">
-              <ui-checkbox-field formControlName="isVatExempt" inputId="isVatExempt" />
+              <ui-checkbox-field [formField]="form.isVatExempt" inputId="isVatExempt" />
               <label for="isVatExempt">VAT / sales tax exempt (charity, government, etc.)</label>
             </ui-stack>
           </ui-form-field>
@@ -84,7 +84,7 @@
 
       <ui-form-field label="Notes" for="notes">
         <ui-textarea-field
-          formControlName="notes"
+          [formField]="form.notes"
           id="notes"
           [rows]="3"
           placeholder="Additional notes about this customer..."
@@ -92,7 +92,7 @@
       </ui-form-field>
 
       <ui-stack direction="row" gap="2" class="mt-2">
-        <p-button type="submit" icon="pi pi-check" label="Save" [disabled]="isLoading()" />
+        <p-button type="submit" icon="pi pi-check" label="Save" [disabled]="form().submitting()" />
 
         @if (mode() === "edit") {
           <p-button
@@ -100,7 +100,7 @@
             icon="pi pi-trash"
             label="Delete"
             severity="danger"
-            [disabled]="isLoading()"
+            [disabled]="form().submitting()"
             (click)="askRemove()"
           />
 

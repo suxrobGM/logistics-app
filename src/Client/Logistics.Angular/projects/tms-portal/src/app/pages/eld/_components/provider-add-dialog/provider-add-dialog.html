@@ -6,16 +6,26 @@
   [draggable]="false"
   (onShow)="onShow()"
 >
-  <form [formGroup]="form" (ngSubmit)="submit()">
+  <form [formRoot]="form" #formEl>
+    <!--
+      Stays a raw p-select: it projects an `<ng-template #item>` to render each provider's
+      description sub-line, and `ui-select-field` has no item slot yet (an unconditional `#item`
+      would force custom rendering for every option in every select). So it is driven by ngModel
+      and `ui-form-field` is handed the field explicitly. Revisit when the item slot lands.
+    -->
     <ui-form-field
       label="Provider"
       for="providerType"
       [required]="true"
-      [control]="form.controls.providerType"
+      [field]="form.providerType"
     >
       <p-select
         id="providerType"
-        formControlName="providerType"
+        [ngModel]="form.providerType().value()"
+        (ngModelChange)="form.providerType().value.set($event)"
+        [ngModelOptions]="{ standalone: true }"
+        (onBlur)="form.providerType().markAsTouched()"
+        [invalid]="form.providerType().invalid() && form.providerType().touched()"
         [options]="providerOptions"
         optionLabel="label"
         optionValue="value"
@@ -37,19 +47,14 @@
       for="apiKey"
       [required]="true"
       hint="Your ELD provider API key or access token"
-      [control]="form.controls.apiKey"
     >
-      <ui-text-field
-        id="apiKey"
-        formControlName="apiKey"
-        placeholder="Enter API key"
-      />
+      <ui-text-field id="apiKey" [formField]="form.apiKey" placeholder="Enter API key" />
     </ui-form-field>
 
     <ui-form-field label="API Secret (Optional)" for="apiSecret" hint="Required for some providers">
       <ui-password-field
         id="apiSecret"
-        formControlName="apiSecret"
+        [formField]="form.apiSecret"
         [toggleMask]="true"
         [feedback]="false"
         placeholder="Enter API secret"
@@ -63,7 +68,7 @@
     >
       <ui-password-field
         id="webhookSecret"
-        formControlName="webhookSecret"
+        [formField]="form.webhookSecret"
         [toggleMask]="true"
         [feedback]="false"
         placeholder="Enter webhook secret"
@@ -88,7 +93,7 @@
     <p-button
       label="Add Provider"
       icon="pi pi-check"
-      (onClick)="submit()"
+      (onClick)="requestSubmit()"
       [loading]="saving()"
     />
   </ng-template>

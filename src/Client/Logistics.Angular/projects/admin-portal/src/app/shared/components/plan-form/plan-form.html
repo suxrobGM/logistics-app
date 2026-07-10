@@ -1,9 +1,9 @@
-<form [formGroup]="form" (ngSubmit)="submit()">
+<form [formRoot]="form">
   <div class="mb-4 grid grid-cols-12 gap-4">
     <div class="col-span-12">
       <ui-form-field label="Plan Name" [required]="true">
         <ui-text-field
-          formControlName="name"
+          [formField]="form.name"
           placeholder="Enter plan name (e.g., Basic, Pro, Enterprise)"
         />
       </ui-form-field>
@@ -13,18 +13,14 @@
   <div class="mb-4 grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-6">
       <ui-form-field label="Description">
-        <ui-textarea-field
-          formControlName="description"
-          placeholder="Enter plan description"
-          [rows]="3"
-        />
+        <ui-textarea-field [formField]="form.description" placeholder="Enter plan description" [rows]="3" />
       </ui-form-field>
     </div>
 
     <div class="col-span-12 md:col-span-6">
       <ui-form-field label="Plan Tier" [required]="true">
         <ui-select-field
-          formControlName="tier"
+          [formField]="form.tier"
           [options]="tierOptions"
           placeholder="Select tier"
           [fluid]="true"
@@ -36,21 +32,20 @@
   <div class="mb-4 grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-4">
       <ui-form-field label="Base Monthly Fee" [required]="true">
-        <ui-currency-field formControlName="price" [min]="0" placeholder="0.00" />
+        <ui-currency-field [formField]="form.price" placeholder="0.00" />
       </ui-form-field>
     </div>
 
     <div class="col-span-12 md:col-span-4">
       <ui-form-field label="Per Truck Fee" [required]="true">
-        <ui-currency-field formControlName="perTruckPrice" [min]="0" placeholder="0.00" />
+        <ui-currency-field [formField]="form.perTruckPrice" placeholder="0.00" />
       </ui-form-field>
     </div>
 
     <div class="col-span-12 md:col-span-4">
       <ui-form-field label="Max Trucks">
         <ui-number-field
-          formControlName="maxTrucks"
-          [min]="1"
+          [formField]="form.maxTrucks"
           [showButtons]="true"
           placeholder="Unlimited"
           [fluid]="true"
@@ -63,8 +58,7 @@
     <div class="col-span-12 md:col-span-4">
       <ui-form-field label="Weekly AI Request Quota" hint="Leave empty for unlimited">
         <ui-number-field
-          formControlName="weeklyAiRequestQuota"
-          [min]="1"
+          [formField]="form.weeklyAiRequestQuota"
           [showButtons]="true"
           placeholder="Unlimited"
           [fluid]="true"
@@ -77,7 +71,7 @@
     <div class="col-span-12 md:col-span-4">
       <ui-form-field label="Billing Interval" [required]="true">
         <ui-select-field
-          formControlName="interval"
+          [formField]="form.interval"
           [options]="intervalOptions"
           placeholder="Select interval"
           [fluid]="true"
@@ -87,17 +81,10 @@
 
     <div class="col-span-12 md:col-span-4">
       <ui-form-field label="Interval Count" [required]="true">
-        <ui-number-field
-          formControlName="intervalCount"
-          [min]="1"
-          [max]="12"
-          [showButtons]="true"
-          [fluid]="true"
-        />
+        <ui-number-field [formField]="form.intervalCount" [showButtons]="true" [fluid]="true" />
       </ui-form-field>
     </div>
   </div>
-
 
   <div class="mt-6 flex gap-2">
     <p-button

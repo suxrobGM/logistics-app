@@ -24,7 +24,7 @@ import { focusFirstControl } from "../../../forms/focus-control";
  * standalone `ngModel` (`[ngModel]` / `(ngModelChange)` + `{ standalone: true }`). Never put
  * `formControlName` or `[formField]` on the `p-select` itself: every `BaseInput` subclass
  * collides with Signal Forms' `pattern` state input. The inner NgModel lives in THIS view,
- * not in `ui-form-field`'s projected content, so `ui-form-field`'s `contentChild(NgControl)`
+ * not in `ui-form-field`'s projected content, so `ui-form-field`'s `contentChild(FORM_FIELD)`
  * still resolves the OUTER binding. See `forms/signal-forms-compat-probe.spec.ts`.
  *
  * @example

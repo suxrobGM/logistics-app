@@ -1,5 +1,5 @@
 import { Component, computed, effect, inject, input, output, signal } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { RouterLink } from "@angular/router";
 import { isEuCountry, regionAllowedCountries } from "@logistics/shared";
 import {
@@ -31,14 +31,25 @@ import { TenantService } from "@/core/services/tenant.service";
 
 export interface CustomerFormValue {
   name: string;
-  email: string | null;
-  phone: string | null;
+  email: string;
+  phone: string;
   status: CustomerStatus;
   address: Address | null;
-  notes: string | null;
-  taxId: string | null;
+  notes: string;
+  taxId: string;
   isVatExempt: boolean;
 }
+
+const EMPTY: CustomerFormValue = {
+  name: "",
+  email: "",
+  phone: "",
+  status: "active",
+  address: null,
+  notes: "",
+  taxId: "",
+  isVatExempt: false,
+};
 
 @Component({
   selector: "app-customer-form",
@@ -46,7 +57,8 @@ export interface CustomerFormValue {
   imports: [
     ButtonModule,
     ValidatedForm,
-    ReactiveFormsModule,
+    FormRoot,
+    FormField,
     RouterLink,
     ProgressSpinnerModule,
     UiFormField,
@@ -64,7 +76,6 @@ export class CustomerForm {
   private readonly toastService = inject(ToastService);
   private readonly tenantService = inject(TenantService);
 
-  protected readonly isLoading = signal(false);
   protected readonly statusOptions = customerStatusOptions;
   protected readonly allowedCountries = computed(() =>
     regionAllowedCountries(this.tenantService.tenantData()?.settings?.region),
@@ -77,25 +88,73 @@ export class CustomerForm {
   public readonly save = output<CustomerDto>();
   public readonly remove = output<void>();
 
-  protected readonly form = new FormGroup({
-    name: new FormControl("", { validators: Validators.required, nonNullable: true }),
-    email: new FormControl<string | null>(null),
-    phone: new FormControl<string | null>(null),
-    status: new FormControl<CustomerStatus>("active", {
-      validators: Validators.required,
-      nonNullable: true,
-    }),
-    address: new FormControl<Address | null>(null, { validators: Validators.required }),
-    notes: new FormControl<string | null>(null),
-    taxId: new FormControl<string | null>(null),
-    isVatExempt: new FormControl<boolean>(false, { nonNullable: true }),
-  });
+  protected readonly model = signal<CustomerFormValue>({ ...EMPTY });
+
+  /**
+   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips
+   * the action while invalid, and drives `form().submitting()` — so there is no `isLoading` signal
+   * and no `if (form.invalid) return` guard.
+   */
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.name, { message: "Customer name is required." });
+      required(p.status, { message: "Status is required." });
+      required(p.address, { message: "Address is required." });
+      // Tax ID is mandatory once the billing country is an EU member (reverse-charge B2B).
+      required(p.taxId, {
+        when: ({ valueOf }) => isEuCountry(valueOf(p.address)?.country),
+        message: "Tax ID is required for EU customers.",
+      });
+    },
+    {
+      submission: {
+        action: async () => {
+          const value = this.model();
+
+          if (this.mode() === "create") {
+            const command: CreateCustomerCommand = {
+              name: value.name,
+              email: value.email || null,
+              phone: value.phone || null,
+              status: value.status,
+              address: value.address!,
+              notes: value.notes || null,
+              taxId: value.taxId || null,
+              isVatExempt: value.isVatExempt,
+            };
+
+            const result = await this.api.invoke(createCustomer, { body: command });
+            if (result) {
+              this.toastService.showSuccess("A new customer has been created successfully");
+              this.save.emit(result);
+            }
+          } else {
+            const command: UpdateCustomerCommand = {
+              id: this.id()!,
+              name: value.name,
+              email: value.email || null,
+              phone: value.phone || null,
+              status: value.status,
+              address: value.address!,
+              notes: value.notes || null,
+              taxId: value.taxId || null,
+              isVatExempt: value.isVatExempt,
+            };
+            await this.api.invoke(updateCustomer, { id: this.id()!, body: command });
+            this.toastService.showSuccess("Customer data has been updated successfully");
+            this.save.emit({ id: this.id()!, name: value.name });
+          }
+
+          return undefined;
+        },
+      },
+    },
+  );
 
   /** True when the customer's billing country is an EU member — drives the
    *  Tax-ID required hint + validator. Updates as the address sub-form changes. */
-  protected readonly customerIsEu = computed(() =>
-    isEuCountry(this.form.controls.address.value?.country),
-  );
+  protected readonly customerIsEu = computed(() => isEuCountry(this.model().address?.country));
 
   constructor() {
     effect(() => {
@@ -103,61 +162,6 @@ export class CustomerForm {
         this.patch(this.initial()!);
       }
     });
-
-    // Re-evaluate the Tax-ID required validator whenever the country changes.
-    this.form.controls.address.valueChanges.subscribe(() => this.applyTaxIdValidators());
-  }
-
-  private applyTaxIdValidators(): void {
-    const taxId = this.form.controls.taxId;
-    const required = isEuCountry(this.form.controls.address.value?.country);
-    taxId.setValidators(required ? [Validators.required] : []);
-    taxId.updateValueAndValidity({ emitEvent: false });
-  }
-
-  protected async submit(): Promise<void> {
-    if (this.form.invalid) {
-      return;
-    }
-
-    this.isLoading.set(true);
-    const formValue = this.form.getRawValue();
-
-    if (this.mode() === "create") {
-      const command: CreateCustomerCommand = {
-        name: formValue.name,
-        email: formValue.email,
-        phone: formValue.phone,
-        status: formValue.status,
-        address: formValue.address!,
-        notes: formValue.notes,
-        taxId: formValue.taxId,
-        isVatExempt: formValue.isVatExempt,
-      };
-
-      const result = await this.api.invoke(createCustomer, { body: command });
-      if (result) {
-        this.toastService.showSuccess("A new customer has been created successfully");
-        this.save.emit(result);
-      }
-    } else {
-      const command: UpdateCustomerCommand = {
-        id: this.id()!,
-        name: formValue.name,
-        email: formValue.email,
-        phone: formValue.phone,
-        status: formValue.status,
-        address: formValue.address!,
-        notes: formValue.notes,
-        taxId: formValue.taxId,
-        isVatExempt: formValue.isVatExempt,
-      };
-      await this.api.invoke(updateCustomer, { id: this.id()!, body: command });
-      this.toastService.showSuccess("Customer data has been updated successfully");
-      this.save.emit({ id: this.id()!, name: formValue.name });
-    }
-
-    this.isLoading.set(false);
   }
 
   protected askRemove(): void {
@@ -168,8 +172,6 @@ export class CustomerForm {
   }
 
   private patch(src: Partial<CustomerFormValue>): void {
-    this.form.patchValue({
-      ...src,
-    });
+    this.model.update((v) => ({ ...v, ...src }));
   }
 }

@@ -4,6 +4,7 @@
 export * from "./lib/api";
 export * from "./lib/errors";
 export * from "./lib/components";
+export * from "./lib/forms";
 export * from "./lib/services";
 export * from "./lib/guards";
 export * from "./lib/utils";

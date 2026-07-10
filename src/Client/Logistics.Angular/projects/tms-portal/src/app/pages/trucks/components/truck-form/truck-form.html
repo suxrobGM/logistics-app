@@ -6,7 +6,7 @@
     </ui-stack>
   }
 
-  <form [formGroup]="form" (ngSubmit)="submit()">
+  <form [formRoot]="form">
     <ui-stack gap="6">
 
       <!-- Truck Information Section -->
@@ -19,7 +19,7 @@
           <ui-form-field label="Truck Number" for="truckNumber" [required]="true">
             <ui-text-field
               id="truckNumber"
-              formControlName="truckNumber"
+              [formField]="form.truckNumber"
               type="text"
               placeholder="e.g., T-001"
             />
@@ -27,7 +27,7 @@
 
           <ui-form-field label="Truck Type" for="truckType" [required]="true">
             <ui-select-field
-              formControlName="truckType"
+              [formField]="form.truckType"
               [options]="truckTypes"
               placeholder="Select truck type"
             />
@@ -36,7 +36,7 @@
           @if (mode() === "edit") {
             <ui-form-field label="Status" for="truckStatus" [required]="true">
               <ui-select-field
-                formControlName="truckStatus"
+                [formField]="form.truckStatus"
                 [options]="truckStatuses"
                 placeholder="Select status"
               />
@@ -51,10 +51,8 @@
               class="mb-0"
             >
               <ui-number-field
-                formControlName="vehicleCapacity"
+                [formField]="form.vehicleCapacity"
                 inputId="vehicleCapacity"
-                [min]="1"
-                [max]="12"
                 placeholder="e.g., 8"
               />
             </ui-form-field>
@@ -74,7 +72,7 @@
               <ui-form-field label="Make" for="make">
                 <ui-text-field
                   id="make"
-                  formControlName="make"
+                  [formField]="form.make"
                   type="text"
                   placeholder="e.g., Freightliner"
                 />
@@ -85,7 +83,7 @@
               <ui-form-field label="Model" for="model">
                 <ui-text-field
                   id="model"
-                  formControlName="model"
+                  [formField]="form.model"
                   type="text"
                   placeholder="e.g., Cascadia"
                 />
@@ -95,10 +93,8 @@
             <ui-grid [size]="{ xs: 12, md: 6 }">
               <ui-form-field label="Year" for="year">
                 <ui-number-field
-                  formControlName="year"
+                  [formField]="form.year"
                   inputId="year"
-                  [min]="1900"
-                  [max]="2100"
                   [useGrouping]="false"
                   placeholder="e.g., 2023"
                 />
@@ -106,7 +102,7 @@
             </ui-grid>
 
             <ui-grid [size]="{ xs: 12, md: 6 }">
-              <app-truck-vin-field [form]="form" />
+              <app-truck-vin-field [field]="form" />
             </ui-grid>
           </ui-grid>
         </ui-surface>
@@ -124,7 +120,7 @@
               <ui-form-field label="License Plate" for="licensePlate">
                 <ui-text-field
                   id="licensePlate"
-                  formControlName="licensePlate"
+                  [formField]="form.licensePlate"
                   type="text"
                   placeholder="e.g., ABC-1234"
                 />
@@ -135,7 +131,7 @@
               <ui-form-field label="License Plate State" for="licensePlateState" class="mb-0">
                 <ui-text-field
                   id="licensePlateState"
-                  formControlName="licensePlateState"
+                  [formField]="form.licensePlateState"
                   type="text"
                   placeholder="e.g., TX"
                   [maxlength]="2"
@@ -155,7 +151,7 @@
         <ui-surface variant="elevated" [border]="true">
           <ui-form-field label="Main Driver" for="mainDriver">
             <ui-autocomplete-field
-              formControlName="mainDriver"
+              [formField]="form.mainDriver"
               placeholder="Search for a driver..."
               optionLabel="fullName"
               [minQueryLength]="2"
@@ -166,7 +162,7 @@
 
           <ui-form-field label="Secondary Driver" for="secondaryDriver" class="mb-0">
             <ui-autocomplete-field
-              formControlName="secondaryDriver"
+              [formField]="form.secondaryDriver"
               placeholder="Search for a driver..."
               optionLabel="fullName"
               [minQueryLength]="2"
@@ -177,7 +173,7 @@
         </ui-surface>
       </ui-stack>
 
-      <app-truck-hazmat-section [form]="form" />
+      <app-truck-hazmat-section [field]="form" />
 
       <!-- Action Buttons -->
       <ui-stack direction="row" gap="2">

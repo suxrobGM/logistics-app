@@ -1,6 +1,7 @@
-import { Component, effect, inject, input, model, output, signal } from "@angular/core";
+import { Component, effect, ElementRef, inject, input, model, output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl } from "@angular/forms/signals";
+import { focusFirstControl } from "@logistics/shared";
 import { Api, getLoadById, getLoads, type LoadDto } from "@logistics/shared/api";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 import { LoadStatusTag } from "../../tags/load-status-tag/load-status-tag";
@@ -34,6 +35,13 @@ export class SearchLoad implements FormValueControl<LoadDto | null> {
 
   /** Raised on blur so the form can mark the field touched. */
   public readonly touch = output<void>();
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
+  public focus(options?: FocusOptions): void {
+    focusFirstControl(this.host.nativeElement, options);
+  }
 
   constructor() {
     // A parent form may write a bare load id (string) as the value instead of a

@@ -1,4 +1,4 @@
-<form [formGroup]="form()" class="py-4">
+<div class="py-4">
 
   <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
     <!-- Injuries Section -->
@@ -6,21 +6,17 @@
       <div class="flex flex-col gap-4">
         <div class="flex items-center justify-between">
           <span>Were there any injuries?</span>
-          <ui-toggle-field formControlName="injuriesReported" />
+          <ui-toggle-field [formField]="field().injuriesReported" />
         </div>
 
-        @if (form().get("injuriesReported")?.value) {
+        @if (field().injuriesReported().value()) {
           <ui-form-field label="Number of Injuries" for="numberOfInjuries">
-            <ui-number-field
-              formControlName="numberOfInjuries"
-              id="numberOfInjuries"
-              [min]="0"
-            />
+            <ui-number-field [formField]="field().numberOfInjuries" id="numberOfInjuries" />
           </ui-form-field>
 
           <ui-form-field label="Injury Description" for="injuryDescription">
             <ui-textarea-field
-              formControlName="injuryDescription"
+              [formField]="field().injuryDescription"
               id="injuryDescription"
               [rows]="2"
               placeholder="Describe the injuries..."
@@ -30,16 +26,12 @@
 
         <div class="flex items-center justify-between border-t pt-4">
           <span>Were there any fatalities?</span>
-          <ui-toggle-field formControlName="fatalitiesReported" />
+          <ui-toggle-field [formField]="field().fatalitiesReported" />
         </div>
 
-        @if (form().get("fatalitiesReported")?.value) {
+        @if (field().fatalitiesReported().value()) {
           <ui-form-field label="Number of Fatalities" for="numberOfFatalities">
-            <ui-number-field
-              formControlName="numberOfFatalities"
-              id="numberOfFatalities"
-              [min]="0"
-            />
+            <ui-number-field [formField]="field().numberOfFatalities" id="numberOfFatalities" />
           </ui-form-field>
         }
       </div>
@@ -50,7 +42,7 @@
       <div class="flex flex-col gap-4">
         <ui-form-field label="Estimated Damage" for="estimatedDamage">
           <ui-number-field
-            formControlName="estimatedDamage"
+            [formField]="field().estimatedDamage"
             id="estimatedDamage"
             mode="currency"
             currency="USD"
@@ -60,7 +52,7 @@
 
         <ui-form-field label="Damage Description" for="damageDescription">
           <ui-textarea-field
-            formControlName="damageDescription"
+            [formField]="field().damageDescription"
             id="damageDescription"
             [rows]="2"
             placeholder="Describe the damage..."
@@ -69,13 +61,13 @@
 
         <div class="flex items-center justify-between border-t pt-4">
           <span>Was the vehicle towed?</span>
-          <ui-toggle-field formControlName="vehicleTowed" />
+          <ui-toggle-field [formField]="field().vehicleTowed" />
         </div>
 
-        @if (form().get("vehicleTowed")?.value) {
+        @if (field().vehicleTowed().value()) {
           <ui-form-field label="Tow Company" for="towCompany">
             <ui-text-field
-              formControlName="towCompany"
+              [formField]="field().towCompany"
               id="towCompany"
               placeholder="Name of tow company"
             />
@@ -90,13 +82,13 @@
     <div class="flex flex-col gap-4">
       <div class="flex items-center justify-between">
         <span>Was hazardous material involved?</span>
-        <ui-toggle-field formControlName="hazmatInvolved" />
+        <ui-toggle-field [formField]="field().hazmatInvolved" />
       </div>
 
-      @if (form().get("hazmatInvolved")?.value) {
+      @if (field().hazmatInvolved().value()) {
         <ui-form-field label="Hazmat Description" for="hazmatDescription">
           <ui-textarea-field
-            formControlName="hazmatDescription"
+            [formField]="field().hazmatDescription"
             id="hazmatDescription"
             [rows]="2"
             placeholder="Describe the hazardous materials involved..."
@@ -105,4 +97,4 @@
       }
     </div>
   </p-card>
-</form>
+</div>

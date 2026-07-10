@@ -8,11 +8,11 @@
 >
   <p class="text-muted-color mb-4">Send this invoice to the customer via email.</p>
 
-  <form [formGroup]="form" (ngSubmit)="send()">
-    <ui-form-field label="Email Address" for="email" [required]="true" [control]="form.controls.email">
+  <form [formRoot]="form">
+    <ui-form-field label="Email Address" for="email" [required]="true">
       <ui-text-field
         id="email"
-        formControlName="email"
+        [formField]="form.email"
         type="email"
         placeholder="customer@example.com"
       />
@@ -21,7 +21,7 @@
     <ui-form-field label="Personal Message" for="personalMessage">
       <ui-textarea-field
         id="personalMessage"
-        formControlName="personalMessage"
+        [formField]="form.personalMessage"
         [rows]="3"
         placeholder="Add an optional message to include in the email..."
       />
@@ -33,7 +33,7 @@
         type="submit"
         icon="pi pi-send"
         label="Send Invoice"
-        [loading]="isSending()"
+        [loading]="form().submitting()"
       />
     </ui-stack>
   </form>

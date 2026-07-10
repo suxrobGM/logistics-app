@@ -6,27 +6,17 @@
   [draggable]="false"
   [resizable]="false"
 >
-  <form [formGroup]="form" (ngSubmit)="save()">
+  <form [formRoot]="form">
 
     <ui-stack gap="3">
-      <ui-form-field
-        label="License number"
-        for="licenseNumber"
-        [required]="true"
-        [control]="form.controls.licenseNumber"
-      >
-        <ui-text-field id="licenseNumber" formControlName="licenseNumber" type="text" />
+      <ui-form-field label="License number" for="licenseNumber" [required]="true">
+        <ui-text-field id="licenseNumber" [formField]="form.licenseNumber" type="text" />
       </ui-form-field>
 
-      <ui-form-field
-        label="License class"
-        for="licenseClass"
-        [required]="true"
-        [control]="form.controls.licenseClass"
-      >
+      <ui-form-field label="License class" for="licenseClass" [required]="true">
         <ui-select-field
           id="licenseClass"
-          formControlName="licenseClass"
+          [formField]="form.licenseClass"
           [options]="classOptions"
           optionLabel="label"
           optionValue="value"
@@ -39,11 +29,10 @@
         for="issuingCountry"
         hint="2-letter country code, e.g. US, DE, PL"
         [required]="true"
-        [control]="form.controls.issuingCountry"
       >
         <ui-text-field
           id="issuingCountry"
-          formControlName="issuingCountry"
+          [formField]="form.issuingCountry"
           type="text"
           [maxlength]="2"
           style="text-transform: uppercase"
@@ -55,32 +44,22 @@
         for="issuingRegion"
         hint="State / province, e.g. TX, BY"
       >
-        <ui-text-field id="issuingRegion" formControlName="issuingRegion" type="text" />
+        <ui-text-field id="issuingRegion" [formField]="form.issuingRegion" type="text" />
       </ui-form-field>
 
-      <ui-form-field
-        label="Issued date"
-        for="issuedDate"
-        [required]="true"
-        [control]="form.controls.issuedDate"
-      >
+      <ui-form-field label="Issued date" for="issuedDate" [required]="true">
         <ui-date-field
           id="issuedDate"
-          formControlName="issuedDate"
+          [formField]="form.issuedDate"
           dateFormat="yy-mm-dd"
           appendTo="body"
         />
       </ui-form-field>
 
-      <ui-form-field
-        label="Expires at"
-        for="expiresAt"
-        [required]="true"
-        [control]="form.controls.expiresAt"
-      >
+      <ui-form-field label="Expires at" for="expiresAt" [required]="true">
         <ui-date-field
           id="expiresAt"
-          formControlName="expiresAt"
+          [formField]="form.expiresAt"
           dateFormat="yy-mm-dd"
           appendTo="body"
         />
@@ -93,7 +72,7 @@
       >
         <ui-date-field
           id="medicalCertExpiresAt"
-          formControlName="medicalCertExpiresAt"
+          [formField]="form.medicalCertExpiresAt"
           dateFormat="yy-mm-dd"
           appendTo="body"
         />
@@ -103,7 +82,7 @@
         <ui-form-field label="Status" for="status">
           <ui-select-field
             id="status"
-            formControlName="status"
+            [formField]="form.status"
             [options]="statusOptions"
             optionLabel="label"
             optionValue="value"
@@ -113,30 +92,26 @@
       }
 
       <ui-form-field label="Endorsements" for="endorsements">
-        <ui-stack gap="2">
-          @for (opt of endorsementOptions; track opt.value) {
-            <ui-stack direction="row" align="center" gap="2">
-              <p-checkbox
-                [inputId]="'endorsement-' + opt.value"
-                [value]="opt.value"
-                formControlName="endorsements"
-              />
-              <label [for]="'endorsement-' + opt.value">{{ opt.label }}</label>
-            </ui-stack>
-          }
-        </ui-stack>
+        <ui-multiselect-field
+          id="endorsements"
+          [formField]="form.endorsements"
+          [options]="endorsementOptions"
+          optionLabel="label"
+          optionValue="value"
+          display="chip"
+          appendTo="body"
+        />
       </ui-form-field>
+
+      <ui-stack direction="row" justify="end" gap="2">
+        <p-button label="Cancel" severity="secondary" [outlined]="true" (click)="close()" />
+        <p-button
+          type="submit"
+          label="Save"
+          icon="pi pi-check"
+          [loading]="form().submitting()"
+        />
+      </ui-stack>
     </ui-stack>
   </form>
-
-  <ng-template #footer>
-    <p-button label="Cancel" severity="secondary" [outlined]="true" (click)="close()" />
-    <p-button
-      label="Save"
-      icon="pi pi-check"
-      [loading]="isLoading()"
-      [disabled]="!form.valid"
-      (click)="save()"
-    />
-  </ng-template>
 </p-dialog>

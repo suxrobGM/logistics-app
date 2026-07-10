@@ -1,6 +1,7 @@
-import { Component, inject, input, model, output, signal } from "@angular/core";
+import { Component, ElementRef, inject, input, model, output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl } from "@angular/forms/signals";
+import { focusFirstControl } from "@logistics/shared";
 import { Api, getContainers, type ContainerDto } from "@logistics/shared/api";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 
@@ -31,6 +32,13 @@ export class SearchContainer implements FormValueControl<ContainerDto | null> {
 
   /** Raised on blur so the form can mark the field touched. */
   public readonly touch = output<void>();
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
+  public focus(options?: FocusOptions): void {
+    focusFirstControl(this.host.nativeElement, options);
+  }
 
   protected async searchContainer(event: { query: string }): Promise<void> {
     const q = event.query?.trim() ?? "";

@@ -26,7 +26,7 @@ import { focusFirstControl } from "../../../forms/focus-control";
  * `BaseInput`, which declares a `pattern: string` input. Signal Forms binds a `pattern`
  * *state* input onto whatever carries `[formField]`, so the two collide — that collision is
  * the whole reason this wrapper exists. The inner NgModel lives in THIS view, not in
- * `ui-form-field`'s projected content, so `ui-form-field`'s `contentChild(NgControl)` still
+ * `ui-form-field`'s projected content, so `ui-form-field`'s `contentChild(FORM_FIELD)` still
  * resolves the OUTER binding. See `forms/signal-forms-compat-probe.spec.ts`.
  *
  * @example

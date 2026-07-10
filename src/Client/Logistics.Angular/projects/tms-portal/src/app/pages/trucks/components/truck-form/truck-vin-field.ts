@@ -1,30 +1,23 @@
 import { Component, computed, inject, input, signal } from "@angular/core";
-import { FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormField, type FieldTree } from "@angular/forms/signals";
 import { Api, decodeVin } from "@logistics/shared/api";
 import { Stack, UiFormField, UiTextField } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { MessageModule } from "primeng/message";
 import { TagModule } from "primeng/tag";
 import { ToastService } from "@/core/services";
+import type { TruckFormModel } from "./truck-form";
 
 @Component({
   selector: "app-truck-vin-field",
   templateUrl: "./truck-vin-field.html",
-  imports: [
-    ReactiveFormsModule,
-    ButtonModule,
-    MessageModule,
-    TagModule,
-    UiFormField,
-    Stack,
-    UiTextField,
-  ],
+  imports: [FormField, ButtonModule, MessageModule, TagModule, UiFormField, Stack, UiTextField],
 })
 export class TruckVinField {
   private readonly api = inject(Api);
   private readonly toastService = inject(ToastService);
 
-  public readonly form = input.required<FormGroup>();
+  public readonly field = input.required<FieldTree<TruckFormModel>>();
 
   protected readonly decoding = signal(false);
   protected readonly decodedSource = signal<string | null>(null);
@@ -44,7 +37,7 @@ export class TruckVinField {
   });
 
   protected async decodeVin(): Promise<void> {
-    const vin = this.form().get("vin")?.value?.trim().toUpperCase() ?? "";
+    const vin = this.field().vin().value()?.trim().toUpperCase() ?? "";
 
     if (vin.length !== 17) {
       this.toastService.showError("VIN must be exactly 17 characters");
@@ -56,12 +49,9 @@ export class TruckVinField {
     try {
       const result = await this.api.invoke(decodeVin, { vin });
 
-      const patch: Record<string, unknown> = {};
-      if (result.make) patch["make"] = result.make;
-      if (result.model) patch["model"] = result.model;
-      if (result.year) patch["year"] = result.year;
-
-      this.form().patchValue(patch);
+      if (result.make) this.field().make().value.set(result.make);
+      if (result.model) this.field().model().value.set(result.model);
+      if (result.year) this.field().year().value.set(result.year);
 
       this.decodedSource.set(result.source ?? null);
       this.decodedModelMissing.set(result.source === "wmi" && !result.model);

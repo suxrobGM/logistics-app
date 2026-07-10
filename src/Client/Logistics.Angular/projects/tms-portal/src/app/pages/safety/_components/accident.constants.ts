@@ -1,5 +1,39 @@
 import type { SelectOption } from "@logistics/shared";
-import type { AccidentSeverity, AccidentType } from "@logistics/shared/api";
+import type {
+  AccidentSeverity,
+  AccidentType,
+  Address,
+  EmployeeDto,
+  TruckDto,
+} from "@logistics/shared/api";
+
+/** Step 1 (incident details) sub-form model. Shared by the parent pages and the field fragment. */
+export interface AccidentIncidentModel {
+  accidentDateTime: Date;
+  location: Address | null;
+  truck: TruckDto | null;
+  driver: EmployeeDto | null;
+  type: AccidentType;
+  severity: AccidentSeverity;
+  description: string;
+  weatherConditions: string;
+  roadConditions: string;
+}
+
+/** Step 2 (injuries & damage) sub-form model. Shared by the parent pages and the field fragment. */
+export interface AccidentInjuriesDamageModel {
+  injuriesReported: boolean;
+  numberOfInjuries: number | null;
+  injuryDescription: string;
+  fatalitiesReported: boolean;
+  numberOfFatalities: number | null;
+  hazmatInvolved: boolean;
+  hazmatDescription: string;
+  estimatedDamage: number | null;
+  damageDescription: string;
+  vehicleTowed: boolean;
+  towCompany: string;
+}
 
 export const ACCIDENT_TYPE_OPTIONS: SelectOption<AccidentType>[] = [
   { label: "Collision", value: "collision" },

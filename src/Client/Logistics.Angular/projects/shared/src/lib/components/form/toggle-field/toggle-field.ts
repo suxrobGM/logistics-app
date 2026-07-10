@@ -23,7 +23,7 @@ import { focusFirstControl } from "../../../forms/focus-control";
  * The PrimeNG `p-toggleswitch` is itself a `ControlValueAccessor`, so it is driven internally
  * with a standalone `ngModel` (never `formControlName` / `[formField]`, which would collide with
  * Signal Forms' `pattern` state input). The inner `NgModel` lives in THIS wrapper's view, so the
- * enclosing `ui-form-field`'s `contentChild(NgControl)` still resolves the OUTER binding.
+ * enclosing `ui-form-field`'s `contentChild(FORM_FIELD)` still resolves the OUTER binding.
  *
  * `p-toggleswitch` exposes no `onBlur` output (only `onChange`), so `touch` is raised from the
  * native, bubbling `(focusout)` on the host instead.

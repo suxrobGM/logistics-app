@@ -1,4 +1,4 @@
-<form [formGroup]="form" (ngSubmit)="submit()">
+<form [formRoot]="form">
   <ui-stack gap="4">
 
     <ui-stack tag="section" gap="3">
@@ -14,28 +14,27 @@
               for="code"
               [required]="true"
               hint="5-character UN/LOCODE (e.g., USNYC, BEANR)"
-              [control]="form.controls.code"
             >
-              <ui-text-field id="code" formControlName="code" [maxlength]="5" />
+              <ui-text-field id="code" [formField]="form.code" [maxlength]="5" />
             </ui-form-field>
           </ui-grid>
 
           <ui-grid [size]="{ xs: 12, md: 6 }">
             <ui-form-field label="Name" for="name" [required]="true">
-              <ui-text-field id="name" formControlName="name" />
+              <ui-text-field id="name" [formField]="form.name" />
             </ui-form-field>
           </ui-grid>
 
           <ui-grid [size]="{ xs: 12, md: 6 }">
             <ui-form-field label="Type" for="type" [required]="true">
-              <ui-select-field formControlName="type" [options]="typeOptions" />
+              <ui-select-field [formField]="form.type" [options]="typeOptions" />
             </ui-form-field>
           </ui-grid>
 
           <ui-grid [size]="{ xs: 12, md: 6 }">
             <ui-form-field label="Country" for="countryCode" [required]="true">
               <ui-select-field
-                formControlName="countryCode"
+                [formField]="form.countryCode"
                 [options]="countryOptions()"
                 [filter]="true"
                 placeholder="Select country"
@@ -52,7 +51,7 @@
         <ui-typography variant="overline" color="secondary">Address</ui-typography>
       </ui-stack>
       <ui-surface variant="elevated" [border]="true">
-        <ui-address-form formControlName="address" [allowedCountries]="allowedCountries()" />
+        <ui-address-form [formField]="form.address" [allowedCountries]="allowedCountries()" />
       </ui-surface>
     </ui-stack>
 
@@ -63,7 +62,7 @@
       </ui-stack>
       <ui-surface variant="elevated" [border]="true">
         <ui-form-field label="Notes" for="notes" class="mb-0">
-          <ui-textarea-field id="notes" formControlName="notes" [rows]="3" />
+          <ui-textarea-field id="notes" [formField]="form.notes" [rows]="3" />
         </ui-form-field>
       </ui-surface>
     </ui-stack>

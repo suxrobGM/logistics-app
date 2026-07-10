@@ -1,5 +1,5 @@
 import { Component, computed, effect, inject, input, model, output, signal } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { isEuCountry, regionAllowedCountries } from "@logistics/shared";
 import {
   Api,
@@ -26,13 +26,36 @@ import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { TenantService } from "@/core/services/tenant.service";
 
+interface UpdateCustomerModel {
+  name: string;
+  email: string;
+  phone: string;
+  status: CustomerStatus;
+  address: Address | null;
+  notes: string;
+  taxId: string;
+  isVatExempt: boolean;
+}
+
+const EMPTY: UpdateCustomerModel = {
+  name: "",
+  email: "",
+  phone: "",
+  status: "active",
+  address: null,
+  notes: "",
+  taxId: "",
+  isVatExempt: false,
+};
+
 @Component({
   selector: "app-customer-edit-dialog",
   templateUrl: "./customer-edit-dialog.html",
   imports: [
     DialogModule,
     ButtonModule,
-    ReactiveFormsModule,
+    FormRoot,
+    FormField,
     AccordionModule,
     UiFormField,
     UiTextField,
@@ -58,108 +81,81 @@ export class CustomerEditDialog {
   readonly saved = output<void>();
   readonly deleted = output<void>();
 
-  protected readonly form: FormGroup<UpdateCustomerForm>;
   protected readonly statusOptions = customerStatusOptions;
-  protected readonly isLoading = signal(false);
+  protected readonly model = signal<UpdateCustomerModel>({ ...EMPTY });
+
+  /**
+   * `[formRoot]` runs `submission.action` on submit — it marks the tree touched first, skips the
+   * action while invalid, and drives `form().submitting()`, so there is no `isLoading` signal and
+   * no `if (!form.valid) return` guard.
+   */
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.name, { message: "Customer name is required." });
+      required(p.status, { message: "Status is required." });
+      // Tax ID is mandatory once the billing country is an EU member (reverse-charge B2B).
+      required(p.taxId, {
+        when: ({ valueOf }) => isEuCountry(valueOf(p.address)?.country),
+        message: "Tax ID is required for EU customers.",
+      });
+    },
+    {
+      submission: {
+        action: async () => {
+          const cust = this.customer();
+          if (!cust?.id) {
+            return undefined;
+          }
+
+          const value = this.model();
+          const command: UpdateCustomerCommand = {
+            id: cust.id,
+            name: value.name,
+            email: value.email || null,
+            phone: value.phone || null,
+            status: value.status,
+            address: value.address!,
+            notes: value.notes || null,
+            taxId: value.taxId || null,
+            isVatExempt: value.isVatExempt,
+          };
+
+          await this.api.invoke(updateCustomer, { id: cust.id, body: command });
+          this.saved.emit();
+          return undefined;
+        },
+      },
+    },
+  );
 
   /** True when the customer's billing country is an EU member — drives the
    *  Tax-ID required hint + validator. */
-  protected readonly customerIsEu = computed(() =>
-    isEuCountry(this.form?.controls.address.value?.country),
-  );
+  protected readonly customerIsEu = computed(() => isEuCountry(this.model().address?.country));
 
   constructor() {
-    this.form = new FormGroup<UpdateCustomerForm>({
-      name: new FormControl<string>("", {
-        validators: Validators.required,
-        nonNullable: true,
-      }),
-      email: new FormControl<string | null>(null),
-      phone: new FormControl<string | null>(null),
-      status: new FormControl<CustomerStatus>("active", {
-        validators: Validators.required,
-        nonNullable: true,
-      }),
-      address: new FormControl<Address | null>(null),
-      notes: new FormControl<string | null>(null),
-      taxId: new FormControl<string | null>(null),
-      isVatExempt: new FormControl<boolean>(false, { nonNullable: true }),
-    });
-
     effect(() => {
       const cust = this.customer();
       if (cust && this.visible()) {
         this.populateForm(cust);
       }
     });
-
-    this.form.controls.address.valueChanges.subscribe(() => this.applyTaxIdValidators());
-  }
-
-  async save(): Promise<void> {
-    if (!this.form.valid) return;
-
-    const cust = this.customer();
-    if (!cust?.id) return;
-
-    const formValue = this.form.getRawValue();
-
-    const command: UpdateCustomerCommand = {
-      id: cust.id,
-      name: formValue.name,
-      email: formValue.email,
-      phone: formValue.phone,
-      status: formValue.status,
-      address: formValue.address!,
-      notes: formValue.notes,
-      taxId: formValue.taxId,
-      isVatExempt: formValue.isVatExempt,
-    };
-
-    this.isLoading.set(true);
-    try {
-      await this.api.invoke(updateCustomer, {
-        id: cust.id,
-        body: command,
-      });
-      this.saved.emit();
-    } finally {
-      this.isLoading.set(false);
-    }
   }
 
   close(): void {
     this.visible.set(false);
   }
 
-  private applyTaxIdValidators(): void {
-    const taxId = this.form.controls.taxId;
-    const required = isEuCountry(this.form.controls.address.value?.country);
-    taxId.setValidators(required ? [Validators.required] : []);
-    taxId.updateValueAndValidity({ emitEvent: false });
-  }
-
   private populateForm(cust: CustomerDto): void {
-    this.form.patchValue({
+    this.model.set({
       name: cust.name ?? "",
-      email: cust.email ?? null,
-      phone: cust.phone ?? null,
+      email: cust.email ?? "",
+      phone: cust.phone ?? "",
       status: cust.status ?? "active",
       address: cust.address ?? null,
-      notes: cust.notes ?? null,
-      taxId: cust.taxId ?? null,
+      notes: cust.notes ?? "",
+      taxId: cust.taxId ?? "",
       isVatExempt: cust.isVatExempt ?? false,
     });
   }
-}
-
-interface UpdateCustomerForm {
-  name: FormControl<string>;
-  email: FormControl<string | null>;
-  phone: FormControl<string | null>;
-  status: FormControl<CustomerStatus>;
-  address: FormControl<Address | null>;
-  notes: FormControl<string | null>;
-  taxId: FormControl<string | null>;
-  isVatExempt: FormControl<boolean>;
 }

@@ -49,20 +49,20 @@
     <!-- Review Form -->
     <div>
       <p-card header="Your Review">
-        <form [formGroup]="form" (ngSubmit)="submitReview()">
+        <form [formRoot]="form">
 
           @if (report()!.hasDefects) {
             <ui-form-field label="All Defects Corrected?" class="mb-4">
               <div class="flex items-center gap-2">
-                <ui-toggle-field formControlName="defectsCorrected" />
-                <span class="text-sm">{{ form.value.defectsCorrected ? "Yes" : "No" }}</span>
+                <ui-toggle-field [formField]="form.defectsCorrected" />
+                <span class="text-sm">{{ model().defectsCorrected ? "Yes" : "No" }}</span>
               </div>
             </ui-form-field>
           }
 
           <ui-form-field label="Mechanic Notes" for="mechanicNotes">
             <ui-textarea-field
-              formControlName="mechanicNotes"
+              [formField]="form.mechanicNotes"
               id="mechanicNotes"
               [rows]="4"
               placeholder="Enter any notes about repairs or observations..."
@@ -75,8 +75,8 @@
               icon="pi pi-check"
               label="Submit Review"
               class="w-full"
-              [loading]="isSaving()"
-              [disabled]="isSaving()"
+              [loading]="form().submitting()"
+              [disabled]="form().submitting()"
             />
             <p-button
               type="button"
@@ -85,7 +85,7 @@
               severity="secondary"
               [outlined]="true"
               class="w-full"
-              [disabled]="isSaving()"
+              [disabled]="form().submitting()"
               (click)="cancel()"
             />
           </div>

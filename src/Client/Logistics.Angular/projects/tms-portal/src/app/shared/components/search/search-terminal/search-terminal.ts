@@ -1,6 +1,7 @@
-import { Component, inject, input, model, output, signal } from "@angular/core";
+import { Component, ElementRef, inject, input, model, output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl } from "@angular/forms/signals";
+import { focusFirstControl } from "@logistics/shared";
 import { Api, getTerminals, type TerminalDto } from "@logistics/shared/api";
 import { AutoCompleteModule } from "primeng/autocomplete";
 
@@ -33,6 +34,13 @@ export class SearchTerminal implements FormValueControl<TerminalDto | null> {
   public readonly touch = output<void>();
 
   public readonly placeholder = model<string>("Type a terminal code or name");
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
+  public focus(options?: FocusOptions): void {
+    focusFirstControl(this.host.nativeElement, options);
+  }
 
   protected async searchTerminal(event: { query: string }): Promise<void> {
     const q = event.query?.trim() ?? "";

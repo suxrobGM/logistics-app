@@ -5,7 +5,7 @@
   [style]="{ width: '450px' }"
   (onHide)="close()"
 >
-  @if (isLoading()) {
+  @if (form().submitting()) {
     <ui-stack align="center" justify="center" class="py-4">
       <p-progress-spinner />
     </ui-stack>
@@ -14,24 +14,19 @@
       Send an email invitation to join your company as an employee.
     </p>
 
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <ui-form-field
-        label="Email Address"
-        for="email"
-        [required]="true"
-        [control]="form.controls.email"
-      >
+    <form [formRoot]="form">
+      <ui-form-field label="Email Address" for="email" [required]="true">
         <ui-text-field
           id="email"
-          formControlName="email"
+          [formField]="form.email"
           type="email"
           placeholder="employee@example.com"
         />
       </ui-form-field>
 
-      <ui-form-field label="Role" for="role" [required]="true" [control]="form.controls.role">
+      <ui-form-field label="Role" for="role" [required]="true">
         <ui-select-field
-          formControlName="role"
+          [formField]="form.role"
           id="role"
           appendTo="body"
           [options]="roles()"
@@ -48,7 +43,7 @@
       >
         <ui-textarea-field
           id="personalMessage"
-          formControlName="personalMessage"
+          [formField]="form.personalMessage"
           [rows]="3"
           placeholder="Add a personal note to the invitation email..."
         />
@@ -56,12 +51,7 @@
 
       <ui-stack direction="row" justify="end" gap="2">
         <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />
-        <p-button
-          type="submit"
-          icon="pi pi-send"
-          label="Send Invitation"
-          [disabled]="isLoading()"
-        />
+        <p-button type="submit" icon="pi pi-send" label="Send Invitation" />
       </ui-stack>
     </form>
   }

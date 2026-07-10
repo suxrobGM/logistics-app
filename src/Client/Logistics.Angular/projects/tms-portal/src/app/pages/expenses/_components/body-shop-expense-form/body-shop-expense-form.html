@@ -1,13 +1,12 @@
-<form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4 pt-4">
+<form [formRoot]="form" class="space-y-4 pt-4">
   <ui-grid container spacing="4">
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Amount" for="bodyshop-amount" [required]="true">
         <ui-number-field
           id="bodyshop-amount"
-          formControlName="amount"
+          [formField]="form.amount"
           mode="currency"
           currency="USD"
-          [min]="0"
           [fluid]="true"
         />
       </ui-form-field>
@@ -17,7 +16,7 @@
       <ui-form-field label="Truck" for="bodyshop-truck" [required]="true">
         <ui-select-field
           id="bodyshop-truck"
-          formControlName="truckId"
+          [formField]="form.truckId"
           [options]="trucks()"
           optionLabel="number"
           optionValue="id"
@@ -29,7 +28,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Body Shop Name" for="bodyshop-vendor">
-        <ui-text-field id="bodyshop-vendor" formControlName="vendorName" />
+        <ui-text-field id="bodyshop-vendor" [formField]="form.vendorName" />
       </ui-form-field>
     </ui-grid>
 
@@ -37,7 +36,7 @@
       <ui-form-field label="Expense Date" for="bodyshop-date" [required]="true">
         <ui-date-field
           id="bodyshop-date"
-          formControlName="expenseDate"
+          [formField]="form.expenseDate"
           [showIcon]="true"
           [fluid]="true"
         />
@@ -46,13 +45,13 @@
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Shop Address" for="bodyshop-address">
-        <ui-text-field id="bodyshop-address" formControlName="vendorAddress" />
+        <ui-text-field id="bodyshop-address" [formField]="form.vendorAddress" />
       </ui-form-field>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Shop Phone" for="bodyshop-phone">
-        <ui-text-field id="bodyshop-phone" formControlName="vendorPhone" />
+        <ui-text-field id="bodyshop-phone" [formField]="form.vendorPhone" />
       </ui-form-field>
     </ui-grid>
   </ui-grid>
@@ -60,7 +59,7 @@
   <ui-form-field label="Repair Description" for="bodyshop-description">
     <ui-textarea-field
       id="bodyshop-description"
-      formControlName="repairDescription"
+      [formField]="form.repairDescription"
       [rows]="3"
     />
   </ui-form-field>
@@ -70,7 +69,7 @@
       <ui-form-field label="Estimated Completion" for="bodyshop-est-date">
         <ui-date-field
           id="bodyshop-est-date"
-          formControlName="estimatedCompletionDate"
+          [formField]="form.estimatedCompletionDate"
           [showIcon]="true"
           [fluid]="true"
         />
@@ -81,7 +80,7 @@
       <ui-form-field label="Actual Completion" for="bodyshop-actual-date">
         <ui-date-field
           id="bodyshop-actual-date"
-          formControlName="actualCompletionDate"
+          [formField]="form.actualCompletionDate"
           [showIcon]="true"
           [fluid]="true"
         />
@@ -92,7 +91,7 @@
   <ui-form-field label="Notes" for="bodyshop-notes">
     <ui-textarea-field
       id="bodyshop-notes"
-      formControlName="notes"
+      [formField]="form.notes"
       [rows]="3"
     />
   </ui-form-field>
@@ -112,7 +111,7 @@
       type="submit"
       [label]="mode() === 'edit' ? 'Save Changes' : 'Create Expense'"
       icon="pi pi-save"
-      [loading]="isSaving()"
+      [loading]="form().submitting()"
     />
   </ui-stack>
 </form>

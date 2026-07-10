@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, input, signal, type OnInit } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { FormsModule } from "@angular/forms";
+import { form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { Router, RouterModule } from "@angular/router";
 import {
   Api,
@@ -27,6 +28,11 @@ import { PageHeader, UiFormField } from "@/shared/components";
 import { DateUtils, PredefinedDateRanges } from "@/shared/utils";
 import { PayrollLineItemsTable, PayrollPaySummary } from "../../components";
 
+interface PayrollFormValue {
+  employee: EmployeeDto | null;
+  dateRange: Date[];
+}
+
 @Component({
   selector: "app-payroll-invoice-edit",
   templateUrl: "./payroll-invoice-edit.html",
@@ -38,7 +44,9 @@ import { PayrollLineItemsTable, PayrollPaySummary } from "../../components";
     RouterModule,
     UiAutocompleteField,
     ProgressSpinnerModule,
-    ReactiveFormsModule,
+    FormsModule,
+    FormRoot,
+    FormField,
     ButtonModule,
     DatePicker,
     DividerModule,
@@ -56,36 +64,72 @@ export class PayrollInvoiceEdit implements OnInit {
   private readonly router = inject(Router);
 
   protected readonly todayDate = new Date();
-  protected readonly form: FormGroup<PayrollForm>;
 
   protected readonly invoiceId = input.required<string>();
   protected readonly isLoading = signal(false);
-  protected readonly isSaving = signal(false);
   protected readonly suggestedEmployees = signal<EmployeeDto[]>([]);
   protected readonly selectedEmployee = signal<EmployeeDto | null>(null);
   protected readonly invoice = signal<InvoiceDto | null>(null);
   protected readonly lineItems = signal<InvoiceLineItemDto[]>([]);
 
-  constructor() {
-    const lastWeek = [
-      PredefinedDateRanges.getLastWeek().startDate,
-      PredefinedDateRanges.getLastWeek().endDate,
-    ];
+  private readonly lastWeek = PredefinedDateRanges.getLastWeek();
 
-    this.form = new FormGroup<PayrollForm>({
-      employee: new FormControl(null, { validators: Validators.required }),
-      dateRange: new FormControl(lastWeek, { validators: Validators.required, nonNullable: true }),
-    });
-  }
+  protected readonly model = signal<PayrollFormValue>({
+    employee: null,
+    dateRange: [this.lastWeek.startDate, this.lastWeek.endDate],
+  });
+
+  /**
+   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips
+   * the action while invalid, and drives `form().submitting()` — so there is no `isSaving` signal
+   * and no `if (!form.valid) return` guard. `isLoading` is kept because it tracks the initial fetch.
+   */
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.employee, { message: "Employee is required." });
+      required(p.dateRange, { message: "Pay period is required." });
+    },
+    {
+      submission: {
+        action: async () => {
+          const value = this.model();
+          const command: UpdatePayrollInvoiceCommand = {
+            id: this.invoiceId(),
+            employeeId: value.employee!.id ?? undefined,
+            periodStart: value.dateRange[0].toISOString(),
+            periodEnd: value.dateRange[1].toISOString(),
+          };
+
+          try {
+            await this.api.invoke(updatePayrollInvoice, {
+              id: this.invoiceId(),
+              body: command,
+            });
+          } catch {
+            this.toastService.showError("Failed to update payroll");
+            return undefined;
+          }
+          this.toastService.showSuccess("Payroll data has been updated successfully");
+          this.router.navigateByUrl("/payroll/invoices");
+          return undefined;
+        },
+      },
+    },
+  );
 
   ngOnInit(): void {
     this.fetchPayroll();
   }
 
+  onDateRangeChange(dates: Date[]): void {
+    this.model.update((v) => ({ ...v, dateRange: dates }));
+  }
+
   tryCalculatePayroll(): void {
     const employeeId = this.selectedEmployee()?.id;
 
-    if (!DateUtils.isValidRange(this.form.value.dateRange) || !employeeId) {
+    if (!DateUtils.isValidRange(this.model().dateRange) || !employeeId) {
       return;
     }
 
@@ -108,26 +152,19 @@ export class PayrollInvoiceEdit implements OnInit {
   }
 
   async fetchPreviewPayrollInvoice(employeeId: string): Promise<void> {
-    if (!this.form.valid) {
+    if (!this.form().valid()) {
       return;
     }
 
+    const dateRange = this.model().dateRange;
     const result = await this.api.invoke(previewPayrollInvoice, {
       EmployeeId: employeeId,
-      PeriodStart: this.form.value.dateRange![0].toISOString(),
-      PeriodEnd: this.form.value.dateRange![1].toISOString(),
+      PeriodStart: dateRange[0].toISOString(),
+      PeriodEnd: dateRange[1].toISOString(),
     });
     if (result) {
       this.invoice.set(result as InvoiceDto);
     }
-  }
-
-  submit(): void {
-    if (!this.form.valid) {
-      return;
-    }
-
-    this.updatePayroll();
   }
 
   getSalaryTypeDesc(salaryType?: SalaryType): string {
@@ -149,10 +186,11 @@ export class PayrollInvoiceEdit implements OnInit {
     try {
       const invoice = await this.api.invoke(getInvoiceById, { id: invoiceId });
       if (invoice) {
-        this.form.patchValue({
-          employee: invoice.employee,
+        this.model.update((v) => ({
+          ...v,
+          employee: invoice.employee ?? null,
           dateRange: [new Date(invoice.periodStart!), new Date(invoice.periodEnd!)],
-        });
+        }));
 
         this.invoice.set(invoice);
         this.selectedEmployee.set(invoice.employee!);
@@ -162,33 +200,4 @@ export class PayrollInvoiceEdit implements OnInit {
       this.isLoading.set(false);
     }
   }
-
-  private async updatePayroll(): Promise<void> {
-    this.isSaving.set(true);
-
-    const command: UpdatePayrollInvoiceCommand = {
-      id: this.invoiceId()!,
-      employeeId: this.form.value.employee!.id ?? undefined,
-      periodStart: this.form.value.dateRange![0].toISOString(),
-      periodEnd: this.form.value.dateRange![1].toISOString(),
-    };
-
-    try {
-      await this.api.invoke(updatePayrollInvoice, {
-        id: this.invoiceId()!,
-        body: command,
-      });
-      this.toastService.showSuccess("Payroll data has been updated successfully");
-      this.router.navigateByUrl("/payroll/invoices");
-    } catch {
-      this.toastService.showError("Failed to update payroll");
-    } finally {
-      this.isSaving.set(false);
-    }
-  }
-}
-
-interface PayrollForm {
-  employee: FormControl<EmployeeDto | null>;
-  dateRange: FormControl<Date[]>;
 }

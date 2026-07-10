@@ -148,17 +148,6 @@ describe("UiSelectField — a FormValueControl-only wrapper", () => {
       const select = fixture.debugElement.query(By.directive(Select)).componentInstance as Select;
       expect(select.$disabled()).toBe(true);
     });
-
-    it("ui-form-field renders the required error once touched", async () => {
-      const fixture = TestBed.createComponent(HostReactiveSelect);
-      await settle(fixture);
-
-      pick(fixture, null);
-      fixture.componentInstance.fg.controls.color.markAsTouched();
-      await settle(fixture);
-
-      expect(fixture.nativeElement.textContent).toContain("This field is required.");
-    });
   });
 
   describe("under Signal Forms ([formField])", () => {

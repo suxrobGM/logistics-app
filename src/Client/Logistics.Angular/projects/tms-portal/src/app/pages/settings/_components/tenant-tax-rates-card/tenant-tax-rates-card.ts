@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal, type OnInit } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { disabled, form, FormField, FormRoot, max, min, required } from "@angular/forms/signals";
 import {
   Api,
   createTenantTaxRate,
@@ -31,19 +31,28 @@ import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
 
-interface TaxRateForm {
-  jurisdictionKey: FormControl<string | null>;
-  ratePercent: FormControl<number | null>;
-  description: FormControl<string | null>;
-  effectiveFrom: FormControl<Date | null>;
-  effectiveTo: FormControl<Date | null>;
+interface TaxRateModel {
+  jurisdictionKey: string | null;
+  ratePercent: number | null;
+  description: string;
+  effectiveFrom: Date | null;
+  effectiveTo: Date | null;
 }
+
+const EMPTY: TaxRateModel = {
+  jurisdictionKey: null,
+  ratePercent: null,
+  description: "",
+  effectiveFrom: null,
+  effectiveTo: null,
+};
 
 @Component({
   selector: "app-tenant-tax-rates-card",
   templateUrl: "./tenant-tax-rates-card.html",
   imports: [
-    ReactiveFormsModule,
+    FormRoot,
+    FormField,
     CardModule,
     DialogModule,
     ButtonModule,
@@ -66,7 +75,6 @@ export class TenantTaxRatesCard implements OnInit {
   private readonly toastService = inject(ToastService);
 
   protected readonly isLoading = signal(false);
-  protected readonly isSaving = signal(false);
   protected readonly rates = signal<TenantTaxRateDto[]>([]);
   protected readonly jurisdictions = signal<TaxJurisdictionInfoDto[]>([]);
   protected readonly editingId = signal<string | null>(null);
@@ -82,15 +90,63 @@ export class TenantTaxRatesCard implements OnInit {
     })),
   );
 
-  protected readonly form = new FormGroup<TaxRateForm>({
-    jurisdictionKey: new FormControl<string | null>(null, { validators: Validators.required }),
-    ratePercent: new FormControl<number | null>(null, {
-      validators: [Validators.required, Validators.min(0), Validators.max(100)],
-    }),
-    description: new FormControl<string | null>(null),
-    effectiveFrom: new FormControl<Date | null>(null),
-    effectiveTo: new FormControl<Date | null>(null),
-  });
+  protected readonly model = signal<TaxRateModel>({ ...EMPTY });
+
+  /**
+   * `[formRoot]` runs `submission.action` on submit: it marks the whole tree touched first, skips
+   * the action while invalid, and drives `form().submitting()` — so there is no `isSaving` signal
+   * and no `if (form.invalid) return` guard. The jurisdiction is disabled while editing (editing it
+   * would create a different rate row), driven declaratively off `editingId()`.
+   */
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.jurisdictionKey, { message: "Jurisdiction is required." });
+      required(p.ratePercent, { message: "Rate is required." });
+      min(p.ratePercent, 0, { message: "Rate must be at least 0." });
+      max(p.ratePercent, 100, { message: "Rate cannot exceed 100." });
+      disabled(p.jurisdictionKey, { when: () => this.editingId() !== null });
+    },
+    {
+      submission: {
+        action: async () => {
+          const value = this.model();
+          const editing = this.editingId();
+          try {
+            if (editing) {
+              const command: UpdateTenantTaxRateCommand = {
+                ratePercent: value.ratePercent!,
+                description: value.description || null,
+                effectiveFrom: value.effectiveFrom?.toISOString() ?? null,
+                effectiveTo: value.effectiveTo?.toISOString() ?? null,
+              };
+
+              await this.api.invoke(updateTenantTaxRate, { id: editing, body: command });
+              this.toastService.showSuccess("Tax rate updated");
+            } else {
+              const [country, region] = (value.jurisdictionKey ?? "").split(":");
+              const command: CreateTenantTaxRateCommand = {
+                countryCode: country,
+                region: region || null,
+                ratePercent: value.ratePercent!,
+                description: value.description || null,
+                effectiveFrom: value.effectiveFrom?.toISOString() ?? null,
+                effectiveTo: value.effectiveTo?.toISOString() ?? null,
+              };
+
+              await this.api.invoke(createTenantTaxRate, { body: command });
+              this.toastService.showSuccess("Tax rate created");
+            }
+            this.closeDialog();
+            await this.loadRates();
+          } catch {
+            this.toastService.showError("Failed to save tax rate");
+          }
+          return undefined;
+        },
+      },
+    },
+  );
 
   ngOnInit(): void {
     this.loadAll();
@@ -98,31 +154,25 @@ export class TenantTaxRatesCard implements OnInit {
 
   protected openCreate(): void {
     this.editingId.set(null);
-    this.form.reset({
-      jurisdictionKey: null,
-      ratePercent: null,
-      description: null,
-      effectiveFrom: null,
-      effectiveTo: null,
-    });
+    this.form().reset({ ...EMPTY });
     this.dialogOpen.set(true);
   }
 
   protected openEdit(rate: TenantTaxRateDto): void {
     if (!rate.id) return;
     this.editingId.set(rate.id);
-    this.form.reset({
+    this.form().reset({
       jurisdictionKey: this.jurisdictionKey({
         countryCode: rate.jurisdiction?.countryCode ?? null,
         region: rate.jurisdiction?.region ?? null,
       } as TaxJurisdictionInfoDto),
       ratePercent: rate.ratePercent ?? null,
-      description: rate.description ?? null,
+      description: rate.description ?? "",
       effectiveFrom: rate.effectiveFrom ? new Date(rate.effectiveFrom) : null,
       effectiveTo: rate.effectiveTo ? new Date(rate.effectiveTo) : null,
     });
-    // Editing the jurisdiction is unsupported (would create a different rate row).
-    this.form.controls.jurisdictionKey.disable();
+    // Editing the jurisdiction is unsupported (would create a different rate row); the schema's
+    // `disabled(p.jurisdictionKey, {when: editingId})` rule disables it now that `editingId` is set.
     this.dialogOpen.set(true);
   }
 
@@ -130,55 +180,13 @@ export class TenantTaxRatesCard implements OnInit {
   protected onJurisdictionChange(key: string | null): void {
     if (!key || this.editingId()) return;
     const opt = this.jurisdictionOptions().find((o) => o.value === key);
-    if (opt?.defaultRate != null && this.form.controls.ratePercent.value == null) {
-      this.form.controls.ratePercent.setValue(opt.defaultRate);
+    if (opt?.defaultRate != null && this.model().ratePercent == null) {
+      this.model.update((v) => ({ ...v, ratePercent: opt.defaultRate }));
     }
   }
 
   protected closeDialog(): void {
     this.dialogOpen.set(false);
-    this.form.controls.jurisdictionKey.enable();
-  }
-
-  protected async save(): Promise<void> {
-    if (this.form.invalid) return;
-
-    const value = this.form.getRawValue();
-    const editing = this.editingId();
-
-    this.isSaving.set(true);
-    try {
-      if (editing) {
-        const command: UpdateTenantTaxRateCommand = {
-          ratePercent: value.ratePercent!,
-          description: value.description || null,
-          effectiveFrom: value.effectiveFrom?.toISOString() ?? null,
-          effectiveTo: value.effectiveTo?.toISOString() ?? null,
-        };
-
-        await this.api.invoke(updateTenantTaxRate, { id: editing, body: command });
-        this.toastService.showSuccess("Tax rate updated");
-      } else {
-        const [country, region] = (value.jurisdictionKey ?? "").split(":");
-        const command: CreateTenantTaxRateCommand = {
-          countryCode: country,
-          region: region || null,
-          ratePercent: value.ratePercent!,
-          description: value.description || null,
-          effectiveFrom: value.effectiveFrom?.toISOString() ?? null,
-          effectiveTo: value.effectiveTo?.toISOString() ?? null,
-        };
-
-        await this.api.invoke(createTenantTaxRate, { body: command });
-        this.toastService.showSuccess("Tax rate created");
-      }
-      this.closeDialog();
-      await this.loadRates();
-    } catch {
-      this.toastService.showError("Failed to save tax rate");
-    } finally {
-      this.isSaving.set(false);
-    }
   }
 
   protected askDelete(rate: TenantTaxRateDto): void {

@@ -1,9 +1,9 @@
-<form [formGroup]="form()" class="py-4">
+<div class="py-4">
 
   <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
     <ui-form-field label="Date & Time" for="accidentDateTime" [required]="true">
       <ui-date-field
-        formControlName="accidentDateTime"
+        [formField]="field().accidentDateTime"
         id="accidentDateTime"
         [showTime]="true"
         [showIcon]="true"
@@ -14,7 +14,7 @@
 
     <ui-form-field label="Location" for="location" [required]="true">
       <app-address-autocomplete
-        formControlName="location"
+        [formField]="field().location"
         placeholder="Type address..."
         [forceSelection]="true"
       />
@@ -23,12 +23,12 @@
 
   <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
     <ui-form-field label="Truck" for="truck" [required]="true">
-      <app-search-truck formControlName="truck" />
+      <app-search-truck [formField]="field().truck" />
     </ui-form-field>
 
     <ui-form-field label="Driver" for="driver" [required]="true">
       <app-search-employee
-        formControlName="driver"
+        [formField]="field().driver"
         [role]="'tenant.driver'"
         placeholder="Search for driver..."
       />
@@ -38,7 +38,7 @@
   <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
     <ui-form-field label="Accident Type" for="type" [required]="true">
       <ui-select-field
-        formControlName="type"
+        [formField]="field().type"
         id="type"
         [options]="typeOptions"
         optionLabel="label"
@@ -49,7 +49,7 @@
 
     <ui-form-field label="Severity" for="severity" [required]="true">
       <ui-select-field
-        formControlName="severity"
+        [formField]="field().severity"
         id="severity"
         [options]="severityOptions"
         optionLabel="label"
@@ -61,7 +61,7 @@
 
   <ui-form-field label="Description" for="description" [required]="true" class="mt-4">
     <ui-textarea-field
-      formControlName="description"
+      [formField]="field().description"
       id="description"
       [rows]="4"
       placeholder="Describe what happened..."
@@ -71,7 +71,7 @@
   <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
     <ui-form-field label="Weather Conditions" for="weatherConditions">
       <ui-text-field
-        formControlName="weatherConditions"
+        [formField]="field().weatherConditions"
         id="weatherConditions"
         placeholder="e.g., Clear, Rainy, Foggy"
       />
@@ -79,10 +79,10 @@
 
     <ui-form-field label="Road Conditions" for="roadConditions">
       <ui-text-field
-        formControlName="roadConditions"
+        [formField]="field().roadConditions"
         id="roadConditions"
         placeholder="e.g., Dry, Wet, Icy"
       />
     </ui-form-field>
   </div>
-</form>
+</div>

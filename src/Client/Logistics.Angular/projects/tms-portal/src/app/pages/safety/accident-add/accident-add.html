@@ -17,7 +17,7 @@
         <!-- Step 1: Incident Details -->
         <p-step-panel [value]="1">
           <ng-template #content>
-            <app-accident-incident-form [form]="step1Form" />
+            <app-accident-incident-form [field]="step1Form" />
 
             <div class="flex justify-end gap-2 py-4">
               <p-button
@@ -33,7 +33,7 @@
         <!-- Step 2: Injuries & Damage -->
         <p-step-panel [value]="2">
           <ng-template #content>
-            <app-accident-injuries-damage-form [form]="step2Form" />
+            <app-accident-injuries-damage-form [field]="step2Form" />
 
             <div class="flex justify-between py-4">
               <p-button

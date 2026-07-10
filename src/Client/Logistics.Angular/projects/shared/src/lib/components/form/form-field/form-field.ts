@@ -1,24 +1,18 @@
 import { Component, computed, contentChild, input } from "@angular/core";
-import { toObservable, toSignal } from "@angular/core/rxjs-interop";
-import { AbstractControl, NgControl } from "@angular/forms";
-import { FORM_FIELD, type Field } from "@angular/forms/signals";
-import { of, switchMap } from "rxjs";
+import { FORM_FIELD, type ReadonlyFieldState } from "@angular/forms/signals";
 
 /**
- * A single validation error, normalized across Signal Forms and legacy Reactive Forms.
+ * A single validation error.
  *
- * Signal Forms already speaks this shape (`ValidationError`). Reactive Forms' keyed
- * `ValidationErrors` object is flattened into it by `legacyErrors()` below.
- *
- * Deliberately has NO index signature — `ValidationError` has none either, and adding one here
- * would make every Signal Forms error un-assignable. Payload props are read via `payloadOf()`.
+ * Deliberately has NO index signature — Signal Forms' `ValidationError` has none either, and adding
+ * one here would make every error un-assignable. Payload props are read via `payloadOf()`.
  */
 export interface FieldError {
   readonly kind: string;
   readonly message?: string;
 }
 
-/** Reads an error's validator-specific payload (e.g. `minLength`, `requiredLength`). */
+/** Reads an error's validator-specific payload (e.g. `minLength`). */
 function payloadOf(error: FieldError): Record<string, unknown> {
   return error as unknown as Record<string, unknown>;
 }
@@ -26,9 +20,9 @@ function payloadOf(error: FieldError): Record<string, unknown> {
 /**
  * Fallback copy for errors that carry no `message`.
  *
- * Signal Forms' built-in error `kind`s are camelCase (`minLength`), while Reactive Forms uses
- * lowercase keys (`minlength`) and a different payload prop (`requiredLength` vs `minLength`).
- * Both spellings are handled so this component works during the reactive -> signal migration.
+ * Prefer `{message: '...'}` on the validator itself; this only covers rules declared without one.
+ * Note Signal Forms' built-in error `kind`s are camelCase (`minLength`) and their payload prop is
+ * `minLength`, not reactive forms' `requiredLength`.
  *
  * @see signal-forms-v22-api-probe.spec.ts, claim J
  */
@@ -53,14 +47,12 @@ function describeError(error: FieldError): string {
       return "This field is required.";
     case "email":
       return "Enter a valid email address.";
-    case "minLength":
-    case "minlength": {
-      const n = num("minLength", "requiredLength");
+    case "minLength": {
+      const n = num("minLength");
       return n === undefined ? "Value is too short." : `Minimum length is ${n} characters.`;
     }
-    case "maxLength":
-    case "maxlength": {
-      const n = num("maxLength", "requiredLength");
+    case "maxLength": {
+      const n = num("maxLength");
       return n === undefined ? "Value is too long." : `Maximum length is ${n} characters.`;
     }
     case "min":
@@ -80,20 +72,6 @@ function describeError(error: FieldError): string {
   }
 }
 
-/** Flattens Reactive Forms' `{ [key]: payload }` errors into the normalized array shape. */
-function legacyErrors(control: AbstractControl | null): readonly FieldError[] {
-  const errors = control?.errors;
-  if (!errors) {
-    return [];
-  }
-  return Object.entries(errors).map(
-    ([kind, payload]) =>
-      (payload !== null && typeof payload === "object"
-        ? { ...(payload as object), kind }
-        : { kind, value: payload }) as FieldError,
-  );
-}
-
 @Component({
   selector: "ui-form-field",
   templateUrl: "./form-field.html",
@@ -105,61 +83,32 @@ export class UiFormField {
   public readonly hint = input<string | null>(null);
 
   /**
-   * Optional explicit field. When omitted, the field auto-resolves from the projected
-   * `[formField]` directive, so inline validation errors render without any per-field wiring.
+   * Optional explicit field. When omitted, the field auto-resolves from the projected `[formField]`
+   * directive, so inline validation errors render without any per-field wiring.
+   *
+   * Bind it only when the control cannot carry `[formField]` itself — e.g. a raw PrimeNG component
+   * driven by `ngModel` because it needs a projected `<ng-template>`.
+   *
+   * Typed as a read-only field accessor rather than `Field<unknown>` so any `FieldTree<T>` is
+   * assignable: `FieldState<T>.value` is a `WritableSignal<T>` (invariant), while
+   * `ReadonlyFieldState<T>.value` is a `Signal<T>` (covariant).
    */
-  public readonly field = input<Field<unknown> | null>(null);
+  public readonly field = input<(() => ReadonlyFieldState<unknown>) | null>(null);
   private readonly projectedField = contentChild(FORM_FIELD, { descendants: true });
 
-  private readonly fieldState = computed(() => {
+  private readonly fieldState = computed<ReadonlyFieldState<unknown> | null>(() => {
     const explicit = this.field();
-    if (explicit) {
-      return explicit();
-    }
-    // A projected `[formField]` also provides `NgControl` (as `InteropNgControl`), so this must be
-    // checked BEFORE the legacy branch below — it is the richer of the two (ordered errors that
-    // carry their own `message`).
-    return this.projectedField()?.state() ?? null;
+    return explicit ? explicit() : (this.projectedField()?.state() ?? null);
   });
-
-  // ---------------------------------------------------------------------------------------------
-  // Legacy Reactive Forms support. Deleted once the last `formControlName` is gone (Phase 4 exit).
-  // ---------------------------------------------------------------------------------------------
-
-  /** @deprecated Reactive-forms only. Bind nothing; `[formField]` auto-resolves. */
-  public readonly control = input<AbstractControl | null>(null);
-  private readonly projectedControl = contentChild(NgControl, { descendants: true });
-
-  private readonly legacyControl = computed<AbstractControl | null>(() =>
-    this.fieldState() ? null : (this.control() ?? this.projectedControl()?.control ?? null),
-  );
-
-  // Reactive-forms control state is not signal-based, so re-emit on every value/status/touched
-  // change to keep the computeds below live. (`InteropNgControl` has no `events`, hence `of(null)`.)
-  private readonly legacyState = toSignal(
-    toObservable(this.legacyControl).pipe(switchMap((c) => c?.events ?? of(null))),
-  );
-
-  // ---------------------------------------------------------------------------------------------
 
   protected readonly isFieldInvalid = computed(() => {
     const state = this.fieldState();
-    if (state) {
-      return state.invalid() && (state.touched() || state.dirty());
-    }
-    this.legacyState(); // reactive trigger
-    const control = this.legacyControl();
-    return !!control && control.invalid && (control.touched || control.dirty);
+    return !!state && state.invalid() && (state.touched() || state.dirty());
   });
 
-  protected readonly errors = computed<readonly FieldError[]>(() => {
-    const state = this.fieldState();
-    if (state) {
-      return state.errors();
-    }
-    this.legacyState(); // reactive trigger
-    return legacyErrors(this.legacyControl());
-  });
+  protected readonly errors = computed<readonly FieldError[]>(
+    () => this.fieldState()?.errors() ?? [],
+  );
 
   protected describe(error: FieldError): string {
     return describeError(error);

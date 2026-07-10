@@ -1,17 +1,17 @@
 <ui-stack>
-  <form [formGroup]="form" (ngSubmit)="goToNextStep()">
+  <form [formRoot]="form">
 
     <ui-form-field label="Trip Name" for="tripName" [required]="true">
       <ui-text-field
         id="tripName"
-        formControlName="tripName"
+        [formField]="form.tripName"
         type="text"
         placeholder="Trip name"
       />
     </ui-form-field>
 
     <ui-form-field label="Assigned Truck" for="truck">
-      <app-search-truck formControlName="truck" />
+      <app-search-truck [formField]="form.truck" />
     </ui-form-field>
 
     <ui-stack direction="row" justify="between" class="pt-6">

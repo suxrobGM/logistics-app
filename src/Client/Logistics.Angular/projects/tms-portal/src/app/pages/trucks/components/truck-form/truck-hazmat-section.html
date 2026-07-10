@@ -1,62 +1,58 @@
-<ng-container [formGroup]="form()">
-  <p-fieldset
-    legend="Hazmat & ADR"
-    [toggleable]="true"
-    [collapsed]="
-      !form().controls['isHazmatPlacarded'].value && !form().controls['isAdrCertified'].value
-    "
+<p-fieldset
+  legend="Hazmat & ADR"
+  [toggleable]="true"
+  [collapsed]="!field().isHazmatPlacarded().value() && !field().isAdrCertified().value()"
+>
+  <ui-form-field
+    label="Hazmat placarded (US)"
+    for="isHazmatPlacarded"
+    hint="Required for US Hazmat transport"
   >
+    <ui-checkbox-field inputId="isHazmatPlacarded" [formField]="field().isHazmatPlacarded" />
+  </ui-form-field>
+
+  <ui-form-field label="ADR certified (EU)" for="isAdrCertified">
+    <ui-checkbox-field inputId="isAdrCertified" [formField]="field().isAdrCertified" />
+  </ui-form-field>
+
+  @if (field().isAdrCertified().value()) {
+    <ui-form-field label="ADR certificate expiry" for="adrCertExpiresAt">
+      <ui-date-field
+        id="adrCertExpiresAt"
+        [formField]="field().adrCertExpiresAt"
+        dateFormat="yy-mm-dd"
+        appendTo="body"
+      />
+    </ui-form-field>
+
     <ui-form-field
-      label="Hazmat placarded (US)"
-      for="isHazmatPlacarded"
-      hint="Required for US Hazmat transport"
+      label="Allowed hazmat classes"
+      for="adrAllowedClasses"
+      hint="Classes this truck is certified to carry"
     >
-      <ui-checkbox-field inputId="isHazmatPlacarded" formControlName="isHazmatPlacarded" />
+      <ui-multiselect-field
+        id="adrAllowedClasses"
+        [formField]="field().adrAllowedClasses"
+        [options]="hazmatClassOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select classes"
+        appendTo="body"
+      />
     </ui-form-field>
 
-    <ui-form-field label="ADR certified (EU)" for="isAdrCertified">
-      <ui-checkbox-field inputId="isAdrCertified" formControlName="isAdrCertified" />
+    <ui-form-field
+      label="Orange plate number"
+      for="orangePlateNumber"
+      hint="ADR orange plate identifier (e.g., 30/1203)"
+      class="mb-0"
+    >
+      <ui-text-field
+        id="orangePlateNumber"
+        [formField]="field().orangePlateNumber"
+        type="text"
+        [maxlength]="8"
+      />
     </ui-form-field>
-
-    @if (form().controls["isAdrCertified"].value) {
-      <ui-form-field label="ADR certificate expiry" for="adrCertExpiresAt">
-        <ui-date-field
-          id="adrCertExpiresAt"
-          formControlName="adrCertExpiresAt"
-          dateFormat="yy-mm-dd"
-          appendTo="body"
-        />
-      </ui-form-field>
-
-      <ui-form-field
-        label="Allowed hazmat classes"
-        for="adrAllowedClasses"
-        hint="Classes this truck is certified to carry"
-      >
-        <ui-multiselect-field
-          id="adrAllowedClasses"
-          formControlName="adrAllowedClasses"
-          [options]="hazmatClassOptions"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select classes"
-          appendTo="body"
-        />
-      </ui-form-field>
-
-      <ui-form-field
-        label="Orange plate number"
-        for="orangePlateNumber"
-        hint="ADR orange plate identifier (e.g., 30/1203)"
-        class="mb-0"
-      >
-        <ui-text-field
-          id="orangePlateNumber"
-          formControlName="orangePlateNumber"
-          type="text"
-          [maxlength]="8"
-        />
-      </ui-form-field>
-    }
-  </p-fieldset>
-</ng-container>
+  }
+</p-fieldset>

@@ -27,31 +27,22 @@
       </ui-stack>
     </ui-surface>
 
-    <form [formGroup]="form">
+    <form [formRoot]="form">
       <ui-form-field label="Assign Truck" for="truckId">
-        <p-select
+        <ui-select-field
           id="truckId"
-          formControlName="truckId"
+          [formField]="form.truckId"
           [options]="trucks()"
           optionLabel="number"
           optionValue="id"
           placeholder="Select a truck"
-          class="w-full"
-          [style]="{ width: '100%' }"
-        >
-          <ng-template #item let-truck>
-            <div>
-              <div class="font-medium">{{ truck.number }}</div>
-              <small class="text-muted">{{ truck.type }}</small>
-            </div>
-          </ng-template>
-        </p-select>
+        />
       </ui-form-field>
 
       <ui-form-field label="Contact Name" for="contactName">
         <ui-text-field
           id="contactName"
-          formControlName="contactName"
+          [formField]="form.contactName"
           placeholder="Your name"
         />
       </ui-form-field>
@@ -59,7 +50,7 @@
       <ui-form-field label="Contact Phone" for="contactPhone">
         <ui-text-field
           id="contactPhone"
-          formControlName="contactPhone"
+          [formField]="form.contactPhone"
           placeholder="Your phone number"
         />
       </ui-form-field>
@@ -67,7 +58,7 @@
       <ui-form-field label="Contact Email" for="contactEmail">
         <ui-text-field
           id="contactEmail"
-          formControlName="contactEmail"
+          [formField]="form.contactEmail"
           placeholder="Your email"
         />
       </ui-form-field>
@@ -75,7 +66,7 @@
       <ui-form-field label="Notes" for="notes">
         <ui-text-field
           id="notes"
-          formControlName="notes"
+          [formField]="form.notes"
           placeholder="Additional notes for the broker"
         />
       </ui-form-field>

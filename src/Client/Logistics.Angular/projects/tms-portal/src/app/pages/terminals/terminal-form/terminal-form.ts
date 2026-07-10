@@ -1,5 +1,5 @@
-import { Component, computed, effect, inject, input, output } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { Component, computed, effect, inject, input, output, signal } from "@angular/core";
+import { form, FormField, FormRoot, maxLength, minLength, required } from "@angular/forms/signals";
 import { RouterLink } from "@angular/router";
 import { COUNTRIES_OPTIONS, regionAllowedCountries } from "@logistics/shared";
 import type { Address, TerminalType } from "@logistics/shared/api";
@@ -29,11 +29,24 @@ export interface TerminalFormValue {
   notes: string | null;
 }
 
+// The editable model. `notes` is a plain string here (default "") so it binds to
+// `ui-textarea-field` (a `FormValueControl<string>`); the public `TerminalFormValue.notes`
+// stays `string | null` and the string is coerced at the emit boundary below.
+const EMPTY = {
+  name: "",
+  code: "",
+  countryCode: "",
+  type: "sea_port" as TerminalType,
+  address: null as Address | null,
+  notes: "",
+};
+
 @Component({
   selector: "app-terminal-form",
   templateUrl: "./terminal-form.html",
   imports: [
-    ReactiveFormsModule,
+    FormRoot,
+    FormField,
     RouterLink,
     ButtonModule,
     AddressForm,
@@ -72,47 +85,50 @@ export class TerminalForm {
     return COUNTRIES_OPTIONS.filter((opt) => allowed.has(opt.value));
   });
 
-  protected readonly form = new FormGroup({
-    name: new FormControl("", { validators: [Validators.required], nonNullable: true }),
-    code: new FormControl("", {
-      validators: [Validators.required, Validators.minLength(5), Validators.maxLength(5)],
-      nonNullable: true,
-    }),
-    countryCode: new FormControl("", { validators: [Validators.required], nonNullable: true }),
-    type: new FormControl<TerminalType>("sea_port", {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
-    address: new FormControl<Address | null>(null, { validators: [Validators.required] }),
-    notes: new FormControl<string | null>(null),
-  });
+  protected readonly model = signal({ ...EMPTY });
+
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.name, { message: "Name is required." });
+      required(p.code, { message: "Code is required." });
+      minLength(p.code, 5, { message: "Code must be exactly 5 characters." });
+      maxLength(p.code, 5, { message: "Code must be exactly 5 characters." });
+      required(p.countryCode, { message: "Country is required." });
+      required(p.type, { message: "Type is required." });
+      required(p.address, { message: "Address is required." });
+    },
+    {
+      submission: {
+        action: async () => {
+          const v = this.model();
+          this.save.emit({
+            name: v.name,
+            code: v.code.toUpperCase(),
+            countryCode: v.countryCode.toUpperCase(),
+            type: v.type,
+            address: v.address,
+            notes: v.notes,
+          });
+          return undefined;
+        },
+      },
+    },
+  );
 
   constructor() {
     effect(() => {
       const initialData = this.initial();
       if (!initialData) return;
-      if (this.mode() === "edit" && this.form.dirty) return;
-      this.form.patchValue({
+      if (this.mode() === "edit" && this.form().dirty()) return;
+      this.model.set({
         name: initialData.name ?? "",
         code: initialData.code ?? "",
         countryCode: initialData.countryCode ?? "",
         type: initialData.type ?? "sea_port",
         address: initialData.address ?? null,
-        notes: initialData.notes ?? null,
+        notes: initialData.notes ?? "",
       });
-    });
-  }
-
-  protected submit(): void {
-    if (this.form.invalid) return;
-    const v = this.form.getRawValue();
-    this.save.emit({
-      name: v.name,
-      code: v.code.toUpperCase(),
-      countryCode: v.countryCode.toUpperCase(),
-      type: v.type,
-      address: v.address,
-      notes: v.notes,
     });
   }
 }

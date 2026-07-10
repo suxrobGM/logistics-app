@@ -1,6 +1,7 @@
-import { Component, inject, input, model, output, signal } from "@angular/core";
+import { Component, ElementRef, inject, input, model, output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl } from "@angular/forms/signals";
+import { focusFirstControl } from "@logistics/shared";
 import { Api, getCustomers, type CustomerDto } from "@logistics/shared/api";
 import {
   AutoComplete,
@@ -32,6 +33,13 @@ export class SearchCustomer implements FormValueControl<CustomerDto | null> {
   public readonly touch = output<void>();
 
   protected readonly customerDialogVisible = model<boolean>(false);
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
+  public focus(options?: FocusOptions): void {
+    focusFirstControl(this.host.nativeElement, options);
+  }
 
   protected async searchCustomer(event: { query: string }): Promise<void> {
     const q = event.query?.trim() ?? "";

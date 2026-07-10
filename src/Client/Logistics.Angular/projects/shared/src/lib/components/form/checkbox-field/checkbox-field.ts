@@ -24,7 +24,7 @@ import { focusFirstControl } from "../../../forms/focus-control";
  * a STANDALONE `NgModel` (`[ngModel]` + `(ngModelChange)` + `{ standalone: true }`). Never put
  * `formControlName` or `[formField]` on the PrimeNG element directly — it collides with Signal
  * Forms' `pattern` state input under strictTemplates. The inner `NgModel` lives in this wrapper's
- * view, so `ui-form-field`'s `contentChild(NgControl)` still resolves the OUTER binding.
+ * view, so `ui-form-field`'s `contentChild(FORM_FIELD)` still resolves the OUTER binding.
  *
  * @example
  * <ui-form-field label="Accept terms" [required]="true">

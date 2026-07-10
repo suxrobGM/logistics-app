@@ -1,6 +1,5 @@
 import { Component, computed, effect, inject, input, model, output, signal } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { disabled, form, FormField, FormRoot, max, min, required } from "@angular/forms/signals";
 import { regionAllowedCountries, UserRole } from "@logistics/shared";
 import {
   Api,
@@ -30,13 +29,28 @@ import {
 import { NumberUtils } from "@/shared/utils";
 import { ChangeRoleDialog } from "../change-role-dialog/change-role-dialog";
 
+interface EmployeeEditModel {
+  salary: number;
+  salaryType: SalaryType;
+  status: EmployeeStatus;
+  address: Address | null;
+}
+
+const EMPTY: EmployeeEditModel = {
+  salary: 0,
+  salaryType: "none",
+  status: "active",
+  address: null,
+};
+
 @Component({
   selector: "app-employee-edit-dialog",
   templateUrl: "./employee-edit-dialog.html",
   imports: [
     DialogModule,
     ButtonModule,
-    ReactiveFormsModule,
+    FormRoot,
+    FormField,
     InputGroupModule,
     InputTextModule,
     AccordionModule,
@@ -64,54 +78,70 @@ export class EmployeeEditDialog {
   readonly saved = output<void>();
   readonly deleted = output<void>();
 
-  protected readonly form: FormGroup<UpdateEmployeeForm>;
   protected readonly salaryTypes = salaryTypeOptions;
   protected readonly statusOptions = employeeStatusOptions;
-  protected readonly isLoading = signal(false);
   protected readonly canChangeRole = signal(false);
   protected readonly changeRoleDialogVisible = signal(false);
 
-  constructor() {
-    this.form = new FormGroup<UpdateEmployeeForm>({
-      salary: new FormControl<number>(0, {
-        validators: Validators.compose([Validators.required, Validators.min(0)]),
-        nonNullable: true,
-      }),
-      salaryType: new FormControl<SalaryType>("none", {
-        validators: Validators.required,
-        nonNullable: true,
-      }),
-      status: new FormControl<EmployeeStatus>("active", {
-        validators: Validators.required,
-        nonNullable: true,
-      }),
-      address: new FormControl<Address | null>(null),
-    });
+  protected readonly model = signal<EmployeeEditModel>({ ...EMPTY });
 
-    this.form
-      .get("salaryType")
-      ?.valueChanges.pipe(takeUntilDestroyed())
-      .subscribe((selectedSalaryType) => {
-        const salaryControl = this.form.get("salary");
-        if (!salaryControl) return;
-
-        if (selectedSalaryType === "share_of_gross") {
-          salaryControl.setValidators([
-            Validators.required,
-            Validators.min(0),
-            Validators.max(100),
-          ]);
-          salaryControl.enable();
-        } else if (selectedSalaryType === "none") {
-          salaryControl.setValue(0);
-          salaryControl.disable();
-        } else {
-          salaryControl.setValidators([Validators.required, Validators.min(0)]);
-          salaryControl.enable();
-        }
-        salaryControl.updateValueAndValidity();
+  /**
+   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips
+   * the action while invalid, and drives `form().submitting()` — so there is no `isLoading` signal.
+   * The salary control's validators and disabled state are declarative, replacing the old
+   * `salaryType.valueChanges` subscription.
+   */
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.status, { message: "Status is required." });
+      required(p.salaryType, { message: "Salary type is required." });
+      required(p.salary, { message: "Salary is required." });
+      min(p.salary, 0, { message: "Salary cannot be negative." });
+      max(p.salary, 100, {
+        when: ({ valueOf }) => valueOf(p.salaryType) === "share_of_gross",
+        message: "Share of gross cannot exceed 100%.",
       });
+      disabled(p.salary, { when: ({ valueOf }) => valueOf(p.salaryType) === "none" });
+    },
+    {
+      submission: {
+        action: async () => {
+          const emp = this.employee();
+          if (!emp?.id) {
+            return undefined;
+          }
 
+          const v = this.model();
+          const salaryType = v.salaryType;
+
+          const command: UpdateEmployeeCommand = {
+            userId: emp.id,
+            // "none" salary type carries no salary: reactive forms excluded the disabled control
+            // from the payload, so send undefined to preserve that behavior.
+            salary:
+              salaryType === "none"
+                ? undefined
+                : salaryType === "share_of_gross"
+                  ? NumberUtils.toRatio(v.salary)
+                  : v.salary,
+            salaryType,
+            status: v.status,
+            address: v.address ?? undefined,
+          };
+
+          await this.api.invoke(updateEmployee, {
+            userId: emp.id,
+            body: command,
+          });
+          this.saved.emit();
+          return undefined;
+        },
+      },
+    },
+  );
+
+  constructor() {
     effect(() => {
       const emp = this.employee();
       if (emp && this.visible()) {
@@ -119,36 +149,6 @@ export class EmployeeEditDialog {
         this.evaluateCanChangeRole(emp);
       }
     });
-  }
-
-  async save(): Promise<void> {
-    if (!this.form.valid) return;
-
-    const emp = this.employee();
-    if (!emp?.id) return;
-
-    const salaryType = this.form.value.salaryType!;
-    const salary = this.form.value.salary!;
-    const status = this.form.value.status!;
-
-    const command: UpdateEmployeeCommand = {
-      userId: emp.id,
-      salary: salaryType === "share_of_gross" ? NumberUtils.toRatio(salary) : salary,
-      salaryType: salaryType,
-      status: status,
-      address: this.form.value.address ?? undefined,
-    };
-
-    this.isLoading.set(true);
-    try {
-      await this.api.invoke(updateEmployee, {
-        userId: emp.id,
-        body: command,
-      });
-      this.saved.emit();
-    } finally {
-      this.isLoading.set(false);
-    }
   }
 
   close(): void {
@@ -165,20 +165,20 @@ export class EmployeeEditDialog {
   }
 
   isShareOfGrossSalary(): boolean {
-    return this.form.value.salaryType === "share_of_gross";
+    return this.model().salaryType === "share_of_gross";
   }
 
   isNoneSalary(): boolean {
-    return this.form.value.salaryType === "none";
+    return this.model().salaryType === "none";
   }
 
   private populateForm(emp: EmployeeDto): void {
     const salaryType = emp.salaryType ?? "none";
     const salary = emp.salary ?? 0;
 
-    this.form.patchValue({
+    this.model.set({
       salary: salaryType === "share_of_gross" ? NumberUtils.toPercent(salary) : salary,
-      salaryType: salaryType,
+      salaryType,
       status: emp.status ?? "active",
       address: emp.address ?? null,
     });
@@ -213,11 +213,4 @@ export class EmployeeEditDialog {
       this.canChangeRole.set(false);
     }
   }
-}
-
-interface UpdateEmployeeForm {
-  salary: FormControl<number>;
-  salaryType: FormControl<SalaryType>;
-  status: FormControl<EmployeeStatus>;
-  address: FormControl<Address | null>;
 }

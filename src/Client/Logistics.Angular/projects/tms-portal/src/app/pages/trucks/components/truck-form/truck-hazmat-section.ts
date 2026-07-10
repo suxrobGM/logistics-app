@@ -1,5 +1,5 @@
 import { Component, input } from "@angular/core";
-import { FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormField, type FieldTree } from "@angular/forms/signals";
 import { hazmatClassOptions } from "@logistics/shared/api/enums";
 import {
   UiCheckboxField,
@@ -9,12 +9,13 @@ import {
   UiTextField,
 } from "@logistics/shared/components";
 import { Fieldset } from "primeng/fieldset";
+import type { TruckFormModel } from "./truck-form";
 
 @Component({
   selector: "app-truck-hazmat-section",
   templateUrl: "./truck-hazmat-section.html",
   imports: [
-    ReactiveFormsModule,
+    FormField,
     Fieldset,
     UiFormField,
     UiCheckboxField,
@@ -24,7 +25,7 @@ import { Fieldset } from "primeng/fieldset";
   ],
 })
 export class TruckHazmatSection {
-  public readonly form = input.required<FormGroup>();
+  public readonly field = input.required<FieldTree<TruckFormModel>>();
 
   protected readonly hazmatClassOptions = hazmatClassOptions;
 }

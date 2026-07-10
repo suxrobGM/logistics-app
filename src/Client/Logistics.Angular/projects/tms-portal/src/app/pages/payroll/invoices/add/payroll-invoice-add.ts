@@ -1,12 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from "@angular/forms";
+import { FormsModule } from "@angular/forms";
+import { form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { Router, RouterModule } from "@angular/router";
 import {
   Api,
@@ -53,6 +48,11 @@ interface BulkPreview {
   error?: string;
 }
 
+interface PayrollFormValue {
+  employee: EmployeeDto | null;
+  dateRange: Date[];
+}
+
 @Component({
   selector: "app-payroll-invoice-add",
   templateUrl: "./payroll-invoice-add.html",
@@ -60,12 +60,13 @@ interface BulkPreview {
     CommonModule,
     CardModule,
     ValidatedForm,
+    FormRoot,
+    FormField,
     UiFormField,
     RouterModule,
     UiAutocompleteField,
     ProgressSpinnerModule,
     FormsModule,
-    ReactiveFormsModule,
     ButtonModule,
     SelectModule,
     DateRangePicker,
@@ -88,17 +89,50 @@ export class PayrollInvoiceAdd {
   private readonly router = inject(Router);
 
   protected readonly todayDate = new Date();
-  protected readonly form: FormGroup<PayrollForm>;
 
-  protected readonly isLoading = signal(false);
-  protected readonly isBulkCreating = signal(false);
+  private readonly lastWeek = PredefinedDateRanges.getLastWeek();
+
+  protected readonly mode = signal<PayrollMode>("single");
   protected readonly suggestedEmployees = signal<EmployeeDto[]>([]);
   protected readonly selectedEmployee = signal<EmployeeDto | null>(null);
   protected readonly previewPayrollInvoice = signal<InvoiceDto | null>(null);
-  protected readonly mode = signal<PayrollMode>("single");
   protected readonly allEmployees = signal<EmployeeDto[]>([]);
   protected readonly selectedEmployees = signal<EmployeeDto[]>([]);
   protected readonly bulkPreviews = signal<BulkPreview[]>([]);
+
+  protected readonly model = signal<PayrollFormValue>({
+    employee: null,
+    dateRange: [this.lastWeek.startDate, this.lastWeek.endDate],
+  });
+
+  /**
+   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips
+   * the action while invalid, and drives `form().submitting()` — so there are no `isLoading` /
+   * `isBulkCreating` signals and no `if (!form.valid) return` guards. Employee is only required in
+   * single mode; bulk mode validates its own selection.
+   */
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.employee, {
+        when: () => this.mode() === "single",
+        message: "Employee is required.",
+      });
+      required(p.dateRange, { message: "Pay period is required." });
+    },
+    {
+      submission: {
+        action: async () => {
+          if (this.mode() === "single") {
+            await this.addSinglePayroll();
+          } else {
+            await this.addBulkPayrolls();
+          }
+          return undefined;
+        },
+      },
+    },
+  );
 
   protected readonly modeOptions = [
     { label: "Single Employee", value: "single", icon: "pi pi-user" },
@@ -106,21 +140,11 @@ export class PayrollInvoiceAdd {
   ];
 
   constructor() {
-    const lastWeek = PredefinedDateRanges.getLastWeek();
-
-    this.form = new FormGroup<PayrollForm>({
-      employee: new FormControl(null, { validators: Validators.required }),
-      dateRange: new FormControl([lastWeek.startDate, lastWeek.endDate], {
-        validators: Validators.required,
-        nonNullable: true,
-      }),
-    });
-
     this.loadAllEmployees();
   }
 
   onDateRangeChange(dates: Date[]): void {
-    this.form.patchValue({ dateRange: dates });
+    this.model.update((v) => ({ ...v, dateRange: dates }));
     this.tryCalculatePayroll();
     this.refreshBulkPreviews();
   }
@@ -139,7 +163,7 @@ export class PayrollInvoiceAdd {
   tryCalculatePayroll(): void {
     const employeeId = this.selectedEmployee()?.id;
 
-    if (!DateUtils.isValidRange(this.form.value.dateRange) || !employeeId) {
+    if (!DateUtils.isValidRange(this.model().dateRange) || !employeeId) {
       return;
     }
 
@@ -162,28 +186,18 @@ export class PayrollInvoiceAdd {
   }
 
   async fetchPreviewPayrollInvoice(employeeId: string): Promise<void> {
-    if (!this.form.valid) {
+    if (!this.form().valid()) {
       return;
     }
 
+    const dateRange = this.model().dateRange;
     const result = await this.api.invoke(previewPayrollInvoice, {
       EmployeeId: employeeId,
-      PeriodStart: this.form.value.dateRange![0].toISOString(),
-      PeriodEnd: this.form.value.dateRange![1].toISOString(),
+      PeriodStart: dateRange[0].toISOString(),
+      PeriodEnd: dateRange[1].toISOString(),
     });
     if (result) {
       this.previewPayrollInvoice.set(result as InvoiceDto);
-    }
-  }
-
-  submit(): void {
-    if (this.mode() === "single") {
-      if (!this.form.valid) {
-        return;
-      }
-      this.addSinglePayroll();
-    } else {
-      this.addBulkPayrolls();
     }
   }
 
@@ -216,7 +230,8 @@ export class PayrollInvoiceAdd {
 
   private async refreshBulkPreviews(): Promise<void> {
     const employees = this.selectedEmployees();
-    if (employees.length === 0 || !DateUtils.isValidRange(this.form.value.dateRange)) {
+    const dateRange = this.model().dateRange;
+    if (employees.length === 0 || !DateUtils.isValidRange(dateRange)) {
       this.bulkPreviews.set([]);
       return;
     }
@@ -235,8 +250,8 @@ export class PayrollInvoiceAdd {
         try {
           const result = await this.api.invoke(previewPayrollInvoice, {
             EmployeeId: employee.id!,
-            PeriodStart: this.form.value.dateRange![0].toISOString(),
-            PeriodEnd: this.form.value.dateRange![1].toISOString(),
+            PeriodStart: dateRange[0].toISOString(),
+            PeriodEnd: dateRange[1].toISOString(),
           });
           return {
             employee,
@@ -258,15 +273,11 @@ export class PayrollInvoiceAdd {
   }
 
   private async addSinglePayroll(): Promise<void> {
-    if (!this.form.valid) {
-      return;
-    }
-
-    this.isLoading.set(true);
+    const value = this.model();
     const command: CreatePayrollInvoiceCommand = {
-      employeeId: this.form.value.employee!.id ?? undefined,
-      periodStart: this.form.value.dateRange![0].toISOString(),
-      periodEnd: this.form.value.dateRange![1].toISOString(),
+      employeeId: value.employee!.id ?? undefined,
+      periodStart: value.dateRange[0].toISOString(),
+      periodEnd: value.dateRange[1].toISOString(),
     };
 
     try {
@@ -275,25 +286,23 @@ export class PayrollInvoiceAdd {
       this.router.navigateByUrl("/payroll/invoices");
     } catch {
       this.toastService.showError("Failed to create payroll invoice");
-    } finally {
-      this.isLoading.set(false);
     }
   }
 
   private async addBulkPayrolls(): Promise<void> {
     const employees = this.selectedEmployees();
-    if (employees.length === 0 || !DateUtils.isValidRange(this.form.value.dateRange)) {
+    const dateRange = this.model().dateRange;
+    if (employees.length === 0 || !DateUtils.isValidRange(dateRange)) {
       this.toastService.showError("Please select at least one employee and a valid date range");
       return;
     }
 
-    this.isBulkCreating.set(true);
     try {
       const result = await this.api.invoke(batchCreatePayrollInvoices, {
         body: {
           employeeIds: employees.map((e) => e.id!),
-          periodStart: this.form.value.dateRange![0].toISOString(),
-          periodEnd: this.form.value.dateRange![1].toISOString(),
+          periodStart: dateRange[0].toISOString(),
+          periodEnd: dateRange[1].toISOString(),
         },
       });
 
@@ -315,13 +324,6 @@ export class PayrollInvoiceAdd {
       }
     } catch {
       this.toastService.showError("Failed to create payroll invoices");
-    } finally {
-      this.isBulkCreating.set(false);
     }
   }
-}
-
-interface PayrollForm {
-  employee: FormControl<EmployeeDto | null>;
-  dateRange: FormControl<Date[]>;
 }

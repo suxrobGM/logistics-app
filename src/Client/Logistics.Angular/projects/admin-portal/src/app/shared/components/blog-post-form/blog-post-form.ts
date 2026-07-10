@@ -1,5 +1,5 @@
-import { Component, effect, inject, input, output } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { Component, inject, input, linkedSignal, output } from "@angular/core";
+import { form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import {
@@ -23,13 +23,24 @@ export interface BlogPostFormValue {
   isFeatured: boolean;
 }
 
+const EMPTY: BlogPostFormValue = {
+  title: "",
+  content: "",
+  excerpt: "",
+  category: "",
+  authorName: "",
+  featuredImage: "",
+  isFeatured: false,
+};
+
 @Component({
   selector: "adm-blog-post-form",
   templateUrl: "./blog-post-form.html",
   imports: [
     ButtonModule,
     ValidatedForm,
-    ReactiveFormsModule,
+    FormRoot,
+    FormField,
     RouterLink,
     ProgressSpinnerModule,
     UiFormField,
@@ -52,30 +63,32 @@ export class BlogPostForm {
   public readonly publish = output<void>();
   public readonly unpublish = output<void>();
 
-  protected readonly form = new FormGroup({
-    title: new FormControl("", { validators: Validators.required, nonNullable: true }),
-    content: new FormControl("", { validators: Validators.required, nonNullable: true }),
-    excerpt: new FormControl("", { nonNullable: true }),
-    category: new FormControl("", { nonNullable: true }),
-    authorName: new FormControl("", { validators: Validators.required, nonNullable: true }),
-    featuredImage: new FormControl("", { nonNullable: true }),
-    isFeatured: new FormControl(false, { nonNullable: true }),
-  });
+  /** Seeded from `initial()`; resets to those values whenever the input changes. */
+  protected readonly model = linkedSignal<BlogPostFormValue>(() => ({
+    ...EMPTY,
+    ...(this.initial() ?? {}),
+  }));
 
-  constructor() {
-    effect(() => {
-      if (this.initial()) {
-        this.patch(this.initial()!);
-      }
-    });
-  }
-
-  protected submit(): void {
-    if (this.form.invalid) {
-      return;
-    }
-    this.save.emit(this.form.getRawValue() as BlogPostFormValue);
-  }
+  /**
+   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first and
+   * skips the action while invalid, so there is no `markAllAsTouched()` and no `form.invalid` guard.
+   */
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.title, { message: "Title is required." });
+      required(p.content, { message: "Content is required." });
+      required(p.authorName, { message: "Author name is required." });
+    },
+    {
+      submission: {
+        action: async () => {
+          this.save.emit(this.model());
+          return undefined;
+        },
+      },
+    },
+  );
 
   protected askRemove(): void {
     this.toastService.confirm({
@@ -104,12 +117,6 @@ export class BlogPostForm {
       icon: "hide",
       severity: "warning",
       accept: () => this.unpublish.emit(),
-    });
-  }
-
-  private patch(src: Partial<BlogPostFormValue>): void {
-    this.form.patchValue({
-      ...src,
     });
   }
 }

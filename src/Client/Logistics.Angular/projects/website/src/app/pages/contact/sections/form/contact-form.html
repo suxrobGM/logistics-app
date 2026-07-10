@@ -28,32 +28,32 @@
           Fill this out and we'll get back to you.
         </p>
 
-        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-8">
+        <form [formRoot]="form" class="mt-8">
           <!-- Name Fields -->
           <div class="grid gap-4 sm:grid-cols-2">
-            <ui-form-field label="First Name" for="firstName" [required]="true" [control]="form.controls.firstName">
-              <ui-text-field id="firstName" formControlName="firstName" placeholder="John" />
+            <ui-form-field label="First Name" for="firstName" [required]="true">
+              <ui-text-field id="firstName" [formField]="form.firstName" placeholder="John" />
             </ui-form-field>
-            <ui-form-field label="Last Name" for="lastName" [required]="true" [control]="form.controls.lastName">
-              <ui-text-field id="lastName" formControlName="lastName" placeholder="Doe" />
+            <ui-form-field label="Last Name" for="lastName" [required]="true">
+              <ui-text-field id="lastName" [formField]="form.lastName" placeholder="Doe" />
             </ui-form-field>
           </div>
 
           <!-- Email & Phone -->
           <div class="grid gap-4 sm:grid-cols-2">
-            <ui-form-field label="Email" for="email" [required]="true" [control]="form.controls.email">
-              <ui-text-field id="email" type="email" formControlName="email" placeholder="john@company.com" />
+            <ui-form-field label="Email" for="email" [required]="true">
+              <ui-text-field id="email" type="email" [formField]="form.email" placeholder="john@company.com" />
             </ui-form-field>
             <ui-form-field label="Phone" for="phone" hint="Optional">
-              <ui-text-field id="phone" type="tel" formControlName="phone" placeholder="(555) 123-4567" />
+              <ui-text-field id="phone" type="tel" [formField]="form.phone" placeholder="(555) 123-4567" />
             </ui-form-field>
           </div>
 
           <!-- Subject -->
-          <ui-form-field label="Subject" for="subject" [required]="true" [control]="form.controls.subject">
+          <ui-form-field label="Subject" for="subject" [required]="true">
             <ui-select-field
               id="subject"
-              formControlName="subject"
+              [formField]="form.subject"
               [options]="subjectOptions"
               optionLabel="label"
               optionValue="value"
@@ -63,10 +63,10 @@
           </ui-form-field>
 
           <!-- Message -->
-          <ui-form-field label="Message" for="message" [required]="true" [control]="form.controls.message">
+          <ui-form-field label="Message" for="message" [required]="true">
             <ui-textarea-field
               id="message"
-              formControlName="message"
+              [formField]="form.message"
               [rows]="5"
               placeholder="How can we help you?"
             />
@@ -87,7 +87,7 @@
               label="Send Message"
               icon="pi pi-send"
               iconPos="right"
-              [loading]="isLoading()"
+              [loading]="form().submitting()"
               [rounded]="true"
               size="large"
             />

@@ -109,12 +109,12 @@
         </div>
       }
 
-      <form [formGroup]="form" class="mt-2 border-t pt-4">
+      <div class="mt-2 border-t pt-4">
         <ui-grid container spacing="4">
           <ui-grid [size]="{ xs: 12, md: 6 }">
             <ui-form-field label="Status">
               <ui-select-field
-                formControlName="status"
+                [formField]="form.status"
                 [options]="statusOptions"
                 optionLabel="label"
                 optionValue="value"
@@ -125,14 +125,14 @@
           <ui-grid [size]="12">
             <ui-form-field label="Internal Notes">
               <ui-textarea-field
-                formControlName="notes"
+                [formField]="form.notes"
                 [rows]="3"
                 placeholder="Add notes about this lead..."
               />
             </ui-form-field>
           </ui-grid>
         </ui-grid>
-      </form>
+      </div>
     </ui-stack>
   }
 

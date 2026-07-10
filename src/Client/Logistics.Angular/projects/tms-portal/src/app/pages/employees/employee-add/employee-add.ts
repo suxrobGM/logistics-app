@@ -1,12 +1,6 @@
 import { Component, DestroyRef, inject, signal } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from "@angular/forms";
+import { form, FormField, FormRoot, max, min, required } from "@angular/forms/signals";
 import { RouterLink } from "@angular/router";
 import {
   Api,
@@ -37,6 +31,20 @@ import {
 } from "@/shared/components";
 import { UserService } from "../services";
 
+interface EmployeeAddModel {
+  user: UserDto | null;
+  role: RoleDto | null;
+  salary: number;
+  salaryType: SalaryType;
+}
+
+const EMPTY: EmployeeAddModel = {
+  user: null,
+  role: null,
+  salary: 0,
+  salaryType: "none",
+};
+
 @Component({
   selector: "app-employee-add",
   templateUrl: "./employee-add.html",
@@ -44,8 +52,8 @@ import { UserService } from "../services";
     ToastModule,
     ConfirmDialogModule,
     ProgressSpinnerModule,
-    FormsModule,
-    ReactiveFormsModule,
+    FormRoot,
+    FormField,
     UiAutocompleteField,
     UiSelectField,
     ButtonModule,
@@ -66,7 +74,6 @@ import { UserService } from "../services";
   ],
 })
 export class EmployeeAdd {
-  protected readonly form: FormGroup<CreateEmployeeForm>;
   protected readonly salaryTypes = salaryTypeOptions;
 
   private readonly api = inject(Api);
@@ -78,17 +85,48 @@ export class EmployeeAdd {
   protected readonly roles = signal<RoleDto[]>([]);
   protected readonly isLoading = signal<boolean>(false);
 
-  constructor() {
-    this.form = new FormGroup<CreateEmployeeForm>({
-      user: new FormControl(null, { validators: Validators.required }),
-      role: new FormControl(null),
-      salary: new FormControl<number>(0, { validators: Validators.required, nonNullable: true }),
-      salaryType: new FormControl<SalaryType>("none", {
-        validators: Validators.required,
-        nonNullable: true,
-      }),
-    });
+  protected readonly model = signal<EmployeeAddModel>({ ...EMPTY });
 
+  /**
+   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips
+   * the action while invalid, and drives `form().submitting()`. `isLoading` is kept because it also
+   * tracks the initial roles load, not the submit.
+   */
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.user, { message: "Select a user." });
+      required(p.salaryType, { message: "Salary type is required." });
+      required(p.salary, { message: "Salary is required." });
+      min(p.salary, 0, { message: "Salary cannot be negative." });
+      max(p.salary, 100, {
+        when: ({ valueOf }) => valueOf(p.salaryType) === "share_of_gross",
+        message: "Share of gross cannot exceed 100%.",
+      });
+    },
+    {
+      submission: {
+        action: async () => {
+          const v = this.model();
+          const user = v.user!;
+
+          const newEmployee: CreateEmployeeCommand = {
+            userId: user.id ?? undefined,
+            role: v.role?.name,
+            salary: v.salary,
+            salaryType: v.salaryType,
+          };
+
+          await this.api.invoke(createEmployee, { body: newEmployee });
+          this.toastService.showSuccess("New employee has been added successfully");
+          this.form().reset({ ...EMPTY });
+          return undefined;
+        },
+      },
+    },
+  );
+
+  constructor() {
     this.fetchRoles();
   }
 
@@ -104,44 +142,15 @@ export class EmployeeAdd {
   }
 
   clearSelectedRole(): void {
-    this.form.patchValue({
-      role: null,
-    });
-  }
-
-  async submit(): Promise<void> {
-    if (!this.form.valid) {
-      return;
-    }
-
-    const user = this.form.value.user as UserDto;
-
-    if (!user) {
-      this.toastService.showError("Select user");
-      return;
-    }
-
-    const newEmployee: CreateEmployeeCommand = {
-      userId: user.id ?? undefined,
-      role: this.form.value.role?.name,
-      salary: this.form.value.salary ?? 0,
-      salaryType: this.form.value.salaryType ?? "none",
-    };
-
-    this.isLoading.set(true);
-    await this.api.invoke(createEmployee, { body: newEmployee });
-    this.toastService.showSuccess("New employee has been added successfully");
-    this.form.reset();
-
-    this.isLoading.set(false);
+    this.model.update((m) => ({ ...m, role: null }));
   }
 
   isShareOfGrossSalary(): boolean {
-    return this.form.value.salaryType === "share_of_gross";
+    return this.model().salaryType === "share_of_gross";
   }
 
   isNoneSalary(): boolean {
-    return this.form.value.salaryType === "none";
+    return this.model().salaryType === "none";
   }
 
   private fetchRoles(): void {
@@ -158,11 +167,4 @@ export class EmployeeAdd {
         this.isLoading.set(false);
       });
   }
-}
-
-interface CreateEmployeeForm {
-  user: FormControl<UserDto | null>;
-  role: FormControl<RoleDto | null>;
-  salary: FormControl<number>;
-  salaryType: FormControl<SalaryType>;
 }

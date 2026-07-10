@@ -257,6 +257,50 @@ In **this repo** the wrappers already exist (`ui-text-field`, `ui-select-field`,
 in `projects/shared/src/lib/components/form/`). Templates already speak `ui-*-field`, so a form
 migration is normally a **`.ts`-only change**. If a control is still raw PrimeNG, wrap it first.
 
+##### `[formField]` value types are invariant
+
+A control's `value` is a `ModelSignal<T>` — read **and** write — so `T` is invariant. The model
+field's type must equal the wrapper's `T` **exactly**:
+
+```ts
+// ui-text-field is FormValueControl<string>
+interface Model {
+  name: string | null;
+} // ✗ TS2322: 'string | null' is not assignable to 'string'
+interface Model {
+  name: string;
+} // ✓
+```
+
+Neither direction is allowed: a `FieldTree<string>` will not bind a `FormValueControl<string | null>`
+either. This is the single most common error when converting a form, because reactive `FormControl`s
+were routinely typed `string | null` while the DTO field is optional.
+
+The convention in this repo:
+
+| Wrapper              | `T`              | Model field      | Empty value |
+| -------------------- | ---------------- | ---------------- | ----------- |
+| `ui-text-field`      | `string`         | `string`         | `""`        |
+| `ui-textarea-field`  | `string`         | `string`         | `""`        |
+| `ui-number-field`    | `number \| null` | `number \| null` | `null`      |
+| `ui-date-field`      | `Date \| null`   | `Date \| null`   | `null`      |
+| `ui-checkbox-field`  | `boolean`        | `boolean`        | `false`     |
+| `ui-select-field<T>` | `T \| null`      | `T \| null`      | `null`      |
+
+So an optional text field holds `""`, not `null`. **Coerce at the boundaries**: `dto.x ?? ""` coming
+in, and `v.x || null` (or `|| undefined`) going out — otherwise you start sending `""` to an API that
+previously received `null`.
+
+Note this also means `pattern()` / `minLength()` / `maxLength()` now typecheck against a `string`
+path. An _optional_ field must guard them, since reactive `Validators.pattern` skipped empty values:
+
+```ts
+pattern(p.unNumber, /^UN\d{4}$/i, {
+  when: ({ valueOf }) => valueOf(p.unNumber).length > 0,
+  message: "Enter a UN number such as UN1203.",
+});
+```
+
 ##### Optional control hooks, and reserved input names
 
 `FormUiControl` declares optional `focus?(options?)` and `reset?()` methods; `focusBoundControl()`

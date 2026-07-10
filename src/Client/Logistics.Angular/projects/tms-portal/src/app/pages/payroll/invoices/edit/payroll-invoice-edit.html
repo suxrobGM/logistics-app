@@ -6,7 +6,7 @@
       <p-progress-spinner />
     </ui-stack>
   } @else {
-    <form [formGroup]="form" (ngSubmit)="submit()">
+    <form [formRoot]="form">
       <!-- Employee & Date Range Section -->
       <p-card class="mb-4">
         <ng-template #title>Pay Period Details</ng-template>
@@ -15,7 +15,7 @@
           <ui-grid [size]="{ xs: 12, md: 6 }">
             <ui-form-field label="Employee">
               <ui-autocomplete-field
-                formControlName="employee"
+                [formField]="form.employee"
                 placeholder="Type employee's name"
                 optionLabel="fullName"
                 [minQueryLength]="2"
@@ -29,7 +29,9 @@
           <ui-grid [size]="{ xs: 12, md: 6 }">
             <ui-form-field label="Date Range">
               <p-date-picker
-                formControlName="dateRange"
+                [ngModel]="model().dateRange"
+                [ngModelOptions]="{ standalone: true }"
+                (ngModelChange)="onDateRangeChange($event)"
                 selectionMode="range"
                 [showIcon]="true"
                 [maxDate]="todayDate"
@@ -90,8 +92,7 @@
           type="submit"
           icon="pi pi-check"
           label="Save Changes"
-          [loading]="isSaving()"
-          [disabled]="!form.valid"
+          [loading]="form().submitting()"
         />
         <p-button
           type="button"

@@ -1,5 +1,5 @@
 import { Component, inject, signal } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { form, FormField } from "@angular/forms/signals";
 import {
   Api,
   deleteDemoRequest,
@@ -50,7 +50,7 @@ interface StatusOption {
     SearchField,
     TagModule,
     DialogModule,
-    ReactiveFormsModule,
+    FormField,
     UiFormField,
     UiSelectField,
     UiTextareaField,
@@ -68,10 +68,12 @@ export class DemoRequestsList {
   protected viewDialogVisible = signal(false);
   protected selectedRequest = signal<DemoRequestDto | null>(null);
 
-  protected readonly form = new FormGroup({
-    status: new FormControl<DemoRequestStatus>("new", { nonNullable: true }),
-    notes: new FormControl<string>("", { nonNullable: true }),
+  protected readonly model = signal<{ status: DemoRequestStatus; notes: string }>({
+    status: "new",
+    notes: "",
   });
+
+  protected readonly form = form(this.model);
 
   protected readonly statusOptions: StatusOption[] = [
     { label: "New", value: "new" },
@@ -86,7 +88,7 @@ export class DemoRequestsList {
 
   protected viewRequest(request: DemoRequestDto): void {
     this.selectedRequest.set(request);
-    this.form.patchValue({
+    this.model.set({
       status: request.status ?? "new",
       notes: request.notes ?? "",
     });
@@ -97,7 +99,7 @@ export class DemoRequestsList {
     const request = this.selectedRequest();
     if (!request?.id) return;
 
-    const formValue = this.form.getRawValue();
+    const formValue = this.model();
     await this.api.invoke(updateDemoRequest, {
       id: request.id,
       body: {

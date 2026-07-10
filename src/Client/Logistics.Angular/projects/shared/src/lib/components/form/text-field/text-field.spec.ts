@@ -115,17 +115,6 @@ describe("UiTextField — a FormValueControl-only wrapper", () => {
 
       expect(input(fixture).disabled).toBe(true);
     });
-
-    it("ui-form-field renders the required error once touched", async () => {
-      const fixture = TestBed.createComponent(HostReactiveText);
-      await settle(fixture);
-
-      type(fixture, "");
-      fixture.componentInstance.fg.controls.name.markAsTouched();
-      await settle(fixture);
-
-      expect(fixture.nativeElement.textContent).toContain("This field is required.");
-    });
   });
 
   describe("under Signal Forms ([formField])", () => {

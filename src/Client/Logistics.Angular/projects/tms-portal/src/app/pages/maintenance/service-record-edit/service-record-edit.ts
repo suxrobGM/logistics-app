@@ -58,11 +58,11 @@ export class ServiceRecordEditPage implements OnInit {
           serviceDate: found.serviceDate ? new Date(found.serviceDate) : new Date(),
           odometerReading: found.odometerReading,
           engineHours: found.engineHours,
-          vendorName: found.vendorName,
-          invoiceNumber: found.invoiceNumber,
+          vendorName: found.vendorName ?? "",
+          invoiceNumber: found.invoiceNumber ?? "",
           laborCost: found.laborCost ?? 0,
           partsCost: found.partsCost ?? 0,
-          notes: found.notes,
+          notes: found.notes ?? "",
         };
 
         this.initialFormValue.set(formValue);

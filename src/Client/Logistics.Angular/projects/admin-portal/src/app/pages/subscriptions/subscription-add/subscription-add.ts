@@ -1,5 +1,5 @@
 import { Component, inject, signal, type OnInit } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { Router, RouterModule } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import {
@@ -30,6 +30,8 @@ interface SelectOption {
   value: string;
 }
 
+const EMPTY = { tenantId: "", planId: "" };
+
 @Component({
   selector: "adm-subscription-add",
   templateUrl: "./subscription-add.html",
@@ -38,7 +40,8 @@ interface SelectOption {
     ButtonModule,
     RouterModule,
     SkeletonModule,
-    ReactiveFormsModule,
+    FormRoot,
+    FormField,
     UiFormField,
     UiSelectField,
     ValidatedForm,
@@ -54,15 +57,39 @@ export class SubscriptionAdd implements OnInit {
   private readonly toastService = inject(ToastService);
   private readonly router = inject(Router);
 
-  protected readonly isLoading = signal<boolean>(false);
   protected readonly isFetching = signal<boolean>(true);
   protected readonly tenantOptions = signal<SelectOption[]>([]);
   protected readonly planOptions = signal<SelectOption[]>([]);
 
-  protected readonly form = new FormGroup({
-    tenantId: new FormControl("", { validators: Validators.required, nonNullable: true }),
-    planId: new FormControl("", { validators: Validators.required, nonNullable: true }),
-  });
+  protected readonly model = signal({ ...EMPTY });
+
+  /**
+   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips
+   * the action while invalid, and drives `form().submitting()` — so there is no `isLoading` signal
+   * for the submit and no `markAllAsTouched()` / invalid guard.
+   */
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.tenantId, { message: "Tenant is required." });
+      required(p.planId, { message: "Subscription plan is required." });
+    },
+    {
+      submission: {
+        action: async () => {
+          const command: CreateSubscriptionCommand = {
+            tenantId: this.model().tenantId,
+            planId: this.model().planId,
+          };
+
+          await this.api.invoke(createSubscription, { body: command });
+          this.toastService.showSuccess("Subscription has been created successfully");
+          this.router.navigateByUrl("/subscriptions");
+          return undefined;
+        },
+      },
+    },
+  );
 
   ngOnInit(): void {
     this.fetchOptions();
@@ -102,22 +129,5 @@ export class SubscriptionAdd implements OnInit {
     );
 
     this.isFetching.set(false);
-  }
-
-  protected async onSubmit(): Promise<void> {
-    if (this.form.invalid) return;
-
-    this.isLoading.set(true);
-
-    const command: CreateSubscriptionCommand = {
-      tenantId: this.form.value.tenantId!,
-      planId: this.form.value.planId!,
-    };
-
-    await this.api.invoke(createSubscription, { body: command });
-    this.toastService.showSuccess("Subscription has been created successfully");
-    this.router.navigateByUrl("/subscriptions");
-
-    this.isLoading.set(false);
   }
 }

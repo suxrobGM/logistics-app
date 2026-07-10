@@ -85,12 +85,12 @@
   [closable]="true"
   [draggable]="false"
 >
-  <form [formGroup]="form" (ngSubmit)="save()">
+  <form [formRoot]="form">
 
     <ui-form-field label="Jurisdiction" for="jurisdictionKey" [required]="true">
       <ui-select-field
         id="jurisdictionKey"
-        formControlName="jurisdictionKey"
+        [formField]="form.jurisdictionKey"
         [options]="jurisdictionOptions()"
         optionLabel="label"
         optionValue="value"
@@ -111,9 +111,7 @@
     >
       <ui-number-field
         inputId="ratePercent"
-        formControlName="ratePercent"
-        [min]="0"
-        [max]="100"
+        [formField]="form.ratePercent"
         [maxFractionDigits]="2"
         suffix=" %"
         [fluid]="true"
@@ -123,7 +121,7 @@
     <ui-form-field label="Description" for="description" class="mt-4">
       <ui-text-field
         id="description"
-        formControlName="description"
+        [formField]="form.description"
         placeholder="e.g. Reduced rate for digital services"
       />
     </ui-form-field>
@@ -132,7 +130,7 @@
       <ui-form-field label="Effective from" for="effectiveFrom" hint="Defaults to today">
         <ui-date-field
           inputId="effectiveFrom"
-          formControlName="effectiveFrom"
+          [formField]="form.effectiveFrom"
           showIcon
           dateFormat="yy-mm-dd"
           [fluid]="true"
@@ -142,7 +140,7 @@
       <ui-form-field label="Effective to" for="effectiveTo" hint="Optional; null = forever">
         <ui-date-field
           inputId="effectiveTo"
-          formControlName="effectiveTo"
+          [formField]="form.effectiveTo"
           showIcon
           dateFormat="yy-mm-dd"
           [fluid]="true"
@@ -156,8 +154,7 @@
         type="submit"
         icon="pi pi-check"
         label="Save"
-        [loading]="isSaving()"
-        [disabled]="!form.valid"
+        [loading]="form().submitting()"
       />
     </ui-stack>
   </form>

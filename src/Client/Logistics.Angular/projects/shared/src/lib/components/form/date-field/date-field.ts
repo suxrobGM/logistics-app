@@ -24,7 +24,7 @@ import { focusFirstControl } from "../../../forms/focus-control";
  * standalone `ngModel` (never `formControlName`/`[formField]` — every `BaseInput` subclass
  * collides with Signal Forms' `pattern` state input). `standalone: true` keeps the inner
  * NgModel from registering with an ancestor NgForm, and since it lives in this wrapper's
- * own view, `ui-form-field`'s `contentChild(NgControl)` still resolves the outer binding.
+ * own view, `ui-form-field`'s `contentChild(FORM_FIELD)` still resolves the outer binding.
  *
  * @example
  * <ui-form-field label="Ship date" for="shipDate" [required]="true">

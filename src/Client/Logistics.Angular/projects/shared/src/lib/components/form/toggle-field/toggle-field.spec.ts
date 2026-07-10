@@ -113,17 +113,6 @@ describe("UiToggleField — a FormValueControl-only wrapper", () => {
 
       expect(input(fixture).disabled).toBe(true);
     });
-
-    it("ui-form-field renders the required error once touched", async () => {
-      const fixture = TestBed.createComponent(HostReactiveToggle);
-      await settle(fixture);
-
-      fixture.componentInstance.fg.controls.accept.setValue(false);
-      fixture.componentInstance.fg.controls.accept.markAsTouched();
-      await settle(fixture);
-
-      expect(fixture.nativeElement.textContent).toContain("This field is required.");
-    });
   });
 
   describe("under Signal Forms ([formField])", () => {

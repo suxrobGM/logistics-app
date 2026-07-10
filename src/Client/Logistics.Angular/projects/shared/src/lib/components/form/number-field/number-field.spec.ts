@@ -118,18 +118,6 @@ describe("UiNumberField — a FormValueControl-only wrapper", () => {
 
       expect(input(fixture).disabled).toBe(true);
     });
-
-    it("ui-form-field renders the required error once touched", async () => {
-      const fixture = TestBed.createComponent(HostReactiveNumber);
-      await settle(fixture);
-
-      enter(fixture, "");
-      fixture.componentInstance.fg.controls.rate.markAsTouched();
-      await settle(fixture);
-
-      expect(fixture.componentInstance.fg.controls.rate.value).toBeNull();
-      expect(fixture.nativeElement.textContent).toContain("This field is required.");
-    });
   });
 
   describe("under Signal Forms ([formField])", () => {

@@ -8,12 +8,12 @@
         <p-skeleton height="3rem" />
       </ui-stack>
     } @else {
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <form [formRoot]="form">
         <ui-grid container spacing="4" class="mb-4">
           <ui-grid [size]="12">
             <ui-form-field label="Tenant" [required]="true">
               <ui-select-field
-                formControlName="tenantId"
+                [formField]="form.tenantId"
                 [options]="tenantOptions()"
                 optionLabel="label"
                 optionValue="value"
@@ -38,7 +38,7 @@
           <ui-grid [size]="12">
             <ui-form-field label="Subscription Plan" [required]="true">
               <ui-select-field
-                formControlName="planId"
+                [formField]="form.planId"
                 [options]="planOptions()"
                 optionLabel="label"
                 optionValue="value"
@@ -64,9 +64,9 @@
             label="Create Subscription"
             icon="pi pi-check"
             type="submit"
-            [loading]="isLoading()"
+            [loading]="form().submitting()"
             [disabled]="
-              isLoading() ||
+              form().submitting() ||
               tenantOptions().length === 0 ||
               planOptions().length === 0
             "

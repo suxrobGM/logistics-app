@@ -1,13 +1,12 @@
-<form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4 pt-4">
+<form [formRoot]="form" class="space-y-4 pt-4">
   <ui-grid container spacing="4">
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Amount" for="truck-amount" [required]="true">
         <ui-number-field
           id="truck-amount"
-          formControlName="amount"
+          [formField]="form.amount"
           mode="currency"
           currency="USD"
-          [min]="0"
           [fluid]="true"
         />
       </ui-form-field>
@@ -17,7 +16,7 @@
       <ui-form-field label="Category" for="truck-category" [required]="true">
         <ui-select-field
           id="truck-category"
-          formControlName="category"
+          [formField]="form.category"
           [options]="categories"
           optionLabel="label"
           optionValue="value"
@@ -30,7 +29,7 @@
       <ui-form-field label="Truck" for="truck-select" [required]="true">
         <ui-select-field
           id="truck-select"
-          formControlName="truckId"
+          [formField]="form.truckId"
           [options]="trucks()"
           optionLabel="number"
           optionValue="id"
@@ -44,7 +43,7 @@
       <ui-form-field label="Expense Date" for="truck-date" [required]="true">
         <ui-date-field
           id="truck-date"
-          formControlName="expenseDate"
+          [formField]="form.expenseDate"
           [showIcon]="true"
           [fluid]="true"
         />
@@ -53,7 +52,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Vendor Name" for="truck-vendor">
-        <ui-text-field id="truck-vendor" formControlName="vendorName" />
+        <ui-text-field id="truck-vendor" [formField]="form.vendorName" />
       </ui-form-field>
     </ui-grid>
 
@@ -61,21 +60,19 @@
       <ui-form-field label="Odometer Reading" for="truck-odometer">
         <ui-number-field
           id="truck-odometer"
-          formControlName="odometerReading"
-          [min]="0"
+          [formField]="form.odometerReading"
           suffix=" mi"
           [fluid]="true"
         />
       </ui-form-field>
     </ui-grid>
 
-    @if (form.controls.category.value === "fuel") {
+    @if (model().category === "fuel") {
       <ui-grid [size]="{ xs: 12, md: 6 }">
         <ui-form-field label="Quantity" for="truck-quantity">
           <ui-number-field
             id="truck-quantity"
-            formControlName="quantity"
-            [min]="0"
+            [formField]="form.quantity"
             [minFractionDigits]="0"
             [maxFractionDigits]="2"
             [fluid]="true"
@@ -87,7 +84,7 @@
         <ui-form-field label="Quantity Unit" for="truck-quantity-unit">
           <ui-select-field
             id="truck-quantity-unit"
-            formControlName="quantityUnit"
+            [formField]="form.quantityUnit"
             [options]="volumeUnits"
             optionLabel="label"
             optionValue="value"
@@ -99,7 +96,7 @@
   </ui-grid>
 
   <ui-form-field label="Notes" for="truck-notes">
-    <ui-textarea-field id="truck-notes" formControlName="notes" [rows]="3" />
+    <ui-textarea-field id="truck-notes" [formField]="form.notes" [rows]="3" />
   </ui-form-field>
 
   <app-expense-receipt-upload
@@ -117,7 +114,7 @@
       type="submit"
       [label]="mode() === 'edit' ? 'Save Changes' : 'Create Expense'"
       icon="pi pi-save"
-      [loading]="isSaving()"
+      [loading]="form().submitting()"
     />
   </ui-stack>
 </form>

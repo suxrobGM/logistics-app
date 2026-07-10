@@ -29,7 +29,7 @@ export type NumberFieldMode = "decimal" | "currency";
  * `p-inputnumber` is a PrimeNG `BaseInput` and must NOT receive `formControlName` /
  * `[formField]` directly (its `pattern` state input collides with Signal Forms). It is driven
  * internally with a standalone `NgModel` instead. This inner `NgModel` lives in this wrapper's
- * view, not in `ui-form-field`'s projected content, so `ui-form-field`'s `contentChild(NgControl)`
+ * view, not in `ui-form-field`'s projected content, so `ui-form-field`'s `contentChild(FORM_FIELD)`
  * still resolves the OUTER binding.
  *
  * @example

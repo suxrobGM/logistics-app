@@ -3,6 +3,8 @@ import {
   Component,
   computed,
   effect,
+  ElementRef,
+  inject,
   input,
   model,
   output,
@@ -14,6 +16,7 @@ import { InputGroupModule } from "primeng/inputgroup";
 import { InputMaskModule } from "primeng/inputmask";
 import { SelectModule } from "primeng/select";
 import { DEFAULT_PHONE_COUNTRY, PHONE_COUNTRIES, type PhoneCountry } from "../../../constants";
+import { focusFirstControl } from "../../../forms/focus-control";
 
 /**
  * Phone number input with a country dial-code selector.
@@ -50,6 +53,13 @@ export class PhoneField implements FormValueControl<string | null> {
   public readonly touch = output<void>();
 
   public readonly placeholder = input<string>("Enter phone number");
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
+  public focus(options?: FocusOptions): void {
+    focusFirstControl(this.host.nativeElement, options);
+  }
 
   protected readonly countries = PHONE_COUNTRIES;
   protected readonly selectedCountry = signal<PhoneCountry>(DEFAULT_PHONE_COUNTRY);

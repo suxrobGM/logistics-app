@@ -1,5 +1,6 @@
-import { Component, inject, input, model, output } from "@angular/core";
-import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
+import { Component, ElementRef, input, model, output, signal, viewChild } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { form, FormField, FormRoot, required } from "@angular/forms/signals";
 import {
   type CreateEldProviderConfigurationCommand,
   type EldProviderType,
@@ -11,6 +12,13 @@ import { SelectModule } from "primeng/select";
 import { UiFormField, UiPasswordField, UiTextField } from "@/shared/components";
 import { ELD_PROVIDER_OPTIONS } from "../eld.constants";
 
+const EMPTY = {
+  providerType: "demo" as EldProviderType,
+  apiKey: "",
+  apiSecret: "",
+  webhookSecret: "",
+};
+
 @Component({
   selector: "app-eld-provider-add-dialog",
   templateUrl: "./provider-add-dialog.html",
@@ -19,49 +27,60 @@ import { ELD_PROVIDER_OPTIONS } from "../eld.constants";
     Alert,
     ButtonModule,
     DialogModule,
+    FormRoot,
+    FormField,
+    FormsModule,
+    SelectModule,
     UiFormField,
     UiTextField,
     UiPasswordField,
-    ReactiveFormsModule,
-    SelectModule,
   ],
 })
 export class EldProviderAddDialog {
-  private readonly fb = inject(FormBuilder);
-
   public readonly visible = model.required<boolean>();
   public readonly saving = input(false);
   public readonly save = output<CreateEldProviderConfigurationCommand>();
 
   protected readonly providerOptions = ELD_PROVIDER_OPTIONS;
 
-  protected readonly form = this.fb.group({
-    providerType: ["demo" as EldProviderType, Validators.required],
-    apiKey: ["", Validators.required],
-    apiSecret: [""],
-    webhookSecret: [""],
-  });
+  private readonly formEl = viewChild.required("formEl", { read: ElementRef });
+
+  protected readonly model = signal({ ...EMPTY });
+
+  /**
+   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips the
+   * action while invalid, and drives `form().submitting()`. The parent owns the async save, so the
+   * button stays bound to the `saving` input, and the action just emits the command.
+   */
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.providerType, { message: "Provider is required." });
+      required(p.apiKey, { message: "API key is required." });
+    },
+    {
+      submission: {
+        action: async () => {
+          const v = this.model();
+          this.save.emit({
+            providerType: v.providerType,
+            apiKey: v.apiKey,
+            apiSecret: v.apiSecret,
+            webhookSecret: v.webhookSecret,
+          });
+          return undefined;
+        },
+      },
+    },
+  );
 
   protected onShow(): void {
-    this.form.reset({
-      providerType: "demo" as EldProviderType,
-      apiKey: "",
-      apiSecret: "",
-      webhookSecret: "",
-    });
+    this.form().reset({ ...EMPTY });
   }
 
-  protected submit(): void {
-    if (this.form.invalid) {
-      return;
-    }
-    const v = this.form.value;
-    this.save.emit({
-      providerType: v.providerType as EldProviderType,
-      apiKey: v.apiKey ?? "",
-      apiSecret: v.apiSecret,
-      webhookSecret: v.webhookSecret,
-    });
+  /** The footer buttons live outside the `<form>`, so submit it imperatively via a real submit event. */
+  protected requestSubmit(): void {
+    (this.formEl().nativeElement as HTMLFormElement).requestSubmit();
   }
 
   protected close(): void {

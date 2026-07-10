@@ -25,7 +25,7 @@ import { focusFirstControl } from "../../../forms/focus-control";
  * `pattern` state input under strictTemplates. Instead we drive it with a standalone `NgModel`
  * (`[ngModel]` + `(ngModelChange)`); the `standalone: true` keeps that inner NgModel from
  * registering with an ancestor `NgForm`, and it lives in THIS wrapper's view so
- * `ui-form-field`'s `contentChild(NgControl)` still resolves the OUTER binding.
+ * `ui-form-field`'s `contentChild(FORM_FIELD)` still resolves the OUTER binding.
  *
  * @example
  * <ui-form-field label="Tags" for="tags" [required]="true">

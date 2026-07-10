@@ -25,7 +25,7 @@ import { focusFirstControl } from "../../../forms/focus-control";
  * Forms' `pattern` state input under strictTemplates (`pattern: string` vs the Signal Forms
  * `pattern` control). Instead we drive it with a standalone `NgModel`
  * (`[ngModel]` / `(ngModelChange)` + `{ standalone: true }`); the inner NgModel lives in THIS
- * view, not in `ui-form-field`'s projected content, so `ui-form-field`'s `contentChild(NgControl)`
+ * view, not in `ui-form-field`'s projected content, so `ui-form-field`'s `contentChild(FORM_FIELD)`
  * still resolves the OUTER binding. See `forms/signal-forms-compat-probe.spec.ts`.
  *
  * The parent still owns fetching suggestions: wire `(completeMethod)` to your search handler and

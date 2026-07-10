@@ -1,16 +1,13 @@
 /**
- * `ui-form-field` renders inline validation errors for BOTH form systems.
+ * `ui-form-field` renders inline validation errors for a projected `[formField]`.
  *
- * During Phase 4 the app has reactive forms and signal forms side by side, so this component
- * auto-resolves either. The interesting cases:
+ * It resolves the field through the public `FORM_FIELD` token and reads `FieldState.errors()`,
+ * which is a `ValidationError[]` — each error carrying its own `message` when the validator
+ * supplied one.
  *
- *  - Signal Forms errors are a `ValidationError[]` whose `kind`s are camelCase (`minLength`) and
- *    which carry their own `message`. We render `message` verbatim when present.
- *  - Reactive Forms errors are a keyed object (`{minlength: {requiredLength}}`) with no message.
- *    We flatten and describe them.
- *
- * The camelCase-vs-lowercase split is the trap: a template that only knew `minlength` renders
- * nothing for a signal form, while still (correctly) marking the field invalid.
+ * The trap this guards: Signal Forms' built-in error `kind`s are camelCase (`minLength`) with a
+ * `minLength` payload prop, NOT reactive forms' `minlength` + `requiredLength`. A template written
+ * against the reactive spellings renders nothing while still (correctly) marking the field invalid.
  *
  * @see signal-forms-v22-api-probe.spec.ts, claim J
  */
@@ -23,7 +20,6 @@ import {
   signal,
 } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import {
   form,
   FormField,
@@ -78,27 +74,6 @@ class HostSignal {
 class HostSignalNoMessage {
   readonly data = signal({ name: "ab" });
   readonly f = form(this.data, (p) => minLength(p.name, 5));
-}
-
-@Component({
-  selector: "ui-host-reactive",
-  imports: [UiFormField, ProbeInput, ReactiveFormsModule],
-  template: `
-    <form [formGroup]="fg">
-      <ui-form-field label="Name">
-        <ui-probe-input formControlName="name" />
-      </ui-form-field>
-    </form>
-  `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-})
-class HostReactive {
-  readonly fg = new FormGroup({
-    name: new FormControl("", {
-      nonNullable: true,
-      validators: [Validators.required, Validators.minLength(5)],
-    }),
-  });
 }
 
 async function settle(fixture: ComponentFixture<unknown>): Promise<void> {
@@ -158,20 +133,5 @@ describe("UiFormField", () => {
     // A template that only knew the reactive spellings would render "Invalid value." here.
     expect(errorText(fixture)).toContain("Minimum length is 5 characters.");
     expect(errorText(fixture)).not.toContain("Invalid value.");
-  });
-
-  it("renders reactive-forms errors from the projected formControlName", async () => {
-    const fixture = TestBed.createComponent(HostReactive);
-    await settle(fixture);
-    const control = fixture.componentInstance.fg.controls.name;
-
-    control.markAsTouched();
-    await settle(fixture);
-    expect(errorText(fixture)).toContain("This field is required.");
-
-    // Reactive spelling: kind `minlength`, payload prop `requiredLength`.
-    control.setValue("ab");
-    await settle(fixture);
-    expect(errorText(fixture)).toContain("Minimum length is 5 characters.");
   });
 });

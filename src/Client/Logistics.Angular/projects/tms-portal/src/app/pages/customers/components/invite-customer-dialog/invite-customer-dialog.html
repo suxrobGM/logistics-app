@@ -6,7 +6,7 @@
   (onShow)="onShow()"
   (onHide)="close()"
 >
-  @if (isLoading()) {
+  @if (form().submitting()) {
     <ui-stack align="center" justify="center" class="py-4">
       <p-progress-spinner />
     </ui-stack>
@@ -15,32 +15,22 @@
       Send an email invitation to give a customer access to the customer portal.
     </p>
 
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <ui-form-field
-        label="Email Address"
-        for="email"
-        [required]="true"
-        [control]="form.controls.email"
-      >
+    <form [formRoot]="form">
+      <ui-form-field label="Email Address" for="email" [required]="true">
         <ui-text-field
           id="email"
-          formControlName="email"
+          [formField]="form.email"
           type="email"
           placeholder="customer@example.com"
         />
       </ui-form-field>
 
-      <ui-form-field
-        label="Customer"
-        for="customerId"
-        [required]="true"
-        [control]="form.controls.customerId"
-      >
+      <ui-form-field label="Customer" for="customerId" [required]="true">
         @if (customerId()) {
           <input pInputText id="customerName" [value]="customerName()" class="w-full" disabled />
         } @else {
           <ui-select-field
-            formControlName="customerId"
+            [formField]="form.customerId"
             id="customerId"
             appendTo="body"
             [options]="customers()"
@@ -61,7 +51,7 @@
       >
         <ui-textarea-field
           id="personalMessage"
-          formControlName="personalMessage"
+          [formField]="form.personalMessage"
           [rows]="3"
           placeholder="Add a personal note to the invitation email..."
         />
@@ -73,7 +63,7 @@
           type="submit"
           icon="pi pi-send"
           label="Send Invitation"
-          [disabled]="isLoading()"
+          [disabled]="form().submitting()"
         />
       </ui-stack>
     </form>

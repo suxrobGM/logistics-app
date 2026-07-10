@@ -1,13 +1,12 @@
-<form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4 pt-4">
+<form [formRoot]="form" class="space-y-4 pt-4">
   <ui-grid container spacing="4">
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Amount" for="company-amount" [required]="true">
         <ui-number-field
           id="company-amount"
-          formControlName="amount"
+          [formField]="form.amount"
           mode="currency"
           currency="USD"
-          [min]="0"
           [fluid]="true"
         />
       </ui-form-field>
@@ -17,7 +16,7 @@
       <ui-form-field label="Category" for="company-category" [required]="true">
         <ui-select-field
           id="company-category"
-          formControlName="category"
+          [formField]="form.category"
           [options]="categories"
           optionLabel="label"
           optionValue="value"
@@ -28,7 +27,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Vendor Name" for="company-vendor">
-        <ui-text-field id="company-vendor" formControlName="vendorName" />
+        <ui-text-field id="company-vendor" [formField]="form.vendorName" />
       </ui-form-field>
     </ui-grid>
 
@@ -36,7 +35,7 @@
       <ui-form-field label="Expense Date" for="company-date" [required]="true">
         <ui-date-field
           id="company-date"
-          formControlName="expenseDate"
+          [formField]="form.expenseDate"
           [showIcon]="true"
           [fluid]="true"
         />
@@ -47,7 +46,7 @@
   <ui-form-field label="Notes" for="company-notes">
     <ui-textarea-field
       id="company-notes"
-      formControlName="notes"
+      [formField]="form.notes"
       [rows]="3"
     />
   </ui-form-field>
@@ -67,7 +66,7 @@
       type="submit"
       [label]="mode() === 'edit' ? 'Save Changes' : 'Create Expense'"
       icon="pi pi-save"
-      [loading]="isSaving()"
+      [loading]="form().submitting()"
     />
   </ui-stack>
 </form>

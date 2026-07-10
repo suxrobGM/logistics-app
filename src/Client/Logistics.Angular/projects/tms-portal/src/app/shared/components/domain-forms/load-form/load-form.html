@@ -5,7 +5,7 @@
       <p-progress-spinner />
     }
 
-    <form [formGroup]="form" (ngSubmit)="submit()">
+    <form [formRoot]="form">
       <ui-stack gap="2">
 
         <!-- Load Information Section -->
@@ -18,16 +18,16 @@
             <ui-form-field label="Name" for="name" [required]="true">
               <ui-text-field
                 id="name"
-                formControlName="name"
+                [formField]="form.name"
                 type="text"
                 placeholder="Load name"
               />
             </ui-form-field>
             <ui-form-field label="Load Type" for="type" [required]="true">
-              <ui-select-field formControlName="type" [options]="loadTypes" />
+              <ui-select-field [formField]="form.type" [options]="loadTypes" />
             </ui-form-field>
             <ui-form-field label="Source" for="source" [required]="true" class="mb-0">
-              <ui-select-field formControlName="source" [options]="loadSources" />
+              <ui-select-field [formField]="form.source" [options]="loadSources" />
             </ui-form-field>
           </ui-surface>
         </ui-stack>
@@ -43,7 +43,8 @@
               <ui-form-field label="Trip" for="tripNumber" class="mb-0">
                 <ui-text-field
                   id="tripNumber"
-                  formControlName="tripNumber"
+                  [value]="tripNumberText()"
+                  [disabled]="true"
                   type="text"
                   placeholder="Trip"
                 />
@@ -60,7 +61,7 @@
           </ui-stack>
           <ui-surface variant="elevated" [border]="true">
             <ui-form-field label="Customer" for="customer" [required]="true" class="mb-0">
-              <app-search-customer formControlName="customer" />
+              <app-search-customer [formField]="form.customer" />
             </ui-form-field>
           </ui-surface>
         </ui-stack>
@@ -75,7 +76,7 @@
             <ui-form-field label="Origin Address" for="originAddress" [required]="true">
               <app-address-autocomplete
                 field="originAddress"
-                formControlName="originAddress"
+                [formField]="form.originAddress"
                 [forceSelection]="true"
                 (selectedAddress)="updateOrigin($event)"
               />
@@ -89,7 +90,7 @@
             >
               <app-address-autocomplete
                 field="destinationAddress"
-                formControlName="destinationAddress"
+                [formField]="form.destinationAddress"
                 [forceSelection]="true"
                 (selectedAddress)="updateDestination($event)"
               />
@@ -103,7 +104,7 @@
             <ui-grid [size]="{ xs: 12, md: 6 }">
               <ui-form-field label="Requested Pickup Date" for="requestedPickupDate" class="mb-0">
                 <ui-date-field
-                  formControlName="requestedPickupDate"
+                  [formField]="form.requestedPickupDate"
                   [showIcon]="true"
                   [showTime]="true"
                   inputId="requestedPickupDate"
@@ -117,7 +118,7 @@
                 class="mb-0"
               >
                 <ui-date-field
-                  formControlName="requestedDeliveryDate"
+                  [formField]="form.requestedDeliveryDate"
                   [showIcon]="true"
                   [showTime]="true"
                   inputId="requestedDeliveryDate"
@@ -130,13 +131,13 @@
         <!-- Intermodal Section (collapsable) -->
         <p-fieldset legend="Intermodal (optional)" [toggleable]="true" [collapsed]="true">
           <ui-form-field label="Container" for="container">
-            <app-search-container formControlName="container" />
+            <app-search-container [formField]="form.container" />
           </ui-form-field>
           <ui-form-field label="Origin Terminal" for="originTerminal">
-            <app-search-terminal formControlName="originTerminal" />
+            <app-search-terminal [formField]="form.originTerminal" />
           </ui-form-field>
           <ui-form-field label="Destination Terminal" for="destinationTerminal" class="mb-0">
-            <app-search-terminal formControlName="destinationTerminal" />
+            <app-search-terminal [formField]="form.destinationTerminal" />
           </ui-form-field>
         </p-fieldset>
 
@@ -144,17 +145,17 @@
         <p-fieldset
           legend="Hazmat / ADR"
           [toggleable]="true"
-          [collapsed]="!form.controls.isHazmat.value"
+          [collapsed]="!model().isHazmat"
         >
           <ui-form-field label="Contains hazardous materials" for="isHazmat">
-            <ui-checkbox-field inputId="isHazmat" formControlName="isHazmat" />
+            <ui-checkbox-field inputId="isHazmat" [formField]="form.isHazmat" />
           </ui-form-field>
 
-          @if (form.controls.isHazmat.value) {
+          @if (model().isHazmat) {
             <ui-form-field label="Hazmat class" for="hazmatClass" hint="UN/ADR classification">
               <ui-select-field
                 id="hazmatClass"
-                formControlName="hazmatClass"
+                [formField]="form.hazmatClass"
                 [options]="hazmatClasses"
                 optionLabel="label"
                 optionValue="value"
@@ -168,11 +169,10 @@
               for="unNumber"
               hint="e.g., UN1203 for petrol"
               class="mb-0"
-              [control]="form.controls.unNumber"
             >
               <ui-text-field
                 id="unNumber"
-                formControlName="unNumber"
+                [formField]="form.unNumber"
                 type="text"
                 [maxlength]="16"
                 placeholder="UN0000"
@@ -187,7 +187,7 @@
           <ui-form-field label="Notes" for="notes" hint="Max 2000 characters" class="mb-0">
             <ui-textarea-field
               id="notes"
-              formControlName="notes"
+              [formField]="form.notes"
               [rows]="3"
               [maxlength]="2000"
             />
@@ -204,14 +204,13 @@
             <ui-form-field label="Delivery Cost" for="deliveryCost" [required]="true">
               <ui-number-field
                 id="deliveryCost"
-                formControlName="deliveryCost"
-                [min]="0"
+                [formField]="form.deliveryCost"
                 prefixLabel="$$"
               />
             </ui-form-field>
 
             <ui-form-field label="Estimated Distance" for="distance" class="mb-0">
-              <ui-number-field id="distance" formControlName="distance" [min]="0" prefixLabel="mi" />
+              <ui-number-field id="distance" [formField]="form.distance" prefixLabel="mi" />
             </ui-form-field>
           </ui-surface>
         </ui-stack>
@@ -226,20 +225,20 @@
             <ui-form-field label="Assigned Dispatcher" for="dispatcherName">
               <ui-text-field
                 id="dispatcherName"
-                formControlName="assignedDispatcherName"
+                [formField]="form.assignedDispatcherName"
                 type="text"
               />
             </ui-form-field>
 
             @if (canChangeAssignedTruck()) {
               <ui-form-field label="Assigned Truck" for="assignedTruck">
-                <app-search-truck formControlName="assignedTruck" />
+                <app-search-truck [formField]="form.assignedTruck" [truckId]="initialTruckId()" />
               </ui-form-field>
             }
 
             @if (mode() === "edit") {
               <ui-form-field label="Status" for="status" class="mb-0">
-                <ui-select-field formControlName="status" [options]="loadStatuses" />
+                <ui-select-field [formField]="form.status" [options]="loadStatuses" />
               </ui-form-field>
             }
           </ui-surface>

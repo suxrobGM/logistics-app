@@ -82,14 +82,14 @@
   [modal]="true"
   [style]="{ width: '500px' }"
 >
-  <form [formGroup]="form" class="space-y-4">
+  <form [formRoot]="form" class="space-y-4">
     <ui-form-field label="Description" [required]="true">
-      <ui-text-field formControlName="description" />
+      <ui-text-field [formField]="form.description" />
     </ui-form-field>
 
     <ui-form-field label="Type" [required]="true">
       <ui-select-field
-        formControlName="type"
+        [formField]="form.type"
         [options]="typeOptions"
         optionLabel="label"
         optionValue="value"
@@ -100,7 +100,7 @@
     <div class="grid grid-cols-2 gap-4">
       <ui-form-field label="Amount" [required]="true">
         <ui-number-field
-          formControlName="amount"
+          [formField]="form.amount"
           mode="currency"
           currency="USD"
           styleClass="w-full"
@@ -108,12 +108,12 @@
       </ui-form-field>
 
       <ui-form-field label="Quantity" [required]="true">
-        <ui-number-field formControlName="quantity" [min]="1" styleClass="w-full" />
+        <ui-number-field [formField]="form.quantity" styleClass="w-full" />
       </ui-form-field>
     </div>
 
     <ui-form-field label="Notes">
-      <ui-textarea-field formControlName="notes" [rows]="2" />
+      <ui-textarea-field [formField]="form.notes" [rows]="2" />
     </ui-form-field>
   </form>
 
@@ -122,8 +122,7 @@
     <p-button
       [label]="editingItem() ? 'Update' : 'Add'"
       icon="pi pi-check"
-      [loading]="isSaving()"
-      [disabled]="!form.valid"
+      [loading]="form().submitting()"
       (onClick)="saveItem()"
     />
   </ng-template>

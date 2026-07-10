@@ -7,7 +7,7 @@
     </ui-stack>
   }
 
-  <form [formGroup]="form" (ngSubmit)="submit()">
+  <form [formRoot]="form">
     <ui-stack gap="6">
 
       <!-- Employee Details Section -->
@@ -19,7 +19,7 @@
         <ui-surface variant="elevated" [border]="true">
           <ui-form-field label="User Name" for="name" hint="Start typing (minimum 3 characters)">
             <ui-autocomplete-field
-              formControlName="user"
+              [formField]="form.user"
               placeholder="Type user name"
               optionLabel="userName"
               [minQueryLength]="3"
@@ -30,7 +30,7 @@
 
           <ui-form-field label="Role" for="role" class="mb-0">
             <ui-select-field
-              formControlName="role"
+              [formField]="form.role"
               [options]="roles()"
               optionValue="name"
               optionLabel="displayName"
@@ -49,14 +49,14 @@
         </ui-stack>
         <ui-surface variant="elevated" [border]="true">
           <ui-form-field label="Salary Type" for="salaryType">
-            <ui-select-field formControlName="salaryType" [options]="salaryTypes" />
+            <ui-select-field [formField]="form.salaryType" [options]="salaryTypes" />
           </ui-form-field>
 
           <ui-form-field label="Salary" for="salary" class="mb-0">
             @if (isShareOfGrossSalary()) {
-              <ui-unit-field formControlName="salary" unit="%" [min]="0" [max]="100" />
+              <ui-unit-field [formField]="form.salary" unit="%" />
             } @else {
-              <ui-currency-field formControlName="salary" [min]="0" />
+              <ui-currency-field [formField]="form.salary" />
             }
           </ui-form-field>
         </ui-surface>
@@ -64,7 +64,13 @@
 
       <!-- Action Buttons -->
       <ui-stack direction="row" gap="2">
-        <p-button type="submit" icon="pi pi-plus" label="Add" [disabled]="isLoading()" />
+        <p-button
+          type="submit"
+          icon="pi pi-plus"
+          label="Add"
+          [loading]="form().submitting()"
+          [disabled]="isLoading()"
+        />
         <p-button
           type="button"
           icon="pi pi-arrow-left"

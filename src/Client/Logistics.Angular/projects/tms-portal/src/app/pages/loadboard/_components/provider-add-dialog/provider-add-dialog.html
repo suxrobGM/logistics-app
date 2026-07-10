@@ -6,30 +6,16 @@
   [draggable]="false"
   (onShow)="onShow()"
 >
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <ui-form-field
-      label="Provider"
-      for="providerType"
-      [required]="true"
-      [control]="form.controls.providerType"
-    >
-      <p-select
+  <form [formRoot]="form" #formEl>
+    <ui-form-field label="Provider" for="providerType" [required]="true">
+      <ui-select-field
         id="providerType"
-        formControlName="providerType"
+        [formField]="form.providerType"
         [options]="providerOptions"
         optionLabel="label"
         optionValue="value"
         placeholder="Select provider"
-        class="w-full"
-        [style]="{ width: '100%' }"
-      >
-        <ng-template #item let-item>
-          <div>
-            <div class="font-medium">{{ item.label }}</div>
-            <small class="text-muted">{{ item.description }}</small>
-          </div>
-        </ng-template>
-      </p-select>
+      />
     </ui-form-field>
 
     <ui-form-field
@@ -37,13 +23,8 @@
       for="apiKey"
       [required]="true"
       hint="Your load board API key or client ID"
-      [control]="form.controls.apiKey"
     >
-      <ui-text-field
-        id="apiKey"
-        formControlName="apiKey"
-        placeholder="Enter API key"
-      />
+      <ui-text-field id="apiKey" [formField]="form.apiKey" placeholder="Enter API key" />
     </ui-form-field>
 
     <ui-form-field
@@ -53,7 +34,7 @@
     >
       <ui-password-field
         id="apiSecret"
-        formControlName="apiSecret"
+        [formField]="form.apiSecret"
         [toggleMask]="true"
         [feedback]="false"
         placeholder="Enter API secret"
@@ -67,7 +48,7 @@
     >
       <ui-text-field
         id="companyDotNumber"
-        formControlName="companyDotNumber"
+        [formField]="form.companyDotNumber"
         placeholder="e.g., 1234567"
       />
     </ui-form-field>
@@ -79,7 +60,7 @@
     >
       <ui-text-field
         id="companyMcNumber"
-        formControlName="companyMcNumber"
+        [formField]="form.companyMcNumber"
         placeholder="e.g., MC123456"
       />
     </ui-form-field>
@@ -123,7 +104,7 @@
     <p-button
       label="Add Provider"
       icon="pi pi-check"
-      (onClick)="submit()"
+      (onClick)="requestSubmit()"
       [loading]="saving()"
     />
   </ng-template>

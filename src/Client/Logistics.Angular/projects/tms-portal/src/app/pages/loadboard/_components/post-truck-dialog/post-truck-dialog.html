@@ -6,45 +6,26 @@
   [draggable]="false"
   (onShow)="onShow()"
 >
-  <form [formGroup]="form" (ngSubmit)="submit()">
+  <form [formRoot]="form">
     <ui-grid container spacing="4">
       <ui-grid [size]="{ xs: 12, md: 6 }">
-        <ui-form-field
-          label="Truck"
-          for="truckId"
-          [required]="true"
-          [control]="form.controls.truckId"
-        >
-          <p-select
+        <ui-form-field label="Truck" for="truckId" [required]="true">
+          <ui-select-field
             id="truckId"
-            formControlName="truckId"
+            [formField]="form.truckId"
             [options]="trucks()"
             optionLabel="number"
             optionValue="id"
             placeholder="Select truck"
-            class="w-full"
-            [style]="{ width: '100%' }"
-          >
-            <ng-template #item let-truck>
-              <div>
-                <div class="font-medium">{{ truck.number }}</div>
-                <small class="text-muted">{{ truck.type }}</small>
-              </div>
-            </ng-template>
-          </p-select>
+          />
         </ui-form-field>
       </ui-grid>
 
       <ui-grid [size]="{ xs: 12, md: 6 }">
-        <ui-form-field
-          label="Load Board"
-          for="providerType"
-          [required]="true"
-          [control]="form.controls.providerType"
-        >
+        <ui-form-field label="Load Board" for="providerType" [required]="true">
           <ui-select-field
             id="providerType"
-            formControlName="providerType"
+            [formField]="form.providerType"
             [options]="providerOptions()"
             optionLabel="label"
             optionValue="value"
@@ -58,30 +39,20 @@
     <ui-typography variant="h6" class="mt-4 mb-3">Available Location</ui-typography>
     <ui-grid container spacing="4">
       <ui-grid [size]="{ xs: 12, md: 4 }">
-        <ui-form-field
-          label="City"
-          for="availableAtCity"
-          [required]="true"
-          [control]="form.controls.availableAtCity"
-        >
+        <ui-form-field label="City" for="availableAtCity" [required]="true">
           <ui-text-field
             id="availableAtCity"
-            formControlName="availableAtCity"
+            [formField]="form.availableAtCity"
             placeholder="e.g., Los Angeles"
           />
         </ui-form-field>
       </ui-grid>
 
       <ui-grid [size]="{ xs: 12, md: 4 }">
-        <ui-form-field
-          label="State"
-          for="availableAtState"
-          [required]="true"
-          [control]="form.controls.availableAtState"
-        >
+        <ui-form-field label="State" for="availableAtState" [required]="true">
           <ui-text-field
             id="availableAtState"
-            formControlName="availableAtState"
+            [formField]="form.availableAtState"
             placeholder="e.g., CA"
           />
         </ui-form-field>
@@ -91,7 +62,7 @@
         <ui-form-field label="ZIP Code" for="availableAtZipCode">
           <ui-text-field
             id="availableAtZipCode"
-            formControlName="availableAtZipCode"
+            [formField]="form.availableAtZipCode"
             placeholder="e.g., 90001"
           />
         </ui-form-field>
@@ -104,7 +75,7 @@
         <ui-form-field label="City" for="destinationCity">
           <ui-text-field
             id="destinationCity"
-            formControlName="destinationCity"
+            [formField]="form.destinationCity"
             placeholder="e.g., Dallas"
           />
         </ui-form-field>
@@ -114,7 +85,7 @@
         <ui-form-field label="State" for="destinationState">
           <ui-text-field
             id="destinationState"
-            formControlName="destinationState"
+            [formField]="form.destinationState"
             placeholder="e.g., TX"
           />
         </ui-form-field>
@@ -122,12 +93,7 @@
 
       <ui-grid [size]="{ xs: 12, md: 4 }">
         <ui-form-field label="Radius (mi)" for="destinationRadius">
-          <ui-number-field
-            id="destinationRadius"
-            formControlName="destinationRadius"
-            [min]="0"
-            [max]="500"
-          />
+          <ui-number-field id="destinationRadius" [formField]="form.destinationRadius" />
         </ui-form-field>
       </ui-grid>
     </ui-grid>
@@ -135,15 +101,10 @@
     <ui-typography variant="h6" class="mt-4 mb-3">Availability</ui-typography>
     <ui-grid container spacing="4">
       <ui-grid [size]="{ xs: 12, md: 6 }">
-        <ui-form-field
-          label="Available From"
-          for="availableFrom"
-          [required]="true"
-          [control]="form.controls.availableFrom"
-        >
+        <ui-form-field label="Available From" for="availableFrom" [required]="true">
           <ui-date-field
             id="availableFrom"
-            formControlName="availableFrom"
+            [formField]="form.availableFrom"
             [showIcon]="true"
             dateFormat="mm/dd/yy"
           />
@@ -154,7 +115,7 @@
         <ui-form-field label="Available To" for="availableTo">
           <ui-date-field
             id="availableTo"
-            formControlName="availableTo"
+            [formField]="form.availableTo"
             [showIcon]="true"
             dateFormat="mm/dd/yy"
           />
@@ -168,7 +129,7 @@
         <ui-form-field label="Equipment Type" for="equipmentType">
           <ui-select-field
             id="equipmentType"
-            formControlName="equipmentType"
+            [formField]="form.equipmentType"
             [options]="equipmentOptions"
             optionLabel="label"
             optionValue="value"
@@ -180,23 +141,13 @@
 
       <ui-grid [size]="{ xs: 12, md: 4 }">
         <ui-form-field label="Max Weight (lbs)" for="maxWeight">
-          <ui-number-field
-            id="maxWeight"
-            formControlName="maxWeight"
-            [min]="0"
-            [max]="100000"
-          />
+          <ui-number-field id="maxWeight" [formField]="form.maxWeight" />
         </ui-form-field>
       </ui-grid>
 
       <ui-grid [size]="{ xs: 12, md: 4 }">
         <ui-form-field label="Max Length (ft)" for="maxLength">
-          <ui-number-field
-            id="maxLength"
-            formControlName="maxLength"
-            [min]="0"
-            [max]="100"
-          />
+          <ui-number-field id="maxLength" [formField]="form.maxLength" />
         </ui-form-field>
       </ui-grid>
     </ui-grid>
@@ -207,7 +158,7 @@
     <p-button
       label="Post Truck"
       icon="pi pi-check"
-      (onClick)="submit()"
+      (onClick)="onSubmit()"
       [loading]="posting()"
     />
   </ng-template>

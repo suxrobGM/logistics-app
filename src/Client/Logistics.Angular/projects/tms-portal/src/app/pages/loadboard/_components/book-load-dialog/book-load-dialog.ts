@@ -1,16 +1,30 @@
-import { Component, inject, input, model, output } from "@angular/core";
-import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
+import { Component, input, model, output, signal } from "@angular/core";
+import { form, FormField, FormRoot } from "@angular/forms/signals";
 import {
   type LoadBoardBookingRequest,
   type LoadBoardListingDto,
   type TruckDto,
 } from "@logistics/shared/api";
-import { Alert, Stack, Surface, Typography, UiTextField } from "@logistics/shared/components";
+import {
+  Alert,
+  Stack,
+  Surface,
+  Typography,
+  UiSelectField,
+  UiTextField,
+} from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
-import { SelectModule } from "primeng/select";
 import { UiFormField } from "@/shared/components";
+
+const EMPTY = {
+  truckId: "",
+  contactName: "",
+  contactPhone: "",
+  contactEmail: "",
+  notes: "",
+};
 
 @Component({
   selector: "app-book-load-dialog",
@@ -20,44 +34,33 @@ import { UiFormField } from "@/shared/components";
     ButtonModule,
     CurrencyFormatPipe,
     DialogModule,
+    FormRoot,
+    FormField,
     UiFormField,
+    UiSelectField,
     UiTextField,
-    ReactiveFormsModule,
-    SelectModule,
     Stack,
     Surface,
     Typography,
   ],
 })
 export class BookLoadDialog {
-  private readonly fb = inject(FormBuilder);
-
   public readonly visible = model.required<boolean>();
   public readonly listing = input<LoadBoardListingDto | null>(null);
   public readonly booking = input(false);
   public readonly trucks = input.required<TruckDto[]>();
   public readonly submitted = output<LoadBoardBookingRequest>();
 
-  protected readonly form = this.fb.group({
-    truckId: [""],
-    contactName: [""],
-    contactPhone: [""],
-    contactEmail: [""],
-    notes: [""],
-  });
+  protected readonly model = signal({ ...EMPTY });
+
+  protected readonly form = form(this.model);
 
   protected onShow(): void {
-    this.form.reset({
-      truckId: "",
-      contactName: "",
-      contactPhone: "",
-      contactEmail: "",
-      notes: "",
-    });
+    this.form().reset({ ...EMPTY });
   }
 
   protected submit(): void {
-    const v = this.form.value;
+    const v = this.model();
     this.submitted.emit({
       truckId: v.truckId || undefined,
       notes: v.notes,

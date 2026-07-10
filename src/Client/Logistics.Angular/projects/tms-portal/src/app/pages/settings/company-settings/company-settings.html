@@ -6,7 +6,7 @@
       <p-progress-spinner />
     </ui-stack>
   } @else {
-    <form [formGroup]="form" (ngSubmit)="save()">
+    <form [formRoot]="form">
       <ui-stack gap="6">
 
         <!-- Branding Section -->
@@ -63,15 +63,15 @@
           </ui-stack>
           <ui-surface variant="elevated" [border]="true">
             <ui-form-field label="Company Name" for="companyName" [required]="true">
-              <ui-text-field formControlName="companyName" id="companyName" />
+              <ui-text-field [formField]="form.companyName" id="companyName" />
             </ui-form-field>
 
             <ui-form-field label="Phone Number" for="phoneNumber">
-              <ui-phone-field formControlName="phoneNumber" />
+              <ui-phone-field [formField]="form.phoneNumber" />
             </ui-form-field>
 
             <ui-form-field label="Billing Email" for="billingEmail" [required]="true" class="mb-0">
-              <ui-text-field formControlName="billingEmail" id="billingEmail" type="email" />
+              <ui-text-field [formField]="form.billingEmail" id="billingEmail" type="email" />
             </ui-form-field>
           </ui-surface>
         </ui-stack>
@@ -87,7 +87,7 @@
           <ui-surface variant="elevated" [border]="true">
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
               <ui-form-field label="US DOT Number" for="dotNumber" class="mb-0">
-                <ui-text-field formControlName="dotNumber" id="dotNumber" />
+                <ui-text-field [formField]="form.dotNumber" id="dotNumber" />
               </ui-form-field>
 
               <ui-form-field
@@ -96,7 +96,7 @@
                 hint="US Motor Carrier number"
                 class="mb-0"
               >
-                <ui-text-field formControlName="mcNumber" id="mcNumber" />
+                <ui-text-field [formField]="form.mcNumber" id="mcNumber" />
               </ui-form-field>
 
               <ui-form-field
@@ -106,7 +106,7 @@
                 class="mb-0"
               >
                 <ui-text-field
-                  formControlName="vatNumber"
+                  [formField]="form.vatNumber"
                   id="vatNumber"
                   placeholder="e.g. DE123456789"
                 />
@@ -118,7 +118,7 @@
                 hint="EU/UK customs ID"
                 class="mb-0"
               >
-                <ui-text-field formControlName="eoriNumber" id="eoriNumber" />
+                <ui-text-field [formField]="form.eoriNumber" id="eoriNumber" />
               </ui-form-field>
 
               <ui-form-field
@@ -128,7 +128,7 @@
                 class="mb-0"
               >
                 <ui-text-field
-                  formControlName="companyRegistrationNumber"
+                  [formField]="form.companyRegistrationNumber"
                   id="companyRegistrationNumber"
                 />
               </ui-form-field>
@@ -140,7 +140,7 @@
                 class="mb-0"
               >
                 <ui-text-field
-                  formControlName="taxResidencyCountry"
+                  [formField]="form.taxResidencyCountry"
                   id="taxResidencyCountry"
                   [maxlength]="2"
                   placeholder="e.g. DE"
@@ -159,7 +159,7 @@
           <ui-surface variant="elevated" [border]="true">
             <ui-form-field label="Address" [required]="true" class="mb-0">
               <ui-address-form
-                formControlName="companyAddress"
+                [formField]="form.companyAddress"
                 [allowedCountries]="allowedCountries()"
               />
             </ui-form-field>
@@ -177,7 +177,7 @@
               <ui-form-field label="Distance Unit" for="distanceUnit" class="mb-0">
                 <ui-select-field
                   id="distanceUnit"
-                  formControlName="distanceUnit"
+                  [formField]="form.distanceUnit"
                   [options]="distanceUnitOptions"
                   optionLabel="label"
                   optionValue="value"
@@ -188,7 +188,7 @@
               <ui-form-field label="Weight Unit" for="weightUnit" class="mb-0">
                 <ui-select-field
                   id="weightUnit"
-                  formControlName="weightUnit"
+                  [formField]="form.weightUnit"
                   [options]="weightUnitOptions"
                   optionLabel="label"
                   optionValue="value"
@@ -199,7 +199,7 @@
               <ui-form-field label="Date Format" for="dateFormat" class="mb-0">
                 <ui-select-field
                   id="dateFormat"
-                  formControlName="dateFormat"
+                  [formField]="form.dateFormat"
                   [options]="dateFormatOptions"
                   optionLabel="label"
                   optionValue="value"
@@ -210,7 +210,7 @@
               <ui-form-field label="Timezone" for="timezone" class="mb-0">
                 <ui-select-field
                   id="timezone"
-                  formControlName="timezone"
+                  [formField]="form.timezone"
                   [options]="timezoneOptions"
                   optionLabel="label"
                   optionValue="value"
@@ -229,7 +229,7 @@
             type="submit"
             icon="pi pi-save"
             label="Save Changes"
-            [loading]="isSaving()"
+            [loading]="form().submitting()"
           />
         </ui-stack>
       </ui-stack>

@@ -1,20 +1,20 @@
 <div class="flex flex-col gap-6">
-  @if (isLoading()) {
+  @if (form().submitting()) {
     <div class="flex justify-center py-8">
       <p-progress-spinner />
     </div>
   }
 
-  <form [formGroup]="form" (ngSubmit)="submit()">
+  <form [formRoot]="form">
 
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
       <ui-form-field label="Truck" for="truck" [required]="true">
-        <app-search-truck formControlName="truck" />
+        <app-search-truck [formField]="form.truck" />
       </ui-form-field>
 
       <ui-form-field label="Service Type" for="type" [required]="true">
         <ui-select-field
-          formControlName="type"
+          [formField]="form.type"
           id="type"
           [options]="maintenanceTypeOptions"
           optionLabel="label"
@@ -26,7 +26,7 @@
 
     <ui-form-field label="Description" for="description" [required]="true" class="mt-4">
       <ui-textarea-field
-        formControlName="description"
+        [formField]="form.description"
         id="description"
         [rows]="2"
         placeholder="Describe the maintenance performed..."
@@ -36,7 +36,7 @@
     <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
       <ui-form-field label="Service Date" for="serviceDate" [required]="true">
         <ui-date-field
-          formControlName="serviceDate"
+          [formField]="form.serviceDate"
           id="serviceDate"
           [showIcon]="true"
           [iconDisplay]="'input'"
@@ -47,7 +47,7 @@
 
       <ui-form-field label="Odometer Reading" for="odometerReading">
         <ui-number-field
-          formControlName="odometerReading"
+          [formField]="form.odometerReading"
           id="odometerReading"
           [useGrouping]="true"
           suffix=" mi"
@@ -56,7 +56,7 @@
 
       <ui-form-field label="Engine Hours" for="engineHours">
         <ui-number-field
-          formControlName="engineHours"
+          [formField]="form.engineHours"
           id="engineHours"
           [useGrouping]="true"
           suffix=" hrs"
@@ -68,7 +68,7 @@
       <ui-form-field label="Vendor Name" for="vendorName">
         <ui-text-field
           id="vendorName"
-          formControlName="vendorName"
+          [formField]="form.vendorName"
           placeholder="Service provider name"
         />
       </ui-form-field>
@@ -76,7 +76,7 @@
       <ui-form-field label="Invoice Number" for="invoiceNumber">
         <ui-text-field
           id="invoiceNumber"
-          formControlName="invoiceNumber"
+          [formField]="form.invoiceNumber"
           placeholder="INV-12345"
         />
       </ui-form-field>
@@ -85,7 +85,7 @@
     <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
       <ui-form-field label="Labor Cost" for="laborCost">
         <ui-number-field
-          formControlName="laborCost"
+          [formField]="form.laborCost"
           id="laborCost"
           mode="currency"
           currency="USD"
@@ -95,7 +95,7 @@
 
       <ui-form-field label="Parts Cost" for="partsCost">
         <ui-number-field
-          formControlName="partsCost"
+          [formField]="form.partsCost"
           id="partsCost"
           mode="currency"
           currency="USD"
@@ -106,7 +106,7 @@
 
     <ui-form-field label="Notes" for="notes" class="mt-4">
       <ui-textarea-field
-        formControlName="notes"
+        [formField]="form.notes"
         id="notes"
         [rows]="3"
         placeholder="Additional notes about this service..."
@@ -114,7 +114,7 @@
     </ui-form-field>
 
     <div class="mt-6 flex gap-2">
-      <p-button type="submit" icon="pi pi-check" label="Save" [disabled]="isLoading()" />
+      <p-button type="submit" icon="pi pi-check" label="Save" [loading]="form().submitting()" />
 
       <p-button
         type="button"

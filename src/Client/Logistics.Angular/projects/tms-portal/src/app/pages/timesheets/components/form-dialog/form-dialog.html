@@ -5,21 +5,16 @@
   [style]="{ width: '500px' }"
   (onHide)="close()"
 >
-  @if (isLoading()) {
+  @if (form().submitting()) {
     <ui-stack align="center" justify="center" class="py-4">
       <p-progress-spinner />
     </ui-stack>
   } @else {
-    <form [formGroup]="form" (ngSubmit)="submit()">
+    <form [formRoot]="form">
       @if (!isEditMode) {
-        <ui-form-field
-          label="Employee"
-          for="employeeId"
-          [required]="true"
-          [control]="form.controls.employeeId"
-        >
+        <ui-form-field label="Employee" for="employeeId" [required]="true">
           <ui-select-field
-            formControlName="employeeId"
+            [formField]="form.employeeId"
             id="employeeId"
             appendTo="body"
             [options]="employees()"
@@ -32,9 +27,9 @@
         </ui-form-field>
       }
 
-      <ui-form-field label="Date" for="date" [required]="true" [control]="form.controls.date">
+      <ui-form-field label="Date" for="date" [required]="true">
         <ui-date-field
-          formControlName="date"
+          [formField]="form.date"
           id="date"
           dateFormat="mm/dd/yy"
           [showIcon]="true"
@@ -44,14 +39,9 @@
 
       <ui-grid container spacing="4">
         <ui-grid [size]="{ xs: 12, md: 6 }">
-          <ui-form-field
-            label="Start Time"
-            for="startTime"
-            [required]="true"
-            [control]="form.controls.startTime"
-          >
+          <ui-form-field label="Start Time" for="startTime" [required]="true">
             <ui-date-field
-              formControlName="startTime"
+              [formField]="form.startTime"
               id="startTime"
               [timeOnly]="true"
               [showIcon]="true"
@@ -62,14 +52,9 @@
         </ui-grid>
 
         <ui-grid [size]="{ xs: 12, md: 6 }">
-          <ui-form-field
-            label="End Time"
-            for="endTime"
-            [required]="true"
-            [control]="form.controls.endTime"
-          >
+          <ui-form-field label="End Time" for="endTime" [required]="true">
             <ui-date-field
-              formControlName="endTime"
+              [formField]="form.endTime"
               id="endTime"
               [timeOnly]="true"
               [showIcon]="true"
@@ -80,13 +65,6 @@
         </ui-grid>
       </ui-grid>
 
-      @if (timeError()) {
-        <ui-stack direction="row" align="center" gap="1" class="text-red-500 text-sm mb-2">
-          <ui-icon name="exclamation-circle" />
-          <span>{{ timeError() }}</span>
-        </ui-stack>
-      }
-
       <ui-grid container spacing="4">
         <ui-grid [size]="{ xs: 12, md: 6 }">
           <ui-form-field
@@ -95,21 +73,19 @@
             hint="Calculated from start and end time"
           >
             <ui-number-field
-              formControlName="totalHours"
+              [formField]="form.totalHours"
               id="totalHours"
               mode="decimal"
               [minFractionDigits]="1"
               [maxFractionDigits]="2"
-              [min]="0"
-              [max]="24"
             />
           </ui-form-field>
         </ui-grid>
 
         <ui-grid [size]="{ xs: 12, md: 6 }">
-          <ui-form-field label="Type" for="type" [required]="true" [control]="form.controls.type">
+          <ui-form-field label="Type" for="type" [required]="true">
             <ui-select-field
-              formControlName="type"
+              [formField]="form.type"
               id="type"
               appendTo="body"
               [options]="typeOptions"
@@ -123,7 +99,7 @@
       <ui-form-field label="Notes" for="notes" hint="Optional notes about this entry">
         <ui-textarea-field
           id="notes"
-          formControlName="notes"
+          [formField]="form.notes"
           [rows]="3"
           placeholder="Add notes..."
         />
@@ -131,12 +107,7 @@
 
       <ui-stack direction="row" justify="end" gap="2" class="mt-4">
         <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />
-        <p-button
-          type="submit"
-          icon="pi pi-check"
-          [label]="isEditMode ? 'Update' : 'Create'"
-          [disabled]="isLoading() || timeError()"
-        />
+        <p-button type="submit" icon="pi pi-check" [label]="isEditMode ? 'Update' : 'Create'" />
       </ui-stack>
     </form>
   }

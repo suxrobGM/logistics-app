@@ -149,18 +149,6 @@ describe("UiMultiSelectField — a FormValueControl-only wrapper", () => {
       const root = fixture.nativeElement.querySelector("p-multiselect") as HTMLElement;
       expect(root.classList.contains("p-disabled")).toBe(true);
     });
-
-    it("ui-form-field renders the required error once touched", async () => {
-      const fixture = TestBed.createComponent(HostReactiveMultiSelect);
-      await settle(fixture);
-
-      // Validators.required treats an empty array as invalid (isEmptyInputValue).
-      fixture.componentInstance.fg.controls.tags.setValue([]);
-      fixture.componentInstance.fg.controls.tags.markAsTouched();
-      await settle(fixture);
-
-      expect(fixture.nativeElement.textContent).toContain("This field is required.");
-    });
   });
 
   describe("under Signal Forms ([formField])", () => {

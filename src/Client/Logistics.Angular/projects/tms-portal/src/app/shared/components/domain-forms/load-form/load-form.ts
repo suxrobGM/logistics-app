@@ -1,5 +1,22 @@
-import { Component, effect, inject, input, output, signal, type OnInit } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+  type OnInit,
+} from "@angular/core";
+import {
+  disabled,
+  form,
+  FormField,
+  FormRoot,
+  maxLength,
+  pattern,
+  required,
+} from "@angular/forms/signals";
 import { RouterLink } from "@angular/router";
 import {
   type Address,
@@ -95,13 +112,77 @@ export interface LoadFormValue {
   unNumber?: string | null;
 }
 
+const DUMMY_LOCATION: GeoPoint = { longitude: 0, latitude: 0 };
+
+/**
+ * The signal-form model. Field types mirror the `ui-*-field` wrappers they bind to (e.g.
+ * `ui-select-field` is a `FormValueControl<T | null>`), so nullability here is a binding
+ * requirement, not a validation one — `required()` in the schema enforces presence.
+ */
+interface LoadFormModel {
+  name: string;
+  type: LoadType | null;
+  source: LoadSource | null;
+  customer: CustomerDto | null;
+  originAddress: Address | null;
+  originLocation: GeoPoint;
+  destinationAddress: Address | null;
+  destinationLocation: GeoPoint;
+  deliveryCost: number | null;
+  distance: number | null;
+  requestedPickupDate: Date | null;
+  requestedDeliveryDate: Date | null;
+  container: ContainerDto | null;
+  originTerminal: TerminalDto | null;
+  destinationTerminal: TerminalDto | null;
+  notes: string;
+  isHazmat: boolean;
+  hazmatClass: HazmatClass | null;
+  unNumber: string;
+  status: LoadStatus | null;
+  assignedTruck: TruckDto | null;
+  assignedDispatcherId: string;
+  assignedDispatcherName: string;
+  tripId: string | null;
+  tripNumber: number | null;
+}
+
+const EMPTY: LoadFormModel = {
+  name: "",
+  type: "general_freight",
+  source: "manual",
+  customer: null,
+  originAddress: null,
+  originLocation: DUMMY_LOCATION,
+  destinationAddress: null,
+  destinationLocation: DUMMY_LOCATION,
+  deliveryCost: 0,
+  distance: 0,
+  requestedPickupDate: null,
+  requestedDeliveryDate: null,
+  container: null,
+  originTerminal: null,
+  destinationTerminal: null,
+  notes: "",
+  isHazmat: false,
+  hazmatClass: null,
+  unNumber: "",
+  status: null,
+  assignedTruck: null,
+  assignedDispatcherId: "",
+  assignedDispatcherName: "",
+  tripId: null,
+  tripNumber: null,
+};
+
 @Component({
   selector: "app-load-form",
   templateUrl: "./load-form.html",
   imports: [
     ToastModule,
     ProgressSpinnerModule,
-    ReactiveFormsModule,
+    FormRoot,
+    FormField,
     UiTextField,
     UiNumberField,
     ButtonModule,
@@ -132,7 +213,6 @@ export class LoadForm implements OnInit {
   protected readonly loadStatuses = loadStatusOptions;
   protected readonly loadSources = loadSourceOptions;
   protected readonly hazmatClasses = hazmatClassOptions;
-  private readonly dummyLocation: GeoPoint = { longitude: 0, latitude: 0 };
 
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);
@@ -155,67 +235,57 @@ export class LoadForm implements OnInit {
   public readonly save = output<LoadFormValue>();
   public readonly remove = output<void>();
 
-  protected readonly form = new FormGroup({
-    name: new FormControl("", { validators: [Validators.required], nonNullable: true }),
-    type: new FormControl<LoadType>("general_freight", {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
-    source: new FormControl<LoadSource>("manual", {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
-    customer: new FormControl<CustomerDto | null>(null, {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
-    originAddress: new FormControl<Address | null>(null, {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
-    originLocation: new FormControl<GeoPoint>(this.dummyLocation, {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
-    destinationAddress: new FormControl<Address | null>(null, {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
-    destinationLocation: new FormControl<GeoPoint>(this.dummyLocation, {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
-    deliveryCost: new FormControl(0, { validators: [Validators.required], nonNullable: true }),
-    distance: new FormControl({ value: 0, disabled: true }, { nonNullable: true }),
-    // Schedule
-    requestedPickupDate: new FormControl<Date | null>(null),
-    requestedDeliveryDate: new FormControl<Date | null>(null),
-    // Intermodal - controls hold the full DTO objects (autocompletes return DTOs);
-    // submit() extracts the IDs and emits them on LoadFormValue.
-    container: new FormControl<ContainerDto | null>(null),
-    originTerminal: new FormControl<TerminalDto | null>(null),
-    destinationTerminal: new FormControl<TerminalDto | null>(null),
-    notes: new FormControl<string | null>(null, { validators: [Validators.maxLength(2000)] }),
-    isHazmat: new FormControl<boolean>(false, { nonNullable: true }),
-    hazmatClass: new FormControl<HazmatClass | null>(null),
-    unNumber: new FormControl<string | null>(null, {
-      validators: [Validators.maxLength(16), Validators.pattern(/^UN\d{4}$/i)],
-    }),
-    // only visible/patched when mode === 'edit'
-    status: new FormControl<LoadStatus | null>(null),
-    // Truck assignment is optional - load can be created without a truck (e.g., from load board)
-    assignedTruck: new FormControl<TruckDto | string | null>(
-      { value: null, disabled: !this.canChangeAssignedTruck() },
-      { nonNullable: true },
-    ),
-    assignedDispatcherId: new FormControl("", {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
-    assignedDispatcherName: new FormControl({ value: "", disabled: true }, { nonNullable: true }),
-    tripId: new FormControl<string | null>({ value: null, disabled: true }),
-    tripNumber: new FormControl<number | null>({ value: null, disabled: true }),
-  });
+  protected readonly model = signal<LoadFormModel>({ ...EMPTY });
+
+  /**
+   * `[formRoot]` runs `submission.action` on submit: it marks the whole tree touched, skips the
+   * action while invalid (so the old `if (form.invalid) return` guard is gone) and drives
+   * `submitting()`. The parent owns the async save, so the action just emits.
+   *
+   * `distance`, `assignedDispatcherName`, `tripId` and `tripNumber` are permanently disabled — they
+   * are computed or informational. Unlike reactive forms' `form.value`, `model()` still contains
+   * them, which is what the old `getRawValue()` call relied on.
+   */
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.name, { message: "Load name is required." });
+      required(p.type, { message: "Load type is required." });
+      required(p.source, { message: "Load source is required." });
+      required(p.customer, { message: "Customer is required." });
+      required(p.originAddress, { message: "Origin address is required." });
+      required(p.destinationAddress, { message: "Destination address is required." });
+      required(p.deliveryCost, { message: "Delivery cost is required." });
+      required(p.assignedDispatcherId, { message: "An assigned dispatcher is required." });
+
+      maxLength(p.notes, 2000, { message: "Notes cannot exceed 2000 characters." });
+      maxLength(p.unNumber, 16, { message: "UN number cannot exceed 16 characters." });
+      pattern(p.unNumber, /^UN\d{4}$/i, {
+        when: ({ valueOf }) => valueOf(p.unNumber).length > 0,
+        message: "Enter a UN number such as UN1203.",
+      });
+
+      disabled(p.distance, { when: () => true });
+      disabled(p.assignedDispatcherName, { when: () => true });
+      disabled(p.tripId, { when: () => true });
+      disabled(p.tripNumber, { when: () => true });
+      disabled(p.assignedTruck, { when: () => !this.canChangeAssignedTruck() });
+    },
+    {
+      submission: {
+        action: async () => {
+          this.save.emit(this.toFormValue());
+          return undefined;
+        },
+      },
+    },
+  );
+
+  /** `tripNumber` is a disabled, informational number rendered by a string-valued text field. */
+  protected readonly tripNumberText = computed(() => this.model().tripNumber?.toString() ?? "");
+
+  /** An edit-mode load carries only the truck's ID; `app-search-truck` resolves it to the DTO. */
+  protected readonly initialTruckId = computed(() => this.initial()?.assignedTruckId ?? null);
 
   constructor() {
     effect(() => {
@@ -225,7 +295,7 @@ export class LoadForm implements OnInit {
       }
 
       // Prevent overwriting user changes if the form is dirty in edit-mode
-      if (this.mode() === "edit" && this.form.dirty) {
+      if (this.mode() === "edit" && this.form().dirty()) {
         return;
       }
 
@@ -240,61 +310,20 @@ export class LoadForm implements OnInit {
   }
 
   protected updateOrigin(e: SelectedAddressEvent): void {
-    this.originCoords.set({
-      id: "origin",
-      location: {
-        longitude: e.center[0],
-        latitude: e.center[1],
-      },
-    });
-    this.form.patchValue({ originLocation: { longitude: e.center[0], latitude: e.center[1] } });
+    const location = { longitude: e.center[0], latitude: e.center[1] };
+    this.originCoords.set({ id: "origin", location });
+    this.model.update((v) => ({ ...v, originLocation: location }));
   }
 
   protected updateDestination(e: SelectedAddressEvent): void {
-    this.destinationCoords.set({
-      id: "destination",
-      location: {
-        longitude: e.center[0],
-        latitude: e.center[1],
-      },
-    });
-    this.form.patchValue({
-      destinationLocation: { longitude: e.center[0], latitude: e.center[1] },
-    });
+    const location = { longitude: e.center[0], latitude: e.center[1] };
+    this.destinationCoords.set({ id: "destination", location });
+    this.model.update((v) => ({ ...v, destinationLocation: location }));
   }
 
   protected updateDistance(e: RouteChangeEvent): void {
     const miles = Converters.metersTo(e.distance, "mi");
-    this.form.patchValue({ distance: miles });
-  }
-
-  protected submit(): void {
-    if (this.form.invalid) {
-      return;
-    }
-
-    const raw = this.form.getRawValue();
-    const truck = raw.assignedTruck as TruckDto | null;
-
-    const formValue: LoadFormValue = {
-      ...raw,
-      distance: Converters.toMeters(raw.distance, "mi"),
-      assignedTruckId: truck?.id ?? null,
-      requestedPickupDate: raw.requestedPickupDate
-        ? new Date(raw.requestedPickupDate).toISOString()
-        : null,
-      requestedDeliveryDate: raw.requestedDeliveryDate
-        ? new Date(raw.requestedDeliveryDate).toISOString()
-        : null,
-      containerId: raw.container?.id ?? null,
-      originTerminalId: raw.originTerminal?.id ?? null,
-      destinationTerminalId: raw.destinationTerminal?.id ?? null,
-      isHazmat: raw.isHazmat,
-      hazmatClass: raw.isHazmat ? (raw.hazmatClass ?? null) : null,
-      unNumber: raw.isHazmat ? (raw.unNumber ?? null) : null,
-    } as LoadFormValue;
-
-    this.save.emit(formValue);
+    this.model.update((v) => ({ ...v, distance: miles }));
   }
 
   protected askRemove(): void {
@@ -304,16 +333,58 @@ export class LoadForm implements OnInit {
     });
   }
 
+  private toFormValue(): LoadFormValue {
+    const v = this.model();
+
+    return {
+      ...v,
+      distance: Converters.toMeters(v.distance ?? 0, "mi"),
+      assignedTruckId: v.assignedTruck?.id ?? null,
+      requestedPickupDate: v.requestedPickupDate ? v.requestedPickupDate.toISOString() : null,
+      requestedDeliveryDate: v.requestedDeliveryDate ? v.requestedDeliveryDate.toISOString() : null,
+      containerId: v.container?.id ?? null,
+      originTerminalId: v.originTerminal?.id ?? null,
+      destinationTerminalId: v.destinationTerminal?.id ?? null,
+      notes: v.notes || null,
+      isHazmat: v.isHazmat,
+      hazmatClass: v.isHazmat ? (v.hazmatClass ?? null) : null,
+      unNumber: v.isHazmat ? v.unNumber || null : null,
+    } as LoadFormValue;
+  }
+
   private patch(src: Partial<LoadFormValue>): void {
-    this.form.patchValue({
-      ...src,
-      assignedTruck: src.assignedTruckId, // Set ID instead of object, then component will fetch the object
+    // Assign field by field rather than spreading `src`: `LoadFormValue` carries keys the model does
+    // not have (`assignedTruckId`, `containerId`, `originTerminalId`, ...). `patchValue()` used to
+    // drop them; a `model.update()` spread would add them to the form tree.
+    // `assignedTruck` is deliberately absent — the form only ever receives an `assignedTruckId`, and
+    // `app-search-truck` resolves that to the DTO through its `truckId` input.
+    this.model.update((v) => ({
+      ...v,
+      name: src.name ?? v.name,
+      type: src.type ?? v.type,
+      source: src.source ?? v.source,
+      customer: src.customer ?? v.customer,
+      originAddress: src.originAddress ?? v.originAddress,
+      originLocation: src.originLocation ?? v.originLocation,
+      destinationAddress: src.destinationAddress ?? v.destinationAddress,
+      destinationLocation: src.destinationLocation ?? v.destinationLocation,
+      deliveryCost: src.deliveryCost ?? v.deliveryCost,
+      distance: src.distance ?? v.distance,
+      status: src.status ?? v.status,
+      assignedDispatcherId: src.assignedDispatcherId ?? v.assignedDispatcherId,
+      assignedDispatcherName: src.assignedDispatcherName ?? v.assignedDispatcherName,
+      tripId: src.tripId ?? null,
+      tripNumber: src.tripNumber ?? null,
       requestedPickupDate: src.requestedPickupDate ? new Date(src.requestedPickupDate) : null,
       requestedDeliveryDate: src.requestedDeliveryDate ? new Date(src.requestedDeliveryDate) : null,
       container: src.container ?? null,
       originTerminal: src.originTerminal ?? null,
       destinationTerminal: src.destinationTerminal ?? null,
-    });
+      hazmatClass: src.hazmatClass ?? null,
+      notes: src.notes ?? "",
+      unNumber: src.unNumber ?? "",
+      isHazmat: src.isHazmat ?? false,
+    }));
 
     if (src.originLocation) {
       this.originCoords.set({
@@ -339,10 +410,11 @@ export class LoadForm implements OnInit {
     const userData = this.authService.getUserData();
 
     if (userData) {
-      this.form.patchValue({
+      this.model.update((v) => ({
+        ...v,
         assignedDispatcherId: userData.id,
         assignedDispatcherName: userData.getFullName(),
-      });
+      }));
     }
   }
 }

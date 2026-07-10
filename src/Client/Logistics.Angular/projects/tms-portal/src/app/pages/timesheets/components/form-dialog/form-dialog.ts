@@ -1,11 +1,14 @@
 import { Component, effect, inject, input, model, output, signal } from "@angular/core";
 import {
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from "@angular/forms";
+  disabled,
+  form,
+  FormField,
+  FormRoot,
+  max,
+  min,
+  required,
+  validate,
+} from "@angular/forms/signals";
 import {
   Api,
   createTimeEntry,
@@ -20,7 +23,6 @@ import {
 import { timeEntryTypeOptions } from "@logistics/shared/api/enums";
 import {
   Grid,
-  Icon,
   Stack,
   UiDateField,
   UiNumberField,
@@ -34,6 +36,17 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
 
+// `totalHours` is calculated and disabled; the other nullable fields mirror the DTO shape.
+const EMPTY = {
+  employeeId: "",
+  date: null as Date | null,
+  startTime: null as Date | null,
+  endTime: null as Date | null,
+  totalHours: null as number | null,
+  type: "regular" as TimeEntryType,
+  notes: "",
+};
+
 @Component({
   selector: "app-timesheet-form-dialog",
   templateUrl: "./form-dialog.html",
@@ -41,8 +54,8 @@ import { UiFormField } from "@/shared/components";
     ValidatedForm,
     DialogModule,
     ProgressSpinnerModule,
-    FormsModule,
-    ReactiveFormsModule,
+    FormRoot,
+    FormField,
     ButtonModule,
     UiSelectField,
     UiDateField,
@@ -50,7 +63,6 @@ import { UiFormField } from "@/shared/components";
     UiTextareaField,
     UiFormField,
     Grid,
-    Icon,
     Stack,
   ],
 })
@@ -64,19 +76,90 @@ export class TimesheetFormDialog {
   public readonly saved = output<void>();
 
   protected readonly employees = signal<EmployeeDto[]>([]);
-  protected readonly isLoading = signal(false);
   protected readonly typeOptions = timeEntryTypeOptions;
-  protected readonly timeError = signal<string | null>(null);
 
-  protected readonly form = new FormGroup({
-    employeeId: new FormControl<string>("", Validators.required),
-    date: new FormControl<Date | null>(null, Validators.required),
-    startTime: new FormControl<Date | null>(null, Validators.required),
-    endTime: new FormControl<Date | null>(null, Validators.required),
-    totalHours: new FormControl<number | null>({ value: null, disabled: true }),
-    type: new FormControl<TimeEntryType>("regular", Validators.required),
-    notes: new FormControl<string>(""),
-  });
+  protected readonly model = signal({ ...EMPTY });
+
+  /**
+   * `[formRoot]` runs `submission.action` on submit: it marks the whole tree touched first, skips
+   * the action (running `onInvalid`) while invalid, and drives `form().submitting()`. The
+   * start/end ordering check is a cross-field `validate()` rule, so an out-of-order time makes the
+   * form invalid and blocks submission without any manual guard.
+   */
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.employeeId, { message: "Employee is required." });
+      required(p.date, { message: "Date is required." });
+      required(p.startTime, { message: "Start time is required." });
+      required(p.endTime, { message: "End time is required." });
+      required(p.type, { message: "Type is required." });
+
+      // Calculated, read-only field. Its 0–24 bound moves from the template [min]/[max]
+      // (reserved Signal Forms state inputs on ui-number-field) into schema validators.
+      disabled(p.totalHours, { when: () => true });
+      min(p.totalHours, 0, { message: "Total hours cannot be negative." });
+      max(p.totalHours, 24, { message: "Total hours cannot exceed 24." });
+
+      validate(p.endTime, ({ valueOf }) => {
+        const start = valueOf(p.startTime);
+        const end = valueOf(p.endTime);
+        return start && end && end.getTime() <= start.getTime()
+          ? { kind: "timeOrder", message: "End time must be after start time." }
+          : null;
+      });
+    },
+    {
+      submission: {
+        action: async () => {
+          const formValue = this.model();
+
+          try {
+            if (this.isEditMode) {
+              const command: UpdateTimeEntryCommand = {
+                id: this.timeEntry()!.id!,
+                date: formValue.date ? this.formatDate(formValue.date) : undefined,
+                startTime: formValue.startTime ? this.formatTime(formValue.startTime) : null,
+                endTime: formValue.endTime ? this.formatTime(formValue.endTime) : null,
+                totalHours: formValue.totalHours ?? undefined,
+                type: formValue.type,
+                notes: formValue.notes,
+              };
+
+              await this.api.invoke(updateTimeEntry, { id: this.timeEntry()!.id!, body: command });
+              this.toastService.showSuccess("Timesheet entry updated successfully");
+            } else {
+              const command: CreateTimeEntryCommand = {
+                employeeId: formValue.employeeId,
+                date: formValue.date ? this.formatDate(formValue.date) : undefined,
+                startTime: formValue.startTime ? this.formatTime(formValue.startTime) : undefined,
+                endTime: formValue.endTime ? this.formatTime(formValue.endTime) : undefined,
+                totalHours: formValue.totalHours ?? undefined,
+                type: formValue.type,
+                notes: formValue.notes,
+              };
+
+              await this.api.invoke(createTimeEntry, { body: command });
+              this.toastService.showSuccess("Timesheet entry created successfully");
+            }
+
+            this.saved.emit();
+            this.close();
+          } catch {
+            this.toastService.showError(
+              this.isEditMode
+                ? "Failed to update timesheet entry"
+                : "Failed to create timesheet entry",
+            );
+          }
+          return undefined;
+        },
+        onInvalid: () => {
+          this.toastService.showError("Please fill in all required fields");
+        },
+      },
+    },
+  );
 
   protected get isEditMode(): boolean {
     return !!this.timeEntry()?.id;
@@ -89,118 +172,44 @@ export class TimesheetFormDialog {
   constructor() {
     this.fetchEmployees();
 
-    // Watch for visible changes to re-populate form when dialog opens
-    effect(
-      () => {
-        const isVisible = this.visible();
-        if (isVisible) {
-          const entry = this.timeEntry();
-          if (entry) {
-            this.populateForm(entry);
-          }
+    // Re-populate the form when the dialog opens for an existing entry.
+    effect(() => {
+      if (this.visible()) {
+        const entry = this.timeEntry();
+        if (entry) {
+          this.populateForm(entry);
         }
-      },
-      { allowSignalWrites: true },
-    );
-
-    // Watch for preselectedEmployeeId changes
-    effect(
-      () => {
-        const employeeId = this.preselectedEmployeeId();
-        if (employeeId && !this.timeEntry()) {
-          this.form.patchValue({ employeeId });
-        }
-      },
-      { allowSignalWrites: true },
-    );
-  }
-
-  async submit(): Promise<void> {
-    // Validate time
-    if (this.timeError()) {
-      this.toastService.showError(this.timeError()!);
-      return;
-    }
-
-    if (this.form.invalid) {
-      this.toastService.showError("Please fill in all required fields");
-      return;
-    }
-
-    const formValue = this.form.getRawValue(); // getRawValue includes disabled controls
-    this.isLoading.set(true);
-
-    try {
-      if (this.isEditMode) {
-        const command: UpdateTimeEntryCommand = {
-          id: this.timeEntry()!.id!,
-          date: formValue.date ? this.formatDate(formValue.date) : undefined,
-          startTime: formValue.startTime ? this.formatTime(formValue.startTime) : null,
-          endTime: formValue.endTime ? this.formatTime(formValue.endTime) : null,
-          totalHours: formValue.totalHours ?? undefined,
-          type: formValue.type ?? undefined,
-          notes: formValue.notes ?? null,
-        };
-
-        await this.api.invoke(updateTimeEntry, { id: this.timeEntry()!.id!, body: command });
-        this.toastService.showSuccess("Timesheet entry updated successfully");
-      } else {
-        const command: CreateTimeEntryCommand = {
-          employeeId: formValue.employeeId!,
-          date: formValue.date ? this.formatDate(formValue.date) : undefined,
-          startTime: formValue.startTime ? this.formatTime(formValue.startTime) : undefined,
-          endTime: formValue.endTime ? this.formatTime(formValue.endTime) : undefined,
-          totalHours: formValue.totalHours ?? undefined,
-          type: formValue.type ?? undefined,
-          notes: formValue.notes ?? null,
-        };
-
-        await this.api.invoke(createTimeEntry, { body: command });
-        this.toastService.showSuccess("Timesheet entry created successfully");
       }
+    });
 
-      this.saved.emit();
-      this.close();
-    } catch {
-      this.toastService.showError(
-        this.isEditMode ? "Failed to update timesheet entry" : "Failed to create timesheet entry",
-      );
-    } finally {
-      this.isLoading.set(false);
-    }
+    // Seed the employee when one is preselected and we are creating a new entry.
+    effect(() => {
+      const employeeId = this.preselectedEmployeeId();
+      if (employeeId && !this.timeEntry()) {
+        this.model.update((v) => ({ ...v, employeeId }));
+      }
+    });
   }
 
   close(): void {
     this.visible.set(false);
     this.resetForm();
-    this.timeError.set(null);
   }
 
   private populateForm(entry: TimeEntryDto): void {
-    this.form.patchValue({
+    this.model.set({
       employeeId: entry.employeeId ?? "",
       date: entry.date ? new Date(entry.date) : null,
       startTime: entry.startTime ? this.parseTime(entry.startTime) : null,
       endTime: entry.endTime ? this.parseTime(entry.endTime) : null,
+      totalHours: entry.totalHours ?? null,
       type: (entry.type as TimeEntryType) ?? "regular",
       notes: entry.notes ?? "",
     });
-    // Set disabled control value
-    this.form.controls.totalHours.setValue(entry.totalHours ?? null);
-    this.timeError.set(null);
   }
 
   private resetForm(): void {
-    this.form.reset({
-      employeeId: this.preselectedEmployeeId() ?? "",
-      date: null,
-      startTime: null,
-      endTime: null,
-      type: "regular",
-      notes: "",
-    });
-    this.form.controls.totalHours.setValue(null);
-    this.timeError.set(null);
+    this.form().reset({ ...EMPTY, employeeId: this.preselectedEmployeeId() ?? "" });
   }
 
   private async fetchEmployees(): Promise<void> {
@@ -234,24 +243,21 @@ export class TimesheetFormDialog {
   }
 
   protected calculateHours(): void {
-    const startTime = this.form.value.startTime;
-    const endTime = this.form.value.endTime;
+    const { startTime, endTime } = this.model();
 
     if (startTime && endTime) {
       const diffMs = endTime.getTime() - startTime.getTime();
 
-      // Validate start time is before end time
+      // Out-of-order times clear the total; the cross-field validate() rule surfaces the error.
       if (diffMs <= 0) {
-        this.timeError.set("End time must be after start time");
-        this.form.controls.totalHours.setValue(null);
+        this.model.update((v) => ({ ...v, totalHours: null }));
         return;
       }
 
-      this.timeError.set(null);
       const diffHours = Math.round((diffMs / (1000 * 60 * 60)) * 100) / 100;
-      this.form.controls.totalHours.setValue(diffHours);
+      this.model.update((v) => ({ ...v, totalHours: diffHours }));
     } else {
-      this.form.controls.totalHours.setValue(null);
+      this.model.update((v) => ({ ...v, totalHours: null }));
     }
   }
 }

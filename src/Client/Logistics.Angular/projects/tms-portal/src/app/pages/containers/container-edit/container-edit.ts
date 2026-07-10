@@ -1,5 +1,14 @@
 import { Component, inject, input, signal, type OnInit } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import {
+  form,
+  FormField,
+  FormRoot,
+  maxLength,
+  min,
+  minLength,
+  pattern,
+  required,
+} from "@angular/forms/signals";
 import { Router, RouterLink } from "@angular/router";
 import {
   Api,
@@ -38,11 +47,44 @@ import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import { SearchTerminal } from "@/shared/components/search";
 
+interface ContainerFormModel {
+  number: string;
+  isoType: ContainerIsoType;
+  sealNumber: string;
+  bookingReference: string;
+  billOfLadingNumber: string;
+  grossWeight: number | null;
+  notes: string;
+}
+
+interface StatusFormModel {
+  targetStatus: ContainerStatus | null;
+  terminal: TerminalDto | null;
+}
+
+interface TerminalFormModel {
+  terminal: TerminalDto | null;
+}
+
+const CONTAINER_EMPTY: ContainerFormModel = {
+  number: "",
+  isoType: "gp40",
+  sealNumber: "",
+  bookingReference: "",
+  billOfLadingNumber: "",
+  grossWeight: null,
+  notes: "",
+};
+
+const STATUS_EMPTY: StatusFormModel = { targetStatus: null, terminal: null };
+const TERMINAL_EMPTY: TerminalFormModel = { terminal: null };
+
 @Component({
   selector: "app-container-edit",
   templateUrl: "./container-edit.html",
   imports: [
-    ReactiveFormsModule,
+    FormField,
+    FormRoot,
     RouterLink,
     ButtonModule,
     CardModule,
@@ -81,39 +123,123 @@ export class ContainerEdit implements OnInit {
   protected readonly statusDialogVisible = signal(false);
   protected readonly terminalDialogVisible = signal(false);
 
-  protected readonly form = new FormGroup({
-    number: new FormControl("", {
-      validators: [
-        Validators.required,
-        Validators.minLength(11),
-        Validators.maxLength(11),
-        Validators.pattern(/^[A-Z]{4}\d{7}$/),
-      ],
-      nonNullable: true,
-    }),
-    isoType: new FormControl<ContainerIsoType>("gp40", {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
-    sealNumber: new FormControl<string | null>(null),
-    bookingReference: new FormControl<string | null>(null),
-    billOfLadingNumber: new FormControl<string | null>(null),
-    grossWeight: new FormControl<number | null>(null),
-    notes: new FormControl<string | null>(null),
-  });
+  protected readonly model = signal<ContainerFormModel>({ ...CONTAINER_EMPTY });
 
-  protected readonly statusForm = new FormGroup({
-    targetStatus: new FormControl<ContainerStatus | null>(null, {
-      validators: [Validators.required],
-    }),
-    terminal: new FormControl<TerminalDto | null>(null),
-  });
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.number, { message: "Container number is required." });
+      minLength(p.number, 11, {
+        message: "Container number must be exactly 11 characters.",
+      });
+      maxLength(p.number, 11, {
+        message: "Container number must be exactly 11 characters.",
+      });
+      pattern(p.number, /^[A-Z]{4}\d{7}$/, {
+        message:
+          "Container number must be 4 uppercase letters followed by 7 digits (e.g., MSCU1234567).",
+      });
+      required(p.isoType, { message: "ISO type is required." });
+      min(p.grossWeight, 0, { message: "Gross weight cannot be negative." });
+    },
+    {
+      submission: {
+        action: async () => {
+          const v = this.model();
+          const command: UpdateContainerCommand = {
+            id: this.id(),
+            number: v.number.toUpperCase(),
+            isoType: v.isoType,
+            sealNumber: v.sealNumber || null,
+            bookingReference: v.bookingReference || null,
+            billOfLadingNumber: v.billOfLadingNumber || null,
+            grossWeight: v.grossWeight,
+            notes: v.notes || null,
+          };
 
-  protected readonly terminalForm = new FormGroup({
-    terminal: new FormControl<TerminalDto | null>(null, {
-      validators: [Validators.required],
-    }),
-  });
+          try {
+            await this.api.invoke(updateContainer, { id: this.id(), body: command });
+          } catch {
+            this.toastService.showError("Failed to update container");
+            return undefined;
+          }
+          this.toastService.showSuccess("Container has been updated successfully");
+          this.router.navigate(["/containers", this.id()]);
+          return undefined;
+        },
+      },
+    },
+  );
+
+  protected readonly statusModel = signal<StatusFormModel>({ ...STATUS_EMPTY });
+
+  protected readonly statusForm = form(
+    this.statusModel,
+    (p) => {
+      required(p.targetStatus, { message: "Please select a target status." });
+      required(p.terminal, {
+        when: ({ valueOf }) =>
+          valueOf(p.targetStatus) === "at_port" || valueOf(p.targetStatus) === "returned",
+        message: "A terminal is required for this status.",
+      });
+    },
+    {
+      submission: {
+        action: async () => {
+          const v = this.statusModel();
+          const command: UpdateContainerStatusCommand = {
+            id: this.id(),
+            targetStatus: v.targetStatus!,
+            terminalId: v.terminal?.id ?? null,
+          };
+
+          try {
+            await this.api.invoke(updateContainerStatus, { id: this.id(), body: command });
+          } catch {
+            this.toastService.showError("Failed to update container status");
+            return undefined;
+          }
+          this.toastService.showSuccess("Container status has been updated");
+          this.statusDialogVisible.set(false);
+          await this.fetchContainer();
+          return undefined;
+        },
+      },
+    },
+  );
+
+  protected readonly terminalModel = signal<TerminalFormModel>({ ...TERMINAL_EMPTY });
+
+  protected readonly terminalForm = form(
+    this.terminalModel,
+    (p) => {
+      required(p.terminal, { message: "Please select a terminal." });
+    },
+    {
+      submission: {
+        action: async () => {
+          const terminal = this.terminalModel().terminal;
+          if (!terminal?.id) {
+            return undefined;
+          }
+
+          try {
+            await this.api.invoke(setContainerTerminal, {
+              id: this.id(),
+              body: { terminalId: terminal.id },
+            });
+          } catch {
+            this.toastService.showError("Failed to update terminal");
+            return undefined;
+          }
+          this.toastService.showSuccess("Container terminal has been updated");
+          this.terminalDialogVisible.set(false);
+          await this.fetchContainer();
+          return undefined;
+        },
+      },
+    },
+  );
 
   ngOnInit(): void {
     this.fetchContainer();
@@ -139,90 +265,18 @@ export class ContainerEdit implements OnInit {
   }
 
   protected get statusRequiresTerminal(): boolean {
-    const target = this.statusForm.controls.targetStatus.value;
+    const target = this.statusModel().targetStatus;
     return target === "at_port" || target === "returned";
   }
 
-  protected async submit(): Promise<void> {
-    if (this.form.invalid) {
-      return;
-    }
-
-    this.isLoading.set(true);
-    const formValue = this.form.getRawValue();
-
-    const command: UpdateContainerCommand = {
-      id: this.id(),
-      number: formValue.number.toUpperCase(),
-      isoType: formValue.isoType,
-      sealNumber: formValue.sealNumber,
-      bookingReference: formValue.bookingReference,
-      billOfLadingNumber: formValue.billOfLadingNumber,
-      grossWeight: formValue.grossWeight,
-      notes: formValue.notes,
-    };
-
-    try {
-      await this.api.invoke(updateContainer, { id: this.id(), body: command });
-      this.toastService.showSuccess("Container has been updated successfully");
-      this.router.navigate(["/containers", this.id()]);
-    } finally {
-      this.isLoading.set(false);
-    }
-  }
-
   protected openStatusDialog(): void {
-    this.statusForm.reset({ targetStatus: null, terminal: null });
+    this.statusForm().reset({ ...STATUS_EMPTY });
     this.statusDialogVisible.set(true);
   }
 
-  protected async submitStatus(): Promise<void> {
-    if (this.statusForm.invalid) return;
-    const value = this.statusForm.getRawValue();
-    const target = value.targetStatus!;
-
-    if ((target === "at_port" || target === "returned") && !value.terminal?.id) {
-      this.toastService.showError("A terminal is required for this status");
-      return;
-    }
-
-    const command: UpdateContainerStatusCommand = {
-      id: this.id(),
-      targetStatus: target,
-      terminalId: value.terminal?.id ?? null,
-    };
-
-    try {
-      await this.api.invoke(updateContainerStatus, { id: this.id(), body: command });
-      this.toastService.showSuccess("Container status has been updated");
-      this.statusDialogVisible.set(false);
-      await this.fetchContainer();
-    } catch {
-      this.toastService.showError("Failed to update container status");
-    }
-  }
-
   protected openTerminalDialog(): void {
-    this.terminalForm.reset({ terminal: null });
+    this.terminalForm().reset({ ...TERMINAL_EMPTY });
     this.terminalDialogVisible.set(true);
-  }
-
-  protected async submitTerminal(): Promise<void> {
-    if (this.terminalForm.invalid) return;
-    const terminal = this.terminalForm.controls.terminal.value;
-    if (!terminal?.id) return;
-
-    try {
-      await this.api.invoke(setContainerTerminal, {
-        id: this.id(),
-        body: { terminalId: terminal.id },
-      });
-      this.toastService.showSuccess("Container terminal has been updated");
-      this.terminalDialogVisible.set(false);
-      await this.fetchContainer();
-    } catch {
-      this.toastService.showError("Failed to update terminal");
-    }
   }
 
   private async fetchContainer(): Promise<void> {
@@ -231,14 +285,14 @@ export class ContainerEdit implements OnInit {
       const container = await this.api.invoke(getContainerById, { id: this.id() });
       if (!container) return;
       this.container.set(container);
-      this.form.patchValue({
+      this.model.set({
         number: container.number ?? "",
         isoType: container.isoType ?? "gp40",
-        sealNumber: container.sealNumber,
-        bookingReference: container.bookingReference,
-        billOfLadingNumber: container.billOfLadingNumber,
+        sealNumber: container.sealNumber ?? "",
+        bookingReference: container.bookingReference ?? "",
+        billOfLadingNumber: container.billOfLadingNumber ?? "",
         grossWeight: container.grossWeight ?? null,
-        notes: container.notes,
+        notes: container.notes ?? "",
       });
     } finally {
       this.isLoading.set(false);

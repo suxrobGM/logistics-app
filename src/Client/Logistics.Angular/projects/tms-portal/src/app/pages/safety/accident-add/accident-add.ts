@@ -1,16 +1,7 @@
 import { Component, inject, signal } from "@angular/core";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
+import { form, min, required, submit } from "@angular/forms/signals";
 import { Router } from "@angular/router";
-import {
-  Api,
-  createAccidentReport,
-  type AccidentSeverity,
-  type AccidentType,
-  type Address,
-  type CreateAccidentReportCommand,
-  type EmployeeDto,
-  type TruckDto,
-} from "@logistics/shared/api";
+import { Api, createAccidentReport, type CreateAccidentReportCommand } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -22,6 +13,8 @@ import {
   AccidentIncidentForm,
   AccidentInjuriesDamageForm,
   AccidentReviewSummary,
+  type AccidentIncidentModel,
+  type AccidentInjuriesDamageModel,
 } from "../_components";
 
 @Component({
@@ -48,54 +41,57 @@ export class AccidentAddPage {
   protected readonly activeStep = signal(1);
 
   // Step 1: Incident Details
-  protected readonly step1Form = new FormGroup({
-    accidentDateTime: new FormControl<Date>(new Date(), {
-      validators: Validators.required,
-      nonNullable: true,
-    }),
-    location: new FormControl<Address | null>(null, { validators: Validators.required }),
-    truck: new FormControl<TruckDto | null>(null, { validators: Validators.required }),
-    driver: new FormControl<EmployeeDto | null>(null, { validators: Validators.required }),
-    type: new FormControl<AccidentType>("collision", {
-      validators: Validators.required,
-      nonNullable: true,
-    }),
-    severity: new FormControl<AccidentSeverity>("minor", {
-      validators: Validators.required,
-      nonNullable: true,
-    }),
-    description: new FormControl<string>("", {
-      validators: Validators.required,
-      nonNullable: true,
-    }),
-    weatherConditions: new FormControl<string | null>(null),
-    roadConditions: new FormControl<string | null>(null),
+  protected readonly step1Model = signal<AccidentIncidentModel>({
+    accidentDateTime: new Date(),
+    location: null,
+    truck: null,
+    driver: null,
+    type: "collision",
+    severity: "minor",
+    description: "",
+    weatherConditions: "",
+    roadConditions: "",
+  });
+
+  protected readonly step1Form = form(this.step1Model, (p) => {
+    required(p.accidentDateTime, { message: "Date and time is required." });
+    required(p.location, { message: "Location is required." });
+    required(p.truck, { message: "Truck is required." });
+    required(p.driver, { message: "Driver is required." });
+    required(p.type, { message: "Accident type is required." });
+    required(p.severity, { message: "Severity is required." });
+    required(p.description, { message: "Description is required." });
   });
 
   // Step 2: Injuries & Damage
-  protected readonly step2Form = new FormGroup({
-    injuriesReported: new FormControl<boolean>(false, { nonNullable: true }),
-    numberOfInjuries: new FormControl<number | null>(null),
-    injuryDescription: new FormControl<string | null>(null),
-    fatalitiesReported: new FormControl<boolean>(false, { nonNullable: true }),
-    numberOfFatalities: new FormControl<number | null>(null),
-    hazmatInvolved: new FormControl<boolean>(false, { nonNullable: true }),
-    hazmatDescription: new FormControl<string | null>(null),
-    estimatedDamage: new FormControl<number | null>(null),
-    damageDescription: new FormControl<string | null>(null),
-    vehicleTowed: new FormControl<boolean>(false, { nonNullable: true }),
-    towCompany: new FormControl<string | null>(null),
+  protected readonly step2Model = signal<AccidentInjuriesDamageModel>({
+    injuriesReported: false,
+    numberOfInjuries: null,
+    injuryDescription: "",
+    fatalitiesReported: false,
+    numberOfFatalities: null,
+    hazmatInvolved: false,
+    hazmatDescription: "",
+    estimatedDamage: null,
+    damageDescription: "",
+    vehicleTowed: false,
+    towCompany: "",
   });
 
-  protected nextStep(): void {
+  protected readonly step2Form = form(this.step2Model, (p) => {
+    min(p.numberOfInjuries, 0, { message: "Number of injuries cannot be negative." });
+    min(p.numberOfFatalities, 0, { message: "Number of fatalities cannot be negative." });
+  });
+
+  protected async nextStep(): Promise<void> {
+    // submit() marks the whole step's field tree touched (revealing inline errors) and
+    // resolves false when invalid, so the step only advances once it validates.
     if (this.activeStep() === 1) {
-      if (this.step1Form.invalid) {
-        this.step1Form.markAllAsTouched();
+      if (!(await submit(this.step1Form, async () => undefined))) {
         return;
       }
     } else if (this.activeStep() === 2) {
-      if (this.step2Form.invalid) {
-        this.step2Form.markAllAsTouched();
+      if (!(await submit(this.step2Form, async () => undefined))) {
         return;
       }
     }
@@ -113,10 +109,16 @@ export class AccidentAddPage {
   }
 
   protected async submit(): Promise<void> {
+    const step1Valid = await submit(this.step1Form, async () => undefined);
+    const step2Valid = await submit(this.step2Form, async () => undefined);
+    if (!step1Valid || !step2Valid) {
+      return;
+    }
+
     this.isSaving.set(true);
     try {
-      const step1 = this.step1Form.getRawValue();
-      const step2 = this.step2Form.getRawValue();
+      const step1 = this.step1Model();
+      const step2 = this.step2Model();
 
       const command: CreateAccidentReportCommand = {
         accidentDateTime: step1.accidentDateTime.toISOString(),
@@ -126,19 +128,19 @@ export class AccidentAddPage {
         type: step1.type,
         severity: step1.severity,
         description: step1.description,
-        weatherConditions: step1.weatherConditions,
-        roadConditions: step1.roadConditions,
+        weatherConditions: step1.weatherConditions || null,
+        roadConditions: step1.roadConditions || null,
         injuriesReported: step2.injuriesReported,
         numberOfInjuries: step2.numberOfInjuries,
-        injuryDescription: step2.injuryDescription,
+        injuryDescription: step2.injuryDescription || null,
         fatalitiesReported: step2.fatalitiesReported,
         numberOfFatalities: step2.numberOfFatalities,
         hazmatInvolved: step2.hazmatInvolved,
-        hazmatDescription: step2.hazmatDescription,
+        hazmatDescription: step2.hazmatDescription || null,
         estimatedDamage: step2.estimatedDamage,
-        damageDescription: step2.damageDescription,
+        damageDescription: step2.damageDescription || null,
         vehicleTowed: step2.vehicleTowed,
-        towCompany: step2.towCompany,
+        towCompany: step2.towCompany || null,
       };
 
       const result = await this.api.invoke(createAccidentReport, { body: command });

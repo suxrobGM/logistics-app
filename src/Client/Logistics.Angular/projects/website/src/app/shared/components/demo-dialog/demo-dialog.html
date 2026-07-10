@@ -18,7 +18,7 @@
       <p-button label="Close" (onClick)="closeDialog()" />
     </div>
   } @else {
-    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col pt-4">
+    <form [formRoot]="form" class="flex flex-col pt-4">
       @if (errorMessage()) {
         <div class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">
           <i class="pi pi-exclamation-circle mr-2"></i>
@@ -27,30 +27,30 @@
       }
 
       <div class="grid grid-cols-2 gap-4">
-        <ui-form-field label="First Name" for="firstName" [required]="true" [control]="form.controls.firstName">
-          <ui-text-field id="firstName" formControlName="firstName" placeholder="John" />
+        <ui-form-field label="First Name" for="firstName" [required]="true">
+          <ui-text-field id="firstName" [formField]="form.firstName" placeholder="John" />
         </ui-form-field>
-        <ui-form-field label="Last Name" for="lastName" [required]="true" [control]="form.controls.lastName">
-          <ui-text-field id="lastName" formControlName="lastName" placeholder="Doe" />
+        <ui-form-field label="Last Name" for="lastName" [required]="true">
+          <ui-text-field id="lastName" [formField]="form.lastName" placeholder="Doe" />
         </ui-form-field>
       </div>
 
-      <ui-form-field label="Work Email" for="email" [required]="true" [control]="form.controls.email">
-        <ui-text-field id="email" formControlName="email" type="email" placeholder="john@company.com" />
+      <ui-form-field label="Work Email" for="email" [required]="true">
+        <ui-text-field id="email" [formField]="form.email" type="email" placeholder="john@company.com" />
       </ui-form-field>
 
-      <ui-form-field label="Company Name" for="company" [required]="true" [control]="form.controls.company">
-        <ui-text-field id="company" formControlName="company" placeholder="Acme Trucking" />
+      <ui-form-field label="Company Name" for="company" [required]="true">
+        <ui-text-field id="company" [formField]="form.company" placeholder="Acme Trucking" />
       </ui-form-field>
 
       <ui-form-field label="Phone Number" for="phone">
-        <ui-phone-field id="phone" formControlName="phone" />
+        <ui-phone-field id="phone" [formField]="form.phone" />
       </ui-form-field>
 
       <ui-form-field label="Fleet Size" for="fleetSize">
         <ui-select-field
           id="fleetSize"
-          formControlName="fleetSize"
+          [formField]="form.fleetSize"
           [options]="fleetSizeOptions"
           placeholder="Select fleet size"
           styleClass="w-full"
@@ -60,7 +60,7 @@
       <ui-form-field label="Message" for="message">
         <ui-textarea-field
           id="message"
-          formControlName="message"
+          [formField]="form.message"
           [rows]="3"
           placeholder="Tell us about your needs..."
         />
@@ -71,8 +71,8 @@
         <p-button
           label="Submit Request"
           type="submit"
-          [disabled]="isLoading()"
-          [loading]="isLoading()"
+          [disabled]="form().submitting()"
+          [loading]="form().submitting()"
         />
       </div>
     </form>

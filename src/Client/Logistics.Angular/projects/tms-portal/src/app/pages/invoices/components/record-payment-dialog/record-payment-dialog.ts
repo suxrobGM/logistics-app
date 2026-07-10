@@ -1,5 +1,5 @@
 import { Component, inject, input, model, output, signal } from "@angular/core";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { form, FormField, FormRoot, min, required } from "@angular/forms/signals";
 import { UiFormField } from "@logistics/shared";
 import { Api, recordManualPayment, type PaymentMethodType } from "@logistics/shared/api";
 import { paymentMethodTypeOptions } from "@logistics/shared/api/enums";
@@ -16,6 +16,14 @@ import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ToastService } from "@/core/services";
 
+const EMPTY = {
+  amount: null as number | null,
+  type: "cash" as PaymentMethodType,
+  referenceNumber: "",
+  notes: "",
+  receivedDate: null as Date | null,
+};
+
 @Component({
   selector: "app-record-payment-dialog",
   templateUrl: "./record-payment-dialog.html",
@@ -23,7 +31,8 @@ import { ToastService } from "@/core/services";
     ValidatedForm,
     DialogModule,
     ButtonModule,
-    ReactiveFormsModule,
+    FormRoot,
+    FormField,
     UiTextField,
     UiNumberField,
     UiTextareaField,
@@ -42,55 +51,56 @@ export class RecordPaymentDialog {
   public readonly visible = model<boolean>(false);
   public readonly recorded = output<void>();
 
-  protected readonly isSaving = signal(false);
-
   protected readonly paymentTypes = paymentMethodTypeOptions;
 
-  protected readonly form = new FormGroup({
-    amount: new FormControl<number | null>(null, [Validators.required, Validators.min(0.01)]),
-    type: new FormControl<PaymentMethodType>("cash", [Validators.required]),
-    referenceNumber: new FormControl(""),
-    notes: new FormControl(""),
-    receivedDate: new FormControl<Date | null>(null),
-  });
+  protected readonly model = signal({ ...EMPTY });
+
+  /**
+   * `[formRoot]` runs `submission.action` on submit. It marks the whole tree touched first, skips
+   * the action while invalid, and drives `form().submitting()` — so there is no `isSaving` signal
+   * and no `markAllAsTouched()` call.
+   */
+  protected readonly form = form(
+    this.model,
+    (p) => {
+      required(p.amount, { message: "Amount is required." });
+      min(p.amount, 0.01, { message: "Amount must be greater than zero." });
+      required(p.type, { message: "Payment type is required." });
+    },
+    {
+      submission: {
+        action: async () => {
+          const receivedDate = this.model().receivedDate;
+          try {
+            await this.api.invoke(recordManualPayment, {
+              id: this.invoiceId(),
+              body: {
+                amount: this.model().amount!,
+                type: this.model().type,
+                referenceNumber: this.model().referenceNumber || undefined,
+                notes: this.model().notes || undefined,
+                receivedDate: receivedDate ? receivedDate.toISOString() : undefined,
+              },
+            });
+          } catch {
+            this.toastService.showError("Failed to record payment");
+            return undefined;
+          }
+          this.toastService.showSuccess("Payment recorded successfully");
+          this.recorded.emit();
+          this.close();
+          return undefined;
+        },
+      },
+    },
+  );
 
   onShow(): void {
-    this.form.reset();
-    this.form.patchValue({
-      amount: this.outstandingAmount(),
-      type: "cash",
-      receivedDate: new Date(),
-    });
+    this.form().reset({ ...EMPTY, amount: this.outstandingAmount(), receivedDate: new Date() });
   }
 
   close(): void {
     this.visible.set(false);
-    this.form.reset();
-  }
-
-  async save(): Promise<void> {
-    if (this.form.invalid) return;
-
-    this.isSaving.set(true);
-    try {
-      const receivedDate = this.form.value.receivedDate;
-      await this.api.invoke(recordManualPayment, {
-        id: this.invoiceId(),
-        body: {
-          amount: this.form.value.amount!,
-          type: this.form.value.type!,
-          referenceNumber: this.form.value.referenceNumber || undefined,
-          notes: this.form.value.notes || undefined,
-          receivedDate: receivedDate ? receivedDate.toISOString() : undefined,
-        },
-      });
-      this.toastService.showSuccess("Payment recorded successfully");
-      this.recorded.emit();
-      this.close();
-    } catch {
-      this.toastService.showError("Failed to record payment");
-    } finally {
-      this.isSaving.set(false);
-    }
+    this.form().reset({ ...EMPTY });
   }
 }

@@ -1,5 +1,5 @@
 import { Component, input } from "@angular/core";
-import { ReactiveFormsModule, type FormGroup } from "@angular/forms";
+import { FormField, type FieldTree } from "@angular/forms/signals";
 import {
   UiDateField,
   UiFormField,
@@ -9,13 +9,17 @@ import {
 } from "@logistics/shared/components";
 import { AddressAutocomplete } from "@/shared/components/maps";
 import { SearchEmployee, SearchTruck } from "@/shared/components/search";
-import { ACCIDENT_SEVERITY_OPTIONS, ACCIDENT_TYPE_OPTIONS } from "../accident.constants";
+import {
+  ACCIDENT_SEVERITY_OPTIONS,
+  ACCIDENT_TYPE_OPTIONS,
+  type AccidentIncidentModel,
+} from "../accident.constants";
 
 @Component({
   selector: "app-accident-incident-form",
   templateUrl: "./accident-incident-form.html",
   imports: [
-    ReactiveFormsModule,
+    FormField,
     UiFormField,
     UiDateField,
     UiSelectField,
@@ -27,7 +31,7 @@ import { ACCIDENT_SEVERITY_OPTIONS, ACCIDENT_TYPE_OPTIONS } from "../accident.co
   ],
 })
 export class AccidentIncidentForm {
-  public readonly form = input.required<FormGroup>();
+  public readonly field = input.required<FieldTree<AccidentIncidentModel>>();
 
   protected readonly typeOptions = ACCIDENT_TYPE_OPTIONS;
   protected readonly severityOptions = ACCIDENT_SEVERITY_OPTIONS;

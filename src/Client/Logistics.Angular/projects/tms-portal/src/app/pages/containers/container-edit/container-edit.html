@@ -32,7 +32,7 @@
       </ui-stack>
     </ui-stack>
 
-    <form [formGroup]="form" (ngSubmit)="submit()">
+    <form [formRoot]="form">
       <ui-stack gap="4">
 
         <ui-stack tag="section" gap="3">
@@ -48,33 +48,32 @@
                   for="number"
                   [required]="true"
                   hint="11 characters: 4 letters + 7 digits"
-                  [control]="form.controls.number"
                 >
-                  <ui-text-field id="number" formControlName="number" />
+                  <ui-text-field id="number" [formField]="form.number" />
                 </ui-form-field>
               </ui-grid>
 
               <ui-grid [size]="{ xs: 12, md: 6 }">
                 <ui-form-field label="ISO Type" for="isoType" [required]="true">
-                  <ui-select-field formControlName="isoType" [options]="isoTypeOptions" />
+                  <ui-select-field [formField]="form.isoType" [options]="isoTypeOptions" />
                 </ui-form-field>
               </ui-grid>
 
               <ui-grid [size]="{ xs: 12, md: 6 }">
                 <ui-form-field label="Seal Number" for="sealNumber">
-                  <ui-text-field id="sealNumber" formControlName="sealNumber" />
+                  <ui-text-field id="sealNumber" [formField]="form.sealNumber" />
                 </ui-form-field>
               </ui-grid>
 
               <ui-grid [size]="{ xs: 12, md: 6 }">
                 <ui-form-field label="Booking Reference" for="bookingReference">
-                  <ui-text-field id="bookingReference" formControlName="bookingReference" />
+                  <ui-text-field id="bookingReference" [formField]="form.bookingReference" />
                 </ui-form-field>
               </ui-grid>
 
               <ui-grid [size]="12">
                 <ui-form-field label="Bill of Lading Number" for="billOfLadingNumber">
-                  <ui-text-field id="billOfLadingNumber" formControlName="billOfLadingNumber" />
+                  <ui-text-field id="billOfLadingNumber" [formField]="form.billOfLadingNumber" />
                 </ui-form-field>
               </ui-grid>
             </ui-grid>
@@ -88,7 +87,7 @@
           </ui-stack>
           <ui-surface variant="elevated" [border]="true">
             <ui-form-field label="Gross Weight (kg)" for="grossWeight" class="mb-0">
-              <ui-number-field id="grossWeight" formControlName="grossWeight" [min]="0" />
+              <ui-number-field id="grossWeight" [formField]="form.grossWeight" />
             </ui-form-field>
           </ui-surface>
         </ui-stack>
@@ -100,13 +99,19 @@
           </ui-stack>
           <ui-surface variant="elevated" [border]="true">
             <ui-form-field label="Notes" for="notes" class="mb-0">
-              <ui-textarea-field id="notes" formControlName="notes" [rows]="3" />
+              <ui-textarea-field id="notes" [formField]="form.notes" [rows]="3" />
             </ui-form-field>
           </ui-surface>
         </ui-stack>
 
         <ui-stack direction="row" gap="2">
-          <p-button type="submit" icon="pi pi-check" label="Update" [disabled]="isLoading()" />
+          <p-button
+            type="submit"
+            icon="pi pi-check"
+            label="Update"
+            [disabled]="isLoading()"
+            [loading]="form().submitting()"
+          />
           <p-button
             type="button"
             icon="pi pi-arrow-left"
@@ -127,11 +132,11 @@
   [(visible)]="statusDialogVisible"
   [style]="{ width: '32rem' }"
 >
-  <form [formGroup]="statusForm" (ngSubmit)="submitStatus()">
+  <form [formRoot]="statusForm">
     <ui-stack gap="3">
       <ui-form-field label="New Status" for="targetStatus" [required]="true">
         <ui-select-field
-          formControlName="targetStatus"
+          [formField]="statusForm.targetStatus"
           [options]="statusOptions"
           placeholder="Select target status"
         />
@@ -139,7 +144,7 @@
 
       @if (statusRequiresTerminal) {
         <ui-form-field label="Terminal" for="statusTerminal" [required]="true" class="mb-0">
-          <app-search-terminal formControlName="terminal" />
+          <app-search-terminal [formField]="statusForm.terminal" />
         </ui-form-field>
       }
 
@@ -150,7 +155,12 @@
           [outlined]="true"
           (click)="statusDialogVisible.set(false)"
         />
-        <p-button type="submit" label="Update Status" icon="pi pi-check" />
+        <p-button
+          type="submit"
+          label="Update Status"
+          icon="pi pi-check"
+          [loading]="statusForm().submitting()"
+        />
       </ui-stack>
     </ui-stack>
   </form>
@@ -163,10 +173,10 @@
   [(visible)]="terminalDialogVisible"
   [style]="{ width: '32rem' }"
 >
-  <form [formGroup]="terminalForm" (ngSubmit)="submitTerminal()">
+  <form [formRoot]="terminalForm">
     <ui-stack gap="3">
       <ui-form-field label="Terminal" for="moveTerminal" [required]="true" class="mb-0">
-        <app-search-terminal formControlName="terminal" />
+        <app-search-terminal [formField]="terminalForm.terminal" />
       </ui-form-field>
 
       <ui-stack direction="row" justify="end" gap="2" class="pt-2">
@@ -176,7 +186,12 @@
           [outlined]="true"
           (click)="terminalDialogVisible.set(false)"
         />
-        <p-button type="submit" label="Move" icon="pi pi-arrow-right" />
+        <p-button
+          type="submit"
+          label="Move"
+          icon="pi pi-arrow-right"
+          [loading]="terminalForm().submitting()"
+        />
       </ui-stack>
     </ui-stack>
   </form>

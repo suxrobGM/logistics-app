@@ -1,7 +1,7 @@
-import { Component, inject, input, model, output, signal } from "@angular/core";
+import { Component, ElementRef, inject, input, model, output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl } from "@angular/forms/signals";
-import { type TenantRoleValue } from "@logistics/shared";
+import { focusFirstControl, type TenantRoleValue } from "@logistics/shared";
 import { Api, getEmployees, type EmployeeDto } from "@logistics/shared/api";
 import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 
@@ -39,6 +39,13 @@ export class SearchEmployee implements FormValueControl<EmployeeDto | null> {
   /** Filter employees by role (e.g., "Driver", "Dispatcher") */
   public readonly role = input<TenantRoleValue | null>(null);
   public readonly placeholder = input<string>("Type employee name");
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
+  public focus(options?: FocusOptions): void {
+    focusFirstControl(this.host.nativeElement, options);
+  }
 
   protected async searchEmployee(event: { query: string }): Promise<void> {
     const roleValue = this.role() as string;

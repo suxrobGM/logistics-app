@@ -2,7 +2,7 @@
 
 <div class="mx-auto max-w-4xl">
   <p-card>
-    <form [formGroup]="form" (ngSubmit)="submit()">
+    <form [formRoot]="form">
 
       <!-- Mode Toggle -->
       <ui-form-field label="Creation Mode">
@@ -24,18 +24,18 @@
       </ui-form-field>
 
       <!-- Date Range Section -->
-      <ui-form-field label="Pay Period" [control]="form.controls.dateRange">
+      <ui-form-field label="Pay Period">
         <ui-date-range-picker
-          [dates]="form.value.dateRange ?? []"
+          [dates]="model().dateRange"
           (datesChange)="onDateRangeChange($event)"
         />
       </ui-form-field>
 
       <!-- Single Mode: Employee Selection -->
       @if (mode() === "single") {
-        <ui-form-field label="Employee" [control]="form.controls.employee" [required]="true">
+        <ui-form-field label="Employee" [required]="true">
           <ui-autocomplete-field
-            formControlName="employee"
+            [formField]="form.employee"
             placeholder="Type employee's name"
             optionLabel="fullName"
             [minQueryLength]="2"
@@ -97,8 +97,8 @@
             type="submit"
             icon="pi pi-plus"
             label="Create Payroll"
-            [loading]="isLoading()"
-            [disabled]="!form.valid || previewPayrollInvoice()?.total?.amount === 0"
+            [loading]="form().submitting()"
+            [disabled]="previewPayrollInvoice()?.total?.amount === 0"
           />
           <p-button
             type="button"
@@ -194,7 +194,7 @@
             type="submit"
             icon="pi pi-plus"
             [label]="'Create ' + selectedEmployees().length + ' Payroll(s)'"
-            [loading]="isBulkCreating()"
+            [loading]="form().submitting()"
             [disabled]="isBulkCreateDisabled()"
           />
           <p-button

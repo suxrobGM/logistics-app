@@ -6,10 +6,10 @@
   [closable]="true"
   [draggable]="false"
 >
-  <form [formGroup]="form" (ngSubmit)="save()">
+  <form [formRoot]="form">
     <ui-form-field label="Status" for="status">
       <ui-select-field
-        formControlName="status"
+        [formField]="form.status"
         id="status"
         [options]="statusOptions"
         optionLabel="label"
@@ -19,7 +19,7 @@
 
     <ui-form-field label="Salary Type" for="salaryType" class="mt-4">
       <ui-select-field
-        formControlName="salaryType"
+        [formField]="form.salaryType"
         id="salaryType"
         [options]="salaryTypes"
         optionLabel="label"
@@ -29,11 +29,11 @@
 
     <ui-form-field label="Salary" for="salary" class="mt-4">
       @if (isShareOfGrossSalary()) {
-        <ui-unit-field formControlName="salary" unit="%" [min]="0" [max]="100" />
+        <ui-unit-field [formField]="form.salary" unit="%" />
       } @else if (isNoneSalary()) {
         <input pInputText id="salary" type="text" class="w-full" [disabled]="true" value="N/A" />
       } @else {
-        <ui-currency-field formControlName="salary" [min]="0" />
+        <ui-currency-field [formField]="form.salary" />
       }
     </ui-form-field>
 
@@ -61,7 +61,7 @@
       class="mt-4"
       hint="Optional. Used for Stripe Connect payout onboarding when the employee's country differs from the company's."
     >
-      <ui-address-form formControlName="address" [allowedCountries]="allowedCountries()" />
+      <ui-address-form [formField]="form.address" [allowedCountries]="allowedCountries()" />
     </ui-form-field>
 
 
@@ -71,8 +71,7 @@
         type="submit"
         label="Save Changes"
         icon="pi pi-check"
-        [loading]="isLoading()"
-        [disabled]="!form.valid"
+        [loading]="form().submitting()"
       />
     </ui-stack>
   </form>
