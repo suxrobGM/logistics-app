@@ -460,6 +460,29 @@ hook from `data-[matches-spartan-invalid=true]` onto `aria-[invalid=true]`, whic
 Note also: brain's control-state tracker calls `control.events.subscribe(...)`, and `InteropNgControl` has no `events` —
 the same shape as the `pTextarea` crash. Stripping the wiring sidesteps it.
 
+### Helm's _components_ are unusable for our form controls — brain + harvested classes instead
+
+`input` and `textarea` swapped cleanly because Helm ships them as **directives** on native elements: no
+`ControlValueAccessor`, no icon dependency. That is the boundary, not luck. The richer Helm primitives are
+components, and two properties of them collide head-on with this project's governing principles:
+
+1. **Four Helm form primitives provide `NG_VALUE_ACCESSOR`** and implement `ControlValueAccessor`:
+   `checkbox`, `switch`, `date-picker`, `native-select`. Nesting one inside a `ui-*-field` would put a CVA
+   in the injector directly under a `FormValueControl` — the dual-interface ambiguity Phases 3 and 4 spent
+   their entire effort eliminating (`git grep NG_VALUE_ACCESSOR` is currently empty by design).
+2. **21 Helm primitives import `@ng-icons/core` + `@ng-icons/lucide`**, among them `select`, `checkbox`,
+   `date-picker`, `calendar`, `autocomplete` and `combobox`. That is a _second_ icon system; Phase 6 commits
+   to `@lucide/angular` behind `ui-icon`, and the governing principle forbids a dual icon system.
+
+**So for the remaining ten wrappers: take behaviour from `@spartan-ng/brain` directly (`BrnCheckbox`,
+`BrnSelect`, `BrnPopover`, …), take presentation from Helm's harvested class strings via `hlm()`, and render
+icons with the existing `ui-icon`.** `vendor-spartan-helm.mjs` already harvests the style map, so the classes
+are available without importing the component. Do not `bun add @ng-icons/*`.
+
+This is a bigger job than `input`/`textarea` were: each remaining wrapper is a small component built on brain,
+not a one-line directive swap. `select`, `multiselect`, `autocomplete` and `date-picker` additionally need CDK
+overlays, so `provideSpartanHlm()` must land in all four `app.config.ts` first.
+
 ### Remaining
 
 3. Swap wrapper internals **one component type at a time**. Feature code untouched — the payoff of Phase 3.
