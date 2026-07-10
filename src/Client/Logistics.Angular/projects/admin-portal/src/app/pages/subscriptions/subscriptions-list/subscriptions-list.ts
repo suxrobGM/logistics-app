@@ -7,7 +7,7 @@ import {
   deleteSubscription,
   type SubscriptionDto,
 } from "@logistics/shared/api";
-import { DataContainer, PageHeader, SearchField, UiDataTable } from "@logistics/shared/components";
+import { DataContainer, PageHeader, SearchField, UiDataTable } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

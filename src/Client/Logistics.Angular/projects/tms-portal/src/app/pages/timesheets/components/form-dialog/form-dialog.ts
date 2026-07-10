@@ -29,7 +29,7 @@ import {
   UiSelectField,
   UiTextareaField,
   ValidatedForm,
-} from "@logistics/shared/components";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

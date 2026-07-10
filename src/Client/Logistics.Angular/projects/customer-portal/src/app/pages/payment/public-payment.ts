@@ -8,16 +8,8 @@ import {
   getPublicInvoice,
   type PublicInvoiceDto,
 } from "@logistics/shared/api";
-import {
-  Alert,
-  Grid,
-  Icon,
-  Stack,
-  Surface,
-  Typography,
-  UiDataTable,
-} from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
+import { Alert, Grid, Icon, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";

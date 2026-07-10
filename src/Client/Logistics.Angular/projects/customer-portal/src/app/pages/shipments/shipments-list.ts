@@ -1,15 +1,8 @@
 import { Component, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Api, getPortalLoads, type PortalLoadDto } from "@logistics/shared/api";
-import {
-  Icon,
-  Stack,
-  StatusBadge,
-  Surface,
-  Typography,
-  UiDataTable,
-} from "@logistics/shared/components";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
+import { Icon, Stack, StatusBadge, Surface, Typography, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";

@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { Container, Typography } from "@logistics/shared/components";
+import { Container, Typography } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { PageHeader } from "@/shared/components";
 import { ApiKeysTable, McpIntegrationGuide } from "../_components";

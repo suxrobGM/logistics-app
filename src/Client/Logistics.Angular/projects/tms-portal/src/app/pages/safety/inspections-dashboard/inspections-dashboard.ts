@@ -14,7 +14,7 @@ import {
   type DvirReportDto,
   type DvirStatus,
 } from "@logistics/shared/api";
-import { UiDataTable } from "@logistics/shared/components";
+import { UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

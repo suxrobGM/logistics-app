@@ -19,7 +19,7 @@ import {
   type AiDispatchDecisionDto,
   type AiDispatchSessionDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TagModule } from "primeng/tag";

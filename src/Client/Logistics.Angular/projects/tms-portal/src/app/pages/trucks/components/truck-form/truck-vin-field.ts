@@ -1,7 +1,7 @@
 import { Component, computed, inject, input, signal } from "@angular/core";
 import { FormField, type FieldTree } from "@angular/forms/signals";
 import { Api, decodeVin } from "@logistics/shared/api";
-import { Stack, UiFormField, UiTextField } from "@logistics/shared/components";
+import { Stack, UiFormField, UiTextField } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { MessageModule } from "primeng/message";
 import { TagModule } from "primeng/tag";

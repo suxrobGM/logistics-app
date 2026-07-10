@@ -1,7 +1,7 @@
 import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
 import { Api, resetTenantQuotas } from "@logistics/shared/api";
-import { Icon, Stack, Typography, UiDataTable, UiSortHeader } from "@logistics/shared/components";
+import { Icon, Stack, Typography, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressBar } from "primeng/progressbar";

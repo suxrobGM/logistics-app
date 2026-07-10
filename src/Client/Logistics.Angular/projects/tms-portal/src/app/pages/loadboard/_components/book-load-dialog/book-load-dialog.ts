@@ -5,6 +5,7 @@ import {
   type LoadBoardListingDto,
   type TruckDto,
 } from "@logistics/shared/api";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
   Alert,
   Stack,
@@ -12,8 +13,7 @@ import {
   Typography,
   UiSelectField,
   UiTextField,
-} from "@logistics/shared/components";
-import { CurrencyFormatPipe } from "@logistics/shared/pipes";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { UiFormField } from "@/shared/components";

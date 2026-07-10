@@ -13,6 +13,7 @@ import {
   type SalaryType,
 } from "@logistics/shared/api";
 import { invoiceStatusOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
   Grid,
   Stack,
@@ -20,8 +21,7 @@ import {
   UiDataTable,
   UiSortHeader,
   UiTableRowDirectives,
-} from "@logistics/shared/components";
-import { CurrencyFormatPipe } from "@logistics/shared/pipes";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";

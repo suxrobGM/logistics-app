@@ -12,8 +12,8 @@ import {
   type AccidentReportStatus,
   type AccidentSeverity,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";

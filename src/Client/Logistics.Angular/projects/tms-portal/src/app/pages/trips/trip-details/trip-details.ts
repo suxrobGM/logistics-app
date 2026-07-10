@@ -4,6 +4,13 @@ import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import type { TripStopDto, TripStopType } from "@logistics/shared/api";
 import {
+  AddressPipe,
+  CurrencyFormatPipe,
+  DateFormatPipe,
+  DistanceUnitPipe,
+} from "@logistics/shared/pipes";
+import { LocalizationService } from "@logistics/shared/services";
+import {
   Grid,
   Icon,
   Stack,
@@ -12,14 +19,7 @@ import {
   UiDataTable,
   UiSortHeader,
   UiTableRowDirectives,
-} from "@logistics/shared/components";
-import {
-  AddressPipe,
-  CurrencyFormatPipe,
-  DateFormatPipe,
-  DistanceUnitPipe,
-} from "@logistics/shared/pipes";
-import { LocalizationService } from "@logistics/shared/services";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressBarModule } from "primeng/progressbar";

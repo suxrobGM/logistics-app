@@ -1,5 +1,5 @@
 import { Component, input } from "@angular/core";
-import { Grid, Typography } from "@logistics/shared/components";
+import { Grid, Typography } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { ChartModule } from "primeng/chart";
 import { chartOptions, lineChartOptions } from "../expense-analytics.utils";

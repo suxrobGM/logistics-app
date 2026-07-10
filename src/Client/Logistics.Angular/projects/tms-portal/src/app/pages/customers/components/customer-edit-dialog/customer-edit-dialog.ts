@@ -20,7 +20,7 @@ import {
   UiTextareaField,
   UiTextField,
   ValidatedForm,
-} from "@logistics/shared/components";
+} from "@logistics/shared/ui";
 import { AccordionModule } from "primeng/accordion";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";

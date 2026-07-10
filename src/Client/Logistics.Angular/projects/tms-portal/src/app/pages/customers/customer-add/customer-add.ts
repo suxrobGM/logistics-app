@@ -1,7 +1,7 @@
 import { Component, inject } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import type { CustomerDto } from "@logistics/shared/api";
-import { Container } from "@logistics/shared/components";
+import { Container } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CustomerForm, PageHeader } from "@/shared/components";

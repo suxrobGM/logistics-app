@@ -8,7 +8,7 @@ import {
   type StripeConnectStatus,
   type StripeConnectStatusDto,
 } from "@logistics/shared/api";
-import { Container, Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Container, Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";

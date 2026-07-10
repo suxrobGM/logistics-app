@@ -11,8 +11,8 @@ import {
   licenseClassOptions,
   licenseEndorsementOptions,
 } from "@logistics/shared/api/enums";
-import { Stack, Typography, UiDataTable } from "@logistics/shared/components";
 import { ToastService } from "@logistics/shared/services";
+import { Stack, Typography, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { ChipModule } from "primeng/chip";
 import { Tag as PrimeTag, TagModule } from "primeng/tag";

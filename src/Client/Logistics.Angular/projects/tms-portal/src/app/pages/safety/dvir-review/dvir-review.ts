@@ -8,12 +8,7 @@ import {
   type DvirReportDto,
   type ReviewDvirReportCommand,
 } from "@logistics/shared/api";
-import {
-  UiFormField,
-  UiTextareaField,
-  UiToggleField,
-  ValidatedForm,
-} from "@logistics/shared/components";
+import { UiFormField, UiTextareaField, UiToggleField, ValidatedForm } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

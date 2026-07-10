@@ -12,7 +12,7 @@ import {
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import type { ConversationDto, EmployeeDto, MessageDto } from "@logistics/shared/api";
-import { EmptyState, Stack } from "@logistics/shared/components";
+import { EmptyState, Stack } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { InputTextModule } from "primeng/inputtext";
 import { SkeletonModule } from "primeng/skeleton";

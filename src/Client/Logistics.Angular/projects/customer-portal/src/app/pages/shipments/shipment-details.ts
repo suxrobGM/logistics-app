@@ -7,8 +7,8 @@ import {
   type DocumentDto,
   type PortalLoadDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
+import { Grid, Icon, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

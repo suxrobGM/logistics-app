@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, input } from "@angular/core";
 import type { ConditionDefectDto } from "@logistics/shared/api";
-import { UiDataTable } from "@logistics/shared/components";
+import { UiDataTable } from "@logistics/shared/ui";
 import { TagModule } from "primeng/tag";
 
 @Component({

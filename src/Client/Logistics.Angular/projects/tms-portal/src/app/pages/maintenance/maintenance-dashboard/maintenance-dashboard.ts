@@ -8,8 +8,8 @@ import {
   type MaintenanceRecordDto,
   type MaintenanceScheduleDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography, UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
+import { Grid, Icon, Stack, Typography, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";

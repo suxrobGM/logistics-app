@@ -1,6 +1,6 @@
 import { Component, inject, input, output, signal } from "@angular/core";
 import { Api, getEmployees, type EmployeeDto } from "@logistics/shared/api";
-import { Icon, Stack, Typography } from "@logistics/shared/components";
+import { Icon, Stack, Typography } from "@logistics/shared/ui";
 import {
   AutoCompleteModule,
   type AutoCompleteCompleteEvent,

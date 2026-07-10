@@ -1,5 +1,5 @@
 import { Component, computed, input } from "@angular/core";
-import { Icon, Stack, Typography } from "@logistics/shared/components";
+import { Icon, Stack, Typography } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { TooltipModule } from "primeng/tooltip";
 

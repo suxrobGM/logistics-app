@@ -1,7 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { ToastService } from "@logistics/shared";
-import { UiDataTable, UiSortHeader } from "@logistics/shared/components";
+import { UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";

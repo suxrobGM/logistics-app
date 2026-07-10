@@ -8,8 +8,8 @@ import {
   type DefaultFeatureStatusDto,
   type TenantFeature,
 } from "@logistics/shared/api";
-import { FeatureRow, PageHeader } from "@logistics/shared/components";
 import { FEATURE_DESCRIPTIONS } from "@logistics/shared/services";
+import { FeatureRow, PageHeader } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

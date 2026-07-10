@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Api, getInspection, type ConditionReportDto } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/ui";
 import { isContainerLoadType } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

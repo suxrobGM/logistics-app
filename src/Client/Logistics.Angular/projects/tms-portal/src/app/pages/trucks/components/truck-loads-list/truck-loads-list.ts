@@ -1,8 +1,8 @@
 import { Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { LoadDto } from "@logistics/shared/api";
-import { UiDataTable } from "@logistics/shared/components";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
+import { UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { TooltipModule } from "primeng/tooltip";
 import { LoadStatusTag, LoadTypeTag } from "@/shared/components";

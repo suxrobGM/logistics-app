@@ -16,7 +16,7 @@ import {
   SearchField,
   UiDataTable,
   UiSortHeader,
-} from "@logistics/shared/components";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";

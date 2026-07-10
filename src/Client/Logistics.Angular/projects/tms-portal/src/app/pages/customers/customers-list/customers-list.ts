@@ -3,7 +3,7 @@ import { Component, effect, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { Api, deleteCustomer, Permission, PermissionGuard } from "@logistics/shared";
 import type { CustomerDto } from "@logistics/shared/api";
-import { Stack, UiDataTable, UiSortHeader } from "@logistics/shared/components";
+import { Stack, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

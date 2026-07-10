@@ -6,7 +6,7 @@ import {
   revokePaymentLink,
   type PaymentLinkDto,
 } from "@logistics/shared/api";
-import { Icon, Stack, UiDataTable } from "@logistics/shared/components";
+import { Icon, Stack, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

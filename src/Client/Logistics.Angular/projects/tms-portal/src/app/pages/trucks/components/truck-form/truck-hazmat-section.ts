@@ -7,7 +7,7 @@ import {
   UiFormField,
   UiMultiSelectField,
   UiTextField,
-} from "@logistics/shared/components";
+} from "@logistics/shared/ui";
 import { Fieldset } from "primeng/fieldset";
 import type { TruckFormModel } from "./truck-form";
 

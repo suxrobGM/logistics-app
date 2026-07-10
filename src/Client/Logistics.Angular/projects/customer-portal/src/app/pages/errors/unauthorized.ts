@@ -1,5 +1,5 @@
 import { Component, inject } from "@angular/core";
-import { Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { AuthService } from "@/core/auth";
 

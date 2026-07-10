@@ -3,7 +3,7 @@ import { Component, inject, input, output } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { LocalizationService } from "@logistics/shared";
 import { type ExpenseDto } from "@logistics/shared/api";
-import { Typography } from "@logistics/shared/components";
+import { Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";

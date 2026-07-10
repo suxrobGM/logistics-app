@@ -9,7 +9,7 @@ import {
   type ApiKeyCreatedDto,
   type ApiKeyDto,
 } from "@logistics/shared/api";
-import { UiDataTable } from "@logistics/shared/components";
+import { UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";

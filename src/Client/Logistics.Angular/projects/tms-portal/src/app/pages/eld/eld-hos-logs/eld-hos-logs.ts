@@ -8,9 +8,9 @@ import {
   type DutyStatus,
   type HosLogDto,
 } from "@logistics/shared/api";
-import { EmptyState, ErrorState, Grid, Stack, UiDataTable } from "@logistics/shared/components";
 import { LocalizationService } from "@logistics/shared/services";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
+import { EmptyState, ErrorState, Grid, Stack, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";

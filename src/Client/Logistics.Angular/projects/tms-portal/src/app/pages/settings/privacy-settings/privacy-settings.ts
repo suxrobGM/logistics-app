@@ -14,7 +14,7 @@ import {
   type DataDeletionRequestDto,
   type DataExportRequestDto,
 } from "@logistics/shared/api";
-import { Container, Stack, UiDataTable } from "@logistics/shared/components";
+import { Container, Stack, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";

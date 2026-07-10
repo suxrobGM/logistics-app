@@ -4,7 +4,7 @@ import { Router } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import type { ContainerDto, ContainerIsoType, ContainerStatus } from "@logistics/shared/api";
 import { containerIsoTypeOptions, containerStatusOptions } from "@logistics/shared/api/enums";
-import { Icon, Stack, StatusBadge, UiDataTable, UiSortHeader } from "@logistics/shared/components";
+import { Icon, Stack, StatusBadge, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { SelectModule } from "primeng/select";

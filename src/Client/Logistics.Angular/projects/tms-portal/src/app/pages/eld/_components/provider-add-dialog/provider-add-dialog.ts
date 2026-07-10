@@ -5,7 +5,7 @@ import {
   type CreateEldProviderConfigurationCommand,
   type EldProviderType,
 } from "@logistics/shared/api";
-import { Alert, ValidatedForm } from "@logistics/shared/components";
+import { Alert, ValidatedForm } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { SelectModule } from "primeng/select";

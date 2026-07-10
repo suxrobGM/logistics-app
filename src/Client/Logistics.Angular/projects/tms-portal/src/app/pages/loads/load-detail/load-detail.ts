@@ -8,13 +8,13 @@ import {
   type LoadDto,
   type LoadExceptionDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import {
   AddressPipe,
   CurrencyFormatPipe,
   DateFormatPipe,
   DistanceUnitPipe,
 } from "@logistics/shared/pipes";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";

@@ -1,8 +1,8 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import type { Address, TruckDto } from "@logistics/shared/api";
-import { Stack, UiDataTable, UiSortHeader } from "@logistics/shared/components";
 import { AddressPipe } from "@logistics/shared/pipes";
+import { Stack, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

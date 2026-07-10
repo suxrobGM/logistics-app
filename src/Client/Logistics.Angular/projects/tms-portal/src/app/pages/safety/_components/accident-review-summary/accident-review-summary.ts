@@ -1,8 +1,8 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, input } from "@angular/core";
 import type { FieldTree } from "@angular/forms/signals";
-import { Grid, Stack, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
+import { Grid, Stack, Typography } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 import { Converters } from "@/shared/utils";

@@ -1,7 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject, input, output } from "@angular/core";
 import { type PostedTruckDto } from "@logistics/shared/api";
-import { Icon, Stack, UiDataTable } from "@logistics/shared/components";
+import { Icon, Stack, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";

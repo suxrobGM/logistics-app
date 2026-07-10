@@ -16,8 +16,8 @@ import {
   type UpdatePayrollInvoiceCommand,
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
-import { Grid, Stack, Typography, UiAutocompleteField } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
+import { Grid, Stack, Typography, UiAutocompleteField } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";

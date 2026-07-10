@@ -1,6 +1,6 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, input } from "@angular/core";
-import { Stack, Typography } from "@logistics/shared/components";
+import { Stack, Typography } from "@logistics/shared/ui";
 
 interface TimelineStep {
   label: string;

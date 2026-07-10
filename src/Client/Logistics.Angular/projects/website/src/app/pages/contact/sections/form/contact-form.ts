@@ -1,14 +1,14 @@
 import { Component, inject, signal } from "@angular/core";
 import { email, form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { Api, createContactSubmission, type ContactSubject } from "@logistics/shared/api";
+import type { SelectOption } from "@logistics/shared/models";
 import {
   UiFormField,
   UiSelectField,
   UiTextareaField,
   UiTextField,
   ValidatedForm,
-} from "@logistics/shared/components";
-import type { SelectOption } from "@logistics/shared/models";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { SectionContainer } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";

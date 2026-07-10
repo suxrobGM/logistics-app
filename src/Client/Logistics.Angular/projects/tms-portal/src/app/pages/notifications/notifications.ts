@@ -8,8 +8,8 @@ import {
   updateNotification,
   type NotificationDto,
 } from "@logistics/shared/api";
-import { Icon, Stack, Typography } from "@logistics/shared/components";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
+import { Icon, Stack, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";

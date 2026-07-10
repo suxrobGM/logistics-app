@@ -11,7 +11,7 @@ import {
   type UpdateEmployeeCommand,
 } from "@logistics/shared/api";
 import { employeeStatusOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
-import { AddressForm, Stack } from "@logistics/shared/components";
+import { AddressForm, Stack } from "@logistics/shared/ui";
 import { AccordionModule } from "primeng/accordion";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";

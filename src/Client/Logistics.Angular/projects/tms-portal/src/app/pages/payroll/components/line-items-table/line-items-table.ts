@@ -11,14 +11,14 @@ import {
   type InvoiceLineItemType,
 } from "@logistics/shared/api";
 import { payrollLineItemTypeOptions } from "@logistics/shared/api/enums";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
   UiDataTable,
   UiNumberField,
   UiSelectField,
   UiTextareaField,
   UiTextField,
-} from "@logistics/shared/components";
-import { CurrencyFormatPipe } from "@logistics/shared/pipes";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { TooltipModule } from "primeng/tooltip";

@@ -12,7 +12,7 @@ import {
   type TimeEntryType,
 } from "@logistics/shared/api";
 import { timeEntryTypeOptions } from "@logistics/shared/api/enums";
-import { Stack, UiDataTable, UiSortHeader } from "@logistics/shared/components";
+import { Stack, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePickerModule } from "primeng/datepicker";

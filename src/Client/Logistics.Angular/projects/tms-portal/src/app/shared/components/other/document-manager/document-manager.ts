@@ -10,7 +10,7 @@ import {
   type DocumentStatus,
   type DocumentType,
 } from "@logistics/shared/api";
-import { UiDataTable } from "@logistics/shared/components";
+import { UiDataTable } from "@logistics/shared/ui";
 import { downloadBlobFile, formatFileSize } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

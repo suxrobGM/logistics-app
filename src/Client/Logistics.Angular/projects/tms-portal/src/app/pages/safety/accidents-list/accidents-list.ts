@@ -8,7 +8,7 @@ import {
   type AccidentReportStatus,
   type AccidentSeverity,
 } from "@logistics/shared/api";
-import { Icon, Stack, UiDataTable, UiSortHeader } from "@logistics/shared/components";
+import { Icon, Stack, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

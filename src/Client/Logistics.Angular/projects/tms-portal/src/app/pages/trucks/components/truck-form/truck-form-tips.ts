@@ -1,5 +1,5 @@
 import { Component, input } from "@angular/core";
-import { Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-truck-form-tips",

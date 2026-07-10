@@ -16,7 +16,7 @@ import {
   Surface,
   Typography,
   UiDataTable,
-} from "@logistics/shared/components";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

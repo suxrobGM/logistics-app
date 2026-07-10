@@ -10,7 +10,7 @@ import {
   type ContainerStatus,
 } from "@logistics/shared/api";
 import { containerIsoTypeOptions, containerStatusOptions } from "@logistics/shared/api/enums";
-import { Grid, Icon, Stack, StatusBadge, Surface, Typography } from "@logistics/shared/components";
+import { Grid, Icon, Stack, StatusBadge, Surface, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

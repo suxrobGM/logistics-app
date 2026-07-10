@@ -12,6 +12,7 @@ import {
   type TenantTaxRateDto,
   type UpdateTenantTaxRateCommand,
 } from "@logistics/shared/api";
+import { DateFormatPipe } from "@logistics/shared/pipes";
 import {
   Alert,
   Stack,
@@ -23,8 +24,7 @@ import {
   UiSelectField,
   UiTextField,
   ValidatedForm,
-} from "@logistics/shared/components";
-import { DateFormatPipe } from "@logistics/shared/pipes";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";

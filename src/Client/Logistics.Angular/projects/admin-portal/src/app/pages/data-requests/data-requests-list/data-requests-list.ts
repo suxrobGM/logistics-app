@@ -14,7 +14,7 @@ import {
   Typography,
   UiDataTable,
   type BadgeSeverity,
-} from "@logistics/shared/components";
+} from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TagModule } from "primeng/tag";

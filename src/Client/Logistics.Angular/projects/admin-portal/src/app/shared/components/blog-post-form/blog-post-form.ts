@@ -8,7 +8,7 @@ import {
   UiTextareaField,
   UiTextField,
   ValidatedForm,
-} from "@logistics/shared/components";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { EditorModule } from "primeng/editor";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

@@ -10,7 +10,7 @@ import {
   type TruckDto,
   type UpdateTruckCommand,
 } from "@logistics/shared/api";
-import { Stack } from "@logistics/shared/components";
+import { Stack } from "@logistics/shared/ui";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";

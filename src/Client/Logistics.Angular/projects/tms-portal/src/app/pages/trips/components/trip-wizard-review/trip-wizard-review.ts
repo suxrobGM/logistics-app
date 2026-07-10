@@ -1,6 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, inject, input, output } from "@angular/core";
 import type { TripStopDto, TripStopType } from "@logistics/shared/api";
+import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
   Grid,
   Icon,
@@ -9,8 +10,7 @@ import {
   UiDataTable,
   UiSortHeader,
   UiTableRowDirectives,
-} from "@logistics/shared/components";
-import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import {

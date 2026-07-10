@@ -6,8 +6,8 @@ import {
   type FinancialsReportDto,
   type RevenueTrendDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography, UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
+import { Grid, Icon, Stack, Typography, UiDataTable } from "@logistics/shared/ui";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { Tag, TagModule } from "primeng/tag";

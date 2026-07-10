@@ -1,7 +1,7 @@
 import { CommonModule, DatePipe } from "@angular/common";
 import { Component, effect, inject, input, signal } from "@angular/core";
 import { Api, downloadDocument, getDocuments, type DocumentDto } from "@logistics/shared/api";
-import { UiDataTable } from "@logistics/shared/components";
+import { UiDataTable } from "@logistics/shared/ui";
 import { downloadBlobFile, formatFileSize } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

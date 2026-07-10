@@ -8,6 +8,7 @@ import {
   type ContactSubmissionDto,
   type ContactSubmissionStatus,
 } from "@logistics/shared/api";
+import type { SelectOption } from "@logistics/shared/models";
 import {
   DataContainer,
   Grid,
@@ -21,8 +22,7 @@ import {
   UiSelectField,
   UiSortHeader,
   UiTextareaField,
-} from "@logistics/shared/components";
-import type { SelectOption } from "@logistics/shared/models";
+} from "@logistics/shared/ui";
 import { DateUtils } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

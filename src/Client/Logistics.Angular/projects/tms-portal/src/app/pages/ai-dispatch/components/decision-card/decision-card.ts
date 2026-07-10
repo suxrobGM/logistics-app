@@ -1,7 +1,7 @@
 import { Component, computed, input, output, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { AiDispatchDecisionDto } from "@logistics/shared/api";
-import { Icon, Stack, Surface } from "@logistics/shared/components";
+import { Icon, Stack, Surface } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";

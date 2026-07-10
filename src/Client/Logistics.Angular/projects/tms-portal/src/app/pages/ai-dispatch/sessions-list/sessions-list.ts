@@ -18,8 +18,8 @@ import {
   type TruckDto,
 } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
-import { Icon, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/components";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
+import { Icon, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TagModule } from "primeng/tag";

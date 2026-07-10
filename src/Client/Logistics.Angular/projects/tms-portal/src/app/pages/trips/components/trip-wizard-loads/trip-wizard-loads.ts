@@ -2,8 +2,8 @@ import { Component, computed, inject, input, model, viewChild } from "@angular/c
 import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import type { LoadDto } from "@logistics/shared/api";
-import { Icon, Stack, Typography, UiDataTable, UiSortHeader } from "@logistics/shared/components";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
+import { Icon, Stack, Typography, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { Dialog } from "primeng/dialog";
 import { IconField } from "primeng/iconfield";

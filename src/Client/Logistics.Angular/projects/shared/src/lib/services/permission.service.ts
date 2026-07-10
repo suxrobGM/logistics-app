@@ -1,7 +1,7 @@
-import { Injectable, inject, signal } from "@angular/core";
+import { inject, Injectable, signal } from "@angular/core";
 import { Api } from "../api/generated/api";
 import { getCurrentUserPermissions } from "../api/generated/functions";
-import type { PermissionChecker } from "../components/permission/permission-checker";
+import type { PermissionChecker } from "../permission/permission-checker";
 
 /**
  * Service for managing user permissions.

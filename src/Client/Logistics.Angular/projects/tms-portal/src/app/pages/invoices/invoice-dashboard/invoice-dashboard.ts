@@ -7,8 +7,8 @@ import {
   type InvoiceDashboardDto,
   type InvoiceDto,
 } from "@logistics/shared/api";
-import { Grid, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
+import { Grid, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";

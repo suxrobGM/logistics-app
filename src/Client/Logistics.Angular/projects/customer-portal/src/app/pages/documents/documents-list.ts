@@ -7,7 +7,7 @@ import {
   getPortalLoads,
   type DocumentDto,
 } from "@logistics/shared/api";
-import { Icon, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/components";
+import { Icon, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TagModule } from "primeng/tag";

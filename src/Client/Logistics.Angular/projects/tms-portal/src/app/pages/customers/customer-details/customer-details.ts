@@ -1,8 +1,8 @@
 import { CommonModule, DatePipe } from "@angular/common";
 import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { ToastService } from "@logistics/shared/services";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";

@@ -2,7 +2,7 @@ import { DatePipe } from "@angular/common";
 import { Component, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import type { UserTenantAccessDto } from "@logistics/shared";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

@@ -16,6 +16,7 @@ import {
   type SalaryType,
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
+import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
   DateRangePicker,
   Grid,
@@ -24,8 +25,7 @@ import {
   Typography,
   UiAutocompleteField,
   UiDataTable,
-} from "@logistics/shared/components";
-import { CurrencyFormatPipe } from "@logistics/shared/pipes";
+} from "@logistics/shared/ui";
 import { PredefinedDateRanges } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

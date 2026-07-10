@@ -1,7 +1,7 @@
 import { Component, input, output } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { ConversationDto } from "@logistics/shared/api";
-import { Icon, Stack, Typography } from "@logistics/shared/components";
+import { Icon, Stack, Typography } from "@logistics/shared/ui";
 import { AvatarModule } from "primeng/avatar";
 import { ButtonModule } from "primeng/button";
 import { TooltipModule } from "primeng/tooltip";

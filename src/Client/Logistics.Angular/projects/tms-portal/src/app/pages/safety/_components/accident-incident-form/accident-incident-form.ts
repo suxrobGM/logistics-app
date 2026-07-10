@@ -6,7 +6,7 @@ import {
   UiSelectField,
   UiTextareaField,
   UiTextField,
-} from "@logistics/shared/components";
+} from "@logistics/shared/ui";
 import { AddressAutocomplete } from "@/shared/components/maps";
 import { SearchEmployee, SearchTruck } from "@/shared/components/search";
 import {

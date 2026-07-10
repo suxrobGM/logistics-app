@@ -2,7 +2,7 @@ import { DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import type { DvirReportDto, DvirStatus, DvirType } from "@logistics/shared/api";
-import { Icon, Stack, UiDataTable, UiSortHeader } from "@logistics/shared/components";
+import { Icon, Stack, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

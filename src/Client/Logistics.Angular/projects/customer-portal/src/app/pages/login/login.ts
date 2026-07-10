@@ -1,6 +1,6 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
-import { Stack, Surface, Typography } from "@logistics/shared/components";
+import { Stack, Surface, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { AuthService } from "@/core/auth";

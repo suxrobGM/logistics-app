@@ -6,7 +6,7 @@ import {
   getExpenseById,
   type ExpenseDto,
 } from "@logistics/shared/api";
-import { Container, Grid, Typography } from "@logistics/shared/components";
+import { Container, Grid, Typography } from "@logistics/shared/ui";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

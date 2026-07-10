@@ -11,7 +11,7 @@ import {
   type UserDto,
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
-import { Container, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Container, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { InputGroupModule } from "primeng/inputgroup";

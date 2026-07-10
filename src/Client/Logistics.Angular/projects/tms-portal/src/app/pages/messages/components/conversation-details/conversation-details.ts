@@ -1,7 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, input, model } from "@angular/core";
 import type { ConversationDto } from "@logistics/shared/api";
-import { Icon, Stack, Typography } from "@logistics/shared/components";
+import { Icon, Stack, Typography } from "@logistics/shared/ui";
 import { AvatarModule } from "primeng/avatar";
 import { DrawerModule } from "primeng/drawer";
 import { UserAvatar } from "@/shared/components";

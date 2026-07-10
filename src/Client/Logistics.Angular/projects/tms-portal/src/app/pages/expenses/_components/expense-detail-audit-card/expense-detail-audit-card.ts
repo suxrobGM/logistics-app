@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { Component, input } from "@angular/core";
 import { type ExpenseDto } from "@logistics/shared/api";
-import { Grid, Typography } from "@logistics/shared/components";
+import { Grid, Typography } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 
 @Component({

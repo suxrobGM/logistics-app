@@ -1,7 +1,7 @@
 import { CommonModule, DatePipe } from "@angular/common";
 import { Component, inject, input, output, signal, type OnInit } from "@angular/core";
 import { Api, getLoadExceptions, type LoadExceptionDto } from "@logistics/shared/api";
-import { UiDataTable } from "@logistics/shared/components";
+import { UiDataTable } from "@logistics/shared/ui";
 import { BadgeModule } from "primeng/badge";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

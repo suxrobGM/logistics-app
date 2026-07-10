@@ -32,7 +32,7 @@ import {
   UiTextareaField,
   UiTextField,
   ValidatedForm,
-} from "@logistics/shared/components";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ToastService } from "@/core/services";

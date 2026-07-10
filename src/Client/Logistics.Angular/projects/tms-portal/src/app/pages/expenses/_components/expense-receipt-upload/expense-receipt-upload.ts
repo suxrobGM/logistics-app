@@ -1,7 +1,7 @@
 import { Component, computed, inject, input, output, signal } from "@angular/core";
 import { Api, uploadExpenseReceipt } from "@logistics/shared/api";
-import { Icon, Stack } from "@logistics/shared/components";
 import { ToastService } from "@logistics/shared/services";
+import { Icon, Stack } from "@logistics/shared/ui";
 import { FileUploadModule } from "primeng/fileupload";
 import { UiFormField } from "@/shared/components";
 

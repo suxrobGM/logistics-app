@@ -2,10 +2,10 @@ import { Component, computed, inject, input, model, output, signal } from "@angu
 import { Router, RouterLink } from "@angular/router";
 import type { AppError } from "@logistics/shared";
 import type { LoadDto, LoadStatus } from "@logistics/shared/api";
-import { UiDataTable, UiSortHeader, UiTableRowDirectives } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
+import { UiDataTable, UiSortHeader, UiTableRowDirectives } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

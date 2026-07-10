@@ -1,7 +1,7 @@
 import { Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { CurrencyFormatPipe } from "@logistics/shared";
-import { Icon, Stack, Typography } from "@logistics/shared/components";
+import { Icon, Stack, Typography } from "@logistics/shared/ui";
 import { BadgeModule } from "primeng/badge";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";

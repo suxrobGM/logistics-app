@@ -1,6 +1,6 @@
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { type CreateLoadBoardConfigurationCommand } from "@logistics/shared/api";
-import { Alert, Stack } from "@logistics/shared/components";
+import { Alert, Stack } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { DashboardCard, EmptyState, ErrorState, PageHeader } from "@/shared/components";

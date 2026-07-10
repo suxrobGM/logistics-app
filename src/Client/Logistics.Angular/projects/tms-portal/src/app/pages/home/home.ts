@@ -8,13 +8,13 @@ import {
   type CompanyStatsDto,
   type LoadDto,
 } from "@logistics/shared/api";
-import { Icon, Stack, StatusBadge, Typography, UiDataTable } from "@logistics/shared/components";
 import {
   AddressPipe,
   CurrencyFormatPipe,
   DateFormatPipe,
   DistanceUnitPipe,
 } from "@logistics/shared/pipes";
+import { Icon, Stack, StatusBadge, Typography, UiDataTable } from "@logistics/shared/ui";
 import { Gridster, GridsterItem, type GridsterConfig } from "angular-gridster2";
 import { SharedModule, type MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";

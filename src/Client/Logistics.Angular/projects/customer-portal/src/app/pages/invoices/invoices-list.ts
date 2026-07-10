@@ -2,16 +2,9 @@ import { Component, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import { Api, getPortalInvoices, type PortalInvoiceDto } from "@logistics/shared/api";
-import {
-  Icon,
-  Stack,
-  StatusBadge,
-  Surface,
-  Typography,
-  UiDataTable,
-} from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
+import { Icon, Stack, StatusBadge, Surface, Typography, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";

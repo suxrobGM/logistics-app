@@ -12,9 +12,9 @@ import {
   type TruckDto,
 } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { AddressPipe, CurrencyFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";

@@ -1,6 +1,6 @@
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { Api, getExpenseById, type ExpenseDto } from "@logistics/shared/api";
-import { Container, Stack, Typography } from "@logistics/shared/components";
+import { Container, Stack, Typography } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { PageHeader } from "@/shared/components";

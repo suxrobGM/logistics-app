@@ -1,7 +1,7 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { Api, createTrip, type CreateTripCommand } from "@logistics/shared/api";
-import { Container } from "@logistics/shared/components";
+import { Container } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";

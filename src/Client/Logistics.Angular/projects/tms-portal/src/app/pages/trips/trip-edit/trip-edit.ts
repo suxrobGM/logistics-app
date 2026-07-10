@@ -7,7 +7,7 @@ import {
   updateTrip,
   type UpdateTripCommand,
 } from "@logistics/shared/api";
-import { Container } from "@logistics/shared/components";
+import { Container } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";

@@ -1,8 +1,8 @@
 import { Component, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { Api, dispatchLoad, type LoadDto } from "@logistics/shared/api";
-import { Stack } from "@logistics/shared/components";
 import { AddressPipe } from "@logistics/shared/pipes";
+import { Stack } from "@logistics/shared/ui";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { TooltipModule } from "primeng/tooltip";

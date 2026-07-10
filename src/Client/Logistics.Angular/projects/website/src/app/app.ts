@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
-import { CookieBanner } from "@logistics/shared/components";
+import { CookieBanner } from "@logistics/shared/ui";
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { ToastModule } from "primeng/toast";
 import { Footer, Navbar } from "@/layout";

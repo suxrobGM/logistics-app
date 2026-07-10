@@ -3,7 +3,7 @@ import { Component, inject, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { CurrencyFormatPipe } from "@logistics/shared";
-import { Typography, UiDataTable } from "@logistics/shared/components";
+import { Typography, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";

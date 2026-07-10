@@ -2,7 +2,7 @@ import { Component, effect, inject, input, signal } from "@angular/core";
 import { disabled, form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { RouterLink } from "@angular/router";
 import type { TruckDto } from "@logistics/shared/api";
-import { Stack, UiTextField } from "@logistics/shared/components";
+import { Stack, UiTextField } from "@logistics/shared/ui";
 import { Button } from "primeng/button";
 import { ToastService } from "@/core/services";
 import { SearchTruck, UiFormField, ValidatedForm } from "@/shared/components";

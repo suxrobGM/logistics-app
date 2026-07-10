@@ -1,7 +1,7 @@
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Api, getAiSettings, updateAiSettings, type PlanQuotaDto } from "@logistics/shared/api";
-import { Grid, PageHeader, Stack, Typography } from "@logistics/shared/components";
+import { Grid, PageHeader, Stack, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";

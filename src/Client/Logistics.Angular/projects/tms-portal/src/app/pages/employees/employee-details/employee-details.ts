@@ -7,9 +7,9 @@ import {
   setupEmployeePayout,
   type DocumentType,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ToastService } from "@logistics/shared/services";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";

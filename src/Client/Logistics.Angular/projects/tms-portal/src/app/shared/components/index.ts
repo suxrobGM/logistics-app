@@ -1,4 +1,4 @@
-export * from "@logistics/shared/components";
+export * from "@logistics/shared/ui";
 
 export * from "./tags";
 export * from "./maps";

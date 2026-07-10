@@ -6,7 +6,7 @@ import {
   UiTextareaField,
   UiTextField,
   UiToggleField,
-} from "@logistics/shared/components";
+} from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { type AccidentInjuriesDamageModel } from "../accident.constants";
 

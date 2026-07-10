@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { Router } from "@angular/router";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/components";
+import { Grid, Icon, Stack, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 

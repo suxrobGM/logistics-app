@@ -14,7 +14,7 @@ import {
   Stack,
   UiDataTable,
   UiSortHeader,
-} from "@logistics/shared/components";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TagModule } from "primeng/tag";

@@ -8,8 +8,8 @@ import {
   type SalaryTypeBreakdownDto,
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
-import { Grid, Stack, Typography, UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
+import { Grid, Stack, Typography, UiDataTable } from "@logistics/shared/ui";
 import { ChartModule } from "primeng/chart";
 import { SkeletonModule } from "primeng/skeleton";
 import { TagModule } from "primeng/tag";

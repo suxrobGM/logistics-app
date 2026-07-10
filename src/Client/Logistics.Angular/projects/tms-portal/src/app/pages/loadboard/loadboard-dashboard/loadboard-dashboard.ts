@@ -2,7 +2,7 @@ import { DatePipe } from "@angular/common";
 import { Component, computed, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { Api, searchLoadBoard, type LoadBoardListingDto } from "@logistics/shared/api";
-import { Grid, Stack, UiDataTable } from "@logistics/shared/components";
+import { Grid, Stack, UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";

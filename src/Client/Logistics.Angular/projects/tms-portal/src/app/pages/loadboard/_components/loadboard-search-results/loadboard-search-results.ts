@@ -1,8 +1,8 @@
 import { DecimalPipe } from "@angular/common";
 import { Component, input, output } from "@angular/core";
 import { type LoadBoardListingDto } from "@logistics/shared/api";
-import { UiDataTable } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
+import { UiDataTable } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";

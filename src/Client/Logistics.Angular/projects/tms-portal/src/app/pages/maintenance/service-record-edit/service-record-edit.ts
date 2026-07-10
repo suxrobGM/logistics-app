@@ -6,7 +6,7 @@ import {
   type MaintenanceRecordDto,
   type TruckDto,
 } from "@logistics/shared/api";
-import { Stack } from "@logistics/shared/components";
+import { Stack } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";

@@ -1,6 +1,6 @@
 import { Component, inject, signal } from "@angular/core";
 import { Api, getCompanyStats, type CompanyStatsDto } from "@logistics/shared/api";
-import { Grid, PageHeader } from "@logistics/shared/components";
+import { Grid, PageHeader } from "@logistics/shared/ui";
 import { GrossBarchart, GrossSummaryWidgetComponent } from "@/shared/components";
 
 @Component({

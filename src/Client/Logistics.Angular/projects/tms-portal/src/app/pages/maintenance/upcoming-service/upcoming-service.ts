@@ -2,7 +2,7 @@ import { DatePipe, DecimalPipe } from "@angular/common";
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import type { MaintenanceIntervalType, MaintenanceScheduleDto } from "@logistics/shared/api";
-import { Icon, UiDataTable, UiSortHeader } from "@logistics/shared/components";
+import { Icon, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

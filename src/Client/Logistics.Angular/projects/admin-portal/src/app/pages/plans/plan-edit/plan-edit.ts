@@ -9,7 +9,7 @@ import {
   type SubscriptionPlanDto,
   type UpdateSubscriptionPlanCommand,
 } from "@logistics/shared/api";
-import { PageHeader, Stack } from "@logistics/shared/components";
+import { PageHeader, Stack } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";

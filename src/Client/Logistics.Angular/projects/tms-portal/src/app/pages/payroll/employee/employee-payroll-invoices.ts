@@ -9,8 +9,8 @@ import {
   type SalaryType,
 } from "@logistics/shared/api";
 import { paymentMethodTypeOptions, salaryTypeOptions } from "@logistics/shared/api/enums";
-import { Grid, Stack, UiDataTable, UiSortHeader } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
+import { Grid, Stack, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";

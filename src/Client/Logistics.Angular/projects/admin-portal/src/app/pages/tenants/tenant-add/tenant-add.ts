@@ -2,7 +2,7 @@ import { Component, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import { Api, createTenant, type CreateTenantCommand } from "@logistics/shared/api";
-import { PageHeader } from "@logistics/shared/components";
+import { PageHeader } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TenantForm, type TenantFormValue } from "@/shared/components";

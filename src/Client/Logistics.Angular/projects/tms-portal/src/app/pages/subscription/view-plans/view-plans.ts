@@ -9,7 +9,7 @@ import {
   type SubscriptionPlanDto,
   type TenantFeature,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";

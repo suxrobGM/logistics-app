@@ -9,7 +9,7 @@ import {
   type TerminalType,
 } from "@logistics/shared/api";
 import { terminalTypeOptions } from "@logistics/shared/api/enums";
-import { Container, Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Container, Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

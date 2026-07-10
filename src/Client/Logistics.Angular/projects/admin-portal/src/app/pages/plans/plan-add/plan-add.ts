@@ -6,7 +6,7 @@ import {
   createSubscriptionPlan,
   type CreateSubscriptionPlanCommand,
 } from "@logistics/shared/api";
-import { PageHeader } from "@logistics/shared/components";
+import { PageHeader } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { PlanForm, type PlanFormValue } from "@/shared/components";

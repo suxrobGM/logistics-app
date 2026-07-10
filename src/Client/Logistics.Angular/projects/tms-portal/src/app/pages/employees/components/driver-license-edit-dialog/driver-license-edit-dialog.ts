@@ -35,14 +35,14 @@ import {
   licenseClassOptions,
   licenseEndorsementOptions,
 } from "@logistics/shared/api/enums";
+import { ToastService } from "@logistics/shared/services";
 import {
   Stack,
   UiDateField,
   UiMultiSelectField,
   UiSelectField,
   UiTextField,
-} from "@logistics/shared/components";
-import { ToastService } from "@logistics/shared/services";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { UiFormField, ValidatedForm } from "@/shared/components";

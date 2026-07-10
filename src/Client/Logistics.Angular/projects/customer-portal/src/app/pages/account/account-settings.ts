@@ -1,7 +1,7 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Api, getPortalProfile, type CustomerUserDto } from "@logistics/shared/api";
-import { Grid, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Grid, Stack, Surface, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";

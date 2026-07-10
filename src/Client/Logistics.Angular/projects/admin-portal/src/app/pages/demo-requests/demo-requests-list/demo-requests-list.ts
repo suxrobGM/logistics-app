@@ -20,7 +20,7 @@ import {
   UiSelectField,
   UiSortHeader,
   UiTextareaField,
-} from "@logistics/shared/components";
+} from "@logistics/shared/ui";
 import { DateUtils } from "@logistics/shared/utils";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

@@ -1,6 +1,6 @@
 import { Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { Icon, Stack, Typography } from "@logistics/shared/components";
+import { Icon, Stack, Typography } from "@logistics/shared/ui";
 import { BadgeModule } from "primeng/badge";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";

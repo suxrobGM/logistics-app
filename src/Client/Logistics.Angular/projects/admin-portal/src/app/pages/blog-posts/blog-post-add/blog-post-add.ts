@@ -2,7 +2,7 @@ import { Component, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import { Api, createBlogPost, type CreateBlogPostCommand } from "@logistics/shared/api";
-import { PageHeader } from "@logistics/shared/components";
+import { PageHeader } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { BlogPostForm, type BlogPostFormValue } from "@/shared/components";

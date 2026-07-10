@@ -8,7 +8,7 @@ import {
   type CreateEldProviderConfigurationCommand,
   type EldProviderConfigurationDto,
 } from "@logistics/shared/api";
-import { Alert, DashboardCard, EmptyState, ErrorState, Stack } from "@logistics/shared/components";
+import { Alert, DashboardCard, EmptyState, ErrorState, Stack } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { PageHeader } from "@/shared/components";

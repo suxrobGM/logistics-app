@@ -10,7 +10,7 @@ import {
   type TenantDto,
   type UpdateTenantCommand,
 } from "@logistics/shared/api";
-import { PageHeader, Stack, Typography } from "@logistics/shared/components";
+import { PageHeader, Stack, Typography } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";

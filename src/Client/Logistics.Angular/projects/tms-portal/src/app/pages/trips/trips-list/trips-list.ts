@@ -12,20 +12,20 @@ import {
 } from "@logistics/shared/api";
 import { tripStatusOptions } from "@logistics/shared/api/enums";
 import {
-  Grid,
-  Stack,
-  Typography,
-  UiDataTable,
-  UiSortHeader,
-  UiTableRowDirectives,
-} from "@logistics/shared/components";
-import {
   AddressPipe,
   CurrencyFormatPipe,
   DateFormatPipe,
   DistanceUnitPipe,
 } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
+import {
+  Grid,
+  Stack,
+  Typography,
+  UiDataTable,
+  UiSortHeader,
+  UiTableRowDirectives,
+} from "@logistics/shared/ui";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import type { MenuItem } from "primeng/api";
 import { Button } from "primeng/button";

@@ -11,7 +11,7 @@ import {
   type DvirStatus,
   type DvirType,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack } from "@logistics/shared/components";
+import { Grid, Icon, Stack } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";

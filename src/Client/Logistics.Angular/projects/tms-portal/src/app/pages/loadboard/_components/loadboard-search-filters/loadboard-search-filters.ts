@@ -1,6 +1,7 @@
 import { Component, computed, inject, input, output, signal } from "@angular/core";
 import { form, FormField, FormRoot, max, min } from "@angular/forms/signals";
 import { type SearchLoadBoardCommand } from "@logistics/shared/api";
+import { LocalizationService } from "@logistics/shared/services";
 import {
   Grid,
   Stack,
@@ -8,8 +9,7 @@ import {
   UiMultiSelectField,
   UiNumberField,
   UiTextField,
-} from "@logistics/shared/components";
-import { LocalizationService } from "@logistics/shared/services";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { UiFormField } from "@/shared/components";
 import { EQUIPMENT_OPTIONS } from "../loadboard.constants";

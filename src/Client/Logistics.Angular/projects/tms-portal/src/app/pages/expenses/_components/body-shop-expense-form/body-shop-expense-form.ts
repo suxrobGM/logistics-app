@@ -19,7 +19,7 @@ import {
   UiTextareaField,
   UiTextField,
   ValidatedForm,
-} from "@logistics/shared/components";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { TenantService } from "@/core/services";
 import { UiFormField } from "@/shared/components";

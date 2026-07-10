@@ -2,7 +2,7 @@ import { Component, inject, input, model, output, signal } from "@angular/core";
 import { email, form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { UiFormField } from "@logistics/shared";
 import { Api, sendInvoice } from "@logistics/shared/api";
-import { Stack, UiTextareaField, UiTextField, ValidatedForm } from "@logistics/shared/components";
+import { Stack, UiTextareaField, UiTextField, ValidatedForm } from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ToastService } from "@/core/services";

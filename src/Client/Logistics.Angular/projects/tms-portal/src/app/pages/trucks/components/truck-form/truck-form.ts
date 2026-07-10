@@ -24,7 +24,7 @@ import {
   UiSelectField,
   UiTextField,
   ValidatedForm,
-} from "@logistics/shared/components";
+} from "@logistics/shared/ui";
 import { ButtonModule } from "primeng/button";
 import { ToastService } from "@/core/services";
 import { TruckFormTips } from "./truck-form-tips";
