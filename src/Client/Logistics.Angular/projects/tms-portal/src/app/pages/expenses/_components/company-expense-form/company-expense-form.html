@@ -2,7 +2,7 @@
   <ui-grid container spacing="4">
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Amount" for="company-amount" [required]="true">
-        <p-inputNumber
+        <ui-number-field
           id="company-amount"
           formControlName="amount"
           mode="currency"
@@ -15,7 +15,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Category" for="company-category" [required]="true">
-        <p-select
+        <ui-select-field
           id="company-category"
           formControlName="category"
           [options]="categories"
@@ -28,13 +28,13 @@
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Vendor Name" for="company-vendor">
-        <input pInputText id="company-vendor" formControlName="vendorName" class="w-full" />
+        <ui-text-field id="company-vendor" formControlName="vendorName" />
       </ui-form-field>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Expense Date" for="company-date" [required]="true">
-        <p-datepicker
+        <ui-date-field
           id="company-date"
           formControlName="expenseDate"
           [showIcon]="true"
@@ -45,13 +45,11 @@
   </ui-grid>
 
   <ui-form-field label="Notes" for="company-notes">
-    <textarea
-      pInputTextarea
+    <ui-textarea-field
       id="company-notes"
       formControlName="notes"
-      rows="3"
-      class="w-full"
-    ></textarea>
+      [rows]="3"
+    />
   </ui-form-field>
 
   <app-expense-receipt-upload

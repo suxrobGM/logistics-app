@@ -13,13 +13,19 @@ import {
   type UpdateCustomerCommand,
 } from "@logistics/shared/api";
 import { customerStatusOptions } from "@logistics/shared/api/enums";
-import { AddressForm, Grid, Stack, UiFormField, ValidatedForm } from "@logistics/shared/components";
+import {
+  AddressForm,
+  Grid,
+  Stack,
+  UiCheckboxField,
+  UiFormField,
+  UiSelectField,
+  UiTextareaField,
+  UiTextField,
+  ValidatedForm,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { CheckboxModule } from "primeng/checkbox";
-import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { SelectModule } from "primeng/select";
-import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
 import { TenantService } from "@/core/services/tenant.service";
 
@@ -39,17 +45,17 @@ export interface CustomerFormValue {
   templateUrl: "./customer-form.html",
   imports: [
     ButtonModule,
-    CheckboxModule,
     ValidatedForm,
     ReactiveFormsModule,
     RouterLink,
     ProgressSpinnerModule,
     UiFormField,
+    UiTextField,
+    UiSelectField,
+    UiCheckboxField,
+    UiTextareaField,
     Grid,
     Stack,
-    InputTextModule,
-    TextareaModule,
-    SelectModule,
     AddressForm,
   ],
 })

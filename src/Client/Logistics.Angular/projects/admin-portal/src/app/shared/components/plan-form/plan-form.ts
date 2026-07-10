@@ -3,13 +3,17 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angula
 import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import type { BillingInterval, PlanTier } from "@logistics/shared/api";
-import { CurrencyField, UiFormField, ValidatedForm } from "@logistics/shared/components";
+import {
+  CurrencyField,
+  UiFormField,
+  UiNumberField,
+  UiSelectField,
+  UiTextareaField,
+  UiTextField,
+  ValidatedForm,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { SelectModule } from "primeng/select";
-import { TextareaModule } from "primeng/textarea";
 
 export interface PlanFormValue {
   name: string;
@@ -46,10 +50,10 @@ const INTERVAL_OPTIONS = [
     RouterLink,
     ProgressSpinnerModule,
     UiFormField,
-    InputTextModule,
-    TextareaModule,
-    InputNumberModule,
-    SelectModule,
+    UiTextField,
+    UiTextareaField,
+    UiNumberField,
+    UiSelectField,
     CurrencyField,
   ],
 })

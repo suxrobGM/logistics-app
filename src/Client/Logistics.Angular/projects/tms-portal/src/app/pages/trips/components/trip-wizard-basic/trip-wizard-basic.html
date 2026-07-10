@@ -2,8 +2,7 @@
   <form [formGroup]="form" (ngSubmit)="goToNextStep()">
 
     <ui-form-field label="Trip Name" for="tripName" [required]="true">
-      <input
-        pInputText
+      <ui-text-field
         id="tripName"
         formControlName="tripName"
         type="text"

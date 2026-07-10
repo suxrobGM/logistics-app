@@ -1,24 +1,26 @@
 import { Component, input } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { hazmatClassOptions } from "@logistics/shared/api/enums";
-import { UiFormField } from "@logistics/shared/components";
-import { CheckboxModule } from "primeng/checkbox";
-import { DatePickerModule } from "primeng/datepicker";
+import {
+  UiCheckboxField,
+  UiDateField,
+  UiFormField,
+  UiMultiSelectField,
+  UiTextField,
+} from "@logistics/shared/components";
 import { Fieldset } from "primeng/fieldset";
-import { InputTextModule } from "primeng/inputtext";
-import { MultiSelectModule } from "primeng/multiselect";
 
 @Component({
   selector: "app-truck-hazmat-section",
   templateUrl: "./truck-hazmat-section.html",
   imports: [
     ReactiveFormsModule,
-    CheckboxModule,
-    DatePickerModule,
     Fieldset,
-    InputTextModule,
-    MultiSelectModule,
     UiFormField,
+    UiCheckboxField,
+    UiDateField,
+    UiMultiSelectField,
+    UiTextField,
   ],
 })
 export class TruckHazmatSection {

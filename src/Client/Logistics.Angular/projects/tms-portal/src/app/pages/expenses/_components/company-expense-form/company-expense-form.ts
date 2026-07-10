@@ -3,13 +3,16 @@ import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import { Api, createCompanyExpense, updateExpense, type ExpenseDto } from "@logistics/shared/api";
-import { Grid, Stack } from "@logistics/shared/components";
+import {
+  Grid,
+  Stack,
+  UiDateField,
+  UiNumberField,
+  UiSelectField,
+  UiTextareaField,
+  UiTextField,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { DatePicker } from "primeng/datepicker";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
-import { SelectModule } from "primeng/select";
-import { TextareaModule } from "primeng/textarea";
 import { TenantService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
 import { ExpenseReceiptUpload } from "../expense-receipt-upload/expense-receipt-upload";
@@ -22,11 +25,11 @@ import { COMPANY_CATEGORIES } from "../expense.constants";
     ReactiveFormsModule,
     RouterModule,
     ButtonModule,
-    InputTextModule,
-    InputNumberModule,
-    TextareaModule,
-    DatePicker,
-    SelectModule,
+    UiTextField,
+    UiNumberField,
+    UiTextareaField,
+    UiDateField,
+    UiSelectField,
     UiFormField,
     Grid,
     Stack,

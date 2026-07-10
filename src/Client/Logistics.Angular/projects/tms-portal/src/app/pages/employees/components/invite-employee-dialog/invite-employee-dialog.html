@@ -21,21 +21,18 @@
         [required]="true"
         [control]="form.controls.email"
       >
-        <input
-          pInputText
+        <ui-text-field
           id="email"
           formControlName="email"
           type="email"
           placeholder="employee@example.com"
-          class="w-full"
         />
       </ui-form-field>
 
       <ui-form-field label="Role" for="role" [required]="true" [control]="form.controls.role">
-        <p-select
+        <ui-select-field
           formControlName="role"
           id="role"
-          class="w-full"
           appendTo="body"
           [options]="roles()"
           optionValue="name"
@@ -49,14 +46,12 @@
         for="personalMessage"
         hint="Optional note to include in the invitation email"
       >
-        <textarea
-          pTextarea
+        <ui-textarea-field
           id="personalMessage"
           formControlName="personalMessage"
-          rows="3"
+          [rows]="3"
           placeholder="Add a personal note to the invitation email..."
-          class="w-full"
-        ></textarea>
+        />
       </ui-form-field>
 
       <ui-stack direction="row" justify="end" gap="2">

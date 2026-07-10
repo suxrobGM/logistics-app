@@ -12,7 +12,7 @@
         <ui-grid container spacing="4" class="mb-4">
           <ui-grid [size]="12">
             <ui-form-field label="Tenant" [required]="true">
-              <p-select
+              <ui-select-field
                 formControlName="tenantId"
                 [options]="tenantOptions()"
                 optionLabel="label"
@@ -37,7 +37,7 @@
         <ui-grid container spacing="4" class="mb-4">
           <ui-grid [size]="12">
             <ui-form-field label="Subscription Plan" [required]="true">
-              <p-select
+              <ui-select-field
                 formControlName="planId"
                 [options]="planOptions()"
                 optionLabel="label"

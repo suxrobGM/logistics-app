@@ -3,14 +3,17 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angula
 import { UiFormField } from "@logistics/shared";
 import { Api, recordManualPayment, type PaymentMethodType } from "@logistics/shared/api";
 import { paymentMethodTypeOptions } from "@logistics/shared/api/enums";
-import { Stack, ValidatedForm } from "@logistics/shared/components";
+import {
+  Stack,
+  UiDateField,
+  UiNumberField,
+  UiSelectField,
+  UiTextareaField,
+  UiTextField,
+  ValidatedForm,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { DatePickerModule } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
-import { SelectModule } from "primeng/select";
-import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
 
 @Component({
@@ -21,11 +24,11 @@ import { ToastService } from "@/core/services";
     DialogModule,
     ButtonModule,
     ReactiveFormsModule,
-    InputTextModule,
-    InputNumberModule,
-    TextareaModule,
-    SelectModule,
-    DatePickerModule,
+    UiTextField,
+    UiNumberField,
+    UiTextareaField,
+    UiSelectField,
+    UiDateField,
     UiFormField,
     Stack,
   ],

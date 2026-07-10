@@ -8,11 +8,9 @@
 >
   <form [formGroup]="form" (ngSubmit)="save()">
     <ui-form-field label="Name" for="name" [required]="true">
-      <input
-        pInputText
+      <ui-text-field
         formControlName="name"
         id="name"
-        class="w-full"
         placeholder="Customer name"
       />
     </ui-form-field>
@@ -20,12 +18,10 @@
     <ui-grid container spacing="4" class="mt-4">
       <ui-grid [size]="{ xs: 12, md: 6 }">
         <ui-form-field label="Email" for="email">
-          <input
-            pInputText
+          <ui-text-field
             formControlName="email"
             id="email"
             type="email"
-            class="w-full"
             placeholder="email@example.com"
           />
         </ui-form-field>
@@ -33,12 +29,10 @@
 
       <ui-grid [size]="{ xs: 12, md: 6 }">
         <ui-form-field label="Phone" for="phone">
-          <input
-            pInputText
+          <ui-text-field
             formControlName="phone"
             id="phone"
             type="tel"
-            class="w-full"
             placeholder="(555) 555-5555"
           />
         </ui-form-field>
@@ -46,10 +40,9 @@
     </ui-grid>
 
     <ui-form-field label="Status" for="status" class="mt-4">
-      <p-select
+      <ui-select-field
         formControlName="status"
         id="status"
-        class="w-full"
         [options]="statusOptions"
         optionLabel="label"
         optionValue="value"
@@ -72,11 +65,9 @@
               : 'VAT, EIN, GSTIN, ABN, etc. (optional)'
           "
         >
-          <input
-            pInputText
+          <ui-text-field
             id="taxId"
             formControlName="taxId"
-            class="w-full"
             placeholder="e.g. DE123456789"
           />
         </ui-form-field>
@@ -85,7 +76,7 @@
       <ui-grid [size]="{ xs: 12, md: 6 }">
         <ui-form-field label="Tax status" for="isVatExempt">
           <div class="flex items-center gap-2 pt-2">
-            <p-checkbox formControlName="isVatExempt" inputId="isVatExempt" [binary]="true" />
+            <ui-checkbox-field formControlName="isVatExempt" inputId="isVatExempt" />
             <label for="isVatExempt">VAT / sales tax exempt</label>
           </div>
         </ui-form-field>
@@ -93,14 +84,12 @@
     </ui-grid>
 
     <ui-form-field label="Notes" for="notes" class="mt-4">
-      <textarea
-        pInputTextarea
+      <ui-textarea-field
         formControlName="notes"
         id="notes"
-        class="w-full"
-        rows="3"
+        [rows]="3"
         placeholder="Additional notes about this customer..."
-      ></textarea>
+      />
     </ui-form-field>
 
 

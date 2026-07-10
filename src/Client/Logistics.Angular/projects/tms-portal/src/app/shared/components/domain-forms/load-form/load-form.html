@@ -16,8 +16,7 @@
           </ui-stack>
           <ui-surface variant="elevated" [border]="true">
             <ui-form-field label="Name" for="name" [required]="true">
-              <input
-                pInputText
+              <ui-text-field
                 id="name"
                 formControlName="name"
                 type="text"
@@ -25,10 +24,10 @@
               />
             </ui-form-field>
             <ui-form-field label="Load Type" for="type" [required]="true">
-              <p-select formControlName="type" [options]="loadTypes" />
+              <ui-select-field formControlName="type" [options]="loadTypes" />
             </ui-form-field>
             <ui-form-field label="Source" for="source" [required]="true" class="mb-0">
-              <p-select formControlName="source" [options]="loadSources" />
+              <ui-select-field formControlName="source" [options]="loadSources" />
             </ui-form-field>
           </ui-surface>
         </ui-stack>
@@ -42,8 +41,7 @@
             </ui-stack>
             <ui-surface variant="elevated" [border]="true">
               <ui-form-field label="Trip" for="tripNumber" class="mb-0">
-                <input
-                  pInputText
+                <ui-text-field
                   id="tripNumber"
                   formControlName="tripNumber"
                   type="text"
@@ -104,7 +102,7 @@
           <ui-grid container spacing="4">
             <ui-grid [size]="{ xs: 12, md: 6 }">
               <ui-form-field label="Requested Pickup Date" for="requestedPickupDate" class="mb-0">
-                <p-datepicker
+                <ui-date-field
                   formControlName="requestedPickupDate"
                   [showIcon]="true"
                   [showTime]="true"
@@ -118,7 +116,7 @@
                 for="requestedDeliveryDate"
                 class="mb-0"
               >
-                <p-datepicker
+                <ui-date-field
                   formControlName="requestedDeliveryDate"
                   [showIcon]="true"
                   [showTime]="true"
@@ -149,12 +147,12 @@
           [collapsed]="!form.controls.isHazmat.value"
         >
           <ui-form-field label="Contains hazardous materials" for="isHazmat">
-            <p-checkbox inputId="isHazmat" formControlName="isHazmat" [binary]="true" />
+            <ui-checkbox-field inputId="isHazmat" formControlName="isHazmat" />
           </ui-form-field>
 
           @if (form.controls.isHazmat.value) {
             <ui-form-field label="Hazmat class" for="hazmatClass" hint="UN/ADR classification">
-              <p-select
+              <ui-select-field
                 id="hazmatClass"
                 formControlName="hazmatClass"
                 [options]="hazmatClasses"
@@ -172,12 +170,11 @@
               class="mb-0"
               [control]="form.controls.unNumber"
             >
-              <input
-                pInputText
+              <ui-text-field
                 id="unNumber"
                 formControlName="unNumber"
                 type="text"
-                maxlength="16"
+                [maxlength]="16"
                 placeholder="UN0000"
                 style="text-transform: uppercase"
               />
@@ -188,13 +185,12 @@
         <!-- Notes Section (collapsable) -->
         <p-fieldset legend="Notes" [toggleable]="true" [collapsed]="true">
           <ui-form-field label="Notes" for="notes" hint="Max 2000 characters" class="mb-0">
-            <textarea
-              pTextarea
+            <ui-textarea-field
               id="notes"
               formControlName="notes"
-              rows="3"
-              maxlength="2000"
-            ></textarea>
+              [rows]="3"
+              [maxlength]="2000"
+            />
           </ui-form-field>
         </p-fieldset>
 
@@ -206,17 +202,16 @@
           </ui-stack>
           <ui-surface variant="elevated" [border]="true">
             <ui-form-field label="Delivery Cost" for="deliveryCost" [required]="true">
-              <p-inputgroup>
-                <p-inputgroup-addon>$$</p-inputgroup-addon>
-                <p-input-number id="deliveryCost" formControlName="deliveryCost" [min]="0" />
-              </p-inputgroup>
+              <ui-number-field
+                id="deliveryCost"
+                formControlName="deliveryCost"
+                [min]="0"
+                prefixLabel="$$"
+              />
             </ui-form-field>
 
             <ui-form-field label="Estimated Distance" for="distance" class="mb-0">
-              <p-inputgroup>
-                <p-inputgroup-addon>mi</p-inputgroup-addon>
-                <p-input-number id="distance" formControlName="distance" [min]="0" />
-              </p-inputgroup>
+              <ui-number-field id="distance" formControlName="distance" [min]="0" prefixLabel="mi" />
             </ui-form-field>
           </ui-surface>
         </ui-stack>
@@ -229,8 +224,7 @@
           </ui-stack>
           <ui-surface variant="elevated" [border]="true">
             <ui-form-field label="Assigned Dispatcher" for="dispatcherName">
-              <input
-                pInputText
+              <ui-text-field
                 id="dispatcherName"
                 formControlName="assignedDispatcherName"
                 type="text"
@@ -245,7 +239,7 @@
 
             @if (mode() === "edit") {
               <ui-form-field label="Status" for="status" class="mb-0">
-                <p-select formControlName="status" [options]="loadStatuses" />
+                <ui-select-field formControlName="status" [options]="loadStatuses" />
               </ui-form-field>
             }
           </ui-surface>

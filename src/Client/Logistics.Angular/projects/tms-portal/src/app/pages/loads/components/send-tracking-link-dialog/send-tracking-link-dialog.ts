@@ -1,11 +1,9 @@
 import { Component, inject, input, model, output, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { UiFormField, ValidatedForm } from "@logistics/shared";
+import { UiFormField, UiTextareaField, UiTextField, ValidatedForm } from "@logistics/shared";
 import { Api, sendTrackingLinkEmail } from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
 
 @Component({
@@ -16,9 +14,9 @@ import { ToastService } from "@/core/services";
     DialogModule,
     ButtonModule,
     ReactiveFormsModule,
-    InputTextModule,
-    TextareaModule,
     UiFormField,
+    UiTextField,
+    UiTextareaField,
   ],
 })
 export class SendTrackingLinkDialog {

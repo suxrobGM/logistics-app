@@ -25,21 +25,19 @@ import {
   Stack,
   Surface,
   Typography,
+  UiCheckboxField,
+  UiDateField,
   UiFormField,
+  UiNumberField,
+  UiSelectField,
+  UiTextareaField,
+  UiTextField,
   ValidatedForm,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { CheckboxModule } from "primeng/checkbox";
-import { DatePicker } from "primeng/datepicker";
 import { DividerModule } from "primeng/divider";
 import { Fieldset } from "primeng/fieldset";
-import { InputGroupModule } from "primeng/inputgroup";
-import { InputGroupAddonModule } from "primeng/inputgroupaddon";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { Select } from "primeng/select";
-import { TextareaModule } from "primeng/textarea";
 import { ToastModule } from "primeng/toast";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
@@ -104,16 +102,14 @@ export interface LoadFormValue {
     ToastModule,
     ProgressSpinnerModule,
     ReactiveFormsModule,
-    InputTextModule,
-    InputGroupModule,
-    InputGroupAddonModule,
-    InputNumberModule,
+    UiTextField,
+    UiNumberField,
     ButtonModule,
-    CheckboxModule,
-    DatePicker,
+    UiCheckboxField,
+    UiDateField,
     Fieldset,
-    Select,
-    TextareaModule,
+    UiSelectField,
+    UiTextareaField,
     RouterLink,
     AddressAutocomplete,
     DirectionMap,

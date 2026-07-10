@@ -113,12 +113,11 @@
         <ui-grid container spacing="4">
           <ui-grid [size]="{ xs: 12, md: 6 }">
             <ui-form-field label="Status">
-              <p-select
+              <ui-select-field
                 formControlName="status"
                 [options]="statusOptions"
                 optionLabel="label"
                 optionValue="value"
-                class="w-full"
               />
             </ui-form-field>
           </ui-grid>

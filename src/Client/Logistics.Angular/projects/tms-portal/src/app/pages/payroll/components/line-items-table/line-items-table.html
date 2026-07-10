@@ -84,11 +84,11 @@
 >
   <form [formGroup]="form" class="space-y-4">
     <ui-form-field label="Description" [required]="true">
-      <input pInputText formControlName="description" class="w-full" />
+      <ui-text-field formControlName="description" />
     </ui-form-field>
 
     <ui-form-field label="Type" [required]="true">
-      <p-select
+      <ui-select-field
         formControlName="type"
         [options]="typeOptions"
         optionLabel="label"
@@ -99,7 +99,7 @@
 
     <div class="grid grid-cols-2 gap-4">
       <ui-form-field label="Amount" [required]="true">
-        <p-inputnumber
+        <ui-number-field
           formControlName="amount"
           mode="currency"
           currency="USD"
@@ -108,12 +108,12 @@
       </ui-form-field>
 
       <ui-form-field label="Quantity" [required]="true">
-        <p-inputnumber formControlName="quantity" [min]="1" styleClass="w-full" />
+        <ui-number-field formControlName="quantity" [min]="1" styleClass="w-full" />
       </ui-form-field>
     </div>
 
     <ui-form-field label="Notes">
-      <textarea pTextarea formControlName="notes" rows="2" class="w-full"></textarea>
+      <ui-textarea-field formControlName="notes" [rows]="2" />
     </ui-form-field>
   </form>
 

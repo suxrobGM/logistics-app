@@ -1,12 +1,16 @@
 import { Component, inject, model, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Api, createDemoRequest } from "@logistics/shared/api";
-import { PhoneField, UiFormField, ValidatedForm } from "@logistics/shared/components";
+import {
+  PhoneField,
+  UiFormField,
+  UiSelectField,
+  UiTextareaField,
+  UiTextField,
+  ValidatedForm,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { SelectModule } from "primeng/select";
-import { TextareaModule } from "primeng/textarea";
 
 @Component({
   selector: "web-demo-dialog",
@@ -15,12 +19,12 @@ import { TextareaModule } from "primeng/textarea";
     ValidatedForm,
     DialogModule,
     ReactiveFormsModule,
-    InputTextModule,
     ButtonModule,
-    SelectModule,
-    TextareaModule,
     PhoneField,
     UiFormField,
+    UiTextField,
+    UiSelectField,
+    UiTextareaField,
   ],
 })
 export class DemoDialog {

@@ -21,8 +21,7 @@
                   hint="11 characters: 4 letters + 7 digits (e.g., MSCU1234567)"
                   [control]="form.controls.number"
                 >
-                  <input
-                    pInputText
+                  <ui-text-field
                     id="number"
                     formControlName="number"
                     placeholder="MSCU1234567"
@@ -32,7 +31,7 @@
 
               <ui-grid [size]="{ xs: 12, md: 6 }">
                 <ui-form-field label="ISO Type" for="isoType" [required]="true">
-                  <p-select
+                  <ui-select-field
                     formControlName="isoType"
                     [options]="isoTypeOptions"
                     placeholder="Select ISO type"
@@ -42,19 +41,19 @@
 
               <ui-grid [size]="{ xs: 12, md: 6 }">
                 <ui-form-field label="Seal Number" for="sealNumber">
-                  <input pInputText id="sealNumber" formControlName="sealNumber" />
+                  <ui-text-field id="sealNumber" formControlName="sealNumber" />
                 </ui-form-field>
               </ui-grid>
 
               <ui-grid [size]="{ xs: 12, md: 6 }">
                 <ui-form-field label="Booking Reference" for="bookingReference">
-                  <input pInputText id="bookingReference" formControlName="bookingReference" />
+                  <ui-text-field id="bookingReference" formControlName="bookingReference" />
                 </ui-form-field>
               </ui-grid>
 
               <ui-grid [size]="12">
                 <ui-form-field label="Bill of Lading Number" for="billOfLadingNumber">
-                  <input pInputText id="billOfLadingNumber" formControlName="billOfLadingNumber" />
+                  <ui-text-field id="billOfLadingNumber" formControlName="billOfLadingNumber" />
                 </ui-form-field>
               </ui-grid>
             </ui-grid>
@@ -71,14 +70,14 @@
             <ui-grid container spacing="4">
               <ui-grid [size]="{ xs: 12, md: 6 }">
                 <ui-form-field label="Gross Weight (kg)" for="grossWeight">
-                  <p-input-number id="grossWeight" formControlName="grossWeight" [min]="0" />
+                  <ui-number-field id="grossWeight" formControlName="grossWeight" [min]="0" />
                 </ui-form-field>
               </ui-grid>
 
               <ui-grid [size]="{ xs: 12, md: 6 }">
                 <ui-form-field label="Status" for="isLaden">
                   <ui-stack direction="row" gap="2" align="center">
-                    <p-checkbox formControlName="isLaden" [binary]="true" inputId="isLaden" />
+                    <ui-checkbox-field formControlName="isLaden" inputId="isLaden" />
                     <label for="isLaden" class="cursor-pointer">Laden (loaded with cargo)</label>
                   </ui-stack>
                 </ui-form-field>
@@ -108,7 +107,7 @@
           </ui-stack>
           <ui-surface>
             <ui-form-field label="Notes" for="notes" class="mb-0">
-              <textarea pTextarea id="notes" formControlName="notes" rows="3"></textarea>
+              <ui-textarea-field id="notes" formControlName="notes" [rows]="3" />
             </ui-form-field>
           </ui-surface>
         </ui-stack>

@@ -1,12 +1,15 @@
 import { Component, inject, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { Api, createContactSubmission, type ContactSubject } from "@logistics/shared/api";
-import { UiFormField, ValidatedForm } from "@logistics/shared/components";
+import {
+  UiFormField,
+  UiSelectField,
+  UiTextareaField,
+  UiTextField,
+  ValidatedForm,
+} from "@logistics/shared/components";
 import type { SelectOption } from "@logistics/shared/models";
 import { ButtonModule } from "primeng/button";
-import { InputTextModule } from "primeng/inputtext";
-import { SelectModule } from "primeng/select";
-import { TextareaModule } from "primeng/textarea";
 import { SectionContainer } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
 
@@ -18,11 +21,11 @@ import { ScrollAnimateDirective } from "@/shared/directives";
     SectionContainer,
     ScrollAnimateDirective,
     ReactiveFormsModule,
-    InputTextModule,
     ButtonModule,
-    SelectModule,
-    TextareaModule,
     UiFormField,
+    UiTextField,
+    UiSelectField,
+    UiTextareaField,
   ],
 })
 export class ContactForm {

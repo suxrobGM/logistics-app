@@ -11,12 +11,15 @@ import {
   type TruckDto,
   type VolumeUnit,
 } from "@logistics/shared/api";
-import { Grid, Stack } from "@logistics/shared/components";
+import {
+  Grid,
+  Stack,
+  UiDateField,
+  UiNumberField,
+  UiSelectField,
+  UiTextField,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { DatePicker } from "primeng/datepicker";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
-import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
 import { TenantService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
@@ -30,12 +33,12 @@ import { TRUCK_CATEGORIES, VOLUME_UNIT_OPTIONS } from "../expense.constants";
     ReactiveFormsModule,
     RouterModule,
     ButtonModule,
-    InputTextModule,
-    InputNumberModule,
     TextareaModule,
-    DatePicker,
-    SelectModule,
     UiFormField,
+    UiTextField,
+    UiNumberField,
+    UiSelectField,
+    UiDateField,
     Grid,
     Stack,
     ExpenseReceiptUpload,

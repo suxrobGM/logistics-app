@@ -11,14 +11,17 @@ import {
   type TruckDto,
   type UpdateMaintenanceRecordCommand,
 } from "@logistics/shared/api";
-import { UiFormField, ValidatedForm } from "@logistics/shared/components";
+import {
+  UiDateField,
+  UiFormField,
+  UiNumberField,
+  UiSelectField,
+  UiTextareaField,
+  UiTextField,
+  ValidatedForm,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { DatePickerModule } from "primeng/datepicker";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { SelectModule } from "primeng/select";
-import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
 import { SearchTruck } from "@/shared/components/search";
 
@@ -70,11 +73,11 @@ const maintenanceTypeOptions = [
     RouterLink,
     ProgressSpinnerModule,
     UiFormField,
-    InputTextModule,
-    InputNumberModule,
-    SelectModule,
-    TextareaModule,
-    DatePickerModule,
+    UiTextField,
+    UiTextareaField,
+    UiSelectField,
+    UiNumberField,
+    UiDateField,
     SearchTruck,
   ],
 })

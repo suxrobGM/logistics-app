@@ -2,11 +2,9 @@
   <ui-grid container spacing="4">
     <ui-grid [size]="{ xs: 12, md: 4, lg: 3 }">
       <ui-form-field label="Origin City" for="originCity">
-        <input
-          pInputText
+        <ui-text-field
           id="originCity"
           formControlName="originCity"
-          class="w-full"
           placeholder="e.g., Los Angeles"
         />
       </ui-form-field>
@@ -14,11 +12,9 @@
 
     <ui-grid [size]="{ xs: 12, md: 4, lg: 3 }">
       <ui-form-field label="Origin State" for="originState">
-        <input
-          pInputText
+        <ui-text-field
           id="originState"
           formControlName="originState"
-          class="w-full"
           placeholder="e.g., CA"
         />
       </ui-form-field>
@@ -39,11 +35,9 @@
 
     <ui-grid [size]="{ xs: 12, md: 4, lg: 3 }">
       <ui-form-field label="Destination City" for="destinationCity">
-        <input
-          pInputText
+        <ui-text-field
           id="destinationCity"
           formControlName="destinationCity"
-          class="w-full"
           placeholder="e.g., Dallas"
         />
       </ui-form-field>
@@ -51,11 +45,9 @@
 
     <ui-grid [size]="{ xs: 12, md: 4, lg: 3 }">
       <ui-form-field label="Destination State" for="destinationState">
-        <input
-          pInputText
+        <ui-text-field
           id="destinationState"
           formControlName="destinationState"
-          class="w-full"
           placeholder="e.g., TX"
         />
       </ui-form-field>
@@ -102,14 +94,13 @@
 
     <ui-grid [size]="{ xs: 12, md: 4, lg: 3 }">
       <ui-form-field label="Equipment Types" for="equipmentTypes">
-        <p-multiSelect
+        <ui-multiselect-field
           id="equipmentTypes"
           formControlName="equipmentTypes"
           [options]="equipmentOptions"
           optionLabel="label"
           optionValue="value"
           placeholder="Any equipment"
-          class="w-full"
           [style]="{ width: '100%' }"
         />
       </ui-form-field>

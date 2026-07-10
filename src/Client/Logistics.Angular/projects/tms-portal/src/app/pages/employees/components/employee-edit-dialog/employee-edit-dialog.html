@@ -8,10 +8,9 @@
 >
   <form [formGroup]="form" (ngSubmit)="save()">
     <ui-form-field label="Status" for="status">
-      <p-select
+      <ui-select-field
         formControlName="status"
         id="status"
-        class="w-full"
         [options]="statusOptions"
         optionLabel="label"
         optionValue="value"
@@ -19,10 +18,9 @@
     </ui-form-field>
 
     <ui-form-field label="Salary Type" for="salaryType" class="mt-4">
-      <p-select
+      <ui-select-field
         formControlName="salaryType"
         id="salaryType"
-        class="w-full"
         [options]="salaryTypes"
         optionLabel="label"
         optionValue="value"

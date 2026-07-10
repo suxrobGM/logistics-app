@@ -10,14 +10,20 @@ import {
   type UpdateCustomerCommand,
 } from "@logistics/shared/api";
 import { customerStatusOptions } from "@logistics/shared/api/enums";
-import { AddressForm, Grid, Stack, UiFormField, ValidatedForm } from "@logistics/shared/components";
+import {
+  AddressForm,
+  Grid,
+  Stack,
+  UiCheckboxField,
+  UiFormField,
+  UiSelectField,
+  UiTextareaField,
+  UiTextField,
+  ValidatedForm,
+} from "@logistics/shared/components";
 import { AccordionModule } from "primeng/accordion";
 import { ButtonModule } from "primeng/button";
-import { CheckboxModule } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { SelectModule } from "primeng/select";
-import { TextareaModule } from "primeng/textarea";
 import { TenantService } from "@/core/services/tenant.service";
 
 @Component({
@@ -26,13 +32,13 @@ import { TenantService } from "@/core/services/tenant.service";
   imports: [
     DialogModule,
     ButtonModule,
-    CheckboxModule,
     ReactiveFormsModule,
-    SelectModule,
-    InputTextModule,
-    TextareaModule,
     AccordionModule,
     UiFormField,
+    UiTextField,
+    UiSelectField,
+    UiCheckboxField,
+    UiTextareaField,
     ValidatedForm,
     AddressForm,
     Grid,

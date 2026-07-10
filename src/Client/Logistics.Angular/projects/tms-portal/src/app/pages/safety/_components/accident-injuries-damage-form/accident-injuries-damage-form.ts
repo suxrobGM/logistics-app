@@ -1,11 +1,13 @@
 import { Component, input } from "@angular/core";
 import { ReactiveFormsModule, type FormGroup } from "@angular/forms";
-import { UiFormField } from "@logistics/shared/components";
+import {
+  UiFormField,
+  UiNumberField,
+  UiTextareaField,
+  UiTextField,
+  UiToggleField,
+} from "@logistics/shared/components";
 import { CardModule } from "primeng/card";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
-import { TextareaModule } from "primeng/textarea";
-import { ToggleSwitchModule } from "primeng/toggleswitch";
 
 @Component({
   selector: "app-accident-injuries-damage-form",
@@ -13,10 +15,10 @@ import { ToggleSwitchModule } from "primeng/toggleswitch";
   imports: [
     ReactiveFormsModule,
     CardModule,
-    InputNumberModule,
-    InputTextModule,
-    TextareaModule,
-    ToggleSwitchModule,
+    UiNumberField,
+    UiTextField,
+    UiTextareaField,
+    UiToggleField,
     UiFormField,
   ],
 })

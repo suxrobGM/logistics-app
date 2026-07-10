@@ -2,7 +2,7 @@
   <ui-grid container spacing="4">
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Amount" for="truck-amount" [required]="true">
-        <p-inputNumber
+        <ui-number-field
           id="truck-amount"
           formControlName="amount"
           mode="currency"
@@ -15,7 +15,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Category" for="truck-category" [required]="true">
-        <p-select
+        <ui-select-field
           id="truck-category"
           formControlName="category"
           [options]="categories"
@@ -28,7 +28,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Truck" for="truck-select" [required]="true">
-        <p-select
+        <ui-select-field
           id="truck-select"
           formControlName="truckId"
           [options]="trucks()"
@@ -42,7 +42,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Expense Date" for="truck-date" [required]="true">
-        <p-datepicker
+        <ui-date-field
           id="truck-date"
           formControlName="expenseDate"
           [showIcon]="true"
@@ -53,13 +53,13 @@
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Vendor Name" for="truck-vendor">
-        <input pInputText id="truck-vendor" formControlName="vendorName" class="w-full" />
+        <ui-text-field id="truck-vendor" formControlName="vendorName" />
       </ui-form-field>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Odometer Reading" for="truck-odometer">
-        <p-inputNumber
+        <ui-number-field
           id="truck-odometer"
           formControlName="odometerReading"
           [min]="0"
@@ -72,7 +72,7 @@
     @if (form.controls.category.value === "fuel") {
       <ui-grid [size]="{ xs: 12, md: 6 }">
         <ui-form-field label="Quantity" for="truck-quantity">
-          <p-inputNumber
+          <ui-number-field
             id="truck-quantity"
             formControlName="quantity"
             [min]="0"
@@ -85,7 +85,7 @@
 
       <ui-grid [size]="{ xs: 12, md: 6 }">
         <ui-form-field label="Quantity Unit" for="truck-quantity-unit">
-          <p-select
+          <ui-select-field
             id="truck-quantity-unit"
             formControlName="quantityUnit"
             [options]="volumeUnits"

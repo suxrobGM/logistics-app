@@ -63,7 +63,7 @@
           </ui-stack>
           <ui-surface variant="elevated" [border]="true">
             <ui-form-field label="Company Name" for="companyName" [required]="true">
-              <input pInputText formControlName="companyName" id="companyName" class="w-full" />
+              <ui-text-field formControlName="companyName" id="companyName" />
             </ui-form-field>
 
             <ui-form-field label="Phone Number" for="phoneNumber">
@@ -71,13 +71,7 @@
             </ui-form-field>
 
             <ui-form-field label="Billing Email" for="billingEmail" [required]="true" class="mb-0">
-              <input
-                pInputText
-                formControlName="billingEmail"
-                id="billingEmail"
-                type="email"
-                class="w-full"
-              />
+              <ui-text-field formControlName="billingEmail" id="billingEmail" type="email" />
             </ui-form-field>
           </ui-surface>
         </ui-stack>
@@ -93,7 +87,7 @@
           <ui-surface variant="elevated" [border]="true">
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
               <ui-form-field label="US DOT Number" for="dotNumber" class="mb-0">
-                <input pInputText formControlName="dotNumber" id="dotNumber" class="w-full" />
+                <ui-text-field formControlName="dotNumber" id="dotNumber" />
               </ui-form-field>
 
               <ui-form-field
@@ -102,7 +96,7 @@
                 hint="US Motor Carrier number"
                 class="mb-0"
               >
-                <input pInputText formControlName="mcNumber" id="mcNumber" class="w-full" />
+                <ui-text-field formControlName="mcNumber" id="mcNumber" />
               </ui-form-field>
 
               <ui-form-field
@@ -111,11 +105,9 @@
                 hint="Required to send invoices for EU tenants"
                 class="mb-0"
               >
-                <input
-                  pInputText
+                <ui-text-field
                   formControlName="vatNumber"
                   id="vatNumber"
-                  class="w-full"
                   placeholder="e.g. DE123456789"
                 />
               </ui-form-field>
@@ -126,7 +118,7 @@
                 hint="EU/UK customs ID"
                 class="mb-0"
               >
-                <input pInputText formControlName="eoriNumber" id="eoriNumber" class="w-full" />
+                <ui-text-field formControlName="eoriNumber" id="eoriNumber" />
               </ui-form-field>
 
               <ui-form-field
@@ -135,11 +127,9 @@
                 hint="Companies House, Handelsregister, RCS, etc."
                 class="mb-0"
               >
-                <input
-                  pInputText
+                <ui-text-field
                   formControlName="companyRegistrationNumber"
                   id="companyRegistrationNumber"
-                  class="w-full"
                 />
               </ui-form-field>
 
@@ -149,12 +139,10 @@
                 hint="ISO-2 code, defaults to billing-address country"
                 class="mb-0"
               >
-                <input
-                  pInputText
+                <ui-text-field
                   formControlName="taxResidencyCountry"
                   id="taxResidencyCountry"
-                  class="w-full"
-                  maxlength="2"
+                  [maxlength]="2"
                   placeholder="e.g. DE"
                 />
               </ui-form-field>
@@ -187,7 +175,7 @@
           <ui-surface variant="elevated" [border]="true">
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
               <ui-form-field label="Distance Unit" for="distanceUnit" class="mb-0">
-                <p-select
+                <ui-select-field
                   id="distanceUnit"
                   formControlName="distanceUnit"
                   [options]="distanceUnitOptions"
@@ -198,7 +186,7 @@
               </ui-form-field>
 
               <ui-form-field label="Weight Unit" for="weightUnit" class="mb-0">
-                <p-select
+                <ui-select-field
                   id="weightUnit"
                   formControlName="weightUnit"
                   [options]="weightUnitOptions"
@@ -209,7 +197,7 @@
               </ui-form-field>
 
               <ui-form-field label="Date Format" for="dateFormat" class="mb-0">
-                <p-select
+                <ui-select-field
                   id="dateFormat"
                   formControlName="dateFormat"
                   [options]="dateFormatOptions"
@@ -220,7 +208,7 @@
               </ui-form-field>
 
               <ui-form-field label="Timezone" for="timezone" class="mb-0">
-                <p-select
+                <ui-select-field
                   id="timezone"
                   formControlName="timezone"
                   [options]="timezoneOptions"

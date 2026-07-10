@@ -5,12 +5,17 @@ import {
   type PostTruckToLoadBoardCommand,
   type TruckDto,
 } from "@logistics/shared/api";
-import { Grid, Typography, ValidatedForm } from "@logistics/shared/components";
+import {
+  Grid,
+  Typography,
+  UiSelectField,
+  UiTextField,
+  ValidatedForm,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DatePickerModule } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
 import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
 import { UiFormField } from "@/shared/components";
 import { EQUIPMENT_OPTIONS } from "../loadboard.constants";
@@ -31,10 +36,11 @@ interface ProviderOption {
     UiFormField,
     Grid,
     InputNumberModule,
-    InputTextModule,
     ReactiveFormsModule,
     SelectModule,
     Typography,
+    UiSelectField,
+    UiTextField,
   ],
 })
 export class PostTruckDialog {

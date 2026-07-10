@@ -18,10 +18,15 @@ import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputTextModule } from "primeng/inputtext";
-import { SelectModule } from "primeng/select";
 import { AuthService } from "@/core/auth";
 import { TenantService } from "@/core/services/tenant.service";
-import { CurrencyField, UiFormField, UnitField, ValidatedForm } from "@/shared/components";
+import {
+  CurrencyField,
+  UiFormField,
+  UiSelectField,
+  UnitField,
+  ValidatedForm,
+} from "@/shared/components";
 import { NumberUtils } from "@/shared/utils";
 import { ChangeRoleDialog } from "../change-role-dialog/change-role-dialog";
 
@@ -32,11 +37,11 @@ import { ChangeRoleDialog } from "../change-role-dialog/change-role-dialog";
     DialogModule,
     ButtonModule,
     ReactiveFormsModule,
-    SelectModule,
     InputGroupModule,
     InputTextModule,
     AccordionModule,
     UiFormField,
+    UiSelectField,
     UnitField,
     CurrencyField,
     ValidatedForm,

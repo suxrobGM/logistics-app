@@ -42,14 +42,13 @@
           [required]="true"
           [control]="form.controls.providerType"
         >
-          <p-select
+          <ui-select-field
             id="providerType"
             formControlName="providerType"
             [options]="providerOptions()"
             optionLabel="label"
             optionValue="value"
             placeholder="Select provider"
-            class="w-full"
             [style]="{ width: '100%' }"
           />
         </ui-form-field>
@@ -65,11 +64,9 @@
           [required]="true"
           [control]="form.controls.availableAtCity"
         >
-          <input
-            pInputText
+          <ui-text-field
             id="availableAtCity"
             formControlName="availableAtCity"
-            class="w-full"
             placeholder="e.g., Los Angeles"
           />
         </ui-form-field>
@@ -82,11 +79,9 @@
           [required]="true"
           [control]="form.controls.availableAtState"
         >
-          <input
-            pInputText
+          <ui-text-field
             id="availableAtState"
             formControlName="availableAtState"
-            class="w-full"
             placeholder="e.g., CA"
           />
         </ui-form-field>
@@ -94,11 +89,9 @@
 
       <ui-grid [size]="{ xs: 12, md: 4 }">
         <ui-form-field label="ZIP Code" for="availableAtZipCode">
-          <input
-            pInputText
+          <ui-text-field
             id="availableAtZipCode"
             formControlName="availableAtZipCode"
-            class="w-full"
             placeholder="e.g., 90001"
           />
         </ui-form-field>
@@ -109,11 +102,9 @@
     <ui-grid container spacing="4">
       <ui-grid [size]="{ xs: 12, md: 4 }">
         <ui-form-field label="City" for="destinationCity">
-          <input
-            pInputText
+          <ui-text-field
             id="destinationCity"
             formControlName="destinationCity"
-            class="w-full"
             placeholder="e.g., Dallas"
           />
         </ui-form-field>
@@ -121,11 +112,9 @@
 
       <ui-grid [size]="{ xs: 12, md: 4 }">
         <ui-form-field label="State" for="destinationState">
-          <input
-            pInputText
+          <ui-text-field
             id="destinationState"
             formControlName="destinationState"
-            class="w-full"
             placeholder="e.g., TX"
           />
         </ui-form-field>
@@ -183,14 +172,13 @@
     <ui-grid container spacing="4">
       <ui-grid [size]="{ xs: 12, md: 4 }">
         <ui-form-field label="Equipment Type" for="equipmentType">
-          <p-select
+          <ui-select-field
             id="equipmentType"
             formControlName="equipmentType"
             [options]="equipmentOptions"
             optionLabel="label"
             optionValue="value"
             placeholder="Select type"
-            class="w-full"
             [style]="{ width: '100%' }"
           />
         </ui-form-field>

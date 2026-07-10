@@ -22,13 +22,11 @@
         [required]="true"
         [control]="form.controls.email"
       >
-        <input
-          pInputText
+        <ui-text-field
           id="email"
           formControlName="email"
           type="email"
           placeholder="customer@example.com"
-          class="w-full"
         />
       </ui-form-field>
 
@@ -41,10 +39,9 @@
         @if (customerId()) {
           <input pInputText id="customerName" [value]="customerName()" class="w-full" disabled />
         } @else {
-          <p-select
+          <ui-select-field
             formControlName="customerId"
             id="customerId"
-            class="w-full"
             appendTo="body"
             [options]="customers()"
             optionValue="id"
@@ -62,14 +59,12 @@
         for="personalMessage"
         hint="Optional note to include in the invitation email"
       >
-        <textarea
-          pTextarea
+        <ui-textarea-field
           id="personalMessage"
           formControlName="personalMessage"
-          rows="3"
+          [rows]="3"
           placeholder="Add a personal note to the invitation email..."
-          class="w-full"
-        ></textarea>
+        />
       </ui-form-field>
 
       <ui-stack direction="row" justify="end" gap="2">

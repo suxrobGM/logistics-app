@@ -14,13 +14,16 @@ import {
   type CreateInvitationCommand,
   type RoleDto,
 } from "@logistics/shared/api";
-import { Stack, ValidatedForm } from "@logistics/shared/components";
+import {
+  Stack,
+  UiSelectField,
+  UiTextareaField,
+  UiTextField,
+  ValidatedForm,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { SelectModule } from "primeng/select";
-import { TextareaModule } from "primeng/textarea";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
@@ -35,9 +38,9 @@ import { UiFormField } from "@/shared/components";
     FormsModule,
     ReactiveFormsModule,
     ButtonModule,
-    SelectModule,
-    InputTextModule,
-    TextareaModule,
+    UiSelectField,
+    UiTextField,
+    UiTextareaField,
     UiFormField,
     Stack,
   ],

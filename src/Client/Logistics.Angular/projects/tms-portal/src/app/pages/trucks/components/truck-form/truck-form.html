@@ -17,8 +17,7 @@
         </ui-stack>
         <ui-surface variant="elevated" [border]="true">
           <ui-form-field label="Truck Number" for="truckNumber" [required]="true">
-            <input
-              pInputText
+            <ui-text-field
               id="truckNumber"
               formControlName="truckNumber"
               type="text"
@@ -27,21 +26,19 @@
           </ui-form-field>
 
           <ui-form-field label="Truck Type" for="truckType" [required]="true">
-            <p-select
+            <ui-select-field
               formControlName="truckType"
               [options]="truckTypes"
               placeholder="Select truck type"
-              class="w-full"
             />
           </ui-form-field>
 
           @if (mode() === "edit") {
             <ui-form-field label="Status" for="truckStatus" [required]="true">
-              <p-select
+              <ui-select-field
                 formControlName="truckStatus"
                 [options]="truckStatuses"
                 placeholder="Select status"
-                class="w-full"
               />
             </ui-form-field>
           }
@@ -53,7 +50,7 @@
               hint="Maximum number of vehicles this hauler can carry"
               class="mb-0"
             >
-              <p-inputNumber
+              <ui-number-field
                 formControlName="vehicleCapacity"
                 inputId="vehicleCapacity"
                 [min]="1"
@@ -75,8 +72,7 @@
           <ui-grid container spacing="4">
             <ui-grid [size]="{ xs: 12, md: 6 }">
               <ui-form-field label="Make" for="make">
-                <input
-                  pInputText
+                <ui-text-field
                   id="make"
                   formControlName="make"
                   type="text"
@@ -87,8 +83,7 @@
 
             <ui-grid [size]="{ xs: 12, md: 6 }">
               <ui-form-field label="Model" for="model">
-                <input
-                  pInputText
+                <ui-text-field
                   id="model"
                   formControlName="model"
                   type="text"
@@ -99,7 +94,7 @@
 
             <ui-grid [size]="{ xs: 12, md: 6 }">
               <ui-form-field label="Year" for="year">
-                <p-inputNumber
+                <ui-number-field
                   formControlName="year"
                   inputId="year"
                   [min]="1900"
@@ -127,8 +122,7 @@
           <ui-grid container spacing="4">
             <ui-grid [size]="{ xs: 12, md: 6 }">
               <ui-form-field label="License Plate" for="licensePlate">
-                <input
-                  pInputText
+                <ui-text-field
                   id="licensePlate"
                   formControlName="licensePlate"
                   type="text"
@@ -139,13 +133,12 @@
 
             <ui-grid [size]="{ xs: 12, md: 6 }">
               <ui-form-field label="License Plate State" for="licensePlateState" class="mb-0">
-                <input
-                  pInputText
+                <ui-text-field
                   id="licensePlateState"
                   formControlName="licensePlateState"
                   type="text"
                   placeholder="e.g., TX"
-                  maxlength="2"
+                  [maxlength]="2"
                 />
               </ui-form-field>
             </ui-grid>

@@ -25,6 +25,9 @@ import { DatePicker } from "primeng/datepicker";
 @Component({
   selector: "ui-date-field",
   templateUrl: "./date-field.html",
+  // `id` is a declared input, but a static `id="x"` attribute also lands on the host element.
+  // Strip it so the id lives only on the inner control and `<label for>` targets something focusable.
+  host: { "[attr.id]": "null" },
   imports: [DatePicker, FormsModule],
 })
 export class UiDateField implements FormValueControl<Date | null> {

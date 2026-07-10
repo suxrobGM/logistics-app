@@ -1,18 +1,17 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
   <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
     <ui-form-field label="Tenant Name" [required]="true">
-      <input pInputText formControlName="name" placeholder="Enter tenant identifier" />
+      <ui-text-field formControlName="name" placeholder="Enter tenant identifier" />
     </ui-form-field>
 
     <ui-form-field label="Company Name" [required]="true">
-      <input pInputText formControlName="companyName" placeholder="Enter company name" />
+      <ui-text-field formControlName="companyName" placeholder="Enter company name" />
     </ui-form-field>
   </div>
 
   <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
     <ui-form-field label="Billing Email" [required]="true">
-      <input
-        pInputText
+      <ui-text-field
         formControlName="billingEmail"
         placeholder="Enter billing email"
         type="email"
@@ -20,7 +19,7 @@
     </ui-form-field>
 
     <ui-form-field label="DOT Number">
-      <input pInputText formControlName="dotNumber" placeholder="Enter DOT number" />
+      <ui-text-field formControlName="dotNumber" placeholder="Enter DOT number" />
     </ui-form-field>
   </div>
 
@@ -30,7 +29,7 @@
       [required]="true"
       hint="Determines available countries for addresses"
     >
-      <p-select formControlName="region" [options]="regionOptions" placeholder="Select region" />
+      <ui-select-field formControlName="region" [options]="regionOptions" placeholder="Select region" />
     </ui-form-field>
   </div>
 
@@ -48,18 +47,17 @@
 
       <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         <ui-form-field label="First Name" [required]="true">
-          <input pInputText formControlName="ownerFirstName" placeholder="Enter first name" />
+          <ui-text-field formControlName="ownerFirstName" placeholder="Enter first name" />
         </ui-form-field>
 
         <ui-form-field label="Last Name" [required]="true">
-          <input pInputText formControlName="ownerLastName" placeholder="Enter last name" />
+          <ui-text-field formControlName="ownerLastName" placeholder="Enter last name" />
         </ui-form-field>
       </div>
 
       <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
         <ui-form-field label="Email" [required]="true">
-          <input
-            pInputText
+          <ui-text-field
             formControlName="ownerEmail"
             placeholder="Enter owner email"
             type="email"

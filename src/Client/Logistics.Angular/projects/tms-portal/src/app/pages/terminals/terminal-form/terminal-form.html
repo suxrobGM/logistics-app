@@ -16,25 +16,25 @@
               hint="5-character UN/LOCODE (e.g., USNYC, BEANR)"
               [control]="form.controls.code"
             >
-              <input pInputText id="code" formControlName="code" maxlength="5" />
+              <ui-text-field id="code" formControlName="code" [maxlength]="5" />
             </ui-form-field>
           </ui-grid>
 
           <ui-grid [size]="{ xs: 12, md: 6 }">
             <ui-form-field label="Name" for="name" [required]="true">
-              <input pInputText id="name" formControlName="name" />
+              <ui-text-field id="name" formControlName="name" />
             </ui-form-field>
           </ui-grid>
 
           <ui-grid [size]="{ xs: 12, md: 6 }">
             <ui-form-field label="Type" for="type" [required]="true">
-              <p-select formControlName="type" [options]="typeOptions" />
+              <ui-select-field formControlName="type" [options]="typeOptions" />
             </ui-form-field>
           </ui-grid>
 
           <ui-grid [size]="{ xs: 12, md: 6 }">
             <ui-form-field label="Country" for="countryCode" [required]="true">
-              <p-select
+              <ui-select-field
                 formControlName="countryCode"
                 [options]="countryOptions()"
                 [filter]="true"
@@ -63,7 +63,7 @@
       </ui-stack>
       <ui-surface variant="elevated" [border]="true">
         <ui-form-field label="Notes" for="notes" class="mb-0">
-          <textarea pTextarea id="notes" formControlName="notes" rows="3"></textarea>
+          <ui-textarea-field id="notes" formControlName="notes" [rows]="3" />
         </ui-form-field>
       </ui-surface>
     </ui-stack>

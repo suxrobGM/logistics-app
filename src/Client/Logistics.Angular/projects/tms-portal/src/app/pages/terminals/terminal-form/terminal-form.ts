@@ -12,12 +12,12 @@ import {
   Surface,
   Typography,
   UiFormField,
+  UiSelectField,
+  UiTextareaField,
+  UiTextField,
   ValidatedForm,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { InputTextModule } from "primeng/inputtext";
-import { Select } from "primeng/select";
-import { TextareaModule } from "primeng/textarea";
 import { TenantService } from "@/core/services/tenant.service";
 
 export interface TerminalFormValue {
@@ -36,11 +36,11 @@ export interface TerminalFormValue {
     ReactiveFormsModule,
     RouterLink,
     ButtonModule,
-    InputTextModule,
-    Select,
-    TextareaModule,
     AddressForm,
     UiFormField,
+    UiTextField,
+    UiSelectField,
+    UiTextareaField,
     ValidatedForm,
     Grid,
     Icon,

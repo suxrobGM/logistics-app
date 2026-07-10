@@ -1,9 +1,8 @@
 import { Component, computed, inject, input, signal } from "@angular/core";
 import { FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { Api, decodeVin } from "@logistics/shared/api";
-import { Stack, UiFormField } from "@logistics/shared/components";
+import { Stack, UiFormField, UiTextField } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
 import { TagModule } from "primeng/tag";
 import { ToastService } from "@/core/services";
@@ -14,11 +13,11 @@ import { ToastService } from "@/core/services";
   imports: [
     ReactiveFormsModule,
     ButtonModule,
-    InputTextModule,
     MessageModule,
     TagModule,
     UiFormField,
     Stack,
+    UiTextField,
   ],
 })
 export class TruckVinField {

@@ -28,19 +28,19 @@
 
       <div class="grid grid-cols-2 gap-4">
         <ui-form-field label="First Name" for="firstName" [required]="true" [control]="form.controls.firstName">
-          <input pInputText id="firstName" formControlName="firstName" placeholder="John" class="w-full" />
+          <ui-text-field id="firstName" formControlName="firstName" placeholder="John" />
         </ui-form-field>
         <ui-form-field label="Last Name" for="lastName" [required]="true" [control]="form.controls.lastName">
-          <input pInputText id="lastName" formControlName="lastName" placeholder="Doe" class="w-full" />
+          <ui-text-field id="lastName" formControlName="lastName" placeholder="Doe" />
         </ui-form-field>
       </div>
 
       <ui-form-field label="Work Email" for="email" [required]="true" [control]="form.controls.email">
-        <input pInputText id="email" formControlName="email" type="email" placeholder="john@company.com" class="w-full" />
+        <ui-text-field id="email" formControlName="email" type="email" placeholder="john@company.com" />
       </ui-form-field>
 
       <ui-form-field label="Company Name" for="company" [required]="true" [control]="form.controls.company">
-        <input pInputText id="company" formControlName="company" placeholder="Acme Trucking" class="w-full" />
+        <ui-text-field id="company" formControlName="company" placeholder="Acme Trucking" />
       </ui-form-field>
 
       <ui-form-field label="Phone Number" for="phone">
@@ -48,7 +48,7 @@
       </ui-form-field>
 
       <ui-form-field label="Fleet Size" for="fleetSize">
-        <p-select
+        <ui-select-field
           id="fleetSize"
           formControlName="fleetSize"
           [options]="fleetSizeOptions"
@@ -58,14 +58,12 @@
       </ui-form-field>
 
       <ui-form-field label="Message" for="message">
-        <textarea
-          pTextarea
+        <ui-textarea-field
           id="message"
           formControlName="message"
-          rows="3"
+          [rows]="3"
           placeholder="Tell us about your needs..."
-          class="w-full"
-        ></textarea>
+        />
       </ui-form-field>
 
       <div class="flex justify-end gap-2">

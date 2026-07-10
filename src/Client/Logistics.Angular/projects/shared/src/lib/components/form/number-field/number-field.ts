@@ -31,6 +31,9 @@ export type NumberFieldMode = "decimal" | "currency";
 @Component({
   selector: "ui-number-field",
   templateUrl: "./number-field.html",
+  // `id` is a declared input, but a static `id="x"` attribute also lands on the host element.
+  // Strip it so the id lives only on the inner control and `<label for>` targets something focusable.
+  host: { "[attr.id]": "null" },
   imports: [InputNumber, InputGroupModule, InputGroupAddonModule, FormsModule, NgTemplateOutlet],
 })
 export class UiNumberField implements FormValueControl<number | null> {
@@ -71,4 +74,8 @@ export class UiNumberField implements FormValueControl<number | null> {
   public readonly prefixLabel = input<string>("");
   /** Trailing input-group addon (e.g. "mi"). Renders the `p-inputgroup` chrome when set. */
   public readonly suffixLabel = input<string>("");
+  /** Text rendered INSIDE the input after the number (p-inputnumber `suffix`), not an addon. */
+  public readonly suffix = input<string | undefined>(undefined);
+  /** Text rendered INSIDE the input before the number (p-inputnumber `prefix`), not an addon. */
+  public readonly prefix = input<string | undefined>(undefined);
 }

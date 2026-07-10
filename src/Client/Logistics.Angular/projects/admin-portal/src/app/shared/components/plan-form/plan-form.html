@@ -2,11 +2,9 @@
   <div class="mb-4 grid grid-cols-12 gap-4">
     <div class="col-span-12">
       <ui-form-field label="Plan Name" [required]="true">
-        <input
-          pInputText
+        <ui-text-field
           formControlName="name"
           placeholder="Enter plan name (e.g., Basic, Pro, Enterprise)"
-          class="w-full"
         />
       </ui-form-field>
     </div>
@@ -15,19 +13,17 @@
   <div class="mb-4 grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-6">
       <ui-form-field label="Description">
-        <textarea
-          pInputTextarea
+        <ui-textarea-field
           formControlName="description"
           placeholder="Enter plan description"
-          rows="3"
-          class="w-full"
-        ></textarea>
+          [rows]="3"
+        />
       </ui-form-field>
     </div>
 
     <div class="col-span-12 md:col-span-6">
       <ui-form-field label="Plan Tier" [required]="true">
-        <p-select
+        <ui-select-field
           formControlName="tier"
           [options]="tierOptions"
           placeholder="Select tier"
@@ -52,7 +48,7 @@
 
     <div class="col-span-12 md:col-span-4">
       <ui-form-field label="Max Trucks">
-        <p-inputNumber
+        <ui-number-field
           formControlName="maxTrucks"
           [min]="1"
           [showButtons]="true"
@@ -66,7 +62,7 @@
   <div class="mb-4 grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-4">
       <ui-form-field label="Weekly AI Request Quota" hint="Leave empty for unlimited">
-        <p-inputNumber
+        <ui-number-field
           formControlName="weeklyAiRequestQuota"
           [min]="1"
           [showButtons]="true"
@@ -80,7 +76,7 @@
   <div class="mb-4 grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-4">
       <ui-form-field label="Billing Interval" [required]="true">
-        <p-select
+        <ui-select-field
           formControlName="interval"
           [options]="intervalOptions"
           placeholder="Select interval"
@@ -91,7 +87,7 @@
 
     <div class="col-span-12 md:col-span-4">
       <ui-form-field label="Interval Count" [required]="true">
-        <p-inputNumber
+        <ui-number-field
           formControlName="intervalCount"
           [min]="1"
           [max]="12"

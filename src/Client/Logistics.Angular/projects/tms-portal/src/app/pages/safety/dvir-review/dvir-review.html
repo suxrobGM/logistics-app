@@ -54,7 +54,7 @@
           @if (report()!.hasDefects) {
             <ui-form-field label="All Defects Corrected?" class="mb-4">
               <div class="flex items-center gap-2">
-                <p-toggleswitch formControlName="defectsCorrected" />
+                <ui-toggle-field formControlName="defectsCorrected" />
                 <span class="text-sm">{{ form.value.defectsCorrected ? "Yes" : "No" }}</span>
               </div>
             </ui-form-field>

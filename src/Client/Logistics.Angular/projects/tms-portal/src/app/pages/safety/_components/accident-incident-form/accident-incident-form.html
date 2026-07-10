@@ -2,7 +2,7 @@
 
   <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
     <ui-form-field label="Date & Time" for="accidentDateTime" [required]="true">
-      <p-datepicker
+      <ui-date-field
         formControlName="accidentDateTime"
         id="accidentDateTime"
         [showTime]="true"
@@ -37,10 +37,9 @@
 
   <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
     <ui-form-field label="Accident Type" for="type" [required]="true">
-      <p-select
+      <ui-select-field
         formControlName="type"
         id="type"
-        class="w-full"
         [options]="typeOptions"
         optionLabel="label"
         optionValue="value"
@@ -49,10 +48,9 @@
     </ui-form-field>
 
     <ui-form-field label="Severity" for="severity" [required]="true">
-      <p-select
+      <ui-select-field
         formControlName="severity"
         id="severity"
-        class="w-full"
         [options]="severityOptions"
         optionLabel="label"
         optionValue="value"
@@ -74,21 +72,17 @@
 
   <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
     <ui-form-field label="Weather Conditions" for="weatherConditions">
-      <input
-        pInputText
+      <ui-text-field
         formControlName="weatherConditions"
         id="weatherConditions"
-        class="w-full"
         placeholder="e.g., Clear, Rainy, Foggy"
       />
     </ui-form-field>
 
     <ui-form-field label="Road Conditions" for="roadConditions">
-      <input
-        pInputText
+      <ui-text-field
         formControlName="roadConditions"
         id="roadConditions"
-        class="w-full"
         placeholder="e.g., Dry, Wet, Icy"
       />
     </ui-form-field>

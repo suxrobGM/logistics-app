@@ -10,51 +10,46 @@
 
   <form [formGroup]="form" (ngSubmit)="save()">
     <ui-form-field label="Amount" for="amount" [required]="true" [control]="form.controls.amount">
-      <p-inputNumber
+      <ui-number-field
         id="amount"
         formControlName="amount"
         mode="currency"
         currency="USD"
         locale="en-US"
         [min]="0.01"
-        class="w-full"
       />
     </ui-form-field>
 
     <ui-form-field label="Payment Type" for="type" [required]="true" [control]="form.controls.type">
-      <p-select
+      <ui-select-field
         id="type"
         formControlName="type"
         [options]="paymentTypes"
         optionLabel="label"
         optionValue="value"
-        class="w-full"
       />
     </ui-form-field>
 
     <ui-form-field label="Reference Number" for="referenceNumber" hint="Check number, receipt ID, etc.">
-      <input pInputText id="referenceNumber" formControlName="referenceNumber" class="w-full" />
+      <ui-text-field id="referenceNumber" formControlName="referenceNumber" />
     </ui-form-field>
 
     <ui-form-field label="Received Date" for="receivedDate">
-      <p-datepicker
+      <ui-date-field
         id="receivedDate"
         formControlName="receivedDate"
         [showIcon]="true"
         dateFormat="mm/dd/yy"
-        class="w-full"
       />
     </ui-form-field>
 
     <ui-form-field label="Notes" for="notes">
-      <textarea
-        pTextarea
+      <ui-textarea-field
         id="notes"
         formControlName="notes"
-        rows="2"
+        [rows]="2"
         placeholder="Add any additional notes about this payment..."
-        class="w-full"
-      ></textarea>
+      />
     </ui-form-field>
 
     <ui-stack direction="row" justify="end" gap="2">

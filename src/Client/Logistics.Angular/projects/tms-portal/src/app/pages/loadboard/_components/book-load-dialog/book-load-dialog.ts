@@ -5,11 +5,10 @@ import {
   type LoadBoardListingDto,
   type TruckDto,
 } from "@logistics/shared/api";
-import { Alert, Stack, Surface, Typography } from "@logistics/shared/components";
+import { Alert, Stack, Surface, Typography, UiTextField } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
 import { SelectModule } from "primeng/select";
 import { UiFormField } from "@/shared/components";
 
@@ -22,7 +21,7 @@ import { UiFormField } from "@/shared/components";
     CurrencyFormatPipe,
     DialogModule,
     UiFormField,
-    InputTextModule,
+    UiTextField,
     ReactiveFormsModule,
     SelectModule,
     Stack,

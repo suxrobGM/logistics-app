@@ -2,13 +2,16 @@ import { Component, effect, inject, input, output } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
-import { UiFormField, ValidatedForm } from "@logistics/shared/components";
+import {
+  UiCheckboxField,
+  UiFormField,
+  UiTextareaField,
+  UiTextField,
+  ValidatedForm,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { CheckboxModule } from "primeng/checkbox";
 import { EditorModule } from "primeng/editor";
-import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TextareaModule } from "primeng/textarea";
 
 export interface BlogPostFormValue {
   title: string;
@@ -30,10 +33,10 @@ export interface BlogPostFormValue {
     RouterLink,
     ProgressSpinnerModule,
     UiFormField,
-    InputTextModule,
-    TextareaModule,
+    UiTextField,
+    UiTextareaField,
+    UiCheckboxField,
     EditorModule,
-    CheckboxModule,
   ],
 })
 export class BlogPostForm {

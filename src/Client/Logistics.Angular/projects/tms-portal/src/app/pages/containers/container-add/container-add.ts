@@ -16,16 +16,16 @@ import {
   Stack,
   Surface,
   Typography,
+  UiCheckboxField,
   UiFormField,
+  UiNumberField,
+  UiSelectField,
+  UiTextareaField,
+  UiTextField,
   ValidatedForm,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { CheckboxModule } from "primeng/checkbox";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
-import { Select } from "primeng/select";
-import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import { SearchTerminal } from "@/shared/components/search";
@@ -38,11 +38,6 @@ import { SearchTerminal } from "@/shared/components/search";
     RouterLink,
     ButtonModule,
     CardModule,
-    CheckboxModule,
-    InputTextModule,
-    InputNumberModule,
-    Select,
-    TextareaModule,
     UiFormField,
     ValidatedForm,
     PageHeader,
@@ -53,6 +48,11 @@ import { SearchTerminal } from "@/shared/components/search";
     Stack,
     Surface,
     Typography,
+    UiCheckboxField,
+    UiNumberField,
+    UiSelectField,
+    UiTextareaField,
+    UiTextField,
   ],
 })
 export class ContainerAdd {

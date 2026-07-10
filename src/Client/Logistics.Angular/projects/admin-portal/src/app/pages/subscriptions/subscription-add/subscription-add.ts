@@ -18,11 +18,11 @@ import {
   Stack,
   Typography,
   UiFormField,
+  UiSelectField,
   ValidatedForm,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { SelectModule } from "primeng/select";
 import { SkeletonModule } from "primeng/skeleton";
 
 interface SelectOption {
@@ -38,9 +38,9 @@ interface SelectOption {
     ButtonModule,
     RouterModule,
     SkeletonModule,
-    SelectModule,
     ReactiveFormsModule,
     UiFormField,
+    UiSelectField,
     ValidatedForm,
     Grid,
     Icon,

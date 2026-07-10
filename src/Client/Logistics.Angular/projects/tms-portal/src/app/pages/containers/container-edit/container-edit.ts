@@ -23,17 +23,17 @@ import {
   Surface,
   Typography,
   UiFormField,
+  UiNumberField,
+  UiSelectField,
+  UiTextareaField,
+  UiTextField,
   ValidatedForm,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
-import { Select } from "primeng/select";
 import { TagModule } from "primeng/tag";
-import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import { SearchTerminal } from "@/shared/components/search";
@@ -48,11 +48,7 @@ import { SearchTerminal } from "@/shared/components/search";
     CardModule,
     CheckboxModule,
     DialogModule,
-    InputTextModule,
-    InputNumberModule,
-    Select,
     TagModule,
-    TextareaModule,
     UiFormField,
     ValidatedForm,
     PageHeader,
@@ -63,6 +59,10 @@ import { SearchTerminal } from "@/shared/components/search";
     Surface,
     Typography,
     Container,
+    UiNumberField,
+    UiSelectField,
+    UiTextareaField,
+    UiTextField,
   ],
 })
 export class ContainerEdit implements OnInit {

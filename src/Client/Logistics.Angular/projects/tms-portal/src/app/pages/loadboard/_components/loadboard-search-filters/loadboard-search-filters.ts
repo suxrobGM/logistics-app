@@ -1,13 +1,11 @@
 import { Component, computed, inject, input, output } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { type SearchLoadBoardCommand } from "@logistics/shared/api";
-import { Grid, Stack } from "@logistics/shared/components";
+import { Grid, Stack, UiMultiSelectField, UiTextField } from "@logistics/shared/components";
 import { LocalizationService } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
 import { DatePickerModule } from "primeng/datepicker";
 import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
-import { MultiSelectModule } from "primeng/multiselect";
 import { UiFormField } from "@/shared/components";
 import { EQUIPMENT_OPTIONS } from "../loadboard.constants";
 
@@ -20,8 +18,8 @@ import { EQUIPMENT_OPTIONS } from "../loadboard.constants";
     UiFormField,
     Grid,
     InputNumberModule,
-    InputTextModule,
-    MultiSelectModule,
+    UiTextField,
+    UiMultiSelectField,
     ReactiveFormsModule,
     Stack,
   ],

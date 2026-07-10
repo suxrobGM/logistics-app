@@ -1,9 +1,6 @@
 import { Component, input } from "@angular/core";
 import { ReactiveFormsModule, type FormGroup } from "@angular/forms";
-import { UiFormField } from "@logistics/shared/components";
-import { DatePickerModule } from "primeng/datepicker";
-import { InputTextModule } from "primeng/inputtext";
-import { SelectModule } from "primeng/select";
+import { UiDateField, UiFormField, UiSelectField, UiTextField } from "@logistics/shared/components";
 import { TextareaModule } from "primeng/textarea";
 import { AddressAutocomplete } from "@/shared/components/maps";
 import { SearchEmployee, SearchTruck } from "@/shared/components/search";
@@ -14,11 +11,11 @@ import { ACCIDENT_SEVERITY_OPTIONS, ACCIDENT_TYPE_OPTIONS } from "../accident.co
   templateUrl: "./accident-incident-form.html",
   imports: [
     ReactiveFormsModule,
-    DatePickerModule,
-    InputTextModule,
-    SelectModule,
     TextareaModule,
     UiFormField,
+    UiDateField,
+    UiSelectField,
+    UiTextField,
     SearchEmployee,
     SearchTruck,
     AddressAutocomplete,

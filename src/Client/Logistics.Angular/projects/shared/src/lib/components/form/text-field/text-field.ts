@@ -25,6 +25,9 @@ export type TextFieldType = "text" | "email" | "password" | "tel" | "url" | "sea
 @Component({
   selector: "ui-text-field",
   templateUrl: "./text-field.html",
+  // `id` is a declared input, but a static `id="x"` attribute also lands on the host element.
+  // Strip it so the id lives only on the inner control and `<label for>` targets something focusable.
+  host: { "[attr.id]": "null" },
   imports: [InputText],
 })
 export class UiTextField implements FormValueControl<string> {

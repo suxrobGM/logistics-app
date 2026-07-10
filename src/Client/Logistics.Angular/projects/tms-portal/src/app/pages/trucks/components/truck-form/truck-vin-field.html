@@ -1,13 +1,12 @@
 <ng-container [formGroup]="form()">
   <ui-form-field label="VIN" for="vin" hint="17-character Vehicle Identification Number">
     <ui-stack direction="row" gap="2" align="center">
-      <input
-        pInputText
+      <ui-text-field
         id="vin"
         formControlName="vin"
         type="text"
         placeholder="e.g., 1FUJGLDR5BSAV1234"
-        maxlength="17"
+        [maxlength]="17"
         class="flex-1"
       />
       <p-button

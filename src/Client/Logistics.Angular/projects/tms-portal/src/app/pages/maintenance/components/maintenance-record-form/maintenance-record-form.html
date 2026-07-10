@@ -13,10 +13,9 @@
       </ui-form-field>
 
       <ui-form-field label="Service Type" for="type" [required]="true">
-        <p-select
+        <ui-select-field
           formControlName="type"
           id="type"
-          class="w-full"
           [options]="maintenanceTypeOptions"
           optionLabel="label"
           optionValue="value"
@@ -26,19 +25,17 @@
     </div>
 
     <ui-form-field label="Description" for="description" [required]="true" class="mt-4">
-      <textarea
-        pInputTextarea
+      <ui-textarea-field
         formControlName="description"
         id="description"
-        class="w-full"
-        rows="2"
+        [rows]="2"
         placeholder="Describe the maintenance performed..."
-      ></textarea>
+      />
     </ui-form-field>
 
     <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
       <ui-form-field label="Service Date" for="serviceDate" [required]="true">
-        <p-datepicker
+        <ui-date-field
           formControlName="serviceDate"
           id="serviceDate"
           [showIcon]="true"
@@ -49,20 +46,18 @@
       </ui-form-field>
 
       <ui-form-field label="Odometer Reading" for="odometerReading">
-        <p-inputnumber
+        <ui-number-field
           formControlName="odometerReading"
           id="odometerReading"
-          class="w-full"
           [useGrouping]="true"
           suffix=" mi"
         />
       </ui-form-field>
 
       <ui-form-field label="Engine Hours" for="engineHours">
-        <p-inputnumber
+        <ui-number-field
           formControlName="engineHours"
           id="engineHours"
-          class="w-full"
           [useGrouping]="true"
           suffix=" hrs"
         />
@@ -71,21 +66,17 @@
 
     <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
       <ui-form-field label="Vendor Name" for="vendorName">
-        <input
-          pInputText
+        <ui-text-field
           id="vendorName"
           formControlName="vendorName"
-          class="w-full"
           placeholder="Service provider name"
         />
       </ui-form-field>
 
       <ui-form-field label="Invoice Number" for="invoiceNumber">
-        <input
-          pInputText
+        <ui-text-field
           id="invoiceNumber"
           formControlName="invoiceNumber"
-          class="w-full"
           placeholder="INV-12345"
         />
       </ui-form-field>
@@ -93,10 +84,9 @@
 
     <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
       <ui-form-field label="Labor Cost" for="laborCost">
-        <p-inputnumber
+        <ui-number-field
           formControlName="laborCost"
           id="laborCost"
-          class="w-full"
           mode="currency"
           currency="USD"
           locale="en-US"
@@ -104,10 +94,9 @@
       </ui-form-field>
 
       <ui-form-field label="Parts Cost" for="partsCost">
-        <p-inputnumber
+        <ui-number-field
           formControlName="partsCost"
           id="partsCost"
-          class="w-full"
           mode="currency"
           currency="USD"
           locale="en-US"
@@ -116,14 +105,12 @@
     </div>
 
     <ui-form-field label="Notes" for="notes" class="mt-4">
-      <textarea
-        pInputTextarea
+      <ui-textarea-field
         formControlName="notes"
         id="notes"
-        class="w-full"
-        rows="3"
+        [rows]="3"
         placeholder="Additional notes about this service..."
-      ></textarea>
+      />
     </ui-form-field>
 
     <div class="mt-6 flex gap-2">

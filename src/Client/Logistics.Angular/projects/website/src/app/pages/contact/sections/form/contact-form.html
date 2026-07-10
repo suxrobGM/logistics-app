@@ -32,26 +32,26 @@
           <!-- Name Fields -->
           <div class="grid gap-4 sm:grid-cols-2">
             <ui-form-field label="First Name" for="firstName" [required]="true" [control]="form.controls.firstName">
-              <input pInputText id="firstName" formControlName="firstName" placeholder="John" class="w-full" />
+              <ui-text-field id="firstName" formControlName="firstName" placeholder="John" />
             </ui-form-field>
             <ui-form-field label="Last Name" for="lastName" [required]="true" [control]="form.controls.lastName">
-              <input pInputText id="lastName" formControlName="lastName" placeholder="Doe" class="w-full" />
+              <ui-text-field id="lastName" formControlName="lastName" placeholder="Doe" />
             </ui-form-field>
           </div>
 
           <!-- Email & Phone -->
           <div class="grid gap-4 sm:grid-cols-2">
             <ui-form-field label="Email" for="email" [required]="true" [control]="form.controls.email">
-              <input pInputText id="email" type="email" formControlName="email" placeholder="john@company.com" class="w-full" />
+              <ui-text-field id="email" type="email" formControlName="email" placeholder="john@company.com" />
             </ui-form-field>
             <ui-form-field label="Phone" for="phone" hint="Optional">
-              <input pInputText id="phone" type="tel" formControlName="phone" placeholder="(555) 123-4567" class="w-full" />
+              <ui-text-field id="phone" type="tel" formControlName="phone" placeholder="(555) 123-4567" />
             </ui-form-field>
           </div>
 
           <!-- Subject -->
           <ui-form-field label="Subject" for="subject" [required]="true" [control]="form.controls.subject">
-            <p-select
+            <ui-select-field
               id="subject"
               formControlName="subject"
               [options]="subjectOptions"
@@ -64,14 +64,12 @@
 
           <!-- Message -->
           <ui-form-field label="Message" for="message" [required]="true" [control]="form.controls.message">
-            <textarea
-              pTextarea
+            <ui-textarea-field
               id="message"
               formControlName="message"
-              rows="5"
+              [rows]="5"
               placeholder="How can we help you?"
-              class="w-full"
-            ></textarea>
+            />
           </ui-form-field>
 
           <!-- Error Message -->

@@ -39,11 +39,9 @@
       hint="Your load board API key or client ID"
       [control]="form.controls.apiKey"
     >
-      <input
-        pInputText
+      <ui-text-field
         id="apiKey"
         formControlName="apiKey"
-        class="w-full"
         placeholder="Enter API key"
       />
     </ui-form-field>
@@ -69,11 +67,9 @@
       for="companyDotNumber"
       hint="Your company's USDOT number"
     >
-      <input
-        pInputText
+      <ui-text-field
         id="companyDotNumber"
         formControlName="companyDotNumber"
-        class="w-full"
         placeholder="e.g., 1234567"
       />
     </ui-form-field>
@@ -83,11 +79,9 @@
       for="companyMcNumber"
       hint="Your company's Motor Carrier number"
     >
-      <input
-        pInputText
+      <ui-text-field
         id="companyMcNumber"
         formControlName="companyMcNumber"
-        class="w-full"
         placeholder="e.g., MC123456"
       />
     </ui-form-field>

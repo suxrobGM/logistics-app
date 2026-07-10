@@ -2,9 +2,8 @@ import { Component, effect, inject, input } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import type { TruckDto } from "@logistics/shared/api";
-import { Stack } from "@logistics/shared/components";
+import { Stack, UiTextField } from "@logistics/shared/components";
 import { Button } from "primeng/button";
-import { InputTextModule } from "primeng/inputtext";
 import { ToastService } from "@/core/services";
 import { SearchTruck, UiFormField, ValidatedForm } from "@/shared/components";
 import { TripWizardStore } from "../../store/trip-wizard-store";
@@ -19,7 +18,7 @@ import { TripWizardStore } from "../../store/trip-wizard-store";
     Button,
     RouterLink,
     ReactiveFormsModule,
-    InputTextModule,
+    UiTextField,
     Stack,
   ],
 })

@@ -2,7 +2,7 @@
   <ui-grid container spacing="4">
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Amount" for="bodyshop-amount" [required]="true">
-        <p-inputNumber
+        <ui-number-field
           id="bodyshop-amount"
           formControlName="amount"
           mode="currency"
@@ -15,7 +15,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Truck" for="bodyshop-truck" [required]="true">
-        <p-select
+        <ui-select-field
           id="bodyshop-truck"
           formControlName="truckId"
           [options]="trucks()"
@@ -29,13 +29,13 @@
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Body Shop Name" for="bodyshop-vendor">
-        <input pInputText id="bodyshop-vendor" formControlName="vendorName" class="w-full" />
+        <ui-text-field id="bodyshop-vendor" formControlName="vendorName" />
       </ui-form-field>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Expense Date" for="bodyshop-date" [required]="true">
-        <p-datepicker
+        <ui-date-field
           id="bodyshop-date"
           formControlName="expenseDate"
           [showIcon]="true"
@@ -46,31 +46,29 @@
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Shop Address" for="bodyshop-address">
-        <input pInputText id="bodyshop-address" formControlName="vendorAddress" class="w-full" />
+        <ui-text-field id="bodyshop-address" formControlName="vendorAddress" />
       </ui-form-field>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Shop Phone" for="bodyshop-phone">
-        <input pInputText id="bodyshop-phone" formControlName="vendorPhone" class="w-full" />
+        <ui-text-field id="bodyshop-phone" formControlName="vendorPhone" />
       </ui-form-field>
     </ui-grid>
   </ui-grid>
 
   <ui-form-field label="Repair Description" for="bodyshop-description">
-    <textarea
-      pInputTextarea
+    <ui-textarea-field
       id="bodyshop-description"
       formControlName="repairDescription"
-      rows="3"
-      class="w-full"
-    ></textarea>
+      [rows]="3"
+    />
   </ui-form-field>
 
   <ui-grid container spacing="4">
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Estimated Completion" for="bodyshop-est-date">
-        <p-datepicker
+        <ui-date-field
           id="bodyshop-est-date"
           formControlName="estimatedCompletionDate"
           [showIcon]="true"
@@ -81,7 +79,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 6 }">
       <ui-form-field label="Actual Completion" for="bodyshop-actual-date">
-        <p-datepicker
+        <ui-date-field
           id="bodyshop-actual-date"
           formControlName="actualCompletionDate"
           [showIcon]="true"
@@ -92,13 +90,11 @@
   </ui-grid>
 
   <ui-form-field label="Notes" for="bodyshop-notes">
-    <textarea
-      pInputTextarea
+    <ui-textarea-field
       id="bodyshop-notes"
       formControlName="notes"
-      rows="3"
-      class="w-full"
-    ></textarea>
+      [rows]="3"
+    />
   </ui-form-field>
 
   <app-expense-receipt-upload

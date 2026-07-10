@@ -20,6 +20,8 @@
     [ngModel]="value()"
     (ngModelChange)="value.set($event)"
     [ngModelOptions]="{ standalone: true }"
+    [suffix]="$any(suffix())"
+    [prefix]="$any(prefix())"
     [disabled]="disabled()"
     [readonly]="readonly()"
     [required]="required()"

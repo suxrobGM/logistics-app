@@ -10,25 +10,21 @@
 
   <form [formGroup]="form" (ngSubmit)="send()">
     <ui-form-field label="Email Address" for="email" [required]="true" [control]="form.controls.email">
-      <input
-        pInputText
+      <ui-text-field
         id="email"
         formControlName="email"
         type="email"
         placeholder="customer@example.com"
-        class="w-full"
       />
     </ui-form-field>
 
     <ui-form-field label="Personal Message" for="personalMessage">
-      <textarea
-        pTextarea
+      <ui-textarea-field
         id="personalMessage"
         formControlName="personalMessage"
-        rows="3"
+        [rows]="3"
         placeholder="Add an optional message to include in the email..."
-        class="w-full"
-      ></textarea>
+      />
     </ui-form-field>
 
     <ui-stack direction="row" justify="end" gap="2">

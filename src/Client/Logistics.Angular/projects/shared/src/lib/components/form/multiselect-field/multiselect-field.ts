@@ -27,6 +27,9 @@ import { MultiSelect } from "primeng/multiselect";
 @Component({
   selector: "ui-multiselect-field",
   templateUrl: "./multiselect-field.html",
+  // `id` is a declared input, but a static `id="x"` attribute also lands on the host element.
+  // Strip it so the id lives only on the inner control and `<label for>` targets something focusable.
+  host: { "[attr.id]": "null" },
   imports: [MultiSelect, FormsModule],
 })
 export class UiMultiSelectField<T = unknown> implements FormValueControl<T[]> {

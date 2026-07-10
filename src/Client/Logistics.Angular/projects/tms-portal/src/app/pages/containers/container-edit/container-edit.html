@@ -50,31 +50,31 @@
                   hint="11 characters: 4 letters + 7 digits"
                   [control]="form.controls.number"
                 >
-                  <input pInputText id="number" formControlName="number" />
+                  <ui-text-field id="number" formControlName="number" />
                 </ui-form-field>
               </ui-grid>
 
               <ui-grid [size]="{ xs: 12, md: 6 }">
                 <ui-form-field label="ISO Type" for="isoType" [required]="true">
-                  <p-select formControlName="isoType" [options]="isoTypeOptions" />
+                  <ui-select-field formControlName="isoType" [options]="isoTypeOptions" />
                 </ui-form-field>
               </ui-grid>
 
               <ui-grid [size]="{ xs: 12, md: 6 }">
                 <ui-form-field label="Seal Number" for="sealNumber">
-                  <input pInputText id="sealNumber" formControlName="sealNumber" />
+                  <ui-text-field id="sealNumber" formControlName="sealNumber" />
                 </ui-form-field>
               </ui-grid>
 
               <ui-grid [size]="{ xs: 12, md: 6 }">
                 <ui-form-field label="Booking Reference" for="bookingReference">
-                  <input pInputText id="bookingReference" formControlName="bookingReference" />
+                  <ui-text-field id="bookingReference" formControlName="bookingReference" />
                 </ui-form-field>
               </ui-grid>
 
               <ui-grid [size]="12">
                 <ui-form-field label="Bill of Lading Number" for="billOfLadingNumber">
-                  <input pInputText id="billOfLadingNumber" formControlName="billOfLadingNumber" />
+                  <ui-text-field id="billOfLadingNumber" formControlName="billOfLadingNumber" />
                 </ui-form-field>
               </ui-grid>
             </ui-grid>
@@ -88,7 +88,7 @@
           </ui-stack>
           <ui-surface variant="elevated" [border]="true">
             <ui-form-field label="Gross Weight (kg)" for="grossWeight" class="mb-0">
-              <p-input-number id="grossWeight" formControlName="grossWeight" [min]="0" />
+              <ui-number-field id="grossWeight" formControlName="grossWeight" [min]="0" />
             </ui-form-field>
           </ui-surface>
         </ui-stack>
@@ -100,7 +100,7 @@
           </ui-stack>
           <ui-surface variant="elevated" [border]="true">
             <ui-form-field label="Notes" for="notes" class="mb-0">
-              <textarea pTextarea id="notes" formControlName="notes" rows="3"></textarea>
+              <ui-textarea-field id="notes" formControlName="notes" [rows]="3" />
             </ui-form-field>
           </ui-surface>
         </ui-stack>
@@ -130,7 +130,7 @@
   <form [formGroup]="statusForm" (ngSubmit)="submitStatus()">
     <ui-stack gap="3">
       <ui-form-field label="New Status" for="targetStatus" [required]="true">
-        <p-select
+        <ui-select-field
           formControlName="targetStatus"
           [options]="statusOptions"
           placeholder="Select target status"

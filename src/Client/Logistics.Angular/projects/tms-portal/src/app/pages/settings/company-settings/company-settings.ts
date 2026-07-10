@@ -10,11 +10,17 @@ import {
   type TenantSettings,
   type UpdateTenantCommand,
 } from "@logistics/shared/api";
-import { Container, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import {
+  Container,
+  Icon,
+  Stack,
+  Surface,
+  Typography,
+  UiSelectField,
+  UiTextField,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { TenantService, ToastService } from "@/core/services";
 import { PageHeader, UiFormField, ValidatedForm } from "@/shared/components";
@@ -30,10 +36,10 @@ import { PageHeader, UiFormField, ValidatedForm } from "@/shared/components";
     ValidatedForm,
     UiFormField,
     PageHeader,
-    InputTextModule,
+    UiTextField,
     AddressForm,
     PhoneField,
-    SelectModule,
+    UiSelectField,
     Icon,
     Stack,
     Surface,
