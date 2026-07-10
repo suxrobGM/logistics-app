@@ -1,7 +1,16 @@
-import { booleanAttribute, Component, input, model, output } from "@angular/core";
+import {
+  booleanAttribute,
+  Component,
+  ElementRef,
+  inject,
+  input,
+  model,
+  output,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { DatePicker } from "primeng/datepicker";
+import { focusFirstControl } from "../../../forms/focus-control";
 
 /**
  * Date picker field.
@@ -71,4 +80,11 @@ export class UiDateField implements FormValueControl<Date | null> {
   public readonly minDate = input<Date | undefined>(undefined);
   public readonly maxDate = input<Date | undefined>(undefined);
   public readonly selectionMode = input<"single" | "multiple" | "range">("single");
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
+  public focus(options?: FocusOptions): void {
+    focusFirstControl(this.host.nativeElement, options);
+  }
 }

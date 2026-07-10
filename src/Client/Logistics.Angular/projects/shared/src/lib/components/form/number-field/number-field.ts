@@ -1,10 +1,19 @@
 import { NgTemplateOutlet } from "@angular/common";
-import { booleanAttribute, Component, input, model, output } from "@angular/core";
+import {
+  booleanAttribute,
+  Component,
+  ElementRef,
+  inject,
+  input,
+  model,
+  output,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputGroupAddonModule } from "primeng/inputgroupaddon";
 import { InputNumber } from "primeng/inputnumber";
+import { focusFirstControl } from "../../../forms/focus-control";
 
 export type NumberFieldMode = "decimal" | "currency";
 
@@ -78,4 +87,11 @@ export class UiNumberField implements FormValueControl<number | null> {
   public readonly suffix = input<string | undefined>(undefined);
   /** Text rendered INSIDE the input before the number (p-inputnumber `prefix`), not an addon. */
   public readonly prefix = input<string | undefined>(undefined);
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
+  public focus(options?: FocusOptions): void {
+    focusFirstControl(this.host.nativeElement, options);
+  }
 }

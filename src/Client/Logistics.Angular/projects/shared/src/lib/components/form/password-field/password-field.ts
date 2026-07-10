@@ -1,7 +1,16 @@
-import { booleanAttribute, Component, input, model, output } from "@angular/core";
+import {
+  booleanAttribute,
+  Component,
+  ElementRef,
+  inject,
+  input,
+  model,
+  output,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { Password } from "primeng/password";
+import { focusFirstControl } from "../../../forms/focus-control";
 
 /**
  * Masked password input with optional strength feedback and a reveal toggle.
@@ -70,4 +79,11 @@ export class UiPasswordField implements FormValueControl<string> {
   public readonly styleClass = input<string | undefined>(undefined);
   /** Style class of the inner input field. PrimeNG default: undefined. */
   public readonly inputStyleClass = input<string | undefined>(undefined);
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
+  public focus(options?: FocusOptions): void {
+    focusFirstControl(this.host.nativeElement, options);
+  }
 }

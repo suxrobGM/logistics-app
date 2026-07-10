@@ -54,9 +54,9 @@
 
           <ui-form-field label="Salary" for="salary" class="mb-0">
             @if (isShareOfGrossSalary()) {
-              <ui-unit-field [control]="form.controls.salary" unit="%" [min]="0" [max]="100" />
+              <ui-unit-field formControlName="salary" unit="%" [min]="0" [max]="100" />
             } @else {
-              <ui-currency-field [control]="form.controls.salary" [min]="0" />
+              <ui-currency-field formControlName="salary" [min]="0" />
             }
           </ui-form-field>
         </ui-surface>

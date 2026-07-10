@@ -1,7 +1,16 @@
-import { booleanAttribute, Component, input, model, output } from "@angular/core";
+import {
+  booleanAttribute,
+  Component,
+  ElementRef,
+  inject,
+  input,
+  model,
+  output,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { Select } from "primeng/select";
+import { focusFirstControl } from "../../../forms/focus-control";
 
 /**
  * Single-select dropdown.
@@ -71,4 +80,11 @@ export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
   public readonly filterPlaceholder = input<string | undefined>(undefined);
   public readonly filterBy = input<string | undefined>(undefined);
   public readonly loading = input(false, { transform: booleanAttribute });
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
+  public focus(options?: FocusOptions): void {
+    focusFirstControl(this.host.nativeElement, options);
+  }
 }

@@ -1,7 +1,16 @@
-import { booleanAttribute, Component, input, model, output } from "@angular/core";
+import {
+  booleanAttribute,
+  Component,
+  ElementRef,
+  inject,
+  input,
+  model,
+  output,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { Checkbox } from "primeng/checkbox";
+import { focusFirstControl } from "../../../forms/focus-control";
 
 /**
  * Binary checkbox.
@@ -46,4 +55,11 @@ export class UiCheckboxField implements FormValueControl<boolean> {
   // Presentation
   public readonly inputId = input<string>("");
   public readonly label = input<string>("");
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
+  public focus(options?: FocusOptions): void {
+    focusFirstControl(this.host.nativeElement, options);
+  }
 }

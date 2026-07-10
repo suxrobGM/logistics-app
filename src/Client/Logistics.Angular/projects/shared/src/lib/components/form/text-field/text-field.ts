@@ -1,6 +1,15 @@
-import { booleanAttribute, Component, input, model, output } from "@angular/core";
+import {
+  booleanAttribute,
+  Component,
+  ElementRef,
+  inject,
+  input,
+  model,
+  output,
+} from "@angular/core";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { InputText } from "primeng/inputtext";
+import { focusFirstControl } from "../../../forms/focus-control";
 
 export type TextFieldType = "text" | "email" | "password" | "tel" | "url" | "search";
 
@@ -52,6 +61,13 @@ export class UiTextField implements FormValueControl<string> {
   public readonly placeholder = input<string>("");
   public readonly autocomplete = input<string>("");
   public readonly maxlength = input<number | undefined>(undefined);
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
+  public focus(options?: FocusOptions): void {
+    focusFirstControl(this.host.nativeElement, options);
+  }
 
   protected onInput(event: Event): void {
     this.value.set((event.target as HTMLInputElement).value);

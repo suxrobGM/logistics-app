@@ -1,7 +1,16 @@
-import { booleanAttribute, Component, input, model, output } from "@angular/core";
+import {
+  booleanAttribute,
+  Component,
+  ElementRef,
+  inject,
+  input,
+  model,
+  output,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { AutoComplete, type AutoCompleteCompleteEvent } from "primeng/autocomplete";
+import { focusFirstControl } from "../../../forms/focus-control";
 
 /**
  * Type-ahead autocomplete backed by PrimeNG's `p-autocomplete`.
@@ -93,4 +102,11 @@ export class UiAutocompleteField<T = unknown> implements FormValueControl<T | nu
   public readonly showClear = input(false, { transform: booleanAttribute });
   /** PrimeNG default is `undefined` (booleanAttribute, no initializer). */
   public readonly dropdown = input<boolean | undefined>(undefined);
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
+  public focus(options?: FocusOptions): void {
+    focusFirstControl(this.host.nativeElement, options);
+  }
 }

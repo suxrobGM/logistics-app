@@ -1,6 +1,15 @@
-import { booleanAttribute, Component, input, model, output } from "@angular/core";
+import {
+  booleanAttribute,
+  Component,
+  ElementRef,
+  inject,
+  input,
+  model,
+  output,
+} from "@angular/core";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { Textarea } from "primeng/textarea";
+import { focusFirstControl } from "../../../forms/focus-control";
 
 /**
  * Multi-line text input.
@@ -49,6 +58,13 @@ export class UiTextareaField implements FormValueControl<string> {
   public readonly rows = input<number>(3);
   public readonly placeholder = input<string>("");
   public readonly maxlength = input<number | null>(null);
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
+  public focus(options?: FocusOptions): void {
+    focusFirstControl(this.host.nativeElement, options);
+  }
 
   protected onInput(event: Event): void {
     this.value.set((event.target as HTMLTextAreaElement).value);

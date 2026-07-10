@@ -2,10 +2,18 @@
   <p-inputgroup-addon>{{ unit() }}</p-inputgroup-addon>
   <input
     pInputText
-    [type]="type()"
-    [formControl]="control()"
-    [min]="min()"
-    [max]="max()"
+    type="number"
+    [id]="id()"
+    [attr.name]="name() || null"
+    [value]="value() ?? ''"
+    [disabled]="disabled()"
+    [readOnly]="readonly()"
+    [required]="required()"
+    [attr.min]="min() ?? null"
+    [attr.max]="max() ?? null"
+    [attr.aria-invalid]="invalid() ? 'true' : null"
     [placeholder]="placeholder()"
+    (input)="onInput($event)"
+    (blur)="touch.emit()"
   />
 </p-inputgroup>

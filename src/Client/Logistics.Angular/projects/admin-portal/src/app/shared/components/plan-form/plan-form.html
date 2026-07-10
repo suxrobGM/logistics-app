@@ -36,13 +36,13 @@
   <div class="mb-4 grid grid-cols-12 gap-4">
     <div class="col-span-12 md:col-span-4">
       <ui-form-field label="Base Monthly Fee" [required]="true">
-        <ui-currency-field [control]="form.controls.price" placeholder="0.00" />
+        <ui-currency-field formControlName="price" [min]="0" placeholder="0.00" />
       </ui-form-field>
     </div>
 
     <div class="col-span-12 md:col-span-4">
       <ui-form-field label="Per Truck Fee" [required]="true">
-        <ui-currency-field [control]="form.controls.perTruckPrice" placeholder="0.00" />
+        <ui-currency-field formControlName="perTruckPrice" [min]="0" placeholder="0.00" />
       </ui-form-field>
     </div>
 

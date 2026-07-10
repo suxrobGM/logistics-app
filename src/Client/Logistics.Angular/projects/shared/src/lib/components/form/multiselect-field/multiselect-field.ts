@@ -1,7 +1,16 @@
-import { booleanAttribute, Component, input, model, output } from "@angular/core";
+import {
+  booleanAttribute,
+  Component,
+  ElementRef,
+  inject,
+  input,
+  model,
+  output,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { MultiSelect } from "primeng/multiselect";
+import { focusFirstControl } from "../../../forms/focus-control";
 
 /**
  * Multi-select dropdown backed by PrimeNG's `p-multiselect`.
@@ -61,4 +70,11 @@ export class UiMultiSelectField<T = unknown> implements FormValueControl<T[]> {
   public readonly id = input<string>("");
   /** PrimeNG defaults to undefined (inline overlay). Do not portal to body unless asked. */
   public readonly appendTo = input<unknown>(undefined);
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  /** Signal Forms calls this via `FieldState.focusBoundControl()`. */
+  public focus(options?: FocusOptions): void {
+    focusFirstControl(this.host.nativeElement, options);
+  }
 }

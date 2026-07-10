@@ -1,47 +1,85 @@
 import { DestroyRef, Directive, ElementRef, inject, type OnInit } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { AbstractControl, FormGroupDirective } from "@angular/forms";
+import { FormRoot } from "@angular/forms/signals";
 
 /**
- * Reveals validation feedback when an invalid reactive form is submitted.
+ * Reveals validation feedback when an invalid form is submitted.
  *
- * Auto-applies to every `<form [formGroup]>` in a component that imports it — no template
- * attribute and no submit-handler changes are required. On an invalid submit it:
- *  - marks every control as touched (so inline `ui-form-field` errors render), and
+ * Auto-applies to every `<form [formRoot]>` (Signal Forms) and every `<form [formGroup]>` (legacy
+ * Reactive Forms) in a component that imports it — no template attribute and no submit-handler
+ * changes are required. On an invalid submit it:
  *  - scrolls to / focuses the first invalid control, and
  *  - announces the error count to assistive technologies via an `aria-live` region.
  *
- * This is the single, reusable replacement for hand-written `markAllAsTouched()` calls.
+ * ## Signal Forms
+ *
+ * It deliberately does NOT mark controls as touched: Signal Forms' own `submit()` already marks the
+ * entire tree touched *before* it checks validity, so inline `ui-form-field` errors reveal
+ * themselves. (Pinned by `signal-forms-v22-api-probe.spec.ts`, claim F.)
+ *
+ * Focusing relies on each `ui-*-field` wrapper implementing the optional `focus()` hook of
+ * `FormUiControl` — without it, `focusBoundControl()` falls back to `.focus()` on the wrapper's
+ * non-focusable custom-element host and silently does nothing. (Claim L.)
+ *
+ * Note it cannot query `.ng-invalid`: Signal Forms applies no status classes by default. (Claim I.)
+ *
+ * ## Reactive Forms — transitional
+ *
+ * The `form[formGroup]` half exists only while forms are being migrated to Signal Forms one at a
+ * time. It is deleted, with the selector, at the end of Phase 4.
  */
 @Directive({
-  // Intentionally matches every reactive form so the behavior is opt-in by import only.
+  // Intentionally matches every form so the behavior is opt-in by import only.
   // eslint-disable-next-line @angular-eslint/directive-selector
-  selector: "form[formGroup]",
+  selector: "form[formRoot], form[formGroup]",
+  host: {
+    "(submit)": "onSignalSubmit()",
+  },
 })
 export class ValidatedForm implements OnInit {
-  private readonly formDir = inject(FormGroupDirective);
+  private readonly formRoot = inject(FormRoot, { optional: true, self: true });
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
-  private readonly destroyRef = inject(DestroyRef);
   private liveRegion?: HTMLElement;
 
-  ngOnInit(): void {
-    this.formDir.ngSubmit.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      const form = this.formDir.form;
-      if (form.invalid) {
-        form.markAllAsTouched();
-        this.revealErrors();
-      }
-    });
+  // --- Signal Forms -----------------------------------------------------------------------------
+
+  protected onSignalSubmit(): void {
+    const root = this.formRoot;
+    if (!root) {
+      return;
+    }
+    const state = root.fieldTree()();
+    if (!state.invalid()) {
+      return;
+    }
+
+    // `errorSummary()` is the field's own errors plus every descendant's, in tree order. One field
+    // can contribute several errors, so count distinct fields, not errors.
+    const errors = state.errorSummary();
+    const fields = new Set(errors.map((error) => error.fieldTree));
+    this.announce(fields.size);
+    errors[0]?.fieldTree().focusBoundControl();
   }
 
-  private revealErrors(): void {
-    const count = this.countInvalid(this.formDir.form);
-    this.announce(
-      count === 1
-        ? "1 field needs your attention before submitting."
-        : `${count} fields need your attention before submitting.`,
-    );
-    this.focusFirstInvalid();
+  // --- Reactive Forms (transitional; removed at Phase 4 exit) ------------------------------------
+
+  private readonly formDir = inject(FormGroupDirective, { optional: true, self: true });
+  private readonly destroyRef = inject(DestroyRef);
+
+  ngOnInit(): void {
+    const formDir = this.formDir;
+    if (!formDir) {
+      return;
+    }
+    formDir.ngSubmit.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      const form = formDir.form;
+      if (form.invalid) {
+        form.markAllAsTouched();
+        this.announce(this.countInvalid(form));
+        this.focusFirstInvalidElement();
+      }
+    });
   }
 
   /** Counts invalid leaf controls (descends into nested groups/arrays). */
@@ -55,7 +93,7 @@ export class ValidatedForm implements OnInit {
     return list.reduce((sum, child) => sum + this.countInvalid(child), 0);
   }
 
-  private focusFirstInvalid(): void {
+  private focusFirstInvalidElement(): void {
     const host = this.host.nativeElement;
     const invalid = Array.from(host.querySelectorAll<HTMLElement>(".ng-invalid")).find(
       (el) => el !== host && el.tagName !== "FORM",
@@ -72,7 +110,14 @@ export class ValidatedForm implements OnInit {
     focusTarget.focus?.({ preventScroll: true });
   }
 
-  private announce(message: string): void {
+  // ----------------------------------------------------------------------------------------------
+
+  private announce(invalidFieldCount: number): void {
+    const message =
+      invalidFieldCount === 1
+        ? "1 field needs your attention before submitting."
+        : `${invalidFieldCount} fields need your attention before submitting.`;
+
     if (!this.liveRegion) {
       const region = document.createElement("div");
       region.setAttribute("aria-live", "assertive");
