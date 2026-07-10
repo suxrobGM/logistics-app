@@ -262,18 +262,28 @@ Phases 5–6 must be re-driven through the Playwright MCP against this same rout
 
 ## Phase 3 — Seam hardening, still on PrimeNG _(no visual change; each item independently shippable)_
 
-1. **Rename shared `FormField` → `UiFormField`** (class only; selector `ui-form-field` unchanged). ~20 import sites.
-2. **De-leak `ToastService`**: replace PrimeNG's `Confirmation` with an owned `ConfirmOptions`; move the `pi pi-*` icon
-   and `p-button-danger` class inside the service. ~90 call sites unchanged.
-3. **Delete the PrimeNG coupling in list infrastructure.** Replace `TableLazyLoadEvent` with an owned `ListLazyLoadEvent`,
-   **collapse the two identical `base-list.store.ts` copies into one in `shared`**, and **delete the `BaseTable` abstract
-   class** (2 of 82 users) in favor of the store.
-4. **Introduce `<ui-data-table>`** wrapping `<p-table>`; migrate all 82 templates onto it. API sized to what is actually
+> **Progress (branch `feat/angular-22-upgrade`):** 1 ✅, 2 ✅, 3 ✅, 5 partially (pattern proven, `ui-text-field` landed).
+> Remaining: the other 8 `ui-*-field` wrappers, the 9 CVA conversions, and `<ui-data-table>` + 82 templates.
+>
+> **The wrapper pattern is proven, not assumed.** `projects/shared/src/lib/components/form/text-field/text-field.spec.ts`
+> shows a `FormValueControl`-only component syncing both ways under `formControlName` AND `[formField]`, propagating
+> `disabled`, and rendering errors through `ui-form-field` under both — with no transitional code. Replicate it exactly.
+
+1. ✅ **Renamed shared `FormField` → `UiFormField`** (class only; selector unchanged). 59 files.
+2. ✅ **De-leaked `ToastService`**: owned `ConfirmOptions` with semantic `ConfirmIcon` / `ConfirmSeverity` tokens,
+   mapped to PrimeNG inside the service. 29 calls across 27 files, verified lossless against `git show HEAD:`.
+   That mapping table is where Phase 6 swaps primeicons for lucide, with zero call-site churn.
+3. ✅ **Deleted the PrimeNG coupling in list infrastructure.** Owned `ListLazyLoadEvent`; the two `base-list.store.ts`
+   copies collapsed into `@logistics/shared/stores` (kept the rxMethod one — its `switchMap` cancels in-flight
+   requests); `BaseTable` deleted and its 2 subclasses moved to `createListStore`. Added
+   `setFilters(f, { reload: false })` so a page can seed filters without a duplicate initial request.
+
+4. ⬜ **Introduce `<ui-data-table>`** wrapping `<p-table>`; migrate all 82 templates onto it. API sized to what is actually
    used: `[value]`, `[lazy]` + `(onLazyLoad)`, paginator/`[rows]`/`[totalRecords]`/`rowsPerPageOptions`, sort, `dataKey`,
    `scrollable`, selection, and projected `header`/`body`/`footer`/`emptymessage`/`caption` slots. Sweep the ~55 trivial
    and ~24 identical server-lazy tables in batches; hand-handle the ~6 hard ones — start with `trips-list`'s nested
    expansion table as the design forcing-function.
-5. **Introduce `ui-*-field` wrappers implementing `FormValueControl` only** — `ui-text-field`, `ui-textarea-field`
+5. 🟡 **Introduce `ui-*-field` wrappers implementing `FormValueControl` only** — `ui-text-field` ✅ (with spec) —
    (native `<textarea>`, never `pTextarea`), `ui-select-field`, `ui-number-field`, `ui-date-field`, `ui-checkbox-field`,
    `ui-toggle-field`, `ui-multiselect-field`, `ui-autocomplete-field`. Internals drive PrimeNG via plain value/event
    bindings — **never** `formControlName`/`[formField]` on a PrimeNG element. Fold `ui-currency-field`/`ui-unit-field`
