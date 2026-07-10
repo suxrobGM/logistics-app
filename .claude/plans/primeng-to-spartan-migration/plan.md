@@ -397,14 +397,52 @@ four default-drift bugs.
 
 ## Phase 5 — spartan/ui foundation + wrapper internals swap
 
-1. `bun add @spartan-ng/brain @angular/cdk clsx tw-animate-css`; `bun add -d @spartan-ng/cli`.
-   Generate helm components into `projects/shared/src/lib/spartan/` via `ng g @spartan-ng/cli:ui` (code-in-repo — ours).
-2. Import `@spartan-ng/brain/hlm-tailwind-preset.css`; map spartan's shadcn CSS variables onto the token layer. **Promote
-   `tms-portal/src/styles/variables.css` into `shared`** so all four apps use one token system. Reproduce the
-   **load-bearing** parts of `primeng-preset.ts`: the entire dark `colorScheme` surface ramp, plus the visual signatures
-   (uppercase datatable headers, tag sizing, gradient primary button).
+**Step 1 is DONE.** Deps installed into the Angular workspace package (`bun add --cwd src/Client/Logistics.Angular`):
+`@spartan-ng/brain@1.1.0` (MIT), `clsx`, `tw-animate-css`, `tailwind-merge`. `build:all` green, 98 tests green.
+`@angular/cdk@22.0.4` was already present and satisfies brain's peer `>=21 <23`.
+
+### Two facts the original plan got wrong
+
+1. **`@spartan-ng/cli` is not installable here without dragging in Nx.** It depends on `nx`, `@nx/angular`,
+   `@nx/devkit`, `@nx/js`, `@nx/workspace` and `@schematics/angular@21.2.14` — into a plain Angular CLI + bun
+   workspace on Angular 22, with no `nx.json`. **User decision (2026-07-10): vendor Helm by hand, no CLI, no Nx.**
+   Helm is code-in-repo either way; the CLI is only a copier.
+2. **The Helm `.template` files are not directly usable.** A template's `classes(() => 'spartan-input …')` string is a
+   _placeholder_. The generator builds a style map from the chosen `style-<theme>.css` (harvesting each
+   `.spartan-x { @apply … }` rule) and **inlines those utilities into the component**, merging with `tailwind-merge`.
+   Copy a template verbatim and you get a component referencing a class that nothing defines → unstyled.
+   - `style-nova.css` (the default) holds **298** `.spartan-*` rules; **297** are the plain `{ @apply …; }` shape and
+     extract with one regex. The lone exception is `spartan-drawer-content`.
+   - The generator leaves three tokens in place: `spartan-invalid`, `spartan-menu-target`, `spartan-logical-sides`.
+   - Get the sources without installing anything: `npm pack @spartan-ng/cli@1.1.0`, then read
+     `package/src/generators/ui/libs/<primitive>/files/**` and `package/src/generators/ui/style-nova.css`.
+   - Templates substitute exactly one variable, `<%- importAlias %>` (e.g. `import { classes } from '<%- importAlias %>/utils'`).
+     Inside the `shared` library this must become a **relative** path — ng-packagr rejects tsconfig path aliases that
+     resolve outside the entry point.
+
+`utils` is the root primitive: `hlm()` (clsx + tailwind-merge), `classes()` (a `MutationObserver`-backed class manager),
+and `provideSpartanHlm()` (sets `OVERLAY_DEFAULT_CONFIG.usePopover = false`, needed because Angular 21+ otherwise renders
+CDK overlays above `position: fixed` elements).
+
+### Remaining
+
+2. Import `@spartan-ng/brain/hlm-tailwind-preset.css`; map spartan's shadcn CSS variables onto the token layer.
+   The preset's `@theme inline` block expects these raw vars: `--background --foreground --card(-foreground)
+--popover(-foreground) --primary(-foreground) --secondary(-foreground) --muted(-foreground) --accent(-foreground)
+--destructive --border --input --ring --sidebar* --radius --font-sans --font-mono`.
+   **Conflict to reconcile:** the preset declares `@custom-variant dark (&:is(.dark *))` while `tms-portal/styles.css`
+   declares `@custom-variant dark (&:where(.dark-theme, .dark-theme *))`. Ours must be declared _after_ the preset import.
+   **Promote `tms-portal/src/styles/variables.css` into `shared`** so all four apps use one token system (only TMS has
+   one today; `projects/shared/src/styles/` is currently empty). Reproduce the **load-bearing** parts of
+   `primeng-preset.ts`: the entire dark `colorScheme` surface ramp, plus the visual signatures (uppercase datatable
+   headers, tag sizing, gradient primary button).
 3. Swap wrapper internals **one component type at a time**. Feature code untouched — the payoff of Phase 3.
+   Primitives the 12 `ui-*-field` wrappers need: `utils`, `input`, `textarea`, `select`, `checkbox`, `switch`, `label`,
+   `field`, `input-group`, `date-picker` + `calendar` + `popover`, `autocomplete`/`combobox`, `button`.
+   Note `HlmInput` is a **directive** on a native `<input>` (`[hlmInput]`), a drop-in for `pInputText`.
 4. Check each swap against the Phase 2 Playwright baseline.
+
+**Watch:** brain peers `luxon >=3.0.0` (only needed for `@spartan-ng/brain/date-time-luxon`); we have not installed it.
 
 ## Phase 6 — Non-form component sweep
 
