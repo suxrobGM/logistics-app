@@ -122,13 +122,11 @@
 
           <ui-grid [size]="12">
             <ui-form-field label="Internal Notes">
-              <textarea
-                pInputTextarea
+              <ui-textarea-field
                 formControlName="notes"
-                rows="3"
-                class="w-full"
+                [rows]="3"
                 placeholder="Add notes about this submission..."
-              ></textarea>
+              />
             </ui-form-field>
           </ui-grid>
         </ui-grid>

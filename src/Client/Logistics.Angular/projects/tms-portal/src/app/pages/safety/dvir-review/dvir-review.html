@@ -61,14 +61,12 @@
           }
 
           <ui-form-field label="Mechanic Notes" for="mechanicNotes">
-            <textarea
-              pInputTextarea
+            <ui-textarea-field
               formControlName="mechanicNotes"
               id="mechanicNotes"
-              class="w-full"
-              rows="4"
+              [rows]="4"
               placeholder="Enter any notes about repairs or observations..."
-            ></textarea>
+            />
           </ui-form-field>
 
           <div class="mt-6 flex flex-col gap-2">

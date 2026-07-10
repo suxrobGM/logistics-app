@@ -22,13 +22,11 @@
 
     <ui-grid [size]="{ xs: 12, md: 4, lg: 3 }">
       <ui-form-field label="Origin Radius ({{ distanceUnitLabel() }})" for="originRadius">
-        <p-inputNumber
+        <ui-number-field
           id="originRadius"
           formControlName="originRadius"
           [min]="0"
           [max]="500"
-          class="w-full"
-          inputStyleClass="w-full"
         />
       </ui-form-field>
     </ui-grid>
@@ -55,39 +53,33 @@
 
     <ui-grid [size]="{ xs: 12, md: 4, lg: 3 }">
       <ui-form-field label="Dest. Radius ({{ distanceUnitLabel() }})" for="destinationRadius">
-        <p-inputNumber
+        <ui-number-field
           id="destinationRadius"
           formControlName="destinationRadius"
           [min]="0"
           [max]="500"
-          class="w-full"
-          inputStyleClass="w-full"
         />
       </ui-form-field>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 4, lg: 3 }">
       <ui-form-field label="Pickup From" for="pickupDateStart">
-        <p-datePicker
+        <ui-date-field
           id="pickupDateStart"
           formControlName="pickupDateStart"
           [showIcon]="true"
           dateFormat="mm/dd/yy"
-          class="w-full"
-          inputStyleClass="w-full"
         />
       </ui-form-field>
     </ui-grid>
 
     <ui-grid [size]="{ xs: 12, md: 4, lg: 3 }">
       <ui-form-field label="Pickup To" for="pickupDateEnd">
-        <p-datePicker
+        <ui-date-field
           id="pickupDateEnd"
           formControlName="pickupDateEnd"
           [showIcon]="true"
           dateFormat="mm/dd/yy"
-          class="w-full"
-          inputStyleClass="w-full"
         />
       </ui-form-field>
     </ui-grid>
@@ -108,13 +100,11 @@
 
     <ui-grid [size]="{ xs: 12, md: 4, lg: 3 }">
       <ui-form-field label="Max Results" for="maxResults">
-        <p-inputNumber
+        <ui-number-field
           id="maxResults"
           formControlName="maxResults"
           [min]="10"
           [max]="100"
-          class="w-full"
-          inputStyleClass="w-full"
         />
       </ui-form-field>
     </ui-grid>

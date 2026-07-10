@@ -8,11 +8,15 @@ import {
   type DvirReportDto,
   type ReviewDvirReportCommand,
 } from "@logistics/shared/api";
-import { UiFormField, UiToggleField, ValidatedForm } from "@logistics/shared/components";
+import {
+  UiFormField,
+  UiTextareaField,
+  UiToggleField,
+  ValidatedForm,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TextareaModule } from "primeng/textarea";
 import { AuthService } from "@/core/auth";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
@@ -26,9 +30,9 @@ import { DvirDefectsList } from "../_components/dvir-defects-list/dvir-defects-l
     ButtonModule,
     CardModule,
     ProgressSpinnerModule,
-    TextareaModule,
     PageHeader,
     UiFormField,
+    UiTextareaField,
     UiToggleField,
     ValidatedForm,
     DvirDefectsList,

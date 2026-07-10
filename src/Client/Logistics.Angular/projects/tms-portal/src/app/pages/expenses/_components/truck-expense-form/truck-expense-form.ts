@@ -17,10 +17,10 @@ import {
   UiDateField,
   UiNumberField,
   UiSelectField,
+  UiTextareaField,
   UiTextField,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { TextareaModule } from "primeng/textarea";
 import { TenantService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
 import { ExpenseReceiptUpload } from "../expense-receipt-upload/expense-receipt-upload";
@@ -33,9 +33,9 @@ import { TRUCK_CATEGORIES, VOLUME_UNIT_OPTIONS } from "../expense.constants";
     ReactiveFormsModule,
     RouterModule,
     ButtonModule,
-    TextareaModule,
     UiFormField,
     UiTextField,
+    UiTextareaField,
     UiNumberField,
     UiSelectField,
     UiDateField,

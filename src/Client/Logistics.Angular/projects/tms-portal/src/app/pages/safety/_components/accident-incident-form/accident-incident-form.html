@@ -60,14 +60,12 @@
   </div>
 
   <ui-form-field label="Description" for="description" [required]="true" class="mt-4">
-    <textarea
-      pInputTextarea
+    <ui-textarea-field
       formControlName="description"
       id="description"
-      class="w-full"
-      rows="4"
+      [rows]="4"
       placeholder="Describe what happened..."
-    ></textarea>
+    />
   </ui-form-field>
 
   <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">

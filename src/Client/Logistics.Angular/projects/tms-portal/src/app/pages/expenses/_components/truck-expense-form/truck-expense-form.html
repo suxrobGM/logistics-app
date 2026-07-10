@@ -99,13 +99,7 @@
   </ui-grid>
 
   <ui-form-field label="Notes" for="truck-notes">
-    <textarea
-      pInputTextarea
-      id="truck-notes"
-      formControlName="notes"
-      rows="3"
-      class="w-full"
-    ></textarea>
+    <ui-textarea-field id="truck-notes" formControlName="notes" [rows]="3" />
   </ui-form-field>
 
   <app-expense-receipt-upload

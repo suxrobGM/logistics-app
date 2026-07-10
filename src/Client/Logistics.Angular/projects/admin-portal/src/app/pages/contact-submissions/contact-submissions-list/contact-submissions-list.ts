@@ -20,6 +20,7 @@ import {
   UiFormField,
   UiSelectField,
   UiSortHeader,
+  UiTextareaField,
 } from "@logistics/shared/components";
 import type { SelectOption } from "@logistics/shared/models";
 import { DateUtils } from "@logistics/shared/utils";
@@ -27,7 +28,6 @@ import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { TagModule } from "primeng/tag";
-import { TextareaModule } from "primeng/textarea";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { ContactSubmissionsListStore } from "../store/contact-submissions-list.store";
@@ -47,10 +47,10 @@ import { ContactSubmissionsListStore } from "../store/contact-submissions-list.s
     SearchField,
     TagModule,
     DialogModule,
-    TextareaModule,
     ReactiveFormsModule,
     UiFormField,
     UiSelectField,
+    UiTextareaField,
     Grid,
     Stack,
     Surface,

@@ -48,11 +48,19 @@ export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
   /** Raised on blur so the form can mark the field touched. */
   public readonly touch = output<void>();
 
+  /** Raised after the user picks an option. Mirrors p-select's `onChange`. */
+  public readonly selectionChange = output<T | null>();
+
+  /** Raised when the user clicks the clear (x) button. Mirrors p-select's `onClear`. */
+  public readonly cleared = output<void>();
+
   // Presentation
   public readonly options = input.required<readonly unknown[]>();
-  public readonly optionLabel = input<string>("");
-  public readonly optionValue = input<string>("");
-  public readonly placeholder = input<string>("");
+  /** Field path for an option's label. Undefined (not "") so PrimeNG applies its own fallback. */
+  public readonly optionLabel = input<string | undefined>(undefined);
+  /** Field path for an option's value. Undefined (not "") — an empty path resolves to undefined. */
+  public readonly optionValue = input<string | undefined>(undefined);
+  public readonly placeholder = input<string | undefined>(undefined);
   public readonly id = input<string>("");
   public readonly showClear = input<boolean>(false);
   public readonly filter = input<boolean>(false);

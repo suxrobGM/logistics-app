@@ -8,14 +8,14 @@ import {
 import {
   Grid,
   Typography,
+  UiDateField,
+  UiNumberField,
   UiSelectField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { DatePickerModule } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
 import { SelectModule } from "primeng/select";
 import { UiFormField } from "@/shared/components";
 import { EQUIPMENT_OPTIONS } from "../loadboard.constants";
@@ -31,14 +31,14 @@ interface ProviderOption {
   imports: [
     ValidatedForm,
     ButtonModule,
-    DatePickerModule,
     DialogModule,
     UiFormField,
     Grid,
-    InputNumberModule,
     ReactiveFormsModule,
     SelectModule,
     Typography,
+    UiDateField,
+    UiNumberField,
     UiSelectField,
     UiTextField,
   ],
