@@ -14,3 +14,5 @@ export * from "./date-field/date-field";
 export * from "./checkbox-field/checkbox-field";
 export * from "./toggle-field/toggle-field";
 export * from "./multiselect-field/multiselect-field";
+export * from "./password-field/password-field";
+export * from "./autocomplete-field/autocomplete-field";

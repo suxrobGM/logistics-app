@@ -16,6 +16,8 @@ import { Component, provideZonelessChangeDetection, signal, viewChild } from "@a
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { form, FormField, required } from "@angular/forms/signals";
+import { By } from "@angular/platform-browser";
+import { DatePicker } from "primeng/datepicker";
 import { UiFormField } from "../form-field/form-field";
 import { UiDateField } from "./date-field";
 
@@ -165,6 +167,24 @@ describe("UiDateField — a FormValueControl-only wrapper", () => {
       expect(value?.getFullYear()).toBe(2024);
       expect(value?.getMonth()).toBe(3); // April
       expect(value?.getDate()).toBe(12);
+    });
+
+    it("re-emits the inner DatePicker's (onSelect) as (dateSelected) with the picked Date", async () => {
+      const fixture = TestBed.createComponent(HostSignalDate);
+      await settle(fixture);
+
+      const picked = new Date(2024, 8, 3); // Sep 3 2024
+      let emitted: Date | undefined;
+      fixture.componentInstance.field().dateSelected.subscribe((d) => (emitted = d));
+
+      // Emit from the real inner PrimeNG DatePicker instance — its `onSelect` carries a Date
+      // (verified against primeng-datepicker.mjs: `this.onSelect.emit(date)`).
+      const picker = fixture.debugElement.query(By.directive(DatePicker))
+        .componentInstance as DatePicker;
+      picker.onSelect.emit(picked);
+      await settle(fixture);
+
+      expect(emitted).toBe(picked);
     });
 
     it("ui-form-field renders the required error once touched — with NO transitional code", async () => {

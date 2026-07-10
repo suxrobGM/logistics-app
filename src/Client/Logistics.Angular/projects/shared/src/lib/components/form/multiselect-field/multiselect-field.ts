@@ -59,5 +59,6 @@ export class UiMultiSelectField<T = unknown> implements FormValueControl<T[]> {
   public readonly display = input<"comma" | "chip">("comma");
   public readonly maxSelectedLabels = input<number>();
   public readonly id = input<string>("");
-  public readonly appendTo = input<unknown>("body");
+  /** PrimeNG defaults to undefined (inline overlay). Do not portal to body unless asked. */
+  public readonly appendTo = input<unknown>(undefined);
 }

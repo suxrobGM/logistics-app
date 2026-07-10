@@ -46,18 +46,28 @@ export class UiDateField implements FormValueControl<Date | null> {
   /** Raised on blur so the form can mark the field touched. */
   public readonly touch = output<void>();
 
+  /**
+   * Mirrors PrimeNG datepicker's `(onSelect)`. Emits the selected `Date` when the user
+   * picks a date from the panel. (For single selection PrimeNG emits a `Date`; verified
+   * against `primeng/fesm2022/primeng-datepicker.mjs`, `this.onSelect.emit(date)`.)
+   */
+  public readonly dateSelected = output<Date>();
+
   // Presentation
   public readonly id = input<string>("");
-  public readonly inputId = input<string>("");
-  public readonly showIcon = input<boolean>(true);
+  public readonly inputId = input<string | undefined>(undefined);
+  /** PrimeNG's own default is falsy; templates that want the icon pass [showIcon]="true". */
+  public readonly showIcon = input<boolean>(false);
   public readonly dateFormat = input<string>("mm/dd/yy");
-  public readonly placeholder = input<string>("");
-  public readonly appendTo = input<unknown>("body");
+  public readonly placeholder = input<string | undefined>(undefined);
+  /** PrimeNG defaults to undefined (inline overlay). Do not portal to body unless asked. */
+  public readonly appendTo = input<unknown>(undefined);
   public readonly fluid = input<boolean>(true);
   public readonly showTime = input<boolean>(false);
   public readonly timeOnly = input<boolean>(false);
   public readonly styleClass = input<string | undefined>(undefined);
-  public readonly iconDisplay = input<"button" | "input" | undefined>(undefined);
+  /** PrimeNG defaults this to "button". Forwarding `undefined` disables the calendar trigger icon. */
+  public readonly iconDisplay = input<"button" | "input">("button");
   public readonly minDate = input<Date | undefined>(undefined);
   public readonly maxDate = input<Date | undefined>(undefined);
   public readonly selectionMode = input<"single" | "multiple" | "range">("single");

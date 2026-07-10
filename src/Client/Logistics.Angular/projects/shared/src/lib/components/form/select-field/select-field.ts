@@ -64,7 +64,8 @@ export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
   public readonly id = input<string>("");
   public readonly showClear = input<boolean>(false);
   public readonly filter = input<boolean>(false);
-  public readonly appendTo = input<unknown>("body");
+  /** PrimeNG defaults to undefined (inline overlay). Do not portal to body unless asked. */
+  public readonly appendTo = input<unknown>(undefined);
   public readonly fluid = input<boolean>(true);
   public readonly styleClass = input<string | undefined>(undefined);
   public readonly filterPlaceholder = input<string | undefined>(undefined);
