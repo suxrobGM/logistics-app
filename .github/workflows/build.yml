@@ -62,6 +62,11 @@ jobs:
         working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
         run: bun run build:shared
 
+      # Guards the Signal Forms <-> PrimeNG facts the migration depends on.
+      - name: Test shared library
+        working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
+        run: bun run ng test shared --watch=false
+
       - name: Build TMS Portal
         working-directory: ${{ env.CLIENT_PROJECTS_DIR }}/Logistics.Angular
         run: bun run build:tms

@@ -1,0 +1,36 @@
+# Normalize line endings across the repo.
+# Baseline: auto-detect text, check out/commit with LF.
+* text=auto eol=lf
+
+# Shell scripts must stay LF regardless of platform.
+*.sh text eol=lf
+
+# Windows script types must stay CRLF.
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Lockfiles: normalize to LF (large, noisy diffs otherwise).
+bun.lock text eol=lf
+package-lock.json text eol=lf
+
+# Binary assets: never touch EOL, never diff as text.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.pdf binary
+*.zip binary
+*.dll binary
+*.exe binary
+*.so binary
+*.dylib binary
+*.snk binary
+
+# Generated Angular API client: collapse in diffs/reviews.
+src/Client/Logistics.Angular/projects/shared/src/lib/api/generated/** linguist-generated
