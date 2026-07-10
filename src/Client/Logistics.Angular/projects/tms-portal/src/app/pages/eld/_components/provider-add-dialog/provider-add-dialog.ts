@@ -7,9 +7,8 @@ import {
 import { Alert, ValidatedForm } from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
-import { PasswordModule } from "primeng/password";
 import { SelectModule } from "primeng/select";
-import { UiFormField, UiTextField } from "@/shared/components";
+import { UiFormField, UiPasswordField, UiTextField } from "@/shared/components";
 import { ELD_PROVIDER_OPTIONS } from "../eld.constants";
 
 @Component({
@@ -22,7 +21,7 @@ import { ELD_PROVIDER_OPTIONS } from "../eld.constants";
     DialogModule,
     UiFormField,
     UiTextField,
-    PasswordModule,
+    UiPasswordField,
     ReactiveFormsModule,
     SelectModule,
   ],

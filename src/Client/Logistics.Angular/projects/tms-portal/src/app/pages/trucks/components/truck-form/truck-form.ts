@@ -24,13 +24,13 @@ import {
   Stack,
   Surface,
   Typography,
+  UiAutocompleteField,
   UiFormField,
   UiNumberField,
   UiSelectField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/components";
-import { AutoCompleteModule } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
 import { ToastService } from "@/core/services";
 import { TruckFormTips } from "./truck-form-tips";
@@ -62,11 +62,11 @@ export interface TruckFormData {
     ReactiveFormsModule,
     RouterLink,
     ButtonModule,
-    AutoCompleteModule,
     UiFormField,
     UiTextField,
     UiSelectField,
     UiNumberField,
+    UiAutocompleteField,
     Grid,
     Icon,
     Stack,

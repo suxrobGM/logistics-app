@@ -1,4 +1,4 @@
-import { Component, input, model, output } from "@angular/core";
+import { booleanAttribute, Component, input, model, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { Select } from "primeng/select";
@@ -38,10 +38,10 @@ export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
 
   // Optional state inputs. Signal Forms binds these automatically when present;
   // the Reactive Forms bridge drives `disabled`.
-  public readonly disabled = input<boolean>(false);
-  public readonly readonly = input<boolean>(false);
-  public readonly required = input<boolean>(false);
-  public readonly invalid = input<boolean>(false);
+  public readonly disabled = input(false, { transform: booleanAttribute });
+  public readonly readonly = input(false, { transform: booleanAttribute });
+  public readonly required = input(false, { transform: booleanAttribute });
+  public readonly invalid = input(false, { transform: booleanAttribute });
   public readonly errors = input<readonly ValidationError[]>([]);
   public readonly name = input<string>("");
 
@@ -62,13 +62,13 @@ export class UiSelectField<T = unknown> implements FormValueControl<T | null> {
   public readonly optionValue = input<string | undefined>(undefined);
   public readonly placeholder = input<string | undefined>(undefined);
   public readonly id = input<string>("");
-  public readonly showClear = input<boolean>(false);
-  public readonly filter = input<boolean>(false);
+  public readonly showClear = input(false, { transform: booleanAttribute });
+  public readonly filter = input(false, { transform: booleanAttribute });
   /** PrimeNG defaults to undefined (inline overlay). Do not portal to body unless asked. */
   public readonly appendTo = input<unknown>(undefined);
-  public readonly fluid = input<boolean>(true);
+  public readonly fluid = input(true, { transform: booleanAttribute });
   public readonly styleClass = input<string | undefined>(undefined);
   public readonly filterPlaceholder = input<string | undefined>(undefined);
   public readonly filterBy = input<string | undefined>(undefined);
-  public readonly loading = input<boolean>(false);
+  public readonly loading = input(false, { transform: booleanAttribute });
 }

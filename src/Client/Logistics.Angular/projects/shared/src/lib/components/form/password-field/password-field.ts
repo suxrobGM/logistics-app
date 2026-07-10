@@ -1,4 +1,4 @@
-import { Component, input, model, output } from "@angular/core";
+import { booleanAttribute, Component, input, model, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { Password } from "primeng/password";
@@ -40,12 +40,12 @@ export class UiPasswordField implements FormValueControl<string> {
 
   // Optional state inputs. Signal Forms binds these automatically when present;
   // the Reactive Forms bridge drives `disabled`.
-  public readonly disabled = input<boolean>(false);
+  public readonly disabled = input(false, { transform: booleanAttribute });
   // Declared for FormValueControl parity, but NOT forwarded: `p-password` (and its
   // BaseInput/BaseEditableHolder chain) has no `readonly` input in PrimeNG 21.
-  public readonly readonly = input<boolean>(false);
-  public readonly required = input<boolean>(false);
-  public readonly invalid = input<boolean>(false);
+  public readonly readonly = input(false, { transform: booleanAttribute });
+  public readonly required = input(false, { transform: booleanAttribute });
+  public readonly invalid = input(false, { transform: booleanAttribute });
   public readonly errors = input<readonly ValidationError[]>([]);
   public readonly name = input<string>("");
 
@@ -61,7 +61,7 @@ export class UiPasswordField implements FormValueControl<string> {
   /** Forwarded to the inner input's `inputId`. PrimeNG default: undefined. */
   public readonly placeholder = input<string | undefined>(undefined);
   /** Strength indicator. PrimeNG default: `true`. */
-  public readonly feedback = input<boolean>(true);
+  public readonly feedback = input(true, { transform: booleanAttribute });
   /** Reveal-password icon. PrimeNG default: undefined (falsy). */
   public readonly toggleMask = input<boolean | undefined>(undefined);
   /** BaseInput default: undefined (defers to global inputStyle config). */

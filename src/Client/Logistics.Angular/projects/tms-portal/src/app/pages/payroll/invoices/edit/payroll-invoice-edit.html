@@ -14,16 +14,14 @@
         <ui-grid container spacing="4">
           <ui-grid [size]="{ xs: 12, md: 6 }">
             <ui-form-field label="Employee">
-              <p-autocomplete
+              <ui-autocomplete-field
                 formControlName="employee"
-                class="w-full"
-                inputStyleClass="w-full"
                 placeholder="Type employee's name"
                 optionLabel="fullName"
-                [minLength]="2"
+                [minQueryLength]="2"
                 [suggestions]="suggestedEmployees()"
                 (completeMethod)="searchEmployee($event)"
-                (onSelect)="handleAutoCompleteSelectEvent($event)"
+                (optionSelected)="handleAutoCompleteSelectEvent($event)"
               />
             </ui-form-field>
           </ui-grid>

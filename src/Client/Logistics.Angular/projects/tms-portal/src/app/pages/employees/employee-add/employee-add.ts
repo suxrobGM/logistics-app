@@ -18,20 +18,20 @@ import {
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { Container, Icon, Stack, Surface, Typography } from "@logistics/shared/components";
-import { AutoCompleteModule } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputGroupAddonModule } from "primeng/inputgroupaddon";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { SelectModule } from "primeng/select";
 import { ToastModule } from "primeng/toast";
 import { ToastService } from "@/core/services";
 import {
   CurrencyField,
   PageHeader,
+  UiAutocompleteField,
   UiFormField,
+  UiSelectField,
   UnitField,
   ValidatedForm,
 } from "@/shared/components";
@@ -46,8 +46,8 @@ import { UserService } from "../services";
     ProgressSpinnerModule,
     FormsModule,
     ReactiveFormsModule,
-    AutoCompleteModule,
-    SelectModule,
+    UiAutocompleteField,
+    UiSelectField,
     ButtonModule,
     RouterLink,
     PageHeader,

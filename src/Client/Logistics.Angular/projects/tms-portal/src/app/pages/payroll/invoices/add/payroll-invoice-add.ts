@@ -27,11 +27,11 @@ import {
   Stack,
   Surface,
   Typography,
+  UiAutocompleteField,
   UiDataTable,
 } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { PredefinedDateRanges } from "@logistics/shared/utils";
-import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
@@ -62,7 +62,7 @@ interface BulkPreview {
     ValidatedForm,
     UiFormField,
     RouterModule,
-    AutoCompleteModule,
+    UiAutocompleteField,
     ProgressSpinnerModule,
     FormsModule,
     ReactiveFormsModule,
@@ -153,8 +153,10 @@ export class PayrollInvoiceAdd {
     }
   }
 
-  handleAutoCompleteSelectEvent(event: AutoCompleteSelectEvent): void {
-    const employee = event.value as EmployeeDto;
+  handleAutoCompleteSelectEvent(employee: EmployeeDto | null): void {
+    if (!employee) {
+      return;
+    }
     this.selectedEmployee.set(employee);
     this.fetchPreviewPayrollInvoice(employee.id!);
   }

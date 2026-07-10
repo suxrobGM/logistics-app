@@ -4,10 +4,16 @@ import {
   type CreateLoadBoardConfigurationCommand,
   type LoadBoardProviderType,
 } from "@logistics/shared/api";
-import { Icon, Stack, Typography, UiTextField, ValidatedForm } from "@logistics/shared/components";
+import {
+  Icon,
+  Stack,
+  Typography,
+  UiPasswordField,
+  UiTextField,
+  ValidatedForm,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
-import { PasswordModule } from "primeng/password";
 import { SelectModule } from "primeng/select";
 import { UiFormField } from "@/shared/components";
 import { PROVIDER_OPTIONS } from "../loadboard.constants";
@@ -22,7 +28,7 @@ import { PROVIDER_OPTIONS } from "../loadboard.constants";
     UiFormField,
     Icon,
     UiTextField,
-    PasswordModule,
+    UiPasswordField,
     ReactiveFormsModule,
     SelectModule,
     Stack,

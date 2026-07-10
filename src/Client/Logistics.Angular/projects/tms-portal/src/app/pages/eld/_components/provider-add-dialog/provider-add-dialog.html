@@ -47,13 +47,11 @@
     </ui-form-field>
 
     <ui-form-field label="API Secret (Optional)" for="apiSecret" hint="Required for some providers">
-      <p-password
+      <ui-password-field
         id="apiSecret"
         formControlName="apiSecret"
         [toggleMask]="true"
         [feedback]="false"
-        class="w-full"
-        inputStyleClass="w-full"
         placeholder="Enter API secret"
       />
     </ui-form-field>
@@ -63,13 +61,11 @@
       for="webhookSecret"
       hint="For verifying incoming webhook requests"
     >
-      <p-password
+      <ui-password-field
         id="webhookSecret"
         formControlName="webhookSecret"
         [toggleMask]="true"
         [feedback]="false"
-        class="w-full"
-        inputStyleClass="w-full"
         placeholder="Enter webhook secret"
       />
     </ui-form-field>

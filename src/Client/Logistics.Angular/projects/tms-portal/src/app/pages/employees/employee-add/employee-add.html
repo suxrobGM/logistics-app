@@ -18,27 +18,24 @@
         </ui-stack>
         <ui-surface variant="elevated" [border]="true">
           <ui-form-field label="User Name" for="name" hint="Start typing (minimum 3 characters)">
-            <p-autocomplete
+            <ui-autocomplete-field
               formControlName="user"
-              class="w-full"
-              inputStyleClass="w-full"
               placeholder="Type user name"
               optionLabel="userName"
-              [minLength]="3"
+              [minQueryLength]="3"
               [suggestions]="suggestedUsers()"
               (completeMethod)="searchUser($event)"
             />
           </ui-form-field>
 
           <ui-form-field label="Role" for="role" class="mb-0">
-            <p-select
+            <ui-select-field
               formControlName="role"
-              class="w-full"
               [options]="roles()"
               optionValue="name"
               optionLabel="displayName"
               [showClear]="true"
-              (onClear)="clearSelectedRole()"
+              (cleared)="clearSelectedRole()"
             />
           </ui-form-field>
         </ui-surface>
@@ -52,7 +49,7 @@
         </ui-stack>
         <ui-surface variant="elevated" [border]="true">
           <ui-form-field label="Salary Type" for="salaryType">
-            <p-select formControlName="salaryType" class="w-full" [options]="salaryTypes" />
+            <ui-select-field formControlName="salaryType" [options]="salaryTypes" />
           </ui-form-field>
 
           <ui-form-field label="Salary" for="salary" class="mb-0">

@@ -18,10 +18,9 @@
           [required]="true"
           [control]="form.controls.employeeId"
         >
-          <p-select
+          <ui-select-field
             formControlName="employeeId"
             id="employeeId"
-            class="w-full"
             appendTo="body"
             [options]="employees()"
             optionValue="id"
@@ -34,13 +33,12 @@
       }
 
       <ui-form-field label="Date" for="date" [required]="true" [control]="form.controls.date">
-        <p-datepicker
+        <ui-date-field
           formControlName="date"
           id="date"
           dateFormat="mm/dd/yy"
           [showIcon]="true"
           appendTo="body"
-          styleClass="w-full"
         />
       </ui-form-field>
 
@@ -52,14 +50,13 @@
             [required]="true"
             [control]="form.controls.startTime"
           >
-            <p-datepicker
+            <ui-date-field
               formControlName="startTime"
               id="startTime"
               [timeOnly]="true"
               [showIcon]="true"
               appendTo="body"
-              styleClass="w-full"
-              (onSelect)="calculateHours()"
+              (dateSelected)="calculateHours()"
             />
           </ui-form-field>
         </ui-grid>
@@ -71,14 +68,13 @@
             [required]="true"
             [control]="form.controls.endTime"
           >
-            <p-datepicker
+            <ui-date-field
               formControlName="endTime"
               id="endTime"
               [timeOnly]="true"
               [showIcon]="true"
               appendTo="body"
-              styleClass="w-full"
-              (onSelect)="calculateHours()"
+              (dateSelected)="calculateHours()"
             />
           </ui-form-field>
         </ui-grid>
@@ -98,7 +94,7 @@
             for="totalHours"
             hint="Calculated from start and end time"
           >
-            <p-inputNumber
+            <ui-number-field
               formControlName="totalHours"
               id="totalHours"
               mode="decimal"
@@ -106,17 +102,15 @@
               [maxFractionDigits]="2"
               [min]="0"
               [max]="24"
-              styleClass="w-full"
             />
           </ui-form-field>
         </ui-grid>
 
         <ui-grid [size]="{ xs: 12, md: 6 }">
           <ui-form-field label="Type" for="type" [required]="true" [control]="form.controls.type">
-            <p-select
+            <ui-select-field
               formControlName="type"
               id="type"
-              class="w-full"
               appendTo="body"
               [options]="typeOptions"
               optionValue="value"
@@ -127,14 +121,12 @@
       </ui-grid>
 
       <ui-form-field label="Notes" for="notes" hint="Optional notes about this entry">
-        <textarea
-          pTextarea
+        <ui-textarea-field
           id="notes"
           formControlName="notes"
-          rows="3"
+          [rows]="3"
           placeholder="Add notes..."
-          class="w-full"
-        ></textarea>
+        />
       </ui-form-field>
 
       <ui-stack direction="row" justify="end" gap="2" class="mt-4">

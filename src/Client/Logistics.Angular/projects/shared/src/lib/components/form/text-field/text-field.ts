@@ -1,4 +1,4 @@
-import { Component, input, model, output } from "@angular/core";
+import { booleanAttribute, Component, input, model, output } from "@angular/core";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { InputText } from "primeng/inputtext";
 
@@ -36,10 +36,10 @@ export class UiTextField implements FormValueControl<string> {
 
   // Optional state inputs. Signal Forms binds these automatically when present;
   // the Reactive Forms bridge drives `disabled`.
-  public readonly disabled = input<boolean>(false);
-  public readonly readonly = input<boolean>(false);
-  public readonly required = input<boolean>(false);
-  public readonly invalid = input<boolean>(false);
+  public readonly disabled = input(false, { transform: booleanAttribute });
+  public readonly readonly = input(false, { transform: booleanAttribute });
+  public readonly required = input(false, { transform: booleanAttribute });
+  public readonly invalid = input(false, { transform: booleanAttribute });
   public readonly errors = input<readonly ValidationError[]>([]);
   public readonly name = input<string>("");
 

@@ -51,13 +51,11 @@
       for="apiSecret"
       hint="Required for some providers (e.g., DAT)"
     >
-      <p-password
+      <ui-password-field
         id="apiSecret"
         formControlName="apiSecret"
         [toggleMask]="true"
         [feedback]="false"
-        class="w-full"
-        inputStyleClass="w-full"
         placeholder="Enter API secret"
       />
     </ui-form-field>

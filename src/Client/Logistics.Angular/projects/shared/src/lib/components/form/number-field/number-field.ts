@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from "@angular/common";
-import { Component, input, model, output } from "@angular/core";
+import { booleanAttribute, Component, input, model, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { InputGroupModule } from "primeng/inputgroup";
@@ -42,10 +42,10 @@ export class UiNumberField implements FormValueControl<number | null> {
 
   // Optional state inputs. Signal Forms binds these automatically when present;
   // the Reactive Forms bridge drives `disabled`.
-  public readonly disabled = input<boolean>(false);
-  public readonly readonly = input<boolean>(false);
-  public readonly required = input<boolean>(false);
-  public readonly invalid = input<boolean>(false);
+  public readonly disabled = input(false, { transform: booleanAttribute });
+  public readonly readonly = input(false, { transform: booleanAttribute });
+  public readonly required = input(false, { transform: booleanAttribute });
+  public readonly invalid = input(false, { transform: booleanAttribute });
   public readonly errors = input<readonly ValidationError[]>([]);
   public readonly name = input<string>("");
 
@@ -60,14 +60,14 @@ export class UiNumberField implements FormValueControl<number | null> {
   public readonly locale = input<string | undefined>(undefined);
   public readonly minFractionDigits = input<number | undefined>(undefined);
   public readonly maxFractionDigits = input<number | undefined>(undefined);
-  public readonly useGrouping = input<boolean>(true);
-  public readonly showButtons = input<boolean>(false);
+  public readonly useGrouping = input(true, { transform: booleanAttribute });
+  public readonly showButtons = input(false, { transform: booleanAttribute });
 
   // Presentation
   public readonly placeholder = input<string>("");
   public readonly id = input<string>("");
   public readonly inputId = input<string>("");
-  public readonly fluid = input<boolean>(true);
+  public readonly fluid = input(true, { transform: booleanAttribute });
   public readonly styleClass = input<string | undefined>(undefined);
 
   /** Leading input-group addon (e.g. "$"). Renders the `p-inputgroup` chrome when set. */

@@ -154,26 +154,22 @@
         </ui-stack>
         <ui-surface variant="elevated" [border]="true">
           <ui-form-field label="Main Driver" for="mainDriver">
-            <p-autocomplete
+            <ui-autocomplete-field
               formControlName="mainDriver"
-              class="w-full"
-              inputStyleClass="w-full"
               placeholder="Search for a driver..."
               optionLabel="fullName"
-              [minLength]="2"
+              [minQueryLength]="2"
               [suggestions]="suggestedDrivers()"
               (completeMethod)="searchDriver($event)"
             />
           </ui-form-field>
 
           <ui-form-field label="Secondary Driver" for="secondaryDriver" class="mb-0">
-            <p-autocomplete
+            <ui-autocomplete-field
               formControlName="secondaryDriver"
-              class="w-full"
-              inputStyleClass="w-full"
               placeholder="Search for a driver..."
               optionLabel="fullName"
-              [minLength]="2"
+              [minQueryLength]="2"
               [suggestions]="suggestedDrivers()"
               (completeMethod)="searchDriver($event)"
             />

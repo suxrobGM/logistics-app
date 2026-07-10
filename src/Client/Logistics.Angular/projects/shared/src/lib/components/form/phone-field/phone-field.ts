@@ -1,4 +1,13 @@
-import { Component, computed, effect, input, model, output, signal } from "@angular/core";
+import {
+  booleanAttribute,
+  Component,
+  computed,
+  effect,
+  input,
+  model,
+  output,
+  signal,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { InputGroupModule } from "primeng/inputgroup";
@@ -31,9 +40,9 @@ export class PhoneField implements FormValueControl<string | null> {
 
   // Optional state inputs. Signal Forms binds these automatically when present;
   // the Reactive Forms bridge drives `disabled`.
-  public readonly disabled = input<boolean>(false);
-  public readonly required = input<boolean>(false);
-  public readonly invalid = input<boolean>(false);
+  public readonly disabled = input(false, { transform: booleanAttribute });
+  public readonly required = input(false, { transform: booleanAttribute });
+  public readonly invalid = input(false, { transform: booleanAttribute });
   public readonly errors = input<readonly ValidationError[]>([]);
   public readonly name = input<string>("");
 

@@ -1,4 +1,4 @@
-import { Component, input, model, output } from "@angular/core";
+import { booleanAttribute, Component, input, model, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { DatePicker } from "primeng/datepicker";
@@ -36,10 +36,10 @@ export class UiDateField implements FormValueControl<Date | null> {
 
   // Optional state inputs. Signal Forms binds these automatically when present;
   // the Reactive Forms bridge drives `disabled`.
-  public readonly disabled = input<boolean>(false);
-  public readonly readonly = input<boolean>(false);
-  public readonly required = input<boolean>(false);
-  public readonly invalid = input<boolean>(false);
+  public readonly disabled = input(false, { transform: booleanAttribute });
+  public readonly readonly = input(false, { transform: booleanAttribute });
+  public readonly required = input(false, { transform: booleanAttribute });
+  public readonly invalid = input(false, { transform: booleanAttribute });
   public readonly errors = input<readonly ValidationError[]>([]);
   public readonly name = input<string>("");
 
@@ -57,14 +57,14 @@ export class UiDateField implements FormValueControl<Date | null> {
   public readonly id = input<string>("");
   public readonly inputId = input<string | undefined>(undefined);
   /** PrimeNG's own default is falsy; templates that want the icon pass [showIcon]="true". */
-  public readonly showIcon = input<boolean>(false);
+  public readonly showIcon = input(false, { transform: booleanAttribute });
   public readonly dateFormat = input<string>("mm/dd/yy");
   public readonly placeholder = input<string | undefined>(undefined);
   /** PrimeNG defaults to undefined (inline overlay). Do not portal to body unless asked. */
   public readonly appendTo = input<unknown>(undefined);
-  public readonly fluid = input<boolean>(true);
-  public readonly showTime = input<boolean>(false);
-  public readonly timeOnly = input<boolean>(false);
+  public readonly fluid = input(true, { transform: booleanAttribute });
+  public readonly showTime = input(false, { transform: booleanAttribute });
+  public readonly timeOnly = input(false, { transform: booleanAttribute });
   public readonly styleClass = input<string | undefined>(undefined);
   /** PrimeNG defaults this to "button". Forwarding `undefined` disables the calendar trigger icon. */
   public readonly iconDisplay = input<"button" | "input">("button");

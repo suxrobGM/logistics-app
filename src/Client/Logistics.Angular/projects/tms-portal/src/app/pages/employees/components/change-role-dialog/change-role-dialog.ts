@@ -6,12 +6,16 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { Api, updateEmployee } from "@logistics/shared/api";
-import type { RoleDto, UpdateEmployeeCommand } from "@logistics/shared/api";
+import { UiSelectField } from "@logistics/shared";
+import {
+  Api,
+  updateEmployee,
+  type RoleDto,
+  type UpdateEmployeeCommand,
+} from "@logistics/shared/api";
 import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { SelectModule } from "primeng/select";
 import { ToastService } from "@/core/services";
 import { UserService } from "../../services";
 
@@ -24,7 +28,7 @@ import { UserService } from "../../services";
     FormsModule,
     ReactiveFormsModule,
     ButtonModule,
-    SelectModule,
+    UiSelectField,
   ],
 })
 export class ChangeRoleDialog {

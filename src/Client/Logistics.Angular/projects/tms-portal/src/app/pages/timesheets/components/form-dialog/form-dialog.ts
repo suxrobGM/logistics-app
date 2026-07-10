@@ -18,14 +18,19 @@ import {
   type UpdateTimeEntryCommand,
 } from "@logistics/shared/api";
 import { timeEntryTypeOptions } from "@logistics/shared/api/enums";
-import { Grid, Icon, Stack, ValidatedForm } from "@logistics/shared/components";
+import {
+  Grid,
+  Icon,
+  Stack,
+  UiDateField,
+  UiNumberField,
+  UiSelectField,
+  UiTextareaField,
+  ValidatedForm,
+} from "@logistics/shared/components";
 import { ButtonModule } from "primeng/button";
-import { DatePickerModule } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { SelectModule } from "primeng/select";
-import { TextareaModule } from "primeng/textarea";
 import { ToastService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
 
@@ -39,10 +44,10 @@ import { UiFormField } from "@/shared/components";
     FormsModule,
     ReactiveFormsModule,
     ButtonModule,
-    SelectModule,
-    DatePickerModule,
-    InputNumberModule,
-    TextareaModule,
+    UiSelectField,
+    UiDateField,
+    UiNumberField,
+    UiTextareaField,
     UiFormField,
     Grid,
     Icon,

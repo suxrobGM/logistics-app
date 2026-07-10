@@ -34,16 +34,14 @@
       <!-- Single Mode: Employee Selection -->
       @if (mode() === "single") {
         <ui-form-field label="Employee" [control]="form.controls.employee" [required]="true">
-          <p-autocomplete
+          <ui-autocomplete-field
             formControlName="employee"
-            class="w-full"
-            inputStyleClass="w-full"
             placeholder="Type employee's name"
             optionLabel="fullName"
-            [minLength]="2"
+            [minQueryLength]="2"
             [suggestions]="suggestedEmployees()"
             (completeMethod)="searchEmployee($event)"
-            (onSelect)="handleAutoCompleteSelectEvent($event)"
+            (optionSelected)="handleAutoCompleteSelectEvent($event)"
           />
         </ui-form-field>
 

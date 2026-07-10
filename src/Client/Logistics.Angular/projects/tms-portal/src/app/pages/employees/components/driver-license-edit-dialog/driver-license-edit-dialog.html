@@ -15,7 +15,7 @@
         [required]="true"
         [control]="form.controls.licenseNumber"
       >
-        <input pInputText id="licenseNumber" formControlName="licenseNumber" type="text" />
+        <ui-text-field id="licenseNumber" formControlName="licenseNumber" type="text" />
       </ui-form-field>
 
       <ui-form-field
@@ -24,7 +24,7 @@
         [required]="true"
         [control]="form.controls.licenseClass"
       >
-        <p-select
+        <ui-select-field
           id="licenseClass"
           formControlName="licenseClass"
           [options]="classOptions"
@@ -41,12 +41,11 @@
         [required]="true"
         [control]="form.controls.issuingCountry"
       >
-        <input
-          pInputText
+        <ui-text-field
           id="issuingCountry"
           formControlName="issuingCountry"
           type="text"
-          maxlength="2"
+          [maxlength]="2"
           style="text-transform: uppercase"
         />
       </ui-form-field>
@@ -56,7 +55,7 @@
         for="issuingRegion"
         hint="State / province, e.g. TX, BY"
       >
-        <input pInputText id="issuingRegion" formControlName="issuingRegion" type="text" />
+        <ui-text-field id="issuingRegion" formControlName="issuingRegion" type="text" />
       </ui-form-field>
 
       <ui-form-field
@@ -65,7 +64,7 @@
         [required]="true"
         [control]="form.controls.issuedDate"
       >
-        <p-datepicker
+        <ui-date-field
           id="issuedDate"
           formControlName="issuedDate"
           dateFormat="yy-mm-dd"
@@ -79,7 +78,7 @@
         [required]="true"
         [control]="form.controls.expiresAt"
       >
-        <p-datepicker
+        <ui-date-field
           id="expiresAt"
           formControlName="expiresAt"
           dateFormat="yy-mm-dd"
@@ -92,7 +91,7 @@
         for="medicalCertExpiresAt"
         hint="US CDL only — leave blank for non-US licenses"
       >
-        <p-datepicker
+        <ui-date-field
           id="medicalCertExpiresAt"
           formControlName="medicalCertExpiresAt"
           dateFormat="yy-mm-dd"
@@ -102,7 +101,7 @@
 
       @if (mode() === "update") {
         <ui-form-field label="Status" for="status">
-          <p-select
+          <ui-select-field
             id="status"
             formControlName="status"
             [options]="statusOptions"

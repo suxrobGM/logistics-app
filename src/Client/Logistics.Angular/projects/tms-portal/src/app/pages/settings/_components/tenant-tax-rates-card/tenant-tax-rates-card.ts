@@ -17,18 +17,18 @@ import {
   Stack,
   Typography,
   UiDataTable,
+  UiDateField,
   UiFormField,
+  UiNumberField,
+  UiSelectField,
+  UiTextField,
   ValidatedForm,
 } from "@logistics/shared/components";
 import { DateFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { DatePickerModule } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
-import { InputNumberModule } from "primeng/inputnumber";
-import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { SelectModule } from "primeng/select";
 import { ToastService } from "@/core/services";
 
 interface TaxRateForm {
@@ -47,13 +47,13 @@ interface TaxRateForm {
     CardModule,
     DialogModule,
     ButtonModule,
-    InputTextModule,
-    InputNumberModule,
-    SelectModule,
-    DatePickerModule,
     ProgressSpinnerModule,
     UiDataTable,
     UiFormField,
+    UiTextField,
+    UiNumberField,
+    UiSelectField,
+    UiDateField,
     ValidatedForm,
     Alert,
     Stack,

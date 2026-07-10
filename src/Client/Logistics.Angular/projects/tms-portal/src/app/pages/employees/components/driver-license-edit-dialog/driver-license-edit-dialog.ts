@@ -16,14 +16,11 @@ import {
   licenseClassOptions,
   licenseEndorsementOptions,
 } from "@logistics/shared/api/enums";
-import { Stack } from "@logistics/shared/components";
+import { Stack, UiDateField, UiSelectField, UiTextField } from "@logistics/shared/components";
 import { ToastService } from "@logistics/shared/services";
 import { ButtonModule } from "primeng/button";
 import { CheckboxModule } from "primeng/checkbox";
-import { DatePickerModule } from "primeng/datepicker";
 import { DialogModule } from "primeng/dialog";
-import { InputTextModule } from "primeng/inputtext";
-import { SelectModule } from "primeng/select";
 import { UiFormField, ValidatedForm } from "@/shared/components";
 
 @Component({
@@ -33,10 +30,10 @@ import { UiFormField, ValidatedForm } from "@/shared/components";
     DialogModule,
     ButtonModule,
     ReactiveFormsModule,
-    InputTextModule,
-    SelectModule,
-    DatePickerModule,
     CheckboxModule,
+    UiTextField,
+    UiSelectField,
+    UiDateField,
     UiFormField,
     ValidatedForm,
     Stack,

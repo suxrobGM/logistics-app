@@ -1,4 +1,4 @@
-import { Component, input, model, output } from "@angular/core";
+import { booleanAttribute, Component, input, model, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { AutoComplete, type AutoCompleteCompleteEvent } from "primeng/autocomplete";
@@ -43,10 +43,10 @@ export class UiAutocompleteField<T = unknown> implements FormValueControl<T | nu
 
   // Optional state inputs. Signal Forms binds these automatically when present;
   // the Reactive Forms bridge drives `disabled`.
-  public readonly disabled = input<boolean>(false);
-  public readonly readonly = input<boolean>(false);
-  public readonly required = input<boolean>(false);
-  public readonly invalid = input<boolean>(false);
+  public readonly disabled = input(false, { transform: booleanAttribute });
+  public readonly readonly = input(false, { transform: booleanAttribute });
+  public readonly required = input(false, { transform: booleanAttribute });
+  public readonly invalid = input(false, { transform: booleanAttribute });
   public readonly errors = input<readonly ValidationError[]>([]);
   public readonly name = input<string>("");
 
@@ -90,7 +90,7 @@ export class UiAutocompleteField<T = unknown> implements FormValueControl<T | nu
   /** PrimeNG default is `undefined` (booleanAttribute, no initializer). */
   public readonly forceSelection = input<boolean | undefined>(undefined);
   /** PrimeNG default is `false`. */
-  public readonly showClear = input<boolean>(false);
+  public readonly showClear = input(false, { transform: booleanAttribute });
   /** PrimeNG default is `undefined` (booleanAttribute, no initializer). */
   public readonly dropdown = input<boolean | undefined>(undefined);
 }

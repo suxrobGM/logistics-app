@@ -17,15 +17,14 @@
   <form [formGroup]="form" (ngSubmit)="submit()">
     <div class="mb-3">
       <label for="role" class="form-label">Select Role</label>
-      <p-select
+      <ui-select-field
         formControlName="role"
-        class="w-full"
         appendTo="body"
         [options]="roles()"
         optionValue="name"
         optionLabel="displayName"
         [showClear]="true"
-        (onClear)="clearSelectedRole()"
+        (cleared)="clearSelectedRole()"
       />
     </div>
     <div class="flex gap-2">

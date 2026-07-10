@@ -15,9 +15,8 @@ import {
   type UpdatePayrollInvoiceCommand,
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
-import { Grid, Stack, Typography } from "@logistics/shared/components";
+import { Grid, Stack, Typography, UiAutocompleteField } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { AutoCompleteModule, type AutoCompleteSelectEvent } from "primeng/autocomplete";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
@@ -37,7 +36,7 @@ import { PayrollLineItemsTable, PayrollPaySummary } from "../../components";
     CardModule,
     UiFormField,
     RouterModule,
-    AutoCompleteModule,
+    UiAutocompleteField,
     ProgressSpinnerModule,
     ReactiveFormsModule,
     ButtonModule,
@@ -100,8 +99,10 @@ export class PayrollInvoiceEdit implements OnInit {
     }
   }
 
-  handleAutoCompleteSelectEvent(event: AutoCompleteSelectEvent): void {
-    const employee = event.value as EmployeeDto;
+  handleAutoCompleteSelectEvent(employee: EmployeeDto | null): void {
+    if (!employee) {
+      return;
+    }
     this.selectedEmployee.set(employee);
     this.fetchPreviewPayrollInvoice(employee.id!);
   }

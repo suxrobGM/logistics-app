@@ -88,7 +88,7 @@
   <form [formGroup]="form" (ngSubmit)="save()">
 
     <ui-form-field label="Jurisdiction" for="jurisdictionKey" [required]="true">
-      <p-select
+      <ui-select-field
         id="jurisdictionKey"
         formControlName="jurisdictionKey"
         [options]="jurisdictionOptions()"
@@ -98,7 +98,7 @@
         [filter]="true"
         filterPlaceholder="Search country or US state..."
         placeholder="Select a jurisdiction"
-        (onChange)="onJurisdictionChange($event.value)"
+        (selectionChange)="onJurisdictionChange($event)"
       />
     </ui-form-field>
 
@@ -109,7 +109,7 @@
       hint="0–100. Pre-filled from the jurisdiction's default if available."
       class="mt-4"
     >
-      <p-inputNumber
+      <ui-number-field
         inputId="ratePercent"
         formControlName="ratePercent"
         [min]="0"
@@ -121,18 +121,16 @@
     </ui-form-field>
 
     <ui-form-field label="Description" for="description" class="mt-4">
-      <input
-        pInputText
+      <ui-text-field
         id="description"
         formControlName="description"
-        class="w-full"
         placeholder="e.g. Reduced rate for digital services"
       />
     </ui-form-field>
 
     <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
       <ui-form-field label="Effective from" for="effectiveFrom" hint="Defaults to today">
-        <p-datepicker
+        <ui-date-field
           inputId="effectiveFrom"
           formControlName="effectiveFrom"
           showIcon
@@ -142,7 +140,7 @@
       </ui-form-field>
 
       <ui-form-field label="Effective to" for="effectiveTo" hint="Optional; null = forever">
-        <p-datepicker
+        <ui-date-field
           inputId="effectiveTo"
           formControlName="effectiveTo"
           showIcon
