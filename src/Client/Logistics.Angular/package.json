@@ -17,6 +17,7 @@
     "build:all": "ng build shared && ng build tms-portal && ng build customer-portal && ng build admin-portal && ng build website",
     "test": "ng test",
     "lint": "ng lint",
+    "ui:normalize": "node tools/normalize-helm.mjs",
     "format": "prettier --write ./projects",
     "gen:api": "ng-openapi-gen && bun scripts/fix-verbatim-imports.ts",
     "gen:api:live": "bun scripts/fetch-openapi.ts && bun run gen:api"
@@ -61,6 +62,7 @@
     "@angular/cli": "^22.0.6",
     "@angular/compiler-cli": "^22.0.6",
     "@eslint/js": "^9.39.1",
+    "@spartan-ng/cli": "1.1.0",
     "@tailwindcss/postcss": "^4.2.2",
     "@tailwindcss/typography": "^0.5.19",
     "@types/express": "^5.0.1",
