@@ -25,20 +25,20 @@
     <!-- Summary Stats -->
     <div [class]="'mb-4 flex flex-wrap gap-6 ' + chartClass()">
       <div>
-        <div class="text-muted text-xs font-medium tracking-wide uppercase">Weekly Total</div>
+        <div class="text-muted-foreground text-xs font-medium tracking-wide uppercase">Weekly Total</div>
         <div class="mt-1 font-mono text-lg font-bold text-emerald-600">
           {{ totalGross() | currencyFormat }}
         </div>
       </div>
       <div>
-        <div class="text-muted text-xs font-medium tracking-wide uppercase">Today</div>
+        <div class="text-muted-foreground text-xs font-medium tracking-wide uppercase">Today</div>
         <div class="mt-1 font-mono text-lg font-bold text-cyan-600">
           {{ todayGross() | currencyFormat }}
         </div>
       </div>
       <div>
-        <div class="text-muted text-xs font-medium tracking-wide uppercase">Avg/Day</div>
-        <div class="text-primary mt-1 font-mono text-lg font-bold">
+        <div class="text-muted-foreground text-xs font-medium tracking-wide uppercase">Avg/Day</div>
+        <div class="text-foreground mt-1 font-mono text-lg font-bold">
           {{ totalGross() / 7 | currencyFormat }}
         </div>
       </div>

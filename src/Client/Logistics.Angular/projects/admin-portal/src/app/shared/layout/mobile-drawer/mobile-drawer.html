@@ -9,7 +9,7 @@
 >
   <ng-template #header>
     <div class="flex items-center gap-3">
-      <span class="text-primary text-base font-semibold">Admin Portal</span>
+      <span class="text-foreground text-base font-semibold">Admin Portal</span>
     </div>
   </ng-template>
 
@@ -17,12 +17,12 @@
     <!-- Navigation -->
     <div class="flex-1 overflow-y-auto px-2">
       @for (section of sections(); track section.label; let isLast = $last) {
-        <p class="text-muted-color mt-3 mb-1 px-2 text-xs font-semibold tracking-wider uppercase">
+        <p class="text-muted-foreground mt-3 mb-1 px-2 text-xs font-semibold tracking-wider uppercase">
           {{ section.label }}
         </p>
         @for (item of section.items; track item.route) {
           <button
-            class="text-color hover:bg-surface-100 mb-0.5 flex w-full items-center gap-3 rounded-lg border-none bg-transparent px-3 py-2.5 text-left text-sm font-medium transition-colors"
+            class="text-foreground hover:bg-surface-100 mb-0.5 flex w-full items-center gap-3 rounded-lg border-none bg-transparent px-3 py-2.5 text-left text-sm font-medium transition-colors"
             (click)="navigateTo(item.route)"
           >
             <i [class]="item.icon + ' text-base'"></i>
@@ -36,13 +36,13 @@
     </div>
 
     <!-- User Section -->
-    <div class="border-surface border-t p-4">
+    <div class="border-border border-t p-4">
       @if (userName()) {
         <div class="mb-3 flex items-center gap-3">
           <p-avatar [label]="userInitials()" shape="circle" />
           <div>
-            <p class="text-color m-0 text-sm font-medium">{{ userName() }}</p>
-            <p class="text-muted-color m-0 text-xs">Super Admin</p>
+            <p class="text-foreground m-0 text-sm font-medium">{{ userName() }}</p>
+            <p class="text-muted-foreground m-0 text-xs">Super Admin</p>
           </div>
         </div>
       }

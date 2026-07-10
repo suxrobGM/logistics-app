@@ -2,18 +2,18 @@
   <!-- Map Header -->
   <div class="border-default flex items-center justify-between border-b p-3">
     <div class="flex items-center gap-2">
-      <i class="pi pi-map text-primary"></i>
+      <i class="pi pi-map text-foreground"></i>
       <span class="font-medium">Fleet Map</span>
     </div>
     <div class="flex items-center gap-3 text-sm">
       @if (trucksWithLocation() > 0) {
-        <span class="text-muted">
+        <span class="text-muted-foreground">
           <i class="pi pi-map-marker text-success mr-1"></i>
           {{ trucksWithLocation() }} tracked
         </span>
       }
       @if (trucksWithoutLocation() > 0) {
-        <span class="text-muted">
+        <span class="text-muted-foreground">
           <i class="pi pi-question-circle text-warning mr-1"></i>
           {{ trucksWithoutLocation() }} no location
         </span>

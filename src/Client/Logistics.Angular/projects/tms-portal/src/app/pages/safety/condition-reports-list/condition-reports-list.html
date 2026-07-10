@@ -50,17 +50,17 @@
             @if (report.loadType === "vehicle") {
               <span class="text-sm">{{ getVehicleInfo(report) }}</span>
               @if (report.vehicleBodyClass) {
-                <span class="text-muted block text-xs">{{ report.vehicleBodyClass }}</span>
+                <span class="text-muted-foreground block text-xs">{{ report.vehicleBodyClass }}</span>
               }
             } @else {
-              <span class="text-muted text-sm">{{ report.loadType }}</span>
+              <span class="text-muted-foreground text-sm">{{ report.loadType }}</span>
             }
           </td>
           <td>
             @if (getDefectCount(report) > 0) {
               <p-tag [value]="getDefectCount(report).toString() + ' defect(s)'" severity="danger" />
             } @else {
-              <span class="text-muted text-sm">None</span>
+              <span class="text-muted-foreground text-sm">None</span>
             }
           </td>
           <td>{{ report.inspectorName || "N/A" }}</td>
@@ -69,7 +69,7 @@
             @if (report.photos && report.photos.length > 0) {
               <span class="text-sm">{{ report.photos.length }} photo(s)</span>
             } @else {
-              <span class="text-muted text-sm">None</span>
+              <span class="text-muted-foreground text-sm">None</span>
             }
           </td>
           <td>

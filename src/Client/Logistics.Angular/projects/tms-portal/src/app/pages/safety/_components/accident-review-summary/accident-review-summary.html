@@ -113,7 +113,7 @@
         @if (injuriesDamageForm().estimatedDamage().value()) {
           <ui-stack direction="row" align="center" justify="between" class="border-t pt-3">
             <ui-typography variant="body" color="muted">Estimated Damage</ui-typography>
-            <span class="text-primary font-bold">{{
+            <span class="text-foreground font-bold">{{
               injuriesDamageForm().estimatedDamage().value() | currencyFormat
             }}</span>
           </ui-stack>

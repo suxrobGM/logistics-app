@@ -25,7 +25,7 @@
         <app-load-type-tag [type]="load()!.type!" />
       </ui-stack>
       @if (load()!.name) {
-        <ui-typography variant="h6" class="text-secondary">{{ load()!.name }}</ui-typography>
+        <ui-typography variant="h6" class="text-subtle-foreground">{{ load()!.name }}</ui-typography>
       }
     </ui-stack>
 
@@ -124,7 +124,7 @@
                       <span>Invoice</span>
                       <a
                         [routerLink]="['/invoices/loads', id(), load()!.invoice!.id]"
-                        class="text-primary flex items-center gap-1 font-medium hover:underline"
+                        class="text-foreground flex items-center gap-1 font-medium hover:underline"
                       >
                         <ui-icon name="external-link" size="sm" />
                         #{{ load()!.invoice!.number }}
@@ -152,7 +152,7 @@
                       <span>Customer</span>
                       <a
                         [routerLink]="['/customers', load()!.customer!.id]"
-                        class="text-primary font-medium hover:underline"
+                        class="text-foreground font-medium hover:underline"
                       >
                         {{ load()!.customer!.name }}
                       </a>
@@ -166,7 +166,7 @@
                       <span>Truck</span>
                       <a
                         [routerLink]="['/trucks', load()!.assignedTruckId]"
-                        class="text-primary font-medium hover:underline"
+                        class="text-foreground font-medium hover:underline"
                       >
                         {{ load()!.assignedTruckNumber }}
                       </a>
@@ -193,7 +193,7 @@
                       <span>Trip</span>
                       <a
                         [routerLink]="['/trips', load()!.tripId]"
-                        class="text-primary font-medium hover:underline"
+                        class="text-foreground font-medium hover:underline"
                       >
                         {{ load()!.tripName }}
                       </a>
@@ -222,7 +222,7 @@
                     Origin
                   </ui-typography>
                 </ui-stack>
-                <p class="text-secondary">{{ load()!.originAddress | address }}</p>
+                <p class="text-subtle-foreground">{{ load()!.originAddress | address }}</p>
               </ui-grid>
               <ui-grid [size]="{ xs: 12, md: 6 }">
                 <ui-stack direction="row" align="center" gap="2" class="mb-2">
@@ -231,7 +231,7 @@
                     Destination
                   </ui-typography>
                 </ui-stack>
-                <p class="text-secondary">{{ load()!.destinationAddress | address }}</p>
+                <p class="text-subtle-foreground">{{ load()!.destinationAddress | address }}</p>
               </ui-grid>
             </ui-grid>
 
@@ -244,7 +244,7 @@
                     Current Location
                   </ui-typography>
                 </ui-stack>
-                <p class="text-secondary">{{ load()!.currentAddress | address }}</p>
+                <p class="text-subtle-foreground">{{ load()!.currentAddress | address }}</p>
               </div>
             }
           </p-card>

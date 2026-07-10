@@ -1,7 +1,7 @@
 <div class="border-default bg-elevated rounded-lg border p-4">
   <div class="mb-3 flex items-center justify-between">
     <div class="flex items-center gap-2">
-      <i class="pi pi-bolt text-primary"></i>
+      <i class="pi pi-bolt text-foreground"></i>
       <span class="font-semibold">AI Dispatch Usage</span>
       @if (quota().planName) {
         <p-tag [value]="quota().planName!" severity="info" [style]="{ fontSize: '0.7rem' }" />
@@ -12,7 +12,7 @@
         <p-tag value="Overage charges apply" severity="warn" />
       }
       @if (quota().resetsAt) {
-        <span class="text-muted text-sm">
+        <span class="text-muted-foreground text-sm">
           Resets {{ quota().resetsAt | date: "EEE, MMM d, h:mm a" }}
         </span>
       }

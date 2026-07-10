@@ -25,7 +25,7 @@
             <app-truck-status-tag [status]="truck()!.status!" />
             <app-truck-type-tag [type]="truck()!.type!" />
           </ui-stack>
-          <div class="text-secondary">
+          <div class="text-subtle-foreground">
             @if (truck()!.mainDriver) {
               <span>{{ truck()!.mainDriver!.fullName }}</span>
               @if (truck()!.secondaryDriver) {
@@ -148,7 +148,7 @@
                       <span class="font-mono font-semibold">
                         {{ truck()!.licensePlate }}
                         @if (truck()!.licensePlateState) {
-                          <span class="text-muted ml-1">({{ truck()!.licensePlateState }})</span>
+                          <span class="text-muted-foreground ml-1">({{ truck()!.licensePlateState }})</span>
                         }
                       </span>
                     </ui-stack>
@@ -174,7 +174,7 @@
                       <span>Main Driver</span>
                       <a
                         [routerLink]="['/employees', truck()!.mainDriver!.id]"
-                        class="text-primary font-medium hover:underline"
+                        class="text-foreground font-medium hover:underline"
                       >
                         {{ truck()!.mainDriver!.fullName }}
                       </a>
@@ -191,7 +191,7 @@
                       <span>Secondary Driver</span>
                       <a
                         [routerLink]="['/employees', truck()!.secondaryDriver!.id]"
-                        class="text-primary font-medium hover:underline"
+                        class="text-foreground font-medium hover:underline"
                       >
                         {{ truck()!.secondaryDriver!.fullName }}
                       </a>
@@ -226,7 +226,7 @@
                   <ui-typography variant="body" weight="medium">Address</ui-typography>
                 </ui-stack>
                 @if (truck()!.currentAddress) {
-                  <p class="text-secondary">{{ truck()!.currentAddress | address }}</p>
+                  <p class="text-subtle-foreground">{{ truck()!.currentAddress | address }}</p>
                 } @else {
                   <ui-typography variant="body" color="muted">
                     No location data available

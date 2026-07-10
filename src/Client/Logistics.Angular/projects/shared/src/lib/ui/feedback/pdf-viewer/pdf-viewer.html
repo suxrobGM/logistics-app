@@ -4,7 +4,7 @@
       <ng-template #header>
         <div class="flex items-center justify-between p-4 pb-0">
           <div class="flex items-center gap-2">
-            <i class="pi pi-file-pdf text-primary"></i>
+            <i class="pi pi-file-pdf text-foreground"></i>
             <h3 class="m-0 text-lg font-semibold">{{ title() }}</h3>
           </div>
           <div class="flex gap-1">
@@ -37,10 +37,10 @@
           class="w-full rounded border"
           [style.height]="height()"
         >
-          <p class="text-muted p-4 text-center">
+          <p class="text-muted-foreground p-4 text-center">
             Your browser does not support PDF preview.
             <a
-              class="text-primary cursor-pointer underline"
+              class="text-foreground cursor-pointer underline"
               (click)="openInNewTab()"
             >
               Open PDF in new tab
@@ -56,10 +56,10 @@
       class="w-full rounded border"
       [style.height]="height()"
     >
-      <p class="text-muted p-4 text-center">
+      <p class="text-muted-foreground p-4 text-center">
         Your browser does not support PDF preview.
         <a
-          class="text-primary cursor-pointer underline"
+          class="text-foreground cursor-pointer underline"
           (click)="openInNewTab()"
         >
           Open PDF in new tab

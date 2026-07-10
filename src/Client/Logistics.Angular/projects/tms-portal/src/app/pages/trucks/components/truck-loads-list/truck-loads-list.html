@@ -1,7 +1,7 @@
 @if (loads().length === 0) {
   <div class="py-8 text-center">
-    <i class="pi pi-inbox text-muted mb-3 text-4xl"></i>
-    <p class="text-muted">No loads assigned to this truck</p>
+    <i class="pi pi-inbox text-muted-foreground mb-3 text-4xl"></i>
+    <p class="text-muted-foreground">No loads assigned to this truck</p>
   </div>
 } @else {
   <ui-data-table [value]="loads()" dataKey="id" [scrollable]="true">
@@ -21,11 +21,11 @@
     <ng-template #body let-load>
       <tr class="hover:bg-hover transition-colors duration-150">
         <td>
-          <a [routerLink]="['/loads', load.id]" class="text-primary font-bold hover:underline">
+          <a [routerLink]="['/loads', load.id]" class="text-foreground font-bold hover:underline">
             #{{ load.number }}
           </a>
           @if (load.name) {
-            <div class="text-muted text-xs">{{ load.name }}</div>
+            <div class="text-muted-foreground text-xs">{{ load.name }}</div>
           }
         </td>
         <td>
@@ -45,11 +45,11 @@
         </td>
         <td>
           @if (load.tripNumber) {
-            <a [routerLink]="['/trips', load.tripId]" class="text-primary hover:underline">
+            <a [routerLink]="['/trips', load.tripId]" class="text-foreground hover:underline">
               #{{ load.tripNumber }}
             </a>
           } @else {
-            <span class="text-muted">-</span>
+            <span class="text-muted-foreground">-</span>
           }
         </td>
         <td>
@@ -67,7 +67,7 @@
     <ng-template #empty>
       <tr>
         <td colspan="8" class="text-center">
-          <span class="text-muted">No loads assigned</span>
+          <span class="text-muted-foreground">No loads assigned</span>
         </td>
       </tr>
     </ng-template>

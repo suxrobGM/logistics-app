@@ -11,7 +11,7 @@
       <p-progress-spinner />
     </div>
   } @else {
-    <p class="text-muted-color mb-4">
+    <p class="text-muted-foreground mb-4">
       Configure feature settings for this tenant. Locked features cannot be changed by the tenant
       owner.
     </p>
@@ -23,7 +23,7 @@
           [description]="getFeatureDescription(feature.feature)"
         >
           <label [for]="'enabled-' + feature.feature" class="flex items-center gap-2 text-sm">
-            <span class="text-muted-color">Enabled</span>
+            <span class="text-muted-foreground">Enabled</span>
             <p-toggleswitch
               [inputId]="'enabled-' + feature.feature"
               [ngModel]="feature.isEnabled"
@@ -36,7 +36,7 @@
             pTooltip="When locked, the tenant owner cannot change this setting"
             tooltipPosition="top"
           >
-            <span class="text-muted-color">Locked</span>
+            <span class="text-muted-foreground">Locked</span>
             <p-toggleswitch
               [inputId]="'locked-' + feature.feature"
               [ngModel]="feature.isAdminLocked"
@@ -45,7 +45,7 @@
           </label>
         </ui-feature-row>
       } @empty {
-        <p class="text-muted-color py-4 text-center">No features available</p>
+        <p class="text-muted-foreground py-4 text-center">No features available</p>
       }
     </div>
   }

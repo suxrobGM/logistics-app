@@ -1,23 +1,23 @@
 <aside
-  class="bg-surface-0 border-surface fixed top-0 left-0 z-40 hidden h-screen w-64 flex-col border-r md:flex"
+  class="bg-surface-0 border-border fixed top-0 left-0 z-40 hidden h-screen w-64 flex-col border-r md:flex"
 >
   <!-- Header -->
-  <div class="border-surface flex h-16 items-center justify-center border-b px-4">
-    <span class="text-primary text-xl font-semibold">Admin Portal</span>
+  <div class="border-border flex h-16 items-center justify-center border-b px-4">
+    <span class="text-foreground text-xl font-semibold">Admin Portal</span>
   </div>
 
   <!-- Navigation -->
   <nav class="flex-1 overflow-y-auto px-3 py-2">
     @for (section of sections(); track section.label; let isLast = $last) {
-      <p class="text-muted-color mt-3 mb-1 px-2 text-xs font-semibold tracking-wider uppercase">
+      <p class="text-muted-foreground mt-3 mb-1 px-2 text-xs font-semibold tracking-wider uppercase">
         {{ section.label }}
       </p>
       @for (item of section.items; track item.route) {
         <a
           [routerLink]="item.route"
-          routerLinkActive="bg-primary-50 text-primary"
+          routerLinkActive="bg-primary-50 text-foreground"
           [routerLinkActiveOptions]="{ exact: true }"
-          class="text-color hover:bg-surface-100 mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors"
+          class="text-foreground hover:bg-surface-100 mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors"
         >
           <svg [lucideIcon]="item.icon" class="size-4 shrink-0"></svg>
           <span>{{ item.label }}</span>
@@ -30,12 +30,12 @@
   </nav>
 
   <!-- User section -->
-  <div class="border-surface border-t p-4">
+  <div class="border-border border-t p-4">
     <div class="mb-3 flex items-center gap-3">
       <p-avatar [label]="userInitials()" shape="circle" />
       <div>
-        <p class="text-color m-0 text-sm font-medium">{{ userName() }}</p>
-        <p class="text-muted-color m-0 text-xs">Super Admin</p>
+        <p class="text-foreground m-0 text-sm font-medium">{{ userName() }}</p>
+        <p class="text-muted-foreground m-0 text-xs">Super Admin</p>
       </div>
     </div>
     <p-button

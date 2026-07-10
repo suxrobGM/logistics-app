@@ -58,7 +58,7 @@
           <td>
             <a
               [routerLink]="['/loads', load.id]"
-              class="text-primary font-bold hover:underline"
+              class="text-foreground font-bold hover:underline"
               (click)="$event.stopPropagation()"
             >
               #{{ load.number }}
@@ -90,7 +90,7 @@
           </td>
           <td>
             <app-load-status-tag [status]="load.status" />
-            <div class="text-muted text-xs italic">
+            <div class="text-muted-foreground text-xs italic">
               @switch (load.status) {
                 @case ("dispatched") {
                   {{ load.dispatchedAt | dateFormat: "mediumDate" }}

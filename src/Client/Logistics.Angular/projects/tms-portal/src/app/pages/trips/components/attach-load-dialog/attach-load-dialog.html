@@ -33,7 +33,7 @@
         <p-progressSpinner strokeWidth="4" />
       </div>
     } @else if (filteredLoads().length === 0) {
-      <div class="text-muted-color flex flex-col items-center p-8 text-center">
+      <div class="text-muted-foreground flex flex-col items-center p-8 text-center">
         <i class="pi pi-inbox mb-2 text-4xl"></i>
         @if (searchQuery()) {
           <p>No loads match your search criteria</p>
@@ -73,7 +73,7 @@
             </td>
             <td>
               <div class="font-medium">{{ load.name }}</div>
-              <div class="text-muted-color text-sm">#{{ load.number }}</div>
+              <div class="text-muted-foreground text-sm">#{{ load.number }}</div>
             </td>
             <td>
               @if (load.type) {

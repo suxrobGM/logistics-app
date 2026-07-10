@@ -36,14 +36,14 @@
     <ui-surface variant="elevated" [border]="true" class="mb-6 transition-all duration-300">
       @if (session.status === "running") {
         <div class="bg-primary/10 -mx-4 -mt-4 mb-4 flex items-center gap-2 rounded-t-lg px-4 py-2">
-          <i class="pi pi-spin pi-spinner text-primary text-sm"></i>
-          <span class="text-primary text-sm font-medium">Agent is running...</span>
+          <i class="pi pi-spin pi-spinner text-foreground text-sm"></i>
+          <span class="text-foreground text-sm font-medium">Agent is running...</span>
         </div>
       }
       <ui-grid container spacing="4">
         @for (stat of statsItems(); track stat.label) {
           <ui-grid [size]="{ xs: 6, md: 2 }">
-            <span class="text-muted text-sm">{{ stat.label }}</span>
+            <span class="text-muted-foreground text-sm">{{ stat.label }}</span>
             <p class="font-medium" [class.font-mono]="stat.mono">{{ stat.value }}</p>
           </ui-grid>
         }
@@ -57,7 +57,7 @@
           <ui-icon name="comment" color="primary" />
           <span class="text-sm font-semibold">Dispatcher Instructions</span>
         </ui-stack>
-        <p class="text-secondary m-0 text-sm">{{ session.instructions }}</p>
+        <p class="text-subtle-foreground m-0 text-sm">{{ session.instructions }}</p>
       </ui-surface>
     }
 
@@ -73,7 +73,7 @@
           <ui-icon name="sparkles" color="primary" />
           <span class="font-semibold">Agent Summary</span>
           @if (session.status === "running") {
-            <i class="pi pi-spin pi-spinner text-muted text-xs"></i>
+            <i class="pi pi-spin pi-spinner text-muted-foreground text-xs"></i>
           }
         </ui-stack>
         <div
@@ -104,7 +104,7 @@
             <!-- Tool name + time + status -->
             <div class="mb-1 flex flex-wrap items-center gap-2">
               <span class="text-sm font-medium">{{ getToolLabel(decision.toolName) }}</span>
-              <span class="text-muted text-xs">
+              <span class="text-muted-foreground text-xs">
                 {{ decision.createdAt | date: "MMM d, h:mm a" }}
               </span>
               @if (isWriteTool(decision.toolName)) {
@@ -126,7 +126,7 @@
                 ></div>
                 @if (decision.reasoning.length > 150) {
                   <button
-                    class="text-primary mt-1 cursor-pointer border-none bg-transparent p-0 text-xs hover:underline"
+                    class="text-foreground mt-1 cursor-pointer border-none bg-transparent p-0 text-xs hover:underline"
                     (click)="toggleExpand(decision.id!); $event.stopPropagation()"
                   >
                     {{ isExpanded(decision.id!) ? "Show less" : "Show more" }}

@@ -72,18 +72,18 @@
 
             <div class="min-w-0 flex-1">
               <div class="flex items-center justify-between gap-2">
-                <span class="text-primary truncate font-semibold">
+                <span class="text-foreground truncate font-semibold">
                   {{ conversation.name || getParticipantNames(conversation) }}
                 </span>
                 @if (conversation.lastMessageAt) {
-                  <span class="text-muted shrink-0 text-xs">
+                  <span class="text-muted-foreground shrink-0 text-xs">
                     {{ conversation.lastMessageAt | date: "shortTime" }}
                   </span>
                 }
               </div>
 
               <div class="mt-1 flex items-center justify-between gap-2">
-                <p class="text-muted truncate text-sm">
+                <p class="text-muted-foreground truncate text-sm">
                   @if (conversation.lastMessage) {
                     {{ conversation.lastMessage.content }}
                   } @else {

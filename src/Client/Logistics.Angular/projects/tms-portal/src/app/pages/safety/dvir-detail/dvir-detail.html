@@ -34,45 +34,45 @@
     <p-card header="Inspection Details" class="w-full">
       <ui-grid container spacing="4">
         <ui-grid [size]="{ xs: 6, md: 3 }">
-          <div class="text-muted mb-1 text-sm">Status</div>
+          <div class="text-muted-foreground mb-1 text-sm">Status</div>
           <p-tag
             [value]="getStatusLabel(report()!.status)"
             [severity]="getStatusSeverity(report()!.status)"
           />
         </ui-grid>
         <ui-grid [size]="{ xs: 6, md: 3 }">
-          <div class="text-muted mb-1 text-sm">Type</div>
+          <div class="text-muted-foreground mb-1 text-sm">Type</div>
           <p-tag
             [value]="getTypeLabel(report()!.type)"
             [severity]="getTypeSeverity(report()!.type)"
           />
         </ui-grid>
         <ui-grid [size]="{ xs: 6, md: 3 }">
-          <div class="text-muted mb-1 text-sm">Date</div>
+          <div class="text-muted-foreground mb-1 text-sm">Date</div>
           <div class="font-medium">{{ report()!.inspectionDate | date: "medium" }}</div>
         </ui-grid>
         <ui-grid [size]="{ xs: 6, md: 3 }">
-          <div class="text-muted mb-1 text-sm">Odometer</div>
+          <div class="text-muted-foreground mb-1 text-sm">Odometer</div>
           <div class="font-medium">{{ report()!.odometerReading | number }} mi</div>
         </ui-grid>
       </ui-grid>
 
       <ui-grid container spacing="4" class="mt-4">
         <ui-grid [size]="{ xs: 6, md: 3 }">
-          <div class="text-muted mb-1 text-sm">Truck</div>
-          <a [routerLink]="['/trucks', report()!.truckId]" class="text-primary font-medium">
+          <div class="text-muted-foreground mb-1 text-sm">Truck</div>
+          <a [routerLink]="['/trucks', report()!.truckId]" class="text-foreground font-medium">
             {{ report()!.truckNumber }}
           </a>
         </ui-grid>
         <ui-grid [size]="{ xs: 6, md: 3 }">
-          <div class="text-muted mb-1 text-sm">Driver</div>
+          <div class="text-muted-foreground mb-1 text-sm">Driver</div>
           <div class="font-medium">{{ report()!.driverName }}</div>
         </ui-grid>
       </ui-grid>
 
       @if (report()!.driverNotes) {
         <div class="mt-4">
-          <div class="text-muted mb-1 text-sm">Driver Notes</div>
+          <div class="text-muted-foreground mb-1 text-sm">Driver Notes</div>
           <p>{{ report()!.driverNotes }}</p>
         </div>
       }
@@ -103,16 +103,16 @@
       <p-card header="Mechanic Review" class="w-full">
         <ui-grid container spacing="4">
           <ui-grid [size]="{ xs: 6, md: 3 }">
-            <div class="text-muted mb-1 text-sm">Reviewed By</div>
+            <div class="text-muted-foreground mb-1 text-sm">Reviewed By</div>
             <div class="font-medium">{{ report()!.reviewedByName }}</div>
           </ui-grid>
           <ui-grid [size]="{ xs: 6, md: 3 }">
-            <div class="text-muted mb-1 text-sm">Reviewed At</div>
+            <div class="text-muted-foreground mb-1 text-sm">Reviewed At</div>
             <div>{{ report()!.reviewedAt | date: "medium" }}</div>
           </ui-grid>
           @if (report()!.defectsCorrected !== null) {
             <ui-grid [size]="{ xs: 6, md: 3 }">
-              <div class="text-muted mb-1 text-sm">Defects Corrected</div>
+              <div class="text-muted-foreground mb-1 text-sm">Defects Corrected</div>
               @if (report()!.defectsCorrected) {
                 <span class="text-success font-medium">Yes</span>
               } @else {
@@ -122,7 +122,7 @@
           }
           @if (report()!.hasMechanicSignature) {
             <ui-grid [size]="{ xs: 6, md: 3 }">
-              <div class="text-muted mb-1 text-sm">Signature</div>
+              <div class="text-muted-foreground mb-1 text-sm">Signature</div>
               <ui-stack direction="row" align="center" gap="1" class="text-success">
                 <ui-icon name="check-circle" />
                 <span class="text-sm">Mechanic signed</span>
@@ -132,7 +132,7 @@
         </ui-grid>
         @if (report()!.mechanicNotes) {
           <div class="mt-4">
-            <div class="text-muted mb-1 text-sm">Mechanic Notes</div>
+            <div class="text-muted-foreground mb-1 text-sm">Mechanic Notes</div>
             <p>{{ report()!.mechanicNotes }}</p>
           </div>
         }
@@ -175,7 +175,7 @@
   [style]="{ width: '450px' }"
 >
   <div class="flex flex-col gap-4">
-    <p class="text-muted">
+    <p class="text-muted-foreground">
       Dismissing this report will mark it as cleared. This is typically used for reports with no
       defects that don't require mechanic review.
     </p>
@@ -213,7 +213,7 @@
   [style]="{ width: '450px' }"
 >
   <div class="flex flex-col gap-4">
-    <p class="text-muted">
+    <p class="text-muted-foreground">
       Rejecting this report will send it back to the driver for corrections. Please provide a
       reason.
     </p>

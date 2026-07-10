@@ -18,7 +18,7 @@
           </div>
           <div>
             <div class="font-medium">{{ getProviderLabel(provider.providerType) }}</div>
-            <small class="text-muted">{{ provider.providerType }}</small>
+            <small class="text-muted-foreground">{{ provider.providerType }}</small>
           </div>
         </ui-stack>
       </td>
@@ -37,9 +37,9 @@
       </td>
       <td>
         @if (provider.createdAt) {
-          <span class="text-muted text-sm">{{ provider.createdAt | date: "short" }}</span>
+          <span class="text-muted-foreground text-sm">{{ provider.createdAt | date: "short" }}</span>
         } @else {
-          <span class="text-muted text-sm">-</span>
+          <span class="text-muted-foreground text-sm">-</span>
         }
       </td>
       <td>

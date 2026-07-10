@@ -21,9 +21,9 @@ const sizeClasses: Record<IconSize, string> = {
 
 const colorClasses: Record<IconColor, string> = {
   inherit: "",
-  primary: "text-primary",
-  secondary: "text-secondary",
-  muted: "text-muted",
+  primary: "text-foreground",
+  secondary: "text-subtle-foreground",
+  muted: "text-muted-foreground",
   success: "text-[var(--success)]",
   warning: "text-[var(--warning)]",
   danger: "text-[var(--danger)]",

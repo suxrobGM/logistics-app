@@ -101,7 +101,7 @@
                     <ui-typography variant="body" color="muted">Email</ui-typography>
                     <a
                       [href]="'mailto:' + employee.email"
-                      class="text-accent font-medium hover:underline"
+                      class="text-primary font-medium hover:underline"
                     >
                       {{ employee.email }}
                     </a>
@@ -114,7 +114,7 @@
                     @if (employee.phoneNumber) {
                       <a
                         [href]="'tel:' + employee.phoneNumber"
-                        class="text-accent font-medium hover:underline"
+                        class="text-primary font-medium hover:underline"
                       >
                         {{ employee.phoneNumber }}
                       </a>
@@ -188,7 +188,7 @@
               </ng-template>
 
               <ui-stack direction="row" align="center" gap="2">
-                <ui-icon name="map-marker" class="text-accent" />
+                <ui-icon name="map-marker" class="text-primary" />
                 <span>{{ employee.lastKnownLocation }}</span>
               </ui-stack>
             </p-card>

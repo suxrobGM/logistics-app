@@ -24,25 +24,25 @@
     <!-- Summary Stats -->
     <div class="mb-4 flex flex-wrap gap-6">
       <div>
-        <div class="text-xs font-medium uppercase tracking-wide text-muted">Total Gross</div>
+        <div class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total Gross</div>
         <div class="mt-1 font-mono text-xl font-bold text-emerald-600">
           {{ totalGross() | currencyFormat }}
         </div>
       </div>
       <div>
-        <div class="text-xs font-medium uppercase tracking-wide text-muted">Total Miles</div>
-        <div class="mt-1 font-mono text-xl font-bold text-primary">
+        <div class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total Miles</div>
+        <div class="mt-1 font-mono text-xl font-bold text-foreground">
           {{ totalDistance() | number: "1.0-0" }} mi
         </div>
       </div>
       <div>
-        <div class="text-xs font-medium uppercase tracking-wide text-muted">Rate/Mile</div>
+        <div class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Rate/Mile</div>
         <div class="mt-1 font-mono text-xl font-bold text-purple-600">
           {{ rpm() | currencyFormat }}
         </div>
       </div>
       <div>
-        <div class="text-xs font-medium uppercase tracking-wide text-muted">Avg/Day</div>
+        <div class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Avg/Day</div>
         <div class="mt-1 font-mono text-xl font-bold text-cyan-600">
           {{ avgDailyGross() | currencyFormat }}
         </div>

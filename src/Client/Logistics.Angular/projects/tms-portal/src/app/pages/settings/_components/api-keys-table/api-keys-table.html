@@ -29,7 +29,7 @@
             @if (key.lastUsedAt) {
               {{ key.lastUsedAt | date: "medium" }}
             } @else {
-              <span class="text-muted">Never</span>
+              <span class="text-muted-foreground">Never</span>
             }
           </td>
           <td>
@@ -46,12 +46,12 @@
       </ng-template>
       <ng-template #empty>
         <tr>
-          <td colspan="6" class="text-muted text-center">No API keys yet.</td>
+          <td colspan="6" class="text-muted-foreground text-center">No API keys yet.</td>
         </tr>
       </ng-template>
     </ui-data-table>
   } @else {
-    <div class="text-muted py-8 text-center">
+    <div class="text-muted-foreground py-8 text-center">
       <i class="pi pi-key mb-2 text-4xl"></i>
       <p>No API keys yet. Create one to get started.</p>
     </div>
@@ -113,7 +113,7 @@
       />
     </div>
 
-    <p class="text-muted text-sm">
+    <p class="text-muted-foreground text-sm">
       Use this key as a Bearer token for MCP clients or REST API requests.
     </p>
   }

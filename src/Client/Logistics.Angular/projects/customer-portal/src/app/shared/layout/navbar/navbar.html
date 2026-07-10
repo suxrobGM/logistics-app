@@ -4,7 +4,7 @@
       <!-- Logo and company name -->
       <div class="flex items-center gap-4">
         <a routerLink="/" class="flex items-center gap-2">
-          <i class="pi pi-box text-primary text-2xl"></i>
+          <i class="pi pi-box text-foreground text-2xl"></i>
           <span class="text-xl font-semibold text-gray-900">Customer Portal</span>
         </a>
 
@@ -29,7 +29,7 @@
         @for (item of navItems; track item.route) {
           <a
             [routerLink]="item.route"
-            routerLinkActive="bg-primary-50 text-primary"
+            routerLinkActive="bg-primary-50 text-foreground"
             [routerLinkActiveOptions]="{ exact: item.route === '/' }"
             class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
           >
@@ -62,7 +62,7 @@
       @for (item of navItems; track item.route) {
         <a
           [routerLink]="item.route"
-          routerLinkActive="text-primary"
+          routerLinkActive="text-foreground"
           [routerLinkActiveOptions]="{ exact: item.route === '/' }"
           class="flex flex-col items-center gap-1 px-3 py-2 text-xs text-gray-600"
         >

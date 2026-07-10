@@ -1,5 +1,5 @@
 <div
-  class="border-surface flex items-center justify-between gap-4 rounded-lg border px-4 py-3"
+  class="border-border flex items-center justify-between gap-4 rounded-lg border px-4 py-3"
   [class.opacity-60]="locked()"
 >
   <div class="min-w-0">
@@ -16,7 +16,7 @@
       }
     </div>
     @if (description()) {
-      <p class="text-muted-color mt-0.5 text-sm">{{ description() }}</p>
+      <p class="text-muted-foreground mt-0.5 text-sm">{{ description() }}</p>
     }
   </div>
 

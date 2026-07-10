@@ -14,7 +14,7 @@
 <p-card class="border-default border">
   <ng-template #header>
     <div class="flex items-center gap-2 p-4 pb-0">
-      <i class="pi pi-file-check text-primary"></i>
+      <i class="pi pi-file-check text-foreground"></i>
       <h3 class="m-0 text-lg font-semibold">POD / BOL Documents</h3>
       <p-tag [value]="documents().length.toString()" severity="info" />
     </div>
@@ -49,17 +49,17 @@
           <td>
             <div class="flex flex-col">
               <span class="text-sm font-medium">{{ doc.originalFileName || doc.fileName }}</span>
-              <span class="text-muted text-xs">{{ formatFileSize(doc.fileSizeBytes) }}</span>
+              <span class="text-muted-foreground text-xs">{{ formatFileSize(doc.fileSizeBytes) }}</span>
             </div>
           </td>
           <td>
             @if (doc.recipientName) {
               <div class="flex items-center gap-2">
-                <i class="pi pi-user text-muted"></i>
+                <i class="pi pi-user text-muted-foreground"></i>
                 <span class="text-sm">{{ doc.recipientName }}</span>
               </div>
             } @else {
-              <span class="text-muted text-sm">-</span>
+              <span class="text-muted-foreground text-sm">-</span>
             }
           </td>
           <td>
@@ -67,21 +67,21 @@
               <a
                 [href]="getGoogleMapsUrl(doc.captureLatitude, doc.captureLongitude)"
                 target="_blank"
-                class="text-primary flex items-center gap-1 text-sm hover:underline"
+                class="text-foreground flex items-center gap-1 text-sm hover:underline"
                 (click)="$event.stopPropagation()"
               >
                 <i class="pi pi-map-marker"></i>
                 <span>View on Map</span>
               </a>
             } @else {
-              <span class="text-muted text-sm">-</span>
+              <span class="text-muted-foreground text-sm">-</span>
             }
           </td>
           <td>
             @if (doc.capturedAt) {
               <span class="text-sm">{{ doc.capturedAt | date: "medium" }}</span>
             } @else {
-              <span class="text-muted text-sm">{{ doc.createdAt | date: "medium" }}</span>
+              <span class="text-muted-foreground text-sm">{{ doc.createdAt | date: "medium" }}</span>
             }
           </td>
           <td>
@@ -110,7 +110,7 @@
       <ng-template #empty>
         <tr>
           <td colspan="6" class="py-8 text-center">
-            <div class="text-muted flex flex-col items-center gap-3">
+            <div class="text-muted-foreground flex flex-col items-center gap-3">
               <i class="pi pi-file-check text-4xl"></i>
               <div>
                 <p class="font-medium">No POD/BOL documents found</p>
@@ -141,7 +141,7 @@
           [value]="getTypeLabel(selectedDocument()!.type)"
           [severity]="getTypeSeverity(selectedDocument()!.type)"
         />
-        <span class="text-muted text-sm">
+        <span class="text-muted-foreground text-sm">
           {{ selectedDocument()!.capturedAt | date: "medium" }}
         </span>
       </div>
@@ -149,13 +149,13 @@
       <!-- File Info -->
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <span class="text-muted mb-1 block text-xs font-medium">File Name</span>
+          <span class="text-muted-foreground mb-1 block text-xs font-medium">File Name</span>
           <p class="text-sm">
             {{ selectedDocument()!.originalFileName || selectedDocument()!.fileName }}
           </p>
         </div>
         <div>
-          <span class="text-muted mb-1 block text-xs font-medium">File Size</span>
+          <span class="text-muted-foreground mb-1 block text-xs font-medium">File Size</span>
           <p class="text-sm">{{ formatFileSize(selectedDocument()!.fileSizeBytes) }}</p>
         </div>
       </div>
@@ -171,7 +171,7 @@
       <!-- Signature Preview -->
       @if (selectedDocument()!.recipientSignature) {
         <div>
-          <span class="text-muted mb-2 block text-xs font-medium">Signature</span>
+          <span class="text-muted-foreground mb-2 block text-xs font-medium">Signature</span>
           <div class="bg-surface rounded border p-2">
             @if (
               selectedDocument()!.recipientSignature!.startsWith("data:") ||
@@ -183,7 +183,7 @@
                 class="max-h-24 w-auto"
               />
             } @else {
-              <p class="text-muted text-sm">Signature captured</p>
+              <p class="text-muted-foreground text-sm">Signature captured</p>
             }
           </div>
         </div>
@@ -210,7 +210,7 @@
                 )
               "
               target="_blank"
-              class="text-primary text-sm hover:underline"
+              class="text-foreground text-sm hover:underline"
             >
               <i class="pi pi-external-link mr-1"></i>
               Open in Maps
@@ -222,7 +222,7 @@
       <!-- Notes -->
       @if (selectedDocument()!.notes) {
         <div>
-          <span class="text-muted mb-1 block text-xs font-medium">Notes</span>
+          <span class="text-muted-foreground mb-1 block text-xs font-medium">Notes</span>
           <p class="bg-hover rounded p-2 text-sm">{{ selectedDocument()!.notes }}</p>
         </div>
       }
@@ -230,9 +230,9 @@
       <!-- Image Preview -->
       @if (isImage(selectedDocument()!)) {
         <div>
-          <span class="text-muted mb-2 block text-xs font-medium">Document Preview</span>
+          <span class="text-muted-foreground mb-2 block text-xs font-medium">Document Preview</span>
           <div class="bg-hover rounded border p-2">
-            <p class="text-muted text-center text-sm">
+            <p class="text-muted-foreground text-center text-sm">
               <i class="pi pi-image mr-1"></i>
               Image document - click Download to view
             </p>

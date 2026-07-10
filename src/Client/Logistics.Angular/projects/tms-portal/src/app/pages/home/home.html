@@ -111,7 +111,7 @@
                 <ng-template #header>
                   <ui-stack direction="row" align="center" justify="between" class="py-3 pr-2 pl-4">
                     <ui-stack direction="row" align="center" gap="2">
-                      <span class="text-accent">
+                      <span class="text-primary">
                         <ui-icon name="box" color="inherit" />
                       </span>
                       <ui-typography variant="h4" tag="h4" color="primary">
@@ -149,7 +149,7 @@
                       <td>
                         <a
                           [routerLink]="['/loads', load.id, 'edit']"
-                          class="text-primary font-semibold"
+                          class="text-foreground font-semibold"
                         >
                           #{{ load.number }}
                         </a>
@@ -176,11 +176,11 @@
                       </td>
                       <td>
                         @if (load.assignedTruckId) {
-                          <a [routerLink]="['/trucks', load.assignedTruckId]" class="text-primary">
+                          <a [routerLink]="['/trucks', load.assignedTruckId]" class="text-foreground">
                             {{ load.assignedTruckNumber }}
                           </a>
                         } @else {
-                          <span class="text-muted">Unassigned</span>
+                          <span class="text-muted-foreground">Unassigned</span>
                         }
                       </td>
                     </tr>
@@ -188,7 +188,7 @@
                   <ng-template #empty>
                     <tr>
                       <td colspan="5" class="text-center">
-                        <ui-stack align="center" gap="2" class="text-muted py-8">
+                        <ui-stack align="center" gap="2" class="text-muted-foreground py-8">
                           <i class="pi pi-inbox text-4xl" aria-hidden="true"></i>
                           <ui-typography variant="body" color="muted">
                             No active loads
@@ -211,7 +211,7 @@
               <p-card class="h-full">
                 <ng-template #header>
                   <ui-stack direction="row" align="center" gap="2" class="py-3 pr-2 pl-4">
-                    <span class="text-accent">
+                    <span class="text-primary">
                       <ui-icon name="map-marker" color="inherit" />
                     </span>
                     <ui-typography variant="h4" tag="h4" color="primary">

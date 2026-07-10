@@ -35,11 +35,11 @@
             >
               <app-user-avatar [initials]="getInitials(participant.employeeName)" />
               <div class="min-w-0 flex-1">
-                <p class="text-primary truncate font-medium">
+                <p class="text-foreground truncate font-medium">
                   {{ participant.employeeName || "Unknown" }}
                 </p>
                 @if (participant.employeeId === currentUserId()) {
-                  <p class="text-muted text-xs">You</p>
+                  <p class="text-muted-foreground text-xs">You</p>
                 }
               </div>
             </ui-stack>

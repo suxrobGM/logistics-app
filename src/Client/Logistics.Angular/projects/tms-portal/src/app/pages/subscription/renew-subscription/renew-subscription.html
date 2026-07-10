@@ -31,17 +31,17 @@
 
     <div class="space-y-3">
       <div class="flex items-center justify-between">
-        <span class="text-muted">Base monthly fee</span>
+        <span class="text-muted-foreground">Base monthly fee</span>
         <span class="font-medium">{{ subscription()?.plan?.price | currency }}</span>
       </div>
       <div class="flex items-center justify-between">
-        <span class="text-muted">Per truck fee</span>
+        <span class="text-muted-foreground">Per truck fee</span>
         <span class="font-medium">
           {{ subscription()?.plan?.perTruckPrice | currency }} / truck
         </span>
       </div>
       <div class="flex items-center justify-between">
-        <span class="text-muted">Active trucks</span>
+        <span class="text-muted-foreground">Active trucks</span>
         <span class="font-medium">{{ truckCount() }}</span>
       </div>
       <div class="border-default border-t pt-3">

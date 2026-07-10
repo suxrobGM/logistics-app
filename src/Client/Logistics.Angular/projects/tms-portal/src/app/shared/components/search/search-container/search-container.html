@@ -14,7 +14,7 @@
 >
   <ng-template #empty>
     <div class="p-2">
-      <span class="text-muted text-sm">
+      <span class="text-muted-foreground text-sm">
         No containers matching <b>"{{ lastQuery() }}"</b>
       </span>
     </div>
@@ -22,7 +22,7 @@
   <ng-template let-container #item>
     <div class="flex flex-col">
       <div class="font-medium">{{ container.number }}</div>
-      <div class="text-muted text-xs">
+      <div class="text-muted-foreground text-xs">
         {{ container.isoType }}
         @if (container.currentTerminalCode) {
           · {{ container.currentTerminalCode }}

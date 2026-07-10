@@ -14,7 +14,7 @@ import { ExpenseAnalyticsStore } from "../store/expense-analytics.store";
 
 const RANK_BADGE_CLASSES: Record<number, string> = {
   0: "bg-warning/20 text-warning",
-  1: "bg-active text-secondary",
+  1: "bg-active text-subtle-foreground",
   2: "bg-warning/20 text-warning",
 };
 
@@ -50,6 +50,6 @@ export class ExpenseAnalyticsPage implements OnInit {
   }
 
   protected rankBadgeClass(index: number): string {
-    return RANK_BADGE_CLASSES[index] ?? "bg-hover text-secondary";
+    return RANK_BADGE_CLASSES[index] ?? "bg-hover text-subtle-foreground";
   }
 }

@@ -4,7 +4,7 @@
   [modal]="true"
   [style]="{ width: '480px' }"
 >
-  <p class="text-muted-color mt-0 mb-4 text-sm">
+  <p class="text-muted-foreground mt-0 mb-4 text-sm">
     @if (mode() === "human_in_the_loop") {
       The agent will propose assignments for your review.
     } @else {
@@ -26,7 +26,7 @@
   ></textarea>
   <div
     class="mt-1 text-right text-xs"
-    [class.text-muted]="charsRemaining() > 50"
+    [class.text-muted-foreground]="charsRemaining() > 50"
     [class.text-red-500]="charsRemaining() <= 50"
   >
     {{ charsRemaining() }} / 500

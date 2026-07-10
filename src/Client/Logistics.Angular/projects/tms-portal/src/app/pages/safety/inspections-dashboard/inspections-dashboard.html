@@ -16,7 +16,7 @@
           <i class="pi pi-clipboard text-warning text-2xl"></i>
         </div>
         <div>
-          <div class="text-muted text-sm">Pending DVIR Reviews</div>
+          <div class="text-muted-foreground text-sm">Pending DVIR Reviews</div>
           <div class="text-2xl font-bold">{{ pendingDvirCount() }}</div>
         </div>
       </div>
@@ -31,7 +31,7 @@
           <i class="pi pi-exclamation-triangle text-danger text-2xl"></i>
         </div>
         <div>
-          <div class="text-muted text-sm">Open Accidents</div>
+          <div class="text-muted-foreground text-sm">Open Accidents</div>
           <div class="text-2xl font-bold">{{ openAccidentsCount() }}</div>
         </div>
       </div>
@@ -46,7 +46,7 @@
           <i class="pi pi-file-edit text-info text-2xl"></i>
         </div>
         <div>
-          <div class="text-muted text-sm">Condition Reports</div>
+          <div class="text-muted-foreground text-sm">Condition Reports</div>
           <div class="text-2xl font-bold">{{ conditionReportsCount() }}</div>
         </div>
       </div>
@@ -61,7 +61,7 @@
           <i class="pi pi-user text-2xl text-purple-500"></i>
         </div>
         <div>
-          <div class="text-muted text-sm">Driver Behavior</div>
+          <div class="text-muted-foreground text-sm">Driver Behavior</div>
           <div class="text-2xl font-bold">-</div>
         </div>
       </div>
@@ -125,8 +125,8 @@
         </ui-data-table>
       } @else {
         <div class="flex flex-col items-center py-8 text-center">
-          <i class="pi pi-clipboard text-muted mb-2 text-3xl"></i>
-          <p class="text-muted">No recent DVIRs</p>
+          <i class="pi pi-clipboard text-muted-foreground mb-2 text-3xl"></i>
+          <p class="text-muted-foreground">No recent DVIRs</p>
         </div>
       }
     </p-card>
@@ -172,7 +172,7 @@
       } @else {
         <div class="flex flex-col items-center py-8 text-center">
           <i class="pi pi-check-circle text-success mb-2 text-3xl"></i>
-          <p class="text-muted">No recent accidents</p>
+          <p class="text-muted-foreground">No recent accidents</p>
         </div>
       }
     </p-card>

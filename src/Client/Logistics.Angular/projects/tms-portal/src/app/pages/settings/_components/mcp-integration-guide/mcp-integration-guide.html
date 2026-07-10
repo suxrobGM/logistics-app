@@ -2,7 +2,7 @@
   <i class="pi pi-link text-xl"></i>
   <h2 class="m-0 text-lg font-semibold">MCP Server Integration</h2>
 </div>
-<p class="text-muted mb-4">
+<p class="text-muted-foreground mb-4">
   Connect AI assistants like Claude, GitHub Copilot, Cursor, or Windsurf to your fleet data using
   the Model Context Protocol. Create an API key above, then use the snippets below.
 </p>
@@ -11,7 +11,7 @@
 </p-message>
 
 <div class="bg-subtle border-default mb-4 flex items-center gap-2 rounded-lg border p-3">
-  <span class="text-muted text-sm">MCP Endpoint:</span>
+  <span class="text-muted-foreground text-sm">MCP Endpoint:</span>
   <code class="flex-1 text-sm font-semibold">{{ mcpEndpoint }}</code>
   <p-button
     icon="pi pi-copy"
@@ -33,7 +33,7 @@
 
   <p-tabpanels>
     <p-tabpanel value="claude-desktop">
-      <p class="text-muted mb-2 text-sm">Add to your <code>claude_desktop_config.json</code>:</p>
+      <p class="text-muted-foreground mb-2 text-sm">Add to your <code>claude_desktop_config.json</code>:</p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
         <pre class="overflow-x-auto text-sm">{{ claudeDesktopSnippet }}</pre>
         <p-button
@@ -49,7 +49,7 @@
     </p-tabpanel>
 
     <p-tabpanel value="claude-code">
-      <p class="text-muted mb-2 text-sm">Run in your terminal:</p>
+      <p class="text-muted-foreground mb-2 text-sm">Run in your terminal:</p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
         <pre class="overflow-x-auto text-sm">{{ claudeCodeSnippet }}</pre>
         <p-button
@@ -65,7 +65,7 @@
     </p-tabpanel>
 
     <p-tabpanel value="cursor">
-      <p class="text-muted mb-2 text-sm">Add to your Cursor MCP settings:</p>
+      <p class="text-muted-foreground mb-2 text-sm">Add to your Cursor MCP settings:</p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
         <pre class="overflow-x-auto text-sm">{{ cursorSnippet }}</pre>
         <p-button
@@ -81,7 +81,7 @@
     </p-tabpanel>
 
     <p-tabpanel value="copilot">
-      <p class="text-muted mb-2 text-sm">
+      <p class="text-muted-foreground mb-2 text-sm">
         Add to your VS Code <code>.vscode/mcp.json</code> or user settings:
       </p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
@@ -99,7 +99,7 @@
     </p-tabpanel>
 
     <p-tabpanel value="api">
-      <p class="text-muted mb-2 text-sm">
+      <p class="text-muted-foreground mb-2 text-sm">
         Use the API key as a Bearer token for REST API requests:
       </p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">

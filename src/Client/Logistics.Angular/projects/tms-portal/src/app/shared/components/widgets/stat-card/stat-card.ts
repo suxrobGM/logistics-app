@@ -37,7 +37,7 @@ export class StatCard {
   protected readonly trendClasses = computed(() => {
     if (this.trendDirection() === "up") return "text-success";
     if (this.trendDirection() === "down") return "text-danger";
-    return "text-muted";
+    return "text-muted-foreground";
   });
 
   protected readonly trendIcon = computed(() => {

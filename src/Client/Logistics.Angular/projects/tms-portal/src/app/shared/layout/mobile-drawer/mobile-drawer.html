@@ -53,25 +53,25 @@
       <!-- User profile button -->
       @if (userFullName()) {
         <button
-          class="text-secondary hover:bg-hover hover:text-primary flex w-full cursor-pointer items-center gap-3 rounded-md border-none bg-transparent px-1 py-2 text-left text-[0.9375rem] font-medium transition-all"
+          class="text-subtle-foreground hover:bg-hover hover:text-foreground flex w-full cursor-pointer items-center gap-3 rounded-md border-none bg-transparent px-1 py-2 text-left text-[0.9375rem] font-medium transition-all"
           (click)="mobileUserPopover.toggle($event)"
           type="button"
         >
           <div
-            class="bg-accent/12 border-accent/20 flex size-9 shrink-0 items-center justify-center rounded-full border"
+            class="bg-primary/12 border-accent/20 flex size-9 shrink-0 items-center justify-center rounded-full border"
           >
-            <i class="pi pi-user text-accent text-sm"></i>
+            <i class="pi pi-user text-primary text-sm"></i>
           </div>
           <div class="min-w-0 flex-1">
             <span class="block truncate text-sm font-medium">{{ userFullName() }}</span>
             @if (userRole()) {
               <span
-                class="text-accent block text-[0.6875rem] font-semibold tracking-wider uppercase"
+                class="text-primary block text-[0.6875rem] font-semibold tracking-wider uppercase"
                 >{{ userRole() }}</span
               >
             }
           </div>
-          <i class="pi pi-ellipsis-v text-muted text-xs"></i>
+          <i class="pi pi-ellipsis-v text-muted-foreground text-xs"></i>
         </button>
       }
     </div>
@@ -83,19 +83,19 @@
   <div class="w-52">
     @if (userFullName()) {
       <div class="border-subtle border-b px-3.5 py-2.5">
-        <div class="text-primary text-sm font-semibold">{{ userFullName() }}</div>
+        <div class="text-foreground text-sm font-semibold">{{ userFullName() }}</div>
         @if (userRole()) {
-          <div class="text-accent text-[0.6875rem] font-medium">{{ userRole() }}</div>
+          <div class="text-primary text-[0.6875rem] font-medium">{{ userRole() }}</div>
         }
       </div>
     }
     <div class="p-1">
       <button
-        class="text-secondary hover:bg-hover hover:text-primary flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent px-3 py-2 text-left text-[0.8125rem] font-medium transition-all"
+        class="text-subtle-foreground hover:bg-hover hover:text-foreground flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent px-3 py-2 text-left text-[0.8125rem] font-medium transition-all"
         (click)="openAccountUrl(); mobileUserPopover.hide()"
         type="button"
       >
-        <i class="pi pi-user-edit text-muted w-5 text-center"></i>
+        <i class="pi pi-user-edit text-muted-foreground w-5 text-center"></i>
         <span>Manage Profile</span>
       </button>
       <button

@@ -1,5 +1,5 @@
 @if (defects().length === 0) {
-  <p class="text-muted py-4 text-center text-sm">No defects documented.</p>
+  <p class="text-muted-foreground py-4 text-center text-sm">No defects documented.</p>
 } @else {
   <ui-data-table [value]="defects()" [scrollable]="true">
     <ng-template #header>

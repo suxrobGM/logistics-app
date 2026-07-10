@@ -61,9 +61,9 @@ const variantDefaultTag: Record<TypographyVariant, TypographyTag> = {
 };
 
 const colorClasses: Record<TypographyColor, string> = {
-  primary: "text-primary",
-  secondary: "text-secondary",
-  muted: "text-muted",
+  primary: "text-foreground",
+  secondary: "text-subtle-foreground",
+  muted: "text-muted-foreground",
   inherit: "",
 };
 

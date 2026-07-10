@@ -23,7 +23,7 @@
       <td>
         {{ row.license.issuingCountry }}
         @if (row.license.issuingRegion) {
-          <span class="text-muted text-xs">/ {{ row.license.issuingRegion }}</span>
+          <span class="text-muted-foreground text-xs">/ {{ row.license.issuingRegion }}</span>
         }
       </td>
       <td>
@@ -34,7 +34,7 @@
             }
           </ui-stack>
         } @else {
-          <span class="text-muted text-sm">—</span>
+          <span class="text-muted-foreground text-sm">—</span>
         }
       </td>
       <td>{{ row.license.expiresAt | date: "mediumDate" }}</td>
@@ -66,7 +66,7 @@
 
   <ng-template #empty>
     <tr>
-      <td colspan="7" class="text-muted py-12 text-center">
+      <td colspan="7" class="text-muted-foreground py-12 text-center">
         No licenses on file. Click "Add license" to record one.
       </td>
     </tr>

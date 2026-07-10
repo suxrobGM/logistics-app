@@ -1,7 +1,7 @@
 <div class="border-default bg-elevated rounded-lg border p-4">
   <div class="mb-3 flex items-center justify-between">
     <h4
-      class="text-secondary flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
+      class="text-subtle-foreground flex items-center gap-2 text-sm font-semibold tracking-wide uppercase"
     >
       <i class="pi pi-file"></i>
       Document Status
@@ -54,7 +54,7 @@
   </div>
 
   @if (summary().missingRequired.length > 0) {
-    <div class="text-muted mt-3 text-xs">
+    <div class="text-muted-foreground mt-3 text-xs">
       <i class="pi pi-info-circle mr-1"></i>
       Missing required documents: {{ summary().missingRequiredLabels }}
     </div>

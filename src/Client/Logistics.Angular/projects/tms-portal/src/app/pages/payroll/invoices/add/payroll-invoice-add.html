@@ -56,23 +56,23 @@
             <ui-grid container spacing="4">
               <ui-grid [size]="6">
                 <ui-typography variant="caption" color="muted">Employee</ui-typography>
-                <p class="text-primary font-medium">{{ selectedEmployee()!.fullName }}</p>
+                <p class="text-foreground font-medium">{{ selectedEmployee()!.fullName }}</p>
               </ui-grid>
               <ui-grid [size]="6">
                 <ui-typography variant="caption" color="muted">Role</ui-typography>
-                <p class="text-primary font-medium">
+                <p class="text-foreground font-medium">
                   {{ selectedEmployee()!.role?.displayName ?? "N/A" }}
                 </p>
               </ui-grid>
               <ui-grid [size]="6">
                 <ui-typography variant="caption" color="muted">Salary Type</ui-typography>
-                <p class="text-primary font-medium">
+                <p class="text-foreground font-medium">
                   {{ getSalaryTypeDesc(selectedEmployee()!.salaryType) }}
                 </p>
               </ui-grid>
               <ui-grid [size]="6">
                 <ui-typography variant="caption" color="muted">Rate</ui-typography>
-                <p class="text-primary font-medium">
+                <p class="text-foreground font-medium">
                   @if (selectedEmployee()!.salaryType === "share_of_gross") {
                     {{ selectedEmployee()!.salary | percent }}
                   } @else {
@@ -172,7 +172,7 @@
                 </td>
                 <td class="text-center">
                   @if (item.loading) {
-                    <i class="pi pi-spin pi-spinner text-primary"></i>
+                    <i class="pi pi-spin pi-spinner text-foreground"></i>
                   } @else if (item.error) {
                     <i class="pi pi-times-circle text-danger" [pTooltip]="item.error"></i>
                   } @else {
@@ -183,7 +183,7 @@
             </ng-template>
             <ng-template #empty>
               <tr>
-                <td colspan="5" class="text-muted text-center">No employees selected</td>
+                <td colspan="5" class="text-muted-foreground text-center">No employees selected</td>
               </tr>
             </ng-template>
           </ui-data-table>

@@ -25,8 +25,8 @@
         >
           <app-user-avatar [initials]="getInitials(recipient.fullName)" />
           <div class="flex-1">
-            <p class="text-primary font-medium">{{ recipient.fullName }}</p>
-            <p class="text-muted text-xs">{{ recipient.email }}</p>
+            <p class="text-foreground font-medium">{{ recipient.fullName }}</p>
+            <p class="text-muted-foreground text-xs">{{ recipient.email }}</p>
           </div>
           <p-button
             icon="pi pi-times"
@@ -57,7 +57,7 @@
               />
               <div>
                 <p class="font-medium">{{ employee.fullName }}</p>
-                <p class="text-muted text-xs">{{ employee.email }}</p>
+                <p class="text-muted-foreground text-xs">{{ employee.email }}</p>
               </div>
             </div>
           </ng-template>

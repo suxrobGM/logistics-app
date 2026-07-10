@@ -67,7 +67,7 @@
                 <i class="pi pi-check-circle"></i>
                 Resolved
               </span>
-              <span class="text-muted text-xs">
+              <span class="text-muted-foreground text-xs">
                 {{ exception.resolvedAt | date: "mediumDate" }}
               </span>
             } @else {
@@ -89,7 +89,7 @@
               />
             } @else {
               <span
-                class="text-muted cursor-help text-sm"
+                class="text-muted-foreground cursor-help text-sm"
                 [pTooltip]="exception.resolution"
                 [showDelay]="300"
                 tooltipPosition="left"
@@ -104,7 +104,7 @@
       <ng-template #empty>
         <tr>
           <td colspan="6" class="py-8 text-center">
-            <div class="text-muted flex flex-col items-center gap-3">
+            <div class="text-muted-foreground flex flex-col items-center gap-3">
               <i class="pi pi-check-circle text-success text-4xl"></i>
               <div>
                 <p class="font-medium">No exceptions reported</p>

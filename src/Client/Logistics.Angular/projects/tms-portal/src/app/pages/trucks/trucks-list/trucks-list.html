@@ -87,10 +87,10 @@
                 @if (truck.licensePlate) {
                   <span class="font-mono">{{ truck.licensePlate }}</span>
                   @if (truck.licensePlateState) {
-                    <span class="text-muted ml-1">({{ truck.licensePlateState }})</span>
+                    <span class="text-muted-foreground ml-1">({{ truck.licensePlateState }})</span>
                   }
                 } @else {
-                  <span class="text-muted">-</span>
+                  <span class="text-muted-foreground">-</span>
                 }
               </td>
               <td
@@ -104,10 +104,10 @@
                 @if (truck.mainDriver) {
                   <span>{{ truck.mainDriver.fullName }}</span>
                   @if (truck.secondaryDriver) {
-                    <span class="text-muted ml-1">& {{ truck.secondaryDriver.fullName }}</span>
+                    <span class="text-muted-foreground ml-1">& {{ truck.secondaryDriver.fullName }}</span>
                   }
                 } @else {
-                  <span class="text-muted">Unassigned</span>
+                  <span class="text-muted-foreground">Unassigned</span>
                 }
               </td>
 

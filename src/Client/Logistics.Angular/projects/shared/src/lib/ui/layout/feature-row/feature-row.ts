@@ -9,7 +9,7 @@ import { Icon } from "../../content/icon/icon";
  *
  * Shared by the admin portal (default + per-tenant feature config) and the TMS
  * portal (tenant self-service feature toggles) so all three read identically.
- * Uses only cross-portal-safe utilities (`border-surface`, `text-muted-color`),
+ * Uses only cross-portal-safe utilities (`border-border`, `text-muted-foreground`),
  * never the TMS-only `border-default` / `bg-subtle` tokens.
  */
 @Component({

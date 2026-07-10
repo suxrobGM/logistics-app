@@ -8,18 +8,18 @@
         [style.width.%]="progress()"
       ></div>
     </div>
-    <span class="text-muted text-xs whitespace-nowrap">{{ progress() }}%</span>
+    <span class="text-muted-foreground text-xs whitespace-nowrap">{{ progress() }}%</span>
   </div>
 } @else {
   <!-- Full version with cities -->
   <div class="flex flex-col gap-1">
-    <div class="text-muted flex items-center justify-between text-xs">
+    <div class="text-muted-foreground flex items-center justify-between text-xs">
       <span class="max-w-24 truncate" [pTooltip]="originCity()">
         {{ originCity() || "Origin" }}
       </span>
       <span
         class="text-center text-xs font-medium"
-        [class]="status() === 'cancelled' ? 'text-red-600' : 'text-primary'"
+        [class]="status() === 'cancelled' ? 'text-red-600' : 'text-foreground'"
       >
         {{ statusLabel() }}
       </span>
@@ -56,7 +56,7 @@
         ></div>
       </div>
     </div>
-    <div class="text-muted flex items-center justify-between text-xs">
+    <div class="text-muted-foreground flex items-center justify-between text-xs">
       <span>Start</span>
       <span>Pickup</span>
       <span>Transit</span>

@@ -105,7 +105,7 @@
             @if (log.endTime) {
               {{ log.endTime | date: "shortTime" }}
             } @else {
-              <span class="text-muted">Ongoing</span>
+              <span class="text-muted-foreground">Ongoing</span>
             }
           </td>
           <td>
@@ -119,18 +119,18 @@
             @if (log.location) {
               <span class="text-sm">{{ log.location }}</span>
             } @else if (log.latitude && log.longitude) {
-              <span class="text-muted text-sm">
+              <span class="text-muted-foreground text-sm">
                 {{ log.latitude | number: "1.4-4" }}, {{ log.longitude | number: "1.4-4" }}
               </span>
             } @else {
-              <span class="text-muted">-</span>
+              <span class="text-muted-foreground">-</span>
             }
           </td>
           <td>
             @if (log.remark) {
               <span class="text-sm">{{ log.remark }}</span>
             } @else {
-              <span class="text-muted">-</span>
+              <span class="text-muted-foreground">-</span>
             }
           </td>
         </tr>

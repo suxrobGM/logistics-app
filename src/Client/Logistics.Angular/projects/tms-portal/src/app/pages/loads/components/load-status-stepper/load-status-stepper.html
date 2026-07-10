@@ -6,7 +6,7 @@
       <span class="text-danger text-lg font-semibold">Load Cancelled</span>
     </div>
     @if (cancelledAt()) {
-      <span class="text-muted text-sm">{{ cancelledAt() | date: "medium" }}</span>
+      <span class="text-muted-foreground text-sm">{{ cancelledAt() | date: "medium" }}</span>
     }
   </div>
 } @else {
@@ -30,7 +30,7 @@
             <i
               class="pi {{ step.icon }}"
               [class.text-white]="isStepCurrent(i)"
-              [class.text-muted]="isStepPending(i)"
+              [class.text-muted-foreground]="isStepPending(i)"
             ></i>
           }
         </div>
@@ -42,14 +42,14 @@
           [class.dark:text-green-400]="isStepCompleted(i)"
           [class.text-blue-600]="isStepCurrent(i)"
           [class.dark:text-blue-400]="isStepCurrent(i)"
-          [class.text-muted]="isStepPending(i)"
+          [class.text-muted-foreground]="isStepPending(i)"
         >
           {{ step.label }}
         </span>
 
         <!-- Step Date -->
         @if (getStepDate(step.status); as date) {
-          <span class="text-muted mt-1 text-xs">
+          <span class="text-muted-foreground mt-1 text-xs">
             {{ date | date: "MMM d" }}
           </span>
         }

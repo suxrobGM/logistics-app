@@ -1,22 +1,22 @@
 <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
   <!-- Total Trucks -->
   <div class="border-default bg-elevated rounded-lg border p-4">
-    <div class="text-muted mb-1 text-sm font-medium">Total Trucks</div>
-    <div class="text-primary text-2xl font-bold">
+    <div class="text-muted-foreground mb-1 text-sm font-medium">Total Trucks</div>
+    <div class="text-foreground text-2xl font-bold">
       @if (isLoading()) {
-        <span class="text-muted">...</span>
+        <span class="text-muted-foreground">...</span>
       } @else {
         {{ totalRecords() }}
       }
     </div>
-    <div class="text-muted text-xs">{{ trucks().length }} shown on current page</div>
+    <div class="text-muted-foreground text-xs">{{ trucks().length }} shown on current page</div>
   </div>
 
   <!-- Availability Summary -->
   <div class="border-default bg-elevated rounded-lg border p-4">
-    <div class="text-muted mb-2 text-sm font-medium">Availability</div>
+    <div class="text-muted-foreground mb-2 text-sm font-medium">Availability</div>
     @if (isLoading()) {
-      <span class="text-muted">...</span>
+      <span class="text-muted-foreground">...</span>
     } @else {
       <div class="flex flex-wrap gap-2">
         @if (availableCount() > 0) {
@@ -41,7 +41,7 @@
           </span>
         }
         @if (trucks().length === 0) {
-          <span class="text-muted text-sm">No trucks</span>
+          <span class="text-muted-foreground text-sm">No trucks</span>
         }
       </div>
     }
@@ -49,9 +49,9 @@
 
   <!-- Status Breakdown -->
   <div class="border-default bg-elevated rounded-lg border p-4">
-    <div class="text-muted mb-2 text-sm font-medium">Status Breakdown</div>
+    <div class="text-muted-foreground mb-2 text-sm font-medium">Status Breakdown</div>
     @if (isLoading()) {
-      <span class="text-muted">...</span>
+      <span class="text-muted-foreground">...</span>
     } @else {
       <div class="flex flex-wrap gap-2">
         @for (status of statuses; track status) {
@@ -65,7 +65,7 @@
           }
         }
         @if (trucks().length === 0) {
-          <span class="text-muted text-sm">No trucks</span>
+          <span class="text-muted-foreground text-sm">No trucks</span>
         }
       </div>
     }

@@ -6,11 +6,10 @@
 /* === Core Imports === */
 @import "primeicons/primeicons.css";
 @import "tailwindcss";
-@import "tailwindcss-primeui";
 @plugin "@tailwindcss/typography";
 
-/* spartan/ui token + variant layer (sp-* prefixed; see the file header for why) */
-@import "../../shared/src/styles/spartan.css";
+/* spartan/ui token + variant layer (canonical shadcn tokens; see theme.css) */
+@import "../../shared/src/styles/theme.css";
 
 /* === Tailwind v4 Dark Mode Configuration === */
 /* Aligns Tailwind's dark: variant with PrimeNG's darkModeSelector */

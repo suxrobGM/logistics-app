@@ -10,7 +10,7 @@
       <app-expense-detail-row label="Truck">
         <a
           [routerLink]="['/trucks', expense().truckId, 'edit']"
-          class="text-primary font-medium hover:underline"
+          class="text-foreground font-medium hover:underline"
         >
           {{ expense().truck?.number }}
         </a>
@@ -82,7 +82,7 @@
       </app-expense-detail-row>
     } @else {
       <app-expense-detail-row label="Receipt">
-        <span class="text-muted">No receipt attached</span>
+        <span class="text-muted-foreground">No receipt attached</span>
       </app-expense-detail-row>
     }
   </div>

@@ -14,12 +14,12 @@
   <ng-template #item let-load>
     <div class="flex items-center gap-2">
       <span class="font-bold">{{ load.number }} - </span>
-      <span class="text-sm text-muted">{{ load.name }}</span>
+      <span class="text-sm text-muted-foreground">{{ load.name }}</span>
       <app-load-status-tag [status]="load.status" />
     </div>
   </ng-template>
   <!-- <ng-template #footer>
-    <span class="text-sm text-muted">
+    <span class="text-sm text-muted-foreground">
       Not found?
       <a [routerLink]="['/loads/add']" class="font-semibold">Click here</a>
       to add a new load

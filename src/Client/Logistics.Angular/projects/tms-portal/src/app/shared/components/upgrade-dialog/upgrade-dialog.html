@@ -13,11 +13,11 @@
       <i
         class="pi mt-0.5 text-lg"
         [class]="
-          isResourceLimit() ? 'pi-exclamation-triangle text-warning' : 'pi-lock text-primary'
+          isResourceLimit() ? 'pi-exclamation-triangle text-warning' : 'pi-lock text-foreground'
         "
       >
       </i>
-      <p class="text-secondary m-0 text-sm">{{ prompt.message }}</p>
+      <p class="text-subtle-foreground m-0 text-sm">{{ prompt.message }}</p>
     </div>
 
     <!-- Plan comparison cards -->
@@ -32,16 +32,16 @@
                 [value]="tierLabel(current)"
                 [rounded]="true"
               />
-              <span class="text-secondary text-xs">Current</span>
+              <span class="text-subtle-foreground text-xs">Current</span>
             </div>
             <div class="mb-1 text-xl font-bold">
               {{ current.price | currency
-              }}<span class="text-secondary text-sm font-normal">/mo</span>
+              }}<span class="text-subtle-foreground text-sm font-normal">/mo</span>
             </div>
-            <div class="text-secondary mb-2 text-xs">
+            <div class="text-subtle-foreground mb-2 text-xs">
               + {{ current.perTruckPrice | currency }}/truck
             </div>
-            <div class="text-secondary flex flex-col gap-1 text-xs">
+            <div class="text-subtle-foreground flex flex-col gap-1 text-xs">
               <div class="flex items-center gap-1.5">
                 <i class="pi pi-truck text-xs"></i>
                 <span>{{ getMaxTrucksLabel(current) }}</span>
@@ -63,16 +63,16 @@
                 [value]="tierLabel(recommended)"
                 [rounded]="true"
               />
-              <span class="text-primary text-xs font-medium">Recommended</span>
+              <span class="text-foreground text-xs font-medium">Recommended</span>
             </div>
             <div class="mb-1 text-xl font-bold">
               {{ recommended.price | currency
-              }}<span class="text-secondary text-sm font-normal">/mo</span>
+              }}<span class="text-subtle-foreground text-sm font-normal">/mo</span>
             </div>
-            <div class="text-secondary mb-2 text-xs">
+            <div class="text-subtle-foreground mb-2 text-xs">
               + {{ recommended.perTruckPrice | currency }}/truck
             </div>
-            <div class="text-secondary flex flex-col gap-1 text-xs">
+            <div class="text-subtle-foreground flex flex-col gap-1 text-xs">
               <div class="flex items-center gap-1.5">
                 <i class="pi pi-truck text-xs"></i>
                 <span>{{ getMaxTrucksLabel(recommended) }}</span>

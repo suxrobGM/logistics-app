@@ -22,7 +22,7 @@
   <div class="flex flex-col">
     <!-- Header -->
     <div class="flex items-center justify-between px-4 py-3">
-      <h4 class="text-primary m-0 text-[1rem] font-semibold">Notifications</h4>
+      <h4 class="text-foreground m-0 text-[1rem] font-semibold">Notifications</h4>
       @if (unreadCount() > 0) {
         <button class="mark-all-read" (click)="markAllAsRead()" type="button">
           Mark all as read
@@ -39,7 +39,7 @@
           <p-progress-spinner strokeWidth="4" [style]="{ width: '40px', height: '40px' }" />
         </div>
       } @else if (displayedNotifications().length === 0) {
-        <div class="text-muted flex flex-col items-center justify-center p-8">
+        <div class="text-muted-foreground flex flex-col items-center justify-center p-8">
           <i class="pi pi-bell-slash mb-2 text-3xl"></i>
           <p class="m-0 text-sm">No notifications</p>
         </div>
@@ -54,15 +54,15 @@
             tabindex="0"
           >
             <div class="mb-1 flex items-start justify-between gap-2">
-              <span class="text-primary text-sm leading-tight font-semibold">{{
+              <span class="text-foreground text-sm leading-tight font-semibold">{{
                 notification.title
               }}</span>
-              <span class="text-muted shrink-0 text-xs whitespace-nowrap">{{
+              <span class="text-muted-foreground shrink-0 text-xs whitespace-nowrap">{{
                 notification.createdDate | relativeTime
               }}</span>
             </div>
             <p
-              class="notification-message text-secondary m-0 text-[0.8125rem] leading-snug"
+              class="notification-message text-subtle-foreground m-0 text-[0.8125rem] leading-snug"
               [class.truncated]="selectedNotification()?.id !== notification.id"
             >
               {{ notification.message }}
@@ -78,7 +78,7 @@
       <div class="px-4 py-3">
         <a
           routerLink="/notifications"
-          class="view-all-link text-accent flex items-center justify-center gap-2 rounded p-2 text-sm font-medium no-underline"
+          class="view-all-link text-primary flex items-center justify-center gap-2 rounded p-2 text-sm font-medium no-underline"
           (click)="popover.hide()"
         >
           View all notifications

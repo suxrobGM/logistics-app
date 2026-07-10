@@ -55,8 +55,8 @@
 
   <!-- Bulk Actions -->
   @if (hasSelection()) {
-    <div class="bg-accent/10 mb-4 flex items-center gap-3 rounded-lg px-4 py-3">
-      <span class="text-accent text-sm font-medium">{{ selectedIds().size }} selected</span>
+    <div class="bg-primary/10 mb-4 flex items-center gap-3 rounded-lg px-4 py-3">
+      <span class="text-primary text-sm font-medium">{{ selectedIds().size }} selected</span>
       <p-button
         label="Mark as read"
         icon="pi pi-check"
@@ -101,7 +101,7 @@
       <!-- Select All Header -->
       <ui-stack direction="row" align="center" justify="between" class="px-4 py-3">
         <span
-          class="text-secondary flex cursor-pointer items-center gap-2 text-sm"
+          class="text-subtle-foreground flex cursor-pointer items-center gap-2 text-sm"
           tabindex="0"
           role="checkbox"
           [attr.aria-checked]="allSelected()"
@@ -111,7 +111,7 @@
           <p-checkbox [ngModel]="allSelected()" [binary]="true" />
           <span>Select all</span>
         </span>
-        <span class="text-muted text-xs">{{ filteredNotifications().length }} notifications</span>
+        <span class="text-muted-foreground text-xs">{{ filteredNotifications().length }} notifications</span>
       </ui-stack>
 
       <p-divider class="m-0" />
@@ -140,23 +140,23 @@
               (keydown.enter)="markAsRead(notification)"
             >
               <div class="mb-1 flex items-start justify-between gap-4 max-sm:flex-col max-sm:gap-1">
-                <h4 class="text-primary m-0 flex items-center gap-2 text-sm font-semibold">
+                <h4 class="text-foreground m-0 flex items-center gap-2 text-sm font-semibold">
                   @if (!notification.isRead) {
-                    <span class="bg-accent h-2 w-2 shrink-0 rounded-full"></span>
+                    <span class="bg-primary h-2 w-2 shrink-0 rounded-full"></span>
                   }
                   {{ notification.title }}
                 </h4>
-                <span class="text-muted shrink-0 text-xs whitespace-nowrap">
+                <span class="text-muted-foreground shrink-0 text-xs whitespace-nowrap">
                   {{ notification.createdDate | relativeTime }}
                 </span>
               </div>
-              <p class="text-secondary m-0 mb-2 text-sm leading-normal">
+              <p class="text-subtle-foreground m-0 mb-2 text-sm leading-normal">
                 {{ notification.message }}
               </p>
               <div
                 class="flex items-center justify-between gap-4 max-sm:flex-col max-sm:items-start max-sm:gap-2"
               >
-                <span class="text-muted text-xs">
+                <span class="text-muted-foreground text-xs">
                   {{ notification.createdDate | date: "MMM d, yyyy 'at' h:mm a" }}
                 </span>
                 @if (!notification.isRead) {

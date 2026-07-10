@@ -44,13 +44,13 @@
       <ui-icon name="info-circle" color="primary" />
       <span class="font-semibold">How it works</span>
     </ui-stack>
-    <ui-stack gap="2" class="text-secondary text-sm leading-relaxed">
+    <ui-stack gap="2" class="text-subtle-foreground text-sm leading-relaxed">
       <p class="m-0">
         The AI agent analyzes unassigned loads, truck locations, HOS hours, truck type
         compatibility, and revenue per mile to find optimal assignments.
       </p>
       <p class="m-0">
-        <i class="pi pi-play text-primary mr-1 text-xs"></i>
+        <i class="pi pi-play text-foreground mr-1 text-xs"></i>
         <strong>Suggestions</strong>
         - proposes assignments for your review. Approve or reject each one, then use
         <strong>Re-plan</strong>
@@ -59,7 +59,7 @@
         <strong>Autonomous</strong>
         - executes assignments, creates trips, and dispatches immediately.
       </p>
-      <p class="text-muted-color m-0">
+      <p class="text-muted-foreground m-0">
         <i class="pi pi-comment mr-1 text-xs"></i>
         Add custom instructions when running to guide priorities (e.g., "Prioritize Customer X" or
         "Skip Truck 42").
@@ -94,7 +94,7 @@
         <ui-stack direction="row" align="center" gap="2" class="border-default border-b p-3">
           <ui-icon name="map" color="primary" />
           <span class="font-medium">Fleet Map</span>
-          <span class="text-muted text-sm">{{ truckLocations().length }} trucks tracked</span>
+          <span class="text-muted-foreground text-sm">{{ truckLocations().length }} trucks tracked</span>
         </ui-stack>
         <div class="h-125">
           <app-geolocation-map [geolocationData]="truckLocations()" [zoom]="4" height="100%" />
@@ -121,8 +121,8 @@
             class="flex h-full flex-col items-center justify-center p-8 text-center"
           >
             <ui-icon name="check-circle" size="xl" color="muted" class="mb-3" />
-            <p class="text-secondary mb-1 font-medium">No pending decisions</p>
-            <p class="text-muted text-sm">
+            <p class="text-subtle-foreground mb-1 font-medium">No pending decisions</p>
+            <p class="text-muted-foreground text-sm">
               Run the AI dispatcher to generate load-to-truck assignment suggestions for review.
             </p>
           </ui-surface>
@@ -171,7 +171,7 @@
         <td>{{ session.startedAt | date: "medium" }}</td>
         <td>{{ session.decisionCount }}</td>
         <td class="max-w-sm text-sm">
-          <span class="text-secondary line-clamp-2">{{ stripMarkdown(session.summary) }}</span>
+          <span class="text-subtle-foreground line-clamp-2">{{ stripMarkdown(session.summary) }}</span>
         </td>
         <td>
           <p-button icon="pi pi-eye" [rounded]="true" [text]="true" size="small" />
@@ -181,7 +181,7 @@
     <ng-template #empty>
       <tr>
         <td colspan="7" class="py-8 text-center">
-          <div class="text-muted">
+          <div class="text-muted-foreground">
             <i class="pi pi-sparkles mb-2 text-4xl"></i>
             <p>No dispatch sessions yet. Click "Run" to start the AI dispatcher.</p>
           </div>

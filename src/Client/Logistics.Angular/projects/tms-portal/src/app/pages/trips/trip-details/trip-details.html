@@ -52,7 +52,7 @@
             <ui-surface variant="subtle" [border]="true" padding="md">
               <ui-stack direction="row" align="center" justify="between" class="mb-2">
                 <span class="font-medium">Trip Progress</span>
-                <span class="text-primary font-semibold">{{ store.progressPercentage() }}%</span>
+                <span class="text-foreground font-semibold">{{ store.progressPercentage() }}%</span>
               </ui-stack>
               <p-progressBar
                 [value]="store.progressPercentage()"
@@ -63,7 +63,7 @@
                 direction="row"
                 align="center"
                 gap="1"
-                class="text-muted-color mt-2 text-sm"
+                class="text-muted-foreground mt-2 text-sm"
               >
                 <ui-icon name="map-marker" />
                 <span>
@@ -82,7 +82,7 @@
                     direction="row"
                     align="center"
                     gap="2"
-                    class="text-muted-color mb-1 text-sm"
+                    class="text-muted-foreground mb-1 text-sm"
                   >
                     <ui-icon name="map" />
                     <span>Total Distance</span>
@@ -100,7 +100,7 @@
                     direction="row"
                     align="center"
                     gap="2"
-                    class="text-muted-color mb-1 text-sm"
+                    class="text-muted-foreground mb-1 text-sm"
                   >
                     <ui-icon name="box" />
                     <span>Loads</span>
@@ -116,7 +116,7 @@
                     direction="row"
                     align="center"
                     gap="2"
-                    class="text-muted-color mb-1 text-sm"
+                    class="text-muted-foreground mb-1 text-sm"
                   >
                     <ui-icon name="truck" />
                     <span>Truck</span>
@@ -134,7 +134,7 @@
                     direction="row"
                     align="center"
                     gap="2"
-                    class="text-muted-color mb-1 text-sm"
+                    class="text-muted-foreground mb-1 text-sm"
                   >
                     <ui-icon name="flag" />
                     <span>Stops</span>
@@ -149,14 +149,14 @@
               @if (tripDetails.dispatchedAt) {
                 <ui-stack direction="row" align="center" gap="2" class="text-sm">
                   <ui-icon name="send" color="info" />
-                  <span class="text-muted-color">Dispatched:</span>
+                  <span class="text-muted-foreground">Dispatched:</span>
                   <span>{{ tripDetails.dispatchedAt | dateFormat: "medium" }}</span>
                 </ui-stack>
               }
               @if (tripDetails.completedAt) {
                 <ui-stack direction="row" align="center" gap="2" class="text-sm">
                   <ui-icon name="check-circle" color="success" />
-                  <span class="text-muted-color">Completed:</span>
+                  <span class="text-muted-foreground">Completed:</span>
                   <span>{{ tripDetails.completedAt | dateFormat: "medium" }}</span>
                 </ui-stack>
               }
@@ -220,7 +220,7 @@
                     @if (tripStop.arrivedAt) {
                       {{ tripStop.arrivedAt | dateFormat: "short" }}
                     } @else {
-                      <span class="text-muted-color">Pending</span>
+                      <span class="text-muted-foreground">Pending</span>
                     }
                   </td>
                   @if (store.isActive()) {
@@ -295,7 +295,7 @@
           @if (store.timelineEvents().length > 0) {
             <app-trip-timeline [events]="store.timelineEvents()" />
           } @else {
-            <ui-stack align="center" gap="2" class="text-muted-color py-8">
+            <ui-stack align="center" gap="2" class="text-muted-foreground py-8">
               <ui-icon name="clock" size="xl" color="muted" class="opacity-50" />
               <p class="m-0">No timeline events yet.</p>
             </ui-stack>

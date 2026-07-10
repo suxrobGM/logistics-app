@@ -4,16 +4,16 @@
   </div>
   <div class="flex-1">
     @if (title()) {
-      <div class="text-primary mb-1 text-sm font-semibold">{{ title() }}</div>
+      <div class="text-foreground mb-1 text-sm font-semibold">{{ title() }}</div>
     }
-    <div class="text-secondary text-sm">
+    <div class="text-subtle-foreground text-sm">
       <ng-content />
     </div>
   </div>
   @if (dismissible()) {
     <button
       type="button"
-      class="text-muted hover:text-primary self-start"
+      class="text-muted-foreground hover:text-foreground self-start"
       aria-label="Dismiss"
       (click)="handleDismiss()"
     >

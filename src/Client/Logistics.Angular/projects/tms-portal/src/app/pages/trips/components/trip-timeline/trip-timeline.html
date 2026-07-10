@@ -6,13 +6,13 @@
           [severity]="getEventSeverity(event.eventType)"
           [value]="getEventLabel(event.eventType)"
         />
-        <span class="text-muted-color text-xs">
+        <span class="text-muted-foreground text-xs">
           {{ event.timestamp | date: "short" }}
         </span>
       </div>
       <p class="m-0 text-sm">{{ event.description }}</p>
       @if (event.loadName) {
-        <span class="text-muted-color text-xs">
+        <span class="text-muted-foreground text-xs">
           <i class="pi pi-box mr-1"></i>{{ event.loadName }}
         </span>
       }

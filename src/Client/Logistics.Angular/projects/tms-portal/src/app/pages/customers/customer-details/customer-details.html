@@ -93,7 +93,7 @@
                     @if (customer.email) {
                       <a
                         [href]="'mailto:' + customer.email"
-                        class="text-accent font-medium hover:underline"
+                        class="text-primary font-medium hover:underline"
                       >
                         {{ customer.email }}
                       </a>
@@ -109,7 +109,7 @@
                     @if (customer.phone) {
                       <a
                         [href]="'tel:' + customer.phone"
-                        class="text-accent font-medium hover:underline"
+                        class="text-primary font-medium hover:underline"
                       >
                         {{ customer.phone }}
                       </a>
@@ -244,7 +244,7 @@
                   >
                     <div>
                       <div class="font-medium">{{ user.displayName || user.email }}</div>
-                      <div class="text-muted text-sm">{{ user.email }}</div>
+                      <div class="text-muted-foreground text-sm">{{ user.email }}</div>
                     </div>
                     <!-- TODO: Add action menu for portal customers -->
                     <!-- <p-button icon="pi pi-ellipsis-v" [text]="true" [rounded]="true" /> -->

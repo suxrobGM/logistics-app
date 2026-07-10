@@ -1,0 +1,278 @@
+/**
+ * theme.css — the shared design-system token layer (canonical shadcn vocabulary).
+ * ============================================================================
+ * One token system for tms / admin / customer. Spartan Helm primitives use the
+ * canonical names natively (bg-primary, text-muted-foreground, ring-destructive, …),
+ * so there is no `sp-` prefix and no token-rewriting tool any more.
+ *
+ * Light values live in `:root`, dark values in `.dark-theme`. Each app declares its
+ * own `dark` Tailwind variant (TMS: `.dark-theme`). The canonical tokens are keyed to
+ * TMS's raw ramp (`--bg-base`, `--text-primary`, `--primary-500`, …) via
+ * `var(--raw, literal)`: tms-portal supplies the raw vars (and flips them under
+ * `.dark-theme`); admin / customer have no raw ramp and take the literal — so they
+ * inherit BOTH a light and a dark default palette and are dark-ready for free.
+ *
+ * We deliberately do NOT import `@spartan-ng/brain/hlm-tailwind-preset.css`
+ * (its radius/font/dark keys and oklch values would fight this hand-authored layer).
+ */
+
+@import "@angular/cdk/overlay-prebuilt.css";
+@import "tw-animate-css";
+
+/* CDK fades the backdrop with its own opacity transition and the spartan overlay class
+   fades it again, so the two visibly double up. Neutralise CDK's. Kept UNLAYERED so it
+   beats CDK's runtime `@layer cdk-overlay`. Scoped off `.cdk-overlay-transparent-backdrop`
+   so CDK's invisible click-catcher backdrops keep their own `opacity: 0`. */
+.cdk-overlay-backdrop:not(.cdk-overlay-transparent-backdrop) {
+  opacity: var(--spartan-overlay-backdrop-opacity, 1);
+  transition: var(--spartan-overlay-backdrop-transition, none);
+}
+
+/* State variants brain's primitives drive via data-attributes. `dark` is NOT here —
+   each app declares its own. */
+@custom-variant data-open {
+  &:where([data-state="open"]),
+  &:where([data-open]:not([data-open="false"])) {
+    @slot;
+  }
+}
+@custom-variant data-closed {
+  &:where([data-state="closed"]),
+  &:where([data-closed]:not([data-closed="false"])) {
+    @slot;
+  }
+}
+@custom-variant data-checked {
+  &:where([data-state="checked"]),
+  &:where([data-checked]:not([data-checked="false"])) {
+    @slot;
+  }
+}
+@custom-variant data-unchecked {
+  &:where([data-state="unchecked"]),
+  &:where([data-unchecked]:not([data-unchecked="false"])) {
+    @slot;
+  }
+}
+@custom-variant data-selected {
+  &:where([data-selected="true"]) {
+    @slot;
+  }
+}
+@custom-variant data-disabled {
+  &:where([data-disabled="true"]),
+  &:where([data-disabled]:not([data-disabled="false"])) {
+    @slot;
+  }
+}
+@custom-variant data-active {
+  &:where([data-state="active"]),
+  &:where([data-active]:not([data-active="false"])) {
+    @slot;
+  }
+}
+@custom-variant data-horizontal {
+  &:where([data-orientation="horizontal"]) {
+    @slot;
+  }
+}
+@custom-variant data-vertical {
+  &:where([data-orientation="vertical"]) {
+    @slot;
+  }
+}
+
+/* ---------------------------------------------------------------------------------------------
+ * Token values. `var(--raw, literal)`: TMS supplies `--raw` (light + dark via `.dark-theme`);
+ * admin / customer take the literal. `:root` = light default, `.dark-theme` = dark default.
+ * ------------------------------------------------------------------------------------------- */
+
+:root {
+  /* semantic */
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --info: #2563eb;
+
+  /* load-status ramp */
+  --status-pending: #d97706;
+  --status-dispatched: #2563eb;
+  --status-pickedup: #7c3aed;
+  --status-delivered: #16a34a;
+  --status-cancelled: #dc2626;
+  --status-completed: #0891b2;
+
+  /* canonical surfaces + text */
+  --background: var(--bg-base, #f1f5f9);
+  --foreground: var(--text-primary, #0f172a);
+  --card: var(--bg-surface, #ffffff);
+  --card-foreground: var(--text-primary, #0f172a);
+  --popover: var(--bg-elevated, #ffffff);
+  --popover-foreground: var(--text-primary, #0f172a);
+  --primary: var(--primary-500, #0891b2);
+  --primary-foreground: #ffffff;
+  --secondary: var(--bg-hover, #e2e8f0);
+  --secondary-foreground: var(--text-primary, #0f172a);
+  --muted: var(--bg-hover, #e2e8f0);
+  --muted-foreground: var(--text-muted, #94a3b8);
+  --accent: var(--bg-hover, #e2e8f0);
+  --accent-foreground: var(--text-primary, #0f172a);
+  --subtle-foreground: var(--text-secondary, #475569);
+  --inverse: var(--text-inverse, #f1f5f9);
+  --destructive: var(--danger);
+  --destructive-foreground: #ffffff;
+  --border: var(--border-default, #cbd5e1);
+  --input: var(--border-default, #cbd5e1);
+  --ring: var(--primary-500, #0891b2);
+
+  /* surface / border aliases (preserve existing TMS utility names) */
+  --elevated: var(--bg-elevated, #ffffff);
+  --hover: var(--bg-hover, #e2e8f0);
+  --active: var(--bg-active, #cbd5e1);
+  --subtle: var(--border-subtle, #e2e8f0);
+  --strong: var(--border-strong, #94a3b8);
+
+  /* sidebar */
+  --sidebar: var(--bg-surface, #ffffff);
+  --sidebar-foreground: var(--text-primary, #0f172a);
+  --sidebar-primary: var(--primary-500, #0891b2);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--bg-hover, #e2e8f0);
+  --sidebar-accent-foreground: var(--text-primary, #0f172a);
+  --sidebar-border: var(--border-subtle, #e2e8f0);
+  --sidebar-ring: var(--primary-500, #0891b2);
+}
+
+.dark-theme {
+  /* semantic (brighter for dark bg) */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+
+  /* load-status ramp (dark) */
+  --status-pending: #f59e0b;
+  --status-dispatched: #3b82f6;
+  --status-pickedup: #8b5cf6;
+  --status-delivered: #22c55e;
+  --status-cancelled: #ef4444;
+  --status-completed: #06b6d4;
+
+  /* canonical surfaces + text (dark defaults; TMS overrides via its own raw ramp) */
+  --background: var(--bg-base, #0f1419);
+  --foreground: var(--text-primary, #f1f5f9);
+  --card: var(--bg-surface, #1a1f2e);
+  --card-foreground: var(--text-primary, #f1f5f9);
+  --popover: var(--bg-elevated, #242b3d);
+  --popover-foreground: var(--text-primary, #f1f5f9);
+  --primary: var(--primary-500, #06b6d4);
+  --secondary: var(--bg-hover, #2d3548);
+  --secondary-foreground: var(--text-primary, #f1f5f9);
+  --muted: var(--bg-hover, #2d3548);
+  --muted-foreground: var(--text-muted, #64748b);
+  --accent: var(--bg-hover, #2d3548);
+  --accent-foreground: var(--text-primary, #f1f5f9);
+  --subtle-foreground: var(--text-secondary, #94a3b8);
+  --inverse: var(--text-inverse, #0f172a);
+  --border: var(--border-default, #3d4760);
+  --input: var(--border-default, #3d4760);
+  --ring: var(--primary-500, #06b6d4);
+
+  --elevated: var(--bg-elevated, #242b3d);
+  --hover: var(--bg-hover, #2d3548);
+  --active: var(--bg-active, #363f54);
+  --subtle: var(--border-subtle, #2d3548);
+  --strong: var(--border-strong, #4d5a78);
+
+  --sidebar: var(--bg-surface, #1a1f2e);
+  --sidebar-foreground: var(--text-primary, #f1f5f9);
+  --sidebar-primary: var(--primary-500, #06b6d4);
+  --sidebar-accent: var(--bg-hover, #2d3548);
+  --sidebar-accent-foreground: var(--text-primary, #f1f5f9);
+  --sidebar-border: var(--border-subtle, #2d3548);
+  --sidebar-ring: var(--primary-500, #06b6d4);
+}
+
+/* `inline` so utilities emit `var(--token)` and `.dark-theme` re-points them at runtime. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-subtle-foreground: var(--subtle-foreground);
+  --color-inverse: var(--inverse);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* TMS extension aliases — keep bg-canvas/bg-surface/bg-elevated/bg-hover/bg-active,
+     border-subtle/border-default/border-strong working unchanged. */
+  --color-canvas: var(--background);
+  --color-surface: var(--card);
+  --color-elevated: var(--elevated);
+  --color-hover: var(--hover);
+  --color-active: var(--active);
+  --color-subtle: var(--subtle);
+  --color-default: var(--border);
+  --color-strong: var(--strong);
+
+  /* semantic */
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+
+  /* load-status */
+  --color-pending: var(--status-pending);
+  --color-dispatched: var(--status-dispatched);
+  --color-pickedup: var(--status-pickedup);
+  --color-delivered: var(--status-delivered);
+  --color-cancelled: var(--status-cancelled);
+  --color-completed: var(--status-completed);
+
+  /* static slate ramp — replaces the tailwindcss-primeui `surface-*` utilities.
+     Usages pick light/dark shades explicitly (e.g. `bg-surface-300 dark:bg-surface-600`). */
+  --color-surface-0: #ffffff;
+  --color-surface-50: #f8fafc;
+  --color-surface-100: #f1f5f9;
+  --color-surface-200: #e2e8f0;
+  --color-surface-300: #cbd5e1;
+  --color-surface-400: #94a3b8;
+  --color-surface-500: #64748b;
+  --color-surface-600: #475569;
+  --color-surface-700: #334155;
+  --color-surface-800: #1e293b;
+  --color-surface-900: #0f172a;
+  --color-surface-950: #020617;
+
+  --animate-indeterminate: indeterminate 4s ease-in-out infinite;
+
+  @keyframes indeterminate {
+    0% {
+      transform: translateX(-100%) scaleX(0.5);
+    }
+    100% {
+      transform: translateX(100%) scaleX(0.5);
+    }
+  }
+}

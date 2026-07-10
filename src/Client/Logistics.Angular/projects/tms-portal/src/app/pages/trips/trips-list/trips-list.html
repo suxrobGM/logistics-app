@@ -83,7 +83,7 @@
         [binary]="true"
         inputId="activeTripsOnly"
       />
-      <label for="activeTripsOnly" class="text-secondary cursor-pointer text-sm"
+      <label for="activeTripsOnly" class="text-subtle-foreground cursor-pointer text-sm"
         >Active trips only</label
       >
     </ui-stack>
@@ -168,7 +168,7 @@
             <td class="text-center">{{ trip.totalDistance | distanceUnit }}</td>
             <td>
               <app-trip-status-tag [status]="trip.status" />
-              <div class="text-muted text-xs italic">
+              <div class="text-muted-foreground text-xs italic">
                 @switch (trip.status) {
                   @case ("dispatched") {
                     {{ trip.dispatchedAt | dateFormat: "mediumDate" }}
@@ -184,15 +184,15 @@
                 @let progress = getProgressPercentage(trip);
                 <div style="min-width: 110px">
                   <div class="mb-1 flex items-center justify-between text-xs">
-                    <span class="text-muted">{{ progress }}%</span>
-                    <span class="text-muted">
+                    <span class="text-muted-foreground">{{ progress }}%</span>
+                    <span class="text-muted-foreground">
                       {{ getCompletedStops(trip) }}/{{ trip.stops?.length ?? 0 }} stops
                     </span>
                   </div>
                   <p-progressBar [value]="progress" [showValue]="false" class="h-2!" />
                 </div>
               } @else {
-                <span class="text-muted-color text-sm">&mdash;</span>
+                <span class="text-muted-foreground text-sm">&mdash;</span>
               }
             </td>
             <td (click)="$event.stopPropagation()">

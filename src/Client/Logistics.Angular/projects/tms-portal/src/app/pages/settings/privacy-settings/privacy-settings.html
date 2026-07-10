@@ -51,7 +51,7 @@
                     (onClick)="download(row.id!)"
                   />
                 } @else if (row.status === "failed") {
-                  <span class="text-muted text-sm">{{ row.errorMessage }}</span>
+                  <span class="text-muted-foreground text-sm">{{ row.errorMessage }}</span>
                 }
               </td>
             </tr>
@@ -112,7 +112,7 @@
       </ng-template>
 
       @if (consents().length === 0) {
-        <p class="text-muted text-sm">No consent records yet.</p>
+        <p class="text-muted-foreground text-sm">No consent records yet.</p>
       } @else {
         <ui-data-table [value]="consents()" styleClass="mt-2" dataKey="id">
           <ng-template #header>

@@ -1,35 +1,35 @@
 <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
   <!-- Total Trips -->
   <div class="border-default bg-elevated rounded-lg border p-4">
-    <div class="text-muted mb-1 text-sm font-medium">Total Trips</div>
-    <div class="text-primary text-2xl font-bold">
+    <div class="text-muted-foreground mb-1 text-sm font-medium">Total Trips</div>
+    <div class="text-foreground text-2xl font-bold">
       @if (isLoading()) {
-        <span class="text-muted">...</span>
+        <span class="text-muted-foreground">...</span>
       } @else {
         {{ totalRecords() }}
       }
     </div>
-    <div class="text-muted text-xs">{{ trips().length }} shown on current page</div>
+    <div class="text-muted-foreground text-xs">{{ trips().length }} shown on current page</div>
   </div>
 
   <!-- Total Revenue -->
   <div class="border-default bg-elevated rounded-lg border p-4">
-    <div class="text-muted mb-1 text-sm font-medium">Page Total Revenue</div>
+    <div class="text-muted-foreground mb-1 text-sm font-medium">Page Total Revenue</div>
     <div class="text-success text-2xl font-bold">
       @if (isLoading()) {
-        <span class="text-muted">...</span>
+        <span class="text-muted-foreground">...</span>
       } @else {
         {{ totalRevenue() | currencyFormat }}
       }
     </div>
-    <div class="text-muted text-xs">Sum of revenue on current page</div>
+    <div class="text-muted-foreground text-xs">Sum of revenue on current page</div>
   </div>
 
   <!-- Status Breakdown -->
   <div class="border-default bg-elevated rounded-lg border p-4">
-    <div class="text-muted mb-2 text-sm font-medium">Status Breakdown</div>
+    <div class="text-muted-foreground mb-2 text-sm font-medium">Status Breakdown</div>
     @if (isLoading()) {
-      <span class="text-muted">...</span>
+      <span class="text-muted-foreground">...</span>
     } @else {
       <div class="flex flex-wrap gap-2">
         @for (status of statuses; track status) {
@@ -43,7 +43,7 @@
           }
         }
         @if (trips().length === 0) {
-          <span class="text-muted text-sm">No trips</span>
+          <span class="text-muted-foreground text-sm">No trips</span>
         }
       </div>
     }

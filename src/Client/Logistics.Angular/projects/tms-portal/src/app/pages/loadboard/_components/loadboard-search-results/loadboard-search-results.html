@@ -30,12 +30,12 @@
           <div class="font-medium">
             {{ listing.originAddress.city }}, {{ listing.originAddress.state }}
           </div>
-          <div class="text-muted text-sm">↓</div>
+          <div class="text-muted-foreground text-sm">↓</div>
           <div class="font-medium">
             {{ listing.destinationAddress.city }}, {{ listing.destinationAddress.state }}
           </div>
           @if (listing.distance) {
-            <div class="text-muted text-xs">{{ listing.distance | distanceUnit }}</div>
+            <div class="text-muted-foreground text-xs">{{ listing.distance | distanceUnit }}</div>
           }
         </div>
       </td>
@@ -43,7 +43,7 @@
         @if (listing.pickupDateStart) {
           <div class="text-sm">{{ listing.pickupDateStart | dateFormat: "shortDate" }}</div>
         } @else {
-          <span class="text-muted">-</span>
+          <span class="text-muted-foreground">-</span>
         }
       </td>
       <td>
@@ -53,7 +53,7 @@
         @if (listing.weight) {
           <span class="text-sm">{{ listing.weight | number }} lbs</span>
         } @else {
-          <span class="text-muted">-</span>
+          <span class="text-muted-foreground">-</span>
         }
       </td>
       <td>

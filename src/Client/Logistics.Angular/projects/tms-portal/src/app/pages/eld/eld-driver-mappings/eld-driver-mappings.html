@@ -45,7 +45,7 @@
                     <ui-icon name="id-card" color="success" />
                     <div>
                       <div>{{ mapping.externalDriverName || mapping.externalDriverId }}</div>
-                      <small class="text-muted">{{ mapping.externalDriverId }}</small>
+                      <small class="text-muted-foreground">{{ mapping.externalDriverId }}</small>
                     </div>
                   </ui-stack>
                 </td>
@@ -58,11 +58,11 @@
                 </td>
                 <td>
                   @if (mapping.lastSyncedAt) {
-                    <span class="text-muted text-sm">
+                    <span class="text-muted-foreground text-sm">
                       {{ mapping.lastSyncedAt | date: "short" }}
                     </span>
                   } @else {
-                    <span class="text-muted text-sm">Never</span>
+                    <span class="text-muted-foreground text-sm">Never</span>
                   }
                 </td>
                 <td>
@@ -108,7 +108,7 @@
                 <ng-template #item let-item>
                   <div>
                     <div class="font-medium">{{ item.name }}</div>
-                    <small class="text-muted">ID: {{ item.externalDriverId }}</small>
+                    <small class="text-muted-foreground">ID: {{ item.externalDriverId }}</small>
                   </div>
                 </ng-template>
               </p-select>
@@ -140,7 +140,7 @@
                 <ng-template #item let-item>
                   <div>
                     <div class="font-medium">{{ item.fullName }}</div>
-                    <small class="text-muted">{{ item.email }}</small>
+                    <small class="text-muted-foreground">{{ item.email }}</small>
                   </div>
                 </ng-template>
               </p-select>

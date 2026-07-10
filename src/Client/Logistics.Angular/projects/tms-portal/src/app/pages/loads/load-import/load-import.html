@@ -72,7 +72,7 @@
             <ui-icon name="check-circle" color="success" />
             <ui-typography variant="h6" tag="h3">Extracted Data</ui-typography>
             @if (data.sourceTemplate) {
-              <span class="bg-primary/10 text-primary rounded px-2 py-1 text-xs">
+              <span class="bg-primary/10 text-foreground rounded px-2 py-1 text-xs">
                 {{ data.sourceTemplate }}
               </span>
             }
@@ -89,10 +89,10 @@
               </p>
             }
             @if (data.vehicleVin) {
-              <p class="text-muted text-sm">VIN: {{ data.vehicleVin }}</p>
+              <p class="text-muted-foreground text-sm">VIN: {{ data.vehicleVin }}</p>
             }
             @if (data.vehicleType) {
-              <p class="text-muted text-sm">Type: {{ data.vehicleType }}</p>
+              <p class="text-muted-foreground text-sm">Type: {{ data.vehicleType }}</p>
             }
           </ui-grid>
 
@@ -104,7 +104,7 @@
                 {{ data.paymentAmount | currencyFormat }}
               </p>
             } @else {
-              <p class="text-muted">Not extracted</p>
+              <p class="text-muted-foreground">Not extracted</p>
             }
           </ui-grid>
 
@@ -118,7 +118,7 @@
                 {{ data.originAddress.zipCode }}
               </p>
             } @else {
-              <p class="text-muted">Not extracted</p>
+              <p class="text-muted-foreground">Not extracted</p>
             }
           </ui-grid>
 
@@ -134,7 +134,7 @@
                 {{ data.destinationAddress.zipCode }}
               </p>
             } @else {
-              <p class="text-muted">Not extracted</p>
+              <p class="text-muted-foreground">Not extracted</p>
             }
           </ui-grid>
 
@@ -146,7 +146,7 @@
             @if (data.shipperName) {
               <p>{{ data.shipperName }}</p>
             } @else {
-              <p class="text-muted">Not extracted</p>
+              <p class="text-muted-foreground">Not extracted</p>
             }
           </ui-grid>
 
@@ -160,7 +160,7 @@
               <p>Delivery: {{ data.deliveryDate | date }}</p>
             }
             @if (!data.pickupDate && !data.deliveryDate) {
-              <p class="text-muted">Not extracted</p>
+              <p class="text-muted-foreground">Not extracted</p>
             }
           </ui-grid>
         </ui-grid>

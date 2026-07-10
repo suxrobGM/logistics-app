@@ -7,12 +7,12 @@
   >
     @if (!collapsed()) {
       <div class="flex items-center justify-between px-1 pb-1.5">
-        <span class="text-muted text-[0.625rem] font-bold tracking-widest uppercase">
+        <span class="text-muted-foreground text-[0.625rem] font-bold tracking-widest uppercase">
           Favorites
         </span>
         @if (!isFull()) {
           <button
-            class="border-default text-muted hover:border-accent hover:text-accent hover:bg-accent/8 flex size-5.5 cursor-pointer items-center justify-center rounded-sm border border-dashed transition-all"
+            class="border-default text-muted-foreground hover:border-accent hover:text-primary hover:bg-primary/8 flex size-5.5 cursor-pointer items-center justify-center rounded-sm border border-dashed transition-all"
             (click)="addPopover.toggle($event)"
             pTooltip="Add favorite"
             tooltipPosition="top"
@@ -25,18 +25,18 @@
       <div class="flex flex-wrap gap-1.5">
         @for (item of favoriteItems(); track item.id) {
           <button
-            class="group bg-accent/8 border-accent/20 text-secondary hover:bg-accent/15 hover:border-accent/35 hover:text-primary inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2 py-1 text-[0.6875rem] font-medium whitespace-nowrap transition-all"
+            class="group bg-primary/8 border-accent/20 text-subtle-foreground hover:bg-primary/15 hover:border-accent/35 hover:text-foreground inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2 py-1 text-[0.6875rem] font-medium whitespace-nowrap transition-all"
             (click)="onFavoriteClick(item)"
             [pTooltip]="item.label"
             tooltipPosition="top"
             type="button"
           >
             @if (item.icon) {
-              <svg [lucideIcon]="item.icon" class="text-accent size-3"></svg>
+              <svg [lucideIcon]="item.icon" class="text-primary size-3"></svg>
             }
             <span class="max-w-24 truncate">{{ item.label }}</span>
             <button
-              class="text-muted hover:text-danger ml-0.5 flex cursor-pointer items-center justify-center border-none bg-transparent p-0 opacity-0 transition-opacity group-hover:opacity-100"
+              class="text-muted-foreground hover:text-danger ml-0.5 flex cursor-pointer items-center justify-center border-none bg-transparent p-0 opacity-0 transition-opacity group-hover:opacity-100"
               (click)="removeFavorite($event, item.id)"
               type="button"
               aria-label="Remove from favorites"
@@ -51,7 +51,7 @@
       <div class="flex flex-col items-center gap-1">
         @for (item of favoriteItems(); track item.id) {
           <button
-            class="bg-accent/8 border-accent/15 text-accent hover:bg-accent/18 hover:border-accent flex size-9 cursor-pointer items-center justify-center rounded-md border transition-all hover:scale-105"
+            class="bg-primary/8 border-accent/15 text-primary hover:bg-primary/18 hover:border-accent flex size-9 cursor-pointer items-center justify-center rounded-md border transition-all hover:scale-105"
             (click)="onFavoriteClick(item)"
             [pTooltip]="item.label"
             tooltipPosition="right"
@@ -69,24 +69,24 @@
 <p-popover #addPopover>
   <div class="w-55">
     <div
-      class="text-muted border-subtle border-b px-3 py-2 text-[0.6875rem] font-bold tracking-wider uppercase"
+      class="text-muted-foreground border-subtle border-b px-3 py-2 text-[0.6875rem] font-bold tracking-wider uppercase"
     >
       Add to Favorites
     </div>
     <div class="max-h-62 overflow-y-auto p-1">
       @for (item of availableItems(); track item.id) {
         <button
-          class="text-secondary hover:bg-hover hover:text-primary flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent px-2.5 py-2 text-left text-[0.8125rem] transition-all"
+          class="text-subtle-foreground hover:bg-hover hover:text-foreground flex w-full cursor-pointer items-center gap-2.5 rounded-md border-none bg-transparent px-2.5 py-2 text-left text-[0.8125rem] transition-all"
           (click)="addFavorite(item.id); addPopover.hide()"
           type="button"
         >
           @if (item.icon) {
-            <svg [lucideIcon]="item.icon" class="text-muted size-4 shrink-0"></svg>
+            <svg [lucideIcon]="item.icon" class="text-muted-foreground size-4 shrink-0"></svg>
           }
           <span>{{ item.label }}</span>
         </button>
       } @empty {
-        <div class="text-muted p-4 text-center text-[0.8125rem]">No more items to add</div>
+        <div class="text-muted-foreground p-4 text-center text-[0.8125rem]">No more items to add</div>
       }
     </div>
   </div>

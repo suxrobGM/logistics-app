@@ -55,7 +55,7 @@
         <ui-grid container spacing="4" class="mt-4">
           <ui-grid [size]="{ xs: 12, md: 6 }">
             <ui-typography variant="caption" color="muted" class="mb-1 block">Truck</ui-typography>
-            <a [routerLink]="['/trucks', record()!.truckId]" class="text-primary font-medium">
+            <a [routerLink]="['/trucks', record()!.truckId]" class="text-foreground font-medium">
               {{ record()!.truckNumber }}
             </a>
           </ui-grid>
@@ -89,11 +89,11 @@
             <table class="min-w-full">
               <thead>
                 <tr class="border-b">
-                  <th class="text-muted py-2 text-left text-sm font-medium">Part Name</th>
-                  <th class="text-muted py-2 text-left text-sm font-medium">Part Number</th>
-                  <th class="text-muted py-2 text-right text-sm font-medium">Quantity</th>
-                  <th class="text-muted py-2 text-right text-sm font-medium">Unit Cost</th>
-                  <th class="text-muted py-2 text-right text-sm font-medium">Total</th>
+                  <th class="text-muted-foreground py-2 text-left text-sm font-medium">Part Name</th>
+                  <th class="text-muted-foreground py-2 text-left text-sm font-medium">Part Number</th>
+                  <th class="text-muted-foreground py-2 text-right text-sm font-medium">Quantity</th>
+                  <th class="text-muted-foreground py-2 text-right text-sm font-medium">Unit Cost</th>
+                  <th class="text-muted-foreground py-2 text-right text-sm font-medium">Total</th>
                 </tr>
               </thead>
               <tbody>
@@ -143,7 +143,7 @@
             <div class="border-t pt-3">
               <ui-stack direction="row" justify="between">
                 <span class="font-semibold">Total Cost</span>
-                <span class="text-primary text-lg font-bold">
+                <span class="text-foreground text-lg font-bold">
                   {{ record()!.totalCost | currencyFormat }}
                 </span>
               </ui-stack>

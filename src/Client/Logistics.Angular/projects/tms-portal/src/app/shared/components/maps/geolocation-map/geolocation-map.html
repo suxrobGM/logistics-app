@@ -60,18 +60,18 @@
           <div
             class="border-surface-200 dark:border-surface-700 mb-2 flex items-center gap-2 border-b pb-2"
           >
-            <i class="pi pi-truck text-primary"></i>
+            <i class="pi pi-truck text-foreground"></i>
             <strong class="text-base">{{ selectedMarker()!.data.truckNumber }}</strong>
           </div>
           @if (selectedMarker()!.data.driversName) {
             <div class="mb-1 flex items-start gap-2 text-sm">
-              <i class="pi pi-user text-muted mt-0.5"></i>
+              <i class="pi pi-user text-muted-foreground mt-0.5"></i>
               <span>{{ selectedMarker()!.data.driversName }}</span>
             </div>
           }
           @if (selectedMarker()!.data.currentAddress) {
             <div class="flex items-start gap-2 text-sm">
-              <i class="pi pi-map-marker text-muted mt-0.5"></i>
+              <i class="pi pi-map-marker text-muted-foreground mt-0.5"></i>
               <span>{{ selectedMarker()!.data.currentAddress | address }}</span>
             </div>
           }

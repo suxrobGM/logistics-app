@@ -117,7 +117,7 @@
                 <ui-stack direction="row" justify="between" class="py-1">
                   <span>{{ taxLabel() }}:</span>
                   @if (isReverseCharge()) {
-                    <span class="text-muted">0.00 (reverse charge)</span>
+                    <span class="text-muted-foreground">0.00 (reverse charge)</span>
                   } @else {
                     <span>{{ inv.taxTotal?.amount ?? 0 | currencyFormat }}</span>
                   }

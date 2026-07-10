@@ -11,28 +11,28 @@
       <p-card header="Report Summary">
         <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
           <div>
-            <div class="text-muted mb-1 text-sm">Truck</div>
+            <div class="text-muted-foreground mb-1 text-sm">Truck</div>
             <div class="font-medium">{{ report()!.truckNumber }}</div>
           </div>
           <div>
-            <div class="text-muted mb-1 text-sm">Driver</div>
+            <div class="text-muted-foreground mb-1 text-sm">Driver</div>
             <div class="font-medium">{{ report()!.driverName }}</div>
           </div>
           <div>
-            <div class="text-muted mb-1 text-sm">Type</div>
+            <div class="text-muted-foreground mb-1 text-sm">Type</div>
             <div class="font-medium">
               {{ report()!.type === "pre_trip" ? "Pre-Trip" : "Post-Trip" }}
             </div>
           </div>
           <div>
-            <div class="text-muted mb-1 text-sm">Defects Found</div>
+            <div class="text-muted-foreground mb-1 text-sm">Defects Found</div>
             <div class="font-medium">{{ report()!.defects?.length ?? 0 }}</div>
           </div>
         </div>
 
         @if (report()!.driverNotes) {
           <div class="mt-4">
-            <div class="text-muted mb-1 text-sm">Driver Notes</div>
+            <div class="text-muted-foreground mb-1 text-sm">Driver Notes</div>
             <p>{{ report()!.driverNotes }}</p>
           </div>
         }

@@ -69,7 +69,7 @@
             style="height: 300px"
           />
         } @else {
-          <ui-stack align="center" justify="center" class="text-muted h-75">
+          <ui-stack align="center" justify="center" class="text-muted-foreground h-75">
             <ui-typography variant="body" color="muted">
               No service type data available
             </ui-typography>
@@ -88,7 +88,7 @@
             style="height: 300px"
           />
         } @else {
-          <ui-stack align="center" justify="center" class="text-muted h-75">
+          <ui-stack align="center" justify="center" class="text-muted-foreground h-75">
             <ui-typography variant="body" color="muted">No vendor data available</ui-typography>
           </ui-stack>
         }
@@ -107,7 +107,7 @@
           style="height: 350px"
         />
       } @else {
-        <ui-stack align="center" justify="center" class="text-muted h-88">
+        <ui-stack align="center" justify="center" class="text-muted-foreground h-88">
           <ui-typography variant="body" color="muted">No trend data available</ui-typography>
         </ui-stack>
       }
@@ -149,7 +149,7 @@
           </ng-template>
           <ng-template #empty>
             <tr>
-              <td colspan="4" class="text-muted text-center">No service type data available</td>
+              <td colspan="4" class="text-muted-foreground text-center">No service type data available</td>
             </tr>
           </ng-template>
         </ui-data-table>
@@ -196,14 +196,14 @@
                 @if (truck.lastServiceDate) {
                   {{ truck.lastServiceDate | date: "MMM d, yyyy" }}
                 } @else {
-                  <span class="text-muted">N/A</span>
+                  <span class="text-muted-foreground">N/A</span>
                 }
               </td>
             </tr>
           </ng-template>
           <ng-template #empty>
             <tr>
-              <td colspan="4" class="text-muted text-center">No truck data available</td>
+              <td colspan="4" class="text-muted-foreground text-center">No truck data available</td>
             </tr>
           </ng-template>
         </ui-data-table>
@@ -239,7 +239,7 @@
         </ng-template>
         <ng-template #empty>
           <tr>
-            <td colspan="3" class="text-muted text-center">No vendor data available</td>
+            <td colspan="3" class="text-muted-foreground text-center">No vendor data available</td>
           </tr>
         </ng-template>
       </ui-data-table>

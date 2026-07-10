@@ -240,7 +240,7 @@
                 >
                   <div>
                     <p class="font-semibold">{{ payment.amount?.amount | currencyFormat }}</p>
-                    <p class="text-muted-color text-sm">
+                    <p class="text-muted-foreground text-sm">
                       {{ payment.createdDate | date: "short" }}
                     </p>
                   </div>
@@ -290,7 +290,7 @@
     </p-dialog>
   } @else {
     <p-card>
-      <ui-stack align="center" gap="4" class="text-muted-color py-8">
+      <ui-stack align="center" gap="4" class="text-muted-foreground py-8">
         <ui-icon name="exclamation-circle" size="xl" />
         <p>Payroll invoice not found</p>
       </ui-stack>

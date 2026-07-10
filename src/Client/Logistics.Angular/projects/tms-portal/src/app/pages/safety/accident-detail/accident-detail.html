@@ -90,7 +90,7 @@
                   <ui-typography variant="body-sm" color="muted" class="mb-1 block">
                     Truck
                   </ui-typography>
-                  <a [routerLink]="['/trucks', report()!.truckId]" class="text-primary font-medium">
+                  <a [routerLink]="['/trucks', report()!.truckId]" class="text-foreground font-medium">
                     {{ report()!.truckNumber }}
                   </a>
                 </ui-grid>
@@ -191,7 +191,7 @@
                       <ui-typography variant="body-sm" color="muted" class="mb-1 block">
                         Associated Trip
                       </ui-typography>
-                      <a [routerLink]="['/trips', report()!.tripId]" class="text-primary text-sm">
+                      <a [routerLink]="['/trips', report()!.tripId]" class="text-foreground text-sm">
                         View Trip
                       </a>
                     </div>
@@ -251,7 +251,7 @@
                     <ui-typography variant="body-sm" color="muted" class="mb-1 block">
                       Estimated Damage
                     </ui-typography>
-                    <div class="text-primary text-2xl font-bold">
+                    <div class="text-foreground text-2xl font-bold">
                       {{ report()!.estimatedDamage | currencyFormat }}
                     </div>
                   </div>

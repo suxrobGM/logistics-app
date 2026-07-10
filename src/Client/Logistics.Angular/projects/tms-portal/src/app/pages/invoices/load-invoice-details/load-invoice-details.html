@@ -140,7 +140,7 @@
                 <div class="flex justify-between py-1">
                   <span>{{ taxLabel() }}:</span>
                   @if (isReverseCharge()) {
-                    <span class="text-muted">0.00 (reverse charge)</span>
+                    <span class="text-muted-foreground">0.00 (reverse charge)</span>
                   } @else {
                     <span>{{ invoice()!.taxTotal?.amount ?? 0 | currencyFormat }}</span>
                   }
@@ -227,7 +227,7 @@
                 >
                   <div>
                     <p class="font-semibold">{{ payment.amount?.amount | currencyFormat }}</p>
-                    <p class="text-muted text-sm">
+                    <p class="text-muted-foreground text-sm">
                       {{ payment.createdDate | dateFormat: "short" }}
                     </p>
                   </div>
@@ -242,7 +242,7 @@
 
         @if (invoice()!.notes) {
           <p-card header="Notes" styleClass="mt-4">
-            <p class="text-muted-color">{{ invoice()!.notes }}</p>
+            <p class="text-muted-foreground">{{ invoice()!.notes }}</p>
           </p-card>
         }
       </ui-grid>
@@ -265,7 +265,7 @@
     <app-payment-link-dialog [invoiceId]="invoiceId()" [(visible)]="showPaymentLinkDialog" />
   } @else {
     <p-card>
-      <ui-stack align="center" gap="4" class="text-muted-color py-8">
+      <ui-stack align="center" gap="4" class="text-muted-foreground py-8">
         <ui-icon name="exclamation-circle" size="xl" />
         <p>Invoice not found</p>
       </ui-stack>

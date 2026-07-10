@@ -11,7 +11,7 @@
       <p-progress-spinner />
     </div>
   } @else {
-    <p class="text-muted-color mb-4">
+    <p class="text-muted-foreground mb-4">
       Generate tracking links to share with customers so they can track this shipment without
       creating an account.
     </p>
@@ -75,14 +75,14 @@
         </ng-template>
         <ng-template #empty>
           <tr>
-            <td colspan="5" class="text-muted-color py-4 text-center">
+            <td colspan="5" class="text-muted-foreground py-4 text-center">
               No tracking links generated yet
             </td>
           </tr>
         </ng-template>
       </ui-data-table>
     } @else {
-      <div class="text-muted-color py-4 text-center">
+      <div class="text-muted-foreground py-4 text-center">
         <i class="pi pi-link mb-2 text-4xl"></i>
         <p>No tracking links generated yet</p>
         <p class="text-sm">Click "Generate New Link" to create a shareable tracking link</p>

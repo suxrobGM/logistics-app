@@ -98,7 +98,7 @@
             @if (entry.startTime && entry.endTime) {
               {{ entry.startTime | slice: 0 : 5 }} - {{ entry.endTime | slice: 0 : 5 }}
             } @else {
-              <span class="text-muted-color">-</span>
+              <span class="text-muted-foreground">-</span>
             }
           </td>
           <td>
@@ -110,7 +110,7 @@
                 {{ entry.notes | slice: 0 : 30 }}{{ entry.notes.length > 30 ? "..." : "" }}
               </span>
             } @else {
-              <span class="text-muted-color">-</span>
+              <span class="text-muted-foreground">-</span>
             }
           </td>
           <td>
