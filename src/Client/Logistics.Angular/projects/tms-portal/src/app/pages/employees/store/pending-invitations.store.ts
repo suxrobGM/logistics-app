@@ -1,10 +1,15 @@
 import { computed, inject } from "@angular/core";
-import { Api, cancelInvitation, getInvitations, resendInvitation } from "@logistics/shared/api";
-import { formatSortField } from "@logistics/shared/api";
-import type { InvitationDto } from "@logistics/shared/api";
+import {
+  Api,
+  cancelInvitation,
+  formatSortField,
+  getInvitations,
+  resendInvitation,
+  type InvitationDto,
+} from "@logistics/shared/api";
 import type { AppError } from "@logistics/shared/errors";
+import type { ListLazyLoadEvent } from "@logistics/shared/stores";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
-import type { TableLazyLoadEvent } from "primeng/table";
 import { ToastService } from "@/core/services";
 
 interface PendingInvitationsState {
@@ -76,7 +81,7 @@ export const PendingInvitationsStore = signalStore(
         fetchData();
       },
 
-      onLazyLoad(event: TableLazyLoadEvent) {
+      onLazyLoad(event: ListLazyLoadEvent) {
         const page = Math.floor((event.first ?? 0) / (event.rows ?? 10)) + 1;
         patchState(store, {
           page,

@@ -26,19 +26,18 @@
   </ng-template>
 
   <p-table
-    [value]="data()"
-    [loading]="isLoading()"
+    [value]="store.data()"
+    [loading]="store.isLoading()"
     [tableStyle]="{ 'min-width': '50rem' }"
     [size]="'small'"
     [showLoader]="true"
     [lazy]="true"
     [paginator]="true"
     [showCurrentPageReport]="true"
-    (onLazyLoad)="onLazyLoad($event)"
+    (onLazyLoad)="store.onLazyLoad($event)"
     [rows]="10"
-    [(first)]="first"
-    [totalRecords]="totalRecords()"
-    [loading]="isLoading()"
+    [first]="store.first()"
+    [totalRecords]="store.totalRecords()"
     [rowsPerPageOptions]="[10, 25, 50]"
   >
     <ng-template #header>

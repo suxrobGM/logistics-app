@@ -1,5 +1,5 @@
 import { getAdminInvitations, type InvitationDto } from "@logistics/shared/api";
-import { createListStore } from "@/shared/stores";
+import { createListStore } from "@logistics/shared/stores";
 
 /**
  * Store for the pending admin invitations list.

@@ -1,6 +1,5 @@
-import { getDriverBehaviorEvents } from "@logistics/shared/api";
-import type { DriverBehaviorEventDto } from "@logistics/shared/api";
-import { createListStore } from "@/shared/stores";
+import { getDriverBehaviorEvents, type DriverBehaviorEventDto } from "@logistics/shared/api";
+import { createListStore } from "@logistics/shared/stores";
 
 /**
  * Store for the driver behavior events list page.

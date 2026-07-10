@@ -1,6 +1,5 @@
-import { getSubscriptions } from "@logistics/shared/api";
-import type { SubscriptionDto } from "@logistics/shared/api";
-import { createListStore } from "@/shared/stores";
+import { getSubscriptions, type SubscriptionDto } from "@logistics/shared/api";
+import { createListStore } from "@logistics/shared/stores";
 
 /**
  * Store for the subscriptions list page.

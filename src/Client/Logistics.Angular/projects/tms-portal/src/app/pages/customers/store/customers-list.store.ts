@@ -1,6 +1,5 @@
-import { getCustomers } from "@logistics/shared/api";
-import type { CustomerDto } from "@logistics/shared/api";
-import { createListStore } from "@/shared/stores";
+import { getCustomers, type CustomerDto } from "@logistics/shared/api";
+import { createListStore } from "@logistics/shared/stores";
 
 /**
  * Store for the customers list page.

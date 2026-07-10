@@ -10,11 +10,12 @@ import {
 } from "@logistics/shared/api";
 import { EmptyState, ErrorState, Grid, Stack } from "@logistics/shared/components";
 import { LocalizationService } from "@logistics/shared/services";
+import type { ListLazyLoadEvent } from "@logistics/shared/stores";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule, type TableLazyLoadEvent } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import { DashboardCard, PageHeader, StatCard, UiFormField } from "@/shared/components";
@@ -122,7 +123,7 @@ export class EldHosLogsComponent implements OnInit {
     }
   }
 
-  protected async onLazyLoad(event: TableLazyLoadEvent): Promise<void> {
+  protected async onLazyLoad(event: ListLazyLoadEvent): Promise<void> {
     this.first.set(event.first ?? 0);
     this.pageSize.set(event.rows ?? 25);
     await this.loadData();

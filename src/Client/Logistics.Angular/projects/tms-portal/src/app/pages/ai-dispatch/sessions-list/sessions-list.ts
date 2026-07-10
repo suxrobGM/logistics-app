@@ -19,9 +19,10 @@ import {
 } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { Icon, Stack, Surface, Typography } from "@logistics/shared/components";
+import type { ListLazyLoadEvent } from "@logistics/shared/stores";
 import { ButtonModule } from "primeng/button";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { TableModule, type TableLazyLoadEvent } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
 import {
@@ -166,7 +167,7 @@ export class SessionsListPage implements OnInit, OnDestroy {
     }
   }
 
-  protected onPageChange(event: TableLazyLoadEvent): void {
+  protected onPageChange(event: ListLazyLoadEvent): void {
     const first = event.first ?? 0;
     const rows = event.rows ?? this.pageSize();
     this.page.set(Math.floor(first / rows) + 1);

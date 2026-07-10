@@ -1,6 +1,5 @@
-import { getExpenses } from "@logistics/shared/api";
-import type { ExpenseDto } from "@logistics/shared/api";
-import { createListStore } from "@/shared/stores";
+import { getExpenses, type ExpenseDto } from "@logistics/shared/api";
+import { createListStore } from "@logistics/shared/stores";
 
 /**
  * Store for the expenses list page.

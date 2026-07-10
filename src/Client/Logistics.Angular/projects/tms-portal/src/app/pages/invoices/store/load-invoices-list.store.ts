@@ -1,6 +1,5 @@
-import { formatSortField, getInvoices } from "@logistics/shared/api";
-import type { InvoiceDto } from "@logistics/shared/api";
-import { createListStore } from "@/shared/stores";
+import { formatSortField, getInvoices, type InvoiceDto } from "@logistics/shared/api";
+import { createListStore } from "@logistics/shared/stores";
 
 /**
  * Store for the load invoices list page.

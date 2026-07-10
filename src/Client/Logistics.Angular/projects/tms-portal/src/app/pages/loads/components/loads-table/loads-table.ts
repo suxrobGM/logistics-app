@@ -4,11 +4,12 @@ import type { AppError } from "@logistics/shared";
 import type { LoadDto, LoadStatus } from "@logistics/shared/api";
 import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
+import type { ListLazyLoadEvent } from "@logistics/shared/stores";
 import type { MenuItem } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
-import { type TableLazyLoadEvent, TableModule } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { DataContainer, LoadStatusTag, LoadTypeTag, RouteBadge } from "@/shared/components";
@@ -38,7 +39,9 @@ export class LoadsTable {
   private readonly localizationService = inject(LocalizationService);
 
   // Localization
-  protected readonly distanceUnitLabel = computed(() => this.localizationService.getDistanceUnitLabel());
+  protected readonly distanceUnitLabel = computed(() =>
+    this.localizationService.getDistanceUnitLabel(),
+  );
 
   // Data inputs
   public readonly data = input.required<LoadDto[]>();
@@ -53,7 +56,7 @@ export class LoadsTable {
   public readonly selectedLoads = model<LoadDto[]>([]);
 
   // Outputs
-  public readonly lazyLoad = output<TableLazyLoadEvent>();
+  public readonly lazyLoad = output<ListLazyLoadEvent>();
   public readonly retry = output<void>();
   public readonly addLoad = output<void>();
   public readonly assignLoad = output<LoadDto>();
@@ -107,7 +110,7 @@ export class LoadsTable {
     ];
   });
 
-  protected onLazyLoad(event: TableLazyLoadEvent): void {
+  protected onLazyLoad(event: ListLazyLoadEvent): void {
     this.lazyLoad.emit(event);
   }
 

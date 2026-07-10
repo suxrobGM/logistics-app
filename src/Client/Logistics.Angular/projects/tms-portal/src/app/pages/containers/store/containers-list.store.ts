@@ -1,5 +1,5 @@
 import { getContainers, type ContainerDto } from "@logistics/shared/api";
-import { createListStore } from "@/shared/stores";
+import { createListStore } from "@logistics/shared/stores";
 
 /**
  * Store for the containers list page.

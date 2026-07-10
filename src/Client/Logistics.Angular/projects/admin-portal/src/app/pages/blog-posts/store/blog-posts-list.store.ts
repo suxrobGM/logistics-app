@@ -1,6 +1,5 @@
-import { getBlogPosts } from "@logistics/shared/api";
-import type { BlogPostDto } from "@logistics/shared/api";
-import { createListStore } from "@/shared/stores";
+import { getBlogPosts, type BlogPostDto } from "@logistics/shared/api";
+import { createListStore } from "@logistics/shared/stores";
 
 /**
  * Store for the blog posts list page.

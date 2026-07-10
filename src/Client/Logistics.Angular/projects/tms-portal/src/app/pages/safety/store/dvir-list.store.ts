@@ -1,6 +1,5 @@
-import { getDvirReports } from "@logistics/shared/api";
-import type { DvirReportDto } from "@logistics/shared/api";
-import { createListStore } from "@/shared/stores";
+import { getDvirReports, type DvirReportDto } from "@logistics/shared/api";
+import { createListStore } from "@logistics/shared/stores";
 
 /**
  * Store for the DVIR reports list page.

@@ -29,15 +29,15 @@
   </ui-stack>
 
   <p-table
-    [value]="data()"
+    [value]="store.data()"
     [lazy]="true"
     [paginator]="true"
     [showCurrentPageReport]="true"
-    (onLazyLoad)="onLazyLoad($event)"
-    [rows]="10"
-    [first]="first()"
-    [totalRecords]="totalRecords()"
-    [loading]="isLoading()"
+    (onLazyLoad)="store.onLazyLoad($event)"
+    [rows]="store.pageSize()"
+    [first]="store.first()"
+    [totalRecords]="store.totalRecords()"
+    [loading]="store.isLoading()"
     [rowsPerPageOptions]="[10, 25, 50]"
     [rowHover]="true"
   >

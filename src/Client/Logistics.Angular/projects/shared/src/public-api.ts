@@ -11,3 +11,4 @@ export * from "./lib/constants";
 export * from "./lib/icons";
 export * from "./lib/models";
 export * from "./lib/pipes";
+export * from "./lib/stores";

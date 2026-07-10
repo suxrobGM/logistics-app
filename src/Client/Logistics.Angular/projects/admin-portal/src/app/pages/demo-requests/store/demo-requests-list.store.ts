@@ -1,6 +1,5 @@
-import { getDemoRequests } from "@logistics/shared/api";
-import type { DemoRequestDto } from "@logistics/shared/api";
-import { createListStore } from "@/shared/stores";
+import { getDemoRequests, type DemoRequestDto } from "@logistics/shared/api";
+import { createListStore } from "@logistics/shared/stores";
 
 /**
  * Store for the demo requests list page.

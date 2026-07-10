@@ -1,13 +1,17 @@
 import { computed, inject } from "@angular/core";
-import { Api, formatSortField } from "@logistics/shared/api";
-import type { ApiFnOptional, ApiFnRequired } from "@logistics/shared/api/generated/api";
-import type { PagedResponse } from "@logistics/shared/api/models";
-import type { AppError } from "@logistics/shared/errors";
 import { patchState, signalStore, withComputed, withMethods, withState } from "@ngrx/signals";
 import { rxMethod } from "@ngrx/signals/rxjs-interop";
-import type { TableLazyLoadEvent } from "primeng/table";
 import { catchError, from, of, pipe, switchMap, tap } from "rxjs";
-import type { ListQueryParams, ListState, ListStoreConfig } from "./base-list.types";
+import { Api, formatSortField } from "../api";
+import type { ApiFnOptional, ApiFnRequired } from "../api/generated/api";
+import type { PagedResponse } from "../api/models";
+import type { AppError } from "../errors";
+import type {
+  ListLazyLoadEvent,
+  ListQueryParams,
+  ListState,
+  ListStoreConfig,
+} from "./base-list.types";
 
 /**
  * Creates the initial state for a list store.
@@ -163,16 +167,21 @@ export function createListStore<T, P extends ListQueryParams = ListQueryParams>(
 
         /**
          * Sets additional filters and reloads from page 1.
+         *
+         * Pass `{ reload: false }` to seed filters before the table issues its own initial
+         * lazy-load — otherwise the page fires two identical requests on mount.
          */
-        setFilters(filters: Record<string, unknown>): void {
+        setFilters(filters: Record<string, unknown>, options?: { reload?: boolean }): void {
           patchState(store, { filters: { ...store.filters(), ...filters }, page: 1, first: 0 });
-          load();
+          if (options?.reload !== false) {
+            load();
+          }
         },
 
         /**
-         * Handles PrimeNG table lazy load events.
+         * Handles a data-table lazy-load request (paging + sorting).
          */
-        onLazyLoad(event: TableLazyLoadEvent): void {
+        onLazyLoad(event: ListLazyLoadEvent): void {
           const pageSize = event.rows ?? store.pageSize();
           const page = (event.first ?? 0) / pageSize + 1;
           const sortField = (event.sortField as string) ?? "";

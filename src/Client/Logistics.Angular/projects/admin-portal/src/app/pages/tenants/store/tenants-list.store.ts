@@ -1,6 +1,5 @@
-import { getTenants } from "@logistics/shared/api";
-import type { TenantDto } from "@logistics/shared/api";
-import { createListStore } from "@/shared/stores";
+import { getTenants, type TenantDto } from "@logistics/shared/api";
+import { createListStore } from "@logistics/shared/stores";
 
 /**
  * Store for the tenants list page.

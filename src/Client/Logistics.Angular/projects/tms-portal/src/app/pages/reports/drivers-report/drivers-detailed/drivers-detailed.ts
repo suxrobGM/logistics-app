@@ -1,14 +1,7 @@
 import { DecimalPipe } from "@angular/common";
-import { Component, inject, signal } from "@angular/core";
+import { Component, inject, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { LocalizationService } from "@logistics/shared";
-import {
-  Api,
-  formatSortField,
-  getDriversReport,
-  type DriverReportDto,
-} from "@logistics/shared/api";
-import type { PagedResponse } from "@logistics/shared/api/models";
 import { Icon, Stack, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ButtonModule } from "primeng/button";
@@ -17,13 +10,14 @@ import { DatePickerModule } from "primeng/datepicker";
 import { InputTextModule } from "primeng/inputtext";
 import { TableModule } from "primeng/table";
 import { Tag, TagModule } from "primeng/tag";
-import { from, Observable } from "rxjs";
-import { BaseTable, DateRangePicker, PageHeader, type TableQueryParams } from "@/shared/components";
+import { DateRangePicker, PageHeader } from "@/shared/components";
 import { DateUtils, getPerformanceLevel, getPerformanceSeverity } from "@/shared/utils";
+import { DriversDetailedStore } from "./store";
 
 @Component({
   selector: "app-drivers-detailed",
   templateUrl: "./drivers-detailed.html",
+  providers: [DriversDetailedStore],
   imports: [
     FormsModule,
     ButtonModule,
@@ -41,33 +35,39 @@ import { DateUtils, getPerformanceLevel, getPerformanceSeverity } from "@/shared
     Typography,
   ],
 })
-export class DriversDetailedComponent extends BaseTable<DriverReportDto> {
-  private readonly api = inject(Api);
+export class DriversDetailedComponent implements OnInit {
   private readonly localization = inject(LocalizationService);
+  protected readonly store = inject(DriversDetailedStore);
   protected readonly distanceUnitLabel = this.localization.getDistanceUnitLabel();
 
   protected readonly startDate = signal(DateUtils.thisYear());
   protected readonly endDate = signal(DateUtils.today());
 
-  protected override query(params: TableQueryParams): Observable<PagedResponse<DriverReportDto>> {
-    const orderBy = formatSortField(params.sortField, params.sortOrder);
-
-    return from(
-      this.api.invoke(getDriversReport, {
-        Page: params.page + 1,
-        PageSize: params.size,
-        OrderBy: orderBy,
-        Search: params.search,
+  ngOnInit(): void {
+    // Seed the date range without loading: the table issues its own initial
+    // lazy-load, which then carries StartDate/EndDate (matching the old query()).
+    this.store.setFilters(
+      {
         StartDate: this.startDate().toISOString(),
         EndDate: this.endDate().toISOString(),
-      }),
+      },
+      { reload: false },
     );
   }
+
+  protected onSearch(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.store.setSearch(value);
+  }
+
   protected onDateRangeChange(dates: Date[]): void {
     if (dates.length === 2) {
       this.startDate.set(dates[0]);
       this.endDate.set(dates[1]);
-      this.fetch({ page: 0, size: 10 });
+      this.store.setFilters({
+        StartDate: this.startDate().toISOString(),
+        EndDate: this.endDate().toISOString(),
+      });
     }
   }
 

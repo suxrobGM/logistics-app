@@ -1,6 +1,5 @@
-import { getTrips } from "@logistics/shared/api";
-import type { TripDto } from "@logistics/shared/api";
-import { createListStore } from "@/shared/stores";
+import { getTrips, type TripDto } from "@logistics/shared/api";
+import { createListStore } from "@logistics/shared/stores";
 
 /**
  * Store for the trips list page.

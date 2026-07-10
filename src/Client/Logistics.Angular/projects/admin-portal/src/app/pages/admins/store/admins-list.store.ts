@@ -1,5 +1,5 @@
 import { getAdmins, type UserDto } from "@logistics/shared/api";
-import { createListStore } from "@/shared/stores";
+import { createListStore } from "@logistics/shared/stores";
 
 /**
  * Store for the admins list page (users holding an app-level role).

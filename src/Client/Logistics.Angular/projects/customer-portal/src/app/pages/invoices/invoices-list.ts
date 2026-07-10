@@ -4,12 +4,13 @@ import { ToastService } from "@logistics/shared";
 import { Api, getPortalInvoices, type PortalInvoiceDto } from "@logistics/shared/api";
 import { Icon, Stack, StatusBadge, Surface, Typography } from "@logistics/shared/components";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
+import type { ListLazyLoadEvent } from "@logistics/shared/stores";
 import { ButtonModule } from "primeng/button";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
-import { TableModule, type TableLazyLoadEvent } from "primeng/table";
+import { TableModule } from "primeng/table";
 import { ToastModule } from "primeng/toast";
 
 @Component({
@@ -64,7 +65,7 @@ export class InvoicesList {
     }
   }
 
-  protected onLazyLoad(event: TableLazyLoadEvent): void {
+  protected onLazyLoad(event: ListLazyLoadEvent): void {
     this.currentPage = Math.floor((event.first ?? 0) / (event.rows ?? 10)) + 1;
     this.pageSize = event.rows ?? 10;
     this.loadData();

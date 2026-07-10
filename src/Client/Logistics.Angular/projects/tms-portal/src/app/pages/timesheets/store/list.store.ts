@@ -1,6 +1,5 @@
-import { getTimeEntries } from "@logistics/shared/api";
-import type { TimeEntryDto } from "@logistics/shared/api";
-import { createListStore } from "@/shared/stores";
+import { getTimeEntries, type TimeEntryDto } from "@logistics/shared/api";
+import { createListStore } from "@logistics/shared/stores";
 
 /**
  * Store for the timesheets list page.
