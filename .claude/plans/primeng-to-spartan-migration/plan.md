@@ -264,28 +264,43 @@ Phases 5–6 must be re-driven through the Playwright MCP against this same rout
 
 > **Progress (branch `feat/angular-22-upgrade`):** items 1, 2, 3, 4, 6 ✅ — and item 5's wrappers all exist with specs.
 >
-> **Wrapper adoption: 219 of 221 raw controls converted.** 36 remain (that count now also includes p-password and
-> p-autocomplete, which were never in the original 221). What's left, and what each needs:
+> **Phase 3 is DONE.** 215 of the original 221 raw form controls go through wrappers; `formControlName` untouched.
+> 10 wrappers exist (text / textarea / select / number / date / checkbox / toggle / multiselect / password /
+> autocomplete), each with a spec. **90 tests across 11 spec files.**
 >
-> | blocker                                     | controls | needs                                                         |
-> | ------------------------------------------- | -------- | ------------------------------------------------------------- |
-> | projected `<ng-template #item>` on p-select | 3        | an item slot on `ui-select-field` — **see the trap below**    |
-> | `<p-password>`                              | 3        | a `ui-password-field` wrapper                                 |
-> | `<p-autocomplete>` (+ `(completeMethod)`)   | 5        | a `ui-autocomplete-field` wrapper                             |
-> | `(onSelect)` on p-datepicker                | 2        | a `select` output on `ui-date-field`                          |
-> | `(onChange)`/`(onClear)` on p-select        | 3        | **done** — `selectionChange` / `cleared` outputs exist now    |
-> | `p-checkbox [value]` without `[binary]`     | 1        | a checkbox-group member; `ui-checkbox-field` models a boolean |
+> **6 controls stay raw, each blocked on a capability, not effort:** a projected `<ng-template #item>`
+> (p-select x3, p-autocomplete x1), one `p-checkbox [value]` without `[binary]` (a checkbox-group member, not a
+> boolean), and one `p-datepicker selectionMode="range"`. The 6 `search-*` components also use `<ng-template #item>`
+> and so cannot adopt `ui-autocomplete-field` yet.
 >
-> **The `#item` trap.** Do NOT add an unconditional `<ng-template #item>` to `ui-select-field`'s template. p-select
-> then uses custom rendering for EVERY option, and all 54 already-converted selects render blank. Wrapping it in
-> `@if` is not obviously safe either (p-select's content query timing). Design it deliberately, with a browser check.
+> **The `#item` trap.** PrimeNG resolves the item template in `ngAfterContentInit`, so an `@if`-guarded
+> `<ng-template #item>` may never register — and an unconditional one makes p-select/p-autocomplete use custom
+> rendering for EVERY option, blanking all 54 converted selects. Design the slot in Phase 5 against spartan, and
+> verify it in a browser.
 >
-> **Wrapper defaults must match PrimeNG's, not "nice" values.** `optionLabel`/`optionValue` defaulted to `""`
-> instead of `undefined`, and every select in the app rendered its options as the literal string `"empty"` —
-> while `build:all` and all 73 specs stayed green. `optionValue=""` would also have stored `undefined` on selection.
-> Same class of bug as `currentPageReportTemplate`. Two open items of this kind, deliberately left as normalisation:
-> `ui-select-field` defaults `fluid` to `true` and `appendTo` to `"body"`, where a bare `<p-select>` defaults to
-> neither. 42 selects did not previously set `fluid`. Worth a visual pass.
+> ### Wrapper defaults must mirror PrimeNG's exactly. This bug class bit us four times.
+>
+> Each was invisible to `build:all` and to every passing spec. Each was found only by driving the browser, or by a
+> reviewer reading PrimeNG's `.mjs`:
+>
+> | wrapper input                 | wrong default                     | symptom                                                                                                           |
+> | ----------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+> | `currentPageReportTemplate`   | `undefined`                       | paginator threw on **every** paginated table                                                                      |
+> | `optionLabel` / `optionValue` | `""`                              | every select rendered its options as the literal `"empty"`; `optionValue=""` would store `undefined` on selection |
+> | `iconDisplay`                 | `undefined` (PrimeNG: `"button"`) | every datepicker lost its calendar trigger                                                                        |
+> | `appendTo`                    | `"body"` (PrimeNG: `undefined`)   | every overlay portalled out of its wrapper                                                                        |
+>
+> **Rule:** for every forwarded input, read the declared default in `node_modules/primeng/fesm2022/primeng-*.mjs`
+> and copy it. Never invent `""`, `true`, or `"body"`. Boolean inputs need `transform: booleanAttribute` — templates
+> write bare attributes (`showIcon`, `stripedRows`) which Angular passes as `""`.
+>
+> **Name collisions with `FormValueControl`.** It reserves `minLength`, `maxLength`, `min`, `max`, `pattern`,
+> `required`, `readonly`, `disabled`, `invalid`, `errors`, `name`, `touched`, `dirty`, `pending`, `hidden` as
+> validator-derived state inputs. `ui-autocomplete-field`'s "characters before searching" had to become
+> `minQueryLength`, or Signal Forms would auto-bind over it. TS2416 catches these.
+>
+> One deliberate normalisation, not a bug: `fluid` defaults to `true` on select/multiselect/date, compensating for
+> the `class="w-full"` the sweep drops. 42 selects did not previously set it. Worth a visual pass.
 >
 > **The wrapper pattern is proven, not assumed.** `projects/shared/src/lib/components/form/text-field/text-field.spec.ts`
 > shows a `FormValueControl`-only component syncing both ways under `formControlName` AND `[formField]`, propagating
