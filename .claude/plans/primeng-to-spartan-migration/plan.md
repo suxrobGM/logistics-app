@@ -345,21 +345,55 @@ Phases 5–6 must be re-driven through the Playwright MCP against this same rout
 
 7. `UiFormField` requires **no change**. Do not add dual-shape error handling.
 
-## Phase 4 — Signal Forms migration _(~52 components)_
+## Phase 4 — Signal Forms migration _(52 components)_ — ✅ COMPLETE
 
-Templates already speak `ui-*-field`, so each form is a `.ts`-only change: `FormGroup` → `signal()` + `form()`.
+All 52 forms are Signal Forms. Exit criteria clean: 0 `ReactiveFormsModule` / `FormBuilder` /
+`new FormGroup` / `new FormControl`, 0 `ControlValueAccessor` / `NG_VALUE_ACCESSOR` implementations,
+0 compat shims, 0 `formControlName` / `[formGroup]` / `(ngSubmit)` / `[control]=` in templates.
+39 `<form [formRoot]>`, 286 `[formField]` bindings, 21 `FormValueControl` controls.
+`build:all` green, 98 tests / 13 spec files.
 
-- Use the `signal-forms-migration` skill — but **fix it first**: its "third-party components" section wrongly claims CVA
-  "works with most third-party libraries" and recommends `[formField]` directly on PrimeNG.
-- Order by risk: website (2) → admin-portal (6) → shared (4) → tms-portal (40).
-- Model dynamic arrays as plain arrays inside the model signal (no `FormArray` class exists).
-- Use the `{when: LogicFn}` config form of `disabled()`/`readonly()`/`hidden()`.
-- Rewrite `ValidatedForm` for Signal Forms (its selector `form[formGroup]` never matches a Signal Form). Same UX
-  contract: mark all touched, focus first invalid, `aria-live` count. **Delete the reactive-forms directive at the end of
-  this phase**, along with the last `ReactiveFormsModule` import.
-- **Do not use `compatForm` or `SignalFormControl`.** If a form resists conversion, fix the form.
+The `signal-forms-migration` skill was **rewritten against the installed 22.0.6** and is now pinned by
+`signal-forms-v22-api-probe.spec.ts` (claims F–O). The old draft was wrong about `submit()`,
+`form[formRoot]`, error kinds, status classes and `reset()`. **Read the skill before touching a form.**
 
-**Exit criteria:** `git grep -E "ReactiveFormsModule|FormBuilder|new FormGroup|ControlValueAccessor|NG_VALUE_ACCESSOR"` is clean.
+### The one thing that broke, 46 times
+
+**`[formField]` value types are invariant.** A control's `value` is a `ModelSignal<T>` (read+write), so
+the model field type must equal the wrapper's `FormValueControl<T>` T exactly. Reactive `FormControl`s
+were routinely `string | null`; `ui-text-field` is `FormValueControl<string>`. Convention now: optional
+text fields hold `""`, coerced `dto.x ?? ""` inbound and `v.x || null` outbound. Every fix was checked
+against `git show HEAD:<file>` so an empty field keeps sending the wire value it always did.
+
+Knock-on: `pattern()` / `minLength()` now typecheck against `string`, so an **optional** field needs
+`{when: ({valueOf}) => valueOf(p.x).length > 0}` — reactive `Validators.pattern` skipped empty values.
+
+### Two bugs only the browser found
+
+Both were invisible to `build:all` and to a fully green test suite — the same pattern as Phase 3's
+four default-drift bugs.
+
+1. **`invalid` is bound from form creation**, not from first interaction. Under the reactive bridge
+   that state input was never driven, so wrappers' `[invalid]` / `[attr.aria-invalid]` were inert.
+   After migration every required, empty, untouched field rendered as invalid on page load. Fixed by
+   gating all 12 wrappers on `showInvalid = invalid() && (touched() || dirty())`.
+2. **A conversion agent silently dropped a projected `<ng-template #item>`**, swapping a deliberately-raw
+   `p-select` for `ui-select-field` and losing each ELD provider's description sub-line. The 6 raw
+   controls from Phase 3 are raw _for a reason_. **When an agent converts a form, diff its template for
+   dropped projected templates.**
+
+### Shared seam
+
+- `ui-form-field` resolves the projected `FORM_FIELD` token, reads `FieldState.errors()`, and renders
+  `error.message` — so every validator carries one. The `NgControl` fallback, the `[control]` input and
+  the reactive error flattening are gone. It keeps an explicit `[field]` input for the rare control that
+  cannot carry `[formField]` (a raw PrimeNG component needing a projected template).
+- `ValidatedForm` matches only `form[formRoot]`. It does **not** mark controls touched (`submit()`
+  already does) and cannot query `.ng-invalid` (Signal Forms sets no status classes). It focuses via
+  `errorSummary()[0].fieldTree().focusBoundControl()`, which is why every control implements `focus()`.
+- `SearchTruck` gained a `[truckId]` seed input rather than widening `value` to `TruckDto | string | null`.
+- `load-form.patch()` assigns field by field: `LoadFormValue` carries keys the model lacks, which
+  `patchValue()` dropped but a `model.update()` spread would add to the field tree.
 
 ## Phase 5 — spartan/ui foundation + wrapper internals swap
 
