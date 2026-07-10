@@ -94,12 +94,24 @@ export class UiDataTable<T> {
   public readonly scrollable = input<boolean>(false);
   public readonly scrollHeight = input<string | undefined>(undefined);
   public readonly styleClass = input<string | undefined>(undefined);
+  public readonly tableStyle = input<Record<string, string> | undefined>(undefined);
   public readonly size = input<DataTableSize>(undefined);
   public readonly stripedRows = input<boolean>(false);
+  public readonly rowHover = input<boolean>(false);
+  public readonly showLoader = input<boolean>(true);
+  public readonly currentPageReportTemplate = input<string | undefined>(undefined);
   public readonly globalFilterFields = input<string[] | undefined>(undefined);
 
   /** Emitted when the table needs a page of data (paging or sorting changed). */
   public readonly lazyLoad = output<ListLazyLoadEvent>();
+
+  /**
+   * Applies the table's client-side global filter. Only used by the trip wizard's load picker;
+   * every other list filters server-side through its store.
+   */
+  public filterGlobal(value: string, matchMode = "contains"): void {
+    this.innerTable().filterGlobal(value, matchMode);
+  }
 
   // Projected slots. Rendered through ngTemplateOutlet, so an absent slot renders nothing.
   protected readonly headerTpl = contentChild<TemplateRef<unknown>>("header");

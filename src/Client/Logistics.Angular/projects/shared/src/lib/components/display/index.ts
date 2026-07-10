@@ -5,3 +5,4 @@ export * from "./pdf-viewer/pdf-viewer";
 export * from "./date-range-picker";
 export * from "./data-table/data-table";
 export * from "./data-table/sort-header";
+export * from "./data-table/table-row-directives";
