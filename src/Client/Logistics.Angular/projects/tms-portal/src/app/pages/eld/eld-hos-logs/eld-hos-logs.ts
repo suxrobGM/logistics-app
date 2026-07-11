@@ -23,7 +23,6 @@ import {
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import { DatePicker } from "primeng/datepicker";
-import { TooltipModule } from "primeng/tooltip";
 import { DashboardCard, PageHeader, StatCard, UiFormField } from "@/shared/components";
 
 @Component({
@@ -44,7 +43,6 @@ import { DashboardCard, PageHeader, StatCard, UiFormField } from "@/shared/compo
     Spinner,
     Stack,
     StatCard,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiFormField,

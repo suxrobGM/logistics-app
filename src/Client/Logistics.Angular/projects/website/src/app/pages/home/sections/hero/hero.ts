@@ -1,6 +1,5 @@
 import { Component, inject, signal } from "@angular/core";
-import { Icon, UiButton } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
+import { Icon, UiButton, UiTooltip } from "@logistics/shared/ui";
 import { BrowserFrame, HeroBackground } from "@/shared/components";
 import { DemoDialogService } from "@/shared/services";
 
@@ -12,7 +11,7 @@ interface StatItem {
 @Component({
   selector: "web-hero",
   templateUrl: "./hero.html",
-  imports: [BrowserFrame, HeroBackground, Icon, TooltipModule, UiButton],
+  imports: [BrowserFrame, HeroBackground, Icon, UiButton, UiTooltip],
 })
 export class Hero {
   private readonly demoDialogService = inject(DemoDialogService);

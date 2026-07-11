@@ -15,6 +15,7 @@ import {
   lucideChartColumn,
   lucideClock,
   lucideCompass,
+  lucideCreditCard,
   lucideGlobe,
   lucideHeart,
   lucideHistory,
@@ -45,7 +46,7 @@ import {
  * Icons `website` uses that `BASE_NG_ICONS` does not already provide.
  * Registered in app.config.ts:  provideIcons({ ...BASE_NG_ICONS, ...WEBSITE_NG_ICONS })
  *
- * 37 name(s) -> 36 distinct glyph(s).
+ * 38 name(s) -> 37 distinct glyph(s).
  */
 export const WEBSITE_NG_ICONS = {
   brandFacebook,
@@ -60,6 +61,7 @@ export const WEBSITE_NG_ICONS = {
   lucideChartColumn,
   lucideClock,
   lucideCompass,
+  lucideCreditCard,
   lucideGlobe,
   lucideHeart,
   lucideHistory,

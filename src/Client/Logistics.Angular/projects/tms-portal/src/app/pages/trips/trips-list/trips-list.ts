@@ -28,13 +28,13 @@ import {
   UiDataTable,
   UiSortHeader,
   UiTableRowDirectives,
+  UiTooltip,
 } from "@logistics/shared/ui";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import type { MenuItem } from "primeng/api";
 import { Checkbox } from "primeng/checkbox";
 import { MenuModule } from "primeng/menu";
 import { MultiSelect } from "primeng/multiselect";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import {
   DataContainer,
@@ -75,7 +75,6 @@ import { TripsListStore } from "../store/trips-list.store";
     SearchField,
     SearchTruck,
     Stack,
-    TooltipModule,
     TripsSummaryStats,
     TripStatusTag,
     Typography,
@@ -84,6 +83,7 @@ import { TripsListStore } from "../store/trips-list.store";
     UiFormField,
     UiSortHeader,
     UiTableRowDirectives,
+    UiTooltip,
   ],
 })
 export class TripsList {

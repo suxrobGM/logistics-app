@@ -23,11 +23,11 @@ import {
   UiDataTable,
   UiSortHeader,
   UiTableRowDirectives,
+  UiTooltip,
 } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
 import { MultiSelectModule } from "primeng/multiselect";
 import { TextareaModule } from "primeng/textarea";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import {
   DataContainer,
@@ -59,13 +59,13 @@ import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
     SearchField,
     Stack,
     TextareaModule,
-    TooltipModule,
     Typography,
     UiButton,
     UiDataTable,
     UiFormField,
     UiSortHeader,
     UiTableRowDirectives,
+    UiTooltip,
   ],
 })
 export class PayrollInvoicesList {

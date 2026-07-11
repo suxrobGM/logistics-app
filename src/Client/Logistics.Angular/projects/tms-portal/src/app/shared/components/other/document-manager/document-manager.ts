@@ -17,12 +17,12 @@ import {
   Spinner,
   UiButton,
   UiDataTable,
+  UiTooltip,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import { downloadBlobFile, formatFileSize } from "@logistics/shared/utils";
 import { FileUploadModule } from "primeng/fileupload";
 import { ToastModule } from "primeng/toast";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { Converters } from "@/shared/utils";
 
@@ -37,9 +37,9 @@ import { Converters } from "@/shared/utils";
     Icon,
     Spinner,
     ToastModule,
-    TooltipModule,
     UiButton,
     UiDataTable,
+    UiTooltip,
   ],
 })
 export class DocumentManager implements OnInit {

@@ -1,13 +1,12 @@
 import { Component, computed, inject, input, output } from "@angular/core";
 import { Api, bulkDeleteLoads, bulkDispatchLoads, type LoadDto } from "@logistics/shared/api";
-import { UiButton } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
+import { UiButton, UiTooltip } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 
 @Component({
   selector: "app-loads-bulk-toolbar",
   templateUrl: "./loads-bulk-toolbar.html",
-  imports: [TooltipModule, UiButton],
+  imports: [UiButton, UiTooltip],
 })
 export class LoadsBulkToolbar {
   private readonly api = inject(Api);

@@ -1,5 +1,5 @@
 <ui-page-header title="ELD / HOS Dashboard" subtitle="Monitor driver Hours of Service compliance">
-  <ui-badge [value]="rules.ruleSetLabel()" severity="info" pTooltip="Active HOS rule set" />
+  <ui-badge [value]="rules.ruleSetLabel()" severity="info" uiTooltip="Active HOS rule set" />
   <ui-button label="Configure Providers" icon="cog" (click)="configureProviders()" />
   <ui-button
     label="Sync HOS Data"
@@ -91,7 +91,7 @@
                     <ui-icon
                       name="exclamation-triangle"
                       class="text-danger"
-                      pTooltip="HOS Violation"
+                      uiTooltip="HOS Violation"
                     />
                   }
                   <span class="font-medium">{{ driver.employeeName }}</span>
@@ -128,7 +128,7 @@
                   ariaLabel="View Logs"
                   icon="history"
                   [rounded]="true"
-                  pTooltip="View Logs"
+                  uiTooltip="View Logs"
                   (click)="viewDriverLogs(driver.employeeId)"
                 ></ui-button>
               </td>

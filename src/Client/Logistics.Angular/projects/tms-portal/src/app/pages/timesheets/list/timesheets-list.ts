@@ -19,11 +19,11 @@ import {
   UiButton,
   UiDataTable,
   UiSortHeader,
+  UiTooltip,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import { DatePickerModule } from "primeng/datepicker";
 import { SelectModule } from "primeng/select";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { DataContainer, PageHeader } from "@/shared/components";
 import { TimesheetFormDialog } from "../components/form-dialog/form-dialog";
@@ -47,10 +47,10 @@ import { TimesheetsListStore } from "../store/list.store";
     SlicePipe,
     Stack,
     TimesheetFormDialog,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,
+    UiTooltip,
   ],
 })
 export class TimesheetsList {

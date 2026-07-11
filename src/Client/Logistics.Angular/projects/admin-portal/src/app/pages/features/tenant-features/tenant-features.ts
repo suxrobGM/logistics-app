@@ -12,9 +12,8 @@ import {
   type TenantFeature,
 } from "@logistics/shared/api";
 import { FEATURE_DESCRIPTIONS } from "@logistics/shared/services";
-import { Card, FeatureRow, PageHeader, Spinner, UiButton } from "@logistics/shared/ui";
+import { Card, FeatureRow, PageHeader, Spinner, UiButton, UiTooltip } from "@logistics/shared/ui";
 import { ToggleSwitchModule } from "primeng/toggleswitch";
-import { TooltipModule } from "primeng/tooltip";
 
 @Component({
   selector: "adm-tenant-features",
@@ -26,8 +25,8 @@ import { TooltipModule } from "primeng/tooltip";
     PageHeader,
     Spinner,
     ToggleSwitchModule,
-    TooltipModule,
     UiButton,
+    UiTooltip,
   ],
 })
 export class TenantFeatures implements OnInit {

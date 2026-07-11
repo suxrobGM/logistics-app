@@ -8,9 +8,9 @@ import {
   UiButton,
   UiDataTable,
   UiSortHeader,
+  UiTooltip,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { InviteEmployeeDialog } from "../components";
 import { PendingInvitationsStore } from "../store";
@@ -28,10 +28,10 @@ import { PendingInvitationsStore } from "../store";
     InviteEmployeeDialog,
     PageHeader,
     SearchField,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,
+    UiTooltip,
   ],
 })
 export class PendingInvitations {

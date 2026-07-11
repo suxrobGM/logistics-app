@@ -14,7 +14,6 @@ import {
   UiSortHeader,
 } from "@logistics/shared/ui";
 import { SelectModule } from "primeng/select";
-import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { ContainersListStore } from "../store";
 
@@ -32,7 +31,6 @@ import { ContainersListStore } from "../store";
     SelectModule,
     Stack,
     StatusBadge,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,

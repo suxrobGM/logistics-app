@@ -1,0 +1,14 @@
+{
+  "generatedBy": "tools/codemods/tooltip-sweep.mjs",
+  "mode": "check",
+  "stats": {
+    "seen": 0,
+    "rewritten": 0,
+    "refused": 0,
+    "position": 0,
+    "delay": 0,
+    "bound": 0,
+    "static": 0
+  },
+  "refusals": []
+}

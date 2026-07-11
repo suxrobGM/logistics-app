@@ -16,7 +16,6 @@ import {
 } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
 import { MenuModule } from "primeng/menu";
-import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { EmployeeStatusTag } from "@/shared/components/tags";
 import { EmployeeAvatar, InviteEmployeeDialog } from "../components";
@@ -42,7 +41,6 @@ import { EmployeesListStore } from "../store";
     RouterLink,
     SearchField,
     Stack,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,

@@ -17,8 +17,8 @@ import {
   Typography,
   UiButton,
   UiDataTable,
+  UiTooltip,
 } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
 import { InvoiceStatusTag, PageHeader } from "@/shared/components";
 
 @Component({
@@ -36,10 +36,10 @@ import { InvoiceStatusTag, PageHeader } from "@/shared/components";
     Skeleton,
     Stack,
     Surface,
-    TooltipModule,
     Typography,
     UiButton,
     UiDataTable,
+    UiTooltip,
   ],
 })
 export class InvoiceDashboard {

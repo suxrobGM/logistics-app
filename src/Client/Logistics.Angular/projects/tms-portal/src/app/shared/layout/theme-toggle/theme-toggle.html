@@ -1,8 +1,8 @@
 <button
   class="theme-toggle"
   (click)="toggleTheme()"
-  [pTooltip]="isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
-  tooltipPosition="right"
+  [uiTooltip]="isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+  uiTooltipPosition="right"
   [attr.aria-label]="isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
   type="button"
 >

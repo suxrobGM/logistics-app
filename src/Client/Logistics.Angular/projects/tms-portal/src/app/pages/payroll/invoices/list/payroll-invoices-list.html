@@ -173,8 +173,8 @@
                   ariaLabel="View details"
                   icon="eye"
                   [rounded]="true"
-                  pTooltip="View details"
-                  tooltipPosition="bottom"
+                  uiTooltip="View details"
+                  uiTooltipPosition="bottom"
                   [routerLink]="['/payroll/invoices', invoice.id]"
                 />
                 @if (invoice.status === "pending_approval") {
@@ -184,8 +184,8 @@
                     ariaLabel="Approve"
                     icon="check"
                     [rounded]="true"
-                    pTooltip="Approve"
-                    tooltipPosition="bottom"
+                    uiTooltip="Approve"
+                    uiTooltipPosition="bottom"
                     (click)="approveInvoice(invoice)"
                   />
                   <ui-button
@@ -194,8 +194,8 @@
                     ariaLabel="Reject"
                     icon="times"
                     [rounded]="true"
-                    pTooltip="Reject"
-                    tooltipPosition="bottom"
+                    uiTooltip="Reject"
+                    uiTooltipPosition="bottom"
                     (click)="openRejectDialog(invoice)"
                   />
                 }
@@ -205,8 +205,8 @@
                     ariaLabel="Edit"
                     icon="pen-to-square"
                     [rounded]="true"
-                    pTooltip="Edit"
-                    tooltipPosition="bottom"
+                    uiTooltip="Edit"
+                    uiTooltipPosition="bottom"
                     [routerLink]="['/payroll/invoices', invoice.id, 'edit']"
                   />
                 }

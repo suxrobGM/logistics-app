@@ -8,11 +8,11 @@ import {
   Spinner,
   UiButton,
   UiDataTable,
+  UiTooltip,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import { downloadBlobFile, formatFileSize } from "@logistics/shared/utils";
 import { DialogModule } from "primeng/dialog";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 
 @Component({
@@ -26,9 +26,9 @@ import { ToastService } from "@/core/services";
     DialogModule,
     Icon,
     Spinner,
-    TooltipModule,
     UiButton,
     UiDataTable,
+    UiTooltip,
   ],
 })
 export class LoadPodContent {

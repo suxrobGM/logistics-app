@@ -106,7 +106,7 @@
           </td>
           <td>
             @if (entry.notes) {
-              <span class="text-sm" [pTooltip]="entry.notes" tooltipPosition="top">
+              <span class="text-sm" [uiTooltip]="entry.notes" uiTooltipPosition="top">
                 {{ entry.notes | slice: 0 : 30 }}{{ entry.notes.length > 30 ? "..." : "" }}
               </span>
             } @else {
@@ -127,8 +127,8 @@
                   appearance="text"
                   ariaLabel="Edit"
                   icon="pencil"
-                  pTooltip="Edit"
-                  tooltipPosition="top"
+                  uiTooltip="Edit"
+                  uiTooltipPosition="top"
                   [disabled]="!!entry.payrollInvoiceId"
                   (click)="openEditDialog(entry)"
                 />
@@ -137,8 +137,8 @@
                   appearance="text"
                   ariaLabel="Delete"
                   icon="trash"
-                  pTooltip="Delete"
-                  tooltipPosition="top"
+                  uiTooltip="Delete"
+                  uiTooltipPosition="top"
                   [disabled]="!!entry.payrollInvoiceId"
                   (click)="confirmDelete(entry)"
                 />

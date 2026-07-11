@@ -1,9 +1,8 @@
 import { Component, computed, effect, inject, signal } from "@angular/core";
 import { UserRole } from "@logistics/shared";
 import { FeatureService } from "@logistics/shared/services";
-import { Icon } from "@logistics/shared/ui";
+import { Icon, UiTooltip } from "@logistics/shared/ui";
 import { PopoverModule } from "primeng/popover";
-import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "@/core/auth";
 import {
   ChatService,
@@ -47,15 +46,7 @@ const ROLE_ITEM_ACCESS: Record<string, string[] | "*"> = {
   selector: "app-sidebar",
   templateUrl: "./sidebar.html",
   styleUrl: "./sidebar.css",
-  imports: [
-    FavoritesBar,
-    Icon,
-    NavMenu,
-    NotificationBell,
-    PopoverModule,
-    ThemeToggle,
-    TooltipModule,
-  ],
+  imports: [FavoritesBar, Icon, NavMenu, NotificationBell, PopoverModule, ThemeToggle, UiTooltip],
 })
 export class Sidebar {
   private readonly authService = inject(AuthService);

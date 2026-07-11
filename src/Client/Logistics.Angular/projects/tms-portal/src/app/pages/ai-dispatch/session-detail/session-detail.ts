@@ -19,7 +19,16 @@ import {
   type AiDispatchDecisionDto,
   type AiDispatchSessionDto,
 } from "@logistics/shared/api";
-import { Badge, Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
+import {
+  Badge,
+  Grid,
+  Icon,
+  Stack,
+  Surface,
+  Typography,
+  UiButton,
+  UiTooltip,
+} from "@logistics/shared/ui";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TimelineModule } from "primeng/timeline";
 import { AiDispatchHubService, TenantService, ToastService } from "@/core/services";
@@ -56,6 +65,7 @@ import { MarkdownPipe } from "../utils/markdown";
     ToolOutputSummary,
     Typography,
     UiButton,
+    UiTooltip,
   ],
 })
 export class SessionDetailPage implements OnInit, OnDestroy {

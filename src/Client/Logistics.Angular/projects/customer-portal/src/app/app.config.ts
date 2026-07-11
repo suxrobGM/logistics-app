@@ -14,7 +14,6 @@ import { provideTranslateService } from "@ngx-translate/core";
 import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
 import Aura from "@primeuix/themes/aura";
 import { provideAuth } from "angular-auth-oidc-client";
-import { ConfirmationService, MessageService } from "primeng/api";
 import { providePrimeNG } from "primeng/config";
 import { authConfig } from "@/core/auth";
 import { tenantInterceptor } from "@/core/interceptors";
@@ -55,9 +54,6 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => {
       inject(I18nService).init({ supportedLanguages: ["en"] });
     }),
-
-    MessageService,
-    ConfirmationService,
 
     // Localization provider
     { provide: TENANT_SETTINGS_PROVIDER, useExisting: CustomerPortalSettingsProvider },

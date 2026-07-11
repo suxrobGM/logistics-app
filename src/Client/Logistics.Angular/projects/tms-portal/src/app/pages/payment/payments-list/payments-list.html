@@ -43,9 +43,9 @@
             <app-payment-status-tag [paymentStatus]="payment.status"></app-payment-status-tag>
           </td>
           <td
-            [pTooltip]="payment.billingAddress | address"
-            [showDelay]="500"
-            tooltipPosition="bottom"
+            [uiTooltip]="payment.billingAddress | address"
+            [uiTooltipDelay]="500"
+            uiTooltipPosition="bottom"
           >
             {{ payment.billingAddress | address }}
           </td>

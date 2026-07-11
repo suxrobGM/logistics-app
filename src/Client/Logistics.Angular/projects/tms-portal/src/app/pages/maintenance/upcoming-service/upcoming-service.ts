@@ -13,7 +13,6 @@ import {
 } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
 import { MenuModule } from "primeng/menu";
-import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader } from "@/shared/components";
 import { UpcomingServiceStore } from "../store";
 
@@ -30,7 +29,6 @@ import { UpcomingServiceStore } from "../store";
     Icon,
     MenuModule,
     PageHeader,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,

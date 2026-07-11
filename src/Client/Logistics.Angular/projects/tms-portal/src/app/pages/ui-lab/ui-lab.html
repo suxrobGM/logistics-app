@@ -35,6 +35,8 @@
     <app-ui-lab-overlays />
     <app-ui-lab-feedback />
     <app-ui-lab-cosmetics />
+    <app-ui-lab-tooltip />
+    <app-ui-lab-notifications />
 
     <!--
       ============================================================================================
@@ -45,7 +47,6 @@
       add its heading id to the `sections` array so the nav and the probe pick it up.
 
         S7  ui-dialog   — open/close, modal + non-modal, a nested overlay inside a dialog.
-        S6  ui-tooltip  — the [uiTooltip] directive, all four placements.
         S9  ui-menu     — trigger, keyboard nav, submenu.
       ============================================================================================
     -->
@@ -62,12 +63,6 @@
           data-lab="slot-ui-dialog"
         >
           ui-dialog (S7)
-        </div>
-        <div
-          class="border-default text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm"
-          data-lab="slot-ui-tooltip"
-        >
-          ui-tooltip (S6)
         </div>
         <div
           class="border-default text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm"

@@ -11,12 +11,12 @@ import {
   UiButton,
   UiDataTable,
   UiSortHeader,
+  UiTooltip,
 } from "@logistics/shared/ui";
 import { Dialog } from "primeng/dialog";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
-import { TooltipModule } from "primeng/tooltip";
 import { LoadForm, LoadStatusTag, type LoadFormValue } from "@/shared/components";
 import { DistanceUnitPipe } from "@/shared/pipes";
 import { TripWizardStore, type TableRow } from "../../store/trip-wizard-store";
@@ -41,11 +41,11 @@ import { AttachLoadDialog } from "../attach-load-dialog/attach-load-dialog";
     LoadStatusTag,
     RouterLink,
     Stack,
-    TooltipModule,
     Typography,
     UiButton,
     UiDataTable,
     UiSortHeader,
+    UiTooltip,
   ],
 })
 export class TripFormStepLoads {

@@ -75,8 +75,8 @@
             routerLinkActive="nav-item-active"
             (click)="navigateTo(item)"
             (contextmenu)="onItemContextMenu($event, item)"
-            [pTooltip]="collapsed() ? item.label : ''"
-            tooltipPosition="right"
+            [uiTooltip]="collapsed() ? item.label : ''"
+            uiTooltipPosition="right"
           >
             <div class="flex min-w-0 items-center gap-3">
               @if (item.icon; as icon) {

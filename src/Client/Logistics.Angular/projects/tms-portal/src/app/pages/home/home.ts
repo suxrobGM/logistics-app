@@ -23,11 +23,11 @@ import {
   Typography,
   UiButton,
   UiDataTable,
+  UiTooltip,
 } from "@logistics/shared/ui";
 import { Gridster, GridsterItem, type GridsterConfig } from "angular-gridster2";
 import { SharedModule, type MenuItem } from "primeng/api";
 import { MenuModule } from "primeng/menu";
-import { TooltipModule } from "primeng/tooltip";
 import { AuthService } from "@/core/auth";
 import { DashboardSettingsService, type DashboardPanelConfig } from "@/core/services";
 import { PageHeader, StatCard, TrucksMap } from "@/shared/components";
@@ -69,12 +69,12 @@ import { HomeSkeleton } from "./home-skeleton/home-skeleton";
     Stack,
     StatCard,
     StatusBadge,
-    TooltipModule,
     TopPerformersWidgetComponent,
     TrucksMap,
     Typography,
     UiButton,
     UiDataTable,
+    UiTooltip,
   ],
   providers: [AddressPipe],
 })

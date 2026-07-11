@@ -17,7 +17,7 @@
       (click)="bulkDispatch()"
       [disabled]="!canDispatchSelected()"
       [loading]="isProcessing()"
-      pTooltip="Only Draft loads can be dispatched"
+      uiTooltip="Only Draft loads can be dispatched"
     />
     <ui-button
       intent="danger"
@@ -28,7 +28,7 @@
       (click)="bulkDelete()"
       [disabled]="!canDeleteSelected()"
       [loading]="isProcessing()"
-      pTooltip="Only Draft loads can be deleted"
+      uiTooltip="Only Draft loads can be deleted"
     />
     <ui-button
       appearance="text"
@@ -36,7 +36,7 @@
       ariaLabel="Clear selection"
       icon="times"
       (click)="clearSelection()"
-      pTooltip="Clear selection"
+      uiTooltip="Clear selection"
     />
   </div>
 </div>

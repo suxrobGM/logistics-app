@@ -26,7 +26,6 @@ import {
   UiButton,
 } from "@logistics/shared/ui";
 import { TabsModule } from "primeng/tabs";
-import { TooltipModule } from "primeng/tooltip";
 import {
   DocumentManager,
   GeolocationMap,
@@ -66,7 +65,6 @@ import {
     Stack,
     Surface,
     TabsModule,
-    TooltipModule,
     TruckGrossLinechart,
     TruckLoadsList,
     TruckStatusTag,

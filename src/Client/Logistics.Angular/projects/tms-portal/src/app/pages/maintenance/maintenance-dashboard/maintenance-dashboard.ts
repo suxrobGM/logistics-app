@@ -10,7 +10,6 @@ import {
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { Badge, Grid, Icon, Stack, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
 import { DashboardCard, PageHeader, StatCard } from "@/shared/components";
 
 @Component({
@@ -27,7 +26,6 @@ import { DashboardCard, PageHeader, StatCard } from "@/shared/components";
     PageHeader,
     Stack,
     StatCard,
-    TooltipModule,
     Typography,
     UiButton,
     UiDataTable,

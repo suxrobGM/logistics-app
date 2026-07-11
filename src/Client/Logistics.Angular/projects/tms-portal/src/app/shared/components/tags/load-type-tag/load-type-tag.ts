@@ -1,7 +1,6 @@
 import { Component, input } from "@angular/core";
 import type { LoadType } from "@logistics/shared/api";
-import { Badge, type IconName, type UiBadgeIntent } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
+import { Badge, UiTooltip, type IconName, type UiBadgeIntent } from "@logistics/shared/ui";
 
 interface TypeInfo {
   label: string;
@@ -42,7 +41,7 @@ const TYPE_INFO: Record<LoadType, TypeInfo> = {
 @Component({
   selector: "app-load-type-tag",
   templateUrl: "./load-type-tag.html",
-  imports: [Badge, TooltipModule],
+  imports: [Badge, UiTooltip],
 })
 export class LoadTypeTag {
   /**

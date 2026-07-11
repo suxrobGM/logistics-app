@@ -1,0 +1,111 @@
+<section id="notifications" class="scroll-mt-24">
+  <ui-typography variant="h2" tag="h2">Notifications</ui-typography>
+  <ui-typography variant="body-sm" color="muted">
+    Toasts and confirmations through the real, root-provided
+    <code>ToastService</code>
+    . The outcome log below records which callback actually ran — a confirm that opens but drops
+    <code>accept</code>
+    , or fires it on dismiss, is invisible any other way.
+  </ui-typography>
+
+  <div class="mt-4 flex flex-col gap-6">
+    <div>
+      <ui-typography variant="h3" tag="h3">Toasts</ui-typography>
+      <div class="mt-2 flex flex-wrap gap-2" data-lab="toasts">
+        <ui-button
+          label="Success"
+          intent="success"
+          (click)="showSuccess()"
+          data-lab="toast-success"
+        />
+        <ui-button label="Error" intent="danger" (click)="showError()" data-lab="toast-error" />
+        <ui-button label="Warning" intent="warn" (click)="showWarning()" data-lab="toast-warning" />
+        <ui-button label="Info" intent="info" (click)="showInfo()" data-lab="toast-info" />
+        <ui-button
+          label="Custom title"
+          intent="secondary"
+          (click)="showCustomTitle()"
+          data-lab="toast-custom"
+        />
+      </div>
+    </div>
+
+    <div>
+      <ui-typography variant="h3" tag="h3">Confirmations</ui-typography>
+      <div class="mt-2 flex flex-wrap gap-2" data-lab="confirms">
+        <ui-button
+          label="confirmDelete()"
+          intent="danger"
+          (click)="confirmDelete()"
+          data-lab="confirm-delete"
+        />
+        <ui-button
+          label="Plain confirm"
+          intent="secondary"
+          (click)="confirmPlain()"
+          data-lab="confirm-plain"
+        />
+        <ui-button
+          label="Escape only"
+          intent="secondary"
+          (click)="confirmEscapable()"
+          data-lab="confirm-escapable"
+        />
+        <ui-button
+          label="Backdrop only"
+          intent="secondary"
+          (click)="confirmDismissable()"
+          data-lab="confirm-dismissable"
+        />
+        <ui-button
+          label="No way out"
+          intent="secondary"
+          (click)="confirmTrapped()"
+          data-lab="confirm-trapped"
+        />
+        <ui-button
+          label="Every option"
+          intent="help"
+          (click)="confirmEverything()"
+          data-lab="confirm-everything"
+        />
+        <ui-button
+          label="Multi-line"
+          intent="secondary"
+          (click)="confirmMultiline()"
+          data-lab="confirm-multiline"
+        />
+      </div>
+    </div>
+
+    <div>
+      <div class="flex items-center justify-between gap-4">
+        <ui-typography variant="h3" tag="h3">Outcome log</ui-typography>
+        <ui-button
+          label="Clear"
+          appearance="outlined"
+          intent="secondary"
+          size="sm"
+          (click)="clear()"
+          data-lab="outcome-clear"
+        />
+      </div>
+
+      <div
+        class="border-default bg-subtle mt-2 min-h-24 rounded-lg border p-3 font-mono text-sm"
+        data-lab="outcome-log"
+      >
+        @for (outcome of outcomes(); track outcome.at + outcome.text) {
+          <div class="text-foreground" data-lab="outcome-row">
+            <span class="text-muted-foreground">{{ outcome.at }}</span>
+            {{ outcome.text }}
+          </div>
+        } @empty {
+          <span class="text-muted-foreground" data-lab="outcome-empty">
+            Nothing has run yet. Open a confirmation and dismiss or accept it.
+          </span>
+        }
+      </div>
+    </div>
+  </div>
+</section>

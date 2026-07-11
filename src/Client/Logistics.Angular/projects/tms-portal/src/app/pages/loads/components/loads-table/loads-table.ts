@@ -11,10 +11,10 @@ import {
   UiDataTable,
   UiSortHeader,
   UiTableRowDirectives,
+  UiTooltip,
 } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
 import { MenuModule } from "primeng/menu";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { DataContainer, LoadStatusTag, LoadTypeTag, RouteBadge } from "@/shared/components";
 
@@ -32,11 +32,11 @@ import { DataContainer, LoadStatusTag, LoadTypeTag, RouteBadge } from "@/shared/
     MenuModule,
     RouteBadge,
     RouterLink,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,
     UiTableRowDirectives,
+    UiTooltip,
   ],
 })
 export class LoadsTable {

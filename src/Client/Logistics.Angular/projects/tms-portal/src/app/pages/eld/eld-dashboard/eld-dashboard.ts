@@ -18,9 +18,9 @@ import {
   UiButton,
   UiDataTable,
   UiSortHeader,
+  UiTooltip,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
 import { EldRulesService } from "@/core/services";
 import { DashboardCard, PageHeader, StatCard } from "@/shared/components";
 
@@ -44,10 +44,10 @@ const ON_DUTY_WARN_PCT = 0.15;
     Spinner,
     Stack,
     StatCard,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,
+    UiTooltip,
   ],
 })
 export class EldDashboardComponent implements OnInit {

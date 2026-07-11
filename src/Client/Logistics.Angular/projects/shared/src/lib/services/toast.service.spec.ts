@@ -1,104 +1,141 @@
 /**
- * CONTRACT spec for `ToastService`. It is written to SURVIVE step S8, in which the service's
- * internals are swapped from PrimeNG (`MessageService` / `ConfirmationService`) to
+ * CONTRACT spec for `ToastService`. It was written to SURVIVE step S8, in which the service's
+ * internals were swapped from PrimeNG's message/confirmation services to
  * `@spartan-ng/brain/sonner`'s imperative `toast` + a Helm-based `ui-confirm-dialog`.
  *
  * ~386 call sites across ~118 files must keep working with ZERO changes, so this spec asserts on
- * WHAT THE USER SEES AND WHAT GETS CALLED — never on `MessageService.add` having been invoked.
+ * WHAT THE USER SEES AND WHAT GETS CALLED — never on a rendering library's API having been invoked.
  * The failure this guards against is silent and asymmetric:
  *   - dialog never opens AND `accept` is dropped  => "Delete" silently does nothing;
  *   - `accept` fires with no dialog               => it deletes WITHOUT ASKING.
  *
- * ============================ HOW TO MIGRATE THIS FILE IN S8 ============================
- * Rendering happens in `<p-toast>` / `<p-confirm-dialog>`, which live in each app's `app.html`,
- * NOT in the shared lib. So the test host below re-creates those surfaces exactly as the apps do.
+ * ======================== HOW THIS FILE SURVIVED THE S8 SWAP ========================
+ * Everything that knows which library renders these surfaces is quarantined in the block marked
+ * `RENDERING-LAYER ADAPTER`: the host component, the DI providers, and four tiny readers that
+ * translate "what the rendering layer did" back into our own vocabulary. S8 rewrote ONLY that block.
+ * Every `describe`/`it` body and every `expect(...)` below is BYTE-IDENTICAL to the PrimeNG-era file
+ * — which is the entire point, and the reason it is evidence of anything.
  *
- * In S8 you change ONLY the block marked `RENDERING-LAYER ADAPTER`. That block is the complete
- * list of things that know PrimeNG exists: the host component, the DI providers, and four tiny
- * readers that translate "what the rendering layer did" back into our own vocabulary.
- * Every `describe`/`it` body and every `expect(...)` below stays BYTE-IDENTICAL.
- *
- * Concretely, in S8 the adapter becomes: `<hlm-toaster />` + `<ui-confirm-dialog />` in the host,
- * no `MessageService`/`ConfirmationService` providers, and the four readers re-pointed at sonner's
- * `data-type` / the Helm button variant classes.
- * =======================================================================================
+ * Keep it that way. If a future rendering swap seems to require changing an assertion, that is a
+ * BEHAVIOUR CHANGE, not a test-maintenance chore: fix the code, or land the behaviour change
+ * deliberately and say so out loud.
+ * ===================================================================================
  *
  * NOT OBSERVABLE HERE (documented deliberately rather than asserted vacuously):
- *   - toast auto-dismiss after `life` ms — a real timer; out of scope for a contract spec.
+ *   - toast auto-dismiss after its duration — a real timer; out of scope for a contract spec.
  *   - toast stacking/position — pure CSS, invisible to jsdom.
  */
-import { Component, provideZonelessChangeDetection } from "@angular/core";
+import { Dialog } from "@angular/cdk/dialog";
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  inject,
+  provideZonelessChangeDetection,
+} from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
-import { ConfirmationService, MessageService } from "primeng/api";
-import { ConfirmDialog } from "primeng/confirmdialog";
-import { Toast } from "primeng/toast";
+import { toastState } from "@spartan-ng/brain/sonner";
+import { UiToaster } from "../ui/feedback/toaster/toaster";
 import { ToastService, type ConfirmOptions } from "./toast.service";
 
 /** Our own vocabulary — independent of any UI library. */
 type Severity = "success" | "error" | "warning" | "info";
 type Intent = "default" | "danger" | "warning" | "success";
 
-// ═════════════════════════════ RENDERING-LAYER ADAPTER (PrimeNG today) ═════════════════════════
+// ═════════════════════ RENDERING-LAYER ADAPTER (brain/sonner + Helm dialog) ═════════════════════
 // ▼▼▼ S8: EVERYTHING BETWEEN THESE MARKERS IS THE ONLY PART THAT CHANGES ▼▼▼
 
 /**
- * Mirrors what every app's `app.html` renders. The `key`s are load-bearing: `ToastService` tags
- * its messages with them, and a surface with the wrong key silently drops everything.
- * (S8: replace with `<hlm-toaster />` + `<ui-confirm-dialog />`.)
+ * Mirrors what every app's `app.html` renders — which is now just the toaster. The confirm dialog is
+ * no longer a declarative surface: `ToastService` opens `ui-confirm-dialog` imperatively through
+ * `HlmDialogService`, so there is nothing for a shell to render and no `key` to get wrong.
+ *
+ * The teardown below is NOT belt-and-braces; without it the suite is wrong in both directions:
+ *   - `toastState` (brain/sonner) is a MODULE-GLOBAL signal store, not a DI singleton. It survives
+ *     `TestBed.resetTestingModule()`, so a toast raised in one test is still in the store when the
+ *     NEXT test mounts its toaster — and "renders nothing before anything is shown" would fail.
+ *   - the dialog is a CDK overlay portaled to <body>, OUTSIDE the fixture, so `fixture.destroy()`
+ *     does not take it down — and `afterEach`'s `expect(confirmSurface()).toBeNull()` would fail.
+ * The app needs neither (its shell outlives every toast, and a destroyed shell means the page is
+ * gone); a test that reuses one document does. `closeAll()` closes with `undefined`, which by design
+ * fires neither `accept` nor `reject` — so teardown can never forge a decision.
  */
 @Component({
   selector: "ui-host-notification-surfaces",
-  imports: [Toast, ConfirmDialog],
-  template: `
-    <p-toast key="notification" position="top-right" />
-    <p-confirm-dialog key="confirmDialog" position="center" />
-  `,
+  imports: [UiToaster],
+  template: `<ui-toaster />`,
 })
-class HostNotificationSurfaces {}
+class HostNotificationSurfaces {
+  constructor() {
+    const dialog = inject(Dialog);
+    const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
-/** (S8: drop these — brain/sonner is imperative and needs no providers.) */
-const RENDERING_PROVIDERS = [MessageService, ConfirmationService];
+    inject(DestroyRef).onDestroy(() => {
+      dialog.closeAll();
+      toastState.reset();
+
+      // `fixture.destroy()` tears down the VIEW but leaves the root element's DOM in the document —
+      // TestBed only strips root elements at `resetTestingModule()`, i.e. in the NEXT test's
+      // `beforeEach`. PrimeNG's toast hid that from us by removing its own container in `ngOnDestroy`;
+      // sonner renders in place and (rightly) leaves lifetime to the framework. So the surface detaches
+      // itself here, or `afterEach` would find the previous test's toast still hanging off <body>.
+      //
+      // This cannot mask a real failure: it only removes THIS host's subtree. A toast that failed to
+      // render still fails `theToast()`, and the leaks that actually matter — the module-global
+      // `toastState` and the body-portaled CDK overlay — are undone above, by reset() and closeAll().
+      host.remove();
+    });
+  }
+}
+
+/** brain/sonner's `toast` is imperative and `HlmDialogService` is `providedIn: 'root'` — nothing to provide. */
+const RENDERING_PROVIDERS: never[] = [];
 
 /**
  * The accept/reject button labels the rendering layer falls back to when the caller supplies none.
- * `confirmDelete` — i.e. most of the ~386 call sites — relies on these.
- * (S8: if the Helm dialog defaults to something else, that is a deliberate, user-visible copy
- * change; update these two consts, not the tests.)
+ * `confirmDelete` — i.e. most of the ~386 call sites — relies on these. Unchanged in S8: they are now
+ * `ToastService`'s own DEFAULT_ACCEPT_LABEL / DEFAULT_REJECT_LABEL rather than PrimeNG's.
  */
 const DEFAULT_ACCEPT_LABEL = "Yes";
 const DEFAULT_REJECT_LABEL = "No";
 
 /** Severity the rendering layer stamped onto a toast, normalized to OUR vocabulary. */
 function renderedSeverity(toast: Element): Severity | null {
-  const marker = toast.getAttribute("data-p") ?? ""; // S8 (sonner): `data-type`
+  const marker = toast.getAttribute("data-type") ?? ""; // sonner stamps its toast type here
   if (marker.includes("success")) return "success";
   if (marker.includes("error")) return "error";
-  if (marker.includes("warn")) return "warning"; // PrimeNG says "warn", we say "warning"
+  if (marker.includes("warn")) return "warning"; // sonner says "warning", we say "warning"
   if (marker.includes("info")) return "info";
   return null;
 }
 
 /** Intent (accept/reject button styling) the rendering layer applied, normalized to OUR vocabulary. */
 function renderedIntent(button: Element): Intent {
-  const classes = button.className; // S8: the Helm button variant class
-  if (classes.includes("p-button-danger")) return "danger";
-  if (classes.includes("p-button-warning")) return "warning";
-  if (classes.includes("p-button-success")) return "success";
+  // `ui-button`'s intent cells resolve to semantic TOKEN utilities (`bg-danger`, `border-success`,
+  // `hover:bg-warning/10`, …). Matching the `-token` stem rather than a whole class name keeps this
+  // reader indifferent to which appearance (solid/outlined) the dialog chose for each button.
+  const classes = button.className;
+  if (classes.includes("-danger")) return "danger";
+  if (classes.includes("-warning")) return "warning"; // the `warn` INTENT paints with the `warning` TOKEN
+  if (classes.includes("-success")) return "success";
   return "default";
 }
 
 /** Did an icon actually get rendered inside this element (excluding icons in nested buttons)? */
 function rendersIcon(host: Element): boolean {
-  // PrimeNG icons are `<i class="pi pi-*">`. S8: `<ui-icon>` / `<ng-icon>`.
-  const icons = [...host.querySelectorAll("i[class*='pi-'], ui-icon, ng-icon")];
+  // `<ui-icon>` renders an `<ng-icon>`; nothing here emits a PrimeIcons `<i>` any more.
+  const icons = [...host.querySelectorAll("ui-icon, ng-icon")];
   return icons.some((icon) => icon.closest("button") === host.closest("button"));
 }
 
 /** The "click outside the dialog" gesture. Returns false if there is no backdrop to click. */
 function clickBackdrop(): boolean {
-  const backdrop = confirmSurface()?.parentElement; // PrimeNG nests the dialog inside its mask
+  // CDK's backdrop is a SIBLING of the overlay pane, not an ancestor of the dialog, and it listens
+  // for `click` (not `mousedown`). It exists whenever `hasBackdrop` — i.e. always here — regardless
+  // of whether the dialog will actually act on it, which is what the negative control relies on.
+  const backdrop = document.querySelector<HTMLElement>(".cdk-overlay-backdrop");
   if (!backdrop) return false;
-  backdrop.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+  backdrop.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   return true;
 }
 

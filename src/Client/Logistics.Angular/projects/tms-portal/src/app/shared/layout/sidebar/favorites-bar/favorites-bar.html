@@ -14,9 +14,10 @@
           <button
             class="border-default text-muted-foreground hover:border-accent hover:text-primary hover:bg-primary/8 flex size-5.5 cursor-pointer items-center justify-center rounded-sm border border-dashed transition-all"
             (click)="addPopover.toggle($event)"
-            pTooltip="Add favorite"
-            tooltipPosition="top"
+            uiTooltip="Add favorite"
+            uiTooltipPosition="top"
             type="button"
+            aria-label="Add favorite"
           >
             <ui-icon name="plus" size="inherit" class="text-[0.625rem]" />
           </button>
@@ -27,8 +28,8 @@
           <button
             class="group bg-primary/8 border-accent/20 text-subtle-foreground hover:bg-primary/15 hover:border-accent/35 hover:text-foreground inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2 py-1 text-[0.6875rem] font-medium whitespace-nowrap transition-all"
             (click)="onFavoriteClick(item)"
-            [pTooltip]="item.label"
-            tooltipPosition="top"
+            [uiTooltip]="item.label"
+            uiTooltipPosition="top"
             type="button"
           >
             @if (item.icon; as icon) {
@@ -53,9 +54,10 @@
           <button
             class="bg-primary/8 border-accent/15 text-primary hover:bg-primary/18 hover:border-accent flex size-9 cursor-pointer items-center justify-center rounded-md border transition-all hover:scale-105"
             (click)="onFavoriteClick(item)"
-            [pTooltip]="item.label"
-            tooltipPosition="right"
+            [uiTooltip]="item.label"
+            uiTooltipPosition="right"
             type="button"
+            [attr.aria-label]="item.label"
           >
             <ui-icon [name]="item.icon ?? 'star'" size="inherit" class="text-base" />
           </button>
@@ -81,12 +83,18 @@
           type="button"
         >
           @if (item.icon; as icon) {
-            <ui-icon [name]="icon" size="inherit" class="text-muted-foreground shrink-0 text-base" />
+            <ui-icon
+              [name]="icon"
+              size="inherit"
+              class="text-muted-foreground shrink-0 text-base"
+            />
           }
           <span>{{ item.label }}</span>
         </button>
       } @empty {
-        <div class="text-muted-foreground p-4 text-center text-[0.8125rem]">No more items to add</div>
+        <div class="text-muted-foreground p-4 text-center text-[0.8125rem]">
+          No more items to add
+        </div>
       }
     </div>
   </div>

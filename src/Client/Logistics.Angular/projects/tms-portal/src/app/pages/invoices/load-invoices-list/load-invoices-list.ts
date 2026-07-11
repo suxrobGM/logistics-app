@@ -13,9 +13,9 @@ import {
   UiButton,
   UiDataTable,
   UiSortHeader,
+  UiTooltip,
 } from "@logistics/shared/ui";
 import { MultiSelectModule } from "primeng/multiselect";
-import { TooltipModule } from "primeng/tooltip";
 import {
   DataContainer,
   DateRangePicker,
@@ -45,12 +45,12 @@ import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
     RouterModule,
     SearchField,
     Stack,
-    TooltipModule,
     Typography,
     UiButton,
     UiDataTable,
     UiFormField,
     UiSortHeader,
+    UiTooltip,
   ],
 })
 export class LoadInvoicesList {

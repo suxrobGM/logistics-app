@@ -14,7 +14,6 @@ import {
 import { isContainerLoadType } from "@logistics/shared/utils";
 import type { MenuItem } from "primeng/api";
 import { MenuModule } from "primeng/menu";
-import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { ConditionReportsListStore } from "../store/condition-reports-list.store";
 
@@ -31,7 +30,6 @@ import { ConditionReportsListStore } from "../store/condition-reports-list.store
     MenuModule,
     PageHeader,
     SearchField,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,

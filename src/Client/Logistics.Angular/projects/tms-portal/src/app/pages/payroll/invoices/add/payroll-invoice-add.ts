@@ -29,13 +29,13 @@ import {
   UiAutocompleteField,
   UiButton,
   UiDataTable,
+  UiTooltip,
   type IconName,
 } from "@logistics/shared/ui";
 import { PredefinedDateRanges } from "@logistics/shared/utils";
 import { MultiSelectModule } from "primeng/multiselect";
 import { SelectModule } from "primeng/select";
 import { SelectButtonModule } from "primeng/selectbutton";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { PageHeader, UiFormField, ValidatedForm } from "@/shared/components";
 import { DateUtils } from "@/shared/utils";
@@ -75,12 +75,12 @@ interface PayrollFormValue {
     SelectModule,
     Stack,
     Surface,
-    TooltipModule,
     Typography,
     UiAutocompleteField,
     UiButton,
     UiDataTable,
     UiFormField,
+    UiTooltip,
     ValidatedForm,
   ],
 })

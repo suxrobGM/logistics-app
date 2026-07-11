@@ -10,7 +10,7 @@
         [appearance]="viewMode() === 'table' ? 'solid' : 'text'"
         size="sm"
         ariaLabel="Table view"
-        pTooltip="Table view"
+        uiTooltip="Table view"
         (click)="viewMode.set('table')"
       />
       <ui-button
@@ -19,7 +19,7 @@
         [appearance]="viewMode() === 'map' ? 'solid' : 'text'"
         size="sm"
         ariaLabel="Map view"
-        pTooltip="Map view"
+        uiTooltip="Map view"
         (click)="viewMode.set('map')"
       />
     </ui-stack>
@@ -100,8 +100,8 @@
               </td>
               <td
                 class="text-center"
-                [pTooltip]="formatAddress(truck.currentAddress)"
-                [showDelay]="500"
+                [uiTooltip]="formatAddress(truck.currentAddress)"
+                [uiTooltipDelay]="500"
               >
                 {{ truck.currentAddress | address }}
               </td>

@@ -1,14 +1,12 @@
 import { Component, inject } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
-import { CookieBanner } from "@logistics/shared/ui";
-import { ConfirmDialog } from "primeng/confirmdialog";
-import { ToastModule } from "primeng/toast";
+import { CookieBanner, UiToaster } from "@logistics/shared/ui";
 import { AuthService } from "@/core/auth";
 
 @Component({
   selector: "cp-root",
   templateUrl: "./app.html",
-  imports: [RouterOutlet, ToastModule, ConfirmDialog, CookieBanner],
+  imports: [UiToaster, RouterOutlet, CookieBanner],
 })
 export class App {
   private readonly authService = inject(AuthService);

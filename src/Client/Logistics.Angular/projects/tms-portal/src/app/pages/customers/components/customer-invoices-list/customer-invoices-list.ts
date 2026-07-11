@@ -3,8 +3,7 @@ import { Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { InvoiceDto } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Icon, UiButton, UiDataTable } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
+import { Icon, UiButton, UiDataTable, UiTooltip } from "@logistics/shared/ui";
 import { InvoiceStatusTag } from "@/shared/components";
 
 @Component({
@@ -16,9 +15,9 @@ import { InvoiceStatusTag } from "@/shared/components";
     Icon,
     InvoiceStatusTag,
     RouterLink,
-    TooltipModule,
     UiButton,
     UiDataTable,
+    UiTooltip,
   ],
 })
 export class CustomerInvoicesList {

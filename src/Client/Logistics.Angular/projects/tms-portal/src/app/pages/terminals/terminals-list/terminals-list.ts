@@ -5,7 +5,6 @@ import type { TerminalDto, TerminalType } from "@logistics/shared/api";
 import { terminalTypeOptions } from "@logistics/shared/api/enums";
 import { Card, Stack, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import { SelectModule } from "primeng/select";
-import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { TerminalsListStore } from "../store";
 
@@ -20,7 +19,6 @@ import { TerminalsListStore } from "../store";
     SearchField,
     SelectModule,
     Stack,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,

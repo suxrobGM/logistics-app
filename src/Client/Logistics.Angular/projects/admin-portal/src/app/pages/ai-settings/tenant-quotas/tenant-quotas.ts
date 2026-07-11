@@ -12,7 +12,6 @@ import {
   UiDataTable,
   UiSortHeader,
 } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { TenantQuotasStore } from "./store";
 
@@ -28,7 +27,6 @@ import { TenantQuotasStore } from "./store";
     Icon,
     Progress,
     Stack,
-    TooltipModule,
     Typography,
     UiButton,
     UiDataTable,

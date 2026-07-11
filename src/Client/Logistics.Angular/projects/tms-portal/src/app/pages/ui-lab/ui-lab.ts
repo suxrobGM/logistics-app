@@ -5,8 +5,10 @@ import { UiLabCosmeticsSection } from "./sections/cosmetics-section";
 import { UiLabFeedbackSection } from "./sections/feedback-section";
 import { UiLabFormsSection } from "./sections/forms-section";
 import { UiLabIconsSection } from "./sections/icons-section";
+import { UiLabNotificationsSection } from "./sections/notifications-section";
 import { UiLabOverlaysSection } from "./sections/overlays-section";
 import { UiLabTableSection } from "./sections/table-section";
+import { UiLabTooltipSection } from "./sections/tooltip-section";
 
 interface LabSection {
   readonly id: string;
@@ -40,6 +42,8 @@ interface LabSection {
     UiLabOverlaysSection,
     UiLabFeedbackSection,
     UiLabCosmeticsSection,
+    UiLabTooltipSection,
+    UiLabNotificationsSection,
   ],
 })
 export class UiLab {
@@ -52,6 +56,8 @@ export class UiLab {
     { id: "overlays", label: "Overlays" },
     { id: "feedback", label: "Feedback" },
     { id: "cosmetics", label: "Cosmetics" },
+    { id: "tooltip", label: "Tooltip" },
+    { id: "notifications", label: "Notifications" },
     { id: "pending", label: "Pending" },
   ];
 }

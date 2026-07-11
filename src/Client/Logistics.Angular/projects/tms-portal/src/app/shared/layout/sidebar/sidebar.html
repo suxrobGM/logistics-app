@@ -19,8 +19,8 @@
   <button
     class="sidebar-search-trigger"
     (click)="openCommandPalette()"
-    [pTooltip]="isOpened() ? '' : 'Search (Ctrl+K)'"
-    tooltipPosition="right"
+    [uiTooltip]="isOpened() ? '' : 'Search (Ctrl+K)'"
+    uiTooltipPosition="right"
     type="button"
   >
     <ui-icon name="search" size="inherit" class="shrink-0 text-sm" />
@@ -48,11 +48,15 @@
   <button
     class="sidebar-toggle"
     (click)="toggle()"
-    [pTooltip]="isOpened() ? 'Minimize menu' : 'Maximize menu'"
-    tooltipPosition="right"
+    [uiTooltip]="isOpened() ? 'Minimize menu' : 'Maximize menu'"
+    uiTooltipPosition="right"
     type="button"
   >
-    <ui-icon [name]="isOpened() ? 'chevron-left' : 'chevron-right'" size="inherit" class="text-xs" />
+    <ui-icon
+      [name]="isOpened() ? 'chevron-left' : 'chevron-right'"
+      size="inherit"
+      class="text-xs"
+    />
     @if (isOpened()) {
       <span>Collapse</span>
     }

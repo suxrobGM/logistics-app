@@ -19,11 +19,11 @@ import {
   UiButton,
   UiDataTable,
   UiSortHeader,
+  UiTooltip,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { AdminInvitationsListStore } from "../store/admin-invitations-list.store";
 import { AdminsListStore } from "../store/admins-list.store";
@@ -42,10 +42,10 @@ import { AdminsListStore } from "../store/admins-list.store";
     InputTextModule,
     PageHeader,
     SearchField,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,
+    UiTooltip,
   ],
 })
 export class AdminsList {

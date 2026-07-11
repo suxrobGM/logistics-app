@@ -1,15 +1,14 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject, input, output } from "@angular/core";
 import { type LoadBoardConfigurationDto, type LoadBoardProviderType } from "@logistics/shared/api";
-import { Badge, Icon, Stack, UiButton, UiDataTable } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
+import { Badge, Icon, Stack, UiButton, UiDataTable, UiTooltip } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { getProviderLabel } from "../loadboard.constants";
 
 @Component({
   selector: "app-providers-table",
   templateUrl: "./providers-table.html",
-  imports: [Badge, DatePipe, Icon, Stack, TooltipModule, UiButton, UiDataTable],
+  imports: [Badge, DatePipe, Icon, Stack, UiButton, UiDataTable, UiTooltip],
 })
 export class ProvidersTable {
   private readonly toast = inject(ToastService);

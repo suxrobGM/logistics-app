@@ -8,7 +8,7 @@
         icon="play"
         [loading]="isRunning()"
         [disabled]="hasRunningSession()"
-        [pTooltip]="hasRunningSession() ? 'A session is already running' : ''"
+        [uiTooltip]="hasRunningSession() ? 'A session is already running' : ''"
         (click)="openRunDialog('human_in_the_loop')"
       />
       <ui-button
@@ -19,7 +19,7 @@
         icon="bolt"
         [loading]="isRunning()"
         [disabled]="hasRunningSession()"
-        [pTooltip]="
+        [uiTooltip]="
           hasRunningSession()
             ? 'A session is already running'
             : 'Executes assignments without approval'

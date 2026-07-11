@@ -1,9 +1,29 @@
+<!-- The tooltip is a TEMPLATE, not an HTML string. It used to be assembled by hand and injected with
+     PrimeNG's [escape]="false" (which sets innerHTML), with `line1` / `city` / `state` interpolated
+     straight into it — so any address field carrying markup was executed. These bindings escape. -->
+<ng-template #routeTooltip>
+  <div class="flex items-start gap-3">
+    <div>
+      <div class="mb-1 text-xs font-semibold opacity-70">ORIGIN</div>
+      @for (line of originLines(); track $index) {
+        <div>{{ line }}</div>
+      }
+    </div>
+    <div class="mt-3 opacity-40">&rarr;</div>
+    <div>
+      <div class="mb-1 text-xs font-semibold opacity-70">DESTINATION</div>
+      @for (line of destinationLines(); track $index) {
+        <div>{{ line }}</div>
+      }
+    </div>
+  </div>
+</ng-template>
+
 <span
   class="bg-subtle border-default inline-flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-sm"
-  [pTooltip]="tooltipHtml()"
-  [escape]="false"
-  [showDelay]="400"
-  tooltipPosition="bottom"
+  [uiTooltip]="routeTooltip"
+  [uiTooltipDelay]="400"
+  uiTooltipPosition="bottom"
 >
   <span class="text-foreground font-medium">{{ originShort() }}</span>
   <ui-icon name="arrow-right" size="inherit" class="text-muted-foreground text-xs" />

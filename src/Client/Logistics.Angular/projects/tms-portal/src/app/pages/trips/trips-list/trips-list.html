@@ -5,7 +5,7 @@
       size="lg"
       icon="download"
       [rounded]="true"
-      pTooltip="Export to CSV"
+      uiTooltip="Export to CSV"
       ariaLabel="Export to CSV"
       (click)="exportToCsv()"
       [disabled]="store.isEmpty()"
@@ -151,9 +151,9 @@
             <td>
               <span
                 class="block max-w-32 truncate"
-                [pTooltip]="getRouteTooltip(trip)"
-                [showDelay]="500"
-                tooltipPosition="bottom"
+                [uiTooltip]="getRouteTooltip(trip)"
+                [uiTooltipDelay]="500"
+                uiTooltipPosition="bottom"
               >
                 {{ trip.name }}
               </span>
@@ -231,9 +231,9 @@
                       <td>
                         <span
                           class="block max-w-32 truncate"
-                          [pTooltip]="load.name"
-                          [showDelay]="500"
-                          tooltipPosition="bottom"
+                          [uiTooltip]="load.name"
+                          [uiTooltipDelay]="500"
+                          uiTooltipPosition="bottom"
                         >
                           {{ load.name }}
                         </span>
@@ -242,9 +242,9 @@
                       <td>
                         <span
                           class="block max-w-28 truncate"
-                          [pTooltip]="load.customer.name"
-                          [showDelay]="500"
-                          tooltipPosition="bottom"
+                          [uiTooltip]="load.customer.name"
+                          [uiTooltipDelay]="500"
+                          uiTooltipPosition="bottom"
                         >
                           {{ load.customer.name }}
                         </span>

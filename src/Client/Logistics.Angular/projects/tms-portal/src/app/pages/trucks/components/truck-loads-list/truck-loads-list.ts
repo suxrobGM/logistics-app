@@ -2,8 +2,7 @@ import { Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import type { LoadDto } from "@logistics/shared/api";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Icon, UiButton, UiDataTable } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
+import { Icon, UiButton, UiDataTable, UiTooltip } from "@logistics/shared/ui";
 import { LoadStatusTag, LoadTypeTag } from "@/shared/components";
 
 @Component({
@@ -16,9 +15,9 @@ import { LoadStatusTag, LoadTypeTag } from "@/shared/components";
     LoadStatusTag,
     LoadTypeTag,
     RouterLink,
-    TooltipModule,
     UiButton,
     UiDataTable,
+    UiTooltip,
   ],
 })
 export class TruckLoadsList {

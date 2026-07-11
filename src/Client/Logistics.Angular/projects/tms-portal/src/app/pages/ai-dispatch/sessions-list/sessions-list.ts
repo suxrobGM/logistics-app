@@ -27,9 +27,9 @@ import {
   Typography,
   UiButton,
   UiDataTable,
+  UiTooltip,
 } from "@logistics/shared/ui";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
-import { TooltipModule } from "primeng/tooltip";
 import {
   AiDispatchHubService,
   DispatchBadgeService,
@@ -63,10 +63,10 @@ import { stripMarkdown } from "../utils/markdown";
     RunAgentDialog,
     Stack,
     Surface,
-    TooltipModule,
     Typography,
     UiButton,
     UiDataTable,
+    UiTooltip,
   ],
 })
 export class SessionsListPage implements OnInit, OnDestroy {

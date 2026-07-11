@@ -17,7 +17,6 @@ import {
   UiButton,
   UiDataTable,
 } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
 import { PdfService, TenantService, ToastService } from "@/core/services";
 import { InvoiceStatusTag, PageHeader, PaymentStatusTag } from "@/shared/components";
 import { PaymentLinkDialog, RecordPaymentDialog, SendInvoiceDialog } from "../components";
@@ -45,7 +44,6 @@ import { PaymentLinkDialog, RecordPaymentDialog, SendInvoiceDialog } from "../co
     SendInvoiceDialog,
     Spinner,
     Stack,
-    TooltipModule,
     Typography,
     UiButton,
     UiDataTable,

@@ -14,7 +14,6 @@ import {
   UiButton,
 } from "@logistics/shared/ui";
 import { TabsModule } from "primeng/tabs";
-import { TooltipModule } from "primeng/tooltip";
 import { PageHeader } from "@/shared/components";
 import { CustomerStatusTag } from "@/shared/components/tags";
 import { CustomerAvatar } from "../components";
@@ -45,7 +44,6 @@ import { CustomerDetailsStore } from "../store";
     Stack,
     Surface,
     TabsModule,
-    TooltipModule,
     Typography,
     UiButton,
   ],

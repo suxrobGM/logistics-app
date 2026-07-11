@@ -2,9 +2,8 @@ import { Component, inject, signal } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { Api, dispatchLoad, type LoadDto } from "@logistics/shared/api";
 import { AddressPipe } from "@logistics/shared/pipes";
-import { Stack, UiButton } from "@logistics/shared/ui";
+import { Stack, UiButton, UiTooltip } from "@logistics/shared/ui";
 import { downloadBlobFile } from "@logistics/shared/utils";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
 import {
@@ -30,8 +29,8 @@ import { LoadsListStore } from "../store/loads-list.store";
     PageHeader,
     RouterLink,
     Stack,
-    TooltipModule,
     UiButton,
+    UiTooltip,
   ],
 })
 export class LoadsListComponent {

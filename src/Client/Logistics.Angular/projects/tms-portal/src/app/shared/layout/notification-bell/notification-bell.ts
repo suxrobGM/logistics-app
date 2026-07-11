@@ -12,10 +12,9 @@ import {
 import { RouterLink } from "@angular/router";
 import type { NotificationDto } from "@logistics/shared/api";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
-import { Divider, Icon, OverlayBadge, Spinner } from "@logistics/shared/ui";
+import { Divider, Icon, OverlayBadge, Spinner, UiTooltip } from "@logistics/shared/ui";
 import { OverlayBadgeModule } from "primeng/overlaybadge";
 import { Popover, PopoverModule } from "primeng/popover";
-import { TooltipModule } from "primeng/tooltip";
 import { NotificationService, ToastService } from "@/core/services";
 
 @Component({
@@ -32,7 +31,7 @@ import { NotificationService, ToastService } from "@/core/services";
     RelativeTimePipe,
     RouterLink,
     Spinner,
-    TooltipModule,
+    UiTooltip,
   ],
 })
 export class NotificationBell implements OnInit, OnDestroy {

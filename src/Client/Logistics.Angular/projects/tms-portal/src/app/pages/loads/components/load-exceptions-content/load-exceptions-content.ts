@@ -1,8 +1,15 @@
 import { CommonModule, DatePipe } from "@angular/common";
 import { Component, inject, input, output, signal, type OnInit } from "@angular/core";
 import { Api, getLoadExceptions, type LoadExceptionDto } from "@logistics/shared/api";
-import { Card, CountBadge, Icon, Spinner, UiButton, UiDataTable } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
+import {
+  Card,
+  CountBadge,
+  Icon,
+  Spinner,
+  UiButton,
+  UiDataTable,
+  UiTooltip,
+} from "@logistics/shared/ui";
 import { ExceptionTypeTag } from "@/shared/components/tags";
 
 @Component({
@@ -16,9 +23,9 @@ import { ExceptionTypeTag } from "@/shared/components/tags";
     ExceptionTypeTag,
     Icon,
     Spinner,
-    TooltipModule,
     UiButton,
     UiDataTable,
+    UiTooltip,
   ],
 })
 export class LoadExceptionsContent implements OnInit {

@@ -20,12 +20,14 @@ import {
   lucideChartLine,
   lucideChartPie,
   lucideCheckSquare,
+  lucideCircleHelp,
   lucideCircleMinus,
   lucideClipboard,
   lucideClock,
   lucideCloud,
   lucideCompass,
   lucideCopy,
+  lucideCreditCard,
   lucideDollarSign,
   lucideDownload,
   lucideFile,
@@ -70,6 +72,7 @@ import {
   lucidePlay,
   lucideRoute,
   lucideSave,
+  lucideSend,
   lucideServer,
   lucideSettings,
   lucideShield,
@@ -104,7 +107,7 @@ import {
  * Icons `tms-portal` uses that `BASE_NG_ICONS` does not already provide.
  * Registered in app.config.ts:  provideIcons({ ...BASE_NG_ICONS, ...TMS_NG_ICONS })
  *
- * 107 name(s) -> 93 distinct glyph(s).
+ * 110 name(s) -> 96 distinct glyph(s).
  */
 export const TMS_NG_ICONS = {
   lucideArrowRight,
@@ -122,12 +125,14 @@ export const TMS_NG_ICONS = {
   lucideChartLine,
   lucideChartPie,
   lucideCheckSquare,
+  lucideCircleHelp,
   lucideCircleMinus,
   lucideClipboard,
   lucideClock,
   lucideCloud,
   lucideCompass,
   lucideCopy,
+  lucideCreditCard,
   lucideDollarSign,
   lucideDownload,
   lucideFile,
@@ -172,6 +177,7 @@ export const TMS_NG_ICONS = {
   lucidePlay,
   lucideRoute,
   lucideSave,
+  lucideSend,
   lucideServer,
   lucideSettings,
   lucideShield,

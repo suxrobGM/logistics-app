@@ -2,7 +2,14 @@ import { Component, computed, inject, model, output, signal } from "@angular/cor
 import { FormsModule } from "@angular/forms";
 import { Api, getUnassignedLoads, type LoadDto } from "@logistics/shared/api";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Icon, Spinner, UiButton, UiDataTable, UiTableRowDirectives } from "@logistics/shared/ui";
+import {
+  Icon,
+  Spinner,
+  UiButton,
+  UiDataTable,
+  UiTableRowDirectives,
+  UiTooltip,
+} from "@logistics/shared/ui";
 import { Dialog } from "primeng/dialog";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
@@ -28,6 +35,7 @@ import { DistanceUnitPipe } from "@/shared/pipes";
     UiButton,
     UiDataTable,
     UiTableRowDirectives,
+    UiTooltip,
   ],
 })
 export class AttachLoadDialog {

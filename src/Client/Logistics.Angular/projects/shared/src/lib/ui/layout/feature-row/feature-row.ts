@@ -1,6 +1,6 @@
 import { booleanAttribute, Component, input } from "@angular/core";
-import { TooltipModule } from "primeng/tooltip";
 import { Icon } from "../../content/icon/icon";
+import { UiTooltip } from "../../feedback/tooltip/tooltip";
 
 /**
  * A single row in a feature-settings list: feature name, optional description,
@@ -15,7 +15,7 @@ import { Icon } from "../../content/icon/icon";
 @Component({
   selector: "ui-feature-row",
   templateUrl: "./feature-row.html",
-  imports: [Icon, TooltipModule],
+  imports: [Icon, UiTooltip],
 })
 export class FeatureRow {
   public readonly name = input.required<string>();

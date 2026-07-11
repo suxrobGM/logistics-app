@@ -53,9 +53,9 @@
           <td>
             <span
               class="block max-w-xs truncate"
-              [pTooltip]="exception.reason"
-              [showDelay]="500"
-              tooltipPosition="bottom"
+              [uiTooltip]="exception.reason"
+              [uiTooltipDelay]="500"
+              uiTooltipPosition="bottom"
             >
               {{ exception.reason }}
             </span>
@@ -86,15 +86,15 @@
                 size="sm"
                 ariaLabel="Resolve exception"
                 icon="check"
-                pTooltip="Resolve exception"
+                uiTooltip="Resolve exception"
                 (click)="onResolveException(exception)"
               />
             } @else {
               <span
                 class="text-muted-foreground cursor-help text-sm"
-                [pTooltip]="exception.resolution"
-                [showDelay]="300"
-                tooltipPosition="left"
+                [uiTooltip]="exception.resolution"
+                [uiTooltipDelay]="300"
+                uiTooltipPosition="left"
               >
                 <ui-icon name="info-circle" />
               </span>

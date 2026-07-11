@@ -14,7 +14,7 @@
   <!-- Full version with cities -->
   <div class="flex flex-col gap-1">
     <div class="text-muted-foreground flex items-center justify-between text-xs">
-      <span class="max-w-24 truncate" [pTooltip]="originCity()">
+      <span class="max-w-24 truncate" [uiTooltip]="originCity()">
         {{ originCity() || "Origin" }}
       </span>
       <span
@@ -23,7 +23,7 @@
       >
         {{ statusLabel() }}
       </span>
-      <span class="max-w-24 truncate text-right" [pTooltip]="destinationCity()">
+      <span class="max-w-24 truncate text-right" [uiTooltip]="destinationCity()">
         {{ destinationCity() || "Destination" }}
       </span>
     </div>

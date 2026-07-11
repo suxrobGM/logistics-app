@@ -24,10 +24,10 @@ import {
   Typography,
   UiButton,
   UiDataTable,
+  UiTooltip,
 } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
 import { TextareaModule } from "primeng/textarea";
-import { TooltipModule } from "primeng/tooltip";
 import { PdfService, TenantService, ToastService } from "@/core/services";
 import { RecordPaymentDialog } from "@/pages/invoices/components";
 import { InvoiceStatusTag, PageHeader, PaymentStatusTag } from "@/shared/components";
@@ -55,10 +55,10 @@ import { InvoiceStatusTag, PageHeader, PaymentStatusTag } from "@/shared/compone
     Spinner,
     Stack,
     TextareaModule,
-    TooltipModule,
     Typography,
     UiButton,
     UiDataTable,
+    UiTooltip,
   ],
 })
 export class PayrollInvoiceDetails implements OnInit {

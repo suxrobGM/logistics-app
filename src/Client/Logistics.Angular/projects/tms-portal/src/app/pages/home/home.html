@@ -10,8 +10,8 @@
       icon="refresh"
       [rounded]="true"
       (click)="refreshData()"
-      pTooltip="Refresh data"
-      tooltipPosition="bottom"
+      uiTooltip="Refresh data"
+      uiTooltipPosition="bottom"
     />
     <ui-button
       intent="secondary"
@@ -20,8 +20,8 @@
       icon="th-large"
       [rounded]="true"
       (click)="resetLayout()"
-      pTooltip="Reset Layout"
-      tooltipPosition="bottom"
+      uiTooltip="Reset Layout"
+      uiTooltipPosition="bottom"
     />
     <ui-button
       appearance="outlined"
@@ -161,13 +161,13 @@
                       </td>
                       <td>
                         <ui-stack direction="row" align="center" gap="1" class="text-sm">
-                          <span class="max-w-20 truncate" [pTooltip]="load.originAddress?.city">
+                          <span class="max-w-20 truncate" [uiTooltip]="load.originAddress?.city">
                             {{ load.originAddress?.city || "N/A" }}
                           </span>
                           <ui-icon name="arrow-right" size="xs" color="muted" />
                           <span
                             class="max-w-20 truncate"
-                            [pTooltip]="load.destinationAddress?.city"
+                            [uiTooltip]="load.destinationAddress?.city"
                           >
                             {{ load.destinationAddress?.city || "N/A" }}
                           </span>

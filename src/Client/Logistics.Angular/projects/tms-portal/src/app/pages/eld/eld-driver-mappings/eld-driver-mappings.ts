@@ -25,9 +25,9 @@ import {
   Stack,
   UiButton,
   UiDataTable,
+  UiTooltip,
 } from "@logistics/shared/ui";
 import { SelectModule } from "primeng/select";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { PageHeader, UiFormField } from "@/shared/components";
 import { getEldProviderLabel } from "../_components";
@@ -48,10 +48,10 @@ import { getEldProviderLabel } from "../_components";
     SelectModule,
     Spinner,
     Stack,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiFormField,
+    UiTooltip,
   ],
 })
 export class EldDriverMappingsComponent implements OnInit {

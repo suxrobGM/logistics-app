@@ -18,10 +18,10 @@ import {
   Stack,
   Typography,
   UiButton,
+  UiTooltip,
 } from "@logistics/shared/ui";
 import { CheckboxModule } from "primeng/checkbox";
 import { SelectButtonModule } from "primeng/selectbutton";
-import { TooltipModule } from "primeng/tooltip";
 import { NotificationService, ToastService } from "@/core/services";
 
 type FilterType = "all" | "unread" | "read";
@@ -48,9 +48,9 @@ interface FilterOption {
     SelectButtonModule,
     Spinner,
     Stack,
-    TooltipModule,
     Typography,
     UiButton,
+    UiTooltip,
   ],
 })
 export class NotificationsComponent implements OnInit, OnDestroy {

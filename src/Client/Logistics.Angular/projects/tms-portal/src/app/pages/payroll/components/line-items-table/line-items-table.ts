@@ -20,9 +20,9 @@ import {
   UiSelectField,
   UiTextareaField,
   UiTextField,
+  UiTooltip,
 } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
 
@@ -44,7 +44,6 @@ const EMPTY = {
     FormField,
     FormRoot,
     Icon,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiFormField,
@@ -52,6 +51,7 @@ const EMPTY = {
     UiSelectField,
     UiTextareaField,
     UiTextField,
+    UiTooltip,
   ],
 })
 export class PayrollLineItemsTable {

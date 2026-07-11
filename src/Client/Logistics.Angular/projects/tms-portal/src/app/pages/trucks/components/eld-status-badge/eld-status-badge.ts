@@ -1,7 +1,6 @@
 import { Component, computed, input } from "@angular/core";
 import type { EldProviderType } from "@logistics/shared/api";
-import { Icon, type IconName } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
+import { Icon, UiTooltip, type IconName } from "@logistics/shared/ui";
 
 interface ProviderInfo {
   label: string;
@@ -22,7 +21,7 @@ const PROVIDER_INFO: Record<EldProviderType, ProviderInfo> = {
 @Component({
   selector: "app-eld-status-badge",
   templateUrl: "./eld-status-badge.html",
-  imports: [Icon, TooltipModule],
+  imports: [Icon, UiTooltip],
 })
 export class EldStatusBadge {
   public readonly providerType = input<EldProviderType | null>(null);

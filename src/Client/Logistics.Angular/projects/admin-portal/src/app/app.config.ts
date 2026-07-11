@@ -15,7 +15,6 @@ import { provideApi } from "@logistics/shared/api";
 import { provideIcons } from "@ng-icons/core";
 import Aura from "@primeuix/themes/aura";
 import { provideAuth } from "angular-auth-oidc-client";
-import { ConfirmationService, MessageService } from "primeng/api";
 import { providePrimeNG } from "primeng/config";
 import { authConfig, PermissionService } from "@/core/auth";
 import { environment } from "@/env";
@@ -49,8 +48,6 @@ export const appConfig: ApplicationConfig = {
     }),
     provideIcons({ ...BASE_NG_ICONS, ...ADMIN_NG_ICONS }),
 
-    MessageService,
-    ConfirmationService,
     { provide: PERMISSION_CHECKER, useExisting: PermissionService },
   ],
 };

@@ -15,7 +15,6 @@ import {
 } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
 import { Menu, MenuModule } from "primeng/menu";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { TenantsListStore } from "../store/tenants-list.store";
 
@@ -31,7 +30,6 @@ import { TenantsListStore } from "../store/tenants-list.store";
     MenuModule,
     PageHeader,
     SearchField,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,

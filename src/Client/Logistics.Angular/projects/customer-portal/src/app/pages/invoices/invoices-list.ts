@@ -16,7 +16,6 @@ import {
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
-import { ToastModule } from "primeng/toast";
 
 @Component({
   selector: "cp-invoices-list",
@@ -32,7 +31,6 @@ import { ToastModule } from "primeng/toast";
     Stack,
     StatusBadge,
     Surface,
-    ToastModule,
     Typography,
     UiButton,
     UiDataTable,

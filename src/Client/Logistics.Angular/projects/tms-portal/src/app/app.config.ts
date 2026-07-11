@@ -25,7 +25,6 @@ import { provideTranslateService } from "@ngx-translate/core";
 import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
 import { provideAuth } from "angular-auth-oidc-client";
 import { provideMapboxGL } from "ngx-mapbox-gl";
-import { ConfirmationService, MessageService } from "primeng/api";
 import { providePrimeNG } from "primeng/config";
 import { authConfig, PermissionService } from "@/core/auth";
 import { tenantInterceptor } from "@/core/interceptors";
@@ -68,9 +67,6 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => {
       inject(I18nService).init({ supportedLanguages: ["en"] });
     }),
-
-    MessageService,
-    ConfirmationService,
 
     { provide: PERMISSION_CHECKER, useExisting: PermissionService },
     { provide: TENANT_SETTINGS_PROVIDER, useExisting: TmsTenantSettingsProvider },

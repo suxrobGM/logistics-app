@@ -13,8 +13,8 @@ import {
   Typography,
   UiButton,
   UiDataTable,
+  UiTooltip,
 } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
 import { InvoiceStatusTag, PageHeader } from "@/shared/components";
 
 interface PayrollDashboardData {
@@ -44,10 +44,10 @@ interface PayrollDashboardData {
     Skeleton,
     Stack,
     Surface,
-    TooltipModule,
     Typography,
     UiButton,
     UiDataTable,
+    UiTooltip,
   ],
 })
 export class PayrollDashboard {

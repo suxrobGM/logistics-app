@@ -1,0 +1,144 @@
+<section id="tooltip" class="scroll-mt-24" data-lab="tooltip">
+  <ui-typography variant="h2" tag="h2">Tooltip</ui-typography>
+  <ui-typography variant="body-sm" color="muted">
+    The
+    <code>[uiTooltip]</code>
+    directive. Hover a host, then TAB to it — it must open both ways, and close on mouseout, blur
+    and Escape.
+  </ui-typography>
+
+  <!-- (1) The row that would have shipped broken: icon-only <ui-button> wrappers.
+       Tab through them; each must open a tooltip AND keep its own aria-label as its name. -->
+  <div class="mt-6">
+    <ui-typography variant="h3" tag="h3">Icon-only buttons (the 82-site shape)</ui-typography>
+    <ui-typography variant="body-sm" color="muted">
+      Keyboard-focusable. The tooltip is the DESCRIPTION;
+      <code>ariaLabel</code>
+      is the NAME.
+    </ui-typography>
+    <div class="mt-3 flex flex-wrap items-center gap-3" data-lab="tooltip-icon-buttons">
+      @for (b of iconButtons; track b.icon) {
+        <ui-button
+          appearance="text"
+          [icon]="b.icon"
+          [ariaLabel]="b.label"
+          [uiTooltip]="b.label"
+          [attr.data-lab-tooltip]="b.icon"
+        />
+      }
+    </div>
+  </div>
+
+  <!-- (2) All four placements. `right` is the default (PrimeNG's), so the unpositioned one must
+       land on the right. -->
+  <div class="mt-6">
+    <ui-typography variant="h3" tag="h3">Placements</ui-typography>
+    <div class="mt-3 flex flex-wrap items-center gap-3" data-lab="tooltip-positions">
+      @for (p of positions; track p) {
+        <ui-button
+          appearance="outlined"
+          [label]="p"
+          [uiTooltip]="'Placed ' + p"
+          [uiTooltipPosition]="p"
+          [attr.data-lab-position]="p"
+        />
+      }
+      <ui-button
+        appearance="outlined"
+        label="default"
+        uiTooltip="No position set — defaults to right"
+        data-lab-position="default"
+      />
+    </div>
+  </div>
+
+  <!-- (3) An empty tooltip is NO tooltip. Click to blank the bound value, then hover: nothing may
+       appear — not an empty box. -->
+  <div class="mt-6">
+    <ui-typography variant="h3" tag="h3">Bound text, and the empty case</ui-typography>
+    <div class="mt-3 flex flex-wrap items-center gap-3">
+      <ui-button
+        appearance="outlined"
+        label="Hover me"
+        [uiTooltip]="boundText()"
+        data-lab="tooltip-bound"
+      />
+      <ui-button
+        appearance="text"
+        [label]="boundText() ? 'Set text to empty' : 'Restore text'"
+        (click)="toggleBoundText()"
+        data-lab="tooltip-toggle-empty"
+      />
+      <span class="text-muted-foreground text-sm">
+        current:
+        <code>{{ boundText() || "(empty)" }}</code>
+      </span>
+    </div>
+  </div>
+
+  <!-- (4) Delay, and hosts that are not <ui-button>. -->
+  <div class="mt-6">
+    <ui-typography variant="h3" tag="h3">Delay and other hosts</ui-typography>
+    <div class="mt-3 flex flex-wrap items-center gap-4">
+      <ui-button
+        appearance="outlined"
+        label="800ms delay"
+        uiTooltip="You waited for this"
+        [uiTooltipDelay]="800"
+        data-lab="tooltip-delayed"
+      />
+
+      <button
+        type="button"
+        class="border-default hover:bg-subtle rounded-md border px-3 py-1.5 text-sm"
+        uiTooltip="A native button — the host IS the focusable element"
+        data-lab="tooltip-native-button"
+      >
+        native button
+      </button>
+
+      <span
+        class="text-muted-foreground inline-flex items-center gap-1.5 text-sm"
+        uiTooltip="A non-focusable host. Hover-only, exactly as it was under PrimeNG."
+        uiTooltipPosition="top"
+        data-lab="tooltip-span"
+      >
+        <ui-icon name="info" size="inherit" />
+        plain span (hover only)
+      </span>
+    </div>
+  </div>
+
+  <!-- (5) A structured tooltip. This is what replaced PrimeNG's [escape]="false" innerHTML string
+       at the one site that used it (route-badge, which was interpolating tenant address data into
+       hand-built HTML). A TemplateRef keeps the layout and escapes the bindings. -->
+  <div class="mt-6">
+    <ui-typography variant="h3" tag="h3">
+      Template content (replaces [escape]="false")
+    </ui-typography>
+    <ng-template #richTooltip>
+      <div class="flex items-start gap-3">
+        <div>
+          <div class="mb-1 text-xs font-semibold opacity-70">ORIGIN</div>
+          <div>1200 Harbor Blvd</div>
+          <div>Los Angeles, CA, 90731</div>
+        </div>
+        <div class="mt-3 opacity-40">&rarr;</div>
+        <div>
+          <div class="mb-1 text-xs font-semibold opacity-70">DESTINATION</div>
+          <div>4400 Freight Way</div>
+          <div>Phoenix, AZ, 85043</div>
+        </div>
+      </div>
+    </ng-template>
+    <div class="mt-3">
+      <ui-button
+        appearance="outlined"
+        label="Structured tooltip"
+        [uiTooltip]="richTooltip"
+        uiTooltipPosition="bottom"
+        data-lab="tooltip-template"
+      />
+    </div>
+  </div>
+</section>

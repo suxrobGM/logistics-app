@@ -19,8 +19,8 @@ import {
   UiButton,
   UiDataTable,
   UiSortHeader,
+  UiTooltip,
 } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, InvoiceStatusTag, PageHeader } from "@/shared/components";
 import { EmployeePayrollListStore } from "../store/employee-list.store";
 
@@ -40,10 +40,10 @@ import { EmployeePayrollListStore } from "../store/employee-list.store";
     RouterModule,
     Spinner,
     Stack,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,
+    UiTooltip,
   ],
 })
 export class EmployeePayrollInvoices {

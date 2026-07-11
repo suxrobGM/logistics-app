@@ -17,7 +17,6 @@ import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { Menu, MenuModule } from "primeng/menu";
 import { PasswordModule } from "primeng/password";
-import { TooltipModule } from "primeng/tooltip";
 import { ImpersonationService, ToastService } from "@/core/services";
 import { UsersListStore } from "../store/users-list.store";
 
@@ -37,7 +36,6 @@ import { UsersListStore } from "../store/users-list.store";
     PasswordModule,
     RouterLink,
     SearchField,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,

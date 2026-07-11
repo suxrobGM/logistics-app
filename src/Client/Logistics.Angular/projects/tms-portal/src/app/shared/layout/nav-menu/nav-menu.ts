@@ -1,14 +1,13 @@
 import { Component, computed, effect, inject, input, output, signal } from "@angular/core";
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
-import { CountBadge, Icon } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
+import { CountBadge, Icon, UiTooltip } from "@logistics/shared/ui";
 import type { NavItem, NavSection } from "./nav-menu.types";
 
 @Component({
   selector: "app-nav-menu",
   templateUrl: "./nav-menu.html",
   styleUrl: "./nav-menu.css",
-  imports: [CountBadge, Icon, RouterLink, RouterLinkActive, TooltipModule],
+  imports: [CountBadge, Icon, RouterLink, RouterLinkActive, UiTooltip],
   host: { class: "flex flex-col flex-1 min-h-0" },
 })
 export class NavMenu {

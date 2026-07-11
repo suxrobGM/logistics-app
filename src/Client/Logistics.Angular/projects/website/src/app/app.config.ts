@@ -10,7 +10,6 @@ import { BASE_NG_ICONS, provideSpartanHlm } from "@logistics/shared";
 import { provideApi } from "@logistics/shared/api";
 import { provideIcons } from "@ng-icons/core";
 import Aura from "@primeuix/themes/aura";
-import { ConfirmationService, MessageService } from "primeng/api";
 import { providePrimeNG } from "primeng/config";
 import { WEBSITE_NG_ICONS } from "@/shared/icons/lucide-icons";
 import { environment } from "../environments/environment";
@@ -46,7 +45,5 @@ export const appConfig: ApplicationConfig = {
     }),
 
     // PrimeNG Services
-    MessageService,
-    ConfirmationService,
   ],
 };

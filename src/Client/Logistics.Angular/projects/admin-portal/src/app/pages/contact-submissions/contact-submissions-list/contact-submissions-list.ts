@@ -25,11 +25,11 @@ import {
   UiSelectField,
   UiSortHeader,
   UiTextareaField,
+  UiTooltip,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import { DateUtils } from "@logistics/shared/utils";
 import { DialogModule } from "primeng/dialog";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { ContactSubmissionsListStore } from "../store/contact-submissions-list.store";
 
@@ -48,7 +48,6 @@ import { ContactSubmissionsListStore } from "../store/contact-submissions-list.s
     SearchField,
     Stack,
     Surface,
-    TooltipModule,
     Typography,
     UiButton,
     UiDataTable,
@@ -56,6 +55,7 @@ import { ContactSubmissionsListStore } from "../store/contact-submissions-list.s
     UiSelectField,
     UiSortHeader,
     UiTextareaField,
+    UiTooltip,
   ],
 })
 export class ContactSubmissionsList {

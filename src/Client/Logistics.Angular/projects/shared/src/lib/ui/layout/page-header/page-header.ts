@@ -1,7 +1,7 @@
 import { Component, input } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { TooltipModule } from "primeng/tooltip";
 import { UiButton } from "../../action/button/button";
+import { UiTooltip } from "../../feedback/tooltip/tooltip";
 
 /**
  * Page header component with title, optional subtitle, and optional add button.
@@ -9,7 +9,7 @@ import { UiButton } from "../../action/button/button";
 @Component({
   selector: "ui-page-header",
   templateUrl: "./page-header.html",
-  imports: [RouterModule, TooltipModule, UiButton],
+  imports: [RouterModule, UiButton, UiTooltip],
 })
 export class PageHeader {
   public readonly title = input.required<string>();

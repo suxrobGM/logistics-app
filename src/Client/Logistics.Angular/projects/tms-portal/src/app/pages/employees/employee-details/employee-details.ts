@@ -22,7 +22,6 @@ import {
   UiButton,
 } from "@logistics/shared/ui";
 import { TabsModule } from "primeng/tabs";
-import { TooltipModule } from "primeng/tooltip";
 import { DocumentManager, PageHeader } from "@/shared/components";
 import { EmployeeStatusTag } from "@/shared/components/tags";
 import { EmployeeAvatar } from "../components";
@@ -55,7 +54,6 @@ import { EmployeeDetailsStore } from "../store";
     Stack,
     Surface,
     TabsModule,
-    TooltipModule,
     Typography,
     UiButton,
   ],

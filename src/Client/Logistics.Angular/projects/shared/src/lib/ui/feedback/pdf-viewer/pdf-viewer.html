@@ -14,7 +14,7 @@
               ariaLabel="Open in new tab"
               icon="external-link"
               [rounded]="true"
-              pTooltip="Open in new tab"
+              uiTooltip="Open in new tab"
               (click)="openInNewTab()"
             />
             @if (collapsible()) {
@@ -24,7 +24,7 @@
                 size="sm"
                 [rounded]="true"
                 [ariaLabel]="isCollapsed() ? 'Expand' : 'Collapse'"
-                [pTooltip]="isCollapsed() ? 'Expand' : 'Collapse'"
+                [uiTooltip]="isCollapsed() ? 'Expand' : 'Collapse'"
                 (click)="toggleCollapse()"
               />
             }

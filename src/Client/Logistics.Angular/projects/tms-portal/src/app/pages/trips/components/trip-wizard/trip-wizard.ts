@@ -4,7 +4,6 @@ import { Alert, Stack } from "@logistics/shared/ui";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputTextModule } from "primeng/inputtext";
 import { StepperModule } from "primeng/stepper";
-import { TooltipModule } from "primeng/tooltip";
 import { TripWizardStore } from "../../store/trip-wizard-store";
 import { TripWizardBasic } from "../trip-wizard-basic/trip-wizard-basic";
 import { TripFormStepLoads } from "../trip-wizard-loads/trip-wizard-loads";
@@ -36,7 +35,6 @@ export interface TripWizardValue {
     InputTextModule,
     Stack,
     StepperModule,
-    TooltipModule,
     TripFormStepLoads,
     TripWizardBasic,
     TripWizardReview,

@@ -173,7 +173,7 @@
                   @if (item.loading) {
                     <ui-icon name="spinner" spin class="text-foreground" />
                   } @else if (item.error) {
-                    <ui-icon name="times-circle" class="text-danger" [pTooltip]="item.error" />
+                    <ui-icon name="times-circle" class="text-danger" [uiTooltip]="item.error" />
                   } @else {
                     <ui-icon name="check-circle" class="text-success" />
                   }

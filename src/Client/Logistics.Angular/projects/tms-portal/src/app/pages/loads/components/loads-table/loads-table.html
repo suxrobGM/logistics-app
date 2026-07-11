@@ -67,9 +67,9 @@
           <td>
             <span
               class="block max-w-32 truncate"
-              [pTooltip]="load.name"
-              [showDelay]="500"
-              tooltipPosition="bottom"
+              [uiTooltip]="load.name"
+              [uiTooltipDelay]="500"
+              uiTooltipPosition="bottom"
             >
               {{ load.name }}
             </span>
@@ -78,9 +78,9 @@
           <td>
             <span
               class="block max-w-32 truncate"
-              [pTooltip]="load.customer?.name"
-              [showDelay]="500"
-              tooltipPosition="bottom"
+              [uiTooltip]="load.customer?.name"
+              [uiTooltipDelay]="500"
+              uiTooltipPosition="bottom"
             >
               {{ load.customer?.name }}
             </span>
@@ -113,9 +113,9 @@
           <td>
             <span
               class="block max-w-24 truncate"
-              [pTooltip]="load.assignedDispatcherName"
-              [showDelay]="500"
-              tooltipPosition="bottom"
+              [uiTooltip]="load.assignedDispatcherName"
+              [uiTooltipDelay]="500"
+              uiTooltipPosition="bottom"
             >
               {{ load.assignedDispatcherName }}
             </span>

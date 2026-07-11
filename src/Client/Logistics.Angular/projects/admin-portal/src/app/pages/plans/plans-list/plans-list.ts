@@ -17,7 +17,6 @@ import {
 import type { MenuItem } from "primeng/api";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { Menu, MenuModule } from "primeng/menu";
-import { TooltipModule } from "primeng/tooltip";
 import { PlansListStore } from "../store/plans-list.store";
 
 @Component({
@@ -34,7 +33,6 @@ import { PlansListStore } from "../store/plans-list.store";
     PageHeader,
     SearchField,
     TitleCasePipe,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,

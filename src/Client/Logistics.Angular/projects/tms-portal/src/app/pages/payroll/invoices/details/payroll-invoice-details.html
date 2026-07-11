@@ -182,7 +182,7 @@
                 label="Pay via Bank Transfer"
                 [loading]="isPaying()"
                 [disabled]="!canPayViaStripe()"
-                [pTooltip]="canPayViaStripe() ? '' : 'Employee must set up a payout account first'"
+                [uiTooltip]="canPayViaStripe() ? '' : 'Employee must set up a payout account first'"
                 (click)="payViaStripe()"
               />
               <ui-button

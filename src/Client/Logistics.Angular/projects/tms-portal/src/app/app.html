@@ -30,11 +30,6 @@
   <router-outlet />
 }
 
-<p-toast key="notification" position="top-right" />
-<p-confirm-dialog
-  key="confirmDialog"
-  position="center"
-  [style]="{ 'max-width': '32rem', 'white-space': 'pre-line' }"
-/>
+<ui-toaster />
 <app-command-palette />
 <app-upgrade-dialog />

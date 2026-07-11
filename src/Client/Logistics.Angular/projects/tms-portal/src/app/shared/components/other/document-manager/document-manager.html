@@ -73,7 +73,7 @@
           icon="refresh"
           (click)="refresh()"
           [loading]="isLoading()"
-          pTooltip="Refresh"
+          uiTooltip="Refresh"
         />
       </div>
     </ng-template>
@@ -133,7 +133,7 @@
                   ariaLabel="Download"
                   icon="download"
                   (click)="download(doc)"
-                  pTooltip="Download"
+                  uiTooltip="Download"
                 />
                 <ui-button
                   intent="danger"
@@ -142,7 +142,7 @@
                   ariaLabel="Delete"
                   icon="trash"
                   (click)="delete(doc)"
-                  pTooltip="Delete"
+                  uiTooltip="Delete"
                 />
               </div>
             </td>

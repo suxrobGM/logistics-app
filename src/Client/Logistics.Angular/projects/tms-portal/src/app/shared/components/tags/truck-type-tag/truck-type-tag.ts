@@ -1,7 +1,6 @@
 import { Component, input } from "@angular/core";
 import type { TruckType } from "@logistics/shared/api";
-import { Badge, type IconName, type UiBadgeIntent } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
+import { Badge, UiTooltip, type IconName, type UiBadgeIntent } from "@logistics/shared/ui";
 
 interface TypeInfo {
   label: string;
@@ -29,7 +28,7 @@ const TYPE_INFO: Record<TruckType, TypeInfo> = {
 @Component({
   selector: "app-truck-type-tag",
   templateUrl: "./truck-type-tag.html",
-  imports: [Badge, TooltipModule],
+  imports: [Badge, UiTooltip],
 })
 export class TruckTypeTag {
   public readonly type = input.required<TruckType>();

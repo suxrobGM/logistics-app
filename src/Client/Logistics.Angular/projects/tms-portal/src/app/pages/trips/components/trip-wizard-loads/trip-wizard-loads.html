@@ -106,8 +106,8 @@
                 size="sm"
                 ariaLabel="Edit load"
                 icon="pencil"
-                pTooltip="Edit load"
-                tooltipPosition="bottom"
+                uiTooltip="Edit load"
+                uiTooltipPosition="bottom"
                 [routerLink]="['/loads', row.id, 'edit']"
                 [disabled]="row.pendingDetach || disabled()"
               />
@@ -117,8 +117,8 @@
                   size="sm"
                   ariaLabel="Undo detach"
                   icon="undo"
-                  pTooltip="Undo detach"
-                  tooltipPosition="bottom"
+                  uiTooltip="Undo detach"
+                  uiTooltipPosition="bottom"
                   (click)="undoDetachLoad(row.id)"
                   [disabled]="disabled()"
                 />
@@ -129,8 +129,8 @@
                   size="sm"
                   ariaLabel="Detach"
                   icon="times"
-                  pTooltip="Detach"
-                  tooltipPosition="bottom"
+                  uiTooltip="Detach"
+                  uiTooltipPosition="bottom"
                   (click)="detachLoad(row.id)"
                   [disabled]="disabled()"
                 />
@@ -142,7 +142,7 @@
                 size="sm"
                 ariaLabel="Remove"
                 icon="times"
-                pTooltip="Remove"
+                uiTooltip="Remove"
                 (click)="removeNewLoad(row.id)"
                 [disabled]="disabled()"
               />

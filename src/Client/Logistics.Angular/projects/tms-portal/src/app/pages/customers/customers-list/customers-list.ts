@@ -7,7 +7,6 @@ import { Card, Stack, UiButton, UiDataTable, UiSortHeader } from "@logistics/sha
 import type { MenuItem } from "primeng/api";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { MenuModule } from "primeng/menu";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { CustomerStatusTag } from "@/shared/components/tags";
@@ -31,7 +30,6 @@ import { CustomersListStore } from "../store";
     PermissionGuard,
     SearchField,
     Stack,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,

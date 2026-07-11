@@ -51,7 +51,7 @@
                 icon="envelope"
                 [rounded]="true"
                 (click)="openEmailDialog(link)"
-                pTooltip="Send by email"
+                uiTooltip="Send by email"
                 [disabled]="!link.isActive || link.isExpired"
               />
               <ui-button
@@ -60,7 +60,7 @@
                 icon="copy"
                 [rounded]="true"
                 (click)="copyToClipboard(link.url)"
-                pTooltip="Copy link"
+                uiTooltip="Copy link"
                 [disabled]="!link.isActive || link.isExpired"
               />
               <ui-button
@@ -70,7 +70,7 @@
                 icon="trash"
                 [rounded]="true"
                 (click)="revokeLink(link.id)"
-                pTooltip="Revoke"
+                uiTooltip="Revoke"
                 [disabled]="!link.isActive"
               />
             </td>

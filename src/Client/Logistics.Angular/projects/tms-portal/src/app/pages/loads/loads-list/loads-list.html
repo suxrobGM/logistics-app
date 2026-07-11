@@ -6,7 +6,7 @@
         size="lg"
         icon="file-import"
         [rounded]="true"
-        pTooltip="Import from PDF"
+        uiTooltip="Import from PDF"
         ariaLabel="Import from PDF"
         [routerLink]="['/loads/import']"
       />
@@ -15,7 +15,7 @@
         size="lg"
         icon="download"
         [rounded]="true"
-        pTooltip="Export to CSV"
+        uiTooltip="Export to CSV"
         ariaLabel="Export to CSV"
         (click)="exportToCsv()"
         [disabled]="store.isEmpty()"

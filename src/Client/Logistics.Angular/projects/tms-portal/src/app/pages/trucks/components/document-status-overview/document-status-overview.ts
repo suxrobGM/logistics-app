@@ -1,7 +1,6 @@
 import { Component, computed, input } from "@angular/core";
 import type { DocumentDto, DocumentType } from "@logistics/shared/api";
-import { Icon } from "@logistics/shared/ui";
-import { TooltipModule } from "primeng/tooltip";
+import { Icon, UiTooltip } from "@logistics/shared/ui";
 
 interface DocumentTypeInfo {
   type: DocumentType;
@@ -21,7 +20,7 @@ const TRUCK_DOCUMENT_TYPES: DocumentTypeInfo[] = [
 @Component({
   selector: "app-document-status-overview",
   templateUrl: "./document-status-overview.html",
-  imports: [Icon, TooltipModule],
+  imports: [Icon, UiTooltip],
 })
 export class DocumentStatusOverview {
   public readonly documents = input<DocumentDto[]>([]);

@@ -1,28 +1,18 @@
 import { Component, inject, input, output, signal } from "@angular/core";
 import { Api, getEmployees, type EmployeeDto } from "@logistics/shared/api";
-import { Avatar, Icon, Stack, Typography, UiButton } from "@logistics/shared/ui";
+import { Avatar, Icon, Stack, Typography, UiButton, UiTooltip } from "@logistics/shared/ui";
 import {
   AutoCompleteModule,
   type AutoCompleteCompleteEvent,
   type AutoCompleteSelectEvent,
 } from "primeng/autocomplete";
-import { TooltipModule } from "primeng/tooltip";
 import { UserAvatar } from "@/shared/components";
 import { Converters } from "@/shared/utils";
 
 @Component({
   selector: "app-recipient-selector",
   templateUrl: "./recipient-selector.html",
-  imports: [
-    AutoCompleteModule,
-    Avatar,
-    Icon,
-    Stack,
-    TooltipModule,
-    Typography,
-    UiButton,
-    UserAvatar,
-  ],
+  imports: [AutoCompleteModule, Avatar, Icon, Stack, Typography, UiButton, UiTooltip, UserAvatar],
 })
 export class RecipientSelector {
   private readonly api = inject(Api);

@@ -25,7 +25,10 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "setupFiles": ["projects/shared/src/test-setup.ts"]
+          }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",

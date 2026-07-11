@@ -14,7 +14,6 @@ import {
 } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
 import { MenuModule } from "primeng/menu";
-import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, SearchField } from "@/shared/components";
 import { DvirListStore } from "../store";
 
@@ -32,7 +31,6 @@ import { DvirListStore } from "../store";
     PageHeader,
     SearchField,
     Stack,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,

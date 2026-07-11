@@ -23,11 +23,11 @@ import {
   UiSelectField,
   UiSortHeader,
   UiTextareaField,
+  UiTooltip,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import { DateUtils } from "@logistics/shared/utils";
 import { DialogModule } from "primeng/dialog";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { DemoRequestsListStore } from "../store/demo-requests-list.store";
 
@@ -51,7 +51,6 @@ interface StatusOption {
     SearchField,
     Stack,
     Surface,
-    TooltipModule,
     Typography,
     UiButton,
     UiDataTable,
@@ -59,6 +58,7 @@ interface StatusOption {
     UiSelectField,
     UiSortHeader,
     UiTextareaField,
+    UiTooltip,
   ],
 })
 export class DemoRequestsList {

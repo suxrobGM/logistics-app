@@ -19,11 +19,11 @@ import {
   UiButton,
   UiDataTable,
   UiSortHeader,
+  UiTooltip,
   type UiBadgeIntent,
 } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
 import { MenuModule } from "primeng/menu";
-import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
 import { BlogPostsListStore } from "../store/blog-posts-list.store";
 
@@ -41,10 +41,10 @@ import { BlogPostsListStore } from "../store/blog-posts-list.store";
     PageHeader,
     SearchField,
     Stack,
-    TooltipModule,
     UiButton,
     UiDataTable,
     UiSortHeader,
+    UiTooltip,
   ],
 })
 export class BlogPostsList {

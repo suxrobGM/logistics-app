@@ -20,7 +20,6 @@ import {
 import type { MenuItem } from "primeng/api";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { Menu, MenuModule } from "primeng/menu";
-import { TooltipModule } from "primeng/tooltip";
 import { SubscriptionsListStore } from "../store/subscriptions-list.store";
 
 @Component({
@@ -36,7 +35,6 @@ import { SubscriptionsListStore } from "../store/subscriptions-list.store";
     PageHeader,
     RouterLink,
     SearchField,
-    TooltipModule,
     UiButton,
     UiDataTable,
   ],
