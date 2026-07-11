@@ -27,19 +27,20 @@
           >
             <div class="flex min-w-0 items-center gap-3">
               @if (item.icon) {
-                <svg [lucideIcon]="item.icon" class="nav-icon"></svg>
+                <ng-icon [name]="ngIcon(item.icon)" size="1.125rem" class="nav-icon" />
               }
               @if (!collapsed()) {
                 <span class="truncate">{{ item.label }}</span>
               }
             </div>
             @if (!collapsed()) {
-              <svg
-                lucideIcon="chevron-down"
-                class="text-muted-foreground size-3 shrink-0 transition-transform duration-200"
+              <ng-icon
+                name="lucideChevronDown"
+                size="0.75rem"
+                class="text-muted-foreground shrink-0 transition-transform duration-200"
                 [class.rotate-180]="isGroupExpanded(item)"
                 [class.text-primary]="isGroupExpanded(item)"
-              ></svg>
+              />
             }
           </button>
 
@@ -79,7 +80,7 @@
           >
             <div class="flex min-w-0 items-center gap-3">
               @if (item.icon) {
-                <svg [lucideIcon]="item.icon" class="nav-icon"></svg>
+                <ng-icon [name]="ngIcon(item.icon)" size="1.125rem" class="nav-icon" />
               }
               @if (!collapsed()) {
                 <span class="truncate">{{ item.label }}</span>
@@ -117,19 +118,20 @@
           >
             <div class="flex min-w-0 items-center gap-3">
               @if (item.icon) {
-                <svg [lucideIcon]="item.icon" class="nav-icon"></svg>
+                <ng-icon [name]="ngIcon(item.icon)" size="1.125rem" class="nav-icon" />
               }
               @if (!collapsed()) {
                 <span class="truncate">{{ item.label }}</span>
               }
             </div>
             @if (!collapsed()) {
-              <svg
-                lucideIcon="chevron-down"
-                class="text-muted-foreground size-3 shrink-0 transition-transform duration-200"
+              <ng-icon
+                name="lucideChevronDown"
+                size="0.75rem"
+                class="text-muted-foreground shrink-0 transition-transform duration-200"
                 [class.rotate-180]="isGroupExpanded(item)"
                 [class.text-primary]="isGroupExpanded(item)"
-              ></svg>
+              />
             }
           </button>
 
@@ -160,7 +162,7 @@
           >
             <div class="flex min-w-0 items-center gap-3">
               @if (item.icon) {
-                <svg [lucideIcon]="item.icon" class="nav-icon"></svg>
+                <ng-icon [name]="ngIcon(item.icon)" size="1.125rem" class="nav-icon" />
               }
               @if (!collapsed()) {
                 <span class="truncate">{{ item.label }}</span>

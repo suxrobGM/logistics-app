@@ -6,9 +6,9 @@ import {
   withInMemoryScrolling,
   withRouterConfig,
 } from "@angular/router";
-import { BASE_LUCIDE_ICONS } from "@logistics/shared";
+import { BASE_NG_ICONS, provideSpartanHlm } from "@logistics/shared";
 import { provideApi } from "@logistics/shared/api";
-import { provideLucideIcons } from "@lucide/angular";
+import { provideIcons } from "@ng-icons/core";
 import Aura from "@primeuix/themes/aura";
 import { ConfirmationService, MessageService } from "primeng/api";
 import { providePrimeNG } from "primeng/config";
@@ -17,8 +17,9 @@ import { routes } from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideLucideIcons(...BASE_LUCIDE_ICONS),
+    provideIcons({ ...BASE_NG_ICONS }),
     provideBrowserGlobalErrorListeners(),
+    provideSpartanHlm(),
     provideRouter(
       routes,
       withInMemoryScrolling({

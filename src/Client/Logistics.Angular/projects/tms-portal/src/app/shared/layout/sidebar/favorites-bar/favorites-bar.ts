@@ -1,6 +1,7 @@
 import { Component, computed, inject, input, output } from "@angular/core";
 import { Router } from "@angular/router";
-import { LucideDynamicIcon } from "@lucide/angular";
+import { resolveNgIcon } from "@logistics/shared/ui";
+import { NgIcon } from "@ng-icons/core";
 import { PopoverModule } from "primeng/popover";
 import { TooltipModule } from "primeng/tooltip";
 import { SidebarFavoritesService } from "@/core/services";
@@ -9,11 +10,14 @@ import type { NavItem, NavSection } from "../../nav-menu";
 @Component({
   selector: "app-favorites-bar",
   templateUrl: "./favorites-bar.html",
-  imports: [TooltipModule, PopoverModule, LucideDynamicIcon],
+  imports: [TooltipModule, PopoverModule, NgIcon],
 })
 export class FavoritesBar {
   private readonly router = inject(Router);
   private readonly favoritesService = inject(SidebarFavoritesService);
+
+  /** Maps a nav item's icon name to its registered `@ng-icons/lucide` name. */
+  protected readonly ngIcon = resolveNgIcon;
 
   public readonly sections = input.required<NavSection[]>();
   public readonly collapsed = input(false);

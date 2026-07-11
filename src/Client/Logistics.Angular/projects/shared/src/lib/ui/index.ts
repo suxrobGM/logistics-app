@@ -12,3 +12,8 @@ export * from "./layout";
 export * from "./content";
 export * from "./feedback";
 export * from "./icons";
+
+// The one primitive-layer export consumers need: the app-bootstrap provider that configures
+// CDK overlays for the spartan/brain components (select, date-picker, …). The Helm primitives
+// themselves stay private behind the `ui-*` components above.
+export { provideSpartanHlm } from "./primitives/utils";

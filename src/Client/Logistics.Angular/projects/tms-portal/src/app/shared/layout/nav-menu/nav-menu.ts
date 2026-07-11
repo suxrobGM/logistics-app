@@ -1,6 +1,7 @@
 import { Component, computed, effect, inject, input, output, signal } from "@angular/core";
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
-import { LucideDynamicIcon } from "@lucide/angular";
+import { resolveNgIcon } from "@logistics/shared/ui";
+import { NgIcon } from "@ng-icons/core";
 import { BadgeModule } from "primeng/badge";
 import { TooltipModule } from "primeng/tooltip";
 import type { NavItem, NavSection } from "./nav-menu.types";
@@ -9,11 +10,14 @@ import type { NavItem, NavSection } from "./nav-menu.types";
   selector: "app-nav-menu",
   templateUrl: "./nav-menu.html",
   styleUrl: "./nav-menu.css",
-  imports: [RouterLink, RouterLinkActive, BadgeModule, TooltipModule, LucideDynamicIcon],
+  imports: [RouterLink, RouterLinkActive, BadgeModule, TooltipModule, NgIcon],
   host: { class: "flex flex-col flex-1 min-h-0" },
 })
 export class NavMenu {
   private readonly router = inject(Router);
+
+  /** Maps a nav item's icon name to its registered `@ng-icons/lucide` name. */
+  protected readonly ngIcon = resolveNgIcon;
 
   public readonly sections = input.required<NavSection[]>();
   public readonly collapsed = input(false);

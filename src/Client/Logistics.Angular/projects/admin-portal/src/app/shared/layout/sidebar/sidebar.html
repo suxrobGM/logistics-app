@@ -19,7 +19,7 @@
           [routerLinkActiveOptions]="{ exact: true }"
           class="text-foreground hover:bg-surface-100 mb-0.5 flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors"
         >
-          <svg [lucideIcon]="item.icon" class="size-4 shrink-0"></svg>
+          <ng-icon [name]="ngIcon(item.icon)" size="1rem" class="shrink-0" />
           <span>{{ item.label }}</span>
         </a>
       }
@@ -46,7 +46,7 @@
       (onClick)="logout()"
     >
       <ng-template pTemplate="icon">
-        <svg lucideIcon="log-out" class="size-4"></svg>
+        <ng-icon name="lucideLogOut" size="1rem" />
       </ng-template>
     </p-button>
   </div>

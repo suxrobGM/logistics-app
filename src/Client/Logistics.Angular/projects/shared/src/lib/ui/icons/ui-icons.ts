@@ -1,11 +1,13 @@
 /**
  * Maps the legacy PrimeIcons-style names `ui-icon` receives (`pi-` prefix stripped) onto
- * lucide icon names (kebab-case, as `@lucide/angular`'s dynamic loader expects). Lets the
- * 80+ existing `<ui-icon name="...">` call sites keep their names while rendering lucide
- * SVGs. Phase 6 can migrate call sites to lucide names directly.
+ * lucide icon names (kebab-case). Lets the 80+ existing `<ui-icon name="...">` call sites keep
+ * their names while rendering lucide SVGs. Names not in the map are assumed to already be lucide
+ * kebab names and pass through unchanged (that is how the nav's dynamic icons resolve). Phase 6
+ * can migrate call sites to lucide names directly.
  *
- * `@lucide/angular` is the single lucide runtime (it also backs the nav's dynamic icons);
- * its `LucideDynamicIcon` loads any icon by name, so nothing here needs registering.
+ * Icons render through `@ng-icons/lucide`, whose exports are named `lucide` + PascalCase of the
+ * kebab name (e.g. `chevron-down` → `lucideChevronDown`). {@link toNgIconName} applies that
+ * transform; the resolved icon must be registered via `provideIcons(...)` in each portal.
  */
 export const PI_TO_LUCIDE: Record<string, string> = {
   "check-circle": "circle-check",
@@ -42,6 +44,7 @@ export const PI_TO_LUCIDE: Record<string, string> = {
   "external-link": "external-link",
   "credit-card": "credit-card",
   car: "car",
+  cog: "settings",
   minus: "minus",
   "minus-circle": "circle-minus",
   lock: "lock",
@@ -83,5 +86,28 @@ export const PI_TO_LUCIDE: Record<string, string> = {
   "eye-slash": "eye-off",
 };
 
-/** Fallback rendered when a name is not mapped. */
+/** Fallback rendered when a name is empty or unresolved. */
 export const UI_ICON_FALLBACK = "circle";
+
+/**
+ * Converts a lucide kebab-case name to its `@ng-icons/lucide` export name.
+ * `chevron-down` → `lucideChevronDown`, `map-pin` → `lucideMapPin`, `building-2` → `lucideBuilding2`.
+ */
+export function toNgIconName(kebab: string): string {
+  const pascal = kebab
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join("");
+  return `lucide${pascal}`;
+}
+
+/**
+ * Resolves a raw icon name (legacy PrimeIcons-style or lucide kebab) to its registered
+ * `@ng-icons/lucide` export name. The single mapping site shared by `ui-icon` and the nav's
+ * dynamic-icon renderers.
+ */
+export function resolveNgIcon(name: string): string {
+  const trimmed = name.replace(/^pi-?/, "");
+  const kebab = (PI_TO_LUCIDE[trimmed] ?? trimmed) || UI_ICON_FALLBACK;
+  return toNgIconName(kebab);
+}

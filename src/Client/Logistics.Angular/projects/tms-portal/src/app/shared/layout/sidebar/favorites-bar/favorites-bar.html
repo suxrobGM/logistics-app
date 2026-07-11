@@ -18,7 +18,7 @@
             tooltipPosition="top"
             type="button"
           >
-            <svg lucideIcon="plus" class="size-2.5"></svg>
+            <ng-icon name="lucidePlus" size="0.625rem" />
           </button>
         }
       </div>
@@ -32,7 +32,7 @@
             type="button"
           >
             @if (item.icon) {
-              <svg [lucideIcon]="item.icon" class="text-primary size-3"></svg>
+              <ng-icon [name]="ngIcon(item.icon)" size="0.75rem" class="text-primary" />
             }
             <span class="max-w-24 truncate">{{ item.label }}</span>
             <button
@@ -41,7 +41,7 @@
               type="button"
               aria-label="Remove from favorites"
             >
-              <svg lucideIcon="x" class="size-2.5"></svg>
+              <ng-icon name="lucideX" size="0.625rem" />
             </button>
           </button>
         }
@@ -57,7 +57,7 @@
             tooltipPosition="right"
             type="button"
           >
-            <svg [lucideIcon]="item.icon ?? 'star'" class="size-4"></svg>
+            <ng-icon [name]="ngIcon(item.icon ?? 'star')" size="1rem" />
           </button>
         }
       </div>
@@ -81,7 +81,7 @@
           type="button"
         >
           @if (item.icon) {
-            <svg [lucideIcon]="item.icon" class="text-muted-foreground size-4 shrink-0"></svg>
+            <ng-icon [name]="ngIcon(item.icon)" size="1rem" class="text-muted-foreground shrink-0" />
           }
           <span>{{ item.label }}</span>
         </button>

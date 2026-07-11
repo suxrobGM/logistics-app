@@ -8,9 +8,10 @@ import {
 import { BrowserModule } from "@angular/platform-browser";
 import { provideRouter, withComponentInputBinding, withRouterConfig } from "@angular/router";
 import {
-  BASE_LUCIDE_ICONS,
+  BASE_NG_ICONS,
   getAccessToken,
   PERMISSION_CHECKER,
+  provideSpartanHlm,
   UPGRADE_HANDLER,
 } from "@logistics/shared";
 import { provideApi } from "@logistics/shared/api";
@@ -19,7 +20,7 @@ import {
   I18nService,
   TENANT_SETTINGS_PROVIDER,
 } from "@logistics/shared/services";
-import { provideLucideIcons } from "@lucide/angular";
+import { provideIcons } from "@ng-icons/core";
 import { provideTranslateService } from "@ngx-translate/core";
 import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
 import { provideAuth } from "angular-auth-oidc-client";
@@ -33,12 +34,13 @@ import { TmsTenantSettingsProvider } from "@/core/services/tenant-settings.provi
 import { UpgradePromptService } from "@/core/services/upgrade-prompt.service";
 import { TmsPreset, TmsThemeOptions } from "@/core/theme/primeng-preset";
 import { environment } from "@/env";
-import { TMS_LUCIDE_ICONS } from "@/shared/icons/lucide-icons";
+import { TMS_NG_ICONS } from "@/shared/icons/lucide-icons";
 import { appRoutes } from "./app.routes";
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
+    provideSpartanHlm(),
     provideAuth({ config: authConfig }),
     provideRouter(
       appRoutes,
@@ -60,7 +62,7 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     provideMapboxGL({ accessToken: environment.mapboxToken }),
-    provideLucideIcons(...BASE_LUCIDE_ICONS, ...TMS_LUCIDE_ICONS),
+    provideIcons({ ...BASE_NG_ICONS, ...TMS_NG_ICONS }),
     provideTranslateService({ fallbackLang: "en", lang: "en" }),
     provideTranslateHttpLoader({ prefix: "/assets/i18n/", suffix: ".json" }),
     provideAppInitializer(() => {
