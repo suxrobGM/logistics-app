@@ -438,6 +438,20 @@ four default-drift bugs.
 >
 > Spec pattern for every swap: the per-wrapper `*.spec.ts` proves the `FormValueControl` contract under Reactive Forms,
 > Signal Forms, and inside `ui-form-field`; wrappers that render `ui-icon` register `BASE_LUCIDE_ICONS` in their TestBed.
+>
+> **`select` spike (2026-07-11) — findings, reverted to keep the tree green.** Built `ui-select-field` on the CLI-generated
+> Helm select (`BrnSelect` + `BrnPopover`), driven by `[value]`/`(valueChange)` (no CVA). What worked: trigger renders +
+> shows the selected label, options render with the check on the active item, and a pick updates the value + display
+> (verified in-browser + a rewritten contract spec). **What did NOT work: the panel never closes** — on select, Escape,
+> or outside click. The content renders _inline_ (`.cdk-overlay-container` is empty), so `BrnPopover`/`BrnSelectContent`
+> isn't portaling to a CDK overlay; toggling `provideSpartanHlm()` (usePopover false↔true) made no difference. So the
+> open/close needs a proper overlay wiring fix — likely a missing brain overlay/popover provider or the content must sit
+> in a portal/template brain renders, not as a direct child. Resolve THIS before wiring the wrapper into the app.
+> Other friction to expect each generation: (1) the generator re-adds `@ng-icons` to package.json and imports it in the
+> icon-bearing Helm files (trigger/item/scroll-up/scroll-down) — replace with `@lucide/angular`'s `LucideDynamicIcon`
+> (`<svg lucideIcon="chevron-down">`, `check`, `chevron-up`); (2) Helm uses a `src/`-nested layout while our vendored
+> `utils` is flat — relativize `@logistics/shared/ui/primitives/utils` → `../../../utils`; (3) `verbatimModuleSyntax`
+> needs `import type { BooleanInput }`; (4) the brain select adds ~67 kB → tms `initial` budget (4 MB) needs a bump.
 
 **Step 1 is DONE.** Deps installed into the Angular workspace package (`bun add --cwd src/Client/Logistics.Angular`):
 `@spartan-ng/brain@1.1.0` (MIT), `clsx`, `tw-animate-css`, `tailwind-merge`. `build:all` green, 98 tests green.
