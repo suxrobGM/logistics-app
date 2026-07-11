@@ -1,6 +1,5 @@
 import { CommonModule } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Router, RouterModule } from "@angular/router";
 import { downloadBlobFile } from "@logistics/shared";
 import {
@@ -49,7 +48,6 @@ import { PayrollInvoicesListStore } from "../../store/invoices-list.store";
     CurrencyFormatPipe,
     DataContainer,
     DateRangePicker,
-    FormsModule,
     Grid,
     InvoiceStatusTag,
     PageHeader,

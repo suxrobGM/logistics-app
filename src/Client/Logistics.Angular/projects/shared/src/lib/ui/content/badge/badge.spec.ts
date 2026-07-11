@@ -104,13 +104,13 @@ describe("ui-badge", () => {
   });
 
   // 2. The default that four previous bugs were made of.
-  it('defaults `severity` to "info" — NOT "primary" (a bare <p-tag> is primary; ui-badge is not)', () => {
+  it('defaults `severity` to "info" — NOT "primary" (a bare PrimeNG p-tag was primary; ui-badge is not)', () => {
     fixture.detectChanges();
     expect(el().className).toContain("--ui-badge-info-bg");
     expect(el().className).not.toContain("--ui-badge-primary-bg");
   });
 
-  it('paints "primary" when asked — the one severity-less <p-tag> in the repo needs it', () => {
+  it('paints "primary" when asked — the one severity-less p-tag in the repo needed it', () => {
     host.severity.set("primary");
     fixture.detectChanges();
     expect(el().className).toContain("--ui-badge-primary-bg");
@@ -135,7 +135,7 @@ describe("ui-badge", () => {
     expect(el().textContent?.trim()).toBe("Delivered");
   });
 
-  it("falls back to projected content when `value` is null — 4 <p-tag>…</p-tag> sites rely on it", () => {
+  it("falls back to projected content when `value` is null — 4 content-projecting p-tag sites relied on it", () => {
     host.value.set(null);
     host.projected.set("Cancels at period end");
     fixture.detectChanges();

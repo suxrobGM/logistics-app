@@ -4,9 +4,8 @@
  *
  * `UiDateField` implements ONLY `FormValueControl<Date | null>`. It must therefore work:
  *   1. under Signal Forms `[formField]`,
- *   2. under legacy Reactive Forms `formControlName` (Angular 22's automatic bridge),
- *   3. inside `<ui-form-field>`, whose `contentChild(NgControl)` must still resolve and
- *      render validation errors — under BOTH form systems.
+ *   2. inside `<ui-form-field>`, whose `contentChild(NgControl)` must still resolve and
+ *      render validation errors.
  *
  * The inner spartan `hlm-date-picker` (brain calendar + `BrnPopover`) is driven with plain `[date]`
  * / `(dateChange)`; `uiDetachedControl` severs the ambient `NgControl`. Its calendar portals to a
@@ -15,33 +14,13 @@
  */
 import { Component, provideZonelessChangeDetection, signal, viewChild } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { form, FormField, required } from "@angular/forms/signals";
+import { disabled, form, FormField, required } from "@angular/forms/signals";
 import { By } from "@angular/platform-browser";
 import { HlmDatePicker } from "../../primitives/date-picker";
 import { UiFormField } from "../form-field/form-field";
 import { UiDateField } from "./date-field";
 
 const INITIAL = new Date(2024, 0, 15); // Jan 15 2024
-
-/** Reactive Forms host: wrapper bound with formControlName, wrapped in ui-form-field chrome. */
-@Component({
-  selector: "ui-host-reactive-date",
-  imports: [UiDateField, UiFormField, ReactiveFormsModule],
-  template: `
-    <form [formGroup]="fg">
-      <ui-form-field label="Ship date" for="shipDate" [required]="true">
-        <ui-date-field id="shipDate" formControlName="shipDate" />
-      </ui-form-field>
-    </form>
-  `,
-})
-class HostReactiveDate {
-  readonly fg = new FormGroup({
-    shipDate: new FormControl<Date | null>(INITIAL, { validators: [Validators.required] }),
-  });
-  readonly field = viewChild.required(UiDateField);
-}
 
 /** Signal Forms host: the SAME wrapper bound with [formField]. */
 @Component({
@@ -54,9 +33,14 @@ class HostReactiveDate {
   `,
 })
 class HostSignalDate {
+  /** Flips the schema's disabled rule — proves the wrapper REACTS, not just reads once. */
+  readonly lock = signal(false);
   readonly model = signal<{ shipDate: Date | null }>({ shipDate: INITIAL });
   readonly f = form(this.model, (p) => {
     required(p.shipDate);
+    // Reactive disabled rule — the shape every real form uses:
+    //   disabled(p.truckId, { when: () => this.mode() === "edit" })
+    disabled(p.shipDate, { when: () => this.lock() });
   });
   readonly field = viewChild.required(UiDateField);
 }
@@ -73,54 +57,22 @@ function picker(fixture: ComponentFixture<unknown>): HlmDatePicker<Date> {
     .componentInstance as HlmDatePicker<Date>;
 }
 
+/** The native <input> the date field renders — what a user actually cannot focus when disabled. */
+function nativeInput(fixture: ComponentFixture<unknown>): HTMLInputElement {
+  return fixture.nativeElement.querySelector("input") as HTMLInputElement;
+}
+
 describe("UiDateField — a FormValueControl-only wrapper", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({ providers: [provideZonelessChangeDetection()] });
   });
 
   it("renders the date field and reflects the initial value", async () => {
-    const fixture = TestBed.createComponent(HostReactiveDate);
+    const fixture = TestBed.createComponent(HostSignalDate);
     await settle(fixture);
     expect(fixture.nativeElement.querySelector("input")).toBeTruthy();
     expect(fixture.componentInstance.field().value()?.getTime()).toBe(INITIAL.getTime());
   });
-
-  describe("under legacy Reactive Forms (formControlName)", () => {
-    it("syncs control -> view", async () => {
-      const fixture = TestBed.createComponent(HostReactiveDate);
-      await settle(fixture);
-
-      const next = new Date(2024, 5, 20); // Jun 20 2024
-      fixture.componentInstance.fg.controls.shipDate.setValue(next);
-      await settle(fixture);
-
-      expect(fixture.componentInstance.field().value()?.getTime()).toBe(next.getTime());
-    });
-
-    it("syncs view -> control (calendar pick via the picker seam)", async () => {
-      const fixture = TestBed.createComponent(HostReactiveDate);
-      await settle(fixture);
-
-      const picked = new Date(2024, 2, 10); // Mar 10 2024
-      picker(fixture).updateDate(picked);
-      await settle(fixture);
-
-      expect(fixture.componentInstance.fg.controls.shipDate.value?.getTime()).toBe(
-        picked.getTime(),
-      );
-    });
-
-    it("propagates disabled state from the control", async () => {
-      const fixture = TestBed.createComponent(HostReactiveDate);
-      await settle(fixture);
-
-      fixture.componentInstance.fg.controls.shipDate.disable();
-      await settle(fixture);
-
-      expect(fixture.componentInstance.field().disabled()).toBe(true);
-    });
-  });
-
   describe("under Signal Forms ([formField])", () => {
     it("syncs field -> view", async () => {
       const fixture = TestBed.createComponent(HostSignalDate);
@@ -158,6 +110,30 @@ describe("UiDateField — a FormValueControl-only wrapper", () => {
 
       expect(fixture.componentInstance.f.shipDate().invalid()).toBe(true);
       expect(fixture.nativeElement.textContent).toContain("This field is required.");
+    });
+    /**
+     * REGRESSION GUARD. `disabled` is a first-class part of the FormValueControl contract and is
+     * load-bearing in production (`disabled(p.salary, { when: ... })` in employee-edit,
+     * `disabled(p.truckId, ...)` in the expense forms, tax-rates, timesheets, ...).
+     *
+     * It used to be covered ONLY by the legacy Reactive-Forms host ("propagates disabled state from
+     * the control"). That host was deleted with PrimeNG, and the assertion went with it — leaving the
+     * whole `disabled` dimension of all 10 wrappers untested. This is its Signal Forms twin.
+     */
+    it("propagates the schema's disabled rule to the control — and reacts when it flips", async () => {
+      const fixture = TestBed.createComponent(HostSignalDate);
+      await settle(fixture);
+
+      expect(fixture.componentInstance.f.shipDate().disabled()).toBe(false);
+      expect(fixture.componentInstance.field().disabled()).toBe(false);
+      expect(nativeInput(fixture).disabled).toBe(false);
+
+      fixture.componentInstance.lock.set(true);
+      await settle(fixture);
+
+      expect(fixture.componentInstance.f.shipDate().disabled()).toBe(true);
+      expect(fixture.componentInstance.field().disabled()).toBe(true);
+      expect(nativeInput(fixture).disabled).toBe(true);
     });
   });
 });

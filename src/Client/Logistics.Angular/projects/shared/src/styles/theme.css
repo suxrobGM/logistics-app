@@ -88,6 +88,24 @@
  * ------------------------------------------------------------------------------------------- */
 
 :root {
+  /* The ONE thing PrimeNG's injected theme still actually painted (S13).
+   *
+   * Everything else in its stylesheet was either scoped to a `.p-*` class (and no element carries
+   * one any more) or a duplicate of Tailwind preflight's `box-sizing: border-box`. But
+   * `providePrimeNG` also emitted, unscoped:
+   *
+   *     :root, :host { color-scheme: light }        .dark-theme { color-scheme: dark }
+   *
+   * and it was the ONLY source of the `color-scheme` property in the whole document. `color-scheme`
+   * is what tells the UA to render the *native* widgets dark: scrollbars (the dashboard panels on
+   * /home are full of them), form controls, the canvas behind the page, and `accent-color`
+   * defaults. Deleting PrimeNG without porting this drops color-scheme to `normal`, and dark mode
+   * silently grows light-grey scrollbars.
+   *
+   * `.dark-theme` is set on <html> by ThemeService, so :root and .dark-theme are the same element;
+   * the override below wins on source order, exactly as PrimeNG's did. */
+  color-scheme: light;
+
   /* semantic */
   --success: #16a34a;
   --warning: #d97706;
@@ -261,6 +279,9 @@
 }
 
 .dark-theme {
+  /* Ported from PrimeNG's `darkModeSelector: ".dark-theme"` output — see the note on :root. */
+  color-scheme: dark;
+
   /* semantic (brighter for dark bg) */
   --success: #22c55e;
   --warning: #f59e0b;
@@ -373,7 +394,9 @@
   --color-cancelled: var(--status-cancelled);
   --color-completed: var(--status-completed);
 
-  /* static slate ramp — replaces the tailwindcss-primeui `surface-*` utilities.
+  /* Static slate ramp. This is now the ONLY definition of the `surface-*` utilities — the plugin
+     that used to supply them is long gone, and these keys are what keeps the ~200 existing
+     `bg-surface-*` / `border-surface-*` call sites painting.
      Usages pick light/dark shades explicitly (e.g. `bg-surface-300 dark:bg-surface-600`). */
   --color-surface-0: #ffffff;
   --color-surface-50: #f8fafc;

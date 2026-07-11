@@ -165,10 +165,34 @@ export class ToastService {
       rejectIcon: options.rejectIcon ? ICONS[options.rejectIcon] : undefined,
       acceptIntent: ACCEPT_INTENT[options.severity ?? "default"],
       rejectIntent: REJECT_INTENT[options.rejectSeverity ?? "default"],
-      // Both default to FALSE, preserving today's behaviour exactly: `confirm()` used to forward
-      // `undefined` for these, which the rendering layer coerced to false. So a dialog that has not
-      // opted in is NOT escapable and NOT mask-dismissable — the only ways out are Yes and No.
-      closeOnEscape: options.closeOnEscape ?? false,
+      // THESE TWO DEFAULTS ARE NOT THE SAME, and the earlier "both default to FALSE, preserving
+      // today's behaviour exactly" was half wrong. Read from primeng-confirmdialog.mjs (21.1.6):
+      //
+      //   closeOnEscape = true;                          <- line 176: an own class field, default TRUE
+      //   dismissableMask;                               <- line 181: declared, never assigned -> undefined
+      //
+      //   [closeOnEscape]="option('closeOnEscape')"      <- line 529
+      //   [dismissableMask]="dismissableMask"            <- line 534, bound DIRECTLY
+      //
+      //   option(name) { const source = this; ... }      <- line 399-406
+      //
+      // `option()` resolves against the COMPONENT (`const source = this`) — never against the
+      // `confirmation` object a `ConfirmationService.confirm({...})` call site passes. So a call site
+      // could not influence `closeOnEscape` at all, and every confirm dialog in the app resolved it to
+      // the class default: TRUE. Escape cancelled a delete confirmation, everywhere, for free.
+      //
+      // `?? false` therefore did not preserve behaviour — it silently removed Escape from all 72
+      // `confirm()` / `confirmDelete()` call sites. This is the migration's own hard-won lesson:
+      // read the library's COMPILED DEFAULTS, not just its template — and never forward a `false`
+      // for an input whose real default is `true`. `ui-dialog` got this right (see dialog.ts:258,
+      // which records `closeOnEscape` default true); the confirm dialog did not.
+      //
+      // Escape maps to REJECT, never accept (see `UiConfirmDialog.onEscape`), and is guarded by
+      // `isTopmostOverlay`, so a confirm stacked over a half-filled `ui-dialog` form dismisses only
+      // itself. Restoring `true` is both parity-correct and safe.
+      closeOnEscape: options.closeOnEscape ?? true,
+      // `dismissableMask` genuinely WAS undefined -> falsy, and is bound directly rather than through
+      // `option()`. So `?? false` is correct here: the backdrop never dismissed a confirm.
       dismissableMask: options.dismissableMask ?? false,
     };
 

@@ -1,5 +1,5 @@
 @if (session(); as session) {
-  <div class="animate-fadein">
+  <div class="animate-in fade-in">
     <!-- Header -->
     <ui-page-header [title]="'Session #' + session.number" backLink="/ai-dispatch">
       <ui-stack direction="row" align="center" gap="2">
@@ -67,7 +67,7 @@
         variant="elevated"
         [border]="true"
         padding="lg"
-        class="animate-fadein mb-6 transition-all duration-300"
+        class="animate-in fade-in mb-6 transition-all duration-300"
       >
         <ui-stack direction="row" align="center" gap="2" class="mb-3">
           <ui-icon name="sparkles" color="primary" />

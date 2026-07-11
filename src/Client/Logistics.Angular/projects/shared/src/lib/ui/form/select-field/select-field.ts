@@ -28,8 +28,8 @@ export interface UiSelectOptionContext<T = unknown> {
  *
  * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
  * signal-form controls into Reactive and Template-Driven forms automatically, so this one
- * component binds via `[formField]`, `formControlName` and `[(ngModel)]` alike — no
- * `ControlValueAccessor`, no compat shim.
+ * component binds via `[formField]` with no value-accessor glue and no compat
+ * shim.
  *
  * The inner spartan `hlm-select` (brain `BrnSelect` + `BrnPopover`) is driven with plain
  * `[value]` / `(valueChange)` — never `formControlName` / `[formField]` on it. `uiDetachedControl`
@@ -39,7 +39,7 @@ export interface UiSelectOptionContext<T = unknown> {
  *
  * @example
  * <ui-form-field label="Color" for="color" [required]="true">
- *   <ui-select-field id="color" formControlName="color"
+ *   <ui-select-field id="color" [formField]="form.color"
  *     [options]="colors" optionLabel="label" optionValue="value" />
  * </ui-form-field>
  */

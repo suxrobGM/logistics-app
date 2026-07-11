@@ -1,6 +1,5 @@
 import { CommonModule } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import type { InvoiceDto, InvoiceStatus } from "@logistics/shared/api";
 import { invoiceStatusOptions } from "@logistics/shared/api/enums";
@@ -37,7 +36,6 @@ import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
     DataContainer,
     DateFormatPipe,
     DateRangePicker,
-    FormsModule,
     Grid,
     InvoiceStatusTag,
     PageHeader,

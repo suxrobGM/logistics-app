@@ -17,7 +17,7 @@ import { focusFirstControl } from "../focus-control";
  * styled box with a lucide check.
  *
  * Implements Angular's `FormValueControl<boolean>` and nothing else — binds via `[formField]`,
- * `formControlName` and `[(ngModel)]` alike, with no `ControlValueAccessor`. The inner control is
+ * with no value-accessor glue of any kind. The inner control is
  * a real native checkbox driven by plain `[checked]` / `(change)`.
  *
  * @example

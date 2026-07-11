@@ -1,6 +1,5 @@
 import { DatePipe } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import {
   Api,
@@ -41,7 +40,6 @@ import { AccidentQuickInfo } from "../_components";
     Card,
     CurrencyFormatPipe,
     DatePipe,
-    FormsModule,
     Grid,
     Icon,
     PageHeader,

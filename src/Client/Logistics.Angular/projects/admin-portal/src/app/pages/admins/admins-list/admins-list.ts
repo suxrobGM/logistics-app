@@ -1,6 +1,5 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import {
   addAdmin,
   Api,
@@ -37,7 +36,6 @@ import { AdminsListStore } from "../store/admins-list.store";
     Card,
     DataContainer,
     DatePipe,
-    FormsModule,
     PageHeader,
     SearchField,
     UiButton,

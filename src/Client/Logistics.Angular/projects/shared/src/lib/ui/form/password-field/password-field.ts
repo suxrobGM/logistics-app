@@ -18,7 +18,7 @@ import { focusFirstControl } from "../focus-control";
  * Masked password input with a reveal toggle, built on the native `<input>` + `hlmInput`.
  *
  * Implements Angular's `FormValueControl` and nothing else — it binds via `[formField]`,
- * `formControlName` and `[(ngModel)]` alike, with no `ControlValueAccessor`. The inner
+ * with no value-accessor glue of any kind. The inner
  * control is a native element driven by plain value/event bindings, so nothing collides
  * with the `pattern` state input Signal Forms binds onto `[formField]`.
  *

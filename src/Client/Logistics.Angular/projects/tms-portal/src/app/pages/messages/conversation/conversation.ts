@@ -9,7 +9,6 @@ import {
   type OnDestroy,
   type OnInit,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
 import type { ConversationDto, EmployeeDto, MessageDto } from "@logistics/shared/api";
 import { EmptyState, Skeleton, Stack, UiButton, UiTextField } from "@logistics/shared/ui";
@@ -31,7 +30,6 @@ import { MessagesStore } from "../store/messages.store";
     ConversationDetails,
     ConversationHeader,
     EmptyState,
-    FormsModule,
     MessageBubble,
     RecipientSelector,
     Skeleton,

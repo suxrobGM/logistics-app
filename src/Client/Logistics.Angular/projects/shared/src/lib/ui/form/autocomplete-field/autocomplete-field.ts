@@ -36,8 +36,8 @@ export interface UiAutocompleteOptionContext<T = unknown> {
  *
  * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
  * signal-form controls into Reactive and Template-Driven forms automatically, so this one
- * component binds via `[formField]`, `formControlName` and `[(ngModel)]` alike — no
- * `ControlValueAccessor`, no compat shim.
+ * component binds via `[formField]` with no value-accessor glue and no compat
+ * shim.
  *
  * The inner spartan `hlm-autocomplete` (brain `BrnAutocomplete` + `BrnPopover`) is driven with plain
  * `[value]` / `(valueChange)` and its search via `(searchChange)`. `uiDetachedControl` severs the
@@ -49,7 +49,7 @@ export interface UiAutocompleteOptionContext<T = unknown> {
  *
  * @example
  * <ui-form-field label="Driver" for="driver" [required]="true">
- *   <ui-autocomplete-field id="driver" formControlName="driver"
+ *   <ui-autocomplete-field id="driver" [formField]="form.driver"
  *     [suggestions]="suggestedDrivers()" optionLabel="fullName" [minQueryLength]="2"
  *     (completeMethod)="searchDriver($event)" />
  * </ui-form-field>

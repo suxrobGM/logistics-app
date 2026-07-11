@@ -4,9 +4,8 @@
  *
  * `UiCheckboxField` implements ONLY `FormValueControl<boolean>`. It must therefore work:
  *   1. under Signal Forms `[formField]`,
- *   2. under legacy Reactive Forms `formControlName` (Angular 22's automatic bridge),
- *   3. inside `<ui-form-field>`, whose `contentChild(NgControl)` must still resolve and
- *      render validation errors — under BOTH form systems.
+ *   2. inside `<ui-form-field>`, whose `contentChild(NgControl)` must still resolve and
+ *      render validation errors.
  *
  * Required-error note: a boolean field needs a "must be true" validator to be invalid while
  * `false`. Reactive Forms has a built-in one (`Validators.requiredTrue`). For Signal Forms,
@@ -17,31 +16,11 @@
  */
 import { Component, provideZonelessChangeDetection, signal, viewChild } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { form, FormField, required } from "@angular/forms/signals";
+import { disabled, form, FormField, required } from "@angular/forms/signals";
 import { provideIcons } from "@ng-icons/core";
 import { BASE_NG_ICONS } from "../../icons/icon-registry.generated";
 import { UiFormField } from "../form-field/form-field";
 import { UiCheckboxField } from "./checkbox-field";
-
-/** Reactive Forms host: wrapper bound with formControlName, wrapped in ui-form-field chrome. */
-@Component({
-  selector: "ui-host-reactive-checkbox",
-  imports: [UiCheckboxField, UiFormField, ReactiveFormsModule],
-  template: `
-    <form [formGroup]="fg">
-      <ui-form-field label="Terms" for="terms" [required]="true">
-        <ui-checkbox-field inputId="terms" label="I agree" formControlName="terms" />
-      </ui-form-field>
-    </form>
-  `,
-})
-class HostReactiveCheckbox {
-  readonly fg = new FormGroup({
-    terms: new FormControl(false, { nonNullable: true, validators: [Validators.requiredTrue] }),
-  });
-  readonly field = viewChild.required(UiCheckboxField);
-}
 
 /** Signal Forms host: the SAME wrapper bound with [formField]. */
 @Component({
@@ -54,10 +33,15 @@ class HostReactiveCheckbox {
   `,
 })
 class HostSignalCheckbox {
+  /** Flips the schema's disabled rule — proves the wrapper REACTS, not just reads once. */
+  readonly lock = signal(false);
   readonly model = signal({ terms: false });
   readonly f = form(this.model, (p) => {
     // `required()` treats `false` as empty, so this makes an unchecked box invalid.
     required(p.terms);
+    // Reactive disabled rule — the shape every real form uses:
+    //   disabled(p.truckId, { when: () => this.mode() === "edit" })
+    disabled(p.terms, { when: () => this.lock() });
   });
   readonly field = viewChild.required(UiCheckboxField);
 }
@@ -84,47 +68,14 @@ describe("UiCheckboxField — a FormValueControl<boolean>-only wrapper", () => {
     });
   });
 
-  it("renders the PrimeNG checkbox and reflects the initial value", async () => {
-    const fixture = TestBed.createComponent(HostReactiveCheckbox);
+  it("renders the checkbox and reflects the initial value", async () => {
+    const fixture = TestBed.createComponent(HostSignalCheckbox);
     await settle(fixture);
     expect(checkbox(fixture).checked).toBe(false);
 
-    fixture.componentInstance.fg.controls.terms.setValue(true);
+    fixture.componentInstance.f.terms().value.set(true);
     await settle(fixture);
     expect(checkbox(fixture).checked).toBe(true);
-  });
-
-  describe("under legacy Reactive Forms (formControlName)", () => {
-    it("syncs control -> view", async () => {
-      const fixture = TestBed.createComponent(HostReactiveCheckbox);
-      await settle(fixture);
-
-      fixture.componentInstance.fg.controls.terms.setValue(true);
-      await settle(fixture);
-
-      expect(fixture.componentInstance.field().value()).toBe(true);
-      expect(checkbox(fixture).checked).toBe(true);
-    });
-
-    it("syncs view -> control (clicking)", async () => {
-      const fixture = TestBed.createComponent(HostReactiveCheckbox);
-      await settle(fixture);
-
-      toggle(fixture);
-      await settle(fixture);
-
-      expect(fixture.componentInstance.fg.controls.terms.value).toBe(true);
-    });
-
-    it("propagates disabled state from the control", async () => {
-      const fixture = TestBed.createComponent(HostReactiveCheckbox);
-      await settle(fixture);
-
-      fixture.componentInstance.fg.controls.terms.disable();
-      await settle(fixture);
-
-      expect(checkbox(fixture).disabled).toBe(true);
-    });
   });
 
   describe("under Signal Forms ([formField])", () => {
@@ -159,6 +110,30 @@ describe("UiCheckboxField — a FormValueControl<boolean>-only wrapper", () => {
 
       expect(fixture.componentInstance.f.terms().invalid()).toBe(true);
       expect(fixture.nativeElement.textContent).toContain("This field is required.");
+    });
+    /**
+     * REGRESSION GUARD. `disabled` is a first-class part of the FormValueControl contract and is
+     * load-bearing in production (`disabled(p.salary, { when: ... })` in employee-edit,
+     * `disabled(p.truckId, ...)` in the expense forms, tax-rates, timesheets, ...).
+     *
+     * It used to be covered ONLY by the legacy Reactive-Forms host ("propagates disabled state from
+     * the control"). That host was deleted with PrimeNG, and the assertion went with it — leaving the
+     * whole `disabled` dimension of all 10 wrappers untested. This is its Signal Forms twin.
+     */
+    it("propagates the schema's disabled rule to the control — and reacts when it flips", async () => {
+      const fixture = TestBed.createComponent(HostSignalCheckbox);
+      await settle(fixture);
+
+      expect(fixture.componentInstance.f.terms().disabled()).toBe(false);
+      expect(fixture.componentInstance.field().disabled()).toBe(false);
+      expect(checkbox(fixture).disabled).toBe(false);
+
+      fixture.componentInstance.lock.set(true);
+      await settle(fixture);
+
+      expect(fixture.componentInstance.f.terms().disabled()).toBe(true);
+      expect(fixture.componentInstance.field().disabled()).toBe(true);
+      expect(checkbox(fixture).disabled).toBe(true);
     });
   });
 });

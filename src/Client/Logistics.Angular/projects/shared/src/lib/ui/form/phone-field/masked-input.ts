@@ -16,12 +16,11 @@ import { HlmInputGroupInput } from "../../primitives/input-group";
 const DIGIT = "9";
 
 /**
- * A digit mask over a plain `<input>`. Replaces `<p-inputmask>` — the last PrimeNG form control in
- * `shared`, and the last `[(ngModel)]` in the library.
+ * A digit mask over a plain `<input>`.
  *
  * PRIVATE TO `ui-phone-field`. Not exported from the ui barrel: it implements exactly the slice of
- * `p-inputmask` that the phone field used (`mask`, `slotChar="_"`, `autoClear=false`) and nothing
- * more. A general-purpose mask is a much bigger contract than we need.
+ * masking that the phone field needs (`mask`, `slotChar="_"`, no auto-clear) and nothing more.
+ * A general-purpose mask is a much bigger contract than we need.
  *
  * ------------------------------------------------------------------------------------------------
  * THE MODEL IS THE DIGITS, NOT THE TEXT.

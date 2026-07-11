@@ -80,9 +80,8 @@ function parseAddress(value: Address | null): AddressParts {
 /**
  * Composite address editor.
  *
- * Implements Angular's `FormValueControl<Address | null>` and nothing else — the Angular 22
- * forms bridge wires it into Reactive Forms (`formControlName`), Signal Forms (`[formField]`)
- * and template-driven forms alike, so no `ControlValueAccessor` / compat shim is needed.
+ * Implements Angular's `FormValueControl<Address | null>` and nothing else — Signal Forms binds
+ * straight to it via `[formField]`, so no value accessor and no compat shim are needed.
  *
  * The sub-fields are driven by plain signals rather than an internal `FormGroup`. Each edit
  * recomposes an `Address` and pushes it through `value` — but only once every required part is

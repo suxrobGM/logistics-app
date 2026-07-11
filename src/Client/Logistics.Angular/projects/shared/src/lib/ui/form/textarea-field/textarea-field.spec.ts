@@ -1,39 +1,18 @@
 /**
- * Proves the wrapper contract that the whole PrimeNG -> spartan migration rests on.
+ * Proves the wrapper contract that the whole `ui-*-field` layer rests on.
  *
- * `UiTextareaField` implements ONLY `FormValueControl`. It must therefore work:
+ * `UiTextareaField` implements ONLY `FormValueControl` — no value-accessor glue of any kind. It must work:
  *   1. under Signal Forms `[formField]`,
- *   2. under legacy Reactive Forms `formControlName` (Angular 22's automatic bridge),
- *   3. inside `<ui-form-field>`, whose `contentChild(NgControl)` must still resolve and
- *      render validation errors — under BOTH form systems.
+ *   2. inside `<ui-form-field>`, whose `contentChild(NgControl)` must still resolve and
+ *      render validation errors.
  *
  * If any of these break, every `ui-*-field` wrapper breaks with them.
  */
 import { Component, provideZonelessChangeDetection, signal, viewChild } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { form, FormField, required } from "@angular/forms/signals";
+import { disabled, form, FormField, required } from "@angular/forms/signals";
 import { UiFormField } from "../form-field/form-field";
 import { UiTextareaField } from "./textarea-field";
-
-/** Reactive Forms host: wrapper bound with formControlName, wrapped in ui-form-field chrome. */
-@Component({
-  selector: "ui-host-reactive-textarea",
-  imports: [UiTextareaField, UiFormField, ReactiveFormsModule],
-  template: `
-    <form [formGroup]="fg">
-      <ui-form-field label="Notes" for="notes" [required]="true">
-        <ui-textarea-field id="notes" formControlName="notes" />
-      </ui-form-field>
-    </form>
-  `,
-})
-class HostReactiveTextarea {
-  readonly fg = new FormGroup({
-    notes: new FormControl("initial", { nonNullable: true, validators: [Validators.required] }),
-  });
-  readonly field = viewChild.required(UiTextareaField);
-}
 
 /** Signal Forms host: the SAME wrapper bound with [formField]. */
 @Component({
@@ -46,9 +25,14 @@ class HostReactiveTextarea {
   `,
 })
 class HostSignalTextarea {
+  /** Flips the schema's disabled rule — proves the wrapper REACTS, not just reads once. */
+  readonly lock = signal(false);
   readonly model = signal({ notes: "initial" });
   readonly f = form(this.model, (p) => {
     required(p.notes);
+    // Reactive disabled rule — the shape every real form uses:
+    //   disabled(p.truckId, { when: () => this.mode() === "edit" })
+    disabled(p.notes, { when: () => this.lock() });
   });
   readonly field = viewChild.required(UiTextareaField);
 }
@@ -74,45 +58,11 @@ describe("UiTextareaField — a FormValueControl-only wrapper", () => {
     TestBed.configureTestingModule({ providers: [provideZonelessChangeDetection()] });
   });
 
-  it("renders the PrimeNG textarea and reflects the initial value", async () => {
-    const fixture = TestBed.createComponent(HostReactiveTextarea);
+  it("renders the textarea and reflects the initial value", async () => {
+    const fixture = TestBed.createComponent(HostSignalTextarea);
     await settle(fixture);
     expect(textarea(fixture).value).toBe("initial");
   });
-
-  describe("under legacy Reactive Forms (formControlName)", () => {
-    it("syncs control -> view", async () => {
-      const fixture = TestBed.createComponent(HostReactiveTextarea);
-      await settle(fixture);
-
-      fixture.componentInstance.fg.controls.notes.setValue("from-control");
-      await settle(fixture);
-
-      expect(fixture.componentInstance.field().value()).toBe("from-control");
-      expect(textarea(fixture).value).toBe("from-control");
-    });
-
-    it("syncs view -> control (typing)", async () => {
-      const fixture = TestBed.createComponent(HostReactiveTextarea);
-      await settle(fixture);
-
-      type(fixture, "typed");
-      await settle(fixture);
-
-      expect(fixture.componentInstance.fg.controls.notes.value).toBe("typed");
-    });
-
-    it("propagates disabled state from the control", async () => {
-      const fixture = TestBed.createComponent(HostReactiveTextarea);
-      await settle(fixture);
-
-      fixture.componentInstance.fg.controls.notes.disable();
-      await settle(fixture);
-
-      expect(textarea(fixture).disabled).toBe(true);
-    });
-  });
-
   describe("under Signal Forms ([formField])", () => {
     it("syncs field -> view", async () => {
       const fixture = TestBed.createComponent(HostSignalTextarea);
@@ -146,6 +96,30 @@ describe("UiTextareaField — a FormValueControl-only wrapper", () => {
 
       expect(fixture.componentInstance.f.notes().invalid()).toBe(true);
       expect(fixture.nativeElement.textContent).toContain("This field is required.");
+    });
+    /**
+     * REGRESSION GUARD. `disabled` is a first-class part of the FormValueControl contract and is
+     * load-bearing in production (`disabled(p.salary, { when: ... })` in employee-edit,
+     * `disabled(p.truckId, ...)` in the expense forms, tax-rates, timesheets, ...).
+     *
+     * It used to be covered ONLY by the legacy Reactive-Forms host ("propagates disabled state from
+     * the control"). That host was deleted with PrimeNG, and the assertion went with it — leaving the
+     * whole `disabled` dimension of all 10 wrappers untested. This is its Signal Forms twin.
+     */
+    it("propagates the schema's disabled rule to the control — and reacts when it flips", async () => {
+      const fixture = TestBed.createComponent(HostSignalTextarea);
+      await settle(fixture);
+
+      expect(fixture.componentInstance.f.notes().disabled()).toBe(false);
+      expect(fixture.componentInstance.field().disabled()).toBe(false);
+      expect(textarea(fixture).disabled).toBe(false);
+
+      fixture.componentInstance.lock.set(true);
+      await settle(fixture);
+
+      expect(fixture.componentInstance.f.notes().disabled()).toBe(true);
+      expect(fixture.componentInstance.field().disabled()).toBe(true);
+      expect(textarea(fixture).disabled).toBe(true);
     });
   });
 });

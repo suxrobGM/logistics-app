@@ -25,13 +25,11 @@ import { provideTranslateService } from "@ngx-translate/core";
 import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
 import { provideAuth } from "angular-auth-oidc-client";
 import { provideMapboxGL } from "ngx-mapbox-gl";
-import { providePrimeNG } from "primeng/config";
 import { authConfig, PermissionService } from "@/core/auth";
 import { tenantInterceptor } from "@/core/interceptors";
 import { TmsFeatureProvider } from "@/core/services/feature.provider";
 import { TmsTenantSettingsProvider } from "@/core/services/tenant-settings.provider";
 import { UpgradePromptService } from "@/core/services/upgrade-prompt.service";
-import { TmsPreset, TmsThemeOptions } from "@/core/theme/primeng-preset";
 import { environment } from "@/env";
 import { TMS_NG_ICONS } from "@/shared/icons/lucide-icons";
 import { appRoutes } from "./app.routes";
@@ -53,12 +51,6 @@ export const appConfig: ApplicationConfig = {
       baseUrl: environment.apiUrl,
       interceptors: [tenantInterceptor],
       tokenGetter: () => getAccessToken("tmsportal"),
-    }),
-    providePrimeNG({
-      theme: {
-        preset: TmsPreset,
-        options: TmsThemeOptions,
-      },
     }),
     provideMapboxGL({ accessToken: environment.mapboxToken }),
     provideIcons({ ...BASE_NG_ICONS, ...TMS_NG_ICONS }),

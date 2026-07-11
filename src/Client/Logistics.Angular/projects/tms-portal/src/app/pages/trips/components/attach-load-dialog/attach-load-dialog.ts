@@ -1,5 +1,4 @@
 import { Component, computed, inject, model, output, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Api, getUnassignedLoads, type LoadDto } from "@logistics/shared/api";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
@@ -22,7 +21,6 @@ import { DistanceUnitPipe } from "@/shared/pipes";
     AddressPipe,
     CurrencyFormatPipe,
     DistanceUnitPipe,
-    FormsModule,
     Icon,
     LoadTypeTag,
     SearchField,

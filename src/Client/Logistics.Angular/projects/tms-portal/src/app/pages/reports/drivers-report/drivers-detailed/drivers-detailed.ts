@@ -1,6 +1,5 @@
 import { DecimalPipe } from "@angular/common";
 import { Component, inject, signal, type OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { LocalizationService } from "@logistics/shared";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
@@ -28,7 +27,6 @@ import { DriversDetailedStore } from "./store";
     CurrencyFormatPipe,
     DateRangePicker,
     DecimalPipe,
-    FormsModule,
     Icon,
     PageHeader,
     SearchField,

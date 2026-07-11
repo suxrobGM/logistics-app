@@ -10,7 +10,6 @@ import {
   output,
   signal,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import type { FormValueControl } from "@angular/forms/signals";
 import { focusFirstControl } from "@logistics/shared";
 import type { Address } from "@logistics/shared/api";
@@ -33,7 +32,7 @@ const MAPBOX_MAX_COUNTRY_CODES = 5;
   selector: "app-address-autocomplete",
   templateUrl: "./address-autocomplete.html",
   styleUrl: "./address-autocomplete.css",
-  imports: [FormsModule, UiTextField],
+  imports: [UiTextField],
 })
 export class AddressAutocomplete implements FormValueControl<Address | null> {
   private readonly http = inject(HttpClient);

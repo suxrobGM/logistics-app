@@ -16,12 +16,19 @@ differs substantially — ignore any v21-era blog post, and distrust any answer 
 
 Every claim here is pinned by an executable spec that CI runs:
 
-| Spec                                                                 | Pins                                                                    |
-| -------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `projects/shared/src/lib/ui/form/signal-forms-v22-api-probe.spec.ts` | The Signal Forms API itself (claims F–O), including every example below |
+| Spec                                                                 | Pins                                                                                                                                                                                           |
+| -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `projects/shared/src/lib/ui/form/signal-forms-v22-api-probe.spec.ts` | The Signal Forms API itself (claims F–O), including every example below                                                                                                                        |
+| `projects/shared/src/lib/ui/form/form-value-control.spec.ts`         | The `FormValueControl` contract every `ui-*-field` rests on: two-way sync with `[formField]` and no value-accessor glue; `InteropNgControl.errors` is a **keyed object**; 3 known Angular bugs |
 
-**That spec is the source of truth, not this doc.** If they disagree, the spec wins and this file
-is stale. Run it with `bun run ng test shared --watch=false`.
+**Those specs are the source of truth, not this doc.** If they disagree, the spec wins and this file
+is stale. Run them with `bun run ng test shared --watch=false`.
+
+> `form-value-control.spec.ts` is the surviving half of a former `signal-forms-compat-probe.spec.ts`.
+> The half that pinned PrimeNG↔Signal-Forms interop was deleted with PrimeNG itself; the half that
+> pins **Angular's own** behaviour was kept, because `ui-form-field` renders every inline error in the
+> app by reading `InteropNgControl.errors` as a keyed object. If that shape ever flips to an array,
+> field errors silently stop rendering everywhere.
 
 ## Step-by-step process
 
@@ -239,6 +246,12 @@ implements `ControlValueAccessor`, and two failure modes follow from that:
   inputs onto the bound element, and the names are reserved (see below). A library control that
   declares an input of the same name with a different type fails to compile — e.g. Signal Forms binds
   `pattern` as `readonly RegExp[]`, so any control declaring `pattern: string` collides.
+
+Both were observed for real against PrimeNG before it was removed (a `pTextarea` + `[formField]`
+crashed on the missing `valueChanges`; `BaseInput.pattern: string` hit the TS2322). The repo no
+longer depends on that library, so those specific probes are gone — but the **mechanism is Angular's
+`InteropNgControl`, not PrimeNG's**, and it will bite the next `ControlValueAccessor`-based library
+you reach for in exactly the same way.
 
 **The correct pattern: a wrapper implementing `FormValueControl` only.** Angular 22 bridges custom
 Signal Form controls into legacy Reactive and Template-Driven forms automatically — angular.dev:

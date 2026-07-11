@@ -15,7 +15,7 @@ import { UiNumberField } from "../number-field/number-field";
  * A numeric field with a trailing unit addon (`%`, `mi`, `kg`, …) — a thin `ui-number-field`
  * with a `suffixLabel`.
  *
- * Implements `FormValueControl` ONLY — never `ControlValueAccessor`. `[formField]` binds to this
+ * Implements `FormValueControl` ONLY — never a legacy value accessor. `[formField]` binds to this
  * wrapper; the inner `ui-number-field` is driven by a plain two-way `[(value)]`.
  */
 @Component({

@@ -15,7 +15,7 @@ import { UiNumberField } from "../number-field/number-field";
  * A currency-prefixed number field — a thin `ui-number-field` configured with a currency addon
  * and two fraction digits.
  *
- * Implements `FormValueControl` ONLY — never `ControlValueAccessor`. `[formField]` binds to this
+ * Implements `FormValueControl` ONLY — never a legacy value accessor. `[formField]` binds to this
  * wrapper; the inner `ui-number-field` is driven by a plain two-way `[(value)]`, so there is no
  * dual-binding conflict.
  */

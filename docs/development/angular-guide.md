@@ -330,8 +330,12 @@ bun run gen:api
 ## UI Components
 
 The UI library is **spartan/ui**: Helm components vendored in-repo under
-`projects/shared/src/lib/ui/primitives/` on top of `@spartan-ng/brain`. **PrimeNG is being
-removed — never add a new `p-*` component or a `primeng/*` import.**
+`projects/shared/src/lib/ui/primitives/` on top of `@spartan-ng/brain`.
+
+**PrimeNG is gone** — fully removed (no dependency, no import, no `p-*` markup, no theme preset).
+Never reintroduce a `p-*` component or a `primeng/*` import: `tools/gates/phase7.sh` runs in CI and
+fails the build if any of it comes back. Browse `/ui-lab` (a lazy dev route in tms-portal) to see
+every `ui-*` component rendered in light and dark before hand-rolling anything new.
 
 Feature code does not touch the Helm primitives directly. It uses the shared `ui-*` components from
 `@logistics/shared/ui`, which live in `projects/shared/src/lib/ui/`:

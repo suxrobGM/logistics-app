@@ -1,663 +1,286 @@
-# Angular 22 + Signal Forms + PrimeNG → spartan/ui — Migration Roadmap
+# PrimeNG → spartan/ui — the finished record
 
-> Status: rewritten 2026-07-09 against **Angular 22 stable**. Supersedes the 2026-07-09 draft, which was written
-> against Angular 21's _experimental_ Signal Forms API and cited a compat probe that was never committed.
-> Execute in phase order; each phase is independently shippable.
-
-## Context
-
-PrimeTek archived the PrimeNG repo on 2026-06-29. v22+ is commercial under the PrimeUI umbrella ($599/dev launch,
-$799/dev from 2027, +$399/dev/yr for updates). Community (non-`-lts`) versions ≤21 remain MIT forever but are
-unmaintained. We want off it because it will bit-rot against future Angular majors, and because Signal Forms cannot
-bind `[formField]` to several PrimeNG controls (verified below).
-
-**Target library: spartan/ui** — 1.0 stable (June 2026), MIT, Tailwind-4-native, CDK-based, shadcn-style code-in-repo.
-Runner-up rejected: Taiga UI, ng-zorro, Angular Material. **OpenNG is not a fallback**: real, active org, but its first
-cohort is the ngneat libraries; it has only blogged that it is _"considering"_ a PrimeNG fork. No fork repo, no npm package.
-
-**The headline correction vs. the old draft:** the hard part of this migration is _not_ PrimeNG. Angular 22 changes the
-default change-detection strategy to `OnPush` and silently flips the router's `paramsInheritanceStrategy`. This repo has
-**371 components, none declaring `changeDetection`**. The framework upgrade is its own project and ships alone.
-
-## Governing principle: no shims, no legacy residue
-
-Every transitional artifact is recorded with the phase that **deletes** it (see Cleanup Ledger).
-
-- **No dual-interface components.** `FormValueControl` only — never alongside `ControlValueAccessor`.
-- **No `compatForm`, no `SignalFormControl`, no `@angular/forms/signals/compat`.** Every form converts fully.
-- **No `ControlValueAccessor` survives.** All 9 implementations are converted, not wrapped.
-- **No dual icon system.** `primeicons` and `@lucide/angular` do not coexist in the final state.
-- **No `ChangeDetectionStrategy.Eager` markers.** The app is zoneless; take the new `OnPush` default.
-- **No duplicated infrastructure.** The two identical `base-list.store.ts` copies collapse to one; `BaseTable` is deleted.
-- **No leftover `tailwindcss-primeui` utility classes**, no `primeng-preset.ts`, no peer overrides.
-
-`<ui-data-table>` and the `ui-*-field` components are **not shims** — they are the permanent public API. Only their
-internals change (PrimeNG → spartan), once.
+> **Status: COMPLETE (2026-07-11).** PrimeNG is gone: 0 dependencies, 0 imports, 0 `<p-*>` markup,
+> 0 `.p-*` selectors, no theme preset. `tools/gates/phase7.sh` runs in CI and fails the build if any
+> of it comes back.
+>
+> This file used to be a roadmap. It is now the record. It is written for the person who has to do
+> the next migration of this kind — so it leads with what we got **wrong**, and with the bugs we
+> **found**, not with what we shipped.
 
 ---
 
-## Verified facts (2026-07-09)
+## Outcome
 
-### Angular 22
+|                                  |                                                                                                                 |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| PrimeNG surface (burndown total) | **3,690 → 0**                                                                                                   |
+| Sites touched                    | ~2,300 (498 buttons · 940 icons · 608 cosmetics · 124 tooltips · 46 dialogs · 90 tables · 55 raw form controls) |
+| Forms                            | 52 components → 100% Signal Forms. Zero `ReactiveFormsModule`, zero `ControlValueAccessor`                      |
+| Tests                            | 0 → **244** (26 files). The repo had **no test suite at all** when this started                                 |
+| Commits                          | 60, on `feat/angular-22-upgrade`                                                                                |
+| Bundles                          | every app **below** its pre-migration size (see below)                                                          |
+| Bugs found in existing code      | **9** (see the ledger) — several user-visible and long-lived                                                    |
 
-- Latest `22.0.6` (21.x line: `21.2.18`). Released 2026-06-03.
-- **TypeScript `>=6.0.0 <6.1.0`.** TS 7.0 (the Go rewrite) is released but Angular's compiler does **not** support it;
-  TS 7 can only serve as a side-channel `tsc` checker. Our `typescript: ^6.0.3` allows anything `<7.0.0` and **must be
-  pinned to `~6.0.3`**.
-- Node `^22.22.3 || ^24.15.0 || >=26.0.0`. RxJS `^6.5.3 || ^7.4.0`.
+### Bundles (measured, not estimated)
 
-### Angular 22 breaking changes, scored against this repo
+Measured by building the pre-migration commit in a worktree, because the planning numbers were
+wrong. The website's "0.32 MB" was really **1.18 MB**; had we trusted the plan we would have
+"discovered" a phantom 3× regression and gone hunting for it.
 
-| Change                                                                                                                    | Repo impact                                          | Action                                                                                                                           |
-| ------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| **`OnPush` is the default CD strategy**; the migration stamps `ChangeDetectionStrategy.Eager` on every existing component | **371 components, 0 declare `changeDetection`**      | **Revert the stamping.** Already zoneless: 0 `\| async` pipes; 23 of 28 `.subscribe(` files write to signals. Audit the 7 below. |
-| **Router `paramsInheritanceStrategy` → `'always'`** (was `'emptyOnly'`); **no migration provided**                        | Repo reads `snapshot.paramMap` widely                | Set `'emptyOnly'` explicitly via `withRouterConfig` in all 4 `app.config.ts`                                                     |
-| Template optional chaining returns `undefined`, not `null`                                                                | `strictTemplates: true` → new type errors            | Expect a tail of template fixes                                                                                                  |
-| HttpClient defaults to Fetch                                                                                              | `api.provider.ts:63` already calls `withFetch()`     | No-op; delete the deprecated `withFetch()`                                                                                       |
-| Removed: `ComponentFactoryResolver`, `createNgModuleRef()`, `provideRoutes()`, `checkNoChanges()`                         | zero usages                                          | No-op                                                                                                                            |
-| `provideAnimationsAsync()` deprecated                                                                                     | zero usages                                          | No-op                                                                                                                            |
-| `reportProgress` deprecated                                                                                               | only in generated `api/generated/request-builder.ts` | Regenerated by `gen:api`; ignore                                                                                                 |
-
-**OnPush audit list** (`.subscribe(` + plain-field assignment readable from a template): `customer-edit-dialog.ts`,
-`change-role-dialog.ts`, `employee-edit-dialog.ts`, `employee-add.ts`, `timesheets-list.ts`,
-`maps/address-autocomplete.ts`, `shared/.../form/address-form/address-form.ts`. Convert each to signals.
-(`validated-form.ts`'s plain field is a DOM node, not template-read.)
-
-### Signal Forms (v22, stable)
-
-- Directive is `FormField`, selector `[formField]`.
-- `FormValueControl<T>` requires **only** `value: ModelSignal<T>`. `FormCheckboxControl` requires `checked`.
-  ~17 optional state inputs are auto-bound _only if the component declares them_: `disabled`, `readonly`, `hidden`,
-  `invalid`, `errors`, `required`, `touched`, `dirty`, `pending`, `name`, `min`, `max`, `minLength`, `maxLength`,
-  **`pattern: readonly RegExp[]`**.
-- **The decisive fact.** angular.dev/guide/forms/signals/custom-controls states verbatim:
-
-  > "Custom Signal Form Controls can be used with Signal, Reactive and Template-Driven Forms without any extra compatibility code."
-
-  So a wrapper implementing `FormValueControl` **alone** works under both `formControlName` and `[formField]`. The old
-  draft's dual `FormValueControl` + `ControlValueAccessor` design is unnecessary — it _would be_ the shim we refuse to write.
-
-- v21→v22 changes: `disabled()`/`readonly()`/`hidden()` take `{when: LogicFn}`; `FieldState` optional props became
-  required; `touched` model split into input + `touch()` output; `min`/`max` reject strings.
-- **No `FormArray` class.** Dynamic arrays are plain arrays inside the model signal; `@for` over the iterable `FieldTree`.
-- **No official Reactive→Signal Forms schematic.** Conversion is manual (see `.claude/skills/signal-forms-migration/`).
-
-### `ui-form-field` needs no transitional code
-
-Verified in `node_modules/@angular/forms/fesm2022/signals.mjs`: `[formField]` provides `NgControl` as `InteropNgControl`,
-whose `errors` getter calls `signalErrorsToValidationErrors(field().errors())` — it emits the classic `ValidationErrors`
-shape. Its `invalid`/`touched`/`dirty` getters are signal reads, so the existing `computed()`s track them. The existing
-`contentChild(NgControl)` resolution works unchanged under **both** form systems. Do not add dual-shape error handling.
-
-### PrimeNG ↔ Signal Forms interop — forensically verified against installed `node_modules`
-
-(`@angular/core` 21.2.11, `@angular/forms` 21.2.11, `primeng` 21.1.6)
-
-| Claim                                          | Verdict                                                                                                                                                                                                                                                              |
-| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pTextarea` + `[formField]` crashes at runtime | **VERIFIED.** `primeng-textarea.mjs:137-142` subscribes to `ngControl.valueChanges` in `onInit`. `[formField]` provides `NgControl` as `InteropNgControl` (`signals.mjs:1079`), which exposes no `valueChanges`/`statusChanges` — still true on v22 main.            |
-| `pattern` collision breaks `strictTemplates`   | **VERIFIED.** `BaseInput.pattern: InputSignal<string \| null \| undefined>` vs Signal Forms `pattern?: InputSignal<readonly RegExp[]>`. Angular's compiler has a dedicated `expandBoundAttributesForField` type-check op that synthesizes the binding → hard TS2322. |
-| Blast radius                                   | **6 components, not 4.** Every `BaseInput` subclass: `Select`, `InputNumber`, `DatePicker`, `AutoComplete`, **`InputMask`**, **`Password`**.                                                                                                                         |
-| Safe set                                       | **VERIFIED.** `pInputText`, `p-checkbox`, `p-toggleswitch`, `p-multiselect`, `p-selectbutton` do not extend `BaseInput`. Across **all** of primeng's `fesm2022`, only `primeng-textarea.mjs` references `valueChanges`; nothing references `statusChanges`.          |
-
-These only matter transitionally: **nothing ever binds `[formField]` to a PrimeNG element.** Wrappers drive PrimeNG
-internally via plain value/event bindings, and `ui-textarea-field` uses a native `<textarea>` from day one.
-
-### spartan/ui
-
-| Fact                      | Value                                                                                                      |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `@spartan-ng/brain@1.1.0` | **MIT**; peer `@angular/core >=21.0.0 <23.0.0` → **Angular 22 supported**                                  |
-| Other peers               | `@angular/cdk >=21 <23`, `@angular/forms`, `tailwindcss >=4`, `clsx`, `tw-animate-css`, `luxon` (optional) |
-| `@spartan-ng/helm`        | **Does not exist on npm.** Helm code is generated into the repo via `ng g @spartan-ng/cli:ui`              |
-| `@spartan-ng/cli@1.1.0`   | MIT, devDependency; Angular CLI supported (Nx optional)                                                    |
-| New runtime deps          | `@angular/cdk@22.0.4` (MIT), `clsx`, `tw-animate-css`                                                      |
-
-Fallback if spartan stalls: Angular Material, or build directly on `@angular/cdk` v22 — essentially what spartan is.
-
-### PrimeNG licensing
-
-`primeng@21.1.9`'s npm `license` field is `"SEE LICENSE IN LICENSE.md"`, not `MIT`. That file defines **two** licenses:
-community versions are **MIT**; **`-lts`-suffixed versions are proprietary** (`20.5.1-lts`, `19.2.0-lts` are published).
-**Never install an `-lts` dist-tag.** `primeng@22.0.0-rc.2` also exists.
-
-`primeng@21.1.9` peers `@angular/core: ^21.0.7` **and `@angular/cdk: ^21.0.0`**. Angular 22 needs cdk 22; spartan needs
-cdk `>=21 <23`. **Two peer overrides are required, not one.**
-
-## Current footprint (measured 2026-07-09)
-
-- **311 `.ts` files** import `primeng/*` (tms 229, admin 32, shared 20, website 15, customer 15). **48** distinct modules.
-- Heaviest: button 206 · card 131 · tag 88 · **table 87** · tooltip 86 · progressspinner 74 · inputtext 53 · select 46 ·
-  dialog 42 · textarea 36 · divider 33 · skeleton 32 · api 29 · menu 20 · datepicker 19 · inputnumber 19 · toast 16 ·
-  confirmdialog 13 · checkbox 13 · autocomplete 12 · multiselect 10 · chart 10.
-- **~52 distinct reactive-form components** (tms 40, admin 6, shared 4, website 2, customer 0), ~100 files with templates.
-  _(The old draft's "97 files" was a `.ts`+`.html` touchpoint count, not a form count.)_
-- **1 file already uses Signal Forms**: `admin-portal/.../tenants/tenant-edit/tenant-edit.ts`.
-- **9 `ControlValueAccessor` implementations**: shared `phone-field`, `address-form`; tms `address-autocomplete` + 6 `search-*`.
-- **105 `<p-table>` occurrences across 82 templates** — all raw. `shared/.../display/base-table/base-table.ts` is an
-  _abstract logic class_ (`template: ""`, no `.html`), used by only **2 of 82**. There is no `<ui-base-table>` component.
-- `base-list.store.ts` exists in **both** admin-portal and tms-portal, identical public contract; each only _type_-imports
-  `TableLazyLoadEvent` from `primeng/table`.
-- **`ToastService`** (`shared/src/lib/services/toast.service.ts`) already wraps _both_ `MessageService` and
-  `ConfirmationService`; ~90 confirm sites funnel through it. Direct `primeng/api` imports survive only in the four
-  `app.config.ts` files and `toast.service.ts`. It leaks PrimeNG at exactly three points: the `Confirmation` type,
-  `icon: "pi pi-exclamation-triangle"`, `acceptButtonStyleClass: "p-button-danger"`.
-- **All dialogs are declarative `[(visible)]`.** Zero `DialogService`/`DynamicDialog` usage.
-- **Name collision:** `@logistics/shared`'s `ui-form-field` component class is named `FormField` — so is Angular's Signal
-  Forms directive. ~20 files import the shared one.
-- Wraps we can unwrap: `p-chart` → `chart.js` (already a dep), `p-editor` → `quill` (already a dep).
-
-### Table feature surface (narrower than feared)
-
-`[lazy]` 33 · `paginator` 47 · `[rows]` 50 · `rowsPerPageOptions` 37 · `sortField` 18 · `dataKey` 19 · `scrollable` ~20 ·
-`selectionMode` 6 · templates `#header` 171 / `#body` 99 / `#footer` 34 / `#emptymessage` 27 / `#caption` 9 / `#expandedrow` 1.
-
-**Zero** usages of `p-columnFilter`, `filterDelay`, cell/row editing, frozen / resizable / reorderable columns, virtual
-scroll, row reorder, row grouping.
-
-Buckets: **~55 trivial** client-side `[value]` tables · **~24 identical** server-lazy tables · **~6 hard** —
-`trips-list` (row expansion containing a _nested_ `p-table`), `loads-table` (multi-select + checkboxes),
-`trip-wizard-review`, `attach-load-dialog`, `trip-details` (selection), `trip-wizard-loads` (client global filter).
-
-### The hidden removal tax
-
-- **Icons.** `pi pi-*` appears ~580 times across 209 templates (~90 distinct icons). Lucide is registered but used in
-  only ~8 files, with zero `<lucide-icon>` in templates. Remapping is a first-class workstream that **gates** removal.
-- **`tailwindcss-primeui` utilities.** ~243 template usages. Those with no `@theme` fallback go unstyled the moment the
-  plugin is dropped: `text-muted-color` ×35, `bg-surface-[0-9]` ×28, `border-surface` ×9, `text-surface-*` (TMS); ~29 in admin.
-  `text-primary`/`bg-primary` survive in TMS via the `@theme` mapping but **not** in admin.
-- **CSS coupling is small**: 6 files with `::ng-deep` / `.p-*` selectors.
-- **Visual-break risk**: TMS **high** (real dark mode, hand-authored dark surface ramp) · admin **medium** · customer **low** · website **low**.
-
-### There is no safety net today
-
-**Zero `.spec.ts` files.** Only `website` defines a `test` target (`@angular/build:unit-test`, vitest-backed; vitest +
-jsdom already installed). No Playwright/Cypress/e2e, no visual regression. CI runs `bun install --force` → `gen:api` →
-`ng build` ×5, with **no lint step and no test step**. `bun run lint` is pre-existing red — `bun run build:all` is the
-only real gate. `git config core.autocrlf=true` with **no `.gitattributes`** → bulk `sed -i` sweeps create phantom
-EOL-only diffs.
+| app      | pre-migration (measured) | final       | delta  |
+| -------- | ------------------------ | ----------- | ------ |
+| tms      | 3.99 MB                  | **3.60 MB** | −9.8%  |
+| customer | 1.58 MB                  | **1.02 MB** | −35.4% |
+| admin    | 1.82 MB                  | **1.22 MB** | −33.0% |
+| website  | 1.18 MB (_not_ 0.32)     | **1.01 MB** | −14.4% |
 
 ---
 
-## Phase 0 — Spike: does PrimeNG 21 survive Angular 22 + CDK 22? — ✅ **DONE (2026-07-09). Answer: YES.**
+## The corrected facts
 
-Executed on branch `feat/angular-22-upgrade` (started as `spike/angular-22-primeng-compat`).
+The old plan stated these confidently. A future reader would have believed them. **They were false.**
+This section exists because the single most expensive habit in this migration was trusting the brief
+over the source.
 
-**Result: `bun run build:all` exits 0.** All five projects — `shared` (ng-packagr partial compilation), `tms-portal`
-(229 PrimeNG imports), `admin-portal` (already uses `@angular/forms/signals`), `customer-portal`, and `website`
-(SSR, prerenders 8 routes) — build clean on Angular **22.0.6** + `@angular/cdk` **22.0.4** + `primeng` **21.1.6**.
-`ng serve tms-portal` boots and serves the SPA shell (HTTP 200).
+| The plan claimed                                              | The truth                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| "`git grep NG_VALUE_ACCESSOR` is currently empty by design"   | **It was not empty.** The four vendored Helm form primitives (`hlmInput`, `hlmTextarea`, `hlmCheckbox`, `hlmSelect`) each _provided_ `NG_VALUE_ACCESSOR` and implemented `ControlValueAccessor` — the exact legacy interface the migration existed to delete, re-entering through the new library. `tools/normalize-helm.mjs` now strips CVAs from every vendored primitive on the way in. It is 0 today because a codemod _makes_ it 0, not by design. |
+| "6 raw form controls remain, blocked on a wrapper capability" | **55, across ~30 files** — roughly 10× the estimate — plus `pInputText` / `pTextarea` / `pInputTextarea` (a _third_ spelling nobody had named) in 22 more files. The count came from grepping one spelling of one thing.                                                                                                                                                                                                                                |
+| "`p-card` is 100% content projection, zero templates"         | **83 template slots.** `p-card` accepted `#header` / `#title` / `#subtitle` / `#content` / `#footer` refs, and the repo used them heavily. A content-projection-only `ui-card` would have silently dropped every one.                                                                                                                                                                                                                                   |
+| "All four portals share a PrimeNG theme"                      | **They do not.** tms-portal ran `definePreset(Nora, …)`; admin, customer and website ran **Aura**. The two presets disagree semantically — Aura's `.p-tag-success` is a soft tint (green-100 bg, green-700 ink), Nora's is a **solid fill** (green-600 bg, white ink). "Port the theme" was really "port two themes." The website also had `darkModeSelector: false` — no dark mode at all.                                                             |
+| `[draggable]` / `[resizable]` on dialogs "must be kept"       | **Inverted.** They are the _opt-outs_; `primeng-dialog.mjs` defaults both to false. Keeping them would have made 13 dialogs draggable that never were.                                                                                                                                                                                                                                                                                                  |
+| `p-select` needs one projected slot                           | **Two.** `eld-driver-mappings` projects `#item` _and_ `#selectedItem`. A one-slot wrapper flattens every trigger, silently.                                                                                                                                                                                                                                                                                                                             |
+| "The chart.js saving is ~180 KB"                              | **Off by 13×.** The tree-shaken saving is ~14 KB min.                                                                                                                                                                                                                                                                                                                                                                                                   |
+| "`selectButton` is 2 sites"                                   | 3. (A third spelling. Again.)                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
-What we actually learned, versus what we feared:
-
-| Expectation                          | Reality                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **CDK overlay skew is the top risk** | **Void.** PrimeNG 21 imports `@angular/cdk` in exactly **3** components — `listbox`, `orderlist`, `picklist` — and only `@angular/cdk/drag-drop`. It never uses CDK overlays (PrimeNG ships its own). **This repo imports none of those 3**, and no app code imports `@angular/cdk` at all. CDK 21→22 cannot affect us.                                                                                                                |
-| **Peer overrides are needed**        | **Not needed.** `bun install` resolves cleanly with **no `overrides` block** and no peer errors — bun does not enforce peer ranges (npm would). Nothing was added to the root `package.json`.                                                                                                                                                                                                                                          |
-| Node just works                      | **No.** Angular 22 requires Node `^22.22.3 \|\| ^24.15.0 \|\| >=26.0.0`. The dev machine was on 24.9.0 and the CLI refused to run. **CI has no `setup-node` step** — `.github/workflows/build.yml` uses `setup-bun` only, so this is a latent CI break.                                                                                                                                                                                |
-| TypeScript range is comfortable      | The 6.x line stops at **6.0.3**; `7.0.2` is now npm `latest`. Pinned `~6.0.3`.                                                                                                                                                                                                                                                                                                                                                         |
-| —                                    | **New: diagnostic NG1054.** A `model()` named `foo` implicitly creates a `fooChange` output; declaring an explicit one is now a hard error. **8 components hit this**, and every one had a real duplicate-emission bug (the template bound `[(ngModel)]` to the model _and_ the class emitted `fooChange` manually). Fixed by deleting the redundant explicit outputs. Public API unchanged — `model()` supplies the same output name. |
-
-Remaining warnings only: pre-existing bundle-budget overages, a `quill`/CommonJS bailout, and one `NG8102`
-(`session.decisions ?? []` where the left side is non-nullable).
-
-**Still owed from this phase:** interactive smoke of overlay surfaces (`p-select`, `p-autocomplete`, `p-datepicker`,
-`p-dialog`, `p-confirmdialog`, `p-tooltip`, `p-popover`, `p-drawer`, `p-menu`) in a real browser — a build cannot prove
-runtime behavior. Folded into Phase 2's Playwright smoke.
-
-## Phase 1 — Angular 22 upgrade _(its own PR)_
-
-1. `ng update @angular/core@22 @angular/cli@22` (+ `@angular/build`, `@angular/ssr`, `@angular/compiler-cli`,
-   `ng-packagr`, `@ngrx/signals`, `angular-eslint`). `angular.json` sets `packageManager: bun`; if `ng update` misbehaves
-   under bun, fall back to manual bumps + `ng update @angular/core --migrate-only --from=21 --to=22`.
-2. **Revert the CD migration's `Eager` stamping** — keep the new `OnPush` default. Convert the 7 audit-list files to signals.
-3. Pin `typescript` to `~6.0.3` (the 6.x line ends at 6.0.3; `7.0.2` is npm `latest` and Angular rejects it).
-4. **Add a `setup-node` step to `.github/workflows/build.yml`** pinning Node `24.15.0` — CI currently installs no Node
-   at all, so the Angular CLI would refuse to run. Also bump local dev docs.
-5. **Fix NG1054** — 8 components declared a `model()` plus a redundant explicit `<name>Change = output<T>()`.
-   Delete the explicit output; `model()` already provides it. (Done: `date-range-picker`, `address-autocomplete`,
-   6 × `search-*`. Each had a real duplicate-emission bug.)
-6. Set `paramsInheritanceStrategy: 'emptyOnly'` explicitly in each app's `provideRouter(..., withRouterConfig({...}))`.
-7. Delete the deprecated `withFetch()` from `shared/src/lib/api/api.provider.ts`.
-8. `angular-gridster2` → `^22.0.0`. `ngx-mapbox-gl@14` already peers `^21 || ^22`; `angular-auth-oidc-client` peers
-   `>=20`. **No peer `overrides` block is required** — bun does not enforce peer ranges.
-9. Fix the `strictTemplates` tail from the optional-chaining semantics change (one `NG8102` so far).
-
-**Gate:** `bun run build:all` (passes) + interactive smoke of all four portals.
-
-## Phase 2 — Safety net _(small, high leverage)_ — **mostly DONE**
-
-1. ✅ Added `test` targets (`@angular/build:unit-test`, vitest) + `tsconfig.spec.json` for `shared`, `tms-portal`,
-   `admin-portal`, `customer-portal`. All five projects now have one.
-2. ✅ Committed the compat probe: `projects/shared/src/lib/forms/signal-forms-compat-probe.spec.ts` — **9 tests, green.**
-   It pins the five load-bearing claims (A–E) plus the three `FormValueControl` sharp edges, so CI screams if any drift.
-   **This is the workspace's first executable test.**
-3. ✅ `.gitattributes` added (`* text=auto eol=lf`). NB: a deliberate `git add --renormalize .` commit is still owed;
-   it was intentionally NOT run here so it doesn't contaminate this diff.
-4. ✅ CI: added `setup-node@24.15.0` and a `bun run ng test shared --watch=false` step to `.github/workflows/build.yml`.
-5. ✅ **Interactive verification via the Playwright MCP** (no committed e2e suite — deliberately; a hand-written spec
-   suite would need the API + identity server running, which CI does not have, and would be dead weight).
-   Signed in as `owner@test.com` against the real backend (API `:7000`, identity `:7001` — note both serve **http**,
-   not https). Eight routes (`/home`, `/customers`, `/loads`, `/loads/add`, `/customers/add`, `/reports/loads`,
-   `/trucks`, `/employees`) render with **zero page errors**. The only console errors anywhere are Mapbox rejecting the
-   literal unexpanded `${MAPBOX_TOKEN}` placeholder — environment config, unrelated to the upgrade.
-
-   **Phase 0's outstanding overlay smoke is now discharged** — every CDK-suspect overlay works on Angular 22:
-
-   | Overlay           | Result                                                              |
-   | ----------------- | ------------------------------------------------------------------- |
-   | `p-select`        | opens, 15 options                                                   |
-   | `p-autocomplete`  | opens; selecting a customer drives the reactive form to `ng-valid`  |
-   | `p-datepicker`    | panel opens; `ui-date-range-picker` presets write back and re-query |
-   | `p-menu`          | row kebab opens with items                                          |
-   | `p-confirmdialog` | opens via `ConfirmationService`; rejected cleanly, no data touched  |
-   | `p-dialog`        | opens (invite-employee)                                             |
-   | `p-tooltip`       | shows on hover                                                      |
-   | `p-table`         | server-lazy rows + paginator                                        |
-
-   Not exercised: `p-drawer`, `p-popover` (3–4 usages, mobile-only chrome).
-
-**Verification protocol for later phases.** There is no automated visual-regression net, so every component-type swap in
-Phases 5–6 must be re-driven through the Playwright MCP against this same route/overlay checklist before it lands.
-
-## Phase 3 — Seam hardening, still on PrimeNG _(no visual change; each item independently shippable)_
-
-> **Progress (branch `feat/angular-22-upgrade`):** items 1, 2, 3, 4, 6 ✅ — and item 5's wrappers all exist with specs.
->
-> **Phase 3 is DONE.** 215 of the original 221 raw form controls go through wrappers; `formControlName` untouched.
-> 10 wrappers exist (text / textarea / select / number / date / checkbox / toggle / multiselect / password /
-> autocomplete), each with a spec. **90 tests across 11 spec files.**
->
-> **6 controls stay raw, each blocked on a capability, not effort:** a projected `<ng-template #item>`
-> (p-select x3, p-autocomplete x1), one `p-checkbox [value]` without `[binary]` (a checkbox-group member, not a
-> boolean), and one `p-datepicker selectionMode="range"`. The 6 `search-*` components also use `<ng-template #item>`
-> and so cannot adopt `ui-autocomplete-field` yet.
->
-> **The `#item` trap.** PrimeNG resolves the item template in `ngAfterContentInit`, so an `@if`-guarded
-> `<ng-template #item>` may never register — and an unconditional one makes p-select/p-autocomplete use custom
-> rendering for EVERY option, blanking all 54 converted selects. Design the slot in Phase 5 against spartan, and
-> verify it in a browser.
->
-> ### Wrapper defaults must mirror PrimeNG's exactly. This bug class bit us four times.
->
-> Each was invisible to `build:all` and to every passing spec. Each was found only by driving the browser, or by a
-> reviewer reading PrimeNG's `.mjs`:
->
-> | wrapper input                 | wrong default                     | symptom                                                                                                           |
-> | ----------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-> | `currentPageReportTemplate`   | `undefined`                       | paginator threw on **every** paginated table                                                                      |
-> | `optionLabel` / `optionValue` | `""`                              | every select rendered its options as the literal `"empty"`; `optionValue=""` would store `undefined` on selection |
-> | `iconDisplay`                 | `undefined` (PrimeNG: `"button"`) | every datepicker lost its calendar trigger                                                                        |
-> | `appendTo`                    | `"body"` (PrimeNG: `undefined`)   | every overlay portalled out of its wrapper                                                                        |
->
-> **Rule:** for every forwarded input, read the declared default in `node_modules/primeng/fesm2022/primeng-*.mjs`
-> and copy it. Never invent `""`, `true`, or `"body"`. Boolean inputs need `transform: booleanAttribute` — templates
-> write bare attributes (`showIcon`, `stripedRows`) which Angular passes as `""`.
->
-> **Name collisions with `FormValueControl`.** It reserves `minLength`, `maxLength`, `min`, `max`, `pattern`,
-> `required`, `readonly`, `disabled`, `invalid`, `errors`, `name`, `touched`, `dirty`, `pending`, `hidden` as
-> validator-derived state inputs. `ui-autocomplete-field`'s "characters before searching" had to become
-> `minQueryLength`, or Signal Forms would auto-bind over it. TS2416 catches these.
->
-> One deliberate normalisation, not a bug: `fluid` defaults to `true` on select/multiselect/date, compensating for
-> the `class="w-full"` the sweep drops. 42 selects did not previously set it. Worth a visual pass.
->
-> **The wrapper pattern is proven, not assumed.** `projects/shared/src/lib/components/form/text-field/text-field.spec.ts`
-> shows a `FormValueControl`-only component syncing both ways under `formControlName` AND `[formField]`, propagating
-> `disabled`, and rendering errors through `ui-form-field` under both — with no transitional code. All 8 wrappers
-> have an equivalent spec; 73 tests green.
->
-> **Table sweep done.** All 82 templates use `<ui-data-table>`; 34 use `<th uiSortHeader="Field">`; 6 use
-> `UiTableRowDirectives`. `primeng/table` is imported by exactly 3 files, all in
-> `shared/src/lib/components/display/data-table/`. Phase 7 swaps those 3.
->
-> Two traps recorded so the next person does not rediscover them:
->
-> - A projected `<ng-template #header>` resolves DI against the CONSUMER, not the inner `p-table` — hence
->   `UiDataTable` re-provides `Table` from its own view via a lazy factory. Without it: `NG0201`.
-> - `Paginator.currentPageReport` calls `currentPageReportTemplate.replace(...)` unguarded, so forwarding
->   `undefined` throws on **every paginated table**. Defaults must match PrimeNG's, not `undefined`.
-
-1. ✅ **Renamed shared `FormField` → `UiFormField`** (class only; selector unchanged). 59 files.
-2. ✅ **De-leaked `ToastService`**: owned `ConfirmOptions` with semantic `ConfirmIcon` / `ConfirmSeverity` tokens,
-   mapped to PrimeNG inside the service. 29 calls across 27 files, verified lossless against `git show HEAD:`.
-   That mapping table is where Phase 6 swaps primeicons for lucide, with zero call-site churn.
-3. ✅ **Deleted the PrimeNG coupling in list infrastructure.** Owned `ListLazyLoadEvent`; the two `base-list.store.ts`
-   copies collapsed into `@logistics/shared/stores` (kept the rxMethod one — its `switchMap` cancels in-flight
-   requests); `BaseTable` deleted and its 2 subclasses moved to `createListStore`. Added
-   `setFilters(f, { reload: false })` so a page can seed filters without a duplicate initial request.
-
-4. ⬜ **Introduce `<ui-data-table>`** wrapping `<p-table>`; migrate all 82 templates onto it. API sized to what is actually
-   used: `[value]`, `[lazy]` + `(onLazyLoad)`, paginator/`[rows]`/`[totalRecords]`/`rowsPerPageOptions`, sort, `dataKey`,
-   `scrollable`, selection, and projected `header`/`body`/`footer`/`emptymessage`/`caption` slots. Sweep the ~55 trivial
-   and ~24 identical server-lazy tables in batches; hand-handle the ~6 hard ones — start with `trips-list`'s nested
-   expansion table as the design forcing-function.
-5. 🟡 **Introduce `ui-*-field` wrappers implementing `FormValueControl` only** — `ui-text-field` ✅ (with spec) —
-   (native `<textarea>`, never `pTextarea`), `ui-select-field`, `ui-number-field`, `ui-date-field`, `ui-checkbox-field`,
-   `ui-toggle-field`, `ui-multiselect-field`, `ui-autocomplete-field`. Internals drive PrimeNG via plain value/event
-   bindings — **never** `formControlName`/`[formField]` on a PrimeNG element. Fold `ui-currency-field`/`ui-unit-field`
-   into `ui-number-field` variants (delete the originals).
-6. **Convert all 9 `ControlValueAccessor` implementations to `FormValueControl`**: `PhoneField`, `AddressForm`, and the 7
-   tms-portal `search-*` / `address-autocomplete` components. Delete every `NG_VALUE_ACCESSOR` provider.
-
-   Thanks to Angular 22's bridge these all drop into the **existing reactive forms** via `formControlName`. Adopt them
-   across all ~52 forms here, with **zero Signal Forms work and zero shim code**.
-
-7. `UiFormField` requires **no change**. Do not add dual-shape error handling.
-
-## Phase 4 — Signal Forms migration _(52 components)_ — ✅ COMPLETE
-
-All 52 forms are Signal Forms. Exit criteria clean: 0 `ReactiveFormsModule` / `FormBuilder` /
-`new FormGroup` / `new FormControl`, 0 `ControlValueAccessor` / `NG_VALUE_ACCESSOR` implementations,
-0 compat shims, 0 `formControlName` / `[formGroup]` / `(ngSubmit)` / `[control]=` in templates.
-39 `<form [formRoot]>`, 286 `[formField]` bindings, 21 `FormValueControl` controls.
-`build:all` green, 98 tests / 13 spec files.
-
-The `signal-forms-migration` skill was **rewritten against the installed 22.0.6** and is now pinned by
-`signal-forms-v22-api-probe.spec.ts` (claims F–O). The old draft was wrong about `submit()`,
-`form[formRoot]`, error kinds, status classes and `reset()`. **Read the skill before touching a form.**
-
-### The one thing that broke, 46 times
-
-**`[formField]` value types are invariant.** A control's `value` is a `ModelSignal<T>` (read+write), so
-the model field type must equal the wrapper's `FormValueControl<T>` T exactly. Reactive `FormControl`s
-were routinely `string | null`; `ui-text-field` is `FormValueControl<string>`. Convention now: optional
-text fields hold `""`, coerced `dto.x ?? ""` inbound and `v.x || null` outbound. Every fix was checked
-against `git show HEAD:<file>` so an empty field keeps sending the wire value it always did.
-
-Knock-on: `pattern()` / `minLength()` now typecheck against `string`, so an **optional** field needs
-`{when: ({valueOf}) => valueOf(p.x).length > 0}` — reactive `Validators.pattern` skipped empty values.
-
-### Two bugs only the browser found
-
-Both were invisible to `build:all` and to a fully green test suite — the same pattern as Phase 3's
-four default-drift bugs.
-
-1. **`invalid` is bound from form creation**, not from first interaction. Under the reactive bridge
-   that state input was never driven, so wrappers' `[invalid]` / `[attr.aria-invalid]` were inert.
-   After migration every required, empty, untouched field rendered as invalid on page load. Fixed by
-   gating all 12 wrappers on `showInvalid = invalid() && (touched() || dirty())`.
-2. **A conversion agent silently dropped a projected `<ng-template #item>`**, swapping a deliberately-raw
-   `p-select` for `ui-select-field` and losing each ELD provider's description sub-line. The 6 raw
-   controls from Phase 3 are raw _for a reason_. **When an agent converts a form, diff its template for
-   dropped projected templates.**
-
-### Shared seam
-
-- `ui-form-field` resolves the projected `FORM_FIELD` token, reads `FieldState.errors()`, and renders
-  `error.message` — so every validator carries one. The `NgControl` fallback, the `[control]` input and
-  the reactive error flattening are gone. It keeps an explicit `[field]` input for the rare control that
-  cannot carry `[formField]` (a raw PrimeNG component needing a projected template).
-- `ValidatedForm` matches only `form[formRoot]`. It does **not** mark controls touched (`submit()`
-  already does) and cannot query `.ng-invalid` (Signal Forms sets no status classes). It focuses via
-  `errorSummary()[0].fieldTree().focusBoundControl()`, which is why every control implements `focus()`.
-- `SearchTruck` gained a `[truckId]` seed input rather than widening `value` to `TruckDto | string | null`.
-- `load-form.patch()` assigns field by field: `LoadFormValue` carries keys the model lacks, which
-  `patchValue()` dropped but a `model.update()` spread would add to the field tree.
-
-## Phase 5 — spartan/ui foundation + wrapper internals swap — ✅ **COMPLETE (2026-07-11)**
-
-> **All 7 remaining form controls are spartan-native.** `git grep "primeng/" projects/shared/src/lib/ui/form` returns
-> **only `phone-field`** (`p-inputmask` + `p-inputgroup` — the one deliberate Phase-6 carryover). `@lucide/angular` is
-> gone (icon runtime is `@ng-icons/lucide`). `build:all` green (5/5), 97 tests / 13 spec files, and every overlay
-> (select, filterable select, multiselect, autocomplete, date calendar) browser-verified open → pick → **close**.
-
-> ### ⭮ REWORKED 2026-07-11 — this block supersedes the "Step 1 / Two facts / sp-\*" narrative below.
->
-> The whole design-system foundation was refactored (branch `feat/angular-22-upgrade`) per the user's four decisions
-> (2026-07-11): **canonical shadcn tokens** (drop `sp-*`), **keep the `ui-*-field` wrappers**, **single lucide runtime**,
-> and **use the official CLI**. The earlier "vendor Helm by hand, no CLI" and "namespace `sp-*`" decisions are reversed;
-> ignore them below.
->
-> **Foundation — DONE & verified (build:all + 98 tests + Playwright):**
->
-> - **5.0** Adopted `@spartan-ng/cli` (devDep); deleted the 320-line `tools/vendor-spartan-helm.mjs`; added a ~40-line
->   `tools/normalize-helm.mjs` (relativizes the generator's self-alias imports, which ng-packagr rejects). ng-packagr
->   spike settled: Helm uses **relative** imports, consumed from source.
-> - **5.1** Restructured `lib/components` → **`lib/ui`** (`primitives`/`form`/`table`/`layout`/`content`/`feedback`/
->   `icons`); folded in `lib/spartan`, `lib/forms`, `lib/icons`; promoted `permission` out. Entry point
->   `@logistics/shared/components` → **`@logistics/shared/ui`** (199 imports codemodded). Non-UI folders unchanged.
-> - **5.2** **Canonical shadcn tokens** in the shared `styles/theme.css` (renamed from `spartan.css`): `sp-*` gone,
->   `tailwindcss-primeui` dropped, TMS's inverted `@theme` moved to the shared layer with light+dark keyed to its raw
->   ramp. Utility codemod across ~170 files (`text-primary`→`text-foreground`, `text-muted`→`text-muted-foreground`,
->   `text-secondary`→`text-subtle-foreground`, `text/bg-accent`→`*-primary`, …). Verified light + dark.
-> - **5.2b** Promoted `ThemeService` to `@logistics/shared`; **working dark mode for admin + customer** (shared
->   `ui-theme-toggle`, real `.dark-theme` variant, aligned PrimeNG `darkModeSelector`, token-driven body bg).
-> - **5.3** **`ui-icon` → `@ng-icons/lucide`** — user decision (2026-07-11) **reverses** the earlier `@lucide/angular`
->   choice. Rationale: `@ng-icons/lucide` is what Helm ships, so generated components need **zero icon edits** (the
->   generator's `provideIcons({ lucideChevronDown })` / `<ng-icon>` are used as-is). `ui-icon` renders `<ng-icon>` via
->   `NgIcon`; a `PI_TO_LUCIDE` map + `resolveNgIcon()` (kebab→`lucide`+PascalCase, with pass-through for native names)
->   bridge legacy names; `BASE_NG_ICONS` / `TMS_NG_ICONS` / `ADMIN_NG_ICONS` register per portal via `provideIcons(...)`.
->   The three dynamic-icon nav components (`nav-menu`, `favorites-bar`, `sidebar`) render `<ng-icon>` through
->   `resolveNgIcon`. **`@lucide/angular` fully removed.** The exhaustive `<i class="pi">`→lucide remap + dropping
->   `primeicons` remain **Phase 6** (the `pi→lucide` bridge now targets `@ng-icons`).
->
-> **5.4 form-control internal swaps — ✅ COMPLETE (2026-07-11).** All wrappers are spartan-native and spec-validated.
->
-> - ✅ `text`, `textarea`, `password`, `number`, `currency`, `unit`, `search`, `checkbox`, `toggle` (pre-existing native).
-> - ✅ **`select`** — `hlm-select` (`BrnSelect` + `BrnPopover`), `[value]`/`(valueChange)`, `itemToString` renders the
->   trigger label, `[forceInvalid]="showInvalid()"`, plus built-in **filter** (a projected search `<input>` with
->   `(keydown.stopPropagation)` so brain's keyManager doesn't hijack it) and **clear**. 34 call sites unchanged.
-> - ✅ **`multiselect`** (`hlm-select-multiple`, `T[]`, comma + chip display) · **`autocomplete`** (`hlm-autocomplete`,
->   async `completeMethod` debounced via rxjs — browser-verified against the real `/employees?…&Search=` API) ·
->   **`date`** (`hlm-date-picker` + calendar + `provideNativeDateAdapter`; **single mode only** — the sole mode any call
->   site uses — plus a native `<input type="time">` for the 5 `showTime`/`timeOnly` fields; `dateFormat` honoured, e.g.
->   `07/18/2026`). Range/multiple live in the separate `feedback/date-range-picker`, out of form-wrapper scope.
-> - ✅ **`language-picker`** → `ui-select-field`; **`address-form`** fully de-primeng'd (`p-select`→`ui-select-field`,
->   `pInputText`→`hlmInput`); **`phone-field`** country picker → `hlm-select` (keeps `p-inputmask`/`p-inputgroup`, the
->   documented Phase-6 carryover).
->
-> Spec pattern for every swap: the per-wrapper `*.spec.ts` proves the `FormValueControl` contract under Reactive Forms,
-> Signal Forms, and inside `ui-form-field`; overlay wrappers drive the inner brain instance (`BrnSelect`/`HlmDatePicker`)
-> for the view→control direction since options portal outside the fixture.
->
-> **`select` spike RESOLVED — the "panel never closes" bug was a missing structural portal.** The content must sit on an
-> `<ng-template>` carrying `BrnPopoverContent`, i.e. `<hlm-select-content *hlmSelectPortal>`. Without it
-> `registerContent()` never fires, the overlay never opens, content renders inline and `.cdk-overlay-container` stays
-> empty. Adding `*hlmSelectPortal` fixes open/pick/close (browser-verified). `provideSpartanHlm()` (usePopover:false) is
-> added to all four `app.config.ts` for overlay stacking, but it is **not** what fixes closing.
->
-> **The `BrnFieldControl` trap + the fix.** `BrnSelect` / `BrnSelectMultiple` / `BrnAutocomplete` / `HlmDatePicker` all
-> host-direct `BrnFieldControl`, which hierarchically injects the ambient `NgControl` — inside our wrapper that resolves
-> the consumer's `[formField]` `InteropNgControl`, whose missing `.events` crashes `createStateTracker` (the `pTextarea`
-> shape). Fix: a **`uiDetachedControl`** directive on the inner Helm element provides `{ NgControl: null }`, so brain
-> resolves null on the self element and skips tracking. `git grep NG_VALUE_ACCESSOR projects/` stays empty for our
-> wrappers; the vendored `hlm-date-picker` declares it internally (inert — driven by `[date]`; a Phase-7 grep note).
->
-> Generation friction is now handled once in `tools/normalize-helm.mjs`: flatten `<name>/src`→`<name>`, **preserve** the
-> hand-customised `utils`/`input`/`textarea` (the generator re-emits stock copies of `input`/`textarea` that re-add the
-> `BrnInput` host-directive we stripped), relativize alias imports, `import type` for
-> `BooleanInput`/`ClassValue`/`ButtonVariants`, and strip the CLI's broken `[forceInvalid]` binding on the date inputs
-> (a CLI/brain 1.1.0 mismatch). Icons are zero-touch now that we use `@ng-icons`. The brain overlays add ~1 MB across the
-> set → tms `initial` budget bumped to **5 MB** error / **4 MB** warning in `angular.json`.
-
-**Step 1 is DONE.** Deps installed into the Angular workspace package (`bun add --cwd src/Client/Logistics.Angular`):
-`@spartan-ng/brain@1.1.0` (MIT), `clsx`, `tw-animate-css`, `tailwind-merge`. `build:all` green, 98 tests green.
-`@angular/cdk@22.0.4` was already present and satisfies brain's peer `>=21 <23`.
-
-### Two facts the original plan got wrong
-
-1. **`@spartan-ng/cli` is not installable here without dragging in Nx.** It depends on `nx`, `@nx/angular`,
-   `@nx/devkit`, `@nx/js`, `@nx/workspace` and `@schematics/angular@21.2.14` — into a plain Angular CLI + bun
-   workspace on Angular 22, with no `nx.json`. **User decision (2026-07-10): vendor Helm by hand, no CLI, no Nx.**
-   Helm is code-in-repo either way; the CLI is only a copier.
-2. **The Helm `.template` files are not directly usable.** A template's `classes(() => 'spartan-input …')` string is a
-   _placeholder_. The generator builds a style map from the chosen `style-<theme>.css` (harvesting each
-   `.spartan-x { @apply … }` rule) and **inlines those utilities into the component**, merging with `tailwind-merge`.
-   Copy a template verbatim and you get a component referencing a class that nothing defines → unstyled.
-   - `style-nova.css` (the default) holds **298** `.spartan-*` rules; **297** are the plain `{ @apply …; }` shape and
-     extract with one regex. The lone exception is `spartan-drawer-content`.
-   - The generator leaves three tokens in place: `spartan-invalid`, `spartan-menu-target`, `spartan-logical-sides`.
-   - Get the sources without installing anything: `npm pack @spartan-ng/cli@1.1.0`, then read
-     `package/src/generators/ui/libs/<primitive>/files/**` and `package/src/generators/ui/style-nova.css`.
-   - Templates substitute exactly one variable, `<%- importAlias %>` (e.g. `import { classes } from '<%- importAlias %>/utils'`).
-     Inside the `shared` library this must become a **relative** path — ng-packagr rejects tsconfig path aliases that
-     resolve outside the entry point.
-
-`utils` is the root primitive: `hlm()` (clsx + tailwind-merge), `classes()` (a `MutationObserver`-backed class manager),
-and `provideSpartanHlm()` (sets `OVERLAY_DEFAULT_CONFIG.usePopover = false`, needed because Angular 21+ otherwise renders
-CDK overlays above `position: fixed` elements).
-
-### Step 2 is DONE — the token layer (`projects/shared/src/styles/spartan.css`, imported by all four apps)
-
-**We do NOT import `@spartan-ng/brain/hlm-tailwind-preset.css`.** Its `@theme inline` block registers the shadcn colour
-names as Tailwind theme keys, and four collide with `tms-portal/src/styles/variables.css` — three with **inverted
-meaning**: here `text-primary` is the primary _text_ colour and `text-muted` is muted _text_, while in shadcn `--primary`
-is the brand colour and `--muted` is a surface. Importing it would silently repaint **723 utility usages across 173
-files** (`primary` 143, `secondary` 63, `muted` 396, `accent` 121; tms-portal alone 627).
-
-**User decision (2026-07-10): namespace spartan's tokens `sp-*`, leave app code untouched.** We vendor the parts of the
-preset we need (CDK overlay css, `tw-animate-css`, the backdrop double-fade fix, the nine `data-*` custom variants) and
-declare our own `@theme inline` with every colour token prefixed. `tools/vendor-spartan-helm.mjs` applies the same prefix
-to the Helm components. A token we forget to prefix renders unstyled — visible — rather than silently wrong.
-
-Deliberately **not** taken from the preset: `@custom-variant dark` (each app declares its own; TMS uses `.dark-theme`),
-the `--radius-*` overrides (they would change `rounded-*` app-wide), `--font-sans` / `--font-mono` (owned per app), and
-`@utility container`.
-
-The raw `--sp-*` values resolve through `var(--x, literal)`: tms-portal supplies `--x` and redefines it under
-`.dark-theme`, so dark mode flows automatically; the three light-only apps take the literal. Verified in the built CSS:
-`dark:bg-sp-input/30` compiles to `:where(.dark-theme,.dark-theme *)`, and `--sp-input` resolves `#cbd5e1` → `#3d4760`.
-
-### Architectural stance: Helm for presentation, our wrappers own form state
-
-Brain's `BrnInput` / `BrnFieldControl` inject the ambient `NgControl` — which `[formField]` provides as an
-`InteropNgControl` — and host-bind `aria-invalid` / `data-invalid` from the **raw** `control.invalid`. That is true from
-form creation, so a required, untouched field announces itself invalid on load, and the directive's host binding beats
-the wrapper's own `[attr.aria-invalid]`. (Caught by `text-field.spec.ts`; the same class of bug as the Phase 4
-pristine-invalid regression.) Brain's own `data-matches-spartan-invalid` _is_ correctly gated by an `ErrorStateMatcher`.
-
-So `vendor-spartan-helm.mjs` strips `hostDirectives` for the primitives in `STRIP_FORM_STATE` and re-points the styling
-hook from `data-[matches-spartan-invalid=true]` onto `aria-[invalid=true]`, which our wrappers already drive from
-`showInvalid() = invalid() && (touched() || dirty())`. Visuals and a11y then agree, with one source of truth.
-
-Note also: brain's control-state tracker calls `control.events.subscribe(...)`, and `InteropNgControl` has no `events` —
-the same shape as the `pTextarea` crash. Stripping the wiring sidesteps it.
-
-### Helm's _components_ are unusable for our form controls — brain + harvested classes instead
-
-`input` and `textarea` swapped cleanly because Helm ships them as **directives** on native elements: no
-`ControlValueAccessor`, no icon dependency. That is the boundary, not luck. The richer Helm primitives are
-components, and two properties of them collide head-on with this project's governing principles:
-
-1. **Four Helm form primitives provide `NG_VALUE_ACCESSOR`** and implement `ControlValueAccessor`:
-   `checkbox`, `switch`, `date-picker`, `native-select`. Nesting one inside a `ui-*-field` would put a CVA
-   in the injector directly under a `FormValueControl` — the dual-interface ambiguity Phases 3 and 4 spent
-   their entire effort eliminating (`git grep NG_VALUE_ACCESSOR` is currently empty by design).
-2. **21 Helm primitives import `@ng-icons/core` + `@ng-icons/lucide`**, among them `select`, `checkbox`,
-   `date-picker`, `calendar`, `autocomplete` and `combobox`. That is a _second_ icon system; Phase 6 commits
-   to `@lucide/angular` behind `ui-icon`, and the governing principle forbids a dual icon system.
-
-**So for the remaining ten wrappers: take behaviour from `@spartan-ng/brain` directly (`BrnCheckbox`,
-`BrnSelect`, `BrnPopover`, …), take presentation from Helm's harvested class strings via `hlm()`, and render
-icons with the existing `ui-icon`.** `vendor-spartan-helm.mjs` already harvests the style map, so the classes
-are available without importing the component. Do not `bun add @ng-icons/*`.
-
-This is a bigger job than `input`/`textarea` were: each remaining wrapper is a small component built on brain,
-not a one-line directive swap. `select`, `multiselect`, `autocomplete` and `date-picker` additionally need CDK
-overlays, so `provideSpartanHlm()` must land in all four `app.config.ts` first.
-
-### Remaining
-
-3. Swap wrapper internals **one component type at a time**. Feature code untouched — the payoff of Phase 3.
-   - ✅ `ui-text-field` → `hlmInput` (vendored `utils`, `input`). 98 tests green; browser-verified: correct token
-     colours, destructive ring on submit only, dark mode, focus, disabled.
-   - Remaining primitives: `textarea`, `select`, `checkbox`, `switch`, `label`, `field`, `input-group`,
-     `date-picker` + `calendar` + `popover`, `autocomplete`/`combobox`, `button`.
-   - **Expect a mixed look mid-phase.** spartan inputs are `h-8` / `rounded-lg`; PrimeNG's are taller. Neighbouring
-     unswapped controls will not line up until the whole set moves.
-   - Still to reproduce from `primeng-preset.ts`: the dark `colorScheme` surface ramp and the visual signatures
-     (uppercase datatable headers, tag sizing, gradient primary button).
-   - `projects/shared/src/styles/` now exists; promoting `variables.css` into it is still open (only TMS has a token
-     system; admin/customer/website are light-only with their own palettes).
-4. Check each swap against the Phase 2 Playwright baseline.
-
-**Watch:** brain peers `luxon >=3.0.0` (only needed for `@spartan-ng/brain/date-time-luxon`); we have not installed it.
-`provideSpartanHlm()` (vendored in `spartan/utils`) sets `OVERLAY_DEFAULT_CONFIG.usePopover = false` and must be added
-to each `app.config.ts` before the first CDK-overlay-based primitive (select, date-picker, popover) ships.
-
-## Phase 6 — Non-form component sweep
-
-- Cosmetic (~60% of usages): button (206), card (131), tag (88), tooltip (86), progressspinner (74), skeleton (32),
-  divider (33), avatar/badge/chip/message/progressbar → spartan or plain Tailwind, behind `ui-*` where a pattern repeats.
-- Behavioral: dialog (42), confirmdialog (13), toast (16), menu (20), popover/drawer/tabs/accordion/stepper/timeline.
-  All dialogs are declarative `[(visible)]`; `ToastService` (hardened in Phase 3) absorbs toast/confirm with no call-site churn.
-- Unwrap deps we already ship: `p-chart` (10) → `chart.js`; `p-editor` (1) → `quill`; galleria (1) → custom.
-- Hand-roll: `inputmask` (1, inside `PhoneField`), stepper, timeline, galleria.
-- **Icon workstream** (own milestone, gates Phase 7): remap ~90 distinct `pi pi-*` icons across ~209 templates to
-  `@lucide/angular` behind the existing `ui-icon` component. Ends with a single icon system.
-- **Replace all ~243 `tailwindcss-primeui` utility usages** with the shared `@theme` token layer.
-- **No bulk `sed -i`** until Phase 2's `.gitattributes` has landed.
-
-## Phase 7 — Table internals + PrimeNG removal
-
-1. Swap `<ui-data-table>`'s internals from `p-table` to spartan/TanStack. Because Phase 3 centralized 82 templates behind
-   it, this is **one component**, not 82. No column filters, editing, frozen columns, or virtual scroll are in use, so the
-   required TanStack surface is small. Prototype against the loads list (server-side paging + sort) first.
-2. Drop `primeng`, `primeicons`, `@primeuix/themes`, `tailwindcss-primeui`. Delete `primeng-preset.ts` and **both peer
-   overrides** from the root `package.json`.
-3. Docs sweep: `.claude/rules/frontend/angular-conventions.md` (lines 56–57 tell developers to _prefer_ `p-message`,
-   `p-tag`, `p-table`, `p-dialog`), `src/Client/Logistics.Angular/CLAUDE.md` (Reactive Forms + `pInputText` examples;
-   also missing admin-portal from its project table), `.claude/feature-map.md`, `.claude/skills/signal-forms-migration/SKILL.md`.
-4. Final gate: `bun run build:all`, full smoke, and these must all return nothing outside docs/history:
-   `git grep -i primeng`, `git grep "pi pi-"`, `git grep tailwindcss-primeui`, `git grep ControlValueAccessor`,
-   `git grep ReactiveFormsModule`, `git grep ChangeDetectionStrategy.Eager`.
+**Roughly 15 "verified facts" in the brief turned out to be wrong, and the implementing agent was
+right every single time.** The pattern is always the same: a fact derived from a grep of one spelling,
+or from a library's _docs_, rather than from its compiled metadata and its **defaults**.
 
 ---
 
-## Cleanup ledger — every transitional artifact and its deletion phase
+## The bug ledger — 9 bugs this migration FOUND
 
-| Artifact                                       | Created    | Deleted                                 |
-| ---------------------------------------------- | ---------- | --------------------------------------- |
-| ~~peer `overrides` in root `package.json`~~    | —          | **Never needed — bun ignores peers**    |
-| `p-table` internals inside `<ui-data-table>`   | Phase 3    | Phase 7                                 |
-| PrimeNG internals inside `ui-*-field` wrappers | Phase 3    | Phase 5                                 |
-| `BaseTable` abstract class                     | _(exists)_ | Phase 3                                 |
-| Duplicate `base-list.store.ts` (admin copy)    | _(exists)_ | Phase 3                                 |
-| `ui-currency-field`, `ui-unit-field`           | _(exists)_ | Phase 3 (folded into `ui-number-field`) |
-| 9 `ControlValueAccessor` implementations       | _(exists)_ | Phase 3                                 |
-| Reactive-forms `ValidatedForm` directive       | _(exists)_ | Phase 4                                 |
-| `ReactiveFormsModule` imports                  | _(exists)_ | Phase 4                                 |
-| `primeicons` + `pi pi-*` classes               | _(exists)_ | Phase 6                                 |
-| `tailwindcss-primeui` + its utility classes    | _(exists)_ | Phase 6                                 |
-| `primeng-preset.ts`                            | _(exists)_ | Phase 7                                 |
+None of these were caused by the migration. All of them were live, most were long-lived, and **every
+one was green on `build:all`, green on the test suite, and green on lint.** This is the most valuable
+section in the document.
+
+1. **NG0201 emptied `/loads` — the core page of a trucking TMS.**
+   `<ui-data-table>` re-provided PrimeNG's `Table` so projected `#header`/`#body` templates could
+   resolve it, but not `TableService`. `TableCheckbox`, `TableHeaderCheckbox` and `SelectableRow`
+   inject **both**; `TableService` is `@Injectable()` with no `providedIn`, so it lives only in
+   `Table`'s node providers and is invisible to the consumer's injector. Every projected checkbox
+   threw NG0201 and took the whole table render down. The page rendered a summary card reading
+   _"Total Loads: 195 / $22,233.00"_ directly above an **empty** grey table reading _"0 of 0"_.
+   Also hit payroll-invoices-list, attach-load-dialog, trip-wizard-review, trip-details.
+
+2. **Every client-paginated table rendered zero rows.**
+   `first` and `totalRecords` were `input<number|undefined>(undefined)` and forwarded
+   unconditionally, so Angular wrote `undefined` over `p-table`'s own `_first = 0` /
+   `_totalRecords = 0` defaults. `slice(undefined, NaN)` → `[]`. 14 templates, incl. all 6 report
+   pages. **Never forward `undefined` for an input whose library default is not `undefined`.**
+
+3. **A live XSS.** `route-badge` set `[escape]="false"` on a `pTooltip` — PrimeNG renders that via
+   `innerHTML` — and fed it a hand-built HTML string with **tenant address fields interpolated into
+   it**. Forbidden by our own `angular-security.md`. Killed by converting the site to a `TemplateRef`
+   tooltip, so the bindings escape.
+
+4. **Escape discarded a half-filled form (data loss).**
+   `ui-dialog` bound `(document:keydown.escape)`. A `ui-select-field` opened _inside_ a dialog is its
+   own CDK overlay, so **one** Escape — meant for the dropdown — also reached the dialog and
+   discarded the form. Same for nested confirm dialogs. It was hidden under PrimeNG because
+   `primeng-select.mjs:1512` called `stopPropagation()` on Escape, so `p-dialog`'s document listener
+   never saw it; Helm/brain let it bubble. Fixed with an `isTopmostOverlay` guard.
+   **A document-level Escape handler fires for nested overlays too.**
+
+5. **`selectButton` deselect-to-null.** `allowEmpty` defaults **true**, so clicking the _active_
+   segment wrote `null` into three non-nullable targets (`signal<FilterType>`,
+   `setLayer(MapLayerType)`, `onModeChange(PayrollMode)`) — the map style persisted as null and the
+   payroll form body vanished. Spartan's `BrnToggleGroup.nullable` _also_ defaults true, so it had to
+   be bound `false` explicitly or the bug would have been faithfully reproduced one layer down.
+
+6. **`fileUpload` POSTed to `/undefined`** on every selection. Both sites set `[auto]="true"` with no
+   `url`, so PrimeNG's uploader fired `http.request('post', undefined)` and latched "uploading"
+   forever while the app uploaded separately in `(onSelect)`.
+
+7. **`upcoming-service` never sorted — broken since it was written.** Its client-side table used
+   PascalCase sort fields (`"TruckNumber"`) while the rows hold `truckNumber`. Client tables resolve
+   the field off the **row object**, so every value was `undefined`: the header flipped to
+   `aria-sort="ascending"` and the rows never moved. `git show` proves the original `p-table` had the
+   identical `pSortableColumn="TruckNumber"`. The port reproduced it faithfully, then fixed it.
+
+8. **Every sort arrow in all four portals rendered blank.** The new paginator asked for
+   `lucideChevronsUpDown` / `Left` / `Right`; nothing registered them. See vacuous gate #2 below —
+   the icon gate whose entire job is to catch a blank icon could not see the file that caused it.
+
+9. **Keyboard-only tooltips would never have opened.** `BrnTooltip` binds its triggers and
+   `aria-describedby` to its **own host**, and 82 of the 124 hosts are `<ui-button>` — a _wrapper_
+   around the real `<button>`. **`focus` and `blur` do not bubble**, so brain's listener on the
+   wrapper would never fire. Invisible to every gate, and it fails exactly the users a tooltip exists
+   to serve. `uiTooltip` uses `focusin`/`focusout` (which do bubble) and resolves `aria-describedby`
+   onto the focusable descendant.
+
+Plus a tail: phone paste corrupted numbers (`+1 (555) 123-4567` → `+11555123456`); `ui-icon` was
+`display: inline`, so `animate-spin` was a **no-op** (transforms don't apply to non-replaced inline
+elements); 61 of 131 icon names silently resolved to an empty `<svg>`.
+
+### The two vacuous gates
+
+These deserve their own heading, because a green gate that cannot see is worse than no gate: it
+actively buys false confidence.
+
+- **A checker that shares a scanner with the thing it checks.** `gen-icon-registry.mjs`'s scanner
+  regex listed `icon|iconName|leadingIcon|…` but not `iconEnd` — and `\bicon\b` cannot match
+  `iconEnd`. So `<ui-button iconEnd="arrow-right">` was invisible to the **generator**, and equally
+  invisible to `check-icons.mjs`, _which shares the scanner_. `lucideArrowRight` was never registered
+  in admin, four 16×16 empty boxes shipped on the admin home page, and the blank-icon gate reported
+  **green**. (Also missing: `actionIcon`, `badgeIcon`, `emptyIcon`, `ctaIcon`.)
+
+- **A checker that cannot see untracked files.** `tools/codemods/lib/io.mjs`'s `listFiles()` used
+  `git ls-files` — **tracked files only**. Every file a step _created_ was invisible to every gate
+  until it was committed. S11 wrote a new table engine, a paginator and two vendored primitives;
+  `check-icons`, `burndown` and `spartan-tokens` all reported green **having never read them**. The
+  gates ran clean over precisely the newest, least-reviewed code in the migration. That is bug #8.
+  Fixed with `--cached --others --exclude-standard`, and _proven_ non-vacuous by planting an
+  untracked file with a bogus icon and watching the gate fail.
+
+> Both have the same shape: **a checker that cannot see (or shares a scanner with) the thing it
+> checks confirms only its own blind spots.** The new `phase7.mjs` gate is deliberately an
+> _independent_ implementation — its own fs walk (not `git ls-files`), its own comment stripper (not
+> `burndown`'s regex) — and it **self-tests against positive controls before it reports green**.
 
 ---
 
-## Standing risks
+## What shipped, phase by phase
 
-- ~~**PrimeNG 21 under Angular 22 + CDK 22 is unproven.**~~ **Resolved in Phase 0: it works.** All five projects build;
-  PrimeNG never touches CDK overlays, so the feared version skew does not exist. This de-risks the entire
-  "upgrade first, swap later" ordering.
-- **Node version is a latent CI break.** Angular 22 requires Node `^22.22.3 || ^24.15.0 || >=26.0.0`, and
-  `.github/workflows/build.yml` pins no Node at all (`setup-bun` only). Add `setup-node` before merging Phase 1.
-- **`paramsInheritanceStrategy` has no migration** and fails silently.
-- **`@ngrx/signals` has no Angular 22 release** (latest `21.1.1`, peer `^21.0.0`, no 22.x even in prerelease). It works
-  today because bun does not enforce peers, but it is unmaintained against v22 — and it backs `base-list.store.ts`.
-  Watch it; it is the most likely thing to break on Angular 23.
-- ~~**`FormValueControl` has open sharp edges.**~~ **Probed on 22.0.6 — mostly non-issues.** Measured by
-  `projects/shared/src/lib/forms/signal-forms-compat-probe.spec.ts`:
-  - #65478 (value-as-`model()` recompute): **bounded**. `model()` uses `Object.is`, so a `computed()` over `value()`
-    re-runs only on _distinct_ values, not on every raw `set()`. Not the per-keystroke cost the issue implies.
-  - #65576 (external model signal): **does not reproduce**. No NG0318. But note the semantics: when a control is bound
-    with both `[(value)]` and `[formField]`, **`[formField]` wins**. Wrappers must not expose an external two-way
-    `value` binding alongside `[formField]`.
-  - #63625 (`min`/`max` + value update): **works**. Validator-derived `min`/`max` push into the control's state inputs
-    and re-validate correctly.
-  - #67847 (CVA `writeValue` loopback) was already fixed upstream, and is moot — we implement no CVAs.
-- **`ui-data-table` (Phase 3.4) is the single largest chunk of work.** It is also what makes Phase 7 cheap.
-  `trips-list`'s nested-table row expansion is the hard case; design against it first.
-- **The icon migration is a hidden project** (~90 icons, ~209 templates) and it _gates_ PrimeNG removal.
-- **TMS dark mode is hand-authored** in `primeng-preset.ts`. Reproducing it in spartan tokens is the highest visual risk.
-- **spartan is code-in-repo.** Upstream fixes don't flow automatically; track the upstream repo.
-- Windows + `core.autocrlf=true` and no `.gitattributes`: broad `sed -i` sweeps create phantom EOL-only diffs — trust
-  `git diff`, not `git status`. Phase 2 fixes this.
+Phases 0–4 were the groundwork (Angular 22, then the safety net, then centralising every PrimeNG
+touchpoint behind `ui-*` seams, then Signal Forms). Steps S0–S14 were the removal itself.
 
-## Verification strategy (every phase)
+|             | What                                                                         | Real numbers                                                                                                                                                                                                                                                                            |
+| ----------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0**      | Spike: does PrimeNG 21 survive Angular 22 + CDK 22?                          | **Yes.** All 5 projects build. PrimeNG never touches CDK overlays, so the feared version skew did not exist — this de-risked the whole "upgrade first, swap later" ordering                                                                                                             |
+| **P1**      | Angular 22 upgrade                                                           | 371 components, none declaring `changeDetection`. The v22 migration stamps `Eager` on every one — **reverted**; the app is zoneless and takes the new `OnPush` default. Router `paramsInheritanceStrategy` pinned back to `emptyOnly` (it silently flipped, with no migration provided) |
+| **P2**      | Safety net                                                                   | The repo had **zero `.spec.ts` files**, no lint step, no test step in CI. Everything below rests on fixing that                                                                                                                                                                         |
+| **P3**      | Seam hardening (still on PrimeNG)                                            | 82 table templates → one `<ui-data-table>`; 9 `ControlValueAccessor`s → `FormValueControl`; `BaseTable` deleted; duplicate `base-list.store.ts` collapsed. **This is what made the endgame cheap**                                                                                      |
+| **P4**      | Signal Forms                                                                 | 52 components. One bug 46 times: `invalid` is bound from form _creation_, not first interaction, so every required-empty field rendered invalid on page load. Gated all wrappers on `invalid() && (touched() \|\| dirty())`                                                             |
+| **S0**      | Guardrails                                                                   | burndown ratchet, budgets, `normalize-helm.mjs`, codemod lib, `.gitattributes`                                                                                                                                                                                                          |
+| **S1**      | Characterization capture **against live PrimeNG**                            | The spec that made S11 survivable. It passed **unchanged** through the table swap — 2 changed lines, both a fixture selector rename. Zero `it()` bodies touched                                                                                                                         |
+| **S2–S3**   | Icon runtime + 940-site sweep                                                | Typed `UiIconName` union → an unknown icon is now a **compile error**. `primeicons` dead                                                                                                                                                                                                |
+| **S4**      | `ui-button`                                                                  | 498 sites                                                                                                                                                                                                                                                                               |
+| **S5–S6**   | Cosmetics + tooltip                                                          | 608 + 124 sites                                                                                                                                                                                                                                                                         |
+| **S7–S9**   | Dialogs, toasts, menus, tabs, accordion, popover, drawer, stepper, timeline  | 46 dialogs; `ToastService` onto sonner                                                                                                                                                                                                                                                  |
+| **S10**     | Raw form controls, chart, editor, uploads                                    | 55 controls (not 6). Surface 466 → 85                                                                                                                                                                                                                                                   |
+| **S11–S12** | **The crux.** `p-table` ripped out of `ui-data-table`; 7 engines hand-rolled | **83 of 90 consumer templates changed zero lines.** That was the entire safety argument for P3, and it held                                                                                                                                                                             |
+| **S13**     | Theme port + removal (one-way door)                                          | See below                                                                                                                                                                                                                                                                               |
+| **S14**     | CI exit gate + this document                                                 | `tools/gates/phase7.sh`                                                                                                                                                                                                                                                                 |
 
-- `bun run build:all` is the gate (shared/admin lint is pre-existing red — do not use lint as the gate).
-- Keep the committed compat probe green in `shared` as wrappers evolve.
-- After Phase 2, CI runs unit tests; every component-type swap in Phases 5–6 is checked against the Playwright baseline.
-- Exercise real flows in the running portal (Playwright MCP available): load form create/edit, customer form, dispatch
-  board, a server-paged list, one dialog, one toast/confirm — not just builds.
-- Phase 7's `git grep` sweep is the definition of done.
+### S13 — the one thing in the theme that actually mattered
+
+Deleting `providePrimeNG` was **not** a no-op, but not for the reason anyone expected. Zero elements
+in the rendered DOM carried a `p-*` class, so every class-scoped rule was already dead. But the
+injected sheet carried four rules that were **not** class-scoped, and one was load-bearing:
+
+```css
+:root,
+:host {
+  color-scheme: light;
+}
+.dark-theme {
+  color-scheme: dark;
+}
+```
+
+`providePrimeNG` was the **only source of `color-scheme` in the entire document**. Delete it and it
+falls back to `normal` — native scrollbars, form controls and the page canvas silently stay **light in
+dark mode**. Ported into `theme.css`. The other three rules were inert (`--p-*` vars nothing consumed;
+a `box-sizing` reset Tailwind preflight already provides).
+
+Verified by computed-style digest across 11 routes × light/dark: **1,089,432 comparisons, 22
+differences — all `width`/`height`, zero colour/background/border/shadow/font drift.** Pixel diff:
+16/22 surfaces byte-identical, including all of `/ui-lab` (7023 px tall) at **0 px**. The 4 that
+differed were proven to differ _between two runs of identical code_ (an API 429 rendered a "Too many
+requests" toast in the BEFORE capture) — **zero pixels attributable to PrimeNG removal.**
+
+---
+
+## Lessons
+
+The ones that each cost a real bug. In rough order of how much they cost:
+
+1. **If the brief contradicts the source, trust the source and say so loudly.** ~15 "verified facts"
+   were wrong; the agent that checked was right every time. A fact derived from a grep of one
+   spelling is not a fact.
+2. **A checker that cannot see (or shares a scanner with) the thing it checks confirms only its own
+   blind spots.** Two vacuous gates, both green, both hiding a shipped bug. Gates need positive
+   controls: plant the bug, watch the gate fail, _then_ trust it.
+3. **Read the library's compiled metadata and its DEFAULTS, not its docs and not its template.**
+   Defaults invert (`allowEmpty`, `nullable`, `draggable`, `hideOnEscape`, tooltip `position: right`,
+   toaster `bottom-right`).
+4. **Never forward `undefined` for an input whose library default is not `undefined`.** This one bug
+   class appeared five separate times and emptied every client-paginated table in the app.
+5. **`focus`/`blur` and `scroll` do not bubble.** A wrapper element silently breaks any library that
+   listens on its own host. (Use `focusin`/`focusout`.)
+6. **An overlay must close, and a document-level Escape handler fires for nested overlays too.**
+   That is a data-loss bug, not a UX nit.
+7. **A wrapper element changes layout.** Keeping `<ui-button>` as a real node around `<button>` was
+   right, but it is a node, and it has consequences (see 5).
+8. **Centralise before you swap.** P3 pushed 82 tables and every form control behind `ui-*` seams
+   _while still on PrimeNG_. That is why S11 changed 83 of 90 consumer templates by zero lines. The
+   boring phase is the one that buys the endgame.
+9. **Capture characterization tests against the OLD library, before you touch it.** S1's spec passed
+   unchanged through the engine swap. Without it, S11 is unshippable.
+10. **A metric that punishes documenting the thing you're removing cannot be used to remove it.**
+    The gates exempt comments deliberately — the ~75 files of prose explaining _what was removed and
+    why_ are the most valuable text in the repo. See the header of `phase7.mjs`.
+
+---
+
+## The gate — the definition of done
+
+`tools/gates/phase7.sh`, wired into `.github/workflows/build.yml`, plus `bun run lint --max-warnings 0`.
+
+```bash
+bun run gate:phase7     # self-test → source scan → manifests → check:all cross-check
+```
+
+It scans `projects/` for PrimeNG in **code** — comments naming PrimeNG are exempt, deliberately and
+loudly — and asserts `primeng` / `primeicons` / `@primeuix` are absent from the **Angular workspace**
+`package.json` (not the repo-root one: that is a bun workspace root, has never listed them, and a
+root-targeted assertion therefore passes _vacuously_), from `bun.lock`, and from `angular.json`.
+
+Three things a future maintainer needs to know about it:
+
+- **It is an independent scanner, on purpose.** It does not reuse `burndown.mjs`. Two independent
+  implementations agreeing on 0 is evidence; one agreeing with itself is not (see the vacuous gates).
+- **It self-tests before it reports.** 20 positive controls prove the comment stripper can still _see_
+  real code. If the stripper ever fails open, CI fails on the gate rather than passing the repo.
+- **Some greps cannot return literal zero, and should not.** `git grep -i primeng` still hits the 15
+  migration codemods and `burndown.mjs`'s own metric regex — the tooling must name the thing it
+  removes. Satisfying that literally means deleting the enforcement. The gate scopes to `projects/`
+  and says so.
+
+### A trap worth knowing: `bun install --force` does not prune
+
+After PrimeNG was removed from `package.json` and `bun.lock`, `node_modules/primeng` was **still
+physically present and resolvable** on the dev machine — `bun install --force` re-resolves but does
+not garbage-collect. A stray `import { Button } from "primeng/button"` would still have **compiled
+locally**, and only broken in CI (which installs into a fresh tree). Verified: after
+`rm -rf node_modules && bun install`, `primeng` is `MODULE_NOT_FOUND` and the `.bun` store is clean.
+The gate is what stands between a stale local tree and a broken build.
+
+---
+
+## Still open
+
+- **`@ngrx/signals` has no Angular 22 release** (latest 21.1.1, peer `^21.0.0`). It works only
+  because bun does not enforce peers, and it backs `base-list.store.ts`. **The most likely thing to
+  break on Angular 23.**
+- **spartan is code-in-repo.** Upstream fixes do not flow automatically. `tools/normalize-helm.mjs`
+  strips CVAs from vendored primitives on the way in — keep running it, and keep reading what you
+  vendor (that is how `NG_VALUE_ACCESSOR` got back in once already).
+- **The website eagerly bundles sonner + CDK overlay + Helm** (712 KB initial chunk) because its root
+  template renders `<ui-toaster/>` and a dialog. Legitimate, and still below pre-migration — but it is
+  the biggest remaining lever if the marketing site needs to be slimmer.
+- **`angular-gridster2` legitimately requires `::ng-deep`** (`home.css`). The gate bans `::ng-deep` _at
+  a `.p-_`class*, not`::ng-deep` itself. Do not "fix" that.

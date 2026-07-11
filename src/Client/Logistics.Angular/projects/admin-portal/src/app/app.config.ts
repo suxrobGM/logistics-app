@@ -13,9 +13,7 @@ import {
 } from "@logistics/shared";
 import { provideApi } from "@logistics/shared/api";
 import { provideIcons } from "@ng-icons/core";
-import Aura from "@primeuix/themes/aura";
 import { provideAuth } from "angular-auth-oidc-client";
-import { providePrimeNG } from "primeng/config";
 import { authConfig, PermissionService } from "@/core/auth";
 import { environment } from "@/env";
 import { ADMIN_NG_ICONS } from "@/shared/icons/lucide-icons";
@@ -37,14 +35,6 @@ export const appConfig: ApplicationConfig = {
     provideApi({
       baseUrl: environment.apiUrl,
       tokenGetter: () => getAccessToken("adminportal"),
-    }),
-    providePrimeNG({
-      theme: {
-        preset: Aura,
-        options: {
-          darkModeSelector: ".dark-theme",
-        },
-      },
     }),
     provideIcons({ ...BASE_NG_ICONS, ...ADMIN_NG_ICONS }),
 

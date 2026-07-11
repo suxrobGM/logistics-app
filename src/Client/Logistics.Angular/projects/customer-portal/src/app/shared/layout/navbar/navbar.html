@@ -31,7 +31,7 @@
         @for (item of navItems; track item.route) {
           <a
             [routerLink]="item.route"
-            routerLinkActive="bg-primary-50 text-foreground"
+            routerLinkActive="bg-primary/12 text-foreground"
             [routerLinkActiveOptions]="{ exact: item.route === '/' }"
             class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
           >

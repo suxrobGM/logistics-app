@@ -1,6 +1,5 @@
 import { DatePipe, DecimalPipe } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { Router, RouterLink } from "@angular/router";
 import {
   Api,
@@ -37,7 +36,6 @@ import { DvirDefectsList } from "../_components/dvir-defects-list/dvir-defects-l
     DatePipe,
     DecimalPipe,
     DvirDefectsList,
-    FormsModule,
     Grid,
     Icon,
     PageHeader,

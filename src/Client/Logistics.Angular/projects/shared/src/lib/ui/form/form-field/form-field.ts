@@ -86,8 +86,8 @@ export class UiFormField {
    * Optional explicit field. When omitted, the field auto-resolves from the projected `[formField]`
    * directive, so inline validation errors render without any per-field wiring.
    *
-   * Bind it only when the control cannot carry `[formField]` itself — e.g. a raw PrimeNG component
-   * driven by `ngModel` because it needs a projected `<ng-template>`.
+   * Bind it only when the control cannot carry `[formField]` itself — e.g. a control that is
+   * driven by a plain `[(value)]` two-way binding because it needs a projected `<ng-template>`.
    *
    * Typed as a read-only field accessor rather than `Field<unknown>` so any `FieldTree<T>` is
    * assignable: `FieldState<T>.value` is a `WritableSignal<T>` (invariant), while

@@ -66,20 +66,20 @@ onKeydown(event: KeyboardEvent) {}
 
 ## UI components
 
-- The UI library is **spartan/ui** — Helm components vendored in-repo under `projects/shared/src/lib/ui/primitives/` on top of `@spartan-ng/brain`. **NOT PrimeNG.**
-- **PrimeNG is being removed — never add a new `p-*` component or a `primeng/*` import.** Existing ones are being swept out.
-- **Prefer the shared `ui-*` components from `@logistics/shared/ui` over hand-rolled Tailwind.** Never reach for a raw Helm primitive in feature code — the `ui-*` components are the public surface. What exists today:
-  - **Forms**: `ui-form-field` (label/hint/error wrapper — auto-resolves the projected `[formField]`), `ui-text-field`, `ui-textarea-field`, `ui-select-field`, `ui-multiselect-field`, `ui-number-field`, `ui-currency-field`, `ui-unit-field`, `ui-date-field`, `ui-checkbox-field`, `ui-toggle-field`, `ui-password-field`, `ui-autocomplete-field`, `ui-search-field`, `ui-phone-field`, `ui-address-form`, `ui-language-picker`, plus the `ValidatedForm` directive (matches `form[formRoot]`)
-  - **Data**: `ui-data-table` with `<th uiSortHeader="Field">`
-  - **Content**: `ui-icon`, `ui-alert`, `ui-badge`, `ui-status-badge`, `ui-typography`, `ui-theme-toggle`
-  - **Layout**: `ui-divider`, `ui-container`, `ui-grid`, `ui-stack`, `ui-surface`, `ui-toolbar`, `ui-page-header`, `ui-dashboard-card`, `ui-tabs` (+ `ui-tab-list` / `ui-tab` / `ui-tab-panels` / `ui-tab-panel`), `ui-accordion` (+ `-panel` / `-header` / `-content`), `ui-stepper` (+ `ui-step-list` / `ui-step` / `ui-step-panels` / `ui-step-panel` and the `*uiStepContent` template), `ui-drawer`
-  - **Feedback**: `ui-empty-state`, `ui-error-state`, `ui-loading-skeleton`, `ui-data-container`, `ui-date-range-picker`, `ui-popover`
-  - **Menus**: `ui-menu` — a popup menu driven by a template ref: `<ui-menu #menu [items]="items()" />` plus `(click)="menu.toggle($event)"` on any trigger. Items are `UiMenuItem` (`icon` is a typed `IconName`, `variant: "destructive"` for danger rows). **Never import `MenuItem` from `primeng/api`.**
+- The UI library is **spartan/ui** — Helm components vendored in-repo under `projects/shared/src/lib/ui/primitives/` on top of `@spartan-ng/brain`. **PrimeNG is GONE** (removed in full; no dependency, no import, no `p-*` markup anywhere). Never reintroduce a `p-*` component or a `primeng/*` import — CI fails on it (`tools/gates/phase7.sh`).
+- **Always prefer a shared `ui-*` component from `@logistics/shared/ui` over hand-rolled Tailwind.** The Helm primitives under `ui/primitives/` are an implementation detail and are deliberately **not** re-exported — never reach for a raw `hlm*` directive in feature code. The full public catalogue:
+  - **Action**: `ui-button`, `ui-toggle-group`
+  - **Forms**: `ui-form-field` (label/hint/error wrapper — auto-resolves the projected `[formField]`), `ui-text-field`, `ui-textarea-field`, `ui-select-field`, `ui-multiselect-field`, `ui-number-field`, `ui-currency-field`, `ui-unit-field`, `ui-date-field`, `ui-checkbox-field`, `ui-toggle-field`, `ui-password-field`, `ui-autocomplete-field`, `ui-search-field`, `ui-phone-field`, `ui-editor` (lazy Quill), `ui-file-upload`, the composites `ui-address-form` / `ui-language-picker`, and the `ValidatedForm` directive (auto-applies to `form[formRoot]`)
+  - **Table**: `ui-data-table` with `<th uiSortHeader="Field">`, `ui-table-paginator`, `<tr uiSelectableRow>`, `[uiRowToggler]`, `ui-table-checkbox`, `ui-table-header-checkbox`
+  - **Content**: `ui-typography`, `ui-icon`, `ui-chart`, `ui-badge`, `ui-status-badge`, `ui-count-badge`, `ui-overlay-badge`, `ui-avatar`, `ui-alert`, `ui-menu`, `ui-timeline`, `ui-money-with-tax`, `ui-theme-toggle`
+  - **Layout**: `ui-stack`, `ui-surface`, `ui-container`, `ui-divider`, `ui-grid`, `ui-toolbar`, `ui-page-header`, `ui-card`, `ui-collapsible`, `ui-dashboard-card`, `ui-feature-row`, `ui-drawer`, `ui-tabs` (+ `ui-tab-list` / `ui-tab` / `ui-tab-panels` / `ui-tab-panel`), `ui-accordion` (+ `-panel` / `-header` / `-content`), `ui-stepper` (+ `ui-step-list` / `ui-step` / `ui-step-panels` / `ui-step-panel` and the `*uiStepContent` template)
+  - **Feedback**: `ui-dialog`, `ui-confirm-dialog`, `ui-confirm-delete-dialog`, `ui-popover`, `[uiTooltip]`, `ui-toaster`, `ui-spinner`, `ui-skeleton`, `ui-loading-skeleton`, `ui-progress`, `ui-empty-state`, `ui-error-state`, `ui-data-container`, `ui-date-range-picker`, `ui-lightbox`, `ui-pdf-viewer`, `ui-cookie-banner`
+  - **Menus**: `ui-menu` — a popup menu driven by a template ref: `<ui-menu #menu [items]="items()" />` plus `(click)="menu.toggle($event)"` on any trigger. Items are `UiMenuItem` (`icon` is a typed `IconName`; `variant: "destructive"` for danger rows; `visible: false` **removes** an item)
   - **Timeline**: `ui-timeline` with `*uiTimelineContent` (and optional `*uiTimelineMarker`) templates
-- `ui-chart` is still **landing during the migration** — check `projects/shared/src/lib/ui/` for what exists before hand-rolling one
+- Browse `/ui-lab` (lazy dev route in tms-portal) to see every component rendered in light and dark before building a new one.
 - **Never hide an `<ng-icon>` with a Tailwind display utility** (`hidden`, `inline`, …). `NgIcon` ships an unlayered `:host { display: inline-block }` component style, and unlayered CSS beats every `@layer` — including `@layer utilities`, where all Tailwind utilities live. The class lands in the DOM, the rule lands in the stylesheet, and the icon stays visible anyway. Rotate it (`rotate-180`) or wrap it in a `<span>` you hide instead.
-- **Icons**: `<ui-icon name="..."/>` only. Never `<i class="pi pi-*">`, never a raw `<ng-icon>` in feature code
-- **Toasts / confirms**: `ToastService` from `@logistics/shared` only. Never inject `MessageService` / `ConfirmationService`
+- **Icons**: `<ui-icon name="..."/>` only — never a raw `<ng-icon>` in feature code. `name` is the typed `IconName` union; an unregistered name renders a **blank** glyph, so `bun run check:icons` gates it.
+- **Toasts / confirms**: `ToastService` from `@logistics/shared` only.
 
 ## HTTP Caching
 

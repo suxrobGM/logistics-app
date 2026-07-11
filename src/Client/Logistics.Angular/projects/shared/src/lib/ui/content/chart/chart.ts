@@ -9,24 +9,9 @@ import {
   untracked,
   viewChild,
 } from "@angular/core";
-import {
-  ArcElement,
-  BarController,
-  BarElement,
-  CategoryScale,
-  Chart,
-  DoughnutController,
-  Filler,
-  Legend,
-  LinearScale,
-  LineController,
-  LineElement,
-  PieController,
-  PointElement,
-  Tooltip,
-  type ChartData,
-  type ChartOptions,
-} from "chart.js";
+// TYPE-ONLY. A value import here is what put 179KB of chart.js in tms-portal's INITIAL bundle —
+// see `loadChartJs` below. Types are erased, so this creates no runtime edge.
+import type { Chart, ChartData, ChartOptions } from "chart.js";
 
 /** The four chart types this app actually draws. Anything else needs a new controller registered. */
 export type UiChartType = "bar" | "line" | "doughnut" | "pie";
@@ -54,32 +39,67 @@ export type UiChartType = "bar" | "line" | "doughnut" | "pie";
  * and cost bytes.
  *
  * Registration is a function rather than a top-level `Chart.register(...)` call on purpose: a
- * module-level side effect would make this file unshakeable, and chart.js would then be linked into
- * customer-portal / admin-portal / website, none of which draw a chart.
+ * module-level side effect would make this file unshakeable.
+ *
+ * =================================================================================================
+ * WHY chart.js IS LOADED WITH `await import()` AND NOT A STATIC IMPORT
+ * =================================================================================================
+ * Avoiding the module-level side effect was NECESSARY BUT NOT SUFFICIENT, and the shortfall was
+ * measured, not guessed. With a static `import { Chart } from "chart.js"`, chart.js landed in
+ * **tms-portal's INITIAL chunk** — 179KB, eagerly, on every cold load of every page:
+ *
+ *     main-*.js   chart.js  179 kB   <== EAGER
+ *
+ * The side-effect-free reasoning holds for customer-portal / admin-portal / website: they draw no
+ * chart, nothing references `UiChart`, and chart.js is correctly absent from their bundles entirely.
+ * TMS is different, and the difference is not about side effects at all:
+ *
+ *   `app.ts` (EAGER, the root component) imports `{ Spinner, UiToaster }` from the
+ *   `@logistics/shared/ui` barrel -> `ui/index.ts` -> `content/index.ts` -> `chart/chart.ts`.
+ *   Ten LAZY routes then use `<ui-chart>` (home, trucks, expenses, and seven report pages). A module
+ *   reachable from the eager root AND shared by many lazy chunks gets hoisted by esbuild into the
+ *   COMMON chunk — which is `main`. So the component, and with it all of chart.js, is pulled forward
+ *   into the initial bundle.
+ *
+ * Before this migration `<p-chart>` came from `primeng/chart` — a separate package entry that
+ * esbuild put in its OWN lazy chunk. So the static import here was a silent 179KB regression against
+ * PrimeNG, and the pre-existing comment ("registration is a function, therefore it is shakeable")
+ * was the reason nobody looked.
+ *
+ * `await import("chart.js")` makes the eager/lazy question moot: there is no static edge for esbuild
+ * to hoist, chart.js gets its own chunk, and it is fetched the first time a chart actually renders.
+ * This is the same pattern `ui-editor` already uses for Quill (~43KB) — see `editor.ts`.
  */
 let registered = false;
 
-function registerChartJs(): void {
-  if (registered) {
-    return;
-  }
-  registered = true;
+/**
+ * Loads chart.js and registers the opt-in list exactly once. The dynamic `import()` is cached by the
+ * module system, so every call after the first resolves from memory with no second network fetch.
+ */
+async function loadChartJs(): Promise<typeof import("chart.js")> {
+  const m = await import("chart.js");
 
-  Chart.register(
-    BarController,
-    LineController,
-    DoughnutController,
-    PieController,
-    ArcElement,
-    BarElement,
-    LineElement,
-    PointElement,
-    CategoryScale,
-    LinearScale,
-    Filler,
-    Legend,
-    Tooltip,
-  );
+  if (!registered) {
+    registered = true;
+
+    m.Chart.register(
+      m.BarController,
+      m.LineController,
+      m.DoughnutController,
+      m.PieController,
+      m.ArcElement,
+      m.BarElement,
+      m.LineElement,
+      m.PointElement,
+      m.CategoryScale,
+      m.LinearScale,
+      m.Filler,
+      m.Legend,
+      m.Tooltip,
+    );
+  }
+
+  return m;
 }
 
 /**
@@ -140,8 +160,17 @@ export class UiChart {
   private builtType: UiChartType | null = null;
   private builtOptions: unknown = null;
 
+  /**
+   * Guards the window in which `import("chart.js")` is in flight. `destroy()` and every new
+   * `create()` bump it; a `create()` whose token is stale when its await resolves has been
+   * superseded (a type/options flip) or orphaned (the component was destroyed mid-import) and must
+   * NOT touch the canvas — `viewChild.required` throws once the view is gone, and a chart built
+   * after teardown leaks its ResizeObserver forever.
+   */
+  private generation = 0;
+
   constructor() {
-    afterNextRender(() => this.create());
+    afterNextRender(() => void this.create());
 
     effect(() => {
       const type = this.type();
@@ -168,7 +197,7 @@ export class UiChart {
 
     if (type !== this.builtType || options !== this.builtOptions) {
       this.destroy();
-      this.create();
+      void this.create();
       return;
     }
 
@@ -177,9 +206,19 @@ export class UiChart {
     chart.update();
   }
 
-  private create(): void {
-    registerChartJs();
+  private async create(): Promise<void> {
+    const token = ++this.generation;
 
+    const { Chart } = await loadChartJs();
+
+    // Superseded by a newer create(), or the component was destroyed, while the import() was in
+    // flight. Reading `this.canvas()` after teardown throws; building a chart after teardown leaks.
+    if (token !== this.generation) {
+      return;
+    }
+
+    // Re-read the inputs AFTER the await — they may have moved on while chart.js was loading, and
+    // `sync()` no-ops until `this.chart` exists, so this is the only place that reconciliation lands.
     const type = this.type();
     const options = this.options();
 
@@ -194,6 +233,8 @@ export class UiChart {
   }
 
   private destroy(): void {
+    // Invalidates any in-flight create() — see `generation`.
+    this.generation++;
     this.chart?.destroy();
     this.chart = null;
     this.builtType = null;

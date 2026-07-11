@@ -29,11 +29,11 @@ interface QuillLike {
 }
 
 /**
- * Rich-text editor. Replaces `<p-editor>` — one call site, the admin blog-post form.
+ * Rich-text editor. One call site, the admin blog-post form.
  *
- * Implements `FormValueControl<string>` and nothing else, like every other `ui-*-field`. NOT a
- * `ControlValueAccessor`: that is the governing rule of this repo's form layer, and the Phase 7
- * exit gate greps for it. `[formField]="form.content"` binds straight to `value`.
+ * Implements `FormValueControl<string>` and nothing else, like every other `ui-*-field` — never a
+ * legacy value accessor. That is the governing rule of this repo's form layer, and the exit gate
+ * greps for it. `[formField]="form.content"` binds straight to `value`.
  *
  * QUILL IS LOADED LAZILY (`await import("quill")`) and only when the component renders. It is ~43KB
  * min+gzip, it is needed on exactly one admin page, and a static import would put it in admin's

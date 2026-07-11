@@ -1,6 +1,5 @@
 import { CommonModule } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import {
   Api,
   cancelDataDeletion,
@@ -39,7 +38,6 @@ import { PageHeader, UiFormField } from "@/shared/components";
     Card,
     CommonModule,
     Container,
-    FormsModule,
     PageHeader,
     Spinner,
     Stack,

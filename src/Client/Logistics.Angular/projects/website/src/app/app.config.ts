@@ -9,8 +9,6 @@ import {
 import { BASE_NG_ICONS, provideSpartanHlm } from "@logistics/shared";
 import { provideApi } from "@logistics/shared/api";
 import { provideIcons } from "@ng-icons/core";
-import Aura from "@primeuix/themes/aura";
-import { providePrimeNG } from "primeng/config";
 import { WEBSITE_NG_ICONS } from "@/shared/icons/lucide-icons";
 import { environment } from "../environments/environment";
 import { routes } from "./app.routes";
@@ -35,15 +33,5 @@ export const appConfig: ApplicationConfig = {
     provideApi({
       baseUrl: environment.apiUrl,
     }),
-    providePrimeNG({
-      theme: {
-        preset: Aura,
-        options: {
-          darkModeSelector: false,
-        },
-      },
-    }),
-
-    // PrimeNG Services
   ],
 };

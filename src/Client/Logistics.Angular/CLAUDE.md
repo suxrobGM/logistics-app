@@ -39,7 +39,7 @@ Shared form building blocks live in `projects/shared/src/lib/ui/form/`, exported
 `ui-password-field`, `ui-autocomplete-field`, `ui-search-field`, `ui-phone-field`) and the
 composites `ui-address-form` / `ui-language-picker`.
 
-Each `*-field` implements `FormValueControl` only — **never** `ControlValueAccessor` — so
+Each `*-field` implements `FormValueControl` only — **never** a legacy value accessor — so
 `[formField]` binds straight to it.
 
 ### Field wrapper
@@ -114,10 +114,27 @@ Do **not** disable the submit button with `[disabled]="form().invalid()"` — ke
 
 - `projects/shared/src/styles/theme.css` — **canonical** shadcn token layer shared by tms / admin /
   customer (`--background`, `--card`, `--muted`, `--foreground`, `--border`, …). Light in `:root`,
-  dark in `.dark-theme`.
+  dark in `.dark-theme`. It also owns `color-scheme` (`light` on `:root`, `dark` on `.dark-theme`) —
+  that declaration is what makes native scrollbars, form controls and the page canvas follow the
+  theme. It is load-bearing: drop it and dark mode keeps light scrollbars.
 - `projects/tms-portal/src/styles/variables.css` — the TMS raw ramp (`--bg-base`, `--text-primary`,
   `--primary-500`, …) that `theme.css` keys the canonical tokens to.
-- `projects/tms-portal/src/app/core/theme/primeng-preset.ts` — **pending deletion** (migration step
-  S13). Do not add to it; do not reference it in new code.
+
+There is **no PrimeNG theme preset**. The four portals are styled entirely by `theme.css` + Tailwind;
+`primeng-preset.ts` and `providePrimeNG()` were deleted in the S13 migration step.
 
 For the `bg-elevated` / `bg-subtle` / `border-default` / `text-muted` rule (and the no-hardcoded-colors rule), see `angular-conventions.md`.
+
+## UI library
+
+**spartan/ui** (Helm, vendored in-repo) — see `.claude/rules/frontend/angular-conventions.md` for the
+full `ui-*` catalogue. PrimeNG is gone: no dependency, no import, no `p-*` markup. `tools/gates/phase7.sh`
+runs in CI and fails the build if any of it comes back.
+
+```bash
+bun run gate:phase7        # the PrimeNG exit gate (+ check:all as an independent cross-check)
+bun run check:all          # burndown + budgets + spartan-tokens + icons
+bun run ng test shared     # the shared-library specs
+```
+
+`/ui-lab` is a lazy dev route in tms-portal that renders every `ui-*` component in light and dark.

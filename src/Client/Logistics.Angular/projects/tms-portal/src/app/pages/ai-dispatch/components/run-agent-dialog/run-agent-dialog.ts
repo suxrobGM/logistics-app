@@ -1,5 +1,4 @@
 import { Component, computed, input, model, output } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import type { AiDispatchMode, AiQuotaStatusDto } from "@logistics/shared/api";
 import {
   Alert,
@@ -18,7 +17,7 @@ export interface RunAgentDialogData {
 @Component({
   selector: "app-run-agent-dialog",
   templateUrl: "./run-agent-dialog.html",
-  imports: [Alert, FormsModule, UiButton, UiDialog, UiTextareaField],
+  imports: [Alert, UiButton, UiDialog, UiTextareaField],
 })
 export class RunAgentDialog {
   public readonly visible = model(false);

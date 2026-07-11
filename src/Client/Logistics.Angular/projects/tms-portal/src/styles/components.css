@@ -1,15 +1,15 @@
 /**
  * TMS Portal - Custom Component Styles
- * App-specific components only - PrimeNG handled by definePreset
+ * App-specific components only; the shared design tokens live in shared/src/styles/theme.css.
  */
 
-/* === PrimeNG Select: left-align selected value and placeholder === */
-.p-select-label {
-  text-align: start;
-}
+/* (S13 removed a global `.p-select-label { text-align: start }` from here. It was the last live
+   `.p-*` selector in the repo, and it was already dead: no element in the rendered DOM carries a
+   `p-*` class any more, so the rule matched nothing. `ui-select-field`'s trigger is a flex row that
+   start-aligns its label by construction, so there was nothing to port.) */
 
 /* === Custom Animations === */
-/* Staggered children animation (not provided by PrimeNG) */
+/* Staggered children animation */
 @keyframes stagger-fade-in {
   from {
     opacity: 0;

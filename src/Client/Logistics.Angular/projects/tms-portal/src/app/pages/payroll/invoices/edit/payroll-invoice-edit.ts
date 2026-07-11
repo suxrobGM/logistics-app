@@ -1,6 +1,5 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, input, signal, type OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { Router, RouterModule } from "@angular/router";
 import {
@@ -48,7 +47,6 @@ interface PayrollFormValue {
     Divider,
     FormField,
     FormRoot,
-    FormsModule,
     Grid,
     PageHeader,
     PayrollLineItemsTable,

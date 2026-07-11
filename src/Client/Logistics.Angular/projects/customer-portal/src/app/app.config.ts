@@ -12,9 +12,7 @@ import { I18nService, TENANT_SETTINGS_PROVIDER } from "@logistics/shared/service
 import { provideIcons } from "@ng-icons/core";
 import { provideTranslateService } from "@ngx-translate/core";
 import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
-import Aura from "@primeuix/themes/aura";
 import { provideAuth } from "angular-auth-oidc-client";
-import { providePrimeNG } from "primeng/config";
 import { authConfig } from "@/core/auth";
 import { tenantInterceptor } from "@/core/interceptors";
 import { CustomerPortalSettingsProvider } from "@/core/services";
@@ -36,14 +34,6 @@ export const appConfig: ApplicationConfig = {
       withRouterConfig({ paramsInheritanceStrategy: "emptyOnly" }),
     ),
     importProvidersFrom(BrowserModule),
-    providePrimeNG({
-      theme: {
-        preset: Aura,
-        options: {
-          darkModeSelector: ".dark-theme",
-        },
-      },
-    }),
     provideApi({
       baseUrl: environment.apiUrl,
       tokenGetter: () => getAccessToken("customerportal"),

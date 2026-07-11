@@ -1,6 +1,5 @@
 import { DatePipe } from "@angular/common";
 import { Component, inject, signal, type OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import {
   Api,
   createApiKey,
@@ -28,7 +27,6 @@ import { UiFormField } from "@/shared/components";
   imports: [
     Alert,
     DatePipe,
-    FormsModule,
     Icon,
     Spinner,
     UiButton,

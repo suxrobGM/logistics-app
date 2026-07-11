@@ -17,8 +17,8 @@ import { focusFirstControl } from "../focus-control";
  *
  * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
  * signal-form controls into Reactive and Template-Driven forms automatically, so this one
- * component binds via `[formField]`, `formControlName` and `[(ngModel)]` alike — no
- * `ControlValueAccessor`, no compat shim.
+ * component binds via `[formField]` with no value-accessor glue and no compat
+ * shim.
  *
  * The inner native textarea is styled by spartan's `hlmTextarea` and driven with plain value/event
  * bindings. It used to be PrimeNG's `pTextarea`, the one component in all of primeng that subscribes

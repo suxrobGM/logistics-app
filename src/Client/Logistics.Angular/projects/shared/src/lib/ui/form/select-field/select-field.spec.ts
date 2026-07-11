@@ -1,11 +1,10 @@
 /**
- * Proves the wrapper contract that the whole PrimeNG -> spartan migration rests on.
+ * Proves the wrapper contract that the whole `ui-*-field` layer rests on.
  *
- * `UiSelectField` implements ONLY `FormValueControl`. It must therefore work:
+ * `UiSelectField` implements ONLY `FormValueControl` — no value-accessor glue of any kind. It must work:
  *   1. under Signal Forms `[formField]`,
- *   2. under legacy Reactive Forms `formControlName` (Angular 22's automatic bridge),
- *   3. inside `<ui-form-field>`, whose `contentChild(NgControl)` must still resolve and
- *      render validation errors — under BOTH form systems.
+ *   2. inside `<ui-form-field>`, whose `contentChild(NgControl)` must still resolve and
+ *      render validation errors.
  *
  * The inner spartan `hlm-select` (brain `BrnSelect` + `BrnPopover`) is driven with plain
  * `[value]` / `(valueChange)`. `uiDetachedControl` severs the ambient `NgControl` so brain's
@@ -16,8 +15,7 @@
  */
 import { Component, provideZonelessChangeDetection, signal, viewChild } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { form, FormField, required } from "@angular/forms/signals";
+import { disabled, form, FormField, required } from "@angular/forms/signals";
 import { By } from "@angular/platform-browser";
 import { BrnSelect } from "@spartan-ng/brain/select";
 import { UiFormField } from "../form-field/form-field";
@@ -27,32 +25,6 @@ const OPTIONS = [
   { label: "Red", value: "red" },
   { label: "Green", value: "green" },
 ];
-
-/** Reactive Forms host: wrapper bound with formControlName, wrapped in ui-form-field chrome. */
-@Component({
-  selector: "ui-host-reactive-select",
-  imports: [UiSelectField, UiFormField, ReactiveFormsModule],
-  template: `
-    <form [formGroup]="fg">
-      <ui-form-field label="Color" for="color" [required]="true">
-        <ui-select-field
-          id="color"
-          formControlName="color"
-          [options]="options"
-          optionLabel="label"
-          optionValue="value"
-        />
-      </ui-form-field>
-    </form>
-  `,
-})
-class HostReactiveSelect {
-  readonly options = OPTIONS;
-  readonly fg = new FormGroup({
-    color: new FormControl<string | null>("green", { validators: [Validators.required] }),
-  });
-  readonly field = viewChild.required(UiSelectField);
-}
 
 /** Signal Forms host: the SAME wrapper bound with [formField]. */
 @Component({
@@ -71,8 +43,42 @@ class HostReactiveSelect {
   `,
 })
 class HostSignalSelect {
+  /** Flips the schema's disabled rule — proves the wrapper REACTS, not just reads once. */
+  readonly lock = signal(false);
   readonly options = OPTIONS;
   readonly model = signal<{ color: string | null }>({ color: null });
+  readonly f = form(this.model, (p) => {
+    required(p.color);
+    // Reactive disabled rule — the shape every real form uses:
+    //   disabled(p.truckId, { when: () => this.mode() === "edit" })
+    disabled(p.color, { when: () => this.lock() });
+  });
+  readonly field = viewChild.required(UiSelectField);
+}
+
+/**
+ * Same host, but SEEDED with a value — so "the initial model value is rendered on first paint" is
+ * still covered. (It used to be covered by the Reactive-Forms host, whose FormControl was seeded
+ * with "green"; that host is gone, and the plain signal host starts null.)
+ */
+@Component({
+  selector: "ui-host-signal-select-seeded",
+  imports: [UiSelectField, UiFormField, FormField],
+  template: `
+    <ui-form-field label="Color" for="color" [required]="true">
+      <ui-select-field
+        id="color"
+        [formField]="f.color"
+        [options]="options"
+        optionLabel="label"
+        optionValue="value"
+      />
+    </ui-form-field>
+  `,
+})
+class HostSignalSelectSeeded {
+  readonly options = OPTIONS;
+  readonly model = signal<{ color: string | null }>({ color: "green" });
   readonly f = form(this.model, (p) => {
     required(p.color);
   });
@@ -102,54 +108,21 @@ function pick(fixture: ComponentFixture<unknown>, value: string | null): void {
   brnSelect(fixture).value.set(value);
 }
 
+/** The trigger the user actually clicks — spartan renders it as a real <button>. */
+function triggerButton(fixture: ComponentFixture<unknown>): HTMLButtonElement {
+  return fixture.nativeElement.querySelector("hlm-select-trigger button") as HTMLButtonElement;
+}
+
 describe("UiSelectField — a FormValueControl-only wrapper", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({ providers: [provideZonelessChangeDetection()] });
   });
 
   it("renders the select and reflects the initial value", async () => {
-    const fixture = TestBed.createComponent(HostReactiveSelect);
+    const fixture = TestBed.createComponent(HostSignalSelectSeeded);
     await settle(fixture);
     expect(fixture.componentInstance.field().value()).toBe("green");
     expect(triggerText(fixture)).toContain("Green");
-  });
-
-  describe("under legacy Reactive Forms (formControlName)", () => {
-    it("syncs control -> view", async () => {
-      const fixture = TestBed.createComponent(HostReactiveSelect);
-      await settle(fixture);
-
-      fixture.componentInstance.fg.controls.color.setValue("red");
-      await settle(fixture);
-
-      expect(fixture.componentInstance.field().value()).toBe("red");
-      expect(triggerText(fixture)).toContain("Red");
-    });
-
-    it("syncs view -> control (selecting an option)", async () => {
-      const fixture = TestBed.createComponent(HostReactiveSelect);
-      await settle(fixture);
-
-      pick(fixture, "red");
-      await settle(fixture);
-
-      expect(fixture.componentInstance.fg.controls.color.value).toBe("red");
-    });
-
-    it("propagates disabled state from the control", async () => {
-      const fixture = TestBed.createComponent(HostReactiveSelect);
-      await settle(fixture);
-
-      fixture.componentInstance.fg.controls.color.disable();
-      await settle(fixture);
-
-      // The wrapper's own contract: the Reactive Forms bridge drives its `disabled` input,
-      // and the wrapper forwards it to the inner control. Assert the wrapper's resolved state
-      // and that the trigger button is disabled — not a spartan-internal attribute.
-      expect(fixture.componentInstance.field().disabled()).toBe(true);
-      const button = fixture.nativeElement.querySelector("hlm-select-trigger button");
-      expect(button?.disabled).toBe(true);
-    });
   });
 
   describe("under Signal Forms ([formField])", () => {
@@ -184,6 +157,30 @@ describe("UiSelectField — a FormValueControl-only wrapper", () => {
 
       expect(fixture.componentInstance.f.color().invalid()).toBe(true);
       expect(fixture.nativeElement.textContent).toContain("This field is required.");
+    });
+    /**
+     * REGRESSION GUARD. `disabled` is a first-class part of the FormValueControl contract and is
+     * load-bearing in production (`disabled(p.salary, { when: ... })` in employee-edit,
+     * `disabled(p.truckId, ...)` in the expense forms, tax-rates, timesheets, ...).
+     *
+     * It used to be covered ONLY by the legacy Reactive-Forms host ("propagates disabled state from
+     * the control"). That host was deleted with PrimeNG, and the assertion went with it — leaving the
+     * whole `disabled` dimension of all 10 wrappers untested. This is its Signal Forms twin.
+     */
+    it("propagates the schema's disabled rule to the control — and reacts when it flips", async () => {
+      const fixture = TestBed.createComponent(HostSignalSelect);
+      await settle(fixture);
+
+      expect(fixture.componentInstance.f.color().disabled()).toBe(false);
+      expect(fixture.componentInstance.field().disabled()).toBe(false);
+      expect(triggerButton(fixture).disabled).toBe(false);
+
+      fixture.componentInstance.lock.set(true);
+      await settle(fixture);
+
+      expect(fixture.componentInstance.f.color().disabled()).toBe(true);
+      expect(fixture.componentInstance.field().disabled()).toBe(true);
+      expect(triggerButton(fixture).disabled).toBe(true);
     });
   });
 });

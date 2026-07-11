@@ -20,8 +20,8 @@ import { focusFirstControl } from "../focus-control";
  *
  * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
  * signal-form controls into Reactive and Template-Driven forms automatically, so this one
- * component binds via `[formField]`, `formControlName` and `[(ngModel)]` alike — no
- * `ControlValueAccessor`, no compat shim.
+ * component binds via `[formField]` with no value-accessor glue and no compat
+ * shim.
  *
  * The inner spartan `hlm-select-multiple` (brain `BrnSelectMultiple` + `BrnPopover`) is driven with
  * plain `[value]` / `(valueChange)`. `uiDetachedControl` severs the ambient `NgControl` so brain's
@@ -29,7 +29,7 @@ import { focusFirstControl } from "../focus-control";
  *
  * @example
  * <ui-form-field label="Tags" for="tags" [required]="true">
- *   <ui-multiselect-field id="tags" formControlName="tags"
+ *   <ui-multiselect-field id="tags" [formField]="form.tags"
  *     [options]="tagOptions" optionLabel="label" optionValue="value" />
  * </ui-form-field>
  */

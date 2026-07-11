@@ -1,5 +1,4 @@
 import { Component, computed, inject, input, model, viewChild } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import type { LoadDto } from "@logistics/shared/api";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
@@ -29,7 +28,6 @@ import { AttachLoadDialog } from "../attach-load-dialog/attach-load-dialog";
     Badge,
     CurrencyFormatPipe,
     DistanceUnitPipe,
-    FormsModule,
     Icon,
     LoadForm,
     LoadStatusTag,

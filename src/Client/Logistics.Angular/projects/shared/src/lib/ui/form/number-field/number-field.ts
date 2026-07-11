@@ -21,7 +21,7 @@ export type NumberFieldMode = "decimal" | "currency";
  * `prefixLabel` / `suffixLabel` addon for unit inputs.
  *
  * Implements Angular's `FormValueControl` and nothing else — binds via `[formField]`,
- * `formControlName` and `[(ngModel)]` alike, with no `ControlValueAccessor`.
+ * with no value-accessor glue of any kind.
  *
  * Formatting is applied on blur (via `Intl.NumberFormat`) and the raw number is shown while
  * editing — a small, deliberate simplification of `p-inputnumber`'s live caret formatting.

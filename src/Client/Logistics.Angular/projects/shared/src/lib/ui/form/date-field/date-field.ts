@@ -22,8 +22,8 @@ const pad = (value: number): string => String(value).padStart(2, "0");
  *
  * Implements Angular's `FormValueControl` and nothing else. Angular 22 bridges custom
  * signal-form controls into Reactive and Template-Driven forms automatically, so this one
- * component binds via `[formField]`, `formControlName` and `[(ngModel)]` alike — no
- * `ControlValueAccessor`, no compat shim.
+ * component binds via `[formField]` with no value-accessor glue and no compat
+ * shim.
  *
  * The inner spartan `hlm-date-picker` (brain calendar + `BrnPopover`, native date adapter) is
  * driven with plain `[date]` / `(dateChange)`. `uiDetachedControl` severs the ambient `NgControl`
@@ -33,7 +33,7 @@ const pad = (value: number): string => String(value).padStart(2, "0");
  *
  * @example
  * <ui-form-field label="Ship date" for="shipDate" [required]="true">
- *   <ui-date-field id="shipDate" formControlName="shipDate" [showIcon]="true" />
+ *   <ui-date-field id="shipDate" [formField]="form.shipDate" [showIcon]="true" />
  * </ui-form-field>
  */
 @Component({

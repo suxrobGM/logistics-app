@@ -494,17 +494,38 @@ describe("ToastService — the contract every call site depends on", () => {
     });
 
     /**
-     * CHARACTERIZATION of today's behaviour: `ToastService.confirm` forwards `closeOnEscape:
-     * undefined`, which the rendering layer coerces to `false` — so a dialog that does not opt in
-     * is NOT escapable. Most call sites (incl. every `confirmDelete`) are in that bucket.
-     * If S8 deliberately makes every dialog escapable, this test is the one to change — and the
-     * change is safe in the only direction that matters (Escape may reject; it must never accept).
+     * REGRESSION GUARD — this test used to assert the OPPOSITE, as a "characterization of today's
+     * behaviour", and today's behaviour was a bug.
+     *
+     * `ToastService.confirm` forwarded `closeOnEscape ?? false` on the belief that PrimeNG "coerced
+     * undefined to false". It did not. In primeng-confirmdialog.mjs (21.1.6) `closeOnEscape = true`
+     * is an own class field (line 176) and the template binds `option('closeOnEscape')` (line 529),
+     * whose `option()` resolves against the COMPONENT, not the confirmation object (line 399:
+     * `const source = this`). A call site could not influence it; every confirm dialog in the app
+     * resolved it to TRUE. So Escape cancelled a delete confirmation, everywhere — and `?? false`
+     * silently removed that from all 72 confirm()/confirmDelete() call sites.
+     *
+     * The default is now `true`, restoring parity. Escape REJECTS — never accepts.
      */
-    it("without closeOnEscape: Escape does nothing — the dialog stays open, neither callback fires", async () => {
+    it("by default Escape rejects and closes — PrimeNG's closeOnEscape defaulted to TRUE", async () => {
       const accept = vi.fn();
       const reject = vi.fn();
 
       await openConfirm({ message: "Delete it?", accept, reject });
+      pressEscape();
+      await settle();
+
+      expect(accept).not.toHaveBeenCalled();
+      expect(reject).toHaveBeenCalledTimes(1);
+      expect(confirmSurface()).toBeNull();
+    });
+
+    /** The opt-OUT still works: a caller may explicitly refuse Escape. */
+    it("closeOnEscape: false — Escape does nothing, the dialog stays open, neither callback fires", async () => {
+      const accept = vi.fn();
+      const reject = vi.fn();
+
+      await openConfirm({ message: "Delete it?", closeOnEscape: false, accept, reject });
       pressEscape();
       await settle();
 

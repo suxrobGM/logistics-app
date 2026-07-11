@@ -1,41 +1,19 @@
 /**
- * Proves the wrapper contract that the whole PrimeNG -> spartan migration rests on, for the
- * numeric wrapper. `UiNumberField` implements ONLY `FormValueControl<number | null>`. It must
- * therefore work:
+ * Proves the wrapper contract that the whole `ui-*-field` layer rests on, for the numeric wrapper.
+ * `UiNumberField` implements ONLY `FormValueControl<number | null>` — no value-accessor glue of any
+ * kind. It must therefore work:
  *   1. under Signal Forms `[formField]`,
- *   2. under legacy Reactive Forms `formControlName` (Angular 22's automatic bridge),
- *   3. inside `<ui-form-field>`, whose `contentChild(NgControl)` must still resolve and render
- *      validation errors — under BOTH form systems.
+ *   2. inside `<ui-form-field>`, whose `contentChild(NgControl)` must still resolve and render
+ *      validation errors.
  *
- * The inner `p-inputnumber` is driven by a standalone NgModel and updates its model on blur
- * (`onInputBlur`), which is also the moment it emits `onBlur` -> `touch`. The `enter()` helper
- * below therefore simulates a real "type then leave the field" interaction.
+ * The inner numeric input commits its value on blur, which is also the moment it emits `touch`.
+ * The `enter()` helper below therefore simulates a real "type then leave the field" interaction.
  */
 import { Component, provideZonelessChangeDetection, signal, viewChild } from "@angular/core";
 import { TestBed, type ComponentFixture } from "@angular/core/testing";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { form, FormField, required } from "@angular/forms/signals";
+import { disabled, form, FormField, required } from "@angular/forms/signals";
 import { UiFormField } from "../form-field/form-field";
 import { UiNumberField } from "./number-field";
-
-/** Reactive Forms host: wrapper bound with formControlName, wrapped in ui-form-field chrome. */
-@Component({
-  selector: "ui-host-reactive-number",
-  imports: [UiNumberField, UiFormField, ReactiveFormsModule],
-  template: `
-    <form [formGroup]="fg">
-      <ui-form-field label="Rate" for="rate" [required]="true">
-        <ui-number-field id="rate" formControlName="rate" />
-      </ui-form-field>
-    </form>
-  `,
-})
-class HostReactiveNumber {
-  readonly fg = new FormGroup({
-    rate: new FormControl<number | null>(10, { validators: [Validators.required] }),
-  });
-  readonly field = viewChild.required(UiNumberField);
-}
 
 /** Signal Forms host: the SAME wrapper bound with [formField]. */
 @Component({
@@ -48,9 +26,14 @@ class HostReactiveNumber {
   `,
 })
 class HostSignalNumber {
+  /** Flips the schema's disabled rule — proves the wrapper REACTS, not just reads once. */
+  readonly lock = signal(false);
   readonly model = signal<{ rate: number | null }>({ rate: 10 });
   readonly f = form(this.model, (p) => {
     required(p.rate);
+    // Reactive disabled rule — the shape every real form uses:
+    //   disabled(p.truckId, { when: () => this.mode() === "edit" })
+    disabled(p.rate, { when: () => this.lock() });
   });
   readonly field = viewChild.required(UiNumberField);
 }
@@ -81,46 +64,12 @@ describe("UiNumberField — a FormValueControl-only wrapper", () => {
     TestBed.configureTestingModule({ providers: [provideZonelessChangeDetection()] });
   });
 
-  it("renders the PrimeNG input-number and reflects the initial value", async () => {
-    const fixture = TestBed.createComponent(HostReactiveNumber);
+  it("renders the input-number and reflects the initial value", async () => {
+    const fixture = TestBed.createComponent(HostSignalNumber);
     await settle(fixture);
     expect(input(fixture).value).toContain("10");
     expect(fixture.componentInstance.field().value()).toBe(10);
   });
-
-  describe("under legacy Reactive Forms (formControlName)", () => {
-    it("syncs control -> view", async () => {
-      const fixture = TestBed.createComponent(HostReactiveNumber);
-      await settle(fixture);
-
-      fixture.componentInstance.fg.controls.rate.setValue(99);
-      await settle(fixture);
-
-      expect(fixture.componentInstance.field().value()).toBe(99);
-      expect(input(fixture).value).toContain("99");
-    });
-
-    it("syncs view -> control (typing then blur)", async () => {
-      const fixture = TestBed.createComponent(HostReactiveNumber);
-      await settle(fixture);
-
-      enter(fixture, "42");
-      await settle(fixture);
-
-      expect(fixture.componentInstance.fg.controls.rate.value).toBe(42);
-    });
-
-    it("propagates disabled state from the control", async () => {
-      const fixture = TestBed.createComponent(HostReactiveNumber);
-      await settle(fixture);
-
-      fixture.componentInstance.fg.controls.rate.disable();
-      await settle(fixture);
-
-      expect(input(fixture).disabled).toBe(true);
-    });
-  });
-
   describe("under Signal Forms ([formField])", () => {
     it("syncs field -> view", async () => {
       const fixture = TestBed.createComponent(HostSignalNumber);
@@ -155,6 +104,30 @@ describe("UiNumberField — a FormValueControl-only wrapper", () => {
       expect(fixture.componentInstance.model().rate).toBeNull();
       expect(fixture.componentInstance.f.rate().invalid()).toBe(true);
       expect(fixture.nativeElement.textContent).toContain("This field is required.");
+    });
+    /**
+     * REGRESSION GUARD. `disabled` is a first-class part of the FormValueControl contract and is
+     * load-bearing in production (`disabled(p.salary, { when: ... })` in employee-edit,
+     * `disabled(p.truckId, ...)` in the expense forms, tax-rates, timesheets, ...).
+     *
+     * It used to be covered ONLY by the legacy Reactive-Forms host ("propagates disabled state from
+     * the control"). That host was deleted with PrimeNG, and the assertion went with it — leaving the
+     * whole `disabled` dimension of all 10 wrappers untested. This is its Signal Forms twin.
+     */
+    it("propagates the schema's disabled rule to the control — and reacts when it flips", async () => {
+      const fixture = TestBed.createComponent(HostSignalNumber);
+      await settle(fixture);
+
+      expect(fixture.componentInstance.f.rate().disabled()).toBe(false);
+      expect(fixture.componentInstance.field().disabled()).toBe(false);
+      expect(input(fixture).disabled).toBe(false);
+
+      fixture.componentInstance.lock.set(true);
+      await settle(fixture);
+
+      expect(fixture.componentInstance.f.rate().disabled()).toBe(true);
+      expect(fixture.componentInstance.field().disabled()).toBe(true);
+      expect(input(fixture).disabled).toBe(true);
     });
   });
 });

@@ -1,6 +1,5 @@
 import { CommonModule, DatePipe, PercentPipe } from "@angular/common";
 import { Component, inject, input, signal, type OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import {
   Api,
@@ -42,7 +41,6 @@ import { InvoiceStatusTag, PageHeader, PaymentStatusTag } from "@/shared/compone
     CurrencyFormatPipe,
     DatePipe,
     Divider,
-    FormsModule,
     Grid,
     Icon,
     InvoiceStatusTag,
