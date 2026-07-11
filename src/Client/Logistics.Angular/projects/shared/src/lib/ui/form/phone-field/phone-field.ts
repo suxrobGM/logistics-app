@@ -14,8 +14,9 @@ import { FormsModule } from "@angular/forms";
 import type { FormValueControl, ValidationError } from "@angular/forms/signals";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputMaskModule } from "primeng/inputmask";
-import { SelectModule } from "primeng/select";
 import { DEFAULT_PHONE_COUNTRY, PHONE_COUNTRIES, type PhoneCountry } from "../../../constants";
+import { HlmSelectImports } from "../../primitives/select";
+import { DetachedControl } from "../detached-control";
 import { focusFirstControl } from "../focus-control";
 
 /**
@@ -35,7 +36,7 @@ import { focusFirstControl } from "../focus-control";
 @Component({
   selector: "ui-phone-field",
   templateUrl: "./phone-field.html",
-  imports: [InputGroupModule, InputMaskModule, SelectModule, FormsModule],
+  imports: [InputGroupModule, InputMaskModule, FormsModule, HlmSelectImports, DetachedControl],
 })
 export class PhoneField implements FormValueControl<string | null> {
   /** The control's value in E.164 format. Required by `FormValueControl`. */
@@ -66,6 +67,10 @@ export class PhoneField implements FormValueControl<string | null> {
   protected readonly phoneNumber = signal<string>("");
 
   protected readonly currentMask = computed(() => this.selectedCountry().mask);
+
+  /** Trigger shows only the dial code; the option list shows the full country name. */
+  protected readonly countryDialCode = (country: unknown): string =>
+    (country as PhoneCountry | null)?.dialCode ?? "";
 
   /**
    * The last value we emitted from a user edit. When `value()` matches it, the change

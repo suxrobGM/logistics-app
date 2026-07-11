@@ -1,10 +1,8 @@
 <div>
-
   <ui-form-field label="Address Line 1" for="addressLine1" [required]="true">
     <input
-      pInputText
+      hlmInput
       id="addressLine1"
-      class="w-full"
       [value]="parts().addressLine1"
       [disabled]="disabled()"
       (input)="onLine1Input($event)"
@@ -14,9 +12,8 @@
 
   <ui-form-field label="Address Line 2" for="addressLine2" hint="Optional">
     <input
-      pInputText
+      hlmInput
       id="addressLine2"
-      class="w-full"
       [value]="parts().addressLine2 ?? ''"
       [disabled]="disabled()"
       (input)="onLine2Input($event)"
@@ -26,9 +23,8 @@
 
   <ui-form-field label="City" for="city" [required]="true">
     <input
-      pInputText
+      hlmInput
       id="city"
-      class="w-full"
       [value]="parts().city"
       [disabled]="disabled()"
       (input)="onCityInput($event)"
@@ -38,23 +34,22 @@
 
   <ui-form-field [label]="stateLabel()" for="state" [required]="true">
     @if (hasStateOptions()) {
-      <p-select
-        inputId="state"
-        [ngModel]="parts().state"
-        [ngModelOptions]="{ standalone: true }"
-        (ngModelChange)="onStateSelect($event)"
-        [options]="stateOptions()"
+      <ui-select-field
+        id="state"
+        [value]="parts().state"
+        (selectionChange)="onStateSelect($any($event))"
+        [options]="$any(stateOptions())"
+        optionLabel="label"
+        optionValue="value"
         [placeholder]="'Select a ' + stateLabel().toLowerCase()"
-        class="w-full"
         [filter]="true"
         [disabled]="disabled()"
-        (onBlur)="touch.emit()"
+        (touch)="touch.emit()"
       />
     } @else {
       <input
-        pInputText
+        hlmInput
         id="state"
-        class="w-full"
         [value]="parts().state"
         [disabled]="disabled()"
         (input)="onStateInput($event)"
@@ -65,9 +60,8 @@
 
   <ui-form-field label="Zip Code" for="zipCode" [required]="true">
     <input
-      pInputText
+      hlmInput
       id="zipCode"
-      class="w-full"
       [value]="parts().zipCode"
       [disabled]="disabled()"
       (input)="onZipCodeInput($event)"
@@ -76,17 +70,17 @@
   </ui-form-field>
 
   <ui-form-field label="Country" for="country" [required]="true">
-    <p-select
-      inputId="country"
-      [ngModel]="parts().country"
-      [ngModelOptions]="{ standalone: true }"
-      (ngModelChange)="onCountrySelect($event)"
+    <ui-select-field
+      id="country"
+      [value]="parts().country"
+      (selectionChange)="onCountrySelect($any($event))"
       [options]="countries()"
+      optionLabel="label"
+      optionValue="value"
       placeholder="Select a country"
-      class="w-full"
       [filter]="true"
       [disabled]="disabled()"
-      (onBlur)="touch.emit()"
+      (touch)="touch.emit()"
     />
   </ui-form-field>
 </div>

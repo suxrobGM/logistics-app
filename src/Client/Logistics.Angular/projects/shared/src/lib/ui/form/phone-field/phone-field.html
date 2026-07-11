@@ -1,19 +1,21 @@
 <p-inputgroup>
-  <p-select
-    [options]="countries"
-    [ngModel]="selectedCountry()"
-    (ngModelChange)="onCountryChange($event)"
-    optionLabel="dialCode"
+  <hlm-select
+    uiDetachedControl
+    class="flex-none"
+    [value]="selectedCountry()"
+    (valueChange)="onCountryChange($any($event))"
+    [itemToString]="countryDialCode"
     [disabled]="disabled()"
-    [style]="{ minWidth: '7rem', flex: 'none' }"
   >
-    <ng-template #selectedItem let-item>
-      <span>{{ item.dialCode }}</span>
-    </ng-template>
-    <ng-template #item let-item>
-      <span>{{ item.dialCode }} {{ item.name }}</span>
-    </ng-template>
-  </p-select>
+    <hlm-select-trigger class="min-w-28 rounded-r-none">
+      <hlm-select-value />
+    </hlm-select-trigger>
+    <hlm-select-content *hlmSelectPortal>
+      @for (country of countries; track country.iso) {
+        <hlm-select-item [value]="country">{{ country.dialCode }} {{ country.name }}</hlm-select-item>
+      }
+    </hlm-select-content>
+  </hlm-select>
   <p-inputmask
     [mask]="currentMask()"
     [ngModel]="phoneNumber()"

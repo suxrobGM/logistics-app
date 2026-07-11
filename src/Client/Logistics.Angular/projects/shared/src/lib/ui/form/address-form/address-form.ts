@@ -8,11 +8,7 @@ import {
   model,
   output,
 } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import type { FormValueControl } from "@angular/forms/signals";
-import { InputTextModule } from "primeng/inputtext";
-import { KeyFilterModule } from "primeng/keyfilter";
-import { SelectModule } from "primeng/select";
 import type { Address } from "../../../api/generated/models";
 import {
   AU_STATES_OPTIONS,
@@ -25,8 +21,10 @@ import {
 } from "../../../constants";
 import type { SelectOption } from "../../../models/select-option";
 import { findOption } from "../../../utils/select-utils";
+import { HlmInput } from "../../primitives/input";
 import { focusFirstControl } from "../focus-control";
 import { UiFormField } from "../form-field/form-field";
+import { UiSelectField } from "../select-field/select-field";
 
 /** Country-specific state/province option lists. Countries not listed get a free-text input. */
 const COUNTRY_STATE_OPTIONS: Record<string, SelectOption[]> = {
@@ -93,7 +91,7 @@ function parseAddress(value: Address | null): AddressParts {
 @Component({
   selector: "ui-address-form",
   templateUrl: "./address-form.html",
-  imports: [FormsModule, UiFormField, SelectModule, InputTextModule, KeyFilterModule],
+  imports: [UiFormField, UiSelectField, HlmInput],
 })
 export class AddressForm implements FormValueControl<Address | null> {
   /** The control's value. Required by `FormValueControl`. */

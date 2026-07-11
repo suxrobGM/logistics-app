@@ -1,8 +1,7 @@
-<p-select
+<ui-select-field
   [options]="languages()"
   optionLabel="label"
   optionValue="code"
-  [ngModel]="value()"
-  (ngModelChange)="onChange($event)"
-  appendTo="body"
+  [value]="value()"
+  (selectionChange)="onChange($any($event))"
 />

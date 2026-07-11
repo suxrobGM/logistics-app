@@ -1,7 +1,6 @@
 import { Component, computed, inject, input } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { SelectModule } from "primeng/select";
 import { I18nService } from "../../../services/i18n.service";
+import { UiSelectField } from "../select-field/select-field";
 
 export interface LanguageOption {
   code: string;
@@ -11,7 +10,7 @@ export interface LanguageOption {
 @Component({
   selector: "ui-language-picker",
   templateUrl: "./language-picker.html",
-  imports: [FormsModule, SelectModule],
+  imports: [UiSelectField],
 })
 export class LanguagePicker {
   private readonly i18n = inject(I18nService);
