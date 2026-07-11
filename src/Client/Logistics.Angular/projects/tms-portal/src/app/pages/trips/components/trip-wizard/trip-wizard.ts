@@ -1,7 +1,6 @@
 import { Component, effect, inject, input, output } from "@angular/core";
 import type { CreateTripLoadCommand, TripLoadDto, TripStopDto } from "@logistics/shared/api";
 import { Stack } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
@@ -35,7 +34,6 @@ export interface TripWizardValue {
   providers: [TripWizardStore],
   imports: [
     InputGroupModule,
-    ButtonModule,
     InputTextModule,
     StepperModule,
     TooltipModule,

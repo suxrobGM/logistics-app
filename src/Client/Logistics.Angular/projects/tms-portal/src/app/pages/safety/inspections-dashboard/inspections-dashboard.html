@@ -70,21 +70,17 @@
 
   <!-- Quick Actions -->
   <div class="mb-6 flex flex-wrap gap-2">
-    <p-button
-      label="Report Accident"
-      icon="pi pi-plus"
-      (click)="navigateTo('/safety/accidents/add')"
-    />
-    <p-button
+    <ui-button label="Report Accident" icon="plus" (click)="navigateTo('/safety/accidents/add')" />
+    <ui-button
+      appearance="outlined"
       label="View DVIRs"
-      icon="pi pi-clipboard"
-      [outlined]="true"
+      icon="clipboard"
       (click)="navigateTo('/safety/dvir')"
     />
-    <p-button
+    <ui-button
+      appearance="outlined"
       label="Condition Reports"
-      icon="pi pi-file-edit"
-      [outlined]="true"
+      icon="file-edit"
       (click)="navigateTo('/safety/condition-reports')"
     />
   </div>
@@ -95,7 +91,7 @@
       <ng-template #header>
         <div class="flex items-center justify-between p-4 pb-0">
           <h3 class="text-lg font-semibold">Recent DVIRs</h3>
-          <p-button label="View All" [link]="true" (click)="navigateTo('/safety/dvir')" />
+          <ui-button appearance="link" label="View All" (click)="navigateTo('/safety/dvir')" />
         </div>
       </ng-template>
 
@@ -136,7 +132,7 @@
       <ng-template #header>
         <div class="flex items-center justify-between p-4 pb-0">
           <h3 class="text-lg font-semibold">Recent Accidents</h3>
-          <p-button label="View All" [link]="true" (click)="navigateTo('/safety/accidents')" />
+          <ui-button appearance="link" label="View All" (click)="navigateTo('/safety/accidents')" />
         </div>
       </ng-template>
 
@@ -184,9 +180,9 @@
       <ng-template #header>
         <div class="flex items-center justify-between p-4 pb-0">
           <h3 class="text-lg font-semibold">Recent Condition Reports</h3>
-          <p-button
+          <ui-button
+            appearance="link"
             label="View All"
-            [link]="true"
             (click)="navigateTo('/safety/condition-reports')"
           />
         </div>

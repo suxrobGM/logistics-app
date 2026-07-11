@@ -9,8 +9,7 @@ import {
   type MaintenanceScheduleDto,
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Icon, Stack, Typography, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Icon, Stack, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
@@ -20,21 +19,21 @@ import { DashboardCard, PageHeader, StatCard } from "@/shared/components";
   selector: "app-maintenance-dashboard",
   templateUrl: "./maintenance-dashboard.html",
   imports: [
-    ButtonModule,
-    TooltipModule,
     CardModule,
-    UiDataTable,
-    TagModule,
-    DatePipe,
     CurrencyFormatPipe,
-    DecimalPipe,
-    PageHeader,
-    StatCard,
     DashboardCard,
+    DatePipe,
+    DecimalPipe,
     Grid,
     Icon,
+    PageHeader,
     Stack,
+    StatCard,
+    TagModule,
+    TooltipModule,
     Typography,
+    UiButton,
+    UiDataTable,
   ],
 })
 export class MaintenanceDashboardPage implements OnInit {

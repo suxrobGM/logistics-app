@@ -91,7 +91,10 @@
                 <ui-typography variant="h5" tag="h3">Damage / Defects</ui-typography>
               </ui-stack>
               @if ((report()!.defects ?? []).length > 0) {
-                <p-tag [value]="(report()!.defects ?? []).length + ' defect(s)'" severity="danger" />
+                <p-tag
+                  [value]="(report()!.defects ?? []).length + ' defect(s)'"
+                  severity="danger"
+                />
               } @else {
                 <p-tag value="No defects" severity="success" />
               }
@@ -258,10 +261,10 @@
   <ui-stack align="center" gap="4" class="py-16 text-center">
     <ui-icon name="exclamation-circle" size="xl" color="muted" />
     <ui-typography variant="body" color="muted">Condition report not found</ui-typography>
-    <p-button
+    <ui-button
+      appearance="outlined"
       label="Back to List"
       [routerLink]="['/inspections/condition-reports']"
-      [outlined]="true"
       class="mt-4"
     />
   </ui-stack>

@@ -19,8 +19,7 @@ import {
 } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
-import { Icon, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Icon, Stack, Surface, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
@@ -45,22 +44,22 @@ import { stripMarkdown } from "../utils/markdown";
   selector: "app-sessions-list",
   templateUrl: "./sessions-list.html",
   imports: [
-    ButtonModule,
-    UiDataTable,
-    TagModule,
-    TooltipModule,
+    AiQuotaUsage,
     ConfirmDialogModule,
     DatePipe,
-    PageHeader,
-    AiQuotaUsage,
-    GeolocationMap,
     DecisionCard,
-    ModeBadge,
-    RunAgentDialog,
+    GeolocationMap,
     Icon,
+    ModeBadge,
+    PageHeader,
+    RunAgentDialog,
     Stack,
     Surface,
+    TagModule,
+    TooltipModule,
     Typography,
+    UiButton,
+    UiDataTable,
   ],
 })
 export class SessionsListPage implements OnInit, OnDestroy {

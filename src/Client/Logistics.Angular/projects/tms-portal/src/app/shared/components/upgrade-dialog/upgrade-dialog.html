@@ -101,11 +101,11 @@
 
     <!-- Actions -->
     <div class="mt-5 flex justify-end gap-2">
-      <p-button label="View All Plans" [outlined]="true" icon="pi pi-list" (click)="viewPlans()" />
+      <ui-button appearance="outlined" label="View All Plans" icon="list" (click)="viewPlans()" />
       @if (prompt.recommendedPlan) {
-        <p-button
+        <ui-button
           [label]="'Upgrade to ' + recommendedPlanLabel()"
-          icon="pi pi-arrow-up"
+          icon="arrow-up"
           (click)="upgradeNow()"
         />
       }

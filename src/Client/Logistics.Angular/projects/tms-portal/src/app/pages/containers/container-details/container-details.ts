@@ -10,8 +10,15 @@ import {
   type ContainerStatus,
 } from "@logistics/shared/api";
 import { containerIsoTypeOptions, containerStatusOptions } from "@logistics/shared/api/enums";
-import { Grid, Icon, Stack, StatusBadge, Surface, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import {
+  Grid,
+  Icon,
+  Stack,
+  StatusBadge,
+  Surface,
+  Typography,
+  UiButton,
+} from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
@@ -21,18 +28,18 @@ import { PageHeader } from "@/shared/components";
   selector: "app-container-details",
   templateUrl: "./container-details.html",
   imports: [
-    DatePipe,
-    RouterLink,
-    ButtonModule,
     CardModule,
-    ProgressSpinnerModule,
-    PageHeader,
+    DatePipe,
     Grid,
     Icon,
+    PageHeader,
+    ProgressSpinnerModule,
+    RouterLink,
     Stack,
     StatusBadge,
     Surface,
     Typography,
+    UiButton,
   ],
 })
 export class ContainerDetails implements OnInit {

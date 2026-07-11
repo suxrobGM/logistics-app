@@ -5,8 +5,7 @@ import {
   type CreateEldProviderConfigurationCommand,
   type EldProviderType,
 } from "@logistics/shared/api";
-import { Alert, ValidatedForm } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Alert, UiButton, ValidatedForm } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
 import { SelectModule } from "primeng/select";
 import { UiFormField, UiPasswordField, UiTextField } from "@/shared/components";
@@ -23,17 +22,17 @@ const EMPTY = {
   selector: "app-eld-provider-add-dialog",
   templateUrl: "./provider-add-dialog.html",
   imports: [
-    ValidatedForm,
     Alert,
-    ButtonModule,
     DialogModule,
-    FormRoot,
     FormField,
+    FormRoot,
     FormsModule,
     SelectModule,
+    UiButton,
     UiFormField,
-    UiTextField,
     UiPasswordField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class EldProviderAddDialog {

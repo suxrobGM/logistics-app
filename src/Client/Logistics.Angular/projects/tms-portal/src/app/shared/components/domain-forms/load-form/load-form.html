@@ -7,7 +7,6 @@
 
     <form [formRoot]="form">
       <ui-stack gap="2">
-
         <!-- Load Information Section -->
         <ui-stack tag="section" gap="3">
           <ui-stack direction="row" gap="2" align="center">
@@ -142,11 +141,7 @@
         </p-fieldset>
 
         <!-- Hazmat / ADR Section -->
-        <p-fieldset
-          legend="Hazmat / ADR"
-          [toggleable]="true"
-          [collapsed]="!model().isHazmat"
-        >
+        <p-fieldset legend="Hazmat / ADR" [toggleable]="true" [collapsed]="!model().isHazmat">
           <ui-form-field label="Contains hazardous materials" for="isHazmat">
             <ui-checkbox-field inputId="isHazmat" [formField]="form.isHazmat" />
           </ui-form-field>
@@ -185,12 +180,7 @@
         <!-- Notes Section (collapsable) -->
         <p-fieldset legend="Notes" [toggleable]="true" [collapsed]="true">
           <ui-form-field label="Notes" for="notes" hint="Max 2000 characters" class="mb-0">
-            <ui-textarea-field
-              id="notes"
-              [formField]="form.notes"
-              [rows]="3"
-              [maxlength]="2000"
-            />
+            <ui-textarea-field id="notes" [formField]="form.notes" [rows]="3" [maxlength]="2000" />
           </ui-form-field>
         </p-fieldset>
 
@@ -202,11 +192,7 @@
           </ui-stack>
           <ui-surface variant="elevated" [border]="true">
             <ui-form-field label="Delivery Cost" for="deliveryCost" [required]="true">
-              <ui-number-field
-                id="deliveryCost"
-                [formField]="form.deliveryCost"
-                prefixLabel="$$"
-              />
+              <ui-number-field id="deliveryCost" [formField]="form.deliveryCost" prefixLabel="$$" />
             </ui-form-field>
 
             <ui-form-field label="Estimated Distance" for="distance" class="mb-0">
@@ -246,26 +232,26 @@
 
         <!-- Action Buttons -->
         <ui-stack direction="row" gap="2">
-          <p-button
+          <ui-button
             type="submit"
-            icon="pi pi-pencil"
+            icon="pencil"
             [label]="mode() === 'create' ? 'Create' : 'Update'"
             [disabled]="isLoading()"
           />
 
           @if (mode() === "edit") {
-            <p-button
+            <ui-button
+              intent="danger"
               type="button"
-              icon="pi pi-trash"
+              icon="trash"
               label="Delete"
-              severity="danger"
               [disabled]="isLoading()"
               (click)="askRemove()"
             />
 
-            <p-button
+            <ui-button
               type="button"
-              icon="pi pi-arrow-left"
+              icon="arrow-left"
               label="Back to list"
               [routerLink]="['/loads']"
             />

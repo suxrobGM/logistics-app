@@ -13,8 +13,7 @@ import {
   type AccidentSeverity,
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Icon, Stack, Typography, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -31,23 +30,23 @@ import { AccidentQuickInfo } from "../_components";
   selector: "app-accident-detail",
   templateUrl: "./accident-detail.html",
   imports: [
-    CurrencyFormatPipe,
-    RouterLink,
-    FormsModule,
-    DatePipe,
-    ButtonModule,
-    CardModule,
-    DialogModule,
-    TextareaModule,
-    ProgressSpinnerModule,
-    TabsModule,
-    TagModule,
-    PageHeader,
     AccidentQuickInfo,
+    CardModule,
+    CurrencyFormatPipe,
+    DatePipe,
+    DialogModule,
+    FormsModule,
     Grid,
     Icon,
+    PageHeader,
+    ProgressSpinnerModule,
+    RouterLink,
     Stack,
+    TabsModule,
+    TagModule,
+    TextareaModule,
     Typography,
+    UiButton,
   ],
 })
 export class AccidentDetailPage implements OnInit {

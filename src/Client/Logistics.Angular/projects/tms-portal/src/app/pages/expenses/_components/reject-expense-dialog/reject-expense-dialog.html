@@ -19,11 +19,11 @@
     ></textarea>
   </div>
   <ng-template #footer>
-    <p-button label="Cancel" [text]="true" (click)="service.cancelReject()" />
-    <p-button
+    <ui-button appearance="text" label="Cancel" (click)="service.cancelReject()" />
+    <ui-button
+      intent="danger"
       label="Reject"
-      severity="danger"
-      icon="pi pi-times"
+      icon="times"
       [disabled]="!service.rejectionReason().trim()"
       (click)="service.confirmReject()"
     />

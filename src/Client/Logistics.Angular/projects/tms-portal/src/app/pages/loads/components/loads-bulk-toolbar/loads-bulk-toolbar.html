@@ -1,39 +1,40 @@
-<div class="mb-4 flex items-center justify-between rounded-lg border border-default bg-subtle p-3">
+<div class="border-default bg-subtle mb-4 flex items-center justify-between rounded-lg border p-3">
   <span class="text-foreground font-medium">{{ selectedLoads().length }} load(s) selected</span>
   <div class="flex gap-2">
-    <p-button
+    <ui-button
+      appearance="outlined"
+      size="sm"
       label="Assign to Truck"
-      icon="pi pi-truck"
-      size="small"
-      [outlined]="true"
+      icon="truck"
       (click)="openBulkAssignDialog()"
       [loading]="isProcessing()"
     />
-    <p-button
+    <ui-button
+      appearance="outlined"
+      size="sm"
       label="Dispatch"
-      icon="pi pi-send"
-      size="small"
-      [outlined]="true"
+      icon="send"
       (click)="bulkDispatch()"
       [disabled]="!canDispatchSelected()"
       [loading]="isProcessing()"
       pTooltip="Only Draft loads can be dispatched"
     />
-    <p-button
+    <ui-button
+      intent="danger"
+      appearance="outlined"
+      size="sm"
       label="Delete"
-      icon="pi pi-trash"
-      size="small"
-      severity="danger"
-      [outlined]="true"
+      icon="trash"
       (click)="bulkDelete()"
       [disabled]="!canDeleteSelected()"
       [loading]="isProcessing()"
       pTooltip="Only Draft loads can be deleted"
     />
-    <p-button
-      icon="pi pi-times"
-      size="small"
-      [text]="true"
+    <ui-button
+      appearance="text"
+      size="sm"
+      ariaLabel="Clear selection"
+      icon="times"
       (click)="clearSelection()"
       pTooltip="Clear selection"
     />

@@ -2,22 +2,21 @@
   <!-- Header -->
   <ui-page-header title="AI Dispatch">
     <ui-stack [direction]="{ xs: 'col', sm: 'row' }" gap="2" class="whitespace-nowrap">
-      <p-button
+      <ui-button
+        size="sm"
         label="Run (Suggestions)"
-        icon="pi pi-play"
-        severity="primary"
-        size="small"
+        icon="play"
         [loading]="isRunning()"
         [disabled]="hasRunningSession()"
         [pTooltip]="hasRunningSession() ? 'A session is already running' : ''"
-        (onClick)="openRunDialog('human_in_the_loop')"
+        (click)="openRunDialog('human_in_the_loop')"
       />
-      <p-button
+      <ui-button
+        intent="warn"
+        appearance="outlined"
+        size="sm"
         label="Run (Autonomous)"
-        icon="pi pi-bolt"
-        severity="warn"
-        size="small"
-        [outlined]="true"
+        icon="bolt"
         [loading]="isRunning()"
         [disabled]="hasRunningSession()"
         [pTooltip]="
@@ -25,7 +24,7 @@
             ? 'A session is already running'
             : 'Executes assignments without approval'
         "
-        (onClick)="openRunDialog('autonomous')"
+        (click)="openRunDialog('autonomous')"
       />
     </ui-stack>
   </ui-page-header>
@@ -178,7 +177,13 @@
           </span>
         </td>
         <td>
-          <p-button icon="pi pi-eye" [rounded]="true" [text]="true" size="small" />
+          <ui-button
+            appearance="text"
+            size="sm"
+            ariaLabel="View session"
+            icon="eye"
+            [rounded]="true"
+          />
         </td>
       </tr>
     </ng-template>

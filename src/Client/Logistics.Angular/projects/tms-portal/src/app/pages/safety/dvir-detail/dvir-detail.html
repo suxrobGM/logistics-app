@@ -1,25 +1,25 @@
 <ui-page-header [title]="pageTitle()" backLink="/safety/dvir">
   <ui-stack direction="row" gap="2">
     @if (canDismiss()) {
-      <p-button
-        icon="pi pi-check"
+      <ui-button
+        intent="success"
+        appearance="outlined"
+        icon="check"
         label="Dismiss"
-        severity="success"
-        [outlined]="true"
         (click)="openDismissDialog()"
       />
     }
     @if (canReject()) {
-      <p-button
-        icon="pi pi-times"
+      <ui-button
+        intent="danger"
+        appearance="outlined"
+        icon="times"
         label="Reject"
-        severity="danger"
-        [outlined]="true"
         (click)="openRejectDialog()"
       />
     }
     @if (canReview()) {
-      <p-button icon="pi pi-check-square" label="Review" (click)="reviewReport()" />
+      <ui-button icon="check-square" label="Review" (click)="reviewReport()" />
     }
   </ui-stack>
 </ui-page-header>
@@ -193,11 +193,11 @@
   </div>
   <ng-template #footer>
     <ui-stack direction="row" justify="end" gap="2">
-      <p-button label="Cancel" [text]="true" (click)="showDismissDialog.set(false)" />
-      <p-button
+      <ui-button appearance="text" label="Cancel" (click)="showDismissDialog.set(false)" />
+      <ui-button
+        intent="success"
         label="Dismiss"
-        icon="pi pi-check"
-        severity="success"
+        icon="check"
         (click)="confirmDismiss()"
         [loading]="isSubmitting()"
       />
@@ -231,11 +231,11 @@
   </div>
   <ng-template #footer>
     <ui-stack direction="row" justify="end" gap="2">
-      <p-button label="Cancel" [text]="true" (click)="showRejectDialog.set(false)" />
-      <p-button
+      <ui-button appearance="text" label="Cancel" (click)="showRejectDialog.set(false)" />
+      <ui-button
+        intent="danger"
         label="Reject"
-        icon="pi pi-times"
-        severity="danger"
+        icon="times"
         (click)="confirmReject()"
         [loading]="isSubmitting()"
         [disabled]="!rejectionReason.trim()"

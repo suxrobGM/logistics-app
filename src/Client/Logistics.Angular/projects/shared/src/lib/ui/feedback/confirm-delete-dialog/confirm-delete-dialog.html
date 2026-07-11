@@ -11,8 +11,10 @@
       <strong>{{ entityName() }}</strong>
       and all its data. This action cannot be undone.
     </p>
-    <p class="text-sm text-surface-500">
-      Type <strong>{{ entityName() }}</strong> to confirm:
+    <p class="text-surface-500 text-sm">
+      Type
+      <strong>{{ entityName() }}</strong>
+      to confirm:
     </p>
     <input
       pInputText
@@ -24,16 +26,16 @@
     />
   </div>
   <ng-template #footer>
-    <p-button
+    <ui-button
+      intent="secondary"
       label="Cancel"
-      severity="secondary"
       (click)="visible.set(false)"
       [disabled]="deleting()"
     />
-    <p-button
+    <ui-button
+      intent="danger"
       [label]="'Delete ' + entityLabel()"
-      severity="danger"
-      icon="pi pi-trash"
+      icon="trash"
       [loading]="deleting()"
       [disabled]="!isConfirmValid() || deleting()"
       (click)="onConfirm()"

@@ -14,8 +14,7 @@ import {
   DateFormatPipe,
   DistanceUnitPipe,
 } from "@logistics/shared/pipes";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -35,32 +34,32 @@ import {
   selector: "app-load-detail",
   templateUrl: "./load-detail.html",
   imports: [
-    CommonModule,
-    RouterModule,
-    CardModule,
-    ButtonModule,
-    TabsModule,
-    DividerModule,
-    ProgressSpinnerModule,
-    DateFormatPipe,
-    CurrencyFormatPipe,
-    PageHeader,
-    LoadStatusTag,
-    LoadTypeTag,
     AddressPipe,
+    CardModule,
+    CommonModule,
+    CurrencyFormatPipe,
+    DateFormatPipe,
     DistanceUnitPipe,
+    DividerModule,
     DocumentManager,
-    LoadStatusStepper,
-    LoadPodContent,
-    LoadExceptionsContent,
-    TrackingLinkDialog,
-    ReportExceptionDialog,
-    ResolveExceptionDialog,
     Grid,
     Icon,
+    LoadExceptionsContent,
+    LoadPodContent,
+    LoadStatusStepper,
+    LoadStatusTag,
+    LoadTypeTag,
+    PageHeader,
+    ProgressSpinnerModule,
+    ReportExceptionDialog,
+    ResolveExceptionDialog,
+    RouterModule,
     Stack,
     Surface,
+    TabsModule,
+    TrackingLinkDialog,
     Typography,
+    UiButton,
   ],
 })
 export class LoadDetailPage implements OnInit {

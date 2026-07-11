@@ -25,11 +25,11 @@ import {
   Surface,
   Typography,
   UiAutocompleteField,
+  UiButton,
   UiDataTable,
   type IconName,
 } from "@logistics/shared/ui";
 import { PredefinedDateRanges } from "@logistics/shared/utils";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { MultiSelectModule } from "primeng/multiselect";
@@ -59,7 +59,6 @@ interface PayrollFormValue {
   selector: "app-payroll-invoice-add",
   templateUrl: "./payroll-invoice-add.html",
   imports: [
-    ButtonModule,
     CardModule,
     CommonModule,
     CurrencyFormatPipe,
@@ -81,6 +80,7 @@ interface PayrollFormValue {
     TooltipModule,
     Typography,
     UiAutocompleteField,
+    UiButton,
     UiDataTable,
     UiFormField,
     ValidatedForm,

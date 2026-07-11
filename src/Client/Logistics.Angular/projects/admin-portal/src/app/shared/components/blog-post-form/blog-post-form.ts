@@ -3,13 +3,13 @@ import { form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import {
+  UiButton,
   UiCheckboxField,
   UiFormField,
   UiTextareaField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { EditorModule } from "primeng/editor";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 
@@ -37,17 +37,17 @@ const EMPTY: BlogPostFormValue = {
   selector: "adm-blog-post-form",
   templateUrl: "./blog-post-form.html",
   imports: [
-    ButtonModule,
-    ValidatedForm,
-    FormRoot,
-    FormField,
-    RouterLink,
-    ProgressSpinnerModule,
-    UiFormField,
-    UiTextField,
-    UiTextareaField,
-    UiCheckboxField,
     EditorModule,
+    FormField,
+    FormRoot,
+    ProgressSpinnerModule,
+    RouterLink,
+    UiButton,
+    UiCheckboxField,
+    UiFormField,
+    UiTextareaField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class BlogPostForm {

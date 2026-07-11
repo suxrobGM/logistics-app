@@ -10,12 +10,12 @@ import {
 } from "@logistics/shared/api";
 import {
   Stack,
+  UiButton,
   UiSelectField,
   UiTextareaField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { AuthService } from "@/core/auth";
@@ -28,17 +28,17 @@ const EMPTY = { email: "", role: "", personalMessage: "" };
   selector: "app-invite-employee-dialog",
   templateUrl: "./invite-employee-dialog.html",
   imports: [
-    ValidatedForm,
     DialogModule,
-    ProgressSpinnerModule,
-    FormRoot,
     FormField,
-    ButtonModule,
-    UiSelectField,
-    UiTextField,
-    UiTextareaField,
-    UiFormField,
+    FormRoot,
+    ProgressSpinnerModule,
     Stack,
+    UiButton,
+    UiFormField,
+    UiSelectField,
+    UiTextareaField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class InviteEmployeeDialog {

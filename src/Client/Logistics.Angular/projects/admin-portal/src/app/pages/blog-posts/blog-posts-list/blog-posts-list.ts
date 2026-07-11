@@ -14,11 +14,11 @@ import {
   PageHeader,
   SearchField,
   Stack,
+  UiButton,
   UiDataTable,
   UiSortHeader,
 } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
 import { TagModule } from "primeng/tag";
@@ -31,17 +31,17 @@ import { BlogPostsListStore } from "../store/blog-posts-list.store";
   templateUrl: "./blog-posts-list.html",
   providers: [BlogPostsListStore],
   imports: [
-    ButtonModule,
-    TooltipModule,
     CardModule,
-    MenuModule,
     DataContainer,
-    PageHeader,
-    SearchField,
-    TagModule,
     DatePipe,
     Icon,
+    MenuModule,
+    PageHeader,
+    SearchField,
     Stack,
+    TagModule,
+    TooltipModule,
+    UiButton,
     UiDataTable,
     UiSortHeader,
   ],

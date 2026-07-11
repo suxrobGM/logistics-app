@@ -5,26 +5,26 @@
     addTooltip="Add a new payroll invoice"
   >
     @if (selectedInvoices().length > 0) {
-      <p-button
-        icon="pi pi-check-circle"
+      <ui-button
+        intent="success"
+        icon="check-circle"
         label="Approve Selected ({{ selectedInvoices().length }})"
-        severity="success"
         [loading]="isBatchApproving()"
         (click)="batchApprove()"
       />
-      <p-button icon="pi pi-times" label="Clear" [text]="true" (click)="clearSelection()" />
+      <ui-button appearance="text" icon="times" label="Clear" (click)="clearSelection()" />
     }
-    <p-button
-      icon="pi pi-download"
+    <ui-button
+      appearance="outlined"
+      icon="download"
       label="Export CSV"
-      [outlined]="true"
       [loading]="isExporting()"
       (click)="exportToCsv()"
     />
-    <p-button
-      icon="pi pi-chart-bar"
+    <ui-button
+      appearance="outlined"
+      icon="chart-bar"
       label="Dashboard"
-      [outlined]="true"
       [routerLink]="['/payroll']"
     />
   </ui-page-header>
@@ -41,11 +41,11 @@
             {{ activeFilterCount() }} active
           </ui-typography>
         }
-        <p-button
+        <ui-button
+          appearance="text"
+          size="sm"
           label="Clear All"
-          icon="pi pi-times"
-          size="small"
-          [text]="true"
+          icon="times"
           (click)="clearFilters()"
           [disabled]="activeFilterCount() === 0"
         />
@@ -168,39 +168,43 @@
             </td>
             <td>
               <ui-stack direction="row" align="center" gap="1">
-                <p-button
-                  icon="pi pi-eye"
+                <ui-button
+                  appearance="text"
+                  ariaLabel="View details"
+                  icon="eye"
                   [rounded]="true"
-                  [text]="true"
                   pTooltip="View details"
                   tooltipPosition="bottom"
                   [routerLink]="['/payroll/invoices', invoice.id]"
                 />
                 @if (invoice.status === "pending_approval") {
-                  <p-button
-                    icon="pi pi-check"
+                  <ui-button
+                    intent="success"
+                    appearance="text"
+                    ariaLabel="Approve"
+                    icon="check"
                     [rounded]="true"
-                    [text]="true"
-                    severity="success"
                     pTooltip="Approve"
                     tooltipPosition="bottom"
                     (click)="approveInvoice(invoice)"
                   />
-                  <p-button
-                    icon="pi pi-times"
+                  <ui-button
+                    intent="danger"
+                    appearance="text"
+                    ariaLabel="Reject"
+                    icon="times"
                     [rounded]="true"
-                    [text]="true"
-                    severity="danger"
                     pTooltip="Reject"
                     tooltipPosition="bottom"
                     (click)="openRejectDialog(invoice)"
                   />
                 }
                 @if (invoice.status === "draft") {
-                  <p-button
-                    icon="pi pi-pen-to-square"
+                  <ui-button
+                    appearance="text"
+                    ariaLabel="Edit"
+                    icon="pen-to-square"
                     [rounded]="true"
-                    [text]="true"
                     pTooltip="Edit"
                     tooltipPosition="bottom"
                     [routerLink]="['/payroll/invoices', invoice.id, 'edit']"
@@ -232,10 +236,10 @@
       ></textarea>
     </ui-stack>
     <ng-template #footer>
-      <p-button label="Cancel" [text]="true" (click)="showRejectDialog.set(false)" />
-      <p-button
+      <ui-button appearance="text" label="Cancel" (click)="showRejectDialog.set(false)" />
+      <ui-button
+        intent="danger"
         label="Reject"
-        severity="danger"
         [loading]="isRejecting()"
         (click)="confirmReject()"
       />

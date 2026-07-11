@@ -6,11 +6,11 @@ import {
   DataContainer,
   PageHeader,
   SearchField,
+  UiButton,
   UiDataTable,
   UiSortHeader,
 } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { Menu, MenuModule } from "primeng/menu";
 import { TagModule } from "primeng/tag";
@@ -23,17 +23,17 @@ import { TenantsListStore } from "../store/tenants-list.store";
   templateUrl: "./tenants-list.html",
   providers: [TenantsListStore],
   imports: [
-    ButtonModule,
-    TooltipModule,
     CardModule,
-    UiDataTable,
-    UiSortHeader,
-    MenuModule,
+    ConfirmDeleteDialog,
     DataContainer,
+    MenuModule,
     PageHeader,
     SearchField,
     TagModule,
-    ConfirmDeleteDialog,
+    TooltipModule,
+    UiButton,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class TenantsList {

@@ -12,18 +12,18 @@
           <ui-typography variant="h4" tag="h2">Messages</ui-typography>
         </ui-stack>
         <ui-stack direction="row" gap="2">
-          <p-button
-            icon="pi pi-users"
+          <ui-button
+            intent="info"
+            appearance="outlined"
+            icon="users"
             label="Team Chat"
-            severity="info"
-            [outlined]="true"
-            (onClick)="openTeamChat()"
+            (click)="openTeamChat()"
           />
-          <p-button
-            icon="pi pi-plus"
+          <ui-button
+            intent="success"
+            icon="plus"
             label="New Conversation"
-            severity="success"
-            (onClick)="createNewConversation()"
+            (click)="createNewConversation()"
           />
         </ui-stack>
       </ui-stack>
@@ -50,12 +50,12 @@
         <ui-typography variant="body" color="muted" class="max-w-sm">
           Start a conversation with your team members to collaborate and stay connected
         </ui-typography>
-        <p-button
-          icon="pi pi-plus"
+        <ui-button
+          intent="success"
+          size="lg"
+          icon="plus"
           label="Start Conversation"
-          severity="success"
-          size="large"
-          (onClick)="createNewConversation()"
+          (click)="createNewConversation()"
         />
       </ui-stack>
     } @else {

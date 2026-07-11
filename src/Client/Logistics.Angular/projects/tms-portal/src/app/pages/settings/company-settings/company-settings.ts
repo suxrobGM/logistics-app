@@ -16,10 +16,10 @@ import {
   Stack,
   Surface,
   Typography,
+  UiButton,
   UiSelectField,
   UiTextField,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastModule } from "primeng/toast";
 import { TenantService, ToastService } from "@/core/services";
@@ -64,23 +64,23 @@ const EMPTY: CompanySettingsModel = {
   selector: "app-company-settings",
   templateUrl: "./company-settings.html",
   imports: [
-    ToastModule,
-    ProgressSpinnerModule,
-    ButtonModule,
-    FormRoot,
-    FormField,
-    ValidatedForm,
-    UiFormField,
-    PageHeader,
-    UiTextField,
     AddressForm,
-    PhoneField,
-    UiSelectField,
+    Container,
+    FormField,
+    FormRoot,
     Icon,
+    PageHeader,
+    PhoneField,
+    ProgressSpinnerModule,
     Stack,
     Surface,
+    ToastModule,
     Typography,
-    Container,
+    UiButton,
+    UiFormField,
+    UiSelectField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class CompanySettingsComponent implements OnInit {

@@ -1,14 +1,13 @@
 import { Component, inject } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Icon } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Icon, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { AuthService } from "@/core/auth";
 
 @Component({
   selector: "adm-unauthorized",
   templateUrl: "./unauthorized.html",
-  imports: [ButtonModule, CardModule, Icon, RouterModule],
+  imports: [CardModule, Icon, RouterModule, UiButton],
 })
 export class Unauthorized {
   private readonly authService = inject(AuthService);

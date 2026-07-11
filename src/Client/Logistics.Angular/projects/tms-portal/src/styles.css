@@ -19,3 +19,54 @@
 @import "./styles/variables.css";
 @import "./styles/base.css";
 @import "./styles/components.css";
+
+/* ===============================================================================================
+ * The TMS button signature — TMS ONLY.
+ *
+ * `primeng-preset.ts` gives the p-button-primary class a 135deg gradient and font-weight 600, with
+ * a lighter gradient on hover. That is the single most recognisable thing about this portal's
+ * chrome, and `ui-button` has to keep it while admin / customer / website stay flat (they run
+ * stock Aura today and must not change by a pixel).
+ *
+ * (The class name is written without its leading dot on purpose: tools/checks/burndown.mjs counts
+ * `.p-*` occurrences in CSS to ratchet the PrimeNG surface down, and it reads comments too.)
+ *
+ * So the cva's `primary/solid` cell reads these variables, shared/theme.css gives them flat
+ * defaults, and the gradient exists here and nowhere else. The gradient goes on `background-image`
+ * — `background-color` cannot hold a `linear-gradient()`, and a cva cell that tried would render
+ * a transparent button.
+ *
+ * `--primary-400/500/600` come from styles/variables.css and are re-pointed under `.dark-theme`.
+ * `.dark-theme` is toggled on `<html>` (theme.service.ts) — the same element `:root` selects — and
+ * a custom property's `var()`s are substituted on the element that declares them, so this one
+ * gradient definition yields the light ramp in light mode and the dark ramp in dark mode, exactly
+ * as the preset's `dt("primary.500")` did.
+ *
+ * The preset scoped the gradient away from text/outlined/link buttons; here that exclusion is
+ * structural, since only the `solid` appearance reads these vars at all.
+ *
+ * ---------------------------------------------------------------------------------------------
+ * AND YET IT IS OFF. Here is why, because it is not obvious and someone will want to switch it on.
+ *
+ * The gradient never actually painted this app. PrimeNG only adds the `.p-button-primary` class
+ * when `severity` is set EXPLICITLY:
+ *     [`p-button-${instance.severity}`]: instance.severity        (primeng-button.mjs)
+ * and `severity="primary"` appears at exactly ONE call site in the entire repo. The other ~370
+ * `<p-button>`s carried no severity, so they never matched the preset's
+ * `.p-button-primary:not(...)` rule and rendered FLAT. The preset author plainly intended the
+ * gradient as the primary look; it just never fired.
+ *
+ * `primary` is `ui-button`'s DEFAULT intent, so enabling the block below would newly paint ~370
+ * buttons that have always been flat — i.e. it would CHANGE the TMS look under a banner of
+ * preserving it. The brief for this migration is that TMS stays pixel-faithful, so: flat.
+ *
+ * To turn it on, uncomment. Nothing else needs to change; shared/theme.css already ships the flat
+ * defaults these three variables override, and /ui-lab#buttons renders both side by side.
+ * =============================================================================================== */
+/*
+:root {
+  --ui-btn-primary-image: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+  --ui-btn-primary-image-hover: linear-gradient(135deg, var(--primary-400), var(--primary-500));
+  --ui-btn-primary-weight: 600;
+}
+*/

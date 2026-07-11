@@ -3,10 +3,9 @@ import { Component, computed, inject, signal } from "@angular/core";
 import { Router, RouterModule } from "@angular/router";
 import { Api, downloadExpenseReceipt, type ExpenseDto } from "@logistics/shared/api";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
-import { Icon, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
+import { Icon, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import { downloadBlobFile } from "@logistics/shared/utils";
 import type { MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
 import { TooltipModule } from "primeng/tooltip";
@@ -21,23 +20,23 @@ import { ExpensesListStore } from "../store/expenses-list.store";
   templateUrl: "./expenses-list.html",
   providers: [ExpensesListStore, ExpenseActionsService],
   imports: [
-    CommonModule,
-    RouterModule,
     CardModule,
-    ButtonModule,
-    MenuModule,
-    TooltipModule,
-    UiDataTable,
-    UiSortHeader,
+    CommonModule,
     CurrencyFormatPipe,
-    DateFormatPipe,
     DataContainer,
-    PageHeader,
-    SearchField,
-    Icon,
+    DateFormatPipe,
     ExpenseStatusTag,
     ExpenseTypeTag,
+    Icon,
+    MenuModule,
+    PageHeader,
     RejectExpenseDialog,
+    RouterModule,
+    SearchField,
+    TooltipModule,
+    UiButton,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class ExpensesListPage {

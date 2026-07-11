@@ -1,11 +1,6 @@
 <ui-page-header title="Customer Details">
-  <p-button icon="pi pi-pencil" label="Edit" [outlined]="true" (click)="openEditDialog()" />
-  <p-button
-    icon="pi pi-arrow-left"
-    label="Back"
-    [routerLink]="['/customers']"
-    [outlined]="true"
-  />
+  <ui-button appearance="outlined" icon="pencil" label="Edit" (click)="openEditDialog()" />
+  <ui-button appearance="outlined" icon="arrow-left" label="Back" [routerLink]="['/customers']" />
 </ui-page-header>
 
 @if (store.isLoading()) {
@@ -194,17 +189,17 @@
             </ng-template>
 
             <ui-stack direction="row" gap="2" wrap>
-              <p-button
-                icon="pi pi-plus"
+              <ui-button
+                appearance="outlined"
+                icon="plus"
                 label="New Load"
-                [outlined]="true"
                 [routerLink]="['/loads/add']"
                 [queryParams]="{ customerId: id() }"
               />
-              <p-button
-                icon="pi pi-file-invoice"
+              <ui-button
+                appearance="outlined"
+                icon="file-invoice"
                 label="View Invoices"
-                [outlined]="true"
                 [routerLink]="['/invoices']"
                 [queryParams]="{ customerId: id() }"
               />
@@ -231,7 +226,7 @@
           <div class="pt-4">
             <ui-stack direction="row" align="center" justify="between" class="mb-4">
               <ui-typography variant="h5" tag="h3" class="m-0">Portal Users</ui-typography>
-              <p-button icon="pi pi-plus" label="Invite User" [outlined]="true" />
+              <ui-button appearance="outlined" icon="plus" label="Invite User" />
             </ui-stack>
             @if (store.portalUsers().length) {
               <ui-stack gap="2">
@@ -246,8 +241,10 @@
                       <div class="font-medium">{{ user.displayName || user.email }}</div>
                       <div class="text-muted-foreground text-sm">{{ user.email }}</div>
                     </div>
-                    <!-- TODO: Add action menu for portal customers -->
-                    <!-- <p-button icon="pi pi-ellipsis-v" [text]="true" [rounded]="true" /> -->
+                    <!-- TODO: Add a <ui-action-menu> here for portal customers. -->
+                    <!-- (The dead PrimeNG snippet that used to sit here was removed in S4: the
+                         burndown ratchet and the sweep's own --check both read comments, and a
+                         commented-out tag counts against them forever.) -->
                   </ui-stack>
                 }
               </ui-stack>
@@ -266,7 +263,7 @@
     <ui-stack align="center" gap="4" class="py-16">
       <ui-icon name="exclamation-circle" size="xl" color="muted" />
       <ui-typography variant="body" color="muted">Customer not found</ui-typography>
-      <p-button label="Back to Customers" [routerLink]="['/customers']" />
+      <ui-button label="Back to Customers" [routerLink]="['/customers']" />
     </ui-stack>
   </p-card>
 }

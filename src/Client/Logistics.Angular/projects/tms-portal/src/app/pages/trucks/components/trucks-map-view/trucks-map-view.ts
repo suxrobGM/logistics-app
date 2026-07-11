@@ -2,13 +2,12 @@ import { Component, computed, input } from "@angular/core";
 import type { TruckDto } from "@logistics/shared/api";
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { Icon } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { GeolocationMap } from "@/shared/components";
 
 @Component({
   selector: "app-trucks-map-view",
   templateUrl: "./trucks-map-view.html",
-  imports: [ButtonModule, GeolocationMap, Icon],
+  imports: [GeolocationMap, Icon],
 })
 export class TrucksMapView {
   public readonly trucks = input<TruckDto[]>([]);

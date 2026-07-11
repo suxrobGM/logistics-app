@@ -71,10 +71,10 @@
           </td>
           <td>{{ container.createdAt | date: "mediumDate" }}</td>
           <td>
-            <p-button
-              icon="pi pi-pencil"
-              [text]="true"
-              aria-label="Edit container"
+            <ui-button
+              appearance="text"
+              icon="pencil"
+              ariaLabel="Edit container"
               (click)="$event.stopPropagation(); editContainer(container)"
             />
           </td>

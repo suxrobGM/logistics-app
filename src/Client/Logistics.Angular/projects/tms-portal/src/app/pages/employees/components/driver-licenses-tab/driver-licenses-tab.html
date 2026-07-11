@@ -1,6 +1,6 @@
 <ui-stack direction="row" align="center" justify="between" class="mb-4">
   <ui-typography variant="h5" tag="h3" class="m-0">Driver licenses</ui-typography>
-  <p-button label="Add license" icon="pi pi-plus" size="small" (click)="openCreateDialog()" />
+  <ui-button size="sm" label="Add license" icon="plus" (click)="openCreateDialog()" />
 </ui-stack>
 
 <ui-data-table [value]="rows()" [loading]="isLoading()" [scrollable]="true" scrollHeight="500px">
@@ -43,20 +43,22 @@
       </td>
       <td>
         <ui-stack direction="row" gap="1">
-          <p-button
-            icon="pi pi-pencil"
-            severity="secondary"
-            [text]="true"
+          <ui-button
+            intent="secondary"
+            appearance="text"
+            size="sm"
+            ariaLabel="Edit license"
+            icon="pencil"
             [rounded]="true"
-            size="small"
             (click)="openEditDialog(row.license)"
           />
-          <p-button
-            icon="pi pi-trash"
-            severity="danger"
-            [text]="true"
+          <ui-button
+            intent="danger"
+            appearance="text"
+            size="sm"
+            ariaLabel="Delete license"
+            icon="trash"
             [rounded]="true"
-            size="small"
             (click)="onDelete(row.license)"
           />
         </ui-stack>

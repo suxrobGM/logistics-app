@@ -9,24 +9,26 @@
   <ui-grid container spacing="4">
     @for (action of actions; track action.route) {
       <ui-grid [size]="{ xs: 12, md: 4 }">
-        <p-button
-          [outlined]="true"
-          severity="secondary"
-          styleClass="w-full justify-start gap-3 p-4 h-auto text-left"
-          (onClick)="navigate(action.route)"
+        <!-- Deliberately NOT a ui-button. ui-button is filled by `label` + `icon`, and this is a
+             clickable CARD: an icon medallion, a title and a description, laid out by itself. It was
+             only ever a PrimeNG button because that one had an ng-content. The classes below are the
+             secondary/outlined cell of ui-button's own cva plus the old styleClass, so it still
+             looks like the button it used to be. -->
+        <button
+          type="button"
+          class="border-strong text-subtle-foreground hover:bg-secondary hover:text-foreground flex h-auto w-full cursor-pointer items-center gap-3 rounded-md border p-4 text-left transition-colors"
+          (click)="navigate(action.route)"
         >
-          <div class="flex items-center gap-3">
-            <div class="bg-subtle flex h-12 w-12 items-center justify-center rounded-full">
-              <ui-icon [name]="action.icon" size="lg" [color]="action.iconColor" />
-            </div>
-            <div>
-              <ui-typography variant="h6" class="mb-1">{{ action.label }}</ui-typography>
-              <ui-typography variant="body-sm" color="muted" class="mb-0">
-                {{ action.description }}
-              </ui-typography>
-            </div>
+          <div class="bg-subtle flex h-12 w-12 shrink-0 items-center justify-center rounded-full">
+            <ui-icon [name]="action.icon" size="lg" [color]="action.iconColor" />
           </div>
-        </p-button>
+          <div>
+            <ui-typography variant="h6" class="mb-1">{{ action.label }}</ui-typography>
+            <ui-typography variant="body-sm" color="muted" class="mb-0">
+              {{ action.description }}
+            </ui-typography>
+          </div>
+        </button>
       </ui-grid>
     }
   </ui-grid>

@@ -14,8 +14,7 @@ import {
   type DataDeletionRequestDto,
   type DataExportRequestDto,
 } from "@logistics/shared/api";
-import { Container, Stack, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Container, Stack, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { MessageModule } from "primeng/message";
@@ -30,20 +29,20 @@ import type { SeverityLevel } from "@/shared/utils";
   selector: "app-privacy-settings",
   templateUrl: "./privacy-settings.html",
   imports: [
-    CommonModule,
-    FormsModule,
-    ButtonModule,
     CardModule,
+    CommonModule,
+    Container,
     DialogModule,
+    FormsModule,
     MessageModule,
+    PageHeader,
     ProgressSpinnerModule,
+    Stack,
     TagModule,
     TextareaModule,
-    UiFormField,
-    PageHeader,
-    Stack,
-    Container,
+    UiButton,
     UiDataTable,
+    UiFormField,
   ],
 })
 export class PrivacySettings {

@@ -9,12 +9,12 @@ import {
 } from "@logistics/shared/api";
 import {
   Stack,
+  UiButton,
   UiSelectField,
   UiTextareaField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -27,18 +27,18 @@ const EMPTY = { email: "", customerId: "", personalMessage: "" };
   selector: "app-invite-customer-dialog",
   templateUrl: "./invite-customer-dialog.html",
   imports: [
-    ValidatedForm,
     DialogModule,
-    ProgressSpinnerModule,
-    FormRoot,
     FormField,
-    ButtonModule,
-    UiSelectField,
+    FormRoot,
     InputTextModule,
-    UiTextField,
-    UiTextareaField,
-    UiFormField,
+    ProgressSpinnerModule,
     Stack,
+    UiButton,
+    UiFormField,
+    UiSelectField,
+    UiTextareaField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class InviteCustomerDialogComponent {

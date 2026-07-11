@@ -9,8 +9,7 @@ import {
   type ApiKeyCreatedDto,
   type ApiKeyDto,
 } from "@logistics/shared/api";
-import { Icon, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Icon, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from "primeng/message";
@@ -23,7 +22,6 @@ import { UiFormField } from "@/shared/components";
   selector: "app-api-keys-table",
   templateUrl: "./api-keys-table.html",
   imports: [
-    ButtonModule,
     DatePipe,
     DialogModule,
     FormsModule,
@@ -32,6 +30,7 @@ import { UiFormField } from "@/shared/components";
     MessageModule,
     ProgressSpinnerModule,
     TooltipModule,
+    UiButton,
     UiDataTable,
     UiFormField,
   ],

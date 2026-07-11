@@ -9,8 +9,7 @@ import {
   type TenantFeature,
 } from "@logistics/shared/api";
 import { FEATURE_DESCRIPTIONS } from "@logistics/shared/services";
-import { FeatureRow, PageHeader } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { FeatureRow, PageHeader, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToggleSwitchModule } from "primeng/toggleswitch";
@@ -19,13 +18,13 @@ import { ToggleSwitchModule } from "primeng/toggleswitch";
   selector: "adm-default-features",
   templateUrl: "./default-features.html",
   imports: [
-    FormsModule,
     CardModule,
-    ProgressSpinnerModule,
-    ButtonModule,
-    ToggleSwitchModule,
     FeatureRow,
+    FormsModule,
     PageHeader,
+    ProgressSpinnerModule,
+    ToggleSwitchModule,
+    UiButton,
   ],
 })
 export class DefaultFeatures implements OnInit {

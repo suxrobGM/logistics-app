@@ -7,8 +7,7 @@ import {
   getBillingPortalUrl,
   type SubscriptionDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TagModule } from "primeng/tag";
@@ -19,9 +18,8 @@ import { Labels, type SeverityLevel } from "@/shared/utils";
   selector: "app-manage-subscription",
   templateUrl: "./manage-subscription.html",
   imports: [
-    CommonModule,
     CardModule,
-    ButtonModule,
+    CommonModule,
     ConfirmDialogModule,
     Grid,
     Icon,
@@ -30,6 +28,7 @@ import { Labels, type SeverityLevel } from "@/shared/utils";
     Surface,
     TagModule,
     Typography,
+    UiButton,
   ],
 })
 export class ManageSubscriptionComponent {

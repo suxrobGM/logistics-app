@@ -7,8 +7,7 @@ import {
   revokeTrackingLink,
   type TrackingLinkDto,
 } from "@logistics/shared/api";
-import { Icon, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Icon, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TagModule } from "primeng/tag";
@@ -20,7 +19,6 @@ import { SendTrackingLinkDialog } from "../send-tracking-link-dialog/send-tracki
   selector: "app-tracking-link-dialog",
   templateUrl: "./tracking-link-dialog.html",
   imports: [
-    ButtonModule,
     DatePipe,
     DialogModule,
     Icon,
@@ -28,6 +26,7 @@ import { SendTrackingLinkDialog } from "../send-tracking-link-dialog/send-tracki
     SendTrackingLinkDialog,
     TagModule,
     TooltipModule,
+    UiButton,
     UiDataTable,
   ],
 })

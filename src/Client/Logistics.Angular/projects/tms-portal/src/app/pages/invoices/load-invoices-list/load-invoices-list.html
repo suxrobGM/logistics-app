@@ -1,9 +1,9 @@
 <div class="animate-fadein">
   <ui-page-header title="Load Invoices">
-    <p-button
-      icon="pi pi-chart-bar"
+    <ui-button
+      appearance="outlined"
+      icon="chart-bar"
       label="Dashboard"
-      [outlined]="true"
       [routerLink]="['/invoices']"
     />
   </ui-page-header>
@@ -11,16 +11,20 @@
   <!-- Filter Panel -->
   <p-card class="mb-4">
     <ui-stack direction="row" align="center" justify="between" class="mb-4">
-      <ui-typography variant="body" color="primary" weight="semibold" class="text-lg">Filters</ui-typography>
+      <ui-typography variant="body" color="primary" weight="semibold" class="text-lg">
+        Filters
+      </ui-typography>
       <ui-stack direction="row" align="center" gap="2">
         @if (activeFilterCount() > 0) {
-          <ui-typography variant="body-sm" color="muted">{{ activeFilterCount() }} active</ui-typography>
+          <ui-typography variant="body-sm" color="muted">
+            {{ activeFilterCount() }} active
+          </ui-typography>
         }
-        <p-button
+        <ui-button
+          appearance="text"
+          size="sm"
           label="Clear All"
-          icon="pi pi-times"
-          size="small"
-          [text]="true"
+          icon="times"
           (click)="clearFilters()"
           [disabled]="activeFilterCount() === 0"
         />
@@ -115,10 +119,11 @@
             <td>{{ invoice.dueDate | dateFormat: "shortDate" }}</td>
             <td>
               <a [routerLink]="getInvoiceLink(invoice)">
-                <p-button
-                  icon="pi pi-eye"
+                <ui-button
+                  appearance="text"
+                  ariaLabel="View Details"
+                  icon="eye"
                   [rounded]="true"
-                  [text]="true"
                   pTooltip="View Details"
                   tooltipPosition="top"
                 />

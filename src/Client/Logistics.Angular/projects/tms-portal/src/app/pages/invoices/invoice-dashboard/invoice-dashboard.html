@@ -106,10 +106,10 @@
       <p-card header="Quick Actions">
         <ui-stack direction="row" gap="2" wrap>
           <a routerLink="/invoices/loads" class="no-underline">
-            <p-button label="View All Load Invoices" icon="pi pi-list" [outlined]="true" />
+            <ui-button appearance="outlined" label="View All Load Invoices" icon="list" />
           </a>
           <a routerLink="/settings/payments" class="no-underline">
-            <p-button label="Setup Payments" icon="pi pi-credit-card" [outlined]="true" />
+            <ui-button appearance="outlined" label="Setup Payments" icon="credit-card" />
           </a>
         </ui-stack>
       </p-card>
@@ -151,10 +151,11 @@
                 <td>{{ invoice.dueDate | dateFormat: "shortDate" }}</td>
                 <td>
                   <a [routerLink]="getInvoiceLink(invoice)">
-                    <p-button
-                      icon="pi pi-eye"
+                    <ui-button
+                      appearance="text"
+                      ariaLabel="View Details"
+                      icon="eye"
                       [rounded]="true"
-                      [text]="true"
                       pTooltip="View Details"
                       tooltipPosition="top"
                     />
@@ -164,7 +165,9 @@
             </ng-template>
             <ng-template #empty>
               <tr>
-                <td colspan="7" class="text-muted-foreground p-4 text-center">No recent invoices</td>
+                <td colspan="7" class="text-muted-foreground p-4 text-center">
+                  No recent invoices
+                </td>
               </tr>
             </ng-template>
           </ui-data-table>

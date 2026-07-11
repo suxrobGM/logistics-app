@@ -4,7 +4,13 @@
   gap="4"
   class="from-primary/5 border-b bg-linear-to-r to-transparent px-4 py-3"
 >
-  <p-button icon="pi pi-arrow-left" [text]="true" [rounded]="true" routerLink="/messages" />
+  <ui-button
+    appearance="text"
+    ariaLabel="Back to messages"
+    icon="arrow-left"
+    [rounded]="true"
+    routerLink="/messages"
+  />
 
   @if (isNewConversation()) {
     <ui-icon name="plus-circle" size="lg" color="primary" />
@@ -34,11 +40,12 @@
         <ui-typography variant="caption" color="muted">Click to view details</ui-typography>
       }
     </div>
-    <p-button
-      icon="pi pi-info-circle"
-      [text]="true"
+    <ui-button
+      appearance="text"
+      ariaLabel="View details"
+      icon="info-circle"
       [rounded]="true"
-      (onClick)="toggleDetails.emit()"
+      (click)="toggleDetails.emit()"
       pTooltip="View details"
     />
   }

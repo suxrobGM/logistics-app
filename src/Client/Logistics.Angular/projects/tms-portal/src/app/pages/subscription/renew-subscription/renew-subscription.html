@@ -54,18 +54,18 @@
 
     <ng-template #footer>
       <div class="flex gap-2">
-        <p-button
+        <ui-button
+          intent="success"
           label="Resume Subscription"
-          icon="pi pi-refresh"
-          severity="success"
+          icon="refresh"
           [loading]="isLoading()"
           [disabled]="isLoading()"
           (click)="confirmRenewSubscription()"
         />
-        <p-button
+        <ui-button
+          intent="secondary"
           label="Back"
-          icon="pi pi-arrow-left"
-          severity="secondary"
+          icon="arrow-left"
           [routerLink]="'/subscription/manage'"
         />
       </div>

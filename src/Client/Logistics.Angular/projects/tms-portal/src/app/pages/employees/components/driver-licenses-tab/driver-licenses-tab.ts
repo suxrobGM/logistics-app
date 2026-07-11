@@ -12,8 +12,7 @@ import {
   licenseEndorsementOptions,
 } from "@logistics/shared/api/enums";
 import { ToastService } from "@logistics/shared/services";
-import { Stack, Typography, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Stack, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { ChipModule } from "primeng/chip";
 import { Tag as PrimeTag, TagModule } from "primeng/tag";
 import { DriverLicenseEditDialog } from "../driver-license-edit-dialog/driver-license-edit-dialog";
@@ -30,14 +29,14 @@ interface LicenseRowVm {
   selector: "app-driver-licenses-tab",
   templateUrl: "./driver-licenses-tab.html",
   imports: [
+    ChipModule,
     CommonModule,
     DatePipe,
-    TagModule,
-    ChipModule,
-    ButtonModule,
     DriverLicenseEditDialog,
     Stack,
+    TagModule,
     Typography,
+    UiButton,
     UiDataTable,
   ],
 })

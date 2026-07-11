@@ -88,17 +88,17 @@
 
       <!-- Actions -->
       <ui-stack direction="row" gap="2">
-        <p-button
+        <ui-button
           type="submit"
-          icon="pi pi-check"
+          icon="check"
           label="Save Changes"
           [loading]="form().submitting()"
         />
-        <p-button
+        <ui-button
+          appearance="outlined"
           type="button"
-          icon="pi pi-arrow-left"
+          icon="arrow-left"
           label="Cancel"
-          [outlined]="true"
           routerLink="/payroll/invoices"
         />
       </ui-stack>

@@ -17,6 +17,7 @@ import {
   Alert,
   Stack,
   Typography,
+  UiButton,
   UiDataTable,
   UiDateField,
   UiFormField,
@@ -25,7 +26,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -51,23 +51,23 @@ const EMPTY: TaxRateModel = {
   selector: "app-tenant-tax-rates-card",
   templateUrl: "./tenant-tax-rates-card.html",
   imports: [
-    FormRoot,
-    FormField,
-    CardModule,
-    DialogModule,
-    ButtonModule,
-    ProgressSpinnerModule,
-    UiDataTable,
-    UiFormField,
-    UiTextField,
-    UiNumberField,
-    UiSelectField,
-    UiDateField,
-    ValidatedForm,
     Alert,
+    CardModule,
+    DateFormatPipe,
+    DialogModule,
+    FormField,
+    FormRoot,
+    ProgressSpinnerModule,
     Stack,
     Typography,
-    DateFormatPipe,
+    UiButton,
+    UiDataTable,
+    UiDateField,
+    UiFormField,
+    UiNumberField,
+    UiSelectField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class TenantTaxRatesCard implements OnInit {

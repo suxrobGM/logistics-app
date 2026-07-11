@@ -1,7 +1,7 @@
 <ui-page-header [title]="'Feature Configuration: ' + (tenant()?.companyName ?? 'Loading...')">
   <div class="flex gap-2">
-    <p-button icon="pi pi-arrow-left" label="Back" severity="secondary" (onClick)="goBack()" />
-    <p-button icon="pi pi-save" label="Save Changes" [loading]="isSaving()" (onClick)="saveAll()" />
+    <ui-button intent="secondary" icon="arrow-left" label="Back" (click)="goBack()" />
+    <ui-button icon="save" label="Save Changes" [loading]="isSaving()" (click)="saveAll()" />
   </div>
 </ui-page-header>
 

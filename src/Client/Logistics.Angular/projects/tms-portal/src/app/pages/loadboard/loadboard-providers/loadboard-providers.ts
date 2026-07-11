@@ -1,7 +1,6 @@
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { type CreateLoadBoardConfigurationCommand } from "@logistics/shared/api";
-import { Alert, Stack } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Alert, Stack, UiButton } from "@logistics/shared/ui";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { DashboardCard, EmptyState, ErrorState, PageHeader } from "@/shared/components";
 import { ProviderAddDialog, ProvidersTable } from "../_components";
@@ -12,7 +11,6 @@ import { LoadBoardStore } from "../store";
   templateUrl: "./loadboard-providers.html",
   imports: [
     Alert,
-    ButtonModule,
     DashboardCard,
     EmptyState,
     ErrorState,
@@ -21,6 +19,7 @@ import { LoadBoardStore } from "../store";
     ProviderAddDialog,
     ProvidersTable,
     Stack,
+    UiButton,
   ],
 })
 export class LoadBoardProvidersComponent implements OnInit {

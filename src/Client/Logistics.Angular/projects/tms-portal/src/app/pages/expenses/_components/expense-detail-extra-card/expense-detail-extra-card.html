@@ -72,11 +72,11 @@
 
     @if (expense().receiptBlobPath) {
       <app-expense-detail-row label="Receipt">
-        <p-button
-          icon="pi pi-file"
+        <ui-button
+          appearance="outlined"
+          size="sm"
+          icon="file"
           label="View Receipt"
-          [outlined]="true"
-          size="small"
           (click)="viewReceipt.emit()"
         />
       </app-expense-detail-row>

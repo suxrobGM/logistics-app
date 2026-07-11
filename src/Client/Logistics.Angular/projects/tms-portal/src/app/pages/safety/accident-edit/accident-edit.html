@@ -20,12 +20,7 @@
             <app-accident-incident-form [field]="step1Form" />
 
             <div class="flex justify-end gap-2 py-4">
-              <p-button
-                label="Next"
-                icon="pi pi-arrow-right"
-                iconPos="right"
-                (click)="nextStep()"
-              />
+              <ui-button label="Next" iconEnd="arrow-right" (click)="nextStep()" />
             </div>
           </ng-template>
         </p-step-panel>
@@ -36,18 +31,13 @@
             <app-accident-injuries-damage-form [field]="step2Form" />
 
             <div class="flex justify-between py-4">
-              <p-button
+              <ui-button
+                appearance="outlined"
                 label="Back"
-                icon="pi pi-arrow-left"
-                [outlined]="true"
+                icon="arrow-left"
                 (click)="prevStep()"
               />
-              <p-button
-                label="Next"
-                icon="pi pi-arrow-right"
-                iconPos="right"
-                (click)="nextStep()"
-              />
+              <ui-button label="Next" iconEnd="arrow-right" (click)="nextStep()" />
             </div>
           </ng-template>
         </p-step-panel>
@@ -64,15 +54,15 @@
               />
 
               <div class="mt-6 flex justify-between">
-                <p-button
+                <ui-button
+                  appearance="outlined"
                   label="Back"
-                  icon="pi pi-arrow-left"
-                  [outlined]="true"
+                  icon="arrow-left"
                   (click)="prevStep()"
                 />
-                <p-button
+                <ui-button
                   label="Save Changes"
-                  icon="pi pi-check"
+                  icon="check"
                   [loading]="isSaving()"
                   (click)="submit()"
                 />

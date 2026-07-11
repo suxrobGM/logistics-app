@@ -14,6 +14,7 @@ import {
   AddressForm,
   Grid,
   Stack,
+  UiButton,
   UiCheckboxField,
   UiFormField,
   UiSelectField,
@@ -22,7 +23,6 @@ import {
   ValidatedForm,
 } from "@logistics/shared/ui";
 import { AccordionModule } from "primeng/accordion";
-import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { TenantService } from "@/core/services/tenant.service";
 
@@ -52,20 +52,20 @@ const EMPTY: UpdateCustomerModel = {
   selector: "app-customer-edit-dialog",
   templateUrl: "./customer-edit-dialog.html",
   imports: [
-    DialogModule,
-    ButtonModule,
-    FormRoot,
-    FormField,
     AccordionModule,
-    UiFormField,
-    UiTextField,
-    UiSelectField,
-    UiCheckboxField,
-    UiTextareaField,
-    ValidatedForm,
     AddressForm,
+    DialogModule,
+    FormField,
+    FormRoot,
     Grid,
     Stack,
+    UiButton,
+    UiCheckboxField,
+    UiFormField,
+    UiSelectField,
+    UiTextareaField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class CustomerEditDialog {

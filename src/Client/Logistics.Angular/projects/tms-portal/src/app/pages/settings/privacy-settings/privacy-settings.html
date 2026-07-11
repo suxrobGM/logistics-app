@@ -16,11 +16,11 @@
       </ng-template>
 
       <div class="flex justify-end">
-        <p-button
+        <ui-button
           label="Request export"
-          icon="pi pi-download"
+          icon="download"
           [loading]="isRequesting()"
-          (onClick)="requestExport()"
+          (click)="requestExport()"
         />
       </div>
 
@@ -43,12 +43,12 @@
               <td>{{ row.expiresAt ? (row.expiresAt | date: "medium") : "—" }}</td>
               <td class="text-right">
                 @if (row.status === "ready") {
-                  <p-button
+                  <ui-button
+                    appearance="text"
+                    size="sm"
                     label="Download"
-                    icon="pi pi-download"
-                    size="small"
-                    text
-                    (onClick)="download(row.id!)"
+                    icon="download"
+                    (click)="download(row.id!)"
                   />
                 } @else if (row.status === "failed") {
                   <span class="text-muted-foreground text-sm">{{ row.errorMessage }}</span>
@@ -83,22 +83,22 @@
 
         @if (pending.isCancellable) {
           <div class="mt-3 flex justify-end">
-            <p-button
-              severity="secondary"
+            <ui-button
+              intent="secondary"
               label="Cancel deletion"
-              icon="pi pi-times"
-              (onClick)="cancelDeletion(pending.id!)"
+              icon="times"
+              (click)="cancelDeletion(pending.id!)"
             />
           </div>
         }
       } @else {
         <div class="flex justify-end">
-          <p-button
-            severity="danger"
-            outlined
+          <ui-button
+            intent="danger"
+            appearance="outlined"
             label="Delete my account"
-            icon="pi pi-exclamation-triangle"
-            (onClick)="openDeleteDialog()"
+            icon="exclamation-triangle"
+            (click)="openDeleteDialog()"
           />
         </div>
       }
@@ -164,12 +164,12 @@
     ></textarea>
   </ui-form-field>
   <ng-template #footer>
-    <p-button severity="secondary" label="Cancel" (onClick)="deleteDialogOpen.set(false)" />
-    <p-button
-      severity="danger"
+    <ui-button intent="secondary" label="Cancel" (click)="deleteDialogOpen.set(false)" />
+    <ui-button
+      intent="danger"
       label="Schedule deletion"
       [loading]="isDeleting()"
-      (onClick)="confirmDeletion()"
+      (click)="confirmDeletion()"
     />
   </ng-template>
 </p-dialog>

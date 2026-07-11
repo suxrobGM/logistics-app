@@ -7,11 +7,11 @@ import {
   DataContainer,
   PageHeader,
   SearchField,
+  UiButton,
   UiDataTable,
   UiSortHeader,
 } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { Menu, MenuModule } from "primeng/menu";
@@ -24,19 +24,19 @@ import { PlansListStore } from "../store/plans-list.store";
   templateUrl: "./plans-list.html",
   providers: [PlansListStore],
   imports: [
-    ButtonModule,
-    TooltipModule,
     CardModule,
-    UiDataTable,
-    UiSortHeader,
     ConfirmDialogModule,
+    CurrencyPipe,
     DataContainer,
+    MenuModule,
     PageHeader,
     SearchField,
     TagModule,
-    CurrencyPipe,
     TitleCasePipe,
-    MenuModule,
+    TooltipModule,
+    UiButton,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class PlansList {

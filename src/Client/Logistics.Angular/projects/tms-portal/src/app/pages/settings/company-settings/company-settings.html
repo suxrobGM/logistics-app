@@ -8,7 +8,6 @@
   } @else {
     <form [formRoot]="form">
       <ui-stack gap="6">
-
         <!-- Branding Section -->
         <ui-stack tag="section" gap="3">
           <ui-stack direction="row" gap="2" align="center">
@@ -39,9 +38,9 @@
                     accept="image/*"
                     (change)="onLogoSelected($event)"
                   />
-                  <p-button
+                  <ui-button
                     type="button"
-                    icon="pi pi-upload"
+                    icon="upload"
                     label="Upload Logo"
                     (click)="logoInput.click()"
                     [loading]="isUploadingLogo()"
@@ -225,9 +224,9 @@
 
         <!-- Actions -->
         <ui-stack direction="row" gap="2">
-          <p-button
+          <ui-button
             type="submit"
-            icon="pi pi-save"
+            icon="save"
             label="Save Changes"
             [loading]="form().submitting()"
           />

@@ -2,7 +2,7 @@ import { Component, inject, input, model, output, signal } from "@angular/core";
 import { email, form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { UiFormField, UiTextareaField, UiTextField, ValidatedForm } from "@logistics/shared";
 import { Api, sendTrackingLinkEmail } from "@logistics/shared/api";
-import { ButtonModule } from "primeng/button";
+import { UiButton } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
 import { ToastService } from "@/core/services";
 
@@ -12,14 +12,14 @@ const EMPTY = { email: "", personalMessage: "" };
   selector: "app-send-tracking-link-dialog",
   templateUrl: "./send-tracking-link-dialog.html",
   imports: [
-    ValidatedForm,
     DialogModule,
-    ButtonModule,
-    FormRoot,
     FormField,
+    FormRoot,
+    UiButton,
     UiFormField,
-    UiTextField,
     UiTextareaField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class SendTrackingLinkDialog {

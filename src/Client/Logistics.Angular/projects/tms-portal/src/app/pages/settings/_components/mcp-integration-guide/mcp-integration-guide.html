@@ -13,12 +13,13 @@
 <div class="bg-subtle border-default mb-4 flex items-center gap-2 rounded-lg border p-3">
   <span class="text-muted-foreground text-sm">MCP Endpoint:</span>
   <code class="flex-1 text-sm font-semibold">{{ mcpEndpoint }}</code>
-  <p-button
-    icon="pi pi-copy"
-    [text]="true"
+  <ui-button
+    appearance="text"
+    ariaLabel="Copy endpoint URL"
+    icon="copy"
     [rounded]="true"
     pTooltip="Copy endpoint URL"
-    (onClick)="copyToClipboard(mcpEndpoint)"
+    (click)="copyToClipboard(mcpEndpoint)"
   />
 </div>
 
@@ -40,14 +41,15 @@
       </p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
         <pre class="overflow-x-auto text-sm">{{ claudeDesktopSnippet }}</pre>
-        <p-button
+        <ui-button
+          appearance="text"
+          size="sm"
+          ariaLabel="Copy"
           class="absolute top-2 right-2"
-          icon="pi pi-copy"
-          [text]="true"
+          icon="copy"
           [rounded]="true"
-          size="small"
           pTooltip="Copy"
-          (onClick)="copyToClipboard(claudeDesktopSnippet)"
+          (click)="copyToClipboard(claudeDesktopSnippet)"
         />
       </div>
     </p-tabpanel>
@@ -56,14 +58,15 @@
       <p class="text-muted-foreground mb-2 text-sm">Run in your terminal:</p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
         <pre class="overflow-x-auto text-sm">{{ claudeCodeSnippet }}</pre>
-        <p-button
+        <ui-button
+          appearance="text"
+          size="sm"
+          ariaLabel="Copy"
           class="absolute top-2 right-2"
-          icon="pi pi-copy"
-          [text]="true"
+          icon="copy"
           [rounded]="true"
-          size="small"
           pTooltip="Copy"
-          (onClick)="copyToClipboard(claudeCodeSnippet)"
+          (click)="copyToClipboard(claudeCodeSnippet)"
         />
       </div>
     </p-tabpanel>
@@ -72,14 +75,15 @@
       <p class="text-muted-foreground mb-2 text-sm">Add to your Cursor MCP settings:</p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
         <pre class="overflow-x-auto text-sm">{{ cursorSnippet }}</pre>
-        <p-button
+        <ui-button
+          appearance="text"
+          size="sm"
+          ariaLabel="Copy"
           class="absolute top-2 right-2"
-          icon="pi pi-copy"
-          [text]="true"
+          icon="copy"
           [rounded]="true"
-          size="small"
           pTooltip="Copy"
-          (onClick)="copyToClipboard(cursorSnippet)"
+          (click)="copyToClipboard(cursorSnippet)"
         />
       </div>
     </p-tabpanel>
@@ -92,14 +96,15 @@
       </p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
         <pre class="overflow-x-auto text-sm">{{ copilotSnippet }}</pre>
-        <p-button
+        <ui-button
+          appearance="text"
+          size="sm"
+          ariaLabel="Copy"
           class="absolute top-2 right-2"
-          icon="pi pi-copy"
-          [text]="true"
+          icon="copy"
           [rounded]="true"
-          size="small"
           pTooltip="Copy"
-          (onClick)="copyToClipboard(copilotSnippet)"
+          (click)="copyToClipboard(copilotSnippet)"
         />
       </div>
     </p-tabpanel>
@@ -110,14 +115,15 @@
       </p>
       <div class="bg-subtle border-default relative rounded-lg border p-4">
         <pre class="overflow-x-auto text-sm">{{ apiSnippet }}</pre>
-        <p-button
+        <ui-button
+          appearance="text"
+          size="sm"
+          ariaLabel="Copy"
           class="absolute top-2 right-2"
-          icon="pi pi-copy"
-          [text]="true"
+          icon="copy"
           [rounded]="true"
-          size="small"
           pTooltip="Copy"
-          (onClick)="copyToClipboard(apiSnippet)"
+          (click)="copyToClipboard(apiSnippet)"
         />
       </div>
     </p-tabpanel>

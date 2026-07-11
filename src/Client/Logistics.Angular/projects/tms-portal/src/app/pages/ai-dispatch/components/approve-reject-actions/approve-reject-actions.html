@@ -1,18 +1,18 @@
 <div class="flex gap-2">
-  <p-button
+  <ui-button
+    intent="success"
+    appearance="outlined"
+    size="sm"
     label="Approve"
-    icon="pi pi-check"
-    severity="success"
-    size="small"
-    [outlined]="true"
-    (onClick)="approve.emit(decision())"
+    icon="check"
+    (click)="approve.emit(decision())"
   />
-  <p-button
+  <ui-button
+    intent="danger"
+    appearance="outlined"
+    size="sm"
     label="Reject"
-    icon="pi pi-times"
-    severity="danger"
-    size="small"
-    [outlined]="true"
-    (onClick)="reject.emit(decision())"
+    icon="times"
+    (click)="reject.emit(decision())"
   />
 </div>

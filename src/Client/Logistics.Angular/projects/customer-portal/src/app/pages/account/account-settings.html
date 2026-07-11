@@ -1,6 +1,8 @@
 <ui-stack gap="1" class="mb-6">
   <ui-typography variant="h2" tag="h1">Account Settings</ui-typography>
-  <ui-typography variant="body" color="muted">View your profile and manage your account</ui-typography>
+  <ui-typography variant="body" color="muted">
+    View your profile and manage your account
+  </ui-typography>
 </ui-stack>
 
 @if (isLoading()) {
@@ -16,22 +18,34 @@
         <ui-stack gap="4">
           <div>
             <ui-typography variant="caption" color="muted" weight="medium">Name</ui-typography>
-            <ui-typography variant="body" weight="medium" class="mt-1">{{ profile()?.displayName || "-" }}</ui-typography>
+            <ui-typography variant="body" weight="medium" class="mt-1">
+              {{ profile()?.displayName || "-" }}
+            </ui-typography>
           </div>
           <div>
             <ui-typography variant="caption" color="muted" weight="medium">Email</ui-typography>
-            <ui-typography variant="body" weight="medium" class="mt-1">{{ profile()?.email || "-" }}</ui-typography>
+            <ui-typography variant="body" weight="medium" class="mt-1">
+              {{ profile()?.email || "-" }}
+            </ui-typography>
           </div>
           <div>
             <ui-typography variant="caption" color="muted" weight="medium">Company</ui-typography>
-            <ui-typography variant="body" weight="medium" class="mt-1">{{ companyName() || "-" }}</ui-typography>
+            <ui-typography variant="body" weight="medium" class="mt-1">
+              {{ companyName() || "-" }}
+            </ui-typography>
           </div>
           <div>
-            <ui-typography variant="caption" color="muted" weight="medium">Customer Account</ui-typography>
-            <ui-typography variant="body" weight="medium" class="mt-1">{{ profile()?.customerName || "-" }}</ui-typography>
+            <ui-typography variant="caption" color="muted" weight="medium">
+              Customer Account
+            </ui-typography>
+            <ui-typography variant="body" weight="medium" class="mt-1">
+              {{ profile()?.customerName || "-" }}
+            </ui-typography>
           </div>
           <div>
-            <ui-typography variant="caption" color="muted" weight="medium">Last Login</ui-typography>
+            <ui-typography variant="caption" color="muted" weight="medium">
+              Last Login
+            </ui-typography>
             <ui-typography variant="body" weight="medium" class="mt-1">
               {{ profile()?.lastLoginAt ? (profile()?.lastLoginAt | date: "medium") : "Never" }}
             </ui-typography>
@@ -49,16 +63,16 @@
             Update your profile information, change your password, and manage security settings.
           </ui-typography>
           <ui-stack gap="3">
-            <p-button
+            <ui-button
+              appearance="outlined"
               label="Edit Profile"
-              icon="pi pi-user-edit"
-              [outlined]="true"
+              icon="user-edit"
               (click)="openManageProfile()"
             />
-            <p-button
+            <ui-button
+              appearance="outlined"
               label="Change Password"
-              icon="pi pi-lock"
-              [outlined]="true"
+              icon="lock"
               (click)="openChangePassword()"
             />
           </ui-stack>

@@ -141,6 +141,39 @@
   --sidebar-accent-foreground: var(--text-primary, #0f172a);
   --sidebar-border: var(--border-subtle, #e2e8f0);
   --sidebar-ring: var(--primary-500, #0891b2);
+
+  /* ---------------------------------------------------------------------------------------------
+   * ui-button (see lib/ui/action/button/button-variants.ts).
+   *
+   * These are FLAT DEFAULTS, and only the `primary` intent needs them at all. TMS paints its
+   * primary buttons with a gradient and font-weight 600 (its primeng-preset.ts did that to the
+   * p-button-primary class); admin / customer / website run stock and must stay pixel-identical. So
+   * the cva reads variables and each app supplies them — tms-portal/src/styles.css overrides the
+   * primary ones, everyone else takes what is here. The gradient rides on `-image` because a
+   * `linear-gradient()` is not a valid `background-color`.
+   *
+   * No `.dark-theme` block, and that is load-bearing rather than lazy: a custom property whose
+   * value contains `var()` is substituted at computed-value time ON THE ELEMENT THAT DECLARES IT.
+   * `theme.service.ts` toggles `.dark-theme` on `<html>` — the very element `:root` selects — so
+   * `--primary`, `--status-pickedup` and `--inverse` are already their dark values by the time
+   * these resolve. Dark mode comes for free. (Were `.dark-theme` ever moved to `<body>`, every
+   * line below would silently freeze at its light value and would need re-declaring there.)
+   * ------------------------------------------------------------------------------------------- */
+  --ui-btn-primary-bg: var(--primary);
+  --ui-btn-primary-bg-hover: color-mix(in oklab, var(--primary) 88%, black);
+  --ui-btn-primary-image: none;
+  --ui-btn-primary-image-hover: none;
+  --ui-btn-primary-fg: var(--primary-foreground);
+  --ui-btn-primary-weight: 500;
+
+  /* Ink on a saturated solid fill (success / info / warn / danger / help). `--inverse` is the
+     theme's opposing ink — near-white in light, near-black in dark — which is exactly the flip a
+     bright solid needs: white on #16a34a in light, dark ink on #22c55e in dark. */
+  --ui-btn-on-solid: var(--inverse);
+
+  /* PrimeNG's `help` severity is purple, and the one purple this theme defines in both `:root` and
+     `.dark-theme` is the load-status ramp's. Alias it rather than add a ninth hex to the palette. */
+  --ui-btn-help: var(--status-pickedup);
 }
 
 .dark-theme {
@@ -241,6 +274,12 @@
   --color-warning: var(--warning);
   --color-danger: var(--danger);
   --color-info: var(--info);
+
+  /* `help` must be a REAL registered colour, not just a raw custom property, so that the button cva
+     can spell it as a named utility. An arbitrary-property class is a different tailwind-merge class
+     group than a named one, so it will NOT dedupe against the base border colour and the two both
+     survive — which silently left the outlined help button with no border at all. */
+  --color-help: var(--ui-btn-help);
 
   /* load-status */
   --color-pending: var(--status-pending);

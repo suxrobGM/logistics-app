@@ -2,9 +2,8 @@ import { CommonModule } from "@angular/common";
 import { Component, computed, inject, input, signal, type OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Api, getInspection, type ConditionReportDto } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/ui";
+import { Grid, Icon, Stack, Typography, UiButton } from "@logistics/shared/ui";
 import { isContainerLoadType } from "@logistics/shared/utils";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { GalleriaModule } from "primeng/galleria";
@@ -17,20 +16,20 @@ import { ConditionDefectsList } from "@/shared/components/inspections";
   selector: "app-condition-report-detail",
   templateUrl: "./condition-report-detail.html",
   imports: [
-    CommonModule,
     CardModule,
-    ButtonModule,
-    ProgressSpinnerModule,
-    RouterModule,
-    DividerModule,
-    TagModule,
-    GalleriaModule,
-    PageHeader,
+    CommonModule,
     ConditionDefectsList,
+    DividerModule,
+    GalleriaModule,
     Grid,
     Icon,
+    PageHeader,
+    ProgressSpinnerModule,
+    RouterModule,
     Stack,
+    TagModule,
     Typography,
+    UiButton,
   ],
 })
 export class ConditionReportDetailPage implements OnInit {

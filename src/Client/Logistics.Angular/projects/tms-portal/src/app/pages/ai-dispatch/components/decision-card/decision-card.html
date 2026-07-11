@@ -55,21 +55,21 @@
   <!-- Actions -->
   @if (decision().status === "suggested") {
     <ui-stack direction="row" gap="2">
-      <p-button
+      <ui-button
+        intent="success"
+        appearance="outlined"
+        size="sm"
         label="Approve"
-        icon="pi pi-check"
-        severity="success"
-        size="small"
-        [outlined]="true"
-        (onClick)="onApprove()"
+        icon="check"
+        (click)="onApprove()"
       />
-      <p-button
+      <ui-button
+        intent="danger"
+        appearance="outlined"
+        size="sm"
         label="Reject"
-        icon="pi pi-times"
-        severity="danger"
-        size="small"
-        [outlined]="true"
-        (onClick)="onReject()"
+        icon="times"
+        (click)="onReject()"
       />
     </ui-stack>
   }

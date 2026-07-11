@@ -32,12 +32,12 @@
 
     <!-- Actions -->
     <ui-stack direction="row" justify="center" gap="3" class="flex-col items-center sm:flex-row">
-      <p-button routerLink="/" label="Go to Dashboard" icon="pi pi-home" />
-      <p-button
+      <ui-button routerLink="/" label="Go to Dashboard" icon="home" />
+      <ui-button
+        appearance="outlined"
         routerLink="/shipments"
         label="View Shipments"
-        icon="pi pi-truck"
-        [outlined]="true"
+        icon="truck"
       />
     </ui-stack>
 

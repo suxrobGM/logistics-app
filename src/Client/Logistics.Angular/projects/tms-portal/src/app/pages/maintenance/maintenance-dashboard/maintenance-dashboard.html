@@ -66,7 +66,7 @@
           </ng-template>
         </ui-data-table>
         <div class="mt-2 text-right">
-          <p-button label="View All" [text]="true" (click)="viewAllUpcoming()" />
+          <ui-button appearance="text" label="View All" (click)="viewAllUpcoming()" />
         </div>
       } @else {
         <ui-stack align="center" gap="2" class="py-4">
@@ -106,7 +106,7 @@
           </ng-template>
         </ui-data-table>
         <div class="mt-2 text-right">
-          <p-button label="View All" [text]="true" (click)="viewAllRecords()" />
+          <ui-button appearance="text" label="View All" (click)="viewAllRecords()" />
         </div>
       } @else {
         <ui-stack align="center" gap="2" class="py-4">
@@ -119,11 +119,11 @@
 </ui-grid>
 
 <ui-stack direction="row" gap="2" class="mt-4">
-  <p-button icon="pi pi-plus" label="Log Service" (click)="addServiceRecord()" />
-  <p-button
-    icon="pi pi-refresh"
+  <ui-button icon="plus" label="Log Service" (click)="addServiceRecord()" />
+  <ui-button
+    appearance="outlined"
+    icon="refresh"
     label="Refresh"
-    [outlined]="true"
     (click)="loadData()"
     [loading]="loading()"
   />

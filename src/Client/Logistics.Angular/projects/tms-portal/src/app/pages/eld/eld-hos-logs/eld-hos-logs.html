@@ -1,10 +1,10 @@
 <ui-page-header [title]="headerTitle()" subtitle="View driver duty status history" backLink="/eld">
-  <p-button
+  <ui-button
+    appearance="outlined"
     label="Refresh"
-    icon="pi pi-refresh"
-    [outlined]="true"
+    icon="refresh"
     [loading]="loading()"
-    (onClick)="loadData()"
+    (click)="loadData()"
   />
 </ui-page-header>
 

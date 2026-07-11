@@ -40,11 +40,7 @@
       </ui-form-field>
 
       <ui-form-field label="Contact Name" for="contactName">
-        <ui-text-field
-          id="contactName"
-          [formField]="form.contactName"
-          placeholder="Your name"
-        />
+        <ui-text-field id="contactName" [formField]="form.contactName" placeholder="Your name" />
       </ui-form-field>
 
       <ui-form-field label="Contact Phone" for="contactPhone">
@@ -56,11 +52,7 @@
       </ui-form-field>
 
       <ui-form-field label="Contact Email" for="contactEmail">
-        <ui-text-field
-          id="contactEmail"
-          [formField]="form.contactEmail"
-          placeholder="Your email"
-        />
+        <ui-text-field id="contactEmail" [formField]="form.contactEmail" placeholder="Your email" />
       </ui-form-field>
 
       <ui-form-field label="Notes" for="notes">
@@ -78,7 +70,7 @@
   }
 
   <ng-template #footer>
-    <p-button label="Cancel" (onClick)="close()" [text]="true" />
-    <p-button label="Book Load" icon="pi pi-check" (onClick)="submit()" [loading]="booking()" />
+    <ui-button appearance="text" label="Cancel" (click)="close()" />
+    <ui-button label="Book Load" icon="check" (click)="submit()" [loading]="booking()" />
   </ng-template>
 </p-dialog>

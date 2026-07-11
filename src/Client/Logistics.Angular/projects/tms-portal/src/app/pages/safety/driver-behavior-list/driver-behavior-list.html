@@ -88,9 +88,10 @@
             }
           </td>
           <td>
-            <p-button
-              icon="pi pi-eye"
-              [text]="true"
+            <ui-button
+              appearance="text"
+              ariaLabel="Review event"
+              icon="eye"
               (click)="$event.stopPropagation(); openReviewDialog(event)"
             />
           </td>
@@ -246,7 +247,9 @@
           </ui-stack>
 
           <div>
-            <label for="reviewNotes" class="text-muted-foreground mb-1 block text-sm">Review Notes</label>
+            <label for="reviewNotes" class="text-muted-foreground mb-1 block text-sm">
+              Review Notes
+            </label>
             <textarea
               pInputTextarea
               id="reviewNotes"
@@ -261,11 +264,11 @@
     </ui-stack>
 
     <ng-template #footer>
-      <p-button label="Close" [outlined]="true" (click)="closeReviewDialog()" />
+      <ui-button appearance="outlined" label="Close" (click)="closeReviewDialog()" />
       @if (!selectedEvent()!.isReviewed) {
-        <p-button
+        <ui-button
           label="Submit Review"
-          icon="pi pi-check"
+          icon="check"
           [loading]="isReviewing()"
           (click)="submitReview()"
         />

@@ -26,7 +26,9 @@
             <ui-stack direction="row" align="center" gap="2" class="mt-1">
               <p-tag [value]="statusLabel()" [severity]="statusSeverity()" />
               @if (connectStatus()?.accountId) {
-                <span class="text-muted-foreground text-xs">Account: {{ connectStatus()?.accountId }}</span>
+                <span class="text-muted-foreground text-xs">
+                  Account: {{ connectStatus()?.accountId }}
+                </span>
               }
             </ui-stack>
           </div>
@@ -81,16 +83,16 @@
           </ui-grid>
 
           <ui-stack direction="row" justify="center" gap="3" class="mt-6">
-            <p-button
-              icon="pi pi-chart-bar"
+            <ui-button
+              icon="chart-bar"
               label="Open Dashboard"
               (click)="openDashboard()"
               [loading]="isOpeningDashboard()"
             />
-            <p-button
-              icon="pi pi-cog"
+            <ui-button
+              appearance="outlined"
+              icon="cog"
               label="Account Settings"
-              [outlined]="true"
               (click)="continueOnboarding()"
               [loading]="isGettingLink()"
             />
@@ -103,7 +105,7 @@
             title="Complete Your Setup"
             message="Your Stripe Connect account has been created but onboarding is not complete. Please continue the setup process to start receiving payments."
             actionLabel="Continue Setup"
-            actionIcon="pi pi-external-link"
+            actionIcon="external-link"
             (action)="continueOnboarding()"
           />
         }
@@ -114,7 +116,7 @@
             title="Account Restricted"
             message="Your Stripe Connect account has some restrictions. Please complete the required steps to restore full functionality."
             actionLabel="Resolve Issues"
-            actionIcon="pi pi-external-link"
+            actionIcon="external-link"
             (action)="continueOnboarding()"
           />
         }
@@ -125,7 +127,7 @@
             title="Account Disabled"
             message="Your Stripe Connect account has been disabled. Please contact support for assistance."
             actionLabel="Contact Support"
-            actionIcon="pi pi-external-link"
+            actionIcon="external-link"
             (action)="continueOnboarding()"
           />
         }
@@ -141,8 +143,8 @@
               Set up Stripe Connect to receive payments from your customers directly into your bank
               account. You'll be redirected to Stripe to complete the secure onboarding process.
             </ui-typography>
-            <p-button
-              icon="pi pi-external-link"
+            <ui-button
+              icon="external-link"
               label="Connect with Stripe"
               (click)="startOnboarding()"
               [loading]="isCreatingAccount() || isGettingLink()"

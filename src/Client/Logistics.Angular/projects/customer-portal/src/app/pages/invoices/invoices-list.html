@@ -41,7 +41,10 @@
         <td class="font-medium">INV-{{ invoice.number }}</td>
         <td>
           @if (invoice.loadId) {
-            <a [routerLink]="['/shipments', invoice.loadId]" class="text-foreground hover:underline">
+            <a
+              [routerLink]="['/shipments', invoice.loadId]"
+              class="text-foreground hover:underline"
+            >
               #{{ invoice.loadNumber }}
             </a>
           } @else {
@@ -55,9 +58,9 @@
           <ui-status-badge [status]="invoice.status" kind="invoice" />
         </td>
         <td class="text-right">
-          <p-button
-            icon="pi pi-download"
-            [text]="true"
+          <ui-button
+            appearance="text"
+            icon="download"
             label="Download"
             (click)="downloadInvoice(invoice)"
           />

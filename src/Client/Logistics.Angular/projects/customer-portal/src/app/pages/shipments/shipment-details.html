@@ -1,5 +1,5 @@
 <ui-stack direction="row" align="center" gap="4" class="mb-6">
-  <p-button routerLink="/shipments" icon="pi pi-arrow-left" [text]="true" label="Back" />
+  <ui-button appearance="text" routerLink="/shipments" icon="arrow-left" label="Back" />
   <ui-typography variant="h2" tag="h1">Shipment Details</ui-typography>
 </ui-stack>
 
@@ -25,9 +25,9 @@
 
         <ui-grid container spacing="6">
           <ui-grid [size]="{ xs: 12, md: 6 }">
-            <ui-typography variant="caption" color="muted" weight="medium" class="mb-2 block"
-              >Origin</ui-typography
-            >
+            <ui-typography variant="caption" color="muted" weight="medium" class="mb-2 block">
+              Origin
+            </ui-typography>
             <ui-typography variant="body" weight="medium">
               {{ formatAddress(load()?.originAddress) }}
             </ui-typography>
@@ -74,7 +74,7 @@
                 <td>{{ doc.documentType }}</td>
                 <td>{{ doc.createdAt | dateFormat: "short" }}</td>
                 <td class="text-right">
-                  <p-button icon="pi pi-download" [text]="true" label="Download" />
+                  <ui-button appearance="text" icon="download" label="Download" />
                 </td>
               </tr>
             </ng-template>
@@ -132,9 +132,9 @@
           }
           <ui-stack direction="row" justify="between">
             <ui-typography variant="body" color="muted">Documents</ui-typography>
-            <ui-typography variant="body" weight="medium">{{
-              load()?.documentCount || 0
-            }}</ui-typography>
+            <ui-typography variant="body" weight="medium">
+              {{ load()?.documentCount || 0 }}
+            </ui-typography>
           </ui-stack>
           <ui-stack direction="row" justify="between">
             <ui-typography variant="body" color="muted">Bill of Lading</ui-typography>

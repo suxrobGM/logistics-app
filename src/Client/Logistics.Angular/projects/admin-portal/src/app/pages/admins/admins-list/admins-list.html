@@ -28,7 +28,7 @@
       <ng-template #caption>
         <div class="flex items-center justify-between gap-4">
           <ui-search-field (searchChange)="search($event)" />
-          <p-button label="Add Admin" icon="pi pi-plus" (onClick)="openAddDialog()" />
+          <ui-button label="Add Admin" icon="plus" (click)="openAddDialog()" />
         </div>
       </ng-template>
       <ng-template #header>
@@ -48,13 +48,13 @@
           </td>
           <td>
             @if (!isSuperAdmin(admin)) {
-              <p-button
-                icon="pi pi-user-minus"
-                [text]="true"
-                severity="danger"
+              <ui-button
+                intent="danger"
+                appearance="text"
+                icon="user-minus"
                 pTooltip="Revoke admin"
                 (click)="revoke(admin)"
-                aria-label="Revoke admin"
+                ariaLabel="Revoke admin"
               />
             }
           </td>
@@ -110,20 +110,20 @@
           </td>
           <td>
             <div class="flex gap-1">
-              <p-button
-                icon="pi pi-envelope"
-                [text]="true"
+              <ui-button
+                appearance="text"
+                icon="envelope"
                 pTooltip="Resend"
                 (click)="resendInvitation(invitation)"
-                aria-label="Resend invitation"
+                ariaLabel="Resend invitation"
               />
-              <p-button
-                icon="pi pi-times"
-                [text]="true"
-                severity="danger"
+              <ui-button
+                intent="danger"
+                appearance="text"
+                icon="times"
                 pTooltip="Cancel"
                 (click)="cancelInvitation(invitation)"
-                aria-label="Cancel invitation"
+                ariaLabel="Cancel invitation"
               />
             </div>
           </td>
@@ -133,7 +133,12 @@
   </ui-data-container>
 </p-card>
 
-<p-dialog header="Add Admin" [(visible)]="showAddDialog" [modal]="true" [style]="{ width: '460px' }">
+<p-dialog
+  header="Add Admin"
+  [(visible)]="showAddDialog"
+  [modal]="true"
+  [style]="{ width: '460px' }"
+>
   <div class="flex flex-col gap-4">
     <p class="text-muted-foreground">
       Enter an email address. If the user already exists they'll be granted the Admin role
@@ -162,12 +167,7 @@
     </div>
   </div>
   <ng-template #footer>
-    <p-button label="Cancel" severity="secondary" (onClick)="showAddDialog.set(false)" />
-    <p-button
-      label="Add Admin"
-      icon="pi pi-plus"
-      [loading]="isAdding()"
-      (onClick)="submitAddAdmin()"
-    />
+    <ui-button intent="secondary" label="Cancel" (click)="showAddDialog.set(false)" />
+    <ui-button label="Add Admin" icon="plus" [loading]="isAdding()" (click)="submitAddAdmin()" />
   </ng-template>
 </p-dialog>

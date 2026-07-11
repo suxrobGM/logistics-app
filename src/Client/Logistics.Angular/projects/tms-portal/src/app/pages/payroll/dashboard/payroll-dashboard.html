@@ -76,16 +76,16 @@
       <p-card header="Quick Actions">
         <ui-stack direction="row" gap="2" wrap>
           <a routerLink="/payroll/invoices/add" class="no-underline">
-            <p-button label="Create Payroll" icon="pi pi-plus" />
+            <ui-button label="Create Payroll" icon="plus" />
           </a>
           <a routerLink="/payroll/invoices" class="no-underline">
-            <p-button label="View All Payrolls" icon="pi pi-list" [outlined]="true" />
+            <ui-button appearance="outlined" label="View All Payrolls" icon="list" />
           </a>
           <a routerLink="/reports/payroll" class="no-underline">
-            <p-button label="Payroll Report" icon="pi pi-chart-bar" [outlined]="true" />
+            <ui-button appearance="outlined" label="Payroll Report" icon="chart-bar" />
           </a>
           <a routerLink="/employees" class="no-underline">
-            <p-button label="Manage Employees" icon="pi pi-users" [outlined]="true" />
+            <ui-button appearance="outlined" label="Manage Employees" icon="users" />
           </a>
         </ui-stack>
       </p-card>
@@ -99,10 +99,10 @@
             These payroll invoices are waiting for your approval before payment can be processed.
           </ui-typography>
           <a routerLink="/payroll/invoices" [queryParams]="{ status: 'pending_approval' }">
-            <p-button
+            <ui-button
+              intent="warn"
               label="Review {{ dashboard()?.pendingApprovalCount }} Pending Payroll(s)"
-              icon="pi pi-check-circle"
-              severity="warn"
+              icon="check-circle"
             />
           </a>
         </p-card>
@@ -148,10 +148,11 @@
                 <td>{{ invoice.createdDate | date: "shortDate" }}</td>
                 <td>
                   <a [routerLink]="['/payroll/invoices', invoice.id, 'edit']">
-                    <p-button
-                      icon="pi pi-pencil"
+                    <ui-button
+                      appearance="text"
+                      ariaLabel="Edit"
+                      icon="pencil"
                       [rounded]="true"
-                      [text]="true"
                       pTooltip="Edit"
                       tooltipPosition="top"
                     />
@@ -163,7 +164,9 @@
               <tr>
                 <td colspan="7" class="text-muted-foreground p-4 text-center">
                   No payroll invoices yet.
-                  <a routerLink="/payroll/invoices/add" class="text-foreground ml-2">Create one now</a>
+                  <a routerLink="/payroll/invoices/add" class="text-foreground ml-2">
+                    Create one now
+                  </a>
                 </td>
               </tr>
             </ng-template>

@@ -8,20 +8,22 @@
             <h3 class="m-0 text-lg font-semibold">{{ title() }}</h3>
           </div>
           <div class="flex gap-1">
-            <p-button
-              icon="pi pi-external-link"
-              [text]="true"
+            <ui-button
+              appearance="text"
+              size="sm"
+              ariaLabel="Open in new tab"
+              icon="external-link"
               [rounded]="true"
-              size="small"
               pTooltip="Open in new tab"
               (click)="openInNewTab()"
             />
             @if (collapsible()) {
-              <p-button
-                [icon]="isCollapsed() ? 'pi pi-chevron-down' : 'pi pi-chevron-up'"
-                [text]="true"
+              <ui-button
+                [icon]="isCollapsed() ? 'chevron-down' : 'chevron-up'"
+                appearance="text"
+                size="sm"
                 [rounded]="true"
-                size="small"
+                [ariaLabel]="isCollapsed() ? 'Expand' : 'Collapse'"
                 [pTooltip]="isCollapsed() ? 'Expand' : 'Collapse'"
                 (click)="toggleCollapse()"
               />

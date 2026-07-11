@@ -10,8 +10,11 @@
   }
 
   <p>
-    Are you sure that you want to change employee's role? <br />
-    If you want to remove role from employee then select <strong>Remove Role</strong>.
+    Are you sure that you want to change employee's role?
+    <br />
+    If you want to remove role from employee then select
+    <strong>Remove Role</strong>
+    .
   </p>
 
   <form [formRoot]="form">
@@ -28,16 +31,16 @@
       />
     </div>
     <div class="flex gap-2">
-      <p-button
+      <ui-button
         type="submit"
-        icon="pi pi-pencil"
+        icon="pencil"
         label="Change Role"
         [loading]="form().submitting()"
         [disabled]="isLoading()"
       />
-      <p-button
+      <ui-button
         type="button"
-        icon="pi pi-trash"
+        icon="trash"
         label="Remove Role"
         [disabled]="isLoading() || form().submitting()"
         (click)="removeRole()"

@@ -12,11 +12,7 @@
 
     <ui-grid [size]="{ xs: 12, md: 4, lg: 3 }">
       <ui-form-field label="Origin State" for="originState">
-        <ui-text-field
-          id="originState"
-          [formField]="form.originState"
-          placeholder="e.g., CA"
-        />
+        <ui-text-field id="originState" [formField]="form.originState" placeholder="e.g., CA" />
       </ui-form-field>
     </ui-grid>
 
@@ -96,6 +92,6 @@
   </ui-grid>
 
   <ui-stack direction="row" justify="end" class="mt-4">
-    <p-button label="Search Loads" icon="pi pi-search" type="submit" [loading]="searching()" />
+    <ui-button label="Search Loads" icon="search" type="submit" [loading]="searching()" />
   </ui-stack>
 </form>

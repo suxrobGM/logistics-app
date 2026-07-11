@@ -1,9 +1,9 @@
 <ui-page-header title="Expenses" addRoute="/expenses/add" addTooltip="Add a new expense">
-  <p-button
-    icon="pi pi-chart-bar"
+  <ui-button
+    appearance="outlined"
+    icon="chart-bar"
     label="Analytics"
     [routerLink]="['/expenses/analytics']"
-    [outlined]="true"
   />
 </ui-page-header>
 
@@ -74,13 +74,13 @@
           </td>
           <td>
             @if (expense.receiptBlobPath) {
-              <p-button
-                icon="pi pi-file"
+              <ui-button
+                intent="success"
+                appearance="text"
+                size="sm"
+                icon="file"
                 pTooltip="View receipt"
-                aria-label="View receipt"
-                severity="success"
-                [text]="true"
-                size="small"
+                ariaLabel="View receipt"
                 (click)="viewReceipt(expense, $event)"
               />
             } @else {
@@ -88,11 +88,11 @@
             }
           </td>
           <td>
-            <p-button
-              icon="pi pi-ellipsis-v"
+            <ui-button
+              appearance="text"
+              icon="ellipsis-v"
               (click)="openActionMenu(expense, menu, $event); $event.stopPropagation()"
-              [text]="true"
-              aria-label="Show actions menu"
+              ariaLabel="Show actions menu"
             />
           </td>
         </tr>

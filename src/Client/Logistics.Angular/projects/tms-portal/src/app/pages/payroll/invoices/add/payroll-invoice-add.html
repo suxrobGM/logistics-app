@@ -92,16 +92,16 @@
         }
 
         <ui-stack direction="row" gap="2">
-          <p-button
+          <ui-button
             type="submit"
-            icon="pi pi-plus"
+            icon="plus"
             label="Create Payroll"
             [loading]="form().submitting()"
             [disabled]="previewPayrollInvoice()?.total?.amount === 0"
           />
-          <p-button
+          <ui-button
             type="button"
-            icon="pi pi-arrow-left"
+            icon="arrow-left"
             label="Back to list"
             [routerLink]="['/payroll/invoices']"
           />
@@ -189,16 +189,16 @@
         }
 
         <ui-stack direction="row" gap="2" class="mt-6">
-          <p-button
+          <ui-button
             type="submit"
-            icon="pi pi-plus"
+            icon="plus"
             [label]="'Create ' + selectedEmployees().length + ' Payroll(s)'"
             [loading]="form().submitting()"
             [disabled]="isBulkCreateDisabled()"
           />
-          <p-button
+          <ui-button
             type="button"
-            icon="pi pi-arrow-left"
+            icon="arrow-left"
             label="Back to list"
             [routerLink]="['/payroll/invoices']"
           />

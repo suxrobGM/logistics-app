@@ -2,8 +2,7 @@ import { CommonModule, DatePipe } from "@angular/common";
 import { Component, inject, input, signal, type OnInit } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared/services";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -22,26 +21,26 @@ import { CustomerDetailsStore } from "../store";
   templateUrl: "./customer-details.html",
   providers: [CustomerDetailsStore],
   imports: [
-    CommonModule,
-    ButtonModule,
     CardModule,
-    TooltipModule,
-    TabsModule,
-    DividerModule,
-    ProgressSpinnerModule,
-    RouterLink,
-    DatePipe,
-    PageHeader,
-    CustomerStatusTag,
+    CommonModule,
     CustomerAvatar,
     CustomerEditDialog,
     CustomerInvoicesList,
     CustomerLoadsList,
+    CustomerStatusTag,
+    DatePipe,
+    DividerModule,
     Grid,
     Icon,
+    PageHeader,
+    ProgressSpinnerModule,
+    RouterLink,
     Stack,
     Surface,
+    TabsModule,
+    TooltipModule,
     Typography,
+    UiButton,
   ],
 })
 export class CustomerDetails implements OnInit {

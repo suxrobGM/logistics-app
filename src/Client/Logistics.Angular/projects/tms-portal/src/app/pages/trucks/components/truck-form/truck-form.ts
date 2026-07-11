@@ -19,13 +19,13 @@ import {
   Surface,
   Typography,
   UiAutocompleteField,
+  UiButton,
   UiFormField,
   UiNumberField,
   UiSelectField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { ToastService } from "@/core/services";
 import { TruckFormTips } from "./truck-form-tips";
 import { TruckHazmatSection } from "./truck-hazmat-section";
@@ -101,24 +101,24 @@ const EMPTY: TruckFormModel = {
   selector: "app-truck-form",
   templateUrl: "./truck-form.html",
   imports: [
-    RouterLink,
-    ButtonModule,
-    FormRoot,
     FormField,
-    UiFormField,
-    UiTextField,
-    UiSelectField,
-    UiNumberField,
-    UiAutocompleteField,
+    FormRoot,
     Grid,
     Icon,
+    RouterLink,
     Stack,
     Surface,
-    Typography,
-    ValidatedForm,
     TruckFormTips,
     TruckHazmatSection,
     TruckVinField,
+    Typography,
+    UiAutocompleteField,
+    UiButton,
+    UiFormField,
+    UiNumberField,
+    UiSelectField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class TruckForm {

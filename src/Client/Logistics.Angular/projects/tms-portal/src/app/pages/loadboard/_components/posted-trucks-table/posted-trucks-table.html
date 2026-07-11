@@ -43,7 +43,9 @@
       <td>
         <span class="text-sm">{{ truck.availableFrom | date: "shortDate" }}</span>
         @if (truck.availableTo) {
-          <span class="text-muted-foreground text-xs">- {{ truck.availableTo | date: "shortDate" }}</span>
+          <span class="text-muted-foreground text-xs">
+            - {{ truck.availableTo | date: "shortDate" }}
+          </span>
         }
       </td>
       <td>
@@ -54,19 +56,22 @@
       </td>
       <td>
         @if (truck.expiresAt) {
-          <span class="text-muted-foreground text-sm">{{ truck.expiresAt | date: "shortDate" }}</span>
+          <span class="text-muted-foreground text-sm">
+            {{ truck.expiresAt | date: "shortDate" }}
+          </span>
         } @else {
           <span class="text-muted-foreground">-</span>
         }
       </td>
       <td>
-        <p-button
-          icon="pi pi-trash"
+        <ui-button
+          intent="danger"
+          appearance="text"
+          ariaLabel="Remove Post"
+          icon="trash"
           [rounded]="true"
-          [text]="true"
-          severity="danger"
           pTooltip="Remove Post"
-          (onClick)="confirmRemove(truck)"
+          (click)="confirmRemove(truck)"
         />
       </td>
     </tr>

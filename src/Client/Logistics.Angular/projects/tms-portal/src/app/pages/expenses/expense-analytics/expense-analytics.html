@@ -14,10 +14,10 @@
     [showIcon]="true"
     (onSelect)="onDateChange()"
   />
-  <p-button
-    icon="pi pi-download"
+  <ui-button
+    appearance="outlined"
+    icon="download"
     label="Export CSV"
-    [outlined]="true"
     (click)="store.exportCsv()"
     [disabled]="!store.stats()"
   />

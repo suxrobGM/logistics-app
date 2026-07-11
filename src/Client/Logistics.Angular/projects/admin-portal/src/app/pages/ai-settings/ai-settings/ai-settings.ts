@@ -1,8 +1,7 @@
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Api, getAiSettings, updateAiSettings, type PlanQuotaDto } from "@logistics/shared/api";
-import { Grid, PageHeader, Stack, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, PageHeader, Stack, Typography, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -21,19 +20,19 @@ interface ModelOption {
   selector: "adm-ai-settings",
   templateUrl: "./ai-settings.html",
   imports: [
-    FormsModule,
-    ButtonModule,
     CardModule,
     CheckboxModule,
+    FormsModule,
+    Grid,
     InputNumberModule,
     MessageModule,
+    PageHeader,
     ProgressSpinnerModule,
     SelectModule,
-    Grid,
-    PageHeader,
     Stack,
-    Typography,
     TenantQuotas,
+    Typography,
+    UiButton,
   ],
 })
 export class AiSettings implements OnInit {

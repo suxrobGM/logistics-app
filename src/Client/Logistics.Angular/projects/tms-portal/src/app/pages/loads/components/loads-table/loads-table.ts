@@ -5,9 +5,8 @@ import type { LoadDto, LoadStatus } from "@logistics/shared/api";
 import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
-import { UiDataTable, UiSortHeader, UiTableRowDirectives } from "@logistics/shared/ui";
+import { UiButton, UiDataTable, UiSortHeader, UiTableRowDirectives } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
 import { TooltipModule } from "primeng/tooltip";
@@ -19,20 +18,20 @@ import { DataContainer, LoadStatusTag, LoadTypeTag, RouteBadge } from "@/shared/
   templateUrl: "./loads-table.html",
   imports: [
     CardModule,
+    CurrencyFormatPipe,
+    DataContainer,
+    DateFormatPipe,
+    DistanceUnitPipe,
+    LoadStatusTag,
+    LoadTypeTag,
+    MenuModule,
+    RouteBadge,
+    RouterLink,
+    TooltipModule,
+    UiButton,
     UiDataTable,
     UiSortHeader,
     UiTableRowDirectives,
-    ButtonModule,
-    TooltipModule,
-    MenuModule,
-    RouterLink,
-    DistanceUnitPipe,
-    CurrencyFormatPipe,
-    DateFormatPipe,
-    LoadStatusTag,
-    LoadTypeTag,
-    RouteBadge,
-    DataContainer,
   ],
 })
 export class LoadsTable {

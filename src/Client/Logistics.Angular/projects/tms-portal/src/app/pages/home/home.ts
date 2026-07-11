@@ -14,10 +14,9 @@ import {
   DateFormatPipe,
   DistanceUnitPipe,
 } from "@logistics/shared/pipes";
-import { Icon, Stack, StatusBadge, Typography, UiDataTable } from "@logistics/shared/ui";
+import { Icon, Stack, StatusBadge, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { Gridster, GridsterItem, type GridsterConfig } from "angular-gridster2";
 import { SharedModule, type MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { MenuModule } from "primeng/menu";
@@ -43,34 +42,34 @@ import { HomeSkeleton } from "./home-skeleton/home-skeleton";
   templateUrl: "./home.html",
   styleUrl: "./home.css",
   imports: [
+    AttentionPanelComponent,
     CardModule,
-    SharedModule,
-    UiDataTable,
-    RouterLink,
-    TooltipModule,
-    ButtonModule,
-    SkeletonModule,
     CurrencyFormatPipe,
+    DailyGrossChartComponent,
     DateFormatPipe,
     DistanceUnitPipe,
-    TrucksMap,
-    LoadProgressBarComponent,
-    RecentActivityComponent,
-    DailyGrossChartComponent,
-    AttentionPanelComponent,
-    FinancialHealthWidgetComponent,
-    TopPerformersWidgetComponent,
     DividerModule,
-    MenuModule,
-    PageHeader,
-    StatCard,
-    StatusBadge,
-    Icon,
-    Stack,
-    Typography,
+    FinancialHealthWidgetComponent,
     Gridster,
     GridsterItem,
     HomeSkeleton,
+    Icon,
+    LoadProgressBarComponent,
+    MenuModule,
+    PageHeader,
+    RecentActivityComponent,
+    RouterLink,
+    SharedModule,
+    SkeletonModule,
+    Stack,
+    StatCard,
+    StatusBadge,
+    TooltipModule,
+    TopPerformersWidgetComponent,
+    TrucksMap,
+    Typography,
+    UiButton,
+    UiDataTable,
   ],
   providers: [AddressPipe],
 })

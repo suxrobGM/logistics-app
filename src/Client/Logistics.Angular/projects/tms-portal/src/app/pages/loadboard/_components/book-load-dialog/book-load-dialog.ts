@@ -11,10 +11,10 @@ import {
   Stack,
   Surface,
   Typography,
+  UiButton,
   UiSelectField,
   UiTextField,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { UiFormField } from "@/shared/components";
 
@@ -31,17 +31,17 @@ const EMPTY = {
   templateUrl: "./book-load-dialog.html",
   imports: [
     Alert,
-    ButtonModule,
     CurrencyFormatPipe,
     DialogModule,
-    FormRoot,
     FormField,
-    UiFormField,
-    UiSelectField,
-    UiTextField,
+    FormRoot,
     Stack,
     Surface,
     Typography,
+    UiButton,
+    UiFormField,
+    UiSelectField,
+    UiTextField,
   ],
 })
 export class BookLoadDialog {

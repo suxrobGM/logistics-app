@@ -7,7 +7,7 @@ import {
   type RoleDto,
   type UpdateEmployeeCommand,
 } from "@logistics/shared/api";
-import { ButtonModule } from "primeng/button";
+import { UiButton } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
@@ -18,7 +18,7 @@ const EMPTY = { role: "" };
 @Component({
   selector: "app-change-role-dialog",
   templateUrl: "./change-role-dialog.html",
-  imports: [DialogModule, ProgressSpinnerModule, ButtonModule, UiSelectField, FormRoot, FormField],
+  imports: [DialogModule, FormField, FormRoot, ProgressSpinnerModule, UiButton, UiSelectField],
 })
 export class ChangeRoleDialog {
   private readonly api = inject(Api);

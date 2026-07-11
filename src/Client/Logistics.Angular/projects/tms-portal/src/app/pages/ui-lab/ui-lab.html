@@ -29,6 +29,7 @@
 
   <div class="flex flex-col gap-12">
     <app-ui-lab-icons />
+    <app-ui-lab-buttons />
     <app-ui-lab-table />
     <app-ui-lab-forms />
     <app-ui-lab-overlays />
@@ -42,7 +43,6 @@
       add a `<app-ui-lab-{name}>` child component under ./sections/, import it in ui-lab.ts, and
       add its heading id to the `sections` array so the nav and the probe pick it up.
 
-        S4  ui-button   — every severity × variant × size, plus loading and icon-only.
         S5  ui-card     — header/body/footer slots, with and without a title.
         S7  ui-dialog   — open/close, modal + non-modal, a nested overlay inside a dialog.
         S6  ui-tooltip  — the [uiTooltip] directive, all four placements.
@@ -56,13 +56,7 @@
         rendered component.
       </ui-typography>
 
-      <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
-        <div
-          class="border-default text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm"
-          data-lab="slot-ui-button"
-        >
-          ui-button (S4)
-        </div>
+      <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <div
           class="border-default text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm"
           data-lab="slot-ui-card"

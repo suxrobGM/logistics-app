@@ -31,6 +31,7 @@ import {
   Stack,
   Surface,
   Typography,
+  UiButton,
   UiFormField,
   UiNumberField,
   UiSelectField,
@@ -38,7 +39,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
@@ -83,28 +83,28 @@ const TERMINAL_EMPTY: TerminalFormModel = { terminal: null };
   selector: "app-container-edit",
   templateUrl: "./container-edit.html",
   imports: [
-    FormField,
-    FormRoot,
-    RouterLink,
-    ButtonModule,
     CardModule,
     CheckboxModule,
+    Container,
     DialogModule,
-    TagModule,
-    UiFormField,
-    ValidatedForm,
-    PageHeader,
-    SearchTerminal,
+    FormField,
+    FormRoot,
     Grid,
     Icon,
+    PageHeader,
+    RouterLink,
+    SearchTerminal,
     Stack,
     Surface,
+    TagModule,
     Typography,
-    Container,
+    UiButton,
+    UiFormField,
     UiNumberField,
     UiSelectField,
     UiTextareaField,
     UiTextField,
+    ValidatedForm,
   ],
 })
 export class ContainerEdit implements OnInit {

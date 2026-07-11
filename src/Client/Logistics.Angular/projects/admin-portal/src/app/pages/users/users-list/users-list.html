@@ -54,11 +54,11 @@
           </td>
           <td>{{ user.phoneNumber ?? "-" }}</td>
           <td>
-            <p-button
-              icon="pi pi-ellipsis-v"
-              [text]="true"
+            <ui-button
+              appearance="text"
+              icon="ellipsis-v"
               (click)="openActionMenu($event, user)"
-              aria-label="Show actions menu"
+              ariaLabel="Show actions menu"
             />
           </td>
         </tr>
@@ -95,12 +95,12 @@
     </div>
   </div>
   <ng-template #footer>
-    <p-button label="Cancel" severity="secondary" (onClick)="showImpersonateDialog.set(false)" />
-    <p-button
+    <ui-button intent="secondary" label="Cancel" (click)="showImpersonateDialog.set(false)" />
+    <ui-button
       label="Impersonate"
-      icon="pi pi-user"
+      icon="user"
       [loading]="isImpersonating()"
-      (onClick)="impersonate()"
+      (click)="impersonate()"
     />
   </ng-template>
 </p-dialog>

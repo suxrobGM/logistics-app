@@ -17,8 +17,7 @@ import {
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Stack, Typography, UiAutocompleteField } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Stack, Typography, UiAutocompleteField, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
 import { DividerModule } from "primeng/divider";
@@ -37,25 +36,25 @@ interface PayrollFormValue {
   selector: "app-payroll-invoice-edit",
   templateUrl: "./payroll-invoice-edit.html",
   imports: [
-    CurrencyFormatPipe,
-    CommonModule,
     CardModule,
-    UiFormField,
-    RouterModule,
-    UiAutocompleteField,
-    ProgressSpinnerModule,
-    FormsModule,
-    FormRoot,
-    FormField,
-    ButtonModule,
+    CommonModule,
+    CurrencyFormatPipe,
     DatePicker,
     DividerModule,
+    FormField,
+    FormRoot,
+    FormsModule,
+    Grid,
     PageHeader,
     PayrollLineItemsTable,
     PayrollPaySummary,
-    Grid,
+    ProgressSpinnerModule,
+    RouterModule,
     Stack,
     Typography,
+    UiAutocompleteField,
+    UiButton,
+    UiFormField,
   ],
 })
 export class PayrollInvoiceEdit implements OnInit {

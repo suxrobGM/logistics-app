@@ -9,8 +9,16 @@ import {
   type PublicInvoiceDto,
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Alert, Grid, Icon, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import {
+  Alert,
+  Grid,
+  Icon,
+  Stack,
+  Surface,
+  Typography,
+  UiButton,
+  UiDataTable,
+} from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { InputNumberModule } from "primeng/inputnumber";
@@ -21,23 +29,23 @@ import { PublicLayout } from "@/shared/layout";
   selector: "cp-public-payment",
   templateUrl: "./public-payment.html",
   imports: [
+    Alert,
+    CardModule,
     CurrencyFormatPipe,
     DatePipe,
-    FormsModule,
-    ButtonModule,
-    CardModule,
     DividerModule,
-    InputNumberModule,
-    TagModule,
     ErrorState,
-    LoadingSkeleton,
-    PublicLayout,
-    Alert,
+    FormsModule,
     Grid,
     Icon,
+    InputNumberModule,
+    LoadingSkeleton,
+    PublicLayout,
     Stack,
     Surface,
+    TagModule,
     Typography,
+    UiButton,
     UiDataTable,
   ],
 })

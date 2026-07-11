@@ -45,27 +45,39 @@
             <div>
               <ui-stack direction="row" align="center" gap="2" class="mb-1">
                 <ui-icon name="map-marker" class="text-blue-500" />
-                <ui-typography variant="caption" color="muted" weight="medium">Origin</ui-typography>
+                <ui-typography variant="caption" color="muted" weight="medium">
+                  Origin
+                </ui-typography>
               </ui-stack>
-              <ui-typography variant="body" weight="medium">{{ data.originAddress | address }}</ui-typography>
+              <ui-typography variant="body" weight="medium">
+                {{ data.originAddress | address }}
+              </ui-typography>
             </div>
 
             @if (data.currentAddress) {
               <div>
                 <ui-stack direction="row" align="center" gap="2" class="mb-1">
                   <ui-icon name="truck" class="text-orange-500" />
-                  <ui-typography variant="caption" color="muted" weight="medium">Current Location</ui-typography>
+                  <ui-typography variant="caption" color="muted" weight="medium">
+                    Current Location
+                  </ui-typography>
                 </ui-stack>
-                <ui-typography variant="body" weight="medium">{{ data.currentAddress | address }}</ui-typography>
+                <ui-typography variant="body" weight="medium">
+                  {{ data.currentAddress | address }}
+                </ui-typography>
               </div>
             }
 
             <div>
               <ui-stack direction="row" align="center" gap="2" class="mb-1">
                 <ui-icon name="flag" class="text-green-500" />
-                <ui-typography variant="caption" color="muted" weight="medium">Destination</ui-typography>
+                <ui-typography variant="caption" color="muted" weight="medium">
+                  Destination
+                </ui-typography>
               </ui-stack>
-              <ui-typography variant="body" weight="medium">{{ data.destinationAddress | address }}</ui-typography>
+              <ui-typography variant="body" weight="medium">
+                {{ data.destinationAddress | address }}
+              </ui-typography>
             </div>
           </ui-stack>
         </ui-surface>
@@ -81,10 +93,14 @@
               </div>
               <div>
                 @if (data.driverName) {
-                  <ui-typography variant="body" weight="medium">{{ data.driverName }}</ui-typography>
+                  <ui-typography variant="body" weight="medium">
+                    {{ data.driverName }}
+                  </ui-typography>
                 }
                 @if (data.truckNumber) {
-                  <ui-typography variant="body-sm" color="muted">Truck: {{ data.truckNumber }}</ui-typography>
+                  <ui-typography variant="body-sm" color="muted">
+                    Truck: {{ data.truckNumber }}
+                  </ui-typography>
                 }
               </div>
             </ui-stack>
@@ -96,7 +112,9 @@
           }
 
           <div class="mt-6 border-t pt-4">
-            <ui-typography variant="caption" color="muted" weight="medium" class="mb-3 block">Document Status</ui-typography>
+            <ui-typography variant="caption" color="muted" weight="medium" class="mb-3 block">
+              Document Status
+            </ui-typography>
             <ui-stack direction="row" gap="4">
               <ui-stack direction="row" align="center" gap="2">
                 @if (data.hasBillOfLading) {
@@ -144,9 +162,9 @@
               <td>{{ doc.documentType }}</td>
               <td>{{ doc.createdAt | date: "short" }}</td>
               <td class="text-right">
-                <p-button
-                  icon="pi pi-download"
-                  [text]="true"
+                <ui-button
+                  appearance="text"
+                  icon="download"
                   label="Download"
                   (click)="downloadDocument(doc)"
                 />
@@ -159,7 +177,9 @@
 
     <!-- Footer -->
     <div class="mt-8 text-center">
-      <ui-typography variant="body-sm" color="muted">Tracking provided by {{ data.tenantName }}</ui-typography>
+      <ui-typography variant="body-sm" color="muted">
+        Tracking provided by {{ data.tenantName }}
+      </ui-typography>
     </div>
   }
 </cp-public-layout>

@@ -7,11 +7,11 @@
           Manage documents for employee: {{ employee()?.firstName }} {{ employee()?.lastName }}
         </p>
       </div>
-      <p-button
-        icon="pi pi-arrow-left"
+      <ui-button
+        appearance="outlined"
+        icon="arrow-left"
         label="Back to Employees"
         [routerLink]="['/employees']"
-        [outlined]="true"
       />
     </div>
   </div>

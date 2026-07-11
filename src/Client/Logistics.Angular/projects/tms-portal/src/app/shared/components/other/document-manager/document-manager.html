@@ -31,12 +31,12 @@
                 (change)="onFileChange($event, type)"
                 accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt"
               />
-              <p-button
+              <ui-button
+                appearance="outlined"
+                size="sm"
+                block
                 label="Choose File"
-                icon="pi pi-plus"
-                styleClass="w-full"
-                [outlined]="true"
-                size="small"
+                icon="plus"
                 (click)="fileInput.click()"
               />
             </div>
@@ -67,9 +67,10 @@
           <h3 class="m-0 text-lg font-semibold">Documents</h3>
           <p-tag [value]="rows().length.toString()" severity="info" />
         </div>
-        <p-button
-          icon="pi pi-refresh"
-          [text]="true"
+        <ui-button
+          appearance="text"
+          ariaLabel="Refresh"
+          icon="refresh"
           (click)="refresh()"
           [loading]="isLoading()"
           pTooltip="Refresh"
@@ -125,19 +126,21 @@
             </td>
             <td>
               <div class="flex gap-1">
-                <p-button
-                  icon="pi pi-download"
-                  size="small"
-                  [text]="true"
-                  severity="info"
+                <ui-button
+                  intent="info"
+                  appearance="text"
+                  size="sm"
+                  ariaLabel="Download"
+                  icon="download"
                   (click)="download(doc)"
                   pTooltip="Download"
                 />
-                <p-button
-                  icon="pi pi-trash"
-                  size="small"
-                  [text]="true"
-                  severity="danger"
+                <ui-button
+                  intent="danger"
+                  appearance="text"
+                  size="sm"
+                  ariaLabel="Delete"
+                  icon="trash"
                   (click)="delete(doc)"
                   pTooltip="Delete"
                 />

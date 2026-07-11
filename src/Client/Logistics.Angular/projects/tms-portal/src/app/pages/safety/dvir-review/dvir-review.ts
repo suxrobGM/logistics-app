@@ -8,8 +8,13 @@ import {
   type DvirReportDto,
   type ReviewDvirReportCommand,
 } from "@logistics/shared/api";
-import { UiFormField, UiTextareaField, UiToggleField, ValidatedForm } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import {
+  UiButton,
+  UiFormField,
+  UiTextareaField,
+  UiToggleField,
+  ValidatedForm,
+} from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { AuthService } from "@/core/auth";
@@ -21,17 +26,17 @@ import { DvirDefectsList } from "../_components/dvir-defects-list/dvir-defects-l
   selector: "app-dvir-review",
   templateUrl: "./dvir-review.html",
   imports: [
-    ButtonModule,
     CardModule,
-    ProgressSpinnerModule,
-    PageHeader,
-    FormRoot,
+    DvirDefectsList,
     FormField,
+    FormRoot,
+    PageHeader,
+    ProgressSpinnerModule,
+    UiButton,
     UiFormField,
     UiTextareaField,
     UiToggleField,
     ValidatedForm,
-    DvirDefectsList,
   ],
 })
 export class DvirReviewPage implements OnInit {

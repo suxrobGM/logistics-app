@@ -2,8 +2,7 @@ import { Component, effect, inject, input, signal } from "@angular/core";
 import { disabled, form, FormField, FormRoot, required } from "@angular/forms/signals";
 import { RouterLink } from "@angular/router";
 import type { TruckDto } from "@logistics/shared/api";
-import { Stack, UiTextField } from "@logistics/shared/ui";
-import { Button } from "primeng/button";
+import { Stack, UiButton, UiTextField } from "@logistics/shared/ui";
 import { ToastService } from "@/core/services";
 import { SearchTruck, UiFormField, ValidatedForm } from "@/shared/components";
 import { TripWizardStore } from "../../store/trip-wizard-store";
@@ -18,15 +17,15 @@ interface TripBasicModel {
   selector: "app-trip-wizard-basic",
   templateUrl: "./trip-wizard-basic.html",
   imports: [
-    ValidatedForm,
-    UiFormField,
-    SearchTruck,
-    Button,
-    RouterLink,
-    FormRoot,
     FormField,
-    UiTextField,
+    FormRoot,
+    RouterLink,
+    SearchTruck,
     Stack,
+    UiButton,
+    UiFormField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class TripWizardBasic {

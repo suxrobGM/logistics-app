@@ -53,10 +53,11 @@
           }
         </td>
         <td>
-          <p-button
-            icon="pi pi-eye"
+          <ui-button
+            appearance="text"
+            ariaLabel="View invoice"
+            icon="eye"
             [rounded]="true"
-            [text]="true"
             pTooltip="View invoice"
             [routerLink]="['/invoices/loads', invoice.id]"
           />
@@ -75,9 +76,9 @@
 
   @if (customerId()) {
     <div class="mt-4 text-right">
-      <p-button
+      <ui-button
+        appearance="outlined"
         label="View All Invoices"
-        [outlined]="true"
         [routerLink]="['/invoices']"
         [queryParams]="{ customerId: customerId() }"
       />

@@ -1,8 +1,7 @@
 import { CurrencyPipe, DatePipe } from "@angular/common";
 import { Component, computed, inject, signal } from "@angular/core";
 import { Api, resetTenantQuotas } from "@logistics/shared/api";
-import { Icon, Stack, Typography, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Icon, Stack, Typography, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { ProgressBar } from "primeng/progressbar";
 import { TagModule } from "primeng/tag";
@@ -15,16 +14,16 @@ import { TenantQuotasStore } from "./store";
   templateUrl: "./tenant-quotas.html",
   providers: [TenantQuotasStore],
   imports: [
-    ButtonModule,
     CardModule,
+    CurrencyPipe,
+    DatePipe,
+    Icon,
     ProgressBar,
+    Stack,
     TagModule,
     TooltipModule,
-    DatePipe,
-    CurrencyPipe,
-    Icon,
-    Stack,
     Typography,
+    UiButton,
     UiDataTable,
     UiSortHeader,
   ],

@@ -8,11 +8,7 @@
 >
   <form [formRoot]="form">
     <ui-form-field label="Name" for="name" [required]="true">
-      <ui-text-field
-        [formField]="form.name"
-        id="name"
-        placeholder="Customer name"
-      />
+      <ui-text-field [formField]="form.name" id="name" placeholder="Customer name" />
     </ui-form-field>
 
     <ui-grid container spacing="4" class="mt-4">
@@ -65,11 +61,7 @@
               : 'VAT, EIN, GSTIN, ABN, etc. (optional)'
           "
         >
-          <ui-text-field
-            id="taxId"
-            [formField]="form.taxId"
-            placeholder="e.g. DE123456789"
-          />
+          <ui-text-field id="taxId" [formField]="form.taxId" placeholder="e.g. DE123456789" />
         </ui-form-field>
       </ui-grid>
 
@@ -92,15 +84,9 @@
       />
     </ui-form-field>
 
-
     <ui-stack direction="row" justify="end" gap="2" class="mt-6">
-      <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />
-      <p-button
-        type="submit"
-        label="Save Changes"
-        icon="pi pi-check"
-        [loading]="form().submitting()"
-      />
+      <ui-button appearance="outlined" type="button" label="Cancel" (click)="close()" />
+      <ui-button type="submit" label="Save Changes" icon="check" [loading]="form().submitting()" />
     </ui-stack>
   </form>
 
@@ -113,12 +99,7 @@
         <p class="text-muted-foreground mb-4">
           Deleting a customer will remove all associated data. This action cannot be undone.
         </p>
-        <p-button
-          label="Delete Customer"
-          icon="pi pi-trash"
-          severity="danger"
-          (click)="deleted.emit()"
-        />
+        <ui-button intent="danger" label="Delete Customer" icon="trash" (click)="deleted.emit()" />
       </ng-template>
     </p-accordion-panel>
   </p-accordion>

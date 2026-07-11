@@ -4,8 +4,15 @@ import { ToastService } from "@logistics/shared";
 import { Api, getPortalInvoices, type PortalInvoiceDto } from "@logistics/shared/api";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
-import { Icon, Stack, StatusBadge, Surface, Typography, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import {
+  Icon,
+  Stack,
+  StatusBadge,
+  Surface,
+  Typography,
+  UiButton,
+  UiDataTable,
+} from "@logistics/shared/ui";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
@@ -18,19 +25,19 @@ import { ToastModule } from "primeng/toast";
   imports: [
     CurrencyFormatPipe,
     DateFormatPipe,
-    RouterLink,
-    UiDataTable,
-    ButtonModule,
+    Icon,
     IconFieldModule,
     InputIconModule,
     InputTextModule,
     ProgressSpinnerModule,
-    ToastModule,
-    Icon,
+    RouterLink,
     Stack,
     StatusBadge,
     Surface,
+    ToastModule,
     Typography,
+    UiButton,
+    UiDataTable,
   ],
 })
 export class InvoicesList {

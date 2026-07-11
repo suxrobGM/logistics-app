@@ -19,8 +19,7 @@ import {
   type AiDispatchDecisionDto,
   type AiDispatchSessionDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { TagModule } from "primeng/tag";
 import { TimelineModule } from "primeng/timeline";
@@ -43,21 +42,21 @@ import { MarkdownPipe } from "../utils/markdown";
   templateUrl: "./session-detail.html",
   styleUrl: "./session-detail.css",
   imports: [
-    ButtonModule,
-    TagModule,
-    TimelineModule,
+    ApproveRejectActions,
     ConfirmDialogModule,
     DatePipe,
-    PageHeader,
-    MarkdownPipe,
-    ModeBadge,
-    ToolOutputSummary,
-    ApproveRejectActions,
     Grid,
     Icon,
+    MarkdownPipe,
+    ModeBadge,
+    PageHeader,
     Stack,
     Surface,
+    TagModule,
+    TimelineModule,
+    ToolOutputSummary,
     Typography,
+    UiButton,
   ],
 })
 export class SessionDetailPage implements OnInit, OnDestroy {

@@ -1,7 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { Grid, Icon, Stack, Typography, type IconName } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 
 interface QuickAction {
@@ -15,7 +14,7 @@ interface QuickAction {
 @Component({
   selector: "app-loadboard-quick-actions",
   templateUrl: "./loadboard-quick-actions.html",
-  imports: [ButtonModule, CardModule, Grid, Icon, Stack, Typography],
+  imports: [CardModule, Grid, Icon, Stack, Typography],
 })
 export class LoadBoardQuickActions {
   protected readonly actions: readonly QuickAction[] = [

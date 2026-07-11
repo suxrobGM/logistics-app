@@ -1,6 +1,5 @@
 <form [formRoot]="form">
   <ui-stack gap="4">
-
     <ui-stack tag="section" gap="3">
       <ui-stack direction="row" gap="2" align="center">
         <ui-icon name="tag" color="secondary" />
@@ -68,18 +67,18 @@
     </ui-stack>
 
     <ui-stack direction="row" gap="2">
-      <p-button
+      <ui-button
         type="submit"
-        icon="pi pi-check"
+        icon="check"
         [label]="mode() === 'create' ? 'Create' : 'Update'"
         [disabled]="isLoading()"
       />
-      <p-button
+      <ui-button
+        appearance="outlined"
         type="button"
-        icon="pi pi-arrow-left"
+        icon="arrow-left"
         label="Back to list"
         [routerLink]="['/terminals']"
-        [outlined]="true"
       />
     </ui-stack>
   </ui-stack>

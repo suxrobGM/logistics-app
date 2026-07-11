@@ -2,9 +2,8 @@ import { Component, computed, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router, RouterLink, RouterLinkActive } from "@angular/router";
 import { ThemeToggle, type UserTenantAccessDto } from "@logistics/shared";
-import { Icon, type IconName } from "@logistics/shared/ui";
+import { Icon, UiButton, type IconName } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { MenuModule } from "primeng/menu";
 import { SelectModule } from "primeng/select";
 import { AuthService } from "@/core/auth";
@@ -21,7 +20,6 @@ interface NavItem {
   selector: "cp-navbar",
   templateUrl: "./navbar.html",
   imports: [
-    ButtonModule,
     FormsModule,
     Icon,
     MenuModule,
@@ -29,6 +27,7 @@ interface NavItem {
     RouterLinkActive,
     SelectModule,
     ThemeToggle,
+    UiButton,
   ],
 })
 export class Navbar {

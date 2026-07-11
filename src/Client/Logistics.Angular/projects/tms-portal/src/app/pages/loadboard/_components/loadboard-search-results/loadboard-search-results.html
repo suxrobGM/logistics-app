@@ -65,12 +65,12 @@
         <span class="text-sm">{{ (listing.ratePerMile | currencyFormat) ?? "-" }}/mi</span>
       </td>
       <td>
-        <p-button
-          icon="pi pi-check"
+        <ui-button
+          size="sm"
+          icon="check"
           label="Book"
           [rounded]="true"
-          size="small"
-          (onClick)="book.emit(listing)"
+          (click)="book.emit(listing)"
           pTooltip="Book this load"
         />
       </td>

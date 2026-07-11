@@ -1,11 +1,11 @@
 import { Component, input, output } from "@angular/core";
 import type { AiDispatchDecisionDto } from "@logistics/shared/api";
-import { ButtonModule } from "primeng/button";
+import { UiButton } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-approve-reject-actions",
   templateUrl: "./approve-reject-actions.html",
-  imports: [ButtonModule],
+  imports: [UiButton],
 })
 export class ApproveRejectActions {
   public readonly decision = input.required<AiDispatchDecisionDto>();

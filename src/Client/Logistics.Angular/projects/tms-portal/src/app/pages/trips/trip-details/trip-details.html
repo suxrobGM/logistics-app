@@ -168,12 +168,7 @@
 
     <ng-template #footer>
       <div class="flex flex-row gap-2">
-        <p-button
-          type="button"
-          icon="pi pi-arrow-left"
-          label="Back to list"
-          [routerLink]="['/trips']"
-        />
+        <ui-button type="button" icon="arrow-left" label="Back to list" [routerLink]="['/trips']" />
       </div>
     </ng-template>
   </p-card>
@@ -226,14 +221,14 @@
                   @if (store.isActive()) {
                     <td>
                       @if (!tripStop.arrivedAt) {
-                        <p-button
-                          icon="pi pi-check"
+                        <ui-button
+                          intent="success"
+                          appearance="text"
+                          size="sm"
+                          icon="check"
                           label="Mark Arrived"
-                          severity="success"
-                          [text]="true"
-                          size="small"
                           [loading]="store.isProcessing()"
-                          (onClick)="onMarkStopArrived(tripStop)"
+                          (click)="onMarkStopArrived(tripStop)"
                         />
                       } @else {
                         <ui-icon name="check-circle" class="text-green-500" />

@@ -56,10 +56,10 @@
 
       <!-- CTA Button -->
       <div class="hidden md:block">
-        <p-button
+        <ui-button
+          buttonClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark font-display"
           label="Request a Demo"
-          (onClick)="openDemoDialog()"
-          styleClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark font-display"
+          (click)="openDemoDialog()"
         />
       </div>
 
@@ -114,10 +114,11 @@
         FAQ
       </a>
       <div class="pt-2">
-        <p-button
+        <ui-button
+          block
+          buttonClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark font-display"
           label="Request a Demo"
-          (onClick)="openDemoDialog(); mobileMenuOpen.set(false)"
-          styleClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark font-display w-full"
+          (click)="openDemoDialog(); mobileMenuOpen.set(false)"
         />
       </div>
     </div>

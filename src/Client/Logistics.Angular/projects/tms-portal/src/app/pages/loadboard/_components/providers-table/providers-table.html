@@ -37,19 +37,22 @@
       </td>
       <td>
         @if (provider.createdAt) {
-          <span class="text-muted-foreground text-sm">{{ provider.createdAt | date: "short" }}</span>
+          <span class="text-muted-foreground text-sm">
+            {{ provider.createdAt | date: "short" }}
+          </span>
         } @else {
           <span class="text-muted-foreground text-sm">-</span>
         }
       </td>
       <td>
-        <p-button
-          icon="pi pi-trash"
+        <ui-button
+          intent="danger"
+          appearance="text"
+          ariaLabel="Delete Provider"
+          icon="trash"
           [rounded]="true"
-          [text]="true"
-          severity="danger"
           pTooltip="Delete Provider"
-          (onClick)="confirmDelete(provider)"
+          (click)="confirmDelete(provider)"
         />
       </td>
     </tr>

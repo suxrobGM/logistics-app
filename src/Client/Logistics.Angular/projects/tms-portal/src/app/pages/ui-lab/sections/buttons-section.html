@@ -1,0 +1,157 @@
+<section id="buttons" class="scroll-mt-24" data-lab="buttons">
+  <ui-typography variant="h2" tag="h2">Buttons</ui-typography>
+  <ui-typography variant="body-sm" color="muted">
+    <code>ui-button</code>
+    : 8 intents x 4 appearances x 3 sizes. The
+    <code>p-button</code>
+    column that stood beside each cell during the S4 component step is gone — the sweep took all 498
+    call sites, so there is no PrimeNG button left in the workspace to compare against.
+  </ui-typography>
+
+  <!-- ============================================================================================
+       THE 8 x 4 MATRIX, AT ALL 3 SIZES. 32 cells, no holes: a missing cell emits no CSS and no
+       warning, so it would render as an unstyled or primary-blue button and nothing would fail.
+       ========================================================================================= -->
+  @for (size of sizes; track size) {
+    <ui-typography variant="h4" tag="h3" class="mt-8">size = {{ size }}</ui-typography>
+
+    <div class="border-default mt-2 overflow-x-auto rounded-lg border">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-hover">
+          <tr>
+            <th class="text-muted-foreground px-3 py-2 font-medium">intent</th>
+            @for (appearance of appearances; track appearance) {
+              <th class="text-muted-foreground px-3 py-2 font-medium">{{ appearance }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (intent of intents; track intent) {
+            <tr class="border-subtle border-t" [attr.data-lab-intent]="intent">
+              <td class="text-subtle-foreground px-3 py-2 font-mono text-xs">{{ intent }}</td>
+
+              @for (appearance of appearances; track appearance) {
+                <td class="px-3 py-2" [attr.data-lab-appearance]="appearance">
+                  <ui-button
+                    [intent]="intent"
+                    [appearance]="appearance"
+                    [size]="size"
+                    [label]="intent"
+                  />
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- ============================================================================================
+       THE OPEN DECISION FROM THE S4 COMPONENT STEP, RE-POSED WITHOUT PRIMENG.
+
+       PrimeNG only put `.p-button-primary` on a button whose `severity` was EXPLICITLY set, and the
+       census found exactly ONE such site. So the TMS gradient — which the old preset hung off that
+       class — painted one button, while the ~370 severity-less p-buttons rendered flat. `primary` is
+       `ui-button`'s DEFAULT intent, so the gradient now reaches all of them. That is a real visual
+       change to ~370 buttons and it has not been ruled on.
+
+       The p-button that used to sit here as the "flat" reference is gone with the sweep. The flat
+       look is reproduced instead by resetting the three `--ui-btn-primary-*` variables to the
+       defaults shared/theme.css already ships (image:none, weight:500) — which is precisely what
+       deleting the `:root` block at the bottom of tms-portal/src/styles.css would do globally.
+
+       Left = flat (what ~370 TMS buttons render today). Right = gradient (what ships now).
+       If the flat one is wanted, delete that `:root` block; nothing else changes.
+       ========================================================================================= -->
+  <ui-typography variant="h4" tag="h3" class="mt-10">
+    Primary: keep the TMS gradient on all ~370 buttons, or go flat?
+  </ui-typography>
+
+  <div class="border-default mt-2 flex flex-wrap items-end gap-6 rounded-lg border p-4">
+    <div
+      class="flex flex-col items-start gap-1 [--ui-btn-primary-image-hover:none] [--ui-btn-primary-image:none] [--ui-btn-primary-weight:500]"
+      data-lab="primary-flat"
+    >
+      <ui-button label="Save" icon="check" />
+      <ui-typography variant="body-sm" color="muted">
+        flat — what ~370 TMS buttons look like today
+      </ui-typography>
+    </div>
+
+    <div class="flex flex-col items-start gap-1" data-lab="primary-gradient">
+      <ui-button label="Save" icon="check" />
+      <ui-typography variant="body-sm" color="muted">
+        gradient — the preset's look, now the default for every primary
+      </ui-typography>
+    </div>
+  </div>
+
+  <!-- ============================================================================================
+       STATES. Each of these is a bug the wrapper exists to make impossible at 496 sites.
+       ========================================================================================= -->
+  <ui-typography variant="h4" tag="h3" class="mt-10">States</ui-typography>
+
+  <div class="border-default mt-2 grid gap-6 rounded-lg border p-4 md:grid-cols-2 xl:grid-cols-3">
+    <div class="flex flex-col gap-2" data-lab="icon-only">
+      <ui-typography variant="body-sm" color="muted">
+        icon-only — square, named only by
+        <code>ariaLabel</code>
+      </ui-typography>
+      <div class="flex items-center gap-2">
+        <ui-button icon="pencil" ariaLabel="Edit load" appearance="text" />
+        <ui-button icon="trash" ariaLabel="Delete load" intent="danger" appearance="text" />
+        <ui-button icon="check" ariaLabel="Approve" intent="success" />
+        <ui-button icon="plus" ariaLabel="Add" [rounded]="true" />
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-2" data-lab="loading">
+      <ui-typography variant="body-sm" color="muted">
+        loading — swaps the glyph for a spinner AND disables. One place, not 100.
+      </ui-typography>
+      <div class="flex items-center gap-2">
+        <ui-button label="Save" icon="check" [loading]="busy()" (click)="toggleBusy()" />
+        <ui-button icon="refresh" ariaLabel="Refresh" [loading]="busy()" appearance="outlined" />
+        <ui-button label="Click me" intent="success" [loading]="busy()" (click)="toggleBusy()" />
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-2" data-lab="disabled">
+      <ui-typography variant="body-sm" color="muted">disabled</ui-typography>
+      <div class="flex items-center gap-2">
+        <ui-button label="Save" [disabled]="true" />
+        <ui-button label="Delete" intent="danger" [disabled]="true" />
+        <ui-button label="Cancel" appearance="outlined" intent="secondary" [disabled]="true" />
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-2" data-lab="rounded">
+      <ui-typography variant="body-sm" color="muted">rounded — 63 sites</ui-typography>
+      <div class="flex items-center gap-2">
+        <ui-button label="Rounded" [rounded]="true" />
+        <ui-button label="Rounded" intent="secondary" appearance="outlined" [rounded]="true" />
+        <ui-button icon="plus" ariaLabel="Add" [rounded]="true" intent="success" />
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-2" data-lab="icon-end">
+      <ui-typography variant="body-sm" color="muted">
+        iconEnd — replaces
+        <code>iconPos="right"</code>
+        (16 sites)
+      </ui-typography>
+      <div class="flex items-center gap-2">
+        <ui-button label="Next" iconEnd="arrow-right" />
+        <ui-button label="Export" iconEnd="download" appearance="outlined" />
+        <ui-button label="Both" icon="filter" iconEnd="chevron-down" intent="secondary" />
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-2" data-lab="block">
+      <ui-typography variant="body-sm" color="muted">block — fills its container</ui-typography>
+      <ui-button label="Block button" [block]="true" />
+      <ui-button label="Block, outlined" appearance="outlined" [block]="true" />
+    </div>
+  </div>
+</section>

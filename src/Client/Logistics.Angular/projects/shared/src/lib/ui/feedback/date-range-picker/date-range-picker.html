@@ -9,13 +9,13 @@
   <ng-template #footer>
     <div class="flex flex-wrap gap-2 border-t p-2">
       @for (preset of presets(); track preset.label) {
-        <p-button
+        <ui-button
+          intent="secondary"
+          appearance="text"
+          size="sm"
           type="button"
           [label]="preset.label"
-          severity="secondary"
-          [text]="true"
-          size="small"
-          (onClick)="selectPreset(preset)"
+          (click)="selectPreset(preset)"
         />
       }
     </div>

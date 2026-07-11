@@ -1,7 +1,7 @@
 import { Component, computed, inject, input, model, output, signal } from "@angular/core";
 import { Api, bulkAssignLoads, type LoadDto, type TruckDto } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { ButtonModule } from "primeng/button";
+import { UiButton } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
@@ -10,7 +10,7 @@ import { SearchTruck } from "@/shared/components";
 @Component({
   selector: "app-bulk-assign-dialog",
   templateUrl: "./bulk-assign-dialog.html",
-  imports: [DialogModule, ProgressSpinnerModule, ButtonModule, SearchTruck, CurrencyFormatPipe],
+  imports: [CurrencyFormatPipe, DialogModule, ProgressSpinnerModule, SearchTruck, UiButton],
 })
 export class BulkAssignDialog {
   private readonly api = inject(Api);

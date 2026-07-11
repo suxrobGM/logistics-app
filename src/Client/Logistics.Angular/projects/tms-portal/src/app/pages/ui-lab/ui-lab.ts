@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { ThemeToggle, Typography } from "@logistics/shared/ui";
+import { UiLabButtonsSection } from "./sections/buttons-section";
 import { UiLabFeedbackSection } from "./sections/feedback-section";
 import { UiLabFormsSection } from "./sections/forms-section";
 import { UiLabIconsSection } from "./sections/icons-section";
@@ -32,6 +33,7 @@ interface LabSection {
     ThemeToggle,
     Typography,
     UiLabIconsSection,
+    UiLabButtonsSection,
     UiLabTableSection,
     UiLabFormsSection,
     UiLabOverlaysSection,
@@ -42,6 +44,7 @@ export class UiLab {
   /** Anchors the probe navigates by. Each id is the `id` of that section's `<section>` element. */
   protected readonly sections: readonly LabSection[] = [
     { id: "icons", label: "Icons" },
+    { id: "buttons", label: "Buttons" },
     { id: "table", label: "Table" },
     { id: "forms", label: "Forms" },
     { id: "overlays", label: "Overlays" },

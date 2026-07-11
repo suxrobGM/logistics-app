@@ -1,5 +1,5 @@
 <ui-page-header title="Pending Invitations">
-  <p-button icon="pi pi-plus" label="Invite Employee" (click)="openInviteDialog()" />
+  <ui-button icon="plus" label="Invite Employee" (click)="openInviteDialog()" />
 </ui-page-header>
 
 <p-card>
@@ -64,19 +64,21 @@
           </td>
           <td>{{ invitation.invitedByName }}</td>
           <td class="overflow-visible">
-            <p-button
-              icon="pi pi-refresh"
+            <ui-button
+              appearance="text"
+              ariaLabel="Resend invitation"
+              icon="refresh"
               pTooltip="Resend invitation"
               tooltipPosition="bottom"
-              [text]="true"
               (click)="resendInvitation(invitation.id)"
             />
-            <p-button
-              icon="pi pi-times"
+            <ui-button
+              intent="danger"
+              appearance="text"
+              ariaLabel="Cancel invitation"
+              icon="times"
               pTooltip="Cancel invitation"
               tooltipPosition="bottom"
-              [text]="true"
-              severity="danger"
               (click)="cancelInvitation(invitation.id)"
             />
           </td>

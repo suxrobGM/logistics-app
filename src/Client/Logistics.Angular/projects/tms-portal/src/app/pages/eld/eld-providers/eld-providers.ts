@@ -8,8 +8,14 @@ import {
   type CreateEldProviderConfigurationCommand,
   type EldProviderConfigurationDto,
 } from "@logistics/shared/api";
-import { Alert, DashboardCard, EmptyState, ErrorState, Stack } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import {
+  Alert,
+  DashboardCard,
+  EmptyState,
+  ErrorState,
+  Stack,
+  UiButton,
+} from "@logistics/shared/ui";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { PageHeader } from "@/shared/components";
 import { EldProviderAddDialog, EldProvidersTable } from "../_components";
@@ -19,7 +25,6 @@ import { EldProviderAddDialog, EldProvidersTable } from "../_components";
   templateUrl: "./eld-providers.html",
   imports: [
     Alert,
-    ButtonModule,
     DashboardCard,
     EldProviderAddDialog,
     EldProvidersTable,
@@ -28,6 +33,7 @@ import { EldProviderAddDialog, EldProvidersTable } from "../_components";
     PageHeader,
     ProgressSpinnerModule,
     Stack,
+    UiButton,
   ],
 })
 export class EldProvidersComponent implements OnInit {

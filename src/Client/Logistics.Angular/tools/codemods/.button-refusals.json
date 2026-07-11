@@ -1,0 +1,20 @@
+{
+  "generatedBy": "tools/codemods/button-sweep.mjs",
+  "mode": "apply",
+  "stats": {
+    "seen": 0,
+    "rewritten": 0,
+    "refused": 0,
+    "iconResolved": 0,
+    "iconEnd": 0,
+    "onClick": 0,
+    "ariaFromTooltip": 0,
+    "ariaFromTable": 0,
+    "ariaFromNativeAttr": 0,
+    "styleClassToButtonClass": 0,
+    "styleClassToBlock": 0,
+    "styleClassToIntent": 0
+  },
+  "refusals": [],
+  "accidentalSubmits": []
+}

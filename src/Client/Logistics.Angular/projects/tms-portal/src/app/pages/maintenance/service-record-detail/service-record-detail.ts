@@ -3,8 +3,7 @@ import { Component, computed, inject, input, signal, type OnInit } from "@angula
 import { Router, RouterLink } from "@angular/router";
 import { Api, getMaintenanceRecords, type MaintenanceRecordDto } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Icon, Stack, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Icon, Stack, Typography, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TagModule } from "primeng/tag";
@@ -15,19 +14,19 @@ import { PageHeader } from "@/shared/components";
   selector: "app-service-record-detail",
   templateUrl: "./service-record-detail.html",
   imports: [
-    RouterLink,
+    CardModule,
     CurrencyFormatPipe,
     DatePipe,
     DecimalPipe,
-    ButtonModule,
-    CardModule,
-    ProgressSpinnerModule,
-    TagModule,
-    PageHeader,
     Grid,
     Icon,
+    PageHeader,
+    ProgressSpinnerModule,
+    RouterLink,
     Stack,
+    TagModule,
     Typography,
+    UiButton,
   ],
 })
 export class ServiceRecordDetailPage implements OnInit {

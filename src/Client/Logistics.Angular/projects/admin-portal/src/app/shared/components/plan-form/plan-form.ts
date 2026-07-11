@@ -5,6 +5,7 @@ import { ToastService } from "@logistics/shared";
 import type { BillingInterval, PlanTier } from "@logistics/shared/api";
 import {
   CurrencyField,
+  UiButton,
   UiFormField,
   UiNumberField,
   UiSelectField,
@@ -12,7 +13,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 
 export interface PlanFormValue {
@@ -56,18 +56,18 @@ const EMPTY: PlanFormValue = {
   selector: "adm-plan-form",
   templateUrl: "./plan-form.html",
   imports: [
-    ButtonModule,
-    ValidatedForm,
-    FormRoot,
+    CurrencyField,
     FormField,
-    RouterLink,
+    FormRoot,
     ProgressSpinnerModule,
+    RouterLink,
+    UiButton,
     UiFormField,
-    UiTextField,
-    UiTextareaField,
     UiNumberField,
     UiSelectField,
-    CurrencyField,
+    UiTextareaField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class PlanForm {

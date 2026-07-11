@@ -12,13 +12,8 @@
       </p>
 
       <div class="flex justify-center gap-3">
-        <p-button label="Go to Login" icon="pi pi-arrow-left" routerLink="/" />
-        <p-button
-          label="Sign Out"
-          icon="pi pi-sign-out"
-          severity="secondary"
-          (onClick)="logout()"
-        />
+        <ui-button label="Go to Login" icon="arrow-left" routerLink="/" />
+        <ui-button intent="secondary" label="Sign Out" icon="sign-out" (click)="logout()" />
       </div>
     </div>
   </p-card>

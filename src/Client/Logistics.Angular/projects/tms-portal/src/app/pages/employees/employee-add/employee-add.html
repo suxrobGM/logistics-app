@@ -9,7 +9,6 @@
 
   <form [formRoot]="form">
     <ui-stack gap="6">
-
       <!-- Employee Details Section -->
       <ui-stack tag="section" gap="3">
         <ui-stack direction="row" gap="2" align="center">
@@ -64,18 +63,18 @@
 
       <!-- Action Buttons -->
       <ui-stack direction="row" gap="2">
-        <p-button
+        <ui-button
           type="submit"
-          icon="pi pi-plus"
+          icon="plus"
           label="Add"
           [loading]="form().submitting()"
           [disabled]="isLoading()"
         />
-        <p-button
+        <ui-button
+          appearance="outlined"
           type="button"
-          icon="pi pi-arrow-left"
+          icon="arrow-left"
           label="Back to list"
-          [outlined]="true"
           [routerLink]="['/employees']"
         />
       </ui-stack>

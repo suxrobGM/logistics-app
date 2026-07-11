@@ -17,6 +17,7 @@ import {
   AddressForm,
   Grid,
   Stack,
+  UiButton,
   UiCheckboxField,
   UiFormField,
   UiSelectField,
@@ -24,7 +25,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
 import { TenantService } from "@/core/services/tenant.service";
@@ -55,20 +55,20 @@ const EMPTY: CustomerFormValue = {
   selector: "app-customer-form",
   templateUrl: "./customer-form.html",
   imports: [
-    ButtonModule,
-    ValidatedForm,
-    FormRoot,
-    FormField,
-    RouterLink,
-    ProgressSpinnerModule,
-    UiFormField,
-    UiTextField,
-    UiSelectField,
-    UiCheckboxField,
-    UiTextareaField,
-    Grid,
-    Stack,
     AddressForm,
+    FormField,
+    FormRoot,
+    Grid,
+    ProgressSpinnerModule,
+    RouterLink,
+    Stack,
+    UiButton,
+    UiCheckboxField,
+    UiFormField,
+    UiSelectField,
+    UiTextareaField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class CustomerForm {

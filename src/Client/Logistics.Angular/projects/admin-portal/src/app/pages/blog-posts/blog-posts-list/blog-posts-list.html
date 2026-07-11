@@ -55,12 +55,12 @@
           </td>
           <td>{{ post.publishedAt | date: "mediumDate" }}</td>
           <td>
-            <p-button
-              icon="pi pi-ellipsis-v"
+            <ui-button
+              intent="secondary"
+              appearance="text"
+              icon="ellipsis-v"
               (click)="openActionMenu(post, menu, $event)"
-              severity="secondary"
-              [text]="true"
-              aria-label="Show actions menu"
+              ariaLabel="Show actions menu"
             />
           </td>
         </tr>

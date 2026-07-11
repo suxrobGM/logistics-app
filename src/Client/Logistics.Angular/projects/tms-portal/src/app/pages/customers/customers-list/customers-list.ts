@@ -3,9 +3,8 @@ import { Component, effect, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import { Api, deleteCustomer, Permission, PermissionGuard } from "@logistics/shared";
 import type { CustomerDto } from "@logistics/shared/api";
-import { Stack, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
+import { Stack, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { MenuModule } from "primeng/menu";
@@ -21,20 +20,20 @@ import { CustomersListStore } from "../store";
   templateUrl: "./customers-list.html",
   providers: [CustomersListStore],
   imports: [
-    ButtonModule,
-    TooltipModule,
     CardModule,
-    MenuModule,
     ConfirmDialogModule,
-    DatePipe,
-    DataContainer,
-    PageHeader,
-    SearchField,
     CustomerAvatar,
     CustomerStatusTag,
+    DataContainer,
+    DatePipe,
     InviteCustomerDialogComponent,
+    MenuModule,
+    PageHeader,
     PermissionGuard,
+    SearchField,
     Stack,
+    TooltipModule,
+    UiButton,
     UiDataTable,
     UiSortHeader,
   ],

@@ -4,8 +4,14 @@ import { Router } from "@angular/router";
 import { Permission } from "@logistics/shared";
 import type { ContainerDto, ContainerIsoType, ContainerStatus } from "@logistics/shared/api";
 import { containerIsoTypeOptions, containerStatusOptions } from "@logistics/shared/api/enums";
-import { Icon, Stack, StatusBadge, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import {
+  Icon,
+  Stack,
+  StatusBadge,
+  UiButton,
+  UiDataTable,
+  UiSortHeader,
+} from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { SelectModule } from "primeng/select";
 import { TooltipModule } from "primeng/tooltip";
@@ -17,17 +23,17 @@ import { ContainersListStore } from "../store";
   templateUrl: "./containers-list.html",
   providers: [ContainersListStore],
   imports: [
-    ButtonModule,
     CardModule,
-    SelectModule,
-    TooltipModule,
-    DatePipe,
     DataContainer,
+    DatePipe,
+    Icon,
     PageHeader,
     SearchField,
-    Icon,
+    SelectModule,
     Stack,
     StatusBadge,
+    TooltipModule,
+    UiButton,
     UiDataTable,
     UiSortHeader,
   ],

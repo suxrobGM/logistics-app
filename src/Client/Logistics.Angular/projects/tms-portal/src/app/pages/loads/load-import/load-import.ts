@@ -10,8 +10,7 @@ import {
   type TruckDto,
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Icon, PdfViewer, Stack, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Icon, PdfViewer, Stack, Typography, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { FileUploadModule, type FileSelectEvent } from "primeng/fileupload";
@@ -25,23 +24,23 @@ import { SearchTruck, UiFormField } from "@/shared/components";
   selector: "app-load-import",
   templateUrl: "./load-import.html",
   imports: [
-    CurrencyFormatPipe,
-    CommonModule,
     CardModule,
+    CommonModule,
+    CurrencyFormatPipe,
+    DividerModule,
     FileUploadModule,
-    ButtonModule,
-    ProgressSpinnerModule,
+    Grid,
+    Icon,
     MessageModule,
-    ToastModule,
+    PdfViewer,
+    ProgressSpinnerModule,
     RouterLink,
     SearchTruck,
-    UiFormField,
-    DividerModule,
-    PdfViewer,
-    Typography,
     Stack,
-    Icon,
-    Grid,
+    ToastModule,
+    Typography,
+    UiButton,
+    UiFormField,
   ],
 })
 export class LoadImportComponent {

@@ -1,11 +1,11 @@
 <ui-page-header title="Truck Details">
-  <p-button
-    icon="pi pi-pencil"
+  <ui-button
+    appearance="outlined"
+    icon="pencil"
     label="Edit"
-    [outlined]="true"
     [routerLink]="['/trucks', id(), 'edit']"
   />
-  <p-button icon="pi pi-arrow-left" label="Back" [routerLink]="['/trucks']" [outlined]="true" />
+  <ui-button appearance="outlined" icon="arrow-left" label="Back" [routerLink]="['/trucks']" />
 </ui-page-header>
 
 @if (isLoading()) {
@@ -148,7 +148,9 @@
                       <span class="font-mono font-semibold">
                         {{ truck()!.licensePlate }}
                         @if (truck()!.licensePlateState) {
-                          <span class="text-muted-foreground ml-1">({{ truck()!.licensePlateState }})</span>
+                          <span class="text-muted-foreground ml-1">
+                            ({{ truck()!.licensePlateState }})
+                          </span>
                         }
                       </span>
                     </ui-stack>
@@ -309,7 +311,7 @@
     <ui-stack align="center" gap="4" class="py-16">
       <ui-icon name="exclamation-circle" size="xl" color="muted" />
       <ui-typography variant="body" color="muted">Truck not found</ui-typography>
-      <p-button label="Back to Trucks" [routerLink]="['/trucks']" />
+      <ui-button label="Back to Trucks" [routerLink]="['/trucks']" />
     </ui-stack>
   </p-card>
 }

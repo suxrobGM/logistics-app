@@ -9,7 +9,9 @@
   <!-- Navigation -->
   <nav class="flex-1 overflow-y-auto px-3 py-2">
     @for (section of sections(); track section.label; let isLast = $last) {
-      <p class="text-muted-foreground mt-3 mb-1 px-2 text-xs font-semibold tracking-wider uppercase">
+      <p
+        class="text-muted-foreground mt-3 mb-1 px-2 text-xs font-semibold tracking-wider uppercase"
+      >
         {{ section.label }}
       </p>
       @for (item of section.items; track item.route) {
@@ -39,15 +41,10 @@
       </div>
       <ui-theme-toggle class="ml-auto" />
     </div>
-    <p-button
-      label="Logout"
-      severity="secondary"
-      styleClass="w-full"
-      (onClick)="logout()"
-    >
-      <ng-template pTemplate="icon">
-        <ui-icon name="sign-out" size="inherit" class="text-base" />
-      </ng-template>
-    </p-button>
+    <!-- The projected icon template that used to sit here existed only because the PrimeNG button's
+         `icon` input takes a CSS class string, so a ui-icon could not be passed through it.
+         ui-button's `icon` IS an IconName, so the projection collapses into the input it was
+         working around. -->
+    <ui-button label="Logout" icon="sign-out" intent="secondary" block (click)="logout()" />
   </div>
 </aside>

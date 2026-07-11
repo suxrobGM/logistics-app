@@ -1,11 +1,11 @@
 <ui-page-header title="ELD / HOS Dashboard" subtitle="Monitor driver Hours of Service compliance">
   <p-tag [value]="rules.ruleSetLabel()" severity="info" pTooltip="Active HOS rule set" />
-  <p-button label="Configure Providers" icon="pi pi-cog" (onClick)="configureProviders()" />
-  <p-button
+  <ui-button label="Configure Providers" icon="cog" (click)="configureProviders()" />
+  <ui-button
     label="Sync HOS Data"
-    icon="pi pi-refresh"
+    icon="refresh"
     [loading]="loading()"
-    (onClick)="syncDriversHos()"
+    (click)="syncDriversHos()"
   />
 </ui-page-header>
 
@@ -59,7 +59,7 @@
           icon="info-circle"
           severity="info"
           actionLabel="Configure Providers"
-          actionIcon="pi pi-cog"
+          actionIcon="cog"
           (action)="configureProviders()"
         />
       } @else {
@@ -123,13 +123,14 @@
               </td>
               <td>{{ driver.lastUpdatedAt | date: "short" }}</td>
               <td>
-                <p-button
-                  icon="pi pi-history"
+                <ui-button
+                  appearance="text"
+                  ariaLabel="View Logs"
+                  icon="history"
                   [rounded]="true"
-                  [text]="true"
                   pTooltip="View Logs"
-                  (onClick)="viewDriverLogs(driver.employeeId)"
-                ></p-button>
+                  (click)="viewDriverLogs(driver.employeeId)"
+                ></ui-button>
               </td>
             </tr>
           </ng-template>

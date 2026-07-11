@@ -5,8 +5,7 @@ import { RouterModule } from "@angular/router";
 import type { InvoiceDto, InvoiceStatus } from "@logistics/shared/api";
 import { invoiceStatusOptions } from "@logistics/shared/api/enums";
 import { CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Stack, Typography, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Stack, Typography, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { MultiSelectModule } from "primeng/multiselect";
 import { TooltipModule } from "primeng/tooltip";
@@ -25,26 +24,26 @@ import { LoadInvoicesListStore } from "../store/load-invoices-list.store";
   templateUrl: "./load-invoices-list.html",
   providers: [LoadInvoicesListStore],
   imports: [
-    CommonModule,
-    FormsModule,
     CardModule,
-    RouterModule,
-    ButtonModule,
-    TooltipModule,
-    MultiSelectModule,
-    InvoiceStatusTag,
-    DataContainer,
-    DateRangePicker,
-    SearchField,
-    UiFormField,
-    UiDataTable,
-    UiSortHeader,
+    CommonModule,
     CurrencyFormatPipe,
+    DataContainer,
     DateFormatPipe,
-    PageHeader,
+    DateRangePicker,
+    FormsModule,
     Grid,
+    InvoiceStatusTag,
+    MultiSelectModule,
+    PageHeader,
+    RouterModule,
+    SearchField,
     Stack,
+    TooltipModule,
     Typography,
+    UiButton,
+    UiDataTable,
+    UiFormField,
+    UiSortHeader,
   ],
 })
 export class LoadInvoicesList {

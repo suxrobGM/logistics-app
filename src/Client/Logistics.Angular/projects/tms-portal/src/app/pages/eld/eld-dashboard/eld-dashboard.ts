@@ -13,10 +13,10 @@ import {
   Grid,
   Icon,
   Stack,
+  UiButton,
   UiDataTable,
   UiSortHeader,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TagModule } from "primeng/tag";
 import { TooltipModule } from "primeng/tooltip";
@@ -32,7 +32,6 @@ const ON_DUTY_WARN_PCT = 0.15;
   selector: "app-eld-dashboard",
   templateUrl: "./eld-dashboard.html",
   imports: [
-    ButtonModule,
     DashboardCard,
     DatePipe,
     EmptyState,
@@ -45,6 +44,7 @@ const ON_DUTY_WARN_PCT = 0.15;
     StatCard,
     TagModule,
     TooltipModule,
+    UiButton,
     UiDataTable,
     UiSortHeader,
   ],

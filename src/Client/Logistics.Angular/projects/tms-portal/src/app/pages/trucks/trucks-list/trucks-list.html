@@ -1,19 +1,24 @@
 <div class="animate-fadein">
   <ui-page-header title="List Trucks" addRoute="/trucks/add" addTooltip="Add a new truck">
     <ui-stack direction="row" gap="1" class="border-default bg-elevated rounded-lg border p-1">
-      <p-button
-        icon="pi pi-table"
-        [text]="viewMode() !== 'table'"
-        [severity]="viewMode() === 'table' ? 'primary' : 'secondary'"
-        size="small"
+      <!-- A segmented toggle: the SELECTED half is a solid primary button, the other a muted text
+           one. p-button expressed that as two independent bound flags ([severity] + [text]);
+           ui-button has one axis for each, so it is the same two expressions, renamed. -->
+      <ui-button
+        icon="table"
+        [intent]="viewMode() === 'table' ? 'primary' : 'secondary'"
+        [appearance]="viewMode() === 'table' ? 'solid' : 'text'"
+        size="sm"
+        ariaLabel="Table view"
         pTooltip="Table view"
         (click)="viewMode.set('table')"
       />
-      <p-button
-        icon="pi pi-map"
-        [text]="viewMode() !== 'map'"
-        [severity]="viewMode() === 'map' ? 'primary' : 'secondary'"
-        size="small"
+      <ui-button
+        icon="map"
+        [intent]="viewMode() === 'map' ? 'primary' : 'secondary'"
+        [appearance]="viewMode() === 'map' ? 'solid' : 'text'"
+        size="sm"
+        ariaLabel="Map view"
         pTooltip="Map view"
         (click)="viewMode.set('map')"
       />
@@ -104,7 +109,9 @@
                 @if (truck.mainDriver) {
                   <span>{{ truck.mainDriver.fullName }}</span>
                   @if (truck.secondaryDriver) {
-                    <span class="text-muted-foreground ml-1">& {{ truck.secondaryDriver.fullName }}</span>
+                    <span class="text-muted-foreground ml-1">
+                      & {{ truck.secondaryDriver.fullName }}
+                    </span>
                   }
                 } @else {
                   <span class="text-muted-foreground">Unassigned</span>
@@ -112,10 +119,10 @@
               </td>
 
               <td class="text-center">
-                <p-button
-                  icon="pi pi-ellipsis-v"
-                  [text]="true"
-                  aria-label="Show actions menu"
+                <ui-button
+                  appearance="text"
+                  icon="ellipsis-v"
+                  ariaLabel="Show actions menu"
                   (click)="selectedRow.set(truck); menu.toggle($event)"
                 />
               </td>

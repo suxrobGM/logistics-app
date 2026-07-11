@@ -14,6 +14,7 @@ import {
 import {
   Grid,
   Stack,
+  UiButton,
   UiDateField,
   UiNumberField,
   UiSelectField,
@@ -21,7 +22,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { TenantService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
 import { ExpenseReceiptUpload } from "../expense-receipt-upload/expense-receipt-upload";
@@ -31,20 +31,20 @@ import { TRUCK_CATEGORIES, VOLUME_UNIT_OPTIONS } from "../expense.constants";
   selector: "app-truck-expense-form",
   templateUrl: "./truck-expense-form.html",
   imports: [
-    RouterModule,
-    ButtonModule,
-    FormRoot,
+    ExpenseReceiptUpload,
     FormField,
-    ValidatedForm,
+    FormRoot,
+    Grid,
+    RouterModule,
+    Stack,
+    UiButton,
+    UiDateField,
     UiFormField,
-    UiTextField,
-    UiTextareaField,
     UiNumberField,
     UiSelectField,
-    UiDateField,
-    Grid,
-    Stack,
-    ExpenseReceiptUpload,
+    UiTextareaField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class TruckExpenseForm implements OnInit {

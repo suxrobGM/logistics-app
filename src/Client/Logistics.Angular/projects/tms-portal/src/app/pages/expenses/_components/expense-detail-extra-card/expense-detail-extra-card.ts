@@ -3,8 +3,7 @@ import { Component, inject, input, output } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { LocalizationService } from "@logistics/shared";
 import { type ExpenseDto } from "@logistics/shared/api";
-import { Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Typography, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { ExpenseDetailRow } from "../expense-detail-row/expense-detail-row";
@@ -14,13 +13,13 @@ import { toShortVolumeUnit } from "../expense.constants";
   selector: "app-expense-detail-extra-card",
   templateUrl: "./expense-detail-extra-card.html",
   imports: [
-    CommonModule,
-    RouterModule,
     CardModule,
-    ButtonModule,
+    CommonModule,
     DividerModule,
-    Typography,
     ExpenseDetailRow,
+    RouterModule,
+    Typography,
+    UiButton,
   ],
 })
 export class ExpenseDetailExtraCard {

@@ -3,9 +3,8 @@ import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import type { MaintenanceRecordDto, MaintenanceType } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { UiDataTable, UiSortHeader } from "@logistics/shared/ui";
+import { UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
 import { TagModule } from "primeng/tag";
@@ -19,17 +18,17 @@ import { ServiceRecordsStore } from "../store";
   templateUrl: "./service-records.html",
   providers: [ServiceRecordsStore],
   imports: [
-    ButtonModule,
-    TooltipModule,
     CardModule,
-    MenuModule,
-    TagModule,
-    DatePipe,
     CurrencyFormatPipe,
-    DecimalPipe,
     DataContainer,
+    DatePipe,
+    DecimalPipe,
+    MenuModule,
     PageHeader,
     SearchField,
+    TagModule,
+    TooltipModule,
+    UiButton,
     UiDataTable,
     UiSortHeader,
   ],

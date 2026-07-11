@@ -1,6 +1,6 @@
 <ui-page-header [title]="pageTitle()" backLink="/maintenance/records">
   @if (record()) {
-    <p-button icon="pi pi-pencil" label="Edit" (click)="editRecord()" />
+    <ui-button icon="pencil" label="Edit" (click)="editRecord()" />
   }
 </ui-page-header>
 
@@ -89,10 +89,18 @@
             <table class="min-w-full">
               <thead>
                 <tr class="border-b">
-                  <th class="text-muted-foreground py-2 text-left text-sm font-medium">Part Name</th>
-                  <th class="text-muted-foreground py-2 text-left text-sm font-medium">Part Number</th>
-                  <th class="text-muted-foreground py-2 text-right text-sm font-medium">Quantity</th>
-                  <th class="text-muted-foreground py-2 text-right text-sm font-medium">Unit Cost</th>
+                  <th class="text-muted-foreground py-2 text-left text-sm font-medium">
+                    Part Name
+                  </th>
+                  <th class="text-muted-foreground py-2 text-left text-sm font-medium">
+                    Part Number
+                  </th>
+                  <th class="text-muted-foreground py-2 text-right text-sm font-medium">
+                    Quantity
+                  </th>
+                  <th class="text-muted-foreground py-2 text-right text-sm font-medium">
+                    Unit Cost
+                  </th>
                   <th class="text-muted-foreground py-2 text-right text-sm font-medium">Total</th>
                 </tr>
               </thead>

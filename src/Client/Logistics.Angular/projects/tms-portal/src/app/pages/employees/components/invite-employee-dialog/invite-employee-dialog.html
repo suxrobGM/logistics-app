@@ -50,8 +50,8 @@
       </ui-form-field>
 
       <ui-stack direction="row" justify="end" gap="2">
-        <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />
-        <p-button type="submit" icon="pi pi-send" label="Send Invitation" />
+        <ui-button appearance="outlined" type="button" label="Cancel" (click)="close()" />
+        <ui-button type="submit" icon="send" label="Send Invitation" />
       </ui-stack>
     </form>
   }

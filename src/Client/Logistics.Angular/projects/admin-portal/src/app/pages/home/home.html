@@ -20,11 +20,10 @@
           </div>
         </ui-stack>
         <div class="mt-4">
-          <p-button
+          <ui-button
+            appearance="link"
             label="View All"
-            icon="pi pi-arrow-right"
-            iconPos="right"
-            [link]="true"
+            iconEnd="arrow-right"
             routerLink="/tenants"
           />
         </div>
@@ -43,11 +42,10 @@
           </div>
         </ui-stack>
         <div class="mt-4">
-          <p-button
+          <ui-button
+            appearance="link"
             label="View All"
-            icon="pi pi-arrow-right"
-            iconPos="right"
-            [link]="true"
+            iconEnd="arrow-right"
             routerLink="/subscriptions"
           />
         </div>
@@ -66,11 +64,10 @@
           </div>
         </ui-stack>
         <div class="mt-4">
-          <p-button
+          <ui-button
+            appearance="link"
             label="View All"
-            icon="pi pi-arrow-right"
-            iconPos="right"
-            [link]="true"
+            iconEnd="arrow-right"
             routerLink="/subscription-plans"
           />
         </div>
@@ -89,13 +86,7 @@
           </div>
         </ui-stack>
         <div class="mt-4">
-          <p-button
-            label="View All"
-            icon="pi pi-arrow-right"
-            iconPos="right"
-            [link]="true"
-            routerLink="/users"
-          />
+          <ui-button appearance="link" label="View All" iconEnd="arrow-right" routerLink="/users" />
         </div>
       </p-card>
     </ui-grid>
@@ -110,17 +101,17 @@
         <p-divider class="m-0" />
       </ng-template>
       <ui-stack direction="row" gap="3" wrap>
-        <p-button label="Add Tenant" icon="pi pi-plus" routerLink="/tenants/add" />
-        <p-button
+        <ui-button label="Add Tenant" icon="plus" routerLink="/tenants/add" />
+        <ui-button
+          intent="secondary"
           label="Add Plan"
-          icon="pi pi-plus"
-          severity="secondary"
+          icon="plus"
           routerLink="/subscription-plans/add"
         />
-        <p-button
+        <ui-button
+          intent="secondary"
           label="Add Subscription"
-          icon="pi pi-plus"
-          severity="secondary"
+          icon="plus"
           routerLink="/subscriptions/add"
         />
       </ui-stack>

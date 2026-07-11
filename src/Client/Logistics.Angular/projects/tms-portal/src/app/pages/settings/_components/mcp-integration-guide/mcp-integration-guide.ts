@@ -1,6 +1,5 @@
 import { Component, inject } from "@angular/core";
-import { Icon } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Icon, UiButton } from "@logistics/shared/ui";
 import { MessageModule } from "primeng/message";
 import { TabsModule } from "primeng/tabs";
 import { TooltipModule } from "primeng/tooltip";
@@ -10,7 +9,7 @@ import { environment } from "@/env";
 @Component({
   selector: "app-mcp-integration-guide",
   templateUrl: "./mcp-integration-guide.html",
-  imports: [ButtonModule, Icon, MessageModule, TabsModule, TooltipModule],
+  imports: [Icon, MessageModule, TabsModule, TooltipModule, UiButton],
 })
 export class McpIntegrationGuide {
   private readonly toastService = inject(ToastService);

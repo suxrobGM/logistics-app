@@ -12,9 +12,14 @@
             </ui-typography>
           </ui-stack>
           <ui-stack direction="row" gap="2" wrap justify="end" class="md:min-w-65">
-            <p-button severity="secondary" outlined label="Customize" (onClick)="openCustomize()" />
-            <p-button severity="secondary" label="Reject all" (onClick)="rejectAll()" />
-            <p-button label="Accept all" (onClick)="acceptAll()" />
+            <ui-button
+              intent="secondary"
+              appearance="outlined"
+              label="Customize"
+              (click)="openCustomize()"
+            />
+            <ui-button intent="secondary" label="Reject all" (click)="rejectAll()" />
+            <ui-button label="Accept all" (click)="acceptAll()" />
           </ui-stack>
         </ui-stack>
       } @else {
@@ -71,13 +76,13 @@
             </ui-stack>
           </ui-stack>
           <ui-stack direction="row" gap="2" justify="end" wrap>
-            <p-button
-              severity="secondary"
-              outlined
+            <ui-button
+              intent="secondary"
+              appearance="outlined"
               label="Cancel"
-              (onClick)="customizing.set(false)"
+              (click)="customizing.set(false)"
             />
-            <p-button label="Save preferences" (onClick)="savePreferences()" />
+            <ui-button label="Save preferences" (click)="savePreferences()" />
           </ui-stack>
         </ui-stack>
       }

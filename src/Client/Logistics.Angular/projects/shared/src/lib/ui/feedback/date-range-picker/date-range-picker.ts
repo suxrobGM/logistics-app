@@ -1,8 +1,8 @@
 import { Component, effect, input, linkedSignal, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ButtonModule } from "primeng/button";
 import { DatePicker } from "primeng/datepicker";
 import { DateUtils, PredefinedDateRanges } from "../../../utils";
+import { UiButton } from "../../action/button/button";
 
 export interface DatePreset {
   label: string;
@@ -28,7 +28,7 @@ export const DEFAULT_DATE_PRESETS: DatePreset[] = [
 @Component({
   selector: "ui-date-range-picker",
   templateUrl: "./date-range-picker.html",
-  imports: [DatePicker, FormsModule, ButtonModule],
+  imports: [DatePicker, FormsModule, UiButton],
 })
 export class DateRangePicker {
   public readonly presets = input<DatePreset[]>(DEFAULT_DATE_PRESETS);

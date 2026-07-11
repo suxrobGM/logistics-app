@@ -1,8 +1,4 @@
-<ui-page-header
-  title="Driver Mappings"
-  [subtitle]="headerSubtitle()"
-  backLink="/eld/providers"
-/>
+<ui-page-header title="Driver Mappings" [subtitle]="headerSubtitle()" backLink="/eld/providers" />
 
 @if (loading()) {
   <ui-stack align="center" justify="center" class="p-10">
@@ -66,14 +62,14 @@
                   }
                 </td>
                 <td>
-                  <p-button
-                    icon="pi pi-trash"
+                  <ui-button
+                    intent="danger"
+                    appearance="text"
+                    icon="trash"
                     [rounded]="true"
-                    [text]="true"
-                    severity="danger"
                     pTooltip="Remove Mapping"
-                    aria-label="Remove mapping"
-                    (onClick)="confirmDeleteMapping(mapping)"
+                    ariaLabel="Remove mapping"
+                    (click)="confirmDeleteMapping(mapping)"
                   />
                 </td>
               </tr>
@@ -149,10 +145,10 @@
         </ui-grid>
 
         <ui-stack direction="row" justify="end" class="mt-4">
-          <p-button
+          <ui-button
             label="Create Mapping"
-            icon="pi pi-link"
-            (onClick)="createMapping()"
+            icon="link"
+            (click)="createMapping()"
             [loading]="saving()"
             [disabled]="!selectedEldDriver || !selectedEmployee"
           />

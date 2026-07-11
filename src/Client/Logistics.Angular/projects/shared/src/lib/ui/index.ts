@@ -7,6 +7,7 @@
  * re-exported here — consumers use the `ui-*` components, not raw Helm.
  */
 export * from "./form";
+export * from "./action";
 export * from "./table";
 export * from "./layout";
 export * from "./content";

@@ -62,10 +62,10 @@
           <td>{{ typeLabel(terminal.type) }}</td>
           <td>{{ terminal.address?.city || "-" }}</td>
           <td>
-            <p-button
-              icon="pi pi-pencil"
-              [text]="true"
-              aria-label="Edit terminal"
+            <ui-button
+              appearance="text"
+              icon="pencil"
+              ariaLabel="Edit terminal"
               (click)="$event.stopPropagation(); editTerminal(terminal)"
             />
           </td>

@@ -1,12 +1,12 @@
 <div class="animate-fadein">
   <ui-page-header title="Trips" addRoute="/trips/add" addTooltip="Add a new trip">
-    <p-button
-      icon="pi pi-download"
-      size="large"
+    <ui-button
+      appearance="text"
+      size="lg"
+      icon="download"
       [rounded]="true"
-      [text]="true"
       pTooltip="Export to CSV"
-      aria-label="Export to CSV"
+      ariaLabel="Export to CSV"
       (click)="exportToCsv()"
       [disabled]="store.isEmpty()"
     />
@@ -29,11 +29,11 @@
             {{ activeFilterCount() }} active
           </ui-typography>
         }
-        <p-button
+        <ui-button
+          appearance="text"
+          size="sm"
           label="Clear All"
-          icon="pi pi-times"
-          size="small"
-          [text]="true"
+          icon="times"
           (click)="clearFilters()"
           [disabled]="activeFilterCount() === 0"
         />
@@ -83,9 +83,9 @@
         [binary]="true"
         inputId="activeTripsOnly"
       />
-      <label for="activeTripsOnly" class="text-subtle-foreground cursor-pointer text-sm"
-        >Active trips only</label
-      >
+      <label for="activeTripsOnly" class="text-subtle-foreground cursor-pointer text-sm">
+        Active trips only
+      </label>
     </ui-stack>
   </p-card>
 
@@ -137,12 +137,14 @@
             (click)="navigateToTrip(trip)"
           >
             <td (click)="$event.stopPropagation()">
-              <p-button
+              <!-- The row-toggler directive below stays on the host: it belongs to the PrimeNG table,
+                   and S12 owns that. (Naming it in prose would feed the burndown ratchet a phantom.) -->
+              <ui-button
                 [pRowToggler]="trip"
                 class="mr-2 text-sm no-underline"
-                [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
-                variant="text"
-                aria-label="Toggle trip details"
+                [icon]="expanded ? 'chevron-down' : 'chevron-right'"
+                appearance="text"
+                ariaLabel="Toggle trip details"
               />
             </td>
             <td class="text-center font-medium">{{ trip.number }}</td>
@@ -196,11 +198,11 @@
               }
             </td>
             <td (click)="$event.stopPropagation()">
-              <p-button
-                icon="pi pi-ellipsis-v"
-                [text]="true"
+              <ui-button
+                appearance="text"
+                icon="ellipsis-v"
                 (click)="selectedRow.set(trip); menu.toggle($event)"
-                aria-label="Show actions menu"
+                ariaLabel="Show actions menu"
               />
             </td>
           </tr>

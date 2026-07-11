@@ -13,8 +13,7 @@ import {
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Icon, Stack, Typography, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Icon, Stack, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { DividerModule } from "primeng/divider";
@@ -30,29 +29,29 @@ import { InvoiceStatusTag, PageHeader, PaymentStatusTag } from "@/shared/compone
   selector: "app-payroll-invoice-details",
   templateUrl: "./payroll-invoice-details.html",
   imports: [
-    CommonModule,
-    FormsModule,
     CardModule,
-    ButtonModule,
-    ProgressSpinnerModule,
-    RouterModule,
-    InvoiceStatusTag,
-    PaymentStatusTag,
-    DividerModule,
-    UiDataTable,
-    TagModule,
-    TooltipModule,
+    CommonModule,
     CurrencyFormatPipe,
     DatePipe,
-    PercentPipe,
-    RecordPaymentDialog,
     DialogModule,
-    TextareaModule,
-    PageHeader,
+    DividerModule,
+    FormsModule,
     Grid,
     Icon,
+    InvoiceStatusTag,
+    PageHeader,
+    PaymentStatusTag,
+    PercentPipe,
+    ProgressSpinnerModule,
+    RecordPaymentDialog,
+    RouterModule,
     Stack,
+    TagModule,
+    TextareaModule,
+    TooltipModule,
     Typography,
+    UiButton,
+    UiDataTable,
   ],
 })
 export class PayrollInvoiceDetails implements OnInit {

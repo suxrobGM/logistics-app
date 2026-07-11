@@ -6,8 +6,7 @@ import {
   revokePaymentLink,
   type PaymentLinkDto,
 } from "@logistics/shared/api";
-import { Icon, Stack, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Icon, Stack, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TagModule } from "primeng/tag";
@@ -18,14 +17,14 @@ import { ToastService } from "@/core/services";
   selector: "app-payment-link-dialog",
   templateUrl: "./payment-link-dialog.html",
   imports: [
-    DialogModule,
-    ProgressSpinnerModule,
-    ButtonModule,
-    TooltipModule,
-    TagModule,
     DatePipe,
+    DialogModule,
     Icon,
+    ProgressSpinnerModule,
     Stack,
+    TagModule,
+    TooltipModule,
+    UiButton,
     UiDataTable,
   ],
 })

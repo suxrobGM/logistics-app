@@ -17,7 +17,6 @@ import {
   Typography,
   UiDataTable,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SkeletonModule } from "primeng/skeleton";
@@ -29,7 +28,6 @@ import { TenantContextService } from "@/core/services";
   imports: [
     RouterLink,
     CardModule,
-    ButtonModule,
     ProgressSpinnerModule,
     SkeletonModule,
     Grid,

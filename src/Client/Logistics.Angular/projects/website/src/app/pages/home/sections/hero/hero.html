@@ -29,13 +29,12 @@
 
         <!-- CTA Buttons -->
         <div class="mt-12 flex flex-wrap items-center gap-6">
-          <p-button
+          <ui-button
+            size="lg"
+            buttonClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark font-display"
             label="Request a Demo"
-            icon="pi pi-arrow-right"
-            iconPos="right"
-            (onClick)="openDemoDialog()"
-            size="large"
-            styleClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark font-display"
+            iconEnd="arrow-right"
+            (click)="openDemoDialog()"
           />
           <div class="flex flex-col items-start gap-1.5">
             <a

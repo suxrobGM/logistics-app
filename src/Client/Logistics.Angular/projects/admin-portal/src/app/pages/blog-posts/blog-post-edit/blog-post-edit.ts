@@ -12,7 +12,6 @@ import {
   type UpdateBlogPostCommand,
 } from "@logistics/shared/api";
 import { PageHeader, Stack } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";
 import { BlogPostForm, type BlogPostFormValue } from "@/shared/components";
@@ -20,15 +19,7 @@ import { BlogPostForm, type BlogPostFormValue } from "@/shared/components";
 @Component({
   selector: "adm-blog-post-edit",
   templateUrl: "./blog-post-edit.html",
-  imports: [
-    CardModule,
-    ButtonModule,
-    RouterModule,
-    BlogPostForm,
-    SkeletonModule,
-    Stack,
-    PageHeader,
-  ],
+  imports: [CardModule, RouterModule, BlogPostForm, SkeletonModule, Stack, PageHeader],
 })
 export class BlogPostEdit implements OnInit {
   private readonly api = inject(Api);

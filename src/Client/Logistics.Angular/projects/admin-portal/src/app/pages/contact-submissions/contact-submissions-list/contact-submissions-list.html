@@ -49,10 +49,17 @@
           </td>
           <td>{{ formatDate(submission.createdAt) }}</td>
           <td class="text-center">
-            <p-button icon="pi pi-eye" pTooltip="View Details" (click)="viewSubmission(submission)" />
-            <p-button
-              styleClass="ml-2 p-button-danger"
-              icon="pi pi-trash"
+            <ui-button
+              ariaLabel="View Details"
+              icon="eye"
+              pTooltip="View Details"
+              (click)="viewSubmission(submission)"
+            />
+            <ui-button
+              intent="danger"
+              buttonClass="ml-2"
+              ariaLabel="Delete"
+              icon="trash"
               pTooltip="Delete"
               (click)="confirmToDelete(submission.id)"
             />
@@ -74,7 +81,9 @@
       <ui-grid container spacing="4">
         <ui-grid [size]="6">
           <ui-typography variant="caption" color="muted" class="mb-1 block">Name</ui-typography>
-          <ui-typography variant="body">{{ submission.firstName }} {{ submission.lastName }}</ui-typography>
+          <ui-typography variant="body">
+            {{ submission.firstName }} {{ submission.lastName }}
+          </ui-typography>
         </ui-grid>
         <ui-grid [size]="6">
           <ui-typography variant="caption" color="muted" class="mb-1 block">Email</ui-typography>
@@ -89,12 +98,16 @@
           <ui-typography variant="body">{{ getSubjectLabel(submission.subject) }}</ui-typography>
         </ui-grid>
         <ui-grid [size]="6">
-          <ui-typography variant="caption" color="muted" class="mb-1 block">Submitted</ui-typography>
+          <ui-typography variant="caption" color="muted" class="mb-1 block">
+            Submitted
+          </ui-typography>
           <ui-typography variant="body">{{ formatDate(submission.createdAt) }}</ui-typography>
         </ui-grid>
         @if (submission.updatedAt) {
           <ui-grid [size]="6">
-            <ui-typography variant="caption" color="muted" class="mb-1 block">Last Updated</ui-typography>
+            <ui-typography variant="caption" color="muted" class="mb-1 block">
+              Last Updated
+            </ui-typography>
             <ui-typography variant="body">{{ formatDate(submission.updatedAt) }}</ui-typography>
           </ui-grid>
         }
@@ -135,7 +148,7 @@
   }
 
   <ng-template #footer>
-    <p-button label="Cancel" severity="secondary" (click)="viewDialogVisible.set(false)" />
-    <p-button label="Save Changes" icon="pi pi-check" (click)="saveSubmission()" />
+    <ui-button intent="secondary" label="Cancel" (click)="viewDialogVisible.set(false)" />
+    <ui-button label="Save Changes" icon="check" (click)="saveSubmission()" />
   </ng-template>
 </p-dialog>

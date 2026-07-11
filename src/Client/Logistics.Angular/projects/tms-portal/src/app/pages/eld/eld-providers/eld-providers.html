@@ -3,11 +3,11 @@
   subtitle="Connect your ELD devices to sync driver Hours of Service data"
   backLink="/eld"
 >
-  <p-button
+  <ui-button
+    buttonClass="whitespace-nowrap"
     label="Add Provider"
-    icon="pi pi-plus"
-    styleClass="whitespace-nowrap"
-    (onClick)="showAddDialog.set(true)"
+    icon="plus"
+    (click)="showAddDialog.set(true)"
   />
 </ui-page-header>
 

@@ -5,11 +5,11 @@ import {
   DataContainer,
   PageHeader,
   SearchField,
+  UiButton,
   UiDataTable,
   UiSortHeader,
 } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -25,21 +25,21 @@ import { UsersListStore } from "../store/users-list.store";
   templateUrl: "./users-list.html",
   providers: [UsersListStore],
   imports: [
-    TooltipModule,
-    RouterLink,
     CardModule,
-    UiDataTable,
-    UiSortHeader,
     DataContainer,
-    PageHeader,
-    SearchField,
-    TagModule,
-    ButtonModule,
     DialogModule,
+    FormsModule,
     InputTextModule,
     MenuModule,
+    PageHeader,
     PasswordModule,
-    FormsModule,
+    RouterLink,
+    SearchField,
+    TagModule,
+    TooltipModule,
+    UiButton,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class UsersList {

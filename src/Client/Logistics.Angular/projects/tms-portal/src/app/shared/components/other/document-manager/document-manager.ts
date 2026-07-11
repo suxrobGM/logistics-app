@@ -10,9 +10,8 @@ import {
   type DocumentStatus,
   type DocumentType,
 } from "@logistics/shared/api";
-import { Icon, UiDataTable } from "@logistics/shared/ui";
+import { Icon, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { downloadBlobFile, formatFileSize } from "@logistics/shared/utils";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { FileUploadModule } from "primeng/fileupload";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -26,7 +25,6 @@ import { Converters } from "@/shared/utils";
   selector: "app-document-manager",
   templateUrl: "./document-manager.html",
   imports: [
-    ButtonModule,
     CardModule,
     CommonModule,
     FileUploadModule,
@@ -35,6 +33,7 @@ import { Converters } from "@/shared/utils";
     TagModule,
     ToastModule,
     TooltipModule,
+    UiButton,
     UiDataTable,
   ],
 })

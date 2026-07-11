@@ -181,10 +181,10 @@
               </ui-stack>
             </div>
 
-            <p-button
+            <ui-button
+              block
               label="Continue to Payment"
-              icon="pi pi-arrow-right"
-              styleClass="w-full"
+              icon="arrow-right"
               [loading]="isProcessing()"
               (click)="processPayment()"
               [disabled]="!paymentAmount() || paymentAmount()! <= 0"

@@ -1,15 +1,14 @@
 import { Location } from "@angular/common";
 import { Component, computed, effect, inject, input } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { Icon } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Icon, UiButton } from "@logistics/shared/ui";
 import { AuthService } from "@/core/auth";
 import { TenantService } from "@/core/services";
 
 @Component({
   selector: "app-unauthorized",
   templateUrl: "./unauthorized.html",
-  imports: [ButtonModule, Icon, RouterLink],
+  imports: [Icon, RouterLink, UiButton],
 })
 export class UnauthorizedComponent {
   private readonly location = inject(Location);

@@ -3,8 +3,7 @@ import { FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
 import type { LoadDto } from "@logistics/shared/api";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Icon, Stack, Typography, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Icon, Stack, Typography, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import { Dialog } from "primeng/dialog";
 import { IconField } from "primeng/iconfield";
 import { InputIcon } from "primeng/inputicon";
@@ -20,26 +19,26 @@ import { AttachLoadDialog } from "../attach-load-dialog/attach-load-dialog";
   selector: "app-trip-wizard-loads",
   templateUrl: "./trip-wizard-loads.html",
   imports: [
-    FormsModule,
-    ButtonModule,
-    UiDataTable,
-    UiSortHeader,
-    TagModule,
-    TooltipModule,
     AddressPipe,
-    DistanceUnitPipe,
+    AttachLoadDialog,
     CurrencyFormatPipe,
-    LoadStatusTag,
-    RouterLink,
-    InputTextModule,
+    Dialog,
+    DistanceUnitPipe,
+    FormsModule,
+    Icon,
     IconField,
     InputIcon,
-    Dialog,
+    InputTextModule,
     LoadForm,
-    AttachLoadDialog,
-    Icon,
+    LoadStatusTag,
+    RouterLink,
     Stack,
+    TagModule,
+    TooltipModule,
     Typography,
+    UiButton,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class TripFormStepLoads {

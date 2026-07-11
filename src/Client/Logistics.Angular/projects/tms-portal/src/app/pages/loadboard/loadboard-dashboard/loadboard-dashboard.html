@@ -3,17 +3,17 @@
   subtitle="Search available loads, post trucks, and manage load board integrations"
 >
   <ui-stack direction="row" align="center" gap="2">
-    <p-button
+    <ui-button
+      buttonClass="whitespace-nowrap"
       label="Search Loads"
-      icon="pi pi-search"
-      styleClass="whitespace-nowrap"
-      (onClick)="searchLoads()"
+      icon="search"
+      (click)="searchLoads()"
     />
-    <p-button
+    <ui-button
+      buttonClass="whitespace-nowrap"
       label="Post Truck"
-      icon="pi pi-truck"
-      styleClass="whitespace-nowrap"
-      (onClick)="managePostedTrucks()"
+      icon="truck"
+      (click)="managePostedTrucks()"
     />
   </ui-stack>
 </ui-page-header>
@@ -89,13 +89,13 @@
                   />
                 </td>
                 <td>
-                  <p-button
-                    icon="pi pi-cog"
+                  <ui-button
+                    appearance="text"
+                    icon="cog"
                     [rounded]="true"
-                    [text]="true"
                     pTooltip="Configure"
-                    aria-label="Configure provider"
-                    (onClick)="configureProviders()"
+                    ariaLabel="Configure provider"
+                    (click)="configureProviders()"
                   />
                 </td>
               </tr>

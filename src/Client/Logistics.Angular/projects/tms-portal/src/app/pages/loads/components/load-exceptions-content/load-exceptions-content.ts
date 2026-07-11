@@ -1,9 +1,8 @@
 import { CommonModule, DatePipe } from "@angular/common";
 import { Component, inject, input, output, signal, type OnInit } from "@angular/core";
 import { Api, getLoadExceptions, type LoadExceptionDto } from "@logistics/shared/api";
-import { Icon, UiDataTable } from "@logistics/shared/ui";
+import { Icon, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { BadgeModule } from "primeng/badge";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TooltipModule } from "primeng/tooltip";
@@ -14,7 +13,6 @@ import { ExceptionTypeTag } from "@/shared/components/tags";
   templateUrl: "./load-exceptions-content.html",
   imports: [
     BadgeModule,
-    ButtonModule,
     CardModule,
     CommonModule,
     DatePipe,
@@ -22,6 +20,7 @@ import { ExceptionTypeTag } from "@/shared/components/tags";
     Icon,
     ProgressSpinnerModule,
     TooltipModule,
+    UiButton,
     UiDataTable,
   ],
 })

@@ -14,16 +14,12 @@
         </p>
 
         <div class="flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <p-button
-            icon="pi pi-refresh"
-            label="Renew Subscription"
-            routerLink="/subscription/renew"
-          />
-          <p-button icon="pi pi-arrow-left" label="Go Back" [outlined]="true" (click)="goBack()" />
+          <ui-button icon="refresh" label="Renew Subscription" routerLink="/subscription/renew" />
+          <ui-button appearance="outlined" icon="arrow-left" label="Go Back" (click)="goBack()" />
         </div>
 
         <div class="border-subtle mt-4 border-t pt-4">
-          <p-button icon="pi pi-sign-out" label="Sign Out" [text]="true" (click)="logout()" />
+          <ui-button appearance="text" icon="sign-out" label="Sign Out" (click)="logout()" />
         </div>
       } @else {
         <div
@@ -39,12 +35,12 @@
         </p>
 
         <div class="flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <p-button icon="pi pi-home" label="Go to Dashboard" routerLink="/home" />
-          <p-button icon="pi pi-arrow-left" label="Go Back" [outlined]="true" (click)="goBack()" />
+          <ui-button icon="home" label="Go to Dashboard" routerLink="/home" />
+          <ui-button appearance="outlined" icon="arrow-left" label="Go Back" (click)="goBack()" />
         </div>
 
         <div class="border-subtle mt-4 border-t pt-4">
-          <p-button icon="pi pi-sign-out" label="Sign Out" [text]="true" (click)="logout()" />
+          <ui-button appearance="text" icon="sign-out" label="Sign Out" (click)="logout()" />
         </div>
       }
     </div>

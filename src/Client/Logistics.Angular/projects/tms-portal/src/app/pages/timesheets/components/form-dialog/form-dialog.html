@@ -106,8 +106,8 @@
       </ui-form-field>
 
       <ui-stack direction="row" justify="end" gap="2" class="mt-4">
-        <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />
-        <p-button type="submit" icon="pi pi-check" [label]="isEditMode ? 'Update' : 'Create'" />
+        <ui-button appearance="outlined" type="button" label="Cancel" (click)="close()" />
+        <ui-button type="submit" icon="check" [label]="isEditMode ? 'Update' : 'Create'" />
       </ui-stack>
     </form>
   }

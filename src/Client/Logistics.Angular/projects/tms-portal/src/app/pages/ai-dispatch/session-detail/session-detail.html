@@ -9,24 +9,24 @@
         />
         <app-mode-badge [mode]="session.mode" />
         @if (session.status === "running") {
-          <p-button
+          <ui-button
+            intent="danger"
+            appearance="outlined"
+            size="sm"
             label="Cancel"
-            icon="pi pi-stop-circle"
-            severity="danger"
-            [outlined]="true"
-            size="small"
-            (onClick)="cancelSession()"
+            icon="stop-circle"
+            (click)="cancelSession()"
           />
         }
         @if (session.status !== "running" && hasRejectedDecisions()) {
-          <p-button
+          <ui-button
+            intent="help"
+            appearance="outlined"
+            size="sm"
             label="Re-plan"
-            icon="pi pi-refresh"
-            severity="help"
-            [outlined]="true"
-            size="small"
+            icon="refresh"
             pTooltip="Start a new session with rejection context"
-            (onClick)="replanSession()"
+            (click)="replanSession()"
           />
         }
       </ui-stack>

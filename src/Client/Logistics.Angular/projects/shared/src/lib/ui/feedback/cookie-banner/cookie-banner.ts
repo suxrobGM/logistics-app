@@ -1,8 +1,8 @@
 import { Component, computed, inject, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ButtonModule } from "primeng/button";
 import { CheckboxModule } from "primeng/checkbox";
 import { ConsentService } from "../../../services/consent.service";
+import { UiButton } from "../../action/button/button";
 import { Typography } from "../../content/typography/typography";
 import { Stack } from "../../layout/stack/stack";
 import { Surface } from "../../layout/surface/surface";
@@ -16,7 +16,7 @@ import { Surface } from "../../layout/surface/surface";
 @Component({
   selector: "ui-cookie-banner",
   templateUrl: "./cookie-banner.html",
-  imports: [ButtonModule, CheckboxModule, FormsModule, Stack, Surface, Typography],
+  imports: [CheckboxModule, FormsModule, Stack, Surface, Typography, UiButton],
 })
 export class CookieBanner {
   private readonly consent = inject(ConsentService);

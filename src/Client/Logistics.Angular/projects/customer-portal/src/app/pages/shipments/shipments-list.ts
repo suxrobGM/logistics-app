@@ -2,8 +2,15 @@ import { Component, inject, signal } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Api, getPortalLoads, type PortalLoadDto } from "@logistics/shared/api";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
-import { Icon, Stack, StatusBadge, Surface, Typography, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import {
+  Icon,
+  Stack,
+  StatusBadge,
+  Surface,
+  Typography,
+  UiButton,
+  UiDataTable,
+} from "@logistics/shared/ui";
 import { IconFieldModule } from "primeng/iconfield";
 import { InputIconModule } from "primeng/inputicon";
 import { InputTextModule } from "primeng/inputtext";
@@ -13,18 +20,18 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
   selector: "cp-shipments-list",
   templateUrl: "./shipments-list.html",
   imports: [
-    RouterLink,
-    UiDataTable,
-    ButtonModule,
+    Icon,
     IconFieldModule,
     InputIconModule,
     InputTextModule,
     ProgressSpinnerModule,
-    Icon,
+    RouterLink,
     Stack,
     StatusBadge,
     Surface,
     Typography,
+    UiButton,
+    UiDataTable,
   ],
 })
 export class ShipmentsList {

@@ -28,11 +28,12 @@
             <p class="text-foreground font-medium">{{ recipient.fullName }}</p>
             <p class="text-muted-foreground text-xs">{{ recipient.email }}</p>
           </div>
-          <p-button
-            icon="pi pi-times"
-            [text]="true"
+          <ui-button
+            appearance="text"
+            ariaLabel="Remove"
+            icon="times"
             [rounded]="true"
-            (onClick)="clearRecipient()"
+            (click)="clearRecipient()"
             pTooltip="Remove"
           />
         </ui-stack>

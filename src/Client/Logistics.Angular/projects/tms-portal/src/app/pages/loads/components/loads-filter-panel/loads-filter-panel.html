@@ -7,11 +7,11 @@
           {{ activeFilterCount() }} active
         </ui-typography>
       }
-      <p-button
+      <ui-button
+        appearance="text"
+        size="sm"
         label="Clear All"
-        icon="pi pi-times"
-        size="small"
-        [text]="true"
+        icon="times"
         (click)="clearFilters()"
         [disabled]="activeFilterCount() === 0"
       />

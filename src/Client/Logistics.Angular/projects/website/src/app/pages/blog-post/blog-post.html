@@ -27,12 +27,7 @@
         The article you're looking for doesn't exist or has been removed.
       </p>
       <div class="mt-8">
-        <p-button
-          label="Back to Blog"
-          icon="pi pi-arrow-left"
-          routerLink="/blog"
-          [rounded]="true"
-        />
+        <ui-button label="Back to Blog" icon="arrow-left" routerLink="/blog" [rounded]="true" />
       </div>
     </div>
   } @else if (post(); as article) {
@@ -101,11 +96,11 @@
               <p class="font-semibold text-gray-900">{{ article.authorName }}</p>
             </div>
           </div>
-          <p-button
+          <ui-button
+            appearance="outlined"
             label="Back to Blog"
-            icon="pi pi-arrow-left"
+            icon="arrow-left"
             routerLink="/blog"
-            [outlined]="true"
             [rounded]="true"
           />
         </div>

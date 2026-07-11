@@ -50,7 +50,9 @@
             @if (report.loadType === "vehicle") {
               <span class="text-sm">{{ getVehicleInfo(report) }}</span>
               @if (report.vehicleBodyClass) {
-                <span class="text-muted-foreground block text-xs">{{ report.vehicleBodyClass }}</span>
+                <span class="text-muted-foreground block text-xs">
+                  {{ report.vehicleBodyClass }}
+                </span>
               }
             } @else {
               <span class="text-muted-foreground text-sm">{{ report.loadType }}</span>
@@ -80,11 +82,11 @@
             }
           </td>
           <td>
-            <p-button
-              icon="pi pi-ellipsis-v"
+            <ui-button
+              appearance="text"
+              icon="ellipsis-v"
               (click)="openActionMenu(report, menu, $event); $event.stopPropagation()"
-              [text]="true"
-              aria-label="Show actions menu"
+              ariaLabel="Show actions menu"
             />
           </td>
         </tr>

@@ -25,6 +25,7 @@ import {
   Stack,
   Surface,
   Typography,
+  UiButton,
   UiCheckboxField,
   UiFormField,
   UiNumberField,
@@ -33,7 +34,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ToastService } from "@/core/services";
 import { PageHeader } from "@/shared/components";
@@ -55,26 +55,26 @@ interface ContainerFormModel {
   selector: "app-container-add",
   templateUrl: "./container-add.html",
   imports: [
+    CardModule,
+    Container,
     FormField,
     FormRoot,
-    RouterLink,
-    ButtonModule,
-    CardModule,
-    UiFormField,
-    ValidatedForm,
-    PageHeader,
-    SearchTerminal,
-    Container,
     Grid,
     Icon,
+    PageHeader,
+    RouterLink,
+    SearchTerminal,
     Stack,
     Surface,
     Typography,
+    UiButton,
     UiCheckboxField,
+    UiFormField,
     UiNumberField,
     UiSelectField,
     UiTextareaField,
     UiTextField,
+    ValidatedForm,
   ],
 })
 export class ContainerAdd {

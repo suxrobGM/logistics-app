@@ -15,18 +15,18 @@
         </span>
       }
       <ui-stack direction="row" gap="2" class="ml-auto">
-        <p-button
+        <ui-button
+          appearance="outlined"
           type="button"
-          icon="pi pi-sync"
+          icon="sync"
           label="Change Status"
-          [outlined]="true"
           (click)="openStatusDialog()"
         />
-        <p-button
+        <ui-button
+          appearance="outlined"
           type="button"
-          icon="pi pi-map-marker"
+          icon="map-marker"
           label="Move to Terminal"
-          [outlined]="true"
           (click)="openTerminalDialog()"
         />
       </ui-stack>
@@ -34,7 +34,6 @@
 
     <form [formRoot]="form">
       <ui-stack gap="4">
-
         <ui-stack tag="section" gap="3">
           <ui-stack direction="row" gap="2" align="center">
             <ui-icon name="tag" color="secondary" />
@@ -105,19 +104,19 @@
         </ui-stack>
 
         <ui-stack direction="row" gap="2">
-          <p-button
+          <ui-button
             type="submit"
-            icon="pi pi-check"
+            icon="check"
             label="Update"
             [disabled]="isLoading()"
             [loading]="form().submitting()"
           />
-          <p-button
+          <ui-button
+            appearance="outlined"
             type="button"
-            icon="pi pi-arrow-left"
+            icon="arrow-left"
             label="Back to list"
             [routerLink]="['/containers']"
-            [outlined]="true"
           />
         </ui-stack>
       </ui-stack>
@@ -149,16 +148,16 @@
       }
 
       <ui-stack direction="row" justify="end" gap="2" class="pt-2">
-        <p-button
+        <ui-button
+          appearance="outlined"
           type="button"
           label="Cancel"
-          [outlined]="true"
           (click)="statusDialogVisible.set(false)"
         />
-        <p-button
+        <ui-button
           type="submit"
           label="Update Status"
-          icon="pi pi-check"
+          icon="check"
           [loading]="statusForm().submitting()"
         />
       </ui-stack>
@@ -180,16 +179,16 @@
       </ui-form-field>
 
       <ui-stack direction="row" justify="end" gap="2" class="pt-2">
-        <p-button
+        <ui-button
+          appearance="outlined"
           type="button"
           label="Cancel"
-          [outlined]="true"
           (click)="terminalDialogVisible.set(false)"
         />
-        <p-button
+        <ui-button
           type="submit"
           label="Move"
-          icon="pi pi-arrow-right"
+          icon="arrow-right"
           [loading]="terminalForm().submitting()"
         />
       </ui-stack>

@@ -86,7 +86,10 @@
             </span>
           </td>
           <td>
-            <app-route-badge [origin]="load.originAddress" [destination]="load.destinationAddress" />
+            <app-route-badge
+              [origin]="load.originAddress"
+              [destination]="load.destinationAddress"
+            />
           </td>
           <td>
             <app-load-status-tag [status]="load.status" />
@@ -118,11 +121,11 @@
             </span>
           </td>
           <td (click)="$event.stopPropagation()">
-            <p-button
-              icon="pi pi-ellipsis-v"
-              [text]="true"
+            <ui-button
+              appearance="text"
+              icon="ellipsis-v"
               (click)="selectedRow.set(load); menu.toggle($event)"
-              aria-label="Show actions menu"
+              ariaLabel="Show actions menu"
             />
           </td>
         </tr>

@@ -17,7 +17,9 @@
     <!-- Navigation -->
     <div class="flex-1 overflow-y-auto px-2">
       @for (section of sections(); track section.label; let isLast = $last) {
-        <p class="text-muted-foreground mt-3 mb-1 px-2 text-xs font-semibold tracking-wider uppercase">
+        <p
+          class="text-muted-foreground mt-3 mb-1 px-2 text-xs font-semibold tracking-wider uppercase"
+        >
           {{ section.label }}
         </p>
         @for (item of section.items; track item.route) {
@@ -47,13 +49,13 @@
         </div>
       }
 
-      <p-button
+      <ui-button
+        intent="danger"
+        appearance="outlined"
+        block
         label="Sign Out"
-        icon="pi pi-sign-out"
-        severity="danger"
-        [outlined]="true"
-        styleClass="w-full"
-        (onClick)="logout()"
+        icon="sign-out"
+        (click)="logout()"
       />
     </div>
   </div>

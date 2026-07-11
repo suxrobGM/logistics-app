@@ -7,8 +7,7 @@ import {
   getPortalLoads,
   type DocumentDto,
 } from "@logistics/shared/api";
-import { Icon, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Icon, Stack, Surface, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TagModule } from "primeng/tag";
 
@@ -23,14 +22,14 @@ interface DocumentWithLoad extends DocumentDto {
   templateUrl: "./documents-list.html",
   imports: [
     DatePipe,
-    RouterLink,
-    ButtonModule,
-    TagModule,
-    ProgressSpinnerModule,
     Icon,
+    ProgressSpinnerModule,
+    RouterLink,
     Stack,
     Surface,
+    TagModule,
     Typography,
+    UiButton,
     UiDataTable,
   ],
 })

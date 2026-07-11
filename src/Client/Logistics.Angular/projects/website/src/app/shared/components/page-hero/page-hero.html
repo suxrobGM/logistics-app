@@ -31,13 +31,12 @@
     <!-- CTA Button -->
     @if (ctaLabel()) {
       <div class="mt-10">
-        <p-button
+        <ui-button
           [label]="ctaLabel()!"
-          [icon]="ctaIcon() ? 'pi ' + ctaIcon() : ''"
-          iconPos="right"
-          size="large"
-          styleClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark font-display"
-          (onClick)="ctaClick.emit()"
+          [iconEnd]="ctaIcon()"
+          size="lg"
+          buttonClass="bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark font-display"
+          (click)="ctaClick.emit()"
         />
       </div>
     }

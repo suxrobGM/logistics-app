@@ -2,18 +2,18 @@
 
 <ui-stack direction="row" gap="2" class="mb-4">
   <ui-permission-guard [permissions]="Permission.Invitation.Manage">
-    <p-button
-      icon="pi pi-send"
+    <ui-button
+      appearance="outlined"
+      icon="send"
       label="Invite Employee"
-      [outlined]="true"
       (click)="openInviteDialog()"
     />
   </ui-permission-guard>
   <ui-permission-guard [permissions]="Permission.Invitation.View">
-    <p-button
-      icon="pi pi-clock"
+    <ui-button
+      appearance="outlined"
+      icon="clock"
       label="Pending Invitations"
-      [outlined]="true"
       routerLink="/employees/invitations"
     />
   </ui-permission-guard>
@@ -101,10 +101,10 @@
           </td>
           <td>{{ employee.joinedDate | date: "mediumDate" }}</td>
           <td>
-            <p-button
-              icon="pi pi-ellipsis-v"
-              [text]="true"
-              aria-label="Show actions menu"
+            <ui-button
+              appearance="text"
+              icon="ellipsis-v"
+              ariaLabel="Show actions menu"
               (click)="$event.stopPropagation(); selectedRow.set(employee); menu.toggle($event)"
             />
           </td>

@@ -41,12 +41,13 @@
             <div class="text-sm opacity-70">Totals</div>
             <div>
               Distance:
-              <span class="font-semibold"
-                >{{ reviewData().totalDistance | distanceUnit: "mi" }} mi</span
-              >
+              <span class="font-semibold">
+                {{ reviewData().totalDistance | distanceUnit: "mi" }} mi
+              </span>
             </div>
             <div>
-              Cost: <span class="font-semibold">{{ reviewData().totalCost | currencyFormat }}</span>
+              Cost:
+              <span class="font-semibold">{{ reviewData().totalCost | currencyFormat }}</span>
             </div>
           </div>
           <ui-icon name="chart-line" size="xl" color="muted" class="opacity-60" />
@@ -60,11 +61,11 @@
     <ng-template #header>
       <ui-stack direction="row" align="center" gap="2" class="p-3 pb-0">
         <ui-typography variant="h6" tag="h5">Stops</ui-typography>
-        <p-button
+        <ui-button
+          appearance="outlined"
           type="button"
-          icon="pi pi-route"
+          icon="route"
           label="Re-optimize Route"
-          variant="outlined"
           [loading]="isOptimizing()"
           [disabled]="isOptimizing()"
           (click)="reOptimizeRoute()"
@@ -110,10 +111,10 @@
   />
 
   <ui-stack direction="row" justify="between" class="pt-6">
-    <p-button type="button" label="Back" icon="pi pi-arrow-left" (click)="goToPreviousStep()" />
-    <p-button
+    <ui-button type="button" label="Back" icon="arrow-left" (click)="goToPreviousStep()" />
+    <ui-button
       type="button"
-      icon="pi pi-pen-to-square"
+      icon="pen-to-square"
       [label]="saveButtonLabel()"
       (click)="save.emit()"
     />

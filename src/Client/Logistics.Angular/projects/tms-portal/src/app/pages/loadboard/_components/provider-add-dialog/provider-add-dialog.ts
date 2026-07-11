@@ -8,12 +8,12 @@ import {
   Icon,
   Stack,
   Typography,
+  UiButton,
   UiPasswordField,
   UiSelectField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { UiFormField } from "@/shared/components";
 import { PROVIDER_OPTIONS } from "../loadboard.constants";
@@ -30,18 +30,18 @@ const EMPTY = {
   selector: "app-provider-add-dialog",
   templateUrl: "./provider-add-dialog.html",
   imports: [
-    ValidatedForm,
-    ButtonModule,
     DialogModule,
-    FormRoot,
     FormField,
-    UiFormField,
+    FormRoot,
     Icon,
-    UiTextField,
-    UiPasswordField,
-    UiSelectField,
     Stack,
     Typography,
+    UiButton,
+    UiFormField,
+    UiPasswordField,
+    UiSelectField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class ProviderAddDialog {

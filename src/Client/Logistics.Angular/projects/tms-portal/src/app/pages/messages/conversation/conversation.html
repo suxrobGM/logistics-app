@@ -41,13 +41,13 @@
     } @else {
       @if (store.hasMore()) {
         <ui-stack align="center" justify="center">
-          <p-button
+          <ui-button
+            appearance="text"
+            size="sm"
             label="Load earlier messages"
-            icon="pi pi-history"
-            [text]="true"
+            icon="history"
             [loading]="store.loading()"
-            size="small"
-            (onClick)="loadMore()"
+            (click)="loadMore()"
           />
         </ui-stack>
       }
@@ -78,12 +78,13 @@
           (input)="onInput()"
         />
       </div>
-      <p-button
-        icon="pi pi-send"
+      <ui-button
+        ariaLabel="Send message"
+        icon="send"
         [rounded]="true"
         [disabled]="!canSendMessage()"
         [loading]="isCreatingConversation()"
-        (onClick)="sendMessage()"
+        (click)="sendMessage()"
       />
     </div>
   </div>

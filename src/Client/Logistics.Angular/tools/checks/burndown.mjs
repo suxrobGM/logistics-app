@@ -44,6 +44,31 @@ export const METRICS = {
   },
 };
 
+/**
+ * Blank out comments before counting, preserving byte offsets and newlines so line numbers and
+ * "lines" mode still work.
+ *
+ * This is load-bearing, not tidiness. The counters have raised a false alarm three times now — a
+ * `.p-button-primary` named inside a CSS comment explaining PrimeNG's behaviour, a `[pRowToggler]`
+ * named in a TS comment, a `pi` in the words "the pi font". Every one of them pressured someone to
+ * "fix" the gate by deleting an EXPLANATION rather than a component, which is precisely backwards:
+ * the comments describing what we are removing, and why, are the most valuable prose in the repo
+ * right now. A metric that punishes documenting PrimeNG cannot be used to remove PrimeNG.
+ *
+ * (This does not weaken the gate. Real code is still counted; only prose is exempt. If someone
+ * hides a live `<p-button>` inside an HTML comment, it is not rendered, so it is not surface.)
+ */
+function stripComments(src, ext) {
+  const blank = (m) => m.replace(/[^\n]/g, " ");
+  if (ext === ".html") return src.replace(/<!--[\s\S]*?-->/g, blank);
+  if (ext === ".css" || ext === ".scss") return src.replace(/\/\*[\s\S]*?\*\//g, blank);
+  // .ts — block and line comments. Strings can contain "//" (e.g. a URL), so skip quoted spans.
+  return src.replace(
+    /("(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'|`(?:[^`\\]|\\.)*`)|\/\*[\s\S]*?\*\/|\/\/[^\n]*/g,
+    (m, quoted) => (quoted ? m : blank(m)),
+  );
+}
+
 /** Count every metric. Returns { counts, worstFiles } — worstFiles powers the "where is it" hint. */
 export function measure() {
   const counts = {};
@@ -54,7 +79,8 @@ export function measure() {
     perFile[name] = new Map();
 
     for (const file of listFiles({ dirs: ["projects"], ext: spec.ext })) {
-      const src = readText(file);
+      const ext = file.slice(file.lastIndexOf("."));
+      const src = stripComments(readText(file), ext);
       let n = 0;
 
       if (spec.mode === "lines") {

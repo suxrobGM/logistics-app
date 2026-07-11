@@ -7,11 +7,11 @@ import {
   Icon,
   Stack,
   Typography,
+  UiButton,
   UiDataTable,
   UiSortHeader,
   UiTableRowDirectives,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import {
   DirectionMap,
@@ -26,17 +26,17 @@ import { TripWizardStore } from "../../store/trip-wizard-store";
   selector: "app-trip-wizard-review",
   templateUrl: "./trip-wizard-review.html",
   imports: [
-    CardModule,
-    DirectionMap,
-    ButtonModule,
-    DistanceUnitPipe,
-    CurrencyFormatPipe,
     AddressPipe,
+    CardModule,
+    CurrencyFormatPipe,
     DatePipe,
+    DirectionMap,
+    DistanceUnitPipe,
     Grid,
     Icon,
     Stack,
     Typography,
+    UiButton,
     UiDataTable,
     UiSortHeader,
     UiTableRowDirectives,

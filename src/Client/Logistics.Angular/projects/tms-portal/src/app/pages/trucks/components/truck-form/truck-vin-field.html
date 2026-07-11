@@ -8,13 +8,13 @@
       [maxlength]="17"
       class="flex-1"
     />
-    <p-button
+    <ui-button
+      intent="secondary"
       type="button"
       label="Decode VIN"
-      severity="secondary"
       [loading]="decoding()"
       [disabled]="decoding()"
-      (onClick)="decodeVin()"
+      (click)="decodeVin()"
     />
   </ui-stack>
   @if (sourceLabel()) {

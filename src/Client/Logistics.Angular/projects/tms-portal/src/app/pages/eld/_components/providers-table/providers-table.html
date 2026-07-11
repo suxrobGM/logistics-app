@@ -43,29 +43,31 @@
       </td>
       <td>
         @if (provider.lastSyncedAt) {
-          <span class="text-muted-foreground text-sm">{{ provider.lastSyncedAt | date: "short" }}</span>
+          <span class="text-muted-foreground text-sm">
+            {{ provider.lastSyncedAt | date: "short" }}
+          </span>
         } @else {
           <span class="text-muted-foreground text-sm">Never</span>
         }
       </td>
       <td>
         <div class="flex gap-1">
-          <p-button
-            icon="pi pi-users"
+          <ui-button
+            appearance="text"
+            icon="users"
             [rounded]="true"
-            [text]="true"
             pTooltip="Manage Driver Mappings"
-            aria-label="Manage driver mappings"
-            (onClick)="manageMappings.emit(provider.id!)"
+            ariaLabel="Manage driver mappings"
+            (click)="manageMappings.emit(provider.id!)"
           />
-          <p-button
-            icon="pi pi-trash"
+          <ui-button
+            intent="danger"
+            appearance="text"
+            icon="trash"
             [rounded]="true"
-            [text]="true"
-            severity="danger"
             pTooltip="Delete Provider"
-            aria-label="Delete provider"
-            (onClick)="confirmDelete(provider)"
+            ariaLabel="Delete provider"
+            (click)="confirmDelete(provider)"
           />
         </div>
       </td>

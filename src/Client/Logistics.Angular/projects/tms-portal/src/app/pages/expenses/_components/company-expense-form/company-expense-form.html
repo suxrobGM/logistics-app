@@ -44,11 +44,7 @@
   </ui-grid>
 
   <ui-form-field label="Notes" for="company-notes">
-    <ui-textarea-field
-      id="company-notes"
-      [formField]="form.notes"
-      [rows]="3"
-    />
+    <ui-textarea-field id="company-notes" [formField]="form.notes" [rows]="3" />
   </ui-form-field>
 
   <app-expense-receipt-upload
@@ -57,15 +53,15 @@
   />
 
   <ui-stack direction="row" justify="end" gap="2" class="pt-4">
-    <p-button
+    <ui-button
+      appearance="outlined"
       label="Cancel"
       [routerLink]="mode() === 'edit' ? ['/expenses', initial()?.id] : ['/expenses']"
-      [outlined]="true"
     />
-    <p-button
+    <ui-button
       type="submit"
       [label]="mode() === 'edit' ? 'Save Changes' : 'Create Expense'"
-      icon="pi pi-save"
+      icon="save"
       [loading]="form().submitting()"
     />
   </ui-stack>

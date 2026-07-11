@@ -1,7 +1,6 @@
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Icon } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Icon, UiButton } from "@logistics/shared/ui";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { AuthService } from "@/core/auth";
 
@@ -9,7 +8,7 @@ import { AuthService } from "@/core/auth";
   selector: "app-login",
   templateUrl: "./login.html",
   styleUrl: "./login.css",
-  imports: [ButtonModule, Icon, ProgressSpinnerModule],
+  imports: [Icon, ProgressSpinnerModule, UiButton],
 })
 export class LoginComponent implements OnInit {
   private readonly authService = inject(AuthService);

@@ -1,9 +1,9 @@
 import { LowerCasePipe } from "@angular/common";
 import { Component, computed, effect, input, model, output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
+import { UiButton } from "../../action/button/button";
 
 /**
  * Reusable confirmation dialog that requires typing the entity name to confirm deletion.
@@ -22,7 +22,7 @@ import { InputTextModule } from "primeng/inputtext";
 @Component({
   selector: "ui-confirm-delete-dialog",
   templateUrl: "./confirm-delete-dialog.html",
-  imports: [ButtonModule, DialogModule, InputTextModule, FormsModule, LowerCasePipe],
+  imports: [DialogModule, FormsModule, InputTextModule, LowerCasePipe, UiButton],
 })
 export class ConfirmDeleteDialog {
   public readonly entityLabel = input("Item");

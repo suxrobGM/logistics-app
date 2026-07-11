@@ -11,8 +11,7 @@ import {
   type DvirStatus,
   type DvirType,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Icon, Stack, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -28,21 +27,21 @@ import { DvirDefectsList } from "../_components/dvir-defects-list/dvir-defects-l
   selector: "app-dvir-detail",
   templateUrl: "./dvir-detail.html",
   imports: [
+    CardModule,
     DatePipe,
     DecimalPipe,
-    FormsModule,
-    ButtonModule,
-    CardModule,
     DialogModule,
-    TextareaModule,
-    ProgressSpinnerModule,
-    TagModule,
-    RouterLink,
-    PageHeader,
     DvirDefectsList,
+    FormsModule,
     Grid,
     Icon,
+    PageHeader,
+    ProgressSpinnerModule,
+    RouterLink,
     Stack,
+    TagModule,
+    TextareaModule,
+    UiButton,
   ],
 })
 export class DvirDetailPage implements OnInit {

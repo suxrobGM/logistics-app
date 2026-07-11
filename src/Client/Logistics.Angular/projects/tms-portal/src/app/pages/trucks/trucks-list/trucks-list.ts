@@ -2,9 +2,8 @@ import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import type { Address, TruckDto } from "@logistics/shared/api";
 import { AddressPipe } from "@logistics/shared/pipes";
-import { Stack, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
+import { Stack, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
 import { TooltipModule } from "primeng/tooltip";
@@ -22,19 +21,19 @@ import { TrucksListStore } from "../store/trucks-list.store";
   templateUrl: "./trucks-list.html",
   providers: [TrucksListStore, AddressPipe],
   imports: [
-    ButtonModule,
-    TooltipModule,
-    CardModule,
-    MenuModule,
     AddressPipe,
+    CardModule,
     DataContainer,
+    MenuModule,
     PageHeader,
-    TruckStatusTag,
-    TruckTypeTag,
-    TrucksSummaryStats,
+    Stack,
+    TooltipModule,
     TrucksFilterPanel,
     TrucksMapView,
-    Stack,
+    TrucksSummaryStats,
+    TruckStatusTag,
+    TruckTypeTag,
+    UiButton,
     UiDataTable,
     UiSortHeader,
   ],

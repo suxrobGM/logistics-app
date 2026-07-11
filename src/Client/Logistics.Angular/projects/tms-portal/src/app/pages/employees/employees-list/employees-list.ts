@@ -5,9 +5,8 @@ import { Permission, PermissionGuard } from "@logistics/shared";
 import type { EmployeeDto, SalaryType } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Stack, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
+import { Stack, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
 import { TagModule } from "primeng/tag";
@@ -24,23 +23,23 @@ type SeverityType = "success" | "secondary" | "info" | "warn" | "danger" | "cont
   templateUrl: "./employees-list.html",
   providers: [EmployeesListStore],
   imports: [
-    CurrencyFormatPipe,
-    ButtonModule,
-    TooltipModule,
-    RouterLink,
     CardModule,
-    MenuModule,
-    TagModule,
-    DatePipe,
-    PercentPipe,
+    CurrencyFormatPipe,
     DataContainer,
-    PageHeader,
-    SearchField,
-    InviteEmployeeDialog,
-    PermissionGuard,
+    DatePipe,
     EmployeeAvatar,
     EmployeeStatusTag,
+    InviteEmployeeDialog,
+    MenuModule,
+    PageHeader,
+    PercentPipe,
+    PermissionGuard,
+    RouterLink,
+    SearchField,
     Stack,
+    TagModule,
+    TooltipModule,
+    UiButton,
     UiDataTable,
     UiSortHeader,
   ],

@@ -21,9 +21,9 @@ import {
   Grid,
   Icon,
   Stack,
+  UiButton,
   UiDataTable,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SelectModule } from "primeng/select";
 import { TagModule } from "primeng/tag";
@@ -36,13 +36,11 @@ import { getEldProviderLabel } from "../_components";
   selector: "app-eld-driver-mappings",
   templateUrl: "./eld-driver-mappings.html",
   imports: [
-    ButtonModule,
     DashboardCard,
     DatePipe,
     EmptyState,
     ErrorState,
     FormsModule,
-    UiFormField,
     Grid,
     Icon,
     PageHeader,
@@ -51,7 +49,9 @@ import { getEldProviderLabel } from "../_components";
     Stack,
     TagModule,
     TooltipModule,
+    UiButton,
     UiDataTable,
+    UiFormField,
   ],
 })
 export class EldDriverMappingsComponent implements OnInit {

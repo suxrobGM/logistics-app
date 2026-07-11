@@ -154,12 +154,7 @@
   </form>
 
   <ng-template #footer>
-    <p-button label="Cancel" (onClick)="close()" [text]="true" />
-    <p-button
-      label="Post Truck"
-      icon="pi pi-check"
-      (onClick)="onSubmit()"
-      [loading]="posting()"
-    />
+    <ui-button appearance="text" label="Cancel" (click)="close()" />
+    <ui-button label="Post Truck" icon="check" (click)="onSubmit()" [loading]="posting()" />
   </ng-template>
 </p-dialog>

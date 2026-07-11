@@ -13,7 +13,6 @@ import { RouterLink } from "@angular/router";
 import type { NotificationDto } from "@logistics/shared/api";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
 import { Icon } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { DividerModule } from "primeng/divider";
 import { OverlayBadgeModule } from "primeng/overlaybadge";
 import { Popover, PopoverModule } from "primeng/popover";
@@ -26,7 +25,6 @@ import { NotificationService, ToastService } from "@/core/services";
   templateUrl: "./notification-bell.html",
   styleUrl: "./notification-bell.css",
   imports: [
-    ButtonModule,
     CommonModule,
     DividerModule,
     Icon,

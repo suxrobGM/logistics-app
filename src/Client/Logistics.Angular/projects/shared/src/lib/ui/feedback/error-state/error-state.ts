@@ -1,5 +1,5 @@
 import { Component, input, output } from "@angular/core";
-import { ButtonModule } from "primeng/button";
+import { UiButton } from "../../action/button/button";
 import { Icon } from "../../content/icon/icon";
 
 /**
@@ -8,7 +8,7 @@ import { Icon } from "../../content/icon/icon";
 @Component({
   selector: "ui-error-state",
   templateUrl: "./error-state.html",
-  imports: [ButtonModule, Icon],
+  imports: [Icon, UiButton],
 })
 export class ErrorState {
   /** Title displayed above the error message */

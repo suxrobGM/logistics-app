@@ -1,7 +1,8 @@
 import { Component, computed, input, viewChild } from "@angular/core";
 import type { MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { Menu, MenuModule } from "primeng/menu";
+import { UiButton } from "../../action/button/button";
+import type { IconName } from "../../icons/icon-registry.generated";
 
 export interface ActionMenuItem {
   label: string;
@@ -21,14 +22,21 @@ export type ActionMenuTrigger = "icon" | "button";
 @Component({
   selector: "ui-action-menu",
   templateUrl: "./action-menu.html",
-  imports: [ButtonModule, MenuModule],
+  imports: [MenuModule, UiButton],
 })
 export class ActionMenu {
   public readonly items = input.required<ActionMenuItem[]>();
   public readonly appendTo = input<"body" | "self">("body");
   public readonly trigger = input<ActionMenuTrigger>("icon");
   public readonly buttonLabel = input<string>("Actions");
-  public readonly buttonIcon = input<string>("pi pi-ellipsis-v");
+
+  /**
+   * The TRIGGER's glyph, now typed `IconName` because it feeds `<ui-button [icon]>` — an unknown
+   * name is a compile error rather than a blank button. `items[].icon` below is a different thing
+   * and is still a primeicons class string: it feeds PrimeNG's `MenuItem.icon` on `<p-menu>`, which
+   * renders it as a CSS class. That one migrates with the menu in S9.
+   */
+  public readonly buttonIcon = input<IconName>("ellipsis-v");
 
   protected readonly menu = viewChild<Menu>("menu");
 

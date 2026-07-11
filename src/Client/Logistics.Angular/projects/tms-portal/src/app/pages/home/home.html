@@ -3,29 +3,31 @@
     <ui-typography variant="body-sm" color="muted" class="whitespace-nowrap">
       Updated {{ lastUpdated() | dateFormat: "shortTime" }}
     </ui-typography>
-    <p-button
-      icon="pi pi-refresh"
+    <ui-button
+      intent="secondary"
+      appearance="text"
+      ariaLabel="Refresh data"
+      icon="refresh"
       [rounded]="true"
-      [text]="true"
-      severity="secondary"
       (click)="refreshData()"
       pTooltip="Refresh data"
       tooltipPosition="bottom"
     />
-    <p-button
-      icon="pi pi-th-large"
+    <ui-button
+      intent="secondary"
+      appearance="text"
+      ariaLabel="Reset Layout"
+      icon="th-large"
       [rounded]="true"
-      [text]="true"
-      severity="secondary"
       (click)="resetLayout()"
       pTooltip="Reset Layout"
       tooltipPosition="bottom"
     />
-    <p-button
+    <ui-button
+      appearance="outlined"
+      buttonClass="whitespace-nowrap"
       label="Quick Actions"
-      icon="pi pi-plus"
-      styleClass="whitespace-nowrap"
-      [outlined]="true"
+      icon="plus"
       (click)="menu.toggle($event)"
     />
     <p-menu #menu [model]="quickActions" [popup]="true" />
@@ -118,9 +120,9 @@
                         Active Loads
                       </ui-typography>
                     </ui-stack>
-                    <p-button
+                    <ui-button
+                      appearance="text"
                       label="View All"
-                      [text]="true"
                       [routerLink]="['/loads']"
                       class="no-drag"
                     />

@@ -1,7 +1,7 @@
 import { Component, computed, input, model, output } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { AiDispatchMode, AiQuotaStatusDto } from "@logistics/shared/api";
-import { ButtonModule } from "primeng/button";
+import { UiButton, type IconName, type UiButtonIntent } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
 import { MessageModule } from "primeng/message";
 import { TextareaModule } from "primeng/textarea";
@@ -14,7 +14,7 @@ export interface RunAgentDialogData {
 @Component({
   selector: "app-run-agent-dialog",
   templateUrl: "./run-agent-dialog.html",
-  imports: [DialogModule, ButtonModule, FormsModule, TextareaModule, MessageModule],
+  imports: [DialogModule, FormsModule, MessageModule, TextareaModule, UiButton],
 })
 export class RunAgentDialog {
   public readonly visible = model(false);
@@ -31,11 +31,12 @@ export class RunAgentDialog {
     return this.mode() === "human_in_the_loop" ? "Run (Suggestions)" : "Run (Autonomous)";
   }
 
-  protected get modeIcon(): string {
-    return this.mode() === "human_in_the_loop" ? "pi pi-play" : "pi pi-bolt";
+  protected get modeIcon(): IconName {
+    return this.mode() === "human_in_the_loop" ? "play" : "bolt";
   }
 
-  protected get modeSeverity(): "primary" | "warn" {
+  /** Autonomous mode moves loads without asking, so its Run button is deliberately a warning. */
+  protected get modeIntent(): UiButtonIntent {
     return this.mode() === "human_in_the_loop" ? "primary" : "warn";
   }
 

@@ -15,7 +15,7 @@
       <p class="text-gray-600">
         We got your demo request. Someone will be in touch within 24 hours.
       </p>
-      <p-button label="Close" (onClick)="closeDialog()" />
+      <ui-button label="Close" (click)="closeDialog()" />
     </div>
   } @else {
     <form [formRoot]="form" class="flex flex-col pt-4">
@@ -72,8 +72,8 @@
       </ui-form-field>
 
       <div class="flex justify-end gap-2">
-        <p-button label="Cancel" severity="secondary" (onClick)="closeDialog()" />
-        <p-button
+        <ui-button intent="secondary" label="Cancel" (click)="closeDialog()" />
+        <ui-button
           label="Submit Request"
           type="submit"
           [disabled]="form().submitting()"

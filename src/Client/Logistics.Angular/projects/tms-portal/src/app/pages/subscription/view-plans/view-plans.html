@@ -24,7 +24,9 @@
             {{ plan.price | currency }}
             <span class="text-subtle-foreground font-normal">/mo</span>
           </div>
-          <div class="text-subtle-foreground">+ {{ plan.perTruckPrice | currency }} per truck / mo</div>
+          <div class="text-subtle-foreground">
+            + {{ plan.perTruckPrice | currency }} per truck / mo
+          </div>
           <ui-typography variant="body-sm" color="secondary">
             {{ getMaxTrucksLabel(plan) }}
           </ui-typography>
@@ -37,7 +39,9 @@
               <ui-icon name="bolt" class="text-foreground" />
               <div>
                 <div class="font-medium">AI Dispatch - {{ getAiDispatchLabel(plan) }}</div>
-                <div class="text-subtle-foreground text-xs">Overage charges apply beyond weekly limit</div>
+                <div class="text-subtle-foreground text-xs">
+                  Overage charges apply beyond weekly limit
+                </div>
               </div>
             </ui-stack>
           </ui-surface>
@@ -62,11 +66,11 @@
         <ng-template #footer>
           <ui-stack direction="row" justify="center">
             @if (isCurrentPlan(plan)) {
-              <p-button label="Current Plan" icon="pi pi-check" disabled class="w-full" />
+              <ui-button label="Current Plan" icon="check" disabled class="w-full" />
             } @else {
-              <p-button
+              <ui-button
                 label="Select Plan"
-                icon="pi pi-credit-card"
+                icon="credit-card"
                 class="w-full"
                 [loading]="isLoading()"
                 (click)="selectPlan(plan)"

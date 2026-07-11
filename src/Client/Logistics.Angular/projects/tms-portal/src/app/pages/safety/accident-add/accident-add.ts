@@ -2,7 +2,7 @@ import { Component, inject, signal } from "@angular/core";
 import { form, min, required, submit } from "@angular/forms/signals";
 import { Router } from "@angular/router";
 import { Api, createAccidentReport, type CreateAccidentReportCommand } from "@logistics/shared/api";
-import { ButtonModule } from "primeng/button";
+import { UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { StepperModule } from "primeng/stepper";
@@ -21,14 +21,14 @@ import {
   selector: "app-accident-add",
   templateUrl: "./accident-add.html",
   imports: [
-    ButtonModule,
-    CardModule,
-    ProgressSpinnerModule,
-    StepperModule,
-    PageHeader,
     AccidentIncidentForm,
     AccidentInjuriesDamageForm,
     AccidentReviewSummary,
+    CardModule,
+    PageHeader,
+    ProgressSpinnerModule,
+    StepperModule,
+    UiButton,
   ],
 })
 export class AccidentAddPage {

@@ -1,18 +1,13 @@
 <ui-page-header title="Employee Details">
-  <p-button icon="pi pi-pencil" label="Edit" [outlined]="true" (click)="openEditDialog()" />
-  <p-button
-    icon="pi pi-chart-line"
+  <ui-button appearance="outlined" icon="pencil" label="Edit" (click)="openEditDialog()" />
+  <ui-button
+    appearance="outlined"
+    icon="chart-line"
     label="View Report"
-    [outlined]="true"
     [routerLink]="['/reports/drivers/detailed']"
     [queryParams]="{ driverId: id() }"
   />
-  <p-button
-    icon="pi pi-arrow-left"
-    label="Back"
-    [routerLink]="['/employees']"
-    [outlined]="true"
-  />
+  <ui-button appearance="outlined" icon="arrow-left" label="Back" [routerLink]="['/employees']" />
 </ui-page-header>
 
 @if (store.isLoading()) {
@@ -203,22 +198,22 @@
             </ng-template>
 
             <ui-stack direction="row" gap="2" wrap>
-              <p-button
-                icon="pi pi-dollar"
+              <ui-button
+                appearance="outlined"
+                icon="dollar"
                 label="View Payroll"
-                [outlined]="true"
                 [routerLink]="['/payroll/employee', id()]"
               />
-              <p-button
-                icon="pi pi-clock"
+              <ui-button
+                appearance="outlined"
+                icon="clock"
                 label="View Timesheets"
-                [outlined]="true"
                 [routerLink]="['/timesheets/employee', id()]"
               />
-              <p-button
-                icon="pi pi-chart-line"
+              <ui-button
+                appearance="outlined"
+                icon="chart-line"
                 label="View Report"
-                [outlined]="true"
                 [routerLink]="['/reports/drivers/detailed']"
                 [queryParams]="{ driverId: id() }"
               />
@@ -245,9 +240,9 @@
           <div class="pt-4">
             <ui-stack direction="row" align="center" justify="between" class="mb-4">
               <ui-typography variant="h5" tag="h3" class="m-0">Payroll</ui-typography>
-              <p-button
+              <ui-button
+                appearance="outlined"
                 label="View All Payroll"
-                [outlined]="true"
                 [routerLink]="['/payroll/employee', id()]"
               />
             </ui-stack>
@@ -267,11 +262,11 @@
                   <ui-icon name="check-circle" class="text-green-500" />
                   <span>Payout account connected</span>
                 </ui-stack>
-                <p-button
+                <ui-button
+                  appearance="outlined"
+                  size="sm"
                   label="Update Bank Details"
-                  icon="pi pi-external-link"
-                  size="small"
-                  [outlined]="true"
+                  icon="external-link"
                   class="mt-3"
                   [loading]="isPayoutLoading()"
                   (click)="openPayoutOnboarding()"
@@ -284,10 +279,10 @@
                     transfer.
                   </span>
                 </ui-stack>
-                <p-button
+                <ui-button
+                  size="sm"
                   label="Set Up Payout Account"
-                  icon="pi pi-credit-card"
-                  size="small"
+                  icon="credit-card"
                   class="mt-3"
                   [loading]="isPayoutLoading()"
                   (click)="setupPayout()"
@@ -313,7 +308,7 @@
     <ui-stack align="center" gap="4" class="py-16">
       <ui-icon name="exclamation-circle" size="xl" color="muted" />
       <ui-typography variant="body" color="muted">Employee not found</ui-typography>
-      <p-button label="Back to Employees" [routerLink]="['/employees']" />
+      <ui-button label="Back to Employees" [routerLink]="['/employees']" />
     </ui-stack>
   </p-card>
 }

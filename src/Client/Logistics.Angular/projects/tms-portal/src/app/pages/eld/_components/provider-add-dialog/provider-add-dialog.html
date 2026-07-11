@@ -81,20 +81,17 @@
         <li>Samsara: Settings → API Tokens in your Samsara dashboard</li>
         <li>Motive: Settings → Integrations → API Keys</li>
         <li>
-          Geotab: API key as <code>database|userName</code>, password as API secret. Webhook
-          secret is the HMAC-SHA256 key configured on your Geotab Add-In / IOX forwarder.
+          Geotab: API key as
+          <code>database|userName</code>
+          , password as API secret. Webhook secret is the HMAC-SHA256 key configured on your Geotab
+          Add-In / IOX forwarder.
         </li>
       </ul>
     </ui-alert>
   </form>
 
   <ng-template #footer>
-    <p-button label="Cancel" (onClick)="close()" [text]="true" />
-    <p-button
-      label="Add Provider"
-      icon="pi pi-check"
-      (onClick)="requestSubmit()"
-      [loading]="saving()"
-    />
+    <ui-button appearance="text" label="Cancel" (click)="close()" />
+    <ui-button label="Add Provider" icon="check" (click)="requestSubmit()" [loading]="saving()" />
   </ng-template>
 </p-dialog>

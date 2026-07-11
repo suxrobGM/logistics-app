@@ -9,17 +9,18 @@
         }
       </div>
       <div class="flex gap-2">
-        <p-button
-          icon="pi pi-plus"
+        <ui-button
+          appearance="outlined"
+          size="sm"
+          icon="plus"
           label="Report Exception"
-          [outlined]="true"
-          size="small"
           (click)="onReportException()"
         />
-        <p-button
-          icon="pi pi-refresh"
-          [outlined]="true"
-          size="small"
+        <ui-button
+          appearance="outlined"
+          size="sm"
+          ariaLabel="Refresh exceptions"
+          icon="refresh"
           (click)="refresh()"
           [loading]="isLoading()"
         />
@@ -79,11 +80,12 @@
           </td>
           <td>
             @if (!isResolved(exception)) {
-              <p-button
-                icon="pi pi-check"
-                size="small"
-                [text]="true"
-                severity="success"
+              <ui-button
+                intent="success"
+                appearance="text"
+                size="sm"
+                ariaLabel="Resolve exception"
+                icon="check"
                 pTooltip="Resolve exception"
                 (click)="onResolveException(exception)"
               />

@@ -43,17 +43,19 @@
 
         <!-- CTA -->
         <div class="mt-6">
-          <p-button
+          <!-- This carried BOTH a static styleClass and a bound [styleClass] (the binding won, so the
+               static one never did anything) plus a bound [outlined]. Untangled: `block` is the
+               w-full, `appearance` is the outlined flag, `buttonClass` is the accent skin. -->
+          <ui-button
             label="Request a Demo"
-            (onClick)="openDemoDialog()"
+            (click)="openDemoDialog()"
             [rounded]="true"
-            class="w-full"
-            styleClass="w-full justify-center"
-            [outlined]="!tier.highlighted"
-            [styleClass]="
+            block
+            [appearance]="tier.highlighted ? 'solid' : 'outlined'"
+            [buttonClass]="
               tier.highlighted
-                ? 'w-full justify-center bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark'
-                : 'w-full justify-center'
+                ? 'justify-center bg-accent border-accent hover:bg-accent-dark hover:border-accent-dark'
+                : 'justify-center'
             "
           />
         </div>

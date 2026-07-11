@@ -11,8 +11,7 @@ import {
   type UserDto,
 } from "@logistics/shared/api";
 import { salaryTypeOptions } from "@logistics/shared/api/enums";
-import { Container, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Container, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { InputGroupModule } from "primeng/inputgroup";
 import { InputGroupAddonModule } from "primeng/inputgroupaddon";
@@ -49,28 +48,28 @@ const EMPTY: EmployeeAddModel = {
   selector: "app-employee-add",
   templateUrl: "./employee-add.html",
   imports: [
-    ToastModule,
     ConfirmDialogModule,
-    ProgressSpinnerModule,
-    FormRoot,
-    FormField,
-    UiAutocompleteField,
-    UiSelectField,
-    ButtonModule,
-    RouterLink,
-    PageHeader,
-    ValidatedForm,
-    UiFormField,
-    InputGroupModule,
-    InputGroupAddonModule,
-    InputTextModule,
-    UnitField,
+    Container,
     CurrencyField,
+    FormField,
+    FormRoot,
     Icon,
+    InputGroupAddonModule,
+    InputGroupModule,
+    InputTextModule,
+    PageHeader,
+    ProgressSpinnerModule,
+    RouterLink,
     Stack,
     Surface,
+    ToastModule,
     Typography,
-    Container,
+    UiAutocompleteField,
+    UiButton,
+    UiFormField,
+    UiSelectField,
+    UnitField,
+    ValidatedForm,
   ],
 })
 export class EmployeeAdd {

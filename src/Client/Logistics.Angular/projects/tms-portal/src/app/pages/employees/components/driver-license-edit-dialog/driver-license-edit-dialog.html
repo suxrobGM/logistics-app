@@ -7,7 +7,6 @@
   [resizable]="false"
 >
   <form [formRoot]="form">
-
     <ui-stack gap="3">
       <ui-form-field label="License number" for="licenseNumber" [required]="true">
         <ui-text-field id="licenseNumber" [formField]="form.licenseNumber" type="text" />
@@ -104,13 +103,8 @@
       </ui-form-field>
 
       <ui-stack direction="row" justify="end" gap="2">
-        <p-button label="Cancel" severity="secondary" [outlined]="true" (click)="close()" />
-        <p-button
-          type="submit"
-          label="Save"
-          icon="pi pi-check"
-          [loading]="form().submitting()"
-        />
+        <ui-button intent="secondary" appearance="outlined" label="Cancel" (click)="close()" />
+        <ui-button type="submit" label="Save" icon="check" [loading]="form().submitting()" />
       </ui-stack>
     </ui-stack>
   </form>

@@ -8,9 +8,8 @@ import {
   type AccidentReportStatus,
   type AccidentSeverity,
 } from "@logistics/shared/api";
-import { Icon, Stack, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
+import { Icon, Stack, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
 import { TagModule } from "primeng/tag";
@@ -25,17 +24,17 @@ import { AccidentsListStore } from "../store";
   templateUrl: "./accidents-list.html",
   providers: [AccidentsListStore],
   imports: [
-    ButtonModule,
-    TooltipModule,
     CardModule,
-    MenuModule,
-    TagModule,
-    DatePipe,
     DataContainer,
+    DatePipe,
+    Icon,
+    MenuModule,
     PageHeader,
     SearchField,
-    Icon,
     Stack,
+    TagModule,
+    TooltipModule,
+    UiButton,
     UiDataTable,
     UiSortHeader,
   ],

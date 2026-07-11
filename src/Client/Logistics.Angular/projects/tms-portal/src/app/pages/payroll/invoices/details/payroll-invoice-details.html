@@ -146,83 +146,73 @@
         <p-card header="Actions">
           <ui-stack gap="2">
             @if (canSubmitForApproval()) {
-              <p-button
-                icon="pi pi-send"
+              <ui-button
+                block
+                icon="send"
                 label="Submit for Approval"
-                styleClass="w-full"
                 [loading]="isSubmitting()"
                 (click)="submitForApproval()"
               />
             }
 
             @if (canApprove()) {
-              <p-button
-                icon="pi pi-check"
+              <ui-button
+                intent="success"
+                block
+                icon="check"
                 label="Approve"
-                styleClass="w-full"
-                severity="success"
                 [loading]="isApproving()"
                 (click)="approve()"
               />
-              <p-button
-                icon="pi pi-times"
+              <ui-button
+                intent="danger"
+                appearance="outlined"
+                block
+                icon="times"
                 label="Reject"
-                styleClass="w-full"
-                severity="danger"
-                [outlined]="true"
                 (click)="openRejectDialog()"
               />
             }
 
             @if (canRecordPayment()) {
-              <p-button
-                icon="pi pi-credit-card"
+              <ui-button
+                intent="success"
+                block
+                icon="credit-card"
                 label="Pay via Bank Transfer"
-                styleClass="w-full"
-                severity="success"
                 [loading]="isPaying()"
                 [disabled]="!canPayViaStripe()"
                 [pTooltip]="canPayViaStripe() ? '' : 'Employee must set up a payout account first'"
                 (click)="payViaStripe()"
               />
-              <p-button
-                icon="pi pi-dollar"
+              <ui-button
+                appearance="outlined"
+                block
+                icon="dollar"
                 label="Record Manual Payment"
-                styleClass="w-full"
-                [outlined]="true"
                 (click)="showRecordPaymentDialog.set(true)"
               />
             }
 
-            <p-button
-              icon="pi pi-download"
+            <ui-button
+              appearance="outlined"
+              block
+              icon="download"
               label="Download Pay Stub"
-              styleClass="w-full"
-              [outlined]="true"
               [loading]="isDownloadingPdf()"
               (click)="downloadPayStub()"
             />
 
             <a [routerLink]="['/payroll/invoices', invoice()!.id, 'edit']" class="no-underline">
-              <p-button icon="pi pi-pencil" label="Edit" styleClass="w-full" [outlined]="true" />
+              <ui-button appearance="outlined" block icon="pencil" label="Edit" />
             </a>
 
             <a [routerLink]="['/payroll/employee', invoice()!.employee?.id]" class="no-underline">
-              <p-button
-                icon="pi pi-user"
-                label="View Employee Payrolls"
-                styleClass="w-full"
-                [outlined]="true"
-              />
+              <ui-button appearance="outlined" block icon="user" label="View Employee Payrolls" />
             </a>
 
             <a routerLink="/payroll/invoices" class="no-underline">
-              <p-button
-                icon="pi pi-arrow-left"
-                label="Back to List"
-                styleClass="w-full"
-                [outlined]="true"
-              />
+              <ui-button appearance="outlined" block icon="arrow-left" label="Back to List" />
             </a>
           </ui-stack>
         </p-card>
@@ -279,10 +269,10 @@
         (ngModelChange)="rejectionReason.set($event)"
       ></textarea>
       <ng-template #footer>
-        <p-button label="Cancel" [text]="true" (click)="showRejectDialog.set(false)" />
-        <p-button
+        <ui-button appearance="text" label="Cancel" (click)="showRejectDialog.set(false)" />
+        <ui-button
+          intent="danger"
           label="Reject"
-          severity="danger"
           [loading]="isRejecting()"
           (click)="confirmReject()"
         />

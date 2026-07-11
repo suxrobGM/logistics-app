@@ -28,13 +28,8 @@
     </ui-form-field>
 
     <div class="flex justify-end gap-2">
-      <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />
-      <p-button
-        type="submit"
-        icon="pi pi-send"
-        label="Send Email"
-        [loading]="form().submitting()"
-      />
+      <ui-button appearance="outlined" type="button" label="Cancel" (click)="close()" />
+      <ui-button type="submit" icon="send" label="Send Email" [loading]="form().submitting()" />
     </div>
   </form>
 </p-dialog>

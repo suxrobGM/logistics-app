@@ -17,8 +17,8 @@
     </p>
 
     <div class="mb-4 flex justify-end">
-      <p-button
-        icon="pi pi-plus"
+      <ui-button
+        icon="plus"
         label="Generate New Link"
         (click)="generateLink()"
         [loading]="isGenerating()"
@@ -45,27 +45,30 @@
               <p-tag [value]="getLinkStatusLabel(link)" [severity]="getLinkStatus(link)" />
             </td>
             <td class="text-right">
-              <p-button
-                icon="pi pi-envelope"
-                [text]="true"
+              <ui-button
+                appearance="text"
+                ariaLabel="Send by email"
+                icon="envelope"
                 [rounded]="true"
                 (click)="openEmailDialog(link)"
                 pTooltip="Send by email"
                 [disabled]="!link.isActive || link.isExpired"
               />
-              <p-button
-                icon="pi pi-copy"
-                [text]="true"
+              <ui-button
+                appearance="text"
+                ariaLabel="Copy link"
+                icon="copy"
                 [rounded]="true"
                 (click)="copyToClipboard(link.url)"
                 pTooltip="Copy link"
                 [disabled]="!link.isActive || link.isExpired"
               />
-              <p-button
-                icon="pi pi-trash"
-                [text]="true"
+              <ui-button
+                intent="danger"
+                appearance="text"
+                ariaLabel="Revoke"
+                icon="trash"
                 [rounded]="true"
-                severity="danger"
                 (click)="revokeLink(link.id)"
                 pTooltip="Revoke"
                 [disabled]="!link.isActive"

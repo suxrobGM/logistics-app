@@ -15,8 +15,15 @@ import {
   type DocumentDto,
   type PublicTrackingDto,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import {
+  Grid,
+  Icon,
+  Stack,
+  Surface,
+  Typography,
+  UiButton,
+  UiDataTable,
+} from "@logistics/shared/ui";
 import { TagModule } from "primeng/tag";
 import { ShipmentTimeline } from "@/shared/components";
 import { PublicLayout } from "@/shared/layout";
@@ -25,19 +32,19 @@ import { PublicLayout } from "@/shared/layout";
   selector: "cp-public-tracking",
   templateUrl: "./public-tracking.html",
   imports: [
-    DatePipe,
-    ButtonModule,
-    TagModule,
     AddressPipe,
+    DatePipe,
     ErrorState,
+    Grid,
+    Icon,
     LoadingSkeleton,
     PublicLayout,
     ShipmentTimeline,
-    Grid,
-    Icon,
     Stack,
     Surface,
+    TagModule,
     Typography,
+    UiButton,
     UiDataTable,
   ],
 })

@@ -4,13 +4,13 @@ import { Api, createContactSubmission, type ContactSubject } from "@logistics/sh
 import type { SelectOption } from "@logistics/shared/models";
 import {
   Icon,
+  UiButton,
   UiFormField,
   UiSelectField,
   UiTextareaField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { SectionContainer } from "@/shared/components";
 import { ScrollAnimateDirective } from "@/shared/directives";
 
@@ -27,12 +27,12 @@ const EMPTY = {
   selector: "web-contact-form",
   templateUrl: "./contact-form.html",
   imports: [
-    ButtonModule,
     FormField,
     FormRoot,
     Icon,
     ScrollAnimateDirective,
     SectionContainer,
+    UiButton,
     UiFormField,
     UiSelectField,
     UiTextareaField,

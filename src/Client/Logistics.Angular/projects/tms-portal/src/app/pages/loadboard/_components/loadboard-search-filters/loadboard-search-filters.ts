@@ -5,12 +5,12 @@ import { LocalizationService } from "@logistics/shared/services";
 import {
   Grid,
   Stack,
+  UiButton,
   UiDateField,
   UiMultiSelectField,
   UiNumberField,
   UiTextField,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { UiFormField } from "@/shared/components";
 import { EQUIPMENT_OPTIONS } from "../loadboard.constants";
 
@@ -18,16 +18,16 @@ import { EQUIPMENT_OPTIONS } from "../loadboard.constants";
   selector: "app-loadboard-search-filters",
   templateUrl: "./loadboard-search-filters.html",
   imports: [
-    ButtonModule,
-    FormRoot,
     FormField,
-    UiFormField,
+    FormRoot,
     Grid,
+    Stack,
+    UiButton,
     UiDateField,
+    UiFormField,
+    UiMultiSelectField,
     UiNumberField,
     UiTextField,
-    UiMultiSelectField,
-    Stack,
   ],
 })
 export class LoadBoardSearchFilters {

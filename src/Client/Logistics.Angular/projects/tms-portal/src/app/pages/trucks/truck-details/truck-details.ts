@@ -14,8 +14,7 @@ import {
 import type { TruckGeolocationDto } from "@logistics/shared/api/models";
 import { AddressPipe, CurrencyFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -42,31 +41,31 @@ import {
   templateUrl: "./truck-details.html",
   styleUrl: "./truck-details.css",
   imports: [
-    CommonModule,
-    ButtonModule,
+    AddressPipe,
     CardModule,
-    TooltipModule,
-    TabsModule,
+    CommonModule,
+    CurrencyFormatPipe,
+    DistanceUnitPipe,
     DividerModule,
+    DocumentManager,
+    DocumentStatusOverview,
+    GeolocationMap,
+    Grid,
+    GrossBarchart,
+    Icon,
+    PageHeader,
     ProgressSpinnerModule,
     RouterLink,
-    CurrencyFormatPipe,
-    AddressPipe,
-    DistanceUnitPipe,
-    GeolocationMap,
-    TruckGrossLinechart,
-    GrossBarchart,
-    PageHeader,
-    TruckStatusTag,
-    TruckTypeTag,
-    DocumentManager,
-    TruckLoadsList,
-    DocumentStatusOverview,
-    Grid,
-    Icon,
     Stack,
     Surface,
+    TabsModule,
+    TooltipModule,
+    TruckGrossLinechart,
+    TruckLoadsList,
+    TruckStatusTag,
+    TruckTypeTag,
     Typography,
+    UiButton,
   ],
 })
 export class TruckDetailsComponent implements OnInit {

@@ -14,13 +14,13 @@ import { payrollLineItemTypeOptions } from "@logistics/shared/api/enums";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import {
   Icon,
+  UiButton,
   UiDataTable,
   UiNumberField,
   UiSelectField,
   UiTextareaField,
   UiTextField,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { TooltipModule } from "primeng/tooltip";
 import { ToastService } from "@/core/services";
@@ -38,7 +38,6 @@ const EMPTY = {
   selector: "app-payroll-line-items-table",
   templateUrl: "./line-items-table.html",
   imports: [
-    ButtonModule,
     CommonModule,
     CurrencyFormatPipe,
     DialogModule,
@@ -46,6 +45,7 @@ const EMPTY = {
     FormRoot,
     Icon,
     TooltipModule,
+    UiButton,
     UiDataTable,
     UiFormField,
     UiNumberField,

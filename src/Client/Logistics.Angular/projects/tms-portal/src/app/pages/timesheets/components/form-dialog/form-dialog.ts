@@ -24,13 +24,13 @@ import { timeEntryTypeOptions } from "@logistics/shared/api/enums";
 import {
   Grid,
   Stack,
+  UiButton,
   UiDateField,
   UiNumberField,
   UiSelectField,
   UiTextareaField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
@@ -51,19 +51,19 @@ const EMPTY = {
   selector: "app-timesheet-form-dialog",
   templateUrl: "./form-dialog.html",
   imports: [
-    ValidatedForm,
     DialogModule,
-    ProgressSpinnerModule,
-    FormRoot,
     FormField,
-    ButtonModule,
-    UiSelectField,
-    UiDateField,
-    UiNumberField,
-    UiTextareaField,
-    UiFormField,
+    FormRoot,
     Grid,
+    ProgressSpinnerModule,
     Stack,
+    UiButton,
+    UiDateField,
+    UiFormField,
+    UiNumberField,
+    UiSelectField,
+    UiTextareaField,
+    ValidatedForm,
   ],
 })
 export class TimesheetFormDialog {

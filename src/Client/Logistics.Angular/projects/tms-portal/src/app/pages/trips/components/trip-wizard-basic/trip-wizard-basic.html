@@ -1,6 +1,5 @@
 <ui-stack>
   <form [formRoot]="form">
-
     <ui-form-field label="Trip Name" for="tripName" [required]="true">
       <ui-text-field
         id="tripName"
@@ -15,13 +14,8 @@
     </ui-form-field>
 
     <ui-stack direction="row" justify="between" class="pt-6">
-      <p-button
-        type="button"
-        icon="pi pi-arrow-left"
-        label="Back to list"
-        [routerLink]="['/trips']"
-      />
-      <p-button type="submit" icon="pi pi-arrow-right" iconPos="right" label="Next" />
+      <ui-button type="button" icon="arrow-left" label="Back to list" [routerLink]="['/trips']" />
+      <ui-button type="submit" iconEnd="arrow-right" label="Next" />
     </ui-stack>
   </form>
 </ui-stack>

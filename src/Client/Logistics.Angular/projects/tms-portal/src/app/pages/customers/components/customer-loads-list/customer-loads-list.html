@@ -54,10 +54,11 @@
           <span class="font-medium">{{ load.deliveryCost | currencyFormat }}</span>
         </td>
         <td>
-          <p-button
-            icon="pi pi-eye"
+          <ui-button
+            appearance="text"
+            ariaLabel="View load"
+            icon="eye"
             [rounded]="true"
-            [text]="true"
             pTooltip="View load"
             [routerLink]="['/loads', load.id]"
           />
@@ -76,9 +77,9 @@
 
   @if (customerId()) {
     <div class="mt-4 text-right">
-      <p-button
+      <ui-button
+        appearance="outlined"
         label="View All Loads"
-        [outlined]="true"
         [routerLink]="['/loads']"
         [queryParams]="{ customerId: customerId() }"
       />

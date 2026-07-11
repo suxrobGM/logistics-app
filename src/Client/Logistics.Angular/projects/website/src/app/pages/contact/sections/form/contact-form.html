@@ -10,11 +10,11 @@
         <p class="mt-2 text-gray-600">
           Thanks for reaching out. We'll get back to you within 24 hours.
         </p>
-        <p-button
+        <ui-button
+          appearance="outlined"
           label="Send Another Message"
-          [outlined]="true"
           [rounded]="true"
-          (onClick)="resetForm()"
+          (click)="resetForm()"
           class="mt-6"
         />
       </div>
@@ -88,14 +88,13 @@
 
           <!-- Submit Button -->
           <div class="text-center">
-            <p-button
+            <ui-button
+              size="lg"
               type="submit"
               label="Send Message"
-              icon="pi pi-send"
-              iconPos="right"
+              iconEnd="send"
               [loading]="form().submitting()"
               [rounded]="true"
-              size="large"
             />
           </div>
         </form>

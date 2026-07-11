@@ -4,8 +4,7 @@ import { RouterModule } from "@angular/router";
 import { Api, getInvoices, type InvoiceDto } from "@logistics/shared/api";
 import { invoiceStatusOptions } from "@logistics/shared/api/enums";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
-import { Grid, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Stack, Surface, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";
 import { TooltipModule } from "primeng/tooltip";
@@ -27,21 +26,21 @@ interface PayrollDashboardData {
   selector: "app-payroll-dashboard",
   templateUrl: "./payroll-dashboard.html",
   imports: [
-    CurrencyFormatPipe,
-    CommonModule,
-    RouterModule,
     CardModule,
-    ButtonModule,
-    UiDataTable,
-    SkeletonModule,
-    TooltipModule,
+    CommonModule,
+    CurrencyFormatPipe,
     DatePipe,
+    Grid,
     InvoiceStatusTag,
     PageHeader,
-    Grid,
+    RouterModule,
+    SkeletonModule,
     Stack,
     Surface,
+    TooltipModule,
     Typography,
+    UiButton,
+    UiDataTable,
   ],
 })
 export class PayrollDashboard {

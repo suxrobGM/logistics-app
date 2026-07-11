@@ -9,7 +9,6 @@ import {
 } from "@logistics/shared/api";
 import { FEATURE_DESCRIPTIONS } from "@logistics/shared/services";
 import { Container, FeatureRow, Icon, Stack, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToggleSwitchModule } from "primeng/toggleswitch";
@@ -23,7 +22,6 @@ import { PageHeader } from "@/shared/components";
     FormsModule,
     CardModule,
     ProgressSpinnerModule,
-    ButtonModule,
     ToggleSwitchModule,
     PageHeader,
     Icon,

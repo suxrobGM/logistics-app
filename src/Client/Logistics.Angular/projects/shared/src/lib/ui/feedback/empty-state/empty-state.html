@@ -15,6 +15,6 @@
     {{ message() }}
   </ui-typography>
   @if (actionLabel()) {
-    <p-button [label]="actionLabel()!" [icon]="actionIcon()" (onClick)="onAction()" />
+    <ui-button [label]="actionLabel()!" [icon]="actionIcon()" (click)="onAction()" />
   }
 </ui-stack>

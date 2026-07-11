@@ -65,10 +65,10 @@
             />
           </td>
           <td>
-            <p-button
-              icon="pi pi-ellipsis-v"
-              [text]="true"
-              aria-label="Show actions menu"
+            <ui-button
+              appearance="text"
+              icon="ellipsis-v"
+              ariaLabel="Show actions menu"
               (click)="$event.stopPropagation(); selectedRow.set(dvir); menu.toggle($event)"
             />
           </td>

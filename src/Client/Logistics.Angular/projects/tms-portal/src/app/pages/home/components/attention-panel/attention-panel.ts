@@ -2,7 +2,6 @@ import { Component, input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { Icon, Stack, Typography } from "@logistics/shared/ui";
 import { BadgeModule } from "primeng/badge";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
@@ -14,7 +13,6 @@ import { SkeletonModule } from "primeng/skeleton";
     CardModule,
     BadgeModule,
     DividerModule,
-    ButtonModule,
     RouterLink,
     SkeletonModule,
     Icon,

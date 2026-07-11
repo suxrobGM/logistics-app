@@ -18,9 +18,10 @@
           [(ngModel)]="searchQuery"
         />
       </p-icon-field>
-      <p-button
-        icon="pi pi-refresh"
-        variant="outlined"
+      <ui-button
+        appearance="outlined"
+        ariaLabel="Refresh"
+        icon="refresh"
         pTooltip="Refresh"
         [loading]="isLoading()"
         (click)="loadUnassignedLoads()"
@@ -110,10 +111,10 @@
 
   <ng-template #footer>
     <div class="flex justify-end gap-2">
-      <p-button label="Cancel" variant="outlined" (click)="visible.set(false)" />
-      <p-button
+      <ui-button appearance="outlined" label="Cancel" (click)="visible.set(false)" />
+      <ui-button
         label="Attach Selected"
-        icon="pi pi-plus"
+        icon="plus"
         [disabled]="selectedLoads().length === 0"
         (click)="attachSelected()"
       />

@@ -13,6 +13,7 @@ import {
 import {
   Grid,
   Stack,
+  UiButton,
   UiDateField,
   UiNumberField,
   UiSelectField,
@@ -20,7 +21,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { TenantService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
 import { ExpenseReceiptUpload } from "../expense-receipt-upload/expense-receipt-upload";
@@ -29,20 +29,20 @@ import { ExpenseReceiptUpload } from "../expense-receipt-upload/expense-receipt-
   selector: "app-body-shop-expense-form",
   templateUrl: "./body-shop-expense-form.html",
   imports: [
-    RouterModule,
-    ButtonModule,
-    FormRoot,
+    ExpenseReceiptUpload,
     FormField,
-    ValidatedForm,
-    UiTextField,
-    UiTextareaField,
-    UiNumberField,
-    UiSelectField,
+    FormRoot,
+    Grid,
+    RouterModule,
+    Stack,
+    UiButton,
     UiDateField,
     UiFormField,
-    Grid,
-    Stack,
-    ExpenseReceiptUpload,
+    UiNumberField,
+    UiSelectField,
+    UiTextareaField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class BodyShopExpenseForm implements OnInit {

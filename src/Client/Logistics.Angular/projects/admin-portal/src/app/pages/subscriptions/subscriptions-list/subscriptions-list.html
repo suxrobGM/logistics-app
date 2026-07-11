@@ -52,11 +52,11 @@
             <p-tag [value]="sub.status ?? 'unknown'" [severity]="getStatusSeverity(sub.status)" />
           </td>
           <td>
-            <p-button
-              icon="pi pi-ellipsis-v"
-              [text]="true"
+            <ui-button
+              appearance="text"
+              icon="ellipsis-v"
               (click)="openActionMenu($event, sub)"
-              aria-label="Show actions menu"
+              ariaLabel="Show actions menu"
             />
           </td>
         </tr>

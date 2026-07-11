@@ -6,12 +6,12 @@ import type { Address, Region } from "@logistics/shared/api";
 import { regionOptions } from "@logistics/shared/api/enums";
 import {
   AddressForm,
+  UiButton,
   UiFormField,
   UiSelectField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 
 export interface TenantFormValue {
@@ -55,16 +55,16 @@ const EMPTY: TenantFormModel = {
   selector: "adm-tenant-form",
   templateUrl: "./tenant-form.html",
   imports: [
-    ButtonModule,
-    ValidatedForm,
-    FormRoot,
-    FormField,
-    RouterLink,
-    ProgressSpinnerModule,
-    UiFormField,
-    UiTextField,
-    UiSelectField,
     AddressForm,
+    FormField,
+    FormRoot,
+    ProgressSpinnerModule,
+    RouterLink,
+    UiButton,
+    UiFormField,
+    UiSelectField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class TenantForm {

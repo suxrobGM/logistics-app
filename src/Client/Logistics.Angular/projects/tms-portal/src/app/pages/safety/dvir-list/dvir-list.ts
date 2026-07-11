@@ -2,9 +2,8 @@ import { DatePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Router } from "@angular/router";
 import type { DvirReportDto, DvirStatus, DvirType } from "@logistics/shared/api";
-import { Icon, Stack, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
+import { Icon, Stack, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
 import { TagModule } from "primeng/tag";
@@ -18,17 +17,17 @@ import { DvirListStore } from "../store";
   templateUrl: "./dvir-list.html",
   providers: [DvirListStore],
   imports: [
-    ButtonModule,
-    TooltipModule,
     CardModule,
-    MenuModule,
-    TagModule,
-    DatePipe,
     DataContainer,
+    DatePipe,
+    Icon,
+    MenuModule,
     PageHeader,
     SearchField,
-    Icon,
     Stack,
+    TagModule,
+    TooltipModule,
+    UiButton,
     UiDataTable,
     UiSortHeader,
   ],

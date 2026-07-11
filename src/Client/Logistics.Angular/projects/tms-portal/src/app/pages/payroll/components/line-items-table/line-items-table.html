@@ -1,11 +1,11 @@
 <div class="mb-3 flex items-center justify-between">
   <h3 class="text-lg font-medium">Line Items</h3>
-  <p-button
-    icon="pi pi-plus"
+  <ui-button
+    intent="secondary"
+    appearance="text"
+    icon="plus"
     label="Add Item"
-    severity="secondary"
-    [text]="true"
-    (onClick)="openAddDialog()"
+    (click)="openAddDialog()"
   />
 </div>
 
@@ -45,23 +45,25 @@
           }
         </td>
         <td class="text-right">
-          <p-button
-            icon="pi pi-pencil"
-            severity="secondary"
-            [text]="true"
+          <ui-button
+            intent="secondary"
+            appearance="text"
+            size="sm"
+            ariaLabel="Edit"
+            icon="pencil"
             [rounded]="true"
-            size="small"
             pTooltip="Edit"
-            (onClick)="openEditDialog(item)"
+            (click)="openEditDialog(item)"
           />
-          <p-button
-            icon="pi pi-trash"
-            severity="danger"
-            [text]="true"
+          <ui-button
+            intent="danger"
+            appearance="text"
+            size="sm"
+            ariaLabel="Delete"
+            icon="trash"
             [rounded]="true"
-            size="small"
             pTooltip="Delete"
-            (onClick)="confirmDelete(item)"
+            (click)="confirmDelete(item)"
           />
         </td>
       </tr>
@@ -118,12 +120,17 @@
   </form>
 
   <ng-template #footer>
-    <p-button label="Cancel" severity="secondary" [text]="true" (onClick)="showDialog.set(false)" />
-    <p-button
+    <ui-button
+      intent="secondary"
+      appearance="text"
+      label="Cancel"
+      (click)="showDialog.set(false)"
+    />
+    <ui-button
       [label]="editingItem() ? 'Update' : 'Add'"
-      icon="pi pi-check"
+      icon="check"
       [loading]="form().submitting()"
-      (onClick)="saveItem()"
+      (click)="saveItem()"
     />
   </ng-template>
 </p-dialog>

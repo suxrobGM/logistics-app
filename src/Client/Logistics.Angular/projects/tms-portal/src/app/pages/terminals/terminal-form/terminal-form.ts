@@ -11,13 +11,13 @@ import {
   Stack,
   Surface,
   Typography,
+  UiButton,
   UiFormField,
   UiSelectField,
   UiTextareaField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { TenantService } from "@/core/services/tenant.service";
 
 export interface TerminalFormValue {
@@ -45,21 +45,21 @@ const EMPTY = {
   selector: "app-terminal-form",
   templateUrl: "./terminal-form.html",
   imports: [
-    FormRoot,
-    FormField,
-    RouterLink,
-    ButtonModule,
     AddressForm,
-    UiFormField,
-    UiTextField,
-    UiSelectField,
-    UiTextareaField,
-    ValidatedForm,
+    FormField,
+    FormRoot,
     Grid,
     Icon,
+    RouterLink,
     Stack,
     Surface,
     Typography,
+    UiButton,
+    UiFormField,
+    UiSelectField,
+    UiTextareaField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class TerminalForm {

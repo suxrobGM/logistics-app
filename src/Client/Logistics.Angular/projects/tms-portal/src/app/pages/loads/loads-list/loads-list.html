@@ -1,22 +1,22 @@
 <div class="animate-fadein">
   <ui-page-header title="List Loads" addRoute="/loads/add" addTooltip="Add a new load">
     <ui-stack direction="row" gap="1">
-      <p-button
-        icon="pi pi-file-import"
-        size="large"
+      <ui-button
+        appearance="text"
+        size="lg"
+        icon="file-import"
         [rounded]="true"
-        [text]="true"
         pTooltip="Import from PDF"
-        aria-label="Import from PDF"
+        ariaLabel="Import from PDF"
         [routerLink]="['/loads/import']"
       />
-      <p-button
-        icon="pi pi-download"
-        size="large"
+      <ui-button
+        appearance="text"
+        size="lg"
+        icon="download"
         [rounded]="true"
-        [text]="true"
         pTooltip="Export to CSV"
-        aria-label="Export to CSV"
+        ariaLabel="Export to CSV"
         (click)="exportToCsv()"
         [disabled]="store.isEmpty()"
       />

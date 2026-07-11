@@ -7,8 +7,15 @@ import {
   type DriverBehaviorEventDto,
   type DriverBehaviorEventType,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Typography, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import {
+  Grid,
+  Icon,
+  Stack,
+  Typography,
+  UiButton,
+  UiDataTable,
+  UiSortHeader,
+} from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -50,26 +57,26 @@ const reviewStatusOptions = [
   templateUrl: "./driver-behavior-list.html",
   providers: [DriverBehaviorListStore],
   imports: [
-    FormsModule,
+    CardModule,
+    DataContainer,
     DatePipe,
     DecimalPipe,
-    ButtonModule,
-    CardModule,
     DialogModule,
+    FormsModule,
+    Grid,
+    Icon,
     InputTextModule,
     MenuModule,
     MultiSelectModule,
+    PageHeader,
+    SearchField,
     SelectModule,
+    Stack,
     TagModule,
     TextareaModule,
     ToggleSwitchModule,
-    DataContainer,
-    PageHeader,
-    SearchField,
-    Grid,
-    Icon,
-    Stack,
     Typography,
+    UiButton,
     UiDataTable,
     UiSortHeader,
   ],

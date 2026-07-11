@@ -105,15 +105,15 @@
   />
 
   <ui-stack direction="row" justify="end" gap="2" class="pt-4">
-    <p-button
+    <ui-button
+      appearance="outlined"
       label="Cancel"
       [routerLink]="mode() === 'edit' ? ['/expenses', initial()?.id] : ['/expenses']"
-      [outlined]="true"
     />
-    <p-button
+    <ui-button
       type="submit"
       [label]="mode() === 'edit' ? 'Save Changes' : 'Create Expense'"
-      icon="pi pi-save"
+      icon="save"
       [loading]="form().submitting()"
     />
   </ui-stack>

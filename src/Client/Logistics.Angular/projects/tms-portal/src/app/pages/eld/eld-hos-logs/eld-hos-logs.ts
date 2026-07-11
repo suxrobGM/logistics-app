@@ -10,8 +10,7 @@ import {
 } from "@logistics/shared/api";
 import { LocalizationService } from "@logistics/shared/services";
 import type { ListLazyLoadEvent } from "@logistics/shared/stores";
-import { EmptyState, ErrorState, Grid, Stack, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { EmptyState, ErrorState, Grid, Stack, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DatePicker } from "primeng/datepicker";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -23,7 +22,6 @@ import { DashboardCard, PageHeader, StatCard, UiFormField } from "@/shared/compo
   selector: "app-eld-hos-logs",
   templateUrl: "./eld-hos-logs.html",
   imports: [
-    ButtonModule,
     CardModule,
     DashboardCard,
     DatePicker,
@@ -32,7 +30,6 @@ import { DashboardCard, PageHeader, StatCard, UiFormField } from "@/shared/compo
     EmptyState,
     ErrorState,
     FormsModule,
-    UiFormField,
     Grid,
     PageHeader,
     ProgressSpinnerModule,
@@ -40,7 +37,9 @@ import { DashboardCard, PageHeader, StatCard, UiFormField } from "@/shared/compo
     StatCard,
     TagModule,
     TooltipModule,
+    UiButton,
     UiDataTable,
+    UiFormField,
   ],
 })
 export class EldHosLogsComponent implements OnInit {

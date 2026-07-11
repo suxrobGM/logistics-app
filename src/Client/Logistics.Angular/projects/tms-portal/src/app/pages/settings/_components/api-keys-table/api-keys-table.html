@@ -4,7 +4,7 @@
   </div>
 } @else {
   <div class="mb-4 flex justify-end">
-    <p-button label="Create API Key" icon="pi pi-plus" (onClick)="openCreateDialog()" />
+    <ui-button label="Create API Key" icon="plus" (click)="openCreateDialog()" />
   </div>
 
   @if (apiKeys().length > 0) {
@@ -33,13 +33,14 @@
             }
           </td>
           <td>
-            <p-button
-              icon="pi pi-trash"
-              severity="danger"
-              [text]="true"
+            <ui-button
+              intent="danger"
+              appearance="text"
+              ariaLabel="Revoke key"
+              icon="trash"
               [rounded]="true"
               pTooltip="Revoke key"
-              (onClick)="confirmRevoke(key)"
+              (click)="confirmRevoke(key)"
             />
           </td>
         </tr>
@@ -76,13 +77,13 @@
   </ui-form-field>
 
   <ng-template #footer>
-    <p-button label="Cancel" [text]="true" (onClick)="showCreateDialog.set(false)" />
-    <p-button
+    <ui-button appearance="text" label="Cancel" (click)="showCreateDialog.set(false)" />
+    <ui-button
       label="Create"
-      icon="pi pi-check"
+      icon="check"
       [loading]="isCreating()"
       [disabled]="!newKeyName().trim()"
-      (onClick)="createKey()"
+      (click)="createKey()"
     />
   </ng-template>
 </p-dialog>
@@ -104,12 +105,13 @@
 
     <div class="bg-subtle border-default mb-4 flex items-center gap-2 rounded-lg border p-3">
       <code class="flex-1 text-sm break-all">{{ key.plaintextKey }}</code>
-      <p-button
-        icon="pi pi-copy"
-        [text]="true"
+      <ui-button
+        appearance="text"
+        ariaLabel="Copy to clipboard"
+        icon="copy"
         [rounded]="true"
         pTooltip="Copy to clipboard"
-        (onClick)="copyToClipboard(key.plaintextKey)"
+        (click)="copyToClipboard(key.plaintextKey)"
       />
     </div>
 
@@ -119,6 +121,6 @@
   }
 
   <ng-template #footer>
-    <p-button label="Done" (onClick)="showKeyDialog.set(false)" />
+    <ui-button label="Done" (click)="showKeyDialog.set(false)" />
   </ng-template>
 </p-dialog>

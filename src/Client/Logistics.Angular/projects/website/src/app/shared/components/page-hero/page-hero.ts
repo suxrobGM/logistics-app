@@ -1,6 +1,5 @@
 import { Component, input, output } from "@angular/core";
-import { Icon, type IconName } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Icon, UiButton, type IconName } from "@logistics/shared/ui";
 import { HeroBackground } from "../hero-background/hero-background";
 
 interface StatItem {
@@ -11,7 +10,7 @@ interface StatItem {
 @Component({
   selector: "web-page-hero",
   templateUrl: "./page-hero.html",
-  imports: [ButtonModule, HeroBackground, Icon],
+  imports: [HeroBackground, Icon, UiButton],
 })
 export class PageHero {
   public readonly badgeIcon = input.required<IconName>();
@@ -20,9 +19,9 @@ export class PageHero {
   public readonly accentLine = input<string>();
   public readonly description = input.required<string>();
   public readonly ctaLabel = input<string>();
-  /** primeicons CLASS STRING — feeds `<p-button [icon]>`, which renders it on an internal
-   *  `<span>`. Migrates with the button in S4, not with the icons. */
-  public readonly ctaIcon = input<string>();
+  /** Trailing glyph on the CTA. Feeds `<ui-button [iconEnd]>`, so it is typed — the old
+   *  `'pi ' + ctaIcon()` class-string concatenation is gone with the p-button. */
+  public readonly ctaIcon = input<IconName>();
   public readonly stats = input<StatItem[]>();
 
   public readonly ctaClick = output<void>();

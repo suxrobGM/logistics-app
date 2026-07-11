@@ -12,6 +12,7 @@ import {
   type UpdateMaintenanceRecordCommand,
 } from "@logistics/shared/api";
 import {
+  UiButton,
   UiDateField,
   UiFormField,
   UiNumberField,
@@ -20,7 +21,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { ToastService } from "@/core/services";
 import { SearchTruck } from "@/shared/components/search";
@@ -67,19 +67,19 @@ const maintenanceTypeOptions = [
   selector: "app-maintenance-record-form",
   templateUrl: "./maintenance-record-form.html",
   imports: [
-    ButtonModule,
-    ValidatedForm,
-    FormRoot,
     FormField,
-    RouterLink,
+    FormRoot,
     ProgressSpinnerModule,
-    UiFormField,
-    UiTextField,
-    UiTextareaField,
-    UiSelectField,
-    UiNumberField,
-    UiDateField,
+    RouterLink,
     SearchTruck,
+    UiButton,
+    UiDateField,
+    UiFormField,
+    UiNumberField,
+    UiSelectField,
+    UiTextareaField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class MaintenanceRecordForm {

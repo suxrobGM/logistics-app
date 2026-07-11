@@ -38,12 +38,12 @@ import {
 import { ToastService } from "@logistics/shared/services";
 import {
   Stack,
+  UiButton,
   UiDateField,
   UiMultiSelectField,
   UiSelectField,
   UiTextField,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { UiFormField, ValidatedForm } from "@/shared/components";
 
@@ -76,16 +76,16 @@ const EMPTY: DriverLicenseModel = {
   templateUrl: "./driver-license-edit-dialog.html",
   imports: [
     DialogModule,
-    ButtonModule,
-    FormRoot,
     FormField,
-    UiTextField,
-    UiSelectField,
-    UiDateField,
-    UiMultiSelectField,
-    UiFormField,
-    ValidatedForm,
+    FormRoot,
     Stack,
+    UiButton,
+    UiDateField,
+    UiFormField,
+    UiMultiSelectField,
+    UiSelectField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class DriverLicenseEditDialog {

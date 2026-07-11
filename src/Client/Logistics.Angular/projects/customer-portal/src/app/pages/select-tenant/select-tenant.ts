@@ -2,8 +2,7 @@ import { DatePipe } from "@angular/common";
 import { Component, inject } from "@angular/core";
 import { Router } from "@angular/router";
 import type { UserTenantAccessDto } from "@logistics/shared";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { AuthService } from "@/core/auth";
@@ -13,15 +12,15 @@ import { TenantContextService } from "@/core/services";
   selector: "cp-select-tenant",
   templateUrl: "./select-tenant.html",
   imports: [
-    DatePipe,
-    ButtonModule,
     CardModule,
-    ProgressSpinnerModule,
+    DatePipe,
     Grid,
     Icon,
+    ProgressSpinnerModule,
     Stack,
     Surface,
     Typography,
+    UiButton,
   ],
 })
 export class SelectTenant {

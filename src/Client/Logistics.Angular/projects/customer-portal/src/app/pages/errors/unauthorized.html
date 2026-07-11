@@ -42,26 +42,28 @@
     <ui-typography variant="h3" tag="h1" align="center" class="mb-3">Access Denied</ui-typography>
 
     <!-- Description -->
-    <ui-typography variant="body" color="muted" align="center" class="mx-auto mb-8 max-w-sm block">
+    <ui-typography variant="body" color="muted" align="center" class="mx-auto mb-8 block max-w-sm">
       You don't have permission to access this page. This might be because your session has expired
       or you don't have the required permissions.
     </ui-typography>
 
     <!-- Actions -->
     <ui-stack direction="row" justify="center" gap="3" class="flex-col sm:flex-row">
-      <p-button label="Sign In Again" icon="pi pi-sign-in" severity="success" (click)="login()" />
-      <p-button
+      <ui-button intent="success" label="Sign In Again" icon="sign-in" (click)="login()" />
+      <ui-button
+        intent="success"
+        appearance="outlined"
         label="Sign Out"
-        icon="pi pi-sign-out"
-        severity="success"
-        [outlined]="true"
+        icon="sign-out"
         (click)="logout()"
       />
     </ui-stack>
 
     <!-- Additional info card -->
     <ui-surface variant="elevated" [border]="true" padding="md" class="mt-10 block">
-      <ui-typography variant="body-sm" weight="medium" class="mb-3 block">Why am I seeing this?</ui-typography>
+      <ui-typography variant="body-sm" weight="medium" class="mb-3 block">
+        Why am I seeing this?
+      </ui-typography>
       <ul class="space-y-2.5 text-left text-sm text-slate-500">
         <li class="flex items-center gap-3">
           <ui-icon name="clock" color="muted" />

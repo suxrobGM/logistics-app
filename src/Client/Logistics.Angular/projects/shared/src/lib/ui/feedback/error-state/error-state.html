@@ -8,10 +8,10 @@
   <p class="mb-6 max-w-md text-gray-600 dark:text-gray-400">{{ message() }}</p>
   <div class="flex gap-2">
     @if (retryable()) {
-      <p-button label="Retry" icon="pi pi-refresh" (onClick)="onRetry()" />
+      <ui-button label="Retry" icon="refresh" (click)="onRetry()" />
     }
     @if (showLogout()) {
-      <p-button label="Log Out" icon="pi pi-sign-out" severity="secondary" (onClick)="onLogout()" />
+      <ui-button intent="secondary" label="Log Out" icon="sign-out" (click)="onLogout()" />
     }
   </div>
 </div>

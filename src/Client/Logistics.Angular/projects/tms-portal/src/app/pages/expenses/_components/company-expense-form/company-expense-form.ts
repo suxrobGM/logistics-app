@@ -6,6 +6,7 @@ import { Api, createCompanyExpense, updateExpense, type ExpenseDto } from "@logi
 import {
   Grid,
   Stack,
+  UiButton,
   UiDateField,
   UiNumberField,
   UiSelectField,
@@ -13,7 +14,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { TenantService } from "@/core/services";
 import { UiFormField } from "@/shared/components";
 import { ExpenseReceiptUpload } from "../expense-receipt-upload/expense-receipt-upload";
@@ -23,20 +23,20 @@ import { COMPANY_CATEGORIES } from "../expense.constants";
   selector: "app-company-expense-form",
   templateUrl: "./company-expense-form.html",
   imports: [
-    RouterModule,
-    ButtonModule,
-    FormRoot,
-    FormField,
-    ValidatedForm,
-    UiTextField,
-    UiNumberField,
-    UiTextareaField,
-    UiDateField,
-    UiSelectField,
-    UiFormField,
-    Grid,
-    Stack,
     ExpenseReceiptUpload,
+    FormField,
+    FormRoot,
+    Grid,
+    RouterModule,
+    Stack,
+    UiButton,
+    UiDateField,
+    UiFormField,
+    UiNumberField,
+    UiSelectField,
+    UiTextareaField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class CompanyExpenseForm {

@@ -58,25 +58,17 @@
           </ui-grid>
         </ui-grid>
 
-
         <ui-stack direction="row" gap="2" class="mt-6">
-          <p-button
+          <ui-button
             label="Create Subscription"
-            icon="pi pi-check"
+            icon="check"
             type="submit"
             [loading]="form().submitting()"
             [disabled]="
-              form().submitting() ||
-              tenantOptions().length === 0 ||
-              planOptions().length === 0
+              form().submitting() || tenantOptions().length === 0 || planOptions().length === 0
             "
           />
-          <p-button
-            label="Cancel"
-            icon="pi pi-times"
-            severity="secondary"
-            routerLink="/subscriptions"
-          />
+          <ui-button intent="secondary" label="Cancel" icon="times" routerLink="/subscriptions" />
         </ui-stack>
       </form>
     }

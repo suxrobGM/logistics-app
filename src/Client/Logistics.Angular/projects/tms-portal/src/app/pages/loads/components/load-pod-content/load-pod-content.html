@@ -1,10 +1,10 @@
 <!-- Refresh button -->
 <div class="mb-4 flex justify-end">
-  <p-button
-    icon="pi pi-refresh"
+  <ui-button
+    appearance="outlined"
+    size="sm"
+    icon="refresh"
     label="Refresh"
-    [outlined]="true"
-    size="small"
     (click)="refresh()"
     [loading]="isLoading()"
   />
@@ -90,19 +90,21 @@
           </td>
           <td>
             <div class="flex gap-1">
-              <p-button
-                icon="pi pi-eye"
-                size="small"
-                [text]="true"
-                severity="info"
+              <ui-button
+                intent="info"
+                appearance="text"
+                size="sm"
+                ariaLabel="View Details"
+                icon="eye"
                 (click)="viewDetails(doc); $event.stopPropagation()"
                 pTooltip="View Details"
               />
-              <p-button
-                icon="pi pi-download"
-                size="small"
-                [text]="true"
-                severity="success"
+              <ui-button
+                intent="success"
+                appearance="text"
+                size="sm"
+                ariaLabel="Download"
+                icon="download"
                 (click)="download(doc); $event.stopPropagation()"
                 pTooltip="Download"
               />
@@ -246,13 +248,13 @@
 
       <!-- Actions -->
       <div class="flex justify-end gap-2 border-t pt-4">
-        <p-button
-          icon="pi pi-download"
+        <ui-button
+          intent="success"
+          icon="download"
           label="Download"
-          severity="success"
           (click)="download(selectedDocument()!)"
         />
-        <p-button label="Close" [outlined]="true" (click)="showDetailDialog.set(false)" />
+        <ui-button appearance="outlined" label="Close" (click)="showDetailDialog.set(false)" />
       </div>
     </div>
   }

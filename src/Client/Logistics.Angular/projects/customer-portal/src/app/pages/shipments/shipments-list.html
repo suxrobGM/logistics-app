@@ -48,11 +48,11 @@
           </td>
           <td>{{ load.driverName || "-" }}</td>
           <td class="text-right">
-            <p-button
+            <ui-button
+              appearance="text"
               [routerLink]="['/shipments', load.id]"
               label="View"
-              [text]="true"
-              icon="pi pi-eye"
+              icon="eye"
             />
           </td>
         </tr>

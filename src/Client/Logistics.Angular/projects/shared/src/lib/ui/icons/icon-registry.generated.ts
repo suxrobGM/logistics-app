@@ -556,7 +556,6 @@ export const TMS_ICON_NAMES: readonly UiIconName[] = [
 /** Every icon name `admin-portal` writes (base included). Used by check-icons.mjs and the ui-lab. */
 export const ADMIN_ICON_NAMES: readonly UiIconName[] = [
   "arrow-left",
-  "arrow-right",
   "bars",
   "bot",
   "box",
@@ -632,9 +631,7 @@ export const CUSTOMER_ICON_NAMES: readonly UiIconName[] = [
 
 /** Every icon name `website` writes (base included). Used by check-icons.mjs and the ui-lab. */
 export const WEBSITE_ICON_NAMES: readonly UiIconName[] = [
-  "arrow-down",
   "arrow-left",
-  "arrow-right",
   "bars",
   "bolt",
   "book",
@@ -674,7 +671,6 @@ export const WEBSITE_ICON_NAMES: readonly UiIconName[] = [
   "play",
   "receipt",
   "search",
-  "send",
   "shield",
   "sparkles",
   "spinner",

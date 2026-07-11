@@ -17,11 +17,11 @@ import {
   PageHeader,
   Stack,
   Typography,
+  UiButton,
   UiFormField,
   UiSelectField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { SkeletonModule } from "primeng/skeleton";
 
@@ -37,19 +37,19 @@ const EMPTY = { tenantId: "", planId: "" };
   templateUrl: "./subscription-add.html",
   imports: [
     CardModule,
-    ButtonModule,
+    FormField,
+    FormRoot,
+    Grid,
+    Icon,
+    PageHeader,
     RouterModule,
     SkeletonModule,
-    FormRoot,
-    FormField,
+    Stack,
+    Typography,
+    UiButton,
     UiFormField,
     UiSelectField,
     ValidatedForm,
-    Grid,
-    Icon,
-    Stack,
-    Typography,
-    PageHeader,
   ],
 })
 export class SubscriptionAdd implements OnInit {

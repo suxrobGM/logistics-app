@@ -56,11 +56,11 @@
           </td>
           <td>{{ tenant.truckCount ?? 0 }}</td>
           <td class="text-center">
-            <p-button
-              icon="pi pi-ellipsis-v"
-              [text]="true"
+            <ui-button
+              appearance="text"
+              icon="ellipsis-v"
               (click)="openActionMenu($event, tenant)"
-              aria-label="Show actions menu"
+              ariaLabel="Show actions menu"
             />
           </td>
         </tr>

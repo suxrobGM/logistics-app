@@ -24,10 +24,7 @@
           [required]="false"
           hint="Optionally select a truck to assign to the imported load"
         >
-          <app-search-truck
-            [value]="selectedTruck()"
-            (valueChange)="selectedTruck.set($event)"
-          />
+          <app-search-truck [value]="selectedTruck()" (valueChange)="selectedTruck.set($event)" />
         </ui-form-field>
 
         <p-fileUpload
@@ -199,12 +196,12 @@
           }
 
           <ui-stack direction="row" gap="2">
-            <p-button label="View Load" icon="pi pi-eye" (onClick)="viewLoad()" />
-            <p-button label="Import Another" icon="pi pi-plus" (onClick)="reset()" />
-            <p-button
+            <ui-button label="View Load" icon="eye" (click)="viewLoad()" />
+            <ui-button label="Import Another" icon="plus" (click)="reset()" />
+            <ui-button
+              appearance="text"
               label="Back to Loads"
-              icon="pi pi-arrow-left"
-              [text]="true"
+              icon="arrow-left"
               routerLink="/loads"
             />
           </ui-stack>

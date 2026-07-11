@@ -9,8 +9,7 @@ import {
   type NotificationDto,
 } from "@logistics/shared/api";
 import { RelativeTimePipe } from "@logistics/shared/pipes";
-import { Icon, Stack, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Icon, Stack, Typography, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
 import { DividerModule } from "primeng/divider";
@@ -33,20 +32,20 @@ interface FilterOption {
   styleUrl: "./notifications.css",
   imports: [
     CardModule,
-    ButtonModule,
-    DividerModule,
-    ProgressSpinnerModule,
-    TagModule,
-    RelativeTimePipe,
-    DatePipe,
-    SelectButtonModule,
     CheckboxModule,
+    DatePipe,
+    DividerModule,
     FormsModule,
-    TooltipModule,
-    SearchField,
     Icon,
+    ProgressSpinnerModule,
+    RelativeTimePipe,
+    SearchField,
+    SelectButtonModule,
     Stack,
+    TagModule,
+    TooltipModule,
     Typography,
+    UiButton,
   ],
 })
 export class NotificationsComponent implements OnInit, OnDestroy {

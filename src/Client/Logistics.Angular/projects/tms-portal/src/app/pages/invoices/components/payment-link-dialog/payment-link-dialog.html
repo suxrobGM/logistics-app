@@ -11,8 +11,8 @@
   </p>
 
   <ui-stack direction="row" justify="end" class="mb-4">
-    <p-button
-      icon="pi pi-plus"
+    <ui-button
+      icon="plus"
       label="Generate New Link"
       (click)="generateLink()"
       [loading]="isGenerating()"
@@ -39,19 +39,21 @@
             <p-tag [value]="getLinkStatusLabel(link)" [severity]="getLinkStatus(link)" />
           </td>
           <td class="text-right">
-            <p-button
-              icon="pi pi-copy"
-              [text]="true"
+            <ui-button
+              appearance="text"
+              ariaLabel="Copy link"
+              icon="copy"
               [rounded]="true"
               (click)="copyToClipboard(link.url)"
               pTooltip="Copy link"
               [disabled]="!link.isActive || !link.isValid"
             />
-            <p-button
-              icon="pi pi-trash"
-              [text]="true"
+            <ui-button
+              intent="danger"
+              appearance="text"
+              ariaLabel="Revoke"
+              icon="trash"
               [rounded]="true"
-              severity="danger"
               (click)="revokeLink(link.id)"
               pTooltip="Revoke"
               [disabled]="!link.isActive"

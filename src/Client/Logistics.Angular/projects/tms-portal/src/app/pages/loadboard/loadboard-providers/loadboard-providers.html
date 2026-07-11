@@ -3,11 +3,11 @@
   subtitle="Connect to load boards to search for available freight and post trucks"
   backLink="/loadboard"
 >
-  <p-button
+  <ui-button
+    buttonClass="whitespace-nowrap"
     label="Add Provider"
-    icon="pi pi-plus"
-    styleClass="whitespace-nowrap"
-    (onClick)="showAddDialog.set(true)"
+    icon="plus"
+    (click)="showAddDialog.set(true)"
   />
 </ui-page-header>
 
@@ -33,15 +33,8 @@
       (action)="showAddDialog.set(true)"
     />
   } @else {
-    <app-providers-table
-      [providers]="store.providers()"
-      (delete)="store.deleteProvider($event)"
-    />
+    <app-providers-table [providers]="store.providers()" (delete)="store.deleteProvider($event)" />
   }
 </ui-dashboard-card>
 
-<app-provider-add-dialog
-  [(visible)]="showAddDialog"
-  [saving]="saving()"
-  (save)="onSave($event)"
-/>
+<app-provider-add-dialog [(visible)]="showAddDialog" [saving]="saving()" (save)="onSave($event)" />

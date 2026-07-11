@@ -6,7 +6,9 @@
   (onShow)="onShow()"
   (onHide)="close()"
 >
-  <p class="text-muted-foreground mb-4">Record a cash or check payment received from the customer.</p>
+  <p class="text-muted-foreground mb-4">
+    Record a cash or check payment received from the customer.
+  </p>
 
   <form [formRoot]="form">
     <ui-form-field label="Amount" for="amount" [required]="true">
@@ -29,7 +31,11 @@
       />
     </ui-form-field>
 
-    <ui-form-field label="Reference Number" for="referenceNumber" hint="Check number, receipt ID, etc.">
+    <ui-form-field
+      label="Reference Number"
+      for="referenceNumber"
+      hint="Check number, receipt ID, etc."
+    >
       <ui-text-field id="referenceNumber" [formField]="form.referenceNumber" />
     </ui-form-field>
 
@@ -52,10 +58,10 @@
     </ui-form-field>
 
     <ui-stack direction="row" justify="end" gap="2">
-      <p-button type="button" label="Cancel" [outlined]="true" (click)="close()" />
-      <p-button
+      <ui-button appearance="outlined" type="button" label="Cancel" (click)="close()" />
+      <ui-button
         type="submit"
-        icon="pi pi-check"
+        icon="check"
         label="Record Payment"
         [loading]="form().submitting()"
       />

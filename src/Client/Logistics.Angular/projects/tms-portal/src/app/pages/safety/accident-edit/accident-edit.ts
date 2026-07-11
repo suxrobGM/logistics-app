@@ -11,7 +11,7 @@ import {
   type TruckDto,
   type UpdateAccidentReportCommand,
 } from "@logistics/shared/api";
-import { ButtonModule } from "primeng/button";
+import { UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { StepperModule } from "primeng/stepper";
@@ -30,14 +30,14 @@ import {
   selector: "app-accident-edit",
   templateUrl: "./accident-edit.html",
   imports: [
-    ButtonModule,
-    CardModule,
-    ProgressSpinnerModule,
-    StepperModule,
-    PageHeader,
     AccidentIncidentForm,
     AccidentInjuriesDamageForm,
     AccidentReviewSummary,
+    CardModule,
+    PageHeader,
+    ProgressSpinnerModule,
+    StepperModule,
+    UiButton,
   ],
 })
 export class AccidentEditPage implements OnInit {

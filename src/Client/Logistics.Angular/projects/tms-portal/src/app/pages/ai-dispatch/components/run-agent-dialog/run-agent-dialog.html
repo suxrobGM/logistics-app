@@ -32,12 +32,7 @@
     {{ charsRemaining() }} / 500
   </div>
   <ng-template #footer>
-    <p-button label="Cancel" severity="secondary" [text]="true" (onClick)="cancel()" />
-    <p-button
-      [label]="modeLabel"
-      [icon]="modeIcon"
-      [severity]="modeSeverity"
-      (onClick)="confirm()"
-    />
+    <ui-button intent="secondary" appearance="text" label="Cancel" (click)="cancel()" />
+    <ui-button [label]="modeLabel" [icon]="modeIcon" [intent]="modeIntent" (click)="confirm()" />
   </ng-template>
 </p-dialog>

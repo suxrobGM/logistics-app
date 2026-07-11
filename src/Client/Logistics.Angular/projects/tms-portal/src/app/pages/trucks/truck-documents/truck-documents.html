@@ -9,11 +9,11 @@
           Manage documents for truck: {{ truck()?.number }}
         </ui-typography>
       </div>
-      <p-button
-        icon="pi pi-arrow-left"
+      <ui-button
+        appearance="outlined"
+        icon="arrow-left"
         label="Back to Trucks"
         [routerLink]="['/trucks']"
-        [outlined]="true"
       />
     </ui-stack>
   </div>

@@ -29,12 +29,19 @@
       [required]="true"
       hint="Determines available countries for addresses"
     >
-      <ui-select-field [formField]="form.region" [options]="regionOptions" placeholder="Select region" />
+      <ui-select-field
+        [formField]="form.region"
+        [options]="regionOptions"
+        placeholder="Select region"
+      />
     </ui-form-field>
   </div>
 
   <div class="mb-4">
-    <h4 class="mb-2 font-semibold">Company Address <span class="text-red-500">*</span></h4>
+    <h4 class="mb-2 font-semibold">
+      Company Address
+      <span class="text-red-500">*</span>
+    </h4>
     <ui-address-form [formField]="form.companyAddress" />
   </div>
 
@@ -67,22 +74,21 @@
     </div>
   }
 
-
   <div class="mt-6 flex gap-2">
-    <p-button
+    <ui-button
       [label]="mode() === 'create' ? 'Create' : 'Save'"
-      icon="pi pi-check"
+      icon="check"
       type="submit"
       [loading]="isLoading()"
       [disabled]="isLoading()"
     />
-    <p-button label="Cancel" icon="pi pi-times" severity="secondary" routerLink="/tenants" />
+    <ui-button intent="secondary" label="Cancel" icon="times" routerLink="/tenants" />
     @if (mode() === "edit") {
-      <p-button
+      <ui-button
+        intent="danger"
+        appearance="outlined"
         label="Delete"
-        icon="pi pi-trash"
-        severity="danger"
-        [outlined]="true"
+        icon="trash"
         (click)="askRemove()"
       />
     }

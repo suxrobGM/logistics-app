@@ -2,8 +2,7 @@ import { Component, computed, input, output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import type { CustomerDto, LoadStatus, LoadType, TruckDto } from "@logistics/shared/api";
 import { loadStatusOptions, loadTypeOptions } from "@logistics/shared/api/enums";
-import { Stack, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Stack, Typography, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
 import { MultiSelectModule } from "primeng/multiselect";
@@ -29,17 +28,17 @@ export interface LoadsFilterState {
   templateUrl: "./loads-filter-panel.html",
   imports: [
     CardModule,
-    ButtonModule,
+    CheckboxModule,
+    DateRangePicker,
     FormsModule,
     MultiSelectModule,
-    CheckboxModule,
+    SearchCustomer,
     SearchField,
     SearchTruck,
-    SearchCustomer,
-    DateRangePicker,
-    UiFormField,
     Stack,
     Typography,
+    UiButton,
+    UiFormField,
   ],
 })
 export class LoadsFilterPanel {

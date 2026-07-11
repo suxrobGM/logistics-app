@@ -7,8 +7,7 @@ import {
   getTenants,
   getUsers,
 } from "@logistics/shared/api";
-import { Grid, Icon, PageHeader, Stack, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Icon, PageHeader, Stack, Typography, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { SkeletonModule } from "primeng/skeleton";
@@ -18,15 +17,15 @@ import { SkeletonModule } from "primeng/skeleton";
   templateUrl: "./home.html",
   imports: [
     CardModule,
-    ButtonModule,
-    RouterLink,
     DividerModule,
-    SkeletonModule,
     Grid,
     Icon,
     PageHeader,
+    RouterLink,
+    SkeletonModule,
     Stack,
     Typography,
+    UiButton,
   ],
 })
 export class Home implements OnInit {

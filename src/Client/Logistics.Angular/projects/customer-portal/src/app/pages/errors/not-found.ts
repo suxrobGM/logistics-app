@@ -1,11 +1,10 @@
 import { Component } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { Icon, Stack, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Icon, Stack, Typography, UiButton } from "@logistics/shared/ui";
 
 @Component({
   selector: "cp-not-found",
   templateUrl: "./not-found.html",
-  imports: [RouterLink, ButtonModule, Icon, Stack, Typography],
+  imports: [Icon, RouterLink, Stack, Typography, UiButton],
 })
 export class NotFound {}

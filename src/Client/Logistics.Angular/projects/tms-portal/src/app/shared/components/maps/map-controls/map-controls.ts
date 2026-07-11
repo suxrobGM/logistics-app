@@ -7,7 +7,6 @@ import {
   NavigationControlDirective,
   ScaleControlDirective,
 } from "ngx-mapbox-gl";
-import { ButtonModule } from "primeng/button";
 import { SelectButtonModule } from "primeng/selectbutton";
 import { TooltipModule } from "primeng/tooltip";
 import { MapStyleService } from "@/core/services";
@@ -25,7 +24,6 @@ import type { MapControlPosition, MapLayerType } from "../types";
     NavigationControlDirective,
     FullscreenControlDirective,
     ScaleControlDirective,
-    ButtonModule,
     Icon,
     SelectButtonModule,
     TooltipModule,

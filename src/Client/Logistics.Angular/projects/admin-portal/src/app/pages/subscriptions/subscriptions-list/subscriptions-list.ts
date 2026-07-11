@@ -7,9 +7,14 @@ import {
   deleteSubscription,
   type SubscriptionDto,
 } from "@logistics/shared/api";
-import { DataContainer, PageHeader, SearchField, UiDataTable } from "@logistics/shared/ui";
+import {
+  DataContainer,
+  PageHeader,
+  SearchField,
+  UiButton,
+  UiDataTable,
+} from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { Menu, MenuModule } from "primeng/menu";
@@ -22,17 +27,17 @@ import { SubscriptionsListStore } from "../store/subscriptions-list.store";
   templateUrl: "./subscriptions-list.html",
   providers: [SubscriptionsListStore],
   imports: [
-    ButtonModule,
-    TooltipModule,
-    RouterLink,
     CardModule,
-    UiDataTable,
     ConfirmDialogModule,
     DataContainer,
+    MenuModule,
     PageHeader,
+    RouterLink,
     SearchField,
     TagModule,
-    MenuModule,
+    TooltipModule,
+    UiButton,
+    UiDataTable,
   ],
 })
 export class SubscriptionsList {

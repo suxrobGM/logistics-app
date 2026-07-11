@@ -15,6 +15,7 @@ import {
   Stack,
   Surface,
   Typography,
+  UiButton,
   UiDataTable,
   UiFormField,
   UiSelectField,
@@ -22,7 +23,6 @@ import {
   UiTextareaField,
 } from "@logistics/shared/ui";
 import { DateUtils } from "@logistics/shared/utils";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { TagModule } from "primeng/tag";
@@ -40,24 +40,24 @@ interface StatusOption {
   templateUrl: "./demo-requests-list.html",
   providers: [DemoRequestsListStore],
   imports: [
-    ButtonModule,
-    TooltipModule,
     CardModule,
-    UiDataTable,
-    UiSortHeader,
     DataContainer,
-    PageHeader,
-    SearchField,
-    TagModule,
     DialogModule,
     FormField,
-    UiFormField,
-    UiSelectField,
-    UiTextareaField,
     Grid,
+    PageHeader,
+    SearchField,
     Stack,
     Surface,
+    TagModule,
+    TooltipModule,
     Typography,
+    UiButton,
+    UiDataTable,
+    UiFormField,
+    UiSelectField,
+    UiSortHeader,
+    UiTextareaField,
   ],
 })
 export class DemoRequestsList {

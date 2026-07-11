@@ -1,5 +1,5 @@
 import { Component, computed, input, output } from "@angular/core";
-import { ButtonModule } from "primeng/button";
+import { UiButton } from "../../action/button/button";
 import { Icon } from "../../content/icon/icon";
 import { Typography } from "../../content/typography/typography";
 import type { IconName } from "../../icons/icon-registry.generated";
@@ -27,7 +27,7 @@ const SEVERITY_COLOR: Record<Exclude<Severity, null>, string> = {
 @Component({
   selector: "ui-empty-state",
   templateUrl: "./empty-state.html",
-  imports: [ButtonModule, Icon, Stack, Typography],
+  imports: [Icon, Stack, Typography, UiButton],
 })
 export class EmptyState {
   /** Title displayed above the message */
@@ -42,11 +42,8 @@ export class EmptyState {
   /** Label for the optional action button */
   public readonly actionLabel = input<string | null>(null);
 
-  /**
-   * Icon for the action button. Still a primeicons CLASS STRING because `<p-button [icon]>` renders
-   * it onto an internal `<span>` — it migrates with the button in S4, not here.
-   */
-  public readonly actionIcon = input("pi pi-plus");
+  /** Icon for the action button. Typed `IconName` since S4 — an unknown name is now a compile error. */
+  public readonly actionIcon = input<IconName>("plus");
 
   /**
    * Optional severity tint for the icon. Default `null` renders a neutral muted

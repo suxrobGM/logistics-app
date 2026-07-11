@@ -8,8 +8,15 @@ import {
   type PortalLoadDto,
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe, DateFormatPipe, DistanceUnitPipe } from "@logistics/shared/pipes";
-import { Grid, Icon, Stack, Surface, Typography, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import {
+  Grid,
+  Icon,
+  Stack,
+  Surface,
+  Typography,
+  UiButton,
+  UiDataTable,
+} from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { TagModule } from "primeng/tag";
@@ -18,19 +25,19 @@ import { TagModule } from "primeng/tag";
   selector: "cp-shipment-details",
   templateUrl: "./shipment-details.html",
   imports: [
+    CardModule,
     CurrencyFormatPipe,
     DateFormatPipe,
     DistanceUnitPipe,
-    RouterLink,
-    CardModule,
-    ButtonModule,
-    TagModule,
-    ProgressSpinnerModule,
     Grid,
     Icon,
+    ProgressSpinnerModule,
+    RouterLink,
     Stack,
     Surface,
+    TagModule,
     Typography,
+    UiButton,
     UiDataTable,
   ],
 })

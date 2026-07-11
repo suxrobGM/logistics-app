@@ -3,11 +3,11 @@
   subtitle="Manage trucks posted to load boards to advertise available capacity"
   backLink="/loadboard"
 >
-  <p-button
+  <ui-button
+    buttonClass="whitespace-nowrap"
     label="Post Truck"
-    icon="pi pi-plus"
-    styleClass="whitespace-nowrap"
-    (onClick)="showPostDialog.set(true)"
+    icon="plus"
+    (click)="showPostDialog.set(true)"
     [disabled]="!store.hasProviders()"
   />
 </ui-page-header>
@@ -18,12 +18,7 @@
       <ui-typography variant="body-sm" color="secondary">
         You need to configure at least one load board provider before you can post trucks.
       </ui-typography>
-      <p-button
-        label="Configure Providers"
-        icon="pi pi-cog"
-        size="small"
-        (onClick)="configureProviders()"
-      />
+      <ui-button size="sm" label="Configure Providers" icon="cog" (click)="configureProviders()" />
     </ui-stack>
   </ui-alert>
 } @else {

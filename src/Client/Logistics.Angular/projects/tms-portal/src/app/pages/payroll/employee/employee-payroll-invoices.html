@@ -107,20 +107,22 @@
             }
           </td>
           <td class="overflow-visible">
-            <p-button
+            <ui-button
+              ariaLabel="Edit payroll"
               class="ml-2"
-              icon="pi pi-pen-to-square"
+              icon="pen-to-square"
               pTooltip="Edit payroll"
               tooltipPosition="bottom"
               [routerLink]="['/payroll/invoices', invoice.id, 'edit']"
             />
-            <p-button
+            <ui-button
+              appearance="outlined"
+              ariaLabel="View payroll"
               class="ml-2"
-              icon="pi pi-eye"
+              icon="eye"
               pTooltip="View payroll"
               tooltipPosition="bottom"
               [routerLink]="['/payroll/invoices', invoice.id]"
-              [outlined]="true"
             />
           </td>
         </tr>

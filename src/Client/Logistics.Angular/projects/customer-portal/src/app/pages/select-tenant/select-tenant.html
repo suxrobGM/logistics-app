@@ -3,7 +3,9 @@
     <ui-stack align="center" gap="2" class="mb-8 text-center">
       <ui-icon name="box" size="xl" class="text-foreground mb-4" />
       <ui-typography variant="h2" tag="h1" align="center">Select Company</ui-typography>
-      <ui-typography variant="body" color="muted" align="center">Choose which company you'd like to access</ui-typography>
+      <ui-typography variant="body" color="muted" align="center">
+        Choose which company you'd like to access
+      </ui-typography>
     </ui-stack>
 
     @if (isLoading()) {
@@ -16,7 +18,7 @@
           <ui-grid [size]="{ xs: 12, md: 6 }">
             <button
               type="button"
-              class="group hover:border-primary focus:ring-primary block w-full rounded-lg border border-gray-200 bg-white p-6 text-left transition-all hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+              class="group hover:border-primary focus:ring-primary block w-full rounded-lg border border-gray-200 bg-white p-6 text-left transition-all hover:shadow-md focus:ring-2 focus:ring-offset-2 focus:outline-none"
               (click)="selectTenant(tenant)"
             >
               <ui-stack direction="row" align="start" gap="4">
@@ -30,7 +32,9 @@
                     {{ tenant.companyName || tenant.tenantName }}
                   </ui-typography>
                   @if (tenant.customerName) {
-                    <ui-typography variant="body-sm" color="muted" class="mt-1">Customer: {{ tenant.customerName }}</ui-typography>
+                    <ui-typography variant="body-sm" color="muted" class="mt-1">
+                      Customer: {{ tenant.customerName }}
+                    </ui-typography>
                   }
                   @if (tenant.lastAccessedAt) {
                     <ui-typography variant="caption" color="muted" class="mt-1 block">
@@ -47,17 +51,12 @@
 
       @if (tenants().length === 0) {
         <ui-surface variant="elevated" padding="lg" class="block text-center">
-          <ui-icon name="exclamation-triangle" size="xl" class="text-yellow-500 mb-4" />
+          <ui-icon name="exclamation-triangle" size="xl" class="mb-4 text-yellow-500" />
           <ui-typography variant="h5" tag="h3" class="mb-2">No Access</ui-typography>
           <ui-typography variant="body" color="muted" class="mb-6">
             You don't have access to any companies. Please contact your administrator.
           </ui-typography>
-          <p-button
-            label="Sign Out"
-            icon="pi pi-sign-out"
-            [outlined]="true"
-            (click)="logout()"
-          />
+          <ui-button appearance="outlined" label="Sign Out" icon="sign-out" (click)="logout()" />
         </ui-surface>
       }
     }

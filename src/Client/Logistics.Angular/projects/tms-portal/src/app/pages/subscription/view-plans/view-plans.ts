@@ -9,8 +9,7 @@ import {
   type SubscriptionPlanDto,
   type TenantFeature,
 } from "@logistics/shared/api";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 import { TenantService, ToastService } from "@/core/services";
@@ -77,14 +76,14 @@ const allFeatures: TenantFeature[] = [
   imports: [
     CardModule,
     CurrencyPipe,
-    ButtonModule,
     Grid,
     Icon,
+    PageHeader,
     Stack,
     Surface,
     TagModule,
     Typography,
-    PageHeader,
+    UiButton,
   ],
 })
 export class ViewPlansComponent implements OnInit {

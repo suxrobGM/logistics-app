@@ -2,12 +2,12 @@ import { Component, inject, input, output } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { ToastService } from "@logistics/shared";
 import type { TripStatus } from "@logistics/shared/api";
-import { ButtonModule } from "primeng/button";
+import { UiButton } from "@logistics/shared/ui";
 
 @Component({
   selector: "app-trip-actions",
   templateUrl: "./trip-actions.html",
-  imports: [ButtonModule, RouterLink],
+  imports: [RouterLink, UiButton],
 })
 export class TripActions {
   private readonly toastService = inject(ToastService);

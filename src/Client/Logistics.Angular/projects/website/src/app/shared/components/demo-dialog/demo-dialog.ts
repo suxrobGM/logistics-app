@@ -4,13 +4,13 @@ import { Api, createDemoRequest } from "@logistics/shared/api";
 import {
   Icon,
   PhoneField,
+  UiButton,
   UiFormField,
   UiSelectField,
   UiTextareaField,
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 
 const EMPTY = {
@@ -27,12 +27,12 @@ const EMPTY = {
   selector: "web-demo-dialog",
   templateUrl: "./demo-dialog.html",
   imports: [
-    ButtonModule,
     DialogModule,
     FormField,
     FormRoot,
     Icon,
     PhoneField,
+    UiButton,
     UiFormField,
     UiSelectField,
     UiTextareaField,

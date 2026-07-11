@@ -1,16 +1,16 @@
 <ui-container maxWidth="md">
   <ui-page-header title="Expense Details" backLink="/expenses">
     @if (canApproveOrReject()) {
-      <p-button icon="pi pi-check" label="Approve" severity="success" (click)="onApprove()" />
-      <p-button
-        icon="pi pi-times"
+      <ui-button intent="success" icon="check" label="Approve" (click)="onApprove()" />
+      <ui-button
+        intent="danger"
+        appearance="outlined"
+        icon="times"
         label="Reject"
-        severity="danger"
-        [outlined]="true"
         (click)="onReject()"
       />
     }
-    <p-button icon="pi pi-pencil" label="Edit" [outlined]="true" (click)="onEdit()" />
+    <ui-button appearance="outlined" icon="pencil" label="Edit" (click)="onEdit()" />
   </ui-page-header>
 
   @if (isLoading()) {
@@ -38,7 +38,7 @@
           class="text-muted-foreground mb-4 text-4xl"
         />
         <ui-typography color="muted">Expense not found</ui-typography>
-        <p-button label="Back to Expenses" [routerLink]="['/expenses']" class="mt-4" />
+        <ui-button label="Back to Expenses" [routerLink]="['/expenses']" class="mt-4" />
       </div>
     </p-card>
   }

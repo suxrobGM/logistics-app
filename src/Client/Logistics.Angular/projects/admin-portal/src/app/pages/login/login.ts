@@ -1,14 +1,13 @@
 import { Component, inject, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { Icon } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Icon, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { AuthService } from "@/core/auth";
 
 @Component({
   selector: "adm-login",
   templateUrl: "./login.html",
-  imports: [ButtonModule, CardModule, Icon],
+  imports: [CardModule, Icon, UiButton],
 })
 export class Login implements OnInit {
   private readonly authService = inject(AuthService);

@@ -4,7 +4,6 @@ import { FormsModule } from "@angular/forms";
 import { LocalizationService } from "@logistics/shared";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { Icon, Stack, Typography, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DatePickerModule } from "primeng/datepicker";
 import { InputTextModule } from "primeng/inputtext";
@@ -19,7 +18,6 @@ import { DriversDetailedStore } from "./store";
   providers: [DriversDetailedStore],
   imports: [
     FormsModule,
-    ButtonModule,
     CardModule,
     InputTextModule,
     DatePickerModule,

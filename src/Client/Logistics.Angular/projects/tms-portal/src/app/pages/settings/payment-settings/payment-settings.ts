@@ -8,8 +8,7 @@ import {
   type StripeConnectStatus,
   type StripeConnectStatusDto,
 } from "@logistics/shared/api";
-import { Container, Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Container, Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { TagModule } from "primeng/tag";
 import { ToastModule } from "primeng/toast";
@@ -21,20 +20,20 @@ import { TenantTaxRatesCard } from "../_components";
   selector: "app-payment-settings",
   templateUrl: "./payment-settings.html",
   imports: [
-    ToastModule,
     CardModule,
-    ButtonModule,
-    TagModule,
+    Container,
     EmptyState,
-    LoadingSkeleton,
-    PageHeader,
     Grid,
     Icon,
+    LoadingSkeleton,
+    PageHeader,
     Stack,
     Surface,
-    Typography,
+    TagModule,
     TenantTaxRatesCard,
-    Container,
+    ToastModule,
+    Typography,
+    UiButton,
   ],
 })
 export class PaymentSettingsComponent implements OnInit {

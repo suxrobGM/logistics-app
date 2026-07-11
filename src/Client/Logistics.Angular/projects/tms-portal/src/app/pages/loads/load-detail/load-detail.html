@@ -1,12 +1,12 @@
 <ui-page-header title="Load Details">
-  <p-button
-    icon="pi pi-link"
+  <ui-button
+    appearance="outlined"
+    icon="link"
     label="Tracking Link"
-    [outlined]="true"
     (click)="showTrackingDialog.set(true)"
   />
-  <p-button icon="pi pi-pencil" label="Edit" [outlined]="true" (click)="onEdit()" />
-  <p-button icon="pi pi-arrow-left" label="Back" [routerLink]="['/loads']" [outlined]="true" />
+  <ui-button appearance="outlined" icon="pencil" label="Edit" (click)="onEdit()" />
+  <ui-button appearance="outlined" icon="arrow-left" label="Back" [routerLink]="['/loads']" />
 </ui-page-header>
 
 @if (isLoading()) {
@@ -25,7 +25,9 @@
         <app-load-type-tag [type]="load()!.type!" />
       </ui-stack>
       @if (load()!.name) {
-        <ui-typography variant="h6" class="text-subtle-foreground">{{ load()!.name }}</ui-typography>
+        <ui-typography variant="h6" class="text-subtle-foreground">
+          {{ load()!.name }}
+        </ui-typography>
       }
     </ui-stack>
 
@@ -350,7 +352,7 @@
     <ui-stack align="center" gap="4" class="py-16">
       <ui-icon name="exclamation-circle" size="xl" color="muted" />
       <ui-typography variant="body" color="muted">Load not found</ui-typography>
-      <p-button label="Back to Loads" [routerLink]="['/loads']" />
+      <ui-button label="Back to Loads" [routerLink]="['/loads']" />
     </ui-stack>
   </p-card>
 }

@@ -1,13 +1,14 @@
 <header
   class="border-default bg-surface sticky top-0 z-40 flex items-center justify-between border-b px-4 py-3 md:hidden"
 >
-  <!-- Hamburger Menu Button -->
-  <p-button
-    [icon]="mobileMenuOpen() ? 'pi pi-times' : 'pi pi-bars'"
-    [text]="true"
+  <!-- Hamburger Menu Button. size="lg" rather than the old `styleClass="text-xl"`: ui-button sizes its
+       glyph from the size variant (lg = 1.25rem), which is exactly what the old text-xl gave the primeicons glyph. -->
+  <ui-button
+    [icon]="mobileMenuOpen() ? 'times' : 'bars'"
+    appearance="text"
+    size="lg"
     (click)="toggleMenu()"
-    aria-label="Toggle navigation menu"
-    styleClass="text-xl"
+    ariaLabel="Toggle navigation menu"
   />
 
   <!-- Logo and Page Title -->

@@ -14,10 +14,10 @@ import {
   DataContainer,
   PageHeader,
   SearchField,
+  UiButton,
   UiDataTable,
   UiSortHeader,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { DialogModule } from "primeng/dialog";
 import { InputTextModule } from "primeng/inputtext";
@@ -32,17 +32,17 @@ import { AdminsListStore } from "../store/admins-list.store";
   templateUrl: "./admins-list.html",
   providers: [AdminsListStore, AdminInvitationsListStore],
   imports: [
-    FormsModule,
-    DatePipe,
-    ButtonModule,
     CardModule,
-    DialogModule,
-    InputTextModule,
-    TagModule,
-    TooltipModule,
     DataContainer,
+    DatePipe,
+    DialogModule,
+    FormsModule,
+    InputTextModule,
     PageHeader,
     SearchField,
+    TagModule,
+    TooltipModule,
+    UiButton,
     UiDataTable,
     UiSortHeader,
   ],

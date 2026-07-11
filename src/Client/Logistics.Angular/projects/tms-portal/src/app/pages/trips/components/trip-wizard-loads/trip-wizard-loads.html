@@ -34,17 +34,17 @@
           </p-icon-field>
         }
 
-        <p-button
-          icon="pi pi-link"
+        <ui-button
+          appearance="outlined"
+          icon="link"
           label="Attach Existing"
-          variant="outlined"
           [disabled]="disabled()"
           (click)="attachLoadDialogVisible.set(true)"
         />
-        <p-button
-          icon="pi pi-plus"
+        <ui-button
+          appearance="outlined"
+          icon="plus"
           label="Create New"
-          variant="outlined"
           [disabled]="disabled()"
           (click)="tripLoadDialogVisible.set(true)"
         />
@@ -101,44 +101,48 @@
         <td>
           <ui-stack direction="row" justify="end" gap="1">
             @if (row.kind === "existing") {
-              <p-button
-                icon="pi pi-pencil"
+              <ui-button
+                appearance="text"
+                size="sm"
+                ariaLabel="Edit load"
+                icon="pencil"
                 pTooltip="Edit load"
                 tooltipPosition="bottom"
-                variant="text"
-                size="small"
                 [routerLink]="['/loads', row.id, 'edit']"
                 [disabled]="row.pendingDetach || disabled()"
               />
               @if (row.pendingDetach) {
-                <p-button
-                  icon="pi pi-undo"
+                <ui-button
+                  appearance="text"
+                  size="sm"
+                  ariaLabel="Undo detach"
+                  icon="undo"
                   pTooltip="Undo detach"
                   tooltipPosition="bottom"
-                  variant="text"
-                  size="small"
                   (click)="undoDetachLoad(row.id)"
                   [disabled]="disabled()"
                 />
               } @else {
-                <p-button
-                  icon="pi pi-times"
-                  severity="danger"
+                <ui-button
+                  intent="danger"
+                  appearance="text"
+                  size="sm"
+                  ariaLabel="Detach"
+                  icon="times"
                   pTooltip="Detach"
                   tooltipPosition="bottom"
-                  variant="text"
-                  size="small"
                   (click)="detachLoad(row.id)"
                   [disabled]="disabled()"
                 />
               }
             } @else {
-              <p-button
-                icon="pi pi-times"
-                severity="danger"
+              <ui-button
+                intent="danger"
+                appearance="text"
+                size="sm"
+                ariaLabel="Remove"
+                icon="times"
                 pTooltip="Remove"
-                variant="text"
-                size="small"
                 (click)="removeNewLoad(row.id)"
                 [disabled]="disabled()"
               />
@@ -161,14 +165,8 @@
   </ui-data-table>
 
   <ui-stack direction="row" justify="between" class="pt-6">
-    <p-button type="button" label="Back" icon="pi pi-arrow-left" (click)="goToPreviousStep()" />
-    <p-button
-      type="button"
-      icon="pi pi-arrow-right"
-      iconPos="right"
-      label="Next"
-      (click)="goToNextStep()"
-    />
+    <ui-button type="button" label="Back" icon="arrow-left" (click)="goToPreviousStep()" />
+    <ui-button type="button" iconEnd="arrow-right" label="Next" (click)="goToNextStep()" />
   </ui-stack>
 </ui-stack>
 

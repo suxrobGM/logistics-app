@@ -9,8 +9,7 @@ import {
 } from "@logistics/shared/api";
 import { CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { ToastService } from "@logistics/shared/services";
-import { Grid, Icon, Stack, Surface, Typography } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Grid, Icon, Stack, Surface, Typography, UiButton } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -30,28 +29,28 @@ import { EmployeeDetailsStore } from "../store";
   templateUrl: "./employee-details.html",
   providers: [EmployeeDetailsStore, CurrencyFormatPipe],
   imports: [
-    CommonModule,
-    ButtonModule,
     CardModule,
-    TooltipModule,
-    TabsModule,
-    TagModule,
-    DividerModule,
-    ProgressSpinnerModule,
-    RouterLink,
+    CommonModule,
     DatePipe,
-    PageHeader,
-    EmployeeStatusTag,
-    EmployeeAvatar,
+    DividerModule,
     DocumentManager,
     DriverLicensesTab,
+    EmployeeAvatar,
     EmployeeEditDialog,
     EmployeeLoadsList,
+    EmployeeStatusTag,
     Grid,
     Icon,
+    PageHeader,
+    ProgressSpinnerModule,
+    RouterLink,
     Stack,
     Surface,
+    TabsModule,
+    TagModule,
+    TooltipModule,
     Typography,
+    UiButton,
   ],
 })
 export class EmployeeDetails implements OnInit {

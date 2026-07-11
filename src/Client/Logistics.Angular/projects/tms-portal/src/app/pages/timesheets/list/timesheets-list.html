@@ -1,6 +1,6 @@
 <ui-page-header [title]="pageTitle">
   <ui-permission-guard [permissions]="Permission.Payroll.Manage">
-    <p-button icon="pi pi-plus" label="Add Entry" (click)="openAddDialog()" />
+    <ui-button icon="plus" label="Add Entry" (click)="openAddDialog()" />
   </ui-permission-guard>
 </ui-page-header>
 
@@ -36,11 +36,11 @@
   />
 
   @if (filterType() || filterStartDate() || filterEndDate()) {
-    <p-button
-      icon="pi pi-filter-slash"
+    <ui-button
+      intent="secondary"
+      appearance="outlined"
+      icon="filter-slash"
       label="Clear"
-      [outlined]="true"
-      severity="secondary"
       (click)="clearFilters()"
     />
   }
@@ -123,18 +123,20 @@
           <td>
             <ui-stack direction="row" gap="1">
               <ui-permission-guard [permissions]="Permission.Payroll.Manage">
-                <p-button
-                  icon="pi pi-pencil"
-                  [text]="true"
+                <ui-button
+                  appearance="text"
+                  ariaLabel="Edit"
+                  icon="pencil"
                   pTooltip="Edit"
                   tooltipPosition="top"
                   [disabled]="!!entry.payrollInvoiceId"
                   (click)="openEditDialog(entry)"
                 />
-                <p-button
-                  icon="pi pi-trash"
-                  [text]="true"
-                  severity="danger"
+                <ui-button
+                  intent="danger"
+                  appearance="text"
+                  ariaLabel="Delete"
+                  icon="trash"
                   pTooltip="Delete"
                   tooltipPosition="top"
                   [disabled]="!!entry.payrollInvoiceId"

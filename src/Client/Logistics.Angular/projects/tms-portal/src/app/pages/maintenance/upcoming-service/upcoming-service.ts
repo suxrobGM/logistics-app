@@ -2,9 +2,8 @@ import { DatePipe, DecimalPipe } from "@angular/common";
 import { Component, inject, signal, type OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import type { MaintenanceIntervalType, MaintenanceScheduleDto } from "@logistics/shared/api";
-import { Icon, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
+import { Icon, UiButton, UiDataTable, UiSortHeader } from "@logistics/shared/ui";
 import type { MenuItem } from "primeng/api";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { MenuModule } from "primeng/menu";
 import { TagModule } from "primeng/tag";
@@ -18,18 +17,18 @@ import { UpcomingServiceStore } from "../store";
   templateUrl: "./upcoming-service.html",
   providers: [UpcomingServiceStore],
   imports: [
-    ButtonModule,
-    TooltipModule,
     CardModule,
-    UiDataTable,
-    UiSortHeader,
-    MenuModule,
-    TagModule,
+    DataContainer,
     DatePipe,
     DecimalPipe,
-    DataContainer,
-    PageHeader,
     Icon,
+    MenuModule,
+    PageHeader,
+    TagModule,
+    TooltipModule,
+    UiButton,
+    UiDataTable,
+    UiSortHeader,
   ],
 })
 export class UpcomingServicePage implements OnInit {

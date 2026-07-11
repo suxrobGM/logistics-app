@@ -16,13 +16,14 @@
   <ng-template #empty>
     <div class="flex items-center justify-between gap-2 p-2">
       <span class="text-muted-foreground text-sm">
-        No customers matching <b>"{{ lastQuery() }}"</b>
+        No customers matching
+        <b>"{{ lastQuery() }}"</b>
       </span>
 
-      <p-button
+      <ui-button
+        appearance="text"
+        size="sm"
         label="Add new customer"
-        size="small"
-        variant="text"
         (click)="openCreateCustomer(autoComplete)"
       />
     </div>

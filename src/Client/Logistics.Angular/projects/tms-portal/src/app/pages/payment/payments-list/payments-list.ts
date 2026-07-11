@@ -5,7 +5,6 @@ import { type PaymentMethodType } from "@logistics/shared/api";
 import { paymentMethodTypeOptions } from "@logistics/shared/api/enums";
 import { AddressPipe, CurrencyFormatPipe } from "@logistics/shared/pipes";
 import { UiDataTable, UiSortHeader } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { TooltipModule } from "primeng/tooltip";
 import { DataContainer, PageHeader, PaymentStatusTag } from "@/shared/components";
@@ -21,7 +20,6 @@ import { PaymentsListStore } from "../store/payments-list.store";
     CardModule,
     TooltipModule,
     RouterModule,
-    ButtonModule,
     PaymentStatusTag,
     AddressPipe,
     DataContainer,

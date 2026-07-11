@@ -61,11 +61,11 @@
           <td>{{ plan.maxTrucks ?? "Unlimited" }}</td>
           <td>{{ formatInterval(plan.interval, plan.intervalCount) | titlecase }}</td>
           <td>
-            <p-button
-              icon="pi pi-ellipsis-v"
-              [text]="true"
+            <ui-button
+              appearance="text"
+              icon="ellipsis-v"
               (click)="openActionMenu($event, plan)"
-              aria-label="Show actions menu"
+              ariaLabel="Show actions menu"
             />
           </td>
         </tr>

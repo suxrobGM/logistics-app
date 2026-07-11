@@ -46,11 +46,12 @@
           <span class="hidden text-sm text-gray-600 sm:block">{{ userName() }}</span>
         }
         <p-menu #menu [model]="profileMenuItems" [popup]="true" />
-        <p-button
-          icon="pi pi-user"
+        <ui-button
+          intent="secondary"
+          appearance="text"
+          ariaLabel="Open profile menu"
+          icon="user"
           [rounded]="true"
-          [text]="true"
-          severity="secondary"
           (click)="menu.toggle($event)"
         />
       </div>

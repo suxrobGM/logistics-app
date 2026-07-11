@@ -4,8 +4,7 @@ import { RouterModule } from "@angular/router";
 import { Api, getInvoiceById, type Address, type InvoiceDto } from "@logistics/shared/api";
 import { AddressPipe, CurrencyFormatPipe, DateFormatPipe } from "@logistics/shared/pipes";
 import { LocalizationService } from "@logistics/shared/services";
-import { Alert, Grid, Icon, Stack, Typography, UiDataTable } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
+import { Alert, Grid, Icon, Stack, Typography, UiButton, UiDataTable } from "@logistics/shared/ui";
 import { CardModule } from "primeng/card";
 import { DividerModule } from "primeng/divider";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
@@ -19,28 +18,28 @@ import { PaymentLinkDialog, RecordPaymentDialog, SendInvoiceDialog } from "../co
   selector: "app-load-invoice-details",
   templateUrl: "./load-invoice-details.html",
   imports: [
-    CommonModule,
-    CardModule,
-    ButtonModule,
-    ProgressSpinnerModule,
-    RouterModule,
     AddressPipe,
-    InvoiceStatusTag,
-    PaymentStatusTag,
-    DividerModule,
-    TagModule,
-    TooltipModule,
+    Alert,
+    CardModule,
+    CommonModule,
     CurrencyFormatPipe,
     DateFormatPipe,
-    SendInvoiceDialog,
-    RecordPaymentDialog,
-    PaymentLinkDialog,
-    Alert,
-    PageHeader,
+    DividerModule,
     Grid,
     Icon,
+    InvoiceStatusTag,
+    PageHeader,
+    PaymentLinkDialog,
+    PaymentStatusTag,
+    ProgressSpinnerModule,
+    RecordPaymentDialog,
+    RouterModule,
+    SendInvoiceDialog,
     Stack,
+    TagModule,
+    TooltipModule,
     Typography,
+    UiButton,
     UiDataTable,
   ],
 })

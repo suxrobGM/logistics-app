@@ -174,42 +174,37 @@
       <ui-grid [size]="{ xs: 12, lg: 4 }">
         <p-card header="Actions">
           <ui-stack gap="2">
-            <p-button
-              icon="pi pi-send"
+            <ui-button
+              block
+              icon="send"
               label="Send Invoice"
-              styleClass="w-full"
               (click)="showSendInvoiceDialog.set(true)"
             />
-            <p-button
-              icon="pi pi-dollar"
+            <ui-button
+              appearance="outlined"
+              block
+              icon="dollar"
               label="Record Payment"
-              styleClass="w-full"
-              [outlined]="true"
               (click)="showRecordPaymentDialog.set(true)"
               [disabled]="getOutstandingAmount() <= 0"
             />
-            <p-button
-              icon="pi pi-link"
+            <ui-button
+              appearance="outlined"
+              block
+              icon="link"
               label="Payment Link"
-              styleClass="w-full"
-              [outlined]="true"
               (click)="showPaymentLinkDialog.set(true)"
             />
-            <p-button
-              icon="pi pi-file-pdf"
+            <ui-button
+              appearance="outlined"
+              block
+              icon="file-pdf"
               label="Download PDF"
-              styleClass="w-full"
-              [outlined]="true"
               [loading]="isDownloadingPdf()"
               (click)="exportToPdf()"
             />
             <a [routerLink]="['/loads', invoice()!.loadId]" class="no-underline">
-              <p-button
-                icon="pi pi-truck"
-                label="View Load"
-                styleClass="w-full"
-                [outlined]="true"
-              />
+              <ui-button appearance="outlined" block icon="truck" label="View Load" />
             </a>
           </ui-stack>
         </p-card>

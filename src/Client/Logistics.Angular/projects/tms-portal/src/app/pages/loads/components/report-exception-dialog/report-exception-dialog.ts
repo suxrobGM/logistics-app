@@ -3,7 +3,7 @@ import { FormsModule } from "@angular/forms";
 import { UiFormField } from "@logistics/shared";
 import { Api, reportLoadException, type LoadExceptionType } from "@logistics/shared/api";
 import { loadExceptionTypeOptions } from "@logistics/shared/api/enums";
-import { ButtonModule } from "primeng/button";
+import { UiButton } from "@logistics/shared/ui";
 import { DialogModule } from "primeng/dialog";
 import { SelectModule } from "primeng/select";
 import { TextareaModule } from "primeng/textarea";
@@ -12,7 +12,7 @@ import { ToastService } from "@/core/services";
 @Component({
   selector: "app-report-exception-dialog",
   templateUrl: "./report-exception-dialog.html",
-  imports: [DialogModule, ButtonModule, FormsModule, SelectModule, TextareaModule, UiFormField],
+  imports: [DialogModule, FormsModule, SelectModule, TextareaModule, UiButton, UiFormField],
 })
 export class ReportExceptionDialog {
   private readonly api = inject(Api);

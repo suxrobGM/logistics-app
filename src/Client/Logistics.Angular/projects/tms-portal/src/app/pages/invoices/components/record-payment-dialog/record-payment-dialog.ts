@@ -5,6 +5,7 @@ import { Api, recordManualPayment, type PaymentMethodType } from "@logistics/sha
 import { paymentMethodTypeOptions } from "@logistics/shared/api/enums";
 import {
   Stack,
+  UiButton,
   UiDateField,
   UiNumberField,
   UiSelectField,
@@ -12,7 +13,6 @@ import {
   UiTextField,
   ValidatedForm,
 } from "@logistics/shared/ui";
-import { ButtonModule } from "primeng/button";
 import { DialogModule } from "primeng/dialog";
 import { ToastService } from "@/core/services";
 
@@ -28,18 +28,18 @@ const EMPTY = {
   selector: "app-record-payment-dialog",
   templateUrl: "./record-payment-dialog.html",
   imports: [
-    ValidatedForm,
     DialogModule,
-    ButtonModule,
-    FormRoot,
     FormField,
-    UiTextField,
-    UiNumberField,
-    UiTextareaField,
-    UiSelectField,
+    FormRoot,
+    Stack,
+    UiButton,
     UiDateField,
     UiFormField,
-    Stack,
+    UiNumberField,
+    UiSelectField,
+    UiTextareaField,
+    UiTextField,
+    ValidatedForm,
   ],
 })
 export class RecordPaymentDialog {

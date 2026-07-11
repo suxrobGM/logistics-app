@@ -1,11 +1,11 @@
 import { Component, inject } from "@angular/core";
-import { ButtonModule } from "primeng/button";
+import { UiButton } from "@logistics/shared/ui";
 import { LayoutService } from "@/core/services/layout.service";
 
 @Component({
   selector: "adm-mobile-header",
   templateUrl: "./mobile-header.html",
-  imports: [ButtonModule],
+  imports: [UiButton],
 })
 export class MobileHeader {
   private readonly layoutService = inject(LayoutService);
