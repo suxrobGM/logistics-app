@@ -1,0 +1,108 @@
+<section id="table" class="scroll-mt-24">
+  <ui-typography variant="h2" tag="h2">Table</ui-typography>
+  <ui-typography variant="body-sm" color="muted">
+    57 local rows. <code>Code</code> holds the strings "9", "10", "100" — sort it and read the first
+    page. <code>Customer</code> sorts through the dotted path <code>customer.name</code>.
+    <code>Driver</code> has both <code>null</code> and <code>undefined</code> holes.
+  </ui-typography>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">Client-side (paginator, sortable)</ui-typography>
+  <div data-lab="table-client" class="mt-2">
+    <!--
+      Binds NEITHER [first] NOR [totalRecords] — on purpose. A client-side table must work without
+      them, exactly as the 14 client-paged templates in the app use it: `first` defaults to 0, and
+      `totalRecords` falls back to `value().length`. If either default regresses, this table renders
+      zero rows or a paginator reading "0 of 0", and the screenshot diff catches it.
+    -->
+    <ui-data-table
+      [value]="shipments"
+      dataKey="id"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [showCurrentPageReport]="true"
+      [stripedRows]="true"
+      [rowHover]="true"
+    >
+      <ng-template #header>
+        <tr>
+          <th uiSortHeader="code" data-lab="sort-code">Code</th>
+          <th uiSortHeader="customer.name" data-lab="sort-customer">Customer</th>
+          <th uiSortHeader="driver" data-lab="sort-driver">Driver</th>
+          <th uiSortHeader="weightKg" data-lab="sort-weight">Weight (kg)</th>
+          <th uiSortHeader="pickup" data-lab="sort-pickup">Pickup</th>
+          <th>Status</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-row>
+        <tr [attr.data-row-id]="row.id">
+          <td data-lab="cell-code">{{ row.code }}</td>
+          <td data-lab="cell-customer">{{ row.customer.name }}</td>
+          <td data-lab="cell-driver">
+            @if (row.driver) {
+              {{ row.driver }}
+            } @else {
+              <span class="text-muted-foreground">—</span>
+            }
+          </td>
+          <td>{{ row.weightKg }}</td>
+          <td>{{ row.pickup | date: "mediumDate" }}</td>
+          <td><ui-status-badge [status]="row.status" kind="load" /></td>
+        </tr>
+      </ng-template>
+
+      <ng-template #empty>
+        <tr>
+          <td colspan="6">No shipments.</td>
+        </tr>
+      </ng-template>
+    </ui-data-table>
+  </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-8">Selection (checkboxes)</ui-typography>
+  <div class="mt-2 flex flex-col gap-4 lg:flex-row">
+    <div data-lab="table-selection" class="flex-1">
+      <ui-data-table
+        [value]="selectableShipments"
+        dataKey="id"
+        selectionMode="multiple"
+        [(selection)]="selection"
+        [rowHover]="true"
+      >
+        <ng-template #header>
+          <tr>
+            <th class="w-12"><p-tableHeaderCheckbox /></th>
+            <th uiSortHeader="code">Code</th>
+            <th uiSortHeader="customer.name">Customer</th>
+            <th>Status</th>
+          </tr>
+        </ng-template>
+
+        <ng-template #body let-row>
+          <tr [pSelectableRow]="row" [attr.data-row-id]="row.id">
+            <td><p-tableCheckbox [value]="row" /></td>
+            <td>{{ row.code }}</td>
+            <td>{{ row.customer.name }}</td>
+            <td><ui-status-badge [status]="row.status" kind="load" /></td>
+          </tr>
+        </ng-template>
+      </ui-data-table>
+    </div>
+
+    <div class="bg-subtle border-default flex-1 rounded-md border p-3">
+      <div class="mb-2 flex items-center justify-between">
+        <ui-typography variant="overline">selection()</ui-typography>
+        <button
+          type="button"
+          data-lab="clear-selection"
+          class="border-default rounded-md border px-2 py-1 text-xs"
+          (click)="clearSelection()"
+        >
+          Clear
+        </button>
+      </div>
+      <pre data-lab="selection-json" class="overflow-x-auto text-xs">{{ selectionJson() }}</pre>
+    </div>
+  </div>
+</section>

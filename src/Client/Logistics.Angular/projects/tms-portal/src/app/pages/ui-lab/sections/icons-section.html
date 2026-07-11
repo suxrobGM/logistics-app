@@ -1,0 +1,89 @@
+<section id="icons" class="scroll-mt-24">
+  <ui-typography variant="h2" tag="h2">Icons</ui-typography>
+  <ui-typography variant="body-sm" color="muted">
+    {{ totalRegistered }} registered icons + {{ legacyAliases.length }} legacy aliases, driven
+    straight off the registries. Every cell is bordered — an empty box is a blank icon.
+  </ui-typography>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">BASE_NG_ICONS ({{ baseIcons.length }})</ui-typography>
+  <div
+    data-lab="icons-base"
+    class="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-10"
+  >
+    @for (icon of baseIcons; track icon.exportName) {
+      <div
+        class="border-default flex flex-col items-center justify-center gap-1 rounded-md border p-2"
+        [attr.data-icon]="icon.name"
+        [title]="icon.exportName"
+      >
+        <ui-icon [name]="icon.name" size="lg" />
+        <span class="text-muted-foreground truncate text-xs" [title]="icon.name">{{ icon.name }}</span>
+      </div>
+    }
+  </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">TMS_NG_ICONS ({{ tmsIcons.length }})</ui-typography>
+  <div
+    data-lab="icons-tms"
+    class="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-10"
+  >
+    @for (icon of tmsIcons; track icon.exportName) {
+      <div
+        class="border-default flex flex-col items-center justify-center gap-1 rounded-md border p-2"
+        [attr.data-icon]="icon.name"
+        [title]="icon.exportName"
+      >
+        <ui-icon [name]="icon.name" size="lg" />
+        <span class="text-muted-foreground truncate text-xs" [title]="icon.name">{{ icon.name }}</span>
+      </div>
+    }
+  </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">
+    Legacy aliases ({{ legacyAliases.length }})
+  </ui-typography>
+  <ui-typography variant="body-sm" color="muted">
+    The PrimeIcons-style names that call sites still pass to <code>&lt;ui-icon&gt;</code>.
+  </ui-typography>
+  <div
+    data-lab="icons-legacy"
+    class="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-8 lg:grid-cols-10"
+  >
+    @for (icon of legacyAliases; track icon.name) {
+      <div
+        class="border-default flex flex-col items-center justify-center gap-1 rounded-md border p-2"
+        [attr.data-icon]="icon.name"
+        [title]="icon.name + ' → ' + icon.exportName"
+      >
+        <ui-icon [name]="icon.name" size="lg" />
+        <span class="text-muted-foreground truncate text-xs" [title]="icon.name">{{ icon.name }}</span>
+      </div>
+    }
+  </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">Sizes</ui-typography>
+  <div data-lab="icons-sizes" class="mt-2 flex flex-wrap items-end gap-4">
+    @for (size of sizes; track size) {
+      <div
+        class="border-default flex flex-col items-center gap-1 rounded-md border px-4 py-2"
+        [attr.data-icon-size]="size"
+      >
+        <ui-icon name="truck" [size]="size" />
+        <span class="text-muted-foreground text-xs">{{ size }}</span>
+      </div>
+    }
+  </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">Colors</ui-typography>
+  <div data-lab="icons-colors" class="mt-2 flex flex-wrap items-end gap-4">
+    @for (color of colors; track color) {
+      <div
+        class="border-default flex flex-col items-center gap-1 rounded-md border px-4 py-2"
+        [attr.data-icon-color]="color"
+      >
+        <ui-icon name="circle-check" size="lg" [color]="color" />
+        <span class="text-muted-foreground text-xs">{{ color }}</span>
+      </div>
+    }
+  </div>
+</section>

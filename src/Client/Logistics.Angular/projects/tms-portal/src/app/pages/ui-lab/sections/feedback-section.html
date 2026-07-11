@@ -1,0 +1,112 @@
+<section id="feedback" class="scroll-mt-24">
+  <ui-typography variant="h2" tag="h2">Feedback &amp; content</ui-typography>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">ui-alert</ui-typography>
+  <div data-lab="alerts" class="mt-2 flex flex-col gap-3">
+    @for (intent of intents; track intent) {
+      <ui-alert [intent]="intent" [title]="intent + ' alert'" [attr.data-lab-intent]="intent">
+        The <code>{{ intent }}</code> intent picks the icon and the accent color.
+      </ui-alert>
+    }
+
+    @if (!alertDismissed()) {
+      <ui-alert
+        intent="warning"
+        title="Dismissible"
+        [dismissible]="true"
+        data-lab="alert-dismissible"
+        (dismiss)="alertDismissed.set(true)"
+      >
+        Click the × — this one has to actually go away.
+      </ui-alert>
+    } @else {
+      <ui-typography variant="body-sm" color="muted" data-lab="alert-dismissed">
+        Dismissed.
+      </ui-typography>
+    }
+  </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">ui-badge</ui-typography>
+  <div data-lab="badges" class="mt-2 flex flex-col gap-2">
+    @for (variant of badgeVariants; track variant) {
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-muted-foreground w-20 text-xs">{{ variant }}</span>
+        @for (severity of severities; track severity) {
+          <ui-badge [value]="severity" [severity]="severity" [variant]="variant" />
+        }
+        <ui-badge value="with icon" severity="success" [variant]="variant" icon="check" />
+      </div>
+    }
+  </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">ui-status-badge</ui-typography>
+  <div data-lab="status-badges" class="mt-2 flex flex-col gap-2">
+    @for (row of statusKinds; track row.kind) {
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-muted-foreground w-24 text-xs">{{ row.kind }}</span>
+        @for (status of row.statuses; track status) {
+          <ui-status-badge [status]="status" [kind]="row.kind" />
+        }
+        <ui-status-badge [status]="null" [kind]="row.kind" />
+      </div>
+    }
+  </div>
+
+  <ui-divider class="my-6">divider with a label</ui-divider>
+
+  <div class="flex items-stretch gap-2">
+    <span class="text-muted-foreground text-xs">vertical</span>
+    <ui-divider orientation="vertical" />
+    <span class="text-muted-foreground text-xs">divider</span>
+  </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">ui-empty-state / ui-error-state</ui-typography>
+  <div class="mt-2 grid grid-cols-1 gap-4 lg:grid-cols-2">
+    <div class="border-default bg-elevated rounded-lg border p-4" data-lab="empty-state">
+      <ui-empty-state
+        title="No loads yet"
+        message="Create your first load to see it here."
+        icon="box"
+        actionLabel="Create load"
+        (action)="lastAction.set('empty-state action')"
+      />
+    </div>
+    <div class="border-default bg-elevated rounded-lg border p-4" data-lab="error-state">
+      <ui-error-state
+        title="Could not load shipments"
+        message="The request failed. This state is fabricated — the lab makes no HTTP calls."
+        [retryable]="true"
+        (retry)="lastAction.set('error-state retry')"
+      />
+    </div>
+  </div>
+  <ui-typography variant="body-sm" color="muted" class="mt-2" data-lab="last-action">
+    last action: <code>{{ lastAction() }}</code>
+  </ui-typography>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">ui-loading-skeleton</ui-typography>
+  <div data-lab="skeletons" class="mt-2 grid grid-cols-1 gap-4 lg:grid-cols-3">
+    <div class="border-default bg-elevated rounded-lg border p-4">
+      <ui-typography variant="overline">table</ui-typography>
+      <ui-loading-skeleton variant="table" [rows]="4" />
+    </div>
+    <div class="border-default bg-elevated rounded-lg border p-4">
+      <ui-typography variant="overline">card</ui-typography>
+      <ui-loading-skeleton variant="card" height="8rem" />
+    </div>
+    <div class="border-default bg-elevated rounded-lg border p-4">
+      <ui-typography variant="overline">list</ui-typography>
+      <ui-loading-skeleton variant="list" [rows]="3" loadingText="Loading…" />
+    </div>
+  </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-6">ui-typography</ui-typography>
+  <div data-lab="typography" class="border-default mt-2 flex flex-col gap-1 rounded-lg border p-4">
+    @for (variant of typographyVariants; track variant) {
+      <div class="flex items-baseline gap-4">
+        <span class="text-muted-foreground w-20 shrink-0 text-xs">{{ variant }}</span>
+        <ui-typography [variant]="variant">The quick brown fox — 0123456789</ui-typography>
+      </div>
+    }
+  </div>
+</section>

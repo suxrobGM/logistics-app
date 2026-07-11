@@ -1,0 +1,14 @@
+<section id="forms" class="scroll-mt-24">
+  <ui-typography variant="h2" tag="h2">Forms</ui-typography>
+  <ui-typography variant="body-sm" color="muted">
+    Every <code>ui-*-field</code> inside a <code>&lt;form [formRoot]&gt;</code>, in all three states.
+    The invalid column reveals its errors through <code>submit()</code> on first render — the same
+    path a user takes.
+  </ui-typography>
+
+  <div class="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-3">
+    @for (variant of variants; track variant) {
+      <app-ui-lab-form-showcase [variant]="variant" />
+    }
+  </div>
+</section>

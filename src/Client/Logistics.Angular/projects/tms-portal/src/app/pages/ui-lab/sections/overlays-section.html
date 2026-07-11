@@ -1,0 +1,74 @@
+<section id="overlays" class="scroll-mt-24">
+  <ui-typography variant="h2" tag="h2">Overlays</ui-typography>
+  <ui-typography variant="body-sm" color="muted">
+    One trigger per overlay that exists today. The probe clicks each, asserts a panel appears, then
+    asserts it goes away — opening is the easy half.
+  </ui-typography>
+
+  <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="border-default bg-elevated rounded-lg border p-4" data-lab="overlay-select">
+      <ui-typography variant="overline">select</ui-typography>
+      <div class="mt-2">
+        <ui-select-field
+          id="overlay-select"
+          [options]="options"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Open me"
+          [showClear]="true"
+          [(value)]="selectValue"
+        />
+      </div>
+      <pre class="text-muted-foreground mt-2 text-xs" data-lab="overlay-select-value">{{
+        selectJson()
+      }}</pre>
+    </div>
+
+    <div class="border-default bg-elevated rounded-lg border p-4" data-lab="overlay-multiselect">
+      <ui-typography variant="overline">multiselect</ui-typography>
+      <div class="mt-2">
+        <ui-multiselect-field
+          id="overlay-multiselect"
+          [options]="options"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Open me"
+          display="chip"
+          [(value)]="multiselectValue"
+        />
+      </div>
+      <pre class="text-muted-foreground mt-2 text-xs" data-lab="overlay-multiselect-value">{{
+        multiselectJson()
+      }}</pre>
+    </div>
+
+    <div class="border-default bg-elevated rounded-lg border p-4" data-lab="overlay-autocomplete">
+      <ui-typography variant="overline">autocomplete</ui-typography>
+      <div class="mt-2">
+        <ui-autocomplete-field
+          id="overlay-autocomplete"
+          [suggestions]="suggestions()"
+          optionLabel="label"
+          placeholder="Type 'a'"
+          [minQueryLength]="1"
+          [showClear]="true"
+          (completeMethod)="search($event)"
+          [(value)]="autocompleteValue"
+        />
+      </div>
+      <pre class="text-muted-foreground mt-2 text-xs" data-lab="overlay-autocomplete-value">{{
+        autocompleteJson()
+      }}</pre>
+    </div>
+
+    <div class="border-default bg-elevated rounded-lg border p-4" data-lab="overlay-date">
+      <ui-typography variant="overline">date picker</ui-typography>
+      <div class="mt-2">
+        <ui-date-field id="overlay-date" [showIcon]="true" [(value)]="dateValue" />
+      </div>
+      <pre class="text-muted-foreground mt-2 text-xs" data-lab="overlay-date-value">{{
+        dateJson()
+      }}</pre>
+    </div>
+  </div>
+</section>

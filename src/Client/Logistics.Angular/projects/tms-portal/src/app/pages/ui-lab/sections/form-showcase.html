@@ -1,0 +1,140 @@
+<div
+  class="border-default bg-elevated rounded-lg border p-4"
+  [attr.data-lab-form]="variant()"
+  [attr.id]="headingId()"
+>
+  <ui-typography variant="h4" tag="h3">{{ variant() }}</ui-typography>
+
+  <form [formRoot]="form" class="mt-3 flex flex-col gap-4">
+    <ui-form-field label="Text" [for]="fieldId('text')" [required]="true">
+      <ui-text-field
+        [id]="fieldId('text')"
+        [formField]="form.text"
+        placeholder="Reference number"
+      />
+    </ui-form-field>
+
+    <ui-form-field label="Textarea" [for]="fieldId('textarea')" [required]="true" hint="Free text">
+      <ui-textarea-field
+        [id]="fieldId('textarea')"
+        [formField]="form.textarea"
+        [rows]="3"
+        placeholder="Notes"
+      />
+    </ui-form-field>
+
+    <ui-form-field label="Select" [for]="fieldId('select')" [required]="true">
+      <ui-select-field
+        [id]="fieldId('select')"
+        [formField]="form.select"
+        [options]="options"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Pick an equipment type"
+        [showClear]="true"
+      />
+    </ui-form-field>
+
+    <ui-form-field label="Multiselect" [for]="fieldId('multiselect')" [required]="true">
+      <ui-multiselect-field
+        [id]="fieldId('multiselect')"
+        [formField]="form.multiselect"
+        [options]="options"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Pick one or more"
+        display="chip"
+      />
+    </ui-form-field>
+
+    <!--
+      No [min] / [max] here: `min`, `max`, `required`, `disabled`, `invalid`, `touched`, … are
+      RESERVED state inputs that Signal Forms binds itself on any node carrying [formField]
+      (NG8022). Bounds belong in the schema, not the template.
+    -->
+    <ui-form-field label="Number" [for]="fieldId('number')" [required]="true">
+      <ui-number-field [id]="fieldId('number')" [formField]="form.number" suffix=" kg" />
+    </ui-form-field>
+
+    <ui-form-field label="Currency" [for]="fieldId('currency')" [required]="true">
+      <ui-currency-field [id]="fieldId('currency')" [formField]="form.currency" />
+    </ui-form-field>
+
+    <ui-form-field label="Date" [for]="fieldId('date')" [required]="true">
+      <ui-date-field [id]="fieldId('date')" [formField]="form.date" [showIcon]="true" />
+    </ui-form-field>
+
+    <ui-form-field label="Checkbox" [for]="fieldId('checkbox')" [required]="true">
+      <ui-checkbox-field
+        [inputId]="fieldId('checkbox')"
+        [formField]="form.checkbox"
+        label="Hazmat certified"
+      />
+    </ui-form-field>
+
+    <ui-form-field label="Toggle" [for]="fieldId('toggle')" [required]="true">
+      <ui-toggle-field
+        [inputId]="fieldId('toggle')"
+        [formField]="form.toggle"
+        label="Team drivers"
+      />
+    </ui-form-field>
+
+    <ui-form-field label="Password" [for]="fieldId('password')" [required]="true">
+      <ui-password-field
+        [id]="fieldId('password')"
+        [formField]="form.password"
+        placeholder="••••••••"
+      />
+    </ui-form-field>
+
+    <ui-form-field label="Autocomplete" [for]="fieldId('autocomplete')" [required]="true">
+      <ui-autocomplete-field
+        [id]="fieldId('autocomplete')"
+        [formField]="form.autocomplete"
+        [suggestions]="suggestions()"
+        optionLabel="label"
+        placeholder="Type 'r' for Reefer"
+        [minQueryLength]="1"
+        (completeMethod)="search($event)"
+      />
+    </ui-form-field>
+
+    <!--
+      ui-search-field is NOT a FormValueControl — it is a debounced input that emits a query. It
+      lives inside the form only so all the field controls are visible side by side.
+    -->
+    <ui-form-field label="Search (not form-bound)" hint="Emits (searchChange) after a debounce">
+      <ui-search-field placeholder="Search shipments" (searchChange)="lastSearch.set($event)" />
+      <p class="text-muted-foreground mt-1 text-xs" [attr.data-lab]="'search-echo-' + variant()">
+        last query: <code>{{ lastSearch() || "—" }}</code>
+      </p>
+    </ui-form-field>
+
+    <div class="flex items-center gap-3">
+      <!--
+        Never `[disabled]="form().invalid()"` — the button must stay clickable so ValidatedForm can
+        reveal what is missing. Guard on submitting() only.
+      -->
+      <button
+        type="submit"
+        class="bg-primary text-primary-foreground rounded-md px-3 py-2 text-sm"
+        [attr.data-lab]="'submit-' + variant()"
+        [disabled]="form().submitting()"
+      >
+        Submit
+      </button>
+      <!--
+        `disabled` is read off a FIELD, not the root: the schema disables each field individually,
+        so `form().disabled()` (the root's own flag) is false even when every control is disabled.
+        Printing the root here would say "disabled: false" on the disabled card.
+        Note the disabled card also reads `valid: true` — Signal Forms skips validation on disabled
+        fields. That is correct, and worth being able to see.
+      -->
+      <span class="text-muted-foreground text-xs" [attr.data-lab]="'state-' + variant()">
+        valid: {{ form().valid() }} · touched: {{ form().touched() }} · fields disabled:
+        {{ form.text().disabled() }}
+      </span>
+    </div>
+  </form>
+</div>

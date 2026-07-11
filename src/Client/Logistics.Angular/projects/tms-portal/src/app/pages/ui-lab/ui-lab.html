@@ -1,0 +1,93 @@
+<div class="bg-background text-foreground min-h-screen p-6" data-lab="ui-lab">
+  <header
+    class="bg-background border-default sticky top-0 z-10 -mx-6 -mt-6 mb-6 border-b px-6 py-4"
+  >
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <ui-typography variant="h1" tag="h1">UI Lab</ui-typography>
+        <ui-typography variant="body-sm" color="muted">
+          Every shared component, every state, no auth and no HTTP. Dev builds only.
+        </ui-typography>
+      </div>
+      <div data-lab="theme-toggle">
+        <ui-theme-toggle />
+      </div>
+    </div>
+
+    <nav class="mt-3 flex flex-wrap gap-2">
+      @for (section of sections; track section.id) {
+        <a
+          class="border-default hover:bg-subtle rounded-md border px-2 py-1 text-sm"
+          [href]="'#' + section.id"
+          [attr.data-lab-nav]="section.id"
+        >
+          {{ section.label }}
+        </a>
+      }
+    </nav>
+  </header>
+
+  <div class="flex flex-col gap-12">
+    <app-ui-lab-icons />
+    <app-ui-lab-table />
+    <app-ui-lab-forms />
+    <app-ui-lab-overlays />
+    <app-ui-lab-feedback />
+
+    <!--
+      ============================================================================================
+      SLOTS FOR LATER MIGRATION STEPS.
+
+      These components do not exist yet. When a step lands one, delete its placeholder row below,
+      add a `<app-ui-lab-{name}>` child component under ./sections/, import it in ui-lab.ts, and
+      add its heading id to the `sections` array so the nav and the probe pick it up.
+
+        S4  ui-button   — every severity × variant × size, plus loading and icon-only.
+        S5  ui-card     — header/body/footer slots, with and without a title.
+        S7  ui-dialog   — open/close, modal + non-modal, a nested overlay inside a dialog.
+        S6  ui-tooltip  — the [uiTooltip] directive, all four placements.
+        S9  ui-menu     — trigger, keyboard nav, submenu.
+      ============================================================================================
+    -->
+    <section id="pending" class="scroll-mt-24">
+      <ui-typography variant="h2" tag="h2">Pending</ui-typography>
+      <ui-typography variant="body-sm" color="muted">
+        Slots reserved for components that later steps will land. Each row is a placeholder, not a
+        rendered component.
+      </ui-typography>
+
+      <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <div
+          class="border-default text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm"
+          data-lab="slot-ui-button"
+        >
+          ui-button (S4)
+        </div>
+        <div
+          class="border-default text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm"
+          data-lab="slot-ui-card"
+        >
+          ui-card (S5)
+        </div>
+        <div
+          class="border-default text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm"
+          data-lab="slot-ui-dialog"
+        >
+          ui-dialog (S7)
+        </div>
+        <div
+          class="border-default text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm"
+          data-lab="slot-ui-tooltip"
+        >
+          ui-tooltip (S6)
+        </div>
+        <div
+          class="border-default text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm"
+          data-lab="slot-ui-menu"
+        >
+          ui-menu (S9)
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

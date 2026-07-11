@@ -10,7 +10,7 @@ import {
   viewChild,
   type TemplateRef,
 } from "@angular/core";
-import { Table, TableModule } from "primeng/table";
+import { Table, TableModule, TableService } from "primeng/table";
 import type { ListLazyLoadEvent } from "../../stores";
 
 export type DataTableSize = "small" | "large" | undefined;
@@ -63,6 +63,17 @@ export type DataTableSelectionMode = "single" | "multiple" | undefined;
       useFactory: (host: UiDataTable<unknown>) => host.innerTable(),
       deps: [forwardRef(() => UiDataTable)],
     },
+    // `Table` alone is not enough. `TableCheckbox`, `TableHeaderCheckbox` and `SelectableRow`
+    // (re-exported through `UiTableRowDirectives`) inject BOTH `Table` and `TableService`, and
+    // `TableService` is `@Injectable()` with no `providedIn` — it lives only in `Table`'s own node
+    // providers, which the consumer's injector cannot see. Without this, every projected checkbox
+    // throws NG0201 and takes the whole table's render down with it: `/loads` rendered a summary
+    // card saying "195 loads" above an empty grey table reading "0 of 0".
+    {
+      provide: TableService,
+      useFactory: (host: UiDataTable<unknown>) => host.innerTable().tableService,
+      deps: [forwardRef(() => UiDataTable)],
+    },
   ],
 })
 export class UiDataTable<T> {
@@ -75,7 +86,22 @@ export class UiDataTable<T> {
   public readonly lazy = input(false, { transform: booleanAttribute });
   public readonly paginator = input(false, { transform: booleanAttribute });
   public readonly rows = input<number | undefined>(undefined);
-  public readonly first = input<number | undefined>(undefined);
+  /**
+   * 0-indexed row offset of the current page.
+   *
+   * Must default to PrimeNG's own default (`0`), not `undefined`. An unbound `input()` forwards
+   * `undefined` into `<p-table>` on the first change-detection pass, overwriting its `_first = 0`
+   * before `ngOnInit` runs — after which `dataToRender()` computes `slice(undefined, NaN)` and
+   * every client-paginated table renders **zero rows**. Same bug class as
+   * `currentPageReportTemplate` below; see {@link totalRecords}.
+   */
+  public readonly first = input<number>(0);
+  /**
+   * Total row count. Server-lazy tables bind it; client-side tables leave it unbound, in which case
+   * it falls back to `value().length` — which is exactly what PrimeNG does internally when its own
+   * `_totalRecords` is 0. Forwarding a bare `undefined` instead makes the paginator report "0 of 0"
+   * and render no page links.
+   */
   public readonly totalRecords = input<number | undefined>(undefined);
   public readonly rowsPerPageOptions = input<number[] | undefined>(undefined);
   public readonly showCurrentPageReport = input(false, { transform: booleanAttribute });
