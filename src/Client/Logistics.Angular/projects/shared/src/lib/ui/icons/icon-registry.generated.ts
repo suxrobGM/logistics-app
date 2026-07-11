@@ -13,6 +13,9 @@ import {
   lucideChevronDown,
   lucideChevronLeft,
   lucideChevronRight,
+  lucideChevronsLeft,
+  lucideChevronsRight,
+  lucideChevronsUpDown,
   lucideChevronUp,
   lucideCircle,
   lucideCircleAlert,
@@ -23,7 +26,9 @@ import {
   lucideExternalLink,
   lucideEye,
   lucideEyeOff,
+  lucideFile,
   lucideFileText,
+  lucideImage,
   lucideInbox,
   lucideInfo,
   lucideLoaderCircle,
@@ -37,6 +42,7 @@ import {
   lucideSun,
   lucideTrash,
   lucideTriangleAlert,
+  lucideUpload,
   lucideX,
 } from "@ng-icons/lucide";
 
@@ -123,6 +129,9 @@ export type UiIconName =
   | "briefcase"
   | "chevron-down"
   | "chevron-right"
+  | "chevrons-up-down"
+  | "chevrons-left"
+  | "chevrons-right"
   | "eye-slash"
   | "file-check"
   | "file-pdf"
@@ -288,6 +297,9 @@ export const ICON_ALIASES: Record<UiIconName, string> = {
   briefcase: "briefcase",
   "chevron-down": "chevron-down",
   "chevron-right": "chevron-right",
+  "chevrons-up-down": "chevrons-up-down",
+  "chevrons-left": "chevrons-left",
+  "chevrons-right": "chevrons-right",
   "eye-slash": "eye-off",
   "file-check": "file-check",
   "file-pdf": "file-text",
@@ -379,13 +391,18 @@ export const BASE_ICON_NAMES: readonly UiIconName[] = [
   "chevron-left",
   "chevron-right",
   "chevron-up",
+  "chevrons-left",
+  "chevrons-right",
+  "chevrons-up-down",
   "circle",
   "ellipsis-v",
   "exclamation-triangle",
   "external-link",
   "eye",
   "eye-slash",
+  "file",
   "file-pdf",
+  "image",
   "inbox",
   "info-circle",
   "lock",
@@ -403,6 +420,7 @@ export const BASE_ICON_NAMES: readonly UiIconName[] = [
   "times",
   "times-circle",
   "trash",
+  "upload",
 ];
 
 /** Every icon name `tms-portal` writes (base included). Used by check-icons.mjs and the ui-lab. */
@@ -696,6 +714,9 @@ export const BASE_NG_ICONS = {
   lucideChevronLeft,
   lucideChevronRight,
   lucideChevronUp,
+  lucideChevronsLeft,
+  lucideChevronsRight,
+  lucideChevronsUpDown,
   lucideCircle,
   lucideCircleAlert,
   lucideCircleCheck,
@@ -705,7 +726,9 @@ export const BASE_NG_ICONS = {
   lucideExternalLink,
   lucideEye,
   lucideEyeOff,
+  lucideFile,
   lucideFileText,
+  lucideImage,
   lucideInbox,
   lucideInfo,
   lucideLoaderCircle,
@@ -719,5 +742,6 @@ export const BASE_NG_ICONS = {
   lucideSun,
   lucideTrash,
   lucideTriangleAlert,
+  lucideUpload,
   lucideX,
 };

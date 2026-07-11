@@ -51,7 +51,22 @@ export function writeText(file, contents) {
 }
 
 /**
- * List tracked files via `git ls-files`, so we can never walk node_modules/ or dist/.
+ * List source files via git, so we can never walk node_modules/ or dist/.
+ *
+ * `--cached --others --exclude-standard` = tracked files PLUS untracked-but-not-ignored ones.
+ *
+ * The `--others` half is load-bearing, and it was missing. A plain `git ls-files` sees only TRACKED
+ * files — so every file a step CREATES is invisible to every checker until it is committed, and the
+ * gates run green over precisely the newest, least-reviewed code in the repo.
+ *
+ * That is not hypothetical. S11 wrote a new table engine, paginator and two vendored primitives, and
+ * `check-icons` / `burndown` / `spartan-tokens` all reported green without ever reading them. The
+ * paginator asked for three chevron glyphs that were never registered, so EVERY SORT ARROW IN ALL
+ * FOUR PORTALS rendered blank — and the icon gate whose entire job is to catch a blank icon could not
+ * see the file that caused it. "All gates green" was vacuous.
+ *
+ * This is the same shape as the check-icons scanner hole: a checker that cannot see the thing it
+ * checks confirms only its own blind spots.
  *
  * @param {object} [options]
  * @param {string[]} [options.dirs]  repo-relative-to-workspace dirs to scan (default: ['projects'])
@@ -59,13 +74,18 @@ export function writeText(file, contents) {
  * @returns {string[]} absolute paths, POSIX separators
  */
 export function listFiles({ dirs = ["projects"], ext = null } = {}) {
-  const out = execFileSync("git", ["ls-files", "-z", "--", ...dirs], {
-    cwd: WORKSPACE_ROOT,
-    encoding: "utf8",
-    maxBuffer: 64 * 1024 * 1024,
-  });
+  const out = execFileSync(
+    "git",
+    ["ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", ...dirs],
+    {
+      cwd: WORKSPACE_ROOT,
+      encoding: "utf8",
+      maxBuffer: 64 * 1024 * 1024,
+    },
+  );
 
-  const rel = out.split("\0").filter(Boolean);
+  // Dedupe: a path staged with `git add -N` can surface in both --cached and --others.
+  const rel = [...new Set(out.split("\0").filter(Boolean))];
   const keep = ext
     ? rel.filter((f) => ext.some((e) => f.toLowerCase().endsWith(e.toLowerCase())))
     : rel;

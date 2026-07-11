@@ -165,13 +165,13 @@ class HostClient {
     <ui-data-table [value]="data()" selectionMode="multiple" dataKey="id" [(selection)]="selected">
       <ng-template #header>
         <tr>
-          <th><p-tableHeaderCheckbox /></th>
+          <th><ui-table-header-checkbox /></th>
           <th>Name</th>
         </tr>
       </ng-template>
       <ng-template #body let-row let-i="rowIndex">
         <tr>
-          <td><p-tableCheckbox [value]="row" [index]="i" /></td>
+          <td><ui-table-checkbox [value]="row" [index]="i" /></td>
           <td>{{ row.name }}</td>
         </tr>
       </ng-template>

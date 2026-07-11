@@ -220,6 +220,16 @@
 
   --ui-card-body-padding: 1.25rem;
   --ui-card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+
+  /* The `<th>` signature of `<ui-data-table>`.
+   *
+   * SAME MECHANISM AS --ui-btn-* / --ui-badge-*: a flat default here, the fork in the one app that
+   * has one. `primeng-preset.ts` gave TMS — and ONLY TMS, the other three run Aura — an uppercase,
+   * 12px, wide-tracked column header via `.p-datatable-thead > tr > th`. That rule dies with the
+   * preset, and the uppercase headers on ~90 TMS tables would die silently with it. */
+  --ui-table-th-transform: none;
+  --ui-table-th-size: 0.875rem;
+  --ui-table-th-tracking: normal;
 }
 
 /* -----------------------------------------------------------------------------------------------

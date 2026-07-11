@@ -131,7 +131,7 @@
           <tr>
             <th style="width: 3rem">
               @if (hasSelectableInvoices()) {
-                <p-tableHeaderCheckbox />
+                <ui-table-header-checkbox />
               }
             </th>
             <th uiSortHeader="PeriodStart">Period</th>
@@ -148,7 +148,7 @@
           <tr>
             <td>
               @if (invoice.status === "pending_approval") {
-                <p-tableCheckbox [value]="invoice" />
+                <ui-table-checkbox [value]="invoice" />
               }
             </td>
             <td>

@@ -187,7 +187,6 @@
               [value]="store.sortedStops()"
               dataKey="id"
               sortField="order"
-              sortMode="single"
               selectionMode="single"
               [paginator]="false"
             >
@@ -203,7 +202,7 @@
                 </tr>
               </ng-template>
               <ng-template #body let-tripStop>
-                <tr [pSelectableRow]="tripStop">
+                <tr [uiSelectableRow]="tripStop">
                   <td>{{ tripStop.order }}</td>
                   <td>{{ stopLabel(tripStop.type) }}</td>
                   <td>{{ tripStop.address | address }}</td>

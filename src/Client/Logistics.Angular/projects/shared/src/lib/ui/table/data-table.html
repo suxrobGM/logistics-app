@@ -1,58 +1,89 @@
-<p-table
-  [value]="$any(value())"
-  [lazy]="lazy()"
-  [paginator]="paginator()"
-  [rows]="$any(rows())"
-  [first]="first()"
-  [totalRecords]="totalRecords() ?? value().length"
-  [rowsPerPageOptions]="$any(rowsPerPageOptions())"
-  [showCurrentPageReport]="showCurrentPageReport()"
-  [loading]="loading()"
-  [sortField]="$any(sortField())"
-  [sortOrder]="$any(sortOrder())"
-  [sortMode]="sortMode()"
-  [dataKey]="$any(dataKey())"
-  [selectionMode]="$any(selectionMode())"
-  [(selection)]="selection"
-  [scrollable]="scrollable()"
-  [scrollHeight]="$any(scrollHeight())"
-  [styleClass]="$any(styleClass())"
-  [tableStyle]="$any(tableStyle())"
-  [size]="$any(size())"
-  [stripedRows]="stripedRows()"
-  [rowHover]="rowHover()"
-  [showLoader]="showLoader()"
-  [currentPageReportTemplate]="currentPageReportTemplate()"
-  [globalFilterFields]="$any(globalFilterFields())"
-  (onLazyLoad)="lazyLoad.emit($event)"
->
-  <ng-template #caption>
-    <ng-container [ngTemplateOutlet]="$any(captionTpl())" />
-  </ng-template>
+<div class="relative flex w-full min-w-0 flex-col" [class]="styleClass() ?? ''">
+  @if (captionTpl(); as caption) {
+    <div class="pb-3">
+      <ng-container [ngTemplateOutlet]="caption" />
+    </div>
+  }
 
-  <ng-template #header>
-    <ng-container [ngTemplateOutlet]="$any(headerTpl())" />
-  </ng-template>
+  <!--
+    The scroll container. `<p-table>` silently provided BOTH this and a sticky <thead>; without
+    them a "scrollable" table just grows and pushes the page down, which looks perfectly fine in a
+    screenshot and is wrong on all ~20 scrollable tables. `scrollHeight="flex"` means "fill the
+    flex parent" (home.html), so it gets no max-height — anything else is one.
+  -->
+  <div
+    [class]="scrollable() ? 'relative w-full overflow-auto' : 'relative w-full overflow-x-auto'"
+    [class.flex-1]="scrollHeight() === 'flex'"
+    [style.max-height]="maxHeight()"
+  >
+    <table hlmTable [style]="tableStyle() ?? null">
+      <!--
+        Sticky header. It needs its own background or the body rows scroll THROUGH it.
 
-  <ng-template #body let-row let-rowIndex="rowIndex" let-expanded="expanded">
-    <ng-container
-      [ngTemplateOutlet]="$any(bodyTpl())"
-      [ngTemplateOutletContext]="{ $implicit: row, rowIndex: rowIndex, expanded: expanded }"
+        `[&>tr>th]` (direct children), never `[&_th]`: a descendant selector would also reach the
+        <th>s of the nested <ui-data-table> that trips-list renders inside its expanded row.
+        The uppercase/size/tracking values come from CSS custom properties so TMS can keep its
+        uppercase column signature while the other three portals do not — see theme.css.
+      -->
+      <thead
+        hlmTHead
+        class="bg-card [&>tr>th]:border-border [&>tr>th]:text-muted-foreground sticky top-0 z-10 [&>tr>th]:border-b [&>tr>th]:px-3 [&>tr>th]:py-2.5 [&>tr>th]:text-left [&>tr>th]:align-middle [&>tr>th]:[font-size:var(--ui-table-th-size)] [&>tr>th]:font-medium [&>tr>th]:[letter-spacing:var(--ui-table-th-tracking)] [&>tr>th]:whitespace-nowrap [&>tr>th]:[text-transform:var(--ui-table-th-transform)]"
+      >
+        <ng-container [ngTemplateOutlet]="$any(headerTpl())" />
+      </thead>
+
+      <tbody hlmTBody [class]="bodyClass()">
+        @for (row of rowsToRender(); track trackRow($index, row)) {
+          <ng-container
+            [ngTemplateOutlet]="$any(bodyTpl())"
+            [ngTemplateOutletContext]="{
+              $implicit: row,
+              rowIndex: $index,
+              expanded: state.isExpanded(row),
+            }"
+          />
+
+          <!--
+            Rendered BARE into <tbody>. The consumer's #expandedrow template already emits its own
+            `<tr><td colspan="11">`; wrapping it in another <tr>/<td> here would produce <td><tr>,
+            which the HTML parser hoists straight back out of the table.
+          -->
+          @if (expandedRowTpl(); as expandedRow) {
+            @if (state.isExpanded(row)) {
+              <ng-container
+                [ngTemplateOutlet]="expandedRow"
+                [ngTemplateOutletContext]="{ $implicit: row, rowIndex: $index }"
+              />
+            }
+          }
+        } @empty {
+          <ng-container [ngTemplateOutlet]="$any(emptyTpl())" />
+        }
+      </tbody>
+
+      @if (footerTpl(); as footer) {
+        <tfoot hlmTFoot class="[&>tr>td]:px-3 [&>tr>td]:py-2.5">
+          <ng-container [ngTemplateOutlet]="footer" />
+        </tfoot>
+      }
+    </table>
+  </div>
+
+  @if (paginator()) {
+    <ui-table-paginator
+      [rowsPerPageOptions]="rowsPerPageOptions()"
+      [showCurrentPageReport]="showCurrentPageReport()"
+      [currentPageReportTemplate]="currentPageReportTemplate()"
     />
-  </ng-template>
+  }
 
-  <ng-template #expandedrow let-row let-rowIndex="rowIndex">
-    <ng-container
-      [ngTemplateOutlet]="$any(expandedRowTpl())"
-      [ngTemplateOutletContext]="{ $implicit: row, rowIndex: rowIndex }"
-    />
-  </ng-template>
-
-  <ng-template #footer>
-    <ng-container [ngTemplateOutlet]="$any(footerTpl())" />
-  </ng-template>
-
-  <ng-template #emptymessage>
-    <ng-container [ngTemplateOutlet]="$any(emptyTpl())" />
-  </ng-template>
-</p-table>
+  @if (loading() && showLoader()) {
+    <div
+      class="bg-background/60 absolute inset-0 z-20 flex items-center justify-center"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <ui-spinner />
+    </div>
+  }
+</div>

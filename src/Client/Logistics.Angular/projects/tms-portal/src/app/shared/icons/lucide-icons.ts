@@ -30,7 +30,6 @@ import {
   lucideCreditCard,
   lucideDollarSign,
   lucideDownload,
-  lucideFile,
   lucideFileCheck,
   lucideFileInput,
   lucideFileOutput,
@@ -47,7 +46,6 @@ import {
   lucideHome,
   lucideHouse,
   lucideIdCard,
-  lucideImage,
   lucideImages,
   lucideKey,
   lucideLayoutGrid,
@@ -88,7 +86,6 @@ import {
   lucideTrophy,
   lucideTruck,
   lucideUndo,
-  lucideUpload,
   lucideUser,
   lucideUserPen,
   lucideUserPlus,
@@ -106,7 +103,7 @@ import {
  * Icons `tms-portal` uses that `BASE_NG_ICONS` does not already provide.
  * Registered in app.config.ts:  provideIcons({ ...BASE_NG_ICONS, ...TMS_NG_ICONS })
  *
- * 109 name(s) -> 95 distinct glyph(s).
+ * 106 name(s) -> 92 distinct glyph(s).
  */
 export const TMS_NG_ICONS = {
   lucideArrowRight,
@@ -134,7 +131,6 @@ export const TMS_NG_ICONS = {
   lucideCreditCard,
   lucideDollarSign,
   lucideDownload,
-  lucideFile,
   lucideFileCheck,
   lucideFileInput,
   lucideFileOutput,
@@ -151,7 +147,6 @@ export const TMS_NG_ICONS = {
   lucideHome,
   lucideHouse,
   lucideIdCard,
-  lucideImage,
   lucideImages,
   lucideKey,
   lucideLayoutGrid,
@@ -192,7 +187,6 @@ export const TMS_NG_ICONS = {
   lucideTrophy,
   lucideTruck,
   lucideUndo,
-  lucideUpload,
   lucideUser,
   lucideUserPen,
   lucideUserPlus,

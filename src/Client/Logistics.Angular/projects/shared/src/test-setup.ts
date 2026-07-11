@@ -37,3 +37,21 @@ if (typeof window !== "undefined" && typeof window.matchMedia !== "function") {
       }) as unknown as MediaQueryList,
   });
 }
+
+/**
+ * JSDOM implements no scrolling at all, so `Element.prototype.scrollIntoView` is absent.
+ *
+ * `BrnSelectItem.setActiveStyles()` calls it whenever the CDK key manager makes an option active —
+ * which happens as soon as any `hlm-select` panel opens, including the rows-per-page dropdown on
+ * `<ui-data-table>`'s paginator. Unpatched it throws `scrollIntoView is not a function` from inside
+ * an effect during the open, so the option never gets clicked and a page-size test fails for a
+ * reason that has nothing to do with paging.
+ *
+ * Supplying the missing API only. Scrolling a viewport that does not exist is a genuine no-op here,
+ * and nothing under test asserts on scroll position.
+ */
+if (typeof Element !== "undefined" && typeof Element.prototype.scrollIntoView !== "function") {
+  Element.prototype.scrollIntoView = function scrollIntoView(): void {
+    // No viewport in JSDOM; nothing to scroll.
+  };
+}

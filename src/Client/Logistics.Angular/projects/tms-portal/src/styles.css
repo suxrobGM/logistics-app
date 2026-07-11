@@ -134,4 +134,15 @@
      `primeng-preset.ts` overrides only `card.colorScheme.dark.root`, so Nora's shadow is what all
      ~227 TMS cards wear today. shared/theme.css ships Aura's pair for the other three apps. */
   --ui-card-shadow: 0 1px 4px 0 rgb(0 0 0 / 0.1);
+
+  /* TMS is the only portal whose table headers are uppercase. From `primeng-preset.ts`:
+   *
+   *     .p-datatable .p-datatable-thead > tr > th {
+   *       text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;
+   *     }
+   *
+   * A `datatable.css` override, so it never applied to admin / customer / website. */
+  --ui-table-th-transform: uppercase;
+  --ui-table-th-size: 0.75rem;
+  --ui-table-th-tracking: 0.05em;
 }

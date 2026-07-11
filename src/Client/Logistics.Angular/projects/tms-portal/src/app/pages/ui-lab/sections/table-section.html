@@ -84,7 +84,7 @@
       >
         <ng-template #header>
           <tr>
-            <th class="w-12"><p-tableHeaderCheckbox /></th>
+            <th class="w-12"><ui-table-header-checkbox /></th>
             <th uiSortHeader="code">Code</th>
             <th uiSortHeader="customer.name">Customer</th>
             <th>Status</th>
@@ -92,8 +92,8 @@
         </ng-template>
 
         <ng-template #body let-row>
-          <tr [pSelectableRow]="row" [attr.data-row-id]="row.id">
-            <td><p-tableCheckbox [value]="row" /></td>
+          <tr [uiSelectableRow]="row" [attr.data-row-id]="row.id">
+            <td><ui-table-checkbox [value]="row" /></td>
             <td>{{ row.code }}</td>
             <td>{{ row.customer.name }}</td>
             <td><ui-status-badge [status]="row.status" kind="load" /></td>
@@ -116,5 +116,44 @@
       </div>
       <pre data-lab="selection-json" class="overflow-x-auto text-xs">{{ selectionJson() }}</pre>
     </div>
+  </div>
+
+  <ui-typography variant="h4" tag="h3" class="mt-8">
+    Scrollable + sticky header (scrollHeight 300px)
+  </ui-typography>
+  <ui-typography variant="body-sm" color="muted">
+    All 57 rows, no paginator. The body must SCROLL INSIDE the 300px box with the header pinned to
+    the top of it — it must not simply grow and push this page down. The old PrimeNG table provided
+    both the scroll container and the sticky thead silently, and a table that grows instead of
+    scrolling looks entirely fine in a screenshot. Scroll it and watch the header stay.
+  </ui-typography>
+  <div data-lab="table-scroll" class="border-default mt-2 rounded-md border">
+    <ui-data-table [value]="shipments" dataKey="id" [scrollable]="true" scrollHeight="300px">
+      <ng-template #header>
+        <tr>
+          <th uiSortHeader="code">Code</th>
+          <th uiSortHeader="customer.name">Customer</th>
+          <th uiSortHeader="driver">Driver</th>
+          <th uiSortHeader="weightKg">Weight (kg)</th>
+          <th>Status</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-row>
+        <tr [attr.data-row-id]="row.id">
+          <td>{{ row.code }}</td>
+          <td>{{ row.customer.name }}</td>
+          <td>
+            @if (row.driver) {
+              {{ row.driver }}
+            } @else {
+              <span class="text-muted-foreground">—</span>
+            }
+          </td>
+          <td>{{ row.weightKg }}</td>
+          <td><ui-status-badge [status]="row.status" kind="load" /></td>
+        </tr>
+      </ng-template>
+    </ui-data-table>
   </div>
 </section>

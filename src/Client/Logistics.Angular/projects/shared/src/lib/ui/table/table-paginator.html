@@ -1,0 +1,95 @@
+@if (showCurrentPageReport()) {
+  <span class="text-muted-foreground text-sm">{{ pageReport() }}</span>
+} @else {
+  <span></span>
+}
+
+<nav hlmPagination aria-label="Table pagination" class="mx-0! w-auto! justify-start!">
+  <ul hlmPaginationContent>
+    <li hlmPaginationItem>
+      <button
+        type="button"
+        [class]="linkClass(false)"
+        [disabled]="isFirstPage()"
+        aria-label="Go to first page"
+        (click)="goToPage(0)"
+      >
+        <ui-icon name="chevrons-left" size="xs" />
+      </button>
+    </li>
+    <li hlmPaginationItem>
+      <button
+        type="button"
+        [class]="linkClass(false)"
+        [disabled]="isFirstPage()"
+        aria-label="Go to previous page"
+        (click)="goToPage(page() - 1)"
+      >
+        <ui-icon name="chevron-left" size="xs" />
+      </button>
+    </li>
+
+    <!--
+      The page-number buttons. Their text content is the page number and NOTHING else — the
+      contract spec locates a page by exactly that text, and an icon or a stray label inside would
+      make it unfindable.
+    -->
+    @for (link of pageLinks(); track link) {
+      <li hlmPaginationItem>
+        <button
+          type="button"
+          [class]="linkClass(link === page())"
+          [attr.aria-current]="link === page() ? 'page' : null"
+          [attr.aria-label]="'Go to page ' + (link + 1)"
+          (click)="goToPage(link)"
+        >
+          {{ link + 1 }}
+        </button>
+      </li>
+    }
+
+    <li hlmPaginationItem>
+      <button
+        type="button"
+        [class]="linkClass(false)"
+        [disabled]="isLastPage()"
+        aria-label="Go to next page"
+        (click)="goToPage(page() + 1)"
+      >
+        <ui-icon name="chevron-right" size="xs" />
+      </button>
+    </li>
+    <li hlmPaginationItem>
+      <button
+        type="button"
+        [class]="linkClass(false)"
+        [disabled]="isLastPage()"
+        aria-label="Go to last page"
+        (click)="goToPage(pageCount() - 1)"
+      >
+        <ui-icon name="chevrons-right" size="xs" />
+      </button>
+    </li>
+  </ul>
+</nav>
+
+<!--
+  The page-size control. Renders ONLY when the consumer supplied options, mirroring
+  `<p-paginator>`'s `*ngIf="rowsPerPageOptions"`.
+
+  `ui-select-field` rather than a hand-rolled dropdown: it already portals its panel
+  (`*hlmSelectPortal`), which is the difference between an overlay that opens and one that silently
+  never does.
+-->
+@if (rowsPerPageOptions(); as options) {
+  <ui-select-field
+    class="w-24"
+    [options]="options"
+    [value]="pageSize()"
+    [fluid]="false"
+    (selectionChange)="onPageSizeChange($any($event))"
+    aria-label="Rows per page"
+  />
+} @else {
+  <span></span>
+}

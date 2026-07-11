@@ -80,6 +80,15 @@ const MANDATORY_BASE = [
   "chevron-up",
   "chevron-left",
   "chevron-right",
+  // The <ui-data-table> chrome. `chevrons-up-down` is the UNSORTED sort arrow — i.e. the DEFAULT
+  // state of every `<th uiSortHeader>` in all four portals — and `sort-header.ts` renders it through
+  // `[name]="sortIcon()"`, a computed the scanner's regexes cannot see. `chevrons-left`/`-right` are
+  // the paginator's first/last-page buttons. All three shipped BLANK: they resolve through
+  // ICON_ALIASES (so `UiIconName` compiles and check-icons passes) while `provideIcons` never
+  // registers the glyph. A sort header with no arrow passes every test and every code review.
+  "chevrons-up-down",
+  "chevrons-left",
+  "chevrons-right",
   "calendar",
   "eye",
   "eye-slash",
@@ -263,9 +272,27 @@ const split = (exports) => ({
   lucide: exports.filter((e) => !e.startsWith("brand")),
   brand: exports.filter((e) => e.startsWith("brand")),
 });
+/**
+ * Named import SPECIFIERS, ordered the way `@ianvs/prettier-plugin-sort-imports` orders them:
+ * alphabetically and CASE-INSENSITIVELY.
+ *
+ * ⚠ Not the same order as the icon NAMES. The rest of this script sorts by kebab name and maps to
+ * the export afterwards, and the two collations disagree the moment a `chevrons-*` meets a
+ * `chevron-*`: by kebab, `chevron-up` < `chevrons-left` (`-` < `s`); by export, case-insensitively,
+ * `lucideChevronsLeft` < `lucideChevronUp` (`s` < `u`). Emitting the kebab order left the file
+ * permanently unformatted, so `gen --check` (staleness) and the lint/format gate would each demand
+ * the other's output forever. Sort the specifiers here, at the point of emission.
+ */
+const sortSpecifiers = (names) =>
+  [...names].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()) || a.localeCompare(b));
+
 const lucideImport = (names) =>
   names.length > 0
-    ? [`import {\n${names.map((n) => `  ${n},`).join("\n")}\n} from "@ng-icons/lucide";`]
+    ? [
+        `import {\n${sortSpecifiers(names)
+          .map((n) => `  ${n},`)
+          .join("\n")}\n} from "@ng-icons/lucide";`,
+      ]
     : [];
 
 const objectLiteral = (name, exports, type = "") =>

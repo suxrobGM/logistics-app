@@ -137,10 +137,10 @@
             (click)="navigateToTrip(trip)"
           >
             <td (click)="$event.stopPropagation()">
-              <!-- The row-toggler directive below stays on the host: it belongs to the PrimeNG table,
-                   and S12 owns that. (Naming it in prose would feed the burndown ratchet a phantom.) -->
+              <!-- The toggler sits on the host so the click lands on the button itself, not a
+                   wrapper. `expanded` comes from the #body context above and drives the chevron. -->
               <ui-button
-                [pRowToggler]="trip"
+                [uiRowToggler]="trip"
                 class="mr-2 text-sm no-underline"
                 [icon]="expanded ? 'chevron-down' : 'chevron-right'"
                 appearance="text"

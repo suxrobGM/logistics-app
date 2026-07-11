@@ -30,7 +30,7 @@
       <ng-template #header>
         <tr>
           <th style="width: 3rem">
-            <p-tableHeaderCheckbox />
+            <ui-table-header-checkbox />
           </th>
           <th uiSortHeader="Number">Number</th>
           <th uiSortHeader="Name">Name</th>
@@ -53,7 +53,7 @@
           (click)="navigateToLoad(load)"
         >
           <td (click)="$event.stopPropagation()">
-            <p-tableCheckbox [value]="load" />
+            <ui-table-checkbox [value]="load" />
           </td>
           <td>
             <a
